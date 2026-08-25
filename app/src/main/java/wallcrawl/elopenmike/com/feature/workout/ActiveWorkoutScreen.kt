@@ -34,7 +34,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
-import wallcrawl.elopenmike.com.core.ui.components.ExerciseVisual
+import wallcrawl.elopenmike.com.core.exercise.visual.ExerciseVisualProvider
+import wallcrawl.elopenmike.com.core.ui.components.ExerciseIllustration
 import wallcrawl.elopenmike.com.core.ui.components.SetRow
 import wallcrawl.elopenmike.com.core.ui.components.StatBadge
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
@@ -60,6 +61,7 @@ import java.util.Locale
 @Composable
 fun ActiveWorkoutScreen(
     viewModel: ActiveWorkoutViewModel,
+    visualProvider: ExerciseVisualProvider,
     onNavigateBack: () -> Unit,
     onWorkoutFinished: (summarySessionId: String) -> Unit,
     modifier: Modifier = Modifier
@@ -107,6 +109,7 @@ fun ActiveWorkoutScreen(
             is ActiveWorkoutUiState.Active -> {
                 ActiveWorkoutContent(
                     state = state,
+                    visualProvider = visualProvider,
                     onPreviousExercise = { viewModel.previousExercise() },
                     onNextExercise = { viewModel.nextExercise() },
                     onUpdateSet = { setId, reps, weight, isCompleted ->
@@ -123,6 +126,7 @@ fun ActiveWorkoutScreen(
 @Composable
 private fun ActiveWorkoutContent(
     state: ActiveWorkoutUiState.Active,
+    visualProvider: ExerciseVisualProvider,
     onPreviousExercise: () -> Unit,
     onNextExercise: () -> Unit,
     onUpdateSet: (setId: String, reps: Int?, weight: Double?, isCompleted: Boolean) -> Unit,
@@ -185,9 +189,11 @@ private fun ActiveWorkoutContent(
                     .fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
-                // 1. Exercise Visual Placeholder (Workout Guide integration target)
                 item {
-                    ExerciseVisual(exercise = state.currentCatalogExercise)
+                    ExerciseIllustration(
+                        exercise = state.currentCatalogExercise,
+                        visualProvider = visualProvider
+                    )
                 }
 
                 // 2. Exercise Title & Details Card

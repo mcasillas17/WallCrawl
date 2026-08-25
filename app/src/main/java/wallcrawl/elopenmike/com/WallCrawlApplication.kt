@@ -15,6 +15,8 @@ import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
 import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
 import wallcrawl.elopenmike.com.core.exercise.ExerciseFilter
 import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
+import wallcrawl.elopenmike.com.core.exercise.visual.ExerciseVisualProvider
+import wallcrawl.elopenmike.com.core.exercise.visual.WorkoutGuideVisualProvider
 import wallcrawl.elopenmike.com.core.progress.ProgressCalculator
 
 /**
@@ -25,6 +27,7 @@ interface AppContainer {
     val userProfileRepository: UserProfileRepository
     val workoutRepository: WorkoutRepository
     val exerciseCatalog: ExerciseCatalog
+    val exerciseVisualProvider: ExerciseVisualProvider
     val exerciseFilter: ExerciseFilter
     val workoutPlanner: WorkoutPlanner
     val workoutValidator: GeneratedWorkoutValidator
@@ -51,6 +54,10 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
 
     override val exerciseCatalog: ExerciseCatalog by lazy {
         InMemoryExerciseCatalog()
+    }
+
+    override val exerciseVisualProvider: ExerciseVisualProvider by lazy {
+        WorkoutGuideVisualProvider()
     }
 
     override val exerciseFilter: ExerciseFilter by lazy {

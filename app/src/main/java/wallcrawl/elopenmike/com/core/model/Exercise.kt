@@ -11,7 +11,6 @@ data class Exercise(
     val secondaryMuscles: List<String> = emptyList(),
     val equipment: List<String> = emptyList(),
     val type: ExerciseType = ExerciseType.WEIGHTED_REPS,
-    val imageFrames: List<String> = emptyList(),
     val movementPattern: MovementPattern = MovementPattern.OTHER,
     val difficulty: Difficulty = Difficulty.INTERMEDIATE,
     val compoundOrIsolation: MechanicsType = MechanicsType.COMPOUND,

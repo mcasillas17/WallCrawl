@@ -45,7 +45,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import wallcrawl.elopenmike.com.core.model.Exercise
-import wallcrawl.elopenmike.com.core.ui.components.ExerciseVisual
+import wallcrawl.elopenmike.com.core.exercise.visual.ExerciseVisualProvider
+import wallcrawl.elopenmike.com.core.ui.components.ExerciseIllustration
 import wallcrawl.elopenmike.com.core.ui.components.StatBadge
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
@@ -66,6 +67,7 @@ import wallcrawl.elopenmike.com.core.ui.theme.WebBlueAccent
 @Composable
 fun ExercisesScreen(
     viewModel: ExercisesViewModel,
+    visualProvider: ExerciseVisualProvider,
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -103,6 +105,7 @@ fun ExercisesScreen(
                 if (state.selectedExerciseDetail != null) {
                     ExerciseDetailSheet(
                         exercise = state.selectedExerciseDetail,
+                        visualProvider = visualProvider,
                         onDismiss = { viewModel.closeExerciseDetail() }
                     )
                 }
@@ -334,6 +337,7 @@ private fun ExerciseListItem(
 @Composable
 private fun ExerciseDetailSheet(
     exercise: Exercise,
+    visualProvider: ExerciseVisualProvider,
     onDismiss: () -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -350,7 +354,11 @@ private fun ExerciseDetailSheet(
                 .padding(horizontal = 20.dp, vertical = 12.dp)
         ) {
             // Illustration Component
-            ExerciseVisual(exercise = exercise, height = 200)
+            ExerciseIllustration(
+                exercise = exercise,
+                visualProvider = visualProvider,
+                height = 200
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
 

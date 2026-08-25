@@ -160,7 +160,10 @@ fun WallCrawlApp(
                         exerciseCatalog = container.exerciseCatalog
                     )
                 )
-                ExercisesScreen(viewModel = exercisesViewModel)
+                ExercisesScreen(
+                    viewModel = exercisesViewModel,
+                    visualProvider = container.exerciseVisualProvider
+                )
             }
 
             composable(AppRoutes.PROFILE) {
@@ -189,6 +192,7 @@ fun WallCrawlApp(
                 )
                 ActiveWorkoutScreen(
                     viewModel = workoutViewModel,
+                    visualProvider = container.exerciseVisualProvider,
                     onNavigateBack = { navController.popBackStack() },
                     onWorkoutFinished = {
                         navController.navigate(AppRoutes.PROGRESS) {
