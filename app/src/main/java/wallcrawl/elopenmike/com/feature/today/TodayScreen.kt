@@ -202,14 +202,20 @@ private fun TodayHeader(
                 )
             }
 
-            Image(
-                painter = painterResource(id = R.mipmap.ic_launcher_round),
-                contentDescription = "WallCrawl Logo",
+            Box(
                 modifier = Modifier
                     .size(44.dp)
                     .clip(CircleShape)
-                    .border(1.dp, CrimsonRedPrimary.copy(alpha = 0.4f), CircleShape)
-            )
+                    .background(GraphiteSurfaceElevated)
+                    .border(1.dp, CrimsonRedPrimary.copy(alpha = 0.5f), CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(id = R.mipmap.ic_launcher_foreground),
+                    contentDescription = "WallCrawl Logo",
+                    modifier = Modifier.size(40.dp)
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(12.dp))
