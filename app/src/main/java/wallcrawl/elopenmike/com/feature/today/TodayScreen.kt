@@ -247,7 +247,11 @@ private fun TodayHeader(
                     )
                 }
                 Text(
-                    text = "🔥 4w Streak",
+                    text = if (completedThisWeek >= weeklyGoal) {
+                        "Weekly goal met"
+                    } else {
+                        "${(weeklyGoal - completedThisWeek).coerceAtLeast(0)} to weekly goal"
+                    },
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     color = WebBlueAccent

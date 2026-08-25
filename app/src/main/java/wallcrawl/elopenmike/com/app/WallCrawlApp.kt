@@ -126,8 +126,7 @@ fun WallCrawlApp(
                     factory = TodayViewModel.provideFactory(
                         userProfileRepository = container.userProfileRepository,
                         workoutRepository = container.workoutRepository,
-                        exerciseCatalog = container.exerciseCatalog,
-                        exerciseFilter = container.exerciseFilter,
+                        workoutGenerationContextBuilder = container.workoutGenerationContextBuilder,
                         workoutPlanner = container.workoutPlanner,
                         workoutValidator = container.workoutValidator
                     )

@@ -12,7 +12,7 @@ sealed interface TodayUiState {
         val suggestedWorkout: GeneratedWorkout,
         val activeSession: WorkoutSession? = null,
         val isRegenerating: Boolean = false,
-        val completedThisWeek: Int = 3
+        val completedThisWeek: Int = 0
     ) : TodayUiState
 
     data class Error(val message: String) : TodayUiState
