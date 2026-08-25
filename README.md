@@ -1,11 +1,11 @@
 <p align="center">
-  <img src="art/playstore-icon-512.png" width="160" alt="WallCrawl Logo" />
+  <img src="art/wallcrawl-wordmark-dark-bg.png" width="380" alt="WallCrawl Wordmark" />
 </p>
 
 <h1 align="center">WallCrawl</h1>
 
 <p align="center">
-  <em>Local-First Intelligent Workout Planner & Tracker for Android</em>
+  <em>Local-First Intelligent Workout Planner &amp; Tracker for Android</em>
 </p>
 
 <p align="center">
@@ -14,14 +14,15 @@
   <a href="https://kotlinlang.org"><img src="https://img.shields.io/badge/Kotlin-2.0.21-purple.svg" alt="Kotlin" /></a>
   <a href="https://developer.android.com/jetpack/compose"><img src="https://img.shields.io/badge/Jetpack%20Compose-Material%203-brightgreen.svg" alt="Compose" /></a>
   <a href="https://developer.android.com/training/data-storage/room"><img src="https://img.shields.io/badge/Room-Offline--First-orange.svg" alt="Room" /></a>
-  <a href="#"><img src="https://img.shields.io/badge/Local%20AI-Anti--Hallucination-red.svg" alt="Local AI" /></a>
+  <a href="#"><img src="https://img.shields.io/badge/Theme-Spider--Man%20Athletic-red.svg" alt="Spider-Man Theme" /></a>
+  <a href="#"><img src="https://img.shields.io/badge/Local%20AI-Anti--Hallucination-crimson.svg" alt="Local AI" /></a>
 </p>
 
-> **"Open the app → WallCrawl understands your goals, equipment, and history → an on-device model plans your training → zero latency, 100% offline."**
+> **"Open the app → WallCrawl understands your goals, equipment, and recovery → an on-device model plans your training → zero latency, 100% offline."**
 
-WallCrawl is an open-source, local-first Android application designed for intelligent workout planning, friction-free set tracking, and progressive overload optimization. 
+WallCrawl is an open-source, local-first Android application designed for intelligent workout planning, friction-free set tracking, and progressive overload optimization.
 
-Instead of rigid spreadsheets or generic static routines, WallCrawl evaluates your equipment, training split, recovery state, and muscle priorities to generate tailored daily routines using on-device intelligence—all wrapped in a dark, athletic interface with zero required cloud accounts or telemetry.
+Instead of rigid spreadsheets or generic static routines, WallCrawl evaluates your available equipment, training split, recovery state, and muscle priorities to generate tailored daily routines using on-device intelligence—all wrapped in an athletic Spider-Man-inspired obsidian and scarlet interface with zero required cloud accounts or telemetry.
 
 ---
 
@@ -34,43 +35,43 @@ User Profile + Equipment + Workout History → Candidate Constraint Filter → O
 ```
 
 ```mermaid
-graph TD
-    subgraph UI Layer ["1. UI & Navigation (Jetpack Compose & Material 3)"]
-        Nav[Navigation Compose]
-        TodayScreen[Today Screen]
-        ActiveWorkoutScreen[Active Workout Screen]
-        WorkoutSummaryScreen[Workout Summary Screen]
-        ProgressScreen[Progress Screen]
-        ExercisesScreen[Exercise Library Screen]
-        ProfileScreen[Profile & Settings Screen]
+flowchart TD
+    subgraph UI_Layer ["1. UI & Navigation (Jetpack Compose & Material 3)"]
+        Nav["Navigation Compose"]
+        TodayScreen["Today Screen"]
+        ActiveWorkoutScreen["Active Workout Screen"]
+        WorkoutSummaryScreen["Workout Summary Screen"]
+        ProgressScreen["Progress Screen"]
+        ExercisesScreen["Exercise Library Screen"]
+        ProfileScreen["Profile & Settings Screen"]
     end
 
-    subgraph Feature Layer ["2. Feature ViewModels & StateFlows"]
-        TodayVM[TodayViewModel]
-        WorkoutVM[ActiveWorkoutViewModel]
-        ProgressVM[ProgressViewModel]
-        ExercisesVM[ExercisesViewModel]
-        ProfileVM[ProfileViewModel]
+    subgraph Feature_Layer ["2. Feature ViewModels & StateFlows"]
+        TodayVM["TodayViewModel"]
+        WorkoutVM["ActiveWorkoutViewModel"]
+        ProgressVM["ProgressViewModel"]
+        ExercisesVM["ExercisesViewModel"]
+        ProfileVM["ProfileViewModel"]
     end
 
-    subgraph AI Pipeline ["3. AI Planning & Anti-Hallucination Engine"]
-        ContextBuilder[WorkoutGenerationContext Builder]
-        ExerciseFilter[ExerciseFilter (Hard Constraints)]
-        Planner[WorkoutPlanner Interface]
-        FakePlanner[FakeWorkoutPlanner / Local LLM]
-        Validator[GeneratedWorkoutValidator]
+    subgraph AI_Pipeline ["3. AI Planning & Anti-Hallucination Engine"]
+        ContextBuilder["WorkoutGenerationContext Builder"]
+        ExerciseFilter["ExerciseFilter (Hard Constraints)"]
+        Planner["WorkoutPlanner Interface"]
+        FakePlanner["FakeWorkoutPlanner / Local LLM"]
+        Validator["GeneratedWorkoutValidator"]
     end
 
-    subgraph Domain & Catalog ["4. Domain & Catalog Layer"]
-        Catalog[ExerciseCatalog Interface]
-        InMemoryCatalog[InMemoryExerciseCatalog / Workout Guide]
-        DomainModels[UserProfile, Exercise, Workout, Session, Set]
+    subgraph Domain_Catalog ["4. Domain & Catalog Layer"]
+        Catalog["ExerciseCatalog Interface"]
+        InMemoryCatalog["InMemoryExerciseCatalog / Workout Guide"]
+        DomainModels["Domain Models (UserProfile, Exercise, Workout, Session, Set)"]
     end
 
-    subgraph Data Layer ["5. Persistence Layer (Offline Room DB)"]
-        ProfileRepo[OfflineUserProfileRepository]
-        WorkoutRepo[OfflineWorkoutRepository]
-        RoomDB[(WallCrawlDatabase)]
+    subgraph Data_Layer ["5. Persistence Layer (Offline Room DB)"]
+        ProfileRepo["OfflineUserProfileRepository"]
+        WorkoutRepo["OfflineWorkoutRepository"]
+        RoomDB[("WallCrawlDatabase (Room)")]
     end
 
     TodayScreen --> TodayVM
@@ -100,28 +101,37 @@ graph TD
 
 A core design requirement of WallCrawl is that **on-device LLMs (Gemma, Qwen, LiteRT) must choose workouts, but can NEVER invent exercises**.
 
-```
-ExerciseCatalog (Full Library)
-          ↓
-  [Equipment Filter]
-  [User Exclusions]
-  [Recovery Constraints]
-          ↓
-  Allowed Exercise Candidates
-          ↓
-  Local LLM / WorkoutPlanner (Constrained by ID)
-          ↓
-  Structured Workout Payload
-          ↓
-  GeneratedWorkoutValidator (Verifies all IDs exist in Catalog)
-          ↓
-  Workout Logging UI
+```mermaid
+flowchart TD
+    A["ExerciseCatalog (Full Library)"] --> B["ExerciseFilter\n• Equipment constraints\n• User exclusions\n• Recovery state"]
+    B --> C["Allowed Exercise Candidates (IDs only)"]
+    C --> D["Local LLM / WorkoutPlanner\n(Constrained by candidate IDs)"]
+    D --> E["Structured Workout Payload"]
+    E --> F["GeneratedWorkoutValidator\n(Verifies every ID exists in Catalog)"]
+    F --> G["Active Workout Logging UI"]
 ```
 
 1. **User Profile & State Assembly**: Equipment, excluded exercises, muscle priorities, target duration, and recovery history are assembled into `WorkoutGenerationContext`.
 2. **Hard Constraint Filtering**: `ExerciseFilter` filters the full `ExerciseCatalog` to produce only candidates the user can physically execute given available equipment and exclusions.
 3. **Constrained Selection**: Only the filtered candidate list is supplied to `WorkoutPlanner`. When local LLMs are integrated, constrained decoding or tool-calling will constrain model tokens strictly to valid `exerciseId` strings.
 4. **Strict Schema & Catalog Validation**: `GeneratedWorkoutValidator` verifies that every generated exercise ID exists in the catalog and belongs to the allowed candidates. If an unrecognized ID or invalid rep range is returned, validation throws a `WorkoutValidationException` and rejects the payload immediately.
+
+---
+
+## 🕷️ Spider-Man Inspired Color Palette
+
+WallCrawl features an athletic, dark-mode design system with colors inspired by Spider-Man's iconic suit aesthetics:
+
+| Token | Hex Value | Role in App |
+| :--- | :--- | :--- |
+| `SpiderRedPrimary` | `#E81A21` | Primary action buttons, brand accents, icon mark |
+| `SpiderRedVibrant` | `#FF2A3A` | High-energy highlights and active indicators |
+| `SpiderRedDeep` | `#9E0012` | Container backgrounds and subtle deep red states |
+| `SpiderBluePrimary` | `#0066FF` | Iconic suit contrast blue for tags and analytics |
+| `SpiderBlueElectric` | `#38BDF8` | Web strand glow, badges, and secondary highlights |
+| `ObsidianBlack` | `#08090C` | Deep midnight black background |
+| `GraphiteSurface` | `#131722` | Dark suit surface cards with subtle blue-black tone |
+| `TextWebSilver` | `#E2E8F0` | High-contrast readable typography |
 
 ---
 
@@ -132,7 +142,7 @@ wallcrawl.elopenmike.com/
 ├── WallCrawlApplication.kt         # Application container & dependency registration
 ├── MainActivity.kt                 # Single activity host with Edge-to-Edge Compose
 ├── app/
-│   └── WallCrawlNavigation.kt     # App navigation routes & bottom navigation graph
+│   ├── WallCrawlNavigation.kt     # App navigation routes & bottom navigation graph
 │   └── WallCrawlApp.kt            # App scaffold and bottom navigation host
 ├── core/
 │   ├── model/                     # Pure domain models (Exercise, Workout, UserProfile, Sets)
@@ -151,7 +161,7 @@ wallcrawl.elopenmike.com/
 │   │   ├── FakeWorkoutPlanner.kt  # Recommendation engine conforming to candidate IDs
 │   │   └── GeneratedWorkoutValidator.kt # Strict schema and catalog ID validation
 │   └── ui/                        # Design system & reusable Compose components
-│       ├── theme/                 # Color (Red accent #E81A21, Obsidian #0A0C10), Type, Theme
+│       ├── theme/                 # Color (Red #E81A21, Blue #0066FF, Obsidian #08090C), Type, Theme
 │       └── components/            # WallCrawlButton, WallCrawlCard, ExerciseVisual, SetRow, WebBackgroundPattern
 └── feature/
     ├── today/                     # Today recommendation card, active banner, regeneration
@@ -181,13 +191,13 @@ WallCrawl's `Exercise` domain model is designed for 1-to-1 compatibility with th
 * 📈 **Progress & Streaks**: Weekly consistency counter, total volume distribution, strength progression trends, and chronological history.
 * 🔍 **Exercise Library**: Instant search, muscle filter chips, equipment filter chips, and modal sheets with movement pattern details.
 * ⚙️ **Customizable Training Profile**: Edit goals (Build Muscle, Strength, Fat Loss, Athletic), duration (30–90m), units (lb/kg), equipment inventory, and muscle priority levels.
-* 🕷️ **Athletic Dark Design**: Obsidian dark surfaces, vivid crimson accents (`#E81A21`), and subtle agile web geometric motifs.
+* 🕷️ **Spider-Man Athletic Dark Design**: Obsidian dark surfaces, vivid scarlet red accents (`#E81A21`), royal web blue highlights (`#0066FF`), and subtle agile web geometric motifs.
 
 ---
 
 ## 🧪 Testing & Verification
 
-The project includes unit tests for all core boundaries:
+The project includes automated unit tests covering all critical boundaries:
 
 ```bash
 # Run all unit tests

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import wallcrawl.elopenmike.com.R
 import androidx.compose.foundation.layout.fillMaxSize
@@ -186,29 +187,35 @@ private fun TodayHeader(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
-                Text(
-                    text = "TODAY",
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 1.5.sp,
-                    color = CrimsonRedPrimary
+                Image(
+                    painter = painterResource(id = R.drawable.ic_wallcrawl_wordmark),
+                    contentDescription = "WallCrawl",
+                    modifier = Modifier.height(26.dp),
+                    contentScale = ContentScale.Fit
                 )
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = "Ready to train, $userName",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Black,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
                     color = TextWhite
                 )
             }
 
-            Image(
-                painter = painterResource(id = R.mipmap.ic_launcher_round),
-                contentDescription = "WallCrawl Logo",
+            Box(
                 modifier = Modifier
                     .size(44.dp)
                     .clip(CircleShape)
-                    .border(1.dp, CrimsonRedPrimary.copy(alpha = 0.4f), CircleShape)
-            )
+                    .background(GraphiteSurfaceElevated)
+                    .border(1.dp, CrimsonRedPrimary.copy(alpha = 0.5f), CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(id = R.mipmap.ic_launcher_foreground),
+                    contentDescription = "WallCrawl Logo",
+                    modifier = Modifier.size(40.dp)
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(12.dp))
