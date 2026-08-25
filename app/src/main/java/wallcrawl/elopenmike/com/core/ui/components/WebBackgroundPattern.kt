@@ -10,13 +10,13 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 
 /**
- * Renders a subtle, non-distracting geometric web background motif
- * providing an agile, spider-inspired atmosphere without any copyrighted assets.
+ * Renders a subtle geometric web background motif
+ * providing an agile, Spider-Man-inspired atmosphere without any copyrighted assets.
  */
 @Composable
 fun WebBackgroundPattern(
     modifier: Modifier = Modifier,
-    lineColor: Color = Color(0x0F38BDF8) // very faint translucent web glow
+    lineColor: Color = Color(0x1238BDF8) // subtle electric web strand glow
 ) {
     Canvas(modifier = modifier.fillMaxSize()) {
         val width = size.width
@@ -68,7 +68,7 @@ fun WebBackgroundPattern(
                     val midX = (prevX + pointX) / 2 + (originX - (prevX + pointX) / 2) * 0.08f
                     val midY = (prevY + pointY) / 2 + (originY - (prevY + pointY) / 2) * 0.08f
 
-                    path.quadraticBezierTo(midX, midY, pointX, pointY)
+                    path.quadraticTo(midX, midY, pointX, pointY)
                 }
             }
 
