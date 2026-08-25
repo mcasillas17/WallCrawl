@@ -8,6 +8,7 @@ import wallcrawl.elopenmike.com.core.model.MechanicsType
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
+import wallcrawl.elopenmike.com.core.model.WeightUnit
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
@@ -136,18 +137,11 @@ class FakeWorkoutPlanner : WorkoutPlanner {
             FitnessGoal.ATHLETIC_PERFORMANCE -> 5 to 8
         }
 
-        val targetWeight = when (exercise.id) {
-            "incline-dumbbell-press" -> 47.5
-            "barbell-bench-press" -> 135.0
-            "barbell-deadlift" -> 225.0
-            "barbell-back-squat" -> 185.0
-            "dumbbell-shoulder-press" -> 35.0
-            "dumbbell-lateral-raise" -> 20.0
-            "cable-triceps-pushdown" -> 42.5
-            "barbell-bicep-curl" -> 55.0
-            "romanian-deadlift" -> 135.0
-            else -> null
-        }
+        val targetWeight = suggestedTargetWeight(
+            exercise = exercise,
+            context = context,
+            targetRepMaximum = repMax
+        )
 
         val restSeconds = if (context.fitnessGoal == FitnessGoal.STRENGTH) 120 else 90
 
@@ -160,6 +154,43 @@ class FakeWorkoutPlanner : WorkoutPlanner {
             restSeconds = restSeconds,
             notes = exercise.description
         )
+    }
+
+    private fun suggestedTargetWeight(
+        exercise: Exercise,
+        context: WorkoutGenerationContext,
+        targetRepMaximum: Int
+    ): Double? {
+        val priorPerformance = context.exerciseHistory[exercise.id]
+        val priorWeight = priorPerformance?.lastWeight
+        if (priorWeight != null && priorWeight.isFinite() && priorWeight >= 0.0) {
+            val completedRecentSets = priorPerformance.recentSets.filter { it.isCompleted }
+            val reachedTopOfRange = completedRecentSets.isNotEmpty() &&
+                completedRecentSets.all { (it.completedReps ?: 0) >= targetRepMaximum }
+            return if (reachedTopOfRange) {
+                priorWeight + when (context.preferredUnits) {
+                    WeightUnit.LBS -> 5.0
+                    WeightUnit.KG -> 2.5
+                }
+            } else {
+                priorWeight
+            }
+        }
+
+        return sampleStartingWeight(exercise.id)
+    }
+
+    private fun sampleStartingWeight(exerciseId: String): Double? = when (exerciseId) {
+        "incline-dumbbell-press" -> 47.5
+        "barbell-bench-press" -> 135.0
+        "barbell-deadlift" -> 225.0
+        "barbell-back-squat" -> 185.0
+        "dumbbell-shoulder-press" -> 35.0
+        "dumbbell-lateral-raise" -> 20.0
+        "cable-triceps-pushdown" -> 42.5
+        "barbell-bicep-curl" -> 55.0
+        "romanian-deadlift" -> 135.0
+        else -> null
     }
 
     private fun generateWorkoutTitle(split: SplitType, goal: FitnessGoal): String {

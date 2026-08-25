@@ -40,7 +40,7 @@ class OfflineUserProfileRepository(
     }
 
     override suspend fun saveUserProfile(profile: UserProfile) {
-        userProfileDao.insertOrUpdate(profile.toEntity())
+        userProfileDao.insertOrUpdateWithNextRevision(profile.toEntity())
     }
 
     override suspend fun updatePrimaryGoal(goal: FitnessGoal) {
@@ -102,6 +102,7 @@ class OfflineUserProfileRepository(
 
         return UserProfile(
             id = id,
+            revision = revision,
             name = name,
             primaryGoal = primaryGoal,
             experienceLevel = experienceLevel,
@@ -121,6 +122,7 @@ class OfflineUserProfileRepository(
 
         return UserProfileEntity(
             id = id,
+            revision = revision,
             name = name,
             primaryGoal = primaryGoal,
             experienceLevel = experienceLevel,

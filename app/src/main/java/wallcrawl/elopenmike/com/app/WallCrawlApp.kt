@@ -126,8 +126,7 @@ fun WallCrawlApp(
                     factory = TodayViewModel.provideFactory(
                         userProfileRepository = container.userProfileRepository,
                         workoutRepository = container.workoutRepository,
-                        exerciseCatalog = container.exerciseCatalog,
-                        exerciseFilter = container.exerciseFilter,
+                        workoutGenerationContextBuilder = container.workoutGenerationContextBuilder,
                         workoutPlanner = container.workoutPlanner,
                         workoutValidator = container.workoutValidator
                     )
@@ -147,7 +146,9 @@ fun WallCrawlApp(
                 val progressViewModel: ProgressViewModel = viewModel(
                     factory = ProgressViewModel.provideFactory(
                         workoutRepository = container.workoutRepository,
-                        userProfileRepository = container.userProfileRepository
+                        userProfileRepository = container.userProfileRepository,
+                        exerciseCatalog = container.exerciseCatalog,
+                        progressCalculator = container.progressCalculator
                     )
                 )
                 ProgressScreen(viewModel = progressViewModel)
@@ -159,7 +160,10 @@ fun WallCrawlApp(
                         exerciseCatalog = container.exerciseCatalog
                     )
                 )
-                ExercisesScreen(viewModel = exercisesViewModel)
+                ExercisesScreen(
+                    viewModel = exercisesViewModel,
+                    visualProvider = container.exerciseVisualProvider
+                )
             }
 
             composable(AppRoutes.PROFILE) {
@@ -181,12 +185,13 @@ fun WallCrawlApp(
                     factory = ActiveWorkoutViewModel.provideFactory(
                         sessionId = sessionId,
                         workoutRepository = container.workoutRepository,
-                        userProfileRepository = container.userProfileRepository,
-                        exerciseCatalog = container.exerciseCatalog
+                        exerciseCatalog = container.exerciseCatalog,
+                        workoutHistoryAnalyzer = container.workoutHistoryAnalyzer
                     )
                 )
                 ActiveWorkoutScreen(
                     viewModel = workoutViewModel,
+                    visualProvider = container.exerciseVisualProvider,
                     onNavigateBack = { navController.popBackStack() },
                     onWorkoutFinished = {
                         navController.navigate(AppRoutes.PROGRESS) {

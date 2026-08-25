@@ -4,6 +4,8 @@ import android.app.Application
 import android.content.Context
 import wallcrawl.elopenmike.com.core.ai.FakeWorkoutPlanner
 import wallcrawl.elopenmike.com.core.ai.GeneratedWorkoutValidator
+import wallcrawl.elopenmike.com.core.ai.WorkoutGenerationContextBuilder
+import wallcrawl.elopenmike.com.core.ai.WorkoutHistoryAnalyzer
 import wallcrawl.elopenmike.com.core.ai.WorkoutPlanner
 import wallcrawl.elopenmike.com.core.database.WallCrawlDatabase
 import wallcrawl.elopenmike.com.core.database.repository.OfflineUserProfileRepository
@@ -13,6 +15,9 @@ import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
 import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
 import wallcrawl.elopenmike.com.core.exercise.ExerciseFilter
 import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
+import wallcrawl.elopenmike.com.core.exercise.visual.ExerciseVisualProvider
+import wallcrawl.elopenmike.com.core.exercise.visual.WorkoutGuideVisualProvider
+import wallcrawl.elopenmike.com.core.progress.ProgressCalculator
 
 /**
  * Dependency container providing core database, catalog, filter, and AI planner instances.
@@ -22,9 +27,13 @@ interface AppContainer {
     val userProfileRepository: UserProfileRepository
     val workoutRepository: WorkoutRepository
     val exerciseCatalog: ExerciseCatalog
+    val exerciseVisualProvider: ExerciseVisualProvider
     val exerciseFilter: ExerciseFilter
     val workoutPlanner: WorkoutPlanner
     val workoutValidator: GeneratedWorkoutValidator
+    val workoutGenerationContextBuilder: WorkoutGenerationContextBuilder
+    val workoutHistoryAnalyzer: WorkoutHistoryAnalyzer
+    val progressCalculator: ProgressCalculator
 }
 
 class DefaultAppContainer(private val context: Context) : AppContainer {
@@ -39,13 +48,16 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
     override val workoutRepository: WorkoutRepository by lazy {
         OfflineWorkoutRepository(
             sessionDao = database.workoutSessionDao(),
-            exerciseDao = database.workoutExerciseDao(),
             setDao = database.workoutSetDao()
         )
     }
 
     override val exerciseCatalog: ExerciseCatalog by lazy {
         InMemoryExerciseCatalog()
+    }
+
+    override val exerciseVisualProvider: ExerciseVisualProvider by lazy {
+        WorkoutGuideVisualProvider()
     }
 
     override val exerciseFilter: ExerciseFilter by lazy {
@@ -58,6 +70,24 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
 
     override val workoutValidator: GeneratedWorkoutValidator by lazy {
         GeneratedWorkoutValidator(exerciseCatalog)
+    }
+
+    override val workoutGenerationContextBuilder: WorkoutGenerationContextBuilder by lazy {
+        WorkoutGenerationContextBuilder(
+            userProfileRepository = userProfileRepository,
+            workoutRepository = workoutRepository,
+            exerciseCatalog = exerciseCatalog,
+            exerciseFilter = exerciseFilter,
+            historyAnalyzer = workoutHistoryAnalyzer
+        )
+    }
+
+    override val workoutHistoryAnalyzer: WorkoutHistoryAnalyzer by lazy {
+        WorkoutHistoryAnalyzer()
+    }
+
+    override val progressCalculator: ProgressCalculator by lazy {
+        ProgressCalculator()
     }
 }
 

@@ -38,6 +38,7 @@ data class WorkoutSession(
     val completedAtTimestamp: Long? = null,
     val targetDurationMinutes: Int = 50,
     val actualDurationMinutes: Int = 0,
+    val weightUnit: WeightUnit = WeightUnit.LBS,
     val status: SessionStatus = SessionStatus.IN_PROGRESS,
     val focusMuscles: List<String> = emptyList(),
     val exercises: List<WorkoutExercise> = emptyList(),

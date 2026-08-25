@@ -33,7 +33,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
-import wallcrawl.elopenmike.com.core.ui.components.ExerciseVisual
+import wallcrawl.elopenmike.com.core.model.WorkoutSet
+import wallcrawl.elopenmike.com.core.exercise.visual.ExerciseVisualProvider
+import wallcrawl.elopenmike.com.core.ui.components.ExerciseIllustration
 import wallcrawl.elopenmike.com.core.ui.components.SetRow
 import wallcrawl.elopenmike.com.core.ui.components.StatBadge
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
@@ -52,10 +54,14 @@ import wallcrawl.elopenmike.com.core.ui.theme.TextPrimary
 import wallcrawl.elopenmike.com.core.ui.theme.TextSecondary
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
 import wallcrawl.elopenmike.com.core.ui.theme.WebBlueAccent
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun ActiveWorkoutScreen(
     viewModel: ActiveWorkoutViewModel,
+    visualProvider: ExerciseVisualProvider,
     onNavigateBack: () -> Unit,
     onWorkoutFinished: (summarySessionId: String) -> Unit,
     modifier: Modifier = Modifier
@@ -103,6 +109,7 @@ fun ActiveWorkoutScreen(
             is ActiveWorkoutUiState.Active -> {
                 ActiveWorkoutContent(
                     state = state,
+                    visualProvider = visualProvider,
                     onPreviousExercise = { viewModel.previousExercise() },
                     onNextExercise = { viewModel.nextExercise() },
                     onUpdateSet = { setId, reps, weight, isCompleted ->
@@ -119,6 +126,7 @@ fun ActiveWorkoutScreen(
 @Composable
 private fun ActiveWorkoutContent(
     state: ActiveWorkoutUiState.Active,
+    visualProvider: ExerciseVisualProvider,
     onPreviousExercise: () -> Unit,
     onNextExercise: () -> Unit,
     onUpdateSet: (setId: String, reps: Int?, weight: Double?, isCompleted: Boolean) -> Unit,
@@ -181,23 +189,30 @@ private fun ActiveWorkoutContent(
                     .fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
-                // 1. Exercise Visual Placeholder (Workout Guide integration target)
                 item {
-                    ExerciseVisual(exercise = state.currentCatalogExercise)
+                    ExerciseIllustration(
+                        exercise = state.currentCatalogExercise,
+                        visualProvider = visualProvider
+                    )
                 }
 
                 // 2. Exercise Title & Details Card
                 item {
                     ExerciseHeaderCard(
                         workoutExercise = currentExercise,
-                        preferredUnit = state.preferredUnit.symbol
+                        exerciseName = state.currentCatalogExercise?.name,
+                        preferredUnit = state.weightUnit.symbol
                     )
                 }
 
                 // 3. Previous Performance Reference Card
-                if (state.previousHistory.isNotEmpty()) {
+                if (state.previousSets.isNotEmpty()) {
                     item {
-                        PreviousPerformanceCard(history = state.previousHistory)
+                        PreviousPerformanceCard(
+                            sets = state.previousSets,
+                            completedAtTimestamp = state.previousSessionTimestamp,
+                            weightUnit = state.previousWeightUnit.symbol
+                        )
                     }
                 }
 
@@ -218,7 +233,7 @@ private fun ActiveWorkoutContent(
                             modifier = Modifier.width(32.dp)
                         )
                         Text(
-                            text = "WEIGHT (${state.preferredUnit.symbol.uppercase()})",
+                            text = "WEIGHT (${state.weightUnit.symbol.uppercase()})",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
                             color = TextMuted,
@@ -249,7 +264,7 @@ private fun ActiveWorkoutContent(
                     val set = currentExercise.sets[setIndex]
                     SetRow(
                         set = set,
-                        weightUnit = state.preferredUnit.symbol,
+                        weightUnit = state.weightUnit.symbol,
                         onUpdateSet = { reps, weight, isCompleted ->
                             onUpdateSet(set.id, reps, weight, isCompleted)
                         }
@@ -297,9 +312,10 @@ private fun ActiveWorkoutContent(
 @Composable
 private fun ExerciseHeaderCard(
     workoutExercise: WorkoutExercise,
+    exerciseName: String?,
     preferredUnit: String
 ) {
-    val cleanName = workoutExercise.exerciseId
+    val displayName = exerciseName ?: workoutExercise.exerciseId
         .split("-")
         .joinToString(" ") { it.replaceFirstChar { char -> char.uppercase() } }
 
@@ -309,7 +325,7 @@ private fun ExerciseHeaderCard(
         backgroundColor = GraphiteSurfaceElevated
     ) {
         Text(
-            text = cleanName,
+            text = displayName,
             fontSize = 20.sp,
             fontWeight = FontWeight.Black,
             color = TextWhite
@@ -339,7 +355,9 @@ private fun ExerciseHeaderCard(
 
 @Composable
 private fun PreviousPerformanceCard(
-    history: List<String>
+    sets: List<WorkoutSet>,
+    completedAtTimestamp: Long?,
+    weightUnit: String
 ) {
     WallCrawlCard(
         cornerRadius = 12.dp,
@@ -363,11 +381,28 @@ private fun PreviousPerformanceCard(
             )
         }
 
+        completedAtTimestamp?.let { timestamp ->
+            Text(
+                text = SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(Date(timestamp)),
+                fontSize = 11.sp,
+                color = TextMuted
+            )
+        }
+
         Spacer(modifier = Modifier.height(6.dp))
 
-        history.forEach { entry ->
+        sets.forEach { set ->
+            val reps = set.completedReps ?: return@forEach
+            val weightLabel = set.completedWeight?.let { weight ->
+                val displayWeight = if (weight % 1.0 == 0.0) {
+                    weight.toInt().toString()
+                } else {
+                    weight.toString()
+                }
+                "$displayWeight $weightUnit"
+            } ?: "Bodyweight"
             Text(
-                text = "• $entry",
+                text = "• $weightLabel × $reps",
                 fontSize = 13.sp,
                 color = TextSecondary
             )

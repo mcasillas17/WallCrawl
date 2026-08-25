@@ -4,56 +4,82 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import wallcrawl.elopenmike.com.core.ai.GeneratedWorkoutValidator
+import wallcrawl.elopenmike.com.core.ai.WorkoutGenerationContextBuilder
 import wallcrawl.elopenmike.com.core.ai.WorkoutPlanner
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
-import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
-import wallcrawl.elopenmike.com.core.exercise.ExerciseFilter
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
 import wallcrawl.elopenmike.com.core.model.UserProfile
-import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class TodayViewModel(
     private val userProfileRepository: UserProfileRepository,
     private val workoutRepository: WorkoutRepository,
-    private val exerciseCatalog: ExerciseCatalog,
-    private val exerciseFilter: ExerciseFilter,
+    private val workoutGenerationContextBuilder: WorkoutGenerationContextBuilder,
     private val workoutPlanner: WorkoutPlanner,
-    private val workoutValidator: GeneratedWorkoutValidator
+    private val workoutValidator: GeneratedWorkoutValidator,
+    nowTimestamp: () -> Long = System::currentTimeMillis,
+    clock: Flow<Long> = minuteClock(nowTimestamp)
 ) : ViewModel() {
 
     private val generatedWorkoutFlow = MutableStateFlow<GeneratedWorkout?>(null)
+    private val generatedForProfileFlow = MutableStateFlow<UserProfile?>(null)
     private val isRegeneratingFlow = MutableStateFlow(false)
     private val errorFlow = MutableStateFlow<String?>(null)
+    private var generationJob: Job? = null
+    private var hasPendingRegeneration = false
 
-    val uiState: StateFlow<TodayUiState> = combine(
+    private val completedThisWeekFlow = clock.flatMapLatest { currentTimestamp ->
+        workoutRepository.observeCompletedWorkoutCountSince(
+            startTimestamp = currentTimestamp - WEEK_MILLIS
+        )
+    }
+
+    private val sourceStateFlow = combine(
         userProfileRepository.getUserProfile(),
         workoutRepository.observeActiveSession(),
+        completedThisWeekFlow
+    ) { profile, activeSession, completedThisWeek ->
+        TodaySourceState(
+            userProfile = profile,
+            activeSession = activeSession,
+            completedThisWeek = completedThisWeek
+        )
+    }
+
+    val uiState: StateFlow<TodayUiState> = combine(
+        sourceStateFlow,
         generatedWorkoutFlow,
         isRegeneratingFlow,
         errorFlow
-    ) { profile, activeSession, generatedWorkout, isRegenerating, error ->
+    ) { sourceState, generatedWorkout, isRegenerating, error ->
         if (error != null) {
             TodayUiState.Error(error)
         } else if (generatedWorkout == null) {
-            // Trigger first generation
-            generateInitialWorkout(profile)
             TodayUiState.Loading
         } else {
             TodayUiState.Success(
-                userProfile = profile,
+                userProfile = sourceState.userProfile,
                 suggestedWorkout = generatedWorkout,
-                activeSession = activeSession,
+                activeSession = sourceState.activeSession,
                 isRegenerating = isRegenerating,
-                completedThisWeek = 3
+                completedThisWeek = sourceState.completedThisWeek
             )
         }
     }.stateIn(
@@ -62,73 +88,93 @@ class TodayViewModel(
         initialValue = TodayUiState.Loading
     )
 
-    private fun generateInitialWorkout(profile: UserProfile) {
+    init {
         viewModelScope.launch {
-            try {
-                val workout = buildAndValidateWorkout(profile)
-                generatedWorkoutFlow.value = workout
-            } catch (e: Exception) {
-                errorFlow.value = e.message ?: "Failed to generate workout recommendation."
-            }
+            userProfileRepository.getUserProfile()
+                .distinctUntilChanged()
+                .drop(1)
+                .collect { requestWorkoutGeneration(isRegeneration = true) }
         }
+        requestWorkoutGeneration(isRegeneration = false)
     }
 
     fun regenerateWorkout() {
-        viewModelScope.launch {
-            isRegeneratingFlow.value = true
-            try {
-                val profile = userProfileRepository.getProfileOnce()
-                val newWorkout = buildAndValidateWorkout(profile)
-                generatedWorkoutFlow.value = newWorkout
-                errorFlow.value = null
-            } catch (e: Exception) {
-                errorFlow.value = e.message ?: "Failed to regenerate workout."
-            } finally {
-                isRegeneratingFlow.value = false
-            }
+        requestWorkoutGeneration(isRegeneration = true)
+    }
+
+    private fun requestWorkoutGeneration(isRegeneration: Boolean) {
+        if (generationJob?.isActive == true) {
+            hasPendingRegeneration = hasPendingRegeneration || isRegeneration
+            return
+        }
+
+        generationJob = viewModelScope.launch {
+            var currentRequestIsRegeneration = isRegeneration
+            do {
+                hasPendingRegeneration = false
+                isRegeneratingFlow.value = currentRequestIsRegeneration
+                try {
+                    val generatedResult = buildAndValidateWorkout()
+                    generatedWorkoutFlow.value = generatedResult.workout
+                    generatedForProfileFlow.value = generatedResult.profile
+                    errorFlow.value = null
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    errorFlow.value = e.message ?: if (currentRequestIsRegeneration) {
+                        "Failed to regenerate workout."
+                    } else {
+                        "Failed to generate workout recommendation."
+                    }
+                } finally {
+                    isRegeneratingFlow.value = false
+                }
+                currentRequestIsRegeneration = true
+            } while (hasPendingRegeneration)
         }
     }
 
     fun startWorkout(onWorkoutStarted: (sessionId: String) -> Unit) {
+        if (generationJob?.isActive == true) return
         viewModelScope.launch {
             val currentWorkout = generatedWorkoutFlow.value ?: return@launch
             try {
-                val session = workoutRepository.startWorkoutFromGenerated(currentWorkout)
+                val currentContext = workoutGenerationContextBuilder.build()
+                check(generatedForProfileFlow.value == currentContext.userProfile) {
+                    "Workout recommendation is being updated for the current profile."
+                }
+                val allowedIds = currentContext.allowedExercises.map { it.id }.toSet()
+                workoutValidator.validate(currentWorkout, allowedIds)
+                val session = workoutRepository.startWorkoutFromGenerated(
+                    generated = currentWorkout,
+                    userProfile = currentContext.userProfile
+                )
                 onWorkoutStarted(session.id)
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 errorFlow.value = "Failed to start workout session: ${e.message}"
             }
         }
     }
 
-    private suspend fun buildAndValidateWorkout(profile: UserProfile): GeneratedWorkout {
-        val allExercises = exerciseCatalog.getAllExercises().first()
-        val allowedCandidates = exerciseFilter.filterCandidates(
-            allExercises = allExercises,
-            profile = profile
-        )
-
-        val context = WorkoutGenerationContext(
-            userProfile = profile,
-            availableEquipment = profile.availableEquipment,
-            preferredWorkoutDurationMinutes = profile.preferredDurationMinutes,
-            musclePriorities = profile.musclePriorities,
-            excludedExerciseIds = profile.excludedExerciseIds,
-            allowedExercises = allowedCandidates,
-            preferredUnits = profile.preferredUnit
-        )
-
+    private suspend fun buildAndValidateWorkout(): GeneratedWorkoutResult {
+        val context = workoutGenerationContextBuilder.build()
         val generated = workoutPlanner.generateWorkout(context)
-        val allowedIds = allowedCandidates.map { it.id }.toSet()
-        return workoutValidator.validate(generated, allowedIds)
+        val allowedIds = context.allowedExercises.map { it.id }.toSet()
+        return GeneratedWorkoutResult(
+            workout = workoutValidator.validate(generated, allowedIds),
+            profile = context.userProfile
+        )
     }
 
     companion object {
+        private const val WEEK_MILLIS = 7 * 24 * 60 * 60 * 1_000L
+
         fun provideFactory(
             userProfileRepository: UserProfileRepository,
             workoutRepository: WorkoutRepository,
-            exerciseCatalog: ExerciseCatalog,
-            exerciseFilter: ExerciseFilter,
+            workoutGenerationContextBuilder: WorkoutGenerationContextBuilder,
             workoutPlanner: WorkoutPlanner,
             workoutValidator: GeneratedWorkoutValidator
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
@@ -137,12 +183,31 @@ class TodayViewModel(
                 return TodayViewModel(
                     userProfileRepository,
                     workoutRepository,
-                    exerciseCatalog,
-                    exerciseFilter,
+                    workoutGenerationContextBuilder,
                     workoutPlanner,
                     workoutValidator
                 ) as T
             }
         }
     }
+
+    private data class TodaySourceState(
+        val userProfile: UserProfile,
+        val activeSession: WorkoutSession?,
+        val completedThisWeek: Int
+    )
+
+    private data class GeneratedWorkoutResult(
+        val workout: GeneratedWorkout,
+        val profile: UserProfile
+    )
 }
+
+private fun minuteClock(nowTimestamp: () -> Long): Flow<Long> = flow {
+    while (true) {
+        emit(nowTimestamp())
+        delay(MINUTE_MILLIS)
+    }
+}
+
+private const val MINUTE_MILLIS = 60_000L

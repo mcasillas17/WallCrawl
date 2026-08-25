@@ -4,11 +4,11 @@ package wallcrawl.elopenmike.com.core.model
  * Progress and analytics models for the WallCrawl Progress screen.
  */
 data class ProgressOverview(
-    val workoutsThisWeek: Int = 3,
-    val weeklyGoal: Int = 4,
-    val currentStreakWeeks: Int = 4,
-    val totalWorkoutsLogged: Int = 18,
-    val totalVolumeThisWeek: Double = 14250.0,
+    val workoutsThisWeek: Int = 0,
+    val weeklyGoal: Int = 0,
+    val currentStreakWeeks: Int = 0,
+    val totalWorkoutsLogged: Int = 0,
+    val totalVolumeThisWeek: Double = 0.0,
     val recentPersonalRecords: List<PersonalRecord> = emptyList(),
     val muscleGroupFocus: List<MuscleProgressStat> = emptyList(),
     val strengthTrends: List<StrengthTrend> = emptyList(),

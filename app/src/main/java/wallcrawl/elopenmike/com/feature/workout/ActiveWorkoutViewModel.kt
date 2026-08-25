@@ -3,13 +3,14 @@ package wallcrawl.elopenmike.com.feature.workout
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
+import wallcrawl.elopenmike.com.core.ai.WorkoutHistoryAnalyzer
 import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
 import wallcrawl.elopenmike.com.core.model.Exercise
-import wallcrawl.elopenmike.com.core.model.WeightUnit
+import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutSummary
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -20,50 +21,59 @@ import kotlinx.coroutines.launch
 class ActiveWorkoutViewModel(
     private val sessionId: String,
     private val workoutRepository: WorkoutRepository,
-    private val userProfileRepository: UserProfileRepository,
-    private val exerciseCatalog: ExerciseCatalog
+    private val exerciseCatalog: ExerciseCatalog,
+    private val workoutHistoryAnalyzer: WorkoutHistoryAnalyzer
 ) : ViewModel() {
 
     private val currentExerciseIndexFlow = MutableStateFlow(0)
     private val currentCatalogExerciseFlow = MutableStateFlow<Exercise?>(null)
-    private val completedSummaryFlow = MutableStateFlow<WorkoutSummary?>(null)
     private val errorFlow = MutableStateFlow<String?>(null)
+    private var finishRequested = false
 
-    // Combine session and profile first
-    private val sessionAndProfileFlow = combine(
+    private val sessionHistoryFlow = combine(
         workoutRepository.observeSession(sessionId),
-        userProfileRepository.getUserProfile()
-    ) { session, profile ->
-        Pair(session, profile)
+        workoutRepository.observeCompletedSessions(limit = MAX_PREVIOUS_PERFORMANCE_SESSIONS)
+    ) { session, completedSessions ->
+        SessionHistory(session, completedSessions)
     }
 
     val uiState: StateFlow<ActiveWorkoutUiState> = combine(
-        sessionAndProfileFlow,
+        sessionHistoryFlow,
         currentExerciseIndexFlow,
         currentCatalogExerciseFlow,
-        completedSummaryFlow,
         errorFlow
-    ) { (session, profile), exerciseIndex, catalogEx, summary, error ->
-        if (error != null) {
-            ActiveWorkoutUiState.Error(error)
-        } else if (summary != null) {
-            ActiveWorkoutUiState.Completed(summary)
-        } else if (session == null) {
+    ) { sessionHistory, exerciseIndex, catalogEx, error ->
+        val (session, completedSessions) = sessionHistory
+        if (session == null) {
             ActiveWorkoutUiState.Loading
+        } else if (session.status == SessionStatus.COMPLETED) {
+            ActiveWorkoutUiState.Completed(session.toSummary())
+        } else if (error != null) {
+            ActiveWorkoutUiState.Error(error)
+        } else if (session.status != SessionStatus.IN_PROGRESS) {
+            ActiveWorkoutUiState.Error("Workout session is no longer active.")
+        } else if (session.exercises.isEmpty()) {
+            ActiveWorkoutUiState.Error("Workout session contains no exercises.")
         } else {
-            val currentEx = session.exercises.getOrNull(exerciseIndex)
-            if (currentEx != null && catalogEx?.id != currentEx.exerciseId) {
+            val safeExerciseIndex = exerciseIndex.coerceIn(0, session.exercises.lastIndex)
+            val currentEx = session.exercises[safeExerciseIndex]
+            if (catalogEx?.id != currentEx.exerciseId) {
                 loadCatalogExercise(currentEx.exerciseId)
             }
 
-            val previousHistory = getPreviousHistoryForExercise(currentEx?.exerciseId, profile.preferredUnit)
+            val previousPerformance = workoutHistoryAnalyzer.latestCompletedExercisePerformance(
+                sessions = completedSessions,
+                exerciseId = currentEx.exerciseId
+            )
 
             ActiveWorkoutUiState.Active(
                 session = session,
-                currentExerciseIndex = exerciseIndex,
+                currentExerciseIndex = safeExerciseIndex,
                 currentCatalogExercise = catalogEx,
-                preferredUnit = profile.preferredUnit,
-                previousHistory = previousHistory
+                weightUnit = session.weightUnit,
+                previousSets = previousPerformance?.sets.orEmpty(),
+                previousSessionTimestamp = previousPerformance?.sessionCompletedAtTimestamp,
+                previousWeightUnit = previousPerformance?.weightUnit ?: session.weightUnit
             )
         }
     }.stateIn(
@@ -76,35 +86,6 @@ class ActiveWorkoutViewModel(
         viewModelScope.launch {
             val ex = exerciseCatalog.getExerciseById(exerciseId)
             currentCatalogExerciseFlow.value = ex
-        }
-    }
-
-    private fun getPreviousHistoryForExercise(exerciseId: String?, unit: WeightUnit): List<String> {
-        return when (exerciseId) {
-            "incline-dumbbell-press" -> listOf(
-                "45 ${unit.symbol} × 10",
-                "45 ${unit.symbol} × 9",
-                "45 ${unit.symbol} × 8"
-            )
-            "barbell-bench-press" -> listOf(
-                "135 ${unit.symbol} × 8",
-                "135 ${unit.symbol} × 7",
-                "135 ${unit.symbol} × 6"
-            )
-            "pull-ups" -> listOf(
-                "Bodyweight × 8",
-                "Bodyweight × 7",
-                "Bodyweight × 6"
-            )
-            "barbell-back-squat" -> listOf(
-                "185 ${unit.symbol} × 8",
-                "185 ${unit.symbol} × 8",
-                "185 ${unit.symbol} × 6"
-            )
-            else -> listOf(
-                "Last session: 3 sets completed",
-                "Targeting progressive overload"
-            )
         }
     }
 
@@ -135,6 +116,8 @@ class ActiveWorkoutViewModel(
                     weight = weight,
                     isCompleted = isCompleted
                 )
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 errorFlow.value = "Failed to update set: ${e.message}"
             }
@@ -142,14 +125,21 @@ class ActiveWorkoutViewModel(
     }
 
     fun finishWorkout() {
+        if (finishRequested) return
+        val currentState = uiState.value as? ActiveWorkoutUiState.Active ?: return
+        finishRequested = true
         viewModelScope.launch {
-            val currentState = uiState.value as? ActiveWorkoutUiState.Active ?: return@launch
             try {
-                val elapsedMinutes = ((System.currentTimeMillis() - currentState.session.startedAtTimestamp) / (60 * 1000)).toInt()
-                    .coerceAtLeast(currentState.session.targetDurationMinutes)
-                val summary = workoutRepository.completeWorkout(sessionId, elapsedMinutes)
-                completedSummaryFlow.value = summary
+                val elapsedMinutes = elapsedWorkoutMinutes(
+                    startedAtTimestamp = currentState.session.startedAtTimestamp,
+                    nowTimestamp = System.currentTimeMillis()
+                )
+                workoutRepository.completeWorkout(sessionId, elapsedMinutes)
+            } catch (e: CancellationException) {
+                finishRequested = false
+                throw e
             } catch (e: Exception) {
+                finishRequested = false
                 errorFlow.value = "Failed to finish workout: ${e.message}"
             }
         }
@@ -160,6 +150,8 @@ class ActiveWorkoutViewModel(
             try {
                 workoutRepository.cancelWorkout(sessionId)
                 onCancelled()
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 errorFlow.value = "Failed to cancel workout: ${e.message}"
             }
@@ -167,21 +159,55 @@ class ActiveWorkoutViewModel(
     }
 
     companion object {
+        private const val MAX_PREVIOUS_PERFORMANCE_SESSIONS = 50
+
         fun provideFactory(
             sessionId: String,
             workoutRepository: WorkoutRepository,
-            userProfileRepository: UserProfileRepository,
-            exerciseCatalog: ExerciseCatalog
+            exerciseCatalog: ExerciseCatalog,
+            workoutHistoryAnalyzer: WorkoutHistoryAnalyzer
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 return ActiveWorkoutViewModel(
                     sessionId,
                     workoutRepository,
-                    userProfileRepository,
-                    exerciseCatalog
+                    exerciseCatalog,
+                    workoutHistoryAnalyzer
                 ) as T
             }
         }
     }
+
+    private data class SessionHistory(
+        val session: WorkoutSession?,
+        val completedSessions: List<WorkoutSession>
+    )
+
+    private fun WorkoutSession.toSummary() = WorkoutSummary(
+        sessionId = id,
+        workoutName = name,
+        durationMinutes = actualDurationMinutes,
+        totalSetsCompleted = completedSetsCount,
+        totalVolume = totalVolume,
+        prCount = 0,
+        unit = weightUnit,
+        completedAtTimestamp = completedAtTimestamp ?: startedAtTimestamp
+    )
+
+}
+
+internal fun elapsedWorkoutMinutes(
+    startedAtTimestamp: Long,
+    nowTimestamp: Long
+): Int {
+    val elapsedMillis = if (startedAtTimestamp < 0 || nowTimestamp <= startedAtTimestamp) {
+        0L
+    } else {
+        nowTimestamp - startedAtTimestamp
+    }
+    return (elapsedMillis / 60_000L)
+        .coerceAtMost(Int.MAX_VALUE.toLong())
+        .toInt()
+        .coerceAtLeast(1)
 }
