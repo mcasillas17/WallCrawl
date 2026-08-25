@@ -120,4 +120,90 @@ class GeneratedWorkoutValidatorTest {
             assertThat(e.message).contains("Invalid rep range")
         }
     }
+
+    @Test
+    fun validate_blankWorkoutName_throwsException() = runTest {
+        assertValidationFailure(
+            workout = validGeneratedWorkout().copy(name = "   "),
+            expectedMessage = "blank name"
+        )
+    }
+
+    @Test
+    fun validate_outOfRangeWorkoutDuration_throwsException() = runTest {
+        assertValidationFailure(
+            workout = validGeneratedWorkout().copy(estimatedDurationMinutes = 0),
+            expectedMessage = "duration"
+        )
+    }
+
+    @Test
+    fun validate_excessiveTargetSets_throwsException() = runTest {
+        val workout = validGeneratedWorkout().withOnlyExercise { exercise ->
+            exercise.copy(targetSets = 21)
+        }
+
+        assertValidationFailure(workout, "target sets")
+    }
+
+    @Test
+    fun validate_excessiveRepMaximum_throwsException() = runTest {
+        val workout = validGeneratedWorkout().withOnlyExercise { exercise ->
+            exercise.copy(repMin = 1, repMax = 1_001)
+        }
+
+        assertValidationFailure(workout, "rep range")
+    }
+
+    @Test
+    fun validate_negativeOrNonFiniteTargetWeight_throwsException() = runTest {
+        listOf(-1.0, Double.NaN, Double.POSITIVE_INFINITY).forEach { invalidWeight ->
+            val workout = validGeneratedWorkout().withOnlyExercise { exercise ->
+                exercise.copy(targetWeight = invalidWeight)
+            }
+
+            assertValidationFailure(workout, "target weight")
+        }
+    }
+
+    @Test
+    fun validate_outOfRangeRestPeriod_throwsException() = runTest {
+        val workout = validGeneratedWorkout().withOnlyExercise { exercise ->
+            exercise.copy(restSeconds = 1_801)
+        }
+
+        assertValidationFailure(workout, "rest period")
+    }
+
+    private fun validGeneratedWorkout() = GeneratedWorkout(
+        name = "Valid Workout",
+        focusMuscles = listOf("Chest"),
+        estimatedDurationMinutes = 45,
+        exercises = listOf(
+            GeneratedExercise(
+                exerciseId = "incline-dumbbell-press",
+                targetSets = 3,
+                repMin = 8,
+                repMax = 10,
+                targetWeight = 45.0,
+                restSeconds = 90
+            )
+        )
+    )
+
+    private fun GeneratedWorkout.withOnlyExercise(
+        transform: (GeneratedExercise) -> GeneratedExercise
+    ): GeneratedWorkout = copy(exercises = listOf(transform(exercises.single())))
+
+    private suspend fun assertValidationFailure(
+        workout: GeneratedWorkout,
+        expectedMessage: String
+    ) {
+        try {
+            validator.validate(workout)
+            fail("Expected WorkoutValidationException containing '$expectedMessage'")
+        } catch (exception: WorkoutValidationException) {
+            assertThat(exception.message).contains(expectedMessage)
+        }
+    }
 }

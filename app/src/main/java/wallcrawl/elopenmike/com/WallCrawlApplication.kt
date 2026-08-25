@@ -42,7 +42,6 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
     override val workoutRepository: WorkoutRepository by lazy {
         OfflineWorkoutRepository(
             sessionDao = database.workoutSessionDao(),
-            exerciseDao = database.workoutExerciseDao(),
             setDao = database.workoutSetDao()
         )
     }

@@ -1,6 +1,5 @@
 package wallcrawl.elopenmike.com.core.database.repository
 
-import wallcrawl.elopenmike.com.core.database.dao.WorkoutExerciseDao
 import wallcrawl.elopenmike.com.core.database.dao.WorkoutSessionDao
 import wallcrawl.elopenmike.com.core.database.dao.WorkoutSetDao
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutExerciseEntity
@@ -40,7 +39,6 @@ interface WorkoutRepository {
 
 class OfflineWorkoutRepository(
     private val sessionDao: WorkoutSessionDao,
-    private val exerciseDao: WorkoutExerciseDao,
     private val setDao: WorkoutSetDao
 ) : WorkoutRepository {
 
@@ -90,8 +88,6 @@ class OfflineWorkoutRepository(
             focusMusclesJson = generated.focusMuscles.joinToString("|||"),
             notes = generated.rationale
         )
-        sessionDao.insertSession(sessionEntity)
-
         val exerciseEntities = mutableListOf<WorkoutExerciseEntity>()
         val setEntities = mutableListOf<WorkoutSetEntity>()
 
@@ -130,8 +126,11 @@ class OfflineWorkoutRepository(
             }
         }
 
-        exerciseDao.insertExercises(exerciseEntities)
-        setDao.insertSets(setEntities)
+        sessionDao.insertWorkout(
+            session = sessionEntity,
+            exercises = exerciseEntities,
+            sets = setEntities
+        )
 
         return getSessionById(sessionId) ?: throw IllegalStateException("Failed to create session")
     }
@@ -142,15 +141,33 @@ class OfflineWorkoutRepository(
         weight: Double?,
         isCompleted: Boolean
     ) {
-        setDao.updateSetCompletion(
+        require(setId.isNotBlank()) { "setId must not be blank." }
+        require(reps == null || reps >= 0) { "reps must not be negative." }
+        require(!isCompleted || (reps != null && reps > 0)) {
+            "A completed set must have positive reps."
+        }
+        require(weight == null || (weight.isFinite() && weight >= 0.0)) {
+            "weight must be finite and not negative."
+        }
+
+        val affectedRows = setDao.updateSetCompletion(
             setId = setId,
             reps = reps,
             weight = weight,
             isCompleted = isCompleted
         )
+        check(affectedRows == 1) { "Workout set '$setId' was not found." }
     }
 
     override suspend fun completeWorkout(sessionId: String, actualDurationMinutes: Int): WorkoutSummary {
+        require(sessionId.isNotBlank()) { "sessionId must not be blank." }
+        require(actualDurationMinutes > 0) { "actualDurationMinutes must be greater than zero." }
+        val activeSession = getSessionById(sessionId)
+            ?: throw IllegalStateException("Workout session '$sessionId' was not found.")
+        check(activeSession.status == SessionStatus.IN_PROGRESS) {
+            "Workout session '$sessionId' is not in progress."
+        }
+
         val completedTimestamp = System.currentTimeMillis()
         sessionDao.completeSession(
             sessionId = sessionId,
@@ -169,7 +186,7 @@ class OfflineWorkoutRepository(
             durationMinutes = actualDurationMinutes,
             totalSetsCompleted = totalSets,
             totalVolume = totalVolume,
-            prCount = 2, // Sample PRs detected
+            prCount = 0,
             completedAtTimestamp = completedTimestamp
         )
     }

@@ -24,6 +24,16 @@ class GeneratedWorkoutValidator(
         workout: GeneratedWorkout,
         allowedExerciseIds: Set<String>? = null
     ): GeneratedWorkout {
+        if (workout.name.isBlank()) {
+            throw WorkoutValidationException("Generated workout has a blank name.")
+        }
+
+        if (workout.estimatedDurationMinutes !in MIN_DURATION_MINUTES..MAX_DURATION_MINUTES) {
+            throw WorkoutValidationException(
+                "Invalid workout duration (${workout.estimatedDurationMinutes} minutes)."
+            )
+        }
+
         if (workout.exercises.isEmpty()) {
             throw WorkoutValidationException("Generated workout has no exercises.")
         }
@@ -58,17 +68,44 @@ class GeneratedWorkoutValidator(
         }
 
         // Validate set/rep ranges
-        if (exercise.targetSets <= 0) {
+        if (exercise.targetSets !in MIN_TARGET_SETS..MAX_TARGET_SETS) {
             throw WorkoutValidationException(
                 "Invalid target sets (${exercise.targetSets}) for exercise '${exercise.exerciseId}'."
             )
         }
 
-        if (exercise.repMin <= 0 || exercise.repMax < exercise.repMin) {
+        if (
+            exercise.repMin !in MIN_REPS..MAX_REPS ||
+            exercise.repMax !in exercise.repMin..MAX_REPS
+        ) {
             throw WorkoutValidationException(
                 "Invalid rep range (${exercise.repMin}–${exercise.repMax}) for exercise '${exercise.exerciseId}'."
             )
         }
+
+        val targetWeight = exercise.targetWeight
+        if (targetWeight != null && (!targetWeight.isFinite() || targetWeight < 0.0)) {
+            throw WorkoutValidationException(
+                "Invalid target weight for exercise '${exercise.exerciseId}'."
+            )
+        }
+
+        if (exercise.restSeconds !in MIN_REST_SECONDS..MAX_REST_SECONDS) {
+            throw WorkoutValidationException(
+                "Invalid rest period (${exercise.restSeconds} seconds) for exercise '${exercise.exerciseId}'."
+            )
+        }
+    }
+
+    private companion object {
+        const val MIN_DURATION_MINUTES = 1
+        const val MAX_DURATION_MINUTES = 240
+        const val MIN_TARGET_SETS = 1
+        const val MAX_TARGET_SETS = 20
+        const val MIN_REPS = 1
+        const val MAX_REPS = 1_000
+        const val MIN_REST_SECONDS = 0
+        const val MAX_REST_SECONDS = 1_800
     }
 }
 

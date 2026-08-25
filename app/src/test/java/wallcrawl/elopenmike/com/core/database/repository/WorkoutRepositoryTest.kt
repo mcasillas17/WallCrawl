@@ -1,0 +1,191 @@
+package wallcrawl.elopenmike.com.core.database.repository
+
+import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.runTest
+import org.junit.Assert.fail
+import org.junit.Before
+import org.junit.Test
+import wallcrawl.elopenmike.com.core.database.dao.WorkoutSessionDao
+import wallcrawl.elopenmike.com.core.database.dao.WorkoutSetDao
+import wallcrawl.elopenmike.com.core.database.entity.WorkoutSessionEntity
+import wallcrawl.elopenmike.com.core.database.entity.WorkoutSetEntity
+import wallcrawl.elopenmike.com.core.database.relation.WorkoutSessionWithExercisesAndSets
+import wallcrawl.elopenmike.com.core.model.SessionStatus
+
+class WorkoutRepositoryTest {
+
+    private lateinit var setDao: RecordingWorkoutSetDao
+    private lateinit var repository: OfflineWorkoutRepository
+
+    @Before
+    fun setUp() {
+        setDao = RecordingWorkoutSetDao()
+        repository = OfflineWorkoutRepository(
+            sessionDao = EmptyWorkoutSessionDao(),
+            setDao = setDao
+        )
+    }
+
+    @Test
+    fun logSetCompletion_completedSetWithoutPositiveReps_isRejectedBeforePersistence() = runTest {
+        assertIllegalArgument {
+            repository.logSetCompletion(
+                setId = "set-id",
+                reps = 0,
+                weight = 20.0,
+                isCompleted = true
+            )
+        }
+
+        assertThat(setDao.completionUpdates).isEmpty()
+    }
+
+    @Test
+    fun logSetCompletion_negativeOrNonFiniteWeight_isRejectedBeforePersistence() = runTest {
+        listOf(-0.1, Double.NaN, Double.POSITIVE_INFINITY).forEach { invalidWeight ->
+            assertIllegalArgument {
+                repository.logSetCompletion(
+                    setId = "set-id",
+                    reps = 8,
+                    weight = invalidWeight,
+                    isCompleted = false
+                )
+            }
+        }
+
+        assertThat(setDao.completionUpdates).isEmpty()
+    }
+
+    @Test
+    fun logSetCompletion_incompletePartialEdit_isPersisted() = runTest {
+        repository.logSetCompletion(
+            setId = "set-id",
+            reps = null,
+            weight = null,
+            isCompleted = false
+        )
+
+        assertThat(setDao.completionUpdates)
+            .containsExactly(SetCompletionUpdate("set-id", null, null, false))
+    }
+
+    @Test
+    fun logSetCompletion_unknownSetId_isRejected() = runTest {
+        setDao.affectedRows = 0
+
+        try {
+            repository.logSetCompletion(
+                setId = "missing-set",
+                reps = 8,
+                weight = 20.0,
+                isCompleted = true
+            )
+            fail("Expected an unknown set to be rejected")
+        } catch (exception: IllegalStateException) {
+            assertThat(exception.message).contains("missing-set")
+        }
+    }
+
+    @Test
+    fun completeWorkout_unknownSession_isRejected() = runTest {
+        try {
+            repository.completeWorkout(sessionId = "missing", actualDurationMinutes = 30)
+            fail("Expected an unknown session to be rejected")
+        } catch (exception: IllegalStateException) {
+            assertThat(exception.message).contains("missing")
+        }
+    }
+
+    @Test
+    fun completeWorkout_nonPositiveDuration_isRejected() = runTest {
+        assertIllegalArgument {
+            repository.completeWorkout(sessionId = "session-id", actualDurationMinutes = 0)
+        }
+    }
+
+    private suspend fun assertIllegalArgument(block: suspend () -> Unit) {
+        try {
+            block()
+            fail("Expected IllegalArgumentException")
+        } catch (_: IllegalArgumentException) {
+            // Expected rejection.
+        }
+    }
+}
+
+private data class SetCompletionUpdate(
+    val setId: String,
+    val reps: Int?,
+    val weight: Double?,
+    val isCompleted: Boolean
+)
+
+private class RecordingWorkoutSetDao : WorkoutSetDao {
+    val completionUpdates = mutableListOf<SetCompletionUpdate>()
+    var affectedRows: Int = 1
+
+    override suspend fun insertSets(sets: List<WorkoutSetEntity>) = Unit
+    override suspend fun insertOrUpdateSet(set: WorkoutSetEntity) = Unit
+
+    override suspend fun updateSetCompletion(
+        setId: String,
+        reps: Int?,
+        weight: Double?,
+        isCompleted: Boolean
+    ): Int {
+        completionUpdates += SetCompletionUpdate(setId, reps, weight, isCompleted)
+        return affectedRows
+    }
+
+    override suspend fun getSetsForExercise(workoutExerciseId: String): List<WorkoutSetEntity> =
+        emptyList()
+}
+
+private class EmptyWorkoutSessionDao : WorkoutSessionDao {
+    override fun observeSessionWithDetails(
+        sessionId: String
+    ): Flow<WorkoutSessionWithExercisesAndSets?> = flowOf(null)
+
+    override suspend fun getSessionWithDetails(
+        sessionId: String
+    ): WorkoutSessionWithExercisesAndSets? = null
+
+    override fun observeActiveSession(
+        status: SessionStatus
+    ): Flow<WorkoutSessionWithExercisesAndSets?> = flowOf(null)
+
+    override suspend fun getActiveSession(
+        status: SessionStatus
+    ): WorkoutSessionWithExercisesAndSets? = null
+
+    override fun observeCompletedSessions(
+        status: SessionStatus
+    ): Flow<List<WorkoutSessionWithExercisesAndSets>> = flowOf(emptyList())
+
+    override suspend fun getRecentCompletedSessions(
+        limit: Int,
+        status: SessionStatus
+    ): List<WorkoutSessionWithExercisesAndSets> = emptyList()
+
+    override fun observeAllSessions(): Flow<List<WorkoutSessionWithExercisesAndSets>> =
+        flowOf(emptyList())
+
+    override suspend fun insertSession(session: WorkoutSessionEntity) = Unit
+    override suspend fun insertWorkoutExercises(
+        exercises: List<wallcrawl.elopenmike.com.core.database.entity.WorkoutExerciseEntity>
+    ) = Unit
+
+    override suspend fun insertWorkoutSets(sets: List<WorkoutSetEntity>) = Unit
+    override suspend fun updateSession(session: WorkoutSessionEntity) = Unit
+
+    override suspend fun completeSession(
+        sessionId: String,
+        status: SessionStatus,
+        completedAt: Long,
+        actualDuration: Int
+    ) = Unit
+
+    override suspend fun deleteSession(sessionId: String) = Unit
+}

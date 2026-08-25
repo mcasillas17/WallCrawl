@@ -62,6 +62,23 @@ interface WorkoutSessionDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSession(session: WorkoutSessionEntity)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertWorkoutExercises(exercises: List<WorkoutExerciseEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertWorkoutSets(sets: List<WorkoutSetEntity>)
+
+    @Transaction
+    suspend fun insertWorkout(
+        session: WorkoutSessionEntity,
+        exercises: List<WorkoutExerciseEntity>,
+        sets: List<WorkoutSetEntity>
+    ) {
+        insertSession(session)
+        insertWorkoutExercises(exercises)
+        insertWorkoutSets(sets)
+    }
+
     @Update
     suspend fun updateSession(session: WorkoutSessionEntity)
 
@@ -103,7 +120,7 @@ interface WorkoutSetDao {
         reps: Int?,
         weight: Double?,
         isCompleted: Boolean
-    )
+    ): Int
 
     @Query("SELECT * FROM workout_sets WHERE workoutExerciseId = :workoutExerciseId ORDER BY setNumber ASC")
     suspend fun getSetsForExercise(workoutExerciseId: String): List<WorkoutSetEntity>
