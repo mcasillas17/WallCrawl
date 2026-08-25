@@ -4,6 +4,8 @@ import android.app.Application
 import android.content.Context
 import wallcrawl.elopenmike.com.core.ai.FakeWorkoutPlanner
 import wallcrawl.elopenmike.com.core.ai.GeneratedWorkoutValidator
+import wallcrawl.elopenmike.com.core.ai.WorkoutGenerationContextBuilder
+import wallcrawl.elopenmike.com.core.ai.WorkoutHistoryAnalyzer
 import wallcrawl.elopenmike.com.core.ai.WorkoutPlanner
 import wallcrawl.elopenmike.com.core.database.WallCrawlDatabase
 import wallcrawl.elopenmike.com.core.database.repository.OfflineUserProfileRepository
@@ -25,6 +27,7 @@ interface AppContainer {
     val exerciseFilter: ExerciseFilter
     val workoutPlanner: WorkoutPlanner
     val workoutValidator: GeneratedWorkoutValidator
+    val workoutGenerationContextBuilder: WorkoutGenerationContextBuilder
 }
 
 class DefaultAppContainer(private val context: Context) : AppContainer {
@@ -58,6 +61,16 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
 
     override val workoutValidator: GeneratedWorkoutValidator by lazy {
         GeneratedWorkoutValidator(exerciseCatalog)
+    }
+
+    override val workoutGenerationContextBuilder: WorkoutGenerationContextBuilder by lazy {
+        WorkoutGenerationContextBuilder(
+            userProfileRepository = userProfileRepository,
+            workoutRepository = workoutRepository,
+            exerciseCatalog = exerciseCatalog,
+            exerciseFilter = exerciseFilter,
+            historyAnalyzer = WorkoutHistoryAnalyzer()
+        )
     }
 }
 

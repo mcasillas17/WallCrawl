@@ -30,6 +30,7 @@ interface WorkoutRepository {
     suspend fun getSessionById(sessionId: String): WorkoutSession?
     fun observeSession(sessionId: String): Flow<WorkoutSession?>
     fun observeCompletedSessions(): Flow<List<WorkoutSession>>
+    suspend fun getRecentCompletedSessions(limit: Int = 8): List<WorkoutSession>
     suspend fun startWorkoutFromGenerated(generated: GeneratedWorkout): WorkoutSession
     suspend fun logSetCompletion(setId: String, reps: Int?, weight: Double?, isCompleted: Boolean)
     suspend fun completeWorkout(sessionId: String, actualDurationMinutes: Int): WorkoutSummary
@@ -63,6 +64,11 @@ class OfflineWorkoutRepository(
         return sessionDao.observeCompletedSessions().map { list ->
             list.map { it.toDomainModel() }
         }
+    }
+
+    override suspend fun getRecentCompletedSessions(limit: Int): List<WorkoutSession> {
+        require(limit > 0) { "limit must be greater than zero." }
+        return sessionDao.getRecentCompletedSessions(limit).map { it.toDomainModel() }
     }
 
     override suspend fun startWorkoutFromGenerated(generated: GeneratedWorkout): WorkoutSession {

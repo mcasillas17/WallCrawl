@@ -49,6 +49,13 @@ interface WorkoutSessionDao {
     fun observeCompletedSessions(status: SessionStatus = SessionStatus.COMPLETED): Flow<List<WorkoutSessionWithExercisesAndSets>>
 
     @Transaction
+    @Query("SELECT * FROM workout_sessions WHERE status = :status ORDER BY completedAtTimestamp DESC LIMIT :limit")
+    suspend fun getRecentCompletedSessions(
+        limit: Int,
+        status: SessionStatus = SessionStatus.COMPLETED
+    ): List<WorkoutSessionWithExercisesAndSets>
+
+    @Transaction
     @Query("SELECT * FROM workout_sessions ORDER BY startedAtTimestamp DESC")
     fun observeAllSessions(): Flow<List<WorkoutSessionWithExercisesAndSets>>
 
