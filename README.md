@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="art/playstore-icon-512.png" width="160" alt="WallCrawl Logo" />
+  <img src="art/wallcrawl-wordmark-dark-bg.png" width="380" alt="WallCrawl Wordmark" />
 </p>
 
 <h1 align="center">WallCrawl</h1>

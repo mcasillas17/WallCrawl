@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import wallcrawl.elopenmike.com.R
 import androidx.compose.foundation.layout.fillMaxSize
@@ -186,17 +187,17 @@ private fun TodayHeader(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
-                Text(
-                    text = "TODAY",
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 1.5.sp,
-                    color = CrimsonRedPrimary
+                Image(
+                    painter = painterResource(id = R.drawable.ic_wallcrawl_wordmark),
+                    contentDescription = "WallCrawl",
+                    modifier = Modifier.height(26.dp),
+                    contentScale = ContentScale.Fit
                 )
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = "Ready to train, $userName",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Black,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
                     color = TextWhite
                 )
             }
