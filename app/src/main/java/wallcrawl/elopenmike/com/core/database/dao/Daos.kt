@@ -24,6 +24,14 @@ interface UserProfileDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOrUpdate(profile: UserProfileEntity)
+
+    @Transaction
+    suspend fun insertOrUpdateWithNextRevision(profile: UserProfileEntity): UserProfileEntity {
+        val nextRevision = (getProfile(profile.id)?.revision ?: -1L) + 1L
+        return profile.copy(revision = nextRevision).also { revisedProfile ->
+            insertOrUpdate(revisedProfile)
+        }
+    }
 }
 
 @Dao
@@ -44,9 +52,26 @@ interface WorkoutSessionDao {
     @Query("SELECT * FROM workout_sessions WHERE status = :status ORDER BY startedAtTimestamp DESC LIMIT 1")
     suspend fun getActiveSession(status: SessionStatus = SessionStatus.IN_PROGRESS): WorkoutSessionWithExercisesAndSets?
 
+    @Query("SELECT revision FROM user_profiles WHERE id = :profileId LIMIT 1")
+    suspend fun getProfileRevision(profileId: String): Long?
+
     @Transaction
-    @Query("SELECT * FROM workout_sessions WHERE status = :status ORDER BY completedAtTimestamp DESC")
-    fun observeCompletedSessions(status: SessionStatus = SessionStatus.COMPLETED): Flow<List<WorkoutSessionWithExercisesAndSets>>
+    @Query("SELECT * FROM workout_sessions WHERE status = :status ORDER BY completedAtTimestamp DESC LIMIT :limit")
+    fun observeRecentCompletedSessions(
+        limit: Int,
+        status: SessionStatus = SessionStatus.COMPLETED
+    ): Flow<List<WorkoutSessionWithExercisesAndSets>>
+
+    @Query("SELECT COUNT(*) FROM workout_sessions WHERE status = :status")
+    fun observeCompletedSessionCount(
+        status: SessionStatus = SessionStatus.COMPLETED
+    ): Flow<Int>
+
+    @Query("SELECT COUNT(*) FROM workout_sessions WHERE status = :status AND completedAtTimestamp >= :startTimestamp")
+    fun observeCompletedSessionCountSince(
+        startTimestamp: Long,
+        status: SessionStatus = SessionStatus.COMPLETED
+    ): Flow<Int>
 
     @Transaction
     @Query("SELECT * FROM workout_sessions WHERE status = :status ORDER BY completedAtTimestamp DESC LIMIT :limit")
@@ -79,19 +104,43 @@ interface WorkoutSessionDao {
         insertWorkoutSets(sets)
     }
 
+    @Transaction
+    suspend fun insertWorkoutUnlessActive(
+        session: WorkoutSessionEntity,
+        exercises: List<WorkoutExerciseEntity>,
+        sets: List<WorkoutSetEntity>,
+        expectedProfileId: String,
+        expectedProfileRevision: Long
+    ): WorkoutSessionWithExercisesAndSets {
+        check(getProfileRevision(expectedProfileId) == expectedProfileRevision) {
+            "User profile changed while the workout recommendation was being started."
+        }
+        val existingActiveSession = getActiveSession()
+        if (existingActiveSession != null) return existingActiveSession
+
+        insertWorkout(session, exercises, sets)
+        return checkNotNull(getSessionWithDetails(session.id)) {
+            "Inserted workout session '${session.id}' could not be read back."
+        }
+    }
+
     @Update
     suspend fun updateSession(session: WorkoutSessionEntity)
 
-    @Query("UPDATE workout_sessions SET status = :status, completedAtTimestamp = :completedAt, actualDurationMinutes = :actualDuration WHERE id = :sessionId")
-    suspend fun completeSession(
+    @Query("UPDATE workout_sessions SET status = :completedStatus, completedAtTimestamp = :completedAt, actualDurationMinutes = :actualDuration WHERE id = :sessionId AND status = :requiredStatus")
+    suspend fun completeSessionIfActive(
         sessionId: String,
-        status: SessionStatus = SessionStatus.COMPLETED,
+        completedStatus: SessionStatus = SessionStatus.COMPLETED,
+        requiredStatus: SessionStatus = SessionStatus.IN_PROGRESS,
         completedAt: Long = System.currentTimeMillis(),
         actualDuration: Int
-    )
+    ): Int
 
-    @Query("DELETE FROM workout_sessions WHERE id = :sessionId")
-    suspend fun deleteSession(sessionId: String)
+    @Query("DELETE FROM workout_sessions WHERE id = :sessionId AND status = :requiredStatus")
+    suspend fun deleteActiveSession(
+        sessionId: String,
+        requiredStatus: SessionStatus = SessionStatus.IN_PROGRESS
+    ): Int
 }
 
 @Dao
@@ -114,12 +163,27 @@ interface WorkoutSetDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOrUpdateSet(set: WorkoutSetEntity)
 
-    @Query("UPDATE workout_sets SET completedReps = :reps, completedWeight = :weight, isCompleted = :isCompleted WHERE id = :setId")
+    @Query(
+        """
+        UPDATE workout_sets
+        SET completedReps = :reps, completedWeight = :weight, isCompleted = :isCompleted
+        WHERE id = :setId
+          AND EXISTS (
+              SELECT 1
+              FROM workout_exercises
+              INNER JOIN workout_sessions
+                  ON workout_sessions.id = workout_exercises.sessionId
+              WHERE workout_exercises.id = workout_sets.workoutExerciseId
+                AND workout_sessions.status = :requiredStatus
+          )
+        """
+    )
     suspend fun updateSetCompletion(
         setId: String,
         reps: Int?,
         weight: Double?,
-        isCompleted: Boolean
+        isCompleted: Boolean,
+        requiredStatus: SessionStatus = SessionStatus.IN_PROGRESS
     ): Int
 
     @Query("SELECT * FROM workout_sets WHERE workoutExerciseId = :workoutExerciseId ORDER BY setNumber ASC")

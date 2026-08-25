@@ -1,0 +1,194 @@
+package wallcrawl.elopenmike.com.feature.workout
+
+import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runTest
+import org.junit.Rule
+import org.junit.Test
+import wallcrawl.elopenmike.com.core.ai.WorkoutHistoryAnalyzer
+import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
+import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
+import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
+import wallcrawl.elopenmike.com.core.model.SessionStatus
+import wallcrawl.elopenmike.com.core.model.UserProfile
+import wallcrawl.elopenmike.com.core.model.WeightUnit
+import wallcrawl.elopenmike.com.core.model.WorkoutExercise
+import wallcrawl.elopenmike.com.core.model.WorkoutSession
+import wallcrawl.elopenmike.com.core.model.WorkoutSet
+import wallcrawl.elopenmike.com.core.model.WorkoutSummary
+import wallcrawl.elopenmike.com.test.MainDispatcherRule
+
+@OptIn(ExperimentalCoroutinesApi::class)
+class ActiveWorkoutViewModelTest {
+
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule()
+
+    @Test
+    fun completedPersistedSession_restoresCompletedUiWithActualDurationAndStoredUnit() = runTest {
+        val repository = ActiveWorkoutRepository(
+            workoutSession(status = SessionStatus.COMPLETED).copy(
+                targetDurationMinutes = 50,
+                actualDurationMinutes = 12,
+                completedAtTimestamp = 5_000L,
+                weightUnit = WeightUnit.KG
+            )
+        )
+        val viewModel = viewModel(repository)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiState.collect {}
+        }
+
+        advanceUntilIdle()
+
+        val state = viewModel.uiState.value as ActiveWorkoutUiState.Completed
+        assertThat(state.summary.durationMinutes).isEqualTo(12)
+        assertThat(state.summary.unit).isEqualTo(WeightUnit.KG)
+        assertThat(state.summary.totalSetsCompleted).isEqualTo(1)
+    }
+
+    @Test
+    fun requestedExerciseIndexOutsideSession_isClampedToPersistedContents() = runTest {
+        val repository = ActiveWorkoutRepository(workoutSession(SessionStatus.IN_PROGRESS))
+        val viewModel = viewModel(repository)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiState.collect {}
+        }
+        advanceUntilIdle()
+
+        viewModel.goToExercise(99)
+        advanceUntilIdle()
+
+        val state = viewModel.uiState.value as ActiveWorkoutUiState.Active
+        assertThat(state.currentExerciseIndex).isEqualTo(0)
+        assertThat(state.currentExercise).isNotNull()
+    }
+
+    @Test
+    fun doubleFinishAndDelayedSetFailure_keepPersistedCompletionVisible() = runTest {
+        val repository = ActiveWorkoutRepository(workoutSession(SessionStatus.IN_PROGRESS))
+        val viewModel = viewModel(repository)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiState.collect {}
+        }
+        advanceUntilIdle()
+
+        viewModel.finishWorkout()
+        viewModel.finishWorkout()
+        advanceUntilIdle()
+
+        assertThat(repository.completeCalls).isEqualTo(1)
+        assertThat(viewModel.uiState.value).isInstanceOf(ActiveWorkoutUiState.Completed::class.java)
+
+        repository.failSetUpdates = true
+        viewModel.updateSet("set", reps = 9, weight = 20.0, isCompleted = true)
+        advanceUntilIdle()
+
+        assertThat(viewModel.uiState.value).isInstanceOf(ActiveWorkoutUiState.Completed::class.java)
+    }
+
+    private fun viewModel(repository: WorkoutRepository) = ActiveWorkoutViewModel(
+        sessionId = SESSION_ID,
+        workoutRepository = repository,
+        exerciseCatalog = InMemoryExerciseCatalog(),
+        workoutHistoryAnalyzer = WorkoutHistoryAnalyzer()
+    )
+
+    private fun workoutSession(status: SessionStatus): WorkoutSession {
+        val workoutExerciseId = "workout-exercise"
+        return WorkoutSession(
+            id = SESSION_ID,
+            name = "Workout",
+            status = status,
+            exercises = listOf(
+                WorkoutExercise(
+                    id = workoutExerciseId,
+                    sessionId = SESSION_ID,
+                    exerciseId = "incline-dumbbell-press",
+                    orderIndex = 0,
+                    targetSets = 1,
+                    targetRepMin = 8,
+                    targetRepMax = 10,
+                    sets = listOf(
+                        WorkoutSet(
+                            id = "set",
+                            workoutExerciseId = workoutExerciseId,
+                            setNumber = 1,
+                            targetReps = 10,
+                            completedReps = 10,
+                            completedWeight = 20.0,
+                            isCompleted = true
+                        )
+                    )
+                )
+            )
+        )
+    }
+
+    private companion object {
+        const val SESSION_ID = "session"
+    }
+}
+
+private class ActiveWorkoutRepository(initialSession: WorkoutSession) : WorkoutRepository {
+    private val session = MutableStateFlow<WorkoutSession?>(initialSession)
+    var completeCalls: Int = 0
+        private set
+    var failSetUpdates: Boolean = false
+
+    override fun observeActiveSession(): Flow<WorkoutSession?> = session
+    override suspend fun getActiveSessionOnce(): WorkoutSession? = session.value
+    override suspend fun getSessionById(sessionId: String): WorkoutSession? = session.value
+    override fun observeSession(sessionId: String): Flow<WorkoutSession?> = session
+    override fun observeCompletedSessions(limit: Int): Flow<List<WorkoutSession>> =
+        flowOf(emptyList())
+
+    override fun observeCompletedWorkoutCount(): Flow<Int> = flowOf(0)
+    override fun observeCompletedWorkoutCountSince(startTimestamp: Long): Flow<Int> = flowOf(0)
+
+    override suspend fun getRecentCompletedSessions(limit: Int): List<WorkoutSession> = emptyList()
+
+    override suspend fun startWorkoutFromGenerated(
+        generated: GeneratedWorkout,
+        userProfile: UserProfile
+    ): WorkoutSession = error("Not used")
+
+    override suspend fun logSetCompletion(
+        setId: String,
+        reps: Int?,
+        weight: Double?,
+        isCompleted: Boolean
+    ) {
+        if (failSetUpdates) error("Session is already complete")
+    }
+
+    override suspend fun completeWorkout(
+        sessionId: String,
+        actualDurationMinutes: Int
+    ): WorkoutSummary {
+        completeCalls += 1
+        val completed = requireNotNull(session.value).copy(
+            status = SessionStatus.COMPLETED,
+            completedAtTimestamp = 5_000L,
+            actualDurationMinutes = actualDurationMinutes
+        )
+        session.value = completed
+        return WorkoutSummary(
+            sessionId = completed.id,
+            workoutName = completed.name,
+            durationMinutes = completed.actualDurationMinutes,
+            totalSetsCompleted = completed.completedSetsCount,
+            totalVolume = completed.totalVolume,
+            unit = completed.weightUnit,
+            completedAtTimestamp = requireNotNull(completed.completedAtTimestamp)
+        )
+    }
+
+    override suspend fun cancelWorkout(sessionId: String) = Unit
+}

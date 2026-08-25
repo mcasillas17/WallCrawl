@@ -5,6 +5,8 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import wallcrawl.elopenmike.com.core.database.converter.RoomTypeConverters
 import wallcrawl.elopenmike.com.core.database.dao.UserProfileDao
 import wallcrawl.elopenmike.com.core.database.dao.WorkoutExerciseDao
@@ -22,7 +24,7 @@ import wallcrawl.elopenmike.com.core.database.entity.WorkoutSetEntity
         WorkoutExerciseEntity::class,
         WorkoutSetEntity::class
     ],
-    version = 1,
+    version = 3,
     exportSchema = false
 )
 @TypeConverters(RoomTypeConverters::class)
@@ -45,7 +47,38 @@ abstract class WallCrawlDatabase : RoomDatabase() {
                     context.applicationContext,
                     WallCrawlDatabase::class.java,
                     DATABASE_NAME
-                ).build().also { INSTANCE = it }
+                )
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                    .build()
+                    .also { INSTANCE = it }
+            }
+        }
+
+        val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "ALTER TABLE workout_sessions " +
+                        "ADD COLUMN weightUnit TEXT NOT NULL DEFAULT 'LBS'"
+                )
+                db.execSQL(
+                    "UPDATE workout_sessions SET weightUnit = " +
+                        "COALESCE((SELECT preferredUnit FROM user_profiles " +
+                        "WHERE id = 'default_user' LIMIT 1), 'LBS')"
+                )
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS " +
+                        "index_workout_sessions_status_completedAtTimestamp " +
+                        "ON workout_sessions (status, completedAtTimestamp)"
+                )
+            }
+        }
+
+        val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "ALTER TABLE user_profiles " +
+                        "ADD COLUMN revision INTEGER NOT NULL DEFAULT 0"
+                )
             }
         }
     }

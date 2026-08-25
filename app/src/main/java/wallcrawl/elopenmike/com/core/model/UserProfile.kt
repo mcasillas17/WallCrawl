@@ -5,6 +5,7 @@ package wallcrawl.elopenmike.com.core.model
  */
 data class UserProfile(
     val id: String = DEFAULT_PROFILE_ID,
+    val revision: Long = 0,
     val name: String = "Crawler",
     val primaryGoal: FitnessGoal = FitnessGoal.BUILD_MUSCLE,
     val experienceLevel: ExperienceLevel = ExperienceLevel.INTERMEDIATE,
@@ -55,6 +56,17 @@ enum class WeightUnit(val symbol: String) {
     LBS("lb"),
     KG("kg")
 }
+
+fun convertWeight(value: Double, from: WeightUnit, to: WeightUnit): Double {
+    require(value.isFinite() && value >= 0.0) { "Weight must be finite and not negative." }
+    if (from == to) return value
+    return when (from) {
+        WeightUnit.LBS -> value * KILOGRAMS_PER_POUND
+        WeightUnit.KG -> value / KILOGRAMS_PER_POUND
+    }
+}
+
+private const val KILOGRAMS_PER_POUND = 0.45359237
 
 enum class PriorityLevel(val multiplier: Float, val label: String) {
     LOW(0.6f, "Low"),

@@ -40,7 +40,10 @@ class WorkoutGenerationContextBuilder(
             trainingFrequencyDaysPerWeek = profile.daysPerWeek,
             musclePriorities = profile.musclePriorities,
             recentWorkoutHistory = recentCompletedSessions,
-            exerciseHistory = historyAnalyzer.exerciseHistory(recentCompletedSessions),
+            exerciseHistory = historyAnalyzer.exerciseHistory(
+                sessions = recentCompletedSessions,
+                targetWeightUnit = profile.preferredUnit
+            ),
             recentlyTrainedMuscles = historyAnalyzer.recentlyTrainedMuscles(
                 sessions = recentCompletedSessions,
                 nowTimestamp = nowTimestamp()

@@ -15,6 +15,7 @@ import wallcrawl.elopenmike.com.core.model.WeightUnit
 data class UserProfileEntity(
     @PrimaryKey
     val id: String,
+    val revision: Long = 0,
     val name: String,
     val primaryGoal: FitnessGoal,
     val experienceLevel: ExperienceLevel,
@@ -26,7 +27,10 @@ data class UserProfileEntity(
     val excludedExerciseIdsJson: String
 )
 
-@Entity(tableName = "workout_sessions")
+@Entity(
+    tableName = "workout_sessions",
+    indices = [Index(value = ["status", "completedAtTimestamp"])]
+)
 data class WorkoutSessionEntity(
     @PrimaryKey
     val id: String,
@@ -35,6 +39,7 @@ data class WorkoutSessionEntity(
     val completedAtTimestamp: Long?,
     val targetDurationMinutes: Int,
     val actualDurationMinutes: Int,
+    val weightUnit: WeightUnit = WeightUnit.LBS,
     val status: SessionStatus,
     val focusMusclesJson: String,
     val notes: String

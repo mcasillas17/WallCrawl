@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
+import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.EmojiEvents
@@ -156,7 +157,7 @@ private fun ProgressContent(
             }
         } else {
             items(overview.recentHistory) { session ->
-                WorkoutHistoryCard(session = session, unit = unit)
+                WorkoutHistoryCard(session = session)
             }
         }
 
@@ -272,7 +273,7 @@ private fun StrengthTrendsSection(
                 )
             }
             Text(
-                text = "Recent PRs",
+                text = "Recent changes",
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 color = TextSecondary
@@ -304,17 +305,22 @@ private fun StrengthTrendsSection(
                 }
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
+                    val trendColor = if (trend.isPositive) SuccessGreen else CrimsonRedLight
                     Icon(
-                        imageVector = Icons.Default.ArrowUpward,
+                        imageVector = if (trend.isPositive) {
+                            Icons.Default.ArrowUpward
+                        } else {
+                            Icons.Default.ArrowDownward
+                        },
                         contentDescription = null,
-                        tint = SuccessGreen,
+                        tint = trendColor,
                         modifier = Modifier.size(14.dp)
                     )
                     Text(
                         text = "${trend.percentageChange}%",
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold,
-                        color = SuccessGreen
+                        color = trendColor
                     )
                 }
             }
@@ -384,8 +390,7 @@ private fun MuscleFocusSection(
 
 @Composable
 private fun WorkoutHistoryCard(
-    session: WorkoutSession,
-    unit: String
+    session: WorkoutSession
 ) {
     val dateStr = SimpleDateFormat("MMM d, yyyy · h:mm a", Locale.getDefault())
         .format(Date(session.startedAtTimestamp))
@@ -415,7 +420,7 @@ private fun WorkoutHistoryCard(
             }
 
             StatBadge(
-                label = "${session.actualDurationMinutes.coerceAtLeast(session.targetDurationMinutes)} min",
+                label = "${session.actualDurationMinutes} min",
                 textColor = WebBlueAccent
             )
         }
@@ -434,7 +439,10 @@ private fun WorkoutHistoryCard(
 
             if (session.totalVolume > 0) {
                 Text(
-                    text = "%,.0f %s volume".format(session.totalVolume, unit),
+                    text = "%,.0f %s volume".format(
+                        session.totalVolume,
+                        session.weightUnit.symbol
+                    ),
                     fontSize = 12.sp,
                     color = CrimsonRedLight,
                     fontWeight = FontWeight.SemiBold

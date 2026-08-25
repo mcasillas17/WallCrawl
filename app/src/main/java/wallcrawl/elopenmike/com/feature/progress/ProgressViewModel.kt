@@ -22,16 +22,17 @@ class ProgressViewModel(
 
     val uiState: StateFlow<ProgressUiState> = combine(
         userProfileRepository.getUserProfile(),
-        workoutRepository.observeCompletedSessions(),
+        workoutRepository.observeCompletedSessions(limit = MAX_ANALYTICS_SESSIONS),
+        workoutRepository.observeCompletedWorkoutCount(),
         exerciseCatalog.getAllExercises()
-    ) { profile, completedSessions, exercises ->
+    ) { profile, completedSessions, totalCompletedCount, exercises ->
         ProgressUiState.Success(
             overview = progressCalculator.calculate(
                 completedSessions = completedSessions,
                 profile = profile,
                 catalogExercises = exercises,
                 nowTimestamp = nowTimestamp()
-            ),
+            ).copy(totalWorkoutsLogged = totalCompletedCount),
             preferredUnit = profile.preferredUnit
         )
     }.stateIn(
@@ -41,6 +42,8 @@ class ProgressViewModel(
     )
 
     companion object {
+        private const val MAX_ANALYTICS_SESSIONS = 500
+
         fun provideFactory(
             workoutRepository: WorkoutRepository,
             userProfileRepository: UserProfileRepository,

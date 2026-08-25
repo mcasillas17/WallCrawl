@@ -3,6 +3,7 @@ package wallcrawl.elopenmike.com.core.ai
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import wallcrawl.elopenmike.com.core.model.SessionStatus
+import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
@@ -60,6 +61,26 @@ class WorkoutHistoryAnalyzerTest {
         assertThat(history.getValue("barbell-bench-press").bestEstimated1RM)
             .isWithin(0.001)
             .of(133.333)
+    }
+
+    @Test
+    fun exerciseHistory_convertsPersistedWeightsToRequestedPlannerUnit() {
+        val metricSession = completedSession(
+            id = "metric",
+            completedAtTimestamp = 2_000L,
+            exerciseId = "incline-dumbbell-press",
+            sets = listOf(completedSet("metric-set", 1, weight = 50.0, reps = 10)),
+            weightUnit = WeightUnit.KG
+        )
+
+        val history = analyzer.exerciseHistory(
+            sessions = listOf(metricSession),
+            targetWeightUnit = WeightUnit.LBS
+        )
+
+        assertThat(history.getValue("incline-dumbbell-press").lastWeight)
+            .isWithin(0.001)
+            .of(110.231)
     }
 
     @Test
@@ -150,6 +171,7 @@ class WorkoutHistoryAnalyzerTest {
         )
 
         assertThat(performance?.sessionCompletedAtTimestamp).isEqualTo(2_000L)
+        assertThat(performance?.weightUnit).isEqualTo(WeightUnit.LBS)
         assertThat(performance?.sets?.map { it.id })
             .containsExactly("newer-set-1", "newer-set-2")
             .inOrder()
@@ -160,13 +182,15 @@ class WorkoutHistoryAnalyzerTest {
         completedAtTimestamp: Long,
         exerciseId: String,
         sets: List<WorkoutSet>,
-        focusMuscles: List<String> = listOf("Chest")
+        focusMuscles: List<String> = listOf("Chest"),
+        weightUnit: WeightUnit = WeightUnit.LBS
     ): WorkoutSession {
         val workoutExerciseId = "$id-exercise"
         return WorkoutSession(
             id = id,
             name = "Workout $id",
             completedAtTimestamp = completedAtTimestamp,
+            weightUnit = weightUnit,
             status = SessionStatus.COMPLETED,
             focusMuscles = focusMuscles,
             exercises = listOf(

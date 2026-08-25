@@ -201,7 +201,7 @@ private fun ActiveWorkoutContent(
                     ExerciseHeaderCard(
                         workoutExercise = currentExercise,
                         exerciseName = state.currentCatalogExercise?.name,
-                        preferredUnit = state.preferredUnit.symbol
+                        preferredUnit = state.weightUnit.symbol
                     )
                 }
 
@@ -211,7 +211,7 @@ private fun ActiveWorkoutContent(
                         PreviousPerformanceCard(
                             sets = state.previousSets,
                             completedAtTimestamp = state.previousSessionTimestamp,
-                            weightUnit = state.preferredUnit.symbol
+                            weightUnit = state.previousWeightUnit.symbol
                         )
                     }
                 }
@@ -233,7 +233,7 @@ private fun ActiveWorkoutContent(
                             modifier = Modifier.width(32.dp)
                         )
                         Text(
-                            text = "WEIGHT (${state.preferredUnit.symbol.uppercase()})",
+                            text = "WEIGHT (${state.weightUnit.symbol.uppercase()})",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
                             color = TextMuted,
@@ -264,7 +264,7 @@ private fun ActiveWorkoutContent(
                     val set = currentExercise.sets[setIndex]
                     SetRow(
                         set = set,
-                        weightUnit = state.preferredUnit.symbol,
+                        weightUnit = state.weightUnit.symbol,
                         onUpdateSet = { reps, weight, isCompleted ->
                             onUpdateSet(set.id, reps, weight, isCompleted)
                         }

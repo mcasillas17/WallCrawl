@@ -116,6 +116,8 @@ duration calculation, and visual-provider mapping.
   exercise set created from equipment, exclusions, and hard limitations.
 - Model output is structured and always validated before persistence or UI.
 - Recommendation and performed values are both retained for future progression.
+- Each session retains its weight unit; mixed-unit history is converted only for
+  planner and analytics calculations, never silently relabeled.
 - Analytics are derived from completed local sessions, not sample metrics.
 - Database migrations must preserve user history; destructive migration fallback
   is intentionally disabled.

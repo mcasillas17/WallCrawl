@@ -2,8 +2,10 @@ package wallcrawl.elopenmike.com.core.ai
 
 import wallcrawl.elopenmike.com.core.model.ExercisePerformanceHistory
 import wallcrawl.elopenmike.com.core.model.SessionStatus
+import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
+import wallcrawl.elopenmike.com.core.model.convertWeight
 
 /**
  * Converts completed workout sessions into the compact performance summaries used by
@@ -12,7 +14,8 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSet
 class WorkoutHistoryAnalyzer {
 
     fun exerciseHistory(
-        sessions: List<WorkoutSession>
+        sessions: List<WorkoutSession>,
+        targetWeightUnit: WeightUnit = WeightUnit.LBS
     ): Map<String, ExercisePerformanceHistory> {
         val completedSessions = sessions
             .filter { it.status == SessionStatus.COMPLETED && it.completedAtTimestamp != null }
@@ -24,7 +27,14 @@ class WorkoutHistoryAnalyzer {
                     ExercisePerformance(
                         exerciseId = exercise.exerciseId,
                         completedAtTimestamp = session.completedAtTimestamp ?: Long.MIN_VALUE,
-                        completedSets = exercise.sets.completedPerformanceSets()
+                        completedSets = exercise.sets
+                            .completedPerformanceSets()
+                            .map { set ->
+                                set.convertWeights(
+                                    from = session.weightUnit,
+                                    to = targetWeightUnit
+                                )
+                            }
                     )
                 }
             }
@@ -95,6 +105,7 @@ class WorkoutHistoryAnalyzer {
                 } else {
                     CompletedExercisePerformance(
                         sessionCompletedAtTimestamp = requireNotNull(session.completedAtTimestamp),
+                        weightUnit = session.weightUnit,
                         sets = completedSets
                     )
                 }
@@ -118,6 +129,14 @@ class WorkoutHistoryAnalyzer {
         return weight * (1.0 + reps / 30.0)
     }
 
+    private fun WorkoutSet.convertWeights(from: WeightUnit, to: WeightUnit): WorkoutSet = copy(
+        targetWeight = targetWeight.convertIfValid(from, to),
+        completedWeight = completedWeight.convertIfValid(from, to)
+    )
+
+    private fun Double?.convertIfValid(from: WeightUnit, to: WeightUnit): Double? =
+        this?.takeIf { it.isFinite() && it >= 0.0 }?.let { convertWeight(it, from, to) }
+
     private data class ExercisePerformance(
         val exerciseId: String,
         val completedAtTimestamp: Long,
@@ -132,5 +151,6 @@ class WorkoutHistoryAnalyzer {
 
 data class CompletedExercisePerformance(
     val sessionCompletedAtTimestamp: Long,
+    val weightUnit: WeightUnit,
     val sets: List<WorkoutSet>
 )

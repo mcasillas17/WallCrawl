@@ -59,6 +59,28 @@ class WorkoutRepositoryTest {
     }
 
     @Test
+    fun logSetCompletion_implausiblyLargeValuesAreRejectedBeforePersistence() = runTest {
+        assertIllegalArgument {
+            repository.logSetCompletion(
+                setId = "set-id",
+                reps = 1_001,
+                weight = 20.0,
+                isCompleted = true
+            )
+        }
+        assertIllegalArgument {
+            repository.logSetCompletion(
+                setId = "set-id",
+                reps = 8,
+                weight = 100_001.0,
+                isCompleted = true
+            )
+        }
+
+        assertThat(setDao.completionUpdates).isEmpty()
+    }
+
+    @Test
     fun logSetCompletion_incompletePartialEdit_isPersisted() = runTest {
         repository.logSetCompletion(
             setId = "set-id",
@@ -133,7 +155,8 @@ private class RecordingWorkoutSetDao : WorkoutSetDao {
         setId: String,
         reps: Int?,
         weight: Double?,
-        isCompleted: Boolean
+        isCompleted: Boolean,
+        requiredStatus: SessionStatus
     ): Int {
         completionUpdates += SetCompletionUpdate(setId, reps, weight, isCompleted)
         return affectedRows
@@ -160,9 +183,19 @@ private class EmptyWorkoutSessionDao : WorkoutSessionDao {
         status: SessionStatus
     ): WorkoutSessionWithExercisesAndSets? = null
 
-    override fun observeCompletedSessions(
+    override fun observeRecentCompletedSessions(
+        limit: Int,
         status: SessionStatus
     ): Flow<List<WorkoutSessionWithExercisesAndSets>> = flowOf(emptyList())
+
+    override fun observeCompletedSessionCount(status: SessionStatus): Flow<Int> = flowOf(0)
+
+    override fun observeCompletedSessionCountSince(
+        startTimestamp: Long,
+        status: SessionStatus
+    ): Flow<Int> = flowOf(0)
+
+    override suspend fun getProfileRevision(profileId: String): Long? = null
 
     override suspend fun getRecentCompletedSessions(
         limit: Int,
@@ -180,12 +213,16 @@ private class EmptyWorkoutSessionDao : WorkoutSessionDao {
     override suspend fun insertWorkoutSets(sets: List<WorkoutSetEntity>) = Unit
     override suspend fun updateSession(session: WorkoutSessionEntity) = Unit
 
-    override suspend fun completeSession(
+    override suspend fun completeSessionIfActive(
         sessionId: String,
-        status: SessionStatus,
+        completedStatus: SessionStatus,
+        requiredStatus: SessionStatus,
         completedAt: Long,
         actualDuration: Int
-    ) = Unit
+    ): Int = 0
 
-    override suspend fun deleteSession(sessionId: String) = Unit
+    override suspend fun deleteActiveSession(
+        sessionId: String,
+        requiredStatus: SessionStatus
+    ): Int = 0
 }

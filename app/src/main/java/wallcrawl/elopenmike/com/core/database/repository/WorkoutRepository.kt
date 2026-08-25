@@ -9,6 +9,8 @@ import wallcrawl.elopenmike.com.core.database.relation.WorkoutSessionWithExercis
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetType
+import wallcrawl.elopenmike.com.core.model.UserProfile
+import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
@@ -22,9 +24,14 @@ interface WorkoutRepository {
     suspend fun getActiveSessionOnce(): WorkoutSession?
     suspend fun getSessionById(sessionId: String): WorkoutSession?
     fun observeSession(sessionId: String): Flow<WorkoutSession?>
-    fun observeCompletedSessions(): Flow<List<WorkoutSession>>
+    fun observeCompletedSessions(limit: Int = DEFAULT_OBSERVED_COMPLETED_SESSIONS): Flow<List<WorkoutSession>>
+    fun observeCompletedWorkoutCount(): Flow<Int>
+    fun observeCompletedWorkoutCountSince(startTimestamp: Long): Flow<Int>
     suspend fun getRecentCompletedSessions(limit: Int = 8): List<WorkoutSession>
-    suspend fun startWorkoutFromGenerated(generated: GeneratedWorkout): WorkoutSession
+    suspend fun startWorkoutFromGenerated(
+        generated: GeneratedWorkout,
+        userProfile: UserProfile
+    ): WorkoutSession
     suspend fun logSetCompletion(setId: String, reps: Int?, weight: Double?, isCompleted: Boolean)
     suspend fun completeWorkout(sessionId: String, actualDurationMinutes: Int): WorkoutSummary
     suspend fun cancelWorkout(sessionId: String)
@@ -51,24 +58,28 @@ class OfflineWorkoutRepository(
         return sessionDao.observeSessionWithDetails(sessionId).map { it?.toDomainModel() }
     }
 
-    override fun observeCompletedSessions(): Flow<List<WorkoutSession>> {
-        return sessionDao.observeCompletedSessions().map { list ->
+    override fun observeCompletedSessions(limit: Int): Flow<List<WorkoutSession>> {
+        require(limit > 0) { "limit must be greater than zero." }
+        return sessionDao.observeRecentCompletedSessions(limit).map { list ->
             list.map { it.toDomainModel() }
         }
     }
+
+    override fun observeCompletedWorkoutCount(): Flow<Int> =
+        sessionDao.observeCompletedSessionCount()
+
+    override fun observeCompletedWorkoutCountSince(startTimestamp: Long): Flow<Int> =
+        sessionDao.observeCompletedSessionCountSince(startTimestamp)
 
     override suspend fun getRecentCompletedSessions(limit: Int): List<WorkoutSession> {
         require(limit > 0) { "limit must be greater than zero." }
         return sessionDao.getRecentCompletedSessions(limit).map { it.toDomainModel() }
     }
 
-    override suspend fun startWorkoutFromGenerated(generated: GeneratedWorkout): WorkoutSession {
-        // If an active session already exists, we return it or cancel it
-        val existingActive = sessionDao.getActiveSession()
-        if (existingActive != null) {
-            return existingActive.toDomainModel()
-        }
-
+    override suspend fun startWorkoutFromGenerated(
+        generated: GeneratedWorkout,
+        userProfile: UserProfile
+    ): WorkoutSession {
         val sessionId = UUID.randomUUID().toString()
         val sessionEntity = WorkoutSessionEntity(
             id = sessionId,
@@ -77,6 +88,7 @@ class OfflineWorkoutRepository(
             completedAtTimestamp = null,
             targetDurationMinutes = generated.estimatedDurationMinutes,
             actualDurationMinutes = 0,
+            weightUnit = userProfile.preferredUnit,
             status = SessionStatus.IN_PROGRESS,
             focusMusclesJson = generated.focusMuscles.joinToString("|||"),
             notes = generated.rationale
@@ -119,13 +131,13 @@ class OfflineWorkoutRepository(
             }
         }
 
-        sessionDao.insertWorkout(
+        return sessionDao.insertWorkoutUnlessActive(
             session = sessionEntity,
             exercises = exerciseEntities,
-            sets = setEntities
-        )
-
-        return getSessionById(sessionId) ?: throw IllegalStateException("Failed to create session")
+            sets = setEntities,
+            expectedProfileId = userProfile.id,
+            expectedProfileRevision = userProfile.revision
+        ).toDomainModel()
     }
 
     override suspend fun logSetCompletion(
@@ -135,12 +147,14 @@ class OfflineWorkoutRepository(
         isCompleted: Boolean
     ) {
         require(setId.isNotBlank()) { "setId must not be blank." }
-        require(reps == null || reps >= 0) { "reps must not be negative." }
+        require(reps == null || reps in 0..MAX_LOGGED_REPS) {
+            "reps must be between zero and $MAX_LOGGED_REPS."
+        }
         require(!isCompleted || (reps != null && reps > 0)) {
             "A completed set must have positive reps."
         }
-        require(weight == null || (weight.isFinite() && weight >= 0.0)) {
-            "weight must be finite and not negative."
+        require(weight == null || (weight.isFinite() && weight in 0.0..MAX_LOGGED_WEIGHT)) {
+            "weight must be finite and between zero and $MAX_LOGGED_WEIGHT."
         }
 
         val affectedRows = setDao.updateSetCompletion(
@@ -149,43 +163,47 @@ class OfflineWorkoutRepository(
             weight = weight,
             isCompleted = isCompleted
         )
-        check(affectedRows == 1) { "Workout set '$setId' was not found." }
+        check(affectedRows == 1) {
+            "Workout set '$setId' was not found or its session is not in progress."
+        }
     }
 
     override suspend fun completeWorkout(sessionId: String, actualDurationMinutes: Int): WorkoutSummary {
         require(sessionId.isNotBlank()) { "sessionId must not be blank." }
         require(actualDurationMinutes > 0) { "actualDurationMinutes must be greater than zero." }
-        val activeSession = getSessionById(sessionId)
-            ?: throw IllegalStateException("Workout session '$sessionId' was not found.")
-        check(activeSession.status == SessionStatus.IN_PROGRESS) {
-            "Workout session '$sessionId' is not in progress."
-        }
-
         val completedTimestamp = System.currentTimeMillis()
-        sessionDao.completeSession(
+        val affectedRows = sessionDao.completeSessionIfActive(
             sessionId = sessionId,
-            status = SessionStatus.COMPLETED,
             completedAt = completedTimestamp,
             actualDuration = actualDurationMinutes
         )
+        check(affectedRows == 1) {
+            "Workout session '$sessionId' was not found or is not in progress."
+        }
 
-        val session = getSessionById(sessionId)
-        val totalSets = session?.completedSetsCount ?: 0
-        val totalVolume = session?.totalVolume ?: 0.0
+        val session = checkNotNull(getSessionById(sessionId)) {
+            "Completed workout session '$sessionId' could not be read back."
+        }
+        val totalSets = session.completedSetsCount
+        val totalVolume = session.totalVolume
 
         return WorkoutSummary(
             sessionId = sessionId,
-            workoutName = session?.name ?: "Workout",
+            workoutName = session.name,
             durationMinutes = actualDurationMinutes,
             totalSetsCompleted = totalSets,
             totalVolume = totalVolume,
             prCount = 0,
+            unit = session.weightUnit,
             completedAtTimestamp = completedTimestamp
         )
     }
 
     override suspend fun cancelWorkout(sessionId: String) {
-        sessionDao.deleteSession(sessionId)
+        require(sessionId.isNotBlank()) { "sessionId must not be blank." }
+        check(sessionDao.deleteActiveSession(sessionId) == 1) {
+            "Workout session '$sessionId' was not found or is not in progress."
+        }
     }
 
     private fun WorkoutSessionWithExercisesAndSets.toDomainModel(): WorkoutSession {
@@ -237,10 +255,18 @@ class OfflineWorkoutRepository(
             completedAtTimestamp = session.completedAtTimestamp,
             targetDurationMinutes = session.targetDurationMinutes,
             actualDurationMinutes = session.actualDurationMinutes,
+            weightUnit = session.weightUnit,
             status = session.status,
             focusMuscles = focusMusclesList,
             exercises = domainExercises,
             notes = session.notes
         )
     }
+
+    private companion object {
+        const val MAX_LOGGED_REPS = 1_000
+        const val MAX_LOGGED_WEIGHT = 100_000.0
+    }
 }
+
+const val DEFAULT_OBSERVED_COMPLETED_SESSIONS = 500

@@ -185,7 +185,6 @@ fun WallCrawlApp(
                     factory = ActiveWorkoutViewModel.provideFactory(
                         sessionId = sessionId,
                         workoutRepository = container.workoutRepository,
-                        userProfileRepository = container.userProfileRepository,
                         exerciseCatalog = container.exerciseCatalog,
                         workoutHistoryAnalyzer = container.workoutHistoryAnalyzer
                     )

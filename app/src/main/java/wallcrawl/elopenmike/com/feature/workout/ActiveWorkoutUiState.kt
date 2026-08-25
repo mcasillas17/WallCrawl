@@ -14,10 +14,11 @@ sealed interface ActiveWorkoutUiState {
         val session: WorkoutSession,
         val currentExerciseIndex: Int = 0,
         val currentCatalogExercise: Exercise? = null,
-        val preferredUnit: WeightUnit = WeightUnit.LBS,
+        val weightUnit: WeightUnit = WeightUnit.LBS,
         val isSaving: Boolean = false,
         val previousSets: List<WorkoutSet> = emptyList(),
-        val previousSessionTimestamp: Long? = null
+        val previousSessionTimestamp: Long? = null,
+        val previousWeightUnit: WeightUnit = WeightUnit.LBS
     ) : ActiveWorkoutUiState {
         val currentExercise: WorkoutExercise?
             get() = session.exercises.getOrNull(currentExerciseIndex)

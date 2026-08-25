@@ -95,6 +95,28 @@ class ProgressCalculatorTest {
     }
 
     @Test
+    fun calculate_convertsMixedSessionWeightsToCurrentDisplayUnit() {
+        val metricSession = session(
+            id = "metric-session",
+            completedAtTimestamp = NOW - DAY_MILLIS,
+            sets = listOf(completedSet(1, 10.0, 10)),
+            weightUnit = WeightUnit.KG
+        )
+
+        val result = calculator.calculate(
+            completedSessions = listOf(metricSession),
+            profile = profile,
+            catalogExercises = exercises,
+            nowTimestamp = NOW
+        )
+
+        assertThat(result.totalVolumeThisWeek)
+            .isWithin(0.001)
+            .of(220.462)
+        assertThat(result.recentHistory.single().weightUnit).isEqualTo(WeightUnit.KG)
+    }
+
+    @Test
     fun calculate_derivesRecentWeightRecordAndStrengthTrend() {
         val previous = session(
             id = "previous",
@@ -130,11 +152,36 @@ class ProgressCalculatorTest {
         assertThat(trend.isPositive).isTrue()
     }
 
+    @Test
+    fun calculate_marksRegressingStrengthTrendAsNegative() {
+        val previous = session(
+            id = "previous",
+            completedAtTimestamp = NOW - (8 * DAY_MILLIS),
+            sets = listOf(completedSet(1, 50.0, 10))
+        )
+        val current = session(
+            id = "current",
+            completedAtTimestamp = NOW - DAY_MILLIS,
+            sets = listOf(completedSet(1, 40.0, 10))
+        )
+
+        val trend = calculator.calculate(
+            completedSessions = listOf(previous, current),
+            profile = profile,
+            catalogExercises = exercises,
+            nowTimestamp = NOW
+        ).strengthTrends.single()
+
+        assertThat(trend.percentageChange).isEqualTo(-20)
+        assertThat(trend.isPositive).isFalse()
+    }
+
     private fun session(
         id: String,
         completedAtTimestamp: Long,
         exerciseId: String = "incline-dumbbell-press",
-        sets: List<WorkoutSet> = listOf(completedSet(1, 45.0, 10))
+        sets: List<WorkoutSet> = listOf(completedSet(1, 45.0, 10)),
+        weightUnit: WeightUnit = WeightUnit.LBS
     ): WorkoutSession {
         val workoutExerciseId = "$id-exercise"
         return WorkoutSession(
@@ -142,6 +189,7 @@ class ProgressCalculatorTest {
             name = "Workout $id",
             completedAtTimestamp = completedAtTimestamp,
             actualDurationMinutes = 45,
+            weightUnit = weightUnit,
             status = SessionStatus.COMPLETED,
             exercises = listOf(
                 WorkoutExercise(

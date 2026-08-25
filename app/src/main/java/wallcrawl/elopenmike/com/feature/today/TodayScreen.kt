@@ -447,6 +447,7 @@ private fun SuggestedWorkoutCard(
         WallCrawlPrimaryButton(
             text = "Start Workout",
             onClick = onStartWorkout,
+            enabled = !isRegenerating,
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.PlayArrow,

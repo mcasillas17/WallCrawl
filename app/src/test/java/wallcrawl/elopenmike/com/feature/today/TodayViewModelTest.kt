@@ -5,6 +5,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -66,7 +67,8 @@ class TodayViewModelTest {
             workoutGenerationContextBuilder = contextBuilder,
             workoutPlanner = planner,
             workoutValidator = GeneratedWorkoutValidator(catalog),
-            nowTimestamp = { now }
+            nowTimestamp = { now },
+            clock = flowOf(now)
         )
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.uiState.collect {}
@@ -100,7 +102,8 @@ class TodayViewModelTest {
             ),
             workoutPlanner = planner,
             workoutValidator = GeneratedWorkoutValidator(catalog),
-            nowTimestamp = { now }
+            nowTimestamp = { now },
+            clock = flowOf(now)
         )
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.uiState.collect {}
@@ -112,6 +115,135 @@ class TodayViewModelTest {
 
         assertThat(planner.generateCalls).isEqualTo(2)
         assertThat(planner.contexts.last().fitnessGoal).isEqualTo(FitnessGoal.STRENGTH)
+    }
+
+    @Test
+    fun startWorkout_afterProfileConstraintChange_neverPersistsStaleExercise() = runTest {
+        val now = 20 * DAY_MILLIS
+        val profileRepository = TodayUserProfileRepository(UserProfile())
+        val workoutRepository = TodayWorkoutRepository(emptyList())
+        val catalog = InMemoryExerciseCatalog()
+        val planner = RecordingWorkoutPlanner()
+        val viewModel = TodayViewModel(
+            userProfileRepository = profileRepository,
+            workoutRepository = workoutRepository,
+            workoutGenerationContextBuilder = WorkoutGenerationContextBuilder(
+                userProfileRepository = profileRepository,
+                workoutRepository = workoutRepository,
+                exerciseCatalog = catalog,
+                exerciseFilter = ExerciseFilter(),
+                historyAnalyzer = WorkoutHistoryAnalyzer(),
+                nowTimestamp = { now }
+            ),
+            workoutPlanner = planner,
+            workoutValidator = GeneratedWorkoutValidator(catalog),
+            nowTimestamp = { now },
+            clock = flowOf(now)
+        )
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiState.collect {}
+        }
+        advanceUntilIdle()
+        val staleExerciseId = planner.contexts.single().allowedExercises.first().id
+
+        profileRepository.updateExcludedExercises(listOf(staleExerciseId))
+        viewModel.startWorkout {}
+        advanceUntilIdle()
+
+        assertThat(workoutRepository.startRequests).isEmpty()
+        assertThat(planner.contexts.last().allowedExercises.map { it.id })
+            .doesNotContain(staleExerciseId)
+
+        viewModel.startWorkout {}
+        advanceUntilIdle()
+
+        assertThat(workoutRepository.startRequests).hasSize(1)
+        assertThat(workoutRepository.startRequests.single().workout.exercises.map { it.exerciseId })
+            .doesNotContain(staleExerciseId)
+    }
+
+    @Test
+    fun startWorkout_persistsTheUnitUsedToGenerateTargets() = runTest {
+        val now = 20 * DAY_MILLIS
+        val profileRepository = TodayUserProfileRepository(
+            UserProfile(preferredUnit = WeightUnit.KG)
+        )
+        val workoutRepository = TodayWorkoutRepository(emptyList())
+        val catalog = InMemoryExerciseCatalog()
+        val viewModel = TodayViewModel(
+            userProfileRepository = profileRepository,
+            workoutRepository = workoutRepository,
+            workoutGenerationContextBuilder = WorkoutGenerationContextBuilder(
+                userProfileRepository = profileRepository,
+                workoutRepository = workoutRepository,
+                exerciseCatalog = catalog,
+                exerciseFilter = ExerciseFilter(),
+                historyAnalyzer = WorkoutHistoryAnalyzer(),
+                nowTimestamp = { now }
+            ),
+            workoutPlanner = RecordingWorkoutPlanner(),
+            workoutValidator = GeneratedWorkoutValidator(catalog),
+            nowTimestamp = { now },
+            clock = flowOf(now)
+        )
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiState.collect {}
+        }
+        advanceUntilIdle()
+
+        viewModel.startWorkout {}
+        advanceUntilIdle()
+
+        assertThat(workoutRepository.startRequests.single().userProfile.preferredUnit)
+            .isEqualTo(WeightUnit.KG)
+    }
+
+    @Test
+    fun completedThisWeek_updatesForNewCompletionsAndMovingClock() = runTest {
+        val now = 20 * DAY_MILLIS
+        val clock = MutableStateFlow(now)
+        val profileRepository = TodayUserProfileRepository(UserProfile())
+        val workoutRepository = TodayWorkoutRepository(
+            listOf(completedSession("recent", now - DAY_MILLIS))
+        )
+        val catalog = InMemoryExerciseCatalog()
+        val viewModel = TodayViewModel(
+            userProfileRepository = profileRepository,
+            workoutRepository = workoutRepository,
+            workoutGenerationContextBuilder = WorkoutGenerationContextBuilder(
+                userProfileRepository = profileRepository,
+                workoutRepository = workoutRepository,
+                exerciseCatalog = catalog,
+                exerciseFilter = ExerciseFilter(),
+                historyAnalyzer = WorkoutHistoryAnalyzer(),
+                nowTimestamp = { now }
+            ),
+            workoutPlanner = RecordingWorkoutPlanner(),
+            workoutValidator = GeneratedWorkoutValidator(catalog),
+            nowTimestamp = { clock.value },
+            clock = clock
+        )
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiState.collect {}
+        }
+        advanceUntilIdle()
+
+        assertThat((viewModel.uiState.value as TodayUiState.Success).completedThisWeek)
+            .isEqualTo(1)
+
+        workoutRepository.addCompletedSession(
+            completedSession("new", now + 1_000L)
+        )
+        advanceUntilIdle()
+
+        assertThat((viewModel.uiState.value as TodayUiState.Success).completedThisWeek)
+            .isEqualTo(2)
+
+        clock.value = now + (8 * DAY_MILLIS)
+        advanceUntilIdle()
+
+        assertThat((viewModel.uiState.value as TodayUiState.Success).completedThisWeek)
+            .isEqualTo(0)
     }
 
     private fun completedSession(id: String, completedAtTimestamp: Long) = WorkoutSession(
@@ -159,37 +291,44 @@ private class TodayUserProfileRepository(
     override fun getUserProfile(): Flow<UserProfile> = profile
     override suspend fun getProfileOnce(): UserProfile = profile.value
     override suspend fun saveUserProfile(profile: UserProfile) {
-        this.profile.value = profile
+        this.profile.update { current -> profile.copy(revision = current.revision + 1L) }
     }
 
     override suspend fun updatePrimaryGoal(goal: FitnessGoal) =
-        profile.update { it.copy(primaryGoal = goal) }
+        updateProfile { it.copy(primaryGoal = goal) }
 
     override suspend fun updateExperienceLevel(level: ExperienceLevel) =
-        profile.update { it.copy(experienceLevel = level) }
+        updateProfile { it.copy(experienceLevel = level) }
 
     override suspend fun updatePreferredDuration(minutes: Int) =
-        profile.update { it.copy(preferredDurationMinutes = minutes) }
+        updateProfile { it.copy(preferredDurationMinutes = minutes) }
 
     override suspend fun updateDaysPerWeek(days: Int) =
-        profile.update { it.copy(daysPerWeek = days) }
+        updateProfile { it.copy(daysPerWeek = days) }
 
     override suspend fun updateEquipment(equipment: List<String>) =
-        profile.update { it.copy(availableEquipment = equipment) }
+        updateProfile { it.copy(availableEquipment = equipment) }
 
     override suspend fun updateUnit(unit: WeightUnit) =
-        profile.update { it.copy(preferredUnit = unit) }
+        updateProfile { it.copy(preferredUnit = unit) }
 
     override suspend fun updateMusclePriorities(priorities: Map<String, PriorityLevel>) =
-        profile.update { it.copy(musclePriorities = priorities) }
+        updateProfile { it.copy(musclePriorities = priorities) }
 
     override suspend fun updateExcludedExercises(excludedIds: List<String>) =
-        profile.update { it.copy(excludedExerciseIds = excludedIds) }
+        updateProfile { it.copy(excludedExerciseIds = excludedIds) }
+
+    private fun updateProfile(transform: (UserProfile) -> UserProfile) {
+        profile.update { current ->
+            transform(current).copy(revision = current.revision + 1L)
+        }
+    }
 }
 
 private class TodayWorkoutRepository(
     completedSessions: List<WorkoutSession>
 ) : WorkoutRepository {
+    val startRequests = mutableListOf<StartWorkoutRequest>()
     private val activeSession = MutableStateFlow<WorkoutSession?>(null)
     private val completed = MutableStateFlow(completedSessions)
 
@@ -199,12 +338,34 @@ private class TodayWorkoutRepository(
         activeSession.value?.takeIf { it.id == sessionId } ?: completed.value.firstOrNull { it.id == sessionId }
 
     override fun observeSession(sessionId: String): Flow<WorkoutSession?> = flowOf(null)
-    override fun observeCompletedSessions(): Flow<List<WorkoutSession>> = completed
+    override fun observeCompletedSessions(limit: Int): Flow<List<WorkoutSession>> = completed
+
+    override fun observeCompletedWorkoutCount(): Flow<Int> = flowOf(completed.value.size)
+
+    override fun observeCompletedWorkoutCountSince(startTimestamp: Long): Flow<Int> =
+        completed.map { sessions ->
+            sessions.count { session ->
+                session.completedAtTimestamp?.let { it >= startTimestamp } == true
+            }
+        }
     override suspend fun getRecentCompletedSessions(limit: Int): List<WorkoutSession> =
         completed.value.sortedByDescending { it.completedAtTimestamp }.take(limit)
 
-    override suspend fun startWorkoutFromGenerated(generated: GeneratedWorkout): WorkoutSession =
-        error("Not used")
+    override suspend fun startWorkoutFromGenerated(
+        generated: GeneratedWorkout,
+        userProfile: UserProfile
+    ): WorkoutSession {
+        startRequests += StartWorkoutRequest(generated, userProfile)
+        return WorkoutSession(
+            id = "started-session",
+            name = generated.name,
+            weightUnit = userProfile.preferredUnit
+        )
+    }
+
+    fun addCompletedSession(session: WorkoutSession) {
+        completed.update { it + session }
+    }
 
     override suspend fun logSetCompletion(
         setId: String,
@@ -220,3 +381,8 @@ private class TodayWorkoutRepository(
 
     override suspend fun cancelWorkout(sessionId: String) = Unit
 }
+
+private data class StartWorkoutRequest(
+    val workout: GeneratedWorkout,
+    val userProfile: UserProfile
+)

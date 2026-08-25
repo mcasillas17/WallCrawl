@@ -151,11 +151,21 @@ private class StubWorkoutRepository(
     override suspend fun getActiveSessionOnce(): WorkoutSession? = null
     override suspend fun getSessionById(sessionId: String): WorkoutSession? = null
     override fun observeSession(sessionId: String): Flow<WorkoutSession?> = flowOf(null)
-    override fun observeCompletedSessions(): Flow<List<WorkoutSession>> = flowOf(completedSessions)
+    override fun observeCompletedSessions(limit: Int): Flow<List<WorkoutSession>> =
+        flowOf(completedSessions.take(limit))
+
+    override fun observeCompletedWorkoutCount(): Flow<Int> = flowOf(completedSessions.size)
+
+    override fun observeCompletedWorkoutCountSince(startTimestamp: Long): Flow<Int> = flowOf(
+        completedSessions.count { (it.completedAtTimestamp ?: Long.MIN_VALUE) >= startTimestamp }
+    )
     override suspend fun getRecentCompletedSessions(limit: Int): List<WorkoutSession> =
         completedSessions.sortedByDescending { it.completedAtTimestamp }.take(limit)
 
-    override suspend fun startWorkoutFromGenerated(generated: GeneratedWorkout): WorkoutSession =
+    override suspend fun startWorkoutFromGenerated(
+        generated: GeneratedWorkout,
+        userProfile: UserProfile
+    ): WorkoutSession =
         error("Not used")
 
     override suspend fun logSetCompletion(

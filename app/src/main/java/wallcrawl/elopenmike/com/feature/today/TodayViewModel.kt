@@ -9,47 +9,57 @@ import wallcrawl.elopenmike.com.core.ai.WorkoutPlanner
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
-import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class TodayViewModel(
     private val userProfileRepository: UserProfileRepository,
     private val workoutRepository: WorkoutRepository,
     private val workoutGenerationContextBuilder: WorkoutGenerationContextBuilder,
     private val workoutPlanner: WorkoutPlanner,
     private val workoutValidator: GeneratedWorkoutValidator,
-    private val nowTimestamp: () -> Long = System::currentTimeMillis
+    nowTimestamp: () -> Long = System::currentTimeMillis,
+    clock: Flow<Long> = minuteClock(nowTimestamp)
 ) : ViewModel() {
 
     private val generatedWorkoutFlow = MutableStateFlow<GeneratedWorkout?>(null)
+    private val generatedForProfileFlow = MutableStateFlow<UserProfile?>(null)
     private val isRegeneratingFlow = MutableStateFlow(false)
     private val errorFlow = MutableStateFlow<String?>(null)
     private var generationJob: Job? = null
     private var hasPendingRegeneration = false
 
+    private val completedThisWeekFlow = clock.flatMapLatest { currentTimestamp ->
+        workoutRepository.observeCompletedWorkoutCountSince(
+            startTimestamp = currentTimestamp - WEEK_MILLIS
+        )
+    }
+
     private val sourceStateFlow = combine(
         userProfileRepository.getUserProfile(),
         workoutRepository.observeActiveSession(),
-        workoutRepository.observeCompletedSessions()
-    ) { profile, activeSession, completedSessions ->
+        completedThisWeekFlow
+    ) { profile, activeSession, completedThisWeek ->
         TodaySourceState(
             userProfile = profile,
             activeSession = activeSession,
-            completedThisWeek = completedSessions.count { session ->
-                val completedAt = session.completedAtTimestamp
-                val age = completedAt?.let { nowTimestamp() - it }
-                session.status == SessionStatus.COMPLETED && age != null && age in 0 until WEEK_MILLIS
-            }
+            completedThisWeek = completedThisWeek
         )
     }
 
@@ -104,9 +114,12 @@ class TodayViewModel(
                 hasPendingRegeneration = false
                 isRegeneratingFlow.value = currentRequestIsRegeneration
                 try {
-                    val newWorkout = buildAndValidateWorkout()
-                    generatedWorkoutFlow.value = newWorkout
+                    val generatedResult = buildAndValidateWorkout()
+                    generatedWorkoutFlow.value = generatedResult.workout
+                    generatedForProfileFlow.value = generatedResult.profile
                     errorFlow.value = null
+                } catch (e: CancellationException) {
+                    throw e
                 } catch (e: Exception) {
                     errorFlow.value = e.message ?: if (currentRequestIsRegeneration) {
                         "Failed to regenerate workout."
@@ -122,22 +135,37 @@ class TodayViewModel(
     }
 
     fun startWorkout(onWorkoutStarted: (sessionId: String) -> Unit) {
+        if (generationJob?.isActive == true) return
         viewModelScope.launch {
             val currentWorkout = generatedWorkoutFlow.value ?: return@launch
             try {
-                val session = workoutRepository.startWorkoutFromGenerated(currentWorkout)
+                val currentContext = workoutGenerationContextBuilder.build()
+                check(generatedForProfileFlow.value == currentContext.userProfile) {
+                    "Workout recommendation is being updated for the current profile."
+                }
+                val allowedIds = currentContext.allowedExercises.map { it.id }.toSet()
+                workoutValidator.validate(currentWorkout, allowedIds)
+                val session = workoutRepository.startWorkoutFromGenerated(
+                    generated = currentWorkout,
+                    userProfile = currentContext.userProfile
+                )
                 onWorkoutStarted(session.id)
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 errorFlow.value = "Failed to start workout session: ${e.message}"
             }
         }
     }
 
-    private suspend fun buildAndValidateWorkout(): GeneratedWorkout {
+    private suspend fun buildAndValidateWorkout(): GeneratedWorkoutResult {
         val context = workoutGenerationContextBuilder.build()
         val generated = workoutPlanner.generateWorkout(context)
         val allowedIds = context.allowedExercises.map { it.id }.toSet()
-        return workoutValidator.validate(generated, allowedIds)
+        return GeneratedWorkoutResult(
+            workout = workoutValidator.validate(generated, allowedIds),
+            profile = context.userProfile
+        )
     }
 
     companion object {
@@ -168,4 +196,18 @@ class TodayViewModel(
         val activeSession: WorkoutSession?,
         val completedThisWeek: Int
     )
+
+    private data class GeneratedWorkoutResult(
+        val workout: GeneratedWorkout,
+        val profile: UserProfile
+    )
 }
+
+private fun minuteClock(nowTimestamp: () -> Long): Flow<Long> = flow {
+    while (true) {
+        emit(nowTimestamp())
+        delay(MINUTE_MILLIS)
+    }
+}
+
+private const val MINUTE_MILLIS = 60_000L

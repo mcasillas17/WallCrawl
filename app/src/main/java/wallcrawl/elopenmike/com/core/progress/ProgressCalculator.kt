@@ -9,8 +9,10 @@ import wallcrawl.elopenmike.com.core.model.RecordType
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.StrengthTrend
 import wallcrawl.elopenmike.com.core.model.UserProfile
+import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
+import wallcrawl.elopenmike.com.core.model.convertWeight
 
 /** Calculates user-visible progress exclusively from persisted completed workout data. */
 class ProgressCalculator {
@@ -21,7 +23,7 @@ class ProgressCalculator {
         catalogExercises: List<Exercise>,
         nowTimestamp: Long
     ): ProgressOverview {
-        val sessions = completedSessions
+        val persistedSessions = completedSessions
             .filter { session ->
                 val completedAt = session.completedAtTimestamp
                 session.status == SessionStatus.COMPLETED &&
@@ -29,6 +31,9 @@ class ProgressCalculator {
                     completedAt <= nowTimestamp
             }
             .sortedByDescending { it.completedAtTimestamp }
+        val sessions = persistedSessions.map { session ->
+            session.convertWeightsTo(profile.preferredUnit)
+        }
         val catalogById = catalogExercises.associateBy { it.id }
         val thisWeek = sessions.filter { session ->
             val age = nowTimestamp - requireNotNull(session.completedAtTimestamp)
@@ -60,7 +65,7 @@ class ProgressCalculator {
                 catalogById = catalogById,
                 unit = profile.preferredUnit.symbol
             ),
-            recentHistory = sessions.take(MAX_RECENT_HISTORY)
+            recentHistory = persistedSessions.take(MAX_RECENT_HISTORY)
         )
     }
 
@@ -240,8 +245,33 @@ class ProgressCalculator {
     private fun validCompletedVolume(session: WorkoutSession): Double = session.exercises.sumOf { exercise ->
         exercise.sets
             .filter { it.isValidCompletedSet() }
-            .sumOf { set -> (set.completedWeight ?: 0.0) * (set.completedReps ?: 0) }
+            .sumOf { set ->
+                ((set.completedWeight ?: 0.0) * (set.completedReps ?: 0))
+                    .takeIf(Double::isFinite)
+                    ?: 0.0
+            }
     }
+
+    private fun WorkoutSession.convertWeightsTo(targetUnit: WeightUnit): WorkoutSession {
+        if (weightUnit == targetUnit) return this
+        return copy(
+            weightUnit = targetUnit,
+            exercises = exercises.map { exercise ->
+                exercise.copy(
+                    targetWeight = exercise.targetWeight.convertIfValid(weightUnit, targetUnit),
+                    sets = exercise.sets.map { set ->
+                        set.copy(
+                            targetWeight = set.targetWeight.convertIfValid(weightUnit, targetUnit),
+                            completedWeight = set.completedWeight.convertIfValid(weightUnit, targetUnit)
+                        )
+                    }
+                )
+            }
+        )
+    }
+
+    private fun Double?.convertIfValid(from: WeightUnit, to: WeightUnit): Double? =
+        this?.takeIf { it.isFinite() && it >= 0.0 }?.let { convertWeight(it, from, to) }
 
     private fun WorkoutSet.isValidCompletedSet(): Boolean =
         isCompleted &&
