@@ -35,7 +35,7 @@
 - Consumes: `UserProfileRepository.getProfileOnce()`, `WorkoutRepository.getRecentCompletedSessions(limit)`, `ExerciseCatalog.getAllExercises()`, `ExerciseFilter.filterCandidates(...)`.
 - Produces: `WorkoutHistoryAnalyzer.exerciseHistory(sessions)`, `WorkoutHistoryAnalyzer.recentlyTrainedMuscles(sessions, now)`, and `WorkoutGenerationContextBuilder.build()`.
 
-- [ ] **Step 1: Write failing analyzer tests**
+- [x] **Step 1: Write failing analyzer tests**
 
 ```kotlin
 @Test fun exerciseHistory_usesLatestCompletedPerformanceAndBestEstimatedOneRepMax() {
@@ -50,11 +50,11 @@
 }
 ```
 
-- [ ] **Step 2: Run analyzer tests and confirm they fail because the analyzer is absent**
+- [x] **Step 2: Run analyzer tests and confirm they fail because the analyzer is absent**
 
 Run: `./gradlew testDebugUnitTest --tests '*WorkoutHistoryAnalyzerTest'`
 
-- [ ] **Step 3: Implement the pure analyzer and re-run its tests**
+- [x] **Step 3: Implement the pure analyzer and re-run its tests**
 
 ```kotlin
 class WorkoutHistoryAnalyzer {
@@ -67,7 +67,7 @@ class WorkoutHistoryAnalyzer {
 }
 ```
 
-- [ ] **Step 4: Write a failing context-builder test**
+- [x] **Step 4: Write a failing context-builder test**
 
 ```kotlin
 @Test fun build_filtersCandidatesAndIncludesPersistedHistory() = runTest {
@@ -78,7 +78,7 @@ class WorkoutHistoryAnalyzer {
 }
 ```
 
-- [ ] **Step 5: Add `getRecentCompletedSessions`, implement the builder, wire the container, and re-run both tests**
+- [x] **Step 5: Add `getRecentCompletedSessions`, implement the builder, wire the container, and re-run both tests**
 
 ```kotlin
 interface WorkoutRepository {
@@ -97,7 +97,7 @@ class WorkoutGenerationContextBuilder(
 }
 ```
 
-- [ ] **Step 6: Commit the history/context boundary**
+- [x] **Step 6: Commit the history/context boundary**
 
 ```bash
 git add app/src/main app/src/test
@@ -117,7 +117,7 @@ git commit -m "feat: build workout context from persisted history"
 - Consumes: existing Room entities and DAOs.
 - Produces: `WorkoutSessionDao.insertWorkout(...)` transaction and repository validation guarantees.
 
-- [ ] **Step 1: Add failing validator tests for non-finite/negative weight, excessive sets/reps, invalid rest, blank title, and duration**
+- [x] **Step 1: Add failing validator tests for non-finite/negative weight, excessive sets/reps, invalid rest, blank title, and duration**
 
 ```kotlin
 @Test fun validate_negativeTargetWeight_throwsException() = runTest {
@@ -126,11 +126,11 @@ git commit -m "feat: build workout context from persisted history"
 }
 ```
 
-- [ ] **Step 2: Run the validator test and confirm the new cases fail**
+- [x] **Step 2: Run the validator test and confirm the new cases fail**
 
 Run: `./gradlew testDebugUnitTest --tests '*GeneratedWorkoutValidatorTest'`
 
-- [ ] **Step 3: Implement the minimal numeric/title/duration checks and re-run the validator tests**
+- [x] **Step 3: Implement the minimal numeric/title/duration checks and re-run the validator tests**
 
 ```kotlin
 requireValidation(workout.name.isNotBlank(), "Generated workout has a blank name.")
@@ -141,7 +141,7 @@ requireValidation(exercise.targetWeight == null || (exercise.targetWeight.isFini
 requireValidation(exercise.restSeconds in 0..1800, "Invalid rest period.")
 ```
 
-- [ ] **Step 4: Add failing repository tests for invalid set input and unknown completion**
+- [x] **Step 4: Add failing repository tests for invalid set input and unknown completion**
 
 ```kotlin
 @Test fun logSetCompletion_completedSetWithoutPositiveReps_isRejected() = runTest {
@@ -151,7 +151,7 @@ requireValidation(exercise.restSeconds in 0..1800, "Invalid rest period.")
 }
 ```
 
-- [ ] **Step 5: Add the transaction DAO method and repository guards, then re-run repository tests**
+- [x] **Step 5: Add the transaction DAO method and repository guards, then re-run repository tests**
 
 ```kotlin
 @Transaction
@@ -166,7 +166,7 @@ suspend fun insertWorkout(
 }
 ```
 
-- [ ] **Step 6: Commit persistence hardening**
+- [x] **Step 6: Commit persistence hardening**
 
 ```bash
 git add app/src/main app/src/test
@@ -188,7 +188,7 @@ git commit -m "fix: make workout persistence atomic and validated"
 - Consumes: completed `WorkoutSession` values, `UserProfile`, and catalog exercises.
 - Produces: real `ProgressOverview` and structured previous completed sets in active state.
 
-- [ ] **Step 1: Write failing progress tests for empty history, weekly counts/volume/muscle sets, streaks, and trends**
+- [x] **Step 1: Write failing progress tests for empty history, weekly counts/volume/muscle sets, streaks, and trends**
 
 ```kotlin
 @Test fun calculate_emptyHistory_returnsZeroOverview() {
@@ -199,11 +199,11 @@ git commit -m "fix: make workout persistence atomic and validated"
 }
 ```
 
-- [ ] **Step 2: Run and confirm failure because `ProgressCalculator` is absent**
+- [x] **Step 2: Run and confirm failure because `ProgressCalculator` is absent**
 
 Run: `./gradlew testDebugUnitTest --tests '*ProgressCalculatorTest'`
 
-- [ ] **Step 3: Implement calculations and re-run focused tests**
+- [x] **Step 3: Implement calculations and re-run focused tests**
 
 ```kotlin
 class ProgressCalculator {
@@ -216,11 +216,11 @@ class ProgressCalculator {
 }
 ```
 
-- [ ] **Step 4: Wire `ProgressViewModel` to completed sessions/profile/catalog and remove repository sample analytics**
+- [x] **Step 4: Wire `ProgressViewModel` to completed sessions/profile/catalog and remove repository sample analytics**
 
 Run: `./gradlew testDebugUnitTest`
 
-- [ ] **Step 5: Change active state to carry `previousSets: List<WorkoutSet>` and derive the latest prior exercise from completed sessions**
+- [x] **Step 5: Change active state to carry `previousSets: List<WorkoutSet>` and derive the latest prior exercise from completed sessions**
 
 ```kotlin
 data class Active(
@@ -234,7 +234,7 @@ data class Active(
 )
 ```
 
-- [ ] **Step 6: Render previous actual values from structured sets and commit**
+- [x] **Step 6: Render previous actual values from structured sets and commit**
 
 ```bash
 git add app/src/main app/src/test
@@ -255,7 +255,7 @@ git commit -m "feat: derive progress and exercise history from workouts"
 - Consumes: `WorkoutGenerationContextBuilder.build()` and completed-session Flow.
 - Produces: one guarded generation at a time, real weekly count, and history-aware target load.
 
-- [ ] **Step 1: Write a failing planner test showing that completed top-range reps increase the prior load**
+- [x] **Step 1: Write a failing planner test showing that completed top-range reps increase the prior load**
 
 ```kotlin
 @Test fun generateWorkout_whenLastPerformanceHitTopRange_increasesTargetWeight() = runTest {
@@ -265,9 +265,9 @@ git commit -m "feat: derive progress and exercise history from workouts"
 }
 ```
 
-- [ ] **Step 2: Run the test, implement the minimal unit-aware progression fallback, and re-run it**
+- [x] **Step 2: Run the test, implement the minimal unit-aware progression fallback, and re-run it**
 
-- [ ] **Step 3: Write a failing Today ViewModel test asserting one initial build and actual weekly count**
+- [x] **Step 3: Write a failing Today ViewModel test asserting one initial build and actual weekly count**
 
 ```kotlin
 @Test fun uiState_generatesOnceAndUsesCompletedSessionsThisWeek() = runTest {
@@ -277,9 +277,9 @@ git commit -m "feat: derive progress and exercise history from workouts"
 }
 ```
 
-- [ ] **Step 4: Refactor generation out of the Flow transform, inject the builder, and re-run focused tests**
+- [x] **Step 4: Refactor generation out of the Flow transform, inject the builder, and re-run focused tests**
 
-- [ ] **Step 5: Run all unit tests and commit**
+- [x] **Step 5: Run all unit tests and commit**
 
 ```bash
 git add app/src/main app/src/test
@@ -307,7 +307,7 @@ git commit -m "feat: feed workout history into daily planning"
 **Interfaces:**
 - Produces: `ExerciseVisualProvider.framesFor(exerciseId): List<ExerciseVisual>` and `ExerciseIllustration(exerciseId, exerciseName, visualProvider, modifier)`.
 
-- [ ] **Step 1: Write failing provider mapping tests**
+- [x] **Step 1: Write failing provider mapping tests**
 
 ```kotlin
 @Test fun framesFor_mapsWallCrawlIdToPinnedWorkoutGuideAssets() {
@@ -320,11 +320,11 @@ git commit -m "feat: feed workout history into daily planning"
 }
 ```
 
-- [ ] **Step 2: Run the provider test and confirm it fails because the abstraction is absent**
+- [x] **Step 2: Run the provider test and confirm it fails because the abstraction is absent**
 
-- [ ] **Step 3: Implement provider descriptors/mappings and re-run the test**
+- [x] **Step 3: Implement provider descriptors/mappings and re-run the test**
 
-- [ ] **Step 4: Add verified Coil Compose/SVG dependencies and implement tasteful `1 → 2 → 3 → 2` local-asset rendering with fallback**
+- [x] **Step 4: Add verified Coil Compose/SVG dependencies and implement tasteful `1 → 2 → 3 → 2` local-asset rendering with fallback**
 
 ```kotlin
 interface ExerciseVisualProvider {
@@ -334,9 +334,9 @@ interface ExerciseVisualProvider {
 data class ExerciseVisual(val assetPath: String)
 ```
 
-- [ ] **Step 5: Copy the nine pinned upstream SVGs without modification and add license, attribution, and provenance notice**
+- [x] **Step 5: Copy the nine pinned upstream SVGs without modification and add license, attribution, and provenance notice**
 
-- [ ] **Step 6: Remove raw `imageFrames` from the exercise domain model, wire the provider through screens, build the APK, and commit**
+- [x] **Step 6: Remove raw `imageFrames` from the exercise domain model, wire the provider through screens, build the APK, and commit**
 
 ```bash
 git add app/src/main app/src/test app/build.gradle.kts gradle/libs.versions.toml
@@ -352,21 +352,21 @@ git commit -m "feat: render bundled Workout Guide exercise frames"
 **Interfaces:**
 - Documents the completed feedback loop, visual abstraction, pinned upstream subset, and local build environment.
 
-- [ ] **Step 1: Update README claims so implemented and roadmap features are separated accurately**
+- [x] **Step 1: Update README claims so implemented and roadmap features are separated accurately**
 
-- [ ] **Step 2: Run focused tests for all new domain boundaries**
+- [x] **Step 2: Run focused tests for all new domain boundaries**
 
 Run: `./gradlew testDebugUnitTest --tests '*WorkoutHistoryAnalyzerTest' --tests '*WorkoutGenerationContextBuilderTest' --tests '*ProgressCalculatorTest' --tests '*WorkoutGuideVisualProviderTest'`
 
-- [ ] **Step 3: Run the complete JVM suite and build the debug APK**
+- [x] **Step 3: Run the complete JVM suite and build the debug APK**
 
 Run: `./gradlew testDebugUnitTest assembleDebug`
 
-- [ ] **Step 4: Run lint and inspect any failures/warnings**
+- [x] **Step 4: Run lint and inspect any failures/warnings**
 
 Run: `./gradlew lintDebug`
 
-- [ ] **Step 5: Verify bundled assets/provenance and inspect the final diff**
+- [x] **Step 5: Verify bundled assets/provenance and inspect the final diff**
 
 ```bash
 find app/src/main/assets/workout-guide -type f | sort
@@ -374,7 +374,7 @@ git diff --check
 git status --short
 ```
 
-- [ ] **Step 6: Commit documentation and verification-safe cleanup**
+- [x] **Step 6: Commit documentation and verification-safe cleanup**
 
 ```bash
 git add README.md

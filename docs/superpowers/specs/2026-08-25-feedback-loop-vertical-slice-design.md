@@ -49,7 +49,7 @@ The active workout screen receives the most recent completed sets for the curren
 
 Room session, exercise, and set inserts are grouped behind one `@Transaction` DAO operation. Repository methods validate structurally invalid logging input before it reaches Room. Completing an unknown or already-completed session is rejected rather than fabricating a summary.
 
-The stored schema already retains target and actual reps/weight, RPE/RIR, completion state, exercise IDs, order, timestamps, focus muscles, and duration. No schema migration is required for this slice.
+The stored schema retains target and actual reps/weight, RPE/RIR, completion state, exercise IDs, order, timestamps, focus muscles, and duration. Schema migrations add the weight unit used by each session and a transactional user-profile revision. Workout creation checks that revision inside the same Room transaction that inserts the session, preventing a recommendation based on stale equipment or exclusions from being persisted.
 
 ## Workout Guide Visual Proof
 
@@ -69,7 +69,7 @@ The bundled subset includes the upstream asset license and attribution plus a lo
 
 `TodayViewModel` performs initial generation from `init` with a guarded coroutine instead of launching work inside a Flow transform. Profile changes trigger a deliberate regeneration after the previous build completes. Existing active sessions remain the repository source of truth and continue surviving navigation/process recreation through Room.
 
-`ActiveWorkoutViewModel` combines the observed session, profile, catalog lookup, and completed-session history. Exercise index is clamped when persisted session contents change. Set writes remain asynchronous but Room observations refresh the displayed session.
+`ActiveWorkoutViewModel` combines the observed session, catalog lookup, and bounded completed-session history. Exercise index is clamped when persisted session contents change. Set writes remain asynchronous but Room observations refresh the displayed session, and terminal persisted state takes precedence over delayed write errors.
 
 ## Errors and Boundaries
 
@@ -81,9 +81,9 @@ The bundled subset includes the upstream asset license and attribution plus a lo
 
 ## Testing
 
-JVM tests cover history summarization, context construction, planner use of prior performance, validator numeric boundaries, real progress calculations, repository validation, and provider mappings. Existing tests remain green. Gradle verification includes the focused test classes, all debug unit tests, a debug APK build, and lint where the existing project supports it.
+JVM tests cover history summarization, context construction, planner use of prior performance, validator numeric boundaries, real progress calculations, repository validation, and provider mappings. Android instrumentation tests exercise concurrent starts, terminal-state write rejection, and stale-profile revision rejection against an in-memory Room database. Gradle verification includes all debug unit and connected tests, a debug APK build, and lint.
 
-The visual renderer itself is verified by compilation and bundled-asset inspection in this pass; pixel/UI instrumentation tests are deferred until the project has an Android test harness.
+The visual renderer itself is verified by compilation, bundled-asset inspection, and emulator smoke testing; pixel-level UI assertions remain deferred.
 
 ## Out of Scope
 
