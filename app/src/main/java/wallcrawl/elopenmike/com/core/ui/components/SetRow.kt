@@ -62,7 +62,7 @@ fun SetRow(
 
     var repsText by remember(set.id, set.completedReps, set.targetReps) {
         val initialVal = set.completedReps ?: set.targetReps
-        mutableStateOf(if (initialVal != null && initialVal > 0) initialVal.toString() else "")
+        mutableStateOf(initialVal.takeIf { it > 0 }?.toString().orEmpty())
     }
 
     val isCompleted = set.isCompleted

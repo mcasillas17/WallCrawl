@@ -125,8 +125,10 @@ class ActiveWorkoutViewModel(
         viewModelScope.launch {
             val currentState = uiState.value as? ActiveWorkoutUiState.Active ?: return@launch
             try {
-                val elapsedMinutes = ((System.currentTimeMillis() - currentState.session.startedAtTimestamp) / (60 * 1000)).toInt()
-                    .coerceAtLeast(currentState.session.targetDurationMinutes)
+                val elapsedMinutes = elapsedWorkoutMinutes(
+                    startedAtTimestamp = currentState.session.startedAtTimestamp,
+                    nowTimestamp = System.currentTimeMillis()
+                )
                 val summary = workoutRepository.completeWorkout(sessionId, elapsedMinutes)
                 completedSummaryFlow.value = summary
             } catch (e: Exception) {
@@ -172,4 +174,19 @@ class ActiveWorkoutViewModel(
         val profile: wallcrawl.elopenmike.com.core.model.UserProfile,
         val completedSessions: List<WorkoutSession>
     )
+}
+
+internal fun elapsedWorkoutMinutes(
+    startedAtTimestamp: Long,
+    nowTimestamp: Long
+): Int {
+    val elapsedMillis = if (startedAtTimestamp < 0 || nowTimestamp <= startedAtTimestamp) {
+        0L
+    } else {
+        nowTimestamp - startedAtTimestamp
+    }
+    return (elapsedMillis / 60_000L)
+        .coerceAtMost(Int.MAX_VALUE.toLong())
+        .toInt()
+        .coerceAtLeast(1)
 }
