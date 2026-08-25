@@ -147,7 +147,9 @@ fun WallCrawlApp(
                 val progressViewModel: ProgressViewModel = viewModel(
                     factory = ProgressViewModel.provideFactory(
                         workoutRepository = container.workoutRepository,
-                        userProfileRepository = container.userProfileRepository
+                        userProfileRepository = container.userProfileRepository,
+                        exerciseCatalog = container.exerciseCatalog,
+                        progressCalculator = container.progressCalculator
                     )
                 )
                 ProgressScreen(viewModel = progressViewModel)
@@ -182,7 +184,8 @@ fun WallCrawlApp(
                         sessionId = sessionId,
                         workoutRepository = container.workoutRepository,
                         userProfileRepository = container.userProfileRepository,
-                        exerciseCatalog = container.exerciseCatalog
+                        exerciseCatalog = container.exerciseCatalog,
+                        workoutHistoryAnalyzer = container.workoutHistoryAnalyzer
                     )
                 )
                 ActiveWorkoutScreen(

@@ -12,7 +12,6 @@ import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
-import wallcrawl.elopenmike.com.core.model.ProgressOverview
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
@@ -172,6 +171,4 @@ private class StubWorkoutRepository(
     ): WorkoutSummary = error("Not used")
 
     override suspend fun cancelWorkout(sessionId: String) = Unit
-    override fun observeProgressOverview(preferredUnit: WeightUnit): Flow<ProgressOverview> =
-        flowOf(ProgressOverview())
 }

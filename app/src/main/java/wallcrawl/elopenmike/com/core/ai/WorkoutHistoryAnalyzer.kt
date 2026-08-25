@@ -73,6 +73,35 @@ class WorkoutHistoryAnalyzer {
             .toList()
     }
 
+    fun latestCompletedExercisePerformance(
+        sessions: List<WorkoutSession>,
+        exerciseId: String
+    ): CompletedExercisePerformance? {
+        require(exerciseId.isNotBlank()) { "exerciseId must not be blank." }
+
+        return sessions
+            .asSequence()
+            .filter { it.status == SessionStatus.COMPLETED && it.completedAtTimestamp != null }
+            .sortedByDescending { it.completedAtTimestamp }
+            .mapNotNull { session ->
+                val completedSets = session.exercises
+                    .firstOrNull { it.exerciseId == exerciseId }
+                    ?.sets
+                    ?.completedPerformanceSets()
+                    ?.sortedBy { it.setNumber }
+                    .orEmpty()
+                if (completedSets.isEmpty()) {
+                    null
+                } else {
+                    CompletedExercisePerformance(
+                        sessionCompletedAtTimestamp = requireNotNull(session.completedAtTimestamp),
+                        sets = completedSets
+                    )
+                }
+            }
+            .firstOrNull()
+    }
+
     private fun List<WorkoutSet>.completedPerformanceSets(): List<WorkoutSet> =
         filter { set ->
             set.isCompleted &&
@@ -100,3 +129,8 @@ class WorkoutHistoryAnalyzer {
         const val HOUR_MILLIS = 60 * 60 * 1_000L
     }
 }
+
+data class CompletedExercisePerformance(
+    val sessionCompletedAtTimestamp: Long,
+    val sets: List<WorkoutSet>
+)

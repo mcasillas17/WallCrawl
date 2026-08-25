@@ -33,6 +33,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
+import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.ui.components.ExerciseVisual
 import wallcrawl.elopenmike.com.core.ui.components.SetRow
 import wallcrawl.elopenmike.com.core.ui.components.StatBadge
@@ -52,6 +53,9 @@ import wallcrawl.elopenmike.com.core.ui.theme.TextPrimary
 import wallcrawl.elopenmike.com.core.ui.theme.TextSecondary
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
 import wallcrawl.elopenmike.com.core.ui.theme.WebBlueAccent
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun ActiveWorkoutScreen(
@@ -190,14 +194,19 @@ private fun ActiveWorkoutContent(
                 item {
                     ExerciseHeaderCard(
                         workoutExercise = currentExercise,
+                        exerciseName = state.currentCatalogExercise?.name,
                         preferredUnit = state.preferredUnit.symbol
                     )
                 }
 
                 // 3. Previous Performance Reference Card
-                if (state.previousHistory.isNotEmpty()) {
+                if (state.previousSets.isNotEmpty()) {
                     item {
-                        PreviousPerformanceCard(history = state.previousHistory)
+                        PreviousPerformanceCard(
+                            sets = state.previousSets,
+                            completedAtTimestamp = state.previousSessionTimestamp,
+                            weightUnit = state.preferredUnit.symbol
+                        )
                     }
                 }
 
@@ -297,9 +306,10 @@ private fun ActiveWorkoutContent(
 @Composable
 private fun ExerciseHeaderCard(
     workoutExercise: WorkoutExercise,
+    exerciseName: String?,
     preferredUnit: String
 ) {
-    val cleanName = workoutExercise.exerciseId
+    val displayName = exerciseName ?: workoutExercise.exerciseId
         .split("-")
         .joinToString(" ") { it.replaceFirstChar { char -> char.uppercase() } }
 
@@ -309,7 +319,7 @@ private fun ExerciseHeaderCard(
         backgroundColor = GraphiteSurfaceElevated
     ) {
         Text(
-            text = cleanName,
+            text = displayName,
             fontSize = 20.sp,
             fontWeight = FontWeight.Black,
             color = TextWhite
@@ -339,7 +349,9 @@ private fun ExerciseHeaderCard(
 
 @Composable
 private fun PreviousPerformanceCard(
-    history: List<String>
+    sets: List<WorkoutSet>,
+    completedAtTimestamp: Long?,
+    weightUnit: String
 ) {
     WallCrawlCard(
         cornerRadius = 12.dp,
@@ -363,11 +375,28 @@ private fun PreviousPerformanceCard(
             )
         }
 
+        completedAtTimestamp?.let { timestamp ->
+            Text(
+                text = SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(Date(timestamp)),
+                fontSize = 11.sp,
+                color = TextMuted
+            )
+        }
+
         Spacer(modifier = Modifier.height(6.dp))
 
-        history.forEach { entry ->
+        sets.forEach { set ->
+            val reps = set.completedReps ?: return@forEach
+            val weightLabel = set.completedWeight?.let { weight ->
+                val displayWeight = if (weight % 1.0 == 0.0) {
+                    weight.toInt().toString()
+                } else {
+                    weight.toString()
+                }
+                "$displayWeight $weightUnit"
+            } ?: "Bodyweight"
             Text(
-                text = "• $entry",
+                text = "• $weightLabel × $reps",
                 fontSize = 13.sp,
                 color = TextSecondary
             )

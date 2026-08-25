@@ -126,6 +126,35 @@ class WorkoutHistoryAnalyzerTest {
         assertThat(muscles).containsExactly("Chest", "Triceps").inOrder()
     }
 
+    @Test
+    fun latestCompletedExercisePerformance_returnsStructuredSetsFromNewestMatchingSession() {
+        val older = completedSession(
+            id = "older",
+            completedAtTimestamp = 1_000L,
+            exerciseId = "incline-dumbbell-press",
+            sets = listOf(completedSet("older-set", 1, weight = 45.0, reps = 10))
+        )
+        val newer = completedSession(
+            id = "newer",
+            completedAtTimestamp = 2_000L,
+            exerciseId = "incline-dumbbell-press",
+            sets = listOf(
+                completedSet("newer-set-1", 1, weight = 50.0, reps = 9),
+                completedSet("newer-set-2", 2, weight = 50.0, reps = 8)
+            )
+        )
+
+        val performance = analyzer.latestCompletedExercisePerformance(
+            sessions = listOf(older, newer),
+            exerciseId = "incline-dumbbell-press"
+        )
+
+        assertThat(performance?.sessionCompletedAtTimestamp).isEqualTo(2_000L)
+        assertThat(performance?.sets?.map { it.id })
+            .containsExactly("newer-set-1", "newer-set-2")
+            .inOrder()
+    }
+
     private fun completedSession(
         id: String,
         completedAtTimestamp: Long,

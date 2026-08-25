@@ -4,6 +4,7 @@ import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
+import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.model.WorkoutSummary
 
 sealed interface ActiveWorkoutUiState {
@@ -15,7 +16,8 @@ sealed interface ActiveWorkoutUiState {
         val currentCatalogExercise: Exercise? = null,
         val preferredUnit: WeightUnit = WeightUnit.LBS,
         val isSaving: Boolean = false,
-        val previousHistory: List<String> = emptyList()
+        val previousSets: List<WorkoutSet> = emptyList(),
+        val previousSessionTimestamp: Long? = null
     ) : ActiveWorkoutUiState {
         val currentExercise: WorkoutExercise?
             get() = session.exercises.getOrNull(currentExerciseIndex)

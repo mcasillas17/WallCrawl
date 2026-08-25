@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
+import wallcrawl.elopenmike.com.core.ai.WorkoutHistoryAnalyzer
 import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
 import wallcrawl.elopenmike.com.core.model.Exercise
-import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutSummary
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +21,8 @@ class ActiveWorkoutViewModel(
     private val sessionId: String,
     private val workoutRepository: WorkoutRepository,
     private val userProfileRepository: UserProfileRepository,
-    private val exerciseCatalog: ExerciseCatalog
+    private val exerciseCatalog: ExerciseCatalog,
+    private val workoutHistoryAnalyzer: WorkoutHistoryAnalyzer
 ) : ViewModel() {
 
     private val currentExerciseIndexFlow = MutableStateFlow(0)
@@ -29,12 +30,13 @@ class ActiveWorkoutViewModel(
     private val completedSummaryFlow = MutableStateFlow<WorkoutSummary?>(null)
     private val errorFlow = MutableStateFlow<String?>(null)
 
-    // Combine session and profile first
+    // Keep the active session, profile preferences, and completed history synchronized.
     private val sessionAndProfileFlow = combine(
         workoutRepository.observeSession(sessionId),
-        userProfileRepository.getUserProfile()
-    ) { session, profile ->
-        Pair(session, profile)
+        userProfileRepository.getUserProfile(),
+        workoutRepository.observeCompletedSessions()
+    ) { session, profile, completedSessions ->
+        SessionProfileHistory(session, profile, completedSessions)
     }
 
     val uiState: StateFlow<ActiveWorkoutUiState> = combine(
@@ -43,7 +45,8 @@ class ActiveWorkoutViewModel(
         currentCatalogExerciseFlow,
         completedSummaryFlow,
         errorFlow
-    ) { (session, profile), exerciseIndex, catalogEx, summary, error ->
+    ) { sessionProfileHistory, exerciseIndex, catalogEx, summary, error ->
+        val (session, profile, completedSessions) = sessionProfileHistory
         if (error != null) {
             ActiveWorkoutUiState.Error(error)
         } else if (summary != null) {
@@ -56,14 +59,20 @@ class ActiveWorkoutViewModel(
                 loadCatalogExercise(currentEx.exerciseId)
             }
 
-            val previousHistory = getPreviousHistoryForExercise(currentEx?.exerciseId, profile.preferredUnit)
+            val previousPerformance = currentEx?.let { exercise ->
+                workoutHistoryAnalyzer.latestCompletedExercisePerformance(
+                    sessions = completedSessions,
+                    exerciseId = exercise.exerciseId
+                )
+            }
 
             ActiveWorkoutUiState.Active(
                 session = session,
                 currentExerciseIndex = exerciseIndex,
                 currentCatalogExercise = catalogEx,
                 preferredUnit = profile.preferredUnit,
-                previousHistory = previousHistory
+                previousSets = previousPerformance?.sets.orEmpty(),
+                previousSessionTimestamp = previousPerformance?.sessionCompletedAtTimestamp
             )
         }
     }.stateIn(
@@ -76,35 +85,6 @@ class ActiveWorkoutViewModel(
         viewModelScope.launch {
             val ex = exerciseCatalog.getExerciseById(exerciseId)
             currentCatalogExerciseFlow.value = ex
-        }
-    }
-
-    private fun getPreviousHistoryForExercise(exerciseId: String?, unit: WeightUnit): List<String> {
-        return when (exerciseId) {
-            "incline-dumbbell-press" -> listOf(
-                "45 ${unit.symbol} × 10",
-                "45 ${unit.symbol} × 9",
-                "45 ${unit.symbol} × 8"
-            )
-            "barbell-bench-press" -> listOf(
-                "135 ${unit.symbol} × 8",
-                "135 ${unit.symbol} × 7",
-                "135 ${unit.symbol} × 6"
-            )
-            "pull-ups" -> listOf(
-                "Bodyweight × 8",
-                "Bodyweight × 7",
-                "Bodyweight × 6"
-            )
-            "barbell-back-squat" -> listOf(
-                "185 ${unit.symbol} × 8",
-                "185 ${unit.symbol} × 8",
-                "185 ${unit.symbol} × 6"
-            )
-            else -> listOf(
-                "Last session: 3 sets completed",
-                "Targeting progressive overload"
-            )
         }
     }
 
@@ -171,7 +151,8 @@ class ActiveWorkoutViewModel(
             sessionId: String,
             workoutRepository: WorkoutRepository,
             userProfileRepository: UserProfileRepository,
-            exerciseCatalog: ExerciseCatalog
+            exerciseCatalog: ExerciseCatalog,
+            workoutHistoryAnalyzer: WorkoutHistoryAnalyzer
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -179,9 +160,16 @@ class ActiveWorkoutViewModel(
                     sessionId,
                     workoutRepository,
                     userProfileRepository,
-                    exerciseCatalog
+                    exerciseCatalog,
+                    workoutHistoryAnalyzer
                 ) as T
             }
         }
     }
+
+    private data class SessionProfileHistory(
+        val session: WorkoutSession?,
+        val profile: wallcrawl.elopenmike.com.core.model.UserProfile,
+        val completedSessions: List<WorkoutSession>
+    )
 }

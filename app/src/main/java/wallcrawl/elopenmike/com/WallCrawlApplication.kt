@@ -15,6 +15,7 @@ import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
 import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
 import wallcrawl.elopenmike.com.core.exercise.ExerciseFilter
 import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
+import wallcrawl.elopenmike.com.core.progress.ProgressCalculator
 
 /**
  * Dependency container providing core database, catalog, filter, and AI planner instances.
@@ -28,6 +29,8 @@ interface AppContainer {
     val workoutPlanner: WorkoutPlanner
     val workoutValidator: GeneratedWorkoutValidator
     val workoutGenerationContextBuilder: WorkoutGenerationContextBuilder
+    val workoutHistoryAnalyzer: WorkoutHistoryAnalyzer
+    val progressCalculator: ProgressCalculator
 }
 
 class DefaultAppContainer(private val context: Context) : AppContainer {
@@ -68,8 +71,16 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
             workoutRepository = workoutRepository,
             exerciseCatalog = exerciseCatalog,
             exerciseFilter = exerciseFilter,
-            historyAnalyzer = WorkoutHistoryAnalyzer()
+            historyAnalyzer = workoutHistoryAnalyzer
         )
+    }
+
+    override val workoutHistoryAnalyzer: WorkoutHistoryAnalyzer by lazy {
+        WorkoutHistoryAnalyzer()
+    }
+
+    override val progressCalculator: ProgressCalculator by lazy {
+        ProgressCalculator()
     }
 }
 

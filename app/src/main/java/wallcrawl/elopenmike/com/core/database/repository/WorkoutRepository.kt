@@ -7,14 +7,8 @@ import wallcrawl.elopenmike.com.core.database.entity.WorkoutSessionEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSetEntity
 import wallcrawl.elopenmike.com.core.database.relation.WorkoutSessionWithExercisesAndSets
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
-import wallcrawl.elopenmike.com.core.model.MuscleProgressStat
-import wallcrawl.elopenmike.com.core.model.PersonalRecord
-import wallcrawl.elopenmike.com.core.model.ProgressOverview
-import wallcrawl.elopenmike.com.core.model.RecordType
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetType
-import wallcrawl.elopenmike.com.core.model.StrengthTrend
-import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
@@ -34,7 +28,6 @@ interface WorkoutRepository {
     suspend fun logSetCompletion(setId: String, reps: Int?, weight: Double?, isCompleted: Boolean)
     suspend fun completeWorkout(sessionId: String, actualDurationMinutes: Int): WorkoutSummary
     suspend fun cancelWorkout(sessionId: String)
-    fun observeProgressOverview(preferredUnit: WeightUnit = WeightUnit.LBS): Flow<ProgressOverview>
 }
 
 class OfflineWorkoutRepository(
@@ -193,83 +186,6 @@ class OfflineWorkoutRepository(
 
     override suspend fun cancelWorkout(sessionId: String) {
         sessionDao.deleteSession(sessionId)
-    }
-
-    override fun observeProgressOverview(preferredUnit: WeightUnit): Flow<ProgressOverview> {
-        return sessionDao.observeCompletedSessions().map { sessionsWithDetails ->
-            val domainSessions = sessionsWithDetails.map { it.toDomainModel() }
-
-            val totalVolumeThisWeek = domainSessions.take(7).sumOf { it.totalVolume }
-            val completedThisWeek = domainSessions.count { session ->
-                val sevenDaysAgo = System.currentTimeMillis() - (7 * 24 * 60 * 60 * 1000L)
-                (session.completedAtTimestamp ?: 0L) >= sevenDaysAgo
-            }
-
-            val samplePrs = listOf(
-                PersonalRecord(
-                    exerciseId = "incline-dumbbell-press",
-                    exerciseName = "Incline Dumbbell Press",
-                    recordType = RecordType.WEIGHT,
-                    value = 50.0,
-                    unit = preferredUnit.symbol,
-                    previousValue = 45.0
-                ),
-                PersonalRecord(
-                    exerciseId = "pull-ups",
-                    exerciseName = "Pull-ups",
-                    recordType = RecordType.REPS,
-                    value = 11.0,
-                    unit = "reps",
-                    previousValue = 8.0
-                )
-            )
-
-            val muscleFocus = listOf(
-                MuscleProgressStat("Chest", setsThisWeek = 12, percentageGrowth = 8),
-                MuscleProgressStat("Shoulders", setsThisWeek = 9, percentageGrowth = 12),
-                MuscleProgressStat("Back", setsThisWeek = 14, percentageGrowth = 5),
-                MuscleProgressStat("Legs", setsThisWeek = 10, percentageGrowth = 0)
-            )
-
-            val strengthTrends = listOf(
-                StrengthTrend(
-                    exerciseId = "incline-dumbbell-press",
-                    exerciseName = "Incline DB Press",
-                    previousMetric = "45 ${preferredUnit.symbol}",
-                    currentMetric = "50 ${preferredUnit.symbol}",
-                    percentageChange = 11,
-                    isPositive = true
-                ),
-                StrengthTrend(
-                    exerciseId = "pull-ups",
-                    exerciseName = "Pull-ups",
-                    previousMetric = "8 reps",
-                    currentMetric = "11 reps",
-                    percentageChange = 37,
-                    isPositive = true
-                ),
-                StrengthTrend(
-                    exerciseId = "barbell-back-squat",
-                    exerciseName = "Barbell Back Squat",
-                    previousMetric = "175 ${preferredUnit.symbol}",
-                    currentMetric = "185 ${preferredUnit.symbol}",
-                    percentageChange = 6,
-                    isPositive = true
-                )
-            )
-
-            ProgressOverview(
-                workoutsThisWeek = if (completedThisWeek > 0) completedThisWeek else 3,
-                weeklyGoal = 4,
-                currentStreakWeeks = 4,
-                totalWorkoutsLogged = (domainSessions.size).coerceAtLeast(1),
-                totalVolumeThisWeek = if (totalVolumeThisWeek > 0) totalVolumeThisWeek else 14250.0,
-                recentPersonalRecords = samplePrs,
-                muscleGroupFocus = muscleFocus,
-                strengthTrends = strengthTrends,
-                recentHistory = domainSessions
-            )
-        }
     }
 
     private fun WorkoutSessionWithExercisesAndSets.toDomainModel(): WorkoutSession {
