@@ -2,19 +2,19 @@ package wallcrawl.elopenmike.com.core.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Obsidian & Graphite Dark Base
-val ObsidianBlack = Color(0xFF090A0D)
-val DarkGraphiteBackground = Color(0xFF0F1216)
-val GraphiteSurface = Color(0xFF161A22)
-val GraphiteSurfaceElevated = Color(0xFF1E232E)
-val GraphiteBorder = Color(0xFF2B3240)
-val GraphiteDivider = Color(0xFF222834)
+// Obsidian & Graphite Dark Base (Matching official icon background)
+val ObsidianBlack = Color(0xFF0A0C10)
+val DarkGraphiteBackground = Color(0xFF0F1217)
+val GraphiteSurface = Color(0xFF141820)
+val GraphiteSurfaceElevated = Color(0xFF1B202B)
+val GraphiteBorder = Color(0xFF283040)
+val GraphiteDivider = Color(0xFF1F2532)
 
-// Crimson / Spider Accents (Distinct, athletic, non-branded)
-val CrimsonRedPrimary = Color(0xFFE63946)
-val CrimsonRedLight = Color(0xFFFF4D5A)
-val CrimsonRedDark = Color(0xFFB81D2B)
-val CrimsonRedGlow = Color(0x33E63946)
+// Crimson / Spider Accents (Directly matching official icon red mark)
+val CrimsonRedPrimary = Color(0xFFE81A21)
+val CrimsonRedLight = Color(0xFFFC2A2E)
+val CrimsonRedDark = Color(0xFF9E0012)
+val CrimsonRedGlow = Color(0x33E81A21)
 
 // Functional Accent & Contrast
 val WebBlueAccent = Color(0xFF38BDF8)
