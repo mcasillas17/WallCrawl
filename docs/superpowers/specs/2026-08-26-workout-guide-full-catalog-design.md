@@ -58,7 +58,7 @@ app/src/main/assets/workout-guide/
             frame-3.svg
 ```
 
-`upstream-manifest.json` is the pinned upstream manifest preserved for provenance. `catalog.json` is the deterministic WallCrawl runtime format. Runtime code reads only `catalog.json` and the frame paths it contains; it does not understand the upstream repository layout.
+`upstream-manifest.json` is the pinned upstream manifest preserved for exact exercise and per-frame provenance. `catalog.json` is the compact deterministic WallCrawl runtime format. Runtime code reads only `catalog.json`; it derives frame paths from validated source slugs and the validated catalog-wide visual specification, without understanding the upstream repository layout.
 
 `import-config.json` names the source repository, pinned commit, expected counts, source paths, and stable ID aliases. `programming-overrides.json` contains reviewed WallCrawl enrichment and is intentionally maintained separately from generated upstream facts.
 
@@ -114,7 +114,7 @@ Generated JSON uses stable key ordering, sorted exercises, normalized line endin
 
 ## Runtime Catalog Schema
 
-`catalog.json` has a schema version, provenance, and exercises. Conceptually:
+`catalog.json` has a schema version, catalog-wide provenance and visual facts, and exercises. Conceptually:
 
 ```json
 {
@@ -122,7 +122,19 @@ Generated JSON uses stable key ordering, sorted exercises, normalized line endin
   "source": {
     "repository": "https://github.com/bryllim/workout-guide",
     "commit": "ba0b709cb20430361b2cb33aaadd20998164a916",
-    "assetLicense": "CC-BY-SA-4.0"
+    "assetLicense": "CC-BY-SA-4.0",
+    "attribution": {
+      "creator": "Bryl Lim",
+      "creatorUrl": "https://bryllim.com",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+    }
+  },
+  "visuals": {
+    "frameCount": 3,
+    "widthPx": 512,
+    "heightPx": 512,
+    "format": "svg"
   },
   "exercises": [
     {
@@ -136,41 +148,6 @@ Generated JSON uses stable key ordering, sorted exercises, normalized line endin
       "primaryMuscles": ["Chest"],
       "secondaryMuscles": ["Triceps", "Shoulders"],
       "isStretch": false,
-      "frames": [
-        {
-          "index": 1,
-          "assetPath": "workout-guide/assets/bench-press/frame-1.svg",
-          "widthPx": 512,
-          "heightPx": 512,
-          "format": "svg",
-          "attribution": {
-            "creator": "Bryl Lim",
-            "creatorUrl": "https://bryllim.com",
-            "license": "CC BY-SA 4.0",
-            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
-            "source": {
-              "name": "Everkinetic",
-              "url": "https://github.com/everkinetic/data/blob/main/dist/svg/0042-tension.svg",
-              "license": "CC BY-SA 4.0",
-              "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
-              "changes": "Rasterized on a transparent 512 × 512 canvas, recolored for monochrome display, and vector-traced."
-            }
-          }
-        }
-      ],
-      "attribution": {
-        "creator": "Bryl Lim",
-        "creatorUrl": "https://bryllim.com",
-        "license": "CC BY-SA 4.0",
-        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "source": {
-          "name": "Everkinetic",
-          "url": "https://github.com/everkinetic/data/blob/main/dist/svg/0042-tension.svg",
-          "license": "CC BY-SA 4.0",
-          "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
-          "changes": "Rasterized on a transparent 512 × 512 canvas, recolored for monochrome display, and vector-traced."
-        }
-      },
       "programming": {
         "requiredEquipmentCombinations": [["Barbell", "Bench"]],
         "movementPattern": "horizontal_push",
@@ -187,7 +164,7 @@ Generated JSON uses stable key ordering, sorted exercises, normalized line endin
 }
 ```
 
-The example abbreviates the repeated frame records and attribution objects rather than freezing their exact text; generated values come from the pinned manifest and reviewed overrides. The importer preserves every upstream exercise-level field (`id`, `slug`, `name`, `exerciseType`, `equipment`, `primaryMuscle`, `secondaryMuscles`, `isStretch`, `frames`, and `attribution`). Frame records retain their index, dimensions, format, and complete attribution while replacing the upstream-relative path with a validated Android asset path.
+The runtime file intentionally does not repeat three frame objects and attribution objects for every exercise. The importer proves that every source entry has the same three-frame, 512 × 512 SVG contract and catalog attribution, then stores those common facts once. Android derives only `workout-guide/assets/<validated-sourceSlug>/frame-<1..3>.svg`. The byte-identical `upstream-manifest.json` remains packaged beside it and preserves every original exercise field, frame record, and per-frame attribution. This cut measured emulator cold catalog loading from about 13.3 seconds to about 3.4 seconds without dropping source data from the app bundle.
 
 Field names deliberately state their authority:
 
@@ -233,7 +210,7 @@ data class ExerciseProgrammingMetadata(
 )
 ```
 
-`ExerciseSource` holds the source catalog name, source ID, source slug, and normalized attribution. Validated frame records remain in the shared catalog snapshot used by `ExerciseVisualProvider`; raw asset paths do not enter feature UI or the general exercise domain model.
+`ExerciseSource` holds the source catalog name, source ID, source slug, and normalized catalog attribution. Validated frame descriptors are derived into the shared catalog snapshot used by `ExerciseVisualProvider`; raw asset paths do not enter feature UI or the general exercise domain model.
 
 This removes misleading default programming values. Catalog filters use `listedEquipment`; generation hard filters use `programming.requiredEquipmentCombinations` and reject exercises with no programming metadata. The combination shape correctly distinguishes “bench and dumbbells” from “barbell or dumbbells”; a flat list cannot represent both cases honestly.
 
@@ -262,7 +239,7 @@ Search uses normalized case and whitespace but remains a simple in-memory substr
 
 ## Visual Resolution
 
-`WorkoutGuideVisualProvider` loads its ID-to-frame index from the same parsed catalog result as `BundledExerciseCatalog`. It no longer contains a three-entry hard-coded map and it does not construct paths from user-controlled IDs. `framesFor(exerciseId)` returns only validated frame paths recorded in `catalog.json`; an unknown ID returns an empty list so `ExerciseIllustration` keeps its existing placeholder behavior.
+`WorkoutGuideVisualProvider` loads its ID-to-frame index from the same parsed catalog result as `BundledExerciseCatalog`. It no longer contains a three-entry hard-coded map. The parser constructs descriptors only from validated source slugs and the catalog visual specification; the provider never constructs paths from caller input. `framesFor(exerciseId)` performs a lookup in that validated index, and an unknown ID returns an empty list so `ExerciseIllustration` keeps its existing placeholder behavior.
 
 The UI remains unaware of Workout Guide slugs and raw asset paths:
 

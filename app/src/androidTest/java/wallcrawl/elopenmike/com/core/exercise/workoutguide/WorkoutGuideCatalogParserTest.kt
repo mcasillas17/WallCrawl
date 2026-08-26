@@ -62,15 +62,11 @@ class WorkoutGuideCatalogParserTest {
     }
 
     @Test
-    fun parse_rejectsFramePathThatDoesNotMatchSourceSlug() {
-        val malformed = catalogJson(
-            exerciseJson().replace(
-                "workout-guide/assets/sample/frame-1.svg",
-                "workout-guide/assets/different/frame-1.svg"
-            )
-        )
+    fun parse_rejectsInvalidVisualSpecification() {
+        val malformed = catalogJson(exerciseJson())
+            .replace("\"frameCount\": 3", "\"frameCount\": 4")
 
-        assertFormatFailure(malformed, "must resolve")
+        assertFormatFailure(malformed, "frameCount")
     }
 
     @Test
@@ -98,33 +94,20 @@ class WorkoutGuideCatalogParserTest {
           "source": {
             "repository": "https://github.com/bryllim/workout-guide",
             "commit": "ba0b709cb20430361b2cb33aaadd20998164a916",
-            "assetLicense": "CC-BY-SA-4.0"
-          },
-          "exercises": [$exercises]
-        }
-    """.trimIndent()
-
-    private fun exerciseJson(): String {
-        val attribution = """
-            {
+            "assetLicense": "CC-BY-SA-4.0",
+            "attribution": {
               "creator": "Bryl Lim",
               "creatorUrl": "https://bryllim.com",
               "license": "CC BY-SA 4.0",
               "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
             }
-        """.trimIndent()
-        val frames = (1..3).joinToString(separator = ",") { index ->
-            """
-                {
-                  "index": $index,
-                  "assetPath": "workout-guide/assets/sample/frame-$index.svg",
-                  "format": "svg",
-                  "widthPx": 512,
-                  "heightPx": 512,
-                  "attribution": $attribution
-                }
-            """.trimIndent()
+          },
+          "visuals": {"frameCount": 3, "widthPx": 512, "heightPx": 512, "format": "svg"},
+          "exercises": [$exercises]
         }
+    """.trimIndent()
+
+    private fun exerciseJson(): String {
         return """
             {
               "id": "sample",
@@ -136,9 +119,7 @@ class WorkoutGuideCatalogParserTest {
               "secondaryMuscles": [],
               "listedEquipment": ["Bodyweight"],
               "exerciseType": "bodyweight_reps",
-              "isStretch": false,
-              "attribution": $attribution,
-              "frames": [$frames]
+              "isStretch": false
             }
         """.trimIndent()
     }

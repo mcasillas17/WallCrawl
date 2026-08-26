@@ -113,7 +113,7 @@ exercise-romanian-deadlift     → romanian-deadlift
 
 - [ ] Run the importer against the verified local checkout and capture its summary.
 - [ ] Run importer `--check` against the generated tree and verify byte-identical output.
-- [ ] Independently parse `catalog.json` with Python and assert 302 unique WallCrawl IDs, 302 unique source IDs/slugs, five supported exercise types, 12 programmed exercises, three frames per exercise, 906 existing `.svg` paths, zero `.png` files, and all 12 historical IDs.
+- [ ] Independently parse `catalog.json` with Python and assert 302 unique WallCrawl IDs, 302 unique source IDs/slugs, five supported exercise types, 12 programmed exercises, a three-frame SVG visual specification, 906 existing derived `.svg` paths, zero `.png` files, and all 12 historical IDs.
 - [ ] Verify `LICENSE`, `LICENSE-ASSETS`, and `ATTRIBUTION.md` match their pinned upstream files byte-for-byte; verify `NOTICE.md` names the source URL and commit.
 - [ ] Inspect generated size and largest files with `du`/`find`; confirm no file approaches GitHub's individual-file limit.
 - [ ] Commit the mechanically generated bundle separately as `feat: bundle full Workout Guide catalog`.
@@ -175,7 +175,7 @@ data class WorkoutGuideCatalogSnapshot(
 
 - [ ] Add JVM tests for `BundledExerciseCatalog` using a fixed `WorkoutGuideCatalogSource`: list/order, case-insensitive ID lookup, name/alias/muscle/equipment search, exact filters, and source failure propagation. Verify RED before implementation.
 - [ ] Add Android parser tests using the real packaged `catalog.json`: exact 302/906 counts, unique IDs, three frames per item, direct/aliased historical lookups, 12 programmed entries, and parser rejection of malformed fixtures. Verify RED before parser/store implementation.
-- [ ] Implement `WorkoutGuideCatalogParser` with `android.util.JsonReader`, explicit enum mapping, bounded collections/strings, duplicate rejection, schema/version checks, safe asset paths, frame validation, optional programming parsing, and unknown-field skipping.
+- [ ] Implement `WorkoutGuideCatalogParser` with `android.util.JsonReader`, explicit enum mapping, bounded collections/strings, duplicate rejection, schema/version checks, safe source-slug and visual-spec validation, derived frame descriptors, optional programming parsing, and unknown-field skipping.
 - [ ] Implement `WorkoutGuideCatalogStore` with an injected I/O dispatcher, `Mutex`, one cached immutable snapshot, and a synchronous `currentSnapshot()` that never performs I/O.
 - [ ] Implement `BundledExerciseCatalog` Flow/suspend operations over the shared snapshot.
 - [ ] Extend `ExerciseVisual` with `widthPx`, `heightPx`, and normalized attribution, and change `WorkoutGuideVisualProvider` to read `framesByExerciseId` from the shared source.

@@ -32,6 +32,11 @@ class ImportCatalogTest(unittest.TestCase):
         catalog = json.loads((self.output / "catalog.json").read_text())
         self.assertEqual(catalog["schemaVersion"], 1)
         self.assertEqual(catalog["source"]["commit"], self.source_commit)
+        self.assertEqual(catalog["source"]["attribution"]["creator"], "Bryl Lim")
+        self.assertEqual(
+            catalog["visuals"],
+            {"format": "svg", "frameCount": 3, "heightPx": 512, "widthPx": 512},
+        )
         self.assertEqual(len(catalog["exercises"]), 1)
 
         exercise = catalog["exercises"][0]
@@ -42,16 +47,8 @@ class ImportCatalogTest(unittest.TestCase):
         self.assertEqual(exercise["listedEquipment"], ["Barbell"])
         self.assertEqual(exercise["primaryMuscles"], ["Chest"])
         self.assertEqual(exercise["programming"]["requiredEquipmentCombinations"], [["Barbell", "Bench"]])
-        self.assertEqual(
-            [frame["assetPath"] for frame in exercise["frames"]],
-            [
-                "workout-guide/assets/bench-press/frame-1.svg",
-                "workout-guide/assets/bench-press/frame-2.svg",
-                "workout-guide/assets/bench-press/frame-3.svg",
-            ],
-        )
-        self.assertEqual(exercise["frames"][0]["attribution"]["creator"], "Bryl Lim")
-        self.assertEqual(exercise["attribution"]["source"]["name"], "Everkinetic")
+        self.assertNotIn("frames", exercise)
+        self.assertNotIn("attribution", exercise)
 
         self.assertEqual(
             sorted(path.relative_to(self.output).as_posix() for path in self.output.rglob("*.svg")),
@@ -63,6 +60,9 @@ class ImportCatalogTest(unittest.TestCase):
         )
         self.assertEqual(list(self.output.rglob("*.png")), [])
         self.assertEqual((self.output / "upstream-manifest.json").read_bytes(), self._manifest_path().read_bytes())
+        preserved_manifest = json.loads((self.output / "upstream-manifest.json").read_text())
+        self.assertEqual(preserved_manifest[0]["attribution"]["source"]["name"], "Everkinetic")
+        self.assertEqual(preserved_manifest[0]["frames"][0]["attribution"]["creator"], "Bryl Lim")
         for license_name in ("LICENSE", "LICENSE-ASSETS", "ATTRIBUTION.md"):
             self.assertEqual((self.output / license_name).read_bytes(), (self.source / license_name).read_bytes())
         self.assertIn(self.source_commit, (self.output / "NOTICE.md").read_text())

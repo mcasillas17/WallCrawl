@@ -133,6 +133,9 @@ def import_catalog(
     source_slugs: set[str] = set()
     wallcrawl_ids: set[str] = set()
     used_alias_sources: set[str] = set()
+    catalog_attribution: dict[str, Any] | None = None
+    visual_width: int | None = None
+    visual_height: int | None = None
 
     for position, raw_exercise in enumerate(manifest):
         exercise = _expect_object(raw_exercise, f"exercise[{position}]")
@@ -175,6 +178,16 @@ def import_catalog(
         secondary_muscles = _required_string_list(exercise, "secondaryMuscles", source_id, maximum=50)
         is_stretch = _required_bool(exercise, "isStretch", source_id)
         attribution = _required_attribution(exercise, "attribution", source_id)
+        exercise_catalog_attribution = {
+            key: attribution[key]
+            for key in ("creator", "creatorUrl", "license", "licenseUrl")
+        }
+        if catalog_attribution is None:
+            catalog_attribution = exercise_catalog_attribution
+        elif exercise_catalog_attribution != catalog_attribution:
+            raise CatalogImportError(
+                f"Exercise {source_id} uses attribution that differs from the catalog attribution"
+            )
 
         raw_frames = _required_array(exercise, "frames", source_id)
         if len(raw_frames) != 3:
@@ -182,7 +195,6 @@ def import_catalog(
         if len(raw_frames) > MAX_FRAMES_PER_EXERCISE:
             raise CatalogImportError(f"Exercise {source_id} has too many frames")
 
-        normalized_frames: list[dict[str, Any]] = []
         frame_indices: set[int] = set()
         for frame_position, raw_frame in enumerate(raw_frames):
             frame_label = f"{source_id}.frames[{frame_position}]"
@@ -210,19 +222,16 @@ def import_catalog(
                 raise CatalogImportError(f"Frame {source_id}/{index} format must be svg")
             width = _required_int(frame, "width", frame_label, minimum=1, maximum=8_192)
             height = _required_int(frame, "height", frame_label, minimum=1, maximum=8_192)
-            frame_attribution = _required_attribution(frame, "attribution", frame_label)
+            _required_attribution(frame, "attribution", frame_label)
+            if visual_width is None:
+                visual_width = width
+                visual_height = height
+            elif width != visual_width or height != visual_height:
+                raise CatalogImportError(
+                    f"Frame {source_id}/{index} dimensions differ from the catalog visual specification"
+                )
             destination_relative = f"assets/{source_slug}/frame-{index}.svg"
             frame_sources.append((source_frame, destination_relative))
-            normalized_frames.append(
-                {
-                    "index": index,
-                    "assetPath": f"workout-guide/{destination_relative}",
-                    "widthPx": width,
-                    "heightPx": height,
-                    "format": frame_format,
-                    "attribution": frame_attribution,
-                }
-            )
         if frame_indices != {1, 2, 3}:
             raise CatalogImportError(f"Exercise {source_id} frame indices must be 1, 2, and 3")
 
@@ -243,8 +252,6 @@ def import_catalog(
                 "primaryMuscles": [primary_muscle],
                 "secondaryMuscles": secondary_muscles,
                 "isStretch": is_stretch,
-                "frames": sorted(normalized_frames, key=lambda item: item["index"]),
-                "attribution": attribution,
                 **({"programming": programming} if programming is not None else {}),
             }
         )
@@ -278,12 +285,21 @@ def import_catalog(
         raise CatalogImportError("Generated frame paths are not unique")
 
     normalized_exercises.sort(key=lambda item: item["id"])
+    if catalog_attribution is None or visual_width is None or visual_height is None:
+        raise CatalogImportError("Pinned Workout Guide catalog is missing visual attribution or dimensions")
     catalog = {
         "schemaVersion": SCHEMA_VERSION,
         "source": {
             "repository": source_repository,
             "commit": source_commit,
             "assetLicense": "CC-BY-SA-4.0",
+            "attribution": catalog_attribution,
+        },
+        "visuals": {
+            "frameCount": 3,
+            "widthPx": visual_width,
+            "heightPx": visual_height,
+            "format": "svg",
         },
         "exercises": normalized_exercises,
     }
@@ -555,7 +571,12 @@ def _read_json(path: Path, label: str) -> Any:
 
 def _write_json(path: Path, value: Any) -> None:
     path.write_text(
-        json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+        json.dumps(
+            value,
+            ensure_ascii=False,
+            separators=(",", ":"),
+            sort_keys=True,
+        ) + "\n",
         encoding="utf-8",
         newline="\n",
     )
