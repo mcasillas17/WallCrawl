@@ -15,6 +15,26 @@ and validation, active set logging, Room persistence, workout-history context,
 and progress calculations. The current `FakeWorkoutPlanner` is deliberately
 replaceable; no production local LLM runtime is integrated yet.
 
+## Screenshots & App Experience
+
+<p align="center">
+  <img src="art/screenshots/today-screen.png" width="31%" alt="Today Screen" />
+  <img src="art/screenshots/active-workout.png" width="31%" alt="Active Workout Screen" />
+  <img src="art/screenshots/workout-summary.png" width="31%" alt="Workout Summary Screen" />
+</p>
+<p align="center">
+  <img src="art/screenshots/progress-screen.png" width="31%" alt="Progress Screen" />
+  <img src="art/screenshots/exercises-screen.png" width="31%" alt="Exercise Library Screen" />
+  <img src="art/screenshots/profile-screen.png" width="31%" alt="Training Profile Screen" />
+</p>
+
+- **Today Recommendation**: Offline AI-generated routine tailored to equipment and training goals, with instant regeneration.
+- **Active Workout Session**: Live set logging with target reps/weight suggestions, animated SVG movement previews, previous session performance comparisons, and finish flow.
+- **Workout Summary**: Post-workout celebration card displaying session duration, total volume lifted, sets completed, and PR records.
+- **Progress Tracking**: Weekly workout streaks, aggregate volume trends, strength progression indicators, and historical workout logs.
+- **Exercise Library**: Searchable catalog with target muscle and equipment filter chips.
+- **Training Profile**: Full local customization of fitness goals, preferred weight units (LBS/KG), session duration targets, and available gym equipment.
+
 ## Current vertical slice
 
 ```text

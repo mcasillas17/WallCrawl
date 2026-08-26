@@ -159,8 +159,13 @@ fun WallCrawlApp(
                     visualProvider = container.exerciseVisualProvider,
                     onNavigateBack = { navController.popBackStack() },
                     onWorkoutFinished = {
+                        navController.popBackStack()
                         navController.navigate(AppRoutes.PROGRESS) {
-                            popUpTo(AppRoutes.TODAY)
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
                         }
                     }
                 )
