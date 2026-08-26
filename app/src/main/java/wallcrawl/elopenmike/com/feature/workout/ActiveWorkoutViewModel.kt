@@ -84,8 +84,15 @@ class ActiveWorkoutViewModel(
 
     private fun loadCatalogExercise(exerciseId: String) {
         viewModelScope.launch {
-            val ex = exerciseCatalog.getExerciseById(exerciseId)
-            currentCatalogExerciseFlow.value = ex
+            try {
+                val ex = exerciseCatalog.getExerciseById(exerciseId)
+                currentCatalogExerciseFlow.value = ex
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                errorFlow.value =
+                    "The offline exercise catalog could not load this workout's exercise details."
+            }
         }
     }
 

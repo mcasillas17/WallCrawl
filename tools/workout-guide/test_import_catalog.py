@@ -187,6 +187,41 @@ class ImportCatalogTest(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("unknown walcrawl exercise id", result.stderr.lower())
 
+    def test_rejects_programming_the_android_parser_cannot_read(self) -> None:
+        overrides = json.loads(self.overrides.read_text())
+        programming = overrides["exercises"]["barbell-bench-press"]
+
+        for combinations in ([], [[]]):
+            with self.subTest(combinations=combinations):
+                programming["requiredEquipmentCombinations"] = combinations
+                self.overrides.write_text(json.dumps(overrides, indent=2) + "\n")
+
+                result = self._run_import()
+
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn("equipment combinations must be non-empty", result.stderr.lower())
+
+        programming["requiredEquipmentCombinations"] = [["Barbell", "Bench"]]
+        programming["coachingSummary"] = "x" * 2_001
+        self.overrides.write_text(json.dumps(overrides, indent=2) + "\n")
+
+        result = self._run_import()
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("exceeds 2000 characters", result.stderr.lower())
+
+    def test_rejects_catalog_string_the_android_parser_cannot_read(self) -> None:
+        manifest = json.loads(self._manifest_path().read_text())
+        manifest[0]["name"] = "x" * 257
+        self._manifest_path().write_text(json.dumps(manifest, indent=2) + "\n")
+        self._commit_fixture_change("oversized exercise name")
+        self._write_config(source_commit=self._head_commit())
+
+        result = self._run_import()
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("exceeds 256 characters", result.stderr.lower())
+
     def _write_source_fixture(self) -> None:
         attribution = {
             "creator": "Bryl Lim",

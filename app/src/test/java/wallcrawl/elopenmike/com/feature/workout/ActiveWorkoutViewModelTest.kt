@@ -13,7 +13,9 @@ import org.junit.Rule
 import org.junit.Test
 import wallcrawl.elopenmike.com.core.ai.WorkoutHistoryAnalyzer
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
+import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
 import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
+import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.UserProfile
@@ -93,10 +95,27 @@ class ActiveWorkoutViewModelTest {
         assertThat(viewModel.uiState.value).isInstanceOf(ActiveWorkoutUiState.Completed::class.java)
     }
 
-    private fun viewModel(repository: WorkoutRepository) = ActiveWorkoutViewModel(
+    @Test
+    fun catalogLookupFailure_becomesVisibleError() = runTest {
+        val repository = ActiveWorkoutRepository(workoutSession(SessionStatus.IN_PROGRESS))
+        val viewModel = viewModel(repository, FailingExerciseCatalog())
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiState.collect {}
+        }
+
+        advanceUntilIdle()
+
+        val state = viewModel.uiState.value as ActiveWorkoutUiState.Error
+        assertThat(state.message).contains("offline exercise catalog")
+    }
+
+    private fun viewModel(
+        repository: WorkoutRepository,
+        exerciseCatalog: ExerciseCatalog = InMemoryExerciseCatalog()
+    ) = ActiveWorkoutViewModel(
         sessionId = SESSION_ID,
         workoutRepository = repository,
-        exerciseCatalog = InMemoryExerciseCatalog(),
+        exerciseCatalog = exerciseCatalog,
         workoutHistoryAnalyzer = WorkoutHistoryAnalyzer()
     )
 
@@ -134,6 +153,21 @@ class ActiveWorkoutViewModelTest {
     private companion object {
         const val SESSION_ID = "session"
     }
+}
+
+private class FailingExerciseCatalog : ExerciseCatalog {
+    private val failure = IllegalStateException("asset parse failed")
+
+    override fun getAllExercises(): Flow<List<Exercise>> = error("Not used")
+    override suspend fun getExerciseById(id: String): Exercise? = throw failure
+    override fun searchExercises(
+        query: String,
+        muscle: String?,
+        equipment: String?
+    ): Flow<List<Exercise>> = error("Not used")
+
+    override suspend fun getMuscleGroups(): List<String> = error("Not used")
+    override suspend fun getEquipmentTypes(): List<String> = error("Not used")
 }
 
 private class ActiveWorkoutRepository(initialSession: WorkoutSession) : WorkoutRepository {

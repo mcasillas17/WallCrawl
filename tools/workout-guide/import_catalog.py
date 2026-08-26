@@ -20,7 +20,10 @@ SCHEMA_VERSION = 1
 MAX_EXERCISES = 5_000
 MAX_FRAMES_PER_EXERCISE = 10
 MAX_LIST_ITEMS = 1_000
-MAX_STRING_LENGTH = 8_192
+MAX_STRING_LENGTH = 256
+MAX_DESCRIPTION_LENGTH = 2_000
+MAX_URL_LENGTH = 2_048
+MAX_RAW_JSON_STRING_LENGTH = 8_192
 MAX_JSON_DEPTH = 12
 SAFE_ID_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 SUPPORTED_EXERCISE_TYPES = {
@@ -350,12 +353,16 @@ def import_catalog(
 def _normalize_programming(raw_value: Any, exercise_id: str) -> dict[str, Any]:
     raw = _expect_object(raw_value, f"programming.{exercise_id}")
     combinations_raw = _required_array(raw, "requiredEquipmentCombinations", exercise_id)
+    if not combinations_raw:
+        raise CatalogImportError(f"Equipment combinations must be non-empty for {exercise_id}")
     if len(combinations_raw) > 20:
         raise CatalogImportError(f"Too many equipment combinations for {exercise_id}")
     combinations: list[list[str]] = []
     for index, combination_value in enumerate(combinations_raw):
         if not isinstance(combination_value, list):
             raise CatalogImportError(f"Equipment combination {index} for {exercise_id} must be an array")
+        if not combination_value:
+            raise CatalogImportError(f"Equipment combinations must be non-empty for {exercise_id}")
         if len(combination_value) > 20:
             raise CatalogImportError(f"Equipment combination {index} for {exercise_id} is too large")
         combination = [_bounded_string(item, f"equipment for {exercise_id}") for item in combination_value]
@@ -383,7 +390,12 @@ def _normalize_programming(raw_value: Any, exercise_id: str) -> dict[str, Any]:
         raise CatalogImportError(f"Recommended rep range is reversed for {exercise_id}")
     fatigue_score = _required_int(raw, "fatigueScore", exercise_id, minimum=1, maximum=5)
     alternatives = _required_string_list(raw, "alternativeExerciseIds", exercise_id, maximum=100)
-    coaching_summary = _required_string(raw, "coachingSummary", exercise_id)
+    coaching_summary = _required_string(
+        raw,
+        "coachingSummary",
+        exercise_id,
+        maximum=MAX_DESCRIPTION_LENGTH,
+    )
 
     return {
         "requiredEquipmentCombinations": combinations,
@@ -463,14 +475,27 @@ def _validate_safe_id(value: str, label: str, allow_exercise_prefix: bool = Fals
 def _required_attribution(container: dict[str, Any], key: str, label: str) -> dict[str, Any]:
     attribution = _required_object(container, key, label)
     _required_string(attribution, "creator", f"{label}.{key}")
-    _required_string(attribution, "creatorUrl", f"{label}.{key}")
+    _required_string(attribution, "creatorUrl", f"{label}.{key}", maximum=MAX_URL_LENGTH)
     _required_string(attribution, "license", f"{label}.{key}")
-    _required_string(attribution, "licenseUrl", f"{label}.{key}")
+    _required_string(attribution, "licenseUrl", f"{label}.{key}", maximum=MAX_URL_LENGTH)
     source = attribution.get("source")
     if source is not None:
         source_object = _expect_object(source, f"{label}.{key}.source")
-        for source_key in ("name", "url", "license", "licenseUrl", "changes"):
-            _required_string(source_object, source_key, f"{label}.{key}.source")
+        _required_string(source_object, "name", f"{label}.{key}.source")
+        _required_string(source_object, "url", f"{label}.{key}.source", maximum=MAX_URL_LENGTH)
+        _required_string(source_object, "license", f"{label}.{key}.source")
+        _required_string(
+            source_object,
+            "licenseUrl",
+            f"{label}.{key}.source",
+            maximum=MAX_URL_LENGTH,
+        )
+        _required_string(
+            source_object,
+            "changes",
+            f"{label}.{key}.source",
+            maximum=MAX_DESCRIPTION_LENGTH,
+        )
     return _bounded_json_value(attribution, f"{label}.{key}", depth=0)
 
 
@@ -486,7 +511,7 @@ def _bounded_json_value(value: Any, label: str, depth: int) -> Any:
             raise CatalogImportError(f"{label} contains a non-integral number")
         return int(value)
     if isinstance(value, str):
-        return _bounded_string(value, label)
+        return _bounded_string(value, label, maximum=MAX_RAW_JSON_STRING_LENGTH)
     if isinstance(value, list):
         if len(value) > MAX_LIST_ITEMS:
             raise CatalogImportError(f"{label} contains too many items")
@@ -601,21 +626,30 @@ def _required_array(container: dict[str, Any], key: str, label: str) -> list[Any
     return value
 
 
-def _required_string(container: dict[str, Any], key: str, label: str) -> str:
+def _required_string(
+    container: dict[str, Any],
+    key: str,
+    label: str,
+    maximum: int = MAX_STRING_LENGTH,
+) -> str:
     if key not in container:
         raise CatalogImportError(f"Missing {label}.{key}")
-    return _bounded_string(container[key], f"{label}.{key}")
+    return _bounded_string(container[key], f"{label}.{key}", maximum=maximum)
 
 
-def _bounded_string(value: Any, label: str) -> str:
+def _bounded_string(
+    value: Any,
+    label: str,
+    maximum: int = MAX_STRING_LENGTH,
+) -> str:
     if not isinstance(value, str):
         raise CatalogImportError(f"{label} must be a string")
     if not value.strip():
         raise CatalogImportError(f"{label} must not be blank")
     if value != value.strip():
         raise CatalogImportError(f"{label} must not have surrounding whitespace")
-    if len(value) > MAX_STRING_LENGTH:
-        raise CatalogImportError(f"{label} exceeds {MAX_STRING_LENGTH} characters")
+    if len(value) > maximum:
+        raise CatalogImportError(f"{label} exceeds {maximum} characters")
     return value
 
 
