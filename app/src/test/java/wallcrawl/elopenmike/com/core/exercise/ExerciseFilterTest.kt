@@ -65,4 +65,32 @@ class ExerciseFilterTest {
             it.primaryMuscles.contains(StandardMuscles.CHEST) || it.secondaryMuscles.contains(StandardMuscles.CHEST)
         }).isTrue()
     }
+
+    @Test
+    fun filterCandidates_excludesExerciseWithoutReviewedProgramming() {
+        val reviewed = allExercises.first()
+        val unreviewed = reviewed.copy(id = "catalog-only-exercise", programming = null)
+
+        val candidates = filter.filterCandidates(
+            allExercises = listOf(reviewed, unreviewed),
+            profile = UserProfile()
+        )
+
+        assertThat(candidates.map { it.id }).containsExactly(reviewed.id)
+    }
+
+    @Test
+    fun filterCandidates_acceptsAnyCompleteEquipmentCombination() {
+        val romanianDeadlift = allExercises.single { it.id == "romanian-deadlift" }
+        val dumbbellOnlyProfile = UserProfile(
+            availableEquipment = listOf(StandardEquipment.DUMBBELL)
+        )
+
+        val candidates = filter.filterCandidates(
+            allExercises = listOf(romanianDeadlift),
+            profile = dumbbellOnlyProfile
+        )
+
+        assertThat(candidates.map { it.id }).containsExactly("romanian-deadlift")
+    }
 }

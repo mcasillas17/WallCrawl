@@ -155,7 +155,7 @@ private fun IllustrationPlaceholder(exercise: Exercise?) {
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = exercise?.movementPattern?.name?.replace('_', ' ') ?: "Motion preview",
+            text = exercise?.programming?.movementPattern?.name?.replace('_', ' ') ?: "Motion preview",
             fontSize = 11.sp,
             color = TextMuted
         )

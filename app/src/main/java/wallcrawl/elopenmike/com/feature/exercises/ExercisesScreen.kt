@@ -306,10 +306,12 @@ private fun ExerciseListItem(
                 )
             }
 
-            StatBadge(
-                label = exercise.compoundOrIsolation.name,
-                textColor = if (exercise.compoundOrIsolation.name == "COMPOUND") CrimsonRedLight else WebBlueAccent
-            )
+            exercise.programming?.let { programming ->
+                StatBadge(
+                    label = programming.mechanics.name,
+                    textColor = if (programming.mechanics.name == "COMPOUND") CrimsonRedLight else WebBlueAccent
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -318,17 +320,19 @@ private fun ExerciseListItem(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            if (exercise.equipment.isNotEmpty()) {
+            if (exercise.listedEquipment.isNotEmpty()) {
                 StatBadge(
-                    label = exercise.equipment.joinToString(", "),
+                    label = exercise.listedEquipment.joinToString(", "),
                     icon = Icons.Default.FitnessCenter,
                     textColor = TextMuted
                 )
             }
-            StatBadge(
-                label = "${exercise.recommendedRepRange.min}–${exercise.recommendedRepRange.max} reps",
-                textColor = TextMuted
-            )
+            exercise.programming?.let { programming ->
+                StatBadge(
+                    label = "${programming.recommendedRepRange.min}–${programming.recommendedRepRange.max} reps",
+                    textColor = TextMuted
+                )
+            }
         }
     }
 }
@@ -372,7 +376,8 @@ private fun ExerciseDetailSheet(
             Spacer(modifier = Modifier.height(6.dp))
 
             Text(
-                text = exercise.description,
+                text = exercise.programming?.coachingSummary
+                    ?: "Catalog metadata and illustration are available. Programming review is pending.",
                 fontSize = 14.sp,
                 lineHeight = 20.sp,
                 color = TextSecondary
@@ -386,15 +391,28 @@ private fun ExerciseDetailSheet(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                StatBadge(label = "Pattern: ${exercise.movementPattern.name.replace('_', ' ')}", textColor = TextPrimary)
                 StatBadge(label = "Primary: ${exercise.primaryMuscles.joinToString(", ")}", textColor = CrimsonRedLight)
                 if (exercise.secondaryMuscles.isNotEmpty()) {
                     StatBadge(label = "Secondary: ${exercise.secondaryMuscles.joinToString(", ")}", textColor = TextSecondary)
                 }
-                StatBadge(label = "Equipment: ${exercise.equipment.joinToString(", ")}", textColor = WebBlueAccent)
-                StatBadge(label = "Difficulty: ${exercise.difficulty.name}", textColor = TextPrimary)
-                StatBadge(label = "Target: ${exercise.recommendedRepRange.min}–${exercise.recommendedRepRange.max} reps", textColor = TextPrimary)
-                StatBadge(label = "Fatigue Score: ${exercise.fatigueScore}/5", textColor = TextMuted)
+                if (exercise.listedEquipment.isNotEmpty()) {
+                    StatBadge(
+                        label = "Listed equipment: ${exercise.listedEquipment.joinToString(", ")}",
+                        textColor = WebBlueAccent
+                    )
+                }
+                exercise.programming?.let { programming ->
+                    StatBadge(
+                        label = "Pattern: ${programming.movementPattern.name.replace('_', ' ')}",
+                        textColor = TextPrimary
+                    )
+                    StatBadge(label = "Difficulty: ${programming.difficulty.name}", textColor = TextPrimary)
+                    StatBadge(
+                        label = "Target: ${programming.recommendedRepRange.min}–${programming.recommendedRepRange.max} reps",
+                        textColor = TextPrimary
+                    )
+                    StatBadge(label = "Fatigue Score: ${programming.fatigueScore}/5", textColor = TextMuted)
+                } ?: StatBadge(label = "Programming review pending", textColor = TextMuted)
             }
 
             Spacer(modifier = Modifier.height(24.dp))

@@ -16,6 +16,8 @@ data class UserProfile(
         StandardEquipment.DUMBBELL,
         StandardEquipment.BENCH,
         StandardEquipment.PULLUP_BAR,
+        StandardEquipment.DIP_BARS,
+        StandardEquipment.SQUAT_RACK,
         StandardEquipment.BODYWEIGHT,
         StandardEquipment.CABLE
     ),

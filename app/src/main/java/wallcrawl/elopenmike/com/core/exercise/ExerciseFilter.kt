@@ -1,7 +1,6 @@
 package wallcrawl.elopenmike.com.core.exercise
 
 import wallcrawl.elopenmike.com.core.model.Exercise
-import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.UserProfile
 
 /**
@@ -24,18 +23,23 @@ class ExerciseFilter {
         profile: UserProfile,
         targetMuscles: List<String>? = null
     ): List<Exercise> {
-        val ownedEquipment = profile.availableEquipment.toSet() + setOf(StandardEquipment.BODYWEIGHT)
+        val ownedEquipment = profile.availableEquipment.map { it.lowercase() }.toSet()
         val excludedIds = profile.excludedExerciseIds.toSet()
 
         return allExercises.filter { exercise ->
+            // Catalog-only entries have not had their hard requirements reviewed.
+            val programming = exercise.programming ?: return@filter false
+
             // 1. Check exclusions
             if (exercise.id in excludedIds) {
                 return@filter false
             }
 
-            // 2. Check equipment requirements (all required equipment must be available)
-            val hasRequiredEquipment = exercise.equipment.isEmpty() ||
-                exercise.equipment.all { eq -> eq in ownedEquipment }
+            // 2. Any one combination is viable; every item within it is required.
+            val combinations = programming.requiredEquipmentCombinations
+            val hasRequiredEquipment = combinations.isEmpty() || combinations.any { combination ->
+                combination.all { equipment -> equipment.lowercase() in ownedEquipment }
+            }
             if (!hasRequiredEquipment) {
                 return@filter false
             }

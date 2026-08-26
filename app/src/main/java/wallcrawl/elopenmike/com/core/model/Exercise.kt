@@ -1,30 +1,63 @@
 package wallcrawl.elopenmike.com.core.model
 
 /**
- * Exercise domain model aligned with the open-source Workout Guide catalog schema
- * and enriched with extensible metadata for training science and AI generation.
+ * WallCrawl-owned exercise model. Catalog facts are always available while
+ * programming metadata is present only after exercise requirements are reviewed.
  */
 data class Exercise(
     val id: String,
+    val source: ExerciseSource? = null,
     val name: String,
+    val searchAliases: List<String> = emptyList(),
     val primaryMuscles: List<String>,
     val secondaryMuscles: List<String> = emptyList(),
-    val equipment: List<String> = emptyList(),
-    val type: ExerciseType = ExerciseType.WEIGHTED_REPS,
-    val movementPattern: MovementPattern = MovementPattern.OTHER,
-    val difficulty: Difficulty = Difficulty.INTERMEDIATE,
-    val compoundOrIsolation: MechanicsType = MechanicsType.COMPOUND,
-    val recommendedRepRange: RepRange = RepRange(min = 8, max = 12),
-    val fatigueScore: Int = 3, // Scale 1 (low fatigue) to 5 (high systemic fatigue)
-    val description: String = ""
+    val listedEquipment: List<String> = emptyList(),
+    val type: ExerciseType,
+    val isStretch: Boolean = false,
+    val programming: ExerciseProgrammingMetadata? = null
+)
+
+data class ExerciseSource(
+    val catalogId: String,
+    val sourceId: String,
+    val sourceSlug: String,
+    val attribution: ExerciseAttribution
+)
+
+data class ExerciseAttribution(
+    val creator: String,
+    val creatorUrl: String,
+    val license: String,
+    val licenseUrl: String,
+    val source: ExerciseAttributionSource? = null
+)
+
+data class ExerciseAttributionSource(
+    val name: String,
+    val url: String,
+    val license: String,
+    val licenseUrl: String,
+    val changes: String
+)
+
+data class ExerciseProgrammingMetadata(
+    val requiredEquipmentCombinations: List<List<String>>,
+    val movementPattern: MovementPattern,
+    val difficulty: Difficulty,
+    val mechanics: MechanicsType,
+    val recommendedRepRange: RepRange,
+    val fatigueScore: Int,
+    val progressionType: ProgressionType,
+    val alternativeExerciseIds: List<String> = emptyList(),
+    val coachingSummary: String
 )
 
 enum class ExerciseType {
-    WEIGHTED_REPS,
+    WEIGHT_REPS,
     BODYWEIGHT_REPS,
-    TIMED,
-    CARDIO,
-    DISTANCE
+    ASSISTED_BODYWEIGHT,
+    DURATION,
+    DISTANCE_DURATION
 }
 
 enum class MovementPattern {
@@ -52,10 +85,23 @@ enum class Difficulty {
     ADVANCED
 }
 
+enum class ProgressionType {
+    REPETITIONS_THEN_LOAD,
+    LOAD,
+    REPETITIONS,
+    DURATION,
+    DISTANCE,
+    ASSISTANCE_REDUCTION
+}
+
 data class RepRange(
     val min: Int,
     val max: Int
 ) {
+    init {
+        require(min > 0 && max >= min) { "Rep range must be positive and ordered." }
+    }
+
     override fun toString(): String = if (min == max) "$min" else "$min–$max"
 }
 
@@ -90,9 +136,11 @@ object StandardEquipment {
     const val RESISTANCE_BAND = "Resistance Band"
     const val BENCH = "Bench"
     const val PULLUP_BAR = "Pull-up Bar"
+    const val DIP_BARS = "Dip Bars"
+    const val SQUAT_RACK = "Squat Rack"
 
     val ALL = listOf(
         BARBELL, DUMBBELL, CABLE, MACHINE, BODYWEIGHT,
-        KETTLEBELL, RESISTANCE_BAND, BENCH, PULLUP_BAR
+        KETTLEBELL, RESISTANCE_BAND, BENCH, PULLUP_BAR, DIP_BARS, SQUAT_RACK
     )
 }
