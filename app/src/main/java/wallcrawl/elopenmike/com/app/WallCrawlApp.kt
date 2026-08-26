@@ -1,13 +1,9 @@
 package wallcrawl.elopenmike.com.app
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -16,8 +12,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -68,49 +64,18 @@ fun WallCrawlApp(
         containerColor = ObsidianBlack,
         bottomBar = {
             if (shouldShowBottomBar) {
-                NavigationBar(
-                    containerColor = GraphiteSurface,
-                    modifier = Modifier
-                        .height(68.dp)
-                        .border(1.dp, GraphiteBorder)
-                ) {
-                    Screen.bottomNavItems.forEach { screen ->
-                        val isSelected = currentRoute == screen.route
-                        NavigationBarItem(
-                            selected = isSelected,
-                            onClick = {
-                                navController.navigate(screen.route) {
-                                    popUpTo(navController.graph.findStartDestination().id) {
-                                        saveState = true
-                                    }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            },
-                            icon = {
-                                Icon(
-                                    imageVector = screen.icon,
-                                    contentDescription = screen.title,
-                                    modifier = Modifier.size(22.dp)
-                                )
-                            },
-                            label = {
-                                Text(
-                                    text = screen.title,
-                                    fontSize = 11.sp,
-                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
-                                )
-                            },
-                            colors = NavigationBarItemDefaults.colors(
-                                selectedIconColor = TextWhite,
-                                unselectedIconColor = TextMuted,
-                                selectedTextColor = CrimsonRedPrimary,
-                                unselectedTextColor = TextMuted,
-                                indicatorColor = CrimsonRedPrimary
-                            )
-                        )
+                WallCrawlBottomBar(
+                    currentRoute = currentRoute,
+                    onNavigate = { screen ->
+                        navController.navigate(screen.route) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
                     }
-                }
+                )
             }
         }
     ) { innerPadding ->
@@ -200,6 +165,51 @@ fun WallCrawlApp(
                     }
                 )
             }
+        }
+    }
+}
+
+internal const val WALL_CRAWL_BOTTOM_BAR_TEST_TAG = "wall_crawl_bottom_bar"
+
+@Composable
+internal fun WallCrawlBottomBar(
+    currentRoute: String?,
+    onNavigate: (Screen) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    NavigationBar(
+        containerColor = GraphiteSurface,
+        modifier = modifier
+            .testTag(WALL_CRAWL_BOTTOM_BAR_TEST_TAG)
+            .border(1.dp, GraphiteBorder)
+    ) {
+        Screen.bottomNavItems.forEach { screen ->
+            val isSelected = currentRoute == screen.route
+            NavigationBarItem(
+                selected = isSelected,
+                onClick = { onNavigate(screen) },
+                icon = {
+                    Icon(
+                        imageVector = screen.icon,
+                        contentDescription = screen.title,
+                        modifier = Modifier.size(22.dp)
+                    )
+                },
+                label = {
+                    Text(
+                        text = screen.title,
+                        fontSize = 11.sp,
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
+                    )
+                },
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = TextWhite,
+                    unselectedIconColor = TextMuted,
+                    selectedTextColor = CrimsonRedPrimary,
+                    unselectedTextColor = TextMuted,
+                    indicatorColor = CrimsonRedPrimary
+                )
+            )
         }
     }
 }
