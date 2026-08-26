@@ -29,6 +29,32 @@ class LauncherIconResourceTest {
         assertThat(opaqueBounds.width).isAtLeast((size * 0.9f).toInt())
         assertThat(opaqueBounds.height).isAtLeast((size * 0.9f).toInt())
     }
+
+    @Test
+    fun monochromeIcon_hasTransparentBackgroundForThemedIcons() {
+        val context = ApplicationProvider.getApplicationContext<android.content.Context>()
+        val launcherIcon = context.getDrawable(R.mipmap.ic_launcher)
+        assertThat(launcherIcon).isInstanceOf(AdaptiveIconDrawable::class.java)
+
+        val monochrome = (launcherIcon as AdaptiveIconDrawable).monochrome
+        assertThat(monochrome).isNotNull()
+
+        val size = 432
+        val rendered = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+        monochrome!!.setBounds(0, 0, size, size)
+        monochrome.draw(Canvas(rendered))
+
+        // Ensure corners and background areas are transparent (no background plate)
+        assertThat((rendered.getPixel(0, 0) ushr 24)).isEqualTo(0)
+        assertThat((rendered.getPixel(size - 1, 0) ushr 24)).isEqualTo(0)
+        assertThat((rendered.getPixel(0, size - 1) ushr 24)).isEqualTo(0)
+        assertThat((rendered.getPixel(size - 1, size - 1) ushr 24)).isEqualTo(0)
+
+        // Ensure the glyph itself exists and has valid bounds
+        val opaqueBounds = rendered.opaquePixelBounds()
+        assertThat(opaqueBounds.width).isGreaterThan(0)
+        assertThat(opaqueBounds.height).isGreaterThan(0)
+    }
 }
 
 private fun Bitmap.opaquePixelBounds(): PixelBounds {
