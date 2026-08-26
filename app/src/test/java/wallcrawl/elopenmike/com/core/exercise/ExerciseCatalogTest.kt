@@ -51,6 +51,19 @@ class ExerciseCatalogTest {
     fun searchExercises_byEquipment_filtersCorrectly() = runTest {
         val barbellOnly = catalog.searchExercises(equipment = StandardEquipment.BARBELL).first()
         assertThat(barbellOnly).isNotEmpty()
-        assertThat(barbellOnly.all { it.equipment.contains(StandardEquipment.BARBELL) }).isTrue()
+        assertThat(barbellOnly.all { it.listedEquipment.contains(StandardEquipment.BARBELL) }).isTrue()
+    }
+
+    @Test
+    fun searchExercises_byLegacyAlias_returnsMappedExercise() = runTest {
+        val aliased = InMemoryExerciseCatalog.SAMPLE_EXERCISES.first().copy(
+            name = "Bench Press",
+            searchAliases = listOf("Barbell Bench Press")
+        )
+        val aliasCatalog = InMemoryExerciseCatalog(exercises = listOf(aliased))
+
+        val results = aliasCatalog.searchExercises(query = "barbell bench").first()
+
+        assertThat(results.map { it.id }).containsExactly(aliased.id)
     }
 }

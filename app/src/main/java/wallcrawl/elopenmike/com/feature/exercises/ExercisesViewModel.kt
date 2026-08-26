@@ -5,11 +5,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
 import wallcrawl.elopenmike.com.core.model.Exercise
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -46,7 +48,7 @@ class ExercisesViewModel(
         val muscles = exerciseCatalog.getMuscleGroups()
         val eqTypes = exerciseCatalog.getEquipmentTypes()
 
-        ExercisesUiState.Success(
+        val state: ExercisesUiState = ExercisesUiState.Success(
             exercises = exercises,
             query = query,
             selectedMuscle = muscle,
@@ -54,6 +56,14 @@ class ExercisesViewModel(
             availableMuscles = muscles,
             availableEquipment = eqTypes,
             selectedExerciseDetail = detail
+        )
+        state
+    }.catch { error ->
+        if (error is CancellationException) throw error
+        emit(
+            ExercisesUiState.Error(
+                "The offline exercise catalog could not be loaded. Reinstall or update WallCrawl and try again."
+            )
         )
     }.stateIn(
         scope = viewModelScope,

@@ -109,4 +109,20 @@ class FakeWorkoutPlannerTest {
 
         assertThat(workout.exercises.single().targetWeight).isEqualTo(50.0)
     }
+
+    @Test
+    fun generateWorkout_withUnreviewedCandidate_rejectsInvalidContext() = runTest {
+        val unreviewed = allExercises.first().copy(programming = null)
+        val context = WorkoutGenerationContext(
+            userProfile = UserProfile(),
+            allowedExercises = listOf(unreviewed)
+        )
+
+        try {
+            planner.generateWorkout(context)
+            fail("Expected WorkoutValidationException for unreviewed candidate")
+        } catch (error: WorkoutValidationException) {
+            assertThat(error.message).contains("programming metadata")
+        }
+    }
 }

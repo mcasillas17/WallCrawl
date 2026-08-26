@@ -83,51 +83,84 @@ feature/exercises/      searchable/filterable catalog browser
 feature/profile/        local goals, equipment, units, and preferences
 ```
 
-The current catalog is a small in-memory set with WallCrawl-owned domain
-metadata. Upstream Workout Guide paths are not stored in `Exercise` and are not
-visible to feature screens. `ExerciseVisualProvider` owns that integration
-boundary.
+Production uses a bundled Workout Guide catalog behind WallCrawl-owned domain
+and provider interfaces. Upstream paths are not stored in `Exercise` and are
+not visible to feature screens. `ExerciseVisualProvider` owns that integration
+boundary, while `InMemoryExerciseCatalog` remains an injectable test fixture.
 
-## Workout Guide visual proof
+## Offline Workout Guide catalog
 
-A small, pinned [Workout Guide](https://github.com/bryllim/workout-guide)
-subset proves the offline rendering path:
+WallCrawl bundles the complete catalog from pinned
+[Workout Guide](https://github.com/bryllim/workout-guide) commit
+`ba0b709cb20430361b2cb33aaadd20998164a916`: 302 exercises and 906 SVG frames.
+The installed app does not use npm, fetch catalog data, or require the upstream
+repository.
 
 ```text
-exerciseId → WorkoutGuideVisualProvider → bundled SVG frames
-           → ExerciseIllustration → Compose
+bundled catalog.json → WorkoutGuideCatalogStore
+                     ├→ BundledExerciseCatalog → search and filters
+                     └→ WorkoutGuideVisualProvider → SVG frames
+                                                ↓
+                                     ExerciseIllustration → Compose
 ```
 
-The proof includes three unmodified frames each for incline dumbbell press,
-pull-up, and lateral raise. Frames are bundled under
-`app/src/main/assets/workout-guide/` and animate in a lightweight
-`1 → 2 → 3 → 2` loop using Coil 3 with SVG support. Unsupported exercise IDs
-show a local fallback rather than attempting network access.
+All catalog facts are browseable and searchable by name, alias, muscle, and
+listed equipment. Workout Guide does not provide every hard equipment
+requirement or programming judgment WallCrawl needs, so only the 12 exercises
+with reviewed `programming` metadata are currently eligible for workout
+generation. The hard filter prevents all other catalog entries from reaching
+the planner.
 
-The subset is pinned to Workout Guide commit
-`ba0b709cb20430361b2cb33aaadd20998164a916`. Workout Guide visual assets are
-CC BY-SA 4.0; the upstream `LICENSE-ASSETS` and `ATTRIBUTION.md`, the source
-commit, and the WallCrawl ID mapping are preserved with the bundled assets.
-WallCrawl source code remains covered by the repository's MIT license; the
-third-party visual assets retain their own license.
+Each exercise resolves to three bundled frames that animate in a lightweight
+`1 → 2 → 3 → 2` loop using Coil 3 with SVG support. The compact normalized
+`catalog.json` derives those paths from validated source slugs and a catalog
+visual specification. The exact pinned upstream metadata and per-frame
+attribution remain unmodified in `upstream-manifest.json` beside the SVGs.
+
+The importer is a Python-standard-library development tool. Point it at a clean
+local Workout Guide checkout at the pinned commit:
+
+```bash
+python3 tools/workout-guide/import_catalog.py \
+  --source /path/to/workout-guide
+
+python3 tools/workout-guide/import_catalog.py \
+  --source /path/to/workout-guide \
+  --check
+```
+
+The import validates the exact commit, source cleanliness, IDs, metadata,
+licenses, paths, frame counts, and reviewed overrides before atomically
+replacing the generated Android asset directory. It copies SVG only; the PNG
+counterparts would duplicate the same illustrations without helping Android's
+vector rendering path.
+
+Workout Guide visual assets are CC BY-SA 4.0. Its `LICENSE`,
+`LICENSE-ASSETS`, `ATTRIBUTION.md`, full `upstream-manifest.json`, pinned commit,
+and WallCrawl notice are preserved under
+`app/src/main/assets/workout-guide/`. WallCrawl source code remains covered by
+the repository's MIT license; third-party assets retain their own terms.
 
 ## Build and test
 
 Requirements:
 
-- JDK 17 or newer (the project compiles to Java 17 bytecode)
+- JDK 17 (the project compiles to Java 17 bytecode)
 - Android SDK 35
 - `JAVA_HOME` and `ANDROID_HOME` configured
 
 ```bash
 ./gradlew testDebugUnitTest
 ./gradlew assembleDebug
+./gradlew connectedDebugAndroidTest
 ```
 
 The unit suite covers catalog filtering, context construction, bounded history
 analysis, planner constraints and load progression, generated-workout
 validation, atomic persistence boundaries, progress calculations, Today state,
-duration calculation, and visual-provider mapping.
+duration calculation, and visual-provider mapping. Android instrumentation
+also parses the packaged 302-exercise catalog and opens every one of its 906 SVG
+paths.
 
 ## Product and engineering principles
 
@@ -144,8 +177,8 @@ duration calculation, and visual-provider mapping.
 
 ## Next milestones
 
-- Add a reproducible importer for the full pinned Workout Guide manifest/assets.
-- Move catalog metadata from the in-memory proof to a bundled parsed catalog.
+- Review programming and hard equipment requirements for additional catalog
+  exercises before making them planner-eligible.
 - Add richer active-workout controls such as rest timers, RPE/RIR editing, and
   exercise substitution.
 - Expand progress calculations and charts as more history accumulates.

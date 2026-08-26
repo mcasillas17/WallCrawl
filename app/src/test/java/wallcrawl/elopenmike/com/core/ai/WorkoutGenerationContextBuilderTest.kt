@@ -25,6 +25,24 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSummary
 class WorkoutGenerationContextBuilderTest {
 
     @Test
+    fun build_excludesCatalogEntriesWithoutReviewedProgramming() = runTest {
+        val reviewed = InMemoryExerciseCatalog.SAMPLE_EXERCISES.first()
+        val unreviewed = reviewed.copy(id = "catalog-only-exercise", programming = null)
+        val builder = WorkoutGenerationContextBuilder(
+            userProfileRepository = StubUserProfileRepository(UserProfile()),
+            workoutRepository = StubWorkoutRepository(emptyList()),
+            exerciseCatalog = InMemoryExerciseCatalog(listOf(reviewed, unreviewed)),
+            exerciseFilter = ExerciseFilter(),
+            historyAnalyzer = WorkoutHistoryAnalyzer()
+        )
+
+        val context = builder.build()
+
+        assertThat(context.allowedExercises.map { it.id }).contains(reviewed.id)
+        assertThat(context.allowedExercises.map { it.id }).doesNotContain(unreviewed.id)
+    }
+
+    @Test
     fun build_filtersCandidatesAndIncludesPersistedPerformance() = runTest {
         val now = 10_000_000L
         val profile = UserProfile(

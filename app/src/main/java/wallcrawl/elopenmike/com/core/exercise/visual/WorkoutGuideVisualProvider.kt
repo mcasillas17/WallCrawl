@@ -1,28 +1,19 @@
 package wallcrawl.elopenmike.com.core.exercise.visual
 
+import java.util.Locale
+import wallcrawl.elopenmike.com.core.exercise.workoutguide.WorkoutGuideCatalogSource
+
 /**
- * Resolves WallCrawl exercise IDs to the pinned Workout Guide subset bundled in assets.
+ * Resolves WallCrawl exercise IDs to the pinned Workout Guide catalog bundled in assets.
  * Raw upstream paths remain confined to this integration boundary.
  */
-class WorkoutGuideVisualProvider : ExerciseVisualProvider {
+class WorkoutGuideVisualProvider(
+    private val source: WorkoutGuideCatalogSource
+) : ExerciseVisualProvider {
 
-    override fun framesFor(exerciseId: String): List<ExerciseVisual> {
-        val workoutGuideId = WORKOUT_GUIDE_IDS[exerciseId] ?: return emptyList()
-        return (1..FRAME_COUNT).map { frameNumber ->
-            ExerciseVisual(
-                assetPath = "$ASSET_ROOT/$workoutGuideId/frame-$frameNumber.svg"
-            )
-        }
-    }
-
-    private companion object {
-        const val ASSET_ROOT = "workout-guide/assets"
-        const val FRAME_COUNT = 3
-
-        val WORKOUT_GUIDE_IDS = mapOf(
-            "incline-dumbbell-press" to "incline-dumbbell-press",
-            "pull-ups" to "pull-up",
-            "dumbbell-lateral-raise" to "lateral-raise"
-        )
-    }
+    override fun framesFor(exerciseId: String): List<ExerciseVisual> =
+        source.currentSnapshot()
+            ?.framesByExerciseId
+            ?.get(exerciseId.trim().lowercase(Locale.ROOT))
+            .orEmpty()
 }

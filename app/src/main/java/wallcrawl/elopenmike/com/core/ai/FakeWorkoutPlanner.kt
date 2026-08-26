@@ -25,6 +25,11 @@ class FakeWorkoutPlanner : WorkoutPlanner {
         if (candidates.isEmpty()) {
             throw WorkoutValidationException("Cannot generate workout: no allowed candidate exercises available.")
         }
+        if (candidates.any { it.programming == null }) {
+            throw WorkoutValidationException(
+                "Cannot generate workout: every allowed candidate requires reviewed programming metadata."
+            )
+        }
 
         val generationIndex = generationCounter.getAndIncrement()
         val splitType = determineSplitType(context, generationIndex)
@@ -94,8 +99,8 @@ class FakeWorkoutPlanner : WorkoutPlanner {
         }.ifEmpty { candidates }
 
         // Partition compound vs isolation
-        val compounds = matchingCandidates.filter { it.compoundOrIsolation == MechanicsType.COMPOUND }
-        val isolations = matchingCandidates.filter { it.compoundOrIsolation == MechanicsType.ISOLATION }
+        val compounds = matchingCandidates.filter { it.programming?.mechanics == MechanicsType.COMPOUND }
+        val isolations = matchingCandidates.filter { it.programming?.mechanics == MechanicsType.ISOLATION }
 
         val exerciseCountTarget = when {
             context.preferredWorkoutDurationMinutes <= 35 -> 3
@@ -121,8 +126,12 @@ class FakeWorkoutPlanner : WorkoutPlanner {
         exercise: Exercise,
         context: WorkoutGenerationContext
     ): GeneratedExercise {
+        val programming = exercise.programming
+            ?: throw WorkoutValidationException(
+                "Cannot generate workout: ${exercise.id} has no reviewed programming metadata."
+            )
         val sets = when (context.fitnessGoal) {
-            FitnessGoal.STRENGTH -> if (exercise.compoundOrIsolation == MechanicsType.COMPOUND) 4 else 3
+            FitnessGoal.STRENGTH -> if (programming.mechanics == MechanicsType.COMPOUND) 4 else 3
             FitnessGoal.BUILD_MUSCLE -> 3
             FitnessGoal.GENERAL_FITNESS -> 3
             FitnessGoal.FAT_LOSS -> 3
@@ -130,8 +139,8 @@ class FakeWorkoutPlanner : WorkoutPlanner {
         }
 
         val (repMin, repMax) = when (context.fitnessGoal) {
-            FitnessGoal.STRENGTH -> if (exercise.compoundOrIsolation == MechanicsType.COMPOUND) 4 to 6 else 6 to 8
-            FitnessGoal.BUILD_MUSCLE -> exercise.recommendedRepRange.min to exercise.recommendedRepRange.max
+            FitnessGoal.STRENGTH -> if (programming.mechanics == MechanicsType.COMPOUND) 4 to 6 else 6 to 8
+            FitnessGoal.BUILD_MUSCLE -> programming.recommendedRepRange.min to programming.recommendedRepRange.max
             FitnessGoal.GENERAL_FITNESS -> 10 to 12
             FitnessGoal.FAT_LOSS -> 12 to 15
             FitnessGoal.ATHLETIC_PERFORMANCE -> 5 to 8
@@ -152,7 +161,7 @@ class FakeWorkoutPlanner : WorkoutPlanner {
             repMax = repMax,
             targetWeight = targetWeight,
             restSeconds = restSeconds,
-            notes = exercise.description
+            notes = programming.coachingSummary
         )
     }
 

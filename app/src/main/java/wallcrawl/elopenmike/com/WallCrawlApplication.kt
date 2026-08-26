@@ -12,11 +12,12 @@ import wallcrawl.elopenmike.com.core.database.repository.OfflineUserProfileRepos
 import wallcrawl.elopenmike.com.core.database.repository.OfflineWorkoutRepository
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
+import wallcrawl.elopenmike.com.core.exercise.BundledExerciseCatalog
 import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
 import wallcrawl.elopenmike.com.core.exercise.ExerciseFilter
-import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
 import wallcrawl.elopenmike.com.core.exercise.visual.ExerciseVisualProvider
 import wallcrawl.elopenmike.com.core.exercise.visual.WorkoutGuideVisualProvider
+import wallcrawl.elopenmike.com.core.exercise.workoutguide.WorkoutGuideCatalogStore
 import wallcrawl.elopenmike.com.core.progress.ProgressCalculator
 
 /**
@@ -37,6 +38,10 @@ interface AppContainer {
 }
 
 class DefaultAppContainer(private val context: Context) : AppContainer {
+    private val workoutGuideCatalogStore: WorkoutGuideCatalogStore by lazy {
+        WorkoutGuideCatalogStore(context.assets)
+    }
+
     override val database: WallCrawlDatabase by lazy {
         WallCrawlDatabase.getInstance(context)
     }
@@ -53,11 +58,11 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
     }
 
     override val exerciseCatalog: ExerciseCatalog by lazy {
-        InMemoryExerciseCatalog()
+        BundledExerciseCatalog(workoutGuideCatalogStore)
     }
 
     override val exerciseVisualProvider: ExerciseVisualProvider by lazy {
-        WorkoutGuideVisualProvider()
+        WorkoutGuideVisualProvider(workoutGuideCatalogStore)
     }
 
     override val exerciseFilter: ExerciseFilter by lazy {

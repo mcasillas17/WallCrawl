@@ -7,8 +7,10 @@ import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
 import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
 import wallcrawl.elopenmike.com.core.progress.ProgressCalculator
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 
@@ -26,7 +28,7 @@ class ProgressViewModel(
         workoutRepository.observeCompletedWorkoutCount(),
         exerciseCatalog.getAllExercises()
     ) { profile, completedSessions, totalCompletedCount, exercises ->
-        ProgressUiState.Success(
+        val state: ProgressUiState = ProgressUiState.Success(
             overview = progressCalculator.calculate(
                 completedSessions = completedSessions,
                 profile = profile,
@@ -34,6 +36,14 @@ class ProgressViewModel(
                 nowTimestamp = nowTimestamp()
             ).copy(totalWorkoutsLogged = totalCompletedCount),
             preferredUnit = profile.preferredUnit
+        )
+        state
+    }.catch { error ->
+        if (error is CancellationException) throw error
+        emit(
+            ProgressUiState.Error(
+                "Progress could not be loaded because the offline exercise catalog or workout data is unavailable."
+            )
         )
     }.stateIn(
         scope = viewModelScope,

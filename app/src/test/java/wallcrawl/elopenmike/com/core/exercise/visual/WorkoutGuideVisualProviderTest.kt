@@ -2,10 +2,25 @@ package wallcrawl.elopenmike.com.core.exercise.visual
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
+import wallcrawl.elopenmike.com.core.exercise.workoutguide.WorkoutGuideCatalogSnapshot
+import wallcrawl.elopenmike.com.core.exercise.workoutguide.WorkoutGuideCatalogSource
 
 class WorkoutGuideVisualProviderTest {
 
-    private val provider = WorkoutGuideVisualProvider()
+    private val inclineFrames = (1..3).map { frame ->
+        ExerciseVisual("workout-guide/assets/incline-dumbbell-press/frame-$frame.svg")
+    }
+    private val pullUpFrames = (1..3).map { frame ->
+        ExerciseVisual("workout-guide/assets/pull-up/frame-$frame.svg")
+    }
+    private val snapshot = WorkoutGuideCatalogSnapshot(
+        exercises = emptyList(),
+        framesByExerciseId = mapOf(
+            "incline-dumbbell-press" to inclineFrames,
+            "pull-ups" to pullUpFrames
+        )
+    )
+    private val provider = WorkoutGuideVisualProvider(FixedSource(snapshot))
 
     @Test
     fun framesFor_directCatalogId_returnsOrderedBundledFrames() {
@@ -27,19 +42,18 @@ class WorkoutGuideVisualProviderTest {
                 "workout-guide/assets/pull-up/frame-3.svg"
             )
             .inOrder()
-
-        assertThat(provider.framesFor("dumbbell-lateral-raise").map { it.assetPath })
-            .containsExactly(
-                "workout-guide/assets/lateral-raise/frame-1.svg",
-                "workout-guide/assets/lateral-raise/frame-2.svg",
-                "workout-guide/assets/lateral-raise/frame-3.svg"
-            )
-            .inOrder()
     }
 
     @Test
     fun framesFor_unknownOrBlankId_returnsNoFrames() {
         assertThat(provider.framesFor("unknown-exercise")).isEmpty()
         assertThat(provider.framesFor(" ")).isEmpty()
+    }
+
+    private class FixedSource(
+        private val snapshot: WorkoutGuideCatalogSnapshot
+    ) : WorkoutGuideCatalogSource {
+        override suspend fun snapshot(): WorkoutGuideCatalogSnapshot = snapshot
+        override fun currentSnapshot(): WorkoutGuideCatalogSnapshot = snapshot
     }
 }
