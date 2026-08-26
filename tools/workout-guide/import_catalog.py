@@ -85,6 +85,8 @@ def import_catalog(
     _require_schema_version(overrides, "programming overrides")
 
     source_repository = _required_string(config, "sourceRepository", "import config")
+    if not source_repository.startswith("https://"):
+        raise CatalogImportError("sourceRepository must be an HTTPS URL")
     source_commit = _required_string(config, "sourceCommit", "import config")
     if not re.fullmatch(r"[0-9a-f]{40}", source_commit):
         raise CatalogImportError("sourceCommit must be a 40-character lowercase git commit")

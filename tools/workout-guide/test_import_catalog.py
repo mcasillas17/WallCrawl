@@ -99,6 +99,16 @@ class ImportCatalogTest(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("pinned commit", result.stderr.lower())
 
+    def test_rejects_non_https_source_repository(self) -> None:
+        config = json.loads(self.config.read_text())
+        config["sourceRepository"] = "http://example.test/workout-guide"
+        self.config.write_text(json.dumps(config, indent=2) + "\n")
+
+        result = self._run_import()
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("https url", result.stderr.lower())
+
     def test_rejects_dirty_imported_source_and_preserves_existing_output(self) -> None:
         first = self._run_import()
         self.assertEqual(first.returncode, 0, first.stderr)
