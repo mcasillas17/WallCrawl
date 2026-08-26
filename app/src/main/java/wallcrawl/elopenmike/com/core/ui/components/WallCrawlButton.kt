@@ -93,19 +93,19 @@ fun WallCrawlOutlinedButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
 ) {
     OutlinedButton(
         onClick = onClick,
-        modifier = modifier
-            .fillMaxWidth()
-            .height(48.dp),
+        modifier = modifier,
         enabled = enabled,
         shape = RoundedCornerShape(12.dp),
         border = BorderStroke(1.dp, CrimsonRedPrimary.copy(alpha = 0.6f)),
         colors = ButtonDefaults.outlinedButtonColors(
             contentColor = CrimsonRedPrimary
-        )
+        ),
+        contentPadding = contentPadding
     ) {
         Text(
             text = text,
@@ -114,3 +114,4 @@ fun WallCrawlOutlinedButton(
         )
     }
 }
+
