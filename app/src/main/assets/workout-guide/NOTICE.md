@@ -1,13 +1,13 @@
-# Workout Guide asset subset
+# Workout Guide catalog
 
-WallCrawl bundles an unmodified proof-of-concept subset of the Workout Guide
-exercise illustrations from commit
-`ba0b709cb20430361b2cb33aaadd20998164a916`.
+WallCrawl bundles unmodified Workout Guide SVG exercise illustrations and normalized metadata.
 
 Source: https://github.com/bryllim/workout-guide
 
-The visual assets are licensed under CC BY-SA 4.0. The upstream
-`LICENSE-ASSETS` and `ATTRIBUTION.md` files are preserved beside this notice.
-The WallCrawl-to-upstream ID mapping is recorded in `manifest.json` and kept
-behind `WorkoutGuideVisualProvider` so the application UI does not depend on
-the upstream repository layout.
+Pinned commit: `ba0b709cb20430361b2cb33aaadd20998164a916`
+
+Imported exercises: 302
+
+Imported SVG frames: 906
+
+PNG counterparts are intentionally not bundled. See LICENSE, LICENSE-ASSETS, ATTRIBUTION.md, and upstream-manifest.json in this directory.
