@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "sourceRepository": "https://github.com/bryllim/workout-guide",
+  "sourceCommit": "ba0b709cb20430361b2cb33aaadd20998164a916",
+  "manifestPath": "packages/workout-guide/manifest.json",
+  "assetBasePath": "packages/workout-guide",
+  "licenseFiles": [
+    "LICENSE",
+    "LICENSE-ASSETS",
+    "ATTRIBUTION.md"
+  ],
+  "expectedExerciseCount": 302,
+  "expectedFrameCount": 906,
+  "idAliases": {
+    "exercise-incline-dumbbell-press": {
+      "wallCrawlId": "incline-dumbbell-press",
+      "searchAliases": []
+    },
+    "exercise-bench-press": {
+      "wallCrawlId": "barbell-bench-press",
+      "searchAliases": [
+        "Barbell Bench Press"
+      ]
+    },
+    "exercise-pull-up": {
+      "wallCrawlId": "pull-ups",
+      "searchAliases": [
+        "Pull-ups"
+      ]
+    },
+    "exercise-deadlift": {
+      "wallCrawlId": "barbell-deadlift",
+      "searchAliases": [
+        "Barbell Deadlift"
+      ]
+    },
+    "exercise-squat": {
+      "wallCrawlId": "barbell-back-squat",
+      "searchAliases": [
+        "Back Squat",
+        "Barbell Back Squat"
+      ]
+    },
+    "exercise-seated-dumbbell-press": {
+      "wallCrawlId": "dumbbell-shoulder-press",
+      "searchAliases": [
+        "Dumbbell Shoulder Press",
+        "Seated Dumbbell Shoulder Press"
+      ]
+    },
+    "exercise-lateral-raise": {
+      "wallCrawlId": "dumbbell-lateral-raise",
+      "searchAliases": [
+        "Dumbbell Lateral Raise"
+      ]
+    },
+    "exercise-tricep-pushdown": {
+      "wallCrawlId": "cable-triceps-pushdown",
+      "searchAliases": [
+        "Cable Tricep Pushdown",
+        "Cable Triceps Pushdown"
+      ]
+    },
+    "exercise-ez-bar-curl": {
+      "wallCrawlId": "barbell-bicep-curl",
+      "searchAliases": [
+        "Barbell Bicep Curl",
+        "Barbell Curl"
+      ]
+    },
+    "exercise-chest-dip": {
+      "wallCrawlId": "parallel-bar-dips",
+      "searchAliases": [
+        "Parallel Bar Dips",
+        "Parallel-Bar Dip"
+      ]
+    },
+    "exercise-hanging-leg-raise": {
+      "wallCrawlId": "hanging-leg-raise",
+      "searchAliases": []
+    },
+    "exercise-romanian-deadlift": {
+      "wallCrawlId": "romanian-deadlift",
+      "searchAliases": [
+        "Romanian Deadlift (RDL)"
+      ]
+    }
+  }
+}

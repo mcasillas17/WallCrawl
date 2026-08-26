@@ -1,0 +1,241 @@
+{
+  "schemaVersion": 1,
+  "exercises": {
+    "incline-dumbbell-press": {
+      "requiredEquipmentCombinations": [
+        [
+          "Dumbbell",
+          "Bench"
+        ]
+      ],
+      "movementPattern": "horizontal_push",
+      "difficulty": "intermediate",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 8,
+        "max": 10
+      },
+      "fatigueScore": 3,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "barbell-bench-press"
+      ],
+      "coachingSummary": "Upper chest press using dumbbells on an incline bench with a controlled range of motion."
+    },
+    "barbell-bench-press": {
+      "requiredEquipmentCombinations": [
+        [
+          "Barbell",
+          "Bench",
+          "Squat Rack"
+        ]
+      ],
+      "movementPattern": "horizontal_push",
+      "difficulty": "intermediate",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 5,
+        "max": 8
+      },
+      "fatigueScore": 4,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "incline-dumbbell-press"
+      ],
+      "coachingSummary": "Foundational horizontal press for chest, shoulder, and triceps strength."
+    },
+    "pull-ups": {
+      "requiredEquipmentCombinations": [
+        [
+          "Pull-up Bar"
+        ]
+      ],
+      "movementPattern": "vertical_pull",
+      "difficulty": "intermediate",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 6,
+        "max": 12
+      },
+      "fatigueScore": 3,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [],
+      "coachingSummary": "Bodyweight vertical pull emphasizing the lats, upper back, biceps, and grip."
+    },
+    "barbell-deadlift": {
+      "requiredEquipmentCombinations": [
+        [
+          "Barbell"
+        ]
+      ],
+      "movementPattern": "hinge",
+      "difficulty": "advanced",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 4,
+        "max": 6
+      },
+      "fatigueScore": 5,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "romanian-deadlift"
+      ],
+      "coachingSummary": "Heavy hip hinge for posterior-chain strength, trunk bracing, and grip."
+    },
+    "barbell-back-squat": {
+      "requiredEquipmentCombinations": [
+        [
+          "Barbell",
+          "Squat Rack"
+        ]
+      ],
+      "movementPattern": "squat",
+      "difficulty": "advanced",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 6,
+        "max": 8
+      },
+      "fatigueScore": 5,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [],
+      "coachingSummary": "Barbell squat emphasizing quadriceps and glutes with full-body bracing."
+    },
+    "dumbbell-shoulder-press": {
+      "requiredEquipmentCombinations": [
+        [
+          "Dumbbell",
+          "Bench"
+        ]
+      ],
+      "movementPattern": "vertical_push",
+      "difficulty": "intermediate",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 8,
+        "max": 12
+      },
+      "fatigueScore": 3,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [],
+      "coachingSummary": "Seated dumbbell overhead press for shoulder and triceps strength."
+    },
+    "dumbbell-lateral-raise": {
+      "requiredEquipmentCombinations": [
+        [
+          "Dumbbell"
+        ]
+      ],
+      "movementPattern": "isolation",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 12,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [],
+      "coachingSummary": "Shoulder isolation emphasizing the lateral deltoids with controlled arm elevation."
+    },
+    "cable-triceps-pushdown": {
+      "requiredEquipmentCombinations": [
+        [
+          "Cable"
+        ]
+      ],
+      "movementPattern": "isolation",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "parallel-bar-dips"
+      ],
+      "coachingSummary": "Cable elbow extension that trains the triceps through a controlled range."
+    },
+    "barbell-bicep-curl": {
+      "requiredEquipmentCombinations": [
+        [
+          "Barbell"
+        ]
+      ],
+      "movementPattern": "isolation",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 8,
+        "max": 12
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [],
+      "coachingSummary": "Standing curl for biceps and forearm flexors using a barbell or EZ-bar."
+    },
+    "parallel-bar-dips": {
+      "requiredEquipmentCombinations": [
+        [
+          "Dip Bars"
+        ]
+      ],
+      "movementPattern": "vertical_push",
+      "difficulty": "intermediate",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 8,
+        "max": 12
+      },
+      "fatigueScore": 3,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "cable-triceps-pushdown"
+      ],
+      "coachingSummary": "Parallel-bar press emphasizing the chest and triceps with controlled shoulder depth."
+    },
+    "hanging-leg-raise": {
+      "requiredEquipmentCombinations": [
+        [
+          "Pull-up Bar"
+        ]
+      ],
+      "movementPattern": "core",
+      "difficulty": "intermediate",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions",
+      "alternativeExerciseIds": [],
+      "coachingSummary": "Hanging trunk and hip flexion for the abdominals, hip flexors, and grip."
+    },
+    "romanian-deadlift": {
+      "requiredEquipmentCombinations": [
+        [
+          "Barbell"
+        ],
+        [
+          "Dumbbell"
+        ]
+      ],
+      "movementPattern": "hinge",
+      "difficulty": "intermediate",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 8,
+        "max": 10
+      },
+      "fatigueScore": 4,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "barbell-deadlift"
+      ],
+      "coachingSummary": "Controlled hip hinge emphasizing the hamstrings and glutes under load."
+    }
+  }
+}
