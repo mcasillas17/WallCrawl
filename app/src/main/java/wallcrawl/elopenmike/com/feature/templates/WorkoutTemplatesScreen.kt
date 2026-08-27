@@ -10,13 +10,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
@@ -36,15 +39,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
+import wallcrawl.elopenmike.com.core.ui.components.StatBadge
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
 import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
+import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
+import wallcrawl.elopenmike.com.core.ui.theme.GraphiteBorder
 import wallcrawl.elopenmike.com.core.ui.theme.GraphiteSurfaceElevated
 import wallcrawl.elopenmike.com.core.ui.theme.ObsidianBlack
 import wallcrawl.elopenmike.com.core.ui.theme.TextMuted
 import wallcrawl.elopenmike.com.core.ui.theme.TextSecondary
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
+import wallcrawl.elopenmike.com.core.ui.theme.WebBlueAccent
 
 @Composable
 fun WorkoutTemplatesScreen(
@@ -68,13 +75,21 @@ fun WorkoutTemplatesScreen(
                 IconButton(onClick = onBack) {
                     Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back", tint = TextWhite)
                 }
-                Text(
-                    "My Workouts",
-                    color = TextWhite,
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Black,
-                    modifier = Modifier.weight(1f)
-                )
+                Column(Modifier.weight(1f)) {
+                    Text(
+                        text = "CUSTOM ROUTINES",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 1.sp,
+                        color = CrimsonRedPrimary
+                    )
+                    Text(
+                        text = "My Workouts",
+                        color = TextWhite,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Black
+                    )
+                }
                 IconButton(onClick = onCreate) {
                     Icon(Icons.Default.Add, "Create workout", tint = CrimsonRedPrimary)
                 }
@@ -89,7 +104,7 @@ fun WorkoutTemplatesScreen(
                     CircularProgressIndicator(color = CrimsonRedPrimary)
                 }
                 state.templates.isEmpty() -> EmptyTemplates(onCreate)
-                else -> LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                else -> LazyColumn(verticalArrangement = Arrangement.spacedBy(14.dp)) {
                     items(state.templates, key = WorkoutTemplate::id) { template ->
                         TemplateCard(
                             template = template,
@@ -108,15 +123,36 @@ fun WorkoutTemplatesScreen(
     pendingDelete?.let { template ->
         AlertDialog(
             onDismissRequest = { pendingDelete = null },
-            title = { Text("Delete ${template.name}?") },
-            text = { Text("Completed workout history will not be affected.") },
+            containerColor = GraphiteSurfaceElevated,
+            titleContentColor = TextWhite,
+            textContentColor = TextSecondary,
+            shape = RoundedCornerShape(16.dp),
+            title = {
+                Text(
+                    text = "Delete \"${template.name}\"?",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
+            },
+            text = {
+                Text(
+                    text = "This routine will be removed from your saved workouts. Completed workout history will not be affected.",
+                    fontSize = 14.sp
+                )
+            },
             confirmButton = {
                 TextButton(onClick = {
                     viewModel.deleteTemplate(template.id)
                     pendingDelete = null
-                }) { Text("Delete") }
+                }) {
+                    Text("Delete", color = CrimsonRedLight, fontWeight = FontWeight.Bold)
+                }
             },
-            dismissButton = { TextButton(onClick = { pendingDelete = null }) { Text("Cancel") } }
+            dismissButton = {
+                TextButton(onClick = { pendingDelete = null }) {
+                    Text("Cancel", color = TextSecondary)
+                }
+            }
         )
     }
 }
@@ -125,9 +161,18 @@ fun WorkoutTemplatesScreen(
 private fun EmptyTemplates(onCreate: () -> Unit) {
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         WallCrawlCard(backgroundColor = GraphiteSurfaceElevated) {
-            Text("Build your own workout", color = TextWhite, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.FitnessCenter,
+                    contentDescription = null,
+                    tint = CrimsonRedPrimary,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(Modifier.padding(horizontal = 4.dp))
+                Text("Build your own workout", color = TextWhite, fontSize = 19.sp, fontWeight = FontWeight.Bold)
+            }
             Spacer(Modifier.height(8.dp))
-            Text("Choose from all 302 offline exercises and reuse it anytime.", color = TextSecondary)
+            Text("Choose from all 302 offline exercises and save custom routines to reuse anytime.", color = TextSecondary, fontSize = 14.sp)
             Spacer(Modifier.height(16.dp))
             WallCrawlPrimaryButton("Create Workout", onClick = onCreate)
         }
@@ -145,20 +190,24 @@ private fun TemplateCard(
     WallCrawlCard(backgroundColor = GraphiteSurfaceElevated) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {
-                Text(template.name, color = TextWhite, fontSize = 19.sp, fontWeight = FontWeight.Bold)
+                Text(template.name, color = TextWhite, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                Spacer(Modifier.height(2.dp))
                 Text(
-                    "${template.exercises.size} exercises · ${template.exercises.sumOf { it.targetSets }} sets",
+                    "${template.exercises.size} exercises · ${template.exercises.sumOf { it.targetSets }} total sets",
                     color = TextSecondary,
                     fontSize = 13.sp
                 )
-                if (template.notes.isNotBlank()) Text(template.notes, color = TextMuted, fontSize = 12.sp)
+                if (template.notes.isNotBlank()) {
+                    Spacer(Modifier.height(4.dp))
+                    Text(template.notes, color = TextMuted, fontSize = 12.sp)
+                }
             }
             IconButton(onClick = onEdit) { Icon(Icons.Default.Edit, "Edit", tint = TextSecondary) }
-            IconButton(onClick = onDelete) { Icon(Icons.Default.Delete, "Delete", tint = TextMuted) }
+            IconButton(onClick = onDelete) { Icon(Icons.Default.Delete, "Delete", tint = CrimsonRedLight.copy(alpha = 0.8f)) }
         }
         Spacer(Modifier.height(12.dp))
         WallCrawlPrimaryButton(
-            text = if (isStarting) "Starting…" else "Start Workout",
+            text = if (isStarting) "Starting Workout…" else "Start Workout",
             enabled = !isStarting,
             onClick = onStart,
             leadingIcon = { Icon(Icons.Default.PlayArrow, null, tint = TextWhite) }

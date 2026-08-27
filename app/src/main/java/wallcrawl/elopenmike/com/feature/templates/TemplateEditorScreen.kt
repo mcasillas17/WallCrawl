@@ -1,7 +1,7 @@
 package wallcrawl.elopenmike.com.feature.templates
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,29 +10,39 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -41,14 +51,22 @@ import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.ExercisePrescription
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.PlannedExercise
+import wallcrawl.elopenmike.com.core.ui.components.StatBadge
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
+import wallcrawl.elopenmike.com.core.ui.components.WallCrawlOutlinedButton
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
+import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
+import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
+import wallcrawl.elopenmike.com.core.ui.theme.GraphiteBorder
+import wallcrawl.elopenmike.com.core.ui.theme.GraphiteSurface
 import wallcrawl.elopenmike.com.core.ui.theme.GraphiteSurfaceElevated
 import wallcrawl.elopenmike.com.core.ui.theme.ObsidianBlack
 import wallcrawl.elopenmike.com.core.ui.theme.TextMuted
+import wallcrawl.elopenmike.com.core.ui.theme.TextPrimary
 import wallcrawl.elopenmike.com.core.ui.theme.TextSecondary
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
+import wallcrawl.elopenmike.com.core.ui.theme.WebBlueAccent
 
 @Composable
 fun TemplateEditorScreen(
@@ -58,96 +76,180 @@ fun TemplateEditorScreen(
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.uiState.collectAsState()
-    if (state.isPickerOpen) ExercisePickerDialog(state, viewModel)
 
-    Column(
-        modifier
+    if (state.isPickerOpen) {
+        ExercisePickerSheet(state = state, viewModel = viewModel)
+    }
+
+    Box(
+        modifier = modifier
             .fillMaxSize()
             .background(ObsidianBlack)
-            .padding(horizontal = 16.dp)
     ) {
-        Row(
-            Modifier.fillMaxWidth().padding(vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically
+        WebBackgroundPattern()
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp)
         ) {
-            IconButton(onClick = onBack) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back", tint = TextWhite)
-            }
-            Text(
-                if (state.templateId == null) "Create Workout" else "Edit Workout",
-                color = TextWhite,
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Black,
-                modifier = Modifier.weight(1f)
-            )
-        }
-
-        if (state.isLoading) {
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = CrimsonRedPrimary)
-            }
-            return
-        }
-
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            item {
-                OutlinedTextField(
-                    value = state.name,
-                    onValueChange = viewModel::updateName,
-                    label = { Text("Workout name") },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = onBack) {
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back", tint = TextWhite)
+                }
+                Text(
+                    text = if (state.templateId == null) "Create Workout" else "Edit Workout",
+                    color = TextWhite,
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Black,
+                    modifier = Modifier.weight(1f)
                 )
             }
-            item {
-                OutlinedTextField(
-                    value = state.notes,
-                    onValueChange = viewModel::updateNotes,
-                    label = { Text("Notes (optional)") },
-                    modifier = Modifier.fillMaxWidth()
-                )
+
+            if (state.isLoading) {
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = CrimsonRedPrimary)
+                }
+                return
             }
-            item {
-                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        "Exercises (${state.selectedExercises.size})",
-                        color = TextWhite,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.weight(1f)
+
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                item {
+                    OutlinedTextField(
+                        value = state.name,
+                        onValueChange = viewModel::updateName,
+                        label = { Text("Workout Name") },
+                        placeholder = { Text("e.g. Upper Body Hypertrophy", color = TextMuted) },
+                        singleLine = true,
+                        shape = RoundedCornerShape(12.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedContainerColor = GraphiteSurfaceElevated,
+                            unfocusedContainerColor = GraphiteSurface,
+                            focusedBorderColor = CrimsonRedPrimary,
+                            unfocusedBorderColor = GraphiteBorder,
+                            focusedTextColor = TextPrimary,
+                            unfocusedTextColor = TextPrimary,
+                            focusedLabelColor = CrimsonRedPrimary,
+                            unfocusedLabelColor = TextSecondary
+                        ),
+                        modifier = Modifier.fillMaxWidth()
                     )
-                    TextButton(onClick = viewModel::openPicker) {
-                        Icon(Icons.Default.Add, null)
-                        Text("Add")
+                }
+
+                item {
+                    OutlinedTextField(
+                        value = state.notes,
+                        onValueChange = viewModel::updateNotes,
+                        label = { Text("Notes (optional)") },
+                        placeholder = { Text("e.g. Focus on strict form and 90s rest", color = TextMuted) },
+                        shape = RoundedCornerShape(12.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedContainerColor = GraphiteSurfaceElevated,
+                            unfocusedContainerColor = GraphiteSurface,
+                            focusedBorderColor = CrimsonRedPrimary,
+                            unfocusedBorderColor = GraphiteBorder,
+                            focusedTextColor = TextPrimary,
+                            unfocusedTextColor = TextPrimary,
+                            focusedLabelColor = CrimsonRedPrimary,
+                            unfocusedLabelColor = TextSecondary
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column {
+                            Text(
+                                text = "EXERCISES",
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                letterSpacing = 1.sp,
+                                color = CrimsonRedPrimary
+                            )
+                            Text(
+                                text = "${state.selectedExercises.size} Selected",
+                                color = TextWhite,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                        WallCrawlOutlinedButton(
+                            text = "+ Add Exercise",
+                            onClick = viewModel::openPicker
+                        )
                     }
                 }
-            }
-            items(state.selectedExercises.size) { index ->
-                val planned = state.selectedExercises[index]
-                val exercise = state.catalogExercises.firstOrNull { it.id == planned.exerciseId }
-                SelectedExerciseCard(
-                    index = index,
-                    total = state.selectedExercises.size,
-                    planned = planned,
-                    exercise = exercise,
-                    equipmentWarning = exercise?.hasEquipmentMismatch(state.availableEquipment) == true,
-                    onSetsDown = { viewModel.changeSetCount(index, -1) },
-                    onSetsUp = { viewModel.changeSetCount(index, 1) },
-                    onMoveUp = { viewModel.moveExercise(index, -1) },
-                    onMoveDown = { viewModel.moveExercise(index, 1) },
-                    onRemove = { viewModel.removeExercise(index) }
-                )
-            }
-            state.errorMessage?.let { message ->
-                item { Text(message, color = CrimsonRedPrimary, fontSize = 13.sp) }
-            }
-            item {
-                WallCrawlPrimaryButton(
-                    text = if (state.isSaving) "Saving…" else "Save Workout",
-                    enabled = !state.isSaving,
-                    onClick = { viewModel.save(onSaved) }
-                )
-                Spacer(Modifier.height(24.dp))
+
+                if (state.selectedExercises.isEmpty()) {
+                    item {
+                        WallCrawlCard(
+                            backgroundColor = GraphiteSurface,
+                            borderColor = GraphiteBorder
+                        ) {
+                            Text(
+                                text = "No exercises added yet",
+                                color = TextSecondary,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Medium
+                            )
+                            Spacer(Modifier.height(4.dp))
+                            Text(
+                                text = "Tap '+ Add Exercise' to browse the 302 offline exercises catalog.",
+                                color = TextMuted,
+                                fontSize = 12.sp
+                            )
+                        }
+                    }
+                } else {
+                    items(state.selectedExercises.size) { index ->
+                        val planned = state.selectedExercises[index]
+                        val exercise = state.catalogExercises.firstOrNull { it.id == planned.exerciseId }
+                        SelectedExerciseCard(
+                            index = index,
+                            total = state.selectedExercises.size,
+                            planned = planned,
+                            exercise = exercise,
+                            equipmentWarning = exercise?.hasEquipmentMismatch(state.availableEquipment) == true,
+                            onSetsDown = { viewModel.changeSetCount(index, -1) },
+                            onSetsUp = { viewModel.changeSetCount(index, 1) },
+                            onMoveUp = { viewModel.moveExercise(index, -1) },
+                            onMoveDown = { viewModel.moveExercise(index, 1) },
+                            onRemove = { viewModel.removeExercise(index) }
+                        )
+                    }
+                }
+
+                state.errorMessage?.let { message ->
+                    item {
+                        WallCrawlCard(borderColor = CrimsonRedPrimary) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(Icons.Default.Warning, null, tint = CrimsonRedLight, modifier = Modifier.size(16.dp))
+                                Spacer(Modifier.size(8.dp))
+                                Text(message, color = CrimsonRedLight, fontSize = 13.sp)
+                            }
+                        }
+                    }
+                }
+
+                item {
+                    Spacer(Modifier.height(8.dp))
+                    WallCrawlPrimaryButton(
+                        text = if (state.isSaving) "Saving Workout…" else "Save Workout",
+                        enabled = !state.isSaving,
+                        onClick = { viewModel.save(onSaved) }
+                    )
+                    Spacer(Modifier.height(24.dp))
+                }
             }
         }
     }
@@ -167,68 +269,274 @@ private fun SelectedExerciseCard(
     onRemove: () -> Unit
 ) {
     WallCrawlCard(backgroundColor = GraphiteSurfaceElevated) {
-        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Column(Modifier.weight(1f)) {
-                Text(exercise?.name ?: planned.exerciseId, color = TextWhite, fontWeight = FontWeight.Bold)
-                Text(planned.prescription.summary(), color = TextSecondary, fontSize = 13.sp)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "${index + 1}.",
+                color = CrimsonRedPrimary,
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp,
+                modifier = Modifier.padding(end = 8.dp)
+            )
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = exercise?.name ?: planned.exerciseId,
+                    color = TextWhite,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = planned.prescription.summary(),
+                    color = TextSecondary,
+                    fontSize = 13.sp
+                )
                 if (equipmentWarning) {
-                    Text("Equipment not in your current profile", color = CrimsonRedPrimary, fontSize = 12.sp)
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "⚠️ Equipment not in current profile",
+                        color = CrimsonRedLight,
+                        fontSize = 12.sp
+                    )
                 }
             }
-            IconButton(onClick = onMoveUp, enabled = index > 0) {
-                Icon(Icons.Default.ArrowUpward, "Move up", tint = TextMuted)
+
+            IconButton(
+                onClick = onMoveUp,
+                enabled = index > 0,
+                modifier = Modifier.size(32.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowUpward,
+                    contentDescription = "Move up",
+                    tint = if (index > 0) TextSecondary else TextMuted.copy(alpha = 0.25f),
+                    modifier = Modifier.size(18.dp)
+                )
             }
-            IconButton(onClick = onMoveDown, enabled = index < total - 1) {
-                Icon(Icons.Default.ArrowDownward, "Move down", tint = TextMuted)
+            IconButton(
+                onClick = onMoveDown,
+                enabled = index < total - 1,
+                modifier = Modifier.size(32.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowDownward,
+                    contentDescription = "Move down",
+                    tint = if (index < total - 1) TextSecondary else TextMuted.copy(alpha = 0.25f),
+                    modifier = Modifier.size(18.dp)
+                )
             }
-            IconButton(onClick = onRemove) { Icon(Icons.Default.Delete, "Remove", tint = TextMuted) }
+            IconButton(
+                onClick = onRemove,
+                modifier = Modifier.size(32.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Remove",
+                    tint = CrimsonRedLight.copy(alpha = 0.8f),
+                    modifier = Modifier.size(18.dp)
+                )
+            }
         }
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("Sets", color = TextSecondary, modifier = Modifier.weight(1f))
-            TextButton(onClick = onSetsDown) { Text("−") }
-            Text("${planned.targetSets}", color = TextWhite, fontWeight = FontWeight.Bold)
-            TextButton(onClick = onSetsUp) { Text("+") }
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = "Target Sets",
+                color = TextSecondary,
+                fontSize = 13.sp,
+                modifier = Modifier.weight(1f)
+            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(30.dp)
+                        .clip(CircleShape)
+                        .background(GraphiteSurface)
+                        .clickable(enabled = planned.targetSets > 1, onClick = onSetsDown),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Remove,
+                        contentDescription = "Decrease sets",
+                        tint = if (planned.targetSets > 1) TextWhite else TextMuted.copy(alpha = 0.3f),
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+                Text(
+                    text = "${planned.targetSets}",
+                    color = TextWhite,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp,
+                    modifier = Modifier.padding(horizontal = 4.dp)
+                )
+                Box(
+                    modifier = Modifier
+                        .size(30.dp)
+                        .clip(CircleShape)
+                        .background(GraphiteSurface)
+                        .clickable(onClick = onSetsUp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Increase sets",
+                        tint = TextWhite,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+            }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ExercisePickerDialog(state: TemplateEditorUiState, viewModel: TemplateEditorViewModel) {
-    AlertDialog(
+private fun ExercisePickerSheet(
+    state: TemplateEditorUiState,
+    viewModel: TemplateEditorViewModel
+) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    ModalBottomSheet(
         onDismissRequest = viewModel::closePicker,
-        title = { Text("Add Exercise") },
-        text = {
-            Column(Modifier.height(500.dp)) {
-                OutlinedTextField(
-                    value = state.query,
-                    onValueChange = viewModel::updateQuery,
-                    label = { Text("Search all 302 exercises") },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(Modifier.height(8.dp))
-                LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    items(state.filteredExercises, key = Exercise::id) { exercise ->
-                        Column(
-                            Modifier.fillMaxWidth()
-                                .clickable { viewModel.addExercise(exercise) }
-                                .padding(vertical = 8.dp)
+        sheetState = sheetState,
+        containerColor = GraphiteSurfaceElevated,
+        scrimColor = ObsidianBlack.copy(alpha = 0.7f)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .padding(bottom = 24.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column {
+                    Text(
+                        text = "CATALOG",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 1.sp,
+                        color = CrimsonRedPrimary
+                    )
+                    Text(
+                        text = "Add Exercise",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Black,
+                        color = TextWhite
+                    )
+                }
+                IconButton(onClick = viewModel::closePicker) {
+                    Icon(Icons.Default.Close, contentDescription = "Close", tint = TextSecondary)
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            OutlinedTextField(
+                value = state.query,
+                onValueChange = viewModel::updateQuery,
+                placeholder = { Text("Search 302 exercises, muscles, equipment...", color = TextMuted, fontSize = 14.sp) },
+                leadingIcon = {
+                    Icon(Icons.Default.Search, contentDescription = null, tint = TextSecondary)
+                },
+                trailingIcon = {
+                    if (state.query.isNotEmpty()) {
+                        IconButton(onClick = { viewModel.updateQuery("") }) {
+                            Icon(Icons.Default.Close, contentDescription = "Clear", tint = TextSecondary)
+                        }
+                    }
+                },
+                singleLine = true,
+                shape = RoundedCornerShape(12.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = GraphiteSurface,
+                    unfocusedContainerColor = GraphiteSurface,
+                    focusedBorderColor = CrimsonRedPrimary,
+                    unfocusedBorderColor = GraphiteBorder,
+                    focusedTextColor = TextPrimary,
+                    unfocusedTextColor = TextPrimary
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text(
+                text = "${state.filteredExercises.size} EXERCISES AVAILABLE",
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 0.5.sp,
+                color = TextSecondary
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 420.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(state.filteredExercises, key = Exercise::id) { exercise ->
+                    WallCrawlCard(
+                        cornerRadius = 12.dp,
+                        contentPadding = 12.dp,
+                        backgroundColor = GraphiteSurface,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { viewModel.addExercise(exercise) }
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(exercise.name, fontWeight = FontWeight.Bold)
-                            Text(
-                                (exercise.primaryMuscles + exercise.listedEquipment).joinToString(" · "),
-                                color = Color.Gray,
-                                fontSize = 12.sp
-                            )
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = exercise.name,
+                                    fontWeight = FontWeight.Bold,
+                                    color = TextWhite,
+                                    fontSize = 15.sp
+                                )
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text(
+                                    text = (exercise.primaryMuscles + exercise.listedEquipment).joinToString(" · "),
+                                    color = TextSecondary,
+                                    fontSize = 12.sp
+                                )
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .clip(CircleShape)
+                                    .background(CrimsonRedPrimary.copy(alpha = 0.15f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Add,
+                                    contentDescription = "Add",
+                                    tint = CrimsonRedLight,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
                         }
                     }
                 }
             }
-        },
-        confirmButton = {},
-        dismissButton = { TextButton(onClick = viewModel::closePicker) { Text("Close") } },
-        shape = RoundedCornerShape(20.dp)
-    )
+        }
+    }
 }
 
 private fun Exercise.hasEquipmentMismatch(available: Set<String>): Boolean {
