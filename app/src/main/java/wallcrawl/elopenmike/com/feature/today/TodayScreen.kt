@@ -88,11 +88,6 @@ fun TodayScreen(
                         CircularProgressIndicator(color = CrimsonRedPrimary)
                         Spacer(modifier = Modifier.height(16.dp))
                         Text("WallCrawl AI preparing your plan...", color = TextSecondary)
-                        Spacer(modifier = Modifier.height(20.dp))
-                        WallCrawlSecondaryButton(
-                            text = "Open My Workouts",
-                            onClick = onOpenTemplates
-                        )
                     }
                 }
             }
@@ -190,20 +185,47 @@ private fun TodayContent(
 @Composable
 private fun MyWorkoutsCard(onOpenTemplates: () -> Unit) {
     WallCrawlCard(backgroundColor = GraphiteSurfaceElevated) {
-        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                imageVector = Icons.Default.FitnessCenter,
-                contentDescription = null,
-                tint = CrimsonRedPrimary,
-                modifier = Modifier.size(22.dp)
-            )
-            Spacer(Modifier.width(10.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(CrimsonRedPrimary.copy(alpha = 0.15f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.FitnessCenter,
+                    contentDescription = null,
+                    tint = CrimsonRedPrimary,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+            Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
-                Text("MY WORKOUTS", color = TextWhite, fontWeight = FontWeight.Bold, fontSize = 15.sp)
-                Text("Create, save, and repeat your own routines.", color = TextSecondary, fontSize = 13.sp)
+                Text(
+                    text = "CUSTOM ROUTINES",
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 1.sp,
+                    color = CrimsonRedPrimary
+                )
+                Text(
+                    text = "My Workouts",
+                    color = TextWhite,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
+                )
+                Text(
+                    text = "Build, save, and repeat your custom routines.",
+                    color = TextSecondary,
+                    fontSize = 12.sp
+                )
             }
         }
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(14.dp))
         WallCrawlSecondaryButton(text = "Open My Workouts", onClick = onOpenTemplates)
     }
 }

@@ -19,22 +19,25 @@ production local LLM runtime is integrated yet.
 ## Screenshots & App Experience
 
 <p align="center">
-  <img src="art/screenshots/today-screen.png" width="31%" alt="Today Screen" />
-  <img src="art/screenshots/active-workout.png" width="31%" alt="Active Workout Screen" />
-  <img src="art/screenshots/workout-summary.png" width="31%" alt="Workout Summary Screen" />
+  <img src="art/screenshots/today-screen.png" width="23%" alt="Today Screen" />
+  <img src="art/screenshots/workout-templates.png" width="23%" alt="My Workouts Screen" />
+  <img src="art/screenshots/template-editor.png" width="23%" alt="Workout Builder Screen" />
+  <img src="art/screenshots/exercises-screen.png" width="23%" alt="Exercise Library Screen" />
 </p>
 <p align="center">
-  <img src="art/screenshots/progress-screen.png" width="31%" alt="Progress Screen" />
-  <img src="art/screenshots/exercises-screen.png" width="31%" alt="Exercise Library Screen" />
-  <img src="art/screenshots/profile-screen.png" width="31%" alt="Training Profile Screen" />
+  <img src="art/screenshots/active-workout.png" width="23%" alt="Active Workout Screen" />
+  <img src="art/screenshots/workout-summary.png" width="23%" alt="Workout Summary Screen" />
+  <img src="art/screenshots/progress-screen.png" width="23%" alt="Progress Screen" />
+  <img src="art/screenshots/profile-screen.png" width="23%" alt="Training Profile Screen" />
 </p>
 
-- **Today Recommendation**: Offline planner-generated routine tailored to equipment and training goals, with instant regeneration.
-- **Custom Workouts**: Build and save local templates from all 302 bundled exercises, reorder exercises, adjust set counts, and start them without AI.
+- **Today Recommendation**: Offline planner-generated routine tailored to equipment and training goals, with instant regeneration and custom routine shortcuts.
+- **My Workouts & Templates**: Manage and launch saved custom routines with total sets, exercise counts, and quick-start actions.
+- **Custom Workout Builder**: Interactive routine editor with full 302-exercise bottom sheet picker, drag/reorder controls, and type-aware target set steppers.
+- **Exercise Library**: Searchable catalog of 302 exercises across all muscle groups and equipment types.
 - **Active Workout Session**: Type-aware logging for load/reps, bodyweight reps, assisted reps, duration, and distance/duration, with animated SVG movement previews and previous performance comparisons.
 - **Workout Summary**: Post-workout celebration card displaying session duration, total volume lifted, and sets completed.
 - **Progress Tracking**: Weekly workout streaks, aggregate volume trends, strength progression indicators, and historical workout logs.
-- **Exercise Library**: Searchable catalog with target muscle and equipment filter chips.
 - **Training Profile**: Full local customization of fitness goals, preferred weight units (LBS/KG), session duration targets, and available gym equipment.
 
 ## Documentation
