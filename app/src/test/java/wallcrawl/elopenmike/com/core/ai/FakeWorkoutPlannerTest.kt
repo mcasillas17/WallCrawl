@@ -62,6 +62,67 @@ class FakeWorkoutPlannerTest {
     }
 
     @Test
+    fun generateWorkout_neverSubstitutesExercisesThatMissTheSplitEntirely() = runTest {
+        // A Push day made only of leg work used to be possible: the muscle filter silently
+        // fell back to the unfiltered candidate list whenever nothing matched.
+        val legsOnly = allExercises.filter { exercise ->
+            exercise.primaryMuscles.none {
+                it in listOf(
+                    StandardMuscles.CHEST,
+                    StandardMuscles.SHOULDERS,
+                    StandardMuscles.TRICEPS
+                )
+            } && exercise.secondaryMuscles.none {
+                it in listOf(
+                    StandardMuscles.CHEST,
+                    StandardMuscles.SHOULDERS,
+                    StandardMuscles.TRICEPS
+                )
+            }
+        }
+        val context = WorkoutGenerationContext(
+            userProfile = UserProfile(
+                musclePriorities = mapOf(StandardMuscles.CHEST to PriorityLevel.HIGH)
+            ),
+            allowedExercises = legsOnly
+        )
+
+        try {
+            planner.generateWorkout(context)
+            fail("Expected generation to fail rather than fill a Push day with unrelated work")
+        } catch (e: WorkoutValidationException) {
+            assertThat(e.message).contains("push")
+        }
+    }
+
+    @Test
+    fun generateWorkout_selectedExercisesAlwaysTrainTheChosenSplit() = runTest {
+        val context = WorkoutGenerationContext(
+            userProfile = UserProfile(
+                musclePriorities = mapOf(StandardMuscles.CHEST to PriorityLevel.HIGH)
+            ),
+            allowedExercises = allExercises
+        )
+
+        val workout = planner.generateWorkout(context)
+
+        val pushMuscles = listOf(
+            StandardMuscles.CHEST,
+            StandardMuscles.SHOULDERS,
+            StandardMuscles.TRICEPS
+        )
+        val selected = workout.exercises.map { generated ->
+            allExercises.single { it.id == generated.exerciseId }
+        }
+        assertThat(selected).isNotEmpty()
+        selected.forEach { exercise ->
+            assertThat(
+                (exercise.primaryMuscles + exercise.secondaryMuscles).any { it in pushMuscles }
+            ).isTrue()
+        }
+    }
+
+    @Test
     fun generateWorkout_withEmptyAllowedCandidates_throwsException() = runTest {
         val emptyContext = WorkoutGenerationContext(
             userProfile = UserProfile(),

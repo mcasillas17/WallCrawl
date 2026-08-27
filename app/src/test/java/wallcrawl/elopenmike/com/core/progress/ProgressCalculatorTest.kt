@@ -176,6 +176,109 @@ class ProgressCalculatorTest {
         assertThat(trend.isPositive).isFalse()
     }
 
+    @Test
+    fun calculate_sumsRepsSoBodyweightOnlyWeeksReportRealWork() {
+        val bodyweightSession = session(
+            id = "bodyweight",
+            completedAtTimestamp = NOW - DAY_MILLIS,
+            exerciseId = "pull-ups",
+            sets = listOf(completedSet(1, null, 8), completedSet(2, null, 7))
+        )
+
+        val result = calculator.calculate(
+            completedSessions = listOf(bodyweightSession),
+            profile = profile,
+            catalogExercises = exercises,
+            nowTimestamp = NOW
+        )
+
+        assertThat(result.totalVolumeThisWeek).isEqualTo(0.0)
+        assertThat(result.totalRepsThisWeek).isEqualTo(15)
+    }
+
+    @Test
+    fun countPersonalRecords_countsOnlyExercisesBeatingPriorBest() {
+        val older = session(
+            id = "older",
+            completedAtTimestamp = NOW - (8 * DAY_MILLIS),
+            sets = listOf(completedSet(1, 45.0, 10))
+        )
+        val heavier = session(
+            id = "heavier",
+            completedAtTimestamp = NOW - DAY_MILLIS,
+            sets = listOf(completedSet(1, 50.0, 10))
+        )
+
+        assertThat(calculator.countPersonalRecords(heavier, listOf(older, heavier))).isEqualTo(1)
+        assertThat(calculator.countPersonalRecords(older, listOf(older, heavier))).isEqualTo(0)
+    }
+
+    @Test
+    fun countPersonalRecords_firstEverPerformanceIsNotARecord() {
+        val first = session(
+            id = "first",
+            completedAtTimestamp = NOW - DAY_MILLIS,
+            sets = listOf(completedSet(1, 100.0, 5))
+        )
+
+        assertThat(calculator.countPersonalRecords(first, listOf(first))).isEqualTo(0)
+    }
+
+    @Test
+    fun countPersonalRecords_usesRepsForBodyweightWork() {
+        val older = session(
+            id = "older",
+            completedAtTimestamp = NOW - (8 * DAY_MILLIS),
+            exerciseId = "pull-ups",
+            sets = listOf(completedSet(1, null, 8))
+        )
+        val moreReps = session(
+            id = "more-reps",
+            completedAtTimestamp = NOW - DAY_MILLIS,
+            exerciseId = "pull-ups",
+            sets = listOf(completedSet(1, null, 10))
+        )
+
+        assertThat(calculator.countPersonalRecords(moreReps, listOf(older))).isEqualTo(1)
+    }
+
+    @Test
+    fun countPersonalRecords_comparesAcrossDifferentlyLoggedUnits() {
+        val metricPriorBest = session(
+            id = "metric",
+            completedAtTimestamp = NOW - (8 * DAY_MILLIS),
+            sets = listOf(completedSet(1, 100.0, 5)),
+            weightUnit = WeightUnit.KG
+        )
+        // 200 lb is well under the 100 kg (≈220 lb) already lifted, so it is not a record.
+        val imperialAttempt = session(
+            id = "imperial",
+            completedAtTimestamp = NOW - DAY_MILLIS,
+            sets = listOf(completedSet(1, 200.0, 5)),
+            weightUnit = WeightUnit.LBS
+        )
+
+        assertThat(calculator.countPersonalRecords(imperialAttempt, listOf(metricPriorBest)))
+            .isEqualTo(0)
+    }
+
+    @Test
+    fun countPersonalRecords_ignoresIncompleteSets() {
+        val older = session(
+            id = "older",
+            completedAtTimestamp = NOW - (8 * DAY_MILLIS),
+            sets = listOf(completedSet(1, 45.0, 10))
+        )
+        val abandonedHeavyAttempt = session(
+            id = "abandoned",
+            completedAtTimestamp = NOW - DAY_MILLIS,
+            sets = listOf(incompleteSet(1, 500.0, 10))
+        )
+
+        assertThat(calculator.countPersonalRecords(abandonedHeavyAttempt, listOf(older)))
+            .isEqualTo(0)
+    }
+
     private fun session(
         id: String,
         completedAtTimestamp: Long,

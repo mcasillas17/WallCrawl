@@ -87,7 +87,7 @@ fun TodayScreen(
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         CircularProgressIndicator(color = CrimsonRedPrimary)
                         Spacer(modifier = Modifier.height(16.dp))
-                        Text("WallCrawl AI preparing your plan...", color = TextSecondary)
+                        Text("Building today's plan...", color = TextSecondary)
                     }
                 }
             }
@@ -405,7 +405,7 @@ private fun SuggestedWorkoutCard(
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = "AI RECOMMENDED PLAN",
+                    text = "TODAY'S PLAN",
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.8.sp,
@@ -608,7 +608,7 @@ private fun AiContextCard(
                 )
             }
             Text(
-                text = "Local-First AI",
+                text = "Built offline",
                 fontSize = 11.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = WebBlueAccent

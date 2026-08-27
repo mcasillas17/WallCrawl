@@ -9,6 +9,7 @@ data class ProgressOverview(
     val currentStreakWeeks: Int = 0,
     val totalWorkoutsLogged: Int = 0,
     val totalVolumeThisWeek: Double = 0.0,
+    val totalRepsThisWeek: Int = 0,
     val recentPersonalRecords: List<PersonalRecord> = emptyList(),
     val muscleGroupFocus: List<MuscleProgressStat> = emptyList(),
     val strengthTrends: List<StrengthTrend> = emptyList(),

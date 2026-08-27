@@ -15,6 +15,7 @@ import wallcrawl.elopenmike.com.core.model.ExerciseSource
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.MechanicsType
 import wallcrawl.elopenmike.com.core.model.MovementPattern
+import wallcrawl.elopenmike.com.core.model.MuscleVocabulary
 import wallcrawl.elopenmike.com.core.model.ProgressionType
 import wallcrawl.elopenmike.com.core.model.RepRange
 
@@ -92,7 +93,15 @@ class WorkoutGuideCatalogParser {
                             attribution = validatedSource.attribution
                         )
                     }
-                }
+                },
+                catalogAttribution = CatalogAttribution(
+                    repository = validatedSource.repository,
+                    commit = validatedSource.commit,
+                    assetLicense = validatedSource.assetLicense,
+                    attribution = validatedSource.attribution,
+                    exerciseCount = entries.size,
+                    frameCount = entries.size * visuals.frameCount
+                )
             )
         } catch (error: WorkoutGuideCatalogFormatException) {
             throw error
@@ -197,15 +206,24 @@ class WorkoutGuideCatalogParser {
             ?: malformed("Exercise $exerciseId is missing primaryMuscles.")
         if (primary.isEmpty()) malformed("Exercise $exerciseId must have a primary muscle.")
 
+        // Upstream muscle names enter the domain only through the canonical vocabulary, so the
+        // planner, muscle priorities, and volume attribution all share one set of names.
+        val canonicalPrimary = MuscleVocabulary.canonicalizeAll(primary)
+        if (canonicalPrimary.isEmpty()) {
+            malformed("Exercise $exerciseId has no recognizable primary muscle: $primary")
+        }
+        val canonicalSecondary = MuscleVocabulary.canonicalizeAll(
+            secondaryMuscles ?: malformed("Exercise $exerciseId is missing secondaryMuscles.")
+        ).filterNot { it in canonicalPrimary }
+
         return ParsedExercise(
             id = exerciseId,
             sourceId = upstreamId,
             sourceSlug = upstreamSlug,
             name = name ?: malformed("Exercise $exerciseId is missing name."),
             searchAliases = aliases ?: malformed("Exercise $exerciseId is missing searchAliases."),
-            primaryMuscles = primary,
-            secondaryMuscles = secondaryMuscles
-                ?: malformed("Exercise $exerciseId is missing secondaryMuscles."),
+            primaryMuscles = canonicalPrimary,
+            secondaryMuscles = canonicalSecondary,
             listedEquipment = listedEquipment
                 ?: malformed("Exercise $exerciseId is missing listedEquipment."),
             type = exerciseType ?: malformed("Exercise $exerciseId is missing exerciseType."),
@@ -382,16 +400,22 @@ class WorkoutGuideCatalogParser {
 
     private fun CatalogSource?.requireValid(): ValidatedCatalogSource {
         val source = this ?: malformed("Catalog is missing source metadata.")
-        if (!source.repository.orEmpty().startsWith("https://")) {
+        val repository = source.repository.orEmpty()
+        if (!repository.startsWith("https://")) {
             malformed("Catalog source.repository must be an HTTPS URL.")
         }
-        if (!COMMIT_HASH.matches(source.commit.orEmpty())) {
+        val commit = source.commit.orEmpty()
+        if (!COMMIT_HASH.matches(commit)) {
             malformed("Catalog source.commit must be a full Git commit hash.")
         }
-        if (source.assetLicense.isNullOrBlank()) {
+        val assetLicense = source.assetLicense
+        if (assetLicense.isNullOrBlank()) {
             malformed("Catalog source.assetLicense is missing.")
         }
         return ValidatedCatalogSource(
+            repository = repository,
+            commit = commit,
+            assetLicense = assetLicense,
             attribution = source.attribution
                 ?: malformed("Catalog source.attribution is missing.")
         )
@@ -483,6 +507,9 @@ class WorkoutGuideCatalogParser {
     )
 
     private data class ValidatedCatalogSource(
+        val repository: String,
+        val commit: String,
+        val assetLicense: String,
         val attribution: ExerciseAttribution
     )
 

@@ -34,6 +34,8 @@ import wallcrawl.elopenmike.com.core.ui.theme.ObsidianBlack
 import wallcrawl.elopenmike.com.core.ui.theme.TextMuted
 import wallcrawl.elopenmike.com.core.ui.theme.TextSecondary
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
+import wallcrawl.elopenmike.com.feature.credits.CreditsScreen
+import wallcrawl.elopenmike.com.feature.credits.CreditsViewModel
 import wallcrawl.elopenmike.com.feature.exercises.ExercisesScreen
 import wallcrawl.elopenmike.com.feature.exercises.ExercisesViewModel
 import wallcrawl.elopenmike.com.feature.profile.ProfileScreen
@@ -142,7 +144,23 @@ fun WallCrawlApp(
                         userProfileRepository = container.userProfileRepository
                     )
                 )
-                ProfileScreen(viewModel = profileViewModel)
+                ProfileScreen(
+                    viewModel = profileViewModel,
+                    onOpenCredits = { navController.navigate(AppRoutes.CREDITS) }
+                )
+            }
+
+            composable(AppRoutes.CREDITS) {
+                val creditsViewModel: CreditsViewModel = viewModel(
+                    factory = CreditsViewModel.provideFactory(
+                        catalogSource = container.workoutGuideCatalogSource,
+                        noticeSource = container.attributionNoticeSource
+                    )
+                )
+                CreditsScreen(
+                    viewModel = creditsViewModel,
+                    onBack = { navController.popBackStack() }
+                )
             }
 
             composable(

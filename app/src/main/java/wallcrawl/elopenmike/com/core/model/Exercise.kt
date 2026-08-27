@@ -105,27 +105,6 @@ data class RepRange(
     override fun toString(): String = if (min == max) "$min" else "$min–$max"
 }
 
-object StandardMuscles {
-    const val CHEST = "Chest"
-    const val SHOULDERS = "Shoulders"
-    const val TRICEPS = "Triceps"
-    const val BACK = "Back"
-    const val LATS = "Lats"
-    const val BICEPS = "Biceps"
-    const val FOREARMS = "Forearms"
-    const val QUADS = "Quadriceps"
-    const val HAMSTRINGS = "Hamstrings"
-    const val GLUTES = "Glutes"
-    const val CALVES = "Calves"
-    const val CORE = "Core"
-    const val ABS = "Abs"
-
-    val ALL = listOf(
-        CHEST, SHOULDERS, TRICEPS, BACK, LATS, BICEPS, FOREARMS,
-        QUADS, HAMSTRINGS, GLUTES, CALVES, CORE, ABS
-    )
-}
-
 object StandardEquipment {
     const val BARBELL = "Barbell"
     const val DUMBBELL = "Dumbbell"

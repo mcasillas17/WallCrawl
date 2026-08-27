@@ -50,6 +50,7 @@ class ProgressCalculator {
             currentStreakWeeks = calculateStreakWeeks(sessions, nowTimestamp),
             totalWorkoutsLogged = sessions.size,
             totalVolumeThisWeek = thisWeek.sumOf(::validCompletedVolume),
+            totalRepsThisWeek = thisWeek.sumOf(::validCompletedReps),
             recentPersonalRecords = calculateRecentRecords(
                 sessions = sessions,
                 catalogById = catalogById,
@@ -67,6 +68,55 @@ class ProgressCalculator {
             ),
             recentHistory = persistedSessions.take(MAX_RECENT_HISTORY)
         )
+    }
+
+    /**
+     * Counts exercises in [session] that beat every prior completed performance of the same
+     * exercise, using the same rules as the Progress screen's records list: a heavier top set
+     * for loaded work, more reps for bodyweight work, and no record without prior history to
+     * beat. [session] must already carry its own completed sets; [priorCompletedSessions] may
+     * include [session] itself, which is filtered out.
+     */
+    fun countPersonalRecords(
+        session: WorkoutSession,
+        priorCompletedSessions: List<WorkoutSession>
+    ): Int {
+        val bestByExercise = mutableMapOf<String, ExerciseBest>()
+        priorCompletedSessions
+            .asSequence()
+            .filter { it.id != session.id && it.status == SessionStatus.COMPLETED }
+            .map { it.convertWeightsTo(session.weightUnit) }
+            .forEach { prior ->
+                prior.exercises.forEach { exercise ->
+                    val completedSets = exercise.sets.filter { it.isValidCompletedSet() }
+                    if (completedSets.isEmpty()) return@forEach
+                    val existing = bestByExercise[exercise.exerciseId]
+                    bestByExercise[exercise.exerciseId] = ExerciseBest(
+                        weight = maxOfNullable(
+                            existing?.weight,
+                            completedSets.mapNotNull { it.validPositiveWeight() }.maxOrNull()
+                        ),
+                        reps = maxOfNullable(
+                            existing?.reps,
+                            completedSets.mapNotNull { it.completedReps }.maxOrNull()
+                        )
+                    )
+                }
+            }
+
+        return session.exercises.count { exercise ->
+            val completedSets = exercise.sets.filter { it.isValidCompletedSet() }
+            if (completedSets.isEmpty()) return@count false
+            val best = bestByExercise[exercise.exerciseId] ?: return@count false
+
+            val topWeight = completedSets.mapNotNull { it.validPositiveWeight() }.maxOrNull()
+            if (topWeight != null) {
+                best.weight != null && topWeight > best.weight
+            } else {
+                val topReps = completedSets.mapNotNull { it.completedReps }.maxOrNull()
+                topReps != null && best.reps != null && topReps > best.reps
+            }
+        }
     }
 
     private fun calculateStreakWeeks(
@@ -252,6 +302,13 @@ class ProgressCalculator {
             }
     }
 
+    /** Reps completed across the week, so bodyweight-only training still reports real work. */
+    private fun validCompletedReps(session: WorkoutSession): Int = session.exercises.sumOf { exercise ->
+        exercise.sets
+            .filter { it.isValidCompletedSet() }
+            .sumOf { set -> set.completedReps ?: 0 }
+    }
+
     private fun WorkoutSession.convertWeightsTo(targetUnit: WeightUnit): WorkoutSession {
         if (weightUnit == targetUnit) return this
         return copy(
@@ -327,6 +384,25 @@ class ProgressCalculator {
         val completedAtTimestamp: Long,
         val sets: List<WorkoutSet>
     )
+
+    private data class ExerciseBest(
+        val weight: Double?,
+        val reps: Int?
+    )
+
+    private fun maxOfNullable(first: Double?, second: Double?): Double? =
+        when {
+            first == null -> second
+            second == null -> first
+            else -> maxOf(first, second)
+        }
+
+    private fun maxOfNullable(first: Int?, second: Int?): Int? =
+        when {
+            first == null -> second
+            second == null -> first
+            else -> maxOf(first, second)
+        }
 
     private companion object {
         const val DAY_MILLIS = 24 * 60 * 60 * 1_000L

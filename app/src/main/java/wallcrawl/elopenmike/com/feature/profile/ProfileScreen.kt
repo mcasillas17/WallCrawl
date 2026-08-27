@@ -60,6 +60,7 @@ import wallcrawl.elopenmike.com.core.ui.theme.WebBlueAccent
 @Composable
 fun ProfileScreen(
     viewModel: ProfileViewModel,
+    onOpenCredits: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -95,7 +96,8 @@ fun ProfileScreen(
                     onUpdateDaysPerWeek = { viewModel.updateDaysPerWeek(it) },
                     onUpdateUnit = { viewModel.updateUnit(it) },
                     onToggleEquipment = { viewModel.toggleEquipment(it) },
-                    onSetMusclePriority = { muscle, priority -> viewModel.setMusclePriority(muscle, priority) }
+                    onSetMusclePriority = { muscle, priority -> viewModel.setMusclePriority(muscle, priority) },
+                    onOpenCredits = onOpenCredits
                 )
             }
         }
@@ -114,7 +116,8 @@ private fun ProfileContent(
     onUpdateDaysPerWeek: (Int) -> Unit,
     onUpdateUnit: (WeightUnit) -> Unit,
     onToggleEquipment: (String) -> Unit,
-    onSetMusclePriority: (String, PriorityLevel) -> Unit
+    onSetMusclePriority: (String, PriorityLevel) -> Unit,
+    onOpenCredits: () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -415,6 +418,29 @@ private fun ProfileContent(
                         }
                     }
                 }
+            }
+        }
+
+        item {
+            WallCrawlCard(
+                cornerRadius = 16.dp,
+                contentPadding = 16.dp,
+                backgroundColor = GraphiteSurfaceElevated,
+                modifier = Modifier.clickable(onClick = onOpenCredits)
+            ) {
+                Text(
+                    text = "CREDITS & LICENCES",
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 1.sp,
+                    color = TextSecondary
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    text = "Who made the exercise illustrations, and the licence they ship under.",
+                    fontSize = 13.sp,
+                    color = TextMuted
+                )
             }
         }
 

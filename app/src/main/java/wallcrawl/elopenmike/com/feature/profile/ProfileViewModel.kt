@@ -37,17 +37,7 @@ class ProfileViewModel(
                 profile = profile,
                 isSaving = isSaving,
                 availableEquipmentOptions = StandardEquipment.ALL,
-                availableMuscleOptions = listOf(
-                    StandardMuscles.CHEST,
-                    StandardMuscles.SHOULDERS,
-                    StandardMuscles.BACK,
-                    StandardMuscles.TRICEPS,
-                    StandardMuscles.BICEPS,
-                    StandardMuscles.QUADS,
-                    StandardMuscles.HAMSTRINGS,
-                    StandardMuscles.GLUTES,
-                    StandardMuscles.CORE
-                )
+                availableMuscleOptions = StandardMuscles.TRAINABLE
             )
         }
     }.stateIn(

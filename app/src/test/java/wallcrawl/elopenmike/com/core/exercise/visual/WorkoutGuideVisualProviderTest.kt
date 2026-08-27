@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import wallcrawl.elopenmike.com.core.exercise.workoutguide.WorkoutGuideCatalogSnapshot
 import wallcrawl.elopenmike.com.core.exercise.workoutguide.WorkoutGuideCatalogSource
+import wallcrawl.elopenmike.com.core.exercise.workoutguide.testCatalogAttribution
 
 class WorkoutGuideVisualProviderTest {
 
@@ -18,7 +19,8 @@ class WorkoutGuideVisualProviderTest {
         framesByExerciseId = mapOf(
             "incline-dumbbell-press" to inclineFrames,
             "pull-ups" to pullUpFrames
-        )
+        ),
+        catalogAttribution = testCatalogAttribution(frameCount = 6)
     )
     private val provider = WorkoutGuideVisualProvider(FixedSource(snapshot))
 

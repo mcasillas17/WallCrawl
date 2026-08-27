@@ -11,6 +11,7 @@ import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutSummary
+import wallcrawl.elopenmike.com.core.progress.ProgressCalculator
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -23,7 +24,8 @@ class ActiveWorkoutViewModel(
     private val sessionId: String,
     private val workoutRepository: WorkoutRepository,
     private val exerciseCatalog: ExerciseCatalog,
-    private val workoutHistoryAnalyzer: WorkoutHistoryAnalyzer
+    private val workoutHistoryAnalyzer: WorkoutHistoryAnalyzer,
+    private val progressCalculator: ProgressCalculator = ProgressCalculator()
 ) : ViewModel() {
 
     private val currentExerciseIndexFlow = MutableStateFlow(0)
@@ -48,7 +50,7 @@ class ActiveWorkoutViewModel(
         if (session == null) {
             ActiveWorkoutUiState.Loading
         } else if (session.status == SessionStatus.COMPLETED) {
-            ActiveWorkoutUiState.Completed(session.toSummary())
+            ActiveWorkoutUiState.Completed(session.toSummary(completedSessions))
         } else if (error != null) {
             ActiveWorkoutUiState.Error(error)
         } else if (session.status != SessionStatus.IN_PROGRESS) {
@@ -197,13 +199,16 @@ class ActiveWorkoutViewModel(
         val completedSessions: List<WorkoutSession>
     )
 
-    private fun WorkoutSession.toSummary() = WorkoutSummary(
+    private fun WorkoutSession.toSummary(completedSessions: List<WorkoutSession>) = WorkoutSummary(
         sessionId = id,
         workoutName = name,
         durationMinutes = actualDurationMinutes,
         totalSetsCompleted = completedSetsCount,
         totalVolume = totalVolume,
-        prCount = 0,
+        prCount = progressCalculator.countPersonalRecords(
+            session = this,
+            priorCompletedSessions = completedSessions
+        ),
         unit = weightUnit,
         completedAtTimestamp = completedAtTimestamp ?: startedAtTimestamp
     )

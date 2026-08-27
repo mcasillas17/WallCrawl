@@ -22,6 +22,7 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.model.WorkoutSummary
 import wallcrawl.elopenmike.com.core.model.WorkoutOrigin
 import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
+import wallcrawl.elopenmike.com.core.progress.ProgressCalculator
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.util.UUID
@@ -63,7 +64,8 @@ interface WorkoutRepository {
 
 class OfflineWorkoutRepository(
     private val sessionDao: WorkoutSessionDao,
-    private val setDao: WorkoutSetDao
+    private val setDao: WorkoutSetDao,
+    private val progressCalculator: ProgressCalculator = ProgressCalculator()
 ) : WorkoutRepository {
 
     override fun observeActiveSession(): Flow<WorkoutSession?> {
@@ -386,7 +388,12 @@ class OfflineWorkoutRepository(
             durationMinutes = actualDurationMinutes,
             totalSetsCompleted = totalSets,
             totalVolume = totalVolume,
-            prCount = 0,
+            prCount = progressCalculator.countPersonalRecords(
+                session = session,
+                priorCompletedSessions = getRecentCompletedSessions(
+                    limit = PERSONAL_RECORD_HISTORY_SESSIONS
+                )
+            ),
             unit = session.weightUnit,
             completedAtTimestamp = completedTimestamp
         )
@@ -483,6 +490,7 @@ class OfflineWorkoutRepository(
         const val MAX_LOGGED_WEIGHT = 100_000.0
         const val MAX_LOGGED_DURATION_SECONDS = 86_400
         const val MAX_LOGGED_DISTANCE_METERS = 1_000_000.0
+        const val PERSONAL_RECORD_HISTORY_SESSIONS = 200
     }
 }
 

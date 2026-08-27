@@ -8,6 +8,7 @@ import wallcrawl.elopenmike.com.core.model.MechanicsType
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
+import java.util.Locale
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
@@ -58,13 +59,13 @@ class FakeWorkoutPlanner(
 
         val splits = mutableListOf<SplitType>()
 
-        if (highPriorityMuscles.any { it in listOf(StandardMuscles.CHEST, StandardMuscles.SHOULDERS, StandardMuscles.TRICEPS) }) {
+        if (highPriorityMuscles.any { it in SplitType.PUSH.targetMuscles }) {
             splits.add(SplitType.PUSH)
         }
-        if (highPriorityMuscles.any { it in listOf(StandardMuscles.BACK, StandardMuscles.LATS, StandardMuscles.BICEPS) }) {
+        if (highPriorityMuscles.any { it in SplitType.PULL.targetMuscles }) {
             splits.add(SplitType.PULL)
         }
-        if (highPriorityMuscles.any { it in listOf(StandardMuscles.QUADS, StandardMuscles.HAMSTRINGS, StandardMuscles.GLUTES) }) {
+        if (highPriorityMuscles.any { it in SplitType.LEGS.targetMuscles }) {
             splits.add(SplitType.LEGS)
         }
 
@@ -80,19 +81,21 @@ class FakeWorkoutPlanner(
         candidates: List<Exercise>,
         context: WorkoutGenerationContext
     ): List<Exercise> {
-        val targetMuscles = when (split) {
-            SplitType.PUSH -> listOf(StandardMuscles.CHEST, StandardMuscles.SHOULDERS, StandardMuscles.TRICEPS)
-            SplitType.PULL -> listOf(StandardMuscles.BACK, StandardMuscles.LATS, StandardMuscles.BICEPS)
-            SplitType.LEGS -> listOf(StandardMuscles.QUADS, StandardMuscles.HAMSTRINGS, StandardMuscles.GLUTES, StandardMuscles.CALVES)
-            SplitType.UPPER_BODY -> listOf(StandardMuscles.CHEST, StandardMuscles.BACK, StandardMuscles.SHOULDERS, StandardMuscles.ARMS())
-            SplitType.FULL_BODY -> listOf(StandardMuscles.CHEST, StandardMuscles.BACK, StandardMuscles.QUADS, StandardMuscles.CORE)
-        }
+        val targetMuscles = split.targetMuscles
 
-        // Filter candidates matching target muscles
+        // A candidate that trains none of the split's muscles is not a substitute for one that
+        // does. Selection fails here instead of silently widening back to the whole catalog,
+        // which used to hand a Push day whatever sorted first.
         val matchingCandidates = candidates.filter { exercise ->
             exercise.primaryMuscles.any { it in targetMuscles } ||
                 exercise.secondaryMuscles.any { it in targetMuscles }
-        }.ifEmpty { candidates }
+        }
+        if (matchingCandidates.isEmpty()) {
+            throw WorkoutValidationException(
+                "No ${split.displayName.lowercase(Locale.ROOT)} exercises match your available " +
+                    "equipment. Add equipment in Profile, or start one of your own workouts."
+            )
+        }
 
         // Prefer reviewed compound lifts, then allow every remaining matching exercise.
         val compounds = matchingCandidates.filter { it.programming?.mechanics == MechanicsType.COMPOUND }
@@ -114,7 +117,7 @@ class FakeWorkoutPlanner(
             result.addAll(availableRemaining.take(remainingSlots))
         }
 
-        return if (result.isNotEmpty()) result else candidates.take(exerciseCountTarget)
+        return result
     }
 
     private fun createGeneratedExercise(
@@ -129,13 +132,7 @@ class FakeWorkoutPlanner(
     }
 
     private fun generateWorkoutTitle(split: SplitType, goal: FitnessGoal): String {
-        val prefix = when (split) {
-            SplitType.PUSH -> "Push"
-            SplitType.PULL -> "Pull"
-            SplitType.LEGS -> "Legs"
-            SplitType.UPPER_BODY -> "Upper Body"
-            SplitType.FULL_BODY -> "Full Body"
-        }
+        val prefix = split.displayName
         val suffix = when (goal) {
             FitnessGoal.BUILD_MUSCLE -> "Hypertrophy"
             FitnessGoal.STRENGTH -> "Power & Strength"
@@ -161,13 +158,63 @@ class FakeWorkoutPlanner(
         return ((restTimeSeconds + executionTimeSeconds) / 60).coerceIn(1, 240)
     }
 
-    private enum class SplitType {
-        PUSH,
-        PULL,
-        LEGS,
-        UPPER_BODY,
-        FULL_BODY
+    private enum class SplitType(
+        val displayName: String,
+        val targetMuscles: List<String>
+    ) {
+        PUSH(
+            displayName = "Push",
+            targetMuscles = listOf(
+                StandardMuscles.CHEST,
+                StandardMuscles.SHOULDERS,
+                StandardMuscles.TRICEPS
+            )
+        ),
+        PULL(
+            displayName = "Pull",
+            targetMuscles = listOf(
+                StandardMuscles.BACK,
+                StandardMuscles.UPPER_BACK,
+                StandardMuscles.LATS,
+                StandardMuscles.REAR_DELTS,
+                StandardMuscles.BICEPS,
+                StandardMuscles.FOREARMS
+            )
+        ),
+        LEGS(
+            displayName = "Legs",
+            targetMuscles = listOf(
+                StandardMuscles.QUADS,
+                StandardMuscles.HAMSTRINGS,
+                StandardMuscles.GLUTES,
+                StandardMuscles.CALVES,
+                StandardMuscles.ADDUCTORS,
+                StandardMuscles.HIPS
+            )
+        ),
+        UPPER_BODY(
+            displayName = "Upper Body",
+            targetMuscles = listOf(
+                StandardMuscles.CHEST,
+                StandardMuscles.BACK,
+                StandardMuscles.UPPER_BACK,
+                StandardMuscles.LATS,
+                StandardMuscles.SHOULDERS,
+                StandardMuscles.REAR_DELTS,
+                StandardMuscles.BICEPS,
+                StandardMuscles.TRICEPS
+            )
+        ),
+        FULL_BODY(
+            displayName = "Full Body",
+            targetMuscles = listOf(
+                StandardMuscles.CHEST,
+                StandardMuscles.BACK,
+                StandardMuscles.QUADS,
+                StandardMuscles.HAMSTRINGS,
+                StandardMuscles.GLUTES,
+                StandardMuscles.CORE
+            )
+        )
     }
-
-    private fun StandardMuscles.ARMS(): String = StandardMuscles.BICEPS
 }
