@@ -186,6 +186,11 @@ private class StubWorkoutRepository(
     ): WorkoutSession =
         error("Not used")
 
+    override suspend fun startWorkoutFromTemplate(
+        template: wallcrawl.elopenmike.com.core.model.WorkoutTemplate,
+        userProfile: UserProfile
+    ): WorkoutSession = error("Not used")
+
     override suspend fun logSetCompletion(
         setId: String,
         reps: Int?,

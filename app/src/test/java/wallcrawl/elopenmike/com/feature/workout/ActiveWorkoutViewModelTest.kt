@@ -193,6 +193,11 @@ private class ActiveWorkoutRepository(initialSession: WorkoutSession) : WorkoutR
         userProfile: UserProfile
     ): WorkoutSession = error("Not used")
 
+    override suspend fun startWorkoutFromTemplate(
+        template: wallcrawl.elopenmike.com.core.model.WorkoutTemplate,
+        userProfile: wallcrawl.elopenmike.com.core.model.UserProfile
+    ): WorkoutSession = error("Not used")
+
     override suspend fun logSetCompletion(
         setId: String,
         reps: Int?,

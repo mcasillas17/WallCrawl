@@ -13,6 +13,9 @@ import wallcrawl.elopenmike.com.core.database.entity.WorkoutSessionEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSetEntity
 import wallcrawl.elopenmike.com.core.database.relation.WorkoutSessionWithExercisesAndSets
 import wallcrawl.elopenmike.com.core.model.SessionStatus
+import wallcrawl.elopenmike.com.core.model.ExerciseType
+import wallcrawl.elopenmike.com.core.model.SetType
+import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
 
 class WorkoutRepositoryTest {
 
@@ -111,6 +114,55 @@ class WorkoutRepositoryTest {
     }
 
     @Test
+    fun logSetCompletion_durationRejectsRepetitionsBeforePersistence() = runTest {
+        setDao.exerciseType = ExerciseType.DURATION
+
+        assertIllegalArgument {
+            repository.logSetCompletion(
+                setId = "duration-set",
+                performance = SetPerformanceInput(
+                    reps = 10,
+                    durationSeconds = 45,
+                    isCompleted = true
+                )
+            )
+        }
+
+        assertThat(setDao.completionUpdates).isEmpty()
+    }
+
+    @Test
+    fun logSetCompletion_completedDistanceSetRequiresDistanceOrDuration() = runTest {
+        setDao.exerciseType = ExerciseType.DISTANCE_DURATION
+
+        assertIllegalArgument {
+            repository.logSetCompletion(
+                setId = "distance-set",
+                performance = SetPerformanceInput(isCompleted = true)
+            )
+        }
+
+        assertThat(setDao.completionUpdates).isEmpty()
+    }
+
+    @Test
+    fun logSetCompletion_assistedSetPersistsAssistanceInsteadOfLoad() = runTest {
+        setDao.exerciseType = ExerciseType.ASSISTED_BODYWEIGHT
+
+        repository.logSetCompletion(
+            setId = "assisted-set",
+            performance = SetPerformanceInput(
+                reps = 8,
+                assistanceWeight = 30.0,
+                isCompleted = true
+            )
+        )
+
+        assertThat(setDao.completionUpdates.single().assistanceWeight).isEqualTo(30.0)
+        assertThat(setDao.completionUpdates.single().weight).isNull()
+    }
+
+    @Test
     fun completeWorkout_unknownSession_isRejected() = runTest {
         try {
             repository.completeWorkout(sessionId = "missing", actualDurationMinutes = 30)
@@ -141,24 +193,53 @@ private data class SetCompletionUpdate(
     val setId: String,
     val reps: Int?,
     val weight: Double?,
-    val isCompleted: Boolean
+    val isCompleted: Boolean,
+    val assistanceWeight: Double? = null,
+    val durationSeconds: Int? = null,
+    val distanceMeters: Double? = null
 )
 
 private class RecordingWorkoutSetDao : WorkoutSetDao {
     val completionUpdates = mutableListOf<SetCompletionUpdate>()
     var affectedRows: Int = 1
+    var exerciseType: ExerciseType = ExerciseType.WEIGHT_REPS
 
     override suspend fun insertSets(sets: List<WorkoutSetEntity>) = Unit
     override suspend fun insertOrUpdateSet(set: WorkoutSetEntity) = Unit
+    override suspend fun getSetById(setId: String): WorkoutSetEntity? = WorkoutSetEntity(
+        id = setId,
+        workoutExerciseId = "exercise",
+        setNumber = 1,
+        exerciseType = exerciseType,
+        targetReps = 10,
+        completedReps = null,
+        targetWeight = 20.0,
+        completedWeight = null,
+        isCompleted = false,
+        rpe = null,
+        rir = null,
+        type = SetType.NORMAL
+    )
 
     override suspend fun updateSetCompletion(
         setId: String,
         reps: Int?,
         weight: Double?,
+        assistanceWeight: Double?,
+        durationSeconds: Int?,
+        distanceMeters: Double?,
         isCompleted: Boolean,
         requiredStatus: SessionStatus
     ): Int {
-        completionUpdates += SetCompletionUpdate(setId, reps, weight, isCompleted)
+        completionUpdates += SetCompletionUpdate(
+            setId = setId,
+            reps = reps,
+            weight = weight,
+            isCompleted = isCompleted,
+            assistanceWeight = assistanceWeight,
+            durationSeconds = durationSeconds,
+            distanceMeters = distanceMeters
+        )
         return affectedRows
     }
 

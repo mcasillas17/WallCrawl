@@ -167,10 +167,18 @@ interface WorkoutSetDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOrUpdateSet(set: WorkoutSetEntity)
 
+    @Query("SELECT * FROM workout_sets WHERE id = :setId LIMIT 1")
+    suspend fun getSetById(setId: String): WorkoutSetEntity?
+
     @Query(
         """
         UPDATE workout_sets
-        SET completedReps = :reps, completedWeight = :weight, isCompleted = :isCompleted
+        SET completedReps = :reps,
+            completedWeight = :weight,
+            completedAssistanceWeight = :assistanceWeight,
+            completedDurationSeconds = :durationSeconds,
+            completedDistanceMeters = :distanceMeters,
+            isCompleted = :isCompleted
         WHERE id = :setId
           AND EXISTS (
               SELECT 1
@@ -186,9 +194,29 @@ interface WorkoutSetDao {
         setId: String,
         reps: Int?,
         weight: Double?,
+        assistanceWeight: Double?,
+        durationSeconds: Int?,
+        distanceMeters: Double?,
         isCompleted: Boolean,
         requiredStatus: SessionStatus = SessionStatus.IN_PROGRESS
     ): Int
+
+    suspend fun updateSetCompletion(
+        setId: String,
+        reps: Int?,
+        weight: Double?,
+        isCompleted: Boolean,
+        requiredStatus: SessionStatus = SessionStatus.IN_PROGRESS
+    ): Int = updateSetCompletion(
+        setId = setId,
+        reps = reps,
+        weight = weight,
+        assistanceWeight = null,
+        durationSeconds = null,
+        distanceMeters = null,
+        isCompleted = isCompleted,
+        requiredStatus = requiredStatus
+    )
 
     @Query("SELECT * FROM workout_sets WHERE workoutExerciseId = :workoutExerciseId ORDER BY setNumber ASC")
     suspend fun getSetsForExercise(workoutExerciseId: String): List<WorkoutSetEntity>
