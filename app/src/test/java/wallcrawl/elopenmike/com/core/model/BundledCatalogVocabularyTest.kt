@@ -54,7 +54,7 @@ class BundledCatalogVocabularyTest {
             assertThat(MuscleVocabulary.canonicalizePrimary(name)).isNotNull()
         }
         muscleArrays("primaryMuscles").forEach { names ->
-            val primaries = names.map(MuscleVocabulary::canonicalizePrimary)
+            val primaries = names.mapNotNull(MuscleVocabulary::canonicalizePrimary)
             assertThat(primaries).hasSize(names.size)
         }
     }

@@ -71,6 +71,13 @@ class FakeWorkoutPlanner(
         // fillable split when the preferred ones are not. Preferring a split the equipment
         // cannot train and then failing would strand the user: the choice is deterministic,
         // so every retry lands on the same empty split.
+        if (candidates.none { it.isStrengthWork() }) {
+            throw WorkoutValidationException(
+                message = "Every available candidate is cardio or mobility work.",
+                failure = WorkoutPlanningFailure.NO_STRENGTH_CANDIDATES
+            )
+        }
+
         fun List<SplitType>.fillable() = filter { split -> candidates.any { it.trains(split) } }
         val trainable = preferred.fillable().ifEmpty { SplitType.DEFAULT_ROTATION.fillable() }
         if (trainable.isEmpty()) {
@@ -108,11 +115,21 @@ class FakeWorkoutPlanner(
      * upstream's umbrella names were resolved they started matching splits — putting
      * "Walking" in a Legs · Hypertrophy plan alongside squats. They stay in the catalog to
      * browse and to build custom workouts from; they are not prescribed as training slots.
+     *
+     * The test is what can be prescribed, not whether conditioning is involved: a kettlebell
+     * swing is loaded work for reps that happens to be tagged Cardio, and a plank is a timed
+     * hold that is not. Only untimed-distance work and conditioning drills measured purely
+     * in time are dropped.
      */
-    private fun Exercise.isStrengthWork(): Boolean =
-        !isStretch &&
-            (primaryMuscles + secondaryMuscles).none { it == StandardMuscles.CARDIO } &&
-            type != ExerciseType.DISTANCE_DURATION
+    private fun Exercise.isStrengthWork(): Boolean = when {
+        isStretch -> false
+        type == ExerciseType.DISTANCE_DURATION -> false
+        type == ExerciseType.DURATION -> !isConditioning()
+        else -> true
+    }
+
+    private fun Exercise.isConditioning(): Boolean =
+        (primaryMuscles + secondaryMuscles).any { it == StandardMuscles.CARDIO }
 
     private fun selectExercisesForSplit(
         split: SplitType,

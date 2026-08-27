@@ -97,6 +97,14 @@ class TodayViewModel(
                 .drop(1)
                 .collect { requestWorkoutGeneration(isRegeneration = true) }
         }
+        viewModelScope.launch {
+            // Finishing a workout advances the split. This screen outlives the trip to the
+            // workout and back, so without this the card still offers the day just finished.
+            workoutRepository.observeCompletedWorkoutCount()
+                .distinctUntilChanged()
+                .drop(1)
+                .collect { requestWorkoutGeneration(isRegeneration = true) }
+        }
         requestWorkoutGeneration(isRegeneration = false)
     }
 
@@ -144,6 +152,10 @@ class TodayViewModel(
             WorkoutPlanningFailure.NO_CANDIDATES ->
                 "No exercises match your equipment and exclusions yet. " +
                     "Add equipment or clear an exclusion in Profile."
+
+            WorkoutPlanningFailure.NO_STRENGTH_CANDIDATES ->
+                "Cardio machines and stretches aren't planned as strength work. " +
+                    "Add strength equipment in Profile, or build your own workout."
 
             WorkoutPlanningFailure.NO_CANDIDATES_FOR_ANY_SPLIT ->
                 "Your available equipment can't cover a full training day yet. " +

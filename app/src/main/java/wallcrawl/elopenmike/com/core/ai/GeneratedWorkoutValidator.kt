@@ -91,7 +91,10 @@ enum class WorkoutPlanningFailure {
     /** Nothing survived the equipment, exclusion, and recovery filters. */
     NO_CANDIDATES,
 
-    /** Candidates exist, but none of them train any split this profile can be given. */
+    /** Candidates exist, but all of them are cardio or mobility work. */
+    NO_STRENGTH_CANDIDATES,
+
+    /** Strength candidates exist, but none of them train any split. */
     NO_CANDIDATES_FOR_ANY_SPLIT,
 
     /** A generated workout broke the catalog or prescription contract. */

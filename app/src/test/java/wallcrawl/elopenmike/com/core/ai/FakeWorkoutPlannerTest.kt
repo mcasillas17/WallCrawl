@@ -2,6 +2,7 @@ package wallcrawl.elopenmike.com.core.ai
 
 import com.google.common.truth.Truth.assertThat
 import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
+import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.ExercisePerformanceHistory
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
@@ -104,6 +105,52 @@ class FakeWorkoutPlannerTest {
         val workout = planner.generateWorkout(context)
 
         assertThat(workout.name).contains("Legs")
+    }
+
+    @Test
+    fun generateWorkout_stillPrescribesLoadedWorkTaggedAsConditioning() = runTest {
+        // A kettlebell swing carries a Cardio tag but is loaded work for reps, so sets and
+        // reps mean something for it — unlike a treadmill.
+        val swing = allExercises.first().copy(
+            id = "kettlebell-swing",
+            name = "Kettlebell Swing",
+            type = ExerciseType.WEIGHT_REPS,
+            isStretch = false,
+            primaryMuscles = listOf(StandardMuscles.GLUTES),
+            secondaryMuscles = listOf(StandardMuscles.HAMSTRINGS, StandardMuscles.CARDIO)
+        )
+        val context = WorkoutGenerationContext(
+            userProfile = UserProfile(
+                musclePriorities = mapOf(StandardMuscles.GLUTES to PriorityLevel.HIGH)
+            ),
+            allowedExercises = listOf(swing)
+        )
+
+        val workout = planner.generateWorkout(context)
+
+        assertThat(workout.exercises.map { it.exerciseId }).contains(swing.id)
+    }
+
+    @Test
+    fun generateWorkout_reportsWhenEveryCandidateIsConditioning() = runTest {
+        val treadmill = allExercises.first().copy(
+            id = "treadmill-run",
+            name = "Treadmill Run",
+            type = ExerciseType.DISTANCE_DURATION,
+            primaryMuscles = listOf(StandardMuscles.QUADS),
+            secondaryMuscles = listOf(StandardMuscles.CARDIO)
+        )
+        val context = WorkoutGenerationContext(
+            userProfile = UserProfile(),
+            allowedExercises = listOf(treadmill)
+        )
+
+        try {
+            planner.generateWorkout(context)
+            fail("Expected generation to report that nothing available is strength work")
+        } catch (e: WorkoutValidationException) {
+            assertThat(e.failure).isEqualTo(WorkoutPlanningFailure.NO_STRENGTH_CANDIDATES)
+        }
     }
 
     @Test

@@ -78,6 +78,8 @@ class WorkoutGenerationContextBuilderTest {
         assertThat(context.exerciseHistory.getValue("incline-dumbbell-press").lastWeight)
             .isEqualTo(45.0)
         assertThat(context.recentlyTrainedMuscles).containsExactly(StandardMuscles.CHEST)
+        // Seeds split rotation, so it has to survive the trip from the repository.
+        assertThat(context.completedWorkoutCount).isEqualTo(1)
     }
 
     @Test
