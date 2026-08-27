@@ -67,7 +67,7 @@ class ExerciseFilterTest {
     }
 
     @Test
-    fun filterCandidates_excludesExerciseWithoutReviewedProgramming() {
+    fun filterCandidates_includesUnreviewedExerciseWhenListedEquipmentMatches() {
         val reviewed = allExercises.first()
         val unreviewed = reviewed.copy(id = "catalog-only-exercise", programming = null)
 
@@ -76,7 +76,30 @@ class ExerciseFilterTest {
             profile = UserProfile()
         )
 
-        assertThat(candidates.map { it.id }).containsExactly(reviewed.id)
+        assertThat(candidates.map { it.id }).containsExactly(reviewed.id, unreviewed.id)
+    }
+
+    @Test
+    fun filterCandidates_requiresEveryListedEquipmentItemForUnreviewedExercise() {
+        val unreviewed = allExercises.first().copy(
+            id = "dumbbell-bench-movement",
+            listedEquipment = listOf(StandardEquipment.DUMBBELL, StandardEquipment.BENCH),
+            programming = null
+        )
+
+        val withoutBench = filter.filterCandidates(
+            allExercises = listOf(unreviewed),
+            profile = UserProfile(availableEquipment = listOf(StandardEquipment.DUMBBELL))
+        )
+        val withBench = filter.filterCandidates(
+            allExercises = listOf(unreviewed),
+            profile = UserProfile(
+                availableEquipment = listOf(StandardEquipment.DUMBBELL, StandardEquipment.BENCH)
+            )
+        )
+
+        assertThat(withoutBench).isEmpty()
+        assertThat(withBench.map { it.id }).containsExactly(unreviewed.id)
     }
 
     @Test

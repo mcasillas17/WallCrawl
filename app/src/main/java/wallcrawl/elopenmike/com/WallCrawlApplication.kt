@@ -10,8 +10,10 @@ import wallcrawl.elopenmike.com.core.ai.WorkoutPlanner
 import wallcrawl.elopenmike.com.core.database.WallCrawlDatabase
 import wallcrawl.elopenmike.com.core.database.repository.OfflineUserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.OfflineWorkoutRepository
+import wallcrawl.elopenmike.com.core.database.repository.OfflineWorkoutTemplateRepository
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
+import wallcrawl.elopenmike.com.core.database.repository.WorkoutTemplateRepository
 import wallcrawl.elopenmike.com.core.exercise.BundledExerciseCatalog
 import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
 import wallcrawl.elopenmike.com.core.exercise.ExerciseFilter
@@ -27,6 +29,7 @@ interface AppContainer {
     val database: WallCrawlDatabase
     val userProfileRepository: UserProfileRepository
     val workoutRepository: WorkoutRepository
+    val workoutTemplateRepository: WorkoutTemplateRepository
     val exerciseCatalog: ExerciseCatalog
     val exerciseVisualProvider: ExerciseVisualProvider
     val exerciseFilter: ExerciseFilter
@@ -54,6 +57,13 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
         OfflineWorkoutRepository(
             sessionDao = database.workoutSessionDao(),
             setDao = database.workoutSetDao()
+        )
+    }
+
+    override val workoutTemplateRepository: WorkoutTemplateRepository by lazy {
+        OfflineWorkoutTemplateRepository(
+            templateDao = database.workoutTemplateDao(),
+            exerciseCatalog = exerciseCatalog
         )
     }
 

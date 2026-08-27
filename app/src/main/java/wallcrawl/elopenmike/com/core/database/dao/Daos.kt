@@ -6,11 +6,15 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
+import androidx.room.Upsert
 import wallcrawl.elopenmike.com.core.database.entity.UserProfileEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutExerciseEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSessionEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSetEntity
+import wallcrawl.elopenmike.com.core.database.entity.WorkoutTemplateEntity
+import wallcrawl.elopenmike.com.core.database.entity.WorkoutTemplateExerciseEntity
 import wallcrawl.elopenmike.com.core.database.relation.WorkoutSessionWithExercisesAndSets
+import wallcrawl.elopenmike.com.core.database.relation.WorkoutTemplateWithExercises
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import kotlinx.coroutines.flow.Flow
 
@@ -163,10 +167,18 @@ interface WorkoutSetDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOrUpdateSet(set: WorkoutSetEntity)
 
+    @Query("SELECT * FROM workout_sets WHERE id = :setId LIMIT 1")
+    suspend fun getSetById(setId: String): WorkoutSetEntity?
+
     @Query(
         """
         UPDATE workout_sets
-        SET completedReps = :reps, completedWeight = :weight, isCompleted = :isCompleted
+        SET completedReps = :reps,
+            completedWeight = :weight,
+            completedAssistanceWeight = :assistanceWeight,
+            completedDurationSeconds = :durationSeconds,
+            completedDistanceMeters = :distanceMeters,
+            isCompleted = :isCompleted
         WHERE id = :setId
           AND EXISTS (
               SELECT 1
@@ -182,10 +194,73 @@ interface WorkoutSetDao {
         setId: String,
         reps: Int?,
         weight: Double?,
+        assistanceWeight: Double?,
+        durationSeconds: Int?,
+        distanceMeters: Double?,
         isCompleted: Boolean,
         requiredStatus: SessionStatus = SessionStatus.IN_PROGRESS
     ): Int
 
+    suspend fun updateSetCompletion(
+        setId: String,
+        reps: Int?,
+        weight: Double?,
+        isCompleted: Boolean,
+        requiredStatus: SessionStatus = SessionStatus.IN_PROGRESS
+    ): Int = updateSetCompletion(
+        setId = setId,
+        reps = reps,
+        weight = weight,
+        assistanceWeight = null,
+        durationSeconds = null,
+        distanceMeters = null,
+        isCompleted = isCompleted,
+        requiredStatus = requiredStatus
+    )
+
     @Query("SELECT * FROM workout_sets WHERE workoutExerciseId = :workoutExerciseId ORDER BY setNumber ASC")
     suspend fun getSetsForExercise(workoutExerciseId: String): List<WorkoutSetEntity>
+}
+
+@Dao
+interface WorkoutTemplateDao {
+    @Transaction
+    @Query("SELECT * FROM workout_templates ORDER BY updatedAtTimestamp DESC, name COLLATE NOCASE ASC")
+    fun observeTemplatesWithExercises(): Flow<List<WorkoutTemplateWithExercises>>
+
+    @Transaction
+    @Query("SELECT * FROM workout_templates WHERE id = :templateId LIMIT 1")
+    fun observeTemplateWithExercises(templateId: String): Flow<WorkoutTemplateWithExercises?>
+
+    @Transaction
+    @Query("SELECT * FROM workout_templates WHERE id = :templateId LIMIT 1")
+    suspend fun getTemplateWithExercises(templateId: String): WorkoutTemplateWithExercises?
+
+    @Query(
+        "SELECT * FROM workout_template_exercises " +
+            "WHERE templateId = :templateId ORDER BY orderIndex ASC"
+    )
+    suspend fun getExercisesForTemplate(templateId: String): List<WorkoutTemplateExerciseEntity>
+
+    @Upsert
+    suspend fun upsertTemplate(template: WorkoutTemplateEntity)
+
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    suspend fun insertTemplateExercises(exercises: List<WorkoutTemplateExerciseEntity>)
+
+    @Query("DELETE FROM workout_template_exercises WHERE templateId = :templateId")
+    suspend fun deleteExercisesForTemplate(templateId: String)
+
+    @Query("DELETE FROM workout_templates WHERE id = :templateId")
+    suspend fun deleteTemplateById(templateId: String): Int
+
+    @Transaction
+    suspend fun replaceTemplate(
+        template: WorkoutTemplateEntity,
+        exercises: List<WorkoutTemplateExerciseEntity>
+    ) {
+        upsertTemplate(template)
+        deleteExercisesForTemplate(template.id)
+        if (exercises.isNotEmpty()) insertTemplateExercises(exercises)
+    }
 }

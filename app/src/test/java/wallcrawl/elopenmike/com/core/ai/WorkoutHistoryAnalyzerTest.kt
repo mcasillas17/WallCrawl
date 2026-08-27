@@ -199,7 +199,7 @@ class WorkoutHistoryAnalyzerTest {
                     sessionId = id,
                     exerciseId = exerciseId,
                     orderIndex = 0,
-                    targetSets = sets.size,
+                    targetSets = maxOf(1, sets.size),
                     targetRepMin = 8,
                     targetRepMax = 10,
                     sets = sets.map { it.copy(workoutExerciseId = workoutExerciseId) }

@@ -24,8 +24,12 @@ object AppRoutes {
     const val EXERCISES = "exercises"
     const val PROFILE = "profile"
     const val ACTIVE_WORKOUT = "workout_active/{sessionId}"
+    const val WORKOUT_TEMPLATES = "workout_templates"
+    const val TEMPLATE_NEW = "workout_template/new"
+    const val TEMPLATE_EDIT = "workout_template/{templateId}"
     const val WORKOUT_SUMMARY = "workout_summary/{sessionId}"
 
     fun activeWorkout(sessionId: String) = "workout_active/$sessionId"
+    fun editTemplate(templateId: String) = "workout_template/$templateId"
     fun workoutSummary(sessionId: String) = "workout_summary/$sessionId"
 }

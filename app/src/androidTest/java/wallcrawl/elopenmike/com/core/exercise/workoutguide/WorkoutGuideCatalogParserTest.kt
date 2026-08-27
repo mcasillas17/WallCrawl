@@ -6,6 +6,9 @@ import com.google.common.truth.Truth.assertThat
 import java.io.StringReader
 import org.junit.Test
 import org.junit.runner.RunWith
+import wallcrawl.elopenmike.com.core.exercise.ExerciseFilter
+import wallcrawl.elopenmike.com.core.model.StandardEquipment
+import wallcrawl.elopenmike.com.core.model.UserProfile
 
 @RunWith(AndroidJUnit4::class)
 class WorkoutGuideCatalogParserTest {
@@ -40,6 +43,23 @@ class WorkoutGuideCatalogParserTest {
         assertThat(benchPress.searchAliases).contains("Barbell Bench Press")
         assertThat(benchPress.source?.attribution?.license).isEqualTo("CC BY-SA 4.0")
         assertThat(snapshot.framesByExerciseId.getValue(benchPress.id)).hasSize(3)
+    }
+
+    @Test
+    fun packagedCatalog_all302ExercisesCanEnterThePlannerCandidatePool() {
+        val exercises = assets.open("workout-guide/catalog.json")
+            .bufferedReader()
+            .use(parser::parse)
+            .exercises
+
+        val catalogEquipment = exercises.flatMap { it.listedEquipment }.toSet()
+        val candidates = ExerciseFilter().filterCandidates(
+            allExercises = exercises,
+            profile = UserProfile(availableEquipment = StandardEquipment.ALL)
+        )
+
+        assertThat(StandardEquipment.ALL).containsAtLeastElementsIn(catalogEquipment)
+        assertThat(candidates.map { it.id }.toSet()).hasSize(302)
     }
 
     @Test

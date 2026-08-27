@@ -1,15 +1,18 @@
 package wallcrawl.elopenmike.com.core.database.entity
 
 import androidx.room.Entity
+import androidx.room.ColumnInfo
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
+import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetType
 import wallcrawl.elopenmike.com.core.model.WeightUnit
+import wallcrawl.elopenmike.com.core.model.WorkoutOrigin
 
 @Entity(tableName = "user_profiles")
 data class UserProfileEntity(
@@ -41,6 +44,9 @@ data class WorkoutSessionEntity(
     val actualDurationMinutes: Int,
     val weightUnit: WeightUnit = WeightUnit.LBS,
     val status: SessionStatus,
+    @ColumnInfo(defaultValue = "'PLANNER'")
+    val origin: WorkoutOrigin = WorkoutOrigin.PLANNER,
+    val sourceTemplateId: String? = null,
     val focusMusclesJson: String,
     val notes: String
 )
@@ -63,10 +69,15 @@ data class WorkoutExerciseEntity(
     val sessionId: String,
     val exerciseId: String,
     val orderIndex: Int,
+    val exerciseType: ExerciseType = ExerciseType.WEIGHT_REPS,
     val targetSets: Int,
-    val targetRepMin: Int,
-    val targetRepMax: Int,
+    val targetRepMin: Int?,
+    val targetRepMax: Int?,
     val targetWeight: Double?,
+    val targetAssistanceWeight: Double? = null,
+    val targetDurationSeconds: Int? = null,
+    val targetDistanceMeters: Double? = null,
+    val restSeconds: Int = 90,
     val notes: String
 )
 
@@ -87,12 +98,58 @@ data class WorkoutSetEntity(
     val id: String,
     val workoutExerciseId: String,
     val setNumber: Int,
-    val targetReps: Int,
+    val exerciseType: ExerciseType = ExerciseType.WEIGHT_REPS,
+    val targetReps: Int?,
     val completedReps: Int?,
     val targetWeight: Double?,
     val completedWeight: Double?,
+    val targetAssistanceWeight: Double? = null,
+    val completedAssistanceWeight: Double? = null,
+    val targetDurationSeconds: Int? = null,
+    val completedDurationSeconds: Int? = null,
+    val targetDistanceMeters: Double? = null,
+    val completedDistanceMeters: Double? = null,
     val isCompleted: Boolean,
     val rpe: Float?,
     val rir: Int?,
     val type: SetType
+)
+
+@Entity(tableName = "workout_templates")
+data class WorkoutTemplateEntity(
+    @PrimaryKey
+    val id: String,
+    val name: String,
+    val notes: String,
+    val createdAtTimestamp: Long,
+    val updatedAtTimestamp: Long
+)
+
+@Entity(
+    tableName = "workout_template_exercises",
+    primaryKeys = ["templateId", "orderIndex"],
+    foreignKeys = [
+        ForeignKey(
+            entity = WorkoutTemplateEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["templateId"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ],
+    indices = [Index(value = ["templateId"])]
+)
+data class WorkoutTemplateExerciseEntity(
+    val templateId: String,
+    val orderIndex: Int,
+    val exerciseId: String,
+    val exerciseType: ExerciseType,
+    val targetSets: Int,
+    val targetRepMin: Int?,
+    val targetRepMax: Int?,
+    val targetWeight: Double?,
+    val targetAssistanceWeight: Double?,
+    val targetDurationSeconds: Int?,
+    val targetDistanceMeters: Double?,
+    val restSeconds: Int,
+    val notes: String
 )

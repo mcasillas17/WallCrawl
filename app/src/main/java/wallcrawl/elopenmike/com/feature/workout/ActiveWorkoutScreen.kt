@@ -36,9 +36,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
+import wallcrawl.elopenmike.com.core.model.ExerciseType
+import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
 import wallcrawl.elopenmike.com.core.exercise.visual.ExerciseVisualProvider
 import wallcrawl.elopenmike.com.core.ui.components.ExerciseIllustration
-import wallcrawl.elopenmike.com.core.ui.components.SetRow
+import wallcrawl.elopenmike.com.core.ui.components.PerformanceSetRow
 import wallcrawl.elopenmike.com.core.ui.components.StatBadge
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlOutlinedButton
@@ -114,8 +116,8 @@ fun ActiveWorkoutScreen(
                     visualProvider = visualProvider,
                     onPreviousExercise = { viewModel.previousExercise() },
                     onNextExercise = { viewModel.nextExercise() },
-                    onUpdateSet = { setId, reps, weight, isCompleted ->
-                        viewModel.updateSet(setId, reps, weight, isCompleted)
+                    onUpdateSet = { setId, performance ->
+                        viewModel.updateSet(setId, performance)
                     },
                     onFinishWorkout = { viewModel.finishWorkout() },
                     onClose = onNavigateBack
@@ -131,7 +133,7 @@ private fun ActiveWorkoutContent(
     visualProvider: ExerciseVisualProvider,
     onPreviousExercise: () -> Unit,
     onNextExercise: () -> Unit,
-    onUpdateSet: (setId: String, reps: Int?, weight: Double?, isCompleted: Boolean) -> Unit,
+    onUpdateSet: (setId: String, performance: SetPerformanceInput) -> Unit,
     onFinishWorkout: () -> Unit,
     onClose: () -> Unit
 ) {
@@ -236,15 +238,7 @@ private fun ActiveWorkoutContent(
                             modifier = Modifier.width(32.dp)
                         )
                         Text(
-                            text = "WEIGHT (${state.weightUnit.symbol.uppercase()})",
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = TextMuted,
-                            modifier = Modifier.weight(1f),
-                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                        )
-                        Text(
-                            text = "REPS",
+                            text = currentExercise.prescription.inputLabel(state.weightUnit.symbol),
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
                             color = TextMuted,
@@ -265,11 +259,11 @@ private fun ActiveWorkoutContent(
                 // 5. Editable Sets Rows
                 items(currentExercise.sets.size) { setIndex ->
                     val set = currentExercise.sets[setIndex]
-                    SetRow(
+                    PerformanceSetRow(
                         set = set,
                         weightUnit = state.weightUnit.symbol,
-                        onUpdateSet = { reps, weight, isCompleted ->
-                            onUpdateSet(set.id, reps, weight, isCompleted)
+                        onUpdateSet = { performance ->
+                            onUpdateSet(set.id, performance)
                         }
                     )
                 }
@@ -342,7 +336,7 @@ private fun ExerciseHeaderCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             StatBadge(
-                label = "${workoutExercise.targetSets} × ${workoutExercise.targetRepMin}–${workoutExercise.targetRepMax}",
+                label = workoutExercise.prescription.displayTarget(),
                 textColor = TextPrimary
             )
 
@@ -352,9 +346,36 @@ private fun ExerciseHeaderCard(
                     textColor = WebBlueAccent
                 )
             }
+            workoutExercise.prescription.targetAssistanceWeight?.let { assistance ->
+                StatBadge(
+                    label = "Assistance: $assistance $preferredUnit",
+                    textColor = WebBlueAccent
+                )
+            }
         }
     }
 }
+
+private fun wallcrawl.elopenmike.com.core.model.ExercisePrescription.inputLabel(unit: String): String =
+    when (exerciseType) {
+        ExerciseType.WEIGHT_REPS -> "LOAD ($unit) · REPS"
+        ExerciseType.BODYWEIGHT_REPS -> "REPS"
+        ExerciseType.ASSISTED_BODYWEIGHT -> "ASSIST ($unit) · REPS"
+        ExerciseType.DURATION -> "DURATION"
+        ExerciseType.DISTANCE_DURATION -> "DISTANCE · DURATION"
+    }
+
+private fun wallcrawl.elopenmike.com.core.model.ExercisePrescription.displayTarget(): String =
+    when (exerciseType) {
+        ExerciseType.WEIGHT_REPS, ExerciseType.BODYWEIGHT_REPS,
+        ExerciseType.ASSISTED_BODYWEIGHT -> "$targetSets × $repRange"
+        ExerciseType.DURATION -> "$targetSets × ${targetDurationSeconds}s"
+        ExerciseType.DISTANCE_DURATION -> buildList {
+            add("$targetSets set" + if (targetSets == 1) "" else "s")
+            targetDistanceMeters?.let { add("${it.toInt()} m") }
+            targetDurationSeconds?.let { add("${it}s") }
+        }.joinToString(" · ")
+    }
 
 @Composable
 private fun PreviousPerformanceCard(
@@ -395,17 +416,27 @@ private fun PreviousPerformanceCard(
         Spacer(modifier = Modifier.height(6.dp))
 
         sets.forEach { set ->
-            val reps = set.completedReps ?: return@forEach
-            val weightLabel = set.completedWeight?.let { weight ->
-                val displayWeight = if (weight % 1.0 == 0.0) {
-                    weight.toInt().toString()
-                } else {
-                    weight.toString()
+            val result = when (set.exerciseType) {
+                ExerciseType.WEIGHT_REPS -> {
+                    val reps = set.completedReps ?: return@forEach
+                    "${set.completedWeight?.let { "$it $weightUnit" } ?: "No load"} × $reps"
                 }
-                "$displayWeight $weightUnit"
-            } ?: "Bodyweight"
+                ExerciseType.BODYWEIGHT_REPS ->
+                    "Bodyweight × ${set.completedReps ?: return@forEach}"
+                ExerciseType.ASSISTED_BODYWEIGHT -> {
+                    val assistance = set.completedAssistanceWeight
+                        ?.let { "$it $weightUnit assistance" }
+                        ?: "Assistance not logged"
+                    "$assistance × ${set.completedReps ?: return@forEach}"
+                }
+                ExerciseType.DURATION -> "${set.completedDurationSeconds ?: return@forEach} seconds"
+                ExerciseType.DISTANCE_DURATION -> listOfNotNull(
+                    set.completedDistanceMeters?.let { "$it m" },
+                    set.completedDurationSeconds?.let { "$it seconds" }
+                ).joinToString(" · ").ifBlank { return@forEach }
+            }
             Text(
-                text = "• $weightLabel × $reps",
+                text = "• $result",
                 fontSize = 13.sp,
                 color = TextSecondary
             )

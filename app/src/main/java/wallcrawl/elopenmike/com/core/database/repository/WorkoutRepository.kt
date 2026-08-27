@@ -7,14 +7,21 @@ import wallcrawl.elopenmike.com.core.database.entity.WorkoutSessionEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSetEntity
 import wallcrawl.elopenmike.com.core.database.relation.WorkoutSessionWithExercisesAndSets
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
+import wallcrawl.elopenmike.com.core.model.ExercisePrescription
+import wallcrawl.elopenmike.com.core.model.ExerciseType
+import wallcrawl.elopenmike.com.core.model.PlannedExercise
+import wallcrawl.elopenmike.com.core.model.RepRange
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetType
+import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.model.WorkoutSummary
+import wallcrawl.elopenmike.com.core.model.WorkoutOrigin
+import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.util.UUID
@@ -32,7 +39,24 @@ interface WorkoutRepository {
         generated: GeneratedWorkout,
         userProfile: UserProfile
     ): WorkoutSession
+    suspend fun startWorkoutFromTemplate(
+        template: WorkoutTemplate,
+        userProfile: UserProfile
+    ): WorkoutSession
     suspend fun logSetCompletion(setId: String, reps: Int?, weight: Double?, isCompleted: Boolean)
+    suspend fun logSetCompletion(setId: String, performance: SetPerformanceInput) {
+        require(
+            performance.assistanceWeight == null &&
+                performance.durationSeconds == null &&
+                performance.distanceMeters == null
+        ) { "This repository only supports repetition and weight outcomes." }
+        logSetCompletion(
+            setId = setId,
+            reps = performance.reps,
+            weight = performance.weight,
+            isCompleted = performance.isCompleted
+        )
+    }
     suspend fun completeWorkout(sessionId: String, actualDurationMinutes: Int): WorkoutSummary
     suspend fun cancelWorkout(sessionId: String)
 }
@@ -79,24 +103,60 @@ class OfflineWorkoutRepository(
     override suspend fun startWorkoutFromGenerated(
         generated: GeneratedWorkout,
         userProfile: UserProfile
+    ): WorkoutSession = startWorkout(
+        name = generated.name,
+        notes = generated.rationale,
+        focusMuscles = generated.focusMuscles,
+        estimatedDurationMinutes = generated.estimatedDurationMinutes,
+        exercises = generated.exercises,
+        origin = WorkoutOrigin.PLANNER,
+        sourceTemplateId = null,
+        userProfile = userProfile
+    )
+
+    override suspend fun startWorkoutFromTemplate(
+        template: WorkoutTemplate,
+        userProfile: UserProfile
+    ): WorkoutSession = startWorkout(
+        name = template.name,
+        notes = template.notes,
+        focusMuscles = emptyList(),
+        estimatedDurationMinutes = estimateDurationMinutes(template.exercises),
+        exercises = template.exercises,
+        origin = WorkoutOrigin.CUSTOM_TEMPLATE,
+        sourceTemplateId = template.id,
+        userProfile = userProfile
+    )
+
+    private suspend fun startWorkout(
+        name: String,
+        notes: String,
+        focusMuscles: List<String>,
+        estimatedDurationMinutes: Int,
+        exercises: List<PlannedExercise>,
+        origin: WorkoutOrigin,
+        sourceTemplateId: String?,
+        userProfile: UserProfile
     ): WorkoutSession {
         val sessionId = UUID.randomUUID().toString()
         val sessionEntity = WorkoutSessionEntity(
             id = sessionId,
-            name = generated.name,
+            name = name,
             startedAtTimestamp = System.currentTimeMillis(),
             completedAtTimestamp = null,
-            targetDurationMinutes = generated.estimatedDurationMinutes,
+            targetDurationMinutes = estimatedDurationMinutes,
             actualDurationMinutes = 0,
             weightUnit = userProfile.preferredUnit,
             status = SessionStatus.IN_PROGRESS,
-            focusMusclesJson = generated.focusMuscles.joinToString("|||"),
-            notes = generated.rationale
+            origin = origin,
+            sourceTemplateId = sourceTemplateId,
+            focusMusclesJson = focusMuscles.joinToString("|||"),
+            notes = notes
         )
         val exerciseEntities = mutableListOf<WorkoutExerciseEntity>()
         val setEntities = mutableListOf<WorkoutSetEntity>()
 
-        generated.exercises.forEachIndexed { exIndex, genEx ->
+        exercises.forEachIndexed { exIndex, genEx ->
             val exerciseInstanceId = UUID.randomUUID().toString()
             exerciseEntities.add(
                 WorkoutExerciseEntity(
@@ -104,10 +164,15 @@ class OfflineWorkoutRepository(
                     sessionId = sessionId,
                     exerciseId = genEx.exerciseId,
                     orderIndex = exIndex,
+                    exerciseType = genEx.prescription.exerciseType,
                     targetSets = genEx.targetSets,
-                    targetRepMin = genEx.repMin,
-                    targetRepMax = genEx.repMax,
+                    targetRepMin = genEx.prescription.repRange?.min,
+                    targetRepMax = genEx.prescription.repRange?.max,
                     targetWeight = genEx.targetWeight,
+                    targetAssistanceWeight = genEx.prescription.targetAssistanceWeight,
+                    targetDurationSeconds = genEx.prescription.targetDurationSeconds,
+                    targetDistanceMeters = genEx.prescription.targetDistanceMeters,
+                    restSeconds = genEx.prescription.restSeconds,
                     notes = genEx.notes
                 )
             )
@@ -118,10 +183,17 @@ class OfflineWorkoutRepository(
                         id = UUID.randomUUID().toString(),
                         workoutExerciseId = exerciseInstanceId,
                         setNumber = setNum,
-                        targetReps = genEx.repMax,
+                        exerciseType = genEx.prescription.exerciseType,
+                        targetReps = genEx.prescription.repRange?.max,
                         completedReps = null,
                         targetWeight = genEx.targetWeight,
                         completedWeight = null,
+                        targetAssistanceWeight = genEx.prescription.targetAssistanceWeight,
+                        completedAssistanceWeight = null,
+                        targetDurationSeconds = genEx.prescription.targetDurationSeconds,
+                        completedDurationSeconds = null,
+                        targetDistanceMeters = genEx.prescription.targetDistanceMeters,
+                        completedDistanceMeters = null,
                         isCompleted = false,
                         rpe = null,
                         rir = null,
@@ -145,27 +217,148 @@ class OfflineWorkoutRepository(
         reps: Int?,
         weight: Double?,
         isCompleted: Boolean
-    ) {
-        require(setId.isNotBlank()) { "setId must not be blank." }
-        require(reps == null || reps in 0..MAX_LOGGED_REPS) {
-            "reps must be between zero and $MAX_LOGGED_REPS."
-        }
-        require(!isCompleted || (reps != null && reps > 0)) {
-            "A completed set must have positive reps."
-        }
-        require(weight == null || (weight.isFinite() && weight in 0.0..MAX_LOGGED_WEIGHT)) {
-            "weight must be finite and between zero and $MAX_LOGGED_WEIGHT."
-        }
-
-        val affectedRows = setDao.updateSetCompletion(
-            setId = setId,
+    ) = logSetCompletion(
+        setId = setId,
+        performance = SetPerformanceInput(
             reps = reps,
             weight = weight,
             isCompleted = isCompleted
         )
+    )
+
+    override suspend fun logSetCompletion(
+        setId: String,
+        performance: SetPerformanceInput
+    ) {
+        require(setId.isNotBlank()) { "setId must not be blank." }
+        require(performance.reps == null || performance.reps in 0..MAX_LOGGED_REPS) {
+            "reps must be between zero and $MAX_LOGGED_REPS."
+        }
+        requireValidWeight(performance.weight, "weight")
+        requireValidWeight(performance.assistanceWeight, "assistanceWeight")
+        require(
+            performance.durationSeconds == null ||
+                performance.durationSeconds in 0..MAX_LOGGED_DURATION_SECONDS
+        ) {
+            "durationSeconds must be between zero and $MAX_LOGGED_DURATION_SECONDS."
+        }
+        require(
+            performance.distanceMeters == null ||
+                performance.distanceMeters.isFinite() &&
+                performance.distanceMeters in 0.0..MAX_LOGGED_DISTANCE_METERS
+        ) {
+            "distanceMeters must be finite and between zero and $MAX_LOGGED_DISTANCE_METERS."
+        }
+
+        val persistedSet = checkNotNull(setDao.getSetById(setId)) {
+            "Workout set '$setId' was not found."
+        }
+        validatePerformanceForType(persistedSet.exerciseType, performance)
+
+        val affectedRows = setDao.updateSetCompletion(
+            setId = setId,
+            reps = performance.reps,
+            weight = performance.weight,
+            assistanceWeight = performance.assistanceWeight,
+            durationSeconds = performance.durationSeconds,
+            distanceMeters = performance.distanceMeters,
+            isCompleted = performance.isCompleted
+        )
         check(affectedRows == 1) {
             "Workout set '$setId' was not found or its session is not in progress."
         }
+    }
+
+    private fun requireValidWeight(value: Double?, label: String) {
+        require(value == null || (value.isFinite() && value in 0.0..MAX_LOGGED_WEIGHT)) {
+            "$label must be finite and between zero and $MAX_LOGGED_WEIGHT."
+        }
+    }
+
+    private fun validatePerformanceForType(
+        exerciseType: ExerciseType,
+        performance: SetPerformanceInput
+    ) {
+        when (exerciseType) {
+            ExerciseType.WEIGHT_REPS -> {
+                require(performance.assistanceWeight == null) {
+                    "Weight and repetition sets cannot record assistance weight."
+                }
+                requireNoDurationOrDistance(performance, "Weight and repetition")
+                requirePositiveRepetitionsWhenCompleted(performance)
+            }
+
+            ExerciseType.BODYWEIGHT_REPS -> {
+                require(performance.weight == null && performance.assistanceWeight == null) {
+                    "Bodyweight sets cannot record load or assistance weight."
+                }
+                requireNoDurationOrDistance(performance, "Bodyweight")
+                requirePositiveRepetitionsWhenCompleted(performance)
+            }
+
+            ExerciseType.ASSISTED_BODYWEIGHT -> {
+                require(performance.weight == null) {
+                    "Assisted bodyweight sets use assistance weight instead of load."
+                }
+                requireNoDurationOrDistance(performance, "Assisted bodyweight")
+                requirePositiveRepetitionsWhenCompleted(performance)
+            }
+
+            ExerciseType.DURATION -> {
+                require(
+                    performance.reps == null &&
+                        performance.weight == null &&
+                        performance.assistanceWeight == null &&
+                        performance.distanceMeters == null
+                ) { "Duration sets can only record duration." }
+                require(!performance.isCompleted || (performance.durationSeconds ?: 0) > 0) {
+                    "A completed duration set must have positive durationSeconds."
+                }
+            }
+
+            ExerciseType.DISTANCE_DURATION -> {
+                require(
+                    performance.reps == null &&
+                        performance.weight == null &&
+                        performance.assistanceWeight == null
+                ) { "Distance and duration sets cannot record repetitions or load." }
+                require(
+                    !performance.isCompleted ||
+                        (performance.durationSeconds ?: 0) > 0 ||
+                        (performance.distanceMeters ?: 0.0) > 0.0
+                ) {
+                    "A completed distance and duration set needs positive distance or duration."
+                }
+            }
+        }
+    }
+
+    private fun requireNoDurationOrDistance(
+        performance: SetPerformanceInput,
+        label: String
+    ) {
+        require(performance.durationSeconds == null && performance.distanceMeters == null) {
+            "$label sets cannot record duration or distance."
+        }
+    }
+
+    private fun requirePositiveRepetitionsWhenCompleted(performance: SetPerformanceInput) {
+        require(!performance.isCompleted || (performance.reps ?: 0) > 0) {
+            "A completed repetition set must have positive reps."
+        }
+    }
+
+    private fun estimateDurationMinutes(exercises: List<PlannedExercise>): Int {
+        val totalSeconds = exercises.sumOf { exercise ->
+            val prescription = exercise.prescription
+            val secondsPerSet = prescription.targetDurationSeconds
+                ?: if (prescription.targetDistanceMeters != null) 600 else 45
+            val executionSeconds = prescription.targetSets * secondsPerSet
+            val restSeconds = (prescription.targetSets - 1).coerceAtLeast(0) *
+                prescription.restSeconds
+            executionSeconds + restSeconds
+        }
+        return ((totalSeconds + 59) / 60).coerceIn(1, 240)
     }
 
     override suspend fun completeWorkout(sessionId: String, actualDurationMinutes: Int): WorkoutSummary {
@@ -217,10 +410,17 @@ class OfflineWorkoutRepository(
                             id = setEntity.id,
                             workoutExerciseId = setEntity.workoutExerciseId,
                             setNumber = setEntity.setNumber,
+                            exerciseType = setEntity.exerciseType,
                             targetReps = setEntity.targetReps,
                             completedReps = setEntity.completedReps,
                             targetWeight = setEntity.targetWeight,
                             completedWeight = setEntity.completedWeight,
+                            targetAssistanceWeight = setEntity.targetAssistanceWeight,
+                            completedAssistanceWeight = setEntity.completedAssistanceWeight,
+                            targetDurationSeconds = setEntity.targetDurationSeconds,
+                            completedDurationSeconds = setEntity.completedDurationSeconds,
+                            targetDistanceMeters = setEntity.targetDistanceMeters,
+                            completedDistanceMeters = setEntity.completedDistanceMeters,
                             isCompleted = setEntity.isCompleted,
                             rpe = setEntity.rpe,
                             rir = setEntity.rir,
@@ -233,10 +433,23 @@ class OfflineWorkoutRepository(
                     sessionId = exWithSets.exercise.sessionId,
                     exerciseId = exWithSets.exercise.exerciseId,
                     orderIndex = exWithSets.exercise.orderIndex,
-                    targetSets = exWithSets.exercise.targetSets,
-                    targetRepMin = exWithSets.exercise.targetRepMin,
-                    targetRepMax = exWithSets.exercise.targetRepMax,
-                    targetWeight = exWithSets.exercise.targetWeight,
+                    prescription = ExercisePrescription(
+                        exerciseType = exWithSets.exercise.exerciseType,
+                        targetSets = exWithSets.exercise.targetSets,
+                        repRange = exWithSets.exercise.targetRepMin?.let { minimum ->
+                            RepRange(
+                                min = minimum,
+                                max = checkNotNull(exWithSets.exercise.targetRepMax) {
+                                    "Persisted repetition target is missing its maximum."
+                                }
+                            )
+                        },
+                        targetWeight = exWithSets.exercise.targetWeight,
+                        targetAssistanceWeight = exWithSets.exercise.targetAssistanceWeight,
+                        targetDurationSeconds = exWithSets.exercise.targetDurationSeconds,
+                        targetDistanceMeters = exWithSets.exercise.targetDistanceMeters,
+                        restSeconds = exWithSets.exercise.restSeconds
+                    ),
                     notes = exWithSets.exercise.notes,
                     sets = domainSets
                 )
@@ -257,6 +470,8 @@ class OfflineWorkoutRepository(
             actualDurationMinutes = session.actualDurationMinutes,
             weightUnit = session.weightUnit,
             status = session.status,
+            origin = session.origin,
+            sourceTemplateId = session.sourceTemplateId,
             focusMuscles = focusMusclesList,
             exercises = domainExercises,
             notes = session.notes
@@ -266,6 +481,8 @@ class OfflineWorkoutRepository(
     private companion object {
         const val MAX_LOGGED_REPS = 1_000
         const val MAX_LOGGED_WEIGHT = 100_000.0
+        const val MAX_LOGGED_DURATION_SECONDS = 86_400
+        const val MAX_LOGGED_DISTANCE_METERS = 1_000_000.0
     }
 }
 

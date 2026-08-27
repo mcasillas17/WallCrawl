@@ -258,11 +258,26 @@ class ProgressCalculator {
             weightUnit = targetUnit,
             exercises = exercises.map { exercise ->
                 exercise.copy(
-                    targetWeight = exercise.targetWeight.convertIfValid(weightUnit, targetUnit),
+                    prescription = exercise.prescription.copy(
+                        targetWeight = exercise.prescription.targetWeight.convertIfValid(
+                            weightUnit,
+                            targetUnit
+                        ),
+                        targetAssistanceWeight = exercise.prescription.targetAssistanceWeight
+                            .convertIfValid(weightUnit, targetUnit)
+                    ),
                     sets = exercise.sets.map { set ->
                         set.copy(
                             targetWeight = set.targetWeight.convertIfValid(weightUnit, targetUnit),
-                            completedWeight = set.completedWeight.convertIfValid(weightUnit, targetUnit)
+                            completedWeight = set.completedWeight.convertIfValid(weightUnit, targetUnit),
+                            targetAssistanceWeight = set.targetAssistanceWeight.convertIfValid(
+                                weightUnit,
+                                targetUnit
+                            ),
+                            completedAssistanceWeight = set.completedAssistanceWeight.convertIfValid(
+                                weightUnit,
+                                targetUnit
+                            )
                         )
                     }
                 )

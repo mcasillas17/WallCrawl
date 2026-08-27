@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import wallcrawl.elopenmike.com.core.model.GeneratedExercise
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
+import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.ui.components.StatBadge
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlOutlinedButton
@@ -68,6 +69,7 @@ fun TodayScreen(
     viewModel: TodayViewModel,
     onStartWorkout: (sessionId: String) -> Unit,
     onResumeWorkout: (sessionId: String) -> Unit,
+    onOpenTemplates: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -86,6 +88,11 @@ fun TodayScreen(
                         CircularProgressIndicator(color = CrimsonRedPrimary)
                         Spacer(modifier = Modifier.height(16.dp))
                         Text("WallCrawl AI preparing your plan...", color = TextSecondary)
+                        Spacer(modifier = Modifier.height(20.dp))
+                        WallCrawlSecondaryButton(
+                            text = "Open My Workouts",
+                            onClick = onOpenTemplates
+                        )
                     }
                 }
             }
@@ -103,6 +110,8 @@ fun TodayScreen(
                         Text(state.message, color = TextSecondary, fontSize = 14.sp)
                         Spacer(modifier = Modifier.height(16.dp))
                         WallCrawlPrimaryButton(text = "Try Again", onClick = { viewModel.regenerateWorkout() })
+                        Spacer(modifier = Modifier.height(8.dp))
+                        WallCrawlSecondaryButton(text = "Open My Workouts", onClick = onOpenTemplates)
                     }
                 }
             }
@@ -112,7 +121,8 @@ fun TodayScreen(
                     state = state,
                     onStartWorkout = { viewModel.startWorkout(onStartWorkout) },
                     onResumeWorkout = { state.activeSession?.let { onResumeWorkout(it.id) } },
-                    onRegenerate = { viewModel.regenerateWorkout() }
+                    onRegenerate = { viewModel.regenerateWorkout() },
+                    onOpenTemplates = onOpenTemplates
                 )
             }
         }
@@ -124,7 +134,8 @@ private fun TodayContent(
     state: TodayUiState.Success,
     onStartWorkout: () -> Unit,
     onResumeWorkout: () -> Unit,
-    onRegenerate: () -> Unit
+    onRegenerate: () -> Unit,
+    onOpenTemplates: () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -159,6 +170,8 @@ private fun TodayContent(
             )
         }
 
+        item { MyWorkoutsCard(onOpenTemplates) }
+
         // AI Logic & Context Information pill
         item {
             AiContextCard(
@@ -171,6 +184,27 @@ private fun TodayContent(
         item {
             Spacer(modifier = Modifier.height(24.dp))
         }
+    }
+}
+
+@Composable
+private fun MyWorkoutsCard(onOpenTemplates: () -> Unit) {
+    WallCrawlCard(backgroundColor = GraphiteSurfaceElevated) {
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                imageVector = Icons.Default.FitnessCenter,
+                contentDescription = null,
+                tint = CrimsonRedPrimary,
+                modifier = Modifier.size(22.dp)
+            )
+            Spacer(Modifier.width(10.dp))
+            Column(Modifier.weight(1f)) {
+                Text("MY WORKOUTS", color = TextWhite, fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                Text("Create, save, and repeat your own routines.", color = TextSecondary, fontSize = 13.sp)
+            }
+        }
+        Spacer(Modifier.height(12.dp))
+        WallCrawlSecondaryButton(text = "Open My Workouts", onClick = onOpenTemplates)
     }
 }
 
@@ -504,7 +538,17 @@ private fun ExercisePreviewRow(
         }
 
         Text(
-            text = "${exercise.targetSets} × ${exercise.repMin}–${exercise.repMax}",
+            text = when (exercise.prescription.exerciseType) {
+                ExerciseType.WEIGHT_REPS,
+                ExerciseType.BODYWEIGHT_REPS,
+                ExerciseType.ASSISTED_BODYWEIGHT ->
+                    "${exercise.targetSets} × ${exercise.prescription.repRange}"
+                ExerciseType.DURATION ->
+                    "${exercise.targetSets} × ${exercise.prescription.targetDurationSeconds}s"
+                ExerciseType.DISTANCE_DURATION ->
+                    exercise.prescription.targetDurationSeconds?.let { "${it / 60} min" }
+                        ?: "${exercise.prescription.targetDistanceMeters?.toInt()} m"
+            },
             fontSize = 13.sp,
             fontWeight = FontWeight.Medium,
             color = TextSecondary

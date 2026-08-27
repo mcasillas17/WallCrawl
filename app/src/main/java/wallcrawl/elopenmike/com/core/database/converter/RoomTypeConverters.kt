@@ -2,11 +2,13 @@ package wallcrawl.elopenmike.com.core.database.converter
 
 import androidx.room.TypeConverter
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
+import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetType
 import wallcrawl.elopenmike.com.core.model.WeightUnit
+import wallcrawl.elopenmike.com.core.model.WorkoutOrigin
 
 class RoomTypeConverters {
 
@@ -58,6 +60,26 @@ class RoomTypeConverters {
         SetType.valueOf(value)
     } catch (e: Exception) {
         SetType.NORMAL
+    }
+
+    @TypeConverter
+    fun fromExerciseType(type: ExerciseType): String = type.name
+
+    @TypeConverter
+    fun toExerciseType(value: String): ExerciseType = try {
+        ExerciseType.valueOf(value)
+    } catch (e: Exception) {
+        ExerciseType.WEIGHT_REPS
+    }
+
+    @TypeConverter
+    fun fromWorkoutOrigin(origin: WorkoutOrigin): String = origin.name
+
+    @TypeConverter
+    fun toWorkoutOrigin(value: String): WorkoutOrigin = try {
+        WorkoutOrigin.valueOf(value)
+    } catch (e: Exception) {
+        WorkoutOrigin.PLANNER
     }
 
     @TypeConverter

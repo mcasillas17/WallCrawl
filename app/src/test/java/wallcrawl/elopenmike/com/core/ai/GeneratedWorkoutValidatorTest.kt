@@ -4,7 +4,12 @@ import com.google.common.truth.Truth.assertThat
 import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
 import wallcrawl.elopenmike.com.core.model.GeneratedExercise
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
+import wallcrawl.elopenmike.com.core.model.ExercisePrescription
+import wallcrawl.elopenmike.com.core.model.ExerciseType
+import wallcrawl.elopenmike.com.core.model.PlannedExercise
+import wallcrawl.elopenmike.com.core.model.RepRange
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertThrows
 import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
@@ -34,11 +39,13 @@ class GeneratedWorkoutValidatorTest {
                     repMax = 10,
                     targetWeight = 47.5
                 ),
-                GeneratedExercise(
+                PlannedExercise(
                     exerciseId = "parallel-bar-dips",
-                    targetSets = 3,
-                    repMin = 8,
-                    repMax = 12
+                    prescription = ExercisePrescription(
+                        exerciseType = ExerciseType.BODYWEIGHT_REPS,
+                        targetSets = 3,
+                        repRange = RepRange(8, 12)
+                    )
                 )
             )
         )
@@ -98,12 +105,34 @@ class GeneratedWorkoutValidatorTest {
     }
 
     @Test
-    fun validate_invalidRepRange_throwsException() = runTest {
-        val invalidRepWorkout = GeneratedWorkout(
-            name = "Routine",
+    fun validate_prescriptionTypeDoesNotMatchCatalog_throwsException() = runTest {
+        val workout = GeneratedWorkout(
+            name = "Invalid Routine",
             focusMuscles = listOf("Chest"),
-            estimatedDurationMinutes = 45,
+            estimatedDurationMinutes = 30,
             exercises = listOf(
+                PlannedExercise(
+                    exerciseId = "parallel-bar-dips",
+                    prescription = ExercisePrescription(
+                        exerciseType = ExerciseType.DURATION,
+                        targetSets = 3,
+                        targetDurationSeconds = 45
+                    )
+                )
+            )
+        )
+
+        assertValidationFailure(workout, "type")
+    }
+
+    @Test
+    fun prescription_invalidRepRange_throwsException() {
+        assertThrows(IllegalArgumentException::class.java) {
+            GeneratedWorkout(
+                name = "Routine",
+                focusMuscles = listOf("Chest"),
+                estimatedDurationMinutes = 45,
+                exercises = listOf(
                 GeneratedExercise(
                     exerciseId = "incline-dumbbell-press",
                     targetSets = 3,
@@ -111,13 +140,7 @@ class GeneratedWorkoutValidatorTest {
                     repMax = 8 // repMax < repMin
                 )
             )
-        )
-
-        try {
-            validator.validate(invalidRepWorkout)
-            fail("Expected WorkoutValidationException for invalid rep range")
-        } catch (e: WorkoutValidationException) {
-            assertThat(e.message).contains("Invalid rep range")
+            )
         }
     }
 
@@ -138,41 +161,47 @@ class GeneratedWorkoutValidatorTest {
     }
 
     @Test
-    fun validate_excessiveTargetSets_throwsException() = runTest {
-        val workout = validGeneratedWorkout().withOnlyExercise { exercise ->
-            exercise.copy(targetSets = 21)
-        }
-
-        assertValidationFailure(workout, "target sets")
-    }
-
-    @Test
-    fun validate_excessiveRepMaximum_throwsException() = runTest {
-        val workout = validGeneratedWorkout().withOnlyExercise { exercise ->
-            exercise.copy(repMin = 1, repMax = 1_001)
-        }
-
-        assertValidationFailure(workout, "rep range")
-    }
-
-    @Test
-    fun validate_negativeOrNonFiniteTargetWeight_throwsException() = runTest {
-        listOf(-1.0, Double.NaN, Double.POSITIVE_INFINITY).forEach { invalidWeight ->
-            val workout = validGeneratedWorkout().withOnlyExercise { exercise ->
-                exercise.copy(targetWeight = invalidWeight)
+    fun prescription_excessiveTargetSets_throwsException() {
+        assertThrows(IllegalArgumentException::class.java) {
+            validGeneratedWorkout().exercises.single().let { exercise ->
+                exercise.copy(prescription = exercise.prescription.copy(targetSets = 21))
             }
-
-            assertValidationFailure(workout, "target weight")
         }
     }
 
     @Test
-    fun validate_outOfRangeRestPeriod_throwsException() = runTest {
-        val workout = validGeneratedWorkout().withOnlyExercise { exercise ->
-            exercise.copy(restSeconds = 1_801)
+    fun prescription_excessiveRepMaximum_throwsException() {
+        assertThrows(IllegalArgumentException::class.java) {
+            validGeneratedWorkout().exercises.single().let { exercise ->
+                exercise.copy(
+                    prescription = exercise.prescription.copy(
+                        repRange = wallcrawl.elopenmike.com.core.model.RepRange(1, 1_001)
+                    )
+                )
+            }
         }
+    }
 
-        assertValidationFailure(workout, "rest period")
+    @Test
+    fun prescription_negativeOrNonFiniteTargetWeight_throwsException() {
+        listOf(-1.0, Double.NaN, Double.POSITIVE_INFINITY).forEach { invalidWeight ->
+            assertThrows(IllegalArgumentException::class.java) {
+                validGeneratedWorkout().exercises.single().let { exercise ->
+                    exercise.copy(
+                        prescription = exercise.prescription.copy(targetWeight = invalidWeight)
+                    )
+                }
+            }
+        }
+    }
+
+    @Test
+    fun prescription_outOfRangeRestPeriod_throwsException() {
+        assertThrows(IllegalArgumentException::class.java) {
+            validGeneratedWorkout().exercises.single().let { exercise ->
+                exercise.copy(prescription = exercise.prescription.copy(restSeconds = 1_801))
+            }
+        }
     }
 
     private fun validGeneratedWorkout() = GeneratedWorkout(

@@ -363,6 +363,11 @@ private class TodayWorkoutRepository(
         )
     }
 
+    override suspend fun startWorkoutFromTemplate(
+        template: wallcrawl.elopenmike.com.core.model.WorkoutTemplate,
+        userProfile: UserProfile
+    ): WorkoutSession = error("Not used")
+
     fun addCompletedSession(session: WorkoutSession) {
         completed.update { it + session }
     }
