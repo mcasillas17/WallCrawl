@@ -7,6 +7,8 @@ import wallcrawl.elopenmike.com.core.database.entity.WorkoutSessionEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSetEntity
 import wallcrawl.elopenmike.com.core.database.relation.WorkoutSessionWithExercisesAndSets
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
+import wallcrawl.elopenmike.com.core.model.ExercisePrescription
+import wallcrawl.elopenmike.com.core.model.RepRange
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetType
 import wallcrawl.elopenmike.com.core.model.UserProfile
@@ -15,6 +17,7 @@ import wallcrawl.elopenmike.com.core.model.WorkoutExercise
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.model.WorkoutSummary
+import wallcrawl.elopenmike.com.core.model.WorkoutOrigin
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.util.UUID
@@ -90,6 +93,8 @@ class OfflineWorkoutRepository(
             actualDurationMinutes = 0,
             weightUnit = userProfile.preferredUnit,
             status = SessionStatus.IN_PROGRESS,
+            origin = WorkoutOrigin.PLANNER,
+            sourceTemplateId = null,
             focusMusclesJson = generated.focusMuscles.joinToString("|||"),
             notes = generated.rationale
         )
@@ -104,10 +109,15 @@ class OfflineWorkoutRepository(
                     sessionId = sessionId,
                     exerciseId = genEx.exerciseId,
                     orderIndex = exIndex,
+                    exerciseType = genEx.prescription.exerciseType,
                     targetSets = genEx.targetSets,
-                    targetRepMin = genEx.repMin,
-                    targetRepMax = genEx.repMax,
+                    targetRepMin = genEx.prescription.repRange?.min,
+                    targetRepMax = genEx.prescription.repRange?.max,
                     targetWeight = genEx.targetWeight,
+                    targetAssistanceWeight = genEx.prescription.targetAssistanceWeight,
+                    targetDurationSeconds = genEx.prescription.targetDurationSeconds,
+                    targetDistanceMeters = genEx.prescription.targetDistanceMeters,
+                    restSeconds = genEx.prescription.restSeconds,
                     notes = genEx.notes
                 )
             )
@@ -118,10 +128,17 @@ class OfflineWorkoutRepository(
                         id = UUID.randomUUID().toString(),
                         workoutExerciseId = exerciseInstanceId,
                         setNumber = setNum,
-                        targetReps = genEx.repMax,
+                        exerciseType = genEx.prescription.exerciseType,
+                        targetReps = genEx.prescription.repRange?.max,
                         completedReps = null,
                         targetWeight = genEx.targetWeight,
                         completedWeight = null,
+                        targetAssistanceWeight = genEx.prescription.targetAssistanceWeight,
+                        completedAssistanceWeight = null,
+                        targetDurationSeconds = genEx.prescription.targetDurationSeconds,
+                        completedDurationSeconds = null,
+                        targetDistanceMeters = genEx.prescription.targetDistanceMeters,
+                        completedDistanceMeters = null,
                         isCompleted = false,
                         rpe = null,
                         rir = null,
@@ -217,10 +234,17 @@ class OfflineWorkoutRepository(
                             id = setEntity.id,
                             workoutExerciseId = setEntity.workoutExerciseId,
                             setNumber = setEntity.setNumber,
+                            exerciseType = setEntity.exerciseType,
                             targetReps = setEntity.targetReps,
                             completedReps = setEntity.completedReps,
                             targetWeight = setEntity.targetWeight,
                             completedWeight = setEntity.completedWeight,
+                            targetAssistanceWeight = setEntity.targetAssistanceWeight,
+                            completedAssistanceWeight = setEntity.completedAssistanceWeight,
+                            targetDurationSeconds = setEntity.targetDurationSeconds,
+                            completedDurationSeconds = setEntity.completedDurationSeconds,
+                            targetDistanceMeters = setEntity.targetDistanceMeters,
+                            completedDistanceMeters = setEntity.completedDistanceMeters,
                             isCompleted = setEntity.isCompleted,
                             rpe = setEntity.rpe,
                             rir = setEntity.rir,
@@ -233,10 +257,23 @@ class OfflineWorkoutRepository(
                     sessionId = exWithSets.exercise.sessionId,
                     exerciseId = exWithSets.exercise.exerciseId,
                     orderIndex = exWithSets.exercise.orderIndex,
-                    targetSets = exWithSets.exercise.targetSets,
-                    targetRepMin = exWithSets.exercise.targetRepMin,
-                    targetRepMax = exWithSets.exercise.targetRepMax,
-                    targetWeight = exWithSets.exercise.targetWeight,
+                    prescription = ExercisePrescription(
+                        exerciseType = exWithSets.exercise.exerciseType,
+                        targetSets = exWithSets.exercise.targetSets,
+                        repRange = exWithSets.exercise.targetRepMin?.let { minimum ->
+                            RepRange(
+                                min = minimum,
+                                max = checkNotNull(exWithSets.exercise.targetRepMax) {
+                                    "Persisted repetition target is missing its maximum."
+                                }
+                            )
+                        },
+                        targetWeight = exWithSets.exercise.targetWeight,
+                        targetAssistanceWeight = exWithSets.exercise.targetAssistanceWeight,
+                        targetDurationSeconds = exWithSets.exercise.targetDurationSeconds,
+                        targetDistanceMeters = exWithSets.exercise.targetDistanceMeters,
+                        restSeconds = exWithSets.exercise.restSeconds
+                    ),
                     notes = exWithSets.exercise.notes,
                     sets = domainSets
                 )
@@ -257,6 +294,8 @@ class OfflineWorkoutRepository(
             actualDurationMinutes = session.actualDurationMinutes,
             weightUnit = session.weightUnit,
             status = session.status,
+            origin = session.origin,
+            sourceTemplateId = session.sourceTemplateId,
             focusMuscles = focusMusclesList,
             exercises = domainExercises,
             notes = session.notes

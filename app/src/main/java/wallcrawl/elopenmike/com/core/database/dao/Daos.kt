@@ -6,11 +6,15 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
+import androidx.room.Upsert
 import wallcrawl.elopenmike.com.core.database.entity.UserProfileEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutExerciseEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSessionEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSetEntity
+import wallcrawl.elopenmike.com.core.database.entity.WorkoutTemplateEntity
+import wallcrawl.elopenmike.com.core.database.entity.WorkoutTemplateExerciseEntity
 import wallcrawl.elopenmike.com.core.database.relation.WorkoutSessionWithExercisesAndSets
+import wallcrawl.elopenmike.com.core.database.relation.WorkoutTemplateWithExercises
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import kotlinx.coroutines.flow.Flow
 
@@ -188,4 +192,47 @@ interface WorkoutSetDao {
 
     @Query("SELECT * FROM workout_sets WHERE workoutExerciseId = :workoutExerciseId ORDER BY setNumber ASC")
     suspend fun getSetsForExercise(workoutExerciseId: String): List<WorkoutSetEntity>
+}
+
+@Dao
+interface WorkoutTemplateDao {
+    @Transaction
+    @Query("SELECT * FROM workout_templates ORDER BY updatedAtTimestamp DESC, name COLLATE NOCASE ASC")
+    fun observeTemplatesWithExercises(): Flow<List<WorkoutTemplateWithExercises>>
+
+    @Transaction
+    @Query("SELECT * FROM workout_templates WHERE id = :templateId LIMIT 1")
+    fun observeTemplateWithExercises(templateId: String): Flow<WorkoutTemplateWithExercises?>
+
+    @Transaction
+    @Query("SELECT * FROM workout_templates WHERE id = :templateId LIMIT 1")
+    suspend fun getTemplateWithExercises(templateId: String): WorkoutTemplateWithExercises?
+
+    @Query(
+        "SELECT * FROM workout_template_exercises " +
+            "WHERE templateId = :templateId ORDER BY orderIndex ASC"
+    )
+    suspend fun getExercisesForTemplate(templateId: String): List<WorkoutTemplateExerciseEntity>
+
+    @Upsert
+    suspend fun upsertTemplate(template: WorkoutTemplateEntity)
+
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    suspend fun insertTemplateExercises(exercises: List<WorkoutTemplateExerciseEntity>)
+
+    @Query("DELETE FROM workout_template_exercises WHERE templateId = :templateId")
+    suspend fun deleteExercisesForTemplate(templateId: String)
+
+    @Query("DELETE FROM workout_templates WHERE id = :templateId")
+    suspend fun deleteTemplateById(templateId: String): Int
+
+    @Transaction
+    suspend fun replaceTemplate(
+        template: WorkoutTemplateEntity,
+        exercises: List<WorkoutTemplateExerciseEntity>
+    ) {
+        upsertTemplate(template)
+        deleteExercisesForTemplate(template.id)
+        if (exercises.isNotEmpty()) insertTemplateExercises(exercises)
+    }
 }
