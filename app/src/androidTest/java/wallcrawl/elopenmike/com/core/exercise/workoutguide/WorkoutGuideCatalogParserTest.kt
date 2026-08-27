@@ -59,11 +59,13 @@ class WorkoutGuideCatalogParserTest {
         val backSquat = snapshot.exercises.single { it.id == "barbell-back-squat" }
         assertThat(backSquat.primaryMuscles).contains(StandardMuscles.QUADS)
 
-        // Upstream files the deadlift under the umbrella term "Posterior Chain".
+        // Upstream files the deadlift under the umbrella term "Posterior Chain". One group
+        // is named as the primary mover so weekly set counts stay one per set; the rest
+        // become secondary, which split matching also reads.
         val deadlift = snapshot.exercises.single { it.id == "barbell-deadlift" }
-        assertThat(deadlift.primaryMuscles).containsAtLeast(
+        assertThat(deadlift.primaryMuscles).containsExactly(StandardMuscles.HAMSTRINGS)
+        assertThat(deadlift.secondaryMuscles).containsAtLeast(
             StandardMuscles.GLUTES,
-            StandardMuscles.HAMSTRINGS,
             StandardMuscles.LOWER_BACK
         )
     }

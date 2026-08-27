@@ -48,9 +48,9 @@ object StandardMuscles {
     /**
      * Groups offered as muscle priorities.
      *
-     * Every entry has to steer the planner toward a split, so Adductors and Hips are left
-     * out: they are real training targets the catalog tags, but a priority the planner
-     * cannot act on is a control that does nothing.
+     * Adductors and Hips are left out for coverage, not capability: the planner does target
+     * them, but only two catalog exercises name each as a primary mover, so prioritizing
+     * them would barely change a plan.
      */
     val PRIORITY_OPTIONS = listOf(
         CHEST, SHOULDERS, REAR_DELTS, TRICEPS,
@@ -123,6 +123,17 @@ object MuscleVocabulary {
         values.flatMap(::canonicalize).distinct()
 
     /**
+     * The group named on an exercise as its primary mover when [raw] covers several, chosen
+     * deliberately rather than by the order the expansion happens to be written in — this
+     * value is displayed as "Primary: …" and is the one credited with the exercise's sets.
+     */
+    private val umbrellaRepresentative: Map<String, String> = mapOf(
+        "legs" to StandardMuscles.QUADS,
+        "posterior chain" to StandardMuscles.HAMSTRINGS,
+        "full body" to StandardMuscles.CORE
+    )
+
+    /**
      * The single group that best represents [raw], or null if it names nothing.
      *
      * Primary muscles stay one-per-name because weekly set counts credit each completed set
@@ -130,7 +141,10 @@ object MuscleVocabulary {
      * as twelve. The groups dropped here are added to the exercise's secondary muscles by
      * [canonicalizeAll], which is what split matching reads, so nothing stops matching.
      */
-    fun canonicalizePrimary(raw: String): String? = canonicalize(raw).firstOrNull()
+    fun canonicalizePrimary(raw: String): String? {
+        val key = raw.trim().lowercase(Locale.ROOT)
+        return umbrellaRepresentative[key] ?: canonicalize(raw).firstOrNull()
+    }
 
     /** True when [value] is already a known canonical name, alias, or umbrella term. */
     fun isCanonical(value: String): Boolean =

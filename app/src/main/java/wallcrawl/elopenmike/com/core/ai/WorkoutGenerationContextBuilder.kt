@@ -40,6 +40,7 @@ class WorkoutGenerationContextBuilder(
             trainingFrequencyDaysPerWeek = profile.daysPerWeek,
             musclePriorities = profile.musclePriorities,
             recentWorkoutHistory = recentCompletedSessions,
+            completedWorkoutCount = workoutRepository.observeCompletedWorkoutCount().first(),
             exerciseHistory = historyAnalyzer.exerciseHistory(
                 sessions = recentCompletedSessions,
                 targetWeightUnit = profile.preferredUnit

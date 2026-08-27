@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.LinkInteractionListener
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
@@ -203,7 +204,7 @@ private fun CreditsContent(
                 )
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    text = rememberNoticeText(notice.body),
+                    text = rememberNoticeText(notice.body, onOpenUrl),
                     fontSize = 13.sp,
                     color = TextSecondary,
                     lineHeight = 19.sp
@@ -242,15 +243,31 @@ private fun CreditRow(label: String, value: String) {
  * legible would be the least legible on the screen that exists to carry it.
  */
 @Composable
-private fun rememberNoticeText(body: String): AnnotatedString {
+private fun rememberNoticeText(
+    body: String,
+    onOpenUrl: (String) -> Unit
+): AnnotatedString {
     val linkStyles = TextLinkStyles(
         style = SpanStyle(color = CrimsonRedLight, textDecoration = TextDecoration.Underline)
     )
-    return remember(body) {
+    // Routed through the same handler as the buttons so a device with no browser reports
+    // it here too, rather than relying on the framework's default swallowing the failure.
+    val linkListener = LinkInteractionListener { link ->
+        (link as? LinkAnnotation.Url)?.let { onOpenUrl(it.url) }
+    }
+    return remember(body, onOpenUrl) {
         buildAnnotatedString {
             var cursor = 0
-            val text = body.lineSequence()
-                .joinToString("\n") { line -> line.trimStart('#').trimStart() }
+            // The source files are hand-wrapped at ~75 columns. Kept as-is every line wraps
+            // again on a phone, so paragraphs are rejoined and blank lines kept as breaks.
+            val text = body
+                .split(PARAGRAPH_BREAK)
+                .joinToString("\n\n") { paragraph ->
+                    paragraph.lineSequence()
+                        .map { line -> line.trimStart('#').trim() }
+                        .filter(String::isNotEmpty)
+                        .joinToString(" ")
+                }
             while (cursor < text.length) {
                 val match = MARKDOWN_LINK.find(text, cursor)
                 if (match == null) {
@@ -260,8 +277,8 @@ private fun rememberNoticeText(body: String): AnnotatedString {
                 append(text.substring(cursor, match.range.first))
                 val label = match.groupValues[1]
                 val url = match.groupValues[2]
-                if (url.startsWith("https://") || url.startsWith("http://")) {
-                    withLink(LinkAnnotation.Url(url, linkStyles)) { append(label) }
+                if (url.startsWith("https://")) {
+                    withLink(LinkAnnotation.Url(url, linkStyles, linkListener)) { append(label) }
                 } else {
                     append(label)
                 }
@@ -272,3 +289,4 @@ private fun rememberNoticeText(body: String): AnnotatedString {
 }
 
 private val MARKDOWN_LINK = Regex("""\[([^\]]+)]\(([^)\s]+)\)""")
+private val PARAGRAPH_BREAK = Regex("\\n\\s*\\n")

@@ -42,19 +42,42 @@ class BundledCatalogVocabularyTest {
     }
 
     @Test
-    fun primaryMusclesStayOnePerNameSoWeeklySetCountsAreNotInflated() {
-        // An umbrella name such as "Legs" must contribute exactly one primary group;
-        // expanding it here would report one set of lunges as three.
-        muscleArrays("primaryMuscles").forEach { names ->
-            val primaries = names.mapNotNull(MuscleVocabulary::canonicalizePrimary).distinct()
-            assertThat(primaries.size).isAtMost(names.size)
+    fun everyUpstreamNameContributesExactlyOnePrimaryGroup() {
+        // Weekly set counts credit a set to every primary muscle, so an umbrella name such
+        // as "Legs" must resolve to one group: expanding it would report one set of lunges
+        // as three. Asserting per name, because a count over the whole list would also pass
+        // if canonicalization dropped names entirely.
+        val distinctNames = muscleArrays("primaryMuscles").flatten().distinct()
+        assertThat(distinctNames).isNotEmpty()
+
+        distinctNames.forEach { name ->
+            assertThat(MuscleVocabulary.canonicalizePrimary(name)).isNotNull()
         }
+        muscleArrays("primaryMuscles").forEach { names ->
+            val primaries = names.map(MuscleVocabulary::canonicalizePrimary)
+            assertThat(primaries).hasSize(names.size)
+        }
+    }
+
+    @Test
+    fun umbrellaNamesResolveToTheirDocumentedPrimaryMover() {
+        // These are the names that cover several groups at once; pinning the representative
+        // keeps it a decision rather than an artifact of expansion order.
+        assertThat(MuscleVocabulary.canonicalizePrimary("Legs")).isEqualTo(StandardMuscles.QUADS)
+        assertThat(MuscleVocabulary.canonicalizePrimary("Posterior Chain"))
+            .isEqualTo(StandardMuscles.HAMSTRINGS)
     }
 
     private fun allMuscleNames(): Set<String> =
         (muscleArrays("primaryMuscles") + muscleArrays("secondaryMuscles")).flatten().toSet()
 
-    /** Extracts the string arrays stored under [field] for every exercise in the catalog. */
+    /**
+     * Extracts the string arrays stored under [field] for every exercise in the catalog.
+     *
+     * Assumes what the importer actually emits: flat arrays of plain strings with no escaped
+     * quotes or nesting. `bundledCatalogIsPresentAndParsedByThisTest` pins the entry count so
+     * a change in that shape shows up as a failure here rather than as silent under-reading.
+     */
     private fun muscleArrays(field: String): List<List<String>> =
         Regex("\"$field\"\\s*:\\s*\\[([^\\]]*)]")
             .findAll(catalog)

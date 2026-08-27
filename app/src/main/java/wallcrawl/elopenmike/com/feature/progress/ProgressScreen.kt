@@ -241,12 +241,12 @@ private fun StreakAndVolumeCard(
                 value = if (hasLoadedVolume) {
                     "%,.0f %s".format(overview.totalVolumeThisWeek, unit)
                 } else {
-                    "%,d".format(overview.totalRepsThisWeek)
+                    "%,d reps".format(overview.totalRepsThisWeek)
                 },
                 subtitle = if (hasLoadedVolume) {
                     "%,d reps".format(overview.totalRepsThisWeek)
                 } else {
-                    "reps"
+                    "no weight logged"
                 },
                 valueColor = CrimsonRedLight,
                 modifier = Modifier.weight(1.3f)
@@ -367,6 +367,16 @@ private fun MuscleFocusSection(
         )
 
         Spacer(modifier = Modifier.height(10.dp))
+
+        if (overview.muscleGroupFocus.isEmpty()) {
+            // Reachable for a week of stretching or cardio alone: neither counts as
+            // training volume, so there is nothing to attribute sets to.
+            Text(
+                text = "Complete a strength set this week to see which muscles you're hitting.",
+                color = TextMuted,
+                fontSize = 13.sp
+            )
+        }
 
         Row(
             modifier = Modifier.fillMaxWidth(),

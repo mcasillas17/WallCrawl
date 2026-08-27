@@ -54,11 +54,13 @@ class ActiveWorkoutViewModel(
         } else if (session.status == SessionStatus.COMPLETED) {
             // The repository owns the summary so its personal-record count is computed once,
             // over one history window, whether the workout just finished or is revisited.
-            if (summary?.sessionId == session.id) {
-                ActiveWorkoutUiState.Completed(summary)
-            } else {
-                loadSummary(session.id)
-                ActiveWorkoutUiState.Loading
+            when {
+                summary?.sessionId == session.id -> ActiveWorkoutUiState.Completed(summary)
+                error != null -> ActiveWorkoutUiState.Error(error)
+                else -> {
+                    loadSummary(session.id)
+                    ActiveWorkoutUiState.Loading
+                }
             }
         } else if (error != null) {
             ActiveWorkoutUiState.Error(error)
@@ -209,7 +211,9 @@ class ActiveWorkoutViewModel(
     )
 
     private fun loadSummary(completedSessionId: String) {
-        if (summaryJob?.isActive == true) return
+        // completeWorkout already returns the summary, and Room publishes the completed
+        // session before it returns; without this the finish path reads history twice.
+        if (finishRequested || summaryJob?.isActive == true) return
         summaryJob = viewModelScope.launch {
             try {
                 summaryFlow.value = workoutRepository.getWorkoutSummary(completedSessionId)

@@ -1,6 +1,7 @@
 package wallcrawl.elopenmike.com.core.ai
 
 import wallcrawl.elopenmike.com.core.model.Exercise
+import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.GeneratedExercise
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
@@ -8,7 +9,6 @@ import wallcrawl.elopenmike.com.core.model.MechanicsType
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
-import java.util.Locale
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
@@ -66,12 +66,13 @@ class FakeWorkoutPlanner(
         val preferred = SplitType.entries.filter { split ->
             highPriorityMuscles.any { it in split.targetMuscles }
         }
-        val rotation = preferred.ifEmpty { SplitType.DEFAULT_ROTATION }
 
-        // Only rotate onto splits this profile can actually fill. Picking blind and then
-        // failing would strand anyone whose priorities resolve to a single split their
-        // equipment cannot train — every retry would land on the same empty split.
-        val trainable = rotation.filter { split -> candidates.any { it.trains(split) } }
+        // Only rotate onto splits this profile can actually fill, and fall back to any
+        // fillable split when the preferred ones are not. Preferring a split the equipment
+        // cannot train and then failing would strand the user: the choice is deterministic,
+        // so every retry lands on the same empty split.
+        fun List<SplitType>.fillable() = filter { split -> candidates.any { it.trains(split) } }
+        val trainable = preferred.fillable().ifEmpty { SplitType.DEFAULT_ROTATION.fillable() }
         if (trainable.isEmpty()) {
             throw WorkoutValidationException(
                 message = "No available exercise trains any split for this profile.",
@@ -79,12 +80,39 @@ class FakeWorkoutPlanner(
             )
         }
 
-        return trainable[generationIndex.mod(trainable.size)]
+        return trainable[rotationSeed(context, generationIndex).mod(trainable.size)]
     }
 
+    /**
+     * Advances the split from one training day to the next.
+     *
+     * The in-memory counter alone resets whenever the process is killed, so a user who
+     * opens the app once a day would see the first split every day. Completed workouts
+     * carry the rotation across restarts; the counter still varies within a session so
+     * regenerating offers something different.
+     */
+    private fun rotationSeed(context: WorkoutGenerationContext, generationIndex: Int): Int =
+        context.completedWorkoutCount + generationIndex
+
     private fun Exercise.trains(split: SplitType): Boolean =
-        primaryMuscles.any { it in split.targetMuscles } ||
-            secondaryMuscles.any { it in split.targetMuscles }
+        isStrengthWork() &&
+            (
+                primaryMuscles.any { it in split.targetMuscles } ||
+                    secondaryMuscles.any { it in split.targetMuscles }
+                )
+
+    /**
+     * Whether this belongs in a prescribed strength slot with sets and reps.
+     *
+     * Cardio machines and stretches are tagged with the muscles they involve, so once
+     * upstream's umbrella names were resolved they started matching splits — putting
+     * "Walking" in a Legs · Hypertrophy plan alongside squats. They stay in the catalog to
+     * browse and to build custom workouts from; they are not prescribed as training slots.
+     */
+    private fun Exercise.isStrengthWork(): Boolean =
+        !isStretch &&
+            (primaryMuscles + secondaryMuscles).none { it == StandardMuscles.CARDIO } &&
+            type != ExerciseType.DISTANCE_DURATION
 
     private fun selectExercisesForSplit(
         split: SplitType,
