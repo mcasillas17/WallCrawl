@@ -29,34 +29,41 @@ production local LLM runtime is integrated yet.
   <img src="art/screenshots/profile-screen.png" width="31%" alt="Training Profile Screen" />
 </p>
 
-- **Today Recommendation**: Offline AI-generated routine tailored to equipment and training goals, with instant regeneration.
+- **Today Recommendation**: Offline planner-generated routine tailored to equipment and training goals, with instant regeneration.
 - **Custom Workouts**: Build and save local templates from all 302 bundled exercises, reorder exercises, adjust set counts, and start them without AI.
 - **Active Workout Session**: Type-aware logging for load/reps, bodyweight reps, assisted reps, duration, and distance/duration, with animated SVG movement previews and previous performance comparisons.
-- **Workout Summary**: Post-workout celebration card displaying session duration, total volume lifted, sets completed, and PR records.
+- **Workout Summary**: Post-workout celebration card displaying session duration, total volume lifted, and sets completed.
 - **Progress Tracking**: Weekly workout streaks, aggregate volume trends, strength progression indicators, and historical workout logs.
 - **Exercise Library**: Searchable catalog with target muscle and equipment filter chips.
 - **Training Profile**: Full local customization of fitness goals, preferred weight units (LBS/KG), session duration targets, and available gym equipment.
 
+## Documentation
+
+- [Architecture](docs/architecture.md) explains the catalog, planner, template,
+  persistence, logging, and history boundaries in the current application.
+- [Custom Workouts](docs/custom-workouts.md) documents the user flow, full-catalog
+  selection rules, frozen session snapshots, and current editor limitations.
+- The phase-specific design and implementation records under
+  [`docs/superpowers/`](docs/superpowers/) provide historical decision context.
+
 ## Current vertical slice
 
 ```text
-UserProfile + bounded completed history
-             ↓
-WorkoutGenerationContextBuilder
-             ↓
-equipment + exclusions hard filter
-             ↓
-allowed Exercise IDs
-             ↓
-WorkoutPlanner (currently FakeWorkoutPlanner)
-             ↓
-GeneratedWorkoutValidator
-             ↓
-transactional active workout persistence
-             ↓
-set logging → completed session
-             ↓
-ProgressCalculator + next generation context
+                         ┌─ automatic recommendation
+Bundled catalog ─────────┤  profile + bounded history
+                         │            ↓
+                         │  hard filter → WorkoutPlanner → validator
+                         │
+                         └─ manual template
+                            all 302 exercises → local template
+                                          │
+                                          ▼
+                              transactional active session
+                                          │
+                                          ▼
+                              set logging → completed history
+                                   ├─ ProgressCalculator
+                                   └─ next generation context
 ```
 
 The fake planner uses the same `WorkoutPlanner` contract intended for a future
@@ -64,6 +71,10 @@ Qwen, Gemma, or LiteRT-backed implementation. It only selects IDs from
 `WorkoutGenerationContext.allowedExercises`. The validator rejects unknown or
 disallowed IDs and malformed set, rep, weight, rest, name, or duration values
 before any workout reaches persistence.
+
+Manual templates use the same exercise IDs and type-aware prescriptions but do
+not pass through `WorkoutPlanner`. See [WallCrawl Architecture](docs/architecture.md)
+for the complete automatic and manual data flows.
 
 ## Architecture
 
@@ -166,6 +177,7 @@ Requirements:
 ./gradlew testDebugUnitTest
 ./gradlew assembleDebug
 ./gradlew connectedDebugAndroidTest
+python3 -m unittest discover -s tools/workout-guide -p 'test_*.py' -v
 ```
 
 The unit suite covers catalog filtering, context construction, bounded history
