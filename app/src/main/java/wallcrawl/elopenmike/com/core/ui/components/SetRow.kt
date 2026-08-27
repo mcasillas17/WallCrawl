@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,6 +19,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -35,6 +38,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
+import wallcrawl.elopenmike.com.core.model.ExerciseType
+import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 import wallcrawl.elopenmike.com.core.ui.theme.GraphiteBorder
 import wallcrawl.elopenmike.com.core.ui.theme.GraphiteSurface
@@ -232,3 +237,116 @@ fun SetRow(
         }
     }
 }
+
+/** Logger row that exposes only the measurements supported by the catalog exercise type. */
+@Composable
+fun PerformanceSetRow(
+    set: WorkoutSet,
+    weightUnit: String,
+    onUpdateSet: (SetPerformanceInput) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var reps by remember(set.id, set.completedReps) {
+        mutableStateOf((set.completedReps ?: set.targetReps)?.toString().orEmpty())
+    }
+    var weight by remember(set.id, set.completedWeight) {
+        mutableStateOf((set.completedWeight ?: set.targetWeight)?.compactText().orEmpty())
+    }
+    var assistance by remember(set.id, set.completedAssistanceWeight) {
+        mutableStateOf(
+            (set.completedAssistanceWeight ?: set.targetAssistanceWeight)?.compactText().orEmpty()
+        )
+    }
+    var duration by remember(set.id, set.completedDurationSeconds) {
+        mutableStateOf((set.completedDurationSeconds ?: set.targetDurationSeconds)?.toString().orEmpty())
+    }
+    var distance by remember(set.id, set.completedDistanceMeters) {
+        mutableStateOf((set.completedDistanceMeters ?: set.targetDistanceMeters)?.compactText().orEmpty())
+    }
+
+    fun current(completed: Boolean = set.isCompleted) = SetPerformanceInput(
+        reps = reps.toIntOrNull(),
+        weight = weight.toDoubleOrNull(),
+        assistanceWeight = assistance.toDoubleOrNull(),
+        durationSeconds = duration.toIntOrNull(),
+        distanceMeters = distance.toDoubleOrNull(),
+        isCompleted = completed
+    )
+
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(
+                if (set.isCompleted) Color(0x1810B981) else GraphiteSurfaceElevated,
+                RoundedCornerShape(12.dp)
+            )
+            .border(
+                1.dp,
+                if (set.isCompleted) SuccessGreen.copy(alpha = 0.5f) else GraphiteBorder,
+                RoundedCornerShape(12.dp)
+            )
+            .padding(10.dp)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                "Set ${set.setNumber}",
+                color = if (set.isCompleted) SuccessGreen else TextSecondary,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.weight(1f)
+            )
+            Text("Done", color = TextMuted, fontSize = 12.sp)
+            Checkbox(
+                checked = set.isCompleted,
+                onCheckedChange = { onUpdateSet(current(completed = it)) }
+            )
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            when (set.exerciseType) {
+                ExerciseType.WEIGHT_REPS -> {
+                    CompactSetInput(weight, { weight = it; onUpdateSet(current()) }, "Load $weightUnit", true, Modifier.weight(1f))
+                    CompactSetInput(reps, { reps = it; onUpdateSet(current()) }, "Reps", false, Modifier.weight(1f))
+                }
+                ExerciseType.BODYWEIGHT_REPS ->
+                    CompactSetInput(reps, { reps = it; onUpdateSet(current()) }, "Reps", false, Modifier.weight(1f))
+                ExerciseType.ASSISTED_BODYWEIGHT -> {
+                    CompactSetInput(assistance, { assistance = it; onUpdateSet(current()) }, "Assist $weightUnit", true, Modifier.weight(1f))
+                    CompactSetInput(reps, { reps = it; onUpdateSet(current()) }, "Reps", false, Modifier.weight(1f))
+                }
+                ExerciseType.DURATION ->
+                    CompactSetInput(duration, { duration = it; onUpdateSet(current()) }, "Seconds", false, Modifier.weight(1f))
+                ExerciseType.DISTANCE_DURATION -> {
+                    CompactSetInput(distance, { distance = it; onUpdateSet(current()) }, "Meters", true, Modifier.weight(1f))
+                    CompactSetInput(duration, { duration = it; onUpdateSet(current()) }, "Seconds", false, Modifier.weight(1f))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun CompactSetInput(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    decimal: Boolean,
+    modifier: Modifier
+) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = { input ->
+            if (input.length <= 10) onValueChange(input)
+        },
+        label = { Text(label, fontSize = 11.sp) },
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = if (decimal) KeyboardType.Decimal else KeyboardType.Number
+        ),
+        modifier = modifier
+    )
+}
+
+private fun Double.compactText(): String =
+    if (this % 1.0 == 0.0) toInt().toString() else toString()

@@ -38,7 +38,10 @@ class OfflineWorkoutTemplateRepository(
 
     override suspend fun getTemplate(templateId: String): WorkoutTemplate? {
         requireValidTemplateId(templateId)
-        return templateDao.getTemplateWithExercises(templateId)?.toDomainModel()
+        val template = templateDao.getTemplateWithExercises(templateId)?.toDomainModel()
+            ?: return null
+        validateCatalogReferences(template)
+        return template
     }
 
     override suspend fun saveTemplate(template: WorkoutTemplate) {

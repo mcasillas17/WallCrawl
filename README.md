@@ -10,10 +10,11 @@ workouts from a constrained exercise catalog, while workout data stays on the
 phone.
 
 This repository currently contains the working application around that future
-model: profile constraints, catalog filtering, structured workout generation
-and validation, active set logging, Room persistence, workout-history context,
-and progress calculations. The current `FakeWorkoutPlanner` is deliberately
-replaceable; no production local LLM runtime is integrated yet.
+model: profile constraints, a complete bundled catalog, structured workout
+generation and validation, reusable custom workout templates, type-aware active
+set logging, Room persistence, workout-history context, and progress
+calculations. The current `FakeWorkoutPlanner` is deliberately replaceable; no
+production local LLM runtime is integrated yet.
 
 ## Screenshots & App Experience
 
@@ -29,7 +30,8 @@ replaceable; no production local LLM runtime is integrated yet.
 </p>
 
 - **Today Recommendation**: Offline AI-generated routine tailored to equipment and training goals, with instant regeneration.
-- **Active Workout Session**: Live set logging with target reps/weight suggestions, animated SVG movement previews, previous session performance comparisons, and finish flow.
+- **Custom Workouts**: Build and save local templates from all 302 bundled exercises, reorder exercises, adjust set counts, and start them without AI.
+- **Active Workout Session**: Type-aware logging for load/reps, bodyweight reps, assisted reps, duration, and distance/duration, with animated SVG movement previews and previous performance comparisons.
 - **Workout Summary**: Post-workout celebration card displaying session duration, total volume lifted, sets completed, and PR records.
 - **Progress Tracking**: Weekly workout streaks, aggregate volume trends, strength progression indicators, and historical workout logs.
 - **Exercise Library**: Searchable catalog with target muscle and equipment filter chips.
@@ -77,6 +79,7 @@ core/ai/                planner, context builder, history analysis, validation
 core/progress/          pure progress calculations over completed sessions
 core/ui/                theme and reusable Compose components
 feature/today/          daily recommendation and regeneration
+feature/templates/      local custom-workout library and editor
 feature/workout/        active workout logging and completion
 feature/progress/       history-derived progress UI
 feature/exercises/      searchable/filterable catalog browser
@@ -105,11 +108,18 @@ bundled catalog.json → WorkoutGuideCatalogStore
 ```
 
 All catalog facts are browseable and searchable by name, alias, muscle, and
-listed equipment. Workout Guide does not provide every hard equipment
-requirement or programming judgment WallCrawl needs, so only the 12 exercises
-with reviewed `programming` metadata are currently eligible for workout
-generation. The hard filter prevents all other catalog entries from reaching
-the planner.
+listed equipment. Every bundled exercise can enter workout planning with a
+structurally valid prescription appropriate to its catalog type. Reviewed
+`programming` metadata enriches those defaults when available; otherwise
+WallCrawl uses conservative fallback targets. Planner-generated workouts still
+apply the user's equipment hard filter. A user building a custom workout may
+explicitly select any catalog exercise, with an equipment mismatch shown as a
+warning rather than silently hiding the exercise.
+
+Custom workout templates are stored locally in Room. Starting a template
+creates a frozen active-session snapshot, so later template edits or deletion
+do not rewrite workout history. Completed measurements retain their exercise
+type and feed the same history and progress pipeline used by planned workouts.
 
 Each exercise resolves to three bundled frames that animate in a lightweight
 `1 → 2 → 3 → 2` loop using Coil 3 with SVG support. The compact normalized
@@ -156,11 +166,12 @@ Requirements:
 ```
 
 The unit suite covers catalog filtering, context construction, bounded history
-analysis, planner constraints and load progression, generated-workout
-validation, atomic persistence boundaries, progress calculations, Today state,
-duration calculation, and visual-provider mapping. Android instrumentation
-also parses the packaged 302-exercise catalog and opens every one of its 906 SVG
-paths.
+analysis, planner constraints and type-aware prescriptions, generated-workout
+validation, template validation, atomic persistence boundaries, progress
+calculations, Today state, duration calculation, and visual-provider mapping.
+Android instrumentation also validates database migration and template/session
+snapshot behavior, parses the packaged 302-exercise catalog, and opens every one
+of its 906 SVG paths.
 
 ## Product and engineering principles
 
@@ -177,8 +188,10 @@ paths.
 
 ## Next milestones
 
-- Review programming and hard equipment requirements for additional catalog
-  exercises before making them planner-eligible.
+- Expand reviewed programming and hard equipment metadata to improve the
+  conservative defaults used by unreviewed catalog exercises.
+- Add detailed target editing to custom templates beyond exercise order and set
+  count.
 - Add richer active-workout controls such as rest timers, RPE/RIR editing, and
   exercise substitution.
 - Expand progress calculations and charts as more history accumulates.

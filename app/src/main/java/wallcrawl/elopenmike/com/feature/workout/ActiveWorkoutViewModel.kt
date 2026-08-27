@@ -8,6 +8,7 @@ import wallcrawl.elopenmike.com.core.ai.WorkoutHistoryAnalyzer
 import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.SessionStatus
+import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutSummary
 import kotlinx.coroutines.CancellationException
@@ -115,13 +116,18 @@ class ActiveWorkoutViewModel(
     }
 
     fun updateSet(setId: String, reps: Int?, weight: Double?, isCompleted: Boolean) {
+        updateSet(
+            setId,
+            SetPerformanceInput(reps = reps, weight = weight, isCompleted = isCompleted)
+        )
+    }
+
+    fun updateSet(setId: String, performance: SetPerformanceInput) {
         viewModelScope.launch {
             try {
                 workoutRepository.logSetCompletion(
                     setId = setId,
-                    reps = reps,
-                    weight = weight,
-                    isCompleted = isCompleted
+                    performance = performance
                 )
             } catch (e: CancellationException) {
                 throw e

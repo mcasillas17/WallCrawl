@@ -42,6 +42,10 @@ import wallcrawl.elopenmike.com.feature.progress.ProgressScreen
 import wallcrawl.elopenmike.com.feature.progress.ProgressViewModel
 import wallcrawl.elopenmike.com.feature.today.TodayScreen
 import wallcrawl.elopenmike.com.feature.today.TodayViewModel
+import wallcrawl.elopenmike.com.feature.templates.TemplateEditorScreen
+import wallcrawl.elopenmike.com.feature.templates.TemplateEditorViewModel
+import wallcrawl.elopenmike.com.feature.templates.WorkoutTemplatesScreen
+import wallcrawl.elopenmike.com.feature.templates.WorkoutTemplatesViewModel
 import wallcrawl.elopenmike.com.feature.workout.ActiveWorkoutScreen
 import wallcrawl.elopenmike.com.feature.workout.ActiveWorkoutViewModel
 
@@ -103,7 +107,8 @@ fun WallCrawlApp(
                     },
                     onResumeWorkout = { sessionId ->
                         navController.navigate(AppRoutes.activeWorkout(sessionId))
-                    }
+                    },
+                    onOpenTemplates = { navController.navigate(AppRoutes.WORKOUT_TEMPLATES) }
                 )
             }
 
@@ -168,6 +173,63 @@ fun WallCrawlApp(
                             restoreState = true
                         }
                     }
+                )
+            }
+
+            composable(AppRoutes.WORKOUT_TEMPLATES) {
+                val templatesViewModel: WorkoutTemplatesViewModel = viewModel(
+                    factory = WorkoutTemplatesViewModel.provideFactory(
+                        templateRepository = container.workoutTemplateRepository,
+                        workoutRepository = container.workoutRepository,
+                        userProfileRepository = container.userProfileRepository
+                    )
+                )
+                WorkoutTemplatesScreen(
+                    viewModel = templatesViewModel,
+                    onBack = { navController.popBackStack() },
+                    onCreate = { navController.navigate(AppRoutes.TEMPLATE_NEW) },
+                    onEdit = { navController.navigate(AppRoutes.editTemplate(it)) },
+                    onWorkoutStarted = { sessionId ->
+                        navController.navigate(AppRoutes.activeWorkout(sessionId))
+                    }
+                )
+            }
+
+            composable(AppRoutes.TEMPLATE_NEW) {
+                val editorViewModel: TemplateEditorViewModel = viewModel(
+                    key = "new-template",
+                    factory = TemplateEditorViewModel.provideFactory(
+                        templateId = null,
+                        templateRepository = container.workoutTemplateRepository,
+                        userProfileRepository = container.userProfileRepository,
+                        exerciseCatalog = container.exerciseCatalog
+                    )
+                )
+                TemplateEditorScreen(
+                    viewModel = editorViewModel,
+                    onBack = { navController.popBackStack() },
+                    onSaved = { navController.popBackStack() }
+                )
+            }
+
+            composable(
+                AppRoutes.TEMPLATE_EDIT,
+                arguments = listOf(navArgument("templateId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val templateId = backStackEntry.arguments?.getString("templateId").orEmpty()
+                val editorViewModel: TemplateEditorViewModel = viewModel(
+                    key = "edit-template-$templateId",
+                    factory = TemplateEditorViewModel.provideFactory(
+                        templateId = templateId,
+                        templateRepository = container.workoutTemplateRepository,
+                        userProfileRepository = container.userProfileRepository,
+                        exerciseCatalog = container.exerciseCatalog
+                    )
+                )
+                TemplateEditorScreen(
+                    viewModel = editorViewModel,
+                    onBack = { navController.popBackStack() },
+                    onSaved = { navController.popBackStack() }
                 )
             }
         }

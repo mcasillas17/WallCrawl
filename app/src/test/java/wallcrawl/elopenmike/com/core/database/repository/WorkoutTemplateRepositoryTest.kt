@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertThrows
 import org.junit.Test
 import wallcrawl.elopenmike.com.core.database.dao.WorkoutTemplateDao
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutTemplateEntity
@@ -93,6 +94,31 @@ class WorkoutTemplateRepositoryTest {
             .containsExactly("push-up", "plank")
             .inOrder()
         assertThat(template.exercises[1].prescription.targetDurationSeconds).isEqualTo(45)
+    }
+
+    @Test
+    fun getTemplate_rejectsAStaleExerciseThatIsNoLongerInTheCatalog() {
+        val dao = RecordingWorkoutTemplateDao(
+            stored = listOf(
+                WorkoutTemplateWithExercises(
+                    template = WorkoutTemplateEntity(
+                        id = "template",
+                        name = "Stale",
+                        notes = "",
+                        createdAtTimestamp = 1_000L,
+                        updatedAtTimestamp = 1_000L
+                    ),
+                    exercises = listOf(
+                        repetitionEntity(orderIndex = 0, exerciseId = "removed-exercise")
+                    )
+                )
+            )
+        )
+        val repository = OfflineWorkoutTemplateRepository(dao, catalog)
+
+        assertThrows(IllegalArgumentException::class.java) {
+            runTest { repository.getTemplate("template") }
+        }
     }
 
     private fun repetitionEntity(orderIndex: Int, exerciseId: String) =
