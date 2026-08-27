@@ -6,17 +6,17 @@ Let a user build, save, edit, delete, and repeatedly start custom workout templa
 
 ## Product Experience
 
-Today gains a **My Workouts** section below the current recommendation. It shows a small number of saved templates, a **Create workout** action, and **View all** when templates exist. Template management is a pushed destination rather than a fifth bottom-navigation tab.
+Today gains a **My Workouts** entry below the current recommendation. Template management is a pushed destination rather than a fifth bottom-navigation tab.
 
 The template library supports:
 
 - create a named template;
-- edit its name, notes, exercises, exercise order, and targets;
+- edit its name, notes, exercises, exercise order, and set counts;
 - delete a template after confirmation;
 - start a template;
-- see its exercise count, estimated duration, and primary muscle summary.
+- see its exercise and set counts.
 
-The editor uses the bundled offline catalog. Search and equipment/muscle filters match the existing catalog behavior. Every one of the 302 exercises is selectable. An exercise whose listed or reviewed equipment is not in the current profile remains selectable but displays a warning.
+The editor uses the bundled offline catalog. Search matches the catalog library's IDs, names, aliases, muscles, and listed equipment. Every one of the 302 exercises is selectable. An exercise whose listed or reviewed equipment is not in the current profile remains selectable but displays a warning.
 
 Starting a template creates a new, immutable workout-session snapshot. Editing or deleting the template afterward never changes an active or completed session. If another session is already active, the existing single-active-session rule wins and the UI offers the existing resume path.
 
@@ -81,7 +81,7 @@ New tables:
 
 Existing session tables gain origin and type-aware target/outcome columns. Where existing non-null repetition columns prevent faithful duration/distance storage, the migration rebuilds the affected table, copies existing values as `WEIGHT_REPS`-compatible records, recreates indexes and foreign keys, and then drops the old table. Migration instrumentation tests must prove existing user/profile/session/set data survives.
 
-`WorkoutTemplateRepository` owns template CRUD and transactionally replaces ordered exercises on save. It validates names, bounds, unique IDs/order, catalog existence, and prescription/exercise-type agreement before persistence. Flows expose the template list and individual templates.
+`WorkoutTemplateRepository` owns template CRUD and transactionally replaces ordered exercises on save. It validates names, bounds, catalog existence, and prescription/exercise-type agreement before persistence. Flows expose the template list and individual templates.
 
 `WorkoutRepository.startWorkoutFromTemplate` reads the current profile, validates a freshly loaded template against the catalog, snapshots it into the existing active-session tables, and delegates to the same atomic single-active-session transaction used by planner workouts.
 
@@ -93,9 +93,9 @@ New routes:
 - `template/new` — new editor;
 - `template/{templateId}` — edit existing template.
 
-The editor ViewModel owns a draft saved through `SavedStateHandle`, so text and exercise configuration survive navigation/process recreation before explicit save. It loads catalog data asynchronously and exposes loading, content, saving, and actionable error states. Unsaved edits require confirmation before leaving.
+The editor ViewModel owns an in-memory draft, loads catalog data asynchronously, and exposes loading, content, saving, and actionable error states. Explicitly saved templates survive process recreation through Room; unsaved draft restoration and leave confirmation are outside this implementation phase.
 
-Exercise ordering uses accessible move-up/move-down controls in the first version instead of a gesture-only drag implementation. Type-specific controls prevent irrelevant fields from appearing. Input is bounded while editing and revalidated on save.
+Exercise ordering uses accessible move-up/move-down controls instead of a gesture-only drag implementation. The first version edits set counts and displays conservative type-specific targets generated from the current profile; detailed target editing is outside this implementation phase. Input is bounded while editing and revalidated on save.
 
 The active workout logger renders and records fields by exercise type. Existing repetition/weight workouts keep their current fast path. Duration and distance workouts gain appropriate target text and completion inputs. Progress volume continues to count weight × reps only, while duration/distance outcomes remain persisted for later analytics.
 
@@ -106,7 +106,7 @@ The active workout logger renders and records fields by exercise type. Existing 
 - A failed start does not create a partial session.
 - Template deletion is confirmed and does not cascade into session history.
 - Starting while a session exists returns/resumes that session through the existing repository invariant.
-- Missing catalog exercises in an old template are shown as invalid and block start/save until removed or replaced; they are never silently substituted.
+- Missing catalog exercises in an old template block loading or starting with an error; they are never silently substituted.
 
 ## Future AI Boundary
 
@@ -124,8 +124,8 @@ Tests cover:
 - Room 3→4 migration with existing history preserved;
 - template CRUD, ordering, atomic replacement, deletion, and missing-ID failures;
 - frozen template-to-session snapshots;
-- ViewModel draft/save/error behavior;
-- Compose navigation and core editor interactions;
+- editor catalog-search behavior;
+- an emulator smoke flow through create, save, start, log, finish, and history;
 - type-aware active-set logging.
 
 The phase is successful when a user can create and save a template from any catalog exercises, reopen and edit it, start it, log its type-appropriate work, complete the session, see it in history, and later start the unchanged saved template again.
