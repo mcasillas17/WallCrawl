@@ -12,9 +12,11 @@ import java.util.Locale
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
- * Fake on-device workout recommendation engine.
- * Mimics an intelligent local LLM by selecting structured workouts tailored to user goals,
- * muscle priorities, and time budget, while STRICTLY selecting from [context.allowedExercises].
+ * Rule-based on-device workout planner: the tier that always works.
+ *
+ * Selects structured workouts from user goals, muscle priorities, and time budget, STRICTLY
+ * from [WorkoutGenerationContext.allowedExercises]. No model is involved; when a generative
+ * tier is added this stays as its fallback, so its output must be good on its own.
  */
 class FakeWorkoutPlanner(
     private val prescriptionFactory: DefaultExercisePrescriptionFactory =
@@ -26,10 +28,13 @@ class FakeWorkoutPlanner(
     override suspend fun generateWorkout(context: WorkoutGenerationContext): GeneratedWorkout {
         val candidates = context.allowedExercises
         if (candidates.isEmpty()) {
-            throw WorkoutValidationException("Cannot generate workout: no allowed candidate exercises available.")
+            throw WorkoutValidationException(
+                message = "Cannot generate workout: no allowed candidate exercises available.",
+                failure = WorkoutPlanningFailure.NO_CANDIDATES
+            )
         }
         val generationIndex = generationCounter.getAndIncrement()
-        val splitType = determineSplitType(context, generationIndex)
+        val splitType = determineSplitType(context, generationIndex, candidates)
 
         val selectedExercises = selectExercisesForSplit(splitType, candidates, context)
         val generatedExerciseList = selectedExercises.map { exercise ->
@@ -51,50 +56,47 @@ class FakeWorkoutPlanner(
 
     private fun determineSplitType(
         context: WorkoutGenerationContext,
-        generationIndex: Int
+        generationIndex: Int,
+        candidates: List<Exercise>
     ): SplitType {
         val highPriorityMuscles = context.musclePriorities
             .filter { it.value == PriorityLevel.HIGH }
             .keys
 
-        val splits = mutableListOf<SplitType>()
+        val preferred = SplitType.entries.filter { split ->
+            highPriorityMuscles.any { it in split.targetMuscles }
+        }
+        val rotation = preferred.ifEmpty { SplitType.DEFAULT_ROTATION }
 
-        if (highPriorityMuscles.any { it in SplitType.PUSH.targetMuscles }) {
-            splits.add(SplitType.PUSH)
-        }
-        if (highPriorityMuscles.any { it in SplitType.PULL.targetMuscles }) {
-            splits.add(SplitType.PULL)
-        }
-        if (highPriorityMuscles.any { it in SplitType.LEGS.targetMuscles }) {
-            splits.add(SplitType.LEGS)
-        }
-
-        if (splits.isEmpty()) {
-            splits.addAll(listOf(SplitType.PUSH, SplitType.PULL, SplitType.LEGS, SplitType.UPPER_BODY))
+        // Only rotate onto splits this profile can actually fill. Picking blind and then
+        // failing would strand anyone whose priorities resolve to a single split their
+        // equipment cannot train — every retry would land on the same empty split.
+        val trainable = rotation.filter { split -> candidates.any { it.trains(split) } }
+        if (trainable.isEmpty()) {
+            throw WorkoutValidationException(
+                message = "No available exercise trains any split for this profile.",
+                failure = WorkoutPlanningFailure.NO_CANDIDATES_FOR_ANY_SPLIT
+            )
         }
 
-        return splits[generationIndex % splits.size]
+        return trainable[generationIndex.mod(trainable.size)]
     }
+
+    private fun Exercise.trains(split: SplitType): Boolean =
+        primaryMuscles.any { it in split.targetMuscles } ||
+            secondaryMuscles.any { it in split.targetMuscles }
 
     private fun selectExercisesForSplit(
         split: SplitType,
         candidates: List<Exercise>,
         context: WorkoutGenerationContext
     ): List<Exercise> {
-        val targetMuscles = split.targetMuscles
-
         // A candidate that trains none of the split's muscles is not a substitute for one that
-        // does. Selection fails here instead of silently widening back to the whole catalog,
-        // which used to hand a Push day whatever sorted first.
-        val matchingCandidates = candidates.filter { exercise ->
-            exercise.primaryMuscles.any { it in targetMuscles } ||
-                exercise.secondaryMuscles.any { it in targetMuscles }
-        }
-        if (matchingCandidates.isEmpty()) {
-            throw WorkoutValidationException(
-                "No ${split.displayName.lowercase(Locale.ROOT)} exercises match your available " +
-                    "equipment. Add equipment in Profile, or start one of your own workouts."
-            )
+        // does. Widening back to the whole catalog is what used to hand a Push day whatever
+        // sorted first; determineSplitType has already guaranteed this split is fillable.
+        val matchingCandidates = candidates.filter { it.trains(split) }
+        check(matchingCandidates.isNotEmpty()) {
+            "Split ${split.displayName} was selected without any matching candidate."
         }
 
         // Prefer reviewed compound lifts, then allow every remaining matching exercise.
@@ -189,7 +191,10 @@ class FakeWorkoutPlanner(
                 StandardMuscles.GLUTES,
                 StandardMuscles.CALVES,
                 StandardMuscles.ADDUCTORS,
-                StandardMuscles.HIPS
+                StandardMuscles.HIPS,
+                // Hip hinges are the app's lower-back work; without this a Lower Back
+                // priority would select no split at all.
+                StandardMuscles.LOWER_BACK
             )
         ),
         UPPER_BODY(
@@ -215,6 +220,14 @@ class FakeWorkoutPlanner(
                 StandardMuscles.GLUTES,
                 StandardMuscles.CORE
             )
-        )
+        );
+
+        companion object {
+            /**
+             * Used when no muscle is marked high priority. FULL_BODY is the only split that
+             * trains Core, so it stays in the rotation rather than being unreachable.
+             */
+            val DEFAULT_ROTATION = listOf(PUSH, PULL, LEGS, UPPER_BODY, FULL_BODY)
+        }
     }
 }

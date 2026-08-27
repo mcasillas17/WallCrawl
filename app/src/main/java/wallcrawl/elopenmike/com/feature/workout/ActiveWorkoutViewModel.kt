@@ -11,8 +11,8 @@ import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutSummary
-import wallcrawl.elopenmike.com.core.progress.ProgressCalculator
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -24,14 +24,15 @@ class ActiveWorkoutViewModel(
     private val sessionId: String,
     private val workoutRepository: WorkoutRepository,
     private val exerciseCatalog: ExerciseCatalog,
-    private val workoutHistoryAnalyzer: WorkoutHistoryAnalyzer,
-    private val progressCalculator: ProgressCalculator = ProgressCalculator()
+    private val workoutHistoryAnalyzer: WorkoutHistoryAnalyzer
 ) : ViewModel() {
 
     private val currentExerciseIndexFlow = MutableStateFlow(0)
     private val currentCatalogExerciseFlow = MutableStateFlow<Exercise?>(null)
     private val errorFlow = MutableStateFlow<String?>(null)
+    private val summaryFlow = MutableStateFlow<WorkoutSummary?>(null)
     private var finishRequested = false
+    private var summaryJob: Job? = null
 
     private val sessionHistoryFlow = combine(
         workoutRepository.observeSession(sessionId),
@@ -44,13 +45,21 @@ class ActiveWorkoutViewModel(
         sessionHistoryFlow,
         currentExerciseIndexFlow,
         currentCatalogExerciseFlow,
-        errorFlow
-    ) { sessionHistory, exerciseIndex, catalogEx, error ->
+        errorFlow,
+        summaryFlow
+    ) { sessionHistory, exerciseIndex, catalogEx, error, summary ->
         val (session, completedSessions) = sessionHistory
         if (session == null) {
             ActiveWorkoutUiState.Loading
         } else if (session.status == SessionStatus.COMPLETED) {
-            ActiveWorkoutUiState.Completed(session.toSummary(completedSessions))
+            // The repository owns the summary so its personal-record count is computed once,
+            // over one history window, whether the workout just finished or is revisited.
+            if (summary?.sessionId == session.id) {
+                ActiveWorkoutUiState.Completed(summary)
+            } else {
+                loadSummary(session.id)
+                ActiveWorkoutUiState.Loading
+            }
         } else if (error != null) {
             ActiveWorkoutUiState.Error(error)
         } else if (session.status != SessionStatus.IN_PROGRESS) {
@@ -149,7 +158,7 @@ class ActiveWorkoutViewModel(
                     startedAtTimestamp = currentState.session.startedAtTimestamp,
                     nowTimestamp = System.currentTimeMillis()
                 )
-                workoutRepository.completeWorkout(sessionId, elapsedMinutes)
+                summaryFlow.value = workoutRepository.completeWorkout(sessionId, elapsedMinutes)
             } catch (e: CancellationException) {
                 finishRequested = false
                 throw e
@@ -199,19 +208,18 @@ class ActiveWorkoutViewModel(
         val completedSessions: List<WorkoutSession>
     )
 
-    private fun WorkoutSession.toSummary(completedSessions: List<WorkoutSession>) = WorkoutSummary(
-        sessionId = id,
-        workoutName = name,
-        durationMinutes = actualDurationMinutes,
-        totalSetsCompleted = completedSetsCount,
-        totalVolume = totalVolume,
-        prCount = progressCalculator.countPersonalRecords(
-            session = this,
-            priorCompletedSessions = completedSessions
-        ),
-        unit = weightUnit,
-        completedAtTimestamp = completedAtTimestamp ?: startedAtTimestamp
-    )
+    private fun loadSummary(completedSessionId: String) {
+        if (summaryJob?.isActive == true) return
+        summaryJob = viewModelScope.launch {
+            try {
+                summaryFlow.value = workoutRepository.getWorkoutSummary(completedSessionId)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                errorFlow.value = "Failed to load workout summary: ${e.message}"
+            }
+        }
+    }
 
 }
 

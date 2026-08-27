@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import wallcrawl.elopenmike.com.core.ai.GeneratedWorkoutValidator
 import wallcrawl.elopenmike.com.core.ai.WorkoutGenerationContextBuilder
 import wallcrawl.elopenmike.com.core.ai.WorkoutPlanner
+import wallcrawl.elopenmike.com.core.ai.WorkoutPlanningFailure
+import wallcrawl.elopenmike.com.core.ai.WorkoutValidationException
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
@@ -70,7 +72,7 @@ class TodayViewModel(
         errorFlow
     ) { sourceState, generatedWorkout, isRegenerating, error ->
         if (error != null) {
-            TodayUiState.Error(error)
+            TodayUiState.Error(message = error, activeSession = sourceState.activeSession)
         } else if (generatedWorkout == null) {
             TodayUiState.Loading
         } else {
@@ -121,11 +123,7 @@ class TodayViewModel(
                 } catch (e: CancellationException) {
                     throw e
                 } catch (e: Exception) {
-                    errorFlow.value = e.message ?: if (currentRequestIsRegeneration) {
-                        "Failed to regenerate workout."
-                    } else {
-                        "Failed to generate workout recommendation."
-                    }
+                    errorFlow.value = userFacingMessage(e, currentRequestIsRegeneration)
                 } finally {
                     isRegeneratingFlow.value = false
                 }
@@ -133,6 +131,31 @@ class TodayViewModel(
             } while (hasPendingRegeneration)
         }
     }
+
+    /**
+     * Turns a planning failure into copy for the Today error card.
+     *
+     * Exception messages are written for logs, so they are mapped here rather than rendered:
+     * the planner should not have to phrase user-facing text, and "no allowed candidate
+     * exercises available" is not something to show a person mid-workout-planning.
+     */
+    private fun userFacingMessage(error: Exception, isRegeneration: Boolean): String =
+        when ((error as? WorkoutValidationException)?.failure) {
+            WorkoutPlanningFailure.NO_CANDIDATES ->
+                "No exercises match your equipment and exclusions yet. " +
+                    "Add equipment or clear an exclusion in Profile."
+
+            WorkoutPlanningFailure.NO_CANDIDATES_FOR_ANY_SPLIT ->
+                "Your available equipment can't cover a full training day yet. " +
+                    "Add equipment in Profile, or start one of your own workouts."
+
+            WorkoutPlanningFailure.INVALID_GENERATED_WORKOUT, null ->
+                if (isRegeneration) {
+                    "Couldn't build another workout. Try again."
+                } else {
+                    "Couldn't build today's workout. Try again."
+                }
+        }
 
     fun startWorkout(onWorkoutStarted: (sessionId: String) -> Unit) {
         if (generationJob?.isActive == true) return

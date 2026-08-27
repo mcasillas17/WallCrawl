@@ -82,25 +82,28 @@ class WorkoutGuideCatalogParser {
                 }
             }
 
+            val framesByExerciseId = entries.associate { entry ->
+                entry.id to (1..visuals.frameCount).map { frameIndex ->
+                    ExerciseVisual(
+                        assetPath = "$ASSET_PATH_PREFIX${entry.sourceSlug}/frame-$frameIndex.svg",
+                        widthPx = visuals.widthPx,
+                        heightPx = visuals.heightPx,
+                        attribution = validatedSource.attribution
+                    )
+                }
+            }
+
             return WorkoutGuideCatalogSnapshot(
                 exercises = entries.map { entry -> entry.toExercise(validatedSource.attribution) },
-                framesByExerciseId = entries.associate { entry ->
-                    entry.id to (1..visuals.frameCount).map { frameIndex ->
-                        ExerciseVisual(
-                            assetPath = "$ASSET_PATH_PREFIX${entry.sourceSlug}/frame-$frameIndex.svg",
-                            widthPx = visuals.widthPx,
-                            heightPx = visuals.heightPx,
-                            attribution = validatedSource.attribution
-                        )
-                    }
-                },
+                framesByExerciseId = framesByExerciseId,
                 catalogAttribution = CatalogAttribution(
                     repository = validatedSource.repository,
                     commit = validatedSource.commit,
                     assetLicense = validatedSource.assetLicense,
                     attribution = validatedSource.attribution,
                     exerciseCount = entries.size,
-                    frameCount = entries.size * visuals.frameCount
+                    // Counted, not inferred: the credits screen states this number publicly.
+                    frameCount = framesByExerciseId.values.sumOf { it.size }
                 )
             )
         } catch (error: WorkoutGuideCatalogFormatException) {
@@ -208,13 +211,19 @@ class WorkoutGuideCatalogParser {
 
         // Upstream muscle names enter the domain only through the canonical vocabulary, so the
         // planner, muscle priorities, and volume attribution all share one set of names.
-        val canonicalPrimary = MuscleVocabulary.canonicalizeAll(primary)
+        // Umbrella names ("Legs", "Posterior Chain") keep a single representative as primary
+        // and contribute the rest as secondary, so weekly set counts stay one per set while
+        // split matching — which reads both lists — still sees every group involved.
+        val canonicalPrimary = primary.mapNotNull(MuscleVocabulary::canonicalizePrimary).distinct()
         if (canonicalPrimary.isEmpty()) {
             malformed("Exercise $exerciseId has no recognizable primary muscle: $primary")
         }
-        val canonicalSecondary = MuscleVocabulary.canonicalizeAll(
-            secondaryMuscles ?: malformed("Exercise $exerciseId is missing secondaryMuscles.")
-        ).filterNot { it in canonicalPrimary }
+        val declaredSecondary = secondaryMuscles
+            ?: malformed("Exercise $exerciseId is missing secondaryMuscles.")
+        val canonicalSecondary = (
+            MuscleVocabulary.canonicalizeAll(primary) +
+                MuscleVocabulary.canonicalizeAll(declaredSecondary)
+            ).filterNot { it in canonicalPrimary }.distinct()
 
         return ParsedExercise(
             id = exerciseId,
@@ -252,9 +261,11 @@ class WorkoutGuideCatalogParser {
         endObject()
         return ExerciseAttribution(
             creator = creator ?: malformed("$label is missing creator."),
-            creatorUrl = creatorUrl ?: malformed("$label is missing creatorUrl."),
+            // These two are the only values the app ever hands to the system browser, so
+            // they are held to the same scheme requirement as the displayed repository URL.
+            creatorUrl = requireHttps(creatorUrl, "$label.creatorUrl"),
             license = license ?: malformed("$label is missing license."),
-            licenseUrl = licenseUrl ?: malformed("$label is missing licenseUrl."),
+            licenseUrl = requireHttps(licenseUrl, "$label.licenseUrl"),
             source = source
         )
     }
@@ -392,6 +403,12 @@ class WorkoutGuideCatalogParser {
             malformed("$label must contain between 1 and $maxLength characters.")
         }
         return value
+    }
+
+    private fun requireHttps(value: String?, label: String): String {
+        val url = value ?: malformed("$label is missing.")
+        if (!url.startsWith("https://")) malformed("$label must be an HTTPS URL.")
+        return url
     }
 
     private fun requireSafeIdentifier(value: String, label: String) {

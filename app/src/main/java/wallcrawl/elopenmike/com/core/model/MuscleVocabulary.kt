@@ -44,6 +44,20 @@ object StandardMuscles {
     val CONDITIONING = listOf(CARDIO, MOBILITY)
 
     val ALL = TRAINABLE + CONDITIONING
+
+    /**
+     * Groups offered as muscle priorities.
+     *
+     * Every entry has to steer the planner toward a split, so Adductors and Hips are left
+     * out: they are real training targets the catalog tags, but a priority the planner
+     * cannot act on is a control that does nothing.
+     */
+    val PRIORITY_OPTIONS = listOf(
+        CHEST, SHOULDERS, REAR_DELTS, TRICEPS,
+        BACK, UPPER_BACK, LATS, BICEPS, FOREARMS,
+        QUADS, HAMSTRINGS, GLUTES, CALVES, LOWER_BACK,
+        CORE
+    )
 }
 
 /**
@@ -95,8 +109,8 @@ object MuscleVocabulary {
      *
      * An unrecognized name passes through trimmed rather than being dropped, so a catalog
      * update that adds vocabulary degrades to "not matched by splits" instead of "exercise
-     * silently has no muscles". [isCanonical] detects that case and
-     * `MuscleVocabularyTest` fails the build when the shipped catalog introduces one.
+     * silently has no muscles". [isCanonical] detects that case, and
+     * `BundledCatalogVocabularyTest` fails the build when the shipped catalog introduces one.
      */
     fun canonicalize(raw: String): List<String> {
         val trimmed = raw.trim()
@@ -107,6 +121,16 @@ object MuscleVocabulary {
     /** Canonicalizes every value, expanding umbrella terms and removing duplicates. */
     fun canonicalizeAll(values: List<String>): List<String> =
         values.flatMap(::canonicalize).distinct()
+
+    /**
+     * The single group that best represents [raw], or null if it names nothing.
+     *
+     * Primary muscles stay one-per-name because weekly set counts credit each completed set
+     * to every primary: expanding "Legs" into three groups would report four sets of lunges
+     * as twelve. The groups dropped here are added to the exercise's secondary muscles by
+     * [canonicalizeAll], which is what split matching reads, so nothing stops matching.
+     */
+    fun canonicalizePrimary(raw: String): String? = canonicalize(raw).firstOrNull()
 
     /** True when [value] is already a known canonical name, alias, or umbrella term. */
     fun isCanonical(value: String): Boolean =

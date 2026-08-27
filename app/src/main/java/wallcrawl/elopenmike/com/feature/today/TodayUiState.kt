@@ -15,5 +15,13 @@ sealed interface TodayUiState {
         val completedThisWeek: Int = 0
     ) : TodayUiState
 
-    data class Error(val message: String) : TodayUiState
+    /**
+     * Generation failed. [activeSession] rides along because the Today banner is the only
+     * route back into a workout already in progress — losing it here would strand a
+     * half-logged session behind an error card.
+     */
+    data class Error(
+        val message: String,
+        val activeSession: WorkoutSession? = null
+    ) : TodayUiState
 }

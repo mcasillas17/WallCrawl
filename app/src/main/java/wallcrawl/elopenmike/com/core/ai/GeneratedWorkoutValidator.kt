@@ -5,13 +5,13 @@ import wallcrawl.elopenmike.com.core.model.GeneratedExercise
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
 
 /**
- * Validates that an AI-generated workout contains only valid, existing exercises
- * from the catalog, remained inside the allowed candidate set, and uses the catalog type.
+ * Validates that a generated workout contains only valid, existing exercises from the
+ * catalog, stayed inside the allowed candidate set, and uses the catalog type.
  * Structural prescription constraints are enforced when [GeneratedExercise] is constructed.
  *
- * This is a critical barrier against LLM hallucination: if the model invents
- * a non-existent exercise ID or violates set/rep boundaries, this validator
- * rejects the payload immediately.
+ * Today's planner is rule-based and cannot invent an exercise, so this mostly guards
+ * against programming mistakes. It is the barrier a generative planner would need, and
+ * runs on every planner's output so that guarantee holds the day one is added.
  */
 class GeneratedWorkoutValidator(
     private val exerciseCatalog: ExerciseCatalog
@@ -82,4 +82,23 @@ class GeneratedWorkoutValidator(
     }
 }
 
-class WorkoutValidationException(message: String) : IllegalArgumentException(message)
+/**
+ * Why planning stopped. The UI maps this to copy; a future planner chain maps it to a
+ * recovery strategy (repair and retry, fall back to another tier, or surface to the user),
+ * which string matching on [WorkoutValidationException.message] could not support.
+ */
+enum class WorkoutPlanningFailure {
+    /** Nothing survived the equipment, exclusion, and recovery filters. */
+    NO_CANDIDATES,
+
+    /** Candidates exist, but none of them train any split this profile can be given. */
+    NO_CANDIDATES_FOR_ANY_SPLIT,
+
+    /** A generated workout broke the catalog or prescription contract. */
+    INVALID_GENERATED_WORKOUT
+}
+
+class WorkoutValidationException(
+    message: String,
+    val failure: WorkoutPlanningFailure = WorkoutPlanningFailure.INVALID_GENERATED_WORKOUT
+) : IllegalArgumentException(message)

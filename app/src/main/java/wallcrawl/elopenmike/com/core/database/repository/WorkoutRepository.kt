@@ -59,6 +59,14 @@ interface WorkoutRepository {
         )
     }
     suspend fun completeWorkout(sessionId: String, actualDurationMinutes: Int): WorkoutSummary
+
+    /**
+     * Summary of an already completed session, including its personal-record count.
+     * Shares one implementation and one history window with [completeWorkout] so the
+     * number cannot differ between finishing a workout and revisiting it.
+     */
+    suspend fun getWorkoutSummary(sessionId: String): WorkoutSummary?
+
     suspend fun cancelWorkout(sessionId: String)
 }
 
@@ -379,25 +387,32 @@ class OfflineWorkoutRepository(
         val session = checkNotNull(getSessionById(sessionId)) {
             "Completed workout session '$sessionId' could not be read back."
         }
-        val totalSets = session.completedSetsCount
-        val totalVolume = session.totalVolume
+        return session.toSummary(durationMinutes = actualDurationMinutes)
+    }
 
-        return WorkoutSummary(
-            sessionId = sessionId,
-            workoutName = session.name,
-            durationMinutes = actualDurationMinutes,
-            totalSetsCompleted = totalSets,
+    override suspend fun getWorkoutSummary(sessionId: String): WorkoutSummary? {
+        require(sessionId.isNotBlank()) { "sessionId must not be blank." }
+        val session = getSessionById(sessionId) ?: return null
+        if (session.status != SessionStatus.COMPLETED) return null
+        return session.toSummary(durationMinutes = session.actualDurationMinutes)
+    }
+
+    private suspend fun WorkoutSession.toSummary(durationMinutes: Int): WorkoutSummary =
+        WorkoutSummary(
+            sessionId = id,
+            workoutName = name,
+            durationMinutes = durationMinutes,
+            totalSetsCompleted = completedSetsCount,
             totalVolume = totalVolume,
             prCount = progressCalculator.countPersonalRecords(
-                session = session,
+                session = this,
                 priorCompletedSessions = getRecentCompletedSessions(
                     limit = PERSONAL_RECORD_HISTORY_SESSIONS
                 )
             ),
-            unit = session.weightUnit,
-            completedAtTimestamp = completedTimestamp
+            unit = weightUnit,
+            completedAtTimestamp = completedAtTimestamp ?: startedAtTimestamp
         )
-    }
 
     override suspend fun cancelWorkout(sessionId: String) {
         require(sessionId.isNotBlank()) { "sessionId must not be blank." }

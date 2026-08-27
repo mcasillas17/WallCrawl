@@ -62,17 +62,12 @@ class FakeWorkoutPlannerTest {
     }
 
     @Test
-    fun generateWorkout_neverSubstitutesExercisesThatMissTheSplitEntirely() = runTest {
-        // A Push day made only of leg work used to be possible: the muscle filter silently
-        // fell back to the unfiltered candidate list whenever nothing matched.
+    fun generateWorkout_rotatesToASplitTheEquipmentCanFill() = runTest {
+        // Chest HIGH alone resolves to a Push-only rotation. With no pushing exercise
+        // available, failing here would leave Today permanently broken: every retry lands
+        // on the same empty split.
         val legsOnly = allExercises.filter { exercise ->
-            exercise.primaryMuscles.none {
-                it in listOf(
-                    StandardMuscles.CHEST,
-                    StandardMuscles.SHOULDERS,
-                    StandardMuscles.TRICEPS
-                )
-            } && exercise.secondaryMuscles.none {
+            (exercise.primaryMuscles + exercise.secondaryMuscles).none {
                 it in listOf(
                     StandardMuscles.CHEST,
                     StandardMuscles.SHOULDERS,
@@ -87,11 +82,29 @@ class FakeWorkoutPlannerTest {
             allowedExercises = legsOnly
         )
 
+        val workout = planner.generateWorkout(context)
+
+        assertThat(workout.exercises).isNotEmpty()
+        assertThat(workout.name).doesNotContain("Push")
+    }
+
+    @Test
+    fun generateWorkout_failsOnlyWhenNoSplitCanBeTrained() = runTest {
+        val unmatchable = allExercises.first().copy(
+            id = "obscure-movement",
+            primaryMuscles = listOf("Serratus"),
+            secondaryMuscles = emptyList()
+        )
+        val context = WorkoutGenerationContext(
+            userProfile = UserProfile(),
+            allowedExercises = listOf(unmatchable)
+        )
+
         try {
             planner.generateWorkout(context)
-            fail("Expected generation to fail rather than fill a Push day with unrelated work")
+            fail("Expected generation to fail when no split can be trained")
         } catch (e: WorkoutValidationException) {
-            assertThat(e.message).contains("push")
+            assertThat(e.failure).isEqualTo(WorkoutPlanningFailure.NO_CANDIDATES_FOR_ANY_SPLIT)
         }
     }
 

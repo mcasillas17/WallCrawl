@@ -160,7 +160,7 @@ fun WorkoutSummaryScreen(
 
                     MetricHighlight(
                         title = "PRs Hit",
-                        value = "${summary.prCount} Records",
+                        value = if (summary.prCount == 0) "—" else "${summary.prCount}",
                         valueColor = SuccessGreen,
                         modifier = Modifier.weight(1f)
                     )

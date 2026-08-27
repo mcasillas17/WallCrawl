@@ -16,7 +16,7 @@ data class WorkoutGuideCatalogSnapshot(
 
 /**
  * Provenance of the bundled catalog, shown in the in-app credits screen.
- * The CC BY-SA 4.0 licence on the bundled artwork requires this to reach the user, not
+ * The CC BY-SA 4.0 license on the bundled artwork requires this to reach the user, not
  * just the repository, so it is carried through the snapshot rather than dropped at parse.
  */
 data class CatalogAttribution(

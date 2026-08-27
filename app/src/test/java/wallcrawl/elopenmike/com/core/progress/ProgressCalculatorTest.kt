@@ -197,6 +197,50 @@ class ProgressCalculatorTest {
     }
 
     @Test
+    fun calculate_excludesConditioningTagsFromMuscleFocus() {
+        val mobility = InMemoryExerciseCatalog.SAMPLE_EXERCISES.first().copy(
+            id = "cat-cow-stretch",
+            name = "Cat Cow Stretch",
+            primaryMuscles = listOf(StandardMuscles.MOBILITY),
+            secondaryMuscles = emptyList()
+        )
+        val session = session(
+            id = "mobility",
+            completedAtTimestamp = NOW - DAY_MILLIS,
+            exerciseId = mobility.id,
+            sets = listOf(completedSet(1, null, 10))
+        )
+
+        val result = calculator.calculate(
+            completedSessions = listOf(session),
+            profile = profile,
+            catalogExercises = exercises + mobility,
+            nowTimestamp = NOW
+        )
+
+        assertThat(result.muscleGroupFocus.map { it.muscle })
+            .doesNotContain(StandardMuscles.MOBILITY)
+    }
+
+    @Test
+    fun countPersonalRecords_countsAnExerciseOnceEvenIfLoggedTwiceInOneSession() {
+        val older = session(
+            id = "older",
+            completedAtTimestamp = NOW - (8 * DAY_MILLIS),
+            sets = listOf(completedSet(1, 45.0, 10))
+        )
+        val repeated = session(
+            id = "repeated",
+            completedAtTimestamp = NOW - DAY_MILLIS,
+            sets = listOf(completedSet(1, 50.0, 10))
+        ).let { built ->
+            built.copy(exercises = built.exercises + built.exercises.first().copy(id = "second"))
+        }
+
+        assertThat(calculator.countPersonalRecords(repeated, listOf(older))).isEqualTo(1)
+    }
+
+    @Test
     fun countPersonalRecords_countsOnlyExercisesBeatingPriorBest() {
         val older = session(
             id = "older",

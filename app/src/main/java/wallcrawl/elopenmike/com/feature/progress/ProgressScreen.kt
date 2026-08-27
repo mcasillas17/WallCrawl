@@ -232,15 +232,21 @@ private fun StreakAndVolumeCard(
                 modifier = Modifier.weight(1f)
             )
 
-            // Tonnage reads as a flat zero for anyone training without external load, so
-            // bodyweight-only weeks report the reps they actually completed instead.
+            // Tonnage alone reads as a flat zero for anyone training without external load,
+            // and switching metric on a threshold would make one light set swing the card.
+            // Reps are always shown alongside, so every week reports real work.
             val hasLoadedVolume = overview.totalVolumeThisWeek > 0.0
             MetricHighlight(
-                title = if (hasLoadedVolume) "Weekly Volume" else "Weekly Reps",
+                title = "Weekly Volume",
                 value = if (hasLoadedVolume) {
                     "%,.0f %s".format(overview.totalVolumeThisWeek, unit)
                 } else {
+                    "%,d".format(overview.totalRepsThisWeek)
+                },
+                subtitle = if (hasLoadedVolume) {
                     "%,d reps".format(overview.totalRepsThisWeek)
+                } else {
+                    "reps"
                 },
                 valueColor = CrimsonRedLight,
                 modifier = Modifier.weight(1.3f)
@@ -291,7 +297,7 @@ private fun StrengthTrendsSection(
 
         if (trends.isEmpty()) {
             Text(
-                text = "Log the same exercise twice to see how your strength is trending.",
+                text = "Log the same exercise in two workouts to see how your strength is trending.",
                 color = TextMuted,
                 fontSize = 13.sp
             )

@@ -3,6 +3,7 @@ package wallcrawl.elopenmike.com.core.progress
 import kotlin.math.roundToInt
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.MuscleProgressStat
+import wallcrawl.elopenmike.com.core.model.MuscleVocabulary
 import wallcrawl.elopenmike.com.core.model.PersonalRecord
 import wallcrawl.elopenmike.com.core.model.ProgressOverview
 import wallcrawl.elopenmike.com.core.model.RecordType
@@ -104,19 +105,25 @@ class ProgressCalculator {
                 }
             }
 
-        return session.exercises.count { exercise ->
-            val completedSets = exercise.sets.filter { it.isValidCompletedSet() }
-            if (completedSets.isEmpty()) return@count false
-            val best = bestByExercise[exercise.exerciseId] ?: return@count false
+        // Grouped by exercise so the same lift entered twice in one session counts once,
+        // matching how the Progress screen lists records.
+        return session.exercises
+            .groupBy { it.exerciseId }
+            .count { (exerciseId, entries) ->
+                val completedSets = entries.flatMap { entry ->
+                    entry.sets.filter { it.isValidCompletedSet() }
+                }
+                if (completedSets.isEmpty()) return@count false
+                val best = bestByExercise[exerciseId] ?: return@count false
 
-            val topWeight = completedSets.mapNotNull { it.validPositiveWeight() }.maxOrNull()
-            if (topWeight != null) {
-                best.weight != null && topWeight > best.weight
-            } else {
-                val topReps = completedSets.mapNotNull { it.completedReps }.maxOrNull()
-                topReps != null && best.reps != null && topReps > best.reps
+                val topWeight = completedSets.mapNotNull { it.validPositiveWeight() }.maxOrNull()
+                if (topWeight != null) {
+                    best.weight != null && topWeight > best.weight
+                } else {
+                    val topReps = completedSets.mapNotNull { it.completedReps }.maxOrNull()
+                    topReps != null && best.reps != null && topReps > best.reps
+                }
             }
-        }
     }
 
     private fun calculateStreakWeeks(
@@ -171,7 +178,9 @@ class ProgressCalculator {
                 if (completedSetCount == 0) return@forEach
                 catalogById[workoutExercise.exerciseId]
                     ?.primaryMuscles
-                    ?.filter { it.isNotBlank() }
+                    // "Cardio" and "Mobility" are training qualities, not muscles; counting
+                    // them here would put "Mobility — 6 sets" beside Chest and Glutes.
+                    ?.filter { it.isNotBlank() && MuscleVocabulary.isTrainable(it) }
                     ?.distinct()
                     ?.forEach { muscle ->
                         counts[muscle] = (counts[muscle] ?: 0) + completedSetCount

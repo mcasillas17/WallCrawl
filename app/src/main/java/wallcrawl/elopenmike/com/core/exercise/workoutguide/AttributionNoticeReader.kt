@@ -6,7 +6,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-/** One licence or attribution document shipped alongside the bundled catalog. */
+/** One license or attribution document shipped alongside the bundled catalog. */
 data class AttributionNotice(
     val title: String,
     val body: String
@@ -35,7 +35,16 @@ class AssetAttributionNoticeReader(
 
     private fun readAsset(assetPath: String): String? = try {
         assetManager.open(assetPath).bufferedReader().use { reader ->
-            reader.readText().take(MAX_NOTICE_CHARACTERS).trim().takeIf(String::isNotEmpty)
+            // Bounded while reading rather than after: truncating a string already in memory
+            // would not protect against an oversized asset.
+            val buffer = CharArray(MAX_NOTICE_CHARACTERS)
+            var filled = 0
+            while (filled < buffer.size) {
+                val read = reader.read(buffer, filled, buffer.size - filled)
+                if (read < 0) break
+                filled += read
+            }
+            String(buffer, 0, filled).trim().takeIf(String::isNotEmpty)
         }
     } catch (error: IOException) {
         null
@@ -47,8 +56,8 @@ class AssetAttributionNoticeReader(
         val DOCUMENTS = listOf(
             "Attribution" to "workout-guide/ATTRIBUTION.md",
             "Bundled artwork" to "workout-guide/NOTICE.md",
-            "Asset licence" to "workout-guide/LICENSE-ASSETS",
-            "Upstream licence" to "workout-guide/LICENSE"
+            "Asset license" to "workout-guide/LICENSE-ASSETS",
+            "Upstream license" to "workout-guide/LICENSE"
         )
     }
 }

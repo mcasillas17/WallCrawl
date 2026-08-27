@@ -37,7 +37,7 @@ class ProfileViewModel(
                 profile = profile,
                 isSaving = isSaving,
                 availableEquipmentOptions = StandardEquipment.ALL,
-                availableMuscleOptions = StandardMuscles.TRAINABLE
+                availableMuscleOptions = StandardMuscles.PRIORITY_OPTIONS
             )
         }
     }.stateIn(

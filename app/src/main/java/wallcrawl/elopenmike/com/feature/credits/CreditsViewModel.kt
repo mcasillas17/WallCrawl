@@ -13,7 +13,7 @@ import wallcrawl.elopenmike.com.core.exercise.workoutguide.WorkoutGuideCatalogSo
 
 /**
  * Supplies the credits screen with the provenance of the bundled exercise artwork.
- * The artwork ships under CC BY-SA 4.0, which requires the creator, licence, and changes
+ * The artwork ships under CC BY-SA 4.0, which requires the creator, license, and changes
  * to be visible to the person using the app.
  */
 class CreditsViewModel(

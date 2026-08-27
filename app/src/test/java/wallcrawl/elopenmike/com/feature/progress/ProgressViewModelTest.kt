@@ -114,5 +114,7 @@ private class EmptyWorkoutRepository : WorkoutRepository {
         actualDurationMinutes: Int
     ): WorkoutSummary = error("Not used")
 
+    override suspend fun getWorkoutSummary(sessionId: String): WorkoutSummary? = error("Not used")
+
     override suspend fun cancelWorkout(sessionId: String) = error("Not used")
 }
