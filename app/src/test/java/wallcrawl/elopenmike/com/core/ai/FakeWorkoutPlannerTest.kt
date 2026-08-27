@@ -111,18 +111,16 @@ class FakeWorkoutPlannerTest {
     }
 
     @Test
-    fun generateWorkout_withUnreviewedCandidate_rejectsInvalidContext() = runTest {
+    fun generateWorkout_withUnreviewedCandidate_usesCatalogTypeDefaults() = runTest {
         val unreviewed = allExercises.first().copy(programming = null)
         val context = WorkoutGenerationContext(
             userProfile = UserProfile(),
             allowedExercises = listOf(unreviewed)
         )
 
-        try {
-            planner.generateWorkout(context)
-            fail("Expected WorkoutValidationException for unreviewed candidate")
-        } catch (error: WorkoutValidationException) {
-            assertThat(error.message).contains("programming metadata")
-        }
+        val workout = planner.generateWorkout(context)
+
+        assertThat(workout.exercises.single().exerciseId).isEqualTo(unreviewed.id)
+        assertThat(workout.exercises.single().prescription.exerciseType).isEqualTo(unreviewed.type)
     }
 }

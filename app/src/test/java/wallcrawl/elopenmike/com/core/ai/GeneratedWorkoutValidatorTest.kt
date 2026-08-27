@@ -4,6 +4,10 @@ import com.google.common.truth.Truth.assertThat
 import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
 import wallcrawl.elopenmike.com.core.model.GeneratedExercise
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
+import wallcrawl.elopenmike.com.core.model.ExercisePrescription
+import wallcrawl.elopenmike.com.core.model.ExerciseType
+import wallcrawl.elopenmike.com.core.model.PlannedExercise
+import wallcrawl.elopenmike.com.core.model.RepRange
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertThrows
 import org.junit.Assert.fail
@@ -35,11 +39,13 @@ class GeneratedWorkoutValidatorTest {
                     repMax = 10,
                     targetWeight = 47.5
                 ),
-                GeneratedExercise(
+                PlannedExercise(
                     exerciseId = "parallel-bar-dips",
-                    targetSets = 3,
-                    repMin = 8,
-                    repMax = 12
+                    prescription = ExercisePrescription(
+                        exerciseType = ExerciseType.BODYWEIGHT_REPS,
+                        targetSets = 3,
+                        repRange = RepRange(8, 12)
+                    )
                 )
             )
         )
@@ -96,6 +102,27 @@ class GeneratedWorkoutValidatorTest {
         } catch (e: WorkoutValidationException) {
             assertThat(e.message).contains("not in the allowed candidate list")
         }
+    }
+
+    @Test
+    fun validate_prescriptionTypeDoesNotMatchCatalog_throwsException() = runTest {
+        val workout = GeneratedWorkout(
+            name = "Invalid Routine",
+            focusMuscles = listOf("Chest"),
+            estimatedDurationMinutes = 30,
+            exercises = listOf(
+                PlannedExercise(
+                    exerciseId = "parallel-bar-dips",
+                    prescription = ExercisePrescription(
+                        exerciseType = ExerciseType.DURATION,
+                        targetSets = 3,
+                        targetDurationSeconds = 45
+                    )
+                )
+            )
+        )
+
+        assertValidationFailure(workout, "type")
     }
 
     @Test

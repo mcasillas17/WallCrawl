@@ -1,5 +1,6 @@
 package wallcrawl.elopenmike.com.core.exercise
 
+import java.util.Locale
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.UserProfile
 
@@ -23,22 +24,21 @@ class ExerciseFilter {
         profile: UserProfile,
         targetMuscles: List<String>? = null
     ): List<Exercise> {
-        val ownedEquipment = profile.availableEquipment.map { it.lowercase() }.toSet()
+        val ownedEquipment = profile.availableEquipment.map { it.normalizedEquipment() }.toSet()
         val excludedIds = profile.excludedExerciseIds.toSet()
 
         return allExercises.filter { exercise ->
-            // Catalog-only entries have not had their hard requirements reviewed.
-            val programming = exercise.programming ?: return@filter false
-
             // 1. Check exclusions
             if (exercise.id in excludedIds) {
                 return@filter false
             }
 
-            // 2. Any one combination is viable; every item within it is required.
-            val combinations = programming.requiredEquipmentCombinations
+            // 2. Reviewed combinations support alternatives. Catalog-only entries use
+            // their listed equipment as one combination with every item required.
+            val combinations = exercise.programming?.requiredEquipmentCombinations
+                ?: listOf(exercise.listedEquipment.filter(String::isNotBlank))
             val hasRequiredEquipment = combinations.isEmpty() || combinations.any { combination ->
-                combination.all { equipment -> equipment.lowercase() in ownedEquipment }
+                combination.all { equipment -> equipment.normalizedEquipment() in ownedEquipment }
             }
             if (!hasRequiredEquipment) {
                 return@filter false
@@ -59,4 +59,6 @@ class ExerciseFilter {
             true
         }
     }
+
+    private fun String.normalizedEquipment(): String = trim().lowercase(Locale.ROOT)
 }

@@ -8,7 +8,6 @@ import wallcrawl.elopenmike.com.core.model.MechanicsType
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
-import wallcrawl.elopenmike.com.core.model.WeightUnit
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
@@ -16,7 +15,10 @@ import java.util.concurrent.atomic.AtomicInteger
  * Mimics an intelligent local LLM by selecting structured workouts tailored to user goals,
  * muscle priorities, and time budget, while STRICTLY selecting from [context.allowedExercises].
  */
-class FakeWorkoutPlanner : WorkoutPlanner {
+class FakeWorkoutPlanner(
+    private val prescriptionFactory: DefaultExercisePrescriptionFactory =
+        DefaultExercisePrescriptionFactory()
+) : WorkoutPlanner {
 
     private val generationCounter = AtomicInteger(0)
 
@@ -25,12 +27,6 @@ class FakeWorkoutPlanner : WorkoutPlanner {
         if (candidates.isEmpty()) {
             throw WorkoutValidationException("Cannot generate workout: no allowed candidate exercises available.")
         }
-        if (candidates.any { it.programming == null }) {
-            throw WorkoutValidationException(
-                "Cannot generate workout: every allowed candidate requires reviewed programming metadata."
-            )
-        }
-
         val generationIndex = generationCounter.getAndIncrement()
         val splitType = determineSplitType(context, generationIndex)
 
@@ -98,10 +94,8 @@ class FakeWorkoutPlanner : WorkoutPlanner {
                 exercise.secondaryMuscles.any { it in targetMuscles }
         }.ifEmpty { candidates }
 
-        // Partition compound vs isolation
+        // Prefer reviewed compound lifts, then allow every remaining matching exercise.
         val compounds = matchingCandidates.filter { it.programming?.mechanics == MechanicsType.COMPOUND }
-        val isolations = matchingCandidates.filter { it.programming?.mechanics == MechanicsType.ISOLATION }
-
         val exerciseCountTarget = when {
             context.preferredWorkoutDurationMinutes <= 35 -> 3
             context.preferredWorkoutDurationMinutes <= 55 -> 5
@@ -112,10 +106,11 @@ class FakeWorkoutPlanner : WorkoutPlanner {
         // Pick primary compound lifts first
         result.addAll(compounds.take(minOf(3, exerciseCountTarget - 1)))
 
-        // Fill remaining slots with isolation / secondary exercises
+        // Fill remaining slots from the entire matching catalog. Programming metadata
+        // influences ordering but never prevents an otherwise valid exercise from selection.
         val remainingSlots = exerciseCountTarget - result.size
         if (remainingSlots > 0) {
-            val availableRemaining = (isolations + compounds).filter { it !in result }
+            val availableRemaining = matchingCandidates.filter { it !in result }
             result.addAll(availableRemaining.take(remainingSlots))
         }
 
@@ -126,80 +121,11 @@ class FakeWorkoutPlanner : WorkoutPlanner {
         exercise: Exercise,
         context: WorkoutGenerationContext
     ): GeneratedExercise {
-        val programming = exercise.programming
-            ?: throw WorkoutValidationException(
-                "Cannot generate workout: ${exercise.id} has no reviewed programming metadata."
-            )
-        val sets = when (context.fitnessGoal) {
-            FitnessGoal.STRENGTH -> if (programming.mechanics == MechanicsType.COMPOUND) 4 else 3
-            FitnessGoal.BUILD_MUSCLE -> 3
-            FitnessGoal.GENERAL_FITNESS -> 3
-            FitnessGoal.FAT_LOSS -> 3
-            FitnessGoal.ATHLETIC_PERFORMANCE -> 4
-        }
-
-        val (repMin, repMax) = when (context.fitnessGoal) {
-            FitnessGoal.STRENGTH -> if (programming.mechanics == MechanicsType.COMPOUND) 4 to 6 else 6 to 8
-            FitnessGoal.BUILD_MUSCLE -> programming.recommendedRepRange.min to programming.recommendedRepRange.max
-            FitnessGoal.GENERAL_FITNESS -> 10 to 12
-            FitnessGoal.FAT_LOSS -> 12 to 15
-            FitnessGoal.ATHLETIC_PERFORMANCE -> 5 to 8
-        }
-
-        val targetWeight = suggestedTargetWeight(
-            exercise = exercise,
-            context = context,
-            targetRepMaximum = repMax
-        )
-
-        val restSeconds = if (context.fitnessGoal == FitnessGoal.STRENGTH) 120 else 90
-
         return GeneratedExercise(
             exerciseId = exercise.id,
-            targetSets = sets,
-            repMin = repMin,
-            repMax = repMax,
-            targetWeight = targetWeight,
-            restSeconds = restSeconds,
-            notes = programming.coachingSummary
+            prescription = prescriptionFactory.create(exercise, context),
+            notes = exercise.programming?.coachingSummary.orEmpty()
         )
-    }
-
-    private fun suggestedTargetWeight(
-        exercise: Exercise,
-        context: WorkoutGenerationContext,
-        targetRepMaximum: Int
-    ): Double? {
-        val priorPerformance = context.exerciseHistory[exercise.id]
-        val priorWeight = priorPerformance?.lastWeight
-        if (priorWeight != null && priorWeight.isFinite() && priorWeight >= 0.0) {
-            val completedRecentSets = priorPerformance.recentSets.filter { it.isCompleted }
-            val reachedTopOfRange = completedRecentSets.isNotEmpty() &&
-                completedRecentSets.all { (it.completedReps ?: 0) >= targetRepMaximum }
-            return if (reachedTopOfRange) {
-                priorWeight + when (context.preferredUnits) {
-                    WeightUnit.LBS -> 5.0
-                    WeightUnit.KG -> 2.5
-                }
-            } else {
-                priorWeight
-            }
-        }
-
-        return sampleStartingWeight(exercise.id)
-    }
-
-    private fun sampleStartingWeight(exerciseId: String): Double? = when (exerciseId) {
-        "incline-dumbbell-press" -> 47.5
-        "barbell-bench-press" -> 135.0
-        "barbell-deadlift" -> 225.0
-        "barbell-back-squat" -> 185.0
-        "dumbbell-shoulder-press" -> 35.0
-        "dumbbell-lateral-raise" -> 20.0
-        "cable-triceps-pushdown" -> 42.5
-        "barbell-bicep-curl" -> 55.0
-        "romanian-deadlift" -> 135.0
-        else -> null
     }
 
     private fun generateWorkoutTitle(split: SplitType, goal: FitnessGoal): String {
@@ -228,10 +154,11 @@ class FakeWorkoutPlanner : WorkoutPlanner {
     }
 
     private fun calculateEstimatedDuration(exercises: List<GeneratedExercise>): Int {
-        val totalSets = exercises.sumOf { it.targetSets }
         val restTimeSeconds = exercises.sumOf { it.targetSets * it.restSeconds }
-        val executionTimeSeconds = totalSets * 45 // approx 45s per set
-        return ((restTimeSeconds + executionTimeSeconds) / 60).coerceAtLeast(25)
+        val executionTimeSeconds = exercises.sumOf { exercise ->
+            exercise.targetSets * (exercise.prescription.targetDurationSeconds ?: 45)
+        }
+        return ((restTimeSeconds + executionTimeSeconds) / 60).coerceIn(1, 240)
     }
 
     private enum class SplitType {

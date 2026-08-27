@@ -138,9 +138,18 @@ object StandardEquipment {
     const val PULLUP_BAR = "Pull-up Bar"
     const val DIP_BARS = "Dip Bars"
     const val SQUAT_RACK = "Squat Rack"
+    const val BOX = "Box"
+    const val CARDIO = "Cardio"
+    const val CHAIR = "Chair"
+    const val DOORWAY = "Doorway"
+    const val PLATE = "Plate"
+    const val STABILITY_BALL = "Stability Ball"
+    const val TOWEL = "Towel"
+    const val WALL = "Wall"
 
     val ALL = listOf(
         BARBELL, DUMBBELL, CABLE, MACHINE, BODYWEIGHT,
-        KETTLEBELL, RESISTANCE_BAND, BENCH, PULLUP_BAR, DIP_BARS, SQUAT_RACK
+        KETTLEBELL, RESISTANCE_BAND, BENCH, PULLUP_BAR, DIP_BARS, SQUAT_RACK,
+        BOX, CARDIO, CHAIR, DOORWAY, PLATE, STABILITY_BALL, TOWEL, WALL
     )
 }

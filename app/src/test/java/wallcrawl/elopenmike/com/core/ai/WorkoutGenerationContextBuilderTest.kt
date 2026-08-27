@@ -25,7 +25,7 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSummary
 class WorkoutGenerationContextBuilderTest {
 
     @Test
-    fun build_excludesCatalogEntriesWithoutReviewedProgramming() = runTest {
+    fun build_includesCatalogEntriesWithoutReviewedProgrammingWhenEquipmentMatches() = runTest {
         val reviewed = InMemoryExerciseCatalog.SAMPLE_EXERCISES.first()
         val unreviewed = reviewed.copy(id = "catalog-only-exercise", programming = null)
         val builder = WorkoutGenerationContextBuilder(
@@ -38,8 +38,8 @@ class WorkoutGenerationContextBuilderTest {
 
         val context = builder.build()
 
-        assertThat(context.allowedExercises.map { it.id }).contains(reviewed.id)
-        assertThat(context.allowedExercises.map { it.id }).doesNotContain(unreviewed.id)
+        assertThat(context.allowedExercises.map { it.id })
+            .containsExactly(reviewed.id, unreviewed.id)
     }
 
     @Test
