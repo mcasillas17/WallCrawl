@@ -120,6 +120,9 @@ Custom workout templates are stored locally in Room. Starting a template
 creates a frozen active-session snapshot, so later template edits or deletion
 do not rewrite workout history. Completed measurements retain their exercise
 type and feed the same history and progress pipeline used by planned workouts.
+Detailed target editing and unsaved-draft process restoration are intentionally
+out of scope for this phase; the editor currently saves exercise order and set
+count with conservative, type-specific targets.
 
 Each exercise resolves to three bundled frames that animate in a lightweight
 `1 → 2 → 3 → 2` loop using Coil 3 with SVG support. The compact normalized
@@ -190,8 +193,6 @@ of its 906 SVG paths.
 
 - Expand reviewed programming and hard equipment metadata to improve the
   conservative defaults used by unreviewed catalog exercises.
-- Add detailed target editing to custom templates beyond exercise order and set
-  count.
 - Add richer active-workout controls such as rest timers, RPE/RIR editing, and
   exercise substitution.
 - Expand progress calculations and charts as more history accumulates.
