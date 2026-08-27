@@ -36,9 +36,10 @@ production local LLM runtime is integrated yet.
 - **Custom Workout Builder**: Interactive routine editor with full 302-exercise bottom sheet picker, drag/reorder controls, and type-aware target set steppers.
 - **Exercise Library**: Searchable catalog of 302 exercises across all muscle groups and equipment types.
 - **Active Workout Session**: Type-aware logging for load/reps, bodyweight reps, assisted reps, duration, and distance/duration, with animated SVG movement previews and previous performance comparisons.
-- **Workout Summary**: Post-workout celebration card displaying session duration, total volume lifted, and sets completed.
-- **Progress Tracking**: Weekly workout streaks, aggregate volume trends, strength progression indicators, and historical workout logs.
-- **Training Profile**: Full local customization of fitness goals, preferred weight units (LBS/KG), session duration targets, and available gym equipment.
+- **Workout Summary**: Post-workout card displaying session duration, total volume lifted, sets completed, and personal records set against your logged history.
+- **Progress Tracking**: Weekly workout streaks, volume and rep totals, per-muscle weekly set counts, strength progression indicators, and historical workout logs.
+- **Training Profile**: Full local customization of fitness goals, preferred weight units (LBS/KG), session duration targets, available gym equipment, and muscle priorities.
+- **Credits & Licenses**: In-app attribution for the bundled exercise artwork, reachable from the Training Profile screen.
 
 ## Documentation
 
@@ -130,6 +131,21 @@ apply the user's equipment hard filter. A user building a custom workout may
 explicitly select any catalog exercise, with an equipment mismatch shown as a
 warning rather than silently hiding the exercise.
 
+Upstream muscle names enter the domain through `MuscleVocabulary`, so the
+planner, muscle priorities, and weekly volume all share one set of names.
+It resolves upstream spellings (`Quads` → `Quadriceps`) and umbrella terms that
+name several groups at once: `Posterior Chain` becomes a `Hamstrings` primary
+with `Glutes` and `Lower Back` secondary. Primary muscles stay one per upstream
+name because weekly set counts credit a set to every primary — expanding them
+in place would report one set of lunges as three. `catalog.json` itself is left
+byte-identical to what the importer produces, so `--check` still verifies it.
+
+Cardio machines, distance work, and stretches stay browseable and usable in
+custom workouts, but are not prescribed as automatic training slots. The test
+is whether sets and reps mean something for the movement: a kettlebell swing is
+loaded work for reps that happens to involve conditioning, and a plank is a
+timed hold that does not — both are planned; treadmills and jump rope are not.
+
 Custom workout templates are stored locally in Room. Starting a template
 creates a frozen active-session snapshot, so later template edits or deletion
 do not rewrite workout history. Completed measurements retain their exercise
@@ -168,6 +184,13 @@ and WallCrawl notice are preserved under
 `app/src/main/assets/workout-guide/`. WallCrawl source code remains covered by
 the repository's MIT license; third-party assets retain their own terms.
 
+The license also requires the credit to reach the person using the app, not
+only someone reading this repository. **Training Profile → Credits & Licenses**
+shows the creator, the license and a link to it, the pinned upstream commit,
+and the bundled notices — including the Everkinetic provenance of the original
+artwork. Catalog provenance is carried through `CatalogAttribution` rather than
+discarded at parse, so that screen renders what actually shipped.
+
 ## Build and test
 
 Requirements:
@@ -184,9 +207,11 @@ python3 -m unittest discover -s tools/workout-guide -p 'test_*.py' -v
 ```
 
 The unit suite covers catalog filtering, context construction, bounded history
-analysis, planner constraints and type-aware prescriptions, generated-workout
-validation, template validation, atomic persistence boundaries, progress
-calculations, Today state, duration calculation, and visual-provider mapping.
+analysis, planner constraints and type-aware prescriptions, split selection and
+its failure reasons, the muscle vocabulary and the shipped catalog's conformance
+to it, generated-workout validation, template validation, atomic persistence
+boundaries, progress and personal-record calculations, attribution loading,
+Today state, duration calculation, and visual-provider mapping.
 Android instrumentation also validates database migration and template/session
 snapshot behavior, parses the packaged 302-exercise catalog, and opens every one
 of its 906 SVG paths.
@@ -207,7 +232,12 @@ of its 906 SVG paths.
 ## Next milestones
 
 - Expand reviewed programming and hard equipment metadata to improve the
-  conservative defaults used by unreviewed catalog exercises.
+  conservative defaults used by unreviewed catalog exercises. Only 12 of 302
+  exercises carry reviewed `programming` today, which is what limits the
+  planner's ordering.
+- Rank the exercises that fill a split's remaining slots. Compound lifts are
+  chosen first, but the rest are taken in catalog order, so a plan can pad with
+  whatever sorts earliest among matching candidates.
 - Add richer active-workout controls such as rest timers, RPE/RIR editing, and
   exercise substitution.
 - Expand progress calculations and charts as more history accumulates.
