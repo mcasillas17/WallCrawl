@@ -48,6 +48,7 @@ import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.ui.components.StatBadge
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
+import wallcrawl.elopenmike.com.core.ui.components.WallCrawlWordmark
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlOutlinedButton
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlSecondaryButton
@@ -248,12 +249,7 @@ private fun TodayHeader(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_wallcrawl_wordmark),
-                    contentDescription = "WallCrawl",
-                    modifier = Modifier.height(26.dp),
-                    contentScale = ContentScale.Fit
-                )
+                WallCrawlWordmark(fontSize = 20.sp)
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = "Ready to train, $userName",

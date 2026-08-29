@@ -159,15 +159,7 @@ private fun ProfileContent(
             )
         }
 
-        // 1. App Theme Selector
-        item {
-            ProfileThemeSelector(
-                currentTheme = profile.themePreference,
-                onSelectTheme = onUpdateThemePreference
-            )
-        }
-
-        // 2. Fitness Goals Selector
+        // 1. Fitness Goals Selector
         item {
             WallCrawlCard(
                 cornerRadius = 16.dp,
@@ -178,7 +170,7 @@ private fun ProfileContent(
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.8.sp,
-                    color = CrimsonRedLight
+                    color = CrimsonRedPrimary
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
@@ -249,7 +241,7 @@ private fun ProfileContent(
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.8.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = CrimsonRedPrimary
                 )
 
                 Spacer(modifier = Modifier.height(14.dp))
@@ -275,7 +267,7 @@ private fun ProfileContent(
                                     text = unit.name,
                                     fontSize = 13.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = if (isSelected) TextWhite else MaterialTheme.colorScheme.onSurfaceVariant
+                                    color = if (isSelected) TextWhite else MaterialTheme.colorScheme.onSurface
                                 )
                             }
                         }
@@ -330,7 +322,7 @@ private fun ProfileContent(
                                     text = "$days",
                                     fontSize = 13.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = if (isSelected) TextWhite else MaterialTheme.colorScheme.onSurfaceVariant
+                                    color = if (isSelected) TextWhite else MaterialTheme.colorScheme.onSurface
                                 )
                             }
                         }
@@ -339,7 +331,7 @@ private fun ProfileContent(
             }
         }
 
-        // 4. Available Equipment Selector
+        // 3. Available Equipment Selector
         item {
             WallCrawlCard(
                 cornerRadius = 16.dp,
@@ -350,7 +342,7 @@ private fun ProfileContent(
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.8.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = CrimsonRedPrimary
                 )
                 Spacer(modifier = Modifier.height(10.dp))
 
@@ -364,11 +356,18 @@ private fun ProfileContent(
                         FilterChip(
                             selected = isSelected,
                             onClick = { onToggleEquipment(equipment) },
-                            label = { Text(equipment, fontSize = 12.sp, fontWeight = FontWeight.SemiBold) },
+                            label = {
+                                Text(
+                                    text = equipment,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = if (isSelected) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onSurface
+                                )
+                            },
                             colors = FilterChipDefaults.filterChipColors(
                                 containerColor = MaterialTheme.colorScheme.surface,
                                 selectedContainerColor = MaterialTheme.colorScheme.secondary,
-                                labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                labelColor = MaterialTheme.colorScheme.onSurface,
                                 selectedLabelColor = MaterialTheme.colorScheme.onSecondary
                             ),
                             border = FilterChipDefaults.filterChipBorder(
@@ -383,7 +382,7 @@ private fun ProfileContent(
             }
         }
 
-        // 5. Muscle Priorities Matrix
+        // 4. Muscle Priorities Matrix
         item {
             WallCrawlCard(
                 cornerRadius = 16.dp,
@@ -394,7 +393,7 @@ private fun ProfileContent(
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.8.sp,
-                    color = CrimsonRedLight
+                    color = CrimsonRedPrimary
                 )
                 Spacer(modifier = Modifier.height(12.dp))
 
@@ -423,6 +422,11 @@ private fun ProfileContent(
                                     isSelected && level == PriorityLevel.LOW -> MaterialTheme.colorScheme.outline
                                     else -> MaterialTheme.colorScheme.surface
                                 }
+                                val textColor = when {
+                                    isSelected && (level == PriorityLevel.HIGH || level == PriorityLevel.NORMAL) -> TextWhite
+                                    isSelected && level == PriorityLevel.LOW -> MaterialTheme.colorScheme.onSurface
+                                    else -> MaterialTheme.colorScheme.onSurfaceVariant
+                                }
                                 Box(
                                     modifier = Modifier
                                         .background(bgColor, RoundedCornerShape(6.dp))
@@ -438,7 +442,7 @@ private fun ProfileContent(
                                         text = level.label,
                                         fontSize = 11.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = if (isSelected) TextWhite else MaterialTheme.colorScheme.onSurfaceVariant
+                                        color = textColor
                                     )
                                 }
                             }
@@ -448,7 +452,7 @@ private fun ProfileContent(
             }
         }
 
-        // 6. Training constraints and return-after-break weeks
+        // 5. Training constraints and return-after-break weeks
         item {
             WallCrawlCard(
                 cornerRadius = 16.dp,
@@ -459,7 +463,7 @@ private fun ProfileContent(
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.8.sp,
-                    color = CrimsonRedLight
+                    color = CrimsonRedPrimary
                 )
                 Spacer(modifier = Modifier.height(10.dp))
 
@@ -473,11 +477,18 @@ private fun ProfileContent(
                         FilterChip(
                             selected = isSelected,
                             onClick = { onToggleConstraint(constraint) },
-                            label = { Text(constraint.displayName, fontSize = 12.sp, fontWeight = FontWeight.SemiBold) },
+                            label = {
+                                Text(
+                                    text = constraint.displayName,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = if (isSelected) TextWhite else MaterialTheme.colorScheme.onSurface
+                                )
+                            },
                             colors = FilterChipDefaults.filterChipColors(
                                 containerColor = MaterialTheme.colorScheme.surface,
                                 selectedContainerColor = CrimsonRedPrimary,
-                                labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                labelColor = MaterialTheme.colorScheme.onSurface,
                                 selectedLabelColor = TextWhite
                             ),
                             border = FilterChipDefaults.filterChipBorder(
@@ -524,12 +535,21 @@ private fun ProfileContent(
                 Text(
                     text = wallcrawl.elopenmike.com.core.model.BreakDurationHelper.guidanceText(profile.returningAfterBreakWeeks),
                     fontSize = 12.sp,
-                    color = if (profile.returningAfterBreakWeeks >= 52) CrimsonRedLight else MaterialTheme.colorScheme.secondary,
+                    color = if (profile.returningAfterBreakWeeks >= 52) CrimsonRedPrimary else MaterialTheme.colorScheme.secondary,
                     fontWeight = FontWeight.Medium
                 )
             }
         }
 
+        // 6. App Preferences (Theme Switcher)
+        item {
+            ProfileThemeSelector(
+                currentTheme = profile.themePreference,
+                onSelectTheme = onUpdateThemePreference
+            )
+        }
+
+        // 7. Credits and Licenses
         item {
             WallCrawlCard(
                 cornerRadius = 16.dp,
@@ -545,10 +565,10 @@ private fun ProfileContent(
                 ) {
                     Text(
                         text = "CREDITS & LICENSES",
-                        fontSize = 13.sp,
+                        fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        letterSpacing = 0.8.sp,
+                        color = CrimsonRedPrimary
                     )
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
@@ -584,56 +604,69 @@ private fun ProfileThemeSelector(
         contentPadding = 16.dp
     ) {
         Text(
-            text = "APP THEME",
+            text = "APP PREFERENCES",
             fontSize = 12.sp,
             fontWeight = FontWeight.Bold,
             letterSpacing = 0.8.sp,
-            color = CrimsonRedLight
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = "Choose your interface theme and contrast style:",
-            fontSize = 12.sp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = CrimsonRedPrimary
         )
         Spacer(modifier = Modifier.height(12.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            ThemePreference.entries.forEach { theme ->
-                val isSelected = theme == currentTheme
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(
-                            if (isSelected) CrimsonRedPrimary.copy(alpha = 0.15f)
-                            else MaterialTheme.colorScheme.surface
-                        )
-                        .border(
-                            1.dp,
-                            if (isSelected) CrimsonRedPrimary
-                            else MaterialTheme.colorScheme.outline,
-                            RoundedCornerShape(10.dp)
-                        )
-                        .clickable { onSelectTheme(theme) }
-                        .padding(vertical = 10.dp, horizontal = 4.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
+            Column(modifier = Modifier.weight(1f).padding(end = 12.dp)) {
+                Text(
+                    text = "Interface Theme",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = when (currentTheme) {
+                        ThemePreference.SYSTEM -> "Follows device appearance"
+                        ThemePreference.DARK -> "Stealth suit (Dark)"
+                        ThemePreference.LIGHT -> "Daylight athletic (Light)"
+                    },
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            // Compact 3-segment pill control
+            Row(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(MaterialTheme.colorScheme.surface)
+                    .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(10.dp))
+                    .padding(3.dp),
+                horizontalArrangement = Arrangement.spacedBy(2.dp)
+            ) {
+                ThemePreference.entries.forEach { theme ->
+                    val isSelected = theme == currentTheme
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(7.dp))
+                            .background(
+                                if (isSelected) CrimsonRedPrimary
+                                else Color.Transparent
+                            )
+                            .clickable { onSelectTheme(theme) }
+                            .padding(horizontal = 10.dp, vertical = 6.dp),
+                        contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = when (theme) {
-                                ThemePreference.SYSTEM -> "System"
+                                ThemePreference.SYSTEM -> "Auto"
                                 ThemePreference.DARK -> "Dark"
                                 ThemePreference.LIGHT -> "Light"
                             },
-                            fontSize = 13.sp,
-                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.SemiBold,
-                            color = if (isSelected) CrimsonRedPrimary else MaterialTheme.colorScheme.onSurface
+                            fontSize = 12.sp,
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                            color = if (isSelected) TextWhite else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
