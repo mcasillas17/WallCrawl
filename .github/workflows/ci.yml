@@ -38,3 +38,8 @@ jobs:
 
       - name: Run tests, lint, and debug build
         run: ./gradlew test lint assembleDebug --stacktrace --no-daemon
+
+      # Guards the reviewed programming metadata and the importer itself. Both suites
+      # build their own fixtures, so they need nothing beyond Python and git.
+      - name: Run catalog importer tests
+        run: python3 -m unittest discover -s tools/workout-guide -p 'test_*.py' -v

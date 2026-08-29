@@ -236,6 +236,2255 @@
         "barbell-deadlift"
       ],
       "coachingSummary": "Controlled hip hinge emphasizing the hamstrings and glutes under load."
+    },
+    "push-up": {
+      "requiredEquipmentCombinations": [
+        [
+          "Bodyweight"
+        ]
+      ],
+      "movementPattern": "horizontal_push",
+      "difficulty": "beginner",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 8,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions",
+      "alternativeExerciseIds": [
+        "knee-push-up",
+        "incline-push-up"
+      ],
+      "coachingSummary": "Bodyweight horizontal press with the trunk braced in a straight line from head to heels."
+    },
+    "knee-push-up": {
+      "requiredEquipmentCombinations": [
+        [
+          "Bodyweight"
+        ]
+      ],
+      "movementPattern": "horizontal_push",
+      "difficulty": "beginner",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 8,
+        "max": 15
+      },
+      "fatigueScore": 1,
+      "progressionType": "repetitions",
+      "alternativeExerciseIds": [
+        "push-up",
+        "wall-push-up"
+      ],
+      "coachingSummary": "Push-up from the knees, keeping the trunk braced while reducing the load."
+    },
+    "wall-push-up": {
+      "requiredEquipmentCombinations": [
+        [
+          "Wall"
+        ]
+      ],
+      "movementPattern": "horizontal_push",
+      "difficulty": "beginner",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 20
+      },
+      "fatigueScore": 1,
+      "progressionType": "repetitions",
+      "alternativeExerciseIds": [
+        "knee-push-up",
+        "push-up"
+      ],
+      "coachingSummary": "Standing push-up against a wall, the lowest-load entry into horizontal pressing."
+    },
+    "incline-push-up": {
+      "requiredEquipmentCombinations": [
+        [
+          "Bench"
+        ],
+        [
+          "Box"
+        ],
+        [
+          "Bodyweight"
+        ]
+      ],
+      "movementPattern": "horizontal_push",
+      "difficulty": "beginner",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 8,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions",
+      "alternativeExerciseIds": [
+        "push-up",
+        "knee-push-up"
+      ],
+      "coachingSummary": "Push-up with the hands elevated, reducing load while keeping a full range of motion."
+    },
+    "wide-push-up": {
+      "requiredEquipmentCombinations": [
+        [
+          "Bodyweight"
+        ]
+      ],
+      "movementPattern": "horizontal_push",
+      "difficulty": "beginner",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 8,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions",
+      "alternativeExerciseIds": [
+        "push-up"
+      ],
+      "coachingSummary": "Push-up with a wider hand position, shifting emphasis toward the chest."
+    },
+    "dumbbell-bench-press": {
+      "requiredEquipmentCombinations": [
+        [
+          "Dumbbell",
+          "Bench"
+        ]
+      ],
+      "movementPattern": "horizontal_push",
+      "difficulty": "intermediate",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 8,
+        "max": 12
+      },
+      "fatigueScore": 3,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "barbell-bench-press",
+        "machine-chest-press"
+      ],
+      "coachingSummary": "Flat dumbbell press allowing a deeper stretch and independent arm paths."
+    },
+    "incline-bench-press": {
+      "requiredEquipmentCombinations": [
+        [
+          "Barbell",
+          "Bench",
+          "Squat Rack"
+        ]
+      ],
+      "movementPattern": "horizontal_push",
+      "difficulty": "intermediate",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 6,
+        "max": 10
+      },
+      "fatigueScore": 4,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "incline-dumbbell-press",
+        "barbell-bench-press"
+      ],
+      "coachingSummary": "Barbell press on an incline, shifting emphasis toward the upper chest and front delts."
+    },
+    "machine-chest-press": {
+      "requiredEquipmentCombinations": [
+        [
+          "Machine"
+        ]
+      ],
+      "movementPattern": "horizontal_push",
+      "difficulty": "beginner",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 8,
+        "max": 12
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "dumbbell-bench-press",
+        "barbell-bench-press"
+      ],
+      "coachingSummary": "Guided horizontal press that trains the chest with little balance demand."
+    },
+    "dumbbell-fly": {
+      "requiredEquipmentCombinations": [
+        [
+          "Dumbbell",
+          "Bench"
+        ]
+      ],
+      "movementPattern": "isolation",
+      "difficulty": "intermediate",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "cable-fly",
+        "pec-deck"
+      ],
+      "coachingSummary": "Chest isolation through a wide arc with the elbows held at a fixed soft angle."
+    },
+    "cable-fly": {
+      "requiredEquipmentCombinations": [
+        [
+          "Cable"
+        ]
+      ],
+      "movementPattern": "isolation",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "pec-deck",
+        "dumbbell-fly"
+      ],
+      "coachingSummary": "Cable chest fly holding constant tension across the whole arc."
+    },
+    "pec-deck": {
+      "requiredEquipmentCombinations": [
+        [
+          "Machine"
+        ]
+      ],
+      "movementPattern": "isolation",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "cable-fly",
+        "dumbbell-fly"
+      ],
+      "coachingSummary": "Machine chest fly on a fixed path, useful for chest volume at low skill cost."
+    },
+    "weighted-push-up": {
+      "requiredEquipmentCombinations": [
+        [
+          "Bodyweight",
+          "Plate"
+        ]
+      ],
+      "movementPattern": "horizontal_push",
+      "difficulty": "advanced",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 6,
+        "max": 10
+      },
+      "fatigueScore": 3,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "push-up",
+        "barbell-bench-press"
+      ],
+      "coachingSummary": "Push-up loaded with external weight once bodyweight reps stop being challenging."
+    },
+    "overhead-press": {
+      "requiredEquipmentCombinations": [
+        [
+          "Barbell",
+          "Squat Rack"
+        ],
+        [
+          "Barbell"
+        ]
+      ],
+      "movementPattern": "vertical_push",
+      "difficulty": "intermediate",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 5,
+        "max": 8
+      },
+      "fatigueScore": 4,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "push-press",
+        "standing-dumbbell-press"
+      ],
+      "coachingSummary": "Standing barbell press overhead with the trunk braced and the ribs down."
+    },
+    "push-press": {
+      "requiredEquipmentCombinations": [
+        [
+          "Barbell",
+          "Squat Rack"
+        ],
+        [
+          "Barbell"
+        ]
+      ],
+      "movementPattern": "vertical_push",
+      "difficulty": "advanced",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 3,
+        "max": 6
+      },
+      "fatigueScore": 4,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "overhead-press"
+      ],
+      "coachingSummary": "Overhead press driven by a short leg dip, allowing heavier loads than a strict press."
+    },
+    "standing-dumbbell-press": {
+      "requiredEquipmentCombinations": [
+        [
+          "Dumbbell"
+        ]
+      ],
+      "movementPattern": "vertical_push",
+      "difficulty": "intermediate",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 8,
+        "max": 12
+      },
+      "fatigueScore": 3,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "dumbbell-shoulder-press",
+        "overhead-press"
+      ],
+      "coachingSummary": "Standing dumbbell press overhead with independent arm paths and a braced trunk."
+    },
+    "arnold-press": {
+      "requiredEquipmentCombinations": [
+        [
+          "Dumbbell"
+        ]
+      ],
+      "movementPattern": "vertical_push",
+      "difficulty": "intermediate",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 8,
+        "max": 12
+      },
+      "fatigueScore": 3,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "dumbbell-shoulder-press",
+        "standing-dumbbell-press"
+      ],
+      "coachingSummary": "Dumbbell press overhead with rotation, covering front and lateral deltoid ranges."
+    },
+    "machine-shoulder-press": {
+      "requiredEquipmentCombinations": [
+        [
+          "Machine"
+        ]
+      ],
+      "movementPattern": "vertical_push",
+      "difficulty": "beginner",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 8,
+        "max": 12
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "dumbbell-shoulder-press"
+      ],
+      "coachingSummary": "Guided press overhead for shoulder volume with little balance demand."
+    },
+    "pike-push-up": {
+      "requiredEquipmentCombinations": [
+        [
+          "Bodyweight"
+        ]
+      ],
+      "movementPattern": "vertical_push",
+      "difficulty": "intermediate",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 6,
+        "max": 12
+      },
+      "fatigueScore": 3,
+      "progressionType": "repetitions",
+      "alternativeExerciseIds": [
+        "feet-elevated-pike-push-up",
+        "dumbbell-shoulder-press"
+      ],
+      "coachingSummary": "Bodyweight vertical press with the hips high, loading the shoulders and triceps."
+    },
+    "front-raise": {
+      "requiredEquipmentCombinations": [
+        [
+          "Dumbbell"
+        ]
+      ],
+      "movementPattern": "isolation",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "cable-front-raise",
+        "plate-front-raise"
+      ],
+      "coachingSummary": "Front deltoid isolation raising the load to shoulder height under control."
+    },
+    "cable-lateral-raise": {
+      "requiredEquipmentCombinations": [
+        [
+          "Cable"
+        ]
+      ],
+      "movementPattern": "isolation",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 12,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "dumbbell-lateral-raise",
+        "machine-lateral-raise"
+      ],
+      "coachingSummary": "Cable lateral raise holding tension on the side deltoid through the whole range."
+    },
+    "close-grip-bench-press": {
+      "requiredEquipmentCombinations": [
+        [
+          "Barbell",
+          "Bench",
+          "Squat Rack"
+        ]
+      ],
+      "movementPattern": "horizontal_push",
+      "difficulty": "intermediate",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 6,
+        "max": 10
+      },
+      "fatigueScore": 3,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "barbell-bench-press",
+        "dip"
+      ],
+      "coachingSummary": "Narrow-grip bench press shifting emphasis from the chest to the triceps."
+    },
+    "dip": {
+      "requiredEquipmentCombinations": [
+        [
+          "Dip Bars"
+        ]
+      ],
+      "movementPattern": "vertical_push",
+      "difficulty": "intermediate",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 6,
+        "max": 12
+      },
+      "fatigueScore": 3,
+      "progressionType": "repetitions",
+      "alternativeExerciseIds": [
+        "parallel-bar-dips",
+        "bench-dip"
+      ],
+      "coachingSummary": "Bodyweight dip on parallel bars, pressing the chest and triceps through a deep range."
+    },
+    "bench-dip": {
+      "requiredEquipmentCombinations": [
+        [
+          "Bench"
+        ],
+        [
+          "Bodyweight"
+        ]
+      ],
+      "movementPattern": "vertical_push",
+      "difficulty": "beginner",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 8,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions",
+      "alternativeExerciseIds": [
+        "dip",
+        "chair-dip"
+      ],
+      "coachingSummary": "Triceps dip with the hands behind on a bench and the feet supported."
+    },
+    "diamond-push-up": {
+      "requiredEquipmentCombinations": [
+        [
+          "Bodyweight"
+        ]
+      ],
+      "movementPattern": "horizontal_push",
+      "difficulty": "intermediate",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 6,
+        "max": 12
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions",
+      "alternativeExerciseIds": [
+        "push-up",
+        "close-grip-bench-press"
+      ],
+      "coachingSummary": "Push-up with the hands close together, emphasising the triceps."
+    },
+    "assisted-dip": {
+      "requiredEquipmentCombinations": [
+        [
+          "Machine"
+        ]
+      ],
+      "movementPattern": "vertical_push",
+      "difficulty": "beginner",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 6,
+        "max": 10
+      },
+      "fatigueScore": 2,
+      "progressionType": "assistance_reduction",
+      "alternativeExerciseIds": [
+        "dip",
+        "bench-dip"
+      ],
+      "coachingSummary": "Machine-assisted dip that carries part of bodyweight while the pattern is learned."
+    },
+    "dumbbell-overhead-tricep-extension": {
+      "requiredEquipmentCombinations": [
+        [
+          "Dumbbell"
+        ]
+      ],
+      "movementPattern": "isolation",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "overhead-tricep-extension",
+        "dumbbell-skull-crusher"
+      ],
+      "coachingSummary": "Elbow extension overhead, loading the triceps in a lengthened position."
+    },
+    "skull-crusher": {
+      "requiredEquipmentCombinations": [
+        [
+          "Barbell",
+          "Bench"
+        ]
+      ],
+      "movementPattern": "isolation",
+      "difficulty": "intermediate",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 8,
+        "max": 12
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "dumbbell-skull-crusher",
+        "cable-triceps-pushdown"
+      ],
+      "coachingSummary": "Lying elbow extension keeping the upper arms still as the bar travels past the head."
+    },
+    "rope-tricep-pushdown": {
+      "requiredEquipmentCombinations": [
+        [
+          "Cable"
+        ]
+      ],
+      "movementPattern": "isolation",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "cable-triceps-pushdown"
+      ],
+      "coachingSummary": "Cable pushdown with a rope, letting the hands separate at lockout."
+    },
+    "barbell-row": {
+      "requiredEquipmentCombinations": [
+        [
+          "Barbell"
+        ]
+      ],
+      "movementPattern": "horizontal_pull",
+      "difficulty": "intermediate",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 6,
+        "max": 10
+      },
+      "fatigueScore": 4,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "pendlay-row",
+        "dumbbell-bent-over-row"
+      ],
+      "coachingSummary": "Bent-over barbell row pulling to the lower ribs from a braced hinge."
+    },
+    "pendlay-row": {
+      "requiredEquipmentCombinations": [
+        [
+          "Barbell"
+        ]
+      ],
+      "movementPattern": "horizontal_pull",
+      "difficulty": "advanced",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 5,
+        "max": 8
+      },
+      "fatigueScore": 4,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "barbell-row"
+      ],
+      "coachingSummary": "Barbell row from a dead stop on the floor each rep, which removes momentum."
+    },
+    "dumbbell-bent-over-row": {
+      "requiredEquipmentCombinations": [
+        [
+          "Dumbbell"
+        ]
+      ],
+      "movementPattern": "horizontal_pull",
+      "difficulty": "intermediate",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 8,
+        "max": 12
+      },
+      "fatigueScore": 3,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "one-arm-dumbbell-row",
+        "barbell-row"
+      ],
+      "coachingSummary": "Bent-over dumbbell row training the mid-back from a braced hinge position."
+    },
+    "one-arm-dumbbell-row": {
+      "requiredEquipmentCombinations": [
+        [
+          "Dumbbell",
+          "Bench"
+        ],
+        [
+          "Dumbbell"
+        ]
+      ],
+      "movementPattern": "horizontal_pull",
+      "difficulty": "beginner",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 8,
+        "max": 12
+      },
+      "fatigueScore": 3,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "dumbbell-bent-over-row",
+        "seated-row"
+      ],
+      "coachingSummary": "Single-arm row with the free hand supported, allowing a long controlled pull."
+    },
+    "seated-row": {
+      "requiredEquipmentCombinations": [
+        [
+          "Cable"
+        ]
+      ],
+      "movementPattern": "horizontal_pull",
+      "difficulty": "beginner",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 8,
+        "max": 12
+      },
+      "fatigueScore": 3,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "machine-row",
+        "one-arm-dumbbell-row"
+      ],
+      "coachingSummary": "Seated cable row pulling to the trunk with the chest tall and the shoulders down."
+    },
+    "machine-row": {
+      "requiredEquipmentCombinations": [
+        [
+          "Machine"
+        ]
+      ],
+      "movementPattern": "horizontal_pull",
+      "difficulty": "beginner",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 8,
+        "max": 12
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "seated-row",
+        "chest-supported-row"
+      ],
+      "coachingSummary": "Guided rowing pattern for mid-back volume with little balance demand."
+    },
+    "chest-supported-row": {
+      "requiredEquipmentCombinations": [
+        [
+          "Machine"
+        ]
+      ],
+      "movementPattern": "horizontal_pull",
+      "difficulty": "beginner",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 8,
+        "max": 12
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "machine-row",
+        "seated-row"
+      ],
+      "coachingSummary": "Row with the chest supported, taking the lower back out of the movement."
+    },
+    "inverted-row": {
+      "requiredEquipmentCombinations": [
+        [
+          "Bodyweight"
+        ]
+      ],
+      "movementPattern": "horizontal_pull",
+      "difficulty": "beginner",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 8,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions",
+      "alternativeExerciseIds": [
+        "banded-row",
+        "seated-row"
+      ],
+      "coachingSummary": "Bodyweight row under a fixed bar, scaled by how horizontal the body is."
+    },
+    "banded-row": {
+      "requiredEquipmentCombinations": [
+        [
+          "Resistance Band"
+        ]
+      ],
+      "movementPattern": "horizontal_pull",
+      "difficulty": "beginner",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions",
+      "alternativeExerciseIds": [
+        "seated-row",
+        "inverted-row"
+      ],
+      "coachingSummary": "Band row giving a horizontal pull wherever an anchor is available."
+    },
+    "lat-pulldown": {
+      "requiredEquipmentCombinations": [
+        [
+          "Cable"
+        ]
+      ],
+      "movementPattern": "vertical_pull",
+      "difficulty": "beginner",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 8,
+        "max": 12
+      },
+      "fatigueScore": 3,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "wide-grip-lat-pulldown",
+        "pull-ups"
+      ],
+      "coachingSummary": "Cable pulldown training the vertical pull at a load that can be dialled in."
+    },
+    "wide-grip-lat-pulldown": {
+      "requiredEquipmentCombinations": [
+        [
+          "Cable"
+        ]
+      ],
+      "movementPattern": "vertical_pull",
+      "difficulty": "beginner",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 8,
+        "max": 12
+      },
+      "fatigueScore": 3,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "lat-pulldown",
+        "pull-ups"
+      ],
+      "coachingSummary": "Wide-grip pulldown emphasising the lats through a vertical pulling path."
+    },
+    "close-grip-lat-pulldown": {
+      "requiredEquipmentCombinations": [
+        [
+          "Cable"
+        ]
+      ],
+      "movementPattern": "vertical_pull",
+      "difficulty": "beginner",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 8,
+        "max": 12
+      },
+      "fatigueScore": 3,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "lat-pulldown"
+      ],
+      "coachingSummary": "Close-grip pulldown with a longer range and more elbow flexion than a wide grip."
+    },
+    "assisted-pull-up": {
+      "requiredEquipmentCombinations": [
+        [
+          "Machine"
+        ]
+      ],
+      "movementPattern": "vertical_pull",
+      "difficulty": "beginner",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 6,
+        "max": 10
+      },
+      "fatigueScore": 2,
+      "progressionType": "assistance_reduction",
+      "alternativeExerciseIds": [
+        "pull-ups",
+        "negative-pull-up"
+      ],
+      "coachingSummary": "Machine-assisted pull-up that carries part of bodyweight while strength is built."
+    },
+    "negative-pull-up": {
+      "requiredEquipmentCombinations": [
+        [
+          "Pull-up Bar"
+        ]
+      ],
+      "movementPattern": "vertical_pull",
+      "difficulty": "beginner",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 3,
+        "max": 6
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions",
+      "alternativeExerciseIds": [
+        "assisted-pull-up",
+        "pull-ups"
+      ],
+      "coachingSummary": "The lowering half of a pull-up performed slowly, a step toward the full movement."
+    },
+    "neutral-grip-pull-up": {
+      "requiredEquipmentCombinations": [
+        [
+          "Pull-up Bar"
+        ]
+      ],
+      "movementPattern": "vertical_pull",
+      "difficulty": "intermediate",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 6,
+        "max": 12
+      },
+      "fatigueScore": 3,
+      "progressionType": "repetitions",
+      "alternativeExerciseIds": [
+        "pull-ups",
+        "chin-up"
+      ],
+      "coachingSummary": "Pull-up with the palms facing each other, often the most shoulder-friendly grip."
+    },
+    "banded-lat-pulldown": {
+      "requiredEquipmentCombinations": [
+        [
+          "Resistance Band"
+        ]
+      ],
+      "movementPattern": "vertical_pull",
+      "difficulty": "beginner",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions",
+      "alternativeExerciseIds": [
+        "lat-pulldown"
+      ],
+      "coachingSummary": "Band pulldown giving a vertical pull without a cable stack."
+    },
+    "straight-arm-pulldown": {
+      "requiredEquipmentCombinations": [
+        [
+          "Cable"
+        ]
+      ],
+      "movementPattern": "isolation",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 12,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "lat-pulldown"
+      ],
+      "coachingSummary": "Lat isolation drawing the bar down with the elbows held nearly straight."
+    },
+    "face-pull": {
+      "requiredEquipmentCombinations": [
+        [
+          "Cable"
+        ]
+      ],
+      "movementPattern": "horizontal_pull",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 12,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "banded-face-pull",
+        "rear-delt-fly"
+      ],
+      "coachingSummary": "Cable pull to the face training the rear delts and the upper-back rotators."
+    },
+    "band-pull-apart": {
+      "requiredEquipmentCombinations": [
+        [
+          "Resistance Band"
+        ]
+      ],
+      "movementPattern": "horizontal_pull",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 12,
+        "max": 20
+      },
+      "fatigueScore": 1,
+      "progressionType": "repetitions",
+      "alternativeExerciseIds": [
+        "banded-face-pull",
+        "face-pull"
+      ],
+      "coachingSummary": "Band pulled apart at chest height, low-fatigue upper-back and rear-delt work."
+    },
+    "shrug": {
+      "requiredEquipmentCombinations": [
+        [
+          "Barbell"
+        ]
+      ],
+      "movementPattern": "isolation",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "dumbbell-shrug"
+      ],
+      "coachingSummary": "Barbell shrug elevating the shoulders to train the upper traps."
+    },
+    "dumbbell-shrug": {
+      "requiredEquipmentCombinations": [
+        [
+          "Dumbbell"
+        ]
+      ],
+      "movementPattern": "isolation",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "shrug"
+      ],
+      "coachingSummary": "Dumbbell shrug training the upper traps with the arms hanging at the sides."
+    },
+    "prone-y-raise": {
+      "requiredEquipmentCombinations": [
+        [
+          "Bodyweight"
+        ]
+      ],
+      "movementPattern": "horizontal_pull",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 15
+      },
+      "fatigueScore": 1,
+      "progressionType": "repetitions",
+      "alternativeExerciseIds": [
+        "prone-t-raise",
+        "band-pull-apart"
+      ],
+      "coachingSummary": "Face-down raise in a Y position for the lower traps and upper back."
+    },
+    "bicep-curl": {
+      "requiredEquipmentCombinations": [
+        [
+          "Dumbbell"
+        ]
+      ],
+      "movementPattern": "isolation",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 8,
+        "max": 12
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "barbell-bicep-curl",
+        "hammer-curl"
+      ],
+      "coachingSummary": "Dumbbell curl training the biceps with a supinated grip."
+    },
+    "hammer-curl": {
+      "requiredEquipmentCombinations": [
+        [
+          "Dumbbell"
+        ]
+      ],
+      "movementPattern": "isolation",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 8,
+        "max": 12
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "bicep-curl",
+        "rope-hammer-curl"
+      ],
+      "coachingSummary": "Neutral-grip curl loading the biceps and the brachialis beneath them."
+    },
+    "cable-curl": {
+      "requiredEquipmentCombinations": [
+        [
+          "Cable"
+        ]
+      ],
+      "movementPattern": "isolation",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "barbell-bicep-curl",
+        "bicep-curl"
+      ],
+      "coachingSummary": "Cable curl holding tension on the biceps through the whole range."
+    },
+    "incline-dumbbell-curl": {
+      "requiredEquipmentCombinations": [
+        [
+          "Dumbbell",
+          "Bench"
+        ]
+      ],
+      "movementPattern": "isolation",
+      "difficulty": "intermediate",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 12
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "bicep-curl",
+        "spider-curl"
+      ],
+      "coachingSummary": "Curl lying back on an incline, loading the biceps in a stretched position."
+    },
+    "preacher-curl": {
+      "requiredEquipmentCombinations": [
+        [
+          "Machine"
+        ]
+      ],
+      "movementPattern": "isolation",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 8,
+        "max": 12
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "barbell-bicep-curl",
+        "bicep-curl"
+      ],
+      "coachingSummary": "Curl with the upper arms supported, which takes swing out of the movement."
+    },
+    "chin-up": {
+      "requiredEquipmentCombinations": [
+        [
+          "Pull-up Bar"
+        ]
+      ],
+      "movementPattern": "vertical_pull",
+      "difficulty": "intermediate",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 5,
+        "max": 10
+      },
+      "fatigueScore": 3,
+      "progressionType": "repetitions",
+      "alternativeExerciseIds": [
+        "pull-ups",
+        "assisted-chin-up"
+      ],
+      "coachingSummary": "Underhand-grip pull-up placing more of the work on the biceps."
+    },
+    "rear-delt-fly": {
+      "requiredEquipmentCombinations": [
+        [
+          "Dumbbell"
+        ]
+      ],
+      "movementPattern": "isolation",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 12,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "cable-rear-delt-fly",
+        "reverse-pec-deck"
+      ],
+      "coachingSummary": "Bent-over dumbbell fly training the rear deltoids."
+    },
+    "cable-rear-delt-fly": {
+      "requiredEquipmentCombinations": [
+        [
+          "Cable"
+        ]
+      ],
+      "movementPattern": "isolation",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 12,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "rear-delt-fly",
+        "face-pull"
+      ],
+      "coachingSummary": "Cable reverse fly keeping tension on the rear deltoids throughout."
+    },
+    "reverse-pec-deck": {
+      "requiredEquipmentCombinations": [
+        [
+          "Machine"
+        ]
+      ],
+      "movementPattern": "isolation",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 12,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "rear-delt-fly"
+      ],
+      "coachingSummary": "Machine reverse fly for rear-delt volume on a fixed movement path."
+    },
+    "reverse-curl": {
+      "requiredEquipmentCombinations": [
+        [
+          "Barbell"
+        ]
+      ],
+      "movementPattern": "isolation",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "wrist-curl",
+        "hammer-curl"
+      ],
+      "coachingSummary": "Overhand curl loading the forearm extensors and the brachioradialis."
+    },
+    "wrist-curl": {
+      "requiredEquipmentCombinations": [
+        [
+          "Barbell"
+        ]
+      ],
+      "movementPattern": "isolation",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 12,
+        "max": 20
+      },
+      "fatigueScore": 1,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "wrist-extension",
+        "reverse-curl"
+      ],
+      "coachingSummary": "Wrist flexion against load, direct work for the forearm flexors and grip."
+    },
+    "bodyweight-squat": {
+      "requiredEquipmentCombinations": [
+        [
+          "Bodyweight"
+        ]
+      ],
+      "movementPattern": "squat",
+      "difficulty": "beginner",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 20
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions",
+      "alternativeExerciseIds": [
+        "goblet-squat",
+        "forward-lunge"
+      ],
+      "coachingSummary": "Unloaded squat used to groove the pattern and build a base."
+    },
+    "goblet-squat": {
+      "requiredEquipmentCombinations": [
+        [
+          "Dumbbell"
+        ],
+        [
+          "Kettlebell"
+        ]
+      ],
+      "movementPattern": "squat",
+      "difficulty": "beginner",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 8,
+        "max": 12
+      },
+      "fatigueScore": 3,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "bodyweight-squat",
+        "front-squat"
+      ],
+      "coachingSummary": "Squat holding a single weight at the chest, which helps keep the torso upright."
+    },
+    "front-squat": {
+      "requiredEquipmentCombinations": [
+        [
+          "Barbell",
+          "Squat Rack"
+        ]
+      ],
+      "movementPattern": "squat",
+      "difficulty": "advanced",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 5,
+        "max": 8
+      },
+      "fatigueScore": 4,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "barbell-back-squat",
+        "goblet-squat"
+      ],
+      "coachingSummary": "Barbell squat with the bar racked on the front delts, demanding an upright trunk."
+    },
+    "leg-press": {
+      "requiredEquipmentCombinations": [
+        [
+          "Machine"
+        ]
+      ],
+      "movementPattern": "squat",
+      "difficulty": "beginner",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 15
+      },
+      "fatigueScore": 3,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "hack-squat",
+        "barbell-back-squat"
+      ],
+      "coachingSummary": "Machine press loading the legs heavily with the back supported."
+    },
+    "hack-squat": {
+      "requiredEquipmentCombinations": [
+        [
+          "Machine"
+        ]
+      ],
+      "movementPattern": "squat",
+      "difficulty": "intermediate",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 8,
+        "max": 12
+      },
+      "fatigueScore": 3,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "leg-press",
+        "barbell-back-squat"
+      ],
+      "coachingSummary": "Guided squat on a fixed path, biasing the quadriceps."
+    },
+    "leg-extension": {
+      "requiredEquipmentCombinations": [
+        [
+          "Machine"
+        ]
+      ],
+      "movementPattern": "isolation",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 12,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "sissy-squat"
+      ],
+      "coachingSummary": "Knee extension isolating the quadriceps with the thighs supported."
+    },
+    "bulgarian-split-squat": {
+      "requiredEquipmentCombinations": [
+        [
+          "Dumbbell",
+          "Bench"
+        ],
+        [
+          "Bench"
+        ]
+      ],
+      "movementPattern": "lunge",
+      "difficulty": "advanced",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 8,
+        "max": 12
+      },
+      "fatigueScore": 4,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "split-squat",
+        "walking-lunge"
+      ],
+      "coachingSummary": "Rear-foot-elevated split squat, a demanding single-leg squat pattern."
+    },
+    "walking-lunge": {
+      "requiredEquipmentCombinations": [
+        [
+          "Dumbbell"
+        ],
+        [
+          "Bodyweight"
+        ]
+      ],
+      "movementPattern": "lunge",
+      "difficulty": "intermediate",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 12
+      },
+      "fatigueScore": 3,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "reverse-lunge",
+        "forward-lunge"
+      ],
+      "coachingSummary": "Alternating forward lunges travelling across the floor."
+    },
+    "forward-lunge": {
+      "requiredEquipmentCombinations": [
+        [
+          "Bodyweight"
+        ]
+      ],
+      "movementPattern": "lunge",
+      "difficulty": "beginner",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions",
+      "alternativeExerciseIds": [
+        "reverse-lunge",
+        "walking-lunge"
+      ],
+      "coachingSummary": "Lunge stepping forward and returning, training each leg in turn."
+    },
+    "reverse-lunge": {
+      "requiredEquipmentCombinations": [
+        [
+          "Dumbbell"
+        ],
+        [
+          "Bodyweight"
+        ]
+      ],
+      "movementPattern": "lunge",
+      "difficulty": "beginner",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 8,
+        "max": 12
+      },
+      "fatigueScore": 3,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "forward-lunge",
+        "walking-lunge"
+      ],
+      "coachingSummary": "Lunge stepping backward, usually gentler on the knees than stepping forward."
+    },
+    "step-up": {
+      "requiredEquipmentCombinations": [
+        [
+          "Dumbbell",
+          "Box"
+        ],
+        [
+          "Box"
+        ]
+      ],
+      "movementPattern": "lunge",
+      "difficulty": "beginner",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 8,
+        "max": 12
+      },
+      "fatigueScore": 3,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "step-down",
+        "reverse-lunge"
+      ],
+      "coachingSummary": "Single-leg step onto a box, driving through the working leg."
+    },
+    "hip-thrust": {
+      "requiredEquipmentCombinations": [
+        [
+          "Barbell",
+          "Bench"
+        ]
+      ],
+      "movementPattern": "hinge",
+      "difficulty": "intermediate",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 8,
+        "max": 12
+      },
+      "fatigueScore": 3,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "dumbbell-hip-thrust",
+        "glute-bridge"
+      ],
+      "coachingSummary": "Barbell thrust from a bench, loading the glutes at the top of hip extension."
+    },
+    "dumbbell-hip-thrust": {
+      "requiredEquipmentCombinations": [
+        [
+          "Dumbbell",
+          "Bench"
+        ],
+        [
+          "Dumbbell"
+        ]
+      ],
+      "movementPattern": "hinge",
+      "difficulty": "beginner",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "hip-thrust",
+        "glute-bridge"
+      ],
+      "coachingSummary": "Hip thrust loaded with a dumbbell across the hips."
+    },
+    "glute-bridge": {
+      "requiredEquipmentCombinations": [
+        [
+          "Bodyweight"
+        ]
+      ],
+      "movementPattern": "hinge",
+      "difficulty": "beginner",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 12,
+        "max": 20
+      },
+      "fatigueScore": 1,
+      "progressionType": "repetitions",
+      "alternativeExerciseIds": [
+        "single-leg-glute-bridge",
+        "dumbbell-hip-thrust"
+      ],
+      "coachingSummary": "Floor bridge extending the hips against bodyweight."
+    },
+    "single-leg-glute-bridge": {
+      "requiredEquipmentCombinations": [
+        [
+          "Bodyweight"
+        ]
+      ],
+      "movementPattern": "hinge",
+      "difficulty": "beginner",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions",
+      "alternativeExerciseIds": [
+        "glute-bridge"
+      ],
+      "coachingSummary": "Bridge driven by one leg at a time, adding load without equipment."
+    },
+    "cable-pull-through": {
+      "requiredEquipmentCombinations": [
+        [
+          "Cable"
+        ]
+      ],
+      "movementPattern": "hinge",
+      "difficulty": "beginner",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 12,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "kettlebell-swing",
+        "romanian-deadlift"
+      ],
+      "coachingSummary": "Cable hinge pulling from between the legs, which teaches hip drive at light load."
+    },
+    "kettlebell-swing": {
+      "requiredEquipmentCombinations": [
+        [
+          "Kettlebell"
+        ]
+      ],
+      "movementPattern": "hinge",
+      "difficulty": "intermediate",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 12,
+        "max": 20
+      },
+      "fatigueScore": 3,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "cable-pull-through",
+        "romanian-deadlift"
+      ],
+      "coachingSummary": "Ballistic hip hinge swinging the bell to chest height on a sharp glute snap."
+    },
+    "dumbbell-sumo-squat": {
+      "requiredEquipmentCombinations": [
+        [
+          "Dumbbell"
+        ]
+      ],
+      "movementPattern": "squat",
+      "difficulty": "beginner",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 15
+      },
+      "fatigueScore": 3,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "goblet-squat",
+        "bodyweight-squat"
+      ],
+      "coachingSummary": "Wide-stance squat holding a dumbbell, emphasising the glutes and adductors."
+    },
+    "hip-abduction-machine": {
+      "requiredEquipmentCombinations": [
+        [
+          "Machine"
+        ]
+      ],
+      "movementPattern": "isolation",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 12,
+        "max": 20
+      },
+      "fatigueScore": 1,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "banded-lateral-walk",
+        "side-lying-hip-abduction"
+      ],
+      "coachingSummary": "Seated abduction machine isolating the outer hip."
+    },
+    "sumo-deadlift": {
+      "requiredEquipmentCombinations": [
+        [
+          "Barbell"
+        ]
+      ],
+      "movementPattern": "hinge",
+      "difficulty": "advanced",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 4,
+        "max": 6
+      },
+      "fatigueScore": 5,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "barbell-deadlift",
+        "trap-bar-deadlift"
+      ],
+      "coachingSummary": "Wide-stance deadlift with a more upright trunk than the conventional pull."
+    },
+    "trap-bar-deadlift": {
+      "requiredEquipmentCombinations": [
+        [
+          "Barbell"
+        ]
+      ],
+      "movementPattern": "hinge",
+      "difficulty": "intermediate",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 5,
+        "max": 8
+      },
+      "fatigueScore": 4,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "barbell-deadlift",
+        "sumo-deadlift"
+      ],
+      "coachingSummary": "Deadlift from a trap bar with neutral handles, often easier on the lower back."
+    },
+    "dumbbell-romanian-deadlift": {
+      "requiredEquipmentCombinations": [
+        [
+          "Dumbbell"
+        ]
+      ],
+      "movementPattern": "hinge",
+      "difficulty": "beginner",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 12
+      },
+      "fatigueScore": 3,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "romanian-deadlift",
+        "kettlebell-romanian-deadlift"
+      ],
+      "coachingSummary": "Hip hinge with dumbbells, loading the hamstrings under control."
+    },
+    "kettlebell-romanian-deadlift": {
+      "requiredEquipmentCombinations": [
+        [
+          "Kettlebell"
+        ]
+      ],
+      "movementPattern": "hinge",
+      "difficulty": "beginner",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 12
+      },
+      "fatigueScore": 3,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "dumbbell-romanian-deadlift",
+        "romanian-deadlift"
+      ],
+      "coachingSummary": "Kettlebell hinge training the hamstrings and glutes at lighter loads."
+    },
+    "good-morning": {
+      "requiredEquipmentCombinations": [
+        [
+          "Barbell",
+          "Squat Rack"
+        ],
+        [
+          "Barbell"
+        ]
+      ],
+      "movementPattern": "hinge",
+      "difficulty": "advanced",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 8,
+        "max": 12
+      },
+      "fatigueScore": 4,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "romanian-deadlift"
+      ],
+      "coachingSummary": "Barbell hinge with the bar on the back, which demands careful bracing."
+    },
+    "leg-curl": {
+      "requiredEquipmentCombinations": [
+        [
+          "Machine"
+        ]
+      ],
+      "movementPattern": "isolation",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "seated-leg-curl",
+        "lying-leg-curl"
+      ],
+      "coachingSummary": "Machine knee flexion isolating the hamstrings."
+    },
+    "seated-leg-curl": {
+      "requiredEquipmentCombinations": [
+        [
+          "Machine"
+        ]
+      ],
+      "movementPattern": "isolation",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "leg-curl",
+        "lying-leg-curl"
+      ],
+      "coachingSummary": "Seated knee flexion training the hamstrings with the hips flexed."
+    },
+    "single-leg-romanian-deadlift": {
+      "requiredEquipmentCombinations": [
+        [
+          "Dumbbell"
+        ],
+        [
+          "Bodyweight"
+        ]
+      ],
+      "movementPattern": "hinge",
+      "difficulty": "advanced",
+      "mechanics": "compound",
+      "recommendedRepRange": {
+        "min": 8,
+        "max": 12
+      },
+      "fatigueScore": 3,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "dumbbell-romanian-deadlift",
+        "romanian-deadlift"
+      ],
+      "coachingSummary": "Single-leg hinge training the hamstrings while demanding balance."
+    },
+    "calf-raise": {
+      "requiredEquipmentCombinations": [
+        [
+          "Bodyweight"
+        ]
+      ],
+      "movementPattern": "isolation",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 15,
+        "max": 20
+      },
+      "fatigueScore": 1,
+      "progressionType": "repetitions",
+      "alternativeExerciseIds": [
+        "standing-calf-raise",
+        "single-leg-calf-raise"
+      ],
+      "coachingSummary": "Bodyweight heel raise training the calves through a full range."
+    },
+    "standing-calf-raise": {
+      "requiredEquipmentCombinations": [
+        [
+          "Machine"
+        ]
+      ],
+      "movementPattern": "isolation",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "calf-raise",
+        "seated-calf-raise"
+      ],
+      "coachingSummary": "Loaded standing heel raise, biasing the gastrocnemius."
+    },
+    "seated-calf-raise": {
+      "requiredEquipmentCombinations": [
+        [
+          "Machine"
+        ]
+      ],
+      "movementPattern": "isolation",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 12,
+        "max": 20
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "standing-calf-raise"
+      ],
+      "coachingSummary": "Seated heel raise with the knees bent, biasing the soleus."
+    },
+    "single-leg-calf-raise": {
+      "requiredEquipmentCombinations": [
+        [
+          "Bodyweight"
+        ]
+      ],
+      "movementPattern": "isolation",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions",
+      "alternativeExerciseIds": [
+        "calf-raise",
+        "standing-calf-raise"
+      ],
+      "coachingSummary": "Heel raise on one leg at a time, adding load without equipment."
+    },
+    "back-extension": {
+      "requiredEquipmentCombinations": [
+        [
+          "Machine"
+        ],
+        [
+          "Bodyweight"
+        ]
+      ],
+      "movementPattern": "hinge",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions",
+      "alternativeExerciseIds": [
+        "superman",
+        "glute-focused-back-extension"
+      ],
+      "coachingSummary": "Trunk extension training the spinal erectors and glutes."
+    },
+    "superman": {
+      "requiredEquipmentCombinations": [
+        [
+          "Bodyweight"
+        ]
+      ],
+      "movementPattern": "hinge",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 15
+      },
+      "fatigueScore": 1,
+      "progressionType": "repetitions",
+      "alternativeExerciseIds": [
+        "back-extension"
+      ],
+      "coachingSummary": "Face-down raise of the arms and legs, low-load work for the spinal erectors."
+    },
+    "hip-adduction-machine": {
+      "requiredEquipmentCombinations": [
+        [
+          "Machine"
+        ]
+      ],
+      "movementPattern": "isolation",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 12,
+        "max": 20
+      },
+      "fatigueScore": 1,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "cable-standing-hip-adduction"
+      ],
+      "coachingSummary": "Seated adduction machine isolating the inner thigh."
+    },
+    "crunch": {
+      "requiredEquipmentCombinations": [
+        [
+          "Bodyweight"
+        ]
+      ],
+      "movementPattern": "core",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 12,
+        "max": 20
+      },
+      "fatigueScore": 1,
+      "progressionType": "repetitions",
+      "alternativeExerciseIds": [
+        "reverse-crunch",
+        "v-up"
+      ],
+      "coachingSummary": "Short-range trunk flexion training the abdominals."
+    },
+    "reverse-crunch": {
+      "requiredEquipmentCombinations": [
+        [
+          "Bodyweight"
+        ]
+      ],
+      "movementPattern": "core",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 12,
+        "max": 20
+      },
+      "fatigueScore": 1,
+      "progressionType": "repetitions",
+      "alternativeExerciseIds": [
+        "crunch",
+        "lying-leg-raise"
+      ],
+      "coachingSummary": "Trunk flexion driven by lifting the hips, loading the lower abdominals."
+    },
+    "dead-bug": {
+      "requiredEquipmentCombinations": [
+        [
+          "Bodyweight"
+        ]
+      ],
+      "movementPattern": "core",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 15
+      },
+      "fatigueScore": 1,
+      "progressionType": "repetitions",
+      "alternativeExerciseIds": [
+        "bird-dog"
+      ],
+      "coachingSummary": "Anti-extension drill moving opposite limbs while the lower back stays flat."
+    },
+    "bird-dog": {
+      "requiredEquipmentCombinations": [
+        [
+          "Bodyweight"
+        ]
+      ],
+      "movementPattern": "core",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 15
+      },
+      "fatigueScore": 1,
+      "progressionType": "repetitions",
+      "alternativeExerciseIds": [
+        "dead-bug"
+      ],
+      "coachingSummary": "Quadruped drill extending opposite limbs while the trunk resists rotation."
+    },
+    "hanging-knee-raise": {
+      "requiredEquipmentCombinations": [
+        [
+          "Pull-up Bar"
+        ]
+      ],
+      "movementPattern": "core",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions",
+      "alternativeExerciseIds": [
+        "hanging-leg-raise",
+        "lying-leg-raise"
+      ],
+      "coachingSummary": "Hanging knee raise, the usual step before full hanging leg raises."
+    },
+    "lying-leg-raise": {
+      "requiredEquipmentCombinations": [
+        [
+          "Bodyweight"
+        ]
+      ],
+      "movementPattern": "core",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 15
+      },
+      "fatigueScore": 1,
+      "progressionType": "repetitions",
+      "alternativeExerciseIds": [
+        "reverse-crunch",
+        "hanging-leg-raise"
+      ],
+      "coachingSummary": "Floor leg raise training the lower abdominals and hip flexors."
+    },
+    "cable-crunch": {
+      "requiredEquipmentCombinations": [
+        [
+          "Cable"
+        ]
+      ],
+      "movementPattern": "core",
+      "difficulty": "intermediate",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "crunch",
+        "weighted-crunch"
+      ],
+      "coachingSummary": "Kneeling cable crunch, which lets abdominal work be loaded progressively."
+    },
+    "pallof-press": {
+      "requiredEquipmentCombinations": [
+        [
+          "Cable"
+        ]
+      ],
+      "movementPattern": "core",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions_then_load",
+      "alternativeExerciseIds": [
+        "banded-pallof-press",
+        "half-kneeling-pallof-press"
+      ],
+      "coachingSummary": "Anti-rotation press holding the trunk square against a sideways pull."
+    },
+    "ab-wheel": {
+      "requiredEquipmentCombinations": [
+        [
+          "Bodyweight"
+        ]
+      ],
+      "movementPattern": "core",
+      "difficulty": "advanced",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 6,
+        "max": 12
+      },
+      "fatigueScore": 3,
+      "progressionType": "repetitions",
+      "alternativeExerciseIds": [
+        "dead-bug",
+        "inchworm"
+      ],
+      "coachingSummary": "Rollout demanding strong anti-extension control through the trunk."
+    },
+    "v-up": {
+      "requiredEquipmentCombinations": [
+        [
+          "Bodyweight"
+        ]
+      ],
+      "movementPattern": "core",
+      "difficulty": "intermediate",
+      "mechanics": "isolation",
+      "recommendedRepRange": {
+        "min": 10,
+        "max": 15
+      },
+      "fatigueScore": 2,
+      "progressionType": "repetitions",
+      "alternativeExerciseIds": [
+        "crunch",
+        "hollow-rock"
+      ],
+      "coachingSummary": "Simultaneous leg and torso raise meeting over the hips."
     }
   }
 }
