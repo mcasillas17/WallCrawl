@@ -233,6 +233,22 @@ The importer suites run in CI alongside the Gradle build. One exercises the impo
 against synthetic fixtures; the other checks the reviewed metadata that actually ships,
 so a bad edit fails there rather than becoming a workout nobody can perform.
 
+## Release versioning
+
+Tagged builds derive Android package metadata automatically. The release workflow uses
+its monotonically increasing GitHub Actions run number as `versionCode` and the tag
+without its leading `v` as `versionName`, then passes both to Gradle. It verifies the
+generated APK metadata before publishing. Local builds default to `versionCode` 1 and
+`versionName` `0.1.0-dev`; they are not release identifiers.
+
+GitHub numbers runs per workflow. If `.github/workflows/release.yml` is replaced rather
+than edited in place, preserve a `versionCode` greater than the latest distributed build
+before publishing from the replacement workflow.
+
+GitHub prereleases are currently debug-signed and intentionally require uninstalling
+the previous CI build. Supporting in-place upgrades also requires a stable release
+signing key; version metadata alone cannot make differently signed APKs compatible.
+
 The unit suite covers catalog filtering, context construction, bounded history
 analysis, planner constraints and type-aware prescriptions, split selection and
 its failure reasons, the muscle vocabulary and the shipped catalog's conformance

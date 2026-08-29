@@ -5,6 +5,21 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
+val wallcrawlVersionCode = providers.gradleProperty("wallcrawl.versionCode")
+    .orElse("1")
+    .map { it.toInt() }
+    .get()
+val wallcrawlVersionName = providers.gradleProperty("wallcrawl.versionName")
+    .orElse("0.1.0-dev")
+    .get()
+
+require(wallcrawlVersionCode > 0) {
+    "wallcrawl.versionCode must be a positive integer"
+}
+require(wallcrawlVersionName.isNotBlank()) {
+    "wallcrawl.versionName must not be empty"
+}
+
 android {
     namespace = "wallcrawl.elopenmike.com"
     compileSdk = 35
@@ -13,8 +28,8 @@ android {
         applicationId = "wallcrawl.elopenmike.com"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = wallcrawlVersionCode
+        versionName = wallcrawlVersionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
