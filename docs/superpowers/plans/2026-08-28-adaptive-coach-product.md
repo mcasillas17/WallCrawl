@@ -12,23 +12,38 @@
 
 ## Audit Findings and Required Responses
 
-| Finding | Evidence | Implementation response |
+> **Reconciled 2026-08-29** against `main` at `de87da6`, after PRs #12, #13, #15, #16 and #17.
+> Every status below was checked against the code, not against the merge messages.
+> Findings that shipped are kept rather than deleted so the reasoning stays readable.
+
+| Finding | Status | Evidence today | Implementation response |
+| --- | --- | --- | --- |
+| No first-run onboarding | **Shipped** (#15, #16) | `AppRoutes.ONBOARDING` exists; a 7-step wizard collects goals, equipment and confirmed loads | Task 1 complete |
+| Unsafe starting-load defaults | **Shipped** (#15) | `sampleStartingWeight()` is gone; `suggestedTargetWeight()` returns history-derived load, else `confirmedStartingLoads`, else null | Task 2 complete |
+| Planner ignores experience, frequency, and calculated recovery | **Open** | `FakeWorkoutPlanner` and `ExerciseFilter` reference none of `experienceLevel`, `trainingFrequencyDaysPerWeek`, `recentlyTrainedMuscles` | Tasks 3-4 |
+| Only 12/302 exercises have reviewed programming | **Superseded** (#13) | 117/302 reviewed, covering every muscle group with beginner options; the remaining gap is coverage of what the planner reaches for, not volume | Task 3, narrowed |
+| Unreviewed exercises can fill plans in catalog order | **Partly shipped** (#13) | Compound slots order by primary-muscle match, then fatigue, spread across movement patterns; accessory slots prefer isolation work that trains the split. Unreviewed exercises can still be selected, but no longer in alphabetical order | Task 4, narrowed |
+| Generated validation is structural, not program-level | **Open** | `GeneratedWorkoutValidator` has no duplicate, fatigue, weekly-volume or difficulty checks | Task 5 |
+| Gym-floor logging lacks rest timer, RPE/RIR, fast edits, substitutions, and a finish guard | **Open** | `restSeconds` is persisted and never counted down; no RPE/RIR input exists | Tasks 6-7 |
+| No deterministic progression, deload, or program state | **Partly shipped** | Double progression lives in `DefaultExercisePrescriptionFactory`; Epley e1RM in `WorkoutHistoryAnalyzer` and `ProgressCalculator`. Deloads and program blocks remain absent | Task 8, narrowed |
+| Workout Guide dropped Everkinetic instructions | **Open** | No `instructionSteps` or `formCues` anywhere in the runtime catalog | Task 9 |
+| Progress/history and template editing are shallow | **Open** | Progress is a single screen with no drill-down; the template editor still changes set count only | Task 10 |
+| Local privacy promise is underspecified | **Open** | `android:allowBackup="true"` still ships; no export, delete or diagnostic policy | Task 11 |
+| No systematic planner evaluation corpus | **Open** | Unit tests cover components. CI now runs the Python suites, including a guard on the shipped programming metadata, which is a foundation for this rather than a substitute | Task 12 |
+| No production local model and no runtime capability tier | **Open** | `FakeWorkoutPlanner` is still the only `WorkoutPlanner` | Task 13 |
+| Static catalog storage is already appropriate | Unchanged | 302 records parsed once from assets | Keep asset/in-memory storage; do not add Room/FTS without measured need |
+| Kabi already covers broad tracker features | Unchanged | Its listing advertises nutrition, recovery, backup, and beginner features | Keep WallCrawl focused on transparent local adaptation rather than feature-parity sprawl |
+
+### Findings added since the plan was written
+
+These came out of the reviews behind #12 and #13 and are not yet reflected in any task.
+
+| Finding | Evidence | Where it belongs |
 | --- | --- | --- |
-| No first-run onboarding | `WallCrawlApp.kt` starts at `TODAY`; `UserProfile` silently defaults to intermediate/full-gym | Task 1 |
-| Unsafe starting-load defaults | `DefaultExercisePrescriptionFactory.sampleStartingWeight()` returns unit-agnostic 135/185/225 values | Task 2 |
-| Planner ignores experience, frequency, and calculated recovery | Context contains the fields; `FakeWorkoutPlanner` does not consume them | Tasks 3-4 |
-| Only 12/302 exercises have reviewed programming | `tools/workout-guide/programming-overrides.json` | Task 3 |
-| Unreviewed exercises can fill plans in catalog order | `FakeWorkoutPlanner.selectExercisesForSplit()` | Tasks 3-4 |
-| Generated validation is structural, not program-level | `GeneratedWorkoutValidator` lacks duplicate, fatigue, weekly-volume, and difficulty checks | Task 5 |
-| Gym-floor logging lacks rest timer, RPE/RIR, fast edits, substitutions, and a finish guard | `ActiveWorkoutScreen`, `SetPerformanceInput`, `completeWorkout()` | Tasks 6-7 |
-| No deterministic progression, deload, or program state | No corresponding domain types or engines | Task 8 |
-| Workout Guide dropped Everkinetic instructions | Runtime catalog has no setup/step/fault fields | Task 9 |
-| Progress/history and template editing are shallow | History cards are not drill-down; editor changes set count only | Task 10 |
-| Local privacy promise is underspecified | `android:allowBackup="true"`; no export/delete/diagnostic policy | Task 11 |
-| No systematic planner evaluation corpus | Existing unit tests cover components, not persona/replay matrices | Task 12 |
-| No production local model and no runtime capability tier | `FakeWorkoutPlanner` is the only implementation | Task 13 |
-| Static catalog storage is already appropriate | 302 records occupy 91,862 bytes and are parsed once; search is not the product bottleneck | Keep asset/in-memory storage; do not add Room/FTS without measured need |
-| Kabi already covers broad tracker features | Its listing advertises nutrition, recovery, backup, and beginner features | Keep WallCrawl focused on transparent local adaptation rather than feature-parity sprawl |
+| Difficulty is reviewed for 117 exercises and read by nothing | Onboarding now asks the user to declare an experience level that no selection code consults, so a self-declared beginner can be led with a lift marked advanced | Task 3 or 4, and it is now the cheapest real personalization left |
+| 14 planner-eligible timed holds cannot be reviewed at all | The schema requires a `recommendedRepRange` that duration prescriptions never read, so planks, dead hangs and wall sits can carry no mechanics, fatigue or coaching note | Task 3, as a schema change before the next authoring batch |
+| A band-only profile is served almost entirely by unreviewed entries | 3 of roughly 19 band exercises are reviewed; its Push day contains no pressing movement, because band exercises qualify for Push only through a secondary Shoulders tag | Task 3 coverage, and Task 4 should weight primary-muscle matches above secondary ones |
+| `barbell-back-squat` and `barbell-deadlift` are labelled advanced while bench, overhead press and row are intermediate | Two reviewers disagreed on whether that is correct. Under an experience gate, an intermediate lifter would receive bench, press and rows but no squat or deadlift | Decide before Task 3-4 gates on difficulty, not after |
 
 ## Product Rules
 
@@ -79,6 +94,10 @@
 ---
 
 ### Task 1: Add Explicit Onboarding and Training Constraints
+
+> **Shipped in #15 and #16.** Onboarding, `TrainingConstraint`, bodyweight-only defaults,
+> `onboardingCompleted` and the 4->5 migration all exist. Re-read the code before running
+> any step here; treat remaining steps as verification rather than implementation.
 
 **Status: Done.** Commit `802ba67` (`feat: add safe training onboarding`).
 
@@ -191,6 +210,10 @@ git commit -m "feat: add safe training onboarding"
 
 ### Task 2: Remove Unsafe Starting Loads
 
+> **Shipped in #15.** `sampleStartingWeight()` is deleted. `suggestedTargetWeight()` now
+> returns a history-derived load, then a load the user confirmed during onboarding, then
+> null. No number is invented.
+
 **Status: Done.** Commit `65ad03c` (`fix: remove unconfirmed starting loads`).
 
 **Files:**
@@ -257,6 +280,14 @@ git commit -m "fix: remove unconfirmed starting loads"
 ---
 
 ### Task 3: Gate Automatic Planning on Reviewed Metadata
+
+> **Partly shipped in #13.** 117 exercises carry reviewed programming, and
+> `tools/workout-guide/test_programming_overrides.py` already enforces several checks this
+> task asks for: alternatives resolve, no self-alternatives, equipment names must exist in
+> `StandardEquipment`, and the bundled catalog must match the overrides by content.
+> Still to do here: the `review` provenance block, `ExerciseEligibilityPolicy`, and the
+> decision on whether automatic planning is restricted to reviewed records — today it is
+> not, it only prefers them.
 
 **Files:**
 - Create: `tools/workout-guide/review-schema.json`
@@ -358,6 +389,11 @@ git commit -m "feat: gate automatic plans on reviewed exercises"
 ---
 
 ### Task 4: Replace Catalog-Order Selection with Deterministic Policy Ranking
+
+> **Partly shipped in #13.** Compound slots rank by primary-muscle match, then fatigue,
+> and spread across movement patterns; accessory slots prefer isolation work that trains
+> the split. What remains is the policy this task describes: experience, frequency and
+> recovery inputs, and weighting primary matches above secondary ones.
 
 **Files:**
 - Create: `app/src/main/java/wallcrawl/elopenmike/com/core/ai/TrainingPolicy.kt`
@@ -598,6 +634,9 @@ git commit -m "feat: add safe exercise substitutions"
 ---
 
 ### Task 8: Add Progression, Deloads, and Program Blocks
+
+> **Partly shipped.** Double progression and Epley e1RM already exist. This task is now
+> about deloads, program blocks and the state that drives them.
 
 **Files:**
 - Create: `app/src/main/java/wallcrawl/elopenmike/com/core/model/TrainingProgram.kt`

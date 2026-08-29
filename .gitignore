@@ -36,3 +36,6 @@ google-services.json
 # Python catalog importer
 __pycache__/
 *.py[cod]
+
+# Agent worktrees created by Claude Code.
+.claude/
