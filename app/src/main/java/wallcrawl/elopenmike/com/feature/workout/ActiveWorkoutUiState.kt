@@ -18,7 +18,12 @@ sealed interface ActiveWorkoutUiState {
         val isSaving: Boolean = false,
         val previousSets: List<WorkoutSet> = emptyList(),
         val previousSessionTimestamp: Long? = null,
-        val previousWeightUnit: WeightUnit = WeightUnit.LBS
+        val previousWeightUnit: WeightUnit = WeightUnit.LBS,
+        // A rejected set update (e.g. a transient invalid edit slipping through, or an
+        // explicit but invalid completion attempt) is recoverable: it never replaces the
+        // active workout, only surfaces here to be dismissed or cleared by the next
+        // successful update.
+        val setUpdateError: String? = null
     ) : ActiveWorkoutUiState {
         val currentExercise: WorkoutExercise?
             get() = session.exercises.getOrNull(currentExerciseIndex)

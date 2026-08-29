@@ -120,6 +120,7 @@ fun ActiveWorkoutScreen(
                         viewModel.updateSet(setId, performance)
                     },
                     onFinishWorkout = { viewModel.finishWorkout() },
+                    onDismissSetUpdateError = { viewModel.dismissSetUpdateError() },
                     onClose = onNavigateBack
                 )
             }
@@ -135,6 +136,7 @@ private fun ActiveWorkoutContent(
     onNextExercise: () -> Unit,
     onUpdateSet: (setId: String, performance: SetPerformanceInput) -> Unit,
     onFinishWorkout: () -> Unit,
+    onDismissSetUpdateError: () -> Unit,
     onClose: () -> Unit
 ) {
     val currentExercise = state.currentExercise
@@ -186,6 +188,14 @@ private fun ActiveWorkoutContent(
         }
 
         Spacer(modifier = Modifier.height(8.dp))
+
+        if (state.setUpdateError != null) {
+            SetUpdateErrorBanner(
+                message = state.setUpdateError,
+                onDismiss = onDismissSetUpdateError
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+        }
 
         if (currentExercise != null) {
             LazyColumn(
@@ -376,6 +386,37 @@ private fun wallcrawl.elopenmike.com.core.model.ExercisePrescription.displayTarg
             targetDurationSeconds?.let { add("${it}s") }
         }.joinToString(" · ")
     }
+
+/**
+ * A rejected set update (e.g. an explicit but invalid completion attempt) is
+ * recoverable, not terminal: it surfaces here, dismissible, instead of replacing the
+ * active workout with a full-screen error.
+ */
+@Composable
+private fun SetUpdateErrorBanner(message: String, onDismiss: () -> Unit) {
+    WallCrawlCard(
+        cornerRadius = 12.dp,
+        contentPadding = 12.dp,
+        borderColor = CrimsonRedPrimary,
+        backgroundColor = GraphiteSurfaceElevated
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = message,
+                color = CrimsonRedLight,
+                fontSize = 13.sp,
+                modifier = Modifier.weight(1f)
+            )
+            IconButton(onClick = onDismiss) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Dismiss error",
+                    tint = TextSecondary
+                )
+            }
+        }
+    }
+}
 
 @Composable
 private fun PreviousPerformanceCard(
