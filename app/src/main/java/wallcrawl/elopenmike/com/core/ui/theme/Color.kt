@@ -65,4 +65,3 @@ val LightTextDisabled = Color(0xFF94A3B8)
 
 val LightSpiderBluePrimary = Color(0xFF0284C7)
 val LightSpiderBlueGlow = Color(0x1A0284C7)
-
