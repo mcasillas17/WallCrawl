@@ -19,17 +19,21 @@ replaceable; no production local LLM runtime is integrated yet.
 
 ## Screenshots & App Experience
 
+### Dark & Light Theme Modes
+
+WallCrawl supports **Dark Theme** (stealth suit graphite aesthetic), **Light Theme** (high-contrast daylight athletic), and **System Default** across every screen with dynamic insets, high-contrast SVG exercise frames, and a live switcher in Settings.
+
 <p align="center">
-  <img src="art/screenshots/today-screen.png" width="23%" alt="Today Screen" />
-  <img src="art/screenshots/workout-templates.png" width="23%" alt="My Workouts Screen" />
-  <img src="art/screenshots/template-editor.png" width="23%" alt="Workout Builder Screen" />
-  <img src="art/screenshots/exercises-screen.png" width="23%" alt="Exercise Library Screen" />
+  <img src="art/screenshots/today-screen.png" width="24%" alt="Today Screen (Dark)" />
+  <img src="art/screenshots/today-screen-light.png" width="24%" alt="Today Screen (Light)" />
+  <img src="art/screenshots/exercises-screen.png" width="24%" alt="Exercise Library (Dark)" />
+  <img src="art/screenshots/exercises-screen-light.png" width="24%" alt="Exercise Library (Light)" />
 </p>
 <p align="center">
-  <img src="art/screenshots/active-workout.png" width="23%" alt="Active Workout Screen" />
-  <img src="art/screenshots/workout-summary.png" width="23%" alt="Workout Summary Screen" />
-  <img src="art/screenshots/progress-screen.png" width="23%" alt="Progress Screen" />
-  <img src="art/screenshots/profile-screen.png" width="23%" alt="Training Profile Screen" />
+  <img src="art/screenshots/profile-screen.png" width="24%" alt="Training Profile & Preferences (Dark)" />
+  <img src="art/screenshots/profile-screen-light.png" width="24%" alt="Training Profile & Preferences (Light)" />
+  <img src="art/screenshots/workout-templates-light.png" width="24%" alt="My Workouts (Light)" />
+  <img src="art/screenshots/template-editor-light.png" width="24%" alt="Workout Builder (Light)" />
 </p>
 
 - **Today Recommendation**: Offline planner-generated routine tailored to equipment and training goals, with instant regeneration and custom routine shortcuts.
@@ -39,7 +43,7 @@ replaceable; no production local LLM runtime is integrated yet.
 - **Active Workout Session**: Type-aware logging for load/reps, bodyweight reps, assisted reps, duration, and distance/duration, with animated SVG movement previews and previous performance comparisons.
 - **Workout Summary**: Post-workout card displaying session duration, total volume lifted, sets completed, and personal records set against your logged history.
 - **Progress Tracking**: Weekly workout streaks, volume and rep totals, per-muscle weekly set counts, strength progression indicators, and historical workout logs.
-- **Training Profile**: Full local customization of theme preference (System Default / Dark Mode / Light Mode), multi-select fitness goals, preferred weight units (LBS/KG), session duration targets, available gym equipment, return-after-break calibration, and muscle priorities.
+- **Training Profile & App Preferences**: Full local customization of theme preference (Auto System / Dark Mode / Light Mode) with compact switcher, multi-select fitness goals, preferred weight units (LBS/KG), session duration targets, available gym equipment, return-after-break calibration, and muscle priorities.
 - **Credits & Licenses**: In-app attribution for the bundled exercise artwork, reachable from the Training Profile screen.
 
 ## Documentation

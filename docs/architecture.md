@@ -318,6 +318,38 @@ The active session is persisted immediately, so it can be resumed after normal
 navigation or process recreation. The template editor does not yet persist an
 unsaved draft or prompt before leaving with unsaved changes.
 
+## Dynamic Theming and Visual Contrast
+
+WallCrawl supports dynamic theme adaptation across all features and shared
+components via Jetpack Compose and Material 3:
+
+```text
+UserProfile.themePreference (SYSTEM | DARK | LIGHT)
+               │
+               ▼
+        WallCrawlTheme
+         ├─ LightColorScheme / DarkColorScheme
+         ├─ WindowCompat (status & nav insets)
+         └─ Dynamic Tokens (Surfaces, Borders, Typography)
+               │
+               ├→ WallCrawlCard / WebBackgroundPattern
+               ├→ WallCrawlWordmark (Dynamic high-contrast brand)
+               └→ ExerciseIllustration (Elevated container)
+```
+
+- **Theme Preferences**: `ThemePreference.SYSTEM` follows Android's system-wide
+  dark mode setting via `isSystemInDarkTheme()`, while `DARK` and `LIGHT` enforce
+  the respective color palette across the app.
+- **System Inset Controller**: `WallCrawlTheme` updates `WindowInsetsController`
+  to dynamically switch light and dark system status bar and navigation bar icon
+  contrast.
+- **Visual Contrast & Exercise Art**: Vector SVG illustrations use a dedicated
+  dark graphite elevation backing so anatomical illustration lines remain crisp
+  and visible against light and dark background themes alike.
+- **Wordmark & Typography**: Brand elements like `WallCrawlWordmark` dynamically
+  render primary brand lettering in theme-aware typography tokens (`onSurface`),
+  preserving high contrast on all screen densities.
+
 ## Verification boundaries
 
 The JVM suite covers pure domain rules, filtering, context construction,
