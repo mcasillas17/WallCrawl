@@ -30,8 +30,10 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -130,6 +132,11 @@ private fun ProfileContent(
     onUpdateReturningAfterBreakWeeks: (Int) -> Unit,
     onOpenCredits: () -> Unit
 ) {
+    val breakWeeksSliderState = remember { BreakWeeksSliderState(profile.returningAfterBreakWeeks) }
+    LaunchedEffect(profile.returningAfterBreakWeeks) {
+        breakWeeksSliderState.onPersistedValueChanged(profile.returningAfterBreakWeeks)
+    }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -483,10 +490,10 @@ private fun ProfileContent(
                 ) {
                     Text(text = "Returning After a Break", fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = TextPrimary)
                     Text(
-                        text = if (profile.returningAfterBreakWeeks == 0) {
+                        text = if (breakWeeksSliderState.displayWeeks == 0) {
                             "No recent break"
                         } else {
-                            "${profile.returningAfterBreakWeeks} wk off"
+                            "${breakWeeksSliderState.displayWeeks} wk off"
                         },
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
@@ -494,8 +501,11 @@ private fun ProfileContent(
                     )
                 }
                 Slider(
-                    value = profile.returningAfterBreakWeeks.toFloat(),
-                    onValueChange = { onUpdateReturningAfterBreakWeeks(it.toInt()) },
+                    value = breakWeeksSliderState.displayWeeks.toFloat(),
+                    onValueChange = { breakWeeksSliderState.onDrag(it.toInt()) },
+                    onValueChangeFinished = {
+                        breakWeeksSliderState.onDragFinished(onUpdateReturningAfterBreakWeeks)
+                    },
                     valueRange = 0f..52f,
                     colors = SliderDefaults.colors(
                         thumbColor = CrimsonRedPrimary,
