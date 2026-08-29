@@ -311,4 +311,5 @@ private class RecordingUserProfileRepository : UserProfileRepository {
     override suspend fun updateExcludedExercises(excludedIds: List<String>) = error("Not used")
     override suspend fun updateTrainingConstraints(constraints: Set<TrainingConstraint>) = error("Not used")
     override suspend fun updateReturningAfterBreakWeeks(weeks: Int) = error("Not used")
+    override suspend fun updateThemePreference(themePreference: wallcrawl.elopenmike.com.core.model.ThemePreference) = error("Not used")
 }

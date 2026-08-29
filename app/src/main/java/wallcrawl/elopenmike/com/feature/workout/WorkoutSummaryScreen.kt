@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -34,14 +35,7 @@ import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
 import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
-import wallcrawl.elopenmike.com.core.ui.theme.GraphiteBorder
-import wallcrawl.elopenmike.com.core.ui.theme.GraphiteSurfaceElevated
-import wallcrawl.elopenmike.com.core.ui.theme.ObsidianBlack
 import wallcrawl.elopenmike.com.core.ui.theme.SuccessGreen
-import wallcrawl.elopenmike.com.core.ui.theme.TextPrimary
-import wallcrawl.elopenmike.com.core.ui.theme.TextSecondary
-import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
-import wallcrawl.elopenmike.com.core.ui.theme.WebBlueAccent
 
 @Composable
 fun WorkoutSummaryScreen(
@@ -52,7 +46,7 @@ fun WorkoutSummaryScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(ObsidianBlack)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         WebBackgroundPattern()
 
@@ -70,7 +64,7 @@ fun WorkoutSummaryScreen(
                 Box(
                     modifier = Modifier
                         .size(80.dp)
-                        .background(GraphiteSurfaceElevated, CircleShape)
+                        .background(MaterialTheme.colorScheme.surface, CircleShape)
                         .border(2.dp, SuccessGreen, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
@@ -98,7 +92,7 @@ fun WorkoutSummaryScreen(
                     text = summary.workoutName,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Black,
-                    color = TextWhite
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
 
@@ -106,8 +100,6 @@ fun WorkoutSummaryScreen(
             WallCrawlCard(
                 cornerRadius = 20.dp,
                 contentPadding = 20.dp,
-                borderColor = GraphiteBorder,
-                backgroundColor = GraphiteSurfaceElevated,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
@@ -115,7 +107,7 @@ fun WorkoutSummaryScreen(
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.8.sp,
-                    color = TextSecondary
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -127,14 +119,14 @@ fun WorkoutSummaryScreen(
                     MetricHighlight(
                         title = "Duration",
                         value = "${summary.durationMinutes} min",
-                        valueColor = WebBlueAccent,
+                        valueColor = MaterialTheme.colorScheme.secondary,
                         modifier = Modifier.weight(1f)
                     )
 
                     MetricHighlight(
                         title = "Sets Logged",
                         value = "${summary.totalSetsCompleted}",
-                        valueColor = TextPrimary,
+                        valueColor = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.weight(1f)
                     )
                 }

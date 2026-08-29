@@ -10,7 +10,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class Migration5To6Test {
+class Migration6To7Test {
 
     private val context: Context = ApplicationProvider.getApplicationContext()
     private var database: WallCrawlDatabase? = null
@@ -22,36 +22,32 @@ class Migration5To6Test {
     }
 
     @Test
-    fun migrate_addsFitnessGoalsJsonColumnAndBackfillsFromPrimaryGoal() {
+    fun migrate_addsThemePreferenceColumnWithDefaultSystem() {
         context.deleteDatabase(DATABASE_NAME)
         context.openOrCreateDatabase(DATABASE_NAME, Context.MODE_PRIVATE, null).use { db ->
-            createVersion5Schema(db)
-            insertVersion5Data(db)
-            db.version = 5
+            createVersion6Schema(db)
+            insertVersion6Data(db)
+            db.version = 6
         }
 
         database = Room.databaseBuilder(context, WallCrawlDatabase::class.java, DATABASE_NAME)
-            .addMigrations(
-                WallCrawlDatabase.MIGRATION_5_6,
-                WallCrawlDatabase.MIGRATION_6_7
-            )
+            .addMigrations(WallCrawlDatabase.MIGRATION_6_7)
             .build()
         val sqlite = checkNotNull(database).openHelper.writableDatabase
 
         sqlite.query(
-            "SELECT name, primaryGoal, fitnessGoalsJson FROM user_profiles"
+            "SELECT name, themePreference FROM user_profiles"
         ).use { cursor ->
             assertThat(cursor.moveToFirst()).isTrue()
             assertThat(cursor.getString(0)).isEqualTo("Crawler")
-            assertThat(cursor.getString(1)).isEqualTo("BUILD_MUSCLE")
-            assertThat(cursor.getString(2)).isEqualTo("BUILD_MUSCLE")
+            assertThat(cursor.getString(1)).isEqualTo("SYSTEM")
         }
         sqlite.query("PRAGMA foreign_key_check").use { cursor ->
             assertThat(cursor.count).isEqualTo(0)
         }
     }
 
-    private fun createVersion5Schema(db: android.database.sqlite.SQLiteDatabase) {
+    private fun createVersion6Schema(db: android.database.sqlite.SQLiteDatabase) {
         db.execSQL(
             "CREATE TABLE user_profiles (id TEXT NOT NULL PRIMARY KEY, revision INTEGER NOT NULL, " +
                 "name TEXT NOT NULL, primaryGoal TEXT NOT NULL, experienceLevel TEXT NOT NULL, " +
@@ -61,7 +57,8 @@ class Migration5To6Test {
                 "onboardingCompleted INTEGER NOT NULL DEFAULT 0, " +
                 "trainingConstraintsJson TEXT NOT NULL DEFAULT '', " +
                 "returningAfterBreakWeeks INTEGER NOT NULL DEFAULT 0, " +
-                "confirmedStartingLoadsJson TEXT NOT NULL DEFAULT '')"
+                "confirmedStartingLoadsJson TEXT NOT NULL DEFAULT '', " +
+                "fitnessGoalsJson TEXT NOT NULL DEFAULT '')"
         )
         db.execSQL(
             "CREATE TABLE workout_sessions (id TEXT NOT NULL PRIMARY KEY, name TEXT NOT NULL, " +
@@ -116,15 +113,15 @@ class Migration5To6Test {
         )
     }
 
-    private fun insertVersion5Data(db: android.database.sqlite.SQLiteDatabase) {
+    private fun insertVersion6Data(db: android.database.sqlite.SQLiteDatabase) {
         db.execSQL(
             "INSERT INTO user_profiles VALUES " +
-                "('default_user', 5, 'Crawler', 'BUILD_MUSCLE', 'INTERMEDIATE', 50, 4, " +
-                "'Barbell|||Dumbbell|||Bodyweight', 'LBS', '', '', 1, '', 0, '')"
+                "('default_user', 6, 'Crawler', 'BUILD_MUSCLE', 'INTERMEDIATE', 50, 4, " +
+                "'Barbell|||Dumbbell|||Bodyweight', 'LBS', '', '', 1, '', 0, '', 'BUILD_MUSCLE')"
         )
     }
 
     private companion object {
-        const val DATABASE_NAME = "migration-5-6.db"
+        const val DATABASE_NAME = "migration-6-7.db"
     }
 }

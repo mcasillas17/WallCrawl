@@ -173,6 +173,7 @@ private class StubUserProfileRepository(
         constraints: Set<wallcrawl.elopenmike.com.core.model.TrainingConstraint>
     ) = Unit
     override suspend fun updateReturningAfterBreakWeeks(weeks: Int) = Unit
+    override suspend fun updateThemePreference(themePreference: wallcrawl.elopenmike.com.core.model.ThemePreference) = Unit
 }
 
 private class StubWorkoutRepository(

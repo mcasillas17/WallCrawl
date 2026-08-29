@@ -39,7 +39,7 @@ replaceable; no production local LLM runtime is integrated yet.
 - **Active Workout Session**: Type-aware logging for load/reps, bodyweight reps, assisted reps, duration, and distance/duration, with animated SVG movement previews and previous performance comparisons.
 - **Workout Summary**: Post-workout card displaying session duration, total volume lifted, sets completed, and personal records set against your logged history.
 - **Progress Tracking**: Weekly workout streaks, volume and rep totals, per-muscle weekly set counts, strength progression indicators, and historical workout logs.
-- **Training Profile**: Full local customization of multi-select fitness goals, preferred weight units (LBS/KG), session duration targets, available gym equipment, return-after-break calibration, and muscle priorities.
+- **Training Profile**: Full local customization of theme preference (System Default / Dark Mode / Light Mode), multi-select fitness goals, preferred weight units (LBS/KG), session duration targets, available gym equipment, return-after-break calibration, and muscle priorities.
 - **Credits & Licenses**: In-app attribution for the bundled exercise artwork, reachable from the Training Profile screen.
 
 ## Documentation

@@ -7,6 +7,7 @@ import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.MuscleVocabulary
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
+import wallcrawl.elopenmike.com.core.model.ThemePreference
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
@@ -36,6 +37,7 @@ interface UserProfileRepository {
     suspend fun updateExcludedExercises(excludedIds: List<String>)
     suspend fun updateTrainingConstraints(constraints: Set<TrainingConstraint>)
     suspend fun updateReturningAfterBreakWeeks(weeks: Int)
+    suspend fun updateThemePreference(theme: ThemePreference)
 }
 
 class OfflineUserProfileRepository(
@@ -143,6 +145,11 @@ class OfflineUserProfileRepository(
         saveUserProfile(current.copy(returningAfterBreakWeeks = weeks))
     }
 
+    override suspend fun updateThemePreference(theme: ThemePreference) {
+        val current = getProfileOnce()
+        saveUserProfile(current.copy(themePreference = theme))
+    }
+
     private fun UserProfileEntity.toDomainModel(): UserProfile {
         val priorities = if (musclePrioritiesJson.isBlank()) {
             emptyMap()
@@ -184,7 +191,8 @@ class OfflineUserProfileRepository(
             onboardingCompleted = onboardingCompleted,
             trainingConstraints = decodeTrainingConstraints(trainingConstraintsJson),
             returningAfterBreakWeeks = returningAfterBreakWeeks,
-            confirmedStartingLoads = decodeConfirmedStartingLoads(confirmedStartingLoadsJson)
+            confirmedStartingLoads = decodeConfirmedStartingLoads(confirmedStartingLoadsJson),
+            themePreference = themePreference
         )
     }
 
@@ -209,7 +217,8 @@ class OfflineUserProfileRepository(
             trainingConstraintsJson = encodeTrainingConstraints(trainingConstraints),
             returningAfterBreakWeeks = returningAfterBreakWeeks,
             confirmedStartingLoadsJson = encodeConfirmedStartingLoads(confirmedStartingLoads),
-            fitnessGoalsJson = encodeFitnessGoals(goals)
+            fitnessGoalsJson = encodeFitnessGoals(goals),
+            themePreference = themePreference
         )
     }
 

@@ -41,6 +41,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Slider
@@ -60,6 +61,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import wallcrawl.elopenmike.com.core.model.BreakDurationHelper
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
@@ -71,13 +73,6 @@ import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
 import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
-import wallcrawl.elopenmike.com.core.ui.theme.GraphiteBorder
-import wallcrawl.elopenmike.com.core.ui.theme.GraphiteSurface
-import wallcrawl.elopenmike.com.core.ui.theme.GraphiteSurfaceElevated
-import wallcrawl.elopenmike.com.core.ui.theme.ObsidianBlack
-import wallcrawl.elopenmike.com.core.ui.theme.TextMuted
-import wallcrawl.elopenmike.com.core.ui.theme.TextPrimary
-import wallcrawl.elopenmike.com.core.ui.theme.TextSecondary
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
 import wallcrawl.elopenmike.com.core.ui.theme.WebBlueAccent
 
@@ -100,7 +95,7 @@ fun OnboardingScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(ObsidianBlack)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         WebBackgroundPattern()
 
@@ -153,13 +148,13 @@ fun OnboardingScreen(
                                 text = step.title,
                                 fontSize = 24.sp,
                                 fontWeight = FontWeight.Black,
-                                color = TextWhite
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
                                 text = step.subtitle,
                                 fontSize = 14.sp,
-                                color = TextSecondary
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             Spacer(modifier = Modifier.height(16.dp))
 
@@ -217,7 +212,7 @@ private fun OnboardingHeader(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back",
-                        tint = TextSecondary
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             } else {
@@ -254,7 +249,7 @@ private fun OnboardingHeader(
                             when {
                                 isCurrent -> CrimsonRedPrimary
                                 isCompletedOrActive -> CrimsonRedLight.copy(alpha = 0.7f)
-                                else -> GraphiteBorder
+                                else -> MaterialTheme.colorScheme.outline
                             }
                         )
                 )
@@ -276,8 +271,7 @@ private fun WelcomeStep(
     ) {
         WallCrawlCard(
             cornerRadius = 16.dp,
-            contentPadding = 20.dp,
-            backgroundColor = GraphiteSurfaceElevated
+            contentPadding = 20.dp
         ) {
             Text(
                 text = "YOUR CODENAME",
@@ -290,13 +284,13 @@ private fun WelcomeStep(
             Text(
                 text = "What should WallCrawl call you during workouts?",
                 fontSize = 13.sp,
-                color = TextSecondary
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(12.dp))
             OutlinedTextField(
                 value = state.name,
                 onValueChange = viewModel::updateName,
-                placeholder = { Text("e.g. Peter, Gwen, Miles, Alex") },
+                placeholder = { Text("e.g. Peter, Gwen, Miles, Alex", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)) },
                 singleLine = true,
                 leadingIcon = {
                     Icon(
@@ -307,14 +301,16 @@ private fun WelcomeStep(
                 },
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = GraphiteSurface,
-                    unfocusedContainerColor = GraphiteSurface,
+                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                     focusedBorderColor = CrimsonRedPrimary,
-                    unfocusedBorderColor = GraphiteBorder,
-                    focusedTextColor = TextPrimary,
-                    unfocusedTextColor = TextPrimary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
                     focusedLabelColor = CrimsonRedPrimary,
-                    unfocusedLabelColor = TextSecondary
+                    unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    focusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                    unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                 ),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -333,8 +329,7 @@ private fun GoalsStep(
     ) {
         WallCrawlCard(
             cornerRadius = 16.dp,
-            contentPadding = 16.dp,
-            backgroundColor = GraphiteSurfaceElevated
+            contentPadding = 16.dp
         ) {
             Text(
                 text = "FITNESS GOALS",
@@ -347,7 +342,7 @@ private fun GoalsStep(
             Text(
                 text = "Select all that apply to your current training block:",
                 fontSize = 12.sp,
-                color = TextSecondary
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(12.dp))
             FitnessGoal.entries.forEach { goal ->
@@ -373,8 +368,7 @@ private fun ExperienceAndUnitStep(
     ) {
         WallCrawlCard(
             cornerRadius = 16.dp,
-            contentPadding = 20.dp,
-            backgroundColor = GraphiteSurfaceElevated
+            contentPadding = 20.dp
         ) {
             Text(
                 text = "PREFERRED WEIGHT UNIT",
@@ -387,7 +381,7 @@ private fun ExperienceAndUnitStep(
             Text(
                 text = "Used for weight prescriptions, plates, and logging.",
                 fontSize = 13.sp,
-                color = TextSecondary
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(14.dp))
             Row(
@@ -400,8 +394,8 @@ private fun ExperienceAndUnitStep(
                         modifier = Modifier
                             .weight(1f)
                             .clip(RoundedCornerShape(12.dp))
-                            .background(if (isSelected) CrimsonRedPrimary else GraphiteSurface)
-                            .border(1.dp, if (isSelected) CrimsonRedPrimary else GraphiteBorder, RoundedCornerShape(12.dp))
+                            .background(if (isSelected) CrimsonRedPrimary else MaterialTheme.colorScheme.surface)
+                            .border(1.dp, if (isSelected) CrimsonRedPrimary else MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
                             .clickable { viewModel.updateUnit(unit) }
                             .padding(vertical = 14.dp),
                         contentAlignment = Alignment.Center
@@ -411,12 +405,12 @@ private fun ExperienceAndUnitStep(
                                 text = unit.name,
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = if (isSelected) TextWhite else TextPrimary
+                                color = if (isSelected) TextWhite else MaterialTheme.colorScheme.onSurface
                             )
                             Text(
                                 text = if (unit == WeightUnit.LBS) "Pounds (lbs)" else "Kilograms (kg)",
                                 fontSize = 11.sp,
-                                color = if (isSelected) TextWhite.copy(alpha = 0.8f) else TextMuted
+                                color = if (isSelected) TextWhite.copy(alpha = 0.8f) else MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
@@ -426,15 +420,14 @@ private fun ExperienceAndUnitStep(
 
         WallCrawlCard(
             cornerRadius = 16.dp,
-            contentPadding = 16.dp,
-            backgroundColor = GraphiteSurfaceElevated
+            contentPadding = 16.dp
         ) {
             Text(
                 text = "EXPERIENCE LEVEL",
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.8.sp,
-                color = TextSecondary
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(12.dp))
             ExperienceLevel.entries.forEach { level ->
@@ -465,15 +458,14 @@ private fun ScheduleStep(
     ) {
         WallCrawlCard(
             cornerRadius = 16.dp,
-            contentPadding = 16.dp,
-            backgroundColor = GraphiteSurfaceElevated
+            contentPadding = 16.dp
         ) {
             Text(
                 text = "TRAINING DAYS PER WEEK",
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.8.sp,
-                color = TextSecondary
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
@@ -485,7 +477,7 @@ private fun ScheduleStep(
                     else -> "6 days • High frequency dedicated training."
                 },
                 fontSize = 13.sp,
-                color = WebBlueAccent,
+                color = MaterialTheme.colorScheme.secondary,
                 fontWeight = FontWeight.Medium
             )
             Spacer(modifier = Modifier.height(14.dp))
@@ -500,8 +492,8 @@ private fun ScheduleStep(
                             .weight(1f)
                             .height(48.dp)
                             .clip(RoundedCornerShape(10.dp))
-                            .background(if (isSelected) CrimsonRedPrimary else GraphiteSurface)
-                            .border(1.dp, if (isSelected) CrimsonRedPrimary else GraphiteBorder, RoundedCornerShape(10.dp))
+                            .background(if (isSelected) CrimsonRedPrimary else MaterialTheme.colorScheme.surface)
+                            .border(1.dp, if (isSelected) CrimsonRedPrimary else MaterialTheme.colorScheme.outline, RoundedCornerShape(10.dp))
                             .clickable { viewModel.updateDaysPerWeek(days) },
                         contentAlignment = Alignment.Center
                     ) {
@@ -509,7 +501,7 @@ private fun ScheduleStep(
                             text = "$days",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
-                            color = if (isSelected) TextWhite else TextSecondary
+                            color = if (isSelected) TextWhite else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
@@ -518,8 +510,7 @@ private fun ScheduleStep(
 
         WallCrawlCard(
             cornerRadius = 16.dp,
-            contentPadding = 16.dp,
-            backgroundColor = GraphiteSurfaceElevated
+            contentPadding = 16.dp
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -531,20 +522,20 @@ private fun ScheduleStep(
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.8.sp,
-                    color = TextSecondary
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
                     text = "${state.durationMinutes} min",
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
-                    color = WebBlueAccent
+                    color = MaterialTheme.colorScheme.secondary
                 )
             }
             Spacer(modifier = Modifier.height(6.dp))
             Text(
                 text = "Includes warm-up sets, working volume, and rest periods.",
                 fontSize = 12.sp,
-                color = TextSecondary
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(10.dp))
             Slider(
@@ -555,15 +546,14 @@ private fun ScheduleStep(
                 colors = SliderDefaults.colors(
                     thumbColor = CrimsonRedPrimary,
                     activeTrackColor = CrimsonRedPrimary,
-                    inactiveTrackColor = GraphiteBorder
+                    inactiveTrackColor = MaterialTheme.colorScheme.outline
                 )
             )
         }
 
         WallCrawlCard(
             cornerRadius = 16.dp,
-            contentPadding = 16.dp,
-            backgroundColor = GraphiteSurfaceElevated
+            contentPadding = 16.dp
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -582,7 +572,7 @@ private fun ScheduleStep(
                         text = "Re-entry Active",
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
-                        color = WebBlueAccent
+                        color = MaterialTheme.colorScheme.secondary
                     )
                 }
             }
@@ -590,7 +580,7 @@ private fun ScheduleStep(
             Text(
                 text = "Pick your break duration so WallCrawl can calibrate safe starting volume and protect your connective tissue.",
                 fontSize = 12.sp,
-                color = TextSecondary
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -603,7 +593,7 @@ private fun ScheduleStep(
             Text(
                 text = wallcrawl.elopenmike.com.core.model.BreakDurationHelper.guidanceText(state.returningAfterBreakWeeks),
                 fontSize = 12.sp,
-                color = if (state.returningAfterBreakWeeks >= 52) CrimsonRedLight else WebBlueAccent,
+                color = if (state.returningAfterBreakWeeks >= 52) CrimsonRedLight else MaterialTheme.colorScheme.secondary,
                 fontWeight = FontWeight.Medium
             )
         }
@@ -624,10 +614,10 @@ private fun BreakDurationDropdownSelector(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(12.dp))
-                .background(GraphiteSurface)
+                .background(MaterialTheme.colorScheme.surface)
                 .border(
                     1.dp,
-                    if (expanded) CrimsonRedPrimary else GraphiteBorder,
+                    if (expanded) CrimsonRedPrimary else MaterialTheme.colorScheme.outline,
                     RoundedCornerShape(12.dp)
                 )
                 .clickable { expanded = !expanded }
@@ -643,20 +633,20 @@ private fun BreakDurationDropdownSelector(
                         text = currentRange.title,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
-                        color = if (currentRange.weeks == 0) TextWhite else WebBlueAccent
+                        color = if (currentRange.weeks == 0) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.secondary
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = currentRange.subtitle,
                         fontSize = 12.sp,
-                        color = TextSecondary
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
                 Icon(
                     imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                     contentDescription = if (expanded) "Close range menu" else "Select break range",
-                    tint = if (expanded) CrimsonRedPrimary else TextSecondary,
+                    tint = if (expanded) CrimsonRedPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(24.dp)
                 )
             }
@@ -667,8 +657,8 @@ private fun BreakDurationDropdownSelector(
             onDismissRequest = { expanded = false },
             modifier = Modifier
                 .fillMaxWidth(0.88f)
-                .background(GraphiteSurfaceElevated)
-                .border(1.dp, GraphiteBorder, RoundedCornerShape(12.dp))
+                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
         ) {
             wallcrawl.elopenmike.com.core.model.BreakDurationHelper.RANGES.forEach { range ->
                 val isSelected = range == currentRange
@@ -686,12 +676,12 @@ private fun BreakDurationDropdownSelector(
                                     text = range.title,
                                     fontSize = 14.sp,
                                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.SemiBold,
-                                    color = if (isSelected) CrimsonRedLight else TextWhite
+                                    color = if (isSelected) CrimsonRedLight else MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
                                     text = range.subtitle,
                                     fontSize = 11.sp,
-                                    color = TextSecondary
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
                             if (isSelected) {
@@ -710,7 +700,7 @@ private fun BreakDurationDropdownSelector(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(if (isSelected) Color(0x1AE63946) else Color.Transparent)
+                        .background(if (isSelected) CrimsonRedPrimary.copy(alpha = 0.12f) else Color.Transparent)
                 )
             }
         }
@@ -729,8 +719,7 @@ private fun EquipmentStep(
     ) {
         WallCrawlCard(
             cornerRadius = 16.dp,
-            contentPadding = 16.dp,
-            backgroundColor = GraphiteSurfaceElevated
+            contentPadding = 16.dp
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -742,7 +731,7 @@ private fun EquipmentStep(
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.8.sp,
-                    color = TextSecondary
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
             Spacer(modifier = Modifier.height(10.dp))
@@ -754,33 +743,32 @@ private fun EquipmentStep(
                     modifier = Modifier
                         .weight(1f)
                         .clip(RoundedCornerShape(8.dp))
-                        .background(GraphiteSurface)
-                        .border(1.dp, GraphiteBorder, RoundedCornerShape(8.dp))
+                        .background(MaterialTheme.colorScheme.surface)
+                        .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp))
                         .clickable { viewModel.resetEquipmentToBodyweight() }
                         .padding(vertical = 10.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("Bodyweight Only", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = TextPrimary)
+                    Text("Bodyweight Only", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface)
                 }
                 Box(
                     modifier = Modifier
                         .weight(1f)
                         .clip(RoundedCornerShape(8.dp))
-                        .background(GraphiteSurface)
-                        .border(1.dp, GraphiteBorder, RoundedCornerShape(8.dp))
+                        .background(MaterialTheme.colorScheme.surface)
+                        .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp))
                         .clickable { viewModel.selectAllEquipment() }
                         .padding(vertical = 10.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("Full Gym Access", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = WebBlueAccent)
+                    Text("Full Gym Access", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.secondary)
                 }
             }
         }
 
         WallCrawlCard(
             cornerRadius = 16.dp,
-            contentPadding = 16.dp,
-            backgroundColor = GraphiteSurfaceElevated
+            contentPadding = 16.dp
         ) {
             Text(
                 text = "AVAILABLE GEAR",
@@ -793,7 +781,7 @@ private fun EquipmentStep(
             Text(
                 text = "Select what you have in your home or gym:",
                 fontSize = 12.sp,
-                color = TextSecondary
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -807,18 +795,25 @@ private fun EquipmentStep(
                     FilterChip(
                         selected = isSelected,
                         onClick = { viewModel.toggleEquipment(equipment) },
-                        label = { Text(equipment, fontSize = 12.sp, fontWeight = FontWeight.SemiBold) },
+                        label = {
+                            Text(
+                                text = equipment,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = if (isSelected) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onSurface
+                            )
+                        },
                         colors = FilterChipDefaults.filterChipColors(
-                            containerColor = GraphiteSurface,
-                            selectedContainerColor = WebBlueAccent,
-                            labelColor = TextSecondary,
-                            selectedLabelColor = ObsidianBlack
+                            containerColor = MaterialTheme.colorScheme.surface,
+                            selectedContainerColor = MaterialTheme.colorScheme.secondary,
+                            labelColor = MaterialTheme.colorScheme.onSurface,
+                            selectedLabelColor = MaterialTheme.colorScheme.onSecondary
                         ),
                         border = FilterChipDefaults.filterChipBorder(
                             enabled = true,
                             selected = isSelected,
-                            borderColor = GraphiteBorder,
-                            selectedBorderColor = WebBlueAccent
+                            borderColor = MaterialTheme.colorScheme.outline,
+                            selectedBorderColor = MaterialTheme.colorScheme.secondary
                         )
                     )
                 }
@@ -839,8 +834,7 @@ private fun SafetyStep(
     ) {
         WallCrawlCard(
             cornerRadius = 16.dp,
-            contentPadding = 16.dp,
-            backgroundColor = GraphiteSurfaceElevated
+            contentPadding = 16.dp
         ) {
             Text(
                 text = "PROTECT SENSITIVE JOINTS",
@@ -853,7 +847,7 @@ private fun SafetyStep(
             Text(
                 text = "Tell us if any joints need conservative exercise selection. WallCrawl will automatically filter or substitute high-stress movements.",
                 fontSize = 13.sp,
-                color = TextSecondary
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(14.dp))
 
@@ -862,8 +856,8 @@ private fun SafetyStep(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(10.dp))
-                    .background(if (hasNoConstraints) Color(0x2210B981) else GraphiteSurface)
-                    .border(1.dp, if (hasNoConstraints) Color(0xFF10B981) else GraphiteBorder, RoundedCornerShape(10.dp))
+                    .background(if (hasNoConstraints) Color(0x2210B981) else MaterialTheme.colorScheme.surface)
+                    .border(1.dp, if (hasNoConstraints) Color(0xFF10B981) else MaterialTheme.colorScheme.outline, RoundedCornerShape(10.dp))
                     .clickable { viewModel.clearConstraints() }
                     .padding(12.dp)
             ) {
@@ -877,12 +871,12 @@ private fun SafetyStep(
                             text = "Feeling 100% / No Restrictions",
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
-                            color = if (hasNoConstraints) TextWhite else TextPrimary
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
                             text = "Full catalog of exercises available without joint filters.",
                             fontSize = 12.sp,
-                            color = TextSecondary
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                     if (hasNoConstraints) {
@@ -902,7 +896,7 @@ private fun SafetyStep(
                 text = "Or tag specific areas to protect:",
                 fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = TextSecondary
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -918,15 +912,15 @@ private fun SafetyStep(
                         onClick = { viewModel.toggleConstraint(constraint) },
                         label = { Text(constraint.displayName, fontSize = 12.sp, fontWeight = FontWeight.SemiBold) },
                         colors = FilterChipDefaults.filterChipColors(
-                            containerColor = GraphiteSurface,
+                            containerColor = MaterialTheme.colorScheme.surface,
                             selectedContainerColor = CrimsonRedPrimary,
-                            labelColor = TextSecondary,
+                            labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
                             selectedLabelColor = TextWhite
                         ),
                         border = FilterChipDefaults.filterChipBorder(
                             enabled = true,
                             selected = isSelected,
-                            borderColor = GraphiteBorder,
+                            borderColor = MaterialTheme.colorScheme.outline,
                             selectedBorderColor = CrimsonRedPrimary
                         )
                     )
@@ -947,8 +941,7 @@ private fun SummaryStep(
     ) {
         WallCrawlCard(
             cornerRadius = 16.dp,
-            contentPadding = 20.dp,
-            backgroundColor = GraphiteSurfaceElevated
+            contentPadding = 20.dp
         ) {
             Text(
                 text = "TRAINING BLUEPRINT",
@@ -982,20 +975,19 @@ private fun SummaryStep(
 
         WallCrawlCard(
             cornerRadius = 16.dp,
-            contentPadding = 16.dp,
-            backgroundColor = GraphiteSurface
+            contentPadding = 16.dp
         ) {
             Text(
                 text = "⚡ Ready for Action",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
-                color = TextWhite
+                color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = "WallCrawl will now configure your local adaptive planner. You can modify any of these preferences at any time from your Profile.",
                 fontSize = 12.sp,
-                color = TextSecondary
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }
@@ -1013,12 +1005,12 @@ private fun SummaryRow(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = label, fontSize = 13.sp, color = TextSecondary)
+        Text(text = label, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Text(
             text = value,
             fontSize = 13.sp,
             fontWeight = FontWeight.SemiBold,
-            color = TextPrimary
+            color = MaterialTheme.colorScheme.onSurface
         )
     }
 }
@@ -1070,11 +1062,11 @@ private fun SelectableRow(
             .padding(vertical = 4.dp)
             .clip(RoundedCornerShape(10.dp))
             .background(
-                if (isSelected) Color(0x22E63946) else GraphiteSurface
+                if (isSelected) CrimsonRedPrimary.copy(alpha = 0.12f) else MaterialTheme.colorScheme.surface
             )
             .border(
                 1.dp,
-                if (isSelected) CrimsonRedPrimary else GraphiteBorder,
+                if (isSelected) CrimsonRedPrimary else MaterialTheme.colorScheme.outline,
                 RoundedCornerShape(10.dp)
             )
             .clickable(onClick = onClick)
@@ -1090,11 +1082,11 @@ private fun SelectableRow(
                     text = title,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
-                    color = if (isSelected) TextWhite else TextPrimary
+                    color = if (isSelected) CrimsonRedPrimary else MaterialTheme.colorScheme.onSurface
                 )
                 if (subtitle != null) {
                     Spacer(modifier = Modifier.height(2.dp))
-                    Text(text = subtitle, fontSize = 12.sp, color = TextSecondary)
+                    Text(text = subtitle, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
             if (isSelected) {

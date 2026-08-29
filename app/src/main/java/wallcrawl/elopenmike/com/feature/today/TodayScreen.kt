@@ -42,6 +42,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.material3.MaterialTheme
 import wallcrawl.elopenmike.com.core.model.GeneratedExercise
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
 import wallcrawl.elopenmike.com.core.model.ExerciseType
@@ -53,14 +54,7 @@ import wallcrawl.elopenmike.com.core.ui.components.WallCrawlSecondaryButton
 import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
-import wallcrawl.elopenmike.com.core.ui.theme.GraphiteBorder
-import wallcrawl.elopenmike.com.core.ui.theme.GraphiteSurface
-import wallcrawl.elopenmike.com.core.ui.theme.GraphiteSurfaceElevated
-import wallcrawl.elopenmike.com.core.ui.theme.ObsidianBlack
 import wallcrawl.elopenmike.com.core.ui.theme.SuccessGreen
-import wallcrawl.elopenmike.com.core.ui.theme.TextMuted
-import wallcrawl.elopenmike.com.core.ui.theme.TextPrimary
-import wallcrawl.elopenmike.com.core.ui.theme.TextSecondary
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
 import wallcrawl.elopenmike.com.core.ui.theme.WebBlueAccent
 
@@ -77,7 +71,7 @@ fun TodayScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(ObsidianBlack)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         WebBackgroundPattern()
 
@@ -87,7 +81,7 @@ fun TodayScreen(
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         CircularProgressIndicator(color = CrimsonRedPrimary)
                         Spacer(modifier = Modifier.height(16.dp))
-                        Text("Building today's plan...", color = TextSecondary)
+                        Text("Building today's plan...", color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
             }
@@ -113,7 +107,7 @@ fun TodayScreen(
                     WallCrawlCard(borderColor = CrimsonRedPrimary) {
                         Text("Generation Issue", fontWeight = FontWeight.Bold, color = CrimsonRedLight, fontSize = 18.sp)
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text(state.message, color = TextSecondary, fontSize = 14.sp)
+                        Text(state.message, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
                         Spacer(modifier = Modifier.height(16.dp))
                         WallCrawlPrimaryButton(text = "Try Again", onClick = { viewModel.regenerateWorkout() })
                         Spacer(modifier = Modifier.height(8.dp))
@@ -195,7 +189,7 @@ private fun TodayContent(
 
 @Composable
 private fun MyWorkoutsCard(onOpenTemplates: () -> Unit) {
-    WallCrawlCard(backgroundColor = GraphiteSurfaceElevated) {
+    WallCrawlCard {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -225,13 +219,13 @@ private fun MyWorkoutsCard(onOpenTemplates: () -> Unit) {
                 )
                 Text(
                     text = "My Workouts",
-                    color = TextWhite,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp
                 )
                 Text(
                     text = "Build, save, and repeat your custom routines.",
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 12.sp
                 )
             }
@@ -265,7 +259,7 @@ private fun TodayHeader(
                     text = "Ready to train, $userName",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextWhite
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
 
@@ -273,7 +267,7 @@ private fun TodayHeader(
                 modifier = Modifier
                     .size(44.dp)
                     .clip(CircleShape)
-                    .background(GraphiteSurfaceElevated)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
                     .border(1.dp, CrimsonRedPrimary.copy(alpha = 0.5f), CircleShape),
                 contentAlignment = Alignment.Center
             ) {
@@ -290,8 +284,7 @@ private fun TodayHeader(
         // Weekly consistency mini progress
         WallCrawlCard(
             cornerRadius = 12.dp,
-            contentPadding = 12.dp,
-            backgroundColor = GraphiteSurface
+            contentPadding = 12.dp
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -310,7 +303,7 @@ private fun TodayHeader(
                         text = "$completedThisWeek of $weeklyGoal workouts completed this week",
                         fontSize = 13.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = TextPrimary
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
                 Text(
@@ -321,7 +314,7 @@ private fun TodayHeader(
                     },
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
-                    color = WebBlueAccent
+                    color = MaterialTheme.colorScheme.secondary
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
@@ -332,7 +325,7 @@ private fun TodayHeader(
                     .height(6.dp)
                     .clip(RoundedCornerShape(3.dp)),
                 color = CrimsonRedPrimary,
-                trackColor = GraphiteBorder
+                trackColor = MaterialTheme.colorScheme.outline
             )
         }
     }
@@ -346,8 +339,7 @@ private fun ActiveSessionBanner(
     onResume: () -> Unit
 ) {
     WallCrawlCard(
-        borderColor = CrimsonRedPrimary,
-        backgroundColor = GraphiteSurfaceElevated
+        borderColor = CrimsonRedPrimary
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -366,12 +358,12 @@ private fun ActiveSessionBanner(
                     text = sessionName,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextWhite
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
                     text = "$completedSets of $totalSets sets logged",
                     fontSize = 12.sp,
-                    color = TextSecondary
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
             Spacer(modifier = Modifier.width(12.dp))
@@ -399,8 +391,7 @@ private fun SuggestedWorkoutCard(
     WallCrawlCard(
         cornerRadius = 20.dp,
         contentPadding = 20.dp,
-        borderColor = CrimsonRedPrimary.copy(alpha = 0.4f),
-        backgroundColor = GraphiteSurfaceElevated
+        borderColor = CrimsonRedPrimary.copy(alpha = 0.4f)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -435,7 +426,7 @@ private fun SuggestedWorkoutCard(
                     Icon(
                         imageVector = Icons.Default.Refresh,
                         contentDescription = "Regenerate Workout",
-                        tint = TextSecondary,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(20.dp)
                     )
                 }
@@ -448,7 +439,7 @@ private fun SuggestedWorkoutCard(
             text = workout.name,
             fontSize = 24.sp,
             fontWeight = FontWeight.Black,
-            color = TextWhite
+            color = MaterialTheme.colorScheme.onSurface
         )
 
         Spacer(modifier = Modifier.height(6.dp))
@@ -457,7 +448,7 @@ private fun SuggestedWorkoutCard(
             text = workout.focusMuscles.joinToString(" · "),
             fontSize = 15.sp,
             fontWeight = FontWeight.SemiBold,
-            color = TextSecondary
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -470,17 +461,17 @@ private fun SuggestedWorkoutCard(
             StatBadge(
                 label = "~${workout.estimatedDurationMinutes} min",
                 icon = Icons.Default.Schedule,
-                textColor = WebBlueAccent
+                textColor = MaterialTheme.colorScheme.secondary
             )
             StatBadge(
                 label = "${workout.exercises.size} exercises",
                 icon = Icons.Default.FitnessCenter,
-                textColor = TextPrimary
+                textColor = MaterialTheme.colorScheme.onSurface
             )
             val totalSets = workout.exercises.sumOf { it.targetSets }
             StatBadge(
                 label = "$totalSets sets",
-                textColor = TextSecondary
+                textColor = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
 
@@ -490,8 +481,8 @@ private fun SuggestedWorkoutCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(GraphiteSurface, RoundedCornerShape(12.dp))
-                .border(1.dp, GraphiteBorder, RoundedCornerShape(12.dp))
+                .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(12.dp))
+                .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
                 .padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -500,7 +491,7 @@ private fun SuggestedWorkoutCard(
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.5.sp,
-                color = TextMuted
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             workout.exercises.forEachIndexed { index, exercise ->
@@ -566,7 +557,7 @@ private fun ExercisePreviewRow(
                 text = cleanName,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = TextPrimary
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
 
@@ -584,7 +575,7 @@ private fun ExercisePreviewRow(
             },
             fontSize = 13.sp,
             fontWeight = FontWeight.Medium,
-            color = TextSecondary
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
@@ -597,8 +588,7 @@ private fun PlanContextCard(
 ) {
     WallCrawlCard(
         cornerRadius = 12.dp,
-        contentPadding = 12.dp,
-        backgroundColor = GraphiteSurface
+        contentPadding = 12.dp
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -610,19 +600,19 @@ private fun PlanContextCard(
                     text = "TARGETING: $goal".uppercase(),
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextMuted
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
                     text = "$equipmentCount Equipment Types Available · $unit",
                     fontSize = 12.sp,
-                    color = TextSecondary
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
             Text(
                 text = "Built on your phone",
                 fontSize = 11.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = WebBlueAccent
+                color = MaterialTheme.colorScheme.secondary
             )
         }
     }

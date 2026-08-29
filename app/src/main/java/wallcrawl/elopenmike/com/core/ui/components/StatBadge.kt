@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,19 +20,15 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import wallcrawl.elopenmike.com.core.ui.theme.GraphiteBorder
-import wallcrawl.elopenmike.com.core.ui.theme.GraphiteSurface
-import wallcrawl.elopenmike.com.core.ui.theme.TextPrimary
-import wallcrawl.elopenmike.com.core.ui.theme.TextSecondary
 
 @Composable
 fun StatBadge(
     label: String,
     modifier: Modifier = Modifier,
     icon: ImageVector? = null,
-    badgeColor: Color = GraphiteSurface,
-    borderColor: Color = GraphiteBorder,
-    textColor: Color = TextPrimary
+    badgeColor: Color = MaterialTheme.colorScheme.surface,
+    borderColor: Color = MaterialTheme.colorScheme.outline,
+    textColor: Color = MaterialTheme.colorScheme.onSurface
 ) {
     Box(
         modifier = modifier
@@ -66,12 +63,12 @@ fun MetricHighlight(
     value: String,
     modifier: Modifier = Modifier,
     subtitle: String? = null,
-    valueColor: Color = TextPrimary
+    valueColor: Color = MaterialTheme.colorScheme.onSurface
 ) {
     Box(
         modifier = modifier
-            .background(GraphiteSurface, RoundedCornerShape(12.dp))
-            .border(1.dp, GraphiteBorder, RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(12.dp))
+            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
             .padding(12.dp)
     ) {
         Row(
@@ -84,7 +81,7 @@ fun MetricHighlight(
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.5.sp,
-                    color = TextSecondary
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
                     text = value,
@@ -96,7 +93,7 @@ fun MetricHighlight(
                     Text(
                         text = subtitle,
                         fontSize = 11.sp,
-                        color = TextSecondary
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }

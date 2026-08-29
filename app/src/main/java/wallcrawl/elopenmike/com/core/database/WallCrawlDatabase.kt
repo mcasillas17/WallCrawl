@@ -29,7 +29,7 @@ import wallcrawl.elopenmike.com.core.database.entity.WorkoutTemplateExerciseEnti
         WorkoutTemplateEntity::class,
         WorkoutTemplateExerciseEntity::class
     ],
-    version = 6,
+    version = 7,
     exportSchema = false
 )
 @TypeConverters(RoomTypeConverters::class)
@@ -54,7 +54,7 @@ abstract class WallCrawlDatabase : RoomDatabase() {
                     WallCrawlDatabase::class.java,
                     DATABASE_NAME
                 )
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
                     .build()
                     .also { INSTANCE = it }
             }
@@ -263,6 +263,15 @@ abstract class WallCrawlDatabase : RoomDatabase() {
                         "ADD COLUMN fitnessGoalsJson TEXT NOT NULL DEFAULT ''"
                 )
                 db.execSQL("UPDATE user_profiles SET fitnessGoalsJson = primaryGoal WHERE fitnessGoalsJson = ''")
+            }
+        }
+
+        val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "ALTER TABLE user_profiles " +
+                        "ADD COLUMN themePreference TEXT NOT NULL DEFAULT 'SYSTEM'"
+                )
             }
         }
     }

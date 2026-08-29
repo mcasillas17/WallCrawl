@@ -37,18 +37,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.material3.MaterialTheme
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
-import wallcrawl.elopenmike.com.core.ui.theme.GraphiteBorder
-import wallcrawl.elopenmike.com.core.ui.theme.GraphiteSurface
-import wallcrawl.elopenmike.com.core.ui.theme.GraphiteSurfaceElevated
 import wallcrawl.elopenmike.com.core.ui.theme.SuccessGreen
-import wallcrawl.elopenmike.com.core.ui.theme.TextDisabled
-import wallcrawl.elopenmike.com.core.ui.theme.TextMuted
-import wallcrawl.elopenmike.com.core.ui.theme.TextPrimary
-import wallcrawl.elopenmike.com.core.ui.theme.TextSecondary
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
 
 @Composable
@@ -72,8 +66,8 @@ fun SetRow(
 
     val isCompleted = set.isCompleted
 
-    val rowBackgroundColor = if (isCompleted) Color(0x1810B981) else GraphiteSurfaceElevated
-    val rowBorderColor = if (isCompleted) SuccessGreen.copy(alpha = 0.5f) else GraphiteBorder
+    val rowBackgroundColor = if (isCompleted) SuccessGreen.copy(alpha = 0.12f) else MaterialTheme.colorScheme.surfaceVariant
+    val rowBorderColor = if (isCompleted) SuccessGreen.copy(alpha = 0.5f) else MaterialTheme.colorScheme.outline
 
     Row(
         modifier = modifier
@@ -88,15 +82,15 @@ fun SetRow(
         Box(
             modifier = Modifier
                 .size(32.dp)
-                .background(GraphiteSurface, RoundedCornerShape(8.dp))
-                .border(1.dp, GraphiteBorder, RoundedCornerShape(8.dp)),
+                .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(8.dp))
+                .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp)),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = "${set.setNumber}",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
-                color = if (isCompleted) SuccessGreen else TextSecondary
+                color = if (isCompleted) SuccessGreen else MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
 
@@ -117,7 +111,7 @@ fun SetRow(
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 textStyle = TextStyle(
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center
@@ -128,15 +122,15 @@ fun SetRow(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(38.dp)
-                            .background(GraphiteSurface, RoundedCornerShape(8.dp))
-                            .border(1.dp, GraphiteBorder, RoundedCornerShape(8.dp))
+                            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(8.dp))
+                            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp))
                             .padding(horizontal = 8.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         if (weightText.isEmpty()) {
                             Text(
                                 text = set.targetWeight?.let { "$it" } ?: "0",
-                                color = TextDisabled,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                                 fontSize = 15.sp
                             )
                         }
@@ -149,7 +143,7 @@ fun SetRow(
                 text = weightUnit,
                 fontSize = 11.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = TextMuted
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
 
@@ -170,7 +164,7 @@ fun SetRow(
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 textStyle = TextStyle(
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center
@@ -181,15 +175,15 @@ fun SetRow(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(38.dp)
-                            .background(GraphiteSurface, RoundedCornerShape(8.dp))
-                            .border(1.dp, GraphiteBorder, RoundedCornerShape(8.dp))
+                            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(8.dp))
+                            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp))
                             .padding(horizontal = 8.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         if (repsText.isEmpty()) {
                             Text(
                                 text = "${set.targetReps}",
-                                color = TextDisabled,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                                 fontSize = 15.sp
                             )
                         }
@@ -202,7 +196,7 @@ fun SetRow(
                 text = "reps",
                 fontSize = 11.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = TextMuted
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
 
@@ -213,12 +207,12 @@ fun SetRow(
             modifier = Modifier
                 .size(38.dp)
                 .background(
-                    if (isCompleted) SuccessGreen else GraphiteSurface,
+                    if (isCompleted) SuccessGreen else MaterialTheme.colorScheme.surface,
                     RoundedCornerShape(10.dp)
                 )
                 .border(
                     1.dp,
-                    if (isCompleted) SuccessGreen else GraphiteBorder,
+                    if (isCompleted) SuccessGreen else MaterialTheme.colorScheme.outline,
                     RoundedCornerShape(10.dp)
                 )
                 .clickable {
@@ -231,7 +225,7 @@ fun SetRow(
             Icon(
                 imageVector = Icons.Default.Check,
                 contentDescription = "Complete Set",
-                tint = if (isCompleted) TextWhite else TextDisabled,
+                tint = if (isCompleted) TextWhite else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
                 modifier = Modifier.size(20.dp)
             )
         }
@@ -291,12 +285,12 @@ fun PerformanceSetRow(
         modifier = modifier
             .fillMaxWidth()
             .background(
-                if (set.isCompleted) Color(0x1810B981) else GraphiteSurfaceElevated,
+                if (set.isCompleted) SuccessGreen.copy(alpha = 0.12f) else MaterialTheme.colorScheme.surfaceVariant,
                 RoundedCornerShape(12.dp)
             )
             .border(
                 1.dp,
-                if (set.isCompleted) SuccessGreen.copy(alpha = 0.5f) else GraphiteBorder,
+                if (set.isCompleted) SuccessGreen.copy(alpha = 0.5f) else MaterialTheme.colorScheme.outline,
                 RoundedCornerShape(12.dp)
             )
             .padding(10.dp)
@@ -304,11 +298,11 @@ fun PerformanceSetRow(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 "Set ${set.setNumber}",
-                color = if (set.isCompleted) SuccessGreen else TextSecondary,
+                color = if (set.isCompleted) SuccessGreen else MaterialTheme.colorScheme.onSurfaceVariant,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(1f)
             )
-            Text("Done", color = TextMuted, fontSize = 12.sp)
+            Text("Done", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
             Checkbox(
                 checked = set.isCompleted,
                 onCheckedChange = { onUpdateSet(current(completed = it)) }

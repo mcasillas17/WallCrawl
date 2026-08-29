@@ -33,12 +33,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import wallcrawl.elopenmike.com.AppContainer
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
-import wallcrawl.elopenmike.com.core.ui.theme.GraphiteBorder
-import wallcrawl.elopenmike.com.core.ui.theme.GraphiteSurface
-import wallcrawl.elopenmike.com.core.ui.theme.ObsidianBlack
-import wallcrawl.elopenmike.com.core.ui.theme.TextMuted
-import wallcrawl.elopenmike.com.core.ui.theme.TextSecondary
-import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
 import wallcrawl.elopenmike.com.feature.credits.CreditsScreen
 import wallcrawl.elopenmike.com.feature.credits.CreditsViewModel
 import wallcrawl.elopenmike.com.feature.exercises.ExercisesScreen
@@ -58,25 +52,30 @@ import wallcrawl.elopenmike.com.feature.templates.WorkoutTemplatesViewModel
 import wallcrawl.elopenmike.com.feature.workout.ActiveWorkoutScreen
 import wallcrawl.elopenmike.com.feature.workout.ActiveWorkoutViewModel
 
+import androidx.compose.material3.MaterialTheme
+import wallcrawl.elopenmike.com.core.model.UserProfile
+
 @Composable
 fun WallCrawlApp(
     container: AppContainer,
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
+    profile: UserProfile? = null
 ) {
     // The profile's onboarding status decides the start destination, so Today is never
     // reachable - and TodayViewModel is never constructed - until onboarding is confirmed
     // complete. A null first emission means the profile hasn't loaded yet.
-    val profile by container.userProfileRepository.getUserProfile().collectAsState(initial = null)
+    val profileState by container.userProfileRepository.getUserProfile().collectAsState(initial = profile)
+    val effectiveProfile = profile ?: profileState
 
-    when (val currentProfile = profile) {
+    when (effectiveProfile) {
         null -> {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(ObsidianBlack),
+                    .background(MaterialTheme.colorScheme.background),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(color = CrimsonRedPrimary)
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
             }
         }
 
@@ -84,7 +83,7 @@ fun WallCrawlApp(
             WallCrawlAppContent(
                 container = container,
                 navController = navController,
-                startDestination = if (currentProfile.onboardingCompleted) {
+                startDestination = if (effectiveProfile.onboardingCompleted) {
                     AppRoutes.TODAY
                 } else {
                     AppRoutes.ONBOARDING
@@ -111,7 +110,7 @@ private fun WallCrawlAppContent(
     )
 
     Scaffold(
-        containerColor = ObsidianBlack,
+        containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
             if (shouldShowBottomBar) {
                 WallCrawlBottomBar(
@@ -323,10 +322,10 @@ internal fun WallCrawlBottomBar(
     modifier: Modifier = Modifier
 ) {
     NavigationBar(
-        containerColor = GraphiteSurface,
+        containerColor = MaterialTheme.colorScheme.surface,
         modifier = modifier
             .testTag(WALL_CRAWL_BOTTOM_BAR_TEST_TAG)
-            .border(1.dp, GraphiteBorder)
+            .border(1.dp, MaterialTheme.colorScheme.outline)
     ) {
         Screen.bottomNavItems.forEach { screen ->
             val isSelected = currentRoute == screen.route
@@ -348,11 +347,11 @@ internal fun WallCrawlBottomBar(
                     )
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = TextWhite,
-                    unselectedIconColor = TextMuted,
-                    selectedTextColor = CrimsonRedPrimary,
-                    unselectedTextColor = TextMuted,
-                    indicatorColor = CrimsonRedPrimary
+                    selectedIconColor = MaterialTheme.colorScheme.onPrimary,
+                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    selectedTextColor = MaterialTheme.colorScheme.primary,
+                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    indicatorColor = MaterialTheme.colorScheme.primary
                 )
             )
         }

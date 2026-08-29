@@ -7,10 +7,21 @@ import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetType
+import wallcrawl.elopenmike.com.core.model.ThemePreference
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutOrigin
 
 class RoomTypeConverters {
+
+    @TypeConverter
+    fun fromThemePreference(theme: ThemePreference): String = theme.name
+
+    @TypeConverter
+    fun toThemePreference(value: String): ThemePreference = try {
+        ThemePreference.valueOf(value)
+    } catch (e: Exception) {
+        ThemePreference.SYSTEM
+    }
 
     @TypeConverter
     fun fromFitnessGoal(goal: FitnessGoal): String = goal.name
