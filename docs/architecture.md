@@ -129,6 +129,14 @@ current `FakeWorkoutPlanner` chooses exercises exclusively from
 allowed set, matches the catalog exercise type, and belongs to a structurally
 valid workout. Unknown IDs are rejected, never silently substituted.
 
+Within a split, the compound slots are chosen by what the exercise trains and how
+much it demands — primary-muscle match, then fatigue — and spread across movement
+patterns so a session is not the same lift three times. The remaining slots prefer
+isolation work that trains the split directly, since the heavy work is already
+chosen. Before this ordering existed, candidates were taken in catalog order,
+which is alphabetical: a push day led with an Arnold press and a bench dip while
+the bench press sat unused.
+
 Split selection is deliberate about failure. High-priority muscles propose a
 rotation; splits the candidate pool cannot fill are dropped from it, and if none
 of the preferred splits survive, the full rotation is used instead. An exercise

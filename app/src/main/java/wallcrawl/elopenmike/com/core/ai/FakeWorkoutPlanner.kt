@@ -6,6 +6,7 @@ import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.GeneratedExercise
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
 import wallcrawl.elopenmike.com.core.model.MechanicsType
+import wallcrawl.elopenmike.com.core.model.MovementPattern
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
@@ -144,28 +145,84 @@ class FakeWorkoutPlanner(
             "Split ${split.displayName} was selected without any matching candidate."
         }
 
-        // Prefer reviewed compound lifts, then allow every remaining matching exercise.
-        val compounds = matchingCandidates.filter { it.programming?.mechanics == MechanicsType.COMPOUND }
         val exerciseCountTarget = when {
             context.preferredWorkoutDurationMinutes <= 35 -> 3
             context.preferredWorkoutDurationMinutes <= 55 -> 5
             else -> 6
         }
+        val compoundSlots = minOf(3, exerciseCountTarget - 1)
 
         val result = mutableListOf<Exercise>()
-        // Pick primary compound lifts first
-        result.addAll(compounds.take(minOf(3, exerciseCountTarget - 1)))
+        result.addAll(chooseCompounds(split, matchingCandidates, compoundSlots))
 
-        // Fill remaining slots from the entire matching catalog. Programming metadata
+        // Fill the remaining slots from every matching exercise. Programming metadata
         // influences ordering but never prevents an otherwise valid exercise from selection.
         val remainingSlots = exerciseCountTarget - result.size
         if (remainingSlots > 0) {
-            val availableRemaining = matchingCandidates.filter { it !in result }
-            result.addAll(availableRemaining.take(remainingSlots))
+            val accessories = matchingCandidates
+                .filterNot { it in result }
+                .sortedWith(accessoryOrder(split))
+            result.addAll(accessories.take(remainingSlots))
         }
 
         return result
     }
+
+    /**
+     * Picks the heavy work a session is built around.
+     *
+     * Ordering is by what the exercise trains and how much it demands, because taking
+     * candidates in catalog order means taking them alphabetically: a push day led with
+     * Arnold Press and a bench dip while the bench press and overhead press sat unused.
+     * One exercise per movement pattern keeps the session from becoming three of the
+     * same lift.
+     */
+    private fun chooseCompounds(
+        split: SplitType,
+        candidates: List<Exercise>,
+        slots: Int
+    ): List<Exercise> {
+        if (slots <= 0) return emptyList()
+        val compounds = candidates
+            .filter { it.programming?.mechanics == MechanicsType.COMPOUND }
+            .sortedWith(
+                compareByDescending<Exercise> { it.trainsAsPrimary(split) }
+                    .thenByDescending { it.programming?.fatigueScore ?: 0 }
+                    .thenBy { it.id }
+            )
+
+        val chosen = mutableListOf<Exercise>()
+        val usedPatterns = mutableSetOf<MovementPattern>()
+        for (exercise in compounds) {
+            if (chosen.size == slots) break
+            val pattern = exercise.programming?.movementPattern
+            if (pattern != null && !usedPatterns.add(pattern)) continue
+            chosen.add(exercise)
+        }
+        // A split may not offer `slots` distinct patterns; take the best of what is left.
+        for (exercise in compounds) {
+            if (chosen.size == slots) break
+            if (exercise !in chosen) chosen.add(exercise)
+        }
+        return chosen
+    }
+
+    /**
+     * Orders the work that fills the rest of the session.
+     *
+     * Exercises that train the split directly come before ones that only brush against it,
+     * and isolation work comes before more compounds: the heavy work is already chosen, so
+     * another squat pattern adds fatigue where an accessory adds the volume that was missing.
+     */
+    private fun accessoryOrder(split: SplitType): Comparator<Exercise> =
+        compareByDescending<Exercise> { it.trainsAsPrimary(split) }
+            .thenByDescending { it.programming?.mechanics == MechanicsType.ISOLATION }
+            .thenByDescending { it.programming != null }
+            .thenByDescending { it.programming?.fatigueScore ?: 0 }
+            .thenBy { it.id }
+
+    private fun Exercise.trainsAsPrimary(split: SplitType): Boolean =
+        primaryMuscles.any { it in split.targetMuscles }
 
     private fun createGeneratedExercise(
         exercise: Exercise,

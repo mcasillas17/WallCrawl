@@ -126,7 +126,17 @@ All catalog facts are browseable and searchable by name, alias, muscle, and
 listed equipment. Every bundled exercise can enter workout planning with a
 structurally valid prescription appropriate to its catalog type. Reviewed
 `programming` metadata enriches those defaults when available; otherwise
-WallCrawl uses conservative fallback targets. Planner-generated workouts still
+WallCrawl uses conservative fallback targets. 117 of the 302 exercises are
+reviewed, covering every muscle group with beginner options throughout. The
+planner draws its compound slots from that set and prefers it when filling the
+rest, but it still selects from the whole catalog, so an unreviewed exercise can
+appear in a plan with fallback targets and no coaching note.
+
+Equipment requirements are alternatives: a goblet squat resolves with either a
+dumbbell or a kettlebell. Where they are stricter than the upstream listing it is
+deliberate — a lift that begins with a loaded bar held over the torso requires a
+rack, while a lift cleaned from the floor does not, which is why the bench press
+demands one and the overhead press does not. Planner-generated workouts still
 apply the user's equipment hard filter. A user building a custom workout may
 explicitly select any catalog exercise, with an equipment mismatch shown as a
 warning rather than silently hiding the exercise.
@@ -206,6 +216,10 @@ Requirements:
 python3 -m unittest discover -s tools/workout-guide -p 'test_*.py' -v
 ```
 
+The importer suites run in CI alongside the Gradle build. One exercises the importer
+against synthetic fixtures; the other checks the reviewed metadata that actually ships,
+so a bad edit fails there rather than becoming a workout nobody can perform.
+
 The unit suite covers catalog filtering, context construction, bounded history
 analysis, planner constraints and type-aware prescriptions, split selection and
 its failure reasons, the muscle vocabulary and the shipped catalog's conformance
@@ -231,13 +245,18 @@ of its 906 SVG paths.
 
 ## Next milestones
 
-- Expand reviewed programming and hard equipment metadata to improve the
-  conservative defaults used by unreviewed catalog exercises. Only 12 of 302
-  exercises carry reviewed `programming` today, which is what limits the
-  planner's ordering.
-- Rank the exercises that fill a split's remaining slots. Compound lifts are
-  chosen first, but the rest are taken in catalog order, so a plan can pad with
-  whatever sorts earliest among matching candidates.
+- Gate exercise difficulty on the profile's experience level. The data now
+  exists across every muscle group; nothing reads it yet, so a beginner can still
+  be led with a lift marked advanced.
+- Make `recommendedRepRange` optional so timed holds can be reviewed. Fourteen
+  planner-eligible movements — planks, dead hangs, wall sits — cannot carry
+  mechanics, fatigue, or a coaching note today, because the schema demands a rep
+  range their prescriptions never read.
+- Review the exercises the planner reaches for outside the reviewed set, and add
+  band coverage: a band-only profile is served almost entirely by unreviewed
+  entries.
+- Continue reviewing programming metadata beyond the planner's working set, so
+  browsing and custom workouts benefit from it too.
 - Add richer active-workout controls such as rest timers, RPE/RIR editing, and
   exercise substitution.
 - Expand progress calculations and charts as more history accumulates.

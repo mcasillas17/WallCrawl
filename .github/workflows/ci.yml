@@ -36,5 +36,11 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@ed408507eac070d1f99cc633dbcf757c94c7933a # v4.4.3
 
+      # Guards the reviewed programming metadata and the importer itself. Both suites
+      # build their own fixtures, so they need nothing beyond Python and git, and they
+      # run first so a bad metadata edit fails in seconds rather than after the build.
+      - name: Run catalog importer tests
+        run: python3 -m unittest discover -s tools/workout-guide -p 'test_*.py' -v
+
       - name: Run tests, lint, and debug build
         run: ./gradlew test lint assembleDebug --stacktrace --no-daemon

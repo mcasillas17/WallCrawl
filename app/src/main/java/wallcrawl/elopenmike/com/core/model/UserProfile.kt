@@ -41,7 +41,7 @@ data class UserProfile(
 }
 
 enum class FitnessGoal(val displayName: String, val description: String) {
-    BUILD_MUSCLE("Build Muscle", "Hypertrophy focus with moderate-high volume and 8–15 rep targets."),
+    BUILD_MUSCLE("Build Muscle", "Hypertrophy focus with moderate-high volume, and lower reps on the heavy compounds."),
     STRENGTH("Strength", "Heavy compound lifts with lower reps (3–6) and longer rest periods."),
     GENERAL_FITNESS("General Fitness", "Balanced functional strength, endurance, and mobility."),
     FAT_LOSS("Fat Loss", "High density training with steady pace and compound movements."),
