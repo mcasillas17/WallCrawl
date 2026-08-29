@@ -10,6 +10,7 @@ import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
+import wallcrawl.elopenmike.com.core.model.convertWeight
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -108,7 +109,20 @@ class OfflineUserProfileRepository(
 
     override suspend fun updateUnit(unit: WeightUnit) {
         val current = getProfileOnce()
-        saveUserProfile(current.copy(preferredUnit = unit))
+        if (current.preferredUnit == unit) {
+            saveUserProfile(current)
+            return
+        }
+        // confirmedStartingLoads is defined in preferredUnit; switching units without
+        // converting these values would silently relabel a confirmed baseline (a 135 lb
+        // bench press would read back as "135 kg"), reintroducing the exact unsafe,
+        // unit-agnostic default Task 2 removed.
+        val convertedLoads = current.confirmedStartingLoads.mapValues { (_, value) ->
+            convertWeight(value, from = current.preferredUnit, to = unit)
+        }
+        saveUserProfile(
+            current.copy(preferredUnit = unit, confirmedStartingLoads = convertedLoads)
+        )
     }
 
     override suspend fun updateMusclePriorities(priorities: Map<String, PriorityLevel>) {

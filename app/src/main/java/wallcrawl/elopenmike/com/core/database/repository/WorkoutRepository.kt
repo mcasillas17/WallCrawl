@@ -296,6 +296,11 @@ class OfflineWorkoutRepository(
                 }
                 requireNoDurationOrDistance(performance, "Weight and repetition")
                 requirePositiveRepetitionsWhenCompleted(performance)
+                // With no fabricated default weight (Task 2), a set could otherwise be
+                // marked complete while silently recording no load at all.
+                require(!performance.isCompleted || (performance.weight ?: 0.0) > 0.0) {
+                    "A completed weight and repetition set must have a positive load."
+                }
             }
 
             ExerciseType.BODYWEIGHT_REPS -> {

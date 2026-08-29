@@ -114,6 +114,9 @@ class DefaultExercisePrescriptionFactory {
 
         // No performance history exists yet: only a load the user explicitly confirmed
         // during onboarding is safe to prescribe. Never invent a starting number.
+        // Repository validation already rejects malformed values before persistence, but
+        // a directly constructed context must not be trusted to propagate NaN/negative.
         return context.userProfile.confirmedStartingLoads[exercise.id]
+            ?.takeIf { it.isFinite() && it >= 0.0 }
     }
 }

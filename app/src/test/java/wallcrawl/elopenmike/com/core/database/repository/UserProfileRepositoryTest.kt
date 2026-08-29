@@ -11,6 +11,7 @@ import wallcrawl.elopenmike.com.core.model.StandardMuscles
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
+import wallcrawl.elopenmike.com.core.model.convertWeight
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
@@ -189,6 +190,43 @@ class UserProfileRepositoryTest {
         val profile = repository.getUserProfile().first()
 
         assertThat(profile.confirmedStartingLoads).containsExactly("barbell-back-squat", 135.0)
+    }
+
+    @Test
+    fun updateUnit_convertsConfirmedStartingLoadsRatherThanRelabelingThem() = runTest {
+        // The confirmed-loads map is defined in preferredUnit. Switching the unit without
+        // converting stored values would silently relabel a confirmed 135 lb baseline as
+        // "135 kg" -- the exact unsafe-default problem Task 2 exists to remove.
+        repository.saveProfile(
+            UserProfile(
+                preferredUnit = WeightUnit.LBS,
+                confirmedStartingLoads = mapOf("barbell-bench-press" to 135.0),
+                onboardingCompleted = true
+            )
+        )
+
+        repository.updateUnit(WeightUnit.KG)
+
+        val profile = repository.getUserProfile().first()
+        assertThat(profile.preferredUnit).isEqualTo(WeightUnit.KG)
+        assertThat(profile.confirmedStartingLoads["barbell-bench-press"])
+            .isWithin(0.001).of(convertWeight(135.0, from = WeightUnit.LBS, to = WeightUnit.KG))
+    }
+
+    @Test
+    fun updateUnit_withSameUnit_leavesConfirmedStartingLoadsUnchanged() = runTest {
+        repository.saveProfile(
+            UserProfile(
+                preferredUnit = WeightUnit.LBS,
+                confirmedStartingLoads = mapOf("barbell-bench-press" to 135.0),
+                onboardingCompleted = true
+            )
+        )
+
+        repository.updateUnit(WeightUnit.LBS)
+
+        val profile = repository.getUserProfile().first()
+        assertThat(profile.confirmedStartingLoads["barbell-bench-press"]).isEqualTo(135.0)
     }
 }
 
