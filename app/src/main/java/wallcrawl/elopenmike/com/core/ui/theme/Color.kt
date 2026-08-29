@@ -47,3 +47,22 @@ val TextPrimary = Color(0xFFF1F5F9)
 val TextSecondary = Color(0xFF94A3B8)
 val TextMuted = Color(0xFF64748B)
 val TextDisabled = Color(0xFF475569)
+
+// ==========================================
+// Light Theme Palette (Clean Athletic Daylight)
+// ==========================================
+val LightBackground = Color(0xFFF8FAFC)
+val LightSurface = Color(0xFFFFFFFF)
+val LightSurfaceElevated = Color(0xFFFFFFFF)
+val LightSurfaceCard = Color(0xFFF1F5F9)
+val LightBorder = Color(0xFFE2E8F0)
+val LightDivider = Color(0xFFE2E8F0)
+
+val LightTextPrimary = Color(0xFF0F172A)
+val LightTextSecondary = Color(0xFF475569)
+val LightTextMuted = Color(0xFF64748B)
+val LightTextDisabled = Color(0xFF94A3B8)
+
+val LightSpiderBluePrimary = Color(0xFF0284C7)
+val LightSpiderBlueGlow = Color(0x1A0284C7)
+

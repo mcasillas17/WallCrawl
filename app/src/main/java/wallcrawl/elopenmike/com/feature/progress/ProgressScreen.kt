@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -46,14 +47,7 @@ import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
-import wallcrawl.elopenmike.com.core.ui.theme.GraphiteBorder
-import wallcrawl.elopenmike.com.core.ui.theme.GraphiteSurface
-import wallcrawl.elopenmike.com.core.ui.theme.GraphiteSurfaceElevated
-import wallcrawl.elopenmike.com.core.ui.theme.ObsidianBlack
 import wallcrawl.elopenmike.com.core.ui.theme.SuccessGreen
-import wallcrawl.elopenmike.com.core.ui.theme.TextMuted
-import wallcrawl.elopenmike.com.core.ui.theme.TextPrimary
-import wallcrawl.elopenmike.com.core.ui.theme.TextSecondary
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
 import wallcrawl.elopenmike.com.core.ui.theme.WebBlueAccent
 import java.text.SimpleDateFormat
@@ -70,7 +64,7 @@ fun ProgressScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(ObsidianBlack)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         WebBackgroundPattern()
 
@@ -118,7 +112,7 @@ private fun ProgressContent(
                 text = "Consistency & Performance",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Black,
-                color = TextWhite
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
 
@@ -144,15 +138,15 @@ private fun ProgressContent(
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.sp,
-                color = TextSecondary
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
 
         // Recent Workout History Items
         if (overview.recentHistory.isEmpty()) {
             item {
-                WallCrawlCard(backgroundColor = GraphiteSurface) {
-                    Text("No past workouts logged yet. Complete your first workout to see history here.", color = TextMuted, fontSize = 13.sp)
+                WallCrawlCard {
+                    Text("No past workouts logged yet. Complete your first workout to see history here.", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f), fontSize = 13.sp)
                 }
             }
         } else {
@@ -174,8 +168,7 @@ private fun StreakAndVolumeCard(
 ) {
     WallCrawlCard(
         cornerRadius = 16.dp,
-        contentPadding = 16.dp,
-        backgroundColor = GraphiteSurfaceElevated
+        contentPadding = 16.dp
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -203,19 +196,19 @@ private fun StreakAndVolumeCard(
                         text = "${overview.currentStreakWeeks}-Week Streak",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = TextWhite
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         text = "${overview.workoutsThisWeek} workouts logged this week",
                         fontSize = 12.sp,
-                        color = TextSecondary
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
 
             StatBadge(
                 label = "Goal: ${overview.weeklyGoal}/wk",
-                textColor = WebBlueAccent
+                textColor = MaterialTheme.colorScheme.secondary
             )
         }
 
@@ -228,7 +221,7 @@ private fun StreakAndVolumeCard(
             MetricHighlight(
                 title = "Total Workouts",
                 value = "${overview.totalWorkoutsLogged}",
-                valueColor = TextWhite,
+                valueColor = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.weight(1f)
             )
 
@@ -261,8 +254,7 @@ private fun StrengthTrendsSection(
 ) {
     WallCrawlCard(
         cornerRadius = 16.dp,
-        contentPadding = 16.dp,
-        backgroundColor = GraphiteSurfaceElevated
+        contentPadding = 16.dp
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -289,7 +281,7 @@ private fun StrengthTrendsSection(
                 text = "Recent changes",
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
-                color = TextSecondary
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
 
@@ -298,7 +290,7 @@ private fun StrengthTrendsSection(
         if (trends.isEmpty()) {
             Text(
                 text = "Log the same exercise in two workouts to see how your strength is trending.",
-                color = TextMuted,
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                 fontSize = 13.sp
             )
         }
@@ -316,12 +308,12 @@ private fun StrengthTrendsSection(
                         text = trend.exerciseName,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
-                        color = TextPrimary
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         text = "${trend.previousMetric} → ${trend.currentMetric}",
                         fontSize = 12.sp,
-                        color = TextSecondary
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
@@ -355,15 +347,14 @@ private fun MuscleFocusSection(
 ) {
     WallCrawlCard(
         cornerRadius = 16.dp,
-        contentPadding = 16.dp,
-        backgroundColor = GraphiteSurface
+        contentPadding = 16.dp
     ) {
         Text(
             text = "WEEKLY MUSCLE FOCUS",
             fontSize = 11.sp,
             fontWeight = FontWeight.Bold,
             letterSpacing = 0.5.sp,
-            color = TextMuted
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -373,7 +364,7 @@ private fun MuscleFocusSection(
             // training volume, so there is nothing to attribute sets to.
             Text(
                 text = "Complete a strength set this week to see which muscles you're hitting.",
-                color = TextMuted,
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                 fontSize = 13.sp
             )
         }
@@ -386,8 +377,8 @@ private fun MuscleFocusSection(
                 Box(
                     modifier = Modifier
                         .weight(1f)
-                        .background(GraphiteSurfaceElevated, RoundedCornerShape(10.dp))
-                        .border(1.dp, GraphiteBorder, RoundedCornerShape(10.dp))
+                        .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(10.dp))
+                        .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(10.dp))
                         .padding(8.dp),
                     contentAlignment = Alignment.Center
                 ) {
@@ -396,13 +387,13 @@ private fun MuscleFocusSection(
                             text = stat.muscle,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
-                            color = TextPrimary
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
                             text = "${stat.setsThisWeek} sets",
                             fontSize = 11.sp,
-                            color = TextSecondary
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         if (stat.percentageGrowth > 0) {
                             Text(
@@ -428,8 +419,7 @@ private fun WorkoutHistoryCard(
 
     WallCrawlCard(
         cornerRadius = 12.dp,
-        contentPadding = 12.dp,
-        backgroundColor = GraphiteSurfaceElevated
+        contentPadding = 12.dp
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -441,18 +431,18 @@ private fun WorkoutHistoryCard(
                     text = session.name,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextWhite
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
                     text = dateStr,
                     fontSize = 12.sp,
-                    color = TextMuted
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
             StatBadge(
                 label = "${session.actualDurationMinutes} min",
-                textColor = WebBlueAccent
+                textColor = MaterialTheme.colorScheme.secondary
             )
         }
 
@@ -465,7 +455,7 @@ private fun WorkoutHistoryCard(
             Text(
                 text = "${session.completedSetsCount} sets logged",
                 fontSize = 12.sp,
-                color = TextSecondary
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             if (session.totalVolume > 0) {

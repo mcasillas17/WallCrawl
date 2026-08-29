@@ -34,7 +34,8 @@ data class UserProfile(
     val returningAfterBreakWeeks: Int = 0,
     // Never populated with a guessed or catalog default: a load only lands here once a
     // user has explicitly confirmed it (see Task 2), so this starts and stays empty.
-    val confirmedStartingLoads: Map<String, Double> = emptyMap()
+    val confirmedStartingLoads: Map<String, Double> = emptyMap(),
+    val themePreference: ThemePreference = ThemePreference.SYSTEM
 ) {
     val primaryGoal: FitnessGoal get() = goals.firstOrNull() ?: FitnessGoal.BUILD_MUSCLE
 
@@ -42,6 +43,13 @@ data class UserProfile(
         const val DEFAULT_PROFILE_ID = "default_user"
     }
 }
+
+enum class ThemePreference(val displayName: String, val description: String) {
+    SYSTEM("System Default", "Follow device light/dark mode settings"),
+    DARK("Dark Theme", "Stealth black and graphite suit aesthetic"),
+    LIGHT("Light Theme", "High-contrast clean daylight interface")
+}
+
 enum class FitnessGoal(val displayName: String, val description: String) {
     BUILD_MUSCLE("Build Muscle", "Hypertrophy focus with moderate-high volume, and lower reps on the heavy compounds."),
     STRENGTH("Strength", "Heavy compound lifts with lower reps (3–6) and longer rest periods."),

@@ -87,6 +87,7 @@ private class FixedUserProfileRepository : UserProfileRepository {
         constraints: Set<wallcrawl.elopenmike.com.core.model.TrainingConstraint>
     ) = error("Not used")
     override suspend fun updateReturningAfterBreakWeeks(weeks: Int) = error("Not used")
+    override suspend fun updateThemePreference(themePreference: wallcrawl.elopenmike.com.core.model.ThemePreference) = error("Not used")
 }
 
 private class EmptyWorkoutRepository : WorkoutRepository {

@@ -2,6 +2,7 @@ package wallcrawl.elopenmike.com.core.ui.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -16,7 +17,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 @Composable
 fun WebBackgroundPattern(
     modifier: Modifier = Modifier,
-    lineColor: Color = Color(0x1238BDF8) // subtle electric web strand glow
+    lineColor: Color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.08f)
 ) {
     Canvas(modifier = modifier.fillMaxSize()) {
         val width = size.width

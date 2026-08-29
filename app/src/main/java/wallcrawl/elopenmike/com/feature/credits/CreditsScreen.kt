@@ -17,6 +17,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -46,11 +47,6 @@ import wallcrawl.elopenmike.com.core.ui.components.WallCrawlSecondaryButton
 import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
-import wallcrawl.elopenmike.com.core.ui.theme.GraphiteSurface
-import wallcrawl.elopenmike.com.core.ui.theme.ObsidianBlack
-import wallcrawl.elopenmike.com.core.ui.theme.TextPrimary
-import wallcrawl.elopenmike.com.core.ui.theme.TextSecondary
-import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
 
 /**
  * Shows who made the bundled exercise artwork and under what license.
@@ -67,7 +63,7 @@ fun CreditsScreen(
     val uriHandler = LocalUriHandler.current
     var linkError by remember { mutableStateOf<String?>(null) }
 
-    Box(modifier.fillMaxSize().background(ObsidianBlack)) {
+    Box(modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         WebBackgroundPattern()
 
         Column(Modifier.fillMaxSize().padding(horizontal = 16.dp)) {
@@ -76,7 +72,7 @@ fun CreditsScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onBack) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back", tint = TextWhite)
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back", tint = MaterialTheme.colorScheme.onSurface)
                 }
                 Column {
                     Text(
@@ -90,7 +86,7 @@ fun CreditsScreen(
                         text = "Artwork & Licenses",
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Black,
-                        color = TextWhite
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
@@ -111,7 +107,7 @@ fun CreditsScreen(
                             fontSize = 16.sp
                         )
                         Spacer(Modifier.height(8.dp))
-                        Text(current.message, color = TextSecondary, fontSize = 13.sp)
+                        Text(current.message, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp)
                         Spacer(Modifier.height(12.dp))
                         WallCrawlSecondaryButton(text = "Try Again", onClick = viewModel::load)
                     }
@@ -164,7 +160,7 @@ private fun CreditsContent(
                     text = catalog.attribution.creator,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextWhite
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 // Scoped to the WallCrawl -> workout-guide boundary on purpose: some frames
                 // upstream are themselves traced adaptations of Everkinetic originals, which
@@ -173,7 +169,7 @@ private fun CreditsContent(
                     text = "${catalog.exerciseCount} exercises · ${catalog.frameCount} " +
                         "illustration frames, imported unmodified",
                     fontSize = 13.sp,
-                    color = TextSecondary
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(Modifier.height(12.dp))
                 CreditRow(label = "License", value = catalog.attribution.license)
@@ -194,19 +190,19 @@ private fun CreditsContent(
         }
 
         items(notices) { notice ->
-            WallCrawlCard(backgroundColor = GraphiteSurface) {
+            WallCrawlCard {
                 Text(
                     text = notice.title.uppercase(),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.8.sp,
-                    color = TextSecondary
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(Modifier.height(8.dp))
                 Text(
                     text = rememberNoticeText(notice.body, onOpenUrl),
                     fontSize = 13.sp,
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     lineHeight = 19.sp
                 )
             }
@@ -222,12 +218,12 @@ private fun CreditRow(label: String, value: String) {
         Modifier.fillMaxWidth().padding(vertical = 3.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(text = label, fontSize = 13.sp, color = TextSecondary)
+        Text(text = label, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Text(
             text = value,
             fontSize = 13.sp,
             fontWeight = FontWeight.SemiBold,
-            color = TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.End,
             // Source URLs are longer than the label leaves room for on a 360dp screen.
             modifier = Modifier.weight(1f, fill = false).padding(start = 12.dp)

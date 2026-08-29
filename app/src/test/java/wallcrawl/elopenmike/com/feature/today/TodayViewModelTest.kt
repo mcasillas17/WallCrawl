@@ -331,6 +331,9 @@ private class TodayUserProfileRepository(
     override suspend fun updateReturningAfterBreakWeeks(weeks: Int) =
         updateProfile { it.copy(returningAfterBreakWeeks = weeks) }
 
+    override suspend fun updateThemePreference(themePreference: wallcrawl.elopenmike.com.core.model.ThemePreference) =
+        updateProfile { it.copy(themePreference = themePreference) }
+
     private fun updateProfile(transform: (UserProfile) -> UserProfile) {
         profile.update { current ->
             transform(current).copy(revision = current.revision + 1L)

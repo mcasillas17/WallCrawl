@@ -38,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.material3.MaterialTheme
 import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
 import wallcrawl.elopenmike.com.core.ui.components.StatBadge
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
@@ -45,11 +46,6 @@ import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
 import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
-import wallcrawl.elopenmike.com.core.ui.theme.GraphiteBorder
-import wallcrawl.elopenmike.com.core.ui.theme.GraphiteSurfaceElevated
-import wallcrawl.elopenmike.com.core.ui.theme.ObsidianBlack
-import wallcrawl.elopenmike.com.core.ui.theme.TextMuted
-import wallcrawl.elopenmike.com.core.ui.theme.TextSecondary
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
 import wallcrawl.elopenmike.com.core.ui.theme.WebBlueAccent
 
@@ -65,7 +61,7 @@ fun WorkoutTemplatesScreen(
     val state by viewModel.uiState.collectAsState()
     var pendingDelete by remember { mutableStateOf<WorkoutTemplate?>(null) }
 
-    Box(modifier.fillMaxSize().background(ObsidianBlack)) {
+    Box(modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         WebBackgroundPattern()
         Column(Modifier.fillMaxSize().padding(horizontal = 16.dp)) {
             Row(
@@ -73,7 +69,7 @@ fun WorkoutTemplatesScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onBack) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back", tint = TextWhite)
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back", tint = MaterialTheme.colorScheme.onSurface)
                 }
                 Column(Modifier.weight(1f)) {
                     Text(
@@ -85,7 +81,7 @@ fun WorkoutTemplatesScreen(
                     )
                     Text(
                         text = "My Workouts",
-                        color = TextWhite,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Black
                     )
@@ -123,9 +119,9 @@ fun WorkoutTemplatesScreen(
     pendingDelete?.let { template ->
         AlertDialog(
             onDismissRequest = { pendingDelete = null },
-            containerColor = GraphiteSurfaceElevated,
-            titleContentColor = TextWhite,
-            textContentColor = TextSecondary,
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            titleContentColor = MaterialTheme.colorScheme.onSurface,
+            textContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
             shape = RoundedCornerShape(16.dp),
             title = {
                 Text(
@@ -150,7 +146,7 @@ fun WorkoutTemplatesScreen(
             },
             dismissButton = {
                 TextButton(onClick = { pendingDelete = null }) {
-                    Text("Cancel", color = TextSecondary)
+                    Text("Cancel", color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         )
@@ -160,7 +156,7 @@ fun WorkoutTemplatesScreen(
 @Composable
 private fun EmptyTemplates(onCreate: () -> Unit) {
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        WallCrawlCard(backgroundColor = GraphiteSurfaceElevated) {
+        WallCrawlCard {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.Default.FitnessCenter,
@@ -169,10 +165,10 @@ private fun EmptyTemplates(onCreate: () -> Unit) {
                     modifier = Modifier.size(24.dp)
                 )
                 Spacer(Modifier.padding(horizontal = 4.dp))
-                Text("Build your own workout", color = TextWhite, fontSize = 19.sp, fontWeight = FontWeight.Bold)
+                Text("Build your own workout", color = MaterialTheme.colorScheme.onSurface, fontSize = 19.sp, fontWeight = FontWeight.Bold)
             }
             Spacer(Modifier.height(8.dp))
-            Text("Choose from all 302 offline exercises and save custom routines to reuse anytime.", color = TextSecondary, fontSize = 14.sp)
+            Text("Choose from all 302 offline exercises and save custom routines to reuse anytime.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
             Spacer(Modifier.height(16.dp))
             WallCrawlPrimaryButton("Create Workout", onClick = onCreate)
         }
@@ -187,22 +183,22 @@ private fun TemplateCard(
     onEdit: () -> Unit,
     onDelete: () -> Unit
 ) {
-    WallCrawlCard(backgroundColor = GraphiteSurfaceElevated) {
+    WallCrawlCard {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {
-                Text(template.name, color = TextWhite, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                Text(template.name, color = MaterialTheme.colorScheme.onSurface, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                 Spacer(Modifier.height(2.dp))
                 Text(
                     "${template.exercises.size} exercises · ${template.exercises.sumOf { it.targetSets }} total sets",
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 13.sp
                 )
                 if (template.notes.isNotBlank()) {
                     Spacer(Modifier.height(4.dp))
-                    Text(template.notes, color = TextMuted, fontSize = 12.sp)
+                    Text(template.notes, color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f), fontSize = 12.sp)
                 }
             }
-            IconButton(onClick = onEdit) { Icon(Icons.Default.Edit, "Edit", tint = TextSecondary) }
+            IconButton(onClick = onEdit) { Icon(Icons.Default.Edit, "Edit", tint = MaterialTheme.colorScheme.onSurfaceVariant) }
             IconButton(onClick = onDelete) { Icon(Icons.Default.Delete, "Delete", tint = CrimsonRedLight.copy(alpha = 0.8f)) }
         }
         Spacer(Modifier.height(12.dp))

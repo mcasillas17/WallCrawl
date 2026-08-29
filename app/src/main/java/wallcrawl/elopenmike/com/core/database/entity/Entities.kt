@@ -11,6 +11,9 @@ import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetType
+import wallcrawl.elopenmike.com.core.model.ThemePreference
+import wallcrawl.elopenmike.com.core.model.TrainingConstraint
+import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutOrigin
 
@@ -37,7 +40,9 @@ data class UserProfileEntity(
     @ColumnInfo(defaultValue = "''")
     val confirmedStartingLoadsJson: String = "",
     @ColumnInfo(defaultValue = "''")
-    val fitnessGoalsJson: String = ""
+    val fitnessGoalsJson: String = "",
+    @ColumnInfo(defaultValue = "'SYSTEM'")
+    val themePreference: ThemePreference = ThemePreference.SYSTEM
 )
 
 @Entity(

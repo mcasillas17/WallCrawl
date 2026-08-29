@@ -55,6 +55,17 @@ class UserProfileRepositoryTest {
     }
 
     @Test
+    fun updateThemePreference_persistsTheme() = runTest {
+        repository.updateThemePreference(wallcrawl.elopenmike.com.core.model.ThemePreference.LIGHT)
+        val profile = repository.getUserProfile().first()
+        assertThat(profile.themePreference).isEqualTo(wallcrawl.elopenmike.com.core.model.ThemePreference.LIGHT)
+
+        repository.updateThemePreference(wallcrawl.elopenmike.com.core.model.ThemePreference.DARK)
+        val darkProfile = repository.getUserProfile().first()
+        assertThat(darkProfile.themePreference).isEqualTo(wallcrawl.elopenmike.com.core.model.ThemePreference.DARK)
+    }
+
+    @Test
     fun updateEquipment_persistsEquipmentList() = runTest {
         val customEquipment = listOf(StandardEquipment.DUMBBELL, StandardEquipment.BENCH)
         repository.updateEquipment(customEquipment)

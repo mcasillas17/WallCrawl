@@ -44,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.material3.MaterialTheme
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.exercise.visual.ExerciseVisualProvider
 import wallcrawl.elopenmike.com.core.ui.components.ExerciseIllustration
@@ -53,13 +54,6 @@ import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
 import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
-import wallcrawl.elopenmike.com.core.ui.theme.GraphiteBorder
-import wallcrawl.elopenmike.com.core.ui.theme.GraphiteSurface
-import wallcrawl.elopenmike.com.core.ui.theme.GraphiteSurfaceElevated
-import wallcrawl.elopenmike.com.core.ui.theme.ObsidianBlack
-import wallcrawl.elopenmike.com.core.ui.theme.TextMuted
-import wallcrawl.elopenmike.com.core.ui.theme.TextPrimary
-import wallcrawl.elopenmike.com.core.ui.theme.TextSecondary
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
 import wallcrawl.elopenmike.com.core.ui.theme.WebBlueAccent
 
@@ -75,7 +69,7 @@ fun ExercisesScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(ObsidianBlack)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         WebBackgroundPattern()
 
@@ -141,7 +135,7 @@ private fun ExercisesContent(
                 text = "Exercise Library",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Black,
-                color = TextWhite
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
 
@@ -151,30 +145,30 @@ private fun ExercisesContent(
                 value = state.query,
                 onValueChange = onQueryChanged,
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("Search exercises, muscles, equipment...", color = TextMuted, fontSize = 14.sp) },
+                placeholder = { Text("Search exercises, muscles, equipment...", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f), fontSize = 14.sp) },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Search,
                         contentDescription = null,
-                        tint = TextSecondary
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 },
                 trailingIcon = {
                     if (state.query.isNotEmpty()) {
                         IconButton(onClick = { onQueryChanged("") }) {
-                            Icon(Icons.Default.Close, contentDescription = "Clear", tint = TextSecondary)
+                            Icon(Icons.Default.Close, contentDescription = "Clear", tint = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
                 },
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = GraphiteSurfaceElevated,
-                    unfocusedContainerColor = GraphiteSurface,
+                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                     focusedBorderColor = CrimsonRedPrimary,
-                    unfocusedBorderColor = GraphiteBorder,
-                    focusedTextColor = TextPrimary,
-                    unfocusedTextColor = TextPrimary
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                 )
             )
         }
@@ -187,7 +181,7 @@ private fun ExercisesContent(
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.5.sp,
-                    color = TextMuted
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -196,17 +190,24 @@ private fun ExercisesContent(
                         FilterChip(
                             selected = isSelected,
                             onClick = { onSelectMuscle(if (isSelected) null else muscle) },
-                            label = { Text(muscle, fontSize = 12.sp, fontWeight = FontWeight.SemiBold) },
+                            label = {
+                                Text(
+                                    text = muscle,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = if (isSelected) TextWhite else MaterialTheme.colorScheme.onSurface
+                                )
+                            },
                             colors = FilterChipDefaults.filterChipColors(
-                                containerColor = GraphiteSurface,
+                                containerColor = MaterialTheme.colorScheme.surface,
                                 selectedContainerColor = CrimsonRedPrimary,
-                                labelColor = TextSecondary,
+                                labelColor = MaterialTheme.colorScheme.onSurface,
                                 selectedLabelColor = TextWhite
                             ),
                             border = FilterChipDefaults.filterChipBorder(
                                 enabled = true,
                                 selected = isSelected,
-                                borderColor = GraphiteBorder,
+                                borderColor = MaterialTheme.colorScheme.outline,
                                 selectedBorderColor = CrimsonRedPrimary
                             )
                         )
@@ -223,7 +224,7 @@ private fun ExercisesContent(
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.5.sp,
-                    color = TextMuted
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -232,18 +233,25 @@ private fun ExercisesContent(
                         FilterChip(
                             selected = isSelected,
                             onClick = { onSelectEquipment(if (isSelected) null else equipment) },
-                            label = { Text(equipment, fontSize = 12.sp, fontWeight = FontWeight.SemiBold) },
+                            label = {
+                                Text(
+                                    text = equipment,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = if (isSelected) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onSurface
+                                )
+                            },
                             colors = FilterChipDefaults.filterChipColors(
-                                containerColor = GraphiteSurface,
-                                selectedContainerColor = WebBlueAccent,
-                                labelColor = TextSecondary,
-                                selectedLabelColor = ObsidianBlack
+                                containerColor = MaterialTheme.colorScheme.surface,
+                                selectedContainerColor = MaterialTheme.colorScheme.secondary,
+                                labelColor = MaterialTheme.colorScheme.onSurface,
+                                selectedLabelColor = MaterialTheme.colorScheme.onSecondary
                             ),
                             border = FilterChipDefaults.filterChipBorder(
                                 enabled = true,
                                 selected = isSelected,
-                                borderColor = GraphiteBorder,
-                                selectedBorderColor = WebBlueAccent
+                                borderColor = MaterialTheme.colorScheme.outline,
+                                selectedBorderColor = MaterialTheme.colorScheme.secondary
                             )
                         )
                     }
@@ -258,7 +266,7 @@ private fun ExercisesContent(
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.5.sp,
-                color = TextSecondary
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
 
@@ -281,7 +289,6 @@ private fun ExerciseListItem(
     WallCrawlCard(
         cornerRadius = 14.dp,
         contentPadding = 14.dp,
-        backgroundColor = GraphiteSurfaceElevated,
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
@@ -296,20 +303,20 @@ private fun ExerciseListItem(
                     text = exercise.name,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextWhite
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = (exercise.primaryMuscles + exercise.secondaryMuscles).joinToString(" · "),
                     fontSize = 12.sp,
-                    color = TextSecondary
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
             exercise.programming?.let { programming ->
                 StatBadge(
                     label = programming.mechanics.name,
-                    textColor = if (programming.mechanics.name == "COMPOUND") CrimsonRedLight else WebBlueAccent
+                    textColor = if (programming.mechanics.name == "COMPOUND") CrimsonRedLight else MaterialTheme.colorScheme.secondary
                 )
             }
         }
@@ -324,13 +331,13 @@ private fun ExerciseListItem(
                 StatBadge(
                     label = exercise.listedEquipment.joinToString(", "),
                     icon = Icons.Default.FitnessCenter,
-                    textColor = TextMuted
+                    textColor = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
             exercise.programming?.let { programming ->
                 StatBadge(
                     label = "${programming.recommendedRepRange.min}–${programming.recommendedRepRange.max} reps",
-                    textColor = TextMuted
+                    textColor = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
@@ -349,8 +356,8 @@ private fun ExerciseDetailSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = GraphiteSurfaceElevated,
-        scrimColor = ObsidianBlack.copy(alpha = 0.7f)
+        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+        scrimColor = MaterialTheme.colorScheme.scrim.copy(alpha = 0.5f)
     ) {
         Column(
             modifier = Modifier
@@ -370,7 +377,7 @@ private fun ExerciseDetailSheet(
                 text = exercise.name,
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Black,
-                color = TextWhite
+                color = MaterialTheme.colorScheme.onSurface
             )
 
             Spacer(modifier = Modifier.height(6.dp))
@@ -380,7 +387,7 @@ private fun ExerciseDetailSheet(
                     ?: "Catalog metadata and illustration are available. Programming review is pending.",
                 fontSize = 14.sp,
                 lineHeight = 20.sp,
-                color = TextSecondary
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -393,26 +400,26 @@ private fun ExerciseDetailSheet(
             ) {
                 StatBadge(label = "Primary: ${exercise.primaryMuscles.joinToString(", ")}", textColor = CrimsonRedLight)
                 if (exercise.secondaryMuscles.isNotEmpty()) {
-                    StatBadge(label = "Secondary: ${exercise.secondaryMuscles.joinToString(", ")}", textColor = TextSecondary)
+                    StatBadge(label = "Secondary: ${exercise.secondaryMuscles.joinToString(", ")}", textColor = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 if (exercise.listedEquipment.isNotEmpty()) {
                     StatBadge(
                         label = "Listed equipment: ${exercise.listedEquipment.joinToString(", ")}",
-                        textColor = WebBlueAccent
+                        textColor = MaterialTheme.colorScheme.secondary
                     )
                 }
                 exercise.programming?.let { programming ->
                     StatBadge(
                         label = "Pattern: ${programming.movementPattern.name.replace('_', ' ')}",
-                        textColor = TextPrimary
+                        textColor = MaterialTheme.colorScheme.onSurface
                     )
-                    StatBadge(label = "Difficulty: ${programming.difficulty.name}", textColor = TextPrimary)
+                    StatBadge(label = "Difficulty: ${programming.difficulty.name}", textColor = MaterialTheme.colorScheme.onSurface)
                     StatBadge(
                         label = "Target: ${programming.recommendedRepRange.min}–${programming.recommendedRepRange.max} reps",
-                        textColor = TextPrimary
+                        textColor = MaterialTheme.colorScheme.onSurface
                     )
-                    StatBadge(label = "Fatigue Score: ${programming.fatigueScore}/5", textColor = TextMuted)
-                } ?: StatBadge(label = "Programming review pending", textColor = TextMuted)
+                    StatBadge(label = "Fatigue Score: ${programming.fatigueScore}/5", textColor = MaterialTheme.colorScheme.onSurfaceVariant)
+                } ?: StatBadge(label = "Programming review pending", textColor = MaterialTheme.colorScheme.onSurfaceVariant)
             }
 
             Spacer(modifier = Modifier.height(24.dp))

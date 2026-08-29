@@ -46,6 +46,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.material3.MaterialTheme
 import java.util.Locale
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.ExercisePrescription
@@ -58,13 +59,6 @@ import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
 import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
-import wallcrawl.elopenmike.com.core.ui.theme.GraphiteBorder
-import wallcrawl.elopenmike.com.core.ui.theme.GraphiteSurface
-import wallcrawl.elopenmike.com.core.ui.theme.GraphiteSurfaceElevated
-import wallcrawl.elopenmike.com.core.ui.theme.ObsidianBlack
-import wallcrawl.elopenmike.com.core.ui.theme.TextMuted
-import wallcrawl.elopenmike.com.core.ui.theme.TextPrimary
-import wallcrawl.elopenmike.com.core.ui.theme.TextSecondary
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
 import wallcrawl.elopenmike.com.core.ui.theme.WebBlueAccent
 
@@ -84,7 +78,7 @@ fun TemplateEditorScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(ObsidianBlack)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         WebBackgroundPattern()
 
@@ -100,11 +94,11 @@ fun TemplateEditorScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onBack) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back", tint = TextWhite)
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back", tint = MaterialTheme.colorScheme.onSurface)
                 }
                 Text(
                     text = if (state.templateId == null) "Create Workout" else "Edit Workout",
-                    color = TextWhite,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Black,
                     modifier = Modifier.weight(1f)
@@ -124,18 +118,20 @@ fun TemplateEditorScreen(
                         value = state.name,
                         onValueChange = viewModel::updateName,
                         label = { Text("Workout Name") },
-                        placeholder = { Text("e.g. Upper Body Hypertrophy", color = TextMuted) },
+                        placeholder = { Text("e.g. Upper Body Hypertrophy", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)) },
                         singleLine = true,
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedContainerColor = GraphiteSurfaceElevated,
-                            unfocusedContainerColor = GraphiteSurface,
+                            focusedContainerColor = MaterialTheme.colorScheme.surface,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                             focusedBorderColor = CrimsonRedPrimary,
-                            unfocusedBorderColor = GraphiteBorder,
-                            focusedTextColor = TextPrimary,
-                            unfocusedTextColor = TextPrimary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
                             focusedLabelColor = CrimsonRedPrimary,
-                            unfocusedLabelColor = TextSecondary
+                            unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            focusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                            unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                         ),
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -146,17 +142,19 @@ fun TemplateEditorScreen(
                         value = state.notes,
                         onValueChange = viewModel::updateNotes,
                         label = { Text("Notes (optional)") },
-                        placeholder = { Text("e.g. Focus on strict form and 90s rest", color = TextMuted) },
+                        placeholder = { Text("e.g. Focus on strict form and 90s rest", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)) },
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedContainerColor = GraphiteSurfaceElevated,
-                            unfocusedContainerColor = GraphiteSurface,
+                            focusedContainerColor = MaterialTheme.colorScheme.surface,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                             focusedBorderColor = CrimsonRedPrimary,
-                            unfocusedBorderColor = GraphiteBorder,
-                            focusedTextColor = TextPrimary,
-                            unfocusedTextColor = TextPrimary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
                             focusedLabelColor = CrimsonRedPrimary,
-                            unfocusedLabelColor = TextSecondary
+                            unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            focusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                            unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                         ),
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -178,7 +176,7 @@ fun TemplateEditorScreen(
                             )
                             Text(
                                 text = "${state.selectedExercises.size} Selected",
-                                color = TextWhite,
+                                color = MaterialTheme.colorScheme.onSurface,
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold
                             )
@@ -192,20 +190,17 @@ fun TemplateEditorScreen(
 
                 if (state.selectedExercises.isEmpty()) {
                     item {
-                        WallCrawlCard(
-                            backgroundColor = GraphiteSurface,
-                            borderColor = GraphiteBorder
-                        ) {
+                        WallCrawlCard {
                             Text(
                                 text = "No exercises added yet",
-                                color = TextSecondary,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Medium
                             )
                             Spacer(Modifier.height(4.dp))
                             Text(
                                 text = "Tap '+ Add Exercise' to browse the 302 offline exercises catalog.",
-                                color = TextMuted,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                                 fontSize = 12.sp
                             )
                         }
@@ -268,7 +263,7 @@ private fun SelectedExerciseCard(
     onMoveDown: () -> Unit,
     onRemove: () -> Unit
 ) {
-    WallCrawlCard(backgroundColor = GraphiteSurfaceElevated) {
+    WallCrawlCard {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -283,14 +278,14 @@ private fun SelectedExerciseCard(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = exercise?.name ?: planned.exerciseId,
-                    color = TextWhite,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = planned.prescription.summary(),
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 13.sp
                 )
                 if (equipmentWarning) {
@@ -311,7 +306,7 @@ private fun SelectedExerciseCard(
                 Icon(
                     imageVector = Icons.Default.ArrowUpward,
                     contentDescription = "Move up",
-                    tint = if (index > 0) TextSecondary else TextMuted.copy(alpha = 0.25f),
+                    tint = if (index > 0) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.25f),
                     modifier = Modifier.size(18.dp)
                 )
             }
@@ -323,7 +318,7 @@ private fun SelectedExerciseCard(
                 Icon(
                     imageVector = Icons.Default.ArrowDownward,
                     contentDescription = "Move down",
-                    tint = if (index < total - 1) TextSecondary else TextMuted.copy(alpha = 0.25f),
+                    tint = if (index < total - 1) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.25f),
                     modifier = Modifier.size(18.dp)
                 )
             }
@@ -348,7 +343,7 @@ private fun SelectedExerciseCard(
         ) {
             Text(
                 text = "Target Sets",
-                color = TextSecondary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 13.sp,
                 modifier = Modifier.weight(1f)
             )
@@ -360,20 +355,20 @@ private fun SelectedExerciseCard(
                     modifier = Modifier
                         .size(30.dp)
                         .clip(CircleShape)
-                        .background(GraphiteSurface)
+                        .background(MaterialTheme.colorScheme.surface)
                         .clickable(enabled = planned.targetSets > 1, onClick = onSetsDown),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Default.Remove,
                         contentDescription = "Decrease sets",
-                        tint = if (planned.targetSets > 1) TextWhite else TextMuted.copy(alpha = 0.3f),
+                        tint = if (planned.targetSets > 1) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f),
                         modifier = Modifier.size(16.dp)
                     )
                 }
                 Text(
                     text = "${planned.targetSets}",
-                    color = TextWhite,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.Bold,
                     fontSize = 15.sp,
                     modifier = Modifier.padding(horizontal = 4.dp)
@@ -382,14 +377,14 @@ private fun SelectedExerciseCard(
                     modifier = Modifier
                         .size(30.dp)
                         .clip(CircleShape)
-                        .background(GraphiteSurface)
+                        .background(MaterialTheme.colorScheme.surface)
                         .clickable(onClick = onSetsUp),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = "Increase sets",
-                        tint = TextWhite,
+                        tint = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.size(16.dp)
                     )
                 }
@@ -409,8 +404,8 @@ private fun ExercisePickerSheet(
     ModalBottomSheet(
         onDismissRequest = viewModel::closePicker,
         sheetState = sheetState,
-        containerColor = GraphiteSurfaceElevated,
-        scrimColor = ObsidianBlack.copy(alpha = 0.7f)
+        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+        scrimColor = MaterialTheme.colorScheme.scrim.copy(alpha = 0.5f)
     ) {
         Column(
             modifier = Modifier
@@ -435,11 +430,11 @@ private fun ExercisePickerSheet(
                         text = "Add Exercise",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Black,
-                        color = TextWhite
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
                 IconButton(onClick = viewModel::closePicker) {
-                    Icon(Icons.Default.Close, contentDescription = "Close", tint = TextSecondary)
+                    Icon(Icons.Default.Close, contentDescription = "Close", tint = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
 
@@ -448,26 +443,26 @@ private fun ExercisePickerSheet(
             OutlinedTextField(
                 value = state.query,
                 onValueChange = viewModel::updateQuery,
-                placeholder = { Text("Search 302 exercises, muscles, equipment...", color = TextMuted, fontSize = 14.sp) },
+                placeholder = { Text("Search 302 exercises, muscles, equipment...", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f), fontSize = 14.sp) },
                 leadingIcon = {
-                    Icon(Icons.Default.Search, contentDescription = null, tint = TextSecondary)
+                    Icon(Icons.Default.Search, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
                 },
                 trailingIcon = {
                     if (state.query.isNotEmpty()) {
                         IconButton(onClick = { viewModel.updateQuery("") }) {
-                            Icon(Icons.Default.Close, contentDescription = "Clear", tint = TextSecondary)
+                            Icon(Icons.Default.Close, contentDescription = "Clear", tint = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
                 },
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = GraphiteSurface,
-                    unfocusedContainerColor = GraphiteSurface,
+                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                     focusedBorderColor = CrimsonRedPrimary,
-                    unfocusedBorderColor = GraphiteBorder,
-                    focusedTextColor = TextPrimary,
-                    unfocusedTextColor = TextPrimary
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                 ),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -479,7 +474,7 @@ private fun ExercisePickerSheet(
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.5.sp,
-                color = TextSecondary
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -494,7 +489,7 @@ private fun ExercisePickerSheet(
                     WallCrawlCard(
                         cornerRadius = 12.dp,
                         contentPadding = 12.dp,
-                        backgroundColor = GraphiteSurface,
+                        backgroundColor = MaterialTheme.colorScheme.surface,
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable { viewModel.addExercise(exercise) }
@@ -507,13 +502,13 @@ private fun ExercisePickerSheet(
                                 Text(
                                     text = exercise.name,
                                     fontWeight = FontWeight.Bold,
-                                    color = TextWhite,
+                                    color = MaterialTheme.colorScheme.onSurface,
                                     fontSize = 15.sp
                                 )
                                 Spacer(modifier = Modifier.height(2.dp))
                                 Text(
                                     text = (exercise.primaryMuscles + exercise.listedEquipment).joinToString(" · "),
-                                    color = TextSecondary,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     fontSize = 12.sp
                                 )
                             }

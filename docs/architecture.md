@@ -247,10 +247,11 @@ no separate write path that copies a logged value back into
 
 ## Room persistence and invariants
 
-`WallCrawlDatabase` is currently schema version 6. Its tables store:
+`WallCrawlDatabase` is currently schema version 7. Its tables store:
 
 - the user profile, including onboarding status, multi-select fitness goals,
-  training constraints, return-after-break weeks, and confirmed starting loads;
+  training constraints, return-after-break weeks, confirmed starting loads,
+  and theme preference (`SYSTEM`, `DARK`, `LIGHT`);
 - reusable workout templates and their ordered exercises;
 - workout sessions and their ordered exercise snapshots;
 - target and completed values for every set.
@@ -265,7 +266,9 @@ before onboarding existed was never reviewed against these safety-relevant
 fields, so it must not be grandfathered in as already onboarded. Migration
 `5 → 6` adds `fitnessGoalsJson` supporting multiple concurrent fitness goals
 (e.g., hybrid hypertrophy and strength), initializing existing rows from
-`primaryGoal`. Destructive migration fallback is disabled.
+`primaryGoal`. Migration `6 → 7` adds `themePreference` with a default of
+`SYSTEM`, enabling dynamic theme switching between System Default, Dark Mode,
+and Light Mode. Destructive migration fallback is disabled.
 
 The persistence layer enforces several important invariants:
 
@@ -314,6 +317,38 @@ workout start cannot leave a partial session.
 The active session is persisted immediately, so it can be resumed after normal
 navigation or process recreation. The template editor does not yet persist an
 unsaved draft or prompt before leaving with unsaved changes.
+
+## Dynamic Theming and Visual Contrast
+
+WallCrawl supports dynamic theme adaptation across all features and shared
+components via Jetpack Compose and Material 3:
+
+```text
+UserProfile.themePreference (SYSTEM | DARK | LIGHT)
+               │
+               ▼
+        WallCrawlTheme
+         ├─ LightColorScheme / DarkColorScheme
+         ├─ WindowCompat (status & nav insets)
+         └─ Dynamic Tokens (Surfaces, Borders, Typography)
+               │
+               ├→ WallCrawlCard / WebBackgroundPattern
+               ├→ WallCrawlWordmark (Dynamic high-contrast brand)
+               └→ ExerciseIllustration (Elevated container)
+```
+
+- **Theme Preferences**: `ThemePreference.SYSTEM` follows Android's system-wide
+  dark mode setting via `isSystemInDarkTheme()`, while `DARK` and `LIGHT` enforce
+  the respective color palette across the app.
+- **System Inset Controller**: `WallCrawlTheme` updates `WindowInsetsController`
+  to dynamically switch light and dark system status bar and navigation bar icon
+  contrast.
+- **Visual Contrast & Exercise Art**: Vector SVG illustrations use a dedicated
+  dark graphite elevation backing so anatomical illustration lines remain crisp
+  and visible against light and dark background themes alike.
+- **Wordmark & Typography**: Brand elements like `WallCrawlWordmark` dynamically
+  render primary brand lettering in theme-aware typography tokens (`onSurface`),
+  preserving high contrast on all screen densities.
 
 ## Verification boundaries
 

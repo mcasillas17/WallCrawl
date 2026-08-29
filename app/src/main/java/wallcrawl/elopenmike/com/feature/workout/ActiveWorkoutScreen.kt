@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -49,13 +50,6 @@ import wallcrawl.elopenmike.com.core.ui.components.WallCrawlSecondaryButton
 import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
-import wallcrawl.elopenmike.com.core.ui.theme.GraphiteBorder
-import wallcrawl.elopenmike.com.core.ui.theme.GraphiteSurface
-import wallcrawl.elopenmike.com.core.ui.theme.GraphiteSurfaceElevated
-import wallcrawl.elopenmike.com.core.ui.theme.ObsidianBlack
-import wallcrawl.elopenmike.com.core.ui.theme.TextMuted
-import wallcrawl.elopenmike.com.core.ui.theme.TextPrimary
-import wallcrawl.elopenmike.com.core.ui.theme.TextSecondary
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
 import wallcrawl.elopenmike.com.core.ui.theme.WebBlueAccent
 import java.text.SimpleDateFormat
@@ -75,7 +69,7 @@ fun ActiveWorkoutScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(ObsidianBlack)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         WebBackgroundPattern()
 
@@ -96,7 +90,7 @@ fun ActiveWorkoutScreen(
                     WallCrawlCard(borderColor = CrimsonRedPrimary) {
                         Text("Workout Error", color = CrimsonRedLight, fontWeight = FontWeight.Bold, fontSize = 18.sp)
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text(state.message, color = TextSecondary)
+                        Text(state.message, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Spacer(modifier = Modifier.height(16.dp))
                         WallCrawlSecondaryButton(text = "Go Back", onClick = onNavigateBack)
                     }
@@ -158,7 +152,7 @@ private fun ActiveWorkoutContent(
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = "Close Workout",
-                    tint = TextSecondary
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
@@ -167,7 +161,7 @@ private fun ActiveWorkoutContent(
                     text = state.session.name,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextWhite
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
                     text = "Exercise ${state.currentExerciseIndex + 1} of ${state.totalExercises}",
@@ -244,14 +238,14 @@ private fun ActiveWorkoutContent(
                             text = "SET",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
-                            color = TextMuted,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.width(32.dp)
                         )
                         Text(
                             text = currentExercise.prescription.inputLabel(state.weightUnit.symbol),
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
-                            color = TextMuted,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.weight(1f),
                             textAlign = androidx.compose.ui.text.style.TextAlign.Center
                         )
@@ -259,7 +253,7 @@ private fun ActiveWorkoutContent(
                             text = "DONE",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
-                            color = TextMuted,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.width(38.dp),
                             textAlign = androidx.compose.ui.text.style.TextAlign.Center
                         )
@@ -328,14 +322,13 @@ private fun ExerciseHeaderCard(
 
     WallCrawlCard(
         cornerRadius = 14.dp,
-        contentPadding = 14.dp,
-        backgroundColor = GraphiteSurfaceElevated
+        contentPadding = 14.dp
     ) {
         Text(
             text = displayName,
             fontSize = 20.sp,
             fontWeight = FontWeight.Black,
-            color = TextWhite
+            color = MaterialTheme.colorScheme.onSurface
         )
 
         Spacer(modifier = Modifier.height(6.dp))
@@ -347,19 +340,19 @@ private fun ExerciseHeaderCard(
         ) {
             StatBadge(
                 label = workoutExercise.prescription.displayTarget(),
-                textColor = TextPrimary
+                textColor = MaterialTheme.colorScheme.onSurface
             )
 
             if (workoutExercise.targetWeight != null) {
                 StatBadge(
                     label = "Suggested: ${workoutExercise.targetWeight} $preferredUnit",
-                    textColor = WebBlueAccent
+                    textColor = MaterialTheme.colorScheme.secondary
                 )
             }
             workoutExercise.prescription.targetAssistanceWeight?.let { assistance ->
                 StatBadge(
                     label = "Assistance: $assistance $preferredUnit",
-                    textColor = WebBlueAccent
+                    textColor = MaterialTheme.colorScheme.secondary
                 )
             }
         }
@@ -397,8 +390,7 @@ private fun SetUpdateErrorBanner(message: String, onDismiss: () -> Unit) {
     WallCrawlCard(
         cornerRadius = 12.dp,
         contentPadding = 12.dp,
-        borderColor = CrimsonRedPrimary,
-        backgroundColor = GraphiteSurfaceElevated
+        borderColor = CrimsonRedPrimary
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
@@ -411,7 +403,7 @@ private fun SetUpdateErrorBanner(message: String, onDismiss: () -> Unit) {
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = "Dismiss error",
-                    tint = TextSecondary
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
@@ -426,14 +418,13 @@ private fun PreviousPerformanceCard(
 ) {
     WallCrawlCard(
         cornerRadius = 12.dp,
-        contentPadding = 12.dp,
-        backgroundColor = GraphiteSurface
+        contentPadding = 12.dp
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 imageVector = Icons.Default.History,
                 contentDescription = null,
-                tint = WebBlueAccent,
+                tint = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier.size(16.dp)
             )
             Spacer(modifier = Modifier.width(6.dp))
@@ -442,7 +433,7 @@ private fun PreviousPerformanceCard(
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.5.sp,
-                color = WebBlueAccent
+                color = MaterialTheme.colorScheme.secondary
             )
         }
 
@@ -450,7 +441,7 @@ private fun PreviousPerformanceCard(
             Text(
                 text = SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(Date(timestamp)),
                 fontSize = 11.sp,
-                color = TextMuted
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
             )
         }
 
@@ -479,7 +470,7 @@ private fun PreviousPerformanceCard(
             Text(
                 text = "• $result",
                 fontSize = 13.sp,
-                color = TextSecondary
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }

@@ -9,6 +9,7 @@ import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
+import wallcrawl.elopenmike.com.core.model.ThemePreference
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
@@ -47,6 +48,12 @@ class ProfileViewModel(
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = ProfileUiState.Loading
     )
+
+    fun updateThemePreference(theme: ThemePreference) {
+        viewModelScope.launch {
+            userProfileRepository.updateThemePreference(theme)
+        }
+    }
 
     fun toggleGoal(goal: FitnessGoal) {
         viewModelScope.launch {
