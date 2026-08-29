@@ -11,16 +11,9 @@ data class UserProfile(
     val experienceLevel: ExperienceLevel = ExperienceLevel.INTERMEDIATE,
     val preferredDurationMinutes: Int = 50,
     val daysPerWeek: Int = 4,
-    val availableEquipment: List<String> = listOf(
-        StandardEquipment.BARBELL,
-        StandardEquipment.DUMBBELL,
-        StandardEquipment.BENCH,
-        StandardEquipment.PULLUP_BAR,
-        StandardEquipment.DIP_BARS,
-        StandardEquipment.SQUAT_RACK,
-        StandardEquipment.BODYWEIGHT,
-        StandardEquipment.CABLE
-    ),
+    // A fresh profile assumes nothing about the user's gym access: only bodyweight
+    // training is safe to assume without onboarding confirming what equipment exists.
+    val availableEquipment: List<String> = listOf(StandardEquipment.BODYWEIGHT),
     val preferredUnit: WeightUnit = WeightUnit.LBS,
     val musclePriorities: Map<String, PriorityLevel> = mapOf(
         StandardMuscles.CHEST to PriorityLevel.HIGH,
@@ -33,7 +26,15 @@ data class UserProfile(
         StandardMuscles.GLUTES to PriorityLevel.NORMAL,
         StandardMuscles.CORE to PriorityLevel.NORMAL
     ),
-    val excludedExerciseIds: List<String> = emptyList()
+    val excludedExerciseIds: List<String> = emptyList(),
+    // Must stay false until onboarding explicitly confirms the fields above and below it;
+    // Today must not generate or render a workout for an unconfirmed profile.
+    val onboardingCompleted: Boolean = false,
+    val trainingConstraints: Set<TrainingConstraint> = emptySet(),
+    val returningAfterBreakWeeks: Int = 0,
+    // Never populated with a guessed or catalog default: a load only lands here once a
+    // user has explicitly confirmed it (see Task 2), so this starts and stays empty.
+    val confirmedStartingLoads: Map<String, Double> = emptyMap()
 ) {
     companion object {
         const val DEFAULT_PROFILE_ID = "default_user"

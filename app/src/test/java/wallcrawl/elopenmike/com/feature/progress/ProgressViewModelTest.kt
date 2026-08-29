@@ -73,6 +73,7 @@ private class FixedUserProfileRepository : UserProfileRepository {
     override fun getUserProfile(): Flow<UserProfile> = flowOf(profile)
     override suspend fun getProfileOnce(): UserProfile = profile
     override suspend fun saveUserProfile(profile: UserProfile) = error("Not used")
+    override suspend fun saveProfile(profile: UserProfile) = error("Not used")
     override suspend fun updatePrimaryGoal(goal: FitnessGoal) = error("Not used")
     override suspend fun updateExperienceLevel(level: ExperienceLevel) = error("Not used")
     override suspend fun updatePreferredDuration(minutes: Int) = error("Not used")
@@ -81,6 +82,10 @@ private class FixedUserProfileRepository : UserProfileRepository {
     override suspend fun updateUnit(unit: WeightUnit) = error("Not used")
     override suspend fun updateMusclePriorities(priorities: Map<String, PriorityLevel>) = error("Not used")
     override suspend fun updateExcludedExercises(excludedIds: List<String>) = error("Not used")
+    override suspend fun updateTrainingConstraints(
+        constraints: Set<wallcrawl.elopenmike.com.core.model.TrainingConstraint>
+    ) = error("Not used")
+    override suspend fun updateReturningAfterBreakWeeks(weeks: Int) = error("Not used")
 }
 
 private class EmptyWorkoutRepository : WorkoutRepository {

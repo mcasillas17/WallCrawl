@@ -8,14 +8,17 @@ import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
+import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
+import wallcrawl.elopenmike.com.core.model.convertWeight
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
+import org.junit.Assert.assertThrows
 
 class UserProfileRepositoryTest {
 
@@ -79,13 +82,163 @@ class UserProfileRepositoryTest {
     }
 
     private fun StandardMuscles.LEGS() = StandardMuscles.QUADS
+
+    @Test
+    fun saveProfile_persistsOnboardingInputsInASingleRevisionUpdate() = runTest {
+        val onboarded = UserProfile(
+            name = "Alex",
+            primaryGoal = FitnessGoal.STRENGTH,
+            experienceLevel = ExperienceLevel.BEGINNER,
+            daysPerWeek = 3,
+            preferredDurationMinutes = 45,
+            preferredUnit = WeightUnit.KG,
+            availableEquipment = listOf(StandardEquipment.BODYWEIGHT, StandardEquipment.DUMBBELL),
+            trainingConstraints = setOf(TrainingConstraint.SHOULDER_SENSITIVE),
+            returningAfterBreakWeeks = 6,
+            onboardingCompleted = true
+        )
+
+        repository.saveProfile(onboarded)
+
+        val profile = repository.getUserProfile().first()
+        assertThat(profile.onboardingCompleted).isTrue()
+        assertThat(profile.name).isEqualTo("Alex")
+        assertThat(profile.trainingConstraints).containsExactly(TrainingConstraint.SHOULDER_SENSITIVE)
+        assertThat(profile.returningAfterBreakWeeks).isEqualTo(6)
+        assertThat(profile.availableEquipment)
+            .containsExactly(StandardEquipment.BODYWEIGHT, StandardEquipment.DUMBBELL)
+        // One save must be one revision bump, not one write per onboarding field.
+        assertThat(profile.revision).isEqualTo(0L)
+    }
+
+    @Test
+    fun saveProfile_rejectsDaysPerWeekOutsideSupportedRange() {
+        assertThrows(IllegalArgumentException::class.java) {
+            runTest { repository.saveProfile(UserProfile(daysPerWeek = 1)) }
+        }
+    }
+
+    @Test
+    fun saveProfile_rejectsDurationOutsideSupportedRange() {
+        assertThrows(IllegalArgumentException::class.java) {
+            runTest { repository.saveProfile(UserProfile(preferredDurationMinutes = 10)) }
+        }
+    }
+
+    @Test
+    fun saveProfile_rejectsReturningAfterBreakWeeksOutsideSupportedRange() {
+        assertThrows(IllegalArgumentException::class.java) {
+            runTest { repository.saveProfile(UserProfile(returningAfterBreakWeeks = 521)) }
+        }
+    }
+
+    @Test
+    fun saveProfile_rejectsEmptyEquipment() {
+        assertThrows(IllegalArgumentException::class.java) {
+            runTest { repository.saveProfile(UserProfile(availableEquipment = emptyList())) }
+        }
+    }
+
+    @Test
+    fun saveProfile_rejectsUnknownEquipmentNames() {
+        assertThrows(IllegalArgumentException::class.java) {
+            runTest { repository.saveProfile(UserProfile(availableEquipment = listOf("Trampoline"))) }
+        }
+    }
+
+    @Test
+    fun saveProfile_rejectsNonFiniteOrNegativeConfirmedLoads() {
+        assertThrows(IllegalArgumentException::class.java) {
+            runTest {
+                repository.saveProfile(
+                    UserProfile(confirmedStartingLoads = mapOf("barbell-back-squat" to -5.0))
+                )
+            }
+        }
+        assertThrows(IllegalArgumentException::class.java) {
+            runTest {
+                repository.saveProfile(
+                    UserProfile(confirmedStartingLoads = mapOf("barbell-back-squat" to Double.NaN))
+                )
+            }
+        }
+    }
+
+    @Test
+    fun getProfile_dropsMalformedTrainingConstraintNamesRatherThanGuessing() = runTest {
+        // A future/renamed constraint value, or corruption, must not silently resolve to
+        // some other constraint: that would misrepresent what the user actually confirmed.
+        fakeDao.seed(
+            musclePrioritiesJson = "",
+            trainingConstraintsJson = "SHOULDER_SENSITIVE|||NOT_A_REAL_CONSTRAINT"
+        )
+
+        val profile = repository.getUserProfile().first()
+
+        assertThat(profile.trainingConstraints).containsExactly(TrainingConstraint.SHOULDER_SENSITIVE)
+    }
+
+    @Test
+    fun getProfile_dropsMalformedConfirmedStartingLoadsRatherThanInventingAWeight() = runTest {
+        // Inventing a starting weight for a corrupted row would be an unsafe guess;
+        // the safe behavior is to drop just that entry, not the whole profile.
+        fakeDao.seed(
+            musclePrioritiesJson = "",
+            confirmedStartingLoadsJson = "barbell-back-squat:135.0|||dumbbell-row:not-a-number"
+        )
+
+        val profile = repository.getUserProfile().first()
+
+        assertThat(profile.confirmedStartingLoads).containsExactly("barbell-back-squat", 135.0)
+    }
+
+    @Test
+    fun updateUnit_convertsConfirmedStartingLoadsRatherThanRelabelingThem() = runTest {
+        // The confirmed-loads map is defined in preferredUnit. Switching the unit without
+        // converting stored values would silently relabel a confirmed 135 lb baseline as
+        // "135 kg" -- the exact unsafe-default problem Task 2 exists to remove.
+        repository.saveProfile(
+            UserProfile(
+                preferredUnit = WeightUnit.LBS,
+                confirmedStartingLoads = mapOf("barbell-bench-press" to 135.0),
+                onboardingCompleted = true
+            )
+        )
+
+        repository.updateUnit(WeightUnit.KG)
+
+        val profile = repository.getUserProfile().first()
+        assertThat(profile.preferredUnit).isEqualTo(WeightUnit.KG)
+        assertThat(profile.confirmedStartingLoads["barbell-bench-press"])
+            .isWithin(0.001).of(convertWeight(135.0, from = WeightUnit.LBS, to = WeightUnit.KG))
+    }
+
+    @Test
+    fun updateUnit_withSameUnit_leavesConfirmedStartingLoadsUnchanged() = runTest {
+        repository.saveProfile(
+            UserProfile(
+                preferredUnit = WeightUnit.LBS,
+                confirmedStartingLoads = mapOf("barbell-bench-press" to 135.0),
+                onboardingCompleted = true
+            )
+        )
+
+        repository.updateUnit(WeightUnit.LBS)
+
+        val profile = repository.getUserProfile().first()
+        assertThat(profile.confirmedStartingLoads["barbell-bench-press"]).isEqualTo(135.0)
+    }
 }
 
 class FakeUserProfileDao : UserProfileDao {
     private val profileState = MutableStateFlow<UserProfileEntity?>(null)
 
     /** Writes a profile row directly, standing in for one saved by an earlier app version. */
-    fun seed(musclePrioritiesJson: String) {
+    fun seed(
+        musclePrioritiesJson: String,
+        trainingConstraintsJson: String = "",
+        confirmedStartingLoadsJson: String = ""
+    ) {
         profileState.value = UserProfileEntity(
             id = UserProfile.DEFAULT_PROFILE_ID,
             name = "Crawler",
@@ -96,7 +249,9 @@ class FakeUserProfileDao : UserProfileDao {
             availableEquipmentJson = StandardEquipment.BODYWEIGHT,
             preferredUnit = WeightUnit.LBS,
             musclePrioritiesJson = musclePrioritiesJson,
-            excludedExerciseIdsJson = ""
+            excludedExerciseIdsJson = "",
+            trainingConstraintsJson = trainingConstraintsJson,
+            confirmedStartingLoadsJson = confirmedStartingLoadsJson
         )
     }
 

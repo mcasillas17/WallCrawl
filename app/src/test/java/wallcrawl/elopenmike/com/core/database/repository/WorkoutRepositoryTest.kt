@@ -84,6 +84,31 @@ class WorkoutRepositoryTest {
     }
 
     @Test
+    fun logSetCompletion_completingWeightRepsSetWithoutAPositiveLoad_isRejectedBeforePersistence() = runTest {
+        // With no fabricated default weight anymore (Task 2), a completed weight-and-reps
+        // set could otherwise silently persist with no load recorded at all. Completion
+        // must require a user-entered positive load.
+        assertIllegalArgument {
+            repository.logSetCompletion(
+                setId = "set-id",
+                reps = 8,
+                weight = null,
+                isCompleted = true
+            )
+        }
+        assertIllegalArgument {
+            repository.logSetCompletion(
+                setId = "set-id",
+                reps = 8,
+                weight = 0.0,
+                isCompleted = true
+            )
+        }
+
+        assertThat(setDao.completionUpdates).isEmpty()
+    }
+
+    @Test
     fun logSetCompletion_incompletePartialEdit_isPersisted() = runTest {
         repository.logSetCompletion(
             setId = "set-id",

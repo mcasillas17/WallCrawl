@@ -30,8 +30,10 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,6 +46,7 @@ import androidx.compose.ui.unit.sp
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
+import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.ui.components.StatBadge
@@ -94,6 +97,7 @@ fun ProfileScreen(
                     profile = state.profile,
                     availableEquipment = state.availableEquipmentOptions,
                     availableMuscles = state.availableMuscleOptions,
+                    availableConstraints = state.availableConstraintOptions,
                     onUpdateGoal = { viewModel.updateGoal(it) },
                     onUpdateExperience = { viewModel.updateExperience(it) },
                     onUpdateDuration = { viewModel.updateDuration(it) },
@@ -101,6 +105,8 @@ fun ProfileScreen(
                     onUpdateUnit = { viewModel.updateUnit(it) },
                     onToggleEquipment = { viewModel.toggleEquipment(it) },
                     onSetMusclePriority = { muscle, priority -> viewModel.setMusclePriority(muscle, priority) },
+                    onToggleConstraint = { viewModel.toggleTrainingConstraint(it) },
+                    onUpdateReturningAfterBreakWeeks = { viewModel.updateReturningAfterBreakWeeks(it) },
                     onOpenCredits = onOpenCredits
                 )
             }
@@ -114,6 +120,7 @@ private fun ProfileContent(
     profile: UserProfile,
     availableEquipment: List<String>,
     availableMuscles: List<String>,
+    availableConstraints: List<TrainingConstraint>,
     onUpdateGoal: (FitnessGoal) -> Unit,
     onUpdateExperience: (ExperienceLevel) -> Unit,
     onUpdateDuration: (Int) -> Unit,
@@ -121,8 +128,15 @@ private fun ProfileContent(
     onUpdateUnit: (WeightUnit) -> Unit,
     onToggleEquipment: (String) -> Unit,
     onSetMusclePriority: (String, PriorityLevel) -> Unit,
+    onToggleConstraint: (TrainingConstraint) -> Unit,
+    onUpdateReturningAfterBreakWeeks: (Int) -> Unit,
     onOpenCredits: () -> Unit
 ) {
+    val breakWeeksSliderState = remember { BreakWeeksSliderState(profile.returningAfterBreakWeeks) }
+    LaunchedEffect(profile.returningAfterBreakWeeks) {
+        breakWeeksSliderState.onPersistedValueChanged(profile.returningAfterBreakWeeks)
+    }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -422,6 +436,83 @@ private fun ProfileContent(
                         }
                     }
                 }
+            }
+        }
+
+        // 5. Training constraints and return-after-break weeks
+        item {
+            WallCrawlCard(
+                cornerRadius = 16.dp,
+                contentPadding = 16.dp,
+                backgroundColor = GraphiteSurfaceElevated
+            ) {
+                Text(
+                    text = "TRAINING SAFETY",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 0.8.sp,
+                    color = CrimsonRedLight
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    availableConstraints.forEach { constraint ->
+                        val isSelected = constraint in profile.trainingConstraints
+                        FilterChip(
+                            selected = isSelected,
+                            onClick = { onToggleConstraint(constraint) },
+                            label = { Text(constraint.displayName, fontSize = 12.sp, fontWeight = FontWeight.SemiBold) },
+                            colors = FilterChipDefaults.filterChipColors(
+                                containerColor = GraphiteSurface,
+                                selectedContainerColor = CrimsonRedPrimary,
+                                labelColor = TextSecondary,
+                                selectedLabelColor = TextWhite
+                            ),
+                            border = FilterChipDefaults.filterChipBorder(
+                                enabled = true,
+                                selected = isSelected,
+                                borderColor = GraphiteBorder,
+                                selectedBorderColor = CrimsonRedPrimary
+                            )
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(text = "Returning After a Break", fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = TextPrimary)
+                    Text(
+                        text = if (breakWeeksSliderState.displayWeeks == 0) {
+                            "No recent break"
+                        } else {
+                            "${breakWeeksSliderState.displayWeeks} wk off"
+                        },
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = WebBlueAccent
+                    )
+                }
+                Slider(
+                    value = breakWeeksSliderState.displayWeeks.toFloat(),
+                    onValueChange = { breakWeeksSliderState.onDrag(it.toInt()) },
+                    onValueChangeFinished = {
+                        breakWeeksSliderState.onDragFinished(onUpdateReturningAfterBreakWeeks)
+                    },
+                    valueRange = 0f..52f,
+                    colors = SliderDefaults.colors(
+                        thumbColor = CrimsonRedPrimary,
+                        activeTrackColor = CrimsonRedPrimary,
+                        inactiveTrackColor = GraphiteBorder
+                    )
+                )
             }
         }
 

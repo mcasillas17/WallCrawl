@@ -1,9 +1,12 @@
 package wallcrawl.elopenmike.com.app
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -11,7 +14,9 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
@@ -38,6 +43,8 @@ import wallcrawl.elopenmike.com.feature.credits.CreditsScreen
 import wallcrawl.elopenmike.com.feature.credits.CreditsViewModel
 import wallcrawl.elopenmike.com.feature.exercises.ExercisesScreen
 import wallcrawl.elopenmike.com.feature.exercises.ExercisesViewModel
+import wallcrawl.elopenmike.com.feature.onboarding.OnboardingScreen
+import wallcrawl.elopenmike.com.feature.onboarding.OnboardingViewModel
 import wallcrawl.elopenmike.com.feature.profile.ProfileScreen
 import wallcrawl.elopenmike.com.feature.profile.ProfileViewModel
 import wallcrawl.elopenmike.com.feature.progress.ProgressScreen
@@ -55,6 +62,43 @@ import wallcrawl.elopenmike.com.feature.workout.ActiveWorkoutViewModel
 fun WallCrawlApp(
     container: AppContainer,
     navController: NavHostController = rememberNavController()
+) {
+    // The profile's onboarding status decides the start destination, so Today is never
+    // reachable - and TodayViewModel is never constructed - until onboarding is confirmed
+    // complete. A null first emission means the profile hasn't loaded yet.
+    val profile by container.userProfileRepository.getUserProfile().collectAsState(initial = null)
+
+    when (val currentProfile = profile) {
+        null -> {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(ObsidianBlack),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(color = CrimsonRedPrimary)
+            }
+        }
+
+        else -> {
+            WallCrawlAppContent(
+                container = container,
+                navController = navController,
+                startDestination = if (currentProfile.onboardingCompleted) {
+                    AppRoutes.TODAY
+                } else {
+                    AppRoutes.ONBOARDING
+                }
+            )
+        }
+    }
+}
+
+@Composable
+private fun WallCrawlAppContent(
+    container: AppContainer,
+    navController: NavHostController,
+    startDestination: String
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -87,11 +131,27 @@ fun WallCrawlApp(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = AppRoutes.TODAY,
+            startDestination = startDestination,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
+            composable(AppRoutes.ONBOARDING) {
+                val onboardingViewModel: OnboardingViewModel = viewModel(
+                    factory = OnboardingViewModel.provideFactory(
+                        userProfileRepository = container.userProfileRepository
+                    )
+                )
+                OnboardingScreen(
+                    viewModel = onboardingViewModel,
+                    onCompleted = {
+                        navController.navigate(AppRoutes.TODAY) {
+                            popUpTo(AppRoutes.ONBOARDING) { inclusive = true }
+                        }
+                    }
+                )
+            }
+
             composable(AppRoutes.TODAY) {
                 val todayViewModel: TodayViewModel = viewModel(
                     factory = TodayViewModel.provideFactory(

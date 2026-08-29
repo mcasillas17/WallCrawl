@@ -273,6 +273,20 @@ fun PerformanceSetRow(
         isCompleted = completed
     )
 
+    // Field edits (typing) preserve whatever completion state the set already has, so a
+    // digit typed while correcting an already-completed set doesn't uncomplete it. But a
+    // transient in-progress value -- e.g. the field is momentarily empty between clearing
+    // and retyping a number -- must never be submitted as a completion: the repository
+    // would reject it and the caller must not treat a mid-edit keystroke as a rejected
+    // write. Only the checkbox performs the explicit completion transition, so it always
+    // submits regardless of validity.
+    fun submitEdit() {
+        val performance = current()
+        if (performance.isSubmittableFor(set.exerciseType)) {
+            onUpdateSet(performance)
+        }
+    }
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -306,20 +320,26 @@ fun PerformanceSetRow(
         ) {
             when (set.exerciseType) {
                 ExerciseType.WEIGHT_REPS -> {
-                    CompactSetInput(weight, { weight = it; onUpdateSet(current()) }, "Load $weightUnit", true, Modifier.weight(1f))
-                    CompactSetInput(reps, { reps = it; onUpdateSet(current()) }, "Reps", false, Modifier.weight(1f))
+                    CompactSetInput(
+                        weight,
+                        { weight = it; submitEdit() },
+                        weightInputLabel(set.targetWeight, weightUnit),
+                        true,
+                        Modifier.weight(1f)
+                    )
+                    CompactSetInput(reps, { reps = it; submitEdit() }, "Reps", false, Modifier.weight(1f))
                 }
                 ExerciseType.BODYWEIGHT_REPS ->
-                    CompactSetInput(reps, { reps = it; onUpdateSet(current()) }, "Reps", false, Modifier.weight(1f))
+                    CompactSetInput(reps, { reps = it; submitEdit() }, "Reps", false, Modifier.weight(1f))
                 ExerciseType.ASSISTED_BODYWEIGHT -> {
-                    CompactSetInput(assistance, { assistance = it; onUpdateSet(current()) }, "Assist $weightUnit", true, Modifier.weight(1f))
-                    CompactSetInput(reps, { reps = it; onUpdateSet(current()) }, "Reps", false, Modifier.weight(1f))
+                    CompactSetInput(assistance, { assistance = it; submitEdit() }, "Assist $weightUnit", true, Modifier.weight(1f))
+                    CompactSetInput(reps, { reps = it; submitEdit() }, "Reps", false, Modifier.weight(1f))
                 }
                 ExerciseType.DURATION ->
-                    CompactSetInput(duration, { duration = it; onUpdateSet(current()) }, "Seconds", false, Modifier.weight(1f))
+                    CompactSetInput(duration, { duration = it; submitEdit() }, "Seconds", false, Modifier.weight(1f))
                 ExerciseType.DISTANCE_DURATION -> {
-                    CompactSetInput(distance, { distance = it; onUpdateSet(current()) }, "Meters", true, Modifier.weight(1f))
-                    CompactSetInput(duration, { duration = it; onUpdateSet(current()) }, "Seconds", false, Modifier.weight(1f))
+                    CompactSetInput(distance, { distance = it; submitEdit() }, "Meters", true, Modifier.weight(1f))
+                    CompactSetInput(duration, { duration = it; submitEdit() }, "Seconds", false, Modifier.weight(1f))
                 }
             }
         }
@@ -350,3 +370,31 @@ private fun CompactSetInput(
 
 private fun Double.compactText(): String =
     if (this % 1.0 == 0.0) toInt().toString() else toString()
+
+/**
+ * Labels the load field. A null target means no confirmed baseline and no usable
+ * history exist yet, so the logger must ask the user to choose one rather than
+ * silently accepting whatever value happens to be left in the field.
+ */
+internal fun weightInputLabel(targetWeight: Double?, weightUnit: String): String =
+    if (targetWeight == null) "Choose starting load" else "Load $weightUnit"
+
+/**
+ * Whether this performance update is safe to submit to the repository as-is. A set
+ * marked complete must carry valid, positive values for whatever this exercise type
+ * requires -- mirroring [wallcrawl.elopenmike.com.core.database.repository.OfflineWorkoutRepository]'s
+ * completion invariant -- so a mid-edit value (e.g. a field momentarily cleared to
+ * retype a number) is never sent as a rejected completion. An incomplete set is always
+ * submittable, since a partial edit is allowed to persist regardless of its contents.
+ */
+internal fun SetPerformanceInput.isSubmittableFor(exerciseType: ExerciseType): Boolean {
+    if (!isCompleted) return true
+    val hasPositiveReps = (reps ?: 0) > 0
+    return when (exerciseType) {
+        ExerciseType.WEIGHT_REPS -> hasPositiveReps && (weight ?: 0.0) > 0.0
+        ExerciseType.BODYWEIGHT_REPS, ExerciseType.ASSISTED_BODYWEIGHT -> hasPositiveReps
+        ExerciseType.DURATION -> (durationSeconds ?: 0) > 0
+        ExerciseType.DISTANCE_DURATION ->
+            (durationSeconds ?: 0) > 0 || (distanceMeters ?: 0.0) > 0.0
+    }
+}

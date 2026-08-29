@@ -9,6 +9,7 @@ import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
+import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,7 +38,8 @@ class ProfileViewModel(
                 profile = profile,
                 isSaving = isSaving,
                 availableEquipmentOptions = StandardEquipment.ALL,
-                availableMuscleOptions = StandardMuscles.PRIORITY_OPTIONS
+                availableMuscleOptions = StandardMuscles.PRIORITY_OPTIONS,
+                availableConstraintOptions = TrainingConstraint.entries
             )
         }
     }.stateIn(
@@ -95,6 +97,24 @@ class ProfileViewModel(
                 put(muscle, priority)
             }
             userProfileRepository.updateMusclePriorities(updated)
+        }
+    }
+
+    fun toggleTrainingConstraint(constraint: TrainingConstraint) {
+        viewModelScope.launch {
+            val current = userProfileRepository.getProfileOnce()
+            val updated = if (constraint in current.trainingConstraints) {
+                current.trainingConstraints - constraint
+            } else {
+                current.trainingConstraints + constraint
+            }
+            userProfileRepository.updateTrainingConstraints(updated)
+        }
+    }
+
+    fun updateReturningAfterBreakWeeks(weeks: Int) {
+        viewModelScope.launch {
+            userProfileRepository.updateReturningAfterBreakWeeks(weeks)
         }
     }
 

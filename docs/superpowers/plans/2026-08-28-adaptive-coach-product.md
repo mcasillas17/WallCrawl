@@ -80,6 +80,8 @@
 
 ### Task 1: Add Explicit Onboarding and Training Constraints
 
+**Status: Done.** Commit `802ba67` (`feat: add safe training onboarding`).
+
 **Files:**
 - Create: `app/src/main/java/wallcrawl/elopenmike/com/core/model/TrainingConstraint.kt`
 - Create: `app/src/main/java/wallcrawl/elopenmike/com/feature/onboarding/OnboardingViewModel.kt`
@@ -92,7 +94,7 @@
 - Test: `app/src/test/java/wallcrawl/elopenmike/com/feature/onboarding/OnboardingViewModelTest.kt`
 - Test: `app/src/androidTest/java/wallcrawl/elopenmike/com/core/database/Migration4To5Test.kt`
 
-- [ ] **Step 1: Write failing profile and onboarding tests**
+- [x] **Step 1: Write failing profile and onboarding tests**
 
 ```kotlin
 @Test
@@ -119,7 +121,7 @@ fun completeOnboarding_persistsAllRequiredPlanningInputs() = runTest {
 }
 ```
 
-- [ ] **Step 2: Run the tests and verify the missing fields fail compilation**
+- [x] **Step 2: Run the tests and verify the missing fields fail compilation**
 
 Run:
 
@@ -129,7 +131,7 @@ Run:
 
 Expected: FAIL because onboarding and constraint fields do not exist.
 
-- [ ] **Step 3: Add conservative profile fields and constraint vocabulary**
+- [x] **Step 3: Add conservative profile fields and constraint vocabulary**
 
 Add these properties to the existing `UserProfile` constructor:
 
@@ -151,7 +153,7 @@ val returningAfterBreakWeeks: Int = 0
 val confirmedStartingLoads: Map<String, Double> = emptyMap()
 ```
 
-- [ ] **Step 4: Add Room schema version 5 and migration**
+- [x] **Step 4: Add Room schema version 5 and migration**
 
 Add `onboardingCompleted`, `trainingConstraintsJson`, `returningAfterBreakWeeks`, and `confirmedStartingLoadsJson` to `UserProfileEntity`. `MIGRATION_4_5` must add non-destructive columns with conservative defaults and must not mark an existing profile as onboarded.
 
@@ -162,15 +164,15 @@ ALTER TABLE user_profiles ADD COLUMN returningAfterBreakWeeks INTEGER NOT NULL D
 ALTER TABLE user_profiles ADD COLUMN confirmedStartingLoadsJson TEXT NOT NULL DEFAULT '';
 ```
 
-- [ ] **Step 5: Implement one atomic onboarding save**
+- [x] **Step 5: Implement one atomic onboarding save**
 
 Add `saveProfile(profile: UserProfile)` to `UserProfileRepository`; do not fire one database revision per onboarding field. Validate days `2..6`, duration `20..120`, break weeks `0..520`, non-empty equipment, and finite non-negative confirmed loads.
 
-- [ ] **Step 6: Route fresh installs to onboarding**
+- [x] **Step 6: Route fresh installs to onboarding**
 
 Add `AppRoutes.ONBOARDING`; derive start content from the profile flow. Do not render or generate Today until `onboardingCompleted == true`.
 
-- [ ] **Step 7: Run focused tests**
+- [x] **Step 7: Run focused tests**
 
 ```bash
 ./gradlew testDebugUnitTest --tests '*OnboardingViewModelTest' --tests '*UserProfileRepositoryTest'
@@ -178,7 +180,7 @@ Add `AppRoutes.ONBOARDING`; derive start content from the profile flow. Do not r
 
 Expected: PASS.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add app/src/main app/src/test app/src/androidTest
@@ -189,13 +191,15 @@ git commit -m "feat: add safe training onboarding"
 
 ### Task 2: Remove Unsafe Starting Loads
 
+**Status: Done.** Commit `65ad03c` (`fix: remove unconfirmed starting loads`).
+
 **Files:**
 - Modify: `app/src/main/java/wallcrawl/elopenmike/com/core/ai/DefaultExercisePrescriptionFactory.kt`
 - Modify: `app/src/main/java/wallcrawl/elopenmike/com/feature/workout/ActiveWorkoutScreen.kt`
 - Modify: `app/src/main/java/wallcrawl/elopenmike/com/feature/workout/ActiveWorkoutViewModel.kt`
 - Test: `app/src/test/java/wallcrawl/elopenmike/com/core/ai/DefaultExercisePrescriptionFactoryTest.kt`
 
-- [ ] **Step 1: Add failing unit-conversion and unknown-baseline tests**
+- [x] **Step 1: Add failing unit-conversion and unknown-baseline tests**
 
 ```kotlin
 @Test
@@ -217,7 +221,7 @@ fun confirmedBaseline_isUsedInTheProfilesUnit() {
 }
 ```
 
-- [ ] **Step 2: Verify the old sample loads fail**
+- [x] **Step 2: Verify the old sample loads fail**
 
 ```bash
 ./gradlew testDebugUnitTest --tests '*DefaultExercisePrescriptionFactoryTest'
@@ -225,7 +229,7 @@ fun confirmedBaseline_isUsedInTheProfilesUnit() {
 
 Expected: FAIL because `sampleStartingWeight()` returns hard-coded values.
 
-- [ ] **Step 3: Delete `sampleStartingWeight()` and use confirmed/history values only**
+- [x] **Step 3: Delete `sampleStartingWeight()` and use confirmed/history values only**
 
 ```kotlin
 private fun suggestedTargetWeight(
@@ -238,11 +242,11 @@ private fun suggestedTargetWeight(
 }
 ```
 
-- [ ] **Step 4: Make first-load entry explicit in the logger**
+- [x] **Step 4: Make first-load entry explicit in the logger**
 
 When target load is null, label the field `Choose starting load` and do not prefill a number. Persist the performed value; later progression uses that actual value.
 
-- [ ] **Step 5: Run focused tests and commit**
+- [x] **Step 5: Run focused tests and commit**
 
 ```bash
 ./gradlew testDebugUnitTest --tests '*DefaultExercisePrescriptionFactoryTest' --tests '*ActiveWorkoutViewModelTest'

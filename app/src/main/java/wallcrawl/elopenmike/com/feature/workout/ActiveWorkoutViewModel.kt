@@ -30,6 +30,10 @@ class ActiveWorkoutViewModel(
     private val currentExerciseIndexFlow = MutableStateFlow(0)
     private val currentCatalogExerciseFlow = MutableStateFlow<Exercise?>(null)
     private val errorFlow = MutableStateFlow<String?>(null)
+    // A failed set update must never become a terminal, screen-replacing error the way
+    // errorFlow does (see uiState below): it is a recoverable, dismissible condition on
+    // the Active state, cleared automatically the next time a set update succeeds.
+    private val setUpdateErrorFlow = MutableStateFlow<String?>(null)
     private val summaryFlow = MutableStateFlow<WorkoutSummary?>(null)
     private var finishRequested = false
     private var summaryJob: Job? = null
@@ -41,14 +45,19 @@ class ActiveWorkoutViewModel(
         SessionHistory(session, completedSessions)
     }
 
+    private val errorStateFlow = combine(errorFlow, setUpdateErrorFlow) { error, setUpdateError ->
+        ErrorState(error, setUpdateError)
+    }
+
     val uiState: StateFlow<ActiveWorkoutUiState> = combine(
         sessionHistoryFlow,
         currentExerciseIndexFlow,
         currentCatalogExerciseFlow,
-        errorFlow,
+        errorStateFlow,
         summaryFlow
-    ) { sessionHistory, exerciseIndex, catalogEx, error, summary ->
+    ) { sessionHistory, exerciseIndex, catalogEx, errorState, summary ->
         val (session, completedSessions) = sessionHistory
+        val error = errorState.error
         if (session == null) {
             ActiveWorkoutUiState.Loading
         } else if (session.status == SessionStatus.COMPLETED) {
@@ -87,7 +96,8 @@ class ActiveWorkoutViewModel(
                 weightUnit = session.weightUnit,
                 previousSets = previousPerformance?.sets.orEmpty(),
                 previousSessionTimestamp = previousPerformance?.sessionCompletedAtTimestamp,
-                previousWeightUnit = previousPerformance?.weightUnit ?: session.weightUnit
+                previousWeightUnit = previousPerformance?.weightUnit ?: session.weightUnit,
+                setUpdateError = errorState.setUpdateError
             )
         }
     }.stateIn(
@@ -142,12 +152,18 @@ class ActiveWorkoutViewModel(
                     setId = setId,
                     performance = performance
                 )
+                setUpdateErrorFlow.value = null
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                errorFlow.value = "Failed to update set: ${e.message}"
+                setUpdateErrorFlow.value = "Failed to update set: ${e.message}"
             }
         }
+    }
+
+    /** Dismisses a recoverable set-update error without requiring another edit. */
+    fun dismissSetUpdateError() {
+        setUpdateErrorFlow.value = null
     }
 
     fun finishWorkout() {
@@ -208,6 +224,11 @@ class ActiveWorkoutViewModel(
     private data class SessionHistory(
         val session: WorkoutSession?,
         val completedSessions: List<WorkoutSession>
+    )
+
+    private data class ErrorState(
+        val error: String?,
+        val setUpdateError: String?
     )
 
     private fun loadSummary(completedSessionId: String) {

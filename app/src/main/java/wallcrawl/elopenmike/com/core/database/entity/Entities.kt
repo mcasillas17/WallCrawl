@@ -27,7 +27,15 @@ data class UserProfileEntity(
     val availableEquipmentJson: String,
     val preferredUnit: WeightUnit,
     val musclePrioritiesJson: String,
-    val excludedExerciseIdsJson: String
+    val excludedExerciseIdsJson: String,
+    @ColumnInfo(defaultValue = "0")
+    val onboardingCompleted: Boolean = false,
+    @ColumnInfo(defaultValue = "''")
+    val trainingConstraintsJson: String = "",
+    @ColumnInfo(defaultValue = "0")
+    val returningAfterBreakWeeks: Int = 0,
+    @ColumnInfo(defaultValue = "''")
+    val confirmedStartingLoadsJson: String = ""
 )
 
 @Entity(

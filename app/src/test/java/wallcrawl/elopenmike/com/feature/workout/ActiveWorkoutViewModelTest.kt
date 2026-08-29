@@ -96,6 +96,75 @@ class ActiveWorkoutViewModelTest {
     }
 
     @Test
+    fun clearingLoadOnACompletedSet_doesNotEjectTheActiveWorkout() = runTest {
+        // Reproduces the regression: a user clearing the weight field to retype it on an
+        // already-completed set previously sent isCompleted=true with weight=null, the
+        // repository rejected it, and the whole active workout was replaced by a
+        // permanent full-screen error.
+        val repository = ActiveWorkoutRepository(workoutSession(SessionStatus.IN_PROGRESS))
+        val viewModel = viewModel(repository)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiState.collect {}
+        }
+        advanceUntilIdle()
+
+        viewModel.updateSet("set", reps = 10, weight = null, isCompleted = true)
+        advanceUntilIdle()
+
+        val state = viewModel.uiState.value
+        assertThat(state).isInstanceOf(ActiveWorkoutUiState.Active::class.java)
+        assertThat((state as ActiveWorkoutUiState.Active).setUpdateError).isNotNull()
+
+        // A subsequent valid edit recovers: the transient error clears and the set
+        // persists as completed with the real load, without ever having left Active.
+        viewModel.updateSet("set", reps = 10, weight = 25.0, isCompleted = true)
+        advanceUntilIdle()
+
+        val recovered = viewModel.uiState.value as ActiveWorkoutUiState.Active
+        assertThat(recovered.setUpdateError).isNull()
+        assertThat(repository.lastPersistedWeight).isEqualTo(25.0)
+    }
+
+    @Test
+    fun clearingRepsOnACompletedSet_doesNotEjectTheActiveWorkout() = runTest {
+        // The same latent problem exists for reps as for load.
+        val repository = ActiveWorkoutRepository(workoutSession(SessionStatus.IN_PROGRESS))
+        val viewModel = viewModel(repository)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiState.collect {}
+        }
+        advanceUntilIdle()
+
+        viewModel.updateSet("set", reps = null, weight = 20.0, isCompleted = true)
+        advanceUntilIdle()
+
+        val state = viewModel.uiState.value
+        assertThat(state).isInstanceOf(ActiveWorkoutUiState.Active::class.java)
+        assertThat((state as ActiveWorkoutUiState.Active).setUpdateError).isNotNull()
+    }
+
+    @Test
+    fun dismissSetUpdateError_clearsTheTransientErrorWithoutAnotherWrite() = runTest {
+        val repository = ActiveWorkoutRepository(workoutSession(SessionStatus.IN_PROGRESS))
+        val viewModel = viewModel(repository)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiState.collect {}
+        }
+        advanceUntilIdle()
+
+        viewModel.updateSet("set", reps = 10, weight = null, isCompleted = true)
+        advanceUntilIdle()
+        assertThat((viewModel.uiState.value as ActiveWorkoutUiState.Active).setUpdateError)
+            .isNotNull()
+
+        viewModel.dismissSetUpdateError()
+        advanceUntilIdle()
+
+        assertThat((viewModel.uiState.value as ActiveWorkoutUiState.Active).setUpdateError)
+            .isNull()
+    }
+
+    @Test
     fun catalogLookupFailure_becomesVisibleError() = runTest {
         val repository = ActiveWorkoutRepository(workoutSession(SessionStatus.IN_PROGRESS))
         val viewModel = viewModel(repository, FailingExerciseCatalog())
@@ -175,6 +244,10 @@ private class ActiveWorkoutRepository(initialSession: WorkoutSession) : WorkoutR
     var completeCalls: Int = 0
         private set
     var failSetUpdates: Boolean = false
+    var lastPersistedWeight: Double? = null
+        private set
+    var lastPersistedReps: Int? = null
+        private set
 
     override fun observeActiveSession(): Flow<WorkoutSession?> = session
     override suspend fun getActiveSessionOnce(): WorkoutSession? = session.value
@@ -205,6 +278,14 @@ private class ActiveWorkoutRepository(initialSession: WorkoutSession) : WorkoutR
         isCompleted: Boolean
     ) {
         if (failSetUpdates) error("Session is already complete")
+        // Mirrors OfflineWorkoutRepository's real invariant: a completed weight-and-reps
+        // set must carry a positive load and positive reps, so this fake reproduces the
+        // same rejection a production repository would raise.
+        require(!isCompleted || ((reps ?: 0) > 0 && (weight ?: 0.0) > 0.0)) {
+            "A completed weight and repetition set must have a positive load."
+        }
+        lastPersistedWeight = weight
+        lastPersistedReps = reps
     }
 
     override suspend fun completeWorkout(

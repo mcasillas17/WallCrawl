@@ -13,9 +13,11 @@ There is no account requirement, catalog network request, or production LLM in
 the current application.
 
 The application supports two workout entry points that converge on the same
-session and history model:
+session and history model, both gated behind first-run onboarding:
 
 ```text
+                 fresh install → onboarding (equipment, goal, constraints)
+                                          │
                          ┌─ automatic recommendation
 Bundled catalog ─────────┤  profile + history → filter → planner → validator
                          │
@@ -106,6 +108,29 @@ alongside the bundled notice files.
 
 See the [README](../README.md#offline-workout-guide-catalog) for import commands,
 the pinned commit, and licensing details.
+
+## Onboarding and profile safety defaults
+
+`UserProfile` never assumes gym access or training history it has not been
+told about. A fresh profile defaults to `onboardingCompleted = false` and
+`availableEquipment = [BODYWEIGHT]` — not the prior intermediate/full-gym
+assumption — and `confirmedStartingLoads` and `trainingConstraints` start
+empty. `WallCrawlApp` reads this flag to pick the nav-graph start
+destination: Today is never rendered or generated for a profile that has not
+completed onboarding, so a fresh install cannot reach automatic planning
+before the user has stated equipment, goal, experience, schedule, unit, and
+any `TrainingConstraint`s (shoulder/elbow/wrist/lower-back/hip/knee
+sensitivity, low-impact-only).
+
+`OnboardingViewModel.complete()` and `UserProfileRepository.saveProfile()`
+persist onboarding as one atomic revision rather than one write per field, and
+validate every planning-relevant input before it reaches Room: days per week
+(2–6), session duration (20–120 minutes), return-after-break weeks (0–520),
+non-empty and recognized equipment, and finite non-negative confirmed
+starting loads. Training constraints and return-after-break weeks stay
+editable from the Profile screen after onboarding; the onboarding flow itself
+does not collect confirmed starting loads — see the next section for where
+those come from.
 
 ## Automatic workout generation
 
@@ -202,18 +227,43 @@ Domain constructors reject malformed prescriptions before persistence.
 persisted exercise type and prevents updates to sets whose session is no longer
 active.
 
+`DefaultExercisePrescriptionFactory` never invents a `WEIGHT_REPS` starting
+load. It suggests a weight only when either applies, in that priority order:
+
+1. bounded exercise history exists for that catalog ID, converted to the
+   profile's current unit — the existing weight, or a unit-appropriate
+   increment (+5 lb / +2.5 kg) once every recent completed set reached the
+   top of the target rep range; or
+2. the user has explicitly confirmed a baseline in
+   `UserProfile.confirmedStartingLoads` for that ID.
+
+With neither, `targetWeight` is `null` and stays null through to the session
+snapshot and the active-workout UI: `PerformanceSetRow`'s load field shows
+"Choose starting load" instead of "Load `<unit>`" and is never pre-filled
+with a fabricated number. Once the user logs a real value, ordinary set
+completion and the history analyzer take over for future sessions — there is
+no separate write path that copies a logged value back into
+`confirmedStartingLoads`.
+
 ## Room persistence and invariants
 
-`WallCrawlDatabase` is currently schema version 4. Its tables store:
+`WallCrawlDatabase` is currently schema version 5. Its tables store:
 
-- the user profile;
+- the user profile, including onboarding status, training constraints,
+  return-after-break weeks, and confirmed starting loads;
 - reusable workout templates and their ordered exercises;
 - workout sessions and their ordered exercise snapshots;
 - target and completed values for every set.
 
 Migration `3 → 4` adds template storage, session provenance, and type-aware
 target/outcome columns while converting older repetition-based history to
-`WEIGHT_REPS`. Destructive migration fallback is disabled.
+`WEIGHT_REPS`. Migration `4 → 5` is additive-only: it adds
+`onboardingCompleted`, `trainingConstraintsJson`, `returningAfterBreakWeeks`,
+and `confirmedStartingLoadsJson` with conservative defaults, and explicitly
+sets `onboardingCompleted = 0` for every existing row — a profile created
+before onboarding existed was never reviewed against these safety-relevant
+fields, so it must not be grandfathered in as already onboarded. Destructive
+migration fallback is disabled.
 
 The persistence layer enforces several important invariants:
 
