@@ -10,11 +10,12 @@ workouts from a constrained exercise catalog, while workout data stays on the
 phone.
 
 This repository currently contains the working application around that future
-model: profile constraints, a complete bundled catalog, structured workout
-generation and validation, reusable custom workout templates, type-aware active
-set logging, Room persistence, workout-history context, and progress
-calculations. The current `FakeWorkoutPlanner` is deliberately replaceable; no
-production local LLM runtime is integrated yet.
+model: first-run onboarding with conservative equipment defaults, profile
+constraints, a complete bundled catalog, structured workout generation and
+validation, reusable custom workout templates, type-aware active set logging
+with no fabricated starting loads, Room persistence, workout-history context,
+and progress calculations. The current `FakeWorkoutPlanner` is deliberately
+replaceable; no production local LLM runtime is integrated yet.
 
 ## Screenshots & App Experience
 
@@ -53,6 +54,8 @@ production local LLM runtime is integrated yet.
 ## Current vertical slice
 
 ```text
+                fresh install → onboarding (equipment, goal, constraints)
+                                           │
                          ┌─ automatic recommendation
 Bundled catalog ─────────┤  profile + bounded history
                          │            ↓
@@ -69,6 +72,10 @@ Bundled catalog ─────────┤  profile + bounded history
                                    ├─ ProgressCalculator
                                    └─ next generation context
 ```
+
+A fresh install cannot skip onboarding: `UserProfile.onboardingCompleted`
+starts `false`, equipment defaults to bodyweight-only rather than assuming a
+full gym, and Today does not generate or render until onboarding is complete.
 
 The fake planner uses the same `WorkoutPlanner` contract intended for a future
 Qwen, Gemma, or LiteRT-backed implementation. It only selects IDs from
@@ -93,6 +100,7 @@ core/exercise/          catalog, hard filters, and visual-provider boundary
 core/ai/                planner, context builder, history analysis, validation
 core/progress/          pure progress calculations over completed sessions
 core/ui/                theme and reusable Compose components
+feature/onboarding/     first-run onboarding and conservative planning defaults
 feature/today/          daily recommendation and regeneration
 feature/templates/      local custom-workout library and editor
 feature/workout/        active workout logging and completion
@@ -233,9 +241,15 @@ of its 906 SVG paths.
 ## Product and engineering principles
 
 - Core workout planning and tracking should work offline without an account.
+- A fresh install must complete explicit onboarding before it can reach
+  automatic planning; nothing about equipment, experience, or gym access is
+  assumed on its behalf.
 - A future model chooses the workout, but only inside a deterministic legal
   exercise set created from equipment, exclusions, and hard limitations.
 - Model output is structured and always validated before persistence or UI.
+- No unconfirmed starting load is ever prescribed: a `WEIGHT_REPS` target
+  weight comes only from bounded history or a load the user explicitly
+  confirmed, never a sample or catalog default.
 - Recommendation and performed values are both retained for future progression.
 - Each session retains its weight unit; mixed-unit history is converted only for
   planner and analytics calculations, never silently relabeled.
