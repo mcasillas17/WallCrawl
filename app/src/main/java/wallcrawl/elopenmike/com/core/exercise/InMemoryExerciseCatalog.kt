@@ -220,7 +220,7 @@ class InMemoryExerciseCatalog(
             programmedExercise(
                 id = "hanging-leg-raise",
                 name = "Hanging Leg Raise",
-                primaryMuscles = listOf(StandardMuscles.CORE, StandardMuscles.ABS),
+                primaryMuscles = listOf(StandardMuscles.CORE),
                 secondaryMuscles = listOf(StandardMuscles.FOREARMS),
                 listedEquipment = listOf(StandardEquipment.BODYWEIGHT),
                 requiredEquipmentCombinations = listOf(listOf(StandardEquipment.PULLUP_BAR)),

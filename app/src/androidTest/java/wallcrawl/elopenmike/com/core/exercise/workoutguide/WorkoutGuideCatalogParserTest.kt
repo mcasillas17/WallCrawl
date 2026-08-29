@@ -7,7 +7,9 @@ import java.io.StringReader
 import org.junit.Test
 import org.junit.runner.RunWith
 import wallcrawl.elopenmike.com.core.exercise.ExerciseFilter
+import wallcrawl.elopenmike.com.core.model.MuscleVocabulary
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
+import wallcrawl.elopenmike.com.core.model.StandardMuscles
 import wallcrawl.elopenmike.com.core.model.UserProfile
 
 @RunWith(AndroidJUnit4::class)
@@ -31,6 +33,53 @@ class WorkoutGuideCatalogParserTest {
                 assertThat(stream.read()).isNotEqualTo(-1)
             }
         }
+    }
+
+    @Test
+    fun parse_everyMuscleInThePackagedCatalogIsCanonical() {
+        val snapshot = assets.open("workout-guide/catalog.json").bufferedReader().use(parser::parse)
+
+        val unrecognized = snapshot.exercises
+            .flatMap { it.primaryMuscles + it.secondaryMuscles }
+            .distinct()
+            .filterNot(MuscleVocabulary::isCanonical)
+
+        // A catalog update that introduces new muscle vocabulary must be taught to
+        // MuscleVocabulary, otherwise those exercises silently stop matching every split.
+        assertThat(unrecognized).isEmpty()
+        snapshot.exercises.forEach { exercise ->
+            assertThat(exercise.primaryMuscles).isNotEmpty()
+        }
+    }
+
+    @Test
+    fun parse_resolvesUpstreamMuscleNamesOntoTheAppVocabulary() {
+        val snapshot = assets.open("workout-guide/catalog.json").bufferedReader().use(parser::parse)
+
+        val backSquat = snapshot.exercises.single { it.id == "barbell-back-squat" }
+        assertThat(backSquat.primaryMuscles).contains(StandardMuscles.QUADS)
+
+        // Upstream files the deadlift under the umbrella term "Posterior Chain". One group
+        // is named as the primary mover so weekly set counts stay one per set; the rest
+        // become secondary, which split matching also reads.
+        val deadlift = snapshot.exercises.single { it.id == "barbell-deadlift" }
+        assertThat(deadlift.primaryMuscles).containsExactly(StandardMuscles.HAMSTRINGS)
+        assertThat(deadlift.secondaryMuscles).containsAtLeast(
+            StandardMuscles.GLUTES,
+            StandardMuscles.LOWER_BACK
+        )
+    }
+
+    @Test
+    fun parse_exposesCatalogProvenanceForTheCreditsScreen() {
+        val snapshot = assets.open("workout-guide/catalog.json").bufferedReader().use(parser::parse)
+
+        val attribution = snapshot.catalogAttribution
+        assertThat(attribution.attribution.license).isEqualTo("CC BY-SA 4.0")
+        assertThat(attribution.repository).startsWith("https://")
+        assertThat(attribution.commit).hasLength(40)
+        assertThat(attribution.exerciseCount).isEqualTo(302)
+        assertThat(attribution.frameCount).isEqualTo(906)
     }
 
     @Test

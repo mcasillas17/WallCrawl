@@ -84,6 +84,26 @@ IDs, names, aliases, muscles, and listed equipment. The importer under
 clean upstream checkout; the installed application never runs the importer or
 contacts Workout Guide.
 
+`WorkoutGuideCatalogParser` is also where upstream muscle names become
+WallCrawl's, through `MuscleVocabulary`. Normalizing here rather than in the
+asset keeps `catalog.json` byte-identical to the importer's output — so
+`import_catalog.py --check` still verifies it — and keeps the vocabulary
+decision in Kotlin where unit tests cover it. Two rules matter downstream:
+
+- an upstream name maps to exactly one primary muscle, because weekly set
+  counts credit each completed set to every primary;
+- the other groups an umbrella name covers become secondary muscles, which
+  split matching also reads, so nothing stops being selectable.
+
+`BundledCatalogVocabularyTest` reads the shipped asset directly and fails if a
+future catalog introduces a name the vocabulary does not know — the instrumented
+parser tests cover the same ground but do not run in CI.
+
+The parser also carries catalog provenance forward as `CatalogAttribution`
+instead of validating and discarding it, because the CC BY-SA 4.0 license on the
+artwork requires attribution to reach the user. `CreditsScreen` renders it
+alongside the bundled notice files.
+
 See the [README](../README.md#offline-workout-guide-catalog) for import commands,
 the pinned commit, and licensing details.
 
@@ -108,6 +128,26 @@ current `FakeWorkoutPlanner` chooses exercises exclusively from
 `GeneratedWorkoutValidator` then verifies that every ID exists, remains in the
 allowed set, matches the catalog exercise type, and belongs to a structurally
 valid workout. Unknown IDs are rejected, never silently substituted.
+
+Split selection is deliberate about failure. High-priority muscles propose a
+rotation; splits the candidate pool cannot fill are dropped from it, and if none
+of the preferred splits survive, the full rotation is used instead. An exercise
+that trains none of a split's muscles is never substituted in — that is what
+produced push days padded with unrelated work — but the planner only fails when
+nothing at all is trainable, so failure never depends on what the user
+prioritized. Rotation is seeded from completed-workout count so it advances
+across process death, not just within a session.
+
+Cardio machines, distance work, and stretches are excluded from automatic
+selection while remaining fully available in the catalog and in custom
+workouts. The test is whether a sets-and-reps prescription is meaningful, not
+whether conditioning is involved.
+
+Planning failures carry a `WorkoutPlanningFailure` reason rather than
+user-facing text; `TodayViewModel` maps reasons to copy. A future planner chain
+branches on the same reason to decide between repairing, falling back to another
+tier, and surfacing the failure — string matching on messages could not support
+that.
 
 A future local LLM should implement the same `WorkoutPlanner` interface. Model
 integration does not remove the hard filter or validator; constrained decoding
@@ -189,9 +229,20 @@ next recommendation.
 
 Weight-based volume only uses completed load-and-repetition work. Duration and
 distance outcomes are retained for future analytics instead of being forced into
-an invalid volume calculation. Each session keeps the weight unit used when it
-was created; cross-unit planner and analytics calculations convert values rather
-than relabeling stored history.
+an invalid volume calculation. Completed reps are totalled alongside tonnage so
+a week of bodyweight training reports the work it actually did. Each session
+keeps the weight unit used when it was created; cross-unit planner and analytics
+calculations convert values rather than relabeling stored history.
+
+Weekly per-muscle set counts credit a set to each of an exercise's primary
+muscles. Conditioning tags are not muscles and are excluded, so a week of
+mobility work reports an empty focus card rather than "Mobility — 6 sets".
+
+`WorkoutSummary` is built only by `WorkoutRepository`, from one history window,
+whether a workout has just been completed or is being revisited. Personal
+records use the same rules as the Progress screen's record list — a heavier top
+set for loaded work, more reps for bodyweight work, and no record without prior
+history to beat — so the two surfaces cannot disagree.
 
 ## Lifecycle and failure handling
 

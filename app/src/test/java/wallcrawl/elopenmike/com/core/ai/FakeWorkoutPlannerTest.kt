@@ -2,6 +2,7 @@ package wallcrawl.elopenmike.com.core.ai
 
 import com.google.common.truth.Truth.assertThat
 import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
+import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.ExercisePerformanceHistory
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
@@ -59,6 +60,166 @@ class FakeWorkoutPlannerTest {
 
         assertThat(workout.name).contains("Push")
         assertThat(workout.focusMuscles).contains(StandardMuscles.CHEST)
+    }
+
+    @Test
+    fun generateWorkout_fallsBackWhenThePreferredSplitCannotBeFilled() = runTest {
+        // Calves is one of the priorities that maps to a single split (Legs). With no leg
+        // work available, honouring it is impossible — but other splits are trainable, and
+        // failing here would leave Today permanently broken since the choice is
+        // deterministic: every retry would land on the same empty split.
+        val legMuscles = listOf(
+            StandardMuscles.QUADS,
+            StandardMuscles.HAMSTRINGS,
+            StandardMuscles.GLUTES,
+            StandardMuscles.CALVES,
+            StandardMuscles.ADDUCTORS,
+            StandardMuscles.HIPS,
+            StandardMuscles.LOWER_BACK
+        )
+        val upperBodyOnly = allExercises.filter { exercise ->
+            (exercise.primaryMuscles + exercise.secondaryMuscles).none { it in legMuscles }
+        }
+        val context = WorkoutGenerationContext(
+            userProfile = UserProfile(
+                musclePriorities = mapOf(StandardMuscles.CALVES to PriorityLevel.HIGH)
+            ),
+            allowedExercises = upperBodyOnly
+        )
+
+        val workout = planner.generateWorkout(context)
+
+        assertThat(workout.exercises).isNotEmpty()
+        assertThat(workout.name).doesNotContain("Legs")
+    }
+
+    @Test
+    fun generateWorkout_prefersASplitTheHighPriorityMuscleBelongsTo() = runTest {
+        val context = WorkoutGenerationContext(
+            userProfile = UserProfile(
+                musclePriorities = mapOf(StandardMuscles.CALVES to PriorityLevel.HIGH)
+            ),
+            allowedExercises = allExercises
+        )
+
+        val workout = planner.generateWorkout(context)
+
+        assertThat(workout.name).contains("Legs")
+    }
+
+    @Test
+    fun generateWorkout_stillPrescribesLoadedWorkTaggedAsConditioning() = runTest {
+        // A kettlebell swing carries a Cardio tag but is loaded work for reps, so sets and
+        // reps mean something for it — unlike a treadmill.
+        val swing = allExercises.first().copy(
+            id = "kettlebell-swing",
+            name = "Kettlebell Swing",
+            type = ExerciseType.WEIGHT_REPS,
+            isStretch = false,
+            primaryMuscles = listOf(StandardMuscles.GLUTES),
+            secondaryMuscles = listOf(StandardMuscles.HAMSTRINGS, StandardMuscles.CARDIO)
+        )
+        val context = WorkoutGenerationContext(
+            userProfile = UserProfile(
+                musclePriorities = mapOf(StandardMuscles.GLUTES to PriorityLevel.HIGH)
+            ),
+            allowedExercises = listOf(swing)
+        )
+
+        val workout = planner.generateWorkout(context)
+
+        assertThat(workout.exercises.map { it.exerciseId }).contains(swing.id)
+    }
+
+    @Test
+    fun generateWorkout_reportsWhenEveryCandidateIsConditioning() = runTest {
+        val treadmill = allExercises.first().copy(
+            id = "treadmill-run",
+            name = "Treadmill Run",
+            type = ExerciseType.DISTANCE_DURATION,
+            primaryMuscles = listOf(StandardMuscles.QUADS),
+            secondaryMuscles = listOf(StandardMuscles.CARDIO)
+        )
+        val context = WorkoutGenerationContext(
+            userProfile = UserProfile(),
+            allowedExercises = listOf(treadmill)
+        )
+
+        try {
+            planner.generateWorkout(context)
+            fail("Expected generation to report that nothing available is strength work")
+        } catch (e: WorkoutValidationException) {
+            assertThat(e.failure).isEqualTo(WorkoutPlanningFailure.NO_STRENGTH_CANDIDATES)
+        }
+    }
+
+    @Test
+    fun generateWorkout_doesNotPrescribeStretchesAsTrainingSlots() = runTest {
+        val stretch = allExercises.first().copy(
+            id = "hamstring-stretch",
+            name = "Hamstring Stretch",
+            isStretch = true,
+            primaryMuscles = listOf(StandardMuscles.HAMSTRINGS),
+            secondaryMuscles = emptyList()
+        )
+        val context = WorkoutGenerationContext(
+            userProfile = UserProfile(),
+            allowedExercises = allExercises + stretch
+        )
+
+        repeat(SPLIT_ROTATION_PROBE) { index ->
+            val workout = planner.generateWorkout(
+                context.copy(completedWorkoutCount = index)
+            )
+            assertThat(workout.exercises.map { it.exerciseId }).doesNotContain(stretch.id)
+        }
+    }
+
+    @Test
+    fun generateWorkout_failsOnlyWhenNoSplitCanBeTrained() = runTest {
+        val unmatchable = allExercises.first().copy(
+            id = "obscure-movement",
+            primaryMuscles = listOf("Serratus"),
+            secondaryMuscles = emptyList()
+        )
+        val context = WorkoutGenerationContext(
+            userProfile = UserProfile(),
+            allowedExercises = listOf(unmatchable)
+        )
+
+        try {
+            planner.generateWorkout(context)
+            fail("Expected generation to fail when no split can be trained")
+        } catch (e: WorkoutValidationException) {
+            assertThat(e.failure).isEqualTo(WorkoutPlanningFailure.NO_CANDIDATES_FOR_ANY_SPLIT)
+        }
+    }
+
+    @Test
+    fun generateWorkout_selectedExercisesAlwaysTrainTheChosenSplit() = runTest {
+        val context = WorkoutGenerationContext(
+            userProfile = UserProfile(
+                musclePriorities = mapOf(StandardMuscles.CHEST to PriorityLevel.HIGH)
+            ),
+            allowedExercises = allExercises
+        )
+
+        val workout = planner.generateWorkout(context)
+
+        val pushMuscles = listOf(
+            StandardMuscles.CHEST,
+            StandardMuscles.SHOULDERS,
+            StandardMuscles.TRICEPS
+        )
+        val selected = workout.exercises.map { generated ->
+            allExercises.single { it.id == generated.exerciseId }
+        }
+        assertThat(selected).isNotEmpty()
+        selected.forEach { exercise ->
+            assertThat(
+                (exercise.primaryMuscles + exercise.secondaryMuscles).any { it in pushMuscles }
+            ).isTrue()
+        }
     }
 
     @Test
@@ -122,5 +283,10 @@ class FakeWorkoutPlannerTest {
 
         assertThat(workout.exercises.single().exerciseId).isEqualTo(unreviewed.id)
         assertThat(workout.exercises.single().prescription.exerciseType).isEqualTo(unreviewed.type)
+    }
+
+    private companion object {
+        /** Enough generations to walk every split in the rotation. */
+        const val SPLIT_ROTATION_PROBE = 6
     }
 }

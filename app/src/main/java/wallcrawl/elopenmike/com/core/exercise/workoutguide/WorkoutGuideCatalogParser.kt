@@ -15,6 +15,7 @@ import wallcrawl.elopenmike.com.core.model.ExerciseSource
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.MechanicsType
 import wallcrawl.elopenmike.com.core.model.MovementPattern
+import wallcrawl.elopenmike.com.core.model.MuscleVocabulary
 import wallcrawl.elopenmike.com.core.model.ProgressionType
 import wallcrawl.elopenmike.com.core.model.RepRange
 
@@ -81,18 +82,29 @@ class WorkoutGuideCatalogParser {
                 }
             }
 
+            val framesByExerciseId = entries.associate { entry ->
+                entry.id to (1..visuals.frameCount).map { frameIndex ->
+                    ExerciseVisual(
+                        assetPath = "$ASSET_PATH_PREFIX${entry.sourceSlug}/frame-$frameIndex.svg",
+                        widthPx = visuals.widthPx,
+                        heightPx = visuals.heightPx,
+                        attribution = validatedSource.attribution
+                    )
+                }
+            }
+
             return WorkoutGuideCatalogSnapshot(
                 exercises = entries.map { entry -> entry.toExercise(validatedSource.attribution) },
-                framesByExerciseId = entries.associate { entry ->
-                    entry.id to (1..visuals.frameCount).map { frameIndex ->
-                        ExerciseVisual(
-                            assetPath = "$ASSET_PATH_PREFIX${entry.sourceSlug}/frame-$frameIndex.svg",
-                            widthPx = visuals.widthPx,
-                            heightPx = visuals.heightPx,
-                            attribution = validatedSource.attribution
-                        )
-                    }
-                }
+                framesByExerciseId = framesByExerciseId,
+                catalogAttribution = CatalogAttribution(
+                    repository = validatedSource.repository,
+                    commit = validatedSource.commit,
+                    assetLicense = validatedSource.assetLicense,
+                    attribution = validatedSource.attribution,
+                    exerciseCount = entries.size,
+                    // Counted, not inferred: the credits screen states this number publicly.
+                    frameCount = framesByExerciseId.values.sumOf { it.size }
+                )
             )
         } catch (error: WorkoutGuideCatalogFormatException) {
             throw error
@@ -197,15 +209,30 @@ class WorkoutGuideCatalogParser {
             ?: malformed("Exercise $exerciseId is missing primaryMuscles.")
         if (primary.isEmpty()) malformed("Exercise $exerciseId must have a primary muscle.")
 
+        // Upstream muscle names enter the domain only through the canonical vocabulary, so the
+        // planner, muscle priorities, and volume attribution all share one set of names.
+        // Umbrella names ("Legs", "Posterior Chain") keep a single representative as primary
+        // and contribute the rest as secondary, so weekly set counts stay one per set while
+        // split matching — which reads both lists — still sees every group involved.
+        val canonicalPrimary = primary.mapNotNull(MuscleVocabulary::canonicalizePrimary).distinct()
+        if (canonicalPrimary.isEmpty()) {
+            malformed("Exercise $exerciseId has no recognizable primary muscle: $primary")
+        }
+        val declaredSecondary = secondaryMuscles
+            ?: malformed("Exercise $exerciseId is missing secondaryMuscles.")
+        val canonicalSecondary = (
+            MuscleVocabulary.canonicalizeAll(primary) +
+                MuscleVocabulary.canonicalizeAll(declaredSecondary)
+            ).filterNot { it in canonicalPrimary }.distinct()
+
         return ParsedExercise(
             id = exerciseId,
             sourceId = upstreamId,
             sourceSlug = upstreamSlug,
             name = name ?: malformed("Exercise $exerciseId is missing name."),
             searchAliases = aliases ?: malformed("Exercise $exerciseId is missing searchAliases."),
-            primaryMuscles = primary,
-            secondaryMuscles = secondaryMuscles
-                ?: malformed("Exercise $exerciseId is missing secondaryMuscles."),
+            primaryMuscles = canonicalPrimary,
+            secondaryMuscles = canonicalSecondary,
             listedEquipment = listedEquipment
                 ?: malformed("Exercise $exerciseId is missing listedEquipment."),
             type = exerciseType ?: malformed("Exercise $exerciseId is missing exerciseType."),
@@ -234,9 +261,11 @@ class WorkoutGuideCatalogParser {
         endObject()
         return ExerciseAttribution(
             creator = creator ?: malformed("$label is missing creator."),
-            creatorUrl = creatorUrl ?: malformed("$label is missing creatorUrl."),
+            // These two are the only values the app ever hands to the system browser, so
+            // they are held to the same scheme requirement as the displayed repository URL.
+            creatorUrl = requireHttps(creatorUrl, "$label.creatorUrl"),
             license = license ?: malformed("$label is missing license."),
-            licenseUrl = licenseUrl ?: malformed("$label is missing licenseUrl."),
+            licenseUrl = requireHttps(licenseUrl, "$label.licenseUrl"),
             source = source
         )
     }
@@ -376,22 +405,34 @@ class WorkoutGuideCatalogParser {
         return value
     }
 
+    private fun requireHttps(value: String?, label: String): String {
+        val url = value ?: malformed("$label is missing.")
+        if (!url.startsWith("https://")) malformed("$label must be an HTTPS URL.")
+        return url
+    }
+
     private fun requireSafeIdentifier(value: String, label: String) {
         if (!SAFE_IDENTIFIER.matches(value)) malformed("$label is not a safe identifier: $value")
     }
 
     private fun CatalogSource?.requireValid(): ValidatedCatalogSource {
         val source = this ?: malformed("Catalog is missing source metadata.")
-        if (!source.repository.orEmpty().startsWith("https://")) {
+        val repository = source.repository.orEmpty()
+        if (!repository.startsWith("https://")) {
             malformed("Catalog source.repository must be an HTTPS URL.")
         }
-        if (!COMMIT_HASH.matches(source.commit.orEmpty())) {
+        val commit = source.commit.orEmpty()
+        if (!COMMIT_HASH.matches(commit)) {
             malformed("Catalog source.commit must be a full Git commit hash.")
         }
-        if (source.assetLicense.isNullOrBlank()) {
+        val assetLicense = source.assetLicense
+        if (assetLicense.isNullOrBlank()) {
             malformed("Catalog source.assetLicense is missing.")
         }
         return ValidatedCatalogSource(
+            repository = repository,
+            commit = commit,
+            assetLicense = assetLicense,
             attribution = source.attribution
                 ?: malformed("Catalog source.attribution is missing.")
         )
@@ -483,6 +524,9 @@ class WorkoutGuideCatalogParser {
     )
 
     private data class ValidatedCatalogSource(
+        val repository: String,
+        val commit: String,
+        val assetLicense: String,
         val attribution: ExerciseAttribution
     )
 

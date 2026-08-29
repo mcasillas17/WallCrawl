@@ -232,9 +232,22 @@ private fun StreakAndVolumeCard(
                 modifier = Modifier.weight(1f)
             )
 
+            // Tonnage alone reads as a flat zero for anyone training without external load,
+            // and switching metric on a threshold would make one light set swing the card.
+            // Reps are always shown alongside, so every week reports real work.
+            val hasLoadedVolume = overview.totalVolumeThisWeek > 0.0
             MetricHighlight(
                 title = "Weekly Volume",
-                value = "%,.0f %s".format(overview.totalVolumeThisWeek, unit),
+                value = if (hasLoadedVolume) {
+                    "%,.0f %s".format(overview.totalVolumeThisWeek, unit)
+                } else {
+                    "%,d reps".format(overview.totalRepsThisWeek)
+                },
+                subtitle = if (hasLoadedVolume) {
+                    "%,d reps".format(overview.totalRepsThisWeek)
+                } else {
+                    "no weight logged"
+                },
                 valueColor = CrimsonRedLight,
                 modifier = Modifier.weight(1.3f)
             )
@@ -281,6 +294,14 @@ private fun StrengthTrendsSection(
         }
 
         Spacer(modifier = Modifier.height(12.dp))
+
+        if (trends.isEmpty()) {
+            Text(
+                text = "Log the same exercise in two workouts to see how your strength is trending.",
+                color = TextMuted,
+                fontSize = 13.sp
+            )
+        }
 
         trends.forEach { trend ->
             Row(
@@ -346,6 +367,16 @@ private fun MuscleFocusSection(
         )
 
         Spacer(modifier = Modifier.height(10.dp))
+
+        if (overview.muscleGroupFocus.isEmpty()) {
+            // Reachable for a week of stretching or cardio alone: neither counts as
+            // training volume, so there is nothing to attribute sets to.
+            Text(
+                text = "Complete a strength set this week to see which muscles you're hitting.",
+                color = TextMuted,
+                fontSize = 13.sp
+            )
+        }
 
         Row(
             modifier = Modifier.fillMaxWidth(),

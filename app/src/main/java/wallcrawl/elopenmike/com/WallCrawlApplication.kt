@@ -19,6 +19,9 @@ import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
 import wallcrawl.elopenmike.com.core.exercise.ExerciseFilter
 import wallcrawl.elopenmike.com.core.exercise.visual.ExerciseVisualProvider
 import wallcrawl.elopenmike.com.core.exercise.visual.WorkoutGuideVisualProvider
+import wallcrawl.elopenmike.com.core.exercise.workoutguide.AssetAttributionNoticeReader
+import wallcrawl.elopenmike.com.core.exercise.workoutguide.AttributionNoticeSource
+import wallcrawl.elopenmike.com.core.exercise.workoutguide.WorkoutGuideCatalogSource
 import wallcrawl.elopenmike.com.core.exercise.workoutguide.WorkoutGuideCatalogStore
 import wallcrawl.elopenmike.com.core.progress.ProgressCalculator
 
@@ -38,11 +41,20 @@ interface AppContainer {
     val workoutGenerationContextBuilder: WorkoutGenerationContextBuilder
     val workoutHistoryAnalyzer: WorkoutHistoryAnalyzer
     val progressCalculator: ProgressCalculator
+    val workoutGuideCatalogSource: WorkoutGuideCatalogSource
+    val attributionNoticeSource: AttributionNoticeSource
 }
 
 class DefaultAppContainer(private val context: Context) : AppContainer {
     private val workoutGuideCatalogStore: WorkoutGuideCatalogStore by lazy {
         WorkoutGuideCatalogStore(context.assets)
+    }
+
+    override val workoutGuideCatalogSource: WorkoutGuideCatalogSource
+        get() = workoutGuideCatalogStore
+
+    override val attributionNoticeSource: AttributionNoticeSource by lazy {
+        AssetAttributionNoticeReader(context.assets)
     }
 
     override val database: WallCrawlDatabase by lazy {

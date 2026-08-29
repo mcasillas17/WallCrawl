@@ -7,6 +7,7 @@ import org.junit.Test
 import wallcrawl.elopenmike.com.core.exercise.visual.ExerciseVisual
 import wallcrawl.elopenmike.com.core.exercise.workoutguide.WorkoutGuideCatalogSnapshot
 import wallcrawl.elopenmike.com.core.exercise.workoutguide.WorkoutGuideCatalogSource
+import wallcrawl.elopenmike.com.core.exercise.workoutguide.testCatalogAttribution
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
 
@@ -21,7 +22,8 @@ class BundledExerciseCatalogTest {
         exercises = listOf(lateralRaise, inclinePress),
         framesByExerciseId = mapOf(
             inclinePress.id to listOf(ExerciseVisual("workout-guide/assets/incline-dumbbell-press/frame-1.svg"))
-        )
+        ),
+        catalogAttribution = testCatalogAttribution(exerciseCount = 2, frameCount = 1)
     )
     private val catalog = BundledExerciseCatalog(FixedSource(snapshot))
 

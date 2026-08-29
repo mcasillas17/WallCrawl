@@ -229,5 +229,19 @@ private class ActiveWorkoutRepository(initialSession: WorkoutSession) : WorkoutR
         )
     }
 
+    override suspend fun getWorkoutSummary(sessionId: String): WorkoutSummary? {
+        val current = session.value ?: return null
+        if (current.status != SessionStatus.COMPLETED) return null
+        return WorkoutSummary(
+            sessionId = current.id,
+            workoutName = current.name,
+            durationMinutes = current.actualDurationMinutes,
+            totalSetsCompleted = current.completedSetsCount,
+            totalVolume = current.totalVolume,
+            unit = current.weightUnit,
+            completedAtTimestamp = current.completedAtTimestamp ?: current.startedAtTimestamp
+        )
+    }
+
     override suspend fun cancelWorkout(sessionId: String) = Unit
 }

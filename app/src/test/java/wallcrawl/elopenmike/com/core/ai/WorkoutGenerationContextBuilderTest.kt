@@ -78,6 +78,8 @@ class WorkoutGenerationContextBuilderTest {
         assertThat(context.exerciseHistory.getValue("incline-dumbbell-press").lastWeight)
             .isEqualTo(45.0)
         assertThat(context.recentlyTrainedMuscles).containsExactly(StandardMuscles.CHEST)
+        // Seeds split rotation, so it has to survive the trip from the repository.
+        assertThat(context.completedWorkoutCount).isEqualTo(1)
     }
 
     @Test
@@ -202,6 +204,8 @@ private class StubWorkoutRepository(
         sessionId: String,
         actualDurationMinutes: Int
     ): WorkoutSummary = error("Not used")
+
+    override suspend fun getWorkoutSummary(sessionId: String): WorkoutSummary? = error("Not used")
 
     override suspend fun cancelWorkout(sessionId: String) = Unit
 }

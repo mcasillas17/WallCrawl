@@ -22,6 +22,7 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.model.WorkoutSummary
 import wallcrawl.elopenmike.com.core.model.WorkoutOrigin
 import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
+import wallcrawl.elopenmike.com.core.progress.ProgressCalculator
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.util.UUID
@@ -58,12 +59,21 @@ interface WorkoutRepository {
         )
     }
     suspend fun completeWorkout(sessionId: String, actualDurationMinutes: Int): WorkoutSummary
+
+    /**
+     * Summary of an already completed session, including its personal-record count.
+     * Shares one implementation and one history window with [completeWorkout] so the
+     * number cannot differ between finishing a workout and revisiting it.
+     */
+    suspend fun getWorkoutSummary(sessionId: String): WorkoutSummary?
+
     suspend fun cancelWorkout(sessionId: String)
 }
 
 class OfflineWorkoutRepository(
     private val sessionDao: WorkoutSessionDao,
-    private val setDao: WorkoutSetDao
+    private val setDao: WorkoutSetDao,
+    private val progressCalculator: ProgressCalculator = ProgressCalculator()
 ) : WorkoutRepository {
 
     override fun observeActiveSession(): Flow<WorkoutSession?> {
@@ -377,20 +387,32 @@ class OfflineWorkoutRepository(
         val session = checkNotNull(getSessionById(sessionId)) {
             "Completed workout session '$sessionId' could not be read back."
         }
-        val totalSets = session.completedSetsCount
-        val totalVolume = session.totalVolume
-
-        return WorkoutSummary(
-            sessionId = sessionId,
-            workoutName = session.name,
-            durationMinutes = actualDurationMinutes,
-            totalSetsCompleted = totalSets,
-            totalVolume = totalVolume,
-            prCount = 0,
-            unit = session.weightUnit,
-            completedAtTimestamp = completedTimestamp
-        )
+        return session.toSummary(durationMinutes = actualDurationMinutes)
     }
+
+    override suspend fun getWorkoutSummary(sessionId: String): WorkoutSummary? {
+        require(sessionId.isNotBlank()) { "sessionId must not be blank." }
+        val session = getSessionById(sessionId) ?: return null
+        if (session.status != SessionStatus.COMPLETED) return null
+        return session.toSummary(durationMinutes = session.actualDurationMinutes)
+    }
+
+    private suspend fun WorkoutSession.toSummary(durationMinutes: Int): WorkoutSummary =
+        WorkoutSummary(
+            sessionId = id,
+            workoutName = name,
+            durationMinutes = durationMinutes,
+            totalSetsCompleted = completedSetsCount,
+            totalVolume = totalVolume,
+            prCount = progressCalculator.countPersonalRecords(
+                session = this,
+                priorCompletedSessions = getRecentCompletedSessions(
+                    limit = PERSONAL_RECORD_HISTORY_SESSIONS
+                )
+            ),
+            unit = weightUnit,
+            completedAtTimestamp = completedAtTimestamp ?: startedAtTimestamp
+        )
 
     override suspend fun cancelWorkout(sessionId: String) {
         require(sessionId.isNotBlank()) { "sessionId must not be blank." }
@@ -483,6 +505,7 @@ class OfflineWorkoutRepository(
         const val MAX_LOGGED_WEIGHT = 100_000.0
         const val MAX_LOGGED_DURATION_SECONDS = 86_400
         const val MAX_LOGGED_DISTANCE_METERS = 1_000_000.0
+        const val PERSONAL_RECORD_HISTORY_SESSIONS = 200
     }
 }
 

@@ -63,11 +63,42 @@ class UserProfileRepositoryTest {
         assertThat(profile.musclePriorities[StandardMuscles.LEGS()]).isEqualTo(PriorityLevel.LOW)
     }
 
+    @Test
+    fun getProfile_migratesRetiredMuscleNamesOntoTheCanonicalVocabulary() = runTest {
+        // A profile saved before the vocabulary was unified. "Abs" is now part of "Core",
+        // and the stronger of the two saved priorities has to survive the merge.
+        fakeDao.seed(
+            musclePrioritiesJson = "Abs:HIGH|||Core:NORMAL|||Quadriceps:LOW"
+        )
+
+        val profile = repository.getUserProfile().first()
+
+        assertThat(profile.musclePriorities.keys).doesNotContain("Abs")
+        assertThat(profile.musclePriorities[StandardMuscles.CORE]).isEqualTo(PriorityLevel.HIGH)
+        assertThat(profile.musclePriorities[StandardMuscles.QUADS]).isEqualTo(PriorityLevel.LOW)
+    }
+
     private fun StandardMuscles.LEGS() = StandardMuscles.QUADS
 }
 
 class FakeUserProfileDao : UserProfileDao {
     private val profileState = MutableStateFlow<UserProfileEntity?>(null)
+
+    /** Writes a profile row directly, standing in for one saved by an earlier app version. */
+    fun seed(musclePrioritiesJson: String) {
+        profileState.value = UserProfileEntity(
+            id = UserProfile.DEFAULT_PROFILE_ID,
+            name = "Crawler",
+            primaryGoal = FitnessGoal.BUILD_MUSCLE,
+            experienceLevel = ExperienceLevel.INTERMEDIATE,
+            preferredDurationMinutes = 50,
+            daysPerWeek = 4,
+            availableEquipmentJson = StandardEquipment.BODYWEIGHT,
+            preferredUnit = WeightUnit.LBS,
+            musclePrioritiesJson = musclePrioritiesJson,
+            excludedExerciseIdsJson = ""
+        )
+    }
 
     override fun observeProfile(id: String): Flow<UserProfileEntity?> = profileState
 

@@ -4,6 +4,7 @@ import wallcrawl.elopenmike.com.core.database.dao.UserProfileDao
 import wallcrawl.elopenmike.com.core.database.entity.UserProfileEntity
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
+import wallcrawl.elopenmike.com.core.model.MuscleVocabulary
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
@@ -94,7 +95,15 @@ class OfflineUserProfileRepository(
                         val level = try { PriorityLevel.valueOf(parts[1]) } catch (e: Exception) { PriorityLevel.NORMAL }
                         parts[0] to level
                     } else null
-                }.toMap()
+                }
+                // Profiles written before the muscle vocabulary was unified can hold retired
+                // names such as "Abs". Two names collapsing onto one group keep the stronger
+                // priority so a saved preference is never silently downgraded.
+                .flatMap { (muscle, level) ->
+                    MuscleVocabulary.canonicalize(muscle).map { canonical -> canonical to level }
+                }
+                .groupBy({ it.first }, { it.second })
+                .mapValues { (_, levels) -> levels.maxBy(PriorityLevel::multiplier) }
         }
 
         val equipment = if (availableEquipmentJson.isBlank()) emptyList() else availableEquipmentJson.split("|||").filter { it.isNotBlank() }

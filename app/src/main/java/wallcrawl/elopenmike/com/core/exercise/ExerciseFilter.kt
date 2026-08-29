@@ -6,10 +6,10 @@ import wallcrawl.elopenmike.com.core.model.UserProfile
 
 /**
  * Filter layer that enforces hard constraints on the exercise library before
- * passing candidate exercises to the AI / planner.
+ * passing candidate exercises to the planner.
  *
- * This ensures the LLM never sees or chooses exercises the user cannot perform
- * (e.g. missing equipment or user-excluded exercises).
+ * Every planner sees only what survives this stage, so an exercise the user cannot perform
+ * (missing equipment, explicitly excluded) can never be chosen by any of them.
  */
 class ExerciseFilter {
 

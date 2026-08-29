@@ -3,7 +3,7 @@ package wallcrawl.elopenmike.com.core.model
 import java.util.UUID
 
 /**
- * High-level AI-generated workout recommendation.
+ * High-level generated workout recommendation.
  */
 data class GeneratedWorkout(
     val id: String = UUID.randomUUID().toString(),

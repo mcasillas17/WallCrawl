@@ -21,7 +21,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.automirrored.filled.Assignment
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.PlayArrow
@@ -87,18 +87,29 @@ fun TodayScreen(
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         CircularProgressIndicator(color = CrimsonRedPrimary)
                         Spacer(modifier = Modifier.height(16.dp))
-                        Text("WallCrawl AI preparing your plan...", color = TextSecondary)
+                        Text("Building today's plan...", color = TextSecondary)
                     }
                 }
             }
 
             is TodayUiState.Error -> {
-                Box(
+                Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(24.dp),
-                    contentAlignment = Alignment.Center
+                    verticalArrangement = Arrangement.Center
                 ) {
+                    // A workout already in progress stays reachable: this card is the only
+                    // route back into it.
+                    state.activeSession?.let { session ->
+                        ActiveSessionBanner(
+                            sessionName = session.name,
+                            completedSets = session.completedSetsCount,
+                            totalSets = session.totalSetsCount,
+                            onResume = { onResumeWorkout(session.id) }
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
                     WallCrawlCard(borderColor = CrimsonRedPrimary) {
                         Text("Generation Issue", fontWeight = FontWeight.Bold, color = CrimsonRedLight, fontSize = 18.sp)
                         Spacer(modifier = Modifier.height(8.dp))
@@ -167,9 +178,9 @@ private fun TodayContent(
 
         item { MyWorkoutsCard(onOpenTemplates) }
 
-        // AI Logic & Context Information pill
+        // Planning context pill
         item {
-            AiContextCard(
+            PlanContextCard(
                 goal = state.userProfile.primaryGoal.displayName,
                 unit = state.userProfile.preferredUnit.symbol,
                 equipmentCount = state.userProfile.availableEquipment.size
@@ -398,14 +409,14 @@ private fun SuggestedWorkoutCard(
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
-                    imageVector = Icons.Default.AutoAwesome,
+                    imageVector = Icons.AutoMirrored.Filled.Assignment,
                     contentDescription = null,
                     tint = CrimsonRedLight,
                     modifier = Modifier.size(18.dp)
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = "AI RECOMMENDED PLAN",
+                    text = "TODAY'S PLAN",
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.8.sp,
@@ -579,7 +590,7 @@ private fun ExercisePreviewRow(
 }
 
 @Composable
-private fun AiContextCard(
+private fun PlanContextCard(
     goal: String,
     unit: String,
     equipmentCount: Int
@@ -608,7 +619,7 @@ private fun AiContextCard(
                 )
             }
             Text(
-                text = "Local-First AI",
+                text = "Built on your phone",
                 fontSize = 11.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = WebBlueAccent
