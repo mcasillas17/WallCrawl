@@ -33,8 +33,39 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@ed408507eac070d1f99cc633dbcf757c94c7933a # v4.4.3
 
+      - name: Run release tooling tests
+        run: python3 -m unittest discover -s tools/release -p 'test_*.py' -v
+
+      - name: Derive release version
+        id: version
+        env:
+          RUN_NUMBER: ${{ github.run_number }}
+          TAG_NAME: ${{ github.ref_name }}
+        run: |
+          python3 tools/release/validate_version.py \
+            --tag "$TAG_NAME" \
+            --run-number "$RUN_NUMBER" >> "$GITHUB_OUTPUT"
+
       - name: Run tests, lint, and debug build
-        run: ./gradlew test lint assembleDebug --stacktrace --no-daemon
+        env:
+          VERSION_CODE: ${{ steps.version.outputs.version_code }}
+          VERSION_NAME: ${{ steps.version.outputs.version_name }}
+        run: |
+          ./gradlew test lint assembleDebug \
+            "-Pwallcrawl.versionCode=$VERSION_CODE" \
+            "-Pwallcrawl.versionName=$VERSION_NAME" \
+            --stacktrace \
+            --no-daemon
+
+      - name: Validate release version
+        env:
+          RUN_NUMBER: ${{ github.run_number }}
+          TAG_NAME: ${{ github.ref_name }}
+        run: |
+          python3 tools/release/validate_version.py \
+            --tag "$TAG_NAME" \
+            --run-number "$RUN_NUMBER" \
+            --metadata app/build/outputs/apk/debug/output-metadata.json
 
       - name: Stage release asset
         shell: bash
@@ -42,11 +73,6 @@ jobs:
           TAG_NAME: ${{ github.ref_name }}
         run: |
           set -euo pipefail
-
-          if (( ${#TAG_NAME} > 128 )) || [[ ! "$TAG_NAME" =~ ^v[0-9A-Za-z][0-9A-Za-z._-]*$ ]]; then
-            echo "Unsupported release tag" >&2
-            exit 1
-          fi
 
           source_apk="app/build/outputs/apk/debug/app-debug.apk"
           if [[ ! -s "$source_apk" ]]; then

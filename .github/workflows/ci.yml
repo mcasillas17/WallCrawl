@@ -42,5 +42,8 @@ jobs:
       - name: Run catalog importer tests
         run: python3 -m unittest discover -s tools/workout-guide -p 'test_*.py' -v
 
+      - name: Run release tooling tests
+        run: python3 -m unittest discover -s tools/release -p 'test_*.py' -v
+
       - name: Run tests, lint, and debug build
         run: ./gradlew test lint assembleDebug --stacktrace --no-daemon
