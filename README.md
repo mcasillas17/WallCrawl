@@ -39,7 +39,7 @@ replaceable; no production local LLM runtime is integrated yet.
 - **Active Workout Session**: Type-aware logging for load/reps, bodyweight reps, assisted reps, duration, and distance/duration, with animated SVG movement previews and previous performance comparisons.
 - **Workout Summary**: Post-workout card displaying session duration, total volume lifted, sets completed, and personal records set against your logged history.
 - **Progress Tracking**: Weekly workout streaks, volume and rep totals, per-muscle weekly set counts, strength progression indicators, and historical workout logs.
-- **Training Profile**: Full local customization of fitness goals, preferred weight units (LBS/KG), session duration targets, available gym equipment, and muscle priorities.
+- **Training Profile**: Full local customization of multi-select fitness goals, preferred weight units (LBS/KG), session duration targets, available gym equipment, return-after-break calibration, and muscle priorities.
 - **Credits & Licenses**: In-app attribution for the bundled exercise artwork, reachable from the Training Profile screen.
 
 ## Documentation
@@ -54,7 +54,9 @@ replaceable; no production local LLM runtime is integrated yet.
 ## Current vertical slice
 
 ```text
-                fresh install → onboarding (equipment, goal, constraints)
+                fresh install → 7-step onboarding wizard
+                                (codename, goals, units/experience,
+                                 schedule/break, gear, safety, summary)
                                            │
                          ┌─ automatic recommendation
 Bundled catalog ─────────┤  profile + bounded history
@@ -76,6 +78,9 @@ Bundled catalog ─────────┤  profile + bounded history
 A fresh install cannot skip onboarding: `UserProfile.onboardingCompleted`
 starts `false`, equipment defaults to bodyweight-only rather than assuming a
 full gym, and Today does not generate or render until onboarding is complete.
+The 7-step wizard collects user codename, multi-select fitness goals, units and
+experience level, schedule and break duration, available gear, and sensitive joint
+restrictions before compiling the initial Training Blueprint.
 
 The fake planner uses the same `WorkoutPlanner` contract intended for a future
 Qwen, Gemma, or LiteRT-backed implementation. It only selects IDs from

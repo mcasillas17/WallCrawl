@@ -51,7 +51,7 @@ class WorkoutGenerationContextBuilderTest {
     fun build_filtersCandidatesAndIncludesPersistedPerformance() = runTest {
         val now = 10_000_000L
         val profile = UserProfile(
-            primaryGoal = FitnessGoal.STRENGTH,
+            goals = setOf(FitnessGoal.STRENGTH),
             availableEquipment = listOf(
                 StandardEquipment.DUMBBELL,
                 StandardEquipment.BENCH,
@@ -160,6 +160,7 @@ private class StubUserProfileRepository(
     override suspend fun getProfileOnce(): UserProfile = profile
     override suspend fun saveUserProfile(profile: UserProfile) = Unit
     override suspend fun saveProfile(profile: UserProfile) = Unit
+    override suspend fun updateGoals(goals: Set<FitnessGoal>) = Unit
     override suspend fun updatePrimaryGoal(goal: FitnessGoal) = Unit
     override suspend fun updateExperienceLevel(level: wallcrawl.elopenmike.com.core.model.ExperienceLevel) = Unit
     override suspend fun updatePreferredDuration(minutes: Int) = Unit

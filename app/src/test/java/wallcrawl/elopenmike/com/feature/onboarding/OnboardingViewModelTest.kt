@@ -89,7 +89,7 @@ class OnboardingViewModelTest {
 
         viewModel.complete(
             name = "Alex",
-            goal = FitnessGoal.STRENGTH,
+            goals = setOf(FitnessGoal.STRENGTH),
             experience = ExperienceLevel.BEGINNER,
             daysPerWeek = 3,
             durationMinutes = 45,
@@ -106,6 +106,7 @@ class OnboardingViewModelTest {
         assertThat(saved.onboardingCompleted).isTrue()
         assertThat(saved.name).isEqualTo("Alex")
         assertThat(saved.primaryGoal).isEqualTo(FitnessGoal.STRENGTH)
+        assertThat(saved.goals).containsExactly(FitnessGoal.STRENGTH)
         assertThat(saved.experienceLevel).isEqualTo(ExperienceLevel.BEGINNER)
         assertThat(saved.daysPerWeek).isEqualTo(3)
         assertThat(saved.preferredDurationMinutes).isEqualTo(45)
@@ -128,7 +129,7 @@ class OnboardingViewModelTest {
 
         viewModel.complete(
             name = "Alex",
-            goal = FitnessGoal.STRENGTH,
+            goals = setOf(FitnessGoal.STRENGTH),
             experience = ExperienceLevel.BEGINNER,
             daysPerWeek = 3,
             durationMinutes = 45,
@@ -142,6 +143,138 @@ class OnboardingViewModelTest {
         assertThat(repository.saved).isEmpty()
         assertThat(viewModel.uiState.value.isComplete).isFalse()
         assertThat(viewModel.uiState.value.error).isNotNull()
+    }
+
+    @Test
+    fun wizardStepNavigation_progressesThroughAllStepsAndCompletes() = runTest {
+        val repository = RecordingUserProfileRepository()
+        val viewModel = OnboardingViewModel(repository)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiState.collect {}
+        }
+
+        assertThat(viewModel.uiState.value.currentStep).isEqualTo(OnboardingStep.WELCOME)
+        assertThat(viewModel.uiState.value.isFirstStep).isTrue()
+        assertThat(viewModel.uiState.value.canProceedCurrentStep).isFalse()
+
+        // Provide name to proceed from welcome
+        viewModel.updateName("Spider-Crawler")
+        assertThat(viewModel.uiState.value.canProceedCurrentStep).isTrue()
+
+        // Step 1 -> Step 2 (Goals)
+        viewModel.nextStep()
+        assertThat(viewModel.uiState.value.currentStep).isEqualTo(OnboardingStep.GOALS)
+        assertThat(viewModel.uiState.value.canProceedCurrentStep).isTrue()
+
+        // Step 2 -> Step 3 (Experience & Unit)
+        viewModel.nextStep()
+        assertThat(viewModel.uiState.value.currentStep).isEqualTo(OnboardingStep.EXPERIENCE_UNIT)
+        assertThat(viewModel.uiState.value.canProceedCurrentStep).isTrue()
+
+        // Step 3 -> Step 4 (Schedule)
+        viewModel.nextStep()
+        assertThat(viewModel.uiState.value.currentStep).isEqualTo(OnboardingStep.SCHEDULE)
+
+        // Step 4 -> Step 5 (Equipment)
+        viewModel.nextStep()
+        assertThat(viewModel.uiState.value.currentStep).isEqualTo(OnboardingStep.EQUIPMENT)
+        assertThat(viewModel.uiState.value.canProceedCurrentStep).isTrue()
+
+        // Step 5 -> Step 6 (Safety)
+        viewModel.nextStep()
+        assertThat(viewModel.uiState.value.currentStep).isEqualTo(OnboardingStep.SAFETY)
+
+        // Step 6 -> Step 7 (Summary)
+        viewModel.nextStep()
+        assertThat(viewModel.uiState.value.currentStep).isEqualTo(OnboardingStep.SUMMARY)
+        assertThat(viewModel.uiState.value.isLastStep).isTrue()
+        assertThat(viewModel.uiState.value.canProceedCurrentStep).isTrue()
+
+        // Can step backward
+        viewModel.previousStep()
+        assertThat(viewModel.uiState.value.currentStep).isEqualTo(OnboardingStep.SAFETY)
+
+        // Jump directly to summary and complete
+        viewModel.goToStep(OnboardingStep.SUMMARY)
+        assertThat(viewModel.uiState.value.currentStep).isEqualTo(OnboardingStep.SUMMARY)
+
+        // Calling nextStep on last step invokes complete()
+        viewModel.nextStep()
+        advanceUntilIdle()
+
+        assertThat(repository.saved).hasSize(1)
+        assertThat(repository.saved.single().onboardingCompleted).isTrue()
+        assertThat(repository.saved.single().name).isEqualTo("Spider-Crawler")
+        assertThat(viewModel.uiState.value.isComplete).isTrue()
+    }
+
+    @Test
+    fun equipmentAndConstraintHelpers_updateStateCorrectly() = runTest {
+        val repository = RecordingUserProfileRepository()
+        val viewModel = OnboardingViewModel(repository)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiState.collect {}
+        }
+
+        // Test selectAllEquipment
+        viewModel.selectAllEquipment()
+        assertThat(viewModel.uiState.value.equipment)
+            .containsExactlyElementsIn(viewModel.uiState.value.equipmentOptions)
+
+        // Test resetEquipmentToBodyweight
+        viewModel.resetEquipmentToBodyweight()
+        assertThat(viewModel.uiState.value.equipment)
+            .containsExactly(StandardEquipment.BODYWEIGHT)
+
+        // Test clearConstraints
+        viewModel.toggleConstraint(TrainingConstraint.LOWER_BACK_SENSITIVE)
+        viewModel.toggleConstraint(TrainingConstraint.WRIST_SENSITIVE)
+        assertThat(viewModel.uiState.value.constraints).hasSize(2)
+
+        viewModel.clearConstraints()
+        assertThat(viewModel.uiState.value.constraints).isEmpty()
+    }
+
+    @Test
+    fun toggleGoal_addsAndRemovesGoalsWithoutDroppingLastGoal() = runTest {
+        val repository = RecordingUserProfileRepository()
+        val viewModel = OnboardingViewModel(repository)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiState.collect {}
+        }
+
+        // Starts with BUILD_MUSCLE
+        assertThat(viewModel.uiState.value.goals).containsExactly(FitnessGoal.BUILD_MUSCLE)
+
+        // Toggle STRENGTH on
+        viewModel.toggleGoal(FitnessGoal.STRENGTH)
+        advanceUntilIdle()
+        assertThat(viewModel.uiState.value.goals)
+            .containsExactly(FitnessGoal.BUILD_MUSCLE, FitnessGoal.STRENGTH)
+
+        // Toggle BUILD_MUSCLE off
+        viewModel.toggleGoal(FitnessGoal.BUILD_MUSCLE)
+        advanceUntilIdle()
+        assertThat(viewModel.uiState.value.goals).containsExactly(FitnessGoal.STRENGTH)
+
+        // Attempting to toggle STRENGTH off (last remaining) keeps it selected
+        viewModel.toggleGoal(FitnessGoal.STRENGTH)
+        advanceUntilIdle()
+        assertThat(viewModel.uiState.value.goals).containsExactly(FitnessGoal.STRENGTH)
+    }
+
+    @Test
+    fun updateReturningAfterBreakWeeks_supportsMultiYearBreakValues() = runTest {
+        val repository = RecordingUserProfileRepository()
+        val viewModel = OnboardingViewModel(repository)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiState.collect {}
+        }
+
+        viewModel.updateReturningAfterBreakWeeks(104) // 2 years
+        advanceUntilIdle()
+
+        assertThat(viewModel.uiState.value.returningAfterBreakWeeks).isEqualTo(104)
     }
 }
 
@@ -157,6 +290,7 @@ private class RecordingUserProfileRepository : UserProfileRepository {
     }
 
     override suspend fun saveProfile(profile: UserProfile) {
+        require(profile.goals.isNotEmpty()) { "goals must not be empty." }
         require(profile.daysPerWeek in 2..6) { "daysPerWeek must be between 2 and 6." }
         require(profile.preferredDurationMinutes in 20..120) {
             "preferredDurationMinutes must be between 20 and 120."
@@ -166,6 +300,7 @@ private class RecordingUserProfileRepository : UserProfileRepository {
         this.profile.value = profile
     }
 
+    override suspend fun updateGoals(goals: Set<FitnessGoal>) = error("Not used")
     override suspend fun updatePrimaryGoal(goal: FitnessGoal) = error("Not used")
     override suspend fun updateExperienceLevel(level: ExperienceLevel) = error("Not used")
     override suspend fun updatePreferredDuration(minutes: Int) = error("Not used")

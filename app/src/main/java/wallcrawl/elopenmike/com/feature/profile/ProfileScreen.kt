@@ -21,8 +21,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
@@ -33,9 +37,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
@@ -98,7 +105,7 @@ fun ProfileScreen(
                     availableEquipment = state.availableEquipmentOptions,
                     availableMuscles = state.availableMuscleOptions,
                     availableConstraints = state.availableConstraintOptions,
-                    onUpdateGoal = { viewModel.updateGoal(it) },
+                    onToggleGoal = { viewModel.toggleGoal(it) },
                     onUpdateExperience = { viewModel.updateExperience(it) },
                     onUpdateDuration = { viewModel.updateDuration(it) },
                     onUpdateDaysPerWeek = { viewModel.updateDaysPerWeek(it) },
@@ -121,7 +128,7 @@ private fun ProfileContent(
     availableEquipment: List<String>,
     availableMuscles: List<String>,
     availableConstraints: List<TrainingConstraint>,
-    onUpdateGoal: (FitnessGoal) -> Unit,
+    onToggleGoal: (FitnessGoal) -> Unit,
     onUpdateExperience: (ExperienceLevel) -> Unit,
     onUpdateDuration: (Int) -> Unit,
     onUpdateDaysPerWeek: (Int) -> Unit,
@@ -132,11 +139,6 @@ private fun ProfileContent(
     onUpdateReturningAfterBreakWeeks: (Int) -> Unit,
     onOpenCredits: () -> Unit
 ) {
-    val breakWeeksSliderState = remember { BreakWeeksSliderState(profile.returningAfterBreakWeeks) }
-    LaunchedEffect(profile.returningAfterBreakWeeks) {
-        breakWeeksSliderState.onPersistedValueChanged(profile.returningAfterBreakWeeks)
-    }
-
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -160,7 +162,7 @@ private fun ProfileContent(
             )
         }
 
-        // 1. Primary Goal Selector
+        // 1. Fitness Goals Selector
         item {
             WallCrawlCard(
                 cornerRadius = 16.dp,
@@ -168,16 +170,22 @@ private fun ProfileContent(
                 backgroundColor = GraphiteSurfaceElevated
             ) {
                 Text(
-                    text = "PRIMARY FITNESS GOAL",
+                    text = "FITNESS GOALS",
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.8.sp,
                     color = CrimsonRedLight
                 )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Select all that apply to your current training block:",
+                    fontSize = 12.sp,
+                    color = TextSecondary
+                )
                 Spacer(modifier = Modifier.height(12.dp))
 
                 FitnessGoal.entries.forEach { goal ->
-                    val isSelected = profile.primaryGoal == goal
+                    val isSelected = goal in profile.goals
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -191,7 +199,7 @@ private fun ProfileContent(
                                 if (isSelected) CrimsonRedPrimary else GraphiteBorder,
                                 RoundedCornerShape(10.dp)
                             )
-                            .clickable { onUpdateGoal(goal) }
+                            .clickable { onToggleGoal(goal) }
                             .padding(12.dp)
                     ) {
                         Row(
@@ -486,32 +494,38 @@ private fun ProfileContent(
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(text = "Returning After a Break", fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = TextPrimary)
-                    Text(
-                        text = if (breakWeeksSliderState.displayWeeks == 0) {
-                            "No recent break"
-                        } else {
-                            "${breakWeeksSliderState.displayWeeks} wk off"
-                        },
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = WebBlueAccent
-                    )
+                    if (profile.returningAfterBreakWeeks > 0) {
+                        Text(
+                            text = "Re-entry Active",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = WebBlueAccent
+                        )
+                    }
                 }
-                Slider(
-                    value = breakWeeksSliderState.displayWeeks.toFloat(),
-                    onValueChange = { breakWeeksSliderState.onDrag(it.toInt()) },
-                    onValueChangeFinished = {
-                        breakWeeksSliderState.onDragFinished(onUpdateReturningAfterBreakWeeks)
-                    },
-                    valueRange = 0f..52f,
-                    colors = SliderDefaults.colors(
-                        thumbColor = CrimsonRedPrimary,
-                        activeTrackColor = CrimsonRedPrimary,
-                        inactiveTrackColor = GraphiteBorder
-                    )
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    text = "Adjust your break duration to adapt training volume and protect joint health.",
+                    fontSize = 12.sp,
+                    color = TextSecondary
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+
+                ProfileBreakDurationDropdownSelector(
+                    weeks = profile.returningAfterBreakWeeks,
+                    onSelectWeeks = { onUpdateReturningAfterBreakWeeks(it) }
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = wallcrawl.elopenmike.com.core.model.BreakDurationHelper.guidanceText(profile.returningAfterBreakWeeks),
+                    fontSize = 12.sp,
+                    color = if (profile.returningAfterBreakWeeks >= 52) CrimsonRedLight else WebBlueAccent,
+                    fontWeight = FontWeight.Medium
                 )
             }
         }
@@ -555,6 +569,113 @@ private fun ProfileContent(
 
         item {
             Spacer(modifier = Modifier.height(24.dp))
+        }
+    }
+}
+
+@Composable
+private fun ProfileBreakDurationDropdownSelector(
+    weeks: Int,
+    onSelectWeeks: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val currentRange = wallcrawl.elopenmike.com.core.model.BreakDurationHelper.findMatchingRange(weeks)
+
+    Box(modifier = modifier.fillMaxWidth()) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(12.dp))
+                .background(GraphiteSurface)
+                .border(
+                    1.dp,
+                    if (expanded) CrimsonRedPrimary else GraphiteBorder,
+                    RoundedCornerShape(12.dp)
+                )
+                .clickable { expanded = !expanded }
+                .padding(horizontal = 16.dp, vertical = 12.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = currentRange.title,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = if (currentRange.weeks == 0) TextWhite else WebBlueAccent
+                    )
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = currentRange.subtitle,
+                        fontSize = 12.sp,
+                        color = TextSecondary
+                    )
+                }
+
+                Icon(
+                    imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                    contentDescription = if (expanded) "Close range menu" else "Select break range",
+                    tint = if (expanded) CrimsonRedPrimary else TextSecondary,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+        }
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier
+                .fillMaxWidth(0.88f)
+                .background(GraphiteSurfaceElevated)
+                .border(1.dp, GraphiteBorder, RoundedCornerShape(12.dp))
+        ) {
+            wallcrawl.elopenmike.com.core.model.BreakDurationHelper.RANGES.forEach { range ->
+                val isSelected = range == currentRange
+                DropdownMenuItem(
+                    text = {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = range.title,
+                                    fontSize = 14.sp,
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.SemiBold,
+                                    color = if (isSelected) CrimsonRedLight else TextWhite
+                                )
+                                Text(
+                                    text = range.subtitle,
+                                    fontSize = 11.sp,
+                                    color = TextSecondary
+                                )
+                            }
+                            if (isSelected) {
+                                Icon(
+                                    imageVector = Icons.Default.Check,
+                                    contentDescription = null,
+                                    tint = CrimsonRedPrimary,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        }
+                    },
+                    onClick = {
+                        onSelectWeeks(range.weeks)
+                        expanded = false
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(if (isSelected) Color(0x1AE63946) else Color.Transparent)
+                )
+            }
         }
     }
 }

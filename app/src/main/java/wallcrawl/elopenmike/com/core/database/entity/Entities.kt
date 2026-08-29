@@ -35,7 +35,9 @@ data class UserProfileEntity(
     @ColumnInfo(defaultValue = "0")
     val returningAfterBreakWeeks: Int = 0,
     @ColumnInfo(defaultValue = "''")
-    val confirmedStartingLoadsJson: String = ""
+    val confirmedStartingLoadsJson: String = "",
+    @ColumnInfo(defaultValue = "''")
+    val fitnessGoalsJson: String = ""
 )
 
 @Entity(

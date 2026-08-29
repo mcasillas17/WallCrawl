@@ -47,19 +47,38 @@ class DefaultExercisePrescriptionFactory {
         exercise: Exercise,
         context: WorkoutGenerationContext
     ): ExercisePrescription {
+        val goals = context.fitnessGoals.ifEmpty { setOf(context.fitnessGoal) }
         val isCompound = exercise.programming?.mechanics == MechanicsType.COMPOUND
-        val targetSets = when (context.fitnessGoal) {
-            FitnessGoal.STRENGTH -> if (isCompound) 4 else 3
-            FitnessGoal.ATHLETIC_PERFORMANCE -> 4
+        val breakWeeks = context.userProfile.returningAfterBreakWeeks
+
+        val baseSets = when {
+            FitnessGoal.STRENGTH in goals -> if (isCompound) 4 else 3
+            FitnessGoal.ATHLETIC_PERFORMANCE in goals -> 4
             else -> 3
         }
-        val repRange = when (context.fitnessGoal) {
-            FitnessGoal.STRENGTH -> if (isCompound) RepRange(4, 6) else RepRange(6, 8)
-            FitnessGoal.BUILD_MUSCLE ->
+        val targetSets = when {
+            breakWeeks >= 52 -> 2 // 1+ years break: strict 2 working sets to protect connective tissue
+            breakWeeks >= 4 -> if (isCompound) minOf(baseSets, 3) else 2 // 1-12 months break
+            else -> baseSets
+        }
+
+        val repRange = when {
+            breakWeeks >= 52 && FitnessGoal.STRENGTH in goals && isCompound -> RepRange(6, 8)
+            FitnessGoal.STRENGTH in goals && isCompound -> RepRange(4, 6)
+            FitnessGoal.BUILD_MUSCLE in goals ->
                 exercise.programming?.recommendedRepRange ?: RepRange(8, 12)
-            FitnessGoal.GENERAL_FITNESS -> RepRange(10, 12)
-            FitnessGoal.FAT_LOSS -> RepRange(12, 15)
-            FitnessGoal.ATHLETIC_PERFORMANCE -> RepRange(5, 8)
+            FitnessGoal.STRENGTH in goals -> RepRange(6, 8)
+            FitnessGoal.ATHLETIC_PERFORMANCE in goals -> RepRange(5, 8)
+            FitnessGoal.GENERAL_FITNESS in goals -> RepRange(10, 12)
+            FitnessGoal.FAT_LOSS in goals -> RepRange(12, 15)
+            else -> RepRange(8, 12)
+        }
+        val restSeconds = when {
+            FitnessGoal.STRENGTH in goals && isCompound -> 120
+            FitnessGoal.FAT_LOSS in goals && !isCompound -> 60
+            FitnessGoal.STRENGTH in goals -> 90
+            FitnessGoal.ATHLETIC_PERFORMANCE in goals -> 90
+            else -> 90
         }
 
         return ExercisePrescription(
@@ -67,7 +86,7 @@ class DefaultExercisePrescriptionFactory {
             targetSets = targetSets,
             repRange = repRange,
             targetWeight = suggestedTargetWeight(exercise, context, repRange.max),
-            restSeconds = if (context.fitnessGoal == FitnessGoal.STRENGTH) 120 else 90
+            restSeconds = restSeconds
         )
     }
 
@@ -75,19 +94,34 @@ class DefaultExercisePrescriptionFactory {
         exercise: Exercise,
         context: WorkoutGenerationContext
     ): ExercisePrescription {
-        val repRange = when (context.fitnessGoal) {
-            FitnessGoal.STRENGTH -> RepRange(6, 10)
-            FitnessGoal.BUILD_MUSCLE ->
-                exercise.programming?.recommendedRepRange ?: RepRange(8, 15)
-            FitnessGoal.GENERAL_FITNESS -> RepRange(10, 15)
-            FitnessGoal.FAT_LOSS -> RepRange(12, 20)
-            FitnessGoal.ATHLETIC_PERFORMANCE -> RepRange(6, 12)
+        val goals = context.fitnessGoals.ifEmpty { setOf(context.fitnessGoal) }
+        val isCompound = exercise.programming?.mechanics == MechanicsType.COMPOUND
+        val breakWeeks = context.userProfile.returningAfterBreakWeeks
+
+        val baseSets = if (FitnessGoal.ATHLETIC_PERFORMANCE in goals || (FitnessGoal.STRENGTH in goals && isCompound)) 4 else 3
+        val targetSets = when {
+            breakWeeks >= 52 -> 2 // 1+ years break: 2 working sets
+            breakWeeks >= 4 -> minOf(baseSets, 3)
+            else -> baseSets
         }
+
+        val repRange = when {
+            breakWeeks >= 52 && FitnessGoal.STRENGTH in goals && isCompound -> RepRange(8, 12)
+            FitnessGoal.STRENGTH in goals && isCompound -> RepRange(6, 10)
+            FitnessGoal.BUILD_MUSCLE in goals ->
+                exercise.programming?.recommendedRepRange ?: RepRange(8, 15)
+            FitnessGoal.STRENGTH in goals -> RepRange(6, 10)
+            FitnessGoal.ATHLETIC_PERFORMANCE in goals -> RepRange(6, 12)
+            FitnessGoal.GENERAL_FITNESS in goals -> RepRange(10, 15)
+            FitnessGoal.FAT_LOSS in goals -> RepRange(12, 20)
+            else -> RepRange(8, 15)
+        }
+        val restSeconds = if (FitnessGoal.STRENGTH in goals) 120 else 75
         return ExercisePrescription(
             exerciseType = exercise.type,
-            targetSets = if (context.fitnessGoal == FitnessGoal.ATHLETIC_PERFORMANCE) 4 else 3,
+            targetSets = targetSets,
             repRange = repRange,
-            restSeconds = if (context.fitnessGoal == FitnessGoal.STRENGTH) 120 else 75
+            restSeconds = restSeconds
         )
     }
 

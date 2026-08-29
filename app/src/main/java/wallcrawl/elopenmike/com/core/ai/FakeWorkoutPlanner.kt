@@ -42,16 +42,29 @@ class FakeWorkoutPlanner(
             createGeneratedExercise(exercise, context)
         }
 
-        val workoutName = generateWorkoutTitle(splitType, context.fitnessGoal)
+        val breakWeeks = context.userProfile.returningAfterBreakWeeks
+        val isLongBreak = breakWeeks >= 52
+        val isMediumBreak = breakWeeks in 4..51
+
+        val baseWorkoutName = generateWorkoutTitle(splitType, context.fitnessGoals.ifEmpty { setOf(context.fitnessGoal) })
+        val workoutName = if (isLongBreak) "$baseWorkoutName (Re-entry)" else baseWorkoutName
         val focusMuscles = extractFocusMuscles(selectedExercises)
         val estimatedDuration = calculateEstimatedDuration(generatedExerciseList)
+        val goalsDisplay = context.fitnessGoals.ifEmpty { setOf(context.fitnessGoal) }
+            .joinToString(" + ") { it.displayName }
+
+        val rationale = when {
+            isLongBreak -> "Re-entry Ramp-Up Active: Volume is capped at 2 sets to protect joint tendons and safely rebuild capacity after ${wallcrawl.elopenmike.com.core.model.BreakDurationHelper.formatLabel(breakWeeks)}."
+            isMediumBreak -> "Generated for $goalsDisplay with conservative volume scaling for break recovery (${wallcrawl.elopenmike.com.core.model.BreakDurationHelper.formatLabel(breakWeeks)})."
+            else -> "Generated for $goalsDisplay with priority on ${focusMuscles.joinToString(", ")}."
+        }
 
         return GeneratedWorkout(
             name = workoutName,
             focusMuscles = focusMuscles,
             estimatedDurationMinutes = estimatedDuration,
             exercises = generatedExerciseList,
-            rationale = "Generated for ${context.fitnessGoal.displayName} with priority on ${focusMuscles.joinToString(", ")}."
+            rationale = rationale
         )
     }
 
@@ -235,14 +248,19 @@ class FakeWorkoutPlanner(
         )
     }
 
-    private fun generateWorkoutTitle(split: SplitType, goal: FitnessGoal): String {
+    private fun generateWorkoutTitle(split: SplitType, goals: Set<FitnessGoal>): String {
         val prefix = split.displayName
-        val suffix = when (goal) {
-            FitnessGoal.BUILD_MUSCLE -> "Hypertrophy"
-            FitnessGoal.STRENGTH -> "Power & Strength"
-            FitnessGoal.ATHLETIC_PERFORMANCE -> "Agility & Explosiveness"
-            FitnessGoal.FAT_LOSS -> "High-Density Circuit"
-            FitnessGoal.GENERAL_FITNESS -> "Athletic Foundation"
+        val suffix = when {
+            FitnessGoal.STRENGTH in goals && FitnessGoal.BUILD_MUSCLE in goals -> "Power & Hypertrophy"
+            FitnessGoal.STRENGTH in goals && FitnessGoal.ATHLETIC_PERFORMANCE in goals -> "Power & Performance"
+            FitnessGoal.FAT_LOSS in goals && FitnessGoal.ATHLETIC_PERFORMANCE in goals -> "Athletic Conditioning"
+            FitnessGoal.BUILD_MUSCLE in goals && FitnessGoal.FAT_LOSS in goals -> "Hypertrophy & Definition"
+            FitnessGoal.BUILD_MUSCLE in goals -> "Hypertrophy"
+            FitnessGoal.STRENGTH in goals -> "Power & Strength"
+            FitnessGoal.ATHLETIC_PERFORMANCE in goals -> "Agility & Explosiveness"
+            FitnessGoal.FAT_LOSS in goals -> "High-Density Circuit"
+            FitnessGoal.GENERAL_FITNESS in goals -> "Athletic Foundation"
+            else -> "Conditioning"
         }
         return "$prefix · $suffix"
     }

@@ -25,6 +25,7 @@ interface UserProfileRepository {
      * per-field update* calls, so completing it never writes more than one revision.
      */
     suspend fun saveProfile(profile: UserProfile)
+    suspend fun updateGoals(goals: Set<FitnessGoal>)
     suspend fun updatePrimaryGoal(goal: FitnessGoal)
     suspend fun updateExperienceLevel(level: ExperienceLevel)
     suspend fun updatePreferredDuration(minutes: Int)
@@ -57,6 +58,7 @@ class OfflineUserProfileRepository(
     }
 
     override suspend fun saveProfile(profile: UserProfile) {
+        require(profile.goals.isNotEmpty()) { "goals must not be empty." }
         require(profile.daysPerWeek in 2..6) {
             "daysPerWeek must be between 2 and 6, was ${profile.daysPerWeek}."
         }
@@ -82,9 +84,14 @@ class OfflineUserProfileRepository(
         saveUserProfile(profile)
     }
 
-    override suspend fun updatePrimaryGoal(goal: FitnessGoal) {
+    override suspend fun updateGoals(goals: Set<FitnessGoal>) {
+        require(goals.isNotEmpty()) { "goals must not be empty." }
         val current = getProfileOnce()
-        saveUserProfile(current.copy(primaryGoal = goal))
+        saveUserProfile(current.copy(goals = goals))
+    }
+
+    override suspend fun updatePrimaryGoal(goal: FitnessGoal) {
+        updateGoals(setOf(goal))
     }
 
     override suspend fun updateExperienceLevel(level: ExperienceLevel) {
@@ -109,20 +116,11 @@ class OfflineUserProfileRepository(
 
     override suspend fun updateUnit(unit: WeightUnit) {
         val current = getProfileOnce()
-        if (current.preferredUnit == unit) {
-            saveUserProfile(current)
-            return
+        if (current.preferredUnit == unit) return
+        val convertedLoads = current.confirmedStartingLoads.mapValues { (_, load) ->
+            convertWeight(load, from = current.preferredUnit, to = unit)
         }
-        // confirmedStartingLoads is defined in preferredUnit; switching units without
-        // converting these values would silently relabel a confirmed baseline (a 135 lb
-        // bench press would read back as "135 kg"), reintroducing the exact unsafe,
-        // unit-agnostic default Task 2 removed.
-        val convertedLoads = current.confirmedStartingLoads.mapValues { (_, value) ->
-            convertWeight(value, from = current.preferredUnit, to = unit)
-        }
-        saveUserProfile(
-            current.copy(preferredUnit = unit, confirmedStartingLoads = convertedLoads)
-        )
+        saveUserProfile(current.copy(preferredUnit = unit, confirmedStartingLoads = convertedLoads))
     }
 
     override suspend fun updateMusclePriorities(priorities: Map<String, PriorityLevel>) {
@@ -150,16 +148,16 @@ class OfflineUserProfileRepository(
             emptyMap()
         } else {
             musclePrioritiesJson.split("|||")
-                .mapNotNull { item ->
-                    val parts = item.split(":")
-                    if (parts.size == 2) {
-                        val level = try { PriorityLevel.valueOf(parts[1]) } catch (e: Exception) { PriorityLevel.NORMAL }
-                        parts[0] to level
-                    } else null
+                .mapNotNull { entry ->
+                    val parts = entry.split(":")
+                    if (parts.size != 2) return@mapNotNull null
+                    val level = try {
+                        PriorityLevel.valueOf(parts[1])
+                    } catch (e: IllegalArgumentException) {
+                        PriorityLevel.NORMAL
+                    }
+                    parts[0] to level
                 }
-                // Profiles written before the muscle vocabulary was unified can hold retired
-                // names such as "Abs". Two names collapsing onto one group keep the stronger
-                // priority so a saved preference is never silently downgraded.
                 .flatMap { (muscle, level) ->
                     MuscleVocabulary.canonicalize(muscle).map { canonical -> canonical to level }
                 }
@@ -169,12 +167,13 @@ class OfflineUserProfileRepository(
 
         val equipment = if (availableEquipmentJson.isBlank()) emptyList() else availableEquipmentJson.split("|||").filter { it.isNotBlank() }
         val excluded = if (excludedExerciseIdsJson.isBlank()) emptyList() else excludedExerciseIdsJson.split("|||").filter { it.isNotBlank() }
+        val decodedGoals = decodeFitnessGoals(fitnessGoalsJson).ifEmpty { setOf(primaryGoal) }
 
         return UserProfile(
             id = id,
             revision = revision,
             name = name,
-            primaryGoal = primaryGoal,
+            goals = decodedGoals,
             experienceLevel = experienceLevel,
             preferredDurationMinutes = preferredDurationMinutes,
             daysPerWeek = daysPerWeek,
@@ -209,19 +208,31 @@ class OfflineUserProfileRepository(
             onboardingCompleted = onboardingCompleted,
             trainingConstraintsJson = encodeTrainingConstraints(trainingConstraints),
             returningAfterBreakWeeks = returningAfterBreakWeeks,
-            confirmedStartingLoadsJson = encodeConfirmedStartingLoads(confirmedStartingLoads)
+            confirmedStartingLoadsJson = encodeConfirmedStartingLoads(confirmedStartingLoads),
+            fitnessGoalsJson = encodeFitnessGoals(goals)
         )
+    }
+
+    private fun encodeFitnessGoals(goals: Set<FitnessGoal>): String =
+        goals.joinToString("|||") { it.name }
+
+    private fun decodeFitnessGoals(raw: String): Set<FitnessGoal> {
+        if (raw.isBlank()) return emptySet()
+        return raw.split("|||")
+            .filter { it.isNotBlank() }
+            .mapNotNull { name ->
+                try {
+                    FitnessGoal.valueOf(name)
+                } catch (e: IllegalArgumentException) {
+                    null
+                }
+            }
+            .toSet()
     }
 
     private fun encodeTrainingConstraints(constraints: Set<TrainingConstraint>): String =
         constraints.joinToString("|||") { it.name }
 
-    /**
-     * A constraint name that fails to parse (renamed enum value, corruption) is dropped
-     * rather than guessed, unlike the muscle-priorities decoder above's fallback to
-     * NORMAL: silently substituting a different safety constraint would misrepresent
-     * what the user actually confirmed.
-     */
     private fun decodeTrainingConstraints(raw: String): Set<TrainingConstraint> {
         if (raw.isBlank()) return emptySet()
         return raw.split("|||")
@@ -239,11 +250,6 @@ class OfflineUserProfileRepository(
     private fun encodeConfirmedStartingLoads(loads: Map<String, Double>): String =
         loads.entries.joinToString("|||") { "${it.key}:${it.value}" }
 
-    /**
-     * A malformed row (bad number, missing weight) is dropped rather than defaulted to
-     * some invented weight: guessing a starting load here would reintroduce the exact
-     * unsafe-default problem this field exists to prevent.
-     */
     private fun decodeConfirmedStartingLoads(raw: String): Map<String, Double> {
         if (raw.isBlank()) return emptyMap()
         return raw.split("|||")
