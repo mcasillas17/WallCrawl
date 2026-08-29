@@ -27,6 +27,7 @@ import wallcrawl.elopenmike.com.core.model.GeneratedExercise
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
 import wallcrawl.elopenmike.com.core.model.SessionStatus
+import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
@@ -43,7 +44,7 @@ class TodayViewModelTest {
     @Test
     fun uiState_generatesOnceAndCountsCompletedWorkoutsInRollingWeek() = runTest {
         val now = 20 * DAY_MILLIS
-        val profileRepository = TodayUserProfileRepository(UserProfile())
+        val profileRepository = TodayUserProfileRepository(UserProfile(availableEquipment = StandardEquipment.ALL))
         val workoutRepository = TodayWorkoutRepository(
             completedSessions = listOf(
                 completedSession("recent-1", now - DAY_MILLIS),
@@ -85,7 +86,7 @@ class TodayViewModelTest {
     @Test
     fun profileChange_regeneratesWithUpdatedContextAfterInitialGeneration() = runTest {
         val now = 20 * DAY_MILLIS
-        val profileRepository = TodayUserProfileRepository(UserProfile())
+        val profileRepository = TodayUserProfileRepository(UserProfile(availableEquipment = StandardEquipment.ALL))
         val workoutRepository = TodayWorkoutRepository(emptyList())
         val catalog = InMemoryExerciseCatalog()
         val planner = RecordingWorkoutPlanner()
@@ -120,7 +121,7 @@ class TodayViewModelTest {
     @Test
     fun startWorkout_afterProfileConstraintChange_neverPersistsStaleExercise() = runTest {
         val now = 20 * DAY_MILLIS
-        val profileRepository = TodayUserProfileRepository(UserProfile())
+        val profileRepository = TodayUserProfileRepository(UserProfile(availableEquipment = StandardEquipment.ALL))
         val workoutRepository = TodayWorkoutRepository(emptyList())
         val catalog = InMemoryExerciseCatalog()
         val planner = RecordingWorkoutPlanner()
@@ -166,7 +167,7 @@ class TodayViewModelTest {
     fun startWorkout_persistsTheUnitUsedToGenerateTargets() = runTest {
         val now = 20 * DAY_MILLIS
         val profileRepository = TodayUserProfileRepository(
-            UserProfile(preferredUnit = WeightUnit.KG)
+            UserProfile(preferredUnit = WeightUnit.KG, availableEquipment = StandardEquipment.ALL)
         )
         val workoutRepository = TodayWorkoutRepository(emptyList())
         val catalog = InMemoryExerciseCatalog()
@@ -202,7 +203,7 @@ class TodayViewModelTest {
     fun completedThisWeek_updatesForNewCompletionsAndMovingClock() = runTest {
         val now = 20 * DAY_MILLIS
         val clock = MutableStateFlow(now)
-        val profileRepository = TodayUserProfileRepository(UserProfile())
+        val profileRepository = TodayUserProfileRepository(UserProfile(availableEquipment = StandardEquipment.ALL))
         val workoutRepository = TodayWorkoutRepository(
             listOf(completedSession("recent", now - DAY_MILLIS))
         )
@@ -294,6 +295,8 @@ private class TodayUserProfileRepository(
         this.profile.update { current -> profile.copy(revision = current.revision + 1L) }
     }
 
+    override suspend fun saveProfile(profile: UserProfile) = saveUserProfile(profile)
+
     override suspend fun updatePrimaryGoal(goal: FitnessGoal) =
         updateProfile { it.copy(primaryGoal = goal) }
 
@@ -317,6 +320,13 @@ private class TodayUserProfileRepository(
 
     override suspend fun updateExcludedExercises(excludedIds: List<String>) =
         updateProfile { it.copy(excludedExerciseIds = excludedIds) }
+
+    override suspend fun updateTrainingConstraints(
+        constraints: Set<wallcrawl.elopenmike.com.core.model.TrainingConstraint>
+    ) = updateProfile { it.copy(trainingConstraints = constraints) }
+
+    override suspend fun updateReturningAfterBreakWeeks(weeks: Int) =
+        updateProfile { it.copy(returningAfterBreakWeeks = weeks) }
 
     private fun updateProfile(transform: (UserProfile) -> UserProfile) {
         profile.update { current ->

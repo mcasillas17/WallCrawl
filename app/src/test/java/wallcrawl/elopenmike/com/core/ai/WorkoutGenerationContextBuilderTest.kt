@@ -28,8 +28,13 @@ class WorkoutGenerationContextBuilderTest {
     fun build_includesCatalogEntriesWithoutReviewedProgrammingWhenEquipmentMatches() = runTest {
         val reviewed = InMemoryExerciseCatalog.SAMPLE_EXERCISES.first()
         val unreviewed = reviewed.copy(id = "catalog-only-exercise", programming = null)
+        // Onboarding no longer assumes a full gym, so the profile must confirm the
+        // equipment this exercise actually needs for the "equipment matches" premise to hold.
+        val profile = UserProfile(
+            availableEquipment = listOf(StandardEquipment.DUMBBELL, StandardEquipment.BENCH)
+        )
         val builder = WorkoutGenerationContextBuilder(
-            userProfileRepository = StubUserProfileRepository(UserProfile()),
+            userProfileRepository = StubUserProfileRepository(profile),
             workoutRepository = StubWorkoutRepository(emptyList()),
             exerciseCatalog = InMemoryExerciseCatalog(listOf(reviewed, unreviewed)),
             exerciseFilter = ExerciseFilter(),
@@ -154,6 +159,7 @@ private class StubUserProfileRepository(
     override fun getUserProfile(): Flow<UserProfile> = flowOf(profile)
     override suspend fun getProfileOnce(): UserProfile = profile
     override suspend fun saveUserProfile(profile: UserProfile) = Unit
+    override suspend fun saveProfile(profile: UserProfile) = Unit
     override suspend fun updatePrimaryGoal(goal: FitnessGoal) = Unit
     override suspend fun updateExperienceLevel(level: wallcrawl.elopenmike.com.core.model.ExperienceLevel) = Unit
     override suspend fun updatePreferredDuration(minutes: Int) = Unit
@@ -162,6 +168,10 @@ private class StubUserProfileRepository(
     override suspend fun updateUnit(unit: WeightUnit) = Unit
     override suspend fun updateMusclePriorities(priorities: Map<String, PriorityLevel>) = Unit
     override suspend fun updateExcludedExercises(excludedIds: List<String>) = Unit
+    override suspend fun updateTrainingConstraints(
+        constraints: Set<wallcrawl.elopenmike.com.core.model.TrainingConstraint>
+    ) = Unit
+    override suspend fun updateReturningAfterBreakWeeks(weeks: Int) = Unit
 }
 
 private class StubWorkoutRepository(

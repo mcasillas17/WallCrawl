@@ -53,7 +53,11 @@ class ExerciseFilterTest {
 
     @Test
     fun filterCandidates_withTargetMuscles_returnsOnlyMatchingMuscles() {
-        val profile = UserProfile()
+        // Bodyweight-only is now the safe default, so confirm equipment for a chest
+        // movement explicitly rather than relying on an assumed full gym.
+        val profile = UserProfile(
+            availableEquipment = listOf(StandardEquipment.DUMBBELL, StandardEquipment.BENCH)
+        )
         val chestCandidates = filter.filterCandidates(
             allExercises = allExercises,
             profile = profile,
@@ -73,7 +77,9 @@ class ExerciseFilterTest {
 
         val candidates = filter.filterCandidates(
             allExercises = listOf(reviewed, unreviewed),
-            profile = UserProfile()
+            profile = UserProfile(
+                availableEquipment = listOf(StandardEquipment.DUMBBELL, StandardEquipment.BENCH)
+            )
         )
 
         assertThat(candidates.map { it.id }).containsExactly(reviewed.id, unreviewed.id)

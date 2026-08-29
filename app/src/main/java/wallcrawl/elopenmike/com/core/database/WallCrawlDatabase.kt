@@ -29,7 +29,7 @@ import wallcrawl.elopenmike.com.core.database.entity.WorkoutTemplateExerciseEnti
         WorkoutTemplateEntity::class,
         WorkoutTemplateExerciseEntity::class
     ],
-    version = 4,
+    version = 5,
     exportSchema = false
 )
 @TypeConverters(RoomTypeConverters::class)
@@ -54,7 +54,7 @@ abstract class WallCrawlDatabase : RoomDatabase() {
                     WallCrawlDatabase::class.java,
                     DATABASE_NAME
                 )
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
                     .build()
                     .also { INSTANCE = it }
             }
@@ -227,6 +227,32 @@ abstract class WallCrawlDatabase : RoomDatabase() {
                     "CREATE INDEX index_workout_template_exercises_templateId " +
                         "ON workout_template_exercises(templateId)"
                 )
+            }
+        }
+
+        val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // Additive only: existing rows keep every value they already had, and an
+                // already-onboarded user's profile is left completely untouched below.
+                db.execSQL(
+                    "ALTER TABLE user_profiles " +
+                        "ADD COLUMN onboardingCompleted INTEGER NOT NULL DEFAULT 0"
+                )
+                db.execSQL(
+                    "ALTER TABLE user_profiles " +
+                        "ADD COLUMN trainingConstraintsJson TEXT NOT NULL DEFAULT ''"
+                )
+                db.execSQL(
+                    "ALTER TABLE user_profiles " +
+                        "ADD COLUMN returningAfterBreakWeeks INTEGER NOT NULL DEFAULT 0"
+                )
+                db.execSQL(
+                    "ALTER TABLE user_profiles " +
+                        "ADD COLUMN confirmedStartingLoadsJson TEXT NOT NULL DEFAULT ''"
+                )
+                // A profile from before onboarding existed was never reviewed against the
+                // new safety-relevant fields, so it must not be grandfathered in as onboarded.
+                db.execSQL("UPDATE user_profiles SET onboardingCompleted = 0")
             }
         }
     }
