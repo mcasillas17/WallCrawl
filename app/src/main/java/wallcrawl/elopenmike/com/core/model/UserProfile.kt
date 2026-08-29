@@ -42,7 +42,6 @@ data class UserProfile(
         const val DEFAULT_PROFILE_ID = "default_user"
     }
 }
-
 enum class FitnessGoal(val displayName: String, val description: String) {
     BUILD_MUSCLE("Build Muscle", "Hypertrophy focus with moderate-high volume, and lower reps on the heavy compounds."),
     STRENGTH("Strength", "Heavy compound lifts with lower reps (3–6) and longer rest periods."),
@@ -123,5 +122,4 @@ object BreakDurationHelper {
         else -> "Extended hiatus (1+ years). Volume is capped at 2 sets per movement to protect joint tendons and safely rebuild connective tissue."
     }
 }
-
 
