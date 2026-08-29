@@ -112,19 +112,8 @@ class DefaultExercisePrescriptionFactory {
             }
         }
 
-        return sampleStartingWeight(exercise.id)
-    }
-
-    private fun sampleStartingWeight(exerciseId: String): Double? = when (exerciseId) {
-        "incline-dumbbell-press" -> 47.5
-        "barbell-bench-press" -> 135.0
-        "barbell-deadlift" -> 225.0
-        "barbell-back-squat" -> 185.0
-        "dumbbell-shoulder-press" -> 35.0
-        "dumbbell-lateral-raise" -> 20.0
-        "cable-triceps-pushdown" -> 42.5
-        "barbell-bicep-curl" -> 55.0
-        "romanian-deadlift" -> 135.0
-        else -> null
+        // No performance history exists yet: only a load the user explicitly confirmed
+        // during onboarding is safe to prescribe. Never invent a starting number.
+        return context.userProfile.confirmedStartingLoads[exercise.id]
     }
 }

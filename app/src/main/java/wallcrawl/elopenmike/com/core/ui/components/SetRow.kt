@@ -306,7 +306,13 @@ fun PerformanceSetRow(
         ) {
             when (set.exerciseType) {
                 ExerciseType.WEIGHT_REPS -> {
-                    CompactSetInput(weight, { weight = it; onUpdateSet(current()) }, "Load $weightUnit", true, Modifier.weight(1f))
+                    CompactSetInput(
+                        weight,
+                        { weight = it; onUpdateSet(current()) },
+                        weightInputLabel(set.targetWeight, weightUnit),
+                        true,
+                        Modifier.weight(1f)
+                    )
                     CompactSetInput(reps, { reps = it; onUpdateSet(current()) }, "Reps", false, Modifier.weight(1f))
                 }
                 ExerciseType.BODYWEIGHT_REPS ->
@@ -350,3 +356,11 @@ private fun CompactSetInput(
 
 private fun Double.compactText(): String =
     if (this % 1.0 == 0.0) toInt().toString() else toString()
+
+/**
+ * Labels the load field. A null target means no confirmed baseline and no usable
+ * history exist yet, so the logger must ask the user to choose one rather than
+ * silently accepting whatever value happens to be left in the field.
+ */
+internal fun weightInputLabel(targetWeight: Double?, weightUnit: String): String =
+    if (targetWeight == null) "Choose starting load" else "Load $weightUnit"
