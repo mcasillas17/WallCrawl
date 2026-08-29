@@ -59,7 +59,11 @@
       },
       "fatigueScore": 3,
       "progressionType": "repetitions_then_load",
-      "alternativeExerciseIds": [],
+      "alternativeExerciseIds": [
+        "chin-up",
+        "assisted-pull-up",
+        "lat-pulldown"
+      ],
       "coachingSummary": "Bodyweight vertical pull emphasizing the lats, upper back, biceps, and grip."
     },
     "barbell-deadlift": {
@@ -98,7 +102,11 @@
       },
       "fatigueScore": 5,
       "progressionType": "repetitions_then_load",
-      "alternativeExerciseIds": [],
+      "alternativeExerciseIds": [
+        "front-squat",
+        "goblet-squat",
+        "leg-press"
+      ],
       "coachingSummary": "Barbell squat emphasizing quadriceps and glutes with full-body bracing."
     },
     "dumbbell-shoulder-press": {
@@ -117,7 +125,11 @@
       },
       "fatigueScore": 3,
       "progressionType": "repetitions_then_load",
-      "alternativeExerciseIds": [],
+      "alternativeExerciseIds": [
+        "standing-dumbbell-press",
+        "arnold-press",
+        "machine-shoulder-press"
+      ],
       "coachingSummary": "Seated dumbbell overhead press for shoulder and triceps strength."
     },
     "dumbbell-lateral-raise": {
@@ -135,7 +147,10 @@
       },
       "fatigueScore": 2,
       "progressionType": "repetitions_then_load",
-      "alternativeExerciseIds": [],
+      "alternativeExerciseIds": [
+        "cable-lateral-raise",
+        "machine-lateral-raise"
+      ],
       "coachingSummary": "Shoulder isolation emphasizing the lateral deltoids with controlled arm elevation."
     },
     "cable-triceps-pushdown": {
@@ -154,7 +169,8 @@
       "fatigueScore": 2,
       "progressionType": "repetitions_then_load",
       "alternativeExerciseIds": [
-        "parallel-bar-dips"
+        "rope-tricep-pushdown",
+        "dip"
       ],
       "coachingSummary": "Cable elbow extension that trains the triceps through a controlled range."
     },
@@ -173,7 +189,10 @@
       },
       "fatigueScore": 2,
       "progressionType": "repetitions_then_load",
-      "alternativeExerciseIds": [],
+      "alternativeExerciseIds": [
+        "bicep-curl",
+        "cable-curl"
+      ],
       "coachingSummary": "Standing curl for biceps and forearm flexors using a barbell or EZ-bar."
     },
     "parallel-bar-dips": {
@@ -192,7 +211,8 @@
       "fatigueScore": 3,
       "progressionType": "repetitions_then_load",
       "alternativeExerciseIds": [
-        "cable-triceps-pushdown"
+        "dip",
+        "bench-dip"
       ],
       "coachingSummary": "Parallel-bar press emphasizing the chest and triceps with controlled shoulder depth."
     },
@@ -211,7 +231,10 @@
       },
       "fatigueScore": 2,
       "progressionType": "repetitions",
-      "alternativeExerciseIds": [],
+      "alternativeExerciseIds": [
+        "hanging-knee-raise",
+        "lying-leg-raise"
+      ],
       "coachingSummary": "Hanging trunk and hip flexion for the abdominals, hip flexors, and grip."
     },
     "romanian-deadlift": {
@@ -307,9 +330,6 @@
         ],
         [
           "Box"
-        ],
-        [
-          "Bodyweight"
         ]
       ],
       "movementPattern": "horizontal_push",
@@ -502,10 +522,6 @@
     "overhead-press": {
       "requiredEquipmentCombinations": [
         [
-          "Barbell",
-          "Squat Rack"
-        ],
-        [
           "Barbell"
         ]
       ],
@@ -526,10 +542,6 @@
     },
     "push-press": {
       "requiredEquipmentCombinations": [
-        [
-          "Barbell",
-          "Squat Rack"
-        ],
         [
           "Barbell"
         ]
@@ -710,7 +722,7 @@
         "max": 12
       },
       "fatigueScore": 3,
-      "progressionType": "repetitions",
+      "progressionType": "repetitions_then_load",
       "alternativeExerciseIds": [
         "parallel-bar-dips",
         "bench-dip"
@@ -723,7 +735,7 @@
           "Bench"
         ],
         [
-          "Bodyweight"
+          "Box"
         ]
       ],
       "movementPattern": "vertical_push",
@@ -760,7 +772,7 @@
         "push-up",
         "close-grip-bench-press"
       ],
-      "coachingSummary": "Push-up with the hands close together, emphasising the triceps."
+      "coachingSummary": "Push-up with the hands close together, emphasizing the triceps."
     },
     "assisted-dip": {
       "requiredEquipmentCombinations": [
@@ -911,10 +923,6 @@
     "one-arm-dumbbell-row": {
       "requiredEquipmentCombinations": [
         [
-          "Dumbbell",
-          "Bench"
-        ],
-        [
           "Dumbbell"
         ]
       ],
@@ -1057,7 +1065,7 @@
         "wide-grip-lat-pulldown",
         "pull-ups"
       ],
-      "coachingSummary": "Cable pulldown training the vertical pull at a load that can be dialled in."
+      "coachingSummary": "Cable pulldown training the vertical pull at a load that can be dialed in."
     },
     "wide-grip-lat-pulldown": {
       "requiredEquipmentCombinations": [
@@ -1078,7 +1086,7 @@
         "lat-pulldown",
         "pull-ups"
       ],
-      "coachingSummary": "Wide-grip pulldown emphasising the lats through a vertical pulling path."
+      "coachingSummary": "Wide-grip pulldown emphasizing the lats through a vertical pulling path."
     },
     "close-grip-lat-pulldown": {
       "requiredEquipmentCombinations": [
@@ -1669,10 +1677,6 @@
     "bulgarian-split-squat": {
       "requiredEquipmentCombinations": [
         [
-          "Dumbbell",
-          "Bench"
-        ],
-        [
           "Bench"
         ]
       ],
@@ -1713,7 +1717,7 @@
         "reverse-lunge",
         "forward-lunge"
       ],
-      "coachingSummary": "Alternating forward lunges travelling across the floor."
+      "coachingSummary": "Alternating forward lunges traveling across the floor."
     },
     "forward-lunge": {
       "requiredEquipmentCombinations": [
@@ -1763,10 +1767,6 @@
     "step-up": {
       "requiredEquipmentCombinations": [
         [
-          "Dumbbell",
-          "Box"
-        ],
-        [
           "Box"
         ]
       ],
@@ -1812,9 +1812,6 @@
         [
           "Dumbbell",
           "Bench"
-        ],
-        [
-          "Dumbbell"
         ]
       ],
       "movementPattern": "hinge",
@@ -1934,7 +1931,7 @@
         "goblet-squat",
         "bodyweight-squat"
       ],
-      "coachingSummary": "Wide-stance squat holding a dumbbell, emphasising the glutes and adductors."
+      "coachingSummary": "Wide-stance squat holding a dumbbell, emphasizing the glutes and adductors."
     },
     "hip-abduction-machine": {
       "requiredEquipmentCombinations": [
@@ -2043,10 +2040,6 @@
     },
     "good-morning": {
       "requiredEquipmentCombinations": [
-        [
-          "Barbell",
-          "Squat Rack"
-        ],
         [
           "Barbell"
         ]

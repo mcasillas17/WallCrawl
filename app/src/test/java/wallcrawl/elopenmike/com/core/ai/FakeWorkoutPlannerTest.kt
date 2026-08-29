@@ -3,6 +3,8 @@ package wallcrawl.elopenmike.com.core.ai
 import com.google.common.truth.Truth.assertThat
 import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
 import wallcrawl.elopenmike.com.core.model.ExerciseType
+import wallcrawl.elopenmike.com.core.model.MechanicsType
+import wallcrawl.elopenmike.com.core.model.MovementPattern
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.ExercisePerformanceHistory
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
@@ -220,6 +222,72 @@ class FakeWorkoutPlannerTest {
                 (exercise.primaryMuscles + exercise.secondaryMuscles).any { it in pushMuscles }
             ).isTrue()
         }
+    }
+
+    @Test
+    fun generateWorkout_leadsWithTheMostDemandingCompoundThatTrainsTheSplit() = runTest {
+        // Taking compounds in catalog order took them alphabetically, which led a push day
+        // with an accessory while the heaviest press in the pool went unused.
+        val context = WorkoutGenerationContext(
+            userProfile = UserProfile(
+                musclePriorities = mapOf(StandardMuscles.CHEST to PriorityLevel.HIGH)
+            ),
+            allowedExercises = allExercises
+        )
+
+        val workout = planner.generateWorkout(context)
+
+        val first = allExercises.single { it.id == workout.exercises.first().exerciseId }
+        assertThat(first.programming?.mechanics).isEqualTo(MechanicsType.COMPOUND)
+        assertThat(first.primaryMuscles.any { it in listOf(
+            StandardMuscles.CHEST, StandardMuscles.SHOULDERS, StandardMuscles.TRICEPS
+        ) }).isTrue()
+        val fatigueOfFirst = first.programming?.fatigueScore ?: 0
+        val heaviestAvailable = allExercises
+            .filter { it.programming?.mechanics == MechanicsType.COMPOUND }
+            .filter { exercise ->
+                exercise.primaryMuscles.any { it in listOf(
+                    StandardMuscles.CHEST, StandardMuscles.SHOULDERS, StandardMuscles.TRICEPS
+                ) }
+            }
+            .maxOf { it.programming?.fatigueScore ?: 0 }
+        assertThat(fatigueOfFirst).isEqualTo(heaviestAvailable)
+    }
+
+    @Test
+    fun generateWorkout_spreadsCompoundSlotsAcrossMovementPatterns() = runTest {
+        // Pattern variety outranks raw fatigue for the second slot: given two heavy
+        // horizontal presses and one lighter vertical press, the vertical press is taken
+        // before the second horizontal one, so the session is not the same lift twice.
+        val bench = allExercises.single { it.id == "barbell-bench-press" }
+        val heavyPress = bench.copy(
+            id = "heavy-horizontal-press",
+            programming = bench.programming!!.copy(fatigueScore = 5)
+        )
+        val lighterPress = bench.copy(
+            id = "lighter-horizontal-press",
+            programming = bench.programming!!.copy(fatigueScore = 4)
+        )
+        val verticalPress = bench.copy(
+            id = "vertical-press",
+            programming = bench.programming!!.copy(
+                movementPattern = MovementPattern.VERTICAL_PUSH,
+                fatigueScore = 3
+            )
+        )
+        val context = WorkoutGenerationContext(
+            userProfile = UserProfile(
+                preferredDurationMinutes = 60,
+                musclePriorities = mapOf(StandardMuscles.CHEST to PriorityLevel.HIGH)
+            ),
+            allowedExercises = listOf(heavyPress, lighterPress, verticalPress)
+        )
+
+        val workout = planner.generateWorkout(context)
+
+        assertThat(workout.exercises.map { it.exerciseId })
+            .containsExactly("heavy-horizontal-press", "vertical-press", "lighter-horizontal-press")
+            .inOrder()
     }
 
     @Test

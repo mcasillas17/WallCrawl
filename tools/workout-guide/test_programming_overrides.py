@@ -67,11 +67,32 @@ class ProgrammingOverridesTest(unittest.TestCase):
             self.assertLessEqual(rep_range["max"], 30, exercise_id)
 
     def test_the_bundled_catalog_reflects_the_reviewed_metadata(self) -> None:
-        # Catches an override edit that was never imported into the shipped asset.
+        # Compares content, not just which ids are reviewed: the common form of this
+        # mistake is editing an entry and forgetting to re-run the importer, which leaves
+        # the id set identical and ships stale data.
         reviewed_in_catalog = {
-            e["id"] for e in self.catalog["exercises"] if e.get("programming")
+            e["id"]: e["programming"] for e in self.catalog["exercises"] if e.get("programming")
         }
-        self.assertEqual(set(self.overrides), reviewed_in_catalog)
+        self.assertEqual(set(self.overrides), set(reviewed_in_catalog))
+        for exercise_id, programming in self.overrides.items():
+            self.assertEqual(programming, reviewed_in_catalog[exercise_id], exercise_id)
+
+    def test_every_reviewed_exercise_can_actually_be_selected_by_the_planner(self) -> None:
+        # Mirrors FakeWorkoutPlanner.isStrengthWork(). Reviewing an exercise the planner
+        # can never choose is wasted work, and the two rules drifting apart is the kind of
+        # thing that otherwise only surfaces when someone reads both by hand.
+        orphaned = []
+        for exercise_id in self.overrides:
+            exercise = self.by_id[exercise_id]
+            muscles = set(exercise["primaryMuscles"]) | set(exercise["secondaryMuscles"])
+            selectable = not (
+                exercise.get("isStretch")
+                or exercise["exerciseType"] == "distance_duration"
+                or (exercise["exerciseType"] == "duration" and "Cardio" in muscles)
+            )
+            if not selectable:
+                orphaned.append(exercise_id)
+        self.assertEqual([], sorted(orphaned))
 
     def test_coverage_has_not_been_truncated(self) -> None:
         self.assertGreaterEqual(len(self.overrides), MINIMUM_REVIEWED)
