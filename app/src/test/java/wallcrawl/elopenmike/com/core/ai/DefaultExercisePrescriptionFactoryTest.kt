@@ -15,7 +15,7 @@ class DefaultExercisePrescriptionFactoryTest {
 
     private val factory = DefaultExercisePrescriptionFactory()
     private val context = WorkoutGenerationContext(
-        userProfile = UserProfile(primaryGoal = FitnessGoal.GENERAL_FITNESS)
+        userProfile = UserProfile(goals = setOf(FitnessGoal.GENERAL_FITNESS))
     )
 
     @Test
@@ -90,7 +90,7 @@ class DefaultExercisePrescriptionFactoryTest {
     fun priorHistory_takesPrecedenceOverConfirmedBaseline_andHoldsWeightWithNoCompletedSets() {
         val benchPress = exercise(ExerciseType.WEIGHT_REPS).copy(id = "barbell-bench-press")
         val profile = UserProfile(
-            primaryGoal = FitnessGoal.GENERAL_FITNESS,
+            goals = setOf(FitnessGoal.GENERAL_FITNESS),
             preferredUnit = WeightUnit.KG,
             confirmedStartingLoads = mapOf("barbell-bench-press" to 40.0)
         )
@@ -116,7 +116,7 @@ class DefaultExercisePrescriptionFactoryTest {
     fun historyProgression_incrementsWeightByFivePoundsWhenTopOfRepRangeWasReached_inLbs() {
         val benchPress = exercise(ExerciseType.WEIGHT_REPS).copy(id = "barbell-bench-press")
         val profile = UserProfile(
-            primaryGoal = FitnessGoal.GENERAL_FITNESS,
+            goals = setOf(FitnessGoal.GENERAL_FITNESS),
             preferredUnit = WeightUnit.LBS
         )
         val historyContext = WorkoutGenerationContext(
@@ -135,7 +135,7 @@ class DefaultExercisePrescriptionFactoryTest {
     fun historyProgression_incrementsWeightByTwoPointFiveKilogramsWhenTopOfRepRangeWasReached_inKg() {
         val benchPress = exercise(ExerciseType.WEIGHT_REPS).copy(id = "barbell-bench-press")
         val profile = UserProfile(
-            primaryGoal = FitnessGoal.GENERAL_FITNESS,
+            goals = setOf(FitnessGoal.GENERAL_FITNESS),
             preferredUnit = WeightUnit.KG
         )
         val historyContext = WorkoutGenerationContext(
@@ -196,6 +196,112 @@ class DefaultExercisePrescriptionFactoryTest {
 
         assertThat(prescription.targetSets).isEqualTo(1)
         assertThat(prescription.targetDurationSeconds).isEqualTo(30)
+    }
+
+    @Test
+    fun create_hybridGoals_prescribesStrengthForCompoundsAndHypertrophyForAccessories() {
+        val compoundExercise = exercise(ExerciseType.WEIGHT_REPS).copy(
+            id = "barbell-bench-press",
+            programming = wallcrawl.elopenmike.com.core.model.ExerciseProgrammingMetadata(
+                requiredEquipmentCombinations = listOf(listOf(wallcrawl.elopenmike.com.core.model.StandardEquipment.BARBELL)),
+                movementPattern = wallcrawl.elopenmike.com.core.model.MovementPattern.HORIZONTAL_PUSH,
+                difficulty = wallcrawl.elopenmike.com.core.model.Difficulty.INTERMEDIATE,
+                mechanics = wallcrawl.elopenmike.com.core.model.MechanicsType.COMPOUND,
+                recommendedRepRange = wallcrawl.elopenmike.com.core.model.RepRange(4, 6),
+                fatigueScore = 8,
+                progressionType = wallcrawl.elopenmike.com.core.model.ProgressionType.LOAD,
+                coachingSummary = "Keep bar path controlled."
+            )
+        )
+        val isolationExercise = exercise(ExerciseType.WEIGHT_REPS).copy(
+            id = "dumbbell-fly",
+            programming = wallcrawl.elopenmike.com.core.model.ExerciseProgrammingMetadata(
+                requiredEquipmentCombinations = listOf(listOf(wallcrawl.elopenmike.com.core.model.StandardEquipment.DUMBBELL)),
+                movementPattern = wallcrawl.elopenmike.com.core.model.MovementPattern.HORIZONTAL_PUSH,
+                difficulty = wallcrawl.elopenmike.com.core.model.Difficulty.BEGINNER,
+                mechanics = wallcrawl.elopenmike.com.core.model.MechanicsType.ISOLATION,
+                recommendedRepRange = wallcrawl.elopenmike.com.core.model.RepRange(8, 12),
+                fatigueScore = 3,
+                progressionType = wallcrawl.elopenmike.com.core.model.ProgressionType.REPETITIONS_THEN_LOAD,
+                coachingSummary = "Control the stretch."
+            )
+        )
+        val hybridProfile = UserProfile(
+            goals = setOf(FitnessGoal.STRENGTH, FitnessGoal.BUILD_MUSCLE)
+        )
+        val hybridContext = WorkoutGenerationContext(userProfile = hybridProfile)
+
+        val compoundPrescription = factory.create(compoundExercise, hybridContext)
+        val isolationPrescription = factory.create(isolationExercise, hybridContext)
+
+        // Compound gets heavy Strength sets & rep range
+        assertThat(compoundPrescription.targetSets).isEqualTo(4)
+        assertThat(compoundPrescription.repRange?.min).isEqualTo(4)
+        assertThat(compoundPrescription.repRange?.max).isEqualTo(6)
+        assertThat(compoundPrescription.restSeconds).isEqualTo(120)
+
+        // Isolation gets Hypertrophy sets & rep range
+        assertThat(isolationPrescription.targetSets).isEqualTo(3)
+        assertThat(isolationPrescription.repRange?.min).isEqualTo(8)
+        assertThat(isolationPrescription.repRange?.max).isEqualTo(12)
+        assertThat(isolationPrescription.restSeconds).isEqualTo(90)
+    }
+
+    @Test
+    fun create_extendedBreakOverOneYear_capsSetsToTwoAndProtectsTendons() {
+        val compoundExercise = exercise(ExerciseType.WEIGHT_REPS).copy(
+            id = "barbell-bench-press",
+            programming = wallcrawl.elopenmike.com.core.model.ExerciseProgrammingMetadata(
+                requiredEquipmentCombinations = listOf(listOf(wallcrawl.elopenmike.com.core.model.StandardEquipment.BARBELL)),
+                movementPattern = wallcrawl.elopenmike.com.core.model.MovementPattern.HORIZONTAL_PUSH,
+                difficulty = wallcrawl.elopenmike.com.core.model.Difficulty.INTERMEDIATE,
+                mechanics = wallcrawl.elopenmike.com.core.model.MechanicsType.COMPOUND,
+                recommendedRepRange = wallcrawl.elopenmike.com.core.model.RepRange(4, 6),
+                fatigueScore = 8,
+                progressionType = wallcrawl.elopenmike.com.core.model.ProgressionType.LOAD,
+                coachingSummary = "Keep bar path controlled."
+            )
+        )
+        val multiYearBreakProfile = UserProfile(
+            goals = setOf(FitnessGoal.STRENGTH),
+            returningAfterBreakWeeks = 104 // 2 years off
+        )
+        val context = WorkoutGenerationContext(userProfile = multiYearBreakProfile)
+
+        val prescription = factory.create(compoundExercise, context)
+
+        // Strict 2 working sets to prevent severe DOMS and protect tendons
+        assertThat(prescription.targetSets).isEqualTo(2)
+        // Rep range uses introductory 6–8 reps rather than heavy 4–6 grinders
+        assertThat(prescription.repRange?.min).isEqualTo(6)
+        assertThat(prescription.repRange?.max).isEqualTo(8)
+    }
+
+    @Test
+    fun create_moderateBreak_scalesSetsConservatively() {
+        val compoundExercise = exercise(ExerciseType.WEIGHT_REPS).copy(
+            id = "barbell-bench-press",
+            programming = wallcrawl.elopenmike.com.core.model.ExerciseProgrammingMetadata(
+                requiredEquipmentCombinations = listOf(listOf(wallcrawl.elopenmike.com.core.model.StandardEquipment.BARBELL)),
+                movementPattern = wallcrawl.elopenmike.com.core.model.MovementPattern.HORIZONTAL_PUSH,
+                difficulty = wallcrawl.elopenmike.com.core.model.Difficulty.INTERMEDIATE,
+                mechanics = wallcrawl.elopenmike.com.core.model.MechanicsType.COMPOUND,
+                recommendedRepRange = wallcrawl.elopenmike.com.core.model.RepRange(4, 6),
+                fatigueScore = 8,
+                progressionType = wallcrawl.elopenmike.com.core.model.ProgressionType.LOAD,
+                coachingSummary = "Keep bar path controlled."
+            )
+        )
+        val moderateBreakProfile = UserProfile(
+            goals = setOf(FitnessGoal.STRENGTH),
+            returningAfterBreakWeeks = 12 // ~3 months off
+        )
+        val context = WorkoutGenerationContext(userProfile = moderateBreakProfile)
+
+        val prescription = factory.create(compoundExercise, context)
+
+        // Capped to 3 sets instead of full 4
+        assertThat(prescription.targetSets).isEqualTo(3)
     }
 
     private fun exercise(type: ExerciseType) = Exercise(

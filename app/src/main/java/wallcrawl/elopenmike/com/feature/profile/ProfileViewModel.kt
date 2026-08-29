@@ -48,6 +48,26 @@ class ProfileViewModel(
         initialValue = ProfileUiState.Loading
     )
 
+    fun toggleGoal(goal: FitnessGoal) {
+        viewModelScope.launch {
+            val current = userProfileRepository.getProfileOnce()
+            val currentGoals = current.goals
+            val updated = if (goal in currentGoals) {
+                if (currentGoals.size > 1) currentGoals - goal else currentGoals
+            } else {
+                currentGoals + goal
+            }
+            userProfileRepository.updateGoals(updated)
+        }
+    }
+
+    fun updateGoals(goals: Set<FitnessGoal>) {
+        if (goals.isEmpty()) return
+        viewModelScope.launch {
+            userProfileRepository.updateGoals(goals)
+        }
+    }
+
     fun updateGoal(goal: FitnessGoal) {
         viewModelScope.launch {
             userProfileRepository.updatePrimaryGoal(goal)

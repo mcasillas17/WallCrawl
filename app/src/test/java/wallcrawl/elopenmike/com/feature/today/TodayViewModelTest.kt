@@ -297,8 +297,11 @@ private class TodayUserProfileRepository(
 
     override suspend fun saveProfile(profile: UserProfile) = saveUserProfile(profile)
 
+    override suspend fun updateGoals(goals: Set<FitnessGoal>) =
+        updateProfile { it.copy(goals = goals) }
+
     override suspend fun updatePrimaryGoal(goal: FitnessGoal) =
-        updateProfile { it.copy(primaryGoal = goal) }
+        updateGoals(setOf(goal))
 
     override suspend fun updateExperienceLevel(level: ExperienceLevel) =
         updateProfile { it.copy(experienceLevel = level) }

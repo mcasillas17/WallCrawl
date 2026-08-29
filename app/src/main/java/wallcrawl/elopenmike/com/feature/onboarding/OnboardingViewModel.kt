@@ -30,8 +30,24 @@ class OnboardingViewModel(
         mutableState.value = mutableState.value.copy(name = name.take(NAME_MAX_LENGTH), error = null)
     }
 
+    fun toggleGoal(goal: FitnessGoal) {
+        val current = mutableState.value.goals
+        val updated = if (goal in current) {
+            if (current.size > 1) current - goal else current
+        } else {
+            current + goal
+        }
+        mutableState.value = mutableState.value.copy(goals = updated, error = null)
+    }
+
+    fun updateGoals(goals: Set<FitnessGoal>) {
+        if (goals.isNotEmpty()) {
+            mutableState.value = mutableState.value.copy(goals = goals, error = null)
+        }
+    }
+
     fun updateGoal(goal: FitnessGoal) {
-        mutableState.value = mutableState.value.copy(goal = goal, error = null)
+        updateGoals(setOf(goal))
     }
 
     fun updateExperience(experience: ExperienceLevel) {
@@ -66,6 +82,52 @@ class OnboardingViewModel(
         mutableState.value = mutableState.value.copy(returningAfterBreakWeeks = weeks, error = null)
     }
 
+    fun selectAllEquipment() {
+        mutableState.value = mutableState.value.copy(
+            equipment = mutableState.value.equipmentOptions.toSet(),
+            error = null
+        )
+    }
+
+    fun resetEquipmentToBodyweight() {
+        mutableState.value = mutableState.value.copy(
+            equipment = setOf(wallcrawl.elopenmike.com.core.model.StandardEquipment.BODYWEIGHT),
+            error = null
+        )
+    }
+
+    fun clearConstraints() {
+        mutableState.value = mutableState.value.copy(constraints = emptySet(), error = null)
+    }
+
+    fun nextStep() {
+        val current = mutableState.value.currentStep
+        val nextOrdinal = current.ordinal + 1
+        if (nextOrdinal < OnboardingStep.entries.size) {
+            mutableState.value = mutableState.value.copy(
+                currentStep = OnboardingStep.entries[nextOrdinal],
+                error = null
+            )
+        } else {
+            complete()
+        }
+    }
+
+    fun previousStep() {
+        val current = mutableState.value.currentStep
+        val prevOrdinal = current.ordinal - 1
+        if (prevOrdinal >= 0) {
+            mutableState.value = mutableState.value.copy(
+                currentStep = OnboardingStep.entries[prevOrdinal],
+                error = null
+            )
+        }
+    }
+
+    fun goToStep(step: OnboardingStep) {
+        mutableState.value = mutableState.value.copy(currentStep = step, error = null)
+    }
+
     /**
      * Finishes onboarding with the given inputs (defaulting to whatever is already in
      * [uiState]) and persists them as one atomic profile save. Confirmed starting loads
@@ -73,7 +135,7 @@ class OnboardingViewModel(
      */
     fun complete(
         name: String = mutableState.value.name,
-        goal: FitnessGoal = mutableState.value.goal,
+        goals: Set<FitnessGoal> = mutableState.value.goals,
         experience: ExperienceLevel = mutableState.value.experience,
         daysPerWeek: Int = mutableState.value.daysPerWeek,
         durationMinutes: Int = mutableState.value.durationMinutes,
@@ -84,7 +146,7 @@ class OnboardingViewModel(
     ) {
         mutableState.value = mutableState.value.copy(
             name = name,
-            goal = goal,
+            goals = goals,
             experience = experience,
             daysPerWeek = daysPerWeek,
             durationMinutes = durationMinutes,
@@ -100,7 +162,7 @@ class OnboardingViewModel(
                 val current = userProfileRepository.getProfileOnce()
                 val profile = current.copy(
                     name = name,
-                    primaryGoal = goal,
+                    goals = goals,
                     experienceLevel = experience,
                     daysPerWeek = daysPerWeek,
                     preferredDurationMinutes = durationMinutes,

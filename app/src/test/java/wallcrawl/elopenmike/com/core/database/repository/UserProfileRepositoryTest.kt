@@ -43,6 +43,15 @@ class UserProfileRepositoryTest {
         repository.updatePrimaryGoal(FitnessGoal.STRENGTH)
         val profile = repository.getUserProfile().first()
         assertThat(profile.primaryGoal).isEqualTo(FitnessGoal.STRENGTH)
+        assertThat(profile.goals).containsExactly(FitnessGoal.STRENGTH)
+    }
+
+    @Test
+    fun updateGoals_persistsMultipleGoals() = runTest {
+        val goals = setOf(FitnessGoal.STRENGTH, FitnessGoal.BUILD_MUSCLE, FitnessGoal.ATHLETIC_PERFORMANCE)
+        repository.updateGoals(goals)
+        val profile = repository.getUserProfile().first()
+        assertThat(profile.goals).containsExactlyElementsIn(goals)
     }
 
     @Test
@@ -87,7 +96,7 @@ class UserProfileRepositoryTest {
     fun saveProfile_persistsOnboardingInputsInASingleRevisionUpdate() = runTest {
         val onboarded = UserProfile(
             name = "Alex",
-            primaryGoal = FitnessGoal.STRENGTH,
+            goals = setOf(FitnessGoal.STRENGTH),
             experienceLevel = ExperienceLevel.BEGINNER,
             daysPerWeek = 3,
             preferredDurationMinutes = 45,
@@ -129,6 +138,13 @@ class UserProfileRepositoryTest {
     fun saveProfile_rejectsReturningAfterBreakWeeksOutsideSupportedRange() {
         assertThrows(IllegalArgumentException::class.java) {
             runTest { repository.saveProfile(UserProfile(returningAfterBreakWeeks = 521)) }
+        }
+    }
+
+    @Test
+    fun saveProfile_rejectsEmptyGoals() {
+        assertThrows(IllegalArgumentException::class.java) {
+            runTest { repository.saveProfile(UserProfile(goals = emptySet())) }
         }
     }
 
@@ -176,6 +192,25 @@ class UserProfileRepositoryTest {
         val profile = repository.getUserProfile().first()
 
         assertThat(profile.trainingConstraints).containsExactly(TrainingConstraint.SHOULDER_SENSITIVE)
+    }
+
+    @Test
+    fun getProfile_decodesFitnessGoalsJson_andFallsBackToPrimaryGoal() = runTest {
+        // Test decoding encoded multiple goals
+        fakeDao.seed(
+            musclePrioritiesJson = "",
+            fitnessGoalsJson = "STRENGTH|||ATHLETIC_PERFORMANCE"
+        )
+        val profileWithGoals = repository.getUserProfile().first()
+        assertThat(profileWithGoals.goals).containsExactly(FitnessGoal.STRENGTH, FitnessGoal.ATHLETIC_PERFORMANCE)
+
+        // Test fallback when fitnessGoalsJson is blank (legacy row)
+        fakeDao.seed(
+            musclePrioritiesJson = "",
+            fitnessGoalsJson = ""
+        )
+        val profileLegacy = repository.getUserProfile().first()
+        assertThat(profileLegacy.goals).containsExactly(FitnessGoal.BUILD_MUSCLE)
     }
 
     @Test
@@ -237,7 +272,8 @@ class FakeUserProfileDao : UserProfileDao {
     fun seed(
         musclePrioritiesJson: String,
         trainingConstraintsJson: String = "",
-        confirmedStartingLoadsJson: String = ""
+        confirmedStartingLoadsJson: String = "",
+        fitnessGoalsJson: String = ""
     ) {
         profileState.value = UserProfileEntity(
             id = UserProfile.DEFAULT_PROFILE_ID,
@@ -251,7 +287,8 @@ class FakeUserProfileDao : UserProfileDao {
             musclePrioritiesJson = musclePrioritiesJson,
             excludedExerciseIdsJson = "",
             trainingConstraintsJson = trainingConstraintsJson,
-            confirmedStartingLoadsJson = confirmedStartingLoadsJson
+            confirmedStartingLoadsJson = confirmedStartingLoadsJson,
+            fitnessGoalsJson = fitnessGoalsJson
         )
     }
 

@@ -29,7 +29,7 @@ import wallcrawl.elopenmike.com.core.database.entity.WorkoutTemplateExerciseEnti
         WorkoutTemplateEntity::class,
         WorkoutTemplateExerciseEntity::class
     ],
-    version = 5,
+    version = 6,
     exportSchema = false
 )
 @TypeConverters(RoomTypeConverters::class)
@@ -54,7 +54,7 @@ abstract class WallCrawlDatabase : RoomDatabase() {
                     WallCrawlDatabase::class.java,
                     DATABASE_NAME
                 )
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
                     .build()
                     .also { INSTANCE = it }
             }
@@ -253,6 +253,16 @@ abstract class WallCrawlDatabase : RoomDatabase() {
                 // A profile from before onboarding existed was never reviewed against the
                 // new safety-relevant fields, so it must not be grandfathered in as onboarded.
                 db.execSQL("UPDATE user_profiles SET onboardingCompleted = 0")
+            }
+        }
+
+        val MIGRATION_5_6 = object : Migration(5, 6) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "ALTER TABLE user_profiles " +
+                        "ADD COLUMN fitnessGoalsJson TEXT NOT NULL DEFAULT ''"
+                )
+                db.execSQL("UPDATE user_profiles SET fitnessGoalsJson = primaryGoal WHERE fitnessGoalsJson = ''")
             }
         }
     }

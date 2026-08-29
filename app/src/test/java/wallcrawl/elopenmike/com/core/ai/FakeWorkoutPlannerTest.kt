@@ -34,7 +34,7 @@ class FakeWorkoutPlannerTest {
         }
 
         val context = WorkoutGenerationContext(
-            userProfile = UserProfile(primaryGoal = FitnessGoal.BUILD_MUSCLE),
+            userProfile = UserProfile(goals = setOf(FitnessGoal.BUILD_MUSCLE)),
             allowedExercises = allowedSubset
         )
 
@@ -49,7 +49,7 @@ class FakeWorkoutPlannerTest {
     fun generateWorkout_withChestPriority_generatesPushRoutine() = runTest {
         val context = WorkoutGenerationContext(
             userProfile = UserProfile(
-                primaryGoal = FitnessGoal.BUILD_MUSCLE,
+                goals = setOf(FitnessGoal.BUILD_MUSCLE),
                 musclePriorities = mapOf(
                     StandardMuscles.CHEST to PriorityLevel.HIGH,
                     StandardMuscles.SHOULDERS to PriorityLevel.HIGH
@@ -321,7 +321,7 @@ class FakeWorkoutPlannerTest {
             )
         }
         val context = WorkoutGenerationContext(
-            userProfile = UserProfile(primaryGoal = FitnessGoal.BUILD_MUSCLE),
+            userProfile = UserProfile(goals = setOf(FitnessGoal.BUILD_MUSCLE)),
             exerciseHistory = mapOf(
                 inclinePress.id to ExercisePerformanceHistory(
                     exerciseId = inclinePress.id,
@@ -351,6 +351,43 @@ class FakeWorkoutPlannerTest {
 
         assertThat(workout.exercises.single().exerciseId).isEqualTo(unreviewed.id)
         assertThat(workout.exercises.single().prescription.exerciseType).isEqualTo(unreviewed.type)
+    }
+
+    @Test
+    fun generateWorkout_withMultipleGoals_generatesHybridTitleAndRationale() = runTest {
+        val hybridProfile = UserProfile(
+            goals = setOf(FitnessGoal.STRENGTH, FitnessGoal.BUILD_MUSCLE),
+            musclePriorities = mapOf(StandardMuscles.CHEST to PriorityLevel.HIGH)
+        )
+        val context = WorkoutGenerationContext(
+            userProfile = hybridProfile,
+            allowedExercises = allExercises
+        )
+
+        val workout = planner.generateWorkout(context)
+
+        assertThat(workout.name).contains("Power & Hypertrophy")
+        assertThat(workout.rationale).contains("Strength + Build Muscle")
+    }
+
+    @Test
+    fun generateWorkout_withMultiYearBreak_generatesReentryTitleAndProtectiveRationale() = runTest {
+        val reEntryProfile = UserProfile(
+            goals = setOf(FitnessGoal.BUILD_MUSCLE),
+            returningAfterBreakWeeks = 104, // 2 years off
+            musclePriorities = mapOf(StandardMuscles.CHEST to PriorityLevel.HIGH)
+        )
+        val context = WorkoutGenerationContext(
+            userProfile = reEntryProfile,
+            allowedExercises = allExercises
+        )
+
+        val workout = planner.generateWorkout(context)
+
+        assertThat(workout.name).contains("(Re-entry)")
+        assertThat(workout.rationale).contains("Re-entry Ramp-Up Active")
+        assertThat(workout.rationale).contains("Volume is capped at 2 sets")
+        assertThat(workout.rationale).contains("1–2 Years")
     }
 
     private companion object {

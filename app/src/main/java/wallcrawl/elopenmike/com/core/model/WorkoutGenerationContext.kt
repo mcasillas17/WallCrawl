@@ -9,7 +9,8 @@ package wallcrawl.elopenmike.com.core.model
  */
 data class WorkoutGenerationContext(
     val userProfile: UserProfile,
-    val fitnessGoal: FitnessGoal = userProfile.primaryGoal,
+    val fitnessGoals: Set<FitnessGoal> = userProfile.goals,
+    val fitnessGoal: FitnessGoal = fitnessGoals.firstOrNull() ?: userProfile.primaryGoal,
     val experienceLevel: ExperienceLevel = userProfile.experienceLevel,
     val availableEquipment: List<String> = userProfile.availableEquipment,
     val preferredWorkoutDurationMinutes: Int = userProfile.preferredDurationMinutes,

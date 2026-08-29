@@ -247,10 +247,10 @@ no separate write path that copies a logged value back into
 
 ## Room persistence and invariants
 
-`WallCrawlDatabase` is currently schema version 5. Its tables store:
+`WallCrawlDatabase` is currently schema version 6. Its tables store:
 
-- the user profile, including onboarding status, training constraints,
-  return-after-break weeks, and confirmed starting loads;
+- the user profile, including onboarding status, multi-select fitness goals,
+  training constraints, return-after-break weeks, and confirmed starting loads;
 - reusable workout templates and their ordered exercises;
 - workout sessions and their ordered exercise snapshots;
 - target and completed values for every set.
@@ -262,8 +262,10 @@ target/outcome columns while converting older repetition-based history to
 and `confirmedStartingLoadsJson` with conservative defaults, and explicitly
 sets `onboardingCompleted = 0` for every existing row — a profile created
 before onboarding existed was never reviewed against these safety-relevant
-fields, so it must not be grandfathered in as already onboarded. Destructive
-migration fallback is disabled.
+fields, so it must not be grandfathered in as already onboarded. Migration
+`5 → 6` adds `fitnessGoalsJson` supporting multiple concurrent fitness goals
+(e.g., hybrid hypertrophy and strength), initializing existing rows from
+`primaryGoal`. Destructive migration fallback is disabled.
 
 The persistence layer enforces several important invariants:
 

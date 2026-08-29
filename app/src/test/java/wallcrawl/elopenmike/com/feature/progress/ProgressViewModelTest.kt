@@ -74,6 +74,7 @@ private class FixedUserProfileRepository : UserProfileRepository {
     override suspend fun getProfileOnce(): UserProfile = profile
     override suspend fun saveUserProfile(profile: UserProfile) = error("Not used")
     override suspend fun saveProfile(profile: UserProfile) = error("Not used")
+    override suspend fun updateGoals(goals: Set<FitnessGoal>) = error("Not used")
     override suspend fun updatePrimaryGoal(goal: FitnessGoal) = error("Not used")
     override suspend fun updateExperienceLevel(level: ExperienceLevel) = error("Not used")
     override suspend fun updatePreferredDuration(minutes: Int) = error("Not used")
