@@ -48,4 +48,13 @@
     <string name="capability_level_limited">Limited</string>
     <string name="capability_level_avoid">Avoid</string>
     <string name="capability_level_unknown">Not sure</string>
+
+    <string name="profile_capability_title">MOVEMENT PREFERENCES</string>
+    <string name="profile_capability_description">These settings prepare future personalized exercise selection. They do not change current recommendations yet.</string>
+    <string name="profile_capability_edit">Edit movement preferences</string>
+    <string name="profile_capability_save">Save preferences</string>
+    <string name="profile_capability_saving">Saving preferences…</string>
+    <string name="profile_capability_cancel">Cancel</string>
+    <string name="profile_capability_invalid_error">Review the movement preferences and try again.</string>
+    <string name="profile_capability_save_error">Couldn\'t save movement preferences. Try again.</string>
 </resources>
