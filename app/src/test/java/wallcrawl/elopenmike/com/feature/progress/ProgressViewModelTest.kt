@@ -23,6 +23,7 @@ import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutSummary
+import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
 import wallcrawl.elopenmike.com.core.progress.ProgressCalculator
 import wallcrawl.elopenmike.com.test.MainDispatcherRule
 
@@ -111,9 +112,7 @@ private class EmptyWorkoutRepository : WorkoutRepository {
 
     override suspend fun logSetCompletion(
         setId: String,
-        reps: Int?,
-        weight: Double?,
-        isCompleted: Boolean
+        performance: SetPerformanceInput
     ) = error("Not used")
 
     override suspend fun completeWorkout(

@@ -18,6 +18,8 @@ import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
 import wallcrawl.elopenmike.com.core.model.SessionStatus
+import wallcrawl.elopenmike.com.core.model.SetOutcomeRules
+import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
@@ -248,6 +250,7 @@ private class ActiveWorkoutRepository(initialSession: WorkoutSession) : WorkoutR
         private set
     var lastPersistedReps: Int? = null
         private set
+    val persistedInputs = mutableListOf<SetPerformanceInput>()
 
     override fun observeActiveSession(): Flow<WorkoutSession?> = session
     override suspend fun getActiveSessionOnce(): WorkoutSession? = session.value
@@ -271,21 +274,21 @@ private class ActiveWorkoutRepository(initialSession: WorkoutSession) : WorkoutR
         userProfile: wallcrawl.elopenmike.com.core.model.UserProfile
     ): WorkoutSession = error("Not used")
 
-    override suspend fun logSetCompletion(
-        setId: String,
-        reps: Int?,
-        weight: Double?,
-        isCompleted: Boolean
-    ) {
+    override suspend fun logSetCompletion(setId: String, performance: SetPerformanceInput) {
         if (failSetUpdates) error("Session is already complete")
-        // Mirrors OfflineWorkoutRepository's real invariant: a completed weight-and-reps
-        // set must carry a positive load and positive reps, so this fake reproduces the
-        // same rejection a production repository would raise.
-        require(!isCompleted || ((reps ?: 0) > 0 && (weight ?: 0.0) > 0.0)) {
+        // Mirrors OfflineWorkoutRepository's real guards so this fake rejects exactly what
+        // production rejects: the typed outcome invariants plus the completed
+        // weight-and-reps requirement of a positive load and positive reps.
+        SetOutcomeRules.requireValidOutcome(performance)
+        require(
+            !performance.isCompleted ||
+                ((performance.reps ?: 0) > 0 && (performance.weight ?: 0.0) > 0.0)
+        ) {
             "A completed weight and repetition set must have a positive load."
         }
-        lastPersistedWeight = weight
-        lastPersistedReps = reps
+        persistedInputs += performance
+        lastPersistedWeight = performance.weight
+        lastPersistedReps = performance.reps
     }
 
     override suspend fun completeWorkout(

@@ -13,6 +13,7 @@ import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
 import wallcrawl.elopenmike.com.core.model.SessionStatus
+import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
 import wallcrawl.elopenmike.com.core.model.UserProfile
@@ -207,9 +208,7 @@ private class StubWorkoutRepository(
 
     override suspend fun logSetCompletion(
         setId: String,
-        reps: Int?,
-        weight: Double?,
-        isCompleted: Boolean
+        performance: SetPerformanceInput
     ) = Unit
 
     override suspend fun completeWorkout(

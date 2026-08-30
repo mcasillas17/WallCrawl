@@ -24,7 +24,10 @@ class ActiveWorkoutViewModel(
     private val sessionId: String,
     private val workoutRepository: WorkoutRepository,
     private val exerciseCatalog: ExerciseCatalog,
-    private val workoutHistoryAnalyzer: WorkoutHistoryAnalyzer
+    private val workoutHistoryAnalyzer: WorkoutHistoryAnalyzer,
+    // Wall-clock stamp for persisted set outcomes, injected so tests are deterministic.
+    // The rest timer never uses this clock; it has its own monotonic one.
+    private val nowMillis: () -> Long = System::currentTimeMillis
 ) : ViewModel() {
 
     private val currentExerciseIndexFlow = MutableStateFlow(0)
@@ -141,7 +144,12 @@ class ActiveWorkoutViewModel(
     fun updateSet(setId: String, reps: Int?, weight: Double?, isCompleted: Boolean) {
         updateSet(
             setId,
-            SetPerformanceInput(reps = reps, weight = weight, isCompleted = isCompleted)
+            SetPerformanceInput(
+                reps = reps,
+                weight = weight,
+                completedAtTimestamp = if (isCompleted) nowMillis() else null,
+                isCompleted = isCompleted
+            )
         )
     }
 

@@ -16,6 +16,7 @@ import wallcrawl.elopenmike.com.core.database.entity.WorkoutTemplateExerciseEnti
 import wallcrawl.elopenmike.com.core.database.relation.WorkoutSessionWithExercisesAndSets
 import wallcrawl.elopenmike.com.core.database.relation.WorkoutTemplateWithExercises
 import wallcrawl.elopenmike.com.core.model.SessionStatus
+import wallcrawl.elopenmike.com.core.model.SetStopReason
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -170,6 +171,16 @@ interface WorkoutSetDao {
     @Query("SELECT * FROM workout_sets WHERE id = :setId LIMIT 1")
     suspend fun getSetById(setId: String): WorkoutSetEntity?
 
+    /**
+     * Writes one set's complete typed outcome in a single guarded statement.
+     *
+     * Every performance, feedback, timestamp, and stop-reason column is written together,
+     * so no partial write can leave a row claiming completion without its timestamp, or
+     * keep completion-only feedback after completion was cleared. The EXISTS clause keeps
+     * the pre-existing rule that only a set belonging to an in-progress session can
+     * change, which is what makes completed history immutable. All values are bound
+     * parameters; nothing is ever interpolated into the statement.
+     */
     @Query(
         """
         UPDATE workout_sets
@@ -178,6 +189,12 @@ interface WorkoutSetDao {
             completedAssistanceWeight = :assistanceWeight,
             completedDurationSeconds = :durationSeconds,
             completedDistanceMeters = :distanceMeters,
+            rpe = :rpe,
+            rir = :rir,
+            feltManageable = :feltManageable,
+            completedAtTimestamp = :completedAtTimestamp,
+            stoppedAtTimestamp = :stoppedAtTimestamp,
+            stopReason = :stopReason,
             isCompleted = :isCompleted
         WHERE id = :setId
           AND EXISTS (
@@ -190,33 +207,22 @@ interface WorkoutSetDao {
           )
         """
     )
-    suspend fun updateSetCompletion(
+    suspend fun updateSetOutcome(
         setId: String,
         reps: Int?,
         weight: Double?,
         assistanceWeight: Double?,
         durationSeconds: Int?,
         distanceMeters: Double?,
+        rpe: Float?,
+        rir: Int?,
+        feltManageable: Boolean?,
+        completedAtTimestamp: Long?,
+        stoppedAtTimestamp: Long?,
+        stopReason: SetStopReason?,
         isCompleted: Boolean,
         requiredStatus: SessionStatus = SessionStatus.IN_PROGRESS
     ): Int
-
-    suspend fun updateSetCompletion(
-        setId: String,
-        reps: Int?,
-        weight: Double?,
-        isCompleted: Boolean,
-        requiredStatus: SessionStatus = SessionStatus.IN_PROGRESS
-    ): Int = updateSetCompletion(
-        setId = setId,
-        reps = reps,
-        weight = weight,
-        assistanceWeight = null,
-        durationSeconds = null,
-        distanceMeters = null,
-        isCompleted = isCompleted,
-        requiredStatus = requiredStatus
-    )
 
     @Query("SELECT * FROM workout_sets WHERE workoutExerciseId = :workoutExerciseId ORDER BY setNumber ASC")
     suspend fun getSetsForExercise(workoutExerciseId: String): List<WorkoutSetEntity>

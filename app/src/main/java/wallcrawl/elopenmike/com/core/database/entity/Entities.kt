@@ -10,6 +10,7 @@ import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
 import wallcrawl.elopenmike.com.core.model.SessionStatus
+import wallcrawl.elopenmike.com.core.model.SetStopReason
 import wallcrawl.elopenmike.com.core.model.SetType
 import wallcrawl.elopenmike.com.core.model.ThemePreference
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
@@ -129,6 +130,14 @@ data class WorkoutSetEntity(
     val isCompleted: Boolean,
     val rpe: Float?,
     val rir: Int?,
+    // Typed set outcome, added by migration 8 -> 9. Every column is nullable with no SQL
+    // default, exactly like the columns the migration adds: history written before typed
+    // outcomes existed keeps an honestly unknown outcome rather than a fabricated
+    // timestamp or an assumed answer.
+    val feltManageable: Boolean? = null,
+    val completedAtTimestamp: Long? = null,
+    val stoppedAtTimestamp: Long? = null,
+    val stopReason: SetStopReason? = null,
     val type: SetType
 )
 
