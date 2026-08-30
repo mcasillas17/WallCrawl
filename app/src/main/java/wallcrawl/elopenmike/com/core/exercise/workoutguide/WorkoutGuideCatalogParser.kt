@@ -91,7 +91,8 @@ class WorkoutGuideCatalogParser {
                 entry.programming?.alternativeExerciseIds.orEmpty().forEach { alternativeId ->
                     if (alternativeId !in knownExerciseIds) {
                         malformed(
-                            "Exercise ${entry.id} references unknown alternative: $alternativeId"
+                            "Exercise ${entry.id} programming.alternativeExerciseIds " +
+                                "references an unknown exercise."
                         )
                     }
                 }
@@ -220,11 +221,9 @@ class WorkoutGuideCatalogParser {
                 "isStretch" -> isStretch = nextBoolean()
                 "programming" -> programming = readProgramming()
                 "reviewedMetadata" -> reviewedMetadata = readReviewedMetadata(
-                    if (id == null) {
-                        "exercise[$position].reviewedMetadata"
-                    } else {
-                        "Exercise $id reviewedMetadata"
-                    }
+                    id?.takeIf(SAFE_IDENTIFIER::matches)?.let { safeId ->
+                        "Exercise $safeId reviewedMetadata"
+                    } ?: "exercise[$position].reviewedMetadata"
                 )
                 else -> skipBoundedValue("exercise[$position].${safeField(field)}")
             }
@@ -249,7 +248,7 @@ class WorkoutGuideCatalogParser {
         // split matching — which reads both lists — still sees every group involved.
         val canonicalPrimary = primary.mapNotNull(MuscleVocabulary::canonicalizePrimary).distinct()
         if (canonicalPrimary.isEmpty()) {
-            malformed("Exercise $exerciseId has no recognizable primary muscle: $primary")
+            malformed("Exercise $exerciseId has no recognizable primary muscle.")
         }
         val declaredSecondary = secondaryMuscles
             ?: malformed("Exercise $exerciseId is missing secondaryMuscles.")
@@ -1074,7 +1073,7 @@ class WorkoutGuideCatalogParser {
     }
 
     private fun requireSafeIdentifier(value: String, label: String) {
-        if (!SAFE_IDENTIFIER.matches(value)) malformed("$label is not a safe identifier: $value")
+        if (!SAFE_IDENTIFIER.matches(value)) malformed("$label is not a safe identifier.")
     }
 
     private fun CatalogSource?.requireValid(): ValidatedCatalogSource {
@@ -1126,7 +1125,7 @@ class WorkoutGuideCatalogParser {
         "assisted_bodyweight" -> ExerciseType.ASSISTED_BODYWEIGHT
         "duration" -> ExerciseType.DURATION
         "distance_duration" -> ExerciseType.DISTANCE_DURATION
-        else -> malformed("Unknown exerciseType: $value")
+        else -> malformed("exercise.exerciseType contains an unknown enum value.")
     }
 
     private fun readMovementPattern(value: String): MovementPattern = readEnum("movementPattern", value)
@@ -1137,7 +1136,7 @@ class WorkoutGuideCatalogParser {
     private inline fun <reified T : Enum<T>> readEnum(label: String, value: String): T =
         enumValues<T>().firstOrNull { enumValue ->
             enumValue.name.lowercase(Locale.ROOT) == value
-        } ?: malformed("Unknown programming $label: $value")
+        } ?: malformed("programming $label contains an unknown enum value.")
 
     private data class CatalogSource(
         val repository: String?,

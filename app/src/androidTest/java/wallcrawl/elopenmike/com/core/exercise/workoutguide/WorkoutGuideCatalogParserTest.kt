@@ -338,6 +338,36 @@ class WorkoutGuideCatalogParserTest {
     }
 
     @Test
+    fun parse_validationErrorsDoNotRevealUntrustedCatalogValues() {
+        val marker = "INJECTED-CATALOG-VALUE"
+        val unknownReviewedField = reviewedMetadataJson().replace(
+            "\"reviewState\": \"draft\"",
+            "\"reviewState\": \"draft\", \"unknown\": true"
+        )
+        val invalidProgrammingEnum = programmingJson().replace(
+            "\"movementPattern\": \"core\"",
+            "\"movementPattern\": \"bad\\n$marker\""
+        )
+        val invalidAlternative = programmingJson().replace(
+            "\"alternativeExerciseIds\": []",
+            "\"alternativeExerciseIds\": [\"bad\\n$marker\"]"
+        )
+        val cases = listOf(
+            catalogJson(exerciseJson(id = "bad\\n$marker")) to "exercise.id",
+            catalogJson(exerciseJson(exerciseType = "bad\\n$marker")) to "exerciseType",
+            catalogJson(
+                exerciseJson(reviewedMetadata = unknownReviewedField, id = "bad\\n$marker")
+            ) to "exercise[0].reviewedMetadata",
+            catalogJson(exerciseJson(programming = invalidProgrammingEnum)) to
+                "programming movementPattern",
+            catalogJson(exerciseJson(programming = invalidAlternative)) to
+                "alternativeExerciseId"
+        )
+
+        cases.forEach { (json, field) -> assertFormatFailureRedacts(json, field, marker) }
+    }
+
+    @Test
     fun parse_rejectsInvalidReviewedRegressionGraphs() {
         val sourceToTarget = reviewedMetadataJson().replace(
             "\"approvedRegressions\": []",
@@ -416,9 +446,24 @@ class WorkoutGuideCatalogParserTest {
     private fun assertFormatFailure(json: String, messageFragment: String) {
         try {
             parser.parse(StringReader(json))
-            throw AssertionError("Expected catalog format failure")
+            throw AssertionError("Expected catalog format failure for $messageFragment")
         } catch (error: WorkoutGuideCatalogFormatException) {
             assertThat(error.message).contains(messageFragment)
+        }
+    }
+
+    private fun assertFormatFailureRedacts(
+        json: String,
+        messageFragment: String,
+        untrustedFragment: String
+    ) {
+        try {
+            parser.parse(StringReader(json))
+            throw AssertionError("Expected catalog format failure for $messageFragment")
+        } catch (error: WorkoutGuideCatalogFormatException) {
+            assertThat(error.message).contains(messageFragment)
+            assertThat(error.message).doesNotContain(untrustedFragment)
+            assertThat(error.message).doesNotContain("\n")
         }
     }
 

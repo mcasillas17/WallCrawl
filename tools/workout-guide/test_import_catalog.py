@@ -674,6 +674,33 @@ class ImportCatalogTest(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("exceeds 256 characters", result.stderr.lower())
 
+    def test_validation_errors_redact_untrusted_ids_and_enums(self) -> None:
+        marker = "INJECTED-CATALOG-VALUE"
+        overrides = json.loads(self.overrides.read_text())
+        overrides["exercises"]["barbell-bench-press"]["movementPattern"] = (
+            f"bad\n{marker}"
+        )
+        self.overrides.write_text(json.dumps(overrides, indent=2) + "\n")
+
+        enum_result = self._run_import()
+
+        self.assertNotEqual(enum_result.returncode, 0)
+        self.assertIn("movement pattern", enum_result.stderr.lower())
+        self.assertNotIn(marker, enum_result.stderr)
+
+        self._write_overrides()
+        manifest = json.loads(self._manifest_path().read_text())
+        manifest[0]["id"] = f"bad\n{marker}"
+        self._manifest_path().write_text(json.dumps(manifest, indent=2) + "\n")
+        self._commit_fixture_change("unsafe source id")
+        self._write_config(source_commit=self._head_commit())
+
+        identifier_result = self._run_import()
+
+        self.assertNotEqual(identifier_result.returncode, 0)
+        self.assertIn("exercise[0].id", identifier_result.stderr)
+        self.assertNotIn(marker, identifier_result.stderr)
+
     def _write_source_fixture(self) -> None:
         attribution = {
             "creator": "Bryl Lim",

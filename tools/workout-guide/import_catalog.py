@@ -151,7 +151,7 @@ def import_catalog(
         raise CatalogImportError(f"Upstream manifest exceeds {MAX_EXERCISES} exercises")
 
     for license_relative in license_relatives:
-        _source_file(source_root, license_relative, f"license file {license_relative.as_posix()}")
+        _source_file(source_root, license_relative, "license file")
 
     programming_by_id = _required_object(overrides, "exercises", "programming overrides")
     normalized_exercises: list[dict[str, Any]] = []
@@ -199,7 +199,7 @@ def import_catalog(
         name = _required_string(exercise, "name", source_id)
         exercise_type = _required_string(exercise, "exerciseType", source_id)
         if exercise_type not in SUPPORTED_EXERCISE_TYPES:
-            raise CatalogImportError(f"Unsupported exercise type for {source_id}: {exercise_type}")
+            raise CatalogImportError(f"Unsupported exercise type for {source_id}")
         equipment = _required_string(exercise, "equipment", source_id)
         primary_muscle = _required_string(exercise, "primaryMuscle", source_id)
         secondary_muscles = _required_string_list(exercise, "secondaryMuscles", source_id, maximum=50)
@@ -234,7 +234,7 @@ def import_catalog(
             expected_frame_relative = PurePosixPath("assets") / source_slug / f"frame-{index}.svg"
             if frame_relative != expected_frame_relative:
                 raise CatalogImportError(
-                    f"Unsafe or unexpected frame path for {source_id}: {frame_relative.as_posix()}"
+                    f"Unsafe or unexpected frame path for {source_id}"
                 )
             source_frame = _source_file(
                 source_root / Path(asset_base_relative.as_posix()),
@@ -285,11 +285,11 @@ def import_catalog(
 
     unknown_aliases = sorted(set(aliases) - used_alias_sources)
     if unknown_aliases:
-        raise CatalogImportError(f"ID aliases reference unknown source exercises: {', '.join(unknown_aliases)}")
+        raise CatalogImportError("ID aliases reference unknown source exercises")
     unknown_programming = sorted(set(programming_by_id) - wallcrawl_ids)
     if unknown_programming:
         raise CatalogImportError(
-            f"Programming override references unknown WalCrawl exercise ID: {unknown_programming[0]}"
+            "Programming override references an unknown WallCrawl exercise ID"
         )
     for exercise in normalized_exercises:
         programming = exercise.get("programming")
@@ -298,7 +298,7 @@ def import_catalog(
         for alternative_id in programming["alternativeExerciseIds"]:
             if alternative_id not in wallcrawl_ids:
                 raise CatalogImportError(
-                    f"Programming alternative for {exercise['id']} references unknown ID: {alternative_id}"
+                    f"Programming alternative for {exercise['id']} references an unknown ID"
                 )
             if alternative_id == exercise["id"]:
                 raise CatalogImportError(f"Exercise {exercise['id']} cannot list itself as an alternative")
@@ -306,7 +306,7 @@ def import_catalog(
     unknown_reviewed = sorted(set(reviewed_by_id) - wallcrawl_ids)
     if unknown_reviewed:
         raise CatalogImportError(
-            f"Reviewed metadata references unknown WallCrawl exercise ID: {unknown_reviewed[0]}"
+            "Reviewed metadata references an unknown WallCrawl exercise ID"
         )
     exercises_by_id = {exercise["id"]: exercise for exercise in normalized_exercises}
     normalized_reviewed = {
@@ -357,7 +357,7 @@ def import_catalog(
         _write_json(staged_root / "catalog.json", catalog)
         shutil.copyfile(manifest_path, staged_root / "upstream-manifest.json")
         for license_relative in license_relatives:
-            source_license = _source_file(source_root, license_relative, f"license file {license_relative.as_posix()}")
+            source_license = _source_file(source_root, license_relative, "license file")
             shutil.copyfile(source_license, staged_root / license_relative.name)
         for source_frame, destination_relative in frame_sources:
             destination = staged_root / destination_relative
@@ -424,13 +424,13 @@ def _normalize_programming(raw_value: Any, exercise_id: str) -> dict[str, Any]:
     mechanics = _required_string(raw, "mechanics", exercise_id)
     progression_type = _required_string(raw, "progressionType", exercise_id)
     if movement_pattern not in SUPPORTED_MOVEMENT_PATTERNS:
-        raise CatalogImportError(f"Unsupported movement pattern for {exercise_id}: {movement_pattern}")
+        raise CatalogImportError(f"Unsupported movement pattern for {exercise_id}")
     if difficulty not in SUPPORTED_DIFFICULTIES:
-        raise CatalogImportError(f"Unsupported difficulty for {exercise_id}: {difficulty}")
+        raise CatalogImportError(f"Unsupported difficulty for {exercise_id}")
     if mechanics not in SUPPORTED_MECHANICS:
-        raise CatalogImportError(f"Unsupported mechanics for {exercise_id}: {mechanics}")
+        raise CatalogImportError(f"Unsupported mechanics for {exercise_id}")
     if progression_type not in SUPPORTED_PROGRESSION_TYPES:
-        raise CatalogImportError(f"Unsupported progression type for {exercise_id}: {progression_type}")
+        raise CatalogImportError(f"Unsupported progression type for {exercise_id}")
 
     rep_range = _required_object(raw, "recommendedRepRange", exercise_id)
     rep_min = _required_int(rep_range, "min", f"{exercise_id}.recommendedRepRange", minimum=1, maximum=1_000)
@@ -992,34 +992,36 @@ def _source_file(
 ) -> Path:
     candidate = root / Path(relative.as_posix())
     if reject_symlink and candidate.is_symlink():
-        raise CatalogImportError(f"{label} must not be a symlink: {relative.as_posix()}")
+        raise CatalogImportError(f"{label} must not be a symlink")
     try:
         resolved_root = root.resolve(strict=True)
         resolved_candidate = candidate.resolve(strict=True)
     except FileNotFoundError as error:
-        raise CatalogImportError(f"Missing {label}: {relative.as_posix()}") from error
+        raise CatalogImportError(f"Missing {label}") from error
     if not resolved_candidate.is_relative_to(resolved_root):
-        raise CatalogImportError(f"Unsafe {label} path escapes its source root: {relative.as_posix()}")
+        raise CatalogImportError(f"Unsafe {label} path escapes its source root")
     if not resolved_candidate.is_file():
-        raise CatalogImportError(f"Expected regular {label}: {relative.as_posix()}")
+        raise CatalogImportError(f"Expected regular {label}")
     return candidate
 
 
 def _safe_relative_path(value: str, label: str) -> PurePosixPath:
     if "\\" in value:
         raise CatalogImportError(f"Unsafe {label}: backslashes are not allowed")
+    if any(ord(character) < 32 or ord(character) == 127 for character in value):
+        raise CatalogImportError(f"Unsafe {label}: control characters are not allowed")
     path = PurePosixPath(value)
     if not value or path.is_absolute() or any(part in {"", ".", ".."} for part in path.parts):
-        raise CatalogImportError(f"Unsafe {label}: {value}")
+        raise CatalogImportError(f"Unsafe {label}")
     if path.as_posix() != value:
-        raise CatalogImportError(f"Unsafe {label}: {value}")
+        raise CatalogImportError(f"Unsafe {label}")
     return path
 
 
 def _validate_safe_id(value: str, label: str, allow_exercise_prefix: bool = False) -> None:
     checked = value.removeprefix("exercise-") if allow_exercise_prefix else value
     if not checked or not SAFE_ID_PATTERN.fullmatch(checked):
-        raise CatalogImportError(f"Unsafe {label}: {value}")
+        raise CatalogImportError(f"Unsafe {label}")
 
 
 def _required_attribution(container: dict[str, Any], key: str, label: str) -> dict[str, Any]:
@@ -1072,7 +1074,8 @@ def _bounded_json_value(value: Any, label: str, depth: int) -> Any:
         result: dict[str, Any] = {}
         for key, item in value.items():
             checked_key = _bounded_string(key, f"{label} field name")
-            result[checked_key] = _bounded_json_value(item, f"{label}.{checked_key}", depth + 1)
+            safe_key = _safe_error_field(checked_key)
+            result[checked_key] = _bounded_json_value(item, f"{label}.{safe_key}", depth + 1)
         return result
     raise CatalogImportError(f"{label} contains unsupported JSON value {type(value).__name__}")
 
