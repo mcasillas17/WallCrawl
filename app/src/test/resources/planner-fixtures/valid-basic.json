@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "id": "valid-basic",
+  "policyVersion": 3,
+  "catalogVersion": "test-catalog-2026-08-30",
+  "profile": {
+    "goals": ["BUILD_MUSCLE", "GENERAL_FITNESS"],
+    "experienceLevel": "BEGINNER",
+    "preferredDurationMinutes": 45,
+    "daysPerWeek": 3,
+    "availableEquipment": ["Bodyweight", "Dumbbell"],
+    "preferredUnit": "KG",
+    "musclePriorities": {
+      "Chest": "HIGH",
+      "Core": "NORMAL"
+    },
+    "excludedExerciseIds": ["barbell-bench-press"],
+    "trainingConstraints": ["LOW_IMPACT_ONLY"],
+    "returningAfterBreakWeeks": 6,
+    "confirmedStartingLoads": {
+      "incline-dumbbell-press": 20.0
+    },
+    "movementCapabilities": {
+      "IMPACT": "LIMITED"
+    }
+  },
+  "completedWorkoutCount": 12,
+  "exerciseHistory": [
+    {
+      "exerciseId": "incline-dumbbell-press",
+      "lastWeight": 20.0,
+      "lastReps": 10,
+      "bestEstimated1RM": 26.7,
+      "recentSets": [
+        {
+          "completedReps": 10,
+          "completedWeight": 20.0,
+          "isCompleted": true
+        },
+        {
+          "completedReps": 8,
+          "completedWeight": 22.5,
+          "isCompleted": true
+        }
+      ]
+    }
+  ],
+  "expected": {
+    "outcome": "SUCCESS",
+    "requiredExerciseIds": ["incline-dumbbell-press"],
+    "forbiddenExerciseIds": ["barbell-bench-press"]
+  }
+}
