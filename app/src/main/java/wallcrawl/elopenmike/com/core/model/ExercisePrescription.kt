@@ -125,13 +125,26 @@ data class ExercisePrescription(
     }
 }
 
-/** Values recorded for one set; validation against its prescription happens at persistence. */
+/**
+ * Values recorded for one set; validation against its prescription happens at persistence.
+ *
+ * Every feedback field is nullable and means unknown when null -- nothing here is ever
+ * inferred from anything else. The cross-field outcome invariants (which timestamp a
+ * given outcome requires, and which feedback that outcome may carry) live in
+ * [SetOutcomeRules] and are enforced at the repository boundary.
+ */
 data class SetPerformanceInput(
     val reps: Int? = null,
     val weight: Double? = null,
     val assistanceWeight: Double? = null,
     val durationSeconds: Int? = null,
     val distanceMeters: Double? = null,
+    val rpe: Float? = null,
+    val rir: Int? = null,
+    val feltManageable: Boolean? = null,
+    val completedAtTimestamp: Long? = null,
+    val stoppedAtTimestamp: Long? = null,
+    val stopReason: SetStopReason? = null,
     val isCompleted: Boolean
 )
 
