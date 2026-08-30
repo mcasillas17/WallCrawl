@@ -242,6 +242,15 @@ class WorkoutGuideCatalogParserTest {
     }
 
     @Test
+    fun parse_rejectsMoreReviewedEntriesThanTheAuthoredSchemaAllows() {
+        val exercises = (0..500).joinToString(",") { index ->
+            exerciseJson(reviewedMetadataJson(), id = "sample-$index")
+        }
+
+        assertFormatFailure(catalogJson(exercises), "500 reviewed entries")
+    }
+
+    @Test
     fun parse_rejectsInvalidReviewedRegressionGraphs() {
         val sourceToTarget = reviewedMetadataJson().replace(
             "\"approvedRegressions\": []",

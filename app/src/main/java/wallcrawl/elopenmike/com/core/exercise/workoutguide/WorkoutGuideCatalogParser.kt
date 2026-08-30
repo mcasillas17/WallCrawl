@@ -794,6 +794,11 @@ class WorkoutGuideCatalogParser {
     private fun validateReviewedGraphs(entries: List<ParsedExercise>) {
         val entriesById = entries.associateBy(ParsedExercise::id)
         val reviewedEntries = entries.filter { it.reviewedMetadata != null }
+        if (reviewedEntries.size > MAX_REVIEWED_EXERCISES) {
+            malformed(
+                "Catalog contains more than $MAX_REVIEWED_EXERCISES reviewed entries."
+            )
+        }
         val regressionGraph = mutableMapOf<String, List<String>>()
 
         reviewedEntries.forEach { entry ->
@@ -1125,6 +1130,7 @@ class WorkoutGuideCatalogParser {
         const val MIN_FATIGUE_SCORE = 1
         const val MAX_FATIGUE_SCORE = 5
         const val MAX_REVIEWED_MUSCLE_LENGTH = 64
+        const val MAX_REVIEWED_EXERCISES = 500
         const val MAX_REVIEWED_SECONDARY_MUSCLES = 16
         const val MAX_PROGRESSION_FAMILY_LENGTH = 64
         const val MAX_REVIEWED_LINKS = 24

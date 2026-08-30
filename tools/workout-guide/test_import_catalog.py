@@ -511,6 +511,20 @@ class ImportCatalogTest(unittest.TestCase):
         self.assertNotEqual(payload_result.returncode, 0)
         self.assertIn("1000000-byte input limit", payload_result.stderr.lower())
 
+    def test_rejects_more_reviewed_entries_than_schema_bound(self) -> None:
+        reviewed = json.loads(self.reviewed_metadata.read_text())
+        base = reviewed["exercises"]["barbell-bench-press"]
+        reviewed["exercises"] = {
+            f"sample-{index}": json.loads(json.dumps(base))
+            for index in range(501)
+        }
+        self.reviewed_metadata.write_text(json.dumps(reviewed) + "\n")
+
+        result = self._run_import()
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("more than 500 fields", result.stderr.lower())
+
     def test_rejects_duplicate_graph_edge_and_self_edge(self) -> None:
         for links, message in (
             ([{"exerciseId": "barbell-bench-press"}], "self-edge"),
