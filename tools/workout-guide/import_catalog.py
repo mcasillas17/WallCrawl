@@ -289,7 +289,7 @@ def import_catalog(
     unknown_programming = sorted(set(programming_by_id) - wallcrawl_ids)
     if unknown_programming:
         raise CatalogImportError(
-            "Programming override references an unknown WallCrawl exercise ID"
+            "Programming override references unknown WallCrawl exercise ID"
         )
     for exercise in normalized_exercises:
         programming = exercise.get("programming")

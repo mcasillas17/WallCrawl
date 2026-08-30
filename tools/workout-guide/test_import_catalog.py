@@ -218,7 +218,7 @@ class ImportCatalogTest(unittest.TestCase):
         result = self._run_import()
 
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn("unknown walcrawl exercise id", result.stderr.lower())
+        self.assertIn("unknown wallcrawl exercise id", result.stderr.lower())
 
     def test_rejects_regression_cycle(self) -> None:
         self._add_source_exercise(
