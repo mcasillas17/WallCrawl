@@ -720,7 +720,9 @@ class WorkoutGuideCatalogParser {
             return null
         }
         expectToken(JsonToken.NUMBER, label)
-        val value = nextLong()
+        val rawValue = nextString()
+        val value = rawValue.takeIf(SAFE_POSITIVE_INTEGER_LITERAL::matches)?.toLongOrNull()
+            ?: malformed("$label must use integer JSON notation.")
         if (value !in minimum..maximum) {
             malformed("$label must be between $minimum and $maximum.")
         }
@@ -729,7 +731,9 @@ class WorkoutGuideCatalogParser {
 
     private fun JsonReader.readReviewedInt(label: String, minimum: Int, maximum: Int): Int {
         expectToken(JsonToken.NUMBER, label)
-        val value = nextInt()
+        val rawValue = nextString()
+        val value = rawValue.takeIf(SAFE_POSITIVE_INTEGER_LITERAL::matches)?.toIntOrNull()
+            ?: malformed("$label must use integer JSON notation.")
         if (value !in minimum..maximum) {
             malformed("$label must be between $minimum and $maximum.")
         }
@@ -1141,6 +1145,7 @@ class WorkoutGuideCatalogParser {
         val SAFE_IDENTIFIER = Regex("[a-z0-9]+(?:-[a-z0-9]+)*")
         val COMMIT_HASH = Regex("[0-9a-fA-F]{40}")
         val SAFE_PROGRESSION_FAMILY = Regex("[a-z0-9]+(?:-[a-z0-9]+)*")
+        val SAFE_POSITIVE_INTEGER_LITERAL = Regex("[1-9][0-9]*")
         val SAFE_ERROR_FIELD = Regex("[A-Za-z0-9_.-]{1,80}")
         val COMPLEXITY_DEMAND = mapOf(
             ComplexityTier.FOUNDATIONAL to 0,

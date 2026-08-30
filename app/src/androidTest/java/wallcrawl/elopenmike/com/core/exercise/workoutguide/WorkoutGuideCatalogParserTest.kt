@@ -216,12 +216,29 @@ class WorkoutGuideCatalogParserTest {
                 exerciseJson(
                     reviewedMetadata = duration,
                     primaryMuscles = "[\"Chest\"]",
-                    secondaryMuscles = "[\"Cardio\"]",
+                    secondaryMuscles = "[\"cardio\"]",
                     exerciseType = "duration"
                 )
             ),
             "cardio duration"
         )
+    }
+
+    @Test
+    fun parse_rejectsDecimalNotationForReviewedIntegerFields() {
+        for (field in listOf("schemaVersion", "policyVersion")) {
+            val metadata = reviewedMetadataJson().replace(
+                "\"$field\": 1",
+                "\"$field\": 1.0"
+            )
+
+            assertFormatFailure(catalogJson(exerciseJson(metadata)), field)
+        }
+        val reviewedAt = reviewedMetadataJson().replace(
+            "\"reviewedAtEpochMillis\": null",
+            "\"reviewedAtEpochMillis\": 1.0"
+        )
+        assertFormatFailure(catalogJson(exerciseJson(reviewedAt)), "reviewedAtEpochMillis")
     }
 
     @Test

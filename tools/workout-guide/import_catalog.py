@@ -650,14 +650,13 @@ def _normalize_reviewed_metadata(
         raise CatalogImportError(
             f"{exercise_id}.prescriptionShape does not match exerciseType"
         )
-    catalog_muscles = set(catalog_exercise["primaryMuscles"] + catalog_exercise["secondaryMuscles"])
     if catalog_exercise["isStretch"]:
         raise CatalogImportError(f"{exercise_id} is a stretch and cannot enter the reviewed cohort")
     if prescription_shape == "distance_duration":
         raise CatalogImportError(
             f"{exercise_id}.prescriptionShape cannot be distance_duration in the reviewed cohort"
         )
-    if prescription_shape == "duration" and "Cardio" in catalog_muscles:
+    if prescription_shape == "duration" and "Cardio" in represented_muscles:
         raise CatalogImportError(
             f"{exercise_id} is cardio duration work and cannot enter the reviewed cohort"
         )

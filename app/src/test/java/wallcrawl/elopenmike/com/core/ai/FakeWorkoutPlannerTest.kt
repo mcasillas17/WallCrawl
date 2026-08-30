@@ -536,8 +536,12 @@ class FakeWorkoutPlannerTest {
             impactLevel = ImpactLevel.NONE,
             equipmentAlternatives = listOf(listOf(StandardEquipment.DUMBBELL, StandardEquipment.BENCH)),
             provenance = ReviewProvenance(
-                reviewerRole = if (reviewState == ReviewState.APPROVED) "Human exercise reviewer" else null,
-                rationaleOrSource = "Planner invariance fixture.",
+                reviewerRole = if (reviewState == ReviewState.APPROVED) {
+                    "Test-only role; not human approval"
+                } else {
+                    null
+                },
+                rationaleOrSource = "Planner invariance fixture; not authored catalog approval.",
                 reviewedAtEpochMillis = if (reviewState == ReviewState.APPROVED) 1L else null,
                 schemaVersion = 1,
                 policyVersion = 1

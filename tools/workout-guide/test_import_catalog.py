@@ -328,6 +328,27 @@ class ImportCatalogTest(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("reviewedAtEpochMillis", result.stderr)
 
+    def test_rejects_decimal_notation_for_reviewed_integer_fields(self) -> None:
+        for old, new, field in (
+            ('"schemaVersion": 1', '"schemaVersion": 1.0', "schemaVersion"),
+            ('"policyVersion": 1', '"policyVersion": 1.0', "policyVersion"),
+            (
+                '"reviewedAtEpochMillis": null',
+                '"reviewedAtEpochMillis": 1.0',
+                "reviewedAtEpochMillis",
+            ),
+        ):
+            with self.subTest(field=field):
+                self._write_reviewed_metadata()
+                self.reviewed_metadata.write_text(
+                    self.reviewed_metadata.read_text().replace(old, new, 1)
+                )
+
+                result = self._run_import()
+
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn(field, result.stderr)
+
     def test_rejects_primary_muscle_not_represented_by_catalog(self) -> None:
         reviewed = json.loads(self.reviewed_metadata.read_text())
         reviewed["exercises"]["barbell-bench-press"]["directPrimaryMuscle"] = "Quadriceps"
@@ -420,7 +441,7 @@ class ImportCatalogTest(unittest.TestCase):
             edge_field="approvedSubstitutions",
             target_exercise_type="duration",
             target_primary_muscle="Core",
-            target_secondary_muscles=["Cardio"],
+            target_secondary_muscles=["cardio"],
         )
         reviewed["exercises"]["barbell-bench-press"]["approvedSubstitutions"] = []
         reviewed["exercises"]["machine-chest-press"].update(
