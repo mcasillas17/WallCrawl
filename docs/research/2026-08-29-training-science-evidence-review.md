@@ -88,7 +88,7 @@ The cross-review corrected material citation errors:
 4. Schoenfeld BJ et al. *J Sports Sci.* 2017;35:1073-1082. DOI `10.1080/02640414.2016.1210197`; PMID `27433992`.
 5. Schoenfeld BJ et al. *J Sports Sci.* 2019;37:1286-1295. DOI `10.1080/02640414.2018.1555906`; PMID `30558493`.
 6. Schoenfeld BJ et al. *J Strength Cond Res.* 2017;31:3508-3523. DOI `10.1519/JSC.0000000000002200`; PMID `28834797`.
-7. Hickmott LM et al. *Sports Med Open.* 2022;8:10. DOI `10.1186/s40798-021-00404-9`.
+7. Hickmott LM et al. *Sports Med Open.* 2022;8:9. DOI `10.1186/s40798-021-00404-9`.
 8. Robinson ZP et al. *Sports Med.* 2024;54:2209-2231. DOI `10.1007/s40279-024-02069-2`; PMID `38970765`.
 9. Refalo MC et al. *Sports Med Open.* 2023;9:10. DOI `10.1186/s40798-023-00554-y`; PMID `36752989`.
 10. Refalo MC et al. *Sports Med.* 2023. DOI `10.1007/s40279-022-01784-y`; PMID `36334240`.
@@ -114,4 +114,3 @@ The cross-review corrected material citation errors:
 - muscle-specific ROM evidence;
 - prospective LLM-versus-deterministic workout-planner trials;
 - independent expert validation of capability and substitution metadata.
-
