@@ -31,7 +31,10 @@ class Migration6To7Test {
         }
 
         database = Room.databaseBuilder(context, WallCrawlDatabase::class.java, DATABASE_NAME)
-            .addMigrations(WallCrawlDatabase.MIGRATION_6_7)
+            .addMigrations(
+                WallCrawlDatabase.MIGRATION_6_7,
+                WallCrawlDatabase.MIGRATION_7_8
+            )
             .build()
         val sqlite = checkNotNull(database).openHelper.writableDatabase
 
