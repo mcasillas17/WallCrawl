@@ -1,0 +1,383 @@
+package wallcrawl.elopenmike.com.core.ai
+
+import java.io.ByteArrayOutputStream
+import java.io.InputStream
+import java.nio.ByteBuffer
+import java.nio.charset.CharacterCodingException
+import java.nio.charset.CodingErrorAction
+import java.nio.charset.StandardCharsets
+import java.util.Locale
+import org.json.JSONArray
+import org.json.JSONException
+import org.json.JSONObject
+import org.json.JSONTokener
+import wallcrawl.elopenmike.com.core.exercise.ExerciseFilter
+import wallcrawl.elopenmike.com.core.model.Difficulty
+import wallcrawl.elopenmike.com.core.model.Exercise
+import wallcrawl.elopenmike.com.core.model.ExerciseProgrammingMetadata
+import wallcrawl.elopenmike.com.core.model.ExerciseType
+import wallcrawl.elopenmike.com.core.model.MechanicsType
+import wallcrawl.elopenmike.com.core.model.MovementPattern
+import wallcrawl.elopenmike.com.core.model.MuscleVocabulary
+import wallcrawl.elopenmike.com.core.model.ProgressionType
+import wallcrawl.elopenmike.com.core.model.RepRange
+import wallcrawl.elopenmike.com.core.model.StandardEquipment
+import wallcrawl.elopenmike.com.core.model.UserProfile
+import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
+
+internal data class PlannerFixtureContext(
+    val fixture: PlannerFixture,
+    val userProfile: UserProfile,
+    val catalogExercises: List<Exercise>,
+    val filteredExercises: List<Exercise>,
+    val context: WorkoutGenerationContext
+)
+
+internal class PlannerFixtureContextFactory(
+    private val classLoader: ClassLoader = checkNotNull(PlannerFixtureContextFactory::class.java.classLoader),
+    private val exerciseFilter: ExerciseFilter = ExerciseFilter()
+) {
+
+    private val catalogExercises: List<Exercise> by lazy { loadBundledCatalogExercises() }
+
+    fun create(fixture: PlannerFixture): PlannerFixtureContext {
+        val profile = UserProfile(
+            goals = fixture.profile.goals,
+            experienceLevel = fixture.profile.experienceLevel,
+            preferredDurationMinutes = fixture.profile.preferredDurationMinutes,
+            daysPerWeek = fixture.profile.daysPerWeek,
+            availableEquipment = fixture.profile.availableEquipment,
+            preferredUnit = fixture.profile.preferredUnit,
+            musclePriorities = fixture.profile.musclePriorities,
+            excludedExerciseIds = fixture.profile.excludedExerciseIds,
+            onboardingCompleted = true,
+            trainingConstraints = fixture.profile.trainingConstraints,
+            returningAfterBreakWeeks = fixture.profile.returningAfterBreakWeeks,
+            confirmedStartingLoads = fixture.profile.confirmedStartingLoads,
+            movementCapabilities = fixture.profile.movementCapabilities
+        )
+        val filteredExercises = exerciseFilter.filterCandidates(
+            allExercises = catalogExercises,
+            profile = profile
+        )
+        val restrictedExercises = restrictToAllowedExerciseIds(
+            filteredExercises = filteredExercises,
+            fixture = fixture
+        )
+        return PlannerFixtureContext(
+            fixture = fixture,
+            userProfile = profile,
+            catalogExercises = catalogExercises,
+            filteredExercises = filteredExercises,
+            context = WorkoutGenerationContext(
+                userProfile = profile,
+                completedWorkoutCount = fixture.completedWorkoutCount,
+                exerciseHistory = fixture.exerciseHistory.associateBy { it.exerciseId },
+                allowedExercises = restrictedExercises,
+                preferredUnits = profile.preferredUnit
+            )
+        )
+    }
+
+    fun manifestResourcePaths(manifestPath: String = DEFAULT_MANIFEST_RESOURCE): List<String> =
+        readResourceText(manifestPath)
+            .lineSequence()
+            .map(String::trim)
+            .filter { it.isNotEmpty() && !it.startsWith("#") }
+            .toList()
+
+    fun readResourceText(path: String): String = decodeUtf8(readResourceBytes(path), path)
+
+    private fun restrictToAllowedExerciseIds(
+        filteredExercises: List<Exercise>,
+        fixture: PlannerFixture
+    ): List<Exercise> {
+        if (fixture.allowedExerciseIds.isEmpty()) return filteredExercises
+
+        val catalogIds = catalogExercises.mapTo(linkedSetOf(), Exercise::id)
+        val missing = fixture.allowedExerciseIds.filterNot { it in catalogIds }
+        if (missing.isNotEmpty()) {
+            throw PlannerFixtureFormatException(
+                "root.allowedExerciseIds must reference bundled catalog ids: ${missing.joinToString(", ")}."
+            )
+        }
+
+        val allowedIds = fixture.allowedExerciseIds.toSet()
+        return filteredExercises.filter { it.id in allowedIds }
+    }
+
+    private fun loadBundledCatalogExercises(): List<Exercise> {
+        val catalogText = readBundledCatalogText()
+        val root = try {
+            JSONTokener(catalogText).nextValue() as? JSONObject
+                ?: throw PlannerFixtureFormatException("Bundled planner catalog must be a JSON object.")
+        } catch (error: JSONException) {
+            throw PlannerFixtureFormatException("Bundled planner catalog is malformed JSON.", error)
+        }
+        val exercisesArray = root.optJSONArray("exercises")
+            ?: throw PlannerFixtureFormatException("Bundled planner catalog is missing exercises.")
+        val exercises = buildList(exercisesArray.length()) {
+            for (index in 0 until exercisesArray.length()) {
+                val exercise = exercisesArray.optJSONObject(index)
+                    ?: throw PlannerFixtureFormatException("Bundled catalog exercise[$index] must be an object.")
+                add(parseExercise(exercise, index))
+            }
+        }
+        if (exercises.size != EXPECTED_BUNDLED_EXERCISE_COUNT) {
+            throw PlannerFixtureFormatException(
+                "Bundled planner catalog must contain exactly $EXPECTED_BUNDLED_EXERCISE_COUNT exercises."
+            )
+        }
+        val duplicateId = exercises.groupingBy(Exercise::id).eachCount()
+            .entries
+            .firstOrNull { it.value > 1 }
+            ?.key
+        if (duplicateId != null) {
+            throw PlannerFixtureFormatException("Bundled planner catalog contains duplicate exercise id $duplicateId.")
+        }
+        return exercises
+    }
+
+    private fun readBundledCatalogText(): String {
+        for (path in BUNDLED_CATALOG_RESOURCE_PATHS) {
+            val stream = classLoader.getResourceAsStream(path) ?: continue
+            return stream.use { input -> decodeUtf8(readBoundedBytes(input, path), path) }
+        }
+        throw PlannerFixtureFormatException(
+            "Bundled planner catalog resource not found at " +
+                BUNDLED_CATALOG_RESOURCE_PATHS.joinToString(" or ") + "."
+        )
+    }
+
+    private fun parseExercise(exercise: JSONObject, index: Int): Exercise {
+        val path = "catalog.exercises[$index]"
+        val id = requireString(exercise, "id", "$path.id")
+        val name = requireString(exercise, "name", "$path.name")
+        val searchAliases = requireStringList(
+            requireArray(exercise, "searchAliases", "$path.searchAliases"),
+            "$path.searchAliases"
+        )
+        val rawPrimaryMuscles = requireStringList(
+            requireArray(exercise, "primaryMuscles", "$path.primaryMuscles"),
+            "$path.primaryMuscles",
+            minSize = 1
+        )
+        val rawSecondaryMuscles = requireStringList(
+            requireArray(exercise, "secondaryMuscles", "$path.secondaryMuscles"),
+            "$path.secondaryMuscles"
+        )
+        val primaryMuscles = rawPrimaryMuscles.mapNotNull(MuscleVocabulary::canonicalizePrimary).distinct()
+        if (primaryMuscles.isEmpty()) {
+            throw PlannerFixtureFormatException("$path.primaryMuscles must resolve to at least one canonical muscle.")
+        }
+        val secondaryMuscles = (
+            MuscleVocabulary.canonicalizeAll(rawPrimaryMuscles) +
+                MuscleVocabulary.canonicalizeAll(rawSecondaryMuscles)
+            ).filterNot { it in primaryMuscles }
+            .distinct()
+        val listedEquipment = requireEquipmentList(
+            requireArray(exercise, "listedEquipment", "$path.listedEquipment"),
+            "$path.listedEquipment"
+        )
+        return Exercise(
+            id = id,
+            name = name,
+            searchAliases = searchAliases,
+            primaryMuscles = primaryMuscles,
+            secondaryMuscles = secondaryMuscles,
+            listedEquipment = listedEquipment,
+            type = readEnum(
+                requireString(exercise, "exerciseType", "$path.exerciseType"),
+                "$path.exerciseType"
+            ),
+            isStretch = requireBoolean(exercise, "isStretch", "$path.isStretch"),
+            programming = if (exercise.isNull("programming")) {
+                null
+            } else {
+                parseProgramming(
+                    requireObject(exercise, "programming", "$path.programming"),
+                    "$path.programming"
+                )
+            }
+        )
+    }
+
+    private fun parseProgramming(programming: JSONObject, path: String): ExerciseProgrammingMetadata =
+        ExerciseProgrammingMetadata(
+            requiredEquipmentCombinations = requireEquipmentMatrix(
+                requireArray(
+                    programming,
+                    "requiredEquipmentCombinations",
+                    "$path.requiredEquipmentCombinations"
+                ),
+                "$path.requiredEquipmentCombinations"
+            ),
+            movementPattern = readEnum(
+                requireString(programming, "movementPattern", "$path.movementPattern"),
+                "$path.movementPattern"
+            ),
+            difficulty = readEnum(
+                requireString(programming, "difficulty", "$path.difficulty"),
+                "$path.difficulty"
+            ),
+            mechanics = readEnum(
+                requireString(programming, "mechanics", "$path.mechanics"),
+                "$path.mechanics"
+            ),
+            recommendedRepRange = parseRepRange(
+                requireObject(programming, "recommendedRepRange", "$path.recommendedRepRange"),
+                "$path.recommendedRepRange"
+            ),
+            fatigueScore = requireInt(programming, "fatigueScore", "$path.fatigueScore"),
+            progressionType = readEnum(
+                requireString(programming, "progressionType", "$path.progressionType"),
+                "$path.progressionType"
+            ),
+            alternativeExerciseIds = requireStringList(
+                requireArray(programming, "alternativeExerciseIds", "$path.alternativeExerciseIds"),
+                "$path.alternativeExerciseIds"
+            ),
+            coachingSummary = requireString(programming, "coachingSummary", "$path.coachingSummary")
+        )
+
+    private fun parseRepRange(repRange: JSONObject, path: String): RepRange {
+        val min = requireInt(repRange, "min", "$path.min")
+        val max = requireInt(repRange, "max", "$path.max")
+        if (min <= 0 || max < min) {
+            throw PlannerFixtureFormatException("$path must have positive ordered min/max values.")
+        }
+        return RepRange(min = min, max = max)
+    }
+
+    private fun requireEquipmentMatrix(array: JSONArray, path: String): List<List<String>> =
+        buildList(array.length()) {
+            for (index in 0 until array.length()) {
+                add(
+                    requireEquipmentList(
+                        requireArrayObject(array, index, "$path[$index]"),
+                        "$path[$index]",
+                        minSize = 1
+                    )
+                )
+            }
+        }
+
+    private fun requireEquipmentList(
+        array: JSONArray,
+        path: String,
+        minSize: Int = 0
+    ): List<String> {
+        val values = requireStringList(array, path, minSize)
+        val unknown = values.firstOrNull { it !in StandardEquipment.ALL }
+        if (unknown != null) {
+            throw PlannerFixtureFormatException("$path contains unknown equipment '$unknown'.")
+        }
+        return values
+    }
+
+    private fun requireStringList(
+        array: JSONArray,
+        path: String,
+        minSize: Int = 0
+    ): List<String> {
+        val values = buildList(array.length()) {
+            for (index in 0 until array.length()) {
+                val value = array.opt(index)
+                if (value !is String || value.isBlank()) {
+                    throw PlannerFixtureFormatException("$path[$index] must be a non-blank string.")
+                }
+                add(value)
+            }
+        }
+        if (values.size < minSize) {
+            throw PlannerFixtureFormatException("$path must contain at least $minSize item(s).")
+        }
+        return values
+    }
+
+    private fun requireObject(source: JSONObject, key: String, path: String): JSONObject =
+        source.optJSONObject(key) ?: throw PlannerFixtureFormatException("$path must be an object.")
+
+    private fun requireArray(source: JSONObject, key: String, path: String): JSONArray =
+        source.optJSONArray(key) ?: throw PlannerFixtureFormatException("$path must be an array.")
+
+    private fun requireArrayObject(array: JSONArray, index: Int, path: String): JSONArray =
+        array.optJSONArray(index) ?: throw PlannerFixtureFormatException("$path must be an array.")
+
+    private fun requireString(source: JSONObject, key: String, path: String): String {
+        val value = source.opt(key)
+        if (value !is String || value.isBlank()) {
+            throw PlannerFixtureFormatException("$path must be a non-blank string.")
+        }
+        return value
+    }
+
+    private fun requireBoolean(source: JSONObject, key: String, path: String): Boolean {
+        val value = source.opt(key)
+        if (value !is Boolean) {
+            throw PlannerFixtureFormatException("$path must be a boolean.")
+        }
+        return value
+    }
+
+    private fun requireInt(source: JSONObject, key: String, path: String): Int {
+        val value = source.opt(key)
+        val number = value as? Number
+            ?: throw PlannerFixtureFormatException("$path must be an integer.")
+        val intValue = number.toInt()
+        if (intValue.toDouble() != number.toDouble()) {
+            throw PlannerFixtureFormatException("$path must be an integer.")
+        }
+        return intValue
+    }
+
+    private inline fun <reified T : Enum<T>> readEnum(value: String, path: String): T {
+        val normalized = value.trim().replace('-', '_').uppercase(Locale.ROOT)
+        return enumValues<T>().firstOrNull { it.name == normalized }
+            ?: throw PlannerFixtureFormatException("$path has unsupported value '$value'.")
+    }
+
+    private fun readResourceBytes(path: String): ByteArray {
+        val normalizedPath = path.trim().removePrefix("/")
+        val stream = classLoader.getResourceAsStream(normalizedPath)
+            ?: throw PlannerFixtureFormatException("Resource not found: $normalizedPath")
+        return stream.use { input -> readBoundedBytes(input, normalizedPath) }
+    }
+
+    private fun readBoundedBytes(input: InputStream, path: String): ByteArray {
+        val output = ByteArrayOutputStream()
+        val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+        while (true) {
+            val read = input.read(buffer)
+            if (read < 0) break
+            output.write(buffer, 0, read)
+            if (output.size() > MAX_RESOURCE_BYTES) {
+                throw PlannerFixtureFormatException(
+                    "$path exceeds the maximum resource size of $MAX_RESOURCE_BYTES bytes."
+                )
+            }
+        }
+        return output.toByteArray()
+    }
+
+    private fun decodeUtf8(bytes: ByteArray, path: String): String = try {
+        StandardCharsets.UTF_8
+            .newDecoder()
+            .onMalformedInput(CodingErrorAction.REPORT)
+            .onUnmappableCharacter(CodingErrorAction.REPORT)
+            .decode(ByteBuffer.wrap(bytes))
+            .toString()
+    } catch (error: CharacterCodingException) {
+        throw PlannerFixtureFormatException("$path must be valid UTF-8.", error)
+    }
+
+    private companion object {
+        private const val DEFAULT_MANIFEST_RESOURCE = "planner-fixtures/manifest.txt"
+        private const val EXPECTED_BUNDLED_EXERCISE_COUNT = 302
+        private const val MAX_RESOURCE_BYTES = 512 * 1024
+        private val BUNDLED_CATALOG_RESOURCE_PATHS = listOf(
+            "workout-guide/catalog.json",
+            "assets/workout-guide/catalog.json"
+        )
+    }
+}

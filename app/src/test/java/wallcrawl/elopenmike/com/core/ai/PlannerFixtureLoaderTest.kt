@@ -73,7 +73,18 @@ class PlannerFixtureLoaderTest {
     fun loadCorpus_usesManifestResourceInsteadOfFilesystemEnumeration() {
         val fixtures = loader.loadCorpus()
 
-        assertThat(fixtures.map { it.id }).containsExactly("valid-basic").inOrder()
+        assertThat(fixtures.map { it.id }).containsExactly(
+            "bodyweight-beginner",
+            "band-only",
+            "machine-only",
+            "full-gym-advanced",
+            "returning-user",
+            "limited-capability",
+            "mixed-unit-history",
+            "sparse-history",
+            "no-strength-candidates"
+        ).inOrder()
+        assertThat(fixtures.map { it.id }).doesNotContain("valid-basic")
     }
 
     @Test

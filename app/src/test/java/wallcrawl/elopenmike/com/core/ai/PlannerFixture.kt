@@ -32,6 +32,7 @@ internal data class PlannerFixture(
     val profile: PlannerFixtureProfile,
     val completedWorkoutCount: Int,
     val exerciseHistory: List<ExercisePerformanceHistory>,
+    val allowedExerciseIds: List<String> = emptyList(),
     val expected: PlannerFixtureExpected
 )
 
@@ -123,7 +124,7 @@ internal class PlannerFixtureLoader(
     }
 
     private fun parseFixture(root: JSONObject): PlannerFixture {
-        requireExactFields(root, "root", ROOT_FIELDS)
+        requireExactFields(root, "root", ROOT_FIELDS, OPTIONAL_ROOT_FIELDS)
         return PlannerFixture(
             schemaVersion = requireExactInt(root, "schemaVersion", "root.schemaVersion", 1..1),
             id = requireSafeId(root, "id", "root.id"),
@@ -139,6 +140,14 @@ internal class PlannerFixtureLoader(
             exerciseHistory = parseExerciseHistory(
                 requireArray(root, "exerciseHistory", "root.exerciseHistory")
             ),
+            allowedExerciseIds = if (root.has("allowedExerciseIds")) {
+                parseSafeIdList(
+                    requireArray(root, "allowedExerciseIds", "root.allowedExerciseIds"),
+                    "root.allowedExerciseIds"
+                )
+            } else {
+                emptyList()
+            },
             expected = parseExpected(requireObject(root, "expected", "root.expected"))
         )
     }
@@ -407,12 +416,18 @@ internal class PlannerFixtureLoader(
             ?: throw PlannerFixtureFormatException("$path must use a known ${T::class.java.simpleName} value.")
     }
 
-    private fun requireExactFields(objectValue: JSONObject, path: String, allowedFields: Set<String>) {
+    private fun requireExactFields(
+        objectValue: JSONObject,
+        path: String,
+        requiredFields: Set<String>,
+        optionalFields: Set<String> = emptySet()
+    ) {
+        val allowedFields = requiredFields + optionalFields
         val unexpectedField = objectValue.keySet().sorted().firstOrNull { it !in allowedFields }
         if (unexpectedField != null) {
             throw PlannerFixtureFormatException("Unexpected field at $path.$unexpectedField.")
         }
-        val missingField = allowedFields.sorted().firstOrNull { !objectValue.has(it) }
+        val missingField = requiredFields.sorted().firstOrNull { !objectValue.has(it) }
         if (missingField != null) {
             throw PlannerFixtureFormatException("Missing required field at $path.$missingField.")
         }
@@ -647,6 +662,7 @@ internal class PlannerFixtureLoader(
             "exerciseHistory",
             "expected"
         )
+        private val OPTIONAL_ROOT_FIELDS = setOf("allowedExerciseIds")
         private val PROFILE_FIELDS = setOf(
             "goals",
             "experienceLevel",

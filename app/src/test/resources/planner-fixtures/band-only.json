@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "id": "band-only",
+  "policyVersion": 3,
+  "catalogVersion": "workout-guide-bundled-302",
+  "profile": {
+    "goals": [
+      "BUILD_MUSCLE"
+    ],
+    "experienceLevel": "BEGINNER",
+    "preferredDurationMinutes": 40,
+    "daysPerWeek": 4,
+    "availableEquipment": [
+      "Resistance Band"
+    ],
+    "preferredUnit": "LBS",
+    "musclePriorities": {
+      "Back": "HIGH",
+      "Glutes": "NORMAL"
+    },
+    "excludedExerciseIds": [],
+    "trainingConstraints": [],
+    "returningAfterBreakWeeks": 0,
+    "confirmedStartingLoads": {},
+    "movementCapabilities": {
+      "VERTICAL_PULL_OR_HANG": "LIMITED"
+    }
+  },
+  "completedWorkoutCount": 5,
+  "exerciseHistory": [
+    {
+      "exerciseId": "banded-row",
+      "lastWeight": null,
+      "lastReps": 14,
+      "bestEstimated1RM": null,
+      "recentSets": [
+        {
+          "completedReps": 14,
+          "completedWeight": null,
+          "isCompleted": true
+        }
+      ]
+    }
+  ],
+  "expected": {
+    "outcome": "SUCCESS",
+    "requiredExerciseIds": [
+      "banded-row",
+      "banded-squat"
+    ],
+    "forbiddenExerciseIds": [
+      "lat-pulldown"
+    ]
+  }
+}

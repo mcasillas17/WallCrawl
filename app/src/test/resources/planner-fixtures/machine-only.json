@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "id": "machine-only",
+  "policyVersion": 3,
+  "catalogVersion": "workout-guide-bundled-302",
+  "profile": {
+    "goals": [
+      "STRENGTH"
+    ],
+    "experienceLevel": "INTERMEDIATE",
+    "preferredDurationMinutes": 45,
+    "daysPerWeek": 4,
+    "availableEquipment": [
+      "Machine"
+    ],
+    "preferredUnit": "LBS",
+    "musclePriorities": {
+      "Chest": "HIGH",
+      "Quadriceps": "HIGH"
+    },
+    "excludedExerciseIds": [],
+    "trainingConstraints": [],
+    "returningAfterBreakWeeks": 0,
+    "confirmedStartingLoads": {
+      "machine-chest-press": 90.0
+    },
+    "movementCapabilities": {
+      "FLOOR_TRANSITION": "LIMITED"
+    }
+  },
+  "completedWorkoutCount": 11,
+  "exerciseHistory": [
+    {
+      "exerciseId": "machine-chest-press",
+      "lastWeight": 90.0,
+      "lastReps": 10,
+      "bestEstimated1RM": 120.0,
+      "recentSets": [
+        {
+          "completedReps": 10,
+          "completedWeight": 90.0,
+          "isCompleted": true
+        },
+        {
+          "completedReps": 8,
+          "completedWeight": 100.0,
+          "isCompleted": true
+        }
+      ]
+    }
+  ],
+  "expected": {
+    "outcome": "SUCCESS",
+    "requiredExerciseIds": [
+      "machine-chest-press",
+      "leg-press"
+    ],
+    "forbiddenExerciseIds": [
+      "barbell-back-squat"
+    ]
+  }
+}

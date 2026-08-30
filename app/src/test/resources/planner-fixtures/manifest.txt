@@ -1,1 +1,9 @@
-planner-fixtures/valid-basic.json
+planner-fixtures/bodyweight-beginner.json
+planner-fixtures/band-only.json
+planner-fixtures/machine-only.json
+planner-fixtures/full-gym-advanced.json
+planner-fixtures/returning-user.json
+planner-fixtures/limited-capability.json
+planner-fixtures/mixed-unit-history.json
+planner-fixtures/sparse-history.json
+planner-fixtures/no-strength-candidates.json

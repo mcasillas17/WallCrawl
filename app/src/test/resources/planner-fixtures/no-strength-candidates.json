@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "no-strength-candidates",
+  "policyVersion": 3,
+  "catalogVersion": "workout-guide-bundled-302",
+  "profile": {
+    "goals": [
+      "GENERAL_FITNESS"
+    ],
+    "experienceLevel": "BEGINNER",
+    "preferredDurationMinutes": 25,
+    "daysPerWeek": 2,
+    "availableEquipment": [
+      "Bodyweight",
+      "Cardio"
+    ],
+    "preferredUnit": "LBS",
+    "musclePriorities": {
+      "Core": "NORMAL"
+    },
+    "excludedExerciseIds": [],
+    "trainingConstraints": [],
+    "returningAfterBreakWeeks": 0,
+    "confirmedStartingLoads": {},
+    "movementCapabilities": {
+      "CONTINUOUS_ACTIVITY": "COMFORTABLE"
+    }
+  },
+  "completedWorkoutCount": 0,
+  "exerciseHistory": [],
+  "allowedExerciseIds": [
+    "walking",
+    "jump-rope",
+    "arm-circles",
+    "lat-pulldown"
+  ],
+  "expected": {
+    "outcome": "NO_STRENGTH_CANDIDATES",
+    "requiredExerciseIds": [],
+    "forbiddenExerciseIds": [
+      "bodyweight-squat"
+    ]
+  }
+}

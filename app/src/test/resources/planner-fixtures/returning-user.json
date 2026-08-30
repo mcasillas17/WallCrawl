@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "id": "returning-user",
+  "policyVersion": 3,
+  "catalogVersion": "workout-guide-bundled-302",
+  "profile": {
+    "goals": [
+      "GENERAL_FITNESS"
+    ],
+    "experienceLevel": "INTERMEDIATE",
+    "preferredDurationMinutes": 40,
+    "daysPerWeek": 3,
+    "availableEquipment": [
+      "Bodyweight",
+      "Dumbbell",
+      "Bench"
+    ],
+    "preferredUnit": "LBS",
+    "musclePriorities": {
+      "Chest": "HIGH",
+      "Shoulders": "NORMAL"
+    },
+    "excludedExerciseIds": [],
+    "trainingConstraints": [
+      "LOW_IMPACT_ONLY"
+    ],
+    "returningAfterBreakWeeks": 18,
+    "confirmedStartingLoads": {
+      "incline-dumbbell-press": 40.0
+    },
+    "movementCapabilities": {
+      "IMPACT": "LIMITED"
+    }
+  },
+  "completedWorkoutCount": 23,
+  "exerciseHistory": [
+    {
+      "exerciseId": "incline-dumbbell-press",
+      "lastWeight": 40.0,
+      "lastReps": 9,
+      "bestEstimated1RM": 52.0,
+      "recentSets": [
+        {
+          "completedReps": 9,
+          "completedWeight": 40.0,
+          "isCompleted": true
+        }
+      ]
+    }
+  ],
+  "expected": {
+    "outcome": "SUCCESS",
+    "requiredExerciseIds": [
+      "incline-dumbbell-press"
+    ],
+    "forbiddenExerciseIds": [
+      "barbell-bench-press"
+    ]
+  }
+}

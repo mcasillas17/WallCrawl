@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "id": "sparse-history",
+  "policyVersion": 3,
+  "catalogVersion": "workout-guide-bundled-302",
+  "profile": {
+    "goals": [
+      "GENERAL_FITNESS"
+    ],
+    "experienceLevel": "BEGINNER",
+    "preferredDurationMinutes": 30,
+    "daysPerWeek": 2,
+    "availableEquipment": [
+      "Bodyweight",
+      "Pull-up Bar"
+    ],
+    "preferredUnit": "LBS",
+    "musclePriorities": {
+      "Back": "HIGH"
+    },
+    "excludedExerciseIds": [],
+    "trainingConstraints": [],
+    "returningAfterBreakWeeks": 0,
+    "confirmedStartingLoads": {},
+    "movementCapabilities": {
+      "VERTICAL_PULL_OR_HANG": "LIMITED"
+    }
+  },
+  "completedWorkoutCount": 1,
+  "exerciseHistory": [
+    {
+      "exerciseId": "pull-ups",
+      "lastWeight": null,
+      "lastReps": 5,
+      "bestEstimated1RM": null,
+      "recentSets": [
+        {
+          "completedReps": 5,
+          "completedWeight": null,
+          "isCompleted": true
+        }
+      ]
+    }
+  ],
+  "expected": {
+    "outcome": "SUCCESS",
+    "requiredExerciseIds": [
+      "pull-ups"
+    ],
+    "forbiddenExerciseIds": [
+      "lat-pulldown"
+    ]
+  }
+}
