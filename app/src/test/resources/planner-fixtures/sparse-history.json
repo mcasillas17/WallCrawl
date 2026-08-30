@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "id": "sparse-history",
+  "policyVersion": 3,
+  "catalogVersion": "ba0b709cb20430361b2cb33aaadd20998164a916",
+  "profile": {
+    "goals": [
+      "GENERAL_FITNESS"
+    ],
+    "experienceLevel": "BEGINNER",
+    "preferredDurationMinutes": 30,
+    "daysPerWeek": 2,
+    "availableEquipment": [
+      "Bodyweight",
+      "Resistance Band"
+    ],
+    "preferredUnit": "LBS",
+    "musclePriorities": {
+      "Back": "HIGH"
+    },
+    "excludedExerciseIds": [],
+    "trainingConstraints": [],
+    "returningAfterBreakWeeks": 0,
+    "confirmedStartingLoads": {},
+    "movementCapabilities": {
+      "VERTICAL_PULL_OR_HANG": "LIMITED"
+    }
+  },
+  "completedWorkoutCount": 1,
+  "exerciseHistory": [
+    {
+      "exerciseId": "inverted-row",
+      "lastWeight": null,
+      "lastReps": 5,
+      "bestEstimated1RM": null,
+      "recentSets": [
+        {
+          "completedReps": 5,
+          "completedWeight": null,
+          "isCompleted": true
+        }
+      ]
+    }
+  ],
+  "allowedExerciseIds": [
+    "inverted-row",
+    "banded-lat-pulldown",
+    "prone-y-raise"
+  ],
+  "expected": {
+    "outcome": "SUCCESS",
+    "requiredExerciseIds": [],
+    "requiredAnyExerciseIdGroups": [
+      [
+        "inverted-row",
+        "banded-lat-pulldown"
+      ]
+    ],
+    "forbiddenExerciseIds": []
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "id": "bodyweight-beginner",
+  "policyVersion": 3,
+  "catalogVersion": "ba0b709cb20430361b2cb33aaadd20998164a916",
+  "profile": {
+    "goals": [
+      "GENERAL_FITNESS",
+      "BUILD_MUSCLE"
+    ],
+    "experienceLevel": "BEGINNER",
+    "preferredDurationMinutes": 35,
+    "daysPerWeek": 3,
+    "availableEquipment": [
+      "Bodyweight"
+    ],
+    "preferredUnit": "LBS",
+    "musclePriorities": {
+      "Chest": "HIGH",
+      "Core": "NORMAL"
+    },
+    "excludedExerciseIds": [],
+    "trainingConstraints": [],
+    "returningAfterBreakWeeks": 0,
+    "confirmedStartingLoads": {},
+    "movementCapabilities": {
+      "IMPACT": "COMFORTABLE"
+    }
+  },
+  "completedWorkoutCount": 2,
+  "exerciseHistory": [
+    {
+      "exerciseId": "push-up",
+      "lastWeight": null,
+      "lastReps": 12,
+      "bestEstimated1RM": null,
+      "recentSets": [
+        {
+          "completedReps": 12,
+          "completedWeight": null,
+          "isCompleted": true
+        },
+        {
+          "completedReps": 10,
+          "completedWeight": null,
+          "isCompleted": true
+        }
+      ]
+    },
+    {
+      "exerciseId": "bodyweight-squat",
+      "lastWeight": null,
+      "lastReps": 15,
+      "bestEstimated1RM": null,
+      "recentSets": [
+        {
+          "completedReps": 15,
+          "completedWeight": null,
+          "isCompleted": true
+        }
+      ]
+    }
+  ],
+  "allowedExerciseIds": [
+    "push-up",
+    "knee-push-up",
+    "bodyweight-squat",
+    "dead-bug"
+  ],
+  "expected": {
+    "outcome": "SUCCESS",
+    "requiredExerciseIds": [],
+    "requiredAnyExerciseIdGroups": [
+      [
+        "knee-push-up",
+        "push-up"
+      ]
+    ],
+    "forbiddenExerciseIds": []
+  }
+}

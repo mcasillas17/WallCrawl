@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "non-finite-number",
+  "policyVersion": 1,
+  "catalogVersion": "test-catalog-v1",
+  "profile": {
+    "goals": ["BUILD_MUSCLE"],
+    "experienceLevel": "BEGINNER",
+    "preferredDurationMinutes": 45,
+    "daysPerWeek": 3,
+    "availableEquipment": ["Bodyweight"],
+    "preferredUnit": "KG",
+    "musclePriorities": {"Chest": "HIGH"},
+    "excludedExerciseIds": [],
+    "trainingConstraints": [],
+    "returningAfterBreakWeeks": 0,
+    "confirmedStartingLoads": {
+      "incline-dumbbell-press": 1e309
+    },
+    "movementCapabilities": {}
+  },
+  "completedWorkoutCount": 0,
+  "exerciseHistory": [],
+  "expected": {
+    "outcome": "SUCCESS",
+    "requiredExerciseIds": [],
+    "forbiddenExerciseIds": []
+  }
+}

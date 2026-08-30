@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "id": "mixed-unit-history",
+  "policyVersion": 3,
+  "catalogVersion": "ba0b709cb20430361b2cb33aaadd20998164a916",
+  "profile": {
+    "goals": [
+      "BUILD_MUSCLE"
+    ],
+    "experienceLevel": "INTERMEDIATE",
+    "preferredDurationMinutes": 50,
+    "daysPerWeek": 4,
+    "availableEquipment": [
+      "Bodyweight",
+      "Dumbbell",
+      "Bench"
+    ],
+    "preferredUnit": "KG",
+    "musclePriorities": {
+      "Chest": "HIGH",
+      "Quadriceps": "NORMAL"
+    },
+    "excludedExerciseIds": [],
+    "trainingConstraints": [],
+    "returningAfterBreakWeeks": 0,
+    "confirmedStartingLoads": {
+      "incline-dumbbell-press": 25.0
+    },
+    "movementCapabilities": {
+      "BALANCE_WITHOUT_SUPPORT": "COMFORTABLE"
+    }
+  },
+  "completedWorkoutCount": 16,
+  "exerciseHistory": [
+    {
+      "exerciseId": "incline-dumbbell-press",
+      "lastWeight": 27.5,
+      "lastReps": 8,
+      "bestEstimated1RM": 34.8,
+      "recentSets": [
+        {
+          "completedReps": 10,
+          "completedWeight": 25.0,
+          "isCompleted": true
+        },
+        {
+          "completedReps": 8,
+          "completedWeight": 27.5,
+          "isCompleted": true
+        }
+      ]
+    },
+    {
+      "exerciseId": "bodyweight-squat",
+      "lastWeight": null,
+      "lastReps": 20,
+      "bestEstimated1RM": null,
+      "recentSets": [
+        {
+          "completedReps": 20,
+          "completedWeight": null,
+          "isCompleted": true
+        }
+      ]
+    }
+  ],
+  "allowedExerciseIds": [
+    "arnold-press",
+    "incline-dumbbell-press",
+    "dumbbell-bent-over-row",
+    "bicep-curl",
+    "dumbbell-fly"
+  ],
+  "expected": {
+    "outcome": "SUCCESS",
+    "requiredExerciseIds": [],
+    "forbiddenExerciseIds": [],
+    "expectedTargetWeights": {
+      "incline-dumbbell-press": 27.5
+    }
+  }
+}

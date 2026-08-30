@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "id": "limited-capability",
+  "policyVersion": 3,
+  "catalogVersion": "ba0b709cb20430361b2cb33aaadd20998164a916",
+  "profile": {
+    "goals": [
+      "GENERAL_FITNESS",
+      "BUILD_MUSCLE"
+    ],
+    "experienceLevel": "BEGINNER",
+    "preferredDurationMinutes": 35,
+    "daysPerWeek": 3,
+    "availableEquipment": [
+      "Bodyweight",
+      "Dumbbell",
+      "Bench"
+    ],
+    "preferredUnit": "LBS",
+    "musclePriorities": {
+      "Shoulders": "HIGH",
+      "Core": "NORMAL"
+    },
+    "excludedExerciseIds": [
+      "push-up"
+    ],
+    "trainingConstraints": [
+      "LOW_IMPACT_ONLY"
+    ],
+    "returningAfterBreakWeeks": 0,
+    "confirmedStartingLoads": {
+      "dumbbell-shoulder-press": 25.0
+    },
+    "movementCapabilities": {
+      "IMPACT": "AVOID",
+      "FLOOR_TRANSITION": "LIMITED",
+      "UNSUPPORTED_SQUAT": "LIMITED",
+      "UPPER_BODY_BODYWEIGHT_PUSH": "AVOID"
+    }
+  },
+  "completedWorkoutCount": 4,
+  "exerciseHistory": [
+    {
+      "exerciseId": "dumbbell-shoulder-press",
+      "lastWeight": 25.0,
+      "lastReps": 10,
+      "bestEstimated1RM": 33.3,
+      "recentSets": [
+        {
+          "completedReps": 10,
+          "completedWeight": 25.0,
+          "isCompleted": true
+        }
+      ]
+    }
+  ],
+  "expected": {
+    "outcome": "SUCCESS",
+    "requiredExerciseIds": [
+      "dumbbell-shoulder-press"
+    ],
+    "forbiddenExerciseIds": [],
+    "expectedTargetWeights": {
+      "dumbbell-shoulder-press": 25.0
+    }
+  },
+  "allowedExerciseIds": [
+    "dumbbell-bench-press",
+    "dumbbell-shoulder-press",
+    "incline-dumbbell-press",
+    "dumbbell-lateral-raise"
+  ]
+}

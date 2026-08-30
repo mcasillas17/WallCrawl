@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "no-strength-candidates",
+  "policyVersion": 3,
+  "catalogVersion": "ba0b709cb20430361b2cb33aaadd20998164a916",
+  "profile": {
+    "goals": [
+      "GENERAL_FITNESS"
+    ],
+    "experienceLevel": "BEGINNER",
+    "preferredDurationMinutes": 25,
+    "daysPerWeek": 2,
+    "availableEquipment": [
+      "Cardio"
+    ],
+    "preferredUnit": "LBS",
+    "musclePriorities": {
+      "Core": "NORMAL"
+    },
+    "excludedExerciseIds": [],
+    "trainingConstraints": [],
+    "returningAfterBreakWeeks": 0,
+    "confirmedStartingLoads": {},
+    "movementCapabilities": {
+      "CONTINUOUS_ACTIVITY": "COMFORTABLE"
+    }
+  },
+  "completedWorkoutCount": 0,
+  "exerciseHistory": [],
+  "allowedExerciseIds": [
+    "walking"
+  ],
+  "expected": {
+    "outcome": "NO_STRENGTH_CANDIDATES",
+    "requiredExerciseIds": [],
+    "forbiddenExerciseIds": []
+  }
+}

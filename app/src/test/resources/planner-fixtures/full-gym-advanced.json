@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "id": "full-gym-advanced",
+  "policyVersion": 3,
+  "catalogVersion": "ba0b709cb20430361b2cb33aaadd20998164a916",
+  "profile": {
+    "goals": [
+      "STRENGTH",
+      "BUILD_MUSCLE"
+    ],
+    "experienceLevel": "ADVANCED",
+    "preferredDurationMinutes": 70,
+    "daysPerWeek": 5,
+    "availableEquipment": [
+      "Barbell",
+      "Dumbbell",
+      "Cable",
+      "Machine",
+      "Bodyweight",
+      "Kettlebell",
+      "Resistance Band",
+      "Bench",
+      "Pull-up Bar",
+      "Dip Bars",
+      "Squat Rack",
+      "Box",
+      "Cardio",
+      "Chair",
+      "Doorway",
+      "Plate",
+      "Stability Ball",
+      "Towel",
+      "Wall"
+    ],
+    "preferredUnit": "LBS",
+    "musclePriorities": {
+      "Chest": "HIGH",
+      "Back": "HIGH",
+      "Quadriceps": "HIGH"
+    },
+    "excludedExerciseIds": [],
+    "trainingConstraints": [],
+    "returningAfterBreakWeeks": 0,
+    "confirmedStartingLoads": {
+      "barbell-bench-press": 185.0,
+      "barbell-back-squat": 225.0
+    },
+    "movementCapabilities": {
+      "IMPACT": "COMFORTABLE",
+      "UNSUPPORTED_SQUAT": "COMFORTABLE"
+    }
+  },
+  "completedWorkoutCount": 140,
+  "exerciseHistory": [
+    {
+      "exerciseId": "barbell-bench-press",
+      "lastWeight": 185.0,
+      "lastReps": 5,
+      "bestEstimated1RM": 215.8,
+      "recentSets": [
+        {
+          "completedReps": 5,
+          "completedWeight": 185.0,
+          "isCompleted": true
+        }
+      ]
+    },
+    {
+      "exerciseId": "barbell-back-squat",
+      "lastWeight": 225.0,
+      "lastReps": 5,
+      "bestEstimated1RM": 262.5,
+      "recentSets": [
+        {
+          "completedReps": 5,
+          "completedWeight": 225.0,
+          "isCompleted": true
+        }
+      ]
+    }
+  ],
+  "expected": {
+    "outcome": "SUCCESS",
+    "requiredExerciseIds": [
+      "barbell-bench-press"
+    ],
+    "forbiddenExerciseIds": []
+  }
+}
