@@ -340,6 +340,7 @@ class WorkoutGuideCatalogParserTest {
     @Test
     fun parse_validationErrorsDoNotRevealUntrustedCatalogValues() {
         val marker = "INJECTED-CATALOG-VALUE"
+        val graphMarker = "injected-catalog-value"
         val unknownReviewedField = reviewedMetadataJson().replace(
             "\"reviewState\": \"draft\"",
             "\"reviewState\": \"draft\", \"unknown\": true"
@@ -352,6 +353,25 @@ class WorkoutGuideCatalogParserTest {
             "\"alternativeExerciseIds\": []",
             "\"alternativeExerciseIds\": [\"bad\\n$marker\"]"
         )
+        val unknownGraphTarget = reviewedMetadataJson().replace(
+            "\"approvedRegressions\": []",
+            "\"approvedRegressions\": [{\"exerciseId\": \"$graphMarker\"}]"
+        )
+        val duplicateGraphTarget = reviewedMetadataJson().replace(
+            "\"approvedRegressions\": []",
+            "\"approvedRegressions\": [" +
+                "{\"exerciseId\": \"$graphMarker\"}," +
+                "{\"exerciseId\": \"$graphMarker\", \"rationale\": \"Duplicate edge.\"}]"
+        )
+        val crossRoleGraphTarget = reviewedMetadataJson()
+            .replace(
+                "\"approvedRegressions\": []",
+                "\"approvedRegressions\": [{\"exerciseId\": \"$graphMarker\"}]"
+            )
+            .replace(
+                "\"approvedSubstitutions\": []",
+                "\"approvedSubstitutions\": [{\"exerciseId\": \"$graphMarker\"}]"
+            )
         val cases = listOf(
             catalogJson(exerciseJson(id = "bad\\n$marker")) to "exercise.id",
             catalogJson(exerciseJson(exerciseType = "bad\\n$marker")) to "exerciseType",
@@ -363,8 +383,17 @@ class WorkoutGuideCatalogParserTest {
             catalogJson(exerciseJson(programming = invalidAlternative)) to
                 "alternativeExerciseId"
         )
+        val graphCases = listOf(
+            catalogJson(exerciseJson(unknownGraphTarget)) to "unknown exercise id",
+            catalogJson(exerciseJson(duplicateGraphTarget)) to "duplicate edge",
+            catalogJson(exerciseJson(crossRoleGraphTarget)) to
+                "as regression and substitution"
+        )
 
         cases.forEach { (json, field) -> assertFormatFailureRedacts(json, field, marker) }
+        graphCases.forEach { (json, field) ->
+            assertFormatFailureRedacts(json, field, graphMarker)
+        }
     }
 
     @Test

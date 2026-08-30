@@ -614,7 +614,7 @@ class WorkoutGuideCatalogParser {
                 malformed("$linkLabel.exerciseId is not a safe identifier.")
             }
             if (!targetIds.add(targetId)) {
-                malformed("$label contains duplicate edge $targetId.")
+                malformed("$label contains duplicate edge.")
             }
             links += ReviewedExerciseLink(targetId, rationale)
         }
@@ -838,7 +838,7 @@ class WorkoutGuideCatalogParser {
             val duplicateRole = regressionTargets.toSet().intersect(substitutionTargets.toSet()).firstOrNull()
             if (duplicateRole != null) {
                 malformed(
-                    "Exercise ${entry.id} repeats graph edge $duplicateRole as regression and substitution."
+                    "Exercise ${entry.id} repeats a graph edge as regression and substitution."
                 )
             }
             regressionGraph[entry.id] = regressionTargets
@@ -937,21 +937,22 @@ class WorkoutGuideCatalogParser {
 
         val visiting = mutableSetOf<String>()
         val visited = mutableSetOf<String>()
-        fun visit(exerciseId: String, path: List<String>) {
+        fun visit(exerciseId: String) {
             if (exerciseId in visiting) {
-                val cycleStart = path.indexOf(exerciseId)
-                val cycle = path.drop(cycleStart) + exerciseId
-                malformed("Reviewed metadata regression cycle detected: ${cycle.joinToString(" -> ")}.")
+                malformed(
+                    "Exercise $exerciseId reviewedMetadata.approvedRegressions forms a " +
+                        "regression cycle."
+                )
             }
             if (exerciseId in visited) return
             visiting += exerciseId
             regressionGraph[exerciseId].orEmpty().forEach { targetId ->
-                visit(targetId, path + exerciseId)
+                visit(targetId)
             }
             visiting -= exerciseId
             visited += exerciseId
         }
-        regressionGraph.keys.sorted().forEach { exerciseId -> visit(exerciseId, emptyList()) }
+        regressionGraph.keys.sorted().forEach(::visit)
     }
 
     private fun regressionShapesCompatible(

@@ -701,6 +701,44 @@ class ImportCatalogTest(unittest.TestCase):
         self.assertIn("exercise[0].id", identifier_result.stderr)
         self.assertNotIn(marker, identifier_result.stderr)
 
+    def test_reviewed_graph_errors_redact_schema_valid_target_ids(self) -> None:
+        marker = "injected-catalog-value"
+        graph_cases = (
+            (
+                [{"exerciseId": marker}],
+                [],
+                "unknown exercise id",
+            ),
+            (
+                [
+                    {"exerciseId": marker},
+                    {"exerciseId": marker, "rationale": "Duplicate edge."},
+                ],
+                [],
+                "duplicate edge",
+            ),
+            (
+                [{"exerciseId": marker}],
+                [{"exerciseId": marker}],
+                "as regression and substitution",
+            ),
+        )
+
+        for regressions, substitutions, expected_error in graph_cases:
+            with self.subTest(expected_error=expected_error):
+                self._write_reviewed_metadata()
+                reviewed = json.loads(self.reviewed_metadata.read_text())
+                source = reviewed["exercises"]["barbell-bench-press"]
+                source["approvedRegressions"] = regressions
+                source["approvedSubstitutions"] = substitutions
+                self.reviewed_metadata.write_text(json.dumps(reviewed, indent=2) + "\n")
+
+                result = self._run_import()
+
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn(expected_error, result.stderr.lower())
+                self.assertNotIn(marker, result.stderr)
+
     def _write_source_fixture(self) -> None:
         attribution = {
             "creator": "Bryl Lim",

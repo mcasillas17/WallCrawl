@@ -700,7 +700,7 @@ def _normalize_reviewed_metadata(
                 128,
             )
             if target_id in seen_targets:
-                raise CatalogImportError(f"{exercise_id}.{field} contains duplicate edge {target_id}")
+                raise CatalogImportError(f"{exercise_id}.{field} contains duplicate edge")
             seen_targets.add(target_id)
             rationale = link.get("rationale")
             if rationale is not None:
@@ -782,7 +782,7 @@ def _validate_reviewed_graphs(
         duplicate_roles = sorted(set(regression_targets) & set(substitution_targets))
         if duplicate_roles:
             raise CatalogImportError(
-                f"{exercise_id} repeats graph edge {duplicate_roles[0]} as regression and substitution"
+                f"{exercise_id} repeats a graph edge as regression and substitution"
             )
         regression_graph[exercise_id] = regression_targets
 
@@ -796,11 +796,11 @@ def _validate_reviewed_graphs(
                     raise CatalogImportError(f"{exercise_id}.{field} cannot contain a self-edge")
                 if target_id not in catalog_by_id:
                     raise CatalogImportError(
-                        f"{exercise_id}.{field} references unknown exercise ID {target_id}"
+                        f"{exercise_id}.{field} references unknown exercise ID"
                     )
                 if target_id not in reviewed_by_id:
                     raise CatalogImportError(
-                        f"{exercise_id}.{field} target {target_id} lacks reviewed metadata"
+                        f"{exercise_id}.{field} target lacks reviewed metadata"
                     )
 
         for link in source["approvedRegressions"]:
@@ -808,33 +808,33 @@ def _validate_reviewed_graphs(
             target = reviewed_by_id[target_id]
             if source["movementPattern"] != target["movementPattern"]:
                 raise CatalogImportError(
-                    f"{exercise_id}.approvedRegressions target {target_id} has incompatible movementPattern"
+                    f"{exercise_id}.approvedRegressions has incompatible movementPattern"
                 )
             if not _regression_shapes_compatible(
                 source["prescriptionShape"], target["prescriptionShape"]
             ):
                 raise CatalogImportError(
-                    f"{exercise_id}.approvedRegressions target {target_id} has incompatible prescriptionShape"
+                    f"{exercise_id}.approvedRegressions has incompatible prescriptionShape"
                 )
             if source["directPrimaryMuscle"] != target["directPrimaryMuscle"]:
                 raise CatalogImportError(
-                    f"{exercise_id}.approvedRegressions target {target_id} changes directPrimaryMuscle"
+                    f"{exercise_id}.approvedRegressions changes directPrimaryMuscle"
                 )
             if complexity_order[target["complexity"]] > complexity_order[source["complexity"]]:
                 raise CatalogImportError(
-                    f"{exercise_id}.approvedRegressions target {target_id} is more complex"
+                    f"{exercise_id}.approvedRegressions is more complex"
                 )
             if support_order[target["supportRequirement"]] > support_order[source["supportRequirement"]]:
                 raise CatalogImportError(
-                    f"{exercise_id}.approvedRegressions target {target_id} requires less support"
+                    f"{exercise_id}.approvedRegressions requires less support"
                 )
             if not set(target["capabilityRequirements"]).issubset(source["capabilityRequirements"]):
                 raise CatalogImportError(
-                    f"{exercise_id}.approvedRegressions target {target_id} adds capability requirements"
+                    f"{exercise_id}.approvedRegressions adds capability requirements"
                 )
             if source["progressionFamily"] != target["progressionFamily"] and not link.get("rationale"):
                 raise CatalogImportError(
-                    f"{exercise_id}.approvedRegressions target {target_id} crosses progressionFamily "
+                    f"{exercise_id}.approvedRegressions crosses progressionFamily "
                     "without rationale"
                 )
 
@@ -843,7 +843,7 @@ def _validate_reviewed_graphs(
             target = reviewed_by_id[target_id]
             if source["prescriptionShape"] != target["prescriptionShape"]:
                 raise CatalogImportError(
-                    f"{exercise_id}.approvedSubstitutions target {target_id} has incompatible "
+                    f"{exercise_id}.approvedSubstitutions has incompatible "
                     "prescriptionShape"
                 )
             changes_role = (
@@ -852,33 +852,33 @@ def _validate_reviewed_graphs(
             )
             if changes_role and not link.get("rationale"):
                 raise CatalogImportError(
-                    f"{exercise_id}.approvedSubstitutions target {target_id} changes movement role "
+                    f"{exercise_id}.approvedSubstitutions changes movement role "
                     "without rationale"
                 )
             if not target["equipmentAlternatives"]:
                 raise CatalogImportError(
-                    f"{exercise_id}.approvedSubstitutions target {target_id} has no satisfiable "
+                    f"{exercise_id}.approvedSubstitutions has no satisfiable "
                     "equipment alternative"
                 )
 
     visiting: set[str] = set()
     visited: set[str] = set()
 
-    def visit(exercise_id: str, path: list[str]) -> None:
+    def visit(exercise_id: str) -> None:
         if exercise_id in visiting:
-            cycle_start = path.index(exercise_id)
-            cycle = path[cycle_start:] + [exercise_id]
-            raise CatalogImportError(f"Regression cycle detected: {' -> '.join(cycle)}")
+            raise CatalogImportError(
+                f"{exercise_id}.approvedRegressions forms a regression cycle"
+            )
         if exercise_id in visited:
             return
         visiting.add(exercise_id)
         for target_id in regression_graph.get(exercise_id, []):
-            visit(target_id, [*path, exercise_id])
+            visit(target_id)
         visiting.remove(exercise_id)
         visited.add(exercise_id)
 
     for exercise_id in sorted(regression_graph):
-        visit(exercise_id, [])
+        visit(exercise_id)
 
 
 def _regression_shapes_compatible(source_shape: str, target_shape: str) -> bool:
