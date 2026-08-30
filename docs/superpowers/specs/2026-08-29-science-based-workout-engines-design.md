@@ -168,7 +168,7 @@ package is a leaf that can be removed without changing any core workout.
 enum class AdaptationState { NEEDS_ONBOARDING, UNCALIBRATED, INITIATE, BUILD, DEVELOP, HOLD, RETURNING, DELOAD_OFFERED, RECALIBRATE }
 enum class RestClass { SHORT, MODERATE, LONG }
 enum class ComplexityTier { FOUNDATIONAL, STANDARD, ADVANCED }
-enum class ImpactClass { NONE, LOW, HIGH }
+enum class ImpactLevel { NONE, LOW, HIGH }
 enum class SupportRequirement { SUPPORTED, OPTIONAL_SUPPORT, UNSUPPORTED }
 
 data class EffortTarget(val minRir: Int?, val maxRir: Int?)   // nullable; failure never auto-set
@@ -192,7 +192,7 @@ data class ReviewedExerciseMetadata(
     val approvedSubstitutions: List<String>,
     val capabilityRequirements: Set<String>,
     val supportRequirement: SupportRequirement,
-    val impactClass: ImpactClass,
+    val impactLevel: ImpactLevel,
     val equipmentAlternatives: List<List<String>>,
     val provenance: ReviewProvenance
 )
@@ -225,9 +225,9 @@ data class RecommendationSnapshot(
 )
 ```
 
-`ExercisePrescription`, `BodyMeasurements`, and `MovementCapabilities` are
-defined in the body-aware spec. Loads are `null` until confirmed by history or
-explicit user confirmation.
+`BodyMeasurements` and `MovementCapabilities` are defined in the body-aware
+spec. `ExercisePrescription` is the existing shared core model. Loads are
+`null` until confirmed by history or explicit user confirmation.
 
 ## Adaptation State Machine
 
@@ -311,7 +311,7 @@ Hard eligibility runs before any ranking and cannot be repaired away:
 - explicit exercise exclusion;
 - explicit `TrainingConstraint` conflict (for example a protected joint);
 - capability `AVOID` on a required movement capability;
-- `LOW_IMPACT_ONLY` conflicting with `ImpactClass.HIGH`;
+- `LOW_IMPACT_ONLY` conflicting with `ImpactLevel.HIGH`;
 - required floor transition when floor-transition capability is `LIMITED`/`AVOID`;
 - missing reviewed automatic-planning metadata;
 - temporary advanced-complexity ceiling (below) while uncalibrated/returning.

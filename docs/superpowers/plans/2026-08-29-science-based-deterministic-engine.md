@@ -13,10 +13,20 @@
 ## Core Contracts
 
 ```kotlin
-enum class AdaptationState { INITIATE, BUILD, DEVELOP, HOLD, RETURNING, RECALIBRATE }
+enum class AdaptationState {
+    NEEDS_ONBOARDING,
+    UNCALIBRATED,
+    INITIATE,
+    BUILD,
+    DEVELOP,
+    HOLD,
+    RETURNING,
+    DELOAD_OFFERED,
+    RECALIBRATE
+}
 enum class RestClass { SHORT, MODERATE, LONG }
 
-data class EffortTarget(val minRir: Int, val maxRir: Int)
+data class EffortTarget(val minRir: Int?, val maxRir: Int?)
 
 data class WeeklyDoseLedger(
     val policyVersion: Int,
@@ -63,7 +73,7 @@ sealed interface ProgramViolation {
 - Test: `app/src/test/java/wallcrawl/elopenmike/com/core/ai/ExerciseEligibilityPolicyTest.kt`
 
 - [ ] Write failing tests proving equipment, exclusions, constraints, capability `AVOID`, low-impact policy, and reviewed metadata are hard requirements.
-- [ ] Add `AdaptationState { INITIATE, BUILD, DEVELOP, HOLD, RETURNING, RECALIBRATE }`.
+- [ ] Add the complete `AdaptationState` enum from Core Contracts.
 - [ ] Temporarily block advanced-complexity automatic exercises only in INITIATE/RETURNING when no demonstrated family history or supported regression exists.
 - [ ] Preserve full-catalog browse/manual workflows and typed no-plan reasons.
 - [ ] Run focused tests and commit `feat: enforce reviewed workout eligibility`.

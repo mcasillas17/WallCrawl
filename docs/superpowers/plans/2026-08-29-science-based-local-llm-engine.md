@@ -23,6 +23,7 @@ data class NonSafetyPreferences(
     val durationMinutes: Int?,
     val emphasizedMuscles: Set<String>,
     val avoidedEligibleIds: Set<String>,
+    val equipmentPreference: Set<String>,
     val familiarity: FamiliarityPreference?
 )
 
@@ -34,6 +35,7 @@ data class RankedCandidateResponse(
 interface WorkoutCandidateRanker {
     suspend fun rank(
         slots: List<CandidateSlot>,
+        eligibleIds: Set<String>,
         preferences: NonSafetyPreferences,
         policyVersion: Int
     ): RankedCandidateResponse
