@@ -2,6 +2,7 @@ package wallcrawl.elopenmike.com.core.exercise.workoutguide
 
 import android.util.JsonReader
 import android.util.JsonToken
+import java.io.FilterReader
 import java.io.IOException
 import java.io.Reader
 import java.util.Locale
@@ -40,7 +41,7 @@ class WorkoutGuideCatalogParser {
 
     fun parse(input: Reader): WorkoutGuideCatalogSnapshot {
         try {
-            val reader = JsonReader(input)
+            val reader = JsonReader(BoundedCatalogReader(input, MAX_CATALOG_CHARACTERS))
             var schemaVersion: Int? = null
             var source: CatalogSource? = null
             var visualSpecification: VisualSpecification? = null
@@ -48,12 +49,13 @@ class WorkoutGuideCatalogParser {
 
             reader.beginObject()
             while (reader.hasNext()) {
-                when (reader.nextName()) {
+                val field = reader.nextName()
+                when (field) {
                     "schemaVersion" -> schemaVersion = reader.nextInt()
                     "source" -> source = reader.readCatalogSource()
                     "visuals" -> visualSpecification = reader.readVisualSpecification()
                     "exercises" -> parsedExercises = reader.readExercises()
-                    else -> reader.skipValue()
+                    else -> reader.skipBoundedValue("catalog.${safeField(field)}")
                 }
             }
             reader.endObject()
@@ -134,12 +136,13 @@ class WorkoutGuideCatalogParser {
         var attribution: ExerciseAttribution? = null
         beginObject()
         while (hasNext()) {
-            when (nextName()) {
+            val field = nextName()
+            when (field) {
                 "repository" -> repository = readString("source.repository")
                 "commit" -> commit = readString("source.commit")
                 "assetLicense" -> assetLicense = readString("source.assetLicense")
                 "attribution" -> attribution = readAttribution("source.attribution")
-                else -> skipValue()
+                else -> skipBoundedValue("source.${safeField(field)}")
             }
         }
         endObject()
@@ -153,12 +156,13 @@ class WorkoutGuideCatalogParser {
         var format: String? = null
         beginObject()
         while (hasNext()) {
-            when (nextName()) {
+            val field = nextName()
+            when (field) {
                 "frameCount" -> frameCount = nextInt()
                 "widthPx" -> widthPx = nextInt()
                 "heightPx" -> heightPx = nextInt()
                 "format" -> format = readString("visuals.format")
-                else -> skipValue()
+                else -> skipBoundedValue("visuals.${safeField(field)}")
             }
         }
         endObject()
@@ -191,10 +195,13 @@ class WorkoutGuideCatalogParser {
         var isStretch: Boolean? = null
         var programming: ExerciseProgrammingMetadata? = null
         var reviewedMetadata: ReviewedExerciseMetadata? = null
+        val seenFields = mutableSetOf<String>()
 
         beginObject()
         while (hasNext()) {
-            when (nextName()) {
+            val field = nextName()
+            requireUniqueField(seenFields, field, "exercise[$position]")
+            when (field) {
                 "id" -> id = readString("exercise.id")
                 "sourceId" -> sourceId = readString("exercise.sourceId")
                 "sourceSlug" -> sourceSlug = readString("exercise.sourceSlug")
@@ -213,7 +220,7 @@ class WorkoutGuideCatalogParser {
                         "Exercise $id reviewedMetadata"
                     }
                 )
-                else -> skipValue()
+                else -> skipBoundedValue("exercise[$position].${safeField(field)}")
             }
         }
         endObject()
@@ -279,13 +286,14 @@ class WorkoutGuideCatalogParser {
         var source: ExerciseAttributionSource? = null
         beginObject()
         while (hasNext()) {
-            when (nextName()) {
+            val field = nextName()
+            when (field) {
                 "creator" -> creator = readString("$label.creator")
                 "creatorUrl" -> creatorUrl = readString("$label.creatorUrl", MAX_URL_LENGTH)
                 "license" -> license = readString("$label.license")
                 "licenseUrl" -> licenseUrl = readString("$label.licenseUrl", MAX_URL_LENGTH)
                 "source" -> source = readAttributionSource("$label.source")
-                else -> skipValue()
+                else -> skipBoundedValue("$label.${safeField(field)}")
             }
         }
         endObject()
@@ -308,13 +316,14 @@ class WorkoutGuideCatalogParser {
         var changes: String? = null
         beginObject()
         while (hasNext()) {
-            when (nextName()) {
+            val field = nextName()
+            when (field) {
                 "name" -> name = readString("$label.name")
                 "url" -> url = readString("$label.url", MAX_URL_LENGTH)
                 "license" -> license = readString("$label.license")
                 "licenseUrl" -> licenseUrl = readString("$label.licenseUrl", MAX_URL_LENGTH)
                 "changes" -> changes = readString("$label.changes", MAX_DESCRIPTION_LENGTH)
-                else -> skipValue()
+                else -> skipBoundedValue("$label.${safeField(field)}")
             }
         }
         endObject()
@@ -339,7 +348,8 @@ class WorkoutGuideCatalogParser {
         var coachingSummary: String? = null
         beginObject()
         while (hasNext()) {
-            when (nextName()) {
+            val field = nextName()
+            when (field) {
                 "requiredEquipmentCombinations" -> combinations = readStringMatrix()
                 "movementPattern" -> movementPattern = readMovementPattern(readString("programming.movementPattern"))
                 "difficulty" -> difficulty = readDifficulty(readString("programming.difficulty"))
@@ -352,7 +362,7 @@ class WorkoutGuideCatalogParser {
                     "programming.coachingSummary",
                     MAX_DESCRIPTION_LENGTH
                 )
-                else -> skipValue()
+                else -> skipBoundedValue("programming.${safeField(field)}")
             }
         }
         endObject()
@@ -789,6 +799,15 @@ class WorkoutGuideCatalogParser {
                 "Exercise $exerciseId approved reviewedMetadata requires explicit human provenance."
             )
         }
+        if (
+            reviewState == ReviewState.DRAFT &&
+            (provenance.reviewerRole != null || provenance.reviewedAtEpochMillis != null)
+        ) {
+            malformed(
+                "Exercise $exerciseId draft provenance requires null reviewerRole and " +
+                    "reviewedAtEpochMillis."
+            )
+        }
     }
 
     private fun validateReviewedGraphs(entries: List<ParsedExercise>) {
@@ -948,10 +967,11 @@ class WorkoutGuideCatalogParser {
         var max: Int? = null
         beginObject()
         while (hasNext()) {
-            when (nextName()) {
+            val field = nextName()
+            when (field) {
                 "min" -> min = nextInt()
                 "max" -> max = nextInt()
-                else -> skipValue()
+                else -> skipBoundedValue("programming.recommendedRepRange.${safeField(field)}")
             }
         }
         endObject()
@@ -980,6 +1000,55 @@ class WorkoutGuideCatalogParser {
             malformed("$label must contain between 1 and $maxLength characters.")
         }
         return value
+    }
+
+    private fun JsonReader.skipBoundedValue(label: String, depth: Int = 0) {
+        if (depth > MAX_JSON_DEPTH) {
+            malformed("$label exceeds maximum JSON nesting depth.")
+        }
+        when (peek()) {
+            JsonToken.BEGIN_ARRAY -> {
+                beginArray()
+                var itemCount = 0
+                while (hasNext()) {
+                    if (itemCount >= MAX_IGNORED_CONTAINER_ITEMS) {
+                        malformed("$label contains too many items.")
+                    }
+                    skipBoundedValue("$label[$itemCount]", depth + 1)
+                    itemCount += 1
+                }
+                endArray()
+            }
+            JsonToken.BEGIN_OBJECT -> {
+                beginObject()
+                var fieldCount = 0
+                while (hasNext()) {
+                    if (fieldCount >= MAX_IGNORED_CONTAINER_ITEMS) {
+                        malformed("$label contains too many fields.")
+                    }
+                    val field = nextName()
+                    if (field.length > MAX_STRING_LENGTH) {
+                        malformed("$label contains an oversized field name.")
+                    }
+                    skipBoundedValue("$label.${safeField(field)}", depth + 1)
+                    fieldCount += 1
+                }
+                endObject()
+            }
+            JsonToken.STRING -> {
+                if (nextString().length > MAX_RAW_JSON_STRING_LENGTH) {
+                    malformed("$label exceeds the ignored string limit.")
+                }
+            }
+            JsonToken.NUMBER -> {
+                if (nextString().length > MAX_NUMBER_LITERAL_LENGTH) {
+                    malformed("$label exceeds the number literal limit.")
+                }
+            }
+            JsonToken.BOOLEAN -> nextBoolean()
+            JsonToken.NULL -> nextNull()
+            else -> malformed("$label has an invalid JSON shape.")
+        }
     }
 
     private fun requireHttps(value: String?, label: String): String {
@@ -1115,6 +1184,34 @@ class WorkoutGuideCatalogParser {
         val heightPx: Int
     )
 
+    private class BoundedCatalogReader(
+        input: Reader,
+        private val maximumCharacters: Long
+    ) : FilterReader(input) {
+        private var charactersRead = 0L
+
+        override fun read(): Int {
+            val value = super.read()
+            if (value != -1) recordCharacters(1)
+            return value
+        }
+
+        override fun read(buffer: CharArray, offset: Int, length: Int): Int {
+            val count = super.read(buffer, offset, length)
+            if (count > 0) recordCharacters(count)
+            return count
+        }
+
+        private fun recordCharacters(count: Int) {
+            charactersRead += count
+            if (charactersRead > maximumCharacters) {
+                malformed(
+                    "Workout Guide catalog exceeds the $maximumCharacters-character input limit."
+                )
+            }
+        }
+    }
+
     private companion object {
         const val SUPPORTED_SCHEMA_VERSION = 1
         const val CATALOG_ID = "workout-guide"
@@ -1123,7 +1220,12 @@ class WorkoutGuideCatalogParser {
         const val MAX_VISUAL_DIMENSION = 8_192
         const val MAX_EXERCISES = 5_000
         const val MAX_LIST_ITEMS = 100
+        const val MAX_IGNORED_CONTAINER_ITEMS = 1_000
         const val MAX_STRING_LENGTH = 256
+        const val MAX_RAW_JSON_STRING_LENGTH = 8_192
+        const val MAX_NUMBER_LITERAL_LENGTH = 128
+        const val MAX_JSON_DEPTH = 12
+        const val MAX_CATALOG_CHARACTERS = 8_000_000L
         const val MAX_DESCRIPTION_LENGTH = 2_000
         const val MAX_URL_LENGTH = 2_048
         const val MAX_REPETITIONS = 1_000

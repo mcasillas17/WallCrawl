@@ -675,6 +675,11 @@ def _normalize_reviewed_metadata(
         raise CatalogImportError(
             f"{exercise_id}.provenance requires reviewerRole and reviewedAtEpochMillis when approved"
         )
+    if review_state == "draft" and (reviewer_role is not None or reviewed_at is not None):
+        raise CatalogImportError(
+            f"{exercise_id}.provenance draft provenance requires null reviewerRole "
+            "and reviewedAtEpochMillis"
+        )
 
     normalized = json.loads(json.dumps(raw, ensure_ascii=False, allow_nan=False))
     seen_equipment_combinations: set[tuple[str, ...]] = set()

@@ -251,6 +251,37 @@ class WorkoutGuideCatalogParserTest {
     }
 
     @Test
+    fun parse_rejectsDuplicateReviewedMetadataExerciseField() {
+        val metadata = reviewedMetadataJson()
+        val duplicate = exerciseJson(metadata).replace(
+            "\"isStretch\": false",
+            "\"isStretch\": false,\n              \"reviewedMetadata\": $metadata"
+        )
+
+        assertFormatFailure(catalogJson(duplicate), "duplicate field reviewedMetadata")
+    }
+
+    @Test
+    fun parse_boundsIgnoredCatalogPayloadAndDepth() {
+        val nested = buildString {
+            repeat(14) { append("{\"nested\":") }
+            append("\"value\"")
+            repeat(14) { append('}') }
+        }
+        val tooDeep = catalogJson(exerciseJson()).replaceFirst(
+            "{",
+            "{\"ignored\":$nested,"
+        )
+        assertFormatFailure(tooDeep, "nesting depth")
+
+        val oversized = catalogJson(exerciseJson()).replaceFirst(
+            "{",
+            "{\"ignored\":\"${"x".repeat(8_000_001)}\","
+        )
+        assertFormatFailure(oversized, "input limit")
+    }
+
+    @Test
     fun parse_rejectsInvalidReviewedRegressionGraphs() {
         val sourceToTarget = reviewedMetadataJson().replace(
             "\"approvedRegressions\": []",

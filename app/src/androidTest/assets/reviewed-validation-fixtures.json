@@ -100,6 +100,20 @@
       "errorFragment": "provenance"
     },
     {
+      "name": "draft-with-reviewer-role",
+      "operation": "set",
+      "path": ["provenance", "reviewerRole"],
+      "value": "AI model posing as a reviewer",
+      "errorFragment": "draft provenance"
+    },
+    {
+      "name": "draft-with-review-time",
+      "operation": "set",
+      "path": ["provenance", "reviewedAtEpochMillis"],
+      "value": 1,
+      "errorFragment": "draft provenance"
+    },
+    {
       "name": "oversized-progression-family",
       "operation": "set",
       "path": ["progressionFamily"],
