@@ -133,7 +133,7 @@
 
 - [x] Rewrite the merged body-aware documents so this milestone is capability-only and mark measurements, metadata, eligibility/ranking, substitutions, history evidence, progression, and deload explicitly out of scope.
 - [x] Document seven fields, four answers, local Room flow, fresh onboarding, existing-user migration, existing backup inclusion, absent export/delete subsystem as an out-of-scope roadmap item, unchanged planner behavior, and the next reviewed-metadata/eligibility milestone.
-- [ ] Run focused suites, full JVM tests, lint/assemble, connected tests, `git diff --check`, migration-chain checks, intended-file review, secret/debug/generated-artifact scans, and test-result counting.
-- [ ] Compare the implementation with the repository’s existing profile JSON codecs and existing transactional profile save, remove experiment residue, re-run the full evidence suite, and commit all final changes.
+- [x] Run focused suites, full JVM tests, lint/assemble, connected tests, `git diff --check`, migration-chain checks, intended-file review, secret/debug/generated-artifact scans, and test-result counting.
+- [x] Compare the implementation with the repository’s existing profile JSON codecs and existing transactional profile save, remove experiment residue, re-run the full evidence suite, and commit all final changes.
 - [ ] Dispatch exactly two read-only reviewers—`gpt-5.6-terra` and `gpt-5.6-luna`—against the same full `origin/main...HEAD` packet; fix valid findings with tests and repeat both reviews until both return `APPROVED` for one identical SHA.
 - [ ] After dual approval, re-read the entire diff, push `capability-aware-inputs`, open a non-draft PR to `main`, and verify its state, base, head, files, and final SHA.

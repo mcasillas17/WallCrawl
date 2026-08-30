@@ -83,11 +83,11 @@ exercise-demand metadata and deterministic eligibility form the next milestone.
 
 - [x] Run focused red/green domain, codec, repository, migration, onboarding,
   Profile, accessibility, and planner-invariance tests during implementation.
-- [ ] Run the complete JVM suite.
-- [ ] Run lint and assemble the debug APK.
-- [ ] Run the complete connected-device suite with no skips or zero-test
+- [x] Run the complete JVM suite.
+- [x] Run lint and assemble the debug APK.
+- [x] Run the complete connected-device suite with no skips or zero-test
   filters.
-- [ ] Run diff, secret, debug-residue, generated-artifact, and changed-file
+- [x] Run diff, secret, debug-residue, generated-artifact, and changed-file
   audits.
 - [ ] Obtain independent Terra and Luna approval on the exact same final commit.
 - [ ] Open a verified non-draft pull request targeting `main`.
