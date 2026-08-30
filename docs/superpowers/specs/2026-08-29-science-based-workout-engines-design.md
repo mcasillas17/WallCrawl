@@ -13,6 +13,57 @@ body-context inputs are specified in
 `docs/superpowers/specs/2026-08-29-body-aware-personalization-design.md` and
 `docs/superpowers/plans/2026-08-29-body-aware-personalization.md`.
 
+## Final Roundtable Consensus
+
+After four research and adversarial-review rounds, Claude Opus 4.8, Grok 4.6,
+Gemini 3.7 Flash, and GPT-5.6 Terra explicitly signed these twelve v1 decisions:
+
+1. **`PRIMARY_ONLY_V1` weekly ledger.** One completed working set credits one
+   designated direct-primary muscle. Secondary involvement is descriptive only;
+   fractional credit remains a versioned research backlog.
+2. **State-based dose ranges.** Weekly exposure uses editable product-policy
+   ranges, never mandatory scientific floors. Session totals constrain duration
+   and tolerance rather than defining the evidence-based dose.
+3. **Nullable, editable effort guidance.** INITIATE, RETURNING, and LIMITED states
+   default to 2-4 RIR guidance; established general/hypertrophy work defaults to
+   1-3 RIR. Failure is never an automatic target.
+4. **Editable rest classes.** `SHORT`, `MODERATE`, and `LONG` are resolved by a
+   versioned product policy and may reuse user history. No exact duration is
+   claimed as universally optimal.
+5. **Narrow experience ceiling.** Advanced-complexity automatic work is
+   temporarily unavailable only while uncalibrated/returning and lacking
+   demonstrated history or a supported regression. Experience is otherwise a
+   soft complexity input.
+6. **Capability evidence requires confirmation.** Two comparable completed
+   sessions plus explicit user confirmation may relax a soft penalty. This is a
+   reproducibility policy, not a physiological threshold, and never relaxes a
+   hard constraint.
+7. **Today remains an RT session.** A program horizon may record or surface
+   user-selected aerobic activity and public-health education, but v1 does not
+   prescribe obesity treatment, individualized aerobic dose, or Health Connect
+   fatigue/recovery.
+8. **`DeloadOffer`, never diagnosis.** Reduced-demand options may be offered from
+   user request, returning state, or a transparent multi-session pattern. There
+   is no fixed calendar, percentage, RIR, volume, or diagnostic threshold.
+9. **Categorical reviewed metadata only.** V1 retains actionable categorical
+   muscle, pattern, complexity, progression-family, regression/substitution,
+   capability, support, impact, equipment, and provenance fields. Numeric
+   joint/SFR/axial/fatigue scores, body-mass fractions, and general ROM bonuses
+   are excluded.
+10. **LLM enablement is evidence-gated.** Reranking remains disabled until the
+    deterministic engine is complete, hard-constraint/fallback tests are perfect,
+    schemas exclude dose/body/safety, blind expert review is no worse, opt-in
+    evaluation shows predefined benefit, and device SLOs are measured.
+11. **Body measurements are not v1 planner inputs.** Optional measurements may be
+    stored locally for display/future research, but neither engine consumes
+    weight, height, or BMI.
+12. **Reviewed-only automatic planning.** Automatic plans use reviewed
+    programming and demand metadata; the complete catalog remains available for
+    browsing and manual templates.
+
+Every agent retracted conflicting earlier proposals before sign-off. The
+roundtable appendix records the retractions and citation corrections.
+
 ## Product Boundary
 
 WallCrawl builds a deterministic, replayable, multi-week resistance-training
