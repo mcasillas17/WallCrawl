@@ -56,7 +56,7 @@ The cross-review corrected material citation errors:
 
 1. `PRIMARY_ONLY_V1`: one completed work set credits one designated direct-primary muscle; secondary involvement is descriptive only.
 2. Volume uses state-based, editable policy ranges. There is no mandatory scientific floor or evidence-labeled automatic increment.
-3. INITIATE/RETURNING/LIMITED guidance defaults to 2-4 RIR; established general/hypertrophy guidance defaults to 1-3 RIR; null remains null; failure is never automatic.
+3. Guidance defaults to 2-4 RIR in INITIATE/RETURNING or for a relevant `LIMITED` capability; established general/hypertrophy guidance defaults to 1-3 RIR; null remains null; failure is never automatic.
 4. Rest uses editable `SHORT`, `MODERATE`, and `LONG` classes resolved by versioned product policy.
 5. Experience is ordinarily a soft complexity input. Uncalibrated/returning advanced-complexity work has a temporary ceiling unless demonstrated history or a supported regression exists.
 6. Two comparable completed sessions plus explicit user confirmation may relax a soft capability penalty. This is a reproducibility policy, not physiology.

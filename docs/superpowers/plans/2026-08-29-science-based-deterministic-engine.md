@@ -41,10 +41,13 @@ data class EligibilityDecision(
 )
 
 sealed interface ProgramViolation {
+    data class UnknownOrUnreviewedId(val exerciseId: String) : ProgramViolation
     data class HardConstraint(val exerciseId: String) : ProgramViolation
     data class DuplicateFamily(val family: String) : ProgramViolation
     data class InvalidDose(val exerciseId: String) : ProgramViolation
+    data class UnconfirmedLoad(val exerciseId: String) : ProgramViolation
     data class DurationMismatch(val planned: Int, val requested: Int) : ProgramViolation
+    data class WeeklyLedgerOverflow(val muscle: String) : ProgramViolation
 }
 ```
 
@@ -74,7 +77,7 @@ sealed interface ProgramViolation {
 
 - [ ] Write failing tests proving equipment, exclusions, constraints, capability `AVOID`, low-impact policy, and reviewed metadata are hard requirements.
 - [ ] Add the complete `AdaptationState` enum from Core Contracts.
-- [ ] Temporarily block advanced-complexity automatic exercises only in INITIATE/RETURNING when no demonstrated family history or supported regression exists.
+- [ ] Temporarily block advanced-complexity automatic exercises only in UNCALIBRATED/RETURNING when no demonstrated family history or supported regression exists.
 - [ ] Preserve full-catalog browse/manual workflows and typed no-plan reasons.
 - [ ] Run focused tests and commit `feat: enforce reviewed workout eligibility`.
 
@@ -106,7 +109,7 @@ sealed interface ProgramViolation {
 
 - [ ] Write failing tests: INITIATE may choose very small exposure; weekly ledger drives remaining dose; session count only constrains duration/tolerance.
 - [ ] Add nullable `EffortTarget(minRir, maxRir)` and `RestClass { SHORT, MODERATE, LONG }`.
-- [ ] Use 2-4 RIR guidance for INITIATE/RETURNING/LIMITED and 1-3 for established general/hypertrophy; never auto-default failure.
+- [ ] Use 2-4 RIR guidance in INITIATE/RETURNING or for a relevant `LIMITED` capability and 1-3 for established general/hypertrophy; never auto-default failure.
 - [ ] Resolve rest classes through versioned editable product policy and preserve per-exercise user preference.
 - [ ] Prove body measurements never produce load; commit `feat: add state based workout dose policy`.
 

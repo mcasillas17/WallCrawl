@@ -173,7 +173,7 @@ From strongest to weakest:
 4. Return-after-break policy.
 5. Conservative `UNKNOWN` defaults.
 
-One successful set does not permanently upgrade capability. A versioned evidence policy requires repeated successful sessions before relaxing a soft penalty. Explicit user changes apply immediately.
+One successful set does not permanently upgrade capability. A versioned evidence policy requires two comparable completed sessions plus explicit user confirmation before relaxing a soft penalty. Explicit user changes apply immediately.
 
 ## Data Flow
 

@@ -271,8 +271,9 @@ All four agents accepted the twelve canonical v1 decisions:
    muscle; secondary involvement is descriptive only.
 2. State-based, editable weekly volume ranges; no mandatory scientific floor and
    no evidence-labelled automatic increment.
-3. RIR `2–4` for INITIATE/RETURNING/LIMITED and `1–3` for established
-   general/hypertrophy; nullable, editable, failure never automatic.
+3. RIR `2–4` in INITIATE/RETURNING or for a relevant `LIMITED` capability and
+   `1–3` for established general/hypertrophy; nullable, editable, failure never
+   automatic.
 4. Editable rest classes resolved by versioned product policy.
 5. Temporary advanced ceiling only while uncalibrated/returning, then a soft
    complexity input.

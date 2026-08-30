@@ -4,7 +4,7 @@
 
 **Goal:** Add optional local-only body measurements and movement capabilities so v1 planning uses capability/history while measurements remain stored but engine-unused.
 
-**Architecture:** Extend `UserProfile` and reviewed exercise programming with capability and body-mass-demand data. Apply explicit constraints as hard filters, capability and body-mass demand as explainable ranking inputs, demonstrated history as stronger evidence, and whole-session validation after deterministic selection.
+**Architecture:** Extend `UserProfile` and reviewed exercise programming with capability and categorical body-mass-demand data. Apply explicit constraints as hard filters, capability and categorical demand as explainable ranking inputs, demonstrated history as stronger evidence, and whole-session validation after deterministic selection.
 
 **Tech Stack:** Kotlin, Jetpack Compose, Room, Coroutines/Flow, Python standard-library catalog tooling, JUnit 4, Truth, Turbine, Android instrumentation tests.
 
@@ -303,7 +303,7 @@ git commit -m "feat: collect optional body and movement context"
 
 - [ ] **Step 1: Write failing schema/graph tests**
 
-Reject unknown enums, body fractions outside `0.0..1.5`, blank progression families, unknown regressions, self-regressions, regression cycles, and regressions with incompatible movement patterns.
+Reject unknown enums, any numeric body-mass fraction field, blank progression families, unknown regressions, self-regressions, regression cycles, and regressions with incompatible movement patterns.
 
 - [ ] **Step 2: Define deterministic JSON shape**
 
@@ -444,7 +444,7 @@ Use integer weights in one versioned policy object; stable exercise ID is the fi
 
 - [ ] **Step 3: Add demonstrated-capability evidence**
 
-An exercise is demonstrated only after at least two completed sessions where all started prescribed sets have valid outcomes. Evidence removes soft penalties for that exercise and easier members of the same progression family; it never overrides explicit `AVOID` or a `TrainingConstraint`.
+An exercise is demonstrated only after two comparable completed sessions where all started prescribed sets have valid outcomes and the user explicitly confirms the movement felt manageable. Evidence removes soft penalties for that exercise and easier members of the same progression family; it never overrides explicit `AVOID` or a `TrainingConstraint`.
 
 - [ ] **Step 4: Prove measurements are excluded from v1 ranking**
 

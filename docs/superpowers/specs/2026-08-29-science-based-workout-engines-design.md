@@ -24,9 +24,10 @@ Gemini 3.7 Flash, and GPT-5.6 Terra explicitly signed these twelve v1 decisions:
 2. **State-based dose ranges.** Weekly exposure uses editable product-policy
    ranges, never mandatory scientific floors. Session totals constrain duration
    and tolerance rather than defining the evidence-based dose.
-3. **Nullable, editable effort guidance.** INITIATE, RETURNING, and LIMITED states
-   default to 2-4 RIR guidance; established general/hypertrophy work defaults to
-   1-3 RIR. Failure is never an automatic target.
+3. **Nullable, editable effort guidance.** INITIATE/RETURNING states or a
+   relevant `LIMITED` capability default to 2-4 RIR guidance; established
+   general/hypertrophy work defaults to 1-3 RIR. Failure is never an automatic
+   target.
 4. **Editable rest classes.** `SHORT`, `MODERATE`, and `LONG` are resolved by a
    versioned product policy and may reuse user history. No exact duration is
    claimed as universally optimal.
@@ -284,7 +285,7 @@ Automatic candidates require categorical, versioned, human-reviewed metadata:
 direct-primary and descriptive-secondary muscles; exercise type, equipment
 alternatives, movement pattern, complexity; progression family and prescription
 shape; approved regressions/substitutions; capability requirements, support
-requirement, impact class; and full provenance (`reviewerRole`,
+requirement, impact level; and full provenance (`reviewerRole`,
 `rationaleOrSource`, `reviewedAt`, `schemaVersion`, `policyVersion`). Metadata
 is never LLM-authored or auto-approved. Band, machine, supported, bodyweight,
 and timed-hold families must be reviewed before the automatic gate is enabled,
@@ -312,7 +313,7 @@ Hard eligibility runs before any ranking and cannot be repaired away:
 - explicit `TrainingConstraint` conflict (for example a protected joint);
 - capability `AVOID` on a required movement capability;
 - `LOW_IMPACT_ONLY` conflicting with `ImpactLevel.HIGH`;
-- required floor transition when floor-transition capability is `LIMITED`/`AVOID`;
+- required floor transition when floor-transition capability is `AVOID`;
 - missing reviewed automatic-planning metadata;
 - temporary advanced-complexity ceiling (below) while uncalibrated/returning.
 
@@ -345,8 +346,9 @@ BMI value participates in ranking.
   time/tolerance. Volume uses state-based, editable policy ranges. There is no
   mandatory scientific floor and no evidence-labelled automatic increment.
 - `EffortTarget` is nullable. Product-policy default guidance is `2..4` RIR for
-  INITIATE/RETURNING/LIMITED/UNKNOWN and `1..3` RIR for established
-  general/hypertrophy work; strength work keeps an editable low-RIR target.
+  INITIATE/RETURNING or a relevant `LIMITED` capability and `1..3` RIR for
+  established general/hypertrophy work; strength work keeps an editable low-RIR
+  target.
   These are versioned product defaults, not universal evidence-derived
   prescriptions, and `0` RIR (failure) is never an automatic default. Missing
   RIR never implies low effort or readiness.
