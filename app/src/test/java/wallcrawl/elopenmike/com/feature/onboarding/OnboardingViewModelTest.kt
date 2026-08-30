@@ -1,5 +1,6 @@
 package wallcrawl.elopenmike.com.feature.onboarding
 
+import androidx.lifecycle.SavedStateHandle
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -12,8 +13,10 @@ import org.junit.Rule
 import org.junit.Test
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
+import wallcrawl.elopenmike.com.core.model.CapabilityLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
+import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.UserProfile
@@ -86,6 +89,7 @@ class OnboardingViewModelTest {
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.uiState.collect {}
         }
+        answerAllCapabilities(viewModel, CapabilityLevel.UNKNOWN)
 
         viewModel.complete(
             name = "Alex",
@@ -115,6 +119,9 @@ class OnboardingViewModelTest {
             .containsExactly(StandardEquipment.BODYWEIGHT, StandardEquipment.DUMBBELL)
         assertThat(saved.trainingConstraints).containsExactly(TrainingConstraint.SHOULDER_SENSITIVE)
         assertThat(saved.returningAfterBreakWeeks).isEqualTo(6)
+        MovementCapabilityType.entries.forEach { type ->
+            assertThat(saved.movementCapabilities[type]).isEqualTo(CapabilityLevel.UNKNOWN)
+        }
         assertThat(saved.confirmedStartingLoads).isEmpty()
         assertThat(viewModel.uiState.value.isComplete).isTrue()
     }
@@ -126,6 +133,7 @@ class OnboardingViewModelTest {
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.uiState.collect {}
         }
+        answerAllCapabilities(viewModel, CapabilityLevel.UNKNOWN)
 
         viewModel.complete(
             name = "Alex",
@@ -171,20 +179,28 @@ class OnboardingViewModelTest {
         assertThat(viewModel.uiState.value.currentStep).isEqualTo(OnboardingStep.EXPERIENCE_UNIT)
         assertThat(viewModel.uiState.value.canProceedCurrentStep).isTrue()
 
-        // Step 3 -> Step 4 (Schedule)
+        // Step 3 -> Step 4 (Movement preferences)
+        viewModel.nextStep()
+        assertThat(viewModel.uiState.value.currentStep)
+            .isEqualTo(OnboardingStep.MOVEMENT_CAPABILITY)
+        assertThat(viewModel.uiState.value.canProceedCurrentStep).isFalse()
+        answerAllCapabilities(viewModel, CapabilityLevel.UNKNOWN)
+        assertThat(viewModel.uiState.value.canProceedCurrentStep).isTrue()
+
+        // Step 4 -> Step 5 (Schedule)
         viewModel.nextStep()
         assertThat(viewModel.uiState.value.currentStep).isEqualTo(OnboardingStep.SCHEDULE)
 
-        // Step 4 -> Step 5 (Equipment)
+        // Step 5 -> Step 6 (Equipment)
         viewModel.nextStep()
         assertThat(viewModel.uiState.value.currentStep).isEqualTo(OnboardingStep.EQUIPMENT)
         assertThat(viewModel.uiState.value.canProceedCurrentStep).isTrue()
 
-        // Step 5 -> Step 6 (Safety)
+        // Step 6 -> Step 7 (Safety)
         viewModel.nextStep()
         assertThat(viewModel.uiState.value.currentStep).isEqualTo(OnboardingStep.SAFETY)
 
-        // Step 6 -> Step 7 (Summary)
+        // Step 7 -> Step 8 (Summary)
         viewModel.nextStep()
         assertThat(viewModel.uiState.value.currentStep).isEqualTo(OnboardingStep.SUMMARY)
         assertThat(viewModel.uiState.value.isLastStep).isTrue()
@@ -275,6 +291,120 @@ class OnboardingViewModelTest {
         advanceUntilIdle()
 
         assertThat(viewModel.uiState.value.returningAfterBreakWeeks).isEqualTo(104)
+    }
+
+    @Test
+    fun movementCapabilityStep_requiresAnExplicitAnswerForEveryCapability() = runTest {
+        val repository = RecordingUserProfileRepository()
+        val viewModel = OnboardingViewModel(repository)
+
+        viewModel.goToStep(OnboardingStep.MOVEMENT_CAPABILITY)
+        viewModel.nextStep()
+
+        assertThat(viewModel.uiState.value.currentStep)
+            .isEqualTo(OnboardingStep.MOVEMENT_CAPABILITY)
+        assertThat(viewModel.uiState.value.unansweredCapability)
+            .isEqualTo(MovementCapabilityType.IMPACT)
+        assertThat(viewModel.uiState.value.canProceedCurrentStep).isFalse()
+    }
+
+    @Test
+    fun explicitNotSure_isAnsweredAndPersistsAsUnknown() = runTest {
+        val repository = RecordingUserProfileRepository()
+        val viewModel = OnboardingViewModel(repository)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiState.collect {}
+        }
+        viewModel.updateName("Alex")
+        MovementCapabilityType.entries.forEach { type ->
+            viewModel.updateMovementCapability(type, CapabilityLevel.UNKNOWN)
+        }
+
+        viewModel.complete()
+        advanceUntilIdle()
+
+        assertThat(repository.saved).hasSize(1)
+        MovementCapabilityType.entries.forEach { type ->
+            assertThat(repository.saved.single().movementCapabilities[type])
+                .isEqualTo(CapabilityLevel.UNKNOWN)
+        }
+    }
+
+    @Test
+    fun incompleteCapabilityDraft_cannotCompleteOnboarding() = runTest {
+        val repository = RecordingUserProfileRepository()
+        val viewModel = OnboardingViewModel(repository)
+        viewModel.updateName("Alex")
+        viewModel.updateMovementCapability(
+            MovementCapabilityType.IMPACT,
+            CapabilityLevel.COMFORTABLE
+        )
+
+        viewModel.complete()
+        advanceUntilIdle()
+
+        assertThat(repository.saved).isEmpty()
+        assertThat(viewModel.uiState.value.isComplete).isFalse()
+        assertThat(viewModel.uiState.value.unansweredCapability)
+            .isEqualTo(MovementCapabilityType.FLOOR_TRANSITION)
+    }
+
+    @Test
+    fun backAndForwardNavigation_retainsExplicitCapabilityAnswers() {
+        val repository = RecordingUserProfileRepository()
+        val viewModel = OnboardingViewModel(repository)
+        viewModel.goToStep(OnboardingStep.MOVEMENT_CAPABILITY)
+        viewModel.updateMovementCapability(
+            MovementCapabilityType.IMPACT,
+            CapabilityLevel.LIMITED
+        )
+
+        viewModel.previousStep()
+        viewModel.goToStep(OnboardingStep.MOVEMENT_CAPABILITY)
+
+        assertThat(viewModel.uiState.value.capabilityAnswers)
+            .containsExactly(MovementCapabilityType.IMPACT, CapabilityLevel.LIMITED)
+    }
+
+    @Test
+    fun savedStateRecreation_preservesAnsweredKeysWithoutAnsweringMissingKeys() {
+        val repository = RecordingUserProfileRepository()
+        val savedStateHandle = SavedStateHandle()
+        val original = OnboardingViewModel(repository, savedStateHandle)
+        original.goToStep(OnboardingStep.MOVEMENT_CAPABILITY)
+        original.updateMovementCapability(
+            MovementCapabilityType.IMPACT,
+            CapabilityLevel.UNKNOWN
+        )
+        original.updateMovementCapability(
+            MovementCapabilityType.FLOOR_TRANSITION,
+            CapabilityLevel.LIMITED
+        )
+
+        val recreated = OnboardingViewModel(repository, savedStateHandle)
+
+        assertThat(recreated.uiState.value.currentStep)
+            .isEqualTo(OnboardingStep.MOVEMENT_CAPABILITY)
+        assertThat(recreated.uiState.value.capabilityAnswers)
+            .containsExactly(
+                MovementCapabilityType.IMPACT,
+                CapabilityLevel.UNKNOWN,
+                MovementCapabilityType.FLOOR_TRANSITION,
+                CapabilityLevel.LIMITED
+            )
+        assertThat(recreated.uiState.value.capabilityAnswers)
+            .doesNotContainKey(MovementCapabilityType.UNSUPPORTED_SQUAT)
+        assertThat(recreated.uiState.value.unansweredCapability)
+            .isEqualTo(MovementCapabilityType.UNSUPPORTED_SQUAT)
+    }
+
+    private fun answerAllCapabilities(
+        viewModel: OnboardingViewModel,
+        level: CapabilityLevel
+    ) {
+        MovementCapabilityType.entries.forEach { type ->
+            viewModel.updateMovementCapability(type, level)
+        }
     }
 }
 

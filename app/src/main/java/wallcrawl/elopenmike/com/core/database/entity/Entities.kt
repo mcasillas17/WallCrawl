@@ -41,6 +41,8 @@ data class UserProfileEntity(
     val confirmedStartingLoadsJson: String = "",
     @ColumnInfo(defaultValue = "''")
     val fitnessGoalsJson: String = "",
+    @ColumnInfo(defaultValue = "'{}'")
+    val movementCapabilitiesJson: String = "{}",
     @ColumnInfo(defaultValue = "'SYSTEM'")
     val themePreference: ThemePreference = ThemePreference.SYSTEM
 )

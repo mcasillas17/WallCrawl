@@ -29,7 +29,7 @@ import wallcrawl.elopenmike.com.core.database.entity.WorkoutTemplateExerciseEnti
         WorkoutTemplateEntity::class,
         WorkoutTemplateExerciseEntity::class
     ],
-    version = 7,
+    version = 8,
     exportSchema = false
 )
 @TypeConverters(RoomTypeConverters::class)
@@ -54,7 +54,7 @@ abstract class WallCrawlDatabase : RoomDatabase() {
                     WallCrawlDatabase::class.java,
                     DATABASE_NAME
                 )
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
+                    .addMigrations(*ALL_MIGRATIONS)
                     .build()
                     .also { INSTANCE = it }
             }
@@ -274,5 +274,25 @@ abstract class WallCrawlDatabase : RoomDatabase() {
                 )
             }
         }
+
+        val MIGRATION_7_8 = object : Migration(7, 8) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "ALTER TABLE user_profiles " +
+                        "ADD COLUMN movementCapabilitiesJson TEXT NOT NULL DEFAULT '{}'"
+                )
+            }
+        }
+
+        val ALL_MIGRATIONS: Array<Migration>
+            get() = arrayOf(
+                MIGRATION_1_2,
+                MIGRATION_2_3,
+                MIGRATION_3_4,
+                MIGRATION_4_5,
+                MIGRATION_5_6,
+                MIGRATION_6_7,
+                MIGRATION_7_8
+            )
     }
 }

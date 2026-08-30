@@ -64,7 +64,7 @@ The cross-review corrected material citation errors:
 8. `DeloadOffer` is user-requested, return-driven, or based on a transparent multi-session pattern; it has no fixed calendar, percentage, RIR, volume, or diagnostic threshold.
 9. V1 metadata is categorical and actionable: direct primary, descriptive secondary, pattern, complexity, progression family, approved regressions/substitutions, capability requirements, support, impact, equipment, and provenance.
 10. LLM reranking remains disabled until deterministic completion, perfect hard-constraint/fallback tests, strict schema, expert no-worse review, opt-in human benefit, and device-specific benchmarks.
-11. Optional body measurements may be stored locally for display/future research, but v1 deterministic and LLM engines do not consume them.
+11. Body measurements are deferred and not required by the capability roadmap; the capability-input milestone stores no weight, height, or BMI, and deterministic and LLM engines do not consume them.
 12. Automatic plans use reviewed metadata only; browse/manual workflows retain the full catalog.
 
 ## Rejected Claims

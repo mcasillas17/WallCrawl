@@ -55,9 +55,9 @@ Gemini 3.7 Flash, and GPT-5.6 Terra explicitly signed these twelve v1 decisions:
     deterministic engine is complete, hard-constraint/fallback tests are perfect,
     schemas exclude dose/body/safety, blind expert review is no worse, opt-in
     evaluation shows predefined benefit, and device SLOs are measured.
-11. **Body measurements are not v1 planner inputs.** Optional measurements may be
-    stored locally for display/future research, but neither engine consumes
-    weight, height, or BMI.
+11. **Body measurements are deferred.** The capability-input milestone stores no
+    weight, height, or BMI. Optional measurements are not required by this
+    roadmap, and neither deterministic nor LLM engines may consume them.
 12. **Reviewed-only automatic planning.** Automatic plans use reviewed
     programming and demand metadata; the complete catalog remains available for
     browsing and manual templates.
@@ -132,7 +132,7 @@ proposed during the roundtable and explicitly retracted (see the appendix).
 core/model
   Exercise, ReviewedExerciseMetadata, ReviewProvenance
   TrainingProgramState, WeeklyDoseLedger, EffortTarget, RestClass
-  BodyMeasurements, MovementCapabilities (body-aware spec)
+  MovementCapabilities (capability-input spec)
 core/ai (deterministic)
   ExerciseEligibilityPolicy      hard gate
   WeeklyDoseLedgerCalculator     PRIMARY_ONLY_V1 crediting
@@ -155,7 +155,7 @@ core/ai/local (optional LLM)
 core/database
   Entities, Daos, WallCrawlDatabase   immutable history + program state
 feature/today, feature/workout, feature/profile
-  Today session, active logging, capability/measurement UX
+  Today session, active logging, capability UX
 tools/workout-guide
   import_catalog.py, review-schema.json, programming-overrides.json
 ```
@@ -226,9 +226,10 @@ data class RecommendationSnapshot(
 )
 ```
 
-`BodyMeasurements` and `MovementCapabilities` are defined in the body-aware
-spec. `ExercisePrescription` is the existing shared core model. Loads are
-`null` until confirmed by history or explicit user confirmation.
+`MovementCapabilities` is defined in the capability-input spec. Body
+measurements remain deferred and absent from the profile model.
+`ExercisePrescription` is the existing shared core model. Loads are `null`
+until confirmed by history or explicit user confirmation.
 
 ## Adaptation State Machine
 
@@ -538,19 +539,18 @@ any mismatch.
 `LlmAuditRecord` for each invocation: provider/model version, prompt-policy
 hash, candidate-set hash, decoding configuration where available, the structured
 response, the validation result, and the fallback reason. It stores no raw
-personal notes, measurements, or full history in prompt or audit. Model failure
+personal notes or full history in prompt or audit. Model failure
 cannot block workout start or mutate Room, and the final recommendation is
 reconstructable from the audit record plus immutable history.
 
 ## Privacy
 
-Measurements and capability answers remain in local Room storage. No account,
-network call, analytics event, model prompt, Wear payload, or Health Connect
-permission is added by these engines. BMI is neither stored nor derived; it must
-not be displayed, persisted, prompted, or ranked, and tests assert that adding,
-changing, or deleting measurements never changes v1 planner output. Logs and
-crash messages must not contain raw measurements. Local export/delete controls
-include these fields when local data controls ship.
+Capability answers remain in local Room storage. No account, network call,
+analytics event, model prompt, Wear payload, or Health Connect permission is
+added by these engines. Weight, height, and BMI are neither stored nor derived
+by the capability milestone; they must not be displayed, persisted, prompted,
+or ranked. Local export/delete controls include capabilities when local data
+controls ship.
 
 ## Failure and Fallback
 
@@ -580,13 +580,12 @@ tests, and there is no production provider until the gates below pass.
 The deterministic engine requires property/replay tests, persona fixtures,
 catalog-provenance review, and immutable audit reconstruction. Persona fixtures
 cover novice/bodyweight, band-only, machine-only, full-gym, advanced strength,
-limited-capability, returner, mixed-unit, sparse-history, measurement-deleted,
+limited-capability, returner, mixed-unit, sparse-history,
 constraint-sensitive, and concurrent-activity cases. Invariants asserted:
 reviewed IDs only; hard rules always win; explicit `AVOID` always wins;
 primary-only crediting; no invented load; no BMI/body-mass influence; demonstrated
 history relaxes only soft penalties after the confirmed threshold; identical
-versioned inputs reproduce an identical plan; every recommendation stays valid
-when measurements are deleted.
+versioned inputs reproduce an identical plan.
 
 The LLM additionally requires strict schema/adversarial tests (prompt injection,
 safety-like free text, unavailable equipment, hard `AVOID`, duplicate IDs,
@@ -600,16 +599,16 @@ credited to the model.
 
 ## Rollout
 
-1. Ship reviewed metadata, provenance, and profile/capability storage without
-   changing planner output.
-2. Add the PRIMARY_ONLY weekly ledger and calibration-state derivation.
-3. Enable reviewed-only eligibility, the temporary advanced ceiling, and hard
+1. Ship profile/capability storage without changing planner output.
+2. Add reviewed demand metadata and provenance.
+3. Add the PRIMARY_ONLY weekly ledger and calibration-state derivation.
+4. Enable reviewed-only eligibility, the temporary advanced ceiling, and hard
    capability constraints; measure plan availability across persona fixtures.
-4. Enable state-based dose/effort/rest policy and soft ranking behind a local
+5. Enable state-based dose/effort/rest policy and soft ranking behind a local
    flag.
-5. Enable history-derived capability evidence, progression, and `DeloadOffer`
+6. Enable history-derived capability evidence, progression, and `DeloadOffer`
    only after replay tests pass.
-6. Keep LLM reranking disabled until every deterministic gate and every LLM gate
+7. Keep LLM reranking disabled until every deterministic gate and every LLM gate
    passes; ship it opt-in, removable, with an immediate kill switch.
 
 ## Observability
@@ -650,8 +649,7 @@ accuracy alone.
 - The weekly ledger is reconstructable from immutable history with primary-only
   crediting.
 - Missing inputs never become favourable assumptions and no load is invented.
-- BMI/body mass never affect v1 planning, and deleting measurements preserves a
-  valid plan.
+- BMI/body mass never affect v1 planning; they are not profile inputs.
 - `DeloadOffer` is an offer, never a diagnosis or a calendar law.
 - The LLM remains disabled until deterministic completion, perfect
   hard-constraint/fallback tests, strict schema, expert no-worse review, opt-in

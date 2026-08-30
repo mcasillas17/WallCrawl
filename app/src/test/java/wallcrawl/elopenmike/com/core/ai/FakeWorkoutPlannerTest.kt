@@ -7,6 +7,9 @@ import wallcrawl.elopenmike.com.core.model.MechanicsType
 import wallcrawl.elopenmike.com.core.model.MovementPattern
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.ExercisePerformanceHistory
+import wallcrawl.elopenmike.com.core.model.CapabilityLevel
+import wallcrawl.elopenmike.com.core.model.MovementCapabilities
+import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
 import wallcrawl.elopenmike.com.core.model.UserProfile
@@ -388,6 +391,36 @@ class FakeWorkoutPlannerTest {
         assertThat(workout.rationale).contains("Re-entry Ramp-Up Active")
         assertThat(workout.rationale).contains("Volume is capped at 2 sets")
         assertThat(workout.rationale).contains("1–2 Years")
+    }
+
+    @Test
+    fun generateWorkout_movementCapabilitiesDoNotChangeCurrentRecommendation() = runTest {
+        val baselineProfile = UserProfile(
+            goals = setOf(FitnessGoal.STRENGTH, FitnessGoal.BUILD_MUSCLE),
+            musclePriorities = mapOf(StandardMuscles.CHEST to PriorityLevel.HIGH)
+        )
+        val comfortable = MovementCapabilities.from(
+            MovementCapabilityType.entries.associateWith {
+                CapabilityLevel.COMFORTABLE
+            }
+        )
+        val avoid = MovementCapabilities.from(
+            MovementCapabilityType.entries.associateWith {
+                CapabilityLevel.AVOID
+            }
+        )
+        val comfortableContext = WorkoutGenerationContext(
+            userProfile = baselineProfile.copy(movementCapabilities = comfortable),
+            allowedExercises = allExercises
+        )
+        val avoidContext = comfortableContext.copy(
+            userProfile = baselineProfile.copy(movementCapabilities = avoid)
+        )
+
+        val comfortableWorkout = FakeWorkoutPlanner().generateWorkout(comfortableContext)
+        val avoidWorkout = FakeWorkoutPlanner().generateWorkout(avoidContext)
+
+        assertThat(avoidWorkout.copy(id = comfortableWorkout.id)).isEqualTo(comfortableWorkout)
     }
 
     private companion object {

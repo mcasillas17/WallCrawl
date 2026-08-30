@@ -1,3 +1,60 @@
 <resources>
     <string name="app_name">WallCrawl</string>
+
+    <string name="onboarding_welcome_title">Welcome, Crawler</string>
+    <string name="onboarding_welcome_subtitle">Let\'s set up your personal training identity.</string>
+    <string name="onboarding_goals_title">Fitness Goals</string>
+    <string name="onboarding_goals_subtitle">Select all outcomes you want to train for.</string>
+    <string name="onboarding_experience_title">Experience &amp; Units</string>
+    <string name="onboarding_experience_subtitle">Select your preferred weight unit and training background.</string>
+    <string name="onboarding_movement_capability_title">Movement preferences</string>
+    <string name="onboarding_movement_capability_subtitle">Tell us what currently feels comfortable. You can change this later.</string>
+    <string name="onboarding_schedule_title">Training Schedule</string>
+    <string name="onboarding_schedule_subtitle">Set up your weekly routine and preferred session length.</string>
+    <string name="onboarding_equipment_title">Available Equipment</string>
+    <string name="onboarding_equipment_subtitle">Select only the equipment you actually have access to.</string>
+    <string name="onboarding_safety_title">Safety &amp; Recovery</string>
+    <string name="onboarding_safety_subtitle">Tell us if any areas need conservative exercise selection.</string>
+    <string name="onboarding_summary_title">Ready to Begin</string>
+    <string name="onboarding_summary_subtitle">Review your setup before generating your first workout.</string>
+
+    <string name="movement_capability_intro">Answer each preference, including Not sure when that fits best.</string>
+    <string name="movement_capability_future_use">These settings prepare future personalized exercise selection. They do not change current recommendations yet.</string>
+    <string name="movement_capability_answer_required">Choose an answer for this movement preference.</string>
+    <string name="movement_capability_summary_label">Movement preferences</string>
+    <string name="movement_capability_summary_value">7 preferences answered</string>
+    <string name="movement_capability_option_accessibility">%1$s, %2$s</string>
+    <string name="onboarding_error_required_field">Choose an answer for each required onboarding field.</string>
+    <string name="onboarding_error_movement_required">Choose an answer for each movement preference.</string>
+    <string name="onboarding_error_invalid_field">Review the highlighted onboarding field and try again.</string>
+    <string name="onboarding_error_save_failed">Couldn\'t save your profile. Try again.</string>
+
+    <string name="movement_capability_impact_label">Impact tolerance</string>
+    <string name="movement_capability_impact_description">Movements that include landing, hopping, or other impact.</string>
+    <string name="movement_capability_floor_transition_label">Floor transitions</string>
+    <string name="movement_capability_floor_transition_description">Moving down to the floor and returning to standing.</string>
+    <string name="movement_capability_unsupported_squat_label">Unsupported squat</string>
+    <string name="movement_capability_unsupported_squat_description">Lowering into and rising from a squat without holding a support.</string>
+    <string name="movement_capability_upper_body_push_label">Upper-body bodyweight push</string>
+    <string name="movement_capability_upper_body_push_description">Supporting and pushing some of your bodyweight with your arms.</string>
+    <string name="movement_capability_vertical_pull_label">Vertical pull or hang</string>
+    <string name="movement_capability_vertical_pull_description">Hanging from or pulling toward an overhead bar or handles.</string>
+    <string name="movement_capability_balance_label">Balance without support</string>
+    <string name="movement_capability_balance_description">Standing or moving while balancing without holding a support.</string>
+    <string name="movement_capability_continuous_activity_label">Continuous activity</string>
+    <string name="movement_capability_continuous_activity_description">Staying active continuously for several minutes at a comfortable pace.</string>
+
+    <string name="capability_level_comfortable">Comfortable</string>
+    <string name="capability_level_limited">Limited</string>
+    <string name="capability_level_avoid">Avoid</string>
+    <string name="capability_level_unknown">Not sure</string>
+
+    <string name="profile_capability_title">MOVEMENT PREFERENCES</string>
+    <string name="profile_capability_description">These settings prepare future personalized exercise selection. They do not change current recommendations yet.</string>
+    <string name="profile_capability_edit">Edit movement preferences</string>
+    <string name="profile_capability_save">Save preferences</string>
+    <string name="profile_capability_saving">Saving preferences…</string>
+    <string name="profile_capability_cancel">Cancel</string>
+    <string name="profile_capability_invalid_error">Review the movement preferences and try again.</string>
+    <string name="profile_capability_save_error">Couldn\'t save movement preferences. Try again.</string>
 </resources>

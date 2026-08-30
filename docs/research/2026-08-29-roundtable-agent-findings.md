@@ -285,7 +285,7 @@ All four agents accepted the twelve canonical v1 decisions:
 9. Categorical reviewed metadata only — no numeric joint/SFR/axial/fatigue score,
    body-mass fraction, axial-load, or general ROM bonus.
 10. Strict LLM gates with device-specific measured SLOs.
-11. Body measurements optional but unused by v1 engines.
+11. Body measurements deferred, not required by the capability roadmap, and unused by v1 engines.
 12. Reviewed-only automatic planning; full-browse/manual catalog retained.
 
 Retraction ledger: **Opus** retracted the 0.5 secondary credit; **Gemini**

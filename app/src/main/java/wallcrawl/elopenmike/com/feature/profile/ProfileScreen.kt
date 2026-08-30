@@ -1,5 +1,6 @@
 package wallcrawl.elopenmike.com.feature.profile
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -44,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
@@ -51,16 +53,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material3.MaterialTheme
+import wallcrawl.elopenmike.com.core.model.CapabilityLevel
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
+import wallcrawl.elopenmike.com.core.model.MovementCapabilities
+import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
 import wallcrawl.elopenmike.com.core.model.ThemePreference
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.ui.components.StatBadge
+import wallcrawl.elopenmike.com.core.ui.components.MovementCapabilityQuestion
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
+import wallcrawl.elopenmike.com.core.ui.components.WallCrawlOutlinedButton
+import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
 import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
+import wallcrawl.elopenmike.com.core.ui.components.capabilityLevelLabel
+import wallcrawl.elopenmike.com.core.ui.components.movementCapabilityLabel
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
@@ -95,8 +105,14 @@ fun ProfileScreen(
             }
 
             is ProfileUiState.Success -> {
+                BackHandler(enabled = state.movementCapabilityDraft != null) {
+                    viewModel.cancelMovementCapabilityEditing()
+                }
                 ProfileContent(
                     profile = state.profile,
+                    movementCapabilityDraft = state.movementCapabilityDraft,
+                    movementCapabilityError = state.movementCapabilityError,
+                    isSavingCapabilities = state.isSaving,
                     availableEquipment = state.availableEquipmentOptions,
                     availableMuscles = state.availableMuscleOptions,
                     availableConstraints = state.availableConstraintOptions,
@@ -110,6 +126,10 @@ fun ProfileScreen(
                     onToggleConstraint = { viewModel.toggleTrainingConstraint(it) },
                     onUpdateReturningAfterBreakWeeks = { viewModel.updateReturningAfterBreakWeeks(it) },
                     onUpdateThemePreference = { viewModel.updateThemePreference(it) },
+                    onStartCapabilityEdit = viewModel::startMovementCapabilityEditing,
+                    onUpdateCapability = viewModel::updateMovementCapabilityDraft,
+                    onCancelCapabilityEdit = viewModel::cancelMovementCapabilityEditing,
+                    onSaveCapabilities = viewModel::saveMovementCapabilities,
                     onOpenCredits = onOpenCredits
                 )
             }
@@ -121,6 +141,9 @@ fun ProfileScreen(
 @Composable
 private fun ProfileContent(
     profile: UserProfile,
+    movementCapabilityDraft: MovementCapabilities?,
+    movementCapabilityError: ProfileCapabilityError?,
+    isSavingCapabilities: Boolean,
     availableEquipment: List<String>,
     availableMuscles: List<String>,
     availableConstraints: List<TrainingConstraint>,
@@ -134,6 +157,13 @@ private fun ProfileContent(
     onToggleConstraint: (TrainingConstraint) -> Unit,
     onUpdateReturningAfterBreakWeeks: (Int) -> Unit,
     onUpdateThemePreference: (ThemePreference) -> Unit,
+    onStartCapabilityEdit: () -> Unit,
+    onUpdateCapability: (
+        MovementCapabilityType,
+        CapabilityLevel
+    ) -> Unit,
+    onCancelCapabilityEdit: () -> Unit,
+    onSaveCapabilities: () -> Unit,
     onOpenCredits: () -> Unit
 ) {
     LazyColumn(
@@ -329,6 +359,19 @@ private fun ProfileContent(
                     }
                 }
             }
+        }
+
+        item {
+            MovementCapabilityProfileCard(
+                persistedCapabilities = profile.movementCapabilities,
+                draft = movementCapabilityDraft,
+                error = movementCapabilityError,
+                isSaving = isSavingCapabilities,
+                onStartEditing = onStartCapabilityEdit,
+                onUpdate = onUpdateCapability,
+                onCancel = onCancelCapabilityEdit,
+                onSave = onSaveCapabilities
+            )
         }
 
         // 3. Available Equipment Selector
@@ -588,6 +631,121 @@ private fun ProfileContent(
 
         item {
             Spacer(modifier = Modifier.height(24.dp))
+        }
+    }
+}
+
+@Composable
+private fun MovementCapabilityProfileCard(
+    persistedCapabilities: MovementCapabilities,
+    draft: MovementCapabilities?,
+    error: ProfileCapabilityError?,
+    isSaving: Boolean,
+    onStartEditing: () -> Unit,
+    onUpdate: (
+        MovementCapabilityType,
+        CapabilityLevel
+    ) -> Unit,
+    onCancel: () -> Unit,
+    onSave: () -> Unit
+) {
+    WallCrawlCard(
+        cornerRadius = 16.dp,
+        contentPadding = 16.dp
+    ) {
+        Text(
+            text = stringResource(wallcrawl.elopenmike.com.R.string.profile_capability_title),
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = 0.8.sp,
+            color = CrimsonRedPrimary
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = stringResource(
+                wallcrawl.elopenmike.com.R.string.profile_capability_description
+            ),
+            fontSize = 12.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+
+        if (draft == null) {
+            MovementCapabilityType.entries.forEach { type ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 6.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = movementCapabilityLabel(type),
+                        modifier = Modifier.weight(1f),
+                        fontSize = 13.sp,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        text = capabilityLevelLabel(persistedCapabilities[type]),
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            WallCrawlOutlinedButton(
+                text = stringResource(
+                    wallcrawl.elopenmike.com.R.string.profile_capability_edit
+                ),
+                onClick = onStartEditing,
+                modifier = Modifier.fillMaxWidth()
+            )
+        } else {
+            MovementCapabilityType.entries.forEachIndexed { index, type ->
+                if (index > 0) Spacer(modifier = Modifier.height(16.dp))
+                MovementCapabilityQuestion(
+                    type = type,
+                    selectedLevel = draft[type],
+                    onSelect = { level -> onUpdate(type, level) }
+                )
+            }
+
+            if (error != null) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = stringResource(error.messageRes),
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                WallCrawlOutlinedButton(
+                    text = stringResource(
+                        wallcrawl.elopenmike.com.R.string.profile_capability_cancel
+                    ),
+                    onClick = onCancel,
+                    enabled = !isSaving,
+                    modifier = Modifier.weight(1f)
+                )
+                WallCrawlPrimaryButton(
+                    text = stringResource(
+                        if (isSaving) {
+                            wallcrawl.elopenmike.com.R.string.profile_capability_saving
+                        } else {
+                            wallcrawl.elopenmike.com.R.string.profile_capability_save
+                        }
+                    ),
+                    onClick = onSave,
+                    enabled = !isSaving,
+                    modifier = Modifier.weight(1f)
+                )
+            }
         }
     }
 }

@@ -35,6 +35,7 @@ data class UserProfile(
     // Never populated with a guessed or catalog default: a load only lands here once a
     // user has explicitly confirmed it (see Task 2), so this starts and stays empty.
     val confirmedStartingLoads: Map<String, Double> = emptyMap(),
+    val movementCapabilities: MovementCapabilities = MovementCapabilities.unknown(),
     val themePreference: ThemePreference = ThemePreference.SYSTEM
 ) {
     val primaryGoal: FitnessGoal get() = goals.firstOrNull() ?: FitnessGoal.BUILD_MUSCLE
@@ -130,4 +131,3 @@ object BreakDurationHelper {
         else -> "Extended hiatus (1+ years). Volume is capped at 2 sets per movement to protect joint tendons and safely rebuild connective tissue."
     }
 }
-

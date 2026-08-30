@@ -58,16 +58,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import wallcrawl.elopenmike.com.core.model.BreakDurationHelper
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
+import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
+import wallcrawl.elopenmike.com.core.ui.components.MovementCapabilityQuestion
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlOutlinedButton
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
 import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
@@ -145,14 +148,14 @@ fun OnboardingScreen(
                             verticalArrangement = Arrangement.Center
                         ) {
                             Text(
-                                text = step.title,
+                                text = stringResource(step.titleRes),
                                 fontSize = 24.sp,
                                 fontWeight = FontWeight.Black,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = step.subtitle,
+                                text = stringResource(step.subtitleRes),
                                 fontSize = 14.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -162,6 +165,10 @@ fun OnboardingScreen(
                                 OnboardingStep.WELCOME -> WelcomeStep(state = state, viewModel = viewModel)
                                 OnboardingStep.GOALS -> GoalsStep(state = state, viewModel = viewModel)
                                 OnboardingStep.EXPERIENCE_UNIT -> ExperienceAndUnitStep(state = state, viewModel = viewModel)
+                                OnboardingStep.MOVEMENT_CAPABILITY -> MovementCapabilityStep(
+                                    state = state,
+                                    viewModel = viewModel
+                                )
                                 OnboardingStep.SCHEDULE -> ScheduleStep(state = state, viewModel = viewModel)
                                 OnboardingStep.EQUIPMENT -> EquipmentStep(state = state, viewModel = viewModel)
                                 OnboardingStep.SAFETY -> SafetyStep(state = state, viewModel = viewModel)
@@ -174,9 +181,10 @@ fun OnboardingScreen(
             }
 
             // Error message if any
-            if (state.error != null) {
+            val error = state.error
+            if (error != null) {
                 Text(
-                    text = state.error.orEmpty(),
+                    text = stringResource(error.messageRes),
                     fontSize = 13.sp,
                     color = CrimsonRedLight,
                     modifier = Modifier.padding(bottom = 8.dp)
@@ -931,6 +939,53 @@ private fun SafetyStep(
 }
 
 @Composable
+private fun MovementCapabilityStep(
+    state: OnboardingUiState,
+    viewModel: OnboardingViewModel
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        WallCrawlCard(
+            cornerRadius = 16.dp,
+            contentPadding = 16.dp
+        ) {
+            Text(
+                text = stringResource(wallcrawl.elopenmike.com.R.string.movement_capability_intro),
+                fontSize = 13.sp,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = stringResource(
+                    wallcrawl.elopenmike.com.R.string.movement_capability_future_use
+                ),
+                fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+
+        MovementCapabilityType.entries.forEach { type ->
+            WallCrawlCard(
+                cornerRadius = 16.dp,
+                contentPadding = 16.dp
+            ) {
+                MovementCapabilityQuestion(
+                    type = type,
+                    selectedLevel = state.capabilityAnswers[type],
+                    onSelect = { level ->
+                        viewModel.updateMovementCapability(type, level)
+                    },
+                    showAnswerRequired = state.error != null &&
+                        state.unansweredCapability == type
+                )
+            }
+        }
+    }
+}
+
+@Composable
 private fun SummaryStep(
     state: OnboardingUiState,
     viewModel: OnboardingViewModel
@@ -961,6 +1016,14 @@ private fun SummaryStep(
             SummaryRow(label = "Schedule", value = "${state.daysPerWeek} days/wk • ~${state.durationMinutes} min")
             SummaryRow(label = "Units", value = "${state.unit.name} (${state.unit.symbol})")
             SummaryRow(label = "Equipment", value = "${state.equipment.size} gear types selected")
+            SummaryRow(
+                label = stringResource(
+                    wallcrawl.elopenmike.com.R.string.movement_capability_summary_label
+                ),
+                value = stringResource(
+                    wallcrawl.elopenmike.com.R.string.movement_capability_summary_value
+                )
+            )
             SummaryRow(
                 label = "Sensitive Areas",
                 value = if (state.constraints.isEmpty()) "None (100% Clear)" else state.constraints.joinToString { it.displayName }
@@ -1043,7 +1106,7 @@ private fun OnboardingBottomNav(
                 else -> "Continue"
             },
             onClick = onNext,
-            enabled = state.canProceedCurrentStep && !state.isSaving,
+            enabled = !state.isSaving,
             modifier = Modifier.weight(if (state.isFirstStep) 1f else 2f)
         )
     }
