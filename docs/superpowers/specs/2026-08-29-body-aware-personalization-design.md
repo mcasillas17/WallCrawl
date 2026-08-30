@@ -28,9 +28,9 @@ This is safe and directly actionable, but it loses useful context for ranking ex
 
 ### Hybrid capability-first planning
 
-Collect optional height and body weight, require a short movement-capability profile, and combine those values with exercise-demand metadata and observed workout history.
+Collect optional height and body weight for local display/future research, require a short movement-capability profile, and combine capability with reviewed exercise-demand metadata and observed workout history.
 
-Chosen. Capability and explicit constraints determine hard eligibility. Measurements can only apply a soft ranking preference among otherwise eligible exercises. Successful demonstrated performance overrides conservative assumptions.
+Chosen. Capability and explicit constraints determine hard eligibility and soft ranking. V1 stores optional measurements but neither engine consumes them. Successful demonstrated performance overrides conservative soft assumptions.
 
 ## Terminology and UX
 
@@ -51,18 +51,10 @@ Measurements are optional and stored canonically:
 data class BodyMeasurements(
     val weightKg: Double? = null,
     val heightCm: Double? = null
-) {
-    val bmi: Double?
-        get() {
-            val weight = weightKg ?: return null
-            val heightMeters = (heightCm ?: return null) / 100.0
-            return (weight / (heightMeters * heightMeters))
-                .takeIf { it.isFinite() && it > 0.0 }
-        }
-}
+)
 ```
 
-BMI is derived in memory and is not persisted as a separate value. The initial deterministic policy does not use BMI bands or diagnostic categories.
+BMI is neither stored nor derived by v1 product code. Deterministic and LLM inputs omit body measurements.
 
 Movement capability is required during onboarding, with `UNKNOWN` available when the user genuinely cannot answer:
 
@@ -91,7 +83,7 @@ data class MovementCapabilities(
 
 Add one **Body & Movement** onboarding step after Experience & Units:
 
-1. Explain that measurements are optional, remain on-device, and help estimate the demand of bodyweight movements.
+1. Explain that measurements are optional, remain on-device, and are stored only for display/future separately reviewed features.
 2. Accept weight in the selected profile unit and height in centimeters or feet/inches; normalize to kg/cm before persistence.
 3. Ask capability questions as simple cards with Comfortable, Limited, Avoid, and Not sure.
 4. Explain that answers can be edited later and will be corrected by demonstrated workout history.
@@ -126,7 +118,6 @@ enum class SupportRequirement {
 
 data class ExerciseDemandMetadata(
     val bodyMassDemand: BodyMassDemand,
-    val estimatedBodyMassFraction: Double?,
     val impactLevel: ImpactLevel,
     val requiresFloorTransition: Boolean,
     val balanceDemand: CapabilityLevel,
@@ -135,8 +126,6 @@ data class ExerciseDemandMetadata(
     val regressionExerciseIds: List<String>
 )
 ```
-
-`estimatedBodyMassFraction` is optional, bounded to `0.0..1.5`, and only populated after review. It is used for relative ranking, never as an automatic load prescription.
 
 Demand metadata is human-reviewed and versioned with programming overrides. It is never inferred and auto-approved by an LLM.
 
@@ -154,7 +143,7 @@ Hard filters remove an exercise only when:
 - required equipment is absent;
 - the exercise lacks reviewed metadata required for automatic planning.
 
-Body weight, height, or BMI alone never hard-filter an exercise.
+Body weight, height, and BMI are absent from the eligibility input.
 
 ### Soft ranking
 
@@ -164,10 +153,9 @@ Among eligible candidates:
 - prefer lower impact when impact is `UNKNOWN`;
 - prefer no-floor alternatives when floor transition is `LIMITED`;
 - prefer lower balance demand when balance is `LIMITED`;
-- when weight and `estimatedBodyMassFraction` are both available, calculate an estimated supported mass only to order exercises within the same progression family;
 - prefer demonstrated successful exercises over conservative defaults.
 
-No universal body-weight or BMI threshold is used.
+No body-weight or BMI value is used.
 
 ### Prescription scaling
 
@@ -183,8 +171,7 @@ From strongest to weakest:
 2. Completed-session evidence and current user overrides.
 3. Explicit `LIMITED` or `COMFORTABLE` capability.
 4. Return-after-break policy.
-5. Optional body measurements combined with reviewed demand metadata.
-6. Conservative `UNKNOWN` defaults.
+5. Conservative `UNKNOWN` defaults.
 
 One successful set does not permanently upgrade capability. A versioned evidence policy requires repeated successful sessions before relaxing a soft penalty. Explicit user changes apply immediately.
 
@@ -212,7 +199,7 @@ The future local LLM receives only candidates that survive these deterministic b
 - No account, network call, analytics event, model prompt, Wear payload, or Health Connect permission is added.
 - Export and delete controls must include these fields when local data controls ship.
 - Logs and crash messages must not contain raw measurements.
-- Removing measurements immediately removes their ranking influence.
+- Adding, changing, or removing measurements never changes v1 planner output.
 
 ## Migration and Compatibility
 
@@ -228,14 +215,14 @@ The migration is additive and preserves profile revision, workout history, templ
 - Unit conversion occurs only at the UI/repository boundary; Room stores kg/cm.
 - Unknown or malformed capability values decode to `UNKNOWN`, never `COMFORTABLE`.
 - Missing exercise-demand metadata makes an exercise unavailable for automatic planning but not browsing or manual templates.
-- If body-aware filtering leaves no candidates, retry without measurement-based soft preferences; never remove explicit hard constraints.
+- If capability-aware filtering leaves no candidates, return a typed explanation; never remove explicit hard constraints.
 - Explain recommendation changes with capability language, not body labels.
 
 ## Testing and Evaluation
 
 Add persona fixtures:
 
-- same equipment/experience, different body weight, unknown capability;
+- same equipment/experience/capability, different body weight, with identical v1 planner output;
 - same body weight, Comfortable versus Limited floor transition;
 - bodyweight beginner with Limited push capability;
 - band-only user with Avoid impact;
@@ -247,7 +234,7 @@ Add persona fixtures:
 
 Required invariants:
 
-- BMI alone never changes hard eligibility.
+- Body measurements never change v1 eligibility, ranking, or dose.
 - Explicit Avoid always wins.
 - Demonstrated capability can remove a soft penalty but not a hard constraint.
 - Body measurements never produce an external starting load.
@@ -267,7 +254,7 @@ Required invariants:
 - Users can optionally store/delete height and weight locally.
 - Every user explicitly records movement capabilities or Unknown.
 - Automatic planning uses reviewed exercise-demand metadata.
-- No body measurement or BMI is a sole exclusion.
+- No body measurement or BMI is consumed by v1 planning.
 - Limited capability selects appropriate supported regressions when available.
 - Existing users migrate without data loss or forced re-onboarding.
 - Recommendations explain capability-driven choices respectfully.
@@ -278,7 +265,7 @@ Required invariants:
 This design narrows Adaptive Coach Tasks 3-5:
 
 - Task 3 becomes reviewed exercise eligibility plus demand metadata.
-- Task 4 becomes experience-, frequency-, recovery-, capability-, and body-aware ranking.
+- Task 4 becomes experience-, frequency-, recovery-, and capability-aware ranking.
 - Task 5 validates whole-session difficulty, demand, fatigue, volume, duration, and duplicates.
 
 It must land before local-model ranking. Rest timers and RPE/RIR remain the next feedback-loop work after deterministic selection is trustworthy.

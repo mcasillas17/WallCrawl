@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Add local-only body measurements and movement capabilities to WallCrawl's deterministic engine so exercise eligibility, regressions, and prescriptions reflect what the user can currently perform without using BMI as a diagnostic or exclusion.
+**Goal:** Add optional local-only body measurements and movement capabilities so v1 planning uses capability/history while measurements remain stored but engine-unused.
 
 **Architecture:** Extend `UserProfile` and reviewed exercise programming with capability and body-mass-demand data. Apply explicit constraints as hard filters, capability and body-mass demand as explainable ranking inputs, demonstrated history as stronger evidence, and whole-session validation after deterministic selection.
 
@@ -61,10 +61,9 @@ Implementation order is deliberate:
 
 ```kotlin
 @Test
-fun bmi_requiresBothMeasurementsAndIsNeverPersistedInput() {
-    assertThat(BodyMeasurements(weightKg = 100.0, heightCm = null).bmi).isNull()
-    assertThat(BodyMeasurements(weightKg = 100.0, heightCm = 200.0).bmi)
-        .isWithin(0.001).of(25.0)
+fun measurements_doNotExposeDerivedBmi() {
+    assertThat(BodyMeasurements::class.java.declaredMethods.map { it.name })
+        .doesNotContain("getBmi")
 }
 
 @Test
@@ -89,15 +88,7 @@ Expected: compilation fails because the body-context types do not exist.
 data class BodyMeasurements(
     val weightKg: Double? = null,
     val heightCm: Double? = null
-) {
-    val bmi: Double?
-        get() {
-            val weight = weightKg ?: return null
-            val heightMeters = (heightCm ?: return null) / 100.0
-            return (weight / (heightMeters * heightMeters))
-                .takeIf { it.isFinite() && it > 0.0 }
-        }
-}
+)
 
 enum class MovementCapabilityType {
     IMPACT,
@@ -137,7 +128,6 @@ enum class SupportRequirement { SUPPORTED, OPTIONAL_SUPPORT, UNSUPPORTED }
 data class ExerciseDemandMetadata(
     val progressionFamily: String,
     val bodyMassDemand: BodyMassDemand,
-    val estimatedBodyMassFraction: Double?,
     val impactLevel: ImpactLevel,
     val requiresFloorTransition: Boolean,
     val balanceDemand: CapabilityLevel,
@@ -147,7 +137,7 @@ data class ExerciseDemandMetadata(
 )
 ```
 
-Add nullable `demand: ExerciseDemandMetadata?` to `ExerciseProgrammingMetadata`. Require `estimatedBodyMassFraction` to be finite and in `0.0..1.5`.
+Add nullable `demand: ExerciseDemandMetadata?` to `ExerciseProgrammingMetadata`.
 
 - [ ] **Step 5: Run tests and commit**
 
@@ -322,7 +312,6 @@ Reject unknown enums, body fractions outside `0.0..1.5`, blank progression famil
   "demand": {
     "progressionFamily": "horizontal-push",
     "bodyMassDemand": "partial",
-    "estimatedBodyMassFraction": 0.65,
     "impactLevel": "none",
     "requiresFloorTransition": true,
     "balanceDemand": "comfortable",
@@ -418,7 +407,7 @@ git commit -m "feat: enforce movement capability eligibility"
 
 ---
 
-### Task 6: Implement Body-Aware Ranking and History Evidence
+### Task 6: Implement Capability-Aware Ranking and History Evidence
 
 **Files:**
 - Create: `app/src/main/java/wallcrawl/elopenmike/com/core/ai/BodyAwareExerciseRanker.kt`
@@ -444,7 +433,6 @@ data class RankedExercise(
 enum class RankingReason {
     DEMONSTRATED_SUCCESS,
     SUPPORTED_REGRESSION,
-    LOWER_BODY_MASS_DEMAND,
     LOWER_IMPACT,
     NO_FLOOR_TRANSITION,
     LOWER_BALANCE_DEMAND,
@@ -458,20 +446,18 @@ Use integer weights in one versioned policy object; stable exercise ID is the fi
 
 An exercise is demonstrated only after at least two completed sessions where all started prescribed sets have valid outcomes. Evidence removes soft penalties for that exercise and easier members of the same progression family; it never overrides explicit `AVOID` or a `TrainingConstraint`.
 
-- [ ] **Step 4: Use body mass only within progression families**
+- [ ] **Step 4: Prove measurements are excluded from v1 ranking**
 
 ```kotlin
-fun estimatedSupportedMassKg(
-    measurements: BodyMeasurements,
-    demand: ExerciseDemandMetadata
-): Double? {
-    val weight = measurements.weightKg ?: return null
-    val fraction = demand.estimatedBodyMassFraction ?: return null
-    return weight * fraction
+@Test
+fun otherwiseEqualProfiles_getIdenticalRankingWhenMeasurementsDiffer() {
+    val light = profile(bodyMeasurements = BodyMeasurements(weightKg = 60.0, heightCm = 170.0))
+    val heavy = profile(bodyMeasurements = BodyMeasurements(weightKg = 140.0, heightCm = 170.0))
+    assertThat(ranker.rank(candidates, light)).isEqualTo(ranker.rank(candidates, heavy))
 }
 ```
 
-Lower estimated supported mass may win only when capability is `LIMITED` or `UNKNOWN` and candidates share a progression family. No universal threshold and no BMI input.
+Keep `BodyMeasurements` out of `BodyAwareExerciseRanker` and every local-LLM context. Capability, reviewed metadata, and demonstrated history drive ranking.
 
 - [ ] **Step 5: Replace planner ordering**
 
@@ -501,7 +487,7 @@ git commit -m "feat: rank exercises by demonstrated capability"
 
 - [ ] **Step 1: Write failing precedence tests**
 
-Assert explicit Avoid blocks, history beats soft measurement ranking, Limited can reduce sets/progression, return-after-break and Limited choose the more conservative set count, and measurements never create target weight.
+Assert explicit Avoid blocks, demonstrated history can relax capability soft ranking only, Limited can reduce sets/progression, return-after-break and Limited choose the more conservative set count, and measurements never affect target weight.
 
 - [ ] **Step 2: Implement conservative scaling**
 
@@ -567,7 +553,7 @@ Each fixture records profile, capabilities, optional measurements, equipment, hi
 
 - [ ] **Step 2: Assert invariants across every fixture**
 
-BMI never changes hard eligibility; Avoid always wins; measurements never produce load; every plan fits equipment; every selected exercise has reviewed demand; deleting measurements still produces a plan.
+Measurements never change v1 eligibility/ranking/dose; Avoid always wins; measurements never produce load; every plan fits equipment; every selected exercise has reviewed demand; deleting measurements still produces the same legal plan.
 
 - [ ] **Step 3: Add local rollout flag**
 
@@ -646,7 +632,7 @@ git commit -m "docs: explain body-aware personalization"
 
 - Existing users migrate from schema 7 to 8 without re-onboarding or data loss.
 - Optional measurements can be omitted or deleted.
-- BMI is not persisted and never hard-filters.
+- BMI is not implemented, and measurements are not consumed by v1 planning.
 - Explicit capability Avoid and training constraints always win.
 - Every automatic exercise has reviewed demand metadata.
 - Limited/Unknown capability prefers regressions without stranding equipment profiles.
