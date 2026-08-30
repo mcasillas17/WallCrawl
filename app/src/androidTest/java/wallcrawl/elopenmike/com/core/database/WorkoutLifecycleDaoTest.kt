@@ -103,7 +103,21 @@ class WorkoutLifecycleDaoTest {
         )
 
         assertThat(
-            setDao.updateSetCompletion(setId, reps = 10, weight = 20.0, isCompleted = true)
+            setDao.updateSetOutcome(
+                setId = setId,
+                reps = 10,
+                weight = 20.0,
+                assistanceWeight = null,
+                durationSeconds = null,
+                distanceMeters = null,
+                rpe = 8f,
+                rir = 2,
+                feltManageable = true,
+                completedAtTimestamp = 1_500L,
+                stoppedAtTimestamp = null,
+                stopReason = null,
+                isCompleted = true
+            )
         ).isEqualTo(1)
         assertThat(
             sessionDao.completeSessionIfActive(
@@ -121,12 +135,32 @@ class WorkoutLifecycleDaoTest {
             )
         ).isEqualTo(0)
         assertThat(
-            setDao.updateSetCompletion(setId, reps = 99, weight = 999.0, isCompleted = true)
+            setDao.updateSetOutcome(
+                setId = setId,
+                reps = 99,
+                weight = 999.0,
+                assistanceWeight = null,
+                durationSeconds = null,
+                distanceMeters = null,
+                rpe = 1f,
+                rir = 9,
+                feltManageable = false,
+                completedAtTimestamp = 9_999L,
+                stoppedAtTimestamp = null,
+                stopReason = null,
+                isCompleted = true
+            )
         ).isEqualTo(0)
 
+        // Completed history is immutable: neither the performance values nor the typed
+        // feedback recorded while the session was active can be rewritten afterwards.
         val persistedSet = setDao.getSetsForExercise(exerciseId).single()
         assertThat(persistedSet.completedReps).isEqualTo(10)
         assertThat(persistedSet.completedWeight).isEqualTo(20.0)
+        assertThat(persistedSet.rpe).isEqualTo(8f)
+        assertThat(persistedSet.rir).isEqualTo(2)
+        assertThat(persistedSet.feltManageable).isTrue()
+        assertThat(persistedSet.completedAtTimestamp).isEqualTo(1_500L)
     }
 
     @Test

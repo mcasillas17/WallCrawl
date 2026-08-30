@@ -156,23 +156,46 @@ class WorkoutTemplateSessionTest {
 
         workoutRepository.logSetCompletion(
             setsByType.getValue(ExerciseType.WEIGHT_REPS),
-            SetPerformanceInput(reps = 12, weight = 20.0, isCompleted = true)
+            SetPerformanceInput(
+                reps = 12,
+                weight = 20.0,
+                completedAtTimestamp = COMPLETED_AT,
+                isCompleted = true
+            )
         )
         workoutRepository.logSetCompletion(
             setsByType.getValue(ExerciseType.BODYWEIGHT_REPS),
-            SetPerformanceInput(reps = 15, isCompleted = true)
+            SetPerformanceInput(
+                reps = 15,
+                completedAtTimestamp = COMPLETED_AT,
+                isCompleted = true
+            )
         )
         workoutRepository.logSetCompletion(
             setsByType.getValue(ExerciseType.ASSISTED_BODYWEIGHT),
-            SetPerformanceInput(reps = 8, assistanceWeight = 30.0, isCompleted = true)
+            SetPerformanceInput(
+                reps = 8,
+                assistanceWeight = 30.0,
+                completedAtTimestamp = COMPLETED_AT,
+                isCompleted = true
+            )
         )
         workoutRepository.logSetCompletion(
             setsByType.getValue(ExerciseType.DURATION),
-            SetPerformanceInput(durationSeconds = 50, isCompleted = true)
+            SetPerformanceInput(
+                durationSeconds = 50,
+                completedAtTimestamp = COMPLETED_AT,
+                isCompleted = true
+            )
         )
         workoutRepository.logSetCompletion(
             setsByType.getValue(ExerciseType.DISTANCE_DURATION),
-            SetPerformanceInput(durationSeconds = 580, distanceMeters = 1_000.0, isCompleted = true)
+            SetPerformanceInput(
+                durationSeconds = 580,
+                distanceMeters = 1_000.0,
+                completedAtTimestamp = COMPLETED_AT,
+                isCompleted = true
+            )
         )
 
         val persisted = checkNotNull(workoutRepository.getSessionById(session.id))
@@ -221,6 +244,7 @@ class WorkoutTemplateSessionTest {
     )
 
     private companion object {
+        const val COMPLETED_AT = 1_777_777L
         val CATALOG_EXERCISES = listOf(
             exercise("dumbbell-curl", ExerciseType.WEIGHT_REPS),
             exercise("push-up", ExerciseType.BODYWEIGHT_REPS),

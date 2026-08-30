@@ -4,7 +4,7 @@ import android.database.sqlite.SQLiteDatabase
 
 internal object LegacyDatabaseFixtures {
     fun createSchema(db: SQLiteDatabase, version: Int) {
-        require(version in 1..7)
+        require(version in 1..8)
         db.execSQL("PRAGMA foreign_keys=ON")
         createUserProfiles(db, version)
         createWorkoutSessions(db, version)
@@ -69,6 +69,10 @@ internal object LegacyDatabaseFixtures {
             columns += "themePreference"
             values += "DARK"
         }
+        if (version >= 8) {
+            columns += "movementCapabilitiesJson"
+            values += "{}"
+        }
 
         val placeholders = List(columns.size) { "?" }.joinToString(",")
         db.execSQL(
@@ -77,7 +81,11 @@ internal object LegacyDatabaseFixtures {
         )
     }
 
-    fun insertVersion7HistoryAndTemplate(db: SQLiteDatabase) {
+    /**
+     * Session, exercise, set, and template rows in the shape shared by schema 4 through
+     * 8, so a migration test can prove every one of those values survives untouched.
+     */
+    fun insertHistoryAndTemplate(db: SQLiteDatabase) {
         db.execSQL(
             "INSERT INTO workout_sessions " +
                 "(id,name,startedAtTimestamp,completedAtTimestamp,targetDurationMinutes," +
@@ -129,6 +137,7 @@ internal object LegacyDatabaseFixtures {
             }
             if (version >= 6) append(", fitnessGoalsJson TEXT NOT NULL DEFAULT ''")
             if (version >= 7) append(", themePreference TEXT NOT NULL DEFAULT 'SYSTEM'")
+            if (version >= 8) append(", movementCapabilitiesJson TEXT NOT NULL DEFAULT '{}'")
         }
         db.execSQL(
             "CREATE TABLE user_profiles (" +
