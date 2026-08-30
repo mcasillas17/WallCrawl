@@ -2,7 +2,11 @@ package wallcrawl.elopenmike.com.feature.onboarding
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -10,7 +14,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
+import wallcrawl.elopenmike.com.core.model.CapabilityLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
+import wallcrawl.elopenmike.com.core.model.MovementCapabilities
+import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 
@@ -20,14 +27,15 @@ import wallcrawl.elopenmike.com.core.model.WeightUnit
  * `onboardingCompleted = true`.
  */
 class OnboardingViewModel(
-    private val userProfileRepository: UserProfileRepository
+    private val userProfileRepository: UserProfileRepository,
+    private val savedStateHandle: SavedStateHandle = SavedStateHandle()
 ) : ViewModel() {
 
-    private val mutableState = MutableStateFlow(OnboardingUiState())
+    private val mutableState = MutableStateFlow(restoreDraft(savedStateHandle))
     val uiState: StateFlow<OnboardingUiState> = mutableState.asStateFlow()
 
     fun updateName(name: String) {
-        mutableState.value = mutableState.value.copy(name = name.take(NAME_MAX_LENGTH), error = null)
+        updateState { it.copy(name = name.take(NAME_MAX_LENGTH), error = null) }
     }
 
     fun toggleGoal(goal: FitnessGoal) {
@@ -37,12 +45,12 @@ class OnboardingViewModel(
         } else {
             current + goal
         }
-        mutableState.value = mutableState.value.copy(goals = updated, error = null)
+        updateState { it.copy(goals = updated, error = null) }
     }
 
     fun updateGoals(goals: Set<FitnessGoal>) {
         if (goals.isNotEmpty()) {
-            mutableState.value = mutableState.value.copy(goals = goals, error = null)
+            updateState { it.copy(goals = goals, error = null) }
         }
     }
 
@@ -51,63 +59,87 @@ class OnboardingViewModel(
     }
 
     fun updateExperience(experience: ExperienceLevel) {
-        mutableState.value = mutableState.value.copy(experience = experience, error = null)
+        updateState { it.copy(experience = experience, error = null) }
     }
 
     fun updateDaysPerWeek(days: Int) {
-        mutableState.value = mutableState.value.copy(daysPerWeek = days, error = null)
+        updateState { it.copy(daysPerWeek = days, error = null) }
     }
 
     fun updateDurationMinutes(minutes: Int) {
-        mutableState.value = mutableState.value.copy(durationMinutes = minutes, error = null)
+        updateState { it.copy(durationMinutes = minutes, error = null) }
     }
 
     fun updateUnit(unit: WeightUnit) {
-        mutableState.value = mutableState.value.copy(unit = unit, error = null)
+        updateState { it.copy(unit = unit, error = null) }
     }
 
     fun toggleEquipment(equipment: String) {
         val current = mutableState.value.equipment
         val updated = if (equipment in current) current - equipment else current + equipment
-        mutableState.value = mutableState.value.copy(equipment = updated, error = null)
+        updateState { it.copy(equipment = updated, error = null) }
     }
 
     fun toggleConstraint(constraint: TrainingConstraint) {
         val current = mutableState.value.constraints
         val updated = if (constraint in current) current - constraint else current + constraint
-        mutableState.value = mutableState.value.copy(constraints = updated, error = null)
+        updateState { it.copy(constraints = updated, error = null) }
     }
 
     fun updateReturningAfterBreakWeeks(weeks: Int) {
-        mutableState.value = mutableState.value.copy(returningAfterBreakWeeks = weeks, error = null)
+        updateState { it.copy(returningAfterBreakWeeks = weeks, error = null) }
+    }
+
+    fun updateMovementCapability(
+        type: MovementCapabilityType,
+        level: CapabilityLevel
+    ) {
+        updateState { state ->
+            state.copy(
+                capabilityAnswers = state.capabilityAnswers + (type to level),
+                error = null
+            )
+        }
     }
 
     fun selectAllEquipment() {
-        mutableState.value = mutableState.value.copy(
-            equipment = mutableState.value.equipmentOptions.toSet(),
-            error = null
-        )
+        updateState { state ->
+            state.copy(equipment = state.equipmentOptions.toSet(), error = null)
+        }
     }
 
     fun resetEquipmentToBodyweight() {
-        mutableState.value = mutableState.value.copy(
+        updateState { state -> state.copy(
             equipment = setOf(wallcrawl.elopenmike.com.core.model.StandardEquipment.BODYWEIGHT),
             error = null
-        )
+        ) }
     }
 
     fun clearConstraints() {
-        mutableState.value = mutableState.value.copy(constraints = emptySet(), error = null)
+        updateState { it.copy(constraints = emptySet(), error = null) }
     }
 
     fun nextStep() {
-        val current = mutableState.value.currentStep
+        val state = mutableState.value
+        if (!state.canProceedCurrentStep) {
+            updateState {
+                it.copy(
+                    error = if (state.currentStep == OnboardingStep.MOVEMENT_CAPABILITY) {
+                        OnboardingError.MOVEMENT_REQUIRED
+                    } else {
+                        OnboardingError.REQUIRED_FIELD
+                    }
+                )
+            }
+            return
+        }
+        val current = state.currentStep
         val nextOrdinal = current.ordinal + 1
         if (nextOrdinal < OnboardingStep.entries.size) {
-            mutableState.value = mutableState.value.copy(
+            updateState { it.copy(
                 currentStep = OnboardingStep.entries[nextOrdinal],
                 error = null
-            )
+            ) }
         } else {
             complete()
         }
@@ -117,15 +149,15 @@ class OnboardingViewModel(
         val current = mutableState.value.currentStep
         val prevOrdinal = current.ordinal - 1
         if (prevOrdinal >= 0) {
-            mutableState.value = mutableState.value.copy(
+            updateState { it.copy(
                 currentStep = OnboardingStep.entries[prevOrdinal],
                 error = null
-            )
+            ) }
         }
     }
 
     fun goToStep(step: OnboardingStep) {
-        mutableState.value = mutableState.value.copy(currentStep = step, error = null)
+        updateState { it.copy(currentStep = step, error = null) }
     }
 
     /**
@@ -142,9 +174,11 @@ class OnboardingViewModel(
         unit: WeightUnit = mutableState.value.unit,
         equipment: Set<String> = mutableState.value.equipment,
         constraints: Set<TrainingConstraint> = mutableState.value.constraints,
-        returningAfterBreakWeeks: Int = mutableState.value.returningAfterBreakWeeks
+        returningAfterBreakWeeks: Int = mutableState.value.returningAfterBreakWeeks,
+        capabilityAnswers: Map<MovementCapabilityType, CapabilityLevel> =
+            mutableState.value.capabilityAnswers
     ) {
-        mutableState.value = mutableState.value.copy(
+        updateState { it.copy(
             name = name,
             goals = goals,
             experience = experience,
@@ -153,11 +187,25 @@ class OnboardingViewModel(
             unit = unit,
             equipment = equipment,
             constraints = constraints,
-            returningAfterBreakWeeks = returningAfterBreakWeeks
-        )
+            returningAfterBreakWeeks = returningAfterBreakWeeks,
+            capabilityAnswers = capabilityAnswers
+        ) }
+
+        val unansweredCapability = MovementCapabilityType.entries.firstOrNull {
+            it !in capabilityAnswers
+        }
+        if (unansweredCapability != null) {
+            updateState {
+                it.copy(
+                    currentStep = OnboardingStep.MOVEMENT_CAPABILITY,
+                    error = OnboardingError.MOVEMENT_REQUIRED
+                )
+            }
+            return
+        }
 
         viewModelScope.launch {
-            mutableState.value = mutableState.value.copy(isSaving = true, error = null)
+            updateState { it.copy(isSaving = true, error = null) }
             try {
                 val current = userProfileRepository.getProfileOnce()
                 val profile = current.copy(
@@ -170,30 +218,152 @@ class OnboardingViewModel(
                     availableEquipment = equipment.toList(),
                     trainingConstraints = constraints,
                     returningAfterBreakWeeks = returningAfterBreakWeeks,
+                    movementCapabilities = MovementCapabilities.from(capabilityAnswers),
                     onboardingCompleted = true
                 )
                 userProfileRepository.saveProfile(profile)
-                mutableState.value = mutableState.value.copy(isSaving = false, isComplete = true)
+                updateState { it.copy(isSaving = false, isComplete = true) }
             } catch (e: CancellationException) {
                 throw e
+            } catch (e: IllegalArgumentException) {
+                updateState {
+                    it.copy(
+                        isSaving = false,
+                        error = OnboardingError.INVALID_FIELD
+                    )
+                }
             } catch (e: Exception) {
-                mutableState.value = mutableState.value.copy(
+                updateState { it.copy(
                     isSaving = false,
-                    error = e.message ?: "Couldn't save your profile. Try again."
-                )
+                    error = OnboardingError.SAVE_FAILED
+                ) }
             }
         }
     }
 
+    private fun updateState(transform: (OnboardingUiState) -> OnboardingUiState) {
+        mutableState.value = transform(mutableState.value)
+        persistDraft(mutableState.value)
+    }
+
+    private fun persistDraft(state: OnboardingUiState) {
+        savedStateHandle[STATE_CURRENT_STEP] = state.currentStep.name
+        savedStateHandle[STATE_NAME] = state.name
+        savedStateHandle[STATE_GOALS] = ArrayList(state.goals.map { it.name })
+        savedStateHandle[STATE_EXPERIENCE] = state.experience.name
+        savedStateHandle[STATE_DAYS_PER_WEEK] = state.daysPerWeek
+        savedStateHandle[STATE_DURATION_MINUTES] = state.durationMinutes
+        savedStateHandle[STATE_UNIT] = state.unit.name
+        savedStateHandle[STATE_EQUIPMENT] = ArrayList(state.equipment)
+        savedStateHandle[STATE_CONSTRAINTS] = ArrayList(state.constraints.map { it.name })
+        savedStateHandle[STATE_BREAK_WEEKS] = state.returningAfterBreakWeeks
+        savedStateHandle[STATE_CAPABILITY_ANSWERS] = ArrayList(
+            state.capabilityAnswers.entries.map { (type, level) ->
+                "${type.name}:${level.name}"
+            }
+        )
+    }
+
     companion object {
         private const val NAME_MAX_LENGTH = 60
+        private const val STATE_CURRENT_STEP = "onboarding.currentStep"
+        private const val STATE_NAME = "onboarding.name"
+        private const val STATE_GOALS = "onboarding.goals"
+        private const val STATE_EXPERIENCE = "onboarding.experience"
+        private const val STATE_DAYS_PER_WEEK = "onboarding.daysPerWeek"
+        private const val STATE_DURATION_MINUTES = "onboarding.durationMinutes"
+        private const val STATE_UNIT = "onboarding.unit"
+        private const val STATE_EQUIPMENT = "onboarding.equipment"
+        private const val STATE_CONSTRAINTS = "onboarding.constraints"
+        private const val STATE_BREAK_WEEKS = "onboarding.returningAfterBreakWeeks"
+        private const val STATE_CAPABILITY_ANSWERS = "onboarding.capabilityAnswers"
+
+        private fun restoreDraft(savedStateHandle: SavedStateHandle): OnboardingUiState {
+            val defaults = OnboardingUiState()
+            return defaults.copy(
+                currentStep = enumValueOrDefault(
+                    savedStateHandle[STATE_CURRENT_STEP],
+                    defaults.currentStep
+                ),
+                name = savedStateHandle[STATE_NAME] ?: defaults.name,
+                goals = enumSetOrDefault(savedStateHandle[STATE_GOALS], defaults.goals),
+                experience = enumValueOrDefault(
+                    savedStateHandle[STATE_EXPERIENCE],
+                    defaults.experience
+                ),
+                daysPerWeek = savedStateHandle[STATE_DAYS_PER_WEEK] ?: defaults.daysPerWeek,
+                durationMinutes = savedStateHandle[STATE_DURATION_MINUTES]
+                    ?: defaults.durationMinutes,
+                unit = enumValueOrDefault(savedStateHandle[STATE_UNIT], defaults.unit),
+                equipment = savedStateHandle.get<List<String>>(STATE_EQUIPMENT)?.toSet()
+                    ?: defaults.equipment,
+                constraints = enumSetOrDefault(
+                    savedStateHandle[STATE_CONSTRAINTS],
+                    defaults.constraints
+                ),
+                returningAfterBreakWeeks = savedStateHandle[STATE_BREAK_WEEKS]
+                    ?: defaults.returningAfterBreakWeeks,
+                capabilityAnswers = decodeCapabilityAnswers(
+                    savedStateHandle[STATE_CAPABILITY_ANSWERS]
+                )
+            )
+        }
+
+        private inline fun <reified T : Enum<T>> enumValueOrDefault(
+            persistedName: String?,
+            defaultValue: T
+        ): T {
+            if (persistedName == null) return defaultValue
+            return try {
+                enumValueOf<T>(persistedName)
+            } catch (error: IllegalArgumentException) {
+                defaultValue
+            }
+        }
+
+        private inline fun <reified T : Enum<T>> enumSetOrDefault(
+            persistedNames: List<String>?,
+            defaultValue: Set<T>
+        ): Set<T> {
+            if (persistedNames == null) return defaultValue
+            return persistedNames.mapNotNull { name ->
+                try {
+                    enumValueOf<T>(name)
+                } catch (error: IllegalArgumentException) {
+                    null
+                }
+            }.toSet()
+        }
+
+        private fun decodeCapabilityAnswers(
+            persistedAnswers: List<String>?
+        ): Map<MovementCapabilityType, CapabilityLevel> {
+            if (persistedAnswers == null) return emptyMap()
+            return persistedAnswers.mapNotNull { answer ->
+                val parts = answer.split(':', limit = 2)
+                if (parts.size != 2) return@mapNotNull null
+                val type = try {
+                    MovementCapabilityType.valueOf(parts[0])
+                } catch (error: IllegalArgumentException) {
+                    return@mapNotNull null
+                }
+                val level = try {
+                    CapabilityLevel.valueOf(parts[1])
+                } catch (error: IllegalArgumentException) {
+                    return@mapNotNull null
+                }
+                type to level
+            }.toMap()
+        }
 
         fun provideFactory(
             userProfileRepository: UserProfileRepository
-        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return OnboardingViewModel(userProfileRepository) as T
+        ): ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                OnboardingViewModel(
+                    userProfileRepository = userProfileRepository,
+                    savedStateHandle = createSavedStateHandle()
+                )
             }
         }
     }
