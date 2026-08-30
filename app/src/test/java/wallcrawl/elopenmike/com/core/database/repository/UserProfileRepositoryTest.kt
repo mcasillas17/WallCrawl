@@ -4,7 +4,10 @@ import com.google.common.truth.Truth.assertThat
 import wallcrawl.elopenmike.com.core.database.dao.UserProfileDao
 import wallcrawl.elopenmike.com.core.database.entity.UserProfileEntity
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
+import wallcrawl.elopenmike.com.core.model.CapabilityLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
+import wallcrawl.elopenmike.com.core.model.MovementCapabilities
+import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
@@ -274,6 +277,63 @@ class UserProfileRepositoryTest {
         val profile = repository.getUserProfile().first()
         assertThat(profile.confirmedStartingLoads["barbell-bench-press"]).isEqualTo(135.0)
     }
+
+    @Test
+    fun saveProfile_roundTripsCapabilitiesAndPreservesUnrelatedFields() = runTest {
+        val capabilities = MovementCapabilities.from(
+            MovementCapabilityType.entries.associateWith { type ->
+                when (type) {
+                    MovementCapabilityType.IMPACT -> CapabilityLevel.AVOID
+                    MovementCapabilityType.FLOOR_TRANSITION -> CapabilityLevel.LIMITED
+                    else -> CapabilityLevel.COMFORTABLE
+                }
+            }
+        )
+        val original = UserProfile(
+            name = "Alex",
+            goals = setOf(FitnessGoal.STRENGTH, FitnessGoal.BUILD_MUSCLE),
+            availableEquipment = listOf(StandardEquipment.BODYWEIGHT, StandardEquipment.DUMBBELL),
+            trainingConstraints = setOf(TrainingConstraint.KNEE_SENSITIVE),
+            confirmedStartingLoads = mapOf("goblet-squat" to 30.0),
+            themePreference = wallcrawl.elopenmike.com.core.model.ThemePreference.DARK,
+            onboardingCompleted = true,
+            movementCapabilities = capabilities
+        )
+
+        repository.saveProfile(original)
+        val reloaded = OfflineUserProfileRepository(fakeDao).getProfileOnce()
+
+        assertThat(reloaded.movementCapabilities).isEqualTo(capabilities)
+        assertThat(reloaded.name).isEqualTo("Alex")
+        assertThat(reloaded.goals).containsExactlyElementsIn(original.goals)
+        assertThat(reloaded.availableEquipment)
+            .containsExactlyElementsIn(original.availableEquipment)
+        assertThat(reloaded.trainingConstraints)
+            .containsExactlyElementsIn(original.trainingConstraints)
+        assertThat(reloaded.confirmedStartingLoads)
+            .containsExactlyEntriesIn(original.confirmedStartingLoads)
+        assertThat(reloaded.themePreference).isEqualTo(original.themePreference)
+        assertThat(reloaded.onboardingCompleted).isTrue()
+    }
+
+    @Test
+    fun saveProfile_updatesCapabilitiesInOneRepositoryOwnedRevision() = runTest {
+        fakeDao.seed(musclePrioritiesJson = "", revision = 41L)
+        val current = repository.getProfileOnce()
+
+        repository.saveProfile(
+            current.copy(
+                movementCapabilities = MovementCapabilities.from(
+                    mapOf(MovementCapabilityType.IMPACT to CapabilityLevel.LIMITED)
+                )
+            )
+        )
+
+        val reloaded = OfflineUserProfileRepository(fakeDao).getProfileOnce()
+        assertThat(reloaded.revision).isEqualTo(42L)
+        assertThat(reloaded.movementCapabilities[MovementCapabilityType.IMPACT])
+            .isEqualTo(CapabilityLevel.LIMITED)
+    }
 }
 
 class FakeUserProfileDao : UserProfileDao {
@@ -284,10 +344,12 @@ class FakeUserProfileDao : UserProfileDao {
         musclePrioritiesJson: String,
         trainingConstraintsJson: String = "",
         confirmedStartingLoadsJson: String = "",
-        fitnessGoalsJson: String = ""
+        fitnessGoalsJson: String = "",
+        revision: Long = 0L
     ) {
         profileState.value = UserProfileEntity(
             id = UserProfile.DEFAULT_PROFILE_ID,
+            revision = revision,
             name = "Crawler",
             primaryGoal = FitnessGoal.BUILD_MUSCLE,
             experienceLevel = ExperienceLevel.INTERMEDIATE,

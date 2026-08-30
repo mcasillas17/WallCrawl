@@ -5,6 +5,7 @@ import wallcrawl.elopenmike.com.core.database.entity.UserProfileEntity
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.MuscleVocabulary
+import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.ThemePreference
@@ -82,6 +83,11 @@ class OfflineUserProfileRepository(
         val invalidLoads = profile.confirmedStartingLoads.filterValues { !it.isFinite() || it < 0.0 }
         require(invalidLoads.isEmpty()) {
             "confirmedStartingLoads must be finite and not negative: $invalidLoads."
+        }
+        require(
+            profile.movementCapabilities.values.keys == MovementCapabilityType.entries.toSet()
+        ) {
+            "movementCapabilities must contain every supported capability."
         }
         saveUserProfile(profile)
     }
@@ -192,6 +198,7 @@ class OfflineUserProfileRepository(
             trainingConstraints = decodeTrainingConstraints(trainingConstraintsJson),
             returningAfterBreakWeeks = returningAfterBreakWeeks,
             confirmedStartingLoads = decodeConfirmedStartingLoads(confirmedStartingLoadsJson),
+            movementCapabilities = MovementCapabilitiesCodec.decode(movementCapabilitiesJson),
             themePreference = themePreference
         )
     }
@@ -218,6 +225,7 @@ class OfflineUserProfileRepository(
             returningAfterBreakWeeks = returningAfterBreakWeeks,
             confirmedStartingLoadsJson = encodeConfirmedStartingLoads(confirmedStartingLoads),
             fitnessGoalsJson = encodeFitnessGoals(goals),
+            movementCapabilitiesJson = MovementCapabilitiesCodec.encode(movementCapabilities),
             themePreference = themePreference
         )
     }
