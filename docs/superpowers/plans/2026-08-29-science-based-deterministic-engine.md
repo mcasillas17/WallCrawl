@@ -111,7 +111,7 @@ sealed interface ProgramViolation {
 - [ ] Add nullable `EffortTarget(minRir, maxRir)` and `RestClass { SHORT, MODERATE, LONG }`.
 - [ ] Use 2-4 RIR guidance in INITIATE/RETURNING or for a relevant `LIMITED` capability and 1-3 for established general/hypertrophy; never auto-default failure.
 - [ ] Resolve rest classes through versioned editable product policy and preserve per-exercise user preference.
-- [ ] Prove body measurements never produce load; commit `feat: add state based workout dose policy`.
+- [ ] Prove capability values never produce an unconfirmed load; commit `feat: add state based workout dose policy`.
 
 ### Task 5: Add Typed Gym-Floor Feedback
 
@@ -170,8 +170,8 @@ sealed interface ProgramViolation {
 - Modify: `docs/superpowers/specs/2026-08-29-body-aware-personalization-design.md`
 - Modify: `docs/superpowers/plans/2026-08-29-body-aware-personalization.md`
 
-- [ ] Add novice/bodyweight, band-only, machine-only, full-gym, advanced strength, limited capability, returner, mixed-unit, sparse-history, measurement-deleted, and concurrent-activity fixtures.
-- [ ] Assert deterministic replay, reviewed IDs, hard rules, primary-only ledger, no invented load, no BMI influence, and valid plan after measurement deletion.
+- [ ] Add novice/bodyweight, band-only, machine-only, full-gym, advanced strength, limited capability, returner, mixed-unit, sparse-history, and concurrent-activity fixtures.
+- [ ] Assert deterministic replay, reviewed IDs, hard rules, primary-only ledger, no invented load, and no BMI influence.
 - [ ] Remove body-mass ranking/fraction fields and unsupported fixed-dose/deload/fatigue claims from existing plans.
 - [ ] Run Python, JVM, lint, build, connected Android, importer drift, and `git diff --check`.
 - [ ] Commit `test: gate the deterministic workout engine`.

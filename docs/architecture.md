@@ -10,13 +10,14 @@ the current architecture.
 WallCrawl is local-first. The exercise catalog, profile, workout templates,
 active workout, completed history, and progress data all live on the device.
 There is no account requirement, catalog network request, or production LLM in
-the current application.
+the current application. Movement-capability answers add no cloud sync,
+analytics, Health Connect, Wear OS, network, or model data flow.
 
 The application supports two workout entry points that converge on the same
 session and history model, both gated behind first-run onboarding:
 
 ```text
-                 fresh install → onboarding (equipment, goal, constraints)
+                 fresh install → onboarding (goal, capability, equipment, constraints)
                                           │
                          ┌─ automatic recommendation
 Bundled catalog ─────────┤  profile + history → filter → planner → validator
@@ -115,12 +116,23 @@ the pinned commit, and licensing details.
 told about. A fresh profile defaults to `onboardingCompleted = false` and
 `availableEquipment = [BODYWEIGHT]` — not the prior intermediate/full-gym
 assumption — and `confirmedStartingLoads` and `trainingConstraints` start
-empty. `WallCrawlApp` reads this flag to pick the nav-graph start
+empty. Every `MovementCapabilityType` resolves to `UNKNOWN` unless an explicit
+stored value says otherwise. `WallCrawlApp` reads the onboarding flag to pick
+the nav-graph start
 destination: Today is never rendered or generated for a profile that has not
 completed onboarding, so a fresh install cannot reach automatic planning
-before the user has stated equipment, goal, experience, schedule, unit, and
-any `TrainingConstraint`s (shoulder/elbow/wrist/lower-back/hip/knee
-sensitivity, low-impact-only).
+before the user has stated equipment, goal, experience, schedule, unit, all
+seven movement preferences, and any `TrainingConstraint`s
+(shoulder/elbow/wrist/lower-back/hip/knee sensitivity, low-impact-only).
+
+The movement-preference step follows Experience & Units. Its seven questions
+cover impact, floor transitions, unsupported squat, upper-body bodyweight push,
+vertical pull or hang, balance without support, and continuous activity. Each
+question requires an explicit `COMFORTABLE`, `LIMITED`, `AVOID`, or `UNKNOWN`
+answer; the UI displays `UNKNOWN` as **Not sure**. A separate answered-key draft
+prevents the conservative domain default from making an unanswered question
+look complete. `SavedStateHandle` preserves that draft and the current wizard
+step across process recreation.
 
 `OnboardingViewModel.complete()` and `UserProfileRepository.saveProfile()`
 persist onboarding as one atomic revision rather than one write per field, and
@@ -130,7 +142,14 @@ non-empty and recognized equipment, and finite non-negative confirmed
 starting loads. Training constraints and return-after-break weeks stay
 editable from the Profile screen after onboarding; the onboarding flow itself
 does not collect confirmed starting loads — see the next section for where
-those come from.
+those come from. Movement capabilities are edited in a separate Profile draft:
+Save persists the complete profile in one revision, while Cancel or Back drops
+the draft without writing.
+
+`TrainingConstraint` remains separate from movement capability. A capability
+describes current movement comfort; a constraint is an explicit protected-joint
+or low-impact preference. Weight, height, BMI, age, and body composition are not
+part of the current profile model.
 
 ## Automatic workout generation
 
@@ -153,6 +172,14 @@ current `FakeWorkoutPlanner` chooses exercises exclusively from
 `GeneratedWorkoutValidator` then verifies that every ID exists, remains in the
 allowed set, matches the catalog exercise type, and belongs to a structurally
 valid workout. Unknown IDs are rejected, never silently substituted.
+
+`WorkoutGenerationContext` already carries the complete `UserProfile`, so no
+second capability field exists. The current filter, planner, prescription
+factory, and validator intentionally do not read `movementCapabilities`.
+Regression coverage proves otherwise-identical profiles with all-Comfortable
+versus all-Avoid answers produce the same recommendation. Reviewed exercise
+demand metadata and deterministic capability eligibility must land before this
+staged boundary changes.
 
 Within a split, the compound slots are chosen by what the exercise trains and how
 much it demands — primary-muscle match, then fatigue — and spread across movement
@@ -247,11 +274,11 @@ no separate write path that copies a logged value back into
 
 ## Room persistence and invariants
 
-`WallCrawlDatabase` is currently schema version 7. Its tables store:
+`WallCrawlDatabase` is currently schema version 8. Its tables store:
 
 - the user profile, including onboarding status, multi-select fitness goals,
   training constraints, return-after-break weeks, confirmed starting loads,
-  and theme preference (`SYSTEM`, `DARK`, `LIGHT`);
+  theme preference (`SYSTEM`, `DARK`, `LIGHT`), and movement capabilities;
 - reusable workout templates and their ordered exercises;
 - workout sessions and their ordered exercise snapshots;
 - target and completed values for every set.
@@ -268,7 +295,26 @@ fields, so it must not be grandfathered in as already onboarded. Migration
 (e.g., hybrid hypertrophy and strength), initializing existing rows from
 `primaryGoal`. Migration `6 → 7` adds `themePreference` with a default of
 `SYSTEM`, enabling dynamic theme switching between System Default, Dark Mode,
-and Light Mode. Destructive migration fallback is disabled.
+and Light Mode. Migration `7 → 8` adds one non-null
+`movementCapabilitiesJson` column. Existing rows receive `{}`, which the codec
+normalizes to all `UNKNOWN`; their onboarding status, revision, theme, goals,
+equipment, constraints, confirmed loads, templates, sessions, sets, and history
+remain intact. Every supported migration chain registers the new step, and
+destructive migration fallback is disabled.
+
+Capability JSON is a bounded persistence detail, not a UI model. The codec
+accepts at most 4096 characters, validates the flat object shape, allowlists
+known enum keys and values, ignores unknown future keys, and resolves missing,
+unknown, malformed, or oversized input conservatively to all `UNKNOWN`. Encoding
+emits only stable enum names. Raw payloads and complete profiles are not placed
+in logs or user-visible errors.
+
+Android backup policy was not broadened for this milestone. The existing
+manifest has `allowBackup=true` and no capability-specific backup rule, so the
+Room database remains covered by the platform's pre-existing app-data backup
+behavior when device settings permit it. The app currently has no profile
+export or delete-data subsystem; consistent local export/delete controls remain
+a separate roadmap item rather than a new subsystem in this change.
 
 The persistence layer enforces several important invariants:
 
@@ -280,7 +326,10 @@ The persistence layer enforces several important invariants:
 - recommendation targets and performed outcomes remain separate.
 
 Room-backed `Flow` streams make the active workout and completed history
-observable after navigation or process recreation. Unsaved template-editor
+observable after navigation or process recreation. Onboarding capability draft
+answers are restored through `SavedStateHandle` without inventing answers;
+Profile capability drafts remain in memory and are discarded on Cancel or Back.
+Unsaved template-editor
 drafts are in-memory state and are not yet restored after process death.
 
 ## Feedback loop and progress
@@ -353,8 +402,10 @@ UserProfile.themePreference (SYSTEM | DARK | LIGHT)
 ## Verification boundaries
 
 The JVM suite covers pure domain rules, filtering, context construction,
-planning, validation, repository mapping, progress calculations, and ViewModel
-state. Instrumentation tests cover Room transactions and migration, packaged
+capability normalization and codec behavior, planner invariance, validation,
+repository mapping, progress calculations, and ViewModel state. Instrumentation
+tests cover every supported Room migration chain through schema 8, real 7 → 8
+profile/history preservation, capability accessibility semantics, packaged
 catalog parsing, all bundled visual paths, template snapshots, and session
 persistence. The importer has a separate Python-standard-library test suite.
 

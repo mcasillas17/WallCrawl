@@ -11,7 +11,8 @@ phone.
 
 This repository currently contains the working application around that future
 model: first-run onboarding with conservative equipment defaults, profile
-constraints, a complete bundled catalog, structured workout generation and
+constraints and local movement-capability inputs, a complete bundled catalog,
+structured workout generation and
 validation, reusable custom workout templates, type-aware active set logging
 with no fabricated starting loads, Room persistence, workout-history context,
 and progress calculations. The current `FakeWorkoutPlanner` is deliberately
@@ -43,7 +44,7 @@ WallCrawl supports **Dark Theme** (stealth suit graphite aesthetic), **Light The
 - **Active Workout Session**: Type-aware logging for load/reps, bodyweight reps, assisted reps, duration, and distance/duration, with animated SVG movement previews and previous performance comparisons.
 - **Workout Summary**: Post-workout card displaying session duration, total volume lifted, sets completed, and personal records set against your logged history.
 - **Progress Tracking**: Weekly workout streaks, volume and rep totals, per-muscle weekly set counts, strength progression indicators, and historical workout logs.
-- **Training Profile & App Preferences**: Full local customization of theme preference (Auto System / Dark Mode / Light Mode) with compact switcher, multi-select fitness goals, preferred weight units (LBS/KG), session duration targets, available gym equipment, return-after-break calibration, and muscle priorities.
+- **Training Profile & App Preferences**: Full local customization of theme preference (Auto System / Dark Mode / Light Mode) with compact switcher, multi-select fitness goals, preferred weight units (LBS/KG), session duration targets, available gym equipment, return-after-break calibration, muscle priorities, and seven movement preferences.
 - **Credits & Licenses**: In-app attribution for the bundled exercise artwork, reachable from the Training Profile screen.
 
 ## Documentation
@@ -58,9 +59,10 @@ WallCrawl supports **Dark Theme** (stealth suit graphite aesthetic), **Light The
 ## Current vertical slice
 
 ```text
-                fresh install → 7-step onboarding wizard
+                fresh install → 8-step onboarding wizard
                                 (codename, goals, units/experience,
-                                 schedule/break, gear, safety, summary)
+                                 movement preferences, schedule/break,
+                                 gear, safety, summary)
                                            │
                          ┌─ automatic recommendation
 Bundled catalog ─────────┤  profile + bounded history
@@ -82,9 +84,31 @@ Bundled catalog ─────────┤  profile + bounded history
 A fresh install cannot skip onboarding: `UserProfile.onboardingCompleted`
 starts `false`, equipment defaults to bodyweight-only rather than assuming a
 full gym, and Today does not generate or render until onboarding is complete.
-The 7-step wizard collects user codename, multi-select fitness goals, units and
-experience level, schedule and break duration, available gear, and sensitive joint
-restrictions before compiling the initial Training Blueprint.
+The 8-step wizard collects user codename, multi-select fitness goals, units and
+experience level, seven movement preferences, schedule and break duration,
+available gear, and sensitive-joint restrictions before compiling the initial
+Training Blueprint. Every movement preference requires an explicit answer;
+**Not sure** is a valid answer and persists as `UNKNOWN`.
+
+### Movement capability inputs
+
+WallCrawl stores seven local movement preferences: impact tolerance, floor
+transitions, unsupported squat, upper-body bodyweight push, vertical pull or
+hang, balance without support, and continuous activity. Each is one of
+`COMFORTABLE`, `LIMITED`, `AVOID`, or `UNKNOWN` (shown as **Not sure**). They can
+be edited and atomically saved from Training Profile; cancel or Back discards
+the draft.
+
+Fresh onboarding requires an explicit choice for all seven. Existing users who
+upgrade from schema 7 remain onboarded and receive conservative `UNKNOWN`
+values, so the upgrade does not send them through onboarding again. The values
+are stored in the existing local Room profile. This milestone adds no weight,
+height, BMI, age, body composition, cloud sync, analytics, Health Connect,
+Wear OS, network, or LLM data flow.
+
+The current planner deliberately ignores these values. Reviewed exercise-demand
+metadata and deterministic capability eligibility are the next milestone; until
+that lands, changing movement preferences does not change a recommendation.
 
 The fake planner uses the same `WorkoutPlanner` contract intended for a future
 Qwen, Gemma, or LiteRT-backed implementation. It only selects IDs from
@@ -103,7 +127,7 @@ Room, Coroutines, Flow/StateFlow, and Gradle Kotlin DSL.
 
 ```text
 app/                    navigation and dependency container
-core/model/             catalog, workout, profile, and analytics domain models
+core/model/             catalog, workout, profile/capability, and analytics domain models
 core/database/          Room entities, DAOs, relations, and offline repositories
 core/exercise/          catalog, hard filters, and visual-provider boundary
 core/ai/                planner, context builder, history analysis, validation
@@ -115,7 +139,7 @@ feature/templates/      local custom-workout library and editor
 feature/workout/        active workout logging and completion
 feature/progress/       history-derived progress UI
 feature/exercises/      searchable/filterable catalog browser
-feature/profile/        local goals, equipment, units, and preferences
+feature/profile/        local goals, equipment, units, and movement preferences
 ```
 
 Production uses a bundled Workout Guide catalog behind WallCrawl-owned domain
@@ -253,13 +277,16 @@ GitHub prereleases are currently debug-signed and intentionally require uninstal
 the previous CI build. Supporting in-place upgrades also requires a stable release
 signing key; version metadata alone cannot make differently signed APKs compatible.
 
-The unit suite covers catalog filtering, context construction, bounded history
+The unit suite covers catalog filtering, context construction, capability
+normalization and persistence, onboarding/Profile drafts, planner invariance,
+bounded history
 analysis, planner constraints and type-aware prescriptions, split selection and
 its failure reasons, the muscle vocabulary and the shipped catalog's conformance
 to it, generated-workout validation, template validation, atomic persistence
 boundaries, progress and personal-record calculations, attribution loading,
 Today state, duration calculation, and visual-provider mapping.
-Android instrumentation also validates database migration and template/session
+Android instrumentation also validates database migrations through schema 8,
+capability-control semantics, and template/session
 snapshot behavior, parses the packaged 302-exercise catalog, and opens every one
 of its 906 SVG paths.
 
@@ -279,11 +306,15 @@ of its 906 SVG paths.
 - Each session retains its weight unit; mixed-unit history is converted only for
   planner and analytics calculations, never silently relabeled.
 - Analytics are derived from completed local sessions, not sample metrics.
+- Movement-capability values are currently validated local profile inputs only;
+  they do not affect filtering, ranking, substitutions, or dose yet.
 - Database migrations must preserve user history; destructive migration fallback
   is intentionally disabled.
 
 ## Next milestones
 
+- Add human-reviewed exercise-demand metadata and deterministic capability
+  eligibility before any capability-aware filtering or ranking is enabled.
 - Gate exercise difficulty on the profile's experience level. The data now
   exists across every muscle group; nothing reads it yet, so a beginner can still
   be led with a lift marked advanced.
