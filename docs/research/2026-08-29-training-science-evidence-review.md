@@ -11,6 +11,17 @@ Four research agents (Claude Opus 4.8, Grok 4.6, Gemini 3.7 Flash, and GPT-5.6 T
 
 Priority was given to 2018-2026 position stands, systematic reviews, meta-analyses, umbrella reviews, and high-quality trials. Older sources were retained only where still foundational. Blogs were not evidence. Every policy below distinguishes population-level evidence from WallCrawl product policy.
 
+The full per-agent, per-round record — distinct Round-1 findings, Round-2 citation and claim corrections, Round-3 blueprint contributions, Round-4 retractions and sign-off, and the deduplicated union bibliography with VERIFIED/CORRECTED/DUPLICATE/REJECTED/UNVERIFIED labels — is preserved in `docs/research/2026-08-29-roundtable-agent-findings.md`.
+
+## Related Documents
+
+- Detailed engine architecture: `docs/superpowers/specs/2026-08-29-science-based-workout-engines-design.md`.
+- Deterministic engine implementation plan: `docs/superpowers/plans/2026-08-29-science-based-deterministic-engine.md`.
+- Local LLM engine implementation plan: `docs/superpowers/plans/2026-08-29-science-based-local-llm-engine.md`.
+- Body-aware personalization design: `docs/superpowers/specs/2026-08-29-body-aware-personalization-design.md`.
+- Body-aware personalization plan: `docs/superpowers/plans/2026-08-29-body-aware-personalization.md`.
+- Roundtable agent findings appendix: `docs/research/2026-08-29-roundtable-agent-findings.md`.
+
 ## Corrected Citation Ledger
 
 The cross-review corrected material citation errors:
