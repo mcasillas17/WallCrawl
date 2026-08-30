@@ -1,6 +1,7 @@
 package wallcrawl.elopenmike.com.core.ai
 
 import com.google.common.truth.Truth.assertThat
+import java.io.InputStream
 import org.junit.Assert.assertThrows
 import org.junit.Test
 import wallcrawl.elopenmike.com.core.model.CapabilityLevel
@@ -90,6 +91,21 @@ class PlannerFixtureLoaderTest {
     }
 
     @Test
+    fun loadResource_rejectsExcessiveJsonNestingBeforeOverflowingStack() {
+        val resourcePath = "planner-fixtures/excessive-nesting.json"
+        val loader = loaderWithResource(
+            resourcePath = resourcePath,
+            resourceContents = deeplyNestedArrayJson(depth = 20_000)
+        )
+
+        val error = assertThrows(PlannerFixtureFormatException::class.java) {
+            loader.loadResource(resourcePath)
+        }
+
+        assertThat(error.message).isEqualTo("Planner fixture JSON exceeds maximum nesting depth.")
+    }
+
+    @Test
     fun loadResource_rejectsUnsafeIdsAndUnsupportedSchema() {
         assertFormatError("planner-fixtures/invalid-unsafe-id.json", "root.id")
         assertFormatError("planner-fixtures/invalid-unsupported-schema.json", "root.schemaVersion")
@@ -134,5 +150,23 @@ class PlannerFixtureLoaderTest {
         }
 
         assertThat(error.message).contains(expectedMessageFragment)
+    }
+
+    private fun loaderWithResource(resourcePath: String, resourceContents: String): PlannerFixtureLoader =
+        PlannerFixtureLoader(
+            classLoader = object : ClassLoader(PlannerFixtureLoader::class.java.classLoader) {
+                override fun getResourceAsStream(name: String): InputStream? =
+                    if (name == resourcePath) {
+                        resourceContents.byteInputStream()
+                    } else {
+                        super.getResourceAsStream(name)
+                    }
+            }
+        )
+
+    private fun deeplyNestedArrayJson(depth: Int): String = buildString(depth * 2 + 2) {
+        repeat(depth) { append('[') }
+        append("{}")
+        repeat(depth) { append(']') }
     }
 }

@@ -690,18 +690,18 @@ private class DuplicateFieldScanner(
 
     fun scan() {
         skipWhitespace()
-        scanValue("root")
+        scanValue("root", depth = 0)
         skipWhitespace()
         if (index != text.length) {
             throw PlannerFixtureFormatException("Malformed JSON at root.")
         }
     }
 
-    private fun scanValue(path: String) {
+    private fun scanValue(path: String, depth: Int) {
         skipWhitespace()
         when (val next = currentChar()) {
-            '{' -> scanObject(path)
-            '[' -> scanArray(path)
+            '{' -> scanObject(path, depth)
+            '[' -> scanArray(path, depth)
             '"' -> scanString(path)
             't' -> scanLiteral("true", path)
             'f' -> scanLiteral("false", path)
@@ -713,7 +713,8 @@ private class DuplicateFieldScanner(
         }
     }
 
-    private fun scanObject(path: String) {
+    private fun scanObject(path: String, depth: Int) {
+        requireNestedValueAllowed(depth)
         expect('{', path)
         skipWhitespace()
         if (currentChar() == '}') {
@@ -729,7 +730,7 @@ private class DuplicateFieldScanner(
             }
             skipWhitespace()
             expect(':', keyPath)
-            scanValue(keyPath)
+            scanValue(keyPath, depth + 1)
             skipWhitespace()
             when (currentChar()) {
                 ',' -> {
@@ -745,7 +746,8 @@ private class DuplicateFieldScanner(
         }
     }
 
-    private fun scanArray(path: String) {
+    private fun scanArray(path: String, depth: Int) {
+        requireNestedValueAllowed(depth)
         expect('[', path)
         skipWhitespace()
         if (currentChar() == ']') {
@@ -754,7 +756,7 @@ private class DuplicateFieldScanner(
         }
         var itemIndex = 0
         while (true) {
-            scanValue("$path[$itemIndex]")
+            scanValue("$path[$itemIndex]", depth + 1)
             itemIndex++
             skipWhitespace()
             when (currentChar()) {
@@ -768,6 +770,12 @@ private class DuplicateFieldScanner(
                 }
                 else -> throw PlannerFixtureFormatException("Malformed JSON at $path.")
             }
+        }
+    }
+
+    private fun requireNestedValueAllowed(depth: Int) {
+        if (depth >= MAX_JSON_NESTING_DEPTH) {
+            throw PlannerFixtureFormatException("Planner fixture JSON exceeds maximum nesting depth.")
         }
     }
 
@@ -873,4 +881,9 @@ private class DuplicateFieldScanner(
     }
 
     private fun currentChar(): Char? = text.getOrNull(index)
+
+    private companion object {
+        // Planner fixtures have a shallow fixed schema, so deeper JSON is malformed input.
+        private const val MAX_JSON_NESTING_DEPTH = 32
+    }
 }
