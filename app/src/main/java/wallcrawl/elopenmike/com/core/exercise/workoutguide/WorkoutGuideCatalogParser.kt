@@ -46,10 +46,12 @@ class WorkoutGuideCatalogParser {
             var source: CatalogSource? = null
             var visualSpecification: VisualSpecification? = null
             var parsedExercises: List<ParsedExercise>? = null
+            val seenFields = mutableSetOf<String>()
 
             reader.beginObject()
             while (reader.hasNext()) {
                 val field = reader.nextName()
+                requireUniqueField(seenFields, field, "catalog")
                 when (field) {
                     "schemaVersion" -> schemaVersion = reader.nextInt()
                     "source" -> source = reader.readCatalogSource()
@@ -134,9 +136,11 @@ class WorkoutGuideCatalogParser {
         var commit: String? = null
         var assetLicense: String? = null
         var attribution: ExerciseAttribution? = null
+        val seenFields = mutableSetOf<String>()
         beginObject()
         while (hasNext()) {
             val field = nextName()
+            requireUniqueField(seenFields, field, "source")
             when (field) {
                 "repository" -> repository = readString("source.repository")
                 "commit" -> commit = readString("source.commit")
@@ -154,9 +158,11 @@ class WorkoutGuideCatalogParser {
         var widthPx: Int? = null
         var heightPx: Int? = null
         var format: String? = null
+        val seenFields = mutableSetOf<String>()
         beginObject()
         while (hasNext()) {
             val field = nextName()
+            requireUniqueField(seenFields, field, "visuals")
             when (field) {
                 "frameCount" -> frameCount = nextInt()
                 "widthPx" -> widthPx = nextInt()
@@ -284,9 +290,11 @@ class WorkoutGuideCatalogParser {
         var license: String? = null
         var licenseUrl: String? = null
         var source: ExerciseAttributionSource? = null
+        val seenFields = mutableSetOf<String>()
         beginObject()
         while (hasNext()) {
             val field = nextName()
+            requireUniqueField(seenFields, field, label)
             when (field) {
                 "creator" -> creator = readString("$label.creator")
                 "creatorUrl" -> creatorUrl = readString("$label.creatorUrl", MAX_URL_LENGTH)
@@ -314,9 +322,11 @@ class WorkoutGuideCatalogParser {
         var license: String? = null
         var licenseUrl: String? = null
         var changes: String? = null
+        val seenFields = mutableSetOf<String>()
         beginObject()
         while (hasNext()) {
             val field = nextName()
+            requireUniqueField(seenFields, field, label)
             when (field) {
                 "name" -> name = readString("$label.name")
                 "url" -> url = readString("$label.url", MAX_URL_LENGTH)
@@ -346,9 +356,11 @@ class WorkoutGuideCatalogParser {
         var progressionType: ProgressionType? = null
         var alternatives: List<String>? = null
         var coachingSummary: String? = null
+        val seenFields = mutableSetOf<String>()
         beginObject()
         while (hasNext()) {
             val field = nextName()
+            requireUniqueField(seenFields, field, "programming")
             when (field) {
                 "requiredEquipmentCombinations" -> combinations = readStringMatrix()
                 "movementPattern" -> movementPattern = readMovementPattern(readString("programming.movementPattern"))
@@ -965,9 +977,11 @@ class WorkoutGuideCatalogParser {
     private fun JsonReader.readRepRange(): RepRange {
         var min: Int? = null
         var max: Int? = null
+        val seenFields = mutableSetOf<String>()
         beginObject()
         while (hasNext()) {
             val field = nextName()
+            requireUniqueField(seenFields, field, "programming.recommendedRepRange")
             when (field) {
                 "min" -> min = nextInt()
                 "max" -> max = nextInt()
@@ -1022,6 +1036,7 @@ class WorkoutGuideCatalogParser {
             JsonToken.BEGIN_OBJECT -> {
                 beginObject()
                 var fieldCount = 0
+                val seenFields = mutableSetOf<String>()
                 while (hasNext()) {
                     if (fieldCount >= MAX_IGNORED_CONTAINER_ITEMS) {
                         malformed("$label contains too many fields.")
@@ -1030,6 +1045,7 @@ class WorkoutGuideCatalogParser {
                     if (field.length > MAX_STRING_LENGTH) {
                         malformed("$label contains an oversized field name.")
                     }
+                    requireUniqueField(seenFields, field, label)
                     skipBoundedValue("$label.${safeField(field)}", depth + 1)
                     fieldCount += 1
                 }

@@ -262,6 +262,62 @@ class WorkoutGuideCatalogParserTest {
     }
 
     @Test
+    fun parse_rejectsDuplicateFieldsAcrossCatalogCompatibilityObjects() {
+        val base = catalogJson(exerciseJson(programming = programmingJson()))
+        val attributionSource = """
+            "source": {
+              "name": "Workout Guide",
+              "url": "https://github.com/bryllim/workout-guide",
+              "license": "CC BY-SA 4.0",
+              "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+              "changes": "Normalized for offline use."
+            }
+        """.trimIndent()
+        val withAttributionSource = base.replace(
+            "\"licenseUrl\": \"https://creativecommons.org/licenses/by-sa/4.0/\"",
+            "\"licenseUrl\": \"https://creativecommons.org/licenses/by-sa/4.0/\",\n" +
+                attributionSource
+        )
+        val cases = listOf(
+            base.replaceFirst(
+                "\"exercises\": [",
+                "\"exercises\": [],\n  \"exercises\": ["
+            ) to "catalog contains duplicate field exercises",
+            base.replaceFirst(
+                "\"commit\": \"ba0b709cb20430361b2cb33aaadd20998164a916\"",
+                "\"commit\": \"ba0b709cb20430361b2cb33aaadd20998164a916\",\n" +
+                    "    \"commit\": \"ba0b709cb20430361b2cb33aaadd20998164a916\""
+            ) to "source contains duplicate field commit",
+            base.replaceFirst(
+                "\"frameCount\": 3",
+                "\"frameCount\": 3, \"frameCount\": 3"
+            ) to "visuals contains duplicate field frameCount",
+            base.replaceFirst(
+                "\"creator\": \"Bryl Lim\"",
+                "\"creator\": \"Bryl Lim\", \"creator\": \"Bryl Lim\""
+            ) to "source.attribution contains duplicate field creator",
+            withAttributionSource.replaceFirst(
+                "\"name\": \"Workout Guide\"",
+                "\"name\": \"Workout Guide\", \"name\": \"Workout Guide\""
+            ) to "source.attribution.source contains duplicate field name",
+            base.replaceFirst(
+                "\"fatigueScore\": 1",
+                "\"fatigueScore\": 1, \"fatigueScore\": 1"
+            ) to "programming contains duplicate field fatigueScore",
+            base.replaceFirst(
+                "\"min\": 6",
+                "\"min\": 6, \"min\": 6"
+            ) to "programming.recommendedRepRange contains duplicate field min",
+            base.replaceFirst(
+                "{",
+                "{\"ignored\": {\"field\": 1, \"field\": 2},"
+            ) to "catalog.ignored contains duplicate field field"
+        )
+
+        cases.forEach { (json, message) -> assertFormatFailure(json, message) }
+    }
+
+    @Test
     fun parse_boundsIgnoredCatalogPayloadAndDepth() {
         val nested = buildString {
             repeat(14) { append("{\"nested\":") }
@@ -405,7 +461,8 @@ class WorkoutGuideCatalogParserTest {
         primaryMuscles: String = "[\"Core\"]",
         secondaryMuscles: String = "[]",
         exerciseType: String = "bodyweight_reps",
-        isStretch: Boolean = false
+        isStretch: Boolean = false,
+        programming: String? = null
     ): String {
         return """
             {
@@ -418,10 +475,24 @@ class WorkoutGuideCatalogParserTest {
               "secondaryMuscles": $secondaryMuscles,
               "listedEquipment": ["Bodyweight"],
               "exerciseType": "$exerciseType",
-              "isStretch": $isStretch${reviewedMetadata?.let { ",\n              \"reviewedMetadata\": $it" }.orEmpty()}
+              "isStretch": $isStretch${programming?.let { ",\n              \"programming\": $it" }.orEmpty()}${reviewedMetadata?.let { ",\n              \"reviewedMetadata\": $it" }.orEmpty()}
             }
         """.trimIndent()
     }
+
+    private fun programmingJson(): String = """
+        {
+          "requiredEquipmentCombinations": [["Bodyweight"]],
+          "movementPattern": "core",
+          "difficulty": "beginner",
+          "mechanics": "isolation",
+          "recommendedRepRange": {"min": 6, "max": 12},
+          "fatigueScore": 1,
+          "progressionType": "repetitions",
+          "alternativeExerciseIds": [],
+          "coachingSummary": "Controlled core repetition."
+        }
+    """.trimIndent()
 
     private fun reviewedMetadataJson(): String = """
         {
