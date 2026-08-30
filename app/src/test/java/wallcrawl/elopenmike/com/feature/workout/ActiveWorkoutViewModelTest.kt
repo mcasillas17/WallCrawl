@@ -36,7 +36,7 @@ class ActiveWorkoutViewModelTest {
 
     @Test
     fun completedPersistedSession_restoresCompletedUiWithActualDurationAndStoredUnit() = runTest {
-        val repository = ActiveWorkoutRepository(
+        val repository = FakeRepository(
             workoutSession(status = SessionStatus.COMPLETED).copy(
                 targetDurationMinutes = 50,
                 actualDurationMinutes = 12,
@@ -59,7 +59,7 @@ class ActiveWorkoutViewModelTest {
 
     @Test
     fun requestedExerciseIndexOutsideSession_isClampedToPersistedContents() = runTest {
-        val repository = ActiveWorkoutRepository(workoutSession(SessionStatus.IN_PROGRESS))
+        val repository = FakeRepository(workoutSession(SessionStatus.IN_PROGRESS))
         val viewModel = viewModel(repository)
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.uiState.collect {}
@@ -76,7 +76,7 @@ class ActiveWorkoutViewModelTest {
 
     @Test
     fun doubleFinishAndDelayedSetFailure_keepPersistedCompletionVisible() = runTest {
-        val repository = ActiveWorkoutRepository(workoutSession(SessionStatus.IN_PROGRESS))
+        val repository = FakeRepository(workoutSession(SessionStatus.IN_PROGRESS))
         val viewModel = viewModel(repository)
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.uiState.collect {}
@@ -103,7 +103,7 @@ class ActiveWorkoutViewModelTest {
         // already-completed set previously sent isCompleted=true with weight=null, the
         // repository rejected it, and the whole active workout was replaced by a
         // permanent full-screen error.
-        val repository = ActiveWorkoutRepository(workoutSession(SessionStatus.IN_PROGRESS))
+        val repository = FakeRepository(workoutSession(SessionStatus.IN_PROGRESS))
         val viewModel = viewModel(repository)
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.uiState.collect {}
@@ -130,7 +130,7 @@ class ActiveWorkoutViewModelTest {
     @Test
     fun clearingRepsOnACompletedSet_doesNotEjectTheActiveWorkout() = runTest {
         // The same latent problem exists for reps as for load.
-        val repository = ActiveWorkoutRepository(workoutSession(SessionStatus.IN_PROGRESS))
+        val repository = FakeRepository(workoutSession(SessionStatus.IN_PROGRESS))
         val viewModel = viewModel(repository)
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.uiState.collect {}
@@ -147,7 +147,7 @@ class ActiveWorkoutViewModelTest {
 
     @Test
     fun dismissSetUpdateError_clearsTheTransientErrorWithoutAnotherWrite() = runTest {
-        val repository = ActiveWorkoutRepository(workoutSession(SessionStatus.IN_PROGRESS))
+        val repository = FakeRepository(workoutSession(SessionStatus.IN_PROGRESS))
         val viewModel = viewModel(repository)
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.uiState.collect {}
@@ -168,7 +168,7 @@ class ActiveWorkoutViewModelTest {
 
     @Test
     fun catalogLookupFailure_becomesVisibleError() = runTest {
-        val repository = ActiveWorkoutRepository(workoutSession(SessionStatus.IN_PROGRESS))
+        val repository = FakeRepository(workoutSession(SessionStatus.IN_PROGRESS))
         val viewModel = viewModel(repository, FailingExerciseCatalog())
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.uiState.collect {}
@@ -239,93 +239,4 @@ private class FailingExerciseCatalog : ExerciseCatalog {
 
     override suspend fun getMuscleGroups(): List<String> = error("Not used")
     override suspend fun getEquipmentTypes(): List<String> = error("Not used")
-}
-
-private class ActiveWorkoutRepository(initialSession: WorkoutSession) : WorkoutRepository {
-    private val session = MutableStateFlow<WorkoutSession?>(initialSession)
-    var completeCalls: Int = 0
-        private set
-    var failSetUpdates: Boolean = false
-    var lastPersistedWeight: Double? = null
-        private set
-    var lastPersistedReps: Int? = null
-        private set
-    val persistedInputs = mutableListOf<SetPerformanceInput>()
-
-    override fun observeActiveSession(): Flow<WorkoutSession?> = session
-    override suspend fun getActiveSessionOnce(): WorkoutSession? = session.value
-    override suspend fun getSessionById(sessionId: String): WorkoutSession? = session.value
-    override fun observeSession(sessionId: String): Flow<WorkoutSession?> = session
-    override fun observeCompletedSessions(limit: Int): Flow<List<WorkoutSession>> =
-        flowOf(emptyList())
-
-    override fun observeCompletedWorkoutCount(): Flow<Int> = flowOf(0)
-    override fun observeCompletedWorkoutCountSince(startTimestamp: Long): Flow<Int> = flowOf(0)
-
-    override suspend fun getRecentCompletedSessions(limit: Int): List<WorkoutSession> = emptyList()
-
-    override suspend fun startWorkoutFromGenerated(
-        generated: GeneratedWorkout,
-        userProfile: UserProfile
-    ): WorkoutSession = error("Not used")
-
-    override suspend fun startWorkoutFromTemplate(
-        template: wallcrawl.elopenmike.com.core.model.WorkoutTemplate,
-        userProfile: wallcrawl.elopenmike.com.core.model.UserProfile
-    ): WorkoutSession = error("Not used")
-
-    override suspend fun logSetCompletion(setId: String, performance: SetPerformanceInput) {
-        if (failSetUpdates) error("Session is already complete")
-        // Mirrors OfflineWorkoutRepository's real guards so this fake rejects exactly what
-        // production rejects: the typed outcome invariants plus the completed
-        // weight-and-reps requirement of a positive load and positive reps.
-        SetOutcomeRules.requireValidOutcome(performance)
-        require(
-            !performance.isCompleted ||
-                ((performance.reps ?: 0) > 0 && (performance.weight ?: 0.0) > 0.0)
-        ) {
-            "A completed weight and repetition set must have a positive load."
-        }
-        persistedInputs += performance
-        lastPersistedWeight = performance.weight
-        lastPersistedReps = performance.reps
-    }
-
-    override suspend fun completeWorkout(
-        sessionId: String,
-        actualDurationMinutes: Int
-    ): WorkoutSummary {
-        completeCalls += 1
-        val completed = requireNotNull(session.value).copy(
-            status = SessionStatus.COMPLETED,
-            completedAtTimestamp = 5_000L,
-            actualDurationMinutes = actualDurationMinutes
-        )
-        session.value = completed
-        return WorkoutSummary(
-            sessionId = completed.id,
-            workoutName = completed.name,
-            durationMinutes = completed.actualDurationMinutes,
-            totalSetsCompleted = completed.completedSetsCount,
-            totalVolume = completed.totalVolume,
-            unit = completed.weightUnit,
-            completedAtTimestamp = requireNotNull(completed.completedAtTimestamp)
-        )
-    }
-
-    override suspend fun getWorkoutSummary(sessionId: String): WorkoutSummary? {
-        val current = session.value ?: return null
-        if (current.status != SessionStatus.COMPLETED) return null
-        return WorkoutSummary(
-            sessionId = current.id,
-            workoutName = current.name,
-            durationMinutes = current.actualDurationMinutes,
-            totalSetsCompleted = current.completedSetsCount,
-            totalVolume = current.totalVolume,
-            unit = current.weightUnit,
-            completedAtTimestamp = current.completedAtTimestamp ?: current.startedAtTimestamp
-        )
-    }
-
-    override suspend fun cancelWorkout(sessionId: String) = Unit
 }

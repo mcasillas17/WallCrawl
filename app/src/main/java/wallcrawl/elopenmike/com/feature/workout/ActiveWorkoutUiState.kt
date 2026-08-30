@@ -7,6 +7,28 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.model.WorkoutSummary
 
+/** What finishing the workout right now would mean. */
+sealed interface FinishDecision {
+    /** Every planned set is resolved: finishing needs no further confirmation. */
+    data object Complete : FinishDecision
+
+    /** Sets are still open; the user is told how many before anything is persisted. */
+    data class ConfirmIncomplete(val openSetCount: Int) : FinishDecision
+}
+
+/** Rest-timer state plus the remaining seconds derived from its deadline. */
+data class RestTimerUiState(
+    val state: RestTimerState = RestTimerState.Idle,
+    val remainingSeconds: Int = 0
+) {
+    val isRunning: Boolean get() = state is RestTimerState.Running
+    val isVisible: Boolean get() = state !is RestTimerState.Idle
+
+    companion object {
+        val Idle = RestTimerUiState()
+    }
+}
+
 sealed interface ActiveWorkoutUiState {
     data object Loading : ActiveWorkoutUiState
 
@@ -23,7 +45,12 @@ sealed interface ActiveWorkoutUiState {
         // explicit but invalid completion attempt) is recoverable: it never replaces the
         // active workout, only surfaces here to be dismissed or cleared by the next
         // successful update.
-        val setUpdateError: String? = null
+        val setUpdateError: String? = null,
+        val restTimer: RestTimerUiState = RestTimerUiState.Idle,
+        /** Non-null while the user is being asked to confirm finishing with open sets. */
+        val pendingFinish: FinishDecision.ConfirmIncomplete? = null,
+        /** True while the user is being asked to confirm discarding this workout. */
+        val isConfirmingDiscard: Boolean = false
     ) : ActiveWorkoutUiState {
         val currentExercise: WorkoutExercise?
             get() = session.exercises.getOrNull(currentExerciseIndex)
@@ -43,4 +70,18 @@ sealed interface ActiveWorkoutUiState {
     ) : ActiveWorkoutUiState
 
     data class Error(val message: String) : ActiveWorkoutUiState
+}
+
+/**
+ * Sets that are neither completed nor deliberately skipped or stopped.
+ *
+ * A skipped set is a resolved decision, so it never triggers the finish confirmation --
+ * but it also never counts as completed work.
+ */
+internal fun WorkoutSession.openSetCount(): Int =
+    exercises.sumOf { exercise -> exercise.sets.count { !it.isResolved } }
+
+internal fun WorkoutSession.finishDecision(): FinishDecision {
+    val open = openSetCount()
+    return if (open == 0) FinishDecision.Complete else FinishDecision.ConfirmIncomplete(open)
 }
