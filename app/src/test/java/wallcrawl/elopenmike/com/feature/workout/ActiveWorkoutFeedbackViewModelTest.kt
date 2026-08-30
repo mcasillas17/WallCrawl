@@ -17,6 +17,7 @@ import wallcrawl.elopenmike.com.core.model.RepRange
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
 import wallcrawl.elopenmike.com.core.model.SetStopReason
+import wallcrawl.elopenmike.com.core.model.SetValuesDraft
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
@@ -101,6 +102,53 @@ class ActiveWorkoutFeedbackViewModelTest {
         assertThat(repository.persistedInputs).hasSize(1)
         assertThat(active(viewModel).restTimer.state).isEqualTo(
             RestTimerState.Running(setId = "set-1", deadlineElapsedRealtime = 120_000L)
+        )
+    }
+
+    @Test
+    fun secondTapBeforeTheWriteIsObserved_neitherRewritesTheSetNorRestartsRest() = runTest {
+        // Room publishes a committed write asynchronously, so for a short window the
+        // observed session still reports the set as incomplete and the completion
+        // control still renders unchecked. A second tap in that window must not become a
+        // second write, a second completion timestamp, or a second rest period.
+        val repository = FakeRepository(session())
+        repository.deferPublishing = true
+        val viewModel = viewModel(repository)
+        collect(viewModel)
+        advanceUntilIdle()
+
+        viewModel.setCompletion("set-1", SetValuesDraft(reps = 10, weight = 40.0), completed = true)
+        advanceUntilIdle()
+        val deadlineAfterFirstTap = active(viewModel).restTimer.state
+
+        clock.advanceMillis(30_000L)
+        viewModel.setCompletion("set-1", SetValuesDraft(reps = 10, weight = 40.0), completed = true)
+        advanceUntilIdle()
+
+        assertThat(repository.persistedInputs).hasSize(1)
+        assertThat(active(viewModel).restTimer.state).isEqualTo(deadlineAfterFirstTap)
+    }
+
+    @Test
+    fun editingValuesBeforeTheWriteIsObserved_keepsTheOriginalCompletionTimestamp() = runTest {
+        val repository = FakeRepository(session())
+        repository.deferPublishing = true
+        val viewModel = viewModel(repository)
+        collect(viewModel)
+        advanceUntilIdle()
+
+        viewModel.setCompletion("set-1", SetValuesDraft(reps = 10, weight = 40.0), completed = true)
+        advanceUntilIdle()
+        viewModel.updateSetValues("set-1", SetValuesDraft(reps = 11, weight = 42.5))
+        advanceUntilIdle()
+
+        val edit = repository.persistedInputs.last()
+        assertThat(edit.reps).isEqualTo(11)
+        assertThat(edit.weight).isEqualTo(42.5)
+        assertThat(edit.isCompleted).isTrue()
+        assertThat(edit.completedAtTimestamp).isEqualTo(WALL_CLOCK_MILLIS)
+        assertThat(active(viewModel).restTimer.state).isInstanceOf(
+            RestTimerState.Running::class.java
         )
     }
 

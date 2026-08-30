@@ -26,6 +26,13 @@ internal class FakeRepository(initialSession: WorkoutSession) : WorkoutRepositor
     var cancelCalls: Int = 0
         private set
     var failSetUpdates: Boolean = false
+
+    /**
+     * When true a write is accepted and recorded but is not published to the observed
+     * session, reproducing Room's real behaviour: the update commits before the
+     * invalidation-driven query re-emits, so the UI briefly still shows the old row.
+     */
+    var deferPublishing: Boolean = false
     val persistedInputs = mutableListOf<SetPerformanceInput>()
 
     val lastPersistedWeight: Double? get() = persistedInputs.lastOrNull()?.weight
@@ -66,6 +73,7 @@ internal class FakeRepository(initialSession: WorkoutSession) : WorkoutRepositor
             "A completed weight and repetition set must have a positive load."
         }
         persistedInputs += performance
+        if (deferPublishing) return
 
         val current = session.value ?: return
         session.value = current.copy(

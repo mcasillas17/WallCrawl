@@ -56,6 +56,13 @@ class ActiveWorkoutViewModel(
     // same set while the first write is in flight is a double tap, not a second set: it
     // must not produce another write or another rest timer.
     private val completionsInFlight = mutableSetOf<String>()
+    // The outcome most recently written for a set, held only until the observed session
+    // catches up. Room commits a write before its invalidation-driven query re-emits, so
+    // for a short window the session still reports the old row and the completion control
+    // still renders unchecked. Without this, a tap in that window would read a stale
+    // "not completed" set and produce a second write, a fresh completion timestamp, and a
+    // restarted rest period. All access is on the main dispatcher, like the flows above.
+    private val outcomesAwaitingObservation = mutableMapOf<String, SetPerformanceInput>()
     private var latestSession: WorkoutSession? = null
 
     private val sessionHistoryFlow = combine(
@@ -83,6 +90,7 @@ class ActiveWorkoutViewModel(
     ) { sessionHistory, exerciseIndex, catalogEx, screenState, summary ->
         val (session, completedSessions) = sessionHistory
         latestSession = session
+        forgetOutcomesObservedIn(session)
         val error = screenState.error
         if (session == null) {
             ActiveWorkoutUiState.Loading
@@ -180,7 +188,11 @@ class ActiveWorkoutViewModel(
     }
 
     fun updateSet(setId: String, performance: SetPerformanceInput) {
-        val wasCompleted = findSet(setId)?.isCompleted == true
+        val current = currentOutcome(setId)
+        // A repeat of the outcome this set already has is a duplicate tap or a re-emitted
+        // edit, not new information, so it is never written again.
+        if (current == performance) return
+        val wasCompleted = current?.isCompleted == true
         // Rest starts only on a genuine false -> true completion transition, so editing a
         // value on an already-completed set never hands out another rest period.
         val startsRest = performance.isCompleted && !wasCompleted
@@ -192,11 +204,14 @@ class ActiveWorkoutViewModel(
                     setId = setId,
                     performance = performance
                 )
+                outcomesAwaitingObservation[setId] = performance
                 setUpdateErrorFlow.value = null
                 if (startsRest) startRestFor(setId)
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
+                // The write did not land, so the observed session remains the truth.
+                outcomesAwaitingObservation.remove(setId)
                 setUpdateErrorFlow.value = "Failed to update set: ${e.message}"
             } finally {
                 if (startsRest) completionsInFlight.remove(setId)
@@ -209,8 +224,8 @@ class ActiveWorkoutViewModel(
      * completed set keeps it completed, and on a stopped set keeps it stopped.
      */
     fun updateSetValues(setId: String, values: SetValuesDraft) {
-        val set = findSet(setId) ?: return
-        updateSet(setId, set.toPerformanceInput().withValues(values))
+        val current = currentOutcome(setId) ?: return
+        updateSet(setId, current.withValues(values))
     }
 
     /**
@@ -222,8 +237,7 @@ class ActiveWorkoutViewModel(
      * is no longer recorded as done.
      */
     fun setCompletion(setId: String, values: SetValuesDraft, completed: Boolean) {
-        val existing = findSet(setId)?.toPerformanceInput()
-            ?: SetPerformanceInput(isCompleted = false)
+        val existing = currentOutcome(setId) ?: SetPerformanceInput(isCompleted = false)
         val updated = if (completed) {
             existing.withValues(values).copy(
                 stopReason = null,
@@ -253,13 +267,11 @@ class ActiveWorkoutViewModel(
      * that was not performed.
      */
     fun skipSet(setId: String, reason: SetStopReason) {
-        val existing = findSet(setId)
         // Partial work already entered for an unfinished set is kept; a set that was
         // completed and is now being stopped drops its completion-only fields, which the
         // outcome invariants require anyway.
-        val base = existing
+        val base = currentOutcome(setId)
             ?.takeIf { !it.isCompleted }
-            ?.toPerformanceInput()
             ?: SetPerformanceInput(isCompleted = false)
         updateSet(
             setId,
@@ -277,9 +289,9 @@ class ActiveWorkoutViewModel(
 
     /** Records the optional manageable confirmation for work the user already completed. */
     fun recordFeltManageable(setId: String, feltManageable: Boolean) {
-        val set = findSet(setId) ?: return
-        if (!set.isCompleted) return
-        updateSet(setId, set.toPerformanceInput().copy(feltManageable = feltManageable))
+        val current = currentOutcome(setId) ?: return
+        if (!current.isCompleted) return
+        updateSet(setId, current.copy(feltManageable = feltManageable))
     }
 
     /**
@@ -287,9 +299,9 @@ class ActiveWorkoutViewModel(
      * is a first-class outcome and never blocks completing a set.
      */
     fun recordEffort(setId: String, rpe: Float?, rir: Int?) {
-        val set = findSet(setId) ?: return
-        if (!set.isResolved) return
-        updateSet(setId, set.toPerformanceInput().copy(rpe = rpe, rir = rir))
+        val current = currentOutcome(setId) ?: return
+        if (!current.isCompleted && current.stopReason == null) return
+        updateSet(setId, current.copy(rpe = rpe, rir = rir))
     }
 
     /** Dismisses a recoverable set-update error without requiring another edit. */
@@ -401,6 +413,26 @@ class ActiveWorkoutViewModel(
             state = restTimer.state.value,
             remainingSeconds = restTimer.remainingSeconds()
         )
+    }
+
+    /**
+     * The outcome this ViewModel believes a set currently has: the last one it wrote if
+     * the observed session has not caught up yet, otherwise whatever is persisted.
+     */
+    private fun currentOutcome(setId: String): SetPerformanceInput? =
+        outcomesAwaitingObservation[setId] ?: findSet(setId)?.toPerformanceInput()
+
+    /** Drops pending outcomes the observed session now reports, so it becomes the truth again. */
+    private fun forgetOutcomesObservedIn(session: WorkoutSession?) {
+        if (outcomesAwaitingObservation.isEmpty()) return
+        val observed = session
+            ?.exercises
+            ?.flatMap { it.sets }
+            ?.associate { it.id to it.toPerformanceInput() }
+            .orEmpty()
+        outcomesAwaitingObservation.entries.removeAll { (setId, pending) ->
+            observed[setId] == pending
+        }
     }
 
     private fun currentSession(): WorkoutSession? =
