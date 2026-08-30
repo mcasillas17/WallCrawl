@@ -1,6 +1,7 @@
 package wallcrawl.elopenmike.com.core.database
 
 import android.content.Context
+import android.database.Cursor
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -11,6 +12,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import wallcrawl.elopenmike.com.core.database.repository.OfflineUserProfileRepository
 import wallcrawl.elopenmike.com.core.model.CapabilityLevel
+import wallcrawl.elopenmike.com.core.model.MovementCapabilities
 import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 
 @RunWith(AndroidJUnit4::class)
@@ -32,32 +34,7 @@ class Migration7To8Test {
         database = openDatabase()
         val sqlite = checkNotNull(database).openHelper.writableDatabase
 
-        sqlite.query(
-            "SELECT revision,name,primaryGoal,experienceLevel,preferredDurationMinutes," +
-                "daysPerWeek,availableEquipmentJson,preferredUnit,musclePrioritiesJson," +
-                "excludedExerciseIdsJson,onboardingCompleted,trainingConstraintsJson," +
-                "returningAfterBreakWeeks,confirmedStartingLoadsJson,fitnessGoalsJson," +
-                "themePreference,movementCapabilitiesJson FROM user_profiles"
-        ).use { cursor ->
-            assertThat(cursor.moveToFirst()).isTrue()
-            assertThat(cursor.getLong(0)).isEqualTo(17L)
-            assertThat(cursor.getString(1)).isEqualTo("Migration Crawler")
-            assertThat(cursor.getString(2)).isEqualTo("STRENGTH")
-            assertThat(cursor.getString(3)).isEqualTo("ADVANCED")
-            assertThat(cursor.getInt(4)).isEqualTo(75)
-            assertThat(cursor.getInt(5)).isEqualTo(5)
-            assertThat(cursor.getString(6)).isEqualTo("Bodyweight|||Dumbbell")
-            assertThat(cursor.getString(7)).isEqualTo("KG")
-            assertThat(cursor.getString(8)).isEqualTo("Chest:HIGH|||Back:LOW")
-            assertThat(cursor.getString(9)).isEqualTo("burpee")
-            assertThat(cursor.getInt(10)).isEqualTo(1)
-            assertThat(cursor.getString(11)).isEqualTo("KNEE_SENSITIVE|||LOW_IMPACT_ONLY")
-            assertThat(cursor.getInt(12)).isEqualTo(12)
-            assertThat(cursor.getString(13)).isEqualTo("goblet-squat:24.0")
-            assertThat(cursor.getString(14)).isEqualTo("STRENGTH|||BUILD_MUSCLE")
-            assertThat(cursor.getString(15)).isEqualTo("DARK")
-            assertThat(cursor.getString(16)).isEqualTo("{}")
-        }
+        assertRawMigratedProfile(sqlite)
 
         assertPreservedRows(sqlite)
         sqlite.query("PRAGMA foreign_key_check").use { cursor ->
@@ -73,9 +50,24 @@ class Migration7To8Test {
     }
 
     @Test
-    fun migratedDatabase_reloadsThroughANewRoomAndRepositoryInstance() = runBlocking {
+    fun migratedDatabase_reloadsCompleteProfileAndCapabilitiesThroughNewInstances() = runBlocking {
         createVersion7Database()
         database = openDatabase()
+
+        val original = OfflineUserProfileRepository(checkNotNull(database).userProfileDao())
+            .getProfileOnce()
+        val explicitCapabilities = MovementCapabilities.from(
+            MovementCapabilityType.entries.associateWith { type ->
+                when (type.ordinal % 3) {
+                    0 -> CapabilityLevel.COMFORTABLE
+                    1 -> CapabilityLevel.LIMITED
+                    else -> CapabilityLevel.AVOID
+                }
+            }
+        )
+        OfflineUserProfileRepository(checkNotNull(database).userProfileDao()).saveProfile(
+            original.copy(movementCapabilities = explicitCapabilities)
+        )
         checkNotNull(database).close()
         database = null
 
@@ -83,11 +75,16 @@ class Migration7To8Test {
         val profile = OfflineUserProfileRepository(checkNotNull(database).userProfileDao())
             .getProfileOnce()
 
-        assertThat(profile.name).isEqualTo("Migration Crawler")
-        assertThat(profile.revision).isEqualTo(17L)
-        assertThat(profile.onboardingCompleted).isTrue()
-        MovementCapabilityType.entries.forEach { type ->
-            assertThat(profile.movementCapabilities[type]).isEqualTo(CapabilityLevel.UNKNOWN)
+        assertThat(profile).isEqualTo(
+            original.copy(
+                revision = 18L,
+                movementCapabilities = explicitCapabilities
+            )
+        )
+        val sqlite = checkNotNull(database).openHelper.writableDatabase
+        assertPreservedRows(sqlite)
+        sqlite.query("PRAGMA foreign_key_check").use { cursor ->
+            assertThat(cursor.count).isEqualTo(0)
         }
     }
 
@@ -106,42 +103,137 @@ class Migration7To8Test {
             .addMigrations(WallCrawlDatabase.MIGRATION_7_8)
             .build()
 
+    private fun assertRawMigratedProfile(sqlite: androidx.sqlite.db.SupportSQLiteDatabase) {
+        sqlite.query("SELECT * FROM user_profiles").use { cursor ->
+            assertThat(cursor.moveToFirst()).isTrue()
+            cursor.assertString("id", "default_user")
+            cursor.assertLong("revision", 17L)
+            cursor.assertString("name", "Migration Crawler")
+            cursor.assertString("primaryGoal", "STRENGTH")
+            cursor.assertString("experienceLevel", "ADVANCED")
+            cursor.assertInt("preferredDurationMinutes", 75)
+            cursor.assertInt("daysPerWeek", 5)
+            cursor.assertString("availableEquipmentJson", "Bodyweight|||Dumbbell")
+            cursor.assertString("preferredUnit", "KG")
+            cursor.assertString("musclePrioritiesJson", "Chest:HIGH|||Back:LOW")
+            cursor.assertString("excludedExerciseIdsJson", "burpee")
+            cursor.assertInt("onboardingCompleted", 1)
+            cursor.assertString(
+                "trainingConstraintsJson",
+                "KNEE_SENSITIVE|||LOW_IMPACT_ONLY"
+            )
+            cursor.assertInt("returningAfterBreakWeeks", 12)
+            cursor.assertString("confirmedStartingLoadsJson", "goblet-squat:24.0")
+            cursor.assertString("fitnessGoalsJson", "STRENGTH|||BUILD_MUSCLE")
+            cursor.assertString("themePreference", "DARK")
+            cursor.assertString("movementCapabilitiesJson", "{}")
+            assertThat(cursor.moveToNext()).isFalse()
+        }
+    }
+
     private fun assertPreservedRows(sqlite: androidx.sqlite.db.SupportSQLiteDatabase) {
-        sqlite.query(
-            "SELECT name,status,origin,sourceTemplateId,notes FROM workout_sessions"
-        ).use { cursor ->
+        sqlite.query("SELECT * FROM workout_sessions").use { cursor ->
             assertThat(cursor.moveToFirst()).isTrue()
-            assertThat(cursor.getString(0)).isEqualTo("Preserved Session")
-            assertThat(cursor.getString(1)).isEqualTo("COMPLETED")
-            assertThat(cursor.getString(2)).isEqualTo("CUSTOM_TEMPLATE")
-            assertThat(cursor.getString(3)).isEqualTo("template-7")
-            assertThat(cursor.getString(4)).isEqualTo("session note")
+            cursor.assertString("id", "session-7")
+            cursor.assertString("name", "Preserved Session")
+            cursor.assertLong("startedAtTimestamp", 100L)
+            cursor.assertLong("completedAtTimestamp", 200L)
+            cursor.assertInt("targetDurationMinutes", 45)
+            cursor.assertInt("actualDurationMinutes", 43)
+            cursor.assertString("weightUnit", "KG")
+            cursor.assertString("status", "COMPLETED")
+            cursor.assertString("origin", "CUSTOM_TEMPLATE")
+            cursor.assertString("sourceTemplateId", "template-7")
+            cursor.assertString("focusMusclesJson", "Chest")
+            cursor.assertString("notes", "session note")
+            assertThat(cursor.moveToNext()).isFalse()
         }
-        sqlite.query("SELECT exerciseId,targetWeight,notes FROM workout_exercises").use { cursor ->
+        sqlite.query("SELECT * FROM workout_exercises").use { cursor ->
             assertThat(cursor.moveToFirst()).isTrue()
-            assertThat(cursor.getString(0)).isEqualTo("goblet-squat")
-            assertThat(cursor.getDouble(1)).isEqualTo(24.0)
-            assertThat(cursor.getString(2)).isEqualTo("exercise note")
+            cursor.assertString("id", "workout-exercise-7")
+            cursor.assertString("sessionId", "session-7")
+            cursor.assertString("exerciseId", "goblet-squat")
+            cursor.assertInt("orderIndex", 0)
+            cursor.assertString("exerciseType", "WEIGHT_REPS")
+            cursor.assertInt("targetSets", 1)
+            cursor.assertInt("targetRepMin", 8)
+            cursor.assertInt("targetRepMax", 10)
+            cursor.assertDouble("targetWeight", 24.0)
+            cursor.assertNull("targetAssistanceWeight")
+            cursor.assertNull("targetDurationSeconds")
+            cursor.assertNull("targetDistanceMeters")
+            cursor.assertInt("restSeconds", 90)
+            cursor.assertString("notes", "exercise note")
+            assertThat(cursor.moveToNext()).isFalse()
         }
-        sqlite.query("SELECT completedReps,completedWeight,isCompleted FROM workout_sets").use { cursor ->
+        sqlite.query("SELECT * FROM workout_sets").use { cursor ->
             assertThat(cursor.moveToFirst()).isTrue()
-            assertThat(cursor.getInt(0)).isEqualTo(9)
-            assertThat(cursor.getDouble(1)).isEqualTo(24.0)
-            assertThat(cursor.getInt(2)).isEqualTo(1)
+            cursor.assertString("id", "set-7")
+            cursor.assertString("workoutExerciseId", "workout-exercise-7")
+            cursor.assertInt("setNumber", 1)
+            cursor.assertString("exerciseType", "WEIGHT_REPS")
+            cursor.assertInt("targetReps", 10)
+            cursor.assertInt("completedReps", 9)
+            cursor.assertDouble("targetWeight", 24.0)
+            cursor.assertDouble("completedWeight", 24.0)
+            cursor.assertNull("targetAssistanceWeight")
+            cursor.assertNull("completedAssistanceWeight")
+            cursor.assertNull("targetDurationSeconds")
+            cursor.assertNull("completedDurationSeconds")
+            cursor.assertNull("targetDistanceMeters")
+            cursor.assertNull("completedDistanceMeters")
+            cursor.assertInt("isCompleted", 1)
+            cursor.assertDouble("rpe", 8.0)
+            cursor.assertInt("rir", 2)
+            cursor.assertString("type", "NORMAL")
+            assertThat(cursor.moveToNext()).isFalse()
         }
-        sqlite.query("SELECT name,notes FROM workout_templates").use { cursor ->
+        sqlite.query("SELECT * FROM workout_templates").use { cursor ->
             assertThat(cursor.moveToFirst()).isTrue()
-            assertThat(cursor.getString(0)).isEqualTo("Preserved Template")
-            assertThat(cursor.getString(1)).isEqualTo("template note")
+            cursor.assertString("id", "template-7")
+            cursor.assertString("name", "Preserved Template")
+            cursor.assertString("notes", "template note")
+            cursor.assertLong("createdAtTimestamp", 50L)
+            cursor.assertLong("updatedAtTimestamp", 60L)
+            assertThat(cursor.moveToNext()).isFalse()
         }
-        sqlite.query(
-            "SELECT exerciseId,targetWeight,notes FROM workout_template_exercises"
-        ).use { cursor ->
+        sqlite.query("SELECT * FROM workout_template_exercises").use { cursor ->
             assertThat(cursor.moveToFirst()).isTrue()
-            assertThat(cursor.getString(0)).isEqualTo("goblet-squat")
-            assertThat(cursor.getDouble(1)).isEqualTo(24.0)
-            assertThat(cursor.getString(2)).isEqualTo("template exercise note")
+            cursor.assertString("templateId", "template-7")
+            cursor.assertInt("orderIndex", 0)
+            cursor.assertString("exerciseId", "goblet-squat")
+            cursor.assertString("exerciseType", "WEIGHT_REPS")
+            cursor.assertInt("targetSets", 1)
+            cursor.assertInt("targetRepMin", 8)
+            cursor.assertInt("targetRepMax", 10)
+            cursor.assertDouble("targetWeight", 24.0)
+            cursor.assertNull("targetAssistanceWeight")
+            cursor.assertNull("targetDurationSeconds")
+            cursor.assertNull("targetDistanceMeters")
+            cursor.assertInt("restSeconds", 90)
+            cursor.assertString("notes", "template exercise note")
+            assertThat(cursor.moveToNext()).isFalse()
         }
+    }
+
+    private fun Cursor.assertString(column: String, expected: String) {
+        assertThat(getString(getColumnIndexOrThrow(column))).isEqualTo(expected)
+    }
+
+    private fun Cursor.assertInt(column: String, expected: Int) {
+        assertThat(getInt(getColumnIndexOrThrow(column))).isEqualTo(expected)
+    }
+
+    private fun Cursor.assertLong(column: String, expected: Long) {
+        assertThat(getLong(getColumnIndexOrThrow(column))).isEqualTo(expected)
+    }
+
+    private fun Cursor.assertDouble(column: String, expected: Double) {
+        assertThat(getDouble(getColumnIndexOrThrow(column))).isEqualTo(expected)
+    }
+
+    private fun Cursor.assertNull(column: String) {
+        assertThat(isNull(getColumnIndexOrThrow(column))).isTrue()
     }
 
     private companion object {
