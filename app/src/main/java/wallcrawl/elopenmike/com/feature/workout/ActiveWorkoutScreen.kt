@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -287,42 +288,7 @@ private fun ActiveWorkoutContent(
                     }
                 }
 
-                // 4. Sets Logging Table Header
-                item {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 4.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "SET",
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.width(32.dp)
-                        )
-                        Text(
-                            text = currentExercise.prescription.inputLabel(state.weightUnit.symbol),
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.weight(1f),
-                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                        )
-                        Text(
-                            text = "DONE",
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.width(38.dp),
-                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                        )
-                    }
-                }
-
-                // 5. Editable Sets Rows
+                // 4. Editable Sets Rows
                 items(currentExercise.sets.size) { setIndex ->
                     val set = currentExercise.sets[setIndex]
                     GymFloorSetRow(
@@ -421,21 +387,21 @@ private fun RestTimerBar(
                 onClick = onAddRest,
                 modifier = Modifier.heightIn(min = 48.dp)
             ) {
-                Text("+30s")
+                Text("+30s", color = LocalContentColor.current)
             }
             if (isRunning) {
                 TextButton(
                     onClick = onSkipRest,
                     modifier = Modifier.heightIn(min = 48.dp)
                 ) {
-                    Text("Skip rest")
+                    Text("Skip rest", color = LocalContentColor.current)
                 }
             }
             TextButton(
                 onClick = onCancelRest,
                 modifier = Modifier.heightIn(min = 48.dp)
             ) {
-                Text("Dismiss")
+                Text("Dismiss", color = LocalContentColor.current)
             }
         }
     }
@@ -454,15 +420,30 @@ private fun FinishConfirmationDialog(
     val setWord = if (openSetCount == 1) "set" else "sets"
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Finish with $openSetCount unlogged $setWord?") },
+        title = {
+            Text(
+                "Finish with $openSetCount unlogged $setWord?",
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        },
         text = {
             Text(
                 "$openSetCount $setWord will stay unlogged. Only completed sets count " +
-                    "toward your history."
+                    "toward your history.",
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         },
-        confirmButton = { TextButton(onClick = onConfirm) { Text("Finish anyway") } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Keep going") } }
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text("Finish anyway", color = LocalContentColor.current)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Keep going", color = LocalContentColor.current)
+            }
+        },
+        containerColor = MaterialTheme.colorScheme.surface
     )
 }
 
@@ -473,10 +454,26 @@ private fun DiscardConfirmationDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Discard this workout?") },
-        text = { Text("Everything logged in this session will be deleted.") },
-        confirmButton = { TextButton(onClick = onConfirm) { Text("Discard") } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Keep workout") } }
+        title = {
+            Text("Discard this workout?", color = MaterialTheme.colorScheme.onSurface)
+        },
+        text = {
+            Text(
+                "Everything logged in this session will be deleted.",
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        },
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text("Discard", color = LocalContentColor.current)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Keep workout", color = LocalContentColor.current)
+            }
+        },
+        containerColor = MaterialTheme.colorScheme.surface
     )
 }
 

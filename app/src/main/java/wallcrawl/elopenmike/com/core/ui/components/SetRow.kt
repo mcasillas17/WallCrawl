@@ -26,9 +26,12 @@ import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -43,6 +46,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -55,6 +60,7 @@ import wallcrawl.elopenmike.com.core.model.SetValuesDraft
 import wallcrawl.elopenmike.com.core.model.asPerformanceInput
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.ui.theme.SuccessGreen
+import wallcrawl.elopenmike.com.core.ui.theme.SuccessGreenDeep
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
 
 /** One editable measurement of a set, with the step a gym-floor adjustment actually uses. */
@@ -121,6 +127,14 @@ fun stopReasonLabel(reason: SetStopReason): String = when (reason) {
     SetStopReason.TIME_CONSTRAINT -> "Ran out of time"
     SetStopReason.OTHER -> "Another reason"
 }
+
+/**
+ * Success accent that stays readable on whichever surface the current theme paints.
+ * [SuccessGreen] has enough contrast on a dark card but not on a light one.
+ */
+@Composable
+private fun completedAccent(): Color =
+    if (MaterialTheme.colorScheme.background.luminance() > 0.5f) SuccessGreenDeep else SuccessGreen
 
 /** Remaining rest as minutes and seconds. */
 fun restCountdownLabel(remainingSeconds: Int): String {
@@ -216,12 +230,13 @@ fun GymFloorSetRow(
         }
     }
 
+    val accent = completedAccent()
     Column(
         modifier = modifier
             .fillMaxWidth()
             .background(
                 if (set.isCompleted) {
-                    SuccessGreen.copy(alpha = 0.12f)
+                    accent.copy(alpha = 0.12f)
                 } else {
                     MaterialTheme.colorScheme.surfaceVariant
                 },
@@ -230,7 +245,7 @@ fun GymFloorSetRow(
             .border(
                 1.dp,
                 if (set.isCompleted) {
-                    SuccessGreen.copy(alpha = 0.5f)
+                    accent.copy(alpha = 0.5f)
                 } else {
                     MaterialTheme.colorScheme.outline
                 },
@@ -243,7 +258,7 @@ fun GymFloorSetRow(
             Text(
                 "Set ${set.setNumber}",
                 color = if (set.isCompleted) {
-                    SuccessGreen
+                    accent
                 } else {
                     MaterialTheme.colorScheme.onSurfaceVariant
                 },
@@ -301,19 +316,29 @@ fun GymFloorSetRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // These secondary actions use the surface content colour rather than the
+            // brand accent: at 13sp the accent red does not reach a comfortable contrast
+            // ratio on either theme's card background.
             TextButton(
                 onClick = { showStopReasons = true },
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = MaterialTheme.colorScheme.onSurface
+                ),
                 modifier = Modifier.heightIn(min = MIN_TOUCH_TARGET)
             ) {
-                Text("Skip or stop", fontSize = 13.sp)
+                Text("Skip or stop", fontSize = 13.sp, color = LocalContentColor.current)
             }
             TextButton(
                 onClick = { showFeedback = !showFeedback },
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = MaterialTheme.colorScheme.onSurface
+                ),
                 modifier = Modifier.heightIn(min = MIN_TOUCH_TARGET)
             ) {
                 Text(
                     text = if (showFeedback) "Hide feedback" else "Add feedback (optional)",
-                    fontSize = 13.sp
+                    fontSize = 13.sp,
+                    color = LocalContentColor.current
                 )
             }
         }
@@ -339,7 +364,12 @@ fun GymFloorSetRow(
     if (showStopReasons) {
         AlertDialog(
             onDismissRequest = { showStopReasons = false },
-            title = { Text("Why are you stopping this set?") },
+            title = {
+                Text(
+                    "Why are you stopping this set?",
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text(
@@ -353,12 +383,16 @@ fun GymFloorSetRow(
                                 showStopReasons = false
                                 onSkipSet(reason)
                             },
+                            colors = ButtonDefaults.textButtonColors(
+                                contentColor = MaterialTheme.colorScheme.onSurface
+                            ),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .heightIn(min = MIN_TOUCH_TARGET)
                         ) {
                             Text(
                                 text = stopReasonLabel(reason),
+                                color = LocalContentColor.current,
                                 modifier = Modifier.fillMaxWidth()
                             )
                         }
@@ -366,8 +400,13 @@ fun GymFloorSetRow(
                 }
             },
             confirmButton = {
-                TextButton(onClick = { showStopReasons = false }) { Text("Cancel") }
-            }
+                TextButton(onClick = { showStopReasons = false }) {
+                    Text("Cancel", color = LocalContentColor.current)
+                }
+            },
+            containerColor = MaterialTheme.colorScheme.surface,
+            titleContentColor = MaterialTheme.colorScheme.onSurface,
+            textContentColor = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
@@ -397,7 +436,16 @@ private fun SetValueRow(
         OutlinedTextField(
             value = value,
             onValueChange = { input -> if (input.length <= MAX_INPUT_LENGTH) onValueChange(input) },
-            label = { Text(fieldName, fontSize = 11.sp) },
+            label = {
+                Text(
+                    fieldName,
+                    fontSize = 11.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            },
+            textStyle = LocalTextStyle.current.copy(
+                color = MaterialTheme.colorScheme.onSurface
+            ),
             singleLine = true,
             keyboardOptions = KeyboardOptions(
                 keyboardType = if (field.isDecimal) KeyboardType.Decimal else KeyboardType.Number
@@ -414,7 +462,13 @@ private fun SetValueRow(
         if (previousValue != null) {
             AssistChip(
                 onClick = { onCopyPrevious(previousValue) },
-                label = { Text(previousValue.compactText(), fontSize = 12.sp) },
+                label = {
+                    Text(
+                        previousValue.compactText(),
+                        fontSize = 12.sp,
+                        color = LocalContentColor.current
+                    )
+                },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.ContentCopy,
@@ -463,12 +517,14 @@ private fun CompleteSetButton(
             .fillMaxWidth()
             .height(LARGE_TOUCH_TARGET)
             .background(
-                if (isCompleted) SuccessGreen else MaterialTheme.colorScheme.surface,
+                // Filled with the deep green in both themes: white on the lighter green
+                // sits at about 2.2:1, well under WCAG AA.
+                if (isCompleted) SuccessGreenDeep else MaterialTheme.colorScheme.surface,
                 RoundedCornerShape(12.dp)
             )
             .border(
                 1.dp,
-                if (isCompleted) SuccessGreen else MaterialTheme.colorScheme.outline,
+                if (isCompleted) SuccessGreenDeep else MaterialTheme.colorScheme.outline,
                 RoundedCornerShape(12.dp)
             )
             .toggleable(
@@ -516,7 +572,7 @@ private fun ManageableConfirmation(
             FilterChip(
                 selected = feltManageable == answer,
                 onClick = { onRecord(answer) },
-                label = { Text(label) },
+                label = { Text(label, color = LocalContentColor.current) },
                 modifier = Modifier
                     .heightIn(min = MIN_TOUCH_TARGET)
                     .semantics {
@@ -545,7 +601,12 @@ private fun EffortControls(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            Text("RPE", fontSize = 13.sp, modifier = Modifier.width(36.dp))
+            Text(
+                "RPE",
+                fontSize = 13.sp,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.width(36.dp)
+            )
             StepButton(
                 increase = false,
                 contentDescription = "Decrease RPE for set $setNumber",
@@ -556,6 +617,7 @@ private fun EffortControls(
             Text(
                 text = rpe?.compactText() ?: "—",
                 fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier
                     .width(40.dp)
                     .clearAndSetSemantics {
@@ -573,7 +635,7 @@ private fun EffortControls(
                 onClick = { onRecordEffort(null, rir) },
                 modifier = Modifier.heightIn(min = MIN_TOUCH_TARGET)
             ) {
-                Text("Clear", fontSize = 12.sp)
+                Text("Clear", fontSize = 12.sp, color = LocalContentColor.current)
             }
         }
         FlowRow(
@@ -583,6 +645,7 @@ private fun EffortControls(
             Text(
                 "RIR",
                 fontSize = 13.sp,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier
                     .width(36.dp)
                     .heightIn(min = MIN_TOUCH_TARGET)
@@ -591,7 +654,7 @@ private fun EffortControls(
                 FilterChip(
                     selected = rir == value,
                     onClick = { onRecordEffort(rpe, if (rir == value) null else value) },
-                    label = { Text("$value") },
+                    label = { Text("$value", color = LocalContentColor.current) },
                     modifier = Modifier
                         .heightIn(min = MIN_TOUCH_TARGET)
                         .semantics {

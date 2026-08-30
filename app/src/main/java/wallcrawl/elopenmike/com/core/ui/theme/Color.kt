@@ -38,6 +38,12 @@ val GraphiteDivider = Color(0xFF1D2536)
 
 // 4. Functional State Colors
 val SuccessGreen = Color(0xFF10B981)
+
+/**
+ * Darker success green for filled controls and for success text on light surfaces:
+ * white on [SuccessGreen] only reaches about 2.2:1, which is below WCAG AA.
+ */
+val SuccessGreenDeep = Color(0xFF07704F)
 val WarningAmber = Color(0xFFF59E0B)
 
 // 5. Web Silver & Typography Colors
