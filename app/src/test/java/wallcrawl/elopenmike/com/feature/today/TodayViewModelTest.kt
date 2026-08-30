@@ -27,6 +27,7 @@ import wallcrawl.elopenmike.com.core.model.GeneratedExercise
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
 import wallcrawl.elopenmike.com.core.model.SessionStatus
+import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
@@ -390,9 +391,7 @@ private class TodayWorkoutRepository(
 
     override suspend fun logSetCompletion(
         setId: String,
-        reps: Int?,
-        weight: Double?,
-        isCompleted: Boolean
+        performance: SetPerformanceInput
     ) = Unit
 
     override suspend fun completeWorkout(

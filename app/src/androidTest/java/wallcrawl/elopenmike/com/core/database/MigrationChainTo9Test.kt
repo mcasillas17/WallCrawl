@@ -9,14 +9,14 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class MigrationChainTo8Test {
+class MigrationChainTo9Test {
 
     private val context: Context = ApplicationProvider.getApplicationContext()
 
     @Test
-    fun everyHistoricallySupportedSchemaMigratesToVersion8() {
-        (1..7).forEach { startingVersion ->
-            val databaseName = "migration-$startingVersion-8.db"
+    fun everyHistoricallySupportedSchemaMigratesToVersion9() {
+        (1..8).forEach { startingVersion ->
+            val databaseName = "migration-$startingVersion-9.db"
             context.deleteDatabase(databaseName)
             context.openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null).use { db ->
                 LegacyDatabaseFixtures.createSchema(db, startingVersion)
@@ -33,13 +33,31 @@ class MigrationChainTo8Test {
                 .build()
             try {
                 val sqlite = database.openHelper.writableDatabase
-                assertThat(sqlite.version).isEqualTo(8)
+                assertThat(sqlite.version).isEqualTo(9)
                 sqlite.query(
                     "SELECT name,movementCapabilitiesJson FROM user_profiles"
                 ).use { cursor ->
                     assertThat(cursor.moveToFirst()).isTrue()
                     assertThat(cursor.getString(0)).isEqualTo("Migration Crawler")
                     assertThat(cursor.getString(1)).isEqualTo("{}")
+                }
+                // Every chain ends with the schema-9 set-outcome columns present and
+                // defaulted to NULL, whichever version the upgrade started from.
+                sqlite.query("PRAGMA table_info(workout_sets)").use { cursor ->
+                    val columns = mutableMapOf<String, String?>()
+                    while (cursor.moveToNext()) {
+                        columns[cursor.getString(cursor.getColumnIndexOrThrow("name"))] =
+                            cursor.getString(cursor.getColumnIndexOrThrow("dflt_value"))
+                    }
+                    listOf(
+                        "feltManageable",
+                        "completedAtTimestamp",
+                        "stoppedAtTimestamp",
+                        "stopReason"
+                    ).forEach { column ->
+                        assertThat(columns).containsKey(column)
+                        assertThat(columns[column]).isNull()
+                    }
                 }
                 sqlite.query("PRAGMA foreign_key_check").use { cursor ->
                     assertThat(cursor.count).isEqualTo(0)

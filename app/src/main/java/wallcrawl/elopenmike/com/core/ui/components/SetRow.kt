@@ -2,26 +2,40 @@ package wallcrawl.elopenmike.com.core.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Checkbox
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,215 +43,123 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.material3.MaterialTheme
-import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
-import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
+import wallcrawl.elopenmike.com.core.model.SetStopReason
+import wallcrawl.elopenmike.com.core.model.SetValuesDraft
+import wallcrawl.elopenmike.com.core.model.asPerformanceInput
+import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.ui.theme.SuccessGreen
+import wallcrawl.elopenmike.com.core.ui.theme.SuccessGreenDeep
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
 
-@Composable
-fun SetRow(
-    set: WorkoutSet,
-    weightUnit: String,
-    onUpdateSet: (reps: Int?, weight: Double?, isCompleted: Boolean) -> Unit,
-    modifier: Modifier = Modifier
+/** One editable measurement of a set, with the step a gym-floor adjustment actually uses. */
+enum class SetInputField(
+    val label: String,
+    val stepSize: Double,
+    val isDecimal: Boolean,
+    private val maximum: Double
 ) {
-    var weightText by remember(set.id, set.completedWeight, set.targetWeight) {
-        val initialVal = set.completedWeight ?: set.targetWeight
-        mutableStateOf(if (initialVal != null) {
-            if (initialVal % 1.0 == 0.0) initialVal.toInt().toString() else initialVal.toString()
-        } else "")
+    LOAD("Load", stepSize = 2.5, isDecimal = true, maximum = 100_000.0),
+    ASSISTANCE("Assist", stepSize = 2.5, isDecimal = true, maximum = 100_000.0),
+    REPS("Reps", stepSize = 1.0, isDecimal = false, maximum = 1_000.0),
+    DURATION("Seconds", stepSize = 5.0, isDecimal = false, maximum = 86_400.0),
+    DISTANCE("Meters", stepSize = 50.0, isDecimal = true, maximum = 1_000_000.0);
+
+    /**
+     * One step up or down from [current], clamped to the range the repository accepts.
+     *
+     * With no current value the first step starts from [fallback] -- the planned target
+     * for this set -- so the control offers what was prescribed instead of inventing a
+     * value. With no target either, stepping up starts at one step.
+     */
+    fun stepped(current: Double?, increase: Boolean, fallback: Double? = null): Double {
+        if (current == null && fallback != null && increase) return fallback.coerceIn(0.0, maximum)
+        val base = current ?: 0.0
+        val next = if (increase) base + stepSize else base - stepSize
+        return next.coerceIn(0.0, maximum)
     }
 
-    var repsText by remember(set.id, set.completedReps, set.targetReps) {
-        val initialVal = set.completedReps ?: set.targetReps
-        mutableStateOf(initialVal?.takeIf { it > 0 }?.toString().orEmpty())
+    /** The value this field recorded in a previous comparable set, if it completed one. */
+    fun previousValue(previousSet: WorkoutSet?): Double? {
+        val set = previousSet?.takeIf { it.isCompleted } ?: return null
+        return when (this) {
+            LOAD -> set.completedWeight
+            ASSISTANCE -> set.completedAssistanceWeight
+            REPS -> set.completedReps?.toDouble()
+            DURATION -> set.completedDurationSeconds?.toDouble()
+            DISTANCE -> set.completedDistanceMeters
+        }
     }
 
-    val isCompleted = set.isCompleted
-
-    val rowBackgroundColor = if (isCompleted) SuccessGreen.copy(alpha = 0.12f) else MaterialTheme.colorScheme.surfaceVariant
-    val rowBorderColor = if (isCompleted) SuccessGreen.copy(alpha = 0.5f) else MaterialTheme.colorScheme.outline
-
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(rowBackgroundColor, RoundedCornerShape(12.dp))
-            .border(1.dp, rowBorderColor, RoundedCornerShape(12.dp))
-            .padding(horizontal = 12.dp, vertical = 10.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        // Set number badge
-        Box(
-            modifier = Modifier
-                .size(32.dp)
-                .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(8.dp))
-                .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp)),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "${set.setNumber}",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
-                color = if (isCompleted) SuccessGreen else MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-
-        Spacer(modifier = Modifier.width(12.dp))
-
-        // Weight Input
-        Row(
-            modifier = Modifier.weight(1f),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            BasicTextField(
-                value = weightText,
-                onValueChange = { newVal ->
-                    weightText = newVal
-                    val parsedWeight = newVal.toDoubleOrNull()
-                    val parsedReps = repsText.toIntOrNull()
-                    onUpdateSet(parsedReps, parsedWeight, isCompleted)
-                },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                textStyle = TextStyle(
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
-                ),
-                cursorBrush = SolidColor(CrimsonRedPrimary),
-                decorationBox = { innerTextField ->
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(38.dp)
-                            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(8.dp))
-                            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp))
-                            .padding(horizontal = 8.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        if (weightText.isEmpty()) {
-                            Text(
-                                text = set.targetWeight?.let { "$it" } ?: "0",
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                                fontSize = 15.sp
-                            )
-                        }
-                        innerTextField()
-                    }
-                }
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(
-                text = weightUnit,
-                fontSize = 11.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-
-        Spacer(modifier = Modifier.width(12.dp))
-
-        // Reps Input
-        Row(
-            modifier = Modifier.weight(1f),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            BasicTextField(
-                value = repsText,
-                onValueChange = { newVal ->
-                    repsText = newVal
-                    val parsedWeight = weightText.toDoubleOrNull()
-                    val parsedReps = newVal.toIntOrNull()
-                    onUpdateSet(parsedReps, parsedWeight, isCompleted)
-                },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                textStyle = TextStyle(
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
-                ),
-                cursorBrush = SolidColor(CrimsonRedPrimary),
-                decorationBox = { innerTextField ->
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(38.dp)
-                            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(8.dp))
-                            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp))
-                            .padding(horizontal = 8.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        if (repsText.isEmpty()) {
-                            Text(
-                                text = "${set.targetReps}",
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                                fontSize = 15.sp
-                            )
-                        }
-                        innerTextField()
-                    }
-                }
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(
-                text = "reps",
-                fontSize = 11.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-
-        Spacer(modifier = Modifier.width(12.dp))
-
-        // Checkmark Completion Toggle Button
-        Box(
-            modifier = Modifier
-                .size(38.dp)
-                .background(
-                    if (isCompleted) SuccessGreen else MaterialTheme.colorScheme.surface,
-                    RoundedCornerShape(10.dp)
-                )
-                .border(
-                    1.dp,
-                    if (isCompleted) SuccessGreen else MaterialTheme.colorScheme.outline,
-                    RoundedCornerShape(10.dp)
-                )
-                .clickable {
-                    val parsedWeight = weightText.toDoubleOrNull() ?: set.targetWeight
-                    val parsedReps = repsText.toIntOrNull() ?: set.targetReps
-                    onUpdateSet(parsedReps, parsedWeight, !isCompleted)
-                },
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Default.Check,
-                contentDescription = "Complete Set",
-                tint = if (isCompleted) TextWhite else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
-                modifier = Modifier.size(20.dp)
-            )
+    companion object {
+        /** Only the measurements this exercise type supports, in logging order. */
+        fun forType(exerciseType: ExerciseType): List<SetInputField> = when (exerciseType) {
+            ExerciseType.WEIGHT_REPS -> listOf(LOAD, REPS)
+            ExerciseType.BODYWEIGHT_REPS -> listOf(REPS)
+            ExerciseType.ASSISTED_BODYWEIGHT -> listOf(ASSISTANCE, REPS)
+            ExerciseType.DURATION -> listOf(DURATION)
+            ExerciseType.DISTANCE_DURATION -> listOf(DISTANCE, DURATION)
         }
     }
 }
 
-/** Logger row that exposes only the measurements supported by the catalog exercise type. */
+/**
+ * Plain, non-diagnostic wording for a typed stop reason.
+ *
+ * [SetStopReason.PAIN_STOP] says only that the user chose to stop; it is never phrased as
+ * a symptom, an injury, or advice.
+ */
+fun stopReasonLabel(reason: SetStopReason): String = when (reason) {
+    SetStopReason.USER_SKIPPED -> "Skipped this set"
+    SetStopReason.PAIN_STOP -> "Something hurt, so I stopped"
+    SetStopReason.EQUIPMENT_UNAVAILABLE -> "Equipment wasn't available"
+    SetStopReason.TIME_CONSTRAINT -> "Ran out of time"
+    SetStopReason.OTHER -> "Another reason"
+}
+
+/**
+ * Success accent that stays readable on whichever surface the current theme paints.
+ * [SuccessGreen] has enough contrast on a dark card but not on a light one.
+ */
 @Composable
-fun PerformanceSetRow(
+private fun completedAccent(): Color =
+    if (MaterialTheme.colorScheme.background.luminance() > 0.5f) SuccessGreenDeep else SuccessGreen
+
+/** Remaining rest as minutes and seconds. */
+fun restCountdownLabel(remainingSeconds: Int): String {
+    val safeSeconds = remainingSeconds.coerceAtLeast(0)
+    return "${safeSeconds / 60}:${(safeSeconds % 60).toString().padStart(2, '0')}"
+}
+
+/**
+ * The gym-floor logger for one set.
+ *
+ * Completion is a single large tap; every numeric outcome has plus/minus controls with a
+ * text field beside them for precise entry; a previous comparable value can be copied in
+ * one tap. Effort and the manageable confirmation are optional and never gate completion.
+ */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun GymFloorSetRow(
     set: WorkoutSet,
     weightUnit: String,
-    onUpdateSet: (SetPerformanceInput) -> Unit,
+    previousSet: WorkoutSet?,
+    onValuesChanged: (SetValuesDraft) -> Unit,
+    onCompletionChanged: (values: SetValuesDraft, completed: Boolean) -> Unit,
+    onSkipSet: (SetStopReason) -> Unit,
+    onRecordEffort: (rpe: Float?, rir: Int?) -> Unit,
+    onRecordFeltManageable: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var reps by remember(set.id, set.completedReps) {
@@ -252,118 +174,507 @@ fun PerformanceSetRow(
         )
     }
     var duration by remember(set.id, set.completedDurationSeconds) {
-        mutableStateOf((set.completedDurationSeconds ?: set.targetDurationSeconds)?.toString().orEmpty())
+        mutableStateOf(
+            (set.completedDurationSeconds ?: set.targetDurationSeconds)?.toString().orEmpty()
+        )
     }
     var distance by remember(set.id, set.completedDistanceMeters) {
-        mutableStateOf((set.completedDistanceMeters ?: set.targetDistanceMeters)?.compactText().orEmpty())
+        mutableStateOf(
+            (set.completedDistanceMeters ?: set.targetDistanceMeters)?.compactText().orEmpty()
+        )
     }
+    var showStopReasons by remember(set.id) { mutableStateOf(false) }
+    var showFeedback by remember(set.id) { mutableStateOf(false) }
 
-    fun current(completed: Boolean = set.isCompleted) = SetPerformanceInput(
+    fun draft() = SetValuesDraft(
         reps = reps.toIntOrNull(),
         weight = weight.toDoubleOrNull(),
         assistanceWeight = assistance.toDoubleOrNull(),
         durationSeconds = duration.toIntOrNull(),
-        distanceMeters = distance.toDoubleOrNull(),
-        isCompleted = completed
+        distanceMeters = distance.toDoubleOrNull()
     )
 
-    // Field edits (typing) preserve whatever completion state the set already has, so a
-    // digit typed while correcting an already-completed set doesn't uncomplete it. But a
-    // transient in-progress value -- e.g. the field is momentarily empty between clearing
-    // and retyping a number -- must never be submitted as a completion: the repository
-    // would reject it and the caller must not treat a mid-edit keystroke as a rejected
-    // write. Only the checkbox performs the explicit completion transition, so it always
-    // submits regardless of validity.
-    fun submitEdit() {
-        val performance = current()
-        if (performance.isSubmittableFor(set.exerciseType)) {
-            onUpdateSet(performance)
+    fun textFor(field: SetInputField) = when (field) {
+        SetInputField.LOAD -> weight
+        SetInputField.ASSISTANCE -> assistance
+        SetInputField.REPS -> reps
+        SetInputField.DURATION -> duration
+        SetInputField.DISTANCE -> distance
+    }
+
+    fun setText(field: SetInputField, value: String) {
+        when (field) {
+            SetInputField.LOAD -> weight = value
+            SetInputField.ASSISTANCE -> assistance = value
+            SetInputField.REPS -> reps = value
+            SetInputField.DURATION -> duration = value
+            SetInputField.DISTANCE -> distance = value
         }
     }
 
+    fun targetFor(field: SetInputField): Double? = when (field) {
+        SetInputField.LOAD -> set.targetWeight
+        SetInputField.ASSISTANCE -> set.targetAssistanceWeight
+        SetInputField.REPS -> set.targetReps?.toDouble()
+        SetInputField.DURATION -> set.targetDurationSeconds?.toDouble()
+        SetInputField.DISTANCE -> set.targetDistanceMeters
+    }
+
+    // Field edits preserve whatever outcome the set already has, so correcting a digit on
+    // a completed set does not un-complete it. A transient in-progress value -- a field
+    // momentarily cleared to retype a number -- is never submitted as a completion,
+    // because the repository would reject it and a keystroke is not a failed write.
+    fun submitEdit() {
+        if (draft().asPerformanceInput(set.isCompleted).isSubmittableFor(set.exerciseType)) {
+            onValuesChanged(draft())
+        }
+    }
+
+    val accent = completedAccent()
     Column(
         modifier = modifier
             .fillMaxWidth()
             .background(
-                if (set.isCompleted) SuccessGreen.copy(alpha = 0.12f) else MaterialTheme.colorScheme.surfaceVariant,
+                if (set.isCompleted) {
+                    accent.copy(alpha = 0.12f)
+                } else {
+                    MaterialTheme.colorScheme.surfaceVariant
+                },
                 RoundedCornerShape(12.dp)
             )
             .border(
                 1.dp,
-                if (set.isCompleted) SuccessGreen.copy(alpha = 0.5f) else MaterialTheme.colorScheme.outline,
+                if (set.isCompleted) {
+                    accent.copy(alpha = 0.5f)
+                } else {
+                    MaterialTheme.colorScheme.outline
+                },
                 RoundedCornerShape(12.dp)
             )
-            .padding(10.dp)
+            .padding(12.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 "Set ${set.setNumber}",
-                color = if (set.isCompleted) SuccessGreen else MaterialTheme.colorScheme.onSurfaceVariant,
+                color = if (set.isCompleted) {
+                    accent
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                },
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(1f)
             )
-            Text("Done", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
-            Checkbox(
-                checked = set.isCompleted,
-                onCheckedChange = { onUpdateSet(current(completed = it)) }
+            set.stopReason?.let { reason ->
+                Text(
+                    text = stopReasonLabel(reason),
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+
+        SetInputField.forType(set.exerciseType).forEach { field ->
+            SetValueRow(
+                field = field,
+                setNumber = set.setNumber,
+                value = textFor(field),
+                unitSuffix = if (field == SetInputField.LOAD || field == SetInputField.ASSISTANCE) {
+                    weightUnit
+                } else {
+                    null
+                },
+                previousValue = field.previousValue(previousSet),
+                onValueChange = { updated ->
+                    setText(field, updated)
+                    submitEdit()
+                },
+                onStep = { increase ->
+                    val stepped = field.stepped(
+                        current = textFor(field).toDoubleOrNull(),
+                        increase = increase,
+                        fallback = targetFor(field)
+                    )
+                    setText(field, stepped.compactText())
+                    submitEdit()
+                },
+                onCopyPrevious = { previous ->
+                    setText(field, previous.compactText())
+                    submitEdit()
+                }
             )
         }
+
+        CompleteSetButton(
+            setNumber = set.setNumber,
+            isCompleted = set.isCompleted,
+            onToggle = { completed -> onCompletionChanged(draft(), completed) }
+        )
+
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            when (set.exerciseType) {
-                ExerciseType.WEIGHT_REPS -> {
-                    CompactSetInput(
-                        weight,
-                        { weight = it; submitEdit() },
-                        weightInputLabel(set.targetWeight, weightUnit),
-                        true,
-                        Modifier.weight(1f)
-                    )
-                    CompactSetInput(reps, { reps = it; submitEdit() }, "Reps", false, Modifier.weight(1f))
-                }
-                ExerciseType.BODYWEIGHT_REPS ->
-                    CompactSetInput(reps, { reps = it; submitEdit() }, "Reps", false, Modifier.weight(1f))
-                ExerciseType.ASSISTED_BODYWEIGHT -> {
-                    CompactSetInput(assistance, { assistance = it; submitEdit() }, "Assist $weightUnit", true, Modifier.weight(1f))
-                    CompactSetInput(reps, { reps = it; submitEdit() }, "Reps", false, Modifier.weight(1f))
-                }
-                ExerciseType.DURATION ->
-                    CompactSetInput(duration, { duration = it; submitEdit() }, "Seconds", false, Modifier.weight(1f))
-                ExerciseType.DISTANCE_DURATION -> {
-                    CompactSetInput(distance, { distance = it; submitEdit() }, "Meters", true, Modifier.weight(1f))
-                    CompactSetInput(duration, { duration = it; submitEdit() }, "Seconds", false, Modifier.weight(1f))
-                }
+            // These secondary actions use the surface content colour rather than the
+            // brand accent: at 13sp the accent red does not reach a comfortable contrast
+            // ratio on either theme's card background.
+            TextButton(
+                onClick = { showStopReasons = true },
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = MaterialTheme.colorScheme.onSurface
+                ),
+                modifier = Modifier.heightIn(min = MIN_TOUCH_TARGET)
+            ) {
+                Text("Skip or stop", fontSize = 13.sp, color = LocalContentColor.current)
             }
+            TextButton(
+                onClick = { showFeedback = !showFeedback },
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = MaterialTheme.colorScheme.onSurface
+                ),
+                modifier = Modifier.heightIn(min = MIN_TOUCH_TARGET)
+            ) {
+                Text(
+                    text = if (showFeedback) "Hide feedback" else "Add feedback (optional)",
+                    fontSize = 13.sp,
+                    color = LocalContentColor.current
+                )
+            }
+        }
+
+        if (set.isCompleted) {
+            ManageableConfirmation(
+                setNumber = set.setNumber,
+                feltManageable = set.feltManageable,
+                onRecord = onRecordFeltManageable
+            )
+        }
+
+        if (showFeedback) {
+            EffortControls(
+                setNumber = set.setNumber,
+                rpe = set.rpe,
+                rir = set.rir,
+                onRecordEffort = onRecordEffort
+            )
+        }
+    }
+
+    if (showStopReasons) {
+        AlertDialog(
+            onDismissRequest = { showStopReasons = false },
+            title = {
+                Text(
+                    "Why are you stopping this set?",
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text(
+                        "This is only recorded so your log stays accurate.",
+                        fontSize = 13.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    SetStopReason.entries.forEach { reason ->
+                        TextButton(
+                            onClick = {
+                                showStopReasons = false
+                                onSkipSet(reason)
+                            },
+                            colors = ButtonDefaults.textButtonColors(
+                                contentColor = MaterialTheme.colorScheme.onSurface
+                            ),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .heightIn(min = MIN_TOUCH_TARGET)
+                        ) {
+                            Text(
+                                text = stopReasonLabel(reason),
+                                color = LocalContentColor.current,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showStopReasons = false }) {
+                    Text("Cancel", color = LocalContentColor.current)
+                }
+            },
+            containerColor = MaterialTheme.colorScheme.surface,
+            titleContentColor = MaterialTheme.colorScheme.onSurface,
+            textContentColor = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+}
+
+@Composable
+private fun SetValueRow(
+    field: SetInputField,
+    setNumber: Int,
+    value: String,
+    unitSuffix: String?,
+    previousValue: Double?,
+    onValueChange: (String) -> Unit,
+    onStep: (increase: Boolean) -> Unit,
+    onCopyPrevious: (Double) -> Unit
+) {
+    val fieldName = if (unitSuffix != null) "${field.label} $unitSuffix" else field.label
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        StepButton(
+            increase = false,
+            contentDescription = "Decrease ${field.label.lowercase()} for set $setNumber",
+            onClick = { onStep(false) }
+        )
+        OutlinedTextField(
+            value = value,
+            onValueChange = { input -> if (input.length <= MAX_INPUT_LENGTH) onValueChange(input) },
+            label = {
+                Text(
+                    fieldName,
+                    fontSize = 11.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            },
+            textStyle = LocalTextStyle.current.copy(
+                color = MaterialTheme.colorScheme.onSurface
+            ),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = if (field.isDecimal) KeyboardType.Decimal else KeyboardType.Number
+            ),
+            modifier = Modifier
+                .weight(1f)
+                .semantics { contentDescription = "$fieldName for set $setNumber" }
+        )
+        StepButton(
+            increase = true,
+            contentDescription = "Increase ${field.label.lowercase()} for set $setNumber",
+            onClick = { onStep(true) }
+        )
+        if (previousValue != null) {
+            AssistChip(
+                onClick = { onCopyPrevious(previousValue) },
+                label = {
+                    Text(
+                        previousValue.compactText(),
+                        fontSize = 12.sp,
+                        color = LocalContentColor.current
+                    )
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.ContentCopy,
+                        contentDescription = null,
+                        modifier = Modifier.size(14.dp)
+                    )
+                },
+                modifier = Modifier
+                    .heightIn(min = MIN_TOUCH_TARGET)
+                    .semantics {
+                        contentDescription =
+                            "Use previous ${field.label.lowercase()} " +
+                                "${previousValue.compactText()} for set $setNumber"
+                    }
+            )
         }
     }
 }
 
 @Composable
-private fun CompactSetInput(
-    value: String,
-    onValueChange: (String) -> Unit,
-    label: String,
-    decimal: Boolean,
-    modifier: Modifier
+private fun StepButton(
+    increase: Boolean,
+    contentDescription: String,
+    onClick: () -> Unit
 ) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = { input ->
-            if (input.length <= 10) onValueChange(input)
-        },
-        label = { Text(label, fontSize = 11.sp) },
-        singleLine = true,
-        keyboardOptions = KeyboardOptions(
-            keyboardType = if (decimal) KeyboardType.Decimal else KeyboardType.Number
-        ),
-        modifier = modifier
-    )
+    IconButton(
+        onClick = onClick,
+        modifier = Modifier.sizeIn(minWidth = MIN_TOUCH_TARGET, minHeight = MIN_TOUCH_TARGET)
+    ) {
+        Icon(
+            imageVector = if (increase) Icons.Default.Add else Icons.Default.Remove,
+            contentDescription = contentDescription,
+            tint = MaterialTheme.colorScheme.onSurface
+        )
+    }
+}
+
+@Composable
+private fun CompleteSetButton(
+    setNumber: Int,
+    isCompleted: Boolean,
+    onToggle: (Boolean) -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(LARGE_TOUCH_TARGET)
+            .background(
+                // Filled with the deep green in both themes: white on the lighter green
+                // sits at about 2.2:1, well under WCAG AA.
+                if (isCompleted) SuccessGreenDeep else MaterialTheme.colorScheme.surface,
+                RoundedCornerShape(12.dp)
+            )
+            .border(
+                1.dp,
+                if (isCompleted) SuccessGreenDeep else MaterialTheme.colorScheme.outline,
+                RoundedCornerShape(12.dp)
+            )
+            .toggleable(
+                value = isCompleted,
+                role = Role.Checkbox,
+                onValueChange = onToggle
+            )
+            .semantics { contentDescription = "Set $setNumber complete" },
+        contentAlignment = Alignment.Center
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                imageVector = Icons.Default.Check,
+                contentDescription = null,
+                tint = if (isCompleted) TextWhite else MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(22.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = if (isCompleted) "Completed" else "Complete set",
+                color = if (isCompleted) TextWhite else MaterialTheme.colorScheme.onSurface,
+                fontWeight = FontWeight.Bold
+            )
+        }
+    }
+}
+
+@Composable
+private fun ManageableConfirmation(
+    setNumber: Int,
+    feltManageable: Boolean?,
+    onRecord: (Boolean) -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Text(
+            text = "Felt manageable?",
+            fontSize = 13.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        listOf(true to "Yes", false to "No").forEach { (answer, label) ->
+            FilterChip(
+                selected = feltManageable == answer,
+                onClick = { onRecord(answer) },
+                label = { Text(label, color = LocalContentColor.current) },
+                modifier = Modifier
+                    .heightIn(min = MIN_TOUCH_TARGET)
+                    .semantics {
+                        contentDescription = "Set $setNumber felt manageable, $label"
+                    }
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun EffortControls(
+    setNumber: Int,
+    rpe: Float?,
+    rir: Int?,
+    onRecordEffort: (rpe: Float?, rir: Int?) -> Unit
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        Text(
+            text = "Effort is optional. Leaving it blank is fine.",
+            fontSize = 12.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Text(
+                "RPE",
+                fontSize = 13.sp,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.width(36.dp)
+            )
+            StepButton(
+                increase = false,
+                contentDescription = "Decrease RPE for set $setNumber",
+                onClick = {
+                    onRecordEffort(((rpe ?: 0f) - 0.5f).coerceIn(0f, 10f), rir)
+                }
+            )
+            Text(
+                text = rpe?.compactText() ?: "—",
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier
+                    .width(40.dp)
+                    .clearAndSetSemantics {
+                        contentDescription = "RPE for set $setNumber, ${rpe?.compactText() ?: "not recorded"}"
+                    }
+            )
+            StepButton(
+                increase = true,
+                contentDescription = "Increase RPE for set $setNumber",
+                onClick = {
+                    onRecordEffort(((rpe ?: 0f) + 0.5f).coerceIn(0f, 10f), rir)
+                }
+            )
+            TextButton(
+                onClick = { onRecordEffort(null, rir) },
+                modifier = Modifier.heightIn(min = MIN_TOUCH_TARGET)
+            ) {
+                Text("Clear", fontSize = 12.sp, color = LocalContentColor.current)
+            }
+        }
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Text(
+                "RIR",
+                fontSize = 13.sp,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier
+                    .width(36.dp)
+                    .heightIn(min = MIN_TOUCH_TARGET)
+            )
+            (0..5).forEach { value ->
+                FilterChip(
+                    selected = rir == value,
+                    onClick = { onRecordEffort(rpe, if (rir == value) null else value) },
+                    label = { Text("$value", color = LocalContentColor.current) },
+                    modifier = Modifier
+                        .heightIn(min = MIN_TOUCH_TARGET)
+                        .semantics {
+                            contentDescription = "RIR $value for set $setNumber"
+                        }
+                )
+            }
+        }
+    }
 }
 
 private fun Double.compactText(): String =
     if (this % 1.0 == 0.0) toInt().toString() else toString()
+
+private fun Float.compactText(): String =
+    if (this % 1.0f == 0.0f) toInt().toString() else toString()
+
+private const val MAX_INPUT_LENGTH = 10
+private val MIN_TOUCH_TARGET = 48.dp
+private val LARGE_TOUCH_TARGET = 56.dp
 
 /**
  * Labels the load field. A null target means no confirmed baseline and no usable

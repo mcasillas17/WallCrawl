@@ -29,7 +29,7 @@ import wallcrawl.elopenmike.com.core.database.entity.WorkoutTemplateExerciseEnti
         WorkoutTemplateEntity::class,
         WorkoutTemplateExerciseEntity::class
     ],
-    version = 8,
+    version = 9,
     exportSchema = false
 )
 @TypeConverters(RoomTypeConverters::class)
@@ -284,6 +284,20 @@ abstract class WallCrawlDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_8_9 = object : Migration(8, 9) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // Additive only. Every existing profile, capability, workout, template,
+                // exercise, and set column keeps the value it already had; the four new
+                // set-outcome columns are nullable with no default, so existing history
+                // reads back as "outcome not recorded" instead of gaining a fabricated
+                // completion timestamp or an assumed manageable answer.
+                db.execSQL("ALTER TABLE workout_sets ADD COLUMN feltManageable INTEGER")
+                db.execSQL("ALTER TABLE workout_sets ADD COLUMN completedAtTimestamp INTEGER")
+                db.execSQL("ALTER TABLE workout_sets ADD COLUMN stoppedAtTimestamp INTEGER")
+                db.execSQL("ALTER TABLE workout_sets ADD COLUMN stopReason TEXT")
+            }
+        }
+
         val ALL_MIGRATIONS: Array<Migration>
             get() = arrayOf(
                 MIGRATION_1_2,
@@ -292,7 +306,8 @@ abstract class WallCrawlDatabase : RoomDatabase() {
                 MIGRATION_4_5,
                 MIGRATION_5_6,
                 MIGRATION_6_7,
-                MIGRATION_7_8
+                MIGRATION_7_8,
+                MIGRATION_8_9
             )
     }
 }

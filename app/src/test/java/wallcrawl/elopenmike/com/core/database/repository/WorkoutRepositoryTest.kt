@@ -14,6 +14,7 @@ import wallcrawl.elopenmike.com.core.database.entity.WorkoutSetEntity
 import wallcrawl.elopenmike.com.core.database.relation.WorkoutSessionWithExercisesAndSets
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.ExerciseType
+import wallcrawl.elopenmike.com.core.model.SetStopReason
 import wallcrawl.elopenmike.com.core.model.SetType
 import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
 
@@ -36,9 +37,7 @@ class WorkoutRepositoryTest {
         assertIllegalArgument {
             repository.logSetCompletion(
                 setId = "set-id",
-                reps = 0,
-                weight = 20.0,
-                isCompleted = true
+                performance = completedWeightReps(reps = 0)
             )
         }
 
@@ -51,9 +50,11 @@ class WorkoutRepositoryTest {
             assertIllegalArgument {
                 repository.logSetCompletion(
                     setId = "set-id",
-                    reps = 8,
-                    weight = invalidWeight,
-                    isCompleted = false
+                    performance = SetPerformanceInput(
+                        reps = 8,
+                        weight = invalidWeight,
+                        isCompleted = false
+                    )
                 )
             }
         }
@@ -66,17 +67,13 @@ class WorkoutRepositoryTest {
         assertIllegalArgument {
             repository.logSetCompletion(
                 setId = "set-id",
-                reps = 1_001,
-                weight = 20.0,
-                isCompleted = true
+                performance = completedWeightReps(reps = 1_001)
             )
         }
         assertIllegalArgument {
             repository.logSetCompletion(
                 setId = "set-id",
-                reps = 8,
-                weight = 100_001.0,
-                isCompleted = true
+                performance = completedWeightReps(weight = 100_001.0)
             )
         }
 
@@ -85,23 +82,19 @@ class WorkoutRepositoryTest {
 
     @Test
     fun logSetCompletion_completingWeightRepsSetWithoutAPositiveLoad_isRejectedBeforePersistence() = runTest {
-        // With no fabricated default weight anymore (Task 2), a completed weight-and-reps
-        // set could otherwise silently persist with no load recorded at all. Completion
-        // must require a user-entered positive load.
+        // With no fabricated default weight (Task 2), a completed weight-and-reps set
+        // could otherwise silently persist with no load recorded at all. Completion must
+        // require a user-entered positive load.
         assertIllegalArgument {
             repository.logSetCompletion(
                 setId = "set-id",
-                reps = 8,
-                weight = null,
-                isCompleted = true
+                performance = completedWeightReps(weight = null)
             )
         }
         assertIllegalArgument {
             repository.logSetCompletion(
                 setId = "set-id",
-                reps = 8,
-                weight = 0.0,
-                isCompleted = true
+                performance = completedWeightReps(weight = 0.0)
             )
         }
 
@@ -112,13 +105,12 @@ class WorkoutRepositoryTest {
     fun logSetCompletion_incompletePartialEdit_isPersisted() = runTest {
         repository.logSetCompletion(
             setId = "set-id",
-            reps = null,
-            weight = null,
-            isCompleted = false
+            performance = SetPerformanceInput(reps = null, weight = null, isCompleted = false)
         )
 
-        assertThat(setDao.completionUpdates)
-            .containsExactly(SetCompletionUpdate("set-id", null, null, false))
+        assertThat(setDao.completionUpdates).containsExactly(
+            SetCompletionUpdate(setId = "set-id", isCompleted = false)
+        )
     }
 
     @Test
@@ -128,13 +120,25 @@ class WorkoutRepositoryTest {
         try {
             repository.logSetCompletion(
                 setId = "missing-set",
-                reps = 8,
-                weight = 20.0,
-                isCompleted = true
+                performance = completedWeightReps()
             )
             fail("Expected an unknown set to be rejected")
         } catch (exception: IllegalStateException) {
             assertThat(exception.message).contains("missing-set")
+        }
+    }
+
+    @Test
+    fun logSetCompletion_moreThanOneUpdatedRow_isRejected() = runTest {
+        // The guarded update targets exactly one primary key; anything else means the
+        // write did not do what the domain believes it did.
+        setDao.affectedRows = 2
+
+        try {
+            repository.logSetCompletion(setId = "set-id", performance = completedWeightReps())
+            fail("Expected a multi-row update to be rejected")
+        } catch (exception: IllegalStateException) {
+            assertThat(exception.message).contains("set-id")
         }
     }
 
@@ -148,6 +152,7 @@ class WorkoutRepositoryTest {
                 performance = SetPerformanceInput(
                     reps = 10,
                     durationSeconds = 45,
+                    completedAtTimestamp = COMPLETED_AT,
                     isCompleted = true
                 )
             )
@@ -163,7 +168,10 @@ class WorkoutRepositoryTest {
         assertIllegalArgument {
             repository.logSetCompletion(
                 setId = "distance-set",
-                performance = SetPerformanceInput(isCompleted = true)
+                performance = SetPerformanceInput(
+                    completedAtTimestamp = COMPLETED_AT,
+                    isCompleted = true
+                )
             )
         }
 
@@ -179,12 +187,172 @@ class WorkoutRepositoryTest {
             performance = SetPerformanceInput(
                 reps = 8,
                 assistanceWeight = 30.0,
+                completedAtTimestamp = COMPLETED_AT,
                 isCompleted = true
             )
         )
 
         assertThat(setDao.completionUpdates.single().assistanceWeight).isEqualTo(30.0)
         assertThat(setDao.completionUpdates.single().weight).isNull()
+    }
+
+    @Test
+    fun logSetCompletion_completedSet_persistsEveryTypedOutcomeFieldInOneUpdate() = runTest {
+        repository.logSetCompletion(
+            setId = "set-id",
+            performance = completedWeightReps().copy(
+                rpe = 8f,
+                rir = 2,
+                feltManageable = true
+            )
+        )
+
+        assertThat(setDao.completionUpdates).containsExactly(
+            SetCompletionUpdate(
+                setId = "set-id",
+                reps = 10,
+                weight = 40.0,
+                isCompleted = true,
+                rpe = 8f,
+                rir = 2,
+                feltManageable = true,
+                completedAtTimestamp = COMPLETED_AT
+            )
+        )
+    }
+
+    @Test
+    fun logSetCompletion_missingEffortFeedback_staysNull() = runTest {
+        repository.logSetCompletion(setId = "set-id", performance = completedWeightReps())
+
+        val update = setDao.completionUpdates.single()
+        assertThat(update.rpe).isNull()
+        assertThat(update.rir).isNull()
+        assertThat(update.feltManageable).isNull()
+        assertThat(update.stopReason).isNull()
+        assertThat(update.stoppedAtTimestamp).isNull()
+    }
+
+    @Test
+    fun logSetCompletion_effortFeedbackOutsideItsScale_isRejectedBeforePersistence() = runTest {
+        listOf(10.5f, -0.5f, Float.NaN).forEach { invalidRpe ->
+            val message = assertIllegalArgument {
+                repository.logSetCompletion(
+                    setId = "set-id",
+                    performance = completedWeightReps().copy(rpe = invalidRpe)
+                )
+            }
+            assertThat(message).contains("rpe")
+        }
+        assertThat(
+            assertIllegalArgument {
+                repository.logSetCompletion(
+                    setId = "set-id",
+                    performance = completedWeightReps().copy(rir = 11)
+                )
+            }
+        ).contains("rir")
+
+        assertThat(setDao.completionUpdates).isEmpty()
+    }
+
+    @Test
+    fun logSetCompletion_completedSetWithoutAPositiveTimestamp_isRejectedBeforePersistence() = runTest {
+        assertThat(
+            assertIllegalArgument {
+                repository.logSetCompletion(
+                    setId = "set-id",
+                    performance = completedWeightReps().copy(completedAtTimestamp = null)
+                )
+            }
+        ).contains("completedAtTimestamp")
+
+        assertThat(setDao.completionUpdates).isEmpty()
+    }
+
+    @Test
+    fun logSetCompletion_clearingCompletion_atomicallyClearsFeedbackAndTimestamps() = runTest {
+        setDao.persistedCompletion = true
+
+        repository.logSetCompletion(
+            setId = "set-id",
+            performance = SetPerformanceInput(reps = 10, weight = 40.0, isCompleted = false)
+        )
+
+        assertThat(setDao.completionUpdates).containsExactly(
+            SetCompletionUpdate(setId = "set-id", reps = 10, weight = 40.0, isCompleted = false)
+        )
+    }
+
+    @Test
+    fun logSetCompletion_skippedSet_persistsTypedReasonWithoutCompletion() = runTest {
+        // A stopped set records no load at all and must not be held to the completed-set
+        // invariants; it stays distinguishable from a set that was never started.
+        repository.logSetCompletion(
+            setId = "set-id",
+            performance = SetPerformanceInput(
+                stopReason = SetStopReason.PAIN_STOP,
+                stoppedAtTimestamp = STOPPED_AT,
+                isCompleted = false
+            )
+        )
+
+        assertThat(setDao.completionUpdates).containsExactly(
+            SetCompletionUpdate(
+                setId = "set-id",
+                isCompleted = false,
+                stopReason = SetStopReason.PAIN_STOP,
+                stoppedAtTimestamp = STOPPED_AT
+            )
+        )
+    }
+
+    @Test
+    fun logSetCompletion_stoppedSet_stillEnforcesTypeSpecificFields() = runTest {
+        assertIllegalArgument {
+            repository.logSetCompletion(
+                setId = "set-id",
+                performance = SetPerformanceInput(
+                    assistanceWeight = 20.0,
+                    stopReason = SetStopReason.EQUIPMENT_UNAVAILABLE,
+                    stoppedAtTimestamp = STOPPED_AT,
+                    isCompleted = false
+                )
+            )
+        }
+
+        assertThat(setDao.completionUpdates).isEmpty()
+    }
+
+    @Test
+    fun logSetCompletion_contradictoryCompletionAndStopReason_isRejectedBeforePersistence() = runTest {
+        assertThat(
+            assertIllegalArgument {
+                repository.logSetCompletion(
+                    setId = "set-id",
+                    performance = completedWeightReps().copy(
+                        stopReason = SetStopReason.USER_SKIPPED,
+                        stoppedAtTimestamp = STOPPED_AT
+                    )
+                )
+            }
+        ).contains("stopReason")
+
+        assertThat(setDao.completionUpdates).isEmpty()
+    }
+
+    @Test
+    fun logSetCompletion_rejectionMessages_nameFieldsWithoutEchoingEnteredValues() = runTest {
+        val message = assertIllegalArgument {
+            repository.logSetCompletion(
+                setId = "set-id",
+                performance = completedWeightReps(reps = 4_242)
+            )
+        }
+
+        assertThat(message).contains("reps")
+        assertThat(message).doesNotContain("4242")
+        assertThat(message).doesNotContain("4,242")
     }
 
     @Test
@@ -204,30 +372,53 @@ class WorkoutRepositoryTest {
         }
     }
 
-    private suspend fun assertIllegalArgument(block: suspend () -> Unit) {
+    private fun completedWeightReps(
+        reps: Int? = 10,
+        weight: Double? = 40.0
+    ) = SetPerformanceInput(
+        reps = reps,
+        weight = weight,
+        completedAtTimestamp = COMPLETED_AT,
+        isCompleted = true
+    )
+
+    private suspend fun assertIllegalArgument(block: suspend () -> Unit): String {
         try {
             block()
             fail("Expected IllegalArgumentException")
-        } catch (_: IllegalArgumentException) {
-            // Expected rejection.
+        } catch (exception: IllegalArgumentException) {
+            return exception.message.orEmpty()
         }
+        error("unreachable")
+    }
+
+    private companion object {
+        const val COMPLETED_AT = 1_777_777L
+        const val STOPPED_AT = 1_888_888L
     }
 }
 
 private data class SetCompletionUpdate(
     val setId: String,
-    val reps: Int?,
-    val weight: Double?,
+    val reps: Int? = null,
+    val weight: Double? = null,
     val isCompleted: Boolean,
     val assistanceWeight: Double? = null,
     val durationSeconds: Int? = null,
-    val distanceMeters: Double? = null
+    val distanceMeters: Double? = null,
+    val rpe: Float? = null,
+    val rir: Int? = null,
+    val feltManageable: Boolean? = null,
+    val completedAtTimestamp: Long? = null,
+    val stoppedAtTimestamp: Long? = null,
+    val stopReason: SetStopReason? = null
 )
 
 private class RecordingWorkoutSetDao : WorkoutSetDao {
     val completionUpdates = mutableListOf<SetCompletionUpdate>()
     var affectedRows: Int = 1
     var exerciseType: ExerciseType = ExerciseType.WEIGHT_REPS
+    var persistedCompletion: Boolean = false
 
     override suspend fun insertSets(sets: List<WorkoutSetEntity>) = Unit
     override suspend fun insertOrUpdateSet(set: WorkoutSetEntity) = Unit
@@ -240,19 +431,25 @@ private class RecordingWorkoutSetDao : WorkoutSetDao {
         completedReps = null,
         targetWeight = 20.0,
         completedWeight = null,
-        isCompleted = false,
+        isCompleted = persistedCompletion,
         rpe = null,
         rir = null,
         type = SetType.NORMAL
     )
 
-    override suspend fun updateSetCompletion(
+    override suspend fun updateSetOutcome(
         setId: String,
         reps: Int?,
         weight: Double?,
         assistanceWeight: Double?,
         durationSeconds: Int?,
         distanceMeters: Double?,
+        rpe: Float?,
+        rir: Int?,
+        feltManageable: Boolean?,
+        completedAtTimestamp: Long?,
+        stoppedAtTimestamp: Long?,
+        stopReason: SetStopReason?,
         isCompleted: Boolean,
         requiredStatus: SessionStatus
     ): Int {
@@ -263,7 +460,13 @@ private class RecordingWorkoutSetDao : WorkoutSetDao {
             isCompleted = isCompleted,
             assistanceWeight = assistanceWeight,
             durationSeconds = durationSeconds,
-            distanceMeters = distanceMeters
+            distanceMeters = distanceMeters,
+            rpe = rpe,
+            rir = rir,
+            feltManageable = feltManageable,
+            completedAtTimestamp = completedAtTimestamp,
+            stoppedAtTimestamp = stoppedAtTimestamp,
+            stopReason = stopReason
         )
         return affectedRows
     }

@@ -3,6 +3,7 @@ package wallcrawl.elopenmike.com.core.database
 import android.content.Context
 import android.database.Cursor
 import androidx.room.Room
+import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
@@ -11,12 +12,14 @@ import org.junit.After
 import org.junit.Test
 import org.junit.runner.RunWith
 import wallcrawl.elopenmike.com.core.database.repository.OfflineUserProfileRepository
+import wallcrawl.elopenmike.com.core.database.repository.OfflineWorkoutRepository
 import wallcrawl.elopenmike.com.core.model.CapabilityLevel
-import wallcrawl.elopenmike.com.core.model.MovementCapabilities
 import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
+import wallcrawl.elopenmike.com.core.model.SetOutcome
+import wallcrawl.elopenmike.com.core.model.outcome
 
 @RunWith(AndroidJUnit4::class)
-class Migration7To8Test {
+class Migration8To9Test {
 
     private val context: Context = ApplicationProvider.getApplicationContext()
     private var database: WallCrawlDatabase? = null
@@ -28,73 +31,78 @@ class Migration7To8Test {
     }
 
     @Test
-    fun migrate_preservesProfileAndHistoryWhileAddingUnknownCapabilities() = runBlocking {
-        createVersion7Database()
+    fun migrate_addsNullSetOutcomeColumnsWithoutTouchingAnyExistingValue() {
+        createVersion8Database()
 
         database = openDatabase()
         val sqlite = checkNotNull(database).openHelper.writableDatabase
 
-        assertRawMigratedProfile(sqlite)
-
-        assertPreservedRows(sqlite)
+        assertThat(sqlite.version).isEqualTo(9)
+        assertPreservedProfile(sqlite)
+        assertPreservedHistoryAndTemplate(sqlite)
         sqlite.query("PRAGMA foreign_key_check").use { cursor ->
             assertThat(cursor.count).isEqualTo(0)
-        }
-
-        val profile = OfflineUserProfileRepository(checkNotNull(database).userProfileDao())
-            .getProfileOnce()
-        assertThat(profile.onboardingCompleted).isTrue()
-        MovementCapabilityType.entries.forEach { type ->
-            assertThat(profile.movementCapabilities[type]).isEqualTo(CapabilityLevel.UNKNOWN)
         }
     }
 
     @Test
-    fun migratedDatabase_reloadsCompleteProfileAndCapabilitiesThroughNewInstances() = runBlocking {
-        createVersion7Database()
+    fun migrate_leavesExistingHistoryWithAnUnrecordedOutcomeRatherThanAFabricatedOne() {
+        createVersion8Database()
         database = openDatabase()
 
-        val original = OfflineUserProfileRepository(checkNotNull(database).userProfileDao())
-            .getProfileOnce()
-        val explicitCapabilities = MovementCapabilities.from(
-            MovementCapabilityType.entries.associateWith { type ->
-                when (type.ordinal % 3) {
-                    0 -> CapabilityLevel.COMFORTABLE
-                    1 -> CapabilityLevel.LIMITED
-                    else -> CapabilityLevel.AVOID
-                }
-            }
-        )
-        OfflineUserProfileRepository(checkNotNull(database).userProfileDao()).saveProfile(
-            original.copy(movementCapabilities = explicitCapabilities)
-        )
-        checkNotNull(database).close()
-        database = null
-
-        database = openDatabase()
-        val profile = OfflineUserProfileRepository(checkNotNull(database).userProfileDao())
-            .getProfileOnce()
-
-        assertThat(profile).isEqualTo(
-            original.copy(
-                revision = 18L,
-                movementCapabilities = explicitCapabilities
-            )
-        )
         val sqlite = checkNotNull(database).openHelper.writableDatabase
-        assertPreservedRows(sqlite)
-        sqlite.query("PRAGMA foreign_key_check").use { cursor ->
-            assertThat(cursor.count).isEqualTo(0)
+        sqlite.query("SELECT * FROM workout_sets").use { cursor ->
+            assertThat(cursor.moveToFirst()).isTrue()
+            // The set was logged as completed before typed outcomes existed. Migration
+            // must not invent a completion timestamp or a manageable answer for it.
+            cursor.assertInt("isCompleted", 1)
+            cursor.assertNull("feltManageable")
+            cursor.assertNull("completedAtTimestamp")
+            cursor.assertNull("stoppedAtTimestamp")
+            cursor.assertNull("stopReason")
+        }
+
+        val session = runBlocking {
+            OfflineWorkoutRepository(
+                sessionDao = checkNotNull(database).workoutSessionDao(),
+                setDao = checkNotNull(database).workoutSetDao()
+            ).getSessionById("session-7")
+        }
+        val set = checkNotNull(session).exercises.single().sets.single()
+        assertThat(set.isCompleted).isTrue()
+        assertThat(set.outcome).isEqualTo(
+            SetOutcome.Completed(recordedAtTimestamp = null, rpe = 8f, rir = 2)
+        )
+    }
+
+    @Test
+    fun migratedProfileAndCapabilities_reloadUnchangedThroughANewInstance() {
+        createVersion8Database()
+        database = openDatabase()
+
+        val profile = runBlocking {
+            OfflineUserProfileRepository(checkNotNull(database).userProfileDao()).getProfileOnce()
+        }
+        checkNotNull(database).close()
+        database = openDatabase()
+        val reloaded = runBlocking {
+            OfflineUserProfileRepository(checkNotNull(database).userProfileDao()).getProfileOnce()
+        }
+
+        assertThat(reloaded).isEqualTo(profile)
+        assertThat(reloaded.onboardingCompleted).isTrue()
+        MovementCapabilityType.entries.forEach { type ->
+            assertThat(reloaded.movementCapabilities[type]).isEqualTo(CapabilityLevel.UNKNOWN)
         }
     }
 
-    private fun createVersion7Database() {
+    private fun createVersion8Database() {
         context.deleteDatabase(DATABASE_NAME)
         context.openOrCreateDatabase(DATABASE_NAME, Context.MODE_PRIVATE, null).use { db ->
-            LegacyDatabaseFixtures.createSchema(db, version = 7)
-            LegacyDatabaseFixtures.insertProfile(db, version = 7)
+            LegacyDatabaseFixtures.createSchema(db, version = 8)
+            LegacyDatabaseFixtures.insertProfile(db, version = 8)
             LegacyDatabaseFixtures.insertHistoryAndTemplate(db)
-            db.version = 7
+            db.version = 8
         }
     }
 
@@ -103,7 +111,7 @@ class Migration7To8Test {
             .addMigrations(*WallCrawlDatabase.ALL_MIGRATIONS)
             .build()
 
-    private fun assertRawMigratedProfile(sqlite: androidx.sqlite.db.SupportSQLiteDatabase) {
+    private fun assertPreservedProfile(sqlite: SupportSQLiteDatabase) {
         sqlite.query("SELECT * FROM user_profiles").use { cursor ->
             assertThat(cursor.moveToFirst()).isTrue()
             cursor.assertString("id", "default_user")
@@ -118,10 +126,7 @@ class Migration7To8Test {
             cursor.assertString("musclePrioritiesJson", "Chest:HIGH|||Back:LOW")
             cursor.assertString("excludedExerciseIdsJson", "burpee")
             cursor.assertInt("onboardingCompleted", 1)
-            cursor.assertString(
-                "trainingConstraintsJson",
-                "KNEE_SENSITIVE|||LOW_IMPACT_ONLY"
-            )
+            cursor.assertString("trainingConstraintsJson", "KNEE_SENSITIVE|||LOW_IMPACT_ONLY")
             cursor.assertInt("returningAfterBreakWeeks", 12)
             cursor.assertString("confirmedStartingLoadsJson", "goblet-squat:24.0")
             cursor.assertString("fitnessGoalsJson", "STRENGTH|||BUILD_MUSCLE")
@@ -131,7 +136,7 @@ class Migration7To8Test {
         }
     }
 
-    private fun assertPreservedRows(sqlite: androidx.sqlite.db.SupportSQLiteDatabase) {
+    private fun assertPreservedHistoryAndTemplate(sqlite: SupportSQLiteDatabase) {
         sqlite.query("SELECT * FROM workout_sessions").use { cursor ->
             assertThat(cursor.moveToFirst()).isTrue()
             cursor.assertString("id", "session-7")
@@ -237,6 +242,6 @@ class Migration7To8Test {
     }
 
     private companion object {
-        const val DATABASE_NAME = "migration-7-8.db"
+        const val DATABASE_NAME = "migration-8-9.db"
     }
 }

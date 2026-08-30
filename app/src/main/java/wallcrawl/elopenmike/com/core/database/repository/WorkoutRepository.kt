@@ -12,6 +12,7 @@ import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.PlannedExercise
 import wallcrawl.elopenmike.com.core.model.RepRange
 import wallcrawl.elopenmike.com.core.model.SessionStatus
+import wallcrawl.elopenmike.com.core.model.SetOutcomeRules
 import wallcrawl.elopenmike.com.core.model.SetType
 import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
 import wallcrawl.elopenmike.com.core.model.UserProfile
@@ -44,20 +45,13 @@ interface WorkoutRepository {
         template: WorkoutTemplate,
         userProfile: UserProfile
     ): WorkoutSession
-    suspend fun logSetCompletion(setId: String, reps: Int?, weight: Double?, isCompleted: Boolean)
-    suspend fun logSetCompletion(setId: String, performance: SetPerformanceInput) {
-        require(
-            performance.assistanceWeight == null &&
-                performance.durationSeconds == null &&
-                performance.distanceMeters == null
-        ) { "This repository only supports repetition and weight outcomes." }
-        logSetCompletion(
-            setId = setId,
-            reps = performance.reps,
-            weight = performance.weight,
-            isCompleted = performance.isCompleted
-        )
-    }
+    /**
+     * Persists one set's complete typed outcome: the type-specific performance values,
+     * optional RPE/RIR, the optional manageable confirmation, the outcome timestamp, and
+     * any typed stop reason. This is the only way a set outcome is written, so validation
+     * and the active-session guard cannot be bypassed.
+     */
+    suspend fun logSetCompletion(setId: String, performance: SetPerformanceInput)
     suspend fun completeWorkout(sessionId: String, actualDurationMinutes: Int): WorkoutSummary
 
     /**
@@ -224,23 +218,10 @@ class OfflineWorkoutRepository(
 
     override suspend fun logSetCompletion(
         setId: String,
-        reps: Int?,
-        weight: Double?,
-        isCompleted: Boolean
-    ) = logSetCompletion(
-        setId = setId,
-        performance = SetPerformanceInput(
-            reps = reps,
-            weight = weight,
-            isCompleted = isCompleted
-        )
-    )
-
-    override suspend fun logSetCompletion(
-        setId: String,
         performance: SetPerformanceInput
     ) {
         require(setId.isNotBlank()) { "setId must not be blank." }
+        SetOutcomeRules.requireValidOutcome(performance)
         require(performance.reps == null || performance.reps in 0..MAX_LOGGED_REPS) {
             "reps must be between zero and $MAX_LOGGED_REPS."
         }
@@ -265,13 +246,22 @@ class OfflineWorkoutRepository(
         }
         validatePerformanceForType(persistedSet.exerciseType, performance)
 
-        val affectedRows = setDao.updateSetCompletion(
+        // One statement writes performance, feedback, timestamps, stop reason, and
+        // completion together, so clearing completion also clears completion-only
+        // feedback and no intermediate contradictory row can ever be observed.
+        val affectedRows = setDao.updateSetOutcome(
             setId = setId,
             reps = performance.reps,
             weight = performance.weight,
             assistanceWeight = performance.assistanceWeight,
             durationSeconds = performance.durationSeconds,
             distanceMeters = performance.distanceMeters,
+            rpe = performance.rpe,
+            rir = performance.rir,
+            feltManageable = performance.feltManageable,
+            completedAtTimestamp = performance.completedAtTimestamp,
+            stoppedAtTimestamp = performance.stoppedAtTimestamp,
+            stopReason = performance.stopReason,
             isCompleted = performance.isCompleted
         )
         check(affectedRows == 1) {
@@ -451,6 +441,10 @@ class OfflineWorkoutRepository(
                             isCompleted = setEntity.isCompleted,
                             rpe = setEntity.rpe,
                             rir = setEntity.rir,
+                            feltManageable = setEntity.feltManageable,
+                            completedAtTimestamp = setEntity.completedAtTimestamp,
+                            stoppedAtTimestamp = setEntity.stoppedAtTimestamp,
+                            stopReason = setEntity.stopReason,
                             type = setEntity.type
                         )
                     }

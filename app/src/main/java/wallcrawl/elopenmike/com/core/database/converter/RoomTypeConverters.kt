@@ -6,6 +6,7 @@ import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
 import wallcrawl.elopenmike.com.core.model.SessionStatus
+import wallcrawl.elopenmike.com.core.model.SetStopReason
 import wallcrawl.elopenmike.com.core.model.SetType
 import wallcrawl.elopenmike.com.core.model.ThemePreference
 import wallcrawl.elopenmike.com.core.model.WeightUnit
@@ -71,6 +72,27 @@ class RoomTypeConverters {
         SetType.valueOf(value)
     } catch (e: Exception) {
         SetType.NORMAL
+    }
+
+    /**
+     * A stop reason is nullable: NULL means the set was never skipped or stopped.
+     *
+     * Unlike the tolerant converters above, an unrecognised non-null value is rejected
+     * instead of being mapped to a fallback. Every write goes through one guarded
+     * repository path, so an unknown value can only mean the row is not what the domain
+     * believes it is -- and silently choosing a reason would invent an outcome the user
+     * never recorded. The message names the column, never the stored value.
+     */
+    @TypeConverter
+    fun fromSetStopReason(reason: SetStopReason?): String? = reason?.name
+
+    @TypeConverter
+    fun toSetStopReason(value: String?): SetStopReason? {
+        if (value == null) return null
+        return SetStopReason.entries.firstOrNull { it.name == value }
+            ?: throw IllegalArgumentException(
+                "workout_sets.stopReason holds a value that is not a known SetStopReason."
+            )
     }
 
     @TypeConverter

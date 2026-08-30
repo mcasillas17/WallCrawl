@@ -115,19 +115,39 @@ sealed interface ProgramViolation {
 
 ### Task 5: Add Typed Gym-Floor Feedback
 
+> **Shipped.** Typed outcomes are captured, validated, and persisted atomically,
+> and the gym-floor logger and rest timer are in the app. Nothing downstream
+> consumes the feedback yet; that is Task 6.
+
 **Files:**
 - Modify: `app/src/main/java/wallcrawl/elopenmike/com/core/model/Workout.kt`
+- Create: `app/src/main/java/wallcrawl/elopenmike/com/core/model/SetOutcome.kt`
 - Modify: `app/src/main/java/wallcrawl/elopenmike/com/core/database/entity/Entities.kt`
 - Modify: `app/src/main/java/wallcrawl/elopenmike/com/core/database/dao/Daos.kt`
 - Modify: `app/src/main/java/wallcrawl/elopenmike/com/core/database/repository/WorkoutRepository.kt`
 - Modify: `app/src/main/java/wallcrawl/elopenmike/com/feature/workout/ActiveWorkoutScreen.kt`
+- Create: `app/src/main/java/wallcrawl/elopenmike/com/feature/workout/RestTimerState.kt`
 - Test: `app/src/test/java/wallcrawl/elopenmike/com/feature/workout/ActiveWorkoutViewModelTest.kt`
 
-- [ ] Write failing tests for nullable RPE/RIR, timestamps, user-confirmed manageable flag, skip/pain-stop reason, and editable rest.
-- [ ] Persist typed outcomes atomically while preserving null as null.
-- [ ] Add fast RIR/rest controls; never require effort input to complete a valid set.
-- [ ] Ensure incomplete/abandoned sessions cannot progress capability or weekly dose.
-- [ ] Run focused and connected tests; commit `feat: capture adaptive workout feedback`.
+- [x] Nullable RPE/RIR, outcome timestamps, the user-confirmed manageable flag,
+  and a typed skip/pain-stop reason are validated by `SetOutcomeRules` and
+  covered by unit, DAO, and migration tests.
+- [x] Typed outcomes persist atomically in one guarded `updateSetOutcome`
+  statement, with null preserved as null and no partial or contradictory write.
+- [x] Fast RIR and rest controls exist; effort input never blocks completing a
+  valid set, and the rest timer runs off the exercise's persisted `restSeconds`.
+- [x] Incomplete, skipped, cancelled, and abandoned work stays distinguishable
+  from completed work, so it cannot look completed to future adaptation.
+- [x] Focused JVM tests and connected Android tests run against schema 9.
+
+Effort is recorded on the documented 0-10 RPE scale and 0-10 RIR range. Missing
+values stay missing: nothing infers effort, readiness, or a manageable answer
+from any other field. `PAIN_STOP` means only that the user chose to stop because
+something hurt — never an injury, a symptom report, or a diagnosis — and there
+is no free-text stop reason in this milestone.
+
+**Not in this milestone:** capability evidence, progression, deloads, and the
+weekly dose ledger do not read this feedback yet.
 
 ### Task 6: Add Capability Evidence, Progression, and DeloadOffer
 

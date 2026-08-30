@@ -118,8 +118,15 @@ data class WorkoutSet(
     val isCompleted: Boolean = false,
     val rpe: Float? = null,
     val rir: Int? = null,
+    val feltManageable: Boolean? = null,
+    val completedAtTimestamp: Long? = null,
+    val stoppedAtTimestamp: Long? = null,
+    val stopReason: SetStopReason? = null,
     val type: SetType = SetType.NORMAL
-)
+) {
+    /** True once the user resolved this set, either by completing it or by stopping it. */
+    val isResolved: Boolean get() = isCompleted || stopReason != null
+}
 
 enum class SetType {
     WARMUP,

@@ -503,8 +503,13 @@ git commit -m "feat: validate complete workout programs"
 
 ### Task 6: Make Active Logging Complete and Gym-Friendly
 
+> **Shipped.** Typed set outcomes, the local rest timer, the gym-floor controls,
+> and the finish/discard safeguards are in the app. What remains from the
+> original task is exercise substitution, which moved to Task 7.
+
 **Files:**
 - Modify: `app/src/main/java/wallcrawl/elopenmike/com/core/model/ExercisePrescription.kt`
+- Create: `app/src/main/java/wallcrawl/elopenmike/com/core/model/SetOutcome.kt`
 - Modify: `app/src/main/java/wallcrawl/elopenmike/com/core/model/Workout.kt`
 - Modify: `app/src/main/java/wallcrawl/elopenmike/com/core/database/entity/Entities.kt`
 - Modify: `app/src/main/java/wallcrawl/elopenmike/com/core/database/dao/Daos.kt`
@@ -514,68 +519,56 @@ git commit -m "feat: validate complete workout programs"
 - Modify: `app/src/main/java/wallcrawl/elopenmike/com/feature/workout/ActiveWorkoutViewModel.kt`
 - Modify: `app/src/main/java/wallcrawl/elopenmike/com/feature/workout/ActiveWorkoutScreen.kt`
 - Modify: `app/src/main/java/wallcrawl/elopenmike/com/core/ui/components/SetRow.kt`
-- Test: `app/src/test/java/wallcrawl/elopenmike/com/feature/workout/ActiveWorkoutViewModelTest.kt`
-- Test: `app/src/androidTest/java/wallcrawl/elopenmike/com/core/database/Migration5To6Test.kt`
 
-- [ ] **Step 1: Write failing RPE/RIR/timestamp persistence tests**
+- [x] **Step 1: Typed set outcome**
 
-```kotlin
-val input = SetPerformanceInput(
-    reps = 10,
-    weight = 40.0,
-    rpe = 8f,
-    rir = 2,
-    completedAtTimestamp = 1_777_777L,
-    isCompleted = true
-)
-repository.logSetCompletion(setId, input)
-assertThat(repository.getSet(setId).rpe).isEqualTo(8f)
-```
+`SetPerformanceInput` and `WorkoutSet` carry nullable `rpe` (0-10), nullable
+`rir` (0-10), a nullable user-confirmed `feltManageable`, a
+`completedAtTimestamp`, a `stoppedAtTimestamp`, and a nullable `SetStopReason`
+(`USER_SKIPPED`, `PAIN_STOP`, `EQUIPMENT_UNAVAILABLE`, `TIME_CONSTRAINT`,
+`OTHER`). `SetOutcomeRules` rejects contradictory combinations at the
+domain/repository boundary; `SetOutcome` is the derived read model. Null means
+unknown and stays null, `PAIN_STOP` is never treated as a diagnosis, and
+completed work can never also carry a stop reason.
 
-- [ ] **Step 2: Add fields and migration 5 -> 6**
+- [x] **Step 2: Additive migration 8 -> 9**
 
-Add `rpe`, `rir`, and `completedAtTimestamp` to `SetPerformanceInput`; add `completedAtTimestamp` to `WorkoutSetEntity`. Validate RPE `0f..10f`, RIR `0..10`, and require a timestamp only for completed sets.
+Four nullable set-outcome columns with no SQL default, registered in the single
+database construction path with no destructive fallback. Existing history keeps
+an honestly unrecorded outcome. Every supported historical chain is tested
+through to schema 9.
 
-- [ ] **Step 3: Update DAO atomically**
+- [x] **Step 3: One guarded atomic write**
 
-Extend `updateSetCompletion()` to persist performance fields and timestamp under the existing active-session guard.
+`WorkoutSetDao.updateSetOutcome` writes performance, effort, the manageable
+confirmation, both timestamps, the stop reason, and completion in a single
+parameterized statement, still gated on the session being in progress, and the
+repository requires exactly one updated row. Clearing completion clears its
+feedback and timestamps in the same write.
 
-- [ ] **Step 4: Add fast controls**
+- [x] **Step 4: Gym-floor controls**
 
-Replace keyboard-first completion with large plus/minus controls, previous-value copy, optional RPE/RIR sheet, and one-tap completion. Keep text entry accessible as a secondary action.
+One-tap completion with checkbox semantics, 48 dp plus/minus controls beside a
+text field for precise values, copy-previous when a comparable completed value
+exists, optional RPE/RIR that never gate completion, a plainly worded typed
+skip/stop action, and recoverable inline errors that never replace the screen.
 
-- [ ] **Step 5: Add a local rest timer state machine**
+- [x] **Step 5: Local rest timer**
 
-```kotlin
-sealed interface RestTimerState {
-    data object Idle : RestTimerState
-    data class Running(val setId: String, val deadlineElapsedRealtime: Long) : RestTimerState
-    data class Expired(val setId: String) : RestTimerState
-}
-```
+`RestTimerStateMachine` drives `RestTimerState` from an injected monotonic
+elapsed-realtime clock. Completion starts rest from the exercise's persisted
+`restSeconds`; add-30, skip, and cancel are explicit; extensions clamp to the
+prescription's own maximum; zero rest stays idle. It is not restored after
+process death, by design.
 
-Inject an elapsed-realtime clock for tests. Completing a set starts the prescription's rest duration. Skip, add 30 seconds, and cancel are explicit events.
+- [x] **Step 6: Finish and cancel safeguards**
 
-- [ ] **Step 6: Add finish and cancel safeguards**
+`FinishDecision.ConfirmIncomplete(openSetCount)` gates finishing with open sets,
+discarding needs its own confirmation, both are idempotent under double taps,
+and skipped sets stay distinguishable from sets that were never started.
 
-Add the decision type and make `finishWorkout()` return `ConfirmIncomplete` when sets remain:
-
-```kotlin
-sealed interface FinishDecision {
-    data object Complete : FinishDecision
-    data class ConfirmIncomplete(val openSetCount: Int) : FinishDecision
-}
-```
-
-Wire `cancelWorkout()` to an explicit discard confirmation. Empty/incomplete sessions never silently count toward progression.
-
-- [ ] **Step 7: Verify and commit**
-
-```bash
-./gradlew testDebugUnitTest --tests '*WorkoutRepositoryTest' --tests '*ActiveWorkoutViewModelTest'
-git add app/src/main app/src/test app/src/androidTest
-git commit -m "feat: complete active workout logging"
-```
+- [ ] **Remaining:** progression and deload logic still do not read this
+  feedback, and exercise substitution is Task 7.
 
 ---
 
