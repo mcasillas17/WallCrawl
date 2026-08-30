@@ -139,6 +139,14 @@ class PlannerFixtureLoaderTest {
     }
 
     @Test
+    fun loadResource_rejectsSuccessOnlyAssertionsOnFailureOutcomes() {
+        assertFormatError(
+            "planner-fixtures/invalid-failure-outcome-success-assertions.json",
+            "expected.requiredExerciseIds"
+        )
+    }
+
+    @Test
     fun loadResource_rejectsOutOfRangeNonFiniteOversizedInputs() {
         assertFormatError("planner-fixtures/invalid-out-of-range-number.json", "profile.preferredDurationMinutes")
         assertFormatError("planner-fixtures/invalid-non-finite-number.json", "profile.confirmedStartingLoads.incline-dumbbell-press")

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "machine-only",
   "policyVersion": 3,
-  "catalogVersion": "workout-guide-bundled-302",
+  "catalogVersion": "ba0b709cb20430361b2cb33aaadd20998164a916",
   "profile": {
     "goals": [
       "STRENGTH"

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "invalid-failure-outcome-success-assertions",
+  "policyVersion": 3,
+  "catalogVersion": "test-catalog-2026-08-30",
+  "profile": {
+    "goals": ["GENERAL_FITNESS"],
+    "experienceLevel": "BEGINNER",
+    "preferredDurationMinutes": 25,
+    "daysPerWeek": 2,
+    "availableEquipment": ["Cardio"],
+    "preferredUnit": "LBS",
+    "musclePriorities": {"Core": "NORMAL"},
+    "excludedExerciseIds": [],
+    "trainingConstraints": [],
+    "returningAfterBreakWeeks": 0,
+    "confirmedStartingLoads": {},
+    "movementCapabilities": {}
+  },
+  "completedWorkoutCount": 0,
+  "exerciseHistory": [],
+  "expected": {
+    "outcome": "NO_STRENGTH_CANDIDATES",
+    "requiredExerciseIds": ["walking"],
+    "forbiddenExerciseIds": [],
+    "workoutNameContains": "should-not-be-here"
+  }
+}

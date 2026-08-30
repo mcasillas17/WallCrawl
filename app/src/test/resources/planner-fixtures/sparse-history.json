@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "sparse-history",
   "policyVersion": 3,
-  "catalogVersion": "workout-guide-bundled-302",
+  "catalogVersion": "ba0b709cb20430361b2cb33aaadd20998164a916",
   "profile": {
     "goals": [
       "GENERAL_FITNESS"
@@ -12,7 +12,7 @@
     "daysPerWeek": 2,
     "availableEquipment": [
       "Bodyweight",
-      "Pull-up Bar"
+      "Resistance Band"
     ],
     "preferredUnit": "LBS",
     "musclePriorities": {
@@ -29,7 +29,7 @@
   "completedWorkoutCount": 1,
   "exerciseHistory": [
     {
-      "exerciseId": "pull-ups",
+      "exerciseId": "inverted-row",
       "lastWeight": null,
       "lastReps": 5,
       "bestEstimated1RM": null,
@@ -43,18 +43,21 @@
     }
   ],
   "allowedExerciseIds": [
-    "pull-ups",
-    "pike-push-up",
+    "inverted-row",
+    "banded-lat-pulldown",
     "prone-y-raise"
   ],
   "expected": {
     "outcome": "SUCCESS",
     "requiredExerciseIds": [],
     "requiredAnyExerciseIdGroups": [
-      ["pull-ups"]
+      [
+        "inverted-row",
+        "banded-lat-pulldown"
+      ]
     ],
     "forbiddenExerciseIds": [
-      "lat-pulldown"
+      "pull-ups"
     ]
   }
 }

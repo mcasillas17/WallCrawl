@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "returning-user",
   "policyVersion": 3,
-  "catalogVersion": "workout-guide-bundled-302",
+  "catalogVersion": "ba0b709cb20430361b2cb33aaadd20998164a916",
   "profile": {
     "goals": [
       "GENERAL_FITNESS"
@@ -37,15 +37,16 @@
   "allowedExerciseIds": [
     "incline-dumbbell-press",
     "dumbbell-bent-over-row",
-    "single-leg-romanian-deadlift",
-    "ab-wheel",
-    "dumbbell-fly"
+    "goblet-squat",
+    "glute-bridge",
+    "dead-bug"
   ],
   "expected": {
     "outcome": "SUCCESS",
     "requiredExerciseIds": [],
     "forbiddenExerciseIds": [
-      "barbell-bench-press"
+      "ab-wheel",
+      "single-leg-romanian-deadlift"
     ],
     "workoutNameContains": "(Re-entry)",
     "maxTargetSetsPerExercise": 2,

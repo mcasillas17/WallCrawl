@@ -2,15 +2,23 @@
 
 ## Purpose and staged boundary
 
-The planner evaluation corpus is a JVM-only, test-only harness around the current deterministic `FakeWorkoutPlanner`. It documents and replays representative planner inputs without changing production behavior. Its boundary is intentionally staged: JSON fixtures describe only user/profile/history inputs and invariant expectations, the test harness converts those fixtures into a real `WorkoutGenerationContext`, and the planner still operates only on the filtered candidate pool it already receives in production.
+The planner evaluation corpus is a JVM-only, test-only harness around the current deterministic `FakeWorkoutPlanner`. It documents representative planner inputs, builds a real `WorkoutGenerationContext`, and replays planner behavior without changing production code.
+
+The boundary is explicit:
+
+- production still owns equipment filtering, split selection, prescription generation, and typed failures;
+- corpus fixtures can optionally narrow the legal candidate pool with curated `allowedExerciseIds` to model the reviewed eligibility boundary that production does **not** implement yet;
+- capability inputs and `TrainingConstraint` metadata are currently inert for planner eligibility unless production code already reads them.
+
+These fixtures therefore model the planner **inside** a curated legal set. They do not claim that the current planner discovered capability, safety, or persona appropriateness on its own.
 
 ## Fixture location and corpus layout
 
 - Persona fixtures live in `app/src/test/resources/planner-fixtures/*.json`.
 - `app/src/test/resources/planner-fixtures/manifest.txt` is the authoritative corpus manifest. `PlannerFixtureLoader.loadCorpus()` reads that manifest instead of enumerating the directory.
-- Negative fixtures such as malformed, oversized, duplicate, and unknown-field cases live beside the persona files but are exercised by loader tests rather than the corpus manifest.
+- Loader-only malformed/invalid fixtures live beside the corpus resources but stay out of the manifest.
 
-Every corpus fixture has this root shape:
+Every corpus fixture uses this root shape:
 
 - `schemaVersion`
 - `id`
@@ -22,97 +30,115 @@ Every corpus fixture has this root shape:
 - optional `allowedExerciseIds`
 - `expected`
 
-The version fields are deliberately separate:
+## Version and reference contract
 
-- `schemaVersion` gates the wire format. The loader currently accepts only `1`.
-- `policyVersion` is required corpus metadata for the expectation/policy revision the fixture assumes. The loader enforces only a bounded positive integer (`1..10000`); the current corpus uses `3`, and the harness does not branch on it yet.
-- `catalogVersion` is required corpus metadata naming the bundled catalog snapshot the fixture was authored against. The current corpus uses `workout-guide-bundled-302`. The harness validates that the field is present and non-blank, but it still loads the actual bundled asset at evaluation time.
+The version fields are separate and enforced deliberately:
 
-## Persona coverage
+- `schemaVersion` is the fixture wire-format version. The loader accepts only `1`.
+- `policyVersion` is the supported corpus expectation contract. `PlannerFixtureContextFactory.create()` accepts only policy version `3` for corpus evaluation.
+- `catalogVersion` is the pinned bundled catalog source commit, not a friendly label. The current corpus pins every persona fixture to `ba0b709cb20430361b2cb33aaadd20998164a916`, and context construction rejects mismatches against the bundled catalog root `source.commit`.
 
-The manifest currently contains nine personas:
+The test projection also validates the bundled catalog root fields it relies on:
 
-1. `bodyweight-beginner` — bodyweight-only beginner coverage with a restricted allowed list and an any-of push movement expectation.
-2. `band-only` — resistance-band-only back-focused coverage proving a band row can be selected while cable-based pull work such as `lat-pulldown` is excluded.
-3. `machine-only` — machine-only strength coverage with a confirmed machine press load.
-4. `full-gym-advanced` — broad full-gym strength-plus-hypertrophy coverage against the full bundled candidate pool.
-5. `returning-user` — long-break re-entry coverage proving the re-entry workout name, preserved confirmed load, and two-set cap.
-6. `limited-capability` — constrained low-impact profile coverage with exclusions and capability metadata present.
-7. `mixed-unit-history` — kilogram history coverage proving prior KG history is honored and the existing load is preserved when recent sets do not justify an increase.
-8. `sparse-history` — minimal pull-up history coverage proving sparse/bodyweight history remains valid.
-9. `no-strength-candidates` — failure coverage where filtering and optional allowed-ID restriction leave only non-strength candidates, yielding a typed planning failure.
+- `catalog.schemaVersion == 1`
+- `catalog.source.commit` is present and non-blank
+- exactly 302 unique exercises are available to the harness
 
-## Loader validation and security bounds
+Before a context is built, every exercise reference in a fixture is validated against the bundled catalog with field-level errors. This includes:
+
+- `allowedExerciseIds`
+- `profile.excludedExerciseIds`
+- `profile.confirmedStartingLoads.keys`
+- `exerciseHistory.exerciseId`
+- `expected.requiredExerciseIds`
+- every member of `expected.requiredAnyExerciseIdGroups`
+- `expected.expectedTargetWeights.keys`
+- `expected.forbiddenExerciseIds`
+
+Failures report the field path and unknown ID only; they never echo the whole fixture payload.
+
+## Loader validation and failure-schema integrity
 
 `PlannerFixtureLoader` treats fixture JSON as untrusted test input and validates it before any planner objects are built.
 
 - Resources are classpath-only lookups with blank paths, `..`, backslashes, and unsafe resource names rejected before loading.
 - Fixture files must be valid UTF-8 and no larger than 128 KiB.
-- A pre-scan duplicate-field pass rejects duplicate object keys and JSON nesting deeper than 32 levels before object construction.
+- A duplicate-field / nesting-depth prescan rejects duplicate object keys and pathological nesting before object construction.
 - Unknown fields are rejected at every object level.
-- Recognized string fields are capped at 256 characters, except:
-  - fixture/exercise identifiers must match `[a-z0-9]+(?:-[a-z0-9]+)*` and are capped at 80 characters;
-  - `catalogVersion` is capped at 80 characters.
-- Parsed fixture collections are capped at 100 entries, and `exerciseHistory` is capped at 8 items.
-- Numeric fields reject non-integers where integers are required, non-finite doubles, negatives where disallowed, and out-of-range values.
-- Enums, equipment, muscles, and capability keys must map to known app constants.
-- Duplicate list entries, duplicate manifest entries, duplicate fixture IDs, contradictory required/forbidden expectations, and invalid expected target-weight maps are rejected.
+- Strings, numeric ranges, duplicate arrays, duplicate fixture IDs, and contradictory success expectations are bounded and validated.
+- For any `expected.outcome` other than `SUCCESS`, success-only assertions are rejected:
+  - `requiredExerciseIds`
+  - `forbiddenExerciseIds`
+  - `requiredAnyExerciseIdGroups`
+  - `expectedTargetWeights`
+  - `workoutNameContains`
+  - `maxTargetSetsPerExercise`
 
-The loader validates strict schema, known domain constants, numeric ranges, duplicates, and cross-field loader invariants. The evaluator owns planner-behavior checks.
+Failure fixtures may therefore assert only the typed outcome they expect from the real planner.
 
-## Bundled catalog and filtering boundary
+## Bundled catalog projection boundary
 
-`PlannerFixtureContextFactory` builds contexts from the bundled planner catalog asset, not from fixture-embedded exercise definitions. It loads `workout-guide/catalog.json` first and falls back to `assets/workout-guide/catalog.json` if needed, parses the exercise fields needed by the deterministic planner, and enforces exactly 302 unique exercises.
+`PlannerFixtureContextFactory` does **not** reimplement the full packaged catalog parser. It intentionally maps only the `Exercise` and `ExerciseProgrammingMetadata` fields currently consumed by:
 
-The factory then applies the real `ExerciseFilter` before any optional `allowedExerciseIds` narrowing. This keeps equipment and explicit exclusions on the same side of the boundary as production. The `no-strength-candidates` persona demonstrates that ordering: `lat-pulldown` can appear in `allowedExerciseIds`, but it is removed by the real filter because the persona lacks the required equipment.
+- `ExerciseFilter`
+- `FakeWorkoutPlanner`
+- `DefaultExercisePrescriptionFactory`
 
-## Replay semantics
+That includes exercise identity, canonical muscles, listed equipment, type, stretch flag, and reviewed programming metadata used for filtering, split matching, ordering, and prescriptions. The harness does **not** populate unrelated attribution/source data solely for tests.
 
-Each replay attempt uses a fresh `FakeWorkoutPlanner`. That is intentional: the planner keeps an in-memory `generationCounter`, and reusing one planner instance would rotate the split between attempts. Replay comparisons normalize only `GeneratedWorkout.id`, which is UUID-backed; every other generated field must remain identical.
+Full packaged catalog validity remains the responsibility of the dedicated importer/instrumentation tests, especially `WorkoutGuideCatalogParserTest`.
 
-## Invariants asserted by the corpus
+## Persona coverage
 
-`PlannerFixtureTest` and related tests assert these categories:
+The manifest currently contains nine fixtures:
+
+1. `bodyweight-beginner` — curated bodyweight-only beginner subset (`push-up`, `knee-push-up`, `bodyweight-squat`, `dead-bug`) requiring at least one beginner push variant and forbidding advanced/high-impact bodyweight options.
+2. `band-only` — resistance-band-only back-focused coverage proving a band row can be selected while cable-only pull work is excluded by the real filter.
+3. `machine-only` — machine-only strength coverage with a confirmed machine press load.
+4. `full-gym-advanced` — broad full-gym strength-plus-hypertrophy coverage against the full bundled candidate pool.
+5. `returning-user` — curated lower-demand full-body subset for re-entry, preserving the `"(Re-entry)"` title fragment, a max-two-set cap, and the confirmed incline press load while forbidding `ab-wheel` and `single-leg-romanian-deadlift`.
+6. `limited-capability` — curated dumbbell/bench push subset that keeps capability metadata present but inert for planner eligibility, requires `dumbbell-shoulder-press`, and asserts its target load from history / confirmed data.
+7. `mixed-unit-history` — kilogram history coverage proving prior KG history is honored and the existing load is preserved when recent sets do not justify an increase.
+8. `sparse-history` — curated regression-friendly upper-body subset using `inverted-row`, `banded-lat-pulldown`, and `prone-y-raise` so sparse history does not freeze a limited-hang profile to pull-ups.
+9. `no-strength-candidates` — harness-only typed-failure case restricted to cardio-only entries (`walking`, `jump-rope`) so the real planner returns `NO_STRENGTH_CANDIDATES`.
+
+## Replay semantics and asserted invariants
+
+Each replay attempt uses a fresh `FakeWorkoutPlanner`. That is intentional: the planner keeps an in-memory `generationCounter`, and reusing one instance would rotate the split between attempts. Replay comparisons normalize only `GeneratedWorkout.id`, which is UUID-backed; every other generated field must remain identical.
+
+The corpus suite asserts:
 
 - deterministic output equality across two fresh replays, normalized only for the generated workout ID;
-- typed fixture-failure evaluation, with the corpus manifest currently exercising `NO_STRENGTH_CANDIDATES` directly and the harness mapping the additional `NO_CANDIDATES` and `NO_CANDIDATES_FOR_ANY_SPLIT` outcomes for fixture use;
-- legality of every selected exercise against the bundled catalog, the real filter result, and any optional allowed-ID restriction;
-- exclusion enforcement for fixture-level forbidden exercise IDs and profile exclusions;
-- type-valid prescriptions for weight, bodyweight, assisted, duration, and distance-duration exercises;
-- independent no-invented-load behavior, where weight-based prescriptions stay `null` unless history or a confirmed starting load justifies a value;
-- complete deep input non-mutation by snapshotting every `WorkoutGenerationContext` field before and after each attempt;
-- capability invariance for the current pre-eligibility milestone by proving `limited-capability` matches an all-`COMFORTABLE` control;
-- stable behavioral expectations expressed as focused invariants instead of full workout snapshots.
+- typed planner failures through the real evaluator (`NO_CANDIDATES`, `NO_STRENGTH_CANDIDATES`, `NO_CANDIDATES_FOR_ANY_SPLIT`);
+- legality of every selected exercise against the bundled catalog, the real filter result, and any curated allowed-ID subset;
+- non-mutation of the full `WorkoutGenerationContext` input;
+- type-valid prescriptions and no-invented-load behavior through the real prescription factory;
+- capability invariance for the current pre-eligibility milestone by comparing `limited-capability` with an all-`COMFORTABLE` control;
+- parity checks that the lightweight catalog projection preserves planner-consumed fields for representative entries without broadening into full parser duplication.
 
-The stable behavioral expectations currently include:
-
-- `requiredAnyExerciseIdGroups` for `bodyweight-beginner` (`push-up`, `pike-push-up`, or `bench-dip`) and `sparse-history` (`pull-ups`);
-- exact expected target loads of `27.5` for `mixed-unit-history` (`incline-dumbbell-press`) and `40.0` for `returning-user` (`incline-dumbbell-press`);
-- the `"(Re-entry)"` workout-name fragment for `returning-user`;
-- `maxTargetSetsPerExercise = 2` for `returning-user`.
+`PlannerFixtureCorpusTest` avoids a second inaccurate strength classifier. It checks fixture-construction premises and curated candidate subsets, while typed strength/failure behavior is left to the real planner evaluator.
 
 ## Test entry points
 
-The focused planner corpus command is:
+Focused contract / corpus coverage:
 
 ```bash
-./gradlew testDebugUnitTest --tests '*PlannerFixture*' --tests '*FakeWorkoutPlannerTest' --tests '*WorkoutGenerationContextBuilderTest' --rerun-tasks --no-daemon
+JAVA_HOME=/opt/homebrew/opt/openjdk@17 ANDROID_HOME=/Users/elopenmike/Library/Android/sdk \
+  ./gradlew testDebugUnitTest \
+  --tests '*PlannerFixture*' \
+  --tests '*FakeWorkoutPlannerTest' \
+  --tests '*DefaultExercisePrescriptionFactoryTest' \
+  --tests '*ExerciseFilterTest' \
+  --tests '*WorkoutGenerationContextBuilderTest' \
+  --rerun-tasks --no-daemon
 ```
 
-Prerequisites: JDK 17 and configured Android SDK/JAVA_HOME as needed.
-
-Repository verification for this documentation change still uses the broader task-level commands:
+Repository hygiene for this work still includes:
 
 ```bash
-./gradlew testDebugUnitTest --rerun-tasks --no-daemon
-./gradlew lintDebug assembleDebug --stacktrace --no-daemon
 git diff --check
 ```
 
-## Limitations and non-goals
-
-This corpus does not claim scientific optimality. It does not add reviewed-only eligibility, a weekly dose ledger, progression or deload logic, LLM evaluation, Health or Wear integrations, production planner behavior changes, or a complete replacement for the packaged catalog parser. The lightweight bundled-catalog reader exists only to feed the deterministic planner tests; catalog-specific tests such as `WorkoutGuideCatalogParserTest` remain authoritative for packaged asset integrity.
-
 ## Maintenance expectations
 
-Maintaining the corpus means updating `planner-fixtures/manifest.txt` whenever a new persona fixture is added, keeping the exact persona roster/count assertions in `PlannerFixtureTest` and `PlannerFixtureCorpusTest` aligned with that manifest, preserving the strict schema and validation rules, and preferring invariant assertions over full ordered workout snapshots. The 302-exercise baseline is also deliberate: if the bundled catalog snapshot changes, update the catalog-version metadata and the exact-count guards together. `schemaVersion`, `policyVersion`, and `catalogVersion` are meant to move deliberately: bump them only when the fixture format, expectation policy, or bundled catalog baseline truly changes.
+When the bundled planner catalog changes, update the pinned corpus `catalogVersion` commit and keep the exact persona roster/count assertions aligned with `manifest.txt`. Bump `schemaVersion` or `policyVersion` only when the fixture wire format or supported expectation contract truly changes.

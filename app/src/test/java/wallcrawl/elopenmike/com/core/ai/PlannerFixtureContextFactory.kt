@@ -33,15 +33,26 @@ internal data class PlannerFixtureContext(
     val context: WorkoutGenerationContext
 )
 
+internal data class PlannerFixtureBundledCatalogProjection(
+    val schemaVersion: Int,
+    val sourceCommit: String,
+    val exercises: List<Exercise>
+)
+
 internal class PlannerFixtureContextFactory(
     private val classLoader: ClassLoader = checkNotNull(PlannerFixtureContextFactory::class.java.classLoader),
     private val exerciseFilter: ExerciseFilter = ExerciseFilter()
 ) {
 
-    private val catalogExercises: List<Exercise> by lazy { loadBundledCatalogExercises() }
+    private val catalogProjection: PlannerFixtureBundledCatalogProjection by lazy {
+        loadBundledCatalogProjection()
+    }
+
+    internal fun bundledCatalogProjection(): PlannerFixtureBundledCatalogProjection = catalogProjection
 
     fun create(fixture: PlannerFixture): PlannerFixtureContext {
-        validateCatalogReferences(fixture)
+        validateSupportedCorpusContract(fixture, catalogProjection)
+        validateCatalogReferences(fixture, catalogProjection.exercises)
         val profile = UserProfile(
             goals = fixture.profile.goals,
             experienceLevel = fixture.profile.experienceLevel,
@@ -58,17 +69,18 @@ internal class PlannerFixtureContextFactory(
             movementCapabilities = fixture.profile.movementCapabilities
         )
         val filteredExercises = exerciseFilter.filterCandidates(
-            allExercises = catalogExercises,
+            allExercises = catalogProjection.exercises,
             profile = profile
         )
         val restrictedExercises = restrictToAllowedExerciseIds(
             filteredExercises = filteredExercises,
+            catalogExercises = catalogProjection.exercises,
             fixture = fixture
         )
         return PlannerFixtureContext(
             fixture = fixture,
             userProfile = profile,
-            catalogExercises = catalogExercises,
+            catalogExercises = catalogProjection.exercises,
             filteredExercises = filteredExercises,
             context = WorkoutGenerationContext(
                 userProfile = profile,
@@ -91,37 +103,72 @@ internal class PlannerFixtureContextFactory(
 
     private fun restrictToAllowedExerciseIds(
         filteredExercises: List<Exercise>,
+        catalogExercises: List<Exercise>,
         fixture: PlannerFixture
     ): List<Exercise> {
         if (fixture.allowedExerciseIds.isEmpty()) return filteredExercises
-
-        val catalogIds = catalogExercises.mapTo(linkedSetOf(), Exercise::id)
-        val missing = fixture.allowedExerciseIds.filterNot { it in catalogIds }
-        if (missing.isNotEmpty()) {
-            throw PlannerFixtureFormatException(
-                "root.allowedExerciseIds must reference bundled catalog ids: ${missing.joinToString(", ")}."
-            )
-        }
 
         val allowedIds = fixture.allowedExerciseIds.toSet()
         return filteredExercises.filter { it.id in allowedIds }
     }
 
-    private fun validateCatalogReferences(fixture: PlannerFixture) {
-        val catalogIds = catalogExercises.mapTo(linkedSetOf(), Exercise::id)
-        val expectedIds = fixture.expected.requiredExerciseIds +
-            fixture.expected.forbiddenExerciseIds +
-            fixture.expected.requiredAnyExerciseIdGroups.flatten() +
-            fixture.expected.expectedTargetWeights.keys
-        val missing = expectedIds.filterNot { it in catalogIds }.distinct()
-        if (missing.isNotEmpty()) {
+    private fun validateSupportedCorpusContract(
+        fixture: PlannerFixture,
+        catalogProjection: PlannerFixtureBundledCatalogProjection
+    ) {
+        if (fixture.policyVersion != SUPPORTED_CORPUS_POLICY_VERSION) {
             throw PlannerFixtureFormatException(
-                "root.expected must reference bundled catalog ids: ${missing.joinToString(", ")}."
+                "root.policyVersion must equal supported corpus policy version $SUPPORTED_CORPUS_POLICY_VERSION."
+            )
+        }
+        if (fixture.catalogVersion != catalogProjection.sourceCommit) {
+            throw PlannerFixtureFormatException(
+                "root.catalogVersion must equal bundled catalog source.commit ${catalogProjection.sourceCommit}."
             )
         }
     }
 
-    private fun loadBundledCatalogExercises(): List<Exercise> {
+    private fun validateCatalogReferences(
+        fixture: PlannerFixture,
+        catalogExercises: List<Exercise>
+    ) {
+        val catalogIds = catalogExercises.mapTo(linkedSetOf(), Exercise::id)
+        val references = buildList<Pair<String, String>> {
+            fixture.allowedExerciseIds.forEachIndexed { index, exerciseId ->
+                add("root.allowedExerciseIds[$index]" to exerciseId)
+            }
+            fixture.profile.excludedExerciseIds.forEachIndexed { index, exerciseId ->
+                add("root.profile.excludedExerciseIds[$index]" to exerciseId)
+            }
+            fixture.profile.confirmedStartingLoads.keys.forEach { exerciseId ->
+                add("root.profile.confirmedStartingLoads.$exerciseId" to exerciseId)
+            }
+            fixture.exerciseHistory.forEachIndexed { index, history ->
+                add("root.exerciseHistory[$index].exerciseId" to history.exerciseId)
+            }
+            fixture.expected.requiredExerciseIds.toList().forEachIndexed { index, exerciseId ->
+                add("root.expected.requiredExerciseIds[$index]" to exerciseId)
+            }
+            fixture.expected.requiredAnyExerciseIdGroups.forEachIndexed { groupIndex, group ->
+                group.toList().forEachIndexed { memberIndex, exerciseId ->
+                    add("root.expected.requiredAnyExerciseIdGroups[$groupIndex][$memberIndex]" to exerciseId)
+                }
+            }
+            fixture.expected.expectedTargetWeights.keys.forEach { exerciseId ->
+                add("root.expected.expectedTargetWeights.$exerciseId" to exerciseId)
+            }
+            fixture.expected.forbiddenExerciseIds.toList().forEachIndexed { index, exerciseId ->
+                add("root.expected.forbiddenExerciseIds[$index]" to exerciseId)
+            }
+        }
+        val unknownReference = references.firstOrNull { (_, exerciseId) -> exerciseId !in catalogIds }
+            ?: return
+        throw PlannerFixtureFormatException(
+            "${unknownReference.first} references unknown bundled catalog id '${unknownReference.second}'."
+        )
+    }
+
+    private fun loadBundledCatalogProjection(): PlannerFixtureBundledCatalogProjection {
         val catalogText = readBundledCatalogText()
         val root = try {
             JSONTokener(catalogText).nextValue() as? JSONObject
@@ -129,6 +176,17 @@ internal class PlannerFixtureContextFactory(
         } catch (error: JSONException) {
             throw PlannerFixtureFormatException("Bundled planner catalog is malformed JSON.", error)
         }
+        val schemaVersion = requireInt(root, "schemaVersion", "catalog.schemaVersion")
+        if (schemaVersion != SUPPORTED_BUNDLED_CATALOG_SCHEMA_VERSION) {
+            throw PlannerFixtureFormatException(
+                "catalog.schemaVersion must equal $SUPPORTED_BUNDLED_CATALOG_SCHEMA_VERSION."
+            )
+        }
+        val sourceCommit = requireString(
+            requireObject(root, "source", "catalog.source"),
+            "commit",
+            "catalog.source.commit"
+        )
         val exercisesArray = root.optJSONArray("exercises")
             ?: throw PlannerFixtureFormatException("Bundled planner catalog is missing exercises.")
         val exercises = buildList(exercisesArray.length()) {
@@ -150,7 +208,11 @@ internal class PlannerFixtureContextFactory(
         if (duplicateId != null) {
             throw PlannerFixtureFormatException("Bundled planner catalog contains duplicate exercise id $duplicateId.")
         }
-        return exercises
+        return PlannerFixtureBundledCatalogProjection(
+            schemaVersion = schemaVersion,
+            sourceCommit = sourceCommit,
+            exercises = exercises
+        )
     }
 
     private fun readBundledCatalogText(): String {
@@ -388,6 +450,8 @@ internal class PlannerFixtureContextFactory(
 
     private companion object {
         private const val DEFAULT_MANIFEST_RESOURCE = "planner-fixtures/manifest.txt"
+        internal const val SUPPORTED_CORPUS_POLICY_VERSION = 3
+        private const val SUPPORTED_BUNDLED_CATALOG_SCHEMA_VERSION = 1
         private const val EXPECTED_BUNDLED_EXERCISE_COUNT = 302
         private const val MAX_RESOURCE_BYTES = 512 * 1024
         private val BUNDLED_CATALOG_RESOURCE_PATHS = listOf(

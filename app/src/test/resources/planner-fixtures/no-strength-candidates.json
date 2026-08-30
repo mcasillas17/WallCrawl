@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "no-strength-candidates",
   "policyVersion": 3,
-  "catalogVersion": "workout-guide-bundled-302",
+  "catalogVersion": "ba0b709cb20430361b2cb33aaadd20998164a916",
   "profile": {
     "goals": [
       "GENERAL_FITNESS"
@@ -11,7 +11,6 @@
     "preferredDurationMinutes": 25,
     "daysPerWeek": 2,
     "availableEquipment": [
-      "Bodyweight",
       "Cardio"
     ],
     "preferredUnit": "LBS",
@@ -30,15 +29,11 @@
   "exerciseHistory": [],
   "allowedExerciseIds": [
     "walking",
-    "jump-rope",
-    "arm-circles",
-    "lat-pulldown"
+    "jump-rope"
   ],
   "expected": {
     "outcome": "NO_STRENGTH_CANDIDATES",
     "requiredExerciseIds": [],
-    "forbiddenExerciseIds": [
-      "bodyweight-squat"
-    ]
+    "forbiddenExerciseIds": []
   }
 }

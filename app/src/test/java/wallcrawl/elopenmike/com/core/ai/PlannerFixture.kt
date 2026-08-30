@@ -282,6 +282,7 @@ internal class PlannerFixtureLoader(
 
     private fun parseExpected(expected: JSONObject): PlannerFixtureExpected {
         requireExactFields(expected, "root.expected", EXPECTED_REQUIRED_FIELDS, EXPECTED_OPTIONAL_FIELDS)
+        val outcome = parseEnum<PlannerFixtureOutcome>(expected.get("outcome"), "expected.outcome")
         val requiredExerciseIds = parseSafeIdSet(
             requireArray(expected, "requiredExerciseIds", "expected.requiredExerciseIds"),
             "expected.requiredExerciseIds"
@@ -308,6 +309,34 @@ internal class PlannerFixtureLoader(
         } else {
             emptyMap()
         }
+        if (outcome != PlannerFixtureOutcome.SUCCESS) {
+            when {
+                requiredExerciseIds.isNotEmpty() ->
+                    throw PlannerFixtureFormatException(
+                        "expected.requiredExerciseIds is only supported when expected.outcome is SUCCESS."
+                    )
+                forbiddenExerciseIds.isNotEmpty() ->
+                    throw PlannerFixtureFormatException(
+                        "expected.forbiddenExerciseIds is only supported when expected.outcome is SUCCESS."
+                    )
+                requiredAnyExerciseIdGroups.isNotEmpty() ->
+                    throw PlannerFixtureFormatException(
+                        "expected.requiredAnyExerciseIdGroups is only supported when expected.outcome is SUCCESS."
+                    )
+                expectedTargetWeights.isNotEmpty() ->
+                    throw PlannerFixtureFormatException(
+                        "expected.expectedTargetWeights is only supported when expected.outcome is SUCCESS."
+                    )
+                expected.has("workoutNameContains") ->
+                    throw PlannerFixtureFormatException(
+                        "expected.workoutNameContains is only supported when expected.outcome is SUCCESS."
+                    )
+                expected.has("maxTargetSetsPerExercise") ->
+                    throw PlannerFixtureFormatException(
+                        "expected.maxTargetSetsPerExercise is only supported when expected.outcome is SUCCESS."
+                    )
+            }
+        }
         val overlap = requiredExerciseIds.intersect(forbiddenExerciseIds)
         if (overlap.isNotEmpty()) {
             throw PlannerFixtureFormatException(
@@ -323,7 +352,7 @@ internal class PlannerFixtureLoader(
             )
         }
         return PlannerFixtureExpected(
-            outcome = parseEnum<PlannerFixtureOutcome>(expected.get("outcome"), "expected.outcome"),
+            outcome = outcome,
             requiredExerciseIds = requiredExerciseIds,
             forbiddenExerciseIds = forbiddenExerciseIds,
             requiredAnyExerciseIdGroups = requiredAnyExerciseIdGroups,

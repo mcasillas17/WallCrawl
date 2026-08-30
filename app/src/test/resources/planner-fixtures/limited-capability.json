@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "limited-capability",
   "policyVersion": 3,
-  "catalogVersion": "workout-guide-bundled-302",
+  "catalogVersion": "ba0b709cb20430361b2cb33aaadd20998164a916",
   "profile": {
     "goals": [
       "GENERAL_FITNESS",
@@ -56,9 +56,19 @@
   ],
   "expected": {
     "outcome": "SUCCESS",
-    "requiredExerciseIds": [],
-    "forbiddenExerciseIds": [
-      "barbell-back-squat"
-    ]
-  }
+    "requiredExerciseIds": [
+      "dumbbell-shoulder-press"
+    ],
+    "forbiddenExerciseIds": [],
+    "expectedTargetWeights": {
+      "dumbbell-shoulder-press": 25.0
+    }
+  },
+  "allowedExerciseIds": [
+    "dumbbell-bench-press",
+    "dumbbell-shoulder-press",
+    "incline-dumbbell-press",
+    "standing-dumbbell-press",
+    "dumbbell-lateral-raise"
+  ]
 }

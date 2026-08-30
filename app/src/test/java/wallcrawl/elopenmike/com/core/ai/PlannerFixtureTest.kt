@@ -98,8 +98,9 @@ class PlannerFixtureTest {
         assertThat(fixtures).hasSize(9)
         fixtures.forEach { fixture ->
             assertThat(fixture.schemaVersion).isEqualTo(1)
-            assertThat(fixture.policyVersion).isGreaterThan(0)
-            assertThat(fixture.catalogVersion).isNotEmpty()
+            assertThat(fixture.policyVersion).isEqualTo(3)
+            assertThat(fixture.catalogVersion)
+                .isEqualTo("ba0b709cb20430361b2cb33aaadd20998164a916")
             assertThat(fixture.exerciseHistory.size).isAtMost(8)
         }
     }

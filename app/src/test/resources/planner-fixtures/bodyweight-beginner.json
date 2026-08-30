@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "bodyweight-beginner",
   "policyVersion": 3,
-  "catalogVersion": "workout-guide-bundled-302",
+  "catalogVersion": "ba0b709cb20430361b2cb33aaadd20998164a916",
   "profile": {
     "goals": [
       "GENERAL_FITNESS",
@@ -63,17 +63,25 @@
   ],
   "allowedExerciseIds": [
     "push-up",
-    "pike-push-up",
-    "bench-dip"
+    "knee-push-up",
+    "bodyweight-squat",
+    "dead-bug"
   ],
   "expected": {
     "outcome": "SUCCESS",
     "requiredExerciseIds": [],
     "requiredAnyExerciseIdGroups": [
-      ["push-up", "pike-push-up", "bench-dip"]
+      [
+        "knee-push-up",
+        "push-up"
+      ]
     ],
     "forbiddenExerciseIds": [
-      "barbell-bench-press"
+      "ab-wheel",
+      "bench-dip",
+      "handstand-push-up",
+      "burpee",
+      "jump-squat"
     ]
   }
 }

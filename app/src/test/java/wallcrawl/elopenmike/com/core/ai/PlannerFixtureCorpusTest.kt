@@ -7,6 +7,7 @@ import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
+import wallcrawl.elopenmike.com.core.model.StandardMuscles
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 
 class PlannerFixtureCorpusTest {
@@ -64,22 +65,38 @@ class PlannerFixtureCorpusTest {
     }
 
     @Test
-    fun loadCorpus_appliesRealFilterBeforeOptionalAllowedExerciseRestriction() {
-        val fixture = loader.loadCorpus().single { it.id == "no-strength-candidates" }
+    fun loadCorpus_usesPinnedCatalogCommitAndSupportedPolicyVersion() {
+        val fixtures = loader.loadCorpus()
 
-        val built = contextFactory.create(fixture)
-
-        assertThat(fixture.allowedExerciseIds).contains("lat-pulldown")
-        assertThat(built.filteredExercises.map(Exercise::id)).contains("bodyweight-squat")
-        assertThat(built.filteredExercises.map(Exercise::id)).doesNotContain("lat-pulldown")
-        assertThat(built.context.allowedExercises.map(Exercise::id))
-            .containsExactly("arm-circles", "jump-rope", "walking")
-            .inOrder()
-        assertThat(built.context.allowedExercises.all(::isNonStrengthCandidate)).isTrue()
+        fixtures.forEach { fixture ->
+            assertThat(fixture.policyVersion).isEqualTo(3)
+            assertThat(fixture.catalogVersion)
+                .isEqualTo("ba0b709cb20430361b2cb33aaadd20998164a916")
+        }
     }
 
     @Test
-    fun loadCorpus_filteredCandidatesHonorAvailableEquipmentAndOutcomePremises() {
+    fun loadCorpus_noStrengthCandidatesIsHarnessOnlyCardioFailureFixture() {
+        val fixture = loader.loadCorpus().single { it.id == "no-strength-candidates" }
+        val built = contextFactory.create(fixture)
+
+        assertThat(fixture.profile.availableEquipment)
+            .containsExactly(StandardEquipment.CARDIO)
+        assertThat(fixture.allowedExerciseIds)
+            .containsExactly("walking", "jump-rope")
+            .inOrder()
+        assertThat(fixture.expected.requiredExerciseIds).isEmpty()
+        assertThat(fixture.expected.forbiddenExerciseIds).isEmpty()
+        assertThat(fixture.expected.requiredAnyExerciseIdGroups).isEmpty()
+        assertThat(fixture.expected.expectedTargetWeights).isEmpty()
+        assertThat(fixture.expected.workoutNameContains).isNull()
+        assertThat(fixture.expected.maxTargetSetsPerExercise).isNull()
+        assertThat(built.context.allowedExercises.map(Exercise::id))
+            .containsExactly("walking", "jump-rope")
+    }
+
+    @Test
+    fun loadCorpus_filteredCandidatesHonorAvailableEquipmentAndConstructionPremises() {
         val fixtures = loader.loadCorpus()
 
         fixtures.map(contextFactory::create).forEach { built ->
@@ -87,7 +104,7 @@ class PlannerFixtureCorpusTest {
                 hasSatisfiedEquipment(candidate, built.userProfile.availableEquipment)
             }).isTrue()
             if (built.fixture.expected.outcome == PlannerFixtureOutcome.SUCCESS) {
-                assertThat(built.context.allowedExercises.any(::isStrengthCandidate)).isTrue()
+                assertThat(built.context.allowedExercises).isNotEmpty()
             }
         }
     }
@@ -113,6 +130,61 @@ class PlannerFixtureCorpusTest {
     }
 
     @Test
+    fun loadCorpus_returningUserCuratesLowerDemandFullBodyCandidates() {
+        val fixture = loader.loadCorpus().single { it.id == "returning-user" }
+
+        assertThat(fixture.allowedExerciseIds)
+            .containsExactly(
+                "incline-dumbbell-press",
+                "dumbbell-bent-over-row",
+                "goblet-squat",
+                "glute-bridge",
+                "dead-bug"
+            )
+            .inOrder()
+        assertThat(fixture.allowedExerciseIds).doesNotContain("ab-wheel")
+        assertThat(fixture.allowedExerciseIds).doesNotContain("single-leg-romanian-deadlift")
+        assertThat(fixture.expected.forbiddenExerciseIds)
+            .containsAtLeast("ab-wheel", "single-leg-romanian-deadlift")
+    }
+
+    @Test
+    fun loadCorpus_bodyweightBeginnerModelsCuratedLegalCandidateSubset() {
+        val fixture = loader.loadCorpus().single { it.id == "bodyweight-beginner" }
+
+        assertThat(fixture.allowedExerciseIds)
+            .containsExactly("push-up", "knee-push-up", "bodyweight-squat", "dead-bug")
+            .inOrder()
+        assertThat(fixture.allowedExerciseIds).doesNotContain("bench-dip")
+        assertThat(fixture.expected.requiredAnyExerciseIdGroups)
+            .containsExactly(setOf("knee-push-up", "push-up"))
+        assertThat(fixture.expected.forbiddenExerciseIds)
+            .containsAtLeast("ab-wheel", "bench-dip", "handstand-push-up", "burpee", "jump-squat")
+    }
+
+    @Test
+    fun loadCorpus_limitedCapabilityModelsCuratedLegalCandidateSubset() {
+        val fixture = loader.loadCorpus().single { it.id == "limited-capability" }
+
+        assertThat(fixture.allowedExerciseIds)
+            .containsExactly(
+                "dumbbell-bench-press",
+                "dumbbell-shoulder-press",
+                "incline-dumbbell-press",
+                "standing-dumbbell-press",
+                "dumbbell-lateral-raise"
+            )
+            .inOrder()
+        assertThat(fixture.allowedExerciseIds)
+            .containsNoneOf("push-up", "bench-dip", "burpee", "jump-squat")
+        assertThat(fixture.expected.requiredExerciseIds)
+            .containsExactly("dumbbell-shoulder-press")
+        assertThat(fixture.expected.forbiddenExerciseIds).isEmpty()
+        assertThat(fixture.expected.expectedTargetWeights)
+            .containsExactly("dumbbell-shoulder-press", 25.0)
+    }
+
+    @Test
     fun loadCorpus_buildsMixedUnitAndSparseHistoryContexts() {
         val fixturesById = loader.loadCorpus().associateBy { it.id }
 
@@ -125,16 +197,32 @@ class PlannerFixtureCorpusTest {
             .of(27.5)
         assertThat(mixed.context.exerciseHistory.getValue("bodyweight-squat").recentSets).hasSize(1)
 
-        assertThat(sparse.context.exerciseHistory.keys).containsExactly("pull-ups")
-        val sparsePullUps = sparse.context.exerciseHistory.getValue("pull-ups")
-        assertThat(sparsePullUps.lastWeight).isNull()
-        assertThat(sparsePullUps.bestEstimated1RM).isNull()
-        assertThat(sparsePullUps.recentSets.single().exerciseType).isEqualTo(ExerciseType.BODYWEIGHT_REPS)
+        assertThat(sparse.userProfile.availableEquipment)
+            .containsExactly(StandardEquipment.BODYWEIGHT, StandardEquipment.RESISTANCE_BAND)
+            .inOrder()
+        assertThat(sparse.context.exerciseHistory.keys).containsExactly("inverted-row")
+        val sparseRow = sparse.context.exerciseHistory.getValue("inverted-row")
+        assertThat(sparseRow.lastWeight).isNull()
+        assertThat(sparseRow.bestEstimated1RM).isNull()
+        assertThat(sparseRow.recentSets.single().exerciseType).isEqualTo(ExerciseType.BODYWEIGHT_REPS)
+    }
+
+    @Test
+    fun loadCorpus_sparseHistoryUsesRegressionsInsteadOfHangingRequirement() {
+        val fixture = loader.loadCorpus().single { it.id == "sparse-history" }
+
+        assertThat(fixture.allowedExerciseIds)
+            .containsExactly("inverted-row", "banded-lat-pulldown", "prone-y-raise")
+            .inOrder()
+        assertThat(fixture.expected.requiredAnyExerciseIdGroups)
+            .containsExactly(setOf("inverted-row", "banded-lat-pulldown"))
+        assertThat(fixture.expected.forbiddenExerciseIds).containsExactly("pull-ups")
     }
 
     @Test
     fun create_rejectsExpectedExerciseAssertionsThatReferenceMissingCatalogIds() {
         val fixture = loader.loadResource("planner-fixtures/valid-basic.json").copy(
+            catalogVersion = "ba0b709cb20430361b2cb33aaadd20998164a916",
             expected = PlannerFixtureExpected(
                 outcome = PlannerFixtureOutcome.SUCCESS,
                 requiredExerciseIds = emptySet(),
@@ -147,7 +235,8 @@ class PlannerFixtureCorpusTest {
             contextFactory.create(fixture)
         }
 
-        assertThat(error.message).contains("root.expected must reference bundled catalog ids")
+        assertThat(error.message)
+            .isEqualTo("root.expected.expectedTargetWeights.not-in-catalog references unknown bundled catalog id 'not-in-catalog'.")
     }
 
     @Test
@@ -166,15 +255,28 @@ class PlannerFixtureCorpusTest {
         }
     }
 
+    @Test
+    fun strengthCandidateHelper_treatsTimedExercisesWithNoCardioMuscleAsStrengthWork() {
+        val timedShoulderHold = Exercise(
+            id = "timed-shoulder-hold",
+            name = "Timed Shoulder Hold",
+            primaryMuscles = listOf(StandardMuscles.SHOULDERS),
+            secondaryMuscles = listOf(StandardMuscles.CORE),
+            listedEquipment = listOf(StandardEquipment.CARDIO),
+            type = ExerciseType.DURATION,
+            isStretch = false
+        )
+
+        assertThat(isStrengthCandidate(timedShoulderHold)).isTrue()
+    }
+
     private fun isStrengthCandidate(exercise: Exercise): Boolean = when {
         exercise.isStretch -> false
         exercise.type == ExerciseType.DISTANCE_DURATION -> false
         exercise.type == ExerciseType.DURATION ->
-            StandardEquipment.CARDIO !in exercise.listedEquipment
+            StandardMuscles.CARDIO !in (exercise.primaryMuscles + exercise.secondaryMuscles)
         else -> true
     }
-
-    private fun isNonStrengthCandidate(exercise: Exercise): Boolean = !isStrengthCandidate(exercise)
 
     private fun hasSatisfiedEquipment(exercise: Exercise, ownedEquipment: List<String>): Boolean {
         val owned = ownedEquipment.toSet()
