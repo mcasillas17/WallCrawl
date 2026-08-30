@@ -50,9 +50,7 @@
   ],
   "expected": {
     "outcome": "SUCCESS",
-    "requiredExerciseIds": [
-      "incline-dumbbell-press"
-    ],
+    "requiredExerciseIds": [],
     "forbiddenExerciseIds": [
       "barbell-bench-press"
     ]

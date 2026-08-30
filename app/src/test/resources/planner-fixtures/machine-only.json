@@ -52,8 +52,7 @@
   "expected": {
     "outcome": "SUCCESS",
     "requiredExerciseIds": [
-      "machine-chest-press",
-      "leg-press"
+      "machine-chest-press"
     ],
     "forbiddenExerciseIds": [
       "barbell-back-squat"

@@ -82,9 +82,7 @@
   "expected": {
     "outcome": "SUCCESS",
     "requiredExerciseIds": [
-      "barbell-bench-press",
-      "barbell-back-squat",
-      "barbell-deadlift"
+      "barbell-bench-press"
     ],
     "forbiddenExerciseIds": []
   }

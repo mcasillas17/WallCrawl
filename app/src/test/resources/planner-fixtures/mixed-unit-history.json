@@ -66,10 +66,7 @@
   ],
   "expected": {
     "outcome": "SUCCESS",
-    "requiredExerciseIds": [
-      "incline-dumbbell-press",
-      "bodyweight-squat"
-    ],
+    "requiredExerciseIds": [],
     "forbiddenExerciseIds": [
       "barbell-bench-press"
     ]

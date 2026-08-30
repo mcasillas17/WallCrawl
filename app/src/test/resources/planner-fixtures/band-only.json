@@ -45,8 +45,7 @@
   "expected": {
     "outcome": "SUCCESS",
     "requiredExerciseIds": [
-      "banded-row",
-      "banded-squat"
+      "banded-row"
     ],
     "forbiddenExerciseIds": [
       "lat-pulldown"

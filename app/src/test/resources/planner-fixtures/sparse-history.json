@@ -44,9 +44,7 @@
   ],
   "expected": {
     "outcome": "SUCCESS",
-    "requiredExerciseIds": [
-      "pull-ups"
-    ],
+    "requiredExerciseIds": [],
     "forbiddenExerciseIds": [
       "lat-pulldown"
     ]

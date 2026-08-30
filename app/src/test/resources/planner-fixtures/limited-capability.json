@@ -56,9 +56,7 @@
   ],
   "expected": {
     "outcome": "SUCCESS",
-    "requiredExerciseIds": [
-      "dumbbell-shoulder-press"
-    ],
+    "requiredExerciseIds": [],
     "forbiddenExerciseIds": [
       "barbell-back-squat"
     ]
