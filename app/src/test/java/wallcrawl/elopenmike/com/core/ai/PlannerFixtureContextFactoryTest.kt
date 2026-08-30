@@ -2,6 +2,7 @@ package wallcrawl.elopenmike.com.core.ai
 
 import com.google.common.truth.Truth.assertThat
 import java.io.InputStream
+import org.json.JSONObject
 import org.junit.Assert.assertThrows
 import org.junit.Test
 import wallcrawl.elopenmike.com.core.model.ExercisePerformanceHistory
@@ -146,8 +147,9 @@ class PlannerFixtureContextFactoryTest {
     @Test
     fun create_rejectsBundledCatalogWithoutSupportedSchemaVersion() {
         val fixture = corpusCompatibleFixture()
-        val modifiedCatalog = contextFactory.readResourceText("workout-guide/catalog.json")
-            .replaceFirst("\"schemaVersion\":1", "\"schemaVersion\":2")
+        val modifiedCatalog = JSONObject(
+            contextFactory.readResourceText("workout-guide/catalog.json")
+        ).put("schemaVersion", 2).toString()
         val factory = contextFactoryWithCatalog(modifiedCatalog)
 
         val error = assertThrows(PlannerFixtureFormatException::class.java) {
@@ -160,11 +162,9 @@ class PlannerFixtureContextFactoryTest {
     @Test
     fun create_rejectsBundledCatalogWithoutSourceCommit() {
         val fixture = corpusCompatibleFixture()
-        val modifiedCatalog = contextFactory.readResourceText("workout-guide/catalog.json")
-            .replaceFirst(
-                "\"commit\":\"ba0b709cb20430361b2cb33aaadd20998164a916\",",
-                ""
-            )
+        val catalog = JSONObject(contextFactory.readResourceText("workout-guide/catalog.json"))
+        catalog.getJSONObject("source").remove("commit")
+        val modifiedCatalog = catalog.toString()
         val factory = contextFactoryWithCatalog(modifiedCatalog)
 
         val error = assertThrows(PlannerFixtureFormatException::class.java) {
