@@ -171,27 +171,35 @@ enum class RestClass { SHORT, MODERATE, LONG }
 enum class ComplexityTier { FOUNDATIONAL, STANDARD, ADVANCED }
 enum class ImpactLevel { NONE, LOW, HIGH }
 enum class SupportRequirement { SUPPORTED, OPTIONAL_SUPPORT, UNSUPPORTED }
+enum class ReviewState { DRAFT, APPROVED }
+enum class PrescriptionShape { WEIGHT_REPS, BODYWEIGHT_REPS, ASSISTED_BODYWEIGHT, DURATION }
 
 data class EffortTarget(val minRir: Int?, val maxRir: Int?)   // nullable; failure never auto-set
 
 data class ReviewProvenance(
-    val reviewerRole: String,
+    val reviewerRole: String?,             // null while DRAFT
     val rationaleOrSource: String,
-    val reviewedAt: Long,
+    val reviewedAtEpochMillis: Long?,      // null while DRAFT
     val schemaVersion: Int,
     val policyVersion: Int
 )
 
+data class ReviewedExerciseLink(
+    val exerciseId: String,
+    val rationale: String? = null
+)
+
 data class ReviewedExerciseMetadata(
+    val reviewState: ReviewState,
     val directPrimaryMuscle: String,
     val descriptiveSecondaryMuscles: Set<String>,
-    val movementPattern: String,
+    val movementPattern: MovementPattern,
     val complexity: ComplexityTier,
     val progressionFamily: String,
-    val prescriptionShape: String,
-    val approvedRegressions: List<String>,
-    val approvedSubstitutions: List<String>,
-    val capabilityRequirements: Set<String>,
+    val prescriptionShape: PrescriptionShape,
+    val approvedRegressions: List<ReviewedExerciseLink>,
+    val approvedSubstitutions: List<ReviewedExerciseLink>,
+    val capabilityRequirements: Set<MovementCapabilityType>,
     val supportRequirement: SupportRequirement,
     val impactLevel: ImpactLevel,
     val equipmentAlternatives: List<List<String>>,
@@ -282,17 +290,20 @@ seek-support message; the model never adjudicates symptoms),
 
 ## Reviewed Metadata and Provenance
 
-Automatic candidates require categorical, versioned, human-reviewed metadata:
+Automatic candidates require `APPROVED`, categorical, versioned, human-reviewed metadata:
 direct-primary and descriptive-secondary muscles; exercise type, equipment
 alternatives, movement pattern, complexity; progression family and prescription
 shape; approved regressions/substitutions; capability requirements, support
 requirement, impact level; and full provenance (`reviewerRole`,
-`rationaleOrSource`, `reviewedAt`, `schemaVersion`, `policyVersion`). Metadata
-is never LLM-authored or auto-approved. Band, machine, supported, bodyweight,
-and timed-hold families must be reviewed before the automatic gate is enabled,
-so gating does not silently strip equipment-limited users of eligible plans.
-Missing metadata makes an exercise unavailable to automatic planning but leaves
-it available for browse and manual templates.
+`rationaleOrSource`, `reviewedAtEpochMillis`, `schemaVersion`, `policyVersion`).
+Tooling may accept AI-authored `DRAFT` entries as candidates for later human
+inspection, but they are never auto-approved: drafts omit reviewer role and
+review time. Band, machine, supported, bodyweight, and timed-hold families must
+be human-reviewed before the automatic gate is enabled, so gating does not
+silently strip equipment-limited users of eligible plans. Once that separate
+gate is implemented, missing or `DRAFT` metadata makes an exercise unavailable
+to automatic planning but leaves it available for browse and manual templates.
+Until then, the current planner ignores the new block.
 
 ## PRIMARY_ONLY Weekly Ledger
 

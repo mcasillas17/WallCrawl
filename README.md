@@ -171,13 +171,22 @@ bundled catalog.json → WorkoutGuideCatalogStore
 
 All catalog facts are browseable and searchable by name, alias, muscle, and
 listed equipment. Every bundled exercise can enter workout planning with a
-structurally valid prescription appropriate to its catalog type. Reviewed
+structurally valid prescription appropriate to its catalog type. Legacy
 `programming` metadata enriches those defaults when available; otherwise
-WallCrawl uses conservative fallback targets. 117 of the 302 exercises are
-reviewed, covering every muscle group with beginner options throughout. The
-planner draws its compound slots from that set and prefers it when filling the
-rest, but it still selects from the whole catalog, so an unreviewed exercise can
+WallCrawl uses conservative fallback targets. Its 117 authored entries cover
+every muscle group with beginner options throughout. The planner draws its
+compound slots from that set and prefers it when filling the rest, but it still
+selects from the whole catalog, so an exercise without legacy programming can
 appear in a plan with fallback targets and no coaching note.
+
+A separate optional `reviewedMetadata` block now defines categorical input for
+future deterministic eligibility. The initial 37-entry cohort is entirely
+`DRAFT`, including its AI-authored rationale: it is not human-approved and does
+not affect current workouts. `APPROVED` requires an explicit human-review role,
+timestamp, and provenance change; pull-request approval does not change review
+state. Missing or draft reviewed metadata never hides an exercise from browsing
+or manual templates. See [Reviewed exercise metadata](docs/reviewed-exercise-metadata.md)
+and its generated [review report](docs/reviewed-exercise-metadata-review.md).
 
 Equipment requirements are alternatives: a goblet squat resolves with either a
 dumbbell or a kettlebell. Where they are stricter than the upstream listing it is
@@ -230,10 +239,12 @@ python3 tools/workout-guide/import_catalog.py \
 ```
 
 The import validates the exact commit, source cleanliness, IDs, metadata,
-licenses, paths, frame counts, and reviewed overrides before atomically
-replacing the generated Android asset directory. It copies SVG only; the PNG
-counterparts would duplicate the same illustrations without helping Android's
-vector rendering path.
+licenses, paths, frame counts, legacy programming overrides, strict reviewed
+metadata schema, and reviewed graphs before atomically replacing the generated
+Android asset directory. It also regenerates the deterministic human-review
+report; `--check` detects catalog or report drift without writing. It copies SVG
+only; the PNG counterparts would duplicate the same illustrations without
+helping Android's vector rendering path.
 
 Workout Guide visual assets are CC BY-SA 4.0. Its `LICENSE`,
 `LICENSE-ASSETS`, `ATTRIBUTION.md`, full `upstream-manifest.json`, pinned commit,
@@ -319,8 +330,9 @@ of its 906 SVG paths.
 
 ## Next milestones
 
-- Add human-reviewed exercise-demand metadata and deterministic capability
-  eligibility before any capability-aware filtering or ranking is enabled.
+- Complete human review of the 37-entry categorical draft cohort, then add
+  reviewed-only deterministic capability eligibility before any
+  capability-aware filtering or ranking is enabled.
 - Gate exercise difficulty on the profile's experience level. The data now
   exists across every muscle group; nothing reads it yet, so a beginner can still
   be led with a lift marked advanced.
