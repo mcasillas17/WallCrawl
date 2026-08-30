@@ -50,7 +50,9 @@ The manifest currently contains nine personas:
 - Fixture files must be valid UTF-8 and no larger than 128 KiB.
 - A pre-scan duplicate-field pass rejects duplicate object keys and JSON nesting deeper than 32 levels before object construction.
 - Unknown fields are rejected at every object level.
-- Recognized string fields are capped at 256 characters, with tighter caps for IDs and version fields documented in the section that defines them.
+- Recognized string fields are capped at 256 characters, except:
+  - fixture/exercise identifiers must match `[a-z0-9]+(?:-[a-z0-9]+)*` and are capped at 80 characters;
+  - `catalogVersion` is capped at 80 characters.
 - Parsed fixture collections are capped at 100 entries, and `exerciseHistory` is capped at 8 items.
 - Numeric fields reject non-integers where integers are required, non-finite doubles, negatives where disallowed, and out-of-range values.
 - Enums, equipment, muscles, and capability keys must map to known app constants.
