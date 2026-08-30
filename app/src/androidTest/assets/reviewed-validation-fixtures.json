@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "baseReviewedMetadata": {
+    "reviewState": "draft",
+    "directPrimaryMuscle": "Chest",
+    "descriptiveSecondaryMuscles": ["Shoulders", "Triceps"],
+    "movementPattern": "horizontal_push",
+    "complexity": "standard",
+    "progressionFamily": "barbell-horizontal-push",
+    "prescriptionShape": "weight_reps",
+    "approvedRegressions": [],
+    "approvedSubstitutions": [],
+    "capabilityRequirements": [],
+    "supportRequirement": "supported",
+    "impactLevel": "none",
+    "equipmentAlternatives": [["Barbell", "Bench"]],
+    "provenance": {
+      "reviewerRole": null,
+      "rationaleOrSource": "Shared draft fixture awaiting human review.",
+      "reviewedAtEpochMillis": null,
+      "schemaVersion": 1,
+      "policyVersion": 1
+    }
+  },
+  "invalidCases": [
+    {
+      "name": "unknown-field",
+      "operation": "set",
+      "path": ["unexpectedReviewedField"],
+      "value": "unsafe",
+      "errorFragment": "unexpectedReviewedField"
+    },
+    {
+      "name": "missing-field",
+      "operation": "remove",
+      "path": ["impactLevel"],
+      "errorFragment": "impactLevel"
+    },
+    {
+      "name": "unknown-enum",
+      "operation": "set",
+      "path": ["complexity"],
+      "value": "expert",
+      "errorFragment": "unknown enum"
+    },
+    {
+      "name": "unrepresented-primary",
+      "operation": "set",
+      "path": ["directPrimaryMuscle"],
+      "value": "Quadriceps",
+      "errorFragment": "not represented"
+    },
+    {
+      "name": "secondary-duplicates-primary",
+      "operation": "set",
+      "path": ["descriptiveSecondaryMuscles"],
+      "value": ["Chest"],
+      "errorFragment": "duplicates directPrimaryMuscle"
+    },
+    {
+      "name": "prescription-shape-mismatch",
+      "operation": "set",
+      "path": ["prescriptionShape"],
+      "value": "duration",
+      "errorFragment": "does not match exerciseType"
+    },
+    {
+      "name": "unknown-capability",
+      "operation": "set",
+      "path": ["capabilityRequirements"],
+      "value": ["teleport"],
+      "errorFragment": "unknown enum"
+    },
+    {
+      "name": "unknown-equipment",
+      "operation": "set",
+      "path": ["equipmentAlternatives"],
+      "value": [["Quantum Rack"]],
+      "errorFragment": "unknown"
+    },
+    {
+      "name": "empty-equipment-alternatives",
+      "operation": "set",
+      "path": ["equipmentAlternatives"],
+      "value": [],
+      "errorFragment": "equipmentAlternatives"
+    },
+    {
+      "name": "approved-without-human-provenance",
+      "operation": "set",
+      "path": ["reviewState"],
+      "value": "approved",
+      "errorFragment": "provenance"
+    },
+    {
+      "name": "oversized-progression-family",
+      "operation": "set",
+      "path": ["progressionFamily"],
+      "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "errorFragment": "progressionFamily"
+    },
+    {
+      "name": "review-time-above-bound",
+      "operation": "set",
+      "path": ["provenance", "reviewedAtEpochMillis"],
+      "value": 253402300800000,
+      "errorFragment": "reviewedAtEpochMillis"
+    },
+    {
+      "name": "wrong-provenance-schema-version",
+      "operation": "set",
+      "path": ["provenance", "schemaVersion"],
+      "value": 2,
+      "errorFragment": "schemaVersion"
+    },
+    {
+      "name": "forbidden-numeric-field",
+      "operation": "set",
+      "path": ["jointStressScore"],
+      "value": 3,
+      "errorFragment": "jointStressScore"
+    }
+  ]
+}

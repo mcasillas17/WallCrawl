@@ -3,6 +3,7 @@ package wallcrawl.elopenmike.com.core.ai
 import com.google.common.truth.Truth.assertThat
 import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
 import wallcrawl.elopenmike.com.core.model.ExerciseType
+import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.MechanicsType
 import wallcrawl.elopenmike.com.core.model.MovementPattern
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
@@ -392,6 +393,62 @@ class FakeWorkoutPlannerTest {
     }
 
     @Test
+    fun generateWorkout_reviewedMetadataPreservesRepresentativeEquipmentOutputs() = runTest {
+        val bodyweight = allExercises.filter { exercise ->
+            exercise.id in setOf("pull-ups", "parallel-bar-dips", "hanging-leg-raise")
+        }
+        val band = allExercises.map { exercise ->
+            exercise.copy(
+                id = "band-${exercise.id}",
+                listedEquipment = listOf(StandardEquipment.RESISTANCE_BAND),
+                programming = exercise.programming?.copy(
+                    requiredEquipmentCombinations = listOf(
+                        listOf(StandardEquipment.RESISTANCE_BAND)
+                    )
+                )
+            )
+        }
+        val machine = allExercises.map { exercise ->
+            exercise.copy(
+                id = "machine-${exercise.id}",
+                listedEquipment = listOf(StandardEquipment.MACHINE),
+                programming = exercise.programming?.copy(
+                    requiredEquipmentCombinations = listOf(listOf(StandardEquipment.MACHINE))
+                )
+            )
+        }
+        val contexts = mapOf(
+            "bodyweight" to bodyweight,
+            "band" to band,
+            "machine" to machine,
+            "full-gym" to allExercises
+        )
+        val profile = UserProfile(
+            goals = setOf(FitnessGoal.BUILD_MUSCLE),
+            musclePriorities = mapOf(StandardMuscles.CHEST to PriorityLevel.HIGH)
+        )
+
+        contexts.values.forEach { candidates ->
+            val baseline = FakeWorkoutPlanner().generateWorkout(
+                WorkoutGenerationContext(
+                    userProfile = profile,
+                    allowedExercises = candidates.map { it.copy(reviewedMetadata = null) }
+                )
+            )
+            val withDraftMetadata = FakeWorkoutPlanner().generateWorkout(
+                WorkoutGenerationContext(
+                    userProfile = profile,
+                    allowedExercises = candidates.map { exercise ->
+                        exercise.copy(reviewedMetadata = reviewedMetadataFor(exercise))
+                    }
+                )
+            )
+
+            assertThat(withDraftMetadata.copy(id = baseline.id)).isEqualTo(baseline)
+        }
+    }
+
+    @Test
     fun generateWorkout_withMultipleGoals_generatesHybridTitleAndRationale() = runTest {
         val hybridProfile = UserProfile(
             goals = setOf(FitnessGoal.STRENGTH, FitnessGoal.BUILD_MUSCLE),
@@ -485,5 +542,21 @@ class FakeWorkoutPlannerTest {
                 schemaVersion = 1,
                 policyVersion = 1
             )
+        )
+
+    private fun reviewedMetadataFor(exercise: Exercise): ReviewedExerciseMetadata =
+        reviewedMetadata(ReviewState.DRAFT).copy(
+            directPrimaryMuscle = exercise.primaryMuscles.first(),
+            descriptiveSecondaryMuscles = exercise.secondaryMuscles.toSet(),
+            movementPattern = exercise.programming?.movementPattern ?: MovementPattern.OTHER,
+            prescriptionShape = when (exercise.type) {
+                ExerciseType.WEIGHT_REPS -> PrescriptionShape.WEIGHT_REPS
+                ExerciseType.BODYWEIGHT_REPS -> PrescriptionShape.BODYWEIGHT_REPS
+                ExerciseType.ASSISTED_BODYWEIGHT -> PrescriptionShape.ASSISTED_BODYWEIGHT
+                ExerciseType.DURATION -> PrescriptionShape.DURATION
+                ExerciseType.DISTANCE_DURATION -> PrescriptionShape.DURATION
+            },
+            equipmentAlternatives = exercise.programming?.requiredEquipmentCombinations
+                ?: listOf(exercise.listedEquipment.ifEmpty { listOf(StandardEquipment.BODYWEIGHT) })
         )
 }

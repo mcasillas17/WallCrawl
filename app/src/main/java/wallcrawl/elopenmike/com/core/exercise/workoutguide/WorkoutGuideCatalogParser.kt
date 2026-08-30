@@ -6,6 +6,7 @@ import java.io.IOException
 import java.io.Reader
 import java.util.Locale
 import wallcrawl.elopenmike.com.core.exercise.visual.ExerciseVisual
+import wallcrawl.elopenmike.com.core.model.ComplexityTier
 import wallcrawl.elopenmike.com.core.model.Difficulty
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.ExerciseAttribution
@@ -13,11 +14,21 @@ import wallcrawl.elopenmike.com.core.model.ExerciseAttributionSource
 import wallcrawl.elopenmike.com.core.model.ExerciseProgrammingMetadata
 import wallcrawl.elopenmike.com.core.model.ExerciseSource
 import wallcrawl.elopenmike.com.core.model.ExerciseType
+import wallcrawl.elopenmike.com.core.model.ImpactLevel
 import wallcrawl.elopenmike.com.core.model.MechanicsType
+import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.model.MovementPattern
 import wallcrawl.elopenmike.com.core.model.MuscleVocabulary
+import wallcrawl.elopenmike.com.core.model.PrescriptionShape
 import wallcrawl.elopenmike.com.core.model.ProgressionType
 import wallcrawl.elopenmike.com.core.model.RepRange
+import wallcrawl.elopenmike.com.core.model.ReviewProvenance
+import wallcrawl.elopenmike.com.core.model.ReviewState
+import wallcrawl.elopenmike.com.core.model.ReviewedExerciseLink
+import wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata
+import wallcrawl.elopenmike.com.core.model.StandardEquipment
+import wallcrawl.elopenmike.com.core.model.StandardMuscles
+import wallcrawl.elopenmike.com.core.model.SupportRequirement
 
 class WorkoutGuideCatalogFormatException(
     message: String,
@@ -81,6 +92,7 @@ class WorkoutGuideCatalogParser {
                     }
                 }
             }
+            validateReviewedGraphs(entries)
 
             val framesByExerciseId = entries.associate { entry ->
                 entry.id to (1..visuals.frameCount).map { frameIndex ->
@@ -160,13 +172,13 @@ class WorkoutGuideCatalogParser {
             if (exercises.size >= MAX_EXERCISES) {
                 malformed("Catalog exceeds the $MAX_EXERCISES exercise limit.")
             }
-            exercises += readExercise()
+            exercises += readExercise(exercises.size)
         }
         endArray()
         return exercises
     }
 
-    private fun JsonReader.readExercise(): ParsedExercise {
+    private fun JsonReader.readExercise(position: Int): ParsedExercise {
         var id: String? = null
         var sourceId: String? = null
         var sourceSlug: String? = null
@@ -178,6 +190,7 @@ class WorkoutGuideCatalogParser {
         var exerciseType: ExerciseType? = null
         var isStretch: Boolean? = null
         var programming: ExerciseProgrammingMetadata? = null
+        var reviewedMetadata: ReviewedExerciseMetadata? = null
 
         beginObject()
         while (hasNext()) {
@@ -193,6 +206,13 @@ class WorkoutGuideCatalogParser {
                 "exerciseType" -> exerciseType = readExerciseType(readString("exercise.exerciseType"))
                 "isStretch" -> isStretch = nextBoolean()
                 "programming" -> programming = readProgramming()
+                "reviewedMetadata" -> reviewedMetadata = readReviewedMetadata(
+                    if (id == null) {
+                        "exercise[$position].reviewedMetadata"
+                    } else {
+                        "Exercise $id reviewedMetadata"
+                    }
+                )
                 else -> skipValue()
             }
         }
@@ -225,6 +245,15 @@ class WorkoutGuideCatalogParser {
                 MuscleVocabulary.canonicalizeAll(declaredSecondary)
             ).filterNot { it in canonicalPrimary }.distinct()
 
+        val resolvedType = exerciseType ?: malformed("Exercise $exerciseId is missing exerciseType.")
+        val resolvedIsStretch = isStretch ?: malformed("Exercise $exerciseId is missing isStretch.")
+        reviewedMetadata?.validateForExercise(
+            exerciseId = exerciseId,
+            type = resolvedType,
+            isStretch = resolvedIsStretch,
+            representedMuscles = (canonicalPrimary + canonicalSecondary).toSet()
+        )
+
         return ParsedExercise(
             id = exerciseId,
             sourceId = upstreamId,
@@ -235,9 +264,10 @@ class WorkoutGuideCatalogParser {
             secondaryMuscles = canonicalSecondary,
             listedEquipment = listedEquipment
                 ?: malformed("Exercise $exerciseId is missing listedEquipment."),
-            type = exerciseType ?: malformed("Exercise $exerciseId is missing exerciseType."),
-            isStretch = isStretch ?: malformed("Exercise $exerciseId is missing isStretch."),
-            programming = programming
+            type = resolvedType,
+            isStretch = resolvedIsStretch,
+            programming = programming,
+            reviewedMetadata = reviewedMetadata
         )
     }
 
@@ -354,6 +384,544 @@ class WorkoutGuideCatalogParser {
                 ?: malformed("Programming metadata is missing coachingSummary.")
         )
     }
+
+    private fun JsonReader.readReviewedMetadata(label: String): ReviewedExerciseMetadata {
+        expectToken(JsonToken.BEGIN_OBJECT, label)
+        var reviewState: ReviewState? = null
+        var directPrimaryMuscle: String? = null
+        var descriptiveSecondaryMuscles: Set<String>? = null
+        var movementPattern: MovementPattern? = null
+        var complexity: ComplexityTier? = null
+        var progressionFamily: String? = null
+        var prescriptionShape: PrescriptionShape? = null
+        var regressions: List<ReviewedExerciseLink>? = null
+        var substitutions: List<ReviewedExerciseLink>? = null
+        var capabilityRequirements: Set<MovementCapabilityType>? = null
+        var supportRequirement: SupportRequirement? = null
+        var impactLevel: ImpactLevel? = null
+        var equipmentAlternatives: List<List<String>>? = null
+        var provenance: ReviewProvenance? = null
+        val seenFields = mutableSetOf<String>()
+
+        beginObject()
+        while (hasNext()) {
+            val field = nextName()
+            requireUniqueField(seenFields, field, label)
+            when (field) {
+                "reviewState" -> reviewState = readReviewedEnum<ReviewState>("$label.reviewState")
+                "directPrimaryMuscle" -> directPrimaryMuscle = readReviewedString(
+                    "$label.directPrimaryMuscle",
+                    MAX_REVIEWED_MUSCLE_LENGTH
+                )
+                "descriptiveSecondaryMuscles" -> descriptiveSecondaryMuscles =
+                    readReviewedStringSet(
+                        "$label.descriptiveSecondaryMuscles",
+                        MAX_REVIEWED_SECONDARY_MUSCLES,
+                        MAX_REVIEWED_MUSCLE_LENGTH
+                    )
+                "movementPattern" -> movementPattern =
+                    readReviewedEnum<MovementPattern>("$label.movementPattern")
+                "complexity" -> complexity =
+                    readReviewedEnum<ComplexityTier>("$label.complexity")
+                "progressionFamily" -> progressionFamily = readReviewedString(
+                    "$label.progressionFamily",
+                    MAX_PROGRESSION_FAMILY_LENGTH
+                )
+                "prescriptionShape" -> prescriptionShape =
+                    readReviewedEnum<PrescriptionShape>("$label.prescriptionShape")
+                "approvedRegressions" -> regressions = readReviewedLinks(
+                    "$label.approvedRegressions"
+                )
+                "approvedSubstitutions" -> substitutions = readReviewedLinks(
+                    "$label.approvedSubstitutions"
+                )
+                "capabilityRequirements" -> capabilityRequirements =
+                    readReviewedEnumSet(
+                        "$label.capabilityRequirements",
+                        MAX_CAPABILITY_REQUIREMENTS
+                    )
+                "supportRequirement" -> supportRequirement =
+                    readReviewedEnum<SupportRequirement>("$label.supportRequirement")
+                "impactLevel" -> impactLevel =
+                    readReviewedEnum<ImpactLevel>("$label.impactLevel")
+                "equipmentAlternatives" -> equipmentAlternatives =
+                    readReviewedEquipmentAlternatives("$label.equipmentAlternatives")
+                "provenance" -> provenance = readReviewProvenance("$label.provenance")
+                else -> malformed("$label.${safeField(field)} is unknown.")
+            }
+        }
+        endObject()
+
+        val family = progressionFamily
+            ?: malformed("$label is missing progressionFamily.")
+        if (!SAFE_PROGRESSION_FAMILY.matches(family)) {
+            malformed("$label.progressionFamily is not a safe bounded slug.")
+        }
+        val primary = directPrimaryMuscle
+            ?: malformed("$label is missing directPrimaryMuscle.")
+        if (primary !in StandardMuscles.TRAINABLE) {
+            malformed("$label.directPrimaryMuscle is not a canonical WallCrawl muscle.")
+        }
+        val secondaries = descriptiveSecondaryMuscles
+            ?: malformed("$label is missing descriptiveSecondaryMuscles.")
+        if (secondaries.any { it !in StandardMuscles.TRAINABLE }) {
+            malformed("$label.descriptiveSecondaryMuscles contains a non-canonical muscle.")
+        }
+        if (primary in secondaries) {
+            malformed("$label.descriptiveSecondaryMuscles duplicates directPrimaryMuscle.")
+        }
+
+        return ReviewedExerciseMetadata(
+            reviewState = reviewState ?: malformed("$label is missing reviewState."),
+            directPrimaryMuscle = primary,
+            descriptiveSecondaryMuscles = secondaries,
+            movementPattern = movementPattern ?: malformed("$label is missing movementPattern."),
+            complexity = complexity ?: malformed("$label is missing complexity."),
+            progressionFamily = family,
+            prescriptionShape = prescriptionShape
+                ?: malformed("$label is missing prescriptionShape."),
+            approvedRegressions = regressions
+                ?: malformed("$label is missing approvedRegressions."),
+            approvedSubstitutions = substitutions
+                ?: malformed("$label is missing approvedSubstitutions."),
+            capabilityRequirements = capabilityRequirements
+                ?: malformed("$label is missing capabilityRequirements."),
+            supportRequirement = supportRequirement
+                ?: malformed("$label is missing supportRequirement."),
+            impactLevel = impactLevel ?: malformed("$label is missing impactLevel."),
+            equipmentAlternatives = equipmentAlternatives
+                ?: malformed("$label is missing equipmentAlternatives."),
+            provenance = provenance ?: malformed("$label is missing provenance.")
+        )
+    }
+
+    private fun JsonReader.readReviewProvenance(label: String): ReviewProvenance {
+        expectToken(JsonToken.BEGIN_OBJECT, label)
+        var reviewerRole: String? = null
+        var reviewerRolePresent = false
+        var rationaleOrSource: String? = null
+        var reviewedAtEpochMillis: Long? = null
+        var reviewedAtPresent = false
+        var schemaVersion: Int? = null
+        var policyVersion: Int? = null
+        val seenFields = mutableSetOf<String>()
+
+        beginObject()
+        while (hasNext()) {
+            val field = nextName()
+            requireUniqueField(seenFields, field, label)
+            when (field) {
+                "reviewerRole" -> {
+                    reviewerRolePresent = true
+                    reviewerRole = readNullableReviewedString(
+                        "$label.reviewerRole",
+                        MAX_REVIEWER_ROLE_LENGTH
+                    )
+                }
+                "rationaleOrSource" -> rationaleOrSource = readReviewedString(
+                    "$label.rationaleOrSource",
+                    MAX_PROVENANCE_RATIONALE_LENGTH
+                )
+                "reviewedAtEpochMillis" -> {
+                    reviewedAtPresent = true
+                    reviewedAtEpochMillis = readNullableReviewedLong(
+                        "$label.reviewedAtEpochMillis",
+                        MIN_REVIEWED_AT_EPOCH_MILLIS,
+                        MAX_REVIEWED_AT_EPOCH_MILLIS
+                    )
+                }
+                "schemaVersion" -> schemaVersion = readReviewedInt(
+                    "$label.schemaVersion",
+                    REVIEWED_SCHEMA_VERSION,
+                    REVIEWED_SCHEMA_VERSION
+                )
+                "policyVersion" -> policyVersion = readReviewedInt(
+                    "$label.policyVersion",
+                    MIN_POLICY_VERSION,
+                    MAX_POLICY_VERSION
+                )
+                else -> malformed("$label.${safeField(field)} is unknown.")
+            }
+        }
+        endObject()
+
+        if (!reviewerRolePresent) malformed("$label is missing reviewerRole.")
+        if (!reviewedAtPresent) malformed("$label is missing reviewedAtEpochMillis.")
+        return ReviewProvenance(
+            reviewerRole = reviewerRole,
+            rationaleOrSource = rationaleOrSource
+                ?: malformed("$label is missing rationaleOrSource."),
+            reviewedAtEpochMillis = reviewedAtEpochMillis,
+            schemaVersion = schemaVersion ?: malformed("$label is missing schemaVersion."),
+            policyVersion = policyVersion ?: malformed("$label is missing policyVersion.")
+        )
+    }
+
+    private fun JsonReader.readReviewedLinks(label: String): List<ReviewedExerciseLink> {
+        expectToken(JsonToken.BEGIN_ARRAY, label)
+        val links = mutableListOf<ReviewedExerciseLink>()
+        val targetIds = mutableSetOf<String>()
+        beginArray()
+        while (hasNext()) {
+            if (links.size >= MAX_REVIEWED_LINKS) {
+                malformed("$label contains more than $MAX_REVIEWED_LINKS entries.")
+            }
+            val linkLabel = "$label[${links.size}]"
+            expectToken(JsonToken.BEGIN_OBJECT, linkLabel)
+            var exerciseId: String? = null
+            var rationale: String? = null
+            val seenFields = mutableSetOf<String>()
+            beginObject()
+            while (hasNext()) {
+                val field = nextName()
+                requireUniqueField(seenFields, field, linkLabel)
+                when (field) {
+                    "exerciseId" -> exerciseId = readReviewedString(
+                        "$linkLabel.exerciseId",
+                        MAX_EXERCISE_ID_LENGTH
+                    )
+                    "rationale" -> rationale = readReviewedString(
+                        "$linkLabel.rationale",
+                        MAX_LINK_RATIONALE_LENGTH
+                    )
+                    else -> malformed("$linkLabel.${safeField(field)} is unknown.")
+                }
+            }
+            endObject()
+            val targetId = exerciseId ?: malformed("$linkLabel is missing exerciseId.")
+            if (!SAFE_IDENTIFIER.matches(targetId)) {
+                malformed("$linkLabel.exerciseId is not a safe identifier.")
+            }
+            if (!targetIds.add(targetId)) {
+                malformed("$label contains duplicate edge $targetId.")
+            }
+            links += ReviewedExerciseLink(targetId, rationale)
+        }
+        endArray()
+        return links
+    }
+
+    private fun JsonReader.readReviewedEquipmentAlternatives(label: String): List<List<String>> {
+        expectToken(JsonToken.BEGIN_ARRAY, label)
+        val combinations = mutableListOf<List<String>>()
+        val normalizedCombinations = mutableSetOf<List<String>>()
+        beginArray()
+        while (hasNext()) {
+            if (combinations.size >= MAX_REVIEWED_EQUIPMENT_ALTERNATIVES) {
+                malformed(
+                    "$label contains more than $MAX_REVIEWED_EQUIPMENT_ALTERNATIVES combinations."
+                )
+            }
+            val combination = readReviewedStringList(
+                "$label[${combinations.size}]",
+                MAX_REVIEWED_EQUIPMENT_PER_ALTERNATIVE,
+                MAX_REVIEWED_EQUIPMENT_LENGTH,
+                requireNonEmpty = true
+            )
+            if (combination.any { it !in StandardEquipment.ALL }) {
+                malformed("$label contains an unknown StandardEquipment value.")
+            }
+            if (!normalizedCombinations.add(combination.sorted())) {
+                malformed("$label contains a duplicate equipment combination.")
+            }
+            combinations += combination
+        }
+        endArray()
+        if (combinations.isEmpty()) malformed("$label must not be empty.")
+        return combinations
+    }
+
+    private fun JsonReader.readReviewedStringSet(
+        label: String,
+        maximumItems: Int,
+        maximumLength: Int
+    ): Set<String> = readReviewedStringList(
+        label = label,
+        maximumItems = maximumItems,
+        maximumLength = maximumLength,
+        requireNonEmpty = false
+    ).toSet()
+
+    private fun JsonReader.readReviewedStringList(
+        label: String,
+        maximumItems: Int,
+        maximumLength: Int,
+        requireNonEmpty: Boolean
+    ): List<String> {
+        expectToken(JsonToken.BEGIN_ARRAY, label)
+        val values = mutableListOf<String>()
+        val unique = mutableSetOf<String>()
+        beginArray()
+        while (hasNext()) {
+            if (values.size >= maximumItems) {
+                malformed("$label contains more than $maximumItems entries.")
+            }
+            val value = readReviewedString("$label[${values.size}]", maximumLength)
+            if (!unique.add(value)) malformed("$label contains duplicate value.")
+            values += value
+        }
+        endArray()
+        if (requireNonEmpty && values.isEmpty()) malformed("$label must not be empty.")
+        return values
+    }
+
+    private inline fun <reified T : Enum<T>> JsonReader.readReviewedEnumSet(
+        label: String,
+        maximumItems: Int
+    ): Set<T> {
+        expectToken(JsonToken.BEGIN_ARRAY, label)
+        val values = mutableSetOf<T>()
+        beginArray()
+        while (hasNext()) {
+            if (values.size >= maximumItems) {
+                malformed("$label contains more than $maximumItems entries.")
+            }
+            val value = readReviewedEnum<T>("$label[${values.size}]")
+            if (!values.add(value)) malformed("$label contains duplicate value.")
+        }
+        endArray()
+        return values
+    }
+
+    private inline fun <reified T : Enum<T>> JsonReader.readReviewedEnum(label: String): T {
+        val value = readReviewedString(label, MAX_REVIEWED_ENUM_LENGTH)
+        return enumValues<T>().firstOrNull { candidate ->
+            candidate.name.lowercase(Locale.ROOT) == value
+        } ?: malformed("$label contains an unknown enum value.")
+    }
+
+    private fun JsonReader.readNullableReviewedString(label: String, maximumLength: Int): String? {
+        if (peek() == JsonToken.NULL) {
+            nextNull()
+            return null
+        }
+        return readReviewedString(label, maximumLength)
+    }
+
+    private fun JsonReader.readReviewedString(label: String, maximumLength: Int): String {
+        expectToken(JsonToken.STRING, label)
+        val value = nextString()
+        if (
+            value.isEmpty() || value != value.trim() || value.length > maximumLength ||
+            value.any { character -> character.code < 32 || character.code == 127 }
+        ) {
+            malformed("$label is not a safe string of 1 to $maximumLength characters.")
+        }
+        return value
+    }
+
+    private fun JsonReader.readNullableReviewedLong(
+        label: String,
+        minimum: Long,
+        maximum: Long
+    ): Long? {
+        if (peek() == JsonToken.NULL) {
+            nextNull()
+            return null
+        }
+        expectToken(JsonToken.NUMBER, label)
+        val value = nextLong()
+        if (value !in minimum..maximum) {
+            malformed("$label must be between $minimum and $maximum.")
+        }
+        return value
+    }
+
+    private fun JsonReader.readReviewedInt(label: String, minimum: Int, maximum: Int): Int {
+        expectToken(JsonToken.NUMBER, label)
+        val value = nextInt()
+        if (value !in minimum..maximum) {
+            malformed("$label must be between $minimum and $maximum.")
+        }
+        return value
+    }
+
+    private fun JsonReader.expectToken(expected: JsonToken, label: String) {
+        if (peek() != expected) malformed("$label has the wrong JSON type.")
+    }
+
+    private fun requireUniqueField(seenFields: MutableSet<String>, field: String, label: String) {
+        if (!seenFields.add(field)) malformed("$label contains duplicate field ${safeField(field)}.")
+    }
+
+    private fun safeField(field: String): String =
+        if (SAFE_ERROR_FIELD.matches(field)) field else "<invalid-field>"
+
+    private fun ReviewedExerciseMetadata.validateForExercise(
+        exerciseId: String,
+        type: ExerciseType,
+        isStretch: Boolean,
+        representedMuscles: Set<String>
+    ) {
+        if (directPrimaryMuscle !in representedMuscles) {
+            malformed(
+                "Exercise $exerciseId reviewedMetadata.directPrimaryMuscle is not represented " +
+                    "by the catalog exercise."
+            )
+        }
+        val expectedShape = when (type) {
+            ExerciseType.WEIGHT_REPS -> PrescriptionShape.WEIGHT_REPS
+            ExerciseType.BODYWEIGHT_REPS -> PrescriptionShape.BODYWEIGHT_REPS
+            ExerciseType.ASSISTED_BODYWEIGHT -> PrescriptionShape.ASSISTED_BODYWEIGHT
+            ExerciseType.DURATION -> PrescriptionShape.DURATION
+            ExerciseType.DISTANCE_DURATION -> null
+        }
+        if (expectedShape == null || prescriptionShape != expectedShape) {
+            malformed(
+                "Exercise $exerciseId reviewedMetadata.prescriptionShape does not match exerciseType."
+            )
+        }
+        if (isStretch) {
+            malformed("Exercise $exerciseId is a stretch and cannot have reviewedMetadata.")
+        }
+        if (type == ExerciseType.DURATION && StandardMuscles.CARDIO in representedMuscles) {
+            malformed("Exercise $exerciseId is cardio duration work and cannot have reviewedMetadata.")
+        }
+        if (
+            reviewState == ReviewState.APPROVED &&
+            (provenance.reviewerRole == null || provenance.reviewedAtEpochMillis == null)
+        ) {
+            malformed(
+                "Exercise $exerciseId approved reviewedMetadata requires explicit human provenance."
+            )
+        }
+    }
+
+    private fun validateReviewedGraphs(entries: List<ParsedExercise>) {
+        val entriesById = entries.associateBy(ParsedExercise::id)
+        val reviewedEntries = entries.filter { it.reviewedMetadata != null }
+        val regressionGraph = mutableMapOf<String, List<String>>()
+
+        reviewedEntries.forEach { entry ->
+            val metadata = requireNotNull(entry.reviewedMetadata)
+            val regressionTargets = metadata.approvedRegressions.map(ReviewedExerciseLink::exerciseId)
+            val substitutionTargets = metadata.approvedSubstitutions.map(ReviewedExerciseLink::exerciseId)
+            val duplicateRole = regressionTargets.toSet().intersect(substitutionTargets.toSet()).firstOrNull()
+            if (duplicateRole != null) {
+                malformed(
+                    "Exercise ${entry.id} repeats graph edge $duplicateRole as regression and substitution."
+                )
+            }
+            regressionGraph[entry.id] = regressionTargets
+
+            listOf(
+                "approvedRegressions" to metadata.approvedRegressions,
+                "approvedSubstitutions" to metadata.approvedSubstitutions
+            ).forEach { (field, links) ->
+                links.forEach { link ->
+                    if (link.exerciseId == entry.id) {
+                        malformed("Exercise ${entry.id} reviewedMetadata.$field contains a self-edge.")
+                    }
+                    val target = entriesById[link.exerciseId]
+                        ?: malformed(
+                            "Exercise ${entry.id} reviewedMetadata.$field references unknown exercise id."
+                        )
+                    if (target.reviewedMetadata == null) {
+                        malformed(
+                            "Exercise ${entry.id} reviewedMetadata.$field target lacks reviewed metadata."
+                        )
+                    }
+                }
+            }
+
+            metadata.approvedRegressions.forEach { link ->
+                val target = requireNotNull(entriesById.getValue(link.exerciseId).reviewedMetadata)
+                if (metadata.movementPattern != target.movementPattern) {
+                    malformed(
+                        "Exercise ${entry.id} reviewedMetadata.approvedRegressions has incompatible " +
+                            "movementPattern."
+                    )
+                }
+                if (!regressionShapesCompatible(metadata.prescriptionShape, target.prescriptionShape)) {
+                    malformed(
+                        "Exercise ${entry.id} reviewedMetadata.approvedRegressions has incompatible " +
+                            "prescriptionShape."
+                    )
+                }
+                if (metadata.directPrimaryMuscle != target.directPrimaryMuscle) {
+                    malformed(
+                        "Exercise ${entry.id} reviewedMetadata.approvedRegressions changes " +
+                            "directPrimaryMuscle."
+                    )
+                }
+                if (
+                    COMPLEXITY_DEMAND.getValue(target.complexity) >
+                    COMPLEXITY_DEMAND.getValue(metadata.complexity)
+                ) {
+                    malformed(
+                        "Exercise ${entry.id} reviewedMetadata.approvedRegressions is more complex."
+                    )
+                }
+                if (
+                    SUPPORT_DEMAND.getValue(target.supportRequirement) >
+                    SUPPORT_DEMAND.getValue(metadata.supportRequirement)
+                ) {
+                    malformed(
+                        "Exercise ${entry.id} reviewedMetadata.approvedRegressions requires less support."
+                    )
+                }
+                if (!metadata.capabilityRequirements.containsAll(target.capabilityRequirements)) {
+                    malformed(
+                        "Exercise ${entry.id} reviewedMetadata.approvedRegressions adds capability " +
+                            "requirements."
+                    )
+                }
+                if (
+                    metadata.progressionFamily != target.progressionFamily &&
+                    link.rationale == null
+                ) {
+                    malformed(
+                        "Exercise ${entry.id} reviewedMetadata.approvedRegressions crosses " +
+                            "progressionFamily without rationale."
+                    )
+                }
+            }
+
+            metadata.approvedSubstitutions.forEach { link ->
+                val target = requireNotNull(entriesById.getValue(link.exerciseId).reviewedMetadata)
+                if (metadata.prescriptionShape != target.prescriptionShape) {
+                    malformed(
+                        "Exercise ${entry.id} reviewedMetadata.approvedSubstitutions has incompatible " +
+                            "prescriptionShape."
+                    )
+                }
+                val changesRole = metadata.movementPattern != target.movementPattern ||
+                    metadata.directPrimaryMuscle != target.directPrimaryMuscle
+                if (changesRole && link.rationale == null) {
+                    malformed(
+                        "Exercise ${entry.id} reviewedMetadata.approvedSubstitutions changes movement " +
+                            "role without rationale."
+                    )
+                }
+            }
+        }
+
+        val visiting = mutableSetOf<String>()
+        val visited = mutableSetOf<String>()
+        fun visit(exerciseId: String, path: List<String>) {
+            if (exerciseId in visiting) {
+                val cycleStart = path.indexOf(exerciseId)
+                val cycle = path.drop(cycleStart) + exerciseId
+                malformed("Reviewed metadata regression cycle detected: ${cycle.joinToString(" -> ")}.")
+            }
+            if (exerciseId in visited) return
+            visiting += exerciseId
+            regressionGraph[exerciseId].orEmpty().forEach { targetId ->
+                visit(targetId, path + exerciseId)
+            }
+            visiting -= exerciseId
+            visited += exerciseId
+        }
+        regressionGraph.keys.sorted().forEach { exerciseId -> visit(exerciseId, emptyList()) }
+    }
+
+    private fun regressionShapesCompatible(
+        source: PrescriptionShape,
+        target: PrescriptionShape
+    ): Boolean = source == target || (
+        source == PrescriptionShape.BODYWEIGHT_REPS &&
+            target == PrescriptionShape.ASSISTED_BODYWEIGHT
+        )
 
     private fun JsonReader.readStringMatrix(): List<List<String>> {
         val values = mutableListOf<List<String>>()
@@ -495,7 +1063,8 @@ class WorkoutGuideCatalogParser {
         val listedEquipment: List<String>,
         val type: ExerciseType,
         val isStretch: Boolean,
-        val programming: ExerciseProgrammingMetadata?
+        val programming: ExerciseProgrammingMetadata?,
+        val reviewedMetadata: ReviewedExerciseMetadata?
     ) {
         fun toExercise(attribution: ExerciseAttribution): Exercise = Exercise(
             id = id,
@@ -512,7 +1081,8 @@ class WorkoutGuideCatalogParser {
             listedEquipment = listedEquipment,
             type = type,
             isStretch = isStretch,
-            programming = programming
+            programming = programming,
+            reviewedMetadata = reviewedMetadata
         )
     }
 
@@ -550,8 +1120,38 @@ class WorkoutGuideCatalogParser {
         const val MAX_REPETITIONS = 1_000
         const val MIN_FATIGUE_SCORE = 1
         const val MAX_FATIGUE_SCORE = 5
+        const val MAX_REVIEWED_MUSCLE_LENGTH = 64
+        const val MAX_REVIEWED_SECONDARY_MUSCLES = 16
+        const val MAX_PROGRESSION_FAMILY_LENGTH = 64
+        const val MAX_REVIEWED_LINKS = 24
+        const val MAX_EXERCISE_ID_LENGTH = 128
+        const val MAX_LINK_RATIONALE_LENGTH = 500
+        const val MAX_CAPABILITY_REQUIREMENTS = 7
+        const val MAX_REVIEWED_EQUIPMENT_ALTERNATIVES = 20
+        const val MAX_REVIEWED_EQUIPMENT_PER_ALTERNATIVE = 20
+        const val MAX_REVIEWED_EQUIPMENT_LENGTH = 64
+        const val MAX_REVIEWED_ENUM_LENGTH = 64
+        const val MAX_REVIEWER_ROLE_LENGTH = 120
+        const val MAX_PROVENANCE_RATIONALE_LENGTH = 1_000
+        const val MIN_REVIEWED_AT_EPOCH_MILLIS = 1L
+        const val MAX_REVIEWED_AT_EPOCH_MILLIS = 253_402_300_799_999L
+        const val REVIEWED_SCHEMA_VERSION = 1
+        const val MIN_POLICY_VERSION = 1
+        const val MAX_POLICY_VERSION = 10_000
         val SAFE_IDENTIFIER = Regex("[a-z0-9]+(?:-[a-z0-9]+)*")
         val COMMIT_HASH = Regex("[0-9a-fA-F]{40}")
+        val SAFE_PROGRESSION_FAMILY = Regex("[a-z0-9]+(?:-[a-z0-9]+)*")
+        val SAFE_ERROR_FIELD = Regex("[A-Za-z0-9_.-]{1,80}")
+        val COMPLEXITY_DEMAND = mapOf(
+            ComplexityTier.FOUNDATIONAL to 0,
+            ComplexityTier.STANDARD to 1,
+            ComplexityTier.ADVANCED to 2
+        )
+        val SUPPORT_DEMAND = mapOf(
+            SupportRequirement.SUPPORTED to 0,
+            SupportRequirement.OPTIONAL_SUPPORT to 1,
+            SupportRequirement.UNSUPPORTED to 2
+        )
 
         fun malformed(message: String): Nothing = throw WorkoutGuideCatalogFormatException(message)
     }

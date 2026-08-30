@@ -4,10 +4,12 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
 import java.io.StringReader
+import org.json.JSONObject
 import org.junit.Test
 import org.junit.runner.RunWith
 import wallcrawl.elopenmike.com.core.exercise.ExerciseFilter
 import wallcrawl.elopenmike.com.core.model.MuscleVocabulary
+import wallcrawl.elopenmike.com.core.model.ReviewState
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
 import wallcrawl.elopenmike.com.core.model.UserProfile
@@ -16,6 +18,7 @@ import wallcrawl.elopenmike.com.core.model.UserProfile
 class WorkoutGuideCatalogParserTest {
 
     private val assets = InstrumentationRegistry.getInstrumentation().targetContext.assets
+    private val testAssets = InstrumentationRegistry.getInstrumentation().context.assets
     private val parser = WorkoutGuideCatalogParser()
 
     @Test
@@ -28,6 +31,7 @@ class WorkoutGuideCatalogParserTest {
         // Reviewed programming metadata covers the exercises the planner selects from,
         // not the whole catalog; the rest fall back to conservative defaults.
         assertThat(snapshot.exercises.count { it.programming != null }).isEqualTo(117)
+        assertThat(snapshot.exercises.count { it.reviewedMetadata != null }).isEqualTo(37)
         assertThat(snapshot.exercises.map { it.id }).containsAtLeastElementsIn(HISTORICAL_IDS)
 
         snapshot.framesByExerciseId.values.flatten().forEach { frame ->
@@ -150,12 +154,172 @@ class WorkoutGuideCatalogParserTest {
         }
     }
 
+    @Test
+    fun parse_readsTypedReviewedMetadataWithoutTreatingDraftAsApproved() {
+        val snapshot = parser.parse(StringReader(catalogJson(exerciseJson(reviewedMetadataJson()))))
+
+        val metadata = snapshot.exercises.single().reviewedMetadata
+        assertThat(metadata).isNotNull()
+        assertThat(metadata?.reviewState).isEqualTo(ReviewState.DRAFT)
+        assertThat(metadata?.directPrimaryMuscle).isEqualTo(StandardMuscles.CORE)
+        assertThat(metadata?.provenance?.reviewerRole).isNull()
+        assertThat(metadata?.approvedRegressions).isEmpty()
+    }
+
+    @Test
+    fun parse_rejectsUnknownReviewedMetadataField() {
+        val metadata = reviewedMetadataJson().replace(
+            "\"reviewState\": \"draft\"",
+            "\"reviewState\": \"draft\", \"fatigueScore\": 5"
+        )
+
+        assertFormatFailure(catalogJson(exerciseJson(metadata)), "sample reviewedMetadata.fatigueScore")
+    }
+
+    @Test
+    fun parse_rejectsMalformedReviewedMetadataAtTheSameContractBoundariesAsTheImporter() {
+        val fixtures = testAssets.open("reviewed-validation-fixtures.json")
+            .bufferedReader()
+            .use { JSONObject(it.readText()) }
+        val base = fixtures.getJSONObject("baseReviewedMetadata")
+        val cases = fixtures.getJSONArray("invalidCases")
+
+        for (index in 0 until cases.length()) {
+            val case = cases.getJSONObject(index)
+            val metadata = JSONObject(base.toString())
+            applyFixtureOperation(metadata, case)
+            assertFormatFailure(
+                catalogJson(
+                    exerciseJson(
+                        reviewedMetadata = metadata.toString(),
+                        primaryMuscles = "[\"Chest\"]",
+                        secondaryMuscles = "[\"Shoulders\", \"Triceps\"]",
+                        exerciseType = "weight_reps"
+                    )
+                ),
+                case.getString("errorFragment")
+            )
+        }
+    }
+
+    @Test
+    fun parse_rejectsReviewedMetadataOnStretchAndCardioDurationExercises() {
+        assertFormatFailure(
+            catalogJson(exerciseJson(reviewedMetadataJson(), isStretch = true)),
+            "stretch"
+        )
+        val duration = reviewedMetadataJson()
+            .replace("\"directPrimaryMuscle\": \"Core\"", "\"directPrimaryMuscle\": \"Chest\"")
+            .replace("\"prescriptionShape\": \"bodyweight_reps\"", "\"prescriptionShape\": \"duration\"")
+        assertFormatFailure(
+            catalogJson(
+                exerciseJson(
+                    reviewedMetadata = duration,
+                    primaryMuscles = "[\"Chest\"]",
+                    secondaryMuscles = "[\"Cardio\"]",
+                    exerciseType = "duration"
+                )
+            ),
+            "cardio duration"
+        )
+    }
+
+    @Test
+    fun parse_rejectsInvalidReviewedRegressionGraphs() {
+        val sourceToTarget = reviewedMetadataJson().replace(
+            "\"approvedRegressions\": []",
+            "\"approvedRegressions\": [{\"exerciseId\": \"target\"}]"
+        )
+        assertFormatFailure(catalogJson(exerciseJson(sourceToTarget)), "unknown exercise id")
+        assertFormatFailure(
+            catalogJson(
+                exerciseJson(sourceToTarget) + "," + exerciseJson(null, id = "target")
+            ),
+            "target lacks reviewed metadata"
+        )
+
+        val targetToSource = reviewedMetadataJson().replace(
+            "\"approvedRegressions\": []",
+            "\"approvedRegressions\": [{\"exerciseId\": \"sample\"}]"
+        )
+        assertFormatFailure(
+            catalogJson(
+                exerciseJson(sourceToTarget) + "," +
+                    exerciseJson(targetToSource, id = "target")
+            ),
+            "regression cycle"
+        )
+
+        val harderTarget = reviewedMetadataJson().replace(
+            "\"complexity\": \"foundational\"",
+            "\"complexity\": \"standard\""
+        )
+        assertFormatFailure(
+            catalogJson(
+                exerciseJson(sourceToTarget) + "," +
+                    exerciseJson(harderTarget, id = "target")
+            ),
+            "more complex"
+        )
+    }
+
+    @Test
+    fun parse_rejectsUndocumentedCrossFamilyAndRoleChangingEdges() {
+        val regression = reviewedMetadataJson().replace(
+            "\"approvedRegressions\": []",
+            "\"approvedRegressions\": [{\"exerciseId\": \"target\"}]"
+        )
+        val otherFamily = reviewedMetadataJson().replace(
+            "\"progressionFamily\": \"core-hold\"",
+            "\"progressionFamily\": \"other-core-family\""
+        )
+        assertFormatFailure(
+            catalogJson(
+                exerciseJson(regression) + "," + exerciseJson(otherFamily, id = "target")
+            ),
+            "crosses progressionFamily without rationale"
+        )
+
+        val substitution = reviewedMetadataJson().replace(
+            "\"approvedSubstitutions\": []",
+            "\"approvedSubstitutions\": [{\"exerciseId\": \"target\"}]"
+        )
+        val changedRole = reviewedMetadataJson()
+            .replace("\"directPrimaryMuscle\": \"Core\"", "\"directPrimaryMuscle\": \"Chest\"")
+            .replace("\"movementPattern\": \"core\"", "\"movementPattern\": \"horizontal_push\"")
+        assertFormatFailure(
+            catalogJson(
+                exerciseJson(substitution) + "," +
+                    exerciseJson(
+                        reviewedMetadata = changedRole,
+                        id = "target",
+                        primaryMuscles = "[\"Chest\"]"
+                    )
+            ),
+            "changes movement role without rationale"
+        )
+    }
+
     private fun assertFormatFailure(json: String, messageFragment: String) {
         try {
             parser.parse(StringReader(json))
             throw AssertionError("Expected catalog format failure")
         } catch (error: WorkoutGuideCatalogFormatException) {
             assertThat(error.message).contains(messageFragment)
+        }
+    }
+
+    private fun applyFixtureOperation(metadata: JSONObject, case: JSONObject) {
+        val path = case.getJSONArray("path")
+        var target = metadata
+        for (index in 0 until path.length() - 1) {
+            target = target.getJSONObject(path.getString(index))
+        }
+        val key = path.getString(path.length() - 1)
+        when (case.getString("operation")) {
+            "remove" -> target.remove(key)
+            "set" -> target.put(key, case.get("value"))
+            else -> throw AssertionError("Unknown shared fixture operation")
         }
     }
 
@@ -178,22 +342,54 @@ class WorkoutGuideCatalogParserTest {
         }
     """.trimIndent()
 
-    private fun exerciseJson(): String {
+    private fun exerciseJson(
+        reviewedMetadata: String? = null,
+        id: String = "sample",
+        primaryMuscles: String = "[\"Core\"]",
+        secondaryMuscles: String = "[]",
+        exerciseType: String = "bodyweight_reps",
+        isStretch: Boolean = false
+    ): String {
         return """
             {
-              "id": "sample",
-              "sourceId": "exercise-sample",
-              "sourceSlug": "sample",
+              "id": "$id",
+              "sourceId": "exercise-$id",
+              "sourceSlug": "$id",
               "name": "Sample Exercise",
               "searchAliases": [],
-              "primaryMuscles": ["Core"],
-              "secondaryMuscles": [],
+              "primaryMuscles": $primaryMuscles,
+              "secondaryMuscles": $secondaryMuscles,
               "listedEquipment": ["Bodyweight"],
-              "exerciseType": "bodyweight_reps",
-              "isStretch": false
+              "exerciseType": "$exerciseType",
+              "isStretch": $isStretch${reviewedMetadata?.let { ",\n              \"reviewedMetadata\": $it" }.orEmpty()}
             }
         """.trimIndent()
     }
+
+    private fun reviewedMetadataJson(): String = """
+        {
+          "reviewState": "draft",
+          "directPrimaryMuscle": "Core",
+          "descriptiveSecondaryMuscles": [],
+          "movementPattern": "core",
+          "complexity": "foundational",
+          "progressionFamily": "core-hold",
+          "prescriptionShape": "bodyweight_reps",
+          "approvedRegressions": [],
+          "approvedSubstitutions": [],
+          "capabilityRequirements": [],
+          "supportRequirement": "supported",
+          "impactLevel": "none",
+          "equipmentAlternatives": [["Bodyweight"]],
+          "provenance": {
+            "reviewerRole": null,
+            "rationaleOrSource": "Draft fixture awaiting human review.",
+            "reviewedAtEpochMillis": null,
+            "schemaVersion": 1,
+            "policyVersion": 1
+          }
+        }
+    """.trimIndent()
 
     private companion object {
         val HISTORICAL_IDS = setOf(

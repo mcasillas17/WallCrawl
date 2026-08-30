@@ -877,6 +877,8 @@ def _regression_shapes_compatible(source_shape: str, target_shape: str) -> bool:
 
 def _render_review_report(reviewed_by_id: dict[str, dict[str, Any]]) -> str:
     review_states = Counter(value["reviewState"] for value in reviewed_by_id.values())
+    review_states.setdefault("approved", 0)
+    review_states.setdefault("draft", 0)
     movement_patterns = Counter(value["movementPattern"] for value in reviewed_by_id.values())
     progression_families = Counter(value["progressionFamily"] for value in reviewed_by_id.values())
     capability_requirements: Counter[str] = Counter()
@@ -1124,6 +1126,7 @@ def _read_json(path: Path, label: str, maximum_bytes: int = 50_000_000) -> Any:
         return json.loads(
             path.read_text(encoding="utf-8"),
             parse_constant=lambda _value: _reject_non_finite_number(label),
+            object_pairs_hook=lambda pairs: _reject_duplicate_json_fields(pairs, label),
         )
     except FileNotFoundError as error:
         raise CatalogImportError(f"Missing {label}: {path}") from error
@@ -1135,6 +1138,20 @@ def _read_json(path: Path, label: str, maximum_bytes: int = 50_000_000) -> Any:
 
 def _reject_non_finite_number(label: str) -> None:
     raise CatalogImportError(f"{label} contains a non-finite number")
+
+
+def _reject_duplicate_json_fields(
+    pairs: list[tuple[str, Any]],
+    label: str,
+) -> dict[str, Any]:
+    result: dict[str, Any] = {}
+    for key, value in pairs:
+        if key in result:
+            raise CatalogImportError(
+                f"{label} contains duplicate JSON field {_safe_error_field(key)}"
+            )
+        result[key] = value
+    return result
 
 
 def _write_json(path: Path, value: Any) -> None:

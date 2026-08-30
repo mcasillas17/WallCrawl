@@ -8,6 +8,10 @@ from pathlib import Path
 
 
 SCRIPT_PATH = Path(__file__).with_name("import_catalog.py")
+PARITY_FIXTURES = (
+    Path(__file__).resolve().parents[2]
+    / "app/src/androidTest/assets/reviewed-validation-fixtures.json"
+)
 
 
 class ImportCatalogTest(unittest.TestCase):
@@ -52,7 +56,10 @@ class ImportCatalogTest(unittest.TestCase):
         self.assertEqual(exercise["programming"]["requiredEquipmentCombinations"], [["Barbell", "Bench"]])
         self.assertEqual(exercise["reviewedMetadata"]["reviewState"], "draft")
         self.assertEqual(exercise["reviewedMetadata"]["directPrimaryMuscle"], "Chest")
-        self.assertIn("barbell-bench-press", self.review_report.read_text())
+        review_report = self.review_report.read_text()
+        self.assertIn("barbell-bench-press", review_report)
+        self.assertIn("| `approved` | 0 |", review_report)
+        self.assertIn("| `draft` | 1 |", review_report)
         self.assertNotIn("frames", exercise)
         self.assertNotIn("attribution", exercise)
 
@@ -250,6 +257,20 @@ class ImportCatalogTest(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("unknown field fatigueCategory", result.stderr)
 
+    def test_rejects_duplicate_reviewed_json_field(self) -> None:
+        raw = self.reviewed_metadata.read_text()
+        raw = raw.replace(
+            '"reviewState": "draft"',
+            '"reviewState": "draft", "reviewState": "draft"',
+            1,
+        )
+        self.reviewed_metadata.write_text(raw)
+
+        result = self._run_import()
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("duplicate JSON field reviewState", result.stderr)
+
     def test_rejects_missing_reviewed_field(self) -> None:
         reviewed = json.loads(self.reviewed_metadata.read_text())
         del reviewed["exercises"]["barbell-bench-press"]["impactLevel"]
@@ -270,6 +291,22 @@ class ImportCatalogTest(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("unknown enum", result.stderr.lower())
 
+    def test_python_and_android_reject_the_same_reviewed_contract_fixtures(self) -> None:
+        fixtures = json.loads(PARITY_FIXTURES.read_text())
+        for case in fixtures["invalidCases"]:
+            with self.subTest(case=case["name"]):
+                self._write_reviewed_metadata()
+                reviewed = json.loads(self.reviewed_metadata.read_text())
+                metadata = json.loads(json.dumps(fixtures["baseReviewedMetadata"]))
+                self._apply_fixture_operation(metadata, case)
+                reviewed["exercises"]["barbell-bench-press"] = metadata
+                self.reviewed_metadata.write_text(json.dumps(reviewed, indent=2) + "\n")
+
+                result = self._run_import()
+
+                self.assertNotEqual(result.returncode, 0, case["name"])
+                self.assertIn(case["errorFragment"].lower(), result.stderr.lower())
+
     def test_rejects_approved_entry_without_human_provenance(self) -> None:
         reviewed = json.loads(self.reviewed_metadata.read_text())
         reviewed["exercises"]["barbell-bench-press"]["reviewState"] = "approved"
@@ -279,6 +316,17 @@ class ImportCatalogTest(unittest.TestCase):
 
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("requires reviewerRole and reviewedAtEpochMillis", result.stderr)
+
+    def test_rejects_review_timestamp_outside_android_parser_bound(self) -> None:
+        reviewed = json.loads(self.reviewed_metadata.read_text())
+        provenance = reviewed["exercises"]["barbell-bench-press"]["provenance"]
+        provenance["reviewedAtEpochMillis"] = 253_402_300_800_000
+        self.reviewed_metadata.write_text(json.dumps(reviewed, indent=2) + "\n")
+
+        result = self._run_import()
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("reviewedAtEpochMillis", result.stderr)
 
     def test_rejects_primary_muscle_not_represented_by_catalog(self) -> None:
         reviewed = json.loads(self.reviewed_metadata.read_text())
@@ -791,6 +839,19 @@ class ImportCatalogTest(unittest.TestCase):
             },
         }
         self.reviewed_metadata.write_text(json.dumps(reviewed, indent=2) + "\n")
+
+    @staticmethod
+    def _apply_fixture_operation(metadata: dict, case: dict) -> None:
+        path = case["path"]
+        target = metadata
+        for component in path[:-1]:
+            target = target[component]
+        if case["operation"] == "remove":
+            del target[path[-1]]
+        elif case["operation"] == "set":
+            target[path[-1]] = case["value"]
+        else:
+            raise AssertionError(f"Unknown fixture operation: {case['operation']}")
 
     def _commit_source(self) -> str:
         self._git("init", "-q")
