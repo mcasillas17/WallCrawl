@@ -8,10 +8,18 @@ import wallcrawl.elopenmike.com.core.model.MovementPattern
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.ExercisePerformanceHistory
 import wallcrawl.elopenmike.com.core.model.CapabilityLevel
+import wallcrawl.elopenmike.com.core.model.ComplexityTier
+import wallcrawl.elopenmike.com.core.model.ImpactLevel
 import wallcrawl.elopenmike.com.core.model.MovementCapabilities
 import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
+import wallcrawl.elopenmike.com.core.model.PrescriptionShape
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
+import wallcrawl.elopenmike.com.core.model.ReviewProvenance
+import wallcrawl.elopenmike.com.core.model.ReviewState
+import wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata
+import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
+import wallcrawl.elopenmike.com.core.model.SupportRequirement
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
@@ -357,6 +365,33 @@ class FakeWorkoutPlannerTest {
     }
 
     @Test
+    fun generateWorkout_reviewStateDoesNotChangeCurrentPlannerOutput() = runTest {
+        val exercise = allExercises.single { it.id == "incline-dumbbell-press" }
+        val withoutReviewedMetadata = exercise.copy(reviewedMetadata = null)
+        val draft = exercise.copy(reviewedMetadata = reviewedMetadata(ReviewState.DRAFT))
+        val approved = exercise.copy(reviewedMetadata = reviewedMetadata(ReviewState.APPROVED))
+        val profile = UserProfile(
+            goals = setOf(FitnessGoal.BUILD_MUSCLE),
+            musclePriorities = mapOf(StandardMuscles.CHEST to PriorityLevel.HIGH)
+        )
+
+        suspend fun generate(candidate: wallcrawl.elopenmike.com.core.model.Exercise) =
+            FakeWorkoutPlanner().generateWorkout(
+                WorkoutGenerationContext(
+                    userProfile = profile,
+                    allowedExercises = listOf(candidate)
+                )
+            )
+
+        val baseline = generate(withoutReviewedMetadata)
+        val fromDraft = generate(draft)
+        val fromApproved = generate(approved)
+
+        assertThat(fromDraft.copy(id = baseline.id)).isEqualTo(baseline)
+        assertThat(fromApproved.copy(id = baseline.id)).isEqualTo(baseline)
+    }
+
+    @Test
     fun generateWorkout_withMultipleGoals_generatesHybridTitleAndRationale() = runTest {
         val hybridProfile = UserProfile(
             goals = setOf(FitnessGoal.STRENGTH, FitnessGoal.BUILD_MUSCLE),
@@ -427,4 +462,28 @@ class FakeWorkoutPlannerTest {
         /** Enough generations to walk every split in the rotation. */
         const val SPLIT_ROTATION_PROBE = 6
     }
+
+    private fun reviewedMetadata(reviewState: ReviewState): ReviewedExerciseMetadata =
+        ReviewedExerciseMetadata(
+            reviewState = reviewState,
+            directPrimaryMuscle = StandardMuscles.CHEST,
+            descriptiveSecondaryMuscles = setOf(StandardMuscles.SHOULDERS, StandardMuscles.TRICEPS),
+            movementPattern = MovementPattern.HORIZONTAL_PUSH,
+            complexity = ComplexityTier.STANDARD,
+            progressionFamily = "dumbbell-horizontal-push",
+            prescriptionShape = PrescriptionShape.WEIGHT_REPS,
+            approvedRegressions = emptyList(),
+            approvedSubstitutions = emptyList(),
+            capabilityRequirements = emptySet(),
+            supportRequirement = SupportRequirement.SUPPORTED,
+            impactLevel = ImpactLevel.NONE,
+            equipmentAlternatives = listOf(listOf(StandardEquipment.DUMBBELL, StandardEquipment.BENCH)),
+            provenance = ReviewProvenance(
+                reviewerRole = if (reviewState == ReviewState.APPROVED) "Human exercise reviewer" else null,
+                rationaleOrSource = "Planner invariance fixture.",
+                reviewedAtEpochMillis = if (reviewState == ReviewState.APPROVED) 1L else null,
+                schemaVersion = 1,
+                policyVersion = 1
+            )
+        )
 }

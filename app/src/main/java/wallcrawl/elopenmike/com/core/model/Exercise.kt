@@ -14,7 +14,8 @@ data class Exercise(
     val listedEquipment: List<String> = emptyList(),
     val type: ExerciseType,
     val isStretch: Boolean = false,
-    val programming: ExerciseProgrammingMetadata? = null
+    val programming: ExerciseProgrammingMetadata? = null,
+    val reviewedMetadata: ReviewedExerciseMetadata? = null
 )
 
 data class ExerciseSource(
@@ -50,6 +51,81 @@ data class ExerciseProgrammingMetadata(
     val progressionType: ProgressionType,
     val alternativeExerciseIds: List<String> = emptyList(),
     val coachingSummary: String
+)
+
+/** Human-review status for the future automatic-planning metadata contract. */
+enum class ReviewState {
+    DRAFT,
+    APPROVED
+}
+
+enum class ComplexityTier {
+    FOUNDATIONAL,
+    STANDARD,
+    ADVANCED
+}
+
+enum class ImpactLevel {
+    NONE,
+    LOW,
+    HIGH
+}
+
+enum class SupportRequirement {
+    SUPPORTED,
+    OPTIONAL_SUPPORT,
+    UNSUPPORTED
+}
+
+enum class PrescriptionShape {
+    WEIGHT_REPS,
+    BODYWEIGHT_REPS,
+    ASSISTED_BODYWEIGHT,
+    DURATION
+}
+
+/**
+ * Provenance for reviewed planning metadata.
+ *
+ * Drafts deliberately leave the human reviewer and review time absent. Approved metadata
+ * requires both fields at the importer/parser trust boundaries; an AI-authored draft must
+ * never manufacture them merely to satisfy a non-null domain shape.
+ */
+data class ReviewProvenance(
+    val reviewerRole: String?,
+    val rationaleOrSource: String,
+    val reviewedAtEpochMillis: Long?,
+    val schemaVersion: Int,
+    val policyVersion: Int
+)
+
+/** A directed reviewed graph edge; rationale is required for documented exceptions. */
+data class ReviewedExerciseLink(
+    val exerciseId: String,
+    val rationale: String? = null
+)
+
+/**
+ * WallCrawl-owned categorical metadata for future deterministic planning.
+ *
+ * This block is separate from [ExerciseProgrammingMetadata]. The current planner continues
+ * to consume the legacy block until the later reviewed-only eligibility/policy migration.
+ */
+data class ReviewedExerciseMetadata(
+    val reviewState: ReviewState,
+    val directPrimaryMuscle: String,
+    val descriptiveSecondaryMuscles: Set<String>,
+    val movementPattern: MovementPattern,
+    val complexity: ComplexityTier,
+    val progressionFamily: String,
+    val prescriptionShape: PrescriptionShape,
+    val approvedRegressions: List<ReviewedExerciseLink>,
+    val approvedSubstitutions: List<ReviewedExerciseLink>,
+    val capabilityRequirements: Set<MovementCapabilityType>,
+    val supportRequirement: SupportRequirement,
+    val impactLevel: ImpactLevel,
+    val equipmentAlternatives: List<List<String>>,
+    val provenance: ReviewProvenance
 )
 
 enum class ExerciseType {
