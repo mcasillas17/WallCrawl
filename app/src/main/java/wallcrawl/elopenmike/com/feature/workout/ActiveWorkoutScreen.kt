@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -22,26 +23,34 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.model.ExerciseType
-import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
+import wallcrawl.elopenmike.com.core.model.SetStopReason
+import wallcrawl.elopenmike.com.core.model.SetValuesDraft
 import wallcrawl.elopenmike.com.core.exercise.visual.ExerciseVisualProvider
 import wallcrawl.elopenmike.com.core.ui.components.ExerciseIllustration
-import wallcrawl.elopenmike.com.core.ui.components.PerformanceSetRow
+import wallcrawl.elopenmike.com.core.ui.components.GymFloorSetRow
+import wallcrawl.elopenmike.com.core.ui.components.restCountdownLabel
 import wallcrawl.elopenmike.com.core.ui.components.StatBadge
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlOutlinedButton
@@ -52,6 +61,7 @@ import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
 import wallcrawl.elopenmike.com.core.ui.theme.WebBlueAccent
+import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -105,18 +115,53 @@ fun ActiveWorkoutScreen(
             }
 
             is ActiveWorkoutUiState.Active -> {
+                // The countdown is derived from the rest deadline, so the UI only has to
+                // ask the ViewModel to re-evaluate it; nothing here counts time itself.
+                LaunchedEffect(state.restTimer.state) {
+                    while (state.restTimer.state is RestTimerState.Running) {
+                        delay(REST_TICK_MILLIS)
+                        viewModel.onRestTimerTick()
+                    }
+                }
+
                 ActiveWorkoutContent(
                     state = state,
                     visualProvider = visualProvider,
                     onPreviousExercise = { viewModel.previousExercise() },
                     onNextExercise = { viewModel.nextExercise() },
-                    onUpdateSet = { setId, performance ->
-                        viewModel.updateSet(setId, performance)
+                    onValuesChanged = { setId, values ->
+                        viewModel.updateSetValues(setId, values)
                     },
-                    onFinishWorkout = { viewModel.finishWorkout() },
+                    onCompletionChanged = { setId, values, completed ->
+                        viewModel.setCompletion(setId, values, completed)
+                    },
+                    onSkipSet = { setId, reason -> viewModel.skipSet(setId, reason) },
+                    onRecordEffort = { setId, rpe, rir -> viewModel.recordEffort(setId, rpe, rir) },
+                    onRecordFeltManageable = { setId, manageable ->
+                        viewModel.recordFeltManageable(setId, manageable)
+                    },
+                    onRequestFinish = { viewModel.requestFinish() },
                     onDismissSetUpdateError = { viewModel.dismissSetUpdateError() },
-                    onClose = onNavigateBack
+                    onAddRest = { viewModel.addRestTime() },
+                    onSkipRest = { viewModel.skipRest() },
+                    onCancelRest = { viewModel.cancelRest() },
+                    onClose = { viewModel.requestCancel() }
                 )
+
+                state.pendingFinish?.let { pending ->
+                    FinishConfirmationDialog(
+                        openSetCount = pending.openSetCount,
+                        onConfirm = { viewModel.confirmFinish() },
+                        onDismiss = { viewModel.dismissFinishConfirmation() }
+                    )
+                }
+
+                if (state.isConfirmingDiscard) {
+                    DiscardConfirmationDialog(
+                        onConfirm = { viewModel.confirmCancel(onNavigateBack) },
+                        onDismiss = { viewModel.dismissCancelConfirmation() }
+                    )
+                }
             }
         }
     }
@@ -128,9 +173,16 @@ private fun ActiveWorkoutContent(
     visualProvider: ExerciseVisualProvider,
     onPreviousExercise: () -> Unit,
     onNextExercise: () -> Unit,
-    onUpdateSet: (setId: String, performance: SetPerformanceInput) -> Unit,
-    onFinishWorkout: () -> Unit,
+    onValuesChanged: (setId: String, values: SetValuesDraft) -> Unit,
+    onCompletionChanged: (setId: String, values: SetValuesDraft, completed: Boolean) -> Unit,
+    onSkipSet: (setId: String, reason: SetStopReason) -> Unit,
+    onRecordEffort: (setId: String, rpe: Float?, rir: Int?) -> Unit,
+    onRecordFeltManageable: (setId: String, feltManageable: Boolean) -> Unit,
+    onRequestFinish: () -> Unit,
     onDismissSetUpdateError: () -> Unit,
+    onAddRest: () -> Unit,
+    onSkipRest: () -> Unit,
+    onCancelRest: () -> Unit,
     onClose: () -> Unit
 ) {
     val currentExercise = state.currentExercise
@@ -173,7 +225,7 @@ private fun ActiveWorkoutContent(
 
             WallCrawlOutlinedButton(
                 text = "Finish",
-                onClick = onFinishWorkout,
+                onClick = onRequestFinish,
                 modifier = Modifier
                     .widthIn(min = 76.dp)
                     .height(36.dp),
@@ -187,6 +239,16 @@ private fun ActiveWorkoutContent(
             SetUpdateErrorBanner(
                 message = state.setUpdateError,
                 onDismiss = onDismissSetUpdateError
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+
+        if (state.restTimer.isVisible) {
+            RestTimerBar(
+                restTimer = state.restTimer,
+                onAddRest = onAddRest,
+                onSkipRest = onSkipRest,
+                onCancelRest = onCancelRest
             )
             Spacer(modifier = Modifier.height(8.dp))
         }
@@ -263,11 +325,18 @@ private fun ActiveWorkoutContent(
                 // 5. Editable Sets Rows
                 items(currentExercise.sets.size) { setIndex ->
                     val set = currentExercise.sets[setIndex]
-                    PerformanceSetRow(
+                    GymFloorSetRow(
                         set = set,
                         weightUnit = state.weightUnit.symbol,
-                        onUpdateSet = { performance ->
-                            onUpdateSet(set.id, performance)
+                        previousSet = state.previousSets.getOrNull(setIndex),
+                        onValuesChanged = { values -> onValuesChanged(set.id, values) },
+                        onCompletionChanged = { values, completed ->
+                            onCompletionChanged(set.id, values, completed)
+                        },
+                        onSkipSet = { reason -> onSkipSet(set.id, reason) },
+                        onRecordEffort = { rpe, rir -> onRecordEffort(set.id, rpe, rir) },
+                        onRecordFeltManageable = { manageable ->
+                            onRecordFeltManageable(set.id, manageable)
                         }
                     )
                 }
@@ -302,12 +371,113 @@ private fun ActiveWorkoutContent(
             } else {
                 WallCrawlPrimaryButton(
                     text = "Finish Workout",
-                    onClick = onFinishWorkout,
+                    onClick = onRequestFinish,
                     modifier = Modifier.weight(if (state.isFirstExercise) 2f else 1f)
                 )
             }
         }
     }
+}
+
+/**
+ * The visible rest countdown, with the three explicit controls the state machine exposes.
+ */
+@Composable
+private fun RestTimerBar(
+    restTimer: RestTimerUiState,
+    onAddRest: () -> Unit,
+    onSkipRest: () -> Unit,
+    onCancelRest: () -> Unit
+) {
+    val isRunning = restTimer.isRunning
+    val countdown = restCountdownLabel(restTimer.remainingSeconds)
+    WallCrawlCard(cornerRadius = 12.dp, contentPadding = 12.dp) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                imageVector = Icons.Default.Timer,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier.size(18.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = if (isRunning) "Rest $countdown" else "Rest finished",
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier
+                    .weight(1f)
+                    .semantics {
+                        contentDescription = if (isRunning) {
+                            "Rest remaining $countdown"
+                        } else {
+                            "Rest finished"
+                        }
+                    }
+            )
+        }
+        Spacer(modifier = Modifier.height(4.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            TextButton(
+                onClick = onAddRest,
+                modifier = Modifier.heightIn(min = 48.dp)
+            ) {
+                Text("+30s")
+            }
+            if (isRunning) {
+                TextButton(
+                    onClick = onSkipRest,
+                    modifier = Modifier.heightIn(min = 48.dp)
+                ) {
+                    Text("Skip rest")
+                }
+            }
+            TextButton(
+                onClick = onCancelRest,
+                modifier = Modifier.heightIn(min = 48.dp)
+            ) {
+                Text("Dismiss")
+            }
+        }
+    }
+}
+
+/**
+ * Finishing with work still open is confirmed first, and the confirmation says exactly
+ * how much is unlogged so nothing incomplete is silently recorded as a finished session.
+ */
+@Composable
+private fun FinishConfirmationDialog(
+    openSetCount: Int,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    val setWord = if (openSetCount == 1) "set" else "sets"
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Finish with $openSetCount unlogged $setWord?") },
+        text = {
+            Text(
+                "$openSetCount $setWord will stay unlogged. Only completed sets count " +
+                    "toward your history."
+            )
+        },
+        confirmButton = { TextButton(onClick = onConfirm) { Text("Finish anyway") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text("Keep going") } }
+    )
+}
+
+@Composable
+private fun DiscardConfirmationDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Discard this workout?") },
+        text = { Text("Everything logged in this session will be deleted.") },
+        confirmButton = { TextButton(onClick = onConfirm) { Text("Discard") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text("Keep workout") } }
+    )
 }
 
 @Composable
@@ -475,3 +645,6 @@ private fun PreviousPerformanceCard(
         }
     }
 }
+
+/** How often the visible countdown re-derives itself from the rest deadline. */
+private const val REST_TICK_MILLIS = 250L

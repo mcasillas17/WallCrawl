@@ -161,3 +161,28 @@ val WorkoutSet.outcome: SetOutcome
 
         else -> SetOutcome.NotRecorded
     }
+
+/**
+ * The type-specific values a logger can edit, separate from the outcome fields.
+ *
+ * Keeping them apart means the UI never assembles timestamps, stop reasons, or feedback
+ * itself: it reports what the user typed, and the ViewModel assembles the typed outcome
+ * the repository will validate.
+ */
+data class SetValuesDraft(
+    val reps: Int? = null,
+    val weight: Double? = null,
+    val assistanceWeight: Double? = null,
+    val durationSeconds: Int? = null,
+    val distanceMeters: Double? = null
+)
+
+fun SetValuesDraft.asPerformanceInput(isCompleted: Boolean): SetPerformanceInput =
+    SetPerformanceInput(
+        reps = reps,
+        weight = weight,
+        assistanceWeight = assistanceWeight,
+        durationSeconds = durationSeconds,
+        distanceMeters = distanceMeters,
+        isCompleted = isCompleted
+    )

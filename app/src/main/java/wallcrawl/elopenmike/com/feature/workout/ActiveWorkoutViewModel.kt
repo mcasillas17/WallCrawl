@@ -10,6 +10,7 @@ import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
 import wallcrawl.elopenmike.com.core.model.SetStopReason
+import wallcrawl.elopenmike.com.core.model.SetValuesDraft
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
@@ -201,6 +202,49 @@ class ActiveWorkoutViewModel(
                 if (startsRest) completionsInFlight.remove(setId)
             }
         }
+    }
+
+    /**
+     * Persists edited values without changing the outcome: correcting a number on a
+     * completed set keeps it completed, and on a stopped set keeps it stopped.
+     */
+    fun updateSetValues(setId: String, values: SetValuesDraft) {
+        val set = findSet(setId) ?: return
+        updateSet(setId, set.toPerformanceInput().withValues(values))
+    }
+
+    /**
+     * Explicitly completes or un-completes a set.
+     *
+     * Completing stamps the outcome timestamp here, in one place, and clears any stop
+     * reason. Un-completing clears every completion-only field in the same write, so the
+     * row can never claim completion without a timestamp or keep feedback for work that
+     * is no longer recorded as done.
+     */
+    fun setCompletion(setId: String, values: SetValuesDraft, completed: Boolean) {
+        val existing = findSet(setId)?.toPerformanceInput()
+            ?: SetPerformanceInput(isCompleted = false)
+        val updated = if (completed) {
+            existing.withValues(values).copy(
+                stopReason = null,
+                stoppedAtTimestamp = null,
+                completedAtTimestamp = existing.completedAtTimestamp
+                    ?.takeIf { existing.isCompleted }
+                    ?: nowMillis(),
+                isCompleted = true
+            )
+        } else {
+            existing.withValues(values).copy(
+                rpe = null,
+                rir = null,
+                feltManageable = null,
+                completedAtTimestamp = null,
+                stoppedAtTimestamp = null,
+                stopReason = null,
+                isCompleted = false
+            )
+        }
+        updateSet(setId, updated)
     }
 
     /**
@@ -444,6 +488,15 @@ internal fun WorkoutSet.toPerformanceInput(): SetPerformanceInput = SetPerforman
     stoppedAtTimestamp = stoppedAtTimestamp,
     stopReason = stopReason,
     isCompleted = isCompleted
+)
+
+/** The same outcome with new type-specific values. */
+internal fun SetPerformanceInput.withValues(values: SetValuesDraft): SetPerformanceInput = copy(
+    reps = values.reps,
+    weight = values.weight,
+    assistanceWeight = values.assistanceWeight,
+    durationSeconds = values.durationSeconds,
+    distanceMeters = values.distanceMeters
 )
 
 internal fun elapsedWorkoutMinutes(
