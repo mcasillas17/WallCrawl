@@ -67,6 +67,8 @@ class PlannerFixtureLoaderTest {
             .containsExactly("incline-dumbbell-press")
         assertThat(fixture.expected.forbiddenExerciseIds)
             .containsExactly("barbell-bench-press")
+        assertThat(readExpectedTargetWeights(fixture.expected))
+            .containsExactly("incline-dumbbell-press", 20.0)
     }
 
     @Test
@@ -146,6 +148,96 @@ class PlannerFixtureLoaderTest {
     }
 
     @Test
+    fun loadResource_rejectsInvalidExpectedTargetWeightMaps() {
+        val loader = loaderWithResource(
+            resourcePath = "planner-fixtures/invalid-expected-target-weights.json",
+            resourceContents = """
+                {
+                  "schemaVersion": 1,
+                  "id": "invalid-expected-target-weights",
+                  "policyVersion": 3,
+                  "catalogVersion": "test-catalog-2026-08-30",
+                  "profile": {
+                    "goals": ["BUILD_MUSCLE"],
+                    "experienceLevel": "BEGINNER",
+                    "preferredDurationMinutes": 45,
+                    "daysPerWeek": 3,
+                    "availableEquipment": ["Bodyweight"],
+                    "preferredUnit": "LBS",
+                    "musclePriorities": {"Chest": "HIGH"},
+                    "excludedExerciseIds": [],
+                    "trainingConstraints": [],
+                    "returningAfterBreakWeeks": 0,
+                    "confirmedStartingLoads": {},
+                    "movementCapabilities": {}
+                  },
+                  "completedWorkoutCount": 0,
+                  "exerciseHistory": [],
+                  "expected": {
+                    "outcome": "SUCCESS",
+                    "requiredExerciseIds": [],
+                    "forbiddenExerciseIds": [],
+                    "expectedTargetWeights": {
+                      "bad id": -1.0
+                    }
+                  }
+                }
+            """.trimIndent()
+        )
+
+        val error = assertThrows(PlannerFixtureFormatException::class.java) {
+            loader.loadResource("planner-fixtures/invalid-expected-target-weights.json")
+        }
+
+        assertThat(error.message).contains("expected.expectedTargetWeights.bad id")
+    }
+
+    @Test
+    fun loadResource_rejectsRequiredAnyExerciseIdGroupsThatConflictWithForbiddenIds() {
+        val loader = loaderWithResource(
+            resourcePath = "planner-fixtures/invalid-required-any-group.json",
+            resourceContents = """
+                {
+                  "schemaVersion": 1,
+                  "id": "invalid-required-any-group",
+                  "policyVersion": 3,
+                  "catalogVersion": "test-catalog-2026-08-30",
+                  "profile": {
+                    "goals": ["BUILD_MUSCLE"],
+                    "experienceLevel": "BEGINNER",
+                    "preferredDurationMinutes": 45,
+                    "daysPerWeek": 3,
+                    "availableEquipment": ["Bodyweight"],
+                    "preferredUnit": "LBS",
+                    "musclePriorities": {"Chest": "HIGH"},
+                    "excludedExerciseIds": [],
+                    "trainingConstraints": [],
+                    "returningAfterBreakWeeks": 0,
+                    "confirmedStartingLoads": {},
+                    "movementCapabilities": {}
+                  },
+                  "completedWorkoutCount": 0,
+                  "exerciseHistory": [],
+                  "expected": {
+                    "outcome": "SUCCESS",
+                    "requiredExerciseIds": [],
+                    "requiredAnyExerciseIdGroups": [
+                      ["push-up"]
+                    ],
+                    "forbiddenExerciseIds": ["push-up"]
+                  }
+                }
+            """.trimIndent()
+        )
+
+        val error = assertThrows(PlannerFixtureFormatException::class.java) {
+            loader.loadResource("planner-fixtures/invalid-required-any-group.json")
+        }
+
+        assertThat(error.message).contains("requiredAnyExerciseIdGroups")
+    }
+
+    @Test
     fun loadResource_rejectsMalformedJsonAndMissingResources() {
         assertFormatError("planner-fixtures/malformed.json", "planner-fixtures/malformed.json")
 
@@ -179,5 +271,14 @@ class PlannerFixtureLoaderTest {
         repeat(depth) { append('[') }
         append("{}")
         repeat(depth) { append(']') }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun readExpectedTargetWeights(expected: Any): Map<String, Double> {
+        val getter = expected.javaClass.methods.singleOrNull {
+            it.name == "getExpectedTargetWeights" && it.parameterCount == 0
+        } ?: error("PlannerFixtureExpected must expose expectedTargetWeights.")
+        val value = getter.invoke(expected) as Map<*, *>
+        return value.mapKeys { it.key as String }.mapValues { (_, weight) -> (weight as Number).toDouble() }
     }
 }

@@ -48,6 +48,9 @@
   "expected": {
     "outcome": "SUCCESS",
     "requiredExerciseIds": ["incline-dumbbell-press"],
-    "forbiddenExerciseIds": ["barbell-bench-press"]
+    "forbiddenExerciseIds": ["barbell-bench-press"],
+    "expectedTargetWeights": {
+      "incline-dumbbell-press": 20.0
+    }
   }
 }

@@ -41,6 +41,7 @@ internal class PlannerFixtureContextFactory(
     private val catalogExercises: List<Exercise> by lazy { loadBundledCatalogExercises() }
 
     fun create(fixture: PlannerFixture): PlannerFixtureContext {
+        validateCatalogReferences(fixture)
         val profile = UserProfile(
             goals = fixture.profile.goals,
             experienceLevel = fixture.profile.experienceLevel,
@@ -104,6 +105,20 @@ internal class PlannerFixtureContextFactory(
 
         val allowedIds = fixture.allowedExerciseIds.toSet()
         return filteredExercises.filter { it.id in allowedIds }
+    }
+
+    private fun validateCatalogReferences(fixture: PlannerFixture) {
+        val catalogIds = catalogExercises.mapTo(linkedSetOf(), Exercise::id)
+        val expectedIds = fixture.expected.requiredExerciseIds +
+            fixture.expected.forbiddenExerciseIds +
+            fixture.expected.requiredAnyExerciseIdGroups.flatten() +
+            fixture.expected.expectedTargetWeights.keys
+        val missing = expectedIds.filterNot { it in catalogIds }.distinct()
+        if (missing.isNotEmpty()) {
+            throw PlannerFixtureFormatException(
+                "root.expected must reference bundled catalog ids: ${missing.joinToString(", ")}."
+            )
+        }
     }
 
     private fun loadBundledCatalogExercises(): List<Exercise> {

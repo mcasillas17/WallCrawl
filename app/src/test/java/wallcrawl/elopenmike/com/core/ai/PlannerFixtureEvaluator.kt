@@ -1,14 +1,21 @@
 package wallcrawl.elopenmike.com.core.ai
 
 import wallcrawl.elopenmike.com.core.model.Exercise
+import wallcrawl.elopenmike.com.core.model.ExercisePrescription
 import wallcrawl.elopenmike.com.core.model.ExercisePerformanceHistory
 import wallcrawl.elopenmike.com.core.model.ExerciseProgrammingMetadata
 import wallcrawl.elopenmike.com.core.model.ExerciseSource
+import wallcrawl.elopenmike.com.core.model.ExperienceLevel
+import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
 import wallcrawl.elopenmike.com.core.model.MovementCapabilities
+import wallcrawl.elopenmike.com.core.model.PriorityLevel
 import wallcrawl.elopenmike.com.core.model.RepRange
 import wallcrawl.elopenmike.com.core.model.UserProfile
+import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
+import wallcrawl.elopenmike.com.core.model.WorkoutExercise
+import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
 
 internal sealed interface PlannerFixtureEvaluation {
@@ -38,10 +45,20 @@ internal data class PlannerFixtureFailureEvaluation(
 
 internal data class PlannerFixtureInputSnapshot(
     val userProfile: UserProfile,
+    val fitnessGoals: Set<FitnessGoal>,
+    val fitnessGoal: FitnessGoal,
+    val experienceLevel: ExperienceLevel,
+    val availableEquipment: List<String>,
+    val preferredWorkoutDurationMinutes: Int,
+    val trainingFrequencyDaysPerWeek: Int,
+    val musclePriorities: Map<String, PriorityLevel>,
+    val recentWorkoutHistory: List<WorkoutSession>,
     val completedWorkoutCount: Int,
     val exerciseHistory: Map<String, ExercisePerformanceHistory>,
+    val recentlyTrainedMuscles: List<String>,
     val excludedExerciseIds: List<String>,
-    val allowedExercises: List<Exercise>
+    val allowedExercises: List<Exercise>,
+    val preferredUnits: WeightUnit
 )
 
 internal class PlannerFixtureEvaluator(
@@ -121,10 +138,22 @@ internal fun GeneratedWorkout.normalizedPlannerFixtureWorkout(): GeneratedWorkou
 private fun WorkoutGenerationContext.snapshot(): PlannerFixtureInputSnapshot =
     PlannerFixtureInputSnapshot(
         userProfile = userProfile.deepCopy(),
+        fitnessGoals = fitnessGoals.toSet(),
+        fitnessGoal = fitnessGoal,
+        experienceLevel = experienceLevel,
+        availableEquipment = availableEquipment.toList(),
+        preferredWorkoutDurationMinutes = preferredWorkoutDurationMinutes,
+        trainingFrequencyDaysPerWeek = trainingFrequencyDaysPerWeek,
+        musclePriorities = LinkedHashMap(musclePriorities),
+        recentWorkoutHistory = recentWorkoutHistory.map(WorkoutSession::deepCopy),
         completedWorkoutCount = completedWorkoutCount,
-        exerciseHistory = exerciseHistory.mapValues { (_, history) -> history.deepCopy() },
+        exerciseHistory = exerciseHistory.entries.associate { (exerciseId, history) ->
+            exerciseId to history.deepCopy()
+        },
+        recentlyTrainedMuscles = recentlyTrainedMuscles.toList(),
         excludedExerciseIds = excludedExerciseIds.toList(),
-        allowedExercises = allowedExercises.map(Exercise::deepCopy)
+        allowedExercises = allowedExercises.map(Exercise::deepCopy),
+        preferredUnits = preferredUnits
     )
 
 private fun UserProfile.deepCopy(): UserProfile = copy(
@@ -139,6 +168,20 @@ private fun UserProfile.deepCopy(): UserProfile = copy(
 
 private fun ExercisePerformanceHistory.deepCopy(): ExercisePerformanceHistory = copy(
     recentSets = recentSets.map(WorkoutSet::copy)
+)
+
+private fun WorkoutSession.deepCopy(): WorkoutSession = copy(
+    focusMuscles = focusMuscles.toList(),
+    exercises = exercises.map(WorkoutExercise::deepCopy)
+)
+
+private fun WorkoutExercise.deepCopy(): WorkoutExercise = copy(
+    prescription = prescription.deepCopy(),
+    sets = sets.map(WorkoutSet::copy)
+)
+
+private fun ExercisePrescription.deepCopy(): ExercisePrescription = copy(
+    repRange = repRange?.let { RepRange(it.min, it.max) }
 )
 
 private fun Exercise.deepCopy(): Exercise = copy(

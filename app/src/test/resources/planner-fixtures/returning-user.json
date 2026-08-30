@@ -24,7 +24,7 @@
     "trainingConstraints": [
       "LOW_IMPACT_ONLY"
     ],
-    "returningAfterBreakWeeks": 18,
+    "returningAfterBreakWeeks": 104,
     "confirmedStartingLoads": {
       "incline-dumbbell-press": 40.0
     },
@@ -33,26 +33,24 @@
     }
   },
   "completedWorkoutCount": 23,
-  "exerciseHistory": [
-    {
-      "exerciseId": "incline-dumbbell-press",
-      "lastWeight": 40.0,
-      "lastReps": 9,
-      "bestEstimated1RM": 52.0,
-      "recentSets": [
-        {
-          "completedReps": 9,
-          "completedWeight": 40.0,
-          "isCompleted": true
-        }
-      ]
-    }
+  "exerciseHistory": [],
+  "allowedExerciseIds": [
+    "incline-dumbbell-press",
+    "dumbbell-bent-over-row",
+    "single-leg-romanian-deadlift",
+    "ab-wheel",
+    "dumbbell-fly"
   ],
   "expected": {
     "outcome": "SUCCESS",
     "requiredExerciseIds": [],
     "forbiddenExerciseIds": [
       "barbell-bench-press"
-    ]
+    ],
+    "workoutNameContains": "(Re-entry)",
+    "maxTargetSetsPerExercise": 2,
+    "expectedTargetWeights": {
+      "incline-dumbbell-press": 40.0
+    }
   }
 }

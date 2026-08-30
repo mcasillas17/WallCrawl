@@ -133,6 +133,24 @@ class PlannerFixtureCorpusTest {
     }
 
     @Test
+    fun create_rejectsExpectedExerciseAssertionsThatReferenceMissingCatalogIds() {
+        val fixture = loader.loadResource("planner-fixtures/valid-basic.json").copy(
+            expected = PlannerFixtureExpected(
+                outcome = PlannerFixtureOutcome.SUCCESS,
+                requiredExerciseIds = emptySet(),
+                forbiddenExerciseIds = emptySet(),
+                expectedTargetWeights = mapOf("not-in-catalog" to 10.0)
+            )
+        )
+
+        val error = org.junit.Assert.assertThrows(PlannerFixtureFormatException::class.java) {
+            contextFactory.create(fixture)
+        }
+
+        assertThat(error.message).contains("root.expected must reference bundled catalog ids")
+    }
+
+    @Test
     fun loadCorpus_personaResourcesDoNotEmbedRawExerciseDefinitions() {
         val resourcePaths = contextFactory.manifestResourcePaths()
 

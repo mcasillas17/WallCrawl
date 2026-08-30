@@ -24,7 +24,7 @@
     "trainingConstraints": [],
     "returningAfterBreakWeeks": 0,
     "confirmedStartingLoads": {
-      "incline-dumbbell-press": 27.5
+      "incline-dumbbell-press": 25.0
     },
     "movementCapabilities": {
       "BALANCE_WITHOUT_SUPPORT": "COMFORTABLE"
@@ -64,11 +64,21 @@
       ]
     }
   ],
+  "allowedExerciseIds": [
+    "arnold-press",
+    "incline-dumbbell-press",
+    "dumbbell-bent-over-row",
+    "bicep-curl",
+    "dumbbell-fly"
+  ],
   "expected": {
     "outcome": "SUCCESS",
     "requiredExerciseIds": [],
     "forbiddenExerciseIds": [
       "barbell-bench-press"
-    ]
+    ],
+    "expectedTargetWeights": {
+      "incline-dumbbell-press": 27.5
+    }
   }
 }

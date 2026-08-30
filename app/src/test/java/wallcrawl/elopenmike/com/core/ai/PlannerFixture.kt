@@ -54,7 +54,11 @@ internal data class PlannerFixtureProfile(
 internal data class PlannerFixtureExpected(
     val outcome: PlannerFixtureOutcome,
     val requiredExerciseIds: Set<String>,
-    val forbiddenExerciseIds: Set<String>
+    val forbiddenExerciseIds: Set<String>,
+    val requiredAnyExerciseIdGroups: List<Set<String>> = emptyList(),
+    val expectedTargetWeights: Map<String, Double> = emptyMap(),
+    val workoutNameContains: String? = null,
+    val maxTargetSetsPerExercise: Int? = null
 )
 
 internal enum class PlannerFixtureOutcome {
@@ -277,7 +281,7 @@ internal class PlannerFixtureLoader(
     }
 
     private fun parseExpected(expected: JSONObject): PlannerFixtureExpected {
-        requireExactFields(expected, "root.expected", EXPECTED_FIELDS)
+        requireExactFields(expected, "root.expected", EXPECTED_REQUIRED_FIELDS, EXPECTED_OPTIONAL_FIELDS)
         val requiredExerciseIds = parseSafeIdSet(
             requireArray(expected, "requiredExerciseIds", "expected.requiredExerciseIds"),
             "expected.requiredExerciseIds"
@@ -286,17 +290,96 @@ internal class PlannerFixtureLoader(
             requireArray(expected, "forbiddenExerciseIds", "expected.forbiddenExerciseIds"),
             "expected.forbiddenExerciseIds"
         )
+        val requiredAnyExerciseIdGroups = if (expected.has("requiredAnyExerciseIdGroups")) {
+            parseRequiredAnyExerciseIdGroups(
+                requireArray(
+                    expected,
+                    "requiredAnyExerciseIdGroups",
+                    "expected.requiredAnyExerciseIdGroups"
+                )
+            )
+        } else {
+            emptyList()
+        }
+        val expectedTargetWeights = if (expected.has("expectedTargetWeights")) {
+            parseExpectedTargetWeights(
+                requireObject(expected, "expectedTargetWeights", "expected.expectedTargetWeights")
+            )
+        } else {
+            emptyMap()
+        }
         val overlap = requiredExerciseIds.intersect(forbiddenExerciseIds)
         if (overlap.isNotEmpty()) {
             throw PlannerFixtureFormatException(
                 "expected requiredExerciseIds and forbiddenExerciseIds must not overlap."
             )
         }
+        val contradictoryRequiredAny = requiredAnyExerciseIdGroups.firstOrNull { group ->
+            group.any { it in forbiddenExerciseIds }
+        }
+        if (contradictoryRequiredAny != null) {
+            throw PlannerFixtureFormatException(
+                "expected.requiredAnyExerciseIdGroups must not overlap forbiddenExerciseIds."
+            )
+        }
         return PlannerFixtureExpected(
             outcome = parseEnum<PlannerFixtureOutcome>(expected.get("outcome"), "expected.outcome"),
             requiredExerciseIds = requiredExerciseIds,
-            forbiddenExerciseIds = forbiddenExerciseIds
+            forbiddenExerciseIds = forbiddenExerciseIds,
+            requiredAnyExerciseIdGroups = requiredAnyExerciseIdGroups,
+            expectedTargetWeights = expectedTargetWeights,
+            workoutNameContains = if (expected.has("workoutNameContains")) {
+                requireString(
+                    expected,
+                    "workoutNameContains",
+                    "expected.workoutNameContains",
+                    allowBlank = false,
+                    maxLength = MAX_STRING_LENGTH
+                )
+            } else {
+                null
+            },
+            maxTargetSetsPerExercise = if (expected.has("maxTargetSetsPerExercise")) {
+                requireExactInt(
+                    expected,
+                    "maxTargetSetsPerExercise",
+                    "expected.maxTargetSetsPerExercise",
+                    1..20
+                )
+            } else {
+                null
+            }
         )
+    }
+
+    private fun parseRequiredAnyExerciseIdGroups(groupsArray: JSONArray): List<Set<String>> {
+        requireArrayBounds(groupsArray, "expected.requiredAnyExerciseIdGroups", MAX_COLLECTION_SIZE)
+        val groups = mutableListOf<Set<String>>()
+        val seenGroups = linkedSetOf<String>()
+        for (index in 0 until groupsArray.length()) {
+            val groupPath = "expected.requiredAnyExerciseIdGroups[$index]"
+            val ids = parseSafeIdList(requireArrayArray(groupsArray, index, groupPath), groupPath).toSet()
+            if (ids.isEmpty()) {
+                throw PlannerFixtureFormatException("$groupPath must contain at least 1 item(s).")
+            }
+            val fingerprint = ids.sorted().joinToString("\u0000")
+            if (!seenGroups.add(fingerprint)) {
+                throw PlannerFixtureFormatException("Duplicate value at $groupPath.")
+            }
+            groups += ids
+        }
+        return groups
+    }
+
+    private fun parseExpectedTargetWeights(weights: JSONObject): Map<String, Double> {
+        requireObjectBounds(weights, "expected.expectedTargetWeights", MAX_COLLECTION_SIZE)
+        val result = linkedMapOf<String, Double>()
+        weights.keySet().sorted().forEach { key ->
+            val path = "expected.expectedTargetWeights.$key"
+            validateSafeId(key, path)
+            result[key] = requireDouble(weights.get(key), path, 0.0, MAX_WEIGHT)
+        }
+        return result
     }
 
     private fun parseMusclePriorities(priorities: JSONObject): Map<String, PriorityLevel> {
@@ -453,6 +536,14 @@ internal class PlannerFixtureLoader(
         val value = array.get(index)
         if (value !is JSONObject) {
             throw PlannerFixtureFormatException("$path must be an object.")
+        }
+        return value
+    }
+
+    private fun requireArrayArray(array: JSONArray, index: Int, path: String): JSONArray {
+        val value = array.get(index)
+        if (value !is JSONArray) {
+            throw PlannerFixtureFormatException("$path must be an array.")
         }
         return value
     }
@@ -689,10 +780,16 @@ internal class PlannerFixtureLoader(
             "completedWeight",
             "isCompleted"
         )
-        private val EXPECTED_FIELDS = setOf(
+        private val EXPECTED_REQUIRED_FIELDS = setOf(
             "outcome",
             "requiredExerciseIds",
             "forbiddenExerciseIds"
+        )
+        private val EXPECTED_OPTIONAL_FIELDS = setOf(
+            "requiredAnyExerciseIdGroups",
+            "expectedTargetWeights",
+            "workoutNameContains",
+            "maxTargetSetsPerExercise"
         )
         private val KNOWN_EQUIPMENT = StandardEquipment.ALL.toSet()
         private val KNOWN_MUSCLES = StandardMuscles.ALL.toSet()

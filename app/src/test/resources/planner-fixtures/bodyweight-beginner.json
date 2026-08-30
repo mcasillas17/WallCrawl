@@ -61,9 +61,17 @@
       ]
     }
   ],
+  "allowedExerciseIds": [
+    "push-up",
+    "pike-push-up",
+    "bench-dip"
+  ],
   "expected": {
     "outcome": "SUCCESS",
     "requiredExerciseIds": [],
+    "requiredAnyExerciseIdGroups": [
+      ["push-up", "pike-push-up", "bench-dip"]
+    ],
     "forbiddenExerciseIds": [
       "barbell-bench-press"
     ]

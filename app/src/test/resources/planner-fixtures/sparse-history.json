@@ -42,9 +42,17 @@
       ]
     }
   ],
+  "allowedExerciseIds": [
+    "pull-ups",
+    "pike-push-up",
+    "prone-y-raise"
+  ],
   "expected": {
     "outcome": "SUCCESS",
     "requiredExerciseIds": [],
+    "requiredAnyExerciseIdGroups": [
+      ["pull-ups"]
+    ],
     "forbiddenExerciseIds": [
       "lat-pulldown"
     ]
