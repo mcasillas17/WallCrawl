@@ -47,17 +47,16 @@ The manifest currently contains nine personas:
 `PlannerFixtureLoader` treats fixture JSON as untrusted test input and validates it before any planner objects are built.
 
 - Resources are classpath-only lookups with blank paths, `..`, backslashes, and unsafe resource names rejected before loading.
-- Fixture files must be valid UTF-8 and no larger than `128 * 1024` bytes.
-- A pre-parse duplicate-field scanner rejects duplicate object keys and JSON nesting deeper than 32 levels before object construction.
+- Fixture files must be valid UTF-8 and no larger than 128 KiB.
+- A pre-scan duplicate-field pass rejects duplicate object keys and JSON nesting deeper than 32 levels before object construction.
 - Unknown fields are rejected at every object level.
-- IDs must match `[a-z0-9]+(?:-[a-z0-9]+)*` and are capped at 80 characters.
-- Strings are capped at 256 characters.
-- Arrays and objects are capped at 100 entries; `exerciseHistory` is capped at 8 items.
+- Recognized string fields are capped at 256 characters, with tighter caps for IDs and version fields documented in the section that defines them.
+- Parsed fixture collections are capped at 100 entries, and `exerciseHistory` is capped at 8 items.
 - Numeric fields reject non-integers where integers are required, non-finite doubles, negatives where disallowed, and out-of-range values.
 - Enums, equipment, muscles, and capability keys must map to known app constants.
 - Duplicate list entries, duplicate manifest entries, duplicate fixture IDs, contradictory required/forbidden expectations, and invalid expected target-weight maps are rejected.
 
-The loader validates structure only. It does not log fixture bodies or recreate planner behavior.
+The loader validates strict schema, known domain constants, numeric ranges, duplicates, and cross-field loader invariants. The evaluator owns planner-behavior checks.
 
 ## Bundled catalog and filtering boundary
 
@@ -95,14 +94,16 @@ The stable behavioral expectations currently include:
 The focused planner corpus command is:
 
 ```bash
-JAVA_HOME=/opt/homebrew/opt/openjdk@17 ANDROID_HOME=/Users/elopenmike/Library/Android/sdk ./gradlew testDebugUnitTest --tests '*PlannerFixture*' --tests '*FakeWorkoutPlannerTest' --tests '*WorkoutGenerationContextBuilderTest' --rerun-tasks --no-daemon
+./gradlew testDebugUnitTest --tests '*PlannerFixture*' --tests '*FakeWorkoutPlannerTest' --tests '*WorkoutGenerationContextBuilderTest' --rerun-tasks --no-daemon
 ```
+
+Prerequisites: JDK 17 and configured Android SDK/JAVA_HOME as needed.
 
 Repository verification for this documentation change still uses the broader task-level commands:
 
 ```bash
-JAVA_HOME=/opt/homebrew/opt/openjdk@17 ANDROID_HOME=/Users/elopenmike/Library/Android/sdk ./gradlew testDebugUnitTest --rerun-tasks --no-daemon
-JAVA_HOME=/opt/homebrew/opt/openjdk@17 ANDROID_HOME=/Users/elopenmike/Library/Android/sdk ./gradlew lintDebug assembleDebug --stacktrace --no-daemon
+./gradlew testDebugUnitTest --rerun-tasks --no-daemon
+./gradlew lintDebug assembleDebug --stacktrace --no-daemon
 git diff --check
 ```
 
