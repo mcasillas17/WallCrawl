@@ -3,15 +3,24 @@ package wallcrawl.elopenmike.com.core.ai
 import com.google.common.truth.Truth.assertThat
 import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
 import wallcrawl.elopenmike.com.core.model.ExerciseType
+import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.MechanicsType
 import wallcrawl.elopenmike.com.core.model.MovementPattern
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.ExercisePerformanceHistory
 import wallcrawl.elopenmike.com.core.model.CapabilityLevel
+import wallcrawl.elopenmike.com.core.model.ComplexityTier
+import wallcrawl.elopenmike.com.core.model.ImpactLevel
 import wallcrawl.elopenmike.com.core.model.MovementCapabilities
 import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
+import wallcrawl.elopenmike.com.core.model.PrescriptionShape
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
+import wallcrawl.elopenmike.com.core.model.ReviewProvenance
+import wallcrawl.elopenmike.com.core.model.ReviewState
+import wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata
+import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
+import wallcrawl.elopenmike.com.core.model.SupportRequirement
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
@@ -357,6 +366,89 @@ class FakeWorkoutPlannerTest {
     }
 
     @Test
+    fun generateWorkout_reviewStateDoesNotChangeCurrentPlannerOutput() = runTest {
+        val exercise = allExercises.single { it.id == "incline-dumbbell-press" }
+        val withoutReviewedMetadata = exercise.copy(reviewedMetadata = null)
+        val draft = exercise.copy(reviewedMetadata = reviewedMetadata(ReviewState.DRAFT))
+        val approved = exercise.copy(reviewedMetadata = reviewedMetadata(ReviewState.APPROVED))
+        val profile = UserProfile(
+            goals = setOf(FitnessGoal.BUILD_MUSCLE),
+            musclePriorities = mapOf(StandardMuscles.CHEST to PriorityLevel.HIGH)
+        )
+
+        suspend fun generate(candidate: wallcrawl.elopenmike.com.core.model.Exercise) =
+            FakeWorkoutPlanner().generateWorkout(
+                WorkoutGenerationContext(
+                    userProfile = profile,
+                    allowedExercises = listOf(candidate)
+                )
+            )
+
+        val baseline = generate(withoutReviewedMetadata)
+        val fromDraft = generate(draft)
+        val fromApproved = generate(approved)
+
+        assertThat(fromDraft.copy(id = baseline.id)).isEqualTo(baseline)
+        assertThat(fromApproved.copy(id = baseline.id)).isEqualTo(baseline)
+    }
+
+    @Test
+    fun generateWorkout_reviewedMetadataPreservesRepresentativeEquipmentOutputs() = runTest {
+        val bodyweight = allExercises.filter { exercise ->
+            exercise.id in setOf("pull-ups", "parallel-bar-dips", "hanging-leg-raise")
+        }
+        val band = allExercises.map { exercise ->
+            exercise.copy(
+                id = "band-${exercise.id}",
+                listedEquipment = listOf(StandardEquipment.RESISTANCE_BAND),
+                programming = exercise.programming?.copy(
+                    requiredEquipmentCombinations = listOf(
+                        listOf(StandardEquipment.RESISTANCE_BAND)
+                    )
+                )
+            )
+        }
+        val machine = allExercises.map { exercise ->
+            exercise.copy(
+                id = "machine-${exercise.id}",
+                listedEquipment = listOf(StandardEquipment.MACHINE),
+                programming = exercise.programming?.copy(
+                    requiredEquipmentCombinations = listOf(listOf(StandardEquipment.MACHINE))
+                )
+            )
+        }
+        val contexts = mapOf(
+            "bodyweight" to bodyweight,
+            "band" to band,
+            "machine" to machine,
+            "full-gym" to allExercises
+        )
+        val profile = UserProfile(
+            goals = setOf(FitnessGoal.BUILD_MUSCLE),
+            musclePriorities = mapOf(StandardMuscles.CHEST to PriorityLevel.HIGH)
+        )
+
+        contexts.values.forEach { candidates ->
+            val baseline = FakeWorkoutPlanner().generateWorkout(
+                WorkoutGenerationContext(
+                    userProfile = profile,
+                    allowedExercises = candidates.map { it.copy(reviewedMetadata = null) }
+                )
+            )
+            val withDraftMetadata = FakeWorkoutPlanner().generateWorkout(
+                WorkoutGenerationContext(
+                    userProfile = profile,
+                    allowedExercises = candidates.map { exercise ->
+                        exercise.copy(reviewedMetadata = reviewedMetadataFor(exercise))
+                    }
+                )
+            )
+
+            assertThat(withDraftMetadata.copy(id = baseline.id)).isEqualTo(baseline)
+        }
+    }
+
+    @Test
     fun generateWorkout_withMultipleGoals_generatesHybridTitleAndRationale() = runTest {
         val hybridProfile = UserProfile(
             goals = setOf(FitnessGoal.STRENGTH, FitnessGoal.BUILD_MUSCLE),
@@ -427,4 +519,48 @@ class FakeWorkoutPlannerTest {
         /** Enough generations to walk every split in the rotation. */
         const val SPLIT_ROTATION_PROBE = 6
     }
+
+    private fun reviewedMetadata(reviewState: ReviewState): ReviewedExerciseMetadata =
+        ReviewedExerciseMetadata(
+            reviewState = reviewState,
+            directPrimaryMuscle = StandardMuscles.CHEST,
+            descriptiveSecondaryMuscles = setOf(StandardMuscles.SHOULDERS, StandardMuscles.TRICEPS),
+            movementPattern = MovementPattern.HORIZONTAL_PUSH,
+            complexity = ComplexityTier.STANDARD,
+            progressionFamily = "dumbbell-horizontal-push",
+            prescriptionShape = PrescriptionShape.WEIGHT_REPS,
+            approvedRegressions = emptyList(),
+            approvedSubstitutions = emptyList(),
+            capabilityRequirements = emptySet(),
+            supportRequirement = SupportRequirement.SUPPORTED,
+            impactLevel = ImpactLevel.NONE,
+            equipmentAlternatives = listOf(listOf(StandardEquipment.DUMBBELL, StandardEquipment.BENCH)),
+            provenance = ReviewProvenance(
+                reviewerRole = if (reviewState == ReviewState.APPROVED) {
+                    "Test-only role; not human approval"
+                } else {
+                    null
+                },
+                rationaleOrSource = "Planner invariance fixture; not authored catalog approval.",
+                reviewedAtEpochMillis = if (reviewState == ReviewState.APPROVED) 1L else null,
+                schemaVersion = 1,
+                policyVersion = 1
+            )
+        )
+
+    private fun reviewedMetadataFor(exercise: Exercise): ReviewedExerciseMetadata =
+        reviewedMetadata(ReviewState.DRAFT).copy(
+            directPrimaryMuscle = exercise.primaryMuscles.first(),
+            descriptiveSecondaryMuscles = exercise.secondaryMuscles.toSet(),
+            movementPattern = exercise.programming?.movementPattern ?: MovementPattern.OTHER,
+            prescriptionShape = when (exercise.type) {
+                ExerciseType.WEIGHT_REPS -> PrescriptionShape.WEIGHT_REPS
+                ExerciseType.BODYWEIGHT_REPS -> PrescriptionShape.BODYWEIGHT_REPS
+                ExerciseType.ASSISTED_BODYWEIGHT -> PrescriptionShape.ASSISTED_BODYWEIGHT
+                ExerciseType.DURATION -> PrescriptionShape.DURATION
+                ExerciseType.DISTANCE_DURATION -> PrescriptionShape.DURATION
+            },
+            equipmentAlternatives = exercise.programming?.requiredEquipmentCombinations
+                ?: listOf(exercise.listedEquipment.ifEmpty { listOf(StandardEquipment.BODYWEIGHT) })
+        )
 }

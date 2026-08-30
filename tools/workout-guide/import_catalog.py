@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 import json
 import os
 import re
@@ -25,6 +26,7 @@ MAX_DESCRIPTION_LENGTH = 2_000
 MAX_URL_LENGTH = 2_048
 MAX_RAW_JSON_STRING_LENGTH = 8_192
 MAX_JSON_DEPTH = 12
+MAX_REVIEWED_PAYLOAD_BYTES = 1_000_000
 SAFE_ID_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 SUPPORTED_EXERCISE_TYPES = {
     "assisted_bodyweight",
@@ -75,12 +77,32 @@ def import_catalog(
     output_root: Path,
     config_path: Path,
     overrides_path: Path,
+    reviewed_metadata_path: Path,
+    review_schema_path: Path,
+    review_report_path: Path,
     check_only: bool,
 ) -> ImportSummary:
     source_root = source_root.resolve()
     output_root = output_root.resolve()
     config = _read_object(config_path, "import config")
     overrides = _read_object(overrides_path, "programming overrides")
+    review_schema = _read_object(review_schema_path, "review schema")
+    reviewed_document = _read_json(
+        reviewed_metadata_path,
+        "reviewed metadata",
+        maximum_bytes=MAX_REVIEWED_PAYLOAD_BYTES,
+    )
+    _bounded_json_value(reviewed_document, "reviewed metadata", depth=0)
+    _reject_forbidden_reviewed_numeric_fields(reviewed_document, "reviewed metadata")
+    _validate_json_schema(
+        reviewed_document,
+        review_schema,
+        review_schema,
+        "reviewed metadata",
+        depth=0,
+    )
+    reviewed_root = _expect_object(reviewed_document, "reviewed metadata")
+    reviewed_by_id = _required_object(reviewed_root, "exercises", "reviewed metadata")
     _require_schema_version(config, "import config")
     _require_schema_version(overrides, "programming overrides")
 
@@ -129,7 +151,7 @@ def import_catalog(
         raise CatalogImportError(f"Upstream manifest exceeds {MAX_EXERCISES} exercises")
 
     for license_relative in license_relatives:
-        _source_file(source_root, license_relative, f"license file {license_relative.as_posix()}")
+        _source_file(source_root, license_relative, "license file")
 
     programming_by_id = _required_object(overrides, "exercises", "programming overrides")
     normalized_exercises: list[dict[str, Any]] = []
@@ -177,7 +199,7 @@ def import_catalog(
         name = _required_string(exercise, "name", source_id)
         exercise_type = _required_string(exercise, "exerciseType", source_id)
         if exercise_type not in SUPPORTED_EXERCISE_TYPES:
-            raise CatalogImportError(f"Unsupported exercise type for {source_id}: {exercise_type}")
+            raise CatalogImportError(f"Unsupported exercise type for {source_id}")
         equipment = _required_string(exercise, "equipment", source_id)
         primary_muscle = _required_string(exercise, "primaryMuscle", source_id)
         secondary_muscles = _required_string_list(exercise, "secondaryMuscles", source_id, maximum=50)
@@ -212,7 +234,7 @@ def import_catalog(
             expected_frame_relative = PurePosixPath("assets") / source_slug / f"frame-{index}.svg"
             if frame_relative != expected_frame_relative:
                 raise CatalogImportError(
-                    f"Unsafe or unexpected frame path for {source_id}: {frame_relative.as_posix()}"
+                    f"Unsafe or unexpected frame path for {source_id}"
                 )
             source_frame = _source_file(
                 source_root / Path(asset_base_relative.as_posix()),
@@ -263,11 +285,11 @@ def import_catalog(
 
     unknown_aliases = sorted(set(aliases) - used_alias_sources)
     if unknown_aliases:
-        raise CatalogImportError(f"ID aliases reference unknown source exercises: {', '.join(unknown_aliases)}")
+        raise CatalogImportError("ID aliases reference unknown source exercises")
     unknown_programming = sorted(set(programming_by_id) - wallcrawl_ids)
     if unknown_programming:
         raise CatalogImportError(
-            f"Programming override references unknown WalCrawl exercise ID: {unknown_programming[0]}"
+            "Programming override references unknown WallCrawl exercise ID"
         )
     for exercise in normalized_exercises:
         programming = exercise.get("programming")
@@ -276,10 +298,28 @@ def import_catalog(
         for alternative_id in programming["alternativeExerciseIds"]:
             if alternative_id not in wallcrawl_ids:
                 raise CatalogImportError(
-                    f"Programming alternative for {exercise['id']} references unknown ID: {alternative_id}"
+                    f"Programming alternative for {exercise['id']} references an unknown ID"
                 )
             if alternative_id == exercise["id"]:
                 raise CatalogImportError(f"Exercise {exercise['id']} cannot list itself as an alternative")
+
+    unknown_reviewed = sorted(set(reviewed_by_id) - wallcrawl_ids)
+    if unknown_reviewed:
+        raise CatalogImportError(
+            "Reviewed metadata references an unknown WallCrawl exercise ID"
+        )
+    exercises_by_id = {exercise["id"]: exercise for exercise in normalized_exercises}
+    normalized_reviewed = {
+        exercise_id: _normalize_reviewed_metadata(
+            raw_value,
+            exercise_id,
+            exercises_by_id[exercise_id],
+        )
+        for exercise_id, raw_value in reviewed_by_id.items()
+    }
+    _validate_reviewed_graphs(normalized_reviewed, exercises_by_id)
+    for exercise_id, reviewed_metadata in normalized_reviewed.items():
+        exercises_by_id[exercise_id]["reviewedMetadata"] = reviewed_metadata
 
     if len(frame_sources) != expected_frames:
         raise CatalogImportError(
@@ -308,6 +348,7 @@ def import_catalog(
         },
         "exercises": normalized_exercises,
     }
+    review_report = _render_review_report(normalized_reviewed)
 
     output_root.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix=".workout-guide-import-", dir=output_root.parent) as temporary:
@@ -316,7 +357,7 @@ def import_catalog(
         _write_json(staged_root / "catalog.json", catalog)
         shutil.copyfile(manifest_path, staged_root / "upstream-manifest.json")
         for license_relative in license_relatives:
-            source_license = _source_file(source_root, license_relative, f"license file {license_relative.as_posix()}")
+            source_license = _source_file(source_root, license_relative, "license file")
             shutil.copyfile(source_license, staged_root / license_relative.name)
         for source_frame, destination_relative in frame_sources:
             destination = staged_root / destination_relative
@@ -335,7 +376,10 @@ def import_catalog(
         (staged_root / "NOTICE.md").write_text(notice, encoding="utf-8", newline="\n")
         _validate_generated_tree(staged_root, expected_exercises, expected_frames)
 
-        changed = not _trees_equal(staged_root, output_root)
+        report_changed = not review_report_path.is_file() or review_report_path.read_text(
+            encoding="utf-8"
+        ) != review_report
+        changed = not _trees_equal(staged_root, output_root) or report_changed
         svg_bytes = sum(path.stat().st_size for path in staged_root.rglob("*.svg"))
         summary = ImportSummary(
             exercise_count=len(normalized_exercises),
@@ -345,10 +389,13 @@ def import_catalog(
         )
         if check_only:
             if changed:
-                raise CatalogImportError(f"Generated Workout Guide bundle differs from {output_root}")
+                raise CatalogImportError("Generated Workout Guide bundle or review report differs")
             return summary
         if changed:
-            _replace_directory(staged_root, output_root)
+            if not _trees_equal(staged_root, output_root):
+                _replace_directory(staged_root, output_root)
+            review_report_path.parent.mkdir(parents=True, exist_ok=True)
+            _atomic_write_text(review_report_path, review_report)
         return summary
 
 
@@ -377,13 +424,13 @@ def _normalize_programming(raw_value: Any, exercise_id: str) -> dict[str, Any]:
     mechanics = _required_string(raw, "mechanics", exercise_id)
     progression_type = _required_string(raw, "progressionType", exercise_id)
     if movement_pattern not in SUPPORTED_MOVEMENT_PATTERNS:
-        raise CatalogImportError(f"Unsupported movement pattern for {exercise_id}: {movement_pattern}")
+        raise CatalogImportError(f"Unsupported movement pattern for {exercise_id}")
     if difficulty not in SUPPORTED_DIFFICULTIES:
-        raise CatalogImportError(f"Unsupported difficulty for {exercise_id}: {difficulty}")
+        raise CatalogImportError(f"Unsupported difficulty for {exercise_id}")
     if mechanics not in SUPPORTED_MECHANICS:
-        raise CatalogImportError(f"Unsupported mechanics for {exercise_id}: {mechanics}")
+        raise CatalogImportError(f"Unsupported mechanics for {exercise_id}")
     if progression_type not in SUPPORTED_PROGRESSION_TYPES:
-        raise CatalogImportError(f"Unsupported progression type for {exercise_id}: {progression_type}")
+        raise CatalogImportError(f"Unsupported progression type for {exercise_id}")
 
     rep_range = _required_object(raw, "recommendedRepRange", exercise_id)
     rep_min = _required_int(rep_range, "min", f"{exercise_id}.recommendedRepRange", minimum=1, maximum=1_000)
@@ -410,6 +457,507 @@ def _normalize_programming(raw_value: Any, exercise_id: str) -> dict[str, Any]:
         "alternativeExerciseIds": alternatives,
         "coachingSummary": coaching_summary,
     }
+
+
+def _validate_json_schema(
+    value: Any,
+    schema: dict[str, Any],
+    root_schema: dict[str, Any],
+    label: str,
+    depth: int,
+) -> None:
+    if depth > MAX_JSON_DEPTH:
+        raise CatalogImportError(f"{label} exceeds maximum JSON nesting depth")
+    reference = schema.get("$ref")
+    if reference is not None:
+        if not isinstance(reference, str) or not reference.startswith("#/$defs/"):
+            raise CatalogImportError("review schema contains an unsupported reference")
+        definition_name = reference.removeprefix("#/$defs/")
+        definitions = root_schema.get("$defs")
+        if not isinstance(definitions, dict) or definition_name not in definitions:
+            raise CatalogImportError("review schema contains an unresolved local reference")
+        definition = _expect_object(definitions[definition_name], "review schema definition")
+        _validate_json_schema(value, definition, root_schema, label, depth + 1)
+        return
+
+    expected_types = schema.get("type")
+    if expected_types is not None:
+        type_names = [expected_types] if isinstance(expected_types, str) else expected_types
+        if not isinstance(type_names, list) or not all(isinstance(item, str) for item in type_names):
+            raise CatalogImportError("review schema contains an invalid type declaration")
+        if not any(_matches_json_schema_type(value, item) for item in type_names):
+            raise CatalogImportError(f"{label} has the wrong JSON type")
+
+    if "const" in schema and value != schema["const"]:
+        raise CatalogImportError(f"{label} does not match the required schema constant")
+    enum_values = schema.get("enum")
+    if enum_values is not None:
+        if not isinstance(enum_values, list):
+            raise CatalogImportError("review schema contains an invalid enum declaration")
+        if value not in enum_values:
+            raise CatalogImportError(f"{label} contains an unknown enum value")
+
+    if isinstance(value, str):
+        minimum_length = schema.get("minLength")
+        maximum_length = schema.get("maxLength")
+        if isinstance(minimum_length, int) and len(value) < minimum_length:
+            raise CatalogImportError(f"{label} is shorter than the schema minimum")
+        if isinstance(maximum_length, int) and len(value) > maximum_length:
+            raise CatalogImportError(f"{label} exceeds {maximum_length} characters")
+        pattern = schema.get("pattern")
+        if pattern is not None:
+            if not isinstance(pattern, str):
+                raise CatalogImportError("review schema contains an invalid string pattern")
+            if re.search(pattern, value) is None:
+                raise CatalogImportError(f"{label} does not match the required format")
+
+    if isinstance(value, int) and not isinstance(value, bool):
+        minimum = schema.get("minimum")
+        maximum = schema.get("maximum")
+        if isinstance(minimum, int) and value < minimum:
+            raise CatalogImportError(f"{label} is below the schema minimum")
+        if isinstance(maximum, int) and value > maximum:
+            raise CatalogImportError(f"{label} exceeds the schema maximum")
+
+    if isinstance(value, list):
+        minimum_items = schema.get("minItems")
+        maximum_items = schema.get("maxItems")
+        if isinstance(minimum_items, int) and len(value) < minimum_items:
+            raise CatalogImportError(f"{label} has too few items")
+        if isinstance(maximum_items, int) and len(value) > maximum_items:
+            raise CatalogImportError(f"{label} contains more than {maximum_items} items")
+        if schema.get("uniqueItems") is True:
+            encoded = [json.dumps(item, ensure_ascii=False, sort_keys=True) for item in value]
+            if len(set(encoded)) != len(encoded):
+                raise CatalogImportError(f"{label} contains duplicate values")
+        item_schema = schema.get("items")
+        if item_schema is not None:
+            checked_item_schema = _expect_object(item_schema, "review schema array items")
+            for index, item in enumerate(value):
+                _validate_json_schema(
+                    item,
+                    checked_item_schema,
+                    root_schema,
+                    f"{label}[{index}]",
+                    depth + 1,
+                )
+
+    if isinstance(value, dict):
+        minimum_properties = schema.get("minProperties")
+        maximum_properties = schema.get("maxProperties")
+        if isinstance(minimum_properties, int) and len(value) < minimum_properties:
+            raise CatalogImportError(f"{label} has too few fields")
+        if isinstance(maximum_properties, int) and len(value) > maximum_properties:
+            raise CatalogImportError(f"{label} contains more than {maximum_properties} fields")
+        property_names = schema.get("propertyNames")
+        if property_names is not None:
+            checked_name_schema = _expect_object(property_names, "review schema property names")
+            for key in value:
+                _validate_json_schema(
+                    key,
+                    checked_name_schema,
+                    root_schema,
+                    f"{label} field name",
+                    depth + 1,
+                )
+        properties = schema.get("properties", {})
+        if not isinstance(properties, dict):
+            raise CatalogImportError("review schema properties must be an object")
+        required = schema.get("required", [])
+        if not isinstance(required, list) or not all(isinstance(item, str) for item in required):
+            raise CatalogImportError("review schema required fields must be an array of strings")
+        for required_name in required:
+            if required_name not in value:
+                raise CatalogImportError(f"Missing {label}.{required_name}")
+        additional = schema.get("additionalProperties", True)
+        for key, item in value.items():
+            property_schema = properties.get(key)
+            if property_schema is not None:
+                _validate_json_schema(
+                    item,
+                    _expect_object(property_schema, "review schema property"),
+                    root_schema,
+                    f"{label}.{key}",
+                    depth + 1,
+                )
+            elif additional is False:
+                raise CatalogImportError(
+                    f"{label} contains unknown field {_safe_error_field(key)}"
+                )
+            elif isinstance(additional, dict):
+                _validate_json_schema(
+                    item,
+                    additional,
+                    root_schema,
+                    f"{label}.{_safe_error_field(key)}",
+                    depth + 1,
+                )
+            elif additional is not True:
+                raise CatalogImportError("review schema additionalProperties is invalid")
+
+
+def _matches_json_schema_type(value: Any, type_name: str) -> bool:
+    return {
+        "null": value is None,
+        "boolean": isinstance(value, bool),
+        "integer": isinstance(value, int) and not isinstance(value, bool),
+        "number": isinstance(value, (int, float)) and not isinstance(value, bool),
+        "string": isinstance(value, str),
+        "array": isinstance(value, list),
+        "object": isinstance(value, dict),
+    }.get(type_name, False)
+
+
+def _safe_error_field(value: Any) -> str:
+    if isinstance(value, str) and len(value) <= 80 and re.fullmatch(r"[A-Za-z0-9_.-]+", value):
+        return value
+    return "<invalid-field>"
+
+
+def _normalize_reviewed_metadata(
+    raw_value: Any,
+    exercise_id: str,
+    catalog_exercise: dict[str, Any],
+) -> dict[str, Any]:
+    raw = _expect_object(raw_value, f"reviewed metadata.{exercise_id}")
+    _reject_forbidden_reviewed_numeric_fields(raw, exercise_id)
+    review_state = _strict_review_text(raw["reviewState"], f"{exercise_id}.reviewState", 32)
+    direct_primary = _strict_review_text(
+        raw["directPrimaryMuscle"],
+        f"{exercise_id}.directPrimaryMuscle",
+        MAX_STRING_LENGTH,
+    )
+    descriptive_secondary = [
+        _strict_review_text(value, f"{exercise_id}.descriptiveSecondaryMuscles", MAX_STRING_LENGTH)
+        for value in raw["descriptiveSecondaryMuscles"]
+    ]
+    if direct_primary in descriptive_secondary:
+        raise CatalogImportError(
+            f"{exercise_id}.descriptiveSecondaryMuscles duplicates directPrimaryMuscle"
+        )
+    represented_muscles = _canonical_catalog_muscles(catalog_exercise)
+    if direct_primary not in represented_muscles:
+        raise CatalogImportError(
+            f"{exercise_id}.directPrimaryMuscle is not represented by the catalog exercise"
+        )
+
+    prescription_shape = _strict_review_text(
+        raw["prescriptionShape"],
+        f"{exercise_id}.prescriptionShape",
+        64,
+    )
+    if prescription_shape != catalog_exercise["exerciseType"]:
+        raise CatalogImportError(
+            f"{exercise_id}.prescriptionShape does not match exerciseType"
+        )
+    if catalog_exercise["isStretch"]:
+        raise CatalogImportError(f"{exercise_id} is a stretch and cannot enter the reviewed cohort")
+    if prescription_shape == "distance_duration":
+        raise CatalogImportError(
+            f"{exercise_id}.prescriptionShape cannot be distance_duration in the reviewed cohort"
+        )
+    if prescription_shape == "duration" and "Cardio" in represented_muscles:
+        raise CatalogImportError(
+            f"{exercise_id} is cardio duration work and cannot enter the reviewed cohort"
+        )
+
+    provenance = _expect_object(raw["provenance"], f"{exercise_id}.provenance")
+    reviewer_role = provenance["reviewerRole"]
+    reviewed_at = provenance["reviewedAtEpochMillis"]
+    if reviewer_role is not None:
+        _strict_review_text(reviewer_role, f"{exercise_id}.provenance.reviewerRole", 120)
+    _strict_review_text(
+        provenance["rationaleOrSource"],
+        f"{exercise_id}.provenance.rationaleOrSource",
+        1_000,
+    )
+    if review_state == "approved" and (reviewer_role is None or reviewed_at is None):
+        raise CatalogImportError(
+            f"{exercise_id}.provenance requires reviewerRole and reviewedAtEpochMillis when approved"
+        )
+    if review_state == "draft" and (reviewer_role is not None or reviewed_at is not None):
+        raise CatalogImportError(
+            f"{exercise_id}.provenance draft provenance requires null reviewerRole "
+            "and reviewedAtEpochMillis"
+        )
+
+    normalized = json.loads(json.dumps(raw, ensure_ascii=False, allow_nan=False))
+    seen_equipment_combinations: set[tuple[str, ...]] = set()
+    for combination in normalized["equipmentAlternatives"]:
+        combination_key = tuple(sorted(combination))
+        if combination_key in seen_equipment_combinations:
+            raise CatalogImportError(
+                f"{exercise_id}.equipmentAlternatives contains a duplicate equipment combination"
+            )
+        seen_equipment_combinations.add(combination_key)
+    for field in ("approvedRegressions", "approvedSubstitutions"):
+        seen_targets: set[str] = set()
+        for index, link_value in enumerate(normalized[field]):
+            link = _expect_object(link_value, f"{exercise_id}.{field}[{index}]")
+            target_id = _strict_review_text(
+                link["exerciseId"],
+                f"{exercise_id}.{field}[{index}].exerciseId",
+                128,
+            )
+            if target_id in seen_targets:
+                raise CatalogImportError(f"{exercise_id}.{field} contains duplicate edge")
+            seen_targets.add(target_id)
+            rationale = link.get("rationale")
+            if rationale is not None:
+                _strict_review_text(
+                    rationale,
+                    f"{exercise_id}.{field}[{index}].rationale",
+                    500,
+                )
+    return normalized
+
+
+def _strict_review_text(value: Any, label: str, maximum: int) -> str:
+    checked = _bounded_string(value, label, maximum=maximum)
+    if any(ord(character) < 32 or ord(character) == 127 for character in checked):
+        raise CatalogImportError(f"{label} must not contain control characters")
+    return checked
+
+
+def _canonical_catalog_muscles(catalog_exercise: dict[str, Any]) -> set[str]:
+    aliases = {
+        "quads": ["Quadriceps"],
+        "groin": ["Adductors"],
+        "grip": ["Forearms"],
+        "abs": ["Core"],
+        "abdominals": ["Core"],
+        "glutes/hamstrings": ["Glutes", "Hamstrings"],
+        "legs": ["Quadriceps", "Hamstrings", "Glutes"],
+        "posterior chain": ["Glutes", "Hamstrings", "Lower Back"],
+        "full body": ["Chest", "Back", "Quadriceps", "Core"],
+    }
+    canonical = {
+        "Chest", "Shoulders", "Rear Delts", "Triceps", "Back", "Upper Back",
+        "Lower Back", "Lats", "Biceps", "Forearms", "Quadriceps", "Hamstrings",
+        "Glutes", "Adductors", "Calves", "Hips", "Core", "Cardio", "Mobility",
+    }
+    result: set[str] = set()
+    for raw_name in catalog_exercise["primaryMuscles"] + catalog_exercise["secondaryMuscles"]:
+        lowered = raw_name.strip().lower()
+        if lowered in aliases:
+            result.update(aliases[lowered])
+        else:
+            result.update(item for item in canonical if item.lower() == lowered)
+    return result
+
+
+def _reject_forbidden_reviewed_numeric_fields(value: Any, exercise_id: str) -> None:
+    forbidden_fragments = {
+        "jointstress", "injuryrisk", "stimulustofatigue", "sfr", "axialload",
+        "fatigue", "bodymassfraction", "supportedmass", "bmi", "romsuperiority",
+        "rangeofmotionsuperiority", "secondarymusclecredit",
+    }
+    if isinstance(value, dict):
+        for key, item in value.items():
+            normalized_key = re.sub(r"[^a-z0-9]", "", key.lower())
+            if isinstance(item, (int, float)) and not isinstance(item, bool):
+                if any(fragment in normalized_key for fragment in forbidden_fragments):
+                    raise CatalogImportError(
+                        f"{exercise_id} reviewed metadata contains forbidden numeric field "
+                        f"{_safe_error_field(key)}"
+                    )
+            _reject_forbidden_reviewed_numeric_fields(item, exercise_id)
+    elif isinstance(value, list):
+        for item in value:
+            _reject_forbidden_reviewed_numeric_fields(item, exercise_id)
+
+
+def _validate_reviewed_graphs(
+    reviewed_by_id: dict[str, dict[str, Any]],
+    catalog_by_id: dict[str, dict[str, Any]],
+) -> None:
+    complexity_order = {"foundational": 0, "standard": 1, "advanced": 2}
+    support_order = {"supported": 0, "optional_support": 1, "unsupported": 2}
+    regression_graph: dict[str, list[str]] = {}
+
+    for exercise_id in sorted(reviewed_by_id):
+        source = reviewed_by_id[exercise_id]
+        regression_targets = [link["exerciseId"] for link in source["approvedRegressions"]]
+        substitution_targets = [link["exerciseId"] for link in source["approvedSubstitutions"]]
+        duplicate_roles = sorted(set(regression_targets) & set(substitution_targets))
+        if duplicate_roles:
+            raise CatalogImportError(
+                f"{exercise_id} repeats a graph edge as regression and substitution"
+            )
+        regression_graph[exercise_id] = regression_targets
+
+        for field, links in (
+            ("approvedRegressions", source["approvedRegressions"]),
+            ("approvedSubstitutions", source["approvedSubstitutions"]),
+        ):
+            for link in links:
+                target_id = link["exerciseId"]
+                if target_id == exercise_id:
+                    raise CatalogImportError(f"{exercise_id}.{field} cannot contain a self-edge")
+                if target_id not in catalog_by_id:
+                    raise CatalogImportError(
+                        f"{exercise_id}.{field} references unknown exercise ID"
+                    )
+                if target_id not in reviewed_by_id:
+                    raise CatalogImportError(
+                        f"{exercise_id}.{field} target lacks reviewed metadata"
+                    )
+
+        for link in source["approvedRegressions"]:
+            target_id = link["exerciseId"]
+            target = reviewed_by_id[target_id]
+            if source["movementPattern"] != target["movementPattern"]:
+                raise CatalogImportError(
+                    f"{exercise_id}.approvedRegressions has incompatible movementPattern"
+                )
+            if not _regression_shapes_compatible(
+                source["prescriptionShape"], target["prescriptionShape"]
+            ):
+                raise CatalogImportError(
+                    f"{exercise_id}.approvedRegressions has incompatible prescriptionShape"
+                )
+            if source["directPrimaryMuscle"] != target["directPrimaryMuscle"]:
+                raise CatalogImportError(
+                    f"{exercise_id}.approvedRegressions changes directPrimaryMuscle"
+                )
+            if complexity_order[target["complexity"]] > complexity_order[source["complexity"]]:
+                raise CatalogImportError(
+                    f"{exercise_id}.approvedRegressions is more complex"
+                )
+            if support_order[target["supportRequirement"]] > support_order[source["supportRequirement"]]:
+                raise CatalogImportError(
+                    f"{exercise_id}.approvedRegressions requires less support"
+                )
+            if not set(target["capabilityRequirements"]).issubset(source["capabilityRequirements"]):
+                raise CatalogImportError(
+                    f"{exercise_id}.approvedRegressions adds capability requirements"
+                )
+            if source["progressionFamily"] != target["progressionFamily"] and not link.get("rationale"):
+                raise CatalogImportError(
+                    f"{exercise_id}.approvedRegressions crosses progressionFamily "
+                    "without rationale"
+                )
+
+        for link in source["approvedSubstitutions"]:
+            target_id = link["exerciseId"]
+            target = reviewed_by_id[target_id]
+            if source["prescriptionShape"] != target["prescriptionShape"]:
+                raise CatalogImportError(
+                    f"{exercise_id}.approvedSubstitutions has incompatible "
+                    "prescriptionShape"
+                )
+            changes_role = (
+                source["movementPattern"] != target["movementPattern"]
+                or source["directPrimaryMuscle"] != target["directPrimaryMuscle"]
+            )
+            if changes_role and not link.get("rationale"):
+                raise CatalogImportError(
+                    f"{exercise_id}.approvedSubstitutions changes movement role "
+                    "without rationale"
+                )
+            if not target["equipmentAlternatives"]:
+                raise CatalogImportError(
+                    f"{exercise_id}.approvedSubstitutions has no satisfiable "
+                    "equipment alternative"
+                )
+
+    visiting: set[str] = set()
+    visited: set[str] = set()
+
+    def visit(exercise_id: str) -> None:
+        if exercise_id in visiting:
+            raise CatalogImportError(
+                f"{exercise_id}.approvedRegressions forms a regression cycle"
+            )
+        if exercise_id in visited:
+            return
+        visiting.add(exercise_id)
+        for target_id in regression_graph.get(exercise_id, []):
+            visit(target_id)
+        visiting.remove(exercise_id)
+        visited.add(exercise_id)
+
+    for exercise_id in sorted(regression_graph):
+        visit(exercise_id)
+
+
+def _regression_shapes_compatible(source_shape: str, target_shape: str) -> bool:
+    return source_shape == target_shape or (
+        source_shape == "bodyweight_reps" and target_shape == "assisted_bodyweight"
+    )
+
+
+def _render_review_report(reviewed_by_id: dict[str, dict[str, Any]]) -> str:
+    review_states = Counter(value["reviewState"] for value in reviewed_by_id.values())
+    review_states.setdefault("approved", 0)
+    review_states.setdefault("draft", 0)
+    movement_patterns = Counter(value["movementPattern"] for value in reviewed_by_id.values())
+    progression_families = Counter(value["progressionFamily"] for value in reviewed_by_id.values())
+    capability_requirements: Counter[str] = Counter()
+    equipment_families: Counter[str] = Counter()
+    for value in reviewed_by_id.values():
+        capabilities = value["capabilityRequirements"] or ["none"]
+        capability_requirements.update(capabilities)
+        equipment_families.update(
+            sorted({equipment for combination in value["equipmentAlternatives"] for equipment in combination})
+        )
+
+    missing_regressions = sorted(
+        exercise_id
+        for exercise_id, value in reviewed_by_id.items()
+        if _reviewed_requires_regression(value) and not value["approvedRegressions"]
+    )
+    drafts = sorted(
+        exercise_id for exercise_id, value in reviewed_by_id.items()
+        if value["reviewState"] == "draft"
+    )
+    lines = [
+        "# Reviewed Exercise Metadata Report",
+        "",
+        "This file is generated by `tools/workout-guide/import_catalog.py`. Do not edit it by hand.",
+        "",
+        f"- Cohort count: {len(reviewed_by_id)}",
+        "",
+    ]
+    for title, counts in (
+        ("Review state", review_states),
+        ("Equipment family", equipment_families),
+        ("Movement pattern", movement_patterns),
+        ("Progression family", progression_families),
+        ("Capability requirement", capability_requirements),
+    ):
+        lines.extend([f"## Count by {title.lower()}", "", "| Value | Count |", "| --- | ---: |"])
+        lines.extend(f"| `{key}` | {counts[key]} |" for key in sorted(counts))
+        lines.append("")
+
+    lines.extend(["## Entries lacking a required regression", ""])
+    lines.extend(f"- `{exercise_id}`" for exercise_id in missing_regressions)
+    if not missing_regressions:
+        lines.append("- None")
+    lines.extend(
+        [
+            "",
+            "## DRAFT entries awaiting human approval",
+            "",
+            "For every entry below, a human reviewer must inspect direct/secondary muscles, movement "
+            "pattern, complexity, progression family, prescription shape, directed regression and "
+            "substitution edges (including exception rationales), capabilities, support, impact, "
+            "equipment alternatives, and provenance before deliberately changing `reviewState`.",
+            "",
+        ]
+    )
+    lines.extend(f"- `{exercise_id}`" for exercise_id in drafts)
+    if not drafts:
+        lines.append("- None")
+    return "\n".join(lines) + "\n"
+
+
+def _reviewed_requires_regression(value: dict[str, Any]) -> bool:
+    return value["complexity"] == "advanced" or (
+        value["complexity"] == "standard"
+        and value["supportRequirement"] == "unsupported"
+        and bool(value["capabilityRequirements"])
+    )
 
 
 def _validate_source_git_state(source_root: Path, pinned_commit: str, imported_paths: list[PurePosixPath]) -> None:
@@ -444,34 +992,36 @@ def _source_file(
 ) -> Path:
     candidate = root / Path(relative.as_posix())
     if reject_symlink and candidate.is_symlink():
-        raise CatalogImportError(f"{label} must not be a symlink: {relative.as_posix()}")
+        raise CatalogImportError(f"{label} must not be a symlink")
     try:
         resolved_root = root.resolve(strict=True)
         resolved_candidate = candidate.resolve(strict=True)
     except FileNotFoundError as error:
-        raise CatalogImportError(f"Missing {label}: {relative.as_posix()}") from error
+        raise CatalogImportError(f"Missing {label}") from error
     if not resolved_candidate.is_relative_to(resolved_root):
-        raise CatalogImportError(f"Unsafe {label} path escapes its source root: {relative.as_posix()}")
+        raise CatalogImportError(f"Unsafe {label} path escapes its source root")
     if not resolved_candidate.is_file():
-        raise CatalogImportError(f"Expected regular {label}: {relative.as_posix()}")
+        raise CatalogImportError(f"Expected regular {label}")
     return candidate
 
 
 def _safe_relative_path(value: str, label: str) -> PurePosixPath:
     if "\\" in value:
         raise CatalogImportError(f"Unsafe {label}: backslashes are not allowed")
+    if any(ord(character) < 32 or ord(character) == 127 for character in value):
+        raise CatalogImportError(f"Unsafe {label}: control characters are not allowed")
     path = PurePosixPath(value)
     if not value or path.is_absolute() or any(part in {"", ".", ".."} for part in path.parts):
-        raise CatalogImportError(f"Unsafe {label}: {value}")
+        raise CatalogImportError(f"Unsafe {label}")
     if path.as_posix() != value:
-        raise CatalogImportError(f"Unsafe {label}: {value}")
+        raise CatalogImportError(f"Unsafe {label}")
     return path
 
 
 def _validate_safe_id(value: str, label: str, allow_exercise_prefix: bool = False) -> None:
     checked = value.removeprefix("exercise-") if allow_exercise_prefix else value
     if not checked or not SAFE_ID_PATTERN.fullmatch(checked):
-        raise CatalogImportError(f"Unsafe {label}: {value}")
+        raise CatalogImportError(f"Unsafe {label}")
 
 
 def _required_attribution(container: dict[str, Any], key: str, label: str) -> dict[str, Any]:
@@ -524,7 +1074,8 @@ def _bounded_json_value(value: Any, label: str, depth: int) -> Any:
         result: dict[str, Any] = {}
         for key, item in value.items():
             checked_key = _bounded_string(key, f"{label} field name")
-            result[checked_key] = _bounded_json_value(item, f"{label}.{checked_key}", depth + 1)
+            safe_key = _safe_error_field(checked_key)
+            result[checked_key] = _bounded_json_value(item, f"{label}.{safe_key}", depth + 1)
         return result
     raise CatalogImportError(f"{label} contains unsupported JSON value {type(value).__name__}")
 
@@ -583,17 +1134,39 @@ def _read_array(path: Path, label: str) -> list[Any]:
     return value
 
 
-def _read_json(path: Path, label: str) -> Any:
+def _read_json(path: Path, label: str, maximum_bytes: int = 50_000_000) -> Any:
     try:
-        if path.stat().st_size > 50_000_000:
-            raise CatalogImportError(f"{label} exceeds the 50 MB input limit")
-        return json.loads(path.read_text(encoding="utf-8"))
+        if path.stat().st_size > maximum_bytes:
+            raise CatalogImportError(f"{label} exceeds the {maximum_bytes}-byte input limit")
+        return json.loads(
+            path.read_text(encoding="utf-8"),
+            parse_constant=lambda _value: _reject_non_finite_number(label),
+            object_pairs_hook=lambda pairs: _reject_duplicate_json_fields(pairs, label),
+        )
     except FileNotFoundError as error:
         raise CatalogImportError(f"Missing {label}: {path}") from error
     except UnicodeDecodeError as error:
         raise CatalogImportError(f"{label} is not UTF-8: {path}") from error
     except json.JSONDecodeError as error:
         raise CatalogImportError(f"Malformed JSON in {label}: {error}") from error
+
+
+def _reject_non_finite_number(label: str) -> None:
+    raise CatalogImportError(f"{label} contains a non-finite number")
+
+
+def _reject_duplicate_json_fields(
+    pairs: list[tuple[str, Any]],
+    label: str,
+) -> dict[str, Any]:
+    result: dict[str, Any] = {}
+    for key, value in pairs:
+        if key in result:
+            raise CatalogImportError(
+                f"{label} contains duplicate JSON field {_safe_error_field(key)}"
+            )
+        result[key] = value
+    return result
 
 
 def _write_json(path: Path, value: Any) -> None:
@@ -607,6 +1180,18 @@ def _write_json(path: Path, value: Any) -> None:
         encoding="utf-8",
         newline="\n",
     )
+
+
+def _atomic_write_text(path: Path, value: str) -> None:
+    descriptor, temporary_name = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
+    temporary_path = Path(temporary_name)
+    try:
+        with os.fdopen(descriptor, "w", encoding="utf-8", newline="\n") as stream:
+            stream.write(value)
+        os.replace(temporary_path, path)
+    except BaseException:
+        temporary_path.unlink(missing_ok=True)
+        raise
 
 
 def _expect_object(value: Any, label: str) -> dict[str, Any]:
@@ -711,6 +1296,21 @@ def _parse_arguments() -> argparse.Namespace:
     )
     parser.add_argument("--config", type=Path, default=tool_root / "import-config.json")
     parser.add_argument("--overrides", type=Path, default=tool_root / "programming-overrides.json")
+    parser.add_argument(
+        "--reviewed-metadata",
+        type=Path,
+        default=tool_root / "reviewed-metadata.json",
+    )
+    parser.add_argument(
+        "--review-schema",
+        type=Path,
+        default=tool_root / "review-schema.json",
+    )
+    parser.add_argument(
+        "--review-report",
+        type=Path,
+        default=repository_root / "docs/reviewed-exercise-metadata-review.md",
+    )
     parser.add_argument("--check", action="store_true", help="Verify checked-in output without changing it")
     return parser.parse_args()
 
@@ -723,6 +1323,9 @@ def main() -> int:
             output_root=arguments.output,
             config_path=arguments.config,
             overrides_path=arguments.overrides,
+            reviewed_metadata_path=arguments.reviewed_metadata,
+            review_schema_path=arguments.review_schema,
+            review_report_path=arguments.review_report,
             check_only=arguments.check,
         )
     except (CatalogImportError, OSError, subprocess.CalledProcessError) as error:

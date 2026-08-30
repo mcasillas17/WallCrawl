@@ -53,19 +53,25 @@ sealed interface ProgramViolation {
 
 ### Task 1: Replace Speculative Metadata with Reviewed Categorical Metadata
 
+**Status:** Metadata/schema/parser foundation complete. The initial 37-entry
+cohort remains `DRAFT` pending human review; reviewed-only eligibility remains
+Task 2 and current planner behavior is unchanged.
+
 **Files:**
+
 - Modify: `app/src/main/java/wallcrawl/elopenmike/com/core/model/Exercise.kt`
-- Modify: `tools/workout-guide/programming-overrides.json`
+- Create: `tools/workout-guide/reviewed-metadata.json`
 - Modify: `tools/workout-guide/import_catalog.py`
 - Create: `tools/workout-guide/review-schema.json`
 - Test: `tools/workout-guide/test_programming_overrides.py`
 - Test: `app/src/androidTest/java/wallcrawl/elopenmike/com/core/exercise/workoutguide/WorkoutGuideCatalogParserTest.kt`
 
-- [ ] Write failing tests requiring direct-primary muscle, pattern, complexity, progression family, approved regressions/substitutions, capability requirements, support, impact, equipment, and review provenance.
-- [ ] Verify tests reject unknown graph IDs, cycles, missing provenance, and numeric joint/SFR/axial/body-mass fields.
-- [ ] Add categorical types and `ReviewProvenance(reviewerRole, rationaleOrSource, reviewedAt, schemaVersion, policyVersion)`.
+- [x] Write failing tests requiring direct-primary muscle, pattern, complexity, progression family, approved regressions/substitutions, capability requirements, support, impact, equipment, and review provenance.
+- [x] Verify tests reject unknown graph IDs, cycles, missing provenance, and numeric joint/SFR/axial/body-mass fields.
+- [x] Add categorical types and `ReviewProvenance(reviewerRole, rationaleOrSource, reviewedAtEpochMillis, schemaVersion, policyVersion)`.
 - [ ] Review band, machine, supported, bodyweight, and timed-hold families before enabling the automatic gate.
-- [ ] Run Python/importer/parser tests and commit `feat: add reviewed deterministic planning metadata`.
+- [x] Add an AI-authored `DRAFT` cohort spanning band, machine, supported, bodyweight, and timed-hold families for later human review.
+- [x] Run Python/importer/parser tests and commit the reviewed metadata foundation.
 
 ### Task 2: Enforce Reviewed-Only Eligibility and Calibration Complexity
 
