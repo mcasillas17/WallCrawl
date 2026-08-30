@@ -92,15 +92,15 @@ Full packaged catalog validity remains the responsibility of the dedicated impor
 
 The manifest currently contains nine fixtures:
 
-1. `bodyweight-beginner` — curated bodyweight-only beginner subset (`push-up`, `knee-push-up`, `bodyweight-squat`, `dead-bug`) requiring at least one beginner push variant and forbidding advanced/high-impact bodyweight options.
+1. `bodyweight-beginner` — conservative curated bodyweight beginner subset (`push-up`, `knee-push-up`, `bodyweight-squat`, `dead-bug`) requiring at least one beginner push variant.
 2. `band-only` — resistance-band-only back-focused coverage proving a band row can be selected while cable-only pull work is excluded by the real filter.
 3. `machine-only` — machine-only strength coverage with a confirmed machine press load.
 4. `full-gym-advanced` — broad full-gym strength-plus-hypertrophy coverage against the full bundled candidate pool.
-5. `returning-user` — curated lower-demand full-body subset for re-entry, preserving the `"(Re-entry)"` title fragment, a max-two-set cap, and the confirmed incline press load while forbidding `ab-wheel` and `single-leg-romanian-deadlift`.
-6. `limited-capability` — curated dumbbell/bench push subset that keeps capability metadata present but inert for planner eligibility, requires `dumbbell-shoulder-press`, and asserts its target load from history / confirmed data.
+5. `returning-user` — curated lower-demand full-body subset for re-entry (`incline-dumbbell-press`, `one-arm-dumbbell-row`, `goblet-squat`, `glute-bridge`, `dead-bug`), preserving the `"(Re-entry)"` title fragment, a max-two-set cap, the confirmed incline press load, and keeping `ab-wheel` / `single-leg-romanian-deadlift` out of the curated pool.
+6. `limited-capability` — curated dumbbell/bench push subset (`dumbbell-bench-press`, `dumbbell-shoulder-press`, `incline-dumbbell-press`, `dumbbell-lateral-raise`) that keeps capability metadata present but inert for planner eligibility and asserts the shoulder-press target load from history / confirmed data.
 7. `mixed-unit-history` — kilogram history coverage proving prior KG history is honored and the existing load is preserved when recent sets do not justify an increase.
 8. `sparse-history` — curated regression-friendly upper-body subset using `inverted-row`, `banded-lat-pulldown`, and `prone-y-raise` so sparse history does not freeze a limited-hang profile to pull-ups.
-9. `no-strength-candidates` — harness-only typed-failure case restricted to cardio-only entries (`walking`, `jump-rope`) so the real planner returns `NO_STRENGTH_CANDIDATES`.
+9. `no-strength-candidates` — harness-only typed-failure case restricted to the cardio-only `walking` entry so the real planner returns `NO_STRENGTH_CANDIDATES`.
 
 ## Replay semantics and asserted invariants
 
@@ -109,7 +109,8 @@ Each replay attempt uses a fresh `FakeWorkoutPlanner`. That is intentional: the 
 The corpus suite asserts:
 
 - deterministic output equality across two fresh replays, normalized only for the generated workout ID;
-- typed planner failures through the real evaluator (`NO_CANDIDATES`, `NO_STRENGTH_CANDIDATES`, `NO_CANDIDATES_FOR_ANY_SPLIT`);
+- fixture schema and evaluator support all current typed planner failures (`NO_CANDIDATES`, `NO_STRENGTH_CANDIDATES`, `NO_CANDIDATES_FOR_ANY_SPLIT`);
+- the committed nine-fixture manifest currently exercises `NO_STRENGTH_CANDIDATES`; focused existing planner tests cover `NO_CANDIDATES` and `NO_CANDIDATES_FOR_ANY_SPLIT`;
 - legality of every selected exercise against the bundled catalog, the real filter result, and any curated allowed-ID subset;
 - non-mutation of the full `WorkoutGenerationContext` input;
 - type-valid prescriptions and no-invented-load behavior through the real prescription factory;
@@ -127,9 +128,7 @@ JAVA_HOME=/opt/homebrew/opt/openjdk@17 ANDROID_HOME=/Users/elopenmike/Library/An
   ./gradlew testDebugUnitTest \
   --tests '*PlannerFixture*' \
   --tests '*FakeWorkoutPlannerTest' \
-  --tests '*DefaultExercisePrescriptionFactoryTest' \
   --tests '*ExerciseFilterTest' \
-  --tests '*WorkoutGenerationContextBuilderTest' \
   --rerun-tasks --no-daemon
 ```
 

@@ -36,7 +36,7 @@
   "exerciseHistory": [],
   "allowedExerciseIds": [
     "incline-dumbbell-press",
-    "dumbbell-bent-over-row",
+    "one-arm-dumbbell-row",
     "goblet-squat",
     "glute-bridge",
     "dead-bug"
@@ -44,10 +44,7 @@
   "expected": {
     "outcome": "SUCCESS",
     "requiredExerciseIds": [],
-    "forbiddenExerciseIds": [
-      "ab-wheel",
-      "single-leg-romanian-deadlift"
-    ],
+    "forbiddenExerciseIds": [],
     "workoutNameContains": "(Re-entry)",
     "maxTargetSetsPerExercise": 2,
     "expectedTargetWeights": {

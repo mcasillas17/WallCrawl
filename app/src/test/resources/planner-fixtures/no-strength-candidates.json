@@ -28,8 +28,7 @@
   "completedWorkoutCount": 0,
   "exerciseHistory": [],
   "allowedExerciseIds": [
-    "walking",
-    "jump-rope"
+    "walking"
   ],
   "expected": {
     "outcome": "NO_STRENGTH_CANDIDATES",

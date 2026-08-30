@@ -56,8 +56,6 @@
         "banded-lat-pulldown"
       ]
     ],
-    "forbiddenExerciseIds": [
-      "pull-ups"
-    ]
+    "forbiddenExerciseIds": []
   }
 }

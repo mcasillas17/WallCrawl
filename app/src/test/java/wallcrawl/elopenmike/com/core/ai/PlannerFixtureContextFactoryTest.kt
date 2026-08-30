@@ -130,6 +130,20 @@ class PlannerFixtureContextFactoryTest {
     }
 
     @Test
+    fun create_rejectsAllowedExerciseIdsMissingFromRealFilterOutput() {
+        val fixture = corpusCompatibleFixture().copy(
+            allowedExerciseIds = listOf("push-up", "barbell-back-squat")
+        )
+
+        val error = assertThrows(PlannerFixtureFormatException::class.java) {
+            contextFactory.create(fixture)
+        }
+
+        assertThat(error.message).contains("root.allowedExerciseIds")
+        assertThat(error.message).contains("barbell-back-squat")
+    }
+
+    @Test
     fun create_rejectsBundledCatalogWithoutSupportedSchemaVersion() {
         val fixture = corpusCompatibleFixture()
         val modifiedCatalog = contextFactory.readResourceText("workout-guide/catalog.json")

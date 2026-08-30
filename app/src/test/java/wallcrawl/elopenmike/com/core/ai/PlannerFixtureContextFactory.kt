@@ -108,6 +108,14 @@ internal class PlannerFixtureContextFactory(
     ): List<Exercise> {
         if (fixture.allowedExerciseIds.isEmpty()) return filteredExercises
 
+        val filteredIds = filteredExercises.mapTo(linkedSetOf(), Exercise::id)
+        val missingAllowedIds = fixture.allowedExerciseIds.distinct().filterNot { it in filteredIds }
+        if (missingAllowedIds.isNotEmpty()) {
+            throw PlannerFixtureFormatException(
+                "root.allowedExerciseIds contains ids absent from filteredExercises after the real ExerciseFilter: " +
+                    missingAllowedIds.joinToString(", ") + "."
+            )
+        }
         val allowedIds = fixture.allowedExerciseIds.toSet()
         return filteredExercises.filter { it.id in allowedIds }
     }

@@ -76,12 +76,6 @@
         "push-up"
       ]
     ],
-    "forbiddenExerciseIds": [
-      "ab-wheel",
-      "bench-dip",
-      "handstand-push-up",
-      "burpee",
-      "jump-squat"
-    ]
+    "forbiddenExerciseIds": []
   }
 }

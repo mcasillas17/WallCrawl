@@ -83,8 +83,7 @@ class PlannerFixtureCorpusTest {
         assertThat(fixture.profile.availableEquipment)
             .containsExactly(StandardEquipment.CARDIO)
         assertThat(fixture.allowedExerciseIds)
-            .containsExactly("walking", "jump-rope")
-            .inOrder()
+            .containsExactly("walking")
         assertThat(fixture.expected.requiredExerciseIds).isEmpty()
         assertThat(fixture.expected.forbiddenExerciseIds).isEmpty()
         assertThat(fixture.expected.requiredAnyExerciseIdGroups).isEmpty()
@@ -92,7 +91,7 @@ class PlannerFixtureCorpusTest {
         assertThat(fixture.expected.workoutNameContains).isNull()
         assertThat(fixture.expected.maxTargetSetsPerExercise).isNull()
         assertThat(built.context.allowedExercises.map(Exercise::id))
-            .containsExactly("walking", "jump-rope")
+            .containsExactly("walking")
     }
 
     @Test
@@ -136,30 +135,31 @@ class PlannerFixtureCorpusTest {
         assertThat(fixture.allowedExerciseIds)
             .containsExactly(
                 "incline-dumbbell-press",
-                "dumbbell-bent-over-row",
+                "one-arm-dumbbell-row",
                 "goblet-squat",
                 "glute-bridge",
                 "dead-bug"
             )
             .inOrder()
-        assertThat(fixture.allowedExerciseIds).doesNotContain("ab-wheel")
-        assertThat(fixture.allowedExerciseIds).doesNotContain("single-leg-romanian-deadlift")
-        assertThat(fixture.expected.forbiddenExerciseIds)
-            .containsAtLeast("ab-wheel", "single-leg-romanian-deadlift")
+        assertThat(fixture.allowedExerciseIds)
+            .containsNoneOf("ab-wheel", "single-leg-romanian-deadlift")
+        assertThat(fixture.expected.workoutNameContains).isEqualTo("(Re-entry)")
+        assertThat(fixture.expected.maxTargetSetsPerExercise).isEqualTo(2)
+        assertThat(fixture.expected.expectedTargetWeights)
+            .containsExactly("incline-dumbbell-press", 40.0)
     }
 
     @Test
-    fun loadCorpus_bodyweightBeginnerModelsCuratedLegalCandidateSubset() {
+    fun loadCorpus_bodyweightBeginnerModelsConservativeCuratedPushSubset() {
         val fixture = loader.loadCorpus().single { it.id == "bodyweight-beginner" }
 
         assertThat(fixture.allowedExerciseIds)
             .containsExactly("push-up", "knee-push-up", "bodyweight-squat", "dead-bug")
             .inOrder()
-        assertThat(fixture.allowedExerciseIds).doesNotContain("bench-dip")
+        assertThat(fixture.allowedExerciseIds)
+            .containsNoneOf("bench-dip", "handstand-push-up", "burpee", "jump-squat")
         assertThat(fixture.expected.requiredAnyExerciseIdGroups)
             .containsExactly(setOf("knee-push-up", "push-up"))
-        assertThat(fixture.expected.forbiddenExerciseIds)
-            .containsAtLeast("ab-wheel", "bench-dip", "handstand-push-up", "burpee", "jump-squat")
     }
 
     @Test
@@ -171,7 +171,6 @@ class PlannerFixtureCorpusTest {
                 "dumbbell-bench-press",
                 "dumbbell-shoulder-press",
                 "incline-dumbbell-press",
-                "standing-dumbbell-press",
                 "dumbbell-lateral-raise"
             )
             .inOrder()
@@ -216,7 +215,6 @@ class PlannerFixtureCorpusTest {
             .inOrder()
         assertThat(fixture.expected.requiredAnyExerciseIdGroups)
             .containsExactly(setOf("inverted-row", "banded-lat-pulldown"))
-        assertThat(fixture.expected.forbiddenExerciseIds).containsExactly("pull-ups")
     }
 
     @Test
@@ -253,29 +251,6 @@ class PlannerFixtureCorpusTest {
             assertThat(text).doesNotContain("\"programming\"")
             assertThat(text).doesNotContain("\"sourceId\"")
         }
-    }
-
-    @Test
-    fun strengthCandidateHelper_treatsTimedExercisesWithNoCardioMuscleAsStrengthWork() {
-        val timedShoulderHold = Exercise(
-            id = "timed-shoulder-hold",
-            name = "Timed Shoulder Hold",
-            primaryMuscles = listOf(StandardMuscles.SHOULDERS),
-            secondaryMuscles = listOf(StandardMuscles.CORE),
-            listedEquipment = listOf(StandardEquipment.CARDIO),
-            type = ExerciseType.DURATION,
-            isStretch = false
-        )
-
-        assertThat(isStrengthCandidate(timedShoulderHold)).isTrue()
-    }
-
-    private fun isStrengthCandidate(exercise: Exercise): Boolean = when {
-        exercise.isStretch -> false
-        exercise.type == ExerciseType.DISTANCE_DURATION -> false
-        exercise.type == ExerciseType.DURATION ->
-            StandardMuscles.CARDIO !in (exercise.primaryMuscles + exercise.secondaryMuscles)
-        else -> true
     }
 
     private fun hasSatisfiedEquipment(exercise: Exercise, ownedEquipment: List<String>): Boolean {

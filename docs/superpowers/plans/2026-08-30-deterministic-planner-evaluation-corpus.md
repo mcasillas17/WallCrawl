@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Add a versioned, data-driven JVM evaluation corpus that proves the current deterministic planner's safety and reproducibility invariants across representative user profiles.
+**Goal:** Add a versioned, data-driven JVM evaluation corpus that enforces current deterministic planner invariants and establishes a reproducible safety-test foundation across representative user profiles.
 
 **Architecture:** Strict JSON fixtures describe profiles, bounded history, and invariant expectations without duplicating catalog exercises. A test-only loader validates every field before constructing `WorkoutGenerationContext`; parameterized tests run a fresh planner per generation so replay checks are not polluted by its in-memory regeneration counter.
 
@@ -151,7 +151,7 @@ Expected: failure listing the missing persona fixture IDs.
 
 - [ ] **Step 3: Author the nine fixtures**
 
-Use only canonical enum names and `StandardEquipment`/`StandardMuscles` values. Keep expected assertions invariant-based: success/failure type and required/forbidden IDs only where they express a safety boundary. Do not encode a complete ordered workout snapshot.
+Use only canonical enum names and `StandardEquipment`/`StandardMuscles` values. Keep expected assertions invariant-based: success/failure type and required/forbidden IDs only where they express a meaningful filter or planner boundary. Do not encode a complete ordered workout snapshot.
 
 - [ ] **Step 4: Add fixture construction**
 
@@ -179,7 +179,7 @@ git commit -m "test: add deterministic planner personas"
 - Create: `app/src/test/java/wallcrawl/elopenmike/com/core/ai/PlannerFixtureTest.kt`
 - Modify: `app/src/test/java/wallcrawl/elopenmike/com/core/ai/PlannerFixture.kt`
 
-- [ ] **Step 1: Write the failing replay and safety tests**
+- [ ] **Step 1: Write the failing replay and invariant tests**
 
 For every fixture, assert:
 
