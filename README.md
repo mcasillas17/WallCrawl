@@ -36,6 +36,12 @@ WallCrawl supports **Dark Theme** (stealth suit graphite aesthetic), **Light The
   <img src="art/screenshots/workout-templates-light.png" width="24%" alt="My Workouts (Light)" />
   <img src="art/screenshots/template-editor-light.png" width="24%" alt="Workout Builder (Light)" />
 </p>
+<p align="center">
+  <img src="art/screenshots/onboarding-capabilities-light.png" width="24%" alt="Onboarding Movement Preferences (Light)" />
+  <img src="art/screenshots/onboarding-summary-light.png" width="24%" alt="Onboarding Blueprint Summary (Light)" />
+  <img src="art/screenshots/exercise-detail-light.png" width="24%" alt="Exercise Detail & Artwork Frame (Light)" />
+  <img src="art/screenshots/workout-summary.png" width="24%" alt="Workout Summary" />
+</p>
 
 - **Today Recommendation**: Offline planner-generated routine tailored to equipment and training goals, with instant regeneration and custom routine shortcuts.
 - **My Workouts & Templates**: Manage and launch saved custom routines with total sets, exercise counts, and quick-start actions.

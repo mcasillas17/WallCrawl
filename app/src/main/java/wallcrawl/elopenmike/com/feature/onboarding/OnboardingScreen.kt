@@ -918,7 +918,14 @@ private fun SafetyStep(
                     FilterChip(
                         selected = isSelected,
                         onClick = { viewModel.toggleConstraint(constraint) },
-                        label = { Text(constraint.displayName, fontSize = 12.sp, fontWeight = FontWeight.SemiBold) },
+                        label = {
+                            Text(
+                                text = constraint.displayName,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = if (isSelected) TextWhite else MaterialTheme.colorScheme.onSurface
+                            )
+                        },
                         colors = FilterChipDefaults.filterChipColors(
                             containerColor = MaterialTheme.colorScheme.surface,
                             selectedContainerColor = CrimsonRedPrimary,

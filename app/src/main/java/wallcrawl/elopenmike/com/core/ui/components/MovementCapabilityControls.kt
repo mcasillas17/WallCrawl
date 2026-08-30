@@ -23,9 +23,11 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.graphics.Color
 import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.model.CapabilityLevel
 import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
+import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 
 val CapabilityLevel.displayOrder: Int
     get() = when (this) {
@@ -121,10 +123,17 @@ fun MovementCapabilityQuestion(
                     capabilityLabel,
                     optionLabel
                 )
+                val isSelected = selectedLevel == level
                 FilterChip(
-                    selected = selectedLevel == level,
+                    selected = isSelected,
                     onClick = { onSelect(level) },
-                    label = { Text(optionLabel) },
+                    label = {
+                        Text(
+                            text = optionLabel,
+                            color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface,
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                        )
+                    },
                     modifier = Modifier
                         .heightIn(min = 48.dp)
                         .semantics {
@@ -132,8 +141,16 @@ fun MovementCapabilityQuestion(
                             role = Role.RadioButton
                         },
                     colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        selectedLabelColor = MaterialTheme.colorScheme.onSecondaryContainer
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        labelColor = MaterialTheme.colorScheme.onSurface,
+                        selectedContainerColor = CrimsonRedPrimary,
+                        selectedLabelColor = Color.White
+                    ),
+                    border = FilterChipDefaults.filterChipBorder(
+                        enabled = true,
+                        selected = isSelected,
+                        borderColor = MaterialTheme.colorScheme.outline,
+                        selectedBorderColor = CrimsonRedPrimary
                     )
                 )
             }
