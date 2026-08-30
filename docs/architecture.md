@@ -252,7 +252,36 @@ catalog exercise types:
 Domain constructors reject malformed prescriptions before persistence.
 `WorkoutRepository.logSetCompletion` validates recorded fields against the
 persisted exercise type and prevents updates to sets whose session is no longer
-active.
+active. It is the only way a set outcome is written.
+
+### Typed set outcome
+
+A logged set carries a typed outcome alongside its type-specific values:
+nullable `rpe` (0-10) and `rir` (0-10), a nullable user-confirmed
+`feltManageable`, a `completedAtTimestamp`, a `stoppedAtTimestamp`, and a
+nullable `SetStopReason` (`USER_SKIPPED`, `PAIN_STOP`, `EQUIPMENT_UNAVAILABLE`,
+`TIME_CONSTRAINT`, `OTHER`). `SetOutcomeRules` enforces the cross-field
+invariants at the repository boundary before anything is persisted:
+
+- null means unknown and stays null; no feedback is inferred from any other
+  field, and a missing RPE or RIR is never replaced by an assumed effort;
+- a completed set requires a positive `completedAtTimestamp` and cannot also
+  carry a stop reason or a stop timestamp;
+- a skipped or stopped set requires a typed reason and a positive
+  `stoppedAtTimestamp`, and cannot carry `feltManageable`;
+- an untouched set carries no timestamp, no feedback, and no stop reason;
+- `feltManageable` is recorded only for completed work;
+- rejection messages name the offending field and never echo entered values.
+
+`SetOutcome` (`NotRecorded`, `Completed`, `Stopped`) is the derived read model,
+so later adaptation can never confuse work that was never started with work the
+user deliberately stopped. `PAIN_STOP` records only that the user chose to stop
+because something hurt: it is not a symptom report, an injury, or a diagnosis,
+and no surface presents it as one. There is no free-text stop reason.
+
+Progression and deload logic do not consume this feedback yet. It is captured
+now so the deterministic engine has honest history to read later; only completed
+work counts toward volume, history, and progress today.
 
 `DefaultExercisePrescriptionFactory` never invents a `WEIGHT_REPS` starting
 load. It suggests a weight only when either applies, in that priority order:
@@ -265,23 +294,25 @@ load. It suggests a weight only when either applies, in that priority order:
    `UserProfile.confirmedStartingLoads` for that ID.
 
 With neither, `targetWeight` is `null` and stays null through to the session
-snapshot and the active-workout UI: `PerformanceSetRow`'s load field shows
-"Choose starting load" instead of "Load `<unit>`" and is never pre-filled
-with a fabricated number. Once the user logs a real value, ordinary set
+snapshot and the active-workout UI: the load field is empty rather than
+pre-filled with a fabricated number, and its first plus-press starts from the
+planned target only when one exists. Once the user logs a real value, ordinary set
 completion and the history analyzer take over for future sessions — there is
 no separate write path that copies a logged value back into
 `confirmedStartingLoads`.
 
 ## Room persistence and invariants
 
-`WallCrawlDatabase` is currently schema version 8. Its tables store:
+`WallCrawlDatabase` is currently schema version 9. Its tables store:
 
 - the user profile, including onboarding status, multi-select fitness goals,
   training constraints, return-after-break weeks, confirmed starting loads,
   theme preference (`SYSTEM`, `DARK`, `LIGHT`), and movement capabilities;
 - reusable workout templates and their ordered exercises;
 - workout sessions and their ordered exercise snapshots;
-- target and completed values for every set.
+- target and completed values for every set, plus its typed outcome:
+  `rpe`, `rir`, `feltManageable`, `completedAtTimestamp`, `stoppedAtTimestamp`,
+  and `stopReason`.
 
 Migration `3 → 4` adds template storage, session provenance, and type-aware
 target/outcome columns while converting older repetition-based history to
@@ -295,8 +326,14 @@ fields, so it must not be grandfathered in as already onboarded. Migration
 (e.g., hybrid hypertrophy and strength), initializing existing rows from
 `primaryGoal`. Migration `6 → 7` adds `themePreference` with a default of
 `SYSTEM`, enabling dynamic theme switching between System Default, Dark Mode,
-and Light Mode. Migration `7 → 8` adds one non-null
-`movementCapabilitiesJson` column. Existing rows receive `{}`, which the codec
+and Light Mode. Migration `8 → 9` is additive-only: it adds the four nullable set-outcome
+columns (`feltManageable`, `completedAtTimestamp`, `stoppedAtTimestamp`,
+`stopReason`) with no SQL default, so history written before typed outcomes
+existed reads back as an honestly unrecorded outcome instead of gaining a
+fabricated completion timestamp or an assumed manageable answer. There is no
+destructive migration fallback on any construction path, and the migration
+tests exercise every supported starting schema through to version 9. Migration
+`7 → 8` adds one non-null `movementCapabilitiesJson` column. Existing rows receive `{}`, which the codec
 normalizes to all `UNKNOWN`; their onboarding status, revision, theme, goals,
 equipment, constraints, confirmed loads, templates, sessions, sets, and history
 remain intact. Every supported migration chain registers the new step, and
@@ -350,6 +387,13 @@ Weekly per-muscle set counts credit a set to each of an exercise's primary
 muscles. Conditioning tags are not muscles and are excluded, so a week of
 mobility work reports an empty focus card rather than "Mobility — 6 sets".
 
+Finishing a workout with sets that are neither completed nor stopped raises a
+typed `FinishDecision.ConfirmIncomplete` carrying the open-set count, and
+nothing is persisted until the user confirms; discarding an active workout needs
+the same explicit confirmation. Backing out of either dialog does nothing, and
+repeated taps stay idempotent. Skipped sets stay distinguishable from sets that
+were never started, and neither contributes volume, history, or progress.
+
 `WorkoutSummary` is built only by `WorkoutRepository`, from one history window,
 whether a workout has just been completed or is being revisited. Personal
 records use the same rules as the Progress screen's record list — a heavier top
@@ -366,6 +410,17 @@ workout start cannot leave a partial session.
 The active session is persisted immediately, so it can be resumed after normal
 navigation or process recreation. The template editor does not yet persist an
 unsaved draft or prompt before leaving with unsaved changes.
+
+The rest timer is in-memory ViewModel state driven by an injected monotonic
+elapsed-realtime clock. Remaining time is always derived from a deadline rather
+than decremented, so backgrounding, a paused UI, or a missed tick cannot make it
+drift, and a device clock change cannot lengthen or shorten a rest period in
+progress. It survives recomposition and configuration changes, and it is
+deliberately **not** restored after process death: a deadline captured against a
+previous process's elapsed-realtime baseline would restore as a misleading
+countdown, so the timer resets to `Idle` while the session itself is resumed
+intact. This milestone adds no foreground service, notification, alarm, or Wear
+behaviour.
 
 ## Dynamic Theming and Visual Contrast
 

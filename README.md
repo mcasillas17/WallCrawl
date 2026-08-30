@@ -47,7 +47,7 @@ WallCrawl supports **Dark Theme** (stealth suit graphite aesthetic), **Light The
 - **My Workouts & Templates**: Manage and launch saved custom routines with total sets, exercise counts, and quick-start actions.
 - **Custom Workout Builder**: Interactive routine editor with full 302-exercise bottom sheet picker, drag/reorder controls, and type-aware target set steppers.
 - **Exercise Library**: Searchable catalog of 302 exercises across all muscle groups and equipment types.
-- **Active Workout Session**: Type-aware logging for load/reps, bodyweight reps, assisted reps, duration, and distance/duration, with animated SVG movement previews and previous performance comparisons.
+- **Active Workout Session**: Type-aware logging for load/reps, bodyweight reps, assisted reps, duration, and distance/duration, with one-tap set completion, plus/minus and text entry for every value, a local rest countdown, optional RPE/RIR, animated SVG movement previews, and previous performance comparisons.
 - **Workout Summary**: Post-workout card displaying session duration, total volume lifted, sets completed, and personal records set against your logged history.
 - **Progress Tracking**: Weekly workout streaks, volume and rep totals, per-muscle weekly set counts, strength progression indicators, and historical workout logs.
 - **Training Profile & App Preferences**: Full local customization of theme preference (Auto System / Dark Mode / Light Mode) with compact switcher, multi-select fitness goals, preferred weight units (LBS/KG), session duration targets, available gym equipment, return-after-break calibration, muscle priorities, and seven movement preferences.
@@ -125,6 +125,43 @@ before any workout reaches persistence.
 Manual templates use the same exercise IDs and type-aware prescriptions but do
 not pass through `WorkoutPlanner`. See [WallCrawl Architecture](docs/architecture.md)
 for the complete automatic and manual data flows.
+
+## Gym-floor logging and rest timer
+
+Logging a set is meant to survive a noisy gym floor, so the active workout screen
+keeps every control large, explicit, and local.
+
+- **One-tap completion.** Each set has a full-width completion control with
+  checkbox semantics, a screen-reader label, and a 56 dp target.
+- **Plus/minus plus text.** Every numeric outcome — load, assistance, reps,
+  seconds, metres — has 48 dp decrease and increase controls beside a text field
+  for precise values. The first press of a plus control starts from the planned
+  target when one exists; it never invents a load that was never confirmed.
+- **Copy previous.** When a comparable previous set actually recorded a value, a
+  one-tap chip copies it in.
+- **Optional effort.** RPE (0-10) and RIR (0-10) sit behind an "Add feedback
+  (optional)" toggle, and a simple *felt manageable?* yes/no appears once a set
+  is completed. All three are nullable: leaving them blank is a first-class
+  answer, and nothing about completing a set requires them.
+- **Typed skip or stop.** A set can be skipped or stopped with one of five typed
+  reasons, including a plainly worded "Something hurt, so I stopped". That
+  reason records only the user's decision — it is never a symptom report, an
+  injury, or a diagnosis, and there is no free-text field.
+- **Rest countdown.** Completing a set starts a countdown from that exercise's
+  own persisted `restSeconds`, with add-30-seconds, skip, and dismiss. It is
+  driven by a monotonic elapsed-realtime deadline, so backgrounding the app or
+  changing the device clock cannot make it drift. It survives recomposition and
+  rotation, and resets to idle after process death rather than restoring a
+  deadline that no longer means anything. No foreground service, notification,
+  or alarm is involved.
+- **Safe finishing.** Finishing with unlogged sets asks first and says how many;
+  discarding a workout asks first too. Only completed sets count toward volume,
+  history, and progress — skipped, incomplete, and discarded work never looks
+  finished.
+
+Everything above stays on the device. The feedback is stored so a future
+deterministic engine has honest history to read; progression and deload logic do
+not consume it yet.
 
 ## Architecture
 
@@ -333,8 +370,10 @@ of its 906 SVG paths.
   entries.
 - Continue reviewing programming metadata beyond the planner's working set, so
   browsing and custom workouts benefit from it too.
-- Add richer active-workout controls such as rest timers, RPE/RIR editing, and
-  exercise substitution.
+- Consume the logged RPE/RIR, manageable confirmation, and typed stop reasons in
+  progression and deload decisions; they are captured and stored today, but no
+  planning logic reads them yet.
+- Add exercise substitution to the active workout.
 - Expand progress calculations and charts as more history accumulates.
 - Integrate a constrained on-device model only after the surrounding pipeline is
   production-ready.
