@@ -86,6 +86,13 @@
       "errorFragment": "equipmentAlternatives"
     },
     {
+      "name": "duplicate-equipment-combination-with-reordered-values",
+      "operation": "set",
+      "path": ["equipmentAlternatives"],
+      "value": [["Barbell", "Bench"], ["Bench", "Barbell"]],
+      "errorFragment": "duplicate equipment combination"
+    },
+    {
       "name": "approved-without-human-provenance",
       "operation": "set",
       "path": ["reviewState"],

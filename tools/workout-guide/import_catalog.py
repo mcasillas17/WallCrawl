@@ -678,6 +678,14 @@ def _normalize_reviewed_metadata(
         )
 
     normalized = json.loads(json.dumps(raw, ensure_ascii=False, allow_nan=False))
+    seen_equipment_combinations: set[tuple[str, ...]] = set()
+    for combination in normalized["equipmentAlternatives"]:
+        combination_key = tuple(sorted(combination))
+        if combination_key in seen_equipment_combinations:
+            raise CatalogImportError(
+                f"{exercise_id}.equipmentAlternatives contains a duplicate equipment combination"
+            )
+        seen_equipment_combinations.add(combination_key)
     for field in ("approvedRegressions", "approvedSubstitutions"):
         seen_targets: set[str] = set()
         for index, link_value in enumerate(normalized[field]):
