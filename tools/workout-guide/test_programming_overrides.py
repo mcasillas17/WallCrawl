@@ -1,8 +1,8 @@
-"""Checks the reviewed programming metadata that ships in the app.
+"""Checks the legacy and reviewed-planning metadata that ships in the app.
 
 The other suite exercises the importer against synthetic fixtures. This one checks the
-real authored data, so a bad edit to programming-overrides.json fails here rather than
-becoming a workout that references an exercise nobody can perform.
+real authored data, so a bad edit fails here rather than becoming a stale or unsafe
+catalog artifact.
 """
 import json
 import re
@@ -12,6 +12,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[2]
 CATALOG = REPO_ROOT / "app/src/main/assets/workout-guide/catalog.json"
 OVERRIDES = Path(__file__).with_name("programming-overrides.json")
+REVIEWED_METADATA = Path(__file__).with_name("reviewed-metadata.json")
 
 # An exercise measured in distance or held for time is not prescribed with sets and reps,
 # so reviewing one would put a treadmill in a hypertrophy slot.
@@ -108,6 +109,61 @@ class ProgrammingOverridesTest(unittest.TestCase):
             for combination in programming["requiredEquipmentCombinations"]:
                 unknown = set(combination) - offered
                 self.assertEqual(set(), unknown, f"{exercise_id}: {sorted(unknown)}")
+
+
+class ReviewedMetadataTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.catalog = json.loads(CATALOG.read_text())
+        cls.by_id = {exercise["id"]: exercise for exercise in cls.catalog["exercises"]}
+        cls.reviewed = json.loads(REVIEWED_METADATA.read_text())["exercises"]
+
+    def test_initial_cohort_is_present_and_remains_awaiting_human_review(self) -> None:
+        self.assertEqual(37, len(self.reviewed))
+        for exercise_id, metadata in self.reviewed.items():
+            self.assertEqual("draft", metadata["reviewState"], exercise_id)
+            self.assertIsNone(metadata["provenance"]["reviewerRole"], exercise_id)
+            self.assertIsNone(metadata["provenance"]["reviewedAtEpochMillis"], exercise_id)
+
+    def test_every_authored_id_and_graph_edge_resolves(self) -> None:
+        for exercise_id, metadata in self.reviewed.items():
+            self.assertIn(exercise_id, self.by_id)
+            for field in ("approvedRegressions", "approvedSubstitutions"):
+                for edge in metadata[field]:
+                    self.assertIn(edge["exerciseId"], self.by_id, f"{exercise_id}.{field}")
+
+    def test_bundled_catalog_exactly_reflects_reviewed_metadata(self) -> None:
+        reviewed_in_catalog = {
+            exercise["id"]: exercise["reviewedMetadata"]
+            for exercise in self.catalog["exercises"]
+            if exercise.get("reviewedMetadata") is not None
+        }
+        self.assertEqual(self.reviewed, reviewed_in_catalog)
+
+    def test_initial_cohort_spans_required_movements_and_equipment(self) -> None:
+        movements = {metadata["movementPattern"] for metadata in self.reviewed.values()}
+        self.assertTrue(
+            {"core", "hinge", "horizontal_pull", "horizontal_push", "lunge", "squat", "vertical_pull"}
+            <= movements
+        )
+        equipment = {
+            item
+            for metadata in self.reviewed.values()
+            for combination in metadata["equipmentAlternatives"]
+            for item in combination
+        }
+        self.assertTrue(
+            {
+                "Barbell", "Bodyweight", "Cable", "Dumbbell", "Kettlebell",
+                "Machine", "Pull-up Bar", "Resistance Band", "Wall"
+            } <= equipment
+        )
+
+    def test_catalog_count_is_unchanged_and_unreviewed_exercises_remain(self) -> None:
+        self.assertEqual(302, len(self.by_id))
+        self.assertEqual(302 - len(self.reviewed), sum(
+            exercise.get("reviewedMetadata") is None for exercise in self.by_id.values()
+        ))
 
 
 if __name__ == "__main__":
