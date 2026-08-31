@@ -187,6 +187,110 @@ class WeeklyDoseLedgerPayloadTest {
         assertThat(readBack).isEqualTo(produced)
     }
 
+    /**
+     * The codec must not accept a shape the calculator could never produce.
+     *
+     * The calculator caps each muscle map at `MAX_DISTINCT_MUSCLES`. Without the same cap
+     * here, an edited cache could hand a caller a ledger with far more distinct muscles
+     * than any real catalog can name, which is the producer and the codec disagreeing about
+     * what a valid ledger is.
+     */
+    @Test
+    fun aPayloadWithMoreDistinctMusclesThanTheCalculatorCanProduceIsRejected() {
+        val overCap = WeeklyDoseLedgerCalculator.MAX_DISTINCT_MUSCLES + 1
+
+        listOf("primary", "secondary").forEach { kind ->
+            val payload = buildString {
+                append(WeeklyDoseLedgerPayload.PAYLOAD_HEADER)
+                repeat(overCap) { index -> append("\n$kind\tMuscle$index\t1") }
+            }
+
+            assertWithMessage("decoding %s entries beyond the muscle cap", kind)
+                .that(decode(payload))
+                .isNull()
+        }
+    }
+
+    /** Exactly at the cap is a shape the calculator can produce, so it must still decode. */
+    @Test
+    fun aPayloadExactlyAtTheDistinctMuscleCapIsStillAccepted() {
+        val atCap = WeeklyDoseLedgerCalculator.MAX_DISTINCT_MUSCLES
+        val payload = buildString {
+            append(WeeklyDoseLedgerPayload.PAYLOAD_HEADER)
+            repeat(atCap) { index -> append("\nprimary\tMuscle$index\t1") }
+        }
+
+        val decoded = decode(payload)
+
+        assertThat(decoded).isNotNull()
+        assertThat(decoded!!.directPrimarySets).hasSize(atCap)
+    }
+
+    /**
+     * The heaviest ledger the calculator's other guards permit must still be produced and
+     * read back, not rejected.
+     *
+     * The primary and secondary maps are bounded independently, so one work set can
+     * contribute its primary plus a full `MAX_DISTINCT_MUSCLES` distinct secondaries. If the
+     * shared unit bound were derived as if a set contributed only `MAX_DISTINCT_MUSCLES`
+     * units in total, this legal week would throw instead of producing a ledger — trading a
+     * silent cache defeat for a crash.
+     */
+    @Test
+    fun theHeaviestLegalLedgerIsProducedAndStillRoundTrips() {
+        val week = TrainingWeek.startingOn(MONDAY_EPOCH_DAY, ZoneId.of("UTC"))
+        val setsPerInstance = 20
+        val instances = WeeklyDoseLedgerCalculator.MAX_WORK_SETS_PER_WEEK / setsPerInstance
+        val secondaries = (1..WeeklyDoseLedgerCalculator.MAX_DISTINCT_MUSCLES)
+            .map { index -> "Secondary$index" }
+            .toSet()
+
+        val produced = WeeklyDoseLedgerCalculator().calculate(
+            sessions = listOf(
+                completedSession(
+                    id = "heaviest-legal-week",
+                    completedAtEpochMillis = week.startEpochMillis,
+                    exercises = (0 until instances).map { index ->
+                        exerciseInstance(
+                            exerciseId = "synthetic-bench-press",
+                            id = "instance-$index",
+                            orderIndex = index,
+                            sets = List(setsPerInstance) { completedNormalSet() }
+                        )
+                    }
+                )
+            ),
+            exercisesById = mapOf(
+                "synthetic-bench-press" to syntheticApprovedExercise(
+                    id = "synthetic-bench-press",
+                    directPrimaryMuscle = "Chest",
+                    descriptiveSecondaryMuscles = secondaries
+                )
+            ),
+            policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+            week = week,
+            catalogVersion = "catalog-commit",
+            reviewPolicyVersion = 1
+        )
+
+        assertThat(produced.creditedWorkSets)
+            .isEqualTo(WeeklyDoseLedgerCalculator.MAX_WORK_SETS_PER_WEEK)
+        assertThat(produced.secondaryInvolvement)
+            .hasSize(WeeklyDoseLedgerCalculator.MAX_DISTINCT_MUSCLES)
+        assertThat(produced.totalCountedUnits)
+            .isEqualTo(WeeklyDoseLedgerCalculator.MAX_LEDGER_COUNTED_UNITS.toLong())
+
+        val readBack = WeeklyDoseLedgerPayload.decode(
+            payload = WeeklyDoseLedgerPayload.encode(produced),
+            policyVersion = produced.policyVersion,
+            weekStartEpochDay = produced.weekStartEpochDay,
+            timeZoneId = produced.timeZoneId,
+            catalogVersion = produced.catalogVersion,
+            reviewPolicyVersion = produced.reviewPolicyVersion
+        )
+        assertThat(readBack).isEqualTo(produced)
+    }
+
     private fun decode(payload: String): WeeklyDoseLedger? = WeeklyDoseLedgerPayload.decode(
         payload = payload,
         policyVersion = ledger.policyVersion,

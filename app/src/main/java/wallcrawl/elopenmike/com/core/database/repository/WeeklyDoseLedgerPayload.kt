@@ -31,6 +31,15 @@ object WeeklyDoseLedgerPayload {
     private const val MAX_ENTRIES = 3 * WeeklyDoseLedgerCalculator.MAX_DISTINCT_MUSCLES
     private const val MAX_KEY_LENGTH = 64
 
+    /**
+     * The same per-map cap the calculator enforces on what it produces.
+     *
+     * Without it the codec would accept a shape the calculator could never emit, so an
+     * edited cache could hand a caller a ledger naming far more distinct muscles than any
+     * real catalog contains.
+     */
+    private const val MAX_DISTINCT_MUSCLES = WeeklyDoseLedgerCalculator.MAX_DISTINCT_MUSCLES
+
     fun encode(ledger: WeeklyDoseLedger): String {
         val lines = mutableListOf(PAYLOAD_HEADER)
         ledger.directPrimarySets.toSortedMap().forEach { (muscle, count) ->
@@ -87,11 +96,13 @@ object WeeklyDoseLedgerPayload {
                 PRIMARY -> {
                     if (!key.isValidMuscleKey()) return null
                     if (directPrimarySets.put(key, count) != null) return null
+                    if (directPrimarySets.size > MAX_DISTINCT_MUSCLES) return null
                 }
 
                 SECONDARY -> {
                     if (!key.isValidMuscleKey()) return null
                     if (secondaryInvolvement.put(key, count) != null) return null
+                    if (secondaryInvolvement.size > MAX_DISTINCT_MUSCLES) return null
                 }
 
                 UNATTRIBUTED -> {

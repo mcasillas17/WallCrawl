@@ -171,14 +171,19 @@ class WeeklyDoseLedgerCalculator {
          *
          * Secondary involvement adds one unit per descriptive secondary muscle, so a
          * ledger's unit total is a multiple of its work-set total and must not be capped as
-         * if it were work sets. This is derived as the arithmetic maximum a ledger passing
-         * the two guards above can hold — every work set crediting one primary plus at most
-         * [MAX_DISTINCT_MUSCLES] - 1 secondaries — so the producer's check can never fire
-         * for input it would otherwise accept. Its purpose is to give the storage codec the
-         * same hard ceiling, which is what makes the round trip total.
+         * if it were work sets.
+         *
+         * The value is the arithmetic maximum a ledger passing the guards above can hold.
+         * Primary and unattributed counts are bounded together by [MAX_WORK_SETS_PER_WEEK],
+         * and the primary and secondary maps are bounded independently, so one work set can
+         * contribute its primary plus a full [MAX_DISTINCT_MUSCLES] distinct secondaries —
+         * `MAX_DISTINCT_MUSCLES + 1` units, not `MAX_DISTINCT_MUSCLES`. Deriving it this way
+         * means the producer's check cannot fire for input its other guards accept, so the
+         * bound never turns a legal week into a crash. Its purpose is to give the storage
+         * codec the same hard ceiling, which is what makes the round trip total.
          */
         const val MAX_LEDGER_COUNTED_UNITS: Int =
-            MAX_WORK_SETS_PER_WEEK * MAX_DISTINCT_MUSCLES
+            MAX_WORK_SETS_PER_WEEK * (MAX_DISTINCT_MUSCLES + 1)
         const val MAX_VERSION_LENGTH: Int = 128
     }
 }
