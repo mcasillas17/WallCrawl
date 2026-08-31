@@ -9,10 +9,11 @@ have different owners and must not be treated as interchangeable:
   The current planner still consumes this block so existing workout behavior is
   preserved. `fatigueScore` is not part of the reviewed scientific contract and
   remains only until the later planner-policy migration.
-- `reviewedMetadata` is WallCrawl-owned categorical input for a future
-  deterministic capability-eligibility gate. It is optional, and no current
-  filtering, ranking, dose, progression, substitution, or validation behavior
-  reads it.
+- `reviewedMetadata` is WallCrawl-owned categorical input for the deterministic
+  reviewed capability-eligibility gate. The gate exists behind an explicit
+  local feature flag that is `false` in production. The current planner therefore
+  does not read this block for production filtering, ranking, dose, progression,
+  substitution, or validation.
 
 The complete 302-exercise catalog remains available to browsing and manual
 templates whether either optional block is present or absent.
@@ -73,7 +74,7 @@ pinned Workout Guide checkout + WallCrawl-authored JSON
   -> generated catalog.json
   -> Android streaming JSON parser
   -> typed Exercise.reviewedMetadata
-  -> future deterministic planner policy
+  -> deterministic reviewed eligibility policy (production flag disabled)
 ```
 
 `tools/workout-guide/reviewed-metadata.json` is the authored data source.
@@ -117,10 +118,16 @@ assisted-bodyweight progressions.
 
 The importer produces both the catalog and report deterministically; `--check`
 detects drift without writing. Regression tests hold the catalog at 302 entries
-and prove absent, `DRAFT`, and `APPROVED` reviewed blocks produce the same current
-planner output in representative bodyweight, band, machine, and full-gym
-contexts. Movement-capability values likewise remain unused by the planner.
+and prove the disabled rollout keeps current context and planner output unchanged
+in representative bodyweight, band, machine, and full-gym contexts. Synthetic,
+test-only enabled fixtures prove that absent and `DRAFT` blocks cannot enter the
+reviewed automatic pool and that typed no-candidate causes are preserved without
+fallback. Movement-capability values remain unused on the disabled production
+path.
 
-The next integration milestone is human review and deliberate approval of the
-cohort, followed by a separate reviewed-only capability-eligibility policy. That
-policy is not implemented here.
+The focused policy, rollout boundary, typed results, constraint gap, and
+verification commands are documented in
+[Reviewed capability eligibility](reviewed-capability-eligibility.md). The next
+integration milestone remains human review and deliberate approval of the
+cohort, followed by availability/persona review and an explicit production flag
+change. Approval does not happen automatically when reviewed entries appear.

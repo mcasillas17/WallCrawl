@@ -1,6 +1,9 @@
 package wallcrawl.elopenmike.com.core.ai
 
 import wallcrawl.elopenmike.com.core.model.Exercise
+import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
+import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityFailure
+import wallcrawl.elopenmike.com.core.model.EligibilityDecision
 import wallcrawl.elopenmike.com.core.model.ExercisePrescription
 import wallcrawl.elopenmike.com.core.model.ExercisePerformanceHistory
 import wallcrawl.elopenmike.com.core.model.ExerciseProgrammingMetadata
@@ -11,6 +14,7 @@ import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
 import wallcrawl.elopenmike.com.core.model.MovementCapabilities
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
 import wallcrawl.elopenmike.com.core.model.RepRange
+import wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
@@ -40,8 +44,15 @@ internal data class PlannerFixtureFailureEvaluation(
     override val inputAfterFirstAttempt: PlannerFixtureInputSnapshot,
     override val inputAfterSecondAttempt: PlannerFixtureInputSnapshot,
     val firstFailure: WorkoutPlanningFailure,
-    val secondFailure: WorkoutPlanningFailure
+    val secondFailure: WorkoutPlanningFailure,
+    val firstAutomaticEligibilityFailure: AutomaticEligibilityFailure?,
+    val secondAutomaticEligibilityFailure: AutomaticEligibilityFailure?
 ) : PlannerFixtureEvaluation
+
+private data class CapturedPlannerFailure(
+    val failure: WorkoutPlanningFailure,
+    val automaticEligibilityFailure: AutomaticEligibilityFailure?
+)
 
 internal data class PlannerFixtureInputSnapshot(
     val userProfile: UserProfile,
@@ -58,6 +69,7 @@ internal data class PlannerFixtureInputSnapshot(
     val recentlyTrainedMuscles: List<String>,
     val excludedExerciseIds: List<String>,
     val allowedExercises: List<Exercise>,
+    val automaticEligibilityResult: AutomaticEligibilityResult?,
     val preferredUnits: WeightUnit
 )
 
@@ -97,30 +109,53 @@ internal class PlannerFixtureEvaluator(
                 val inputAfterFirst = built.context.snapshot()
                 val secondFailure = captureFailure(built.context)
                 val inputAfterSecond = built.context.snapshot()
-                check(firstFailure == expectedFailure) {
-                    "Expected ${fixture.id} to fail with $expectedFailure, but got $firstFailure."
+                check(firstFailure.failure == expectedFailure) {
+                    "Expected ${fixture.id} to fail with $expectedFailure, but got ${firstFailure.failure}."
                 }
-                check(secondFailure == expectedFailure) {
-                    "Expected ${fixture.id} to fail with $expectedFailure, but got $secondFailure."
+                check(secondFailure.failure == expectedFailure) {
+                    "Expected ${fixture.id} to fail with $expectedFailure, but got ${secondFailure.failure}."
+                }
+                check(
+                    firstFailure.automaticEligibilityFailure ==
+                        fixture.expected.automaticEligibilityFailure
+                ) {
+                    "Expected ${fixture.id} to preserve automatic eligibility failure " +
+                        "${fixture.expected.automaticEligibilityFailure}, but got " +
+                        "${firstFailure.automaticEligibilityFailure}."
+                }
+                check(
+                    secondFailure.automaticEligibilityFailure ==
+                        fixture.expected.automaticEligibilityFailure
+                ) {
+                    "Expected ${fixture.id} to preserve automatic eligibility failure " +
+                        "${fixture.expected.automaticEligibilityFailure}, but got " +
+                        "${secondFailure.automaticEligibilityFailure}."
                 }
                 PlannerFixtureFailureEvaluation(
                     built = built,
                     inputBefore = inputBefore,
                     inputAfterFirstAttempt = inputAfterFirst,
                     inputAfterSecondAttempt = inputAfterSecond,
-                    firstFailure = firstFailure,
-                    secondFailure = secondFailure
+                    firstFailure = firstFailure.failure,
+                    secondFailure = secondFailure.failure,
+                    firstAutomaticEligibilityFailure =
+                        firstFailure.automaticEligibilityFailure,
+                    secondAutomaticEligibilityFailure =
+                        secondFailure.automaticEligibilityFailure
                 )
             }
         }
     }
 
-    private suspend fun captureFailure(context: WorkoutGenerationContext): WorkoutPlanningFailure =
+    private suspend fun captureFailure(context: WorkoutGenerationContext): CapturedPlannerFailure =
         try {
             FakeWorkoutPlanner().generateWorkout(context)
             error("Expected planner generation to fail for fixture context.")
         } catch (exception: WorkoutValidationException) {
-            exception.failure
+            CapturedPlannerFailure(
+                failure = exception.failure,
+                automaticEligibilityFailure = exception.automaticEligibilityFailure
+            )
         }
 
     private fun PlannerFixtureOutcome.toPlanningFailure(): WorkoutPlanningFailure = when (this) {
@@ -129,6 +164,8 @@ internal class PlannerFixtureEvaluator(
         PlannerFixtureOutcome.NO_STRENGTH_CANDIDATES -> WorkoutPlanningFailure.NO_STRENGTH_CANDIDATES
         PlannerFixtureOutcome.NO_CANDIDATES_FOR_ANY_SPLIT ->
             WorkoutPlanningFailure.NO_CANDIDATES_FOR_ANY_SPLIT
+        PlannerFixtureOutcome.REVIEWED_ELIGIBILITY_NO_CANDIDATES ->
+            WorkoutPlanningFailure.REVIEWED_ELIGIBILITY_NO_CANDIDATES
     }
 }
 
@@ -153,6 +190,7 @@ private fun WorkoutGenerationContext.snapshot(): PlannerFixtureInputSnapshot =
         recentlyTrainedMuscles = recentlyTrainedMuscles.toList(),
         excludedExerciseIds = excludedExerciseIds.toList(),
         allowedExercises = allowedExercises.map(Exercise::deepCopy),
+        automaticEligibilityResult = automaticEligibilityResult?.deepCopy(),
         preferredUnits = preferredUnits
     )
 
@@ -190,7 +228,33 @@ private fun Exercise.deepCopy(): Exercise = copy(
     primaryMuscles = primaryMuscles.toList(),
     secondaryMuscles = secondaryMuscles.toList(),
     listedEquipment = listedEquipment.toList(),
-    programming = programming?.deepCopy()
+    programming = programming?.deepCopy(),
+    reviewedMetadata = reviewedMetadata?.deepCopy()
+)
+
+private fun AutomaticEligibilityResult.deepCopy(): AutomaticEligibilityResult = when (this) {
+    is AutomaticEligibilityResult.Candidates -> copy(
+        exercises = exercises.map(Exercise::deepCopy),
+        decisions = decisions.map(EligibilityDecision::deepCopy)
+    )
+
+    is AutomaticEligibilityResult.NoCandidates -> copy(
+        decisions = decisions.map(EligibilityDecision::deepCopy)
+    )
+}
+
+private fun EligibilityDecision.deepCopy(): EligibilityDecision = copy(
+    reasons = reasons.toList(),
+    preferences = preferences.toList()
+)
+
+private fun ReviewedExerciseMetadata.deepCopy(): ReviewedExerciseMetadata = copy(
+    descriptiveSecondaryMuscles = descriptiveSecondaryMuscles.toSet(),
+    approvedRegressions = approvedRegressions.map { it.copy() },
+    approvedSubstitutions = approvedSubstitutions.map { it.copy() },
+    capabilityRequirements = capabilityRequirements.toSet(),
+    equipmentAlternatives = equipmentAlternatives.map(List<String>::toList),
+    provenance = provenance.copy()
 )
 
 private fun ExerciseSource.deepCopy(): ExerciseSource = copy(attribution = attribution.copy(source = attribution.source?.copy()))

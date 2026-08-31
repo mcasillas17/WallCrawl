@@ -52,7 +52,9 @@ class PlannerFixtureTest {
             "limited-capability",
             "mixed-unit-history",
             "sparse-history",
-            "no-strength-candidates"
+            "no-strength-candidates",
+            "reviewed-enabled-bodyweight",
+            "reviewed-enabled-no-approved"
         )
     }
 
@@ -95,7 +97,7 @@ class PlannerFixtureTest {
     fun corpusMetadata_usesSupportedVersionsAndBoundedHistory() {
         val fixtures = loader.loadCorpus()
 
-        assertThat(fixtures).hasSize(9)
+        assertThat(fixtures).hasSize(11)
         fixtures.forEach { fixture ->
             assertThat(fixture.schemaVersion).isEqualTo(1)
             assertThat(fixture.policyVersion).isEqualTo(3)
@@ -305,10 +307,16 @@ class PlannerFixtureTest {
                 WorkoutPlanningFailure.NO_STRENGTH_CANDIDATES
             PlannerFixtureOutcome.NO_CANDIDATES_FOR_ANY_SPLIT ->
                 WorkoutPlanningFailure.NO_CANDIDATES_FOR_ANY_SPLIT
+            PlannerFixtureOutcome.REVIEWED_ELIGIBILITY_NO_CANDIDATES ->
+                WorkoutPlanningFailure.REVIEWED_ELIGIBILITY_NO_CANDIDATES
         }
 
         assertThat(evaluation.firstFailure).isEqualTo(expectedFailure)
         assertThat(evaluation.secondFailure).isEqualTo(expectedFailure)
+        assertThat(evaluation.firstAutomaticEligibilityFailure)
+            .isEqualTo(evaluation.built.fixture.expected.automaticEligibilityFailure)
+        assertThat(evaluation.secondAutomaticEligibilityFailure)
+            .isEqualTo(evaluation.built.fixture.expected.automaticEligibilityFailure)
     }
 
     @Suppress("UNCHECKED_CAST")

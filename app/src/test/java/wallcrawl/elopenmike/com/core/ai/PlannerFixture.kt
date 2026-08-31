@@ -11,6 +11,8 @@ import org.json.JSONException
 import org.json.JSONObject
 import org.json.JSONTokener
 import wallcrawl.elopenmike.com.core.model.CapabilityLevel
+import wallcrawl.elopenmike.com.core.model.AdaptationState
+import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityFailure
 import wallcrawl.elopenmike.com.core.model.ExercisePerformanceHistory
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
@@ -33,7 +35,13 @@ internal data class PlannerFixture(
     val completedWorkoutCount: Int,
     val exerciseHistory: List<ExercisePerformanceHistory>,
     val allowedExerciseIds: List<String> = emptyList(),
+    val reviewedEligibility: PlannerFixtureReviewedEligibility? = null,
     val expected: PlannerFixtureExpected
+)
+
+internal data class PlannerFixtureReviewedEligibility(
+    val adaptationState: AdaptationState,
+    val syntheticApprovedExerciseIds: List<String>
 )
 
 internal data class PlannerFixtureProfile(
@@ -58,14 +66,16 @@ internal data class PlannerFixtureExpected(
     val requiredAnyExerciseIdGroups: List<Set<String>> = emptyList(),
     val expectedTargetWeights: Map<String, Double> = emptyMap(),
     val workoutNameContains: String? = null,
-    val maxTargetSetsPerExercise: Int? = null
+    val maxTargetSetsPerExercise: Int? = null,
+    val automaticEligibilityFailure: AutomaticEligibilityFailure? = null
 )
 
 internal enum class PlannerFixtureOutcome {
     SUCCESS,
     NO_CANDIDATES,
     NO_STRENGTH_CANDIDATES,
-    NO_CANDIDATES_FOR_ANY_SPLIT
+    NO_CANDIDATES_FOR_ANY_SPLIT,
+    REVIEWED_ELIGIBILITY_NO_CANDIDATES
 }
 
 internal class PlannerFixtureFormatException(
@@ -152,7 +162,38 @@ internal class PlannerFixtureLoader(
             } else {
                 emptyList()
             },
+            reviewedEligibility = if (root.has("reviewedEligibility")) {
+                parseReviewedEligibility(
+                    requireObject(root, "reviewedEligibility", "root.reviewedEligibility")
+                )
+            } else {
+                null
+            },
             expected = parseExpected(requireObject(root, "expected", "root.expected"))
+        )
+    }
+
+    private fun parseReviewedEligibility(
+        reviewedEligibility: JSONObject
+    ): PlannerFixtureReviewedEligibility {
+        requireExactFields(
+            reviewedEligibility,
+            "root.reviewedEligibility",
+            REVIEWED_ELIGIBILITY_FIELDS
+        )
+        return PlannerFixtureReviewedEligibility(
+            adaptationState = parseEnum<AdaptationState>(
+                reviewedEligibility.get("adaptationState"),
+                "root.reviewedEligibility.adaptationState"
+            ),
+            syntheticApprovedExerciseIds = parseSafeIdList(
+                requireArray(
+                    reviewedEligibility,
+                    "syntheticApprovedExerciseIds",
+                    "root.reviewedEligibility.syntheticApprovedExerciseIds"
+                ),
+                "root.reviewedEligibility.syntheticApprovedExerciseIds"
+            )
         )
     }
 
@@ -309,6 +350,30 @@ internal class PlannerFixtureLoader(
         } else {
             emptyMap()
         }
+        val automaticEligibilityFailure = if (expected.has("automaticEligibilityFailure")) {
+            parseEnum<AutomaticEligibilityFailure>(
+                expected.get("automaticEligibilityFailure"),
+                "expected.automaticEligibilityFailure"
+            )
+        } else {
+            null
+        }
+        if (
+            outcome == PlannerFixtureOutcome.REVIEWED_ELIGIBILITY_NO_CANDIDATES &&
+            automaticEligibilityFailure == null
+        ) {
+            throw PlannerFixtureFormatException(
+                "expected.automaticEligibilityFailure is required for reviewed eligibility failures."
+            )
+        }
+        if (
+            outcome != PlannerFixtureOutcome.REVIEWED_ELIGIBILITY_NO_CANDIDATES &&
+            automaticEligibilityFailure != null
+        ) {
+            throw PlannerFixtureFormatException(
+                "expected.automaticEligibilityFailure is only supported for reviewed eligibility failures."
+            )
+        }
         if (outcome != PlannerFixtureOutcome.SUCCESS) {
             when {
                 requiredExerciseIds.isNotEmpty() ->
@@ -377,7 +442,8 @@ internal class PlannerFixtureLoader(
                 )
             } else {
                 null
-            }
+            },
+            automaticEligibilityFailure = automaticEligibilityFailure
         )
     }
 
@@ -782,7 +848,11 @@ internal class PlannerFixtureLoader(
             "exerciseHistory",
             "expected"
         )
-        private val OPTIONAL_ROOT_FIELDS = setOf("allowedExerciseIds")
+        private val OPTIONAL_ROOT_FIELDS = setOf("allowedExerciseIds", "reviewedEligibility")
+        private val REVIEWED_ELIGIBILITY_FIELDS = setOf(
+            "adaptationState",
+            "syntheticApprovedExerciseIds"
+        )
         private val PROFILE_FIELDS = setOf(
             "goals",
             "experienceLevel",
@@ -818,7 +888,8 @@ internal class PlannerFixtureLoader(
             "requiredAnyExerciseIdGroups",
             "expectedTargetWeights",
             "workoutNameContains",
-            "maxTargetSetsPerExercise"
+            "maxTargetSetsPerExercise",
+            "automaticEligibilityFailure"
         )
         private val KNOWN_EQUIPMENT = StandardEquipment.ALL.toSet()
         private val KNOWN_MUSCLES = StandardMuscles.ALL.toSet()

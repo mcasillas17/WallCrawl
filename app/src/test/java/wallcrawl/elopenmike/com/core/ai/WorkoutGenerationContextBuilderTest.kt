@@ -9,13 +9,24 @@ import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
 import wallcrawl.elopenmike.com.core.exercise.ExerciseFilter
 import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
+import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
+import wallcrawl.elopenmike.com.core.model.ComplexityTier
+import wallcrawl.elopenmike.com.core.model.EligibilityDecision
+import wallcrawl.elopenmike.com.core.model.EligibilityReason
+import wallcrawl.elopenmike.com.core.model.ImpactLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
+import wallcrawl.elopenmike.com.core.model.MovementPattern
+import wallcrawl.elopenmike.com.core.model.PrescriptionShape
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
+import wallcrawl.elopenmike.com.core.model.ReviewProvenance
+import wallcrawl.elopenmike.com.core.model.ReviewState
+import wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
+import wallcrawl.elopenmike.com.core.model.SupportRequirement
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
@@ -24,6 +35,90 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.model.WorkoutSummary
 
 class WorkoutGenerationContextBuilderTest {
+
+    @Test
+    fun build_withReviewedEligibilityDisabledPreservesLegacyCandidates() = runTest {
+        val first = InMemoryExerciseCatalog.SAMPLE_EXERCISES.first()
+        val second = first.copy(id = "second-legacy-candidate")
+        val builder = WorkoutGenerationContextBuilder(
+            userProfileRepository = StubUserProfileRepository(
+                UserProfile(
+                    availableEquipment = listOf(
+                        StandardEquipment.DUMBBELL,
+                        StandardEquipment.BENCH
+                    )
+                )
+            ),
+            workoutRepository = StubWorkoutRepository(emptyList()),
+            exerciseCatalog = InMemoryExerciseCatalog(listOf(first, second)),
+            exerciseFilter = ExerciseFilter(),
+            historyAnalyzer = WorkoutHistoryAnalyzer(),
+            plannerFeatureFlags = PlannerFeatureFlags()
+        )
+
+        val context = builder.build()
+
+        assertThat(context.allowedExercises.map { it.id })
+            .containsExactly(first.id, second.id)
+            .inOrder()
+        assertThat(context.automaticEligibilityResult).isNull()
+    }
+
+    @Test
+    fun build_withReviewedEligibilityEnabledUsesOnlySyntheticApprovedCandidates() = runTest {
+        val base = InMemoryExerciseCatalog.SAMPLE_EXERCISES.first()
+        val approved = base.copy(
+            id = "synthetic-approved",
+            reviewedMetadata = syntheticReviewedMetadata(ReviewState.APPROVED)
+        )
+        val draft = base.copy(
+            id = "draft",
+            reviewedMetadata = syntheticReviewedMetadata(ReviewState.DRAFT)
+        )
+        val missing = base.copy(id = "missing", reviewedMetadata = null)
+        val builder = WorkoutGenerationContextBuilder(
+            userProfileRepository = StubUserProfileRepository(
+                UserProfile(
+                    availableEquipment = listOf(
+                        StandardEquipment.DUMBBELL,
+                        StandardEquipment.BENCH
+                    )
+                )
+            ),
+            workoutRepository = StubWorkoutRepository(emptyList()),
+            exerciseCatalog = InMemoryExerciseCatalog(listOf(approved, draft, missing)),
+            exerciseFilter = ExerciseFilter(),
+            historyAnalyzer = WorkoutHistoryAnalyzer(),
+            plannerFeatureFlags = PlannerFeatureFlags(reviewedCapabilityEligibility = true),
+            reviewedEligibilityPolicy = ExerciseEligibilityPolicy()
+        )
+
+        val context = builder.build()
+
+        assertThat(context.allowedExercises).containsExactly(approved)
+        assertThat(context.automaticEligibilityResult).isEqualTo(
+            AutomaticEligibilityResult.Candidates(
+                exercises = listOf(approved),
+                decisions = listOf(
+                    EligibilityDecision(
+                        exerciseId = approved.id,
+                        eligible = true,
+                        reasons = listOf(EligibilityReason.APPROVED)
+                    ),
+                    EligibilityDecision(
+                        exerciseId = draft.id,
+                        eligible = false,
+                        reasons = listOf(EligibilityReason.MISSING_APPROVED_METADATA)
+                    ),
+                    EligibilityDecision(
+                        exerciseId = missing.id,
+                        eligible = false,
+                        reasons = listOf(EligibilityReason.MISSING_APPROVED_METADATA)
+                    )
+                )
+            )
+        )
+    }
 
     @Test
     fun build_includesCatalogEntriesWithoutReviewedProgrammingWhenEquipmentMatches() = runTest {
@@ -152,6 +247,36 @@ class WorkoutGenerationContextBuilderTest {
             )
         )
     }
+
+    private fun syntheticReviewedMetadata(reviewState: ReviewState): ReviewedExerciseMetadata =
+        ReviewedExerciseMetadata(
+            reviewState = reviewState,
+            directPrimaryMuscle = StandardMuscles.CHEST,
+            descriptiveSecondaryMuscles = emptySet(),
+            movementPattern = MovementPattern.HORIZONTAL_PUSH,
+            complexity = ComplexityTier.FOUNDATIONAL,
+            progressionFamily = "synthetic-builder-test-family",
+            prescriptionShape = PrescriptionShape.WEIGHT_REPS,
+            approvedRegressions = emptyList(),
+            approvedSubstitutions = emptyList(),
+            capabilityRequirements = emptySet(),
+            supportRequirement = SupportRequirement.SUPPORTED,
+            impactLevel = ImpactLevel.NONE,
+            equipmentAlternatives = listOf(
+                listOf(StandardEquipment.DUMBBELL, StandardEquipment.BENCH)
+            ),
+            provenance = ReviewProvenance(
+                reviewerRole = if (reviewState == ReviewState.APPROVED) {
+                    "Synthetic test-only reviewer"
+                } else {
+                    null
+                },
+                rationaleOrSource = "SYNTHETIC TEST DATA — never bundled in production assets.",
+                reviewedAtEpochMillis = if (reviewState == ReviewState.APPROVED) 1L else null,
+                schemaVersion = 1,
+                policyVersion = 1
+            )
+        )
 }
 
 private class StubUserProfileRepository(

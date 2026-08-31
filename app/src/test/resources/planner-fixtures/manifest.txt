@@ -7,3 +7,5 @@ planner-fixtures/limited-capability.json
 planner-fixtures/mixed-unit-history.json
 planner-fixtures/sparse-history.json
 planner-fixtures/no-strength-candidates.json
+planner-fixtures/reviewed-enabled-bodyweight.json
+planner-fixtures/reviewed-enabled-no-approved.json

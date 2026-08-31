@@ -8,12 +8,15 @@ import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import wallcrawl.elopenmike.com.core.database.converter.RoomTypeConverters
+import wallcrawl.elopenmike.com.core.database.dao.CompletedWorkoutHistoryDao
 import wallcrawl.elopenmike.com.core.database.dao.UserProfileDao
+import wallcrawl.elopenmike.com.core.database.dao.WeeklyDoseLedgerStateDao
 import wallcrawl.elopenmike.com.core.database.dao.WorkoutExerciseDao
 import wallcrawl.elopenmike.com.core.database.dao.WorkoutSessionDao
 import wallcrawl.elopenmike.com.core.database.dao.WorkoutSetDao
 import wallcrawl.elopenmike.com.core.database.dao.WorkoutTemplateDao
 import wallcrawl.elopenmike.com.core.database.entity.UserProfileEntity
+import wallcrawl.elopenmike.com.core.database.entity.WeeklyDoseLedgerStateEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutExerciseEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSessionEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSetEntity
@@ -27,9 +30,10 @@ import wallcrawl.elopenmike.com.core.database.entity.WorkoutTemplateExerciseEnti
         WorkoutExerciseEntity::class,
         WorkoutSetEntity::class,
         WorkoutTemplateEntity::class,
-        WorkoutTemplateExerciseEntity::class
+        WorkoutTemplateExerciseEntity::class,
+        WeeklyDoseLedgerStateEntity::class
     ],
-    version = 9,
+    version = 10,
     exportSchema = false
 )
 @TypeConverters(RoomTypeConverters::class)
@@ -40,6 +44,8 @@ abstract class WallCrawlDatabase : RoomDatabase() {
     abstract fun workoutExerciseDao(): WorkoutExerciseDao
     abstract fun workoutSetDao(): WorkoutSetDao
     abstract fun workoutTemplateDao(): WorkoutTemplateDao
+    abstract fun completedWorkoutHistoryDao(): CompletedWorkoutHistoryDao
+    abstract fun weeklyDoseLedgerStateDao(): WeeklyDoseLedgerStateDao
 
     companion object {
         private const val DATABASE_NAME = "wallcrawl.db"
@@ -298,6 +304,35 @@ abstract class WallCrawlDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_9_10 = object : Migration(9, 10) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // Additive only. Nothing existing is read, rewritten, or dropped: every
+                // profile, capability, template, workout, exercise, set, and typed set
+                // outcome keeps exactly the value it already had.
+                //
+                // The new table starts empty and stays derived. It caches a weekly dose
+                // ledger that is always reconstructable from completed history, so an
+                // empty or deleted cache costs a recomputation and can never change a
+                // result.
+                db.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS weekly_dose_ledger_state (
+                        profileId TEXT NOT NULL,
+                        weekStartEpochDay INTEGER NOT NULL,
+                        timeZoneId TEXT NOT NULL,
+                        policyVersion TEXT NOT NULL,
+                        catalogVersion TEXT NOT NULL,
+                        reviewPolicyVersion INTEGER NOT NULL,
+                        ledgerPayload TEXT NOT NULL,
+                        sourceFingerprint TEXT NOT NULL,
+                        generatedAtTimestamp INTEGER NOT NULL,
+                        PRIMARY KEY(profileId, weekStartEpochDay, timeZoneId, policyVersion)
+                    )
+                    """.trimIndent()
+                )
+            }
+        }
+
         val ALL_MIGRATIONS: Array<Migration>
             get() = arrayOf(
                 MIGRATION_1_2,
@@ -307,7 +342,8 @@ abstract class WallCrawlDatabase : RoomDatabase() {
                 MIGRATION_5_6,
                 MIGRATION_6_7,
                 MIGRATION_7_8,
-                MIGRATION_8_9
+                MIGRATION_8_9,
+                MIGRATION_9_10
             )
     }
 }

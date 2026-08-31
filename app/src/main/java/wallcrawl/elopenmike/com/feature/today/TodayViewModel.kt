@@ -11,6 +11,7 @@ import wallcrawl.elopenmike.com.core.ai.WorkoutValidationException
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
+import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityFailure
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import kotlinx.coroutines.CancellationException
@@ -147,11 +148,15 @@ class TodayViewModel(
      * the planner should not have to phrase user-facing text, and "no allowed candidate
      * exercises available" is not something to show a person mid-workout-planning.
      */
-    private fun userFacingMessage(error: Exception, isRegeneration: Boolean): String =
-        when ((error as? WorkoutValidationException)?.failure) {
+    private fun userFacingMessage(error: Exception, isRegeneration: Boolean): String {
+        val planningError = error as? WorkoutValidationException
+        return when (planningError?.failure) {
             WorkoutPlanningFailure.NO_CANDIDATES ->
                 "No exercises match your equipment and exclusions yet. " +
                     "Add equipment or clear an exclusion in Profile."
+
+            WorkoutPlanningFailure.REVIEWED_ELIGIBILITY_NO_CANDIDATES ->
+                automaticEligibilityMessage(planningError.automaticEligibilityFailure)
 
             WorkoutPlanningFailure.NO_STRENGTH_CANDIDATES ->
                 "Cardio machines and stretches aren't planned as strength work. " +
@@ -168,6 +173,7 @@ class TodayViewModel(
                     "Couldn't build today's workout. Try again."
                 }
         }
+    }
 
     fun startWorkout(onWorkoutStarted: (sessionId: String) -> Unit) {
         if (generationJob?.isActive == true) return
@@ -237,6 +243,37 @@ class TodayViewModel(
         val profile: UserProfile
     )
 }
+
+internal fun automaticEligibilityMessage(failure: AutomaticEligibilityFailure?): String =
+    when (failure) {
+        AutomaticEligibilityFailure.NO_APPROVED_METADATA ->
+            "Reviewed automatic planning isn't available yet because no exercise metadata " +
+                "has human approval. You can still build your own workout."
+
+        AutomaticEligibilityFailure.USER_EXCLUSIONS_REMOVED_ALL ->
+            "Your exercise exclusions leave no reviewed automatic options. " +
+                "Update exclusions in Profile, or build your own workout."
+
+        AutomaticEligibilityFailure.EQUIPMENT_REMOVED_ALL ->
+            "Your available equipment leaves no reviewed automatic options. " +
+                "Update equipment in Profile, or build your own workout."
+
+        AutomaticEligibilityFailure.CAPABILITIES_REMOVED_ALL ->
+            "Your movement preferences leave no reviewed automatic options. " +
+                "Update them in Profile, or build your own workout."
+
+        AutomaticEligibilityFailure.TRAINING_CONSTRAINTS_REMOVED_ALL ->
+            "Your training restrictions leave no reviewed automatic options. " +
+                "Some restrictions still need human-reviewed exercise mappings."
+
+        AutomaticEligibilityFailure.CALIBRATION_COMPLEXITY_REMOVED_ALL ->
+            "Your current calibration stage leaves no reviewed automatic options. " +
+                "You can still build your own workout."
+
+        AutomaticEligibilityFailure.NO_ELIGIBLE_CANDIDATES, null ->
+            "No exercise meets every reviewed automatic-planning rule. " +
+                "You can still build your own workout."
+    }
 
 private fun minuteClock(nowTimestamp: () -> Long): Flow<Long> = flow {
     while (true) {

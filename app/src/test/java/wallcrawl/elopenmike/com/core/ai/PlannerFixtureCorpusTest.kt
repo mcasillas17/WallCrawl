@@ -3,9 +3,13 @@ package wallcrawl.elopenmike.com.core.ai
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import wallcrawl.elopenmike.com.core.model.CapabilityLevel
+import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityFailure
+import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
+import wallcrawl.elopenmike.com.core.model.EligibilityReason
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
+import wallcrawl.elopenmike.com.core.model.ReviewState
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
 import wallcrawl.elopenmike.com.core.model.WeightUnit
@@ -16,7 +20,7 @@ class PlannerFixtureCorpusTest {
     private val contextFactory = PlannerFixtureContextFactory()
 
     @Test
-    fun loadCorpus_containsExactlyTheTask2PersonaFixtures() {
+    fun loadCorpus_containsLegacyAndReviewedEligibilityFixtures() {
         val fixtures = loader.loadCorpus()
 
         assertThat(fixtures.map { it.id }).containsExactly(
@@ -28,9 +32,11 @@ class PlannerFixtureCorpusTest {
             "limited-capability",
             "mixed-unit-history",
             "sparse-history",
-            "no-strength-candidates"
+            "no-strength-candidates",
+            "reviewed-enabled-bodyweight",
+            "reviewed-enabled-no-approved"
         ).inOrder()
-        assertThat(fixtures.map { it.id }.distinct()).hasSize(9)
+        assertThat(fixtures.map { it.id }.distinct()).hasSize(11)
     }
 
     @Test
@@ -55,6 +61,62 @@ class PlannerFixtureCorpusTest {
             assertThat(catalogIds.containsAll(allowedIds)).isTrue()
             assertThat(catalogIds.containsAll(built.fixture.allowedExerciseIds.toSet())).isTrue()
         }
+    }
+
+    @Test
+    fun bundledCatalogProjection_keepsAllAuthoredReviewedMetadataDraft() {
+        val exercises = contextFactory.bundledCatalogProjection().exercises
+
+        assertThat(exercises).hasSize(302)
+        assertThat(exercises.count { it.reviewedMetadata?.reviewState == ReviewState.DRAFT })
+            .isEqualTo(37)
+        assertThat(exercises.count { it.reviewedMetadata?.reviewState == ReviewState.APPROVED })
+            .isEqualTo(0)
+    }
+
+    @Test
+    fun reviewedEnabledFixture_usesOnlyExplicitSyntheticApprovals() {
+        val fixture = loader.loadCorpus().single { it.id == "reviewed-enabled-bodyweight" }
+        val syntheticIds = fixture.reviewedEligibility!!.syntheticApprovedExerciseIds
+        val built = contextFactory.create(fixture)
+        val result = built.context.automaticEligibilityResult as
+            AutomaticEligibilityResult.Candidates
+
+        assertThat(built.catalogExercises).hasSize(302)
+        assertThat(
+            built.catalogExercises.filter {
+                it.reviewedMetadata?.reviewState == ReviewState.APPROVED
+            }.map(Exercise::id)
+        ).containsExactlyElementsIn(syntheticIds)
+        assertThat(result.exercises.map(Exercise::id))
+            .containsExactlyElementsIn(
+                built.catalogExercises.filter { it.id in syntheticIds }.map(Exercise::id)
+            )
+            .inOrder()
+        assertThat(result.decisions).hasSize(302)
+        assertThat(result.decisions.filter { it.eligible }.map { it.exerciseId })
+            .containsExactlyElementsIn(result.exercises.map(Exercise::id))
+            .inOrder()
+        result.exercises.forEach { exercise ->
+            assertThat(exercise.reviewedMetadata!!.provenance.rationaleOrSource)
+                .startsWith("SYNTHETIC PLANNER FIXTURE")
+        }
+    }
+
+    @Test
+    fun reviewedEnabledFixture_withoutSyntheticApprovalsFailsWithTypedReviewGateReason() {
+        val fixture = loader.loadCorpus().single { it.id == "reviewed-enabled-no-approved" }
+        val built = contextFactory.create(fixture)
+        val result = built.context.automaticEligibilityResult as
+            AutomaticEligibilityResult.NoCandidates
+
+        assertThat(built.context.allowedExercises).isEmpty()
+        assertThat(result.failure).isEqualTo(AutomaticEligibilityFailure.NO_APPROVED_METADATA)
+        assertThat(result.decisions).hasSize(302)
+        assertThat(result.decisions.all { decision ->
+            !decision.eligible &&
+                decision.reasons == listOf(EligibilityReason.MISSING_APPROVED_METADATA)
+        }).isTrue()
     }
 
     @Test
