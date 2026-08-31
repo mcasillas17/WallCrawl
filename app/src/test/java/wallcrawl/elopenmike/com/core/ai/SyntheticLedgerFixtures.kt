@@ -130,7 +130,7 @@ fun completedSession(
 fun exerciseInstance(
     exerciseId: String,
     sets: List<WorkoutSet>,
-    id: String = "instance-$exerciseId",
+    id: String = "instance-${SyntheticSetIds.next()}",
     orderIndex: Int = 0
 ): WorkoutExercise = WorkoutExercise(
     id = id,
@@ -190,8 +190,22 @@ fun stoppedSet(
     stoppedAtTimestamp = 1_756_000_000_000L
 )
 
-/** Deterministic, collision-free set identifiers so fixtures never rely on randomness. */
+/** Deterministic, collision-free fixture identifiers so tests never rely on randomness. */
 object SyntheticSetIds {
     private var counter = 0
     fun next(): Int = ++counter
+}
+
+/** Applies [transform] to every exercise instance in every session. */
+fun List<WorkoutSession>.mutateExercises(
+    transform: (WorkoutExercise) -> WorkoutExercise
+): List<WorkoutSession> = map { session ->
+    session.copy(exercises = session.exercises.map(transform))
+}
+
+/** Applies [transform] to every set in every exercise instance in every session. */
+fun List<WorkoutSession>.mutateSets(
+    transform: (WorkoutSet) -> WorkoutSet
+): List<WorkoutSession> = mutateExercises { exercise ->
+    exercise.copy(sets = exercise.sets.map(transform))
 }

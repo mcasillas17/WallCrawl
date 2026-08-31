@@ -3,13 +3,16 @@ package wallcrawl.elopenmike.com.core.ai
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import java.time.ZoneId
+import org.junit.Assert.assertThrows
 import org.junit.Test
 import wallcrawl.elopenmike.com.core.model.LedgerOmissionReason
 import wallcrawl.elopenmike.com.core.model.LedgerPolicyVersion
+import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetStopReason
 import wallcrawl.elopenmike.com.core.model.SetType
 import wallcrawl.elopenmike.com.core.model.TrainingWeek
 import wallcrawl.elopenmike.com.core.model.WeeklyDoseLedger
+import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
 
 /**
@@ -241,6 +244,242 @@ class WeeklyDoseLedgerCalculatorTest {
             )
             .inOrder()
     }
+
+    @Test
+    fun aSessionThatIsNotCompletedIsRejectedRatherThanSilentlyIgnored() {
+        listOf(SessionStatus.IN_PROGRESS, SessionStatus.CANCELLED).forEach { status ->
+            val error = assertThrows(IllegalArgumentException::class.java) {
+                calculateWith(
+                    completedSession(
+                        id = "session-1",
+                        completedAtEpochMillis = week.startEpochMillis,
+                        exercises = listOf(
+                            exerciseInstance("synthetic-bench-press", listOf(completedNormalSet()))
+                        ),
+                        status = status
+                    )
+                )
+            }
+
+            assertWithMessage("rejection for %s", status)
+                .that(error).hasMessageThat().contains("status")
+        }
+    }
+
+    @Test
+    fun aCompletionTimestampOutsideTheWeekIsRejectedRatherThanCredited() {
+        listOf(
+            week.startEpochMillis - 1L,
+            week.endEpochMillisExclusive,
+            week.endEpochMillisExclusive + 1L
+        ).forEach { outsideTheWeek ->
+            val error = assertThrows(IllegalArgumentException::class.java) {
+                calculateWith(
+                    completedSession(
+                        id = "session-1",
+                        completedAtEpochMillis = outsideTheWeek,
+                        exercises = listOf(
+                            exerciseInstance("synthetic-bench-press", listOf(completedNormalSet()))
+                        )
+                    )
+                )
+            }
+
+            assertWithMessage("rejection for %s", outsideTheWeek)
+                .that(error).hasMessageThat().contains("completedAtTimestamp")
+        }
+    }
+
+    @Test
+    fun theExactWeekStartIsIncludedAndTheNextWeekStartIsExcluded() {
+        val ledger = calculateWith(
+            completedSession(
+                id = "session-first-instant",
+                completedAtEpochMillis = week.startEpochMillis,
+                exercises = listOf(
+                    exerciseInstance("synthetic-bench-press", listOf(completedNormalSet()))
+                )
+            ),
+            completedSession(
+                id = "session-last-instant",
+                completedAtEpochMillis = week.endEpochMillisExclusive - 1L,
+                exercises = listOf(
+                    exerciseInstance(
+                        exerciseId = "synthetic-bench-press",
+                        id = "instance-late",
+                        sets = listOf(completedNormalSet())
+                    )
+                )
+            )
+        )
+
+        assertThat(ledger.directPrimarySets).containsExactly("Chest", 2)
+    }
+
+    @Test
+    fun duplicateSessionIdentifiersAreRejectedInsteadOfDoubleCounted() {
+        val session = completedSession(
+            id = "session-1",
+            completedAtEpochMillis = week.startEpochMillis,
+            exercises = listOf(
+                exerciseInstance("synthetic-bench-press", listOf(completedNormalSet()))
+            )
+        )
+
+        val error = assertThrows(IllegalArgumentException::class.java) {
+            calculateWith(session, session)
+        }
+
+        assertThat(error).hasMessageThat().contains("session id")
+    }
+
+    @Test
+    fun aBlankCatalogVersionOrNegativeReviewPolicyVersionIsRejected() {
+        assertThat(
+            assertThrows(IllegalArgumentException::class.java) {
+                calculator.calculate(
+                    sessions = emptyList(),
+                    exercisesById = emptyMap(),
+                    policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+                    week = week,
+                    catalogVersion = "  ",
+                    reviewPolicyVersion = 1
+                )
+            }
+        ).hasMessageThat().contains("catalogVersion")
+
+        assertThat(
+            assertThrows(IllegalArgumentException::class.java) {
+                calculator.calculate(
+                    sessions = emptyList(),
+                    exercisesById = emptyMap(),
+                    policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+                    week = week,
+                    catalogVersion = SYNTHETIC_CATALOG_VERSION,
+                    reviewPolicyVersion = -1
+                )
+            }
+        ).hasMessageThat().contains("reviewPolicyVersion")
+    }
+
+    @Test
+    fun aGenuinelyEmptyWeekProducesAnExplicitEmptyLedgerRatherThanAFailure() {
+        val ledger = calculator.calculate(
+            sessions = emptyList(),
+            exercisesById = emptyMap(),
+            policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+            week = week,
+            catalogVersion = SYNTHETIC_CATALOG_VERSION,
+            reviewPolicyVersion = 1
+        )
+
+        assertThat(ledger.directPrimarySets).isEmpty()
+        assertThat(ledger.secondaryInvolvement).isEmpty()
+        assertThat(ledger.unattributedWorkSets).isEmpty()
+        assertThat(ledger.weekStartEpochDay).isEqualTo(MONDAY_EPOCH_DAY)
+        assertThat(ledger.timeZoneId).isEqualTo("UTC")
+        assertThat(ledger.catalogVersion).isEqualTo(SYNTHETIC_CATALOG_VERSION)
+        assertThat(ledger.reviewPolicyVersion).isEqualTo(1)
+    }
+
+    @Test
+    fun outputIsIdenticalWhateverOrderSessionsExercisesAndSetsArriveIn() {
+        val sessions = listOf(
+            completedSession(
+                id = "session-a",
+                completedAtEpochMillis = week.startEpochMillis,
+                exercises = listOf(
+                    exerciseInstance("synthetic-row", listOf(completedNormalSet()), "a", 0),
+                    exerciseInstance(
+                        exerciseId = "synthetic-bench-press",
+                        sets = listOf(completedNormalSet(), completedNormalSet()),
+                        id = "b",
+                        orderIndex = 1
+                    )
+                )
+            ),
+            completedSession(
+                id = "session-b",
+                completedAtEpochMillis = week.startEpochMillis + 3_600_000L,
+                exercises = listOf(
+                    exerciseInstance("synthetic-squat", listOf(completedNormalSet()), "c", 0),
+                    exerciseInstance("synthetic-unknown", listOf(completedNormalSet()), "d", 1)
+                )
+            )
+        )
+
+        val forward = calculateOrdered(sessions)
+        val reversed = calculateOrdered(
+            sessions.reversed().map { session ->
+                session.copy(
+                    exercises = session.exercises.reversed().map { exercise ->
+                        exercise.copy(sets = exercise.sets.reversed())
+                    }
+                )
+            }
+        )
+
+        assertThat(reversed).isEqualTo(forward)
+        assertThat(reversed.directPrimarySets.keys.toList())
+            .isEqualTo(forward.directPrimarySets.keys.toList())
+        assertThat(forward.directPrimarySets.keys.toList())
+            .containsExactly("Back", "Chest", "Quadriceps")
+            .inOrder()
+    }
+
+    @Test
+    fun recordedEffortAndManageableFeedbackNeverChangeSetCredit() {
+        val withoutFeedback = ledgerOf(
+            sets = listOf(completedNormalSet(), completedNormalSet())
+        )
+        val withFeedback = ledgerOf(
+            sets = listOf(
+                completedNormalSet(rpe = 9.5f, rir = 0, feltManageable = false),
+                completedNormalSet(rpe = 4f, rir = 6, feltManageable = true)
+            )
+        )
+
+        assertThat(withFeedback).isEqualTo(withoutFeedback)
+    }
+
+    @Test
+    fun identicalInputsReproduceAnIdenticalLedger() {
+        val first = ledgerOf(sets = listOf(completedNormalSet(id = "set-fixed-1")))
+        val second = ledgerOf(sets = listOf(completedNormalSet(id = "set-fixed-1")))
+
+        assertThat(second).isEqualTo(first)
+        assertThat(second.hashCode()).isEqualTo(first.hashCode())
+    }
+
+    private fun calculateOrdered(sessions: List<WorkoutSession>): WeeklyDoseLedger =
+        calculator.calculate(
+            sessions = sessions,
+            exercisesById = mapOf(
+                "synthetic-bench-press" to
+                    syntheticApprovedExercise("synthetic-bench-press", "Chest"),
+                "synthetic-row" to syntheticApprovedExercise("synthetic-row", "Back"),
+                "synthetic-squat" to syntheticApprovedExercise("synthetic-squat", "Quadriceps")
+            ),
+            policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+            week = week,
+            catalogVersion = SYNTHETIC_CATALOG_VERSION,
+            reviewPolicyVersion = 1
+        )
+
+    private fun calculateWith(vararg sessions: WorkoutSession): WeeklyDoseLedger =
+        calculator.calculate(
+            sessions = sessions.toList(),
+            exercisesById = mapOf(
+                "synthetic-bench-press" to syntheticApprovedExercise(
+                    id = "synthetic-bench-press",
+                    directPrimaryMuscle = "Chest"
+                )
+            ),
+            policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+            week = week,
+            catalogVersion = SYNTHETIC_CATALOG_VERSION,
+            reviewPolicyVersion = 1
+        )
 
     private fun ledgerOf(sets: List<WorkoutSet>): WeeklyDoseLedger = calculator.calculate(
         sessions = listOf(

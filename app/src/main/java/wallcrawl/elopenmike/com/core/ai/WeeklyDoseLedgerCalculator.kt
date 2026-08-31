@@ -6,6 +6,7 @@ import wallcrawl.elopenmike.com.core.model.LedgerOmissionReason
 import wallcrawl.elopenmike.com.core.model.LedgerPolicyVersion
 import wallcrawl.elopenmike.com.core.model.ReviewState
 import wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata
+import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetType
 import wallcrawl.elopenmike.com.core.model.TrainingWeek
 import wallcrawl.elopenmike.com.core.model.WeeklyDoseLedger
@@ -30,6 +31,8 @@ class WeeklyDoseLedgerCalculator {
         catalogVersion: String,
         reviewPolicyVersion: Int
     ): WeeklyDoseLedger {
+        requireWellFormedInputs(sessions, week, catalogVersion, reviewPolicyVersion)
+
         val directPrimarySets = sortedMapOf<String, Int>()
         val secondaryInvolvement = sortedMapOf<String, Int>()
         val unattributedWorkSets = EnumMap<LedgerOmissionReason, Int>(LedgerOmissionReason::class.java)
@@ -44,6 +47,10 @@ class WeeklyDoseLedgerCalculator {
                         unattributedWorkSets.merge(attribution.reason, workSets, Int::plus)
 
                     is LedgerAttribution.Credited -> {
+                        require(attribution.reviewed.directPrimaryMuscle.isNotBlank()) {
+                            "Approved reviewed metadata is missing directPrimaryMuscle for " +
+                                "exercise '${exercise.exerciseId}'."
+                        }
                         directPrimarySets.merge(
                             attribution.reviewed.directPrimaryMuscle,
                             workSets,
@@ -71,7 +78,85 @@ class WeeklyDoseLedgerCalculator {
             directPrimarySets = directPrimarySets,
             secondaryInvolvement = secondaryInvolvement,
             unattributedWorkSets = unattributedWorkSets.toDeclaredOrderMap()
-        )
+        ).also(::requireWithinCatalogBounds)
+    }
+
+    /**
+     * Rejects malformed input loudly and specifically instead of quietly dropping it.
+     *
+     * Silently skipping a session that should never have been handed to the calculator
+     * would turn a query or wiring defect into an under-reported week that still looks
+     * successful. Messages name the offending field and identifier, never a logged value.
+     */
+    private fun requireWellFormedInputs(
+        sessions: List<WorkoutSession>,
+        week: TrainingWeek,
+        catalogVersion: String,
+        reviewPolicyVersion: Int
+    ) {
+        require(catalogVersion.isNotBlank() && catalogVersion.length <= MAX_VERSION_LENGTH) {
+            "catalogVersion must be non-blank and at most $MAX_VERSION_LENGTH characters."
+        }
+        require(reviewPolicyVersion >= 0) { "reviewPolicyVersion must not be negative." }
+        require(sessions.size <= MAX_SESSIONS_PER_WEEK) {
+            "A week cannot contain more than $MAX_SESSIONS_PER_WEEK completed sessions."
+        }
+
+        val seenSessionIds = mutableSetOf<String>()
+        val seenExerciseInstanceIds = mutableSetOf<String>()
+        sessions.forEach { session ->
+            require(session.status == SessionStatus.COMPLETED) {
+                "Session '${session.id}' has status ${session.status}; the weekly ledger " +
+                    "only reconstructs completed history."
+            }
+            val completedAt = requireNotNull(session.completedAtTimestamp) {
+                "Session '${session.id}' is completed but has no completedAtTimestamp."
+            }
+            require(week.contains(completedAt)) {
+                "Session '${session.id}' has a completedAtTimestamp outside the requested week."
+            }
+            require(seenSessionIds.add(session.id)) {
+                "Duplicate session id '${session.id}' was supplied to the weekly ledger."
+            }
+
+            session.exercises.forEach { exercise ->
+                require(seenExerciseInstanceIds.add(exercise.id)) {
+                    "Duplicate workout exercise id '${exercise.id}' was supplied to the " +
+                        "weekly ledger."
+                }
+                val seenSetIds = mutableSetOf<String>()
+                exercise.sets.forEach { set ->
+                    require(seenSetIds.add(set.id)) {
+                        "Duplicate workout set id '${set.id}' was supplied for workout " +
+                            "exercise '${exercise.id}'."
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Guards the output against a catalog or history that is far outside expected bounds,
+     * so a malformed input can never produce an unbounded ledger to persist or cache.
+     */
+    private fun requireWithinCatalogBounds(ledger: WeeklyDoseLedger) {
+        require(ledger.directPrimarySets.size <= MAX_DISTINCT_MUSCLES) {
+            "directPrimarySets exceeds the $MAX_DISTINCT_MUSCLES muscle bound."
+        }
+        require(ledger.secondaryInvolvement.size <= MAX_DISTINCT_MUSCLES) {
+            "secondaryInvolvement exceeds the $MAX_DISTINCT_MUSCLES muscle bound."
+        }
+        require(ledger.creditedWorkSets + ledger.omittedWorkSets <= MAX_WORK_SETS_PER_WEEK) {
+            "A week cannot contain more than $MAX_WORK_SETS_PER_WEEK completed work sets."
+        }
+    }
+
+    companion object {
+        /** Generous ceilings that bound a persisted ledger without constraining real use. */
+        const val MAX_SESSIONS_PER_WEEK: Int = 1_000
+        const val MAX_WORK_SETS_PER_WEEK: Int = 50_000
+        const val MAX_DISTINCT_MUSCLES: Int = 64
+        const val MAX_VERSION_LENGTH: Int = 128
     }
 }
 

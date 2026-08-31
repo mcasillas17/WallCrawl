@@ -30,21 +30,31 @@ data class TrainingWeek(
         }
     }
 
+    /**
+     * How much time the week actually spans, which is 167 or 169 hours across a
+     * daylight-saving transition rather than a fixed 168.
+     */
+    val elapsedMillis: Long get() = endEpochMillisExclusive - startEpochMillis
+
     /** True when [epochMillis] falls in `[start, nextWeekStart)`. */
     fun contains(epochMillis: Long): Boolean =
         epochMillis >= startEpochMillis && epochMillis < endEpochMillisExclusive
 
     companion object {
-        /** The ISO week containing [instant] as observed in [zoneId]. */
-        fun containing(instant: Instant, zoneId: ZoneId): TrainingWeek {
-            val localDate = instant.atZone(zoneId).toLocalDate()
-            return startingOn(
-                weekStartEpochDay = localDate
-                    .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
-                    .toEpochDay(),
-                zoneId = zoneId
-            )
-        }
+        /**
+         * The ISO week containing [instant] as observed in [zoneId].
+         *
+         * The calendar date is resolved in the zone first, so an instant just after
+         * local midnight belongs to the local week the user is actually training in
+         * rather than the UTC week it happens to fall in.
+         */
+        fun containing(instant: Instant, zoneId: ZoneId): TrainingWeek = startingOn(
+            weekStartEpochDay = instant.atZone(zoneId)
+                .toLocalDate()
+                .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+                .toEpochDay(),
+            zoneId = zoneId
+        )
 
         /**
          * The ISO week beginning on [weekStartEpochDay], which must be a Monday.
