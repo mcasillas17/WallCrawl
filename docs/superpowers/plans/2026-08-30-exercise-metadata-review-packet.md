@@ -156,7 +156,7 @@ git diff --check
 
 - [ ] **Step 5: Run four-agent implementation review**
 
-Opus 4.8, Grok 4.6, Gemini 3.7 Flash, and GPT-5.6 Terra review the complete diff independently. Fix valid findings, rerun verification, and repeat until all four approve the same SHA.
+Opus 4.8, Grok 4.6, Gemini 3.7 Flash, and GPT-5.6 Terra review the complete diff independently. Fix valid findings, rerun verification, and repeat until all four report no remaining findings on the same SHA.
 
 - [ ] **Step 6: Commit documentation**
 
