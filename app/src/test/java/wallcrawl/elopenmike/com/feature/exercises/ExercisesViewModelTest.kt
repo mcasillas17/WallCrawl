@@ -10,7 +10,9 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
+import wallcrawl.elopenmike.com.core.ai.PlannerFixtureContextFactory
 import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
+import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.test.MainDispatcherRule
 
@@ -19,6 +21,25 @@ class ExercisesViewModelTest {
 
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
+
+    @Test
+    fun uiState_blankSearchExposesAll302BundledExercises() = runTest {
+        val bundledExercises = PlannerFixtureContextFactory()
+            .bundledCatalogProjection()
+            .exercises
+        val viewModel = ExercisesViewModel(InMemoryExerciseCatalog(bundledExercises))
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiState.collect {}
+        }
+
+        advanceUntilIdle()
+
+        val state = viewModel.uiState.value as ExercisesUiState.Success
+        assertThat(state.exercises).hasSize(302)
+        assertThat(state.exercises.map(Exercise::id))
+            .containsExactlyElementsIn(bundledExercises.map(Exercise::id))
+            .inOrder()
+    }
 
     @Test
     fun uiState_catalogFailureBecomesVisibleError() = runTest {
