@@ -59,7 +59,6 @@ import wallcrawl.elopenmike.com.core.model.SetStopReason
 import wallcrawl.elopenmike.com.core.model.SetValuesDraft
 import wallcrawl.elopenmike.com.core.model.asPerformanceInput
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
-import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 import wallcrawl.elopenmike.com.core.ui.theme.SuccessGreen
 import wallcrawl.elopenmike.com.core.ui.theme.SuccessGreenDeep
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
@@ -402,7 +401,7 @@ fun GymFloorSetRow(
             },
             confirmButton = {
                 TextButton(onClick = { showStopReasons = false }) {
-                    Text("Cancel", color = CrimsonRedPrimary, fontWeight = FontWeight.Bold)
+                    Text("Cancel", color = MaterialTheme.colorScheme.onSurface)
                 }
             },
             containerColor = MaterialTheme.colorScheme.surface,

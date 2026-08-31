@@ -14,11 +14,14 @@ import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.assertWidthIsAtLeast
+import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toPixelMap
 import androidx.compose.ui.unit.dp
 import com.google.common.truth.Truth.assertThat
 import org.junit.Rule
@@ -27,6 +30,7 @@ import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.SetStopReason
 import wallcrawl.elopenmike.com.core.model.SetValuesDraft
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
+import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 import wallcrawl.elopenmike.com.core.ui.theme.WallCrawlTheme
 
 class GymFloorSetRowTest {
@@ -197,6 +201,17 @@ class GymFloorSetRowTest {
     }
 
     @Test
+    fun stopReasonDialog_doesNotStyleCancelAsDestructive() {
+        showWeightRepsRow()
+
+        composeRule.onNodeWithText("Skip or stop").performClick()
+        composeRule.waitForIdle()
+
+        assertThat(composeRule.onNodeWithText("Cancel").closestColorDistance(CrimsonRedPrimary))
+            .isGreaterThan(COLOR_MATCH_TOLERANCE)
+    }
+
+    @Test
     fun effortControls_areOptionalAndNeverRequiredToCompleteASet() {
         val effort = mutableListOf<Pair<Float?, Int?>>()
         composeRule.setContent {
@@ -239,10 +254,52 @@ class GymFloorSetRowTest {
         isCompleted = isCompleted
     )
 
+    private fun showWeightRepsRow() {
+        composeRule.setContent {
+            WallCrawlTheme {
+                GymFloorSetRow(
+                    set = weightRepsSet(),
+                    weightUnit = "kg",
+                    previousSet = null,
+                    onValuesChanged = {},
+                    onCompletionChanged = { _, _ -> },
+                    onSkipSet = {},
+                    onRecordEffort = { _, _ -> },
+                    onRecordFeltManageable = {}
+                )
+            }
+        }
+        composeRule.waitForIdle()
+    }
+
+    private fun androidx.compose.ui.test.SemanticsNodeInteraction.closestColorDistance(
+        target: Color
+    ): Float {
+        val pixels = captureToImage().toPixelMap()
+        var closest = Float.MAX_VALUE
+        for (x in 0 until pixels.width) {
+            for (y in 0 until pixels.height) {
+                val color = pixels[x, y]
+                val distance =
+                    square(color.red - target.red) +
+                        square(color.green - target.green) +
+                        square(color.blue - target.blue)
+                closest = minOf(closest, distance)
+            }
+        }
+        return closest
+    }
+
+    private fun square(value: Float): Float = value * value
+
     private fun hasContentDescriptionStartingWith(prefix: String) = SemanticsMatcher(
         "content description starts with '$prefix'"
     ) { node ->
         node.config.getOrNull(SemanticsProperties.ContentDescription)
             ?.any { it.startsWith(prefix) } == true
+    }
+
+    private companion object {
+        const val COLOR_MATCH_TOLERANCE = 0.01f
     }
 }

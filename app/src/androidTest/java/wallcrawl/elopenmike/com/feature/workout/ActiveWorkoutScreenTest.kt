@@ -8,9 +8,12 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toPixelMap
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
 import com.google.common.truth.Truth.assertThat
@@ -37,6 +40,7 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.model.WorkoutSummary
 import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
+import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 import wallcrawl.elopenmike.com.core.ui.theme.WallCrawlTheme
 
 /**
@@ -163,6 +167,22 @@ class ActiveWorkoutScreenTest {
         assertThat(repository.cancelCalls).isEqualTo(1)
     }
 
+    @Test
+    fun confirmationDialogs_reserveRedForDestructiveActions() {
+        showScreen()
+
+        composeRule.onNodeWithText("Finish").performClick()
+        composeRule.waitForIdle()
+        composeRule.onNodeWithText("Finish anyway").assertContainsColor(CrimsonRedPrimary)
+        composeRule.onNodeWithText("Keep going").assertDoesNotContainColor(CrimsonRedPrimary)
+        composeRule.onNodeWithText("Keep going").performClick()
+
+        composeRule.onNodeWithContentDescription("Close Workout").performClick()
+        composeRule.waitForIdle()
+        composeRule.onNodeWithText("Discard").assertContainsColor(CrimsonRedPrimary)
+        composeRule.onNodeWithText("Keep workout").assertDoesNotContainColor(CrimsonRedPrimary)
+    }
+
     private fun showScreen() {
         composeRule.setContent {
             WallCrawlTheme {
@@ -217,9 +237,42 @@ class ActiveWorkoutScreenTest {
         node.config.getOrNull(SemanticsProperties.Text)?.any { it.text.startsWith(prefix) } == true
     }
 
+    private fun androidx.compose.ui.test.SemanticsNodeInteraction.assertContainsColor(
+        expected: Color
+    ) {
+        assertThat(closestColorDistance(expected)).isAtMost(COLOR_MATCH_TOLERANCE)
+    }
+
+    private fun androidx.compose.ui.test.SemanticsNodeInteraction.assertDoesNotContainColor(
+        unexpected: Color
+    ) {
+        assertThat(closestColorDistance(unexpected)).isGreaterThan(COLOR_MATCH_TOLERANCE)
+    }
+
+    private fun androidx.compose.ui.test.SemanticsNodeInteraction.closestColorDistance(
+        target: Color
+    ): Float {
+        val pixels = captureToImage().toPixelMap()
+        var closest = Float.MAX_VALUE
+        for (x in 0 until pixels.width) {
+            for (y in 0 until pixels.height) {
+                val color = pixels[x, y]
+                val distance =
+                    square(color.red - target.red) +
+                        square(color.green - target.green) +
+                        square(color.blue - target.blue)
+                closest = minOf(closest, distance)
+            }
+        }
+        return closest
+    }
+
+    private fun square(value: Float): Float = value * value
+
     private companion object {
         const val SESSION_ID = "session"
         const val WALL_CLOCK = 1_777_777L
+        const val COLOR_MATCH_TOLERANCE = 0.01f
     }
 }
 

@@ -431,12 +431,12 @@ private fun FinishConfirmationDialog(
         },
         confirmButton = {
             TextButton(onClick = onConfirm) {
-                Text("Finish anyway", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text("Finish anyway", color = CrimsonRedPrimary, fontWeight = FontWeight.Bold)
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Keep going", color = CrimsonRedPrimary, fontWeight = FontWeight.Bold)
+                Text("Keep going", color = MaterialTheme.colorScheme.onSurface)
             }
         },
         containerColor = MaterialTheme.colorScheme.surface
