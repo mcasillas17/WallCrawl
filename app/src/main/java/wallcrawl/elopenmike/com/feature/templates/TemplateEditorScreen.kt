@@ -118,7 +118,7 @@ fun TemplateEditorScreen(
                         value = state.name,
                         onValueChange = viewModel::updateName,
                         label = { Text("Workout Name") },
-                        placeholder = { Text("e.g. Upper Body Hypertrophy", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)) },
+                        placeholder = { Text("e.g. Upper Body Hypertrophy", color = MaterialTheme.colorScheme.onSurfaceVariant) },
                         singleLine = true,
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
@@ -130,8 +130,8 @@ fun TemplateEditorScreen(
                             unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
                             focusedLabelColor = CrimsonRedPrimary,
                             unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            focusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                            unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                            focusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant
                         ),
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -142,7 +142,7 @@ fun TemplateEditorScreen(
                         value = state.notes,
                         onValueChange = viewModel::updateNotes,
                         label = { Text("Notes (optional)") },
-                        placeholder = { Text("e.g. Focus on strict form and 90s rest", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)) },
+                        placeholder = { Text("e.g. Focus on strict form and 90s rest", color = MaterialTheme.colorScheme.onSurfaceVariant) },
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedContainerColor = MaterialTheme.colorScheme.surface,
@@ -153,8 +153,8 @@ fun TemplateEditorScreen(
                             unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
                             focusedLabelColor = CrimsonRedPrimary,
                             unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            focusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                            unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                            focusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant
                         ),
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -443,7 +443,7 @@ private fun ExercisePickerSheet(
             OutlinedTextField(
                 value = state.query,
                 onValueChange = viewModel::updateQuery,
-                placeholder = { Text("Search 302 exercises, muscles, equipment...", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f), fontSize = 14.sp) },
+                placeholder = { Text("Search 302 exercises, muscles, equipment...", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp) },
                 leadingIcon = {
                     Icon(Icons.Default.Search, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
                 },
@@ -462,7 +462,9 @@ private fun ExercisePickerSheet(
                     focusedBorderColor = CrimsonRedPrimary,
                     unfocusedBorderColor = MaterialTheme.colorScheme.outline,
                     focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    focusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant
                 ),
                 modifier = Modifier.fillMaxWidth()
             )

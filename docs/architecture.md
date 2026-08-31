@@ -449,10 +449,15 @@ UserProfile.themePreference (SYSTEM | DARK | LIGHT)
   contrast.
 - **Visual Contrast & Exercise Art**: Vector SVG illustrations use a dedicated
   dark graphite elevation backing so anatomical illustration lines remain crisp
-  and visible against light and dark background themes alike.
+  and visible against light and dark background themes alike. Light theme card
+  and field borders use Slate 300 (`0xFFCBD5E1`) for sharp structural definition.
 - **Wordmark & Typography**: Brand elements like `WallCrawlWordmark` dynamically
   render primary brand lettering in theme-aware typography tokens (`onSurface`),
   preserving high contrast on all screen densities.
+- **Gym-Floor Ergonomics**: Active workout sets incorporate tactile Material 3
+  `AssistChip` rest-timer controls, bottom padding clearance above sticky
+  actions, and prominent constructive vs destructive confirmation dialog
+  hierarchies.
 
 ## Verification boundaries
 

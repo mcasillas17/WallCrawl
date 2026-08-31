@@ -61,7 +61,7 @@ val LightBackground = Color(0xFFF8FAFC)
 val LightSurface = Color(0xFFFFFFFF)
 val LightSurfaceElevated = Color(0xFFFFFFFF)
 val LightSurfaceCard = Color(0xFFF1F5F9)
-val LightBorder = Color(0xFFE2E8F0)
+val LightBorder = Color(0xFFCBD5E1)
 val LightDivider = Color(0xFFE2E8F0)
 
 val LightTextPrimary = Color(0xFF0F172A)

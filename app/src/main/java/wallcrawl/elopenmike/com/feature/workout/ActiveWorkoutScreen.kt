@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.TextButton
@@ -259,6 +260,7 @@ private fun ActiveWorkoutContent(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth(),
+                contentPadding = PaddingValues(bottom = 24.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
                 item {
@@ -381,28 +383,22 @@ private fun RestTimerBar(
                     }
             )
         }
-        Spacer(modifier = Modifier.height(4.dp))
-        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-            TextButton(
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            AssistChip(
                 onClick = onAddRest,
-                modifier = Modifier.heightIn(min = 48.dp)
-            ) {
-                Text("+30s", color = LocalContentColor.current)
-            }
+                label = { Text("+30s", fontWeight = FontWeight.SemiBold) }
+            )
             if (isRunning) {
-                TextButton(
+                AssistChip(
                     onClick = onSkipRest,
-                    modifier = Modifier.heightIn(min = 48.dp)
-                ) {
-                    Text("Skip rest", color = LocalContentColor.current)
-                }
+                    label = { Text("Skip rest", fontWeight = FontWeight.SemiBold) }
+                )
             }
-            TextButton(
+            AssistChip(
                 onClick = onCancelRest,
-                modifier = Modifier.heightIn(min = 48.dp)
-            ) {
-                Text("Dismiss", color = LocalContentColor.current)
-            }
+                label = { Text("Dismiss", fontWeight = FontWeight.SemiBold) }
+            )
         }
     }
 }
@@ -435,12 +431,12 @@ private fun FinishConfirmationDialog(
         },
         confirmButton = {
             TextButton(onClick = onConfirm) {
-                Text("Finish anyway", color = LocalContentColor.current)
+                Text("Finish anyway", color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Keep going", color = LocalContentColor.current)
+                Text("Keep going", color = CrimsonRedPrimary, fontWeight = FontWeight.Bold)
             }
         },
         containerColor = MaterialTheme.colorScheme.surface
@@ -465,12 +461,12 @@ private fun DiscardConfirmationDialog(
         },
         confirmButton = {
             TextButton(onClick = onConfirm) {
-                Text("Discard", color = LocalContentColor.current)
+                Text("Discard", color = CrimsonRedPrimary, fontWeight = FontWeight.Bold)
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Keep workout", color = LocalContentColor.current)
+                Text("Keep workout", color = MaterialTheme.colorScheme.onSurface)
             }
         },
         containerColor = MaterialTheme.colorScheme.surface
