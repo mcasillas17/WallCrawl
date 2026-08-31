@@ -7,8 +7,9 @@ The planner evaluation corpus is a JVM-only, test-only harness around the curren
 The boundary is explicit:
 
 - production still owns equipment filtering, split selection, prescription generation, and typed failures;
-- corpus fixtures can optionally narrow the legal candidate pool with curated `allowedExerciseIds` to model the reviewed eligibility boundary that production does **not** implement yet;
-- capability inputs and `TrainingConstraint` metadata are currently inert for planner eligibility unless production code already reads them.
+- legacy corpus fixtures can optionally narrow the legal candidate pool with curated `allowedExerciseIds`;
+- reviewed-enabled fixtures exercise the production eligibility policy with explicitly synthetic in-memory approvals while the production rollout flag remains disabled;
+- capability inputs and `TrainingConstraint` metadata remain inert on legacy fixtures and become policy inputs only on reviewed-enabled fixtures.
 
 These fixtures therefore model the planner **inside** a curated legal set. They do not claim that the current planner discovered capability, safety, or persona appropriateness on its own.
 
@@ -28,6 +29,7 @@ Every corpus fixture uses this root shape:
 - `completedWorkoutCount`
 - `exerciseHistory`
 - optional `allowedExerciseIds`
+- optional `reviewedEligibility` with an adaptation state and bounded list of bundled DRAFT IDs to copy as synthetic in-memory approvals
 - `expected`
 
 ## Version and reference contract
@@ -47,6 +49,7 @@ The test projection also validates the bundled catalog root fields it relies on:
 Before a context is built, every exercise reference in a fixture is validated against the bundled catalog with field-level errors. This includes:
 
 - `allowedExerciseIds`
+- `reviewedEligibility.syntheticApprovedExerciseIds`
 - `profile.excludedExerciseIds`
 - `profile.confirmedStartingLoads.keys`
 - `exerciseHistory.exerciseId`
@@ -78,11 +81,12 @@ Failure fixtures may therefore assert only the typed outcome they expect from th
 
 ## Bundled catalog projection boundary
 
-`PlannerFixtureContextFactory` does **not** reimplement the full packaged catalog parser. It intentionally maps only the `Exercise` and `ExerciseProgrammingMetadata` fields currently consumed by:
+`PlannerFixtureContextFactory` does **not** reimplement the full packaged catalog parser. It intentionally maps only the `Exercise`, `ExerciseProgrammingMetadata`, and `ReviewedExerciseMetadata` fields currently consumed by:
 
 - `ExerciseFilter`
 - `FakeWorkoutPlanner`
 - `DefaultExercisePrescriptionFactory`
+- `ExerciseEligibilityPolicy`
 
 That includes exercise identity, canonical muscles, listed equipment, type, stretch flag, and reviewed programming metadata used for filtering, split matching, ordering, and prescriptions. The harness does **not** populate unrelated attribution/source data solely for tests.
 
@@ -90,7 +94,7 @@ Full packaged catalog validity remains the responsibility of the dedicated impor
 
 ## Persona coverage
 
-The manifest currently contains nine fixtures:
+The manifest currently contains eleven fixtures:
 
 1. `bodyweight-beginner` — conservative curated bodyweight beginner subset (`push-up`, `knee-push-up`, `bodyweight-squat`, `dead-bug`) requiring at least one beginner push variant.
 2. `band-only` — resistance-band-only back-focused coverage proving a band row can be selected while cable-only pull work is excluded by the real filter.
@@ -101,6 +105,8 @@ The manifest currently contains nine fixtures:
 7. `mixed-unit-history` — kilogram history coverage proving prior KG history is honored and the existing load is preserved when recent sets do not justify an increase.
 8. `sparse-history` — curated regression-friendly upper-body subset using `inverted-row`, `banded-lat-pulldown`, and `prone-y-raise` so sparse history does not freeze a limited-hang profile to pull-ups.
 9. `no-strength-candidates` — harness-only typed-failure case restricted to the cardio-only `walking` entry so the real planner returns `NO_STRENGTH_CANDIDATES`.
+10. `reviewed-enabled-bodyweight` — copies six real bundled DRAFT records to unmistakably synthetic in-memory approvals and proves the enabled policy and planner select only that reviewed bodyweight pool.
+11. `reviewed-enabled-no-approved` — leaves every bundled record DRAFT and proves the enabled policy returns `REVIEWED_ELIGIBILITY_NO_CANDIDATES` with `NO_APPROVED_METADATA` and no legacy fallback.
 
 ## Replay semantics and asserted invariants
 
@@ -109,8 +115,8 @@ Each replay attempt uses a fresh `FakeWorkoutPlanner`. That is intentional: the 
 The corpus suite asserts:
 
 - deterministic output equality across two fresh replays, normalized only for the generated workout ID;
-- fixture schema and evaluator support all current typed planner failures (`NO_CANDIDATES`, `NO_STRENGTH_CANDIDATES`, `NO_CANDIDATES_FOR_ANY_SPLIT`);
-- the committed nine-fixture manifest currently exercises `NO_STRENGTH_CANDIDATES`; focused existing planner tests cover `NO_CANDIDATES` and `NO_CANDIDATES_FOR_ANY_SPLIT`;
+- fixture schema and evaluator support all current typed planner failures (`NO_CANDIDATES`, `NO_STRENGTH_CANDIDATES`, `NO_CANDIDATES_FOR_ANY_SPLIT`, `REVIEWED_ELIGIBILITY_NO_CANDIDATES`) and the reviewed failure's typed aggregate cause;
+- the committed eleven-fixture manifest exercises `NO_STRENGTH_CANDIDATES` and `REVIEWED_ELIGIBILITY_NO_CANDIDATES`; focused planner tests cover `NO_CANDIDATES` and `NO_CANDIDATES_FOR_ANY_SPLIT`;
 - legality of every selected exercise against the bundled catalog, the real filter result, and any curated allowed-ID subset;
 - non-mutation of the full `WorkoutGenerationContext` input;
 - type-valid prescriptions and no-invented-load behavior through the real prescription factory;

@@ -2,6 +2,7 @@ package wallcrawl.elopenmike.com.feature.templates
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
+import wallcrawl.elopenmike.com.core.ai.PlannerFixtureContextFactory
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 
@@ -45,5 +46,23 @@ class TemplateEditorUiStateTest {
         ).filteredExercises
 
         assertThat(result).containsExactly(exercise, otherExercise).inOrder()
+    }
+
+    @Test
+    fun filteredExercises_withNoProfileEquipmentRetainsAll302BundledManualChoices() {
+        val bundledExercises = PlannerFixtureContextFactory()
+            .bundledCatalogProjection()
+            .exercises
+
+        val state = TemplateEditorUiState(
+            query = "",
+            catalogExercises = bundledExercises,
+            availableEquipment = emptySet()
+        )
+
+        assertThat(state.filteredExercises).hasSize(302)
+        assertThat(state.filteredExercises.map(Exercise::id))
+            .containsExactlyElementsIn(bundledExercises.map(Exercise::id))
+            .inOrder()
     }
 }
