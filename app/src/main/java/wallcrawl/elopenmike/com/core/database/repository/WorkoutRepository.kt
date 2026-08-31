@@ -5,21 +5,17 @@ import wallcrawl.elopenmike.com.core.database.dao.WorkoutSetDao
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutExerciseEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSessionEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSetEntity
-import wallcrawl.elopenmike.com.core.database.relation.WorkoutSessionWithExercisesAndSets
+import wallcrawl.elopenmike.com.core.database.relation.toWorkoutSession
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
-import wallcrawl.elopenmike.com.core.model.ExercisePrescription
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.PlannedExercise
-import wallcrawl.elopenmike.com.core.model.RepRange
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetOutcomeRules
 import wallcrawl.elopenmike.com.core.model.SetType
 import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
-import wallcrawl.elopenmike.com.core.model.WorkoutExercise
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
-import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.model.WorkoutSummary
 import wallcrawl.elopenmike.com.core.model.WorkoutOrigin
 import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
@@ -71,25 +67,25 @@ class OfflineWorkoutRepository(
 ) : WorkoutRepository {
 
     override fun observeActiveSession(): Flow<WorkoutSession?> {
-        return sessionDao.observeActiveSession().map { it?.toDomainModel() }
+        return sessionDao.observeActiveSession().map { it?.toWorkoutSession() }
     }
 
     override suspend fun getActiveSessionOnce(): WorkoutSession? {
-        return sessionDao.getActiveSession()?.toDomainModel()
+        return sessionDao.getActiveSession()?.toWorkoutSession()
     }
 
     override suspend fun getSessionById(sessionId: String): WorkoutSession? {
-        return sessionDao.getSessionWithDetails(sessionId)?.toDomainModel()
+        return sessionDao.getSessionWithDetails(sessionId)?.toWorkoutSession()
     }
 
     override fun observeSession(sessionId: String): Flow<WorkoutSession?> {
-        return sessionDao.observeSessionWithDetails(sessionId).map { it?.toDomainModel() }
+        return sessionDao.observeSessionWithDetails(sessionId).map { it?.toWorkoutSession() }
     }
 
     override fun observeCompletedSessions(limit: Int): Flow<List<WorkoutSession>> {
         require(limit > 0) { "limit must be greater than zero." }
         return sessionDao.observeRecentCompletedSessions(limit).map { list ->
-            list.map { it.toDomainModel() }
+            list.map { it.toWorkoutSession() }
         }
     }
 
@@ -101,7 +97,7 @@ class OfflineWorkoutRepository(
 
     override suspend fun getRecentCompletedSessions(limit: Int): List<WorkoutSession> {
         require(limit > 0) { "limit must be greater than zero." }
-        return sessionDao.getRecentCompletedSessions(limit).map { it.toDomainModel() }
+        return sessionDao.getRecentCompletedSessions(limit).map { it.toWorkoutSession() }
     }
 
     override suspend fun startWorkoutFromGenerated(
@@ -213,7 +209,7 @@ class OfflineWorkoutRepository(
             sets = setEntities,
             expectedProfileId = userProfile.id,
             expectedProfileRevision = userProfile.revision
-        ).toDomainModel()
+        ).toWorkoutSession()
     }
 
     override suspend fun logSetCompletion(
@@ -414,89 +410,6 @@ class OfflineWorkoutRepository(
         check(sessionDao.deleteActiveSession(sessionId) == 1) {
             "Workout session '$sessionId' was not found or is not in progress."
         }
-    }
-
-    private fun WorkoutSessionWithExercisesAndSets.toDomainModel(): WorkoutSession {
-        val domainExercises = exercisesWithSets
-            .sortedBy { it.exercise.orderIndex }
-            .map { exWithSets ->
-                val domainSets = exWithSets.sets
-                    .sortedBy { it.setNumber }
-                    .map { setEntity ->
-                        WorkoutSet(
-                            id = setEntity.id,
-                            workoutExerciseId = setEntity.workoutExerciseId,
-                            setNumber = setEntity.setNumber,
-                            exerciseType = setEntity.exerciseType,
-                            targetReps = setEntity.targetReps,
-                            completedReps = setEntity.completedReps,
-                            targetWeight = setEntity.targetWeight,
-                            completedWeight = setEntity.completedWeight,
-                            targetAssistanceWeight = setEntity.targetAssistanceWeight,
-                            completedAssistanceWeight = setEntity.completedAssistanceWeight,
-                            targetDurationSeconds = setEntity.targetDurationSeconds,
-                            completedDurationSeconds = setEntity.completedDurationSeconds,
-                            targetDistanceMeters = setEntity.targetDistanceMeters,
-                            completedDistanceMeters = setEntity.completedDistanceMeters,
-                            isCompleted = setEntity.isCompleted,
-                            rpe = setEntity.rpe,
-                            rir = setEntity.rir,
-                            feltManageable = setEntity.feltManageable,
-                            completedAtTimestamp = setEntity.completedAtTimestamp,
-                            stoppedAtTimestamp = setEntity.stoppedAtTimestamp,
-                            stopReason = setEntity.stopReason,
-                            type = setEntity.type
-                        )
-                    }
-
-                WorkoutExercise(
-                    id = exWithSets.exercise.id,
-                    sessionId = exWithSets.exercise.sessionId,
-                    exerciseId = exWithSets.exercise.exerciseId,
-                    orderIndex = exWithSets.exercise.orderIndex,
-                    prescription = ExercisePrescription(
-                        exerciseType = exWithSets.exercise.exerciseType,
-                        targetSets = exWithSets.exercise.targetSets,
-                        repRange = exWithSets.exercise.targetRepMin?.let { minimum ->
-                            RepRange(
-                                min = minimum,
-                                max = checkNotNull(exWithSets.exercise.targetRepMax) {
-                                    "Persisted repetition target is missing its maximum."
-                                }
-                            )
-                        },
-                        targetWeight = exWithSets.exercise.targetWeight,
-                        targetAssistanceWeight = exWithSets.exercise.targetAssistanceWeight,
-                        targetDurationSeconds = exWithSets.exercise.targetDurationSeconds,
-                        targetDistanceMeters = exWithSets.exercise.targetDistanceMeters,
-                        restSeconds = exWithSets.exercise.restSeconds
-                    ),
-                    notes = exWithSets.exercise.notes,
-                    sets = domainSets
-                )
-            }
-
-        val focusMusclesList = if (session.focusMusclesJson.isBlank()) {
-            emptyList()
-        } else {
-            session.focusMusclesJson.split("|||").filter { it.isNotBlank() }
-        }
-
-        return WorkoutSession(
-            id = session.id,
-            name = session.name,
-            startedAtTimestamp = session.startedAtTimestamp,
-            completedAtTimestamp = session.completedAtTimestamp,
-            targetDurationMinutes = session.targetDurationMinutes,
-            actualDurationMinutes = session.actualDurationMinutes,
-            weightUnit = session.weightUnit,
-            status = session.status,
-            origin = session.origin,
-            sourceTemplateId = session.sourceTemplateId,
-            focusMuscles = focusMusclesList,
-            exercises = domainExercises,
-            notes = session.notes
-        )
     }
 
     private companion object {
