@@ -298,7 +298,7 @@ private fun WelcomeStep(
             OutlinedTextField(
                 value = state.name,
                 onValueChange = viewModel::updateName,
-                placeholder = { Text("e.g. Peter, Gwen, Miles, Alex", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)) },
+                placeholder = { Text("e.g. Peter, Gwen, Miles, Alex", color = MaterialTheme.colorScheme.onSurfaceVariant) },
                 singleLine = true,
                 leadingIcon = {
                     Icon(
@@ -317,8 +317,8 @@ private fun WelcomeStep(
                     unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
                     focusedLabelColor = CrimsonRedPrimary,
                     unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    focusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                    unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                    focusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant
                 ),
                 modifier = Modifier.fillMaxWidth()
             )

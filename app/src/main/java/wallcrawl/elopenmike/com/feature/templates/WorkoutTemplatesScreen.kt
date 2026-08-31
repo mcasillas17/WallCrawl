@@ -155,7 +155,11 @@ fun WorkoutTemplatesScreen(
 
 @Composable
 private fun EmptyTemplates(onCreate: () -> Unit) {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 12.dp)
+    ) {
         WallCrawlCard {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(

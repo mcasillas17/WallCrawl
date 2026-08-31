@@ -145,7 +145,7 @@ private fun ExercisesContent(
                 value = state.query,
                 onValueChange = onQueryChanged,
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("Search exercises, muscles, equipment...", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f), fontSize = 14.sp) },
+                placeholder = { Text("Search exercises, muscles, equipment...", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp) },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Search,
@@ -168,7 +168,9 @@ private fun ExercisesContent(
                     focusedBorderColor = CrimsonRedPrimary,
                     unfocusedBorderColor = MaterialTheme.colorScheme.outline,
                     focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    focusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             )
         }

@@ -42,6 +42,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.material3.MaterialTheme
 import wallcrawl.elopenmike.com.core.model.GeneratedExercise
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
@@ -248,14 +249,17 @@ private fun TodayHeader(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column {
+            Column(modifier = Modifier.weight(1f)) {
                 WallCrawlWordmark(fontSize = 20.sp)
                 Spacer(modifier = Modifier.height(4.dp))
+                val displayName = userName.lineSequence().firstOrNull()?.trim().orEmpty().ifBlank { "Crawler" }
                 Text(
-                    text = "Ready to train, $userName",
+                    text = "Ready to train, $displayName",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
 
@@ -296,7 +300,11 @@ private fun TodayHeader(
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
-                        text = "$completedThisWeek of $weeklyGoal workouts completed this week",
+                        text = if (weeklyGoal == 1) {
+                            "$completedThisWeek of 1 workout completed this week"
+                        } else {
+                            "$completedThisWeek of $weeklyGoal workouts completed this week"
+                        },
                         fontSize = 13.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onSurface
@@ -306,7 +314,8 @@ private fun TodayHeader(
                     text = if (completedThisWeek >= weeklyGoal) {
                         "Weekly goal met"
                     } else {
-                        "${(weeklyGoal - completedThisWeek).coerceAtLeast(0)} to weekly goal"
+                        val remaining = (weeklyGoal - completedThisWeek).coerceAtLeast(0)
+                        if (remaining == 1) "1 to weekly goal" else "$remaining to weekly goal"
                     },
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
@@ -357,7 +366,7 @@ private fun ActiveSessionBanner(
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = "$completedSets of $totalSets sets logged",
+                    text = if (totalSets == 1) "$completedSets of 1 set logged" else "$completedSets of $totalSets sets logged",
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

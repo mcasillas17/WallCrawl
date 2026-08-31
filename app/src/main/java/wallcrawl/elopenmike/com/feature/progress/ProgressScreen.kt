@@ -199,7 +199,11 @@ private fun StreakAndVolumeCard(
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        text = "${overview.workoutsThisWeek} workouts logged this week",
+                        text = if (overview.workoutsThisWeek == 1) {
+                            "1 workout logged this week"
+                        } else {
+                            "${overview.workoutsThisWeek} workouts logged this week"
+                        },
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -391,7 +395,7 @@ private fun MuscleFocusSection(
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = "${stat.setsThisWeek} sets",
+                            text = if (stat.setsThisWeek == 1) "1 set" else "${stat.setsThisWeek} sets",
                             fontSize = 11.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -453,7 +457,7 @@ private fun WorkoutHistoryCard(
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
-                text = "${session.completedSetsCount} sets logged",
+                text = if (session.completedSetsCount == 1) "1 set logged" else "${session.completedSetsCount} sets logged",
                 fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
