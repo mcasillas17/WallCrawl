@@ -9,14 +9,14 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class MigrationChainTo9Test {
+class MigrationChainTo10Test {
 
     private val context: Context = ApplicationProvider.getApplicationContext()
 
     @Test
-    fun everyHistoricallySupportedSchemaMigratesToVersion9() {
-        (1..8).forEach { startingVersion ->
-            val databaseName = "migration-$startingVersion-9.db"
+    fun everyHistoricallySupportedSchemaMigratesToVersion10() {
+        (1..9).forEach { startingVersion ->
+            val databaseName = "migration-$startingVersion-10.db"
             context.deleteDatabase(databaseName)
             context.openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null).use { db ->
                 LegacyDatabaseFixtures.createSchema(db, startingVersion)
@@ -33,7 +33,7 @@ class MigrationChainTo9Test {
                 .build()
             try {
                 val sqlite = database.openHelper.writableDatabase
-                assertThat(sqlite.version).isEqualTo(9)
+                assertThat(sqlite.version).isEqualTo(10)
                 sqlite.query(
                     "SELECT name,movementCapabilitiesJson FROM user_profiles"
                 ).use { cursor ->
@@ -58,6 +58,12 @@ class MigrationChainTo9Test {
                         assertThat(columns).containsKey(column)
                         assertThat(columns[column]).isNull()
                     }
+                }
+                // Every chain also ends with the derived weekly ledger cache present and
+                // empty: a schema upgrade never fabricates training exposure.
+                sqlite.query("SELECT COUNT(*) FROM weekly_dose_ledger_state").use { cursor ->
+                    assertThat(cursor.moveToFirst()).isTrue()
+                    assertThat(cursor.getInt(0)).isEqualTo(0)
                 }
                 sqlite.query("PRAGMA foreign_key_check").use { cursor ->
                     assertThat(cursor.count).isEqualTo(0)
