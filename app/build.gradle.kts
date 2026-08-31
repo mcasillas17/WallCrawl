@@ -24,7 +24,7 @@ require(wallcrawlVersionName.isNotBlank()) {
 
 android {
     namespace = "wallcrawl.elopenmike.com"
-    compileSdk = 35
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "wallcrawl.elopenmike.com"
