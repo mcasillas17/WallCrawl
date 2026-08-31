@@ -181,10 +181,19 @@ class ReviewedMetadataTest(unittest.TestCase):
 
     def test_ai_draft_rationale_names_pinned_source_and_human_review(self) -> None:
         pinned_commit = "ba0b709cb20430361b2cb33aaadd20998164a916"
+        source_clause = (
+            f"pinned Workout Guide {pinned_commit} manifest/artwork supports "
+            "muscles, prescription shape, and equipment"
+        )
+        policy_clause = (
+            "WallCrawl policy supplies pattern, complexity, family, capabilities, "
+            "support, impact, and graph edges"
+        )
         for exercise_id, metadata in self.reviewed.items():
             rationale = metadata["provenance"]["rationaleOrSource"]
             self.assertIn(exercise_id, rationale)
-            self.assertIn(pinned_commit, rationale)
+            self.assertIn(source_clause, rationale)
+            self.assertIn(policy_clause, rationale)
             self.assertIn("Human field-by-field review required", rationale)
 
     def test_every_authored_id_and_graph_edge_resolves(self) -> None:
