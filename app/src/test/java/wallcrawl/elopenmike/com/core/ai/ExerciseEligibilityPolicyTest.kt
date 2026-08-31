@@ -12,6 +12,7 @@ import wallcrawl.elopenmike.com.core.model.EligibilityPreference
 import wallcrawl.elopenmike.com.core.model.EligibilityReason
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.ExerciseType
+import wallcrawl.elopenmike.com.core.model.ExperienceLevel
 import wallcrawl.elopenmike.com.core.model.ImpactLevel
 import wallcrawl.elopenmike.com.core.model.MovementCapabilities
 import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
@@ -531,6 +532,120 @@ class ExerciseEligibilityPolicyTest {
                 )
             )
         )
+    }
+
+    @Test
+    fun evaluate_preservesCatalogOrderAndReturnsIdenticalDecisionsForIdenticalInputs() {
+        val first = exercise(id = "first-approved").copy(
+            reviewedMetadata = reviewedMetadata(ReviewState.APPROVED)
+        )
+        val draft = exercise(id = "middle-draft").copy(
+            reviewedMetadata = reviewedMetadata(ReviewState.DRAFT)
+        )
+        val last = exercise(id = "last-approved").copy(
+            reviewedMetadata = reviewedMetadata(ReviewState.APPROVED)
+        )
+        val exercises = listOf(first, draft, last)
+        val profile = UserProfile(availableEquipment = listOf(StandardEquipment.BODYWEIGHT))
+
+        val firstResult = policy.evaluate(exercises, profile, AdaptationState.BUILD)
+        val secondResult = policy.evaluate(exercises, profile, AdaptationState.BUILD)
+
+        assertThat(secondResult).isEqualTo(firstResult)
+        val candidates = firstResult as AutomaticEligibilityResult.Candidates
+        assertThat(candidates.exercises.map(Exercise::id))
+            .containsExactly(first.id, last.id)
+            .inOrder()
+        assertThat(candidates.decisions.map(EligibilityDecision::exerciseId))
+            .containsExactly(first.id, draft.id, last.id)
+            .inOrder()
+    }
+
+    @Test
+    fun evaluate_aggregateFailureUsesPolicyStageThatExhaustsRemainingCandidates() {
+        val excluded = exercise(id = "excluded-first").copy(
+            reviewedMetadata = reviewedMetadata(ReviewState.APPROVED)
+        )
+        val missingEquipment = exercise(id = "equipment-second").copy(
+            reviewedMetadata = reviewedMetadata(
+                reviewState = ReviewState.APPROVED,
+                equipmentAlternatives = listOf(listOf(StandardEquipment.BARBELL))
+            )
+        )
+
+        val result = policy.evaluate(
+            exercises = listOf(excluded, missingEquipment),
+            profile = UserProfile(
+                availableEquipment = listOf(StandardEquipment.BODYWEIGHT),
+                excludedExerciseIds = listOf(excluded.id)
+            ),
+            adaptationState = AdaptationState.BUILD
+        )
+
+        assertThat((result as AutomaticEligibilityResult.NoCandidates).failure)
+            .isEqualTo(AutomaticEligibilityFailure.EQUIPMENT_REMOVED_ALL)
+    }
+
+    @Test
+    fun evaluate_experienceAndConfirmedStartingLoadsDoNotChangeEligibility() {
+        val exercise = exercise(id = "advanced-after-calibration").copy(
+            reviewedMetadata = reviewedMetadata(
+                reviewState = ReviewState.APPROVED,
+                complexity = ComplexityTier.ADVANCED
+            )
+        )
+        val beginner = UserProfile(
+            experienceLevel = ExperienceLevel.BEGINNER,
+            availableEquipment = listOf(StandardEquipment.BODYWEIGHT),
+            confirmedStartingLoads = emptyMap()
+        )
+        val advancedWithLoad = beginner.copy(
+            experienceLevel = ExperienceLevel.ADVANCED,
+            confirmedStartingLoads = mapOf(exercise.id to 999.0)
+        )
+
+        val beginnerResult = policy.evaluate(
+            listOf(exercise),
+            beginner,
+            AdaptationState.BUILD
+        )
+        val advancedResult = policy.evaluate(
+            listOf(exercise),
+            advancedWithLoad,
+            AdaptationState.BUILD
+        )
+
+        assertThat(advancedResult).isEqualTo(beginnerResult)
+        assertThat((beginnerResult as AutomaticEligibilityResult.Candidates).exercises)
+            .containsExactly(exercise)
+    }
+
+    @Test
+    fun evaluate_draftRegressionDoesNotLiftAdvancedCeiling() {
+        val regression = exercise(id = "draft-regression").copy(
+            reviewedMetadata = reviewedMetadata(
+                reviewState = ReviewState.DRAFT,
+                supportRequirement = SupportRequirement.SUPPORTED
+            )
+        )
+        val advanced = exercise(id = "advanced-with-draft-regression").copy(
+            reviewedMetadata = reviewedMetadata(
+                reviewState = ReviewState.APPROVED,
+                complexity = ComplexityTier.ADVANCED,
+                approvedRegressions = listOf(ReviewedExerciseLink(regression.id))
+            )
+        )
+
+        val result = policy.evaluate(
+            exercises = listOf(advanced, regression),
+            profile = UserProfile(availableEquipment = listOf(StandardEquipment.BODYWEIGHT)),
+            adaptationState = AdaptationState.UNCALIBRATED
+        ) as AutomaticEligibilityResult.NoCandidates
+
+        assertThat(result.failure)
+            .isEqualTo(AutomaticEligibilityFailure.CALIBRATION_COMPLEXITY_REMOVED_ALL)
+        assertThat(result.decisions.first().reasons)
+            .containsExactly(EligibilityReason.ADVANCED_WHILE_UNCALIBRATED)
     }
 
     private fun exercise(id: String): Exercise = Exercise(

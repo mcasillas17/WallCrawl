@@ -21,6 +21,7 @@ import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
 import wallcrawl.elopenmike.com.core.exercise.ExerciseFilter
 import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
+import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityFailure
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.GeneratedExercise
@@ -41,6 +42,18 @@ class TodayViewModelTest {
 
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
+
+    @Test
+    fun automaticEligibilityMessage_usesTypedNonMedicalCopyForEveryAggregateFailure() {
+        AutomaticEligibilityFailure.entries.forEach { failure ->
+            val message = automaticEligibilityMessage(failure)
+
+            assertThat(message).isNotEmpty()
+            assertThat(message.lowercase()).doesNotContain("safe")
+            assertThat(message.lowercase()).doesNotContain("injury")
+            assertThat(message.lowercase()).doesNotContain("medical")
+        }
+    }
 
     @Test
     fun uiState_generatesOnceAndCountsCompletedWorkoutsInRollingWeek() = runTest {
