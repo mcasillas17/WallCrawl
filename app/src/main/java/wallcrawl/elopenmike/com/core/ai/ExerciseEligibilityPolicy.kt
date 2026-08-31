@@ -18,6 +18,12 @@ import wallcrawl.elopenmike.com.core.model.SupportRequirement
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.UserProfile
 
+/**
+ * Pure reviewed-only legality policy for automatic planning.
+ *
+ * It preserves incoming exercise order and returns a decision for every input. Callers
+ * choose whether this policy is active; the policy never falls back to legacy metadata.
+ */
 class ExerciseEligibilityPolicy {
 
     fun evaluate(
@@ -41,9 +47,7 @@ class ExerciseEligibilityPolicy {
                 }
                 if (
                     approvedMetadata != null &&
-                    approvedMetadata.equipmentAlternatives.none { alternative ->
-                        alternative.all { it.normalizedEquipment() in ownedEquipment }
-                    }
+                    !approvedMetadata.hasAvailableEquipment(ownedEquipment)
                 ) {
                     add(EligibilityReason.MISSING_EQUIPMENT)
                 }
@@ -144,12 +148,10 @@ class ExerciseEligibilityPolicy {
     ): Boolean = approvedRegressions.any { link ->
         val regression = exercisesById[link.exerciseId] ?: return@any false
         val regressionMetadata = regression.reviewedMetadata ?: return@any false
-        regressionMetadata.reviewState == ReviewState.APPROVED &&
+            regressionMetadata.reviewState == ReviewState.APPROVED &&
             regressionMetadata.supportRequirement == SupportRequirement.SUPPORTED &&
             regression.id !in excludedExerciseIds &&
-            regressionMetadata.equipmentAlternatives.any { alternative ->
-                alternative.all { it.normalizedEquipment() in ownedEquipment }
-            } &&
+            regressionMetadata.hasAvailableEquipment(ownedEquipment) &&
             regressionMetadata.capabilityRequirements.none { capability ->
                 profile.movementCapabilities[capability] == CapabilityLevel.AVOID
             } &&
@@ -158,6 +160,12 @@ class ExerciseEligibilityPolicy {
                 TrainingConstraint.LOW_IMPACT_ONLY in profile.trainingConstraints &&
                     regressionMetadata.impactLevel == ImpactLevel.HIGH
                 )
+    }
+
+    private fun ReviewedExerciseMetadata.hasAvailableEquipment(
+        ownedEquipment: Set<String>
+    ): Boolean = equipmentAlternatives.any { alternative ->
+        alternative.all { it.normalizedEquipment() in ownedEquipment }
     }
 
     private fun String.normalizedEquipment(): String = trim().lowercase(Locale.ROOT)

@@ -4,8 +4,8 @@ package wallcrawl.elopenmike.com.core.model
  * Rich contextual payload provided to [wallcrawl.elopenmike.com.core.ai.WorkoutPlanner]
  * so an on-device local model (or fake planner) can select the optimal workout.
  *
- * Notice: [allowedExercises] contains only candidates that passed strict hardware,
- * exclusion, and recovery filters. The planner must choose ONLY from these candidate IDs.
+ * Notice: [allowedExercises] contains only candidates that passed the active eligibility
+ * path. The planner must choose ONLY from these candidate IDs.
  */
 data class WorkoutGenerationContext(
     val userProfile: UserProfile,
