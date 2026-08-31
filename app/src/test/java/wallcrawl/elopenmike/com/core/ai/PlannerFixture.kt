@@ -469,7 +469,7 @@ internal class PlannerFixtureLoader(
     private fun parseExpectedTargetWeights(weights: JSONObject): Map<String, Double> {
         requireObjectBounds(weights, "expected.expectedTargetWeights", MAX_COLLECTION_SIZE)
         val result = linkedMapOf<String, Double>()
-        weights.keySet().sorted().forEach { key ->
+        weights.keys().asSequence().sorted().forEach { key ->
             val path = "expected.expectedTargetWeights.$key"
             validateSafeId(key, path)
             result[key] = requireDouble(weights.get(key), path, 0.0, MAX_WEIGHT)
@@ -480,7 +480,7 @@ internal class PlannerFixtureLoader(
     private fun parseMusclePriorities(priorities: JSONObject): Map<String, PriorityLevel> {
         requireObjectBounds(priorities, "profile.musclePriorities", MAX_COLLECTION_SIZE)
         val result = linkedMapOf<String, PriorityLevel>()
-        priorities.keySet().sorted().forEach { muscle ->
+        priorities.keys().asSequence().sorted().forEach { muscle ->
             if (muscle.length > MAX_STRING_LENGTH) {
                 throw PlannerFixtureFormatException(
                     "profile.musclePriorities contains a key longer than $MAX_STRING_LENGTH characters."
@@ -498,7 +498,7 @@ internal class PlannerFixtureLoader(
     private fun parseConfirmedStartingLoads(loads: JSONObject): Map<String, Double> {
         requireObjectBounds(loads, "profile.confirmedStartingLoads", MAX_COLLECTION_SIZE)
         val result = linkedMapOf<String, Double>()
-        loads.keySet().sorted().forEach { key ->
+        loads.keys().asSequence().sorted().forEach { key ->
             val path = "profile.confirmedStartingLoads.$key"
             validateSafeId(key, path)
             result[key] = requireDouble(loads.get(key), path, 0.0, MAX_WEIGHT)
@@ -509,7 +509,7 @@ internal class PlannerFixtureLoader(
     private fun parseMovementCapabilities(capabilities: JSONObject): MovementCapabilities {
         requireObjectBounds(capabilities, "profile.movementCapabilities", MAX_COLLECTION_SIZE)
         val result = linkedMapOf<MovementCapabilityType, CapabilityLevel>()
-        capabilities.keySet().sorted().forEach { key ->
+        capabilities.keys().asSequence().sorted().forEach { key ->
             if (key.length > MAX_STRING_LENGTH) {
                 throw PlannerFixtureFormatException(
                     "profile.movementCapabilities contains a key longer than $MAX_STRING_LENGTH characters."
@@ -601,7 +601,7 @@ internal class PlannerFixtureLoader(
         optionalFields: Set<String> = emptySet()
     ) {
         val allowedFields = requiredFields + optionalFields
-        val unexpectedField = objectValue.keySet().sorted().firstOrNull { it !in allowedFields }
+        val unexpectedField = objectValue.keys().asSequence().sorted().firstOrNull { it !in allowedFields }
         if (unexpectedField != null) {
             throw PlannerFixtureFormatException("Unexpected field at $path.$unexpectedField.")
         }
