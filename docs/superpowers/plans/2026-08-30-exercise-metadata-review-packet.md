@@ -1,7 +1,5 @@
 # Exercise Metadata Review Packet Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
-
 **Goal:** Produce a four-agent consensus review and human sign-off packet for all 37 exercise-metadata drafts, correcting the drafts without granting AI-authored approval.
 
 **Architecture:** Opus, Grok, Gemini, and Terra independently review every entry against the bundled catalog, source material, and signed evidence doctrine. A convergence pass resolves disagreements into one auditable verdict per entry; accepted corrections remain `DRAFT`, regenerate catalog artifacts, and feed a human-only sign-off checklist.
