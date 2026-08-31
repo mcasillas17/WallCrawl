@@ -37,7 +37,10 @@ class Migration8To9Test {
         database = openDatabase()
         val sqlite = checkNotNull(database).openHelper.writableDatabase
 
-        assertThat(sqlite.version).isEqualTo(9)
+        // Opening the database runs the whole registered chain, so a version-8 file lands
+        // on the current schema. What this test guards is that the schema-9 step left every
+        // existing value alone on the way there.
+        assertThat(sqlite.version).isEqualTo(10)
         assertPreservedProfile(sqlite)
         assertPreservedHistoryAndTemplate(sqlite)
         sqlite.query("PRAGMA foreign_key_check").use { cursor ->
