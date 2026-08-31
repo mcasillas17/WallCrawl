@@ -67,7 +67,7 @@ object WeeklyDoseLedgerPayload {
         val directPrimarySets = sortedMapOf<String, Int>()
         val secondaryInvolvement = sortedMapOf<String, Int>()
         val unattributedWorkSets = sortedMapOf<LedgerOmissionReason, Int>()
-        var totalWorkSets = 0L
+        var totalCountedUnits = 0L
 
         entries.forEach { line ->
             val fields = line.split(FIELD_SEPARATOR)
@@ -76,8 +76,12 @@ object WeeklyDoseLedgerPayload {
 
             val count = rawCount.toIntOrNull() ?: return null
             if (count < 1 || count > WeeklyDoseLedgerCalculator.MAX_WORK_SETS_PER_WEEK) return null
-            totalWorkSets += count
-            if (totalWorkSets > WeeklyDoseLedgerCalculator.MAX_WORK_SETS_PER_WEEK) return null
+            // The same bound the calculator enforces on what it produces, so a legitimately
+            // produced ledger can always be read back from its own payload.
+            totalCountedUnits += count
+            if (totalCountedUnits > WeeklyDoseLedgerCalculator.MAX_LEDGER_COUNTED_UNITS) {
+                return null
+            }
 
             when (kind) {
                 PRIMARY -> {

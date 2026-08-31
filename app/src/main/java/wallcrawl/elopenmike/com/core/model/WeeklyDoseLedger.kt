@@ -53,4 +53,17 @@ data class WeeklyDoseLedger(
 
     /** Completed work sets that were deliberately left uncredited, with typed reasons. */
     val omittedWorkSets: Int get() = unattributedWorkSets.values.sum()
+
+    /**
+     * Every counted unit this ledger holds, across all three maps.
+     *
+     * This is deliberately not a work-set count: secondary involvement contributes one unit
+     * per descriptive secondary muscle, so it grows faster than exposure does. It exists so
+     * the producer and the storage codec can bound the same quantity, which is what
+     * guarantees a ledger can always be read back from its own payload.
+     */
+    val totalCountedUnits: Long
+        get() = directPrimarySets.values.sumOf(Int::toLong) +
+            secondaryInvolvement.values.sumOf(Int::toLong) +
+            unattributedWorkSets.values.sumOf(Int::toLong)
 }

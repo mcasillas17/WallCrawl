@@ -149,13 +149,36 @@ class WeeklyDoseLedgerCalculator {
         require(ledger.creditedWorkSets + ledger.omittedWorkSets <= MAX_WORK_SETS_PER_WEEK) {
             "A week cannot contain more than $MAX_WORK_SETS_PER_WEEK completed work sets."
         }
+        // The storage codec bounds the same quantity with the same constant. Enforcing it
+        // here is what makes "anything this calculator produces can be read back from its
+        // own payload" true by construction: without it a ledger with many descriptive
+        // secondary muscles could be cached and then refused forever, silently disabling
+        // caching for that week instead of failing loudly here.
+        require(ledger.totalCountedUnits <= MAX_LEDGER_COUNTED_UNITS) {
+            "A ledger cannot hold more than $MAX_LEDGER_COUNTED_UNITS counted units."
+        }
     }
 
     companion object {
         /** Generous ceilings that bound a persisted ledger without constraining real use. */
         const val MAX_SESSIONS_PER_WEEK: Int = 1_000
         const val MAX_WORK_SETS_PER_WEEK: Int = 50_000
+
         const val MAX_DISTINCT_MUSCLES: Int = 64
+
+        /**
+         * Every counted unit in one ledger: primary plus secondary plus unattributed.
+         *
+         * Secondary involvement adds one unit per descriptive secondary muscle, so a
+         * ledger's unit total is a multiple of its work-set total and must not be capped as
+         * if it were work sets. This is derived as the arithmetic maximum a ledger passing
+         * the two guards above can hold — every work set crediting one primary plus at most
+         * [MAX_DISTINCT_MUSCLES] - 1 secondaries — so the producer's check can never fire
+         * for input it would otherwise accept. Its purpose is to give the storage codec the
+         * same hard ceiling, which is what makes the round trip total.
+         */
+        const val MAX_LEDGER_COUNTED_UNITS: Int =
+            MAX_WORK_SETS_PER_WEEK * MAX_DISTINCT_MUSCLES
         const val MAX_VERSION_LENGTH: Int = 128
     }
 }

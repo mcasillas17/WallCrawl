@@ -2,9 +2,17 @@ package wallcrawl.elopenmike.com.core.database.repository
 
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
+import java.time.ZoneId
 import org.junit.Test
+import wallcrawl.elopenmike.com.core.ai.MONDAY_EPOCH_DAY
+import wallcrawl.elopenmike.com.core.ai.WeeklyDoseLedgerCalculator
+import wallcrawl.elopenmike.com.core.ai.completedNormalSet
+import wallcrawl.elopenmike.com.core.ai.completedSession
+import wallcrawl.elopenmike.com.core.ai.exerciseInstance
+import wallcrawl.elopenmike.com.core.ai.syntheticApprovedExercise
 import wallcrawl.elopenmike.com.core.model.LedgerOmissionReason
 import wallcrawl.elopenmike.com.core.model.LedgerPolicyVersion
+import wallcrawl.elopenmike.com.core.model.TrainingWeek
 import wallcrawl.elopenmike.com.core.model.WeeklyDoseLedger
 
 /**
@@ -105,14 +113,78 @@ class WeeklyDoseLedgerPayloadTest {
     }
 
     @Test
-    fun aPayloadWhoseTotalExceedsTheWeeklyWorkSetBoundIsRejected() {
+    fun aPayloadWhoseTotalExceedsTheLedgerUnitBoundIsRejected() {
+        // Every individual entry is legal here: distinct keys, and each count is within the
+        // per-entry ceiling. Only the running total pushes it past the bound.
+        val perEntry = WeeklyDoseLedgerCalculator.MAX_WORK_SETS_PER_WEEK
+        val entriesNeeded =
+            WeeklyDoseLedgerCalculator.MAX_LEDGER_COUNTED_UNITS / perEntry + 1
         val oversized = buildString {
             append(WeeklyDoseLedgerPayload.PAYLOAD_HEADER)
-            append("\nprimary\tChest\t40000")
-            append("\nprimary\tBack\t40000")
+            repeat(entriesNeeded) { index -> append("\nsecondary\tMuscle$index\t$perEntry") }
         }
 
         assertThat(decode(oversized)).isNull()
+    }
+
+    /**
+     * The codec has to be able to read back anything the calculator is willing to produce.
+     *
+     * Secondary involvement is accumulated once per descriptive secondary muscle, so a
+     * ledger's payload total grows faster than its work-set total. If the encode side and
+     * the decode side disagree about which total is bounded, a legitimately produced ledger
+     * gets written to the cache and then refused forever, silently disabling caching for
+     * that week instead of failing loudly.
+     */
+    @Test
+    fun anyLedgerTheCalculatorProducesCanBeReadBackFromItsOwnPayload() {
+        val week = TrainingWeek.startingOn(MONDAY_EPOCH_DAY, ZoneId.of("UTC"))
+        // Enough completed work that primary plus four secondaries per set exceeds the
+        // work-set ceiling, spread over exercise instances of a legal size.
+        val instances = 501
+        val setsPerInstance = 20
+        val workSets = instances * setsPerInstance
+        val produced = WeeklyDoseLedgerCalculator().calculate(
+            sessions = listOf(
+                completedSession(
+                    id = "very-long-week",
+                    completedAtEpochMillis = week.startEpochMillis,
+                    exercises = (0 until instances).map { index ->
+                        exerciseInstance(
+                            exerciseId = "synthetic-bench-press",
+                            id = "instance-$index",
+                            orderIndex = index,
+                            sets = List(setsPerInstance) { completedNormalSet() }
+                        )
+                    }
+                )
+            ),
+            exercisesById = mapOf(
+                "synthetic-bench-press" to syntheticApprovedExercise(
+                    id = "synthetic-bench-press",
+                    directPrimaryMuscle = "Chest",
+                    descriptiveSecondaryMuscles = setOf("Triceps", "Shoulders", "Core", "Lats")
+                )
+            ),
+            policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+            week = week,
+            catalogVersion = "catalog-commit",
+            reviewPolicyVersion = 1
+        )
+
+        val readBack = WeeklyDoseLedgerPayload.decode(
+            payload = WeeklyDoseLedgerPayload.encode(produced),
+            policyVersion = produced.policyVersion,
+            weekStartEpochDay = produced.weekStartEpochDay,
+            timeZoneId = produced.timeZoneId,
+            catalogVersion = produced.catalogVersion,
+            reviewPolicyVersion = produced.reviewPolicyVersion
+        )
+
+        assertThat(produced.directPrimarySets).containsExactly("Chest", workSets)
+        assertThat(produced.totalCountedUnits)
+            .isGreaterThan(WeeklyDoseLedgerCalculator.MAX_WORK_SETS_PER_WEEK.toLong())
+        assertThat(readBack).isEqualTo(produced)
     }
 
     private fun decode(payload: String): WeeklyDoseLedger? = WeeklyDoseLedgerPayload.decode(
