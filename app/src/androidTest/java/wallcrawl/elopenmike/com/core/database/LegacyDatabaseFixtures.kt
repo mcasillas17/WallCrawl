@@ -4,14 +4,14 @@ import android.database.sqlite.SQLiteDatabase
 
 internal object LegacyDatabaseFixtures {
     fun createSchema(db: SQLiteDatabase, version: Int) {
-        require(version in 1..8)
+        require(version in 1..9)
         db.execSQL("PRAGMA foreign_keys=ON")
         createUserProfiles(db, version)
         createWorkoutSessions(db, version)
         if (version < 4) {
             createLegacyWorkoutChildren(db)
         } else {
-            createCurrentWorkoutChildren(db)
+            createCurrentWorkoutChildren(db, version)
             createTemplateTables(db)
         }
     }
@@ -192,7 +192,14 @@ internal object LegacyDatabaseFixtures {
         createWorkoutChildIndices(db)
     }
 
-    private fun createCurrentWorkoutChildren(db: SQLiteDatabase) {
+    private fun createCurrentWorkoutChildren(db: SQLiteDatabase, version: Int) {
+        // Schema 9 added the four nullable typed set-outcome columns.
+        val setOutcomeColumns = if (version >= 9) {
+            ", feltManageable INTEGER, completedAtTimestamp INTEGER, " +
+                "stoppedAtTimestamp INTEGER, stopReason TEXT"
+        } else {
+            ""
+        }
         db.execSQL(
             "CREATE TABLE workout_exercises (id TEXT NOT NULL PRIMARY KEY, " +
                 "sessionId TEXT NOT NULL, exerciseId TEXT NOT NULL, orderIndex INTEGER NOT NULL, " +
@@ -211,7 +218,8 @@ internal object LegacyDatabaseFixtures {
                 "completedAssistanceWeight REAL, targetDurationSeconds INTEGER, " +
                 "completedDurationSeconds INTEGER, targetDistanceMeters REAL, " +
                 "completedDistanceMeters REAL, isCompleted INTEGER NOT NULL, rpe REAL, " +
-                "rir INTEGER, type TEXT NOT NULL, FOREIGN KEY(workoutExerciseId) " +
+                "rir INTEGER" + setOutcomeColumns + ", type TEXT NOT NULL, " +
+                "FOREIGN KEY(workoutExerciseId) " +
                 "REFERENCES workout_exercises(id) ON UPDATE NO ACTION ON DELETE CASCADE)"
         )
         createWorkoutChildIndices(db)

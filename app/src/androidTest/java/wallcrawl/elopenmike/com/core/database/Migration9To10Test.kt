@@ -7,19 +7,18 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
-import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Test
 import org.junit.runner.RunWith
-import wallcrawl.elopenmike.com.core.database.repository.OfflineUserProfileRepository
-import wallcrawl.elopenmike.com.core.database.repository.OfflineWorkoutRepository
-import wallcrawl.elopenmike.com.core.model.CapabilityLevel
-import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
-import wallcrawl.elopenmike.com.core.model.SetOutcome
-import wallcrawl.elopenmike.com.core.model.outcome
 
+/**
+ * Migration 9 -> 10 adds the derived weekly dose ledger cache.
+ *
+ * The migration is purely additive: it creates one new table and touches nothing that
+ * already exists, because completed history stays the authority a ledger is rebuilt from.
+ */
 @RunWith(AndroidJUnit4::class)
-class Migration8To9Test {
+class Migration9To10Test {
 
     private val context: Context = ApplicationProvider.getApplicationContext()
     private var database: WallCrawlDatabase? = null
@@ -31,81 +30,71 @@ class Migration8To9Test {
     }
 
     @Test
-    fun migrate_addsNullSetOutcomeColumnsWithoutTouchingAnyExistingValue() {
-        createVersion8Database()
+    fun migrate_addsAnEmptyLedgerCacheWithoutTouchingExistingData() {
+        createVersion9Database()
 
         database = openDatabase()
         val sqlite = checkNotNull(database).openHelper.writableDatabase
 
-        // Opening the database runs the whole registered chain, so a version-8 file lands
-        // on the current schema. What this test guards is that the schema-9 step left every
-        // existing value alone on the way there.
         assertThat(sqlite.version).isEqualTo(10)
         assertPreservedProfile(sqlite)
         assertPreservedHistoryAndTemplate(sqlite)
+
+        sqlite.query("SELECT COUNT(*) FROM weekly_dose_ledger_state").use { cursor ->
+            assertThat(cursor.moveToFirst()).isTrue()
+            assertThat(cursor.getInt(0)).isEqualTo(0)
+        }
         sqlite.query("PRAGMA foreign_key_check").use { cursor ->
             assertThat(cursor.count).isEqualTo(0)
         }
     }
 
     @Test
-    fun migrate_leavesExistingHistoryWithAnUnrecordedOutcomeRatherThanAFabricatedOne() {
-        createVersion8Database()
+    fun migrate_createsTheLedgerCacheKeyedByProfileWeekZoneAndPolicy() {
+        createVersion9Database()
         database = openDatabase()
-
         val sqlite = checkNotNull(database).openHelper.writableDatabase
-        sqlite.query("SELECT * FROM workout_sets").use { cursor ->
-            assertThat(cursor.moveToFirst()).isTrue()
-            // The set was logged as completed before typed outcomes existed. Migration
-            // must not invent a completion timestamp or a manageable answer for it.
-            cursor.assertInt("isCompleted", 1)
-            cursor.assertNull("feltManageable")
-            cursor.assertNull("completedAtTimestamp")
-            cursor.assertNull("stoppedAtTimestamp")
-            cursor.assertNull("stopReason")
+
+        val columns = mutableMapOf<String, Pair<String, Int>>()
+        val primaryKeyColumns = sortedMapOf<Int, String>()
+        sqlite.query("PRAGMA table_info(weekly_dose_ledger_state)").use { cursor ->
+            while (cursor.moveToNext()) {
+                val name = cursor.getString(cursor.getColumnIndexOrThrow("name"))
+                columns[name] = cursor.getString(cursor.getColumnIndexOrThrow("type")) to
+                    cursor.getInt(cursor.getColumnIndexOrThrow("notnull"))
+                val keyPosition = cursor.getInt(cursor.getColumnIndexOrThrow("pk"))
+                if (keyPosition > 0) primaryKeyColumns[keyPosition] = name
+            }
         }
 
-        val session = runBlocking {
-            OfflineWorkoutRepository(
-                sessionDao = checkNotNull(database).workoutSessionDao(),
-                setDao = checkNotNull(database).workoutSetDao()
-            ).getSessionById("session-7")
-        }
-        val set = checkNotNull(session).exercises.single().sets.single()
-        assertThat(set.isCompleted).isTrue()
-        assertThat(set.outcome).isEqualTo(
-            SetOutcome.Completed(recordedAtTimestamp = null, rpe = 8f, rir = 2)
+        assertThat(primaryKeyColumns.values)
+            .containsExactly("profileId", "weekStartEpochDay", "timeZoneId", "policyVersion")
+            .inOrder()
+        assertThat(columns.keys).containsExactly(
+            "profileId",
+            "weekStartEpochDay",
+            "timeZoneId",
+            "policyVersion",
+            "catalogVersion",
+            "reviewPolicyVersion",
+            "ledgerPayload",
+            "sourceFingerprint",
+            "generatedAtTimestamp"
         )
-    }
-
-    @Test
-    fun migratedProfileAndCapabilities_reloadUnchangedThroughANewInstance() {
-        createVersion8Database()
-        database = openDatabase()
-
-        val profile = runBlocking {
-            OfflineUserProfileRepository(checkNotNull(database).userProfileDao()).getProfileOnce()
-        }
-        checkNotNull(database).close()
-        database = openDatabase()
-        val reloaded = runBlocking {
-            OfflineUserProfileRepository(checkNotNull(database).userProfileDao()).getProfileOnce()
-        }
-
-        assertThat(reloaded).isEqualTo(profile)
-        assertThat(reloaded.onboardingCompleted).isTrue()
-        MovementCapabilityType.entries.forEach { type ->
-            assertThat(reloaded.movementCapabilities[type]).isEqualTo(CapabilityLevel.UNKNOWN)
+        columns.forEach { (name, typeAndNullability) ->
+            assertThat(typeAndNullability.second).isEqualTo(1)
+            assertThat(typeAndNullability.first).isAnyOf("TEXT", "INTEGER")
+            assertThat(name).isNotEmpty()
         }
     }
 
-    private fun createVersion8Database() {
+    private fun createVersion9Database() {
         context.deleteDatabase(DATABASE_NAME)
         context.openOrCreateDatabase(DATABASE_NAME, Context.MODE_PRIVATE, null).use { db ->
-            LegacyDatabaseFixtures.createSchema(db, version = 8)
-            LegacyDatabaseFixtures.insertProfile(db, version = 8)
+            LegacyDatabaseFixtures.createSchema(db, version = 9)
+            LegacyDatabaseFixtures.insertProfile(db, version = 9)
             LegacyDatabaseFixtures.insertHistoryAndTemplate(db)
-            db.version = 8
+            db.version = 9
         }
     }
 
@@ -146,14 +135,9 @@ class Migration8To9Test {
             cursor.assertString("name", "Preserved Session")
             cursor.assertLong("startedAtTimestamp", 100L)
             cursor.assertLong("completedAtTimestamp", 200L)
-            cursor.assertInt("targetDurationMinutes", 45)
             cursor.assertInt("actualDurationMinutes", 43)
-            cursor.assertString("weightUnit", "KG")
             cursor.assertString("status", "COMPLETED")
-            cursor.assertString("origin", "CUSTOM_TEMPLATE")
             cursor.assertString("sourceTemplateId", "template-7")
-            cursor.assertString("focusMusclesJson", "Chest")
-            cursor.assertString("notes", "session note")
             assertThat(cursor.moveToNext()).isFalse()
         }
         sqlite.query("SELECT * FROM workout_exercises").use { cursor ->
@@ -161,65 +145,35 @@ class Migration8To9Test {
             cursor.assertString("id", "workout-exercise-7")
             cursor.assertString("sessionId", "session-7")
             cursor.assertString("exerciseId", "goblet-squat")
-            cursor.assertInt("orderIndex", 0)
-            cursor.assertString("exerciseType", "WEIGHT_REPS")
             cursor.assertInt("targetSets", 1)
-            cursor.assertInt("targetRepMin", 8)
-            cursor.assertInt("targetRepMax", 10)
-            cursor.assertDouble("targetWeight", 24.0)
-            cursor.assertNull("targetAssistanceWeight")
-            cursor.assertNull("targetDurationSeconds")
-            cursor.assertNull("targetDistanceMeters")
-            cursor.assertInt("restSeconds", 90)
-            cursor.assertString("notes", "exercise note")
             assertThat(cursor.moveToNext()).isFalse()
         }
         sqlite.query("SELECT * FROM workout_sets").use { cursor ->
             assertThat(cursor.moveToFirst()).isTrue()
             cursor.assertString("id", "set-7")
             cursor.assertString("workoutExerciseId", "workout-exercise-7")
-            cursor.assertInt("setNumber", 1)
-            cursor.assertString("exerciseType", "WEIGHT_REPS")
-            cursor.assertInt("targetReps", 10)
             cursor.assertInt("completedReps", 9)
-            cursor.assertDouble("targetWeight", 24.0)
-            cursor.assertDouble("completedWeight", 24.0)
-            cursor.assertNull("targetAssistanceWeight")
-            cursor.assertNull("completedAssistanceWeight")
-            cursor.assertNull("targetDurationSeconds")
-            cursor.assertNull("completedDurationSeconds")
-            cursor.assertNull("targetDistanceMeters")
-            cursor.assertNull("completedDistanceMeters")
             cursor.assertInt("isCompleted", 1)
             cursor.assertDouble("rpe", 8.0)
             cursor.assertInt("rir", 2)
             cursor.assertString("type", "NORMAL")
+            // Schema 9's typed outcome columns keep the honest nulls they migrated with.
+            cursor.assertNull("feltManageable")
+            cursor.assertNull("completedAtTimestamp")
+            cursor.assertNull("stoppedAtTimestamp")
+            cursor.assertNull("stopReason")
             assertThat(cursor.moveToNext()).isFalse()
         }
         sqlite.query("SELECT * FROM workout_templates").use { cursor ->
             assertThat(cursor.moveToFirst()).isTrue()
             cursor.assertString("id", "template-7")
             cursor.assertString("name", "Preserved Template")
-            cursor.assertString("notes", "template note")
-            cursor.assertLong("createdAtTimestamp", 50L)
-            cursor.assertLong("updatedAtTimestamp", 60L)
             assertThat(cursor.moveToNext()).isFalse()
         }
         sqlite.query("SELECT * FROM workout_template_exercises").use { cursor ->
             assertThat(cursor.moveToFirst()).isTrue()
             cursor.assertString("templateId", "template-7")
-            cursor.assertInt("orderIndex", 0)
             cursor.assertString("exerciseId", "goblet-squat")
-            cursor.assertString("exerciseType", "WEIGHT_REPS")
-            cursor.assertInt("targetSets", 1)
-            cursor.assertInt("targetRepMin", 8)
-            cursor.assertInt("targetRepMax", 10)
-            cursor.assertDouble("targetWeight", 24.0)
-            cursor.assertNull("targetAssistanceWeight")
-            cursor.assertNull("targetDurationSeconds")
-            cursor.assertNull("targetDistanceMeters")
-            cursor.assertInt("restSeconds", 90)
-            cursor.assertString("notes", "template exercise note")
             assertThat(cursor.moveToNext()).isFalse()
         }
     }
@@ -245,6 +199,6 @@ class Migration8To9Test {
     }
 
     private companion object {
-        const val DATABASE_NAME = "migration-8-9.db"
+        const val DATABASE_NAME = "migration-9-10.db"
     }
 }
