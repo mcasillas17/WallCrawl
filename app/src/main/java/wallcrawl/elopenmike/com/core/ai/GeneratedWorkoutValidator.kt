@@ -1,6 +1,7 @@
 package wallcrawl.elopenmike.com.core.ai
 
 import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
+import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityFailure
 import wallcrawl.elopenmike.com.core.model.GeneratedExercise
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
 
@@ -91,6 +92,9 @@ enum class WorkoutPlanningFailure {
     /** Nothing survived the equipment, exclusion, and recovery filters. */
     NO_CANDIDATES,
 
+    /** The enabled reviewed eligibility gate rejected every automatic candidate. */
+    REVIEWED_ELIGIBILITY_NO_CANDIDATES,
+
     /** Candidates exist, but all of them are cardio or mobility work. */
     NO_STRENGTH_CANDIDATES,
 
@@ -103,5 +107,6 @@ enum class WorkoutPlanningFailure {
 
 class WorkoutValidationException(
     message: String,
-    val failure: WorkoutPlanningFailure = WorkoutPlanningFailure.INVALID_GENERATED_WORKOUT
+    val failure: WorkoutPlanningFailure = WorkoutPlanningFailure.INVALID_GENERATED_WORKOUT,
+    val automaticEligibilityFailure: AutomaticEligibilityFailure? = null
 ) : IllegalArgumentException(message)

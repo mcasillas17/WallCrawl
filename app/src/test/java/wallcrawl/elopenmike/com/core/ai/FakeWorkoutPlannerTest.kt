@@ -4,6 +4,8 @@ import com.google.common.truth.Truth.assertThat
 import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.Exercise
+import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityFailure
+import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
 import wallcrawl.elopenmike.com.core.model.MechanicsType
 import wallcrawl.elopenmike.com.core.model.MovementPattern
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
@@ -314,6 +316,28 @@ class FakeWorkoutPlannerTest {
             fail("Expected WorkoutValidationException for empty allowed candidates")
         } catch (e: WorkoutValidationException) {
             assertThat(e.message).contains("no allowed candidate exercises")
+        }
+    }
+
+    @Test
+    fun generateWorkout_withReviewedGateNoCandidates_preservesTypedFailureWithoutFallback() = runTest {
+        val reviewedFailure = AutomaticEligibilityFailure.NO_APPROVED_METADATA
+        val context = WorkoutGenerationContext(
+            userProfile = UserProfile(),
+            allowedExercises = emptyList(),
+            automaticEligibilityResult = AutomaticEligibilityResult.NoCandidates(
+                failure = reviewedFailure,
+                decisions = emptyList()
+            )
+        )
+
+        try {
+            planner.generateWorkout(context)
+            fail("Expected reviewed eligibility to stop planning without a legacy fallback")
+        } catch (e: WorkoutValidationException) {
+            assertThat(e.failure)
+                .isEqualTo(WorkoutPlanningFailure.REVIEWED_ELIGIBILITY_NO_CANDIDATES)
+            assertThat(e.automaticEligibilityFailure).isEqualTo(reviewedFailure)
         }
     }
 

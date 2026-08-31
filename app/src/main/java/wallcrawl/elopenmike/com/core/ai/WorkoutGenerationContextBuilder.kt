@@ -5,6 +5,9 @@ import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
 import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
 import wallcrawl.elopenmike.com.core.exercise.ExerciseFilter
+import wallcrawl.elopenmike.com.core.model.AdaptationState
+import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
+import wallcrawl.elopenmike.com.core.model.ReviewState
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
 
 /**
@@ -17,6 +20,8 @@ class WorkoutGenerationContextBuilder(
     private val exerciseCatalog: ExerciseCatalog,
     private val exerciseFilter: ExerciseFilter,
     private val historyAnalyzer: WorkoutHistoryAnalyzer,
+    private val plannerFeatureFlags: PlannerFeatureFlags = PlannerFeatureFlags(),
+    private val reviewedEligibilityPolicy: ExerciseEligibilityPolicy = ExerciseEligibilityPolicy(),
     private val nowTimestamp: () -> Long = System::currentTimeMillis
 ) {
 
@@ -26,10 +31,40 @@ class WorkoutGenerationContextBuilder(
             limit = MAX_RECENT_SESSIONS
         )
         val allExercises = exerciseCatalog.getAllExercises().first()
-        val allowedExercises = exerciseFilter.filterCandidates(
-            allExercises = allExercises,
-            profile = profile
+        val completedWorkoutCount = workoutRepository.observeCompletedWorkoutCount().first()
+        val exerciseHistory = historyAnalyzer.exerciseHistory(
+            sessions = recentCompletedSessions,
+            targetWeightUnit = profile.preferredUnit
         )
+        val automaticEligibilityResult = if (plannerFeatureFlags.reviewedCapabilityEligibility) {
+            val exercisesById = allExercises.associateBy { it.id }
+            reviewedEligibilityPolicy.evaluate(
+                exercises = allExercises,
+                profile = profile,
+                adaptationState = if (profile.returningAfterBreakWeeks > 0) {
+                    AdaptationState.RETURNING
+                } else {
+                    AdaptationState.UNCALIBRATED
+                },
+                demonstratedProgressionFamilies = exerciseHistory.keys.mapNotNullTo(linkedSetOf()) {
+                    exerciseId ->
+                    exercisesById[exerciseId]
+                        ?.reviewedMetadata
+                        ?.takeIf { it.reviewState == ReviewState.APPROVED }
+                        ?.progressionFamily
+                }
+            )
+        } else {
+            null
+        }
+        val allowedExercises = when (automaticEligibilityResult) {
+            is AutomaticEligibilityResult.Candidates -> automaticEligibilityResult.exercises
+            is AutomaticEligibilityResult.NoCandidates -> emptyList()
+            null -> exerciseFilter.filterCandidates(
+                allExercises = allExercises,
+                profile = profile
+            )
+        }
 
         return WorkoutGenerationContext(
             userProfile = profile,
@@ -40,17 +75,15 @@ class WorkoutGenerationContextBuilder(
             trainingFrequencyDaysPerWeek = profile.daysPerWeek,
             musclePriorities = profile.musclePriorities,
             recentWorkoutHistory = recentCompletedSessions,
-            completedWorkoutCount = workoutRepository.observeCompletedWorkoutCount().first(),
-            exerciseHistory = historyAnalyzer.exerciseHistory(
-                sessions = recentCompletedSessions,
-                targetWeightUnit = profile.preferredUnit
-            ),
+            completedWorkoutCount = completedWorkoutCount,
+            exerciseHistory = exerciseHistory,
             recentlyTrainedMuscles = historyAnalyzer.recentlyTrainedMuscles(
                 sessions = recentCompletedSessions,
                 nowTimestamp = nowTimestamp()
             ),
             excludedExerciseIds = profile.excludedExerciseIds,
             allowedExercises = allowedExercises,
+            automaticEligibilityResult = automaticEligibilityResult,
             preferredUnits = profile.preferredUnit
         )
     }

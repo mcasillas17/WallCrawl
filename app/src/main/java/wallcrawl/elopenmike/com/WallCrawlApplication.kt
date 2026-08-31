@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import wallcrawl.elopenmike.com.core.ai.FakeWorkoutPlanner
 import wallcrawl.elopenmike.com.core.ai.GeneratedWorkoutValidator
+import wallcrawl.elopenmike.com.core.ai.PlannerFeatureFlags
 import wallcrawl.elopenmike.com.core.ai.WorkoutGenerationContextBuilder
 import wallcrawl.elopenmike.com.core.ai.WorkoutHistoryAnalyzer
 import wallcrawl.elopenmike.com.core.ai.WorkoutPlanner
@@ -105,7 +106,10 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
             workoutRepository = workoutRepository,
             exerciseCatalog = exerciseCatalog,
             exerciseFilter = exerciseFilter,
-            historyAnalyzer = workoutHistoryAnalyzer
+            historyAnalyzer = workoutHistoryAnalyzer,
+            plannerFeatureFlags = PlannerFeatureFlags(
+                reviewedCapabilityEligibility = false
+            )
         )
     }
 

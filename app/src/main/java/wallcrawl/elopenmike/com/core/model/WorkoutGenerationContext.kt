@@ -23,6 +23,7 @@ data class WorkoutGenerationContext(
     val recentlyTrainedMuscles: List<String> = emptyList(),
     val excludedExerciseIds: List<String> = userProfile.excludedExerciseIds,
     val allowedExercises: List<Exercise> = emptyList(),
+    val automaticEligibilityResult: AutomaticEligibilityResult? = null,
     val preferredUnits: WeightUnit = userProfile.preferredUnit
 )
 

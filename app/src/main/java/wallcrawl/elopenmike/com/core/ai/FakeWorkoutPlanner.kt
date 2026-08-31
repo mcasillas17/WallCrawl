@@ -1,6 +1,7 @@
 package wallcrawl.elopenmike.com.core.ai
 
 import wallcrawl.elopenmike.com.core.model.Exercise
+import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.GeneratedExercise
@@ -29,9 +30,17 @@ class FakeWorkoutPlanner(
     override suspend fun generateWorkout(context: WorkoutGenerationContext): GeneratedWorkout {
         val candidates = context.allowedExercises
         if (candidates.isEmpty()) {
+            val reviewedFailure =
+                (context.automaticEligibilityResult as? AutomaticEligibilityResult.NoCandidates)
+                    ?.failure
             throw WorkoutValidationException(
                 message = "Cannot generate workout: no allowed candidate exercises available.",
-                failure = WorkoutPlanningFailure.NO_CANDIDATES
+                failure = if (reviewedFailure != null) {
+                    WorkoutPlanningFailure.REVIEWED_ELIGIBILITY_NO_CANDIDATES
+                } else {
+                    WorkoutPlanningFailure.NO_CANDIDATES
+                },
+                automaticEligibilityFailure = reviewedFailure
             )
         }
         val generationIndex = generationCounter.getAndIncrement()
