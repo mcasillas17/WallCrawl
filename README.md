@@ -59,6 +59,9 @@ WallCrawl supports **Dark Theme** (stealth suit graphite aesthetic), **Light The
   persistence, logging, and history boundaries in the current application.
 - [Custom Workouts](docs/custom-workouts.md) documents the user flow, full-catalog
   selection rules, frozen session snapshots, and current editor limitations.
+- [Planner evaluation](docs/planner-evaluation.md) documents the versioned persona
+  corpus, strict fixture validation, deterministic replay, and asserted planner
+  invariants.
 - The phase-specific design and implementation records under
   [`docs/superpowers/`](docs/superpowers/) provide historical decision context.
 
