@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "reviewed-enabled-no-approved",
+  "policyVersion": 3,
+  "catalogVersion": "ba0b709cb20430361b2cb33aaadd20998164a916",
+  "profile": {
+    "goals": [
+      "GENERAL_FITNESS"
+    ],
+    "experienceLevel": "BEGINNER",
+    "preferredDurationMinutes": 35,
+    "daysPerWeek": 3,
+    "availableEquipment": [
+      "Bodyweight"
+    ],
+    "preferredUnit": "LBS",
+    "musclePriorities": {
+      "Chest": "HIGH"
+    },
+    "excludedExerciseIds": [],
+    "trainingConstraints": [],
+    "returningAfterBreakWeeks": 0,
+    "confirmedStartingLoads": {},
+    "movementCapabilities": {}
+  },
+  "completedWorkoutCount": 0,
+  "exerciseHistory": [],
+  "reviewedEligibility": {
+    "adaptationState": "UNCALIBRATED",
+    "syntheticApprovedExerciseIds": []
+  },
+  "expected": {
+    "outcome": "REVIEWED_ELIGIBILITY_NO_CANDIDATES",
+    "automaticEligibilityFailure": "NO_APPROVED_METADATA",
+    "requiredExerciseIds": [],
+    "forbiddenExerciseIds": []
+  }
+}

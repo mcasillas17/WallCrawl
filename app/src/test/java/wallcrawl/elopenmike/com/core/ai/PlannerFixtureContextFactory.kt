@@ -12,16 +12,26 @@ import org.json.JSONException
 import org.json.JSONObject
 import org.json.JSONTokener
 import wallcrawl.elopenmike.com.core.exercise.ExerciseFilter
+import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
+import wallcrawl.elopenmike.com.core.model.ComplexityTier
 import wallcrawl.elopenmike.com.core.model.Difficulty
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.ExerciseProgrammingMetadata
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.MechanicsType
+import wallcrawl.elopenmike.com.core.model.ImpactLevel
+import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.model.MovementPattern
 import wallcrawl.elopenmike.com.core.model.MuscleVocabulary
+import wallcrawl.elopenmike.com.core.model.PrescriptionShape
 import wallcrawl.elopenmike.com.core.model.ProgressionType
 import wallcrawl.elopenmike.com.core.model.RepRange
+import wallcrawl.elopenmike.com.core.model.ReviewProvenance
+import wallcrawl.elopenmike.com.core.model.ReviewState
+import wallcrawl.elopenmike.com.core.model.ReviewedExerciseLink
+import wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
+import wallcrawl.elopenmike.com.core.model.SupportRequirement
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
 
@@ -52,7 +62,12 @@ internal class PlannerFixtureContextFactory(
 
     fun create(fixture: PlannerFixture): PlannerFixtureContext {
         validateSupportedCorpusContract(fixture, catalogProjection)
+        validateReviewedFixtureContract(fixture)
         validateCatalogReferences(fixture, catalogProjection.exercises)
+        val catalogExercises = applySyntheticApprovals(
+            exercises = catalogProjection.exercises,
+            reviewedEligibility = fixture.reviewedEligibility
+        )
         val profile = UserProfile(
             goals = fixture.profile.goals,
             experienceLevel = fixture.profile.experienceLevel,
@@ -69,27 +84,101 @@ internal class PlannerFixtureContextFactory(
             movementCapabilities = fixture.profile.movementCapabilities
         )
         val filteredExercises = exerciseFilter.filterCandidates(
-            allExercises = catalogProjection.exercises,
+            allExercises = catalogExercises,
             profile = profile
         )
-        val restrictedExercises = restrictToAllowedExerciseIds(
-            filteredExercises = filteredExercises,
-            catalogExercises = catalogProjection.exercises,
-            fixture = fixture
-        )
+        val automaticEligibilityResult = fixture.reviewedEligibility?.let { reviewedEligibility ->
+            ExerciseEligibilityPolicy().evaluate(
+                exercises = catalogExercises,
+                profile = profile,
+                adaptationState = reviewedEligibility.adaptationState,
+                demonstratedProgressionFamilies = fixture.exerciseHistory.mapNotNullTo(
+                    linkedSetOf()
+                ) { history ->
+                    catalogExercises.single { it.id == history.exerciseId }
+                        .reviewedMetadata
+                        ?.takeIf { it.reviewState == ReviewState.APPROVED }
+                        ?.progressionFamily
+                }
+            )
+        }
+        val allowedExercises = when (automaticEligibilityResult) {
+            is AutomaticEligibilityResult.Candidates -> automaticEligibilityResult.exercises
+            is AutomaticEligibilityResult.NoCandidates -> emptyList()
+            null -> restrictToAllowedExerciseIds(
+                filteredExercises = filteredExercises,
+                catalogExercises = catalogExercises,
+                fixture = fixture
+            )
+        }
         return PlannerFixtureContext(
             fixture = fixture,
             userProfile = profile,
-            catalogExercises = catalogProjection.exercises,
+            catalogExercises = catalogExercises,
             filteredExercises = filteredExercises,
             context = WorkoutGenerationContext(
                 userProfile = profile,
                 completedWorkoutCount = fixture.completedWorkoutCount,
                 exerciseHistory = fixture.exerciseHistory.associateBy { it.exerciseId },
-                allowedExercises = restrictedExercises,
+                allowedExercises = allowedExercises,
+                automaticEligibilityResult = automaticEligibilityResult,
                 preferredUnits = profile.preferredUnit
             )
         )
+    }
+
+    private fun applySyntheticApprovals(
+        exercises: List<Exercise>,
+        reviewedEligibility: PlannerFixtureReviewedEligibility?
+    ): List<Exercise> {
+        val approvedIds = reviewedEligibility?.syntheticApprovedExerciseIds?.toSet()
+            ?: return exercises
+        return exercises.map { exercise ->
+            if (exercise.id !in approvedIds) return@map exercise
+            val metadata = exercise.reviewedMetadata ?: throw PlannerFixtureFormatException(
+                "root.reviewedEligibility.syntheticApprovedExerciseIds contains '${exercise.id}', " +
+                    "which has no bundled reviewed metadata."
+            )
+            if (metadata.reviewState != ReviewState.DRAFT) {
+                throw PlannerFixtureFormatException(
+                    "root.reviewedEligibility.syntheticApprovedExerciseIds contains '${exercise.id}', " +
+                        "which is not bundled as DRAFT."
+                )
+            }
+            exercise.copy(
+                reviewedMetadata = metadata.copy(
+                    reviewState = ReviewState.APPROVED,
+                    provenance = ReviewProvenance(
+                        reviewerRole = "Synthetic test-only reviewer",
+                        rationaleOrSource =
+                            "SYNTHETIC PLANNER FIXTURE — never bundled in production assets.",
+                        reviewedAtEpochMillis = 1L,
+                        schemaVersion = metadata.provenance.schemaVersion,
+                        policyVersion = metadata.provenance.policyVersion
+                    )
+                )
+            )
+        }
+    }
+
+    private fun validateReviewedFixtureContract(fixture: PlannerFixture) {
+        if (
+            fixture.reviewedEligibility != null &&
+            fixture.allowedExerciseIds.isNotEmpty()
+        ) {
+            throw PlannerFixtureFormatException(
+                "root.allowedExerciseIds cannot restrict an enabled reviewed eligibility fixture."
+            )
+        }
+        if (
+            fixture.expected.outcome ==
+            PlannerFixtureOutcome.REVIEWED_ELIGIBILITY_NO_CANDIDATES &&
+            fixture.reviewedEligibility == null
+        ) {
+            throw PlannerFixtureFormatException(
+                "root.reviewedEligibility is required for a reviewed eligibility failure fixture."
+            )
+        }
     }
 
     fun manifestResourcePaths(manifestPath: String = DEFAULT_MANIFEST_RESOURCE): List<String> =
@@ -145,6 +234,13 @@ internal class PlannerFixtureContextFactory(
             fixture.allowedExerciseIds.forEachIndexed { index, exerciseId ->
                 add("root.allowedExerciseIds[$index]" to exerciseId)
             }
+            fixture.reviewedEligibility?.syntheticApprovedExerciseIds
+                ?.forEachIndexed { index, exerciseId ->
+                    add(
+                        "root.reviewedEligibility.syntheticApprovedExerciseIds[$index]" to
+                            exerciseId
+                    )
+                }
             fixture.profile.excludedExerciseIds.forEachIndexed { index, exerciseId ->
                 add("root.profile.excludedExerciseIds[$index]" to exerciseId)
             }
@@ -283,9 +379,133 @@ internal class PlannerFixtureContextFactory(
                     requireObject(exercise, "programming", "$path.programming"),
                     "$path.programming"
                 )
+            },
+            reviewedMetadata = if (exercise.isNull("reviewedMetadata")) {
+                null
+            } else {
+                parseReviewedMetadata(
+                    requireObject(exercise, "reviewedMetadata", "$path.reviewedMetadata"),
+                    "$path.reviewedMetadata"
+                )
             }
         )
     }
+
+    private fun parseReviewedMetadata(
+        metadata: JSONObject,
+        path: String
+    ): ReviewedExerciseMetadata = ReviewedExerciseMetadata(
+        reviewState = readEnum(
+            requireString(metadata, "reviewState", "$path.reviewState"),
+            "$path.reviewState"
+        ),
+        directPrimaryMuscle = requireString(
+            metadata,
+            "directPrimaryMuscle",
+            "$path.directPrimaryMuscle"
+        ),
+        descriptiveSecondaryMuscles = requireStringList(
+            requireArray(
+                metadata,
+                "descriptiveSecondaryMuscles",
+                "$path.descriptiveSecondaryMuscles"
+            ),
+            "$path.descriptiveSecondaryMuscles"
+        ).toSet(),
+        movementPattern = readEnum(
+            requireString(metadata, "movementPattern", "$path.movementPattern"),
+            "$path.movementPattern"
+        ),
+        complexity = readEnum<ComplexityTier>(
+            requireString(metadata, "complexity", "$path.complexity"),
+            "$path.complexity"
+        ),
+        progressionFamily = requireString(
+            metadata,
+            "progressionFamily",
+            "$path.progressionFamily"
+        ),
+        prescriptionShape = readEnum<PrescriptionShape>(
+            requireString(metadata, "prescriptionShape", "$path.prescriptionShape"),
+            "$path.prescriptionShape"
+        ),
+        approvedRegressions = parseReviewedLinks(
+            requireArray(metadata, "approvedRegressions", "$path.approvedRegressions"),
+            "$path.approvedRegressions"
+        ),
+        approvedSubstitutions = parseReviewedLinks(
+            requireArray(metadata, "approvedSubstitutions", "$path.approvedSubstitutions"),
+            "$path.approvedSubstitutions"
+        ),
+        capabilityRequirements = requireStringList(
+            requireArray(
+                metadata,
+                "capabilityRequirements",
+                "$path.capabilityRequirements"
+            ),
+            "$path.capabilityRequirements"
+        ).mapTo(linkedSetOf()) { value ->
+            readEnum<MovementCapabilityType>(value, "$path.capabilityRequirements")
+        },
+        supportRequirement = readEnum<SupportRequirement>(
+            requireString(metadata, "supportRequirement", "$path.supportRequirement"),
+            "$path.supportRequirement"
+        ),
+        impactLevel = readEnum<ImpactLevel>(
+            requireString(metadata, "impactLevel", "$path.impactLevel"),
+            "$path.impactLevel"
+        ),
+        equipmentAlternatives = requireEquipmentMatrix(
+            requireArray(metadata, "equipmentAlternatives", "$path.equipmentAlternatives"),
+            "$path.equipmentAlternatives"
+        ),
+        provenance = parseReviewProvenance(
+            requireObject(metadata, "provenance", "$path.provenance"),
+            "$path.provenance"
+        )
+    )
+
+    private fun parseReviewedLinks(array: JSONArray, path: String): List<ReviewedExerciseLink> =
+        buildList(array.length()) {
+            for (index in 0 until array.length()) {
+                val linkPath = "$path[$index]"
+                val link = array.optJSONObject(index)
+                    ?: throw PlannerFixtureFormatException("$linkPath must be an object.")
+                add(
+                    ReviewedExerciseLink(
+                        exerciseId = requireString(link, "exerciseId", "$linkPath.exerciseId"),
+                        rationale = if (link.isNull("rationale")) {
+                            null
+                        } else {
+                            requireString(link, "rationale", "$linkPath.rationale")
+                        }
+                    )
+                )
+            }
+        }
+
+    private fun parseReviewProvenance(
+        provenance: JSONObject,
+        path: String
+    ): ReviewProvenance = ReviewProvenance(
+        reviewerRole = if (provenance.isNull("reviewerRole")) {
+            null
+        } else {
+            requireString(provenance, "reviewerRole", "$path.reviewerRole")
+        },
+        rationaleOrSource = requireString(
+            provenance,
+            "rationaleOrSource",
+            "$path.rationaleOrSource"
+        ),
+        reviewedAtEpochMillis = if (provenance.isNull("reviewedAtEpochMillis")) {
+            null
+        } else {
+            requireLong(provenance, "reviewedAtEpochMillis", "$path.reviewedAtEpochMillis")
+        },
+        schemaVersion = requireInt(provenance, "schemaVersion", "$path.schemaVersion"),
+        policyVersion = requireInt(provenance, "policyVersion", "$path.policyVersion")
+    )
 
     private fun parseProgramming(programming: JSONObject, path: String): ExerciseProgrammingMetadata =
         ExerciseProgrammingMetadata(
@@ -414,6 +634,17 @@ internal class PlannerFixtureContextFactory(
             throw PlannerFixtureFormatException("$path must be an integer.")
         }
         return intValue
+    }
+
+    private fun requireLong(source: JSONObject, key: String, path: String): Long {
+        val value = source.opt(key)
+        val number = value as? Number
+            ?: throw PlannerFixtureFormatException("$path must be an integer.")
+        val longValue = number.toLong()
+        if (longValue.toDouble() != number.toDouble()) {
+            throw PlannerFixtureFormatException("$path must be an integer.")
+        }
+        return longValue
     }
 
     private inline fun <reified T : Enum<T>> readEnum(value: String, path: String): T {

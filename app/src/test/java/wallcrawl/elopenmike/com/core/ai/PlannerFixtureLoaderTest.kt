@@ -84,7 +84,9 @@ class PlannerFixtureLoaderTest {
             "limited-capability",
             "mixed-unit-history",
             "sparse-history",
-            "no-strength-candidates"
+            "no-strength-candidates",
+            "reviewed-enabled-bodyweight",
+            "reviewed-enabled-no-approved"
         ).inOrder()
         assertThat(fixtures.map { it.id }).doesNotContain("valid-basic")
     }
