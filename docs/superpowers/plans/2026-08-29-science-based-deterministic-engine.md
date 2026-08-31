@@ -89,20 +89,33 @@ Task 2 and current planner behavior is unchanged.
 
 ### Task 3: Add the PRIMARY_ONLY_V1 Weekly Ledger
 
+**Status:** Shipped. The ledger is built and cached at schema 10 and documented in
+[docs/weekly-dose-ledger.md](../../weekly-dose-ledger.md). Nothing consumes it yet:
+planner selection, dose targets, and progression are unchanged. `AdaptationState` and
+`TrainingProgramState` stay with Task 2/Task 4; composing the ledger into program state
+happens after reviewed eligibility lands.
+
 **Files:**
-- Create: `app/src/main/java/wallcrawl/elopenmike/com/core/model/TrainingProgramState.kt`
+- Create: `app/src/main/java/wallcrawl/elopenmike/com/core/model/WeeklyDoseLedger.kt`
+- Create: `app/src/main/java/wallcrawl/elopenmike/com/core/model/TrainingWeek.kt`
 - Create: `app/src/main/java/wallcrawl/elopenmike/com/core/ai/WeeklyDoseLedgerCalculator.kt`
-- Modify: `app/src/main/java/wallcrawl/elopenmike/com/core/database/entity/Entities.kt`
-- Modify: `app/src/main/java/wallcrawl/elopenmike/com/core/database/dao/Daos.kt`
+- Create: `app/src/main/java/wallcrawl/elopenmike/com/core/ai/LedgerSourceFingerprint.kt`
+- Create: `app/src/main/java/wallcrawl/elopenmike/com/core/database/entity/WeeklyDoseLedgerStateEntity.kt`
+- Create: `app/src/main/java/wallcrawl/elopenmike/com/core/database/dao/WeeklyDoseLedgerDaos.kt`
+- Create: `app/src/main/java/wallcrawl/elopenmike/com/core/database/repository/WeeklyDoseLedgerRepository.kt`
+- Create: `app/src/main/java/wallcrawl/elopenmike/com/core/database/repository/WeeklyDoseLedgerPayload.kt`
 - Modify: `app/src/main/java/wallcrawl/elopenmike/com/core/database/WallCrawlDatabase.kt`
 - Test: `app/src/test/java/wallcrawl/elopenmike/com/core/ai/WeeklyDoseLedgerCalculatorTest.kt`
-- Test: `app/src/androidTest/java/wallcrawl/elopenmike/com/core/database/TrainingProgramStateMigrationTest.kt`
+- Test: `app/src/androidTest/java/wallcrawl/elopenmike/com/core/database/Migration9To10Test.kt`
+- Test: `app/src/androidTest/java/wallcrawl/elopenmike/com/core/database/WeeklyDoseLedgerRepositoryTest.kt`
 
-- [ ] Write failing tests showing one completed work set credits one designated direct-primary muscle once and secondary involvement receives no dose credit.
-- [ ] Add `WeeklyDoseLedger(policyVersion, weekStartEpochDay, directPrimarySets, secondaryInvolvement)`.
-- [ ] Derive ledgers from immutable completed sessions; do not increment mutable counters during generation.
-- [ ] Persist only program state/accepted offers; completed history remains the reconstructable authority.
-- [ ] Run unit/migration tests and commit `feat: add weekly training dose ledger`.
+- [x] Write failing tests showing one completed work set credits one designated direct-primary muscle once and secondary involvement receives no dose credit.
+- [x] Add `WeeklyDoseLedger(policyVersion, weekStartEpochDay, timeZoneId, catalogVersion, reviewPolicyVersion, directPrimarySets, secondaryInvolvement, unattributedWorkSets)`.
+- [x] Derive ledgers from immutable completed sessions; do not increment mutable counters during generation.
+- [x] Persist only a fingerprinted, reconstructable cache; completed history remains the authority and a deleted or corrupted cache changes no result.
+- [x] Count unknown, missing, and `DRAFT` metadata as typed omissions instead of guessing from legacy muscles, names, or programming.
+- [x] Resolve ISO weeks through `ZonedDateTime` in an injected zone, including daylight-saving weeks.
+- [x] Run unit/migration tests and commit `feat: add weekly training dose ledger`.
 
 ### Task 4: Implement State-Based Dose, Effort, and Rest Policy
 
