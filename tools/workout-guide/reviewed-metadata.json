@@ -11,13 +11,13 @@
       "prescriptionShape": "bodyweight_reps",
       "approvedRegressions": [],
       "approvedSubstitutions": [],
-      "capabilityRequirements": ["unsupported_squat"],
+      "capabilityRequirements": [],
       "supportRequirement": "supported",
-      "impactLevel": "low",
+      "impactLevel": "none",
       "equipmentAlternatives": [["Bodyweight", "Wall"], ["Bodyweight", "Chair"]],
       "provenance": {
         "reviewerRole": null,
-        "rationaleOrSource": "AI-authored draft based on the signed WallCrawl evidence review; awaiting human inspection.",
+        "rationaleOrSource": "AI-authored DRAFT for assisted-pistol-squat: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "schemaVersion": 1,
         "policyVersion": 1
@@ -39,7 +39,7 @@
       "equipmentAlternatives": [["Machine"]],
       "provenance": {
         "reviewerRole": null,
-        "rationaleOrSource": "AI-authored draft based on the signed WallCrawl evidence review; awaiting human inspection.",
+        "rationaleOrSource": "AI-authored DRAFT for assisted-pull-up: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "schemaVersion": 1,
         "policyVersion": 1
@@ -56,12 +56,12 @@
       "approvedRegressions": [],
       "approvedSubstitutions": [],
       "capabilityRequirements": [],
-      "supportRequirement": "optional_support",
+      "supportRequirement": "unsupported",
       "impactLevel": "none",
       "equipmentAlternatives": [["Resistance Band"]],
       "provenance": {
         "reviewerRole": null,
-        "rationaleOrSource": "AI-authored draft based on the signed WallCrawl evidence review; awaiting human inspection.",
+        "rationaleOrSource": "AI-authored DRAFT for band-pull-apart: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "schemaVersion": 1,
         "policyVersion": 1
@@ -83,7 +83,7 @@
       "equipmentAlternatives": [["Resistance Band"]],
       "provenance": {
         "reviewerRole": null,
-        "rationaleOrSource": "AI-authored draft based on the signed WallCrawl evidence review; awaiting human inspection.",
+        "rationaleOrSource": "AI-authored DRAFT for banded-glute-bridge: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "schemaVersion": 1,
         "policyVersion": 1
@@ -99,13 +99,13 @@
       "prescriptionShape": "bodyweight_reps",
       "approvedRegressions": [],
       "approvedSubstitutions": [],
-      "capabilityRequirements": ["vertical_pull_or_hang"],
-      "supportRequirement": "optional_support",
+      "capabilityRequirements": [],
+      "supportRequirement": "supported",
       "impactLevel": "none",
-      "equipmentAlternatives": [["Resistance Band"]],
+      "equipmentAlternatives": [["Resistance Band", "Chair"]],
       "provenance": {
         "reviewerRole": null,
-        "rationaleOrSource": "AI-authored draft based on the signed WallCrawl evidence review; awaiting human inspection.",
+        "rationaleOrSource": "AI-authored DRAFT for banded-lat-pulldown: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "schemaVersion": 1,
         "policyVersion": 1
@@ -122,12 +122,12 @@
       "approvedRegressions": [],
       "approvedSubstitutions": [],
       "capabilityRequirements": ["balance_without_support"],
-      "supportRequirement": "optional_support",
+      "supportRequirement": "unsupported",
       "impactLevel": "none",
       "equipmentAlternatives": [["Resistance Band"]],
       "provenance": {
         "reviewerRole": null,
-        "rationaleOrSource": "AI-authored draft based on the signed WallCrawl evidence review; awaiting human inspection.",
+        "rationaleOrSource": "AI-authored DRAFT for banded-pallof-press: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "schemaVersion": 1,
         "policyVersion": 1
@@ -144,12 +144,12 @@
       "approvedRegressions": [],
       "approvedSubstitutions": [],
       "capabilityRequirements": [],
-      "supportRequirement": "optional_support",
+      "supportRequirement": "unsupported",
       "impactLevel": "none",
       "equipmentAlternatives": [["Resistance Band"]],
       "provenance": {
         "reviewerRole": null,
-        "rationaleOrSource": "AI-authored draft based on the signed WallCrawl evidence review; awaiting human inspection.",
+        "rationaleOrSource": "AI-authored DRAFT for banded-row: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "schemaVersion": 1,
         "policyVersion": 1
@@ -167,11 +167,11 @@
       "approvedSubstitutions": [{"exerciseId": "bodyweight-squat"}],
       "capabilityRequirements": ["unsupported_squat", "balance_without_support"],
       "supportRequirement": "unsupported",
-      "impactLevel": "low",
+      "impactLevel": "none",
       "equipmentAlternatives": [["Resistance Band"]],
       "provenance": {
         "reviewerRole": null,
-        "rationaleOrSource": "AI-authored draft based on the signed WallCrawl evidence review; awaiting human inspection.",
+        "rationaleOrSource": "AI-authored DRAFT for banded-squat: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "schemaVersion": 1,
         "policyVersion": 1
@@ -189,11 +189,11 @@
       "approvedSubstitutions": [],
       "capabilityRequirements": ["unsupported_squat", "balance_without_support"],
       "supportRequirement": "unsupported",
-      "impactLevel": "low",
+      "impactLevel": "none",
       "equipmentAlternatives": [["Barbell", "Squat Rack"]],
       "provenance": {
         "reviewerRole": null,
-        "rationaleOrSource": "AI-authored draft based on the signed WallCrawl evidence review; awaiting human inspection.",
+        "rationaleOrSource": "AI-authored DRAFT for barbell-back-squat: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "schemaVersion": 1,
         "policyVersion": 1
@@ -215,7 +215,7 @@
       "equipmentAlternatives": [["Barbell", "Bench", "Squat Rack"]],
       "provenance": {
         "reviewerRole": null,
-        "rationaleOrSource": "AI-authored draft based on the signed WallCrawl evidence review; awaiting human inspection.",
+        "rationaleOrSource": "AI-authored DRAFT for barbell-bench-press: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "schemaVersion": 1,
         "policyVersion": 1
@@ -233,11 +233,11 @@
       "approvedSubstitutions": [],
       "capabilityRequirements": ["balance_without_support"],
       "supportRequirement": "unsupported",
-      "impactLevel": "low",
+      "impactLevel": "none",
       "equipmentAlternatives": [["Barbell"]],
       "provenance": {
         "reviewerRole": null,
-        "rationaleOrSource": "AI-authored draft based on the signed WallCrawl evidence review; awaiting human inspection.",
+        "rationaleOrSource": "AI-authored DRAFT for barbell-deadlift: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "schemaVersion": 1,
         "policyVersion": 1
@@ -255,11 +255,11 @@
       "approvedSubstitutions": [],
       "capabilityRequirements": ["unsupported_squat", "balance_without_support"],
       "supportRequirement": "unsupported",
-      "impactLevel": "low",
+      "impactLevel": "none",
       "equipmentAlternatives": [["Bodyweight"]],
       "provenance": {
         "reviewerRole": null,
-        "rationaleOrSource": "AI-authored draft based on the signed WallCrawl evidence review; awaiting human inspection.",
+        "rationaleOrSource": "AI-authored DRAFT for bodyweight-squat: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "schemaVersion": 1,
         "policyVersion": 1
@@ -276,12 +276,12 @@
       "approvedRegressions": [],
       "approvedSubstitutions": [],
       "capabilityRequirements": ["balance_without_support"],
-      "supportRequirement": "optional_support",
+      "supportRequirement": "unsupported",
       "impactLevel": "none",
       "equipmentAlternatives": [["Cable"]],
       "provenance": {
         "reviewerRole": null,
-        "rationaleOrSource": "AI-authored draft based on the signed WallCrawl evidence review; awaiting human inspection.",
+        "rationaleOrSource": "AI-authored DRAFT for cable-pallof-hold: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "schemaVersion": 1,
         "policyVersion": 1
@@ -298,12 +298,12 @@
       "approvedRegressions": [],
       "approvedSubstitutions": [],
       "capabilityRequirements": ["balance_without_support"],
-      "supportRequirement": "optional_support",
-      "impactLevel": "low",
+      "supportRequirement": "unsupported",
+      "impactLevel": "none",
       "equipmentAlternatives": [["Cable"]],
       "provenance": {
         "reviewerRole": null,
-        "rationaleOrSource": "AI-authored draft based on the signed WallCrawl evidence review; awaiting human inspection.",
+        "rationaleOrSource": "AI-authored DRAFT for cable-pull-through: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "schemaVersion": 1,
         "policyVersion": 1
@@ -325,7 +325,7 @@
       "equipmentAlternatives": [["Pull-up Bar"]],
       "provenance": {
         "reviewerRole": null,
-        "rationaleOrSource": "AI-authored draft based on the signed WallCrawl evidence review; awaiting human inspection.",
+        "rationaleOrSource": "AI-authored DRAFT for dead-hang: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "schemaVersion": 1,
         "policyVersion": 1
@@ -347,7 +347,7 @@
       "equipmentAlternatives": [["Dumbbell", "Bench"]],
       "provenance": {
         "reviewerRole": null,
-        "rationaleOrSource": "AI-authored draft based on the signed WallCrawl evidence review; awaiting human inspection.",
+        "rationaleOrSource": "AI-authored DRAFT for dumbbell-bench-press: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "schemaVersion": 1,
         "policyVersion": 1
@@ -369,7 +369,7 @@
       "equipmentAlternatives": [["Dumbbell"]],
       "provenance": {
         "reviewerRole": null,
-        "rationaleOrSource": "AI-authored draft based on the signed WallCrawl evidence review; awaiting human inspection.",
+        "rationaleOrSource": "AI-authored DRAFT for dumbbell-bent-over-row: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "schemaVersion": 1,
         "policyVersion": 1
@@ -387,11 +387,11 @@
       "approvedSubstitutions": [],
       "capabilityRequirements": ["balance_without_support"],
       "supportRequirement": "unsupported",
-      "impactLevel": "low",
+      "impactLevel": "none",
       "equipmentAlternatives": [["Dumbbell"]],
       "provenance": {
         "reviewerRole": null,
-        "rationaleOrSource": "AI-authored draft based on the signed WallCrawl evidence review; awaiting human inspection.",
+        "rationaleOrSource": "AI-authored DRAFT for dumbbell-romanian-deadlift: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "schemaVersion": 1,
         "policyVersion": 1
@@ -413,7 +413,7 @@
       "equipmentAlternatives": [["Bodyweight"]],
       "provenance": {
         "reviewerRole": null,
-        "rationaleOrSource": "AI-authored draft based on the signed WallCrawl evidence review; awaiting human inspection.",
+        "rationaleOrSource": "AI-authored DRAFT for glute-bridge: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "schemaVersion": 1,
         "policyVersion": 1
@@ -431,11 +431,11 @@
       "approvedSubstitutions": [],
       "capabilityRequirements": ["unsupported_squat", "balance_without_support"],
       "supportRequirement": "unsupported",
-      "impactLevel": "low",
+      "impactLevel": "none",
       "equipmentAlternatives": [["Dumbbell"], ["Kettlebell"]],
       "provenance": {
         "reviewerRole": null,
-        "rationaleOrSource": "AI-authored draft based on the signed WallCrawl evidence review; awaiting human inspection.",
+        "rationaleOrSource": "AI-authored DRAFT for goblet-squat: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "schemaVersion": 1,
         "policyVersion": 1
@@ -453,11 +453,11 @@
       "approvedSubstitutions": [],
       "capabilityRequirements": ["balance_without_support"],
       "supportRequirement": "unsupported",
-      "impactLevel": "low",
+      "impactLevel": "none",
       "equipmentAlternatives": [["Kettlebell"]],
       "provenance": {
         "reviewerRole": null,
-        "rationaleOrSource": "AI-authored draft based on the signed WallCrawl evidence review; awaiting human inspection.",
+        "rationaleOrSource": "AI-authored DRAFT for kettlebell-romanian-deadlift: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "schemaVersion": 1,
         "policyVersion": 1
@@ -479,7 +479,7 @@
       "equipmentAlternatives": [["Bodyweight"]],
       "provenance": {
         "reviewerRole": null,
-        "rationaleOrSource": "AI-authored draft based on the signed WallCrawl evidence review; awaiting human inspection.",
+        "rationaleOrSource": "AI-authored DRAFT for knee-push-up: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "schemaVersion": 1,
         "policyVersion": 1
@@ -497,11 +497,11 @@
       "approvedSubstitutions": [],
       "capabilityRequirements": [],
       "supportRequirement": "supported",
-      "impactLevel": "low",
+      "impactLevel": "none",
       "equipmentAlternatives": [["Machine"]],
       "provenance": {
         "reviewerRole": null,
-        "rationaleOrSource": "AI-authored draft based on the signed WallCrawl evidence review; awaiting human inspection.",
+        "rationaleOrSource": "AI-authored DRAFT for leg-press: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "schemaVersion": 1,
         "policyVersion": 1
@@ -523,7 +523,7 @@
       "equipmentAlternatives": [["Machine"]],
       "provenance": {
         "reviewerRole": null,
-        "rationaleOrSource": "AI-authored draft based on the signed WallCrawl evidence review; awaiting human inspection.",
+        "rationaleOrSource": "AI-authored DRAFT for machine-chest-press: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "schemaVersion": 1,
         "policyVersion": 1
@@ -545,7 +545,7 @@
       "equipmentAlternatives": [["Machine"]],
       "provenance": {
         "reviewerRole": null,
-        "rationaleOrSource": "AI-authored draft based on the signed WallCrawl evidence review; awaiting human inspection.",
+        "rationaleOrSource": "AI-authored DRAFT for machine-row: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "schemaVersion": 1,
         "policyVersion": 1
@@ -567,7 +567,7 @@
       "equipmentAlternatives": [["Pull-up Bar"]],
       "provenance": {
         "reviewerRole": null,
-        "rationaleOrSource": "AI-authored draft based on the signed WallCrawl evidence review; awaiting human inspection.",
+        "rationaleOrSource": "AI-authored DRAFT for negative-pull-up: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "schemaVersion": 1,
         "policyVersion": 1
@@ -585,11 +585,11 @@
       "approvedSubstitutions": [],
       "capabilityRequirements": ["unsupported_squat", "balance_without_support"],
       "supportRequirement": "unsupported",
-      "impactLevel": "low",
+      "impactLevel": "none",
       "equipmentAlternatives": [["Bodyweight"]],
       "provenance": {
         "reviewerRole": null,
-        "rationaleOrSource": "AI-authored draft based on the signed WallCrawl evidence review; awaiting human inspection.",
+        "rationaleOrSource": "AI-authored DRAFT for pistol-squat: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "schemaVersion": 1,
         "policyVersion": 1
@@ -605,13 +605,13 @@
       "prescriptionShape": "duration",
       "approvedRegressions": [],
       "approvedSubstitutions": [],
-      "capabilityRequirements": ["floor_transition", "upper_body_bodyweight_push"],
+      "capabilityRequirements": ["floor_transition"],
       "supportRequirement": "unsupported",
       "impactLevel": "none",
       "equipmentAlternatives": [["Bodyweight"]],
       "provenance": {
         "reviewerRole": null,
-        "rationaleOrSource": "AI-authored draft based on the signed WallCrawl evidence review; awaiting human inspection.",
+        "rationaleOrSource": "AI-authored DRAFT for plank: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "schemaVersion": 1,
         "policyVersion": 1
@@ -633,7 +633,7 @@
       "equipmentAlternatives": [["Pull-up Bar"]],
       "provenance": {
         "reviewerRole": null,
-        "rationaleOrSource": "AI-authored draft based on the signed WallCrawl evidence review; awaiting human inspection.",
+        "rationaleOrSource": "AI-authored DRAFT for pull-ups: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "schemaVersion": 1,
         "policyVersion": 1
@@ -649,13 +649,13 @@
       "prescriptionShape": "bodyweight_reps",
       "approvedRegressions": [{"exerciseId": "knee-push-up"}],
       "approvedSubstitutions": [],
-      "capabilityRequirements": ["upper_body_bodyweight_push", "floor_transition", "balance_without_support"],
+      "capabilityRequirements": ["upper_body_bodyweight_push", "floor_transition"],
       "supportRequirement": "unsupported",
       "impactLevel": "none",
       "equipmentAlternatives": [["Bodyweight"]],
       "provenance": {
         "reviewerRole": null,
-        "rationaleOrSource": "AI-authored draft based on the signed WallCrawl evidence review; awaiting human inspection.",
+        "rationaleOrSource": "AI-authored DRAFT for push-up: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "schemaVersion": 1,
         "policyVersion": 1
@@ -677,7 +677,7 @@
       "equipmentAlternatives": [["Cable"]],
       "provenance": {
         "reviewerRole": null,
-        "rationaleOrSource": "AI-authored draft based on the signed WallCrawl evidence review; awaiting human inspection.",
+        "rationaleOrSource": "AI-authored DRAFT for seated-row: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "schemaVersion": 1,
         "policyVersion": 1
@@ -693,13 +693,13 @@
       "prescriptionShape": "duration",
       "approvedRegressions": [{"exerciseId": "plank"}],
       "approvedSubstitutions": [],
-      "capabilityRequirements": ["floor_transition", "upper_body_bodyweight_push", "balance_without_support"],
+      "capabilityRequirements": ["floor_transition"],
       "supportRequirement": "unsupported",
       "impactLevel": "none",
       "equipmentAlternatives": [["Bodyweight"]],
       "provenance": {
         "reviewerRole": null,
-        "rationaleOrSource": "AI-authored draft based on the signed WallCrawl evidence review; awaiting human inspection.",
+        "rationaleOrSource": "AI-authored DRAFT for side-plank: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "schemaVersion": 1,
         "policyVersion": 1
@@ -717,11 +717,11 @@
       "approvedSubstitutions": [],
       "capabilityRequirements": [],
       "supportRequirement": "supported",
-      "impactLevel": "low",
+      "impactLevel": "none",
       "equipmentAlternatives": [["Machine"]],
       "provenance": {
         "reviewerRole": null,
-        "rationaleOrSource": "AI-authored draft based on the signed WallCrawl evidence review; awaiting human inspection.",
+        "rationaleOrSource": "AI-authored DRAFT for smith-machine-romanian-deadlift: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "schemaVersion": 1,
         "policyVersion": 1
@@ -737,13 +737,13 @@
       "prescriptionShape": "weight_reps",
       "approvedRegressions": [],
       "approvedSubstitutions": [],
-      "capabilityRequirements": ["unsupported_squat"],
+      "capabilityRequirements": [],
       "supportRequirement": "supported",
-      "impactLevel": "low",
+      "impactLevel": "none",
       "equipmentAlternatives": [["Machine"]],
       "provenance": {
         "reviewerRole": null,
-        "rationaleOrSource": "AI-authored draft based on the signed WallCrawl evidence review; awaiting human inspection.",
+        "rationaleOrSource": "AI-authored DRAFT for smith-machine-split-squat: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "schemaVersion": 1,
         "policyVersion": 1
@@ -759,13 +759,13 @@
       "prescriptionShape": "weight_reps",
       "approvedRegressions": [{"exerciseId": "smith-machine-split-squat"}],
       "approvedSubstitutions": [],
-      "capabilityRequirements": ["unsupported_squat", "balance_without_support"],
+      "capabilityRequirements": ["balance_without_support"],
       "supportRequirement": "unsupported",
-      "impactLevel": "low",
+      "impactLevel": "none",
       "equipmentAlternatives": [["Dumbbell"]],
       "provenance": {
         "reviewerRole": null,
-        "rationaleOrSource": "AI-authored draft based on the signed WallCrawl evidence review; awaiting human inspection.",
+        "rationaleOrSource": "AI-authored DRAFT for split-squat: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "schemaVersion": 1,
         "policyVersion": 1
@@ -787,7 +787,7 @@
       "equipmentAlternatives": [["Wall"]],
       "provenance": {
         "reviewerRole": null,
-        "rationaleOrSource": "AI-authored draft based on the signed WallCrawl evidence review; awaiting human inspection.",
+        "rationaleOrSource": "AI-authored DRAFT for wall-push-up: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "schemaVersion": 1,
         "policyVersion": 1
@@ -809,7 +809,7 @@
       "equipmentAlternatives": [["Bodyweight", "Wall"]],
       "provenance": {
         "reviewerRole": null,
-        "rationaleOrSource": "AI-authored draft based on the signed WallCrawl evidence review; awaiting human inspection.",
+        "rationaleOrSource": "AI-authored DRAFT for wall-sit: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "schemaVersion": 1,
         "policyVersion": 1
