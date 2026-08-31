@@ -148,7 +148,7 @@ class ExerciseEligibilityPolicy {
     ): Boolean = approvedRegressions.any { link ->
         val regression = exercisesById[link.exerciseId] ?: return@any false
         val regressionMetadata = regression.reviewedMetadata ?: return@any false
-            regressionMetadata.reviewState == ReviewState.APPROVED &&
+        regressionMetadata.reviewState == ReviewState.APPROVED &&
             regressionMetadata.supportRequirement == SupportRequirement.SUPPORTED &&
             regression.id !in excludedExerciseIds &&
             regressionMetadata.hasAvailableEquipment(ownedEquipment) &&
