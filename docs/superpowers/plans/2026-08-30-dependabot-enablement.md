@@ -197,13 +197,19 @@ Run:
 ```bash
 gh api 'repos/mcasillas17/WallCrawl/dependabot/alerts?state=open&per_page=100' \
   --paginate \
-  --jq '.[].security_advisory.severity' |
-  sort |
-  uniq -c
+  --slurp |
+  jq '[.[][] | .security_advisory.severity] |
+    {
+      critical: (map(select(. == "critical")) | length),
+      high: (map(select(. == "high")) | length),
+      medium: (map(select(. == "medium")) | length),
+      low: (map(select(. == "low")) | length),
+      total: length
+    }'
 ```
 
-Expected: zero or more counts for `critical`, `high`, `medium`, and `low`.
-Record zero for severities omitted from the output.
+Expected: a JSON object with explicit counts for `critical`, `high`, `medium`,
+`low`, and `total`.
 
 ### Task 4: Validate and deliver repository changes
 
