@@ -88,7 +88,7 @@ Update only evidence-supported categorical fields, directed graph edges, and AI-
 
 ```bash
 python3 tools/workout-guide/import_catalog.py \
-  --source /Users/elopenmike/build/Apps/Workouts/guide
+  --source /path/to/pinned/workout-guide
 ```
 
 - [ ] **Step 5: Run metadata tests**
@@ -96,7 +96,7 @@ python3 tools/workout-guide/import_catalog.py \
 ```bash
 python3 -m unittest discover -s tools/workout-guide -p 'test_*.py' -v
 python3 tools/workout-guide/import_catalog.py \
-  --source /Users/elopenmike/build/Apps/Workouts/guide \
+  --source /path/to/pinned/workout-guide \
   --check
 ```
 
@@ -147,13 +147,9 @@ Add concise links from the reviewed-metadata documentation and README without cl
 ```bash
 python3 -m unittest discover -s tools/workout-guide -p 'test_*.py' -v
 python3 tools/workout-guide/import_catalog.py \
-  --source /Users/elopenmike/build/Apps/Workouts/guide \
+  --source /path/to/pinned/workout-guide \
   --check
-JAVA_HOME=/opt/homebrew/opt/openjdk@17 \
-ANDROID_HOME=/Users/elopenmike/Library/Android/sdk \
 ./gradlew test lint assembleDebug --stacktrace --no-daemon
-JAVA_HOME=/opt/homebrew/opt/openjdk@17 \
-ANDROID_HOME=/Users/elopenmike/Library/Android/sdk \
 ./gradlew connectedDebugAndroidTest --no-daemon
 git diff --check
 ```
