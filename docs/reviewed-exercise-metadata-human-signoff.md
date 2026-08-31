@@ -29,7 +29,7 @@ Packet status today:
   - Equipment: `["Bodyweight", "Wall"]`; `["Bodyweight", "Chair"]`
   - Provenance rationale: AI-authored DRAFT for assisted-pistol-squat: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.
 - Roundtable verdict: `READY_AFTER_CORRECTIONS`
-- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, prescription shape, capability requirements, support requirement, impact level, and directed graph edges.
+- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, prescription shape mapped from exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, capability requirements, support requirement, impact level, and directed graph edges.
 - Unresolved caveat: None.
 - [ ] Approve this entry as written
 - [ ] Request changes
@@ -54,7 +54,7 @@ Packet status today:
   - Equipment: `["Machine"]`
   - Provenance rationale: AI-authored DRAFT for assisted-pull-up: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.
 - Roundtable verdict: `READY_AS_WRITTEN`
-- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, prescription shape, capability requirements, support requirement, impact level, and directed graph edges.
+- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, prescription shape mapped from exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, capability requirements, support requirement, impact level, and directed graph edges.
 - Unresolved caveat: None.
 - [ ] Approve this entry as written
 - [ ] Request changes
@@ -79,7 +79,7 @@ Packet status today:
   - Equipment: `["Resistance Band"]`
   - Provenance rationale: AI-authored DRAFT for band-pull-apart: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.
 - Roundtable verdict: `READY_AFTER_CORRECTIONS`
-- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, prescription shape, capability requirements, support requirement, impact level, and directed graph edges.
+- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, prescription shape mapped from exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, capability requirements, support requirement, impact level, and directed graph edges.
 - Unresolved caveat: None.
 - [ ] Approve this entry as written
 - [ ] Request changes
@@ -104,7 +104,7 @@ Packet status today:
   - Equipment: `["Resistance Band"]`
   - Provenance rationale: AI-authored DRAFT for banded-glute-bridge: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.
 - Roundtable verdict: `READY_AS_WRITTEN`
-- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, prescription shape, capability requirements, support requirement, impact level, and directed graph edges.
+- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, prescription shape mapped from exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, capability requirements, support requirement, impact level, and directed graph edges.
 - Unresolved caveat: None.
 - [ ] Approve this entry as written
 - [ ] Request changes
@@ -129,7 +129,7 @@ Packet status today:
   - Equipment: `["Resistance Band", "Chair"]`
   - Provenance rationale: AI-authored DRAFT for banded-lat-pulldown: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.
 - Roundtable verdict: `READY_AFTER_CORRECTIONS`
-- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, prescription shape, capability requirements, support requirement, impact level, and directed graph edges.
+- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, prescription shape mapped from exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, capability requirements, support requirement, impact level, and directed graph edges.
 - Unresolved caveat: None.
 - [ ] Approve this entry as written
 - [ ] Request changes
@@ -154,7 +154,7 @@ Packet status today:
   - Equipment: `["Resistance Band"]`
   - Provenance rationale: AI-authored DRAFT for banded-pallof-press: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.
 - Roundtable verdict: `READY_AFTER_CORRECTIONS`
-- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, prescription shape, capability requirements, support requirement, impact level, and directed graph edges.
+- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, prescription shape mapped from exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, capability requirements, support requirement, impact level, and directed graph edges.
 - Unresolved caveat: None.
 - [ ] Approve this entry as written
 - [ ] Request changes
@@ -179,7 +179,7 @@ Packet status today:
   - Equipment: `["Resistance Band"]`
   - Provenance rationale: AI-authored DRAFT for banded-row: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.
 - Roundtable verdict: `READY_AFTER_CORRECTIONS`
-- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, prescription shape, capability requirements, support requirement, impact level, and directed graph edges.
+- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, prescription shape mapped from exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, capability requirements, support requirement, impact level, and directed graph edges.
 - Unresolved caveat: None.
 - [ ] Approve this entry as written
 - [ ] Request changes
@@ -204,7 +204,7 @@ Packet status today:
   - Equipment: `["Resistance Band"]`
   - Provenance rationale: AI-authored DRAFT for banded-squat: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.
 - Roundtable verdict: `READY_AFTER_CORRECTIONS`
-- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, prescription shape, capability requirements, support requirement, impact level, and directed graph edges.
+- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, prescription shape mapped from exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, capability requirements, support requirement, impact level, and directed graph edges.
 - Unresolved caveat: None.
 - [ ] Approve this entry as written
 - [ ] Request changes
@@ -229,7 +229,7 @@ Packet status today:
   - Equipment: `["Barbell", "Squat Rack"]`
   - Provenance rationale: AI-authored DRAFT for barbell-back-squat: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.
 - Roundtable verdict: `READY_AFTER_CORRECTIONS`
-- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, prescription shape, capability requirements, support requirement, impact level, and directed graph edges.
+- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, prescription shape mapped from exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, capability requirements, support requirement, impact level, and directed graph edges.
 - Unresolved caveat: None.
 - [ ] Approve this entry as written
 - [ ] Request changes
@@ -254,7 +254,7 @@ Packet status today:
   - Equipment: `["Barbell", "Bench", "Squat Rack"]`
   - Provenance rationale: AI-authored DRAFT for barbell-bench-press: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.
 - Roundtable verdict: `READY_AS_WRITTEN`
-- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, prescription shape, capability requirements, support requirement, impact level, and directed graph edges.
+- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, prescription shape mapped from exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, capability requirements, support requirement, impact level, and directed graph edges.
 - Unresolved caveat: None.
 - [ ] Approve this entry as written
 - [ ] Request changes
@@ -279,7 +279,7 @@ Packet status today:
   - Equipment: `["Barbell"]`
   - Provenance rationale: AI-authored DRAFT for barbell-deadlift: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.
 - Roundtable verdict: `READY_AFTER_CORRECTIONS`
-- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, prescription shape, capability requirements, support requirement, impact level, and directed graph edges.
+- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, prescription shape mapped from exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, capability requirements, support requirement, impact level, and directed graph edges.
 - Unresolved caveat: Human ratification required on `directPrimaryMuscle=Hamstrings`; the pinned source says `Posterior Chain`.
 - [ ] Approve this entry as written
 - [ ] Request changes
@@ -304,7 +304,7 @@ Packet status today:
   - Equipment: `["Bodyweight"]`
   - Provenance rationale: AI-authored DRAFT for bodyweight-squat: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.
 - Roundtable verdict: `READY_AFTER_CORRECTIONS`
-- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, prescription shape, capability requirements, support requirement, impact level, and directed graph edges.
+- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, prescription shape mapped from exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, capability requirements, support requirement, impact level, and directed graph edges.
 - Unresolved caveat: None.
 - [ ] Approve this entry as written
 - [ ] Request changes
@@ -329,7 +329,7 @@ Packet status today:
   - Equipment: `["Cable"]`
   - Provenance rationale: AI-authored DRAFT for cable-pallof-hold: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.
 - Roundtable verdict: `READY_AFTER_CORRECTIONS`
-- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, prescription shape, capability requirements, support requirement, impact level, and directed graph edges.
+- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, prescription shape mapped from exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, capability requirements, support requirement, impact level, and directed graph edges.
 - Unresolved caveat: None.
 - [ ] Approve this entry as written
 - [ ] Request changes
@@ -354,7 +354,7 @@ Packet status today:
   - Equipment: `["Cable"]`
   - Provenance rationale: AI-authored DRAFT for cable-pull-through: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.
 - Roundtable verdict: `READY_AFTER_CORRECTIONS`
-- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, prescription shape, capability requirements, support requirement, impact level, and directed graph edges.
+- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, prescription shape mapped from exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, capability requirements, support requirement, impact level, and directed graph edges.
 - Unresolved caveat: None.
 - [ ] Approve this entry as written
 - [ ] Request changes
@@ -379,7 +379,7 @@ Packet status today:
   - Equipment: `["Pull-up Bar"]`
   - Provenance rationale: AI-authored DRAFT for dead-hang: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.
 - Roundtable verdict: `READY_AS_WRITTEN`
-- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, prescription shape, capability requirements, support requirement, impact level, and directed graph edges.
+- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, prescription shape mapped from exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, capability requirements, support requirement, impact level, and directed graph edges.
 - Unresolved caveat: None.
 - [ ] Approve this entry as written
 - [ ] Request changes
@@ -404,7 +404,7 @@ Packet status today:
   - Equipment: `["Dumbbell", "Bench"]`
   - Provenance rationale: AI-authored DRAFT for dumbbell-bench-press: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.
 - Roundtable verdict: `READY_AS_WRITTEN`
-- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, prescription shape, capability requirements, support requirement, impact level, and directed graph edges.
+- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, prescription shape mapped from exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, capability requirements, support requirement, impact level, and directed graph edges.
 - Unresolved caveat: None.
 - [ ] Approve this entry as written
 - [ ] Request changes
@@ -429,7 +429,7 @@ Packet status today:
   - Equipment: `["Dumbbell"]`
   - Provenance rationale: AI-authored DRAFT for dumbbell-bent-over-row: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.
 - Roundtable verdict: `READY_AS_WRITTEN`
-- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, prescription shape, capability requirements, support requirement, impact level, and directed graph edges.
+- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, prescription shape mapped from exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, capability requirements, support requirement, impact level, and directed graph edges.
 - Unresolved caveat: None.
 - [ ] Approve this entry as written
 - [ ] Request changes
@@ -454,7 +454,7 @@ Packet status today:
   - Equipment: `["Dumbbell"]`
   - Provenance rationale: AI-authored DRAFT for dumbbell-romanian-deadlift: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.
 - Roundtable verdict: `READY_AFTER_CORRECTIONS`
-- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, prescription shape, capability requirements, support requirement, impact level, and directed graph edges.
+- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, prescription shape mapped from exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, capability requirements, support requirement, impact level, and directed graph edges.
 - Unresolved caveat: None.
 - [ ] Approve this entry as written
 - [ ] Request changes
@@ -479,7 +479,7 @@ Packet status today:
   - Equipment: `["Bodyweight"]`
   - Provenance rationale: AI-authored DRAFT for glute-bridge: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.
 - Roundtable verdict: `READY_AS_WRITTEN`
-- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, prescription shape, capability requirements, support requirement, impact level, and directed graph edges.
+- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, prescription shape mapped from exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, capability requirements, support requirement, impact level, and directed graph edges.
 - Unresolved caveat: None.
 - [ ] Approve this entry as written
 - [ ] Request changes
@@ -504,7 +504,7 @@ Packet status today:
   - Equipment: `["Dumbbell"]`; `["Kettlebell"]`
   - Provenance rationale: AI-authored DRAFT for goblet-squat: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.
 - Roundtable verdict: `READY_AFTER_CORRECTIONS`
-- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, prescription shape, capability requirements, support requirement, impact level, and directed graph edges.
+- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, prescription shape mapped from exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, capability requirements, support requirement, impact level, and directed graph edges.
 - Unresolved caveat: None.
 - [ ] Approve this entry as written
 - [ ] Request changes
@@ -529,7 +529,7 @@ Packet status today:
   - Equipment: `["Kettlebell"]`
   - Provenance rationale: AI-authored DRAFT for kettlebell-romanian-deadlift: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.
 - Roundtable verdict: `READY_AFTER_CORRECTIONS`
-- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, prescription shape, capability requirements, support requirement, impact level, and directed graph edges.
+- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, prescription shape mapped from exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, capability requirements, support requirement, impact level, and directed graph edges.
 - Unresolved caveat: None.
 - [ ] Approve this entry as written
 - [ ] Request changes
@@ -554,7 +554,7 @@ Packet status today:
   - Equipment: `["Bodyweight"]`
   - Provenance rationale: AI-authored DRAFT for knee-push-up: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.
 - Roundtable verdict: `READY_AS_WRITTEN`
-- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, prescription shape, capability requirements, support requirement, impact level, and directed graph edges.
+- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, prescription shape mapped from exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, capability requirements, support requirement, impact level, and directed graph edges.
 - Unresolved caveat: None.
 - [ ] Approve this entry as written
 - [ ] Request changes
@@ -579,7 +579,7 @@ Packet status today:
   - Equipment: `["Machine"]`
   - Provenance rationale: AI-authored DRAFT for leg-press: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.
 - Roundtable verdict: `READY_AFTER_CORRECTIONS`
-- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, prescription shape, capability requirements, support requirement, impact level, and directed graph edges.
+- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, prescription shape mapped from exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, capability requirements, support requirement, impact level, and directed graph edges.
 - Unresolved caveat: None.
 - [ ] Approve this entry as written
 - [ ] Request changes
@@ -604,7 +604,7 @@ Packet status today:
   - Equipment: `["Machine"]`
   - Provenance rationale: AI-authored DRAFT for machine-chest-press: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.
 - Roundtable verdict: `READY_AS_WRITTEN`
-- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, prescription shape, capability requirements, support requirement, impact level, and directed graph edges.
+- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, prescription shape mapped from exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, capability requirements, support requirement, impact level, and directed graph edges.
 - Unresolved caveat: None.
 - [ ] Approve this entry as written
 - [ ] Request changes
@@ -629,7 +629,7 @@ Packet status today:
   - Equipment: `["Machine"]`
   - Provenance rationale: AI-authored DRAFT for machine-row: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.
 - Roundtable verdict: `READY_AS_WRITTEN`
-- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, prescription shape, capability requirements, support requirement, impact level, and directed graph edges.
+- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, prescription shape mapped from exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, capability requirements, support requirement, impact level, and directed graph edges.
 - Unresolved caveat: None.
 - [ ] Approve this entry as written
 - [ ] Request changes
@@ -654,7 +654,7 @@ Packet status today:
   - Equipment: `["Pull-up Bar"]`
   - Provenance rationale: AI-authored DRAFT for negative-pull-up: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.
 - Roundtable verdict: `READY_AS_WRITTEN`
-- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, prescription shape, capability requirements, support requirement, impact level, and directed graph edges.
+- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, prescription shape mapped from exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, capability requirements, support requirement, impact level, and directed graph edges.
 - Unresolved caveat: None.
 - [ ] Approve this entry as written
 - [ ] Request changes
@@ -679,7 +679,7 @@ Packet status today:
   - Equipment: `["Bodyweight"]`
   - Provenance rationale: AI-authored DRAFT for pistol-squat: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.
 - Roundtable verdict: `READY_AFTER_CORRECTIONS`
-- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, prescription shape, capability requirements, support requirement, impact level, and directed graph edges.
+- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, prescription shape mapped from exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, capability requirements, support requirement, impact level, and directed graph edges.
 - Unresolved caveat: None.
 - [ ] Approve this entry as written
 - [ ] Request changes
@@ -704,7 +704,7 @@ Packet status today:
   - Equipment: `["Bodyweight"]`
   - Provenance rationale: AI-authored DRAFT for plank: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.
 - Roundtable verdict: `READY_AFTER_CORRECTIONS`
-- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, prescription shape, capability requirements, support requirement, impact level, and directed graph edges.
+- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, prescription shape mapped from exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, capability requirements, support requirement, impact level, and directed graph edges.
 - Unresolved caveat: None.
 - [ ] Approve this entry as written
 - [ ] Request changes
@@ -729,7 +729,7 @@ Packet status today:
   - Equipment: `["Pull-up Bar"]`
   - Provenance rationale: AI-authored DRAFT for pull-ups: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.
 - Roundtable verdict: `READY_AS_WRITTEN`
-- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, prescription shape, capability requirements, support requirement, impact level, and directed graph edges.
+- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, prescription shape mapped from exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, capability requirements, support requirement, impact level, and directed graph edges.
 - Unresolved caveat: None.
 - [ ] Approve this entry as written
 - [ ] Request changes
@@ -754,7 +754,7 @@ Packet status today:
   - Equipment: `["Bodyweight"]`
   - Provenance rationale: AI-authored DRAFT for push-up: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.
 - Roundtable verdict: `READY_AFTER_CORRECTIONS`
-- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, prescription shape, capability requirements, support requirement, impact level, and directed graph edges.
+- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, prescription shape mapped from exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, capability requirements, support requirement, impact level, and directed graph edges.
 - Unresolved caveat: None.
 - [ ] Approve this entry as written
 - [ ] Request changes
@@ -779,7 +779,7 @@ Packet status today:
   - Equipment: `["Cable"]`
   - Provenance rationale: AI-authored DRAFT for seated-row: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.
 - Roundtable verdict: `READY_AS_WRITTEN`
-- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, prescription shape, capability requirements, support requirement, impact level, and directed graph edges.
+- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, prescription shape mapped from exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, capability requirements, support requirement, impact level, and directed graph edges.
 - Unresolved caveat: None.
 - [ ] Approve this entry as written
 - [ ] Request changes
@@ -804,7 +804,7 @@ Packet status today:
   - Equipment: `["Bodyweight"]`
   - Provenance rationale: AI-authored DRAFT for side-plank: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.
 - Roundtable verdict: `READY_AFTER_CORRECTIONS`
-- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, prescription shape, capability requirements, support requirement, impact level, and directed graph edges.
+- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, prescription shape mapped from exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, capability requirements, support requirement, impact level, and directed graph edges.
 - Unresolved caveat: None.
 - [ ] Approve this entry as written
 - [ ] Request changes
@@ -829,7 +829,7 @@ Packet status today:
   - Equipment: `["Machine"]`
   - Provenance rationale: AI-authored DRAFT for smith-machine-romanian-deadlift: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.
 - Roundtable verdict: `READY_AFTER_CORRECTIONS`
-- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, prescription shape, capability requirements, support requirement, impact level, and directed graph edges.
+- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, prescription shape mapped from exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, capability requirements, support requirement, impact level, and directed graph edges.
 - Unresolved caveat: None.
 - [ ] Approve this entry as written
 - [ ] Request changes
@@ -854,7 +854,7 @@ Packet status today:
   - Equipment: `["Machine"]`
   - Provenance rationale: AI-authored DRAFT for smith-machine-split-squat: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.
 - Roundtable verdict: `READY_AFTER_CORRECTIONS`
-- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, prescription shape, capability requirements, support requirement, impact level, and directed graph edges.
+- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, prescription shape mapped from exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, capability requirements, support requirement, impact level, and directed graph edges.
 - Unresolved caveat: None.
 - [ ] Approve this entry as written
 - [ ] Request changes
@@ -879,7 +879,7 @@ Packet status today:
   - Equipment: `["Dumbbell"]`
   - Provenance rationale: AI-authored DRAFT for split-squat: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.
 - Roundtable verdict: `READY_AFTER_CORRECTIONS`
-- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, prescription shape, capability requirements, support requirement, impact level, and directed graph edges.
+- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, prescription shape mapped from exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, capability requirements, support requirement, impact level, and directed graph edges.
 - Unresolved caveat: None.
 - [ ] Approve this entry as written
 - [ ] Request changes
@@ -904,7 +904,7 @@ Packet status today:
   - Equipment: `["Wall"]`
   - Provenance rationale: AI-authored DRAFT for wall-push-up: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.
 - Roundtable verdict: `READY_AS_WRITTEN`
-- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, prescription shape, capability requirements, support requirement, impact level, and directed graph edges.
+- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, prescription shape mapped from exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, capability requirements, support requirement, impact level, and directed graph edges.
 - Unresolved caveat: None.
 - [ ] Approve this entry as written
 - [ ] Request changes
@@ -929,7 +929,7 @@ Packet status today:
   - Equipment: `["Bodyweight", "Wall"]`
   - Provenance rationale: AI-authored DRAFT for wall-sit: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.
 - Roundtable verdict: `READY_AS_WRITTEN`
-- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, prescription shape, capability requirements, support requirement, impact level, and directed graph edges.
+- Source basis: Pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` for source-derived muscles, prescription shape mapped from exercise type, and listed equipment; WallCrawl product-policy fields for movement pattern, complexity, progression family, capability requirements, support requirement, impact level, and directed graph edges.
 - Unresolved caveat: None.
 - [ ] Approve this entry as written
 - [ ] Request changes

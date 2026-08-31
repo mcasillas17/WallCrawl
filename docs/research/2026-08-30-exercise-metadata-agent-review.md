@@ -11,23 +11,23 @@ This record summarizes the documentation-side review packet for the 37-entry `re
 - Authoritative upstream commit: `ba0b709cb20430361b2cb33aaadd20998164a916`
 - Source correction: the user-provided checkout was newer than WallCrawl's pin, so reviewers read the pinned commit directly without resetting that checkout.
 - Round 2 resolved semantics from exact product copy plus pinned manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916`.
-- Round 3 ended with all four reviewers approving the final correction resolution.
+- Round 3 ended with all four reviewers confirming the final correction resolution.
 - Current state remains unchanged: all 37 entries are `reviewState=draft`, `provenance.reviewerRole=null`, and `provenance.reviewedAtEpochMillis=null`.
 
 ## Method and lenses
 
 | Agent | Model | Primary lens | Method note |
 | --- | --- | --- | --- |
-| Opus | Claude Opus 4.8 | Resistance-training dose and program construction | Reviewed all 37 entries independently, then joined convergence and final approval. |
+| Opus | Claude Opus 4.8 | Resistance-training dose and program construction | Reviewed all 37 entries independently, then joined convergence and final confirmation. |
 | Grok | Grok 4.6 | Capability, support, impact, and inclusive-access semantics | Reviewed all 37 entries independently, then challenged capability/support assumptions in convergence. |
 | Gemini | Gemini 3.7 Flash | Equipment, biomechanics, regressions, and substitutions | Reviewed all 37 entries independently, then confirmed the final correction resolution. |
-| Terra | GPT-5.6 Terra | Provenance, deterministic-policy compatibility, and evidence boundaries | Reviewed all 37 entries independently, revised insufficiency calls, then approved the final correction resolution. |
+| Terra | GPT-5.6 Terra | Provenance, deterministic-policy compatibility, and evidence boundaries | Reviewed all 37 entries independently, revised insufficiency calls, then confirmed the final correction resolution. |
 
 Review sequence:
 
 1. **Round 1**: all four agents independently reviewed all 37 entries.
 2. **Round 2**: disagreements were rechecked against exact product copy, pinned manifest/artwork, and WallCrawl product-policy fields.
-3. **Round 3**: all four agents approved the final correction resolution now present in the JSON draft.
+3. **Round 3**: all four agents converged on the final correction resolution now present in the JSON draft.
 
 Approval guardrails held throughout: model consensus, Markdown checkboxes, pull-request approval, and merge do not approve metadata. Human approval requires a later deliberate authored-data change with a real reviewer role, real review time, and updated provenance.
 
@@ -47,7 +47,7 @@ Round-1 disagreement pattern:
 - Opus was nearly entirely affirmative and raised only one correction.
 - Grok challenged most support, capability, and impact assignments.
 - Gemini accepted the cohort as-written in Round 1.
-- Terra initially treated several semantics as unresolved rather than approved, then revised those calls during Round 2 once exact product copy and product-policy meanings were pinned down.
+- Terra initially treated several semantics as unresolved, then revised those calls during Round 2 once exact product copy and product-policy meanings were pinned down.
 
 ## Final semantic definitions used in Round 2 convergence
 
