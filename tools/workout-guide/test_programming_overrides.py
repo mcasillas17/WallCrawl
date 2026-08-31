@@ -125,6 +125,68 @@ class ReviewedMetadataTest(unittest.TestCase):
             self.assertIsNone(metadata["provenance"]["reviewerRole"], exercise_id)
             self.assertIsNone(metadata["provenance"]["reviewedAtEpochMillis"], exercise_id)
 
+    def test_roundtable_corrections_match_product_capability_semantics(self) -> None:
+        expected_capabilities = {
+            "assisted-pistol-squat": [],
+            "banded-lat-pulldown": [],
+            "plank": ["floor_transition"],
+            "push-up": ["upper_body_bodyweight_push", "floor_transition"],
+            "side-plank": ["floor_transition"],
+            "smith-machine-split-squat": [],
+            "split-squat": ["balance_without_support"],
+        }
+        expected_support = {
+            "band-pull-apart": "unsupported",
+            "banded-lat-pulldown": "supported",
+            "banded-pallof-press": "unsupported",
+            "banded-row": "unsupported",
+            "cable-pallof-hold": "unsupported",
+            "cable-pull-through": "unsupported",
+        }
+        expected_no_impact = {
+            "assisted-pistol-squat",
+            "banded-squat",
+            "barbell-back-squat",
+            "barbell-deadlift",
+            "bodyweight-squat",
+            "cable-pull-through",
+            "dumbbell-romanian-deadlift",
+            "goblet-squat",
+            "kettlebell-romanian-deadlift",
+            "leg-press",
+            "pistol-squat",
+            "smith-machine-romanian-deadlift",
+            "smith-machine-split-squat",
+            "split-squat",
+        }
+
+        for exercise_id, capabilities in expected_capabilities.items():
+            self.assertEqual(
+                capabilities,
+                self.reviewed[exercise_id]["capabilityRequirements"],
+                exercise_id,
+            )
+        for exercise_id, support in expected_support.items():
+            self.assertEqual(
+                support,
+                self.reviewed[exercise_id]["supportRequirement"],
+                exercise_id,
+            )
+        for exercise_id in expected_no_impact:
+            self.assertEqual("none", self.reviewed[exercise_id]["impactLevel"], exercise_id)
+        self.assertEqual(
+            [["Resistance Band", "Chair"]],
+            self.reviewed["banded-lat-pulldown"]["equipmentAlternatives"],
+        )
+
+    def test_ai_draft_rationale_names_pinned_source_and_human_review(self) -> None:
+        pinned_commit = "ba0b709cb20430361b2cb33aaadd20998164a916"
+        for exercise_id, metadata in self.reviewed.items():
+            rationale = metadata["provenance"]["rationaleOrSource"]
+            self.assertIn(exercise_id, rationale)
+            self.assertIn(pinned_commit, rationale)
+            self.assertIn("Human field-by-field review required", rationale)
+
     def test_every_authored_id_and_graph_edge_resolves(self) -> None:
         for exercise_id, metadata in self.reviewed.items():
             self.assertIn(exercise_id, self.by_id)
