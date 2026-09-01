@@ -96,10 +96,17 @@ requires explicit human metadata signoff and a separate availability/persona dec
 
 ### Task 3: Add the PRIMARY_ONLY_V1 Weekly Ledger
 
-**Status:** Shipped. The ledger is built and cached at schema 10 and documented in
-[docs/weekly-dose-ledger.md](../../weekly-dose-ledger.md). Nothing consumes it yet:
-planner selection, dose targets, and progression are unchanged. `AdaptationState` landed
-with Task 2; `TrainingProgramState` and the first allowed ledger consumption remain Task 4.
+**Status:** Shipped, and now composed. The ledger is built and cached at schema 10 and
+documented in [docs/weekly-dose-ledger.md](../../weekly-dose-ledger.md). `AdaptationState`
+landed with Task 2, and `TrainingProgramState` now composes it with the ledger and rides on
+the generation context when reviewed eligibility is enabled. No policy reads the ledger's
+counts, so planner selection, dose targets, and progression are unchanged; the first allowed
+consumption remains Task 4.
+
+`AdaptationStatePolicy` deliberately derives only `UNCALIBRATED` and `RETURNING`. Any further
+state lifts the advanced-complexity ceiling in `ExerciseEligibilityPolicy`, which is
+allow-by-default on exactly those two, so richer states belong to Task 4 where dose targets
+exist to define entry and exit. A regression test pins that coupling.
 
 **Files:**
 - Create: `app/src/main/java/wallcrawl/elopenmike/com/core/model/WeeklyDoseLedger.kt`
