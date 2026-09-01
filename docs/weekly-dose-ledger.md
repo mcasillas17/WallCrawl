@@ -4,9 +4,14 @@ WallCrawl reconstructs how much resistance training a week actually contained fr
 completed workout history. The reconstruction is deterministic, versioned, and derived:
 nothing increments a stored counter while a workout is generated or a set is logged.
 
-**Nothing consumes the ledger yet.** Planner selection, weekly dose targets, progression,
-deloads, and substitutions are unchanged by this milestone. The ledger is built and stored
-so a later milestone can compose it with eligibility and program state.
+**No policy reads the ledger's counts yet.** Planner selection, weekly dose targets,
+progression, deloads, and substitutions are all unchanged.
+
+The ledger is now composed with the derived adaptation state into `TrainingProgramState` and
+carried on `WorkoutGenerationContext` whenever `PlannerFeatureFlags.reviewedCapabilityEligibility`
+is enabled — which production does not do. Composing it makes the ledger available where
+state-based dose targets will need it; reading its counts is a later milestone. See
+[docs/superpowers/specs/2026-09-01-training-program-state-design.md](superpowers/specs/2026-09-01-training-program-state-design.md).
 
 ## `PRIMARY_ONLY_V1`
 
