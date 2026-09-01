@@ -15,8 +15,9 @@ constraints and local movement-capability inputs, a complete bundled catalog,
 structured workout generation and
 validation, reusable custom workout templates, type-aware active set logging
 with no fabricated starting loads, Room persistence, workout-history context,
-and progress calculations. The current `FakeWorkoutPlanner` is deliberately
-replaceable; no production local LLM runtime is integrated yet.
+experience-aware exercise ordering, and progress calculations. The current
+`FakeWorkoutPlanner` is deliberately replaceable; no production local LLM
+runtime is integrated yet.
 
 ## Screenshots & App Experience
 
@@ -215,9 +216,12 @@ structurally valid prescription appropriate to its catalog type. Legacy
 `programming` metadata enriches those defaults when available; otherwise
 WallCrawl uses conservative fallback targets. Its 117 authored entries cover
 every muscle group with beginner options throughout. The planner draws its
-compound slots from that set and prefers it when filling the rest, but it still
-selects from the whole catalog, so an exercise without legacy programming can
-appear in a plan with fallback targets and no coaching note.
+compound slots from that set, softly demotes work above the profile's
+experience level, and prefers authored entries when filling the rest. Difficulty
+never removes an otherwise-legal candidate: an exercise without legacy
+programming can still appear in a plan with fallback targets and no coaching
+note, and a higher-difficulty exercise remains selectable when it is the only
+fillable option.
 
 A separate optional `reviewedMetadata` block now defines categorical input for
 future deterministic eligibility. The initial 37-entry cohort is entirely
@@ -368,6 +372,10 @@ of its 906 SVG paths.
 - Recommendation and performed values are both retained for future progression.
 - Each session retains its weight unit; mixed-unit history is converted only for
   planner and analytics calculations, never silently relabeled.
+- Profile experience softly ranks otherwise-comparable automatic candidates; it
+  is not a permanent legality gate. The default legacy path reads
+  `programming.difficulty`. The reviewed-enabled path reads only human-approved
+  `reviewedMetadata.complexity`, never draft metadata.
 - Analytics are derived from completed local sessions, not sample metrics.
 - Movement-capability values are currently validated local profile inputs only;
   they do not affect filtering, ranking, substitutions, or dose yet.
@@ -376,12 +384,12 @@ of its 906 SVG paths.
 
 ## Next milestones
 
-- Complete human review of the 37-entry categorical draft cohort, then add
-  reviewed-only deterministic capability eligibility before any
-  capability-aware filtering or ranking is enabled.
-- Gate exercise difficulty on the profile's experience level. The data now
-  exists across every muscle group; nothing reads it yet, so a beginner can still
-  be led with a lift marked advanced.
+- Complete human review of the 37-entry categorical draft cohort and broaden
+  approved equipment/family coverage before enabling the existing reviewed-only
+  capability eligibility path in production. Its experience ranker is already
+  implemented, but only `APPROVED` complexity may influence that mode; all
+  shipped catalog records remain `DRAFT` and therefore cannot authorize or rank
+  an automatic recommendation through the reviewed path.
 - Make `recommendedRepRange` optional so timed holds can be reviewed. Fourteen
   planner-eligible movements — planks, dead hangs, wall sits — cannot carry
   mechanics, fatigue, or a coaching note today, because the schema demands a rep
