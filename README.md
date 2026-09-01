@@ -225,8 +225,9 @@ future deterministic eligibility. The initial 37-entry cohort is entirely
 not affect current workouts. `APPROVED` requires an explicit human-review role,
 timestamp, and provenance change; pull-request approval does not change review
 state. Missing or draft reviewed metadata never hides an exercise from browsing
-or manual templates. See [Reviewed exercise metadata](docs/reviewed-exercise-metadata.md)
-and its generated [review report](docs/reviewed-exercise-metadata-review.md).
+or manual templates. See [Reviewed exercise metadata](docs/reviewed-exercise-metadata.md),
+its generated [review report](docs/reviewed-exercise-metadata-review.md), and the
+[human sign-off packet](docs/reviewed-exercise-metadata-human-signoff.md).
 
 Equipment requirements are alternatives: a goblet squat resolves with either a
 dumbbell or a kettlebell. Where they are stricter than the upstream listing it is

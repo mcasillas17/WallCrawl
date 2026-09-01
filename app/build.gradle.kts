@@ -1,8 +1,5 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
 }
@@ -24,7 +21,7 @@ require(wallcrawlVersionName.isNotBlank()) {
 
 android {
     namespace = "wallcrawl.elopenmike.com"
-    compileSdk = 35
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "wallcrawl.elopenmike.com"
@@ -52,6 +49,11 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+        }
+    }
     buildFeatures {
         compose = true
     }
@@ -64,12 +66,6 @@ android {
         getByName("test") {
             resources.srcDir("src/main/assets")
         }
-    }
-}
-
-kotlin {
-    compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_17)
     }
 }
 

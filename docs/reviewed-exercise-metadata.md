@@ -31,8 +31,10 @@ approval.
 The initial 37-entry cohort is entirely AI-authored and `DRAFT`. It is therefore
 not eligible for the future reviewed-only gate until a human inspects each entry
 and deliberately approves it. The generated
-[review report](reviewed-exercise-metadata-review.md) lists every pending entry,
-coverage counts, and any required regression gap.
+[review report](reviewed-exercise-metadata-review.md),
+[agent review record](research/2026-08-30-exercise-metadata-agent-review.md), and
+[human sign-off worksheet](reviewed-exercise-metadata-human-signoff.md) document
+the cohort without mutating `reviewState`.
 
 For each draft, a human reviewer must inspect:
 
