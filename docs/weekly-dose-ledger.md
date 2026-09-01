@@ -189,7 +189,7 @@ git diff --check
 
 ## Not in this milestone
 
-- Capability eligibility, `ExerciseFilter` changes, and reviewed-only gating.
+- The separately shipped reviewed-only capability gate does not consume this ledger.
 - Metadata approval of any kind.
 - Adaptation-state transitions and state-based dose targets.
 - Progression, deloads, substitutions, and program blocks.

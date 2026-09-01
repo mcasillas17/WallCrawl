@@ -648,6 +648,95 @@ class ExerciseEligibilityPolicyTest {
             .containsExactly(EligibilityReason.ADVANCED_WHILE_UNCALIBRATED)
     }
 
+    @Test
+    fun evaluate_advancedRegressionWithoutDemonstratedHistoryDoesNotLiftCeiling() {
+        val regression = exercise(id = "advanced-supported-regression").copy(
+            reviewedMetadata = reviewedMetadata(
+                reviewState = ReviewState.APPROVED,
+                complexity = ComplexityTier.ADVANCED,
+                progressionFamily = "undemonstrated-regression-family",
+                supportRequirement = SupportRequirement.SUPPORTED
+            )
+        )
+        val advanced = exercise(id = "advanced-with-ineligible-regression").copy(
+            reviewedMetadata = reviewedMetadata(
+                reviewState = ReviewState.APPROVED,
+                complexity = ComplexityTier.ADVANCED,
+                progressionFamily = "undemonstrated-target-family",
+                approvedRegressions = listOf(ReviewedExerciseLink(regression.id))
+            )
+        )
+
+        val result = policy.evaluate(
+            exercises = listOf(advanced, regression),
+            profile = UserProfile(availableEquipment = listOf(StandardEquipment.BODYWEIGHT)),
+            adaptationState = AdaptationState.UNCALIBRATED
+        )
+
+        assertThat(result).isEqualTo(
+            AutomaticEligibilityResult.NoCandidates(
+                failure = AutomaticEligibilityFailure.CALIBRATION_COMPLEXITY_REMOVED_ALL,
+                decisions = listOf(
+                    EligibilityDecision(
+                        exerciseId = advanced.id,
+                        eligible = false,
+                        reasons = listOf(EligibilityReason.ADVANCED_WHILE_UNCALIBRATED)
+                    ),
+                    EligibilityDecision(
+                        exerciseId = regression.id,
+                        eligible = false,
+                        reasons = listOf(EligibilityReason.ADVANCED_WHILE_UNCALIBRATED)
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun evaluate_demonstratedAdvancedRegressionFamilyLiftsTargetCeiling() {
+        val regression = exercise(id = "demonstrated-advanced-regression").copy(
+            reviewedMetadata = reviewedMetadata(
+                reviewState = ReviewState.APPROVED,
+                complexity = ComplexityTier.ADVANCED,
+                progressionFamily = "demonstrated-regression-family",
+                supportRequirement = SupportRequirement.SUPPORTED
+            )
+        )
+        val advanced = exercise(id = "advanced-with-demonstrated-regression").copy(
+            reviewedMetadata = reviewedMetadata(
+                reviewState = ReviewState.APPROVED,
+                complexity = ComplexityTier.ADVANCED,
+                progressionFamily = "undemonstrated-target-family",
+                approvedRegressions = listOf(ReviewedExerciseLink(regression.id))
+            )
+        )
+
+        val result = policy.evaluate(
+            exercises = listOf(advanced, regression),
+            profile = UserProfile(availableEquipment = listOf(StandardEquipment.BODYWEIGHT)),
+            adaptationState = AdaptationState.RETURNING,
+            demonstratedProgressionFamilies = setOf("demonstrated-regression-family")
+        )
+
+        assertThat(result).isEqualTo(
+            AutomaticEligibilityResult.Candidates(
+                exercises = listOf(advanced, regression),
+                decisions = listOf(
+                    EligibilityDecision(
+                        exerciseId = advanced.id,
+                        eligible = true,
+                        reasons = listOf(EligibilityReason.APPROVED)
+                    ),
+                    EligibilityDecision(
+                        exerciseId = regression.id,
+                        eligible = true,
+                        reasons = listOf(EligibilityReason.APPROVED)
+                    )
+                )
+            )
+        )
+    }
+
     private fun exercise(id: String): Exercise = Exercise(
         id = id,
         name = id,

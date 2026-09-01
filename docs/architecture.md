@@ -161,10 +161,21 @@ state:
 - normalized exercise history and recently trained muscles;
 - the full bundled catalog after hard filtering.
 
-`ExerciseFilter` removes explicit exclusions and exercises whose required
-equipment is unavailable. Reviewed equipment combinations take precedence;
-otherwise, the upstream listed equipment is treated as the known minimum.
-Filtering defines the legal search space but does not choose the workout.
+Production currently uses `ExerciseFilter` to remove explicit exclusions and
+exercises whose required equipment is unavailable. Legacy programming equipment
+combinations take precedence; otherwise, the upstream listed equipment is treated as
+the known minimum. Filtering defines the legal search space but does not choose the
+workout.
+
+An implemented, dependency-injected `ExerciseEligibilityPolicy` is the next automatic
+legality path. When explicitly enabled it accepts only `APPROVED` reviewed metadata,
+requires one complete reviewed equipment alternative, preserves explicit exclusions,
+rejects required capabilities marked `AVOID`, fails closed for joint-sensitive
+constraints that lack reviewed mappings, enforces `LOW_IMPACT_ONLY`, and temporarily
+blocks undemonstrated `ADVANCED` work while uncalibrated or returning. A supported
+regression lifts that ceiling only when the regression itself is below the advanced
+ceiling or its family has demonstrated history. `LIMITED` and `UNKNOWN` capability
+requirements remain typed soft preferences rather than becoming favorable assumptions.
 
 `WorkoutPlanner` receives only structured `WorkoutGenerationContext`. The
 current `FakeWorkoutPlanner` chooses exercises exclusively from
@@ -173,13 +184,15 @@ current `FakeWorkoutPlanner` chooses exercises exclusively from
 allowed set, matches the catalog exercise type, and belongs to a structurally
 valid workout. Unknown IDs are rejected, never silently substituted.
 
-`WorkoutGenerationContext` already carries the complete `UserProfile`, so no
-second capability field exists. The current filter, planner, prescription
-factory, and validator intentionally do not read `movementCapabilities`.
-Regression coverage proves otherwise-identical profiles with all-Comfortable
-versus all-Avoid answers produce the same recommendation. Reviewed exercise
-demand metadata and deterministic capability eligibility must land before this
-staged boundary changes.
+`WorkoutGenerationContext` already carries the complete `UserProfile`, so no second
+capability field exists. Production composition sets
+`PlannerFeatureFlags.reviewedCapabilityEligibility = false` because the bundled cohort
+contains 37 `DRAFT` entries and zero human-approved entries. The current recommendation
+therefore still follows the legacy filter and remains invariant to capability changes.
+Tests enable the gate only with synthetic in-memory approvals; a reviewed no-candidate
+result reaches `TodayViewModel` as a typed reason and never falls back to an unreviewed
+exercise. Enabling production requires explicit human metadata signoff plus a deliberate
+availability/persona review and flag change.
 
 Within a split, the compound slots are chosen by what the exercise trains and how
 much it demands — primary-muscle match, then fatigue — and spread across movement
@@ -303,7 +316,7 @@ no separate write path that copies a logged value back into
 
 ## Room persistence and invariants
 
-`WallCrawlDatabase` is currently schema version 9. Its tables store:
+`WallCrawlDatabase` is currently schema version 10. Its tables store:
 
 - the user profile, including onboarding status, multi-select fitness goals,
   training constraints, return-after-break weeks, confirmed starting loads,
@@ -312,7 +325,9 @@ no separate write path that copies a logged value back into
 - workout sessions and their ordered exercise snapshots;
 - target and completed values for every set, plus its typed outcome:
   `rpe`, `rir`, `feltManageable`, `completedAtTimestamp`, `stoppedAtTimestamp`,
-  and `stopReason`.
+  and `stopReason`;
+- a fingerprinted, reconstructable `PRIMARY_ONLY_V1` weekly-ledger cache whose
+  authority remains immutable completed history.
 
 Migration `3 → 4` adds template storage, session provenance, and type-aware
 target/outcome columns while converting older repetition-based history to
@@ -332,12 +347,18 @@ columns (`feltManageable`, `completedAtTimestamp`, `stoppedAtTimestamp`,
 existed reads back as an honestly unrecorded outcome instead of gaining a
 fabricated completion timestamp or an assumed manageable answer. There is no
 destructive migration fallback on any construction path, and the migration
-tests exercise every supported starting schema through to version 9. Migration
+tests exercise every supported starting schema through to version 10. Migration
 `7 → 8` adds one non-null `movementCapabilitiesJson` column. Existing rows receive `{}`, which the codec
 normalizes to all `UNKNOWN`; their onboarding status, revision, theme, goals,
 equipment, constraints, confirmed loads, templates, sessions, sets, and history
 remain intact. Every supported migration chain registers the new step, and
 destructive migration fallback is disabled.
+
+Migration `9 → 10` is additive-only: it creates the weekly-ledger cache table without
+rewriting or dropping profile, template, workout, exercise, set, or outcome data. The
+cache is accepted only when its deterministic source fingerprint matches current
+completed history, catalog/review versions, policy version, week, and zone; a missing,
+stale, corrupt, or deleted row is reconstructed rather than treated as authority.
 
 Capability JSON is a bounded persistence detail, not a UI model. The codec
 accepts at most 4096 characters, validates the flat object shape, allowlists
@@ -399,6 +420,11 @@ whether a workout has just been completed or is being revisited. Personal
 records use the same rules as the Progress screen's record list — a heavier top
 set for loaded work, more reps for bodyweight work, and no record without prior
 history to beat — so the two surfaces cannot disagree.
+
+`WeeklyDoseLedgerRepository` can reconstruct a `PRIMARY_ONLY_V1` ledger from completed
+history and approved direct-primary metadata, but no planner or progression policy
+consumes it yet. Missing and `DRAFT` metadata become typed unattributed work sets rather
+than guessed muscle credit. Task 4 is the first roadmap step allowed to read the ledger.
 
 ## Lifecycle and failure handling
 
@@ -464,10 +490,12 @@ UserProfile.themePreference (SYSTEM | DARK | LIGHT)
 The JVM suite covers pure domain rules, filtering, context construction,
 capability normalization and codec behavior, planner invariance, validation,
 repository mapping, progress calculations, and ViewModel state. Instrumentation
-tests cover every supported Room migration chain through schema 8, real 7 → 8
-profile/history preservation, capability accessibility semantics, packaged
-catalog parsing, all bundled visual paths, template snapshots, and session
-persistence. The importer has a separate Python-standard-library test suite.
+tests cover every supported Room migration chain through schema 10, real 7 → 8 and
+9 → 10 preservation, foreign-key integrity, the weekly-ledger repository, capability
+accessibility semantics, packaged catalog parsing, all bundled visual paths, template
+snapshots, and session persistence. Pull-request/main CI and tag-release publication run
+that connected suite on an API 36 emulator. The importer has a separate
+Python-standard-library test suite.
 
 See [Build and test](../README.md#build-and-test) for the commands contributors
 should run.
