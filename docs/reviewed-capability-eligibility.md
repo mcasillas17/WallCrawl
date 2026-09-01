@@ -5,9 +5,9 @@
 WallCrawl has a deterministic eligibility layer for a future reviewed automatic
 planner. Production composition sets `PlannerFeatureFlags.reviewedCapabilityEligibility`
 to `false`, so today's automatic recommendations continue to use the legacy
-`ExerciseFilter` and `programming` metadata. The flag is local and compile-time;
-there is no remote configuration, analytics, or automatic activation when an
-entry becomes approved.
+`ExerciseFilter` and `programming` metadata. The flag is local and controlled by
+application composition; there is no remote configuration, analytics, or
+automatic activation when an entry becomes approved.
 
 The bundled catalog remains at 302 exercises. Its 37 `reviewedMetadata` entries
 remain `DRAFT`, with zero `APPROVED` entries. A merge or model review is not human
@@ -75,7 +75,9 @@ from exercise names, muscles, equipment, experience, or measurements.
 ceiling is lifted when the user has demonstrated that approved progression
 family or when the catalog contains an available, approved, supported regression
 that passes the same exclusion, reviewed-equipment, capability, and training-
-constraint rules. A DRAFT or unavailable regression cannot lift the ceiling.
+constraint rules. The regression must itself be below the temporary advanced
+ceiling, unless its own progression family has demonstrated history. A DRAFT,
+undemonstrated advanced, or otherwise unavailable regression cannot lift the ceiling.
 Experience level alone is not a permanent exclusion.
 
 The current disabled builder can derive `RETURNING` from a reported break and

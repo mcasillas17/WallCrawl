@@ -9,7 +9,9 @@ The boundary is explicit:
 - production still owns equipment filtering, split selection, prescription generation, and typed failures;
 - legacy corpus fixtures can optionally narrow the legal candidate pool with curated `allowedExerciseIds`;
 - reviewed-enabled fixtures exercise the production eligibility policy with explicitly synthetic in-memory approvals while the production rollout flag remains disabled;
-- capability inputs and `TrainingConstraint` metadata remain inert on legacy fixtures and become policy inputs only on reviewed-enabled fixtures.
+- capability inputs and `TrainingConstraint` metadata remain inert on legacy fixtures,
+  matching the production-disabled rollout, and become policy inputs only on
+  reviewed-enabled fixtures.
 
 These fixtures therefore model the planner **inside** a curated legal set. They do not claim that the current planner discovered capability, safety, or persona appropriateness on its own.
 
@@ -120,7 +122,8 @@ The corpus suite asserts:
 - legality of every selected exercise against the bundled catalog, the real filter result, and any curated allowed-ID subset;
 - non-mutation of the full `WorkoutGenerationContext` input;
 - type-valid prescriptions and no-invented-load behavior through the real prescription factory;
-- capability invariance for the current pre-eligibility milestone by comparing `limited-capability` with an all-`COMFORTABLE` control;
+- capability invariance for the current production legacy path by comparing
+  `limited-capability` with an all-`COMFORTABLE` control;
 - parity checks that the lightweight catalog projection preserves planner-consumed fields for representative entries without broadening into full parser duplication.
 
 `PlannerFixtureCorpusTest` avoids a second inaccurate strength classifier. It checks fixture-construction premises and curated candidate subsets, while typed strength/failure behavior is left to the real planner evaluator.

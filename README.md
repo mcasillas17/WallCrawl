@@ -115,9 +115,13 @@ are stored in the existing local Room profile. This milestone adds no weight,
 height, BMI, age, body composition, cloud sync, analytics, Health Connect,
 Wear OS, network, or LLM data flow.
 
-The current planner deliberately ignores these values. Reviewed exercise-demand
-metadata and deterministic capability eligibility are the next milestone; until
-that lands, changing movement preferences does not change a recommendation.
+The reviewed-only deterministic eligibility layer can consume these values for
+automatic planning, but production composition deliberately keeps that path disabled
+while every reviewed-metadata entry is still `DRAFT`. The current recommendation
+therefore remains unchanged when a movement preference changes. Tests enable the gate
+only with unmistakably synthetic in-memory approvals and verify equipment, exclusions,
+constraints, capability `AVOID`, impact, reviewed-state, and temporary advanced-
+complexity rules without changing browse or manual-workout access.
 
 The fake planner uses the same `WorkoutPlanner` contract intended for a future
 Qwen, Gemma, or LiteRT-backed implementation. It only selects IDs from
@@ -219,14 +223,15 @@ compound slots from that set and prefers it when filling the rest, but it still
 selects from the whole catalog, so an exercise without legacy programming can
 appear in a plan with fallback targets and no coaching note.
 
-A separate optional `reviewedMetadata` block now defines categorical input for
-future deterministic eligibility. The initial 37-entry cohort is entirely
-`DRAFT`, including its AI-authored rationale: it is not human-approved and does
+A separate optional `reviewedMetadata` block defines categorical input for the
+production-disabled deterministic eligibility gate. The initial 37-entry cohort is
+entirely `DRAFT`, including its AI-authored rationale: it is not human-approved and does
 not affect current workouts. `APPROVED` requires an explicit human-review role,
-timestamp, and provenance change; pull-request approval does not change review
-state. Missing or draft reviewed metadata never hides an exercise from browsing
-or manual templates. See [Reviewed exercise metadata](docs/reviewed-exercise-metadata.md),
-its generated [review report](docs/reviewed-exercise-metadata-review.md), and the
+timestamp, and provenance change; pull-request approval does not change review state.
+Missing or draft reviewed metadata never hides an exercise from browsing or manual
+templates. See [Reviewed exercise metadata](docs/reviewed-exercise-metadata.md), its
+generated [review report](docs/reviewed-exercise-metadata-review.md), the
+[eligibility boundary](docs/reviewed-capability-eligibility.md), and the
 [human sign-off packet](docs/reviewed-exercise-metadata-human-signoff.md).
 
 Equipment requirements are alternatives: a goblet squat resolves with either a
@@ -348,10 +353,12 @@ its failure reasons, the muscle vocabulary and the shipped catalog's conformance
 to it, generated-workout validation, template validation, atomic persistence
 boundaries, progress and personal-record calculations, attribution loading,
 Today state, duration calculation, and visual-provider mapping.
-Android instrumentation also validates database migrations through schema 8,
-capability-control semantics, and template/session
-snapshot behavior, parses the packaged 302-exercise catalog, and opens every one
-of its 906 SVG paths.
+Android instrumentation also validates every supported database migration chain through
+schema 10 without destructive fallback, the weekly-ledger DAO/repository,
+capability-control semantics, and template/session snapshot behavior. It parses the
+packaged 302-exercise catalog and opens every one of its 906 SVG paths. Pull-request/main
+CI and tagged-release publication both run this connected suite on an API 36 emulator;
+a tag cannot publish its prerelease unless instrumentation succeeds.
 
 ## Product and engineering principles
 
@@ -369,19 +376,24 @@ of its 906 SVG paths.
 - Each session retains its weight unit; mixed-unit history is converted only for
   planner and analytics calculations, never silently relabeled.
 - Analytics are derived from completed local sessions, not sample metrics.
-- Movement-capability values are currently validated local profile inputs only;
-  they do not affect filtering, ranking, substitutions, or dose yet.
+- Movement-capability values feed a reviewed-only deterministic eligibility path, but
+  production keeps that path disabled until human-approved metadata and an explicit
+  enablement review exist. They do not affect today's filtering, ranking,
+  substitutions, or dose.
 - Database migrations must preserve user history; destructive migration fallback
   is intentionally disabled.
 
 ## Next milestones
 
-- Complete human review of the 37-entry categorical draft cohort, then add
-  reviewed-only deterministic capability eligibility before any
-  capability-aware filtering or ranking is enabled.
-- Gate exercise difficulty on the profile's experience level. The data now
-  exists across every muscle group; nothing reads it yet, so a beginner can still
-  be led with a lift marked advanced.
+- Complete human review of the 37-entry categorical draft cohort, then perform an
+  explicit availability/persona review before switching production to the implemented
+  reviewed-only capability gate. Model or pull-request review is not metadata approval.
+- Continue the deterministic roadmap with Task 4's state-based dose, effort, and rest
+  policy. That is the first step allowed to consume the existing `PRIMARY_ONLY_V1`
+  weekly ledger; this eligibility slice does not read it.
+- Add the post-calibration soft complexity rank described by the roadmap. Task 2 already
+  enforces the temporary hard ceiling for undemonstrated `ADVANCED` work while
+  uncalibrated or returning; self-reported experience is not a permanent hard exclusion.
 - Make `recommendedRepRange` optional so timed holds can be reviewed. Fourteen
   planner-eligible movements — planks, dead hangs, wall sits — cannot carry
   mechanics, fatigue, or a coaching note today, because the schema demands a rep

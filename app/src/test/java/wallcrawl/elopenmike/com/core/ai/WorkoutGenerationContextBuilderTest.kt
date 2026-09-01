@@ -21,6 +21,7 @@ import wallcrawl.elopenmike.com.core.model.PrescriptionShape
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
 import wallcrawl.elopenmike.com.core.model.ReviewProvenance
 import wallcrawl.elopenmike.com.core.model.ReviewState
+import wallcrawl.elopenmike.com.core.model.ReviewedExerciseLink
 import wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
@@ -118,6 +119,72 @@ class WorkoutGenerationContextBuilderTest {
                 )
             )
         )
+    }
+
+    @Test
+    fun build_enabledUncalibratedGateAllowsAdvancedWithAvailableStandardRegression() = runTest {
+        val base = InMemoryExerciseCatalog.SAMPLE_EXERCISES.first()
+        val regression = base.copy(
+            id = "synthetic-standard-regression",
+            reviewedMetadata = syntheticReviewedMetadata(
+                reviewState = ReviewState.APPROVED,
+                complexity = ComplexityTier.STANDARD,
+                progressionFamily = "synthetic-standard-family"
+            )
+        )
+        val advanced = base.copy(
+            id = "synthetic-advanced-target",
+            reviewedMetadata = syntheticReviewedMetadata(
+                reviewState = ReviewState.APPROVED,
+                complexity = ComplexityTier.ADVANCED,
+                progressionFamily = "synthetic-advanced-family",
+                approvedRegressions = listOf(ReviewedExerciseLink(regression.id))
+            )
+        )
+        val builder = reviewedEligibilityBuilder(
+            exercises = listOf(advanced, regression),
+            completedSessions = emptyList()
+        )
+
+        val context = builder.build()
+
+        assertThat(context.allowedExercises).containsExactly(advanced, regression).inOrder()
+        assertThat(context.automaticEligibilityResult)
+            .isInstanceOf(AutomaticEligibilityResult.Candidates::class.java)
+    }
+
+    @Test
+    fun build_enabledReturningGateUsesCompletedHistoryForAdvancedRegressionFamily() = runTest {
+        val base = InMemoryExerciseCatalog.SAMPLE_EXERCISES.first()
+        val regression = base.copy(
+            reviewedMetadata = syntheticReviewedMetadata(
+                reviewState = ReviewState.APPROVED,
+                complexity = ComplexityTier.ADVANCED,
+                progressionFamily = "synthetic-demonstrated-regression-family"
+            )
+        )
+        val advanced = base.copy(
+            id = "synthetic-advanced-target",
+            reviewedMetadata = syntheticReviewedMetadata(
+                reviewState = ReviewState.APPROVED,
+                complexity = ComplexityTier.ADVANCED,
+                progressionFamily = "synthetic-undemonstrated-target-family",
+                approvedRegressions = listOf(ReviewedExerciseLink(regression.id))
+            )
+        )
+        val completedSession = completedInclinePressSession(completedAtTimestamp = 10_000L)
+        val builder = reviewedEligibilityBuilder(
+            exercises = listOf(advanced, regression),
+            completedSessions = listOf(completedSession),
+            returningAfterBreakWeeks = 8
+        )
+
+        val context = builder.build()
+
+        assertThat(context.exerciseHistory.keys).containsExactly(regression.id)
+        assertThat(context.allowedExercises).containsExactly(advanced, regression).inOrder()
+        assertThat(context.automaticEligibilityResult)
+            .isInstanceOf(AutomaticEligibilityResult.Candidates::class.java)
     }
 
     @Test
@@ -248,16 +315,43 @@ class WorkoutGenerationContextBuilderTest {
         )
     }
 
-    private fun syntheticReviewedMetadata(reviewState: ReviewState): ReviewedExerciseMetadata =
+    private fun reviewedEligibilityBuilder(
+        exercises: List<wallcrawl.elopenmike.com.core.model.Exercise>,
+        completedSessions: List<WorkoutSession>,
+        returningAfterBreakWeeks: Int = 0
+    ): WorkoutGenerationContextBuilder = WorkoutGenerationContextBuilder(
+        userProfileRepository = StubUserProfileRepository(
+            UserProfile(
+                availableEquipment = listOf(
+                    StandardEquipment.DUMBBELL,
+                    StandardEquipment.BENCH
+                ),
+                returningAfterBreakWeeks = returningAfterBreakWeeks
+            )
+        ),
+        workoutRepository = StubWorkoutRepository(completedSessions),
+        exerciseCatalog = InMemoryExerciseCatalog(exercises),
+        exerciseFilter = ExerciseFilter(),
+        historyAnalyzer = WorkoutHistoryAnalyzer(),
+        plannerFeatureFlags = PlannerFeatureFlags(reviewedCapabilityEligibility = true),
+        reviewedEligibilityPolicy = ExerciseEligibilityPolicy()
+    )
+
+    private fun syntheticReviewedMetadata(
+        reviewState: ReviewState,
+        complexity: ComplexityTier = ComplexityTier.FOUNDATIONAL,
+        progressionFamily: String = "synthetic-builder-test-family",
+        approvedRegressions: List<ReviewedExerciseLink> = emptyList()
+    ): ReviewedExerciseMetadata =
         ReviewedExerciseMetadata(
             reviewState = reviewState,
             directPrimaryMuscle = StandardMuscles.CHEST,
             descriptiveSecondaryMuscles = emptySet(),
             movementPattern = MovementPattern.HORIZONTAL_PUSH,
-            complexity = ComplexityTier.FOUNDATIONAL,
-            progressionFamily = "synthetic-builder-test-family",
+            complexity = complexity,
+            progressionFamily = progressionFamily,
             prescriptionShape = PrescriptionShape.WEIGHT_REPS,
-            approvedRegressions = emptyList(),
+            approvedRegressions = approvedRegressions,
             approvedSubstitutions = emptyList(),
             capabilityRequirements = emptySet(),
             supportRequirement = SupportRequirement.SUPPORTED,
