@@ -181,6 +181,16 @@ sealed interface TrainingPolicyResult {
     ) : TrainingPolicyResult
 }
 
+class TrainingPolicyResultException(
+    val result: TrainingPolicyResult
+) : IllegalStateException(result.failureMessage()) {
+    init {
+        require(result !is TrainingPolicyResult.Applied) {
+            "An applied training policy result must not be thrown as a failure."
+        }
+    }
+}
+
 /**
  * Applies reviewed state-based dose, effort, and rest guidance to a valid base prescription.
  *
@@ -445,3 +455,14 @@ private fun ReviewedExerciseMetadata.matches(
 }
 
 private const val MAX_LEDGER_KEY_LENGTH = 64
+
+private fun TrainingPolicyResult.failureMessage(): String = when (this) {
+    is TrainingPolicyResult.NoGuidance ->
+        "Training policy produced no prescription: $reason."
+
+    is TrainingPolicyResult.Failure ->
+        "Training policy rejected its input: $reason."
+
+    is TrainingPolicyResult.Applied ->
+        "An applied training policy result is not a failure."
+}

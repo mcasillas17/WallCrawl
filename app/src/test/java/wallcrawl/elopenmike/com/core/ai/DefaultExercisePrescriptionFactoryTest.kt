@@ -1,13 +1,22 @@
 package wallcrawl.elopenmike.com.core.ai
 
 import com.google.common.truth.Truth.assertThat
+import org.junit.Assert.assertThrows
 import org.junit.Test
+import wallcrawl.elopenmike.com.core.model.AdaptationState
+import wallcrawl.elopenmike.com.core.model.EffortTarget
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.ExercisePerformanceHistory
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
+import wallcrawl.elopenmike.com.core.model.LedgerPolicyVersion
+import wallcrawl.elopenmike.com.core.model.RestClass
+import wallcrawl.elopenmike.com.core.model.RestTargetSource
+import wallcrawl.elopenmike.com.core.model.TrainingProgramState
+import wallcrawl.elopenmike.com.core.model.TrainingProgramStatePolicyVersion
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
+import wallcrawl.elopenmike.com.core.model.WeeklyDoseLedger
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
 
@@ -303,6 +312,96 @@ class DefaultExercisePrescriptionFactoryTest {
         // Capped to 3 sets instead of full 4
         assertThat(prescription.targetSets).isEqualTo(3)
     }
+
+    @Test
+    fun noProgramState_returnsTheExactLegacyPrescriptionWithoutGuidance() {
+        val legacy = exercise(ExerciseType.WEIGHT_REPS).copy(id = "legacy-press")
+
+        val prescription = factory.create(
+            legacy,
+            WorkoutGenerationContext(
+                userProfile = UserProfile(goals = setOf(FitnessGoal.GENERAL_FITNESS))
+            )
+        )
+
+        assertThat(prescription.targetSets).isEqualTo(3)
+        assertThat(prescription.repRange).isEqualTo(wallcrawl.elopenmike.com.core.model.RepRange(10, 12))
+        assertThat(prescription.targetWeight).isNull()
+        assertThat(prescription.restSeconds).isEqualTo(90)
+        assertThat(prescription.effortTarget).isNull()
+        assertThat(prescription.restClass).isNull()
+        assertThat(prescription.restTargetSource).isNull()
+    }
+
+    @Test
+    fun reviewedProgramState_appliesGuidanceWithoutChangingConfirmedLoad() {
+        val exercise = syntheticApprovedExercise(
+            id = "reviewed-press",
+            directPrimaryMuscle = "Chest"
+        )
+        val profile = UserProfile(
+            goals = setOf(FitnessGoal.BUILD_MUSCLE),
+            confirmedStartingLoads = mapOf(exercise.id to 40.0)
+        )
+
+        val prescription = factory.create(
+            exercise,
+            WorkoutGenerationContext(
+                userProfile = profile,
+                trainingProgramState = programState(AdaptationState.RETURNING)
+            )
+        )
+
+        assertThat(prescription.targetSets).isEqualTo(2)
+        assertThat(prescription.targetWeight).isEqualTo(40.0)
+        assertThat(prescription.effortTarget).isEqualTo(EffortTarget(2, 4))
+        assertThat(prescription.restClass).isEqualTo(RestClass.MODERATE)
+        assertThat(prescription.restTargetSource).isEqualTo(RestTargetSource.PRODUCT_POLICY)
+    }
+
+    @Test
+    fun exhaustedReviewedDose_throwsTypedResultInsteadOfReturningZeroSets() {
+        val exercise = syntheticApprovedExercise(
+            id = "reviewed-press",
+            directPrimaryMuscle = "Chest"
+        )
+        val profile = UserProfile(goals = setOf(FitnessGoal.BUILD_MUSCLE))
+        val context = WorkoutGenerationContext(
+            userProfile = profile,
+            trainingProgramState = programState(
+                adaptationState = AdaptationState.RETURNING,
+                directPrimarySets = mapOf("Chest" to 6)
+            )
+        )
+
+        val error = assertThrows(TrainingPolicyResultException::class.java) {
+            factory.create(exercise, context)
+        }
+
+        assertThat(error.result).isEqualTo(
+            TrainingPolicyResult.NoGuidance(
+                TrainingPolicyNoGuidanceReason.WEEKLY_DIRECT_PRIMARY_ALLOWANCE_EXHAUSTED
+            )
+        )
+    }
+
+    private fun programState(
+        adaptationState: AdaptationState,
+        directPrimarySets: Map<String, Int> = emptyMap()
+    ) = TrainingProgramState(
+        policyVersion = TrainingProgramStatePolicyVersion.PROGRAM_STATE_V1,
+        adaptationState = adaptationState,
+        weeklyLedger = WeeklyDoseLedger(
+            policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+            weekStartEpochDay = MONDAY_EPOCH_DAY,
+            timeZoneId = "UTC",
+            catalogVersion = SYNTHETIC_CATALOG_VERSION,
+            reviewPolicyVersion = 1,
+            directPrimarySets = directPrimarySets,
+            secondaryInvolvement = emptyMap(),
+            unattributedWorkSets = emptyMap()
+        )
+    )
 
     private fun exercise(type: ExerciseType) = Exercise(
         id = "unreviewed-${type.name.lowercase()}",

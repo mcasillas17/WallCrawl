@@ -17,6 +17,7 @@ import wallcrawl.elopenmike.com.core.model.RepRange
 import wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata
 import wallcrawl.elopenmike.com.core.model.TrainingProgramState
 import wallcrawl.elopenmike.com.core.model.UserProfile
+import wallcrawl.elopenmike.com.core.model.UserRestPreference
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
@@ -76,6 +77,7 @@ internal data class PlannerFixtureInputSnapshot(
      * and its nested ledger is a value type, so there is no mutable branch to copy.
      */
     val trainingProgramState: TrainingProgramState?,
+    val priorUserRestPreferences: Map<String, UserRestPreference>,
     val preferredUnits: WeightUnit
 )
 
@@ -198,6 +200,7 @@ private fun WorkoutGenerationContext.snapshot(): PlannerFixtureInputSnapshot =
         allowedExercises = allowedExercises.map(Exercise::deepCopy),
         automaticEligibilityResult = automaticEligibilityResult?.deepCopy(),
         trainingProgramState = trainingProgramState,
+        priorUserRestPreferences = LinkedHashMap(priorUserRestPreferences),
         preferredUnits = preferredUnits
     )
 

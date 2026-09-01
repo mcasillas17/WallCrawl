@@ -33,6 +33,13 @@ data class WorkoutGenerationContext(
      * read.
      */
     val trainingProgramState: TrainingProgramState? = null,
+    /**
+     * Newest explicit per-exercise rest choices from the bounded history view.
+     *
+     * Product-policy defaults are excluded, so generated guidance never promotes itself into
+     * a user preference.
+     */
+    val priorUserRestPreferences: Map<String, UserRestPreference> = emptyMap(),
     val preferredUnits: WeightUnit = userProfile.preferredUnit
 )
 

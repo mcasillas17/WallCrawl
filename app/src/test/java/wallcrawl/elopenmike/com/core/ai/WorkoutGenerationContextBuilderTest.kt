@@ -18,12 +18,17 @@ import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
 import wallcrawl.elopenmike.com.core.model.ComplexityTier
 import wallcrawl.elopenmike.com.core.model.EligibilityDecision
 import wallcrawl.elopenmike.com.core.model.EligibilityReason
+import wallcrawl.elopenmike.com.core.model.ExercisePrescription
+import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.ImpactLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
 import wallcrawl.elopenmike.com.core.model.MovementPattern
 import wallcrawl.elopenmike.com.core.model.PrescriptionShape
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
+import wallcrawl.elopenmike.com.core.model.RepRange
+import wallcrawl.elopenmike.com.core.model.RestClass
+import wallcrawl.elopenmike.com.core.model.RestTargetSource
 import wallcrawl.elopenmike.com.core.model.ReviewProvenance
 import wallcrawl.elopenmike.com.core.model.ReviewState
 import wallcrawl.elopenmike.com.core.model.ReviewedExerciseLink
@@ -34,6 +39,7 @@ import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
 import wallcrawl.elopenmike.com.core.model.SupportRequirement
 import wallcrawl.elopenmike.com.core.model.UserProfile
+import wallcrawl.elopenmike.com.core.model.UserRestPreference
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
@@ -326,6 +332,100 @@ class WorkoutGenerationContextBuilderTest {
         assertThat(context.automaticEligibilityResult).isNull()
     }
 
+    @Test
+    fun reviewedContextCarriesNewestExplicitRestPreferenceAndIgnoresProductDefaults() = runTest {
+        val productDefault = completedRestTargetSession(
+            completedAtTimestamp = 30L,
+            restClass = RestClass.MODERATE,
+            restSeconds = 90,
+            source = RestTargetSource.PRODUCT_POLICY
+        )
+        val newestUserPreference = completedRestTargetSession(
+            completedAtTimestamp = 20L,
+            restClass = RestClass.LONG,
+            restSeconds = 240,
+            source = RestTargetSource.USER_PREFERENCE
+        )
+        val olderUserPreference = completedRestTargetSession(
+            completedAtTimestamp = 10L,
+            restClass = RestClass.SHORT,
+            restSeconds = 30,
+            source = RestTargetSource.USER_PREFERENCE
+        )
+        val builder = reviewedEligibilityBuilder(
+            exercises = InMemoryExerciseCatalog.SAMPLE_EXERCISES,
+            completedSessions = listOf(
+                olderUserPreference,
+                productDefault,
+                newestUserPreference
+            )
+        )
+
+        val context = builder.build()
+
+        assertThat(context.priorUserRestPreferences).containsExactly(
+            "incline-dumbbell-press",
+            UserRestPreference(RestClass.LONG, 240)
+        )
+    }
+
+    @Test
+    fun legacyContextDoesNotExtractRestPreferences() = runTest {
+        val builder = reviewedEligibilityBuilder(
+            exercises = InMemoryExerciseCatalog.SAMPLE_EXERCISES,
+            completedSessions = listOf(
+                completedRestTargetSession(
+                    completedAtTimestamp = 20L,
+                    restClass = RestClass.LONG,
+                    restSeconds = 240,
+                    source = RestTargetSource.USER_PREFERENCE
+                )
+            ),
+            reviewedCapabilityEligibility = false
+        )
+
+        val context = builder.build()
+
+        assertThat(context.priorUserRestPreferences).isEmpty()
+    }
+
+    @Test
+    fun reviewedContextExaminesAtMost512HistoricalExercisePrescriptionsForPreferences() = runTest {
+        val exercises = (1..513).map { index ->
+            WorkoutExercise(
+                id = "historical-instance-$index",
+                sessionId = "historical-session",
+                exerciseId = "historical-exercise-$index",
+                orderIndex = index - 1,
+                prescription = ExercisePrescription(
+                    exerciseType = ExerciseType.BODYWEIGHT_REPS,
+                    targetSets = 1,
+                    repRange = RepRange(8, 10),
+                    restSeconds = 120,
+                    restClass = RestClass.MODERATE,
+                    restTargetSource = RestTargetSource.USER_PREFERENCE
+                )
+            )
+        }
+        val session = WorkoutSession(
+            id = "historical-session",
+            name = "Historical",
+            completedAtTimestamp = 20L,
+            status = SessionStatus.COMPLETED,
+            exercises = exercises
+        )
+        val builder = reviewedEligibilityBuilder(
+            exercises = InMemoryExerciseCatalog.SAMPLE_EXERCISES,
+            completedSessions = listOf(session)
+        )
+
+        val context = builder.build()
+
+        assertThat(context.priorUserRestPreferences).hasSize(512)
+        assertThat(context.priorUserRestPreferences).containsKey("historical-exercise-512")
+        assertThat(context.priorUserRestPreferences).doesNotContainKey("historical-exercise-513")
+    }
+
     private val emptyLedger = WeeklyDoseLedger(
         policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
         weekStartEpochDay = 20_696L,
@@ -365,6 +465,31 @@ class WorkoutGenerationContextBuilderTest {
                     targetRepMax = 10,
                     targetWeight = 45.0,
                     sets = listOf(set)
+                )
+            )
+        )
+    }
+
+    private fun completedRestTargetSession(
+        completedAtTimestamp: Long,
+        restClass: RestClass,
+        restSeconds: Int,
+        source: RestTargetSource
+    ): WorkoutSession {
+        val session = completedInclinePressSession(completedAtTimestamp)
+        val exercise = session.exercises.single()
+        return session.copy(
+            exercises = listOf(
+                exercise.copy(
+                    prescription = ExercisePrescription(
+                        exerciseType = ExerciseType.WEIGHT_REPS,
+                        targetSets = 1,
+                        repRange = RepRange(8, 10),
+                        targetWeight = 45.0,
+                        restSeconds = restSeconds,
+                        restClass = restClass,
+                        restTargetSource = source
+                    )
                 )
             )
         )

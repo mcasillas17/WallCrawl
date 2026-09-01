@@ -7,6 +7,8 @@ import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
 import wallcrawl.elopenmike.com.core.exercise.ExerciseFilter
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
 import wallcrawl.elopenmike.com.core.model.ReviewState
+import wallcrawl.elopenmike.com.core.model.UserRestPreference
+import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
 
 /**
@@ -43,6 +45,12 @@ class WorkoutGenerationContextBuilder(
         } else {
             null
         }
+        val priorUserRestPreferences =
+            if (plannerFeatureFlags.reviewedCapabilityEligibility) {
+                priorUserRestPreferences(recentCompletedSessions)
+            } else {
+                emptyMap()
+            }
         val automaticEligibilityResult = if (plannerFeatureFlags.reviewedCapabilityEligibility) {
             val exercisesById = allExercises.associateBy { it.id }
             reviewedEligibilityPolicy.evaluate(
@@ -91,11 +99,31 @@ class WorkoutGenerationContextBuilder(
             allowedExercises = allowedExercises,
             automaticEligibilityResult = automaticEligibilityResult,
             trainingProgramState = trainingProgramState,
+            priorUserRestPreferences = priorUserRestPreferences,
             preferredUnits = profile.preferredUnit
         )
     }
 
+    private fun priorUserRestPreferences(
+        sessions: List<WorkoutSession>
+    ): Map<String, UserRestPreference> {
+        val preferences = linkedMapOf<String, UserRestPreference>()
+        var examinedPrescriptions = 0
+        for (session in sessions) {
+            for (exercise in session.exercises) {
+                if (examinedPrescriptions == MAX_PRIOR_REST_PRESCRIPTIONS) {
+                    return preferences
+                }
+                examinedPrescriptions += 1
+                val preference = exercise.prescription.userRestPreferenceOrNull() ?: continue
+                preferences.putIfAbsent(exercise.exerciseId, preference)
+            }
+        }
+        return preferences
+    }
+
     private companion object {
         const val MAX_RECENT_SESSIONS = 8
+        const val MAX_PRIOR_REST_PRESCRIPTIONS = 512
     }
 }
