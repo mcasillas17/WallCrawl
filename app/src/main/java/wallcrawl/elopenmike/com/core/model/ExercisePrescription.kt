@@ -14,7 +14,10 @@ data class ExercisePrescription(
     val targetAssistanceWeight: Double? = null,
     val targetDurationSeconds: Int? = null,
     val targetDistanceMeters: Double? = null,
-    val restSeconds: Int = DEFAULT_REST_SECONDS
+    val restSeconds: Int = DEFAULT_REST_SECONDS,
+    val effortTarget: EffortTarget? = null,
+    val restClass: RestClass? = null,
+    val restTargetSource: RestTargetSource? = null
 ) {
     init {
         require(targetSets in MIN_TARGET_SETS..MAX_TARGET_SETS) {
@@ -22,6 +25,9 @@ data class ExercisePrescription(
         }
         require(restSeconds in MIN_REST_SECONDS..MAX_REST_SECONDS) {
             "Rest seconds must be between $MIN_REST_SECONDS and $MAX_REST_SECONDS."
+        }
+        require((restClass == null) == (restTargetSource == null)) {
+            "Rest class and target source must both be present or both be absent."
         }
         repRange?.let { range ->
             require(range.max <= MAX_TARGET_REPS) {
@@ -93,6 +99,23 @@ data class ExercisePrescription(
             }
         }
     }
+
+    fun withUserRestPreference(preference: UserRestPreference): ExercisePrescription =
+        copy(
+            restSeconds = preference.restSeconds,
+            restClass = preference.restClass,
+            restTargetSource = RestTargetSource.USER_PREFERENCE
+        )
+
+    fun userRestPreferenceOrNull(): UserRestPreference? =
+        if (restTargetSource == RestTargetSource.USER_PREFERENCE) {
+            UserRestPreference(
+                restClass = requireNotNull(restClass),
+                restSeconds = restSeconds
+            )
+        } else {
+            null
+        }
 
     private fun Double?.requireValidNonNegativeDecimal(label: String) {
         if (this != null) {
