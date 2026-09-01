@@ -5,6 +5,7 @@ import android.content.Context
 import wallcrawl.elopenmike.com.core.ai.FakeWorkoutPlanner
 import wallcrawl.elopenmike.com.core.ai.GeneratedWorkoutValidator
 import wallcrawl.elopenmike.com.core.ai.PlannerFeatureFlags
+import wallcrawl.elopenmike.com.core.ai.TrainingProgramStateProvider
 import wallcrawl.elopenmike.com.core.ai.WorkoutGenerationContextBuilder
 import wallcrawl.elopenmike.com.core.ai.WorkoutHistoryAnalyzer
 import wallcrawl.elopenmike.com.core.ai.WorkoutPlanner
@@ -12,7 +13,9 @@ import wallcrawl.elopenmike.com.core.database.WallCrawlDatabase
 import wallcrawl.elopenmike.com.core.database.repository.OfflineUserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.OfflineWorkoutRepository
 import wallcrawl.elopenmike.com.core.database.repository.OfflineWorkoutTemplateRepository
+import wallcrawl.elopenmike.com.core.database.repository.OfflineWeeklyDoseLedgerRepository
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
+import wallcrawl.elopenmike.com.core.database.repository.WeeklyDoseLedgerRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutTemplateRepository
 import wallcrawl.elopenmike.com.core.exercise.BundledExerciseCatalog
@@ -33,6 +36,7 @@ interface AppContainer {
     val database: WallCrawlDatabase
     val userProfileRepository: UserProfileRepository
     val workoutRepository: WorkoutRepository
+    val weeklyDoseLedgerRepository: WeeklyDoseLedgerRepository
     val workoutTemplateRepository: WorkoutTemplateRepository
     val exerciseCatalog: ExerciseCatalog
     val exerciseVisualProvider: ExerciseVisualProvider
@@ -73,6 +77,18 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
         )
     }
 
+    /**
+     * Reconstructs the weekly dose ledger from completed history. Nothing reads its counts
+     * yet; it is composed into the training program state on the reviewed-eligibility path.
+     */
+    override val weeklyDoseLedgerRepository: WeeklyDoseLedgerRepository by lazy {
+        OfflineWeeklyDoseLedgerRepository(
+            historyDao = database.completedWorkoutHistoryDao(),
+            ledgerStateDao = database.weeklyDoseLedgerStateDao(),
+            catalogSource = workoutGuideCatalogSource
+        )
+    }
+
     override val workoutTemplateRepository: WorkoutTemplateRepository by lazy {
         OfflineWorkoutTemplateRepository(
             templateDao = database.workoutTemplateDao(),
@@ -109,6 +125,9 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
             historyAnalyzer = workoutHistoryAnalyzer,
             plannerFeatureFlags = PlannerFeatureFlags(
                 reviewedCapabilityEligibility = false
+            ),
+            trainingProgramStateProvider = TrainingProgramStateProvider(
+                weeklyDoseLedgerRepository = weeklyDoseLedgerRepository
             )
         )
     }

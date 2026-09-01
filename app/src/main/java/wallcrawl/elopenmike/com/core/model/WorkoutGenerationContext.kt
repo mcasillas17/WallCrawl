@@ -24,6 +24,15 @@ data class WorkoutGenerationContext(
     val excludedExerciseIds: List<String> = userProfile.excludedExerciseIds,
     val allowedExercises: List<Exercise> = emptyList(),
     val automaticEligibilityResult: AutomaticEligibilityResult? = null,
+    /**
+     * The composed program state, present only when reviewed eligibility is enabled.
+     *
+     * No planner or policy reads it yet. It is carried so weekly dose targets and
+     * recommendation snapshots can consume the ledger without re-deriving it, and it stays
+     * null on the legacy path so that path reads no history or catalog it did not already
+     * read.
+     */
+    val trainingProgramState: TrainingProgramState? = null,
     val preferredUnits: WeightUnit = userProfile.preferredUnit
 )
 

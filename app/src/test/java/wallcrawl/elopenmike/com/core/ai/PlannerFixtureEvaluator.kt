@@ -15,6 +15,7 @@ import wallcrawl.elopenmike.com.core.model.MovementCapabilities
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
 import wallcrawl.elopenmike.com.core.model.RepRange
 import wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata
+import wallcrawl.elopenmike.com.core.model.TrainingProgramState
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
@@ -70,6 +71,11 @@ internal data class PlannerFixtureInputSnapshot(
     val excludedExerciseIds: List<String>,
     val allowedExercises: List<Exercise>,
     val automaticEligibilityResult: AutomaticEligibilityResult?,
+    /**
+     * Deeply immutable, so the snapshot holds the instance directly. Its maps are read-only
+     * and its nested ledger is a value type, so there is no mutable branch to copy.
+     */
+    val trainingProgramState: TrainingProgramState?,
     val preferredUnits: WeightUnit
 )
 
@@ -191,6 +197,7 @@ private fun WorkoutGenerationContext.snapshot(): PlannerFixtureInputSnapshot =
         excludedExerciseIds = excludedExerciseIds.toList(),
         allowedExercises = allowedExercises.map(Exercise::deepCopy),
         automaticEligibilityResult = automaticEligibilityResult?.deepCopy(),
+        trainingProgramState = trainingProgramState,
         preferredUnits = preferredUnits
     )
 

@@ -421,10 +421,22 @@ records use the same rules as the Progress screen's record list — a heavier to
 set for loaded work, more reps for bodyweight work, and no record without prior
 history to beat — so the two surfaces cannot disagree.
 
-`WeeklyDoseLedgerRepository` can reconstruct a `PRIMARY_ONLY_V1` ledger from completed
-history and approved direct-primary metadata, but no planner or progression policy
-consumes it yet. Missing and `DRAFT` metadata become typed unattributed work sets rather
-than guessed muscle credit. Task 4 is the first roadmap step allowed to read the ledger.
+`WeeklyDoseLedgerRepository` reconstructs a `PRIMARY_ONLY_V1` ledger from completed history
+and approved direct-primary metadata. Missing and `DRAFT` metadata become typed unattributed
+work sets rather than guessed muscle credit.
+
+`TrainingProgramStateProvider` composes that ledger with the adaptation state derived by
+`AdaptationStatePolicy` into a `TrainingProgramState`, which rides on
+`WorkoutGenerationContext` whenever reviewed capability eligibility is enabled. The provider
+is the only unit in that composition performing I/O; the policy is pure. No planner or
+progression policy reads the ledger's counts, and Task 4 is the first roadmap step allowed
+to. On the legacy path the state is absent, so that path reads no history it did not already
+read.
+
+The adaptation policy derives only `UNCALIBRATED` and `RETURNING`. `ExerciseEligibilityPolicy`
+withholds advanced-complexity work on exactly those two states, so a third derived state
+would lift that ceiling; a regression test couples them so widening the policy cannot happen
+by accident.
 
 ## Lifecycle and failure handling
 

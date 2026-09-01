@@ -80,9 +80,17 @@ ceiling, unless its own progression family has demonstrated history. A DRAFT,
 undemonstrated advanced, or otherwise unavailable regression cannot lift the ceiling.
 Experience level alone is not a permanent exclusion.
 
-The current disabled builder can derive `RETURNING` from a reported break and
-otherwise uses `UNCALIBRATED`; richer adaptation state is a later program-state
-milestone. That limitation is one reason production enablement remains blocked.
+The builder now derives that state through `AdaptationStatePolicy`, composed into
+`TrainingProgramState` alongside the weekly dose ledger. The policy still derives only
+`RETURNING` from a reported break and `UNCALIBRATED` otherwise, so eligibility outcomes are
+unchanged, and that limitation remains one reason production enablement is blocked.
+
+Widening it is deliberately deferred rather than merely unfinished. The ceiling above is
+allow-by-default on exactly `UNCALIBRATED` and `RETURNING`, so any additional derived state
+would lift it; the states that remain have entry and exit conditions written in terms of
+weekly dose targets that do not exist until Task 4. A regression test in
+`AdaptationStatePolicyTest` fails if the policy ever emits a state this ceiling does not
+cover, so the two cannot drift apart silently.
 
 ## Constraint metadata gap
 

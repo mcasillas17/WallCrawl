@@ -5,7 +5,6 @@ import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
 import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
 import wallcrawl.elopenmike.com.core.exercise.ExerciseFilter
-import wallcrawl.elopenmike.com.core.model.AdaptationState
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
 import wallcrawl.elopenmike.com.core.model.ReviewState
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
@@ -22,6 +21,8 @@ class WorkoutGenerationContextBuilder(
     private val historyAnalyzer: WorkoutHistoryAnalyzer,
     private val plannerFeatureFlags: PlannerFeatureFlags = PlannerFeatureFlags(),
     private val reviewedEligibilityPolicy: ExerciseEligibilityPolicy = ExerciseEligibilityPolicy(),
+    private val adaptationStatePolicy: AdaptationStatePolicy = AdaptationStatePolicy(),
+    private val trainingProgramStateProvider: TrainingProgramStateProvider? = null,
     private val nowTimestamp: () -> Long = System::currentTimeMillis
 ) {
 
@@ -36,16 +37,21 @@ class WorkoutGenerationContextBuilder(
             sessions = recentCompletedSessions,
             targetWeightUnit = profile.preferredUnit
         )
+        // Composed only on the reviewed path, so the legacy path reads no extra history.
+        val trainingProgramState = if (plannerFeatureFlags.reviewedCapabilityEligibility) {
+            trainingProgramStateProvider?.currentState(profile)
+        } else {
+            null
+        }
         val automaticEligibilityResult = if (plannerFeatureFlags.reviewedCapabilityEligibility) {
             val exercisesById = allExercises.associateBy { it.id }
             reviewedEligibilityPolicy.evaluate(
                 exercises = allExercises,
                 profile = profile,
-                adaptationState = if (profile.returningAfterBreakWeeks > 0) {
-                    AdaptationState.RETURNING
-                } else {
-                    AdaptationState.UNCALIBRATED
-                },
+                // Both branches use the same policy, so the value cannot diverge when no
+                // provider is supplied.
+                adaptationState = trainingProgramState?.adaptationState
+                    ?: adaptationStatePolicy.derive(profile),
                 demonstratedProgressionFamilies = exerciseHistory.keys.mapNotNullTo(linkedSetOf()) {
                     exerciseId ->
                     exercisesById[exerciseId]
@@ -84,6 +90,7 @@ class WorkoutGenerationContextBuilder(
             excludedExerciseIds = profile.excludedExerciseIds,
             allowedExercises = allowedExercises,
             automaticEligibilityResult = automaticEligibilityResult,
+            trainingProgramState = trainingProgramState,
             preferredUnits = profile.preferredUnit
         )
     }
