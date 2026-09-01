@@ -305,8 +305,13 @@ discarded at parse, so that screen renders what actually shipped.
 Requirements:
 
 - JDK 17 (the project compiles to Java 17 bytecode)
-- Android SDK 35
+- Android SDK platform 37, which the app compiles against; it still targets API 35
 - `JAVA_HOME` and `ANDROID_HOME` configured
+
+Gradle, the Android Gradle Plugin, and Kotlin come from the wrapper and the version
+catalog, so no local install of those is needed. `connectedDebugAndroidTest` needs a
+running emulator or device; it fails with "No compatible devices connected" rather than
+skipping when none is attached.
 
 ```bash
 ./gradlew testDebugUnitTest
