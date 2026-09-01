@@ -27,10 +27,9 @@ data class WorkoutGenerationContext(
     /**
      * The composed program state, present only when reviewed eligibility is enabled.
      *
-     * No planner or policy reads it yet. It is carried so weekly dose targets and
-     * recommendation snapshots can consume the ledger without re-deriving it, and it stays
-     * null on the legacy path so that path reads no history or catalog it did not already
-     * read.
+     * The reviewed-enabled state-based policy reads its ledger to cap direct-primary sets.
+     * It stays null on the legacy path so that path reads no history or catalog it did not
+     * already read.
      */
     val trainingProgramState: TrainingProgramState? = null,
     /**
