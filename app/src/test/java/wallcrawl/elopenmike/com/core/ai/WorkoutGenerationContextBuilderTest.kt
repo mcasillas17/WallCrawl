@@ -1,10 +1,15 @@
 package wallcrawl.elopenmike.com.core.ai
 
 import com.google.common.truth.Truth.assertThat
+import java.time.ZoneId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
+import wallcrawl.elopenmike.com.core.database.repository.WeeklyDoseLedgerRepository
+import wallcrawl.elopenmike.com.core.model.AdaptationState
+import wallcrawl.elopenmike.com.core.model.LedgerPolicyVersion
+import wallcrawl.elopenmike.com.core.model.WeeklyDoseLedger
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
 import wallcrawl.elopenmike.com.core.exercise.ExerciseFilter
@@ -282,6 +287,56 @@ class WorkoutGenerationContextBuilderTest {
             .inOrder()
     }
 
+    @Test
+    fun contextCarriesTheProgramStateWhenReviewedEligibilityIsEnabled() = runTest {
+        val builder = reviewedEligibilityBuilder(
+            exercises = InMemoryExerciseCatalog.SAMPLE_EXERCISES,
+            completedSessions = emptyList(),
+            trainingProgramStateProvider = TrainingProgramStateProvider(
+                weeklyDoseLedgerRepository = StubWeeklyDoseLedgerRepository(emptyLedger),
+                zoneId = { ZoneId.of("UTC") }
+            )
+        )
+
+        val context = builder.build()
+
+        assertThat(context.trainingProgramState).isNotNull()
+        assertThat(context.trainingProgramState?.adaptationState)
+            .isEqualTo(AdaptationState.UNCALIBRATED)
+        assertThat(context.trainingProgramState?.weeklyLedger).isEqualTo(emptyLedger)
+    }
+
+    @Test
+    fun contextCarriesNoProgramStateWhileReviewedEligibilityIsDisabled() = runTest {
+        val builder = reviewedEligibilityBuilder(
+            exercises = InMemoryExerciseCatalog.SAMPLE_EXERCISES,
+            completedSessions = emptyList(),
+            reviewedCapabilityEligibility = false,
+            trainingProgramStateProvider = TrainingProgramStateProvider(
+                weeklyDoseLedgerRepository = ThrowingWeeklyDoseLedgerRepository,
+                zoneId = { ZoneId.of("UTC") }
+            )
+        )
+
+        // The stub throws if the disabled path reads the ledger, so this also proves the
+        // legacy path performs no extra history or catalog work.
+        val context = builder.build()
+
+        assertThat(context.trainingProgramState).isNull()
+        assertThat(context.automaticEligibilityResult).isNull()
+    }
+
+    private val emptyLedger = WeeklyDoseLedger(
+        policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+        weekStartEpochDay = 20_696L,
+        timeZoneId = "UTC",
+        catalogVersion = "catalog-commit",
+        reviewPolicyVersion = 1,
+        directPrimarySets = emptyMap(),
+        secondaryInvolvement = emptyMap(),
+        unattributedWorkSets = emptyMap()
+    )
+
     private fun completedInclinePressSession(completedAtTimestamp: Long): WorkoutSession {
         val set = WorkoutSet(
             id = "set-$completedAtTimestamp",
@@ -318,7 +373,9 @@ class WorkoutGenerationContextBuilderTest {
     private fun reviewedEligibilityBuilder(
         exercises: List<wallcrawl.elopenmike.com.core.model.Exercise>,
         completedSessions: List<WorkoutSession>,
-        returningAfterBreakWeeks: Int = 0
+        returningAfterBreakWeeks: Int = 0,
+        reviewedCapabilityEligibility: Boolean = true,
+        trainingProgramStateProvider: TrainingProgramStateProvider? = null
     ): WorkoutGenerationContextBuilder = WorkoutGenerationContextBuilder(
         userProfileRepository = StubUserProfileRepository(
             UserProfile(
@@ -333,9 +390,41 @@ class WorkoutGenerationContextBuilderTest {
         exerciseCatalog = InMemoryExerciseCatalog(exercises),
         exerciseFilter = ExerciseFilter(),
         historyAnalyzer = WorkoutHistoryAnalyzer(),
-        plannerFeatureFlags = PlannerFeatureFlags(reviewedCapabilityEligibility = true),
-        reviewedEligibilityPolicy = ExerciseEligibilityPolicy()
+        plannerFeatureFlags = PlannerFeatureFlags(
+            reviewedCapabilityEligibility = reviewedCapabilityEligibility
+        ),
+        reviewedEligibilityPolicy = ExerciseEligibilityPolicy(),
+        trainingProgramStateProvider = trainingProgramStateProvider
     )
+
+    private class StubWeeklyDoseLedgerRepository(
+        private val ledger: WeeklyDoseLedger
+    ) : WeeklyDoseLedgerRepository {
+        override suspend fun weeklyLedgerAt(
+            profileId: String,
+            instant: java.time.Instant,
+            zoneId: ZoneId
+        ): WeeklyDoseLedger = ledger
+
+        override suspend fun currentWeeklyLedger(
+            profileId: String,
+            zoneId: ZoneId
+        ): WeeklyDoseLedger = ledger
+    }
+
+    /** Fails the test if the disabled path reads the ledger at all. */
+    private object ThrowingWeeklyDoseLedgerRepository : WeeklyDoseLedgerRepository {
+        override suspend fun weeklyLedgerAt(
+            profileId: String,
+            instant: java.time.Instant,
+            zoneId: ZoneId
+        ): WeeklyDoseLedger = error("The disabled path must not read the weekly ledger.")
+
+        override suspend fun currentWeeklyLedger(
+            profileId: String,
+            zoneId: ZoneId
+        ): WeeklyDoseLedger = error("The disabled path must not read the weekly ledger.")
+    }
 
     private fun syntheticReviewedMetadata(
         reviewState: ReviewState,
