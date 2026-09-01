@@ -1,7 +1,5 @@
 # Experience Difficulty Ranking Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
-
 **Goal:** Make automatic workout ordering softly prefer exercises at or below the profile's experience tier without changing exercise legality or manual catalog behavior.
 
 **Architecture:** Add a pure `ExerciseDifficultyRankingPolicy` that converts the active mode's trusted classification into a non-negative `aboveExperiencePenalty`. Inject it into `FakeWorkoutPlanner` and apply the penalty in both compound and accessory comparators after stronger role/mechanics criteria and before fatigue/ID tie-breakers. Keep `ExerciseFilter` and `ExerciseEligibilityPolicy` unchanged.
@@ -372,8 +370,10 @@ At one committed SHA, dispatch exactly two `code-review` agents against the full
 validation, commit, and dispatch the same two reviewers again on the new same SHA.
 Stop only when both report no findings on one SHA.
 
-- [ ] **Step 7: Report to the creating session**
+- [ ] **Step 7: Publish the reviewed branch**
 
-Send the final SHA, commit list, exact focused/Python/Gradle/connected-test
-summaries, diff hygiene result, and both same-SHA clean reviewer results to project
-session `4cc6a667-f22a-4485-81b1-c23e33514b7b`. Do not push or open a pull request.
+After both reviewers report no findings on the same SHA, push the branch and open
+a non-draft pull request against `main`. Include the final SHA, focused and full
+validation summaries, both reviewer results, and the explicit rollout boundary:
+experience changes ordering, not eligibility, and reviewed ranking remains blocked
+until sufficient metadata receives deliberate human approval.
