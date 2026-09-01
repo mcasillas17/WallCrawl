@@ -15,8 +15,9 @@ constraints and local movement-capability inputs, a complete bundled catalog,
 structured workout generation and
 validation, reusable custom workout templates, type-aware active set logging
 with no fabricated starting loads, Room persistence, workout-history context,
-and progress calculations. The current `FakeWorkoutPlanner` is deliberately
-replaceable; no production local LLM runtime is integrated yet.
+experience-aware exercise ordering, and progress calculations. The current
+`FakeWorkoutPlanner` is deliberately replaceable; no production local LLM
+runtime is integrated yet.
 
 ## Screenshots & App Experience
 
@@ -219,9 +220,12 @@ structurally valid prescription appropriate to its catalog type. Legacy
 `programming` metadata enriches those defaults when available; otherwise
 WallCrawl uses conservative fallback targets. Its 117 authored entries cover
 every muscle group with beginner options throughout. The planner draws its
-compound slots from that set and prefers it when filling the rest, but it still
-selects from the whole catalog, so an exercise without legacy programming can
-appear in a plan with fallback targets and no coaching note.
+compound slots from that set, softly demotes work above the profile's
+experience level, and prefers authored entries when filling the rest. Difficulty
+never removes an otherwise-legal candidate: an exercise without legacy
+programming can still appear in a plan with fallback targets and no coaching
+note, and a higher-difficulty exercise remains selectable when it is the only
+fillable option.
 
 A separate optional `reviewedMetadata` block defines categorical input for the
 production-disabled deterministic eligibility gate. The initial 37-entry cohort is
@@ -375,6 +379,10 @@ a tag cannot publish its prerelease unless instrumentation succeeds.
 - Recommendation and performed values are both retained for future progression.
 - Each session retains its weight unit; mixed-unit history is converted only for
   planner and analytics calculations, never silently relabeled.
+- Profile experience softly ranks otherwise-comparable automatic candidates; it
+  is not a permanent legality gate. The default legacy path reads
+  `programming.difficulty`. The reviewed-enabled path reads only human-approved
+  `reviewedMetadata.complexity`, never draft metadata.
 - Analytics are derived from completed local sessions, not sample metrics.
 - Movement-capability values feed a reviewed-only deterministic eligibility path, but
   production keeps that path disabled until human-approved metadata and an explicit
@@ -387,13 +395,11 @@ a tag cannot publish its prerelease unless instrumentation succeeds.
 
 - Complete human review of the 37-entry categorical draft cohort, then perform an
   explicit availability/persona review before switching production to the implemented
-  reviewed-only capability gate. Model or pull-request review is not metadata approval.
+  reviewed-only capability gate. Its experience ranker reads only `APPROVED`
+  complexity; model or pull-request review is not metadata approval.
 - Continue the deterministic roadmap with Task 4's state-based dose, effort, and rest
   policy. That is the first step allowed to consume the existing `PRIMARY_ONLY_V1`
   weekly ledger; this eligibility slice does not read it.
-- Add the post-calibration soft complexity rank described by the roadmap. Task 2 already
-  enforces the temporary hard ceiling for undemonstrated `ADVANCED` work while
-  uncalibrated or returning; self-reported experience is not a permanent hard exclusion.
 - Make `recommendedRepRange` optional so timed holds can be reviewed. Fourteen
   planner-eligible movements — planks, dead hangs, wall sits — cannot carry
   mechanics, fatigue, or a coaching note today, because the schema demands a rep

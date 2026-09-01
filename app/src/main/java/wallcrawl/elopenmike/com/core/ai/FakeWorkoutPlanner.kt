@@ -22,7 +22,9 @@ import java.util.concurrent.atomic.AtomicInteger
  */
 class FakeWorkoutPlanner(
     private val prescriptionFactory: DefaultExercisePrescriptionFactory =
-        DefaultExercisePrescriptionFactory()
+        DefaultExercisePrescriptionFactory(),
+    private val difficultyRankingPolicy: ExerciseDifficultyRankingPolicy =
+        ExerciseDifficultyRankingPolicy()
 ) : WorkoutPlanner {
 
     private val generationCounter = AtomicInteger(0)
@@ -173,9 +175,18 @@ class FakeWorkoutPlanner(
             else -> 6
         }
         val compoundSlots = minOf(3, exerciseCountTarget - 1)
+        val reviewedEligibilityEnabled = context.automaticEligibilityResult != null
 
         val result = mutableListOf<Exercise>()
-        result.addAll(chooseCompounds(split, matchingCandidates, compoundSlots))
+        result.addAll(
+            chooseCompounds(
+                split = split,
+                candidates = matchingCandidates,
+                slots = compoundSlots,
+                context = context,
+                reviewedEligibilityEnabled = reviewedEligibilityEnabled
+            )
+        )
 
         // Fill the remaining slots from every matching exercise. Programming metadata
         // influences ordering but never prevents an otherwise valid exercise from selection.
@@ -183,7 +194,13 @@ class FakeWorkoutPlanner(
         if (remainingSlots > 0) {
             val accessories = matchingCandidates
                 .filterNot { it in result }
-                .sortedWith(accessoryOrder(split))
+                .sortedWith(
+                    accessoryOrder(
+                        split = split,
+                        context = context,
+                        reviewedEligibilityEnabled = reviewedEligibilityEnabled
+                    )
+                )
             result.addAll(accessories.take(remainingSlots))
         }
 
@@ -202,13 +219,22 @@ class FakeWorkoutPlanner(
     private fun chooseCompounds(
         split: SplitType,
         candidates: List<Exercise>,
-        slots: Int
+        slots: Int,
+        context: WorkoutGenerationContext,
+        reviewedEligibilityEnabled: Boolean
     ): List<Exercise> {
         if (slots <= 0) return emptyList()
         val compounds = candidates
             .filter { it.programming?.mechanics == MechanicsType.COMPOUND }
             .sortedWith(
                 compareByDescending<Exercise> { it.trainsAsPrimary(split) }
+                    .thenBy {
+                        difficultyRankingPolicy.aboveExperiencePenalty(
+                            exercise = it,
+                            experienceLevel = context.experienceLevel,
+                            reviewedEligibilityEnabled = reviewedEligibilityEnabled
+                        )
+                    }
                     .thenByDescending { it.programming?.fatigueScore ?: 0 }
                     .thenBy { it.id }
             )
@@ -236,10 +262,21 @@ class FakeWorkoutPlanner(
      * and isolation work comes before more compounds: the heavy work is already chosen, so
      * another squat pattern adds fatigue where an accessory adds the volume that was missing.
      */
-    private fun accessoryOrder(split: SplitType): Comparator<Exercise> =
+    private fun accessoryOrder(
+        split: SplitType,
+        context: WorkoutGenerationContext,
+        reviewedEligibilityEnabled: Boolean
+    ): Comparator<Exercise> =
         compareByDescending<Exercise> { it.trainsAsPrimary(split) }
             .thenByDescending { it.programming?.mechanics == MechanicsType.ISOLATION }
             .thenByDescending { it.programming != null }
+            .thenBy {
+                difficultyRankingPolicy.aboveExperiencePenalty(
+                    exercise = it,
+                    experienceLevel = context.experienceLevel,
+                    reviewedEligibilityEnabled = reviewedEligibilityEnabled
+                )
+            }
             .thenByDescending { it.programming?.fatigueScore ?: 0 }
             .thenBy { it.id }
 

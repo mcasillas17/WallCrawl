@@ -6,10 +6,12 @@ import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityFailure
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
+import wallcrawl.elopenmike.com.core.model.Difficulty
 import wallcrawl.elopenmike.com.core.model.MechanicsType
 import wallcrawl.elopenmike.com.core.model.MovementPattern
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.ExercisePerformanceHistory
+import wallcrawl.elopenmike.com.core.model.ExperienceLevel
 import wallcrawl.elopenmike.com.core.model.CapabilityLevel
 import wallcrawl.elopenmike.com.core.model.ComplexityTier
 import wallcrawl.elopenmike.com.core.model.ImpactLevel
@@ -305,6 +307,201 @@ class FakeWorkoutPlannerTest {
     }
 
     @Test
+    fun generateWorkout_beginnerOrdersOtherwiseEqualCompoundsByDifficulty() = runTest {
+        val candidates = listOf(
+            rankingExercise("a-advanced-press", Difficulty.ADVANCED),
+            rankingExercise("b-intermediate-press", Difficulty.INTERMEDIATE),
+            rankingExercise("c-beginner-press", Difficulty.BEGINNER)
+        )
+
+        val workout = planner.generateWorkout(
+            rankingContext(ExperienceLevel.BEGINNER, candidates)
+        )
+
+        assertThat(workout.exercises.map { it.exerciseId })
+            .containsExactly(
+                "c-beginner-press",
+                "b-intermediate-press",
+                "a-advanced-press"
+            )
+            .inOrder()
+    }
+
+    @Test
+    fun generateWorkout_intermediateDemotesOnlyAdvancedCompounds() = runTest {
+        val candidates = listOf(
+            rankingExercise("a-advanced-press", Difficulty.ADVANCED),
+            rankingExercise("b-intermediate-press", Difficulty.INTERMEDIATE),
+            rankingExercise("c-beginner-press", Difficulty.BEGINNER)
+        )
+
+        val workout = planner.generateWorkout(
+            rankingContext(ExperienceLevel.INTERMEDIATE, candidates)
+        )
+
+        assertThat(workout.exercises.map { it.exerciseId })
+            .containsExactly(
+                "b-intermediate-press",
+                "c-beginner-press",
+                "a-advanced-press"
+            )
+            .inOrder()
+    }
+
+    @Test
+    fun generateWorkout_advancedPreservesFatigueThenIdCompoundOrdering() = runTest {
+        val candidates = listOf(
+            rankingExercise("a-high-advanced", Difficulty.ADVANCED, fatigueScore = 5),
+            rankingExercise("b-low-beginner", Difficulty.BEGINNER, fatigueScore = 1),
+            rankingExercise("c-middle-intermediate", Difficulty.INTERMEDIATE, fatigueScore = 3)
+        )
+
+        val workout = planner.generateWorkout(
+            rankingContext(ExperienceLevel.ADVANCED, candidates)
+        )
+
+        assertThat(workout.exercises.map { it.exerciseId })
+            .containsExactly(
+                "a-high-advanced",
+                "c-middle-intermediate",
+                "b-low-beginner"
+            )
+            .inOrder()
+    }
+
+    @Test
+    fun generateWorkout_beginnerStillSelectsSoleAdvancedCandidate() = runTest {
+        val advanced = rankingExercise("sole-advanced-press", Difficulty.ADVANCED)
+
+        val workout = planner.generateWorkout(
+            rankingContext(ExperienceLevel.BEGINNER, listOf(advanced))
+        )
+
+        assertThat(workout.exercises.map { it.exerciseId })
+            .containsExactly(advanced.id)
+    }
+
+    @Test
+    fun generateWorkout_beginnerUsesDifficultyForAccessoryOrdering() = runTest {
+        val compound = rankingExercise(
+            id = "compound-press",
+            difficulty = Difficulty.BEGINNER,
+            fatigueScore = 5
+        )
+        val candidates = listOf(
+            compound,
+            rankingExercise(
+                id = "a-advanced-accessory",
+                difficulty = Difficulty.ADVANCED,
+                mechanics = MechanicsType.ISOLATION
+            ),
+            rankingExercise(
+                id = "b-intermediate-accessory",
+                difficulty = Difficulty.INTERMEDIATE,
+                mechanics = MechanicsType.ISOLATION
+            ),
+            rankingExercise(
+                id = "c-beginner-accessory",
+                difficulty = Difficulty.BEGINNER,
+                mechanics = MechanicsType.ISOLATION
+            )
+        )
+
+        val workout = planner.generateWorkout(
+            rankingContext(ExperienceLevel.BEGINNER, candidates)
+        )
+
+        assertThat(workout.exercises.map { it.exerciseId })
+            .containsExactly(
+                "compound-press",
+                "c-beginner-accessory",
+                "b-intermediate-accessory",
+                "a-advanced-accessory"
+            )
+            .inOrder()
+    }
+
+    @Test
+    fun generateWorkout_reviewedModeUsesApprovedComplexityOverLegacyDifficulty() = runTest {
+        val reviewedAdvanced = rankingExercise(
+            id = "a-reviewed-advanced",
+            difficulty = Difficulty.BEGINNER,
+            reviewedState = ReviewState.APPROVED,
+            reviewedComplexity = ComplexityTier.ADVANCED
+        )
+        val reviewedFoundational = rankingExercise(
+            id = "z-reviewed-foundational",
+            difficulty = Difficulty.ADVANCED,
+            reviewedState = ReviewState.APPROVED,
+            reviewedComplexity = ComplexityTier.FOUNDATIONAL
+        )
+        val candidates = listOf(reviewedAdvanced, reviewedFoundational)
+
+        val workout = planner.generateWorkout(
+            rankingContext(
+                experienceLevel = ExperienceLevel.BEGINNER,
+                candidates = candidates,
+                reviewedEligibilityEnabled = true
+            )
+        )
+
+        assertThat(workout.exercises.map { it.exerciseId })
+            .containsExactly(reviewedFoundational.id, reviewedAdvanced.id)
+            .inOrder()
+    }
+
+    @Test
+    fun generateWorkout_legacyModeIgnoresDraftComplexity() = runTest {
+        val draftFoundational = rankingExercise(
+            id = "a-draft-foundational",
+            difficulty = Difficulty.ADVANCED,
+            reviewedState = ReviewState.DRAFT,
+            reviewedComplexity = ComplexityTier.FOUNDATIONAL
+        )
+        val draftAdvanced = rankingExercise(
+            id = "z-draft-advanced",
+            difficulty = Difficulty.BEGINNER,
+            reviewedState = ReviewState.DRAFT,
+            reviewedComplexity = ComplexityTier.ADVANCED
+        )
+
+        val workout = planner.generateWorkout(
+            rankingContext(
+                experienceLevel = ExperienceLevel.BEGINNER,
+                candidates = listOf(draftFoundational, draftAdvanced)
+            )
+        )
+
+        assertThat(workout.exercises.map { it.exerciseId })
+            .containsExactly(draftAdvanced.id, draftFoundational.id)
+            .inOrder()
+    }
+
+    @Test
+    fun generateWorkout_softDifficultyRankingPreservesAllowedCandidateMembership() = runTest {
+        val candidates = listOf(
+            rankingExercise("advanced-compound", Difficulty.ADVANCED),
+            rankingExercise(
+                "beginner-accessory",
+                Difficulty.BEGINNER,
+                mechanics = MechanicsType.ISOLATION
+            ),
+            rankingExercise(
+                "intermediate-accessory",
+                Difficulty.INTERMEDIATE,
+                mechanics = MechanicsType.ISOLATION
+            )
+        )
+
+        val workout = planner.generateWorkout(
+            rankingContext(ExperienceLevel.BEGINNER, candidates)
+        )
+
+        assertThat(workout.exercises.map { it.exerciseId })
+            .containsExactlyElementsIn(candidates.map { it.id })
+    }
+
+    @Test
     fun generateWorkout_withEmptyAllowedCandidates_throwsException() = runTest {
         val emptyContext = WorkoutGenerationContext(
             userProfile = UserProfile(),
@@ -544,13 +741,69 @@ class FakeWorkoutPlannerTest {
         const val SPLIT_ROTATION_PROBE = 6
     }
 
-    private fun reviewedMetadata(reviewState: ReviewState): ReviewedExerciseMetadata =
+    private fun rankingContext(
+        experienceLevel: ExperienceLevel,
+        candidates: List<Exercise>,
+        reviewedEligibilityEnabled: Boolean = false
+    ): WorkoutGenerationContext {
+        val profile = UserProfile(
+            experienceLevel = experienceLevel,
+            preferredDurationMinutes = 60,
+            musclePriorities = mapOf(StandardMuscles.CHEST to PriorityLevel.HIGH)
+        )
+        return WorkoutGenerationContext(
+            userProfile = profile,
+            allowedExercises = candidates,
+            automaticEligibilityResult = if (reviewedEligibilityEnabled) {
+                AutomaticEligibilityResult.Candidates(
+                    exercises = candidates,
+                    decisions = emptyList()
+                )
+            } else {
+                null
+            }
+        )
+    }
+
+    private fun rankingExercise(
+        id: String,
+        difficulty: Difficulty,
+        mechanics: MechanicsType = MechanicsType.COMPOUND,
+        fatigueScore: Int = 3,
+        reviewedState: ReviewState? = null,
+        reviewedComplexity: ComplexityTier = ComplexityTier.STANDARD
+    ): Exercise {
+        val base = allExercises.single { it.id == "barbell-bench-press" }
+        return base.copy(
+            id = id,
+            name = id,
+            primaryMuscles = listOf(StandardMuscles.CHEST),
+            secondaryMuscles = emptyList(),
+            programming = checkNotNull(base.programming).copy(
+                difficulty = difficulty,
+                mechanics = mechanics,
+                movementPattern = MovementPattern.HORIZONTAL_PUSH,
+                fatigueScore = fatigueScore
+            ),
+            reviewedMetadata = reviewedState?.let {
+                reviewedMetadata(
+                    reviewState = it,
+                    complexity = reviewedComplexity
+                )
+            }
+        )
+    }
+
+    private fun reviewedMetadata(
+        reviewState: ReviewState,
+        complexity: ComplexityTier = ComplexityTier.STANDARD
+    ): ReviewedExerciseMetadata =
         ReviewedExerciseMetadata(
             reviewState = reviewState,
             directPrimaryMuscle = StandardMuscles.CHEST,
             descriptiveSecondaryMuscles = setOf(StandardMuscles.SHOULDERS, StandardMuscles.TRICEPS),
             movementPattern = MovementPattern.HORIZONTAL_PUSH,
-            complexity = ComplexityTier.STANDARD,
+            complexity = complexity,
             progressionFamily = "dumbbell-horizontal-push",
             prescriptionShape = PrescriptionShape.WEIGHT_REPS,
             approvedRegressions = emptyList(),

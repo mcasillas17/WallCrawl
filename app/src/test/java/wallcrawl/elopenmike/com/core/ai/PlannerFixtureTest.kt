@@ -14,6 +14,7 @@ import wallcrawl.elopenmike.com.core.model.ExercisePrescription
 import wallcrawl.elopenmike.com.core.model.ExerciseProgrammingMetadata
 import wallcrawl.elopenmike.com.core.model.ExerciseSource
 import wallcrawl.elopenmike.com.core.model.ExerciseType
+import wallcrawl.elopenmike.com.core.model.ExperienceLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.MechanicsType
 import wallcrawl.elopenmike.com.core.model.MovementCapabilities
@@ -71,6 +72,72 @@ class PlannerFixtureTest {
                 is PlannerFixtureFailureEvaluation -> assertFailureFixture(evaluation)
             }
         }
+    }
+
+    @Test
+    fun bodyweightBeginnerPersona_keepsExperienceRankingSoftAndInventsNoLoad() = runTest {
+        val fixture = loader.loadCorpus().single { it.id == "bodyweight-beginner" }
+        val evaluation = evaluator.evaluateFixture(fixture) as PlannerFixtureSuccessEvaluation
+        val catalogById = evaluation.built.catalogExercises.associateBy(Exercise::id)
+        val selectedIds = evaluation.firstWorkout.exercises.map { it.exerciseId }
+        val allowedIds = evaluation.built.context.allowedExercises.map(Exercise::id).toSet()
+        val difficultyPolicy = ExerciseDifficultyRankingPolicy()
+
+        assertThat(evaluation.built.userProfile.experienceLevel)
+            .isEqualTo(ExperienceLevel.BEGINNER)
+        assertThat(allowedIds.containsAll(selectedIds)).isTrue()
+        evaluation.firstWorkout.exercises.forEach { generated ->
+            val exercise = checkNotNull(catalogById[generated.exerciseId])
+            assertThat(
+                difficultyPolicy.aboveExperiencePenalty(
+                    exercise = exercise,
+                    experienceLevel = ExperienceLevel.BEGINNER,
+                    reviewedEligibilityEnabled = false
+                )
+            ).isEqualTo(0)
+            assertThat(generated.prescription.targetWeight).isNull()
+        }
+    }
+
+    @Test
+    fun fullGymAdvancedPersona_preservesLegalPoolAndExistingLoadRules() = runTest {
+        val fixture = loader.loadCorpus().single { it.id == "full-gym-advanced" }
+        val evaluation = evaluator.evaluateFixture(fixture) as PlannerFixtureSuccessEvaluation
+        val catalogById = evaluation.built.catalogExercises.associateBy(Exercise::id)
+        val selectedIds = evaluation.firstWorkout.exercises.map { it.exerciseId }
+        val allowedIds = evaluation.built.context.allowedExercises.map(Exercise::id).toSet()
+        val difficultyPolicy = ExerciseDifficultyRankingPolicy()
+
+        assertThat(evaluation.built.userProfile.experienceLevel)
+            .isEqualTo(ExperienceLevel.ADVANCED)
+        assertThat(allowedIds.containsAll(selectedIds)).isTrue()
+        assertThat(
+            evaluation.built.context.allowedExercises.any {
+                it.programming?.difficulty == Difficulty.ADVANCED
+            }
+        ).isTrue()
+        evaluation.firstWorkout.exercises.forEach { generated ->
+            val exercise = checkNotNull(catalogById[generated.exerciseId])
+            assertThat(
+                difficultyPolicy.aboveExperiencePenalty(
+                    exercise = exercise,
+                    experienceLevel = ExperienceLevel.ADVANCED,
+                    reviewedEligibilityEnabled = false
+                )
+            ).isEqualTo(0)
+            if (
+                exercise.type == ExerciseType.WEIGHT_REPS &&
+                exercise.id !in evaluation.built.context.exerciseHistory &&
+                exercise.id !in evaluation.built.userProfile.confirmedStartingLoads
+            ) {
+                assertThat(generated.prescription.targetWeight).isNull()
+            }
+        }
+        assertThat(
+            evaluation.firstWorkout.exercises.single {
+                it.exerciseId == "barbell-bench-press"
+            }.prescription.targetWeight
+        ).isEqualTo(185.0)
     }
 
     @Test
