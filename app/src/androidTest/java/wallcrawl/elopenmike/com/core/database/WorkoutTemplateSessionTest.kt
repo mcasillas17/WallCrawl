@@ -13,6 +13,7 @@ import wallcrawl.elopenmike.com.core.database.entity.UserProfileEntity
 import wallcrawl.elopenmike.com.core.database.repository.OfflineWorkoutRepository
 import wallcrawl.elopenmike.com.core.database.repository.OfflineWorkoutTemplateRepository
 import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
+import wallcrawl.elopenmike.com.core.model.EffortTarget
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.ExercisePrescription
 import wallcrawl.elopenmike.com.core.model.ExerciseType
@@ -20,6 +21,8 @@ import wallcrawl.elopenmike.com.core.model.ExperienceLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.PlannedExercise
 import wallcrawl.elopenmike.com.core.model.RepRange
+import wallcrawl.elopenmike.com.core.model.RestClass
+import wallcrawl.elopenmike.com.core.model.RestTargetSource
 import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
@@ -65,7 +68,10 @@ class WorkoutTemplateSessionTest {
                         exerciseType = ExerciseType.DURATION,
                         targetSets = 3,
                         targetDurationSeconds = 45,
-                        restSeconds = 30
+                        restSeconds = 240,
+                        effortTarget = EffortTarget(2, 4),
+                        restClass = RestClass.LONG,
+                        restTargetSource = RestTargetSource.USER_PREFERENCE
                     )
                 )
             )
@@ -95,6 +101,13 @@ class WorkoutTemplateSessionTest {
         assertThat(persisted.sourceTemplateId).isEqualTo(original.id)
         assertThat(persisted.exercises.single().prescription.targetSets).isEqualTo(3)
         assertThat(persisted.exercises.single().prescription.targetDurationSeconds).isEqualTo(45)
+        assertThat(persisted.exercises.single().prescription.effortTarget)
+            .isEqualTo(EffortTarget(2, 4))
+        assertThat(persisted.exercises.single().prescription.restClass)
+            .isEqualTo(RestClass.LONG)
+        assertThat(persisted.exercises.single().prescription.restTargetSource)
+            .isEqualTo(RestTargetSource.USER_PREFERENCE)
+        assertThat(persisted.exercises.single().prescription.restSeconds).isEqualTo(240)
         assertThat(persisted.exercises.single().sets).hasSize(3)
         assertThat(templateRepository.getTemplate(original.id)).isNull()
     }

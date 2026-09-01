@@ -12,11 +12,14 @@ import wallcrawl.elopenmike.com.core.database.entity.WorkoutTemplateEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutTemplateExerciseEntity
 import wallcrawl.elopenmike.com.core.database.relation.WorkoutTemplateWithExercises
 import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
+import wallcrawl.elopenmike.com.core.model.EffortTarget
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.ExercisePrescription
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.PlannedExercise
 import wallcrawl.elopenmike.com.core.model.RepRange
+import wallcrawl.elopenmike.com.core.model.RestClass
+import wallcrawl.elopenmike.com.core.model.RestTargetSource
 import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
 
 class WorkoutTemplateRepositoryTest {
@@ -47,7 +50,10 @@ class WorkoutTemplateRepositoryTest {
                         targetSets = 4,
                         repRange = RepRange(6, 10),
                         targetAssistanceWeight = 35.0,
-                        restSeconds = 120
+                        restSeconds = 240,
+                        effortTarget = EffortTarget(2, 4),
+                        restClass = RestClass.LONG,
+                        restTargetSource = RestTargetSource.USER_PREFERENCE
                     ),
                     notes = "Full range"
                 )
@@ -63,7 +69,11 @@ class WorkoutTemplateRepositoryTest {
         assertThat(exercise.targetRepMin).isEqualTo(6)
         assertThat(exercise.targetRepMax).isEqualTo(10)
         assertThat(exercise.targetAssistanceWeight).isEqualTo(35.0)
-        assertThat(exercise.restSeconds).isEqualTo(120)
+        assertThat(exercise.restSeconds).isEqualTo(240)
+        assertThat(exercise.effortMinRir).isEqualTo(2)
+        assertThat(exercise.effortMaxRir).isEqualTo(4)
+        assertThat(exercise.restClass).isEqualTo(RestClass.LONG)
+        assertThat(exercise.restTargetSource).isEqualTo(RestTargetSource.USER_PREFERENCE)
         assertThat(exercise.notes).isEqualTo("Full range")
     }
 
@@ -97,6 +107,86 @@ class WorkoutTemplateRepositoryTest {
     }
 
     @Test
+    fun observeTemplates_restoresEveryGuidanceField() = runTest {
+        val dao = RecordingWorkoutTemplateDao(
+            stored = listOf(
+                WorkoutTemplateWithExercises(
+                    template = WorkoutTemplateEntity(
+                        id = "template",
+                        name = "Guided",
+                        notes = "",
+                        createdAtTimestamp = 1_000L,
+                        updatedAtTimestamp = 1_000L
+                    ),
+                    exercises = listOf(
+                        repetitionEntity(
+                            orderIndex = 0,
+                            exerciseId = "push-up",
+                            effortMinRir = 2,
+                            effortMaxRir = 4,
+                            restClass = RestClass.LONG,
+                            restTargetSource = RestTargetSource.USER_PREFERENCE,
+                            restSeconds = 240
+                        )
+                    )
+                )
+            )
+        )
+        val repository = OfflineWorkoutTemplateRepository(dao, catalog)
+
+        val prescription = repository.observeTemplates().first()
+            .single()
+            .exercises
+            .single()
+            .prescription
+
+        assertThat(prescription.effortTarget).isEqualTo(EffortTarget(2, 4))
+        assertThat(prescription.restClass).isEqualTo(RestClass.LONG)
+        assertThat(prescription.restTargetSource).isEqualTo(RestTargetSource.USER_PREFERENCE)
+        assertThat(prescription.restSeconds).isEqualTo(240)
+    }
+
+    @Test
+    fun observeTemplates_rejectsPartialPersistedGuidance() {
+        val malformedRows = listOf(
+            repetitionEntity(
+                orderIndex = 0,
+                exerciseId = "push-up",
+                effortMinRir = 2,
+                effortMaxRir = null
+            ),
+            repetitionEntity(
+                orderIndex = 0,
+                exerciseId = "push-up",
+                restClass = RestClass.MODERATE,
+                restTargetSource = null
+            )
+        )
+
+        malformedRows.forEach { malformed ->
+            val dao = RecordingWorkoutTemplateDao(
+                stored = listOf(
+                    WorkoutTemplateWithExercises(
+                        template = WorkoutTemplateEntity(
+                            id = "template",
+                            name = "Malformed",
+                            notes = "",
+                            createdAtTimestamp = 1_000L,
+                            updatedAtTimestamp = 1_000L
+                        ),
+                        exercises = listOf(malformed)
+                    )
+                )
+            )
+            val repository = OfflineWorkoutTemplateRepository(dao, catalog)
+
+            assertThrows(IllegalStateException::class.java) {
+                runTest { repository.observeTemplates().first() }
+            }
+        }
+    }
+
+    @Test
     fun getTemplate_rejectsAStaleExerciseThatIsNoLongerInTheCatalog() {
         val dao = RecordingWorkoutTemplateDao(
             stored = listOf(
@@ -121,7 +211,15 @@ class WorkoutTemplateRepositoryTest {
         }
     }
 
-    private fun repetitionEntity(orderIndex: Int, exerciseId: String) =
+    private fun repetitionEntity(
+        orderIndex: Int,
+        exerciseId: String,
+        effortMinRir: Int? = null,
+        effortMaxRir: Int? = null,
+        restClass: RestClass? = null,
+        restTargetSource: RestTargetSource? = null,
+        restSeconds: Int = 75
+    ) =
         WorkoutTemplateExerciseEntity(
             templateId = "template",
             orderIndex = orderIndex,
@@ -134,7 +232,11 @@ class WorkoutTemplateRepositoryTest {
             targetAssistanceWeight = null,
             targetDurationSeconds = null,
             targetDistanceMeters = null,
-            restSeconds = 75,
+            restSeconds = restSeconds,
+            effortMinRir = effortMinRir,
+            effortMaxRir = effortMaxRir,
+            restClass = restClass,
+            restTargetSource = restTargetSource,
             notes = ""
         )
 
@@ -152,6 +254,10 @@ class WorkoutTemplateRepositoryTest {
             targetDurationSeconds = 45,
             targetDistanceMeters = null,
             restSeconds = 45,
+            effortMinRir = null,
+            effortMaxRir = null,
+            restClass = null,
+            restTargetSource = null,
             notes = ""
         )
 

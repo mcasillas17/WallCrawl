@@ -4,7 +4,7 @@ import android.database.sqlite.SQLiteDatabase
 
 internal object LegacyDatabaseFixtures {
     fun createSchema(db: SQLiteDatabase, version: Int) {
-        require(version in 1..9)
+        require(version in 1..10)
         db.execSQL("PRAGMA foreign_keys=ON")
         createUserProfiles(db, version)
         createWorkoutSessions(db, version)
@@ -13,6 +13,9 @@ internal object LegacyDatabaseFixtures {
         } else {
             createCurrentWorkoutChildren(db, version)
             createTemplateTables(db)
+        }
+        if (version >= 10) {
+            createWeeklyDoseLedgerState(db)
         }
     }
 
@@ -251,6 +254,25 @@ internal object LegacyDatabaseFixtures {
         db.execSQL(
             "CREATE INDEX index_workout_template_exercises_templateId " +
                 "ON workout_template_exercises(templateId)"
+        )
+    }
+
+    private fun createWeeklyDoseLedgerState(db: SQLiteDatabase) {
+        db.execSQL(
+            """
+            CREATE TABLE weekly_dose_ledger_state (
+                profileId TEXT NOT NULL,
+                weekStartEpochDay INTEGER NOT NULL,
+                timeZoneId TEXT NOT NULL,
+                policyVersion TEXT NOT NULL,
+                catalogVersion TEXT NOT NULL,
+                reviewPolicyVersion INTEGER NOT NULL,
+                ledgerPayload TEXT NOT NULL,
+                sourceFingerprint TEXT NOT NULL,
+                generatedAtTimestamp INTEGER NOT NULL,
+                PRIMARY KEY(profileId, weekStartEpochDay, timeZoneId, policyVersion)
+            )
+            """.trimIndent()
         )
     }
 }

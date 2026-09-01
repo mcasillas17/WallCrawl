@@ -173,7 +173,11 @@ class OfflineWorkoutRepository(
                     targetDurationSeconds = genEx.prescription.targetDurationSeconds,
                     targetDistanceMeters = genEx.prescription.targetDistanceMeters,
                     restSeconds = genEx.prescription.restSeconds,
-                    notes = genEx.notes
+                    notes = genEx.notes,
+                    effortMinRir = genEx.prescription.effortTarget?.minRir,
+                    effortMaxRir = genEx.prescription.effortTarget?.maxRir,
+                    restClass = genEx.prescription.restClass,
+                    restTargetSource = genEx.prescription.restTargetSource
                 )
             )
 

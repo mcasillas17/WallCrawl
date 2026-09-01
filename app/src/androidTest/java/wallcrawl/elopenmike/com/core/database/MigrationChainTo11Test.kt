@@ -9,14 +9,14 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class MigrationChainTo10Test {
+class MigrationChainTo11Test {
 
     private val context: Context = ApplicationProvider.getApplicationContext()
 
     @Test
-    fun everyHistoricallySupportedSchemaMigratesToVersion10() {
-        (1..9).forEach { startingVersion ->
-            val databaseName = "migration-$startingVersion-10.db"
+    fun everyHistoricallySupportedSchemaMigratesToVersion11() {
+        (1..10).forEach { startingVersion ->
+            val databaseName = "migration-$startingVersion-11.db"
             context.deleteDatabase(databaseName)
             context.openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null).use { db ->
                 LegacyDatabaseFixtures.createSchema(db, startingVersion)
@@ -33,7 +33,7 @@ class MigrationChainTo10Test {
                 .build()
             try {
                 val sqlite = database.openHelper.writableDatabase
-                assertThat(sqlite.version).isEqualTo(10)
+                assertThat(sqlite.version).isEqualTo(11)
                 sqlite.query(
                     "SELECT name,movementCapabilitiesJson FROM user_profiles"
                 ).use { cursor ->
@@ -64,6 +64,24 @@ class MigrationChainTo10Test {
                 sqlite.query("SELECT COUNT(*) FROM weekly_dose_ledger_state").use { cursor ->
                     assertThat(cursor.moveToFirst()).isTrue()
                     assertThat(cursor.getInt(0)).isEqualTo(0)
+                }
+                listOf("workout_exercises", "workout_template_exercises").forEach { table ->
+                    sqlite.query("PRAGMA table_info($table)").use { cursor ->
+                        val columns = mutableMapOf<String, String?>()
+                        while (cursor.moveToNext()) {
+                            columns[cursor.getString(cursor.getColumnIndexOrThrow("name"))] =
+                                cursor.getString(cursor.getColumnIndexOrThrow("dflt_value"))
+                        }
+                        listOf(
+                            "effortMinRir",
+                            "effortMaxRir",
+                            "restClass",
+                            "restTargetSource"
+                        ).forEach { column ->
+                            assertThat(columns).containsKey(column)
+                            assertThat(columns[column]).isNull()
+                        }
+                    }
                 }
                 sqlite.query("PRAGMA foreign_key_check").use { cursor ->
                     assertThat(cursor.count).isEqualTo(0)

@@ -18,6 +18,17 @@ internal fun WorkoutSessionWithExercisesAndSets.toWorkoutSession(): WorkoutSessi
     val domainExercises = exercisesWithSets
         .sortedBy { it.exercise.orderIndex }
         .map { exerciseWithSets ->
+            val persistedExercise = exerciseWithSets.exercise
+            val effortTarget = persistedEffortTarget(
+                minRir = persistedExercise.effortMinRir,
+                maxRir = persistedExercise.effortMaxRir,
+                owner = "Persisted workout exercise"
+            )
+            requireCompletePersistedRestTarget(
+                restClass = persistedExercise.restClass,
+                restTargetSource = persistedExercise.restTargetSource,
+                owner = "Persisted workout exercise"
+            )
             val domainSets = exerciseWithSets.sets
                 .sortedBy { it.setNumber }
                 .map { setEntity ->
@@ -48,28 +59,31 @@ internal fun WorkoutSessionWithExercisesAndSets.toWorkoutSession(): WorkoutSessi
                 }
 
             WorkoutExercise(
-                id = exerciseWithSets.exercise.id,
-                sessionId = exerciseWithSets.exercise.sessionId,
-                exerciseId = exerciseWithSets.exercise.exerciseId,
-                orderIndex = exerciseWithSets.exercise.orderIndex,
+                id = persistedExercise.id,
+                sessionId = persistedExercise.sessionId,
+                exerciseId = persistedExercise.exerciseId,
+                orderIndex = persistedExercise.orderIndex,
                 prescription = ExercisePrescription(
-                    exerciseType = exerciseWithSets.exercise.exerciseType,
-                    targetSets = exerciseWithSets.exercise.targetSets,
-                    repRange = exerciseWithSets.exercise.targetRepMin?.let { minimum ->
+                    exerciseType = persistedExercise.exerciseType,
+                    targetSets = persistedExercise.targetSets,
+                    repRange = persistedExercise.targetRepMin?.let { minimum ->
                         RepRange(
                             min = minimum,
-                            max = checkNotNull(exerciseWithSets.exercise.targetRepMax) {
+                            max = checkNotNull(persistedExercise.targetRepMax) {
                                 "Persisted repetition target is missing its maximum."
                             }
                         )
                     },
-                    targetWeight = exerciseWithSets.exercise.targetWeight,
-                    targetAssistanceWeight = exerciseWithSets.exercise.targetAssistanceWeight,
-                    targetDurationSeconds = exerciseWithSets.exercise.targetDurationSeconds,
-                    targetDistanceMeters = exerciseWithSets.exercise.targetDistanceMeters,
-                    restSeconds = exerciseWithSets.exercise.restSeconds
+                    targetWeight = persistedExercise.targetWeight,
+                    targetAssistanceWeight = persistedExercise.targetAssistanceWeight,
+                    targetDurationSeconds = persistedExercise.targetDurationSeconds,
+                    targetDistanceMeters = persistedExercise.targetDistanceMeters,
+                    restSeconds = persistedExercise.restSeconds,
+                    effortTarget = effortTarget,
+                    restClass = persistedExercise.restClass,
+                    restTargetSource = persistedExercise.restTargetSource
                 ),
-                notes = exerciseWithSets.exercise.notes,
+                notes = persistedExercise.notes,
                 sets = domainSets
             )
         }
