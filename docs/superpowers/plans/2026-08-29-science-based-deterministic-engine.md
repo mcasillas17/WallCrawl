@@ -1,7 +1,5 @@
 # Science-Based Deterministic Engine Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
-
 **Goal:** Build a fully local, auditable multi-week resistance-training engine whose eligibility, weekly dose, effort, progression, and fallbacks follow the signed evidence doctrine.
 
 **Architecture:** A reviewed metadata gate feeds capability/equipment eligibility, a `PRIMARY_ONLY_V1` weekly ledger, calibration-state policy, deterministic ranking and prescription compilation, and session/weekly validation. Immutable snapshots and versioned reason codes make every recommendation replayable.
@@ -96,17 +94,19 @@ requires explicit human metadata signoff and a separate availability/persona dec
 
 ### Task 3: Add the PRIMARY_ONLY_V1 Weekly Ledger
 
-**Status:** Shipped, and now composed. The ledger is built and cached at schema 10 and
+**Status:** Shipped, composed, and consumed on the reviewed-enabled path. The ledger is
+built and cached at schema 10 and
 documented in [docs/weekly-dose-ledger.md](../../weekly-dose-ledger.md). `AdaptationState`
 landed with Task 2, and `TrainingProgramState` now composes it with the ledger and rides on
-the generation context when reviewed eligibility is enabled. No policy reads the ledger's
-counts, so planner selection, dose targets, and progression are unchanged; the first allowed
-consumption remains Task 4.
+the generation context when reviewed eligibility is enabled. Task 4 reads direct-primary
+counts only to cap future prescriptions; legacy planner selection and progression remain
+unchanged.
 
 `AdaptationStatePolicy` deliberately derives only `UNCALIBRATED` and `RETURNING`. Any further
 state lifts the advanced-complexity ceiling in `ExerciseEligibilityPolicy`, which is
-allow-by-default on exactly those two, so richer states belong to Task 4 where dose targets
-exist to define entry and exit. A regression test pins that coupling.
+allow-by-default on exactly those two. Task 4 defines dose behavior for every state but
+does not derive another state; comparable-outcome transitions remain Task 6. A regression
+test pins that coupling.
 
 **Files:**
 - Create: `app/src/main/java/wallcrawl/elopenmike/com/core/model/WeeklyDoseLedger.kt`
@@ -132,18 +132,29 @@ exist to define entry and exit. A regression test pins that coupling.
 
 ### Task 4: Implement State-Based Dose, Effort, and Rest Policy
 
+**Status:** Shipped behind the production-disabled reviewed eligibility path. A pure
+`StateBasedTrainingPolicy` returns applied guidance, typed no-guidance, or typed failure;
+it validates approved provenance and composed state/ledger versions, caps but never
+increases base sets, and never changes a load. `ExercisePrescription` persists nullable
+effort and classified rest guidance through Room schema 11. `AdaptationStatePolicy`
+continues to derive only `UNCALIBRATED` and `RETURNING`.
+
 **Files:**
-- Create: `app/src/main/java/wallcrawl/elopenmike/com/core/ai/TrainingPolicy.kt`
-- Create: `app/src/main/java/wallcrawl/elopenmike/com/core/model/EffortTarget.kt`
+- Create: `app/src/main/java/wallcrawl/elopenmike/com/core/ai/StateBasedTrainingPolicy.kt`
+- Create: `app/src/main/java/wallcrawl/elopenmike/com/core/model/TrainingGuidance.kt`
 - Modify: `app/src/main/java/wallcrawl/elopenmike/com/core/model/ExercisePrescription.kt`
 - Modify: `app/src/main/java/wallcrawl/elopenmike/com/core/ai/DefaultExercisePrescriptionFactory.kt`
-- Test: `app/src/test/java/wallcrawl/elopenmike/com/core/ai/TrainingPolicyTest.kt`
+- Modify: `app/src/main/java/wallcrawl/elopenmike/com/core/database/WallCrawlDatabase.kt`
+- Test: `app/src/test/java/wallcrawl/elopenmike/com/core/ai/StateBasedTrainingPolicyTest.kt`
+- Test: `app/src/androidTest/java/wallcrawl/elopenmike/com/core/database/Migration10To11Test.kt`
 
-- [ ] Write failing tests: INITIATE may choose very small exposure; weekly ledger drives remaining dose; session count only constrains duration/tolerance.
-- [ ] Add nullable `EffortTarget(minRir, maxRir)` and `RestClass { SHORT, MODERATE, LONG }`.
-- [ ] Use 2-4 RIR guidance in INITIATE/RETURNING or for a relevant `LIMITED` capability and 1-3 for established general/hypertrophy; never auto-default failure.
-- [ ] Resolve rest classes through versioned editable product policy and preserve per-exercise user preference.
-- [ ] Prove capability values never produce an unconfirmed load; commit `feat: add state based workout dose policy`.
+- [x] Write failing tests: small conservative exposure; weekly ledger drives remaining dose; session count/frequency never masquerades as dose.
+- [x] Add nullable `EffortTarget(minRir, maxRir)` and `RestClass { SHORT, MODERATE, LONG }`.
+- [x] Use 2-4 RIR guidance in conservative states or for a relevant `LIMITED` capability, 1-2 for established strength, and 1-3 for established general/hypertrophy; never auto-default failure.
+- [x] Resolve rest classes through versioned editable product policy and preserve explicit per-exercise user preferences.
+- [x] Return typed exhaustion rather than zero sets, and fail closed on unapproved or version-mismatched metadata/ledger input.
+- [x] Prove capability/state never change confirmed/history-only load and keep the legacy path unchanged.
+- [x] Persist every new field through templates, frozen sessions, and additive migration 10 → 11.
 
 ### Task 5: Add Typed Gym-Floor Feedback
 
@@ -171,7 +182,7 @@ exist to define entry and exit. A regression test pins that coupling.
 - [x] Incomplete, skipped, cancelled, and abandoned work stays distinguishable
   from completed work, so it cannot look completed to future adaptation.
 - [x] Focused JVM and connected Android tests originally shipped at schema 9;
-  the current migration suite validates the complete chain through schema 10.
+  the current migration suite validates the complete chain through schema 11.
 
 Effort is recorded on the documented 0-10 RPE scale and 0-10 RIR range. Missing
 values stay missing: nothing infers effort, readiness, or a manageable answer
@@ -244,9 +255,6 @@ weekly dose ledger do not read this feedback yet.
 
 ```bash
 python3 -m unittest discover -s tools/workout-guide -p 'test_*.py' -v
-python3 tools/workout-guide/import_catalog.py \
-  --source /Users/elopenmike/build/Apps/Workouts/guide/workout-guide \
-  --check
 ./gradlew test lint assembleDebug --stacktrace --no-daemon
 ./gradlew connectedDebugAndroidTest --no-daemon
 git diff --check

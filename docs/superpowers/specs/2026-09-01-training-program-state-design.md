@@ -14,6 +14,11 @@ It also does not approve metadata. The bundled catalog stays at 302 exercises wi
 `DRAFT` reviewed entries and zero `APPROVED`, so the composed ledger still credits nothing
 from real history and reports every completed work set as unattributed.
 
+Task 4 has since added a production-disabled `StateBasedTrainingPolicy` that consumes the
+composed ledger for upper-cap-only dose guidance. This document retains the composition
+decision and its original milestone boundary; current behavior is documented in
+`2026-09-01-state-based-dose-effort-rest-design.md`.
+
 ## Why now
 
 `docs/reviewed-capability-eligibility.md` names this work as a blocker for enabling the
@@ -125,15 +130,13 @@ property of where the code lives, not something this design has to enforce.
 
 ### Carrying an unread ledger
 
-`TrainingProgramState` is placed on `WorkoutGenerationContext` even though no policy reads
-`weeklyLedger` yet. The alternative — composing only `adaptationState` and adding the ledger
-when a consumer exists — avoids computing a value nothing uses.
+`TrainingProgramState` was placed on `WorkoutGenerationContext` before a policy read
+`weeklyLedger`. The alternative — composing only `adaptationState` and adding the ledger
+when a consumer existed — would have avoided computing a temporarily unread value.
 
-Carrying it wins because the cost lands only on the flag-on path, which is tests and
-development today, and because Task 4 and the recommendation snapshot both need the ledger at
-exactly this point in the flow. The waste is bounded and temporary; the alternative splits one
-composition into two changes. This is a reversible decision: deleting the field is a
-mechanical change if Task 4 takes another shape.
+Carrying it won because the cost landed only on the flag-on path and Task 4 needed the
+ledger at exactly this point in the flow. Task 4 now consumes it there, so the temporary
+unread cost has ended. The recommendation snapshot remains deferred.
 
 ## Error handling
 
@@ -171,8 +174,6 @@ than asserting on mock interactions.
 ## Verification
 
 ```bash
-JAVA_HOME=/opt/homebrew/opt/openjdk@17 \
-ANDROID_HOME=/Users/elopenmike/Library/Android/sdk \
 ./gradlew testDebugUnitTest \
   --tests '*AdaptationStatePolicyTest' \
   --tests '*TrainingProgramStateProviderTest' \

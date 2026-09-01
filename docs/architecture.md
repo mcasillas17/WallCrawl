@@ -194,6 +194,22 @@ result reaches `TodayViewModel` as a typed reason and never falls back to an unr
 exercise. Enabling production requires explicit human metadata signoff plus a deliberate
 availability/persona review and flag change.
 
+On that reviewed-enabled path only, `StateBasedTrainingPolicy` consumes the composed
+`TrainingProgramState`. It validates `PROGRAM_STATE_V1`, `PRIMARY_ONLY_V1`, approved
+provenance, review-policy equality, and prescription shape before using the approved
+direct-primary muscle. It caps a base prescription by the remaining editable weekly
+product allowance and never increases it. Exact/over-cap exposure returns typed
+no-guidance instead of a zero-set or over-cap prescription; malformed or version-mismatched
+input returns a typed failure with no legacy fallback.
+
+The same pure result carries nullable RIR guidance and a classified rest target. Product
+defaults are 2-4 RIR for conservative states or a relevant approved `LIMITED` capability,
+1-2 for established strength, and 1-3 for established general/hypertrophy; automatic
+guidance cannot contain 0 RIR. `SHORT`, `MODERATE`, and `LONG` currently map to editable
+60/90/180-second product defaults. These values are product policy, not physiology,
+safety, or optimality claims. Explicit valid user rest preferences win. State and
+capability can reduce sets but cannot change or invent a load.
+
 Within a split, the compound slots are chosen by what the exercise trains and how
 much it demands — primary-muscle match, then fatigue — and spread across movement
 patterns so a session is not the same lift three times. The remaining slots prefer
@@ -262,7 +278,12 @@ catalog exercise types:
 | `DURATION` | Target seconds; actual seconds |
 | `DISTANCE_DURATION` | Target distance, duration, or both; actual distance and/or duration |
 
-Domain constructors reject malformed prescriptions before persistence.
+Domain constructors reject malformed prescriptions before persistence. The shared
+prescription also carries nullable `EffortTarget`, `RestClass`, and `RestTargetSource`.
+A classified rest target must carry its source; an explicit `USER_PREFERENCE` can be
+reused by later reviewed recommendations, while a generated `PRODUCT_POLICY` target
+cannot promote itself into a preference. Manual templates stay outside the automatic
+policy and preserve whichever valid values they already contain.
 `WorkoutRepository.logSetCompletion` validates recorded fields against the
 persisted exercise type and prevents updates to sets whose session is no longer
 active. It is the only way a set outcome is written.
@@ -316,13 +337,15 @@ no separate write path that copies a logged value back into
 
 ## Room persistence and invariants
 
-`WallCrawlDatabase` is currently schema version 10. Its tables store:
+`WallCrawlDatabase` is currently schema version 11. Its tables store:
 
 - the user profile, including onboarding status, multi-select fitness goals,
   training constraints, return-after-break weeks, confirmed starting loads,
   theme preference (`SYSTEM`, `DARK`, `LIGHT`), and movement capabilities;
 - reusable workout templates and their ordered exercises;
 - workout sessions and their ordered exercise snapshots;
+- nullable effort targets, rest classes/sources, and exact rest seconds on template and
+  workout exercise prescriptions;
 - target and completed values for every set, plus its typed outcome:
   `rpe`, `rir`, `feltManageable`, `completedAtTimestamp`, `stoppedAtTimestamp`,
   and `stopReason`;
@@ -347,7 +370,7 @@ columns (`feltManageable`, `completedAtTimestamp`, `stoppedAtTimestamp`,
 existed reads back as an honestly unrecorded outcome instead of gaining a
 fabricated completion timestamp or an assumed manageable answer. There is no
 destructive migration fallback on any construction path, and the migration
-tests exercise every supported starting schema through to version 10. Migration
+tests exercise every supported starting schema through to version 11. Migration
 `7 → 8` adds one non-null `movementCapabilitiesJson` column. Existing rows receive `{}`, which the codec
 normalizes to all `UNKNOWN`; their onboarding status, revision, theme, goals,
 equipment, constraints, confirmed loads, templates, sessions, sets, and history
@@ -359,6 +382,13 @@ rewriting or dropping profile, template, workout, exercise, set, or outcome data
 cache is accepted only when its deterministic source fingerprint matches current
 completed history, catalog/review versions, policy version, week, and zone; a missing,
 stale, corrupt, or deleted row is reconstructed rather than treated as authority.
+
+Migration `10 → 11` adds nullable `effortMinRir`, `effortMaxRir`, `restClass`, and
+`restTargetSource` columns to both template and workout exercises. Existing rows retain
+their exact `restSeconds` and receive null guidance, so old manual templates, active
+sessions, and completed history are not reinterpreted. New values round-trip through
+template storage and frozen session snapshots; partial effort or rest pairs fail loudly
+when mapped back into the domain.
 
 Capability JSON is a bounded persistence detail, not a UI model. The codec
 accepts at most 4096 characters, validates the flat object shape, allowlists
@@ -428,10 +458,10 @@ work sets rather than guessed muscle credit.
 `TrainingProgramStateProvider` composes that ledger with the adaptation state derived by
 `AdaptationStatePolicy` into a `TrainingProgramState`, which rides on
 `WorkoutGenerationContext` whenever reviewed capability eligibility is enabled. The provider
-is the only unit in that composition performing I/O; the policy is pure. No planner or
-progression policy reads the ledger's counts, and Task 4 is the first roadmap step allowed
-to. On the legacy path the state is absent, so that path reads no history it did not already
-read.
+is the only unit in that composition performing I/O. `StateBasedTrainingPolicy` now reads
+the ledger's direct-primary counts to cap future reviewed prescriptions; progression and
+state transitions still do not consume it. On the legacy path the state is absent, so
+that path reads no history it did not already read and returns the existing prescription.
 
 The adaptation policy derives only `UNCALIBRATED` and `RETURNING`. `ExerciseEligibilityPolicy`
 withholds advanced-complexity work on exactly those two states, so a third derived state
@@ -502,8 +532,9 @@ UserProfile.themePreference (SYSTEM | DARK | LIGHT)
 The JVM suite covers pure domain rules, filtering, context construction,
 capability normalization and codec behavior, planner invariance, validation,
 repository mapping, progress calculations, and ViewModel state. Instrumentation
-tests cover every supported Room migration chain through schema 10, real 7 → 8 and
-9 → 10 preservation, foreign-key integrity, the weekly-ledger repository, capability
+tests cover every supported Room migration chain through schema 11, real 7 → 8,
+9 → 10, and 10 → 11 preservation, foreign-key integrity, guidance round trips, the
+weekly-ledger repository, capability
 accessibility semantics, packaged catalog parsing, all bundled visual paths, template
 snapshots, and session persistence. Pull-request/main CI and tag-release publication run
 that connected suite on an API 36 emulator. The importer has a separate

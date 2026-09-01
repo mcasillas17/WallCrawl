@@ -8,7 +8,9 @@ The boundary is explicit:
 
 - production still owns equipment filtering, split selection, prescription generation, and typed failures;
 - legacy corpus fixtures can optionally narrow the legal candidate pool with curated `allowedExerciseIds`;
-- reviewed-enabled fixtures exercise the production eligibility policy with explicitly synthetic in-memory approvals while the production rollout flag remains disabled;
+- reviewed-enabled fixtures exercise the production eligibility and state-based
+  prescription policies with explicitly synthetic in-memory approvals and a synthetic
+  composed empty weekly ledger while the production rollout flag remains disabled;
 - capability inputs and `TrainingConstraint` metadata remain inert on legacy fixtures,
   matching the production-disabled rollout, and become policy inputs only on
   reviewed-enabled fixtures.
@@ -107,7 +109,7 @@ The manifest currently contains eleven fixtures:
 7. `mixed-unit-history` — kilogram history coverage proving prior KG history is honored and the existing load is preserved when recent sets do not justify an increase.
 8. `sparse-history` — curated regression-friendly upper-body subset using `inverted-row`, `banded-lat-pulldown`, and `prone-y-raise` so sparse history does not freeze a limited-hang profile to pull-ups.
 9. `no-strength-candidates` — harness-only typed-failure case restricted to the cardio-only `walking` entry so the real planner returns `NO_STRENGTH_CANDIDATES`.
-10. `reviewed-enabled-bodyweight` — copies six real bundled DRAFT records to unmistakably synthetic in-memory approvals and proves the enabled policy and planner select only that reviewed bodyweight pool.
+10. `reviewed-enabled-bodyweight` — copies six real bundled DRAFT records to unmistakably synthetic in-memory approvals, composes `BUILD` with an empty `PRIMARY_ONLY_V1` ledger, and proves eligibility plus dose/effort/rest guidance stay inside that reviewed bodyweight pool.
 11. `reviewed-enabled-no-approved` — leaves every bundled record DRAFT and proves the enabled policy returns `REVIEWED_ELIGIBILITY_NO_CANDIDATES` with `NO_APPROVED_METADATA` and no legacy fallback.
 
 ## Replay semantics and asserted invariants
@@ -122,6 +124,8 @@ The corpus suite asserts:
 - legality of every selected exercise against the bundled catalog, the real filter result, and any curated allowed-ID subset;
 - non-mutation of the full `WorkoutGenerationContext` input;
 - type-valid prescriptions and no-invented-load behavior through the real prescription factory;
+- reviewed-enabled prescriptions consume composed program state, attach deterministic
+  effort/rest guidance, never increase base sets, and preserve no-invented-load behavior;
 - capability invariance for the current production legacy path by comparing
   `limited-capability` with an all-`COMFORTABLE` control;
 - parity checks that the lightweight catalog projection preserves planner-consumed fields for representative entries without broadening into full parser duplication.
@@ -133,8 +137,7 @@ The corpus suite asserts:
 Focused contract / corpus coverage:
 
 ```bash
-JAVA_HOME=/opt/homebrew/opt/openjdk@17 ANDROID_HOME=/Users/elopenmike/Library/Android/sdk \
-  ./gradlew testDebugUnitTest \
+./gradlew testDebugUnitTest \
   --tests '*PlannerFixture*' \
   --tests '*FakeWorkoutPlannerTest' \
   --tests '*ExerciseFilterTest' \

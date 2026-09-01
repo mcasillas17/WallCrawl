@@ -47,8 +47,10 @@ historical progression when creating its defaults.
 The current editor lets the user change exercise order and set count. Detailed
 editing of rep ranges, load, assistance, duration, distance, rest, and per-
 exercise notes is planned for a later phase. Those values are already represented
-in the domain and database models so adding editor controls will not require a
-second persistence design.
+in the domain and database models. Nullable effort guidance, rest class/source,
+and exact rest seconds now also round-trip through schema 11. The manual editor
+does not apply the reviewed automatic policy; a valid explicit rest preference
+already present on a template is preserved when the template is saved or started.
 
 ## What is stored
 
