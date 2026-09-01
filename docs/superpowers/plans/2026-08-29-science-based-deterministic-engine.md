@@ -54,8 +54,9 @@ sealed interface ProgramViolation {
 ### Task 1: Replace Speculative Metadata with Reviewed Categorical Metadata
 
 **Status:** Metadata/schema/parser foundation complete. The initial 37-entry
-cohort remains `DRAFT` pending human review; reviewed-only eligibility remains
-Task 2 and current planner behavior is unchanged.
+cohort remains `DRAFT` pending human review. Task 2's reviewed-only eligibility
+path is now implemented but production-disabled, so current planner behavior is
+unchanged until human signoff and explicit enablement.
 
 **Files:**
 
@@ -75,25 +76,30 @@ Task 2 and current planner behavior is unchanged.
 
 ### Task 2: Enforce Reviewed-Only Eligibility and Calibration Complexity
 
+**Status:** Shipped behind an explicit production-disabled feature flag. The pure policy,
+typed decisions/failures, context-builder integration, synthetic enabled fixtures, and
+manual/full-catalog regression coverage are present. Production remains on the legacy
+path because the bundled cohort is still 37 `DRAFT` / 0 `APPROVED`; enabling the gate
+requires explicit human metadata signoff and a separate availability/persona decision.
+
 **Files:**
 - Create: `app/src/main/java/wallcrawl/elopenmike/com/core/ai/ExerciseEligibilityPolicy.kt`
 - Modify: `app/src/main/java/wallcrawl/elopenmike/com/core/exercise/ExerciseFilter.kt`
 - Modify: `app/src/main/java/wallcrawl/elopenmike/com/core/model/WorkoutGenerationContext.kt`
 - Test: `app/src/test/java/wallcrawl/elopenmike/com/core/ai/ExerciseEligibilityPolicyTest.kt`
 
-- [ ] Write failing tests proving equipment, exclusions, constraints, capability `AVOID`, low-impact policy, and reviewed metadata are hard requirements.
-- [ ] Add the complete `AdaptationState` enum from Core Contracts.
-- [ ] Temporarily block advanced-complexity automatic exercises only in UNCALIBRATED/RETURNING when no demonstrated family history or supported regression exists.
-- [ ] Preserve full-catalog browse/manual workflows and typed no-plan reasons.
-- [ ] Run focused tests and commit `feat: enforce reviewed workout eligibility`.
+- [x] Write failing tests proving equipment, exclusions, constraints, capability `AVOID`, low-impact policy, and reviewed metadata are hard requirements.
+- [x] Add the complete `AdaptationState` enum from Core Contracts.
+- [x] Temporarily block advanced-complexity automatic exercises only in UNCALIBRATED/RETURNING when no demonstrated family history or an actually available supported regression exists.
+- [x] Preserve full-catalog browse/manual workflows and typed no-plan reasons.
+- [x] Run focused tests and commit `feat: enforce reviewed workout eligibility`.
 
 ### Task 3: Add the PRIMARY_ONLY_V1 Weekly Ledger
 
 **Status:** Shipped. The ledger is built and cached at schema 10 and documented in
 [docs/weekly-dose-ledger.md](../../weekly-dose-ledger.md). Nothing consumes it yet:
-planner selection, dose targets, and progression are unchanged. `AdaptationState` and
-`TrainingProgramState` stay with Task 2/Task 4; composing the ledger into program state
-happens after reviewed eligibility lands.
+planner selection, dose targets, and progression are unchanged. `AdaptationState` landed
+with Task 2; `TrainingProgramState` and the first allowed ledger consumption remain Task 4.
 
 **Files:**
 - Create: `app/src/main/java/wallcrawl/elopenmike/com/core/model/WeeklyDoseLedger.kt`
@@ -157,7 +163,8 @@ happens after reviewed eligibility lands.
   valid set, and the rest timer runs off the exercise's persisted `restSeconds`.
 - [x] Incomplete, skipped, cancelled, and abandoned work stays distinguishable
   from completed work, so it cannot look completed to future adaptation.
-- [x] Focused JVM tests and connected Android tests run against schema 9.
+- [x] Focused JVM and connected Android tests originally shipped at schema 9;
+  the current migration suite validates the complete chain through schema 10.
 
 Effort is recorded on the documented 0-10 RPE scale and 0-10 RIR range. Missing
 values stay missing: nothing infers effort, readiness, or a manageable answer

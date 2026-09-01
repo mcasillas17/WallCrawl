@@ -10,6 +10,30 @@ Packet status today:
 - Roundtable verdict counts: 22 `READY_AFTER_CORRECTIONS`, 15 `READY_AS_WRITTEN`.
 - Source basis for every section: pinned Workout Guide manifest/artwork at `ba0b709cb20430361b2cb33aaadd20998164a916` plus WallCrawl product-policy fields.
 
+## Required sign-off output
+
+This worksheet is the entry-by-entry evidence surface, not the approval mechanism. A
+traceable human sign-off is complete only when all of the following happen for each entry
+being approved:
+
+1. A human checks **Approve this entry as written** below and records their real reviewer
+   role, review date, and any caveat needed to understand that decision. Entries marked
+   **Request changes** remain `DRAFT`.
+2. A later deliberate change to `tools/workout-guide/reviewed-metadata.json` promotes only
+   those approved IDs, sets `provenance.reviewerRole` to the recorded real role, sets
+   `reviewedAtEpochMillis` to the real review time, and updates `rationaleOrSource` so the
+   decision is traceable to this packet and the entry's source basis.
+3. The importer regenerates `app/src/main/assets/workout-guide/catalog.json` and
+   `docs/reviewed-exercise-metadata-review.md`; importer and Android parser validation must
+   pass without bypassing provenance or graph rules.
+4. Production enablement remains a separate decision after approved-catalog availability
+   and persona coverage are reviewed. Metadata sign-off does not flip the feature flag.
+
+Do not batch-promote unchecked entries, reuse one timestamp as a stand-in for review that
+did not occur, infer approval from a merged pull request, or replace the reviewer role
+with a model/agent identity. Until the authored JSON change is present and traceable to
+the relevant rows below, the cohort remains unsigned.
+
 ## Entry-by-entry sign-off worksheet
 
 ### assisted-pistol-squat

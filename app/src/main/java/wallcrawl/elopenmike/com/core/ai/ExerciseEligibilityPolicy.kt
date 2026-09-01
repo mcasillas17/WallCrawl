@@ -80,7 +80,8 @@ class ExerciseEligibilityPolicy {
                                 exercisesById = exercisesById,
                                 profile = profile,
                                 ownedEquipment = ownedEquipment,
-                                excludedExerciseIds = excludedExerciseIds
+                                excludedExerciseIds = excludedExerciseIds,
+                                demonstratedProgressionFamilies = demonstratedProgressionFamilies
                             )
                     if (advancedCeilingApplies && adaptationState == AdaptationState.UNCALIBRATED) {
                         add(EligibilityReason.ADVANCED_WHILE_UNCALIBRATED)
@@ -144,12 +145,17 @@ class ExerciseEligibilityPolicy {
         exercisesById: Map<String, Exercise>,
         profile: UserProfile,
         ownedEquipment: Set<String>,
-        excludedExerciseIds: Set<String>
+        excludedExerciseIds: Set<String>,
+        demonstratedProgressionFamilies: Set<String>
     ): Boolean = approvedRegressions.any { link ->
         val regression = exercisesById[link.exerciseId] ?: return@any false
         val regressionMetadata = regression.reviewedMetadata ?: return@any false
         regressionMetadata.reviewState == ReviewState.APPROVED &&
             regressionMetadata.supportRequirement == SupportRequirement.SUPPORTED &&
+            (
+                regressionMetadata.complexity != ComplexityTier.ADVANCED ||
+                    regressionMetadata.progressionFamily in demonstratedProgressionFamilies
+                ) &&
             regression.id !in excludedExerciseIds &&
             regressionMetadata.hasAvailableEquipment(ownedEquipment) &&
             regressionMetadata.capabilityRequirements.none { capability ->
