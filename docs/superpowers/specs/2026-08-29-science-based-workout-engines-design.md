@@ -1,12 +1,16 @@
 # Science-Based Workout Engines Design
 
+> **Design record:** Current status, priority, and dependency order live in the
+> [canonical roadmap](../../../ROADMAP.md). This document preserves the reviewed architecture
+> and safety boundaries for the deterministic and optional local-model engines.
+
 This document is the detailed architecture for WallCrawl's two workout-planning
 engines: a mandatory on-device **deterministic engine** and an optional,
 strictly bounded **local LLM assistant**. It consolidates the four-agent
 roundtable (see the appendix at
 `docs/research/2026-08-29-roundtable-agent-findings.md`) and the twelve signed v1
 decisions recorded in `docs/research/2026-08-29-training-science-evidence-review.md`.
-Implementation is sequenced by
+Detailed implementation is specified by
 `docs/superpowers/plans/2026-08-29-science-based-deterministic-engine.md` and
 `docs/superpowers/plans/2026-08-29-science-based-local-llm-engine.md`, and the
 body-context inputs are specified in

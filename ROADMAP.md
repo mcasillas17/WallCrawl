@@ -69,11 +69,13 @@ Detailed execution:
 
 ## Next: complete the adaptive coach
 
-9. **Use the remaining profile signals in deterministic ranking.** Incorporate training
-   frequency and recently trained muscles as bounded, explainable inputs; experience is the
-   only one used today.
+9. **Complete capability-aware deterministic ranking.** Add supported-regression preference,
+   rank primary-muscle matches above secondary matches, and incorporate training frequency and
+   recently trained muscles as bounded, explainable inputs; experience is the only profile
+   signal used today.
 10. **Add validated in-session substitutions.** Keep substitutions inside reviewed
-    compatibility, rerun validation, and preserve planned versus performed values.
+    compatibility, rerun validation, explain capability-aware choices with structured reasons,
+    and preserve planned versus performed values.
 11. **Restore reviewed exercise guidance.** Add runtime instruction/form-cue fields and
     reviewed coaching overrides without treating upstream prose as approved programming.
 12. **Add explicit multi-week program blocks.** Build periodization only after progression,
@@ -93,6 +95,7 @@ Detailed execution:
 Detailed execution:
 
 - [Adaptive coach plan](docs/superpowers/plans/2026-08-28-adaptive-coach-product.md)
+- [Capability-aware personalization plan](docs/superpowers/plans/2026-08-29-body-aware-personalization.md)
 - [Local LLM engine plan](docs/superpowers/plans/2026-08-29-science-based-local-llm-engine.md)
 
 ## Later: integrations
