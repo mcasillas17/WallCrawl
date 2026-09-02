@@ -8,14 +8,24 @@ import wallcrawl.elopenmike.com.core.model.CapabilityEvidencePolicyVersion
 import wallcrawl.elopenmike.com.core.model.CapabilityEvidenceReason
 import wallcrawl.elopenmike.com.core.model.CapabilityEvidenceScope
 import wallcrawl.elopenmike.com.core.model.CapabilityEvidenceSet
+import wallcrawl.elopenmike.com.core.model.ComplexityTier
 import wallcrawl.elopenmike.com.core.model.ComparableMovementShape
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.ExercisePrescription
 import wallcrawl.elopenmike.com.core.model.ExerciseType
+import wallcrawl.elopenmike.com.core.model.ImpactLevel
+import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
+import wallcrawl.elopenmike.com.core.model.MovementPattern
+import wallcrawl.elopenmike.com.core.model.PrescriptionShape
 import wallcrawl.elopenmike.com.core.model.RepRange
+import wallcrawl.elopenmike.com.core.model.ReviewProvenance
+import wallcrawl.elopenmike.com.core.model.ReviewState
+import wallcrawl.elopenmike.com.core.model.ReviewedExerciseLink
+import wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetStopReason
 import wallcrawl.elopenmike.com.core.model.SetType
+import wallcrawl.elopenmike.com.core.model.SupportRequirement
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
@@ -862,6 +872,410 @@ class CapabilityEvidencePolicyTest {
             .isEqualTo(CapabilityEvidenceSet.empty())
     }
 
+    @Test
+    fun derive_expandsExactEvidenceThroughDirectApprovedRegressionOnly() {
+        val sourceId = "bench-press"
+        val targetId = "close-grip-bench"
+        val sessions = listOf(
+            weightRepsSession(sessionId = "session-b", exerciseId = sourceId, sessionCompletedAt = 20_000L),
+            weightRepsSession(sessionId = "session-a", exerciseId = sourceId, sessionCompletedAt = 10_000L)
+        )
+        val exercises = listOf(
+            reviewedExercise(
+                id = sourceId,
+                approvedRegressions = listOf(ReviewedExerciseLink(targetId, "synthetic direct regression")),
+                reviewState = ReviewState.APPROVED
+            ),
+            reviewedExercise(
+                id = targetId,
+                reviewState = ReviewState.APPROVED
+            )
+        )
+
+        assertThat(policy.derive(sessions = sessions, exercises = exercises))
+            .isEqualTo(
+                CapabilityEvidenceSet.from(
+                    mapOf(
+                        sourceId to evidenceRecord(
+                            appliesToExerciseId = sourceId,
+                            demonstratedExerciseId = sourceId,
+                            scope = CapabilityEvidenceScope.EXACT_EXERCISE,
+                            sessionIds = listOf("session-a", "session-b")
+                        ),
+                        targetId to evidenceRecord(
+                            appliesToExerciseId = targetId,
+                            demonstratedExerciseId = sourceId,
+                            scope = CapabilityEvidenceScope.DIRECT_APPROVED_REGRESSION,
+                            sessionIds = listOf("session-a", "session-b")
+                        )
+                    )
+                )
+            )
+    }
+
+    @Test
+    fun derive_doesNotExpandFromDraftOrMissingSourceMetadata() {
+        val sourceId = "bench-press"
+        val targetId = "close-grip-bench"
+        val sessions = listOf(
+            weightRepsSession(sessionId = "session-b", exerciseId = sourceId, sessionCompletedAt = 20_000L),
+            weightRepsSession(sessionId = "session-a", exerciseId = sourceId, sessionCompletedAt = 10_000L)
+        )
+        val cases = listOf(
+            reviewedExercise(
+                id = sourceId,
+                reviewState = ReviewState.DRAFT,
+                approvedRegressions = listOf(ReviewedExerciseLink(targetId, "synthetic draft source"))
+            ) to "draft source",
+            exerciseWithoutReviewedMetadata(
+                id = sourceId
+            ) to "missing source metadata"
+        )
+
+        cases.forEach { (source, label) ->
+            val result = policy.derive(
+                sessions = sessions,
+                exercises = listOf(
+                    source,
+                    reviewedExercise(id = targetId, reviewState = ReviewState.APPROVED)
+                )
+            )
+
+            assertWithMessage(label).that(result[sourceId]).isEqualTo(
+                expectedExactEvidence(
+                    exerciseId = sourceId,
+                    sessionIds = listOf("session-a", "session-b")
+                )
+            )
+            assertWithMessage(label).that(result[targetId]).isNull()
+        }
+    }
+
+    @Test
+    fun derive_doesNotExpandToDraftMissingBlankOrUnrelatedTargets() {
+        val sourceId = "bench-press"
+        val approvedTargetId = "close-grip-bench"
+        val draftTargetId = "draft-target"
+        val unrelatedPeerId = "peer-variant"
+        val substitutionTargetId = "substitution-only"
+        val sessions = listOf(
+            weightRepsSession(sessionId = "session-b", exerciseId = sourceId, sessionCompletedAt = 20_000L),
+            weightRepsSession(sessionId = "session-a", exerciseId = sourceId, sessionCompletedAt = 10_000L)
+        )
+        val approvedRegressions = mutableListOf(
+            ReviewedExerciseLink(approvedTargetId, "synthetic direct regression"),
+            ReviewedExerciseLink(draftTargetId, "synthetic draft target"),
+            ReviewedExerciseLink("", "synthetic blank target")
+        )
+        val approvedSubstitutions = mutableListOf(
+            ReviewedExerciseLink(substitutionTargetId, "synthetic substitution")
+        )
+        val exercises = listOf(
+            reviewedExercise(
+                id = sourceId,
+                approvedRegressions = approvedRegressions,
+                approvedSubstitutions = approvedSubstitutions,
+                reviewState = ReviewState.APPROVED
+            ),
+            reviewedExercise(
+                id = approvedTargetId,
+                reviewState = ReviewState.APPROVED
+            ),
+            reviewedExercise(
+                id = draftTargetId,
+                reviewState = ReviewState.DRAFT
+            ),
+            reviewedExercise(
+                id = unrelatedPeerId,
+                directPrimaryMuscle = "synthetic-primary-$sourceId",
+                descriptiveSecondaryMuscles = setOf("synthetic-secondary-$sourceId"),
+                movementPattern = MovementPattern.HINGE,
+                complexity = ComplexityTier.FOUNDATIONAL,
+                progressionFamily = "synthetic-family-$sourceId",
+                prescriptionShape = PrescriptionShape.WEIGHT_REPS,
+                capabilityRequirements = emptySet(),
+                supportRequirement = SupportRequirement.SUPPORTED,
+                impactLevel = ImpactLevel.NONE,
+                equipmentAlternatives = listOf(listOf("synthetic-equipment-$sourceId")),
+                reviewState = ReviewState.APPROVED
+            ),
+            reviewedExercise(
+                id = substitutionTargetId,
+                reviewState = ReviewState.APPROVED
+            )
+        )
+
+        val result = policy.derive(sessions = sessions, exercises = exercises)
+
+        assertThat(result[sourceId]).isEqualTo(
+            expectedExactEvidence(
+                exerciseId = sourceId,
+                sessionIds = listOf("session-a", "session-b")
+            )
+        )
+        assertThat(result[approvedTargetId]).isEqualTo(
+            evidenceRecord(
+                appliesToExerciseId = approvedTargetId,
+                demonstratedExerciseId = sourceId,
+                scope = CapabilityEvidenceScope.DIRECT_APPROVED_REGRESSION,
+                sessionIds = listOf("session-a", "session-b")
+            )
+        )
+        assertThat(result[draftTargetId]).isNull()
+        assertThat(result[unrelatedPeerId]).isNull()
+        assertThat(result[substitutionTargetId]).isNull()
+    }
+
+    @Test
+    fun derive_doesNotTraverseApprovedRegressionTransitively() {
+        val sourceId = "bench-press"
+        val directTargetId = "close-grip-bench"
+        val transitiveTargetId = "reverse-grip-bench"
+        val sessions = listOf(
+            weightRepsSession(sessionId = "session-b", exerciseId = sourceId, sessionCompletedAt = 20_000L),
+            weightRepsSession(sessionId = "session-a", exerciseId = sourceId, sessionCompletedAt = 10_000L)
+        )
+        val exercises = listOf(
+            reviewedExercise(
+                id = sourceId,
+                approvedRegressions = listOf(ReviewedExerciseLink(directTargetId, "synthetic direct regression")),
+                reviewState = ReviewState.APPROVED
+            ),
+            reviewedExercise(
+                id = directTargetId,
+                approvedRegressions = listOf(ReviewedExerciseLink(transitiveTargetId, "synthetic transitive regression")),
+                reviewState = ReviewState.APPROVED
+            ),
+            reviewedExercise(
+                id = transitiveTargetId,
+                reviewState = ReviewState.APPROVED
+            )
+        )
+
+        val result = policy.derive(sessions = sessions, exercises = exercises)
+
+        assertThat(result[sourceId]).isEqualTo(
+            expectedExactEvidence(
+                exerciseId = sourceId,
+                sessionIds = listOf("session-a", "session-b")
+            )
+        )
+        assertThat(result[directTargetId]).isEqualTo(
+            evidenceRecord(
+                appliesToExerciseId = directTargetId,
+                demonstratedExerciseId = sourceId,
+                scope = CapabilityEvidenceScope.DIRECT_APPROVED_REGRESSION,
+                sessionIds = listOf("session-a", "session-b")
+            )
+        )
+        assertThat(result[transitiveTargetId]).isNull()
+    }
+
+    @Test
+    fun derive_prefersExactEvidenceOverInheritedEvidenceForSameTarget() {
+        val sourceId = "bench-press"
+        val targetId = "close-grip-bench"
+        val sessions = listOf(
+            weightRepsSession(sessionId = "source-b", exerciseId = sourceId, sessionCompletedAt = 20_000L),
+            weightRepsSession(sessionId = "source-a", exerciseId = sourceId, sessionCompletedAt = 10_000L),
+            weightRepsSession(sessionId = "target-b", exerciseId = targetId, sessionCompletedAt = 40_000L),
+            weightRepsSession(sessionId = "target-a", exerciseId = targetId, sessionCompletedAt = 30_000L)
+        )
+        val exercises = listOf(
+            reviewedExercise(
+                id = sourceId,
+                approvedRegressions = listOf(ReviewedExerciseLink(targetId, "synthetic direct regression")),
+                reviewState = ReviewState.APPROVED
+            ),
+            reviewedExercise(
+                id = targetId,
+                reviewState = ReviewState.APPROVED
+            )
+        )
+
+        val result = policy.derive(sessions = sessions, exercises = exercises)
+
+        assertThat(result[targetId]).isEqualTo(
+            expectedExactEvidence(
+                exerciseId = targetId,
+                sessionIds = listOf("target-a", "target-b")
+            )
+        )
+    }
+
+    @Test
+    fun derive_choosesLexicographicallyFirstInheritedSourceForSameTarget() {
+        val alphaId = "alpha-source"
+        val betaId = "beta-source"
+        val targetId = "close-grip-bench"
+        val sessions = listOf(
+            weightRepsSession(sessionId = "beta-b", exerciseId = betaId, sessionCompletedAt = 40_000L),
+            weightRepsSession(sessionId = "beta-a", exerciseId = betaId, sessionCompletedAt = 30_000L),
+            weightRepsSession(sessionId = "alpha-b", exerciseId = alphaId, sessionCompletedAt = 20_000L),
+            weightRepsSession(sessionId = "alpha-a", exerciseId = alphaId, sessionCompletedAt = 10_000L)
+        )
+        val exercises = listOf(
+            reviewedExercise(
+                id = betaId,
+                approvedRegressions = listOf(ReviewedExerciseLink(targetId, "beta to target")),
+                reviewState = ReviewState.APPROVED
+            ),
+            reviewedExercise(
+                id = targetId,
+                reviewState = ReviewState.APPROVED
+            ),
+            reviewedExercise(
+                id = alphaId,
+                approvedRegressions = listOf(ReviewedExerciseLink(targetId, "alpha to target")),
+                reviewState = ReviewState.APPROVED
+            )
+        )
+
+        val result = policy.derive(sessions = sessions, exercises = exercises)
+
+        assertThat(result[targetId]).isEqualTo(
+            evidenceRecord(
+                appliesToExerciseId = targetId,
+                demonstratedExerciseId = alphaId,
+                scope = CapabilityEvidenceScope.DIRECT_APPROVED_REGRESSION,
+                sessionIds = listOf("alpha-a", "alpha-b")
+            )
+        )
+    }
+
+    @Test
+    fun derive_isDeterministicRegardlessOfCallerCollectionOrder() {
+        val sourceId = "bench-press"
+        val targetId = "close-grip-bench"
+        val alphaId = "alpha-source"
+        val betaId = "beta-source"
+        val sessions = mutableListOf(
+            weightRepsSession(sessionId = "beta-b", exerciseId = betaId, sessionCompletedAt = 40_000L),
+            weightRepsSession(sessionId = "target-b", exerciseId = targetId, sessionCompletedAt = 30_000L),
+            weightRepsSession(sessionId = "source-b", exerciseId = sourceId, sessionCompletedAt = 20_000L),
+            weightRepsSession(sessionId = "alpha-b", exerciseId = alphaId, sessionCompletedAt = 10_000L),
+            weightRepsSession(sessionId = "alpha-a", exerciseId = alphaId, sessionCompletedAt = 15_000L),
+            weightRepsSession(sessionId = "source-a", exerciseId = sourceId, sessionCompletedAt = 5_000L),
+            weightRepsSession(sessionId = "target-a", exerciseId = targetId, sessionCompletedAt = 25_000L),
+            weightRepsSession(sessionId = "beta-a", exerciseId = betaId, sessionCompletedAt = 35_000L)
+        )
+        val exercises = mutableListOf(
+            reviewedExercise(
+                id = betaId,
+                approvedRegressions = listOf(ReviewedExerciseLink(targetId, "beta to target")),
+                reviewState = ReviewState.APPROVED
+            ),
+            reviewedExercise(
+                id = targetId,
+                reviewState = ReviewState.APPROVED
+            ),
+            reviewedExercise(
+                id = sourceId,
+                approvedRegressions = listOf(ReviewedExerciseLink(targetId, "source to target")),
+                reviewState = ReviewState.APPROVED
+            ),
+            reviewedExercise(
+                id = alphaId,
+                approvedRegressions = listOf(ReviewedExerciseLink(targetId, "alpha to target")),
+                reviewState = ReviewState.APPROVED
+            )
+        )
+
+        val first = policy.derive(sessions = sessions, exercises = exercises)
+        val second = policy.derive(sessions = sessions.asReversed(), exercises = exercises.asReversed())
+
+        assertThat(second).isEqualTo(first)
+    }
+
+    @Test
+    fun derive_usesDefensiveCopiesOfCallerCollections() {
+        val sourceId = "bench-press"
+        val targetId = "close-grip-bench"
+        val regressionLinks = mutableListOf(ReviewedExerciseLink(targetId, "synthetic direct regression"))
+        val sessions = mutableListOf(
+            weightRepsSession(sessionId = "session-b", exerciseId = sourceId, sessionCompletedAt = 20_000L),
+            weightRepsSession(sessionId = "session-a", exerciseId = sourceId, sessionCompletedAt = 10_000L)
+        )
+        val exercises = mutableListOf(
+            reviewedExercise(
+                id = sourceId,
+                approvedRegressions = regressionLinks,
+                reviewState = ReviewState.APPROVED
+            ),
+            reviewedExercise(
+                id = targetId,
+                reviewState = ReviewState.APPROVED
+            )
+        )
+
+        val result = policy.derive(sessions = sessions, exercises = exercises)
+        val expected = CapabilityEvidenceSet.from(
+            mapOf(
+                sourceId to expectedExactEvidence(
+                    exerciseId = sourceId,
+                    sessionIds = listOf("session-a", "session-b")
+                ),
+                targetId to evidenceRecord(
+                    appliesToExerciseId = targetId,
+                    demonstratedExerciseId = sourceId,
+                    scope = CapabilityEvidenceScope.DIRECT_APPROVED_REGRESSION,
+                    sessionIds = listOf("session-a", "session-b")
+                )
+            )
+        )
+
+        regressionLinks.clear()
+        sessions.clear()
+        exercises.clear()
+
+        assertThat(result).isEqualTo(expected)
+        assertThat(result[targetId]).isEqualTo(
+            evidenceRecord(
+                appliesToExerciseId = targetId,
+                demonstratedExerciseId = sourceId,
+                scope = CapabilityEvidenceScope.DIRECT_APPROVED_REGRESSION,
+                sessionIds = listOf("session-a", "session-b")
+            )
+        )
+    }
+
+    @Test
+    fun derive_returnsUnmodifiableRecordMapAndSessionIdLists() {
+        val sourceId = "bench-press"
+        val targetId = "close-grip-bench"
+        val sessions = listOf(
+            weightRepsSession(sessionId = "session-b", exerciseId = sourceId, sessionCompletedAt = 20_000L),
+            weightRepsSession(sessionId = "session-a", exerciseId = sourceId, sessionCompletedAt = 10_000L)
+        )
+        val exercises = listOf(
+            reviewedExercise(
+                id = sourceId,
+                approvedRegressions = listOf(ReviewedExerciseLink(targetId, "synthetic direct regression")),
+                reviewState = ReviewState.APPROVED
+            ),
+            reviewedExercise(
+                id = targetId,
+                reviewState = ReviewState.APPROVED
+            )
+        )
+
+        val result = policy.derive(sessions = sessions, exercises = exercises)
+
+        assertWithMessage("records map should reject mutation").that(
+            runCatching {
+                @Suppress("UNCHECKED_CAST")
+                (result.records as MutableMap<String, CapabilityEvidence>)["mutation"] = result[sourceId]!!
+            }.exceptionOrNull()
+        ).isInstanceOf(UnsupportedOperationException::class.java)
+
+        assertWithMessage("qualifyingSessionIds should reject mutation").that(
+            runCatching {
+                @Suppress("UNCHECKED_CAST")
+                (result[targetId]!!.qualifyingSessionIds as MutableList<String>).add("mutation")
+            }.exceptionOrNull()
+        ).isInstanceOf(UnsupportedOperationException::class.java)
+    }
+
     private fun expectedEvidence(
         exerciseId: String,
         comparableShape: ComparableMovementShape,
@@ -879,6 +1293,91 @@ class CapabilityEvidencePolicyTest {
                     qualifyingSessionIds = sessionIds
                 )
             )
+        )
+
+    private fun expectedExactEvidence(
+        exerciseId: String,
+        sessionIds: List<String>
+    ): CapabilityEvidence =
+        evidenceRecord(
+            appliesToExerciseId = exerciseId,
+            demonstratedExerciseId = exerciseId,
+            scope = CapabilityEvidenceScope.EXACT_EXERCISE,
+            sessionIds = sessionIds
+        )
+
+    private fun evidenceRecord(
+        appliesToExerciseId: String,
+        demonstratedExerciseId: String,
+        scope: CapabilityEvidenceScope,
+        sessionIds: List<String>,
+        comparableShape: ComparableMovementShape = ComparableMovementShape.WEIGHT_REPETITIONS
+    ): CapabilityEvidence =
+        CapabilityEvidence(
+            policyVersion = CapabilityEvidencePolicyVersion.TWO_COMPARABLE_MANAGEABLE_SESSIONS_V1,
+            reason = CapabilityEvidenceReason.TWO_COMPARABLE_MANAGEABLE_COMPLETED_SESSIONS,
+            appliesToExerciseId = appliesToExerciseId,
+            demonstratedExerciseId = demonstratedExerciseId,
+            scope = scope,
+            comparableShape = comparableShape,
+            qualifyingSessionIds = sessionIds
+        )
+
+    private fun reviewedExercise(
+        id: String,
+        reviewState: ReviewState,
+        approvedRegressions: List<ReviewedExerciseLink> = emptyList(),
+        approvedSubstitutions: List<ReviewedExerciseLink> = emptyList(),
+        directPrimaryMuscle: String = "synthetic-primary-$id",
+        descriptiveSecondaryMuscles: Set<String> = setOf("synthetic-secondary-$id"),
+        movementPattern: MovementPattern = MovementPattern.HINGE,
+        complexity: ComplexityTier = ComplexityTier.FOUNDATIONAL,
+        progressionFamily: String = "synthetic-family-$id",
+        prescriptionShape: PrescriptionShape = PrescriptionShape.WEIGHT_REPS,
+        capabilityRequirements: Set<MovementCapabilityType> = emptySet(),
+        supportRequirement: SupportRequirement = SupportRequirement.SUPPORTED,
+        impactLevel: ImpactLevel = ImpactLevel.NONE,
+        equipmentAlternatives: List<List<String>> = listOf(listOf("synthetic-equipment-$id"))
+    ): Exercise =
+        Exercise(
+            id = id,
+            name = "Synthetic $id",
+            primaryMuscles = listOf(directPrimaryMuscle),
+            secondaryMuscles = descriptiveSecondaryMuscles.toList(),
+            listedEquipment = equipmentAlternatives.flatten(),
+            type = ExerciseType.WEIGHT_REPS,
+            reviewedMetadata = ReviewedExerciseMetadata(
+                reviewState = reviewState,
+                directPrimaryMuscle = directPrimaryMuscle,
+                descriptiveSecondaryMuscles = descriptiveSecondaryMuscles,
+                movementPattern = movementPattern,
+                complexity = complexity,
+                progressionFamily = progressionFamily,
+                prescriptionShape = prescriptionShape,
+                approvedRegressions = approvedRegressions,
+                approvedSubstitutions = approvedSubstitutions,
+                capabilityRequirements = capabilityRequirements,
+                supportRequirement = supportRequirement,
+                impactLevel = impactLevel,
+                equipmentAlternatives = equipmentAlternatives,
+                provenance = ReviewProvenance(
+                    reviewerRole = "synthetic-reviewer",
+                    rationaleOrSource = "synthetic-$id",
+                    reviewedAtEpochMillis = 1L,
+                    schemaVersion = 1,
+                    policyVersion = 1
+                )
+            )
+        )
+
+    private fun exerciseWithoutReviewedMetadata(id: String): Exercise =
+        Exercise(
+            id = id,
+            name = "Synthetic $id",
+            primaryMuscles = listOf("synthetic-primary-$id"),
+            secondaryMuscles = listOf("synthetic-secondary-$id"),
+            listedEquipment = listOf("synthetic-equipment-$id"),
+            type = ExerciseType.WEIGHT_REPS
         )
 
     private fun exactExerciseCatalog(vararg definitions: Pair<String, ExerciseType>): List<Exercise> =

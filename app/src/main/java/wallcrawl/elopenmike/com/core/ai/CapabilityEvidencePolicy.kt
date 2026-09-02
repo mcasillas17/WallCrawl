@@ -9,6 +9,8 @@ import wallcrawl.elopenmike.com.core.model.ComparableMovementShape
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.ExercisePrescription
 import wallcrawl.elopenmike.com.core.model.ExerciseType
+import wallcrawl.elopenmike.com.core.model.ReviewState
+import wallcrawl.elopenmike.com.core.model.ReviewedExerciseLink
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetType
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
@@ -21,7 +23,7 @@ class CapabilityEvidencePolicy(
 ) {
 
     fun derive(sessions: List<WorkoutSession>, exercises: List<Exercise>): CapabilityEvidenceSet {
-        val observations = sessions.asSequence()
+        val exactCandidates = sessions.asSequence()
             .sortedWith(
                 compareBy<WorkoutSession> { it.id }
                     .thenBy { it.completedAtTimestamp ?: Long.MIN_VALUE }
@@ -39,8 +41,7 @@ class CapabilityEvidencePolicy(
             .groupBy { observation ->
                 observation.appliesToExerciseId to observation.comparableShape
             }
-
-        val evidenceCandidates = observations.values
+            .values
             .mapNotNull { group ->
                 val representative = group.first()
                 val sessionIds = group.map { it.sessionId }.distinct().sorted()
@@ -58,25 +59,53 @@ class CapabilityEvidencePolicy(
                     )
                 }
             }
-        val records = evidenceCandidates
+        val exactRecords = exactCandidates
             .groupBy { it.appliesToExerciseId }
-            .mapValues { (_, candidates) ->
-                candidates.minWithOrNull(
-                    compareBy<CapabilityEvidence> { scopePriority(it.scope) }
-                        .thenBy { it.demonstratedExerciseId }
-                        .thenBy { it.comparableShape.ordinal }
-                        .thenBy { it.qualifyingSessionIds.joinToString(separator = "\u0000") }
-                )!!
+            .mapNotNull { (_, candidates) ->
+                candidates.minWithOrNull(EXACT_RECORD_SELECTION_ORDER)
             }
+            .sortedWith(EXACT_RECORD_ORDER)
+
+        val exercisesById = exercises.asSequence()
+            .sortedBy(Exercise::id)
+            .associateBy(Exercise::id)
+
+        val records = linkedMapOf<String, CapabilityEvidence>()
+        exactRecords.forEach { exactRecord ->
+            records[exactRecord.appliesToExerciseId] = exactRecord
+        }
+        exactRecords.forEach { exactRecord ->
+            val reviewedMetadata = exercisesById[exactRecord.demonstratedExerciseId]
+                ?.reviewedMetadata
+                ?.takeIf { it.reviewState == ReviewState.APPROVED }
+                ?: return@forEach
+
+            reviewedMetadata.approvedRegressions
+                .asSequence()
+                .sortedWith(REGRESSION_LINK_ORDER)
+                .distinctBy(ReviewedExerciseLink::exerciseId)
+                .forEach { link ->
+                    val targetExerciseId = link.exerciseId
+                    if (targetExerciseId.isBlank()) return@forEach
+                    if (targetExerciseId == exactRecord.demonstratedExerciseId) return@forEach
+
+                    exercisesById[targetExerciseId]
+                        ?.reviewedMetadata
+                        ?.takeIf { it.reviewState == ReviewState.APPROVED }
+                        ?: return@forEach
+
+                    records.putIfAbsent(
+                        targetExerciseId,
+                        exactRecord.copy(
+                            appliesToExerciseId = targetExerciseId,
+                            scope = CapabilityEvidenceScope.DIRECT_APPROVED_REGRESSION
+                        )
+                    )
+                }
+        }
 
         return CapabilityEvidenceSet.from(records)
     }
-
-    private fun scopePriority(scope: CapabilityEvidenceScope): Int =
-        when (scope) {
-            CapabilityEvidenceScope.EXACT_EXERCISE -> 0
-            CapabilityEvidenceScope.DIRECT_APPROVED_REGRESSION -> 1
-        }
 
     private fun exactComparableObservation(
         session: WorkoutSession,
@@ -299,6 +328,18 @@ class CapabilityEvidencePolicy(
         this != null && isFinite() && this > 0.0 && this <= MAX_LOGGED_DISTANCE_METERS
 
     private companion object {
+        val EXACT_RECORD_ORDER = compareBy<CapabilityEvidence> { it.demonstratedExerciseId }
+            .thenBy { it.appliesToExerciseId }
+            .thenBy { it.comparableShape.ordinal }
+            .thenBy { it.qualifyingSessionIds.joinToString(separator = "\u0000") }
+
+        val EXACT_RECORD_SELECTION_ORDER = compareBy<CapabilityEvidence> { it.demonstratedExerciseId }
+            .thenBy { it.comparableShape.ordinal }
+            .thenBy { it.qualifyingSessionIds.joinToString(separator = "\u0000") }
+
+        val REGRESSION_LINK_ORDER = compareBy<ReviewedExerciseLink> { it.exerciseId }
+            .thenBy { it.rationale ?: "" }
+
         const val MAX_LOGGED_REPS = 1_000
         const val MAX_TARGET_WEIGHT = 10_000.0
         const val MAX_LOGGED_WEIGHT = 100_000.0
