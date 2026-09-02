@@ -58,7 +58,7 @@ Each evidence record contains stable, typed audit data:
 - exact demonstrated exercise ID;
 - scope: exact exercise or direct approved regression;
 - comparable movement shape;
-- the two qualifying distinct session IDs.
+- all qualifying distinct session IDs, in stable order.
 
 The result is keyed in stable exercise-ID order and defensively copies all maps and lists.
 If several sources could relax the same exercise, exact evidence wins; otherwise the
@@ -100,8 +100,8 @@ The supported shapes are:
 | `WEIGHT_REPS` | positive finite external load plus positive repetitions |
 | `BODYWEIGHT_REPS` | positive repetitions, with no load/assistance/time/distance |
 | `ASSISTED_BODYWEIGHT` | finite nonnegative assistance plus positive repetitions |
-| `DURATION` | positive duration only |
-| `DISTANCE_DURATION` | positive distance only, positive duration only, or both, exactly matching the prescription's target dimensions |
+| `DURATION` | positive timed-duration work |
+| `DISTANCE_DURATION` | distance-only, time-only, or distance-and-time work, represented by three shapes distinct from `DURATION` and exactly matching the prescription's target dimensions |
 
 Every work set must report the prescription's `ExerciseType`, use the same measurement
 shape, and omit values belonging to other shapes. The policy groups observations by exact
