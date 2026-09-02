@@ -114,3 +114,14 @@ The cross-review corrected material citation errors:
 - muscle-specific ROM evidence;
 - prospective LLM-versus-deterministic workout-planner trials;
 - independent expert validation of capability and substitution metadata.
+
+## Timed programming implementation boundary (2026-09-02)
+
+The [timed programming milestone](../timed-hold-programming.md) adds descriptive,
+AI-authored legacy metadata for 14 duration exercises. It introduces no new efficacy
+evidence or physiological thresholds. Legacy difficulty, mechanics, and fatigue values
+are product ranking labels; the numeric fatigue value is not a validated biological
+measurement and is not promoted into the reviewed scientific contract. Duration defaults
+remain product policy. Coaching describes setup/movement, and alternative IDs are catalog
+references without an equivalence claim or automatic substitution behavior. Human review
+and production gate enablement remain separate work.

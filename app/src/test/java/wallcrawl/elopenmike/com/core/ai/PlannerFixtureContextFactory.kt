@@ -385,6 +385,18 @@ internal class PlannerFixtureContextFactory(
             requireArray(exercise, "listedEquipment", "$path.listedEquipment"),
             "$path.listedEquipment"
         )
+        val exerciseType = readEnum<ExerciseType>(
+            requireString(exercise, "exerciseType", "$path.exerciseType"),
+            "$path.exerciseType"
+        )
+        val programming = if (exercise.isNull("programming")) null else parseProgramming(
+            requireObject(exercise, "programming", "$path.programming"), "$path.programming"
+        )
+        try {
+            programming?.validateFor(exerciseType)
+        } catch (error: IllegalArgumentException) {
+            throw PlannerFixtureFormatException("$path.programming.recommendedRepRange is invalid for exerciseType.")
+        }
         return Exercise(
             id = id,
             name = name,
@@ -392,19 +404,9 @@ internal class PlannerFixtureContextFactory(
             primaryMuscles = primaryMuscles,
             secondaryMuscles = secondaryMuscles,
             listedEquipment = listedEquipment,
-            type = readEnum(
-                requireString(exercise, "exerciseType", "$path.exerciseType"),
-                "$path.exerciseType"
-            ),
+            type = exerciseType,
             isStretch = requireBoolean(exercise, "isStretch", "$path.isStretch"),
-            programming = if (exercise.isNull("programming")) {
-                null
-            } else {
-                parseProgramming(
-                    requireObject(exercise, "programming", "$path.programming"),
-                    "$path.programming"
-                )
-            },
+            programming = programming,
             reviewedMetadata = if (exercise.isNull("reviewedMetadata")) {
                 null
             } else {
@@ -554,7 +556,7 @@ internal class PlannerFixtureContextFactory(
                 requireString(programming, "mechanics", "$path.mechanics"),
                 "$path.mechanics"
             ),
-            recommendedRepRange = parseRepRange(
+            recommendedRepRange = if (programming.isNull("recommendedRepRange")) null else parseRepRange(
                 requireObject(programming, "recommendedRepRange", "$path.recommendedRepRange"),
                 "$path.recommendedRepRange"
             ),
@@ -571,9 +573,16 @@ internal class PlannerFixtureContextFactory(
         )
 
     private fun parseRepRange(repRange: JSONObject, path: String): RepRange {
-        val min = requireInt(repRange, "min", "$path.min")
-        val max = requireInt(repRange, "max", "$path.max")
-        if (min <= 0 || max < min) {
+        fun endpoint(key: String): Int {
+            val value = repRange.opt(key)
+            if (value !is Int && value !is Long) {
+                throw PlannerFixtureFormatException("$path.$key must use integer JSON notation.")
+            }
+            return requireInt(repRange, key, "$path.$key")
+        }
+        val min = endpoint("min")
+        val max = endpoint("max")
+        if (min <= 0 || max < min || max > 1_000) {
             throw PlannerFixtureFormatException("$path must have positive ordered min/max values.")
         }
         return RepRange(min = min, max = max)

@@ -1,6 +1,7 @@
 package wallcrawl.elopenmike.com.core.ai
 
 import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.Truth.assertWithMessage
 import java.io.InputStream
 import org.json.JSONObject
 import org.junit.Assert.assertThrows
@@ -205,8 +206,8 @@ class PlannerFixtureContextFactoryTest {
         assertThat(benchPress.programming!!.movementPattern.name).isEqualTo("HORIZONTAL_PUSH")
         assertThat(benchPress.programming!!.difficulty.name).isEqualTo("INTERMEDIATE")
         assertThat(benchPress.programming!!.mechanics.name).isEqualTo("COMPOUND")
-        assertThat(benchPress.programming!!.recommendedRepRange.min).isEqualTo(5)
-        assertThat(benchPress.programming!!.recommendedRepRange.max).isEqualTo(8)
+        assertThat(benchPress.programming!!.recommendedRepRange?.min).isEqualTo(5)
+        assertThat(benchPress.programming!!.recommendedRepRange?.max).isEqualTo(8)
         assertThat(benchPress.programming!!.fatigueScore).isEqualTo(4)
         assertThat(benchPress.programming!!.progressionType.name)
             .isEqualTo("REPETITIONS_THEN_LOAD")
@@ -225,6 +226,36 @@ class PlannerFixtureContextFactoryTest {
         assertThat(walking.type.name).isEqualTo("DISTANCE_DURATION")
         assertThat(walking.isStretch).isFalse()
         assertThat(walking.programming).isNull()
+    }
+
+    @Test
+    fun bundledCatalogProjection_matchesSharedProgrammingContract() {
+        val classLoader = checkNotNull(javaClass.classLoader)
+        val fixtures = classLoader.getResourceAsStream("programming-validation-fixtures.json")!!
+            .bufferedReader().use { JSONObject(it.readText()) }
+        val cases = fixtures.getJSONArray("cases")
+        val catalogText = classLoader.getResourceAsStream("workout-guide/catalog.json")!!
+            .bufferedReader().use { it.readText() }
+        for (index in 0 until cases.length()) {
+            val case = cases.getJSONObject(index)
+            val catalog = JSONObject(catalogText)
+            val exercise = catalog.getJSONArray("exercises").getJSONObject(0)
+            exercise.put("exerciseType", case.getString("exerciseType"))
+            val programming = fixtures.getJSONObject("baseProgramming").toString().dropLast(1) +
+                (if (case.has("rangeJson")) ",\"recommendedRepRange\":${case.getString("rangeJson")}" else "") + "}"
+            exercise.put("programming", "PROGRAMMING_PLACEHOLDER")
+            exercise.remove("reviewedMetadata")
+            val rawCatalog = catalog.toString().replace("\"PROGRAMMING_PLACEHOLDER\"", programming)
+            val result = runCatching { contextFactoryWithCatalog(rawCatalog).bundledCatalogProjection() }
+            assertWithMessage(case.getString("name")).that(result.isSuccess)
+                .isEqualTo(case.getBoolean("accepted"))
+            if (result.isFailure) {
+                val error = result.exceptionOrNull()!!
+                assertThat(error).isInstanceOf(PlannerFixtureFormatException::class.java)
+                assertThat(error.message!!.length).isLessThan(512)
+                assertThat(error.message).doesNotContain("UNTRUSTED_RECORD_MARKER")
+            }
+        }
     }
 
     private fun corpusCompatibleFixture(): PlannerFixture =

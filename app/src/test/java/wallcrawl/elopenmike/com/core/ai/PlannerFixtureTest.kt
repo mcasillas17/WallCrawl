@@ -1,6 +1,7 @@
 package wallcrawl.elopenmike.com.core.ai
 
 import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.Truth.assertWithMessage
 import java.util.UUID
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
@@ -325,7 +326,8 @@ class PlannerFixtureTest {
             }
         }
         readRequiredAnyExerciseIdGroups(evaluation.built.fixture.expected).forEach { group ->
-            assertThat(selectedIds.any { it in group }).isTrue()
+            assertWithMessage("${evaluation.built.fixture.id}: expected one of $group; selected $selectedIds")
+                .that(selectedIds.any { it in group }).isTrue()
         }
 
         val expectedTargetWeights = readExpectedTargetWeights(evaluation.built.fixture.expected)

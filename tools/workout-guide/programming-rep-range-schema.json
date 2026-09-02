@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "The importer selects repBased for weight_reps/bodyweight_reps/assisted_bodyweight and timed for duration/distance_duration using the pinned catalog type. The normalizer additionally enforces min <= max. Other programming fields retain their existing validation. Timed omission and null normalize to null. Integer JSON notation is required by the importer and Android parser.",
+  "$defs": {
+    "repBased": {
+      "type": "object",
+      "required": [
+        "recommendedRepRange"
+      ],
+      "properties": {
+        "recommendedRepRange": {
+          "type": "object",
+          "required": [
+            "min",
+            "max"
+          ],
+          "properties": {
+            "min": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000
+            },
+            "max": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000
+            }
+          }
+        }
+      }
+    },
+    "timed": {
+      "type": "object",
+      "properties": {
+        "recommendedRepRange": {
+          "type": "null"
+        }
+      }
+    }
+  }
+}

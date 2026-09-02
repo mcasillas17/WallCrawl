@@ -167,6 +167,7 @@ class FakeWorkoutPlannerTest {
             id = "treadmill-run",
             name = "Treadmill Run",
             type = ExerciseType.DISTANCE_DURATION,
+            programming = null,
             primaryMuscles = listOf(StandardMuscles.QUADS),
             secondaryMuscles = listOf(StandardMuscles.CARDIO)
         )
