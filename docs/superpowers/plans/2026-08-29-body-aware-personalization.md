@@ -15,7 +15,8 @@ for the capability roadmap.
 **Architecture:** Typed enum selections flow through onboarding/Profile drafts
 to a normalized `UserProfile`, one atomic repository save, a bounded allowlisted
 codec, and Room schema 8. The current planner ignores the new values. Reviewed
-exercise-demand metadata and deterministic eligibility form the next milestone.
+exercise-demand metadata and deterministic eligibility were the planned follow-up when this
+record was written.
 
 ## Milestone 1: Capability-aware profile inputs
 
@@ -96,9 +97,10 @@ exercise-demand metadata and deterministic eligibility form the next milestone.
 - [ ] Obtain independent Terra and Luna approval on the exact same final commit.
 - [ ] Open a verified non-draft pull request targeting `main`.
 
-## Milestone 2: Reviewed metadata and deterministic eligibility
+## Originally planned Milestone 2: Reviewed metadata and deterministic eligibility
 
-This is the immediate next milestone. None of it is complete in Milestone 1.
+This was the immediate next milestone when the plan was authored. None of it was completed as
+part of Milestone 1.
 
 - [ ] Define categorical exercise demand for impact, floor transition, balance,
   support, and required movement capabilities.
