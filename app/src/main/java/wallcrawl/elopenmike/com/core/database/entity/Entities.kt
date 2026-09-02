@@ -9,6 +9,8 @@ import wallcrawl.elopenmike.com.core.model.ExperienceLevel
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
+import wallcrawl.elopenmike.com.core.model.RestClass
+import wallcrawl.elopenmike.com.core.model.RestTargetSource
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetStopReason
 import wallcrawl.elopenmike.com.core.model.SetType
@@ -96,7 +98,11 @@ data class WorkoutExerciseEntity(
     val targetDurationSeconds: Int? = null,
     val targetDistanceMeters: Double? = null,
     val restSeconds: Int = 90,
-    val notes: String
+    val notes: String,
+    val effortMinRir: Int? = null,
+    val effortMaxRir: Int? = null,
+    val restClass: RestClass? = null,
+    val restTargetSource: RestTargetSource? = null
 )
 
 @Entity(
@@ -177,5 +183,9 @@ data class WorkoutTemplateExerciseEntity(
     val targetDurationSeconds: Int?,
     val targetDistanceMeters: Double?,
     val restSeconds: Int,
-    val notes: String
+    val notes: String,
+    val effortMinRir: Int? = null,
+    val effortMaxRir: Int? = null,
+    val restClass: RestClass? = null,
+    val restTargetSource: RestTargetSource? = null
 )

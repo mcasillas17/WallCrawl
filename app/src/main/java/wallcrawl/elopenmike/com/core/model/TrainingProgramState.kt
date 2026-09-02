@@ -13,10 +13,10 @@ enum class TrainingProgramStatePolicyVersion {
  * completed history, and [adaptationState] is a pure function of the profile, so an identical
  * profile and history always compose an identical state.
  *
- * No policy reads [weeklyLedger] yet. It is carried here so weekly dose targets and
- * recommendation snapshots can consume it without re-deriving it at another point in the
- * flow. Its credited counts are all zero while the bundled catalog carries no `APPROVED`
- * reviewed metadata, and every completed work set is reported as unattributed instead.
+ * [wallcrawl.elopenmike.com.core.ai.StateBasedTrainingPolicy] reads the ledger only on the
+ * reviewed-enabled path to cap future automatic sets by remaining direct-primary allowance.
+ * Its credited counts are all zero while the bundled catalog carries no `APPROVED` reviewed
+ * metadata, and every completed work set is reported as unattributed instead.
  */
 data class TrainingProgramState(
     val policyVersion: TrainingProgramStatePolicyVersion,

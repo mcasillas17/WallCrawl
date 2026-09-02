@@ -36,7 +36,7 @@ class Migration9To10Test {
         database = openDatabase()
         val sqlite = checkNotNull(database).openHelper.writableDatabase
 
-        assertThat(sqlite.version).isEqualTo(10)
+        assertThat(sqlite.version).isEqualTo(11)
         assertPreservedProfile(sqlite)
         assertPreservedHistoryAndTemplate(sqlite)
 

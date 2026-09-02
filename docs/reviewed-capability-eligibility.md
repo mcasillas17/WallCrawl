@@ -87,8 +87,9 @@ unchanged, and that limitation remains one reason production enablement is block
 
 Widening it is deliberately deferred rather than merely unfinished. The ceiling above is
 allow-by-default on exactly `UNCALIBRATED` and `RETURNING`, so any additional derived state
-would lift it; the states that remain have entry and exit conditions written in terms of
-weekly dose targets that do not exist until Task 4. A regression test in
+would lift it. Task 4 now defines deterministic dose behavior for every declared state,
+but does not invent transition evidence or allow `AdaptationStatePolicy` to emit another
+state; comparable-outcome transitions remain Task 6. A regression test in
 `AdaptationStatePolicyTest` fails if the policy ever emits a state this ceiling does not
 cover, so the two cannot drift apart silently.
 
@@ -131,8 +132,6 @@ the production catalog or authored metadata JSON.
 Focused verification:
 
 ```bash
-JAVA_HOME=/opt/homebrew/opt/openjdk@17 \
-ANDROID_HOME=/Users/elopenmike/Library/Android/sdk \
 ./gradlew testDebugUnitTest \
   --tests '*ExerciseEligibilityPolicyTest' \
   --tests '*WorkoutGenerationContextBuilderTest' \
@@ -147,10 +146,10 @@ unit tests, Android lint and assembly, connected Android tests, and
 
 ## Deliberately incomplete work
 
-This milestone does not approve metadata, enable production rollout, rank soft
-preferences, add a weekly dose ledger or Room migration, infer capability
-evidence, implement progression/RPE/RIR/deload/program blocks, substitute an
-active workout, integrate an LLM, or add remote services.
+This eligibility milestone did not approve metadata or enable production rollout. The
+repository now also contains the downstream production-disabled weekly ledger and
+state-based prescription policy, but capability evidence, progression, deload offers,
+program blocks, active-workout substitution, an LLM, and remote services remain absent.
 
 The next enablement requirement is deliberate human review and approval of the
 metadata, followed by an explicit availability/persona review and a deliberate

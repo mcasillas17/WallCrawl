@@ -20,6 +20,7 @@ import wallcrawl.elopenmike.com.core.model.ExerciseProgrammingMetadata
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.MechanicsType
 import wallcrawl.elopenmike.com.core.model.ImpactLevel
+import wallcrawl.elopenmike.com.core.model.LedgerPolicyVersion
 import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.model.MovementPattern
 import wallcrawl.elopenmike.com.core.model.MuscleVocabulary
@@ -32,7 +33,10 @@ import wallcrawl.elopenmike.com.core.model.ReviewedExerciseLink
 import wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.SupportRequirement
+import wallcrawl.elopenmike.com.core.model.TrainingProgramState
+import wallcrawl.elopenmike.com.core.model.TrainingProgramStatePolicyVersion
 import wallcrawl.elopenmike.com.core.model.UserProfile
+import wallcrawl.elopenmike.com.core.model.WeeklyDoseLedger
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
 
 internal data class PlannerFixtureContext(
@@ -111,6 +115,26 @@ internal class PlannerFixtureContextFactory(
                 fixture = fixture
             )
         }
+        val trainingProgramState =
+            fixture.reviewedEligibility?.let { reviewedEligibility ->
+                TrainingProgramState(
+                    policyVersion = TrainingProgramStatePolicyVersion.PROGRAM_STATE_V1,
+                    adaptationState = reviewedEligibility.adaptationState,
+                    weeklyLedger = WeeklyDoseLedger(
+                        policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+                        weekStartEpochDay = MONDAY_EPOCH_DAY,
+                        timeZoneId = "UTC",
+                        catalogVersion = fixture.catalogVersion,
+                        reviewPolicyVersion = catalogExercises
+                            .mapNotNull { it.reviewedMetadata?.provenance?.policyVersion }
+                            .maxOrNull()
+                            ?: 0,
+                        directPrimarySets = emptyMap(),
+                        secondaryInvolvement = emptyMap(),
+                        unattributedWorkSets = emptyMap()
+                    )
+                )
+            }
         return PlannerFixtureContext(
             fixture = fixture,
             userProfile = profile,
@@ -122,6 +146,7 @@ internal class PlannerFixtureContextFactory(
                 exerciseHistory = fixture.exerciseHistory.associateBy { it.exerciseId },
                 allowedExercises = allowedExercises,
                 automaticEligibilityResult = automaticEligibilityResult,
+                trainingProgramState = trainingProgramState,
                 preferredUnits = profile.preferredUnit
             )
         )

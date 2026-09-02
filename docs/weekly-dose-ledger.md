@@ -4,14 +4,17 @@ WallCrawl reconstructs how much resistance training a week actually contained fr
 completed workout history. The reconstruction is deterministic, versioned, and derived:
 nothing increments a stored counter while a workout is generated or a set is logged.
 
-**No policy reads the ledger's counts yet.** Planner selection, weekly dose targets,
-progression, deloads, and substitutions are all unchanged.
+`StateBasedTrainingPolicy` now reads `directPrimarySets` from the ledger to cap future
+reviewed prescriptions by remaining weekly allowance. It never treats frequency or
+session count as dose, never increases a base prescription, and defines no mandatory
+weekly floor. Exact or exceeded allowance returns typed no-guidance instead of zero sets
+or over-cap work.
 
-The ledger is now composed with the derived adaptation state into `TrainingProgramState` and
-carried on `WorkoutGenerationContext` whenever `PlannerFeatureFlags.reviewedCapabilityEligibility`
-is enabled — which production does not do. Composing it makes the ledger available where
-state-based dose targets will need it; reading its counts is a later milestone. See
-[docs/superpowers/specs/2026-09-01-training-program-state-design.md](superpowers/specs/2026-09-01-training-program-state-design.md).
+The consumer is reachable only when
+`PlannerFeatureFlags.reviewedCapabilityEligibility` is enabled, which production does
+not do. The bundled catalog remains 37 `DRAFT` / 0 `APPROVED`, so current production
+planner selection and prescriptions are unchanged. See the
+[state-based policy design](superpowers/specs/2026-09-01-state-based-dose-effort-rest-design.md).
 
 ## `PRIMARY_ONLY_V1`
 
@@ -194,10 +197,11 @@ git diff --check
 
 ## Not in this milestone
 
-- The separately shipped reviewed-only capability gate does not consume this ledger.
 - Metadata approval of any kind.
-- Adaptation-state transitions and state-based dose targets.
+- Production enablement of reviewed eligibility or state-based prescription guidance.
+- Any new adaptation-state transition; derivation remains limited to `UNCALIBRATED` and
+  `RETURNING`.
 - Progression, deloads, substitutions, and program blocks.
-- Any change to planner selection or prescription.
+- Any change to legacy planner selection or prescriptions.
 - Fractional secondary-muscle credit.
 - Body measurements, BMI, Health Connect, Wear OS, LLM, analytics, or networking.

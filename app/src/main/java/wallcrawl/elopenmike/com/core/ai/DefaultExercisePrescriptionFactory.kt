@@ -13,34 +13,56 @@ import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
  * Creates conservative, structurally valid targets for any catalog exercise.
  * Reviewed programming metadata enriches these defaults but is never an eligibility gate.
  */
-class DefaultExercisePrescriptionFactory {
+class DefaultExercisePrescriptionFactory(
+    private val stateBasedTrainingPolicy: StateBasedTrainingPolicy =
+        StateBasedTrainingPolicy()
+) {
 
     fun create(
         exercise: Exercise,
         context: WorkoutGenerationContext
-    ): ExercisePrescription = when (exercise.type) {
-        ExerciseType.WEIGHT_REPS -> createWeightRepetitionPrescription(exercise, context)
-        ExerciseType.BODYWEIGHT_REPS -> createBodyweightRepetitionPrescription(exercise, context)
-        ExerciseType.ASSISTED_BODYWEIGHT -> ExercisePrescription(
-            exerciseType = exercise.type,
-            targetSets = 3,
-            repRange = RepRange(6, 10),
-            restSeconds = 90
-        )
+    ): ExercisePrescription {
+        val basePrescription = when (exercise.type) {
+            ExerciseType.WEIGHT_REPS -> createWeightRepetitionPrescription(exercise, context)
+            ExerciseType.BODYWEIGHT_REPS ->
+                createBodyweightRepetitionPrescription(exercise, context)
 
-        ExerciseType.DURATION -> ExercisePrescription(
-            exerciseType = exercise.type,
-            targetSets = if (exercise.isStretch) 1 else 3,
-            targetDurationSeconds = if (exercise.isStretch) 30 else 45,
-            restSeconds = if (exercise.isStretch) 15 else 45
-        )
+            ExerciseType.ASSISTED_BODYWEIGHT -> ExercisePrescription(
+                exerciseType = exercise.type,
+                targetSets = 3,
+                repRange = RepRange(6, 10),
+                restSeconds = 90
+            )
 
-        ExerciseType.DISTANCE_DURATION -> ExercisePrescription(
-            exerciseType = exercise.type,
-            targetSets = 1,
-            targetDurationSeconds = 600,
-            restSeconds = 0
-        )
+            ExerciseType.DURATION -> ExercisePrescription(
+                exerciseType = exercise.type,
+                targetSets = if (exercise.isStretch) 1 else 3,
+                targetDurationSeconds = if (exercise.isStretch) 30 else 45,
+                restSeconds = if (exercise.isStretch) 15 else 45
+            )
+
+            ExerciseType.DISTANCE_DURATION -> ExercisePrescription(
+                exerciseType = exercise.type,
+                targetSets = 1,
+                targetDurationSeconds = 600,
+                restSeconds = 0
+            )
+        }
+        val programState = context.trainingProgramState ?: return basePrescription
+        return when (
+            val result = stateBasedTrainingPolicy.evaluate(
+                exercise = exercise,
+                basePrescription = basePrescription,
+                profile = context.userProfile,
+                fitnessGoals = context.fitnessGoals.ifEmpty { setOf(context.fitnessGoal) },
+                programState = programState,
+                priorUserRestPreference = context.priorUserRestPreferences[exercise.id]
+            )
+        ) {
+            is TrainingPolicyResult.Applied -> result.prescription
+            is TrainingPolicyResult.NoGuidance,
+            is TrainingPolicyResult.Failure -> throw TrainingPolicyResultException(result)
+        }
     }
 
     private fun createWeightRepetitionPrescription(

@@ -78,8 +78,8 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
     }
 
     /**
-     * Reconstructs the weekly dose ledger from completed history. Nothing reads its counts
-     * yet; it is composed into the training program state on the reviewed-eligibility path.
+     * Reconstructs the weekly dose ledger from completed history. The state-based prescription
+     * policy reads it only on the production-disabled reviewed-eligibility path.
      */
     override val weeklyDoseLedgerRepository: WeeklyDoseLedgerRepository by lazy {
         OfflineWeeklyDoseLedgerRepository(

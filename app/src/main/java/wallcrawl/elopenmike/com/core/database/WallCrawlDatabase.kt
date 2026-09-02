@@ -33,7 +33,7 @@ import wallcrawl.elopenmike.com.core.database.entity.WorkoutTemplateExerciseEnti
         WorkoutTemplateExerciseEntity::class,
         WeeklyDoseLedgerStateEntity::class
     ],
-    version = 10,
+    version = 11,
     exportSchema = false
 )
 @TypeConverters(RoomTypeConverters::class)
@@ -333,6 +333,25 @@ abstract class WallCrawlDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_10_11 = object : Migration(10, 11) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE workout_exercises ADD COLUMN effortMinRir INTEGER")
+                db.execSQL("ALTER TABLE workout_exercises ADD COLUMN effortMaxRir INTEGER")
+                db.execSQL("ALTER TABLE workout_exercises ADD COLUMN restClass TEXT")
+                db.execSQL("ALTER TABLE workout_exercises ADD COLUMN restTargetSource TEXT")
+                db.execSQL(
+                    "ALTER TABLE workout_template_exercises ADD COLUMN effortMinRir INTEGER"
+                )
+                db.execSQL(
+                    "ALTER TABLE workout_template_exercises ADD COLUMN effortMaxRir INTEGER"
+                )
+                db.execSQL("ALTER TABLE workout_template_exercises ADD COLUMN restClass TEXT")
+                db.execSQL(
+                    "ALTER TABLE workout_template_exercises ADD COLUMN restTargetSource TEXT"
+                )
+            }
+        }
+
         val ALL_MIGRATIONS: Array<Migration>
             get() = arrayOf(
                 MIGRATION_1_2,
@@ -343,7 +362,8 @@ abstract class WallCrawlDatabase : RoomDatabase() {
                 MIGRATION_6_7,
                 MIGRATION_7_8,
                 MIGRATION_8_9,
-                MIGRATION_9_10
+                MIGRATION_9_10,
+                MIGRATION_10_11
             )
     }
 }

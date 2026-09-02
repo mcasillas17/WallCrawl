@@ -15,7 +15,8 @@ constraints and local movement-capability inputs, a complete bundled catalog,
 structured workout generation and
 validation, reusable custom workout templates, type-aware active set logging
 with no fabricated starting loads, Room persistence, workout-history context,
-experience-aware exercise ordering, and progress calculations. The current
+experience-aware exercise ordering, a production-disabled reviewed state-based
+dose/effort/rest policy, and progress calculations. The current
 `FakeWorkoutPlanner` is deliberately replaceable; no production local LLM
 runtime is integrated yet.
 
@@ -129,6 +130,29 @@ Qwen, Gemma, or LiteRT-backed implementation. It only selects IDs from
 `WorkoutGenerationContext.allowedExercises`. The validator rejects unknown or
 disallowed IDs and malformed set, rep, weight, rest, name, or duration values
 before any workout reaches persistence.
+
+### Reviewed state-based prescription policy
+
+When tests explicitly enable reviewed eligibility, `TrainingProgramState` supplies
+`PRIMARY_ONLY_V1` weekly direct-primary exposure to a pure, versioned prescription policy.
+The policy can only reduce a valid base prescription: it never raises target sets or
+changes/invents a load. Remaining weekly allowance is an upper-cap calculation with no
+mandatory floor or automatic increment. The editable WallCrawl v1 product defaults cap
+direct-primary exposure at 6/8/12 sets depending on state and cap one exercise at 2 or 4
+sets; these are product values, not universal or medically optimal prescriptions.
+
+The same reviewed path adds nullable effort guidance: conservative states or a relevant
+approved `LIMITED` capability use 2-4 RIR, established strength uses the editable 1-2 RIR
+product target, and established general/hypertrophy uses 1-3 RIR. Automatic guidance
+never targets 0 RIR/failure. Rest is classified as `SHORT`, `MODERATE`, or `LONG` and
+mapped to editable 60/90/180-second defaults. A valid explicit per-exercise user rest
+choice wins and keeps its exact seconds.
+
+Guidance is persisted with templates and frozen session snapshots in Room schema 11.
+The active timer still reads the persisted exact seconds; add-time, skip, and dismiss are
+one-off timer actions rather than durable preference changes. Production keeps reviewed
+eligibility disabled because the bundled cohort remains 37 `DRAFT` / 0 `APPROVED`, so
+today's legacy automatic prescriptions and manual template defaults are unchanged.
 
 Manual templates use the same exercise IDs and type-aware prescriptions but do
 not pass through `WorkoutPlanner`. See [WallCrawl Architecture](docs/architecture.md)
@@ -358,7 +382,7 @@ to it, generated-workout validation, template validation, atomic persistence
 boundaries, progress and personal-record calculations, attribution loading,
 Today state, duration calculation, and visual-provider mapping.
 Android instrumentation also validates every supported database migration chain through
-schema 10 without destructive fallback, the weekly-ledger DAO/repository,
+schema 11 without destructive fallback, guidance persistence, the weekly-ledger DAO/repository,
 capability-control semantics, and template/session snapshot behavior. It parses the
 packaged 302-exercise catalog and opens every one of its 906 SVG paths. Pull-request/main
 CI and tagged-release publication both run this connected suite on an API 36 emulator;
@@ -387,7 +411,7 @@ a tag cannot publish its prerelease unless instrumentation succeeds.
 - Movement-capability values feed a reviewed-only deterministic eligibility path, but
   production keeps that path disabled until human-approved metadata and an explicit
   enablement review exist. They do not affect today's filtering, ranking,
-  substitutions, or dose.
+  substitutions, dose, effort, or rest guidance.
 - Database migrations must preserve user history; destructive migration fallback
   is intentionally disabled.
 
@@ -396,10 +420,8 @@ a tag cannot publish its prerelease unless instrumentation succeeds.
 - Complete human review of the 37-entry categorical draft cohort, then perform an
   explicit availability/persona review before switching production to the implemented
   reviewed-only capability gate. Its experience ranker reads only `APPROVED`
-  complexity; model or pull-request review is not metadata approval.
-- Continue the deterministic roadmap with Task 4's state-based dose, effort, and rest
-  policy. That is the first step allowed to consume the existing `PRIMARY_ONLY_V1`
-  weekly ledger; this eligibility slice does not read it.
+  complexity; model or pull-request review is not metadata approval, and the reviewed
+  state-based prescription policy stays disabled with that gate.
 - Make `recommendedRepRange` optional so timed holds can be reviewed. Fourteen
   planner-eligible movements — planks, dead hangs, wall sits — cannot carry
   mechanics, fatigue, or a coaching note today, because the schema demands a rep
@@ -409,9 +431,10 @@ a tag cannot publish its prerelease unless instrumentation succeeds.
   entries.
 - Continue reviewing programming metadata beyond the planner's working set, so
   browsing and custom workouts benefit from it too.
-- Consume the logged RPE/RIR, manageable confirmation, and typed stop reasons in
-  progression and deload decisions; they are captured and stored today, but no
-  planning logic reads them yet.
+- Continue deterministic Task 6: use comparable completed outcomes and explicit
+  confirmation for capability evidence, one-variable progression, and user-controlled
+  deload offers. Logged RPE/RIR, manageable confirmation, and typed stop reasons are
+  captured today but this milestone does not consume them.
 - Add exercise substitution to the active workout.
 - Expand progress calculations and charts as more history accumulates.
 - Integrate a constrained on-device model only after the surrounding pipeline is

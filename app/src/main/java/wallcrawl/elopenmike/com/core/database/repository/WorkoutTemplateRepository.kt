@@ -7,6 +7,8 @@ import wallcrawl.elopenmike.com.core.database.dao.WorkoutTemplateDao
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutTemplateEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutTemplateExerciseEntity
 import wallcrawl.elopenmike.com.core.database.relation.WorkoutTemplateWithExercises
+import wallcrawl.elopenmike.com.core.database.relation.persistedEffortTarget
+import wallcrawl.elopenmike.com.core.database.relation.requireCompletePersistedRestTarget
 import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
 import wallcrawl.elopenmike.com.core.model.ExercisePrescription
 import wallcrawl.elopenmike.com.core.model.PlannedExercise
@@ -69,7 +71,11 @@ class OfflineWorkoutTemplateRepository(
                     targetDurationSeconds = prescription.targetDurationSeconds,
                     targetDistanceMeters = prescription.targetDistanceMeters,
                     restSeconds = prescription.restSeconds,
-                    notes = exercise.notes.trim()
+                    notes = exercise.notes.trim(),
+                    effortMinRir = prescription.effortTarget?.minRir,
+                    effortMaxRir = prescription.effortTarget?.maxRir,
+                    restClass = prescription.restClass,
+                    restTargetSource = prescription.restTargetSource
                 )
             }
         )
@@ -103,6 +109,16 @@ class OfflineWorkoutTemplateRepository(
         createdAtTimestamp = template.createdAtTimestamp,
         updatedAtTimestamp = template.updatedAtTimestamp,
         exercises = exercises.sortedBy { it.orderIndex }.map { exercise ->
+            val effortTarget = persistedEffortTarget(
+                minRir = exercise.effortMinRir,
+                maxRir = exercise.effortMaxRir,
+                owner = "Persisted template exercise"
+            )
+            requireCompletePersistedRestTarget(
+                restClass = exercise.restClass,
+                restTargetSource = exercise.restTargetSource,
+                owner = "Persisted template exercise"
+            )
             PlannedExercise(
                 exerciseId = exercise.exerciseId,
                 prescription = ExercisePrescription(
@@ -120,7 +136,10 @@ class OfflineWorkoutTemplateRepository(
                     targetAssistanceWeight = exercise.targetAssistanceWeight,
                     targetDurationSeconds = exercise.targetDurationSeconds,
                     targetDistanceMeters = exercise.targetDistanceMeters,
-                    restSeconds = exercise.restSeconds
+                    restSeconds = exercise.restSeconds,
+                    effortTarget = effortTarget,
+                    restClass = exercise.restClass,
+                    restTargetSource = exercise.restTargetSource
                 ),
                 notes = exercise.notes
             )

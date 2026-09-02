@@ -13,6 +13,7 @@ import wallcrawl.elopenmike.com.core.model.ReviewState
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
 import wallcrawl.elopenmike.com.core.model.WeightUnit
+import wallcrawl.elopenmike.com.core.model.LedgerPolicyVersion
 
 class PlannerFixtureCorpusTest {
 
@@ -77,11 +78,19 @@ class PlannerFixtureCorpusTest {
     @Test
     fun reviewedEnabledFixture_usesOnlyExplicitSyntheticApprovals() {
         val fixture = loader.loadCorpus().single { it.id == "reviewed-enabled-bodyweight" }
-        val syntheticIds = fixture.reviewedEligibility!!.syntheticApprovedExerciseIds
+        val reviewedEligibility = requireNotNull(fixture.reviewedEligibility)
+        val syntheticIds = reviewedEligibility.syntheticApprovedExerciseIds
         val built = contextFactory.create(fixture)
         val result = built.context.automaticEligibilityResult as
             AutomaticEligibilityResult.Candidates
 
+        assertThat(built.context.trainingProgramState).isNotNull()
+        assertThat(built.context.trainingProgramState?.adaptationState)
+            .isEqualTo(reviewedEligibility.adaptationState)
+        assertThat(built.context.trainingProgramState?.weeklyLedger?.policyVersion)
+            .isEqualTo(LedgerPolicyVersion.PRIMARY_ONLY_V1)
+        assertThat(built.context.trainingProgramState?.weeklyLedger?.directPrimarySets)
+            .isEmpty()
         assertThat(built.catalogExercises).hasSize(302)
         assertThat(
             built.catalogExercises.filter {

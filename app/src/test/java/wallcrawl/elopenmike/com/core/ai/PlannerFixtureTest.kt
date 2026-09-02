@@ -29,6 +29,9 @@ import wallcrawl.elopenmike.com.core.model.StandardMuscles
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
+import wallcrawl.elopenmike.com.core.model.EffortTarget
+import wallcrawl.elopenmike.com.core.model.RestTargetSource
+import wallcrawl.elopenmike.com.core.model.UserRestPreference
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
@@ -161,6 +164,29 @@ class PlannerFixtureTest {
     }
 
     @Test
+    fun reviewedEnabledPersona_consumesProgramStateWithoutHardRuleOrLoadRegression() = runTest {
+        val fixture = loader.loadCorpus().single { it.id == "reviewed-enabled-bodyweight" }
+        val evaluation = evaluator.evaluateFixture(fixture) as PlannerFixtureSuccessEvaluation
+        val context = evaluation.built.context
+        val allowedIds = context.allowedExercises.map(Exercise::id).toSet()
+
+        assertThat(context.trainingProgramState).isNotNull()
+        assertThat(
+            context.trainingProgramState?.weeklyLedger?.directPrimarySets
+        ).isEmpty()
+        evaluation.firstWorkout.exercises.forEach { generated ->
+            assertThat(allowedIds).contains(generated.exerciseId)
+            assertThat(generated.prescription.effortTarget).isEqualTo(EffortTarget(1, 3))
+            assertThat(generated.prescription.restClass).isNotNull()
+            assertThat(generated.prescription.restTargetSource)
+                .isEqualTo(RestTargetSource.PRODUCT_POLICY)
+            assertThat(generated.prescription.targetWeight).isNull()
+        }
+        assertThat(evaluation.firstWorkout.normalizedPlannerFixtureWorkout())
+            .isEqualTo(evaluation.secondWorkout.normalizedPlannerFixtureWorkout())
+    }
+
+    @Test
     fun corpusMetadata_usesSupportedVersionsAndBoundedHistory() {
         val fixtures = loader.loadCorpus()
 
@@ -195,6 +221,8 @@ class PlannerFixtureTest {
         val snapshotRecentWorkoutHistory = readField(snapshot, "recentWorkoutHistory") as List<*>
         val snapshotExerciseHistory = readField(snapshot, "exerciseHistory") as Map<*, *>
         val snapshotAllowedExercises = readField(snapshot, "allowedExercises") as List<*>
+        val snapshotRestPreferences =
+            readField(snapshot, "priorUserRestPreferences") as Map<*, *>
 
         assertThat(snapshotUserProfile).isEqualTo(context.userProfile)
         assertThat(snapshotUserProfile).isNotSameInstanceAs(context.userProfile)
@@ -216,6 +244,9 @@ class PlannerFixtureTest {
         assertThat(readField(snapshot, "excludedExerciseIds")).isNotSameInstanceAs(context.excludedExerciseIds)
         assertThat(snapshotAllowedExercises).isEqualTo(context.allowedExercises)
         assertThat(snapshotAllowedExercises).isNotSameInstanceAs(context.allowedExercises)
+        assertThat(snapshotRestPreferences).isEqualTo(context.priorUserRestPreferences)
+        assertThat(snapshotRestPreferences)
+            .isNotSameInstanceAs(context.priorUserRestPreferences)
 
         val snapshotSession = snapshotRecentWorkoutHistory.single() as WorkoutSession
         val sourceSession = context.recentWorkoutHistory.single()
@@ -577,6 +608,12 @@ class PlannerFixtureTest {
             recentlyTrainedMuscles = listOf(StandardMuscles.CHEST, StandardMuscles.TRICEPS),
             excludedExerciseIds = listOf("barbell-bench-press"),
             allowedExercises = listOf(allowedExercise),
+            priorUserRestPreferences = linkedMapOf(
+                allowedExercise.id to UserRestPreference(
+                    restClass = wallcrawl.elopenmike.com.core.model.RestClass.LONG,
+                    restSeconds = 240
+                )
+            ),
             preferredUnits = WeightUnit.KG
         )
     }

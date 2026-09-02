@@ -13,7 +13,10 @@ class ExercisePrescriptionTest {
             targetSets = 3,
             repRange = RepRange(8, 10),
             targetWeight = 47.5,
-            restSeconds = 90
+            restSeconds = 90,
+            effortTarget = EffortTarget(minRir = 2, maxRir = 4),
+            restClass = RestClass.MODERATE,
+            restTargetSource = RestTargetSource.PRODUCT_POLICY
         )
 
         assertThat(prescription.repRange).isEqualTo(RepRange(8, 10))
@@ -21,6 +24,9 @@ class ExercisePrescriptionTest {
         assertThat(prescription.targetDurationSeconds).isNull()
         assertThat(prescription.targetDistanceMeters).isNull()
         assertThat(prescription.targetAssistanceWeight).isNull()
+        assertThat(prescription.effortTarget).isEqualTo(EffortTarget(2, 4))
+        assertThat(prescription.restClass).isEqualTo(RestClass.MODERATE)
+        assertThat(prescription.restTargetSource).isEqualTo(RestTargetSource.PRODUCT_POLICY)
     }
 
     @Test
@@ -133,6 +139,58 @@ class ExercisePrescriptionTest {
         assertThat(sessionExercise.prescription).isEqualTo(prescription)
         assertThat(sessionExercise.targetSets).isEqualTo(2)
         assertThat(sessionExercise.targetRepRange).isNull()
+    }
+
+    @Test
+    fun explicitRestPreference_replacesClassSecondsAndSourceTogether() {
+        val base = ExercisePrescription(
+            exerciseType = ExerciseType.BODYWEIGHT_REPS,
+            targetSets = 3,
+            repRange = RepRange(8, 12),
+            restSeconds = 75
+        )
+        val preference = UserRestPreference(RestClass.LONG, restSeconds = 240)
+
+        val preferred = base.withUserRestPreference(preference)
+
+        assertThat(preferred.restSeconds).isEqualTo(240)
+        assertThat(preferred.restClass).isEqualTo(RestClass.LONG)
+        assertThat(preferred.restTargetSource).isEqualTo(RestTargetSource.USER_PREFERENCE)
+        assertThat(preferred.userRestPreferenceOrNull()).isEqualTo(preference)
+    }
+
+    @Test
+    fun productRestGuidance_isNotReportedAsAnExplicitUserPreference() {
+        val prescription = ExercisePrescription(
+            exerciseType = ExerciseType.BODYWEIGHT_REPS,
+            targetSets = 3,
+            repRange = RepRange(8, 12),
+            restSeconds = 90,
+            restClass = RestClass.MODERATE,
+            restTargetSource = RestTargetSource.PRODUCT_POLICY
+        )
+
+        assertThat(prescription.userRestPreferenceOrNull()).isNull()
+    }
+
+    @Test
+    fun restClassificationAndSource_mustBothBePresentOrBothBeAbsent() {
+        assertThrows(IllegalArgumentException::class.java) {
+            ExercisePrescription(
+                exerciseType = ExerciseType.BODYWEIGHT_REPS,
+                targetSets = 3,
+                repRange = RepRange(8, 12),
+                restClass = RestClass.MODERATE
+            )
+        }
+        assertThrows(IllegalArgumentException::class.java) {
+            ExercisePrescription(
+                exerciseType = ExerciseType.BODYWEIGHT_REPS,
+                targetSets = 3,
+                repRange = RepRange(8, 12),
+                restTargetSource = RestTargetSource.USER_PREFERENCE
+            )
+        }
     }
 
     @Test
