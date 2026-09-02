@@ -60,6 +60,28 @@ class CapabilityPreferenceRankingPolicyTest {
     }
 
     @Test
+    fun penalties_keepsFirstDecisionForDuplicateExerciseIds() {
+        val result = policy.penalties(
+            candidateExerciseIds = listOf("duplicate"),
+            automaticEligibilityResult = result(
+                decisions = listOf(
+                    decision(
+                        id = "duplicate",
+                        preferences = listOf(EligibilityPreference.Limited(MovementCapabilityType.FLOOR_TRANSITION))
+                    ),
+                    decision(
+                        id = "duplicate",
+                        eligible = false
+                    )
+                )
+            ),
+            capabilityEvidence = evidenceSet()
+        )
+
+        assertEquals(listOf("duplicate" to 1), result.toList())
+    }
+
+    @Test
     fun penalties_returnsZeroWhenNoPreferencesArePresent() {
         val result = policy.penalties(
             candidateExerciseIds = listOf("candidate"),
