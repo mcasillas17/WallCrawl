@@ -4,6 +4,7 @@ import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityFailure
 import wallcrawl.elopenmike.com.core.model.EligibilityDecision
+import wallcrawl.elopenmike.com.core.model.CapabilityEvidenceSet
 import wallcrawl.elopenmike.com.core.model.ExercisePrescription
 import wallcrawl.elopenmike.com.core.model.ExercisePerformanceHistory
 import wallcrawl.elopenmike.com.core.model.ExerciseProgrammingMetadata
@@ -72,6 +73,10 @@ internal data class PlannerFixtureInputSnapshot(
     val excludedExerciseIds: List<String>,
     val allowedExercises: List<Exercise>,
     val automaticEligibilityResult: AutomaticEligibilityResult?,
+    /**
+     * Deeply immutable, so the snapshot holds the instance directly.
+     */
+    val capabilityEvidence: CapabilityEvidenceSet,
     /**
      * Deeply immutable, so the snapshot holds the instance directly. Its maps are read-only
      * and its nested ledger is a value type, so there is no mutable branch to copy.
@@ -199,6 +204,7 @@ private fun WorkoutGenerationContext.snapshot(): PlannerFixtureInputSnapshot =
         excludedExerciseIds = excludedExerciseIds.toList(),
         allowedExercises = allowedExercises.map(Exercise::deepCopy),
         automaticEligibilityResult = automaticEligibilityResult?.deepCopy(),
+        capabilityEvidence = capabilityEvidence,
         trainingProgramState = trainingProgramState,
         priorUserRestPreferences = LinkedHashMap(priorUserRestPreferences),
         preferredUnits = preferredUnits
