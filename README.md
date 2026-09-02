@@ -436,31 +436,8 @@ a tag cannot publish its prerelease unless instrumentation succeeds.
 - Database migrations must preserve user history; destructive migration fallback
   is intentionally disabled.
 
-## Next milestones
+## Roadmap
 
-- Complete human review of the 37-entry categorical draft cohort, then perform an
-  explicit availability/persona review before switching production to the implemented
-  reviewed-only capability gate. Its experience ranker reads only `APPROVED`
-  complexity; model or pull-request review is not metadata approval, and the same
-  flag would also turn on reviewed capability evidence and reviewed state-based
-  prescription guidance.
-- Review the exercises the planner reaches for outside the reviewed set, and add
-  band coverage: a band-only profile is served almost entirely by unreviewed
-  entries.
-- Continue reviewing programming metadata beyond the planner's working set, so
-  browsing and custom workouts benefit from it too.
-- Task 6A shipped behind the production-disabled reviewed gate: capability
-  evidence now requires two comparable completed sessions for the same exercise
-  ID plus explicit `feltManageable == true`, and suppresses only that
-  candidate's soft capability penalty.
-- Task 6B remains one-variable progression.
-- Task 6C remains user-controlled `DeloadOffer`s. RPE/RIR are stored but not
-  used by capability evidence; Task 6A consumes only explicit
-  `feltManageable == true`, and completion/stop fields act only as
-  disqualifiers.
-- Add exercise substitution to the active workout.
-- Expand progress calculations and charts as more history accumulates.
-- Integrate a constrained on-device model only after the surrounding pipeline is
-  production-ready.
-- Later: Health Connect, Wear OS, programs/periodization, optional sync, and
-  model management.
+Current status, dependency order, and upcoming work live in the
+[WallCrawl roadmap](ROADMAP.md). Detailed design and implementation records remain under
+[`docs/superpowers/`](docs/superpowers/) for execution context.

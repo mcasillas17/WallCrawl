@@ -1,5 +1,9 @@
 # Science-Based Local LLM Engine Implementation Plan
 
+> **Planning record:** Current status, priority, and dependency order live in the
+> [canonical roadmap](../../../ROADMAP.md). This document preserves detailed implementation
+> context; unchecked boxes are not authoritative project status.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Add an optional on-device LLM that improves preference handling and explanations without controlling safety, eligibility, exercise identity, dose, progression, or persistence.
