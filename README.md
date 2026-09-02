@@ -196,9 +196,12 @@ keeps every control large, explicit, and local.
 Everything above stays on the device. Reviewed capability evidence now reads a
 strict subset of that history behind the production-disabled reviewed gate: two
 distinct `SessionStatus.COMPLETED` sessions for the same exercise ID, with only
-qualifying non-warm-up work and explicit `feltManageable == true`. Null/false
-manageable answers, completion alone, RPE, and RIR do not qualify. Progression
-and deload logic still do not consume the feedback.
+qualifying non-warm-up work and explicit `feltManageable == true`. Completion
+and stop fields only disqualify invalid observations; they do not create
+evidence on their own. Null/false manageable answers, completion alone, RPE,
+and RIR do not qualify. RPE/RIR remain stored for logging and are unused by
+capability evidence. Progression and deload logic still do not consume the
+feedback.
 
 ## Architecture
 

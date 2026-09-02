@@ -388,10 +388,10 @@ product. The design constraints still stand for later work: no fixed calendar,
 percentage, RIR, volume, or diagnostic threshold, and no diagnosis or recovery
 claim.
 
-## Session and Weekly Validation
+## Planned Task 7: Session and Weekly Validation
 
-`ProgramValidator` runs after prescription compilation and returns structured
-violations:
+Task 7 will add `ProgramValidator` after prescription compilation and return
+structured violations:
 
 ```kotlin
 sealed interface ProgramViolation {
@@ -405,26 +405,26 @@ sealed interface ProgramViolation {
 }
 ```
 
-Validation covers unknown/unreviewed IDs, hard-rule violations, duplicate
-exercise/family, invalid dose, unconfirmed load, duration mismatch, and gross
-weekly-ledger overflow. Under-target weekly volume is a warning, not a blocking
-error, because bands are advisory.
+When implemented, validation will cover unknown/unreviewed IDs, hard-rule
+violations, duplicate exercise/family, invalid dose, unconfirmed load, duration
+mismatch, and gross weekly-ledger overflow. Under-target weekly volume will be
+a warning, not a blocking error, because bands are advisory.
 
-## Deterministic Repair
+## Planned Task 7: Deterministic Repair
 
-On violations, the engine attempts exactly one deterministic repair pass that
-relaxes soft preferences only. It can never remove an explicit constraint,
-capability `AVOID`, equipment requirement, or low-impact rule, and never invents
-a load. If repair still yields no valid plan, the engine fails closed with a
-typed `WorkoutPlanningFailure`; it never persists an invalid plan.
+On violations, the engine will attempt exactly one deterministic repair pass
+that relaxes soft preferences only. It will never remove an explicit constraint,
+capability `AVOID`, equipment requirement, or low-impact rule, and never invent
+a load. If repair still yields no valid plan, the engine will fail closed with a
+typed `WorkoutPlanningFailure`; it will never persist an invalid plan.
 
-## Recommendation Snapshots
+## Planned Task 7: Recommendation Snapshots
 
-Every recommendation persists an immutable `RecommendationSnapshot` carrying the
-context hash, catalog version, review version, policy version, ledger version,
-ordered reason codes, and validator result. The same versioned inputs reproduce
-the same snapshot, and any recommendation is replayable and auditable from
-immutable history without re-running the LLM.
+Every recommendation will persist an immutable `RecommendationSnapshot`
+carrying the context hash, catalog version, review version, policy version,
+ledger version, ordered reason codes, and validator result. The same versioned
+inputs will reproduce the same snapshot, and any recommendation will be
+replayable and auditable from immutable history without re-running the LLM.
 
 ## Active Logging and Feedback
 
