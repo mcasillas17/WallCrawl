@@ -1,5 +1,9 @@
 # WallCrawl Local Health and Wear OS Implementation Plan
 
+> **Planning record:** Current status, priority, and dependency order live in the
+> [canonical roadmap](../../../ROADMAP.md). This document preserves detailed implementation
+> context; unchecked boxes are not authoritative project status.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Add optional Health Connect export and a phone-planned, watch-executed Wear OS companion that logs sets, runs timers, displays bounded exercise animation, and works after the phone disconnects without weakening WallCrawl's local-first guarantees.

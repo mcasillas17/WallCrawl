@@ -1,5 +1,9 @@
 # Science-Based Deterministic Engine Implementation Plan
 
+> **Planning record:** Current status, priority, and dependency order live in the
+> [canonical roadmap](../../../ROADMAP.md). This document preserves detailed implementation
+> context; unchecked boxes are not authoritative project status.
+
 **Goal:** Build a fully local, auditable multi-week resistance-training engine whose eligibility, weekly dose, effort, progression, and fallbacks follow the signed evidence doctrine.
 
 **Architecture:** A reviewed metadata gate feeds capability/equipment eligibility, a `PRIMARY_ONLY_V1` weekly ledger, calibration-state policy, deterministic ranking and prescription compilation, and session/weekly validation. Immutable snapshots and versioned reason codes make every recommendation replayable.

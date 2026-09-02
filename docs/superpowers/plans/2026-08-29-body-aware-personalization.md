@@ -1,5 +1,9 @@
 # Capability-Aware Personalization Roadmap
 
+> **Planning record:** Current status, priority, and dependency order live in the
+> [canonical roadmap](../../../ROADMAP.md). This document preserves detailed implementation
+> context; unchecked boxes are not authoritative project status.
+
 **Goal:** Stage capability-aware planning safely by shipping validated local
 movement-capability inputs first, without changing current recommendations.
 

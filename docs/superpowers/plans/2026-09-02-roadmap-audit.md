@@ -1,5 +1,9 @@
 # 2026-09-02 Roadmap Audit
 
+> **Audit record:** Current status, priority, and dependency order live in the
+> [canonical roadmap](../../../ROADMAP.md). This document preserves the evidence behind that
+> roadmap.
+
 This records an audit of the existing plans against the code at `d8fc5a4`. Nothing was
 removed. Statuses were corrected, verified steps were ticked, and gaps that no plan tracked
 were added as new tasks.
@@ -87,14 +91,8 @@ Four rows of the audit table in `2026-08-28-adaptive-coach-product.md` were out 
 original text was left in place and corrected in a dated section beneath it, so the record of
 what was believed at the time survives. Two rows were confirmed still accurate.
 
-## Recommended order
+## Consolidated roadmap
 
-1. **Task 11 of the product plan** — the backup/privacy contradiction. Smallest item here, and
-   the only one affecting shipped behavior.
-2. **Task 10** — metadata approval. A human act that unblocks the value of three built tasks.
-   Not something the pipeline may do for itself.
-3. **Task 7** — `ProgramValidator`, including `WeeklyLedgerOverflow`, which became meaningful
-   once Task 4 began reading the ledger.
-4. **Task 9** — reconcile the Progress card, ideally before approval makes the discrepancy
-   user-visible.
-5. **Task 6** — progression and deload, the largest remaining engine work.
+The audited status and dependency order are now maintained in the
+[canonical WallCrawl roadmap](../../../ROADMAP.md). This file remains the dated evidence
+snapshot that explains how those priorities were derived.
