@@ -25,6 +25,12 @@ data class WorkoutGenerationContext(
     val allowedExercises: List<Exercise> = emptyList(),
     val automaticEligibilityResult: AutomaticEligibilityResult? = null,
     /**
+     * Reviewed-only capability evidence derived from the bounded completed-history snapshot.
+     *
+     * Empty on the legacy path.
+     */
+    val capabilityEvidence: CapabilityEvidenceSet = CapabilityEvidenceSet.empty(),
+    /**
      * The composed program state, present only when reviewed eligibility is enabled.
      *
      * The reviewed-enabled state-based policy reads its ledger to cap direct-primary sets.

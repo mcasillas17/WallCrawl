@@ -15,6 +15,12 @@ import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
 import wallcrawl.elopenmike.com.core.exercise.ExerciseFilter
 import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
+import wallcrawl.elopenmike.com.core.model.CapabilityEvidence
+import wallcrawl.elopenmike.com.core.model.CapabilityEvidencePolicyVersion
+import wallcrawl.elopenmike.com.core.model.CapabilityEvidenceReason
+import wallcrawl.elopenmike.com.core.model.CapabilityEvidenceScope
+import wallcrawl.elopenmike.com.core.model.CapabilityEvidenceSet
+import wallcrawl.elopenmike.com.core.model.ComparableMovementShape
 import wallcrawl.elopenmike.com.core.model.ComplexityTier
 import wallcrawl.elopenmike.com.core.model.EligibilityDecision
 import wallcrawl.elopenmike.com.core.model.EligibilityReason
@@ -196,6 +202,139 @@ class WorkoutGenerationContextBuilderTest {
         assertThat(context.allowedExercises).containsExactly(advanced, regression).inOrder()
         assertThat(context.automaticEligibilityResult)
             .isInstanceOf(AutomaticEligibilityResult.Candidates::class.java)
+    }
+
+    @Test
+    fun build_withReviewedEligibilityEnabledCarriesCapabilityEvidenceWithoutMutatingInputs() = runTest {
+        val targetExerciseId = "synthetic-direct-regression"
+        val source = InMemoryExerciseCatalog.SAMPLE_EXERCISES.first().copy(
+            reviewedMetadata = syntheticReviewedMetadata(
+                reviewState = ReviewState.APPROVED,
+                approvedRegressions = listOf(
+                    ReviewedExerciseLink(targetExerciseId, "synthetic direct regression")
+                )
+            )
+        )
+        val target = source.copy(
+            id = targetExerciseId,
+            reviewedMetadata = syntheticReviewedMetadata(
+                reviewState = ReviewState.APPROVED,
+                progressionFamily = "synthetic-direct-regression-family"
+            )
+        )
+        val exercises = listOf(source, target)
+        val completedSessions = listOf(
+            completedInclinePressSession(completedAtTimestamp = 20_000L),
+            completedInclinePressSession(completedAtTimestamp = 10_000L)
+        )
+        val profile = UserProfile(
+            availableEquipment = listOf(StandardEquipment.DUMBBELL, StandardEquipment.BENCH)
+        )
+        val profileSnapshot = profile.deepCopy()
+        val sessionSnapshot = completedSessions.map(WorkoutSession::deepCopy)
+        val exerciseSnapshot = exercises.map(wallcrawl.elopenmike.com.core.model.Exercise::deepCopy)
+        val sourceMetadataSnapshot = source.reviewedMetadata?.deepCopy()
+        val targetMetadataSnapshot = target.reviewedMetadata?.deepCopy()
+        val sourceProvenanceSnapshot = source.reviewedMetadata?.provenance?.copy()
+        val targetProvenanceSnapshot = target.reviewedMetadata?.provenance?.copy()
+        val repository = StubWorkoutRepository(completedSessions)
+        val builder = WorkoutGenerationContextBuilder(
+            userProfileRepository = StubUserProfileRepository(profile),
+            workoutRepository = repository,
+            exerciseCatalog = InMemoryExerciseCatalog(exercises),
+            exerciseFilter = ExerciseFilter(),
+            historyAnalyzer = WorkoutHistoryAnalyzer(),
+            plannerFeatureFlags = PlannerFeatureFlags(reviewedCapabilityEligibility = true)
+        )
+
+        val context = builder.build()
+
+        assertThat(context.capabilityEvidence).isEqualTo(
+            CapabilityEvidenceSet.from(
+                mapOf(
+                    source.id to expectedCapabilityEvidenceRecord(
+                        appliesToExerciseId = source.id,
+                        demonstratedExerciseId = source.id,
+                        scope = CapabilityEvidenceScope.EXACT_EXERCISE,
+                        sessionIds = listOf("session-10000", "session-20000")
+                    ),
+                    targetExerciseId to expectedCapabilityEvidenceRecord(
+                        appliesToExerciseId = targetExerciseId,
+                        demonstratedExerciseId = source.id,
+                        scope = CapabilityEvidenceScope.DIRECT_APPROVED_REGRESSION,
+                        sessionIds = listOf("session-10000", "session-20000")
+                    )
+                )
+            )
+        )
+        assertThat(repository.getRecentCompletedSessionsCallCount).isEqualTo(1)
+        assertThat(profile).isEqualTo(profileSnapshot)
+        assertThat(completedSessions).isEqualTo(sessionSnapshot)
+        assertThat(exercises).isEqualTo(exerciseSnapshot)
+        assertThat(source.reviewedMetadata).isEqualTo(sourceMetadataSnapshot)
+        assertThat(target.reviewedMetadata).isEqualTo(targetMetadataSnapshot)
+        assertThat(source.reviewedMetadata?.provenance).isEqualTo(sourceProvenanceSnapshot)
+        assertThat(target.reviewedMetadata?.provenance).isEqualTo(targetProvenanceSnapshot)
+    }
+
+    @Test
+    fun build_withReviewedEligibilityDisabledLeavesCapabilityEvidenceEmptyAndPreservesLegacyHistory() = runTest {
+        val targetExerciseId = "synthetic-direct-regression"
+        val source = InMemoryExerciseCatalog.SAMPLE_EXERCISES.first().copy(
+            reviewedMetadata = syntheticReviewedMetadata(
+                reviewState = ReviewState.APPROVED,
+                approvedRegressions = listOf(
+                    ReviewedExerciseLink(targetExerciseId, "synthetic direct regression")
+                )
+            )
+        )
+        val target = source.copy(
+            id = targetExerciseId,
+            reviewedMetadata = syntheticReviewedMetadata(
+                reviewState = ReviewState.APPROVED,
+                progressionFamily = "synthetic-direct-regression-family"
+            )
+        )
+        val exercises = listOf(source, target)
+        val completedSessions = listOf(
+            completedInclinePressSession(completedAtTimestamp = 20_000L),
+            completedInclinePressSession(completedAtTimestamp = 10_000L)
+        )
+        val profile = UserProfile(
+            availableEquipment = listOf(StandardEquipment.DUMBBELL, StandardEquipment.BENCH)
+        )
+        val profileSnapshot = profile.deepCopy()
+        val sessionSnapshot = completedSessions.map(WorkoutSession::deepCopy)
+        val exerciseSnapshot = exercises.map(wallcrawl.elopenmike.com.core.model.Exercise::deepCopy)
+        val sourceMetadataSnapshot = source.reviewedMetadata?.deepCopy()
+        val targetMetadataSnapshot = target.reviewedMetadata?.deepCopy()
+        val sourceProvenanceSnapshot = source.reviewedMetadata?.provenance?.copy()
+        val targetProvenanceSnapshot = target.reviewedMetadata?.provenance?.copy()
+        val repository = StubWorkoutRepository(completedSessions)
+        val builder = WorkoutGenerationContextBuilder(
+            userProfileRepository = StubUserProfileRepository(profile),
+            workoutRepository = repository,
+            exerciseCatalog = InMemoryExerciseCatalog(exercises),
+            exerciseFilter = ExerciseFilter(),
+            historyAnalyzer = WorkoutHistoryAnalyzer(),
+            plannerFeatureFlags = PlannerFeatureFlags(reviewedCapabilityEligibility = false)
+        )
+
+        val context = builder.build()
+
+        assertThat(context.capabilityEvidence).isEqualTo(CapabilityEvidenceSet.empty())
+        assertThat(context.exerciseHistory.keys).containsExactly(source.id)
+        assertThat(context.allowedExercises.map { it.id })
+            .containsExactly(source.id, target.id)
+            .inOrder()
+        assertThat(repository.getRecentCompletedSessionsCallCount).isEqualTo(1)
+        assertThat(profile).isEqualTo(profileSnapshot)
+        assertThat(completedSessions).isEqualTo(sessionSnapshot)
+        assertThat(exercises).isEqualTo(exerciseSnapshot)
+        assertThat(source.reviewedMetadata).isEqualTo(sourceMetadataSnapshot)
+        assertThat(target.reviewedMetadata).isEqualTo(targetMetadataSnapshot)
+        assertThat(source.reviewedMetadata?.provenance).isEqualTo(sourceProvenanceSnapshot)
+        assertThat(target.reviewedMetadata?.provenance).isEqualTo(targetProvenanceSnapshot)
     }
 
     @Test
@@ -442,11 +581,14 @@ class WorkoutGenerationContextBuilderTest {
             id = "set-$completedAtTimestamp",
             workoutExerciseId = "workout-exercise-$completedAtTimestamp",
             setNumber = 1,
+            exerciseType = ExerciseType.WEIGHT_REPS,
             targetReps = 10,
             completedReps = 10,
             targetWeight = 45.0,
             completedWeight = 45.0,
-            isCompleted = true
+            isCompleted = true,
+            feltManageable = true,
+            completedAtTimestamp = completedAtTimestamp - 1
         )
         return WorkoutSession(
             id = "session-$completedAtTimestamp",
@@ -585,6 +727,22 @@ class WorkoutGenerationContextBuilderTest {
                 policyVersion = 1
             )
         )
+
+    private fun expectedCapabilityEvidenceRecord(
+        appliesToExerciseId: String,
+        demonstratedExerciseId: String,
+        scope: CapabilityEvidenceScope,
+        sessionIds: List<String>
+    ): CapabilityEvidence =
+        CapabilityEvidence(
+            policyVersion = CapabilityEvidencePolicyVersion.TWO_COMPARABLE_MANAGEABLE_SESSIONS_V1,
+            reason = CapabilityEvidenceReason.TWO_COMPARABLE_MANAGEABLE_COMPLETED_SESSIONS,
+            appliesToExerciseId = appliesToExerciseId,
+            demonstratedExerciseId = demonstratedExerciseId,
+            scope = scope,
+            comparableShape = ComparableMovementShape.WEIGHT_REPETITIONS,
+            qualifyingSessionIds = sessionIds
+        )
 }
 
 private class StubUserProfileRepository(
@@ -613,6 +771,9 @@ private class StubUserProfileRepository(
 private class StubWorkoutRepository(
     private val completedSessions: List<WorkoutSession>
 ) : WorkoutRepository {
+    var getRecentCompletedSessionsCallCount: Int = 0
+        private set
+
     override fun observeActiveSession(): Flow<WorkoutSession?> = flowOf(null)
     override suspend fun getActiveSessionOnce(): WorkoutSession? = null
     override suspend fun getSessionById(sessionId: String): WorkoutSession? = null
@@ -626,7 +787,9 @@ private class StubWorkoutRepository(
         completedSessions.count { (it.completedAtTimestamp ?: Long.MIN_VALUE) >= startTimestamp }
     )
     override suspend fun getRecentCompletedSessions(limit: Int): List<WorkoutSession> =
-        completedSessions.sortedByDescending { it.completedAtTimestamp }.take(limit)
+        completedSessions.sortedByDescending { it.completedAtTimestamp }
+            .take(limit)
+            .also { getRecentCompletedSessionsCallCount += 1 }
 
     override suspend fun startWorkoutFromGenerated(
         generated: GeneratedWorkout,
@@ -653,3 +816,47 @@ private class StubWorkoutRepository(
 
     override suspend fun cancelWorkout(sessionId: String) = Unit
 }
+
+private fun UserProfile.deepCopy(): UserProfile = copy(
+    goals = goals.toSet(),
+    availableEquipment = availableEquipment.toList(),
+    musclePriorities = musclePriorities.toMap(),
+    excludedExerciseIds = excludedExerciseIds.toList()
+)
+
+private fun WorkoutSession.deepCopy(): WorkoutSession = copy(
+    focusMuscles = focusMuscles.toList(),
+    exercises = exercises.map(WorkoutExercise::deepCopy)
+)
+
+private fun WorkoutExercise.deepCopy(): WorkoutExercise = copy(
+    sets = sets.map(WorkoutSet::copy),
+    prescription = prescription.copy()
+)
+
+private fun wallcrawl.elopenmike.com.core.model.Exercise.deepCopy():
+    wallcrawl.elopenmike.com.core.model.Exercise = copy(
+        source = source?.copy(
+            attribution = source.attribution.copy(
+                source = source.attribution.source?.copy()
+            )
+        ),
+        searchAliases = searchAliases.toList(),
+        primaryMuscles = primaryMuscles.toList(),
+        secondaryMuscles = secondaryMuscles.toList(),
+        listedEquipment = listedEquipment.toList(),
+        programming = programming?.copy(
+            requiredEquipmentCombinations = programming.requiredEquipmentCombinations.map(List<String>::toList),
+            alternativeExerciseIds = programming.alternativeExerciseIds.toList()
+        ),
+        reviewedMetadata = reviewedMetadata?.deepCopy()
+    )
+
+private fun ReviewedExerciseMetadata.deepCopy(): ReviewedExerciseMetadata = copy(
+    descriptiveSecondaryMuscles = descriptiveSecondaryMuscles.toSet(),
+    approvedRegressions = approvedRegressions.map { it.copy() },
+    approvedSubstitutions = approvedSubstitutions.map { it.copy() },
+    capabilityRequirements = capabilityRequirements.toSet(),
+    equipmentAlternatives = equipmentAlternatives.map(List<String>::toList),
+    provenance = provenance.copy()
+)

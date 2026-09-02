@@ -6,6 +6,7 @@ import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
 import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
 import wallcrawl.elopenmike.com.core.exercise.ExerciseFilter
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
+import wallcrawl.elopenmike.com.core.model.CapabilityEvidenceSet
 import wallcrawl.elopenmike.com.core.model.ReviewState
 import wallcrawl.elopenmike.com.core.model.UserRestPreference
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
@@ -23,6 +24,7 @@ class WorkoutGenerationContextBuilder(
     private val historyAnalyzer: WorkoutHistoryAnalyzer,
     private val plannerFeatureFlags: PlannerFeatureFlags = PlannerFeatureFlags(),
     private val reviewedEligibilityPolicy: ExerciseEligibilityPolicy = ExerciseEligibilityPolicy(),
+    private val capabilityEvidencePolicy: CapabilityEvidencePolicy = CapabilityEvidencePolicy(),
     private val adaptationStatePolicy: AdaptationStatePolicy = AdaptationStatePolicy(),
     private val trainingProgramStateProvider: TrainingProgramStateProvider? = null,
     private val nowTimestamp: () -> Long = System::currentTimeMillis
@@ -51,6 +53,14 @@ class WorkoutGenerationContextBuilder(
             } else {
                 emptyMap()
             }
+        val capabilityEvidence = if (plannerFeatureFlags.reviewedCapabilityEligibility) {
+            capabilityEvidencePolicy.derive(
+                sessions = recentCompletedSessions,
+                exercises = allExercises
+            )
+        } else {
+            CapabilityEvidenceSet.empty()
+        }
         val automaticEligibilityResult = if (plannerFeatureFlags.reviewedCapabilityEligibility) {
             val exercisesById = allExercises.associateBy { it.id }
             reviewedEligibilityPolicy.evaluate(
@@ -98,6 +108,7 @@ class WorkoutGenerationContextBuilder(
             excludedExerciseIds = profile.excludedExerciseIds,
             allowedExercises = allowedExercises,
             automaticEligibilityResult = automaticEligibilityResult,
+            capabilityEvidence = capabilityEvidence,
             trainingProgramState = trainingProgramState,
             priorUserRestPreferences = priorUserRestPreferences,
             preferredUnits = profile.preferredUnit
