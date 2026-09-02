@@ -34,6 +34,45 @@
 | Static catalog storage is already appropriate | Unchanged | 302 records parsed once from assets | Keep asset/in-memory storage; do not add Room/FTS without measured need |
 | Kabi already covers broad tracker features | Unchanged | Its listing advertises nutrition, recovery, backup, and beginner features | Keep WallCrawl focused on transparent local adaptation rather than feature-parity sprawl |
 
+### 2026-09-02 code audit of the table above
+
+The table records the state at the time it was written. These rows have since changed; the
+original text is left in place and corrected here rather than rewritten, so the history of
+what was believed stays readable.
+
+| Row | Original claim | Verified 2026-09-02 |
+| --- | --- | --- |
+| Planner ignores experience, frequency, recovery | Open; `FakeWorkoutPlanner` references none of them | **Partly resolved.** `FakeWorkoutPlanner` now passes `context.experienceLevel` into `ExerciseDifficultyRankingPolicy` (#48). `trainingFrequencyDaysPerWeek` and `recentlyTrainedMuscles` are still unused by ranking. |
+| Gym-floor logging lacks rest timer, RPE/RIR, fast edits | Open; "no RPE/RIR input exists" | **Resolved.** Typed outcomes shipped in #25; RPE/RIR live in `ActiveWorkoutScreen`/`ActiveWorkoutViewModel`, and `RestTimerState` runs off persisted `restSeconds`. Substitutions remain absent. |
+| Generated validation is structural, not program-level | Open | **Still accurate.** `GeneratedWorkoutValidator` exposes only `validate` and `validateExercise`; no duplicate-family, weekly-volume, or ledger-overflow check. Tracked as Task 7 of the deterministic-engine plan. |
+| No deterministic progression, deload, or program state | Partly shipped | **Advanced.** `TrainingProgramState` (#49) and `StateBasedTrainingPolicy` (#50) now exist behind the production-disabled reviewed-eligibility flag. Progression, deload, and program blocks remain absent — Task 6 of the deterministic-engine plan. |
+| Only 12/302 exercises have reviewed programming | Superseded (#13), 117/302 | **Superseded again.** The reviewed contract is now `reviewedMetadata`, a separate 37-entry cohort, all `DRAFT`. The legacy `programming` block is what has 117 entries. The two are different contracts and should not be compared. |
+| Local privacy promise is underspecified | Open | **Still accurate, and now contradicts shipped documentation.** See Task 11 below, expanded with evidence. |
+
+Unchanged rows were re-checked and are still accurate as written.
+
+### Task 11 evidence, added 2026-09-02
+
+`app/src/main/AndroidManifest.xml:6` ships `android:allowBackup="true"` with no
+`dataExtractionRules` and no `fullBackupContent`. Android Auto Backup is therefore eligible to
+copy the Room database — completed workout history, the profile, movement-capability answers,
+RPE and RIR, typed pain-stop reasons, and the weekly ledger cache — off the device.
+
+That contradicts claims now written in shipped documentation. `docs/weekly-dose-ledger.md`
+states "Everything here is local. No analytics event, network call, cloud sync, model prompt,
+Wear payload, or Health Connect permission is involved," and
+`docs/reviewed-capability-eligibility.md` makes an equivalent local-only claim.
+
+This is the only identified gap where **currently shipping behavior** conflicts with a
+documented promise. Every other open engine task is inert behind a disabled flag, so this
+outranks them on user impact even though it is much smaller work.
+
+- [ ] Decide the backup policy deliberately: exclude the database from Auto Backup, or soften
+  the local-only claims in the docs. Do not leave the two disagreeing.
+- [ ] If excluding, add `android:dataExtractionRules` and `android:fullBackupContent` and
+  verify with an instrumentation assertion, so a future manifest edit cannot silently re-enable it.
+- [ ] Add the local export and delete controls this task already calls for.
+
 ### Findings added since the plan was written
 
 These came out of the reviews behind #12 and #13 and are not yet reflected in any task.
