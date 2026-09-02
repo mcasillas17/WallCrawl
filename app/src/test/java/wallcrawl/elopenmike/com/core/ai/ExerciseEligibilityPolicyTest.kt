@@ -248,6 +248,60 @@ class ExerciseEligibilityPolicyTest {
     }
 
     @Test
+    fun evaluate_softCapabilityPreferencesStayEligibleWhileHardAvoidRemainsRejected() {
+        val softPreference = exercise(id = "soft-limited").copy(
+            reviewedMetadata = reviewedMetadata(
+                reviewState = ReviewState.APPROVED,
+                capabilityRequirements = setOf(MovementCapabilityType.FLOOR_TRANSITION)
+            )
+        )
+        val hardAvoid = exercise(id = "hard-avoid").copy(
+            reviewedMetadata = reviewedMetadata(
+                reviewState = ReviewState.APPROVED,
+                capabilityRequirements = setOf(MovementCapabilityType.IMPACT)
+            )
+        )
+        val profile = UserProfile(
+            availableEquipment = listOf(StandardEquipment.BODYWEIGHT),
+            movementCapabilities = MovementCapabilities.from(
+                mapOf(
+                    MovementCapabilityType.FLOOR_TRANSITION to CapabilityLevel.LIMITED,
+                    MovementCapabilityType.IMPACT to CapabilityLevel.AVOID
+                )
+            )
+        )
+
+        val result = policy.evaluate(
+            exercises = listOf(softPreference, hardAvoid),
+            profile = profile,
+            adaptationState = AdaptationState.BUILD
+        )
+
+        assertThat(result).isEqualTo(
+            AutomaticEligibilityResult.Candidates(
+                exercises = listOf(softPreference),
+                decisions = listOf(
+                    EligibilityDecision(
+                        exerciseId = softPreference.id,
+                        eligible = true,
+                        reasons = listOf(EligibilityReason.APPROVED),
+                        preferences = listOf(
+                            EligibilityPreference.Limited(
+                                MovementCapabilityType.FLOOR_TRANSITION
+                            )
+                        )
+                    ),
+                    EligibilityDecision(
+                        exerciseId = hardAvoid.id,
+                        eligible = false,
+                        reasons = listOf(EligibilityReason.CAPABILITY_AVOID)
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
     fun evaluate_lowImpactOnlyRejectsHighImpactMetadata() {
         val highImpact = exercise(id = "high-impact").copy(
             reviewedMetadata = reviewedMetadata(
