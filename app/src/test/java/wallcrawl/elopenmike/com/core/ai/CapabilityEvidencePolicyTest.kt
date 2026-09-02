@@ -956,6 +956,7 @@ class CapabilityEvidencePolicyTest {
         val sourceId = "bench-press"
         val approvedTargetId = "close-grip-bench"
         val draftTargetId = "draft-target"
+        val missingCatalogTargetId = "absent-from-catalog"
         val unrelatedPeerId = "peer-variant"
         val substitutionTargetId = "substitution-only"
         val sessions = listOf(
@@ -965,7 +966,8 @@ class CapabilityEvidencePolicyTest {
         val approvedRegressions = mutableListOf(
             ReviewedExerciseLink(approvedTargetId, "synthetic direct regression"),
             ReviewedExerciseLink(draftTargetId, "synthetic draft target"),
-            ReviewedExerciseLink("", "synthetic blank target")
+            ReviewedExerciseLink("", "synthetic blank target"),
+            ReviewedExerciseLink(missingCatalogTargetId, "synthetic missing catalog target")
         )
         val approvedSubstitutions = mutableListOf(
             ReviewedExerciseLink(substitutionTargetId, "synthetic substitution")
@@ -1022,6 +1024,7 @@ class CapabilityEvidencePolicyTest {
             )
         )
         assertThat(result[draftTargetId]).isNull()
+        assertThat(result[missingCatalogTargetId]).isNull()
         assertThat(result[unrelatedPeerId]).isNull()
         assertThat(result[substitutionTargetId]).isNull()
     }
@@ -1361,9 +1364,9 @@ class CapabilityEvidencePolicyTest {
                 impactLevel = impactLevel,
                 equipmentAlternatives = equipmentAlternatives,
                 provenance = ReviewProvenance(
-                    reviewerRole = "synthetic-reviewer",
-                    rationaleOrSource = "synthetic-$id",
-                    reviewedAtEpochMillis = 1L,
+                    reviewerRole = if (reviewState == ReviewState.APPROVED) "SYNTHETIC_TEST_REVIEWER_NOT_A_HUMAN" else null,
+                    rationaleOrSource = "SYNTHETIC TEST-ONLY REVIEW METADATA. Not bundled in production.",
+                    reviewedAtEpochMillis = if (reviewState == ReviewState.APPROVED) 1_756_000_000_000L else null,
                     schemaVersion = 1,
                     policyVersion = 1
                 )
