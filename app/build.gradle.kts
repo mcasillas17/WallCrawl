@@ -65,6 +65,7 @@ android {
     sourceSets {
         getByName("test") {
             resources.srcDir("src/main/assets")
+            resources.srcDir("src/androidTest/assets")
         }
     }
 }

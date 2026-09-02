@@ -17,17 +17,17 @@ Core workouts must remain offline, account-free, and usable without a model or c
 | [Android foundation](README.md#current-vertical-slice) | Shipped | Android Auto Backup still conflicts with the documented local-only promise |
 | [Catalog, onboarding, templates, and logging](docs/superpowers/plans/2026-08-28-adaptive-coach-product.md) | Shipped | Validated substitutions, complete target editing, and deeper history remain |
 | [Deterministic coach](docs/superpowers/plans/2026-08-29-science-based-deterministic-engine.md) | Policy foundation shipped behind a disabled gate | Human approval, program validation, progression/deload, Progress semantics, and release gates |
-| [Reviewed exercise metadata](docs/reviewed-exercise-metadata-human-signoff.md) | 37 `DRAFT`, 0 `APPROVED` | Timed-hold schema, band/planner coverage, deadlift classification, and human sign-off |
+| [Reviewed exercise metadata](docs/reviewed-exercise-metadata-human-signoff.md) | 37 `DRAFT`, 0 `APPROVED`; timed-hold programming prerequisite shipped | Band/planner coverage, deadlift classification, and human sign-off |
 | [Planner evaluation](docs/planner-evaluation.md) | Corpus and CI shipped | One persona, new policy assertions, and importer drift checking |
 | [Optional local model](docs/superpowers/plans/2026-08-29-science-based-local-llm-engine.md) | Not started | Blocked on the deterministic coach release gate |
 | [Health Connect and Wear OS](docs/superpowers/plans/2026-08-28-local-health-and-wear.md) | Not started; only `:app` exists | Blocked on privacy controls, validation, and substitutions |
 
 The shipped foundation includes Room schema 11 with a continuous migration chain, the complete
-302-exercise catalog, first-run onboarding, local movement preferences, custom templates,
-type-aware workout logging, RPE/RIR and typed stop reasons, a rest timer, experience-aware
-ranking, the `PRIMARY_ONLY_V1` weekly ledger, and state-based dose/effort/rest policy. Reviewed
-eligibility and state-based guidance remain production-disabled while every reviewed record is
-still draft.
+302-exercise catalog, 131 authored programming entries including all 14 timed strength
+exercises, first-run onboarding, local movement preferences, custom templates, type-aware
+workout logging, RPE/RIR and typed stop reasons, a rest timer, experience-aware ranking, the
+`PRIMARY_ONLY_V1` weekly ledger, and state-based dose/effort/rest policy. Reviewed eligibility
+and state-based guidance remain production-disabled while every reviewed record is still draft.
 
 ## Now: make deterministic coaching production-ready
 
@@ -40,10 +40,9 @@ start until approval and all engineering gates are complete.
 2. **Finish local data ownership controls.** Add versioned Storage Access Framework
    export/import with checksums and future-schema rejection, plus delete-all-local-data
    controls.
-3. **Make reviewed metadata approvable and obtain human sign-off.** Allow timed-hold review
-   metadata, resolve the deadlift direct-primary classification, cover band-only and
-   planner-reachable gaps, complete the sign-off packet, author approvals, and regenerate the
-   catalog and report.
+3. **Complete reviewed metadata coverage and obtain human sign-off.** Resolve the deadlift
+   direct-primary classification, cover band-only and planner-reachable gaps, complete the
+   sign-off packet, author approvals, and regenerate the catalog and report.
 4. **Add whole-program validation.** Validate reviewed IDs, hard constraints, duplicate
    exercise/family, dose, confirmed load, duration, and weekly-ledger overflow; persist
    versions, reason codes, and results with recommendation snapshots.

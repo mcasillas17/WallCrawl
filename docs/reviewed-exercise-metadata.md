@@ -3,11 +3,13 @@
 WallCrawl now carries two separate optional metadata blocks on an exercise. They
 have different owners and must not be treated as interchangeable:
 
-- `programming` is the legacy planner contract. Its 117 authored entries include
-  equipment combinations, movement pattern, difficulty, mechanics, rep range,
+- `programming` is the legacy planner contract. Its 131 authored entries include
+  equipment combinations, movement pattern, difficulty, mechanics, type-dependent rep range,
   progression type, alternatives, coaching text, and numeric `fatigueScore`.
-  The current planner still consumes this block so existing workout behavior is
-  preserved. `fatigueScore` is not part of the reviewed scientific contract and
+  The current planner still consumes this block. The original 117 rep records and
+  per-exercise prescriptions are preserved; 14 newly authored timed entries can affect
+  ranking, equipment filtering, and coaching. Timed records use a null rep range; see
+  [the timed programming contract](timed-hold-programming.md). `fatigueScore` is not part of the reviewed scientific contract and
   remains only until the later planner-policy migration.
 - `reviewedMetadata` is WallCrawl-owned categorical input for the deterministic
   reviewed capability-eligibility gate. The gate exists behind an explicit

@@ -94,6 +94,16 @@ Failure fixtures may therefore assert only the typed outcome they expect from th
 
 That includes exercise identity, canonical muscles, listed equipment, type, stretch flag, and reviewed programming metadata used for filtering, split matching, ordering, and prescriptions. The harness does **not** populate unrelated attribution/source data solely for tests.
 
+The projection validates the same type-dependent legacy rep-range contract as the
+Python importer and Android parser, using shared fixtures from
+`app/src/androidTest/assets/programming-validation-fixtures.json`. It preserves missing
+or explicit-null timed ranges as null, rejects fabricated timed ranges and absent rep
+ranges, and deep-copies nullable ranges for replay snapshots. Raw range JSON in the
+fixture preserves numeric notation rather than letting a JSON serializer change it.
+`TimedHoldProgrammingTest` independently pins all 14 duration strength IDs through
+actual single-candidate planner calls, tests excluded timed work even with metadata,
+replays a timed-only persona through the same harness, and pins baseline rep prescriptions.
+
 Full packaged catalog validity remains the responsibility of the dedicated importer/instrumentation tests, especially `WorkoutGuideCatalogParserTest`.
 
 ## Persona coverage
@@ -110,6 +120,9 @@ The manifest currently contains eleven fixtures:
 8. `sparse-history` — curated regression-friendly upper-body subset using `inverted-row`, `banded-lat-pulldown`, and `prone-y-raise` so sparse history does not freeze a limited-hang profile to pull-ups.
 9. `no-strength-candidates` — harness-only typed-failure case restricted to the cardio-only `walking` entry so the real planner returns `NO_STRENGTH_CANDIDATES`.
 10. `reviewed-enabled-bodyweight` — copies six real bundled DRAFT records to unmistakably synthetic in-memory approvals, composes `BUILD` with an empty `PRIMARY_ONLY_V1` ledger, and proves eligibility plus dose/effort/rest guidance stay inside that reviewed bodyweight pool.
+   Its expected selection is `bodyweight-squat`, `glute-bridge`, and `plank`: adding
+   legacy timed programming makes plank rank ahead of the prior push accessory for this
+   leg split. This is synthetic test approval only; production metadata stays DRAFT.
 11. `reviewed-enabled-no-approved` — leaves every bundled record DRAFT and proves the enabled policy returns `REVIEWED_ELIGIBILITY_NO_CANDIDATES` with `NO_APPROVED_METADATA` and no legacy fallback.
 
 ## Replay semantics and asserted invariants

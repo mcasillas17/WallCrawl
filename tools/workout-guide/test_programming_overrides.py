@@ -4,6 +4,7 @@ The other suite exercises the importer against synthetic fixtures. This one chec
 real authored data, so a bad edit fails here rather than becoming a stale or unsafe
 catalog artifact.
 """
+import hashlib
 import json
 import re
 import unittest
@@ -14,20 +15,17 @@ CATALOG = REPO_ROOT / "app/src/main/assets/workout-guide/catalog.json"
 OVERRIDES = Path(__file__).with_name("programming-overrides.json")
 REVIEWED_METADATA = Path(__file__).with_name("reviewed-metadata.json")
 
-# An exercise measured in distance or held for time is not prescribed with sets and reps,
-# so reviewing one would put a treadmill in a hypertrophy slot.
-UNPRESCRIBABLE_TYPES = {"distance_duration", "duration"}
-
 # A bodyweight movement may be progressed by reps alone or by adding load once a weighted
 # variant exists, so both are accepted; the loaded and assisted cases have one right answer.
 PROGRESSION_BY_TYPE = {
     "weight_reps": {"repetitions_then_load", "load"},
     "bodyweight_reps": {"repetitions", "repetitions_then_load"},
     "assisted_bodyweight": {"assistance_reduction"},
+    "duration": {"duration"},
 }
 
 # Guards against an edit that silently truncates the file. Raise it when coverage grows.
-MINIMUM_REVIEWED = 100
+MINIMUM_REVIEWED = 131
 
 
 class ProgrammingOverridesTest(unittest.TestCase):
@@ -36,6 +34,58 @@ class ProgrammingOverridesTest(unittest.TestCase):
         cls.catalog = json.loads(CATALOG.read_text())
         cls.by_id = {e["id"]: e for e in cls.catalog["exercises"]}
         cls.overrides = json.loads(OVERRIDES.read_text())["exercises"]
+
+    def test_exact_timed_strength_cohort_has_complete_programming(self) -> None:
+        expected = {'hollow-body-hold', 'plank', 'superman-hold', 'l-sit-hold', 'copenhagen-plank', 'active-hang', 'mountain-climber', 'cable-pallof-hold', 'wall-sit', 'bear-plank', 'dead-hang', 'flutter-kick', 'crab-walk', 'side-plank'}
+        derived = {e["id"] for e in self.by_id.values()
+                   if e["exerciseType"] == "duration" and not e["isStretch"]
+                   and "Cardio" not in e["primaryMuscles"] + e["secondaryMuscles"]}
+        self.assertEqual(expected, derived)
+        authored = {key for key in self.overrides
+                    if self.by_id[key]["exerciseType"] == "duration"}
+        self.assertEqual(expected, authored)
+        for exercise_id in expected:
+            self.assertIsNone(self.overrides[exercise_id]["recommendedRepRange"])
+            self.assertEqual("duration", self.overrides[exercise_id]["progressionType"])
+            self.assertTrue(self.overrides[exercise_id]["coachingSummary"].strip())
+            self.assertTrue(self.overrides[exercise_id]["alternativeExerciseIds"])
+
+    def test_original_117_rep_programming_records_are_unchanged(self) -> None:
+        records = {key: value for key, value in self.overrides.items()
+                   if self.by_id[key]["exerciseType"] not in {"duration", "distance_duration"}}
+        self.assertEqual(117, len(records))
+        encoded = json.dumps(records, sort_keys=True, separators=(",", ":")).encode()
+        self.assertEqual("6412738d7f19d78189cdc02c204ed0d67614571ee27bdf0f95cda3c608065e13", hashlib.sha256(encoded).hexdigest())
+
+    def test_catalog_facts_frames_and_licensing_match_pinned_baseline(self) -> None:
+        facts = json.loads(CATALOG.read_text())
+        for exercise in facts["exercises"]:
+            exercise.pop("programming", None)
+        encoded = json.dumps(facts, sort_keys=True, separators=(",", ":")).encode()
+        self.assertEqual("31d3471591f37a4aa4d3b536e23c68b0f15b7ce61e454d3f57bb4cdc601acbbf", hashlib.sha256(encoded).hexdigest())
+        self.assertEqual(302, len(facts["exercises"]))
+        self.assertEqual("ba0b709cb20430361b2cb33aaadd20998164a916", facts["source"]["commit"])
+        self.assertEqual(906, len(list(CATALOG.parent.rglob("*.svg"))))
+        digest = hashlib.sha256()
+        for file in sorted(CATALOG.parent.rglob("*")):
+            if file.is_file() and file.name != "catalog.json":
+                digest.update(file.relative_to(CATALOG.parent).as_posix().encode())
+                digest.update(b"\0")
+                digest.update(file.read_bytes())
+        self.assertEqual("bfbb6bffc84e4b6dd58d83cc20c5d925439d88600719c9d60daa61e9c29a6cf8", digest.hexdigest())
+
+    def test_timed_variants_include_their_required_support_equipment(self) -> None:
+        expected = {
+            "active-hang": [["Pull-up Bar"]],
+            "dead-hang": [["Pull-up Bar"]],
+            "cable-pallof-hold": [["Cable"]],
+            "copenhagen-plank": [["Bodyweight", "Bench"]],
+            "l-sit-hold": [["Bodyweight", "Dip Bars"]],
+            "wall-sit": [["Bodyweight", "Wall"]],
+        }
+        for exercise_id, combinations in expected.items():
+            self.assertIn(exercise_id, self.overrides)
+            self.assertEqual(combinations, self.overrides[exercise_id]["requiredEquipmentCombinations"])
 
     def test_every_reviewed_exercise_exists_in_the_catalog(self) -> None:
         unknown = sorted(set(self.overrides) - set(self.by_id))
@@ -47,11 +97,13 @@ class ProgrammingOverridesTest(unittest.TestCase):
                 self.assertIn(alternative, self.by_id, f"{exercise_id} -> {alternative}")
                 self.assertNotEqual(exercise_id, alternative)
 
-    def test_no_reviewed_exercise_is_a_stretch_or_measured_in_time(self) -> None:
+    def test_no_programmed_exercise_is_a_stretch_or_pure_conditioning(self) -> None:
         offenders = [
             exercise_id for exercise_id in self.overrides
             if self.by_id[exercise_id].get("isStretch")
-            or self.by_id[exercise_id]["exerciseType"] in UNPRESCRIBABLE_TYPES
+            or self.by_id[exercise_id]["exerciseType"] == "distance_duration"
+            or (self.by_id[exercise_id]["exerciseType"] == "duration"
+                and "Cardio" in self.by_id[exercise_id]["primaryMuscles"] + self.by_id[exercise_id]["secondaryMuscles"])
         ]
         self.assertEqual([], sorted(offenders))
 
@@ -63,6 +115,9 @@ class ProgrammingOverridesTest(unittest.TestCase):
     def test_rep_ranges_are_ordered_and_plausible(self) -> None:
         for exercise_id, programming in self.overrides.items():
             rep_range = programming["recommendedRepRange"]
+            if self.by_id[exercise_id]["exerciseType"] == "duration":
+                self.assertIsNone(rep_range, exercise_id)
+                continue
             self.assertLessEqual(rep_range["min"], rep_range["max"], exercise_id)
             self.assertGreaterEqual(rep_range["min"], 1, exercise_id)
             self.assertLessEqual(rep_range["max"], 30, exercise_id)

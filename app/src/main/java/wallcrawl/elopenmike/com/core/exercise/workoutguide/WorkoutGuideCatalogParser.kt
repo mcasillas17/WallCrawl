@@ -259,6 +259,11 @@ class WorkoutGuideCatalogParser {
 
         val resolvedType = exerciseType ?: malformed("Exercise $exerciseId is missing exerciseType.")
         val resolvedIsStretch = isStretch ?: malformed("Exercise $exerciseId is missing isStretch.")
+        try {
+            programming?.validateFor(resolvedType)
+        } catch (error: IllegalArgumentException) {
+            malformed(error.message ?: "Invalid programming rep range for exercise type.")
+        }
         reviewedMetadata?.validateForExercise(
             exerciseId = exerciseId,
             type = resolvedType,
@@ -365,7 +370,11 @@ class WorkoutGuideCatalogParser {
                 "movementPattern" -> movementPattern = readMovementPattern(readString("programming.movementPattern"))
                 "difficulty" -> difficulty = readDifficulty(readString("programming.difficulty"))
                 "mechanics" -> mechanics = readMechanics(readString("programming.mechanics"))
-                "recommendedRepRange" -> repRange = readRepRange()
+                "recommendedRepRange" -> if (peek() == JsonToken.NULL) {
+                    nextNull()
+                } else {
+                    repRange = readRepRange()
+                }
                 "fatigueScore" -> fatigueScore = nextInt()
                 "progressionType" -> progressionType = readProgressionType(readString("programming.progressionType"))
                 "alternativeExerciseIds" -> alternatives = readStringArray("programming.alternativeExerciseIds")
@@ -394,8 +403,7 @@ class WorkoutGuideCatalogParser {
                 ?: malformed("Programming metadata is missing movementPattern."),
             difficulty = difficulty ?: malformed("Programming metadata is missing difficulty."),
             mechanics = mechanics ?: malformed("Programming metadata is missing mechanics."),
-            recommendedRepRange = repRange
-                ?: malformed("Programming metadata is missing recommendedRepRange."),
+            recommendedRepRange = repRange,
             fatigueScore = fatigue,
             progressionType = progressionType
                 ?: malformed("Programming metadata is missing progressionType."),
@@ -551,12 +559,12 @@ class WorkoutGuideCatalogParser {
                         MAX_REVIEWED_AT_EPOCH_MILLIS
                     )
                 }
-                "schemaVersion" -> schemaVersion = readReviewedInt(
+                "schemaVersion" -> schemaVersion = readBoundedInt(
                     "$label.schemaVersion",
                     REVIEWED_SCHEMA_VERSION,
                     REVIEWED_SCHEMA_VERSION
                 )
-                "policyVersion" -> policyVersion = readReviewedInt(
+                "policyVersion" -> policyVersion = readBoundedInt(
                     "$label.policyVersion",
                     MIN_POLICY_VERSION,
                     MAX_POLICY_VERSION
@@ -750,7 +758,7 @@ class WorkoutGuideCatalogParser {
         return value
     }
 
-    private fun JsonReader.readReviewedInt(label: String, minimum: Int, maximum: Int): Int {
+    private fun JsonReader.readBoundedInt(label: String, minimum: Int, maximum: Int): Int {
         expectToken(JsonToken.NUMBER, label)
         val rawValue = nextString()
         val value = rawValue.takeIf(SAFE_POSITIVE_INTEGER_LITERAL::matches)?.toIntOrNull()
@@ -983,8 +991,8 @@ class WorkoutGuideCatalogParser {
             val field = nextName()
             requireUniqueField(seenFields, field, "programming.recommendedRepRange")
             when (field) {
-                "min" -> min = nextInt()
-                "max" -> max = nextInt()
+                "min" -> min = readBoundedInt("programming.recommendedRepRange.min", 1, MAX_REPETITIONS)
+                "max" -> max = readBoundedInt("programming.recommendedRepRange.max", 1, MAX_REPETITIONS)
                 else -> skipBoundedValue("programming.recommendedRepRange.${safeField(field)}")
             }
         }
@@ -992,7 +1000,7 @@ class WorkoutGuideCatalogParser {
         val resolvedMin = min ?: malformed("Recommended rep range is missing min.")
         val resolvedMax = max ?: malformed("Recommended rep range is missing max.")
         if (resolvedMin <= 0 || resolvedMax < resolvedMin || resolvedMax > MAX_REPETITIONS) {
-            malformed("Recommended rep range is invalid: $resolvedMin-$resolvedMax")
+            malformed("Programming recommendedRepRange must be positive, ordered, and at most $MAX_REPETITIONS.")
         }
         return RepRange(resolvedMin, resolvedMax)
     }

@@ -271,6 +271,6 @@ private fun ExerciseSource.deepCopy(): ExerciseSource = copy(attribution = attri
 
 private fun ExerciseProgrammingMetadata.deepCopy(): ExerciseProgrammingMetadata = copy(
     requiredEquipmentCombinations = requiredEquipmentCombinations.map(List<String>::toList),
-    recommendedRepRange = RepRange(recommendedRepRange.min, recommendedRepRange.max),
+    recommendedRepRange = recommendedRepRange?.let { RepRange(it.min, it.max) },
     alternativeExerciseIds = alternativeExerciseIds.toList()
 )

@@ -112,6 +112,37 @@ class ImportCatalogTest(unittest.TestCase):
         self.assertIn("review report differs", report_drift_check.stderr.lower())
         self.assertEqual(self.review_report.read_bytes(), drifted_report)
 
+    def test_timed_missing_and_null_generate_identical_bytes_and_check_detects_drift(self) -> None:
+        manifest = json.loads(self._manifest_path().read_text())
+        manifest[0]["exerciseType"] = "duration"
+        self._manifest_path().write_text(json.dumps(manifest))
+        self._commit_fixture_change("timed fixture")
+        self._write_config(source_commit=self._head_commit())
+        self.reviewed_metadata.write_text(json.dumps({"schemaVersion": 1, "exercises": {}}))
+        overrides = json.loads(self.overrides.read_text())
+        programming = overrides["exercises"]["barbell-bench-press"]
+        programming.pop("recommendedRepRange")
+        programming["progressionType"] = "duration"
+        self.overrides.write_text(json.dumps(overrides))
+        result = self._run_import()
+        self.assertEqual(0, result.returncode, result.stderr)
+        digest = self._tree_digest(self.output)
+        programming["recommendedRepRange"] = None
+        self.overrides.write_text(json.dumps(overrides))
+        result = self._run_import(check_only=True)
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertEqual(digest, self._tree_digest(self.output))
+        result = self._run_import()
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertEqual(digest, self._tree_digest(self.output))
+        catalog_path = self.output / "catalog.json"
+        catalog = json.loads(catalog_path.read_text())
+        catalog["exercises"][0]["programming"].pop("recommendedRepRange")
+        catalog_path.write_text(json.dumps(catalog))
+        drift_digest = self._tree_digest(self.output)
+        self.assertNotEqual(0, self._run_import(check_only=True).returncode)
+        self.assertEqual(drift_digest, self._tree_digest(self.output))
+
     def test_rejects_source_at_wrong_commit(self) -> None:
         (self.source / "README.md").write_text("new commit\n")
         self._git("add", "README.md")
@@ -638,6 +669,38 @@ class ImportCatalogTest(unittest.TestCase):
         result = self._run_import()
 
         self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_python_and_android_share_type_dependent_rep_range_contract(self) -> None:
+        fixtures = json.loads(PARITY_FIXTURES.with_name("programming-validation-fixtures.json").read_text())
+        # Reviewed metadata is a separate contract; these fixtures isolate legacy programming.
+        self.reviewed_metadata.write_text(json.dumps({"schemaVersion": 1, "exercises": {}}))
+        for exercise_type in sorted({case["exerciseType"] for case in fixtures["cases"]}):
+            manifest = json.loads(self._manifest_path().read_text())
+            manifest[0]["exerciseType"] = exercise_type
+            self._manifest_path().write_text(json.dumps(manifest))
+            self._commit_fixture_change("set fixture exercise type")
+            self._write_config(source_commit=self._head_commit())
+            for case in fixtures["cases"]:
+                if case["exerciseType"] != exercise_type:
+                    continue
+                with self.subTest(case=case["name"]):
+                    programming = dict(fixtures["baseProgramming"])
+                    if "rangeJson" in case:
+                        programming["recommendedRepRange"] = json.loads(case["rangeJson"])
+                    self.overrides.write_text(json.dumps({
+                        "schemaVersion": 1,
+                        "exercises": {"barbell-bench-press": programming},
+                    }))
+                    result = self._run_import()
+                    self.assertEqual(case["accepted"], result.returncode == 0, result.stderr)
+                    if case["accepted"]:
+                        generated = json.loads((self.output / "catalog.json").read_text())["exercises"][0]
+                        self.assertIn("recommendedRepRange", generated["programming"])
+                        self.assertEqual(programming.get("recommendedRepRange"),
+                                         generated["programming"]["recommendedRepRange"])
+                    else:
+                        self.assertLess(len(result.stderr), 512)
+                        self.assertNotIn("UNTRUSTED_RECORD_MARKER", result.stderr)
 
     def test_rejects_programming_the_android_parser_cannot_read(self) -> None:
         overrides = json.loads(self.overrides.read_text())

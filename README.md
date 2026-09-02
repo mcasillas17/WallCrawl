@@ -242,7 +242,7 @@ All catalog facts are browseable and searchable by name, alias, muscle, and
 listed equipment. Every bundled exercise can enter workout planning with a
 structurally valid prescription appropriate to its catalog type. Legacy
 `programming` metadata enriches those defaults when available; otherwise
-WallCrawl uses conservative fallback targets. Its 117 authored entries cover
+WallCrawl uses conservative fallback targets. Its 131 authored entries (117 rep-based and 14 timed strength entries) cover
 every muscle group with beginner options throughout. The planner draws its
 compound slots from that set, softly demotes work above the profile's
 experience level, and prefers authored entries when filling the rest. Difficulty
@@ -250,6 +250,17 @@ never removes an otherwise-legal candidate: an exercise without legacy
 programming can still appear in a plan with fallback targets and no coaching
 note, and a higher-difficulty exercise remains selectable when it is the only
 fillable option.
+
+Timed strength programming now carries difficulty, mechanics, fatigue, coaching,
+movement pattern, progression type, equipment, and alternatives without fabricated reps.
+`recommendedRepRange` is required for rep-based metadata and must be absent or null
+for duration/distance-duration metadata; generated timed records always use explicit
+null. The exact 14-entry cohort is derived from the bundled catalog and actual planner
+classification, including three moving timed drills. See
+[Timed-hold programming](docs/timed-hold-programming.md) for the IDs and contract.
+Timed prescriptions still use duration targets; existing rep metadata and per-exercise
+prescriptions are unchanged. New timed metadata can affect ranking, equipment filtering,
+and coaching. Stretches and pure conditioning still cannot fill strength slots.
 
 A separate optional `reviewedMetadata` block defines categorical input for the
 production-disabled deterministic eligibility gate. The initial 37-entry cohort is
@@ -282,7 +293,7 @@ byte-identical to what the importer produces, so `--check` still verifies it.
 
 Cardio machines, distance work, and stretches stay browseable and usable in
 custom workouts, but are not prescribed as automatic training slots. The test
-is whether sets and reps mean something for the movement: a kettlebell swing is
+is whether the movement fits the existing strength classification: a kettlebell swing is
 loaded work for reps that happens to involve conditioning, and a plank is a
 timed hold that does not — both are planned; treadmills and jump rope are not.
 

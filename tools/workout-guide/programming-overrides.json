@@ -2478,6 +2478,247 @@
         "hollow-rock"
       ],
       "coachingSummary": "Simultaneous leg and torso raise meeting over the hips."
+    },
+    "active-hang": {
+      "requiredEquipmentCombinations": [
+        [
+          "Pull-up Bar"
+        ]
+      ],
+      "movementPattern": "vertical_pull",
+      "difficulty": "intermediate",
+      "mechanics": "isolation",
+      "recommendedRepRange": null,
+      "fatigueScore": 2,
+      "progressionType": "duration",
+      "alternativeExerciseIds": [
+        "dead-hang"
+      ],
+      "coachingSummary": "Hang from a pull-up bar with straight arms. Hold the active hanging position with a steady body and breathe throughout the timed set."
+    },
+    "bear-plank": {
+      "requiredEquipmentCombinations": [
+        [
+          "Bodyweight"
+        ]
+      ],
+      "movementPattern": "core",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": null,
+      "fatigueScore": 2,
+      "progressionType": "duration",
+      "alternativeExerciseIds": [
+        "plank"
+      ],
+      "coachingSummary": "Start on hands and knees, then lift your knees slightly from the floor. Keep your hands and toes planted while holding the position."
+    },
+    "cable-pallof-hold": {
+      "requiredEquipmentCombinations": [
+        [
+          "Cable"
+        ]
+      ],
+      "movementPattern": "core",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": null,
+      "fatigueScore": 1,
+      "progressionType": "duration",
+      "alternativeExerciseIds": [
+        "banded-pallof-press"
+      ],
+      "coachingSummary": "Stand side-on to a cable, hold the handle with both hands, and extend your arms in front. Keep your torso facing forward during the timed hold."
+    },
+    "copenhagen-plank": {
+      "requiredEquipmentCombinations": [
+        [
+          "Bodyweight",
+          "Bench"
+        ]
+      ],
+      "movementPattern": "core",
+      "difficulty": "advanced",
+      "mechanics": "isolation",
+      "recommendedRepRange": null,
+      "fatigueScore": 3,
+      "progressionType": "duration",
+      "alternativeExerciseIds": [
+        "side-plank"
+      ],
+      "coachingSummary": "Rest your upper leg on a bench and support your upper body on one forearm. Lift your hips from the floor and hold the side-on position."
+    },
+    "crab-walk": {
+      "requiredEquipmentCombinations": [
+        [
+          "Bodyweight"
+        ]
+      ],
+      "movementPattern": "other",
+      "difficulty": "intermediate",
+      "mechanics": "compound",
+      "recommendedRepRange": null,
+      "fatigueScore": 2,
+      "progressionType": "duration",
+      "alternativeExerciseIds": [
+        "bear-plank"
+      ],
+      "coachingSummary": "Sit with hands and feet on the floor, then lift your hips. Take small alternating steps with your hands and feet for the timed interval."
+    },
+    "dead-hang": {
+      "requiredEquipmentCombinations": [
+        [
+          "Pull-up Bar"
+        ]
+      ],
+      "movementPattern": "vertical_pull",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": null,
+      "fatigueScore": 2,
+      "progressionType": "duration",
+      "alternativeExerciseIds": [
+        "active-hang"
+      ],
+      "coachingSummary": "Grasp a pull-up bar and hang with straight arms. Keep your body steady and breathe throughout the timed hold."
+    },
+    "flutter-kick": {
+      "requiredEquipmentCombinations": [
+        [
+          "Bodyweight"
+        ]
+      ],
+      "movementPattern": "core",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": null,
+      "fatigueScore": 1,
+      "progressionType": "duration",
+      "alternativeExerciseIds": [
+        "hollow-body-hold"
+      ],
+      "coachingSummary": "Lie on your back with your legs extended and slightly raised. Alternate small up-and-down leg movements for the timed interval."
+    },
+    "hollow-body-hold": {
+      "requiredEquipmentCombinations": [
+        [
+          "Bodyweight"
+        ]
+      ],
+      "movementPattern": "core",
+      "difficulty": "intermediate",
+      "mechanics": "isolation",
+      "recommendedRepRange": null,
+      "fatigueScore": 2,
+      "progressionType": "duration",
+      "alternativeExerciseIds": [
+        "plank"
+      ],
+      "coachingSummary": "Lie on your back, raise your shoulders and legs slightly, and hold that position. Keep breathing during the timed hold."
+    },
+    "l-sit-hold": {
+      "requiredEquipmentCombinations": [
+        [
+          "Bodyweight",
+          "Dip Bars"
+        ]
+      ],
+      "movementPattern": "core",
+      "difficulty": "advanced",
+      "mechanics": "compound",
+      "recommendedRepRange": null,
+      "fatigueScore": 3,
+      "progressionType": "duration",
+      "alternativeExerciseIds": [
+        "hollow-body-hold"
+      ],
+      "coachingSummary": "Support yourself on dip bars with straight arms and your legs extended in front. Hold the position while breathing steadily."
+    },
+    "mountain-climber": {
+      "requiredEquipmentCombinations": [
+        [
+          "Bodyweight"
+        ]
+      ],
+      "movementPattern": "core",
+      "difficulty": "beginner",
+      "mechanics": "compound",
+      "recommendedRepRange": null,
+      "fatigueScore": 2,
+      "progressionType": "duration",
+      "alternativeExerciseIds": [
+        "bear-plank"
+      ],
+      "coachingSummary": "Start with hands and toes on the floor and arms extended. Alternate bringing one knee forward, using a steady pace for the timed interval."
+    },
+    "plank": {
+      "requiredEquipmentCombinations": [
+        [
+          "Bodyweight"
+        ]
+      ],
+      "movementPattern": "core",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": null,
+      "fatigueScore": 2,
+      "progressionType": "duration",
+      "alternativeExerciseIds": [
+        "bear-plank"
+      ],
+      "coachingSummary": "Support yourself on your forearms and toes. Hold your body steady and keep breathing during the timed set."
+    },
+    "side-plank": {
+      "requiredEquipmentCombinations": [
+        [
+          "Bodyweight"
+        ]
+      ],
+      "movementPattern": "core",
+      "difficulty": "intermediate",
+      "mechanics": "isolation",
+      "recommendedRepRange": null,
+      "fatigueScore": 2,
+      "progressionType": "duration",
+      "alternativeExerciseIds": [
+        "plank"
+      ],
+      "coachingSummary": "Lie on your side, support yourself on one forearm and the side of your foot, and lift your hips. Hold the position with steady breathing."
+    },
+    "superman-hold": {
+      "requiredEquipmentCombinations": [
+        [
+          "Bodyweight"
+        ]
+      ],
+      "movementPattern": "hinge",
+      "difficulty": "beginner",
+      "mechanics": "isolation",
+      "recommendedRepRange": null,
+      "fatigueScore": 1,
+      "progressionType": "duration",
+      "alternativeExerciseIds": [
+        "bird-dog"
+      ],
+      "coachingSummary": "Lie face down with your arms extended. Lift your arms and legs slightly from the floor and hold the position while breathing."
+    },
+    "wall-sit": {
+      "requiredEquipmentCombinations": [
+        [
+          "Bodyweight",
+          "Wall"
+        ]
+      ],
+      "movementPattern": "squat",
+      "difficulty": "beginner",
+      "mechanics": "compound",
+      "recommendedRepRange": null,
+      "fatigueScore": 2,
+      "progressionType": "duration",
+      "alternativeExerciseIds": [
+        "bodyweight-squat"
+      ],
+      "coachingSummary": "Place your back against a wall and bend your knees to a position you can hold. Keep your feet planted and maintain that position for the timed set."
     }
   }
 }
