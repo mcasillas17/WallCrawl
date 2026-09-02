@@ -87,6 +87,9 @@ def import_catalog(
     config = _read_object(config_path, "import config")
     overrides = _read_object(overrides_path, "programming overrides")
     review_schema = _read_object(review_schema_path, "review schema")
+    rep_range_schema = _read_object(
+        Path(__file__).with_name("programming-rep-range-schema.json"), "programming rep-range schema"
+    )
     reviewed_document = _read_json(
         reviewed_metadata_path,
         "reviewed metadata",
@@ -265,7 +268,7 @@ def import_catalog(
         programming_value = programming_by_id.get(wallcrawl_id)
         programming = None
         if programming_value is not None:
-            programming = _normalize_programming(programming_value, wallcrawl_id)
+            programming = _normalize_programming(programming_value, wallcrawl_id, exercise_type, rep_range_schema)
 
         normalized_exercises.append(
             {
@@ -399,7 +402,9 @@ def import_catalog(
         return summary
 
 
-def _normalize_programming(raw_value: Any, exercise_id: str) -> dict[str, Any]:
+def _normalize_programming(
+    raw_value: Any, exercise_id: str, exercise_type: str, rep_range_schema: dict[str, Any]
+) -> dict[str, Any]:
     raw = _expect_object(raw_value, f"programming.{exercise_id}")
     combinations_raw = _required_array(raw, "requiredEquipmentCombinations", exercise_id)
     if not combinations_raw:
@@ -432,11 +437,17 @@ def _normalize_programming(raw_value: Any, exercise_id: str) -> dict[str, Any]:
     if progression_type not in SUPPORTED_PROGRESSION_TYPES:
         raise CatalogImportError(f"Unsupported progression type for {exercise_id}")
 
-    rep_range = _required_object(raw, "recommendedRepRange", exercise_id)
-    rep_min = _required_int(rep_range, "min", f"{exercise_id}.recommendedRepRange", minimum=1, maximum=1_000)
-    rep_max = _required_int(rep_range, "max", f"{exercise_id}.recommendedRepRange", minimum=1, maximum=1_000)
-    if rep_min > rep_max:
-        raise CatalogImportError(f"Recommended rep range is reversed for {exercise_id}")
+    timed = exercise_type in {"duration", "distance_duration"}
+    contract = rep_range_schema["$defs"]["timed" if timed else "repBased"]
+    _validate_json_schema(raw, contract, rep_range_schema, "programming", depth=0)
+    normalized_rep_range = None
+    if not timed:
+        rep_range = _required_object(raw, "recommendedRepRange", exercise_id)
+        rep_min = _required_int(rep_range, "min", "programming.recommendedRepRange", minimum=1, maximum=1_000)
+        rep_max = _required_int(rep_range, "max", "programming.recommendedRepRange", minimum=1, maximum=1_000)
+        if rep_min > rep_max:
+            raise CatalogImportError("Programming recommendedRepRange must be ordered")
+        normalized_rep_range = {"min": rep_min, "max": rep_max}
     fatigue_score = _required_int(raw, "fatigueScore", exercise_id, minimum=1, maximum=5)
     alternatives = _required_string_list(raw, "alternativeExerciseIds", exercise_id, maximum=100)
     coaching_summary = _required_string(
@@ -451,7 +462,7 @@ def _normalize_programming(raw_value: Any, exercise_id: str) -> dict[str, Any]:
         "movementPattern": movement_pattern,
         "difficulty": difficulty,
         "mechanics": mechanics,
-        "recommendedRepRange": {"min": rep_min, "max": rep_max},
+        "recommendedRepRange": normalized_rep_range,
         "fatigueScore": fatigue_score,
         "progressionType": progression_type,
         "alternativeExerciseIds": alternatives,

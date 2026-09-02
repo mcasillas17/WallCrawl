@@ -2,7 +2,7 @@ package wallcrawl.elopenmike.com.core.model
 
 /**
  * WallCrawl-owned exercise model. Catalog facts are always available while
- * programming metadata is present only after exercise requirements are reviewed.
+ * optional legacy programming is separate from human-gated reviewed metadata.
  */
 data class Exercise(
     val id: String,
@@ -16,7 +16,11 @@ data class Exercise(
     val isStretch: Boolean = false,
     val programming: ExerciseProgrammingMetadata? = null,
     val reviewedMetadata: ReviewedExerciseMetadata? = null
-)
+) {
+    init {
+        programming?.validateFor(type)
+    }
+}
 
 data class ExerciseSource(
     val catalogId: String,
@@ -46,12 +50,26 @@ data class ExerciseProgrammingMetadata(
     val movementPattern: MovementPattern,
     val difficulty: Difficulty,
     val mechanics: MechanicsType,
-    val recommendedRepRange: RepRange,
+    val recommendedRepRange: RepRange? = null,
     val fatigueScore: Int,
     val progressionType: ProgressionType,
     val alternativeExerciseIds: List<String> = emptyList(),
     val coachingSummary: String
-)
+) {
+    /** Rep targets describe rep work only; timed prescriptions never consume them. */
+    fun validateFor(type: ExerciseType) {
+        when (type) {
+            ExerciseType.DURATION, ExerciseType.DISTANCE_DURATION ->
+                require(recommendedRepRange == null) {
+                    "Programming recommendedRepRange must be absent or null for timed exercise types."
+                }
+            ExerciseType.WEIGHT_REPS, ExerciseType.BODYWEIGHT_REPS, ExerciseType.ASSISTED_BODYWEIGHT ->
+                require(recommendedRepRange != null && recommendedRepRange.max <= 1_000) {
+                    "Programming recommendedRepRange must contain ordered integers in 1..1000 for rep exercise types."
+                }
+        }
+    }
+}
 
 /** Human-review status for the future automatic-planning metadata contract. */
 enum class ReviewState {
