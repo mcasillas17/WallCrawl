@@ -336,9 +336,9 @@ private fun ExerciseListItem(
                     textColor = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-            exercise.programming?.let { programming ->
+            exercise.programming?.recommendedRepRange?.let { repRange ->
                 StatBadge(
-                    label = "${programming.recommendedRepRange.min}–${programming.recommendedRepRange.max} reps",
+                    label = "${repRange.min}–${repRange.max} reps",
                     textColor = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
@@ -416,10 +416,12 @@ private fun ExerciseDetailSheet(
                         textColor = MaterialTheme.colorScheme.onSurface
                     )
                     StatBadge(label = "Difficulty: ${programming.difficulty.name}", textColor = MaterialTheme.colorScheme.onSurface)
-                    StatBadge(
-                        label = "Target: ${programming.recommendedRepRange.min}–${programming.recommendedRepRange.max} reps",
-                        textColor = MaterialTheme.colorScheme.onSurface
-                    )
+                    programming.recommendedRepRange?.let { repRange ->
+                        StatBadge(
+                            label = "Target: ${repRange.min}–${repRange.max} reps",
+                            textColor = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
                     StatBadge(label = "Fatigue Score: ${programming.fatigueScore}/5", textColor = MaterialTheme.colorScheme.onSurfaceVariant)
                 } ?: StatBadge(label = "Programming review pending", textColor = MaterialTheme.colorScheme.onSurfaceVariant)
             }

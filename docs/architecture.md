@@ -110,6 +110,23 @@ alongside the bundled notice files.
 See the [README](../README.md#offline-workout-guide-catalog) for import commands,
 the pinned commit, and licensing details.
 
+### Type-dependent legacy programming
+
+`ExerciseProgrammingMetadata.recommendedRepRange` is nullable. When the optional
+programming block exists, `Exercise` construction/copy requires a positive ordered
+integer range up to 1000 for the three rep-based types, and no range for `DURATION`
+or `DISTANCE_DURATION`. The Python importer selects the corresponding authored
+rep-range schema definition using the pinned catalog type. Android validates after
+resolving type, so JSON member order does not affect acceptance. The test-only catalog
+projection uses the same domain validation; replay copies preserve null.
+
+Timed inputs may omit the field or use null; generated timed records always carry
+explicit null. Invalid shapes/types fail with bounded field-specific errors. The
+exercise list and details omit rep badges when the range is null while displaying
+available programming and coaching. The unchanged prescription factory uses duration
+branches, never a rep-to-time conversion. See [Timed-hold programming](timed-hold-programming.md)
+for the exact 14-entry cohort, support equipment, and AI-authorship limits.
+
 ## Onboarding and profile safety defaults
 
 `UserProfile` never assumes gym access or training history it has not been
@@ -229,8 +246,8 @@ across process death, not just within a session.
 
 Cardio machines, distance work, and stretches are excluded from automatic
 selection while remaining fully available in the catalog and in custom
-workouts. The test is whether a sets-and-reps prescription is meaningful, not
-whether conditioning is involved.
+workouts. Rep work and non-stretch duration work without a Cardio muscle tag can
+fill strength slots; metadata presence does not change this classification.
 
 Planning failures carry a `WorkoutPlanningFailure` reason rather than
 user-facing text; `TodayViewModel` maps reasons to copy. A future planner chain

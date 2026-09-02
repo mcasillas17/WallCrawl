@@ -3,6 +3,7 @@ package wallcrawl.elopenmike.com.core.exercise.workoutguide
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.Truth.assertWithMessage
 import java.io.StringReader
 import org.json.JSONObject
 import org.junit.Test
@@ -30,7 +31,7 @@ class WorkoutGuideCatalogParserTest {
         assertThat(snapshot.framesByExerciseId.values.flatten()).hasSize(906)
         // Reviewed programming metadata covers the exercises the planner selects from,
         // not the whole catalog; the rest fall back to conservative defaults.
-        assertThat(snapshot.exercises.count { it.programming != null }).isEqualTo(117)
+        assertThat(snapshot.exercises.count { it.programming != null }).isEqualTo(131)
         assertThat(snapshot.exercises.count { it.reviewedMetadata != null }).isEqualTo(37)
         assertThat(snapshot.exercises.map { it.id }).containsAtLeastElementsIn(HISTORICAL_IDS)
 
@@ -115,6 +116,45 @@ class WorkoutGuideCatalogParserTest {
 
         assertThat(StandardEquipment.ALL).containsAtLeastElementsIn(catalogEquipment)
         assertThat(candidates.map { it.id }.toSet()).hasSize(302)
+    }
+
+    @Test
+    fun parse_sharedProgrammingContract_isTypeDependentAndFieldOrderIndependent() {
+        val fixtures = testAssets.open("programming-validation-fixtures.json").bufferedReader()
+            .use { JSONObject(it.readText()) }
+        val cases = fixtures.getJSONArray("cases")
+        for (index in 0 until cases.length()) {
+            val case = cases.getJSONObject(index)
+            // Preserve raw numeric notation: JSONObject.toString would turn 1.0 into 1.
+            val programming = fixtures.getJSONObject("baseProgramming").toString().dropLast(1) +
+                (if (case.has("rangeJson")) ",\"recommendedRepRange\":${case.getString("rangeJson")}" else "") + "}"
+            val exercise = exerciseJson(
+                exerciseType = case.getString("exerciseType"),
+                programming = programming
+            )
+            // The stream must validate after type resolution, including when type comes last.
+            val typeField = "\"exerciseType\": \"${case.getString("exerciseType")}\","
+            val typeLast = exercise.replace(typeField, "")
+                .trimEnd().dropLast(1) + "," + typeField.dropLast(1) + "}"
+            listOf(exercise, typeLast).forEach { entry ->
+                val result = runCatching { parser.parse(StringReader(catalogJson(entry))) }
+                assertWithMessage(case.getString("name")).that(result.isSuccess)
+                    .isEqualTo(case.getBoolean("accepted"))
+                if (result.isSuccess) {
+                    val range = result.getOrThrow().exercises.single().programming!!.recommendedRepRange
+                    if (JSONObject(programming).isNull("recommendedRepRange")) {
+                        assertThat(range).isNull()
+                    } else {
+                        assertThat(range?.min).isEqualTo(JSONObject(programming).getJSONObject("recommendedRepRange").getInt("min"))
+                    }
+                } else {
+                    val error = result.exceptionOrNull()!!
+                    assertThat(error).isInstanceOf(WorkoutGuideCatalogFormatException::class.java)
+                    assertThat(error.message!!.length).isLessThan(512)
+                    assertThat(error.message).doesNotContain("UNTRUSTED_RECORD_MARKER")
+                }
+            }
+        }
     }
 
     @Test

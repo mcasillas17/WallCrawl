@@ -42,13 +42,12 @@
   },
   "expected": {
     "outcome": "SUCCESS",
-    "requiredExerciseIds": [],
-    "requiredAnyExerciseIdGroups": [
-      [
-        "knee-push-up",
-        "push-up"
-      ]
+    "requiredExerciseIds": [
+      "bodyweight-squat",
+      "glute-bridge",
+      "plank"
     ],
+    "requiredAnyExerciseIdGroups": [],
     "forbiddenExerciseIds": []
   }
 }

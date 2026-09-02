@@ -72,6 +72,14 @@ unchanged until human signoff and explicit enablement.
 - [x] Add an AI-authored `DRAFT` cohort spanning band, machine, supported, bodyweight, and timed-hold families for later human review.
 - [x] Run Python/importer/parser tests and commit the reviewed metadata foundation.
 
+#### Timed programming prerequisite (2026-09-02)
+
+The [timed-hold programming milestone](../../timed-hold-programming.md) adds nullable,
+type-validated rep ranges and complete legacy programming for the exact 14 eligible
+duration exercises. All 117 rep records remain unchanged; the legacy count is now 131.
+This completes the README prerequisite, not the unchecked human-review step above.
+The 37 reviewed entries remain DRAFT and production eligibility remains disabled.
+
 ### Task 2: Enforce Reviewed-Only Eligibility and Calibration Complexity
 
 **Status:** Shipped behind an explicit production-disabled feature flag. The pure policy,
