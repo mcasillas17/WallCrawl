@@ -447,9 +447,10 @@ a tag cannot publish its prerelease unless instrumentation succeeds.
   ID plus explicit `feltManageable == true`, and suppresses only that
   candidate's soft capability penalty.
 - Task 6B remains one-variable progression.
-- Task 6C remains user-controlled `DeloadOffer`s. Logged RPE/RIR, manageable
-  confirmation, and typed stop reasons are captured today; only the strict
-  capability-evidence rule consumes them.
+- Task 6C remains user-controlled `DeloadOffer`s. RPE/RIR are stored but not
+  used by capability evidence; Task 6A consumes only explicit
+  `feltManageable == true`, and completion/stop fields act only as
+  disqualifiers.
 - Add exercise substitution to the active workout.
 - Expand progress calculations and charts as more history accumulates.
 - Integrate a constrained on-device model only after the surrounding pipeline is
