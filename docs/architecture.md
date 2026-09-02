@@ -167,32 +167,49 @@ combinations take precedence; otherwise, the upstream listed equipment is treate
 the known minimum. Filtering defines the legal search space but does not choose the
 workout.
 
-An implemented, dependency-injected `ExerciseEligibilityPolicy` is the next automatic
-legality path. When explicitly enabled it accepts only `APPROVED` reviewed metadata,
-requires one complete reviewed equipment alternative, preserves explicit exclusions,
-rejects required capabilities marked `AVOID`, fails closed for joint-sensitive
-constraints that lack reviewed mappings, enforces `LOW_IMPACT_ONLY`, and temporarily
-blocks undemonstrated `ADVANCED` work while uncalibrated or returning. A supported
-regression lifts that ceiling only when the regression itself is below the advanced
-ceiling or its family has demonstrated history. `LIMITED` and `UNKNOWN` capability
-requirements remain typed soft preferences rather than becoming favorable assumptions.
+An implemented, dependency-injected `ExerciseEligibilityPolicy` is the reviewed-only
+automatic legality path. When explicitly enabled it accepts only `APPROVED` reviewed
+metadata, requires one complete reviewed equipment alternative, preserves explicit
+exclusions, rejects required capabilities marked `AVOID`, fails closed for joint-
+sensitive constraints that lack reviewed mappings, enforces `LOW_IMPACT_ONLY`, and
+temporarily blocks undemonstrated `ADVANCED` work while uncalibrated or returning. A
+supported regression lifts that ceiling only when the regression itself is below the
+advanced ceiling or its family has demonstrated history. `LIMITED` and `UNKNOWN`
+capability requirements remain typed soft preferences rather than becoming favorable
+assumptions.
 
-`WorkoutPlanner` receives only structured `WorkoutGenerationContext`. The
-current `FakeWorkoutPlanner` chooses exercises exclusively from
-`allowedExercises` and returns catalog IDs with structured prescriptions.
-`GeneratedWorkoutValidator` then verifies that every ID exists, remains in the
-allowed set, matches the catalog exercise type, and belongs to a structurally
-valid workout. Unknown IDs are rejected, never silently substituted.
+On that same reviewed-only path, `WorkoutGenerationContextBuilder` derives
+`CapabilityEvidenceSet` locally and on demand from the same bounded max-eight completed
+sessions it already read. `CapabilityEvidencePolicy` accepts only two distinct
+`SessionStatus.COMPLETED` sessions for the same exercise ID whose non-warm-up work sets
+all completed, all logged explicit `feltManageable == true`, and all carry valid
+shape-specific persisted values. Comparability is exact exercise ID plus the persisted
+measurement shape: `WEIGHT_REPETITIONS`, `BODYWEIGHT_REPETITIONS`,
+`ASSISTED_BODYWEIGHT_REPETITIONS`, `TIMED_DURATION`,
+`DISTANCE_DURATION_DISTANCE_ONLY`, `DISTANCE_DURATION_TIME_ONLY`, or
+`DISTANCE_DURATION_DISTANCE_AND_TIME`. The policy validates field presence, bounds, and
+shape consistency but compares no magnitudes or thresholds. This is product
+reproducibility, not physiology, readiness, recovery, or medical inference. Evidence
+applies only to the demonstrated exercise or one direct `approvedRegressions` target
+when both source and target metadata are `APPROVED`; there is no draft, missing,
+inferred, substitution, blank-ID, or transitive expansion.
+
+`WorkoutPlanner` receives only structured `WorkoutGenerationContext`. The current
+`FakeWorkoutPlanner` chooses exercises exclusively from `allowedExercises` and returns
+catalog IDs with structured prescriptions. `GeneratedWorkoutValidator` then verifies
+that every ID exists, remains in the allowed set, matches the catalog exercise type,
+and belongs to a structurally valid workout. Unknown IDs are rejected, never silently
+substituted.
 
 `WorkoutGenerationContext` already carries the complete `UserProfile`, so no second
 capability field exists. Production composition sets
 `PlannerFeatureFlags.reviewedCapabilityEligibility = false` because the bundled cohort
-contains 37 `DRAFT` entries and zero human-approved entries. The current recommendation
-therefore still follows the legacy filter and remains invariant to capability changes.
-Tests enable the gate only with synthetic in-memory approvals; a reviewed no-candidate
-result reaches `TodayViewModel` as a typed reason and never falls back to an unreviewed
-exercise. Enabling production requires explicit human metadata signoff plus a deliberate
-availability/persona review and flag change.
+contains 37 `DRAFT` entries and zero `APPROVED` entries. The current production
+recommendation therefore still follows the legacy filter and remains invariant to
+capability changes. Tests enable the gate only with synthetic in-memory approvals; a
+reviewed no-candidate result reaches `TodayViewModel` as a typed reason and never falls
+back to an unreviewed exercise. Enabling production requires explicit human metadata
+signoff plus a deliberate availability/persona review and flag change.
 
 On that reviewed-enabled path only, `StateBasedTrainingPolicy` consumes the composed
 `TrainingProgramState`. It validates `PROGRAM_STATE_V1`, `PRIMARY_ONLY_V1`, approved
@@ -210,13 +227,15 @@ guidance cannot contain 0 RIR. `SHORT`, `MODERATE`, and `LONG` currently map to 
 safety, or optimality claims. Explicit valid user rest preferences win. State and
 capability can reduce sets but cannot change or invent a load.
 
-Within a split, the compound slots are chosen by what the exercise trains and how
-much it demands — primary-muscle match, then fatigue — and spread across movement
-patterns so a session is not the same lift three times. The remaining slots prefer
-isolation work that trains the split directly, since the heavy work is already
-chosen. Before this ordering existed, candidates were taken in catalog order,
-which is alphabetical: a push day led with an Arnold press and a bench dip while
-the bench press sat unused.
+Within a split, compound slots are chosen first by split-primary match inside the
+compound pool, then by the reviewed capability soft-penalty bit, then by experience,
+fatigue, and stable ID, while still spreading work across movement patterns so a
+session is not the same lift three times. Remaining accessory slots prefer exercises
+that train the split directly, then isolation work, then the presence of programming
+metadata, then that same capability penalty, experience penalty, fatigue, and stable
+ID. Evidence suppresses only the penalized candidate's one-bit capability penalty; it
+never adds candidates, never removes candidates, and never outweighs the harder split
+or mechanics ordering that already happened before it.
 
 Split selection is deliberate about failure. High-priority muscles propose a
 rotation; splits the candidate pool cannot fill are dropped from it, and if none
@@ -313,9 +332,13 @@ user deliberately stopped. `PAIN_STOP` records only that the user chose to stop
 because something hurt: it is not a symptom report, an injury, or a diagnosis,
 and no surface presents it as one. There is no free-text stop reason.
 
-Progression and deload logic do not consume this feedback yet. It is captured
-now so the deterministic engine has honest history to read later; only completed
-work counts toward volume, history, and progress today.
+Reviewed capability evidence already consumes a narrow, deterministic subset of this
+feedback behind the reviewed-only flag: only non-warm-up work from two distinct
+completed sessions for the same exercise ID, and every qualifying set must have
+`feltManageable == true` plus a valid shape-specific logged payload. Null or false
+manageable answers, completion alone, RPE, and RIR do not qualify evidence.
+`ProgressionEngine` and `DeloadOfferPolicy` do not exist yet. Only completed work
+counts toward volume, history, and progress today.
 
 `DefaultExercisePrescriptionFactory` never invents a `WEIGHT_REPS` starting
 load. It suggests a weight only when either applies, in that priority order:
@@ -458,10 +481,14 @@ work sets rather than guessed muscle credit.
 `TrainingProgramStateProvider` composes that ledger with the adaptation state derived by
 `AdaptationStatePolicy` into a `TrainingProgramState`, which rides on
 `WorkoutGenerationContext` whenever reviewed capability eligibility is enabled. The provider
-is the only unit in that composition performing I/O. `StateBasedTrainingPolicy` now reads
-the ledger's direct-primary counts to cap future reviewed prescriptions; progression and
-state transitions still do not consume it. On the legacy path the state is absent, so
-that path reads no history it did not already read and returns the existing prescription.
+is the only unit in that composition performing I/O. On that same reviewed-only path,
+`CapabilityEvidencePolicy` derives `CapabilityEvidenceSet` once from the already-bounded
+history read; it adds no query, cache, migration, network, analytics, or logging path.
+`StateBasedTrainingPolicy` reads the ledger's direct-primary counts to cap reviewed
+prescriptions, and `CapabilityPreferenceRankingPolicy` reads the evidence set only to
+suppress a soft capability penalty for the matching candidate. Progression and state
+transitions still do not consume the ledger. On the legacy path the state is absent,
+`capabilityEvidence` is empty, and the existing prescription path is returned unchanged.
 
 The adaptation policy derives only `UNCALIBRATED` and `RETURNING`. `ExerciseEligibilityPolicy`
 withholds advanced-complexity work on exactly those two states, so a third derived state

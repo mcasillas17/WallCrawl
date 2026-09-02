@@ -13,6 +13,15 @@ body-context inputs are specified in
 `docs/superpowers/specs/2026-08-29-body-aware-personalization-design.md` and
 `docs/superpowers/plans/2026-08-29-body-aware-personalization.md`.
 
+Current repository status: the reviewed-only deterministic path already ships
+`ExerciseEligibilityPolicy`, `WeeklyDoseLedgerCalculator`, `TrainingProgramStateProvider`,
+`StateBasedTrainingPolicy`, `CapabilityEvidencePolicy`, and
+`CapabilityPreferenceRankingPolicy`, all behind
+`PlannerFeatureFlags.reviewedCapabilityEligibility = false` in production. Task 6A
+capability evidence and reviewed soft-penalty relaxation are implemented. Task 6B
+one-variable progression, broader adaptation-state derivation, and Task 6C
+user-controlled `DeloadOffer` remain unimplemented.
+
 ## Final Roundtable Consensus
 
 After four research and adversarial-review rounds, Claude Opus 4.8, Grok 4.6,
@@ -131,20 +140,22 @@ proposed during the roundtable and explicitly retracted (see the appendix).
 ```text
 core/model
   Exercise, ReviewedExerciseMetadata, ReviewProvenance
-  TrainingProgramState, WeeklyDoseLedger, EffortTarget, RestClass
+  CapabilityEvidence, CapabilityEvidenceSet, TrainingProgramState
+  WeeklyDoseLedger, EffortTarget, RestClass, UserRestPreference
   MovementCapabilities (capability-input spec)
 core/ai (deterministic)
-  ExerciseEligibilityPolicy      hard gate
-  WeeklyDoseLedgerCalculator     PRIMARY_ONLY_V1 crediting
-  CalibrationStateResolver       adaptation-state derivation
-  TrainingPolicy                 versioned dose/effort/rest defaults
-  BodyAwareExerciseRanker        soft ranking
+  ExerciseEligibilityPolicy           hard gate
+  WeeklyDoseLedgerCalculator          PRIMARY_ONLY_V1 crediting
+  AdaptationStatePolicy               current derived-state policy
+  TrainingProgramStateProvider        reviewed-path state composition
+  StateBasedTrainingPolicy            versioned dose/effort/rest defaults
+  CapabilityPreferenceRankingPolicy   binary reviewed soft-capability penalty
   DefaultExercisePrescriptionFactory  dose compilation
-  CapabilityEvidencePolicy       history-based soft relaxation
-  ProgressionEngine              one-variable progression
-  DeloadOfferPolicy              transparent reduction offer
-  ProgramValidator               session + weekly validation, one repair
-  FakeWorkoutPlanner / planner   orchestration + immutable snapshot
+  CapabilityEvidencePolicy            Task 6A history-based soft relaxation
+  ProgressionEngine                   planned Task 6B
+  DeloadOfferPolicy                   planned Task 6C
+  ProgramValidator                    planned Task 7 session + weekly validation
+  WorkoutGenerationContextBuilder / FakeWorkoutPlanner / GeneratedWorkoutValidator
 core/ai/local (optional LLM)
   LlmReadinessGate               deterministic enablement gate
   LocalModelRuntime              provider abstraction, tiers, deadlines
@@ -174,12 +185,12 @@ enum class SupportRequirement { SUPPORTED, OPTIONAL_SUPPORT, UNSUPPORTED }
 enum class ReviewState { DRAFT, APPROVED }
 enum class PrescriptionShape { WEIGHT_REPS, BODYWEIGHT_REPS, ASSISTED_BODYWEIGHT, DURATION }
 
-data class EffortTarget(val minRir: Int?, val maxRir: Int?)   // nullable; failure never auto-set
+data class EffortTarget(val minRir: Int, val maxRir: Int)
 
 data class ReviewProvenance(
-    val reviewerRole: String?,             // null while DRAFT
+    val reviewerRole: String?,
     val rationaleOrSource: String,
-    val reviewedAtEpochMillis: Long?,      // null while DRAFT
+    val reviewedAtEpochMillis: Long?,
     val schemaVersion: Int,
     val policyVersion: Int
 )
@@ -206,31 +217,48 @@ data class ReviewedExerciseMetadata(
     val provenance: ReviewProvenance
 )
 
+enum class LedgerPolicyVersion { PRIMARY_ONLY_V1 }
+
 data class WeeklyDoseLedger(
-    val policyVersion: Int,
+    val policyVersion: LedgerPolicyVersion,
     val weekStartEpochDay: Long,
-    val directPrimarySets: Map<String, Int>,      // credited dose
-    val secondaryInvolvement: Map<String, Int>     // analytics only, no dose
+    val timeZoneId: String,
+    val catalogVersion: String,
+    val reviewPolicyVersion: Int,
+    val directPrimarySets: Map<String, Int>,
+    val secondaryInvolvement: Map<String, Int>,
+    val unattributedWorkSets: Map<LedgerOmissionReason, Int>
 )
+
+enum class CapabilityEvidencePolicyVersion { TWO_COMPARABLE_MANAGEABLE_SESSIONS_V1 }
+enum class CapabilityEvidenceReason { TWO_COMPARABLE_MANAGEABLE_COMPLETED_SESSIONS }
+enum class CapabilityEvidenceScope { EXACT_EXERCISE, DIRECT_APPROVED_REGRESSION }
+enum class ComparableMovementShape {
+    WEIGHT_REPETITIONS,
+    BODYWEIGHT_REPETITIONS,
+    ASSISTED_BODYWEIGHT_REPETITIONS,
+    TIMED_DURATION,
+    DISTANCE_DURATION_DISTANCE_ONLY,
+    DISTANCE_DURATION_TIME_ONLY,
+    DISTANCE_DURATION_DISTANCE_AND_TIME
+}
+
+data class CapabilityEvidence(
+    val policyVersion: CapabilityEvidencePolicyVersion,
+    val reason: CapabilityEvidenceReason,
+    val appliesToExerciseId: String,
+    val demonstratedExerciseId: String,
+    val scope: CapabilityEvidenceScope,
+    val comparableShape: ComparableMovementShape,
+    val qualifyingSessionIds: List<String>
+)
+
+enum class TrainingProgramStatePolicyVersion { PROGRAM_STATE_V1 }
 
 data class TrainingProgramState(
-    val policyVersion: Int,
+    val policyVersion: TrainingProgramStatePolicyVersion,
     val adaptationState: AdaptationState,
-    val weeklyLedger: WeeklyDoseLedger,
-    val recentComparableOutcomes: List<ComparableOutcome>,
-    val deloadOffer: DeloadOffer?,
-    val returnStatus: ReturnStatus
-)
-
-data class RecommendationSnapshot(
-    val contextHash: String,
-    val catalogVersion: Int,
-    val reviewVersion: Int,
-    val policyVersion: Int,
-    val ledgerVersion: Int,
-    val reasonCodes: List<String>,
-    val validatorResult: ValidatorResult,
-    val prescriptions: List<ExercisePrescription>
+    val weeklyLedger: WeeklyDoseLedger
 )
 ```
 
@@ -239,54 +267,20 @@ measurements remain deferred and absent from the profile model.
 `ExercisePrescription` is the existing shared core model. Loads are `null`
 until confirmed by history or explicit user confirmation.
 
-## Adaptation State Machine
+## Adaptation state
 
-```text
-NEEDS_ONBOARDING
-  -> UNCALIBRATED -> INITIATE -> BUILD -> DEVELOP
-                          \-> HOLD
-                          \-> RETURNING
-                          \-> DELOAD_OFFERED
-any state -> RECALIBRATE
-```
+`AdaptationState` already declares a broader shared vocabulary, but the current
+implementation deliberately derives only two values in `AdaptationStatePolicy`:
 
-Entry/exit conditions are deterministic and derived from immutable completed
-history plus the current profile; they never read BMI or body mass.
+- `RETURNING` when `UserProfile.returningAfterBreakWeeks > 0`
+- `UNCALIBRATED` otherwise
 
-- **NEEDS_ONBOARDING** — entry: missing goals, equipment, availability, or the
-  required movement-capability answers (`UNKNOWN` is a valid explicit answer).
-  Exit: all required inputs present.
-- **UNCALIBRATED** — entry: no confirmed load and insufficient comparable
-  history. Behaviour: no numeric external starting load; reviewed,
-  capability-compatible, non-advanced candidates only; explicit confirm-load
-  flow. Exit: enough completed comparable sessions to seed calibration.
-- **INITIATE** — entry: calibrated but early. Behaviour: small feasible weekly
-  exposure; no mandatory weekly floor. Exit: repeated tolerated completion.
-- **BUILD** — behaviour: maintain a tolerated, editable weekly direct-primary
-  range. Exit up: repeated comparable success plus user acceptance. Exit down:
-  repeated shortfall or user request.
-- **DEVELOP** — behaviour: progress exactly one variable after repeated
-  comparable success. Exit: shortfall, pain-stop, or user request returns to
-  BUILD/HOLD.
-- **HOLD** — entry: repeated shortfall, higher-than-usual reported effort at a
-  matched task, repeated skips, explicit poor-readiness report, or user
-  preference. Behaviour: preserve or reduce demand. Exit: recovery of comparable
-  performance or user request.
-- **RETURNING** — entry: reported break or long logged gap. Behaviour: re-enter
-  INITIATE/BUILD conservatively by history adequacy and user choice; no fixed
-  percentage reduction. Exit: repeated tolerated completion.
-- **DELOAD_OFFERED** — entry: user request, returning state, or a transparent
-  versioned multi-session pattern. Behaviour: present accept/hold/reduce/shorter
-  options; user chooses. Exit: user decision recorded.
-- **RECALIBRATE** — entry: policy-version change, profile/capability edit,
-  measurement deletion, catalog change, or inadequate/conflicting history.
-  Behaviour: preserve immutable history, re-establish conservative calibration.
-
-Terminal deterministic paths, not states: `NO_ELIGIBLE_PLAN` (typed
-explanation, never drop constraints), `RED_FLAG_ROUTE` (non-diagnostic
-seek-support message; the model never adjudicates symptoms),
-`VALIDATION_FAILURE` (one repair attempt, then no persistence), and
-`MODEL_FAILURE` (irrelevant to safety; deterministic plan proceeds).
+That limitation is intentional. `ExerciseEligibilityPolicy` withholds
+`ComplexityTier.ADVANCED` work on exactly `UNCALIBRATED` and `RETURNING`, so
+widening derivation without updating the matching ceiling would silently make
+more advanced work eligible. Task 6A capability evidence shipped without
+changing derived-state behavior. Broader state transitions, one-variable
+progression, and any `DeloadOffer` state remain future Task 6B/6C work.
 
 ## Reviewed Metadata and Provenance
 
@@ -300,10 +294,11 @@ Tooling may accept AI-authored `DRAFT` entries as candidates for later human
 inspection, but they are never auto-approved: drafts omit reviewer role and
 review time. Band, machine, supported, bodyweight, and timed-hold families must
 be human-reviewed before the automatic gate is enabled, so gating does not
-silently strip equipment-limited users of eligible plans. Once that separate
-gate is implemented, missing or `DRAFT` metadata makes an exercise unavailable
-to automatic planning but leaves it available for browse and manual templates.
-Until then, the current planner ignores the new block.
+silently strip equipment-limited users of eligible plans. The reviewed-only
+automatic gate is already implemented but production-disabled; while it remains
+off, missing or `DRAFT` metadata still leaves an exercise available to automatic
+planning through the legacy path, and always leaves it available for browse and
+manual templates.
 
 ## PRIMARY_ONLY Weekly Ledger
 
@@ -343,14 +338,19 @@ complexity becomes a soft rank; capability, explicit constraints, equipment, and
 history remain stronger. Catalog difficulty is reviewer opinion, not a safety
 score, and never a permanent hard gate on self-reported experience.
 
-Soft ranking, applied only among eligible candidates, prefers: supported or
-partial-body-mass regressions when a required capability is `LIMITED`; lower
-impact when impact is `UNKNOWN`; no-floor alternatives when floor transition is
-`LIMITED`; lower balance demand when balance is `LIMITED`; weekly-ledger-deficit
-muscles; priority/compound placement earlier in a session; and demonstrated
-successful exercises over conservative defaults. Ties break on a stable exercise
-identifier so the same versioned inputs reproduce the same order. No body-mass or
-BMI value participates in ranking.
+Current reviewed soft ranking is intentionally smaller in scope. Eligible
+candidates with any `EligibilityPreference.Limited` or
+`EligibilityPreference.Unknown` receive a binary capability penalty unless
+`CapabilityEvidenceSet` contains a matching record for that exact candidate ID.
+That evidence suppresses only the candidate's capability penalty; it never
+changes hard eligibility or candidate membership.
+
+Inside `FakeWorkoutPlanner`, compound ordering applies split-primary match
+within the compound pool, then capability penalty, then experience penalty,
+then fatigue, then stable ID. Accessory ordering applies split-primary match,
+then isolation preference, then the presence of programming metadata, then the
+same capability penalty, then experience penalty, fatigue, and stable ID. No
+body-mass or BMI value participates in ranking.
 
 ## Dose, Rest, and Effort
 
@@ -374,25 +374,19 @@ BMI value participates in ranking.
 
 ## Progression
 
-`ProgressionEngine` advances exactly one controllable variable at a time
-(reps -> load; or reduce assistance; or add duration/distance for non-load
-modalities) after repeated comparable completed success at acceptable effort.
-Missing effort is treated as neutral. Incomplete or abandoned sessions cannot
-progress capability or credit weekly dose. Policy changes affect only future
-recommendations; completed history is immutable.
+Task 6B remains open. There is no `ProgressionEngine.kt`, no one-variable
+progression pass, and no broader derived-state rollout yet. The current shipped
+Task 6A behavior stops at deterministic capability evidence and reviewed soft-
+penalty suppression. Missing effort therefore remains neutral today because
+nothing progresses from it.
 
 ## DeloadOffer
 
-`DeloadOffer` is user-requested, return-driven, or based on a transparent
-versioned multi-session pattern (for example repeated inability to complete
-intended work, unexpectedly high reported effort at a matched task, declining
-comparable performance, a pain-stop on an otherwise eligible family, or repeated
-skipped/truncated sessions). It has no fixed calendar, percentage, RIR, volume,
-or diagnostic threshold. Missing RPE/RIR/readiness cannot by itself trigger a
-deload or progression. The offer presents hold/reduce/shorter/regression
-options, records the user's choice and the inspectable reasons, and never claims
-to prevent injury or diagnose recovery. If accepted it reduces session density
-while preserving movement families and explicit constraints.
+Task 6C remains open. There is no `DeloadOfferPolicy.kt`, no persisted
+`DeloadOffer`, and no user-controlled multi-session deload flow in the current
+product. The design constraints still stand for later work: no fixed calendar,
+percentage, RIR, volume, or diagnostic threshold, and no diagnosis or recovery
+claim.
 
 ## Session and Weekly Validation
 
@@ -438,13 +432,14 @@ The active workout screen captures nullable RPE/RIR, timestamps, a
 user-confirmed "felt manageable" flag, a skip/pain-stop reason, and editable
 rest, persisted atomically with null preserved as null. Fast RIR/rest controls
 are offered but never required to complete a valid set. Completed history is the
-reconstructable authority; the derived ledger, capability evidence, and
-progression update from it. `CapabilityEvidencePolicy` may relax a soft penalty
-only after two comparable completed sessions plus explicit user confirmation
-that the movement felt manageable, and only for that exercise and documented
-equal-or-easier regressions; it never relaxes a hard exclusion and never
-auto-writes `COMFORTABLE` into the profile. This is a reproducibility policy, not
-physiology.
+reconstructable authority. On the reviewed-only path, `CapabilityEvidencePolicy`
+now relaxes a soft penalty only after two distinct comparable completed sessions
+for the same exercise ID plus explicit per-set `feltManageable == true`, and
+only for that exercise or one direct approved regression target whose source and
+target metadata are both `APPROVED`. It never relaxes a hard exclusion and
+never auto-writes `COMFORTABLE` into the profile. This is a reproducibility
+policy, not physiology. Progression and deload logic still do not update from
+that history.
 
 ## Today vs Program Horizon
 
@@ -460,17 +455,14 @@ same-session aerobic work can affect explosive outcomes.
 ## Deterministic Data Flow
 
 ```text
-Profile + capability + constraints + equipment + history
-  -> reviewed-metadata hard eligibility
-  -> weekly ledger and calibration-state assessment
-  -> state-aware deterministic candidate ranking
+Profile + capability + constraints + equipment + bounded completed history
+  -> legacy `ExerciseFilter` or reviewed `ExerciseEligibilityPolicy`
+  -> reviewed-only `TrainingProgramState` + `CapabilityEvidenceSet` derivation
+  -> deterministic split selection and candidate ordering
   -> deterministic prescription compilation (no invented load)
-  -> session and weekly validation
-  -> one deterministic repair attempt
-  -> immutable recommendation snapshot
   -> active-session logging
   -> immutable completed history
-  -> ledger / capability-evidence / progression / DeloadOffer update
+  -> progress analytics + next legacy/reviewed planning context
 ```
 
 Hard rules cannot be repaired away. Missing inputs become conservative or typed
@@ -568,10 +560,10 @@ controls ship.
 Every runtime, parser, or validator failure — model unavailable,
 download-required, busy, thermal/battery-aborted, cancelled, timed out, corrupt
 model, malformed output, unsupported field, unknown/duplicate ID, or opt-out —
-returns the unchanged deterministic recommendation. Ledger data missing is
-treated as zero credit (conservative). A completed session is immutable; policy
-changes affect only future recommendations. Offline benchmark accuracy alone
-never enables the model.
+returns the unchanged deterministic recommendation. Reviewed-path ledger read
+failures propagate; the legacy path avoids the read entirely. A completed
+session is immutable; policy changes affect only future recommendations.
+Offline benchmark accuracy alone never enables the model.
 
 ## On-Device Runtime Tiers
 
@@ -610,15 +602,19 @@ credited to the model.
 
 ## Rollout
 
-1. Ship profile/capability storage without changing planner output.
-2. Add reviewed demand metadata and provenance.
-3. Add the PRIMARY_ONLY weekly ledger and calibration-state derivation.
-4. Enable reviewed-only eligibility, the temporary advanced ceiling, and hard
-   capability constraints; measure plan availability across persona fixtures.
-5. Enable state-based dose/effort/rest policy and soft ranking behind a local
-   flag.
-6. Enable history-derived capability evidence, progression, and `DeloadOffer`
-   only after replay tests pass.
+1. Shipped: profile/capability storage without changing production planner
+   output.
+2. Shipped: reviewed demand metadata and provenance as authored `DRAFT` review
+   data.
+3. Shipped: the `PRIMARY_ONLY_V1` weekly ledger plus `TrainingProgramState`
+   composition.
+4. Shipped in code but production-disabled: reviewed-only eligibility, the
+   temporary advanced ceiling, and typed reviewed no-candidate failures.
+5. Shipped in code but production-disabled: state-based dose/effort/rest policy
+   and reviewed soft-capability ranking behind the local flag.
+6. Partly shipped: Task 6A history-derived capability evidence is live behind
+   that same local flag; Task 6B progression and Task 6C `DeloadOffer` remain
+   open.
 7. Keep LLM reranking disabled until every deterministic gate and every LLM gate
    passes; ship it opt-in, removable, with an immediate kill switch.
 

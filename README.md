@@ -15,7 +15,8 @@ constraints and local movement-capability inputs, a complete bundled catalog,
 structured workout generation and
 validation, reusable custom workout templates, type-aware active set logging
 with no fabricated starting loads, Room persistence, workout-history context,
-experience-aware exercise ordering, a production-disabled reviewed state-based
+experience-aware exercise ordering, a production-disabled reviewed capability-
+evidence soft-penalty relaxation, a production-disabled reviewed state-based
 dose/effort/rest policy, and progress calculations. The current
 `FakeWorkoutPlanner` is deliberately replaceable; no production local LLM
 runtime is integrated yet.
@@ -117,13 +118,14 @@ are stored in the existing local Room profile. This milestone adds no weight,
 height, BMI, age, body composition, cloud sync, analytics, Health Connect,
 Wear OS, network, or LLM data flow.
 
-The reviewed-only deterministic eligibility layer can consume these values for
-automatic planning, but production composition deliberately keeps that path disabled
-while every reviewed-metadata entry is still `DRAFT`. The current recommendation
-therefore remains unchanged when a movement preference changes. Tests enable the gate
-only with unmistakably synthetic in-memory approvals and verify equipment, exclusions,
-constraints, capability `AVOID`, impact, reviewed-state, and temporary advanced-
-complexity rules without changing browse or manual-workout access.
+The reviewed-only deterministic path can consume these values for automatic
+planning, but production composition deliberately keeps that path disabled while
+every reviewed-metadata entry is still `DRAFT`. The current production
+recommendation therefore remains unchanged when a movement preference changes.
+Tests enable the path only with unmistakably synthetic in-memory approvals and
+verify equipment, exclusions, constraints, capability `AVOID`, impact,
+reviewed-state, temporary advanced-complexity rules, and capability-evidence
+soft-penalty suppression without changing browse or manual-workout access.
 
 The fake planner uses the same `WorkoutPlanner` contract intended for a future
 Qwen, Gemma, or LiteRT-backed implementation. It only selects IDs from
@@ -191,9 +193,12 @@ keeps every control large, explicit, and local.
   history, and progress — skipped, incomplete, and discarded work never looks
   finished.
 
-Everything above stays on the device. The feedback is stored so a future
-deterministic engine has honest history to read; progression and deload logic do
-not consume it yet.
+Everything above stays on the device. Reviewed capability evidence now reads a
+strict subset of that history behind the production-disabled reviewed gate: two
+distinct `SessionStatus.COMPLETED` sessions for the same exercise ID, with only
+qualifying non-warm-up work and explicit `feltManageable == true`. Null/false
+manageable answers, completion alone, RPE, and RIR do not qualify. Progression
+and deload logic still do not consume the feedback.
 
 ## Architecture
 
@@ -408,10 +413,12 @@ a tag cannot publish its prerelease unless instrumentation succeeds.
   `programming.difficulty`. The reviewed-enabled path reads only human-approved
   `reviewedMetadata.complexity`, never draft metadata.
 - Analytics are derived from completed local sessions, not sample metrics.
-- Movement-capability values feed a reviewed-only deterministic eligibility path, but
-  production keeps that path disabled until human-approved metadata and an explicit
-  enablement review exist. They do not affect today's filtering, ranking,
-  substitutions, dose, effort, or rest guidance.
+- Movement-capability values already drive the reviewed-only automatic path's
+  hard eligibility, soft preferences, evidence-backed soft-capability penalty
+  suppression, and relevant limited-capability effort guidance, but production
+  keeps that path disabled until human-approved metadata and an explicit
+  enablement review exist. They do not affect today's production filtering,
+  ranking, substitutions, dose, effort, or rest guidance.
 - Database migrations must preserve user history; destructive migration fallback
   is intentionally disabled.
 
@@ -420,8 +427,9 @@ a tag cannot publish its prerelease unless instrumentation succeeds.
 - Complete human review of the 37-entry categorical draft cohort, then perform an
   explicit availability/persona review before switching production to the implemented
   reviewed-only capability gate. Its experience ranker reads only `APPROVED`
-  complexity; model or pull-request review is not metadata approval, and the reviewed
-  state-based prescription policy stays disabled with that gate.
+  complexity; model or pull-request review is not metadata approval, and the same
+  flag would also turn on reviewed capability evidence and reviewed state-based
+  prescription guidance.
 - Make `recommendedRepRange` optional so timed holds can be reviewed. Fourteen
   planner-eligible movements — planks, dead hangs, wall sits — cannot carry
   mechanics, fatigue, or a coaching note today, because the schema demands a rep
@@ -431,10 +439,14 @@ a tag cannot publish its prerelease unless instrumentation succeeds.
   entries.
 - Continue reviewing programming metadata beyond the planner's working set, so
   browsing and custom workouts benefit from it too.
-- Continue deterministic Task 6: use comparable completed outcomes and explicit
-  confirmation for capability evidence, one-variable progression, and user-controlled
-  deload offers. Logged RPE/RIR, manageable confirmation, and typed stop reasons are
-  captured today but this milestone does not consume them.
+- Task 6A shipped behind the production-disabled reviewed gate: capability
+  evidence now requires two comparable completed sessions for the same exercise
+  ID plus explicit `feltManageable == true`, and suppresses only that
+  candidate's soft capability penalty.
+- Task 6B remains one-variable progression.
+- Task 6C remains user-controlled `DeloadOffer`s. Logged RPE/RIR, manageable
+  confirmation, and typed stop reasons are captured today; only the strict
+  capability-evidence rule consumes them.
 - Add exercise substitution to the active workout.
 - Expand progress calculations and charts as more history accumulates.
 - Integrate a constrained on-device model only after the surrounding pipeline is
