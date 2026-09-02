@@ -166,9 +166,11 @@ continues to derive only `UNCALIBRATED` and `RETURNING`.
 
 ### Task 5: Add Typed Gym-Floor Feedback
 
-> **Shipped.** Typed outcomes are captured, validated, and persisted atomically,
-> and the gym-floor logger and rest timer are in the app. Nothing downstream
-> consumes the feedback yet; that is Task 6.
+**Status:** Shipped. Typed outcomes are captured, validated, and persisted atomically,
+and the gym-floor logger and rest timer are in the app. Verified 2026-09-02: RPE/RIR input
+exists in `ActiveWorkoutScreen`/`ActiveWorkoutViewModel`, and `workout_sets` carries
+`rpe`, `rir`, `feltManageable`, `completedAtTimestamp`, `stoppedAtTimestamp`, and
+`stopReason` since schema 9. Nothing downstream consumes the feedback yet; that is Task 6.
 
 **Files:**
 - Modify: `app/src/main/java/wallcrawl/elopenmike/com/core/model/Workout.kt`
@@ -203,6 +205,18 @@ weekly dose ledger do not read this feedback yet.
 
 ### Task 6: Add Capability Evidence, Progression, and DeloadOffer
 
+**Status:** Not started, verified 2026-09-02. None of `CapabilityEvidencePolicy.kt`,
+`ProgressionEngine.kt`, or `DeloadOfferPolicy.kt` exist under `core/ai/`.
+
+**Prerequisite discovered during Task 3/4 review:** this task is the first that will want
+adaptation states beyond `UNCALIBRATED` and `RETURNING`. `ExerciseEligibilityPolicy` applies
+the temporary advanced-complexity ceiling with an allow-by-default check on exactly those two
+states, so **any additional derived state lifts that ceiling**. `AdaptationStatePolicy`
+therefore emits only those two today, and
+`AdaptationStatePolicyTest.everyDerivableStateIsOneTheAdvancedCeilingCovers` fails if that
+changes. Widening the state machine and updating the ceiling must happen in one change, not
+two.
+
 **Files:**
 - Create: `app/src/main/java/wallcrawl/elopenmike/com/core/ai/CapabilityEvidencePolicy.kt`
 - Create: `app/src/main/java/wallcrawl/elopenmike/com/core/ai/ProgressionEngine.kt`
@@ -218,6 +232,15 @@ weekly dose ledger do not read this feedback yet.
 
 ### Task 7: Add Session and Weekly Program Validation
 
+**Status:** Not started, verified 2026-09-02. `ProgramValidator.kt` does not exist.
+`GeneratedWorkoutValidator` still performs only structural per-exercise validation
+(`validate` and `validateExercise`); it has no duplicate-family, weekly-volume, or
+ledger-overflow check.
+
+`WeeklyLedgerOverflow` became meaningful only once Task 4 started reading
+`weeklyLedger.directPrimarySets`, so this task is now unblocked and is the cheapest
+remaining engine step: it is pure policy, testable with synthetic approved metadata.
+
 **Files:**
 - Create: `app/src/main/java/wallcrawl/elopenmike/com/core/ai/ProgramValidator.kt`
 - Modify: `app/src/main/java/wallcrawl/elopenmike/com/core/ai/FakeWorkoutPlanner.kt`
@@ -232,6 +255,18 @@ weekly dose ledger do not read this feedback yet.
 
 ### Task 8: Add Replayable Persona Evaluation and Release Gate
 
+**Status:** Partly shipped, verified 2026-09-02. The corpus and harness exist:
+33 fixture resources under `app/src/test/resources/planner-fixtures/`, a manifest,
+`PlannerFixtureTest`, `PlannerFixtureCorpusTest`, `PlannerFixtureEvaluator`, and
+`PlannerFixtureContextFactory`. CI runs the Python suites, the JVM suite, lint, the debug
+build, and — since #46 — `connectedDebugAndroidTest` on an emulator.
+
+Nine of the ten personas this task named exist: `bodyweight-beginner`, `band-only`,
+`machine-only`, `full-gym-advanced`, `limited-capability`, `returning-user`,
+`mixed-unit-history`, `sparse-history`, plus `reviewed-enabled-bodyweight` and
+`reviewed-enabled-no-approved` for the reviewed path. **`concurrent-activity` is the one
+missing persona.** The remaining doc-cleanup steps below are also still open.
+
 **Files:**
 - Create: `app/src/test/resources/planner-fixtures/*.json`
 - Create: `app/src/test/java/wallcrawl/elopenmike/com/core/ai/PlannerFixtureTest.kt`
@@ -242,11 +277,73 @@ weekly dose ledger do not read this feedback yet.
 - Modify: `docs/superpowers/specs/2026-08-29-body-aware-personalization-design.md`
 - Modify: `docs/superpowers/plans/2026-08-29-body-aware-personalization.md`
 
-- [ ] Add novice/bodyweight, band-only, machine-only, full-gym, advanced strength, limited capability, returner, mixed-unit, sparse-history, and concurrent-activity fixtures.
-- [ ] Assert deterministic replay, reviewed IDs, hard rules, primary-only ledger, no invented load, and no BMI influence.
+- [x] Add novice/bodyweight, band-only, machine-only, full-gym, advanced strength, limited capability, returner, mixed-unit, and sparse-history fixtures.
+- [ ] Add the remaining `concurrent-activity` persona fixture, the only one of the ten still missing.
+- [x] Assert deterministic replay, reviewed IDs, and hard rules through `PlannerFixtureCorpusTest` and `PlannerFixtureTest`.
+- [ ] Extend corpus assertions to the primary-only ledger and no-invented-load gates now that Task 4 reads the ledger; the corpus predates both.
 - [ ] Remove body-mass ranking/fraction fields and unsupported fixed-dose/deload/fatigue claims from existing plans.
-- [ ] Run Python, JVM, lint, build, connected Android, importer drift, and `git diff --check`.
+- [x] Run Python, JVM, lint, build, and connected Android in CI; `connectedDebugAndroidTest` runs on an emulator since #46.
+- [ ] Add the importer drift check to CI. It currently cannot run unattended: `import_catalog.py --check` needs the Workout Guide checkout pinned at the catalog's `source.commit`, and no CI step provides one.
 - [ ] Commit `test: gate the deterministic workout engine`.
+
+### Task 9: Reconcile the Progress Weekly Card with `PRIMARY_ONLY_V1`
+
+**Status:** Not started, and not previously tracked by any plan. Added by the 2026-09-02
+roadmap audit.
+
+The Progress screen already shows weekly per-muscle set counts, and it computes them in a way
+that contradicts the shipped ledger on three separate axes:
+
+| | Progress screen today | `PRIMARY_ONLY_V1` ledger |
+| --- | --- | --- |
+| Crediting | credits **every** legacy `primaryMuscles` entry per completed set | credits **exactly one** approved `directPrimaryMuscle` |
+| Week boundary | rolling `age in 0 until WEEK_MILLIS` — a fixed 168 hours from now, DST-blind | ISO Monday to Monday in a zone, 167 or 169 hours across a transition |
+| Metadata gate | any catalog entry, no reviewed metadata required | `APPROVED` reviewed metadata only |
+
+Evidence: `ProgressCalculator.completedSetsByPrimaryMuscle` and the `thisWeek` filter in
+`ProgressCalculator`.
+
+Nobody sees the conflict yet because no screen renders the ledger and no entry is `APPROVED`.
+**It becomes user-visible the moment metadata is approved**, when the screen will report
+inflated per-muscle counts beside an engine that disagrees. Doing this work *before* approval
+is cheaper than explaining the discrepancy afterwards.
+
+- [ ] Decide the product answer first: does the Progress card report *dose* (ledger semantics)
+  or *activity* (every muscle an exercise names)? They are different questions and both are
+  defensible; only one can own the phrase "sets this week".
+- [ ] If it reports dose, note that switching today empties the card, because zero entries are
+  `APPROVED`. Design the empty state and the omission copy before switching, not after.
+- [ ] If it keeps activity semantics, rename it in the UI so it cannot be read as dose, and
+  record the divergence in `docs/architecture.md` as deliberate.
+- [ ] Either way, do not leave two unlabelled answers to "how many sets did I do for Chest".
+
+### Task 10: Close the Loop Between Approval and Enablement
+
+**Status:** Blocking prerequisite for Tasks 2, 3, and 4 to have any user-visible effect.
+Added by the 2026-09-02 roadmap audit to make an implicit dependency explicit.
+
+Tasks 2, 3, and 4 are all built, tested, and inert. Every one of them requires `APPROVED`
+reviewed metadata, and all 37 entries are `DRAFT` with zero approved. The engine currently
+computes a ledger that credits nothing and dose targets that gate on nothing, behind a
+production-disabled flag.
+
+This is deliberate and correct — approval is a human act and nothing in the pipeline may
+manufacture it — but it means **further engine tasks do not move the product until approval
+happens**. That dependency was previously implied only by a single unticked step in Task 1.
+
+- [ ] Resolve the one open ratification question recorded in the metadata packet:
+  `barbell-deadlift` uses `directPrimaryMuscle = "Hamstrings"` while the pinned upstream source
+  names `Posterior Chain`. WallCrawl requires a single direct primary, so a human must choose.
+  This value is a direct ledger input; `LedgerSourceFingerprint` hashes it, so a change
+  correctly invalidates cached ledgers.
+- [ ] Complete the human sign-off worksheet at `docs/reviewed-exercise-metadata-human-signoff.md`
+  with a real reviewer role and review time.
+- [ ] Apply approval as a deliberate authored-data change to
+  `tools/workout-guide/reviewed-metadata.json`, then regenerate the catalog and report.
+- [ ] Re-run the availability and persona review before any flag change: with reviewed
+  eligibility enabled, confirm no persona loses its plan.
+- [ ] Only then consider flipping `PlannerFeatureFlags.reviewedCapabilityEligibility`, as a
+  separate, reviewable change.
 
 ## Deterministic Release Gates
 
