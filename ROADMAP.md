@@ -85,9 +85,11 @@ Detailed execution:
 14. **Continue reviewed-content coverage beyond automatic planning.** Expand approved metadata
     so browsing and manual workouts gain reviewed guidance after the initial cohort unblocks
     production planning.
-15. **Integrate optional rank-only local inference.** Add capability/download/removal states,
-    bounded serialization, strict output validation, deterministic fallback, and an experiment
-    gate. The model never owns eligibility, dosage, progression, validation, or persistence.
+15. **Integrate optional bounded local inference.** Add capability/download/removal states;
+    strictly parse non-safety preferences and require user confirmation; serialize only bounded
+    context; rerank exact candidate IDs; validate reason-key explanations and model output; and
+    provide deterministic fallback and an experiment gate. The model never owns eligibility,
+    dosage, progression, validation, or persistence.
 16. **Close the adaptive-coach release.** Reconcile product and architecture documentation,
     retain generated-data checks in CI, run the complete verification matrix, and release only
     after deterministic and local-model gates pass.
