@@ -45,11 +45,12 @@ and Wear modules. Link each row to its detailed source plan.
 
 - [ ] **Step 3: Add the dependency-ordered backlog**
 
-Carry forward all 23 ordered work packages from the audited backlog, grouped into:
+Consolidate the audit findings and active source-plan work into 24 ordered work packages,
+grouped into:
 
 1. **Now — make deterministic coaching production-ready** (items 1-8)
 2. **Next — complete the adaptive coach** (items 9-16)
-3. **Later — Health Connect and Wear OS** (items 17-23)
+3. **Later — integrations** (items 17-24)
 
 State that metadata review may proceed in parallel with deterministic engineering, but
 production enablement waits for approval, validation, Progress semantics, progression/deload,
@@ -63,7 +64,7 @@ Run:
 grep -nE '^#|^[0-9]+\.' ROADMAP.md
 ```
 
-Expected: one document title, three phase headings, and 23 numbered work packages.
+Expected: one document title, three phase headings, and 24 numbered work packages.
 
 ### Task 2: Remove the README Backlog Duplicate
 

@@ -14,13 +14,13 @@ Core workouts must remain offline, account-free, and usable without a model or c
 
 | Area | Status | Remaining gap |
 | --- | --- | --- |
-| Android foundation | Shipped | Android Auto Backup still conflicts with the documented local-only promise |
-| Catalog, onboarding, templates, and logging | Shipped | Validated substitutions, complete target editing, and deeper history remain |
-| Deterministic coach | Policy foundation shipped behind a disabled gate | Human approval, program validation, progression/deload, Progress semantics, and release gates |
-| Reviewed exercise metadata | 37 `DRAFT`, 0 `APPROVED` | Timed-hold schema, band/planner coverage, deadlift classification, and human sign-off |
-| Planner evaluation | Corpus and CI shipped | One persona, new policy assertions, and importer drift checking |
-| Optional local model | Not started | Blocked on the deterministic coach release gate |
-| Health Connect and Wear OS | Not started; only `:app` exists | Blocked on privacy controls, validation, and substitutions |
+| [Android foundation](README.md#current-vertical-slice) | Shipped | Android Auto Backup still conflicts with the documented local-only promise |
+| [Catalog, onboarding, templates, and logging](docs/superpowers/plans/2026-08-28-adaptive-coach-product.md) | Shipped | Validated substitutions, complete target editing, and deeper history remain |
+| [Deterministic coach](docs/superpowers/plans/2026-08-29-science-based-deterministic-engine.md) | Policy foundation shipped behind a disabled gate | Human approval, program validation, progression/deload, Progress semantics, and release gates |
+| [Reviewed exercise metadata](docs/reviewed-exercise-metadata-human-signoff.md) | 37 `DRAFT`, 0 `APPROVED` | Timed-hold schema, band/planner coverage, deadlift classification, and human sign-off |
+| [Planner evaluation](docs/planner-evaluation.md) | Corpus and CI shipped | One persona, new policy assertions, and importer drift checking |
+| [Optional local model](docs/superpowers/plans/2026-08-29-science-based-local-llm-engine.md) | Not started | Blocked on the deterministic coach release gate |
+| [Health Connect and Wear OS](docs/superpowers/plans/2026-08-28-local-health-and-wear.md) | Not started; only `:app` exists | Blocked on privacy controls, validation, and substitutions |
 
 The shipped foundation includes Room schema 11 with a continuous migration chain, the complete
 302-exercise catalog, first-run onboarding, local movement preferences, custom templates,
@@ -72,9 +72,8 @@ Detailed execution:
 9. **Use the remaining profile signals in deterministic ranking.** Incorporate training
    frequency and recently trained muscles as bounded, explainable inputs; experience is the
    only one used today.
-10. **Add validated in-session substitutions and complete target editing.** Keep substitutions
-    inside reviewed compatibility, rerun validation, and preserve planned versus performed
-    values.
+10. **Add validated in-session substitutions.** Keep substitutions inside reviewed
+    compatibility, rerun validation, and preserve planned versus performed values.
 11. **Restore reviewed exercise guidance.** Add runtime instruction/form-cue fields and
     reviewed coaching overrides without treating upstream prose as approved programming.
 12. **Add explicit multi-week program blocks.** Build periodization only after progression,
@@ -96,7 +95,7 @@ Detailed execution:
 - [Adaptive coach plan](docs/superpowers/plans/2026-08-28-adaptive-coach-product.md)
 - [Local LLM engine plan](docs/superpowers/plans/2026-08-29-science-based-local-llm-engine.md)
 
-## Later: Health Connect and Wear OS
+## Later: integrations
 
 17. **Establish shared phone/watch modules.** Extract pure model contracts without changing
     phone behavior.
@@ -114,10 +113,16 @@ Detailed execution:
 23. **Add optional sensors and cross-device release gates.** Health Services remains optional
     and never invents health or effort data; complete phone/watch instrumentation, protocol
     compatibility, and release validation.
+24. **Evaluate optional encrypted sync.** Start with a separate privacy and conflict-resolution
+    design after explicit local export/import is stable. Core planning and tracking must remain
+    fully functional without an account or network.
 
 Detailed execution:
 
 - [Local Health and Wear OS plan](docs/superpowers/plans/2026-08-28-local-health-and-wear.md)
+
+Optional sync does not yet have an implementation plan; write and review one before starting
+that item.
 
 ## Updating this roadmap
 

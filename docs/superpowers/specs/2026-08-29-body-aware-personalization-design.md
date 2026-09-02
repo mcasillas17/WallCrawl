@@ -168,7 +168,11 @@ The shipped milestone covers:
 - capability control accessibility semantics; and
 - planner-output invariance.
 
-## Roadmap status
+## Historical milestone status
+
+> Current status and future priority live in the
+> [canonical roadmap](../../../ROADMAP.md). This section records the state when the
+> capability-input milestone was designed.
 
 Completed in the capability-input milestone:
 
