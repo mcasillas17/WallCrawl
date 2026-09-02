@@ -1,5 +1,9 @@
 # WallCrawl Adaptive Coach Implementation Plan
 
+> **Planning record:** Current status, priority, and dependency order live in the
+> [canonical roadmap](../../../ROADMAP.md). This document preserves detailed implementation
+> context; unchecked boxes are not authoritative project status.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Turn WallCrawl's current local-first vertical slice into a safe, transparent, deterministic adaptive coach, then add an optional on-device LLM that ranks and explains only within validated boundaries.

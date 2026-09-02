@@ -1,5 +1,9 @@
 # Capability-Aware Personalization Design
 
+> **Design record:** Current status, priority, and dependency order live in the
+> [canonical roadmap](../../../ROADMAP.md). This document preserves the scope and safety
+> decisions for the capability-input milestone.
+
 ## Goal and staged boundary
 
 WallCrawl needs explicit, respectful information about what movements currently
@@ -147,10 +151,10 @@ movement capabilities. A regression test requires profiles that differ only in
 all-Comfortable versus all-Avoid values to produce identical current
 recommendations.
 
-The next milestone is human-reviewed exercise-demand metadata followed by
-deterministic capability eligibility. Ranking, substitutions, dose changes,
-history evidence, progression, and deload behavior remain later work and must
-not be enabled piecemeal before the metadata and evaluation gates exist.
+When this design was authored, its next milestone was human-reviewed exercise-demand metadata
+followed by deterministic capability eligibility. Ranking, substitutions, dose changes,
+history evidence, progression, and deload behavior remained later work and were not to be
+enabled piecemeal before the metadata and evaluation gates existed.
 
 ## Verification requirements
 
@@ -168,7 +172,11 @@ The shipped milestone covers:
 - capability control accessibility semantics; and
 - planner-output invariance.
 
-## Roadmap status
+## Historical milestone status
+
+> Current status and future priority live in the
+> [canonical roadmap](../../../ROADMAP.md). This section records the state when the
+> capability-input milestone was designed.
 
 Completed in the capability-input milestone:
 

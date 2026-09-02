@@ -426,25 +426,8 @@ a tag cannot publish its prerelease unless instrumentation succeeds.
 - Database migrations must preserve user history; destructive migration fallback
   is intentionally disabled.
 
-## Next milestones
+## Roadmap
 
-- Complete human review of the 37-entry categorical draft cohort, then perform an
-  explicit availability/persona review before switching production to the implemented
-  reviewed-only capability gate. Its experience ranker reads only `APPROVED`
-  complexity; model or pull-request review is not metadata approval, and the reviewed
-  state-based prescription policy stays disabled with that gate.
-- Review the exercises the planner reaches for outside the reviewed set, and add
-  band coverage: a band-only profile is served almost entirely by unreviewed
-  entries.
-- Continue reviewing programming metadata beyond the planner's working set, so
-  browsing and custom workouts benefit from it too.
-- Continue deterministic Task 6: use comparable completed outcomes and explicit
-  confirmation for capability evidence, one-variable progression, and user-controlled
-  deload offers. Logged RPE/RIR, manageable confirmation, and typed stop reasons are
-  captured today but this milestone does not consume them.
-- Add exercise substitution to the active workout.
-- Expand progress calculations and charts as more history accumulates.
-- Integrate a constrained on-device model only after the surrounding pipeline is
-  production-ready.
-- Later: Health Connect, Wear OS, programs/periodization, optional sync, and
-  model management.
+Current status, dependency order, and upcoming work live in the
+[WallCrawl roadmap](ROADMAP.md). Detailed design and implementation records remain under
+[`docs/superpowers/`](docs/superpowers/) for execution context.
