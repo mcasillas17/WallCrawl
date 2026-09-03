@@ -24,7 +24,9 @@ class FakeWorkoutPlanner(
     private val prescriptionFactory: DefaultExercisePrescriptionFactory =
         DefaultExercisePrescriptionFactory(),
     private val difficultyRankingPolicy: ExerciseDifficultyRankingPolicy =
-        ExerciseDifficultyRankingPolicy()
+        ExerciseDifficultyRankingPolicy(),
+    private val capabilityPreferenceRankingPolicy: CapabilityPreferenceRankingPolicy =
+        CapabilityPreferenceRankingPolicy()
 ) : WorkoutPlanner {
 
     private val generationCounter = AtomicInteger(0)
@@ -176,6 +178,11 @@ class FakeWorkoutPlanner(
         }
         val compoundSlots = minOf(3, exerciseCountTarget - 1)
         val reviewedEligibilityEnabled = context.automaticEligibilityResult != null
+        val capabilityPenalties = capabilityPreferenceRankingPolicy.penalties(
+            candidateExerciseIds = matchingCandidates.map(Exercise::id),
+            automaticEligibilityResult = context.automaticEligibilityResult,
+            capabilityEvidence = context.capabilityEvidence
+        )
 
         val result = mutableListOf<Exercise>()
         result.addAll(
@@ -184,7 +191,8 @@ class FakeWorkoutPlanner(
                 candidates = matchingCandidates,
                 slots = compoundSlots,
                 context = context,
-                reviewedEligibilityEnabled = reviewedEligibilityEnabled
+                reviewedEligibilityEnabled = reviewedEligibilityEnabled,
+                capabilityPenalties = capabilityPenalties
             )
         )
 
@@ -198,7 +206,8 @@ class FakeWorkoutPlanner(
                     accessoryOrder(
                         split = split,
                         context = context,
-                        reviewedEligibilityEnabled = reviewedEligibilityEnabled
+                        reviewedEligibilityEnabled = reviewedEligibilityEnabled,
+                        capabilityPenalties = capabilityPenalties
                     )
                 )
             result.addAll(accessories.take(remainingSlots))
@@ -221,13 +230,15 @@ class FakeWorkoutPlanner(
         candidates: List<Exercise>,
         slots: Int,
         context: WorkoutGenerationContext,
-        reviewedEligibilityEnabled: Boolean
+        reviewedEligibilityEnabled: Boolean,
+        capabilityPenalties: Map<String, Int>
     ): List<Exercise> {
         if (slots <= 0) return emptyList()
         val compounds = candidates
             .filter { it.programming?.mechanics == MechanicsType.COMPOUND }
             .sortedWith(
                 compareByDescending<Exercise> { it.trainsAsPrimary(split) }
+                    .thenBy { capabilityPenalties.getValue(it.id) }
                     .thenBy {
                         difficultyRankingPolicy.aboveExperiencePenalty(
                             exercise = it,
@@ -265,11 +276,13 @@ class FakeWorkoutPlanner(
     private fun accessoryOrder(
         split: SplitType,
         context: WorkoutGenerationContext,
-        reviewedEligibilityEnabled: Boolean
+        reviewedEligibilityEnabled: Boolean,
+        capabilityPenalties: Map<String, Int>
     ): Comparator<Exercise> =
         compareByDescending<Exercise> { it.trainsAsPrimary(split) }
             .thenByDescending { it.programming?.mechanics == MechanicsType.ISOLATION }
             .thenByDescending { it.programming != null }
+            .thenBy { capabilityPenalties.getValue(it.id) }
             .thenBy {
                 difficultyRankingPolicy.aboveExperiencePenalty(
                     exercise = it,

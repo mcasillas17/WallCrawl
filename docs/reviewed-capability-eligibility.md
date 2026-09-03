@@ -2,33 +2,42 @@
 
 ## Status and boundary
 
-WallCrawl has a deterministic eligibility layer for a future reviewed automatic
-planner. Production composition sets `PlannerFeatureFlags.reviewedCapabilityEligibility`
-to `false`, so today's automatic recommendations continue to use the legacy
-`ExerciseFilter` and `programming` metadata. The flag is local and controlled by
-application composition; there is no remote configuration, analytics, or
-automatic activation when an entry becomes approved.
+WallCrawl already ships an implemented reviewed-only automatic-planning path.
+Production composition still sets `PlannerFeatureFlags.reviewedCapabilityEligibility`
+to `false`, so today's shipped recommendations continue to use the legacy
+`ExerciseFilter` and legacy `programming` metadata. The flag is local and set in
+application composition; there is no remote configuration, analytics event,
+automatic activation, or network rollout path.
 
-The bundled catalog remains at 302 exercises. Its 37 `reviewedMetadata` entries
-remain `DRAFT`, with zero `APPROVED` entries. A merge or model review is not human
-metadata approval. This milestone does not change authored review state,
-reviewer identity, timestamps, or provenance.
+That same reviewed-only flag gates three local features together:
+
+- `ExerciseEligibilityPolicy`
+- `CapabilityEvidencePolicy` and `CapabilityEvidenceSet`
+- `TrainingProgramStateProvider` + `StateBasedTrainingPolicy`
+
+The bundled catalog remains at 302 exercises. Its 37 authored
+`reviewedMetadata` entries remain `DRAFT`, with zero authored `APPROVED`
+entries. Task 6A did not mutate review state, reviewer identity, timestamps,
+provenance, history, catalog assets, or profile capability values.
 
 The typed flow is:
 
 ```text
-local UserProfile + bundled catalog + parser-validated reviewed metadata
+local UserProfile + bounded completed history + bundled catalog
   -> ExerciseEligibilityPolicy
   -> per-exercise EligibilityDecision values
   -> AutomaticEligibilityResult.Candidates or NoCandidates
+  -> CapabilityEvidenceSet derivation from the same bounded history read
+  -> reviewed soft-capability ranking inside FakeWorkoutPlanner
   -> allowed automatic candidates or a typed planner failure
 ```
 
-The policy performs no I/O, logging, persistence, analytics, or network access.
-It does not read body weight, height, age, BMI, or body composition, and it does
-not make safety, medical-clearance, or injury-prevention claims.
+The reviewed policies perform no network access. `CapabilityEvidencePolicy`
+performs no persistence, migration, cache write, analytics, or logging.
+Nothing here reads body weight, height, age, BMI, body composition, recovery,
+or readiness.
 
-## Deterministic rule order
+## Deterministic hard rule order
 
 Rules are evaluated in incoming catalog order. Reasons within a decision use
 the order below, and aggregate failure selection replays the same stages. The
@@ -45,113 +54,124 @@ earlier stages.
 | 5 | `LOW_IMPACT_ONLY` meets `ImpactLevel.HIGH` | `HIGH_IMPACT_DISALLOWED` | `TRAINING_CONSTRAINTS_REMOVED_ALL` |
 | 6 | `ADVANCED` is temporarily above the uncalibrated/returning ceiling | `ADVANCED_WHILE_UNCALIBRATED` or `ADVANCED_WHILE_RETURNING` | `CALIBRATION_COMPLEXITY_REMOVED_ALL` |
 
-An empty input or a combination not attributable to one of those exhaustion
-stages uses `NO_ELIGIBLE_CANDIDATES`. Every result retains every per-exercise
-decision. Callers do not derive causes from exception text.
-
 An eligible exercise has the hard reason `APPROVED`. `EligibilityPreference`
-is a separate type for soft inputs: each explicitly required capability that is
-`LIMITED` or `UNKNOWN` is retained in enum order. Those values do not reject the
-exercise and cannot be confused with a hard reason by a later ranker.
+retains each explicitly required capability that is `LIMITED` or `UNKNOWN`, in
+enum order, as a soft input only. Hard rule output defines candidate
+membership; evidence never edits these decisions.
 
-## Reviewed equipment and capability semantics
+## Capability evidence criteria
 
-`reviewedMetadata.equipmentAlternatives` is an OR-of-AND contract. At least one
-inner equipment list must be a complete subset of the profile's available
-equipment. The policy normalizes equipment names for comparison and does not
-mutate either list. `listedEquipment` and legacy
-`programming.requiredEquipmentCombinations` remain compatibility data; they do
-not weaken an approved reviewed requirement.
+`WorkoutGenerationContextBuilder` derives `CapabilityEvidenceSet` locally, on
+demand, once per reviewed build from the same already-bounded max-eight
+completed sessions it already fetched. The legacy path does not derive or
+consume evidence.
 
-`CapabilityLevel.AVOID` is a hard exclusion only when approved metadata names
-that exact `MovementCapabilityType`. `LIMITED` and `UNKNOWN` are soft inputs.
-History does not rewrite capability answers, and the policy does not infer them
-from exercise names, muscles, equipment, experience, or measurements.
+Exact evidence requires all of the following:
 
-## Calibration complexity
+- two distinct `SessionStatus.COMPLETED` sessions;
+- the same exact `exerciseId` in both sessions;
+- a positive session `completedAtTimestamp` in both sessions;
+- at least one non-warm-up work set in each session;
+- every non-warm-up work set completed, unstopped, and type-aligned with the
+  exercise prescription;
+- every non-warm-up work set carrying explicit `feltManageable == true`;
+- every non-warm-up work set carrying a valid shape-specific persisted payload.
 
-`ComplexityTier.ADVANCED` is temporarily unavailable only in `UNCALIBRATED` and
-`RETURNING`. It remains eligible in the other adaptation states. The temporary
-ceiling is lifted when the user has demonstrated that approved progression
-family or when the catalog contains an available, approved, supported regression
-that passes the same exclusion, reviewed-equipment, capability, and training-
-constraint rules. The regression must itself be below the temporary advanced
-ceiling, unless its own progression family has demonstrated history. A DRAFT,
-undemonstrated advanced, or otherwise unavailable regression cannot lift the ceiling.
-Experience level alone is not a permanent exclusion.
+Null `feltManageable`, `feltManageable == false`, completion alone, RPE, and
+RIR do not qualify evidence. Warm-up-only sessions do not qualify evidence.
+One valid work set plus one invalid work set in the same session also fails the
+session.
 
-The builder now derives that state through `AdaptationStatePolicy`, composed into
-`TrainingProgramState` alongside the weekly dose ledger. The policy still derives only
-`RETURNING` from a reported break and `UNCALIBRATED` otherwise, so eligibility outcomes are
-unchanged, and that limitation remains one reason production enablement is blocked.
+Comparability is product reproducibility, not physiology. The rule is exact
+exercise ID plus type-safe persisted measurement shape:
 
-Widening it is deliberately deferred rather than merely unfinished. The ceiling above is
-allow-by-default on exactly `UNCALIBRATED` and `RETURNING`, so any additional derived state
-would lift it. Task 4 now defines deterministic dose behavior for every declared state,
-but does not invent transition evidence or allow `AdaptationStatePolicy` to emit another
-state; comparable-outcome transitions remain Task 6. A regression test in
-`AdaptationStatePolicyTest` fails if the policy ever emits a state this ceiling does not
-cover, so the two cannot drift apart silently.
+- `WEIGHT_REPETITIONS`
+- `BODYWEIGHT_REPETITIONS`
+- `ASSISTED_BODYWEIGHT_REPETITIONS`
+- `TIMED_DURATION`
+- `DISTANCE_DURATION_DISTANCE_ONLY`
+- `DISTANCE_DURATION_TIME_ONLY`
+- `DISTANCE_DURATION_DISTANCE_AND_TIME`
 
-## Constraint metadata gap
+The policy validates field presence, bounds, and shape consistency for load,
+reps, bodyweight, assistance, duration, and distance. It does not compare
+magnitudes, deltas, readiness, recovery, or medical thresholds.
 
-The reviewed contract can enforce `LOW_IMPACT_ONLY` because `impactLevel` is
-reviewed. It has no reviewed per-exercise mapping for shoulder, elbow, wrist,
-lower-back, hip, or knee sensitivity. The policy therefore fails closed with
-`UNMAPPED_TRAINING_CONSTRAINT` instead of guessing from names, muscles, or broad
-movement patterns.
+## Scope, provenance, and determinism
 
-A future human-reviewed categorical compatibility extension is required before
-profiles with those active constraints can use the reviewed automatic gate.
-Adding that field would change the review scope and is not part of this work.
+Evidence applies only to:
+
+1. the exact demonstrated exercise; or
+2. one direct `approvedRegressions` target when both the demonstrated exercise
+   metadata and the target metadata are `ReviewState.APPROVED`.
+
+There is no draft, missing-metadata, inferred, substitution, blank-ID,
+unrelated-peer, or transitive expansion. If a target has its own exact
+evidence, exact evidence wins over inherited evidence. If multiple approved
+sources point directly to the same approved target, the derived inherited record
+uses the lexicographically first demonstrated exercise ID, so results stay
+stable regardless of caller collection order.
+
+Focused tests construct `APPROVED` reviewed metadata only in memory, with
+synthetic provenance that clearly says it is test data. No synthetic approval is
+written into `tools/workout-guide/reviewed-metadata.json`, the bundled catalog,
+or bundled provenance assets.
+
+The implementation defensively copies caller collections, returns an
+unmodifiable record map, sorts qualifying session IDs, and does not mutate the
+profile, history, catalog exercises, reviewed metadata, or provenance objects it
+reads.
+
+## Soft capability penalty semantics
+
+Reviewed-mode unresolved capability preferences are ranked with a binary soft
+penalty:
+
+- `1` when an eligible candidate has at least one `EligibilityPreference.Limited`
+  or `EligibilityPreference.Unknown` and no matching evidence record;
+- `0` otherwise.
+
+Evidence suppresses only that candidate's capability penalty. It never changes
+hard eligibility, candidate membership, explicit exclusions, required
+equipment, joint constraints, `LOW_IMPACT_ONLY`, the approved-metadata gate, or
+the temporary advanced ceiling. A sole eligible candidate is still selected.
+
+Inside `FakeWorkoutPlanner`, that penalty is intentionally weaker than the
+structural split ordering and stronger than the later independent tie-breakers:
+
+- compound ordering: split-primary match within the compound pool, then
+  capability penalty, then experience penalty, then fatigue, then stable ID;
+- accessory ordering: split-primary match, isolation preference, presence of
+  programming metadata, then capability penalty, then experience penalty, then
+  fatigue, then stable ID.
 
 ## Rollout and manual-workout preservation
 
 When the flag is disabled, `WorkoutGenerationContext.automaticEligibilityResult`
-is `null`, `ExerciseFilter` supplies the same ordered candidate list, and the
-current planner receives the same domain inputs and produces the same output for
-representative personas. When enabled in tests, the reviewed policy alone
-supplies `allowedExercises`; an empty result is surfaced as a typed reviewed-
-eligibility failure. There is no fallback to an unreviewed exercise and no rule
-is relaxed to make a plan succeed.
+is `null`, `WorkoutGenerationContext.capabilityEvidence` is
+`CapabilityEvidenceSet.empty()`, `ExerciseFilter` supplies the same ordered
+candidate list, and today's production planner remains invariant to capability
+changes.
 
-The gate exists only on automatic context construction. The exercise library
-continues to read the full catalog, and the manual template editor continues to
-read all 302 exercises and display its existing profile-equipment warnings.
-Missing or DRAFT reviewed metadata does not hide a browse or manual option.
-
-## Test-only approvals and verification
-
-Focused unit tests construct `APPROVED` metadata only in memory, with provenance
-that says `Synthetic test-only reviewer` and a source beginning with `SYNTHETIC`.
-The enabled planner fixtures copy selected bundled DRAFT records in memory and
-replace provenance with `SYNTHETIC PLANNER FIXTURE — never bundled in production
-assets.` Fixture resources list IDs only; no synthetic approval is written to
-the production catalog or authored metadata JSON.
-
-Focused verification:
-
-```bash
-./gradlew testDebugUnitTest \
-  --tests '*ExerciseEligibilityPolicyTest' \
-  --tests '*WorkoutGenerationContextBuilderTest' \
-  --tests '*FakeWorkoutPlannerTest' \
-  --tests '*PlannerFixture*' \
-  --rerun-tasks --no-daemon
-```
-
-Full repository verification also runs the Workout Guide Python tests, all JVM
-unit tests, Android lint and assembly, connected Android tests, and
-`git diff --check`.
+The reviewed gate exists only on automatic context construction. The exercise
+library still reads the full catalog, and the manual template editor still reads
+all 302 exercises and displays its existing profile-equipment warnings. Missing
+or `DRAFT` reviewed metadata does not hide a browse or manual option.
 
 ## Deliberately incomplete work
 
-This eligibility milestone did not approve metadata or enable production rollout. The
-repository now also contains the downstream production-disabled weekly ledger and
-state-based prescription policy, but capability evidence, progression, deload offers,
-program blocks, active-workout substitution, an LLM, and remote services remain absent.
+Task 6A shipped behind the production-disabled reviewed flag: deterministic
+capability evidence exists and soft capability-penalty suppression is wired
+through the reviewed planner path.
 
-The next enablement requirement is deliberate human review and approval of the
-metadata, followed by an explicit availability/persona review and a deliberate
-production flag change. Approval must not happen automatically as a side effect
-of catalog growth or pull-request review.
+Task 6B remains open: there is no `ProgressionEngine.kt`, no one-variable
+progression, and no broader derived-state rollout beyond
+`AdaptationStatePolicy`'s current `UNCALIBRATED`/`RETURNING` outputs.
+
+Task 6C remains open: there is no `DeloadOfferPolicy.kt`, no user-controlled
+`DeloadOffer`, and no multi-session deload state machine.
+
+The next enablement requirement is still deliberate human review and approval of
+the metadata, followed by an explicit availability/persona review and a
+deliberate production flag change. Approval must not happen automatically as a
+side effect of catalog growth, pull-request review, or capability evidence.

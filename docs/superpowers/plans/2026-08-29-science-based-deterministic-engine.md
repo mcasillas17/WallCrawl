@@ -174,7 +174,8 @@ continues to derive only `UNCALIBRATED` and `RETURNING`.
 and the gym-floor logger and rest timer are in the app. Verified 2026-09-02: RPE/RIR input
 exists in `ActiveWorkoutScreen`/`ActiveWorkoutViewModel`, and `workout_sets` carries
 `rpe`, `rir`, `feltManageable`, `completedAtTimestamp`, `stoppedAtTimestamp`, and
-`stopReason` since schema 9. Nothing downstream consumes the feedback yet; that is Task 6.
+`stopReason` since schema 9. Task 6A now consumes a strict reviewed-only subset for
+capability evidence; progression and deload logic remain Task 6B/6C.
 
 **Files:**
 - Modify: `app/src/main/java/wallcrawl/elopenmike/com/core/model/Workout.kt`
@@ -204,35 +205,58 @@ from any other field. `PAIN_STOP` means only that the user chose to stop because
 something hurt — never an injury, a symptom report, or a diagnosis — and there
 is no free-text stop reason in this milestone.
 
-**Not in this milestone:** capability evidence, progression, deloads, and the
-weekly dose ledger do not read this feedback yet.
+**Not in this milestone:** one-variable progression and user-controlled deloads do
+not read this feedback yet. Capability evidence now does, but only behind the
+reviewed-only production-disabled flag and only for strictly qualifying completed
+work.
 
 ### Task 6: Add Capability Evidence, Progression, and DeloadOffer
 
-**Status:** Not started, verified 2026-09-02. None of `CapabilityEvidencePolicy.kt`,
-`ProgressionEngine.kt`, or `DeloadOfferPolicy.kt` exist under `core/ai/`.
+**Status:** Task 6A shipped, verified 2026-09-02. `CapabilityEvidencePolicy.kt`,
+`CapabilityPreferenceRankingPolicy.kt`, focused unit tests, and reviewed-context wiring are in
+place behind the production-disabled reviewed flag. They derive deterministic capability
+evidence and suppress only the matching candidate's soft capability penalty. Production remains
+on the legacy path because `PlannerFeatureFlags.reviewedCapabilityEligibility = false` and the
+bundled reviewed cohort remains 37 `DRAFT` / 0 `APPROVED`. Task 6B and Task 6C remain not
+started: `ProgressionEngine.kt` and `DeloadOfferPolicy.kt` are absent.
 
-**Prerequisite discovered during Task 3/4 review:** this task is the first that will want
-adaptation states beyond `UNCALIBRATED` and `RETURNING`. `ExerciseEligibilityPolicy` applies
-the temporary advanced-complexity ceiling with an allow-by-default check on exactly those two
-states, so **any additional derived state lifts that ceiling**. `AdaptationStatePolicy`
-therefore emits only those two today, and
-`AdaptationStatePolicyTest.everyDerivableStateIsOneTheAdvancedCeilingCovers` fails if that
-changes. Widening the state machine and updating the ceiling must happen in one change, not
-two.
+Task 6A evidence requires two distinct `SessionStatus.COMPLETED` sessions for the same exact
+exercise ID, fully qualifying non-warm-up work, and explicit per-set
+`feltManageable == true`. Null/false manageable answers, completion alone, RPE, and RIR do not
+qualify.
 
-**Files:**
+**Prerequisite discovered during Task 3/4 review:** Task 6A landed without widening derived
+adaptation states. Task 6B/6C are still the first work that wants states beyond
+`UNCALIBRATED` and `RETURNING`. `ExerciseEligibilityPolicy` applies the temporary advanced-
+complexity ceiling with an allow-by-default check on exactly those two states, so **any
+additional derived state lifts that ceiling**. `AdaptationStatePolicy` therefore still emits
+only those two today, and `AdaptationStatePolicyTest.everyDerivableStateIsOneTheAdvancedCeilingCovers`
+fails if that changes. Widening the state machine and updating the ceiling must happen in one
+change, not two.
+
+**Files shipped in 6A:**
 - Create: `app/src/main/java/wallcrawl/elopenmike/com/core/ai/CapabilityEvidencePolicy.kt`
+- Create: `app/src/main/java/wallcrawl/elopenmike/com/core/model/CapabilityEvidence.kt`
+- Create: `app/src/test/java/wallcrawl/elopenmike/com/core/ai/CapabilityEvidencePolicyTest.kt`
+- Modify: `app/src/main/java/wallcrawl/elopenmike/com/core/ai/CapabilityPreferenceRankingPolicy.kt`
+- Modify: `app/src/main/java/wallcrawl/elopenmike/com/core/ai/FakeWorkoutPlanner.kt`
+- Modify: `app/src/main/java/wallcrawl/elopenmike/com/core/ai/WorkoutGenerationContextBuilder.kt`
+- Modify: `app/src/main/java/wallcrawl/elopenmike/com/core/model/WorkoutGenerationContext.kt`
+- Modify: `app/src/test/java/wallcrawl/elopenmike/com/core/ai/CapabilityPreferenceRankingPolicyTest.kt`
+- Modify: `app/src/test/java/wallcrawl/elopenmike/com/core/ai/WorkoutGenerationContextBuilderTest.kt`
+
+**Files still open for 6B/6C:**
 - Create: `app/src/main/java/wallcrawl/elopenmike/com/core/ai/ProgressionEngine.kt`
 - Create: `app/src/main/java/wallcrawl/elopenmike/com/core/ai/DeloadOfferPolicy.kt`
-- Test: `app/src/test/java/wallcrawl/elopenmike/com/core/ai/CapabilityEvidencePolicyTest.kt`
 - Test: `app/src/test/java/wallcrawl/elopenmike/com/core/ai/ProgressionEngineTest.kt`
 
-- [ ] Write failing tests: two comparable completed sessions plus explicit confirmation relax only soft penalties.
-- [ ] Preserve AVOID, constraints, equipment, and low-impact hard rules regardless of history.
-- [ ] Progress one variable at a time from comparable history; missing effort is neutral.
-- [ ] Create user-controlled `DeloadOffer` from request, returning state, or versioned multi-session pattern without fixed calendar/percentage.
-- [ ] Run tests and commit `feat: add transparent workout adaptation`.
+- [x] Write failing tests proving two distinct comparable completed sessions plus explicit per-set manageable confirmation relax only soft capability penalties.
+- [x] Preserve `AVOID`, exclusions, equipment, all training constraints, `LOW_IMPACT_ONLY`, the approved-metadata gate, and the temporary advanced ceiling regardless of history.
+- [x] Scope evidence to the exact demonstrated exercise plus direct approved regressions only when both source and target metadata are `APPROVED`.
+- [x] Keep candidate membership unchanged and suppress only the matching candidate's reviewed soft capability penalty.
+- [ ] Task 6B: Progress one variable at a time from comparable history; missing effort is neutral.
+- [ ] Task 6C: Create user-controlled `DeloadOffer` from request, returning state, or versioned multi-session pattern without fixed calendar/percentage.
+- [ ] Widen adaptation-state derivation beyond `UNCALIBRATED` and `RETURNING` together with the advanced-ceiling update.
 
 ### Task 7: Add Session and Weekly Program Validation
 

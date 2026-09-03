@@ -6,7 +6,15 @@ import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityFailure
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
+import wallcrawl.elopenmike.com.core.model.CapabilityEvidence
+import wallcrawl.elopenmike.com.core.model.CapabilityEvidencePolicyVersion
+import wallcrawl.elopenmike.com.core.model.CapabilityEvidenceReason
+import wallcrawl.elopenmike.com.core.model.CapabilityEvidenceScope
+import wallcrawl.elopenmike.com.core.model.CapabilityEvidenceSet
 import wallcrawl.elopenmike.com.core.model.Difficulty
+import wallcrawl.elopenmike.com.core.model.EligibilityDecision
+import wallcrawl.elopenmike.com.core.model.EligibilityPreference
+import wallcrawl.elopenmike.com.core.model.EligibilityReason
 import wallcrawl.elopenmike.com.core.model.MechanicsType
 import wallcrawl.elopenmike.com.core.model.MovementPattern
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
@@ -22,11 +30,15 @@ import wallcrawl.elopenmike.com.core.model.PriorityLevel
 import wallcrawl.elopenmike.com.core.model.ReviewProvenance
 import wallcrawl.elopenmike.com.core.model.ReviewState
 import wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata
+import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
 import wallcrawl.elopenmike.com.core.model.SupportRequirement
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
+import wallcrawl.elopenmike.com.core.model.WorkoutExercise
+import wallcrawl.elopenmike.com.core.model.WorkoutOrigin
+import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.fail
@@ -423,6 +435,330 @@ class FakeWorkoutPlannerTest {
     }
 
     @Test
+    fun generateWorkout_reviewedCompoundsDemoteLimitedAndUnknownUntilExactEvidenceMatches() = runTest {
+        val limited = rankingExercise(
+            id = "a-limited-compound",
+            difficulty = Difficulty.BEGINNER,
+            reviewedState = ReviewState.APPROVED,
+            reviewedComplexity = ComplexityTier.FOUNDATIONAL
+        )
+        val unknown = rankingExercise(
+            id = "b-unknown-compound",
+            difficulty = Difficulty.BEGINNER,
+            reviewedState = ReviewState.APPROVED,
+            reviewedComplexity = ComplexityTier.FOUNDATIONAL
+        )
+        val clear = rankingExercise(
+            id = "z-clear-compound",
+            difficulty = Difficulty.BEGINNER,
+            reviewedState = ReviewState.APPROVED,
+            reviewedComplexity = ComplexityTier.FOUNDATIONAL
+        )
+        val candidates = listOf(limited, unknown, clear)
+        val decisions = listOf(
+            reviewedDecision(
+                id = limited.id,
+                preferences = listOf(
+                    EligibilityPreference.Limited(MovementCapabilityType.FLOOR_TRANSITION)
+                )
+            ),
+            reviewedDecision(
+                id = unknown.id,
+                preferences = listOf(
+                    EligibilityPreference.Unknown(
+                        MovementCapabilityType.BALANCE_WITHOUT_SUPPORT
+                    )
+                )
+            ),
+            reviewedDecision(id = clear.id)
+        )
+
+        val withoutEvidence = planner.generateWorkout(
+            reviewedRankingContext(
+                experienceLevel = ExperienceLevel.BEGINNER,
+                candidates = candidates,
+                decisions = decisions
+            )
+        )
+        val withExactEvidence = planner.generateWorkout(
+            reviewedRankingContext(
+                experienceLevel = ExperienceLevel.BEGINNER,
+                candidates = candidates,
+                decisions = decisions,
+                capabilityEvidence = capabilityEvidenceSet(
+                    limited.id to capabilityEvidence(
+                        appliesToExerciseId = limited.id,
+                        demonstratedExerciseId = limited.id,
+                        scope = CapabilityEvidenceScope.EXACT_EXERCISE
+                    )
+                )
+            )
+        )
+
+        assertThat(withoutEvidence.exercises.map { it.exerciseId })
+            .containsExactly(clear.id, limited.id, unknown.id)
+            .inOrder()
+        assertThat(withExactEvidence.exercises.map { it.exerciseId })
+            .containsExactly(limited.id, clear.id, unknown.id)
+            .inOrder()
+    }
+
+    @Test
+    fun generateWorkout_reviewedCompoundOrderingKeepsPrimaryAheadOfCapabilityAndCapabilityAheadOfExperienceFatigueAndId() = runTest {
+        val penalizedPrimary = rankingExercise(
+            id = "a-penalized-primary",
+            difficulty = Difficulty.BEGINNER,
+            fatigueScore = 1,
+            reviewedState = ReviewState.APPROVED,
+            reviewedComplexity = ComplexityTier.FOUNDATIONAL
+        )
+        val clearPrimary = rankingExercise(
+            id = "z-clear-primary",
+            difficulty = Difficulty.ADVANCED,
+            fatigueScore = 5,
+            reviewedState = ReviewState.APPROVED,
+            reviewedComplexity = ComplexityTier.ADVANCED
+        )
+        val clearSecondary = rankingExercise(
+            id = "b-clear-secondary",
+            difficulty = Difficulty.BEGINNER,
+            fatigueScore = 5,
+            reviewedState = ReviewState.APPROVED,
+            reviewedComplexity = ComplexityTier.FOUNDATIONAL
+        ).copy(
+            primaryMuscles = listOf(StandardMuscles.CORE),
+            secondaryMuscles = listOf(StandardMuscles.CHEST)
+        )
+
+        val workout = planner.generateWorkout(
+            reviewedRankingContext(
+                experienceLevel = ExperienceLevel.BEGINNER,
+                candidates = listOf(penalizedPrimary, clearPrimary, clearSecondary),
+                decisions = listOf(
+                    reviewedDecision(
+                        id = penalizedPrimary.id,
+                        preferences = listOf(
+                            EligibilityPreference.Limited(
+                                MovementCapabilityType.FLOOR_TRANSITION
+                            )
+                        )
+                    ),
+                    reviewedDecision(id = clearPrimary.id),
+                    reviewedDecision(id = clearSecondary.id)
+                )
+            )
+        )
+
+        assertThat(workout.exercises.map { it.exerciseId })
+            .containsExactly(clearPrimary.id, penalizedPrimary.id, clearSecondary.id)
+            .inOrder()
+    }
+
+    @Test
+    fun generateWorkout_reviewedCompoundCapabilityEvidenceDoesNotRemoveExperiencePenalty() = runTest {
+        val evidencedAdvanced = rankingExercise(
+            id = "a-evidenced-advanced",
+            difficulty = Difficulty.BEGINNER,
+            reviewedState = ReviewState.APPROVED,
+            reviewedComplexity = ComplexityTier.ADVANCED
+        )
+        val foundational = rankingExercise(
+            id = "z-foundational",
+            difficulty = Difficulty.ADVANCED,
+            reviewedState = ReviewState.APPROVED,
+            reviewedComplexity = ComplexityTier.FOUNDATIONAL
+        )
+
+        val workout = planner.generateWorkout(
+            reviewedRankingContext(
+                experienceLevel = ExperienceLevel.BEGINNER,
+                candidates = listOf(evidencedAdvanced, foundational),
+                decisions = listOf(
+                    reviewedDecision(
+                        id = evidencedAdvanced.id,
+                        preferences = listOf(
+                            EligibilityPreference.Limited(
+                                MovementCapabilityType.FLOOR_TRANSITION
+                            )
+                        )
+                    ),
+                    reviewedDecision(id = foundational.id)
+                ),
+                capabilityEvidence = capabilityEvidenceSet(
+                    evidencedAdvanced.id to capabilityEvidence(
+                        appliesToExerciseId = evidencedAdvanced.id,
+                        demonstratedExerciseId = evidencedAdvanced.id,
+                        scope = CapabilityEvidenceScope.EXACT_EXERCISE
+                    )
+                )
+            )
+        )
+
+        assertThat(workout.exercises.map { it.exerciseId })
+            .containsExactly(foundational.id, evidencedAdvanced.id)
+            .inOrder()
+    }
+
+    @Test
+    fun generateWorkout_reviewedAccessoriesDemoteLimitedAndUnknownUntilDirectRegressionEvidenceMatches() = runTest {
+        val anchor = rankingExercise(
+            id = "anchor-compound",
+            difficulty = Difficulty.BEGINNER,
+            reviewedState = ReviewState.APPROVED,
+            reviewedComplexity = ComplexityTier.FOUNDATIONAL
+        )
+        val limited = rankingExercise(
+            id = "a-limited-accessory",
+            difficulty = Difficulty.BEGINNER,
+            mechanics = MechanicsType.ISOLATION,
+            reviewedState = ReviewState.APPROVED,
+            reviewedComplexity = ComplexityTier.FOUNDATIONAL
+        )
+        val unknown = rankingExercise(
+            id = "b-unknown-accessory",
+            difficulty = Difficulty.BEGINNER,
+            mechanics = MechanicsType.ISOLATION,
+            reviewedState = ReviewState.APPROVED,
+            reviewedComplexity = ComplexityTier.FOUNDATIONAL
+        )
+        val clear = rankingExercise(
+            id = "z-clear-accessory",
+            difficulty = Difficulty.BEGINNER,
+            mechanics = MechanicsType.ISOLATION,
+            reviewedState = ReviewState.APPROVED,
+            reviewedComplexity = ComplexityTier.FOUNDATIONAL
+        )
+        val decisions = listOf(
+            reviewedDecision(id = anchor.id),
+            reviewedDecision(
+                id = limited.id,
+                preferences = listOf(
+                    EligibilityPreference.Limited(MovementCapabilityType.FLOOR_TRANSITION)
+                )
+            ),
+            reviewedDecision(
+                id = unknown.id,
+                preferences = listOf(
+                    EligibilityPreference.Unknown(
+                        MovementCapabilityType.BALANCE_WITHOUT_SUPPORT
+                    )
+                )
+            ),
+            reviewedDecision(id = clear.id)
+        )
+
+        val withoutEvidence = planner.generateWorkout(
+            reviewedRankingContext(
+                experienceLevel = ExperienceLevel.BEGINNER,
+                candidates = listOf(anchor, limited, unknown, clear),
+                decisions = decisions
+            )
+        )
+        val withDirectRegressionEvidence = planner.generateWorkout(
+            reviewedRankingContext(
+                experienceLevel = ExperienceLevel.BEGINNER,
+                candidates = listOf(anchor, limited, unknown, clear),
+                decisions = decisions,
+                capabilityEvidence = capabilityEvidenceSet(
+                    limited.id to capabilityEvidence(
+                        appliesToExerciseId = limited.id,
+                        demonstratedExerciseId = anchor.id,
+                        scope = CapabilityEvidenceScope.DIRECT_APPROVED_REGRESSION
+                    )
+                )
+            )
+        )
+
+        assertThat(withoutEvidence.exercises.map { it.exerciseId })
+            .containsExactly(anchor.id, clear.id, limited.id, unknown.id)
+            .inOrder()
+        assertThat(withDirectRegressionEvidence.exercises.map { it.exerciseId })
+            .containsExactly(anchor.id, limited.id, clear.id, unknown.id)
+            .inOrder()
+    }
+
+    @Test
+    fun generateWorkout_reviewedAccessoryOrderingKeepsPrimaryAndMechanicsAheadOfCapabilityAndCapabilityAheadOfExperienceFatigueAndId() = runTest {
+        val anchor = rankingExercise(
+            id = "anchor-compound",
+            difficulty = Difficulty.BEGINNER,
+            fatigueScore = 5,
+            reviewedState = ReviewState.APPROVED,
+            reviewedComplexity = ComplexityTier.FOUNDATIONAL
+        )
+        val penalizedPrimaryIsolation = rankingExercise(
+            id = "a-penalized-primary-isolation",
+            difficulty = Difficulty.BEGINNER,
+            mechanics = MechanicsType.ISOLATION,
+            fatigueScore = 1,
+            reviewedState = ReviewState.APPROVED,
+            reviewedComplexity = ComplexityTier.FOUNDATIONAL
+        )
+        val clearPrimaryNoProgramming = rankingExercise(
+            id = "b-clear-primary-no-programming",
+            difficulty = Difficulty.BEGINNER,
+            reviewedState = ReviewState.APPROVED,
+            reviewedComplexity = ComplexityTier.FOUNDATIONAL
+        ).copy(programming = null)
+        val clearSecondaryIsolation = rankingExercise(
+            id = "c-clear-secondary-isolation",
+            difficulty = Difficulty.BEGINNER,
+            mechanics = MechanicsType.ISOLATION,
+            fatigueScore = 5,
+            reviewedState = ReviewState.APPROVED,
+            reviewedComplexity = ComplexityTier.FOUNDATIONAL
+        ).copy(
+            primaryMuscles = listOf(StandardMuscles.CORE),
+            secondaryMuscles = listOf(StandardMuscles.CHEST)
+        )
+        val clearPrimaryAdvancedIsolation = rankingExercise(
+            id = "z-clear-primary-advanced-isolation",
+            difficulty = Difficulty.ADVANCED,
+            mechanics = MechanicsType.ISOLATION,
+            fatigueScore = 5,
+            reviewedState = ReviewState.APPROVED,
+            reviewedComplexity = ComplexityTier.ADVANCED
+        )
+
+        val workout = planner.generateWorkout(
+            reviewedRankingContext(
+                experienceLevel = ExperienceLevel.BEGINNER,
+                candidates = listOf(
+                    anchor,
+                    penalizedPrimaryIsolation,
+                    clearPrimaryNoProgramming,
+                    clearSecondaryIsolation,
+                    clearPrimaryAdvancedIsolation
+                ),
+                decisions = listOf(
+                    reviewedDecision(id = anchor.id),
+                    reviewedDecision(
+                        id = penalizedPrimaryIsolation.id,
+                        preferences = listOf(
+                            EligibilityPreference.Limited(
+                                MovementCapabilityType.FLOOR_TRANSITION
+                            )
+                        )
+                    ),
+                    reviewedDecision(id = clearPrimaryNoProgramming.id),
+                    reviewedDecision(id = clearSecondaryIsolation.id),
+                    reviewedDecision(id = clearPrimaryAdvancedIsolation.id)
+                )
+            )
+        )
+
+        assertThat(workout.exercises.map { it.exerciseId })
+            .containsExactly(
+                anchor.id,
+                clearPrimaryAdvancedIsolation.id,
+                penalizedPrimaryIsolation.id,
+                clearPrimaryNoProgramming.id,
+                clearSecondaryIsolation.id
+            )
+            .inOrder()
+    }
+
+    @Test
     fun generateWorkout_reviewedModeUsesApprovedComplexityOverLegacyDifficulty() = runTest {
         val reviewedAdvanced = rankingExercise(
             id = "a-reviewed-advanced",
@@ -476,6 +812,93 @@ class FakeWorkoutPlannerTest {
         assertThat(workout.exercises.map { it.exerciseId })
             .containsExactly(draftAdvanced.id, draftFoundational.id)
             .inOrder()
+    }
+
+    @Test
+    fun generateWorkout_reviewedCapabilityPenaltyStillSelectsSoleCandidateAndPreservesEnoughSlotMembership() = runTest {
+        val solePenalized = rankingExercise(
+            id = "sole-penalized-compound",
+            difficulty = Difficulty.ADVANCED,
+            reviewedState = ReviewState.APPROVED,
+            reviewedComplexity = ComplexityTier.ADVANCED
+        )
+        val soleWorkout = planner.generateWorkout(
+            reviewedRankingContext(
+                experienceLevel = ExperienceLevel.BEGINNER,
+                candidates = listOf(solePenalized),
+                decisions = listOf(
+                    reviewedDecision(
+                        id = solePenalized.id,
+                        preferences = listOf(
+                            EligibilityPreference.Limited(
+                                MovementCapabilityType.FLOOR_TRANSITION
+                            )
+                        )
+                    )
+                )
+            )
+        )
+
+        val candidates = listOf(
+            rankingExercise(
+                id = "membership-compound",
+                difficulty = Difficulty.BEGINNER,
+                reviewedState = ReviewState.APPROVED,
+                reviewedComplexity = ComplexityTier.FOUNDATIONAL
+            ),
+            rankingExercise(
+                id = "membership-limited-accessory",
+                difficulty = Difficulty.BEGINNER,
+                mechanics = MechanicsType.ISOLATION,
+                reviewedState = ReviewState.APPROVED,
+                reviewedComplexity = ComplexityTier.FOUNDATIONAL
+            ),
+            rankingExercise(
+                id = "membership-unknown-accessory",
+                difficulty = Difficulty.BEGINNER,
+                mechanics = MechanicsType.ISOLATION,
+                reviewedState = ReviewState.APPROVED,
+                reviewedComplexity = ComplexityTier.FOUNDATIONAL
+            ),
+            rankingExercise(
+                id = "membership-clear-accessory",
+                difficulty = Difficulty.BEGINNER,
+                mechanics = MechanicsType.ISOLATION,
+                reviewedState = ReviewState.APPROVED,
+                reviewedComplexity = ComplexityTier.FOUNDATIONAL
+            )
+        )
+        val membershipWorkout = planner.generateWorkout(
+            reviewedRankingContext(
+                experienceLevel = ExperienceLevel.BEGINNER,
+                candidates = candidates,
+                decisions = listOf(
+                    reviewedDecision(id = "membership-compound"),
+                    reviewedDecision(
+                        id = "membership-limited-accessory",
+                        preferences = listOf(
+                            EligibilityPreference.Limited(
+                                MovementCapabilityType.FLOOR_TRANSITION
+                            )
+                        )
+                    ),
+                    reviewedDecision(
+                        id = "membership-unknown-accessory",
+                        preferences = listOf(
+                            EligibilityPreference.Unknown(
+                                MovementCapabilityType.BALANCE_WITHOUT_SUPPORT
+                            )
+                        )
+                    ),
+                    reviewedDecision(id = "membership-clear-accessory")
+                )
+            )
+        )
+
+        assertThat(soleWorkout.exercises.map { it.exerciseId })
+            .containsExactly(solePenalized.id)
+        assertThat(membershipWorkout.exercises.map { it.exerciseId })
+            .containsExactlyElementsIn(candidates.map { it.id })
     }
 
     @Test
@@ -612,6 +1035,38 @@ class FakeWorkoutPlannerTest {
 
         assertThat(fromDraft.copy(id = baseline.id)).isEqualTo(baseline)
         assertThat(fromApproved.copy(id = baseline.id)).isEqualTo(baseline)
+    }
+
+    @Test
+    fun generateWorkout_legacyModeIgnoresCapabilityEvidenceAndCompletedCapabilityHistory() = runTest {
+        val profile = UserProfile(
+            goals = setOf(FitnessGoal.BUILD_MUSCLE),
+            musclePriorities = mapOf(StandardMuscles.CHEST to PriorityLevel.HIGH)
+        )
+        val exercise = allExercises.single { it.id == "incline-dumbbell-press" }
+
+        val baseline = FakeWorkoutPlanner().generateWorkout(
+            WorkoutGenerationContext(
+                userProfile = profile,
+                allowedExercises = listOf(exercise)
+            )
+        )
+        val withEvidenceAndHistory = FakeWorkoutPlanner().generateWorkout(
+            WorkoutGenerationContext(
+                userProfile = profile,
+                allowedExercises = listOf(exercise),
+                recentWorkoutHistory = comparableCapabilityHistory(exercise.id),
+                capabilityEvidence = capabilityEvidenceSet(
+                    exercise.id to capabilityEvidence(
+                        appliesToExerciseId = exercise.id,
+                        demonstratedExerciseId = exercise.id,
+                        scope = CapabilityEvidenceScope.EXACT_EXERCISE
+                    )
+                )
+            )
+        )
+
+        assertThat(withEvidenceAndHistory.copy(id = baseline.id)).isEqualTo(baseline)
     }
 
     @Test
@@ -766,6 +1221,24 @@ class FakeWorkoutPlannerTest {
         )
     }
 
+    private fun reviewedRankingContext(
+        experienceLevel: ExperienceLevel,
+        candidates: List<Exercise>,
+        decisions: List<EligibilityDecision>,
+        capabilityEvidence: CapabilityEvidenceSet = CapabilityEvidenceSet.empty()
+    ): WorkoutGenerationContext =
+        rankingContext(
+            experienceLevel = experienceLevel,
+            candidates = candidates,
+            reviewedEligibilityEnabled = true
+        ).copy(
+            automaticEligibilityResult = AutomaticEligibilityResult.Candidates(
+                exercises = candidates,
+                decisions = decisions
+            ),
+            capabilityEvidence = capabilityEvidence
+        )
+
     private fun rankingExercise(
         id: String,
         difficulty: Difficulty,
@@ -823,6 +1296,90 @@ class FakeWorkoutPlannerTest {
                 reviewedAtEpochMillis = if (reviewState == ReviewState.APPROVED) 1L else null,
                 schemaVersion = 1,
                 policyVersion = 1
+            )
+        )
+
+    private fun reviewedDecision(
+        id: String,
+        preferences: List<EligibilityPreference> = emptyList()
+    ): EligibilityDecision =
+        EligibilityDecision(
+            exerciseId = id,
+            eligible = true,
+            reasons = listOf(EligibilityReason.APPROVED),
+            preferences = preferences
+        )
+
+    private fun capabilityEvidenceSet(
+        vararg records: Pair<String, CapabilityEvidence>
+    ): CapabilityEvidenceSet = CapabilityEvidenceSet.from(records.toMap())
+
+    private fun capabilityEvidence(
+        appliesToExerciseId: String,
+        demonstratedExerciseId: String,
+        scope: CapabilityEvidenceScope
+    ): CapabilityEvidence =
+        CapabilityEvidence(
+            policyVersion = CapabilityEvidencePolicyVersion.TWO_COMPARABLE_MANAGEABLE_SESSIONS_V1,
+            reason = CapabilityEvidenceReason.TWO_COMPARABLE_MANAGEABLE_COMPLETED_SESSIONS,
+            appliesToExerciseId = appliesToExerciseId,
+            demonstratedExerciseId = demonstratedExerciseId,
+            scope = scope,
+            comparableShape = wallcrawl.elopenmike.com.core.model.ComparableMovementShape.WEIGHT_REPETITIONS,
+            qualifyingSessionIds = listOf("session-a", "session-b")
+        )
+
+    private fun comparableCapabilityHistory(exerciseId: String): List<WorkoutSession> =
+        listOf(
+            completedCapabilitySession(
+                sessionId = "session-a",
+                exerciseId = exerciseId,
+                completedAtTimestamp = 1_000L
+            ),
+            completedCapabilitySession(
+                sessionId = "session-b",
+                exerciseId = exerciseId,
+                completedAtTimestamp = 2_000L
+            )
+        )
+
+    private fun completedCapabilitySession(
+        sessionId: String,
+        exerciseId: String,
+        completedAtTimestamp: Long
+    ): WorkoutSession =
+        WorkoutSession(
+            id = sessionId,
+            name = "Completed $exerciseId",
+            startedAtTimestamp = completedAtTimestamp - 600_000L,
+            completedAtTimestamp = completedAtTimestamp,
+            status = SessionStatus.COMPLETED,
+            origin = WorkoutOrigin.PLANNER,
+            focusMuscles = listOf(StandardMuscles.CHEST),
+            exercises = listOf(
+                WorkoutExercise(
+                    id = "$sessionId-$exerciseId",
+                    sessionId = sessionId,
+                    exerciseId = exerciseId,
+                    orderIndex = 0,
+                    targetSets = 1,
+                    targetRepMin = 8,
+                    targetRepMax = 8,
+                    sets = listOf(
+                        WorkoutSet(
+                            id = "$sessionId-set",
+                            workoutExerciseId = "$sessionId-$exerciseId",
+                            setNumber = 1,
+                            targetReps = 8,
+                            completedReps = 8,
+                            targetWeight = 45.0,
+                            completedWeight = 45.0,
+                            isCompleted = true,
+                            feltManageable = true,
+                            completedAtTimestamp = completedAtTimestamp
+                        )
+                    )
+                )
             )
         )
 

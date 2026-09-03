@@ -15,7 +15,8 @@ constraints and local movement-capability inputs, a complete bundled catalog,
 structured workout generation and
 validation, reusable custom workout templates, type-aware active set logging
 with no fabricated starting loads, Room persistence, workout-history context,
-experience-aware exercise ordering, a production-disabled reviewed state-based
+experience-aware exercise ordering, a production-disabled reviewed capability-
+evidence soft-penalty relaxation, a production-disabled reviewed state-based
 dose/effort/rest policy, and progress calculations. The current
 `FakeWorkoutPlanner` is deliberately replaceable; no production local LLM
 runtime is integrated yet.
@@ -117,13 +118,14 @@ are stored in the existing local Room profile. This milestone adds no weight,
 height, BMI, age, body composition, cloud sync, analytics, Health Connect,
 Wear OS, network, or LLM data flow.
 
-The reviewed-only deterministic eligibility layer can consume these values for
-automatic planning, but production composition deliberately keeps that path disabled
-while every reviewed-metadata entry is still `DRAFT`. The current recommendation
-therefore remains unchanged when a movement preference changes. Tests enable the gate
-only with unmistakably synthetic in-memory approvals and verify equipment, exclusions,
-constraints, capability `AVOID`, impact, reviewed-state, and temporary advanced-
-complexity rules without changing browse or manual-workout access.
+The reviewed-only deterministic path can consume these values for automatic
+planning, but production composition deliberately keeps that path disabled while
+every reviewed-metadata entry is still `DRAFT`. The current production
+recommendation therefore remains unchanged when a movement preference changes.
+Tests enable the path only with unmistakably synthetic in-memory approvals and
+verify equipment, exclusions, constraints, capability `AVOID`, impact,
+reviewed-state, temporary advanced-complexity rules, and capability-evidence
+soft-penalty suppression without changing browse or manual-workout access.
 
 The fake planner uses the same `WorkoutPlanner` contract intended for a future
 Qwen, Gemma, or LiteRT-backed implementation. It only selects IDs from
@@ -191,9 +193,15 @@ keeps every control large, explicit, and local.
   history, and progress — skipped, incomplete, and discarded work never looks
   finished.
 
-Everything above stays on the device. The feedback is stored so a future
-deterministic engine has honest history to read; progression and deload logic do
-not consume it yet.
+Everything above stays on the device. Reviewed capability evidence now reads a
+strict subset of that history behind the production-disabled reviewed gate: two
+distinct `SessionStatus.COMPLETED` sessions for the same exercise ID, with only
+qualifying non-warm-up work and explicit `feltManageable == true`. Completion
+and stop fields only disqualify invalid observations; they do not create
+evidence on their own. Null/false manageable answers, completion alone, RPE,
+and RIR do not qualify. RPE/RIR remain stored for logging and are unused by
+capability evidence. Progression and deload logic still do not consume the
+feedback.
 
 ## Architecture
 
@@ -419,10 +427,12 @@ a tag cannot publish its prerelease unless instrumentation succeeds.
   `programming.difficulty`. The reviewed-enabled path reads only human-approved
   `reviewedMetadata.complexity`, never draft metadata.
 - Analytics are derived from completed local sessions, not sample metrics.
-- Movement-capability values feed a reviewed-only deterministic eligibility path, but
-  production keeps that path disabled until human-approved metadata and an explicit
-  enablement review exist. They do not affect today's filtering, ranking,
-  substitutions, dose, effort, or rest guidance.
+- Movement-capability values already drive the reviewed-only automatic path's
+  hard eligibility, soft preferences, evidence-backed soft-capability penalty
+  suppression, and relevant limited-capability effort guidance, but production
+  keeps that path disabled until human-approved metadata and an explicit
+  enablement review exist. They do not affect today's production filtering,
+  ranking, substitutions, dose, effort, or rest guidance.
 - Database migrations must preserve user history; destructive migration fallback
   is intentionally disabled.
 

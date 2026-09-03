@@ -25,9 +25,10 @@ Core workouts must remain offline, account-free, and usable without a model or c
 The shipped foundation includes Room schema 11 with a continuous migration chain, the complete
 302-exercise catalog, 131 authored programming entries including all 14 timed strength
 exercises, first-run onboarding, local movement preferences, custom templates, type-aware
-workout logging, RPE/RIR and typed stop reasons, a rest timer, experience-aware ranking, the
-`PRIMARY_ONLY_V1` weekly ledger, and state-based dose/effort/rest policy. Reviewed eligibility
-and state-based guidance remain production-disabled while every reviewed record is still draft.
+workout logging, RPE/RIR and typed stop reasons, a rest timer, experience-aware ranking,
+capability-evidence soft-penalty relaxation, the `PRIMARY_ONLY_V1` weekly ledger, and state-based
+dose/effort/rest policy. Reviewed eligibility and state-based guidance remain
+production-disabled while every reviewed record is still draft.
 
 ## Now: make deterministic coaching production-ready
 
@@ -49,9 +50,10 @@ start until approval and all engineering gates are complete.
 5. **Resolve Progress weekly semantics.** Decide whether the card reports primary-only dose or
    broader activity, then align its week boundary, metadata behavior, label, empty state,
    tests, and architecture documentation.
-6. **Implement capability evidence, progression, and deload offers.** Consume comparable
-   completed outcomes without weakening hard rules, progress one variable at a time, keep
-   deload user-controlled, and widen adaptation states and their complexity ceiling atomically.
+6. **Complete progression and deload adaptation after shipped capability evidence.** Capability
+   evidence now consumes comparable completed outcomes without weakening hard rules. Next,
+   progress one variable at a time, keep deload user-controlled, and widen adaptation states and
+   their complexity ceiling atomically.
 7. **Complete the deterministic release gate.** Add the `concurrent-activity` persona,
    primary-only-ledger and no-invented-load assertions, remove unsupported claims from old
    plans, and run the pinned importer drift check in CI.
@@ -62,6 +64,7 @@ start until approval and all engineering gates are complete.
 Detailed execution:
 
 - [Deterministic engine plan](docs/superpowers/plans/2026-08-29-science-based-deterministic-engine.md)
+- [Capability evidence plan](docs/superpowers/plans/2026-09-01-capability-evidence.md)
 - [Adaptive coach plan](docs/superpowers/plans/2026-08-28-adaptive-coach-product.md)
 - [Reviewed metadata sign-off](docs/reviewed-exercise-metadata-human-signoff.md)
 - [Roadmap audit evidence](docs/superpowers/plans/2026-09-02-roadmap-audit.md)

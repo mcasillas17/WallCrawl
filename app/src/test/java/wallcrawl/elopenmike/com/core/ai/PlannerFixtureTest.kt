@@ -5,7 +5,13 @@ import com.google.common.truth.Truth.assertWithMessage
 import java.util.UUID
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
+import wallcrawl.elopenmike.com.core.model.CapabilityEvidence
+import wallcrawl.elopenmike.com.core.model.CapabilityEvidencePolicyVersion
+import wallcrawl.elopenmike.com.core.model.CapabilityEvidenceReason
+import wallcrawl.elopenmike.com.core.model.CapabilityEvidenceScope
+import wallcrawl.elopenmike.com.core.model.CapabilityEvidenceSet
 import wallcrawl.elopenmike.com.core.model.CapabilityLevel
+import wallcrawl.elopenmike.com.core.model.ComparableMovementShape
 import wallcrawl.elopenmike.com.core.model.Difficulty
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.ExerciseAttribution
@@ -90,6 +96,8 @@ class PlannerFixtureTest {
         assertThat(evaluation.built.userProfile.experienceLevel)
             .isEqualTo(ExperienceLevel.BEGINNER)
         assertThat(allowedIds.containsAll(selectedIds)).isTrue()
+        assertThat(evaluation.built.context.capabilityEvidence)
+            .isEqualTo(CapabilityEvidenceSet.empty())
         evaluation.firstWorkout.exercises.forEach { generated ->
             val exercise = checkNotNull(catalogById[generated.exerciseId])
             assertThat(
@@ -172,6 +180,7 @@ class PlannerFixtureTest {
         val allowedIds = context.allowedExercises.map(Exercise::id).toSet()
 
         assertThat(context.trainingProgramState).isNotNull()
+        assertThat(context.capabilityEvidence).isEqualTo(CapabilityEvidenceSet.empty())
         assertThat(
             context.trainingProgramState?.weeklyLedger?.directPrimarySets
         ).isEmpty()
@@ -222,6 +231,7 @@ class PlannerFixtureTest {
         val snapshotRecentWorkoutHistory = readField(snapshot, "recentWorkoutHistory") as List<*>
         val snapshotExerciseHistory = readField(snapshot, "exerciseHistory") as Map<*, *>
         val snapshotAllowedExercises = readField(snapshot, "allowedExercises") as List<*>
+        val snapshotCapabilityEvidence = readField(snapshot, "capabilityEvidence")
         val snapshotRestPreferences =
             readField(snapshot, "priorUserRestPreferences") as Map<*, *>
 
@@ -245,6 +255,8 @@ class PlannerFixtureTest {
         assertThat(readField(snapshot, "excludedExerciseIds")).isNotSameInstanceAs(context.excludedExerciseIds)
         assertThat(snapshotAllowedExercises).isEqualTo(context.allowedExercises)
         assertThat(snapshotAllowedExercises).isNotSameInstanceAs(context.allowedExercises)
+        assertThat(snapshotCapabilityEvidence).isEqualTo(context.capabilityEvidence)
+        assertThat(snapshotCapabilityEvidence).isSameInstanceAs(context.capabilityEvidence)
         assertThat(snapshotRestPreferences).isEqualTo(context.priorUserRestPreferences)
         assertThat(snapshotRestPreferences)
             .isNotSameInstanceAs(context.priorUserRestPreferences)
@@ -610,6 +622,21 @@ class PlannerFixtureTest {
             recentlyTrainedMuscles = listOf(StandardMuscles.CHEST, StandardMuscles.TRICEPS),
             excludedExerciseIds = listOf("barbell-bench-press"),
             allowedExercises = listOf(allowedExercise),
+            capabilityEvidence = CapabilityEvidenceSet.from(
+                mapOf(
+                    allowedExercise.id to CapabilityEvidence(
+                        policyVersion =
+                            CapabilityEvidencePolicyVersion.TWO_COMPARABLE_MANAGEABLE_SESSIONS_V1,
+                        reason =
+                            CapabilityEvidenceReason.TWO_COMPARABLE_MANAGEABLE_COMPLETED_SESSIONS,
+                        appliesToExerciseId = allowedExercise.id,
+                        demonstratedExerciseId = allowedExercise.id,
+                        scope = CapabilityEvidenceScope.EXACT_EXERCISE,
+                        comparableShape = ComparableMovementShape.WEIGHT_REPETITIONS,
+                        qualifyingSessionIds = listOf("session-1", "session-2")
+                    )
+                )
+            ),
             priorUserRestPreferences = linkedMapOf(
                 allowedExercise.id to UserRestPreference(
                     restClass = wallcrawl.elopenmike.com.core.model.RestClass.LONG,
