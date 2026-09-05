@@ -29,7 +29,6 @@ class BackupPolicyResourceTest {
     @Test
     fun referencedLegacyRules_excludeEveryAppDataDomain() {
         withReferencedRules("fullBackupContent") { rules ->
-            assertThat(rules.nextTag()).isEqualTo(XmlPullParser.START_TAG)
             assertThat(rules.name).isEqualTo("full-backup-content")
             assertAllDomainsExcluded(rules)
             assertThat(rules.next()).isEqualTo(XmlPullParser.END_DOCUMENT)
@@ -39,7 +38,6 @@ class BackupPolicyResourceTest {
     @Test
     fun referencedModernRules_excludeEveryDomainFromCloudAndDeviceTransfer() {
         withReferencedRules("dataExtractionRules") { rules ->
-            assertThat(rules.nextTag()).isEqualTo(XmlPullParser.START_TAG)
             assertThat(rules.name).isEqualTo("data-extraction-rules")
             assertThat(rules.attributeCount).isEqualTo(0)
             val sections = mutableListOf<String>()
@@ -81,7 +79,12 @@ class BackupPolicyResourceTest {
             assertWithMessage("Packaged application must reference XML via android:$attribute")
                 .that(resourceId).isNotEqualTo(0)
             context.resources.getXml(resourceId).use { rules ->
-                assertThat(rules.next()).isEqualTo(XmlPullParser.START_DOCUMENT)
+                while (rules.eventType != XmlPullParser.START_TAG &&
+                    rules.eventType != XmlPullParser.END_DOCUMENT
+                ) {
+                    rules.next()
+                }
+                assertThat(rules.eventType).isEqualTo(XmlPullParser.START_TAG)
                 check(rules)
             }
         }
@@ -91,6 +94,12 @@ class BackupPolicyResourceTest {
         // Read the target APK's merged binary manifest, not the test APK or source XML.
         context.assets.openXmlResourceParser("AndroidManifest.xml").use { manifest ->
             while (manifest.next() != XmlPullParser.END_DOCUMENT) {
+                if (manifest.eventType == XmlPullParser.START_TAG && manifest.depth == 1) {
+                    assertThat(manifest.name).isEqualTo("manifest")
+                    assertWithMessage("Read the target application's manifest, not another APK")
+                        .that(manifest.getAttributeValue(null, "package"))
+                        .isEqualTo(context.packageName)
+                }
                 if (manifest.eventType == XmlPullParser.START_TAG &&
                     manifest.name == "application" && manifest.depth == 2
                 ) {
@@ -104,6 +113,8 @@ class BackupPolicyResourceTest {
 
     private companion object {
         const val ANDROID_NAMESPACE = "http://schemas.android.com/apk/res/android"
+        // Recheck this documented domain list when raising compileSdk (currently 37):
+        // https://developer.android.com/identity/data/autobackup#xml-include-exclude
         val BACKUP_DOMAINS = listOf(
             "root", "file", "database", "sharedpref", "external",
             "device_root", "device_file", "device_database", "device_sharedpref"

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Android 12+: also deny transfer data on transports that honor these rules. -->
+<!-- No cross-platform-transfer opt-in: there is no counterpart app for the required mapping. -->
 <data-extraction-rules>
     <cloud-backup>
         <exclude domain="root" path="." />
