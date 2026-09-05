@@ -8,10 +8,14 @@ the current architecture.
 ## Product boundary
 
 WallCrawl is local-first. The exercise catalog, profile, workout templates,
-active workout, completed history, and progress data all live on the device.
+active workout, completed history, and progress data are stored and processed locally.
 There is no account requirement, catalog network request, or production LLM in
 the current application. Movement-capability answers add no cloud sync,
 analytics, Health Connect, Wear OS, network, or model data flow.
+The app opts out of implicit Android backup and excludes app data from cloud
+backup and device transfer through both legacy and modern rules. The
+[privacy policy and storage-boundary diagram](privacy.md) distinguish that
+configuration from OEM transfer limitations and previously retained backups.
 
 The application supports two workout entry points that converge on the same
 session and history model, both gated behind first-run onboarding:
@@ -437,12 +441,17 @@ unknown, malformed, or oversized input conservatively to all `UNKNOWN`. Encoding
 emits only stable enum names. Raw payloads and complete profiles are not placed
 in logs or user-visible errors.
 
-Android backup policy was not broadened for this milestone. The existing
-manifest has `allowBackup=true` and no capability-specific backup rule, so the
-Room database remains covered by the platform's pre-existing app-data backup
-behavior when device settings permit it. The app currently has no profile
-export or delete-data subsystem; consistent local export/delete controls remain
-a separate roadmap item rather than a new subsystem in this change.
+`WallCrawlDatabase.getInstance()` stores `wallcrawl.db` in the application
+context's credential-protected database directory. The manifest now sets
+`allowBackup="false"` and references `res/xml/backup_rules.xml` for API 26-30
+and `res/xml/data_extraction_rules.xml` for API 31+. Both exclude whole data
+domains, including database sidecars, rather than only the named database.
+Modern cloud-backup and device-transfer sections each carry the full exclusions.
+The rules change no database path, schema, migration, local write, or planner gate.
+Compatible in-place upgrades retain data; uninstall/device loss has no supported
+recovery path until user-owned export/import is implemented separately.
+See [Privacy and backup](privacy.md) for domain coverage, the platform-boundary
+diagram, OEM limitations, and the lack of any previous-backup erasure guarantee.
 
 The persistence layer enforces several important invariants:
 
@@ -580,9 +589,11 @@ tests cover every supported Room migration chain through schema 11, real 7 → 8
 9 → 10, and 10 → 11 preservation, foreign-key integrity, guidance round trips, the
 weekly-ledger repository, capability
 accessibility semantics, packaged catalog parsing, all bundled visual paths, template
-snapshots, and session persistence. Pull-request/main CI and tag-release publication run
-that connected suite on an API 36 emulator. The importer has a separate
-Python-standard-library test suite.
+snapshots, session persistence, and the
+[packaged backup-policy configuration](privacy.md#verification-boundary)
+(merged manifest flags, resolved XML references, and exclusion semantics).
+Pull-request/main CI and tag-release publication run that connected suite on an
+API 36 emulator. The importer has a separate Python-standard-library test suite.
 
 See [Build and test](../README.md#build-and-test) for the commands contributors
 should run.

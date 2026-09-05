@@ -6,8 +6,8 @@
 
 WallCrawl is an open-source, local-first workout planner and progress tracker
 for Android. It is building toward a private on-device coach that chooses
-workouts from a constrained exercise catalog, while workout data stays on the
-phone.
+workouts from a constrained exercise catalog, with workout data stored locally
+under an explicit [backup and privacy policy](docs/privacy.md).
 
 This repository currently contains the working application around that future
 model: first-run onboarding with conservative equipment defaults, profile
@@ -60,6 +60,8 @@ WallCrawl supports **Dark Theme** (stealth suit graphite aesthetic), **Light The
 
 - [Architecture](docs/architecture.md) explains the catalog, planner, template,
   persistence, logging, and history boundaries in the current application.
+- [Privacy and backup](docs/privacy.md) explains local storage, Android backup
+  exclusions, recovery tradeoffs, and platform limitations.
 - [Custom Workouts](docs/custom-workouts.md) documents the user flow, full-catalog
   selection rules, frozen session snapshots, and current editor limitations.
 - [Planner evaluation](docs/planner-evaluation.md) documents the versioned persona
@@ -67,6 +69,27 @@ WallCrawl supports **Dark Theme** (stealth suit graphite aesthetic), **Light The
   invariants.
 - The phase-specific design and implementation records under
   [`docs/superpowers/`](docs/superpowers/) provide historical decision context.
+
+## Privacy, backup, and recovery
+
+WallCrawl disables implicit Android cloud backup with `allowBackup="false"` and
+excludes all app-data domains in both legacy backup rules and modern cloud-backup
+and device-transfer rules. The policy covers profiles and capabilities, preferences,
+templates, workout history and feedback, and derived ledger state. The app adds no
+account, analytics upload, or cloud-sync service.
+
+Ordinary local persistence and compatible, same-signature in-place upgrades keep
+working; this policy does not move or clear the Room database. **Uninstalling or
+clearing app storage removes local data. Device loss or replacement has no supported
+recovery path today.** There is no explicit export/import or in-app delete-all-data
+control yet; those remain [roadmap Package 2](ROADMAP.md#2-add-user-owned-export-import-and-deletion).
+Do not rely on automatic device transfer to preserve WallCrawl data.
+
+Android documents manufacturer-dependent device-transfer behavior, so these
+exclusions are not a guarantee about every OEM migration tool. This change neither
+deletes previously uploaded backups nor guarantees remote erasure. See the
+[full policy and platform boundary](docs/privacy.md) before uninstalling or changing
+devices.
 
 ## Current vertical slice
 
@@ -193,7 +216,8 @@ keeps every control large, explicit, and local.
   history, and progress — skipped, incomplete, and discarded work never looks
   finished.
 
-Everything above stays on the device. Reviewed capability evidence now reads a
+Logging and evidence processing run locally; persisted data follows the
+[backup and privacy policy](docs/privacy.md). Reviewed capability evidence reads a
 strict subset of that history behind the production-disabled reviewed gate: two
 distinct `SessionStatus.COMPLETED` sessions for the same exercise ID, with only
 qualifying non-warm-up work and explicit `feltManageable == true`. Completion
@@ -366,11 +390,33 @@ running emulator or device; it fails with "No compatible devices connected" rath
 skipping when none is attached.
 
 ```bash
-./gradlew testDebugUnitTest
-./gradlew assembleDebug
-./gradlew connectedDebugAndroidTest
+./gradlew connectedDebugAndroidTest --no-daemon \
+  -Pandroid.testInstrumentationRunnerArguments.class=wallcrawl.elopenmike.com.app.BackupPolicyResourceTest
+./gradlew testDebugUnitTest lint assembleDebug --no-daemon
+./gradlew connectedDebugAndroidTest --no-daemon
+git diff --check
 python3 -m unittest discover -s tools/workout-guide -p 'test_*.py' -v
+python3 -m unittest discover -s tools/release -p 'test_*.py' -v
 ```
+
+Run the targeted backup guard on a dedicated API 26-30 emulator and an API 31+
+emulator; it has been exercised on API 30 and 36. Use `ANDROID_SERIAL=<serial>`
+to select a device when more than one is connected. Run the full connected suite
+on API 36, matching CI. Do not reset or erase a shared device for these checks.
+For fresh execution evidence, append `--rerun-tasks --no-build-cache` to Gradle
+commands and inspect the reports under `app/build/test-results/` and
+`app/build/outputs/androidTest-results/`: zero, skipped, or cached tests are not
+proof that the guard passed.
+
+`BackupPolicyResourceTest` checks installed flags and the target APK's merged
+manifest, follows its XML resource references, and asserts full-domain exclusions
+for legacy backup and modern cloud/device transfer. It does not just look for
+source text or existing resources. Both XML resources are inspected on either API
+branch; this is a packaged-configuration check, not an actual transfer or restore.
+The guard has been shown to fail against the original backup-enabled manifest and
+against narrowed database exclusions or a missing device-transfer section. See
+[verification boundaries](docs/privacy.md#verification-boundary) for what this
+does and does not establish.
 
 The importer suites run in CI alongside the Gradle build. One exercises the importer
 against synthetic fixtures; the other checks the reviewed metadata that actually ships,
@@ -391,6 +437,8 @@ before publishing from the replacement workflow.
 GitHub prereleases are currently debug-signed and intentionally require uninstalling
 the previous CI build. Supporting in-place upgrades also requires a stable release
 signing key; version metadata alone cannot make differently signed APKs compatible.
+That uninstall removes local workout/profile data, with no supported export or
+automatic restore path under the [current backup policy](docs/privacy.md).
 
 The unit suite covers catalog filtering, context construction, capability
 normalization and persistence, onboarding/Profile drafts, planner invariance,
