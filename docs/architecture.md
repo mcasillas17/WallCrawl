@@ -91,6 +91,14 @@ IDs, names, aliases, muscles, and listed equipment. The importer under
 clean upstream checkout; the installed application never runs the importer or
 contacts Workout Guide.
 
+Pull-request/main CI runs `tools/workout-guide/check_pinned_catalog.py` before
+Java/Gradle setup. It validates `import-config.json`, fetches its exact source pin
+into an isolated temporary checkout, and invokes the importer in `--check` mode
+against the complete committed bundle and generated review report. Drift or an
+unavailable upstream fails the build job without rewriting checked output. See the
+[catalog instructions](../README.md#offline-workout-guide-catalog) for reproduction
+and failure diagnostics.
+
 `WorkoutGuideCatalogParser` is also where upstream muscle names become
 WallCrawl's, through `MuscleVocabulary`. Normalizing here rather than in the
 asset keeps `catalog.json` byte-identical to the importer's output — so
@@ -103,8 +111,8 @@ decision in Kotlin where unit tests cover it. Two rules matter downstream:
   split matching also reads, so nothing stops being selectable.
 
 `BundledCatalogVocabularyTest` reads the shipped asset directly and fails if a
-future catalog introduces a name the vocabulary does not know — the instrumented
-parser tests cover the same ground but do not run in CI.
+future catalog introduces a name the vocabulary does not know. The instrumented
+parser tests also cover the packaged catalog in CI.
 
 The parser also carries catalog provenance forward as `CatalogAttribution`
 instead of validating and discarding it, because the CC BY-SA 4.0 license on the

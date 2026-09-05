@@ -25,7 +25,7 @@ network connection, or companion device.
 | Templates and logging | Shipped with frozen template snapshots, type-aware outcomes, RPE/RIR, typed stops, and a local rest timer | Template targets are only partly editable; unsaved drafts are not restored after process death |
 | Progress and history | Overview, records, trends, summaries, and recent history shipped | Weekly semantics conflict with the dose ledger; workout-summary navigation and history drill-down remain incomplete |
 | Deterministic coach | Eligibility, experience ranking, capability evidence, weekly ledger, and state-based dose/effort/rest shipped behind a disabled gate | Human approval, whole-program validation, release corpus, progression, deload, and rollout gates |
-| Planner evaluation | Versioned corpus, replay harness, importer unit tests, JVM tests, and Android CI shipped | `concurrent-activity`, policy-specific assertions, and real pinned-upstream regeneration checking |
+| Planner evaluation | Versioned corpus, replay harness, importer unit tests, real pinned-upstream regeneration check, JVM tests, and Android CI shipped | `concurrent-activity` and policy-specific assertions |
 | Optional local model | Not started | Blocked on a stable deterministic release |
 | Health Connect and Wear OS | Not started; only `:app` exists | Shared modules, privacy controls, validation, substitutions, protocol, and device evidence |
 | Operational quality | Dependabot, SBOM submission, JVM/lint/build CI, API 36 instrumentation, and prerelease automation shipped | Accessibility baseline, target SDK review, Room schema export, signed/minified release posture, and next alpha |
@@ -231,9 +231,10 @@ boundaries are explicit and tested, and the UI explains omitted or unattributed 
 
 ### 6. Complete the deterministic corpus and CI release gate
 
-**Status:** Partly shipped. The corpus has eleven manifest fixtures; importer behavior is tested
-with synthetic repositories, but committed assets are not regenerated against the pinned
-upstream checkout in CI.
+**Status:** Partly shipped. The corpus has eleven manifest fixtures. CI tests importer and
+checkout behavior with synthetic repositories and checks the complete committed catalog,
+assets, and generated review report against the configured pinned upstream source. The
+remaining persona, policy assertions, documentation audit, and version record are still open.
 
 **Depends on:** Packages 4-5 for their final policy assertions.
 
@@ -243,8 +244,9 @@ upstream checkout in CI.
 2. Add direct corpus assertions for `PRIMARY_ONLY_V1` attribution and state-based set caps;
    preserve the shipped no-invented-load, reviewed-only candidate-membership, and typed-failure
    assertions.
-3. Add a CI step that checks out Workout Guide at the catalog's pinned commit and runs the real
-   importer in `--check` mode against committed assets and reports.
+3. **Complete:** CI validates `import-config.json`, obtains a clean temporary Workout Guide
+   checkout at its exact `sourceCommit`, and runs the real importer in `--check` mode against
+   committed assets and the generated review report. Drift and checkout/import failures fail CI.
 4. Correct stale schema/count comments and remove unsupported present-tense claims from active
    documentation without rewriting historical records as if they were current status.
 5. Record the exact policy, catalog, review, fixture, and importer versions used by the gate.
