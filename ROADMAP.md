@@ -1,9 +1,9 @@
 # WallCrawl Roadmap
 
-> **Status date:** 2026-09-03
+> **Status date:** 2026-09-05
 >
-> **Evidence baseline:** `e4287fd` (`Derive capability evidence for reviewed workout
-> ranking`, #54)
+> **Evidence baseline:** `6a2f624` (roadmap, #55), with Package 1 implemented
+> through `e3ec5f0` (explicit Android backup policy and packaged guards).
 >
 > This is the single source of truth for current project status, priority, dependency
 > order, and implementation scope. Status must be derived from repository evidence rather
@@ -18,7 +18,7 @@ network connection, or companion device.
 
 | Area | Status | Remaining gap |
 | --- | --- | --- |
-| Android foundation | Shipped on Room schema 11 with a continuous migration chain | Auto Backup still conflicts with the local-only promise; `targetSdk` remains 35 while `compileSdk` is 37 |
+| Android foundation | Room schema 11 with a continuous migration chain; implicit Android backup disabled with legacy and modern all-domain exclusions | OEM transfer enforcement varies; no user-owned export/import yet; `targetSdk` remains 35 while `compileSdk` is 37 |
 | Catalog and reviewed content | 302 exercises, 906 SVG frames, 131 authored programming entries, 37 reviewed records | All 37 reviewed records remain `DRAFT`; planner-reachable and band-only coverage still need review |
 | Onboarding and profile | Shipped as an eight-step flow with seven movement-capability questions | No local export, import, or delete-all-data controls |
 | Templates and logging | Shipped with frozen template snapshots, type-aware outcomes, RPE/RIR, typed stops, and a local rest timer | Template targets are only partly editable; unsaved drafts are not restored after process death |
@@ -35,36 +35,44 @@ compiled but inactive because `PlannerFeatureFlags.reviewedCapabilityEligibility
 The reviewed cohort is 37 `DRAFT` / 0 `APPROVED`; approval is a human-authored data change,
 not a consequence of merging a pull request.
 
+## Recorded decisions
+
+**Android backup policy (Package 1):** disable implicit Android cloud backup and
+request exclusion of all app data from device transfer until explicit user-owned
+export/import exists. The manifest sets `allowBackup="false"` and references
+exclude-all legacy rules plus separate modern cloud-backup/device-transfer rules.
+This preserves local persistence and compatible in-place upgrades but sacrifices
+automatic recovery after uninstall, device loss, or replacement. It does not delete
+previously uploaded backups or promise universal OEM transfer enforcement. See the
+[privacy and backup policy](docs/privacy.md) for the exact boundary and tradeoffs.
+
 ## Open decisions
 
 These decisions must be recorded before the related implementation package closes.
 
-1. **Android backup policy:** disable Auto Backup completely or permit only explicitly scoped
-   device transfer. The default recommendation is `allowBackup="false"` until WallCrawl has
-   explicit export/import; softening the local-only promise is not the default.
-2. **Progress weekly meaning:** report reviewed primary dose, broader movement activity, or
+1. **Progress weekly meaning:** report reviewed primary dose, broader movement activity, or
    both under distinct labels. The recommendation is an authoritative primary-dose card plus
    a separately named activity view, both using an explicit week boundary.
-3. **Deadlift direct primary:** a qualified human reviewer must ratify the single
+2. **Deadlift direct primary:** a qualified human reviewer must ratify the single
    `directPrimaryMuscle` for `barbell-deadlift`; automation or PR approval cannot decide it.
-4. **Initial approval cohort:** decide whether the first rollout requires all 37 records or
+3. **Initial approval cohort:** decide whether the first rollout requires all 37 records or
    a smaller persona-complete cohort with explicit band-only and capability coverage.
-5. **Validation persistence:** preserve policy/catalog/review/ledger versions, structured
+4. **Validation persistence:** preserve policy/catalog/review/ledger versions, structured
    reasons, and the recommendation snapshot, but choose columns versus a dedicated table
    during design rather than assuming the next Room schema shape here.
-6. **Reviewed rollout scope:** decide whether the first reviewed-planning release may remain
+5. **Reviewed rollout scope:** decide whether the first reviewed-planning release may remain
    conservatively non-progressing or must wait for progression and user-controlled deload.
    This is a product/release decision, not a technical dependency of eligibility.
-7. **Deload experience:** define where an offer appears, how the user accepts or declines it,
+6. **Deload experience:** define where an offer appears, how the user accepts or declines it,
    and whether that choice persists. Deload must never be automatic or diagnostic.
-8. **Release posture:** decide when to raise `targetSdk`, enable release shrinking, configure
+7. **Release posture:** decide when to raise `targetSdk`, enable release shrinking, configure
    signing, and move beyond debug prerelease APKs.
-9. **Optional sync:** explicitly approve the product/privacy scope before a sync design is
+8. **Optional sync:** explicitly approve the product/privacy scope before a sync design is
    written; local operation without an account remains non-negotiable.
-10. **External-record deletion:** disabling an integration must stop future writes without
+9. **External-record deletion:** disabling an integration must stop future writes without
     silently deleting external records; users also need a separate, explicit way to delete
     WallCrawl-exported Health Connect records before local export IDs are removed.
-11. **Watch ownership:** the first companion release should allow one active execution owner.
+10. **Watch ownership:** the first companion release should allow one active execution owner.
     Decide whether additional paired watches are rejected or read-only; multi-watch editing
     must not enter the protocol without an explicit conflict policy.
 
@@ -72,15 +80,15 @@ These decisions must be recorded before the related implementation package close
 
 | Workstream | Sequence | Parallelism and gates |
 | --- | --- | --- |
-| Privacy and ownership | 1 -> 2 | Package 1 is a release-honesty gate, not an engine dependency |
+| Privacy and ownership | 1 (complete) -> 2 | Package 1's release-honesty gate is satisfied; Package 2 is next and remains unimplemented |
 | Reviewed content | 3 | Human-paced and safe to run beside engineering |
-| Deterministic rollout | 4 + 5 + 6 -> 7 | Package 7 also requires package 3 and the package 1 release gate |
+| Deterministic rollout | 4 + 5 + 6 -> 7 | Package 7 also requires package 3; the package 1 release gate is satisfied |
 | Adaptive coaching | 7 -> 8 and 17; 4 -> 9; 3 + 4 -> 10; 3 -> 11; 4 + 9 -> 12; 10 -> 13; 5 + 13 -> 14; 3 -> 16 | Package 15 is independently useful but integrates package 10 when it exposes substitutions; package 18 gates only the packages selected for that release |
 | Operational quality | 19 + 20 | Parallel unless a release gate says otherwise |
 | Integrations | 21 -> 22 + 23; 2 + 4 + 10 + 21 + 23 -> 24; 23 + 24 -> 25; 24 + 25 -> 26 -> 27 | Health export and the protocol spike may proceed independently after shared-module extraction |
 | Optional sync | 2 -> 28 | Package 28 is a design package first, not implementation authorization |
 
-Safe parallel work now is package 1, package 3, package 4, package 5 after its product
+Safe parallel work now is package 2, package 3, package 4, package 5 after its product
 decision, package 6, and the audits in packages 19-20. Do not enable package 7 against draft
 metadata or a persona cohort that cannot produce valid plans. Do not split adaptation-state
 widening from the advanced-complexity ceiling update in package 9.
@@ -89,32 +97,35 @@ widening from the advanced-complexity ceiling update in package 9.
 
 ### 1. Resolve Android backup and privacy behavior
 
-**Status:** Not started; current shipping behavior contradicts the local-only promise.
+**Status:** Complete. Implicit backup is disabled and the documented boundary is explicit.
 
-**Depends on:** Backup-policy decision.
+**Decision:** Recorded above; no implicit cloud backup or permitted app-data transfer.
 
-**Implementation tasks:**
+**Implemented:**
 
-1. Choose full backup disablement or explicit cloud/device-transfer rules and document the
-   exact promise.
-2. Update `AndroidManifest.xml` and, if scoped rules are selected, add both legacy and API 31+
-   backup-rule resources.
-3. Add an instrumentation guard that fails when protected Room/profile data becomes eligible
-   for implicit cloud backup.
-4. Align the README, architecture, ledger, eligibility, and privacy documentation.
+1. Set `allowBackup="false"` and reference both legacy `fullBackupContent` and API 31+
+   `dataExtractionRules` resources, with separate cloud-backup and device-transfer sections.
+2. Exclude all nine documented app-data domains at their roots, including the full Room
+   database directory and SQLite sidecars, rather than one guessed filename.
+3. Guard the installed flags, target APK's merged manifest, referenced resources, and
+   exclusion semantics with `BackupPolicyResourceTest`. The guard rejects the original
+   configuration, filename-only database exclusions, and missing device-transfer rules.
+4. Align README, architecture, ledger, eligibility, and the shared [privacy policy](docs/privacy.md).
 
-**Likely surfaces:** `app/src/main/AndroidManifest.xml`, `app/src/main/res/xml/`,
+**Surfaces:** `app/src/main/AndroidManifest.xml`, `app/src/main/res/xml/`,
 `app/src/androidTest/`, `README.md`, `docs/architecture.md`,
-`docs/weekly-dose-ledger.md`, `docs/reviewed-capability-eligibility.md`.
+`docs/weekly-dose-ledger.md`, `docs/reviewed-capability-eligibility.md`, `docs/privacy.md`.
 
-**Done when:** the manifest and resources implement the recorded policy, an Android test locks
-it, and no documentation promises a stronger privacy boundary than the app provides.
+**Boundary:** Packaged guards cover API 30 and 36; local Backup Manager requests reject the
+app on both. These do not establish cloud restore or physical/OEM transfer behavior.
+Existing local storage and upgrades are unchanged; no Room migration is needed. Package 2
+remains separate and unimplemented.
 
 ### 2. Add user-owned export, import, and deletion
 
 **Status:** Not started.
 
-**Depends on:** Package 1.
+**Depends on:** Package 1 (complete).
 
 **Implementation tasks:**
 
@@ -247,7 +258,7 @@ asserted, and CI proves both importer behavior and real pinned-source regenerati
 
 **Status:** Blocked; the production flag remains `false`.
 
-**Depends on:** Package 1 as a release gate and packages 3-6. Package 9 is required only if the
+**Depends on:** Packages 3-6; Package 1's release gate is satisfied. Package 9 is required only if the
 initial rollout promises progression/deload rather than a conservative reviewed planner.
 
 **Implementation tasks:**

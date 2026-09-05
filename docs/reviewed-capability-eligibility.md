@@ -36,6 +36,12 @@ The reviewed policies perform no network access. `CapabilityEvidencePolicy`
 performs no persistence, migration, cache write, analytics, or logging.
 Nothing here reads body weight, height, age, BMI, body composition, recovery,
 or readiness.
+The profile/capability answers and source workout history are persisted locally
+in Room and covered by the app's explicit backup exclusions. Derived capability
+evidence is computed in memory rather than persisted separately. This processing
+boundary is not a universal claim about Android/OEM transfer behavior; see
+[Privacy and backup](privacy.md) for the configuration, recovery tradeoffs, and
+previous-backup limitations.
 
 ## Deterministic hard rule order
 

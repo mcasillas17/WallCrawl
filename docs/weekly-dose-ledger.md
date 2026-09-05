@@ -154,8 +154,12 @@ historically supported schema version.
 
 ## Privacy boundary
 
-Everything here is local. No analytics event, network call, cloud sync, model prompt, Wear
-payload, or Health Connect permission is involved.
+Ledger reconstruction and cache access run locally. No analytics event, network call,
+cloud sync, model prompt, Wear payload, or Health Connect permission is involved.
+The cache and its source history share the Room database, which is excluded from
+implicit Android backup and device transfer by the app's configuration. See
+[Privacy and backup](privacy.md) for the full-domain exclusions, recovery tradeoffs,
+OEM transfer limitations, and why this does not erase previously uploaded backups.
 
 The cache and the fingerprint deliberately exclude everything the policy cannot read:
 no notes, no free text, no session or exercise names, no RPE or RIR, no "felt manageable"
