@@ -72,6 +72,39 @@ class ImportSummary:
     changed: bool
 
 
+def validate_import_config(config: dict[str, Any]) -> None:
+    """Validate source-independent configuration before any checkout or import work."""
+    _require_schema_version(config, "import config")
+    repository = _required_string(config, "sourceRepository", "import config")
+    if not repository.startswith("https://"):
+        raise CatalogImportError("sourceRepository must be an HTTPS URL")
+    commit = _required_string(config, "sourceCommit", "import config")
+    if not re.fullmatch(r"[0-9a-f]{40}", commit):
+        raise CatalogImportError("sourceCommit must be a 40-character lowercase git commit")
+
+    for field in ("manifestPath", "assetBasePath"):
+        _safe_relative_path(_required_string(config, field, "import config"), field)
+    for item in _required_string_list(config, "licenseFiles", "import config", maximum=20):
+        _safe_relative_path(item, "licenseFiles entry")
+    _required_int(config, "expectedExerciseCount", "import config", minimum=1, maximum=MAX_EXERCISES)
+    _required_int(
+        config, "expectedFrameCount", "import config",
+        minimum=1, maximum=MAX_EXERCISES * MAX_FRAMES_PER_EXERCISE,
+    )
+    aliases = _required_object(config, "idAliases", "import config")
+    for source_id, raw_alias in aliases.items():
+        _validate_safe_id(
+            _bounded_string(source_id, "import config idAliases key"),
+            "import config idAliases key", allow_exercise_prefix=True,
+        )
+        alias = _expect_object(raw_alias, "import config idAliases entry")
+        _validate_safe_id(
+            _required_string(alias, "wallCrawlId", "import config idAliases entry"),
+            "import config idAliases wallCrawlId",
+        )
+        _required_string_list(alias, "searchAliases", "import config idAliases entry", maximum=50)
+
+
 def import_catalog(
     source_root: Path,
     output_root: Path,
@@ -85,6 +118,7 @@ def import_catalog(
     source_root = source_root.resolve()
     output_root = output_root.resolve()
     config = _read_object(config_path, "import config")
+    validate_import_config(config)
     overrides = _read_object(overrides_path, "programming overrides")
     review_schema = _read_object(review_schema_path, "review schema")
     rep_range_schema = _read_object(
@@ -106,35 +140,16 @@ def import_catalog(
     )
     reviewed_root = _expect_object(reviewed_document, "reviewed metadata")
     reviewed_by_id = _required_object(reviewed_root, "exercises", "reviewed metadata")
-    _require_schema_version(config, "import config")
     _require_schema_version(overrides, "programming overrides")
 
-    source_repository = _required_string(config, "sourceRepository", "import config")
-    if not source_repository.startswith("https://"):
-        raise CatalogImportError("sourceRepository must be an HTTPS URL")
-    source_commit = _required_string(config, "sourceCommit", "import config")
-    if not re.fullmatch(r"[0-9a-f]{40}", source_commit):
-        raise CatalogImportError("sourceCommit must be a 40-character lowercase git commit")
-
-    manifest_relative = _safe_relative_path(
-        _required_string(config, "manifestPath", "import config"),
-        "manifestPath",
-    )
-    asset_base_relative = _safe_relative_path(
-        _required_string(config, "assetBasePath", "import config"),
-        "assetBasePath",
-    )
-    license_files = _required_string_list(config, "licenseFiles", "import config", maximum=20)
-    license_relatives = [_safe_relative_path(item, "licenseFiles entry") for item in license_files]
-    expected_exercises = _required_int(config, "expectedExerciseCount", "import config", minimum=1, maximum=MAX_EXERCISES)
-    expected_frames = _required_int(
-        config,
-        "expectedFrameCount",
-        "import config",
-        minimum=1,
-        maximum=MAX_EXERCISES * MAX_FRAMES_PER_EXERCISE,
-    )
-    aliases = _required_object(config, "idAliases", "import config")
+    source_repository = config["sourceRepository"]
+    source_commit = config["sourceCommit"]
+    manifest_relative = PurePosixPath(config["manifestPath"])
+    asset_base_relative = PurePosixPath(config["assetBasePath"])
+    license_relatives = [PurePosixPath(item) for item in config["licenseFiles"]]
+    expected_exercises = config["expectedExerciseCount"]
+    expected_frames = config["expectedFrameCount"]
+    aliases = config["idAliases"]
 
     if not source_root.is_dir():
         raise CatalogImportError(f"Workout Guide source directory does not exist: {source_root}")
@@ -185,14 +200,8 @@ def import_catalog(
             wallcrawl_id = source_slug
             search_aliases: list[str] = []
         else:
-            alias = _expect_object(alias_value, f"idAliases.{source_id}")
-            wallcrawl_id = _required_string(alias, "wallCrawlId", f"idAliases.{source_id}")
-            search_aliases = _required_string_list(
-                alias,
-                "searchAliases",
-                f"idAliases.{source_id}",
-                maximum=50,
-            )
+            wallcrawl_id = alias_value["wallCrawlId"]
+            search_aliases = alias_value["searchAliases"]
             used_alias_sources.add(source_id)
         _validate_safe_id(wallcrawl_id, f"WallCrawl ID for {source_id}")
         if wallcrawl_id in wallcrawl_ids:

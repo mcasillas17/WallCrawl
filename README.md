@@ -343,8 +343,40 @@ Each exercise resolves to three bundled frames that animate in a lightweight
 visual specification. The exact pinned upstream metadata and per-frame
 attribution remain unmodified in `upstream-manifest.json` beside the SVGs.
 
-The importer is a Python-standard-library development tool. Point it at a clean
-local Workout Guide checkout at the pinned commit:
+The importer and pinned-source CI check use Python's standard library and Git.
+[`tools/workout-guide/import-config.json`](tools/workout-guide/import-config.json)
+owns `sourceRepository` and `sourceCommit`; the workflow reads this configuration
+through the helper instead of maintaining another pin. Reproduce the CI check
+from the repository root with Python 3, Git, and HTTPS access to public GitHub:
+
+```bash
+python3 tools/workout-guide/check_pinned_catalog.py
+```
+
+The helper validates configuration before starting Git, fetches the exact commit
+into a fresh temporary checkout, verifies its commit and cleanliness, and runs
+`import_catalog.py --source <checkout> --check`. It compares the complete committed
+`app/src/main/assets/workout-guide/` bundle and
+`docs/reviewed-exercise-metadata-review.md` with regenerated output. Success prints
+`Workout Guide up to date` and exits zero; failures exit nonzero. Checked files
+are never rewritten, and temporary checkouts are removed on success or failure.
+Upstream is input data only: no dependencies or project code are run, and Git
+configuration and credentials are isolated from the calling environment.
+
+Failure diagnostics identify the stage:
+
+- Configuration errors: fix missing or malformed fields in `import-config.json`.
+  Automated checkout requires a public `https://github.com/owner/repository` URL
+  without credentials, query strings, or fragments, and a full lowercase commit SHA.
+- Git/start/timeout errors: check Git availability, temporary-directory permissions,
+  public HTTPS connectivity, and whether the configured repository and commit exist.
+  Each subprocess has a 180-second timeout; upstream unavailability fails the check.
+- `Generated Workout Guide bundle or review report differs`: inspect authored
+  inputs and committed output, then deliberately regenerate if the input change
+  is intended. Do not change the source pin merely to silence drift.
+
+To regenerate, or check an existing local checkout, point the importer at a clean
+Workout Guide checkout at the configured commit:
 
 ```bash
 python3 tools/workout-guide/import_catalog.py \
@@ -396,6 +428,7 @@ skipping when none is attached.
 ./gradlew connectedDebugAndroidTest --no-daemon
 git diff --check
 python3 -m unittest discover -s tools/workout-guide -p 'test_*.py' -v
+python3 tools/workout-guide/check_pinned_catalog.py
 python3 -m unittest discover -s tools/release -p 'test_*.py' -v
 ```
 
@@ -418,9 +451,11 @@ against narrowed database exclusions or a missing device-transfer section. See
 [verification boundaries](docs/privacy.md#verification-boundary) for what this
 does and does not establish.
 
-The importer suites run in CI alongside the Gradle build. One exercises the importer
-against synthetic fixtures; the other checks the reviewed metadata that actually ships,
-so a bad edit fails there rather than becoming a workout nobody can perform.
+The Python suites run in CI alongside the Gradle build and cover synthetic importer
+and checkout fixtures plus the authored metadata that ships. Pull-request/main CI
+also runs **Check catalog against pinned upstream source** before Java/Gradle setup,
+using the [pinned-source check above](#offline-workout-guide-catalog) to detect drift
+across the real committed bundle and generated review report.
 
 ## Release versioning
 
