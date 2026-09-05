@@ -589,9 +589,11 @@ tests cover every supported Room migration chain through schema 11, real 7 → 8
 9 → 10, and 10 → 11 preservation, foreign-key integrity, guidance round trips, the
 weekly-ledger repository, capability
 accessibility semantics, packaged catalog parsing, all bundled visual paths, template
-snapshots, and session persistence. Pull-request/main CI and tag-release publication run
-that connected suite on an API 36 emulator. The importer has a separate
-Python-standard-library test suite.
+snapshots, session persistence, and the
+[packaged backup-policy configuration](privacy.md#verification-boundary)
+(merged manifest flags, resolved XML references, and exclusion semantics).
+Pull-request/main CI and tag-release publication run that connected suite on an
+API 36 emulator. The importer has a separate Python-standard-library test suite.
 
 See [Build and test](../README.md#build-and-test) for the commands contributors
 should run.

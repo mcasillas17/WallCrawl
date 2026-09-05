@@ -2,8 +2,9 @@
 
 > **Status date:** 2026-09-05
 >
-> **Evidence baseline:** `6a2f624` (roadmap, #55), with Package 1 implemented
-> through `e3ec5f0` (explicit Android backup policy and packaged guards).
+> **Evidence baseline:** `6a2f624` (roadmap, #55). Package 1 status additionally
+> reflects the checked-in manifest, backup-rule resources, packaged-configuration
+> guard, and [privacy policy](docs/privacy.md).
 >
 > This is the single source of truth for current project status, priority, dependency
 > order, and implementation scope. Status must be derived from repository evidence rather
