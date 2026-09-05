@@ -100,7 +100,7 @@ class CheckPinnedCatalogTest(unittest.TestCase):
     def test_rejects_missing_malformed_or_ambiguous_config_before_git(self):
         cases = [None, b"", b"{", b"[]", b"null", b"\xff", b'{"schemaVersion":1,"schemaVersion":1}']
         config = json.loads(self.original_config)
-        for field in ("schemaVersion", "sourceRepository", "sourceCommit"):
+        for field in config:
             missing = dict(config)
             del missing[field]
             cases.append(json.dumps(missing).encode())
@@ -123,6 +123,30 @@ class CheckPinnedCatalogTest(unittest.TestCase):
                 "https://github.com/owner/$(do-not-log)", "ext::do-not-log", "/tmp/repo"],
             "sourceCommit": [None, 1, "", "main", "a" * 39, "A" * 40, "a" * 40 + "\n", "--upload-pack=do-not-log"],
             "schemaVersion": [None, True, 2],
+        }
+        for field, values in cases.items():
+            for value in values:
+                with self.subTest(field=field, value=value):
+                    config = json.loads(self.original_config)
+                    config[field] = value
+                    self.config.write_text(json.dumps(config))
+                    result, error = self.run_check(lambda *a, **k: self.fail("Git ran with invalid config"))
+                    self.assertNotEqual(0, result)
+                    self.assertNotIn("do-not-log", error)
+
+    def test_rejects_invalid_paths_counts_and_aliases_before_git(self):
+        cases = {
+            "manifestPath": [None, 1, "", "../manifest.json", "/manifest.json", "data//manifest.json"],
+            "assetBasePath": [None, "", "../assets", "assets\\frames", "assets\nframes"],
+            "licenseFiles": [None, "LICENSE", [None], ["../LICENSE"], ["LICENSE", "LICENSE"]],
+            "expectedExerciseCount": [None, True, 0, 5001, 1.5],
+            "expectedFrameCount": [None, True, 0, 50001, "3"],
+            "idAliases": [None, [], {"unsafe/do-not-log": {}},
+                {"exercise-bench-press": None}, {"exercise-bench-press": {}},
+                {"exercise-bench-press": {"wallCrawlId": "bad/id", "searchAliases": []}},
+                {"exercise-bench-press": {"wallCrawlId": "bench-press"}},
+                {"exercise-bench-press": {"wallCrawlId": "bench-press", "searchAliases": [None]}},
+                {"exercise-bench-press": {"wallCrawlId": "bench-press", "searchAliases": ["Bench", "Bench"]}}],
         }
         for field, values in cases.items():
             for value in values:

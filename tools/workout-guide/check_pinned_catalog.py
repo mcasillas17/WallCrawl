@@ -10,7 +10,7 @@ import subprocess
 import sys
 import tempfile
 
-from import_catalog import CatalogImportError, _read_object, _require_schema_version
+from import_catalog import CatalogImportError, _read_object, validate_import_config
 
 
 class CatalogCheckError(ValueError):
@@ -20,7 +20,7 @@ class CatalogCheckError(ValueError):
 def check_pinned_catalog(repository_root: Path) -> int:
     tool_root = repository_root / "tools/workout-guide"
     config = _read_object(tool_root / "import-config.json", "import config")
-    _require_schema_version(config, "import config")
+    validate_import_config(config)
     repository = config.get("sourceRepository")
     commit = config.get("sourceCommit")
     # Only public GitHub HTTPS repository paths are supported. No credentials,
@@ -30,8 +30,6 @@ def check_pinned_catalog(repository_root: Path) -> int:
         repository,
     ):
         raise CatalogCheckError("import config sourceRepository must be a public GitHub HTTPS repository URL")
-    if not isinstance(commit, str) or not re.fullmatch(r"[0-9a-f]{40}", commit):
-        raise CatalogCheckError("import config sourceCommit must be a 40-character lowercase Git commit")
 
     with tempfile.TemporaryDirectory(prefix="wallcrawl-pinned-catalog-") as temporary:
         root = Path(temporary)
