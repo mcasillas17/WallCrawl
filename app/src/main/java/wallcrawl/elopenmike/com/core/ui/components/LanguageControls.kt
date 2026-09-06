@@ -57,13 +57,12 @@ fun LanguageChip(
     onSelect: (AppLanguage) -> Unit = AppLanguageController::apply
 ) {
     val locale = LocalConfiguration.current.locales[0]
-    // Whichever shipped language the resources actually resolved to. Derived from the enum
-    // rather than branched on Spanish, so adding a language cannot leave this reading "EN"
-    // over an interface that is not English. Anything unshipped reads as English, which is
+    // Whichever shipped language the resources actually resolved to, read through the one
+    // place that maps a tag to a language. Anything unshipped reads as English, which is
     // what the resources themselves fall back to.
-    val effective = AppLanguage.entries.firstOrNull {
-        it != AppLanguage.SYSTEM && it.languageTag == locale.language
-    } ?: AppLanguage.ENGLISH
+    val effective = AppLanguage.fromLanguageTag(locale.language)
+        .takeIf { it != AppLanguage.SYSTEM }
+        ?: AppLanguage.ENGLISH
     val description = stringResource(
         R.string.language_option_accessibility,
         stringResource(effective.labelRes)

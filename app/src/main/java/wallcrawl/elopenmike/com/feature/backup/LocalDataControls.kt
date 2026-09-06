@@ -203,15 +203,19 @@ fun RestoreFromArchiveButton(
                 BodyText(stringResource(R.string.onboarding_restore_scope))
                 Spacer(modifier = Modifier.height(12.dp))
                 RestoreControl(viewModel = viewModel, state = state)
+                // The picker returns to a sheet that is still open, so this is where the
+                // ordinary failure is read. The copy below covers the other case.
+                LocalDataMessageText(state)
             }
         }
     }
 
-    // Outside the sheet on purpose. The sheet can be dismissed while a restore is still
-    // reading the document, and a failure arriving afterwards would otherwise be reported
-    // to nobody: the entry line would just re-enable with its usual label. The same goes
-    // for a restored archive whose onboarding was never finished — it stays in the wizard,
-    // so it navigates nowhere to announce itself.
+    // Outside the sheet as well, because the sheet can be dismissed while a restore is
+    // still reading the document, and a failure arriving afterwards would otherwise be
+    // reported to nobody: the entry line would just re-enable with its usual label. The
+    // same goes for a restored archive whose onboarding was never finished — it stays in
+    // the wizard, so it navigates nowhere to announce itself. Only one of the two is ever
+    // on screen: the sheet covers this one whenever it is open.
     LocalDataMessageText(state)
 }
 

@@ -15,6 +15,10 @@ import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assertHasClickAction
 import android.net.Uri
 import androidx.compose.ui.test.assertHeightIsAtLeast
+import androidx.compose.ui.test.filterToOne
+import androidx.compose.ui.test.hasAnyAncestor
+import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
@@ -259,6 +263,27 @@ class LocalDataControlsTest {
         composeRule.waitForIdle()
 
         composeRule.onNodeWithTag(LOCAL_DATA_MESSAGE_TEST_TAG).assertIsDisplayed()
+    }
+
+    @Test
+    fun onboardingOutcomeIsReportedWithTheSheetStillOpen() {
+        // The ordinary path: the picker returns to a sheet that never closed, and the
+        // restore fails there. A message rendered only behind the sheet would be invisible
+        // exactly when it matters most.
+        val viewModel = showOnboardingEntry(FakeBackupRepository(restoreAllowed = true))
+
+        composeRule.onNodeWithTag(LOCAL_DATA_RESTORE_ENTRY_TEST_TAG).performClick()
+        composeRule.waitForIdle()
+        composeRule.onNodeWithTag(LOCAL_DATA_RESTORE_SHEET_TEST_TAG).assertIsDisplayed()
+
+        viewModel.restoreFrom(Uri.parse("content://wallcrawl.test.absent/archive.json"))
+        composeRule.waitUntil(TIMEOUT_MILLIS) { viewModel.uiState.value.message != null }
+        composeRule.waitForIdle()
+
+        composeRule.onNodeWithTag(LOCAL_DATA_RESTORE_SHEET_TEST_TAG).assertIsDisplayed()
+        composeRule.onAllNodesWithTag(LOCAL_DATA_MESSAGE_TEST_TAG)
+            .filterToOne(hasAnyAncestor(hasTestTag(LOCAL_DATA_RESTORE_SHEET_TEST_TAG)))
+            .assertIsDisplayed()
     }
 
     private fun showOnboardingEntry(repository: FakeBackupRepository): LocalDataViewModel {
