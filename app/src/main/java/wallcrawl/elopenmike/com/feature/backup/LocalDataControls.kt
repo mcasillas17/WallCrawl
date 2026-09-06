@@ -203,10 +203,16 @@ fun RestoreFromArchiveButton(
                 BodyText(stringResource(R.string.onboarding_restore_scope))
                 Spacer(modifier = Modifier.height(12.dp))
                 RestoreControl(viewModel = viewModel, state = state)
-                LocalDataMessageText(state)
             }
         }
     }
+
+    // Outside the sheet on purpose. The sheet can be dismissed while a restore is still
+    // reading the document, and a failure arriving afterwards would otherwise be reported
+    // to nobody: the entry line would just re-enable with its usual label. The same goes
+    // for a restored archive whose onboarding was never finished — it stays in the wizard,
+    // so it navigates nowhere to announce itself.
+    LocalDataMessageText(state)
 }
 
 @Composable

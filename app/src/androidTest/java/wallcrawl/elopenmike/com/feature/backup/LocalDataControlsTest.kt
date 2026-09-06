@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.toPixelMap
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assertHasClickAction
+import android.net.Uri
 import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
@@ -37,8 +38,6 @@ import wallcrawl.elopenmike.com.core.database.repository.LocalDataExportResult
 import wallcrawl.elopenmike.com.core.database.repository.LocalDataRestoreResult
 import wallcrawl.elopenmike.com.core.model.ThemePreference
 import wallcrawl.elopenmike.com.core.ui.theme.WallCrawlTheme
-import wallcrawl.elopenmike.com.feature.backup.LOCAL_DATA_RESTORE_ENTRY_TEST_TAG
-import wallcrawl.elopenmike.com.feature.backup.LocalDataOperation
 
 /**
  * The destructive path and the accessibility surface of the local-data controls.
@@ -245,6 +244,21 @@ class LocalDataControlsTest {
 
         composeRule.onNodeWithText(text(R.string.local_data_restore_blocked)).assertIsDisplayed()
         composeRule.onNodeWithTag(LOCAL_DATA_RESTORE_TEST_TAG).assertIsNotEnabled()
+    }
+
+    @Test
+    fun onboardingOutcomeIsReportedEvenWithTheSheetClosed() {
+        // The sheet can be dismissed while a restore is still reading the document. If the
+        // outcome text lived inside it, a failure arriving afterwards would be reported to
+        // nobody and the entry would just re-enable as if nothing had happened.
+        val viewModel = showOnboardingEntry(FakeBackupRepository(restoreAllowed = true))
+
+        composeRule.onNodeWithTag(LOCAL_DATA_RESTORE_SHEET_TEST_TAG).assertDoesNotExist()
+        viewModel.restoreFrom(Uri.parse("content://wallcrawl.test.absent/archive.json"))
+        composeRule.waitUntil(TIMEOUT_MILLIS) { viewModel.uiState.value.message != null }
+        composeRule.waitForIdle()
+
+        composeRule.onNodeWithTag(LOCAL_DATA_MESSAGE_TEST_TAG).assertIsDisplayed()
     }
 
     private fun showOnboardingEntry(repository: FakeBackupRepository): LocalDataViewModel {

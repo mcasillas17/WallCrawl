@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -944,6 +945,9 @@ private fun <T> SegmentedPill(
             val optionDescription = accessibilityLabel(option)
             Box(
                 modifier = Modifier
+                    // Abbreviated labels make a segment narrow enough to be hard to hit;
+                    // the label shrinks, the target does not.
+                    .defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
                     .clip(RoundedCornerShape(7.dp))
                     .background(if (isSelected) CrimsonRedPrimary else Color.Transparent)
                     .clickable { onSelect(option) }
