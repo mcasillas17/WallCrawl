@@ -1,5 +1,6 @@
 package wallcrawl.elopenmike.com.feature.workout
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -40,11 +41,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.model.ExerciseType
@@ -60,14 +64,15 @@ import wallcrawl.elopenmike.com.core.ui.components.WallCrawlOutlinedButton
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlSecondaryButton
 import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
+import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
+import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
 import wallcrawl.elopenmike.com.core.ui.theme.WebBlueAccent
 import kotlinx.coroutines.delay
-import java.text.SimpleDateFormat
+import java.text.DateFormat
 import java.util.Date
-import java.util.Locale
 
 @Composable
 fun ActiveWorkoutScreen(
@@ -101,11 +106,22 @@ fun ActiveWorkoutScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     WallCrawlCard(borderColor = CrimsonRedPrimary) {
-                        Text("Workout Error", color = CrimsonRedLight, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                        Text(
+                            stringResource(R.string.workout_error_title),
+                            color = CrimsonRedLight,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp
+                        )
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text(state.message, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(
+                            stringResource(state.messageRes),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                         Spacer(modifier = Modifier.height(16.dp))
-                        WallCrawlSecondaryButton(text = "Go Back", onClick = onNavigateBack)
+                        WallCrawlSecondaryButton(
+                            text = stringResource(R.string.workout_action_go_back),
+                            onClick = onNavigateBack
+                        )
                     }
                 }
             }
@@ -189,6 +205,7 @@ private fun ActiveWorkoutContent(
     onClose: () -> Unit
 ) {
     val currentExercise = state.currentExercise
+    val locale = LocalConfiguration.current.locales[0]
 
     Column(
         modifier = Modifier
@@ -206,12 +223,17 @@ private fun ActiveWorkoutContent(
             IconButton(onClick = onClose) {
                 Icon(
                     imageVector = Icons.Default.Close,
-                    contentDescription = "Close Workout",
+                    contentDescription = stringResource(R.string.workout_close_content_description),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.weight(1f)
+            ) {
+                // The session name is free text written when the workout started, in the
+                // language that was on screen then. It is shown as recorded.
                 Text(
                     text = state.session.name,
                     fontSize = 15.sp,
@@ -219,7 +241,11 @@ private fun ActiveWorkoutContent(
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = "Exercise ${state.currentExerciseIndex + 1} of ${state.totalExercises}",
+                    text = stringResource(
+                        R.string.workout_exercise_position,
+                        LocaleFormatting.formatCount(state.currentExerciseIndex + 1, locale),
+                        LocaleFormatting.formatCount(state.totalExercises, locale)
+                    ),
                     fontSize = 12.sp,
                     color = CrimsonRedLight,
                     fontWeight = FontWeight.SemiBold
@@ -227,7 +253,7 @@ private fun ActiveWorkoutContent(
             }
 
             WallCrawlOutlinedButton(
-                text = "Finish",
+                text = stringResource(R.string.workout_action_finish),
                 onClick = onRequestFinish,
                 modifier = Modifier
                     .widthIn(min = 76.dp)
@@ -240,7 +266,7 @@ private fun ActiveWorkoutContent(
 
         if (state.setUpdateError != null) {
             SetUpdateErrorBanner(
-                message = state.setUpdateError,
+                messageRes = state.setUpdateError,
                 onDismiss = onDismissSetUpdateError
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -275,7 +301,7 @@ private fun ActiveWorkoutContent(
                 item {
                     ExerciseHeaderCard(
                         workoutExercise = currentExercise,
-                        exerciseName = state.currentCatalogExercise?.name,
+                        catalogExercise = state.currentCatalogExercise,
                         preferredUnit = state.weightUnit.symbol
                     )
                 }
@@ -325,7 +351,7 @@ private fun ActiveWorkoutContent(
         ) {
             if (!state.isFirstExercise) {
                 WallCrawlSecondaryButton(
-                    text = "Previous",
+                    text = stringResource(R.string.workout_action_previous),
                     onClick = onPreviousExercise,
                     modifier = Modifier.weight(1f)
                 )
@@ -333,13 +359,13 @@ private fun ActiveWorkoutContent(
 
             if (!state.isLastExercise) {
                 WallCrawlPrimaryButton(
-                    text = "Next Exercise",
+                    text = stringResource(R.string.workout_action_next),
                     onClick = onNextExercise,
                     modifier = Modifier.weight(if (state.isFirstExercise) 2f else 1f)
                 )
             } else {
                 WallCrawlPrimaryButton(
-                    text = "Finish Workout",
+                    text = stringResource(R.string.workout_action_finish_workout),
                     onClick = onRequestFinish,
                     modifier = Modifier.weight(if (state.isFirstExercise) 2f else 1f)
                 )
@@ -369,36 +395,46 @@ private fun RestTimerBar(
                 modifier = Modifier.size(18.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
+            val restLabel = if (isRunning) {
+                stringResource(R.string.rest_running, countdown)
+            } else {
+                stringResource(R.string.rest_finished)
+            }
+            val restAnnouncement = if (isRunning) {
+                stringResource(R.string.rest_remaining_accessibility, countdown)
+            } else {
+                stringResource(R.string.rest_finished)
+            }
             Text(
-                text = if (isRunning) "Rest $countdown" else "Rest finished",
+                text = restLabel,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier
                     .weight(1f)
-                    .semantics {
-                        contentDescription = if (isRunning) {
-                            "Rest remaining $countdown"
-                        } else {
-                            "Rest finished"
-                        }
-                    }
+                    .semantics { contentDescription = restAnnouncement }
             )
         }
         Spacer(modifier = Modifier.height(8.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             AssistChip(
                 onClick = onAddRest,
-                label = { Text("+30s", fontWeight = FontWeight.SemiBold) }
+                label = {
+                    Text(stringResource(R.string.rest_add_thirty), fontWeight = FontWeight.SemiBold)
+                }
             )
             if (isRunning) {
                 AssistChip(
                     onClick = onSkipRest,
-                    label = { Text("Skip rest", fontWeight = FontWeight.SemiBold) }
+                    label = {
+                        Text(stringResource(R.string.rest_skip), fontWeight = FontWeight.SemiBold)
+                    }
                 )
             }
             AssistChip(
                 onClick = onCancelRest,
-                label = { Text("Dismiss", fontWeight = FontWeight.SemiBold) }
+                label = {
+                    Text(stringResource(R.string.rest_dismiss), fontWeight = FontWeight.SemiBold)
+                }
             )
         }
     }
@@ -414,30 +450,37 @@ private fun FinishConfirmationDialog(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
-    val setWord = if (openSetCount == 1) "set" else "sets"
+    val locale = LocalConfiguration.current.locales[0]
+    val openSets = LocaleFormatting.formatCount(openSetCount, locale)
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                "Finish with $openSetCount unlogged $setWord?",
+                pluralStringResource(R.plurals.finish_confirm_title, openSetCount, openSets),
                 color = MaterialTheme.colorScheme.onSurface
             )
         },
         text = {
             Text(
-                "$openSetCount $setWord will stay unlogged. Only completed sets count " +
-                    "toward your history.",
+                pluralStringResource(R.plurals.finish_confirm_body, openSetCount, openSets),
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         },
         confirmButton = {
             TextButton(onClick = onConfirm) {
-                Text("Finish anyway", color = CrimsonRedPrimary, fontWeight = FontWeight.Bold)
+                Text(
+                    stringResource(R.string.finish_confirm_action),
+                    color = CrimsonRedPrimary,
+                    fontWeight = FontWeight.Bold
+                )
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Keep going", color = MaterialTheme.colorScheme.onSurface)
+                Text(
+                    stringResource(R.string.finish_confirm_keep_going),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
             }
         },
         containerColor = MaterialTheme.colorScheme.surface
@@ -452,22 +495,32 @@ private fun DiscardConfirmationDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            Text("Discard this workout?", color = MaterialTheme.colorScheme.onSurface)
+            Text(
+                stringResource(R.string.discard_confirm_title),
+                color = MaterialTheme.colorScheme.onSurface
+            )
         },
         text = {
             Text(
-                "Everything logged in this session will be deleted.",
+                stringResource(R.string.discard_confirm_body),
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         },
         confirmButton = {
             TextButton(onClick = onConfirm) {
-                Text("Discard", color = CrimsonRedPrimary, fontWeight = FontWeight.Bold)
+                Text(
+                    stringResource(R.string.discard_confirm_action),
+                    color = CrimsonRedPrimary,
+                    fontWeight = FontWeight.Bold
+                )
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Keep workout", color = MaterialTheme.colorScheme.onSurface)
+                Text(
+                    stringResource(R.string.discard_confirm_keep),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
             }
         },
         containerColor = MaterialTheme.colorScheme.surface
@@ -477,12 +530,14 @@ private fun DiscardConfirmationDialog(
 @Composable
 private fun ExerciseHeaderCard(
     workoutExercise: WorkoutExercise,
-    exerciseName: String?,
+    catalogExercise: wallcrawl.elopenmike.com.core.model.Exercise?,
     preferredUnit: String
 ) {
-    val displayName = exerciseName ?: workoutExercise.exerciseId
-        .split("-")
-        .joinToString(" ") { it.replaceFirstChar { char -> char.uppercase() } }
+    val locale = LocalConfiguration.current.locales[0]
+    val vocabulary = LocalExerciseVocabulary.current
+    val displayName = catalogExercise
+        ?.let(vocabulary::exerciseName)
+        ?: vocabulary.exerciseName(workoutExercise.exerciseId)
 
     WallCrawlCard(
         cornerRadius = 14.dp,
@@ -503,19 +558,27 @@ private fun ExerciseHeaderCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             StatBadge(
-                label = workoutExercise.prescription.displayTarget(),
+                label = prescriptionTarget(workoutExercise.prescription),
                 textColor = MaterialTheme.colorScheme.onSurface
             )
 
-            if (workoutExercise.targetWeight != null) {
+            workoutExercise.targetWeight?.let { target ->
                 StatBadge(
-                    label = "Suggested: ${workoutExercise.targetWeight} $preferredUnit",
+                    label = stringResource(
+                        R.string.workout_suggested_load,
+                        LocaleFormatting.formatMeasurement(target, locale),
+                        preferredUnit
+                    ),
                     textColor = MaterialTheme.colorScheme.secondary
                 )
             }
             workoutExercise.prescription.targetAssistanceWeight?.let { assistance ->
                 StatBadge(
-                    label = "Assistance: $assistance $preferredUnit",
+                    label = stringResource(
+                        R.string.workout_assistance,
+                        LocaleFormatting.formatMeasurement(assistance, locale),
+                        preferredUnit
+                    ),
                     textColor = MaterialTheme.colorScheme.secondary
                 )
             }
@@ -523,26 +586,55 @@ private fun ExerciseHeaderCard(
     }
 }
 
-private fun wallcrawl.elopenmike.com.core.model.ExercisePrescription.inputLabel(unit: String): String =
-    when (exerciseType) {
-        ExerciseType.WEIGHT_REPS -> "LOAD ($unit) · REPS"
-        ExerciseType.BODYWEIGHT_REPS -> "REPS"
-        ExerciseType.ASSISTED_BODYWEIGHT -> "ASSIST ($unit) · REPS"
-        ExerciseType.DURATION -> "DURATION"
-        ExerciseType.DISTANCE_DURATION -> "DISTANCE · DURATION"
-    }
-
-private fun wallcrawl.elopenmike.com.core.model.ExercisePrescription.displayTarget(): String =
-    when (exerciseType) {
+/** The compact prescribed target for this exercise, written for the reader. */
+@Composable
+private fun prescriptionTarget(
+    prescription: wallcrawl.elopenmike.com.core.model.ExercisePrescription
+): String {
+    val locale = LocalConfiguration.current.locales[0]
+    val sets = LocaleFormatting.formatCount(prescription.targetSets, locale)
+    return when (prescription.exerciseType) {
         ExerciseType.WEIGHT_REPS, ExerciseType.BODYWEIGHT_REPS,
-        ExerciseType.ASSISTED_BODYWEIGHT -> "$targetSets × $repRange"
-        ExerciseType.DURATION -> "$targetSets × ${targetDurationSeconds}s"
-        ExerciseType.DISTANCE_DURATION -> buildList {
-            add("$targetSets set" + if (targetSets == 1) "" else "s")
-            targetDistanceMeters?.let { add("${it.toInt()} m") }
-            targetDurationSeconds?.let { add("${it}s") }
-        }.joinToString(" · ")
+        ExerciseType.ASSISTED_BODYWEIGHT -> {
+            val range = prescription.repRange
+            val reps = when {
+                range == null -> ""
+                range.min == range.max -> LocaleFormatting.formatCount(range.min, locale)
+                else -> stringResource(
+                    R.string.prescription_rep_range,
+                    LocaleFormatting.formatCount(range.min, locale),
+                    LocaleFormatting.formatCount(range.max, locale)
+                )
+            }
+            stringResource(R.string.prescription_sets_by_reps, sets, reps)
+        }
+
+        ExerciseType.DURATION -> stringResource(
+            R.string.prescription_sets_by_reps,
+            sets,
+            stringResource(
+                R.string.prescription_seconds,
+                LocaleFormatting.formatCount(prescription.targetDurationSeconds ?: 0, locale)
+            )
+        )
+
+        ExerciseType.DISTANCE_DURATION -> listOfNotNull(
+            pluralStringResource(R.plurals.count_sets, prescription.targetSets, sets),
+            prescription.targetDistanceMeters?.let {
+                stringResource(
+                    R.string.prescription_meters,
+                    LocaleFormatting.formatCount(it.toInt(), locale)
+                )
+            },
+            prescription.targetDurationSeconds?.let {
+                stringResource(
+                    R.string.prescription_seconds,
+                    LocaleFormatting.formatCount(it, locale)
+                )
+            }
+        ).joinToString(stringResource(R.string.detail_separator))
     }
+}
 
 /**
  * A rejected set update (e.g. an explicit but invalid completion attempt) is
@@ -550,7 +642,7 @@ private fun wallcrawl.elopenmike.com.core.model.ExercisePrescription.displayTarg
  * active workout with a full-screen error.
  */
 @Composable
-private fun SetUpdateErrorBanner(message: String, onDismiss: () -> Unit) {
+private fun SetUpdateErrorBanner(@StringRes messageRes: Int, onDismiss: () -> Unit) {
     WallCrawlCard(
         cornerRadius = 12.dp,
         contentPadding = 12.dp,
@@ -558,7 +650,7 @@ private fun SetUpdateErrorBanner(message: String, onDismiss: () -> Unit) {
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = message,
+                text = stringResource(messageRes),
                 color = CrimsonRedLight,
                 fontSize = 13.sp,
                 modifier = Modifier.weight(1f)
@@ -566,7 +658,7 @@ private fun SetUpdateErrorBanner(message: String, onDismiss: () -> Unit) {
             IconButton(onClick = onDismiss) {
                 Icon(
                     imageVector = Icons.Default.Close,
-                    contentDescription = "Dismiss error",
+                    contentDescription = stringResource(R.string.workout_dismiss_error),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
@@ -580,6 +672,7 @@ private fun PreviousPerformanceCard(
     completedAtTimestamp: Long?,
     weightUnit: String
 ) {
+    val locale = LocalConfiguration.current.locales[0]
     WallCrawlCard(
         cornerRadius = 12.dp,
         contentPadding = 12.dp
@@ -593,7 +686,7 @@ private fun PreviousPerformanceCard(
             )
             Spacer(modifier = Modifier.width(6.dp))
             Text(
-                text = "PREVIOUS SESSION",
+                text = stringResource(R.string.workout_previous_session),
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.5.sp,
@@ -602,9 +695,9 @@ private fun PreviousPerformanceCard(
         }
 
         completedAtTimestamp?.let { timestamp ->
-            val locale = LocalConfiguration.current.locales[0]
             Text(
-                text = SimpleDateFormat("MMM d, yyyy", locale).format(Date(timestamp)),
+                text = DateFormat.getDateInstance(DateFormat.MEDIUM, locale)
+                    .format(Date(timestamp)),
                 fontSize = 11.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
             )
@@ -612,28 +705,65 @@ private fun PreviousPerformanceCard(
 
         Spacer(modifier = Modifier.height(6.dp))
 
+        val detailSeparator = stringResource(R.string.detail_separator)
         sets.forEach { set ->
             val result = when (set.exerciseType) {
                 ExerciseType.WEIGHT_REPS -> {
                     val reps = set.completedReps ?: return@forEach
-                    "${set.completedWeight?.let { "$it $weightUnit" } ?: "No load"} × $reps"
+                    stringResource(
+                        R.string.previous_weight_reps,
+                        set.completedWeight?.let {
+                            stringResource(
+                                R.string.previous_load,
+                                LocaleFormatting.formatMeasurement(it, locale),
+                                weightUnit
+                            )
+                        } ?: stringResource(R.string.previous_no_load),
+                        LocaleFormatting.formatCount(reps, locale)
+                    )
                 }
-                ExerciseType.BODYWEIGHT_REPS ->
-                    "Bodyweight × ${set.completedReps ?: return@forEach}"
+                ExerciseType.BODYWEIGHT_REPS -> stringResource(
+                    R.string.previous_bodyweight_reps,
+                    LocaleFormatting.formatCount(set.completedReps ?: return@forEach, locale)
+                )
                 ExerciseType.ASSISTED_BODYWEIGHT -> {
-                    val assistance = set.completedAssistanceWeight
-                        ?.let { "$it $weightUnit assistance" }
-                        ?: "Assistance not logged"
-                    "$assistance × ${set.completedReps ?: return@forEach}"
+                    val assistance = set.completedAssistanceWeight?.let {
+                        stringResource(
+                            R.string.previous_assistance,
+                            LocaleFormatting.formatMeasurement(it, locale),
+                            weightUnit
+                        )
+                    } ?: stringResource(R.string.previous_assistance_missing)
+                    stringResource(
+                        R.string.previous_weight_reps,
+                        assistance,
+                        LocaleFormatting.formatCount(set.completedReps ?: return@forEach, locale)
+                    )
                 }
-                ExerciseType.DURATION -> "${set.completedDurationSeconds ?: return@forEach} seconds"
+                ExerciseType.DURATION -> stringResource(
+                    R.string.prescription_seconds,
+                    LocaleFormatting.formatCount(
+                        set.completedDurationSeconds ?: return@forEach,
+                        locale
+                    )
+                )
                 ExerciseType.DISTANCE_DURATION -> listOfNotNull(
-                    set.completedDistanceMeters?.let { "$it m" },
-                    set.completedDurationSeconds?.let { "$it seconds" }
-                ).joinToString(" · ").ifBlank { return@forEach }
+                    set.completedDistanceMeters?.let {
+                        stringResource(
+                            R.string.prescription_meters,
+                            LocaleFormatting.formatMeasurement(it, locale)
+                        )
+                    },
+                    set.completedDurationSeconds?.let {
+                        stringResource(
+                            R.string.prescription_seconds,
+                            LocaleFormatting.formatCount(it, locale)
+                        )
+                    }
+                ).joinToString(detailSeparator).ifBlank { return@forEach }
             }
             Text(
-                text = "• $result",
+                text = stringResource(R.string.previous_entry, result),
                 fontSize = 13.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

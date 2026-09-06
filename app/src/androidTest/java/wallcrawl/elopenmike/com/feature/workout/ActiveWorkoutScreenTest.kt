@@ -16,12 +16,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toPixelMap
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
+import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import org.junit.Rule
 import org.junit.Test
+import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.ai.WorkoutHistoryAnalyzer
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
 import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
@@ -52,6 +54,14 @@ class ActiveWorkoutScreenTest {
     @get:Rule
     val composeRule = createComposeRule()
 
+    /**
+     * A label read from resources rather than repeated here. These tests are about the rest
+     * timer and the discard confirmation, not about the wording of a button, so a copy edit
+     * in either language must not break them.
+     */
+    private fun text(id: Int): String =
+        InstrumentationRegistry.getInstrumentation().targetContext.getString(id)
+
     private val clock = TestClock()
     private val repository = ScreenTestRepository(session())
     private val viewModel = ActiveWorkoutViewModel(
@@ -72,7 +82,7 @@ class ActiveWorkoutScreenTest {
 
         composeRule.onNodeWithContentDescription("Rest remaining 2:00").assertIsDisplayed()
 
-        composeRule.onNodeWithText("+30s").performClick()
+        composeRule.onNodeWithText(text(R.string.rest_add_thirty)).performClick()
         composeRule.waitForIdle()
         composeRule.onNodeWithContentDescription("Rest remaining 2:30").assertIsDisplayed()
 
@@ -151,7 +161,9 @@ class ActiveWorkoutScreenTest {
     fun closingTheWorkout_requiresAnExplicitDiscardConfirmation() {
         showScreen()
 
-        composeRule.onNodeWithContentDescription("Close Workout").performClick()
+        composeRule.onNodeWithContentDescription(
+            text(R.string.workout_close_content_description)
+        ).performClick()
         composeRule.waitForIdle()
 
         composeRule.onNodeWithText("Discard this workout?").assertIsDisplayed()
@@ -159,7 +171,9 @@ class ActiveWorkoutScreenTest {
         composeRule.waitForIdle()
         assertThat(repository.cancelCalls).isEqualTo(0)
 
-        composeRule.onNodeWithContentDescription("Close Workout").performClick()
+        composeRule.onNodeWithContentDescription(
+            text(R.string.workout_close_content_description)
+        ).performClick()
         composeRule.waitForIdle()
         composeRule.onNodeWithText("Discard").performClick()
         composeRule.waitForIdle()
@@ -177,7 +191,9 @@ class ActiveWorkoutScreenTest {
         composeRule.onNodeWithText("Keep going").assertDoesNotContainColor(CrimsonRedPrimary)
         composeRule.onNodeWithText("Keep going").performClick()
 
-        composeRule.onNodeWithContentDescription("Close Workout").performClick()
+        composeRule.onNodeWithContentDescription(
+            text(R.string.workout_close_content_description)
+        ).performClick()
         composeRule.waitForIdle()
         composeRule.onNodeWithText("Discard").assertContainsColor(CrimsonRedPrimary)
         composeRule.onNodeWithText("Keep workout").assertDoesNotContainColor(CrimsonRedPrimary)
@@ -307,6 +323,8 @@ private class ScreenTestRepository(initial: WorkoutSession) : WorkoutRepository 
 
     override suspend fun startWorkoutFromGenerated(
         generated: GeneratedWorkout,
+        displayName: String,
+        displayRationale: String,
         userProfile: UserProfile
     ): WorkoutSession = error("Not used")
 

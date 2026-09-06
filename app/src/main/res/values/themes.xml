@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.WallCrawl" parent="android:Theme.Material.NoActionBar">
+    <!--
+        Theme.AppCompat is required by AppCompatActivity, which is in turn what carries the
+        per-app language APIs back to minSdk 26. Its window background resolves to the same
+        colour as the android:Theme.Material.NoActionBar this used to extend, so the launch
+        appearance is unchanged; every pixel after that is painted by Compose.
+    -->
+    <style name="Theme.WallCrawl" parent="Theme.AppCompat.NoActionBar">
         <item name="android:statusBarColor">#0D0F12</item>
         <item name="android:navigationBarColor">#0D0F12</item>
     </style>

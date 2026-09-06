@@ -3,6 +3,8 @@ package wallcrawl.elopenmike.com.feature.templates
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import wallcrawl.elopenmike.com.core.ai.PlannerFixtureContextFactory
+import wallcrawl.elopenmike.com.core.exercise.ExerciseSearchIndex
+import wallcrawl.elopenmike.com.core.exercise.localization.ExerciseLocalization
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 
@@ -29,7 +31,7 @@ class TemplateEditorUiStateTest {
         ).forEach { query ->
             val result = TemplateEditorUiState(
                 query = query,
-                catalogExercises = listOf(exercise)
+                searchIndex = ExerciseSearchIndex(listOf(exercise), ExerciseLocalization.EMPTY)
             ).filteredExercises
 
             assertThat(result).containsExactly(exercise)
@@ -42,7 +44,7 @@ class TemplateEditorUiStateTest {
 
         val result = TemplateEditorUiState(
             query = "   ",
-            catalogExercises = listOf(exercise, otherExercise)
+            searchIndex = ExerciseSearchIndex(listOf(exercise, otherExercise), ExerciseLocalization.EMPTY)
         ).filteredExercises
 
         assertThat(result).containsExactly(exercise, otherExercise).inOrder()
@@ -56,7 +58,7 @@ class TemplateEditorUiStateTest {
 
         val state = TemplateEditorUiState(
             query = "",
-            catalogExercises = bundledExercises,
+            searchIndex = ExerciseSearchIndex(bundledExercises, ExerciseLocalization.EMPTY),
             availableEquipment = emptySet()
         )
 

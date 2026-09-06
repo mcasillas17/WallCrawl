@@ -18,8 +18,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -59,6 +61,8 @@ import wallcrawl.elopenmike.com.feature.workout.ActiveWorkoutViewModel
 
 import androidx.compose.material3.MaterialTheme
 import wallcrawl.elopenmike.com.core.model.UserProfile
+import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
+import wallcrawl.elopenmike.com.core.ui.localization.rememberExerciseVocabulary
 
 @Composable
 fun WallCrawlApp(
@@ -72,28 +76,34 @@ fun WallCrawlApp(
     val profileState by container.userProfileRepository.getUserProfile().collectAsState(initial = profile)
     val effectiveProfile = profile ?: profileState
 
-    when (effectiveProfile) {
-        null -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
-            }
-        }
+    // Catalog text is looked up by canonical id, so the vocabulary is provided once here and
+    // re-derived whenever the configuration's locale changes.
+    val vocabulary = rememberExerciseVocabulary(container.exerciseLocalizationSource)
 
-        else -> {
-            WallCrawlAppContent(
-                container = container,
-                navController = navController,
-                startDestination = if (effectiveProfile.onboardingCompleted) {
-                    AppRoutes.TODAY
-                } else {
-                    AppRoutes.ONBOARDING
+    CompositionLocalProvider(LocalExerciseVocabulary provides vocabulary) {
+        when (effectiveProfile) {
+            null -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                 }
-            )
+            }
+
+            else -> {
+                WallCrawlAppContent(
+                    container = container,
+                    navController = navController,
+                    startDestination = if (effectiveProfile.onboardingCompleted) {
+                        AppRoutes.TODAY
+                    } else {
+                        AppRoutes.ONBOARDING
+                    }
+                )
+            }
         }
     }
 }
@@ -326,7 +336,8 @@ private fun WallCrawlAppContent(
                     factory = WorkoutTemplatesViewModel.provideFactory(
                         templateRepository = container.workoutTemplateRepository,
                         workoutRepository = container.workoutRepository,
-                        userProfileRepository = container.userProfileRepository
+                        userProfileRepository = container.userProfileRepository,
+                        exerciseCatalog = container.exerciseCatalog
                     )
                 )
                 WorkoutTemplatesScreen(
@@ -347,7 +358,8 @@ private fun WallCrawlAppContent(
                         templateId = null,
                         templateRepository = container.workoutTemplateRepository,
                         userProfileRepository = container.userProfileRepository,
-                        exerciseCatalog = container.exerciseCatalog
+                        exerciseCatalog = container.exerciseCatalog,
+                        localizationSource = container.exerciseLocalizationSource
                     )
                 )
                 TemplateEditorScreen(
@@ -368,7 +380,8 @@ private fun WallCrawlAppContent(
                         templateId = templateId,
                         templateRepository = container.workoutTemplateRepository,
                         userProfileRepository = container.userProfileRepository,
-                        exerciseCatalog = container.exerciseCatalog
+                        exerciseCatalog = container.exerciseCatalog,
+                        localizationSource = container.exerciseLocalizationSource
                     )
                 )
                 TemplateEditorScreen(
@@ -397,19 +410,20 @@ internal fun WallCrawlBottomBar(
     ) {
         Screen.bottomNavItems.forEach { screen ->
             val isSelected = currentRoute == screen.route
+            val title = stringResource(screen.titleRes)
             NavigationBarItem(
                 selected = isSelected,
                 onClick = { onNavigate(screen) },
                 icon = {
                     Icon(
                         imageVector = screen.icon,
-                        contentDescription = screen.title,
+                        contentDescription = title,
                         modifier = Modifier.size(22.dp)
                     )
                 },
                 label = {
                     Text(
-                        text = screen.title,
+                        text = title,
                         fontSize = 11.sp,
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
                     )

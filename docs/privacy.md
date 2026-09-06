@@ -104,7 +104,9 @@ It does **not** touch:
   destination synchronised;
 - backups a previous version of Android or an OEM tool may still hold
   (see [platform limitations](#platform-limitations-and-old-backups));
-- the bundled exercise catalog and artwork, which are application assets.
+- the bundled exercise catalog and artwork, which are application assets;
+- the app language, which is an Android per-app language setting rather than app
+  data, so fresh onboarding after deletion opens in the language already chosen.
 
 Deleting local data is not a claim of remote erasure.
 
@@ -116,6 +118,14 @@ profile/capabilities, templates, workout history, set outcomes, and derived ledg
 cache. Its SQLite journal/WAL/SHM sidecars are in the same database domain.
 The policy excludes the entire directory, not a guessed filename or selected
 tables.
+
+The app language is not stored here. Android 13 and later keep the per-app language in
+the system, where it is the same value the system Settings screen shows and is outside the
+app's data entirely; below that, AndroidX's `autoStoreLocales` service persists it in the
+app's SharedPreferences, which the `sharedpref` and `device_sharedpref` exclusions below
+already cover. Either way it is device-local: it is not in the profile, not in Room, and
+not in the export archive, so an archive exported under one language restores unchanged
+under the other. See [Localization](localization.md).
 
 | Android branch | Manifest attribute | Resource and exclusions |
 | --- | --- | --- |

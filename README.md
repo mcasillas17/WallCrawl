@@ -14,7 +14,8 @@ model: first-run onboarding with conservative equipment defaults, profile
 constraints and local movement-capability inputs, a complete bundled catalog,
 structured workout generation and
 validation, reusable custom workout templates, type-aware active set logging
-with no fabricated starting loads, Room persistence with user-owned export,
+with no fabricated starting loads, a complete English and neutral Latin American
+Spanish interface, Room persistence with user-owned export,
 restore, and deletion, workout-history context,
 experience-aware exercise ordering, a production-disabled reviewed capability-
 evidence soft-penalty relaxation, a production-disabled reviewed state-based
@@ -62,9 +63,49 @@ WallCrawl supports **Dark Theme** (stealth suit graphite aesthetic), **Light The
 - **Active Workout Session**: Type-aware logging for load/reps, bodyweight reps, assisted reps, duration, and distance/duration, with one-tap set completion, plus/minus and text entry for every value, a local rest countdown, optional RPE/RIR, animated SVG movement previews, and previous performance comparisons.
 - **Workout Summary**: Post-workout card displaying session duration, total volume lifted, sets completed, and personal records set against your logged history.
 - **Progress Tracking**: Weekly workout streaks, volume and rep totals, per-muscle weekly set counts, strength progression indicators, and historical workout logs.
-- **Training Profile & App Preferences**: Full local customization of theme preference (Auto System / Dark Mode / Light Mode) with compact switcher, multi-select fitness goals, preferred weight units (LBS/KG), session duration targets, available gym equipment, return-after-break calibration, muscle priorities, and seven movement preferences.
+- **Training Profile & App Preferences**: Full local customization of app language (System default / English / Español) and theme preference (Auto System / Dark Mode / Light Mode) with compact switchers, multi-select fitness goals, preferred weight units (LBS/KG), session duration targets, available gym equipment, return-after-break calibration, muscle priorities, and seven movement preferences.
 - **Your Data**: Export everything stored on the device to one versioned, checksummed file you choose the destination for; restore it onto a fresh start; or delete every local record behind an explicit destructive confirmation. Restore is also offered on the first onboarding step, so a reinstall does not have to build a throwaway profile first.
+- **Language**: English and neutral Latin American Spanish across the whole app, following the device by default, switchable from the onboarding Welcome step before any details are entered and from Training Profile → App preferences, and stored as a device setting rather than as part of the profile or the export archive.
 - **Credits & Licenses**: In-app attribution for the bundled exercise artwork, reachable from the Training Profile screen.
+
+### English & Spanish
+
+Every screen ships in **English** and **neutral Latin American Spanish**, including the
+302-exercise catalog, generated workout titles and explanations, destructive
+confirmations, and TalkBack labels. Both languages work fully offline; nothing is
+translated at runtime.
+
+The language follows the device by default, from the very first onboarding screen. It can
+be changed from the onboarding **Welcome** step before any details are entered, and later
+from **Training Profile → App preferences**. Both selectors write the same preference, and
+on Android 13+ that is the same per-app language the system Settings screen shows. It is a
+device setting: it is not part of the training profile, not in the export archive, and
+restoring an archive never changes it.
+
+<p align="center">
+  <img src="art/screenshots/onboarding-welcome-language-es.png" width="24%" alt="Spanish onboarding step 1 of 8 with the language selector above the codename field, offering System default, English, and Español before any details are entered" />
+  <img src="art/screenshots/profile-language-es.png" width="24%" alt="Spanish Training Profile App preferences card holding both the interface theme switcher and the language setting, with Español selected" />
+  <img src="art/screenshots/onboarding-summary-es.png" width="24%" alt="Spanish onboarding step 8 of 8 summarising codename, goals, experience, frequency, units, equipment, movement preferences, and sensitive areas" />
+  <img src="art/screenshots/today-screen-es.png" width="24%" alt="Spanish Today screen with a generated Empuje / Hipertrofia session, its focus muscles, and five Spanish exercise names" />
+</p>
+<p align="center">
+  <img src="art/screenshots/exercises-screen-es.png" width="24%" alt="Spanish exercise library showing 302 exercises with Spanish names, muscle chips, and equipment chips" />
+  <img src="art/screenshots/active-workout-es.png" width="24%" alt="Spanish active workout logging a bench press set, with the load shown as 47,5 using the reader decimal mark and the unit still in pounds" />
+  <img src="art/screenshots/profile-your-data-es.png" width="24%" alt="Spanish Your Data card with export, restore, and delete-all controls and their privacy and fresh-start guidance" />
+  <img src="art/screenshots/profile-delete-confirmation-es.png" width="24%" alt="Spanish delete-all confirmation naming exactly what is removed, what is left alone, and that the language setting is not changed" />
+</p>
+<p align="center">
+  <em>Language on Welcome and in App preferences &middot; onboarding and Today &middot; catalog and logging &middot; the data controls and their destructive confirmation</em>
+</p>
+
+Language is presentation only. Identical inputs produce identical exercise selections,
+prescriptions, loads, rest targets, and stored measurements in either language, and units
+never change with it — Spanish does not turn pounds into kilograms. Numbers are shown with
+the reader's decimal mark and read back the same way, so a load typed as `47,5` is stored
+as 47.5. Anything a user typed — codename, template names, notes — and the title and
+explanation stored with a past session are kept exactly as written, in the language they
+were written in. See [Localization](docs/localization.md) for the full reference and for
+how to add a string, an exercise, or a language.
 
 ## Documentation
 
@@ -75,6 +116,10 @@ WallCrawl supports **Dark Theme** (stealth suit graphite aesthetic), **Light The
   tradeoffs, and platform limitations.
 - [Custom Workouts](docs/custom-workouts.md) documents the user flow, full-catalog
   selection rules, frozen session snapshots, and current editor limitations.
+- [Localization](docs/localization.md) explains where each kind of text lives, what
+  is deliberately never translated, the exercise-translation overlay and its
+  stable-ID boundary, number and input formatting, and how to add a string, an
+  exercise, or a language without translation drift.
 - [Planner evaluation](docs/planner-evaluation.md) documents the versioned persona
   corpus, strict fixture validation, deterministic replay, and asserted planner
   invariants.
@@ -179,9 +224,13 @@ soft-penalty suppression without changing browse or manual-workout access.
 
 The fake planner uses the same `WorkoutPlanner` contract intended for a future
 Qwen, Gemma, or LiteRT-backed implementation. It only selects IDs from
-`WorkoutGenerationContext.allowedExercises`. The validator rejects unknown or
-disallowed IDs and malformed set, rep, weight, rest, name, or duration values
-before any workout reaches persistence.
+`WorkoutGenerationContext.allowedExercises`. `ExercisePrescription` rejects
+malformed set, rep, weight, rest, and duration values as it is constructed, and
+`GeneratedWorkoutValidator` rejects unknown or disallowed exercise IDs, an empty
+workout, a prescription type that disagrees with the catalog, and an
+out-of-range session duration — all before any workout reaches persistence. The
+title and explanation are structured specs rather than strings, so a planner
+cannot emit free text for them at all.
 
 ### Reviewed state-based prescription policy
 
@@ -485,6 +534,13 @@ The guard has been shown to fail against the original backup-enabled manifest an
 against narrowed database exclusions or a missing device-transfer section. See
 [verification boundaries](docs/privacy.md#verification-boundary) for what this
 does and does not establish.
+
+Changes that add or reword user-visible text also need a Spanish translation: every
+resource key, plural quantity, and format argument must match across `values/` and
+`values-es/`, and every catalog exercise needs an entry in the translation overlay.
+`StringResourceParityTest`, `BundledExerciseLocalizationTest`, and `SafetyCopyTest`
+fail the build when they do not, so `testDebugUnitTest` is the check for this.
+[Localization](docs/localization.md) describes the workflow.
 
 The Python suites run in CI alongside the Gradle build and cover synthetic importer
 and checkout fixtures plus the authored metadata that ships. Pull-request/main CI

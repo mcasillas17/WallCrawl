@@ -9,17 +9,10 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSet
 
 class SetRowTest {
 
-    @Test
-    fun weightInputLabel_withNullTarget_asksUserToChooseStartingLoad() {
-        assertThat(weightInputLabel(targetWeight = null, weightUnit = "kg"))
-            .isEqualTo("Choose starting load")
-    }
-
-    @Test
-    fun weightInputLabel_withKnownTarget_showsLoadAndUnit() {
-        assertThat(weightInputLabel(targetWeight = 40.0, weightUnit = "kg"))
-            .isEqualTo("Load kg")
-    }
+    // The load-field label and the rest countdown are string resources now, so they are
+    // covered where resources can actually be read: `SafetyCopyTest` for the wording that
+    // must stay non-diagnostic in both languages, and `LocaleFormattingTest` for the
+    // countdown's digits.
 
     @Test
     fun isSubmittableFor_incompleteSet_isAlwaysSubmittableRegardlessOfPartialData() {
@@ -194,28 +187,4 @@ class SetRowTest {
             .containsExactly(SetInputField.DISTANCE, SetInputField.DURATION).inOrder()
     }
 
-    @Test
-    fun stopReasonLabels_stayPlainAndNeverDiagnostic() {
-        val labels = SetStopReason.entries.map { stopReasonLabel(it) }
-        val forbidden = listOf(
-            "injur", "pain level", "diagnos", "symptom", "medical", "condition",
-            "hurt yourself", "damage", "risk"
-        )
-
-        labels.forEach { label ->
-            assertThat(label).isNotEmpty()
-            forbidden.forEach { word ->
-                assertThat(label.lowercase()).doesNotContain(word)
-            }
-        }
-        assertThat(stopReasonLabel(SetStopReason.PAIN_STOP)).isEqualTo("Something hurt, so I stopped")
-    }
-
-    @Test
-    fun restCountdownLabel_readsAsMinutesAndSeconds() {
-        assertThat(restCountdownLabel(0)).isEqualTo("0:00")
-        assertThat(restCountdownLabel(9)).isEqualTo("0:09")
-        assertThat(restCountdownLabel(90)).isEqualTo("1:30")
-        assertThat(restCountdownLabel(600)).isEqualTo("10:00")
-    }
 }

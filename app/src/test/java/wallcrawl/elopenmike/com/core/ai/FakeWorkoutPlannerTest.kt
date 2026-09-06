@@ -32,7 +32,11 @@ import wallcrawl.elopenmike.com.core.model.ReviewState
 import wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
+import wallcrawl.elopenmike.com.core.model.BreakRange
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
+import wallcrawl.elopenmike.com.core.model.WorkoutEmphasis
+import wallcrawl.elopenmike.com.core.model.WorkoutRationaleSpec
+import wallcrawl.elopenmike.com.core.model.WorkoutSplit
 import wallcrawl.elopenmike.com.core.model.SupportRequirement
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
@@ -88,7 +92,7 @@ class FakeWorkoutPlannerTest {
 
         val workout = planner.generateWorkout(context)
 
-        assertThat(workout.name).contains("Push")
+        assertThat(workout.title.split).isEqualTo(WorkoutSplit.PUSH)
         assertThat(workout.focusMuscles).contains(StandardMuscles.CHEST)
     }
 
@@ -120,7 +124,7 @@ class FakeWorkoutPlannerTest {
         val workout = planner.generateWorkout(context)
 
         assertThat(workout.exercises).isNotEmpty()
-        assertThat(workout.name).doesNotContain("Legs")
+        assertThat(workout.title.split).isNotEqualTo(WorkoutSplit.LEGS)
     }
 
     @Test
@@ -134,7 +138,7 @@ class FakeWorkoutPlannerTest {
 
         val workout = planner.generateWorkout(context)
 
-        assertThat(workout.name).contains("Legs")
+        assertThat(workout.title.split).isEqualTo(WorkoutSplit.LEGS)
     }
 
     @Test
@@ -1138,8 +1142,14 @@ class FakeWorkoutPlannerTest {
 
         val workout = planner.generateWorkout(context)
 
-        assertThat(workout.name).contains("Power & Hypertrophy")
-        assertThat(workout.rationale).contains("Strength + Build Muscle")
+        // The title and the explanation are structured, so a test asserts the decision
+        // rather than the English sentence that happens to render it.
+        assertThat(workout.title.emphasis).isEqualTo(WorkoutEmphasis.POWER_AND_HYPERTROPHY)
+        assertThat(workout.title.isReEntry).isFalse()
+        val rationale = workout.rationale as WorkoutRationaleSpec.GoalFocus
+        assertThat(rationale.goals)
+            .containsExactly(FitnessGoal.BUILD_MUSCLE, FitnessGoal.STRENGTH)
+            .inOrder()
     }
 
     @Test
@@ -1156,10 +1166,9 @@ class FakeWorkoutPlannerTest {
 
         val workout = planner.generateWorkout(context)
 
-        assertThat(workout.name).contains("(Re-entry)")
-        assertThat(workout.rationale).contains("Re-entry Ramp-Up Active")
-        assertThat(workout.rationale).contains("Volume is capped at 2 sets")
-        assertThat(workout.rationale).contains("1–2 Years")
+        assertThat(workout.title.isReEntry).isTrue()
+        assertThat(workout.rationale)
+            .isEqualTo(WorkoutRationaleSpec.ReEntryRamp(BreakRange.HIATUS))
     }
 
     @Test

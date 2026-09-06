@@ -40,11 +40,7 @@ class ProgressViewModel(
         state
     }.catch { error ->
         if (error is CancellationException) throw error
-        emit(
-            ProgressUiState.Error(
-                "Progress could not be loaded because the offline exercise catalog or workout data is unavailable."
-            )
-        )
+        emit(ProgressUiState.Error())
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),

@@ -1,5 +1,7 @@
 package wallcrawl.elopenmike.com.feature.workout
 
+import androidx.annotation.StringRes
+import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
@@ -45,7 +47,7 @@ sealed interface ActiveWorkoutUiState {
         // explicit but invalid completion attempt) is recoverable: it never replaces the
         // active workout, only surfaces here to be dismissed or cleared by the next
         // successful update.
-        val setUpdateError: String? = null,
+        @StringRes val setUpdateError: Int? = null,
         val restTimer: RestTimerUiState = RestTimerUiState.Idle,
         /** Non-null while the user is being asked to confirm finishing with open sets. */
         val pendingFinish: FinishDecision.ConfirmIncomplete? = null,
@@ -69,7 +71,7 @@ sealed interface ActiveWorkoutUiState {
         val summary: WorkoutSummary
     ) : ActiveWorkoutUiState
 
-    data class Error(val message: String) : ActiveWorkoutUiState
+    data class Error(@StringRes val messageRes: Int) : ActiveWorkoutUiState
 }
 
 /**

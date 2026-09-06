@@ -10,6 +10,7 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.exercise.workoutguide.AttributionNotice
 import wallcrawl.elopenmike.com.core.exercise.workoutguide.AttributionNoticeSource
 import wallcrawl.elopenmike.com.core.exercise.workoutguide.WorkoutGuideCatalogSnapshot
@@ -36,7 +37,12 @@ class CreditsViewModelTest {
         val viewModel = CreditsViewModel(
             catalogSource = FakeCatalogSource(),
             noticeSource = FakeNoticeSource(
-                listOf(AttributionNotice("Attribution", "Everkinetic, CC BY-SA 4.0"))
+                listOf(
+                    AttributionNotice(
+                        R.string.credits_notice_attribution,
+                        "Everkinetic, CC BY-SA 4.0"
+                    )
+                )
             )
         )
 
@@ -66,7 +72,10 @@ class CreditsViewModelTest {
 
         val state = viewModel.uiState.value
         assertThat(state).isInstanceOf(CreditsUiState.Error::class.java)
-        assertThat((state as CreditsUiState.Error).message).contains("catalog unavailable")
+        // The reason is resource-backed, so the screen can say it in either language
+        // without the loader knowing which one.
+        assertThat((state as CreditsUiState.Error).messageRes)
+            .isEqualTo(R.string.credits_error_body)
     }
 
     @Test

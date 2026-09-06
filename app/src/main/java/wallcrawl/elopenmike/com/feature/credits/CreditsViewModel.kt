@@ -40,9 +40,9 @@ class CreditsViewModel(
             } catch (error: CancellationException) {
                 throw error
             } catch (error: Exception) {
-                stateFlow.value = CreditsUiState.Error(
-                    error.message ?: "Unable to load attribution details."
-                )
+                // The loader's exception message is developer text and cannot be
+                // translated; the screen shows a typed reason instead.
+                stateFlow.value = CreditsUiState.Error()
             }
         }
     }

@@ -45,7 +45,7 @@
     "outcome": "SUCCESS",
     "requiredExerciseIds": [],
     "forbiddenExerciseIds": [],
-    "workoutNameContains": "(Re-entry)",
+    "titleIdentityContains": "RE_ENTRY",
     "maxTargetSetsPerExercise": 2,
     "expectedTargetWeights": {
       "incline-dumbbell-press": 40.0

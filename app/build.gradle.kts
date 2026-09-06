@@ -57,6 +57,14 @@ android {
     buildFeatures {
         compose = true
     }
+    androidResources {
+        // Generates res/xml/locale_config.xml from the values-* directories that actually
+        // ship, and injects android:localeConfig. That is what makes WallCrawl appear in
+        // the system per-app language screen, and it cannot drift from the resources the
+        // way a hand-maintained list would. The default locale comes from
+        // src/main/res/resources.properties.
+        generateLocaleConfig = true
+    }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -71,6 +79,10 @@ android {
 }
 
 dependencies {
+    // Carries the per-app language APIs back to minSdk 26. On API 33+ AppCompatDelegate
+    // delegates to the platform LocaleManager, so the app selector and the system per-app
+    // language screen always report the same choice.
+    implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)

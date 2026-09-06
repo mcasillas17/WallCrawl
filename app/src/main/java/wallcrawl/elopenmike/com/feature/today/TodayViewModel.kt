@@ -44,7 +44,7 @@ class TodayViewModel(
     private val generatedWorkoutFlow = MutableStateFlow<GeneratedWorkout?>(null)
     private val generatedForProfileFlow = MutableStateFlow<UserProfile?>(null)
     private val isRegeneratingFlow = MutableStateFlow(false)
-    private val errorFlow = MutableStateFlow<String?>(null)
+    private val errorFlow = MutableStateFlow<TodayError?>(null)
     private var generationJob: Job? = null
     private var hasPendingRegeneration = false
 
@@ -73,7 +73,7 @@ class TodayViewModel(
         errorFlow
     ) { sourceState, generatedWorkout, isRegenerating, error ->
         if (error != null) {
-            TodayUiState.Error(message = error, activeSession = sourceState.activeSession)
+            TodayUiState.Error(error = error, activeSession = sourceState.activeSession)
         } else if (generatedWorkout == null) {
             TodayUiState.Loading
         } else {
@@ -132,7 +132,7 @@ class TodayViewModel(
                 } catch (e: CancellationException) {
                     throw e
                 } catch (e: Exception) {
-                    errorFlow.value = userFacingMessage(e, currentRequestIsRegeneration)
+                    errorFlow.value = userFacingError(e, currentRequestIsRegeneration)
                 } finally {
                     isRegeneratingFlow.value = false
                 }
@@ -142,40 +142,48 @@ class TodayViewModel(
     }
 
     /**
-     * Turns a planning failure into copy for the Today error card.
+     * Turns a planning failure into a typed reason for the Today error card.
      *
      * Exception messages are written for logs, so they are mapped here rather than rendered:
-     * the planner should not have to phrase user-facing text, and "no allowed candidate
-     * exercises available" is not something to show a person mid-workout-planning.
+     * the planner should not have to phrase user-facing text in any language, and "no
+     * allowed candidate exercises available" is not something to show a person
+     * mid-workout-planning.
      */
-    private fun userFacingMessage(error: Exception, isRegeneration: Boolean): String {
+    private fun userFacingError(error: Exception, isRegeneration: Boolean): TodayError {
         val planningError = error as? WorkoutValidationException
         return when (planningError?.failure) {
-            WorkoutPlanningFailure.NO_CANDIDATES ->
-                "No exercises match your equipment and exclusions yet. " +
-                    "Add equipment or clear an exclusion in Profile."
+            WorkoutPlanningFailure.NO_CANDIDATES -> TodayError.NO_CANDIDATES
 
             WorkoutPlanningFailure.REVIEWED_ELIGIBILITY_NO_CANDIDATES ->
-                automaticEligibilityMessage(planningError.automaticEligibilityFailure)
+                automaticEligibilityError(planningError.automaticEligibilityFailure)
 
-            WorkoutPlanningFailure.NO_STRENGTH_CANDIDATES ->
-                "Cardio machines and stretches aren't planned as strength work. " +
-                    "Add strength equipment in Profile, or build your own workout."
+            WorkoutPlanningFailure.NO_STRENGTH_CANDIDATES -> TodayError.NO_STRENGTH_CANDIDATES
 
             WorkoutPlanningFailure.NO_CANDIDATES_FOR_ANY_SPLIT ->
-                "Your available equipment can't cover a full training day yet. " +
-                    "Add equipment in Profile, or start one of your own workouts."
+                TodayError.NO_CANDIDATES_FOR_ANY_SPLIT
 
             WorkoutPlanningFailure.INVALID_GENERATED_WORKOUT, null ->
                 if (isRegeneration) {
-                    "Couldn't build another workout. Try again."
+                    TodayError.REGENERATION_FAILED
                 } else {
-                    "Couldn't build today's workout. Try again."
+                    TodayError.FIRST_GENERATION_FAILED
                 }
         }
     }
 
-    fun startWorkout(onWorkoutStarted: (sessionId: String) -> Unit) {
+    /**
+     * Starts the suggested workout.
+     *
+     * [displayName] and [displayRationale] arrive already written by the screen, which is
+     * the only layer that knows what language the reader chose. They are what the session
+     * keeps: a workout started in Spanish stays named in Spanish in the history, exactly as
+     * it was seen when it was started.
+     */
+    fun startWorkout(
+        displayName: String,
+        displayRationale: String,
+        onWorkoutStarted: (sessionId: String) -> Unit
+    ) {
         if (generationJob?.isActive == true) return
         viewModelScope.launch {
             val currentWorkout = generatedWorkoutFlow.value ?: return@launch
@@ -188,13 +196,15 @@ class TodayViewModel(
                 workoutValidator.validate(currentWorkout, allowedIds)
                 val session = workoutRepository.startWorkoutFromGenerated(
                     generated = currentWorkout,
+                    displayName = displayName,
+                    displayRationale = displayRationale,
                     userProfile = currentContext.userProfile
                 )
                 onWorkoutStarted(session.id)
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                errorFlow.value = "Failed to start workout session: ${e.message}"
+                errorFlow.value = TodayError.START_FAILED
             }
         }
     }
@@ -244,35 +254,28 @@ class TodayViewModel(
     )
 }
 
-internal fun automaticEligibilityMessage(failure: AutomaticEligibilityFailure?): String =
+internal fun automaticEligibilityError(failure: AutomaticEligibilityFailure?): TodayError =
     when (failure) {
         AutomaticEligibilityFailure.NO_APPROVED_METADATA ->
-            "Reviewed automatic planning isn't available yet because no exercise metadata " +
-                "has human approval. You can still build your own workout."
+            TodayError.REVIEWED_NO_APPROVED_METADATA
 
         AutomaticEligibilityFailure.USER_EXCLUSIONS_REMOVED_ALL ->
-            "Your exercise exclusions leave no reviewed automatic options. " +
-                "Update exclusions in Profile, or build your own workout."
+            TodayError.REVIEWED_EXCLUSIONS_REMOVED_ALL
 
         AutomaticEligibilityFailure.EQUIPMENT_REMOVED_ALL ->
-            "Your available equipment leaves no reviewed automatic options. " +
-                "Update equipment in Profile, or build your own workout."
+            TodayError.REVIEWED_EQUIPMENT_REMOVED_ALL
 
         AutomaticEligibilityFailure.CAPABILITIES_REMOVED_ALL ->
-            "Your movement preferences leave no reviewed automatic options. " +
-                "Update them in Profile, or build your own workout."
+            TodayError.REVIEWED_CAPABILITIES_REMOVED_ALL
 
         AutomaticEligibilityFailure.TRAINING_CONSTRAINTS_REMOVED_ALL ->
-            "Your training restrictions leave no reviewed automatic options. " +
-                "Some restrictions still need human-reviewed exercise mappings."
+            TodayError.REVIEWED_CONSTRAINTS_REMOVED_ALL
 
         AutomaticEligibilityFailure.CALIBRATION_COMPLEXITY_REMOVED_ALL ->
-            "Your current calibration stage leaves no reviewed automatic options. " +
-                "You can still build your own workout."
+            TodayError.REVIEWED_CALIBRATION_REMOVED_ALL
 
         AutomaticEligibilityFailure.NO_ELIGIBLE_CANDIDATES, null ->
-            "No exercise meets every reviewed automatic-planning rule. " +
-                "You can still build your own workout."
+            TodayError.REVIEWED_NONE_ELIGIBLE
     }
 
 private fun minuteClock(nowTimestamp: () -> Long): Flow<Long> = flow {

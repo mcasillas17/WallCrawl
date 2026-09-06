@@ -23,6 +23,6 @@
     "outcome": "NO_STRENGTH_CANDIDATES",
     "requiredExerciseIds": ["walking"],
     "forbiddenExerciseIds": [],
-    "workoutNameContains": "should-not-be-here"
+    "titleIdentityContains": "should-not-be-here"
   }
 }

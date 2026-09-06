@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import wallcrawl.elopenmike.com.R
 import androidx.compose.foundation.layout.fillMaxSize
@@ -38,7 +37,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -50,15 +51,18 @@ import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.ui.components.StatBadge
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlWordmark
-import wallcrawl.elopenmike.com.core.ui.components.WallCrawlOutlinedButton
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlSecondaryButton
 import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
+import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
+import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
+import wallcrawl.elopenmike.com.core.ui.localization.generatedWorkoutRationale
+import wallcrawl.elopenmike.com.core.ui.localization.generatedWorkoutTitle
+import wallcrawl.elopenmike.com.core.ui.localization.labelRes
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 import wallcrawl.elopenmike.com.core.ui.theme.SuccessGreen
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
-import wallcrawl.elopenmike.com.core.ui.theme.WebBlueAccent
 
 @Composable
 fun TodayScreen(
@@ -83,7 +87,10 @@ fun TodayScreen(
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         CircularProgressIndicator(color = CrimsonRedPrimary)
                         Spacer(modifier = Modifier.height(16.dp))
-                        Text("Building today's plan...", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(
+                            stringResource(R.string.today_loading),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
                 }
             }
@@ -107,21 +114,43 @@ fun TodayScreen(
                         Spacer(modifier = Modifier.height(16.dp))
                     }
                     WallCrawlCard(borderColor = CrimsonRedPrimary) {
-                        Text("Generation Issue", fontWeight = FontWeight.Bold, color = CrimsonRedLight, fontSize = 18.sp)
+                        Text(
+                            stringResource(R.string.today_error_title),
+                            fontWeight = FontWeight.Bold,
+                            color = CrimsonRedLight,
+                            fontSize = 18.sp
+                        )
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text(state.message, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
+                        Text(
+                            stringResource(state.error.messageRes),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 14.sp
+                        )
                         Spacer(modifier = Modifier.height(16.dp))
-                        WallCrawlPrimaryButton(text = "Try Again", onClick = { viewModel.regenerateWorkout() })
+                        WallCrawlPrimaryButton(
+                            text = stringResource(R.string.action_try_again),
+                            onClick = { viewModel.regenerateWorkout() }
+                        )
                         Spacer(modifier = Modifier.height(8.dp))
-                        WallCrawlSecondaryButton(text = "Open My Workouts", onClick = onOpenTemplates)
+                        WallCrawlSecondaryButton(
+                            text = stringResource(R.string.today_action_open_templates),
+                            onClick = onOpenTemplates
+                        )
                     }
                 }
             }
 
             is TodayUiState.Success -> {
+                // Written here, where the reader's language is known, and handed to the
+                // ViewModel so the session is stored with the wording that was on screen.
+                val workoutName = generatedWorkoutTitle(state.suggestedWorkout.title)
+                val workoutRationale = generatedWorkoutRationale(state.suggestedWorkout.rationale)
                 TodayContent(
                     state = state,
-                    onStartWorkout = { viewModel.startWorkout(onStartWorkout) },
+                    workoutName = workoutName,
+                    onStartWorkout = {
+                        viewModel.startWorkout(workoutName, workoutRationale, onStartWorkout)
+                    },
                     onResumeWorkout = { state.activeSession?.let { onResumeWorkout(it.id) } },
                     onRegenerate = { viewModel.regenerateWorkout() },
                     onOpenTemplates = onOpenTemplates
@@ -134,6 +163,7 @@ fun TodayScreen(
 @Composable
 private fun TodayContent(
     state: TodayUiState.Success,
+    workoutName: String,
     onStartWorkout: () -> Unit,
     onResumeWorkout: () -> Unit,
     onRegenerate: () -> Unit,
@@ -147,7 +177,11 @@ private fun TodayContent(
     ) {
         item {
             Spacer(modifier = Modifier.height(16.dp))
-            TodayHeader(userName = state.userProfile.name, completedThisWeek = state.completedThisWeek, weeklyGoal = state.userProfile.daysPerWeek)
+            TodayHeader(
+                userName = state.userProfile.name,
+                completedThisWeek = state.completedThisWeek,
+                weeklyGoal = state.userProfile.daysPerWeek
+            )
         }
 
         // Active workout resumption banner if active
@@ -166,6 +200,7 @@ private fun TodayContent(
         item {
             SuggestedWorkoutCard(
                 workout = state.suggestedWorkout,
+                workoutName = workoutName,
                 isRegenerating = state.isRegenerating,
                 onStartWorkout = onStartWorkout,
                 onRegenerate = onRegenerate
@@ -177,7 +212,7 @@ private fun TodayContent(
         // Planning context pill
         item {
             PlanContextCard(
-                goal = state.userProfile.primaryGoal.displayName,
+                goal = stringResource(state.userProfile.primaryGoal.labelRes),
                 unit = state.userProfile.preferredUnit.symbol,
                 equipmentCount = state.userProfile.availableEquipment.size
             )
@@ -213,27 +248,30 @@ private fun MyWorkoutsCard(onOpenTemplates: () -> Unit) {
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
                 Text(
-                    text = "CUSTOM ROUTINES",
+                    text = stringResource(R.string.today_custom_routines_heading),
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 1.sp,
                     color = CrimsonRedPrimary
                 )
                 Text(
-                    text = "My Workouts",
+                    text = stringResource(R.string.today_my_workouts_title),
                     color = MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp
                 )
                 Text(
-                    text = "Build, save, and repeat your custom routines.",
+                    text = stringResource(R.string.today_my_workouts_body),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 12.sp
                 )
             }
         }
         Spacer(Modifier.height(14.dp))
-        WallCrawlSecondaryButton(text = "Open My Workouts", onClick = onOpenTemplates)
+        WallCrawlSecondaryButton(
+            text = stringResource(R.string.today_action_open_templates),
+            onClick = onOpenTemplates
+        )
     }
 }
 
@@ -243,6 +281,7 @@ private fun TodayHeader(
     completedThisWeek: Int,
     weeklyGoal: Int
 ) {
+    val locale = LocalConfiguration.current.locales[0]
     Column {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -252,13 +291,14 @@ private fun TodayHeader(
             Column(modifier = Modifier.weight(1f)) {
                 WallCrawlWordmark(fontSize = 20.sp)
                 Spacer(modifier = Modifier.height(4.dp))
-                val displayName = userName.lineSequence().firstOrNull()?.trim().orEmpty().ifBlank { "Crawler" }
+                val displayName = userName.lineSequence().firstOrNull()?.trim().orEmpty()
+                    .ifBlank { stringResource(R.string.default_crawler_name) }
                 Text(
-                    text = "Ready to train, $displayName",
+                    text = stringResource(R.string.today_greeting, displayName),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 1,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
             }
@@ -273,7 +313,7 @@ private fun TodayHeader(
             ) {
                 Image(
                     painter = painterResource(id = R.mipmap.ic_launcher_foreground),
-                    contentDescription = "WallCrawl Logo",
+                    contentDescription = stringResource(R.string.today_logo_content_description),
                     modifier = Modifier.size(40.dp)
                 )
             }
@@ -291,7 +331,10 @@ private fun TodayHeader(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f)
+                ) {
                     Icon(
                         imageVector = Icons.Default.CheckCircle,
                         contentDescription = null,
@@ -300,22 +343,28 @@ private fun TodayHeader(
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
-                        text = if (weeklyGoal == 1) {
-                            "$completedThisWeek of 1 workout completed this week"
-                        } else {
-                            "$completedThisWeek of $weeklyGoal workouts completed this week"
-                        },
+                        text = pluralStringResource(
+                            R.plurals.today_weekly_progress,
+                            weeklyGoal,
+                            LocaleFormatting.formatCount(completedThisWeek, locale),
+                            LocaleFormatting.formatCount(weeklyGoal, locale)
+                        ),
                         fontSize = 13.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                 }
+                Spacer(modifier = Modifier.width(8.dp))
+                val remaining = (weeklyGoal - completedThisWeek).coerceAtLeast(0)
                 Text(
                     text = if (completedThisWeek >= weeklyGoal) {
-                        "Weekly goal met"
+                        stringResource(R.string.today_weekly_goal_met)
                     } else {
-                        val remaining = (weeklyGoal - completedThisWeek).coerceAtLeast(0)
-                        if (remaining == 1) "1 to weekly goal" else "$remaining to weekly goal"
+                        pluralStringResource(
+                            R.plurals.today_weekly_goal_remaining,
+                            remaining,
+                            LocaleFormatting.formatCount(remaining, locale)
+                        )
                     },
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
@@ -343,6 +392,7 @@ private fun ActiveSessionBanner(
     totalSets: Int,
     onResume: () -> Unit
 ) {
+    val locale = LocalConfiguration.current.locales[0]
     WallCrawlCard(
         borderColor = CrimsonRedPrimary
     ) {
@@ -353,12 +403,14 @@ private fun ActiveSessionBanner(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "ACTIVE WORKOUT IN PROGRESS",
+                    text = stringResource(R.string.today_active_session_heading),
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
                     color = CrimsonRedLight,
                     letterSpacing = 0.5.sp
                 )
+                // A session name is user-visible free text written when the workout
+                // started. It is never re-translated afterwards.
                 Text(
                     text = sessionName,
                     fontSize = 16.sp,
@@ -366,7 +418,12 @@ private fun ActiveSessionBanner(
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = if (totalSets == 1) "$completedSets of 1 set logged" else "$completedSets of $totalSets sets logged",
+                    text = pluralStringResource(
+                        R.plurals.today_active_session_sets,
+                        totalSets,
+                        LocaleFormatting.formatCount(completedSets, locale),
+                        LocaleFormatting.formatCount(totalSets, locale)
+                    ),
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -380,19 +437,22 @@ private fun ActiveSessionBanner(
 @Composable
 private fun ButtonResume(onClick: () -> Unit) {
     WallCrawlPrimaryButton(
-        text = "Resume",
+        text = stringResource(R.string.today_action_resume),
         onClick = onClick,
-        modifier = Modifier.width(110.dp)
+        modifier = Modifier.width(120.dp)
     )
 }
 
 @Composable
 private fun SuggestedWorkoutCard(
     workout: GeneratedWorkout,
+    workoutName: String,
     isRegenerating: Boolean,
     onStartWorkout: () -> Unit,
     onRegenerate: () -> Unit
 ) {
+    val locale = LocalConfiguration.current.locales[0]
+    val vocabulary = LocalExerciseVocabulary.current
     WallCrawlCard(
         cornerRadius = 20.dp,
         contentPadding = 20.dp,
@@ -403,7 +463,10 @@ private fun SuggestedWorkoutCard(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.weight(1f)
+            ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.Assignment,
                     contentDescription = null,
@@ -412,7 +475,7 @@ private fun SuggestedWorkoutCard(
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = "TODAY'S PLAN",
+                    text = stringResource(R.string.today_plan_heading),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.8.sp,
@@ -430,7 +493,9 @@ private fun SuggestedWorkoutCard(
                 } else {
                     Icon(
                         imageVector = Icons.Default.Refresh,
-                        contentDescription = "Regenerate Workout",
+                        contentDescription = stringResource(
+                            R.string.today_regenerate_content_description
+                        ),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(20.dp)
                     )
@@ -441,7 +506,7 @@ private fun SuggestedWorkoutCard(
         Spacer(modifier = Modifier.height(10.dp))
 
         Text(
-            text = workout.name,
+            text = workoutName,
             fontSize = 24.sp,
             fontWeight = FontWeight.Black,
             color = MaterialTheme.colorScheme.onSurface
@@ -450,7 +515,8 @@ private fun SuggestedWorkoutCard(
         Spacer(modifier = Modifier.height(6.dp))
 
         Text(
-            text = workout.focusMuscles.joinToString(" · "),
+            text = vocabulary.muscles(workout.focusMuscles)
+                .joinToString(stringResource(R.string.detail_separator)),
             fontSize = 15.sp,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -464,18 +530,29 @@ private fun SuggestedWorkoutCard(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             StatBadge(
-                label = "~${workout.estimatedDurationMinutes} min",
+                label = stringResource(
+                    R.string.today_stat_duration,
+                    LocaleFormatting.formatCount(workout.estimatedDurationMinutes, locale)
+                ),
                 icon = Icons.Default.Schedule,
                 textColor = MaterialTheme.colorScheme.secondary
             )
             StatBadge(
-                label = "${workout.exercises.size} exercises",
+                label = pluralStringResource(
+                    R.plurals.count_exercises,
+                    workout.exercises.size,
+                    LocaleFormatting.formatCount(workout.exercises.size, locale)
+                ),
                 icon = Icons.Default.FitnessCenter,
                 textColor = MaterialTheme.colorScheme.onSurface
             )
             val totalSets = workout.exercises.sumOf { it.targetSets }
             StatBadge(
-                label = "$totalSets sets",
+                label = pluralStringResource(
+                    R.plurals.count_sets,
+                    totalSets,
+                    LocaleFormatting.formatCount(totalSets, locale)
+                ),
                 textColor = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
@@ -492,7 +569,7 @@ private fun SuggestedWorkoutCard(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
-                text = "WORKOUT ROUTINE",
+                text = stringResource(R.string.today_routine_heading),
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.5.sp,
@@ -508,7 +585,7 @@ private fun SuggestedWorkoutCard(
 
         // Large Start Workout CTA
         WallCrawlPrimaryButton(
-            text = "Start Workout",
+            text = stringResource(R.string.today_action_start),
             onClick = onStartWorkout,
             enabled = !isRegenerating,
             leadingIcon = {
@@ -526,7 +603,7 @@ private fun SuggestedWorkoutCard(
 
         // Secondary Action: Generate another workout
         WallCrawlSecondaryButton(
-            text = "Generate another workout",
+            text = stringResource(R.string.today_action_regenerate),
             onClick = onRegenerate,
             enabled = !isRegenerating
         )
@@ -538,9 +615,9 @@ private fun ExercisePreviewRow(
     index: Int,
     exercise: GeneratedExercise
 ) {
-    val cleanName = exercise.exerciseId
-        .split("-")
-        .joinToString(" ") { it.replaceFirstChar { char -> char.uppercase() } }
+    val locale = LocalConfiguration.current.locales[0]
+    val vocabulary = LocalExerciseVocabulary.current
+    val name = vocabulary.exerciseName(exercise.exerciseId)
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -552,35 +629,79 @@ private fun ExercisePreviewRow(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "$index.",
+                text = stringResource(
+                    R.string.today_exercise_position,
+                    LocaleFormatting.formatCount(index, locale)
+                ),
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,
                 color = CrimsonRedPrimary,
-                modifier = Modifier.width(20.dp)
+                modifier = Modifier.width(24.dp)
             )
             Text(
-                text = cleanName,
+                text = name,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface
             )
         }
 
+        Spacer(modifier = Modifier.width(8.dp))
+
         Text(
-            text = when (exercise.prescription.exerciseType) {
-                ExerciseType.WEIGHT_REPS,
-                ExerciseType.BODYWEIGHT_REPS,
-                ExerciseType.ASSISTED_BODYWEIGHT ->
-                    "${exercise.targetSets} × ${exercise.prescription.repRange}"
-                ExerciseType.DURATION ->
-                    "${exercise.targetSets} × ${exercise.prescription.targetDurationSeconds}s"
-                ExerciseType.DISTANCE_DURATION ->
-                    exercise.prescription.targetDurationSeconds?.let { "${it / 60} min" }
-                        ?: "${exercise.prescription.targetDistanceMeters?.toInt()} m"
-            },
+            text = prescriptionSummary(exercise),
             fontSize = 13.sp,
             fontWeight = FontWeight.Medium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+}
+
+/** The compact "3 × 8–12" style target shown beside a planned exercise. */
+@Composable
+private fun prescriptionSummary(exercise: GeneratedExercise): String {
+    val locale = LocalConfiguration.current.locales[0]
+    val prescription = exercise.prescription
+    val sets = LocaleFormatting.formatCount(exercise.targetSets, locale)
+    return when (prescription.exerciseType) {
+        ExerciseType.WEIGHT_REPS,
+        ExerciseType.BODYWEIGHT_REPS,
+        ExerciseType.ASSISTED_BODYWEIGHT -> {
+            val range = prescription.repRange
+            val reps = if (range == null) {
+                ""
+            } else if (range.min == range.max) {
+                LocaleFormatting.formatCount(range.min, locale)
+            } else {
+                stringResource(
+                    R.string.prescription_rep_range,
+                    LocaleFormatting.formatCount(range.min, locale),
+                    LocaleFormatting.formatCount(range.max, locale)
+                )
+            }
+            stringResource(R.string.prescription_sets_by_reps, sets, reps)
+        }
+
+        ExerciseType.DURATION -> stringResource(
+            R.string.prescription_sets_by_reps,
+            sets,
+            stringResource(
+                R.string.prescription_seconds,
+                LocaleFormatting.formatCount(prescription.targetDurationSeconds ?: 0, locale)
+            )
+        )
+
+        ExerciseType.DISTANCE_DURATION -> prescription.targetDurationSeconds?.let { seconds ->
+            stringResource(
+                R.string.prescription_minutes,
+                LocaleFormatting.formatCount(seconds / 60, locale)
+            )
+        } ?: stringResource(
+            R.string.prescription_meters,
+            LocaleFormatting.formatCount(
+                prescription.targetDistanceMeters?.toInt() ?: 0,
+                locale
+            )
         )
     }
 }
@@ -591,6 +712,7 @@ private fun PlanContextCard(
     unit: String,
     equipmentCount: Int
 ) {
+    val locale = LocalConfiguration.current.locales[0]
     WallCrawlCard(
         cornerRadius = 12.dp,
         contentPadding = 12.dp
@@ -600,21 +722,31 @@ private fun PlanContextCard(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "TARGETING: $goal".uppercase(),
+                    text = stringResource(R.string.today_plan_context_target, goal)
+                        .uppercase(locale),
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    text = "$equipmentCount Equipment Types Available · $unit",
+                    text = stringResource(
+                        R.string.template_summary,
+                        pluralStringResource(
+                            R.plurals.count_equipment_available,
+                            equipmentCount,
+                            LocaleFormatting.formatCount(equipmentCount, locale)
+                        ),
+                        unit
+                    ),
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
+            Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "Built on your phone",
+                text = stringResource(R.string.today_plan_context_offline),
                 fontSize = 11.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.secondary

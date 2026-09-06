@@ -28,10 +28,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import wallcrawl.elopenmike.com.R
+import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
+import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
+import wallcrawl.elopenmike.com.core.ui.localization.labelRes
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -88,10 +94,13 @@ fun ExerciseIllustration(
             .border(1.dp, GraphiteBorder, RoundedCornerShape(16.dp)),
         contentAlignment = Alignment.Center
     ) {
+        val vocabulary = LocalExerciseVocabulary.current
         if (activeFrame != null && !imageFailed) {
             AsyncImage(
                 model = "$ANDROID_ASSET_URI_PREFIX${activeFrame.assetPath}",
-                contentDescription = exercise?.name?.let { "$it exercise demonstration" },
+                contentDescription = exercise?.let {
+                    stringResource(R.string.illustration_content_description, vocabulary.exerciseName(it))
+                },
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(8.dp),
@@ -111,8 +120,13 @@ fun ExerciseIllustration(
                     .border(1.dp, GraphiteBorder, RoundedCornerShape(6.dp))
                     .padding(horizontal = 8.dp, vertical = 4.dp)
             ) {
+                val locale = LocalConfiguration.current.locales[0]
                 Text(
-                    text = "Frame ${frameIndex + 1} of ${frames.size}",
+                    text = stringResource(
+                        R.string.illustration_frame_counter,
+                        LocaleFormatting.formatEditableInt(frameIndex + 1, locale),
+                        LocaleFormatting.formatEditableInt(frames.size, locale)
+                    ),
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold,
                     color = TextMuted
@@ -147,15 +161,18 @@ private fun IllustrationPlaceholder(exercise: Exercise?) {
         }
 
         Spacer(modifier = Modifier.height(10.dp))
+        val vocabulary = LocalExerciseVocabulary.current
         Text(
-            text = exercise?.name ?: "Exercise illustration unavailable",
+            text = exercise?.let(vocabulary::exerciseName)
+                ?: stringResource(R.string.illustration_unavailable),
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
             color = TextSecondary
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = exercise?.programming?.movementPattern?.name?.replace('_', ' ') ?: "Motion preview",
+            text = exercise?.programming?.movementPattern?.let { stringResource(it.labelRes) }
+                ?: stringResource(R.string.illustration_motion_preview),
             fontSize = 11.sp,
             color = TextMuted
         )

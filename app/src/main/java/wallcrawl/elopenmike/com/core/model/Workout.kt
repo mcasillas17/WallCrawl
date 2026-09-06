@@ -4,14 +4,20 @@ import java.util.UUID
 
 /**
  * High-level generated workout recommendation.
+ *
+ * The title and the explanation are structured rather than written out, because the
+ * planner must not depend on a display language: the screen turns [title] and [rationale]
+ * into text, and the text it produced is what gets persisted when the workout is started.
+ * A session written in one language therefore keeps its original wording forever, which is
+ * the same rule every other piece of user-visible free text in WallCrawl follows.
  */
 data class GeneratedWorkout(
     val id: String = UUID.randomUUID().toString(),
-    val name: String,
+    val title: WorkoutTitleSpec,
     val focusMuscles: List<String>,
     val estimatedDurationMinutes: Int,
     val exercises: List<PlannedExercise>,
-    val rationale: String = ""
+    val rationale: WorkoutRationaleSpec
 )
 
 /**

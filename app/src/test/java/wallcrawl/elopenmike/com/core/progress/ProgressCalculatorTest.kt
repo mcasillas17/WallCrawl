@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
 import wallcrawl.elopenmike.com.core.model.SessionStatus
+import wallcrawl.elopenmike.com.core.model.StrengthPerformance
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
@@ -146,8 +147,10 @@ class ProgressCalculatorTest {
 
         val trend = result.strengthTrends.single()
         assertThat(trend.exerciseName).isEqualTo("Incline Dumbbell Press")
-        assertThat(trend.previousMetric).isEqualTo("45 lb × 10")
-        assertThat(trend.currentMetric).isEqualTo("50 lb × 10")
+        // The trend carries the numbers, not a sentence: the screen writes "45 lb × 10"
+        // or "45 lb × 10" with a decimal comma, whichever the reader's locale calls for.
+        assertThat(trend.previous).isEqualTo(StrengthPerformance(weight = 45.0, reps = 10))
+        assertThat(trend.current).isEqualTo(StrengthPerformance(weight = 50.0, reps = 10))
         assertThat(trend.percentageChange).isEqualTo(11)
         assertThat(trend.isPositive).isTrue()
     }

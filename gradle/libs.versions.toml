@@ -2,6 +2,7 @@
 agp = "9.3.2"
 kotlin = "2.4.10"
 ksp = "2.3.11"
+appcompat = "1.8.0"
 coreKtx = "1.15.0"
 lifecycleRuntimeKtx = "2.8.7"
 lifecycleViewModelCompose = "2.8.7"
@@ -20,6 +21,7 @@ coil = "3.0.4"
 json = "20240303"
 
 [libraries]
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleViewModelCompose" }

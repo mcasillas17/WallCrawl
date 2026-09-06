@@ -33,8 +33,11 @@ a saved reference cannot be resolved later, WallCrawl reports the error instead
 of substituting a different exercise.
 
 Search matches exercise ID, display name, aliases, primary and secondary
-muscles, and listed equipment. The catalog and illustrations are bundled, so
-searching and building templates work offline.
+muscles, and listed equipment — in every shipped language at once, and
+accent-insensitively, so "squat" and "sentadilla" resolve the same catalog IDs
+whichever language the interface is in. See
+[Localization](localization.md#search). The catalog and illustrations are
+bundled, so searching and building templates work offline.
 
 ## Default prescriptions
 

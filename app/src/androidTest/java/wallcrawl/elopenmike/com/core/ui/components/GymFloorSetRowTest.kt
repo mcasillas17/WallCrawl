@@ -8,6 +8,7 @@ import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
+import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsOff
@@ -20,6 +21,8 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextClearance
+import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toPixelMap
 import androidx.compose.ui.unit.dp
@@ -86,16 +89,106 @@ class GymFloorSetRowTest {
             }
         }
 
-        val increaseReps = composeRule.onNodeWithContentDescription("Increase reps for set 1")
+        val increaseReps = composeRule.onNodeWithContentDescription("Increase Reps for set 1")
         increaseReps.assertHeightIsAtLeast(48.dp)
         increaseReps.assertWidthIsAtLeast(48.dp)
-        composeRule.onNodeWithContentDescription("Decrease load for set 1").assertIsDisplayed()
-        composeRule.onNodeWithContentDescription("Load kg for set 1").assertIsDisplayed()
+        composeRule.onNodeWithContentDescription("Decrease Load for set 1").assertIsDisplayed()
+        composeRule.onNodeWithContentDescription("Load (kg) for set 1").assertIsDisplayed()
 
         increaseReps.performClick()
         composeRule.waitForIdle()
 
         assertThat(values.last().reps).isEqualTo(9)
+    }
+
+    @Test
+    fun aHalfTypedDecimalIsNotSubmittedAndDoesNotClearTheField() {
+        // "47." is what a reader types on the way to "47.5", and "47," on the way to
+        // "47,5". The parser refuses both rather than guessing at a magnitude, which is
+        // right for a finished value and wrong for a keystroke: submitting one as a null
+        // stored a null, and the stored null came back and wiped the field, so a decimal
+        // load could not be typed at all.
+        var set by mutableStateOf(weightRepsSet())
+        val values = mutableListOf<SetValuesDraft>()
+        composeRule.setContent {
+            WallCrawlTheme {
+                GymFloorSetRow(
+                    set = set,
+                    weightUnit = "kg",
+                    previousSet = null,
+                    onValuesChanged = {
+                        values += it
+                        // What the repository does with a submitted draft, which is what
+                        // re-seeds the field on the next composition.
+                        set = set.copy(completedWeight = it.weight, completedReps = it.reps)
+                    },
+                    onCompletionChanged = { _, _ -> },
+                    onSkipSet = {},
+                    onRecordEffort = { _, _ -> },
+                    onRecordFeltManageable = {}
+                )
+            }
+        }
+
+        val load = composeRule.onNodeWithContentDescription("Load (kg) for set 1")
+        load.performTextClearance()
+        composeRule.waitForIdle()
+        // Clearing a field really does clear the value, so that submission is expected;
+        // what follows is only the typing.
+        values.clear()
+        listOf("4", "7", ".", "5").forEach { keystroke ->
+            load.performTextInput(keystroke)
+            composeRule.waitForIdle()
+        }
+
+        load.assertTextContains("47.5")
+        assertThat(values.map { it.weight }).doesNotContain(null)
+        assertThat(values.last().weight).isEqualTo(47.5)
+    }
+
+    @Test
+    fun completingWithAHalfTypedDecimalIsRefusedAndSaysWhy() {
+        // The repository rejects a completed weight/reps set with no load, so submitting
+        // "47." as a null would surface as a generic failure banner and no logged set. The
+        // field says what is wrong instead, and completion waits for a whole number.
+        var set by mutableStateOf(weightRepsSet())
+        val completions = mutableListOf<SetValuesDraft>()
+        composeRule.setContent {
+            WallCrawlTheme {
+                GymFloorSetRow(
+                    set = set,
+                    weightUnit = "kg",
+                    previousSet = null,
+                    onValuesChanged = {
+                        set = set.copy(completedWeight = it.weight, completedReps = it.reps)
+                    },
+                    onCompletionChanged = { values, _ -> completions += values },
+                    onSkipSet = {},
+                    onRecordEffort = { _, _ -> },
+                    onRecordFeltManageable = {}
+                )
+            }
+        }
+
+        val load = composeRule.onNodeWithContentDescription("Load (kg) for set 1")
+        load.performTextClearance()
+        composeRule.waitForIdle()
+        listOf("4", "7", ".").forEach { keystroke ->
+            load.performTextInput(keystroke)
+            composeRule.waitForIdle()
+        }
+
+        composeRule.onNodeWithText("Enter a complete number").assertIsDisplayed()
+        composeRule.onNodeWithContentDescription("Set 1 complete").performClick()
+        composeRule.waitForIdle()
+        assertThat(completions).isEmpty()
+
+        load.performTextInput("5")
+        composeRule.waitForIdle()
+        composeRule.onNodeWithContentDescription("Set 1 complete").performClick()
+        composeRule.waitForIdle()
+
+        assertThat(completions.last().weight).isEqualTo(47.5)
     }
 
     @Test
@@ -128,7 +221,7 @@ class GymFloorSetRowTest {
         )
         composeRule.waitForIdle()
 
-        composeRule.onNodeWithContentDescription("Use previous load 47.5 for set 1").performClick()
+        composeRule.onNodeWithContentDescription("Use the previous Load of 47.5 for set 1").performClick()
         composeRule.waitForIdle()
 
         assertThat(values.last().weight).isEqualTo(47.5)

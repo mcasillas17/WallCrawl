@@ -13,6 +13,7 @@ import org.junit.Rule
 import org.junit.Test
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
+import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
@@ -48,7 +49,7 @@ class ProgressViewModelTest {
         advanceUntilIdle()
 
         val state = viewModel.uiState.value as ProgressUiState.Error
-        assertThat(state.message).contains("offline exercise catalog")
+        assertThat(state.messageRes).isEqualTo(R.string.progress_error)
     }
 }
 
@@ -102,6 +103,8 @@ private class EmptyWorkoutRepository : WorkoutRepository {
     override suspend fun getRecentCompletedSessions(limit: Int): List<WorkoutSession> = emptyList()
     override suspend fun startWorkoutFromGenerated(
         generated: GeneratedWorkout,
+        displayName: String,
+        displayRationale: String,
         userProfile: UserProfile
     ): WorkoutSession = error("Not used")
 

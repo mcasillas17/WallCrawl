@@ -26,6 +26,10 @@ import wallcrawl.elopenmike.com.core.model.SetOutcome
 import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
 import wallcrawl.elopenmike.com.core.model.SetStopReason
 import wallcrawl.elopenmike.com.core.model.UserProfile
+import wallcrawl.elopenmike.com.core.model.WorkoutEmphasis
+import wallcrawl.elopenmike.com.core.model.WorkoutRationaleSpec
+import wallcrawl.elopenmike.com.core.model.WorkoutSplit
+import wallcrawl.elopenmike.com.core.model.WorkoutTitleSpec
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.model.outcome
@@ -324,7 +328,8 @@ class WorkoutSetOutcomeDaoTest {
     @Test
     fun everyExerciseType_persistsItsOwnTypedOutcome() = runBlocking {
         val generated = GeneratedWorkout(
-            name = "All types",
+            title = testTitle(),
+            rationale = testRationale(),
             focusMuscles = listOf("Full body"),
             estimatedDurationMinutes = 45,
             exercises = listOf(
@@ -373,7 +378,12 @@ class WorkoutSetOutcomeDaoTest {
                 )
             )
         )
-        val session = repository.startWorkoutFromGenerated(generated, UserProfile())
+        val session = repository.startWorkoutFromGenerated(
+            generated = generated,
+            displayName = "All types",
+            displayRationale = "Generated for this test.",
+            userProfile = UserProfile()
+        )
         val setsByType = session.exercises.associate { exercise ->
             exercise.prescription.exerciseType to exercise.sets.single().id
         }
@@ -438,10 +448,21 @@ class WorkoutSetOutcomeDaoTest {
 
     private lateinit var sessionId: String
 
+    private fun testTitle() = WorkoutTitleSpec(
+        split = WorkoutSplit.FULL_BODY,
+        emphasis = WorkoutEmphasis.HYPERTROPHY
+    )
+
+    private fun testRationale() = WorkoutRationaleSpec.GoalFocus(
+        goals = emptyList(),
+        focusMuscles = listOf("Chest")
+    )
+
     private suspend fun startSingleSetSession(targetSets: Int = 1): String {
         val session = repository.startWorkoutFromGenerated(
             GeneratedWorkout(
-                name = "Session",
+                title = testTitle(),
+                rationale = testRationale(),
                 focusMuscles = listOf("Chest"),
                 estimatedDurationMinutes = 30,
                 exercises = listOf(
@@ -456,7 +477,9 @@ class WorkoutSetOutcomeDaoTest {
                     )
                 )
             ),
-            UserProfile()
+            displayName = "Session",
+            displayRationale = "Generated for this test.",
+            userProfile = UserProfile()
         )
         sessionId = session.id
         return session.exercises.single().sets.first().id

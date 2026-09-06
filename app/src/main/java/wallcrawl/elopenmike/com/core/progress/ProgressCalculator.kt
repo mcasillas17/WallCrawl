@@ -8,6 +8,7 @@ import wallcrawl.elopenmike.com.core.model.PersonalRecord
 import wallcrawl.elopenmike.com.core.model.ProgressOverview
 import wallcrawl.elopenmike.com.core.model.RecordType
 import wallcrawl.elopenmike.com.core.model.SessionStatus
+import wallcrawl.elopenmike.com.core.model.StrengthPerformance
 import wallcrawl.elopenmike.com.core.model.StrengthTrend
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
@@ -64,8 +65,7 @@ class ProgressCalculator {
             ),
             strengthTrends = calculateStrengthTrends(
                 sessions = sessions,
-                catalogById = catalogById,
-                unit = profile.preferredUnit.symbol
+                catalogById = catalogById
             ),
             recentHistory = persistedSessions.take(MAX_RECENT_HISTORY)
         )
@@ -252,8 +252,7 @@ class ProgressCalculator {
 
     private fun calculateStrengthTrends(
         sessions: List<WorkoutSession>,
-        catalogById: Map<String, Exercise>,
-        unit: String
+        catalogById: Map<String, Exercise>
     ): List<StrengthTrend> {
         return performancesByExercise(sessions)
             .mapNotNull { (exerciseId, performances) ->
@@ -266,8 +265,8 @@ class ProgressCalculator {
                 StrengthTrend(
                     exerciseId = exerciseId,
                     exerciseName = catalogById[exerciseId]?.name ?: exerciseId.toDisplayName(),
-                    previousMetric = previous.performanceLabel(unit),
-                    currentMetric = current.performanceLabel(unit),
+                    previous = previous.performance(),
+                    current = current.performance(),
                     percentageChange = (((currentScore - previousScore) / previousScore) * 100.0)
                         .roundToInt(),
                     isPositive = currentScore >= previousScore
@@ -369,21 +368,18 @@ class ProgressCalculator {
         return if (weight == null) reps.toDouble() else weight * (1.0 + reps / 30.0)
     }
 
-    private fun WorkoutSet.performanceLabel(unit: String): String {
-        val reps = requireNotNull(completedReps)
-        val weight = validPositiveWeight()
-        return if (weight == null) {
-            "$reps reps"
-        } else {
-            "${weight.toDisplayNumber()} $unit × $reps"
-        }
-    }
+    /**
+     * The numbers behind a set, left unformatted on purpose: the screen knows the reader's
+     * locale and this does not, and a preformatted "62.5 kg × 8" could not be re-rendered
+     * with a decimal comma without parsing it back out again.
+     */
+    private fun WorkoutSet.performance(): StrengthPerformance = StrengthPerformance(
+        weight = validPositiveWeight(),
+        reps = requireNotNull(completedReps)
+    )
 
     private fun ExerciseSessionPerformance.bestStrengthSet(): WorkoutSet? =
         sets.maxByOrNull { it.strengthScore() ?: Double.NEGATIVE_INFINITY }
-
-    private fun Double.toDisplayNumber(): String =
-        if (this % 1.0 == 0.0) toInt().toString() else toString()
 
     private fun String.toDisplayName(): String =
         split('-').joinToString(" ") { word -> word.replaceFirstChar(Char::uppercase) }
