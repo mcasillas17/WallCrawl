@@ -59,6 +59,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import wallcrawl.elopenmike.com.R
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -87,7 +88,21 @@ import wallcrawl.elopenmike.com.core.ui.theme.WebBlueAccent
 fun OnboardingScreen(
     viewModel: OnboardingViewModel,
     onCompleted: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    /**
+     * Restore control offered on the first step, supplied by the navigation graph.
+     *
+     * It sits here so a fresh install, or an install that has just deleted everything, can
+     * restore an exported file without first being made to build a profile it would discard.
+     */
+    restoreFromArchive: @Composable () -> Unit = {},
+    /**
+     * True while a restore is reading the chosen document.
+     *
+     * The wizard must not advance meanwhile: finishing it writes a whole profile, which
+     * would overwrite the one the restore is about to commit.
+     */
+    isRestoreInFlight: Boolean = false
 ) {
     val state by viewModel.uiState.collectAsState()
 
@@ -162,7 +177,11 @@ fun OnboardingScreen(
                             Spacer(modifier = Modifier.height(16.dp))
 
                             when (step) {
-                                OnboardingStep.WELCOME -> WelcomeStep(state = state, viewModel = viewModel)
+                                OnboardingStep.WELCOME -> {
+                                    WelcomeStep(state = state, viewModel = viewModel)
+                                    Spacer(modifier = Modifier.height(20.dp))
+                                    restoreFromArchive()
+                                }
                                 OnboardingStep.GOALS -> GoalsStep(state = state, viewModel = viewModel)
                                 OnboardingStep.EXPERIENCE_UNIT -> ExperienceAndUnitStep(state = state, viewModel = viewModel)
                                 OnboardingStep.MOVEMENT_CAPABILITY -> MovementCapabilityStep(
@@ -194,6 +213,7 @@ fun OnboardingScreen(
             // Bottom Navigation Actions
             OnboardingBottomNav(
                 state = state,
+                isRestoreInFlight = isRestoreInFlight,
                 onBack = { viewModel.previousStep() },
                 onNext = { viewModel.nextStep() }
             )
@@ -1088,6 +1108,7 @@ private fun SummaryRow(
 @Composable
 private fun OnboardingBottomNav(
     state: OnboardingUiState,
+    isRestoreInFlight: Boolean,
     onBack: () -> Unit,
     onNext: () -> Unit
 ) {
@@ -1109,11 +1130,13 @@ private fun OnboardingBottomNav(
         WallCrawlPrimaryButton(
             text = when {
                 state.isSaving -> "Saving Profile…"
+                isRestoreInFlight ->
+                    stringResource(R.string.local_data_restore_progress)
                 state.isLastStep -> "Start Training"
                 else -> "Continue"
             },
             onClick = onNext,
-            enabled = !state.isSaving,
+            enabled = !state.isSaving && !isRestoreInFlight,
             modifier = Modifier.weight(if (state.isFirstStep) 1f else 2f)
         )
     }

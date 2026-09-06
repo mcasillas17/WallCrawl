@@ -2,6 +2,8 @@ package wallcrawl.elopenmike.com
 
 import android.app.Application
 import android.content.Context
+import androidx.core.content.pm.PackageInfoCompat
+import kotlinx.coroutines.sync.Mutex
 import wallcrawl.elopenmike.com.core.ai.FakeWorkoutPlanner
 import wallcrawl.elopenmike.com.core.ai.GeneratedWorkoutValidator
 import wallcrawl.elopenmike.com.core.ai.PlannerFeatureFlags
@@ -10,6 +12,8 @@ import wallcrawl.elopenmike.com.core.ai.WorkoutGenerationContextBuilder
 import wallcrawl.elopenmike.com.core.ai.WorkoutHistoryAnalyzer
 import wallcrawl.elopenmike.com.core.ai.WorkoutPlanner
 import wallcrawl.elopenmike.com.core.database.WallCrawlDatabase
+import wallcrawl.elopenmike.com.core.database.repository.LocalDataBackupRepository
+import wallcrawl.elopenmike.com.core.database.repository.OfflineLocalDataBackupRepository
 import wallcrawl.elopenmike.com.core.database.repository.OfflineUserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.OfflineWorkoutRepository
 import wallcrawl.elopenmike.com.core.database.repository.OfflineWorkoutTemplateRepository
@@ -38,6 +42,7 @@ interface AppContainer {
     val workoutRepository: WorkoutRepository
     val weeklyDoseLedgerRepository: WeeklyDoseLedgerRepository
     val workoutTemplateRepository: WorkoutTemplateRepository
+    val localDataBackupRepository: LocalDataBackupRepository
     val exerciseCatalog: ExerciseCatalog
     val exerciseVisualProvider: ExerciseVisualProvider
     val exerciseFilter: ExerciseFilter
@@ -51,6 +56,15 @@ interface AppContainer {
 }
 
 class DefaultAppContainer(private val context: Context) : AppContainer {
+    /**
+     * One gate shared by every repository that writes user-owned rows.
+     *
+     * Deleting or restoring all local data has to beat the ordinary writes it races, so the
+     * destructive operations and the profile and template writers take the same lock rather
+     * than each guarding only itself.
+     */
+    private val localDataWriteGate = Mutex()
+
     private val workoutGuideCatalogStore: WorkoutGuideCatalogStore by lazy {
         WorkoutGuideCatalogStore(context.assets)
     }
@@ -67,7 +81,10 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
     }
 
     override val userProfileRepository: UserProfileRepository by lazy {
-        OfflineUserProfileRepository(database.userProfileDao())
+        OfflineUserProfileRepository(
+            userProfileDao = database.userProfileDao(),
+            localDataWriteGate = localDataWriteGate
+        )
     }
 
     override val workoutRepository: WorkoutRepository by lazy {
@@ -92,7 +109,31 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
     override val workoutTemplateRepository: WorkoutTemplateRepository by lazy {
         OfflineWorkoutTemplateRepository(
             templateDao = database.workoutTemplateDao(),
-            exerciseCatalog = exerciseCatalog
+            exerciseCatalog = exerciseCatalog,
+            localDataWriteGate = localDataWriteGate
+        )
+    }
+
+    /**
+     * Owns user-driven export, restore, and deletion across every table.
+     *
+     * Provenance is read from the installed package and the loaded catalog, so an archive
+     * records the build and catalog that produced it without adding a build-time constant
+     * that could drift. An unavailable catalog snapshot simply omits the commit; it never
+     * blocks an export.
+     */
+    override val localDataBackupRepository: LocalDataBackupRepository by lazy {
+        val packageInfo = runCatching {
+            context.packageManager.getPackageInfo(context.packageName, 0)
+        }.getOrNull()
+        OfflineLocalDataBackupRepository(
+            backupDao = database.localDataBackupDao(),
+            appVersionName = packageInfo?.versionName ?: UNKNOWN_APP_VERSION,
+            appVersionCode = packageInfo?.let(PackageInfoCompat::getLongVersionCode) ?: 0L,
+            catalogCommit = {
+                workoutGuideCatalogStore.currentSnapshot()?.catalogAttribution?.commit
+            },
+            localDataWriteGate = localDataWriteGate
         )
     }
 
@@ -138,6 +179,10 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
 
     override val progressCalculator: ProgressCalculator by lazy {
         ProgressCalculator()
+    }
+
+    private companion object {
+        const val UNKNOWN_APP_VERSION = "unknown"
     }
 }
 

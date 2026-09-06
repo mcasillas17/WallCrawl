@@ -80,7 +80,12 @@ import wallcrawl.elopenmike.com.core.ui.theme.WebBlueAccent
 fun ProfileScreen(
     viewModel: ProfileViewModel,
     onOpenCredits: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    /**
+     * Export, restore, and delete-all controls, supplied by the navigation graph so this
+     * screen stays unaware of document handling and of the backup repository.
+     */
+    localDataSection: @Composable () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -130,7 +135,8 @@ fun ProfileScreen(
                     onUpdateCapability = viewModel::updateMovementCapabilityDraft,
                     onCancelCapabilityEdit = viewModel::cancelMovementCapabilityEditing,
                     onSaveCapabilities = viewModel::saveMovementCapabilities,
-                    onOpenCredits = onOpenCredits
+                    onOpenCredits = onOpenCredits,
+                    localDataSection = localDataSection
                 )
             }
         }
@@ -164,7 +170,8 @@ private fun ProfileContent(
     ) -> Unit,
     onCancelCapabilityEdit: () -> Unit,
     onSaveCapabilities: () -> Unit,
-    onOpenCredits: () -> Unit
+    onOpenCredits: () -> Unit,
+    localDataSection: @Composable () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -592,7 +599,12 @@ private fun ProfileContent(
             )
         }
 
-        // 7. Credits and Licenses
+        // 7. Local data: export, restore, and delete-all
+        item {
+            localDataSection()
+        }
+
+        // 8. Credits and Licenses
         item {
             WallCrawlCard(
                 cornerRadius = 16.dp,

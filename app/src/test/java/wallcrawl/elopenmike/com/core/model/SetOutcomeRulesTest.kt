@@ -127,6 +127,39 @@ class SetOutcomeRulesTest {
         }
     }
 
+    @Test
+    fun completedSet_withoutACompletionTimestamp_isRejectedForLiveLogging() {
+        val message = expectRejection(completedWeightReps().copy(completedAtTimestamp = null))
+
+        assertThat(message).contains("completedAtTimestamp")
+    }
+
+    @Test
+    fun completedSet_withoutACompletionTimestamp_isAcceptedWhenRestoringOlderHistory() {
+        // Sets logged before typed outcomes existed are stored complete with no time. A
+        // restore has to accept them exactly as they are rather than inventing a timestamp.
+        SetOutcomeRules.requireValidOutcome(
+            completedWeightReps().copy(completedAtTimestamp = null),
+            allowMissingCompletionTimestamp = true
+        )
+    }
+
+    @Test
+    fun restoreRelaxation_stillRejectsANonPositiveCompletionTimestamp() {
+        val message = try {
+            SetOutcomeRules.requireValidOutcome(
+                completedWeightReps().copy(completedAtTimestamp = 0L),
+                allowMissingCompletionTimestamp = true
+            )
+            fail("Expected a zero completion timestamp to be rejected")
+            error("unreachable")
+        } catch (exception: IllegalArgumentException) {
+            exception.message.orEmpty()
+        }
+
+        assertThat(message).contains("completedAtTimestamp")
+    }
+
     private fun completedWeightReps() = SetPerformanceInput(
         reps = 8,
         weight = 20.0,

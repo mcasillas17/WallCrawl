@@ -55,7 +55,9 @@ boundaries:
 | --- | --- |
 | `app` | Navigation and application composition |
 | `core/model` | Catalog, profile, prescription, workout, template, and analytics models |
+| `core/backup` | Versioned local-data archive contract, its codec, and its validation |
 | `core/database` | Room entities, DAOs, relations, migrations, and repositories |
+| `core/io` | Bounded reading shared by the parsers that accept untrusted input |
 | `core/exercise` | Catalog search/filtering and the visual-provider boundary |
 | `core/ai` | Context building, workout planning, prescription defaults, and validation |
 | `core/progress` | Pure calculations over completed sessions |
@@ -471,10 +473,59 @@ and `res/xml/data_extraction_rules.xml` for API 31+. Both exclude whole data
 domains, including database sidecars, rather than only the named database.
 Modern cloud-backup and device-transfer sections each carry the full exclusions.
 The rules change no database path, schema, migration, local write, or planner gate.
-Compatible in-place upgrades retain data; uninstall/device loss has no supported
-recovery path until user-owned export/import is implemented separately.
+Compatible in-place upgrades retain data. Uninstall or device loss is recoverable
+only from a user-owned export taken beforehand, described in the section below and in
+[Privacy and backup](privacy.md#restore-prerequisites).
 See [Privacy and backup](privacy.md) for domain coverage, the platform-boundary
 diagram, OEM limitations, and the lack of any previous-backup erasure guarantee.
+
+### User-owned export, restore, and deletion
+
+`core/backup` defines archive format **version 1**: one JSON document holding the
+profile, templates, and every session with its exercises and sets. That version is
+independent of the Room schema version, which travels alongside the app version, the
+creation time, and the bundled catalog commit as provenance only.
+
+```text
+Room (profile, templates, sessions, exercises, sets)
+        │  LocalDataBackupDao.readAll()  ── one @Transaction
+        ▼
+  LocalDataSnapshot  ──►  validate  ──►  checksum  ──►  open document  ──►  write
+        ▲                                                                     │
+        │                                                                     ▼
+  restoreIntoEmptyDestination  ◄── validate ◄── parse ◄── read  one JSON archive
+        │  one @Transaction, eligibility rechecked inside                (SAF document)
+        ▼
+Room, or nothing at all
+```
+
+The same `validateSnapshot`/`validateMetadata` contract runs on both sides, so an
+export cannot produce a document the reader would refuse. The checksum covers the
+archive's canonical serialization and is computed before the destination is opened —
+opening with `"wt"` truncates, and a refusal must not destroy a file the user picked.
+The reader treats a document as untrusted: bounded input, exactly the known fields,
+strict enum names, numeric and length bounds, non-blank identifiers, parent/child
+agreement, the one-active-session rule, and the domain invariants
+`ExercisePrescription`, `RepRange`, `WorkoutTemplate` and `SetOutcomeRules` already
+enforce. Rejections carry a typed `ArchiveRejection` that the UI maps to string
+resources, so no parser text — which can quote an offending value — reaches the
+screen.
+
+Restore requires an **empty destination**: no sessions, no templates, and onboarding
+unfinished. The bootstrap profile row an app creates for itself does not count and is
+replaced. Eligibility is rechecked inside the restore transaction, so a concurrent
+write cannot slip past the check a caller made earlier, and a refused or failed
+restore leaves nothing behind.
+
+`DefaultAppContainer` owns one `Mutex` that the backup, profile, and template
+repositories share, so an ordinary write already in flight cannot land after a
+deletion and resurrect erased data. Workout writes deliberately stay outside it:
+creating a session already fails inside its own transaction when the profile revision
+it was started against is gone, and set and completion writes are `UPDATE`s that match
+nothing once history is deleted. The gate is never held across document I/O.
+
+The weekly-ledger cache is never exported and never restored; deletion and restore
+both clear it, and it is rebuilt from restored history on the next read.
 
 The persistence layer enforces several important invariants:
 
@@ -484,6 +535,15 @@ The persistence layer enforces several important invariants:
 - completed or canceled sessions cannot accept additional set updates;
 - template deletion cascades only to template exercise rows, never history;
 - recommendation targets and performed outcomes remain separate.
+
+Restore and deletion outcomes are observed by `LocalDataOutcomeEffect`, which the
+navigation graph places above the onboarding step switch and above the profile's
+`LazyColumn`. Neither host keeps its card composed for the whole operation — the
+onboarding card exists only on the first step, and the profile card is a list item
+Compose disposes once it scrolls out of view — so an effect living with the card could
+miss the result it was waiting for. The onboarding wizard also refuses to advance while
+a restore is in flight, because finishing it writes a whole profile over the one the
+restore is about to commit.
 
 Room-backed `Flow` streams make the active workout and completed history
 observable after navigation or process recreation. Onboarding capability draft
@@ -612,7 +672,9 @@ tests cover every supported Room migration chain through schema 11, real 7 → 8
 9 → 10, and 10 → 11 preservation, foreign-key integrity, guidance round trips, the
 weekly-ledger repository, capability
 accessibility semantics, packaged catalog parsing, all bundled visual paths, template
-snapshots, session persistence, and the
+snapshots, session persistence, the local-data archive (round trip from app-written
+state, every rejection path, transactional restore and deletion, a profile write racing
+a deletion, and the destructive confirmation at a large font scale), and the
 [packaged backup-policy configuration](privacy.md#verification-boundary)
 (merged manifest flags, resolved XML references, and exclusion semantics).
 Pull-request/main CI and tag-release publication run that connected suite on an

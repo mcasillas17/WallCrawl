@@ -2,11 +2,11 @@ package wallcrawl.elopenmike.com.core.exercise.workoutguide
 
 import android.util.JsonReader
 import android.util.JsonToken
-import java.io.FilterReader
 import java.io.IOException
 import java.io.Reader
 import java.util.Locale
 import wallcrawl.elopenmike.com.core.exercise.visual.ExerciseVisual
+import wallcrawl.elopenmike.com.core.io.BoundedCharacterReader
 import wallcrawl.elopenmike.com.core.model.ComplexityTier
 import wallcrawl.elopenmike.com.core.model.Difficulty
 import wallcrawl.elopenmike.com.core.model.Exercise
@@ -41,7 +41,11 @@ class WorkoutGuideCatalogParser {
 
     fun parse(input: Reader): WorkoutGuideCatalogSnapshot {
         try {
-            val reader = JsonReader(BoundedCatalogReader(input, MAX_CATALOG_CHARACTERS))
+            val reader = JsonReader(
+                BoundedCharacterReader(input, MAX_CATALOG_CHARACTERS) { limit ->
+                    malformed("Workout Guide catalog exceeds the $limit-character input limit.")
+                }
+            )
             var schemaVersion: Int? = null
             var source: CatalogSource? = null
             var visualSpecification: VisualSpecification? = null
@@ -1207,34 +1211,6 @@ class WorkoutGuideCatalogParser {
         val widthPx: Int,
         val heightPx: Int
     )
-
-    private class BoundedCatalogReader(
-        input: Reader,
-        private val maximumCharacters: Long
-    ) : FilterReader(input) {
-        private var charactersRead = 0L
-
-        override fun read(): Int {
-            val value = super.read()
-            if (value != -1) recordCharacters(1)
-            return value
-        }
-
-        override fun read(buffer: CharArray, offset: Int, length: Int): Int {
-            val count = super.read(buffer, offset, length)
-            if (count > 0) recordCharacters(count)
-            return count
-        }
-
-        private fun recordCharacters(count: Int) {
-            charactersRead += count
-            if (charactersRead > maximumCharacters) {
-                malformed(
-                    "Workout Guide catalog exceeds the $maximumCharacters-character input limit."
-                )
-            }
-        }
-    }
 
     private companion object {
         const val SUPPORTED_SCHEMA_VERSION = 1
