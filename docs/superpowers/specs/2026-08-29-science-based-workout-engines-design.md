@@ -28,6 +28,10 @@ user-controlled `DeloadOffer` remain unimplemented.
 
 ## Final Roundtable Consensus
 
+The signed decisions below are the historical design record. For current validator
+scope, rule classification, and the distinction between planned editability and shipped
+controls, use the [2026-09-05 evidence clarification](../../research/2026-08-29-training-science-evidence-review.md#validation-scope-clarification-2026-09-05).
+
 After four research and adversarial-review rounds, Claude Opus 4.8, Grok 4.6,
 Gemini 3.7 Flash, and GPT-5.6 Terra explicitly signed these twelve v1 decisions:
 
@@ -94,16 +98,22 @@ copy. It never prescribes, never invents identifiers or loads, and never
 adjudicates safety. Any model failure returns the unchanged deterministic
 recommendation.
 
-The evidence review is the authority for research claims. This document
-distinguishes two kinds of statement throughout:
+The evidence review is the authority for research claims. Implementation must
+distinguish three kinds of statement:
 
 - **Population-level evidence** — a citation supports an inference about a
   studied population under its own method and sample limits. It never licenses a
   universal individual prescription.
-- **Product policy** — a versioned, editable WallCrawl default (for example a
+- **Product policy** — a versioned WallCrawl default (for example a
   rest-class duration or a default RIR band). Policy is a design choice, labelled
   as such, and must never be presented in code, tests, or UI as an
   evidence-derived or medical threshold.
+- **Software invariant** — identity, type, arithmetic, version, or persistence
+  consistency. Passing these checks does not validate the algorithm clinically.
+
+Configurable policy objects and persisted preference fields are not shipped editing
+controls. Dose allowances, automatic RIR bands, and default rest-class seconds are not
+currently user-editable settings; future controls require their own implementation.
 
 ## Evidence Doctrine
 
@@ -113,8 +123,9 @@ review; the engineering consequences are:
 
 1. Consistent, feasible participation precedes optimisation; complexity is not a
    quality metric. Prefer plans a user can actually complete.
-2. The scientific dose unit is **weekly exposure per muscle**, not per-session
-   set count. Session totals are duration/tolerance guardrails.
+2. Per-muscle weekly exposure informs program design; `PRIMARY_ONLY_V1` is the
+   chosen accounting convention, not a complete physiological dose measurement.
+   Session totals serve configured duration/program constraints, not universal tolerances.
 3. Frequency mainly distributes weekly dose when volume is equated; schedule
    around availability and never claim frequency independently grows muscle.
 4. Heavier, specific loading favours maximal-strength outcomes; hypertrophy is
@@ -135,9 +146,11 @@ review; the engineering consequences are:
 12. Deloads are user-controlled offers, not diagnoses or calendar laws.
 13. Deterministic code owns safety and dose; the LLM remains bounded and optional.
 
-No numeric joint-stress, stimulus-to-fatigue, axial-load, or fatigue score, no
-body-mass fraction, and no general ROM bonus enters v1 policy. These were
-proposed during the roundtable and explicitly retracted (see the appendix).
+No numeric joint-stress, stimulus-to-fatigue, axial-load, or physiological fatigue
+score, no body-mass fraction, and no general ROM bonus enters the reviewed v1
+policy. These were proposed during the roundtable and explicitly retracted
+(see the appendix). The legacy `programming.fatigueScore` still participates in
+ordering as an ordinal product label; it must not become a summed fatigue budget.
 
 ## Module and Component Map
 
@@ -306,12 +319,14 @@ manual templates.
 
 ## PRIMARY_ONLY Weekly Ledger
 
-`PRIMARY_ONLY_V1` credits one designated direct-primary muscle per completed
-work set. Secondary involvement is recorded as descriptive analytics and may
-apply a soft recovery rank penalty, but it receives no dose credit and never
-inflates the weekly ledger. Ledgers are derived from immutable completed
-sessions on a rolling weekly window; generation never increments a mutable
-counter. Fractional secondary crediting is deferred to a future
+`PRIMARY_ONLY_V1` is a product accounting convention: one designated direct-primary
+muscle receives credit per completed work set. Secondary involvement is descriptive
+analytics only, not a recovery score, and receives no dose credit. Any future
+recency-based scheduling preference needs explicit inputs and precedence; elapsed
+time alone cannot establish overload, readiness, or a universal recovery interval.
+Ledgers are derived from immutable completed sessions in an ISO Monday-to-Monday
+week in a recorded time zone; generation never increments a mutable counter.
+Fractional secondary crediting is deferred to a future
 `LedgerPolicy` version after reviewed secondary-muscle mapping. The `0.5`
 secondary-credit variant proposed during the roundtable was retracted.
 
@@ -353,25 +368,28 @@ Inside `FakeWorkoutPlanner`, compound ordering applies split-primary match
 within the compound pool, then capability penalty, then experience penalty,
 then fatigue, then stable ID. Accessory ordering applies split-primary match,
 then isolation preference, then the presence of programming metadata, then the
-same capability penalty, then experience penalty, fatigue, and stable ID. No
-body-mass or BMI value participates in ranking.
+same capability penalty, then experience penalty, fatigue, and stable ID. Here
+"fatigue" means the legacy ordinal ranking label, not measured physiology. Pattern
+spreading is a selection preference, not a universal rule against repeated movements.
+No body-mass or BMI value participates in ranking.
 
 ## Dose, Rest, and Effort
 
-- Weekly state drives exposure; session set totals only constrain
-  time/tolerance. Volume uses state-based, editable policy ranges. There is no
+- Weekly state drives exposure; session set totals constrain the configured
+  time/program design. Volume uses state-based product allowances. There is no
   mandatory scientific floor and no evidence-labelled automatic increment.
 - `EffortTarget` is nullable. Product-policy default guidance is `2..4` RIR for
   INITIATE/RETURNING or a relevant `LIMITED` capability and `1..3` RIR for
-  established general/hypertrophy work; strength work keeps an editable low-RIR
+  established general/hypertrophy work; strength work keeps a configured low-RIR
   target.
   These are versioned product defaults, not universal evidence-derived
   prescriptions, and `0` RIR (failure) is never an automatic default. Missing
   RIR never implies low effort or readiness.
-- Rest uses editable `SHORT`/`MODERATE`/`LONG` classes resolved by versioned
+- Rest uses `SHORT`/`MODERATE`/`LONG` classes resolved by versioned
   product policy from exercise type, goal, and prior user preference; the app
-  claims no exact number of seconds as physiologically optimal and preserves
-  per-exercise user edits.
+  claims no exact number of seconds as physiologically optimal. Valid stored
+  explicit preferences are preserved; the active timer's add/skip actions do not
+  author durable preferences, and a dedicated editing UI remains planned.
 - Starting external load comes only from confirmed load or comparable history;
   body measurements never generate a starting load, and capability may only
   reduce sets/duration/progression, never increase them.
@@ -394,8 +412,10 @@ claim.
 
 ## Planned Task 7: Session and Weekly Validation
 
-Task 7 will add `ProgramValidator` after prescription compilation and return
-structured violations:
+Task 7 (roadmap Package 4) will add `ProgramValidator` after prescription compilation.
+The [evidence-to-rule mapping](../../research/2026-08-29-training-science-evidence-review.md#evidence-to-rule-mapping)
+governs the contract; this earlier type sketch is illustrative, not exhaustive or an
+authorization to invent thresholds:
 
 ```kotlin
 sealed interface ProgramViolation {
@@ -409,14 +429,23 @@ sealed interface ProgramViolation {
 }
 ```
 
-When implemented, validation will cover unknown/unreviewed IDs, hard-rule
-violations, duplicate exercise/family, invalid dose, unconfirmed load, duration
-mismatch, and gross weekly-ledger overflow. Under-target weekly volume will be
-a warning, not a blocking error, because bands are advisory.
+Validation retains exact IDs/candidate membership, approved metadata/provenance on the
+reviewed path, explicit constraints, prescription structure, load provenance, duration
+consistency, aggregate configured weekly allowance, and ledger integrity. Duplicate
+exercise/family and movement coverage are program-design policies whose scope and
+permitted repetition must be defined for the intended session/program. They do not
+require every workout to cover every pattern or prohibit repeated movements universally.
+
+`WeeklyLedgerOverflow` must distinguish a configured allowance mismatch from malformed
+accounting; neither is proof of medical danger. Check the whole proposal rather than
+letting each exercise spend the same remaining allowance independently. Add no mandatory
+weekly minimum, automatic increase, or default under-target warning. Define the proposal
+horizon/completed-versus-open accounting and duration estimator/tolerance before coding.
+No physiological fatigue budget or timestamp-only overload/recovery rule belongs in v1.
 
 ## Planned Task 7: Deterministic Repair
 
-On violations, the engine will attempt exactly one deterministic repair pass
+On violations, the engine may attempt at most one deterministic repair pass
 that relaxes soft preferences only. It will never remove an explicit constraint,
 capability `AVOID`, equipment requirement, or low-impact rule, and never invent
 a load. If repair still yields no valid plan, the engine will fail closed with a
@@ -426,16 +455,20 @@ typed `WorkoutPlanningFailure`; it will never persist an invalid plan.
 
 Every recommendation will persist an immutable `RecommendationSnapshot`
 carrying the context hash, catalog version, review version, policy version,
-ledger version, ordered reason codes, and validator result. The same versioned
+ledger version, validator version, ordered reason codes, and validator result. The same versioned
 inputs will reproduce the same snapshot, and any recommendation will be
 replayable and auditable from immutable history without re-running the LLM.
+The persistence representation, replay inputs, and stale-context revalidation/atomic-start
+boundary remain design decisions. Validate before display or persistence and prevent partial
+active sessions without changing valid legacy behavior while the reviewed gate is disabled.
 
 ## Active Logging and Feedback
 
 The active workout screen captures nullable RPE/RIR, timestamps, a
-user-confirmed "felt manageable" flag, a skip/pain-stop reason, and editable
-rest, persisted atomically with null preserved as null. Fast RIR/rest controls
-are offered but never required to complete a valid set. Completed history is the
+user-confirmed "felt manageable" flag, and a skip/pain-stop reason, persisted
+atomically with null preserved as null. Fast effort logging and one-off rest timer
+controls are offered but never required to complete a valid set; they are not automatic
+effort-target or durable rest-preference editors. Completed history is the
 reconstructable authority. On the reviewed-only path, `CapabilityEvidencePolicy`
 now relaxes a soft penalty only after two distinct comparable completed sessions
 for the same exercise ID plus explicit per-set `feltManageable == true`, and

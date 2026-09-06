@@ -6,8 +6,13 @@ This design implements deterministic-engine Task 4 under the signed decisions in
 `docs/research/2026-08-29-training-science-evidence-review.md` and the architecture in
 `docs/superpowers/specs/2026-08-29-science-based-workout-engines-design.md`.
 
-The values in this document are editable, versioned WallCrawl product defaults. They are
-not universal physiology, medical, safety, injury-prevention, or optimality claims.
+The values in this document are configurable, versioned WallCrawl product defaults. They
+are not universal physiology, medical, safety, injury-prevention, or optimality claims.
+Configuration here means policy construction, not shipped user-editable allowances, RIR
+bands, or rest-class defaults. Model/persistence support for `UserRestPreference` is not
+a durable preference editor; active timer add/skip actions do not save such preferences.
+See the [2026-09-05 evidence-to-rule mapping](../../research/2026-08-29-training-science-evidence-review.md#validation-scope-clarification-2026-09-05)
+for the whole-program validator boundary and still-open contracts.
 
 ## Scope and rollout boundary
 
@@ -140,7 +145,9 @@ The v1 product defaults are:
 | `RECALIBRATE` | 6 | 2 |
 
 These numbers are named, versioned WallCrawl defaults. They are not evidence-labelled
-minimums or maximums for a person.
+minimums or maximums for a person; exceeding an allowance is not proof of medical danger.
+`PRIMARY_ONLY_V1` itself is a single-designated-primary accounting policy, not a complete
+measure of stimulus or fatigue.
 
 For the approved direct-primary muscle:
 
@@ -154,6 +161,11 @@ over-cap, and overflow-sized existing counts return
 `NoGuidance(WEEKLY_DIRECT_PRIMARY_ALLOWANCE_EXHAUSTED)`. A positive remainder can reduce
 the base to one valid set. The policy never increases base target sets and has no weekly
 minimum or under-target increment.
+
+This calculation is per exercise against the supplied completed ledger. It does not
+reserve remaining allowance across the whole proposal. Roadmap Package 4 must add
+aggregate validation under an explicit prospective-accounting contract, without treating
+proposed or unperformed sets as already completed exposure or adding a fatigue score.
 
 A relevant `LIMITED` capability means an approved capability requirement whose profile
 answer is `LIMITED`. It applies an additional two-set per-exercise cap. `UNKNOWN` is
@@ -169,8 +181,8 @@ Resolution order is deterministic:
 
 1. `INITIATE`, `RETURNING`, `UNCALIBRATED`, `HOLD`, `DELOAD_OFFERED`, or
    `RECALIBRATE`, or a relevant approved `LIMITED` capability: `2..4` RIR.
-2. Established `BUILD`/`DEVELOP` strength work: editable product default `1..2` RIR.
-3. Established `BUILD`/`DEVELOP` general-fitness or hypertrophy work: editable product
+2. Established `BUILD`/`DEVELOP` strength work: configured product default `1..2` RIR.
+3. Established `BUILD`/`DEVELOP` general-fitness or hypertrophy work: configured product
    default `1..3` RIR.
 4. Other goal/state combinations: `null`.
 

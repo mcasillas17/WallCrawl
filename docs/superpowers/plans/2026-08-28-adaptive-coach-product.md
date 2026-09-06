@@ -16,6 +16,13 @@
 
 ## Audit Findings and Required Responses
 
+> **Scoped supersession, 2026-09-05:** The historical rows mentioning "calculated
+> recovery" or missing fatigue validation are not current requirements. Recency is a
+> history summary, not a recovery measurement; numeric physiological fatigue validation
+> is excluded from v1. Use the [current evidence-to-rule mapping](../../research/2026-08-29-training-science-evidence-review.md#validation-scope-clarification-2026-09-05)
+> and roadmap Package 4 for the retained engineering contract. The original audits below
+> are preserved as records of what was believed at the time.
+
 > **Reconciled 2026-08-29** against `main` at `de87da6`, after PRs #12, #13, #15, #16 and #17.
 > Every status below was checked against the code, not against the merge messages.
 > Findings that shipped are kept rather than deleted so the reasoning stays readable.
@@ -324,6 +331,13 @@ git commit -m "fix: remove unconfirmed starting loads"
 
 ### Task 3: Gate Automatic Planning on Reviewed Metadata
 
+> **Scoped supersession, 2026-09-05:** The legacy `programming` example and approval
+> checklist below are historical. `programming.fatigueScore` is an ordinal ranking label,
+> not approved physiological evidence. Current automatic approval uses the separate
+> categorical `reviewedMetadata` contract, as described by the
+> [evidence clarification](../../research/2026-08-29-training-science-evidence-review.md#validation-scope-clarification-2026-09-05).
+> Do not promote numeric fatigue fields into reviewed policy or validator budgets.
+
 > **Partly shipped in #13.** 117 exercises carry reviewed programming, and
 > `tools/workout-guide/test_programming_overrides.py` already enforces several checks this
 > task asks for: alternatives resolve, no self-alternatives, equipment names must exist in
@@ -433,10 +447,22 @@ git commit -m "feat: gate automatic plans on reviewed exercises"
 
 ### Task 4: Replace Catalog-Order Selection with Deterministic Policy Ranking
 
-> **Partly shipped in #13.** Compound slots rank by primary-muscle match, then fatigue,
-> and spread across movement patterns; accessory slots prefer isolation work that trains
-> the split. What remains is the policy this task describes: experience, frequency and
-> recovery inputs, and weighting primary matches above secondary ones.
+> **Superseded implementation instructions, 2026-09-05:** The budget types, numeric
+> examples, recovery penalties/blocks, and blanket beginner restriction in Steps 1-4
+> below are historical, not instructions to implement. No `maxSessionFatigue` /
+> `remainingFatigue` budget or timestamp-only recovery rule belongs in v1. Preserve
+> current legacy ordering; the existing advanced-complexity ceiling remains limited
+> to its reviewed calibration contract. Frequency/recency scheduling needs explicit
+> attribution, lookback, and precedence before use. Follow roadmap Package 8 and the
+> [evidence-to-rule mapping](../../research/2026-08-29-training-science-evidence-review.md#evidence-to-rule-mapping).
+
+> **Historical #13 status, also superseded by the notice above.** Compound slots rank
+> by primary-muscle match, then fatigue, and spread across movement patterns; accessory
+> slots prefer isolation work that trains the split. At the time, remaining work was
+> described as experience, frequency and recovery inputs, and weighting primary matches
+> above secondary ones. Current remaining work instead follows roadmap Package 8:
+> frequency/recency are scheduling preferences whose attribution, lookback, and precedence
+> need design, not recovery/overload inputs.
 
 **Files:**
 - Create: `app/src/main/java/wallcrawl/elopenmike/com/core/ai/TrainingPolicy.kt`
@@ -506,6 +532,16 @@ git commit -m "feat: add experience-aware workout ranking"
 ---
 
 ### Task 5: Add Whole-Program Validation
+
+> **Superseded validation contract, 2026-09-05:** The violation sketch and test list
+> below are historical. Do not implement `FatigueBudgetExceeded`, timestamp-only
+> "recently trained muscle overload," or a blanket difficulty ban. Retain structural
+> ID/type/candidate checks, reviewed-path provenance and constraints, load provenance,
+> scoped duplicate/coverage policies, configured dose accounting, and duration
+> consistency under the [corrected mapping](../../research/2026-08-29-training-science-evidence-review.md#evidence-to-rule-mapping).
+> Roadmap Package 4 owns current scope: at most one deterministic repair, recorded
+> context/policy/validator versions, validation before UI/persistence, no partial active
+> session, and unchanged valid legacy behavior with the reviewed gate disabled.
 
 **Files:**
 - Create: `app/src/main/java/wallcrawl/elopenmike/com/core/ai/ProgramValidator.kt`
@@ -617,6 +653,14 @@ and skipped sets stay distinguishable from sets that were never started.
 
 ### Task 7: Add Validated Substitutions and Editable Targets
 
+> **Scoped supersession, 2026-09-05:** Step 1's remaining-fatigue budget and the
+> `SessionBudget` dependency below are superseded, not implementation requirements.
+> Substitutions use configured remaining duration and weekly-dose allowances plus
+> explicit session/program constraints, never a summed physiological fatigue score.
+> Keep approved graph membership, equipment/constraint/type compatibility, validation
+> before applying, and preservation of completed work. Follow roadmap Package 10 and
+> the [corrected accounting contract](../../research/2026-08-29-training-science-evidence-review.md#evidence-to-rule-mapping).
+
 **Files:**
 - Create: `app/src/main/java/wallcrawl/elopenmike/com/core/ai/SubstitutionEngine.kt`
 - Modify: `app/src/main/java/wallcrawl/elopenmike/com/core/database/entity/Entities.kt`
@@ -670,6 +714,13 @@ git commit -m "feat: add safe exercise substitutions"
 ---
 
 ### Task 8: Add Progression, Deloads, and Program Blocks
+
+> **Scoped supersession, 2026-09-05:** Step 4's "trigger deload" is not authorization
+> for an automatic reduction or a recovery diagnosis. Current roadmap Package 9 requires
+> a user-controlled offer with explicit accept/decline behavior, no fixed calendar or
+> universal percentage, and no inferred readiness from missing data. The
+> [signed evidence decisions](../../research/2026-08-29-training-science-evidence-review.md#twelve-signed-v1-decisions)
+> supersede conflicting implications in this historical sketch.
 
 > **Partly shipped.** Double progression and Epley e1RM already exist. This task is now
 > about deloads, program blocks and the state that drives them.
@@ -852,6 +903,14 @@ git commit -m "feat: add local data controls"
 
 ### Task 12: Build the Planner Evaluation Corpus
 
+> **Superseded assertion scope, 2026-09-05:** Step 2's fatigue budget is rejected;
+> difficulty means the current reviewed calibration rule, not a universal beginner
+> prohibition. Dose and duration assertions require named product/software contracts;
+> duplicate/coverage rules depend on the intended session/program. Use the
+> [active evaluation guidance](../../planner-evaluation.md#planned-whole-program-assertions)
+> and evidence-to-rule mapping. No passing fixture demonstrates physiological safety or
+> validates the full algorithm scientifically.
+
 **Files:**
 - Create: `app/src/test/resources/planner-fixtures/*.json`
 - Create: `app/src/test/java/wallcrawl/elopenmike/com/core/ai/PlannerFixtureTest.kt`
@@ -999,6 +1058,16 @@ git commit -m "docs: describe the adaptive coach architecture"
 ```
 
 ## Release Gates
+
+> **Scoped supersession, 2026-09-05:** This is a historical checklist, not the current
+> release contract. The blanket beginner/advanced prohibition and unconditional demand
+> for recency/frequency to affect ranking are retired. Use the existing reviewed
+> calibration/complexity rule (including its history/regression exceptions); scheduling
+> preferences require design before use and are roadmap Package 8 work. Current gates
+> live in roadmap Packages 6-8 and the
+> [evidence-to-rule mapping](../../research/2026-08-29-training-science-evidence-review.md#evidence-to-rule-mapping).
+> Preserve the legitimate load-provenance, explicit-constraint, persistence, determinism,
+> privacy, and optional-model safeguards; none is a physiological safety guarantee.
 
 - No plan can contain an unapproved automatic-planning exercise.
 - Beginner fixtures cannot receive advanced movements or unconfirmed loads.

@@ -14,6 +14,10 @@
 
 ## Core Contracts
 
+The sketches below preserve the original design shape; they are not exhaustive current
+implementation contracts. For validation rule meanings and open decisions, use the
+[2026-09-05 evidence-to-rule mapping](../../research/2026-08-29-training-science-evidence-review.md#validation-scope-clarification-2026-09-05).
+
 ```kotlin
 enum class AdaptationState {
     NEEDS_ONBOARDING,
@@ -163,7 +167,7 @@ continues to derive only `UNCALIBRATED` and `RETURNING`.
 - [x] Write failing tests: small conservative exposure; weekly ledger drives remaining dose; session count/frequency never masquerades as dose.
 - [x] Add nullable `EffortTarget(minRir, maxRir)` and `RestClass { SHORT, MODERATE, LONG }`.
 - [x] Use 2-4 RIR guidance in conservative states or for a relevant `LIMITED` capability, 1-2 for established strength, and 1-3 for established general/hypertrophy; never auto-default failure.
-- [x] Resolve rest classes through versioned editable product policy and preserve explicit per-exercise user preferences.
+- [x] Resolve rest classes through versioned configurable product policy and preserve valid stored explicit per-exercise preferences; dedicated policy/preference editing controls are not shipped.
 - [x] Return typed exhaustion rather than zero sets, and fail closed on unapproved or version-mismatched metadata/ledger input.
 - [x] Prove capability/state never change confirmed/history-only load and keep the legacy path unchanged.
 - [x] Persist every new field through templates, frozen sessions, and additive migration 10 → 11.
@@ -265,9 +269,14 @@ change, not two.
 (`validate` and `validateExercise`); it has no duplicate-family, weekly-volume, or
 ledger-overflow check.
 
-`WeeklyLedgerOverflow` became meaningful only once Task 4 started reading
-`weeklyLedger.directPrimarySets`, so this task is now unblocked and is the cheapest
-remaining engine step: it is pure policy, testable with synthetic approved metadata.
+Task 4 reads `weeklyLedger.directPrimarySets` per prescription, so aggregate validation
+can now be designed and tested with synthetic approved metadata. Before implementation,
+settle the open contracts in the
+[evidence-to-rule mapping](../../research/2026-08-29-training-science-evidence-review.md#evidence-to-rule-mapping):
+session/program scope for duplicate-family and movement coverage, prospective weekly
+accounting, duration estimator/tolerance, and stale-context revalidation/persistence.
+`WeeklyLedgerOverflow` is an illustrative name: configured allowance mismatch must remain
+distinct from corrupt/overflowing ledger arithmetic, and neither means medically unsafe.
 
 **Files:**
 - Create: `app/src/main/java/wallcrawl/elopenmike/com/core/ai/ProgramValidator.kt`
@@ -275,9 +284,13 @@ remaining engine step: it is pure policy, testable with synthetic approved metad
 - Modify: `app/src/main/java/wallcrawl/elopenmike/com/feature/today/TodayViewModel.kt`
 - Test: `app/src/test/java/wallcrawl/elopenmike/com/core/ai/ProgramValidatorTest.kt`
 
-- [ ] Write failing tests for unknown/unreviewed IDs, hard-rule violations, duplicate exercise/family, invalid dose, unconfirmed load, duration mismatch, and weekly ledger overflow.
-- [ ] Return structured violations and allow one deterministic repair that never removes explicit constraints.
-- [ ] Persist context/catalog/review/policy/ledger versions, reason codes, and validator result with recommendation snapshots.
+- [ ] Write failing tests for exact catalog IDs/candidate membership, approved metadata/provenance on the reviewed path, explicit constraints, prescription structure, load provenance, duration consistency, and aggregate weekly accounting.
+- [ ] Test duplicate exercise/family and required movement patterns only within the explicitly defined session/program scope; permit intentional repetition where that contract allows it.
+- [ ] Check the complete proposal against the configured allowance, not each exercise against the same remainder independently. Keep completed ledger credit separate from proposed/open work, with no mandatory weekly floor, default under-target warning, or automatic volume increase.
+- [ ] Exclude physiological fatigue budgets (including sums of legacy `programming.fatigueScore`) and timestamp-only overload/readiness/recovery rules. A future recency preference requires a separate explicit scheduling design.
+- [ ] Return structured violations and allow at most one deterministic repair that never removes explicit constraints or expands the legal candidate set.
+- [ ] Persist context/validator/catalog/review/policy/ledger versions, reason codes, and validator result with immutable recommendation snapshots. Validate before display/persistence and revalidate changed context at start under the chosen atomicity contract; leave no partial active session.
+- [ ] Preserve valid legacy behavior while the reviewed gate is disabled; policy allowances, set caps, RIR bands, rest seconds, and `PRIMARY_ONLY_V1` attribution are product choices, not universal medical limits.
 - [ ] Add honest RT-session copy for fat-loss/general-fitness and optional user-selected activity education at program level.
 - [ ] Run focused tests and commit `feat: validate weekly workout programs`.
 
@@ -310,6 +323,10 @@ missing persona.** The remaining doc-cleanup steps below are also still open.
 - [x] Assert deterministic replay, reviewed IDs, and hard rules through `PlannerFixtureCorpusTest` and `PlannerFixtureTest`.
 - [ ] Extend corpus assertions to the primary-only ledger and no-invented-load gates now that Task 4 reads the ledger; the corpus predates both.
 - [ ] Remove body-mass ranking/fraction fields and unsupported fixed-dose/deload/fatigue claims from existing plans.
+  The 2026-09-05 clarification supersedes conflicting historical validation, ranking, and
+  substitution instructions; runtime copy and remaining release-claim audits are still
+  separate work. Use the evidence-to-rule mapping for policy assertions, and never treat
+  passing fixtures or reviewed metadata as scientific validation of the full algorithm.
 - [x] Run Python, JVM, lint, build, and connected Android in CI; `connectedDebugAndroidTest` runs on an emulator since #46.
 - [ ] Add the importer drift check to CI. It currently cannot run unattended: `import_catalog.py --check` needs the Workout Guide checkout pinned at the catalog's `source.commit`, and no CI step provides one.
 - [ ] Commit `test: gate the deterministic workout engine`.
