@@ -39,7 +39,7 @@ import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 import wallcrawl.elopenmike.com.feature.backup.LocalDataOutcomeEffect
 import wallcrawl.elopenmike.com.feature.backup.LocalDataSection
 import wallcrawl.elopenmike.com.feature.backup.LocalDataViewModel
-import wallcrawl.elopenmike.com.feature.backup.RestoreFromArchiveCard
+import wallcrawl.elopenmike.com.feature.backup.RestoreFromArchiveButton
 import wallcrawl.elopenmike.com.feature.credits.CreditsScreen
 import wallcrawl.elopenmike.com.feature.credits.CreditsViewModel
 import wallcrawl.elopenmike.com.feature.exercises.ExercisesScreen
@@ -206,7 +206,7 @@ private fun WallCrawlAppContent(
                         }
                     },
                     restoreFromArchive = {
-                        RestoreFromArchiveCard(viewModel = localDataViewModel)
+                        RestoreFromArchiveButton(viewModel = localDataViewModel)
                     },
                     isRestoreInFlight = localDataState.isBusy
                 )

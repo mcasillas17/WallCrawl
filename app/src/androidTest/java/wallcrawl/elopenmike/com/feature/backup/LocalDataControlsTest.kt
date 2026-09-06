@@ -1,38 +1,44 @@
 package wallcrawl.elopenmike.com.feature.backup
 
 import android.content.Context
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toPixelMap
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assertHasClickAction
-import androidx.compose.ui.test.captureToImage
+import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.dp
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import java.io.InputStream
 import java.io.OutputStream
 import org.junit.Rule
 import org.junit.Test
+import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.database.repository.LocalDataBackupRepository
 import wallcrawl.elopenmike.com.core.database.repository.LocalDataExportResult
 import wallcrawl.elopenmike.com.core.database.repository.LocalDataRestoreResult
 import wallcrawl.elopenmike.com.core.model.ThemePreference
 import wallcrawl.elopenmike.com.core.ui.theme.WallCrawlTheme
+import wallcrawl.elopenmike.com.feature.backup.LOCAL_DATA_RESTORE_ENTRY_TEST_TAG
+import wallcrawl.elopenmike.com.feature.backup.LocalDataOperation
 
 /**
  * The destructive path and the accessibility surface of the local-data controls.
@@ -182,22 +188,77 @@ class LocalDataControlsTest {
     }
 
     @Test
-    fun onboardingCard_offersRestoreWithoutTheDestructiveControls() {
-        val viewModel = LocalDataViewModel(
-            context.contentResolver,
-            FakeBackupRepository(restoreAllowed = true)
-        )
-        composeRule.setContent {
-            ScrollableTestScreen {
-                RestoreFromArchiveCard(viewModel = viewModel)
-            }
-        }
-        composeRule.waitUntil(TIMEOUT_MILLIS) { viewModel.uiState.value.restoreAllowed != null }
+    fun onboardingEntry_keepsTheRestoreFlowBehindAQuietButton() {
+        // Onboarding's first screen belongs to the name field. The restore flow is a whole
+        // panel of instructions, eligibility text and errors, so it lives in a sheet and
+        // only its one-line entry sits on the screen.
+        val viewModel = showOnboardingEntry(FakeBackupRepository(restoreAllowed = true))
+
+        composeRule.onNodeWithTag(LOCAL_DATA_RESTORE_TEST_TAG).assertDoesNotExist()
+        composeRule.onNodeWithText(text(R.string.onboarding_restore_action)).assertIsDisplayed()
+
+        composeRule.onNodeWithTag(LOCAL_DATA_RESTORE_ENTRY_TEST_TAG)
+            .assertIsEnabled()
+            .assertHeightIsAtLeast(48.dp)
+            .performClick()
+        composeRule.waitForIdle()
+
+        composeRule.onNodeWithTag(LOCAL_DATA_RESTORE_TEST_TAG).assertIsEnabled()
+        // Opening the flow is not starting it: nothing has been written or picked yet.
+        assertThat(viewModel.uiState.value.operation).isEqualTo(LocalDataOperation.IDLE)
+    }
+
+    @Test
+    fun onboardingSheet_saysWhatIsActuallyRestored() {
+        // The entry says "profile" because that is what someone setting up is looking for.
+        // Restoring still replaces the whole archive, and the sheet is where that is said.
+        showOnboardingEntry(FakeBackupRepository(restoreAllowed = true))
+
+        composeRule.onNodeWithTag(LOCAL_DATA_RESTORE_ENTRY_TEST_TAG).performClick()
+        composeRule.waitForIdle()
+
+        composeRule.onNodeWithText(text(R.string.onboarding_restore_scope)).assertIsDisplayed()
+    }
+
+    @Test
+    fun onboardingEntry_offersRestoreWithoutTheDestructiveControls() {
+        showOnboardingEntry(FakeBackupRepository(restoreAllowed = true))
+
+        composeRule.onNodeWithTag(LOCAL_DATA_RESTORE_ENTRY_TEST_TAG).performClick()
+        composeRule.waitForIdle()
 
         composeRule.onNodeWithTag(LOCAL_DATA_RESTORE_TEST_TAG).assertIsEnabled()
         composeRule.onNodeWithTag(LOCAL_DATA_DELETE_TEST_TAG).assertDoesNotExist()
         composeRule.onNodeWithTag(LOCAL_DATA_EXPORT_TEST_TAG).assertDoesNotExist()
     }
+
+    @Test
+    fun onboardingEntry_staysReachableBeforeAnythingIsTypedAndSaysWhenBlocked() {
+        // A fresh install has to reach this with the wizard untouched; an app that already
+        // holds data has to be told why it cannot restore.
+        showOnboardingEntry(FakeBackupRepository(restoreAllowed = false))
+
+        composeRule.onNodeWithTag(LOCAL_DATA_RESTORE_ENTRY_TEST_TAG)
+            .assertIsEnabled()
+            .performClick()
+        composeRule.waitForIdle()
+
+        composeRule.onNodeWithText(text(R.string.local_data_restore_blocked)).assertIsDisplayed()
+        composeRule.onNodeWithTag(LOCAL_DATA_RESTORE_TEST_TAG).assertIsNotEnabled()
+    }
+
+    private fun showOnboardingEntry(repository: FakeBackupRepository): LocalDataViewModel {
+        val viewModel = LocalDataViewModel(context.contentResolver, repository)
+        composeRule.setContent {
+            ScrollableTestScreen {
+                RestoreFromArchiveButton(viewModel = viewModel)
+            }
+        }
+        composeRule.waitUntil(TIMEOUT_MILLIS) { viewModel.uiState.value.restoreAllowed != null }
+        return viewModel
+    }
+
+    private fun text(@StringRes id: Int): String = context.getString(id)
 
     private fun showSection(
         repository: FakeBackupRepository,

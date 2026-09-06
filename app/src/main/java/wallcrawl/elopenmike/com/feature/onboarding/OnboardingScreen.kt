@@ -21,6 +21,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -105,10 +107,12 @@ fun OnboardingScreen(
     onCompleted: () -> Unit,
     modifier: Modifier = Modifier,
     /**
-     * Restore control offered on the first step, supplied by the navigation graph.
+     * Restore entry point offered under the first step's primary action, supplied by the
+     * navigation graph.
      *
      * It sits here so a fresh install, or an install that has just deleted everything, can
      * restore an exported file without first being made to build a profile it would discard.
+     * Opening it neither saves a profile nor advances the wizard, so the draft survives.
      */
     restoreFromArchive: @Composable () -> Unit = {},
     /**
@@ -135,6 +139,10 @@ fun OnboardingScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                // The actions sit at the bottom of this column, so it has to end above the
+                // navigation bar and above the keyboard rather than behind either.
+                .navigationBarsPadding()
+                .imePadding()
                 .padding(horizontal = 20.dp, vertical = 16.dp)
         ) {
             // Wizard Header & Progress Bar
@@ -192,11 +200,8 @@ fun OnboardingScreen(
                             Spacer(modifier = Modifier.height(16.dp))
 
                             when (step) {
-                                OnboardingStep.WELCOME -> {
+                                OnboardingStep.WELCOME ->
                                     WelcomeStep(state = state, viewModel = viewModel)
-                                    Spacer(modifier = Modifier.height(20.dp))
-                                    restoreFromArchive()
-                                }
                                 OnboardingStep.GOALS -> GoalsStep(state = state, viewModel = viewModel)
                                 OnboardingStep.EXPERIENCE_UNIT -> ExperienceAndUnitStep(state = state, viewModel = viewModel)
                                 OnboardingStep.MOVEMENT_CAPABILITY -> MovementCapabilityStep(
@@ -232,6 +237,13 @@ fun OnboardingScreen(
                 onBack = { viewModel.previousStep() },
                 onNext = { viewModel.nextStep() }
             )
+
+            // Under the primary action, and only on the first step: someone who has an
+            // archive is restoring instead of filling the wizard in, and everyone else
+            // should be reading the name field rather than this.
+            if (state.currentStep == OnboardingStep.WELCOME) {
+                restoreFromArchive()
+            }
         }
     }
 }

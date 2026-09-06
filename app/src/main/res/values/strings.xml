@@ -121,7 +121,8 @@
     <string name="onboarding_error_save_failed">Couldn\'t save your profile. Try again.</string>
 
     <string name="onboarding_restore_title">ALREADY HAVE A WALLCRAWL FILE?</string>
-    <string name="onboarding_restore_description">Restore an exported file now, before setting up a new profile.</string>
+    <string name="onboarding_restore_scope">The file holds your whole WallCrawl archive: your profile, your routines, and every workout you have logged.</string>
+    <string name="onboarding_restore_action">Restore profile from file</string>
 
     <!-- ============================ Break ranges ============================ -->
     <string name="break_range_none_title">Consistent / no break</string>

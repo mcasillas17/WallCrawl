@@ -48,7 +48,7 @@
     <string name="onboarding_welcome_title">Bienvenido, Crawler</string>
     <string name="onboarding_welcome_subtitle">Vamos a configurar tu identidad de entrenamiento.</string>
     <string name="onboarding_goals_title">Objetivos de entrenamiento</string>
-    <string name="onboarding_goals_subtitle">Elige todo lo que quieras trabajar.</string>
+    <string name="onboarding_goals_subtitle">Elige tus objetivos.</string>
     <string name="onboarding_experience_title">Experiencia y unidades</string>
     <string name="onboarding_experience_subtitle">Elige tu unidad de peso preferida y tu experiencia previa.</string>
     <string name="onboarding_movement_capability_title">Preferencias de movimiento</string>
@@ -56,9 +56,9 @@
     <string name="onboarding_schedule_title">Frecuencia de entrenamiento</string>
     <string name="onboarding_schedule_subtitle">Define tu rutina semanal y la duración que prefieres por sesión.</string>
     <string name="onboarding_equipment_title">Equipo disponible</string>
-    <string name="onboarding_equipment_subtitle">Elige solo el equipo que de verdad tengas a mano.</string>
+    <string name="onboarding_equipment_subtitle">Escoge el equipo que tengas disponible.</string>
     <string name="onboarding_safety_title">Seguridad y recuperación</string>
-    <string name="onboarding_safety_subtitle">Cuéntanos si hay alguna zona que quieras cuidar.</string>
+    <string name="onboarding_safety_subtitle">Cuéntanos qué zonas quieres cuidar.</string>
     <string name="onboarding_summary_title">Todo listo para empezar</string>
     <string name="onboarding_summary_subtitle">Revisa tu configuración antes de generar tu primer entrenamiento.</string>
 
@@ -68,7 +68,7 @@
     <string name="onboarding_codename_placeholder">p. ej. Pedro, Gabriela, Miguel, Ale</string>
 
     <string name="onboarding_goals_heading">OBJETIVOS DE ENTRENAMIENTO</string>
-    <string name="onboarding_goals_hint">Marca todo lo que encaje con tu bloque actual:</string>
+    <string name="onboarding_goals_hint">Selecciona lo que aplique a tu bloque actual:</string>
 
     <string name="onboarding_unit_heading">UNIDAD DE PESO PREFERIDA</string>
     <string name="onboarding_unit_hint">Se usa para las cargas, los discos y el registro.</string>
@@ -87,7 +87,7 @@
     <string name="onboarding_equipment_hint">Marca lo que tengas en casa o en el gimnasio:</string>
 
     <string name="onboarding_safety_heading">PROTEGE LAS ARTICULACIONES SENSIBLES</string>
-    <string name="onboarding_safety_hint">Cuéntanos si hay alguna articulación que quieras cuidar. WallCrawl filtra o cambia los movimientos más exigentes.</string>
+    <string name="onboarding_safety_hint">Cuéntanos qué articulaciones quieres cuidar. WallCrawl filtra o cambia los movimientos más exigentes.</string>
     <string name="onboarding_safety_none_title">Sin molestias / sin restricciones</string>
     <string name="onboarding_safety_none_subtitle">Catálogo completo de ejercicios, sin filtros por articulación.</string>
     <string name="onboarding_safety_tag_prompt">O marca las zonas que quieres cuidar:</string>
@@ -106,7 +106,7 @@
     <string name="onboarding_summary_label_break">Regreso tras la pausa</string>
     <string name="onboarding_summary_value_break">%1$s • %2$s</string>
     <string name="onboarding_ready_title">⚡ Todo listo</string>
-    <string name="onboarding_ready_body">WallCrawl ya va a preparar tu planificador local. Puedes cambiar cualquiera de estas preferencias después desde tu perfil.</string>
+    <string name="onboarding_ready_body">WallCrawl ya va a preparar tu planificador local. Puedes cambiar todo esto después desde tu perfil.</string>
 
     <string name="onboarding_action_continue">Continuar</string>
     <string name="onboarding_action_start">Empezar a entrenar</string>
@@ -118,7 +118,8 @@
     <string name="onboarding_error_save_failed">No se pudo guardar tu perfil. Inténtalo de nuevo.</string>
 
     <string name="onboarding_restore_title">¿YA TIENES UN ARCHIVO DE WALLCRAWL?</string>
-    <string name="onboarding_restore_description">Restaura un archivo exportado ahora, antes de crear un perfil nuevo.</string>
+    <string name="onboarding_restore_scope">El archivo tiene todo: tu perfil, tus rutinas y todos los entrenamientos que registraste.</string>
+    <string name="onboarding_restore_action">Restaurar perfil desde archivo</string>
 
     <!-- ============================ Break ranges ============================ -->
     <string name="break_range_none_title">Constante / sin pausa</string>
@@ -493,7 +494,7 @@
     <string name="profile_eyebrow">AJUSTES</string>
     <string name="profile_title">Perfil de entrenamiento</string>
     <string name="profile_goals_heading">OBJETIVOS DE ENTRENAMIENTO</string>
-    <string name="profile_goals_hint">Marca todo lo que encaje con tu bloque actual:</string>
+    <string name="profile_goals_hint">Selecciona lo que aplique a tu bloque actual:</string>
     <string name="profile_preferences_heading">PREFERENCIAS DE ENTRENAMIENTO</string>
     <string name="profile_preferred_unit">Unidad de peso preferida</string>
     <string name="profile_preferred_duration">Duración preferida</string>
