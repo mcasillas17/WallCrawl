@@ -230,6 +230,14 @@ that every ID exists, remains in the allowed set, matches the catalog exercise t
 and belongs to a structurally valid workout. Unknown IDs are rejected, never silently
 substituted.
 
+Whole-program validation is planned, not shipped. Its
+[evidence-to-rule contract](research/2026-08-29-training-science-evidence-review.md#validation-scope-clarification-2026-09-05)
+retains those checks plus enabled-path eligibility, load provenance, scoped program-design
+constraints, duration consistency, aggregate product allowances, and replayable atomic
+persistence. It excludes physiological fatigue budgets and timestamp-only recovery or
+overload inference. `WorkoutHistoryAnalyzer`'s default 72-hour `focusMuscles` lookback is
+only a history summary; the planner does not use it as a scheduling or recovery rule.
+
 `WorkoutGenerationContext` already carries the complete `UserProfile`, so no second
 capability field exists. Production composition sets
 `PlannerFeatureFlags.reviewedCapabilityEligibility = false` because the bundled cohort
@@ -243,18 +251,22 @@ signoff plus a deliberate availability/persona review and flag change.
 On that reviewed-enabled path only, `StateBasedTrainingPolicy` consumes the composed
 `TrainingProgramState`. It validates `PROGRAM_STATE_V1`, `PRIMARY_ONLY_V1`, approved
 provenance, review-policy equality, and prescription shape before using the approved
-direct-primary muscle. It caps a base prescription by the remaining editable weekly
+direct-primary muscle. It caps a base prescription by the remaining configured weekly
 product allowance and never increases it. Exact/over-cap exposure returns typed
 no-guidance instead of a zero-set or over-cap prescription; malformed or version-mismatched
 input returns a typed failure with no legacy fallback.
+Each exercise reads the same completed ledger; aggregate reservation across a proposal
+is not implemented. Exceeding an allowance is not proof of overload or medical danger.
 
 The same pure result carries nullable RIR guidance and a classified rest target. Product
 defaults are 2-4 RIR for conservative states or a relevant approved `LIMITED` capability,
 1-2 for established strength, and 1-3 for established general/hypertrophy; automatic
-guidance cannot contain 0 RIR. `SHORT`, `MODERATE`, and `LONG` currently map to editable
+guidance cannot contain 0 RIR. `SHORT`, `MODERATE`, and `LONG` currently map to configured
 60/90/180-second product defaults. These values are product policy, not physiology,
-safety, or optimality claims. Explicit valid user rest preferences win. State and
-capability can reduce sets but cannot change or invent a load.
+safety, or optimality claims. Policy construction is configurable; the app does not ship
+settings for editing these allowances, RIR bands, or rest-class defaults. Explicit valid
+stored user rest preferences win, but timer add/skip controls do not persist preferences.
+State and capability can reduce sets but cannot change or invent a load.
 
 Within a split, compound slots are chosen first by split-primary match inside the
 compound pool, then by the reviewed capability soft-penalty bit, then by experience,
@@ -265,6 +277,9 @@ metadata, then that same capability penalty, experience penalty, fatigue, and st
 ID. Evidence suppresses only the penalized candidate's one-bit capability penalty; it
 never adds candidates, never removes candidates, and never outweighs the harder split
 or mechanics ordering that already happened before it.
+The legacy `programming.fatigueScore` is an ordinal product ranking label, not a measured
+physiological quantity or a budget to sum. Pattern spreading is a preference with a
+fallback to repeated patterns, not a universal uniqueness or all-patterns coverage rule.
 
 Split selection is deliberate about failure. High-priority muscles propose a
 rotation; splits the candidate pool cannot fill are dropped from it, and if none

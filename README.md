@@ -162,16 +162,24 @@ When tests explicitly enable reviewed eligibility, `TrainingProgramState` suppli
 `PRIMARY_ONLY_V1` weekly direct-primary exposure to a pure, versioned prescription policy.
 The policy can only reduce a valid base prescription: it never raises target sets or
 changes/invents a load. Remaining weekly allowance is an upper-cap calculation with no
-mandatory floor or automatic increment. The editable WallCrawl v1 product defaults cap
+mandatory floor or automatic increment. The configured WallCrawl v1 product defaults cap
 direct-primary exposure at 6/8/12 sets depending on state and cap one exercise at 2 or 4
 sets; these are product values, not universal or medically optimal prescriptions.
+`PRIMARY_ONLY_V1` is also a product accounting convention, not a complete physiological
+dose measurement. These defaults are configurable through policy construction; user-facing
+allowance, RIR-band, and rest-default editors are not shipped.
 
 The same reviewed path adds nullable effort guidance: conservative states or a relevant
-approved `LIMITED` capability use 2-4 RIR, established strength uses the editable 1-2 RIR
+approved `LIMITED` capability use 2-4 RIR, established strength uses the configured 1-2 RIR
 product target, and established general/hypertrophy uses 1-3 RIR. Automatic guidance
 never targets 0 RIR/failure. Rest is classified as `SHORT`, `MODERATE`, or `LONG` and
-mapped to editable 60/90/180-second defaults. A valid explicit per-exercise user rest
-choice wins and keeps its exact seconds.
+mapped to configured 60/90/180-second defaults. A valid stored explicit per-exercise rest
+preference wins and keeps its exact seconds; model/persistence support does not imply a
+shipped preference-editing UI.
+
+The policy currently caps each prescription against the supplied completed ledger, not
+the aggregate proposal. Whole-program validation remains planned under the
+[evidence-to-rule contract](docs/research/2026-08-29-training-science-evidence-review.md#validation-scope-clarification-2026-09-05).
 
 Guidance is persisted with templates and frozen session snapshots in Room schema 11.
 The active timer still reads the persisted exact seconds; add-time, skip, and dismiss are

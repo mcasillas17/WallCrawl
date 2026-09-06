@@ -10,6 +10,14 @@ session count as dose, never increases a base prescription, and defines no manda
 weekly floor. Exact or exceeded allowance returns typed no-guidance instead of zero sets
 or over-cap work.
 
+This is per-prescription policy application, not whole-program validation: multiple
+proposed exercises can read the same remaining allowance. Roadmap Package 4 must check
+the aggregate proposal separately from completed-dose credit. The exact allowances and
+`PRIMARY_ONLY_V1`'s single-designated-primary convention are versioned product policies,
+not universal physiological laws or medical safety thresholds. Storage/codec bounds are
+software limits, not training ceilings. See the
+[evidence-to-rule mapping](research/2026-08-29-training-science-evidence-review.md#validation-scope-clarification-2026-09-05).
+
 The consumer is reachable only when
 `PlannerFeatureFlags.reviewedCapabilityEligibility` is enabled, which production does
 not do. The bundled catalog remains 37 `DRAFT` / 0 `APPROVED`, so current production

@@ -76,6 +76,11 @@ These decisions must be recorded before the related implementation package close
 10. **Watch ownership:** the first companion release should allow one active execution owner.
     Decide whether additional paired watches are rejected or read-only; multi-watch editing
     must not enter the protocol without an explicit conflict policy.
+11. **Validation contract:** before Package 4 implementation, define session/program scope
+    for duplicate-family and movement-coverage constraints, the duration estimator and
+    tolerance, prospective weekly accounting, and stale-context handling. Recency is at most
+    a scheduling preference whose inputs and precedence still need design, not an overload
+    or recovery test. See the [evidence-to-rule mapping](docs/research/2026-08-29-training-science-evidence-review.md#validation-scope-clarification-2026-09-05).
 
 ## Dependency map
 
@@ -183,14 +188,29 @@ only.
 **Depends on:** Shipped weekly ledger and state-based policy. It may use synthetic approved
 metadata in tests while package 3 proceeds.
 
+**Contract:** Follow the [evidence-to-rule mapping](docs/research/2026-08-29-training-science-evidence-review.md#validation-scope-clarification-2026-09-05).
+Research-informed principles, versioned product policies, and software invariants are
+distinct. Numeric physiological fatigue budgets are excluded from v1; legacy
+`programming.fatigueScore` is an ordinal ranking label, not a summable physiological
+measurement. Elapsed time alone establishes neither overload nor readiness and supplies no
+universal recovery interval. Do not add a blocking recency rule while scheduling policy is
+undefined.
+
 **Implementation tasks:**
 
-1. Define typed violations for unknown/unreviewed IDs, hard constraints, duplicate exercises
-   and progression families, invalid dose, fatigue-budget overflow, missing movement coverage,
-   recently-trained-muscle overload, unconfirmed load, duration mismatch, and weekly ledger
-   overflow.
+1. Define typed violations for unknown IDs, candidate-set membership, approved metadata and
+   provenance on the reviewed path, explicit constraints, prescription structure, load
+   provenance, duration consistency, and aggregate weekly accounting. Enforce duplicate
+   exercise/family and movement-coverage rules only as explicitly defined constraints of the
+   intended session/program, not universal bans on repetition or all-patterns-per-session
+   requirements.
 2. Validate the complete generated recommendation against the exact generation context before
-   persistence or display.
+   persistence or display, with a defined revalidation boundary for changed context at start.
+   Check configured dose allowances across the whole proposal, not independently against the
+   same remaining allowance for each exercise. `PRIMARY_ONLY_V1` attribution, exact weekly
+   allowances, set caps, RIR bands, and rest seconds are versioned WallCrawl policies, not
+   universal physiological limits. Exceeding an allowance is a policy mismatch, not proof of
+   medical danger. Add no mandatory weekly minimum or automatic volume increase.
 3. Permit at most one deterministic repair pass that cannot weaken explicit constraints.
 4. Persist or attach the validator version, catalog/review/policy/ledger versions, structured
    reason codes, validation outcome, and immutable recommendation snapshot.
@@ -204,7 +224,8 @@ repositories, and validation tests.
 
 **Done when:** no recommendation can reach persistence or UI with an aggregate violation,
 failures are explainable and replayable from recorded versions, and valid legacy behavior is
-unchanged while the reviewed gate is disabled.
+unchanged while the reviewed gate is disabled. Every rule identifies its software contract
+or product-policy rationale; unresolved scope/tolerance decisions are settled before coding.
 
 ### 5. Reconcile Progress weekly semantics
 
@@ -249,6 +270,9 @@ remaining persona, policy assertions, documentation audit, and version record ar
    committed assets and the generated review report. Drift and checkout/import failures fail CI.
 4. Correct stale schema/count comments and remove unsupported present-tense claims from active
    documentation without rewriting historical records as if they were current status.
+   Classify policy assertions using the evidence-to-rule mapping; include negative cases
+   against fatigue-score summation, timestamp-only recovery inference, and forced weekly
+   minimums. Audit legacy recovery/injury-prevention copy rather than endorsing it.
 5. Record the exact policy, catalog, review, fixture, and importer versions used by the gate.
 
 **Likely surfaces:** planner fixtures and evaluator tests, `.github/workflows/ci.yml`, importer
@@ -256,6 +280,8 @@ configuration, and active architecture/evaluation documentation.
 
 **Done when:** every supported persona replays deterministically, every policy invariant is
 asserted, and CI proves both importer behavior and real pinned-source regeneration parity.
+Passing this gate demonstrates software-contract conformance, not scientific or clinical
+validation of the complete algorithm.
 
 ### 7. Enable reviewed planning deliberately
 
@@ -271,6 +297,8 @@ initial rollout promises progression/deload rather than a conservative reviewed 
 2. Prove the reviewed path preserves hard constraints, no-invented-load, deterministic replay,
    and valid plans for every supported persona.
 3. Document the initial rollout scope, especially whether progression/deload remains absent.
+   Distinguish configured policy limits from medical safety and planned controls from shipped
+   UI; metadata approval and passing fixtures do not validate the algorithm clinically.
 4. Change `PlannerFeatureFlags.reviewedCapabilityEligibility` in a dedicated, reviewable
    change with a production-default assertion.
 5. Retain a typed fail-closed path; do not fall back to an unreviewed candidate when the
@@ -298,8 +326,9 @@ frequency, recency, and supported-regression preference do not.
    approved `directPrimaryMuscle` contract rather than broad legacy muscle lists.
 2. Prefer approved supported regressions when capability evidence or a limited preference
    makes them the clearer fit.
-3. Incorporate training frequency and recently trained muscles as bounded, explainable
-   ordering inputs.
+3. Define training frequency and recency as bounded, explainable scheduling preferences
+   before incorporating them as ordering inputs. Specify attribution, lookback, and
+   precedence; timestamps must not become overload/readiness judgments or recovery intervals.
 4. Preserve candidate membership and all hard constraints; ranking may only reorder legal
    candidates.
 5. Emit structured ranking reasons and lock comparator order with policy and planner tests.
@@ -349,8 +378,10 @@ accidentally lifts the complexity ceiling.
 
 1. Generate candidates only from approved, equipment-compatible, constraint-compatible,
    type-compatible graph edges.
-2. Rank candidates within remaining duration, fatigue, and weekly-dose budgets with structured
-   reasons.
+2. Rank candidates within the configured remaining-duration and weekly-dose allowances,
+   preserving the intended session/program constraints and emitting structured reasons.
+   Follow Package 4's accounting contract for completed versus unperformed work; do not sum
+   legacy fatigue labels or infer recovery from recency.
 3. Re-run whole-program validation before applying a substitution.
 4. Replace only unperformed work and preserve completed sets under the performed exercise.
 5. Store planned versus performed IDs and targets in the immutable session snapshot.
