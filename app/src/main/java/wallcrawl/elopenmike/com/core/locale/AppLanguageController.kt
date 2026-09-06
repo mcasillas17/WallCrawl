@@ -6,9 +6,9 @@ import androidx.core.os.LocaleListCompat
 /**
  * The single place the app language is read and written.
  *
- * Both selectors — the one on the onboarding Welcome step and the one in Profile — go
- * through here, so they share one preference by construction rather than by keeping two
- * copies in sync. There is no local mirror of the value: [current] always asks the platform,
+ * Both controls — the chip in the onboarding wizard's header, offered on every step, and
+ * the segmented pill in Profile → App preferences — go through here, so they share one
+ * preference by construction rather than by keeping two copies in sync. There is no local mirror of the value: [current] always asks the platform,
  * which is also what makes a change made in the system per-app language screen show up in
  * the app's own selector.
  *

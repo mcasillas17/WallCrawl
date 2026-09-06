@@ -1,6 +1,9 @@
 package wallcrawl.elopenmike.com.feature.profile
 
 import androidx.annotation.StringRes
+import androidx.compose.ui.test.assertHeightIsAtLeast
+import androidx.compose.ui.test.assertWidthIsAtLeast
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -57,6 +60,24 @@ class AppPreferencesCardTest {
             composeRule.onNodeWithContentDescription(
                 text(R.string.language_option_accessibility, text(language.labelRes))
             ).assertIsDisplayed()
+        }
+    }
+
+    @Test
+    fun theAbbreviatedSegmentsAreStillBigEnoughToHit() {
+        // "EN" is two characters wide. The label is what shrinks; the target is not.
+        composeRule.setContent {
+            WallCrawlTheme {
+                AppPreferencesCard(currentTheme = ThemePreference.SYSTEM, onSelectTheme = {})
+            }
+        }
+
+        AppLanguage.entries.forEach { language ->
+            composeRule.onNodeWithContentDescription(
+                text(R.string.language_option_accessibility, text(language.labelRes))
+            )
+                .assertHeightIsAtLeast(48.dp)
+                .assertWidthIsAtLeast(48.dp)
         }
     }
 }

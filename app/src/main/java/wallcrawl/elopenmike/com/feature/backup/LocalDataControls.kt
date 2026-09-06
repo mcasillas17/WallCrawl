@@ -2,21 +2,32 @@ package wallcrawl.elopenmike.com.feature.backup
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -27,6 +38,7 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import wallcrawl.elopenmike.com.R
@@ -38,6 +50,8 @@ import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 
 const val LOCAL_DATA_EXPORT_TEST_TAG = "local_data_export"
 const val LOCAL_DATA_RESTORE_TEST_TAG = "local_data_restore"
+const val LOCAL_DATA_RESTORE_ENTRY_TEST_TAG = "local_data_restore_entry"
+const val LOCAL_DATA_RESTORE_SHEET_TEST_TAG = "local_data_restore_sheet"
 const val LOCAL_DATA_DELETE_TEST_TAG = "local_data_delete"
 const val LOCAL_DATA_MESSAGE_TEST_TAG = "local_data_message"
 const val LOCAL_DATA_DELETE_CONFIRM_TEST_TAG = "local_data_delete_confirm"
@@ -98,8 +112,8 @@ fun LocalDataSection(
 /**
  * Reports a finished restore or deletion, from somewhere that stays composed.
  *
- * Deliberately not inside the cards below. [RestoreFromArchiveCard] exists only on
- * onboarding's first step, and [LocalDataSection] is one item in a scrolling list that
+ * Deliberately not inside the controls below. [RestoreFromArchiveButton] opens a sheet
+ * that exists only while it is open, and [LocalDataSection] is one item in a scrolling list that
  * Compose disposes once it leaves the viewport — either way an effect living with the card
  * can be gone when the operation it was watching finishes. Host screens place this above
  * the step switch and above the list, where it outlives both.
@@ -126,24 +140,89 @@ fun LocalDataOutcomeEffect(
  * Restore on its own, for the first onboarding step.
  *
  * A user who has just reinstalled, or who has just deleted everything, can restore before
- * being asked to build a profile they would immediately discard. Completion is reported by
- * [LocalDataOutcomeEffect], not by this card, so leaving the step cannot lose the result.
+ * being asked to build a profile they would immediately discard — so this has to be
+ * reachable with the wizard untouched and no name typed. It is a quiet text button because
+ * most people setting up are not restoring, and the whole flow lives in a sheet behind it
+ * rather than competing with the name field for the first screen.
+ *
+ * Completion is reported by [LocalDataOutcomeEffect], not from inside the sheet, so
+ * dismissing the sheet — or Compose disposing its content — cannot lose a finished restore.
+ * While one is running the button says so and refuses to open a second entry, which is also
+ * what keeps a running restore visible after the sheet is closed.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RestoreFromArchiveCard(
+fun RestoreFromArchiveButton(
     viewModel: LocalDataViewModel,
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.uiState.collectAsState()
+    var sheetOpen by rememberSaveable { mutableStateOf(false) }
+    val restoring = state.operation == LocalDataOperation.RESTORING
 
-    WallCrawlCard(modifier = modifier.fillMaxWidth(), cornerRadius = 16.dp, contentPadding = 16.dp) {
-        SectionHeading(stringResource(R.string.onboarding_restore_title))
-        Spacer(modifier = Modifier.height(4.dp))
-        BodyText(stringResource(R.string.onboarding_restore_description))
-        Spacer(modifier = Modifier.height(12.dp))
-        RestoreControl(viewModel = viewModel, state = state)
-        LocalDataMessageText(state)
+    TextButton(
+        onClick = { sheetOpen = true },
+        enabled = !state.isBusy,
+        modifier = modifier
+            .fillMaxWidth()
+            .heightIn(min = 48.dp)
+            .testTag(LOCAL_DATA_RESTORE_ENTRY_TEST_TAG)
+    ) {
+        Text(
+            text = stringResource(
+                if (restoring) {
+                    R.string.local_data_restore_progress
+                } else {
+                    R.string.onboarding_restore_action
+                }
+            ),
+            fontSize = 13.sp,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
+
+    if (sheetOpen) {
+        ModalBottomSheet(
+            onDismissRequest = { sheetOpen = false },
+            containerColor = MaterialTheme.colorScheme.background,
+            modifier = Modifier.testTag(LOCAL_DATA_RESTORE_SHEET_TEST_TAG)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    // Explanation, eligibility text and an error can outgrow the sheet at a
+                    // large font scale or in landscape, and the action is underneath them.
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 20.dp)
+                    .padding(bottom = 24.dp)
+                    .navigationBarsPadding()
+            ) {
+                SectionHeading(stringResource(R.string.onboarding_restore_title))
+                Spacer(modifier = Modifier.height(4.dp))
+                // The button that opens this says "profile", because that is what someone
+                // setting up is looking for. What actually gets restored is the whole
+                // archive, and this is where that is stated rather than implied. The
+                // eligibility line below carries the rest; a second "restores an exported
+                // file" sentence here only repeated it.
+                BodyText(stringResource(R.string.onboarding_restore_scope))
+                Spacer(modifier = Modifier.height(12.dp))
+                RestoreControl(viewModel = viewModel, state = state)
+                // The picker returns to a sheet that is still open, so this is where the
+                // ordinary failure is read. The copy below covers the other case.
+                LocalDataMessageText(state)
+            }
+        }
+    }
+
+    // Outside the sheet as well, because the sheet can be dismissed while a restore is
+    // still reading the document, and a failure arriving afterwards would otherwise be
+    // reported to nobody: the entry line would just re-enable with its usual label. The
+    // same goes for a restored archive whose onboarding was never finished — it stays in
+    // the wizard, so it navigates nowhere to announce itself. Guarded rather than merely
+    // covered by the scrim: two of these would be two polite live regions announcing the
+    // same failure, and two nodes sharing one test tag.
+    if (!sheetOpen) LocalDataMessageText(state)
 }
 
 @Composable

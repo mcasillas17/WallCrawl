@@ -44,10 +44,11 @@ WallCrawl supports **Dark Theme** (stealth suit graphite aesthetic), **Light The
 <p align="center">
   <img src="art/screenshots/profile-your-data.png" width="24%" alt="Your Data card on the Training Profile screen: export, restore, and delete-all controls, with restore explaining that it needs a fresh start" />
   <img src="art/screenshots/profile-delete-confirmation.png" width="24%" alt="Delete-all confirmation dialog naming the profile, templates, workouts including one in progress, and cached totals it removes, and what it leaves alone" />
-  <img src="art/screenshots/onboarding-restore-archive.png" width="24%" alt="First onboarding step offering Restore from a file before a new profile is created" />
+  <img src="art/screenshots/onboarding-restore-entry.png" width="24%" alt="First onboarding step: a quiet Restore profile from file text button under the Continue action, with no card competing with the codename field" />
+  <img src="art/screenshots/onboarding-restore-archive.png" width="24%" alt="The restore sheet opened from that button, stating that the file holds the whole archive — profile, routines, and every logged workout — before a new profile is created" />
 </p>
 <p align="center">
-  <em>Your Data on Training Profile &middot; the destructive confirmation &middot; restore offered on first run</em>
+  <em>Your Data on Training Profile &middot; the destructive confirmation &middot; restore offered on first run, and the sheet behind it</em>
 </p>
 <p align="center">
   <img src="art/screenshots/onboarding-capabilities-light.png" width="24%" alt="Onboarding Movement Preferences (Light)" />
@@ -64,8 +65,8 @@ WallCrawl supports **Dark Theme** (stealth suit graphite aesthetic), **Light The
 - **Workout Summary**: Post-workout card displaying session duration, total volume lifted, sets completed, and personal records set against your logged history.
 - **Progress Tracking**: Weekly workout streaks, volume and rep totals, per-muscle weekly set counts, strength progression indicators, and historical workout logs.
 - **Training Profile & App Preferences**: Full local customization of app language (System default / English / Español) and theme preference (Auto System / Dark Mode / Light Mode) with compact switchers, multi-select fitness goals, preferred weight units (LBS/KG), session duration targets, available gym equipment, return-after-break calibration, muscle priorities, and seven movement preferences.
-- **Your Data**: Export everything stored on the device to one versioned, checksummed file you choose the destination for; restore it onto a fresh start; or delete every local record behind an explicit destructive confirmation. Restore is also offered on the first onboarding step, so a reinstall does not have to build a throwaway profile first.
-- **Language**: English and neutral Latin American Spanish across the whole app, following the device by default, switchable from the onboarding Welcome step before any details are entered and from Training Profile → App preferences, and stored as a device setting rather than as part of the profile or the export archive.
+- **Your Data**: Export everything stored on the device to one versioned, checksummed file you choose the destination for; restore it onto a fresh start; or delete every local record behind an explicit destructive confirmation. Restore is also offered on the first onboarding step — a quiet button under Continue opens the whole flow in a sheet — so a reinstall does not have to build a throwaway profile first.
+- **Language**: English and neutral Latin American Spanish across the whole app, following the device by default, switchable from a chip in the onboarding wizard's header before any details are entered and from Training Profile → App preferences, and stored as a device setting rather than as part of the profile or the export archive.
 - **Credits & Licenses**: In-app attribution for the bundled exercise artwork, reachable from the Training Profile screen.
 
 ### English & Spanish
@@ -75,17 +76,18 @@ Every screen ships in **English** and **neutral Latin American Spanish**, includ
 confirmations, and TalkBack labels. Both languages work fully offline; nothing is
 translated at runtime.
 
-The language follows the device by default, from the very first onboarding screen. It can
-be changed from the onboarding **Welcome** step before any details are entered, and later
-from **Training Profile → App preferences**. Both selectors write the same preference, and
-on Android 13+ that is the same per-app language the system Settings screen shows. It is a
+The language follows the device by default, from the very first onboarding screen. A chip
+in the wizard header — reading `EN` or `ES`, whichever is actually on screen — changes it
+before any details are entered, and **Training Profile → App preferences** changes it later.
+Both write the same preference, and on Android 13+ that is the same per-app language the
+system Settings screen shows. It is a
 device setting: it is not part of the training profile, not in the export archive, and
 restoring an archive never changes it.
 
 <p align="center">
-  <img src="art/screenshots/onboarding-welcome-language-es.png" width="24%" alt="Spanish onboarding step 1 of 8 with the language selector above the codename field, offering System default, English, and Español before any details are entered" />
-  <img src="art/screenshots/profile-language-es.png" width="24%" alt="Spanish Training Profile App preferences card holding both the interface theme switcher and the language setting, with Español selected" />
-  <img src="art/screenshots/onboarding-summary-es.png" width="24%" alt="Spanish onboarding step 8 of 8 summarising codename, goals, experience, frequency, units, equipment, movement preferences, and sensitive areas" />
+  <img src="art/screenshots/onboarding-welcome-language-es.png" width="24%" alt="Spanish onboarding step 1 of 8 with the language chip in the header reading ES, the codename field, and a quiet Restaurar perfil desde archivo button under Continuar" />
+  <img src="art/screenshots/profile-language-es.png" width="24%" alt="Spanish Training Profile App preferences card holding the interface theme and language as two compact segmented controls, with ES selected" />
+  <img src="art/screenshots/onboarding-restore-sheet-es.png" width="24%" alt="The Spanish restore sheet opened from the onboarding wizard, stating that the file holds the profile, routines, and every logged workout" />
   <img src="art/screenshots/today-screen-es.png" width="24%" alt="Spanish Today screen with a generated Empuje / Hipertrofia session, its focus muscles, and five Spanish exercise names" />
 </p>
 <p align="center">
@@ -95,7 +97,7 @@ restoring an archive never changes it.
   <img src="art/screenshots/profile-delete-confirmation-es.png" width="24%" alt="Spanish delete-all confirmation naming exactly what is removed, what is left alone, and that the language setting is not changed" />
 </p>
 <p align="center">
-  <em>Language on Welcome and in App preferences &middot; onboarding and Today &middot; catalog and logging &middot; the data controls and their destructive confirmation</em>
+  <em>Language in the wizard header and in App preferences &middot; restoring during onboarding &middot; Today, the catalog, and logging &middot; the data controls and their destructive confirmation</em>
 </p>
 
 Language is presentation only. Identical inputs produce identical exercise selections,

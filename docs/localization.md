@@ -164,8 +164,11 @@ stop reason that reads as a diagnosis rather than as the user's own decision to 
 ## Choosing the language
 
 `AppLanguageController` is the only place the app language is read or written. Both
-selectors — the onboarding Welcome step and Profile → App preferences — call it, so they
-share one preference by construction rather than by keeping two copies in sync.
+controls call it, so they share one preference by construction rather than by keeping two
+copies in sync. They differ only in how much room they have: onboarding shows a chip in the
+wizard header reading `EN` or `ES` — the language actually being read, so it is concrete
+even under System default — and Profile shows a segmented `Auto | EN | ES` control beside
+the theme switcher. Both offer all three options.
 
 Storage belongs to AndroidX: Android 13 and later keep the choice in the system, so the
 in-app selector and the system per-app language screen always agree; below that, the

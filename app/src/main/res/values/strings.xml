@@ -33,14 +33,18 @@
     <string name="nav_profile">Profile</string>
 
     <!-- ============================ Language ============================ -->
-    <string name="language_title">LANGUAGE</string>
     <string name="language_setting_title">Language</string>
-    <string name="language_description">Choose the language WallCrawl uses. The change applies right away and is kept on this device only.</string>
+    <string name="language_description">Kept on this device only.</string>
     <string name="language_option_system">System default</string>
     <!-- Each language is named in itself, the way language pickers everywhere do it. -->
     <string name="language_option_english" translatable="false">English</string>
     <string name="language_option_spanish" translatable="false">Español</string>
     <string name="language_option_accessibility">Language: %1$s</string>
+    <!-- Abbreviations for the compact pickers. Language codes read the same in every
+         language; "Auto" matches the theme control's own short label. -->
+    <string name="language_option_system_short">Auto</string>
+    <string name="language_option_english_short" translatable="false">EN</string>
+    <string name="language_option_spanish_short" translatable="false">ES</string>
 
     <!-- ============================ Onboarding ============================ -->
     <string name="onboarding_welcome_title">Welcome, Crawler</string>
@@ -117,7 +121,8 @@
     <string name="onboarding_error_save_failed">Couldn\'t save your profile. Try again.</string>
 
     <string name="onboarding_restore_title">ALREADY HAVE A WALLCRAWL FILE?</string>
-    <string name="onboarding_restore_description">Restore an exported file now, before setting up a new profile.</string>
+    <string name="onboarding_restore_scope">The file holds your whole WallCrawl archive: your profile, your routines, and every workout you have logged.</string>
+    <string name="onboarding_restore_action">Restore profile from file</string>
 
     <!-- ============================ Break ranges ============================ -->
     <string name="break_range_none_title">Consistent / no break</string>

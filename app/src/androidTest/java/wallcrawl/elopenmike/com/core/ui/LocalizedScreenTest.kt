@@ -29,7 +29,7 @@ import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.model.SetValuesDraft
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.ui.components.GymFloorSetRow
-import wallcrawl.elopenmike.com.core.ui.components.LanguageSelector
+import wallcrawl.elopenmike.com.core.ui.components.LanguageChip
 import wallcrawl.elopenmike.com.core.ui.components.MovementCapabilityQuestion
 import wallcrawl.elopenmike.com.core.ui.localization.ExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
@@ -73,17 +73,25 @@ class LocalizedScreenTest {
     }
 
     @Test
-    fun theLanguageSelectorRendersInSpanish() {
+    fun theLanguageChipRendersInSpanish() {
         composeRule.setContent {
-            InSpanish { LanguageSelector(current = AppLanguage.SPANISH, onSelect = {}) }
+            InSpanish { LanguageChip(current = AppLanguage.SPANISH, onSelect = {}) }
         }
 
         // Genuinely different text, not English falling through: if values-es had not
-        // resolved, this heading would still read "LANGUAGE".
-        assertThat(spanish.getString(R.string.language_title))
-            .isNotEqualTo(english.getString(R.string.language_title))
-        composeRule.onNodeWithText(spanish.getString(R.string.language_title)).assertIsDisplayed()
-        composeRule.onNodeWithText(spanish.getString(R.string.language_option_system))
+        // resolved, this announcement would still read "Language: Spanish".
+        assertThat(spanish.getString(R.string.language_option_accessibility, "x"))
+            .isNotEqualTo(english.getString(R.string.language_option_accessibility, "x"))
+        composeRule
+            .onNodeWithText(spanish.getString(R.string.language_option_spanish_short))
+            .assertIsDisplayed()
+        composeRule
+            .onNodeWithContentDescription(
+                spanish.getString(
+                    R.string.language_option_accessibility,
+                    spanish.getString(R.string.language_option_spanish)
+                )
+            )
             .assertIsDisplayed()
     }
 
