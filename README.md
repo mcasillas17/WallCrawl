@@ -44,10 +44,11 @@ WallCrawl supports **Dark Theme** (stealth suit graphite aesthetic), **Light The
 <p align="center">
   <img src="art/screenshots/profile-your-data.png" width="24%" alt="Your Data card on the Training Profile screen: export, restore, and delete-all controls, with restore explaining that it needs a fresh start" />
   <img src="art/screenshots/profile-delete-confirmation.png" width="24%" alt="Delete-all confirmation dialog naming the profile, templates, workouts including one in progress, and cached totals it removes, and what it leaves alone" />
-  <img src="art/screenshots/onboarding-restore-archive.png" width="24%" alt="The restore sheet opened from the first onboarding step, stating that the file holds the whole archive before a new profile is created" />
+  <img src="art/screenshots/onboarding-restore-entry.png" width="24%" alt="First onboarding step: a quiet Restore profile from file text button under the Continue action, with no card competing with the codename field" />
+  <img src="art/screenshots/onboarding-restore-archive.png" width="24%" alt="The restore sheet opened from that button, stating that the file holds the whole archive — profile, routines, and every logged workout — before a new profile is created" />
 </p>
 <p align="center">
-  <em>Your Data on Training Profile &middot; the destructive confirmation &middot; restore offered on first run</em>
+  <em>Your Data on Training Profile &middot; the destructive confirmation &middot; restore offered on first run, and the sheet behind it</em>
 </p>
 <p align="center">
   <img src="art/screenshots/onboarding-capabilities-light.png" width="24%" alt="Onboarding Movement Preferences (Light)" />
