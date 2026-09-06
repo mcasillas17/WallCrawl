@@ -286,6 +286,33 @@ class LocalDataControlsTest {
             .assertIsDisplayed()
     }
 
+    @Test
+    fun theOnboardingSheetStaysOperableAtALargeFontScale() {
+        // The sheet is explanation first and action last, so at 2x the action is the part
+        // that falls off the bottom. It has to be reachable, not just present.
+        val viewModel = LocalDataViewModel(
+            context.contentResolver,
+            FakeBackupRepository(restoreAllowed = true)
+        )
+        composeRule.setContent {
+            val density = LocalDensity.current
+            CompositionLocalProvider(
+                LocalDensity provides Density(density.density, fontScale = LARGE_FONT_SCALE)
+            ) {
+                RestoreFromArchiveButton(viewModel = viewModel)
+            }
+        }
+        composeRule.waitUntil(TIMEOUT_MILLIS) { viewModel.uiState.value.restoreAllowed != null }
+
+        composeRule.onNodeWithTag(LOCAL_DATA_RESTORE_ENTRY_TEST_TAG).performClick()
+        composeRule.waitForIdle()
+
+        composeRule.onNodeWithTag(LOCAL_DATA_RESTORE_TEST_TAG)
+            .performScrollTo()
+            .assertIsDisplayed()
+            .assertHasClickAction()
+    }
+
     private fun showOnboardingEntry(repository: FakeBackupRepository): LocalDataViewModel {
         val viewModel = LocalDataViewModel(context.contentResolver, repository)
         composeRule.setContent {

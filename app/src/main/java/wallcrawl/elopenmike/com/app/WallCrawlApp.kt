@@ -3,6 +3,7 @@ package wallcrawl.elopenmike.com.app
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -172,6 +173,10 @@ private fun WallCrawlAppContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
+                // Marks those insets spent. Plain padding does not, so a screen applying
+                // its own navigationBarsPadding()/imePadding() inside would otherwise end
+                // a navigation bar's height above where it should.
+                .consumeWindowInsets(innerPadding)
         ) {
             composable(AppRoutes.ONBOARDING) {
                 val onboardingViewModel: OnboardingViewModel = viewModel(

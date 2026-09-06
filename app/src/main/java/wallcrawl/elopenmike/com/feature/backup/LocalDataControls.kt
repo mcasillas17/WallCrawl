@@ -2,6 +2,8 @@ package wallcrawl.elopenmike.com.feature.backup
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -189,6 +191,9 @@ fun RestoreFromArchiveButton(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
+                    // Explanation, eligibility text and an error can outgrow the sheet at a
+                    // large font scale or in landscape, and the action is underneath them.
+                    .verticalScroll(rememberScrollState())
                     .padding(horizontal = 20.dp)
                     .padding(bottom = 24.dp)
                     .navigationBarsPadding()
@@ -214,9 +219,10 @@ fun RestoreFromArchiveButton(
     // still reading the document, and a failure arriving afterwards would otherwise be
     // reported to nobody: the entry line would just re-enable with its usual label. The
     // same goes for a restored archive whose onboarding was never finished — it stays in
-    // the wizard, so it navigates nowhere to announce itself. Only one of the two is ever
-    // on screen: the sheet covers this one whenever it is open.
-    LocalDataMessageText(state)
+    // the wizard, so it navigates nowhere to announce itself. Guarded rather than merely
+    // covered by the scrim: two of these would be two polite live regions announcing the
+    // same failure, and two nodes sharing one test tag.
+    if (!sheetOpen) LocalDataMessageText(state)
 }
 
 @Composable
