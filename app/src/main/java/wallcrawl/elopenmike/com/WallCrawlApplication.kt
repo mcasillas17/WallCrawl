@@ -25,6 +25,8 @@ import wallcrawl.elopenmike.com.core.database.repository.WorkoutTemplateReposito
 import wallcrawl.elopenmike.com.core.exercise.BundledExerciseCatalog
 import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
 import wallcrawl.elopenmike.com.core.exercise.ExerciseFilter
+import wallcrawl.elopenmike.com.core.exercise.localization.ExerciseLocalizationSource
+import wallcrawl.elopenmike.com.core.exercise.localization.ExerciseLocalizationStore
 import wallcrawl.elopenmike.com.core.exercise.visual.ExerciseVisualProvider
 import wallcrawl.elopenmike.com.core.exercise.visual.WorkoutGuideVisualProvider
 import wallcrawl.elopenmike.com.core.exercise.workoutguide.AssetAttributionNoticeReader
@@ -44,6 +46,7 @@ interface AppContainer {
     val workoutTemplateRepository: WorkoutTemplateRepository
     val localDataBackupRepository: LocalDataBackupRepository
     val exerciseCatalog: ExerciseCatalog
+    val exerciseLocalizationSource: ExerciseLocalizationSource
     val exerciseVisualProvider: ExerciseVisualProvider
     val exerciseFilter: ExerciseFilter
     val workoutPlanner: WorkoutPlanner
@@ -137,8 +140,12 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
         )
     }
 
+    override val exerciseLocalizationSource: ExerciseLocalizationSource by lazy {
+        ExerciseLocalizationStore(context.assets)
+    }
+
     override val exerciseCatalog: ExerciseCatalog by lazy {
-        BundledExerciseCatalog(workoutGuideCatalogStore)
+        BundledExerciseCatalog(workoutGuideCatalogStore, exerciseLocalizationSource)
     }
 
     override val exerciseVisualProvider: ExerciseVisualProvider by lazy {

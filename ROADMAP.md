@@ -6,7 +6,10 @@
 > reflects the checked-in manifest, backup-rule resources, packaged-configuration
 > guard, and [privacy policy](docs/privacy.md). Package 2 status reflects the
 > checked-in `core/backup` archive contract, local-data DAO and repository,
-> `feature/backup` controls, and their Android instrumentation tests.
+> `feature/backup` controls, and their Android instrumentation tests. Localization
+> status reflects the checked-in `values-es` resources, the `core/locale`,
+> `core/ui/format`, `core/ui/localization`, and `core/exercise/localization`
+> packages, the bundled translation overlay, and their JVM and Android tests.
 >
 > This is the single source of truth for current project status, priority, dependency
 > order, and implementation scope. Status must be derived from repository evidence rather
@@ -25,6 +28,7 @@ network connection, or companion device.
 | Catalog and reviewed content | 302 exercises, 906 SVG frames, 131 authored programming entries, 37 reviewed records | All 37 reviewed records remain `DRAFT`; planner-reachable and band-only coverage still need review |
 | Onboarding and profile | Shipped as an eight-step flow with seven movement-capability questions, plus export, restore, and delete-all controls | Restore requires a fresh start, so it cannot merge into an installation that already holds data |
 | Templates and logging | Shipped with frozen template snapshots, type-aware outcomes, RPE/RIR, typed stops, and a local rest timer | Template targets are only partly editable; unsaved drafts are not restored after process death |
+| Localization | English and neutral Latin American Spanish shipped across the whole interface, the 302-exercise catalog, generated workout text, and accessibility labels, selectable from onboarding and Profile through Android's per-app language mechanism | Only two languages; historical session text stays in the language it was written in, by design |
 | Progress and history | Overview, records, trends, summaries, and recent history shipped | Weekly semantics conflict with the dose ledger; workout-summary navigation and history drill-down remain incomplete |
 | Deterministic coach | Eligibility, experience ranking, capability evidence, weekly ledger, and state-based dose/effort/rest shipped behind a disabled gate | Human approval, whole-program validation, release corpus, progression, deload, and rollout gates |
 | Planner evaluation | Versioned corpus, replay harness, importer unit tests, real pinned-upstream regeneration check, JVM tests, and Android CI shipped | `concurrent-activity` and policy-specific assertions |
@@ -56,6 +60,20 @@ unfinished, so it can never merge into or overwrite existing data. The supported
 is export, then delete-all or reinstall, then restore. Merging and replacement were
 rejected for this release because they need conflict rules for identifiers, active
 workouts, and units that nothing in the app can currently decide.
+
+**Localization boundary (Spanish support):** language is a device presentation
+preference and never an input to a training decision. Identical canonical inputs produce
+identical selections, ordering, prescriptions, loads, rest targets, eligibility outcomes,
+and policy reasons in either language, and stored measurements are unchanged. Interface
+text lives in `values/` and `values-es/`; exercise names, coaching summaries, and the
+muscle and equipment vocabulary live in a separate validated overlay keyed by the pinned
+catalog's own identifiers, so translating never edits the catalog, its source manifest, or
+any reviewed metadata, and never confers programming approval. The language choice is
+stored by the platform per-app language mechanism, not in the profile, not in Room, and
+not in the export archive; an archive exported under one language restores unchanged under
+the other. User-authored text and the title and explanation stored with a past session are
+never translated or rewritten, so history keeps the wording it was recorded with. See
+[Localization](docs/localization.md).
 
 ## Open decisions
 

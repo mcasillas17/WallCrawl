@@ -43,11 +43,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material3.MaterialTheme
 import java.util.Locale
+import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.ExercisePrescription
 import wallcrawl.elopenmike.com.core.model.ExerciseType
@@ -57,6 +62,8 @@ import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlOutlinedButton
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
 import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
+import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
+import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
@@ -70,6 +77,7 @@ fun TemplateEditorScreen(
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.uiState.collectAsState()
+    val locale = LocalConfiguration.current.locales[0]
 
     if (state.isPickerOpen) {
         ExercisePickerSheet(state = state, viewModel = viewModel)
@@ -94,10 +102,20 @@ fun TemplateEditorScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onBack) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back", tint = MaterialTheme.colorScheme.onSurface)
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowBack,
+                        stringResource(R.string.action_back),
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
                 }
                 Text(
-                    text = if (state.templateId == null) "Create Workout" else "Edit Workout",
+                    text = stringResource(
+                        if (state.templateId == null) {
+                            R.string.editor_title_create
+                        } else {
+                            R.string.editor_title_edit
+                        }
+                    ),
                     color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Black,
@@ -117,8 +135,13 @@ fun TemplateEditorScreen(
                     OutlinedTextField(
                         value = state.name,
                         onValueChange = viewModel::updateName,
-                        label = { Text("Workout Name") },
-                        placeholder = { Text("e.g. Upper Body Hypertrophy", color = MaterialTheme.colorScheme.onSurfaceVariant) },
+                        label = { Text(stringResource(R.string.editor_name_label)) },
+                        placeholder = {
+                            Text(
+                                stringResource(R.string.editor_name_placeholder),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        },
                         singleLine = true,
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
@@ -141,8 +164,13 @@ fun TemplateEditorScreen(
                     OutlinedTextField(
                         value = state.notes,
                         onValueChange = viewModel::updateNotes,
-                        label = { Text("Notes (optional)") },
-                        placeholder = { Text("e.g. Focus on strict form and 90s rest", color = MaterialTheme.colorScheme.onSurfaceVariant) },
+                        label = { Text(stringResource(R.string.editor_notes_label)) },
+                        placeholder = {
+                            Text(
+                                stringResource(R.string.editor_notes_placeholder),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        },
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedContainerColor = MaterialTheme.colorScheme.surface,
@@ -168,21 +196,28 @@ fun TemplateEditorScreen(
                     ) {
                         Column {
                             Text(
-                                text = "EXERCISES",
+                                text = stringResource(R.string.editor_exercises_eyebrow),
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
                                 letterSpacing = 1.sp,
                                 color = CrimsonRedPrimary
                             )
                             Text(
-                                text = "${state.selectedExercises.size} Selected",
+                                text = pluralStringResource(
+                                    R.plurals.count_exercises_selected,
+                                    state.selectedExercises.size,
+                                    LocaleFormatting.formatCount(
+                                        state.selectedExercises.size,
+                                        locale
+                                    )
+                                ),
                                 color = MaterialTheme.colorScheme.onSurface,
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold
                             )
                         }
                         WallCrawlOutlinedButton(
-                            text = "+ Add Exercise",
+                            text = stringResource(R.string.editor_action_add),
                             onClick = viewModel::openPicker
                         )
                     }
@@ -192,14 +227,21 @@ fun TemplateEditorScreen(
                     item {
                         WallCrawlCard {
                             Text(
-                                text = "No exercises added yet",
+                                text = stringResource(R.string.editor_empty_title),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Medium
                             )
                             Spacer(Modifier.height(4.dp))
                             Text(
-                                text = "Tap '+ Add Exercise' to browse the 302 offline exercises catalog.",
+                                text = pluralStringResource(
+                                    R.plurals.editor_empty_body,
+                                    state.catalogExercises.size,
+                                    LocaleFormatting.formatCount(
+                                        state.catalogExercises.size,
+                                        locale
+                                    )
+                                ),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                                 fontSize = 12.sp
                             )
@@ -224,13 +266,17 @@ fun TemplateEditorScreen(
                     }
                 }
 
-                state.errorMessage?.let { message ->
+                state.errorMessage?.let { messageRes ->
                     item {
                         WallCrawlCard(borderColor = CrimsonRedPrimary) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(Icons.Default.Warning, null, tint = CrimsonRedLight, modifier = Modifier.size(16.dp))
                                 Spacer(Modifier.size(8.dp))
-                                Text(message, color = CrimsonRedLight, fontSize = 13.sp)
+                                Text(
+                                    stringResource(messageRes),
+                                    color = CrimsonRedLight,
+                                    fontSize = 13.sp
+                                )
                             }
                         }
                     }
@@ -239,7 +285,13 @@ fun TemplateEditorScreen(
                 item {
                     Spacer(Modifier.height(8.dp))
                     WallCrawlPrimaryButton(
-                        text = if (state.isSaving) "Saving Workout…" else "Save Workout",
+                        text = stringResource(
+                            if (state.isSaving) {
+                                R.string.editor_action_saving
+                            } else {
+                                R.string.editor_action_save
+                            }
+                        ),
                         enabled = !state.isSaving,
                         onClick = { viewModel.save(onSaved) }
                     )
@@ -263,13 +315,18 @@ private fun SelectedExerciseCard(
     onMoveDown: () -> Unit,
     onRemove: () -> Unit
 ) {
+    val locale = LocalConfiguration.current.locales[0]
+    val vocabulary = LocalExerciseVocabulary.current
     WallCrawlCard {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "${index + 1}.",
+                text = stringResource(
+                    R.string.editor_position,
+                    LocaleFormatting.formatCount(index + 1, locale)
+                ),
                 color = CrimsonRedPrimary,
                 fontWeight = FontWeight.Bold,
                 fontSize = 15.sp,
@@ -277,21 +334,25 @@ private fun SelectedExerciseCard(
             )
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = exercise?.name ?: planned.exerciseId,
+                    text = exercise
+                        ?.let(vocabulary::exerciseName)
+                        ?: vocabulary.exerciseName(planned.exerciseId),
                     color = MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
+                    fontSize = 16.sp,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = planned.prescription.summary(),
+                    text = prescriptionSummary(planned.prescription),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 13.sp
                 )
                 if (equipmentWarning) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "⚠️ Equipment not in current profile",
+                        text = stringResource(R.string.editor_equipment_warning),
                         color = CrimsonRedLight,
                         fontSize = 12.sp
                     )
@@ -305,7 +366,7 @@ private fun SelectedExerciseCard(
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowUpward,
-                    contentDescription = "Move up",
+                    contentDescription = stringResource(R.string.editor_move_up),
                     tint = if (index > 0) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.25f),
                     modifier = Modifier.size(18.dp)
                 )
@@ -317,7 +378,7 @@ private fun SelectedExerciseCard(
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowDownward,
-                    contentDescription = "Move down",
+                    contentDescription = stringResource(R.string.editor_move_down),
                     tint = if (index < total - 1) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.25f),
                     modifier = Modifier.size(18.dp)
                 )
@@ -328,7 +389,7 @@ private fun SelectedExerciseCard(
             ) {
                 Icon(
                     imageVector = Icons.Default.Delete,
-                    contentDescription = "Remove",
+                    contentDescription = stringResource(R.string.action_remove),
                     tint = CrimsonRedLight.copy(alpha = 0.8f),
                     modifier = Modifier.size(18.dp)
                 )
@@ -342,7 +403,7 @@ private fun SelectedExerciseCard(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = "Target Sets",
+                text = stringResource(R.string.editor_target_sets),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 13.sp,
                 modifier = Modifier.weight(1f)
@@ -361,13 +422,13 @@ private fun SelectedExerciseCard(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Remove,
-                        contentDescription = "Decrease sets",
+                        contentDescription = stringResource(R.string.editor_decrease_sets),
                         tint = if (planned.targetSets > 1) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f),
                         modifier = Modifier.size(16.dp)
                     )
                 }
                 Text(
-                    text = "${planned.targetSets}",
+                    text = LocaleFormatting.formatCount(planned.targetSets, locale),
                     color = MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.Bold,
                     fontSize = 15.sp,
@@ -383,7 +444,7 @@ private fun SelectedExerciseCard(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
-                        contentDescription = "Increase sets",
+                        contentDescription = stringResource(R.string.editor_increase_sets),
                         tint = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.size(16.dp)
                     )
@@ -400,6 +461,9 @@ private fun ExercisePickerSheet(
     viewModel: TemplateEditorViewModel
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val locale = LocalConfiguration.current.locales[0]
+    val vocabulary = LocalExerciseVocabulary.current
+    val detailSeparator = stringResource(R.string.detail_separator)
 
     ModalBottomSheet(
         onDismissRequest = viewModel::closePicker,
@@ -420,21 +484,25 @@ private fun ExercisePickerSheet(
             ) {
                 Column {
                     Text(
-                        text = "CATALOG",
+                        text = stringResource(R.string.picker_eyebrow),
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 1.sp,
                         color = CrimsonRedPrimary
                     )
                     Text(
-                        text = "Add Exercise",
+                        text = stringResource(R.string.picker_title),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Black,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                 }
                 IconButton(onClick = viewModel::closePicker) {
-                    Icon(Icons.Default.Close, contentDescription = "Close", tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Icon(
+                        Icons.Default.Close,
+                        contentDescription = stringResource(R.string.action_close),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
 
@@ -443,14 +511,28 @@ private fun ExercisePickerSheet(
             OutlinedTextField(
                 value = state.query,
                 onValueChange = viewModel::updateQuery,
-                placeholder = { Text("Search 302 exercises, muscles, equipment...", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp) },
+                placeholder = {
+                    Text(
+                        pluralStringResource(
+                            R.plurals.picker_search_placeholder,
+                            state.catalogExercises.size,
+                            LocaleFormatting.formatCount(state.catalogExercises.size, locale)
+                        ),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSize = 14.sp
+                    )
+                },
                 leadingIcon = {
                     Icon(Icons.Default.Search, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
                 },
                 trailingIcon = {
                     if (state.query.isNotEmpty()) {
                         IconButton(onClick = { viewModel.updateQuery("") }) {
-                            Icon(Icons.Default.Close, contentDescription = "Clear", tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Icon(
+                                Icons.Default.Close,
+                                contentDescription = stringResource(R.string.exercises_search_clear),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
                         }
                     }
                 },
@@ -472,7 +554,11 @@ private fun ExercisePickerSheet(
             Spacer(modifier = Modifier.height(12.dp))
 
             Text(
-                text = "${state.filteredExercises.size} EXERCISES AVAILABLE",
+                text = pluralStringResource(
+                    R.plurals.count_exercises_available,
+                    state.filteredExercises.size,
+                    LocaleFormatting.formatCount(state.filteredExercises.size, locale)
+                ).uppercase(locale),
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.5.sp,
@@ -502,14 +588,17 @@ private fun ExercisePickerSheet(
                         ) {
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = exercise.name,
+                                    text = vocabulary.exerciseName(exercise),
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSurface,
                                     fontSize = 15.sp
                                 )
                                 Spacer(modifier = Modifier.height(2.dp))
                                 Text(
-                                    text = (exercise.primaryMuscles + exercise.listedEquipment).joinToString(" · "),
+                                    text = (
+                                        vocabulary.muscles(exercise.primaryMuscles) +
+                                            vocabulary.equipment(exercise.listedEquipment)
+                                        ).joinToString(detailSeparator),
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     fontSize = 12.sp
                                 )
@@ -523,7 +612,7 @@ private fun ExercisePickerSheet(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Add,
-                                    contentDescription = "Add",
+                                    contentDescription = stringResource(R.string.picker_add_content_description),
                                     tint = CrimsonRedLight,
                                     modifier = Modifier.size(18.dp)
                                 )
@@ -545,16 +634,69 @@ private fun Exercise.hasEquipmentMismatch(available: Set<String>): Boolean {
     }
 }
 
-private fun ExercisePrescription.summary(): String = when (exerciseType) {
-    ExerciseType.WEIGHT_REPS -> "$targetSets sets · ${repRange ?: "reps"}" +
-        (targetWeight?.let { " · $it load" } ?: "")
-    ExerciseType.BODYWEIGHT_REPS -> "$targetSets sets · ${repRange ?: "reps"}"
-    ExerciseType.ASSISTED_BODYWEIGHT -> "$targetSets sets · ${repRange ?: "reps"}" +
-        (targetAssistanceWeight?.let { " · $it assistance" } ?: "")
-    ExerciseType.DURATION -> "$targetSets sets · ${targetDurationSeconds}s"
-    ExerciseType.DISTANCE_DURATION -> buildList {
-        add("$targetSets sets")
-        targetDistanceMeters?.let { add("${it.toInt()} m") }
-        targetDurationSeconds?.let { add("${it}s") }
-    }.joinToString(" · ")
+/** The compact "3 series · 8–12" line under a selected exercise. */
+@Composable
+private fun prescriptionSummary(prescription: ExercisePrescription): String {
+    val locale = LocalConfiguration.current.locales[0]
+    val separator = stringResource(R.string.detail_separator)
+    val sets = pluralStringResource(
+        R.plurals.count_sets,
+        prescription.targetSets,
+        LocaleFormatting.formatCount(prescription.targetSets, locale)
+    )
+    val reps = prescription.repRange?.let { range ->
+        if (range.min == range.max) {
+            LocaleFormatting.formatCount(range.min, locale)
+        } else {
+            stringResource(
+                R.string.prescription_rep_range,
+                LocaleFormatting.formatCount(range.min, locale),
+                LocaleFormatting.formatCount(range.max, locale)
+            )
+        }
+    }
+    val parts = when (prescription.exerciseType) {
+        ExerciseType.WEIGHT_REPS -> listOfNotNull(
+            sets,
+            reps,
+            prescription.targetWeight?.let {
+                LocaleFormatting.formatMeasurement(it, locale)
+            }
+        )
+
+        ExerciseType.BODYWEIGHT_REPS -> listOfNotNull(sets, reps)
+
+        ExerciseType.ASSISTED_BODYWEIGHT -> listOfNotNull(
+            sets,
+            reps,
+            prescription.targetAssistanceWeight?.let {
+                LocaleFormatting.formatMeasurement(it, locale)
+            }
+        )
+
+        ExerciseType.DURATION -> listOfNotNull(
+            sets,
+            stringResource(
+                R.string.prescription_seconds,
+                LocaleFormatting.formatCount(prescription.targetDurationSeconds ?: 0, locale)
+            )
+        )
+
+        ExerciseType.DISTANCE_DURATION -> listOfNotNull(
+            sets,
+            prescription.targetDistanceMeters?.let {
+                stringResource(
+                    R.string.prescription_meters,
+                    LocaleFormatting.formatCount(it.toInt(), locale)
+                )
+            },
+            prescription.targetDurationSeconds?.let {
+                stringResource(
+                    R.string.prescription_seconds,
+                    LocaleFormatting.formatCount(it, locale)
+                )
+            }
+        )
+    }
+    return parts.joinToString(separator)
 }

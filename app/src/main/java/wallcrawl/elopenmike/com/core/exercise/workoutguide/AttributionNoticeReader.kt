@@ -1,14 +1,23 @@
 package wallcrawl.elopenmike.com.core.exercise.workoutguide
 
 import android.content.res.AssetManager
+import androidx.annotation.StringRes
 import java.io.IOException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import wallcrawl.elopenmike.com.R
 
-/** One license or attribution document shipped alongside the bundled catalog. */
+/**
+ * One license or attribution document shipped alongside the bundled catalog.
+ *
+ * [titleRes] names the section for the reader; [body] is the document itself and is never
+ * translated. These are the licences the bundled artwork is distributed under, so the
+ * authoritative wording is the wording that was granted, and a translation of it would not
+ * be the licence.
+ */
 data class AttributionNotice(
-    val title: String,
+    @StringRes val titleRes: Int,
     val body: String
 )
 
@@ -28,8 +37,10 @@ class AssetAttributionNoticeReader(
 ) : AttributionNoticeSource {
 
     override suspend fun notices(): List<AttributionNotice> = withContext(ioDispatcher) {
-        DOCUMENTS.mapNotNull { (title, assetPath) ->
-            readAsset(assetPath)?.let { body -> AttributionNotice(title = title, body = body) }
+        DOCUMENTS.mapNotNull { (titleRes, assetPath) ->
+            readAsset(assetPath)?.let { body ->
+                AttributionNotice(titleRes = titleRes, body = body)
+            }
         }
     }
 
@@ -54,10 +65,10 @@ class AssetAttributionNoticeReader(
         const val MAX_NOTICE_CHARACTERS = 20_000
 
         val DOCUMENTS = listOf(
-            "Attribution" to "workout-guide/ATTRIBUTION.md",
-            "Bundled artwork" to "workout-guide/NOTICE.md",
-            "Asset license" to "workout-guide/LICENSE-ASSETS",
-            "Upstream license" to "workout-guide/LICENSE"
+            R.string.credits_notice_attribution to "workout-guide/ATTRIBUTION.md",
+            R.string.credits_notice_artwork to "workout-guide/NOTICE.md",
+            R.string.credits_notice_asset_license to "workout-guide/LICENSE-ASSETS",
+            R.string.credits_notice_upstream_license to "workout-guide/LICENSE"
         )
     }
 }

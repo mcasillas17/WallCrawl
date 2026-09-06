@@ -398,6 +398,58 @@ class OnboardingViewModelTest {
             .isEqualTo(MovementCapabilityType.UNSUPPORTED_SQUAT)
     }
 
+    @Test
+    fun changingLanguageMidWizardKeepsEveryAnswerAndTheCurrentStep() {
+        // Applying an app language recreates the activity. The ViewModel is retained across
+        // that, and every answer is written to the SavedStateHandle as it is made, so this
+        // is the same recreation the language switch causes — no answer is lost and the
+        // wizard does not jump back to step one.
+        val repository = RecordingUserProfileRepository()
+        val savedStateHandle = SavedStateHandle()
+        val original = OnboardingViewModel(repository, savedStateHandle)
+        original.updateName("Gabriela")
+        original.updateGoals(setOf(FitnessGoal.STRENGTH))
+        original.updateExperience(ExperienceLevel.ADVANCED)
+        original.updateUnit(WeightUnit.KG)
+        original.updateDaysPerWeek(5)
+        original.updateDurationMinutes(75)
+        original.toggleEquipment(StandardEquipment.BARBELL)
+        original.toggleConstraint(TrainingConstraint.KNEE_SENSITIVE)
+        original.updateReturningAfterBreakWeeks(12)
+        answerAllCapabilities(original, CapabilityLevel.COMFORTABLE)
+        original.goToStep(OnboardingStep.EQUIPMENT)
+
+        val afterLanguageChange = OnboardingViewModel(repository, savedStateHandle)
+        val state = afterLanguageChange.uiState.value
+
+        assertThat(state.currentStep).isEqualTo(OnboardingStep.EQUIPMENT)
+        assertThat(state.name).isEqualTo("Gabriela")
+        assertThat(state.goals).containsExactly(FitnessGoal.STRENGTH)
+        assertThat(state.experience).isEqualTo(ExperienceLevel.ADVANCED)
+        assertThat(state.unit).isEqualTo(WeightUnit.KG)
+        assertThat(state.daysPerWeek).isEqualTo(5)
+        assertThat(state.durationMinutes).isEqualTo(75)
+        assertThat(state.equipment).contains(StandardEquipment.BARBELL)
+        assertThat(state.constraints).containsExactly(TrainingConstraint.KNEE_SENSITIVE)
+        assertThat(state.returningAfterBreakWeeks).isEqualTo(12)
+        assertThat(state.unansweredCapability).isNull()
+        // Nothing was saved: a language change is not a profile write.
+        assertThat(repository.saved).isEmpty()
+    }
+
+    @Test
+    fun languageIsNotAnOnboardingAnswerAndAddsNoStep() {
+        // The selector sits on the Welcome step and is never required. The wizard keeps the
+        // same eight steps it had, and no state here records a language.
+        assertThat(OnboardingStep.totalSteps).isEqualTo(8)
+        assertThat(OnboardingStep.entries.first()).isEqualTo(OnboardingStep.WELCOME)
+
+        val viewModel = OnboardingViewModel(RecordingUserProfileRepository(), SavedStateHandle())
+        val fieldNames = viewModel.uiState.value::class.java.declaredFields.map { it.name }
+        assertThat(fieldNames.map { it.lowercase() })
+            .containsNoneOf("language", "locale", "languagetag")
+    }
+
     private fun answerAllCapabilities(
         viewModel: OnboardingViewModel,
         level: CapabilityLevel

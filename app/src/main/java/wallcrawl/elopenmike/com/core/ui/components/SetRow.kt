@@ -1,5 +1,6 @@
 package wallcrawl.elopenmike.com.core.ui.components
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -43,38 +44,43 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
 import wallcrawl.elopenmike.com.core.model.SetStopReason
 import wallcrawl.elopenmike.com.core.model.SetValuesDraft
 import wallcrawl.elopenmike.com.core.model.asPerformanceInput
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
+import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
+import wallcrawl.elopenmike.com.core.ui.localization.labelRes
 import wallcrawl.elopenmike.com.core.ui.theme.SuccessGreen
 import wallcrawl.elopenmike.com.core.ui.theme.SuccessGreenDeep
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
 
 /** One editable measurement of a set, with the step a gym-floor adjustment actually uses. */
 enum class SetInputField(
-    val label: String,
+    @StringRes val labelRes: Int,
     val stepSize: Double,
     val isDecimal: Boolean,
     private val maximum: Double
 ) {
-    LOAD("Load", stepSize = 2.5, isDecimal = true, maximum = 100_000.0),
-    ASSISTANCE("Assist", stepSize = 2.5, isDecimal = true, maximum = 100_000.0),
-    REPS("Reps", stepSize = 1.0, isDecimal = false, maximum = 1_000.0),
-    DURATION("Seconds", stepSize = 5.0, isDecimal = false, maximum = 86_400.0),
-    DISTANCE("Meters", stepSize = 50.0, isDecimal = true, maximum = 1_000_000.0);
+    LOAD(R.string.set_field_load, stepSize = 2.5, isDecimal = true, maximum = 100_000.0),
+    ASSISTANCE(R.string.set_field_assist, stepSize = 2.5, isDecimal = true, maximum = 100_000.0),
+    REPS(R.string.set_field_reps, stepSize = 1.0, isDecimal = false, maximum = 1_000.0),
+    DURATION(R.string.set_field_seconds, stepSize = 5.0, isDecimal = false, maximum = 86_400.0),
+    DISTANCE(R.string.set_field_meters, stepSize = 50.0, isDecimal = true, maximum = 1_000_000.0);
 
     /**
      * One step up or down from [current], clamped to the range the repository accepts.
@@ -118,15 +124,10 @@ enum class SetInputField(
  * Plain, non-diagnostic wording for a typed stop reason.
  *
  * [SetStopReason.PAIN_STOP] says only that the user chose to stop; it is never phrased as
- * a symptom, an injury, or advice.
+ * a symptom, an injury, or advice, in any language.
  */
-fun stopReasonLabel(reason: SetStopReason): String = when (reason) {
-    SetStopReason.USER_SKIPPED -> "Skipped this set"
-    SetStopReason.PAIN_STOP -> "Something hurt, so I stopped"
-    SetStopReason.EQUIPMENT_UNAVAILABLE -> "Equipment wasn't available"
-    SetStopReason.TIME_CONSTRAINT -> "Ran out of time"
-    SetStopReason.OTHER -> "Another reason"
-}
+@Composable
+fun stopReasonLabel(reason: SetStopReason): String = stringResource(reason.labelRes)
 
 /**
  * Success accent that stays readable on whichever surface the current theme paints.
@@ -136,10 +137,12 @@ fun stopReasonLabel(reason: SetStopReason): String = when (reason) {
 private fun completedAccent(): Color =
     if (MaterialTheme.colorScheme.background.luminance() > 0.5f) SuccessGreenDeep else SuccessGreen
 
-/** Remaining rest as minutes and seconds. */
+/** Remaining rest as minutes and seconds, with the reader's digits. */
+@Composable
 fun restCountdownLabel(remainingSeconds: Int): String {
-    val safeSeconds = remainingSeconds.coerceAtLeast(0)
-    return "${safeSeconds / 60}:${(safeSeconds % 60).toString().padStart(2, '0')}"
+    val locale = LocalConfiguration.current.locales[0]
+    val (minutes, seconds) = LocaleFormatting.countdownParts(remainingSeconds, locale)
+    return stringResource(R.string.rest_countdown, minutes, seconds)
 }
 
 /**
@@ -148,6 +151,10 @@ fun restCountdownLabel(remainingSeconds: Int): String {
  * Completion is a single large tap; every numeric outcome has plus/minus controls with a
  * text field beside them for precise entry; a previous comparable value can be copied in
  * one tap. Effort and the manageable confirmation are optional and never gate completion.
+ *
+ * Values are shown with the reader's decimal mark and read back through
+ * [LocaleFormatting.parseDecimalInput], so a load typed as "2,5" is stored as 2.5 rather
+ * than 25 and the stored number is identical whichever language the app is in.
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -162,36 +169,51 @@ fun GymFloorSetRow(
     onRecordFeltManageable: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var reps by remember(set.id, set.completedReps) {
-        mutableStateOf((set.completedReps ?: set.targetReps)?.toString().orEmpty())
-    }
-    var weight by remember(set.id, set.completedWeight) {
-        mutableStateOf((set.completedWeight ?: set.targetWeight)?.compactText().orEmpty())
-    }
-    var assistance by remember(set.id, set.completedAssistanceWeight) {
+    val locale = LocalConfiguration.current.locales[0]
+    var reps by remember(set.id, set.completedReps, locale) {
         mutableStateOf(
-            (set.completedAssistanceWeight ?: set.targetAssistanceWeight)?.compactText().orEmpty()
+            (set.completedReps ?: set.targetReps)
+                ?.let { LocaleFormatting.formatEditableInt(it, locale) }
+                .orEmpty()
         )
     }
-    var duration by remember(set.id, set.completedDurationSeconds) {
+    var weight by remember(set.id, set.completedWeight, locale) {
         mutableStateOf(
-            (set.completedDurationSeconds ?: set.targetDurationSeconds)?.toString().orEmpty()
+            (set.completedWeight ?: set.targetWeight)
+                ?.let { LocaleFormatting.formatEditableDecimal(it, locale) }
+                .orEmpty()
         )
     }
-    var distance by remember(set.id, set.completedDistanceMeters) {
+    var assistance by remember(set.id, set.completedAssistanceWeight, locale) {
         mutableStateOf(
-            (set.completedDistanceMeters ?: set.targetDistanceMeters)?.compactText().orEmpty()
+            (set.completedAssistanceWeight ?: set.targetAssistanceWeight)
+                ?.let { LocaleFormatting.formatEditableDecimal(it, locale) }
+                .orEmpty()
+        )
+    }
+    var duration by remember(set.id, set.completedDurationSeconds, locale) {
+        mutableStateOf(
+            (set.completedDurationSeconds ?: set.targetDurationSeconds)
+                ?.let { LocaleFormatting.formatEditableInt(it, locale) }
+                .orEmpty()
+        )
+    }
+    var distance by remember(set.id, set.completedDistanceMeters, locale) {
+        mutableStateOf(
+            (set.completedDistanceMeters ?: set.targetDistanceMeters)
+                ?.let { LocaleFormatting.formatEditableDecimal(it, locale) }
+                .orEmpty()
         )
     }
     var showStopReasons by remember(set.id) { mutableStateOf(false) }
     var showFeedback by remember(set.id) { mutableStateOf(false) }
 
     fun draft() = SetValuesDraft(
-        reps = reps.toIntOrNull(),
-        weight = weight.toDoubleOrNull(),
-        assistanceWeight = assistance.toDoubleOrNull(),
-        durationSeconds = duration.toIntOrNull(),
-        distanceMeters = distance.toDoubleOrNull()
+        reps = LocaleFormatting.parseIntInput(reps),
+        weight = LocaleFormatting.parseDecimalInput(weight),
+        assistanceWeight = LocaleFormatting.parseDecimalInput(assistance),
+        durationSeconds = LocaleFormatting.parseIntInput(duration),
+        distanceMeters = LocaleFormatting.parseDecimalInput(distance)
     )
 
     fun textFor(field: SetInputField) = when (field) {
@@ -220,17 +242,36 @@ fun GymFloorSetRow(
         SetInputField.DISTANCE -> set.targetDistanceMeters
     }
 
+    /**
+     * Whether some field holds text that is on its way to a number but is not one yet.
+     *
+     * "47." is what a reader types halfway through "47.5", and "47," halfway through
+     * "47,5". [LocaleFormatting] refuses both rather than guessing at them, which is
+     * correct for a finished value and wrong for a keystroke: submitting it would store a
+     * null, and the stored null flows back and clears the field mid-word. A blank field
+     * is not in this state -- clearing a value really does clear it.
+     */
+    fun hasUnfinishedInput(): Boolean =
+        listOf(weight, assistance, distance).any {
+            it.isNotBlank() && LocaleFormatting.parseDecimalInput(it) == null
+        } || listOf(reps, duration).any {
+            it.isNotBlank() && LocaleFormatting.parseIntInput(it) == null
+        }
+
     // Field edits preserve whatever outcome the set already has, so correcting a digit on
     // a completed set does not un-complete it. A transient in-progress value -- a field
-    // momentarily cleared to retype a number -- is never submitted as a completion,
-    // because the repository would reject it and a keystroke is not a failed write.
+    // momentarily cleared to retype a number, or one holding a half-typed decimal -- is
+    // never submitted, because the repository would reject it or store a null and a
+    // keystroke is neither a failed write nor a cleared value.
     fun submitEdit() {
+        if (hasUnfinishedInput()) return
         if (draft().asPerformanceInput(set.isCompleted).isSubmittableFor(set.exerciseType)) {
             onValuesChanged(draft())
         }
     }
 
     val accent = completedAccent()
+    val setNumber = LocaleFormatting.formatEditableInt(set.setNumber, locale)
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -256,7 +297,7 @@ fun GymFloorSetRow(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                "Set ${set.setNumber}",
+                stringResource(R.string.set_number, setNumber),
                 color = if (set.isCompleted) {
                     accent
                 } else {
@@ -277,7 +318,7 @@ fun GymFloorSetRow(
         SetInputField.forType(set.exerciseType).forEach { field ->
             SetValueRow(
                 field = field,
-                setNumber = set.setNumber,
+                setNumber = setNumber,
                 value = textFor(field),
                 unitSuffix = if (field == SetInputField.LOAD || field == SetInputField.ASSISTANCE) {
                     weightUnit
@@ -291,24 +332,29 @@ fun GymFloorSetRow(
                 },
                 onStep = { increase ->
                     val stepped = field.stepped(
-                        current = textFor(field).toDoubleOrNull(),
+                        current = LocaleFormatting.parseDecimalInput(textFor(field)),
                         increase = increase,
                         fallback = targetFor(field)
                     )
-                    setText(field, stepped.compactText())
+                    setText(field, LocaleFormatting.formatEditableDecimal(stepped, locale))
                     submitEdit()
                 },
                 onCopyPrevious = { previous ->
-                    setText(field, previous.compactText())
+                    setText(field, LocaleFormatting.formatEditableDecimal(previous, locale))
                     submitEdit()
                 }
             )
         }
 
         CompleteSetButton(
-            setNumber = set.setNumber,
+            setNumber = setNumber,
             isCompleted = set.isCompleted,
-            onToggle = { completed -> onCompletionChanged(draft(), completed) }
+            // Same guard as submitEdit: a half-typed number would reach the repository as a
+            // null and come back as a failed completion. The field that holds it shows its
+            // own error, so this is explained on screen rather than silently ignored.
+            onToggle = { completed ->
+                if (!hasUnfinishedInput()) onCompletionChanged(draft(), completed)
+            }
         )
 
         Row(
@@ -326,7 +372,11 @@ fun GymFloorSetRow(
                 ),
                 modifier = Modifier.heightIn(min = MIN_TOUCH_TARGET)
             ) {
-                Text("Skip or stop", fontSize = 13.sp, color = LocalContentColor.current)
+                Text(
+                    stringResource(R.string.set_skip_or_stop),
+                    fontSize = 13.sp,
+                    color = LocalContentColor.current
+                )
             }
             TextButton(
                 onClick = { showFeedback = !showFeedback },
@@ -336,7 +386,9 @@ fun GymFloorSetRow(
                 modifier = Modifier.heightIn(min = MIN_TOUCH_TARGET)
             ) {
                 Text(
-                    text = if (showFeedback) "Hide feedback" else "Add feedback (optional)",
+                    text = stringResource(
+                        if (showFeedback) R.string.set_feedback_hide else R.string.set_feedback_show
+                    ),
                     fontSize = 13.sp,
                     color = LocalContentColor.current
                 )
@@ -345,7 +397,7 @@ fun GymFloorSetRow(
 
         if (set.isCompleted) {
             ManageableConfirmation(
-                setNumber = set.setNumber,
+                setNumber = setNumber,
                 feltManageable = set.feltManageable,
                 onRecord = onRecordFeltManageable
             )
@@ -353,7 +405,7 @@ fun GymFloorSetRow(
 
         if (showFeedback) {
             EffortControls(
-                setNumber = set.setNumber,
+                setNumber = setNumber,
                 rpe = set.rpe,
                 rir = set.rir,
                 onRecordEffort = onRecordEffort
@@ -366,14 +418,14 @@ fun GymFloorSetRow(
             onDismissRequest = { showStopReasons = false },
             title = {
                 Text(
-                    "Why are you stopping this set?",
+                    stringResource(R.string.stop_reason_title),
                     color = MaterialTheme.colorScheme.onSurface
                 )
             },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text(
-                        "This is only recorded so your log stays accurate.",
+                        stringResource(R.string.stop_reason_body),
                         fontSize = 13.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -401,7 +453,10 @@ fun GymFloorSetRow(
             },
             confirmButton = {
                 TextButton(onClick = { showStopReasons = false }) {
-                    Text("Cancel", color = MaterialTheme.colorScheme.onSurface)
+                    Text(
+                        stringResource(R.string.action_cancel),
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
                 }
             },
             containerColor = MaterialTheme.colorScheme.surface,
@@ -414,7 +469,7 @@ fun GymFloorSetRow(
 @Composable
 private fun SetValueRow(
     field: SetInputField,
-    setNumber: Int,
+    setNumber: String,
     value: String,
     unitSuffix: String?,
     previousValue: Double?,
@@ -422,7 +477,29 @@ private fun SetValueRow(
     onStep: (increase: Boolean) -> Unit,
     onCopyPrevious: (Double) -> Unit
 ) {
-    val fieldName = if (unitSuffix != null) "${field.label} $unitSuffix" else field.label
+    val locale = LocalConfiguration.current.locales[0]
+    val fieldLabel = stringResource(field.labelRes)
+    val fieldName = if (unitSuffix != null) {
+        stringResource(R.string.set_field_with_unit, fieldLabel, unitSuffix)
+    } else {
+        fieldLabel
+    }
+    // The label goes into every announcement exactly as written. It used to be lower-cased
+    // to read naturally inside an English sentence, which would mangle a language whose
+    // nouns do not change case mid-sentence, so the announcement strings carry the
+    // sentence and the label stays a value.
+    val fieldValueDescription = stringResource(
+        R.string.set_field_value_accessibility,
+        fieldName,
+        setNumber
+    )
+    // "47." on the way to "47.5" is not a number yet. Saying so beats a Complete button
+    // that appears to do nothing.
+    val isUnfinished = value.isNotBlank() && if (field.isDecimal) {
+        LocaleFormatting.parseDecimalInput(value) == null
+    } else {
+        LocaleFormatting.parseIntInput(value) == null
+    }
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -430,12 +507,22 @@ private fun SetValueRow(
     ) {
         StepButton(
             increase = false,
-            contentDescription = "Decrease ${field.label.lowercase()} for set $setNumber",
+            contentDescription = stringResource(
+                R.string.set_field_decrease_accessibility,
+                fieldLabel,
+                setNumber
+            ),
             onClick = { onStep(false) }
         )
         OutlinedTextField(
             value = value,
             onValueChange = { input -> if (input.length <= MAX_INPUT_LENGTH) onValueChange(input) },
+            isError = isUnfinished,
+            supportingText = if (isUnfinished) {
+                { Text(stringResource(R.string.set_field_incomplete_number), fontSize = 11.sp) }
+            } else {
+                null
+            },
             label = {
                 Text(
                     fieldName,
@@ -452,19 +539,32 @@ private fun SetValueRow(
             ),
             modifier = Modifier
                 .weight(1f)
-                .semantics { contentDescription = "$fieldName for set $setNumber" }
+                .semantics {
+                    contentDescription = fieldValueDescription
+                }
         )
         StepButton(
             increase = true,
-            contentDescription = "Increase ${field.label.lowercase()} for set $setNumber",
+            contentDescription = stringResource(
+                R.string.set_field_increase_accessibility,
+                fieldLabel,
+                setNumber
+            ),
             onClick = { onStep(true) }
         )
         if (previousValue != null) {
+            val previousText = LocaleFormatting.formatEditableDecimal(previousValue, locale)
+            val copyDescription = stringResource(
+                R.string.set_copy_previous_accessibility,
+                fieldLabel,
+                previousText,
+                setNumber
+            )
             AssistChip(
                 onClick = { onCopyPrevious(previousValue) },
                 label = {
                     Text(
-                        previousValue.compactText(),
+                        previousText,
                         fontSize = 12.sp,
                         color = LocalContentColor.current
                     )
@@ -478,11 +578,7 @@ private fun SetValueRow(
                 },
                 modifier = Modifier
                     .heightIn(min = MIN_TOUCH_TARGET)
-                    .semantics {
-                        contentDescription =
-                            "Use previous ${field.label.lowercase()} " +
-                                "${previousValue.compactText()} for set $setNumber"
-                    }
+                    .semantics { contentDescription = copyDescription }
             )
         }
     }
@@ -508,10 +604,11 @@ private fun StepButton(
 
 @Composable
 private fun CompleteSetButton(
-    setNumber: Int,
+    setNumber: String,
     isCompleted: Boolean,
     onToggle: (Boolean) -> Unit
 ) {
+    val description = stringResource(R.string.set_complete_accessibility, setNumber)
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -532,7 +629,7 @@ private fun CompleteSetButton(
                 role = Role.Checkbox,
                 onValueChange = onToggle
             )
-            .semantics { contentDescription = "Set $setNumber complete" },
+            .semantics { contentDescription = description },
         contentAlignment = Alignment.Center
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -544,7 +641,9 @@ private fun CompleteSetButton(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = if (isCompleted) "Completed" else "Complete set",
+                text = stringResource(
+                    if (isCompleted) R.string.set_completed else R.string.set_complete
+                ),
                 color = if (isCompleted) TextWhite else MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.Bold
             )
@@ -554,7 +653,7 @@ private fun CompleteSetButton(
 
 @Composable
 private fun ManageableConfirmation(
-    setNumber: Int,
+    setNumber: String,
     feltManageable: Boolean?,
     onRecord: (Boolean) -> Unit
 ) {
@@ -564,20 +663,24 @@ private fun ManageableConfirmation(
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
-            text = "Felt manageable?",
+            text = stringResource(R.string.set_felt_manageable),
             fontSize = 13.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        listOf(true to "Yes", false to "No").forEach { (answer, label) ->
+        listOf(true to R.string.answer_yes, false to R.string.answer_no).forEach { (answer, labelRes) ->
+            val label = stringResource(labelRes)
+            val description = stringResource(
+                R.string.set_manageable_accessibility,
+                setNumber,
+                label
+            )
             FilterChip(
                 selected = feltManageable == answer,
                 onClick = { onRecord(answer) },
                 label = { Text(label, color = LocalContentColor.current) },
                 modifier = Modifier
                     .heightIn(min = MIN_TOUCH_TARGET)
-                    .semantics {
-                        contentDescription = "Set $setNumber felt manageable, $label"
-                    }
+                    .semantics { contentDescription = description }
             )
         }
     }
@@ -586,14 +689,21 @@ private fun ManageableConfirmation(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun EffortControls(
-    setNumber: Int,
+    setNumber: String,
     rpe: Float?,
     rir: Int?,
     onRecordEffort: (rpe: Float?, rir: Int?) -> Unit
 ) {
+    val locale = LocalConfiguration.current.locales[0]
+    val rpeText = rpe?.let { LocaleFormatting.formatEditableDecimal(it.toDouble(), locale) }
+    val rpeAnnouncement = stringResource(
+        R.string.effort_rpe_value_accessibility,
+        setNumber,
+        rpeText ?: stringResource(R.string.effort_not_recorded)
+    )
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Text(
-            text = "Effort is optional. Leaving it blank is fine.",
+            text = stringResource(R.string.effort_optional),
             fontSize = 12.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -602,31 +712,35 @@ private fun EffortControls(
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
-                "RPE",
+                stringResource(R.string.effort_rpe),
                 fontSize = 13.sp,
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.width(36.dp)
             )
             StepButton(
                 increase = false,
-                contentDescription = "Decrease RPE for set $setNumber",
+                contentDescription = stringResource(
+                    R.string.effort_rpe_decrease_accessibility,
+                    setNumber
+                ),
                 onClick = {
                     onRecordEffort(((rpe ?: 0f) - 0.5f).coerceIn(0f, 10f), rir)
                 }
             )
             Text(
-                text = rpe?.compactText() ?: "—",
+                text = rpeText ?: stringResource(R.string.value_not_available),
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier
                     .width(40.dp)
-                    .clearAndSetSemantics {
-                        contentDescription = "RPE for set $setNumber, ${rpe?.compactText() ?: "not recorded"}"
-                    }
+                    .clearAndSetSemantics { contentDescription = rpeAnnouncement }
             )
             StepButton(
                 increase = true,
-                contentDescription = "Increase RPE for set $setNumber",
+                contentDescription = stringResource(
+                    R.string.effort_rpe_increase_accessibility,
+                    setNumber
+                ),
                 onClick = {
                     onRecordEffort(((rpe ?: 0f) + 0.5f).coerceIn(0f, 10f), rir)
                 }
@@ -635,7 +749,11 @@ private fun EffortControls(
                 onClick = { onRecordEffort(null, rir) },
                 modifier = Modifier.heightIn(min = MIN_TOUCH_TARGET)
             ) {
-                Text("Clear", fontSize = 12.sp, color = LocalContentColor.current)
+                Text(
+                    stringResource(R.string.action_clear),
+                    fontSize = 12.sp,
+                    color = LocalContentColor.current
+                )
             }
         }
         FlowRow(
@@ -643,7 +761,7 @@ private fun EffortControls(
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
-                "RIR",
+                stringResource(R.string.effort_rir),
                 fontSize = 13.sp,
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier
@@ -651,28 +769,26 @@ private fun EffortControls(
                     .heightIn(min = MIN_TOUCH_TARGET)
             )
             (0..5).forEach { value ->
+                val valueText = LocaleFormatting.formatEditableInt(value, locale)
+                val description = stringResource(
+                    R.string.effort_rir_accessibility,
+                    valueText,
+                    setNumber
+                )
                 FilterChip(
                     selected = rir == value,
                     onClick = { onRecordEffort(rpe, if (rir == value) null else value) },
-                    label = { Text("$value", color = LocalContentColor.current) },
+                    label = { Text(valueText, color = LocalContentColor.current) },
                     modifier = Modifier
                         .heightIn(min = MIN_TOUCH_TARGET)
-                        .semantics {
-                            contentDescription = "RIR $value for set $setNumber"
-                        }
+                        .semantics { contentDescription = description }
                 )
             }
         }
     }
 }
 
-private fun Double.compactText(): String =
-    if (this % 1.0 == 0.0) toInt().toString() else toString()
-
-private fun Float.compactText(): String =
-    if (this % 1.0f == 0.0f) toInt().toString() else toString()
-
-private const val MAX_INPUT_LENGTH = 10
+private const val MAX_INPUT_LENGTH = LocaleFormatting.MAX_INPUT_LENGTH
 private val MIN_TOUCH_TARGET = 48.dp
 private val LARGE_TOUCH_TARGET = 56.dp
 
@@ -681,8 +797,17 @@ private val LARGE_TOUCH_TARGET = 56.dp
  * history exist yet, so the logger must ask the user to choose one rather than
  * silently accepting whatever value happens to be left in the field.
  */
+@Composable
 internal fun weightInputLabel(targetWeight: Double?, weightUnit: String): String =
-    if (targetWeight == null) "Choose starting load" else "Load $weightUnit"
+    if (targetWeight == null) {
+        stringResource(R.string.set_choose_starting_load)
+    } else {
+        stringResource(
+            R.string.set_field_with_unit,
+            stringResource(R.string.set_field_load),
+            weightUnit
+        )
+    }
 
 /**
  * Whether this performance update is safe to submit to the repository as-is. A set

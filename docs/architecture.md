@@ -58,10 +58,11 @@ boundaries:
 | `core/backup` | Versioned local-data archive contract, its codec, and its validation |
 | `core/database` | Room entities, DAOs, relations, migrations, and repositories |
 | `core/io` | Bounded reading shared by the parsers that accept untrusted input |
+| `core/locale` | The app language preference and the platform per-app locale boundary |
 | `core/exercise` | Catalog search/filtering and the visual-provider boundary |
 | `core/ai` | Context building, workout planning, prescription defaults, and validation |
 | `core/progress` | Pure calculations over completed sessions |
-| `core/ui` | Theme and reusable Compose components |
+| `core/ui` | Theme, reusable Compose components, locale-aware number formatting and parsing, and the read side of the translation overlay |
 | `feature/*` | Screen state, ViewModels, and Compose UI for each product area |
 
 `WallCrawlApplication` owns the current dependency container. Features receive
@@ -88,7 +89,24 @@ Likewise, Compose screens request visuals through `ExerciseVisualProvider` and
 render them with `ExerciseIllustration`.
 
 The bundled snapshot contains 302 exercises and 906 SVG frames. Search covers
-IDs, names, aliases, muscles, and listed equipment. The importer under
+IDs, names, aliases, muscles, and listed equipment in every shipped language at
+once, accent-insensitively, and always resolves to the same catalog IDs. The
+Spanish names, coaching summaries, and muscle and equipment vocabulary come from
+a separate overlay asset keyed by those same IDs and by the canonical English
+vocabulary, so a translation is never a filter key and never edits the pinned
+snapshot:
+
+```text
+app/src/main/assets/localization/exercise-localization.json
+                    │
+                    ▼
+        ExerciseLocalizationStore ── ExerciseLocalizationSource
+             ├─ BundledExerciseCatalog   (search terms)
+             └─ ExerciseVocabulary       (display text, via LocalExerciseVocabulary)
+```
+
+A failure to load the overlay is not fatal: lookups fall back to the catalog's
+English. See [Localization](localization.md). The importer under
 `tools/workout-guide/` validates and regenerates this snapshot from a pinned,
 clean upstream checkout; the installed application never runs the importer or
 contacts Workout Guide.
@@ -227,7 +245,11 @@ inferred, substitution, blank-ID, or transitive expansion.
 
 `WorkoutPlanner` receives only structured `WorkoutGenerationContext`. The current
 `FakeWorkoutPlanner` chooses exercises exclusively from `allowedExercises` and returns
-catalog IDs with structured prescriptions. `GeneratedWorkoutValidator` then verifies
+catalog IDs with structured prescriptions. Its title and rationale are structured too
+(`WorkoutTitleSpec`, `WorkoutRationaleSpec`) rather than rendered sentences, so the
+planner holds no display text and produces the same plan in every language; the screen
+renders them for the reader, and it is that rendered text that a started session stores
+and keeps. `GeneratedWorkoutValidator` then verifies
 that every ID exists, remains in the allowed set, matches the catalog exercise type,
 and belongs to a structurally valid workout. Unknown IDs are rejected, never silently
 substituted.

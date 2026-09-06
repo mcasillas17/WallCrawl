@@ -1,19 +1,26 @@
 package wallcrawl.elopenmike.com.feature.templates
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import wallcrawl.elopenmike.com.R
 import java.util.UUID
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import wallcrawl.elopenmike.com.core.ai.DefaultExercisePrescriptionFactory
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutTemplateRepository
 import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
+import wallcrawl.elopenmike.com.core.exercise.ExerciseSearchIndex
+import wallcrawl.elopenmike.com.core.exercise.localization.ExerciseLocalization
+import wallcrawl.elopenmike.com.core.exercise.localization.ExerciseLocalizationSource
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.PlannedExercise
 import wallcrawl.elopenmike.com.core.model.UserProfile
@@ -26,27 +33,26 @@ data class TemplateEditorUiState(
     val name: String = "",
     val notes: String = "",
     val query: String = "",
-    val catalogExercises: List<Exercise> = emptyList(),
     val selectedExercises: List<PlannedExercise> = emptyList(),
     val availableEquipment: Set<String> = emptySet(),
     val isPickerOpen: Boolean = false,
     val isSaving: Boolean = false,
-    val errorMessage: String? = null
+    @StringRes val errorMessage: Int? = null,
+    /**
+     * The picker's search, so typing "sentadilla" finds the same exercises as typing
+     * "squat". Empty until the catalog and overlay have loaded, which only means the
+     * picker lists nothing until then.
+     */
+    val searchIndex: ExerciseSearchIndex = ExerciseSearchIndex.EMPTY
 ) {
-    val filteredExercises: List<Exercise>
-        get() {
-            val normalized = query.trim()
-            return catalogExercises.filter { exercise ->
-                normalized.isEmpty() || sequenceOf(exercise.id, exercise.name)
-                    .plus(exercise.searchAliases)
-                    .plus(exercise.primaryMuscles)
-                    .plus(exercise.secondaryMuscles)
-                    .plus(exercise.listedEquipment)
-                    .any {
-                        it.contains(normalized, ignoreCase = true)
-                    }
-            }
-        }
+    /** The whole catalog the picker offers, which is what the index was built over. */
+    val catalogExercises: List<Exercise> get() = searchIndex.all
+
+    /**
+     * Resolved once per state, not once per read: the picker reads it three times in a
+     * single composition.
+     */
+    val filteredExercises: List<Exercise> = searchIndex.matching(query)
 }
 
 class TemplateEditorViewModel(
@@ -54,6 +60,7 @@ class TemplateEditorViewModel(
     private val templateRepository: WorkoutTemplateRepository,
     private val userProfileRepository: UserProfileRepository,
     private val exerciseCatalog: ExerciseCatalog,
+    private val localizationSource: ExerciseLocalizationSource? = null,
     private val prescriptionFactory: DefaultExercisePrescriptionFactory =
         DefaultExercisePrescriptionFactory(),
     private val nowTimestamp: () -> Long = System::currentTimeMillis
@@ -69,24 +76,36 @@ class TemplateEditorViewModel(
                 val loadedProfile = userProfileRepository.getProfileOnce()
                 val exercises = exerciseCatalog.getAllExercises().first()
                 val template = templateId?.let { templateRepository.getTemplate(it) }
-                if (templateId != null && template == null) error("Workout template was not found.")
+                if (templateId != null && template == null) {
+                    mutableState.value = mutableState.value.copy(
+                        isLoading = false,
+                        errorMessage = R.string.template_error_missing
+                    )
+                    return@launch
+                }
                 profile = loadedProfile
                 originalTemplate = template
+                val localization =
+                    localizationSource?.localization() ?: ExerciseLocalization.EMPTY
                 mutableState.value = TemplateEditorUiState(
                     isLoading = false,
                     templateId = templateId,
                     name = template?.name.orEmpty(),
                     notes = template?.notes.orEmpty(),
-                    catalogExercises = exercises,
                     selectedExercises = template?.exercises.orEmpty(),
-                    availableEquipment = loadedProfile.availableEquipment.toSet()
+                    availableEquipment = loadedProfile.availableEquipment.toSet(),
+                    // Folding every catalog and overlay term is the one expensive step
+                    // here, so it does not run on the thread drawing the loading state.
+                    searchIndex = withContext(Dispatchers.Default) {
+                        ExerciseSearchIndex(exercises, localization)
+                    }
                 )
             } catch (error: CancellationException) {
                 throw error
             } catch (error: Exception) {
                 mutableState.value = mutableState.value.copy(
                     isLoading = false,
-                    errorMessage = error.message ?: "Unable to load the workout editor."
+                    errorMessage = R.string.editor_error_load_failed
                 )
             }
         }
@@ -155,11 +174,11 @@ class TemplateEditorViewModel(
         val state = mutableState.value
         if (state.isSaving) return
         if (state.name.isBlank()) {
-            mutableState.value = state.copy(errorMessage = "Give this workout a name.")
+            mutableState.value = state.copy(errorMessage = R.string.editor_error_name_required)
             return
         }
         if (state.selectedExercises.isEmpty()) {
-            mutableState.value = state.copy(errorMessage = "Add at least one exercise.")
+            mutableState.value = state.copy(errorMessage = R.string.editor_error_exercise_required)
             return
         }
         viewModelScope.launch {
@@ -182,7 +201,7 @@ class TemplateEditorViewModel(
             } catch (error: Exception) {
                 mutableState.value = mutableState.value.copy(
                     isSaving = false,
-                    errorMessage = error.message ?: "Unable to save this workout."
+                    errorMessage = R.string.editor_error_save_failed
                 )
             }
         }
@@ -200,7 +219,8 @@ class TemplateEditorViewModel(
             templateId: String?,
             templateRepository: WorkoutTemplateRepository,
             userProfileRepository: UserProfileRepository,
-            exerciseCatalog: ExerciseCatalog
+            exerciseCatalog: ExerciseCatalog,
+            localizationSource: ExerciseLocalizationSource? = null
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T =
@@ -208,7 +228,8 @@ class TemplateEditorViewModel(
                     templateId,
                     templateRepository,
                     userProfileRepository,
-                    exerciseCatalog
+                    exerciseCatalog,
+                    localizationSource
                 ) as T
         }
     }

@@ -34,7 +34,11 @@ import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
+import wallcrawl.elopenmike.com.core.model.WorkoutEmphasis
+import wallcrawl.elopenmike.com.core.model.WorkoutRationaleSpec
+import wallcrawl.elopenmike.com.core.model.WorkoutSplit
 import wallcrawl.elopenmike.com.core.model.WorkoutSummary
+import wallcrawl.elopenmike.com.core.model.WorkoutTitleSpec
 import wallcrawl.elopenmike.com.test.MainDispatcherRule
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -44,15 +48,16 @@ class TodayViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     @Test
-    fun automaticEligibilityMessage_usesTypedNonMedicalCopyForEveryAggregateFailure() {
-        AutomaticEligibilityFailure.entries.forEach { failure ->
-            val message = automaticEligibilityMessage(failure)
+    fun everyAggregateEligibilityFailureMapsToItsOwnTypedReason() {
+        // The wording lives in string resources now, and `SafetyCopyTest` holds it to the
+        // same non-medical boundary in both languages. What matters here is that every
+        // failure still resolves to a distinct, non-null reason rather than falling into a
+        // single catch-all the screen would explain wrongly.
+        val reasons = AutomaticEligibilityFailure.entries.map(::automaticEligibilityError)
 
-            assertThat(message).isNotEmpty()
-            assertThat(message.lowercase()).doesNotContain("safe")
-            assertThat(message.lowercase()).doesNotContain("injury")
-            assertThat(message.lowercase()).doesNotContain("medical")
-        }
+        assertThat(reasons).containsNoDuplicates()
+        assertThat(automaticEligibilityError(null))
+            .isEqualTo(TodayError.REVIEWED_NONE_ELIGIBLE)
     }
 
     @Test
@@ -162,14 +167,14 @@ class TodayViewModelTest {
         val staleExerciseId = planner.contexts.single().allowedExercises.first().id
 
         profileRepository.updateExcludedExercises(listOf(staleExerciseId))
-        viewModel.startWorkout {}
+        viewModel.startWorkout(WORKOUT_NAME, WORKOUT_RATIONALE) {}
         advanceUntilIdle()
 
         assertThat(workoutRepository.startRequests).isEmpty()
         assertThat(planner.contexts.last().allowedExercises.map { it.id })
             .doesNotContain(staleExerciseId)
 
-        viewModel.startWorkout {}
+        viewModel.startWorkout(WORKOUT_NAME, WORKOUT_RATIONALE) {}
         advanceUntilIdle()
 
         assertThat(workoutRepository.startRequests).hasSize(1)
@@ -206,7 +211,7 @@ class TodayViewModelTest {
         }
         advanceUntilIdle()
 
-        viewModel.startWorkout {}
+        viewModel.startWorkout(WORKOUT_NAME, WORKOUT_RATIONALE) {}
         advanceUntilIdle()
 
         assertThat(workoutRepository.startRequests.single().userProfile.preferredUnit)
@@ -270,6 +275,14 @@ class TodayViewModelTest {
 
     private companion object {
         const val DAY_MILLIS = 24 * 60 * 60 * 1_000L
+
+        /**
+         * The text the screen would have written for the reader. The ViewModel takes it as
+         * given, which is exactly the boundary these tests exercise: nothing below the
+         * screen knows what language the workout was named in.
+         */
+        const val WORKOUT_NAME = "Empuje · Hipertrofia"
+        const val WORKOUT_RATIONALE = "Generado para Ganar músculo, con prioridad en Pecho."
     }
 }
 
@@ -283,7 +296,14 @@ private class RecordingWorkoutPlanner : WorkoutPlanner {
         contexts += context
         val exercise = context.allowedExercises.first()
         return GeneratedWorkout(
-            name = "Generated",
+            title = WorkoutTitleSpec(
+                split = WorkoutSplit.PUSH,
+                emphasis = WorkoutEmphasis.HYPERTROPHY
+            ),
+            rationale = WorkoutRationaleSpec.GoalFocus(
+                goals = emptyList(),
+                focusMuscles = exercise.primaryMuscles
+            ),
             focusMuscles = exercise.primaryMuscles,
             estimatedDurationMinutes = 30,
             exercises = listOf(
@@ -383,12 +403,14 @@ private class TodayWorkoutRepository(
 
     override suspend fun startWorkoutFromGenerated(
         generated: GeneratedWorkout,
+        displayName: String,
+        displayRationale: String,
         userProfile: UserProfile
     ): WorkoutSession {
-        startRequests += StartWorkoutRequest(generated, userProfile)
+        startRequests += StartWorkoutRequest(generated, displayName, userProfile)
         return WorkoutSession(
             id = "started-session",
-            name = generated.name,
+            name = displayName,
             weightUnit = userProfile.preferredUnit
         )
     }
@@ -419,5 +441,6 @@ private class TodayWorkoutRepository(
 
 private data class StartWorkoutRequest(
     val workout: GeneratedWorkout,
+    val displayName: String,
     val userProfile: UserProfile
 )

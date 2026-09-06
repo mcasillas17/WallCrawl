@@ -336,8 +336,16 @@ class PlannerFixtureTest {
             assertThat(generated).isNotNull()
             assertThat(generated!!.prescription.targetWeight).isEqualTo(expectedWeight)
         }
-        readWorkoutNameContains(evaluation.built.fixture.expected)?.let { expectedFragment ->
-            assertThat(normalizedFirst.name).contains(expectedFragment)
+        readTitleIdentityContains(evaluation.built.fixture.expected)?.let { expectedFragment ->
+            // The title is a structured spec now, so a fixture asserts against the
+            // identifiers the planner chose rather than against a rendered English
+            // sentence that would differ in every language.
+            val titleIdentity = buildList {
+                add(normalizedFirst.title.split.name)
+                add(normalizedFirst.title.emphasis.name)
+                if (normalizedFirst.title.isReEntry) add("RE_ENTRY")
+            }.joinToString(" ")
+            assertThat(titleIdentity).contains(expectedFragment)
         }
         readMaxTargetSetsPerExercise(evaluation.built.fixture.expected)?.let { maxTargetSets ->
             normalizedFirst.exercises.forEach { generated ->
@@ -451,10 +459,10 @@ class PlannerFixtureTest {
         }
     }
 
-    private fun readWorkoutNameContains(expected: Any): String? {
+    private fun readTitleIdentityContains(expected: Any): String? {
         val getter = expected.javaClass.methods.singleOrNull {
-            it.name == "getWorkoutNameContains" && it.parameterCount == 0
-        } ?: error("PlannerFixtureExpected must expose workoutNameContains.")
+            it.name == "getTitleIdentityContains" && it.parameterCount == 0
+        } ?: error("PlannerFixtureExpected must expose titleIdentityContains.")
         return getter.invoke(expected) as String?
     }
 

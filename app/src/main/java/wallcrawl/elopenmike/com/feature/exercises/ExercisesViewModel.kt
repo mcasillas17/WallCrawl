@@ -60,11 +60,7 @@ class ExercisesViewModel(
         state
     }.catch { error ->
         if (error is CancellationException) throw error
-        emit(
-            ExercisesUiState.Error(
-                "The offline exercise catalog could not be loaded. Reinstall or update WallCrawl and try again."
-            )
-        )
+        emit(ExercisesUiState.Error())
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),

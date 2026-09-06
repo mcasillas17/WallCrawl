@@ -35,15 +35,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material3.MaterialTheme
+import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
 import wallcrawl.elopenmike.com.core.ui.components.StatBadge
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
 import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
+import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
@@ -69,37 +74,52 @@ fun WorkoutTemplatesScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onBack) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back", tint = MaterialTheme.colorScheme.onSurface)
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowBack,
+                        stringResource(R.string.action_back),
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
                 }
                 Column(Modifier.weight(1f)) {
                     Text(
-                        text = "CUSTOM ROUTINES",
+                        text = stringResource(R.string.templates_eyebrow),
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 1.sp,
                         color = CrimsonRedPrimary
                     )
                     Text(
-                        text = "My Workouts",
+                        text = stringResource(R.string.templates_title),
                         color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Black
                     )
                 }
                 IconButton(onClick = onCreate) {
-                    Icon(Icons.Default.Add, "Create workout", tint = CrimsonRedPrimary)
+                    Icon(
+                        Icons.Default.Add,
+                        stringResource(R.string.templates_create_content_description),
+                        tint = CrimsonRedPrimary
+                    )
                 }
             }
 
-            state.errorMessage?.let {
-                Text(it, color = CrimsonRedPrimary, modifier = Modifier.padding(bottom = 8.dp))
+            state.errorMessage?.let { messageRes ->
+                Text(
+                    stringResource(messageRes),
+                    color = CrimsonRedPrimary,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
             }
 
             when {
                 state.isLoading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator(color = CrimsonRedPrimary)
                 }
-                state.templates.isEmpty() -> EmptyTemplates(onCreate)
+                state.templates.isEmpty() -> EmptyTemplates(
+                    onCreate = onCreate,
+                    catalogSize = state.catalogSize
+                )
                 else -> LazyColumn(verticalArrangement = Arrangement.spacedBy(14.dp)) {
                     items(state.templates, key = WorkoutTemplate::id) { template ->
                         TemplateCard(
@@ -125,14 +145,16 @@ fun WorkoutTemplatesScreen(
             shape = RoundedCornerShape(16.dp),
             title = {
                 Text(
-                    text = "Delete \"${template.name}\"?",
+                    // The template's own name is user-authored text and is quoted, never
+                    // translated.
+                    text = stringResource(R.string.template_delete_title, template.name),
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp
                 )
             },
             text = {
                 Text(
-                    text = "This routine will be removed from your saved workouts. Completed workout history will not be affected.",
+                    text = stringResource(R.string.template_delete_body),
                     fontSize = 14.sp
                 )
             },
@@ -141,12 +163,19 @@ fun WorkoutTemplatesScreen(
                     viewModel.deleteTemplate(template.id)
                     pendingDelete = null
                 }) {
-                    Text("Delete", color = CrimsonRedLight, fontWeight = FontWeight.Bold)
+                    Text(
+                        stringResource(R.string.action_delete),
+                        color = CrimsonRedLight,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             },
             dismissButton = {
                 TextButton(onClick = { pendingDelete = null }) {
-                    Text("Cancel", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(
+                        stringResource(R.string.action_cancel),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
         )
@@ -154,7 +183,8 @@ fun WorkoutTemplatesScreen(
 }
 
 @Composable
-private fun EmptyTemplates(onCreate: () -> Unit) {
+private fun EmptyTemplates(onCreate: () -> Unit, catalogSize: Int) {
+    val locale = LocalConfiguration.current.locales[0]
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -169,12 +199,28 @@ private fun EmptyTemplates(onCreate: () -> Unit) {
                     modifier = Modifier.size(24.dp)
                 )
                 Spacer(Modifier.padding(horizontal = 4.dp))
-                Text("Build your own workout", color = MaterialTheme.colorScheme.onSurface, fontSize = 19.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    stringResource(R.string.templates_empty_title),
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontSize = 19.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
             Spacer(Modifier.height(8.dp))
-            Text("Choose from all 302 offline exercises and save custom routines to reuse anytime.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
+            Text(
+                pluralStringResource(
+                    R.plurals.templates_empty_body,
+                    catalogSize,
+                    LocaleFormatting.formatCount(catalogSize, locale)
+                ),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontSize = 14.sp
+            )
             Spacer(Modifier.height(16.dp))
-            WallCrawlPrimaryButton("Create Workout", onClick = onCreate)
+            WallCrawlPrimaryButton(
+                stringResource(R.string.templates_action_create),
+                onClick = onCreate
+            )
         }
     }
 }
@@ -187,13 +233,34 @@ private fun TemplateCard(
     onEdit: () -> Unit,
     onDelete: () -> Unit
 ) {
+    val locale = LocalConfiguration.current.locales[0]
     WallCrawlCard {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            val totalSets = template.exercises.sumOf { it.targetSets }
             Column(Modifier.weight(1f)) {
-                Text(template.name, color = MaterialTheme.colorScheme.onSurface, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                // A saved routine's name and notes are the user's own words. They are
+                // never translated, in either direction.
+                Text(
+                    template.name,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
                 Spacer(Modifier.height(2.dp))
                 Text(
-                    "${template.exercises.size} exercises · ${template.exercises.sumOf { it.targetSets }} total sets",
+                    stringResource(
+                        R.string.template_summary,
+                        pluralStringResource(
+                            R.plurals.count_exercises,
+                            template.exercises.size,
+                            LocaleFormatting.formatCount(template.exercises.size, locale)
+                        ),
+                        pluralStringResource(
+                            R.plurals.count_sets,
+                            totalSets,
+                            LocaleFormatting.formatCount(totalSets, locale)
+                        )
+                    ),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 13.sp
                 )
@@ -202,12 +269,26 @@ private fun TemplateCard(
                     Text(template.notes, color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f), fontSize = 12.sp)
                 }
             }
-            IconButton(onClick = onEdit) { Icon(Icons.Default.Edit, "Edit", tint = MaterialTheme.colorScheme.onSurfaceVariant) }
-            IconButton(onClick = onDelete) { Icon(Icons.Default.Delete, "Delete", tint = CrimsonRedLight.copy(alpha = 0.8f)) }
+            IconButton(onClick = onEdit) {
+                Icon(
+                    Icons.Default.Edit,
+                    stringResource(R.string.action_edit),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            IconButton(onClick = onDelete) {
+                Icon(
+                    Icons.Default.Delete,
+                    stringResource(R.string.action_delete),
+                    tint = CrimsonRedLight.copy(alpha = 0.8f)
+                )
+            }
         }
         Spacer(Modifier.height(12.dp))
         WallCrawlPrimaryButton(
-            text = if (isStarting) "Starting Workout…" else "Start Workout",
+            text = stringResource(
+                if (isStarting) R.string.template_action_starting else R.string.template_action_start
+            ),
             enabled = !isStarting,
             onClick = onStart,
             leadingIcon = { Icon(Icons.Default.PlayArrow, null, tint = TextWhite) }

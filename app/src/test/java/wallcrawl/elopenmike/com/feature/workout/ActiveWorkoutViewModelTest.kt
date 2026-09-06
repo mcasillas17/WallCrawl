@@ -13,6 +13,7 @@ import org.junit.Rule
 import org.junit.Test
 import wallcrawl.elopenmike.com.core.ai.WorkoutHistoryAnalyzer
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
+import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
 import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
 import wallcrawl.elopenmike.com.core.model.Exercise
@@ -177,7 +178,7 @@ class ActiveWorkoutViewModelTest {
         advanceUntilIdle()
 
         val state = viewModel.uiState.value as ActiveWorkoutUiState.Error
-        assertThat(state.message).contains("offline exercise catalog")
+        assertThat(state.messageRes).isEqualTo(R.string.workout_catalog_error)
     }
 
     private fun viewModel(

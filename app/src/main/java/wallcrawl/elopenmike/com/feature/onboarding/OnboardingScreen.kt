@@ -61,20 +61,35 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import wallcrawl.elopenmike.com.R
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.pluralStringResource
 import wallcrawl.elopenmike.com.core.model.BreakDurationHelper
+import wallcrawl.elopenmike.com.core.model.BreakRange
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
-import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.WeightUnit
+import wallcrawl.elopenmike.com.core.ui.components.BreakDurationSelector
+import wallcrawl.elopenmike.com.core.ui.components.LanguageSelector
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.MovementCapabilityQuestion
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlOutlinedButton
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
 import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
+import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
+import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
+import wallcrawl.elopenmike.com.core.ui.localization.descriptionRes
+import wallcrawl.elopenmike.com.core.ui.localization.labelRes
+import wallcrawl.elopenmike.com.core.ui.localization.longLabelRes
+import wallcrawl.elopenmike.com.core.ui.localization.messageRes
+import wallcrawl.elopenmike.com.core.ui.localization.shortLabelRes
+import wallcrawl.elopenmike.com.core.ui.localization.subtitleRes
+import wallcrawl.elopenmike.com.core.ui.localization.titleRes
+import wallcrawl.elopenmike.com.core.ui.localization.trainingDaysDescriptionRes
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
@@ -239,7 +254,7 @@ private fun OnboardingHeader(
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back",
+                        contentDescription = stringResource(R.string.action_back),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
@@ -247,8 +262,13 @@ private fun OnboardingHeader(
                 Spacer(modifier = Modifier.size(36.dp))
             }
 
+            val locale = LocalConfiguration.current.locales[0]
             Text(
-                text = "STEP ${currentStep.stepNumber} OF ${OnboardingStep.totalSteps}",
+                text = stringResource(
+                    R.string.onboarding_step_counter,
+                    LocaleFormatting.formatCount(currentStep.stepNumber, locale),
+                    LocaleFormatting.formatCount(OnboardingStep.totalSteps, locale)
+                ),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.5.sp,
@@ -297,12 +317,17 @@ private fun WelcomeStep(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        // Offered before anything has to be typed, so a Spanish reader who landed on an
+        // English install can switch first and then fill the wizard in. It is not a step:
+        // the wizard still has the same eight, and nothing here has to be answered.
+        LanguageSelector()
+
         WallCrawlCard(
             cornerRadius = 16.dp,
             contentPadding = 20.dp
         ) {
             Text(
-                text = "YOUR CODENAME",
+                text = stringResource(R.string.onboarding_codename_heading),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.8.sp,
@@ -310,7 +335,7 @@ private fun WelcomeStep(
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
-                text = "What should WallCrawl call you during workouts?",
+                text = stringResource(R.string.onboarding_codename_prompt),
                 fontSize = 13.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -318,7 +343,12 @@ private fun WelcomeStep(
             OutlinedTextField(
                 value = state.name,
                 onValueChange = viewModel::updateName,
-                placeholder = { Text("e.g. Peter, Gwen, Miles, Alex", color = MaterialTheme.colorScheme.onSurfaceVariant) },
+                placeholder = {
+                    Text(
+                        stringResource(R.string.onboarding_codename_placeholder),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                },
                 singleLine = true,
                 leadingIcon = {
                     Icon(
@@ -360,7 +390,7 @@ private fun GoalsStep(
             contentPadding = 16.dp
         ) {
             Text(
-                text = "FITNESS GOALS",
+                text = stringResource(R.string.onboarding_goals_heading),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.8.sp,
@@ -368,15 +398,15 @@ private fun GoalsStep(
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "Select all that apply to your current training block:",
+                text = stringResource(R.string.onboarding_goals_hint),
                 fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(12.dp))
             FitnessGoal.entries.forEach { goal ->
                 SelectableRow(
-                    title = goal.displayName,
-                    subtitle = goal.description,
+                    title = stringResource(goal.labelRes),
+                    subtitle = stringResource(goal.descriptionRes),
                     isSelected = goal in state.goals,
                     onClick = { viewModel.toggleGoal(goal) }
                 )
@@ -399,7 +429,7 @@ private fun ExperienceAndUnitStep(
             contentPadding = 20.dp
         ) {
             Text(
-                text = "PREFERRED WEIGHT UNIT",
+                text = stringResource(R.string.onboarding_unit_heading),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.8.sp,
@@ -407,7 +437,7 @@ private fun ExperienceAndUnitStep(
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
-                text = "Used for weight prescriptions, plates, and logging.",
+                text = stringResource(R.string.onboarding_unit_hint),
                 fontSize = 13.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -430,13 +460,13 @@ private fun ExperienceAndUnitStep(
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
-                                text = unit.name,
+                                text = stringResource(unit.shortLabelRes),
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = if (isSelected) TextWhite else MaterialTheme.colorScheme.onSurface
                             )
                             Text(
-                                text = if (unit == WeightUnit.LBS) "Pounds (lbs)" else "Kilograms (kg)",
+                                text = stringResource(unit.longLabelRes),
                                 fontSize = 11.sp,
                                 color = if (isSelected) TextWhite.copy(alpha = 0.8f) else MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -451,7 +481,7 @@ private fun ExperienceAndUnitStep(
             contentPadding = 16.dp
         ) {
             Text(
-                text = "EXPERIENCE LEVEL",
+                text = stringResource(R.string.onboarding_experience_heading),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.8.sp,
@@ -460,12 +490,8 @@ private fun ExperienceAndUnitStep(
             Spacer(modifier = Modifier.height(12.dp))
             ExperienceLevel.entries.forEach { level ->
                 SelectableRow(
-                    title = level.displayName,
-                    subtitle = when (level) {
-                        ExperienceLevel.BEGINNER -> "New to structured training or building a fresh baseline"
-                        ExperienceLevel.INTERMEDIATE -> "Comfortable with main compound lifts and routine consistency"
-                        ExperienceLevel.ADVANCED -> "Years of progressive overload and periodized training"
-                    },
+                    title = stringResource(level.labelRes),
+                    subtitle = stringResource(level.descriptionRes),
                     isSelected = state.experience == level,
                     onClick = { viewModel.updateExperience(level) }
                 )
@@ -480,6 +506,7 @@ private fun ScheduleStep(
     state: OnboardingUiState,
     viewModel: OnboardingViewModel
 ) {
+    val locale = LocalConfiguration.current.locales[0]
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -489,7 +516,7 @@ private fun ScheduleStep(
             contentPadding = 16.dp
         ) {
             Text(
-                text = "TRAINING DAYS PER WEEK",
+                text = stringResource(R.string.onboarding_schedule_days_heading),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.8.sp,
@@ -497,13 +524,7 @@ private fun ScheduleStep(
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
-                text = when (state.daysPerWeek) {
-                    2 -> "2 days • Full body maintenance schedule."
-                    3 -> "3 days • Classic full-body progression split (Recommended)."
-                    4 -> "4 days • Upper / Lower balanced frequency."
-                    5 -> "5 days • Push / Pull / Legs adaptive split."
-                    else -> "6 days • High frequency dedicated training."
-                },
+                text = stringResource(trainingDaysDescriptionRes(state.daysPerWeek)),
                 fontSize = 13.sp,
                 color = MaterialTheme.colorScheme.secondary,
                 fontWeight = FontWeight.Medium
@@ -526,7 +547,7 @@ private fun ScheduleStep(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "$days",
+                            text = LocaleFormatting.formatCount(days, locale),
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
                             color = if (isSelected) TextWhite else MaterialTheme.colorScheme.onSurfaceVariant
@@ -546,14 +567,17 @@ private fun ScheduleStep(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "TARGET DURATION",
+                    text = stringResource(R.string.onboarding_duration_heading),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.8.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    text = "${state.durationMinutes} min",
+                    text = stringResource(
+                        R.string.summary_duration_value,
+                        LocaleFormatting.formatCount(state.durationMinutes, locale)
+                    ),
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.secondary
@@ -561,7 +585,7 @@ private fun ScheduleStep(
             }
             Spacer(modifier = Modifier.height(6.dp))
             Text(
-                text = "Includes warm-up sets, working volume, and rest periods.",
+                text = stringResource(R.string.onboarding_duration_hint),
                 fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -589,15 +613,16 @@ private fun ScheduleStep(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "RETURNING AFTER A BREAK?",
+                    text = stringResource(R.string.onboarding_break_heading),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.8.sp,
-                    color = CrimsonRedLight
+                    color = CrimsonRedLight,
+                    modifier = Modifier.weight(1f)
                 )
                 if (state.returningAfterBreakWeeks > 0) {
                     Text(
-                        text = "Re-entry Active",
+                        text = stringResource(R.string.break_reentry_active),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.secondary
@@ -606,131 +631,26 @@ private fun ScheduleStep(
             }
             Spacer(modifier = Modifier.height(6.dp))
             Text(
-                text = "Pick your break duration so WallCrawl can calibrate safe starting volume and protect your connective tissue.",
+                text = stringResource(R.string.onboarding_break_hint),
                 fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(12.dp))
 
-            BreakDurationDropdownSelector(
+            BreakDurationSelector(
                 weeks = state.returningAfterBreakWeeks,
                 onSelectWeeks = { viewModel.updateReturningAfterBreakWeeks(it) }
             )
 
             Spacer(modifier = Modifier.height(10.dp))
             Text(
-                text = wallcrawl.elopenmike.com.core.model.BreakDurationHelper.guidanceText(state.returningAfterBreakWeeks),
+                text = stringResource(
+                    BreakDurationHelper.guidanceFor(state.returningAfterBreakWeeks).messageRes
+                ),
                 fontSize = 12.sp,
                 color = if (state.returningAfterBreakWeeks >= 52) CrimsonRedLight else MaterialTheme.colorScheme.secondary,
                 fontWeight = FontWeight.Medium
             )
-        }
-    }
-}
-
-@Composable
-private fun BreakDurationDropdownSelector(
-    weeks: Int,
-    onSelectWeeks: (Int) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    var expanded by remember { mutableStateOf(false) }
-    val currentRange = wallcrawl.elopenmike.com.core.model.BreakDurationHelper.findMatchingRange(weeks)
-
-    Box(modifier = modifier.fillMaxWidth()) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(12.dp))
-                .background(MaterialTheme.colorScheme.surface)
-                .border(
-                    1.dp,
-                    if (expanded) CrimsonRedPrimary else MaterialTheme.colorScheme.outline,
-                    RoundedCornerShape(12.dp)
-                )
-                .clickable { expanded = !expanded }
-                .padding(horizontal = 16.dp, vertical = 12.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = currentRange.title,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = if (currentRange.weeks == 0) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.secondary
-                    )
-                    Spacer(modifier = Modifier.height(2.dp))
-                    Text(
-                        text = currentRange.subtitle,
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-
-                Icon(
-                    imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                    contentDescription = if (expanded) "Close range menu" else "Select break range",
-                    tint = if (expanded) CrimsonRedPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(24.dp)
-                )
-            }
-        }
-
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier
-                .fillMaxWidth(0.88f)
-                .background(MaterialTheme.colorScheme.surfaceVariant)
-                .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
-        ) {
-            wallcrawl.elopenmike.com.core.model.BreakDurationHelper.RANGES.forEach { range ->
-                val isSelected = range == currentRange
-                DropdownMenuItem(
-                    text = {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = range.title,
-                                    fontSize = 14.sp,
-                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.SemiBold,
-                                    color = if (isSelected) CrimsonRedLight else MaterialTheme.colorScheme.onSurface
-                                )
-                                Text(
-                                    text = range.subtitle,
-                                    fontSize = 11.sp,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                            if (isSelected) {
-                                Icon(
-                                    imageVector = Icons.Default.Check,
-                                    contentDescription = null,
-                                    tint = CrimsonRedPrimary,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                            }
-                        }
-                    },
-                    onClick = {
-                        onSelectWeeks(range.weeks)
-                        expanded = false
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(if (isSelected) CrimsonRedPrimary.copy(alpha = 0.12f) else Color.Transparent)
-                )
-            }
         }
     }
 }
@@ -755,7 +675,7 @@ private fun EquipmentStep(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "GEAR QUICK ACTIONS",
+                    text = stringResource(R.string.onboarding_equipment_quick_heading),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.8.sp,
@@ -777,7 +697,12 @@ private fun EquipmentStep(
                         .padding(vertical = 10.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("Bodyweight Only", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface)
+                    Text(
+                        stringResource(R.string.onboarding_equipment_bodyweight_only),
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
                 }
                 Box(
                     modifier = Modifier
@@ -789,7 +714,12 @@ private fun EquipmentStep(
                         .padding(vertical = 10.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("Full Gym Access", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.secondary)
+                    Text(
+                        stringResource(R.string.onboarding_equipment_full_gym),
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
                 }
             }
         }
@@ -799,7 +729,7 @@ private fun EquipmentStep(
             contentPadding = 16.dp
         ) {
             Text(
-                text = "AVAILABLE GEAR",
+                text = stringResource(R.string.onboarding_equipment_heading),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.8.sp,
@@ -807,12 +737,13 @@ private fun EquipmentStep(
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "Select what you have in your home or gym:",
+                text = stringResource(R.string.onboarding_equipment_hint),
                 fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(12.dp))
 
+            val vocabulary = LocalExerciseVocabulary.current
             FlowRow(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -822,10 +753,12 @@ private fun EquipmentStep(
                     val isSelected = equipment in state.equipment
                     FilterChip(
                         selected = isSelected,
+                        // The canonical English name stays the stored value and the
+                        // filter key; only the chip's label is translated.
                         onClick = { viewModel.toggleEquipment(equipment) },
                         label = {
                             Text(
-                                text = equipment,
+                                text = vocabulary.equipment(equipment),
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.SemiBold,
                                 color = if (isSelected) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onSurface
@@ -865,7 +798,7 @@ private fun SafetyStep(
             contentPadding = 16.dp
         ) {
             Text(
-                text = "PROTECT SENSITIVE JOINTS",
+                text = stringResource(R.string.onboarding_safety_heading),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.8.sp,
@@ -873,7 +806,7 @@ private fun SafetyStep(
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
-                text = "Tell us if any joints need conservative exercise selection. WallCrawl will automatically filter or substitute high-stress movements.",
+                text = stringResource(R.string.onboarding_safety_hint),
                 fontSize = 13.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -894,15 +827,15 @@ private fun SafetyStep(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column {
+                    Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Feeling 100% / No Restrictions",
+                            text = stringResource(R.string.onboarding_safety_none_title),
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
-                            text = "Full catalog of exercises available without joint filters.",
+                            text = stringResource(R.string.onboarding_safety_none_subtitle),
                             fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -921,7 +854,7 @@ private fun SafetyStep(
             Spacer(modifier = Modifier.height(12.dp))
 
             Text(
-                text = "Or tag specific areas to protect:",
+                text = stringResource(R.string.onboarding_safety_tag_prompt),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -940,7 +873,7 @@ private fun SafetyStep(
                         onClick = { viewModel.toggleConstraint(constraint) },
                         label = {
                             Text(
-                                text = constraint.displayName,
+                                text = stringResource(constraint.labelRes),
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.SemiBold,
                                 color = if (isSelected) TextWhite else MaterialTheme.colorScheme.onSurface
@@ -1025,8 +958,10 @@ private fun SummaryStep(
             cornerRadius = 16.dp,
             contentPadding = 20.dp
         ) {
+            val locale = LocalConfiguration.current.locales[0]
+            val separator = stringResource(R.string.list_separator)
             Text(
-                text = "TRAINING BLUEPRINT",
+                text = stringResource(R.string.onboarding_summary_heading),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.sp,
@@ -1034,31 +969,82 @@ private fun SummaryStep(
             )
             Spacer(modifier = Modifier.height(14.dp))
 
-            SummaryRow(label = "Crawler Name", value = state.name.ifBlank { "Crawler" })
             SummaryRow(
-                label = "Fitness Goals",
-                value = if (state.goals.isEmpty()) "General Fitness" else state.goals.joinToString(", ") { it.displayName }
+                label = stringResource(R.string.onboarding_summary_label_name),
+                value = state.name.ifBlank { stringResource(R.string.default_crawler_name) }
             )
-            SummaryRow(label = "Experience", value = state.experience.displayName)
-            SummaryRow(label = "Schedule", value = "${state.daysPerWeek} days/wk • ~${state.durationMinutes} min")
-            SummaryRow(label = "Units", value = "${state.unit.name} (${state.unit.symbol})")
-            SummaryRow(label = "Equipment", value = "${state.equipment.size} gear types selected")
             SummaryRow(
-                label = stringResource(
-                    wallcrawl.elopenmike.com.R.string.movement_capability_summary_label
-                ),
+                label = stringResource(R.string.onboarding_summary_label_goals),
+                value = state.goals
+                    .ifEmpty { setOf(FitnessGoal.GENERAL_FITNESS) }
+                    .let { goals -> FitnessGoal.entries.filter { it in goals } }
+                    .map { stringResource(it.labelRes) }
+                    .joinToString(separator)
+            )
+            SummaryRow(
+                label = stringResource(R.string.onboarding_summary_label_experience),
+                value = stringResource(state.experience.labelRes)
+            )
+            SummaryRow(
+                label = stringResource(R.string.onboarding_summary_label_schedule),
                 value = stringResource(
-                    wallcrawl.elopenmike.com.R.string.movement_capability_summary_value
+                    R.string.onboarding_summary_value_schedule,
+                    pluralStringResource(
+                        R.plurals.count_days_per_week,
+                        state.daysPerWeek,
+                        LocaleFormatting.formatCount(state.daysPerWeek, locale)
+                    ),
+                    stringResource(
+                        R.string.summary_duration_value,
+                        LocaleFormatting.formatCount(state.durationMinutes, locale)
+                    )
                 )
             )
             SummaryRow(
-                label = "Sensitive Areas",
-                value = if (state.constraints.isEmpty()) "None (100% Clear)" else state.constraints.joinToString { it.displayName }
+                label = stringResource(R.string.onboarding_summary_label_units),
+                value = stringResource(
+                    R.string.onboarding_summary_value_units,
+                    stringResource(state.unit.shortLabelRes),
+                    state.unit.symbol
+                )
+            )
+            SummaryRow(
+                label = stringResource(R.string.onboarding_summary_label_equipment),
+                value = pluralStringResource(
+                    R.plurals.count_gear_types,
+                    state.equipment.size,
+                    LocaleFormatting.formatCount(state.equipment.size, locale)
+                )
+            )
+            SummaryRow(
+                label = stringResource(R.string.movement_capability_summary_label),
+                value = pluralStringResource(
+                    R.plurals.count_preferences_answered,
+                    state.capabilityAnswers.size,
+                    LocaleFormatting.formatCount(state.capabilityAnswers.size, locale)
+                )
+            )
+            SummaryRow(
+                label = stringResource(R.string.onboarding_summary_label_sensitive),
+                value = if (state.constraints.isEmpty()) {
+                    stringResource(R.string.onboarding_summary_value_no_sensitive)
+                } else {
+                    TrainingConstraint.entries
+                        .filter { it in state.constraints }
+                        .map { stringResource(it.labelRes) }
+                        .joinToString(separator)
+                }
             )
             if (state.returningAfterBreakWeeks > 0) {
+                val range: BreakRange =
+                    BreakDurationHelper.findMatchingRange(state.returningAfterBreakWeeks)
                 SummaryRow(
-                    label = "Break Recovery",
-                    value = wallcrawl.elopenmike.com.core.model.BreakDurationHelper.formatDetailedLabel(state.returningAfterBreakWeeks)
+                    label = stringResource(R.string.onboarding_summary_label_break),
+                    value = stringResource(
+                        R.string.onboarding_summary_value_break,
+                        stringResource(range.titleRes),
+                        stringResource(range.subtitleRes)
+                    )
                 )
             }
         }
@@ -1068,14 +1054,14 @@ private fun SummaryStep(
             contentPadding = 16.dp
         ) {
             Text(
-                text = "⚡ Ready for Action",
+                text = stringResource(R.string.onboarding_ready_title),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "WallCrawl will now configure your local adaptive planner. You can modify any of these preferences at any time from your Profile.",
+                text = stringResource(R.string.onboarding_ready_body),
                 fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -1095,12 +1081,22 @@ private fun SummaryRow(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = label, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(
+            text = label,
+            fontSize = 13.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.weight(1f)
+        )
+        Spacer(modifier = Modifier.width(12.dp))
+        // Spanish runs longer than English here, so the value gets the room it needs
+        // instead of being squeezed onto one line.
         Text(
             text = value,
             fontSize = 13.sp,
             fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
+            textAlign = TextAlign.End,
+            modifier = Modifier.weight(1.4f)
         )
     }
 }
@@ -1121,20 +1117,21 @@ private fun OnboardingBottomNav(
     ) {
         if (!state.isFirstStep) {
             WallCrawlOutlinedButton(
-                text = "Back",
+                text = stringResource(R.string.action_back),
                 onClick = onBack,
                 modifier = Modifier.weight(1f)
             )
         }
 
         WallCrawlPrimaryButton(
-            text = when {
-                state.isSaving -> "Saving Profile…"
-                isRestoreInFlight ->
-                    stringResource(R.string.local_data_restore_progress)
-                state.isLastStep -> "Start Training"
-                else -> "Continue"
-            },
+            text = stringResource(
+                when {
+                    state.isSaving -> R.string.onboarding_action_saving
+                    isRestoreInFlight -> R.string.local_data_restore_progress
+                    state.isLastStep -> R.string.onboarding_action_start
+                    else -> R.string.onboarding_action_continue
+                }
+            ),
             onClick = onNext,
             enabled = !state.isSaving && !isRestoreInFlight,
             modifier = Modifier.weight(if (state.isFirstStep) 1f else 2f)

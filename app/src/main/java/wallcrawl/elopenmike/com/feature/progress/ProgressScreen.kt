@@ -32,6 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -39,21 +40,27 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
+import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.model.ProgressOverview
+import wallcrawl.elopenmike.com.core.model.StrengthPerformance
 import wallcrawl.elopenmike.com.core.model.StrengthTrend
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.ui.components.MetricHighlight
 import wallcrawl.elopenmike.com.core.ui.components.StatBadge
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
+import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
+import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 import wallcrawl.elopenmike.com.core.ui.theme.SuccessGreen
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
 import wallcrawl.elopenmike.com.core.ui.theme.WebBlueAccent
-import java.text.SimpleDateFormat
+import java.text.DateFormat
 import java.util.Date
-import java.util.Locale
 
 @Composable
 fun ProgressScreen(
@@ -78,7 +85,7 @@ fun ProgressScreen(
 
             is ProgressUiState.Error -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(state.message, color = CrimsonRedLight)
+                    Text(stringResource(state.messageRes), color = CrimsonRedLight)
                 }
             }
 
@@ -103,14 +110,14 @@ private fun ProgressContent(
         item {
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "PROGRESS",
+                text = stringResource(R.string.progress_eyebrow),
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.5.sp,
                 color = CrimsonRedPrimary
             )
             Text(
-                text = "Consistency & Performance",
+                text = stringResource(R.string.progress_title),
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Black,
                 color = MaterialTheme.colorScheme.onSurface
@@ -124,7 +131,7 @@ private fun ProgressContent(
 
         // Strength Trends Section
         item {
-            StrengthTrendsSection(trends = overview.strengthTrends)
+            StrengthTrendsSection(trends = overview.strengthTrends, unit = unit)
         }
 
         // Muscle Group Distribution
@@ -135,7 +142,7 @@ private fun ProgressContent(
         // Recent Workout History Header
         item {
             Text(
-                text = "WORKOUT HISTORY",
+                text = stringResource(R.string.progress_history_heading),
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.sp,
@@ -147,7 +154,11 @@ private fun ProgressContent(
         if (overview.recentHistory.isEmpty()) {
             item {
                 WallCrawlCard {
-                    Text("No past workouts logged yet. Complete your first workout to see history here.", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f), fontSize = 13.sp)
+                    Text(
+                        stringResource(R.string.progress_history_empty),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                        fontSize = 13.sp
+                    )
                 }
             }
         } else {
@@ -167,6 +178,7 @@ private fun StreakAndVolumeCard(
     overview: ProgressOverview,
     unit: String
 ) {
+    val locale = LocalConfiguration.current.locales[0]
     WallCrawlCard(
         cornerRadius = 16.dp,
         contentPadding = 16.dp
@@ -176,7 +188,10 @@ private fun StreakAndVolumeCard(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.weight(1f)
+            ) {
                 Box(
                     modifier = Modifier
                         .size(36.dp)
@@ -194,25 +209,33 @@ private fun StreakAndVolumeCard(
                 Spacer(modifier = Modifier.width(10.dp))
                 Column {
                     Text(
-                        text = "${overview.currentStreakWeeks}-Week Streak",
+                        text = pluralStringResource(
+                            R.plurals.count_weeks_streak,
+                            overview.currentStreakWeeks,
+                            LocaleFormatting.formatCount(overview.currentStreakWeeks, locale)
+                        ),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        text = if (overview.workoutsThisWeek == 1) {
-                            "1 workout logged this week"
-                        } else {
-                            "${overview.workoutsThisWeek} workouts logged this week"
-                        },
+                        text = pluralStringResource(
+                            R.plurals.progress_workouts_this_week,
+                            overview.workoutsThisWeek,
+                            LocaleFormatting.formatCount(overview.workoutsThisWeek, locale)
+                        ),
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
 
+            Spacer(modifier = Modifier.width(8.dp))
             StatBadge(
-                label = "Goal: ${overview.weeklyGoal}/wk",
+                label = stringResource(
+                    R.string.progress_goal,
+                    LocaleFormatting.formatCount(overview.weeklyGoal, locale)
+                ),
                 textColor = MaterialTheme.colorScheme.secondary
             )
         }
@@ -224,8 +247,8 @@ private fun StreakAndVolumeCard(
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             MetricHighlight(
-                title = "Total Workouts",
-                value = "${overview.totalWorkoutsLogged}",
+                title = stringResource(R.string.progress_total_workouts),
+                value = LocaleFormatting.formatCount(overview.totalWorkoutsLogged, locale),
                 valueColor = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.weight(1f)
             )
@@ -234,17 +257,26 @@ private fun StreakAndVolumeCard(
             // and switching metric on a threshold would make one light set swing the card.
             // Reps are always shown alongside, so every week reports real work.
             val hasLoadedVolume = overview.totalVolumeThisWeek > 0.0
+            val repsText = pluralStringResource(
+                R.plurals.count_reps,
+                overview.totalRepsThisWeek,
+                LocaleFormatting.formatCount(overview.totalRepsThisWeek, locale)
+            )
             MetricHighlight(
-                title = "Weekly Volume",
+                title = stringResource(R.string.progress_weekly_volume),
                 value = if (hasLoadedVolume) {
-                    "%,.0f %s".format(overview.totalVolumeThisWeek, unit)
+                    stringResource(
+                        R.string.progress_volume_value,
+                        LocaleFormatting.formatVolume(overview.totalVolumeThisWeek, locale),
+                        unit
+                    )
                 } else {
-                    "%,d reps".format(overview.totalRepsThisWeek)
+                    repsText
                 },
                 subtitle = if (hasLoadedVolume) {
-                    "%,d reps".format(overview.totalRepsThisWeek)
+                    repsText
                 } else {
-                    "no weight logged"
+                    stringResource(R.string.progress_no_weight_logged)
                 },
                 valueColor = CrimsonRedLight,
                 modifier = Modifier.weight(1.3f)
@@ -255,8 +287,11 @@ private fun StreakAndVolumeCard(
 
 @Composable
 private fun StrengthTrendsSection(
-    trends: List<StrengthTrend>
+    trends: List<StrengthTrend>,
+    unit: String
 ) {
+    val locale = LocalConfiguration.current.locales[0]
+    val vocabulary = LocalExerciseVocabulary.current
     WallCrawlCard(
         cornerRadius = 16.dp,
         contentPadding = 16.dp
@@ -275,7 +310,7 @@ private fun StrengthTrendsSection(
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = "STRENGTH PROGRESSION",
+                    text = stringResource(R.string.progress_strength_heading),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.8.sp,
@@ -283,7 +318,7 @@ private fun StrengthTrendsSection(
                 )
             }
             Text(
-                text = "Recent changes",
+                text = stringResource(R.string.progress_recent_changes),
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -294,7 +329,7 @@ private fun StrengthTrendsSection(
 
         if (trends.isEmpty()) {
             Text(
-                text = "Log the same exercise in two workouts to see how your strength is trending.",
+                text = stringResource(R.string.progress_strength_empty),
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                 fontSize = 13.sp
             )
@@ -308,20 +343,27 @@ private fun StrengthTrendsSection(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column {
+                Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = trend.exerciseName,
+                        text = vocabulary.exerciseName(trend.exerciseId, trend.exerciseName),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
                     )
                     Text(
-                        text = "${trend.previousMetric} → ${trend.currentMetric}",
+                        text = stringResource(
+                            R.string.progress_trend_change,
+                            performanceLabel(trend.previous, unit),
+                            performanceLabel(trend.current, unit)
+                        ),
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
+                Spacer(modifier = Modifier.width(8.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     val trendColor = if (trend.isPositive) SuccessGreen else CrimsonRedLight
                     Icon(
@@ -335,7 +377,10 @@ private fun StrengthTrendsSection(
                         modifier = Modifier.size(14.dp)
                     )
                     Text(
-                        text = "${trend.percentageChange}%",
+                        text = stringResource(
+                            R.string.progress_percentage,
+                            LocaleFormatting.formatCount(trend.percentageChange, locale)
+                        ),
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold,
                         color = trendColor
@@ -350,12 +395,14 @@ private fun StrengthTrendsSection(
 private fun MuscleFocusSection(
     overview: ProgressOverview
 ) {
+    val locale = LocalConfiguration.current.locales[0]
+    val vocabulary = LocalExerciseVocabulary.current
     WallCrawlCard(
         cornerRadius = 16.dp,
         contentPadding = 16.dp
     ) {
         Text(
-            text = "WEEKLY MUSCLE FOCUS",
+            text = stringResource(R.string.progress_muscle_heading),
             fontSize = 11.sp,
             fontWeight = FontWeight.Bold,
             letterSpacing = 0.5.sp,
@@ -368,7 +415,7 @@ private fun MuscleFocusSection(
             // Reachable for a week of stretching or cardio alone: neither counts as
             // training volume, so there is nothing to attribute sets to.
             Text(
-                text = "Complete a strength set this week to see which muscles you're hitting.",
+                text = stringResource(R.string.progress_muscle_empty),
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                 fontSize = 13.sp
             )
@@ -389,20 +436,29 @@ private fun MuscleFocusSection(
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
-                            text = stat.muscle,
+                            text = vocabulary.muscle(stat.muscle),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = MaterialTheme.colorScheme.onSurface,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = if (stat.setsThisWeek == 1) "1 set" else "${stat.setsThisWeek} sets",
+                            text = pluralStringResource(
+                                R.plurals.count_sets,
+                                stat.setsThisWeek,
+                                LocaleFormatting.formatCount(stat.setsThisWeek, locale)
+                            ),
                             fontSize = 11.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         if (stat.percentageGrowth > 0) {
                             Text(
-                                text = "↑ ${stat.percentageGrowth}%",
+                                text = stringResource(
+                                    R.string.progress_percentage_growth,
+                                    LocaleFormatting.formatCount(stat.percentageGrowth, locale)
+                                ),
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = SuccessGreen
@@ -420,8 +476,12 @@ private fun WorkoutHistoryCard(
     session: WorkoutSession
 ) {
     val locale = LocalConfiguration.current.locales[0]
-    val dateStr = SimpleDateFormat("MMM d, yyyy · h:mm a", locale)
-        .format(Date(session.startedAtTimestamp))
+    // Medium date plus short time, resolved by the platform for this locale rather than
+    // pinned to an English "MMM d, yyyy" pattern.
+    val dateStr = remember(session.startedAtTimestamp, locale) {
+        DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, locale)
+            .format(Date(session.startedAtTimestamp))
+    }
 
     WallCrawlCard(
         cornerRadius = 12.dp,
@@ -446,8 +506,12 @@ private fun WorkoutHistoryCard(
                 )
             }
 
+            Spacer(modifier = Modifier.width(8.dp))
             StatBadge(
-                label = "${session.actualDurationMinutes} min",
+                label = stringResource(
+                    R.string.progress_history_duration,
+                    LocaleFormatting.formatCount(session.actualDurationMinutes, locale)
+                ),
                 textColor = MaterialTheme.colorScheme.secondary
             )
         }
@@ -459,15 +523,20 @@ private fun WorkoutHistoryCard(
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
-                text = if (session.completedSetsCount == 1) "1 set logged" else "${session.completedSetsCount} sets logged",
+                text = pluralStringResource(
+                    R.plurals.count_sets_logged,
+                    session.completedSetsCount,
+                    LocaleFormatting.formatCount(session.completedSetsCount, locale)
+                ),
                 fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             if (session.totalVolume > 0) {
                 Text(
-                    text = "%,.0f %s volume".format(
-                        session.totalVolume,
+                    text = stringResource(
+                        R.string.progress_history_volume,
+                        LocaleFormatting.formatVolume(session.totalVolume, locale),
                         session.weightUnit.symbol
                     ),
                     fontSize = 12.sp,
@@ -477,4 +546,24 @@ private fun WorkoutHistoryCard(
             }
         }
     }
+}
+
+/**
+ * One comparable set, written for the reader.
+ *
+ * Bodyweight work has no load, so it reads as a rep count rather than "0 kg × 8"; loaded
+ * work reads with the locale's decimal mark.
+ */
+@Composable
+private fun performanceLabel(performance: StrengthPerformance, unit: String): String {
+    val locale = LocalConfiguration.current.locales[0]
+    val reps = LocaleFormatting.formatCount(performance.reps, locale)
+    val weight = performance.weight
+        ?: return pluralStringResource(R.plurals.count_reps, performance.reps, reps)
+    return stringResource(
+        R.string.progress_performance_weight_reps,
+        LocaleFormatting.formatMeasurement(weight, locale),
+        unit,
+        reps
+    )
 }

@@ -8,6 +8,10 @@ import wallcrawl.elopenmike.com.core.model.ExercisePrescription
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.PlannedExercise
 import wallcrawl.elopenmike.com.core.model.RepRange
+import wallcrawl.elopenmike.com.core.model.WorkoutEmphasis
+import wallcrawl.elopenmike.com.core.model.WorkoutRationaleSpec
+import wallcrawl.elopenmike.com.core.model.WorkoutSplit
+import wallcrawl.elopenmike.com.core.model.WorkoutTitleSpec
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertThrows
 import org.junit.Assert.fail
@@ -28,7 +32,8 @@ class GeneratedWorkoutValidatorTest {
     @Test
     fun validate_validWorkout_passesSuccessfully() = runTest {
         val validWorkout = GeneratedWorkout(
-            name = "Push Hypertrophy",
+            title = testTitle(),
+            rationale = testRationale(),
             focusMuscles = listOf("Chest", "Shoulders", "Triceps"),
             estimatedDurationMinutes = 50,
             exercises = listOf(
@@ -57,7 +62,8 @@ class GeneratedWorkoutValidatorTest {
     @Test
     fun validate_hallucinatedExerciseId_throwsException() = runTest {
         val hallucinatedWorkout = GeneratedWorkout(
-            name = "Fake Routine",
+            title = testTitle(),
+            rationale = testRationale(),
             focusMuscles = listOf("Chest"),
             estimatedDurationMinutes = 45,
             exercises = listOf(
@@ -81,7 +87,8 @@ class GeneratedWorkoutValidatorTest {
     @Test
     fun validate_exerciseNotInAllowedCandidates_throwsException() = runTest {
         val workout = GeneratedWorkout(
-            name = "Routine",
+            title = testTitle(),
+            rationale = testRationale(),
             focusMuscles = listOf("Chest"),
             estimatedDurationMinutes = 45,
             exercises = listOf(
@@ -107,7 +114,8 @@ class GeneratedWorkoutValidatorTest {
     @Test
     fun validate_prescriptionTypeDoesNotMatchCatalog_throwsException() = runTest {
         val workout = GeneratedWorkout(
-            name = "Invalid Routine",
+            title = testTitle(),
+            rationale = testRationale(),
             focusMuscles = listOf("Chest"),
             estimatedDurationMinutes = 30,
             exercises = listOf(
@@ -129,7 +137,8 @@ class GeneratedWorkoutValidatorTest {
     fun prescription_invalidRepRange_throwsException() {
         assertThrows(IllegalArgumentException::class.java) {
             GeneratedWorkout(
-                name = "Routine",
+                title = testTitle(),
+                rationale = testRationale(),
                 focusMuscles = listOf("Chest"),
                 estimatedDurationMinutes = 45,
                 exercises = listOf(
@@ -144,13 +153,9 @@ class GeneratedWorkoutValidatorTest {
         }
     }
 
-    @Test
-    fun validate_blankWorkoutName_throwsException() = runTest {
-        assertValidationFailure(
-            workout = validGeneratedWorkout().copy(name = "   "),
-            expectedMessage = "blank name"
-        )
-    }
+    // A blank workout name is no longer representable: the title is a split plus an
+    // emphasis, both of which a planner has to choose. The check it replaced lives in the
+    // type system now.
 
     @Test
     fun validate_outOfRangeWorkoutDuration_throwsException() = runTest {
@@ -205,7 +210,8 @@ class GeneratedWorkoutValidatorTest {
     }
 
     private fun validGeneratedWorkout() = GeneratedWorkout(
-        name = "Valid Workout",
+        title = testTitle(),
+        rationale = testRationale(),
         focusMuscles = listOf("Chest"),
         estimatedDurationMinutes = 45,
         exercises = listOf(
@@ -218,6 +224,16 @@ class GeneratedWorkoutValidatorTest {
                 restSeconds = 90
             )
         )
+    )
+
+    private fun testTitle() = WorkoutTitleSpec(
+        split = WorkoutSplit.PUSH,
+        emphasis = WorkoutEmphasis.HYPERTROPHY
+    )
+
+    private fun testRationale() = WorkoutRationaleSpec.GoalFocus(
+        goals = emptyList(),
+        focusMuscles = listOf("Chest")
     )
 
     private fun GeneratedWorkout.withOnlyExercise(

@@ -793,6 +793,8 @@ private class StubWorkoutRepository(
 
     override suspend fun startWorkoutFromGenerated(
         generated: GeneratedWorkout,
+        displayName: String,
+        displayRationale: String,
         userProfile: UserProfile
     ): WorkoutSession =
         error("Not used")

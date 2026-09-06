@@ -39,11 +39,23 @@ data class MuscleProgressStat(
     val percentageGrowth: Int
 )
 
+/**
+ * One completed set expressed as the numbers behind it, not as a sentence.
+ *
+ * A null [weight] means bodyweight work rather than "no load recorded"; the screen decides
+ * how to word either case, and formats the numbers for the reader's locale.
+ */
+data class StrengthPerformance(
+    val weight: Double?,
+    val reps: Int
+)
+
 data class StrengthTrend(
     val exerciseId: String,
+    /** The catalog's English name, used only when the overlay has no translation. */
     val exerciseName: String,
-    val previousMetric: String,
-    val currentMetric: String,
+    val previous: StrengthPerformance,
+    val current: StrengthPerformance,
     val percentageChange: Int,
     val isPositive: Boolean = true
 )

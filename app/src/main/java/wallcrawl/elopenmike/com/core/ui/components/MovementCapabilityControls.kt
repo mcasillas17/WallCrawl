@@ -27,6 +27,8 @@ import androidx.compose.ui.graphics.Color
 import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.model.CapabilityLevel
 import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
+import wallcrawl.elopenmike.com.core.ui.localization.descriptionRes
+import wallcrawl.elopenmike.com.core.ui.localization.labelRes
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 
 val CapabilityLevel.displayOrder: Int
@@ -38,52 +40,15 @@ val CapabilityLevel.displayOrder: Int
     }
 
 @Composable
-fun movementCapabilityLabel(type: MovementCapabilityType): String = stringResource(
-    when (type) {
-        MovementCapabilityType.IMPACT -> R.string.movement_capability_impact_label
-        MovementCapabilityType.FLOOR_TRANSITION ->
-            R.string.movement_capability_floor_transition_label
-        MovementCapabilityType.UNSUPPORTED_SQUAT ->
-            R.string.movement_capability_unsupported_squat_label
-        MovementCapabilityType.UPPER_BODY_BODYWEIGHT_PUSH ->
-            R.string.movement_capability_upper_body_push_label
-        MovementCapabilityType.VERTICAL_PULL_OR_HANG ->
-            R.string.movement_capability_vertical_pull_label
-        MovementCapabilityType.BALANCE_WITHOUT_SUPPORT ->
-            R.string.movement_capability_balance_label
-        MovementCapabilityType.CONTINUOUS_ACTIVITY ->
-            R.string.movement_capability_continuous_activity_label
-    }
-)
+fun movementCapabilityLabel(type: MovementCapabilityType): String =
+    stringResource(type.labelRes)
 
 @Composable
-fun movementCapabilityDescription(type: MovementCapabilityType): String = stringResource(
-    when (type) {
-        MovementCapabilityType.IMPACT -> R.string.movement_capability_impact_description
-        MovementCapabilityType.FLOOR_TRANSITION ->
-            R.string.movement_capability_floor_transition_description
-        MovementCapabilityType.UNSUPPORTED_SQUAT ->
-            R.string.movement_capability_unsupported_squat_description
-        MovementCapabilityType.UPPER_BODY_BODYWEIGHT_PUSH ->
-            R.string.movement_capability_upper_body_push_description
-        MovementCapabilityType.VERTICAL_PULL_OR_HANG ->
-            R.string.movement_capability_vertical_pull_description
-        MovementCapabilityType.BALANCE_WITHOUT_SUPPORT ->
-            R.string.movement_capability_balance_description
-        MovementCapabilityType.CONTINUOUS_ACTIVITY ->
-            R.string.movement_capability_continuous_activity_description
-    }
-)
+fun movementCapabilityDescription(type: MovementCapabilityType): String =
+    stringResource(type.descriptionRes)
 
 @Composable
-fun capabilityLevelLabel(level: CapabilityLevel): String = stringResource(
-    when (level) {
-        CapabilityLevel.UNKNOWN -> R.string.capability_level_unknown
-        CapabilityLevel.COMFORTABLE -> R.string.capability_level_comfortable
-        CapabilityLevel.LIMITED -> R.string.capability_level_limited
-        CapabilityLevel.AVOID -> R.string.capability_level_avoid
-    }
-)
+fun capabilityLevelLabel(level: CapabilityLevel): String = stringResource(level.labelRes)
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable

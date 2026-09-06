@@ -65,7 +65,7 @@ internal data class PlannerFixtureExpected(
     val forbiddenExerciseIds: Set<String>,
     val requiredAnyExerciseIdGroups: List<Set<String>> = emptyList(),
     val expectedTargetWeights: Map<String, Double> = emptyMap(),
-    val workoutNameContains: String? = null,
+    val titleIdentityContains: String? = null,
     val maxTargetSetsPerExercise: Int? = null,
     val automaticEligibilityFailure: AutomaticEligibilityFailure? = null
 )
@@ -392,9 +392,9 @@ internal class PlannerFixtureLoader(
                     throw PlannerFixtureFormatException(
                         "expected.expectedTargetWeights is only supported when expected.outcome is SUCCESS."
                     )
-                expected.has("workoutNameContains") ->
+                expected.has("titleIdentityContains") ->
                     throw PlannerFixtureFormatException(
-                        "expected.workoutNameContains is only supported when expected.outcome is SUCCESS."
+                        "expected.titleIdentityContains is only supported when expected.outcome is SUCCESS."
                     )
                 expected.has("maxTargetSetsPerExercise") ->
                     throw PlannerFixtureFormatException(
@@ -422,11 +422,11 @@ internal class PlannerFixtureLoader(
             forbiddenExerciseIds = forbiddenExerciseIds,
             requiredAnyExerciseIdGroups = requiredAnyExerciseIdGroups,
             expectedTargetWeights = expectedTargetWeights,
-            workoutNameContains = if (expected.has("workoutNameContains")) {
+            titleIdentityContains = if (expected.has("titleIdentityContains")) {
                 requireString(
                     expected,
-                    "workoutNameContains",
-                    "expected.workoutNameContains",
+                    "titleIdentityContains",
+                    "expected.titleIdentityContains",
                     allowBlank = false,
                     maxLength = MAX_STRING_LENGTH
                 )
@@ -887,7 +887,7 @@ internal class PlannerFixtureLoader(
         private val EXPECTED_OPTIONAL_FIELDS = setOf(
             "requiredAnyExerciseIdGroups",
             "expectedTargetWeights",
-            "workoutNameContains",
+            "titleIdentityContains",
             "maxTargetSetsPerExercise",
             "automaticEligibilityFailure"
         )

@@ -1,8 +1,10 @@
 package wallcrawl.elopenmike.com.feature.workout
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
 import wallcrawl.elopenmike.com.core.ai.WorkoutHistoryAnalyzer
 import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
@@ -37,11 +39,14 @@ class ActiveWorkoutViewModel(
 
     private val currentExerciseIndexFlow = MutableStateFlow(0)
     private val currentCatalogExerciseFlow = MutableStateFlow<Exercise?>(null)
-    private val errorFlow = MutableStateFlow<String?>(null)
+    // Every failure the screen can show is a resource id rather than a sentence: an
+    // exception message is written for a log and cannot be translated.
+    @StringRes
+    private val errorFlow = MutableStateFlow<Int?>(null)
     // A failed set update must never become a terminal, screen-replacing error the way
     // errorFlow does (see uiState below): it is a recoverable, dismissible condition on
     // the Active state, cleared automatically the next time a set update succeeds.
-    private val setUpdateErrorFlow = MutableStateFlow<String?>(null)
+    private val setUpdateErrorFlow = MutableStateFlow<Int?>(null)
     private val summaryFlow = MutableStateFlow<WorkoutSummary?>(null)
     private var finishRequested = false
     private var summaryJob: Job? = null
@@ -108,9 +113,9 @@ class ActiveWorkoutViewModel(
         } else if (error != null) {
             ActiveWorkoutUiState.Error(error)
         } else if (session.status != SessionStatus.IN_PROGRESS) {
-            ActiveWorkoutUiState.Error("Workout session is no longer active.")
+            ActiveWorkoutUiState.Error(R.string.workout_no_longer_active)
         } else if (session.exercises.isEmpty()) {
-            ActiveWorkoutUiState.Error("Workout session contains no exercises.")
+            ActiveWorkoutUiState.Error(R.string.workout_has_no_exercises)
         } else {
             val safeExerciseIndex = exerciseIndex.coerceIn(0, session.exercises.lastIndex)
             val currentEx = session.exercises[safeExerciseIndex]
@@ -151,8 +156,7 @@ class ActiveWorkoutViewModel(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                errorFlow.value =
-                    "The offline exercise catalog could not load this workout's exercise details."
+                errorFlow.value = R.string.workout_catalog_error
             }
         }
     }
@@ -212,7 +216,7 @@ class ActiveWorkoutViewModel(
             } catch (e: Exception) {
                 // The write did not land, so the observed session remains the truth.
                 outcomesAwaitingObservation.remove(setId)
-                setUpdateErrorFlow.value = "Failed to update set: ${e.message}"
+                setUpdateErrorFlow.value = R.string.workout_set_update_error
             } finally {
                 if (startsRest) completionsInFlight.remove(setId)
             }
@@ -379,7 +383,7 @@ class ActiveWorkoutViewModel(
                 throw e
             } catch (e: Exception) {
                 finishRequested = false
-                errorFlow.value = "Failed to finish workout: ${e.message}"
+                errorFlow.value = R.string.workout_finish_error
             }
         }
     }
@@ -397,7 +401,7 @@ class ActiveWorkoutViewModel(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                errorFlow.value = "Failed to cancel workout: ${e.message}"
+                errorFlow.value = R.string.workout_cancel_error
             }
         }
     }
@@ -478,8 +482,8 @@ class ActiveWorkoutViewModel(
     )
 
     private data class ScreenState(
-        val error: String?,
-        val setUpdateError: String?,
+        @StringRes val error: Int?,
+        @StringRes val setUpdateError: Int?,
         val restTimer: RestTimerUiState,
         val confirmations: ConfirmationState
     )
@@ -494,7 +498,7 @@ class ActiveWorkoutViewModel(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                errorFlow.value = "Failed to load workout summary: ${e.message}"
+                errorFlow.value = R.string.workout_summary_error
             }
         }
     }

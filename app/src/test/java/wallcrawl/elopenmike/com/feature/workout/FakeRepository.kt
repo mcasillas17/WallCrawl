@@ -52,6 +52,8 @@ internal class FakeRepository(initialSession: WorkoutSession) : WorkoutRepositor
 
     override suspend fun startWorkoutFromGenerated(
         generated: GeneratedWorkout,
+        displayName: String,
+        displayRationale: String,
         userProfile: UserProfile
     ): WorkoutSession = error("Not used")
 

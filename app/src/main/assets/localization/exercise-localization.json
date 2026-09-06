@@ -1,0 +1,1030 @@
+{
+  "schemaVersion": 1,
+  "languages": ["es"],
+  "vocabulary": {
+    "muscles": {
+      "Chest": { "es": "Pecho" },
+      "Shoulders": { "es": "Hombros" },
+      "Rear Delts": { "es": "Deltoides posteriores" },
+      "Triceps": { "es": "Tríceps" },
+      "Back": { "es": "Espalda" },
+      "Upper Back": { "es": "Espalda alta" },
+      "Lower Back": { "es": "Zona lumbar" },
+      "Lats": { "es": "Dorsales" },
+      "Biceps": { "es": "Bíceps" },
+      "Forearms": { "es": "Antebrazos" },
+      "Quadriceps": { "es": "Cuádriceps" },
+      "Hamstrings": { "es": "Isquiotibiales" },
+      "Glutes": { "es": "Glúteos" },
+      "Adductors": { "es": "Aductores" },
+      "Calves": { "es": "Pantorrillas" },
+      "Hips": { "es": "Caderas" },
+      "Core": { "es": "Core" },
+      "Cardio": { "es": "Cardio" },
+      "Mobility": { "es": "Movilidad" }
+    },
+    "equipment": {
+      "Barbell": { "es": "Barra" },
+      "Dumbbell": { "es": "Mancuerna" },
+      "Cable": { "es": "Polea" },
+      "Machine": { "es": "Máquina" },
+      "Bodyweight": { "es": "Peso corporal" },
+      "Kettlebell": { "es": "Kettlebell" },
+      "Resistance Band": { "es": "Banda elástica" },
+      "Bench": { "es": "Banco" },
+      "Pull-up Bar": { "es": "Barra de dominadas" },
+      "Dip Bars": { "es": "Barras paralelas" },
+      "Squat Rack": { "es": "Rack de sentadillas" },
+      "Box": { "es": "Cajón" },
+      "Cardio": { "es": "Cardio" },
+      "Chair": { "es": "Silla" },
+      "Doorway": { "es": "Marco de puerta" },
+      "Plate": { "es": "Disco" },
+      "Stability Ball": { "es": "Balón de estabilidad" },
+      "Towel": { "es": "Toalla" },
+      "Wall": { "es": "Pared" }
+    }
+  },
+  "exercises": {
+    "ab-wheel": {
+      "es": {
+        "name": "Rueda abdominal",
+        "aliases": ["Ab wheel", "Rollout con rueda"],
+        "coachingSummary": "Extensión con rueda que exige un control antiextensión firme del tronco."
+      }
+    },
+    "active-hang": {
+      "es": {
+        "name": "Suspensión activa",
+        "coachingSummary": "Cuélgate de una barra de dominadas con los brazos estirados. Mantén la suspensión activa con el cuerpo estable y respira durante toda la serie."
+      }
+    },
+    "archer-push-up": { "es": { "name": "Flexión de arquero" } },
+    "arm-circles": { "es": { "name": "Círculos de brazos" } },
+    "arnold-press": {
+      "es": {
+        "name": "Press Arnold",
+        "coachingSummary": "Press de mancuernas por encima de la cabeza con rotación, que cubre el rango del deltoides anterior y lateral."
+      }
+    },
+    "assault-bike": { "es": { "name": "Bicicleta de asalto", "aliases": ["Assault bike"] } },
+    "assisted-chin-up": { "es": { "name": "Dominada supina asistida" } },
+    "assisted-dip": {
+      "es": {
+        "name": "Fondo asistido",
+        "coachingSummary": "Fondo en máquina asistida que sostiene parte del peso corporal mientras aprendes el patrón."
+      }
+    },
+    "assisted-pistol-squat": { "es": { "name": "Sentadilla a una pierna asistida" } },
+    "assisted-pull-up": {
+      "es": {
+        "name": "Dominada asistida",
+        "coachingSummary": "Dominada en máquina asistida que sostiene parte del peso corporal mientras ganas fuerza."
+      }
+    },
+    "back-extension": {
+      "es": {
+        "name": "Extensión lumbar",
+        "coachingSummary": "Extensión de tronco que entrena los erectores espinales y los glúteos."
+      }
+    },
+    "band-pull-apart": {
+      "es": {
+        "name": "Apertura con banda",
+        "coachingSummary": "Banda separada a la altura del pecho: trabajo de espalda alta y deltoides posterior con poca fatiga."
+      }
+    },
+    "banded-clamshell": { "es": { "name": "Almeja con banda" } },
+    "banded-dead-bug": { "es": { "name": "Dead bug con banda", "aliases": ["Bicho muerto con banda"] } },
+    "banded-donkey-kick": { "es": { "name": "Patada de glúteo con banda" } },
+    "banded-face-pull": { "es": { "name": "Face pull con banda", "aliases": ["Jalón a la cara con banda"] } },
+    "banded-fire-hydrant": { "es": { "name": "Abducción en cuadrupedia con banda" } },
+    "banded-frog-pump": { "es": { "name": "Puente de rana con banda" } },
+    "banded-glute-bridge": { "es": { "name": "Puente de glúteos con banda" } },
+    "banded-hip-thrust": { "es": { "name": "Empuje de cadera con banda", "aliases": ["Hip thrust con banda"] } },
+    "banded-kickback": { "es": { "name": "Patada atrás con banda" } },
+    "banded-lat-pulldown": {
+      "es": {
+        "name": "Jalón al pecho con banda",
+        "coachingSummary": "Jalón con banda que da un tirón vertical sin necesidad de una polea."
+      }
+    },
+    "banded-lateral-walk": { "es": { "name": "Caminata lateral con banda" } },
+    "banded-monster-walk": { "es": { "name": "Caminata monstruo con banda" } },
+    "banded-pallof-press": { "es": { "name": "Press Pallof con banda" } },
+    "banded-row": {
+      "es": {
+        "name": "Remo con banda",
+        "coachingSummary": "Remo con banda que da un tirón horizontal en cualquier lugar donde haya un anclaje."
+      }
+    },
+    "banded-seated-hip-abduction": { "es": { "name": "Abducción de cadera sentado con banda" } },
+    "banded-squat": { "es": { "name": "Sentadilla con banda" } },
+    "banded-standing-hip-abduction": { "es": { "name": "Abducción de cadera de pie con banda" } },
+    "banded-woodchop": { "es": { "name": "Leñador con banda" } },
+    "barbell-back-squat": {
+      "es": {
+        "name": "Sentadilla con barra",
+        "aliases": ["Sentadilla trasera", "Back squat"],
+        "coachingSummary": "Sentadilla con barra centrada en cuádriceps y glúteos, con todo el cuerpo estabilizado."
+      }
+    },
+    "barbell-bench-press": {
+      "es": {
+        "name": "Press de banca",
+        "aliases": ["Press de banca con barra"],
+        "coachingSummary": "Empuje horizontal fundamental para la fuerza de pecho, hombro y tríceps."
+      }
+    },
+    "barbell-bicep-curl": {
+      "es": {
+        "name": "Curl con barra Z",
+        "aliases": ["Curl con barra", "Curl de bíceps con barra"],
+        "coachingSummary": "Curl de pie para bíceps y flexores del antebrazo con barra recta o barra Z."
+      }
+    },
+    "barbell-deadlift": {
+      "es": {
+        "name": "Peso muerto",
+        "aliases": ["Peso muerto con barra"],
+        "coachingSummary": "Bisagra de cadera pesada para la fuerza de la cadena posterior, la estabilización del tronco y el agarre."
+      }
+    },
+    "barbell-glute-bridge": { "es": { "name": "Puente de glúteos con barra" } },
+    "barbell-row": {
+      "es": {
+        "name": "Remo con barra",
+        "coachingSummary": "Remo con barra inclinado que tira hacia las costillas bajas desde una bisagra estable."
+      }
+    },
+    "battle-ropes": { "es": { "name": "Cuerdas de batalla" } },
+    "bear-crawl": { "es": { "name": "Gateo del oso" } },
+    "bear-plank": {
+      "es": {
+        "name": "Plancha del oso",
+        "coachingSummary": "Ponte en cuadrupedia y despega las rodillas apenas del suelo. Mantén las manos y las puntas de los pies apoyadas mientras sostienes la posición."
+      }
+    },
+    "belt-squat": { "es": { "name": "Sentadilla con cinturón" } },
+    "bench-dip": {
+      "es": {
+        "name": "Fondo en banco",
+        "coachingSummary": "Fondo de tríceps con las manos apoyadas atrás en un banco y los pies apoyados."
+      }
+    },
+    "bent-over-rear-delt-raise": { "es": { "name": "Elevación posterior inclinado" } },
+    "bicep-curl": {
+      "es": {
+        "name": "Curl de bíceps",
+        "coachingSummary": "Curl con mancuernas que entrena el bíceps con agarre supino."
+      }
+    },
+    "bicycle-crunch": { "es": { "name": "Crunch bicicleta" } },
+    "bird-dog": {
+      "es": {
+        "name": "Bird dog",
+        "aliases": ["Perro pájaro"],
+        "coachingSummary": "Ejercicio en cuadrupedia que extiende extremidades opuestas mientras el tronco resiste la rotación."
+      }
+    },
+    "bodyweight-squat": {
+      "es": {
+        "name": "Sentadilla con peso corporal",
+        "coachingSummary": "Sentadilla sin carga para asentar el patrón y construir una base."
+      }
+    },
+    "bulgarian-split-squat": {
+      "es": {
+        "name": "Sentadilla búlgara",
+        "coachingSummary": "Sentadilla dividida con el pie trasero elevado: un patrón unilateral exigente."
+      }
+    },
+    "burpee": { "es": { "name": "Burpee" } },
+    "butterfly-stretch": { "es": { "name": "Estiramiento de mariposa" } },
+    "cable-crunch": {
+      "es": {
+        "name": "Crunch en polea",
+        "coachingSummary": "Crunch arrodillado en polea, que permite cargar el trabajo abdominal de forma progresiva."
+      }
+    },
+    "cable-curl": {
+      "es": {
+        "name": "Curl en polea",
+        "coachingSummary": "Curl en polea que mantiene tensión sobre el bíceps en todo el recorrido."
+      }
+    },
+    "cable-fly": {
+      "es": {
+        "name": "Aperturas en polea",
+        "coachingSummary": "Apertura de pecho en polea que mantiene tensión constante durante todo el arco."
+      }
+    },
+    "cable-front-raise": { "es": { "name": "Elevación frontal en polea" } },
+    "cable-kickback": { "es": { "name": "Patada de glúteo en polea" } },
+    "cable-lateral-raise": {
+      "es": {
+        "name": "Elevación lateral en polea",
+        "coachingSummary": "Elevación lateral en polea que mantiene tensión sobre el deltoides lateral en todo el recorrido."
+      }
+    },
+    "cable-pallof-hold": {
+      "es": {
+        "name": "Sostén Pallof en polea",
+        "coachingSummary": "Colócate de lado a la polea, sujeta el agarre con ambas manos y extiende los brazos al frente. Mantén el torso mirando al frente durante todo el sostén."
+      }
+    },
+    "cable-pull-through": {
+      "es": {
+        "name": "Pull-through en polea",
+        "coachingSummary": "Bisagra en polea que tira desde entre las piernas y enseña el empuje de cadera con poca carga."
+      }
+    },
+    "cable-rear-delt-fly": {
+      "es": {
+        "name": "Apertura posterior en polea",
+        "coachingSummary": "Apertura inversa en polea que mantiene la tensión sobre los deltoides posteriores."
+      }
+    },
+    "cable-standing-hip-abduction": { "es": { "name": "Abducción de cadera de pie en polea" } },
+    "cable-standing-hip-adduction": { "es": { "name": "Aducción de cadera de pie en polea" } },
+    "cable-triceps-pushdown": {
+      "es": {
+        "name": "Extensión de tríceps en polea",
+        "aliases": ["Jalón de tríceps", "Pushdown de tríceps"],
+        "coachingSummary": "Extensión de codo en polea que entrena el tríceps en un rango controlado."
+      }
+    },
+    "cable-woodchop": { "es": { "name": "Leñador en polea" } },
+    "calf-raise": {
+      "es": {
+        "name": "Elevación de talones",
+        "coachingSummary": "Elevación de talones con peso corporal que entrena las pantorrillas en todo el rango."
+      }
+    },
+    "captains-chair-knee-raise": { "es": { "name": "Elevación de rodillas en silla romana" } },
+    "cat-cow-stretch": { "es": { "name": "Estiramiento gato-camello" } },
+    "chair-dip": { "es": { "name": "Fondo en silla" } },
+    "chest-supported-row": {
+      "es": {
+        "name": "Remo con pecho apoyado",
+        "coachingSummary": "Remo con el pecho apoyado, que saca a la zona lumbar del movimiento."
+      }
+    },
+    "childs-pose": { "es": { "name": "Postura del niño" } },
+    "chin-up": {
+      "es": {
+        "name": "Dominada supina",
+        "coachingSummary": "Dominada con agarre supino, que carga más trabajo sobre el bíceps."
+      }
+    },
+    "clamshell": { "es": { "name": "Almeja" } },
+    "close-grip-bench-press": {
+      "es": {
+        "name": "Press de banca agarre cerrado",
+        "coachingSummary": "Press de banca con agarre estrecho que desplaza el énfasis del pecho al tríceps."
+      }
+    },
+    "close-grip-lat-pulldown": {
+      "es": {
+        "name": "Jalón al pecho agarre cerrado",
+        "coachingSummary": "Jalón con agarre cerrado, con más recorrido y más flexión de codo que el agarre ancho."
+      }
+    },
+    "commando-pull-up": { "es": { "name": "Dominada comando" } },
+    "concentration-curl": { "es": { "name": "Curl concentrado" } },
+    "copenhagen-plank": {
+      "es": {
+        "name": "Plancha de Copenhague",
+        "coachingSummary": "Apoya la pierna de arriba en un banco y sostén el torso sobre un antebrazo. Despega la cadera del suelo y mantén la posición lateral."
+      }
+    },
+    "cossack-squat": { "es": { "name": "Sentadilla cosaca" } },
+    "crab-walk": {
+      "es": {
+        "name": "Caminata del cangrejo",
+        "coachingSummary": "Siéntate con manos y pies en el suelo y levanta la cadera. Da pasos cortos alternando manos y pies durante todo el intervalo."
+      }
+    },
+    "cross-body-shoulder-stretch": { "es": { "name": "Estiramiento de hombro cruzado" } },
+    "crunch": {
+      "es": {
+        "name": "Crunch abdominal",
+        "coachingSummary": "Flexión de tronco de recorrido corto que entrena los abdominales."
+      }
+    },
+    "curtsy-lunge": { "es": { "name": "Zancada cruzada" } },
+    "cycling": { "es": { "name": "Ciclismo" } },
+    "dead-bug": {
+      "es": {
+        "name": "Dead bug",
+        "aliases": ["Bicho muerto"],
+        "coachingSummary": "Ejercicio antiextensión que mueve extremidades opuestas mientras la zona lumbar se mantiene plana."
+      }
+    },
+    "dead-hang": {
+      "es": {
+        "name": "Suspensión pasiva",
+        "coachingSummary": "Sujétate de una barra de dominadas y cuélgate con los brazos estirados. Mantén el cuerpo estable y respira durante todo el sostén."
+      }
+    },
+    "decline-bench-press": { "es": { "name": "Press de banca declinado" } },
+    "decline-dumbbell-press": { "es": { "name": "Press declinado con mancuernas" } },
+    "decline-push-up": { "es": { "name": "Flexión declinada" } },
+    "decline-sit-up": { "es": { "name": "Abdominal en banco declinado" } },
+    "deficit-reverse-lunge": { "es": { "name": "Zancada atrás con déficit" } },
+    "diamond-push-up": {
+      "es": {
+        "name": "Flexión diamante",
+        "coachingSummary": "Flexión con las manos juntas, que enfatiza el tríceps."
+      }
+    },
+    "dip": {
+      "es": {
+        "name": "Fondo",
+        "coachingSummary": "Fondo con peso corporal en barras paralelas, que empuja pecho y tríceps en un recorrido profundo."
+      }
+    },
+    "donkey-calf-raise": { "es": { "name": "Elevación de talones tipo burro" } },
+    "donkey-kick": { "es": { "name": "Patada de glúteo" } },
+    "doorway-chest-stretch": { "es": { "name": "Estiramiento de pecho en marco de puerta" } },
+    "doorway-row": { "es": { "name": "Remo en marco de puerta" } },
+    "drag-curl": { "es": { "name": "Curl arrastrado" } },
+    "dragon-flag": { "es": { "name": "Bandera del dragón" } },
+    "dumbbell-bench-press": {
+      "es": {
+        "name": "Press de banca con mancuernas",
+        "coachingSummary": "Press plano con mancuernas, que permite más estiramiento y una trayectoria independiente por brazo."
+      }
+    },
+    "dumbbell-bent-over-row": {
+      "es": {
+        "name": "Remo inclinado con mancuernas",
+        "coachingSummary": "Remo inclinado con mancuernas que entrena la espalda media desde una bisagra estable."
+      }
+    },
+    "dumbbell-curtsy-lunge": { "es": { "name": "Zancada cruzada con mancuernas" } },
+    "dumbbell-fly": {
+      "es": {
+        "name": "Aperturas con mancuernas",
+        "coachingSummary": "Aislamiento de pecho en un arco amplio, con los codos fijos en un ángulo ligeramente flexionado."
+      }
+    },
+    "dumbbell-glute-bridge": { "es": { "name": "Puente de glúteos con mancuerna" } },
+    "dumbbell-hip-thrust": {
+      "es": {
+        "name": "Empuje de cadera con mancuerna",
+        "aliases": ["Hip thrust con mancuerna"],
+        "coachingSummary": "Empuje de cadera cargado con una mancuerna apoyada sobre la cadera."
+      }
+    },
+    "dumbbell-lateral-lunge": { "es": { "name": "Zancada lateral con mancuernas" } },
+    "dumbbell-lateral-raise": {
+      "es": {
+        "name": "Elevación lateral",
+        "aliases": ["Elevación lateral con mancuernas"],
+        "coachingSummary": "Aislamiento de hombro centrado en el deltoides lateral con una elevación de brazos controlada."
+      }
+    },
+    "dumbbell-overhead-tricep-extension": {
+      "es": {
+        "name": "Extensión de tríceps sobre la cabeza con mancuerna",
+        "coachingSummary": "Extensión de codo por encima de la cabeza, que carga el tríceps en posición alargada."
+      }
+    },
+    "dumbbell-romanian-deadlift": {
+      "es": {
+        "name": "Peso muerto rumano con mancuernas",
+        "coachingSummary": "Bisagra de cadera con mancuernas, que carga los isquiotibiales de forma controlada."
+      }
+    },
+    "dumbbell-shoulder-press": {
+      "es": {
+        "name": "Press de hombro sentado con mancuernas",
+        "aliases": ["Press militar con mancuernas"],
+        "coachingSummary": "Press sentado de mancuernas por encima de la cabeza para la fuerza de hombro y tríceps."
+      }
+    },
+    "dumbbell-shrug": {
+      "es": {
+        "name": "Encogimiento con mancuernas",
+        "coachingSummary": "Encogimiento con mancuernas que entrena el trapecio superior con los brazos colgando a los lados."
+      }
+    },
+    "dumbbell-side-bend": { "es": { "name": "Flexión lateral con mancuerna" } },
+    "dumbbell-skull-crusher": { "es": { "name": "Extensión de tríceps con dos mancuernas" } },
+    "dumbbell-sumo-deadlift": { "es": { "name": "Peso muerto sumo con mancuerna" } },
+    "dumbbell-sumo-squat": {
+      "es": {
+        "name": "Sentadilla sumo con mancuerna",
+        "coachingSummary": "Sentadilla con base amplia sosteniendo una mancuerna, que enfatiza glúteos y aductores."
+      }
+    },
+    "elliptical": { "es": { "name": "Elíptica" } },
+    "explosive-push-up": { "es": { "name": "Flexión explosiva" } },
+    "face-pull": {
+      "es": {
+        "name": "Face pull",
+        "aliases": ["Jalón a la cara"],
+        "coachingSummary": "Tirón en polea hacia la cara que entrena los deltoides posteriores y los rotadores de la espalda alta."
+      }
+    },
+    "farmer-carry": { "es": { "name": "Caminata del granjero" } },
+    "fast-feet": { "es": { "name": "Pies rápidos" } },
+    "feet-elevated-pike-push-up": { "es": { "name": "Flexión pike con pies elevados" } },
+    "fire-hydrant": { "es": { "name": "Abducción en cuadrupedia" } },
+    "flutter-kick": {
+      "es": {
+        "name": "Tijeras verticales",
+        "coachingSummary": "Acuéstate boca arriba con las piernas estiradas y algo elevadas. Alterna movimientos cortos hacia arriba y hacia abajo durante todo el intervalo."
+      }
+    },
+    "forward-lunge": {
+      "es": {
+        "name": "Zancada frontal",
+        "coachingSummary": "Zancada que avanza y regresa, entrenando una pierna a la vez."
+      }
+    },
+    "frog-pump": { "es": { "name": "Puente de rana" } },
+    "front-foot-elevated-split-squat": { "es": { "name": "Sentadilla dividida con pie delantero elevado" } },
+    "front-raise": {
+      "es": {
+        "name": "Elevación frontal",
+        "coachingSummary": "Aislamiento del deltoides anterior que eleva la carga hasta la altura del hombro de forma controlada."
+      }
+    },
+    "front-squat": {
+      "es": {
+        "name": "Sentadilla frontal",
+        "coachingSummary": "Sentadilla con la barra apoyada en los deltoides anteriores, que exige un torso muy erguido."
+      }
+    },
+    "glute-bridge": {
+      "es": {
+        "name": "Puente de glúteos",
+        "coachingSummary": "Puente en el suelo que extiende la cadera contra el peso corporal."
+      }
+    },
+    "glute-bridge-march": { "es": { "name": "Puente de glúteos con marcha" } },
+    "glute-focused-back-extension": { "es": { "name": "Extensión lumbar enfocada en glúteo" } },
+    "goblet-squat": {
+      "es": {
+        "name": "Sentadilla goblet",
+        "coachingSummary": "Sentadilla sosteniendo un solo peso en el pecho, lo que ayuda a mantener el torso erguido."
+      }
+    },
+    "good-morning": {
+      "es": {
+        "name": "Buenos días",
+        "aliases": ["Good morning"],
+        "coachingSummary": "Bisagra con la barra en la espalda, que exige una estabilización cuidadosa."
+      }
+    },
+    "hack-squat": {
+      "es": {
+        "name": "Sentadilla hack",
+        "coachingSummary": "Sentadilla guiada en una trayectoria fija, con sesgo hacia los cuádriceps."
+      }
+    },
+    "half-burpee": { "es": { "name": "Medio burpee" } },
+    "half-kneeling-pallof-press": { "es": { "name": "Press Pallof de rodilla" } },
+    "hammer-curl": {
+      "es": {
+        "name": "Curl martillo",
+        "coachingSummary": "Curl con agarre neutro que carga el bíceps y el braquial que hay debajo."
+      }
+    },
+    "hamstring-stretch": { "es": { "name": "Estiramiento de isquiotibiales" } },
+    "handstand-push-up": { "es": { "name": "Flexión en pino" } },
+    "hanging-knee-raise": {
+      "es": {
+        "name": "Elevación de rodillas colgado",
+        "coachingSummary": "Elevación de rodillas en suspensión: el paso previo habitual antes de la elevación de piernas completa."
+      }
+    },
+    "hanging-leg-raise": {
+      "es": {
+        "name": "Elevación de piernas colgado",
+        "coachingSummary": "Flexión de tronco y cadera en suspensión para abdominales, flexores de cadera y agarre."
+      }
+    },
+    "heel-elevated-goblet-squat": { "es": { "name": "Sentadilla goblet con talones elevados" } },
+    "heel-tap": { "es": { "name": "Toque de talones" } },
+    "high-knees": { "es": { "name": "Rodillas altas" } },
+    "hiking": { "es": { "name": "Senderismo" } },
+    "hindu-push-up": { "es": { "name": "Flexión hindú" } },
+    "hip-abduction-machine": {
+      "es": {
+        "name": "Máquina de abducción de cadera",
+        "coachingSummary": "Máquina de abducción sentado que aísla la cara externa de la cadera."
+      }
+    },
+    "hip-adduction-machine": {
+      "es": {
+        "name": "Máquina de aducción de cadera",
+        "coachingSummary": "Máquina de aducción sentado que aísla la cara interna del muslo."
+      }
+    },
+    "hip-airplane": { "es": { "name": "Avión de cadera" } },
+    "hip-thrust": {
+      "es": {
+        "name": "Empuje de cadera",
+        "aliases": ["Hip thrust"],
+        "coachingSummary": "Empuje con barra apoyado en un banco, que carga los glúteos en el final de la extensión de cadera."
+      }
+    },
+    "hollow-body-hold": {
+      "es": {
+        "name": "Sostén hollow",
+        "coachingSummary": "Acuéstate boca arriba, eleva un poco los hombros y las piernas y mantén esa posición. Sigue respirando durante todo el sostén."
+      }
+    },
+    "hollow-rock": { "es": { "name": "Balanceo hollow" } },
+    "inchworm": { "es": { "name": "Gusano" } },
+    "incline-bench-press": {
+      "es": {
+        "name": "Press de banca inclinado",
+        "coachingSummary": "Press con barra en banco inclinado, que desplaza el énfasis hacia el pecho alto y el deltoides anterior."
+      }
+    },
+    "incline-cable-fly": { "es": { "name": "Aperturas inclinadas en polea" } },
+    "incline-dumbbell-curl": {
+      "es": {
+        "name": "Curl inclinado con mancuernas",
+        "coachingSummary": "Curl recostado en un banco inclinado, que carga el bíceps en posición estirada."
+      }
+    },
+    "incline-dumbbell-press": {
+      "es": {
+        "name": "Press inclinado con mancuernas",
+        "coachingSummary": "Press de pecho alto con mancuernas en banco inclinado y un rango de movimiento controlado."
+      }
+    },
+    "incline-push-up": {
+      "es": {
+        "name": "Flexión inclinada",
+        "coachingSummary": "Flexión con las manos elevadas, que reduce la carga sin perder el rango completo."
+      }
+    },
+    "inverted-row": {
+      "es": {
+        "name": "Remo invertido",
+        "coachingSummary": "Remo con peso corporal bajo una barra fija, cuya dificultad depende de qué tan horizontal esté el cuerpo."
+      }
+    },
+    "jump-rope": { "es": { "name": "Salto de cuerda" } },
+    "jump-squat": { "es": { "name": "Sentadilla con salto" } },
+    "jumping-jack": { "es": { "name": "Salto de tijera" } },
+    "kettlebell-romanian-deadlift": {
+      "es": {
+        "name": "Peso muerto rumano con kettlebell",
+        "coachingSummary": "Bisagra con kettlebell que entrena isquiotibiales y glúteos con cargas más ligeras."
+      }
+    },
+    "kettlebell-swing": {
+      "es": {
+        "name": "Swing con kettlebell",
+        "coachingSummary": "Bisagra de cadera balística que lanza la pesa hasta la altura del pecho con un empuje seco de glúteo."
+      }
+    },
+    "knee-push-up": {
+      "es": {
+        "name": "Flexión de rodillas",
+        "coachingSummary": "Flexión apoyando las rodillas, que mantiene el tronco firme mientras reduce la carga."
+      }
+    },
+    "kneeling-hip-flexor-stretch": { "es": { "name": "Estiramiento de flexores de cadera de rodilla" } },
+    "l-sit-hold": {
+      "es": {
+        "name": "Sostén en L",
+        "aliases": ["L-sit"],
+        "coachingSummary": "Sostente en barras paralelas con los brazos estirados y las piernas extendidas al frente. Mantén la posición respirando de forma constante."
+      }
+    },
+    "l-sit-pull-up": { "es": { "name": "Dominada en L" } },
+    "landmine-press": { "es": { "name": "Press landmine" } },
+    "landmine-romanian-deadlift": { "es": { "name": "Peso muerto rumano landmine" } },
+    "landmine-squat": { "es": { "name": "Sentadilla landmine" } },
+    "lat-pulldown": {
+      "es": {
+        "name": "Jalón al pecho",
+        "aliases": ["Jalón dorsal"],
+        "coachingSummary": "Jalón en polea que entrena el tirón vertical con una carga que se puede ajustar con precisión."
+      }
+    },
+    "lateral-lunge": { "es": { "name": "Zancada lateral" } },
+    "lateral-shuffle": { "es": { "name": "Desplazamiento lateral" } },
+    "leg-curl": {
+      "es": {
+        "name": "Curl femoral",
+        "coachingSummary": "Flexión de rodilla en máquina que aísla los isquiotibiales."
+      }
+    },
+    "leg-extension": {
+      "es": {
+        "name": "Extensión de piernas",
+        "coachingSummary": "Extensión de rodilla que aísla los cuádriceps con los muslos apoyados."
+      }
+    },
+    "leg-press": {
+      "es": {
+        "name": "Prensa de piernas",
+        "coachingSummary": "Press en máquina que carga las piernas con mucho peso y la espalda apoyada."
+      }
+    },
+    "leg-press-calf-raise": { "es": { "name": "Elevación de talones en prensa" } },
+    "leg-swings-stretch": { "es": { "name": "Balanceos de pierna" } },
+    "lying-hamstring-walkout": { "es": { "name": "Caminata de isquiotibiales tumbado" } },
+    "lying-leg-curl": { "es": { "name": "Curl femoral tumbado" } },
+    "lying-leg-raise": {
+      "es": {
+        "name": "Elevación de piernas tumbado",
+        "coachingSummary": "Elevación de piernas en el suelo que entrena el abdomen bajo y los flexores de cadera."
+      }
+    },
+    "machine-chest-press": {
+      "es": {
+        "name": "Press de pecho en máquina",
+        "coachingSummary": "Empuje horizontal guiado que entrena el pecho con muy poca demanda de equilibrio."
+      }
+    },
+    "machine-glute-kickback": { "es": { "name": "Patada de glúteo en máquina" } },
+    "machine-lateral-raise": { "es": { "name": "Elevación lateral en máquina" } },
+    "machine-row": {
+      "es": {
+        "name": "Remo en máquina",
+        "coachingSummary": "Patrón de remo guiado para acumular volumen de espalda media con muy poca demanda de equilibrio."
+      }
+    },
+    "machine-shoulder-press": {
+      "es": {
+        "name": "Press de hombro en máquina",
+        "coachingSummary": "Press guiado por encima de la cabeza para volumen de hombro con muy poca demanda de equilibrio."
+      }
+    },
+    "meadows-row": { "es": { "name": "Remo Meadows" } },
+    "mountain-climber": {
+      "es": {
+        "name": "Escaladores",
+        "coachingSummary": "Empieza con las manos y las puntas de los pies en el suelo y los brazos estirados. Lleva una rodilla al frente alternando a un ritmo constante durante todo el intervalo."
+      }
+    },
+    "negative-pull-up": {
+      "es": {
+        "name": "Dominada negativa",
+        "coachingSummary": "La fase de bajada de la dominada, hecha lentamente, como paso previo al movimiento completo."
+      }
+    },
+    "neutral-grip-pull-up": {
+      "es": {
+        "name": "Dominada agarre neutro",
+        "coachingSummary": "Dominada con las palmas enfrentadas, que suele ser el agarre más amable con el hombro."
+      }
+    },
+    "nordic-hamstring-curl": { "es": { "name": "Curl nórdico" } },
+    "one-arm-dumbbell-row": {
+      "es": {
+        "name": "Remo a una mano con mancuerna",
+        "coachingSummary": "Remo unilateral con la mano libre apoyada, que permite un tirón largo y controlado."
+      }
+    },
+    "overhead-press": {
+      "es": {
+        "name": "Press militar",
+        "aliases": ["Press por encima de la cabeza"],
+        "coachingSummary": "Press de barra de pie por encima de la cabeza, con el tronco firme y las costillas abajo."
+      }
+    },
+    "overhead-tricep-extension": { "es": { "name": "Extensión de tríceps sobre la cabeza" } },
+    "pallof-press": {
+      "es": {
+        "name": "Press Pallof",
+        "coachingSummary": "Press antirrotación que mantiene el tronco de frente contra un tirón lateral."
+      }
+    },
+    "parallel-bar-dips": {
+      "es": {
+        "name": "Fondo de pecho",
+        "aliases": ["Fondos en paralelas"],
+        "coachingSummary": "Empuje en barras paralelas que enfatiza pecho y tríceps con una profundidad de hombro controlada."
+      }
+    },
+    "pec-deck": {
+      "es": {
+        "name": "Contractor de pecho",
+        "aliases": ["Pec deck"],
+        "coachingSummary": "Apertura de pecho en máquina con trayectoria fija, útil para volumen de pecho con poca exigencia técnica."
+      }
+    },
+    "pendlay-row": {
+      "es": {
+        "name": "Remo Pendlay",
+        "coachingSummary": "Remo con barra que arranca desde el suelo en cada repetición, lo que elimina la inercia."
+      }
+    },
+    "pike-push-up": {
+      "es": {
+        "name": "Flexión pike",
+        "coachingSummary": "Empuje vertical con peso corporal y la cadera alta, que carga hombros y tríceps."
+      }
+    },
+    "pistol-squat": { "es": { "name": "Sentadilla a una pierna" } },
+    "plank": {
+      "es": {
+        "name": "Plancha",
+        "coachingSummary": "Apóyate sobre los antebrazos y las puntas de los pies. Mantén el cuerpo estable y sigue respirando durante toda la serie."
+      }
+    },
+    "plank-jack": { "es": { "name": "Plancha con salto" } },
+    "plank-shoulder-tap": { "es": { "name": "Plancha con toque de hombro" } },
+    "plate-front-raise": { "es": { "name": "Elevación frontal con disco" } },
+    "preacher-curl": {
+      "es": {
+        "name": "Curl predicador",
+        "coachingSummary": "Curl con los brazos apoyados, lo que elimina el balanceo del movimiento."
+      }
+    },
+    "prone-t-raise": { "es": { "name": "Elevación en T boca abajo" } },
+    "prone-y-raise": {
+      "es": {
+        "name": "Elevación en Y boca abajo",
+        "coachingSummary": "Elevación boca abajo en posición de Y para el trapecio inferior y la espalda alta."
+      }
+    },
+    "pull-ups": {
+      "es": {
+        "name": "Dominada",
+        "aliases": ["Dominadas"],
+        "coachingSummary": "Tirón vertical con peso corporal que enfatiza dorsales, espalda alta, bíceps y agarre."
+      }
+    },
+    "push-press": {
+      "es": {
+        "name": "Push press",
+        "coachingSummary": "Press por encima de la cabeza impulsado por una flexión corta de piernas, que permite más carga que un press estricto."
+      }
+    },
+    "push-up": {
+      "es": {
+        "name": "Flexión de brazos",
+        "aliases": ["Lagartija", "Push-up"],
+        "coachingSummary": "Empuje horizontal con peso corporal, con el tronco firme en línea recta de la cabeza a los talones."
+      }
+    },
+    "push-up-shoulder-tap": { "es": { "name": "Flexión con toque de hombro" } },
+    "rack-pull": { "es": { "name": "Rack pull" } },
+    "rear-delt-fly": {
+      "es": {
+        "name": "Apertura posterior",
+        "coachingSummary": "Apertura con mancuernas inclinado que entrena los deltoides posteriores."
+      }
+    },
+    "reverse-crunch": {
+      "es": {
+        "name": "Crunch inverso",
+        "coachingSummary": "Flexión de tronco impulsada por la elevación de la cadera, que carga el abdomen bajo."
+      }
+    },
+    "reverse-curl": {
+      "es": {
+        "name": "Curl inverso",
+        "coachingSummary": "Curl con agarre prono que carga los extensores del antebrazo y el braquiorradial."
+      }
+    },
+    "reverse-hyperextension": { "es": { "name": "Hiperextensión inversa" } },
+    "reverse-lunge": {
+      "es": {
+        "name": "Zancada atrás",
+        "coachingSummary": "Zancada dando el paso hacia atrás, por lo general más amable con la rodilla que hacerlo hacia delante."
+      }
+    },
+    "reverse-pec-deck": {
+      "es": {
+        "name": "Contractor inverso",
+        "coachingSummary": "Apertura inversa en máquina para volumen de deltoides posterior con una trayectoria fija."
+      }
+    },
+    "reverse-snow-angel": { "es": { "name": "Ángel invertido" } },
+    "romanian-deadlift": {
+      "es": {
+        "name": "Peso muerto rumano",
+        "aliases": ["RDL"],
+        "coachingSummary": "Bisagra de cadera controlada que enfatiza isquiotibiales y glúteos bajo carga."
+      }
+    },
+    "rope-hammer-curl": { "es": { "name": "Curl martillo con cuerda" } },
+    "rope-tricep-pushdown": {
+      "es": {
+        "name": "Extensión de tríceps con cuerda",
+        "coachingSummary": "Extensión en polea con cuerda, que permite separar las manos al final del recorrido."
+      }
+    },
+    "rowing": { "es": { "name": "Remo ergómetro" } },
+    "running": { "es": { "name": "Correr" } },
+    "russian-twist": { "es": { "name": "Giro ruso" } },
+    "scapular-pull-up": { "es": { "name": "Dominada escapular" } },
+    "scapular-push-up": { "es": { "name": "Flexión escapular" } },
+    "seal-jack": { "es": { "name": "Salto de foca" } },
+    "seated-calf-raise": {
+      "es": {
+        "name": "Elevación de talones sentado",
+        "coachingSummary": "Elevación de talones sentado con las rodillas flexionadas, con sesgo hacia el sóleo."
+      }
+    },
+    "seated-forward-fold-stretch": { "es": { "name": "Flexión hacia delante sentado" } },
+    "seated-knee-tuck": { "es": { "name": "Encogimiento de rodillas sentado" } },
+    "seated-leg-curl": {
+      "es": {
+        "name": "Curl femoral sentado",
+        "coachingSummary": "Flexión de rodilla sentado que entrena los isquiotibiales con la cadera flexionada."
+      }
+    },
+    "seated-row": {
+      "es": {
+        "name": "Remo sentado en polea",
+        "coachingSummary": "Remo sentado en polea que tira hacia el tronco con el pecho alto y los hombros abajo."
+      }
+    },
+    "shrimp-squat": { "es": { "name": "Sentadilla camarón" } },
+    "shrug": {
+      "es": {
+        "name": "Encogimiento con barra",
+        "coachingSummary": "Encogimiento con barra que eleva los hombros para entrenar el trapecio superior."
+      }
+    },
+    "side-lying-hip-abduction": { "es": { "name": "Abducción de cadera tumbado de lado" } },
+    "side-lying-leg-raise": { "es": { "name": "Elevación de pierna tumbado de lado" } },
+    "side-plank": {
+      "es": {
+        "name": "Plancha lateral",
+        "coachingSummary": "Acuéstate de lado, apóyate sobre un antebrazo y el canto del pie y levanta la cadera. Mantén la posición respirando de forma constante."
+      }
+    },
+    "side-plank-hip-dip": { "es": { "name": "Plancha lateral con descenso de cadera" } },
+    "single-arm-cable-row": { "es": { "name": "Remo a una mano en polea" } },
+    "single-arm-dumbbell-tricep-extension": { "es": { "name": "Extensión de tríceps a una mano con mancuerna" } },
+    "single-dumbbell-skullcrusher": { "es": { "name": "Extensión de tríceps con una mancuerna" } },
+    "single-leg-box-squat": { "es": { "name": "Sentadilla a una pierna al cajón" } },
+    "single-leg-calf-raise": {
+      "es": {
+        "name": "Elevación de talones a una pierna",
+        "coachingSummary": "Elevación de talones de una pierna a la vez, que añade carga sin necesidad de equipo."
+      }
+    },
+    "single-leg-glute-bridge": {
+      "es": {
+        "name": "Puente de glúteos a una pierna",
+        "coachingSummary": "Puente impulsado por una pierna a la vez, que añade carga sin necesidad de equipo."
+      }
+    },
+    "single-leg-romanian-deadlift": {
+      "es": {
+        "name": "Peso muerto rumano a una pierna",
+        "coachingSummary": "Bisagra unilateral que entrena los isquiotibiales y además exige equilibrio."
+      }
+    },
+    "sissy-squat": { "es": { "name": "Sentadilla sissy" } },
+    "skater-hop": { "es": { "name": "Salto de patinador" } },
+    "skater-squat": { "es": { "name": "Sentadilla de patinador" } },
+    "skierg": { "es": { "name": "SkiErg" } },
+    "skull-crusher": {
+      "es": {
+        "name": "Extensión de tríceps tumbado",
+        "aliases": ["Rompecráneos"],
+        "coachingSummary": "Extensión de codo tumbado que mantiene los brazos quietos mientras la barra pasa por detrás de la cabeza."
+      }
+    },
+    "smith-machine-bench-press": { "es": { "name": "Press de banca en multipower" } },
+    "smith-machine-bulgarian-split-squat": { "es": { "name": "Sentadilla búlgara en multipower" } },
+    "smith-machine-hip-thrust": { "es": { "name": "Empuje de cadera en multipower" } },
+    "smith-machine-reverse-lunge": { "es": { "name": "Zancada atrás en multipower" } },
+    "smith-machine-romanian-deadlift": { "es": { "name": "Peso muerto rumano en multipower" } },
+    "smith-machine-split-squat": { "es": { "name": "Sentadilla dividida en multipower" } },
+    "smith-machine-squat": { "es": { "name": "Sentadilla en multipower" } },
+    "spider-curl": { "es": { "name": "Curl araña" } },
+    "split-squat": { "es": { "name": "Sentadilla dividida" } },
+    "sprawl": { "es": { "name": "Sprawl" } },
+    "squat-thrust": { "es": { "name": "Sentadilla con empuje de piernas" } },
+    "stability-ball-hamstring-curl": { "es": { "name": "Curl femoral con balón" } },
+    "stair-climber": { "es": { "name": "Escaladora" } },
+    "standing-calf-raise": {
+      "es": {
+        "name": "Elevación de talones de pie",
+        "coachingSummary": "Elevación de talones de pie con carga, con sesgo hacia el gemelo."
+      }
+    },
+    "standing-dumbbell-press": {
+      "es": {
+        "name": "Press de pie con mancuernas",
+        "coachingSummary": "Press de mancuernas de pie por encima de la cabeza, con trayectoria independiente por brazo y el tronco firme."
+      }
+    },
+    "standing-quad-stretch": { "es": { "name": "Estiramiento de cuádriceps de pie" } },
+    "step-down": { "es": { "name": "Descenso del cajón" } },
+    "step-up": {
+      "es": {
+        "name": "Subida al cajón",
+        "coachingSummary": "Subida unilateral a un cajón, empujando con la pierna que trabaja."
+      }
+    },
+    "straight-arm-pulldown": {
+      "es": {
+        "name": "Jalón con brazos rectos",
+        "coachingSummary": "Aislamiento de dorsales que baja la barra manteniendo los codos casi estirados."
+      }
+    },
+    "sumo-deadlift": {
+      "es": {
+        "name": "Peso muerto sumo",
+        "coachingSummary": "Peso muerto con base amplia y un torso más erguido que en el peso muerto convencional."
+      }
+    },
+    "superman": {
+      "es": {
+        "name": "Superman",
+        "coachingSummary": "Elevación de brazos y piernas boca abajo: trabajo de poca carga para los erectores espinales."
+      }
+    },
+    "superman-hold": {
+      "es": {
+        "name": "Sostén superman",
+        "coachingSummary": "Acuéstate boca abajo con los brazos estirados. Eleva un poco brazos y piernas del suelo y mantén la posición mientras respiras."
+      }
+    },
+    "swimming": { "es": { "name": "Natación" } },
+    "t-bar-row": { "es": { "name": "Remo en T" } },
+    "toe-touch": { "es": { "name": "Toque de puntas" } },
+    "torso-twist-stretch": { "es": { "name": "Giros de torso" } },
+    "towel-hamstring-curl": { "es": { "name": "Curl femoral con toalla" } },
+    "towel-pull-up": { "es": { "name": "Dominada con toalla" } },
+    "towel-row": { "es": { "name": "Remo con toalla" } },
+    "trap-bar-deadlift": {
+      "es": {
+        "name": "Peso muerto con barra hexagonal",
+        "coachingSummary": "Peso muerto con barra hexagonal y agarres neutros, que suele ser más llevadero para la zona lumbar."
+      }
+    },
+    "treadmill-incline-walk": { "es": { "name": "Caminata inclinada en cinta" } },
+    "tricep-kickback": { "es": { "name": "Patada de tríceps" } },
+    "typewriter-push-up": { "es": { "name": "Flexión de máquina de escribir" } },
+    "upright-row": { "es": { "name": "Remo al mentón" } },
+    "v-up": {
+      "es": {
+        "name": "V-up",
+        "coachingSummary": "Elevación simultánea de piernas y torso que se encuentran sobre la cadera."
+      }
+    },
+    "walking": { "es": { "name": "Caminar" } },
+    "walking-lunge": {
+      "es": {
+        "name": "Zancada caminando",
+        "coachingSummary": "Zancadas frontales alternas que avanzan por el suelo."
+      }
+    },
+    "wall-calf-stretch": { "es": { "name": "Estiramiento de pantorrilla en pared" } },
+    "wall-handstand-push-up": { "es": { "name": "Flexión en pino contra la pared" } },
+    "wall-push-up": {
+      "es": {
+        "name": "Flexión en pared",
+        "coachingSummary": "Flexión de pie contra una pared: la entrada con menos carga al empuje horizontal."
+      }
+    },
+    "wall-sit": {
+      "es": {
+        "name": "Sentadilla isométrica en pared",
+        "coachingSummary": "Apoya la espalda en una pared y flexiona las rodillas hasta una posición que puedas sostener. Mantén los pies apoyados y conserva esa posición durante toda la serie."
+      }
+    },
+    "wall-walk": { "es": { "name": "Caminata en pared" } },
+    "weighted-chin-up": { "es": { "name": "Dominada supina con lastre" } },
+    "weighted-crunch": { "es": { "name": "Crunch con lastre" } },
+    "weighted-dip": { "es": { "name": "Fondo con lastre" } },
+    "weighted-pull-up": { "es": { "name": "Dominada con lastre" } },
+    "weighted-push-up": {
+      "es": {
+        "name": "Flexión con lastre",
+        "coachingSummary": "Flexión cargada con peso externo cuando las repeticiones con peso corporal dejan de suponer un reto."
+      }
+    },
+    "weighted-russian-twist": { "es": { "name": "Giro ruso con lastre" } },
+    "wide-grip-lat-pulldown": {
+      "es": {
+        "name": "Jalón al pecho agarre ancho",
+        "coachingSummary": "Jalón con agarre ancho que enfatiza los dorsales en una trayectoria de tirón vertical."
+      }
+    },
+    "wide-push-up": {
+      "es": {
+        "name": "Flexión con manos anchas",
+        "coachingSummary": "Flexión con las manos más separadas, que desplaza el énfasis hacia el pecho."
+      }
+    },
+    "worlds-greatest-stretch": { "es": { "name": "El mejor estiramiento del mundo" } },
+    "wrist-curl": {
+      "es": {
+        "name": "Curl de muñeca",
+        "coachingSummary": "Flexión de muñeca contra carga: trabajo directo para los flexores del antebrazo y el agarre."
+      }
+    },
+    "wrist-extension": { "es": { "name": "Extensión de muñeca" } }
+  }
+}

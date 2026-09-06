@@ -11,6 +11,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
 import wallcrawl.elopenmike.com.core.ai.PlannerFixtureContextFactory
+import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
 import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
 import wallcrawl.elopenmike.com.core.model.Exercise
@@ -51,7 +52,7 @@ class ExercisesViewModelTest {
         advanceUntilIdle()
 
         val state = viewModel.uiState.value as ExercisesUiState.Error
-        assertThat(state.message).contains("offline exercise catalog")
+        assertThat(state.messageRes).isEqualTo(R.string.exercises_catalog_error)
     }
 
     private class FailingExerciseCatalog : ExerciseCatalog {

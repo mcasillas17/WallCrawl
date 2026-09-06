@@ -1,6 +1,48 @@
-<resources>
-    <string name="app_name">WallCrawl</string>
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    The English source of every user-visible string.
 
+    Numbers reach these strings already formatted for the current locale, which is why
+    counted quantities use %s rather than %d: a plural still selects on the raw count, but
+    what is substituted is the formatted text. See docs/localization.md before adding keys.
+-->
+<resources>
+    <string name="app_name" translatable="false">WallCrawl</string>
+
+    <!-- ============================ Shared actions ============================ -->
+    <string name="action_back">Back</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_close">Close</string>
+    <string name="action_clear">Clear</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_remove">Remove</string>
+    <string name="action_try_again">Try again</string>
+    <string name="answer_yes">Yes</string>
+    <string name="answer_no">No</string>
+    <string name="value_not_available">—</string>
+    <!-- Joins list items, e.g. "Chest, Shoulders". -->
+    <string name="list_separator" translatable="false">", "</string>
+    <!-- Joins the parts of a compact stat line, e.g. "3 sets · 8–12". -->
+    <string name="detail_separator" translatable="false">" · "</string>
+
+    <!-- ============================ Bottom navigation ============================ -->
+    <string name="nav_today">Today</string>
+    <string name="nav_progress">Progress</string>
+    <string name="nav_exercises">Exercises</string>
+    <string name="nav_profile">Profile</string>
+
+    <!-- ============================ Language ============================ -->
+    <string name="language_title">LANGUAGE</string>
+    <string name="language_setting_title">Language</string>
+    <string name="language_description">Choose the language WallCrawl uses. The change applies right away and is kept on this device only.</string>
+    <string name="language_option_system">System default</string>
+    <!-- Each language is named in itself, the way language pickers everywhere do it. -->
+    <string name="language_option_english" translatable="false">English</string>
+    <string name="language_option_spanish" translatable="false">Español</string>
+    <string name="language_option_accessibility">Language: %1$s</string>
+
+    <!-- ============================ Onboarding ============================ -->
     <string name="onboarding_welcome_title">Welcome, Crawler</string>
     <string name="onboarding_welcome_subtitle">Let\'s set up your personal training identity.</string>
     <string name="onboarding_goals_title">Fitness Goals</string>
@@ -18,16 +60,97 @@
     <string name="onboarding_summary_title">Ready to Begin</string>
     <string name="onboarding_summary_subtitle">Review your setup before generating your first workout.</string>
 
-    <string name="movement_capability_intro">Answer each preference, including Not sure when that fits best.</string>
-    <string name="movement_capability_future_use">These settings prepare future personalized exercise selection. They do not change current recommendations yet.</string>
-    <string name="movement_capability_answer_required">Choose an answer for this movement preference.</string>
-    <string name="movement_capability_summary_label">Movement preferences</string>
-    <string name="movement_capability_summary_value">7 preferences answered</string>
-    <string name="movement_capability_option_accessibility">%1$s, %2$s</string>
+    <string name="onboarding_step_counter">STEP %1$s OF %2$s</string>
+    <string name="onboarding_codename_heading">YOUR CODENAME</string>
+    <string name="onboarding_codename_prompt">What should WallCrawl call you during workouts?</string>
+    <string name="onboarding_codename_placeholder">e.g. Peter, Gwen, Miles, Alex</string>
+    <string name="default_crawler_name" translatable="false">Crawler</string>
+
+    <string name="onboarding_goals_heading">FITNESS GOALS</string>
+    <string name="onboarding_goals_hint">Select all that apply to your current training block:</string>
+
+    <string name="onboarding_unit_heading">PREFERRED WEIGHT UNIT</string>
+    <string name="onboarding_unit_hint">Used for weight prescriptions, plates, and logging.</string>
+    <string name="onboarding_experience_heading">EXPERIENCE LEVEL</string>
+
+    <string name="onboarding_schedule_days_heading">TRAINING DAYS PER WEEK</string>
+    <string name="onboarding_duration_heading">TARGET DURATION</string>
+    <string name="onboarding_duration_hint">Includes warm-up sets, working volume, and rest periods.</string>
+    <string name="onboarding_break_heading">RETURNING AFTER A BREAK?</string>
+    <string name="onboarding_break_hint">Pick how long your break was so WallCrawl can start you at a conservative volume.</string>
+
+    <string name="onboarding_equipment_quick_heading">GEAR QUICK ACTIONS</string>
+    <string name="onboarding_equipment_bodyweight_only">Bodyweight only</string>
+    <string name="onboarding_equipment_full_gym">Full gym access</string>
+    <string name="onboarding_equipment_heading">AVAILABLE GEAR</string>
+    <string name="onboarding_equipment_hint">Select what you have at home or at the gym:</string>
+
+    <string name="onboarding_safety_heading">PROTECT SENSITIVE JOINTS</string>
+    <string name="onboarding_safety_hint">Tell us if any joints need conservative exercise selection. WallCrawl filters or substitutes high-stress movements.</string>
+    <string name="onboarding_safety_none_title">Feeling 100% / no restrictions</string>
+    <string name="onboarding_safety_none_subtitle">Full catalog of exercises available without joint filters.</string>
+    <string name="onboarding_safety_tag_prompt">Or tag specific areas to protect:</string>
+
+    <string name="onboarding_summary_heading">TRAINING BLUEPRINT</string>
+    <string name="onboarding_summary_label_name">Crawler name</string>
+    <string name="onboarding_summary_label_goals">Fitness goals</string>
+    <string name="onboarding_summary_label_experience">Experience</string>
+    <string name="onboarding_summary_label_schedule">Schedule</string>
+    <string name="onboarding_summary_value_schedule">%1$s · ~%2$s</string>
+    <string name="onboarding_summary_label_units">Units</string>
+    <string name="onboarding_summary_value_units">%1$s (%2$s)</string>
+    <string name="onboarding_summary_label_equipment">Equipment</string>
+    <string name="onboarding_summary_label_sensitive">Sensitive areas</string>
+    <string name="onboarding_summary_value_no_sensitive">None</string>
+    <string name="onboarding_summary_label_break">Break recovery</string>
+    <string name="onboarding_summary_value_break">%1$s • %2$s</string>
+    <string name="onboarding_ready_title">⚡ Ready for action</string>
+    <string name="onboarding_ready_body">WallCrawl will now configure your local adaptive planner. You can change any of these preferences later from your Profile.</string>
+
+    <string name="onboarding_action_continue">Continue</string>
+    <string name="onboarding_action_start">Start training</string>
+    <string name="onboarding_action_saving">Saving profile…</string>
+
     <string name="onboarding_error_required_field">Choose an answer for each required onboarding field.</string>
     <string name="onboarding_error_movement_required">Choose an answer for each movement preference.</string>
     <string name="onboarding_error_invalid_field">Review the highlighted onboarding field and try again.</string>
     <string name="onboarding_error_save_failed">Couldn\'t save your profile. Try again.</string>
+
+    <string name="onboarding_restore_title">ALREADY HAVE A WALLCRAWL FILE?</string>
+    <string name="onboarding_restore_description">Restore an exported file now, before setting up a new profile.</string>
+
+    <!-- ============================ Break ranges ============================ -->
+    <string name="break_range_none_title">Consistent / no break</string>
+    <string name="break_range_none_subtitle">Regular training without extended gaps</string>
+    <string name="break_range_short_title">1–4 weeks</string>
+    <string name="break_range_short_subtitle">Short break • quick return to your usual volume</string>
+    <string name="break_range_moderate_title">1–3 months</string>
+    <string name="break_range_moderate_subtitle">Moderate break • conservative volume to start</string>
+    <string name="break_range_extended_title">3–6 months</string>
+    <string name="break_range_extended_subtitle">Extended break • gradual volume ramp-up</string>
+    <string name="break_range_long_title">6–12 months</string>
+    <string name="break_range_long_subtitle">Long break • conservative baseline reset</string>
+    <string name="break_range_hiatus_title">1–2 years</string>
+    <string name="break_range_hiatus_subtitle">Extended hiatus • re-entry active (2 sets per exercise)</string>
+    <string name="break_range_multi_year_title">2+ years</string>
+    <string name="break_range_multi_year_subtitle">Multi-year hiatus • full re-entry and fresh baseline</string>
+
+    <string name="break_guidance_none">No recent break. Standard adaptive progression.</string>
+    <string name="break_guidance_short">Short break. Quick ramp-up back to your usual training volume.</string>
+    <string name="break_guidance_moderate">Moderate break. WallCrawl starts you at a conservative volume and builds back up.</string>
+    <string name="break_guidance_long">Significant break. Sets and starting loads are scaled down while you rebuild your baseline.</string>
+    <string name="break_guidance_hiatus">Extended hiatus of a year or more. Volume is capped at 2 sets per movement while you rebuild your baseline.</string>
+
+    <string name="break_reentry_active">Re-entry active</string>
+    <string name="break_range_open_menu">Select break duration</string>
+    <string name="break_range_close_menu">Close the break duration menu</string>
+
+    <!-- ============================ Movement preferences ============================ -->
+    <string name="movement_capability_intro">Answer each preference, including Not sure when that fits best.</string>
+    <string name="movement_capability_future_use">These settings prepare future personalized exercise selection. They do not change current recommendations yet.</string>
+    <string name="movement_capability_answer_required">Choose an answer for this movement preference.</string>
+    <string name="movement_capability_summary_label">Movement preferences</string>
+    <string name="movement_capability_option_accessibility">%1$s, %2$s</string>
 
     <string name="movement_capability_impact_label">Impact tolerance</string>
     <string name="movement_capability_impact_description">Movements that include landing, hopping, or other impact.</string>
@@ -49,6 +172,346 @@
     <string name="capability_level_avoid">Avoid</string>
     <string name="capability_level_unknown">Not sure</string>
 
+    <!-- ============================ Domain labels ============================ -->
+    <string name="goal_build_muscle_label">Build muscle</string>
+    <string name="goal_build_muscle_description">Hypertrophy focus with moderate-high volume, and lower reps on the heavy compounds.</string>
+    <string name="goal_strength_label">Strength</string>
+    <string name="goal_strength_description">Heavy compound lifts with lower reps (3–6) and longer rest periods.</string>
+    <string name="goal_general_fitness_label">General fitness</string>
+    <string name="goal_general_fitness_description">Balanced functional strength, endurance, and mobility.</string>
+    <string name="goal_fat_loss_label">Fat loss</string>
+    <string name="goal_fat_loss_description">High density training with a steady pace and compound movements.</string>
+    <string name="goal_athletic_performance_label">Athletic performance</string>
+    <string name="goal_athletic_performance_description">Power, agility, explosive strength, and rotational control.</string>
+
+    <string name="experience_beginner_label">Beginner (under 1 year)</string>
+    <string name="experience_beginner_description">New to structured training, or building a fresh baseline.</string>
+    <string name="experience_intermediate_label">Intermediate (1–3 years)</string>
+    <string name="experience_intermediate_description">Comfortable with the main compound lifts and a consistent routine.</string>
+    <string name="experience_advanced_label">Advanced (3+ years)</string>
+    <string name="experience_advanced_description">Years of progressive overload and periodized training.</string>
+
+    <string name="constraint_shoulder_label">Shoulder sensitive</string>
+    <string name="constraint_elbow_label">Elbow sensitive</string>
+    <string name="constraint_wrist_label">Wrist sensitive</string>
+    <string name="constraint_lower_back_label">Lower back sensitive</string>
+    <string name="constraint_hip_label">Hip sensitive</string>
+    <string name="constraint_knee_label">Knee sensitive</string>
+    <string name="constraint_low_impact_label">Low impact only</string>
+
+    <string name="priority_low">Low</string>
+    <string name="priority_normal">Normal</string>
+    <string name="priority_high">High</string>
+
+    <string name="theme_system_label">System default</string>
+    <string name="theme_system_short">Auto</string>
+    <string name="theme_system_description">Follows the device appearance.</string>
+    <string name="theme_dark_label">Dark theme</string>
+    <string name="theme_dark_short">Dark</string>
+    <string name="theme_dark_description">Stealth suit (dark).</string>
+    <string name="theme_light_label">Light theme</string>
+    <string name="theme_light_short">Light</string>
+    <string name="theme_light_description">Daylight athletic (light).</string>
+
+    <string name="weight_unit_lbs_short">LB</string>
+    <string name="weight_unit_lbs_long">Pounds (lb)</string>
+    <string name="weight_unit_kg_short">KG</string>
+    <string name="weight_unit_kg_long">Kilograms (kg)</string>
+
+    <string name="mechanics_compound">Compound</string>
+    <string name="mechanics_isolation">Isolation</string>
+    <string name="difficulty_beginner">Beginner</string>
+    <string name="difficulty_intermediate">Intermediate</string>
+    <string name="difficulty_advanced">Advanced</string>
+
+    <string name="movement_pattern_horizontal_push">Horizontal push</string>
+    <string name="movement_pattern_vertical_push">Vertical push</string>
+    <string name="movement_pattern_horizontal_pull">Horizontal pull</string>
+    <string name="movement_pattern_vertical_pull">Vertical pull</string>
+    <string name="movement_pattern_squat">Squat</string>
+    <string name="movement_pattern_hinge">Hinge</string>
+    <string name="movement_pattern_lunge">Lunge</string>
+    <string name="movement_pattern_isolation">Isolation</string>
+    <string name="movement_pattern_carry">Carry</string>
+    <string name="movement_pattern_core">Core</string>
+    <string name="movement_pattern_other">Other</string>
+
+    <!-- ============================ Generated workout text ============================ -->
+    <string name="split_push">Push</string>
+    <string name="split_pull">Pull</string>
+    <string name="split_legs">Legs</string>
+    <string name="split_upper_body">Upper body</string>
+    <string name="split_full_body">Full body</string>
+
+    <string name="emphasis_power_hypertrophy">Power &amp; hypertrophy</string>
+    <string name="emphasis_power_performance">Power &amp; performance</string>
+    <string name="emphasis_athletic_conditioning">Athletic conditioning</string>
+    <string name="emphasis_hypertrophy_definition">Hypertrophy &amp; definition</string>
+    <string name="emphasis_hypertrophy">Hypertrophy</string>
+    <string name="emphasis_power_strength">Power &amp; strength</string>
+    <string name="emphasis_agility_explosiveness">Agility &amp; explosiveness</string>
+    <string name="emphasis_high_density_circuit">High-density circuit</string>
+    <string name="emphasis_athletic_foundation">Athletic foundation</string>
+    <string name="emphasis_conditioning">Conditioning</string>
+
+    <string name="generated_workout_title">%1$s · %2$s</string>
+    <string name="generated_workout_title_reentry">%1$s · %2$s (re-entry)</string>
+    <string name="generated_workout_goal_separator" translatable="false">" + "</string>
+    <string name="generated_rationale_reentry">Re-entry ramp-up is on: this plan is capped at 2 sets per movement while you build back up after %1$s.</string>
+    <string name="generated_rationale_break_recovery">Generated for %1$s, with a conservative volume after %2$s.</string>
+    <string name="generated_rationale_goal_focus">Generated for %1$s, with priority on %2$s.</string>
+
+    <!-- ============================ Today ============================ -->
+    <string name="today_loading">Building today\'s plan…</string>
+    <string name="today_error_title">Generation issue</string>
+    <string name="today_greeting">Ready to train, %1$s</string>
+    <string name="today_logo_content_description">WallCrawl logo</string>
+    <string name="today_weekly_goal_met">Weekly goal met</string>
+    <string name="today_active_session_heading">ACTIVE WORKOUT IN PROGRESS</string>
+    <string name="today_action_resume">Resume</string>
+    <string name="today_plan_heading">TODAY\'S PLAN</string>
+    <string name="today_regenerate_content_description">Generate another workout</string>
+    <string name="today_stat_duration">~%1$s min</string>
+    <string name="today_routine_heading">WORKOUT ROUTINE</string>
+    <string name="today_exercise_position">%1$s.</string>
+    <string name="today_action_start">Start workout</string>
+    <string name="today_action_regenerate">Generate another workout</string>
+    <string name="today_custom_routines_heading">CUSTOM ROUTINES</string>
+    <string name="today_my_workouts_title">My workouts</string>
+    <string name="today_my_workouts_body">Build, save, and repeat your own routines.</string>
+    <string name="today_action_open_templates">Open my workouts</string>
+    <string name="today_plan_context_target">TARGETING: %1$s</string>
+    <string name="today_plan_context_offline">Built on your phone</string>
+
+    <string name="today_error_no_candidates">No exercises match your equipment and exclusions yet. Add equipment or clear an exclusion in Profile.</string>
+    <string name="today_error_no_strength_candidates">Cardio machines and stretches aren\'t planned as strength work. Add strength equipment in Profile, or build your own workout.</string>
+    <string name="today_error_no_split">Your available equipment can\'t cover a full training day yet. Add equipment in Profile, or start one of your own workouts.</string>
+    <string name="today_error_regenerate_failed">Couldn\'t build another workout. Try again.</string>
+    <string name="today_error_first_failed">Couldn\'t build today\'s workout. Try again.</string>
+    <string name="today_error_start_failed">Couldn\'t start this workout. Try again.</string>
+
+    <string name="today_error_reviewed_no_approved_metadata">Reviewed automatic planning isn\'t available yet, because no exercise metadata has human approval. You can still build your own workout.</string>
+    <string name="today_error_reviewed_exclusions">Your exercise exclusions leave no reviewed automatic options. Update your exclusions in Profile, or build your own workout.</string>
+    <string name="today_error_reviewed_equipment">Your available equipment leaves no reviewed automatic options. Update your equipment in Profile, or build your own workout.</string>
+    <string name="today_error_reviewed_capabilities">Your movement preferences leave no reviewed automatic options. Update them in Profile, or build your own workout.</string>
+    <string name="today_error_reviewed_constraints">Your training restrictions leave no reviewed automatic options. Some restrictions still need human-reviewed exercise mappings.</string>
+    <string name="today_error_reviewed_calibration">Your current calibration stage leaves no reviewed automatic options. You can still build your own workout.</string>
+    <string name="today_error_reviewed_none_eligible">No exercise meets every reviewed automatic-planning rule. You can still build your own workout.</string>
+
+    <!-- ============================ Exercise catalog ============================ -->
+    <string name="exercises_eyebrow">CATALOG</string>
+    <string name="exercises_title">Exercise library</string>
+    <string name="exercises_search_placeholder">Search exercises, muscles, equipment…</string>
+    <string name="exercises_search_clear">Clear the search</string>
+    <string name="exercises_filter_muscle">TARGET MUSCLE</string>
+    <string name="exercises_filter_equipment">EQUIPMENT</string>
+    <string name="exercises_empty">No exercise matches this search.</string>
+    <string name="exercises_catalog_error">The offline exercise catalog could not be loaded. Reinstall or update WallCrawl and try again.</string>
+
+    <string name="exercise_detail_no_programming">Catalog details and the illustration are available. Programming review is pending.</string>
+    <string name="exercise_detail_primary">Primary: %1$s</string>
+    <string name="exercise_detail_secondary">Secondary: %1$s</string>
+    <string name="exercise_detail_equipment">Listed equipment: %1$s</string>
+    <string name="exercise_detail_pattern">Pattern: %1$s</string>
+    <string name="exercise_detail_difficulty">Difficulty: %1$s</string>
+    <string name="exercise_detail_fatigue">Fatigue score: %1$s/5</string>
+    <string name="exercise_detail_review_pending">Programming review pending</string>
+    <string name="exercise_detail_close">Close details</string>
+    <string name="exercise_detail_original_language">Shown in English: this exercise has no Spanish description yet.</string>
+
+    <string name="illustration_content_description">%1$s demonstration</string>
+    <string name="illustration_frame_counter">Frame %1$s of %2$s</string>
+    <string name="illustration_unavailable">Exercise illustration unavailable</string>
+    <string name="illustration_motion_preview">Motion preview</string>
+
+    <!-- ============================ Active workout ============================ -->
+    <string name="workout_error_title">Workout error</string>
+    <string name="workout_action_go_back">Go back</string>
+    <string name="workout_close_content_description">Close workout</string>
+    <string name="workout_exercise_position">Exercise %1$s of %2$s</string>
+    <string name="workout_action_finish">Finish</string>
+    <string name="workout_action_previous">Previous</string>
+    <string name="workout_action_next">Next exercise</string>
+    <string name="workout_action_finish_workout">Finish workout</string>
+    <string name="workout_suggested_load">Suggested: %1$s %2$s</string>
+    <string name="workout_assistance">Assistance: %1$s %2$s</string>
+    <string name="workout_previous_session">PREVIOUS SESSION</string>
+    <string name="workout_dismiss_error">Dismiss error</string>
+    <string name="workout_no_longer_active">This workout session is no longer active.</string>
+    <string name="workout_has_no_exercises">This workout session contains no exercises.</string>
+    <string name="workout_catalog_error">The offline exercise catalog could not load this workout\'s exercise details.</string>
+    <string name="workout_set_update_error">Couldn\'t save this set. Check the values and try again.</string>
+    <string name="workout_finish_error">Couldn\'t finish this workout. Try again.</string>
+    <string name="workout_cancel_error">Couldn\'t discard this workout. Try again.</string>
+    <string name="workout_summary_error">Couldn\'t load the workout summary. Try again.</string>
+
+    <string name="previous_load">%1$s %2$s</string>
+    <string name="previous_no_load">No load</string>
+    <string name="previous_weight_reps">%1$s × %2$s</string>
+    <string name="previous_bodyweight_reps">Bodyweight × %1$s</string>
+    <string name="previous_assistance">%1$s %2$s assistance</string>
+    <string name="previous_assistance_missing">Assistance not logged</string>
+    <string name="previous_entry">• %1$s</string>
+
+    <string name="prescription_sets_by_reps">%1$s × %2$s</string>
+    <string name="prescription_seconds">%1$s s</string>
+    <string name="prescription_meters">%1$s m</string>
+    <string name="prescription_minutes">%1$s min</string>
+    <string name="prescription_rep_range">%1$s–%2$s</string>
+
+    <string name="rest_running">Rest %1$s</string>
+    <string name="rest_finished">Rest finished</string>
+    <string name="rest_remaining_accessibility">Rest remaining %1$s</string>
+    <string name="rest_add_thirty">+30 s</string>
+    <string name="rest_skip">Skip rest</string>
+    <string name="rest_dismiss">Dismiss</string>
+    <string name="rest_countdown">%1$s:%2$s</string>
+
+    <string name="finish_confirm_action">Finish anyway</string>
+    <string name="finish_confirm_keep_going">Keep going</string>
+    <string name="discard_confirm_title">Discard this workout?</string>
+    <string name="discard_confirm_body">Everything logged in this session will be deleted.</string>
+    <string name="discard_confirm_action">Discard</string>
+    <string name="discard_confirm_keep">Keep workout</string>
+
+    <!-- ============================ Set logging ============================ -->
+    <string name="set_number">Set %1$s</string>
+    <string name="set_field_load">Load</string>
+    <string name="set_field_assist">Assist</string>
+    <string name="set_field_reps">Reps</string>
+    <string name="set_field_incomplete_number">Enter a complete number</string>
+    <string name="set_field_seconds">Seconds</string>
+    <string name="set_field_meters">Meters</string>
+    <string name="set_field_with_unit">%1$s (%2$s)</string>
+    <string name="set_field_decrease_accessibility">Decrease %1$s for set %2$s</string>
+    <string name="set_field_increase_accessibility">Increase %1$s for set %2$s</string>
+    <string name="set_field_value_accessibility">%1$s for set %2$s</string>
+    <string name="set_copy_previous_accessibility">Use the previous %1$s of %2$s for set %3$s</string>
+    <string name="set_complete">Complete set</string>
+    <string name="set_completed">Completed</string>
+    <string name="set_complete_accessibility">Set %1$s complete</string>
+    <string name="set_skip_or_stop">Skip or stop</string>
+    <string name="set_feedback_show">Add feedback (optional)</string>
+    <string name="set_feedback_hide">Hide feedback</string>
+    <string name="set_felt_manageable">Felt manageable?</string>
+    <string name="set_manageable_accessibility">Set %1$s felt manageable, %2$s</string>
+    <string name="set_choose_starting_load">Choose starting load</string>
+
+    <string name="effort_optional">Effort is optional. Leaving it blank is fine.</string>
+    <string name="effort_rpe" translatable="false">RPE</string>
+    <string name="effort_rir" translatable="false">RIR</string>
+    <string name="effort_rpe_decrease_accessibility">Decrease RPE for set %1$s</string>
+    <string name="effort_rpe_increase_accessibility">Increase RPE for set %1$s</string>
+    <string name="effort_rpe_value_accessibility">RPE for set %1$s, %2$s</string>
+    <string name="effort_not_recorded">not recorded</string>
+    <string name="effort_rir_accessibility">RIR %1$s for set %2$s</string>
+
+    <string name="stop_reason_title">Why are you stopping this set?</string>
+    <string name="stop_reason_body">This is only recorded so your log stays accurate.</string>
+    <string name="stop_reason_user_skipped">Skipped this set</string>
+    <string name="stop_reason_pain">Something hurt, so I stopped</string>
+    <string name="stop_reason_equipment">Equipment wasn\'t available</string>
+    <string name="stop_reason_time">Ran out of time</string>
+    <string name="stop_reason_other">Another reason</string>
+
+    <!-- ============================ Workout summary ============================ -->
+    <string name="summary_eyebrow">WORKOUT COMPLETE</string>
+    <string name="summary_success_content_description">Workout complete</string>
+    <string name="summary_section">SESSION SUMMARY</string>
+    <string name="summary_metric_duration">Duration</string>
+    <string name="summary_metric_sets">Sets logged</string>
+    <string name="summary_metric_volume">Volume lifted</string>
+    <string name="summary_metric_prs">PRs hit</string>
+    <string name="summary_bodyweight">Bodyweight</string>
+    <string name="summary_action_done">Done</string>
+    <string name="summary_duration_value">%1$s min</string>
+
+    <!-- ============================ Templates ============================ -->
+    <string name="templates_eyebrow">CUSTOM ROUTINES</string>
+    <string name="templates_title">My workouts</string>
+    <string name="templates_create_content_description">Create a workout</string>
+    <string name="templates_empty_title">Build your own workout</string>
+    <string name="templates_action_create">Create workout</string>
+    <string name="template_summary">%1$s · %2$s</string>
+    <string name="template_action_start">Start workout</string>
+    <string name="template_action_starting">Starting…</string>
+    <string name="template_delete_title">Delete “%1$s”?</string>
+    <string name="template_delete_body">This routine is removed from your saved workouts. Completed workout history is not affected.</string>
+    <string name="template_error_start_failed">Couldn\'t start this workout. Try again.</string>
+    <string name="template_error_delete_failed">Couldn\'t delete this workout. Try again.</string>
+    <string name="template_error_missing">This workout no longer exists.</string>
+
+    <string name="editor_title_create">Create workout</string>
+    <string name="editor_title_edit">Edit workout</string>
+    <string name="editor_name_label">Workout name</string>
+    <string name="editor_name_placeholder">e.g. Upper Body Hypertrophy</string>
+    <string name="editor_notes_label">Notes (optional)</string>
+    <string name="editor_notes_placeholder">e.g. Focus on strict form and 90 s rest</string>
+    <string name="editor_exercises_eyebrow">EXERCISES</string>
+    <string name="editor_action_add">+ Add exercise</string>
+    <string name="editor_empty_title">No exercises added yet</string>
+    <string name="editor_equipment_warning">⚠️ This equipment is not in your current profile</string>
+    <string name="editor_move_up">Move up</string>
+    <string name="editor_move_down">Move down</string>
+    <string name="editor_target_sets">Target sets</string>
+    <string name="editor_decrease_sets">Decrease sets</string>
+    <string name="editor_increase_sets">Increase sets</string>
+    <string name="editor_action_save">Save workout</string>
+    <string name="editor_action_saving">Saving…</string>
+    <string name="editor_error_name_required">Give this workout a name.</string>
+    <string name="editor_error_exercise_required">Add at least one exercise.</string>
+    <string name="editor_error_save_failed">Couldn\'t save this workout. Try again.</string>
+    <string name="editor_error_load_failed">Couldn\'t open the workout editor. Try again.</string>
+    <string name="editor_position">%1$s.</string>
+
+    <string name="picker_eyebrow">CATALOG</string>
+    <string name="picker_title">Add exercise</string>
+    <string name="picker_add_content_description">Add</string>
+
+    <!-- ============================ Progress ============================ -->
+    <string name="progress_eyebrow">PROGRESS</string>
+    <string name="progress_title">Consistency &amp; performance</string>
+    <string name="progress_goal">Goal: %1$s/wk</string>
+    <string name="progress_total_workouts">Total workouts</string>
+    <string name="progress_weekly_volume">Weekly volume</string>
+    <string name="progress_volume_value">%1$s %2$s</string>
+    <string name="progress_no_weight_logged">no weight logged</string>
+    <string name="progress_strength_heading">STRENGTH PROGRESSION</string>
+    <string name="progress_recent_changes">Recent changes</string>
+    <string name="progress_strength_empty">Log the same exercise in two workouts to see how your strength is trending.</string>
+    <string name="progress_trend_change">%1$s → %2$s</string>
+    <string name="progress_percentage">%1$s%%</string>
+    <string name="progress_percentage_growth">↑ %1$s%%</string>
+    <string name="progress_muscle_heading">WEEKLY MUSCLE FOCUS</string>
+    <string name="progress_muscle_empty">Complete a strength set this week to see which muscles you\'re hitting.</string>
+    <string name="progress_history_heading">WORKOUT HISTORY</string>
+    <string name="progress_history_empty">No past workouts logged yet. Complete your first workout to see history here.</string>
+    <string name="progress_history_duration">%1$s min</string>
+    <string name="progress_history_volume">%1$s %2$s of volume</string>
+    <string name="progress_error">Progress could not be loaded, because the offline exercise catalog or your workout data is unavailable.</string>
+    <string name="progress_performance_weight_reps">%1$s %2$s × %3$s</string>
+
+    <!-- ============================ Profile ============================ -->
+    <string name="profile_eyebrow">SETTINGS</string>
+    <string name="profile_title">Training profile</string>
+    <string name="profile_goals_heading">FITNESS GOALS</string>
+    <string name="profile_goals_hint">Select all that apply to your current training block:</string>
+    <string name="profile_preferences_heading">WORKOUT PREFERENCES</string>
+    <string name="profile_preferred_unit">Preferred weight unit</string>
+    <string name="profile_preferred_duration">Preferred duration</string>
+    <string name="profile_duration_value">~%1$s min</string>
+    <string name="profile_training_days">Training days per week</string>
+    <string name="profile_equipment_heading">AVAILABLE EQUIPMENT</string>
+    <string name="profile_muscle_heading">MUSCLE PRIORITIES</string>
+    <string name="profile_safety_heading">TRAINING SAFETY</string>
+    <string name="profile_break_title">Returning after a break</string>
+    <string name="profile_break_hint">Adjust your break duration so WallCrawl can scale the volume it plans.</string>
+    <string name="profile_app_preferences_heading">APP PREFERENCES</string>
+    <string name="profile_theme_title">Interface theme</string>
+    <string name="profile_credits_heading">CREDITS &amp; LICENSES</string>
+    <string name="profile_credits_body">Who made the exercise illustrations, and the license they ship under.</string>
+    <string name="profile_load_error">Your profile could not be loaded. Try again.</string>
+
     <string name="profile_capability_title">MOVEMENT PREFERENCES</string>
     <string name="profile_capability_description">These settings prepare future personalized exercise selection. They do not change current recommendations yet.</string>
     <string name="profile_capability_edit">Edit movement preferences</string>
@@ -57,12 +520,34 @@
     <string name="profile_capability_cancel">Cancel</string>
     <string name="profile_capability_invalid_error">Review the movement preferences and try again.</string>
     <string name="profile_capability_save_error">Couldn\'t save movement preferences. Try again.</string>
+
+    <!-- ============================ Credits ============================ -->
+    <string name="credits_eyebrow">CREDITS</string>
+    <string name="credits_title">Artwork &amp; licenses</string>
+    <string name="credits_error_title">Attribution unavailable</string>
+    <string name="credits_error_body">The bundled attribution details could not be read. Try again.</string>
+    <string name="credits_illustrations_heading">EXERCISE ILLUSTRATIONS</string>
+    <string name="credits_counts">%1$s · %2$s, imported unmodified</string>
+    <string name="credits_label_license">License</string>
+    <string name="credits_label_source">Source</string>
+    <string name="credits_label_commit">Pinned commit</string>
+    <string name="credits_action_view_license">View license</string>
+    <string name="credits_action_visit_creator">Visit creator</string>
+    <string name="credits_link_failed">No app available to open %1$s</string>
+    <string name="credits_notice_attribution">Attribution</string>
+    <string name="credits_notice_artwork">Bundled artwork</string>
+    <string name="credits_notice_asset_license">Asset license</string>
+    <string name="credits_notice_upstream_license">Upstream license</string>
+    <!-- The notices below are the licences themselves and are never translated. -->
+    <string name="credits_notice_original_language">Reproduced in its original language. This is the authoritative text.</string>
+
+    <!-- ============================ Your data ============================ -->
     <string name="local_data_title">YOUR DATA</string>
     <string name="local_data_description">Export everything WallCrawl keeps on this device, restore it onto a fresh start, or delete it.</string>
     <string name="local_data_export">Export my data</string>
     <string name="local_data_export_progress">Exporting…</string>
     <string name="local_data_export_hint">Writes one file holding your profile, movement answers, templates, and every workout. It is readable personal information: choose a place you trust, and remember the picker can offer cloud storage.</string>
-    <string name="local_data_export_success">Exported %1$d workouts and %2$d templates.</string>
+    <string name="local_data_export_success">Exported %1$s and %2$s.</string>
     <string name="local_data_export_failed">Export failed. If a file was created it is incomplete, so delete it and try again.</string>
     <string name="local_data_export_too_large">Your saved training data is too large to write into one export file, so this won\'t succeed by retrying. If a file was created it is incomplete, so delete it.</string>
     <string name="local_data_export_refused">WallCrawl couldn\'t build an export file from the data on this device, so this won\'t succeed by retrying. If a file was created it is incomplete, so delete it.</string>
@@ -72,7 +557,7 @@
     <string name="local_data_restore_blocked">Restoring needs a fresh start. Export first if you want to keep this data, then delete all local data, then restore.</string>
     <string name="local_data_restore_checking">Checking whether this app can accept a restore…</string>
     <string name="local_data_restore_check_failed">Couldn\'t check whether this app can accept a restore. You can still try; a restore is refused if this device already holds data.</string>
-    <string name="local_data_restore_success">Restored %1$d workouts and %2$d templates.</string>
+    <string name="local_data_restore_success">Restored %1$s and %2$s.</string>
     <string name="local_data_rejected_version">Couldn\'t restore: this file was written by a newer version of WallCrawl. Update the app and try again.</string>
     <string name="local_data_rejected_checksum">Couldn\'t restore: this file is damaged or was changed after it was exported.</string>
     <string name="local_data_rejected_too_large">Couldn\'t restore: this file is larger than WallCrawl can read.</string>
@@ -87,11 +572,115 @@
     <string name="local_data_delete_hint">Deletes this device\'s copy only. Files you already exported, and any backup a previous version of Android kept, are not touched.</string>
     <string name="local_data_delete_failed">Couldn\'t delete local data. Try again.</string>
     <string name="local_data_delete_confirm_title">Delete all local data?</string>
-    <string name="local_data_delete_confirm_body">This permanently removes your profile and preferences, movement answers, saved templates, every logged workout including one in progress, and cached weekly totals. It cannot be undone, and the app returns to first-run onboarding. Files you already exported are not deleted. Exercise artwork and the bundled catalog stay.</string>
+    <string name="local_data_delete_confirm_body">This permanently removes your profile and preferences, movement answers, saved templates, every logged workout including one in progress, and cached weekly totals. It cannot be undone, and the app returns to first-run onboarding. Files you already exported are not deleted. Exercise artwork and the bundled catalog stay. Your language choice is a device setting and is left as it is.</string>
     <string name="local_data_delete_confirm_action">Delete everything</string>
     <string name="local_data_delete_confirm_cancel">Keep my data</string>
     <string name="local_data_busy">Working…</string>
 
-    <string name="onboarding_restore_title">ALREADY HAVE A WALLCRAWL FILE?</string>
-    <string name="onboarding_restore_description">Restore an exported file now, before setting up a new profile.</string>
+    <!-- ============================ Counted quantities ============================ -->
+    <plurals name="count_sets">
+        <item quantity="one">%1$s set</item>
+        <item quantity="other">%1$s sets</item>
+    </plurals>
+    <plurals name="count_sets_logged">
+        <item quantity="one">%1$s set logged</item>
+        <item quantity="other">%1$s sets logged</item>
+    </plurals>
+    <plurals name="count_exercises">
+        <item quantity="one">%1$s exercise</item>
+        <item quantity="other">%1$s exercises</item>
+    </plurals>
+    <plurals name="count_exercises_found">
+        <item quantity="one">%1$s exercise found</item>
+        <item quantity="other">%1$s exercises found</item>
+    </plurals>
+    <plurals name="count_exercises_available">
+        <item quantity="one">%1$s exercise available</item>
+        <item quantity="other">%1$s exercises available</item>
+    </plurals>
+    <plurals name="count_exercises_selected">
+        <item quantity="one">%1$s selected</item>
+        <item quantity="other">%1$s selected</item>
+    </plurals>
+    <plurals name="count_reps">
+        <item quantity="one">%1$s rep</item>
+        <item quantity="other">%1$s reps</item>
+    </plurals>
+    <plurals name="count_target_reps">
+        <item quantity="one">Target: %1$s rep</item>
+        <item quantity="other">Target: %1$s reps</item>
+    </plurals>
+    <plurals name="count_workouts">
+        <item quantity="one">%1$s workout</item>
+        <item quantity="other">%1$s workouts</item>
+    </plurals>
+    <plurals name="count_templates">
+        <item quantity="one">%1$s workout routine</item>
+        <item quantity="other">%1$s workout routines</item>
+    </plurals>
+    <plurals name="count_illustration_frames">
+        <item quantity="one">%1$s illustration frame</item>
+        <item quantity="other">%1$s illustration frames</item>
+    </plurals>
+    <plurals name="count_gear_types">
+        <item quantity="one">%1$s gear type selected</item>
+        <item quantity="other">%1$s gear types selected</item>
+    </plurals>
+    <plurals name="count_equipment_available">
+        <item quantity="one">%1$s equipment type available</item>
+        <item quantity="other">%1$s equipment types available</item>
+    </plurals>
+    <plurals name="count_preferences_answered">
+        <item quantity="one">%1$s preference answered</item>
+        <item quantity="other">%1$s preferences answered</item>
+    </plurals>
+    <plurals name="count_days_per_week">
+        <item quantity="one">%1$s day/wk</item>
+        <item quantity="other">%1$s days/wk</item>
+    </plurals>
+    <plurals name="count_weeks_streak">
+        <item quantity="one">%1$s-week streak</item>
+        <item quantity="other">%1$s-week streak</item>
+    </plurals>
+    <plurals name="today_weekly_progress">
+        <item quantity="one">%1$s of %2$s workout completed this week</item>
+        <item quantity="other">%1$s of %2$s workouts completed this week</item>
+    </plurals>
+    <plurals name="today_weekly_goal_remaining">
+        <item quantity="one">%1$s to weekly goal</item>
+        <item quantity="other">%1$s to weekly goal</item>
+    </plurals>
+    <plurals name="today_active_session_sets">
+        <item quantity="one">%1$s of %2$s set logged</item>
+        <item quantity="other">%1$s of %2$s sets logged</item>
+    </plurals>
+    <plurals name="progress_workouts_this_week">
+        <item quantity="one">%1$s workout logged this week</item>
+        <item quantity="other">%1$s workouts logged this week</item>
+    </plurals>
+    <plurals name="finish_confirm_title">
+        <item quantity="one">Finish with %1$s unlogged set?</item>
+        <item quantity="other">Finish with %1$s unlogged sets?</item>
+    </plurals>
+    <plurals name="finish_confirm_body">
+        <item quantity="one">%1$s set will stay unlogged. Only completed sets count toward your history.</item>
+        <item quantity="other">%1$s sets will stay unlogged. Only completed sets count toward your history.</item>
+    </plurals>
+    <plurals name="templates_empty_body">
+        <item quantity="one">Choose from the %1$s offline exercise and save custom routines to reuse anytime.</item>
+        <item quantity="other">Choose from all %1$s offline exercises and save custom routines to reuse anytime.</item>
+    </plurals>
+    <plurals name="editor_empty_body">
+        <item quantity="one">Tap “+ Add exercise” to browse the %1$s offline exercise.</item>
+        <item quantity="other">Tap “+ Add exercise” to browse the %1$s offline exercises.</item>
+    </plurals>
+    <plurals name="picker_search_placeholder">
+        <item quantity="one">Search %1$s exercise, muscles, equipment…</item>
+        <item quantity="other">Search %1$s exercises, muscles, equipment…</item>
+    </plurals>
+    <string name="schedule_days_2">2 days • full-body maintenance schedule.</string>
+    <string name="schedule_days_3">3 days • classic full-body progression split (recommended).</string>
+    <string name="schedule_days_4">4 days • upper / lower balanced frequency.</string>
+    <string name="schedule_days_5">5 days • push / pull / legs adaptive split.</string>
+    <string name="schedule_days_6">6 days • high frequency dedicated training.</string>
 </resources>

@@ -1,5 +1,7 @@
 package wallcrawl.elopenmike.com.feature.progress
 
+import androidx.annotation.StringRes
+import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.model.ProgressOverview
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 
@@ -9,5 +11,5 @@ sealed interface ProgressUiState {
         val overview: ProgressOverview,
         val preferredUnit: WeightUnit = WeightUnit.LBS
     ) : ProgressUiState
-    data class Error(val message: String) : ProgressUiState
+    data class Error(@StringRes val messageRes: Int = R.string.progress_error) : ProgressUiState
 }

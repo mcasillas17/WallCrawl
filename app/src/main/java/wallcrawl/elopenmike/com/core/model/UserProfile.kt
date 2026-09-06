@@ -45,26 +45,33 @@ data class UserProfile(
     }
 }
 
-enum class ThemePreference(val displayName: String, val description: String) {
-    SYSTEM("System Default", "Follow device light/dark mode settings"),
-    DARK("Dark Theme", "Stealth black and graphite suit aesthetic"),
-    LIGHT("Light Theme", "High-contrast clean daylight interface")
+enum class ThemePreference {
+    SYSTEM,
+    DARK,
+    LIGHT
 }
 
-enum class FitnessGoal(val displayName: String, val description: String) {
-    BUILD_MUSCLE("Build Muscle", "Hypertrophy focus with moderate-high volume, and lower reps on the heavy compounds."),
-    STRENGTH("Strength", "Heavy compound lifts with lower reps (3–6) and longer rest periods."),
-    GENERAL_FITNESS("General Fitness", "Balanced functional strength, endurance, and mobility."),
-    FAT_LOSS("Fat Loss", "High density training with steady pace and compound movements."),
-    ATHLETIC_PERFORMANCE("Athletic Performance", "Power, agility, explosive strength, and rotational control.")
+enum class FitnessGoal {
+    BUILD_MUSCLE,
+    STRENGTH,
+    GENERAL_FITNESS,
+    FAT_LOSS,
+    ATHLETIC_PERFORMANCE
 }
 
-enum class ExperienceLevel(val displayName: String) {
-    BEGINNER("Beginner (<1 year)"),
-    INTERMEDIATE("Intermediate (1–3 years)"),
-    ADVANCED("Advanced (3+ years)")
+enum class ExperienceLevel {
+    BEGINNER,
+    INTERMEDIATE,
+    ADVANCED
 }
 
+/**
+ * The unit a profile logs and reads loads in.
+ *
+ * [symbol] is the SI-style abbreviation, which is written the same way in every language
+ * WallCrawl ships, so it is domain data rather than a translated label. Switching language
+ * never changes the unit or the stored value.
+ */
 enum class WeightUnit(val symbol: String) {
     LBS("lb"),
     KG("kg")
@@ -81,53 +88,57 @@ fun convertWeight(value: Double, from: WeightUnit, to: WeightUnit): Double {
 
 private const val KILOGRAMS_PER_POUND = 0.45359237
 
-enum class PriorityLevel(val multiplier: Float, val label: String) {
-    LOW(0.6f, "Low"),
-    NORMAL(1.0f, "Normal"),
-    HIGH(1.4f, "High")
+enum class PriorityLevel(val multiplier: Float) {
+    LOW(0.6f),
+    NORMAL(1.0f),
+    HIGH(1.4f)
 }
 
-data class BreakRange(
-    val weeks: Int,
-    val title: String,
-    val subtitle: String
-)
+/**
+ * How long a returning user has been away, as a bounded set of ranges.
+ *
+ * The ranges are identity, not copy: [weeks] is what the planner reads, and the title,
+ * subtitle, and guidance that describe each one are string resources chosen by
+ * `wallcrawl.elopenmike.com.core.ui.localization.DomainLabels`. That keeps the volume
+ * decision identical in every language.
+ */
+enum class BreakRange(val weeks: Int) {
+    NONE(0),
+    SHORT(4),
+    MODERATE(12),
+    EXTENDED(26),
+    LONG(52),
+    HIATUS(104),
+    MULTI_YEAR(156)
+}
+
+/** The wording tier used to explain what a break means for the coming plan. */
+enum class BreakGuidance {
+    NONE,
+    SHORT,
+    MODERATE,
+    LONG,
+    HIATUS
+}
 
 object BreakDurationHelper {
-    val RANGES = listOf(
-        BreakRange(0, "Consistent / No Break", "Regular training without extended gaps"),
-        BreakRange(4, "1–4 Weeks", "Short break • Quick momentum recovery"),
-        BreakRange(12, "1–3 Months", "Moderate break • Tendon re-adaptation"),
-        BreakRange(26, "3–6 Months", "Extended break • Conservative volume ramp-up"),
-        BreakRange(52, "6–12 Months", "Long break • Conservative baseline reset"),
-        BreakRange(104, "1–2 Years", "Extended hiatus • Re-entry active (2 sets/exercise)"),
-        BreakRange(156, "2+ Years", "Multi-year hiatus • Full re-entry & fresh baseline")
-    )
-
-    val PRESETS = RANGES.map { it.weeks to it.title }
+    val RANGES: List<BreakRange> = BreakRange.entries
 
     fun findMatchingRange(weeks: Int): BreakRange = when {
-        weeks <= 0 -> RANGES[0]
-        weeks in 1..8 -> RANGES[1]
-        weeks in 9..18 -> RANGES[2]
-        weeks in 19..38 -> RANGES[3]
-        weeks in 39..77 -> RANGES[4]
-        weeks in 78..129 -> RANGES[5]
-        else -> RANGES[6]
+        weeks <= 0 -> BreakRange.NONE
+        weeks in 1..8 -> BreakRange.SHORT
+        weeks in 9..18 -> BreakRange.MODERATE
+        weeks in 19..38 -> BreakRange.EXTENDED
+        weeks in 39..77 -> BreakRange.LONG
+        weeks in 78..129 -> BreakRange.HIATUS
+        else -> BreakRange.MULTI_YEAR
     }
 
-    fun formatLabel(weeks: Int): String = findMatchingRange(weeks).title
-
-    fun formatDetailedLabel(weeks: Int): String {
-        val range = findMatchingRange(weeks)
-        return "${range.title} • ${range.subtitle}"
-    }
-
-    fun guidanceText(weeks: Int): String = when {
-        weeks <= 0 -> "No recent break. Standard adaptive progression."
-        weeks in 1..8 -> "Short break. Quick ramp-up to normal training volume."
-        weeks in 9..38 -> "Moderate break. We'll start with conservative volume to protect connective tissue and ease back in."
-        weeks in 39..77 -> "Significant break. Sets and starting weights are scaled to avoid excessive soreness while rebuilding capacity."
-        else -> "Extended hiatus (1+ years). Volume is capped at 2 sets per movement to protect joint tendons and safely rebuild connective tissue."
+    fun guidanceFor(weeks: Int): BreakGuidance = when {
+        weeks <= 0 -> BreakGuidance.NONE
+        weeks in 1..8 -> BreakGuidance.SHORT
+        weeks in 9..38 -> BreakGuidance.MODERATE
+        weeks in 39..77 -> BreakGuidance.LONG
+        else -> BreakGuidance.HIATUS
     }
 }

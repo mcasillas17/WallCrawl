@@ -27,7 +27,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.LinkInteractionListener
@@ -40,11 +43,13 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.exercise.workoutguide.AttributionNotice
 import wallcrawl.elopenmike.com.core.exercise.workoutguide.CatalogAttribution
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlSecondaryButton
 import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
+import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 
@@ -72,18 +77,22 @@ fun CreditsScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onBack) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back", tint = MaterialTheme.colorScheme.onSurface)
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowBack,
+                        stringResource(R.string.action_back),
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
                 }
                 Column {
                     Text(
-                        text = "CREDITS",
+                        text = stringResource(R.string.credits_eyebrow),
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 1.5.sp,
                         color = CrimsonRedPrimary
                     )
                     Text(
-                        text = "Artwork & Licenses",
+                        text = stringResource(R.string.credits_title),
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Black,
                         color = MaterialTheme.colorScheme.onSurface
@@ -101,22 +110,29 @@ fun CreditsScreen(
                 is CreditsUiState.Error -> {
                     WallCrawlCard(borderColor = CrimsonRedPrimary) {
                         Text(
-                            text = "Attribution unavailable",
+                            text = stringResource(R.string.credits_error_title),
                             fontWeight = FontWeight.Bold,
                             color = CrimsonRedLight,
                             fontSize = 16.sp
                         )
                         Spacer(Modifier.height(8.dp))
-                        Text(current.message, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp)
+                        Text(
+                            stringResource(current.messageRes),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 13.sp
+                        )
                         Spacer(Modifier.height(12.dp))
-                        WallCrawlSecondaryButton(text = "Try Again", onClick = viewModel::load)
+                        WallCrawlSecondaryButton(
+                            text = stringResource(R.string.action_try_again),
+                            onClick = viewModel::load
+                        )
                     }
                 }
 
                 is CreditsUiState.Success -> {
-                    linkError?.let { message ->
+                    linkError?.let { failedUrl ->
                         Text(
-                            text = message,
+                            text = stringResource(R.string.credits_link_failed, failedUrl),
                             fontSize = 13.sp,
                             color = CrimsonRedLight,
                             modifier = Modifier.padding(bottom = 8.dp)
@@ -130,7 +146,7 @@ fun CreditsScreen(
                         onOpenUrl = { url ->
                             linkError = runCatching { uriHandler.openUri(url) }
                                 .exceptionOrNull()
-                                ?.let { "No app available to open $url" }
+                                ?.let { url }
                         }
                     )
                 }
@@ -145,11 +161,12 @@ private fun CreditsContent(
     notices: List<AttributionNotice>,
     onOpenUrl: (String) -> Unit
 ) {
+    val locale = LocalConfiguration.current.locales[0]
     LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         item {
             WallCrawlCard {
                 Text(
-                    text = "EXERCISE ILLUSTRATIONS",
+                    text = stringResource(R.string.credits_illustrations_heading),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.8.sp,
@@ -166,24 +183,44 @@ private fun CreditsContent(
                 // upstream are themselves traced adaptations of Everkinetic originals, which
                 // the Attribution notice below spells out.
                 Text(
-                    text = "${catalog.exerciseCount} exercises · ${catalog.frameCount} " +
-                        "illustration frames, imported unmodified",
+                    text = stringResource(
+                        R.string.credits_counts,
+                        pluralStringResource(
+                            R.plurals.count_exercises,
+                            catalog.exerciseCount,
+                            LocaleFormatting.formatCount(catalog.exerciseCount, locale)
+                        ),
+                        pluralStringResource(
+                            R.plurals.count_illustration_frames,
+                            catalog.frameCount,
+                            LocaleFormatting.formatCount(catalog.frameCount, locale)
+                        )
+                    ),
                     fontSize = 13.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(Modifier.height(12.dp))
-                CreditRow(label = "License", value = catalog.attribution.license)
-                CreditRow(label = "Source", value = catalog.repository)
-                CreditRow(label = "Pinned commit", value = catalog.commit.take(12))
+                CreditRow(
+                    label = stringResource(R.string.credits_label_license),
+                    value = catalog.attribution.license
+                )
+                CreditRow(
+                    label = stringResource(R.string.credits_label_source),
+                    value = catalog.repository
+                )
+                CreditRow(
+                    label = stringResource(R.string.credits_label_commit),
+                    value = catalog.commit.take(12)
+                )
 
                 Spacer(Modifier.height(14.dp))
                 WallCrawlSecondaryButton(
-                    text = "View license",
+                    text = stringResource(R.string.credits_action_view_license),
                     onClick = { onOpenUrl(catalog.attribution.licenseUrl) }
                 )
                 Spacer(Modifier.height(8.dp))
                 WallCrawlSecondaryButton(
-                    text = "Visit creator",
+                    text = stringResource(R.string.credits_action_visit_creator),
                     onClick = { onOpenUrl(catalog.attribution.creatorUrl) }
                 )
             }
@@ -192,11 +229,19 @@ private fun CreditsContent(
         items(notices) { notice ->
             WallCrawlCard {
                 Text(
-                    text = notice.title.uppercase(),
+                    text = stringResource(notice.titleRes).uppercase(locale),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.8.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(Modifier.height(4.dp))
+                // The heading around a licence is translated; the licence is not, and the
+                // screen says so rather than letting a Spanish reader assume otherwise.
+                Text(
+                    text = stringResource(R.string.credits_notice_original_language),
+                    fontSize = 11.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                 )
                 Spacer(Modifier.height(8.dp))
                 Text(

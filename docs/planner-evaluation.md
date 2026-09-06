@@ -101,7 +101,7 @@ Failures report the field path and unknown ID only; they never echo the whole fi
   - `forbiddenExerciseIds`
   - `requiredAnyExerciseIdGroups`
   - `expectedTargetWeights`
-  - `workoutNameContains`
+  - `titleIdentityContains`
   - `maxTargetSetsPerExercise`
 
 Failure fixtures may therefore assert only the typed outcome they expect from the real planner.
@@ -137,7 +137,7 @@ The manifest currently contains eleven fixtures:
 2. `band-only` — resistance-band-only back-focused coverage proving a band row can be selected while cable-only pull work is excluded by the real filter.
 3. `machine-only` — machine-only strength coverage with a confirmed machine press load.
 4. `full-gym-advanced` — broad full-gym strength-plus-hypertrophy coverage against the full bundled candidate pool.
-5. `returning-user` — curated lower-demand full-body subset for re-entry (`incline-dumbbell-press`, `one-arm-dumbbell-row`, `goblet-squat`, `glute-bridge`, `dead-bug`), preserving the `"(Re-entry)"` title fragment, a max-two-set cap, the confirmed incline press load, and keeping `ab-wheel` / `single-leg-romanian-deadlift` out of the curated pool.
+5. `returning-user` — curated lower-demand full-body subset for re-entry (`incline-dumbbell-press`, `one-arm-dumbbell-row`, `goblet-squat`, `glute-bridge`, `dead-bug`), preserving the `RE_ENTRY` title identity (`WorkoutTitleSpec.isReEntry`), a max-two-set cap, the confirmed incline press load, and keeping `ab-wheel` / `single-leg-romanian-deadlift` out of the curated pool.
 6. `limited-capability` — curated dumbbell/bench push subset (`dumbbell-bench-press`, `dumbbell-shoulder-press`, `incline-dumbbell-press`, `dumbbell-lateral-raise`) that keeps capability metadata present but inert for planner eligibility and asserts the shoulder-press target load from history / confirmed data.
 7. `mixed-unit-history` — kilogram history coverage proving prior KG history is honored and the existing load is preserved when recent sets do not justify an increase.
 8. `sparse-history` — curated regression-friendly upper-body subset using `inverted-row`, `banded-lat-pulldown`, and `prone-y-raise` so sparse history does not freeze a limited-hang profile to pull-ups.

@@ -45,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
@@ -53,6 +54,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material3.MaterialTheme
+import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.model.CapabilityLevel
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
@@ -63,7 +65,9 @@ import wallcrawl.elopenmike.com.core.model.ThemePreference
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
-import wallcrawl.elopenmike.com.core.ui.components.StatBadge
+import wallcrawl.elopenmike.com.core.model.BreakDurationHelper
+import wallcrawl.elopenmike.com.core.ui.components.BreakDurationSelector
+import wallcrawl.elopenmike.com.core.ui.components.LanguageOptions
 import wallcrawl.elopenmike.com.core.ui.components.MovementCapabilityQuestion
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlOutlinedButton
@@ -71,6 +75,12 @@ import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
 import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
 import wallcrawl.elopenmike.com.core.ui.components.capabilityLevelLabel
 import wallcrawl.elopenmike.com.core.ui.components.movementCapabilityLabel
+import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
+import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
+import wallcrawl.elopenmike.com.core.ui.localization.descriptionRes
+import wallcrawl.elopenmike.com.core.ui.localization.labelRes
+import wallcrawl.elopenmike.com.core.ui.localization.messageRes
+import wallcrawl.elopenmike.com.core.ui.localization.shortLabelRes
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
@@ -105,7 +115,7 @@ fun ProfileScreen(
 
             is ProfileUiState.Error -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(state.message, color = CrimsonRedLight)
+                    Text(stringResource(state.messageRes), color = CrimsonRedLight)
                 }
             }
 
@@ -182,14 +192,14 @@ private fun ProfileContent(
         item {
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "SETTINGS",
+                text = stringResource(R.string.profile_eyebrow),
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.5.sp,
                 color = CrimsonRedPrimary
             )
             Text(
-                text = "Training Profile",
+                text = stringResource(R.string.profile_title),
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Black,
                 color = MaterialTheme.colorScheme.onSurface
@@ -203,7 +213,7 @@ private fun ProfileContent(
                 contentPadding = 16.dp
             ) {
                 Text(
-                    text = "FITNESS GOALS",
+                    text = stringResource(R.string.profile_goals_heading),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.8.sp,
@@ -211,7 +221,7 @@ private fun ProfileContent(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Select all that apply to your current training block:",
+                    text = stringResource(R.string.profile_goals_hint),
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -242,13 +252,13 @@ private fun ProfileContent(
                         ) {
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = goal.displayName,
+                                    text = stringResource(goal.labelRes),
                                     fontSize = 15.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = if (isSelected) CrimsonRedPrimary else MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
-                                    text = goal.description,
+                                    text = stringResource(goal.descriptionRes),
                                     fontSize = 12.sp,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -273,8 +283,9 @@ private fun ProfileContent(
                 cornerRadius = 16.dp,
                 contentPadding = 16.dp
             ) {
+                val locale = LocalConfiguration.current.locales[0]
                 Text(
-                    text = "WORKOUT PREFERENCES",
+                    text = stringResource(R.string.profile_preferences_heading),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.8.sp,
@@ -289,7 +300,13 @@ private fun ProfileContent(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = "Preferred Weight Unit", fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface)
+                    Text(
+                        text = stringResource(R.string.profile_preferred_unit),
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.weight(1f)
+                    )
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         WeightUnit.entries.forEach { unit ->
                             val isSelected = profile.preferredUnit == unit
@@ -301,7 +318,7 @@ private fun ProfileContent(
                                     .padding(horizontal = 14.dp, vertical = 6.dp)
                             ) {
                                 Text(
-                                    text = unit.name,
+                                    text = stringResource(unit.shortLabelRes),
                                     fontSize = 13.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = if (isSelected) TextWhite else MaterialTheme.colorScheme.onSurface
@@ -319,8 +336,22 @@ private fun ProfileContent(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text(text = "Preferred Duration", fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface)
-                        Text(text = "~${profile.preferredDurationMinutes} min", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary)
+                        Text(
+                            text = stringResource(R.string.profile_preferred_duration),
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Text(
+                            text = stringResource(
+                                R.string.profile_duration_value,
+                                LocaleFormatting.formatCount(profile.preferredDurationMinutes, locale)
+                            ),
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.secondary
+                        )
                     }
                     Slider(
                         value = profile.preferredDurationMinutes.toFloat(),
@@ -343,7 +374,13 @@ private fun ProfileContent(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = "Training Days / Week", fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface)
+                    Text(
+                        text = stringResource(R.string.profile_training_days),
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.weight(1f)
+                    )
                     Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         (2..6).forEach { days ->
                             val isSelected = profile.daysPerWeek == days
@@ -356,7 +393,7 @@ private fun ProfileContent(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = "$days",
+                                    text = LocaleFormatting.formatCount(days, locale),
                                     fontSize = 13.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = if (isSelected) TextWhite else MaterialTheme.colorScheme.onSurface
@@ -387,8 +424,9 @@ private fun ProfileContent(
                 cornerRadius = 16.dp,
                 contentPadding = 16.dp
             ) {
+                val vocabulary = LocalExerciseVocabulary.current
                 Text(
-                    text = "AVAILABLE EQUIPMENT",
+                    text = stringResource(R.string.profile_equipment_heading),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.8.sp,
@@ -405,10 +443,12 @@ private fun ProfileContent(
                         val isSelected = equipment in profile.availableEquipment
                         FilterChip(
                             selected = isSelected,
+                            // The canonical English name is what is stored and matched on;
+                            // only the label is translated.
                             onClick = { onToggleEquipment(equipment) },
                             label = {
                                 Text(
-                                    text = equipment,
+                                    text = vocabulary.equipment(equipment),
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.SemiBold,
                                     color = if (isSelected) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onSurface
@@ -438,8 +478,9 @@ private fun ProfileContent(
                 cornerRadius = 16.dp,
                 contentPadding = 16.dp
             ) {
+                val muscleVocabulary = LocalExerciseVocabulary.current
                 Text(
-                    text = "MUSCLE PRIORITIES",
+                    text = stringResource(R.string.profile_muscle_heading),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.8.sp,
@@ -457,10 +498,13 @@ private fun ProfileContent(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = muscle,
+                            // The map key stays the canonical English name; the row label
+                            // is the reader's word for the same muscle.
+                            text = muscleVocabulary.muscle(muscle),
                             fontSize = 14.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.weight(1f)
                         )
 
                         Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -489,7 +533,7 @@ private fun ProfileContent(
                                         .padding(horizontal = 8.dp, vertical = 4.dp)
                                 ) {
                                     Text(
-                                        text = level.label,
+                                        text = stringResource(level.labelRes),
                                         fontSize = 11.sp,
                                         fontWeight = FontWeight.Bold,
                                         color = textColor
@@ -509,7 +553,7 @@ private fun ProfileContent(
                 contentPadding = 16.dp
             ) {
                 Text(
-                    text = "TRAINING SAFETY",
+                    text = stringResource(R.string.profile_safety_heading),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.8.sp,
@@ -529,7 +573,7 @@ private fun ProfileContent(
                             onClick = { onToggleConstraint(constraint) },
                             label = {
                                 Text(
-                                    text = constraint.displayName,
+                                    text = stringResource(constraint.labelRes),
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.SemiBold,
                                     color = if (isSelected) TextWhite else MaterialTheme.colorScheme.onSurface
@@ -558,10 +602,16 @@ private fun ProfileContent(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = "Returning After a Break", fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface)
+                    Text(
+                        text = stringResource(R.string.profile_break_title),
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.weight(1f)
+                    )
                     if (profile.returningAfterBreakWeeks > 0) {
                         Text(
-                            text = "Re-entry Active",
+                            text = stringResource(R.string.break_reentry_active),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.secondary
@@ -570,20 +620,22 @@ private fun ProfileContent(
                 }
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
-                    text = "Adjust your break duration to adapt training volume and protect joint health.",
+                    text = stringResource(R.string.profile_break_hint),
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(modifier = Modifier.height(12.dp))
 
-                ProfileBreakDurationDropdownSelector(
+                BreakDurationSelector(
                     weeks = profile.returningAfterBreakWeeks,
                     onSelectWeeks = { onUpdateReturningAfterBreakWeeks(it) }
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = wallcrawl.elopenmike.com.core.model.BreakDurationHelper.guidanceText(profile.returningAfterBreakWeeks),
+                    text = stringResource(
+                        BreakDurationHelper.guidanceFor(profile.returningAfterBreakWeeks).messageRes
+                    ),
                     fontSize = 12.sp,
                     color = if (profile.returningAfterBreakWeeks >= 52) CrimsonRedPrimary else MaterialTheme.colorScheme.secondary,
                     fontWeight = FontWeight.Medium
@@ -591,9 +643,9 @@ private fun ProfileContent(
             }
         }
 
-        // 6. App Preferences (Theme Switcher)
+        // 6. App preferences: theme and language, in one card under one heading.
         item {
-            ProfileThemeSelector(
+            AppPreferencesCard(
                 currentTheme = profile.themePreference,
                 onSelectTheme = onUpdateThemePreference
             )
@@ -619,11 +671,12 @@ private fun ProfileContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "CREDITS & LICENSES",
+                        text = stringResource(R.string.profile_credits_heading),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 0.8.sp,
-                        color = CrimsonRedPrimary
+                        color = CrimsonRedPrimary,
+                        modifier = Modifier.weight(1f)
                     )
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
@@ -634,7 +687,7 @@ private fun ProfileContent(
                 }
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
-                    text = "Who made the exercise illustrations, and the license they ship under.",
+                    text = stringResource(R.string.profile_credits_body),
                     fontSize = 13.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -762,8 +815,12 @@ private fun MovementCapabilityProfileCard(
     }
 }
 
+/**
+ * Interface theme and app language, the two settings that are about the device rather than
+ * about training. Neither is part of the training profile or the export archive.
+ */
 @Composable
-private fun ProfileThemeSelector(
+internal fun AppPreferencesCard(
     currentTheme: ThemePreference,
     onSelectTheme: (ThemePreference) -> Unit,
     modifier: Modifier = Modifier
@@ -774,7 +831,7 @@ private fun ProfileThemeSelector(
         contentPadding = 16.dp
     ) {
         Text(
-            text = "APP PREFERENCES",
+            text = stringResource(R.string.profile_app_preferences_heading),
             fontSize = 12.sp,
             fontWeight = FontWeight.Bold,
             letterSpacing = 0.8.sp,
@@ -789,18 +846,14 @@ private fun ProfileThemeSelector(
         ) {
             Column(modifier = Modifier.weight(1f).padding(end = 12.dp)) {
                 Text(
-                    text = "Interface Theme",
+                    text = stringResource(R.string.profile_theme_title),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = when (currentTheme) {
-                        ThemePreference.SYSTEM -> "Follows device appearance"
-                        ThemePreference.DARK -> "Stealth suit (Dark)"
-                        ThemePreference.LIGHT -> "Daylight athletic (Light)"
-                    },
+                    text = stringResource(currentTheme.descriptionRes),
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -829,11 +882,7 @@ private fun ProfileThemeSelector(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = when (theme) {
-                                ThemePreference.SYSTEM -> "Auto"
-                                ThemePreference.DARK -> "Dark"
-                                ThemePreference.LIGHT -> "Light"
-                            },
+                            text = stringResource(theme.shortLabelRes),
                             fontSize = 12.sp,
                             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
                             color = if (isSelected) TextWhite else MaterialTheme.colorScheme.onSurfaceVariant
@@ -842,112 +891,17 @@ private fun ProfileThemeSelector(
                 }
             }
         }
-    }
-}
 
-@Composable
-private fun ProfileBreakDurationDropdownSelector(
-    weeks: Int,
-    onSelectWeeks: (Int) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    var expanded by remember { mutableStateOf(false) }
-    val currentRange = wallcrawl.elopenmike.com.core.model.BreakDurationHelper.findMatchingRange(weeks)
-
-    Box(modifier = modifier.fillMaxWidth()) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(12.dp))
-                .background(MaterialTheme.colorScheme.surface)
-                .border(
-                    1.dp,
-                    if (expanded) CrimsonRedPrimary else MaterialTheme.colorScheme.outline,
-                    RoundedCornerShape(12.dp)
-                )
-                .clickable { expanded = !expanded }
-                .padding(horizontal = 16.dp, vertical = 12.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = currentRange.title,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = if (currentRange.weeks == 0) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.secondary
-                    )
-                    Spacer(modifier = Modifier.height(2.dp))
-                    Text(
-                        text = currentRange.subtitle,
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-
-                Icon(
-                    imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                    contentDescription = if (expanded) "Close range menu" else "Select break range",
-                    tint = if (expanded) CrimsonRedPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(24.dp)
-                )
-            }
-        }
-
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier
-                .fillMaxWidth(0.88f)
-                .background(MaterialTheme.colorScheme.surfaceVariant)
-                .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
-        ) {
-            wallcrawl.elopenmike.com.core.model.BreakDurationHelper.RANGES.forEach { range ->
-                val isSelected = range == currentRange
-                DropdownMenuItem(
-                    text = {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = range.title,
-                                    fontSize = 14.sp,
-                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.SemiBold,
-                                    color = if (isSelected) CrimsonRedLight else MaterialTheme.colorScheme.onSurface
-                                )
-                                Text(
-                                    text = range.subtitle,
-                                    fontSize = 11.sp,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                            if (isSelected) {
-                                Icon(
-                                    imageVector = Icons.Default.Check,
-                                    contentDescription = null,
-                                    tint = CrimsonRedPrimary,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                            }
-                        }
-                    },
-                    onClick = {
-                        onSelectWeeks(range.weeks)
-                        expanded = false
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(if (isSelected) CrimsonRedPrimary.copy(alpha = 0.12f) else Color.Transparent)
-                )
-            }
-        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = stringResource(R.string.language_setting_title),
+            fontSize = 14.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+        Spacer(modifier = Modifier.height(2.dp))
+        // The same control the onboarding Welcome step shows, reading and writing the one
+        // app-language preference rather than a second copy of it.
+        LanguageOptions()
     }
 }

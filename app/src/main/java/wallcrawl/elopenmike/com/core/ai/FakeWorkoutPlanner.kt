@@ -9,8 +9,13 @@ import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
 import wallcrawl.elopenmike.com.core.model.MechanicsType
 import wallcrawl.elopenmike.com.core.model.MovementPattern
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
+import wallcrawl.elopenmike.com.core.model.BreakDurationHelper
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
+import wallcrawl.elopenmike.com.core.model.WorkoutEmphasis
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
+import wallcrawl.elopenmike.com.core.model.WorkoutRationaleSpec
+import wallcrawl.elopenmike.com.core.model.WorkoutSplit
+import wallcrawl.elopenmike.com.core.model.WorkoutTitleSpec
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
@@ -48,7 +53,7 @@ class FakeWorkoutPlanner(
             )
         }
         val generationIndex = generationCounter.getAndIncrement()
-        val splitType = determineSplitType(context, generationIndex, candidates)
+        val splitType = determineSplit(context, generationIndex, candidates)
 
         val selectedExercises = selectExercisesForSplit(splitType, candidates, context)
         val generatedExerciseList = selectedExercises.map { exercise ->
@@ -59,21 +64,26 @@ class FakeWorkoutPlanner(
         val isLongBreak = breakWeeks >= 52
         val isMediumBreak = breakWeeks in 4..51
 
-        val baseWorkoutName = generateWorkoutTitle(splitType, context.fitnessGoals.ifEmpty { setOf(context.fitnessGoal) })
-        val workoutName = if (isLongBreak) "$baseWorkoutName (Re-entry)" else baseWorkoutName
+        val goals = context.fitnessGoals.ifEmpty { setOf(context.fitnessGoal) }
         val focusMuscles = extractFocusMuscles(selectedExercises)
         val estimatedDuration = calculateEstimatedDuration(generatedExerciseList)
-        val goalsDisplay = context.fitnessGoals.ifEmpty { setOf(context.fitnessGoal) }
-            .joinToString(" + ") { it.displayName }
+        val breakRange = BreakDurationHelper.findMatchingRange(breakWeeks)
+        // Ordered by the enum rather than by set iteration, so the same profile always
+        // produces the same title and the same explanation.
+        val orderedGoals = FitnessGoal.entries.filter { it in goals }
 
         val rationale = when {
-            isLongBreak -> "Re-entry Ramp-Up Active: Volume is capped at 2 sets to protect joint tendons and safely rebuild capacity after ${wallcrawl.elopenmike.com.core.model.BreakDurationHelper.formatLabel(breakWeeks)}."
-            isMediumBreak -> "Generated for $goalsDisplay with conservative volume scaling for break recovery (${wallcrawl.elopenmike.com.core.model.BreakDurationHelper.formatLabel(breakWeeks)})."
-            else -> "Generated for $goalsDisplay with priority on ${focusMuscles.joinToString(", ")}."
+            isLongBreak -> WorkoutRationaleSpec.ReEntryRamp(breakRange)
+            isMediumBreak -> WorkoutRationaleSpec.BreakRecovery(orderedGoals, breakRange)
+            else -> WorkoutRationaleSpec.GoalFocus(orderedGoals, focusMuscles)
         }
 
         return GeneratedWorkout(
-            name = workoutName,
+            title = WorkoutTitleSpec(
+                split = splitType,
+                emphasis = emphasisFor(goals),
+                isReEntry = isLongBreak
+            ),
             focusMuscles = focusMuscles,
             estimatedDurationMinutes = estimatedDuration,
             exercises = generatedExerciseList,
@@ -81,16 +91,16 @@ class FakeWorkoutPlanner(
         )
     }
 
-    private fun determineSplitType(
+    private fun determineSplit(
         context: WorkoutGenerationContext,
         generationIndex: Int,
         candidates: List<Exercise>
-    ): SplitType {
+    ): WorkoutSplit {
         val highPriorityMuscles = context.musclePriorities
             .filter { it.value == PriorityLevel.HIGH }
             .keys
 
-        val preferred = SplitType.entries.filter { split ->
+        val preferred = WorkoutSplit.entries.filter { split ->
             highPriorityMuscles.any { it in split.targetMuscles }
         }
 
@@ -105,8 +115,8 @@ class FakeWorkoutPlanner(
             )
         }
 
-        fun List<SplitType>.fillable() = filter { split -> candidates.any { it.trains(split) } }
-        val trainable = preferred.fillable().ifEmpty { SplitType.DEFAULT_ROTATION.fillable() }
+        fun List<WorkoutSplit>.fillable() = filter { split -> candidates.any { it.trains(split) } }
+        val trainable = preferred.fillable().ifEmpty { WorkoutSplit.DEFAULT_ROTATION.fillable() }
         if (trainable.isEmpty()) {
             throw WorkoutValidationException(
                 message = "No available exercise trains any split for this profile.",
@@ -128,7 +138,7 @@ class FakeWorkoutPlanner(
     private fun rotationSeed(context: WorkoutGenerationContext, generationIndex: Int): Int =
         context.completedWorkoutCount + generationIndex
 
-    private fun Exercise.trains(split: SplitType): Boolean =
+    private fun Exercise.trains(split: WorkoutSplit): Boolean =
         isStrengthWork() &&
             (
                 primaryMuscles.any { it in split.targetMuscles } ||
@@ -159,16 +169,16 @@ class FakeWorkoutPlanner(
         (primaryMuscles + secondaryMuscles).any { it == StandardMuscles.CARDIO }
 
     private fun selectExercisesForSplit(
-        split: SplitType,
+        split: WorkoutSplit,
         candidates: List<Exercise>,
         context: WorkoutGenerationContext
     ): List<Exercise> {
         // A candidate that trains none of the split's muscles is not a substitute for one that
         // does. Widening back to the whole catalog is what used to hand a Push day whatever
-        // sorted first; determineSplitType has already guaranteed this split is fillable.
+        // sorted first; determineSplit has already guaranteed this split is fillable.
         val matchingCandidates = candidates.filter { it.trains(split) }
         check(matchingCandidates.isNotEmpty()) {
-            "Split ${split.displayName} was selected without any matching candidate."
+            "Split ${split.name} was selected without any matching candidate."
         }
 
         val exerciseCountTarget = when {
@@ -226,7 +236,7 @@ class FakeWorkoutPlanner(
      * same lift.
      */
     private fun chooseCompounds(
-        split: SplitType,
+        split: WorkoutSplit,
         candidates: List<Exercise>,
         slots: Int,
         context: WorkoutGenerationContext,
@@ -274,7 +284,7 @@ class FakeWorkoutPlanner(
      * another squat pattern adds fatigue where an accessory adds the volume that was missing.
      */
     private fun accessoryOrder(
-        split: SplitType,
+        split: WorkoutSplit,
         context: WorkoutGenerationContext,
         reviewedEligibilityEnabled: Boolean,
         capabilityPenalties: Map<String, Int>
@@ -293,7 +303,7 @@ class FakeWorkoutPlanner(
             .thenByDescending { it.programming?.fatigueScore ?: 0 }
             .thenBy { it.id }
 
-    private fun Exercise.trainsAsPrimary(split: SplitType): Boolean =
+    private fun Exercise.trainsAsPrimary(split: WorkoutSplit): Boolean =
         primaryMuscles.any { it in split.targetMuscles }
 
     private fun createGeneratedExercise(
@@ -307,21 +317,21 @@ class FakeWorkoutPlanner(
         )
     }
 
-    private fun generateWorkoutTitle(split: SplitType, goals: Set<FitnessGoal>): String {
-        val prefix = split.displayName
-        val suffix = when {
-            FitnessGoal.STRENGTH in goals && FitnessGoal.BUILD_MUSCLE in goals -> "Power & Hypertrophy"
-            FitnessGoal.STRENGTH in goals && FitnessGoal.ATHLETIC_PERFORMANCE in goals -> "Power & Performance"
-            FitnessGoal.FAT_LOSS in goals && FitnessGoal.ATHLETIC_PERFORMANCE in goals -> "Athletic Conditioning"
-            FitnessGoal.BUILD_MUSCLE in goals && FitnessGoal.FAT_LOSS in goals -> "Hypertrophy & Definition"
-            FitnessGoal.BUILD_MUSCLE in goals -> "Hypertrophy"
-            FitnessGoal.STRENGTH in goals -> "Power & Strength"
-            FitnessGoal.ATHLETIC_PERFORMANCE in goals -> "Agility & Explosiveness"
-            FitnessGoal.FAT_LOSS in goals -> "High-Density Circuit"
-            FitnessGoal.GENERAL_FITNESS in goals -> "Athletic Foundation"
-            else -> "Conditioning"
-        }
-        return "$prefix · $suffix"
+    private fun emphasisFor(goals: Set<FitnessGoal>): WorkoutEmphasis = when {
+        FitnessGoal.STRENGTH in goals && FitnessGoal.BUILD_MUSCLE in goals ->
+            WorkoutEmphasis.POWER_AND_HYPERTROPHY
+        FitnessGoal.STRENGTH in goals && FitnessGoal.ATHLETIC_PERFORMANCE in goals ->
+            WorkoutEmphasis.POWER_AND_PERFORMANCE
+        FitnessGoal.FAT_LOSS in goals && FitnessGoal.ATHLETIC_PERFORMANCE in goals ->
+            WorkoutEmphasis.ATHLETIC_CONDITIONING
+        FitnessGoal.BUILD_MUSCLE in goals && FitnessGoal.FAT_LOSS in goals ->
+            WorkoutEmphasis.HYPERTROPHY_AND_DEFINITION
+        FitnessGoal.BUILD_MUSCLE in goals -> WorkoutEmphasis.HYPERTROPHY
+        FitnessGoal.STRENGTH in goals -> WorkoutEmphasis.POWER_AND_STRENGTH
+        FitnessGoal.ATHLETIC_PERFORMANCE in goals -> WorkoutEmphasis.AGILITY_AND_EXPLOSIVENESS
+        FitnessGoal.FAT_LOSS in goals -> WorkoutEmphasis.HIGH_DENSITY_CIRCUIT
+        FitnessGoal.GENERAL_FITNESS in goals -> WorkoutEmphasis.ATHLETIC_FOUNDATION
+        else -> WorkoutEmphasis.CONDITIONING
     }
 
     private fun extractFocusMuscles(exercises: List<Exercise>): List<String> {
@@ -339,74 +349,4 @@ class FakeWorkoutPlanner(
         return ((restTimeSeconds + executionTimeSeconds) / 60).coerceIn(1, 240)
     }
 
-    private enum class SplitType(
-        val displayName: String,
-        val targetMuscles: List<String>
-    ) {
-        PUSH(
-            displayName = "Push",
-            targetMuscles = listOf(
-                StandardMuscles.CHEST,
-                StandardMuscles.SHOULDERS,
-                StandardMuscles.TRICEPS
-            )
-        ),
-        PULL(
-            displayName = "Pull",
-            targetMuscles = listOf(
-                StandardMuscles.BACK,
-                StandardMuscles.UPPER_BACK,
-                StandardMuscles.LATS,
-                StandardMuscles.REAR_DELTS,
-                StandardMuscles.BICEPS,
-                StandardMuscles.FOREARMS
-            )
-        ),
-        LEGS(
-            displayName = "Legs",
-            targetMuscles = listOf(
-                StandardMuscles.QUADS,
-                StandardMuscles.HAMSTRINGS,
-                StandardMuscles.GLUTES,
-                StandardMuscles.CALVES,
-                StandardMuscles.ADDUCTORS,
-                StandardMuscles.HIPS,
-                // Hip hinges are the app's lower-back work; without this a Lower Back
-                // priority would select no split at all.
-                StandardMuscles.LOWER_BACK
-            )
-        ),
-        UPPER_BODY(
-            displayName = "Upper Body",
-            targetMuscles = listOf(
-                StandardMuscles.CHEST,
-                StandardMuscles.BACK,
-                StandardMuscles.UPPER_BACK,
-                StandardMuscles.LATS,
-                StandardMuscles.SHOULDERS,
-                StandardMuscles.REAR_DELTS,
-                StandardMuscles.BICEPS,
-                StandardMuscles.TRICEPS
-            )
-        ),
-        FULL_BODY(
-            displayName = "Full Body",
-            targetMuscles = listOf(
-                StandardMuscles.CHEST,
-                StandardMuscles.BACK,
-                StandardMuscles.QUADS,
-                StandardMuscles.HAMSTRINGS,
-                StandardMuscles.GLUTES,
-                StandardMuscles.CORE
-            )
-        );
-
-        companion object {
-            /**
-             * Used when no muscle is marked high priority. FULL_BODY is the only split that
-             * trains Core, so it stays in the rotation rather than being unreachable.
-             */
-            val DEFAULT_ROTATION = listOf(PUSH, PULL, LEGS, UPPER_BODY, FULL_BODY)
-        }
-    }
 }

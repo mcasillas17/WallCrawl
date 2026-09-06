@@ -26,10 +26,8 @@ class GeneratedWorkoutValidator(
         workout: GeneratedWorkout,
         allowedExerciseIds: Set<String>? = null
     ): GeneratedWorkout {
-        if (workout.name.isBlank()) {
-            throw WorkoutValidationException("Generated workout has a blank name.")
-        }
-
+        // The title is a structured spec rather than a string, so there is no blank name to
+        // guard against: a planner cannot produce one without naming a split and an emphasis.
         if (workout.estimatedDurationMinutes !in MIN_DURATION_MINUTES..MAX_DURATION_MINUTES) {
             throw WorkoutValidationException(
                 "Invalid workout duration (${workout.estimatedDurationMinutes} minutes)."

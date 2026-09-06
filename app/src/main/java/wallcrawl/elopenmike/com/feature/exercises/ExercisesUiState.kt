@@ -1,5 +1,7 @@
 package wallcrawl.elopenmike.com.feature.exercises
 
+import androidx.annotation.StringRes
+import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.model.Exercise
 
 sealed interface ExercisesUiState {
@@ -15,5 +17,7 @@ sealed interface ExercisesUiState {
         val selectedExerciseDetail: Exercise? = null
     ) : ExercisesUiState
 
-    data class Error(val message: String) : ExercisesUiState
+    data class Error(
+        @StringRes val messageRes: Int = R.string.exercises_catalog_error
+    ) : ExercisesUiState
 }

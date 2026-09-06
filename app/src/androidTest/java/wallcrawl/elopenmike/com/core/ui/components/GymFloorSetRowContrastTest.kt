@@ -36,7 +36,7 @@ class GymFloorSetRowContrastTest {
 
         assertReadable("Skip or stop")
         assertReadable("Add feedback (optional)")
-        assertReadableByDescription("Load kg for set 1")
+        assertReadableByDescription("Load (kg) for set 1")
         assertReadableByDescription("Set 1 felt manageable, Yes")
         assertReadableByDescription("Set 1 complete")
     }
@@ -47,7 +47,7 @@ class GymFloorSetRowContrastTest {
 
         assertReadable("Skip or stop")
         assertReadable("Add feedback (optional)")
-        assertReadableByDescription("Load kg for set 1")
+        assertReadableByDescription("Load (kg) for set 1")
         assertReadableByDescription("Set 1 felt manageable, Yes")
         assertReadableByDescription("Set 1 complete")
     }

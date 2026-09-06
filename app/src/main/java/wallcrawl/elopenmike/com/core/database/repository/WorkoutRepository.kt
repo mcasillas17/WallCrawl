@@ -34,8 +34,19 @@ interface WorkoutRepository {
     fun observeCompletedWorkoutCount(): Flow<Int>
     fun observeCompletedWorkoutCountSince(startTimestamp: Long): Flow<Int>
     suspend fun getRecentCompletedSessions(limit: Int = 8): List<WorkoutSession>
+    /**
+     * Starts a session from a generated plan.
+     *
+     * The screen supplies [displayName] and [displayRationale] already written in the
+     * language it is rendering, because [GeneratedWorkout] carries a structured title and
+     * explanation rather than a sentence. What is stored is that text, exactly as the user
+     * saw it: a completed session keeps the wording it was created with, and no later
+     * language change rewrites recorded history.
+     */
     suspend fun startWorkoutFromGenerated(
         generated: GeneratedWorkout,
+        displayName: String,
+        displayRationale: String,
         userProfile: UserProfile
     ): WorkoutSession
     suspend fun startWorkoutFromTemplate(
@@ -103,10 +114,12 @@ class OfflineWorkoutRepository(
 
     override suspend fun startWorkoutFromGenerated(
         generated: GeneratedWorkout,
+        displayName: String,
+        displayRationale: String,
         userProfile: UserProfile
     ): WorkoutSession = startWorkout(
-        name = generated.name,
-        notes = generated.rationale,
+        name = displayName,
+        notes = displayRationale,
         focusMuscles = generated.focusMuscles,
         estimatedDurationMinutes = generated.estimatedDurationMinutes,
         exercises = generated.exercises,

@@ -20,6 +20,7 @@ import wallcrawl.elopenmike.com.core.model.WeightUnit
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -29,26 +30,26 @@ class ProfileViewModel(
 ) : ViewModel() {
 
     private val capabilityEditorFlow = MutableStateFlow(CapabilityEditorState())
-    private val errorFlow = MutableStateFlow<String?>(null)
 
     val uiState: StateFlow<ProfileUiState> = combine(
         userProfileRepository.getUserProfile(),
-        capabilityEditorFlow,
-        errorFlow
-    ) { profile, editor, error ->
-        if (error != null) {
-            ProfileUiState.Error(error)
-        } else {
-            ProfileUiState.Success(
-                profile = profile,
-                isSaving = editor.isSaving,
-                movementCapabilityDraft = editor.draft,
-                movementCapabilityError = editor.error,
-                availableEquipmentOptions = StandardEquipment.ALL,
-                availableMuscleOptions = StandardMuscles.PRIORITY_OPTIONS,
-                availableConstraintOptions = TrainingConstraint.entries
-            )
-        }
+        capabilityEditorFlow
+    ) { profile, editor ->
+        val state: ProfileUiState = ProfileUiState.Success(
+            profile = profile,
+            isSaving = editor.isSaving,
+            movementCapabilityDraft = editor.draft,
+            movementCapabilityError = editor.error,
+            availableEquipmentOptions = StandardEquipment.ALL,
+            availableMuscleOptions = StandardMuscles.PRIORITY_OPTIONS,
+            availableConstraintOptions = TrainingConstraint.entries
+        )
+        state
+    }.catch { error ->
+        // The error carried no message anyone could read before; it now surfaces a
+        // resource-backed one, the same way every other screen reports a failed load.
+        if (error is CancellationException) throw error
+        emit(ProfileUiState.Error())
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),

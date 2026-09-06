@@ -19,7 +19,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
@@ -31,6 +33,7 @@ import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.backup.LocalDataArchiveFormat
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlOutlinedButton
+import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 
 const val LOCAL_DATA_EXPORT_TEST_TAG = "local_data_export"
@@ -269,14 +272,14 @@ private fun LocalDataMessageText(state: LocalDataUiState) {
     val text = when (message) {
         is LocalDataMessage.ExportSucceeded -> stringResource(
             R.string.local_data_export_success,
-            message.sessionCount,
-            message.templateCount
+            workoutCount(message.sessionCount),
+            templateCount(message.templateCount)
         )
 
         is LocalDataMessage.RestoreSucceeded -> stringResource(
             R.string.local_data_restore_success,
-            message.sessionCount,
-            message.templateCount
+            workoutCount(message.sessionCount),
+            templateCount(message.templateCount)
         )
 
         is LocalDataMessage.Failure -> stringResource(message.messageRes)
@@ -321,6 +324,27 @@ private fun BusyIndicator(visible: Boolean) {
         )
     }
 }
+
+/**
+ * The counted halves of an export or restore result.
+ *
+ * Built as separate plurals and substituted into the sentence, rather than the sentence
+ * being assembled from fragments: "1 workout and 3 routines" and "1 entrenamiento y
+ * 3 rutinas" agree differently, and only the translation can decide how.
+ */
+@Composable
+private fun workoutCount(count: Int): String = pluralStringResource(
+    R.plurals.count_workouts,
+    count,
+    LocaleFormatting.formatCount(count, LocalConfiguration.current.locales[0])
+)
+
+@Composable
+private fun templateCount(count: Int): String = pluralStringResource(
+    R.plurals.count_templates,
+    count,
+    LocaleFormatting.formatCount(count, LocalConfiguration.current.locales[0])
+)
 
 @Composable
 private fun SectionHeading(text: String) {

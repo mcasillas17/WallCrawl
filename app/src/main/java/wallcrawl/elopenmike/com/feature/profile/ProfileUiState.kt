@@ -19,7 +19,7 @@ sealed interface ProfileUiState {
         val availableConstraintOptions: List<TrainingConstraint> = TrainingConstraint.entries
     ) : ProfileUiState
 
-    data class Error(val message: String) : ProfileUiState
+    data class Error(@StringRes val messageRes: Int = R.string.profile_load_error) : ProfileUiState
 }
 
 enum class ProfileCapabilityError(@StringRes val messageRes: Int) {
