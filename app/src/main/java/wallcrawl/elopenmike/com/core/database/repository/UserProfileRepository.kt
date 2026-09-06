@@ -1,10 +1,8 @@
 package wallcrawl.elopenmike.com.core.database.repository
 
 import wallcrawl.elopenmike.com.core.database.dao.UserProfileDao
-import wallcrawl.elopenmike.com.core.database.entity.UserProfileEntity
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
-import wallcrawl.elopenmike.com.core.model.MuscleVocabulary
 import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
@@ -15,6 +13,8 @@ import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.convertWeight
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 interface UserProfileRepository {
     fun getUserProfile(): Flow<UserProfile>
@@ -41,26 +41,35 @@ interface UserProfileRepository {
     suspend fun updateThemePreference(theme: ThemePreference)
 }
 
+/**
+ * @param localDataWriteGate serialises every profile write against destructive local-data
+ *   operations. Deleting all local data and writing the profile are both reachable from the
+ *   Training Profile screen, and a profile write that landed after a deletion would restore
+ *   an onboarded profile the user had just erased. Holding the gate across the read and the
+ *   write also makes each `update*` an atomic read-modify-write. The default is a private
+ *   gate for tests and previews; production passes the one the container shares.
+ */
 class OfflineUserProfileRepository(
-    private val userProfileDao: UserProfileDao
+    private val userProfileDao: UserProfileDao,
+    private val localDataWriteGate: Mutex = Mutex()
 ) : UserProfileRepository {
 
     override fun getUserProfile(): Flow<UserProfile> {
         return userProfileDao.observeProfile(UserProfile.DEFAULT_PROFILE_ID).map { entity ->
-            entity?.toDomainModel() ?: UserProfile()
+            entity?.toUserProfile() ?: UserProfile()
         }
     }
 
-    override suspend fun getProfileOnce(): UserProfile {
-        return userProfileDao.getProfile(UserProfile.DEFAULT_PROFILE_ID)?.toDomainModel()
-            ?: UserProfile().also { saveUserProfile(it) }
-    }
+    override suspend fun getProfileOnce(): UserProfile =
+        localDataWriteGate.withLock { readOrBootstrapProfile() }
 
     override suspend fun saveUserProfile(profile: UserProfile) {
-        userProfileDao.insertOrUpdateWithNextRevision(profile.toEntity())
+        localDataWriteGate.withLock { writeProfile(profile) }
     }
 
     override suspend fun saveProfile(profile: UserProfile) {
+        // Validation runs outside the gate: it reads nothing from the database, and holding
+        // the gate for it would block a deletion for no reason.
         require(profile.goals.isNotEmpty()) { "goals must not be empty." }
         require(profile.daysPerWeek in 2..6) {
             "daysPerWeek must be between 2 and 6, was ${profile.daysPerWeek}."
@@ -94,8 +103,7 @@ class OfflineUserProfileRepository(
 
     override suspend fun updateGoals(goals: Set<FitnessGoal>) {
         require(goals.isNotEmpty()) { "goals must not be empty." }
-        val current = getProfileOnce()
-        saveUserProfile(current.copy(goals = goals))
+        mutateProfile { current -> current.copy(goals = goals) }
     }
 
     override suspend fun updatePrimaryGoal(goal: FitnessGoal) {
@@ -103,181 +111,73 @@ class OfflineUserProfileRepository(
     }
 
     override suspend fun updateExperienceLevel(level: ExperienceLevel) {
-        val current = getProfileOnce()
-        saveUserProfile(current.copy(experienceLevel = level))
+        mutateProfile { current -> current.copy(experienceLevel = level) }
     }
 
     override suspend fun updatePreferredDuration(minutes: Int) {
-        val current = getProfileOnce()
-        saveUserProfile(current.copy(preferredDurationMinutes = minutes))
+        mutateProfile { current -> current.copy(preferredDurationMinutes = minutes) }
     }
 
     override suspend fun updateDaysPerWeek(days: Int) {
-        val current = getProfileOnce()
-        saveUserProfile(current.copy(daysPerWeek = days))
+        mutateProfile { current -> current.copy(daysPerWeek = days) }
     }
 
     override suspend fun updateEquipment(equipment: List<String>) {
-        val current = getProfileOnce()
-        saveUserProfile(current.copy(availableEquipment = equipment))
+        mutateProfile { current -> current.copy(availableEquipment = equipment) }
     }
 
     override suspend fun updateUnit(unit: WeightUnit) {
-        val current = getProfileOnce()
-        if (current.preferredUnit == unit) return
-        val convertedLoads = current.confirmedStartingLoads.mapValues { (_, load) ->
-            convertWeight(load, from = current.preferredUnit, to = unit)
+        mutateProfile { current ->
+            if (current.preferredUnit == unit) return@mutateProfile null
+            current.copy(
+                preferredUnit = unit,
+                confirmedStartingLoads = current.confirmedStartingLoads.mapValues { (_, load) ->
+                    convertWeight(load, from = current.preferredUnit, to = unit)
+                }
+            )
         }
-        saveUserProfile(current.copy(preferredUnit = unit, confirmedStartingLoads = convertedLoads))
     }
 
     override suspend fun updateMusclePriorities(priorities: Map<String, PriorityLevel>) {
-        val current = getProfileOnce()
-        saveUserProfile(current.copy(musclePriorities = priorities))
+        mutateProfile { current -> current.copy(musclePriorities = priorities) }
     }
 
     override suspend fun updateExcludedExercises(excludedIds: List<String>) {
-        val current = getProfileOnce()
-        saveUserProfile(current.copy(excludedExerciseIds = excludedIds))
+        mutateProfile { current -> current.copy(excludedExerciseIds = excludedIds) }
     }
 
     override suspend fun updateTrainingConstraints(constraints: Set<TrainingConstraint>) {
-        val current = getProfileOnce()
-        saveUserProfile(current.copy(trainingConstraints = constraints))
+        mutateProfile { current -> current.copy(trainingConstraints = constraints) }
     }
 
     override suspend fun updateReturningAfterBreakWeeks(weeks: Int) {
-        val current = getProfileOnce()
-        saveUserProfile(current.copy(returningAfterBreakWeeks = weeks))
+        mutateProfile { current -> current.copy(returningAfterBreakWeeks = weeks) }
     }
 
     override suspend fun updateThemePreference(theme: ThemePreference) {
-        val current = getProfileOnce()
-        saveUserProfile(current.copy(themePreference = theme))
+        mutateProfile { current -> current.copy(themePreference = theme) }
     }
 
-    private fun UserProfileEntity.toDomainModel(): UserProfile {
-        val priorities = if (musclePrioritiesJson.isBlank()) {
-            emptyMap()
-        } else {
-            musclePrioritiesJson.split("|||")
-                .mapNotNull { entry ->
-                    val parts = entry.split(":")
-                    if (parts.size != 2) return@mapNotNull null
-                    val level = try {
-                        PriorityLevel.valueOf(parts[1])
-                    } catch (e: IllegalArgumentException) {
-                        PriorityLevel.NORMAL
-                    }
-                    parts[0] to level
-                }
-                .flatMap { (muscle, level) ->
-                    MuscleVocabulary.canonicalize(muscle).map { canonical -> canonical to level }
-                }
-                .groupBy({ it.first }, { it.second })
-                .mapValues { (_, levels) -> levels.maxBy(PriorityLevel::multiplier) }
+    /**
+     * Reads the profile, applies [transform], and writes the result as one gated step.
+     *
+     * A transform returning null means the value is already what was asked for, and nothing
+     * is written — which also means nothing is written after a deletion in that case.
+     */
+    private suspend fun mutateProfile(transform: (UserProfile) -> UserProfile?) {
+        localDataWriteGate.withLock {
+            transform(readOrBootstrapProfile())?.let { updated -> writeProfile(updated) }
         }
-
-        val equipment = if (availableEquipmentJson.isBlank()) emptyList() else availableEquipmentJson.split("|||").filter { it.isNotBlank() }
-        val excluded = if (excludedExerciseIdsJson.isBlank()) emptyList() else excludedExerciseIdsJson.split("|||").filter { it.isNotBlank() }
-        val decodedGoals = decodeFitnessGoals(fitnessGoalsJson).ifEmpty { setOf(primaryGoal) }
-
-        return UserProfile(
-            id = id,
-            revision = revision,
-            name = name,
-            goals = decodedGoals,
-            experienceLevel = experienceLevel,
-            preferredDurationMinutes = preferredDurationMinutes,
-            daysPerWeek = daysPerWeek,
-            availableEquipment = equipment,
-            preferredUnit = preferredUnit,
-            musclePriorities = priorities,
-            excludedExerciseIds = excluded,
-            onboardingCompleted = onboardingCompleted,
-            trainingConstraints = decodeTrainingConstraints(trainingConstraintsJson),
-            returningAfterBreakWeeks = returningAfterBreakWeeks,
-            confirmedStartingLoads = decodeConfirmedStartingLoads(confirmedStartingLoadsJson),
-            movementCapabilities = MovementCapabilitiesCodec.decode(movementCapabilitiesJson),
-            themePreference = themePreference
-        )
     }
 
-    private fun UserProfile.toEntity(): UserProfileEntity {
-        val prioritiesStr = musclePriorities.entries.joinToString("|||") { "${it.key}:${it.value.name}" }
-        val equipmentStr = availableEquipment.joinToString("|||")
-        val excludedStr = excludedExerciseIds.joinToString("|||")
+    /** Caller must hold [localDataWriteGate]: this inserts the bootstrap row when absent. */
+    private suspend fun readOrBootstrapProfile(): UserProfile =
+        userProfileDao.getProfile(UserProfile.DEFAULT_PROFILE_ID)?.toUserProfile()
+            ?: UserProfile().also { bootstrap -> writeProfile(bootstrap) }
 
-        return UserProfileEntity(
-            id = id,
-            revision = revision,
-            name = name,
-            primaryGoal = primaryGoal,
-            experienceLevel = experienceLevel,
-            preferredDurationMinutes = preferredDurationMinutes,
-            daysPerWeek = daysPerWeek,
-            availableEquipmentJson = equipmentStr,
-            preferredUnit = preferredUnit,
-            musclePrioritiesJson = prioritiesStr,
-            excludedExerciseIdsJson = excludedStr,
-            onboardingCompleted = onboardingCompleted,
-            trainingConstraintsJson = encodeTrainingConstraints(trainingConstraints),
-            returningAfterBreakWeeks = returningAfterBreakWeeks,
-            confirmedStartingLoadsJson = encodeConfirmedStartingLoads(confirmedStartingLoads),
-            fitnessGoalsJson = encodeFitnessGoals(goals),
-            movementCapabilitiesJson = MovementCapabilitiesCodec.encode(movementCapabilities),
-            themePreference = themePreference
-        )
-    }
-
-    private fun encodeFitnessGoals(goals: Set<FitnessGoal>): String =
-        goals.joinToString("|||") { it.name }
-
-    private fun decodeFitnessGoals(raw: String): Set<FitnessGoal> {
-        if (raw.isBlank()) return emptySet()
-        return raw.split("|||")
-            .filter { it.isNotBlank() }
-            .mapNotNull { name ->
-                try {
-                    FitnessGoal.valueOf(name)
-                } catch (e: IllegalArgumentException) {
-                    null
-                }
-            }
-            .toSet()
-    }
-
-    private fun encodeTrainingConstraints(constraints: Set<TrainingConstraint>): String =
-        constraints.joinToString("|||") { it.name }
-
-    private fun decodeTrainingConstraints(raw: String): Set<TrainingConstraint> {
-        if (raw.isBlank()) return emptySet()
-        return raw.split("|||")
-            .filter { it.isNotBlank() }
-            .mapNotNull { name ->
-                try {
-                    TrainingConstraint.valueOf(name)
-                } catch (e: IllegalArgumentException) {
-                    null
-                }
-            }
-            .toSet()
-    }
-
-    private fun encodeConfirmedStartingLoads(loads: Map<String, Double>): String =
-        loads.entries.joinToString("|||") { "${it.key}:${it.value}" }
-
-    private fun decodeConfirmedStartingLoads(raw: String): Map<String, Double> {
-        if (raw.isBlank()) return emptyMap()
-        return raw.split("|||")
-            .mapNotNull { entry ->
-                val parts = entry.split(":", limit = 2)
-                if (parts.size != 2 || parts[0].isBlank()) return@mapNotNull null
-                val weight = parts[1].toDoubleOrNull() ?: return@mapNotNull null
-                if (!weight.isFinite() || weight < 0.0) return@mapNotNull null
-                parts[0] to weight
-            }
-            .toMap()
+    /** Caller must hold [localDataWriteGate]. */
+    private suspend fun writeProfile(profile: UserProfile) {
+        userProfileDao.insertOrUpdateWithNextRevision(profile.toUserProfileEntity())
     }
 
     private companion object {

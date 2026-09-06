@@ -14,7 +14,8 @@ model: first-run onboarding with conservative equipment defaults, profile
 constraints and local movement-capability inputs, a complete bundled catalog,
 structured workout generation and
 validation, reusable custom workout templates, type-aware active set logging
-with no fabricated starting loads, Room persistence, workout-history context,
+with no fabricated starting loads, Room persistence with user-owned export,
+restore, and deletion, workout-history context,
 experience-aware exercise ordering, a production-disabled reviewed capability-
 evidence soft-penalty relaxation, a production-disabled reviewed state-based
 dose/effort/rest policy, and progress calculations. The current
@@ -40,6 +41,14 @@ WallCrawl supports **Dark Theme** (stealth suit graphite aesthetic), **Light The
   <img src="art/screenshots/template-editor-light.png" width="24%" alt="Workout Builder (Light)" />
 </p>
 <p align="center">
+  <img src="art/screenshots/profile-your-data.png" width="24%" alt="Your Data card on the Training Profile screen: export, restore, and delete-all controls, with restore explaining that it needs a fresh start" />
+  <img src="art/screenshots/profile-delete-confirmation.png" width="24%" alt="Delete-all confirmation dialog naming the profile, templates, workouts including one in progress, and cached totals it removes, and what it leaves alone" />
+  <img src="art/screenshots/onboarding-restore-archive.png" width="24%" alt="First onboarding step offering Restore from a file before a new profile is created" />
+</p>
+<p align="center">
+  <em>Your Data on Training Profile &middot; the destructive confirmation &middot; restore offered on first run</em>
+</p>
+<p align="center">
   <img src="art/screenshots/onboarding-capabilities-light.png" width="24%" alt="Onboarding Movement Preferences (Light)" />
   <img src="art/screenshots/onboarding-summary-light.png" width="24%" alt="Onboarding Blueprint Summary (Light)" />
   <img src="art/screenshots/exercise-detail-light.png" width="24%" alt="Exercise Detail & Artwork Frame (Light)" />
@@ -54,6 +63,7 @@ WallCrawl supports **Dark Theme** (stealth suit graphite aesthetic), **Light The
 - **Workout Summary**: Post-workout card displaying session duration, total volume lifted, sets completed, and personal records set against your logged history.
 - **Progress Tracking**: Weekly workout streaks, volume and rep totals, per-muscle weekly set counts, strength progression indicators, and historical workout logs.
 - **Training Profile & App Preferences**: Full local customization of theme preference (Auto System / Dark Mode / Light Mode) with compact switcher, multi-select fitness goals, preferred weight units (LBS/KG), session duration targets, available gym equipment, return-after-break calibration, muscle priorities, and seven movement preferences.
+- **Your Data**: Export everything stored on the device to one versioned, checksummed file you choose the destination for; restore it onto a fresh start; or delete every local record behind an explicit destructive confirmation. Restore is also offered on the first onboarding step, so a reinstall does not have to build a throwaway profile first.
 - **Credits & Licenses**: In-app attribution for the bundled exercise artwork, reachable from the Training Profile screen.
 
 ## Documentation
@@ -61,7 +71,8 @@ WallCrawl supports **Dark Theme** (stealth suit graphite aesthetic), **Light The
 - [Architecture](docs/architecture.md) explains the catalog, planner, template,
   persistence, logging, and history boundaries in the current application.
 - [Privacy and backup](docs/privacy.md) explains local storage, Android backup
-  exclusions, recovery tradeoffs, and platform limitations.
+  exclusions, user-owned export/restore/deletion, archive compatibility, recovery
+  tradeoffs, and platform limitations.
 - [Custom Workouts](docs/custom-workouts.md) documents the user flow, full-catalog
   selection rules, frozen session snapshots, and current editor limitations.
 - [Planner evaluation](docs/planner-evaluation.md) documents the versioned persona
@@ -78,12 +89,28 @@ and device-transfer rules. The policy covers profiles and capabilities, preferen
 templates, workout history and feedback, and derived ledger state. The app adds no
 account, analytics upload, or cloud-sync service.
 
-Ordinary local persistence and compatible, same-signature in-place upgrades keep
-working; this policy does not move or clear the Room database. **Uninstalling or
-clearing app storage removes local data. Device loss or replacement has no supported
-recovery path today.** There is no explicit export/import or in-app delete-all-data
-control yet; those remain [roadmap Package 2](ROADMAP.md#2-add-user-owned-export-import-and-deletion).
-Do not rely on automatic device transfer to preserve WallCrawl data.
+Recovery is **user-driven**. Training Profile offers three controls, and the first
+onboarding step offers restore on its own:
+
+| Control | What it does |
+| --- | --- |
+| Export my data | Writes one JSON archive — profile, capabilities, templates, and every session including one in progress — to a document you pick, with a format version and a SHA-256 checksum |
+| Restore from a file | Reads an archive into a **fresh start only**: no workouts, no templates, onboarding unfinished. It never merges and never overwrites |
+| Delete all local data | Removes every local record behind a confirmation naming what is lost, then returns to first-run onboarding |
+
+**An export is readable personal information** — training history and movement
+answers in clear text — so choose the destination deliberately; Android's picker can
+offer cloud-backed providers, and the app cannot tell which you chose. The checksum
+detects damage, not tampering: it is neither encryption nor proof of authenticity.
+
+Because restore needs a fresh start, the supported route is **export → delete all
+local data or reinstall → restore**. Ordinary local persistence and compatible,
+same-signature in-place upgrades keep working; none of this moves or clears the Room
+database on its own. **Uninstalling or clearing app storage still removes local data,
+and an export you never took cannot be recovered afterwards.** Deleting local data
+does not reach files you already exported, copies a provider synchronised elsewhere,
+or backups an earlier Android version may still hold. Do not rely on automatic device
+transfer to preserve WallCrawl data.
 
 Android documents manufacturer-dependent device-transfer behavior, so these
 exclusions are not a guarantee about every OEM migration tool. This change neither
@@ -472,8 +499,9 @@ before publishing from the replacement workflow.
 GitHub prereleases are currently debug-signed and intentionally require uninstalling
 the previous CI build. Supporting in-place upgrades also requires a stable release
 signing key; version metadata alone cannot make differently signed APKs compatible.
-That uninstall removes local workout/profile data, with no supported export or
-automatic restore path under the [current backup policy](docs/privacy.md).
+That uninstall removes local workout/profile data. Export first and restore after
+installing the new build: a fresh install is exactly the empty destination a restore
+needs. See the [privacy policy](docs/privacy.md#restore-prerequisites).
 
 The unit suite covers catalog filtering, context construction, capability
 normalization and persistence, onboarding/Profile drafts, planner invariance,
@@ -485,7 +513,9 @@ boundaries, progress and personal-record calculations, attribution loading,
 Today state, duration calculation, and visual-provider mapping.
 Android instrumentation also validates every supported database migration chain through
 schema 11 without destructive fallback, guidance persistence, the weekly-ledger DAO/repository,
-capability-control semantics, and template/session snapshot behavior. It parses the
+capability-control semantics, template/session snapshot behavior, and the local-data archive:
+its round trip from app-written state, every rejection path for untrusted documents,
+transactional restore and deletion, and the destructive confirmation at a large font scale. It parses the
 packaged 302-exercise catalog and opens every one of its 906 SVG paths. Pull-request/main
 CI and tagged-release publication both run this connected suite on an API 36 emulator;
 a tag cannot publish its prerelease unless instrumentation succeeds.

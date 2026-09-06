@@ -1,5 +1,6 @@
 package wallcrawl.elopenmike.com.core.database.relation
 
+import wallcrawl.elopenmike.com.core.database.PERSISTED_LIST_SEPARATOR
 import wallcrawl.elopenmike.com.core.model.ExercisePrescription
 import wallcrawl.elopenmike.com.core.model.RepRange
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
@@ -91,7 +92,7 @@ internal fun WorkoutSessionWithExercisesAndSets.toWorkoutSession(): WorkoutSessi
     val focusMusclesList = if (session.focusMusclesJson.isBlank()) {
         emptyList()
     } else {
-        session.focusMusclesJson.split("|||").filter { it.isNotBlank() }
+        session.focusMusclesJson.split(PERSISTED_LIST_SEPARATOR).filter { it.isNotBlank() }
     }
 
     return WorkoutSession(

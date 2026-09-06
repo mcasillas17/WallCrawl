@@ -18,6 +18,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -33,6 +34,10 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import wallcrawl.elopenmike.com.AppContainer
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
+import wallcrawl.elopenmike.com.feature.backup.LocalDataOutcomeEffect
+import wallcrawl.elopenmike.com.feature.backup.LocalDataSection
+import wallcrawl.elopenmike.com.feature.backup.LocalDataViewModel
+import wallcrawl.elopenmike.com.feature.backup.RestoreFromArchiveCard
 import wallcrawl.elopenmike.com.feature.credits.CreditsScreen
 import wallcrawl.elopenmike.com.feature.credits.CreditsViewModel
 import wallcrawl.elopenmike.com.feature.exercises.ExercisesScreen
@@ -101,6 +106,29 @@ private fun WallCrawlAppContent(
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    // The application context's resolver outlives any single screen, so an export or a
+    // restore keeps running across a rotation instead of losing the document it opened.
+    val contentResolver = LocalContext.current.applicationContext.contentResolver
+
+    /**
+     * Returns to first-run onboarding with nothing behind it.
+     *
+     * The graph's start destination was chosen when the app launched, so after deleting
+     * every local record the back stack has to be replaced rather than merely added to.
+     */
+    fun restartAtOnboarding() {
+        navController.navigate(AppRoutes.ONBOARDING) {
+            popUpTo(navController.graph.findStartDestination().id) { inclusive = true }
+            launchSingleTop = true
+        }
+    }
+
+    fun openTodayAfterRestore() {
+        navController.navigate(AppRoutes.TODAY) {
+            popUpTo(navController.graph.findStartDestination().id) { inclusive = true }
+            launchSingleTop = true
+        }
+    }
 
     val shouldShowBottomBar = currentRoute in listOf(
         AppRoutes.TODAY,
@@ -141,13 +169,36 @@ private fun WallCrawlAppContent(
                         userProfileRepository = container.userProfileRepository
                     )
                 )
+                val localDataViewModel: LocalDataViewModel = viewModel(
+                    key = "onboarding-local-data",
+                    factory = LocalDataViewModel.provideFactory(
+                        contentResolver = contentResolver,
+                        repository = container.localDataBackupRepository
+                    )
+                )
+                // Observed here, not inside the card: the card only exists on the first
+                // step, and a restore from a slow document can finish after the user has
+                // moved on. This stays composed for the whole wizard.
+                LocalDataOutcomeEffect(
+                    viewModel = localDataViewModel,
+                    onRestored = { onboardingCompleted ->
+                        // A restored profile that never finished onboarding stays in the
+                        // wizard; there is nothing for Today to render yet.
+                        if (onboardingCompleted) openTodayAfterRestore()
+                    }
+                )
+                val localDataState by localDataViewModel.uiState.collectAsState()
                 OnboardingScreen(
                     viewModel = onboardingViewModel,
                     onCompleted = {
                         navController.navigate(AppRoutes.TODAY) {
                             popUpTo(AppRoutes.ONBOARDING) { inclusive = true }
                         }
-                    }
+                    },
+                    restoreFromArchive = {
+                        RestoreFromArchiveCard(viewModel = localDataViewModel)
+                    },
+                    isRestoreInFlight = localDataState.isBusy
                 )
             }
 
@@ -203,9 +254,26 @@ private fun WallCrawlAppContent(
                         userProfileRepository = container.userProfileRepository
                     )
                 )
+                val localDataViewModel: LocalDataViewModel = viewModel(
+                    key = "profile-local-data",
+                    factory = LocalDataViewModel.provideFactory(
+                        contentResolver = contentResolver,
+                        repository = container.localDataBackupRepository
+                    )
+                )
+                // Outside the profile's scrolling list, so scrolling the card out of view
+                // cannot lose the outcome of a restore or a deletion.
+                LocalDataOutcomeEffect(
+                    viewModel = localDataViewModel,
+                    onRestored = { onboardingCompleted ->
+                        if (onboardingCompleted) openTodayAfterRestore() else restartAtOnboarding()
+                    },
+                    onDeleted = { restartAtOnboarding() }
+                )
                 ProfileScreen(
                     viewModel = profileViewModel,
-                    onOpenCredits = { navController.navigate(AppRoutes.CREDITS) }
+                    onOpenCredits = { navController.navigate(AppRoutes.CREDITS) },
+                    localDataSection = { LocalDataSection(viewModel = localDataViewModel) }
                 )
             }
 

@@ -1,6 +1,7 @@
 package wallcrawl.elopenmike.com.core.database.converter
 
 import androidx.room.TypeConverter
+import wallcrawl.elopenmike.com.core.database.PERSISTED_LIST_SEPARATOR
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
@@ -127,9 +128,14 @@ class RoomTypeConverters {
 
     // List<String> helper
     @TypeConverter
-    fun fromStringList(list: List<String>): String = list.joinToString("|||")
+    fun fromStringList(list: List<String>): String =
+        list.joinToString(PERSISTED_LIST_SEPARATOR)
 
     @TypeConverter
     fun toStringList(data: String): List<String> =
-        if (data.isBlank()) emptyList() else data.split("|||").filter { it.isNotBlank() }
+        if (data.isBlank()) {
+            emptyList()
+        } else {
+            data.split(PERSISTED_LIST_SEPARATOR).filter { it.isNotBlank() }
+        }
 }

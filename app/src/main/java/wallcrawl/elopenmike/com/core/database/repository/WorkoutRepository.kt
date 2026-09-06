@@ -1,5 +1,6 @@
 package wallcrawl.elopenmike.com.core.database.repository
 
+import wallcrawl.elopenmike.com.core.database.PERSISTED_LIST_SEPARATOR
 import wallcrawl.elopenmike.com.core.database.dao.WorkoutSessionDao
 import wallcrawl.elopenmike.com.core.database.dao.WorkoutSetDao
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutExerciseEntity
@@ -150,7 +151,7 @@ class OfflineWorkoutRepository(
             status = SessionStatus.IN_PROGRESS,
             origin = origin,
             sourceTemplateId = sourceTemplateId,
-            focusMusclesJson = focusMuscles.joinToString("|||"),
+            focusMusclesJson = focusMuscles.joinToString(PERSISTED_LIST_SEPARATOR),
             notes = notes
         )
         val exerciseEntities = mutableListOf<WorkoutExerciseEntity>()

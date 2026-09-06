@@ -105,6 +105,14 @@ connection. A saved template survives navigation and process recreation.
 Unsaved editor changes currently remain in memory only; leaving the editor or a
 process restart can discard them.
 
+Saved templates are included in a user-owned export and come back with a restore,
+identifiers, prescriptions, effort and rest guidance intact. Because an archive
+preserves the exercise identifier a template was saved with, a template can outlive a
+catalog change; an identifier the current catalog no longer contains is kept rather
+than remapped, and opening such a template still reports the missing exercise the way
+it does today. Deleting all local data removes every template along with everything
+else. See [Privacy and backup](privacy.md#export-restore-and-deletion).
+
 The current feature does not include:
 
 - detailed target and rest editing;

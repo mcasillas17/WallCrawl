@@ -9,6 +9,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import wallcrawl.elopenmike.com.core.database.converter.RoomTypeConverters
 import wallcrawl.elopenmike.com.core.database.dao.CompletedWorkoutHistoryDao
+import wallcrawl.elopenmike.com.core.database.dao.LocalDataBackupDao
 import wallcrawl.elopenmike.com.core.database.dao.UserProfileDao
 import wallcrawl.elopenmike.com.core.database.dao.WeeklyDoseLedgerStateDao
 import wallcrawl.elopenmike.com.core.database.dao.WorkoutExerciseDao
@@ -23,6 +24,14 @@ import wallcrawl.elopenmike.com.core.database.entity.WorkoutSetEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutTemplateEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutTemplateExerciseEntity
 
+/**
+ * Current Room schema version.
+ *
+ * Exposed as a constant so provenance recorded in an export names the same number the
+ * database is actually built with, rather than a copy that can drift after a migration.
+ */
+const val WALLCRAWL_SCHEMA_VERSION = 11
+
 @Database(
     entities = [
         UserProfileEntity::class,
@@ -33,7 +42,7 @@ import wallcrawl.elopenmike.com.core.database.entity.WorkoutTemplateExerciseEnti
         WorkoutTemplateExerciseEntity::class,
         WeeklyDoseLedgerStateEntity::class
     ],
-    version = 11,
+    version = WALLCRAWL_SCHEMA_VERSION,
     exportSchema = false
 )
 @TypeConverters(RoomTypeConverters::class)
@@ -46,6 +55,7 @@ abstract class WallCrawlDatabase : RoomDatabase() {
     abstract fun workoutTemplateDao(): WorkoutTemplateDao
     abstract fun completedWorkoutHistoryDao(): CompletedWorkoutHistoryDao
     abstract fun weeklyDoseLedgerStateDao(): WeeklyDoseLedgerStateDao
+    abstract fun localDataBackupDao(): LocalDataBackupDao
 
     companion object {
         private const val DATABASE_NAME = "wallcrawl.db"

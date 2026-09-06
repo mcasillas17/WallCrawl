@@ -65,7 +65,16 @@ object SetOutcomeRules {
     const val MIN_RIR: Int = 0
     const val MAX_RIR: Int = 10
 
-    fun requireValidOutcome(performance: SetPerformanceInput) {
+    /**
+     * @param allowMissingCompletionTimestamp accepts a completed set whose completion time
+     *   is unknown. Only restoring an archive may set this: history logged before typed
+     *   outcomes existed is stored exactly that way, and re-validating it must not reject
+     *   it or hand it a fabricated timestamp. Live logging always records the time.
+     */
+    fun requireValidOutcome(
+        performance: SetPerformanceInput,
+        allowMissingCompletionTimestamp: Boolean = false
+    ) {
         performance.rpe?.let { rpe ->
             require(rpe.isFinite() && rpe >= MIN_RPE && rpe <= MAX_RPE) {
                 "rpe must be a finite value between $MIN_RPE and $MAX_RPE."
@@ -84,7 +93,10 @@ object SetOutcomeRules {
             require(performance.stoppedAtTimestamp == null) {
                 "A completed set cannot carry a stoppedAtTimestamp."
             }
-            require((performance.completedAtTimestamp ?: 0L) > 0L) {
+            require(
+                (performance.completedAtTimestamp ?: 0L) > 0L ||
+                    (allowMissingCompletionTimestamp && performance.completedAtTimestamp == null)
+            ) {
                 "A completed set requires a positive completedAtTimestamp."
             }
             return

@@ -161,6 +161,12 @@ implicit Android backup and device transfer by the app's configuration. See
 [Privacy and backup](privacy.md) for the full-domain exclusions, recovery tradeoffs,
 OEM transfer limitations, and why this does not erase previously uploaded backups.
 
+The cache is never written to a user-owned export and never read from one: it is
+derived, so restoring a stored count would risk serving a number the restored history
+does not support. A restore clears the cache and lets the next read rebuild it from
+the history it just restored, and deleting all local data removes the cache along with
+that history.
+
 The cache and the fingerprint deliberately exclude everything the policy cannot read:
 no notes, no free text, no session or exercise names, no RPE or RIR, no "felt manageable"
 answer, no loads, repetitions, durations, or distances, no capability answers, and no

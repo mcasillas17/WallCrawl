@@ -1,10 +1,12 @@
 # WallCrawl Roadmap
 
-> **Status date:** 2026-09-05
+> **Status date:** 2026-09-06
 >
 > **Evidence baseline:** `6a2f624` (roadmap, #55). Package 1 status additionally
 > reflects the checked-in manifest, backup-rule resources, packaged-configuration
-> guard, and [privacy policy](docs/privacy.md).
+> guard, and [privacy policy](docs/privacy.md). Package 2 status reflects the
+> checked-in `core/backup` archive contract, local-data DAO and repository,
+> `feature/backup` controls, and their Android instrumentation tests.
 >
 > This is the single source of truth for current project status, priority, dependency
 > order, and implementation scope. Status must be derived from repository evidence rather
@@ -19,9 +21,9 @@ network connection, or companion device.
 
 | Area | Status | Remaining gap |
 | --- | --- | --- |
-| Android foundation | Room schema 11 with a continuous migration chain; implicit Android backup disabled with legacy and modern all-domain exclusions | OEM transfer enforcement varies; no user-owned export/import yet; `targetSdk` remains 35 while `compileSdk` is 37 |
+| Android foundation | Room schema 11 with a continuous migration chain; implicit Android backup disabled with legacy and modern all-domain exclusions; user-owned export, restore, and delete-all shipped | OEM transfer enforcement varies; restore is empty-destination only; `targetSdk` remains 35 while `compileSdk` is 37 |
 | Catalog and reviewed content | 302 exercises, 906 SVG frames, 131 authored programming entries, 37 reviewed records | All 37 reviewed records remain `DRAFT`; planner-reachable and band-only coverage still need review |
-| Onboarding and profile | Shipped as an eight-step flow with seven movement-capability questions | No local export, import, or delete-all-data controls |
+| Onboarding and profile | Shipped as an eight-step flow with seven movement-capability questions, plus export, restore, and delete-all controls | Restore requires a fresh start, so it cannot merge into an installation that already holds data |
 | Templates and logging | Shipped with frozen template snapshots, type-aware outcomes, RPE/RIR, typed stops, and a local rest timer | Template targets are only partly editable; unsaved drafts are not restored after process death |
 | Progress and history | Overview, records, trends, summaries, and recent history shipped | Weekly semantics conflict with the dose ledger; workout-summary navigation and history drill-down remain incomplete |
 | Deterministic coach | Eligibility, experience ranking, capability evidence, weekly ledger, and state-based dose/effort/rest shipped behind a disabled gate | Human approval, whole-program validation, release corpus, progression, deload, and rollout gates |
@@ -39,13 +41,21 @@ not a consequence of merging a pull request.
 ## Recorded decisions
 
 **Android backup policy (Package 1):** disable implicit Android cloud backup and
-request exclusion of all app data from device transfer until explicit user-owned
-export/import exists. The manifest sets `allowBackup="false"` and references
-exclude-all legacy rules plus separate modern cloud-backup/device-transfer rules.
-This preserves local persistence and compatible in-place upgrades but sacrifices
-automatic recovery after uninstall, device loss, or replacement. It does not delete
-previously uploaded backups or promise universal OEM transfer enforcement. See the
+request exclusion of all app data from device transfer. The manifest sets
+`allowBackup="false"` and references exclude-all legacy rules plus separate modern
+cloud-backup/device-transfer rules. This preserves local persistence and compatible
+in-place upgrades but sacrifices automatic recovery after uninstall, device loss, or
+replacement. It does not delete previously uploaded backups or promise universal OEM
+transfer enforcement. See the
 [privacy and backup policy](docs/privacy.md) for the exact boundary and tradeoffs.
+
+**Restore semantics (Package 2):** recovery is user-driven and empty-destination only.
+Export writes one versioned, checksummed JSON archive to a document the user picks;
+restore is accepted only when there are no workouts, no templates, and onboarding is
+unfinished, so it can never merge into or overwrite existing data. The supported route
+is export, then delete-all or reinstall, then restore. Merging and replacement were
+rejected for this release because they need conflict rules for identifiers, active
+workouts, and units that nothing in the app can currently decide.
 
 ## Open decisions
 
@@ -81,7 +91,7 @@ These decisions must be recorded before the related implementation package close
 
 | Workstream | Sequence | Parallelism and gates |
 | --- | --- | --- |
-| Privacy and ownership | 1 (complete) -> 2 | Package 1's release-honesty gate is satisfied; Package 2 is next and remains unimplemented |
+| Privacy and ownership | 1 (complete) -> 2 (complete) | Users can export, restore into a fresh start, and delete every local record |
 | Reviewed content | 3 | Human-paced and safe to run beside engineering |
 | Deterministic rollout | 4 + 5 + 6 -> 7 | Package 7 also requires package 3; the package 1 release gate is satisfied |
 | Adaptive coaching | 7 -> 8 and 17; 4 -> 9; 3 + 4 -> 10; 3 -> 11; 4 + 9 -> 12; 10 -> 13; 5 + 13 -> 14; 3 -> 16 | Package 15 is independently useful but integrates package 10 when it exposes substitutions; package 18 gates only the packages selected for that release |
@@ -89,7 +99,7 @@ These decisions must be recorded before the related implementation package close
 | Integrations | 21 -> 22 + 23; 2 + 4 + 10 + 21 + 23 -> 24; 23 + 24 -> 25; 24 + 25 -> 26 -> 27 | Health export and the protocol spike may proceed independently after shared-module extraction |
 | Optional sync | 2 -> 28 | Package 28 is a design package first, not implementation authorization |
 
-Safe parallel work now is package 2, package 3, package 4, package 5 after its product
+Safe parallel work now is package 3, package 4, package 5 after its product
 decision, package 6, and the audits in packages 19-20. Do not enable package 7 against draft
 metadata or a persona cohort that cannot produce valid plans. Do not split adaptation-state
 widening from the advanced-complexity ceiling update in package 9.
@@ -120,34 +130,51 @@ widening from the advanced-complexity ceiling update in package 9.
 **Boundary:** Packaged guards cover API 30 and 36; local Backup Manager requests reject the
 app on both. These do not establish cloud restore or physical/OEM transfer behavior.
 Existing local storage and upgrades are unchanged; no Room migration is needed. Package 2
-remains separate and unimplemented.
+now adds the user-owned export, restore, and deletion controls on top of it.
 
 ### 2. Add user-owned export, import, and deletion
 
-**Status:** Not started.
+**Status:** Complete.
 
 **Depends on:** Package 1 (complete).
 
-**Implementation tasks:**
+**Implemented:**
 
-1. Define a versioned archive envelope covering the profile, capabilities, templates,
-   immutable sessions, sets, program state, and required provenance.
-2. Add deterministic checksums and reject corrupt archives, unsupported future schemas,
-   duplicate/conflicting IDs, and partial imports.
-3. Implement Storage Access Framework export and import without an upload or network path.
-4. Import transactionally and rebuild derived caches instead of trusting stale exported cache
-   rows.
-5. Add an explicit delete-all-local-data flow with destructive confirmation and a complete
-   reset of profile, onboarding state, templates, sessions, sets, and caches.
-6. Document archive compatibility, privacy, failure behavior, and recovery.
+1. Archive format version 1 in `core/backup`, separate from the Room schema version and
+   carrying creation time, app version/code, schema version, and the bundled catalog commit
+   as provenance. It covers the profile and capabilities, templates, and every session with
+   its planned targets, performed values, units, feedback, timestamps, stop reasons, and
+   status. The derived weekly-ledger cache is deliberately not exported.
+2. A SHA-256 checksum over the archive's canonical serialization, plus one validation
+   contract — bounds, enums, lengths, duplicate and blank identifiers, parent/child
+   references, resource limits, and the domain rules the app already enforces — run
+   identically when writing and reading. Unsupported versions and every rejection are
+   reported through typed, resource-backed copy.
+3. Storage Access Framework export and import with no upload or network path. An export is
+   refused before the destination is opened, so a refusal cannot truncate the file the user
+   picked; a document a failed or cancelled export did truncate is discarded.
+4. Restore into an empty destination only, in one transaction that rechecks eligibility from
+   inside, with the ledger cache cleared and rebuilt from restored history.
+5. Delete-all-local-data behind a destructive confirmation that names the affected data and
+   the active workout, returning the app to fresh onboarding. A shared write gate keeps an
+   in-flight profile or template write from landing after the deletion.
+6. Archive compatibility, export sensitivity, document-provider behaviour, restore
+   prerequisites, deletion scope, and remaining recovery limits documented in
+   [privacy](docs/privacy.md), with the surfaces described in
+   [architecture](docs/architecture.md).
 
-**Likely surfaces:** a focused `core/backup` or `core/database/backup` package, Room DAOs and
-repositories, `feature/profile`, app navigation, unit tests, and database instrumentation
-tests.
+**Surfaces:** `app/src/main/java/wallcrawl/elopenmike/com/core/backup/`,
+`core/database/dao/LocalDataBackupDao.kt`,
+`core/database/repository/LocalDataBackupRepository.kt`, `core/io/`, `feature/backup/`,
+app navigation, `feature/profile`, `feature/onboarding`, `docs/privacy.md`,
+`docs/architecture.md`, and Android instrumentation tests.
 
-**Done when:** export -> wipe -> import reproduces the same logical user-owned state, future
-schemas and checksum failures fail closed without partial writes, and deletion leaves a true
-fresh-install state.
+**Boundary:** no Room migration was required; schema 11 and every existing backup exclusion
+are unchanged. Restore is empty-destination only: merging and replacement are deliberately
+not implemented, so the supported recovery route is export, then delete or reinstall, then
+restore. A checksum detects damage; it is not encryption and not proof of authenticity. The
+document picker may offer cloud-backed destinations, and deletion reaches only this device's
+copy.
 
 ### 3. Complete reviewed metadata coverage and human approval
 
