@@ -74,7 +74,7 @@ import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.ui.components.BreakDurationSelector
-import wallcrawl.elopenmike.com.core.ui.components.LanguageSelector
+import wallcrawl.elopenmike.com.core.ui.components.LanguageChip
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.MovementCapabilityQuestion
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlOutlinedButton
@@ -247,10 +247,12 @@ private fun OnboardingHeader(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
+            // Both side slots are the language chip's width so the step counter stays
+            // centred, whether or not this step can go back.
             if (!currentStep.isFirst()) {
                 IconButton(
                     onClick = onBack,
-                    modifier = Modifier.size(36.dp)
+                    modifier = Modifier.size(48.dp)
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -259,7 +261,7 @@ private fun OnboardingHeader(
                     )
                 }
             } else {
-                Spacer(modifier = Modifier.size(36.dp))
+                Spacer(modifier = Modifier.size(48.dp))
             }
 
             val locale = LocalConfiguration.current.locales[0]
@@ -275,7 +277,10 @@ private fun OnboardingHeader(
                 color = CrimsonRedPrimary
             )
 
-            Spacer(modifier = Modifier.size(36.dp))
+            // Reachable from the first screen, before anything has to be typed, so a
+            // Spanish reader who landed on an English install can switch and carry on. It
+            // is not a step: the wizard still has the same eight.
+            LanguageChip()
         }
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -317,11 +322,6 @@ private fun WelcomeStep(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Offered before anything has to be typed, so a Spanish reader who landed on an
-        // English install can switch first and then fill the wizard in. It is not a step:
-        // the wizard still has the same eight, and nothing here has to be answered.
-        LanguageSelector()
-
         WallCrawlCard(
             cornerRadius = 16.dp,
             contentPadding = 20.dp

@@ -188,6 +188,7 @@ class StringResourceParityTest {
             "answer_no",
             "priority_normal",
             "theme_system_short",
+            "language_option_system_short",
             "weight_unit_lbs_short",
             "weight_unit_kg_short",
             "set_field_reps",

@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -31,6 +32,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
@@ -48,13 +50,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.material3.MaterialTheme
 import wallcrawl.elopenmike.com.R
+import wallcrawl.elopenmike.com.core.locale.AppLanguage
+import wallcrawl.elopenmike.com.core.locale.AppLanguageController
+import wallcrawl.elopenmike.com.core.model.BreakDurationHelper
 import wallcrawl.elopenmike.com.core.model.CapabilityLevel
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
@@ -65,9 +71,7 @@ import wallcrawl.elopenmike.com.core.model.ThemePreference
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
-import wallcrawl.elopenmike.com.core.model.BreakDurationHelper
 import wallcrawl.elopenmike.com.core.ui.components.BreakDurationSelector
-import wallcrawl.elopenmike.com.core.ui.components.LanguageOptions
 import wallcrawl.elopenmike.com.core.ui.components.MovementCapabilityQuestion
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlOutlinedButton
@@ -823,8 +827,13 @@ private fun MovementCapabilityProfileCard(
 internal fun AppPreferencesCard(
     currentTheme: ThemePreference,
     onSelectTheme: (ThemePreference) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    currentLanguage: AppLanguage = AppLanguageController.current(),
+    onSelectLanguage: (AppLanguage) -> Unit = AppLanguageController::apply
 ) {
+    // Read so the pill repaints after a language change, before the recreation completes.
+    LocalConfiguration.current
+
     WallCrawlCard(
         modifier = modifier.fillMaxWidth(),
         cornerRadius = 16.dp,
@@ -839,69 +848,120 @@ internal fun AppPreferencesCard(
         )
         Spacer(modifier = Modifier.height(12.dp))
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+        PreferenceRow(
+            title = stringResource(R.string.profile_theme_title),
+            description = stringResource(currentTheme.descriptionRes)
         ) {
-            Column(modifier = Modifier.weight(1f).padding(end = 12.dp)) {
-                Text(
-                    text = stringResource(R.string.profile_theme_title),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Spacer(modifier = Modifier.height(2.dp))
-                Text(
-                    text = stringResource(currentTheme.descriptionRes),
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-
-            // Compact 3-segment pill control
-            Row(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(MaterialTheme.colorScheme.surface)
-                    .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(10.dp))
-                    .padding(3.dp),
-                horizontalArrangement = Arrangement.spacedBy(2.dp)
-            ) {
-                ThemePreference.entries.forEach { theme ->
-                    val isSelected = theme == currentTheme
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(7.dp))
-                            .background(
-                                if (isSelected) CrimsonRedPrimary
-                                else Color.Transparent
-                            )
-                            .clickable { onSelectTheme(theme) }
-                            .padding(horizontal = 10.dp, vertical = 6.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = stringResource(theme.shortLabelRes),
-                            fontSize = 12.sp,
-                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                            color = if (isSelected) TextWhite else MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-            }
+            SegmentedPill(
+                options = ThemePreference.entries,
+                selectedOption = currentTheme,
+                label = { stringResource(it.shortLabelRes) },
+                accessibilityLabel = { stringResource(it.labelRes) },
+                onSelect = onSelectTheme
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = stringResource(R.string.language_setting_title),
-            fontSize = 14.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-        Spacer(modifier = Modifier.height(2.dp))
-        // The same control the onboarding Welcome step shows, reading and writing the one
-        // app-language preference rather than a second copy of it.
-        LanguageOptions()
+
+        // The same preference the onboarding header's chip writes, through the one
+        // AppLanguageController, rather than a second copy of it. Abbreviated to Auto/EN/ES
+        // so it takes one row like the theme control above it.
+        PreferenceRow(
+            title = stringResource(R.string.language_setting_title),
+            description = stringResource(R.string.language_description)
+        ) {
+            SegmentedPill(
+                options = AppLanguage.entries,
+                selectedOption = currentLanguage,
+                label = { stringResource(it.shortLabelRes) },
+                accessibilityLabel = {
+                    stringResource(
+                        R.string.language_option_accessibility,
+                        stringResource(it.labelRes)
+                    )
+                },
+                onSelect = onSelectLanguage
+            )
+        }
+    }
+}
+
+/** A titled setting with its control on the right. */
+@Composable
+private fun PreferenceRow(
+    title: String,
+    description: String,
+    control: @Composable () -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(modifier = Modifier.weight(1f).padding(end = 12.dp)) {
+            Text(
+                text = title,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = description,
+                fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        control()
+    }
+}
+
+/**
+ * The compact segmented control both app preferences use.
+ *
+ * [label] is abbreviated to keep the pill on one row; [accessibilityLabel] is the full name,
+ * because a screen reader announcing "ES" helps nobody.
+ */
+@Composable
+private fun <T> SegmentedPill(
+    options: List<T>,
+    selectedOption: T,
+    label: @Composable (T) -> String,
+    accessibilityLabel: @Composable (T) -> String,
+    onSelect: (T) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .clip(RoundedCornerShape(10.dp))
+            .background(MaterialTheme.colorScheme.surface)
+            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(10.dp))
+            .padding(3.dp)
+            .selectableGroup(),
+        horizontalArrangement = Arrangement.spacedBy(2.dp)
+    ) {
+        options.forEach { option ->
+            val isSelected = option == selectedOption
+            val optionDescription = accessibilityLabel(option)
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(7.dp))
+                    .background(if (isSelected) CrimsonRedPrimary else Color.Transparent)
+                    .clickable { onSelect(option) }
+                    .padding(horizontal = 10.dp, vertical = 6.dp)
+                    .semantics {
+                        contentDescription = optionDescription
+                        role = Role.RadioButton
+                        selected = isSelected
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = label(option),
+                    fontSize = 12.sp,
+                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                    color = if (isSelected) TextWhite else MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
     }
 }

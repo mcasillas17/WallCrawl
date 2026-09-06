@@ -37,6 +37,18 @@ val AppLanguage.labelRes: Int
         AppLanguage.SPANISH -> R.string.language_option_spanish
     }
 
+/**
+ * The label for a control too small for a language's full name: a two-letter code, or
+ * "Auto" for following the device, matching how the theme control abbreviates itself.
+ */
+@get:StringRes
+val AppLanguage.shortLabelRes: Int
+    get() = when (this) {
+        AppLanguage.SYSTEM -> R.string.language_option_system_short
+        AppLanguage.ENGLISH -> R.string.language_option_english_short
+        AppLanguage.SPANISH -> R.string.language_option_spanish_short
+    }
+
 @get:StringRes
 val FitnessGoal.labelRes: Int
     get() = when (this) {
