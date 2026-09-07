@@ -24,7 +24,7 @@ software limits, not training ceilings. See the
 
 The prescription consumer is reachable only when
 `PlannerFeatureFlags.reviewedCapabilityEligibility` is enabled, which production does
-not do. The bundled catalog remains 37 `DRAFT` / 0 `APPROVED`, so current production
+not do. The bundled catalog remains 211 `DRAFT` / 0 `APPROVED`, so current production
 planner selection and prescriptions are unchanged. See the
 [state-based policy design](superpowers/specs/2026-09-01-state-based-dose-effort-rest-design.md).
 
@@ -89,7 +89,7 @@ the legacy `programming` block, or to an inferred movement pattern. The attribut
 is a sealed `LedgerAttribution` with exactly two outcomes — credited, or omitted with a
 reason — so there is no third path that could invent a muscle.
 
-The bundled catalog currently ships 302 exercises with 37 reviewed entries, **all `DRAFT`
+The bundled catalog currently ships 302 exercises with 211 reviewed entries, **all `DRAFT`
 and none `APPROVED`**. Today the ledger therefore credits nothing from real history and
 reports every completed work set as `METADATA_NOT_APPROVED` or
 `MISSING_REVIEWED_METADATA`. `BundledCatalogLedgerAttributionTest` fails the build if that

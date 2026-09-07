@@ -85,7 +85,7 @@ without a baseline, involvement reads as new activity rather than an invented pe
 
 **Reviewed primary dose** uses the existing `PRIMARY_ONLY_V1` ledger: one approved direct
 primary per completed non-warm-up work set. Its details distinguish descriptive secondary
-involvement from unattributed work. The current catalog remains **37 DRAFT / 0 APPROVED**,
+involvement from unattributed work. The current catalog remains **211 DRAFT / 0 APPROVED**,
 so real workouts remain visible even when reviewed allocation is unavailable. Neither an
 empty allocation nor this accounting convention measures physiological stimulus or
 diagnoses readiness. See the [exact metric and read contracts](docs/weekly-dose-ledger.md#progress-metric-contract).
@@ -310,7 +310,7 @@ measurement.
 Guidance is persisted with templates and frozen session snapshots in Room schema 12.
 The active timer still reads the persisted exact seconds; add-time, skip, and dismiss are
 one-off timer actions rather than durable preference changes. Production keeps reviewed
-eligibility disabled because the bundled cohort remains 37 `DRAFT` / 0 `APPROVED`, so
+eligibility disabled because the bundled cohort remains 211 `DRAFT` / 0 `APPROVED`, so
 today's legacy automatic prescriptions and manual template defaults are unchanged.
 
 Manual templates use the same exercise IDs and type-aware prescriptions but do
@@ -429,15 +429,20 @@ prescriptions are unchanged. New timed metadata can affect ranking, equipment fi
 and coaching. Stretches and pure conditioning still cannot fill strength slots.
 
 A separate optional `reviewedMetadata` block defines categorical input for the
-production-disabled deterministic eligibility gate. The initial 37-entry cohort is
-entirely `DRAFT`, including its AI-authored rationale: it is not human-approved and does
+production-disabled deterministic eligibility gate. The 211 authored records are
+entirely `DRAFT`, including their AI-authored rationale: they are not human-approved and do
 not affect current workouts. `APPROVED` requires an explicit human-review role,
 timestamp, and provenance change; pull-request approval does not change review state.
 Missing or draft reviewed metadata never hides an exercise from browsing or manual
 templates. See [Reviewed exercise metadata](docs/reviewed-exercise-metadata.md), its
 generated [review report](docs/reviewed-exercise-metadata-review.md), the
 [eligibility boundary](docs/reviewed-capability-eligibility.md), and the
-[human sign-off packet](docs/reviewed-exercise-metadata-human-signoff.md).
+[human sign-off packet](docs/reviewed-exercise-metadata-human-signoff.md). The
+[full-catalog evidence ledger](docs/research/2026-09-07-full-exercise-catalog-review.json)
+accounts for all 302 entries, including unresolved proposals and categories excluded
+from automatic strength work. The [equipment/profile coverage report](docs/reviewed-catalog-coverage.md)
+keeps synthetic prospective results separate from actual approval and identifies
+the unresolved band-only push and fixed-anchor gaps.
 
 Equipment requirements are alternatives: a goblet squat resolves with either a
 dumbbell or a kettlebell. Where they are stricter than the upstream listing it is

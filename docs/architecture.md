@@ -318,7 +318,7 @@ only a history summary; the planner does not use it as a scheduling or recovery 
 `WorkoutGenerationContext` already carries the complete `UserProfile`, so no second
 capability field exists. Production composition sets
 `PlannerFeatureFlags.reviewedCapabilityEligibility = false` because the bundled cohort
-contains 37 `DRAFT` entries and zero `APPROVED` entries. The current production
+contains 211 `DRAFT` entries and zero `APPROVED` entries. The current production
 recommendation therefore still follows the legacy filter and remains invariant to
 capability changes. Tests enable the gate only with synthetic in-memory approvals; a
 reviewed no-candidate result reaches `TodayViewModel` as a typed reason and never falls
@@ -685,7 +685,7 @@ Progress answers two different questions without combining their totals:
   Assistance, body mass, duration and distance are not converted into tonnage.
 - **Reviewed primary dose:** the existing `PRIMARY_ONLY_V1` ledger, with one approved direct
   primary per completed non-warm-up set. Descriptive secondaries and typed unattributed
-  work stay separate. The 37 DRAFT / 0 APPROVED catalog means reviewed allocation can be
+  work stay separate. The 211 DRAFT / 0 APPROVED catalog means reviewed allocation can be
   empty while logged activity is not.
 
 Legacy primary-muscle involvement is a distinct descriptive view: a completed set can

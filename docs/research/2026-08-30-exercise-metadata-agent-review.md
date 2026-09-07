@@ -1,5 +1,10 @@
 # 2026-08-30 Exercise Metadata Agent Review
 
+This is the historical 37-entry snapshot, not the current catalog or an approval
+certificate. The [full-catalog evidence ledger](2026-09-07-full-exercise-catalog-review.json)
+and [current sign-off worksheet](../reviewed-exercise-metadata-human-signoff.md)
+supersede its status and pending-decision counts without rewriting what was reviewed here.
+
 This record summarizes the documentation-side review packet for the 37-entry `reviewedMetadata` draft cohort. It documents model review and the authoritative draft corrections already present in `tools/workout-guide/reviewed-metadata.json`; it does **not** approve metadata. These reviewers are model agents, not human experts.
 
 ## Scope, authority, and evidence boundary

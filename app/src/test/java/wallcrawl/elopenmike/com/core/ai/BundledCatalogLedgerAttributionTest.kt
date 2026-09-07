@@ -14,7 +14,7 @@ import wallcrawl.elopenmike.com.core.model.TrainingWeek
 /**
  * What the *shipped* catalog credits today, read straight from the bundled asset.
  *
- * The 37-entry reviewed cohort is entirely AI-authored and `DRAFT`. Until a human reviewer
+ * The authored reviewed cohort is entirely AI-authored and `DRAFT`. Until a human reviewer
  * deliberately approves an entry, `PRIMARY_ONLY_V1` must credit nothing at all from it, and
  * this test fails the build the moment that stops being true — whether because an entry was
  * approved without review or because the ledger started guessing from legacy fields.
@@ -43,7 +43,7 @@ class BundledCatalogLedgerAttributionTest {
     }
 
     @Test
-    fun allThirtySevenReviewedEntriesAreStillDraftAndNoneAreApproved() {
+    fun allAuthoredReviewedEntriesAreStillDraftAndNoneAreApproved() {
         val reviewed = exercises.filter { it.reviewState != null }
 
         assertThat(reviewed).hasSize(EXPECTED_REVIEWED_ENTRIES)
@@ -92,9 +92,8 @@ class BundledCatalogLedgerAttributionTest {
     /**
      * Builds the domain shape of a bundled entry.
      *
-     * The reviewed block deliberately carries the muscle the catalog actually names, so the
-     * assertion above proves nothing is credited because the entry is `DRAFT` — not because
-     * the fixture forgot to supply a muscle.
+     * A valid synthetic muscle value isolates the DRAFT-state gate from missing-field
+     * handling. Packaged parser and source-bound evidence tests check the real muscles.
      */
     private fun bundledExercise(id: String, hasReviewedBlock: Boolean): Exercise =
         if (hasReviewedBlock) {
@@ -114,7 +113,7 @@ class BundledCatalogLedgerAttributionTest {
 
     private companion object {
         const val EXPECTED_EXERCISES = 302
-        const val EXPECTED_REVIEWED_ENTRIES = 37
+        const val EXPECTED_REVIEWED_ENTRIES = 211
         val CATALOG_FILE = File("src/main/assets/workout-guide/catalog.json")
     }
 }

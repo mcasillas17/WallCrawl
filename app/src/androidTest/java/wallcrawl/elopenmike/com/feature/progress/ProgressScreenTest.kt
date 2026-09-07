@@ -475,7 +475,7 @@ class ProgressScreenTest {
         unattributedWorkSets = emptyMap()
     )
 
-    /** The current bundled reality: 37 DRAFT / 0 APPROVED, so nothing is credited. */
+    /** The bundled metadata is entirely DRAFT, so no reviewed primary work is credited. */
     private fun productionLedger() = WeeklyDoseLedger(
         policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
         weekStartEpochDay = WEEK.startEpochDay,

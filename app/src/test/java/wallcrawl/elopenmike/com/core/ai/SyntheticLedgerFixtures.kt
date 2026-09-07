@@ -23,7 +23,7 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSet
  * Test-only fixtures for the weekly dose ledger.
  *
  * Every reviewed block built here is **synthetic** and exists only so the ledger can be
- * tested against `APPROVED` metadata while the shipped 37-entry cohort stays `DRAFT`.
+ * tested against `APPROVED` metadata while the shipped reviewed cohort stays `DRAFT`.
  * The provenance strings say so explicitly, and nothing in `src/main` can read this file,
  * so a synthetic approval can never reach the bundled catalog or a real user's ledger.
  */

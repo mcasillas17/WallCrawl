@@ -20,7 +20,7 @@ import wallcrawl.elopenmike.com.core.model.SupportRequirement
  * Test-only catalog fixtures for the weekly dose ledger.
  *
  * Every reviewed block built here is **synthetic**. It exists only so crediting can be
- * tested against `APPROVED` metadata while the shipped 37-entry cohort stays `DRAFT`, and
+ * tested against `APPROVED` metadata while the shipped reviewed cohort stays `DRAFT`, and
  * the provenance strings say exactly that. Nothing in `src/main` can read this file, so a
  * synthetic approval can never reach the bundled catalog or a real user's ledger.
  */

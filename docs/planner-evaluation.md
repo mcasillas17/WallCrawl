@@ -178,6 +178,23 @@ The corpus suite asserts:
 
 `PlannerFixtureCorpusTest` avoids a second inaccurate strength classifier. It checks fixture-construction premises and curated candidate subsets, while typed strength/failure behavior is left to the real planner evaluator.
 
+## Full-catalog content-review coverage
+
+`ReviewedCatalogCoverageTest` supplements, rather than silently enlarges, the
+eleven-fixture manifest. Its 16 declared profiles each exercise an all-DRAFT
+structural upper bound, a separate AI-ready subset (both using explicitly synthetic
+in-memory approvals), and disabled-mode invariance with reviewed metadata stripped.
+The [coverage report](reviewed-catalog-coverage.md) records actual candidate counts,
+selected IDs, mode/state, raw whole-program validation and typed no-plan outcomes.
+
+This suite reads the per-ID evidence ledger for content readiness; readiness is not
+human approval. Known pending records are not promoted in the AI-ready experiment.
+A separate real-planner sole-candidate probe covers every catalog ID, without
+equating that result to full-pool selection. The band-only PUSH case is an explicit
+negative coverage regression: a `PUSH` label and a schema-valid proposal do not
+prove genuine push work. The missing push and fixed-anchor representation remain
+open, and selected joint restrictions continue to fail closed without a fallback.
+
 ## Test entry points
 
 Focused contract / corpus coverage:

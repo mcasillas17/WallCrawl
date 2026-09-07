@@ -30,13 +30,21 @@ version. Tooling validates the presence and shape of that provenance; it cannot
 authenticate a person's identity or turn pull-request approval into metadata
 approval.
 
-The initial 37-entry cohort is entirely AI-authored and `DRAFT`. It is therefore
-not eligible for the future reviewed-only gate until a human inspects each entry
-and deliberately approves it. The generated
-[review report](reviewed-exercise-metadata-review.md),
-[agent review record](research/2026-08-30-exercise-metadata-agent-review.md), and
-[human sign-off worksheet](reviewed-exercise-metadata-human-signoff.md) document
-the cohort without mutating `reviewState`.
+The 211 authored records are entirely AI-authored and `DRAFT`. They are not
+eligible for the reviewed-only gate until a human inspects each entry and
+deliberately approves it. The
+[full per-ID evidence ledger](research/2026-09-07-full-exercise-catalog-review.json)
+accounts for all 302 catalog entries: 186 AI-ready recommendations for human
+inspection, 81 pending evidence/policy decisions, and 35 outside automatic-strength
+scope. Of the 81 pending entries, 25 have a representable draft and 56 have their
+metadata block withheld. Readiness is not approval.
+
+The generated [metadata report](reviewed-exercise-metadata-review.md) and
+[human sign-off worksheet](reviewed-exercise-metadata-human-signoff.md) retain
+those distinctions. The [37-entry review from August](research/2026-08-30-exercise-metadata-agent-review.md)
+is historical evidence, not a current approval certificate. Later source inspection
+corrected or withheld drafts where complete equipment or the depicted variation
+could not be established; earlier model consensus is not authoritative.
 
 For each draft, a human reviewer must inspect:
 
@@ -109,14 +117,30 @@ non-empty combinations of canonical equipment values. Substitutions are
 directed; a reverse relationship exists only when separately authored and
 validated.
 
-## Initial cohort and current behavior
+## Full-catalog review and current behavior
 
-The deterministic report currently records 37 draft entries across bodyweight,
-bands, machines/cables, dumbbells, barbells, kettlebells, and supported-equipment
-families. It includes bodyweight and horizontal pushes, supported and unsupported
-squats/lunges, vertical pulls/hangs and assisted pull-ups, horizontal pulls,
-hinges, timed core holds, low-impact choices, supported regressions, and
-assisted-bodyweight progressions.
+The deterministic report records 211 drafts across bodyweight, bands,
+machines/cables, dumbbells, barbells, kettlebells and supported-equipment families.
+The ledger records exact original source facts, the three inspected PNG source
+illustrations and their pinned paths, field-group citations, categorical reasoning,
+corrections, confidence, limitations and remaining human decisions for every ID.
+Each present proposal is bound to its authored metadata SHA-256. It separately
+flags unresolved source/illustration conflicts as unsuitable references for new
+artwork until reconciled; the bundled artwork itself is unchanged.
+
+The current code classifies 267 entries as type-supported and excludes 14
+stretches, 10 distance-duration entries and 11 other timed-conditioning entries.
+The excluded entries still receive individual factual review; they are not given
+manufactured direct-primary allocations or repetition prescriptions. Type support,
+single-candidate reachability, full-pool availability, AI readiness and human
+approval are distinct, as the [coverage report](reviewed-catalog-coverage.md) explains.
+
+Fixed band anchors, specialized fixtures, conflicting movement depictions and
+some primary/impact decisions remain unresolved. A generic wall, doorway, bench
+or machine is not used to conceal an unrepresented requirement. Broader equipment
+categories also do not prove ownership of every machine subtype or bench configuration.
+Band-only PUSH coverage remains a specific open gap, not a reason to relabel
+back/core movements or imply universal modality equivalence.
 
 The importer produces both the catalog and report deterministically; `--check`
 detects drift without writing. Regression tests hold the catalog at 302 entries
