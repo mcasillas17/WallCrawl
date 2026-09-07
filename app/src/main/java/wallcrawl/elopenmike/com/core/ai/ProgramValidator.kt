@@ -181,8 +181,11 @@ class ProgramValidator(
         if (constraints.uniqueProgressionFamilies) {
             val seen = mutableSetOf<String>()
             workout.exercises.forEachIndexed { index, planned ->
+                // Approved metadata only, matching the constraint's own contract: an
+                // unapproved draft record still carries an authored family, and a draft must
+                // never be what drives a product-policy rejection.
                 val family = allowedById[planned.exerciseId]
-                    ?.reviewedMetadata
+                    ?.approvedMetadata()
                     ?.progressionFamily
                     ?: return@forEachIndexed
                 if (!seen.add(family)) {
@@ -407,6 +410,14 @@ class ProgramValidator(
         context: WorkoutGenerationContext,
         allowedById: Map<String, Exercise>
     ): DoseAccountingResult {
+        // Reviewed path only, gated on the same eligibility result every other reviewed rule
+        // reads rather than on the program state alone. The two coincide today because the
+        // context builder composes a program state only behind the same flag, but a context
+        // carrying one without an eligibility result must not reject a legacy proposal with
+        // a reviewed-only reason.
+        if (context.automaticEligibilityResult == null) {
+            return DoseAccountingResult(emptyList(), emptyList(), emptyMap())
+        }
         val programState = context.trainingProgramState
             ?: return DoseAccountingResult(emptyList(), emptyList(), emptyMap())
 

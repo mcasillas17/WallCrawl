@@ -256,10 +256,11 @@ undefined.
    product policy: identifiers, candidate membership, prescription type, declared session
    constraints, explicit exclusions, reviewed metadata and provenance, review-policy
    equality, prescription shape, load provenance, duration agreement, ledger integrity,
-   accounting overflow, configured allowance, and stale context.
-   `GeneratedWorkoutValidator` now reports its existing structural checks as those typed
-   values instead of only the first message, so `ProgramValidator` reuses them rather than
-   restating them.
+   accounting overflow, and configured allowance. `GeneratedWorkoutValidator` now reports
+   its existing structural checks as those typed values instead of a first-failure message,
+   so `ProgramValidator` reuses them rather than restating them. Context freshness is a
+   separate concern, decided in `TodayViewModel` by comparing digests rather than by a
+   violation code.
 2. Duplicate and coverage rules are **declared**, in `SessionProgramConstraints`. Only
    exercise-id uniqueness within one generated session defaults on, and its rationale is
    accounting and identity integrity, not a claim about repeated movement. Progression-family

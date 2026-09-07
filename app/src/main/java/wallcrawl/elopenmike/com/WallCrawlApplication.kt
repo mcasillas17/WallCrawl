@@ -51,7 +51,6 @@ interface AppContainer {
     val exerciseVisualProvider: ExerciseVisualProvider
     val exerciseFilter: ExerciseFilter
     val workoutPlanner: WorkoutPlanner
-    val workoutValidator: GeneratedWorkoutValidator
     val programValidator: ProgramValidator
     val workoutGenerationContextBuilder: WorkoutGenerationContextBuilder
     val workoutHistoryAnalyzer: WorkoutHistoryAnalyzer
@@ -162,19 +161,16 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
         FakeWorkoutPlanner()
     }
 
-    override val workoutValidator: GeneratedWorkoutValidator by lazy {
-        GeneratedWorkoutValidator(exerciseCatalog)
-    }
-
     /**
      * Whole-program validation for every automatic recommendation.
      *
-     * It reuses [workoutValidator] rather than restating the catalog and candidate checks,
-     * and it takes the same `STATE_BASED_DOSE_EFFORT_REST_V1` defaults the prescription
-     * policy uses, so the allowance a plan is checked against is the one it was built under.
+     * The structural validator is private: it exists only as the piece this composes, so
+     * exposing it on the container would offer a second, weaker way to check a plan. The
+     * defaults are the same `STATE_BASED_DOSE_EFFORT_REST_V1` values the prescription policy
+     * uses, so the allowance a plan is checked against is the one it was built under.
      */
     override val programValidator: ProgramValidator by lazy {
-        ProgramValidator(workoutValidator)
+        ProgramValidator(GeneratedWorkoutValidator(exerciseCatalog))
     }
 
     override val workoutGenerationContextBuilder: WorkoutGenerationContextBuilder by lazy {

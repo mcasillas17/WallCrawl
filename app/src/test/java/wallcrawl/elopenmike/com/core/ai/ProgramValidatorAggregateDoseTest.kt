@@ -265,6 +265,29 @@ class ProgramValidatorAggregateDoseTest {
     }
 
     @Test
+    fun aProgramStateWithoutTheReviewedGate_accountsNothingAndRejectsNothing() = runTest {
+        // The two travel together in production. If dose accounting were gated on the
+        // program state alone, a context that carried one without the reviewed eligibility
+        // result would reject a legacy proposal with a reviewed-only reason.
+        val plain = syntheticExerciseWithoutReviewedMetadata("plain-press")
+        val plan = validatedWorkout(listOf(repetitionPlan(plain.id, targetSets = 20)))
+
+        val result = validate(
+            workout = plan,
+            context = validatorContext(
+                allowedExercises = listOf(plain),
+                reviewedPath = true,
+                directPrimarySets = mapOf("Chest" to 0),
+                reviewedEligibilityResult = false
+            )
+        )
+
+        assertThat(result).isInstanceOf(ProgramValidationResult.Valid::class.java)
+        assertThat(result.snapshot.doseAccounting).isEmpty()
+        assertThat(result.snapshot.reviewedPathEnabled).isFalse()
+    }
+
+    @Test
     fun anUnapprovedExercise_isRejectedOnTheReviewedPath() = runTest {
         val draft = syntheticDraftExercise(id = "draft-press", directPrimaryMuscle = "Chest")
         val plan = validatedWorkout(listOf(repetitionPlan(draft.id, targetSets = 2)))

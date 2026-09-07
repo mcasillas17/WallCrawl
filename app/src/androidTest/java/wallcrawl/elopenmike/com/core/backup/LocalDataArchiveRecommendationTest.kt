@@ -123,6 +123,49 @@ class LocalDataArchiveRecommendationTest {
     }
 
     @Test
+    fun aReasonCodeCarryingTheReservedSeparator_isRefused() {
+        // Reason codes are persisted into a "|||"-joined column. Restoring "A|||B" would
+        // read back as two codes the document never contained, so the archive refuses it
+        // here rather than letting a value change meaning after a successful restore.
+        val archive = LocalDataArchiveFixtures.archive(
+            snapshot = LocalDataArchiveFixtures.snapshot(
+                recommendationRecords = LocalDataArchiveFixtures.recommendationRecords()
+                    .map { record ->
+                        if (record.reasonCodes.isEmpty()) {
+                            record
+                        } else {
+                            record.copy(reasonCodes = listOf("WEEKLY|||ALLOWANCE_EXCEEDED"))
+                        }
+                    }
+            )
+        )
+
+        val error = assertThrows(LocalDataArchiveException::class.java) {
+            LocalDataArchiveCodec.read(ByteArrayInputStream(archive.toBytes()))
+        }
+
+        assertThat(error.rejection).isEqualTo(ArchiveRejection.INVALID_VALUE)
+    }
+
+    @Test
+    fun aBlankReasonCode_isRefusedBecauseTheJoinedColumnWouldDropIt() {
+        // A blank code cannot be built in memory — RecommendationRecord refuses one — so the
+        // only way it reaches a reader is an edited document, which is exactly the path that
+        // has to reject it rather than restore a code the joined column would then drop.
+        val document = LocalDataArchiveFixtures
+            .archive()
+            .toBytes()
+            .decodeToString()
+            .replace("\"reasonCodes\":[\"WEEKLY_ALLOWANCE_EXCEEDED\"]", "\"reasonCodes\":[\" \"]")
+
+        val error = assertThrows(LocalDataArchiveException::class.java) {
+            LocalDataArchiveCodec.read(ByteArrayInputStream(document.encodeToByteArray()))
+        }
+
+        assertThat(error.rejection).isEqualTo(ArchiveRejection.INVALID_VALUE)
+    }
+
+    @Test
     fun anEditedDoseAccountingPayload_isRefusedRatherThanPartlyUnderstood() {
         val document = LocalDataArchiveFixtures
             .archive()

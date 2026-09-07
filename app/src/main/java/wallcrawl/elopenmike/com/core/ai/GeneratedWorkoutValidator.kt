@@ -14,10 +14,10 @@ import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
  * against programming mistakes. It is the barrier a generative planner would need, and
  * runs on every planner's output so that guarantee holds the day one is added.
  *
- * The checks are computed once, as [ProgramViolation] values, and exposed two ways:
- * [structuralViolations] reports all of them, which is what whole-program validation needs
- * in order to explain a rejection completely, and [validate] throws on the first, which is
- * the older single-reason contract its existing callers still use.
+ * The checks are reported as [ProgramViolation] values rather than as a first-failure
+ * message, because whole-program validation has to be able to explain a rejection
+ * completely. `ProgramValidator` is the only caller; it composes these with the rules that
+ * need the whole proposal rather than one exercise at a time.
  */
 class GeneratedWorkoutValidator(
     private val exerciseCatalog: ExerciseCatalog
@@ -26,8 +26,8 @@ class GeneratedWorkoutValidator(
     /**
      * Every structural problem in [workout], in report order, or an empty list.
      *
-     * Unlike [validate] this does not stop at the first problem: a caller assembling a
-     * complete rejection has to be able to show every reason at once.
+     * It deliberately does not stop at the first problem: a caller assembling a rejection
+     * has to be able to show every reason at once.
      */
     suspend fun structuralViolations(
         workout: GeneratedWorkout,
@@ -56,20 +56,6 @@ class GeneratedWorkoutValidator(
             violations += exerciseViolations(index, exercise, allowedExerciseIds)
         }
         return violations
-    }
-
-    /**
-     * Validates [workout] against the catalog and optional [allowedExerciseIds].
-     * @throws WorkoutValidationException if any constraint fails.
-     */
-    suspend fun validate(
-        workout: GeneratedWorkout,
-        allowedExerciseIds: Set<String>? = null
-    ): GeneratedWorkout {
-        structuralViolations(workout, allowedExerciseIds).firstOrNull()?.let { violation ->
-            throw WorkoutValidationException(violation.legacyMessage())
-        }
-        return workout
     }
 
     private suspend fun exerciseViolations(
@@ -115,36 +101,6 @@ class GeneratedWorkoutValidator(
             )
         }
         return violations
-    }
-
-    /**
-     * The message [validate] has always thrown for this problem.
-     *
-     * It is written for logs and tests rather than for a reader, which is exactly why the
-     * screen maps typed codes instead of rendering these strings.
-     */
-    private fun ProgramViolation.legacyMessage(): String = when (code) {
-        ProgramViolationCode.DURATION_OUT_OF_BOUNDS ->
-            "Invalid workout duration ($detail minutes)."
-
-        ProgramViolationCode.EMPTY_RECOMMENDATION ->
-            "Generated workout has no exercises."
-
-        ProgramViolationCode.BLANK_EXERCISE_ID ->
-            "Exercise at index $orderIndex has blank exerciseId."
-
-        ProgramViolationCode.UNKNOWN_EXERCISE_ID ->
-            "Hallucinated or invalid exercise ID: '$exerciseId' at index $orderIndex " +
-                "does not exist in catalog."
-
-        ProgramViolationCode.NOT_IN_CANDIDATE_SET ->
-            "Exercise '$exerciseId' was not in the allowed candidate list."
-
-        ProgramViolationCode.PRESCRIPTION_TYPE_MISMATCH ->
-            "Prescription type does not match catalog type ($detail) for " +
-                "exercise '$exerciseId'."
-
-        else -> "Generated workout violated $code."
     }
 }
 

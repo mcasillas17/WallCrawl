@@ -168,6 +168,28 @@ class ProgramValidatorTest {
     }
 
     @Test
+    fun aRepeatedDraftFamily_isNotAProductPolicyRejection() = runTest {
+        // Draft records carry an authored progression family too, and the shipped cohort is
+        // 37 of them. An unapproved record must never be what drives a product-policy
+        // rejection, so the declared constraint reads approved metadata only.
+        val first = syntheticDraftExercise(id = "press-a", directPrimaryMuscle = "Chest")
+        val second = syntheticDraftExercise(id = "press-b", directPrimaryMuscle = "Chest")
+        val plan = validatedWorkout(
+            listOf(repetitionPlan(first.id), repetitionPlan(second.id))
+        )
+
+        val result = validate(
+            workout = plan,
+            context = validatorContext(
+                allowedExercises = listOf(first, second),
+                programConstraints = SessionProgramConstraints(uniqueProgressionFamilies = true)
+            )
+        )
+
+        assertThat(result).isInstanceOf(ProgramValidationResult.Valid::class.java)
+    }
+
+    @Test
     fun movementCoverage_isInertUntilAPatternIsDeclaredRequired() = runTest {
         // The fixture's approved metadata is HORIZONTAL_PUSH, so a required SQUAT is missing.
         val press = syntheticApprovedExercise(id = "press-a", directPrimaryMuscle = "Chest")

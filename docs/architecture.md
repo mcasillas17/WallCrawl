@@ -252,8 +252,8 @@ renders them for the reader, and it is that rendered text that a started session
 and keeps. `GeneratedWorkoutValidator` verifies that every ID exists, remains in the
 allowed set, matches the catalog exercise type, and belongs to a structurally valid
 workout. Unknown IDs are rejected, never silently substituted. It reports those checks
-as typed `ProgramViolation` values; its throwing `validate` is a thin wrapper kept for
-callers that only need the first reason.
+as typed `ProgramViolation` values rather than as a first-failure message, because a
+rejection has to be explainable completely. `ProgramValidator` is its only caller.
 
 ### Whole-program validation
 

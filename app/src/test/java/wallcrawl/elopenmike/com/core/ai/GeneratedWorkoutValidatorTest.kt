@@ -14,10 +14,18 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSplit
 import wallcrawl.elopenmike.com.core.model.WorkoutTitleSpec
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertThrows
-import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
 
+/**
+ * The structural half of validation: catalog existence, candidate membership, and the
+ * catalog exercise type.
+ *
+ * Several rules this suite used to reach through the validator are enforced by
+ * [ExercisePrescription]'s own constructor instead, so a malformed prescription is not
+ * representable in the first place. Those cases stay here because they are the reason the
+ * validator does not restate them.
+ */
 class GeneratedWorkoutValidatorTest {
 
     private lateinit var catalog: InMemoryExerciseCatalog
@@ -30,7 +38,7 @@ class GeneratedWorkoutValidatorTest {
     }
 
     @Test
-    fun validate_validWorkout_passesSuccessfully() = runTest {
+    fun aValidWorkout_reportsNothing() = runTest {
         val validWorkout = GeneratedWorkout(
             title = testTitle(),
             rationale = testRationale(),
@@ -55,69 +63,49 @@ class GeneratedWorkoutValidatorTest {
             )
         )
 
-        val result = validator.validate(validWorkout)
-        assertThat(result).isEqualTo(validWorkout)
+        assertThat(validator.structuralViolations(validWorkout, null)).isEmpty()
     }
 
     @Test
-    fun validate_hallucinatedExerciseId_throwsException() = runTest {
-        val hallucinatedWorkout = GeneratedWorkout(
-            title = testTitle(),
-            rationale = testRationale(),
-            focusMuscles = listOf("Chest"),
-            estimatedDurationMinutes = 45,
-            exercises = listOf(
-                GeneratedExercise(
-                    exerciseId = "spider-man-web-pull-press", // non-existent ID
-                    targetSets = 3,
-                    repMin = 10,
-                    repMax = 12
-                )
-            )
-        )
-
-        try {
-            validator.validate(hallucinatedWorkout)
-            fail("Expected WorkoutValidationException for hallucinated exercise ID")
-        } catch (e: WorkoutValidationException) {
-            assertThat(e.message).contains("Hallucinated or invalid exercise ID")
+    fun aHallucinatedExerciseId_namesTheCodeIdAndPosition() = runTest {
+        val workout = validGeneratedWorkout().withOnlyExercise { exercise ->
+            exercise.copy(exerciseId = "spider-man-web-pull-press")
         }
+
+        val violation = validator.structuralViolations(workout, null).single()
+
+        assertThat(violation.code).isEqualTo(ProgramViolationCode.UNKNOWN_EXERCISE_ID)
+        assertThat(violation.exerciseId).isEqualTo("spider-man-web-pull-press")
+        assertThat(violation.orderIndex).isEqualTo(0)
     }
 
     @Test
-    fun validate_exerciseNotInAllowedCandidates_throwsException() = runTest {
-        val workout = GeneratedWorkout(
-            title = testTitle(),
-            rationale = testRationale(),
-            focusMuscles = listOf("Chest"),
-            estimatedDurationMinutes = 45,
-            exercises = listOf(
-                GeneratedExercise(
-                    exerciseId = "barbell-bench-press",
-                    targetSets = 3,
-                    repMin = 8,
-                    repMax = 10
-                )
-            )
-        )
-
+    fun anExerciseOutsideTheAllowedSet_reportsCandidateMembership() = runTest {
+        val workout = validGeneratedWorkout().withOnlyExercise { exercise ->
+            exercise.copy(exerciseId = "barbell-bench-press")
+        }
         val allowedOnlyDumbbells = setOf("incline-dumbbell-press", "dumbbell-lateral-raise")
 
-        try {
-            validator.validate(workout, allowedOnlyDumbbells)
-            fail("Expected WorkoutValidationException for exercise not in allowed candidate list")
-        } catch (e: WorkoutValidationException) {
-            assertThat(e.message).contains("not in the allowed candidate list")
-        }
+        val violation = validator.structuralViolations(workout, allowedOnlyDumbbells).single()
+
+        assertThat(violation.code).isEqualTo(ProgramViolationCode.NOT_IN_CANDIDATE_SET)
+        assertThat(violation.exerciseId).isEqualTo("barbell-bench-press")
     }
 
     @Test
-    fun validate_prescriptionTypeDoesNotMatchCatalog_throwsException() = runTest {
-        val workout = GeneratedWorkout(
-            title = testTitle(),
-            rationale = testRationale(),
-            focusMuscles = listOf("Chest"),
-            estimatedDurationMinutes = 30,
+    fun noAllowedSet_meansMembershipIsNotChecked() = runTest {
+        // The candidate filter is optional at this layer; ProgramValidator always supplies
+        // one, and this is what makes that its decision rather than a hidden default here.
+        val workout = validGeneratedWorkout().withOnlyExercise { exercise ->
+            exercise.copy(exerciseId = "barbell-bench-press")
+        }
+
+        assertThat(validator.structuralViolations(workout, null)).isEmpty()
+    }
+
+    @Test
+    fun aPrescriptionTypeThatDoesNotMatchTheCatalog_isReported() = runTest {
+        val workout = validGeneratedWorkout().copy(
             exercises = listOf(
                 PlannedExercise(
                     exerciseId = "parallel-bar-dips",
@@ -130,27 +118,67 @@ class GeneratedWorkoutValidatorTest {
             )
         )
 
-        assertValidationFailure(workout, "type")
+        val violation = validator.structuralViolations(workout, null).single()
+
+        assertThat(violation.code).isEqualTo(ProgramViolationCode.PRESCRIPTION_TYPE_MISMATCH)
+        assertThat(violation.detail).isEqualTo("DURATION!=BODYWEIGHT_REPS")
     }
 
     @Test
-    fun prescription_invalidRepRange_throwsException() {
-        assertThrows(IllegalArgumentException::class.java) {
-            GeneratedWorkout(
-                title = testTitle(),
-                rationale = testRationale(),
-                focusMuscles = listOf("Chest"),
-                estimatedDurationMinutes = 45,
-                exercises = listOf(
+    fun everyOffendingExerciseIsReported_notJustTheFirst() = runTest {
+        val workout = validGeneratedWorkout().copy(
+            exercises = listOf(
+                PlannedExercise(
+                    exerciseId = "parallel-bar-dips",
+                    prescription = ExercisePrescription(
+                        exerciseType = ExerciseType.DURATION,
+                        targetSets = 3,
+                        targetDurationSeconds = 45
+                    )
+                ),
                 GeneratedExercise(
-                    exerciseId = "incline-dumbbell-press",
+                    exerciseId = "spider-man-web-pull-press",
                     targetSets = 3,
-                    repMin = 12,
-                    repMax = 8 // repMax < repMin
+                    repMin = 8,
+                    repMax = 10
                 )
             )
+        )
+
+        assertThat(validator.structuralViolations(workout, null).map { it.code })
+            .containsExactly(
+                ProgramViolationCode.PRESCRIPTION_TYPE_MISMATCH,
+                ProgramViolationCode.UNKNOWN_EXERCISE_ID
             )
+            .inOrder()
+    }
+
+    @Test
+    fun anEmptyRecommendation_isReportedAndStopsThePerExerciseChecks() = runTest {
+        val workout = validGeneratedWorkout().copy(exercises = emptyList())
+
+        assertThat(validator.structuralViolations(workout, null).map { it.code })
+            .containsExactly(ProgramViolationCode.EMPTY_RECOMMENDATION)
+    }
+
+    @Test
+    fun aDurationOutsideTheRepresentableBounds_isReported() = runTest {
+        val workout = validGeneratedWorkout().copy(estimatedDurationMinutes = 0)
+
+        val violation = validator.structuralViolations(workout, null).single()
+
+        assertThat(violation.code).isEqualTo(ProgramViolationCode.DURATION_OUT_OF_BOUNDS)
+        assertThat(violation.detail).isEqualTo("0")
+    }
+
+    @Test
+    fun aBlankExerciseId_isReportedWithoutClaimingTheCatalogWasChecked() = runTest {
+        val workout = validGeneratedWorkout().withOnlyExercise { exercise ->
+            exercise.copy(exerciseId = "  ")
         }
+
+        assertThat(validator.structuralViolations(workout, null).map { it.code })
+            .containsExactly(ProgramViolationCode.BLANK_EXERCISE_ID)
     }
 
     // A blank workout name is no longer representable: the title is a split plus an
@@ -158,11 +186,15 @@ class GeneratedWorkoutValidatorTest {
     // type system now.
 
     @Test
-    fun validate_outOfRangeWorkoutDuration_throwsException() = runTest {
-        assertValidationFailure(
-            workout = validGeneratedWorkout().copy(estimatedDurationMinutes = 0),
-            expectedMessage = "duration"
-        )
+    fun prescription_invalidRepRange_throwsException() {
+        assertThrows(IllegalArgumentException::class.java) {
+            GeneratedExercise(
+                exerciseId = "incline-dumbbell-press",
+                targetSets = 3,
+                repMin = 12,
+                repMax = 8 // repMax < repMin
+            )
+        }
     }
 
     @Test
@@ -179,9 +211,7 @@ class GeneratedWorkoutValidatorTest {
         assertThrows(IllegalArgumentException::class.java) {
             validGeneratedWorkout().exercises.single().let { exercise ->
                 exercise.copy(
-                    prescription = exercise.prescription.copy(
-                        repRange = wallcrawl.elopenmike.com.core.model.RepRange(1, 1_001)
-                    )
+                    prescription = exercise.prescription.copy(repRange = RepRange(1, 1_001))
                 )
             }
         }
@@ -208,92 +238,6 @@ class GeneratedWorkoutValidatorTest {
             }
         }
     }
-
-    @Test
-    fun structuralViolations_validWorkout_reportsNothing() = runTest {
-        assertThat(validator.structuralViolations(validGeneratedWorkout(), null)).isEmpty()
-    }
-
-    @Test
-    fun structuralViolations_hallucinatedId_namesTheCodeIdAndPosition() = runTest {
-        val workout = validGeneratedWorkout().withOnlyExercise { exercise ->
-            exercise.copy(exerciseId = "spider-man-web-pull-press")
-        }
-
-        val violation = validator.structuralViolations(workout, null).single()
-
-        assertThat(violation.code).isEqualTo(ProgramViolationCode.UNKNOWN_EXERCISE_ID)
-        assertThat(violation.exerciseId).isEqualTo("spider-man-web-pull-press")
-        assertThat(violation.orderIndex).isEqualTo(0)
-    }
-
-    @Test
-    fun structuralViolations_outsideCandidateSet_reportsCandidateMembership() = runTest {
-        val violation = validator
-            .structuralViolations(validGeneratedWorkout(), setOf("barbell-bench-press"))
-            .single()
-
-        assertThat(violation.code).isEqualTo(ProgramViolationCode.NOT_IN_CANDIDATE_SET)
-        assertThat(violation.exerciseId).isEqualTo("incline-dumbbell-press")
-    }
-
-    @Test
-    fun structuralViolations_typeMismatch_reportsEveryOffendingExercise() = runTest {
-        val workout = validGeneratedWorkout().copy(
-            exercises = listOf(
-                PlannedExercise(
-                    exerciseId = "parallel-bar-dips",
-                    prescription = ExercisePrescription(
-                        exerciseType = ExerciseType.DURATION,
-                        targetSets = 3,
-                        targetDurationSeconds = 45
-                    )
-                ),
-                GeneratedExercise(
-                    exerciseId = "spider-man-web-pull-press",
-                    targetSets = 3,
-                    repMin = 8,
-                    repMax = 10
-                )
-            )
-        )
-
-        // Unlike `validate`, which stops at the first problem it can name, the structured
-        // report is complete: whole-program validation has to show every reason at once.
-        assertThat(validator.structuralViolations(workout, null).map { it.code })
-            .containsExactly(
-                ProgramViolationCode.PRESCRIPTION_TYPE_MISMATCH,
-                ProgramViolationCode.UNKNOWN_EXERCISE_ID
-            )
-            .inOrder()
-    }
-
-    @Test
-    fun structuralViolations_emptyRecommendation_reportsIt() = runTest {
-        val workout = validGeneratedWorkout().copy(exercises = emptyList())
-
-        assertThat(validator.structuralViolations(workout, null).map { it.code })
-            .containsExactly(ProgramViolationCode.EMPTY_RECOMMENDATION)
-    }
-
-    @Test
-    fun structuralViolations_durationOutsideBounds_reportsIt() = runTest {
-        val workout = validGeneratedWorkout().copy(estimatedDurationMinutes = 0)
-
-        assertThat(validator.structuralViolations(workout, null).map { it.code })
-            .containsExactly(ProgramViolationCode.DURATION_OUT_OF_BOUNDS)
-    }
-
-    @Test
-    fun structuralViolations_blankExerciseId_reportsItWithoutClaimingTheCatalogWasChecked() =
-        runTest {
-            val workout = validGeneratedWorkout().withOnlyExercise { exercise ->
-                exercise.copy(exerciseId = "  ")
-            }
-
-            assertThat(validator.structuralViolations(workout, null).map { it.code })
-                .containsExactly(ProgramViolationCode.BLANK_EXERCISE_ID)
-        }
 
     private fun validGeneratedWorkout() = GeneratedWorkout(
         title = testTitle(),
@@ -325,16 +269,4 @@ class GeneratedWorkoutValidatorTest {
     private fun GeneratedWorkout.withOnlyExercise(
         transform: (GeneratedExercise) -> GeneratedExercise
     ): GeneratedWorkout = copy(exercises = listOf(transform(exercises.single())))
-
-    private suspend fun assertValidationFailure(
-        workout: GeneratedWorkout,
-        expectedMessage: String
-    ) {
-        try {
-            validator.validate(workout)
-            fail("Expected WorkoutValidationException containing '$expectedMessage'")
-        } catch (exception: WorkoutValidationException) {
-            assertThat(exception.message).contains(expectedMessage)
-        }
-    }
 }

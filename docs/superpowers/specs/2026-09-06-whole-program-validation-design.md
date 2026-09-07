@@ -73,8 +73,8 @@ Every recommended exercise ID must be non-blank, exist in the bundled catalog, b
 of the allowed candidate set when one was enforced, and carry a prescription whose
 `exerciseType` equals the catalog type. These are the checks `GeneratedWorkoutValidator`
 already performs; whole-program validation reuses that unit rather than restating it, and
-`GeneratedWorkoutValidator` now computes them as structured violations with its existing
-messages preserved for logs.
+`GeneratedWorkoutValidator` now reports them as structured violations rather than as a
+first-failure message, so a rejection can name every reason at once.
 
 Catalog existence is not approval and not a clinical judgement.
 
@@ -301,7 +301,7 @@ session. A recommendation that is only displayed writes nothing.
 | `weekStartEpochDay`, `timeZoneId` | The exact accounting week. |
 | `profileRevision` | Which profile revision produced it. |
 | `contextIdentity` | The digest above, for mismatch detection. |
-| `reasonCodes` | Ordered stable enum names; empty when nothing was reported. |
+| `reasonCodes` | Ordered stable enum names; empty when nothing was reported. They are persisted into a `"|||"`-joined column, so the archive rejects a code containing that sequence exactly as it does for every other joined value. |
 | `doseAccounting` | Per muscle: completed, proposed, and configured allowance. |
 | `recordedAtTimestamp` | Diagnostics only. |
 

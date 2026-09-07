@@ -68,7 +68,15 @@ fun validatorContext(
     programConstraints: SessionProgramConstraints = SessionProgramConstraints(),
     exerciseHistory: Map<String, wallcrawl.elopenmike.com.core.model.ExercisePerformanceHistory> =
         emptyMap(),
-    ineligibleExerciseIds: Set<String> = emptySet()
+    ineligibleExerciseIds: Set<String> = emptySet(),
+    /**
+     * Whether an eligibility result is present, independently of the program state.
+     *
+     * They always travel together in production, and that is exactly why a test has to be
+     * able to separate them: a rule gated on the wrong one of the two would look correct
+     * forever.
+     */
+    reviewedEligibilityResult: Boolean = reviewedPath
 ): WorkoutGenerationContext = WorkoutGenerationContext(
     userProfile = profile,
     allowedExercises = allowedExercises,
@@ -76,7 +84,7 @@ fun validatorContext(
     catalogVersion = VALIDATOR_CATALOG_VERSION,
     reviewPolicyVersion = 1,
     programConstraints = programConstraints,
-    automaticEligibilityResult = if (reviewedPath) {
+    automaticEligibilityResult = if (reviewedEligibilityResult) {
         AutomaticEligibilityResult.Candidates(
             exercises = allowedExercises,
             decisions = allowedExercises.map { exercise ->

@@ -1404,6 +1404,12 @@ object LocalDataArchiveCodec {
             if (!seen.add(record.sessionId)) {
                 inconsistent("The archive holds more than one recommendation for a session.")
             }
+            // Reason codes are persisted into a "|||"-joined column, so they take the same
+            // reserved-separator guard as every other joined value. Without it a restored
+            // code of "A|||B" would read back as two codes the document never contained.
+            record.reasonCodes.forEach { code ->
+                requireJoinableText(code, "recommendation.reasonCode", MAX_SHORT_TEXT_LENGTH)
+            }
         }
     }
 

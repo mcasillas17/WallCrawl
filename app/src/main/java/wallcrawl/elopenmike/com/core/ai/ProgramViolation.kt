@@ -76,10 +76,7 @@ enum class ProgramViolationCode {
      * This is a mismatch with a versioned WallCrawl number, never evidence of overload or
      * medical danger.
      */
-    WEEKLY_ALLOWANCE_EXCEEDED,
-
-    /** Software invariant: the context changed after the recommendation was produced. */
-    STALE_GENERATION_CONTEXT
+    WEEKLY_ALLOWANCE_EXCEEDED
 }
 
 /**
