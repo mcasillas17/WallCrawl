@@ -523,6 +523,59 @@ class TodayViewModelTest {
             .isEqualTo(TodayError.START_VALIDATION_FAILED)
     }
 
+    @Test
+    fun startWorkout_afterTheWeekRollsOver_refusesBecauseTheContextIsNoLongerTheSame() =
+        runTest {
+            // A card built on Sunday and started on Monday is accounted against a different
+            // ISO week. Nothing about the plan changed, but the week it was checked against
+            // did, so it is refused as out of date rather than started against the new one.
+            val now = 20 * DAY_MILLIS
+            val exercises = listOf(
+                syntheticApprovedExercise(id = "press-a", directPrimaryMuscle = "Chest")
+            )
+            val profileRepository = TodayUserProfileRepository(
+                UserProfile(availableEquipment = listOf(StandardEquipment.BODYWEIGHT))
+            )
+            val workoutRepository = TodayWorkoutRepository(emptyList())
+            val catalog = InMemoryExerciseCatalog(exercises)
+            val ledgerRepository = MutableWeekLedgerRepository(chestSets = 0)
+            val viewModel = TodayViewModel(
+                userProfileRepository = profileRepository,
+                workoutRepository = workoutRepository,
+                workoutGenerationContextBuilder = WorkoutGenerationContextBuilder(
+                    userProfileRepository = profileRepository,
+                    workoutRepository = workoutRepository,
+                    exerciseCatalog = catalog,
+                    exerciseFilter = ExerciseFilter(),
+                    historyAnalyzer = WorkoutHistoryAnalyzer(),
+                    plannerFeatureFlags = PlannerFeatureFlags(
+                        reviewedCapabilityEligibility = true
+                    ),
+                    trainingProgramStateProvider = TrainingProgramStateProvider(
+                        weeklyDoseLedgerRepository = ledgerRepository
+                    ),
+                    nowTimestamp = { now }
+                ),
+                workoutPlanner = FixedPlanWorkoutPlanner(setsPerExercise = 2),
+                programValidator = ProgramValidator(GeneratedWorkoutValidator(catalog)),
+                nowTimestamp = { now },
+                clock = flowOf(now)
+            )
+            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                viewModel.uiState.collect {}
+            }
+            advanceUntilIdle()
+            assertThat(viewModel.uiState.value).isInstanceOf(TodayUiState.Success::class.java)
+
+            ledgerRepository.weekStartEpochDay += 7
+            viewModel.startWorkout(WORKOUT_NAME, WORKOUT_RATIONALE) {}
+            advanceUntilIdle()
+
+            assertThat(workoutRepository.startRequests).isEmpty()
+            assertThat((viewModel.uiState.value as TodayUiState.Error).error)
+                .isEqualTo(TodayError.RECOMMENDATION_OUT_OF_DATE)
+        }
+
     private fun completedSession(id: String, completedAtTimestamp: Long) = WorkoutSession(
         id = id,
         name = "Workout $id",
@@ -739,20 +792,32 @@ private class FixedPlanWorkoutPlanner(
     }
 }
 
-/** A week whose completed chest exposure a test can change between generation and start. */
+/**
+ * A week a test can change between generation and start.
+ *
+ * [chestSets] moves completed exposure without moving the week; [weekStartEpochDay] moves
+ * the week itself. The two exercise the two different gates at start: the second changes
+ * the context fingerprint, the first deliberately does not.
+ */
 private class MutableWeekLedgerRepository(
-    var chestSets: Int
+    var chestSets: Int,
+    var weekStartEpochDay: Long = 20_696L
 ) : WeeklyDoseLedgerRepository {
     override suspend fun weeklyLedgerAt(
         profileId: String,
         instant: java.time.Instant,
         zoneId: java.time.ZoneId
-    ): WeeklyDoseLedger = ledger(mapOf("Chest" to chestSets).filterValues { it > 0 })
+    ): WeeklyDoseLedger = current()
 
     override suspend fun currentWeeklyLedger(
         profileId: String,
         zoneId: java.time.ZoneId
-    ): WeeklyDoseLedger = ledger(mapOf("Chest" to chestSets).filterValues { it > 0 })
+    ): WeeklyDoseLedger = current()
+
+    private fun current(): WeeklyDoseLedger = ledger(
+        directPrimarySets = mapOf("Chest" to chestSets).filterValues { it > 0 },
+        weekStartEpochDay = weekStartEpochDay
+    )
 }
 
 /** A week that has already used four of the configured six direct-primary chest sets. */
@@ -783,9 +848,12 @@ private class EmptyWeekLedgerRepository : WeeklyDoseLedgerRepository {
     ): WeeklyDoseLedger = ledger(emptyMap())
 }
 
-private fun ledger(directPrimarySets: Map<String, Int>) = WeeklyDoseLedger(
+private fun ledger(
+    directPrimarySets: Map<String, Int>,
+    weekStartEpochDay: Long = 20_696L
+) = WeeklyDoseLedger(
     policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
-    weekStartEpochDay = 20_696L,
+    weekStartEpochDay = weekStartEpochDay,
     timeZoneId = "UTC",
     catalogVersion = "catalog-commit-under-test",
     reviewPolicyVersion = 1,
