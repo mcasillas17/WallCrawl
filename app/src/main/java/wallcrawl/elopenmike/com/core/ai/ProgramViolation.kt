@@ -61,7 +61,14 @@ enum class ProgramViolationCode {
     /** Software invariant: a prescribed load must trace to a confirmed or recorded source. */
     UNTRACEABLE_LOAD,
 
-    /** Software invariant: the reported estimate must agree with the named estimator. */
+    /**
+     * Software invariant for the arithmetic, product policy for the tolerance.
+     *
+     * The reported estimate must agree with `DURATION_ESTIMATOR_V1` applied to the same
+     * proposal. That the two must agree at all is internal consistency; the estimator's
+     * assumptions and the deviation allowed from it are versioned WallCrawl choices, which
+     * is the split the evidence-to-rule mapping gives this rule.
+     */
     DURATION_ESTIMATE_MISMATCH,
 
     /** Software invariant: the weekly ledger itself is unusable, not merely full. */

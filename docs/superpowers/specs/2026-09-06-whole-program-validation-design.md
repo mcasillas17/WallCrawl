@@ -186,10 +186,12 @@ it serves the manual-template path, which this validator does not run on.
 Two rules follow:
 
 - **Structural (software invariant):** `estimatedDurationMinutes` must be within 1..240.
-- **Agreement (product policy):** it must be within **±1 minute** of
-  `DURATION_ESTIMATOR_V1` applied to the proposal. The tolerance exists because the
-  `WorkoutPlanner` interface admits other implementations that may round differently; a
-  planner sharing the estimator deviates by zero.
+- **Agreement (software invariant for the arithmetic, product policy for the tolerance):**
+  it must be within **±1 minute** of `DURATION_ESTIMATOR_V1` applied to the proposal. That
+  the reported estimate and the estimator must agree at all is internal consistency; the
+  estimator's assumptions and the ±1 minute allowed deviation are versioned choices. The
+  tolerance exists because the `WorkoutPlanner` interface admits other implementations that
+  may round differently; a planner sharing the estimator deviates by zero.
 
 Version 1 deliberately enforces **no** relationship between the estimate and
 `preferredWorkoutDurationMinutes`. The estimate is not a promise of requested-duration
