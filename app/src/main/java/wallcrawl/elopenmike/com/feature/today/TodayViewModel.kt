@@ -3,7 +3,12 @@ package wallcrawl.elopenmike.com.feature.today
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import wallcrawl.elopenmike.com.core.ai.GeneratedWorkoutValidator
+import wallcrawl.elopenmike.com.core.ai.ProgramValidationResult
+import wallcrawl.elopenmike.com.core.ai.ProgramValidator
+import wallcrawl.elopenmike.com.core.ai.ProgramViolation
+import wallcrawl.elopenmike.com.core.ai.ProgramViolationCode
+import wallcrawl.elopenmike.com.core.ai.RecommendationContextIdentity
+import wallcrawl.elopenmike.com.core.ai.RecommendationSnapshot
 import wallcrawl.elopenmike.com.core.ai.WorkoutGenerationContextBuilder
 import wallcrawl.elopenmike.com.core.ai.WorkoutPlanner
 import wallcrawl.elopenmike.com.core.ai.WorkoutPlanningFailure
@@ -36,13 +41,23 @@ class TodayViewModel(
     private val workoutRepository: WorkoutRepository,
     private val workoutGenerationContextBuilder: WorkoutGenerationContextBuilder,
     private val workoutPlanner: WorkoutPlanner,
-    private val workoutValidator: GeneratedWorkoutValidator,
+    private val programValidator: ProgramValidator,
     nowTimestamp: () -> Long = System::currentTimeMillis,
     clock: Flow<Long> = minuteClock(nowTimestamp)
 ) : ViewModel() {
 
     private val generatedWorkoutFlow = MutableStateFlow<GeneratedWorkout?>(null)
-    private val generatedForProfileFlow = MutableStateFlow<UserProfile?>(null)
+
+    /**
+     * The validation evidence for the workout currently on screen, and the fingerprint of
+     * the context that produced it.
+     *
+     * The fingerprint is what makes "is this still the right plan?" answerable at start.
+     * Both are cleared together with the workout, so a displayed plan can never be started
+     * with another plan's provenance.
+     */
+    private var generatedSnapshot: RecommendationSnapshot? = null
+    private var generatedContextIdentity: String? = null
     private val isRegeneratingFlow = MutableStateFlow(false)
     private val errorFlow = MutableStateFlow<TodayError?>(null)
     private var generationJob: Job? = null
@@ -125,10 +140,7 @@ class TodayViewModel(
                 hasPendingRegeneration = false
                 isRegeneratingFlow.value = currentRequestIsRegeneration
                 try {
-                    val generatedResult = buildAndValidateWorkout()
-                    generatedWorkoutFlow.value = generatedResult.workout
-                    generatedForProfileFlow.value = generatedResult.profile
-                    errorFlow.value = null
+                    generateValidatedWorkout(currentRequestIsRegeneration)
                 } catch (e: CancellationException) {
                     throw e
                 } catch (e: Exception) {
@@ -139,6 +151,58 @@ class TodayViewModel(
                 currentRequestIsRegeneration = true
             } while (hasPendingRegeneration)
         }
+    }
+
+    /**
+     * Generates a recommendation and validates the whole proposal before anything is shown.
+     *
+     * One deterministic repair pass is permitted here and only here. Nothing reaches the
+     * screen or the database until whole-program validation has accepted the complete plan
+     * against the exact context that produced it.
+     */
+    private suspend fun generateValidatedWorkout(isRegeneration: Boolean) {
+        val context = workoutGenerationContextBuilder.build()
+        val generated = workoutPlanner.generateWorkout(context)
+        when (
+            val result = programValidator.validate(
+                workout = generated,
+                context = context,
+                allowRepair = true
+            )
+        ) {
+            is ProgramValidationResult.Valid -> {
+                generatedWorkoutFlow.value = result.workout
+                generatedSnapshot = result.snapshot
+                generatedContextIdentity = result.snapshot.contextIdentity
+                errorFlow.value = null
+            }
+
+            is ProgramValidationResult.Invalid -> {
+                // Fail closed. A rejected proposal is never shown, and the previously
+                // displayed workout is left alone rather than replaced by an invalid one.
+                errorFlow.value = validationError(result.violations, isRegeneration)
+            }
+        }
+    }
+
+    /**
+     * Turns a whole-program rejection into a typed reason for the Today error card.
+     *
+     * A rejection whose every reason is an exceeded configured allowance is the one case a
+     * user can act on directly, so it gets its own copy. It reports that this week's planned
+     * volume is already covered under WallCrawl's configured policy — not that more training
+     * would be unsafe.
+     */
+    private fun validationError(
+        violations: List<ProgramViolation>,
+        isRegeneration: Boolean
+    ): TodayError = when {
+        violations.isNotEmpty() &&
+            violations.all { it.code == ProgramViolationCode.WEEKLY_ALLOWANCE_EXCEEDED } ->
+            TodayError.WEEKLY_ALLOWANCE_REACHED
+
+        isRegeneration -> TodayError.REGENERATION_FAILED
+        else -> TodayError.FIRST_GENERATION_FAILED
     }
 
     /**
@@ -178,6 +242,13 @@ class TodayViewModel(
      * the only layer that knows what language the reader chose. They are what the session
      * keeps: a workout started in Spanish stays named in Spanish in the history, exactly as
      * it was seen when it was started.
+     *
+     * The recommendation is revalidated first, against a freshly built context and with
+     * repair switched off. An edited profile, newly completed history, or a crossed week or
+     * time-zone boundary changes the context fingerprint, and that is reported as an
+     * out-of-date recommendation rather than started quietly. Nothing is repaired here
+     * either, so a displayed plan is never swapped for a materially different one while it
+     * is being started.
      */
     fun startWorkout(
         displayName: String,
@@ -187,18 +258,31 @@ class TodayViewModel(
         if (generationJob?.isActive == true) return
         viewModelScope.launch {
             val currentWorkout = generatedWorkoutFlow.value ?: return@launch
+            val recommendation = generatedSnapshot ?: return@launch
             try {
                 val currentContext = workoutGenerationContextBuilder.build()
-                check(generatedForProfileFlow.value == currentContext.userProfile) {
-                    "Workout recommendation is being updated for the current profile."
+                if (RecommendationContextIdentity.of(currentContext) != generatedContextIdentity) {
+                    errorFlow.value = TodayError.RECOMMENDATION_OUT_OF_DATE
+                    return@launch
                 }
-                val allowedIds = currentContext.allowedExercises.map { it.id }.toSet()
-                workoutValidator.validate(currentWorkout, allowedIds)
+                val result = programValidator.validate(
+                    workout = currentWorkout,
+                    context = currentContext,
+                    allowRepair = false
+                )
+                if (result is ProgramValidationResult.Invalid) {
+                    errorFlow.value = TodayError.START_VALIDATION_FAILED
+                    return@launch
+                }
+                // The generation-time evidence is what is recorded: it describes the decision
+                // that produced the plan the user accepted, and the identity check above has
+                // just established that its inputs still hold.
                 val session = workoutRepository.startWorkoutFromGenerated(
                     generated = currentWorkout,
                     displayName = displayName,
                     displayRationale = displayRationale,
-                    userProfile = currentContext.userProfile
+                    userProfile = currentContext.userProfile,
+                    recommendation = recommendation
                 )
                 onWorkoutStarted(session.id)
             } catch (e: CancellationException) {
@@ -209,16 +293,6 @@ class TodayViewModel(
         }
     }
 
-    private suspend fun buildAndValidateWorkout(): GeneratedWorkoutResult {
-        val context = workoutGenerationContextBuilder.build()
-        val generated = workoutPlanner.generateWorkout(context)
-        val allowedIds = context.allowedExercises.map { it.id }.toSet()
-        return GeneratedWorkoutResult(
-            workout = workoutValidator.validate(generated, allowedIds),
-            profile = context.userProfile
-        )
-    }
-
     companion object {
         private const val WEEK_MILLIS = 7 * 24 * 60 * 60 * 1_000L
 
@@ -227,7 +301,7 @@ class TodayViewModel(
             workoutRepository: WorkoutRepository,
             workoutGenerationContextBuilder: WorkoutGenerationContextBuilder,
             workoutPlanner: WorkoutPlanner,
-            workoutValidator: GeneratedWorkoutValidator
+            programValidator: ProgramValidator
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -236,7 +310,7 @@ class TodayViewModel(
                     workoutRepository,
                     workoutGenerationContextBuilder,
                     workoutPlanner,
-                    workoutValidator
+                    programValidator
                 ) as T
             }
         }
@@ -246,11 +320,6 @@ class TodayViewModel(
         val userProfile: UserProfile,
         val activeSession: WorkoutSession?,
         val completedThisWeek: Int
-    )
-
-    private data class GeneratedWorkoutResult(
-        val workout: GeneratedWorkout,
-        val profile: UserProfile
     )
 }
 

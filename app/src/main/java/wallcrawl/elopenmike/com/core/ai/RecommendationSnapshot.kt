@@ -2,6 +2,8 @@ package wallcrawl.elopenmike.com.core.ai
 
 import wallcrawl.elopenmike.com.core.model.AdaptationState
 import wallcrawl.elopenmike.com.core.model.LedgerPolicyVersion
+import wallcrawl.elopenmike.com.core.model.MuscleDoseAccounting
+import wallcrawl.elopenmike.com.core.model.RecommendationRecord
 import wallcrawl.elopenmike.com.core.model.TrainingProgramStatePolicyVersion
 
 /** The versioned whole-program validation contract a recommendation was checked under. */
@@ -19,44 +21,6 @@ enum class RecommendationOutcome {
 
     /** Rejected. Nothing is displayed or persisted from a rejected proposal. */
     REJECTED
-}
-
-/**
- * Prospective and completed exposure for one approved direct-primary muscle.
- *
- * The two counts stay separate on purpose. [completedSets] is reconstructed from completed
- * history by `PRIMARY_ONLY_V1`; [proposedSets] is what a not-yet-performed plan would add.
- * Summing them into one stored number would let a proposal that was never performed look
- * like work the user did, which is the thing weekly accounting must never do.
- *
- * [allowanceSets] is the configured product allowance for the adaptation state the plan was
- * built under, or null when that state configures no dose guidance. It is a versioned
- * WallCrawl choice, not a physiological ceiling.
- */
-data class MuscleDoseAccounting(
-    val muscle: String,
-    val completedSets: Int,
-    val proposedSets: Int,
-    val allowanceSets: Int?
-) {
-    init {
-        require(muscle.isNotBlank() && muscle.length <= MAX_MUSCLE_LENGTH) {
-            "Dose accounting needs a non-blank muscle of at most $MAX_MUSCLE_LENGTH characters."
-        }
-        require(muscle.none(Char::isISOControl)) {
-            "A dose accounting muscle cannot contain control characters."
-        }
-        require(completedSets >= 0 && proposedSets >= 0) {
-            "Dose accounting counts cannot be negative."
-        }
-        require(allowanceSets == null || allowanceSets > 0) {
-            "A configured allowance is positive when it exists at all."
-        }
-    }
-
-    private companion object {
-        const val MAX_MUSCLE_LENGTH = 64
-    }
 }
 
 /**
@@ -119,3 +83,33 @@ data class RecommendationSnapshot(
         }
     }
 }
+
+/**
+ * The stored form of this snapshot for one started session.
+ *
+ * The mapping is deliberately name-based: every version becomes the enum constant's own
+ * name, so a stored value never depends on an ordinal that a later build could renumber.
+ */
+fun RecommendationSnapshot.asRecord(
+    sessionId: String,
+    recordedAtEpochMillis: Long
+): RecommendationRecord = RecommendationRecord(
+    sessionId = sessionId,
+    validatorVersion = validatorVersion.name,
+    durationEstimatorVersion = durationEstimatorVersion,
+    outcome = outcome.name,
+    reviewedPathEnabled = reviewedPathEnabled,
+    catalogVersion = catalogVersion,
+    reviewPolicyVersion = reviewPolicyVersion,
+    trainingPolicyVersion = trainingPolicyVersion?.name,
+    ledgerPolicyVersion = ledgerPolicyVersion?.name,
+    programStatePolicyVersion = programStatePolicyVersion?.name,
+    adaptationState = adaptationState?.name,
+    weekStartEpochDay = weekStartEpochDay,
+    timeZoneId = timeZoneId,
+    profileRevision = profileRevision,
+    contextIdentity = contextIdentity,
+    reasonCodes = reasonCodes.map { it.name },
+    doseAccounting = doseAccounting,
+    recordedAtEpochMillis = recordedAtEpochMillis
+)

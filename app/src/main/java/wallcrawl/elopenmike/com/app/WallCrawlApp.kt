@@ -224,7 +224,7 @@ private fun WallCrawlAppContent(
                         workoutRepository = container.workoutRepository,
                         workoutGenerationContextBuilder = container.workoutGenerationContextBuilder,
                         workoutPlanner = container.workoutPlanner,
-                        workoutValidator = container.workoutValidator
+                        programValidator = container.programValidator
                     )
                 )
                 TodayScreen(

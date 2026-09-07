@@ -12,6 +12,7 @@ import java.io.OutputStreamWriter
 import java.security.DigestOutputStream
 import java.security.MessageDigest
 import wallcrawl.elopenmike.com.core.backup.LocalDataArchiveFormat.ARCHIVE_VERSION
+import wallcrawl.elopenmike.com.core.backup.LocalDataArchiveFormat.SUPPORTED_ARCHIVE_VERSIONS
 import wallcrawl.elopenmike.com.core.backup.LocalDataArchiveFormat.CHECKSUM_ALGORITHM
 import wallcrawl.elopenmike.com.core.backup.LocalDataArchiveLimits.MAX_CHARACTERS
 import wallcrawl.elopenmike.com.core.backup.LocalDataArchiveLimits.MAX_COLLECTION_ITEMS
@@ -21,6 +22,7 @@ import wallcrawl.elopenmike.com.core.backup.LocalDataArchiveLimits.MAX_EXERCISES
 import wallcrawl.elopenmike.com.core.backup.LocalDataArchiveLimits.MAX_ID_LENGTH
 import wallcrawl.elopenmike.com.core.backup.LocalDataArchiveLimits.MAX_NAME_LENGTH
 import wallcrawl.elopenmike.com.core.backup.LocalDataArchiveLimits.MAX_NOTES_LENGTH
+import wallcrawl.elopenmike.com.core.backup.LocalDataArchiveLimits.MAX_RECOMMENDATION_RECORDS
 import wallcrawl.elopenmike.com.core.backup.LocalDataArchiveLimits.MAX_REPETITIONS
 import wallcrawl.elopenmike.com.core.backup.LocalDataArchiveLimits.MAX_SESSIONS
 import wallcrawl.elopenmike.com.core.backup.LocalDataArchiveLimits.MAX_SETS_PER_EXERCISE
@@ -31,6 +33,7 @@ import wallcrawl.elopenmike.com.core.backup.LocalDataArchiveLimits.MAX_TOTAL_SET
 import wallcrawl.elopenmike.com.core.backup.LocalDataArchiveLimits.MAX_WEIGHT
 import wallcrawl.elopenmike.com.core.database.PERSISTED_LIST_SEPARATOR
 import wallcrawl.elopenmike.com.core.database.PERSISTED_PAIR_SEPARATOR
+import wallcrawl.elopenmike.com.core.database.repository.RecommendationDoseAccountingPayload
 import wallcrawl.elopenmike.com.core.io.BoundedCharacterReader
 import wallcrawl.elopenmike.com.core.model.CapabilityLevel
 import wallcrawl.elopenmike.com.core.model.EffortTarget
@@ -40,9 +43,11 @@ import wallcrawl.elopenmike.com.core.model.ExperienceLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.MovementCapabilities
 import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
+import wallcrawl.elopenmike.com.core.model.MuscleDoseAccounting
 import wallcrawl.elopenmike.com.core.model.MuscleVocabulary
 import wallcrawl.elopenmike.com.core.model.PlannedExercise
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
+import wallcrawl.elopenmike.com.core.model.RecommendationRecord
 import wallcrawl.elopenmike.com.core.model.RepRange
 import wallcrawl.elopenmike.com.core.model.RestClass
 import wallcrawl.elopenmike.com.core.model.RestTargetSource
@@ -68,8 +73,11 @@ import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
  *
  * ```json
  * {
- *   "wallcrawlArchive": { "archiveVersion": 1, ... },
- *   "data": { "profile": {...}, "templates": [...], "sessions": [...] },
+ *   "wallcrawlArchive": { "archiveVersion": 2, ... },
+ *   "data": {
+ *     "profile": {...}, "templates": [...], "sessions": [...],
+ *     "recommendations": [...]
+ *   },
  *   "checksum": { "algorithm": "SHA-256", "value": "<hex>" }
  * }
  * ```
@@ -111,8 +119,18 @@ object LocalDataArchiveCodec {
      * been flushed and closed without error.
      */
     fun write(archive: LocalDataArchive, openOutput: () -> OutputStream) {
-        require(archive.metadata.archiveVersion == ARCHIVE_VERSION) {
-            "Only archive version $ARCHIVE_VERSION can be written."
+        // The codec writes any format it can read, which is what makes the older format's
+        // round trip testable at all. Production always exports [ARCHIVE_VERSION]: the
+        // repository names the version, not this function.
+        require(archive.metadata.archiveVersion in SUPPORTED_ARCHIVE_VERSIONS) {
+            "Only archive versions $SUPPORTED_ARCHIVE_VERSIONS can be written."
+        }
+        require(
+            archive.metadata.archiveVersion >= RECOMMENDATION_RECORDS_ARCHIVE_VERSION ||
+                archive.snapshot.recommendationRecords.isEmpty()
+        ) {
+            "Recommendation records need archive version " +
+                "$RECOMMENDATION_RECORDS_ARCHIVE_VERSION or newer."
         }
         // Everything that can refuse this export runs before [openOutput] is called, and
         // nothing here touches the destination. That matters because opening a document for
@@ -181,7 +199,7 @@ object LocalDataArchiveCodec {
                         if (metadata == null) {
                             malformed("The archive must declare '$FIELD_METADATA' first.")
                         }
-                        snapshot = reader.readSnapshot()
+                        snapshot = reader.readSnapshot(metadata.archiveVersion)
                     }
 
                     FIELD_CHECKSUM -> checksum = reader.readChecksum()
@@ -301,6 +319,40 @@ object LocalDataArchiveCodec {
         beginArray()
         snapshot.sessions.forEach { session -> writeSession(session) }
         endArray()
+        // Omitted entirely when there is none, like every other absent value here, so a
+        // version 1 document re-serializes byte for byte and keeps its original checksum.
+        if (snapshot.recommendationRecords.isNotEmpty()) {
+            name("recommendations")
+            beginArray()
+            snapshot.recommendationRecords.forEach { record -> writeRecommendation(record) }
+            endArray()
+        }
+        endObject()
+    }
+
+    private fun JsonWriter.writeRecommendation(record: RecommendationRecord) {
+        beginObject()
+        name("sessionId").value(record.sessionId)
+        name("validatorVersion").value(record.validatorVersion)
+        name("durationEstimatorVersion").value(record.durationEstimatorVersion)
+        name("outcome").value(record.outcome)
+        name("reviewedPathEnabled").value(record.reviewedPathEnabled)
+        record.catalogVersion?.let { name("catalogVersion").value(it) }
+        name("reviewPolicyVersion").value(record.reviewPolicyVersion.toLong())
+        record.trainingPolicyVersion?.let { name("trainingPolicyVersion").value(it) }
+        record.ledgerPolicyVersion?.let { name("ledgerPolicyVersion").value(it) }
+        record.programStatePolicyVersion?.let { name("programStatePolicyVersion").value(it) }
+        record.adaptationState?.let { name("adaptationState").value(it) }
+        record.weekStartEpochDay?.let { name("weekStartEpochDay").value(it) }
+        record.timeZoneId?.let { name("timeZoneId").value(it) }
+        name("profileRevision").value(record.profileRevision)
+        name("contextIdentity").value(record.contextIdentity)
+        name("reasonCodes").writeStringArray(record.reasonCodes)
+        // The same versioned payload the row stores, so the archive and the database agree
+        // on one encoding and one strict decoder rather than two that can drift.
+        name("doseAccounting")
+            .value(RecommendationDoseAccountingPayload.encode(record.doseAccounting))
+        name("recordedAtEpochMillis").value(record.recordedAtEpochMillis)
         endObject()
     }
 
@@ -484,10 +536,10 @@ object LocalDataArchiveCodec {
             when (field) {
                 "archiveVersion" -> {
                     archiveVersion = nextBoundedInt("archiveVersion", 0, 1_000_000)
-                    if (archiveVersion != ARCHIVE_VERSION) {
+                    if (archiveVersion !in SUPPORTED_ARCHIVE_VERSIONS) {
                         malformed(
                             "Archive version $archiveVersion is not supported; " +
-                                "this build reads version $ARCHIVE_VERSION.",
+                                "this build reads versions $SUPPORTED_ARCHIVE_VERSIONS.",
                             ArchiveRejection.UNSUPPORTED_VERSION
                         )
                     }
@@ -543,16 +595,35 @@ object LocalDataArchiveCodec {
         return value ?: malformed("The archive checksum is missing its value.")
     }
 
-    private fun JsonReader.readSnapshot(): LocalDataSnapshot {
+    /**
+     * Reads the data object under the version its own metadata declared.
+     *
+     * The declared version gates which fields are legal, so a document claiming version 1
+     * while carrying version 2 content is refused rather than quietly upgraded.
+     */
+    private fun JsonReader.readSnapshot(archiveVersion: Int): LocalDataSnapshot {
         var profile: UserProfile? = null
         var templates: List<WorkoutTemplate>? = null
         var sessions: List<WorkoutSession>? = null
+        var recommendations: List<RecommendationRecord>? = null
 
         readObject("archive data") { field ->
             when (field) {
                 "profile" -> profile = readProfile()
                 "templates" -> templates = readArray("templates", MAX_TEMPLATES) { readTemplate() }
                 "sessions" -> sessions = readArray("sessions", MAX_SESSIONS) { readSession() }
+                "recommendations" -> {
+                    if (archiveVersion < RECOMMENDATION_RECORDS_ARCHIVE_VERSION) {
+                        malformed(
+                            "A version $archiveVersion archive cannot carry recommendation records."
+                        )
+                    }
+                    recommendations = readArray(
+                        "recommendations",
+                        MAX_RECOMMENDATION_RECORDS
+                    ) { readRecommendation() }
+                }
+
                 else -> malformed("The archive data has an unsupported field.")
             }
         }
@@ -560,7 +631,140 @@ object LocalDataArchiveCodec {
         return LocalDataSnapshot(
             profile = profile,
             templates = templates ?: malformed("The archive data is missing 'templates'."),
-            sessions = sessions ?: malformed("The archive data is missing 'sessions'.")
+            sessions = sessions ?: malformed("The archive data is missing 'sessions'."),
+            recommendationRecords = recommendations.orEmpty()
+        )
+    }
+
+    private fun JsonReader.readRecommendation(): RecommendationRecord {
+        var sessionId: String? = null
+        var validatorVersion: String? = null
+        var durationEstimatorVersion: String? = null
+        var outcome: String? = null
+        var reviewedPathEnabled: Boolean? = null
+        var catalogVersion: String? = null
+        var reviewPolicyVersion: Int? = null
+        var trainingPolicyVersion: String? = null
+        var ledgerPolicyVersion: String? = null
+        var programStatePolicyVersion: String? = null
+        var adaptationState: String? = null
+        var weekStartEpochDay: Long? = null
+        var timeZoneId: String? = null
+        var profileRevision: Long? = null
+        var contextIdentity: String? = null
+        var reasonCodes: List<String>? = null
+        var doseAccounting: List<MuscleDoseAccounting>? = null
+        var recordedAtEpochMillis: Long? = null
+
+        readObject("recommendation") { field ->
+            when (field) {
+                "sessionId" ->
+                    sessionId = nextBoundedString("recommendation.sessionId", MAX_ID_LENGTH)
+
+                "validatorVersion" -> validatorVersion =
+                    nextBoundedString("recommendation.validatorVersion", MAX_SHORT_TEXT_LENGTH)
+
+                "durationEstimatorVersion" -> durationEstimatorVersion = nextBoundedString(
+                    "recommendation.durationEstimatorVersion",
+                    MAX_SHORT_TEXT_LENGTH
+                )
+
+                "outcome" ->
+                    outcome = nextBoundedString("recommendation.outcome", MAX_SHORT_TEXT_LENGTH)
+
+                "reviewedPathEnabled" -> reviewedPathEnabled = nextBoolean()
+                "catalogVersion" -> catalogVersion =
+                    nextBoundedString("recommendation.catalogVersion", MAX_ID_LENGTH)
+
+                "reviewPolicyVersion" -> reviewPolicyVersion =
+                    nextBoundedInt("recommendation.reviewPolicyVersion", 0, MAX_POLICY_VERSION)
+
+                "trainingPolicyVersion" -> trainingPolicyVersion = nextBoundedString(
+                    "recommendation.trainingPolicyVersion",
+                    MAX_SHORT_TEXT_LENGTH
+                )
+
+                "ledgerPolicyVersion" -> ledgerPolicyVersion = nextBoundedString(
+                    "recommendation.ledgerPolicyVersion",
+                    MAX_SHORT_TEXT_LENGTH
+                )
+
+                "programStatePolicyVersion" -> programStatePolicyVersion = nextBoundedString(
+                    "recommendation.programStatePolicyVersion",
+                    MAX_SHORT_TEXT_LENGTH
+                )
+
+                "adaptationState" -> adaptationState =
+                    nextBoundedString("recommendation.adaptationState", MAX_SHORT_TEXT_LENGTH)
+
+                "weekStartEpochDay" -> weekStartEpochDay = nextBoundedLong(
+                    "recommendation.weekStartEpochDay",
+                    MIN_WEEK_START_EPOCH_DAY,
+                    MAX_WEEK_START_EPOCH_DAY
+                )
+
+                "timeZoneId" -> timeZoneId =
+                    nextBoundedString("recommendation.timeZoneId", MAX_SHORT_TEXT_LENGTH)
+
+                "profileRevision" -> profileRevision =
+                    nextBoundedLong("recommendation.profileRevision", 0L, Long.MAX_VALUE)
+
+                "contextIdentity" -> contextIdentity =
+                    nextBoundedString("recommendation.contextIdentity", MAX_ID_LENGTH)
+
+                "reasonCodes" -> reasonCodes = readArray(
+                    "recommendation.reasonCodes",
+                    RecommendationRecord.MAX_REASON_CODES
+                ) { nextBoundedString("recommendation.reasonCode", MAX_SHORT_TEXT_LENGTH) }
+
+                "doseAccounting" -> doseAccounting = RecommendationDoseAccountingPayload
+                    .decode(nextBoundedString("recommendation.doseAccounting", MAX_NOTES_LENGTH))
+                    ?: malformed(
+                        "The archived recommendation.doseAccounting is not a payload this " +
+                            "build can read.",
+                        ArchiveRejection.INVALID_VALUE
+                    )
+
+                "recordedAtEpochMillis" ->
+                    recordedAtEpochMillis = nextTimestamp("recommendation.recordedAtEpochMillis")
+
+                else -> malformed("The archived recommendation has an unsupported field.")
+            }
+        }
+
+        // The domain type owns the remaining rules — bounds, blank and control-character
+        // tokens, duplicate reason codes, duplicate muscles — so the archive and the
+        // database cannot disagree about what a well-formed record is.
+        return RecommendationRecord(
+            sessionId = sessionId
+                ?: malformed("The archived recommendation is missing 'sessionId'."),
+            validatorVersion = validatorVersion
+                ?: malformed("The archived recommendation is missing 'validatorVersion'."),
+            durationEstimatorVersion = durationEstimatorVersion
+                ?: malformed("The archived recommendation is missing 'durationEstimatorVersion'."),
+            outcome = outcome
+                ?: malformed("The archived recommendation is missing 'outcome'."),
+            reviewedPathEnabled = reviewedPathEnabled
+                ?: malformed("The archived recommendation is missing 'reviewedPathEnabled'."),
+            catalogVersion = catalogVersion,
+            reviewPolicyVersion = reviewPolicyVersion
+                ?: malformed("The archived recommendation is missing 'reviewPolicyVersion'."),
+            trainingPolicyVersion = trainingPolicyVersion,
+            ledgerPolicyVersion = ledgerPolicyVersion,
+            programStatePolicyVersion = programStatePolicyVersion,
+            adaptationState = adaptationState,
+            weekStartEpochDay = weekStartEpochDay,
+            timeZoneId = timeZoneId,
+            profileRevision = profileRevision
+                ?: malformed("The archived recommendation is missing 'profileRevision'."),
+            contextIdentity = contextIdentity
+                ?: malformed("The archived recommendation is missing 'contextIdentity'."),
+            reasonCodes = reasonCodes
+                ?: malformed("The archived recommendation is missing 'reasonCodes'."),
+            doseAccounting = doseAccounting
+                ?: malformed("The archived recommendation is missing 'doseAccounting'."),
+            recordedAtEpochMillis = recordedAtEpochMillis
+                ?: malformed("The archived recommendation is missing 'recordedAtEpochMillis'.")
         )
     }
 
@@ -1171,6 +1375,36 @@ object LocalDataArchiveCodec {
         if (exerciseIds.intersect(setIds).isNotEmpty()) {
             inconsistent("The archive uses the same identifier for an exercise and a set.")
         }
+
+        validateRecommendations(snapshot)
+    }
+
+    /**
+     * Recommendation records must belong to sessions the same document carries.
+     *
+     * A record naming a session that is not here would restore into a row the foreign key
+     * refuses, and two records for one session would mean the document holds two answers to
+     * how one plan was validated. Both are refused before anything is written.
+     */
+    private fun validateRecommendations(snapshot: LocalDataSnapshot) {
+        if (snapshot.recommendationRecords.size > MAX_RECOMMENDATION_RECORDS) {
+            tooLarge(
+                "The archive contains more than $MAX_RECOMMENDATION_RECORDS recommendation records."
+            )
+        }
+        if (snapshot.recommendationRecords.isEmpty()) return
+
+        val sessionIds = snapshot.sessions.mapTo(mutableSetOf(), WorkoutSession::id)
+        val seen = mutableSetOf<String>()
+        snapshot.recommendationRecords.forEach { record ->
+            requireIdentifier(record.sessionId, "recommendation.sessionId")
+            if (record.sessionId !in sessionIds) {
+                inconsistent("An archived recommendation references an unknown session.")
+            }
+            if (!seen.add(record.sessionId)) {
+                inconsistent("The archive holds more than one recommendation for a session.")
+            }
+        }
     }
 
     /**
@@ -1180,10 +1414,10 @@ object LocalDataArchiveCodec {
      * archive that reports export success and is then refused at restore.
      */
     private fun validateMetadata(metadata: LocalDataArchiveMetadata) {
-        if (metadata.archiveVersion != ARCHIVE_VERSION) {
+        if (metadata.archiveVersion !in SUPPORTED_ARCHIVE_VERSIONS) {
             malformed(
                 "Archive version ${metadata.archiveVersion} is not supported; " +
-                    "this build reads version $ARCHIVE_VERSION.",
+                    "this build reads versions $SUPPORTED_ARCHIVE_VERSIONS.",
                 ArchiveRejection.UNSUPPORTED_VERSION
             )
         }
@@ -1672,6 +1906,16 @@ object LocalDataArchiveCodec {
     private const val MAX_DAYS_PER_WEEK = 7
     private const val MAX_PREFERRED_DURATION_MINUTES = 1_440
     private const val MAX_BREAK_WEEKS = 5_200
+
+    /** The first archive format that can carry recommendation records. */
+    private const val RECOMMENDATION_RECORDS_ARCHIVE_VERSION = 2
+
+    /** Far above any authored review policy; a bound, not a product rule. */
+    private const val MAX_POLICY_VERSION = 1_000_000
+
+    /** 1970-01-01 and 2100-01-01 as epoch days, matching the archive's timestamp bounds. */
+    private const val MIN_WEEK_START_EPOCH_DAY = 0L
+    private const val MAX_WEEK_START_EPOCH_DAY = 47_482L
 
     private const val FIELD_METADATA = "wallcrawlArchive"
     private const val FIELD_DATA = "data"

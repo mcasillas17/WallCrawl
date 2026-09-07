@@ -8,6 +8,7 @@ import androidx.room.Transaction
 import wallcrawl.elopenmike.com.core.backup.LocalDataRestoreRefusedException
 import wallcrawl.elopenmike.com.core.database.entity.UserProfileEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutExerciseEntity
+import wallcrawl.elopenmike.com.core.database.entity.WorkoutRecommendationRecordEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSessionEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSetEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutTemplateEntity
@@ -20,7 +21,8 @@ data class LocalDataRows(
     val templateExercises: List<WorkoutTemplateExerciseEntity>,
     val sessions: List<WorkoutSessionEntity>,
     val sessionExercises: List<WorkoutExerciseEntity>,
-    val sets: List<WorkoutSetEntity>
+    val sets: List<WorkoutSetEntity>,
+    val recommendationRecords: List<WorkoutRecommendationRecordEntity>
 )
 
 /**
@@ -33,7 +35,9 @@ data class LocalDataRows(
  *
  * The derived weekly-ledger cache is never read into an archive and never restored from
  * one. It is cleared whenever the history it summarises changes, and rebuilt on demand
- * from restored completed history.
+ * from restored completed history. Recommendation records are the opposite case: they
+ * cannot be reconstructed from history, so they are exported and restored with the sessions
+ * they belong to.
  */
 @Dao
 interface LocalDataBackupDao {
@@ -56,12 +60,15 @@ interface LocalDataBackupDao {
     @Query("SELECT * FROM workout_sets ORDER BY workoutExerciseId ASC, setNumber ASC, id ASC")
     suspend fun selectSets(): List<WorkoutSetEntity>
 
+    @Query("SELECT * FROM workout_recommendation_records ORDER BY sessionId ASC")
+    suspend fun selectRecommendationRecords(): List<WorkoutRecommendationRecordEntity>
+
     /**
      * One transactionally consistent snapshot of every user-owned table.
      *
      * Reading each table in its own statement would let a set logged between two of those
      * statements appear without its parent exercise, or a session appear with a set count
-     * that no longer matches. The transaction makes the six reads one point in time.
+     * that no longer matches. The transaction makes the reads one point in time.
      */
     @Transaction
     suspend fun readAll(): LocalDataRows = LocalDataRows(
@@ -70,7 +77,8 @@ interface LocalDataBackupDao {
         templateExercises = selectTemplateExercises(),
         sessions = selectSessions(),
         sessionExercises = selectSessionExercises(),
-        sets = selectSets()
+        sets = selectSets(),
+        recommendationRecords = selectRecommendationRecords()
     )
 
     @Query("SELECT COUNT(*) FROM workout_sessions")
@@ -111,6 +119,14 @@ interface LocalDataBackupDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertSets(sets: List<WorkoutSetEntity>)
 
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    suspend fun insertRecommendationRecords(
+        records: List<WorkoutRecommendationRecordEntity>
+    )
+
+    @Query("DELETE FROM workout_recommendation_records")
+    suspend fun deleteRecommendationRecords()
+
     @Query("DELETE FROM workout_sets")
     suspend fun deleteSets()
 
@@ -141,6 +157,7 @@ interface LocalDataBackupDao {
      */
     @Transaction
     suspend fun deleteAll() {
+        deleteRecommendationRecords()
         deleteSets()
         deleteSessionExercises()
         deleteSessions()
@@ -178,5 +195,8 @@ interface LocalDataBackupDao {
         insertSessions(rows.sessions)
         insertSessionExercises(rows.sessionExercises)
         insertSets(rows.sets)
+        // After the sessions they belong to, so the foreign key holds at every point in the
+        // transaction rather than only at its end.
+        insertRecommendationRecords(rows.recommendationRecords)
     }
 }
