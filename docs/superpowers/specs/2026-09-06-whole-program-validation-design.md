@@ -283,7 +283,14 @@ recommendation's continued validity:
 - catalog version and review-policy version;
 - whether the reviewed path is enabled;
 - derived adaptation state;
-- the ledger's week start day and time-zone ID, when a program state is present.
+- the program-state and ledger policy versions, when a program state is present;
+- the ledger's week start day and time-zone ID, when a program state is present;
+- the declared `SessionProgramConstraints`, in canonical form.
+
+The declared constraints are load-bearing rather than incidental: switching on
+`uniqueProgressionFamilies` or naming a `requiredMovementPattern` changes what a valid plan
+is, so a recommendation produced under one set of constraints must not be started under
+another.
 
 At start, `TodayViewModel` rebuilds the context, recomputes the identity, and compares it
 to the identity recorded when the recommendation was produced. A mismatch — a profile edit,
