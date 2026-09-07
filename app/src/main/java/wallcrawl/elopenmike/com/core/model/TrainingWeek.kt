@@ -49,12 +49,16 @@ data class TrainingWeek(
          * rather than the UTC week it happens to fall in.
          */
         fun containing(instant: Instant, zoneId: ZoneId): TrainingWeek = startingOn(
-            weekStartEpochDay = instant.atZone(zoneId)
-                .toLocalDate()
-                .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
-                .toEpochDay(),
+            weekStartEpochDay = startEpochDayContaining(instant, zoneId),
             zoneId = zoneId
         )
+
+        /** The same ISO Monday key without constructing unused instant bounds for streaks. */
+        fun startEpochDayContaining(instant: Instant, zoneId: ZoneId): Long =
+            instant.atZone(zoneId)
+                .toLocalDate()
+                .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+                .toEpochDay()
 
         /**
          * The ISO week beginning on [weekStartEpochDay], which must be a Monday.

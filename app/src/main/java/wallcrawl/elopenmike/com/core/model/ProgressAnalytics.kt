@@ -10,8 +10,16 @@ data class ProgressOverview(
     val totalWorkoutsLogged: Int = 0,
     val totalVolumeThisWeek: Double = 0.0,
     val totalRepsThisWeek: Int = 0,
+    /** Every completed set this week, warm-ups and timed work included; not a dose. */
+    val completedSetsThisWeek: Int = 0,
+    /** The warm-up subset of [completedSetsThisWeek], so the reviewed-dose gap is explainable. */
+    val warmupSetsThisWeek: Int = 0,
     val recentPersonalRecords: List<PersonalRecord> = emptyList(),
-    val muscleGroupFocus: List<MuscleProgressStat> = emptyList(),
+    /**
+     * Broad legacy-primary muscle involvement, deliberately named apart from reviewed dose.
+     * Counts are non-additive: one completed set involving two primaries is one set for each.
+     */
+    val legacyPrimaryActivity: List<MuscleProgressStat> = emptyList(),
     val strengthTrends: List<StrengthTrend> = emptyList(),
     val recentHistory: List<WorkoutSession> = emptyList()
 )
@@ -33,10 +41,19 @@ enum class RecordType {
     VOLUME
 }
 
+/**
+ * One muscle's non-additive legacy-primary involvement this week against the previous
+ * calendar week.
+ *
+ * [percentageChange] is null when [setsPreviousWeek] is zero: there is no baseline to grow
+ * from, so the reader is shown new activity rather than an invented 100%. Otherwise it is a
+ * signed whole percent, and a reduction is shown as a negative number.
+ */
 data class MuscleProgressStat(
     val muscle: String,
     val setsThisWeek: Int,
-    val percentageGrowth: Int
+    val setsPreviousWeek: Int,
+    val percentageChange: Int?
 )
 
 /**

@@ -18,6 +18,8 @@ import wallcrawl.elopenmike.com.core.database.repository.OfflineUserProfileRepos
 import wallcrawl.elopenmike.com.core.database.repository.OfflineWorkoutRepository
 import wallcrawl.elopenmike.com.core.database.repository.OfflineWorkoutTemplateRepository
 import wallcrawl.elopenmike.com.core.database.repository.OfflineWeeklyDoseLedgerRepository
+import wallcrawl.elopenmike.com.core.database.repository.OfflineProgressRepository
+import wallcrawl.elopenmike.com.core.database.repository.ProgressRepository
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.WeeklyDoseLedgerRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
@@ -43,6 +45,7 @@ interface AppContainer {
     val userProfileRepository: UserProfileRepository
     val workoutRepository: WorkoutRepository
     val weeklyDoseLedgerRepository: WeeklyDoseLedgerRepository
+    val progressRepository: ProgressRepository
     val workoutTemplateRepository: WorkoutTemplateRepository
     val localDataBackupRepository: LocalDataBackupRepository
     val exerciseCatalog: ExerciseCatalog
@@ -106,6 +109,16 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
             historyDao = database.completedWorkoutHistoryDao(),
             ledgerStateDao = database.weeklyDoseLedgerStateDao(),
             catalogSource = workoutGuideCatalogSource
+        )
+    }
+
+    override val progressRepository: ProgressRepository by lazy {
+        OfflineProgressRepository(
+            database = database,
+            catalogSource = workoutGuideCatalogSource,
+            ledgerRepository = weeklyDoseLedgerRepository,
+            localDataWriteGate = localDataWriteGate,
+            calculator = progressCalculator
         )
     }
 

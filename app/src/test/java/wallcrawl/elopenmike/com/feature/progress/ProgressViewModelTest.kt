@@ -1,129 +1,152 @@
 package wallcrawl.elopenmike.com.feature.progress
 
 import com.google.common.truth.Truth.assertThat
+import java.time.Instant
+import java.time.ZoneId
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.advanceTimeBy
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
-import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
-import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
 import wallcrawl.elopenmike.com.R
-import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
-import wallcrawl.elopenmike.com.core.model.Exercise
-import wallcrawl.elopenmike.com.core.model.ExperienceLevel
-import wallcrawl.elopenmike.com.core.model.FitnessGoal
-import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
-import wallcrawl.elopenmike.com.core.model.PriorityLevel
-import wallcrawl.elopenmike.com.core.model.UserProfile
+import wallcrawl.elopenmike.com.core.database.repository.ProgressRepository
+import wallcrawl.elopenmike.com.core.database.repository.ProgressSnapshot
+import wallcrawl.elopenmike.com.core.model.LedgerPolicyVersion
+import wallcrawl.elopenmike.com.core.model.ProgressOverview
+import wallcrawl.elopenmike.com.core.model.TrainingWeek
+import wallcrawl.elopenmike.com.core.model.WeeklyDoseLedger
 import wallcrawl.elopenmike.com.core.model.WeightUnit
-import wallcrawl.elopenmike.com.core.model.WorkoutSession
-import wallcrawl.elopenmike.com.core.model.WorkoutSummary
-import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
-import wallcrawl.elopenmike.com.core.progress.ProgressCalculator
 import wallcrawl.elopenmike.com.test.MainDispatcherRule
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ProgressViewModelTest {
-
-    @get:Rule
-    val mainDispatcherRule = MainDispatcherRule()
+    @get:Rule val mainDispatcherRule = MainDispatcherRule()
 
     @Test
-    fun catalogFailure_becomesVisibleError() = runTest {
+    fun queryFailureIsAnErrorAndRetryCanRecover() = runTest {
+        val repository = FakeProgressRepository().apply { failure = true }
+        val viewModel = ProgressViewModel(repository, nowTimestamp = { MONDAY }, zoneId = { UTC })
+        assertThat(viewModel.uiState.value).isEqualTo(ProgressUiState.Loading)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        runCurrent()
+        assertThat((viewModel.uiState.value as ProgressUiState.Error).messageRes)
+            .isEqualTo(R.string.progress_error)
+
+        repository.failure = false
+        viewModel.refresh()
+        runCurrent()
+        assertThat(viewModel.uiState.value).isInstanceOf(ProgressUiState.Success::class.java)
+    }
+
+    @Test
+    fun importAndDeletionReplaceTheWholeSnapshot() = runTest {
+        val repository = FakeProgressRepository()
+        val viewModel = ProgressViewModel(repository, nowTimestamp = { MONDAY }, zoneId = { UTC })
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        runCurrent()
+        repository.snapshot.value = snapshot(workouts = 3)
+        runCurrent()
+        assertThat((viewModel.uiState.value as ProgressUiState.Success).overview.workoutsThisWeek)
+            .isEqualTo(3)
+        repository.snapshot.value = null
+        runCurrent()
+        assertThat(viewModel.uiState.value).isEqualTo(ProgressUiState.NoProfile)
+    }
+
+    @Test
+    fun midnightMondayRefreshesWithoutAWorkoutWrite() = runTest {
+        val start = MONDAY - 1_000L
+        val repository = FakeProgressRepository()
         val viewModel = ProgressViewModel(
-            workoutRepository = EmptyWorkoutRepository(),
-            userProfileRepository = FixedUserProfileRepository(),
-            exerciseCatalog = FailingExerciseCatalog(),
-            progressCalculator = ProgressCalculator()
+            repository, nowTimestamp = { start + testScheduler.currentTime }, zoneId = { UTC }
         )
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        runCurrent()
+        assertThat(repository.requests).hasSize(1)
+        advanceTimeBy(999)
+        runCurrent()
+        assertThat(repository.requests).hasSize(1)
+        advanceTimeBy(1)
+        runCurrent()
+        assertThat(repository.requests.map { it.first.toEpochMilli() })
+            .containsExactly(start, MONDAY).inOrder()
+    }
+
+    @Test
+    fun timeZoneChangeAndResumeRefreshUseTheNewCalendarWeek() = runTest {
+        var zone = UTC
+        val repository = FakeProgressRepository()
+        val viewModel = ProgressViewModel(repository, nowTimestamp = { MONDAY }, zoneId = { zone })
+        val collector = backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.uiState.collect {}
         }
+        runCurrent()
+        zone = ZoneId.of("America/Los_Angeles")
+        viewModel.refresh()
+        runCurrent()
+        assertThat(repository.requests.last().second).isEqualTo(zone)
+        assertThat(TrainingWeek.containing(repository.requests.last().first, zone).startEpochDay)
+            .isLessThan(TrainingWeek.containing(Instant.ofEpochMilli(MONDAY), UTC).startEpochDay)
 
-        advanceUntilIdle()
-
-        val state = viewModel.uiState.value as ProgressUiState.Error
-        assertThat(state.messageRes).isEqualTo(R.string.progress_error)
+        collector.cancel()
+        runCurrent()
+        val requestCount = repository.requests.size
+        advanceTimeBy(8 * 86_400_000L)
+        runCurrent()
+        assertThat(repository.requests).hasSize(requestCount)
+        assertThat(viewModel.uiState.value).isEqualTo(ProgressUiState.Loading)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        runCurrent()
+        assertThat(repository.requests).hasSize(requestCount + 1)
     }
-}
 
-private class FailingExerciseCatalog : ExerciseCatalog {
-    override fun getAllExercises(): Flow<List<Exercise>> = flow {
-        throw IllegalStateException("asset parse failed")
+    @Test
+    fun aFailedRefreshDoesNotKeepOldActivityBesideAnEmptyLedger() = runTest {
+        val repository = FakeProgressRepository()
+        val viewModel = ProgressViewModel(repository, nowTimestamp = { MONDAY }, zoneId = { UTC })
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        runCurrent()
+        assertThat(viewModel.uiState.value).isInstanceOf(ProgressUiState.Success::class.java)
+        repository.failure = true
+        viewModel.refresh()
+        runCurrent()
+        assertThat(viewModel.uiState.value).isInstanceOf(ProgressUiState.Error::class.java)
     }
 
-    override suspend fun getExerciseById(id: String): Exercise? = error("Not used")
-    override fun searchExercises(
-        query: String,
-        muscle: String?,
-        equipment: String?
-    ): Flow<List<Exercise>> = error("Not used")
+    private class FakeProgressRepository : ProgressRepository {
+        val snapshot = MutableStateFlow<ProgressSnapshot?>(snapshot())
+        val requests = mutableListOf<Pair<Instant, ZoneId>>()
+        var failure = false
+        override fun observeProgress(now: () -> Instant, zoneId: ZoneId): Flow<ProgressSnapshot?> = flow {
+            requests += now() to zoneId
+            check(!failure) { "query or catalog failure" }
+            emitAll(snapshot)
+        }
+    }
 
-    override suspend fun getMuscleGroups(): List<String> = error("Not used")
-    override suspend fun getEquipmentTypes(): List<String> = error("Not used")
-}
-
-private class FixedUserProfileRepository : UserProfileRepository {
-    private val profile = UserProfile()
-
-    override fun getUserProfile(): Flow<UserProfile> = flowOf(profile)
-    override suspend fun getProfileOnce(): UserProfile = profile
-    override suspend fun saveUserProfile(profile: UserProfile) = error("Not used")
-    override suspend fun saveProfile(profile: UserProfile) = error("Not used")
-    override suspend fun updateGoals(goals: Set<FitnessGoal>) = error("Not used")
-    override suspend fun updatePrimaryGoal(goal: FitnessGoal) = error("Not used")
-    override suspend fun updateExperienceLevel(level: ExperienceLevel) = error("Not used")
-    override suspend fun updatePreferredDuration(minutes: Int) = error("Not used")
-    override suspend fun updateDaysPerWeek(days: Int) = error("Not used")
-    override suspend fun updateEquipment(equipment: List<String>) = error("Not used")
-    override suspend fun updateUnit(unit: WeightUnit) = error("Not used")
-    override suspend fun updateMusclePriorities(priorities: Map<String, PriorityLevel>) = error("Not used")
-    override suspend fun updateExcludedExercises(excludedIds: List<String>) = error("Not used")
-    override suspend fun updateTrainingConstraints(
-        constraints: Set<wallcrawl.elopenmike.com.core.model.TrainingConstraint>
-    ) = error("Not used")
-    override suspend fun updateReturningAfterBreakWeeks(weeks: Int) = error("Not used")
-    override suspend fun updateThemePreference(themePreference: wallcrawl.elopenmike.com.core.model.ThemePreference) = error("Not used")
-}
-
-private class EmptyWorkoutRepository : WorkoutRepository {
-    override fun observeActiveSession(): Flow<WorkoutSession?> = flowOf(null)
-    override suspend fun getActiveSessionOnce(): WorkoutSession? = null
-    override suspend fun getSessionById(sessionId: String): WorkoutSession? = null
-    override fun observeSession(sessionId: String): Flow<WorkoutSession?> = flowOf(null)
-    override fun observeCompletedSessions(limit: Int): Flow<List<WorkoutSession>> = flowOf(emptyList())
-    override fun observeCompletedWorkoutCount(): Flow<Int> = flowOf(0)
-    override fun observeCompletedWorkoutCountSince(startTimestamp: Long): Flow<Int> = flowOf(0)
-    override suspend fun getRecentCompletedSessions(limit: Int): List<WorkoutSession> = emptyList()
-    override suspend fun startWorkoutFromGenerated(
-        generated: GeneratedWorkout,
-        displayName: String,
-        displayRationale: String,
-        userProfile: UserProfile
-    ): WorkoutSession = error("Not used")
-
-    override suspend fun startWorkoutFromTemplate(
-        template: wallcrawl.elopenmike.com.core.model.WorkoutTemplate,
-        userProfile: UserProfile
-    ): WorkoutSession = error("Not used")
-
-    override suspend fun logSetCompletion(
-        setId: String,
-        performance: SetPerformanceInput
-    ) = error("Not used")
-
-    override suspend fun completeWorkout(
-        sessionId: String,
-        actualDurationMinutes: Int
-    ): WorkoutSummary = error("Not used")
-
-    override suspend fun getWorkoutSummary(sessionId: String): WorkoutSummary? = error("Not used")
-
-    override suspend fun cancelWorkout(sessionId: String) = error("Not used")
+    companion object {
+        private val UTC = ZoneId.of("UTC")
+        private val MONDAY = Instant.parse("2026-09-07T00:00:00Z").toEpochMilli()
+        private fun snapshot(workouts: Int = 0): ProgressSnapshot {
+            val week = TrainingWeek.containing(Instant.ofEpochMilli(MONDAY), UTC)
+            fun ledger(epochDay: Long) = WeeklyDoseLedger(
+                LedgerPolicyVersion.PRIMARY_ONLY_V1, epochDay, UTC.id, "test", 1,
+                emptyMap(), emptyMap(), emptyMap()
+            )
+            return ProgressSnapshot(
+                overview = ProgressOverview(workoutsThisWeek = workouts),
+                preferredUnit = WeightUnit.KG,
+                week = week,
+                reviewedDose = ledger(week.startEpochDay),
+                previousReviewedDose = ledger(week.startEpochDay - 7)
+            )
+        }
+    }
 }

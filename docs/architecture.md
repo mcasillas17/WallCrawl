@@ -125,8 +125,8 @@ asset keeps `catalog.json` byte-identical to the importer's output — so
 `import_catalog.py --check` still verifies it — and keeps the vocabulary
 decision in Kotlin where unit tests cover it. Two rules matter downstream:
 
-- an upstream name maps to exactly one primary muscle, because weekly set
-  counts credit each completed set to every primary;
+- an upstream name maps to exactly one legacy primary muscle; Progress describes
+  involvement for every listed primary and explicitly marks those counts as overlapping;
 - the other groups an umbrella name covers become secondary muscles, which
   split matching also reads, so nothing stops being selectable.
 
@@ -581,16 +581,74 @@ derives current progress from completed sessions rather than sample metrics, and
 `WorkoutHistoryAnalyzer` converts bounded history into structured input for the
 next recommendation.
 
-Weight-based volume only uses completed load-and-repetition work. Duration and
-distance outcomes are retained for future analytics instead of being forced into
-an invalid volume calculation. Completed reps are totalled alongside tonnage so
-a week of bodyweight training reports the work it actually did. Each session
-keeps the weight unit used when it was created; cross-unit planner and analytics
-calculations convert values rather than relabeling stored history.
+Progress answers two different questions without combining their totals:
 
-Weekly per-muscle set counts credit a set to each of an exercise's primary
-muscles. Conditioning tags are not muscles and are excluded, so a week of
-mobility work reports an empty focus card rather than "Mobility — 6 sets".
+- **Logged activity:** completed workouts and sets, including warm-ups and timed work;
+  positive repetitions from rep-based sets; external-load volume from completed
+  `WEIGHT_REPS` measurements, converted to the preferred unit and expressed as load × reps.
+  Assistance, body mass, duration and distance are not converted into tonnage.
+- **Reviewed primary dose:** the existing `PRIMARY_ONLY_V1` ledger, with one approved direct
+  primary per completed non-warm-up set. Descriptive secondaries and typed unattributed
+  work stay separate. The 37 DRAFT / 0 APPROVED catalog means reviewed allocation can be
+  empty while logged activity is not.
+
+Legacy primary-muscle involvement is a distinct descriptive view: a completed set can
+appear under multiple muscles, so those counts must not be summed as unique sets. Warm-ups
+and timed sets now appear in this view as activity; unknown catalog IDs and conditioning
+tags have no muscle mapping. Current and previous muscle keys are retained for comparisons,
+including reductions. Percentages describe logged involvement, not physiological growth;
+no previous baseline yields a neutral new-activity state.
+
+All weekly activity and dose use `TrainingWeek`: Monday local start-of-day inclusive to
+the following Monday exclusive, in the device's explicit `ZoneId`. Calendar dates, not
+168-hour durations, handle DST. Membership uses the session completion timestamp, including
+clock-skewed completed records anywhere in that selected week. A comparison is the
+unfinished current week against the complete previous week. A streak counts consecutive
+weeks with at least one completed workout, ending this week if occupied or last week
+otherwise; an empty unfinished current week has grace. `TrainingWeek.startEpochDayContaining`
+shares the Monday-key calculation without constructing unnecessary instant bounds for every
+streak timestamp. Language never selects boundaries or changes canonical numbers.
+
+```text
+Room invalidations / RESUMED subscription / clock or zone change / next Monday
+                                |
+                    OfflineProgressRepository
+           shared local-data write gate -> one Room transaction
+                                |
+           +--------------------------------+-------------------------+
+           |                                |                         |
+    profile (no bootstrap)         two-week range, all times    existing ledger repo
+           |                        + recent 500 sessions       current + previous
+           +------- ProgressCalculator -----+                    + derived cache
+                                |                                     |
+                                +--------- ProgressSnapshot ----------+
+                                               |
+                                              UI
+```
+
+Every source read and both ledger/cache reads share that transaction, so a completed
+workout, import, or deletion cannot split activity and dose into different history
+revisions. The fingerprint is not used as an activity revision: it deliberately excludes
+loads and reps. The shared write gate covers cache rebuilding and a missing profile returns
+`NoProfile` without recreating a row. Errors propagate to a retryable screen state, never
+to zero activity or an empty ledger. Cache-table invalidations are not observed, avoiding
+a self-triggered rebuild loop.
+
+Only the heavy record/trend window remains bounded at 500 sessions (10 shown in recent
+history). Complete current/previous week queries have no 500-session limit; all-time counts
+and streaks use an unordered, lightweight completion-timestamp query. Existing ledger
+representational bounds still fail explicitly rather than truncating counts.
+
+`ProgressScreen` collects only while RESUMED; `WhileSubscribed(0, 0)` stops upstream reads
+and clears replay when hidden, then samples fresh time/zone on resubscription. A single
+delay to the next calendar boundary handles rollover without a workout write. Protected
+device clock/time-zone broadcasts and Retry also refresh. Today uses the same bounded
+calendar range for its workout counter; its existing clock feed is reduced to distinct
+weeks before subscribing to the count query. This does not change recommendation logic.
+
+The complete [metric table](weekly-dose-ledger.md#progress-metric-contract) specifies
+measurement omissions and the preserved independent personal-record/strength rules.
+Neither accounting view measures complete physiological stimulus or diagnoses readiness.
 
 Finishing a workout with sets that are neither completed nor stopped raises a
 typed `FinishDecision.ConfirmIncomplete` carrying the open-set count, and

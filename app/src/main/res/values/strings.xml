@@ -477,7 +477,6 @@
     <string name="progress_eyebrow">PROGRESS</string>
     <string name="progress_title">Consistency &amp; performance</string>
     <string name="progress_goal">Goal: %1$s/wk</string>
-    <string name="progress_total_workouts">Total workouts</string>
     <string name="progress_weekly_volume">Weekly volume</string>
     <string name="progress_volume_value">%1$s %2$s</string>
     <string name="progress_no_weight_logged">no weight logged</string>
@@ -486,14 +485,53 @@
     <string name="progress_strength_empty">Log the same exercise in two workouts to see how your strength is trending.</string>
     <string name="progress_trend_change">%1$s → %2$s</string>
     <string name="progress_percentage">%1$s%%</string>
-    <string name="progress_percentage_growth">↑ %1$s%%</string>
-    <string name="progress_muscle_heading">WEEKLY MUSCLE FOCUS</string>
-    <string name="progress_muscle_empty">Complete a strength set this week to see which muscles you\'re hitting.</string>
+
+    <!-- Weekly logged activity: real work, reported separately from any reviewed dose. -->
+    <string name="progress_activity_heading">This week\'s logged activity</string>
+    <string name="progress_activity_range">%1$s to %2$s</string>
+    <string name="progress_activity_timezone">Times shown for %1$s</string>
+    <string name="progress_activity_empty">No completed workouts this week yet. Finish a workout and it shows up here.</string>
+    <string name="progress_activity_warmups_only">Only warm-up sets logged this week so far — no work sets yet.</string>
+    <string name="progress_completed_sets">Completed sets</string>
+    <string name="progress_volume_tonnage">%1$s %2$s × reps</string>
+    <string name="progress_activity_details">Activity details</string>
+    <string name="progress_metric_sets_def">Completed sets count every finished set, warm-ups and timed work included.</string>
+    <string name="progress_metric_reps_def">Reps count finished rep-based sets; timed and distance work have no reps.</string>
+    <string name="progress_metric_volume_def">Volume is load × reps for weighted sets only; body weight, assistance, time and distance are not tonnage.</string>
+    <string name="progress_streak_grace_note">An unfinished current week does not break your streak.</string>
+
+    <!-- Reviewed primary dose: PRIMARY_ONLY_V1 accounting, kept apart from broad activity. -->
+    <string name="progress_dose_heading">Reviewed primary dose</string>
+    <string name="progress_dose_unattributed">Work without approved muscle data is still included in your logged activity.</string>
+    <string name="progress_dose_none">No completed work sets to review this week.</string>
+    <string name="progress_dose_policy">Policy PRIMARY_ONLY_V1: one approved primary muscle counts per completed work set. Warm-ups and described secondary muscles are never counted as dose.</string>
+    <string name="progress_dose_details">Reviewed dose details</string>
+    <string name="progress_dose_direct_heading">Credited primary sets</string>
+    <string name="progress_dose_secondary_heading">Described secondary involvement</string>
+    <string name="progress_dose_secondary_note">Counted for context, not as dose or as extra sets.</string>
+    <string name="progress_dose_omissions_heading">Not attributed yet</string>
+    <string name="progress_omission_unknown_exercise">Exercise not in the current catalog</string>
+    <string name="progress_omission_missing_metadata">No reviewed exercise data yet</string>
+    <string name="progress_omission_not_approved">Reviewed data not approved yet</string>
+
+    <!-- Broad muscle involvement from legacy primary muscles; non-additive by design. -->
+    <string name="progress_involvement_heading">Muscle involvement</string>
+    <string name="progress_involvement_note">Broad activity from each exercise\'s listed primary muscles. Counts overlap — one set can involve more than one muscle.</string>
+    <string name="progress_involvement_empty">No muscle involvement to show this week.</string>
+    <string name="progress_involvement_new">New this week</string>
+    <string name="progress_involvement_change">%1$s%% vs last week</string>
+    <string name="progress_involvement_partial_note">This week is still in progress, compared with all of last week.</string>
+    <string name="progress_involvement_details">Muscle involvement details</string>
+
+    <!-- Progressive disclosure state, announced for assistive tech. -->
+    <string name="progress_details_expanded">Expanded</string>
+    <string name="progress_details_collapsed">Collapsed</string>
     <string name="progress_history_heading">WORKOUT HISTORY</string>
     <string name="progress_history_empty">No past workouts logged yet. Complete your first workout to see history here.</string>
     <string name="progress_history_duration">%1$s min</string>
     <string name="progress_history_volume">%1$s %2$s of volume</string>
     <string name="progress_error">Progress could not be loaded, because the offline exercise catalog or your workout data is unavailable.</string>
+    <string name="progress_no_profile">No local training data yet. Finish setup to start tracking your workouts here.</string>
     <string name="progress_performance_weight_reps">%1$s %2$s × %3$s</string>
 
     <!-- ============================ Profile ============================ -->
@@ -662,6 +700,22 @@
     <plurals name="progress_workouts_this_week">
         <item quantity="one">%1$s workout logged this week</item>
         <item quantity="other">%1$s workouts logged this week</item>
+    </plurals>
+    <plurals name="progress_all_time_workouts">
+        <item quantity="one">%1$s workout all-time</item>
+        <item quantity="other">%1$s workouts all-time</item>
+    </plurals>
+    <plurals name="progress_warmup_count">
+        <item quantity="one">includes %1$s warm-up set</item>
+        <item quantity="other">includes %1$s warm-up sets</item>
+    </plurals>
+    <plurals name="progress_dose_credited">
+        <item quantity="one">%1$s work set has a reviewed muscle</item>
+        <item quantity="other">%1$s work sets have a reviewed muscle</item>
+    </plurals>
+    <plurals name="progress_dose_previous_credited">
+        <item quantity="one">Last week: %1$s reviewed work set</item>
+        <item quantity="other">Last week: %1$s reviewed work sets</item>
     </plurals>
     <plurals name="finish_confirm_title">
         <item quantity="one">Finish with %1$s unlogged set?</item>

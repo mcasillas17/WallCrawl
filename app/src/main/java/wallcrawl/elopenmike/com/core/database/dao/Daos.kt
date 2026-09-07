@@ -72,9 +72,10 @@ interface WorkoutSessionDao {
         status: SessionStatus = SessionStatus.COMPLETED
     ): Flow<Int>
 
-    @Query("SELECT COUNT(*) FROM workout_sessions WHERE status = :status AND completedAtTimestamp >= :startTimestamp")
-    fun observeCompletedSessionCountSince(
+    @Query("SELECT COUNT(*) FROM workout_sessions WHERE status = :status AND completedAtTimestamp >= :startTimestamp AND completedAtTimestamp < :endTimestampExclusive")
+    fun observeCompletedSessionCountInRange(
         startTimestamp: Long,
+        endTimestampExclusive: Long,
         status: SessionStatus = SessionStatus.COMPLETED
     ): Flow<Int>
 

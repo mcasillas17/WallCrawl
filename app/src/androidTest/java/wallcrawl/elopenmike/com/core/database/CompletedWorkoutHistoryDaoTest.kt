@@ -6,6 +6,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.flow.first
 import org.junit.After
 import org.junit.Assert.assertThrows
 import org.junit.Before
@@ -78,6 +79,8 @@ class CompletedWorkoutHistoryDaoTest {
             .map { it.session.id }
 
         assertThat(ids).containsExactly("at-start", "inside").inOrder()
+        assertThat(database.workoutSessionDao().observeCompletedSessionCountInRange(1_000L, 2_000L).first())
+            .isEqualTo(ids.size)
     }
 
     @Test

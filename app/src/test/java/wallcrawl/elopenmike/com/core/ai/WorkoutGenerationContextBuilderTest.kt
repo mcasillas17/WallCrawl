@@ -783,8 +783,10 @@ private class StubWorkoutRepository(
 
     override fun observeCompletedWorkoutCount(): Flow<Int> = flowOf(completedSessions.size)
 
-    override fun observeCompletedWorkoutCountSince(startTimestamp: Long): Flow<Int> = flowOf(
-        completedSessions.count { (it.completedAtTimestamp ?: Long.MIN_VALUE) >= startTimestamp }
+    override fun observeCompletedWorkoutCountInRange(startTimestamp: Long, endTimestampExclusive: Long): Flow<Int> = flowOf(
+        completedSessions.count {
+            it.completedAtTimestamp?.let { time -> time >= startTimestamp && time < endTimestampExclusive } == true
+        }
     )
     override suspend fun getRecentCompletedSessions(limit: Int): List<WorkoutSession> =
         completedSessions.sortedByDescending { it.completedAtTimestamp }

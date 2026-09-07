@@ -3,6 +3,8 @@ package wallcrawl.elopenmike.com.feature.today
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import java.time.Instant
+import java.time.ZoneId
 import wallcrawl.elopenmike.com.core.ai.GeneratedWorkoutValidator
 import wallcrawl.elopenmike.com.core.ai.WorkoutGenerationContextBuilder
 import wallcrawl.elopenmike.com.core.ai.WorkoutPlanner
@@ -14,6 +16,7 @@ import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityFailure
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
+import wallcrawl.elopenmike.com.core.model.TrainingWeek
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -27,6 +30,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -38,7 +42,8 @@ class TodayViewModel(
     private val workoutPlanner: WorkoutPlanner,
     private val workoutValidator: GeneratedWorkoutValidator,
     nowTimestamp: () -> Long = System::currentTimeMillis,
-    clock: Flow<Long> = minuteClock(nowTimestamp)
+    clock: Flow<Long> = minuteClock(nowTimestamp),
+    zoneId: () -> ZoneId = ZoneId::systemDefault
 ) : ViewModel() {
 
     private val generatedWorkoutFlow = MutableStateFlow<GeneratedWorkout?>(null)
@@ -48,11 +53,15 @@ class TodayViewModel(
     private var generationJob: Job? = null
     private var hasPendingRegeneration = false
 
-    private val completedThisWeekFlow = clock.flatMapLatest { currentTimestamp ->
-        workoutRepository.observeCompletedWorkoutCountSince(
-            startTimestamp = currentTimestamp - WEEK_MILLIS
-        )
-    }
+    private val completedThisWeekFlow = clock
+        .map { TrainingWeek.containing(Instant.ofEpochMilli(it), zoneId()) }
+        .distinctUntilChanged()
+        .flatMapLatest { week ->
+            workoutRepository.observeCompletedWorkoutCountInRange(
+                startTimestamp = week.startEpochMillis,
+                endTimestampExclusive = week.endEpochMillisExclusive
+            )
+        }
 
     private val sourceStateFlow = combine(
         userProfileRepository.getUserProfile(),
@@ -220,8 +229,6 @@ class TodayViewModel(
     }
 
     companion object {
-        private const val WEEK_MILLIS = 7 * 24 * 60 * 60 * 1_000L
-
         fun provideFactory(
             userProfileRepository: UserProfileRepository,
             workoutRepository: WorkoutRepository,

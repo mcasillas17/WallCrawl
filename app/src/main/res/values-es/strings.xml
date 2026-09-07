@@ -471,7 +471,6 @@
     <string name="progress_eyebrow">PROGRESO</string>
     <string name="progress_title">Constancia y rendimiento</string>
     <string name="progress_goal">Meta: %1$s/sem</string>
-    <string name="progress_total_workouts">Entrenamientos totales</string>
     <string name="progress_weekly_volume">Volumen semanal</string>
     <string name="progress_volume_value">%1$s %2$s</string>
     <string name="progress_no_weight_logged">sin peso registrado</string>
@@ -480,14 +479,53 @@
     <string name="progress_strength_empty">Registra el mismo ejercicio en dos entrenamientos para ver cómo evoluciona tu fuerza.</string>
     <string name="progress_trend_change">%1$s → %2$s</string>
     <string name="progress_percentage">%1$s%%</string>
-    <string name="progress_percentage_growth">↑ %1$s%%</string>
-    <string name="progress_muscle_heading">ENFOQUE MUSCULAR DE LA SEMANA</string>
-    <string name="progress_muscle_empty">Completa una serie de fuerza esta semana para ver qué músculos estás trabajando.</string>
+
+    <!-- Actividad registrada de la semana: trabajo real, aparte de cualquier dosis revisada. -->
+    <string name="progress_activity_heading">Tu actividad de esta semana</string>
+    <string name="progress_activity_range">%1$s a %2$s</string>
+    <string name="progress_activity_timezone">Horarios en %1$s</string>
+    <string name="progress_activity_empty">Aún no hay entrenamientos completados esta semana. Termina uno y aparecerá aquí.</string>
+    <string name="progress_activity_warmups_only">Por ahora solo registraste series de calentamiento esta semana; todavía no hay series de trabajo.</string>
+    <string name="progress_completed_sets">Series completadas</string>
+    <string name="progress_volume_tonnage">%1$s %2$s × repeticiones</string>
+    <string name="progress_activity_details">Detalles de la actividad</string>
+    <string name="progress_metric_sets_def">Las series completadas cuentan cada serie terminada, incluidos calentamientos y trabajo por tiempo.</string>
+    <string name="progress_metric_reps_def">Las reps cuentan las series por repeticiones terminadas; el trabajo por tiempo o distancia no tiene reps.</string>
+    <string name="progress_metric_volume_def">El volumen es carga × reps solo en series con peso; el peso corporal, la asistencia, el tiempo y la distancia no son tonelaje.</string>
+    <string name="progress_streak_grace_note">Una semana en curso sin terminar no corta tu racha.</string>
+
+    <!-- Dosis primaria revisada: cuenta PRIMARY_ONLY_V1, separada de la actividad amplia. -->
+    <string name="progress_dose_heading">Dosis primaria revisada</string>
+    <string name="progress_dose_unattributed">El trabajo sin datos musculares aprobados sigue incluido en tu actividad registrada.</string>
+    <string name="progress_dose_none">No hay series de trabajo completadas para revisar esta semana.</string>
+    <string name="progress_dose_policy">Política PRIMARY_ONLY_V1: se cuenta un músculo primario aprobado por serie de trabajo completada. Los calentamientos y los músculos secundarios descritos nunca cuentan como dosis.</string>
+    <string name="progress_dose_details">Detalles de la dosis revisada</string>
+    <string name="progress_dose_direct_heading">Series primarias acreditadas</string>
+    <string name="progress_dose_secondary_heading">Participación secundaria descrita</string>
+    <string name="progress_dose_secondary_note">Se cuenta como contexto, no como dosis ni series extra.</string>
+    <string name="progress_dose_omissions_heading">Sin asignar todavía</string>
+    <string name="progress_omission_unknown_exercise">Ejercicio que no está en el catálogo actual</string>
+    <string name="progress_omission_missing_metadata">Todavía no hay datos de ejercicio revisados</string>
+    <string name="progress_omission_not_approved">Datos revisados aún sin aprobar</string>
+
+    <!-- Participación muscular amplia de los músculos primarios heredados; no aditiva por diseño. -->
+    <string name="progress_involvement_heading">Participación muscular</string>
+    <string name="progress_involvement_note">Actividad amplia según los músculos primarios indicados de cada ejercicio. Los conteos se superponen: una serie puede involucrar más de un músculo.</string>
+    <string name="progress_involvement_empty">No hay participación muscular para mostrar esta semana.</string>
+    <string name="progress_involvement_new">Nuevo esta semana</string>
+    <string name="progress_involvement_change">%1$s%% frente a la semana pasada</string>
+    <string name="progress_involvement_partial_note">Esta semana sigue en curso, comparada con toda la semana pasada.</string>
+    <string name="progress_involvement_details">Detalles de la participación muscular</string>
+
+    <!-- Estado del detalle progresivo, anunciado para tecnología de asistencia. -->
+    <string name="progress_details_expanded">Expandido</string>
+    <string name="progress_details_collapsed">Contraído</string>
     <string name="progress_history_heading">HISTORIAL DE ENTRENAMIENTOS</string>
     <string name="progress_history_empty">Todavía no hay entrenamientos registrados. Completa el primero para ver tu historial aquí.</string>
     <string name="progress_history_duration">%1$s min</string>
     <string name="progress_history_volume">%1$s %2$s de volumen</string>
     <string name="progress_error">No se pudo cargar el progreso, porque el catálogo de ejercicios sin conexión o tus datos de entrenamiento no están disponibles.</string>
+    <string name="progress_no_profile">Todavía no hay datos de entrenamiento en este dispositivo. Termina la configuración para empezar a registrar tus entrenamientos aquí.</string>
     <string name="progress_performance_weight_reps">%1$s %2$s × %3$s</string>
 
     <!-- ============================ Profile ============================ -->
@@ -655,6 +693,22 @@
     <plurals name="progress_workouts_this_week">
         <item quantity="one">%1$s entrenamiento registrado esta semana</item>
         <item quantity="other">%1$s entrenamientos registrados esta semana</item>
+    </plurals>
+    <plurals name="progress_all_time_workouts">
+        <item quantity="one">%1$s entrenamiento en total</item>
+        <item quantity="other">%1$s entrenamientos en total</item>
+    </plurals>
+    <plurals name="progress_warmup_count">
+        <item quantity="one">incluye %1$s serie de calentamiento</item>
+        <item quantity="other">incluye %1$s series de calentamiento</item>
+    </plurals>
+    <plurals name="progress_dose_credited">
+        <item quantity="one">%1$s serie de trabajo tiene músculo revisado</item>
+        <item quantity="other">%1$s series de trabajo tienen músculo revisado</item>
+    </plurals>
+    <plurals name="progress_dose_previous_credited">
+        <item quantity="one">Semana pasada: %1$s serie de trabajo revisada</item>
+        <item quantity="other">Semana pasada: %1$s series de trabajo revisadas</item>
     </plurals>
     <plurals name="finish_confirm_title">
         <item quantity="one">¿Terminar con %1$s serie sin registrar?</item>

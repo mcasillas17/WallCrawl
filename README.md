@@ -63,11 +63,42 @@ WallCrawl supports **Dark Theme** (stealth suit graphite aesthetic), **Light The
 - **Exercise Library**: Searchable catalog of 302 exercises across all muscle groups and equipment types.
 - **Active Workout Session**: Type-aware logging for load/reps, bodyweight reps, assisted reps, duration, and distance/duration, with one-tap set completion, plus/minus and text entry for every value, a local rest countdown, optional RPE/RIR, animated SVG movement previews, and previous performance comparisons.
 - **Workout Summary**: Post-workout card displaying session duration, total volume lifted, sets completed, and personal records set against your logged history.
-- **Progress Tracking**: Weekly workout streaks, volume and rep totals, per-muscle weekly set counts, strength progression indicators, and historical workout logs.
+- **Progress Tracking**: Calendar-week logged workouts, completed sets, reps and external-load volume, with reviewed primary dose and overlapping muscle involvement clearly separated. Includes weekly streaks, strength trends, and recent history.
 - **Training Profile & App Preferences**: Full local customization of app language (System default / English / Español) and theme preference (Auto System / Dark Mode / Light Mode) with compact switchers, multi-select fitness goals, preferred weight units (LBS/KG), session duration targets, available gym equipment, return-after-break calibration, muscle priorities, and seven movement preferences.
 - **Your Data**: Export everything stored on the device to one versioned, checksummed file you choose the destination for; restore it onto a fresh start; or delete every local record behind an explicit destructive confirmation. Restore is also offered on the first onboarding step — a quiet button under Continue opens the whole flow in a sheet — so a reinstall does not have to build a throwaway profile first.
 - **Language**: English and neutral Latin American Spanish across the whole app, following the device by default, switchable from a chip in the onboarding wizard's header before any details are entered and from Training Profile → App preferences, and stored as a device setting rather than as part of the profile or the export archive.
 - **Credits & Licenses**: In-app attribution for the bundled exercise artwork, reachable from the Training Profile screen.
+
+### Progress: activity and reviewed dose
+
+Progress and Today's weekly workout counter use **Monday-to-Monday calendar weeks in the
+device's time zone**, including daylight-saving changes. A streak needs at least one
+completed workout per week; an unfinished, empty current week does not erase a streak
+through last week.
+
+Logged activity includes completed warm-ups and timed sets. Repetitions and external-load
+volume are shown only where those measurements apply; volume is expressed as **lb × reps**
+or **kg × reps**, never body mass or assistance weight. Muscle involvement uses each
+exercise's listed primary muscles: those counts overlap and are **not a total of unique
+sets**. Comparisons show the current, unfinished week against the full previous week;
+without a baseline, involvement reads as new activity rather than an invented percentage.
+
+**Reviewed primary dose** uses the existing `PRIMARY_ONLY_V1` ledger: one approved direct
+primary per completed non-warm-up work set. Its details distinguish descriptive secondary
+involvement from unattributed work. The current catalog remains **37 DRAFT / 0 APPROVED**,
+so real workouts remain visible even when reviewed allocation is unavailable. Neither an
+empty allocation nor this accounting convention measures physiological stimulus or
+diagnoses readiness. See the [exact metric and read contracts](docs/weekly-dose-ledger.md#progress-metric-contract).
+
+<p align="center">
+  <img src="art/screenshots/progress-screen.png" width="24%" alt="English Progress in dark mode: logged activity stays visible with no approved muscle allocation" />
+  <img src="art/screenshots/progress-screen-light.png" width="24%" alt="English Progress in light mode, with separate activity and reviewed-dose sections" />
+  <img src="art/screenshots/progress-screen-es.png" width="24%" alt="Spanish Progress in dark mode: actividad registrada and dosis primaria revisada are distinct" />
+  <img src="art/screenshots/progress-screen-es-light.png" width="24%" alt="Spanish Progress in light mode with readable, expandable accounting explanations" />
+</p>
+<p align="center">
+  <em>Disposable example logs with no approved muscle allocation; production metadata is unchanged.</em>
+</p>
 
 ### English & Spanish
 
@@ -186,7 +217,7 @@ Bundled catalog ─────────┤  profile + bounded history
                                           │
                                           ▼
                               set logging → completed history
-                                   ├─ ProgressCalculator
+                                   ├─ ProgressRepository → logged activity + reviewed ledger
                                    └─ next generation context
 ```
 

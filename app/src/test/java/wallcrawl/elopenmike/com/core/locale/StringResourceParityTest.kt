@@ -113,6 +113,7 @@ class StringResourceParityTest {
 
     @Test
     fun everyAllowlistedKeyIsReallyIdenticalInBothLanguages() {
+        assertThat(english.strings.keys).containsAtLeastElementsIn(IDENTICAL_BY_DESIGN)
         // An exemption for a key that is in fact translated is worse than no exemption:
         // it silently stops guarding that key if the translation is ever lost.
         val notIdentical = IDENTICAL_BY_DESIGN.filter { key ->
@@ -217,7 +218,6 @@ class StringResourceParityTest {
             "progress_volume_value",
             "progress_trend_change",
             "progress_percentage",
-            "progress_percentage_growth",
             "progress_history_duration",
             "progress_performance_weight_reps",
             "profile_duration_value"
