@@ -209,6 +209,92 @@ class GeneratedWorkoutValidatorTest {
         }
     }
 
+    @Test
+    fun structuralViolations_validWorkout_reportsNothing() = runTest {
+        assertThat(validator.structuralViolations(validGeneratedWorkout(), null)).isEmpty()
+    }
+
+    @Test
+    fun structuralViolations_hallucinatedId_namesTheCodeIdAndPosition() = runTest {
+        val workout = validGeneratedWorkout().withOnlyExercise { exercise ->
+            exercise.copy(exerciseId = "spider-man-web-pull-press")
+        }
+
+        val violation = validator.structuralViolations(workout, null).single()
+
+        assertThat(violation.code).isEqualTo(ProgramViolationCode.UNKNOWN_EXERCISE_ID)
+        assertThat(violation.exerciseId).isEqualTo("spider-man-web-pull-press")
+        assertThat(violation.orderIndex).isEqualTo(0)
+    }
+
+    @Test
+    fun structuralViolations_outsideCandidateSet_reportsCandidateMembership() = runTest {
+        val violation = validator
+            .structuralViolations(validGeneratedWorkout(), setOf("barbell-bench-press"))
+            .single()
+
+        assertThat(violation.code).isEqualTo(ProgramViolationCode.NOT_IN_CANDIDATE_SET)
+        assertThat(violation.exerciseId).isEqualTo("incline-dumbbell-press")
+    }
+
+    @Test
+    fun structuralViolations_typeMismatch_reportsEveryOffendingExercise() = runTest {
+        val workout = validGeneratedWorkout().copy(
+            exercises = listOf(
+                PlannedExercise(
+                    exerciseId = "parallel-bar-dips",
+                    prescription = ExercisePrescription(
+                        exerciseType = ExerciseType.DURATION,
+                        targetSets = 3,
+                        targetDurationSeconds = 45
+                    )
+                ),
+                GeneratedExercise(
+                    exerciseId = "spider-man-web-pull-press",
+                    targetSets = 3,
+                    repMin = 8,
+                    repMax = 10
+                )
+            )
+        )
+
+        // Unlike `validate`, which stops at the first problem it can name, the structured
+        // report is complete: whole-program validation has to show every reason at once.
+        assertThat(validator.structuralViolations(workout, null).map { it.code })
+            .containsExactly(
+                ProgramViolationCode.PRESCRIPTION_TYPE_MISMATCH,
+                ProgramViolationCode.UNKNOWN_EXERCISE_ID
+            )
+            .inOrder()
+    }
+
+    @Test
+    fun structuralViolations_emptyRecommendation_reportsIt() = runTest {
+        val workout = validGeneratedWorkout().copy(exercises = emptyList())
+
+        assertThat(validator.structuralViolations(workout, null).map { it.code })
+            .containsExactly(ProgramViolationCode.EMPTY_RECOMMENDATION)
+    }
+
+    @Test
+    fun structuralViolations_durationOutsideBounds_reportsIt() = runTest {
+        val workout = validGeneratedWorkout().copy(estimatedDurationMinutes = 0)
+
+        assertThat(validator.structuralViolations(workout, null).map { it.code })
+            .containsExactly(ProgramViolationCode.DURATION_OUT_OF_BOUNDS)
+    }
+
+    @Test
+    fun structuralViolations_blankExerciseId_reportsItWithoutClaimingTheCatalogWasChecked() =
+        runTest {
+            val workout = validGeneratedWorkout().withOnlyExercise { exercise ->
+                exercise.copy(exerciseId = "  ")
+            }
+
+            assertThat(validator.structuralViolations(workout, null).map { it.code })
+                .containsExactly(ProgramViolationCode.BLANK_EXERCISE_ID)
+        }
+
     private fun validGeneratedWorkout() = GeneratedWorkout(
         title = testTitle(),
         rationale = testRationale(),

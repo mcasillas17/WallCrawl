@@ -45,7 +45,63 @@ data class WorkoutGenerationContext(
      * a user preference.
      */
     val priorUserRestPreferences: Map<String, UserRestPreference> = emptyMap(),
-    val preferredUnits: WeightUnit = userProfile.preferredUnit
+    val preferredUnits: WeightUnit = userProfile.preferredUnit,
+    /**
+     * Commit of the bundled catalog these candidates came from, when it is known.
+     *
+     * It is recorded with a validated recommendation so a past decision names the content
+     * it was made against. Null means the catalog snapshot was not loaded, which is
+     * reported as absent rather than filled in with a guess.
+     */
+    val catalogVersion: String? = null,
+    /**
+     * The highest review-policy version authored in that catalog's reviewed metadata.
+     *
+     * Read from the catalog for the same reason the weekly ledger reads it there: shipping
+     * metadata authored under a new review policy must invalidate old identity rather than
+     * silently reinterpret it. A catalog with no reviewed metadata reports 0.
+     */
+    val reviewPolicyVersion: Int = 0,
+    /** The program-design rules this session was asked to satisfy. */
+    val programConstraints: SessionProgramConstraints = SessionProgramConstraints()
+)
+
+/**
+ * The program-design constraints one proposed session must satisfy.
+ *
+ * These are **declared**, never universal. Whole-program validation enforces exactly what
+ * is switched on here and nothing else, which is what keeps a scoped product rule from
+ * quietly becoming a claim that repeating a movement is harmful or that every session must
+ * cover every pattern.
+ *
+ * The scope is one generated session. Nothing here applies across sessions or across a
+ * week, and nothing here applies to manual templates, which are explicit user choices.
+ */
+data class SessionProgramConstraints(
+    /**
+     * Whether one catalog exercise id may appear only once in a session.
+     *
+     * On by default because two instances of one id inside a single generated session
+     * cannot be told apart in its recommendation record and would be counted twice by
+     * prospective dose accounting. The rationale is accounting and identity integrity, not
+     * a judgement about repeated movements.
+     */
+    val uniqueExerciseIds: Boolean = true,
+    /**
+     * Whether one approved progression family may appear only once in a session.
+     *
+     * Off by default: no product decision has declared it, and repeated families are not
+     * inherently a defect.
+     */
+    val uniqueProgressionFamilies: Boolean = false,
+    /**
+     * Movement patterns this session must contain.
+     *
+     * Empty by default, so no workout is required to cover any pattern. The planner's
+     * pattern spreading stays a ranking preference with an explicit fallback to repeated
+     * patterns; it is not promoted to a rule here.
+     */
+    val requiredMovementPatterns: Set<MovementPattern> = emptySet()
 )
 
 /**

@@ -13,10 +13,50 @@ import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
  * Today's planner is rule-based and cannot invent an exercise, so this mostly guards
  * against programming mistakes. It is the barrier a generative planner would need, and
  * runs on every planner's output so that guarantee holds the day one is added.
+ *
+ * The checks are computed once, as [ProgramViolation] values, and exposed two ways:
+ * [structuralViolations] reports all of them, which is what whole-program validation needs
+ * in order to explain a rejection completely, and [validate] throws on the first, which is
+ * the older single-reason contract its existing callers still use.
  */
 class GeneratedWorkoutValidator(
     private val exerciseCatalog: ExerciseCatalog
 ) {
+
+    /**
+     * Every structural problem in [workout], in report order, or an empty list.
+     *
+     * Unlike [validate] this does not stop at the first problem: a caller assembling a
+     * complete rejection has to be able to show every reason at once.
+     */
+    suspend fun structuralViolations(
+        workout: GeneratedWorkout,
+        allowedExerciseIds: Set<String>?
+    ): List<ProgramViolation> {
+        val violations = mutableListOf<ProgramViolation>()
+
+        // The title is a structured spec rather than a string, so there is no blank name to
+        // guard against: a planner cannot produce one without naming a split and an emphasis.
+        if (
+            workout.estimatedDurationMinutes !in
+            WorkoutDurationEstimator.MIN_MINUTES..WorkoutDurationEstimator.MAX_MINUTES
+        ) {
+            violations += ProgramViolation(
+                code = ProgramViolationCode.DURATION_OUT_OF_BOUNDS,
+                detail = workout.estimatedDurationMinutes.toString()
+            )
+        }
+
+        if (workout.exercises.isEmpty()) {
+            violations += ProgramViolation(ProgramViolationCode.EMPTY_RECOMMENDATION)
+            return violations
+        }
+
+        workout.exercises.forEachIndexed { index, exercise ->
+            violations += exerciseViolations(index, exercise, allowedExerciseIds)
+        }
+        return violations
+    }
 
     /**
      * Validates [workout] against the catalog and optional [allowedExerciseIds].
@@ -26,58 +66,85 @@ class GeneratedWorkoutValidator(
         workout: GeneratedWorkout,
         allowedExerciseIds: Set<String>? = null
     ): GeneratedWorkout {
-        // The title is a structured spec rather than a string, so there is no blank name to
-        // guard against: a planner cannot produce one without naming a split and an emphasis.
-        if (workout.estimatedDurationMinutes !in MIN_DURATION_MINUTES..MAX_DURATION_MINUTES) {
-            throw WorkoutValidationException(
-                "Invalid workout duration (${workout.estimatedDurationMinutes} minutes)."
-            )
+        structuralViolations(workout, allowedExerciseIds).firstOrNull()?.let { violation ->
+            throw WorkoutValidationException(violation.legacyMessage())
         }
-
-        if (workout.exercises.isEmpty()) {
-            throw WorkoutValidationException("Generated workout has no exercises.")
-        }
-
-        workout.exercises.forEachIndexed { index, exercise ->
-            validateExercise(index, exercise, allowedExerciseIds)
-        }
-
         return workout
     }
 
-    private suspend fun validateExercise(
+    private suspend fun exerciseViolations(
         index: Int,
         exercise: GeneratedExercise,
         allowedExerciseIds: Set<String>?
-    ) {
+    ): List<ProgramViolation> {
         if (exercise.exerciseId.isBlank()) {
-            throw WorkoutValidationException("Exercise at index $index has blank exerciseId.")
+            return listOf(
+                ProgramViolation(
+                    code = ProgramViolationCode.BLANK_EXERCISE_ID,
+                    orderIndex = index
+                )
+            )
         }
 
-        // Verify exercise exists in the official catalog
+        // Verify exercise exists in the official catalog.
         val catalogExercise = exerciseCatalog.getExerciseById(exercise.exerciseId)
-            ?: throw WorkoutValidationException(
-                "Hallucinated or invalid exercise ID: '${exercise.exerciseId}' at index $index does not exist in catalog."
+            ?: return listOf(
+                ProgramViolation(
+                    code = ProgramViolationCode.UNKNOWN_EXERCISE_ID,
+                    exerciseId = exercise.exerciseId,
+                    orderIndex = index
+                )
             )
 
-        // If a candidate filter was enforced, verify it was in the allowed list
+        val violations = mutableListOf<ProgramViolation>()
+        // If a candidate filter was enforced, verify it was in the allowed list.
         if (allowedExerciseIds != null && exercise.exerciseId !in allowedExerciseIds) {
-            throw WorkoutValidationException(
-                "Exercise '${exercise.exerciseId}' was not in the allowed candidate list."
+            violations += ProgramViolation(
+                code = ProgramViolationCode.NOT_IN_CANDIDATE_SET,
+                exerciseId = exercise.exerciseId,
+                orderIndex = index
             )
         }
 
         if (exercise.prescription.exerciseType != catalogExercise.type) {
-            throw WorkoutValidationException(
-                "Prescription type '${exercise.prescription.exerciseType}' does not match catalog " +
-                    "type '${catalogExercise.type}' for exercise '${exercise.exerciseId}'."
+            violations += ProgramViolation(
+                code = ProgramViolationCode.PRESCRIPTION_TYPE_MISMATCH,
+                exerciseId = exercise.exerciseId,
+                orderIndex = index,
+                detail = "${exercise.prescription.exerciseType.name}!=${catalogExercise.type.name}"
             )
         }
+        return violations
     }
 
-    private companion object {
-        const val MIN_DURATION_MINUTES = 1
-        const val MAX_DURATION_MINUTES = 240
+    /**
+     * The message [validate] has always thrown for this problem.
+     *
+     * It is written for logs and tests rather than for a reader, which is exactly why the
+     * screen maps typed codes instead of rendering these strings.
+     */
+    private fun ProgramViolation.legacyMessage(): String = when (code) {
+        ProgramViolationCode.DURATION_OUT_OF_BOUNDS ->
+            "Invalid workout duration ($detail minutes)."
+
+        ProgramViolationCode.EMPTY_RECOMMENDATION ->
+            "Generated workout has no exercises."
+
+        ProgramViolationCode.BLANK_EXERCISE_ID ->
+            "Exercise at index $orderIndex has blank exerciseId."
+
+        ProgramViolationCode.UNKNOWN_EXERCISE_ID ->
+            "Hallucinated or invalid exercise ID: '$exerciseId' at index $orderIndex " +
+                "does not exist in catalog."
+
+        ProgramViolationCode.NOT_IN_CANDIDATE_SET ->
+            "Exercise '$exerciseId' was not in the allowed candidate list."
+
+        ProgramViolationCode.PRESCRIPTION_TYPE_MISMATCH ->
+            "Prescription type does not match catalog type ($detail) for " +
+                "exercise '$exerciseId'."
+
+        else -> "Generated workout violated $code."
     }
 }
 
