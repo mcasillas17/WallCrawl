@@ -196,14 +196,15 @@ class ProgramValidator(
             val covered = workout.exercises.mapNotNullTo(mutableSetOf()) { planned ->
                 allowedById[planned.exerciseId]?.movementPattern()
             }
-            (constraints.requiredMovementPatterns - covered)
-                .sortedBy(MovementPattern::ordinal)
-                .forEach { missing ->
-                    violations += ProgramViolation(
-                        code = ProgramViolationCode.MISSING_REQUIRED_MOVEMENT_PATTERN,
-                        detail = missing.name
-                    )
-                }
+            // Unordered on purpose: `evaluate` sorts every violation through
+            // `ProgramViolation.compareTo`, which is the single place report order is
+            // decided. Pre-sorting here could only disagree with it.
+            (constraints.requiredMovementPatterns - covered).forEach { missing ->
+                violations += ProgramViolation(
+                    code = ProgramViolationCode.MISSING_REQUIRED_MOVEMENT_PATTERN,
+                    detail = missing.name
+                )
+            }
         }
         return violations
     }

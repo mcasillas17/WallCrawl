@@ -141,9 +141,10 @@ ranges, finite values, type-specific required and forbidden fields, and paired
 `restClass`/`restTargetSource`. Whole-program validation does not restate those bounds and
 adds no new numeric limits. Representational bounds are not human tolerances.
 
-One consistency rule is added: automatic effort guidance must never target zero reps in
-reserve. `EffortTarget` already forbids a minimum below 1, so this is asserted rather than
-newly enforced.
+No effort rule is added either, and there is no violation code for one. Automatic guidance
+cannot target zero reps in reserve because `EffortTarget` forbids a minimum below 1, and
+that invariant lives in the prescription types and `StateBasedTrainingPolicy`, which
+predate this change. Whole-program validation relies on it rather than restating it.
 
 ### Load provenance — software invariant
 
