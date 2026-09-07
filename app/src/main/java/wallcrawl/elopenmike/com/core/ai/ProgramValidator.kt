@@ -13,20 +13,29 @@ import wallcrawl.elopenmike.com.core.model.TrainingProgramStatePolicyVersion
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
 
-/** What whole-program validation concluded, and the evidence it recorded either way. */
+/** What whole-program validation concluded. */
 sealed interface ProgramValidationResult {
-    val snapshot: RecommendationSnapshot
 
-    /** [workout] is what may be shown and started; it differs from the input only if repaired. */
+    /**
+     * [workout] is what may be shown and started; it differs from the input only if repaired.
+     *
+     * [snapshot] is the evidence recorded with the session if it is started. Only an
+     * accepted proposal carries one, because only an accepted proposal is ever written.
+     */
     data class Valid(
         val workout: GeneratedWorkout,
-        override val snapshot: RecommendationSnapshot
+        val snapshot: RecommendationSnapshot
     ) : ProgramValidationResult
 
-    /** Nothing is displayed or persisted. [violations] is complete and deterministically ordered. */
+    /**
+     * Nothing is displayed or persisted.
+     *
+     * [violations] is complete and deterministically ordered, and is what callers branch on
+     * to explain the refusal. A rejection carries no snapshot: nothing is recorded for a
+     * plan that was never started, so building one would be evidence nobody can read.
+     */
     data class Invalid(
-        val violations: List<ProgramViolation>,
-        override val snapshot: RecommendationSnapshot
+        val violations: List<ProgramViolation>
     ) : ProgramValidationResult
 }
 
@@ -84,15 +93,7 @@ class ProgramValidator(
 
         val repaired = if (allowRepair) repair(workout, first) else null
         if (repaired == null) {
-            return ProgramValidationResult.Invalid(
-                violations = first.violations,
-                snapshot = snapshot(
-                    RecommendationOutcome.REJECTED,
-                    first.reasonCodes(),
-                    first,
-                    context
-                )
-            )
+            return ProgramValidationResult.Invalid(first.violations)
         }
 
         // Exactly one pass. Whatever the repaired proposal still breaks is final: retrying
@@ -109,15 +110,7 @@ class ProgramValidator(
                 )
             )
         } else {
-            ProgramValidationResult.Invalid(
-                violations = second.violations,
-                snapshot = snapshot(
-                    RecommendationOutcome.REJECTED,
-                    second.reasonCodes(),
-                    second,
-                    context
-                )
-            )
+            ProgramValidationResult.Invalid(second.violations)
         }
     }
 

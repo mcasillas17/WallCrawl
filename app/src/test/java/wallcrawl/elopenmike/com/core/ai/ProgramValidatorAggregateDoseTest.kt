@@ -79,7 +79,7 @@ class ProgramValidatorAggregateDoseTest {
         )
 
         assertThat(result).isInstanceOf(ProgramValidationResult.Valid::class.java)
-        assertThat(result.snapshot.doseAccounting).containsExactly(
+        assertThat(result.acceptedSnapshot.doseAccounting).containsExactly(
             MuscleDoseAccounting(
                 muscle = "Chest",
                 completedSets = 4,
@@ -127,7 +127,7 @@ class ProgramValidatorAggregateDoseTest {
         )
 
         assertThat(result).isInstanceOf(ProgramValidationResult.Valid::class.java)
-        assertThat(result.snapshot.doseAccounting.map { it.muscle })
+        assertThat(result.acceptedSnapshot.doseAccounting.map { it.muscle })
             .containsExactly("Back", "Chest")
             .inOrder()
     }
@@ -146,7 +146,7 @@ class ProgramValidatorAggregateDoseTest {
             context = validatorContext(listOf(press), reviewedPath = true)
         )
 
-        assertThat(result.snapshot.doseAccounting.map { it.muscle }).containsExactly("Chest")
+        assertThat(result.acceptedSnapshot.doseAccounting.map { it.muscle }).containsExactly("Chest")
     }
 
     @Test
@@ -223,7 +223,7 @@ class ProgramValidatorAggregateDoseTest {
         )
 
         assertThat(result).isInstanceOf(ProgramValidationResult.Valid::class.java)
-        assertThat(result.snapshot.doseAccounting.single().allowanceSets).isNull()
+        assertThat(result.acceptedSnapshot.doseAccounting.single().allowanceSets).isNull()
     }
 
     @Test
@@ -234,7 +234,7 @@ class ProgramValidatorAggregateDoseTest {
         val snapshot = validate(
             workout = plan,
             context = validatorContext(listOf(press), reviewedPath = true)
-        ).snapshot
+        ).acceptedSnapshot
 
         assertThat(snapshot.reviewedPathEnabled).isTrue()
         assertThat(snapshot.trainingPolicyVersion)
@@ -283,8 +283,8 @@ class ProgramValidatorAggregateDoseTest {
         )
 
         assertThat(result).isInstanceOf(ProgramValidationResult.Valid::class.java)
-        assertThat(result.snapshot.doseAccounting).isEmpty()
-        assertThat(result.snapshot.reviewedPathEnabled).isFalse()
+        assertThat(result.acceptedSnapshot.doseAccounting).isEmpty()
+        assertThat(result.acceptedSnapshot.reviewedPathEnabled).isFalse()
     }
 
     @Test
@@ -428,6 +428,6 @@ class ProgramValidatorAggregateDoseTest {
         )
 
         assertThat(result).isInstanceOf(ProgramValidationResult.Valid::class.java)
-        assertThat(result.snapshot.doseAccounting.single().proposedSets).isEqualTo(3)
+        assertThat(result.acceptedSnapshot.doseAccounting.single().proposedSets).isEqualTo(3)
     }
 }

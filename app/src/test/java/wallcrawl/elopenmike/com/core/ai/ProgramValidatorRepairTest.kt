@@ -36,8 +36,8 @@ class ProgramValidatorRepairTest {
         // Six sets remain, allocated in order: the first exercise keeps four, the second
         // takes what is left rather than being dropped.
         assertThat(repaired.exercises.map { it.targetSets }).containsExactly(4, 2).inOrder()
-        assertThat(result.snapshot.outcome).isEqualTo(RecommendationOutcome.REPAIRED)
-        assertThat(result.snapshot.reasonCodes)
+        assertThat(result.acceptedSnapshot.outcome).isEqualTo(RecommendationOutcome.REPAIRED)
+        assertThat(result.acceptedSnapshot.reasonCodes)
             .containsExactly(ProgramViolationCode.WEEKLY_ALLOWANCE_EXCEEDED)
     }
 
@@ -126,7 +126,6 @@ class ProgramValidatorRepairTest {
         )
 
         assertThat(result).isInstanceOf(ProgramValidationResult.Invalid::class.java)
-        assertThat(result.snapshot.outcome).isEqualTo(RecommendationOutcome.REJECTED)
         assertThat(result.codes()).containsExactly(
             ProgramViolationCode.WEEKLY_ALLOWANCE_EXCEEDED
         )
@@ -198,7 +197,7 @@ class ProgramValidatorRepairTest {
         )
 
         assertThat((result as ProgramValidationResult.Valid).workout).isEqualTo(plan)
-        assertThat(result.snapshot.outcome).isEqualTo(RecommendationOutcome.VALID)
+        assertThat(result.acceptedSnapshot.outcome).isEqualTo(RecommendationOutcome.VALID)
     }
 
     @Test
@@ -217,6 +216,7 @@ class ProgramValidatorRepairTest {
         )
 
         assertThat(result).isInstanceOf(ProgramValidationResult.Invalid::class.java)
-        assertThat(result.snapshot.outcome).isEqualTo(RecommendationOutcome.REJECTED)
+        // The load is still untraceable after the one pass, and nothing retried it.
+        assertThat(result.codes()).contains(ProgramViolationCode.UNTRACEABLE_LOAD)
     }
 }

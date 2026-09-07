@@ -49,15 +49,18 @@ class TodayViewModel(
     private val generatedWorkoutFlow = MutableStateFlow<GeneratedWorkout?>(null)
 
     /**
-     * The validation evidence for the workout currently on screen, and the fingerprint of
-     * the context that produced it.
+     * The validation evidence for the workout currently on screen.
      *
-     * The fingerprint is what makes "is this still the right plan?" answerable at start.
-     * Both are cleared together with the workout, so a displayed plan can never be started
-     * with another plan's provenance.
+     * It carries its own context fingerprint, which is what makes "is this still the right
+     * plan?" answerable at start. Starting captures this reference alongside the workout and
+     * then compares that captured copy, never the field: a regeneration finishing while the
+     * start is suspended replaces the field, and answering the freshness question from it
+     * would check one recommendation's identity while starting another's plan.
+     *
+     * A rejected regeneration deliberately leaves the previous value in place, because the
+     * plan it belongs to is still the one on screen.
      */
     private var generatedSnapshot: RecommendationSnapshot? = null
-    private var generatedContextIdentity: String? = null
     private val isRegeneratingFlow = MutableStateFlow(false)
     private val errorFlow = MutableStateFlow<TodayError?>(null)
     private var generationJob: Job? = null
@@ -173,7 +176,6 @@ class TodayViewModel(
             is ProgramValidationResult.Valid -> {
                 generatedWorkoutFlow.value = result.workout
                 generatedSnapshot = result.snapshot
-                generatedContextIdentity = result.snapshot.contextIdentity
                 errorFlow.value = null
             }
 
@@ -261,7 +263,10 @@ class TodayViewModel(
             val recommendation = generatedSnapshot ?: return@launch
             try {
                 val currentContext = workoutGenerationContextBuilder.build()
-                if (RecommendationContextIdentity.of(currentContext) != generatedContextIdentity) {
+                if (
+                    RecommendationContextIdentity.of(currentContext) !=
+                    recommendation.contextIdentity
+                ) {
                     errorFlow.value = TodayError.RECOMMENDATION_OUT_OF_DATE
                     return@launch
                 }

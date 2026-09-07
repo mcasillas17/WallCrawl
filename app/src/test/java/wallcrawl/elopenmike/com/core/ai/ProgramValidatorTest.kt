@@ -31,7 +31,7 @@ class ProgramValidatorTest {
         val result = validate(plan, validatorContext(listOf(bench)))
 
         assertThat(result).isInstanceOf(ProgramValidationResult.Valid::class.java)
-        val snapshot = result.snapshot
+        val snapshot = result.acceptedSnapshot
         assertThat(snapshot.outcome).isEqualTo(RecommendationOutcome.VALID)
         assertThat(snapshot.reasonCodes).isEmpty()
         assertThat(snapshot.validatorVersion).isEqualTo(ProgramValidatorVersion.WHOLE_PROGRAM_V1)
@@ -47,7 +47,7 @@ class ProgramValidatorTest {
         val bench = syntheticExerciseWithoutReviewedMetadata("bench-press")
         val plan = validatedWorkout(listOf(repetitionPlan(bench.id)))
 
-        val snapshot = validate(plan, validatorContext(listOf(bench))).snapshot
+        val snapshot = validate(plan, validatorContext(listOf(bench))).acceptedSnapshot
 
         assertThat(snapshot.reviewedPathEnabled).isFalse()
         assertThat(snapshot.trainingPolicyVersion).isNull()
@@ -438,15 +438,18 @@ class ProgramValidatorTest {
     }
 
     @Test
-    fun aRejectedProposal_stillRecordsWhatWasCheckedAndWhy() = runTest {
+    fun aRejectedProposal_reportsItsReasonsAndCarriesNoRecordedEvidence() = runTest {
         val bench = syntheticExerciseWithoutReviewedMetadata("bench-press")
         val plan = validatedWorkout(listOf(repetitionPlan(bench.id, targetWeight = 135.0)))
 
-        val snapshot = validate(plan, validatorContext(listOf(bench))).snapshot
+        val result = validate(plan, validatorContext(listOf(bench)))
 
-        assertThat(snapshot.outcome).isEqualTo(RecommendationOutcome.REJECTED)
-        assertThat(snapshot.reasonCodes).containsExactly(ProgramViolationCode.UNTRACEABLE_LOAD)
-        assertThat(snapshot.contextIdentity).isNotEmpty()
+        // Nothing is written for a plan that was never started, so a rejection carries the
+        // reasons a caller acts on and no snapshot at all.
+        val invalid = result as ProgramValidationResult.Invalid
+        assertThat(invalid.violations.map { it.code })
+            .containsExactly(ProgramViolationCode.UNTRACEABLE_LOAD)
+        assertThat(invalid.violations.single().exerciseId).isEqualTo(bench.id)
     }
 
     private fun history(exerciseId: String, lastWeight: Double) = ExercisePerformanceHistory(
@@ -470,3 +473,12 @@ internal fun ProgramValidationResult.codes(): List<ProgramViolationCode> = when 
     is ProgramValidationResult.Valid -> emptyList()
     is ProgramValidationResult.Invalid -> violations.map { it.code }.distinct()
 }
+
+/**
+ * The evidence an accepted result carries, failing loudly when the result was a rejection.
+ *
+ * Only an accepted proposal has a snapshot, because only an accepted proposal is ever
+ * written, so asking a rejection for one is a test bug rather than a missing value.
+ */
+internal val ProgramValidationResult.acceptedSnapshot: RecommendationSnapshot
+    get() = (this as ProgramValidationResult.Valid).snapshot

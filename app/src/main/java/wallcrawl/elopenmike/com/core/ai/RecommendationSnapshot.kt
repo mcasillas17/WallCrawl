@@ -11,16 +11,18 @@ enum class ProgramValidatorVersion {
     WHOLE_PROGRAM_V1
 }
 
-/** What whole-program validation concluded about one proposed session. */
+/**
+ * What whole-program validation concluded about a proposal it accepted.
+ *
+ * There is no rejected value: a rejected proposal is never displayed and never persisted,
+ * so no snapshot is built for one and no outcome is ever recorded for it.
+ */
 enum class RecommendationOutcome {
     /** Valid as proposed. */
     VALID,
 
     /** Valid after exactly one deterministic repair pass reduced sets. */
-    REPAIRED,
-
-    /** Rejected. Nothing is displayed or persisted from a rejected proposal. */
-    REJECTED
+    REPAIRED
 }
 
 /**

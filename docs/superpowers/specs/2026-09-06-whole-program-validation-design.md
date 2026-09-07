@@ -224,8 +224,13 @@ explicitly.
 
 Explicit omissions are preserved rather than guessed at. An exercise on the reviewed path
 without approved metadata is already a `MISSING_APPROVED_METADATA` violation, so it never
-becomes silently uncounted dose. The ledger's own `unattributedWorkSets` reasons are
-carried into the record unchanged.
+becomes silently uncounted dose — the proposal is rejected rather than partly counted.
+
+The ledger's own `unattributedWorkSets` reasons stay in the ledger. The record carries per
+muscle only the completed, proposed, and configured allowance counts; the omission reasons
+belong to the ledger, which is reconstructable from completed history at any time, so
+copying them into an immutable record would duplicate derived data without making anything
+more explainable.
 
 Nothing here writes to the ledger. The ledger is reconstructed from completed history only,
 and a proposed or rejected workout never becomes completed exposure. Prospective targets

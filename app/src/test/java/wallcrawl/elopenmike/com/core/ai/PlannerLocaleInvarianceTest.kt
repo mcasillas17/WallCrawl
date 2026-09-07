@@ -148,18 +148,18 @@ class PlannerLocaleInvarianceTest {
         val reference = outcomes.getValue(LOCALES.first())
         outcomes.forEach { (locale, result) ->
             assertWithMessage("validation outcome under $locale")
-                .that(result.snapshot.outcome).isEqualTo(reference.snapshot.outcome)
+                .that(result.acceptedSnapshot.outcome).isEqualTo(reference.acceptedSnapshot.outcome)
             assertWithMessage("reason codes under $locale")
-                .that(result.snapshot.reasonCodes).isEqualTo(reference.snapshot.reasonCodes)
+                .that(result.acceptedSnapshot.reasonCodes).isEqualTo(reference.acceptedSnapshot.reasonCodes)
             assertWithMessage("dose accounting under $locale")
-                .that(result.snapshot.doseAccounting)
-                .isEqualTo(reference.snapshot.doseAccounting)
+                .that(result.acceptedSnapshot.doseAccounting)
+                .isEqualTo(reference.acceptedSnapshot.doseAccounting)
             // The context fingerprint decides whether a displayed plan may still be started.
             // If a display language could move it, changing language would refuse every plan
             // already on screen.
             assertWithMessage("context identity under $locale")
-                .that(result.snapshot.contextIdentity)
-                .isEqualTo(reference.snapshot.contextIdentity)
+                .that(result.acceptedSnapshot.contextIdentity)
+                .isEqualTo(reference.acceptedSnapshot.contextIdentity)
         }
         assertThat(reference).isInstanceOf(ProgramValidationResult.Valid::class.java)
     }
@@ -180,11 +180,11 @@ class PlannerLocaleInvarianceTest {
 
         assertThat(result).isInstanceOf(ProgramValidationResult.Valid::class.java)
         assertThat((result as ProgramValidationResult.Valid).workout).isEqualTo(plan)
-        assertThat(result.snapshot.reviewedPathEnabled).isFalse()
-        assertThat(result.snapshot.doseAccounting).isEmpty()
-        assertThat(result.snapshot.trainingPolicyVersion).isNull()
-        assertThat(result.snapshot.ledgerPolicyVersion).isNull()
-        assertThat(result.snapshot.adaptationState).isNull()
+        assertThat(result.acceptedSnapshot.reviewedPathEnabled).isFalse()
+        assertThat(result.acceptedSnapshot.doseAccounting).isEmpty()
+        assertThat(result.acceptedSnapshot.trainingPolicyVersion).isNull()
+        assertThat(result.acceptedSnapshot.ledgerPolicyVersion).isNull()
+        assertThat(result.acceptedSnapshot.adaptationState).isNull()
     }
 
     private fun profile() = UserProfile(

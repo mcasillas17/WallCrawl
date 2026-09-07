@@ -470,6 +470,59 @@ class TodayViewModelTest {
             )
     }
 
+    @Test
+    fun startWorkout_whenRevalidationRejectsAnUnchangedContext_startsNothing() = runTest {
+        // The context fingerprint deliberately does not cover everything a decision reads —
+        // completed set counts inside the week are one such thing — so revalidation at start
+        // is a second, independent gate. This drives that gate: the digest still matches,
+        // and the fresh check rejects anyway.
+        val now = 20 * DAY_MILLIS
+        val exercises = listOf(
+            syntheticApprovedExercise(id = "press-a", directPrimaryMuscle = "Chest")
+        )
+        val profileRepository = TodayUserProfileRepository(
+            UserProfile(availableEquipment = listOf(StandardEquipment.BODYWEIGHT))
+        )
+        val workoutRepository = TodayWorkoutRepository(emptyList())
+        val catalog = InMemoryExerciseCatalog(exercises)
+        val ledgerRepository = MutableWeekLedgerRepository(chestSets = 0)
+        val viewModel = TodayViewModel(
+            userProfileRepository = profileRepository,
+            workoutRepository = workoutRepository,
+            workoutGenerationContextBuilder = WorkoutGenerationContextBuilder(
+                userProfileRepository = profileRepository,
+                workoutRepository = workoutRepository,
+                exerciseCatalog = catalog,
+                exerciseFilter = ExerciseFilter(),
+                historyAnalyzer = WorkoutHistoryAnalyzer(),
+                plannerFeatureFlags = PlannerFeatureFlags(reviewedCapabilityEligibility = true),
+                trainingProgramStateProvider = TrainingProgramStateProvider(
+                    weeklyDoseLedgerRepository = ledgerRepository
+                ),
+                nowTimestamp = { now }
+            ),
+            workoutPlanner = FixedPlanWorkoutPlanner(setsPerExercise = 5),
+            programValidator = ProgramValidator(GeneratedWorkoutValidator(catalog)),
+            nowTimestamp = { now },
+            clock = flowOf(now)
+        )
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiState.collect {}
+        }
+        advanceUntilIdle()
+        assertThat(viewModel.uiState.value).isInstanceOf(TodayUiState.Success::class.java)
+
+        // The week fills up underneath the displayed card. Neither the week identity nor any
+        // other digest input moves, so only the fresh validation can catch it.
+        ledgerRepository.chestSets = 4
+        viewModel.startWorkout(WORKOUT_NAME, WORKOUT_RATIONALE) {}
+        advanceUntilIdle()
+
+        assertThat(workoutRepository.startRequests).isEmpty()
+        assertThat((viewModel.uiState.value as TodayUiState.Error).error)
+            .isEqualTo(TodayError.START_VALIDATION_FAILED)
+    }
+
     private fun completedSession(id: String, completedAtTimestamp: Long) = WorkoutSession(
         id = id,
         name = "Workout $id",
@@ -684,6 +737,22 @@ private class FixedPlanWorkoutPlanner(
             exercises = exercises
         )
     }
+}
+
+/** A week whose completed chest exposure a test can change between generation and start. */
+private class MutableWeekLedgerRepository(
+    var chestSets: Int
+) : WeeklyDoseLedgerRepository {
+    override suspend fun weeklyLedgerAt(
+        profileId: String,
+        instant: java.time.Instant,
+        zoneId: java.time.ZoneId
+    ): WeeklyDoseLedger = ledger(mapOf("Chest" to chestSets).filterValues { it > 0 })
+
+    override suspend fun currentWeeklyLedger(
+        profileId: String,
+        zoneId: java.time.ZoneId
+    ): WeeklyDoseLedger = ledger(mapOf("Chest" to chestSets).filterValues { it > 0 })
 }
 
 /** A week that has already used four of the configured six direct-primary chest sets. */
