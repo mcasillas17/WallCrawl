@@ -102,6 +102,11 @@ pattern. When a caller declares required patterns and the eligible pool cannot s
 the result is a typed violation naming the missing pattern; it is not repairable, because
 repair may not widen the legal candidate set.
 
+Both declared constraints read **approved** metadata only, falling back for coverage to the
+legacy authored `programming.movementPattern` so the legacy path can still satisfy a
+declared requirement. An unapproved draft record still carries an authored family and an
+authored pattern, and neither may be what drives a product-policy rejection.
+
 The planner's existing pattern-spreading behavior in `chooseCompounds` stays a ranking
 preference with an explicit fallback to repeated patterns. This design does not promote it
 to a rule.

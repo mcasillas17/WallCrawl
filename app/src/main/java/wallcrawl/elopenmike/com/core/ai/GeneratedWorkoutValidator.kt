@@ -124,14 +124,18 @@ enum class WorkoutPlanningFailure {
     NO_STRENGTH_CANDIDATES,
 
     /** Strength candidates exist, but none of them train any split. */
-    NO_CANDIDATES_FOR_ANY_SPLIT,
-
-    /** A generated workout broke the catalog or prescription contract. */
-    INVALID_GENERATED_WORKOUT
+    NO_CANDIDATES_FOR_ANY_SPLIT
 }
 
+/**
+ * A planner could not produce a plan at all.
+ *
+ * [failure] has no default: every throw site names why, so a new one cannot inherit a
+ * reason that happens to be listed first. A workout that was produced but broke a rule is
+ * not this — that is a [ProgramViolation], which carries every reason rather than one.
+ */
 class WorkoutValidationException(
     message: String,
-    val failure: WorkoutPlanningFailure = WorkoutPlanningFailure.INVALID_GENERATED_WORKOUT,
+    val failure: WorkoutPlanningFailure,
     val automaticEligibilityFailure: AutomaticEligibilityFailure? = null
 ) : IllegalArgumentException(message)

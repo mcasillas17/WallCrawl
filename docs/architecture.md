@@ -274,9 +274,10 @@ generated session cannot be told apart in its record and would be counted twice 
 prospective dose accounting — an accounting and identity rule, not a claim that repeating
 a movement is harmful, and never applied across sessions, weeks, families, or manual
 templates. `uniqueProgressionFamilies` and `requiredMovementPatterns` are inert unless a
-caller declares them, so no workout is required to cover any pattern. The planner's
-pattern spreading stays a ranking preference with an explicit fallback to repeated
-patterns.
+caller declares them, so no workout is required to cover any pattern. Both read approved
+metadata only — coverage falling back to the legacy authored pattern — so an unapproved
+draft record can never drive a product-policy rejection. The planner's pattern spreading
+stays a ranking preference with an explicit fallback to repeated patterns.
 
 Load provenance accepts a null target always, and a non-null one only when it traces to a
 confirmed starting load or to the last recorded load, optionally plus the shipped legacy

@@ -208,9 +208,17 @@ class ProgramValidator(
         return violations
     }
 
-    /** Reviewed metadata is authoritative when present; the legacy block is the fallback. */
+    /**
+     * The pattern a declared coverage rule may be satisfied or rejected by.
+     *
+     * Approved metadata first, then the legacy authored block. An unapproved draft is
+     * skipped for the same reason the family rule skips one: a draft record still carries an
+     * authored pattern, and a draft must never be what drives a product-policy rejection.
+     * The legacy fallback stays so the legacy path, where nothing is approved, can still
+     * satisfy a declared requirement.
+     */
     private fun Exercise.movementPattern(): MovementPattern? =
-        reviewedMetadata?.movementPattern ?: programming?.movementPattern
+        approvedMetadata()?.movementPattern ?: programming?.movementPattern
 
     // endregion
 

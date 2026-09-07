@@ -228,7 +228,7 @@ class TodayViewModel(
             WorkoutPlanningFailure.NO_CANDIDATES_FOR_ANY_SPLIT ->
                 TodayError.NO_CANDIDATES_FOR_ANY_SPLIT
 
-            WorkoutPlanningFailure.INVALID_GENERATED_WORKOUT, null ->
+            null ->
                 if (isRegeneration) {
                     TodayError.REGENERATION_FAILED
                 } else {

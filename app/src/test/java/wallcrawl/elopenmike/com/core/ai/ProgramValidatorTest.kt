@@ -5,7 +5,11 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
 import wallcrawl.elopenmike.com.core.model.ExercisePerformanceHistory
+import wallcrawl.elopenmike.com.core.model.Difficulty
 import wallcrawl.elopenmike.com.core.model.ExercisePrescription
+import wallcrawl.elopenmike.com.core.model.ExerciseProgrammingMetadata
+import wallcrawl.elopenmike.com.core.model.MechanicsType
+import wallcrawl.elopenmike.com.core.model.ProgressionType
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.MovementPattern
 import wallcrawl.elopenmike.com.core.model.PlannedExercise
@@ -209,6 +213,65 @@ class ProgramValidatorTest {
             catalog = InMemoryExerciseCatalog(exercises)
         )
         assertThat(declared.codes()).containsExactly(
+            ProgramViolationCode.MISSING_REQUIRED_MOVEMENT_PATTERN
+        )
+    }
+
+    @Test
+    fun requiredCoverage_ignoresAnUnapprovedDraftPatternAndUsesTheLegacyOne() = runTest {
+        // The same rule the family constraint follows: a draft record carries an authored
+        // pattern, and a draft must never be what drives a product-policy rejection. The
+        // legacy authored pattern still counts, so the legacy path can satisfy a declared
+        // requirement at all.
+        val squatByLegacyPushByDraft = syntheticDraftExercise(
+            id = "press-a",
+            directPrimaryMuscle = "Chest"
+        ).copy(
+            programming = ExerciseProgrammingMetadata(
+                requiredEquipmentCombinations = listOf(listOf("Bodyweight")),
+                movementPattern = MovementPattern.SQUAT,
+                difficulty = Difficulty.BEGINNER,
+                mechanics = MechanicsType.COMPOUND,
+                recommendedRepRange = RepRange(8, 12),
+                fatigueScore = 5,
+                progressionType = ProgressionType.REPETITIONS_THEN_LOAD,
+                coachingSummary = "Synthetic legacy programming."
+            )
+        )
+        val plan = validatedWorkout(listOf(repetitionPlan(squatByLegacyPushByDraft.id)))
+
+        val result = validate(
+            workout = plan,
+            context = validatorContext(
+                allowedExercises = listOf(squatByLegacyPushByDraft),
+                programConstraints = SessionProgramConstraints(
+                    requiredMovementPatterns = setOf(MovementPattern.SQUAT)
+                )
+            )
+        )
+
+        assertThat(result).isInstanceOf(ProgramValidationResult.Valid::class.java)
+    }
+
+    @Test
+    fun requiredCoverage_usesApprovedMetadataWhenItExists() = runTest {
+        // The fixture's approved pattern is HORIZONTAL_PUSH, so a required SQUAT is missing
+        // and stays a rejection — the approval gate narrows what may be trusted, it does not
+        // switch the rule off.
+        val press = syntheticApprovedExercise(id = "press-a", directPrimaryMuscle = "Chest")
+        val plan = validatedWorkout(listOf(repetitionPlan(press.id)))
+
+        val result = validate(
+            workout = plan,
+            context = validatorContext(
+                allowedExercises = listOf(press),
+                programConstraints = SessionProgramConstraints(
+                    requiredMovementPatterns = setOf(MovementPattern.SQUAT)
+                )
+            )
+        )
+
+        assertThat(result.codes()).containsExactly(
             ProgramViolationCode.MISSING_REQUIRED_MOVEMENT_PATTERN
         )
     }
