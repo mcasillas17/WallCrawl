@@ -604,7 +604,6 @@ class ProgramValidator(
             adaptationState = programState?.adaptationState,
             weekStartEpochDay = programState?.weeklyLedger?.weekStartEpochDay,
             timeZoneId = programState?.weeklyLedger?.timeZoneId,
-            profileId = context.userProfile.id,
             profileRevision = context.userProfile.revision,
             contextIdentity = RecommendationContextIdentity.of(context),
             reasonCodes = reasonCodes,

@@ -64,7 +64,12 @@ data class RecommendationSnapshot(
     val adaptationState: AdaptationState?,
     val weekStartEpochDay: Long?,
     val timeZoneId: String?,
-    val profileId: String,
+    /**
+     * Which revision of the profile produced the plan.
+     *
+     * The profile's identity is already inside [contextIdentity]; this is the part a reader
+     * of a stored record can compare against the profile in front of them.
+     */
     val profileRevision: Long,
     val contextIdentity: String,
     /** Ordered, deduplicated reason codes. Empty when nothing was reported. */
@@ -72,7 +77,6 @@ data class RecommendationSnapshot(
     val doseAccounting: List<MuscleDoseAccounting>
 ) {
     init {
-        require(profileId.isNotBlank()) { "A snapshot names the profile it was built for." }
         require(contextIdentity.isNotBlank()) { "A snapshot carries a context identity." }
         require(reasonCodes.size == reasonCodes.distinct().size) {
             "Reason codes are deduplicated before they are recorded."

@@ -28,10 +28,14 @@ class GeneratedWorkoutValidator(
      *
      * It deliberately does not stop at the first problem: a caller assembling a rejection
      * has to be able to show every reason at once.
+     *
+     * [allowedExerciseIds] is the candidate set the generation context allowed, and
+     * membership in it is always checked. There is no "skip the candidate check" mode: a
+     * planner's output staying inside the set it was given is the guarantee this exists for.
      */
     suspend fun structuralViolations(
         workout: GeneratedWorkout,
-        allowedExerciseIds: Set<String>?
+        allowedExerciseIds: Set<String>
     ): List<ProgramViolation> {
         val violations = mutableListOf<ProgramViolation>()
 
@@ -61,7 +65,7 @@ class GeneratedWorkoutValidator(
     private suspend fun exerciseViolations(
         index: Int,
         exercise: GeneratedExercise,
-        allowedExerciseIds: Set<String>?
+        allowedExerciseIds: Set<String>
     ): List<ProgramViolation> {
         if (exercise.exerciseId.isBlank()) {
             return listOf(
@@ -83,8 +87,8 @@ class GeneratedWorkoutValidator(
             )
 
         val violations = mutableListOf<ProgramViolation>()
-        // If a candidate filter was enforced, verify it was in the allowed list.
-        if (allowedExerciseIds != null && exercise.exerciseId !in allowedExerciseIds) {
+        // Verify it was in the allowed list.
+        if (exercise.exerciseId !in allowedExerciseIds) {
             violations += ProgramViolation(
                 code = ProgramViolationCode.NOT_IN_CANDIDATE_SET,
                 exerciseId = exercise.exerciseId,

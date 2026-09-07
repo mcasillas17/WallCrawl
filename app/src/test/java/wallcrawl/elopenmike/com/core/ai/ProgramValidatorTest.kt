@@ -38,7 +38,6 @@ class ProgramValidatorTest {
         assertThat(snapshot.durationEstimatorVersion).isEqualTo(WorkoutDurationEstimator.VERSION)
         assertThat(snapshot.catalogVersion).isEqualTo(VALIDATOR_CATALOG_VERSION)
         assertThat(snapshot.reviewPolicyVersion).isEqualTo(1)
-        assertThat(snapshot.profileId).isEqualTo("profile-under-test")
         assertThat(snapshot.profileRevision).isEqualTo(1)
     }
 

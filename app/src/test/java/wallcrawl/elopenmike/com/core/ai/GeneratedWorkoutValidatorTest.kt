@@ -63,7 +63,7 @@ class GeneratedWorkoutValidatorTest {
             )
         )
 
-        assertThat(validator.structuralViolations(validWorkout, null)).isEmpty()
+        assertThat(violations(validWorkout)).isEmpty()
     }
 
     @Test
@@ -72,7 +72,7 @@ class GeneratedWorkoutValidatorTest {
             exercise.copy(exerciseId = "spider-man-web-pull-press")
         }
 
-        val violation = validator.structuralViolations(workout, null).single()
+        val violation = violations(workout).single()
 
         assertThat(violation.code).isEqualTo(ProgramViolationCode.UNKNOWN_EXERCISE_ID)
         assertThat(violation.exerciseId).isEqualTo("spider-man-web-pull-press")
@@ -86,21 +86,21 @@ class GeneratedWorkoutValidatorTest {
         }
         val allowedOnlyDumbbells = setOf("incline-dumbbell-press", "dumbbell-lateral-raise")
 
-        val violation = validator.structuralViolations(workout, allowedOnlyDumbbells).single()
+        val violation = violations(workout, allowedOnlyDumbbells).single()
 
         assertThat(violation.code).isEqualTo(ProgramViolationCode.NOT_IN_CANDIDATE_SET)
         assertThat(violation.exerciseId).isEqualTo("barbell-bench-press")
     }
 
     @Test
-    fun noAllowedSet_meansMembershipIsNotChecked() = runTest {
-        // The candidate filter is optional at this layer; ProgramValidator always supplies
-        // one, and this is what makes that its decision rather than a hidden default here.
+    fun anExerciseInsideTheAllowedSet_passesMembership() = runTest {
+        // Membership is always checked, so the passing case has to be pinned too: otherwise
+        // a rule that rejected everything would look identical to a correct one.
         val workout = validGeneratedWorkout().withOnlyExercise { exercise ->
             exercise.copy(exerciseId = "barbell-bench-press")
         }
 
-        assertThat(validator.structuralViolations(workout, null)).isEmpty()
+        assertThat(violations(workout, setOf("barbell-bench-press"))).isEmpty()
     }
 
     @Test
@@ -118,7 +118,7 @@ class GeneratedWorkoutValidatorTest {
             )
         )
 
-        val violation = validator.structuralViolations(workout, null).single()
+        val violation = violations(workout).single()
 
         assertThat(violation.code).isEqualTo(ProgramViolationCode.PRESCRIPTION_TYPE_MISMATCH)
         assertThat(violation.detail).isEqualTo("DURATION!=BODYWEIGHT_REPS")
@@ -145,7 +145,7 @@ class GeneratedWorkoutValidatorTest {
             )
         )
 
-        assertThat(validator.structuralViolations(workout, null).map { it.code })
+        assertThat(violations(workout).map { it.code })
             .containsExactly(
                 ProgramViolationCode.PRESCRIPTION_TYPE_MISMATCH,
                 ProgramViolationCode.UNKNOWN_EXERCISE_ID
@@ -157,7 +157,7 @@ class GeneratedWorkoutValidatorTest {
     fun anEmptyRecommendation_isReportedAndStopsThePerExerciseChecks() = runTest {
         val workout = validGeneratedWorkout().copy(exercises = emptyList())
 
-        assertThat(validator.structuralViolations(workout, null).map { it.code })
+        assertThat(violations(workout).map { it.code })
             .containsExactly(ProgramViolationCode.EMPTY_RECOMMENDATION)
     }
 
@@ -165,7 +165,7 @@ class GeneratedWorkoutValidatorTest {
     fun aDurationOutsideTheRepresentableBounds_isReported() = runTest {
         val workout = validGeneratedWorkout().copy(estimatedDurationMinutes = 0)
 
-        val violation = validator.structuralViolations(workout, null).single()
+        val violation = violations(workout).single()
 
         assertThat(violation.code).isEqualTo(ProgramViolationCode.DURATION_OUT_OF_BOUNDS)
         assertThat(violation.detail).isEqualTo("0")
@@ -177,7 +177,7 @@ class GeneratedWorkoutValidatorTest {
             exercise.copy(exerciseId = "  ")
         }
 
-        assertThat(validator.structuralViolations(workout, null).map { it.code })
+        assertThat(violations(workout).map { it.code })
             .containsExactly(ProgramViolationCode.BLANK_EXERCISE_ID)
     }
 
@@ -269,4 +269,24 @@ class GeneratedWorkoutValidatorTest {
     private fun GeneratedWorkout.withOnlyExercise(
         transform: (GeneratedExercise) -> GeneratedExercise
     ): GeneratedWorkout = copy(exercises = listOf(transform(exercises.single())))
+
+    /**
+     * Runs the checks with every id this suite names already allowed.
+     *
+     * Candidate membership is always enforced, so a case that is about something else has
+     * to say so by allowing what it names rather than by switching the rule off.
+     */
+    private suspend fun violations(
+        workout: GeneratedWorkout,
+        allowedExerciseIds: Set<String> = EVERY_ID_THIS_SUITE_NAMES
+    ) = validator.structuralViolations(workout, allowedExerciseIds)
+
+    private companion object {
+        val EVERY_ID_THIS_SUITE_NAMES = setOf(
+            "incline-dumbbell-press",
+            "parallel-bar-dips",
+            "barbell-bench-press",
+            "spider-man-web-pull-press"
+        )
+    }
 }

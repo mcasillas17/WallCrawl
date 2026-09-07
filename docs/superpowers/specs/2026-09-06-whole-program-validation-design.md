@@ -70,8 +70,9 @@ behavior unchanged while the gate is disabled.
 ### Identifier and candidate membership — software invariant
 
 Every recommended exercise ID must be non-blank, exist in the bundled catalog, be a member
-of the allowed candidate set when one was enforced, and carry a prescription whose
-`exerciseType` equals the catalog type. These are the checks `GeneratedWorkoutValidator`
+of the candidate set the generation context allowed, and carry a prescription whose
+`exerciseType` equals the catalog type. Membership is always checked; there is no mode that
+skips it. These are the checks `GeneratedWorkoutValidator`
 already performs; whole-program validation reuses that unit rather than restating it, and
 `GeneratedWorkoutValidator` now reports them as structured violations rather than as a
 first-failure message, so a rejection can name every reason at once.
