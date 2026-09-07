@@ -19,6 +19,17 @@ import wallcrawl.elopenmike.com.core.model.SessionStatus
 @Dao
 interface CompletedWorkoutHistoryDao {
 
+    /** Lightweight, uncapped history for calendar streaks and the all-time workout count. */
+    @Query(
+        """
+        SELECT completedAtTimestamp FROM workout_sessions
+        WHERE status = :status AND completedAtTimestamp IS NOT NULL
+        """
+    )
+    suspend fun getCompletedTimestamps(
+        status: SessionStatus = SessionStatus.COMPLETED
+    ): List<Long>
+
     /**
      * Every completed session whose completion timestamp lies in `[start, end)`, with its
      * exercises and sets loaded in the same transaction.

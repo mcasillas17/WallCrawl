@@ -47,7 +47,7 @@ internal class FakeRepository(initialSession: WorkoutSession) : WorkoutRepositor
         flowOf(emptyList())
 
     override fun observeCompletedWorkoutCount(): Flow<Int> = flowOf(0)
-    override fun observeCompletedWorkoutCountSince(startTimestamp: Long): Flow<Int> = flowOf(0)
+    override fun observeCompletedWorkoutCountInRange(startTimestamp: Long, endTimestampExclusive: Long): Flow<Int> = flowOf(0)
 
     override suspend fun getRecentCompletedSessions(limit: Int): List<WorkoutSession> = emptyList()
 

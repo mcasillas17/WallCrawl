@@ -10,6 +10,8 @@
 > status reflects the checked-in `values-es` resources, the `core/locale`,
 > `core/ui/format`, `core/ui/localization`, and `core/exercise/localization`
 > packages, the bundled translation overlay, and their JVM and Android tests.
+> Package 5 status reflects `ProgressRepository`, the calendar-week calculators,
+> localized Progress disclosures, and their JVM and Android integration/UI tests.
 >
 > This is the single source of truth for current project status, priority, dependency
 > order, and implementation scope. Status must be derived from repository evidence rather
@@ -29,7 +31,7 @@ network connection, or companion device.
 | Onboarding and profile | Shipped as an eight-step flow with seven movement-capability questions, plus export, restore, and delete-all controls | Restore requires a fresh start, so it cannot merge into an installation that already holds data |
 | Templates and logging | Shipped with frozen template snapshots, type-aware outcomes, RPE/RIR, typed stops, and a local rest timer | Template targets are only partly editable; unsaved drafts are not restored after process death |
 | Localization | English and neutral Latin American Spanish shipped across the whole interface, the 302-exercise catalog, generated workout text, and accessibility labels, selectable from onboarding and Profile through Android's per-app language mechanism | Only two languages; historical session text stays in the language it was written in, by design |
-| Progress and history | Overview, records, trends, summaries, and recent history shipped | Weekly semantics conflict with the dose ledger; workout-summary navigation and history drill-down remain incomplete |
+| Progress and history | Calendar-week activity, separately labelled reviewed primary dose, non-additive involvement, records, trends, summaries, and recent history implemented | Workout-summary navigation and history drill-down remain incomplete; production reviewed muscle allocation is unavailable while metadata remains unapproved |
 | Deterministic coach | Eligibility, experience ranking, capability evidence, weekly ledger, state-based dose/effort/rest, and whole-program validation with recorded recommendation provenance shipped; reviewed-only rules remain behind a disabled gate | Human approval, release corpus, progression, deload, and rollout gates |
 | Planner evaluation | Versioned corpus, replay harness, importer unit tests, real pinned-upstream regeneration check, JVM tests, and Android CI shipped | `concurrent-activity` and policy-specific assertions |
 | Optional local model | Not started | Blocked on a stable deterministic release |
@@ -37,8 +39,9 @@ network connection, or companion device.
 | Operational quality | Dependabot, SBOM submission, JVM/lint/build CI, API 36 instrumentation, and prerelease automation shipped | Accessibility baseline, target SDK review, Room schema export, signed/minified release posture, and next alpha |
 
 The production path today is the legacy deterministic planner. Reviewed eligibility,
-capability-evidence ranking, `PRIMARY_ONLY_V1` dose accounting, and state-based guidance are
+capability-evidence ranking and state-based guidance are
 compiled but inactive because `PlannerFeatureFlags.reviewedCapabilityEligibility` is `false`.
+Progress reads `PRIMARY_ONLY_V1` for accounting only; that does not enable reviewed planning.
 The reviewed cohort is 37 `DRAFT` / 0 `APPROVED`; approval is a human-authored data change,
 not a consequence of merging a pull request.
 
@@ -75,38 +78,43 @@ the other. User-authored text and the title and explanation stored with a past s
 never translated or rewritten, so history keeps the wording it was recorded with. See
 [Localization](docs/localization.md).
 
+**Progress weekly meaning (Package 5):** retain logged activity first, with reviewed primary
+dose separately labelled and accounting detail behind disclosures. Both use ISO Monday
+weeks in the device's explicit time zone. Legacy primary-muscle involvement is descriptive,
+overlapping activity, not an alternative dose or unique-set total. Missing reviewed
+allocation never erases completed workouts. An unfinished current week preserves a streak
+through the previous week; zero-baseline comparisons do not manufacture growth percentages.
+See the [metric contract](docs/weekly-dose-ledger.md#progress-metric-contract).
+
 ## Open decisions
 
 These decisions must be recorded before the related implementation package closes.
 
-1. **Progress weekly meaning:** report reviewed primary dose, broader movement activity, or
-   both under distinct labels. The recommendation is an authoritative primary-dose card plus
-   a separately named activity view, both using an explicit week boundary.
-2. **Deadlift direct primary:** a qualified human reviewer must ratify the single
+1. **Deadlift direct primary:** a qualified human reviewer must ratify the single
    `directPrimaryMuscle` for `barbell-deadlift`; automation or PR approval cannot decide it.
-3. **Initial approval cohort:** decide whether the first rollout requires all 37 records or
+2. **Initial approval cohort:** decide whether the first rollout requires all 37 records or
    a smaller persona-complete cohort with explicit band-only and capability coverage.
-4. **Validation persistence:** ~~decided~~. A dedicated `workout_recommendation_records`
+3. **Validation persistence:** ~~decided~~. A dedicated `workout_recommendation_records`
    table (Room schema 12) holds one immutable row per started session, written in the same
    transaction as the session, and travels in archive format version 2. Columns beside the
    session were rejected: the record is provenance about a decision rather than part of the
    session, and a separate table keeps it out of every ordinary session read.
-5. **Reviewed rollout scope:** decide whether the first reviewed-planning release may remain
+4. **Reviewed rollout scope:** decide whether the first reviewed-planning release may remain
    conservatively non-progressing or must wait for progression and user-controlled deload.
    This is a product/release decision, not a technical dependency of eligibility.
-6. **Deload experience:** define where an offer appears, how the user accepts or declines it,
+5. **Deload experience:** define where an offer appears, how the user accepts or declines it,
    and whether that choice persists. Deload must never be automatic or diagnostic.
-7. **Release posture:** decide when to raise `targetSdk`, enable release shrinking, configure
+6. **Release posture:** decide when to raise `targetSdk`, enable release shrinking, configure
    signing, and move beyond debug prerelease APKs.
-8. **Optional sync:** explicitly approve the product/privacy scope before a sync design is
+7. **Optional sync:** explicitly approve the product/privacy scope before a sync design is
    written; local operation without an account remains non-negotiable.
-9. **External-record deletion:** disabling an integration must stop future writes without
+8. **External-record deletion:** disabling an integration must stop future writes without
     silently deleting external records; users also need a separate, explicit way to delete
     WallCrawl-exported Health Connect records before local export IDs are removed.
-10. **Watch ownership:** the first companion release should allow one active execution owner.
+9. **Watch ownership:** the first companion release should allow one active execution owner.
     Decide whether additional paired watches are rejected or read-only; multi-watch editing
     must not enter the protocol without an explicit conflict policy.
-11. **Validation contract:** ~~decided~~ and recorded in the
+10. **Validation contract:** ~~decided~~ and recorded in the
     [whole-program validation design](docs/superpowers/specs/2026-09-06-whole-program-validation-design.md).
     The validated unit is one proposed session with no multi-session horizon; duplicate and
     coverage rules are declared per session and only exercise-id uniqueness defaults on;
@@ -308,26 +316,36 @@ keeps only one current profile row.
 
 ### 5. Reconcile Progress weekly semantics
 
-**Status:** Decision required. The current card uses a rolling 168-hour window and all legacy
-primary muscles; the ledger uses an ISO week and one approved direct primary.
+**Status:** Implemented. Progress separates logged activity, reviewed primary dose, and
+overlapping legacy primary involvement. Progress and Today's weekly count use the same
+ISO Monday-to-Monday, explicit-time-zone boundaries.
 
-**Depends on:** Progress-semantics decision.
+**Decision:** Logged activity remains useful with the production all-DRAFT catalog.
+`PRIMARY_ONLY_V1` is reused unchanged; no metadata approval or reviewed-planner enablement.
 
-**Implementation tasks:**
+**Implemented contract:**
 
-1. Define the user question answered by each weekly card: reviewed dose, broader activity, or
-   separately labeled views.
-2. Reuse `TrainingWeek` and ledger attribution for any primary-dose surface.
-3. Design the empty and unattributed states before approved coverage exists.
-4. Keep broader activity metrics only under language that cannot be mistaken for dose.
-5. Add timezone/DST boundary, metadata-state, multi-primary, and skipped/open-set tests.
-6. Update architecture and product copy with the deliberate semantics.
+1. Completed workouts/sets (including warm-ups and timed work), applicable reps and external
+   load × reps are activity; legacy muscle counts overlap and are never a unique-set total.
+2. Reviewed dose credits one approved direct primary per completed non-warm-up work set;
+   secondary involvement and typed omissions remain separate and understandable.
+3. Current/previous calendar comparisons are explicit; missing baselines read as new activity.
+   An empty unfinished current week preserves the prior streak and prior-week detail.
+4. One write-gated Room transaction produces a coherent activity/ledger snapshot. Complete
+   week ranges and lightweight streak/count inputs are uncapped by the 500-session trend
+   window. No-profile, empty, unattributed, loading and error states remain distinct.
+5. Invalidation, lifecycle resubscription, clock/zone changes and a week-boundary wakeup keep
+   Progress current without query polling or post-delete cache resurrection.
+6. English/Spanish resources, actual large text, light/dark rendering, range/DST/zone,
+   multi-primary, synthetic approval, completion states, restore/deletion and failure paths
+   are covered by focused JVM and Android tests.
 
-**Likely surfaces:** `core/progress/ProgressCalculator`, `WeeklyDoseLedgerRepository`,
-`feature/progress`, progress tests, and `docs/architecture.md`.
+**References:** [Metric and repository contract](docs/weekly-dose-ledger.md#progress-metric-contract),
+[architecture](docs/architecture.md#feedback-loop-and-progress), and
+[Progress screenshots](README.md#progress-activity-and-reviewed-dose).
 
-**Done when:** identical history cannot produce two unlabeled answers to "sets this week," week
-boundaries are explicit and tested, and the UI explains omitted or unattributed work.
+History drill-down and deeper analytics remain Packages 13 and 14. Schema, archives,
+recommendation snapshots, validation policies and planner behavior are unchanged.
 
 ### 6. Complete the deterministic corpus and CI release gate
 

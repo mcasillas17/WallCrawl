@@ -1,15 +1,20 @@
 package wallcrawl.elopenmike.com.core.progress
 
+import java.time.Instant
+import java.time.ZoneId
 import kotlin.math.roundToInt
 import wallcrawl.elopenmike.com.core.model.Exercise
+import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.MuscleProgressStat
 import wallcrawl.elopenmike.com.core.model.MuscleVocabulary
 import wallcrawl.elopenmike.com.core.model.PersonalRecord
 import wallcrawl.elopenmike.com.core.model.ProgressOverview
 import wallcrawl.elopenmike.com.core.model.RecordType
 import wallcrawl.elopenmike.com.core.model.SessionStatus
+import wallcrawl.elopenmike.com.core.model.SetType
 import wallcrawl.elopenmike.com.core.model.StrengthPerformance
 import wallcrawl.elopenmike.com.core.model.StrengthTrend
+import wallcrawl.elopenmike.com.core.model.TrainingWeek
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
@@ -19,55 +24,75 @@ import wallcrawl.elopenmike.com.core.model.convertWeight
 /** Calculates user-visible progress exclusively from persisted completed workout data. */
 class ProgressCalculator {
 
+    /**
+     * @param weeklySessions completed sessions covering at least the current and previous
+     *   calendar weeks, used for every weekly activity metric. Defaults to
+     *   [completedSessions] for callers that pass their whole history.
+     * @param completedTimestamps every completed session's completion time, used for the
+     *   streak and all-time count so neither is capped by the bounded [completedSessions].
+     */
     fun calculate(
         completedSessions: List<WorkoutSession>,
         profile: UserProfile,
         catalogExercises: List<Exercise>,
-        nowTimestamp: Long
+        nowTimestamp: Long,
+        zoneId: ZoneId = ZoneId.systemDefault(),
+        weeklySessions: List<WorkoutSession> = completedSessions,
+        completedTimestamps: List<Long> = completedSessions
+            .filter { it.status == SessionStatus.COMPLETED }
+            .mapNotNull { it.completedAtTimestamp }
     ): ProgressOverview {
-        val persistedSessions = completedSessions
-            .filter { session ->
-                val completedAt = session.completedAtTimestamp
-                session.status == SessionStatus.COMPLETED &&
-                    completedAt != null &&
-                    completedAt <= nowTimestamp
+        val currentWeek = TrainingWeek.containing(Instant.ofEpochMilli(nowTimestamp), zoneId)
+        val previousWeek = TrainingWeek.startingOn(currentWeek.startEpochDay - 7, zoneId)
+
+        // Bounded completed history for records, strength trends, and the recent list. Kept
+        // in each session's own unit for history; converted only for the derived numbers.
+        // This surface keeps its existing rule of not surfacing a completion dated ahead of
+        // the clock; weekly activity below is the clock-skew-tolerant, ledger-matched view.
+        val boundedSessions = completedSessions
+            .filter {
+                it.status == SessionStatus.COMPLETED &&
+                    it.completedAtTimestamp != null &&
+                    it.completedAtTimestamp <= nowTimestamp
             }
             .sortedByDescending { it.completedAtTimestamp }
-        val sessions = persistedSessions.map { session ->
-            session.convertWeightsTo(profile.preferredUnit)
-        }
+        val boundedConverted = boundedSessions.map { it.convertWeightsTo(profile.preferredUnit) }
         val catalogById = catalogExercises.associateBy { it.id }
-        val thisWeek = sessions.filter { session ->
-            val age = nowTimestamp - requireNotNull(session.completedAtTimestamp)
-            age in 0 until WEEK_MILLIS
-        }
-        val previousWeek = sessions.filter { session ->
-            val age = nowTimestamp - requireNotNull(session.completedAtTimestamp)
-            age in WEEK_MILLIS until (2 * WEEK_MILLIS)
-        }
+
+        // Weekly activity is membership by completion timestamp against the calendar week,
+        // never against the wall clock, so a completion recorded ahead of "now" still counts.
+        val weeklyCompleted = weeklySessions
+            .filter { it.status == SessionStatus.COMPLETED && it.completedAtTimestamp != null }
+        val thisWeek = weeklyCompleted
+            .filter { currentWeek.contains(it.completedAtTimestamp!!) }
+            .map { it.convertWeightsTo(profile.preferredUnit) }
+        val previousWeekSessions = weeklyCompleted
+            .filter { previousWeek.contains(it.completedAtTimestamp!!) }
 
         return ProgressOverview(
             workoutsThisWeek = thisWeek.size,
             weeklyGoal = profile.daysPerWeek,
-            currentStreakWeeks = calculateStreakWeeks(sessions, nowTimestamp),
-            totalWorkoutsLogged = sessions.size,
-            totalVolumeThisWeek = thisWeek.sumOf(::validCompletedVolume),
-            totalRepsThisWeek = thisWeek.sumOf(::validCompletedReps),
+            currentStreakWeeks = calculateStreakWeeks(completedTimestamps, currentWeek, zoneId),
+            totalWorkoutsLogged = completedTimestamps.size,
+            totalVolumeThisWeek = thisWeek.sumOf(::weeklyExternalLoadVolume),
+            totalRepsThisWeek = thisWeek.sumOf(::weeklyCompletedReps),
+            completedSetsThisWeek = thisWeek.sumOf { it.completedSetsCount },
+            warmupSetsThisWeek = thisWeek.sumOf(::warmupSetCount),
             recentPersonalRecords = calculateRecentRecords(
-                sessions = sessions,
+                sessions = boundedConverted,
                 catalogById = catalogById,
                 unit = profile.preferredUnit.symbol
             ),
-            muscleGroupFocus = calculateMuscleFocus(
+            legacyPrimaryActivity = calculateLegacyPrimaryActivity(
                 thisWeek = thisWeek,
-                previousWeek = previousWeek,
+                previousWeek = previousWeekSessions,
                 catalogById = catalogById
             ),
             strengthTrends = calculateStrengthTrends(
-                sessions = sessions,
+                sessions = boundedConverted,
                 catalogById = catalogById
             ),
-            recentHistory = persistedSessions.take(MAX_RECENT_HISTORY)
+            recentHistory = boundedSessions.take(MAX_RECENT_HISTORY)
         )
     }
 
@@ -127,54 +152,75 @@ class ProgressCalculator {
     }
 
     private fun calculateStreakWeeks(
-        sessions: List<WorkoutSession>,
-        nowTimestamp: Long
+        completedTimestamps: List<Long>,
+        currentWeek: TrainingWeek,
+        zoneId: ZoneId
     ): Int {
-        val occupiedWeekBuckets = sessions.mapNotNullTo(mutableSetOf()) { session ->
-            val completedAt = session.completedAtTimestamp ?: return@mapNotNullTo null
-            val age = nowTimestamp - completedAt
-            if (age < 0) null else (age / WEEK_MILLIS).toInt()
+        val occupiedWeekStarts = completedTimestamps.mapTo(mutableSetOf()) { timestamp ->
+            TrainingWeek.startEpochDayContaining(Instant.ofEpochMilli(timestamp), zoneId)
         }
 
+        // Count from the current week when it already has work, otherwise from the previous
+        // week: an unfinished, still-empty current week is grace rather than a broken streak.
+        var cursor = if (currentWeek.startEpochDay in occupiedWeekStarts) {
+            currentWeek.startEpochDay
+        } else {
+            currentWeek.startEpochDay - 7
+        }
         var streak = 0
-        while (streak in occupiedWeekBuckets) streak += 1
+        while (cursor in occupiedWeekStarts) {
+            streak += 1
+            cursor -= 7
+        }
         return streak
     }
 
-    private fun calculateMuscleFocus(
+    /**
+     * Non-additive legacy-primary involvement for the current week against the previous
+     * calendar week, over the union of muscles trained in either. A muscle trained last week
+     * but not this week is kept so a reduction is visible rather than silently dropped.
+     */
+    private fun calculateLegacyPrimaryActivity(
         thisWeek: List<WorkoutSession>,
         previousWeek: List<WorkoutSession>,
         catalogById: Map<String, Exercise>
     ): List<MuscleProgressStat> {
-        val currentSetsByMuscle = completedSetsByPrimaryMuscle(thisWeek, catalogById)
-        val previousSetsByMuscle = completedSetsByPrimaryMuscle(previousWeek, catalogById)
+        val currentSetsByMuscle = legacyPrimarySetsByMuscle(thisWeek, catalogById)
+        val previousSetsByMuscle = legacyPrimarySetsByMuscle(previousWeek, catalogById)
 
-        return currentSetsByMuscle
-            .map { (muscle, currentSets) ->
-                val previousSets = previousSetsByMuscle[muscle] ?: 0
-                val percentageGrowth = when {
-                    previousSets == 0 && currentSets > 0 -> 100
-                    previousSets == 0 -> 0
-                    else -> (((currentSets - previousSets) * 100.0) / previousSets).roundToInt()
-                }
+        return (currentSetsByMuscle.keys + previousSetsByMuscle.keys)
+            .map { muscle ->
+                val current = currentSetsByMuscle[muscle] ?: 0
+                val previous = previousSetsByMuscle[muscle] ?: 0
                 MuscleProgressStat(
                     muscle = muscle,
-                    setsThisWeek = currentSets,
-                    percentageGrowth = percentageGrowth
+                    setsThisWeek = current,
+                    setsPreviousWeek = previous,
+                    // No baseline to grow from is new activity, not an invented 100%.
+                    percentageChange = if (previous == 0) {
+                        null
+                    } else {
+                        (((current - previous) * 100.0) / previous).roundToInt()
+                    }
                 )
             }
-            .sortedWith(compareByDescending<MuscleProgressStat> { it.setsThisWeek }.thenBy { it.muscle })
-            .take(MAX_MUSCLE_STATS)
+            .sortedWith(
+                compareByDescending<MuscleProgressStat> { it.setsThisWeek }
+                    .thenByDescending { it.setsPreviousWeek }
+                    .thenBy { it.muscle }
+            )
     }
 
-    private fun completedSetsByPrimaryMuscle(
+    private fun legacyPrimarySetsByMuscle(
         sessions: List<WorkoutSession>,
         catalogById: Map<String, Exercise>
     ): Map<String, Int> {
         val counts = mutableMapOf<String, Int>()
         sessions.forEach { session ->
             session.exercises.forEach { workoutExercise ->
-                val completedSetCount = workoutExercise.sets.count { it.isValidCompletedSet() }
+                // Every completed set counts, warm-ups and timed work included; involvement
+                // describes exposure, not the loaded work sets a reviewed dose credits.
+                val completedSetCount = workoutExercise.sets.count { it.isCompleted }
                 if (completedSetCount == 0) return@forEach
                 catalogById[workoutExercise.exerciseId]
                     ?.primaryMuscles
@@ -300,22 +346,37 @@ class ProgressCalculator {
             }
     }
 
-    private fun validCompletedVolume(session: WorkoutSession): Double = session.exercises.sumOf { exercise ->
-        exercise.sets
-            .filter { it.isValidCompletedSet() }
-            .sumOf { set ->
-                ((set.completedWeight ?: 0.0) * (set.completedReps ?: 0))
-                    .takeIf(Double::isFinite)
-                    ?: 0.0
+    /** External-load tonnage: completed WEIGHT_REPS sets only, warm-ups included. */
+    private fun weeklyExternalLoadVolume(session: WorkoutSession): Double =
+        session.exercises.sumOf { exercise ->
+            exercise.sets.sumOf { set ->
+                if (set.isCompletedRepBasedSet() &&
+                    set.exerciseType == ExerciseType.WEIGHT_REPS
+                ) {
+                    val load = set.completedWeight?.takeIf { it.isFinite() && it >= 0.0 } ?: 0.0
+                    (load * requireNotNull(set.completedReps)).takeIf(Double::isFinite) ?: 0.0
+                } else {
+                    0.0
+                }
             }
-    }
+        }
 
-    /** Reps completed across the week, so bodyweight-only training still reports real work. */
-    private fun validCompletedReps(session: WorkoutSession): Int = session.exercises.sumOf { exercise ->
-        exercise.sets
-            .filter { it.isValidCompletedSet() }
-            .sumOf { set -> set.completedReps ?: 0 }
-    }
+    /**
+     * Reps completed across the week, so bodyweight-only training still reports real work.
+     * Load validity is irrelevant to a rep count, and timed work has no reps to count.
+     */
+    private fun weeklyCompletedReps(session: WorkoutSession): Int =
+        session.exercises.sumOf { exercise ->
+            exercise.sets.sumOf { set ->
+                if (set.isCompletedRepBasedSet()) requireNotNull(set.completedReps) else 0
+            }
+        }
+
+    /** Completed warm-up sets, so the reviewed-dose difference can be explained. */
+    private fun warmupSetCount(session: WorkoutSession): Int =
+        session.exercises.sumOf { exercise ->
+            exercise.sets.count { it.isCompleted && it.type == SetType.WARMUP }
+        }
 
     private fun WorkoutSession.convertWeightsTo(targetUnit: WeightUnit): WorkoutSession {
         if (weightUnit == targetUnit) return this
@@ -358,6 +419,12 @@ class ProgressCalculator {
             completedReps != null &&
             completedReps > 0 &&
             (completedWeight == null || (completedWeight.isFinite() && completedWeight >= 0.0))
+
+    /** A completed rep-based set with a positive rep count; timed and distance work excluded. */
+    private fun WorkoutSet.isCompletedRepBasedSet(): Boolean =
+        isCompleted &&
+            exerciseType in REP_BASED_TYPES &&
+            (completedReps ?: 0) > 0
 
     private fun WorkoutSet.validPositiveWeight(): Double? =
         completedWeight?.takeIf { it.isFinite() && it > 0.0 }
@@ -410,11 +477,13 @@ class ProgressCalculator {
         }
 
     private companion object {
-        const val DAY_MILLIS = 24 * 60 * 60 * 1_000L
-        const val WEEK_MILLIS = 7 * DAY_MILLIS
         const val MAX_RECENT_HISTORY = 10
-        const val MAX_MUSCLE_STATS = 4
         const val MAX_RECORDS = 3
         const val MAX_STRENGTH_TRENDS = 3
+        val REP_BASED_TYPES = setOf(
+            ExerciseType.WEIGHT_REPS,
+            ExerciseType.BODYWEIGHT_REPS,
+            ExerciseType.ASSISTED_BODYWEIGHT
+        )
     }
 }

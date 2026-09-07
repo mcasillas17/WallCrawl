@@ -72,8 +72,8 @@ class TodayViewModelTest {
     }
 
     @Test
-    fun uiState_generatesOnceAndCountsCompletedWorkoutsInRollingWeek() = runTest {
-        val now = 20 * DAY_MILLIS
+    fun uiState_generatesOnceAndCountsCompletedWorkoutsInCalendarWeek() = runTest {
+        val now = java.time.Instant.parse("2026-09-02T12:00:00Z").toEpochMilli()
         val profileRepository = TodayUserProfileRepository(UserProfile(availableEquipment = StandardEquipment.ALL))
         val workoutRepository = TodayWorkoutRepository(
             completedSessions = listOf(
@@ -99,7 +99,8 @@ class TodayViewModelTest {
             workoutPlanner = planner,
             programValidator = ProgramValidator(GeneratedWorkoutValidator(catalog)),
             nowTimestamp = { now },
-            clock = flowOf(now)
+            clock = flowOf(now),
+            zoneId = { java.time.ZoneId.of("UTC") }
         )
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.uiState.collect {}
@@ -109,7 +110,7 @@ class TodayViewModelTest {
 
         val state = viewModel.uiState.value as TodayUiState.Success
         assertThat(planner.generateCalls).isEqualTo(1)
-        assertThat(state.completedThisWeek).isEqualTo(2)
+        assertThat(state.completedThisWeek).isEqualTo(1)
         assertThat(state.suggestedWorkout.exercises).isNotEmpty()
     }
 
@@ -257,6 +258,7 @@ class TodayViewModelTest {
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.uiState.collect {}
         }
+
         advanceUntilIdle()
 
         assertThat((viewModel.uiState.value as TodayUiState.Success).completedThisWeek)
@@ -275,6 +277,34 @@ class TodayViewModelTest {
 
         assertThat((viewModel.uiState.value as TodayUiState.Success).completedThisWeek)
             .isEqualTo(0)
+    }
+
+    @Test
+    fun completedThisWeek_usesMondayBoundsNotThePrevious168Hours() = runTest {
+        val now = java.time.Instant.parse("2026-09-07T00:00:00Z").toEpochMilli()
+        val profileRepository = TodayUserProfileRepository(UserProfile(availableEquipment = StandardEquipment.ALL))
+        val workoutRepository = TodayWorkoutRepository(listOf(
+            completedSession("previous-sunday", now - 1),
+            completedSession("this-monday", now),
+            completedSession("next-monday", now + 7 * DAY_MILLIS)
+        ))
+        val catalog = InMemoryExerciseCatalog()
+        val viewModel = TodayViewModel(
+            userProfileRepository = profileRepository,
+            workoutRepository = workoutRepository,
+            workoutGenerationContextBuilder = WorkoutGenerationContextBuilder(
+                profileRepository, workoutRepository, catalog, ExerciseFilter(),
+                WorkoutHistoryAnalyzer(), nowTimestamp = { now }
+            ),
+            workoutPlanner = RecordingWorkoutPlanner(),
+            programValidator = ProgramValidator(GeneratedWorkoutValidator(catalog)),
+            nowTimestamp = { now },
+            clock = flowOf(now),
+            zoneId = { java.time.ZoneId.of("UTC") }
+        )
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        advanceUntilIdle()
+        assertThat((viewModel.uiState.value as TodayUiState.Success).completedThisWeek).isEqualTo(1)
     }
 
     @Test
@@ -703,10 +733,10 @@ private class TodayWorkoutRepository(
 
     override fun observeCompletedWorkoutCount(): Flow<Int> = flowOf(completed.value.size)
 
-    override fun observeCompletedWorkoutCountSince(startTimestamp: Long): Flow<Int> =
+    override fun observeCompletedWorkoutCountInRange(startTimestamp: Long, endTimestampExclusive: Long): Flow<Int> =
         completed.map { sessions ->
             sessions.count { session ->
-                session.completedAtTimestamp?.let { it >= startTimestamp } == true
+                session.completedAtTimestamp?.let { it >= startTimestamp && it < endTimestampExclusive } == true
             }
         }
     override suspend fun getRecentCompletedSessions(limit: Int): List<WorkoutSession> =

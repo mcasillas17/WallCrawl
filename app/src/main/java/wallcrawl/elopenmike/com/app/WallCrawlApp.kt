@@ -242,10 +242,7 @@ private fun WallCrawlAppContent(
             composable(AppRoutes.PROGRESS) {
                 val progressViewModel: ProgressViewModel = viewModel(
                     factory = ProgressViewModel.provideFactory(
-                        workoutRepository = container.workoutRepository,
-                        userProfileRepository = container.userProfileRepository,
-                        exerciseCatalog = container.exerciseCatalog,
-                        progressCalculator = container.progressCalculator
+                        progressRepository = container.progressRepository
                     )
                 )
                 ProgressScreen(viewModel = progressViewModel)

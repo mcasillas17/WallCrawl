@@ -2,6 +2,7 @@ package wallcrawl.elopenmike.com.core.ai
 
 import com.google.common.truth.Truth.assertThat
 import java.time.Instant
+import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import org.junit.Assert.assertThrows
@@ -12,6 +13,20 @@ import wallcrawl.elopenmike.com.core.model.TrainingWeek
  * ISO week boundaries in real zones, including the two weeks that are not 168 hours long.
  */
 class TrainingWeekTest {
+
+    @Test
+    fun lightweightWeekKeysKeepTheSameZoneAndDstBoundaries() {
+        val cases = listOf(
+            Triple("2026-03-09T03:30:00Z", "America/New_York", "2026-03-02"),
+            Triple("2026-11-02T04:30:00Z", "America/New_York", "2026-10-26"),
+            Triple("2026-09-07T00:00:00Z", "UTC", "2026-09-07"),
+            Triple("2026-09-07T00:00:00Z", "America/Los_Angeles", "2026-08-31")
+        )
+        cases.forEach { (timestamp, zone, monday) ->
+            assertThat(TrainingWeek.startEpochDayContaining(Instant.parse(timestamp), ZoneId.of(zone)))
+                .isEqualTo(LocalDate.parse(monday).toEpochDay())
+        }
+    }
 
     @Test
     fun aSundayBelongsToTheWeekThatStartedOnTheMondayBeforeIt() {

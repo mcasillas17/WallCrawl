@@ -34,7 +34,7 @@ interface WorkoutRepository {
     fun observeSession(sessionId: String): Flow<WorkoutSession?>
     fun observeCompletedSessions(limit: Int = DEFAULT_OBSERVED_COMPLETED_SESSIONS): Flow<List<WorkoutSession>>
     fun observeCompletedWorkoutCount(): Flow<Int>
-    fun observeCompletedWorkoutCountSince(startTimestamp: Long): Flow<Int>
+    fun observeCompletedWorkoutCountInRange(startTimestamp: Long, endTimestampExclusive: Long): Flow<Int>
     suspend fun getRecentCompletedSessions(limit: Int = 8): List<WorkoutSession>
     /**
      * Starts a session from a generated plan.
@@ -112,8 +112,13 @@ class OfflineWorkoutRepository(
     override fun observeCompletedWorkoutCount(): Flow<Int> =
         sessionDao.observeCompletedSessionCount()
 
-    override fun observeCompletedWorkoutCountSince(startTimestamp: Long): Flow<Int> =
-        sessionDao.observeCompletedSessionCountSince(startTimestamp)
+    override fun observeCompletedWorkoutCountInRange(
+        startTimestamp: Long,
+        endTimestampExclusive: Long
+    ): Flow<Int> {
+        require(endTimestampExclusive > startTimestamp) { "The completed-workout range must be nonempty." }
+        return sessionDao.observeCompletedSessionCountInRange(startTimestamp, endTimestampExclusive)
+    }
 
     override suspend fun getRecentCompletedSessions(limit: Int): List<WorkoutSession> {
         require(limit > 0) { "limit must be greater than zero." }

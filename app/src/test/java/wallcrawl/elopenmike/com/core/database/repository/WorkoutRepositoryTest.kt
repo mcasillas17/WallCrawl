@@ -500,8 +500,9 @@ private class EmptyWorkoutSessionDao : WorkoutSessionDao {
 
     override fun observeCompletedSessionCount(status: SessionStatus): Flow<Int> = flowOf(0)
 
-    override fun observeCompletedSessionCountSince(
+    override fun observeCompletedSessionCountInRange(
         startTimestamp: Long,
+        endTimestampExclusive: Long,
         status: SessionStatus
     ): Flow<Int> = flowOf(0)
 
