@@ -14,6 +14,17 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
 import wallcrawl.elopenmike.com.core.ai.GeneratedWorkoutValidator
+import wallcrawl.elopenmike.com.core.ai.PlannerFeatureFlags
+import wallcrawl.elopenmike.com.core.ai.ProgramValidator
+import wallcrawl.elopenmike.com.core.ai.RecommendationOutcome
+import wallcrawl.elopenmike.com.core.ai.TrainingProgramStateProvider
+import wallcrawl.elopenmike.com.core.ai.syntheticApprovedExercise
+import wallcrawl.elopenmike.com.core.database.repository.WeeklyDoseLedgerRepository
+import wallcrawl.elopenmike.com.core.model.LedgerPolicyVersion
+import wallcrawl.elopenmike.com.core.model.MuscleDoseAccounting
+import wallcrawl.elopenmike.com.core.model.WeeklyDoseLedger
+import wallcrawl.elopenmike.com.core.ai.RecommendationSnapshot
+import wallcrawl.elopenmike.com.core.ai.WorkoutDurationEstimator
 import wallcrawl.elopenmike.com.core.ai.WorkoutGenerationContextBuilder
 import wallcrawl.elopenmike.com.core.ai.WorkoutHistoryAnalyzer
 import wallcrawl.elopenmike.com.core.ai.WorkoutPlanner
@@ -86,7 +97,7 @@ class TodayViewModelTest {
             workoutRepository = workoutRepository,
             workoutGenerationContextBuilder = contextBuilder,
             workoutPlanner = planner,
-            workoutValidator = GeneratedWorkoutValidator(catalog),
+            programValidator = ProgramValidator(GeneratedWorkoutValidator(catalog)),
             nowTimestamp = { now },
             clock = flowOf(now),
             zoneId = { java.time.ZoneId.of("UTC") }
@@ -122,7 +133,7 @@ class TodayViewModelTest {
                 nowTimestamp = { now }
             ),
             workoutPlanner = planner,
-            workoutValidator = GeneratedWorkoutValidator(catalog),
+            programValidator = ProgramValidator(GeneratedWorkoutValidator(catalog)),
             nowTimestamp = { now },
             clock = flowOf(now)
         )
@@ -157,7 +168,7 @@ class TodayViewModelTest {
                 nowTimestamp = { now }
             ),
             workoutPlanner = planner,
-            workoutValidator = GeneratedWorkoutValidator(catalog),
+            programValidator = ProgramValidator(GeneratedWorkoutValidator(catalog)),
             nowTimestamp = { now },
             clock = flowOf(now)
         )
@@ -203,7 +214,7 @@ class TodayViewModelTest {
                 nowTimestamp = { now }
             ),
             workoutPlanner = RecordingWorkoutPlanner(),
-            workoutValidator = GeneratedWorkoutValidator(catalog),
+            programValidator = ProgramValidator(GeneratedWorkoutValidator(catalog)),
             nowTimestamp = { now },
             clock = flowOf(now)
         )
@@ -240,7 +251,7 @@ class TodayViewModelTest {
                 nowTimestamp = { now }
             ),
             workoutPlanner = RecordingWorkoutPlanner(),
-            workoutValidator = GeneratedWorkoutValidator(catalog),
+            programValidator = ProgramValidator(GeneratedWorkoutValidator(catalog)),
             nowTimestamp = { clock.value },
             clock = clock
         )
@@ -286,7 +297,7 @@ class TodayViewModelTest {
                 WorkoutHistoryAnalyzer(), nowTimestamp = { now }
             ),
             workoutPlanner = RecordingWorkoutPlanner(),
-            workoutValidator = GeneratedWorkoutValidator(catalog),
+            programValidator = ProgramValidator(GeneratedWorkoutValidator(catalog)),
             nowTimestamp = { now },
             clock = flowOf(now),
             zoneId = { java.time.ZoneId.of("UTC") }
@@ -295,6 +306,305 @@ class TodayViewModelTest {
         advanceUntilIdle()
         assertThat((viewModel.uiState.value as TodayUiState.Success).completedThisWeek).isEqualTo(1)
     }
+
+    @Test
+    fun startWorkout_recordsTheValidationEvidenceWithTheSession() = runTest {
+        val now = 20 * DAY_MILLIS
+        val profileRepository = TodayUserProfileRepository(
+            UserProfile(availableEquipment = StandardEquipment.ALL)
+        )
+        val workoutRepository = TodayWorkoutRepository(emptyList())
+        val catalog = InMemoryExerciseCatalog()
+        val viewModel = TodayViewModel(
+            userProfileRepository = profileRepository,
+            workoutRepository = workoutRepository,
+            workoutGenerationContextBuilder = WorkoutGenerationContextBuilder(
+                userProfileRepository = profileRepository,
+                workoutRepository = workoutRepository,
+                exerciseCatalog = catalog,
+                exerciseFilter = ExerciseFilter(),
+                historyAnalyzer = WorkoutHistoryAnalyzer(),
+                nowTimestamp = { now },
+                catalogVersion = { "catalog-commit-under-test" }
+            ),
+            workoutPlanner = RecordingWorkoutPlanner(),
+            programValidator = ProgramValidator(GeneratedWorkoutValidator(catalog)),
+            nowTimestamp = { now },
+            clock = flowOf(now)
+        )
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiState.collect {}
+        }
+        advanceUntilIdle()
+
+        viewModel.startWorkout(WORKOUT_NAME, WORKOUT_RATIONALE) {}
+        advanceUntilIdle()
+
+        val recommendation = checkNotNull(workoutRepository.startRequests.single().recommendation)
+        assertThat(recommendation.outcome).isEqualTo(RecommendationOutcome.VALID)
+        assertThat(recommendation.reasonCodes).isEmpty()
+        assertThat(recommendation.catalogVersion).isEqualTo("catalog-commit-under-test")
+        // The legacy path runs no reviewed rule, so it records no reviewed identity either.
+        assertThat(recommendation.reviewedPathEnabled).isFalse()
+        assertThat(recommendation.doseAccounting).isEmpty()
+    }
+
+    @Test
+    fun startWorkout_withHistoryCompletedSinceGeneration_refusesInsteadOfStartingAStalePlan() =
+        runTest {
+            val now = 20 * DAY_MILLIS
+            val profileRepository = TodayUserProfileRepository(
+                UserProfile(availableEquipment = StandardEquipment.ALL)
+            )
+            val workoutRepository = TodayWorkoutRepository(emptyList())
+            val catalog = InMemoryExerciseCatalog()
+            val viewModel = TodayViewModel(
+                userProfileRepository = profileRepository,
+                workoutRepository = workoutRepository,
+                workoutGenerationContextBuilder = WorkoutGenerationContextBuilder(
+                    userProfileRepository = profileRepository,
+                    workoutRepository = workoutRepository,
+                    exerciseCatalog = catalog,
+                    exerciseFilter = ExerciseFilter(),
+                    historyAnalyzer = WorkoutHistoryAnalyzer(),
+                    nowTimestamp = { now }
+                ),
+                workoutPlanner = RecordingWorkoutPlanner(),
+                programValidator = ProgramValidator(GeneratedWorkoutValidator(catalog)),
+                nowTimestamp = { now },
+                clock = flowOf(now)
+            )
+            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                viewModel.uiState.collect {}
+            }
+            advanceUntilIdle()
+
+            // A workout finished elsewhere after this card was built. The rebuilt context no
+            // longer matches the one the recommendation was validated against.
+            workoutRepository.addCompletedSession(completedSession("elsewhere", now - 1_000L))
+            viewModel.startWorkout(WORKOUT_NAME, WORKOUT_RATIONALE) {}
+            advanceUntilIdle()
+
+            assertThat(workoutRepository.startRequests).isEmpty()
+            assertThat((viewModel.uiState.value as TodayUiState.Error).error)
+                .isEqualTo(TodayError.RECOMMENDATION_OUT_OF_DATE)
+        }
+
+    @Test
+    fun aProposalThatCannotFitTheConfiguredWeeklyAllowance_saysSoInsteadOfFailingGenerically() =
+        runTest {
+            val now = 20 * DAY_MILLIS
+            val exercises = listOf(
+                syntheticApprovedExercise(id = "press-a", directPrimaryMuscle = "Chest"),
+                syntheticApprovedExercise(id = "press-b", directPrimaryMuscle = "Chest"),
+                syntheticApprovedExercise(id = "press-c", directPrimaryMuscle = "Chest")
+            )
+            val profileRepository = TodayUserProfileRepository(
+                UserProfile(availableEquipment = listOf(StandardEquipment.BODYWEIGHT))
+            )
+            val workoutRepository = TodayWorkoutRepository(emptyList())
+            val catalog = InMemoryExerciseCatalog(exercises)
+            val viewModel = TodayViewModel(
+                userProfileRepository = profileRepository,
+                workoutRepository = workoutRepository,
+                workoutGenerationContextBuilder = WorkoutGenerationContextBuilder(
+                    userProfileRepository = profileRepository,
+                    workoutRepository = workoutRepository,
+                    exerciseCatalog = catalog,
+                    exerciseFilter = ExerciseFilter(),
+                    historyAnalyzer = WorkoutHistoryAnalyzer(),
+                    plannerFeatureFlags = PlannerFeatureFlags(
+                        reviewedCapabilityEligibility = true
+                    ),
+                    trainingProgramStateProvider = TrainingProgramStateProvider(
+                        weeklyDoseLedgerRepository = FullChestWeekLedgerRepository()
+                    ),
+                    nowTimestamp = { now }
+                ),
+                // Two sets on each of three exercises sharing one direct primary, against a
+                // week that has already used four of the configured six.
+                workoutPlanner = FixedPlanWorkoutPlanner(setsPerExercise = 2),
+                programValidator = ProgramValidator(GeneratedWorkoutValidator(catalog)),
+                nowTimestamp = { now },
+                clock = flowOf(now)
+            )
+            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                viewModel.uiState.collect {}
+            }
+            advanceUntilIdle()
+
+            // Two sets remain for three exercises, so the one permitted repair pass cannot
+            // leave every exercise a set and the proposal is refused with copy about the
+            // configured plan rather than a generic "couldn't build".
+            assertThat((viewModel.uiState.value as TodayUiState.Error).error)
+                .isEqualTo(TodayError.WEEKLY_ALLOWANCE_REACHED)
+        }
+
+    @Test
+    fun anOverAllowanceProposalThatCanBeReduced_isRepairedAndRecordedAsRepaired() = runTest {
+        val now = 20 * DAY_MILLIS
+        val exercises = listOf(
+            syntheticApprovedExercise(id = "press-a", directPrimaryMuscle = "Chest"),
+            syntheticApprovedExercise(id = "press-b", directPrimaryMuscle = "Chest")
+        )
+        val profileRepository = TodayUserProfileRepository(
+            UserProfile(availableEquipment = listOf(StandardEquipment.BODYWEIGHT))
+        )
+        val workoutRepository = TodayWorkoutRepository(emptyList())
+        val catalog = InMemoryExerciseCatalog(exercises)
+        val viewModel = TodayViewModel(
+            userProfileRepository = profileRepository,
+            workoutRepository = workoutRepository,
+            workoutGenerationContextBuilder = WorkoutGenerationContextBuilder(
+                userProfileRepository = profileRepository,
+                workoutRepository = workoutRepository,
+                exerciseCatalog = catalog,
+                exerciseFilter = ExerciseFilter(),
+                historyAnalyzer = WorkoutHistoryAnalyzer(),
+                plannerFeatureFlags = PlannerFeatureFlags(reviewedCapabilityEligibility = true),
+                trainingProgramStateProvider = TrainingProgramStateProvider(
+                    weeklyDoseLedgerRepository = EmptyWeekLedgerRepository()
+                ),
+                nowTimestamp = { now }
+            ),
+            workoutPlanner = FixedPlanWorkoutPlanner(setsPerExercise = 4),
+            programValidator = ProgramValidator(GeneratedWorkoutValidator(catalog)),
+            nowTimestamp = { now },
+            clock = flowOf(now)
+        )
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiState.collect {}
+        }
+        advanceUntilIdle()
+
+        val shown = (viewModel.uiState.value as TodayUiState.Success).suggestedWorkout
+        assertThat(shown.exercises.map { it.targetSets }).containsExactly(4, 2).inOrder()
+
+        viewModel.startWorkout(WORKOUT_NAME, WORKOUT_RATIONALE) {}
+        advanceUntilIdle()
+
+        val request = workoutRepository.startRequests.single()
+        // What is started is exactly what was displayed, and the record says it was repaired
+        // rather than claiming the original proposal was valid.
+        assertThat(request.workout).isEqualTo(shown)
+        assertThat(checkNotNull(request.recommendation).outcome)
+            .isEqualTo(RecommendationOutcome.REPAIRED)
+        assertThat(checkNotNull(request.recommendation).doseAccounting.single())
+            .isEqualTo(
+                MuscleDoseAccounting(
+                    muscle = "Chest",
+                    completedSets = 0,
+                    proposedSets = 6,
+                    allowanceSets = 6
+                )
+            )
+    }
+
+    @Test
+    fun startWorkout_whenRevalidationRejectsAnUnchangedContext_startsNothing() = runTest {
+        // The context fingerprint deliberately does not cover everything a decision reads —
+        // completed set counts inside the week are one such thing — so revalidation at start
+        // is a second, independent gate. This drives that gate: the digest still matches,
+        // and the fresh check rejects anyway.
+        val now = 20 * DAY_MILLIS
+        val exercises = listOf(
+            syntheticApprovedExercise(id = "press-a", directPrimaryMuscle = "Chest")
+        )
+        val profileRepository = TodayUserProfileRepository(
+            UserProfile(availableEquipment = listOf(StandardEquipment.BODYWEIGHT))
+        )
+        val workoutRepository = TodayWorkoutRepository(emptyList())
+        val catalog = InMemoryExerciseCatalog(exercises)
+        val ledgerRepository = MutableWeekLedgerRepository(chestSets = 0)
+        val viewModel = TodayViewModel(
+            userProfileRepository = profileRepository,
+            workoutRepository = workoutRepository,
+            workoutGenerationContextBuilder = WorkoutGenerationContextBuilder(
+                userProfileRepository = profileRepository,
+                workoutRepository = workoutRepository,
+                exerciseCatalog = catalog,
+                exerciseFilter = ExerciseFilter(),
+                historyAnalyzer = WorkoutHistoryAnalyzer(),
+                plannerFeatureFlags = PlannerFeatureFlags(reviewedCapabilityEligibility = true),
+                trainingProgramStateProvider = TrainingProgramStateProvider(
+                    weeklyDoseLedgerRepository = ledgerRepository
+                ),
+                nowTimestamp = { now }
+            ),
+            workoutPlanner = FixedPlanWorkoutPlanner(setsPerExercise = 5),
+            programValidator = ProgramValidator(GeneratedWorkoutValidator(catalog)),
+            nowTimestamp = { now },
+            clock = flowOf(now)
+        )
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiState.collect {}
+        }
+        advanceUntilIdle()
+        assertThat(viewModel.uiState.value).isInstanceOf(TodayUiState.Success::class.java)
+
+        // The week fills up underneath the displayed card. Neither the week identity nor any
+        // other digest input moves, so only the fresh validation can catch it.
+        ledgerRepository.chestSets = 4
+        viewModel.startWorkout(WORKOUT_NAME, WORKOUT_RATIONALE) {}
+        advanceUntilIdle()
+
+        assertThat(workoutRepository.startRequests).isEmpty()
+        assertThat((viewModel.uiState.value as TodayUiState.Error).error)
+            .isEqualTo(TodayError.START_VALIDATION_FAILED)
+    }
+
+    @Test
+    fun startWorkout_afterTheWeekRollsOver_refusesBecauseTheContextIsNoLongerTheSame() =
+        runTest {
+            // A card built on Sunday and started on Monday is accounted against a different
+            // ISO week. Nothing about the plan changed, but the week it was checked against
+            // did, so it is refused as out of date rather than started against the new one.
+            val now = 20 * DAY_MILLIS
+            val exercises = listOf(
+                syntheticApprovedExercise(id = "press-a", directPrimaryMuscle = "Chest")
+            )
+            val profileRepository = TodayUserProfileRepository(
+                UserProfile(availableEquipment = listOf(StandardEquipment.BODYWEIGHT))
+            )
+            val workoutRepository = TodayWorkoutRepository(emptyList())
+            val catalog = InMemoryExerciseCatalog(exercises)
+            val ledgerRepository = MutableWeekLedgerRepository(chestSets = 0)
+            val viewModel = TodayViewModel(
+                userProfileRepository = profileRepository,
+                workoutRepository = workoutRepository,
+                workoutGenerationContextBuilder = WorkoutGenerationContextBuilder(
+                    userProfileRepository = profileRepository,
+                    workoutRepository = workoutRepository,
+                    exerciseCatalog = catalog,
+                    exerciseFilter = ExerciseFilter(),
+                    historyAnalyzer = WorkoutHistoryAnalyzer(),
+                    plannerFeatureFlags = PlannerFeatureFlags(
+                        reviewedCapabilityEligibility = true
+                    ),
+                    trainingProgramStateProvider = TrainingProgramStateProvider(
+                        weeklyDoseLedgerRepository = ledgerRepository
+                    ),
+                    nowTimestamp = { now }
+                ),
+                workoutPlanner = FixedPlanWorkoutPlanner(setsPerExercise = 2),
+                programValidator = ProgramValidator(GeneratedWorkoutValidator(catalog)),
+                nowTimestamp = { now },
+                clock = flowOf(now)
+            )
+            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                viewModel.uiState.collect {}
+            }
+            advanceUntilIdle()
+            assertThat(viewModel.uiState.value).isInstanceOf(TodayUiState.Success::class.java)
+
+            ledgerRepository.weekStartEpochDay += 7
+            viewModel.startWorkout(WORKOUT_NAME, WORKOUT_RATIONALE) {}
+            advanceUntilIdle()
+
+            assertThat(workoutRepository.startRequests).isEmpty()
+            assertThat((viewModel.uiState.value as TodayUiState.Error).error)
+                .isEqualTo(TodayError.RECOMMENDATION_OUT_OF_DATE)
+        }
 
     private fun completedSession(id: String, completedAtTimestamp: Long) = WorkoutSession(
         id = id,
@@ -325,6 +635,14 @@ private class RecordingWorkoutPlanner : WorkoutPlanner {
         generateCalls += 1
         contexts += context
         val exercise = context.allowedExercises.first()
+        val exercises = listOf(
+            GeneratedExercise(
+                exerciseId = exercise.id,
+                targetSets = 3,
+                repMin = 8,
+                repMax = 10
+            )
+        )
         return GeneratedWorkout(
             title = WorkoutTitleSpec(
                 split = WorkoutSplit.PUSH,
@@ -335,15 +653,8 @@ private class RecordingWorkoutPlanner : WorkoutPlanner {
                 focusMuscles = exercise.primaryMuscles
             ),
             focusMuscles = exercise.primaryMuscles,
-            estimatedDurationMinutes = 30,
-            exercises = listOf(
-                GeneratedExercise(
-                    exerciseId = exercise.id,
-                    targetSets = 3,
-                    repMin = 8,
-                    repMax = 10
-                )
-            )
+            estimatedDurationMinutes = WorkoutDurationEstimator.estimateMinutes(exercises),
+            exercises = exercises
         )
     }
 }
@@ -435,9 +746,10 @@ private class TodayWorkoutRepository(
         generated: GeneratedWorkout,
         displayName: String,
         displayRationale: String,
-        userProfile: UserProfile
+        userProfile: UserProfile,
+        recommendation: RecommendationSnapshot?
     ): WorkoutSession {
-        startRequests += StartWorkoutRequest(generated, displayName, userProfile)
+        startRequests += StartWorkoutRequest(generated, displayName, userProfile, recommendation)
         return WorkoutSession(
             id = "started-session",
             name = displayName,
@@ -472,5 +784,110 @@ private class TodayWorkoutRepository(
 private data class StartWorkoutRequest(
     val workout: GeneratedWorkout,
     val displayName: String,
-    val userProfile: UserProfile
+    val userProfile: UserProfile,
+    val recommendation: RecommendationSnapshot?
+)
+
+/**
+ * A planner that always proposes every candidate with the same set count.
+ *
+ * It exists so a test can put the whole-proposal dose rule under pressure directly, without
+ * depending on how the real planner happens to fill a split today.
+ */
+private class FixedPlanWorkoutPlanner(
+    private val setsPerExercise: Int
+) : WorkoutPlanner {
+    override suspend fun generateWorkout(context: WorkoutGenerationContext): GeneratedWorkout {
+        val exercises = context.allowedExercises.map { exercise ->
+            GeneratedExercise(
+                exerciseId = exercise.id,
+                targetSets = setsPerExercise,
+                repMin = 8,
+                repMax = 10
+            )
+        }
+        return GeneratedWorkout(
+            title = WorkoutTitleSpec(
+                split = WorkoutSplit.PUSH,
+                emphasis = WorkoutEmphasis.HYPERTROPHY
+            ),
+            rationale = WorkoutRationaleSpec.GoalFocus(
+                goals = emptyList(),
+                focusMuscles = emptyList()
+            ),
+            focusMuscles = listOf("Chest"),
+            estimatedDurationMinutes = WorkoutDurationEstimator.estimateMinutes(exercises),
+            exercises = exercises
+        )
+    }
+}
+
+/**
+ * A week a test can change between generation and start.
+ *
+ * [chestSets] moves completed exposure without moving the week; [weekStartEpochDay] moves
+ * the week itself. The two exercise the two different gates at start: the second changes
+ * the context fingerprint, the first deliberately does not.
+ */
+private class MutableWeekLedgerRepository(
+    var chestSets: Int,
+    var weekStartEpochDay: Long = 20_696L
+) : WeeklyDoseLedgerRepository {
+    override suspend fun weeklyLedgerAt(
+        profileId: String,
+        instant: java.time.Instant,
+        zoneId: java.time.ZoneId
+    ): WeeklyDoseLedger = current()
+
+    override suspend fun currentWeeklyLedger(
+        profileId: String,
+        zoneId: java.time.ZoneId
+    ): WeeklyDoseLedger = current()
+
+    private fun current(): WeeklyDoseLedger = ledger(
+        directPrimarySets = mapOf("Chest" to chestSets).filterValues { it > 0 },
+        weekStartEpochDay = weekStartEpochDay
+    )
+}
+
+/** A week that has already used four of the configured six direct-primary chest sets. */
+private class FullChestWeekLedgerRepository : WeeklyDoseLedgerRepository {
+    override suspend fun weeklyLedgerAt(
+        profileId: String,
+        instant: java.time.Instant,
+        zoneId: java.time.ZoneId
+    ): WeeklyDoseLedger = ledger(mapOf("Chest" to 4))
+
+    override suspend fun currentWeeklyLedger(
+        profileId: String,
+        zoneId: java.time.ZoneId
+    ): WeeklyDoseLedger = ledger(mapOf("Chest" to 4))
+}
+
+/** A week with no completed work at all. */
+private class EmptyWeekLedgerRepository : WeeklyDoseLedgerRepository {
+    override suspend fun weeklyLedgerAt(
+        profileId: String,
+        instant: java.time.Instant,
+        zoneId: java.time.ZoneId
+    ): WeeklyDoseLedger = ledger(emptyMap())
+
+    override suspend fun currentWeeklyLedger(
+        profileId: String,
+        zoneId: java.time.ZoneId
+    ): WeeklyDoseLedger = ledger(emptyMap())
+}
+
+private fun ledger(
+    directPrimarySets: Map<String, Int>,
+    weekStartEpochDay: Long = 20_696L
+) = WeeklyDoseLedger(
+    policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+    weekStartEpochDay = weekStartEpochDay,
+    timeZoneId = "UTC",
+    catalogVersion = "catalog-commit-under-test",
+    reviewPolicyVersion = 1,
+    directPrimarySets = directPrimarySets,
+    secondaryInvolvement = emptyMap(),
+    unattributedWorkSets = emptyMap()
 )

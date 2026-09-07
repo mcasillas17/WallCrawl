@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
+import wallcrawl.elopenmike.com.core.ai.RecommendationSnapshot
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetOutcomeRules
@@ -54,7 +55,8 @@ internal class FakeRepository(initialSession: WorkoutSession) : WorkoutRepositor
         generated: GeneratedWorkout,
         displayName: String,
         displayRationale: String,
-        userProfile: UserProfile
+        userProfile: UserProfile,
+        recommendation: RecommendationSnapshot?
     ): WorkoutSession = error("Not used")
 
     override suspend fun startWorkoutFromTemplate(

@@ -15,6 +15,8 @@ import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.hasScrollAction
+import androidx.compose.ui.test.hasAnyAncestor
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -107,8 +109,10 @@ class ProgressScreenTest {
         // from the bundled overlay, not English falling through.
         scrollTo(spanish.getString(R.string.progress_dose_details))
         composeRule.onNodeWithText(spanish.getString(R.string.progress_dose_details)).performClick()
-        scrollTo(SPANISH_CHEST)
-        composeRule.onNodeWithText(SPANISH_CHEST).assertIsDisplayed()
+        val reviewedMuscle = hasText(SPANISH_CHEST) and
+            hasAnyAncestor(hasTestTag(PROGRESS_REVIEWED_DOSE_TEST_TAG))
+        composeRule.onNode(hasScrollAction()).performScrollToNode(reviewedMuscle)
+        composeRule.onNode(reviewedMuscle).assertIsDisplayed()
     }
 
     @Test

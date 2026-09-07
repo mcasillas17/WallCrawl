@@ -1,5 +1,6 @@
 package wallcrawl.elopenmike.com.core.backup
 
+import wallcrawl.elopenmike.com.core.model.RecommendationRecord
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
@@ -17,17 +18,25 @@ import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
  * ## Versioning
  *
  * [ARCHIVE_VERSION] describes the document format and is independent of the Room schema
- * version, which is recorded separately as provenance. A reader accepts only the exact
- * archive version it implements: a higher version is refused rather than partially
- * understood, because a future format may attach meaning to fields this build would drop.
+ * version, which is recorded separately as provenance. A reader accepts every version in
+ * [SUPPORTED_ARCHIVE_VERSIONS] and writes only the newest. A higher version is refused
+ * rather than partially understood, because a future format may attach meaning to fields
+ * this build would drop.
+ *
+ * Version 2 added recommendation records. A version 1 document restores exactly as it
+ * always did and simply carries none, and each version is read strictly: a version 1
+ * document that uses a version 2 field is refused rather than quietly upgraded.
  *
  * ## What it contains
  *
  * Everything the user owns: the profile with its preferences and movement capabilities,
  * saved templates, and every workout session with its planned prescriptions, performed set
- * values, units, effort feedback, timestamps, stop reasons, and status. Derived caches
- * (currently the weekly dose ledger) are never exported; they are rebuilt from restored
- * history instead of being trusted.
+ * values, units, effort feedback, timestamps, stop reasons, and status, plus the
+ * whole-program validation record for each session started from a recommendation. Derived
+ * caches (currently the weekly dose ledger) are never exported; they are rebuilt from
+ * restored history instead of being trusted. A recommendation record is not derived — it
+ * cannot be reconstructed from history — so it travels with the archive rather than being
+ * silently lost on restore.
  *
  * ## Sensitivity
  *
@@ -39,10 +48,13 @@ import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
  */
 object LocalDataArchiveFormat {
 
-    /** The only archive format this build writes and accepts. */
-    const val ARCHIVE_VERSION: Int = 1
+    /** The only archive format this build writes. */
+    const val ARCHIVE_VERSION: Int = 2
 
-    /** Checksum algorithm recorded in, and required by, a version 1 archive. */
+    /** Every archive format this build can read. */
+    val SUPPORTED_ARCHIVE_VERSIONS: IntRange = 1..ARCHIVE_VERSION
+
+    /** Checksum algorithm recorded in, and required by, every supported archive. */
     const val CHECKSUM_ALGORITHM: String = "SHA-256"
 
     /** MIME type used for both the created and the opened document. */
@@ -90,6 +102,9 @@ object LocalDataArchiveLimits {
     const val MAX_DURATION_SECONDS: Int = 604_800
     const val MAX_REPETITIONS: Int = 100_000
     const val MAX_TIMESTAMP_MILLIS: Long = 4_102_444_800_000L // 2100-01-01T00:00:00Z
+
+    /** At most one recommendation record per session, so the session bound is the ceiling. */
+    const val MAX_RECOMMENDATION_RECORDS: Int = MAX_SESSIONS
 }
 
 /**
@@ -119,7 +134,16 @@ data class LocalDataArchiveMetadata(
 data class LocalDataSnapshot(
     val profile: UserProfile?,
     val templates: List<WorkoutTemplate>,
-    val sessions: List<WorkoutSession>
+    val sessions: List<WorkoutSession>,
+    /**
+     * How each planner-started session's recommendation was validated.
+     *
+     * Kept beside the sessions rather than nested inside them because it is provenance
+     * about a decision, not part of the session a user logged. Every record names an
+     * existing session exactly once; sessions started before whole-program validation
+     * existed, and sessions started from a manual template, simply have none.
+     */
+    val recommendationRecords: List<RecommendationRecord> = emptyList()
 )
 
 /** A complete archive: its provenance and the records it carries. */

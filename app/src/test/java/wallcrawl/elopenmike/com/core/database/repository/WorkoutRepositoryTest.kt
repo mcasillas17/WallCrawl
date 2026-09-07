@@ -9,6 +9,7 @@ import org.junit.Before
 import org.junit.Test
 import wallcrawl.elopenmike.com.core.database.dao.WorkoutSessionDao
 import wallcrawl.elopenmike.com.core.database.dao.WorkoutSetDao
+import wallcrawl.elopenmike.com.core.database.entity.WorkoutRecommendationRecordEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSessionEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSetEntity
 import wallcrawl.elopenmike.com.core.database.relation.WorkoutSessionWithExercisesAndSets
@@ -521,6 +522,14 @@ private class EmptyWorkoutSessionDao : WorkoutSessionDao {
     ) = Unit
 
     override suspend fun insertWorkoutSets(sets: List<WorkoutSetEntity>) = Unit
+
+    override suspend fun insertRecommendationRecord(
+        record: WorkoutRecommendationRecordEntity
+    ) = Unit
+
+    override suspend fun getRecommendationRecord(
+        sessionId: String
+    ): WorkoutRecommendationRecordEntity? = null
     override suspend fun updateSession(session: WorkoutSessionEntity) = Unit
 
     override suspend fun completeSessionIfActive(

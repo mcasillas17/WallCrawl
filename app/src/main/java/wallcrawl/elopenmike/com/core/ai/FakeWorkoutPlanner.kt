@@ -66,7 +66,7 @@ class FakeWorkoutPlanner(
 
         val goals = context.fitnessGoals.ifEmpty { setOf(context.fitnessGoal) }
         val focusMuscles = extractFocusMuscles(selectedExercises)
-        val estimatedDuration = calculateEstimatedDuration(generatedExerciseList)
+        val estimatedDuration = WorkoutDurationEstimator.estimateMinutes(generatedExerciseList)
         val breakRange = BreakDurationHelper.findMatchingRange(breakWeeks)
         // Ordered by the enum rather than by set iteration, so the same profile always
         // produces the same title and the same explanation.
@@ -339,14 +339,6 @@ class FakeWorkoutPlanner(
             .flatMap { it.primaryMuscles }
             .distinct()
             .take(3)
-    }
-
-    private fun calculateEstimatedDuration(exercises: List<GeneratedExercise>): Int {
-        val restTimeSeconds = exercises.sumOf { it.targetSets * it.restSeconds }
-        val executionTimeSeconds = exercises.sumOf { exercise ->
-            exercise.targetSets * (exercise.prescription.targetDurationSeconds ?: 45)
-        }
-        return ((restTimeSeconds + executionTimeSeconds) / 60).coerceIn(1, 240)
     }
 
 }

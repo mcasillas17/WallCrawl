@@ -9,6 +9,7 @@ import androidx.room.Update
 import androidx.room.Upsert
 import wallcrawl.elopenmike.com.core.database.entity.UserProfileEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutExerciseEntity
+import wallcrawl.elopenmike.com.core.database.entity.WorkoutRecommendationRecordEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSessionEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSetEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutTemplateEntity
@@ -110,13 +111,29 @@ interface WorkoutSessionDao {
         insertWorkoutSets(sets)
     }
 
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    suspend fun insertRecommendationRecord(record: WorkoutRecommendationRecordEntity)
+
+    @Query("SELECT * FROM workout_recommendation_records WHERE sessionId = :sessionId")
+    suspend fun getRecommendationRecord(sessionId: String): WorkoutRecommendationRecordEntity?
+
+    /**
+     * Starts a workout, or changes nothing at all.
+     *
+     * [recommendation] is written here rather than afterwards so a started session and the
+     * provenance of the plan it came from land together. Anything that refuses the start —
+     * a profile edited underneath it, an already-active session, or a failed insert — leaves
+     * neither a session nor a record, so there is never a partial active session and never a
+     * session whose recommendation evidence was silently lost.
+     */
     @Transaction
     suspend fun insertWorkoutUnlessActive(
         session: WorkoutSessionEntity,
         exercises: List<WorkoutExerciseEntity>,
         sets: List<WorkoutSetEntity>,
         expectedProfileId: String,
-        expectedProfileRevision: Long
+        expectedProfileRevision: Long,
+        recommendation: WorkoutRecommendationRecordEntity? = null
     ): WorkoutSessionWithExercisesAndSets {
         check(getProfileRevision(expectedProfileId) == expectedProfileRevision) {
             "User profile changed while the workout recommendation was being started."
@@ -125,6 +142,12 @@ interface WorkoutSessionDao {
         if (existingActiveSession != null) return existingActiveSession
 
         insertWorkout(session, exercises, sets)
+        recommendation?.let { record ->
+            check(record.sessionId == session.id) {
+                "A recommendation record must belong to the session it is written with."
+            }
+            insertRecommendationRecord(record)
+        }
         return checkNotNull(getSessionWithDetails(session.id)) {
             "Inserted workout session '${session.id}' could not be read back."
         }

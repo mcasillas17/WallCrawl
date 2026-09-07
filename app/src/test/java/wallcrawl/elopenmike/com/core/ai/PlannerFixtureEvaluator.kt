@@ -14,6 +14,7 @@ import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
 import wallcrawl.elopenmike.com.core.model.MovementCapabilities
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
+import wallcrawl.elopenmike.com.core.model.SessionProgramConstraints
 import wallcrawl.elopenmike.com.core.model.RepRange
 import wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata
 import wallcrawl.elopenmike.com.core.model.TrainingProgramState
@@ -83,7 +84,11 @@ internal data class PlannerFixtureInputSnapshot(
      */
     val trainingProgramState: TrainingProgramState?,
     val priorUserRestPreferences: Map<String, UserRestPreference>,
-    val preferredUnits: WeightUnit
+    val preferredUnits: WeightUnit,
+    val catalogVersion: String?,
+    val reviewPolicyVersion: Int,
+    /** A value type holding only booleans and an enum set, so the instance is held directly. */
+    val programConstraints: SessionProgramConstraints
 )
 
 internal class PlannerFixtureEvaluator(
@@ -207,7 +212,12 @@ private fun WorkoutGenerationContext.snapshot(): PlannerFixtureInputSnapshot =
         capabilityEvidence = capabilityEvidence,
         trainingProgramState = trainingProgramState,
         priorUserRestPreferences = LinkedHashMap(priorUserRestPreferences),
-        preferredUnits = preferredUnits
+        preferredUnits = preferredUnits,
+        catalogVersion = catalogVersion,
+        reviewPolicyVersion = reviewPolicyVersion,
+        programConstraints = programConstraints.copy(
+            requiredMovementPatterns = programConstraints.requiredMovementPatterns.toSet()
+        )
     )
 
 private fun UserProfile.deepCopy(): UserProfile = copy(

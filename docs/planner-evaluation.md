@@ -17,24 +17,34 @@ The boundary is explicit:
 
 These fixtures therefore model the planner **inside** a curated legal set. They do not claim that the current planner discovered capability, safety, or persona appropriateness on its own.
 
-## Planned whole-program assertions
+## Whole-program assertions
 
-Roadmap Packages 4 and 6 must follow the
-[evidence-to-rule mapping](research/2026-08-29-training-science-evidence-review.md#validation-scope-clarification-2026-09-05).
-Retain ID/candidate membership, reviewed provenance on the enabled path, explicit
-constraints, prescription shape, load provenance, deterministic failure/repair,
-snapshot/versioning, and no-partial-persistence coverage. Aggregate weekly assertions
-must test the configured product allowance across the entire proposal, not just each
-prescription against the same completed ledger.
+Whole-program validation is shipped and asserted outside this corpus, in
+`ProgramValidatorTest`, `ProgramValidatorAggregateDoseTest`, `ProgramValidatorRepairTest`,
+`RecommendationContextIdentityTest`, `WorkoutDurationEstimatorTest`,
+`PlannerLocaleInvarianceTest`, `TodayViewModelTest`, and the Room and archive
+instrumentation suites. Those follow the
+[evidence-to-rule mapping](research/2026-08-29-training-science-evidence-review.md#validation-scope-clarification-2026-09-05)
+and cover ID and candidate membership, reviewed provenance on the enabled path, explicit
+constraints, prescription shape, load provenance, deterministic failure and the single
+repair pass, snapshot versioning, stale-context refusal at start, and the no-partial-start
+guarantee. The aggregate weekly assertions test the configured product allowance across the
+entire proposal — including several exercises sharing one direct primary, an exactly
+reached allowance, and one set over it — rather than each prescription against the same
+completed ledger.
 
-Duplicate exercise/family and movement coverage need an explicit session/program scope;
-duration needs a named estimator and tolerance. Their fixtures must encode those
-contracts rather than universal no-repetition, all-patterns, or exact-time requirements.
+Duplicate exercise/family and movement coverage are asserted as **declared** session
+constraints, both in their declared and their default-inert form; duration is asserted
+against the named `DURATION_ESTIMATOR_V1` and its ±1-minute tolerance, with an explicit
+case proving a proposal far from the requested duration is not rejected for that.
 `PRIMARY_ONLY_V1`, set caps, RIR bands, and rest seconds are product-policy expectations,
-not medical thresholds. Include negative cases against numeric physiological fatigue
-budgets, timestamp-only overload/readiness inference, and mandatory weekly minimums or
-automatic volume increases. Recency scheduling remains a design requirement, not a
-blocking rule. These are planned assertions, not claims of coverage by the current corpus.
+not medical thresholds; a malformed ledger and unrepresentable arithmetic are asserted as
+distinct from an exceeded allowance. No fixture encodes a numeric physiological fatigue
+budget, timestamp-only overload or readiness inference, a mandatory weekly minimum, or an
+automatic volume increase, and no recency rule exists to assert.
+
+What this corpus still owes Package 6 is the `concurrent-activity` persona and direct
+corpus assertions for `PRIMARY_ONLY_V1` attribution and state-based set caps.
 
 Passing fixtures/CI establishes software conformance, not scientific or clinical
 validation of WallCrawl's complete algorithm. Approval provenance and expert review do

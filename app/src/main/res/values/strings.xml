@@ -294,6 +294,9 @@
     <string name="today_error_regenerate_failed">Couldn\'t build another workout. Try again.</string>
     <string name="today_error_first_failed">Couldn\'t build today\'s workout. Try again.</string>
     <string name="today_error_start_failed">Couldn\'t start this workout. Try again.</string>
+    <string name="today_error_recommendation_out_of_date">This suggestion is out of date. Something changed since it was built — tap regenerate for a current one.</string>
+    <string name="today_error_start_validation_failed">This suggestion no longer fits your current setup. Regenerate it and try again.</string>
+    <string name="today_error_weekly_allowance_reached">Your planned sets for this week are already covered for these muscles. You can still build your own workout.</string>
 
     <string name="today_error_reviewed_no_approved_metadata">Reviewed automatic planning isn\'t available yet, because no exercise metadata has human approval. You can still build your own workout.</string>
     <string name="today_error_reviewed_exclusions">Your exercise exclusions leave no reviewed automatic options. Update your exclusions in Profile, or build your own workout.</string>

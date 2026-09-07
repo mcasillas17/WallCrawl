@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import wallcrawl.elopenmike.com.core.database.repository.WeeklyDoseLedgerRepository
+import wallcrawl.elopenmike.com.core.ai.RecommendationSnapshot
 import wallcrawl.elopenmike.com.core.model.AdaptationState
 import wallcrawl.elopenmike.com.core.model.LedgerPolicyVersion
 import wallcrawl.elopenmike.com.core.model.WeeklyDoseLedger
@@ -53,6 +54,69 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.model.WorkoutSummary
 
 class WorkoutGenerationContextBuilderTest {
+
+    @Test
+    fun build_recordsTheCatalogIdentityWholeProgramValidationHasToReplay() = runTest {
+        val approved = syntheticApprovedExercise(
+            id = "approved-identity-exercise",
+            directPrimaryMuscle = "Chest"
+        )
+        val builder = WorkoutGenerationContextBuilder(
+            userProfileRepository = StubUserProfileRepository(UserProfile()),
+            workoutRepository = StubWorkoutRepository(emptyList()),
+            exerciseCatalog = InMemoryExerciseCatalog(listOf(approved)),
+            exerciseFilter = ExerciseFilter(),
+            historyAnalyzer = WorkoutHistoryAnalyzer(),
+            plannerFeatureFlags = PlannerFeatureFlags(),
+            catalogVersion = { "catalog-commit-under-test" }
+        )
+
+        val context = builder.build()
+
+        assertThat(context.catalogVersion).isEqualTo("catalog-commit-under-test")
+        // The authored review-policy version comes from the catalog, exactly as the ledger
+        // reads it, so a catalog authored under a new policy is never silently reused.
+        assertThat(context.reviewPolicyVersion).isEqualTo(1)
+    }
+
+    @Test
+    fun build_withoutACatalogVersionSupplier_reportsAbsenceRatherThanAGuess() = runTest {
+        val builder = WorkoutGenerationContextBuilder(
+            userProfileRepository = StubUserProfileRepository(UserProfile()),
+            workoutRepository = StubWorkoutRepository(emptyList()),
+            exerciseCatalog = InMemoryExerciseCatalog(
+                listOf(syntheticExerciseWithoutReviewedMetadata("plain-exercise"))
+            ),
+            exerciseFilter = ExerciseFilter(),
+            historyAnalyzer = WorkoutHistoryAnalyzer(),
+            plannerFeatureFlags = PlannerFeatureFlags()
+        )
+
+        val context = builder.build()
+
+        assertThat(context.catalogVersion).isNull()
+        assertThat(context.reviewPolicyVersion).isEqualTo(0)
+    }
+
+    @Test
+    fun build_declaresOnlyTheSessionConstraintsTheProductActuallyChose() = runTest {
+        val builder = WorkoutGenerationContextBuilder(
+            userProfileRepository = StubUserProfileRepository(UserProfile()),
+            workoutRepository = StubWorkoutRepository(emptyList()),
+            exerciseCatalog = InMemoryExerciseCatalog(),
+            exerciseFilter = ExerciseFilter(),
+            historyAnalyzer = WorkoutHistoryAnalyzer(),
+            plannerFeatureFlags = PlannerFeatureFlags()
+        )
+
+        val constraints = builder.build().programConstraints
+
+        // One exercise id per generated session is declared; families and movement coverage
+        // are not, so neither becomes a universal rule by default.
+        assertThat(constraints.uniqueExerciseIds).isTrue()
+        assertThat(constraints.uniqueProgressionFamilies).isFalse()
+        assertThat(constraints.requiredMovementPatterns).isEmpty()
+    }
 
     @Test
     fun build_withReviewedEligibilityDisabledPreservesLegacyCandidates() = runTest {
@@ -797,7 +861,8 @@ private class StubWorkoutRepository(
         generated: GeneratedWorkout,
         displayName: String,
         displayRationale: String,
-        userProfile: UserProfile
+        userProfile: UserProfile,
+        recommendation: RecommendationSnapshot?
     ): WorkoutSession =
         error("Not used")
 

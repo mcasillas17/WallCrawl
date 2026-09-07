@@ -67,7 +67,11 @@ class SafetyCopyTest {
                 key.startsWith("onboarding_break_") ||
                 key.startsWith("onboarding_safety_") ||
                 key.startsWith("profile_break_") ||
-                key.startsWith("movement_capability_")
+                key.startsWith("movement_capability_") ||
+                // Planning refusals explain a configured product limit. "This week's planned
+                // sets are already covered" is one sentence away from "more would hurt you",
+                // and that sentence must never ship in either language.
+                key.startsWith("today_error_")
         }
         assertThat(claimSensitiveKeys).isNotEmpty()
 

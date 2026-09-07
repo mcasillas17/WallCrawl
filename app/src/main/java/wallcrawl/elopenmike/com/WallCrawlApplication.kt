@@ -7,6 +7,7 @@ import kotlinx.coroutines.sync.Mutex
 import wallcrawl.elopenmike.com.core.ai.FakeWorkoutPlanner
 import wallcrawl.elopenmike.com.core.ai.GeneratedWorkoutValidator
 import wallcrawl.elopenmike.com.core.ai.PlannerFeatureFlags
+import wallcrawl.elopenmike.com.core.ai.ProgramValidator
 import wallcrawl.elopenmike.com.core.ai.TrainingProgramStateProvider
 import wallcrawl.elopenmike.com.core.ai.WorkoutGenerationContextBuilder
 import wallcrawl.elopenmike.com.core.ai.WorkoutHistoryAnalyzer
@@ -53,7 +54,7 @@ interface AppContainer {
     val exerciseVisualProvider: ExerciseVisualProvider
     val exerciseFilter: ExerciseFilter
     val workoutPlanner: WorkoutPlanner
-    val workoutValidator: GeneratedWorkoutValidator
+    val programValidator: ProgramValidator
     val workoutGenerationContextBuilder: WorkoutGenerationContextBuilder
     val workoutHistoryAnalyzer: WorkoutHistoryAnalyzer
     val progressCalculator: ProgressCalculator
@@ -173,8 +174,16 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
         FakeWorkoutPlanner()
     }
 
-    override val workoutValidator: GeneratedWorkoutValidator by lazy {
-        GeneratedWorkoutValidator(exerciseCatalog)
+    /**
+     * Whole-program validation for every automatic recommendation.
+     *
+     * The structural validator is private: it exists only as the piece this composes, so
+     * exposing it on the container would offer a second, weaker way to check a plan. The
+     * defaults are the same `STATE_BASED_DOSE_EFFORT_REST_V1` values the prescription policy
+     * uses, so the allowance a plan is checked against is the one it was built under.
+     */
+    override val programValidator: ProgramValidator by lazy {
+        ProgramValidator(GeneratedWorkoutValidator(exerciseCatalog))
     }
 
     override val workoutGenerationContextBuilder: WorkoutGenerationContextBuilder by lazy {
@@ -189,7 +198,12 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
             ),
             trainingProgramStateProvider = TrainingProgramStateProvider(
                 weeklyDoseLedgerRepository = weeklyDoseLedgerRepository
-            )
+            ),
+            // Read from the already-loaded snapshot, so recording the catalog a plan was
+            // built against never forces asset I/O on the generation path.
+            catalogVersion = {
+                workoutGuideCatalogStore.currentSnapshot()?.catalogAttribution?.commit
+            }
         )
     }
 

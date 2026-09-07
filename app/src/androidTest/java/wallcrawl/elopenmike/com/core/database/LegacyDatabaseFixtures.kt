@@ -4,7 +4,7 @@ import android.database.sqlite.SQLiteDatabase
 
 internal object LegacyDatabaseFixtures {
     fun createSchema(db: SQLiteDatabase, version: Int) {
-        require(version in 1..10)
+        require(version in 1..11)
         db.execSQL("PRAGMA foreign_keys=ON")
         createUserProfiles(db, version)
         createWorkoutSessions(db, version)
@@ -12,7 +12,7 @@ internal object LegacyDatabaseFixtures {
             createLegacyWorkoutChildren(db)
         } else {
             createCurrentWorkoutChildren(db, version)
-            createTemplateTables(db)
+            createTemplateTables(db, version)
         }
         if (version >= 10) {
             createWeeklyDoseLedgerState(db)
@@ -209,7 +209,8 @@ internal object LegacyDatabaseFixtures {
                 "exerciseType TEXT NOT NULL, targetSets INTEGER NOT NULL, targetRepMin INTEGER, " +
                 "targetRepMax INTEGER, targetWeight REAL, targetAssistanceWeight REAL, " +
                 "targetDurationSeconds INTEGER, targetDistanceMeters REAL, " +
-                "restSeconds INTEGER NOT NULL, notes TEXT NOT NULL, " +
+                "restSeconds INTEGER NOT NULL, notes TEXT NOT NULL" +
+                guidanceColumns(version) + ", " +
                 "FOREIGN KEY(sessionId) REFERENCES workout_sessions(id) " +
                 "ON UPDATE NO ACTION ON DELETE CASCADE)"
         )
@@ -236,7 +237,14 @@ internal object LegacyDatabaseFixtures {
         )
     }
 
-    private fun createTemplateTables(db: SQLiteDatabase) {
+    /** Schema 11 added the four nullable effort and rest-guidance columns. */
+    private fun guidanceColumns(version: Int): String = if (version >= 11) {
+        ", effortMinRir INTEGER, effortMaxRir INTEGER, restClass TEXT, restTargetSource TEXT"
+    } else {
+        ""
+    }
+
+    private fun createTemplateTables(db: SQLiteDatabase, version: Int) {
         db.execSQL(
             "CREATE TABLE workout_templates (id TEXT NOT NULL PRIMARY KEY, name TEXT NOT NULL, " +
                 "notes TEXT NOT NULL, createdAtTimestamp INTEGER NOT NULL, " +
@@ -247,7 +255,8 @@ internal object LegacyDatabaseFixtures {
                 "orderIndex INTEGER NOT NULL, exerciseId TEXT NOT NULL, exerciseType TEXT NOT NULL, " +
                 "targetSets INTEGER NOT NULL, targetRepMin INTEGER, targetRepMax INTEGER, " +
                 "targetWeight REAL, targetAssistanceWeight REAL, targetDurationSeconds INTEGER, " +
-                "targetDistanceMeters REAL, restSeconds INTEGER NOT NULL, notes TEXT NOT NULL, " +
+                "targetDistanceMeters REAL, restSeconds INTEGER NOT NULL, notes TEXT NOT NULL" +
+                guidanceColumns(version) + ", " +
                 "PRIMARY KEY(templateId, orderIndex), FOREIGN KEY(templateId) " +
                 "REFERENCES workout_templates(id) ON UPDATE NO ACTION ON DELETE CASCADE)"
         )

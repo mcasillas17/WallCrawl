@@ -1,5 +1,7 @@
 package wallcrawl.elopenmike.com.core.database.repository
 
+import wallcrawl.elopenmike.com.core.ai.RecommendationSnapshot
+import wallcrawl.elopenmike.com.core.ai.asRecord
 import wallcrawl.elopenmike.com.core.database.PERSISTED_LIST_SEPARATOR
 import wallcrawl.elopenmike.com.core.database.dao.WorkoutSessionDao
 import wallcrawl.elopenmike.com.core.database.dao.WorkoutSetDao
@@ -42,12 +44,18 @@ interface WorkoutRepository {
      * explanation rather than a sentence. What is stored is that text, exactly as the user
      * saw it: a completed session keeps the wording it was created with, and no later
      * language change rewrites recorded history.
+     *
+     * [recommendation] is the whole-program validation evidence for this plan. It is written
+     * inside the same transaction as the session, so a start either records both or records
+     * nothing. It is null only for a caller that did not validate — every production path
+     * supplies one.
      */
     suspend fun startWorkoutFromGenerated(
         generated: GeneratedWorkout,
         displayName: String,
         displayRationale: String,
-        userProfile: UserProfile
+        userProfile: UserProfile,
+        recommendation: RecommendationSnapshot? = null
     ): WorkoutSession
     suspend fun startWorkoutFromTemplate(
         template: WorkoutTemplate,
@@ -121,7 +129,8 @@ class OfflineWorkoutRepository(
         generated: GeneratedWorkout,
         displayName: String,
         displayRationale: String,
-        userProfile: UserProfile
+        userProfile: UserProfile,
+        recommendation: RecommendationSnapshot?
     ): WorkoutSession = startWorkout(
         name = displayName,
         notes = displayRationale,
@@ -130,7 +139,8 @@ class OfflineWorkoutRepository(
         exercises = generated.exercises,
         origin = WorkoutOrigin.PLANNER,
         sourceTemplateId = null,
-        userProfile = userProfile
+        userProfile = userProfile,
+        recommendation = recommendation
     )
 
     override suspend fun startWorkoutFromTemplate(
@@ -144,7 +154,10 @@ class OfflineWorkoutRepository(
         exercises = template.exercises,
         origin = WorkoutOrigin.CUSTOM_TEMPLATE,
         sourceTemplateId = template.id,
-        userProfile = userProfile
+        userProfile = userProfile,
+        // A manual template is an explicit user choice, not an automatic recommendation, so
+        // there is no validation provenance to record for it.
+        recommendation = null
     )
 
     private suspend fun startWorkout(
@@ -155,7 +168,8 @@ class OfflineWorkoutRepository(
         exercises: List<PlannedExercise>,
         origin: WorkoutOrigin,
         sourceTemplateId: String?,
-        userProfile: UserProfile
+        userProfile: UserProfile,
+        recommendation: RecommendationSnapshot?
     ): WorkoutSession {
         val sessionId = UUID.randomUUID().toString()
         val sessionEntity = WorkoutSessionEntity(
@@ -231,7 +245,13 @@ class OfflineWorkoutRepository(
             exercises = exerciseEntities,
             sets = setEntities,
             expectedProfileId = userProfile.id,
-            expectedProfileRevision = userProfile.revision
+            expectedProfileRevision = userProfile.revision,
+            recommendation = recommendation
+                ?.asRecord(
+                    sessionId = sessionId,
+                    recordedAtEpochMillis = sessionEntity.startedAtTimestamp
+                )
+                ?.toEntity()
         ).toWorkoutSession()
     }
 

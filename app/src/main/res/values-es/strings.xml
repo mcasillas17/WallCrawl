@@ -290,6 +290,9 @@
     <string name="today_error_regenerate_failed">No se pudo generar otro entrenamiento. Inténtalo de nuevo.</string>
     <string name="today_error_first_failed">No se pudo generar el entrenamiento de hoy. Inténtalo de nuevo.</string>
     <string name="today_error_start_failed">No se pudo iniciar este entrenamiento. Inténtalo de nuevo.</string>
+    <string name="today_error_recommendation_out_of_date">Esta sugerencia ya no está actualizada. Algo cambió desde que se creó: toca regenerar para obtener una nueva.</string>
+    <string name="today_error_start_validation_failed">Esta sugerencia ya no encaja con tu configuración actual. Regenérala e inténtalo de nuevo.</string>
+    <string name="today_error_weekly_allowance_reached">Las series planeadas de esta semana ya están cubiertas para esos músculos. Aun así puedes crear tu propia rutina.</string>
 
     <string name="today_error_reviewed_no_approved_metadata">La planificación automática revisada todavía no está disponible, porque ningún ejercicio tiene metadatos aprobados por una persona. Aun así puedes crear tu propia rutina.</string>
     <string name="today_error_reviewed_exclusions">Tus exclusiones de ejercicios no dejan opciones automáticas revisadas. Actualiza tus exclusiones en el perfil o crea tu propia rutina.</string>

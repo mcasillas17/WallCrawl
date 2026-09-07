@@ -49,6 +49,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -83,6 +84,8 @@ import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 import wallcrawl.elopenmike.com.core.ui.theme.SuccessGreen
+
+internal const val PROGRESS_REVIEWED_DOSE_TEST_TAG = "progress-reviewed-dose"
 
 /**
  * Production entry point.
@@ -490,7 +493,11 @@ private fun ReviewedDoseCard(ledger: WeeklyDoseLedger, previousLedger: WeeklyDos
     val credited = ledger.creditedWorkSets
     val omitted = ledger.omittedWorkSets
 
-    WallCrawlCard(cornerRadius = 16.dp, contentPadding = 16.dp) {
+    WallCrawlCard(
+        modifier = Modifier.testTag(PROGRESS_REVIEWED_DOSE_TEST_TAG),
+        cornerRadius = 16.dp,
+        contentPadding = 16.dp
+    ) {
         Text(
             text = stringResource(R.string.progress_dose_heading),
             fontSize = 13.sp,
