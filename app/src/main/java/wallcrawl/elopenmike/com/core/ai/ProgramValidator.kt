@@ -586,7 +586,11 @@ class ProgramValidator(
         context: WorkoutGenerationContext
     ): RecommendationSnapshot {
         val reviewedPathEnabled = context.automaticEligibilityResult != null
-        val programState = context.trainingProgramState
+        // Gated on the same predicate the reviewed rules use, not on the state's mere
+        // presence. A context carrying a program state without an eligibility result runs no
+        // dose policy and no accounting, so naming one in the record would be provenance for
+        // a decision that never happened.
+        val programState = context.trainingProgramState?.takeIf { reviewedPathEnabled }
         return RecommendationSnapshot(
             validatorVersion = ProgramValidatorVersion.WHOLE_PROGRAM_V1,
             durationEstimatorVersion = WorkoutDurationEstimator.VERSION,

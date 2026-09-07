@@ -298,6 +298,7 @@ session. A recommendation that is only displayed writes nothing.
 | --- | --- |
 | `sessionId` | Primary key; foreign key to `workout_sessions` with cascade delete. |
 | `validatorVersion` | `WHOLE_PROGRAM_V1`. |
+| `durationEstimatorVersion` | `DURATION_ESTIMATOR_V1`; which estimator the duration agreement rule ran under. |
 | `outcome` | `VALID` or `REPAIRED`. |
 | `reviewedPathEnabled` | Which rule set applied. |
 | `catalogVersion`, `reviewPolicyVersion` | Content identity. |

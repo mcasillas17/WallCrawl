@@ -283,8 +283,17 @@ class ProgramValidatorAggregateDoseTest {
         )
 
         assertThat(result).isInstanceOf(ProgramValidationResult.Valid::class.java)
-        assertThat(result.acceptedSnapshot.doseAccounting).isEmpty()
-        assertThat(result.acceptedSnapshot.reviewedPathEnabled).isFalse()
+        val snapshot = result.acceptedSnapshot
+        assertThat(snapshot.doseAccounting).isEmpty()
+        assertThat(snapshot.reviewedPathEnabled).isFalse()
+        // And the record names no policy that did not govern the decision: no dose policy
+        // ran, no ledger was read, and no week was accounted against.
+        assertThat(snapshot.trainingPolicyVersion).isNull()
+        assertThat(snapshot.ledgerPolicyVersion).isNull()
+        assertThat(snapshot.programStatePolicyVersion).isNull()
+        assertThat(snapshot.adaptationState).isNull()
+        assertThat(snapshot.weekStartEpochDay).isNull()
+        assertThat(snapshot.timeZoneId).isNull()
     }
 
     @Test
