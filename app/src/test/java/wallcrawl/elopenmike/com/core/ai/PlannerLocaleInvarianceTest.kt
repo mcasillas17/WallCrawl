@@ -135,6 +135,58 @@ class PlannerLocaleInvarianceTest {
         assertThat(reference).isNotEmpty()
     }
 
+    @Test
+    fun wholeProgramValidationDecidesTheSameWayInEveryLocale() = runTest {
+        val outcomes = LOCALES.associateWith { locale ->
+            Locale.setDefault(locale)
+            val context = context()
+            val plan = FakeWorkoutPlanner().generateWorkout(context)
+            ProgramValidator(GeneratedWorkoutValidator(InMemoryExerciseCatalog()))
+                .validate(workout = plan, context = context, allowRepair = true)
+        }
+
+        val reference = outcomes.getValue(LOCALES.first())
+        outcomes.forEach { (locale, result) ->
+            assertWithMessage("validation outcome under $locale")
+                .that(result.snapshot.outcome).isEqualTo(reference.snapshot.outcome)
+            assertWithMessage("reason codes under $locale")
+                .that(result.snapshot.reasonCodes).isEqualTo(reference.snapshot.reasonCodes)
+            assertWithMessage("dose accounting under $locale")
+                .that(result.snapshot.doseAccounting)
+                .isEqualTo(reference.snapshot.doseAccounting)
+            // The context fingerprint decides whether a displayed plan may still be started.
+            // If a display language could move it, changing language would refuse every plan
+            // already on screen.
+            assertWithMessage("context identity under $locale")
+                .that(result.snapshot.contextIdentity)
+                .isEqualTo(reference.snapshot.contextIdentity)
+        }
+        assertThat(reference).isInstanceOf(ProgramValidationResult.Valid::class.java)
+    }
+
+    @Test
+    fun theProductionLegacyPlanValidatesUnchangedWhileTheReviewedGateIsDisabled() = runTest {
+        // The shipped catalog carries 37 DRAFT reviewed records and zero APPROVED ones, and
+        // production leaves `reviewedCapabilityEligibility` false. Whole-program validation
+        // must therefore accept exactly what the legacy planner already produced: no
+        // approved-metadata rule, no eligibility-decision rule, and no dose accounting.
+        val context = context()
+        assertThat(context.automaticEligibilityResult).isNull()
+        assertThat(context.trainingProgramState).isNull()
+        val plan = FakeWorkoutPlanner().generateWorkout(context)
+
+        val result = ProgramValidator(GeneratedWorkoutValidator(InMemoryExerciseCatalog()))
+            .validate(workout = plan, context = context, allowRepair = false)
+
+        assertThat(result).isInstanceOf(ProgramValidationResult.Valid::class.java)
+        assertThat((result as ProgramValidationResult.Valid).workout).isEqualTo(plan)
+        assertThat(result.snapshot.reviewedPathEnabled).isFalse()
+        assertThat(result.snapshot.doseAccounting).isEmpty()
+        assertThat(result.snapshot.trainingPolicyVersion).isNull()
+        assertThat(result.snapshot.ledgerPolicyVersion).isNull()
+        assertThat(result.snapshot.adaptationState).isNull()
+    }
+
     private fun profile() = UserProfile(
         goals = setOf(FitnessGoal.BUILD_MUSCLE, FitnessGoal.STRENGTH),
         availableEquipment = StandardEquipment.ALL,

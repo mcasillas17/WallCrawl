@@ -160,6 +160,22 @@ nothing: every profile, capability, template, workout, exercise, set, and typed 
 keeps the value it already had, and `PRAGMA foreign_key_check` stays clean from every
 historically supported schema version.
 
+## Prospective proposals are never completed exposure
+
+A ledger counts completed history and nothing else. Whole-program validation reads it to
+check a proposal, and reads it only: it aggregates the proposed session's target sets by
+approved `directPrimaryMuscle` and compares `completed + proposed` to the configured
+weekly allowance once per muscle, instead of letting each exercise spend the same
+remainder. It writes no count back, and a proposal that is displayed, repaired, or
+rejected never becomes credited exposure.
+
+The record kept with a started session stores the two numbers separately —
+`completedSets` from this ledger and `proposedSets` from the plan — precisely so a
+not-yet-performed proposal can never be read later as work the user did. Exceeding a
+configured allowance is a mismatch with a versioned WallCrawl number, never proof of
+overload or medical danger, and a damaged ledger is reported as its own distinct reason
+rather than as a full one.
+
 ## Privacy boundary
 
 Ledger reconstruction and cache access run locally. No analytics event, network call,
