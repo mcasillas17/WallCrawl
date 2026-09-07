@@ -10,9 +10,12 @@ session count as dose, never increases a base prescription, and defines no manda
 weekly floor. Exact or exceeded allowance returns typed no-guidance instead of zero sets
 or over-cap work.
 
-This is per-prescription policy application, not whole-program validation: multiple
-proposed exercises can read the same remaining allowance. Roadmap Package 4 must check
-the aggregate proposal separately from completed-dose credit. The exact allowances and
+That cap stays per prescription, where several proposed exercises could each read the same
+remaining allowance. Checking the whole proposal is
+[whole-program validation](superpowers/specs/2026-09-06-whole-program-validation-design.md)'s
+job, and `ProgramValidator` now does it: the proposal is aggregated once per approved direct
+primary and compared to the configured allowance as a whole, with completed credit and
+proposed targets kept in separate fields throughout. The exact allowances and
 `PRIMARY_ONLY_V1`'s single-designated-primary convention are versioned product policies,
 not universal physiological laws or medical safety thresholds. Storage/codec bounds are
 software limits, not training ceilings. See the
@@ -159,6 +162,22 @@ Migration 9 → 10 is additive. It creates one empty table and reads, rewrites, 
 nothing: every profile, capability, template, workout, exercise, set, and typed set outcome
 keeps the value it already had, and `PRAGMA foreign_key_check` stays clean from every
 historically supported schema version.
+
+## Prospective proposals are never completed exposure
+
+A ledger counts completed history and nothing else. Whole-program validation reads it to
+check a proposal, and reads it only: it aggregates the proposed session's target sets by
+approved `directPrimaryMuscle` and compares `completed + proposed` to the configured
+weekly allowance once per muscle, instead of letting each exercise spend the same
+remainder. It writes no count back, and a proposal that is displayed, repaired, or
+rejected never becomes credited exposure.
+
+The record kept with a started session stores the two numbers separately —
+`completedSets` from this ledger and `proposedSets` from the plan — precisely so a
+not-yet-performed proposal can never be read later as work the user did. Exceeding a
+configured allowance is a mismatch with a versioned WallCrawl number, never proof of
+overload or medical danger, and a damaged ledger is reported as its own distinct reason
+rather than as a full one.
 
 ## Privacy boundary
 

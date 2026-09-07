@@ -9,14 +9,14 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class MigrationChainTo11Test {
+class MigrationChainTo12Test {
 
     private val context: Context = ApplicationProvider.getApplicationContext()
 
     @Test
-    fun everyHistoricallySupportedSchemaMigratesToVersion11() {
-        (1..10).forEach { startingVersion ->
-            val databaseName = "migration-$startingVersion-11.db"
+    fun everyHistoricallySupportedSchemaMigratesToVersion12() {
+        (1..11).forEach { startingVersion ->
+            val databaseName = "migration-$startingVersion-12.db"
             context.deleteDatabase(databaseName)
             context.openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null).use { db ->
                 LegacyDatabaseFixtures.createSchema(db, startingVersion)
@@ -33,7 +33,7 @@ class MigrationChainTo11Test {
                 .build()
             try {
                 val sqlite = database.openHelper.writableDatabase
-                assertThat(sqlite.version).isEqualTo(11)
+                assertThat(sqlite.version).isEqualTo(12)
                 sqlite.query(
                     "SELECT name,movementCapabilitiesJson FROM user_profiles"
                 ).use { cursor ->
@@ -82,6 +82,14 @@ class MigrationChainTo11Test {
                             assertThat(columns[column]).isNull()
                         }
                     }
+                }
+                // And with recommendation provenance present and empty: an upgrade never
+                // invents a validation outcome for a workout nobody validated.
+                sqlite.query(
+                    "SELECT COUNT(*) FROM workout_recommendation_records"
+                ).use { cursor ->
+                    assertThat(cursor.moveToFirst()).isTrue()
+                    assertThat(cursor.getInt(0)).isEqualTo(0)
                 }
                 sqlite.query("PRAGMA foreign_key_check").use { cursor ->
                     assertThat(cursor.count).isEqualTo(0)

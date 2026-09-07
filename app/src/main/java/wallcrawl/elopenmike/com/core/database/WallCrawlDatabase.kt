@@ -19,6 +19,7 @@ import wallcrawl.elopenmike.com.core.database.dao.WorkoutTemplateDao
 import wallcrawl.elopenmike.com.core.database.entity.UserProfileEntity
 import wallcrawl.elopenmike.com.core.database.entity.WeeklyDoseLedgerStateEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutExerciseEntity
+import wallcrawl.elopenmike.com.core.database.entity.WorkoutRecommendationRecordEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSessionEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSetEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutTemplateEntity
@@ -30,7 +31,7 @@ import wallcrawl.elopenmike.com.core.database.entity.WorkoutTemplateExerciseEnti
  * Exposed as a constant so provenance recorded in an export names the same number the
  * database is actually built with, rather than a copy that can drift after a migration.
  */
-const val WALLCRAWL_SCHEMA_VERSION = 11
+const val WALLCRAWL_SCHEMA_VERSION = 12
 
 @Database(
     entities = [
@@ -40,7 +41,8 @@ const val WALLCRAWL_SCHEMA_VERSION = 11
         WorkoutSetEntity::class,
         WorkoutTemplateEntity::class,
         WorkoutTemplateExerciseEntity::class,
-        WeeklyDoseLedgerStateEntity::class
+        WeeklyDoseLedgerStateEntity::class,
+        WorkoutRecommendationRecordEntity::class
     ],
     version = WALLCRAWL_SCHEMA_VERSION,
     exportSchema = false
@@ -362,6 +364,46 @@ abstract class WallCrawlDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_11_12 = object : Migration(11, 12) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // Additive only. Nothing existing is read, rewritten, or dropped: every
+                // profile, capability, template, workout, exercise, set, typed set outcome,
+                // and cached ledger row keeps exactly the value it already had.
+                //
+                // The new table starts empty and stays that way for history recorded before
+                // whole-program validation existed. A session with no row means its
+                // provenance was never recorded, which is the honest answer; nothing here
+                // fabricates a validation outcome for a workout nobody validated.
+                db.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS workout_recommendation_records (
+                        sessionId TEXT NOT NULL,
+                        validatorVersion TEXT NOT NULL,
+                        durationEstimatorVersion TEXT NOT NULL,
+                        outcome TEXT NOT NULL,
+                        reviewedPathEnabled INTEGER NOT NULL,
+                        catalogVersion TEXT,
+                        reviewPolicyVersion INTEGER NOT NULL,
+                        trainingPolicyVersion TEXT,
+                        ledgerPolicyVersion TEXT,
+                        programStatePolicyVersion TEXT,
+                        adaptationState TEXT,
+                        weekStartEpochDay INTEGER,
+                        timeZoneId TEXT,
+                        profileRevision INTEGER NOT NULL,
+                        contextIdentity TEXT NOT NULL,
+                        reasonCodes TEXT NOT NULL,
+                        doseAccounting TEXT NOT NULL,
+                        recordedAtTimestamp INTEGER NOT NULL,
+                        PRIMARY KEY(sessionId),
+                        FOREIGN KEY(sessionId) REFERENCES workout_sessions(id)
+                            ON UPDATE NO ACTION ON DELETE CASCADE
+                    )
+                    """.trimIndent()
+                )
+            }
+        }
+
         val ALL_MIGRATIONS: Array<Migration>
             get() = arrayOf(
                 MIGRATION_1_2,
@@ -373,7 +415,8 @@ abstract class WallCrawlDatabase : RoomDatabase() {
                 MIGRATION_7_8,
                 MIGRATION_8_9,
                 MIGRATION_9_10,
-                MIGRATION_10_11
+                MIGRATION_10_11,
+                MIGRATION_11_12
             )
     }
 }

@@ -249,17 +249,70 @@ catalog IDs with structured prescriptions. Its title and rationale are structure
 (`WorkoutTitleSpec`, `WorkoutRationaleSpec`) rather than rendered sentences, so the
 planner holds no display text and produces the same plan in every language; the screen
 renders them for the reader, and it is that rendered text that a started session stores
-and keeps. `GeneratedWorkoutValidator` then verifies
-that every ID exists, remains in the allowed set, matches the catalog exercise type,
-and belongs to a structurally valid workout. Unknown IDs are rejected, never silently
-substituted.
+and keeps. `GeneratedWorkoutValidator` verifies that every ID exists, remains in the
+allowed set, matches the catalog exercise type, and belongs to a structurally valid
+workout. Unknown IDs are rejected, never silently substituted. It reports those checks
+as typed `ProgramViolation` values rather than as a first-failure message, because a
+rejection has to be explainable completely. `ProgramValidator` is its only caller.
 
-Whole-program validation is planned, not shipped. Its
-[evidence-to-rule contract](research/2026-08-29-training-science-evidence-review.md#validation-scope-clarification-2026-09-05)
-retains those checks plus enabled-path eligibility, load provenance, scoped program-design
-constraints, duration consistency, aggregate product allowances, and replayable atomic
-persistence. It excludes physiological fatigue budgets and timestamp-only recovery or
-overload inference. `WorkoutHistoryAnalyzer`'s default 72-hour `focusMuscles` lookback is
+### Whole-program validation
+
+`ProgramValidator` checks one complete proposed session against the exact
+`WorkoutGenerationContext` that produced it, following the
+[evidence-to-rule contract](research/2026-08-29-training-science-evidence-review.md#validation-scope-clarification-2026-09-05).
+It reuses `GeneratedWorkoutValidator` rather than restating its checks, and adds declared
+session constraints, explicit exclusions, reviewed provenance on the enabled path, load
+provenance, duration agreement, and aggregate weekly dose. It is pure: it writes nothing,
+mutates no ledger, and never credits a proposal as completed work.
+
+The unit is one session. There is no multi-session horizon in version 1, so nothing
+reserves allowance against work that has not been proposed.
+
+Program-design constraints are **declared**, never universal. `SessionProgramConstraints`
+carries them: `uniqueExerciseIds` defaults on, because two instances of one id inside a
+generated session cannot be told apart in its record and would be counted twice by
+prospective dose accounting — an accounting and identity rule, not a claim that repeating
+a movement is harmful, and never applied across sessions, weeks, families, or manual
+templates. `uniqueProgressionFamilies` and `requiredMovementPatterns` are inert unless a
+caller declares them, so no workout is required to cover any pattern. Both read approved
+metadata only — coverage falling back to the legacy authored pattern — so an unapproved
+draft record can never drive a product-policy rejection. The planner's pattern spreading
+stays a ranking preference with an explicit fallback to repeated patterns.
+
+Load provenance accepts a null target always, and a non-null one only when it traces to a
+confirmed starting load or to the last recorded load, optionally plus the shipped legacy
+history increment of 5.0 lb or 2.5 kg in the context's unit. Equality to the last recorded
+load is deliberately not required, and nothing here replaces or introduces progression.
+
+`DURATION_ESTIMATOR_V1` in `WorkoutDurationEstimator` is the single named estimator the
+planner and the validator share: `targetDurationSeconds` or 45 seconds of work per set,
+rest counted once per set, truncated to minutes and clamped to 1..240. The reported
+estimate must be in bounds and within ±1 minute of it. Version 1 enforces **no**
+relationship to `preferredWorkoutDurationMinutes`: an estimate is not a completion-time
+promise, and the bounds are structural, not physiological.
+
+On the reviewed path only, the whole proposal is attributed prospectively to approved
+`directPrimaryMuscle` values, preserving `PRIMARY_ONLY_V1`, and
+`completed + proposed ≤ configured allowance` is checked once per muscle rather than once
+per exercise. A damaged ledger (`MALFORMED_WEEKLY_LEDGER`), unrepresentable arithmetic
+(`DOSE_ACCOUNTING_OVERFLOW`), and a full configured allowance
+(`WEEKLY_ALLOWANCE_EXCEEDED`) stay three distinct reasons. `NEEDS_ONBOARDING` configures
+no allowance, which is recorded as absent rather than treated as a violation. Exceeding an
+allowance is a mismatch with a versioned WallCrawl number, never proof of overload or
+medical danger, and no weekly minimum or automatic increase exists.
+
+At most **one** deterministic repair pass runs, and only at generation time. It may only
+reduce `targetSets` so aggregate accounting holds — allocated in recommendation order with
+every affected exercise keeping at least one set — and then recompute the duration under
+the same estimator. It never weakens a constraint, widens the candidate set, changes
+selection, invents a load, alters effort or rest, or falls back off the reviewed path; when
+the remainder cannot leave every affected exercise a set it fails closed rather than
+dropping one. Repair is disabled at workout start, so a displayed plan is never silently
+replaced.
+
+There is no numeric physiological fatigue budget here, no summation of the legacy ordinal
+`programming.fatigueScore`, no timestamp-derived readiness or overload rule, and no
+recency rule. `WorkoutHistoryAnalyzer`'s default 72-hour `focusMuscles` lookback remains
 only a history summary; the planner does not use it as a scheduling or recovery rule.
 
 `WorkoutGenerationContext` already carries the complete `UserProfile`, so no second
@@ -324,6 +377,17 @@ user-facing text; `TodayViewModel` maps reasons to copy. A future planner chain
 branches on the same reason to decide between repairing, falling back to another
 tier, and surfacing the failure — string matching on messages could not support
 that.
+
+`TodayViewModel` validates in two places. After generation it runs `ProgramValidator`
+with repair permitted, and shows nothing when the result is a rejection; a rejection
+whose every reason is an exceeded allowance gets its own copy about the configured plan
+rather than a generic failure. At start it rebuilds the context, compares
+`RecommendationContextIdentity` — a digest over profile identity and revision, completed
+workouts, the ordered candidate ids, catalog and review-policy identity, the reviewed-path
+flag, adaptation state, declared constraints, and the accounting week and zone — and
+revalidates with repair disabled. An edited profile, newly completed history, or a crossed
+week or time-zone boundary is reported as an out-of-date recommendation, not started
+quietly. The digest reads no locale and no display text, so language cannot move it.
 
 A future local LLM should implement the same `WorkoutPlanner` interface. Model
 integration does not remove the hard filter or validator; constrained decoding
@@ -428,7 +492,7 @@ no separate write path that copies a logged value back into
 
 ## Room persistence and invariants
 
-`WallCrawlDatabase` is currently schema version 11. Its tables store:
+`WallCrawlDatabase` is currently schema version 12. Its tables store:
 
 - the user profile, including onboarding status, multi-select fitness goals,
   training constraints, return-after-break weeks, confirmed starting loads,
@@ -441,7 +505,9 @@ no separate write path that copies a logged value back into
   `rpe`, `rir`, `feltManageable`, `completedAtTimestamp`, `stoppedAtTimestamp`,
   and `stopReason`;
 - a fingerprinted, reconstructable `PRIMARY_ONLY_V1` weekly-ledger cache whose
-  authority remains immutable completed history.
+  authority remains immutable completed history;
+- one immutable whole-program validation record per session started from a
+  recommendation, keyed by that session's own id.
 
 Migration `3 → 4` adds template storage, session provenance, and type-aware
 target/outcome columns while converting older repetition-based history to
@@ -461,7 +527,7 @@ columns (`feltManageable`, `completedAtTimestamp`, `stoppedAtTimestamp`,
 existed reads back as an honestly unrecorded outcome instead of gaining a
 fabricated completion timestamp or an assumed manageable answer. There is no
 destructive migration fallback on any construction path, and the migration
-tests exercise every supported starting schema through to version 11. Migration
+tests exercise every supported starting schema through to version 12. Migration
 `7 → 8` adds one non-null `movementCapabilitiesJson` column. Existing rows receive `{}`, which the codec
 normalizes to all `UNKNOWN`; their onboarding status, revision, theme, goals,
 equipment, constraints, confirmed loads, templates, sessions, sets, and history
@@ -480,6 +546,25 @@ their exact `restSeconds` and receive null guidance, so old manual templates, ac
 sessions, and completed history are not reinterpreted. New values round-trip through
 template storage and frozen session snapshots; partial effort or rest pairs fail loudly
 when mapped back into the domain.
+
+Migration `11 → 12` is additive-only: it creates `workout_recommendation_records` and
+touches no existing table, column, or row. The table starts empty, so a session recorded
+before whole-program validation existed keeps an honestly absent record instead of a
+fabricated validation outcome. A row holds the validator, estimator, catalog, review,
+training-policy, ledger, and program-state versions, the adaptation state, the accounting
+week and zone, the profile revision, the context digest, ordered reason codes, and per
+muscle the completed, proposed, and configured allowance counts. Version-like columns are
+text rather than converted enums, exactly as the ledger cache stores its policy version, so
+a value written by a future build reads back as unrecognised rather than coerced. The plan
+itself is not duplicated — `workout_exercises` already holds it under the same session id —
+and no name, note, load, repetition, effort value, or body measurement is stored. The row
+is written inside the same transaction that inserts the session, its exercises, and its
+sets, and cascades away with the session.
+
+The record makes a past decision explainable and any input mismatch detectable without
+re-running the planner. It does not promise byte-exact replay: WallCrawl keeps one current
+profile row, so a past candidate set cannot be re-derived, and that limit is recorded
+rather than papered over with a digest.
 
 Capability JSON is a bounded persistence detail, not a UI model. The codec
 accepts at most 4096 characters, validates the flat object shape, allowlists
@@ -503,13 +588,19 @@ diagram, OEM limitations, and the lack of any previous-backup erasure guarantee.
 
 ### User-owned export, restore, and deletion
 
-`core/backup` defines archive format **version 1**: one JSON document holding the
-profile, templates, and every session with its exercises and sets. That version is
-independent of the Room schema version, which travels alongside the app version, the
-creation time, and the bundled catalog commit as provenance only.
+`core/backup` writes archive format **version 2** and reads versions 1 and 2: one JSON
+document holding the profile, templates, every session with its exercises and sets, and
+the whole-program validation record for each session started from a recommendation. That
+version is independent of the Room schema version, which travels alongside the app
+version, the creation time, and the bundled catalog commit as provenance only.
+
+Version 2 added the `recommendations` array. A version 1 document restores exactly as it
+always did and simply carries none; a version 1 document that uses a version 2 field is
+refused rather than quietly upgraded, and a version 3 document is still refused as
+unsupported. Each record must name a session the same document carries, exactly once.
 
 ```text
-Room (profile, templates, sessions, exercises, sets)
+Room (profile, templates, sessions, exercises, sets, recommendation records)
         │  LocalDataBackupDao.readAll()  ── one @Transaction
         ▼
   LocalDataSnapshot  ──►  validate  ──►  checksum  ──►  open document  ──►  write
@@ -547,7 +638,11 @@ it was started against is gone, and set and completion writes are `UPDATE`s that
 nothing once history is deleted. The gate is never held across document I/O.
 
 The weekly-ledger cache is never exported and never restored; deletion and restore
-both clear it, and it is rebuilt from restored history on the next read.
+both clear it, and it is rebuilt from restored history on the next read. Recommendation
+records are the opposite case — nothing can rebuild how a past plan was validated from the
+history it produced — so they are exported and restored with the sessions they belong to,
+and removed by deletion with everything else. A record this build cannot read back is
+dropped rather than restored half-understood.
 
 The persistence layer enforces several important invariants:
 
@@ -556,7 +651,8 @@ The persistence layer enforces several important invariants:
 - starting a workout uses the current profile revision and weight unit;
 - completed or canceled sessions cannot accept additional set updates;
 - template deletion cascades only to template exercise rows, never history;
-- recommendation targets and performed outcomes remain separate.
+- recommendation targets and performed outcomes remain separate;
+- a started session and its validation record are written together or not at all.
 
 Restore and deletion outcomes are observed by `LocalDataOutcomeEffect`, which the
 navigation graph places above the onboarding step switch and above the profile's
@@ -690,9 +786,10 @@ UserProfile.themePreference (SYSTEM | DARK | LIGHT)
 The JVM suite covers pure domain rules, filtering, context construction,
 capability normalization and codec behavior, planner invariance, validation,
 repository mapping, progress calculations, and ViewModel state. Instrumentation
-tests cover every supported Room migration chain through schema 11, real 7 → 8,
-9 → 10, and 10 → 11 preservation, foreign-key integrity, guidance round trips, the
-weekly-ledger repository, capability
+tests cover every supported Room migration chain through schema 12, real 7 → 8,
+9 → 10, 10 → 11, and 11 → 12 preservation, foreign-key integrity, guidance round trips,
+the atomic start of a session with its validation record, the weekly-ledger repository,
+capability
 accessibility semantics, packaged catalog parsing, all bundled visual paths, template
 snapshots, session persistence, the local-data archive (round trip from app-written
 state, every rejection path, transactional restore and deletion, a profile write racing

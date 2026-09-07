@@ -400,7 +400,13 @@ class StateBasedTrainingPolicy(
     }
 }
 
-private fun WeeklyDoseLedger.isWellFormed(): Boolean {
+/**
+ * Whether a ledger's own counts and provenance are usable at all.
+ *
+ * Shared with whole-program validation so "this ledger is damaged" and "this allowance is
+ * full" are decided by one implementation and can never drift into disagreeing.
+ */
+internal fun WeeklyDoseLedger.isWellFormed(): Boolean {
     if (
         catalogVersion.isBlank() ||
         catalogVersion.length > WeeklyDoseLedgerCalculator.MAX_VERSION_LENGTH ||
@@ -429,7 +435,8 @@ private fun Map<String, Int>.hasWellFormedCounts(): Boolean = all { (key, count)
         count > 0
 }
 
-private fun ReviewedExerciseMetadata.isWellFormedApprovedMetadata(): Boolean =
+/** Whether approved metadata carries the human provenance approval requires. */
+internal fun ReviewedExerciseMetadata.isWellFormedApprovedMetadata(): Boolean =
     directPrimaryMuscle.isNotBlank() &&
         directPrimaryMuscle.length <= MAX_LEDGER_KEY_LENGTH &&
         directPrimaryMuscle.none(Char::isISOControl) &&
@@ -439,7 +446,8 @@ private fun ReviewedExerciseMetadata.isWellFormedApprovedMetadata(): Boolean =
         provenance.schemaVersion > 0 &&
         provenance.policyVersion > 0
 
-private fun ReviewedExerciseMetadata.matches(
+/** Whether the approved prescription shape agrees with the catalog and prescribed type. */
+internal fun ReviewedExerciseMetadata.matches(
     exerciseType: ExerciseType,
     basePrescriptionType: ExerciseType
 ): Boolean {

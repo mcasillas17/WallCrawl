@@ -27,6 +27,14 @@ class WorkoutGenerationContextBuilder(
     private val capabilityEvidencePolicy: CapabilityEvidencePolicy = CapabilityEvidencePolicy(),
     private val adaptationStatePolicy: AdaptationStatePolicy = AdaptationStatePolicy(),
     private val trainingProgramStateProvider: TrainingProgramStateProvider? = null,
+    /**
+     * Commit of the bundled catalog, when a snapshot has already been loaded.
+     *
+     * Supplied rather than read here so this builder keeps depending on the catalog
+     * interface instead of the asset store behind it, and so a test controls the recorded
+     * identity. An unavailable snapshot records absence; it never blocks generation.
+     */
+    private val catalogVersion: () -> String? = { null },
     private val nowTimestamp: () -> Long = System::currentTimeMillis
 ) {
 
@@ -111,7 +119,12 @@ class WorkoutGenerationContextBuilder(
             capabilityEvidence = capabilityEvidence,
             trainingProgramState = trainingProgramState,
             priorUserRestPreferences = priorUserRestPreferences,
-            preferredUnits = profile.preferredUnit
+            preferredUnits = profile.preferredUnit,
+            catalogVersion = catalogVersion(),
+            reviewPolicyVersion = allExercises
+                .mapNotNull { it.reviewedMetadata?.provenance?.policyVersion }
+                .maxOrNull()
+                ?: 0
         )
     }
 

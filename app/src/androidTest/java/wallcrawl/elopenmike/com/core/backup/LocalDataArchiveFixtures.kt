@@ -9,7 +9,9 @@ import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.MovementCapabilities
 import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.model.PlannedExercise
+import wallcrawl.elopenmike.com.core.model.MuscleDoseAccounting
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
+import wallcrawl.elopenmike.com.core.model.RecommendationRecord
 import wallcrawl.elopenmike.com.core.model.RepRange
 import wallcrawl.elopenmike.com.core.model.RestClass
 import wallcrawl.elopenmike.com.core.model.RestTargetSource
@@ -46,7 +48,7 @@ object LocalDataArchiveFixtures {
         createdAtEpochMillis = 1_735_689_600_000L,
         appVersionName = "0.1.0-dev",
         appVersionCode = 1L,
-        roomSchemaVersion = 11,
+        roomSchemaVersion = 12,
         catalogCommit = catalogCommit
     )
 
@@ -145,11 +147,83 @@ object LocalDataArchiveFixtures {
         activeSession()
     )
 
+    /**
+     * Validation provenance for the two sessions a planner started.
+     *
+     * The cancelled and active sessions deliberately have none, so the round trip proves a
+     * record is optional per session rather than assumed for all of them.
+     */
+    fun recommendationRecords(): List<RecommendationRecord> = listOf(
+        RecommendationRecord(
+            sessionId = "session-1",
+            validatorVersion = "WHOLE_PROGRAM_V1",
+            durationEstimatorVersion = "DURATION_ESTIMATOR_V1",
+            outcome = "VALID",
+            reviewedPathEnabled = false,
+            catalogVersion = "ba0b709cb20430361b2cb33aaadd20998164a916",
+            reviewPolicyVersion = 0,
+            trainingPolicyVersion = null,
+            ledgerPolicyVersion = null,
+            programStatePolicyVersion = null,
+            adaptationState = null,
+            weekStartEpochDay = null,
+            timeZoneId = null,
+            profileRevision = 7L,
+            contextIdentity = "a".repeat(64),
+            reasonCodes = emptyList(),
+            doseAccounting = emptyList(),
+            recordedAtEpochMillis = 1_700_200_000_000L
+        ),
+        RecommendationRecord(
+            sessionId = "session-2",
+            validatorVersion = "WHOLE_PROGRAM_V1",
+            durationEstimatorVersion = "DURATION_ESTIMATOR_V1",
+            outcome = "REPAIRED",
+            reviewedPathEnabled = true,
+            catalogVersion = "ba0b709cb20430361b2cb33aaadd20998164a916",
+            reviewPolicyVersion = 1,
+            trainingPolicyVersion = "STATE_BASED_DOSE_EFFORT_REST_V1",
+            ledgerPolicyVersion = "PRIMARY_ONLY_V1",
+            programStatePolicyVersion = "PROGRAM_STATE_V1",
+            adaptationState = "UNCALIBRATED",
+            weekStartEpochDay = 20_696L,
+            timeZoneId = "America/Mexico_City",
+            profileRevision = 7L,
+            contextIdentity = "b".repeat(64),
+            reasonCodes = listOf("WEEKLY_ALLOWANCE_EXCEEDED"),
+            doseAccounting = listOf(
+                MuscleDoseAccounting(
+                    muscle = "Back",
+                    completedSets = 0,
+                    proposedSets = 3,
+                    allowanceSets = null
+                ),
+                MuscleDoseAccounting(
+                    muscle = "Chest",
+                    completedSets = 4,
+                    proposedSets = 2,
+                    allowanceSets = 6
+                )
+            ),
+            recordedAtEpochMillis = 1_700_300_000_000L
+        )
+    )
+
     fun snapshot(
         profile: UserProfile? = profile(),
         templates: List<WorkoutTemplate> = templates(),
-        sessions: List<WorkoutSession> = sessions()
-    ) = LocalDataSnapshot(profile = profile, templates = templates, sessions = sessions)
+        sessions: List<WorkoutSession> = sessions(),
+        // Defaults follow the sessions actually supplied: a record can only ever name a
+        // session the same snapshot carries, so overriding the sessions must not leave an
+        // orphaned record behind.
+        recommendationRecords: List<RecommendationRecord> = recommendationRecords()
+            .filter { record -> sessions.any { it.id == record.sessionId } }
+    ) = LocalDataSnapshot(
+        profile = profile,
+        templates = templates,
+        sessions = sessions,
+        recommendationRecords = recommendationRecords
+    )
 
     fun archive(
         metadata: LocalDataArchiveMetadata = metadata(),

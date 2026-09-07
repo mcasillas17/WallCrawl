@@ -34,6 +34,9 @@ One JSON file, written where you choose:
   planned targets, performed values, unit, effort feedback, timestamps, stop
   reasons, and status.
 
+It also contains, for each session started from an automatic recommendation, the
+validation record described below.
+
 It does **not** contain the bundled catalog or artwork, which ship with the app,
 or the weekly-ledger cache, which is derived (see
 [deriving the ledger](weekly-dose-ledger.md)).
@@ -50,18 +53,41 @@ modification. It is **not encryption and not proof of authenticity**: the file i
 not protected from being read, and anyone who edits it can recompute the
 checksum. Every archive is validated as untrusted input when it is read back.
 
+### What a validated recommendation records
+
+A session started from an automatic recommendation also stores how that recommendation was
+decided: the validator, duration-estimator, catalog, review-policy, training-policy,
+ledger, and program-state versions, the adaptation state, the ISO week and time zone it was
+accounted against, the profile revision, a digest of the generation inputs, ordered reason
+codes, and per muscle the completed, proposed, and configured allowance set counts.
+
+It holds **no** name, note, load, repetition count, effort value, body measurement, or free
+text, and it does not repeat the plan itself — the session's own exercises already hold
+that. The digest is built only from values a training decision can read (profile identity
+and revision, completed-workout count, candidate ids, catalog and policy versions, week and
+zone); it contains no measurement and is a freshness check, not a security control.
+
+Sessions started from a manual template, and every session recorded before this existed,
+simply have no record. Nothing fabricates one.
+
 ### Archive compatibility
 
-The archive format has its own version, currently **1**, separate from the Room
-schema version. The schema version, app version, creation time, and the bundled
-catalog commit are recorded as provenance only; they never decide whether a file
-can be restored.
+The archive format has its own version, separate from the Room schema version. This
+build **writes version 2** and **reads versions 1 and 2**. The schema version, app
+version, creation time, and the bundled catalog commit are recorded as provenance only;
+they never decide whether a file can be restored.
 
-A build restores only the archive version it implements. A file written by a
-newer WallCrawl is refused with a message saying so, rather than partially
-understood — a future format may attach meaning to fields this build would drop.
-Older archives stay readable as long as the format version is one this build
-implements.
+Version 2 added the validation record described above. A version 1 file — the only kind
+earlier builds ever wrote — restores exactly as it always did and simply carries none.
+Each version is read strictly: a file claiming version 1 while using a version 2 field is
+refused rather than quietly upgraded.
+
+A file written by a newer WallCrawl is still refused with a message saying so, rather than
+partially understood — a future format may attach meaning to fields this build would drop.
+
+Because a validation record cannot be rebuilt from history the way the weekly-ledger cache
+can, it is exported and restored with the session it belongs to instead of being dropped.
+A record this build cannot read back is left out rather than restored half-understood.
 
 ### Restore prerequisites
 
@@ -94,8 +120,9 @@ no longer contains keeps its identifier rather than being remapped.
 
 Deleting all local data asks for explicit confirmation, naming what is lost —
 including a workout in progress — and then removes the profile and preferences,
-movement answers, templates, every session with its exercises and sets, and the
-derived weekly-ledger cache. The app returns to first-run onboarding.
+movement answers, templates, every session with its exercises and sets, every
+validation record, and the derived weekly-ledger cache. The app returns to
+first-run onboarding.
 
 It does **not** touch:
 

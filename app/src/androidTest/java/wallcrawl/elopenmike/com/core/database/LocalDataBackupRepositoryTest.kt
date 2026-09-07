@@ -91,6 +91,12 @@ class LocalDataBackupRepositoryTest {
         assertThat(result.onboardingCompleted).isTrue()
         val afterRows = database.localDataBackupDao().readAll()
         assertThat(afterRows).isEqualTo(beforeRows)
+        // Recommendation provenance cannot be rebuilt from history, so the round trip has
+        // to carry it rather than quietly dropping it on restore.
+        assertThat(afterRows.recommendationRecords.map { it.sessionId })
+            .containsExactly("session-1", "session-2")
+        assertThat(afterRows.recommendationRecords.single { it.sessionId == "session-2" }.outcome)
+            .isEqualTo("REPAIRED")
     }
 
     @Test
@@ -196,6 +202,7 @@ class LocalDataBackupRepositoryTest {
         assertThat(rows.sessions).isEmpty()
         assertThat(rows.sessionExercises).isEmpty()
         assertThat(rows.sets).isEmpty()
+        assertThat(rows.recommendationRecords).isEmpty()
         assertThat(
             database.weeklyDoseLedgerStateDao().findCachedLedger(
                 profileId = UserProfile.DEFAULT_PROFILE_ID,

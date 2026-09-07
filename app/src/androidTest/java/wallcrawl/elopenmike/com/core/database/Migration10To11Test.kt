@@ -36,7 +36,7 @@ class Migration10To11Test {
             .build()
         val sqlite = checkNotNull(database).openHelper.writableDatabase
 
-        assertThat(sqlite.version).isEqualTo(11)
+        assertThat(sqlite.version).isEqualTo(12)
         assertNullableGuidanceColumns(sqlite, "workout_exercises")
         assertNullableGuidanceColumns(sqlite, "workout_template_exercises")
         sqlite.query(

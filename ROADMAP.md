@@ -24,13 +24,13 @@ network connection, or companion device.
 
 | Area | Status | Remaining gap |
 | --- | --- | --- |
-| Android foundation | Room schema 11 with a continuous migration chain; implicit Android backup disabled with legacy and modern all-domain exclusions; user-owned export, restore, and delete-all shipped | OEM transfer enforcement varies; restore is empty-destination only; `targetSdk` remains 35 while `compileSdk` is 37 |
+| Android foundation | Room schema 12 with a continuous migration chain; implicit Android backup disabled with legacy and modern all-domain exclusions; user-owned export, restore, and delete-all shipped | OEM transfer enforcement varies; restore is empty-destination only; `targetSdk` remains 35 while `compileSdk` is 37 |
 | Catalog and reviewed content | 302 exercises, 906 SVG frames, 131 authored programming entries, 37 reviewed records | All 37 reviewed records remain `DRAFT`; planner-reachable and band-only coverage still need review |
 | Onboarding and profile | Shipped as an eight-step flow with seven movement-capability questions, plus export, restore, and delete-all controls | Restore requires a fresh start, so it cannot merge into an installation that already holds data |
 | Templates and logging | Shipped with frozen template snapshots, type-aware outcomes, RPE/RIR, typed stops, and a local rest timer | Template targets are only partly editable; unsaved drafts are not restored after process death |
 | Localization | English and neutral Latin American Spanish shipped across the whole interface, the 302-exercise catalog, generated workout text, and accessibility labels, selectable from onboarding and Profile through Android's per-app language mechanism | Only two languages; historical session text stays in the language it was written in, by design |
 | Progress and history | Overview, records, trends, summaries, and recent history shipped | Weekly semantics conflict with the dose ledger; workout-summary navigation and history drill-down remain incomplete |
-| Deterministic coach | Eligibility, experience ranking, capability evidence, weekly ledger, and state-based dose/effort/rest shipped behind a disabled gate | Human approval, whole-program validation, release corpus, progression, deload, and rollout gates |
+| Deterministic coach | Eligibility, experience ranking, capability evidence, weekly ledger, state-based dose/effort/rest, and whole-program validation with recorded recommendation provenance shipped; reviewed-only rules remain behind a disabled gate | Human approval, release corpus, progression, deload, and rollout gates |
 | Planner evaluation | Versioned corpus, replay harness, importer unit tests, real pinned-upstream regeneration check, JVM tests, and Android CI shipped | `concurrent-activity` and policy-specific assertions |
 | Optional local model | Not started | Blocked on a stable deterministic release |
 | Health Connect and Wear OS | Not started; only `:app` exists | Shared modules, privacy controls, validation, substitutions, protocol, and device evidence |
@@ -86,9 +86,11 @@ These decisions must be recorded before the related implementation package close
    `directPrimaryMuscle` for `barbell-deadlift`; automation or PR approval cannot decide it.
 3. **Initial approval cohort:** decide whether the first rollout requires all 37 records or
    a smaller persona-complete cohort with explicit band-only and capability coverage.
-4. **Validation persistence:** preserve policy/catalog/review/ledger versions, structured
-   reasons, and the recommendation snapshot, but choose columns versus a dedicated table
-   during design rather than assuming the next Room schema shape here.
+4. **Validation persistence:** ~~decided~~. A dedicated `workout_recommendation_records`
+   table (Room schema 12) holds one immutable row per started session, written in the same
+   transaction as the session, and travels in archive format version 2. Columns beside the
+   session were rejected: the record is provenance about a decision rather than part of the
+   session, and a separate table keeps it out of every ordinary session read.
 5. **Reviewed rollout scope:** decide whether the first reviewed-planning release may remain
    conservatively non-progressing or must wait for progression and user-controlled deload.
    This is a product/release decision, not a technical dependency of eligibility.
@@ -104,11 +106,15 @@ These decisions must be recorded before the related implementation package close
 10. **Watch ownership:** the first companion release should allow one active execution owner.
     Decide whether additional paired watches are rejected or read-only; multi-watch editing
     must not enter the protocol without an explicit conflict policy.
-11. **Validation contract:** before Package 4 implementation, define session/program scope
-    for duplicate-family and movement-coverage constraints, the duration estimator and
-    tolerance, prospective weekly accounting, and stale-context handling. Recency is at most
-    a scheduling preference whose inputs and precedence still need design, not an overload
-    or recovery test. See the [evidence-to-rule mapping](docs/research/2026-08-29-training-science-evidence-review.md#validation-scope-clarification-2026-09-05).
+11. **Validation contract:** ~~decided~~ and recorded in the
+    [whole-program validation design](docs/superpowers/specs/2026-09-06-whole-program-validation-design.md).
+    The validated unit is one proposed session with no multi-session horizon; duplicate and
+    coverage rules are declared per session and only exercise-id uniqueness defaults on;
+    `DURATION_ESTIMATOR_V1` is the named estimator with a ±1-minute tolerance and no
+    requested-duration rule; the whole proposal is accounted prospectively against one
+    configured allowance; a changed context fingerprint refuses a stale start rather than
+    repairing it. Recency remains undesigned and no blocking recency rule was added. See the
+    [evidence-to-rule mapping](docs/research/2026-08-29-training-science-evidence-review.md#validation-scope-clarification-2026-09-05).
 
 ## Dependency map
 
@@ -122,7 +128,7 @@ These decisions must be recorded before the related implementation package close
 | Integrations | 21 -> 22 + 23; 2 + 4 + 10 + 21 + 23 -> 24; 23 + 24 -> 25; 24 + 25 -> 26 -> 27 | Health export and the protocol spike may proceed independently after shared-module extraction |
 | Optional sync | 2 -> 28 | Package 28 is a design package first, not implementation authorization |
 
-Safe parallel work now is package 3, package 4, package 5 after its product
+Safe parallel work now is package 3, package 5 after its product
 decision, package 6, and the audits in packages 19-20. Do not enable package 7 against draft
 metadata or a persona cohort that cannot produce valid plans. Do not split adaptation-state
 widening from the advanced-complexity ceiling update in package 9.
@@ -163,9 +169,10 @@ now adds the user-owned export, restore, and deletion controls on top of it.
 
 **Implemented:**
 
-1. Archive format version 1 in `core/backup`, separate from the Room schema version and
+1. Archive format versioning in `core/backup`, separate from the Room schema version and
    carrying creation time, app version/code, schema version, and the bundled catalog commit
-   as provenance. It covers the profile and capabilities, templates, and every session with
+   as provenance. Package 2 shipped version 1; Package 4 extended the format to version 2
+   and kept version 1 readable. It covers the profile and capabilities, templates, and every session with
    its planned targets, performed values, units, feedback, timestamps, stop reasons, and
    status. The derived weekly-ledger cache is deliberately not exported.
 2. A SHA-256 checksum over the archive's canonical serialization, plus one validation
@@ -192,8 +199,8 @@ now adds the user-owned export, restore, and deletion controls on top of it.
 app navigation, `feature/profile`, `feature/onboarding`, `docs/privacy.md`,
 `docs/architecture.md`, and Android instrumentation tests.
 
-**Boundary:** no Room migration was required; schema 11 and every existing backup exclusion
-are unchanged. Restore is empty-destination only: merging and replacement are deliberately
+**Boundary:** Package 2 needed no Room migration and left the schema of the day, and every
+existing backup exclusion, unchanged. Restore is empty-destination only: merging and replacement are deliberately
 not implemented, so the supported recovery route is export, then delete or reinstall, then
 restore. A checksum detects damage; it is not encryption and not proof of authenticity. The
 document picker may offer cloud-backed destinations, and deletion reaches only this device's
@@ -227,11 +234,13 @@ does not silently enable production behavior.
 
 ### 4. Add whole-program validation
 
-**Status:** Not started; `GeneratedWorkoutValidator` performs structural candidate/type checks
-only.
+**Status:** Complete. `ProgramValidator` checks a complete proposal before it is shown and
+again before it is started, and `workout_recommendation_records` (Room schema 12, archive
+format version 2) records how each started session was decided. Reviewed-only rules stay
+inert while `PlannerFeatureFlags.reviewedCapabilityEligibility` is `false`.
 
-**Depends on:** Shipped weekly ledger and state-based policy. It may use synthetic approved
-metadata in tests while package 3 proceeds.
+**Depends on:** Shipped weekly ledger and state-based policy. Tests use synthetic approved
+metadata while package 3 proceeds; no production approval changed.
 
 **Contract:** Follow the [evidence-to-rule mapping](docs/research/2026-08-29-training-science-evidence-review.md#validation-scope-clarification-2026-09-05).
 Research-informed principles, versioned product policies, and software invariants are
@@ -241,36 +250,61 @@ measurement. Elapsed time alone establishes neither overload nor readiness and s
 universal recovery interval. Do not add a blocking recency rule while scheduling policy is
 undefined.
 
-**Implementation tasks:**
+**Implemented:**
 
-1. Define typed violations for unknown IDs, candidate-set membership, approved metadata and
-   provenance on the reviewed path, explicit constraints, prescription structure, load
-   provenance, duration consistency, and aggregate weekly accounting. Enforce duplicate
-   exercise/family and movement-coverage rules only as explicitly defined constraints of the
-   intended session/program, not universal bans on repetition or all-patterns-per-session
-   requirements.
-2. Validate the complete generated recommendation against the exact generation context before
-   persistence or display, with a defined revalidation boundary for changed context at start.
-   Check configured dose allowances across the whole proposal, not independently against the
-   same remaining allowance for each exercise. `PRIMARY_ONLY_V1` attribution, exact weekly
-   allowances, set caps, RIR bands, and rest seconds are versioned WallCrawl policies, not
-   universal physiological limits. Exceeding an allowance is a policy mismatch, not proof of
-   medical danger. Add no mandatory weekly minimum or automatic volume increase.
-3. Permit at most one deterministic repair pass that cannot weaken explicit constraints.
-4. Persist or attach the validator version, catalog/review/policy/ledger versions, structured
-   reason codes, validation outcome, and immutable recommendation snapshot.
-5. Surface typed planning failure without leaving a partial active session.
-6. Add pure policy tests, planner/Today integration tests, and migration/instrumentation
-   coverage if the selected persistence design changes Room.
+1. `ProgramViolationCode` names every rule as either a software invariant or a versioned
+   product policy: identifiers, candidate membership, prescription type, declared session
+   constraints, explicit exclusions, reviewed metadata and provenance, review-policy
+   equality, prescription shape, load provenance, duration agreement, ledger integrity,
+   accounting overflow, and configured allowance. `GeneratedWorkoutValidator` now reports
+   its existing structural checks as those typed values instead of a first-failure message,
+   so `ProgramValidator` reuses them rather than restating them. Context freshness is a
+   separate concern, decided in `TodayViewModel` by comparing digests rather than by a
+   violation code.
+2. Duplicate and coverage rules are **declared**, in `SessionProgramConstraints`. Only
+   exercise-id uniqueness within one generated session defaults on, and its rationale is
+   accounting and identity integrity, not a claim about repeated movement. Progression-family
+   uniqueness and required movement patterns are inert unless a caller declares them, so no
+   workout is required to cover any pattern and the planner's pattern spreading stays a
+   ranking preference.
+3. The whole proposal is attributed prospectively to approved `directPrimaryMuscle` values
+   under `PRIMARY_ONLY_V1` and compared **once per muscle** to the configured allowance,
+   instead of letting each exercise spend the same remainder. Completed credit and proposed
+   targets stay separate fields; nothing writes to the ledger. A damaged ledger,
+   unrepresentable arithmetic, and a full configured allowance remain three distinct typed
+   reasons, and `NEEDS_ONBOARDING` records an absent allowance rather than a violation. No
+   weekly minimum and no automatic increase were added.
+4. Load provenance keeps a null target null and accepts a value only from a confirmed
+   starting load or the last recorded load, optionally plus the shipped legacy 5.0 lb /
+   2.5 kg increment. `DURATION_ESTIMATOR_V1` is shared by the planner and the validator with
+   a ±1-minute tolerance and deliberately no requested-duration rule.
+5. Exactly one deterministic repair pass may reduce sets, in recommendation order, with every
+   affected exercise keeping at least one; it recomputes the duration and fails closed rather
+   than dropping an exercise. It never weakens a constraint, widens the candidate set,
+   invents a load, or leaves reviewed-only eligibility. Repair is disabled at start.
+6. `TodayViewModel` validates before display and revalidates at start against a freshly built
+   context, comparing `RecommendationContextIdentity`. Profile, history, and week or
+   time-zone changes surface typed, resource-backed English and Spanish copy instead of
+   starting a stale plan.
+7. `workout_recommendation_records` (additive migration `11 → 12`) records the validator,
+   estimator, catalog, review, training-policy, ledger, and program-state versions, the
+   adaptation state, accounting week and zone, profile revision, context digest, ordered
+   reason codes, and per-muscle completed/proposed/allowance counts. It is written in the same
+   transaction as the session, so a refused start leaves neither, and it travels in archive
+   format version 2 while version 1 archives still restore.
 
-**Likely surfaces:** `core/ai/GeneratedWorkoutValidator`,
-`core/ai/ProgramValidator`, planner composition, `feature/today`, workout snapshot models,
-repositories, and validation tests.
+**Surfaces:** `core/ai/ProgramValidator`, `core/ai/ProgramViolation`,
+`core/ai/RecommendationSnapshot`, `core/ai/RecommendationContextIdentity`,
+`core/ai/WorkoutDurationEstimator`, `core/ai/GeneratedWorkoutValidator`,
+`core/model/RecommendationRecord`, `core/database` (schema 12, DAO, mapper, payload),
+`core/backup` (archive version 2), `feature/today`, `WallCrawlApplication`, string
+resources, and their JVM and instrumentation tests.
 
-**Done when:** no recommendation can reach persistence or UI with an aggregate violation,
-failures are explainable and replayable from recorded versions, and valid legacy behavior is
-unchanged while the reviewed gate is disabled. Every rule identifies its software contract
-or product-policy rationale; unresolved scope/tolerance decisions are settled before coding.
+**Boundary:** the reviewed path stays production-disabled, all 37 reviewed entries remain
+`DRAFT`, and no policy value, metadata approval, or feature flag changed. Passing these
+checks demonstrates software-contract conformance, not scientific or clinical validation.
+The record explains and detects; it does not promise byte-exact replay, because WallCrawl
+keeps only one current profile row.
 
 ### 5. Reconcile Progress weekly semantics
 

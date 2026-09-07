@@ -29,6 +29,7 @@ import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
 import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
 import wallcrawl.elopenmike.com.core.exercise.visual.ExerciseVisual
 import wallcrawl.elopenmike.com.core.exercise.visual.ExerciseVisualProvider
+import wallcrawl.elopenmike.com.core.ai.RecommendationSnapshot
 import wallcrawl.elopenmike.com.core.model.ExercisePrescription
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
@@ -325,7 +326,8 @@ private class ScreenTestRepository(initial: WorkoutSession) : WorkoutRepository 
         generated: GeneratedWorkout,
         displayName: String,
         displayRationale: String,
-        userProfile: UserProfile
+        userProfile: UserProfile,
+        recommendation: RecommendationSnapshot?
     ): WorkoutSession = error("Not used")
 
     override suspend fun startWorkoutFromTemplate(

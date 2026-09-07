@@ -69,6 +69,12 @@ data class LocalDataRestoreResult(
  * of both restore and deletion, and recomputed from restored completed history the next
  * time it is read, so a restored install can never serve a count its history does not
  * support.
+ *
+ * A recommendation record is not derived in that sense: nothing can rebuild how a past plan
+ * was validated from the history it produced. Records therefore travel in the archive with
+ * the sessions they belong to, and a record this build cannot read back is dropped rather
+ * than restored as a half-understood one — provenance that cannot be trusted is worse than
+ * provenance that is absent.
  */
 interface LocalDataBackupRepository {
 
@@ -193,7 +199,9 @@ class OfflineLocalDataBackupRepository(
         return LocalDataSnapshot(
             profile = rows.profiles.firstOrNull()?.toUserProfile(),
             templates = templates,
-            sessions = sessions
+            sessions = sessions,
+            recommendationRecords = rows.recommendationRecords
+                .mapNotNull { it.toRecommendationRecord() }
         )
     }
 
@@ -209,7 +217,8 @@ class OfflineLocalDataBackupRepository(
             session.exercises.flatMap { exercise ->
                 exercise.sets.map { set -> set.toSetEntity() }
             }
-        }
+        },
+        recommendationRecords = recommendationRecords.map { it.toEntity() }
     )
 
     private fun WorkoutTemplate.toTemplateEntity() = WorkoutTemplateEntity(

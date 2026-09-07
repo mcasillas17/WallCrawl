@@ -15,6 +15,7 @@ import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
 import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
+import wallcrawl.elopenmike.com.core.ai.RecommendationSnapshot
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
@@ -105,7 +106,8 @@ private class EmptyWorkoutRepository : WorkoutRepository {
         generated: GeneratedWorkout,
         displayName: String,
         displayRationale: String,
-        userProfile: UserProfile
+        userProfile: UserProfile,
+        recommendation: RecommendationSnapshot?
     ): WorkoutSession = error("Not used")
 
     override suspend fun startWorkoutFromTemplate(

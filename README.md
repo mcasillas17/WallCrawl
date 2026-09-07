@@ -255,11 +255,28 @@ mapped to configured 60/90/180-second defaults. A valid stored explicit per-exer
 preference wins and keeps its exact seconds; model/persistence support does not imply a
 shipped preference-editing UI.
 
-The policy currently caps each prescription against the supplied completed ledger, not
-the aggregate proposal. Whole-program validation remains planned under the
+That policy caps each prescription against the supplied completed ledger. Whole-program
+validation closes the gap that leaves: `ProgramValidator` checks a complete proposed
+session against the exact context that produced it, aggregating the whole proposal by
+approved direct-primary muscle before comparing it once to the configured weekly
+allowance, so exercises sharing a muscle can no longer each spend the same remainder. It
+also checks identifiers and candidate membership, declared session constraints, explicit
+exclusions, reviewed provenance on the enabled path, load provenance, and agreement with
+the named `DURATION_ESTIMATOR_V1`, all under the
 [evidence-to-rule contract](docs/research/2026-08-29-training-science-evidence-review.md#validation-scope-clarification-2026-09-05).
+At most one deterministic repair pass may reduce sets; it never weakens a constraint,
+widens the candidate set, or invents a load, and it is disabled when a workout is started.
+Exceeding a configured allowance is a policy mismatch, not a medical judgement, and no
+weekly minimum, automatic increase, fatigue budget, or recency rule was added.
 
-Guidance is persisted with templates and frozen session snapshots in Room schema 11.
+A workout started from a recommendation records how it was decided — the validator,
+estimator, catalog, review, policy and ledger versions, the adaptation state, the
+accounting week and zone, ordered reason codes, and the completed, proposed and allowed
+set counts — in the same transaction that writes the session, and that record travels in
+the export archive. It carries no name, note, load, repetition, effort value, or body
+measurement.
+
+Guidance is persisted with templates and frozen session snapshots in Room schema 12.
 The active timer still reads the persisted exact seconds; add-time, skip, and dismiss are
 one-off timer actions rather than durable preference changes. Production keeps reviewed
 eligibility disabled because the bundled cohort remains 37 `DRAFT` / 0 `APPROVED`, so
@@ -578,10 +595,12 @@ to it, generated-workout validation, template validation, atomic persistence
 boundaries, progress and personal-record calculations, attribution loading,
 Today state, duration calculation, and visual-provider mapping.
 Android instrumentation also validates every supported database migration chain through
-schema 11 without destructive fallback, guidance persistence, the weekly-ledger DAO/repository,
+schema 12 without destructive fallback, guidance persistence, the atomic start of a session
+with its validation record, the weekly-ledger DAO/repository,
 capability-control semantics, template/session snapshot behavior, and the local-data archive:
-its round trip from app-written state, every rejection path for untrusted documents,
-transactional restore and deletion, and the destructive confirmation at a large font scale. It parses the
+its round trip from app-written state at both supported format versions, every rejection
+path for untrusted documents, transactional restore and deletion, and the destructive
+confirmation at a large font scale. It parses the
 packaged 302-exercise catalog and opens every one of its 906 SVG paths. Pull-request/main
 CI and tagged-release publication both run this connected suite on an API 36 emulator;
 a tag cannot publish its prerelease unless instrumentation succeeds.

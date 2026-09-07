@@ -20,6 +20,20 @@ enum class TodayError(@StringRes val messageRes: Int) {
     REGENERATION_FAILED(R.string.today_error_regenerate_failed),
     FIRST_GENERATION_FAILED(R.string.today_error_first_failed),
     START_FAILED(R.string.today_error_start_failed),
+
+    /** The generation context changed after this recommendation was produced. */
+    RECOMMENDATION_OUT_OF_DATE(R.string.today_error_recommendation_out_of_date),
+
+    /** Revalidation at start rejected the plan, so nothing was written. */
+    START_VALIDATION_FAILED(R.string.today_error_start_validation_failed),
+
+    /**
+     * The whole proposal would exceed this week's configured direct-primary allowance.
+     *
+     * A configured WallCrawl policy limit, not a medical judgement: the copy says the
+     * planned week is already covered, never that training more would be unsafe.
+     */
+    WEEKLY_ALLOWANCE_REACHED(R.string.today_error_weekly_allowance_reached),
     REVIEWED_NO_APPROVED_METADATA(R.string.today_error_reviewed_no_approved_metadata),
     REVIEWED_EXCLUSIONS_REMOVED_ALL(R.string.today_error_reviewed_exclusions),
     REVIEWED_EQUIPMENT_REMOVED_ALL(R.string.today_error_reviewed_equipment),
