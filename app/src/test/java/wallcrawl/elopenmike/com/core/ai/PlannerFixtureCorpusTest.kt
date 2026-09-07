@@ -70,7 +70,7 @@ class PlannerFixtureCorpusTest {
 
         assertThat(exercises).hasSize(302)
         assertThat(exercises.count { it.reviewedMetadata?.reviewState == ReviewState.DRAFT })
-            .isEqualTo(37)
+            .isEqualTo(211)
         assertThat(exercises.count { it.reviewedMetadata?.reviewState == ReviewState.APPROVED })
             .isEqualTo(0)
     }

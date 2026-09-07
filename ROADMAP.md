@@ -27,7 +27,7 @@ network connection, or companion device.
 | Area | Status | Remaining gap |
 | --- | --- | --- |
 | Android foundation | Room schema 12 with a continuous migration chain; implicit Android backup disabled with legacy and modern all-domain exclusions; user-owned export, restore, and delete-all shipped | OEM transfer enforcement varies; restore is empty-destination only; `targetSdk` remains 35 while `compileSdk` is 37 |
-| Catalog and reviewed content | 302 exercises, 906 SVG frames, 131 authored programming entries, 37 reviewed records | All 37 reviewed records remain `DRAFT`; planner-reachable and band-only coverage still need review |
+| Catalog and reviewed content | All 302 entries have per-ID AI evidence records; 906 SVG frames and 131 legacy programming entries unchanged; 211 reviewed metadata drafts | Zero human approvals; 81 content/policy decisions pending, 35 entries outside automatic-strength scope; band-only push and equipment-representation gaps remain |
 | Onboarding and profile | Shipped as an eight-step flow with seven movement-capability questions, plus export, restore, and delete-all controls | Restore requires a fresh start, so it cannot merge into an installation that already holds data |
 | Templates and logging | Shipped with frozen template snapshots, type-aware outcomes, RPE/RIR, typed stops, and a local rest timer | Template targets are only partly editable; unsaved drafts are not restored after process death |
 | Localization | English and neutral Latin American Spanish shipped across the whole interface, the 302-exercise catalog, generated workout text, and accessibility labels, selectable from onboarding and Profile through Android's per-app language mechanism | Only two languages; historical session text stays in the language it was written in, by design |
@@ -42,7 +42,7 @@ The production path today is the legacy deterministic planner. Reviewed eligibil
 capability-evidence ranking and state-based guidance are
 compiled but inactive because `PlannerFeatureFlags.reviewedCapabilityEligibility` is `false`.
 Progress reads `PRIMARY_ONLY_V1` for accounting only; that does not enable reviewed planning.
-The reviewed cohort is 37 `DRAFT` / 0 `APPROVED`; approval is a human-authored data change,
+The reviewed cohort is 211 `DRAFT` / 0 `APPROVED`; approval is a human-authored data change,
 not a consequence of merging a pull request.
 
 ## Recorded decisions
@@ -92,8 +92,10 @@ These decisions must be recorded before the related implementation package close
 
 1. **Deadlift direct primary:** a qualified human reviewer must ratify the single
    `directPrimaryMuscle` for `barbell-deadlift`; automation or PR approval cannot decide it.
-2. **Initial approval cohort:** decide whether the first rollout requires all 37 records or
-   a smaller persona-complete cohort with explicit band-only and capability coverage.
+2. **Initial approval cohort:** the content review now covers all 302 catalog IDs, not
+   a sample. Separately decide the human-approved rollout cohort from the 211 draft
+   proposals and unresolved entries, with explicit equipment/persona coverage. Neither
+   a smaller rollout cohort nor a completed AI review changes the meaning of approval.
 3. **Validation persistence:** ~~decided~~. A dedicated `workout_recommendation_records`
    table (Room schema 12) holds one immutable row per started session, written in the same
    transaction as the session, and travels in archive format version 2. Columns beside the
@@ -216,18 +218,25 @@ copy.
 
 ### 3. Complete reviewed metadata coverage and human approval
 
-**Status:** 37 records are authored as `DRAFT`; zero are `APPROVED`.
+**Status:** Full-catalog AI review and sign-off preparation cover all 302 IDs:
+186 ready for human inspection, 81 pending evidence/policy and 35 outside automatic
+strength scope. There are 211 authored `DRAFT` records and zero `APPROVED`.
+Package 3 is **not complete**.
 
 **Depends on:** Human decisions for direct-primary classification and first-cohort scope.
 
 **Implementation tasks:**
 
-1. Resolve the `barbell-deadlift` direct-primary question and every
-   `READY_AFTER_CORRECTIONS` item in the sign-off worksheet.
-2. Close planner-reachable gaps, including a valid band-only push path and the capability or
-   joint mappings required by supported personas.
-3. Confirm regression/substitution graph edges, progression families, complexity, support,
-   impact, and prescription shape against source evidence.
+1. Ratify the `barbell-deadlift` single-primary allocation and resolve the current
+   per-ID decisions in the [unsigned sign-off worksheet](docs/reviewed-exercise-metadata-human-signoff.md).
+   The historical `READY_AFTER_CORRECTIONS` verdicts did not grant approval.
+2. Resolve the separately documented [band-only push and fixed-anchor gaps](docs/reviewed-catalog-coverage.md),
+   specialized equipment requirements and selected joint-constraint mappings. No missing
+   token is filled with a guessed generic apparatus, and no planner/artwork fix is implied.
+3. Human-inspect the source-bound [full-catalog evidence ledger](docs/research/2026-09-07-full-exercise-catalog-review.json),
+   including directed edges, complexity, support, impact, prescription shape, withheld
+   blocks and artwork-reference restrictions. AI judgments and software checks are not
+   clinical validation.
 4. Record a real reviewer role, review time, provenance, and rationale in authored metadata.
 5. Regenerate the bundled catalog and review report deterministically.
 6. Re-run availability analysis before changing any production feature flag.
@@ -308,7 +317,7 @@ undefined.
 `core/backup` (archive version 2), `feature/today`, `WallCrawlApplication`, string
 resources, and their JVM and instrumentation tests.
 
-**Boundary:** the reviewed path stays production-disabled, all 37 reviewed entries remain
+**Boundary:** the reviewed path stays production-disabled, all 211 reviewed entries remain
 `DRAFT`, and no policy value, metadata approval, or feature flag changed. Passing these
 checks demonstrates software-contract conformance, not scientific or clinical validation.
 The record explains and detects; it does not promise byte-exact replay, because WallCrawl
@@ -607,7 +616,10 @@ combinations, drafts recover predictably, and completed history never changes wi
 
 ### 16. Expand reviewed content beyond automatic planning
 
-**Status:** Initial 37-record draft cohort only.
+**Status:** All 302 entries now have an individual AI evidence review; 35 are outside
+the current automatic-strength contract. Browsing/manual access remains complete.
+Human approval, reviewed-guidance presentation and support for excluded prescription
+categories remain open; this package is not complete.
 
 **Depends on:** Package 3's repeatable approval process.
 

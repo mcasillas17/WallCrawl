@@ -82,7 +82,7 @@ commit supplies the importer. No networking, analytics, dependency or Room chang
 
 ## Human gate and limits
 
-The separate reviewed cohort remains 37 DRAFT / 0 APPROVED. Human reviewer identities and
+The separate reviewed cohort now contains 211 DRAFT / 0 APPROVED. Human reviewer identities and
 timestamps remain absent and the production reviewed-capability flag remains false.
 Neither agent code review nor PR approval supplies human exercise-metadata signoff.
 

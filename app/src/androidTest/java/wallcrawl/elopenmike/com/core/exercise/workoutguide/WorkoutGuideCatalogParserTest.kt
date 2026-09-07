@@ -32,7 +32,7 @@ class WorkoutGuideCatalogParserTest {
         // Reviewed programming metadata covers the exercises the planner selects from,
         // not the whole catalog; the rest fall back to conservative defaults.
         assertThat(snapshot.exercises.count { it.programming != null }).isEqualTo(131)
-        assertThat(snapshot.exercises.count { it.reviewedMetadata != null }).isEqualTo(37)
+        assertThat(snapshot.exercises.count { it.reviewedMetadata != null }).isEqualTo(211)
         assertThat(snapshot.exercises.map { it.id }).containsAtLeastElementsIn(HISTORICAL_IDS)
 
         snapshot.framesByExerciseId.values.flatten().forEach { frame ->

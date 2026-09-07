@@ -64,7 +64,7 @@ class ProgramValidatorTest {
 
     @Test
     fun theDisabledReviewedGate_appliesNoReviewedOnlyRule() = runTest {
-        // A draft-metadata exercise is exactly what the shipped 37-entry cohort looks like.
+        // A draft-metadata exercise is exactly what the shipped reviewed cohort looks like.
         // On the legacy path it must plan normally rather than being refused for lacking an
         // approval the legacy path never asked for.
         val draft = syntheticDraftExercise(id = "draft-press", directPrimaryMuscle = "Chest")
@@ -173,7 +173,7 @@ class ProgramValidatorTest {
     @Test
     fun aRepeatedDraftFamily_isNotAProductPolicyRejection() = runTest {
         // Draft records carry an authored progression family too, and the shipped cohort is
-        // 37 of them. An unapproved record must never be what drives a product-policy
+        // many of them. An unapproved record must never be what drives a product-policy
         // rejection, so the declared constraint reads approved metadata only.
         val first = syntheticDraftExercise(id = "press-a", directPrimaryMuscle = "Chest")
         val second = syntheticDraftExercise(id = "press-b", directPrimaryMuscle = "Chest")

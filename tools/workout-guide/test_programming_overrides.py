@@ -57,12 +57,18 @@ class ProgrammingOverridesTest(unittest.TestCase):
         encoded = json.dumps(records, sort_keys=True, separators=(",", ":")).encode()
         self.assertEqual("6412738d7f19d78189cdc02c204ed0d67614571ee27bdf0f95cda3c608065e13", hashlib.sha256(encoded).hexdigest())
 
+    def test_all_131_legacy_programming_records_remain_unchanged_during_draft_expansion(self) -> None:
+        self.assertEqual(131, len(self.overrides))
+        encoded = json.dumps(self.overrides, sort_keys=True, separators=(",", ":")).encode()
+        self.assertEqual("98a28205a15069a4c8edc32f27951c46b2134fec02ba51878ef3da777c0d3705", hashlib.sha256(encoded).hexdigest())
+
     def test_catalog_facts_frames_and_licensing_match_pinned_baseline(self) -> None:
         facts = json.loads(CATALOG.read_text())
         for exercise in facts["exercises"]:
             exercise.pop("programming", None)
+            exercise.pop("reviewedMetadata", None)
         encoded = json.dumps(facts, sort_keys=True, separators=(",", ":")).encode()
-        self.assertEqual("31d3471591f37a4aa4d3b536e23c68b0f15b7ce61e454d3f57bb4cdc601acbbf", hashlib.sha256(encoded).hexdigest())
+        self.assertEqual("aa70e3d32fb04f99d54b97c52e13aa2c3567f9d17591aa89b38197f1ade9e745", hashlib.sha256(encoded).hexdigest())
         self.assertEqual(302, len(facts["exercises"]))
         self.assertEqual("ba0b709cb20430361b2cb33aaadd20998164a916", facts["source"]["commit"])
         self.assertEqual(906, len(list(CATALOG.parent.rglob("*.svg"))))
@@ -173,17 +179,65 @@ class ReviewedMetadataTest(unittest.TestCase):
         cls.by_id = {exercise["id"]: exercise for exercise in cls.catalog["exercises"]}
         cls.reviewed = json.loads(REVIEWED_METADATA.read_text())["exercises"]
 
-    def test_initial_cohort_is_present_and_remains_awaiting_human_review(self) -> None:
-        self.assertEqual(37, len(self.reviewed))
+    def test_fixed_anchor_band_variants_do_not_claim_complete_band_only_equipment(self) -> None:
+        # These exact pinned variants use fixed anchors. The current vocabulary has no
+        # anchor token, so a Band/Chair/Wall/Doorway combination cannot stand in for one.
+        anchor_dependent = {
+            "banded-face-pull", "banded-kickback", "banded-lat-pulldown",
+            "banded-pallof-press", "banded-row", "banded-woodchop",
+        }
+        self.assertEqual(set(), anchor_dependent & self.reviewed.keys())
+
+    def test_observed_unheld_standing_variants_preserve_balance_demands(self) -> None:
+        standing = {
+            "cable-fly", "cable-front-raise", "cable-lateral-raise",
+            "cable-triceps-pushdown", "rope-hammer-curl", "rope-tricep-pushdown",
+            "shrug", "reverse-curl", "single-arm-dumbbell-tricep-extension",
+            "push-press", "t-bar-row",
+            "wrist-curl", "wrist-extension",
+            "cable-rear-delt-fly", "drag-curl",
+            "inchworm",
+        }
+        for exercise_id in standing:
+            with self.subTest(exercise=exercise_id):
+                self.assertIn("balance_without_support",
+                              self.reviewed[exercise_id]["capabilityRequirements"])
+
+    def test_depicted_support_and_loaded_variants_do_not_disappear_from_equipment(self) -> None:
+        self.assertEqual([["Resistance Band"]], self.reviewed["clamshell"]["equipmentAlternatives"])
+        for exercise_id in ("crunch", "decline-push-up"):
+            self.assertEqual([["Bodyweight", "Bench"]],
+                             self.reviewed[exercise_id]["equipmentAlternatives"])
+        for exercise_id in ("single-leg-romanian-deadlift", "reverse-lunge"):
+            self.assertEqual([["Dumbbell"]], self.reviewed[exercise_id]["equipmentAlternatives"])
+        self.assertEqual([["Dumbbell", "Bench"]], self.reviewed["step-up"]["equipmentAlternatives"])
+        self.assertEqual([["Barbell"]], self.reviewed["romanian-deadlift"]["equipmentAlternatives"])
+        self.assertIn("floor_transition",
+                      self.reviewed["wall-handstand-push-up"]["capabilityRequirements"])
+        self.assertEqual("supported", self.reviewed["decline-push-up"]["supportRequirement"])
+        self.assertEqual("unsupported", self.reviewed["t-bar-row"]["supportRequirement"])
+
+    def test_unresolved_rails_and_back_bar_setup_are_not_complete_metadata(self) -> None:
+        self.assertNotIn("calf-raise", self.reviewed)
+        self.assertNotIn("good-morning", self.reviewed)
+
+    def test_expanded_cohort_remains_awaiting_human_review(self) -> None:
+        self.assertEqual(211, len(self.reviewed))
         for exercise_id, metadata in self.reviewed.items():
             self.assertEqual("draft", metadata["reviewState"], exercise_id)
             self.assertIsNone(metadata["provenance"]["reviewerRole"], exercise_id)
             self.assertIsNone(metadata["provenance"]["reviewedAtEpochMillis"], exercise_id)
 
+    def test_unresolved_named_variations_cannot_reenter_as_complete_drafts(self) -> None:
+        for exercise_id in ("rack-pull", "commando-pull-up",
+                            "reverse-hyperextension", "skater-squat",
+                            "concentration-curl", "russian-twist",
+                            "glute-focused-back-extension", "single-arm-cable-row"):
+            self.assertNotIn(exercise_id, self.reviewed)
+
     def test_roundtable_corrections_match_product_capability_semantics(self) -> None:
         expected_capabilities = {
             "assisted-pistol-squat": [],
-            "banded-lat-pulldown": [],
             "plank": ["floor_transition"],
             "push-up": ["upper_body_bodyweight_push", "floor_transition"],
             "side-plank": ["floor_transition"],
@@ -192,9 +246,6 @@ class ReviewedMetadataTest(unittest.TestCase):
         }
         expected_support = {
             "band-pull-apart": "unsupported",
-            "banded-lat-pulldown": "supported",
-            "banded-pallof-press": "unsupported",
-            "banded-row": "unsupported",
             "cable-pallof-hold": "unsupported",
             "cable-pull-through": "unsupported",
         }
@@ -216,7 +267,7 @@ class ReviewedMetadataTest(unittest.TestCase):
         }
 
         for exercise_id, capabilities in expected_capabilities.items():
-            self.assertEqual(
+            self.assertCountEqual(
                 capabilities,
                 self.reviewed[exercise_id]["capabilityRequirements"],
                 exercise_id,
@@ -229,23 +280,16 @@ class ReviewedMetadataTest(unittest.TestCase):
             )
         for exercise_id in expected_no_impact:
             self.assertEqual("none", self.reviewed[exercise_id]["impactLevel"], exercise_id)
-        self.assertEqual(
-            [["Resistance Band", "Chair"]],
-            self.reviewed["banded-lat-pulldown"]["equipmentAlternatives"],
-        )
+        self.assertNotIn("banded-lat-pulldown", self.reviewed)
 
     def test_ai_draft_rationale_preserves_provenance_boundary(self) -> None:
         pinned_commit = "ba0b709cb20430361b2cb33aaadd20998164a916"
         for exercise_id, metadata in self.reviewed.items():
             rationale = metadata["provenance"]["rationaleOrSource"]
-            expected = (
-                f"AI-authored DRAFT for {exercise_id}: pinned Workout Guide "
-                f"{pinned_commit} manifest/artwork supports muscles, prescription "
-                "shape, and equipment; WallCrawl policy supplies pattern, complexity, "
-                "family, capabilities, support, impact, and graph edges. "
-                "Human field-by-field review required."
-            )
-            self.assertEqual(expected, rationale, exercise_id)
+            self.assertIn("AI", rationale, exercise_id)
+            self.assertIn(exercise_id, rationale, exercise_id)
+            self.assertIn(pinned_commit, rationale, exercise_id)
+            self.assertIn("human", rationale.lower(), exercise_id)
 
     def test_every_authored_id_and_graph_edge_resolves(self) -> None:
         for exercise_id, metadata in self.reviewed.items():

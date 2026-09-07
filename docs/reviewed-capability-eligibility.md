@@ -15,10 +15,13 @@ That same reviewed-only flag gates three local features together:
 - `CapabilityEvidencePolicy` and `CapabilityEvidenceSet`
 - `TrainingProgramStateProvider` + `StateBasedTrainingPolicy`
 
-The bundled catalog remains at 302 exercises. Its 37 authored
+The bundled catalog remains at 302 exercises. Its 211 authored
 `reviewedMetadata` entries remain `DRAFT`, with zero authored `APPROVED`
-entries. Task 6A did not mutate review state, reviewer identity, timestamps,
-provenance, history, catalog assets, or profile capability values.
+entries. The [full-catalog review](research/2026-09-07-full-exercise-catalog-review.json)
+distinguishes content readiness, unresolved evidence and excluded categories.
+It does not grant human approval or change the rollout flag. The
+[coverage report](reviewed-catalog-coverage.md) separates actual zero-approved
+results from explicitly synthetic prospective cohorts.
 
 The typed flow is:
 

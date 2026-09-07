@@ -218,8 +218,11 @@ The planner still orders by the ordinal legacy `programming.fatigueScore`; neith
 label nor its sum measures physiological fatigue. Its existing pattern-spreading
 preference can also admit repeated patterns when filling remaining compound slots.
 
-The reviewed path remains production-disabled, all 37 reviewed entries remain `DRAFT`,
-and no runtime, policy values, metadata approval, schema, or feature flag changes here.
+At this clarification's 2026-09-05 baseline, the reviewed path was production-disabled
+and all 37 reviewed entries were `DRAFT`; no runtime, policy values, metadata approval,
+schema or feature flag changed in that clarification. Current content status is recorded
+in the [full-catalog review](2026-09-07-full-exercise-catalog-review.json); that later AI
+review also grants no human approval and leaves the production flag disabled.
 Existing legacy return-after-break copy about protecting tendons/rebuilding safely is
 not supported by this evidence clarification and is not a validator requirement; runtime
 copy correction belongs to the roadmap's release-claim audit, not this documentation-only
