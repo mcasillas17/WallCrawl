@@ -154,7 +154,10 @@ class GeneratedWorkoutFocusNoticeTest {
      */
     @Test
     fun aSupportedSessionAddsNoLineToTheCard() {
-        renderTodayCard(Locale.ENGLISH, unavailableFocusMuscles = emptyList())
+        var ordinaryExplanation = ""
+        renderTodayCard(Locale.ENGLISH, unavailableFocusMuscles = emptyList()) {
+            ordinaryExplanation = it
+        }
 
         composeRule
             .onNodeWithText(
@@ -162,26 +165,29 @@ class GeneratedWorkoutFocusNoticeTest {
                 substring = true
             )
             .assertDoesNotExist()
-        // The ordinary explanation is recorded with a started session, not shown here.
-        composeRule
-            .onNodeWithText(
-                english.getString(R.string.generated_rationale_goal_focus, "", ""),
-                substring = true
-            )
-            .assertDoesNotExist()
+        // Captured from the same renderer the card would use, rather than rebuilt from a
+        // format string here. A hand-built expectation can drift into a string nothing ever
+        // renders, and then this assertion passes no matter what the card shows.
+        assertThat(ordinaryExplanation)
+            .isEqualTo(english.getString(R.string.generated_rationale_goal_focus, "Build muscle", "Upper Back"))
+        composeRule.onNodeWithText(ordinaryExplanation, substring = true).assertDoesNotExist()
     }
 
-    private fun renderTodayCard(locale: Locale, unavailableFocusMuscles: List<String>) {
+    private fun renderTodayCard(
+        locale: Locale,
+        unavailableFocusMuscles: List<String>,
+        onOrdinaryExplanation: (String) -> Unit = {}
+    ) {
         val workout = suggestedWorkout(unavailableFocusMuscles)
         composeRule.setContent {
             InLocale(locale) {
+                onOrdinaryExplanation(generatedWorkoutRationale(spec = workout.rationale))
                 TodayContent(
                     state = TodayUiState.Success(
                         userProfile = UserProfile(),
                         suggestedWorkout = workout
                     ),
                     workoutName = generatedWorkoutTitle(workout.title),
-                    focusNotice = unavailableFocusNotice(workout.unavailableFocusMuscles),
                     onStartWorkout = {},
                     onResumeWorkout = {},
                     onRegenerate = {},

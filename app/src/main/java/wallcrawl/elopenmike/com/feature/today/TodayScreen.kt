@@ -152,7 +152,6 @@ fun TodayScreen(
                 TodayContent(
                     state = state,
                     workoutName = workoutName,
-                    focusNotice = unavailableFocusNotice(state.suggestedWorkout.unavailableFocusMuscles),
                     onStartWorkout = {
                         viewModel.startWorkout(workoutName, workoutRationale, onStartWorkout)
                     },
@@ -173,7 +172,6 @@ fun TodayScreen(
 internal fun TodayContent(
     state: TodayUiState.Success,
     workoutName: String,
-    focusNotice: String?,
     onStartWorkout: () -> Unit,
     onResumeWorkout: () -> Unit,
     onRegenerate: () -> Unit,
@@ -211,7 +209,6 @@ internal fun TodayContent(
             SuggestedWorkoutCard(
                 workout = state.suggestedWorkout,
                 workoutName = workoutName,
-                focusNotice = focusNotice,
                 isRegenerating = state.isRegenerating,
                 onStartWorkout = onStartWorkout,
                 onRegenerate = onRegenerate
@@ -458,7 +455,6 @@ private fun ButtonResume(onClick: () -> Unit) {
 private fun SuggestedWorkoutCard(
     workout: GeneratedWorkout,
     workoutName: String,
-    focusNotice: String?,
     isRegenerating: Boolean,
     onStartWorkout: () -> Unit,
     onRegenerate: () -> Unit
@@ -537,7 +533,7 @@ private fun SuggestedWorkoutCard(
         // Only when there is something to say. A prioritised muscle nothing available can
         // train is named here, so the alternative above is explained to the reader and not
         // only to the stored session; an ordinary session adds no line at all.
-        focusNotice?.let { notice ->
+        unavailableFocusNotice(workout.unavailableFocusMuscles)?.let { notice ->
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = notice,
