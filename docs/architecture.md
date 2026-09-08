@@ -127,8 +127,9 @@ decision in Kotlin where unit tests cover it. Two rules matter downstream:
 
 - an upstream name maps to exactly one legacy primary muscle; Progress describes
   involvement for every listed primary and explicitly marks those counts as overlapping;
-- the other groups an umbrella name covers become secondary muscles, which
-  split matching also reads, so nothing stops being selectable.
+- the other groups an umbrella name covers become secondary muscles, so nothing stops being
+  selectable: they keep the exercise eligible for those splits' accessory slots. They do not
+  establish a split's [advertised focus](#advertised-focus), which reads primary muscles only.
 
 `BundledCatalogVocabularyTest` reads the shipped asset directly and fails if a
 future catalog introduces a name the vocabulary does not know. The instrumented
