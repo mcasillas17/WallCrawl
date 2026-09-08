@@ -44,12 +44,27 @@ fun generatedWorkoutRationale(
     spec: WorkoutRationaleSpec,
     unavailableFocusMuscles: List<String> = emptyList()
 ): String {
-    val vocabulary = LocalExerciseVocabulary.current
     val reason = rationaleSentence(spec)
-    if (unavailableFocusMuscles.isEmpty()) return reason
+    val notice = unavailableFocusNotice(unavailableFocusMuscles) ?: return reason
+    return "$reason $notice"
+}
+
+/**
+ * The sentence naming prioritised muscles nothing available trains, or null when there are
+ * none to name.
+ *
+ * Separate from the explanation above because the two have different audiences. The
+ * explanation is what a started session records; this sentence is what the card shows,
+ * and only when there is actually something to say. Surfacing the whole explanation on
+ * every session would be a product change this does not make.
+ */
+@Composable
+fun unavailableFocusNotice(unavailableFocusMuscles: List<String>): String? {
+    if (unavailableFocusMuscles.isEmpty()) return null
+    val vocabulary = LocalExerciseVocabulary.current
     val separator = stringResource(R.string.list_separator)
     val muscles = unavailableFocusMuscles.map { vocabulary.muscle(it) }.joinToString(separator)
-    return reason + " " + stringResource(R.string.generated_rationale_focus_unavailable, muscles)
+    return stringResource(R.string.generated_rationale_focus_unavailable, muscles)
 }
 
 @Composable

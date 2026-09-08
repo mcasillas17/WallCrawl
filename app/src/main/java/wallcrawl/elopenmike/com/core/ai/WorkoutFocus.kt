@@ -3,6 +3,7 @@ package wallcrawl.elopenmike.com.core.ai
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.ReviewState
+import wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
 import wallcrawl.elopenmike.com.core.model.WorkoutSplit
 
@@ -33,11 +34,20 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSplit
  * approval, and it must never become a silent source of production behaviour. Legacy
  * `primaryMuscles` is the fallback, which is what the shipped path uses today.
  */
-internal fun Exercise.focusMuscles(): List<String> = reviewedMetadata
+internal fun Exercise.focusMuscles(): List<String> =
+    approvedMetadata()?.let { listOf(it.directPrimaryMuscle) } ?: primaryMuscles
+
+/**
+ * Reviewed metadata that is actually authoritative: approved, and carrying the human
+ * provenance approval requires.
+ *
+ * One definition for the whole package. This is the gate that decides whether the reviewed
+ * contract applies at all, so it is exactly the thing that must not be spelled out in
+ * several places and tightened in only some of them.
+ */
+internal fun Exercise.approvedMetadata(): ReviewedExerciseMetadata? = reviewedMetadata
     ?.takeIf { it.reviewState == ReviewState.APPROVED }
     ?.takeIf { it.isWellFormedApprovedMetadata() }
-    ?.let { listOf(it.directPrimaryMuscle) }
-    ?: primaryMuscles
 
 /**
  * The muscles [this] involves without training them as its own purpose.
@@ -47,21 +57,22 @@ internal fun Exercise.focusMuscles(): List<String> = reviewedMetadata
  * `directPrimaryMuscle` while still reading the legacy secondary list would mix two
  * classifications of the same exercise.
  */
-internal fun Exercise.involvedMuscles(): List<String> = reviewedMetadata
-    ?.takeIf { it.reviewState == ReviewState.APPROVED }
-    ?.takeIf { it.isWellFormedApprovedMetadata() }
-    ?.descriptiveSecondaryMuscles
-    ?.toList()
-    ?: secondaryMuscles
+internal fun Exercise.involvedMuscles(): List<String> =
+    approvedMetadata()?.descriptiveSecondaryMuscles?.toList() ?: secondaryMuscles
+
+/** Whether [this] trains [muscle] as its own purpose rather than merely involving it. */
+internal fun Exercise.trainsAsFocus(muscle: String): Boolean =
+    isStrengthWork() && muscle in focusMuscles()
 
 /**
  * Whether [exercise] genuinely supports this split's advertised focus.
  *
- * Used by split selection, by the ordering that fills the session, by whole-program
- * validation and by the tests, so those four cannot disagree about what a Push day is.
+ * Used by split selection, by the ordering that fills the session, by the explanation of an
+ * unavailable priority, by whole-program validation and by the tests, so none of them can
+ * disagree about what a Push day is.
  */
 internal fun WorkoutSplit.trainsAsFocus(exercise: Exercise): Boolean =
-    exercise.isStrengthWork() && exercise.focusMuscles().any { it in targetMuscles }
+    targetMuscles.any(exercise::trainsAsFocus)
 
 /**
  * Whether [exercise] may occupy a slot in this split at all.

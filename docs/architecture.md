@@ -415,9 +415,11 @@ a `HIGH`-priority muscle has no candidate that trains it as its own purpose, the
 reports it in `GeneratedWorkout.unavailableFocusMuscles` — canonical names, sorted, so the
 list never depends on map iteration or on the device language, and capped at the same three
 entries the focus-muscle line carries — and the session is the accurately labelled
-alternative the ordinary rotation already chose. The suggested-workout card renders one
-localized sentence naming those muscles after the usual explanation, and that rendered text
-is also what a started session stores. The cap is not cosmetic: a restored archive may carry
+alternative the ordinary rotation already chose. The suggested-workout card adds one
+localized sentence naming those muscles, **only when the list is non-empty**, so an
+ordinary session's card is unchanged; the same sentence is appended to the explanation a
+started session stores. Surfacing the whole explanation on every session would be a
+separate product decision, and is not made here. The cap is not cosmetic: a restored archive may carry
 up to 2,000 profile-supplied priority keys, and an uncapped sentence would push the stored
 notes past the archive's own length limit and break the user's next export. Nothing is
 relabelled generically to hide the mismatch, no equipment is borrowed, and no exercise is

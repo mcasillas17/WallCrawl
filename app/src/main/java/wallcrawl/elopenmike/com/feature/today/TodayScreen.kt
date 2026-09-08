@@ -59,6 +59,7 @@ import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.localization.generatedWorkoutRationale
 import wallcrawl.elopenmike.com.core.ui.localization.generatedWorkoutTitle
 import wallcrawl.elopenmike.com.core.ui.localization.labelRes
+import wallcrawl.elopenmike.com.core.ui.localization.unavailableFocusNotice
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 import wallcrawl.elopenmike.com.core.ui.theme.SuccessGreen
@@ -151,7 +152,7 @@ fun TodayScreen(
                 TodayContent(
                     state = state,
                     workoutName = workoutName,
-                    workoutRationale = workoutRationale,
+                    focusNotice = unavailableFocusNotice(state.suggestedWorkout.unavailableFocusMuscles),
                     onStartWorkout = {
                         viewModel.startWorkout(workoutName, workoutRationale, onStartWorkout)
                     },
@@ -172,7 +173,7 @@ fun TodayScreen(
 internal fun TodayContent(
     state: TodayUiState.Success,
     workoutName: String,
-    workoutRationale: String,
+    focusNotice: String?,
     onStartWorkout: () -> Unit,
     onResumeWorkout: () -> Unit,
     onRegenerate: () -> Unit,
@@ -210,7 +211,7 @@ internal fun TodayContent(
             SuggestedWorkoutCard(
                 workout = state.suggestedWorkout,
                 workoutName = workoutName,
-                workoutRationale = workoutRationale,
+                focusNotice = focusNotice,
                 isRegenerating = state.isRegenerating,
                 onStartWorkout = onStartWorkout,
                 onRegenerate = onRegenerate
@@ -457,7 +458,7 @@ private fun ButtonResume(onClick: () -> Unit) {
 private fun SuggestedWorkoutCard(
     workout: GeneratedWorkout,
     workoutName: String,
-    workoutRationale: String,
+    focusNotice: String?,
     isRegenerating: Boolean,
     onStartWorkout: () -> Unit,
     onRegenerate: () -> Unit
@@ -533,16 +534,17 @@ private fun SuggestedWorkoutCard(
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // The same sentence the started session records. It is where a prioritised muscle
-        // nothing available can train is named, so the alternative on the card is explained
-        // to the reader rather than only to the history.
-        Text(
-            text = workoutRationale,
-            fontSize = 13.sp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+        // Only when there is something to say. A prioritised muscle nothing available can
+        // train is named here, so the alternative above is explained to the reader and not
+        // only to the stored session; an ordinary session adds no line at all.
+        focusNotice?.let { notice ->
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = notice,
+                fontSize = 13.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 

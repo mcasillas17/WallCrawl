@@ -37,6 +37,7 @@ import wallcrawl.elopenmike.com.core.ui.localization.ExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.localization.generatedWorkoutRationale
 import wallcrawl.elopenmike.com.core.ui.localization.generatedWorkoutTitle
+import wallcrawl.elopenmike.com.core.ui.localization.unavailableFocusNotice
 import wallcrawl.elopenmike.com.core.ui.theme.WallCrawlTheme
 import wallcrawl.elopenmike.com.feature.today.TodayContent
 import wallcrawl.elopenmike.com.feature.today.TodayUiState
@@ -134,7 +135,44 @@ class GeneratedWorkoutFocusNoticeTest {
      * alone would pass even if no screen rendered it.
      */
     private fun assertTodayCardExplains(locale: Locale, resources: Context, muscle: String) {
-        val workout = suggestedWorkout(unavailableFocusMuscles = listOf(StandardMuscles.CHEST))
+        renderTodayCard(locale, unavailableFocusMuscles = listOf(StandardMuscles.CHEST))
+
+        composeRule
+            .onNodeWithText(
+                resources.getString(R.string.generated_rationale_focus_unavailable, muscle),
+                substring = true
+            )
+            .assertIsDisplayed()
+    }
+
+    /**
+     * An ordinary session adds no line to the card.
+     *
+     * The notice is conditional on purpose: permanently surfacing the explanation would be
+     * a product change this work does not make, and it would leave every Today screenshot
+     * in the README stale.
+     */
+    @Test
+    fun aSupportedSessionAddsNoLineToTheCard() {
+        renderTodayCard(Locale.ENGLISH, unavailableFocusMuscles = emptyList())
+
+        composeRule
+            .onNodeWithText(
+                english.getString(R.string.generated_rationale_focus_unavailable, "Chest"),
+                substring = true
+            )
+            .assertDoesNotExist()
+        // The ordinary explanation is recorded with a started session, not shown here.
+        composeRule
+            .onNodeWithText(
+                english.getString(R.string.generated_rationale_goal_focus, "", ""),
+                substring = true
+            )
+            .assertDoesNotExist()
+    }
+
+    private fun renderTodayCard(locale: Locale, unavailableFocusMuscles: List<String>) {
+        val workout = suggestedWorkout(unavailableFocusMuscles)
         composeRule.setContent {
             InLocale(locale) {
                 TodayContent(
@@ -143,10 +181,7 @@ class GeneratedWorkoutFocusNoticeTest {
                         suggestedWorkout = workout
                     ),
                     workoutName = generatedWorkoutTitle(workout.title),
-                    workoutRationale = generatedWorkoutRationale(
-                        spec = workout.rationale,
-                        unavailableFocusMuscles = workout.unavailableFocusMuscles
-                    ),
+                    focusNotice = unavailableFocusNotice(workout.unavailableFocusMuscles),
                     onStartWorkout = {},
                     onResumeWorkout = {},
                     onRegenerate = {},
@@ -154,13 +189,6 @@ class GeneratedWorkoutFocusNoticeTest {
                 )
             }
         }
-
-        composeRule
-            .onNodeWithText(
-                resources.getString(R.string.generated_rationale_focus_unavailable, muscle),
-                substring = true
-            )
-            .assertIsDisplayed()
     }
 
     private fun suggestedWorkout(unavailableFocusMuscles: List<String>) = GeneratedWorkout(

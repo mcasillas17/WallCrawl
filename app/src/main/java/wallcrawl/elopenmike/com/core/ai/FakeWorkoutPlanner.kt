@@ -116,9 +116,7 @@ class FakeWorkoutPlanner(
     ): List<String> = context.musclePriorities
         .filterValues { it == PriorityLevel.HIGH }
         .keys
-        .filterNot { muscle ->
-            candidates.any { it.isStrengthWork() && muscle in it.focusMuscles() }
-        }
+        .filterNot { muscle -> candidates.any { it.trainsAsFocus(muscle) } }
         .sorted()
         .take(MAX_REPORTED_MUSCLES)
 

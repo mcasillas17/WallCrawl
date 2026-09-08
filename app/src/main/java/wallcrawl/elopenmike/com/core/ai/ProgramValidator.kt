@@ -354,11 +354,6 @@ class ProgramValidator(
         return violations
     }
 
-    /** Approved metadata that also carries the human provenance approval requires. */
-    private fun Exercise.approvedMetadata(): ReviewedExerciseMetadata? = reviewedMetadata
-        ?.takeIf { it.reviewState == ReviewState.APPROVED }
-        ?.takeIf { it.isWellFormedApprovedMetadata() }
-
     /**
      * A prescribed load must trace to something the user confirmed or actually lifted.
      *
