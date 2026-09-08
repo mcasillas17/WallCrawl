@@ -806,6 +806,7 @@ class ReviewedCatalogCoverageTest(private val caseId: String) {
         .put("title", workout.title.toString())
         .put("rationale", workout.rationale.toString())
         .put("focusMuscles", JSONArray(workout.focusMuscles))
+        .put("unavailableFocusMuscles", JSONArray(workout.unavailableFocusMuscles))
         .put("estimatedDurationMinutes", workout.estimatedDurationMinutes)
         .put("exercises", JSONArray(workout.exercises.map {
             JSONObject().put("exerciseId", it.exerciseId)

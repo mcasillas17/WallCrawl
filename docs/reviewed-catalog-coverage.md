@@ -19,6 +19,13 @@ upper-bound experiment, not the actual approved cohort or a content-readiness cl
 
 ## Reproducible band-only PUSH gap
 
+> **Status (2026-09-07):** the mislabelling below is fixed; the equipment gap is not.
+> The band-only inventory still contains no chest or push work, and the planner now says
+> so instead of calling a pulling and core session "Push". The
+> [post-fix result](#post-fix-result-2026-09-07) records the same profile and generation
+> state after the change. Everything above that section is preserved as a dated baseline,
+> not current behavior.
+
 The following baseline was captured before this review expanded or corrected the
 37-record DRAFT cohort, on catalog commit
 `ba0b709cb20430361b2cb33aaadd20998164a916` and application baseline `0f79810`.
@@ -56,7 +63,7 @@ uses `BUILD`, an empty `PRIMARY_ONLY_V1` ledger and review-policy version 1.
 The legacy experiment has no reviewed eligibility result or program state.
 Bodyweight access is not silently added to the explicitly band-only inventory.
 
-### Pre-expansion results
+### Pre-fix baseline: pre-expansion results (2026-09-05)
 
 | Mode | Candidate count | Synthetic approvals | Actual split | Selected IDs | Genuine direct-primary push selected |
 | --- | ---: | ---: | --- | --- | ---: |
@@ -79,12 +86,13 @@ a push.
 
 ### Two separate follow-ups
 
-**Split/goal coverage:** the existing legacy planner can label a session `PUSH`
-without selecting genuine push work. Split membership considers descriptive
-secondary muscles; shoulder involvement in a row or anti-rotation movement can
-therefore make that split fillable. This is a concrete planner/product follow-up,
-not a claim that schema-valid proposals satisfy the requested movement goal.
-No planner or validation policy is changed by this catalog review.
+**Split/goal coverage — resolved 2026-09-07, see the [post-fix result](#post-fix-result-2026-09-07):**
+the legacy planner could label a session `PUSH` without selecting genuine push work.
+Split membership considered descriptive secondary muscles; shoulder involvement in a row
+or anti-rotation movement therefore made that split fillable. This was a concrete
+planner/product follow-up, not a claim that schema-valid proposals satisfy the requested
+movement goal. No planner or validation policy was changed by this catalog review itself;
+the fix landed separately and changed no catalog fact.
 
 **Fixed-anchor equipment:** some band variations require a fixed anchor that a
 generic `Resistance Band` inventory does not establish. An incomplete equipment
@@ -99,7 +107,7 @@ Resolving an anchor representation would not create a missing band chest push.
 Likewise, changing split selection would not supply missing equipment. These are
 separate decisions, and production human-approved reviewed coverage remains zero.
 
-### Post-expansion results
+### Pre-fix baseline: post-expansion results (2026-09-07, before the focus fix)
 
 The same band-only profile and 0/0 completion/generation state were replayed
 against the expanded 211-DRAFT catalog, including a separate experiment that
@@ -119,6 +127,34 @@ anchor-dependent IDs are `banded-face-pull`, `banded-kickback`,
 `banded-lat-pulldown`, `banded-pallof-press`, `banded-row` and `banded-woodchop`.
 They remain in the catalog and ledger, not in the proposed reviewed metadata pool.
 
+### Post-fix result (2026-09-07)
+
+The identical profile, catalog, `completedWorkoutCount` of 0 and generation index 0 were
+replayed after split selection, exercise selection and whole-program validation were put
+on one focus rule: a split is genuinely trained when a strength exercise's **own-purpose**
+muscle — the approved `directPrimaryMuscle` where the reviewed contract applies, the
+legacy `primaryMuscles` otherwise — is one of the split's target muscles. Descriptive
+secondary muscles no longer establish a split.
+
+| Mode | Candidate count | Synthetic approvals | Actual split | Selected IDs | Genuine direct-primary push selected | Reported unavailable priority |
+| --- | ---: | ---: | --- | --- | ---: | --- |
+| Legacy, reviewed feature disabled | 19 | 0 | `UPPER_BODY` | `banded-lat-pulldown`, `banded-row`, `band-pull-apart`, `banded-face-pull`, `banded-dead-bug` | 0 | `Chest` |
+| All-DRAFT structural upper bound | 12 | 211 | `UPPER_BODY` | `band-pull-apart`, `banded-dead-bug` | 0 | `Chest` |
+| AI-ready synthetic subset | 11 | 186 | `UPPER_BODY` | `band-pull-apart`, `banded-dead-bug` | 0 | `Chest` |
+
+The candidate counts, the eligible pool and the equipment inventory are unchanged: no
+band chest exercise was created, no anchor token was invented, and Bodyweight was not
+added to the explicitly band-only inventory. What changed is that the session is now
+labelled with a split its own exercises train, its focus muscles are the back work it
+actually contains, and `Chest` is reported as an unavailable priority so the reader is
+told why the emphasis they asked for is missing. `ProgramValidator` rejects the original
+proposal with `UNSUPPORTED_WORKOUT_FOCUS`, so it can no longer reach display or
+persistence.
+
+The pre-fix tables above are retained as dated baselines. The
+[fixed-anchor equipment gap](#two-separate-follow-ups) is untouched and still open:
+correcting split selection supplies no missing anchor.
+
 ## Full-pool prospective profiles
 
 These are 16 declared test profiles, not an exhaustive capability/equipment
@@ -130,7 +166,7 @@ passed `ProgramValidator` without repair; typed no-plan outcomes remained explic
 | Profile | All-DRAFT candidates | AI-ready candidates | AI-ready selected IDs or outcome |
 | --- | ---: | ---: | --- |
 | Bodyweight, uncalibrated push | 38 | 34 | `diamond-push-up`, `push-up`, `wide-push-up` |
-| Band-only push gap | 12 | 11 | `band-pull-apart`, `banded-dead-bug`; no genuine push |
+| Band-only push gap | 12 | 11 | `band-pull-apart`, `banded-dead-bug`; no genuine push, so the session is labelled `UPPER_BODY` and reports `Chest` unavailable |
 | Dumbbells + bench | 38 | 37 | `arnold-press`, `dumbbell-bench-press`, `dumbbell-shoulder-press`, `dumbbell-fly`, `dumbbell-lateral-raise` |
 | Machines | 28 | 26 | `machine-chest-press`, `machine-shoulder-press`, `pec-deck`, `machine-lateral-raise`, `captains-chair-knee-raise` |
 | Full gym | 211 | 186 | `barbell-bench-press`, `overhead-press`, `incline-bench-press`, `cable-fly`, `cable-lateral-raise`, `cable-triceps-pushdown` |

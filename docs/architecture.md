@@ -268,6 +268,12 @@ mutates no ledger, and never credits a proposal as completed work.
 The unit is one session. There is no multi-session horizon in version 1, so nothing
 reserves allowance against work that has not been proposed.
 
+Two rules are internal consistency rather than program design, so they are always on:
+duration agreement, and `UNSUPPORTED_WORKOUT_FOCUS` — the advertised split must be one the
+selected exercises train, under the same [focus contract](#advertised-focus) the planner
+uses. A caller cannot reasonably ask for a session whose title contradicts its content.
+Neither is a claim about pattern coverage, and neither is a safety judgement.
+
 Program-design constraints are **declared**, never universal. `SessionProgramConstraints`
 carries them: `uniqueExerciseIds` defaults on, because two instances of one id inside a
 generated session cannot be told apart in its record and would be counted twice by
@@ -308,7 +314,9 @@ the same estimator. It never weakens a constraint, widens the candidate set, cha
 selection, invents a load, alters effort or rest, or falls back off the reviewed path; when
 the remainder cannot leave every affected exercise a set it fails closed rather than
 dropping one. Repair is disabled at workout start, so a displayed plan is never silently
-replaced.
+replaced. It also cannot destroy or conceal focus coverage: reducing sets never removes an
+exercise, and a focus violation is not an exceeded allowance, so its presence blocks repair
+outright.
 
 There is no numeric physiological fatigue budget here, no summation of the legacy ordinal
 `programming.fatigueScore`, no timestamp-derived readiness or overload rule, and no
@@ -345,13 +353,15 @@ settings for editing these allowances, RIR bands, or rest-class defaults. Explic
 stored user rest preferences win, but timer add/skip controls do not persist preferences.
 State and capability can reduce sets but cannot change or invent a load.
 
-Within a split, compound slots are chosen first by split-primary match inside the
+Within a split, compound slots are chosen first by genuine focus support inside the
 compound pool, then by the reviewed capability soft-penalty bit, then by experience,
 fatigue, and stable ID, while still spreading work across movement patterns so a
 session is not the same lift three times. Remaining accessory slots prefer exercises
 that train the split directly, then isolation work, then the presence of programming
 metadata, then that same capability penalty, experience penalty, fatigue, and stable
-ID. Evidence suppresses only the penalized candidate's one-bit capability penalty; it
+ID. Because focus support is the first key in both passes and at least one accessory
+slot always remains, a supporting exercise is always reachable; the planner states that
+as an invariant rather than leaving it to be re-derived from the two comparators. Evidence suppresses only the penalized candidate's one-bit capability penalty; it
 never adds candidates, never removes candidates, and never outweighs the harder split
 or mechanics ordering that already happened before it.
 The legacy `programming.fatigueScore` is an ordinal product ranking label, not a measured
@@ -366,6 +376,38 @@ produced push days padded with unrelated work — but the planner only fails whe
 nothing at all is trainable, so failure never depends on what the user
 prioritized. Rotation is seeded from completed-workout count so it advances
 across process death, not just within a session.
+
+### Advertised focus
+
+A split is a promise about what a session trains, and `WorkoutFocus.kt` holds the one
+rule that decides whether the promise is true. A split is **genuinely trained** by an
+exercise when that exercise is strength work and one of the muscles it trains as its own
+purpose is in the split's `targetMuscles`. Own-purpose means the approved
+`directPrimaryMuscle` where the reviewed contract applies — `APPROVED` plus well-formed
+human provenance — and the legacy `primaryMuscles` otherwise, so a `DRAFT` record drives
+nothing here either. Descriptive secondary muscles are excluded.
+
+Split fillability, both ordering passes, the selection invariant and whole-program
+validation all read that one predicate, so a split the planner considered fillable and a
+split the validator accepts cannot mean different things. The accessory pool stays
+broader: once the focus is established, an exercise that only brushes the split is still
+legal work, it simply can never be the evidence for the name. The rule is muscle-based
+rather than pattern-based because only 131 of the 302 bundled entries carry a movement
+pattern and genuine pushes such as `archer-push-up` and `handstand-push-up` carry none;
+requiring one would invent an absence. It is a truthfulness rule about one label, not a
+claim that a session must cover every pattern, that repeated movement is harmful, or that
+a supported session is medically appropriate.
+
+Muscle priorities stay soft while equipment, exclusions and capabilities stay hard. When
+a `HIGH`-priority muscle has no candidate that trains it as its own purpose, the planner
+reports it in `GeneratedWorkout.unavailableFocusMuscles` — canonical names, sorted, so the
+list never depends on map iteration or on the device language — and the session is the
+accurately labelled alternative the ordinary rotation already chose. The screen adds one
+localized sentence naming those muscles after the usual explanation, and that rendered
+text is what a started session stores. Nothing is relabelled generically to hide the
+mismatch, no equipment is borrowed, and no exercise is invented. When no split is
+supported at all, the existing typed `NO_CANDIDATES_FOR_ANY_SPLIT` outcome and its
+resource-backed Today copy apply instead.
 
 Cardio machines, distance work, and stretches are excluded from automatic
 selection while remaining fully available in the catalog and in custom

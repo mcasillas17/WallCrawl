@@ -27,12 +27,12 @@ network connection, or companion device.
 | Area | Status | Remaining gap |
 | --- | --- | --- |
 | Android foundation | Room schema 12 with a continuous migration chain; implicit Android backup disabled with legacy and modern all-domain exclusions; user-owned export, restore, and delete-all shipped | OEM transfer enforcement varies; restore is empty-destination only; `targetSdk` remains 35 while `compileSdk` is 37 |
-| Catalog and reviewed content | All 302 entries have per-ID AI evidence records; 906 SVG frames and 131 legacy programming entries unchanged; 211 reviewed metadata drafts | Zero human approvals; 81 content/policy decisions pending, 35 entries outside automatic-strength scope; band-only push and equipment-representation gaps remain |
+| Catalog and reviewed content | All 302 entries have per-ID AI evidence records; 906 SVG frames and 131 legacy programming entries unchanged; 211 reviewed metadata drafts | Zero human approvals; 81 content/policy decisions pending, 35 entries outside automatic-strength scope; the band-only inventory still contains no chest work and the equipment-representation gap remains, though the session is now labelled truthfully |
 | Onboarding and profile | Shipped as an eight-step flow with seven movement-capability questions, plus export, restore, and delete-all controls | Restore requires a fresh start, so it cannot merge into an installation that already holds data |
 | Templates and logging | Shipped with frozen template snapshots, type-aware outcomes, RPE/RIR, typed stops, and a local rest timer | Template targets are only partly editable; unsaved drafts are not restored after process death |
 | Localization | English and neutral Latin American Spanish shipped across the whole interface, the 302-exercise catalog, generated workout text, and accessibility labels, selectable from onboarding and Profile through Android's per-app language mechanism | Only two languages; historical session text stays in the language it was written in, by design |
 | Progress and history | Calendar-week activity, separately labelled reviewed primary dose, non-additive involvement, records, trends, summaries, and recent history implemented | Workout-summary navigation and history drill-down remain incomplete; production reviewed muscle allocation is unavailable while metadata remains unapproved |
-| Deterministic coach | Eligibility, experience ranking, capability evidence, weekly ledger, state-based dose/effort/rest, and whole-program validation with recorded recommendation provenance shipped; reviewed-only rules remain behind a disabled gate | Human approval, release corpus, progression, deload, and rollout gates |
+| Deterministic coach | Eligibility, experience ranking, capability evidence, weekly ledger, state-based dose/effort/rest, whole-program validation with recorded recommendation provenance, and a shared advertised-focus contract shipped; reviewed-only rules remain behind a disabled gate | Human approval, release corpus, progression, deload, and rollout gates |
 | Planner evaluation | Versioned corpus, replay harness, importer unit tests, real pinned-upstream regeneration check, JVM tests, and Android CI shipped | `concurrent-activity` and policy-specific assertions |
 | Optional local model | Not started | Blocked on a stable deterministic release |
 | Health Connect and Wear OS | Not started; only `:app` exists | Shared modules, privacy controls, validation, substitutions, protocol, and device evidence |
@@ -233,6 +233,11 @@ Package 3 is **not complete**.
 2. Resolve the separately documented [band-only push and fixed-anchor gaps](docs/reviewed-catalog-coverage.md),
    specialized equipment requirements and selected joint-constraint mappings. No missing
    token is filled with a guessed generic apparatus, and no planner/artwork fix is implied.
+   The **mislabelling** half of the band-only finding is closed: the planner no longer
+   advertises `PUSH` for a pool whose only push evidence is a descriptive secondary muscle,
+   and it reports the unavailable `Chest` priority instead. The **content** half is
+   unchanged — there is still no band chest exercise and no anchor vocabulary — so this
+   task stays open on exactly the evidence it always concerned.
 3. Human-inspect the source-bound [full-catalog evidence ledger](docs/research/2026-09-07-full-exercise-catalog-review.json),
    including directed edges, complexity, support, impact, prescription shape, withheld
    blocks and artwork-reference restrictions. AI judgments and software checks are not
@@ -283,7 +288,11 @@ undefined.
    accounting and identity integrity, not a claim about repeated movement. Progression-family
    uniqueness and required movement patterns are inert unless a caller declares them, so no
    workout is required to cover any pattern and the planner's pattern spreading stays a
-   ranking preference.
+   ranking preference. `UNSUPPORTED_WORKOUT_FOCUS` was added later as an always-on software
+   invariant of the same class as duration agreement — the advertised split must be one the
+   selected exercises train — sharing the planner's
+   [focus contract](docs/architecture.md#advertised-focus) rather than adding a competing
+   classifier. It is not a pattern-coverage rule.
 3. The whole proposal is attributed prospectively to approved `directPrimaryMuscle` values
    under `PRIMARY_ONLY_V1` and compared **once per muscle** to the configured allowance,
    instead of letting each exercise spend the same remainder. Completed credit and proposed
@@ -421,15 +430,17 @@ honest, and the flag change contains no unrelated policy expansion.
 ### 8. Complete capability-aware deterministic ranking
 
 **Status:** Partly shipped. Experience ordering, reviewed capability soft-penalty suppression,
-and legacy primary-before-secondary split ordering exist; reviewed direct-primary semantics,
-frequency, recency, and supported-regression preference do not.
+primary-before-secondary split ordering, and the shared focus contract that ordering now reads
+exist; frequency, recency, and supported-regression preference do not.
 
 **Depends on:** Package 7 for production reviewed behavior.
 
 **Implementation tasks:**
 
-1. Preserve the shipped primary-before-secondary comparator and make the reviewed path use the
-   approved `directPrimaryMuscle` contract rather than broad legacy muscle lists.
+1. **Complete:** the primary-before-secondary comparator is preserved and now reads the same
+   [focus contract](docs/architecture.md#advertised-focus) as split selection and validation,
+   which resolves to the approved `directPrimaryMuscle` on the reviewed path and to the legacy
+   list otherwise. Production ordering is unchanged, because the bundled cohort is all `DRAFT`.
 2. Prefer approved supported regressions when capability evidence or a limited preference
    makes them the clearer fit.
 3. Define training frequency and recency as bounded, explainable scheduling preferences

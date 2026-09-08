@@ -33,8 +33,19 @@ entire proposal — including several exercises sharing one direct primary, an e
 reached allowance, and one set over it — rather than each prescription against the same
 completed ledger.
 
-Duplicate exercise/family and movement coverage are asserted as **declared** session
-constraints, both in their declared and their default-inert form; duration is asserted
+Advertised focus is asserted separately, in `WorkoutFocusCoverageTest`, and against the
+shipped predicate rather than a classifier written for the test: the committed band-only
+reproduction, secondary-only pools for every split, genuine bodyweight/dumbbell/machine
+/full-gym push days, every prioritised muscle across every split, rotation and
+regeneration over a full cycle, and the original misleading proposal being refused with
+`UNSUPPORTED_WORKOUT_FOCUS`. That rule is a software invariant about one label — the
+[focus contract](architecture.md#advertised-focus) — and not a coverage requirement over
+patterns. `ReviewedCatalogCoverageTest` asserts the same predicate on every reviewed case,
+keeping its stricter reviewed pattern premise as a recorded observation rather than a
+product rule.
+
+Duplicate exercise/family and movement-pattern coverage are asserted as **declared**
+session constraints, both in their declared and their default-inert form; duration is asserted
 against the named `DURATION_ESTIMATOR_V1` and its ±1-minute tolerance, with an explicit
 case proving a proposal far from the requested duration is not rejected for that.
 `PRIMARY_ONLY_V1`, set caps, RIR bands, and rest seconds are product-policy expectations,
@@ -190,10 +201,13 @@ selected IDs, mode/state, raw whole-program validation and typed no-plan outcome
 This suite reads the per-ID evidence ledger for content readiness; readiness is not
 human approval. Known pending records are not promoted in the AI-ready experiment.
 A separate real-planner sole-candidate probe covers every catalog ID, without
-equating that result to full-pool selection. The band-only PUSH case is an explicit
-negative coverage regression: a `PUSH` label and a schema-valid proposal do not
-prove genuine push work. The missing push and fixed-anchor representation remain
-open, and selected joint restrictions continue to fail closed without a fallback.
+equating that result to full-pool selection. The band-only case remains an explicit
+negative coverage regression: there is still no genuine band push, and a schema-valid
+proposal never proved otherwise. Since the [focus contract](architecture.md#advertised-focus)
+landed, that case additionally asserts a truthful non-`PUSH` label and a reported
+unavailable `Chest` priority. The missing push and fixed-anchor representation remain
+open — correcting the label supplied neither — and selected joint restrictions continue
+to fail closed without a fallback.
 
 ## Test entry points
 
@@ -203,6 +217,7 @@ Focused contract / corpus coverage:
 ./gradlew testDebugUnitTest \
   --tests '*PlannerFixture*' \
   --tests '*FakeWorkoutPlannerTest' \
+  --tests '*WorkoutFocusCoverageTest' \
   --tests '*ExerciseFilterTest' \
   --rerun-tasks --no-daemon
 ```

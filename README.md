@@ -626,7 +626,8 @@ The unit suite covers catalog filtering, context construction, capability
 normalization and persistence, onboarding/Profile drafts, planner invariance,
 bounded history
 analysis, planner constraints and type-aware prescriptions, split selection and
-its failure reasons, the muscle vocabulary and the shipped catalog's conformance
+its failure reasons, whether a session's advertised focus is one its exercises
+actually train, the muscle vocabulary and the shipped catalog's conformance
 to it, generated-workout validation, template validation, atomic persistence
 boundaries, progress and personal-record calculations, attribution loading,
 Today state, duration calculation, and visual-provider mapping.
