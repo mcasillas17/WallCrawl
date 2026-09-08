@@ -269,10 +269,12 @@ The unit is one session. There is no multi-session horizon in version 1, so noth
 reserves allowance against work that has not been proposed.
 
 Two rules are internal consistency rather than program design, so they are always on:
-duration agreement, and `UNSUPPORTED_WORKOUT_FOCUS` — the advertised split must be one the
-selected exercises train, under the same [focus contract](#advertised-focus) the planner
-uses. A caller cannot reasonably ask for a session whose title contradicts its content.
-Neither is a claim about pattern coverage, and neither is a safety judgement.
+duration agreement, and `UNSUPPORTED_WORKOUT_FOCUS` — every claim the card makes about what
+a session trains must hold, under the same [focus contract](#advertised-focus) the planner
+uses. That covers both the advertised split and each name on the focus-muscle line beneath
+it, because both are displayed and both are copied onto the started session. A caller cannot
+reasonably ask for a session whose title contradicts its content. Neither rule is a claim
+about pattern coverage, and neither is a safety judgement.
 
 Program-design constraints are **declared**, never universal. `SessionProgramConstraints`
 carries them: `uniqueExerciseIds` defaults on, because two instances of one id inside a
@@ -387,27 +389,40 @@ purpose is in the split's `targetMuscles`. Own-purpose means the approved
 human provenance — and the legacy `primaryMuscles` otherwise, so a `DRAFT` record drives
 nothing here either. Descriptive secondary muscles are excluded.
 
-Split fillability, both ordering passes, the selection invariant and whole-program
-validation all read that one predicate, so a split the planner considered fillable and a
-split the validator accepts cannot mean different things. The accessory pool stays
-broader: once the focus is established, an exercise that only brushes the split is still
-legal work, it simply can never be the evidence for the name. The rule is muscle-based
-rather than pattern-based because only 131 of the 302 bundled entries carry a movement
-pattern and genuine pushes such as `archer-push-up` and `handstand-push-up` carry none;
-requiring one would invent an absence. It is a truthfulness rule about one label, not a
-claim that a session must cover every pattern, that repeated movement is harmful, or that
-a supported session is medically appropriate.
+Split fillability, both ordering passes, the selection invariant, the muscle line the card
+shows and whole-program validation all read that one predicate, so a split the planner
+considered fillable and a split the validator accepts cannot mean different things. Slot
+eligibility is a deliberate **superset** — `canFill` — so an exercise that only brushes the
+split is still legal accessory work once the focus is established, while the candidate that
+made a split fillable can never be dropped from the pool that fills it. Both halves of an
+exercise's muscle description resolve the same way, so the reviewed path never mixes an
+approved `directPrimaryMuscle` with a legacy secondary list.
+
+The rule is muscle-based rather than pattern-based because only 131 of the 302 bundled
+entries carry a movement pattern and genuine pushes such as `archer-push-up` and
+`handstand-push-up` carry none; requiring one would invent an absence. It is a truthfulness
+rule about one label, not a claim that a session must cover every pattern, that repeated
+movement is harmful, or that a supported session is medically appropriate.
+
+Because focus evidence is primary muscles only, an exercise whose upstream name is an
+umbrella term carries its `MuscleVocabulary` representative — `Legs` → Quadriceps,
+`Posterior Chain` → Hamstrings, `Full Body` → Core. The groups demoted to secondary keep it
+eligible for those splits' accessory slots but do not establish a split or clear a `HIGH`
+priority.
 
 Muscle priorities stay soft while equipment, exclusions and capabilities stay hard. When
 a `HIGH`-priority muscle has no candidate that trains it as its own purpose, the planner
 reports it in `GeneratedWorkout.unavailableFocusMuscles` — canonical names, sorted, so the
-list never depends on map iteration or on the device language — and the session is the
-accurately labelled alternative the ordinary rotation already chose. The screen adds one
-localized sentence naming those muscles after the usual explanation, and that rendered
-text is what a started session stores. Nothing is relabelled generically to hide the
-mismatch, no equipment is borrowed, and no exercise is invented. When no split is
-supported at all, the existing typed `NO_CANDIDATES_FOR_ANY_SPLIT` outcome and its
-resource-backed Today copy apply instead.
+list never depends on map iteration or on the device language, and capped at the same three
+entries the focus-muscle line carries — and the session is the accurately labelled
+alternative the ordinary rotation already chose. The suggested-workout card renders one
+localized sentence naming those muscles after the usual explanation, and that rendered text
+is also what a started session stores. The cap is not cosmetic: a restored archive may carry
+up to 2,000 profile-supplied priority keys, and an uncapped sentence would push the stored
+notes past the archive's own length limit and break the user's next export. Nothing is
+relabelled generically to hide the mismatch, no equipment is borrowed, and no exercise is
+invented. When no split is supported at all, the existing typed
+`NO_CANDIDATES_FOR_ANY_SPLIT` outcome and its resource-backed Today copy apply instead.
 
 Cardio machines, distance work, and stretches are excluded from automatic
 selection while remaining fully available in the catalog and in custom

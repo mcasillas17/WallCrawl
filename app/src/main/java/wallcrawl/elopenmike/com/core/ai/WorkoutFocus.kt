@@ -40,6 +40,21 @@ internal fun Exercise.focusMuscles(): List<String> = reviewedMetadata
     ?: primaryMuscles
 
 /**
+ * The muscles [this] involves without training them as its own purpose.
+ *
+ * The same approved-then-legacy resolution as [focusMuscles], so both halves of an
+ * exercise's muscle description come from one source. Reading the approved record's
+ * `directPrimaryMuscle` while still reading the legacy secondary list would mix two
+ * classifications of the same exercise.
+ */
+internal fun Exercise.involvedMuscles(): List<String> = reviewedMetadata
+    ?.takeIf { it.reviewState == ReviewState.APPROVED }
+    ?.takeIf { it.isWellFormedApprovedMetadata() }
+    ?.descriptiveSecondaryMuscles
+    ?.toList()
+    ?: secondaryMuscles
+
+/**
  * Whether [exercise] genuinely supports this split's advertised focus.
  *
  * Used by split selection, by the ordering that fills the session, by whole-program
@@ -47,6 +62,22 @@ internal fun Exercise.focusMuscles(): List<String> = reviewedMetadata
  */
 internal fun WorkoutSplit.trainsAsFocus(exercise: Exercise): Boolean =
     exercise.isStrengthWork() && exercise.focusMuscles().any { it in targetMuscles }
+
+/**
+ * Whether [exercise] may occupy a slot in this split at all.
+ *
+ * Deliberately a **superset** of [trainsAsFocus]: once the focus is genuinely established,
+ * an exercise that only brushes the split is still legal accessory work. It can never be
+ * the evidence for the split's name.
+ *
+ * The superset relation is what keeps fillability and selection honest. A predicate that
+ * read the approved `directPrimaryMuscle` for fillability and the legacy muscle lists for
+ * slot eligibility could call a split fillable and then drop the only candidate that made
+ * it so, which is the mismatch this whole contract exists to remove.
+ */
+internal fun WorkoutSplit.canFill(exercise: Exercise): Boolean =
+    trainsAsFocus(exercise) ||
+        (exercise.isStrengthWork() && exercise.involvedMuscles().any { it in targetMuscles })
 
 /**
  * Whether this belongs in a prescribed strength slot with sets and reps.

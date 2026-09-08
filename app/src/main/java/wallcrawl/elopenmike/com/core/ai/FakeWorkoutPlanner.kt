@@ -103,6 +103,12 @@ class FakeWorkoutPlanner(
      * Sorted by canonical name, so the order never depends on map iteration or on the
      * device language. Priorities stay soft; nothing here relaxes equipment, exclusion or
      * capability constraints to make a muscle available.
+     *
+     * Capped at the same three entries [extractFocusMuscles] reports, and for a stronger
+     * reason than symmetry: the rendered sentence is stored as the started session's notes,
+     * and a restored archive may legitimately carry up to 2,000 profile-supplied priority
+     * keys of up to 200 characters each. Uncapped, one such profile would produce notes past
+     * the archive's own length limit and break the user's next export.
      */
     private fun unavailableFocusMuscles(
         context: WorkoutGenerationContext,
@@ -114,6 +120,7 @@ class FakeWorkoutPlanner(
             candidates.any { it.isStrengthWork() && muscle in it.focusMuscles() }
         }
         .sorted()
+        .take(MAX_REPORTED_MUSCLES)
 
     private fun determineSplit(
         context: WorkoutGenerationContext,
@@ -166,20 +173,6 @@ class FakeWorkoutPlanner(
     private fun rotationSeed(context: WorkoutGenerationContext, generationIndex: Int): Int =
         context.completedWorkoutCount + generationIndex
 
-    /**
-     * Whether this may occupy a slot in [split] at all.
-     *
-     * Broader than [trainsAsFocus] on purpose: once the focus is genuinely established, an
-     * exercise that only brushes the split is still legal accessory work. What it can never
-     * do is be the evidence for the split's name.
-     */
-    private fun Exercise.trains(split: WorkoutSplit): Boolean =
-        isStrengthWork() &&
-            (
-                primaryMuscles.any { it in split.targetMuscles } ||
-                    secondaryMuscles.any { it in split.targetMuscles }
-                )
-
     private fun selectExercisesForSplit(
         split: WorkoutSplit,
         candidates: List<Exercise>,
@@ -187,11 +180,9 @@ class FakeWorkoutPlanner(
     ): List<Exercise> {
         // A candidate that trains none of the split's muscles is not a substitute for one that
         // does. Widening back to the whole catalog is what used to hand a Push day whatever
-        // sorted first; determineSplit has already guaranteed this split is fillable.
-        val matchingCandidates = candidates.filter { it.trains(split) }
-        check(matchingCandidates.isNotEmpty()) {
-            "Split ${split.name} was selected without any matching candidate."
-        }
+        // sorted first. `canFill` is a superset of the fillability rule `determineSplit`
+        // already applied, so the candidate that made this split fillable is always here.
+        val matchingCandidates = candidates.filter { split.canFill(it) }
 
         val exerciseCountTarget = when {
             context.preferredWorkoutDurationMinutes <= 35 -> 3
@@ -350,11 +341,23 @@ class FakeWorkoutPlanner(
         else -> WorkoutEmphasis.CONDITIONING
     }
 
+    /**
+     * The muscle line the card shows under the title, and what the session records.
+     *
+     * Reads the same own-purpose muscles the focus contract does, so the reviewed path
+     * names the approved direct primary rather than the broad legacy list. Whole-program
+     * validation holds this line to the plan, and it could not do that against a second
+     * classification.
+     */
     private fun extractFocusMuscles(exercises: List<Exercise>): List<String> {
         return exercises
-            .flatMap { it.primaryMuscles }
+            .flatMap { it.focusMuscles() }
             .distinct()
-            .take(3)
+            .take(MAX_REPORTED_MUSCLES)
     }
 
+    private companion object {
+        /** How many muscle names a card line or explanation may carry. */
+        const val MAX_REPORTED_MUSCLES = 3
+    }
 }

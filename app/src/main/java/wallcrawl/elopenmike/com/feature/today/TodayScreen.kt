@@ -151,6 +151,7 @@ fun TodayScreen(
                 TodayContent(
                     state = state,
                     workoutName = workoutName,
+                    workoutRationale = workoutRationale,
                     onStartWorkout = {
                         viewModel.startWorkout(workoutName, workoutRationale, onStartWorkout)
                     },
@@ -163,10 +164,15 @@ fun TodayScreen(
     }
 }
 
+/**
+ * The success body. Visible to the test source set so a screen test can render the real
+ * card against a state it supplies, rather than asserting on a composable in isolation.
+ */
 @Composable
-private fun TodayContent(
+internal fun TodayContent(
     state: TodayUiState.Success,
     workoutName: String,
+    workoutRationale: String,
     onStartWorkout: () -> Unit,
     onResumeWorkout: () -> Unit,
     onRegenerate: () -> Unit,
@@ -204,6 +210,7 @@ private fun TodayContent(
             SuggestedWorkoutCard(
                 workout = state.suggestedWorkout,
                 workoutName = workoutName,
+                workoutRationale = workoutRationale,
                 isRegenerating = state.isRegenerating,
                 onStartWorkout = onStartWorkout,
                 onRegenerate = onRegenerate
@@ -450,6 +457,7 @@ private fun ButtonResume(onClick: () -> Unit) {
 private fun SuggestedWorkoutCard(
     workout: GeneratedWorkout,
     workoutName: String,
+    workoutRationale: String,
     isRegenerating: Boolean,
     onStartWorkout: () -> Unit,
     onRegenerate: () -> Unit
@@ -522,6 +530,17 @@ private fun SuggestedWorkoutCard(
                 .joinToString(stringResource(R.string.detail_separator)),
             fontSize = 15.sp,
             fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // The same sentence the started session records. It is where a prioritised muscle
+        // nothing available can train is named, so the alternative on the card is explained
+        // to the reader rather than only to the history.
+        Text(
+            text = workoutRationale,
+            fontSize = 13.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 

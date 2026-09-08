@@ -15,6 +15,7 @@ import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.model.PlannedExercise
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
 import wallcrawl.elopenmike.com.core.model.RepRange
+import wallcrawl.elopenmike.com.core.model.ReviewState
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
@@ -198,6 +199,51 @@ class WorkoutFocusCoverageTest {
                 .that(selected.any { workout.title.split.trainsAsFocus(it) })
                 .isTrue()
         }
+    }
+
+    @Test
+    fun anApprovedDirectPrimaryAbsentFromTheLegacyLists_stillFillsItsSplit() = runTest {
+        // Reviewed metadata exists partly to correct legacy misclassification, so an
+        // approved direct primary need not appear in the legacy lists at all. Fillability
+        // reads the approved value; if slot eligibility read only the legacy lists, the one
+        // candidate that made the split fillable would be dropped and the run would die on
+        // an internal invariant instead of planning.
+        val corrected = catalog.first { it.id == "push-up" }.copy(
+            id = "corrected-primary",
+            primaryMuscles = listOf("Serratus"),
+            secondaryMuscles = listOf("Serratus"),
+            reviewedMetadata = syntheticReviewedMetadata(
+                reviewState = ReviewState.APPROVED,
+                directPrimaryMuscle = StandardMuscles.CHEST,
+                descriptiveSecondaryMuscles = setOf(StandardMuscles.TRICEPS)
+            )
+        )
+        val context = WorkoutGenerationContext(
+            userProfile = factory.create(fixture("bodyweight-beginner")).userProfile,
+            allowedExercises = listOf(corrected)
+        )
+
+        val workout = FakeWorkoutPlanner().generateWorkout(context)
+
+        assertThat(workout.title.split).isEqualTo(WorkoutSplit.PUSH)
+        assertThat(workout.exercises.map { it.exerciseId }).containsExactly(corrected.id)
+        assertThat(workout.focusMuscles).containsExactly(StandardMuscles.CHEST)
+    }
+
+    @Test
+    fun anOversizedPriorityMap_reportsABoundedExplanation() = runTest {
+        // A restored archive may carry up to 2,000 profile-supplied priority keys. The
+        // rendered sentence becomes the started session's notes, which the archive itself
+        // caps, so what is reported has to stay bounded.
+        val context = bandOnlyContext()
+        val flooded = context.copy(
+            musclePriorities = (1..2_000).associate { "Unknown muscle $it" to PriorityLevel.HIGH }
+        )
+
+        val workout = FakeWorkoutPlanner().generateWorkout(flooded)
+
+        assertThat(workout.unavailableFocusMuscles).hasSize(3)
+        assertThat(workout.unavailableFocusMuscles).isInOrder()
     }
 
     // endregion

@@ -535,6 +535,44 @@ class ProgramValidatorTest {
     }
 
     @Test
+    fun aFocusMuscleNoSelectedExerciseTrains_isRejected() = runTest {
+        // The muscle line under the title is the card's other claim, and it is copied onto
+        // the started session. Naming Lats on a chest press is the same defect as calling a
+        // row a Push day.
+        val press = syntheticExerciseWithoutReviewedMetadata("press").copy(
+            primaryMuscles = listOf(StandardMuscles.CHEST),
+            secondaryMuscles = listOf(StandardMuscles.TRICEPS)
+        )
+        val plan = validatedWorkout(
+            exercises = listOf(repetitionPlan(press.id)),
+            focusMuscles = listOf(StandardMuscles.CHEST, StandardMuscles.LATS)
+        )
+
+        val result = validate(plan, validatorContext(listOf(press)))
+
+        assertThat(result.codes())
+            .containsExactly(ProgramViolationCode.UNSUPPORTED_WORKOUT_FOCUS)
+        assertThat((result as ProgramValidationResult.Invalid).violations.single().detail)
+            .isEqualTo(StandardMuscles.LATS)
+    }
+
+    @Test
+    fun focusMusclesTheSelectionDoesTrain_areAccepted() = runTest {
+        val press = syntheticExerciseWithoutReviewedMetadata("press").copy(
+            primaryMuscles = listOf(StandardMuscles.CHEST),
+            secondaryMuscles = listOf(StandardMuscles.TRICEPS)
+        )
+        val plan = validatedWorkout(
+            exercises = listOf(repetitionPlan(press.id)),
+            focusMuscles = listOf(StandardMuscles.CHEST)
+        )
+
+        val result = validate(plan, validatorContext(listOf(press)))
+
+        assertThat(result).isInstanceOf(ProgramValidationResult.Valid::class.java)
+    }
+
+    @Test
     fun aSplitOneSelectedExerciseTrains_isAccepted() = runTest {
         val press = syntheticExerciseWithoutReviewedMetadata("press").copy(
             primaryMuscles = listOf(StandardMuscles.CHEST),

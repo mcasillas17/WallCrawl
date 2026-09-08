@@ -21,13 +21,25 @@ import org.junit.runner.RunWith
 import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.exercise.localization.ExerciseLocalizationParser
 import wallcrawl.elopenmike.com.core.exercise.localization.ExerciseLocalizationStore
+import wallcrawl.elopenmike.com.core.model.ExercisePrescription
+import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
+import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
+import wallcrawl.elopenmike.com.core.model.PlannedExercise
+import wallcrawl.elopenmike.com.core.model.RepRange
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
+import wallcrawl.elopenmike.com.core.model.UserProfile
+import wallcrawl.elopenmike.com.core.model.WorkoutEmphasis
 import wallcrawl.elopenmike.com.core.model.WorkoutRationaleSpec
+import wallcrawl.elopenmike.com.core.model.WorkoutSplit
+import wallcrawl.elopenmike.com.core.model.WorkoutTitleSpec
 import wallcrawl.elopenmike.com.core.ui.localization.ExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.localization.generatedWorkoutRationale
+import wallcrawl.elopenmike.com.core.ui.localization.generatedWorkoutTitle
 import wallcrawl.elopenmike.com.core.ui.theme.WallCrawlTheme
+import wallcrawl.elopenmike.com.feature.today.TodayContent
+import wallcrawl.elopenmike.com.feature.today.TodayUiState
 
 /**
  * A prioritised muscle nothing can train is told to the user, in their language.
@@ -99,6 +111,79 @@ class GeneratedWorkoutFocusNoticeTest {
             )
             .assertIsDisplayed()
     }
+
+    @Test
+    fun theTodayCardShowsTheExplanationInEnglish() {
+        assertTodayCardExplains(Locale.ENGLISH, english, "Chest")
+    }
+
+    @Test
+    fun theTodayCardShowsTheExplanationInSpanish() {
+        assertTodayCardExplains(
+            locale = LATIN_AMERICAN_SPANISH,
+            resources = spanish,
+            muscle = checkNotNull(readBundledOverlay(context).muscle(StandardMuscles.CHEST, "es"))
+        )
+    }
+
+    /**
+     * The card the reader actually sees, not the composable in isolation.
+     *
+     * The explanation only counts as delivered if it survives the trip through
+     * `TodayContent` and `SuggestedWorkoutCard`; asserting on `generatedWorkoutRationale`
+     * alone would pass even if no screen rendered it.
+     */
+    private fun assertTodayCardExplains(locale: Locale, resources: Context, muscle: String) {
+        val workout = suggestedWorkout(unavailableFocusMuscles = listOf(StandardMuscles.CHEST))
+        composeRule.setContent {
+            InLocale(locale) {
+                TodayContent(
+                    state = TodayUiState.Success(
+                        userProfile = UserProfile(),
+                        suggestedWorkout = workout
+                    ),
+                    workoutName = generatedWorkoutTitle(workout.title),
+                    workoutRationale = generatedWorkoutRationale(
+                        spec = workout.rationale,
+                        unavailableFocusMuscles = workout.unavailableFocusMuscles
+                    ),
+                    onStartWorkout = {},
+                    onResumeWorkout = {},
+                    onRegenerate = {},
+                    onOpenTemplates = {}
+                )
+            }
+        }
+
+        composeRule
+            .onNodeWithText(
+                resources.getString(R.string.generated_rationale_focus_unavailable, muscle),
+                substring = true
+            )
+            .assertIsDisplayed()
+    }
+
+    private fun suggestedWorkout(unavailableFocusMuscles: List<String>) = GeneratedWorkout(
+        title = WorkoutTitleSpec(
+            split = WorkoutSplit.UPPER_BODY,
+            emphasis = WorkoutEmphasis.HYPERTROPHY
+        ),
+        focusMuscles = listOf(StandardMuscles.UPPER_BACK),
+        estimatedDurationMinutes = 30,
+        exercises = listOf(
+            PlannedExercise(
+                exerciseId = "band-pull-apart",
+                prescription = ExercisePrescription(
+                    exerciseType = ExerciseType.BODYWEIGHT_REPS,
+                    targetSets = 3,
+                    repRange = RepRange(12, 20),
+                    restSeconds = 75
+                )
+            )
+        ),
+        rationale = spec,
+        unavailableFocusMuscles = unavailableFocusMuscles
+    )
 
     @Test
     fun theOrdinaryCaseAddsNothing() {

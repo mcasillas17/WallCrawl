@@ -139,7 +139,10 @@ object MuscleVocabulary {
      * Primary muscles stay one-per-name because weekly set counts credit each completed set
      * to every primary: expanding "Legs" into three groups would report four sets of lunges
      * as twelve. The groups dropped here are added to the exercise's secondary muscles by
-     * [canonicalizeAll], which is what split matching reads, so nothing stops matching.
+     * [canonicalizeAll], so they keep the exercise eligible for those splits' accessory
+     * slots. They do **not** carry the split's advertised focus: that reads primary muscles
+     * only, so an umbrella-named exercise establishes a split, and clears a `HIGH` priority,
+     * through its representative above and not through the groups demoted here.
      */
     fun canonicalizePrimary(raw: String): String? {
         val key = raw.trim().lowercase(Locale.ROOT)

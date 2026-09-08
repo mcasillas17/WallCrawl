@@ -162,17 +162,27 @@ class ProgramValidator(
         workout: GeneratedWorkout,
         allowedById: Map<String, Exercise>
     ): List<ProgramViolation> {
+        val violations = mutableListOf<ProgramViolation>()
+        val selected = workout.exercises.mapNotNull { allowedById[it.exerciseId] }
         val split = workout.title.split
-        val supported = workout.exercises.any { planned ->
-            allowedById[planned.exerciseId]?.let(split::trainsAsFocus) == true
-        }
-        if (supported) return emptyList()
-        return listOf(
-            ProgramViolation(
+        if (selected.none(split::trainsAsFocus)) {
+            violations += ProgramViolation(
                 code = ProgramViolationCode.UNSUPPORTED_WORKOUT_FOCUS,
                 detail = split.name
             )
-        )
+        }
+
+        // The muscle line under the title is the other claim the card makes, and it is
+        // copied onto the started session. Every name on it has to be a muscle something in
+        // the plan actually trains, for the same reason the split does.
+        val trained = selected.flatMapTo(mutableSetOf(), Exercise::focusMuscles)
+        (workout.focusMuscles.toSet() - trained).sorted().forEach { muscle ->
+            violations += ProgramViolation(
+                code = ProgramViolationCode.UNSUPPORTED_WORKOUT_FOCUS,
+                detail = muscle
+            )
+        }
+        return violations
     }
 
     // endregion
