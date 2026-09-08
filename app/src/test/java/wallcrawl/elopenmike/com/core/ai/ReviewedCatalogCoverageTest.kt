@@ -575,30 +575,52 @@ class ReviewedCatalogCoverageTest(private val caseId: String) {
     ) {
         val byId = context.allowedExercises.associateBy(Exercise::id)
         val selected = workout.exercises.map { byId.getValue(it.exerciseId) }
+
+        // The shipped focus contract, on every case rather than only the push ones: the
+        // split a session advertises has to be one its own exercises train.
+        report.put("advertisedSplit", workout.title.split.name)
+            .put("unavailableFocusMuscles", JSONArray(workout.unavailableFocusMuscles))
+        assertWithMessage("$caseId advertised ${workout.title.split} with ${selected.map(Exercise::id)}")
+            .that(selected.any { workout.title.split.trainsAsFocus(it) }).isTrue()
+
         if (caseId in PUSH_CASES || caseId == "band-only-push-gap") {
             // A shoulder secondary on a row or Pallof press must not masquerade as a push.
-            val candidatePush = context.allowedExercises.filter {
+            val candidatePush = context.allowedExercises
+                .filter { WorkoutSplit.PUSH.trainsAsFocus(it) }
+                .map(Exercise::id)
+            val selectedPush = selected.filter { it.id in candidatePush }.map(Exercise::id)
+            // A stricter premise layered on top of the contract, recorded rather than
+            // enforced as product policy: the reviewed cohort's own pattern label. The
+            // contract deliberately requires no pattern, because most of the catalog has
+            // none and demanding one would invent an absence.
+            val reviewedPushPatternIds = context.allowedExercises.filter {
                 it.reviewedMetadata!!.movementPattern in PUSH_PATTERNS &&
                     it.reviewedMetadata.directPrimaryMuscle in WorkoutSplit.PUSH.targetMuscles
             }.map(Exercise::id)
-            val selectedPush = selected.filter { it.id in candidatePush }.map(Exercise::id)
             report.put("candidateViablePushIds", JSONArray(candidatePush))
+                .put("candidateReviewedPushPatternIds", JSONArray(reviewedPushPatternIds))
                 .put("selectedViablePushIds", JSONArray(selectedPush))
                 .put("pushCoverageSatisfied", selectedPush.isNotEmpty())
             if (caseId == "band-only-push-gap") {
                 report.put("coverageGap", candidatePush.isEmpty() && selectedPush.isEmpty())
                     .put("coverageGapKind", "NO_DIRECT_PRIMARY_BAND_PUSH")
                     .put("coverageInterpretation",
-                        "Negative coverage regression: schema-valid output is not a successful push plan")
+                        "The gap is now reported rather than mislabelled: a truthful alternative " +
+                            "split plus the unavailable Chest priority. No band push was created.")
                 assertThat(context.availableEquipment).containsExactly(StandardEquipment.RESISTANCE_BAND)
                 assertThat(context.allowedExercises).isNotEmpty()
                 assertWithMessage("Reassess the documented band-only gap if a real push becomes eligible")
                     .that(candidatePush).isEmpty()
                 assertThat(selectedPush).isEmpty()
+                assertWithMessage("A pool with no push must not advertise one")
+                    .that(workout.title.split).isNotEqualTo(WorkoutSplit.PUSH)
+                assertThat(workout.unavailableFocusMuscles).containsExactly(StandardMuscles.CHEST)
             } else {
                 assertThat(workout.title.split).isEqualTo(WorkoutSplit.PUSH)
                 assertWithMessage("$caseId requires a selected direct-primary push, not secondary involvement")
                     .that(selectedPush).isNotEmpty()
+                assertThat(reviewedPushPatternIds).isNotEmpty()
+                assertThat(workout.unavailableFocusMuscles).isEmpty()
             }
         }
         if (caseId == "avoid-standing-balance") {
@@ -821,7 +843,8 @@ class ReviewedCatalogCoverageTest(private val caseId: String) {
                 .map { it.name }))
             .put("pushCoverageAssertion", when {
                 caseId == "band-only-push-gap" && context.automaticEligibilityResult != null ->
-                    "Negative premise: no direct-primary horizontal/vertical push in the full eligible pool or selected set"
+                    "Negative premise: no direct-primary push in the full eligible pool or selected " +
+                        "set, so the session advertises a split it can train and names the gap"
                 caseId in PUSH_CASES && context.automaticEligibilityResult != null ->
                     "Test premise only: selected reviewed HORIZONTAL_PUSH or VERTICAL_PUSH with direct-primary push muscle"
                 else -> "No anatomical push coverage requirement"
