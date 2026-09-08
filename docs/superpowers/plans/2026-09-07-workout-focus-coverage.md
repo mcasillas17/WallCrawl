@@ -144,13 +144,17 @@ Sorted by canonical name so the list never depends on map iteration order or loc
 
 - [ ] **Step 4: Render it**
 
-`generatedWorkoutRationale(spec, unavailableFocusMuscles = emptyList())` appends
-`R.string.generated_rationale_focus_unavailable` when the list is non-empty, joining the
-muscles with `R.string.list_separator` through `LocalExerciseVocabulary`. `TodayScreen`
-passes `state.suggestedWorkout.unavailableFocusMuscles`.
+`unavailableFocusNotice(muscles)` returns `R.string.generated_rationale_focus_unavailable`
+filled with the muscles joined by `R.string.list_separator` through
+`LocalExerciseVocabulary`, or null when the list is empty.
+`generatedWorkoutRationale(spec, unavailableFocusMuscles)` appends it for the text a started
+session stores, and `SuggestedWorkoutCard` renders it — and only it — when it is non-null.
 
-English: `No available exercise trains %1$s directly, so this session focuses elsewhere.`
-Spanish: `Ningún ejercicio disponible entrena %1$s de forma directa, así que esta sesión se enfoca en otra cosa.`
+English: `Nothing you have available trains %1$s as its main target, so this session focuses elsewhere.`
+Spanish: `Nada de lo que tienes disponible entrena %1$s como objetivo principal, así que esta sesión se enfoca en otra cosa.`
+
+> Revised during review. The first attempt rendered the whole explanation on the card
+> unconditionally, which exceeded this task's scope and staled the Today screenshots.
 
 - [ ] **Step 5: Run the tests**
 
@@ -253,9 +257,9 @@ git commit -m "feat: reject a recommendation whose split its exercises do not tr
   pattern + `directPrimaryMuscle` classifier, and its `band-only-push-gap` case now
   asserts a truthful non-`PUSH` split plus `Chest` in `unavailableFocusMuscles`. Synthetic
   approvals stay clearly labelled test-only.
-- A Compose test renders `TodayScreen`'s success state with a non-empty
+- A Compose test renders the real `TodayContent` success state with a non-empty
   `unavailableFocusMuscles` and asserts the explanatory sentence appears in English and in
-  Spanish.
+  Spanish, and that a supported session adds no line at all.
 
 - [ ] **Step 2: Run the JVM suite**
 

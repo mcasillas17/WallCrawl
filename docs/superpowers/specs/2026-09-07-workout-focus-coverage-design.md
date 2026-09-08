@@ -70,10 +70,16 @@ purpose, the planner records it in `GeneratedWorkout.unavailableFocusMuscles`, s
 canonical name so the list never depends on map iteration order or locale.
 
 The session itself is then an accurately labelled alternative chosen by the existing
-deterministic rotation over the splits that *are* supported. The screen renders one extra
-localized sentence after the ordinary explanation, in English and Spanish, and that
-rendered text is what a started session stores. Nothing is relabelled "Full body" to hide
-the mismatch, no equipment is borrowed, and no exercise is invented.
+deterministic rotation over the splits that *are* supported. The suggested-workout card
+adds one localized sentence naming those muscles, in English and Spanish, **only when the
+list is non-empty** — an ordinary session's card is unchanged, so the committed Today
+screenshots stay accurate and no separate product decision to surface the whole explanation
+is made here. The same sentence is appended to the explanation a started session stores.
+Nothing is relabelled "Full body" to hide the mismatch, no equipment is borrowed, and no
+exercise is invented.
+
+> Revised during review. The first implementation rendered the whole explanation on every
+> card, which was both wider than this task and enough to stale every Today screenshot.
 
 When no split is supported at all, the existing typed
 `WorkoutPlanningFailure.NO_CANDIDATES_FOR_ANY_SPLIT` outcome and its resource-backed
