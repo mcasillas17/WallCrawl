@@ -232,10 +232,9 @@ class OnboardingViewModelTest {
             viewModel.uiState.collect {}
         }
 
-        // Test selectAllEquipment
-        viewModel.selectAllEquipment()
+        viewModel.selectFullGymEquipment()
         assertThat(viewModel.uiState.value.equipment)
-            .containsExactlyElementsIn(viewModel.uiState.value.equipmentOptions)
+            .containsExactlyElementsIn(StandardEquipment.FULL_GYM)
 
         // Test resetEquipmentToBodyweight
         viewModel.resetEquipmentToBodyweight()
@@ -249,6 +248,71 @@ class OnboardingViewModelTest {
 
         viewModel.clearConstraints()
         assertThat(viewModel.uiState.value.constraints).isEmpty()
+    }
+
+    @Test
+    fun fullGym_doesNotConfirmAnyBandSetup() {
+        val viewModel = OnboardingViewModel(RecordingUserProfileRepository())
+
+        viewModel.selectFullGymEquipment()
+
+        assertThat(viewModel.uiState.value.equipment)
+            .containsExactlyElementsIn(StandardEquipment.FULL_GYM)
+        assertThat(viewModel.uiState.value.equipment.intersect(StandardEquipment.BAND_SETUPS.toSet()))
+            .isEmpty()
+    }
+
+    @Test
+    fun fullGym_preservesOnlyExplicitBandConfirmationsAcrossSavedState() {
+        StandardEquipment.BAND_SETUPS.forEach { confirmed ->
+            val handle = SavedStateHandle()
+            val repository = RecordingUserProfileRepository()
+            val original = OnboardingViewModel(repository, handle)
+            original.toggleEquipment(confirmed)
+            original.selectFullGymEquipment()
+
+            val recreated = OnboardingViewModel(repository, handle)
+            assertThat(recreated.uiState.value.equipment)
+                .containsExactlyElementsIn(StandardEquipment.FULL_GYM + confirmed)
+            recreated.toggleEquipment(confirmed)
+            assertThat(OnboardingViewModel(repository, handle).uiState.value.equipment)
+                .containsExactlyElementsIn(StandardEquipment.FULL_GYM)
+        }
+    }
+
+    @Test
+    fun oldSavedEquipmentDraft_doesNotExpandWhenRestoredOrCompleted() = runTest {
+        val repository = RecordingUserProfileRepository()
+        val handle = SavedStateHandle(
+            mapOf("onboarding.equipment" to ArrayList(StandardEquipment.FULL_GYM))
+        )
+        val viewModel = OnboardingViewModel(repository, handle)
+        assertThat(viewModel.uiState.value.equipment)
+            .containsExactlyElementsIn(StandardEquipment.FULL_GYM)
+        answerAllCapabilities(viewModel, CapabilityLevel.UNKNOWN)
+
+        viewModel.complete()
+        advanceUntilIdle()
+
+        assertThat(repository.saved.single().availableEquipment)
+            .containsExactlyElementsIn(StandardEquipment.FULL_GYM)
+    }
+
+    @Test
+    fun explicitBandConfirmations_persistOnCompletionAndBodyweightResetClearsThem() = runTest {
+        val repository = RecordingUserProfileRepository()
+        val handle = SavedStateHandle()
+        val viewModel = OnboardingViewModel(repository, handle)
+        StandardEquipment.BAND_SETUPS.forEach(viewModel::toggleEquipment)
+        answerAllCapabilities(viewModel, CapabilityLevel.UNKNOWN)
+        viewModel.complete()
+        advanceUntilIdle()
+
+        assertThat(repository.saved.single().availableEquipment)
+            .containsExactlyElementsIn(listOf(StandardEquipment.BODYWEIGHT) + StandardEquipment.BAND_SETUPS)
+        viewModel.resetEquipmentToBodyweight()
+        assertThat(OnboardingViewModel(repository, handle).uiState.value.equipment)
+            .containsExactly(StandardEquipment.BODYWEIGHT)
     }
 
     @Test

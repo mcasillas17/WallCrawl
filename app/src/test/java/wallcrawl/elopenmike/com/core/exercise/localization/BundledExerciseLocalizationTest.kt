@@ -10,6 +10,7 @@ import org.junit.Assert.assertThrows
 import org.junit.Test
 import wallcrawl.elopenmike.com.core.model.MuscleVocabulary
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
+import wallcrawl.elopenmike.com.core.ui.localization.ExerciseVocabulary
 
 /**
  * Guards the shipped translation overlay against the catalog, in CI.
@@ -123,6 +124,33 @@ class BundledExerciseLocalizationTest {
         StandardEquipment.ALL.forEach { name ->
             assertWithMessage(name).that(equipment.optJSONObject(name)?.optString("es"))
                 .isNotEmpty()
+        }
+    }
+
+    @Test
+    fun explicitBandSetupLabels_roundTripCanonicalKeysInEnglishAndSpanish() {
+        val translations = overlay.getJSONObject("vocabulary").getJSONObject("equipment")
+        val expectedSpanish = mapOf(
+            StandardEquipment.BAND_ANCHOR_UPPER_BODY to "Anclaje de banda: tren superior",
+            StandardEquipment.BAND_ANCHOR_OVERHEAD to "Anclaje de banda: sobre la cabeza",
+            StandardEquipment.BAND_ANCHOR_LOW to "Anclaje de banda: bajo",
+            StandardEquipment.BAND_KICKBACK_ATTACHMENT_SUPPORT to "Sujeción y apoyo para patada con banda"
+        )
+        val localized = ExerciseLocalization(
+            languages = listOf("es"),
+            exercisesById = emptyMap(),
+            musclesByCanonicalName = emptyMap(),
+            equipmentByCanonicalName = expectedSpanish.keys.associateWith { key ->
+                mapOf("es" to translations.optJSONObject(key)?.optString("es").orEmpty())
+            }
+        )
+        val english = ExerciseVocabulary(localized, "en-US")
+        val spanish = ExerciseVocabulary(localized, "es-ES")
+        expectedSpanish.forEach { (canonical, label) ->
+            assertThat(english.equipment(canonical)).isEqualTo(canonical)
+            assertThat(spanish.equipment(canonical)).isEqualTo(label)
+            assertThat(StandardEquipment.BAND_SETUPS.single { spanish.equipment(it) == label })
+                .isEqualTo(canonical)
         }
     }
 

@@ -1,5 +1,8 @@
 package wallcrawl.elopenmike.com.feature.profile
 
+import wallcrawl.elopenmike.com.core.model.StandardEquipment
+import wallcrawl.elopenmike.com.core.ui.components.BandSetupControls
+
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -444,7 +447,7 @@ private fun ProfileContent(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    availableEquipment.forEach { equipment ->
+                    availableEquipment.filterNot { it in StandardEquipment.BAND_SETUPS }.forEach { equipment ->
                         val isSelected = equipment in profile.availableEquipment
                         FilterChip(
                             selected = isSelected,
@@ -474,6 +477,12 @@ private fun ProfileContent(
                         )
                     }
                 }
+            }
+        }
+
+        item {
+            WallCrawlCard(cornerRadius = 16.dp, contentPadding = 16.dp) {
+                BandSetupControls(profile.availableEquipment, onToggleEquipment)
             }
         }
 

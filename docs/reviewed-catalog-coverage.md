@@ -90,7 +90,7 @@ No planner or validation policy is changed by this catalog review.
 generic `Resistance Band` inventory does not establish. An incomplete equipment
 alternative can overstate availability even if the movement label is correct.
 The per-ID review must retain an explicit pending disposition wherever the
-existing equipment vocabulary cannot truthfully describe the demonstrated setup.
+equipment vocabulary cannot truthfully describe the demonstrated setup.
 Neither `Wall` nor `Doorway` is a substitute for an unspecified load-bearing
 anchor. The lack of an anchor token must not be hidden by relabeling the exercise
 or reporting the old synthetic candidate count as usable band-only coverage.
@@ -118,6 +118,69 @@ coverage: there was no source-backed band push to begin with. The six withheld
 anchor-dependent IDs are `banded-face-pull`, `banded-kickback`,
 `banded-lat-pulldown`, `banded-pallof-press`, `banded-row` and `banded-woodchop`.
 They remain in the catalog and ledger, not in the proposed reviewed metadata pool.
+
+### Fixed-anchor enforcement
+
+The earlier tables are historical observations before the equipment correction.
+At application baseline `933c927`, new regressions reproduced all six IDs passing
+the real legacy filter with Band + Wall + Doorway + Chair. The real context-builder
+and planner selected `banded-face-pull`, `banded-pallof-press` and
+`banded-woodchop` from a band-only profile.
+
+The active filter now applies the [source-bound setup contract](band-anchor-equipment.md).
+The same band-only inventory has **13 candidates rather than 19**:
+`band-pull-apart`, `banded-clamshell`, `banded-dead-bug`, `banded-donkey-kick`,
+`banded-fire-hydrant`, `banded-frog-pump`, `banded-glute-bridge`,
+`banded-hip-thrust`, `banded-lateral-walk`, `banded-monster-walk`,
+`banded-seated-hip-abduction`, `banded-squat` and
+`banded-standing-hip-abduction`. None of the six anchored variations is selected.
+This is only the fixed-anchor correction, not a new audit of the other setups.
+
+The original 40-minute, Chest HIGH, beginner band-only profile at completion/
+generation state 0/0 was also replayed through the real planner and validator:
+
+| Legacy replay | Candidates | Selected IDs | Split | Structural validation | Genuine direct-primary push |
+| --- | ---: | --- | --- | --- | ---: |
+| Before correction | 19 | `band-pull-apart`, `banded-dead-bug`, `banded-face-pull`, `banded-pallof-press`, `banded-woodchop` | `PUSH` | Valid | 0 |
+| After correction | 13 | `band-pull-apart`, `banded-dead-bug` | `PUSH` | Valid, no repair | 0 |
+
+The after result contains no invented load and does not expand the inventory.
+The unchanged `PUSH` label is evidence of the separate workout-focus bug, not a
+claim that this is a successful chest-push workout.
+
+The following outcomes concern only the six anchor-dependent IDs. The matrix
+uses the real filter and separately labelled synthetic equipment-policy approvals,
+not production approvals; all other constraints are absent.
+
+| Explicit inventory | Legacy anchored candidates | Synthetic-reviewed anchored candidates |
+| --- | --- | --- |
+| Resistance Band only | None | None |
+| Band + Wall + Doorway + Chair, or generic Full gym | None | None |
+| Anchor setups without Resistance Band | None | None |
+| Band + upper-body anchor | `banded-face-pull`, `banded-pallof-press` | Same |
+| Band + overhead anchor, without Chair | None | None |
+| Band + overhead anchor + Chair | `banded-lat-pulldown` | Same |
+| Band + low anchor | `banded-woodchop` | Same |
+| Band + low anchor + kickback attachment/support | `banded-kickback`, `banded-woodchop` | Same |
+| Band + all four setup confirmations + Chair | All five above; never `banded-row` | Same |
+
+The upper-body confirmation explicitly covers adjustable chest-through-face
+height and forward/lateral positioning. Kickback additionally needs the ankle
+connection and reachable handhold on the same low-anchor assembly. The row's
+anchor is outside every source frame; it remains unresolved and automatically
+unavailable even with all equipment selected. It is still browseable and manually
+selectable with an unresolved-setup warning.
+
+No full reviewed blocks or graph edges were added. The five representable runtime
+minimums do not approve their other categorical fields, and the held/rejected
+relationships retain their separate movement/shape/evidence decisions. The
+production reviewed pool remains zero, with 211 DRAFT records and the feature
+flag disabled. Synthetic approval tests also reject incomplete Band-only
+alternatives rather than letting them bypass the source-bound minimum.
+
+The workout-focus bug remains separate: removing anchored candidates does not
+create a genuine band chest push or change split selection, titles or fallback
+focus rules. Candidate legality is not proof of anatomical push coverage.
 
 ## Full-pool prospective profiles
 

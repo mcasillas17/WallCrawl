@@ -51,12 +51,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material3.MaterialTheme
-import java.util.Locale
 import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.ExercisePrescription
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.PlannedExercise
+import wallcrawl.elopenmike.com.core.model.hasUnresolvedEquipmentRequirements
+import wallcrawl.elopenmike.com.core.model.missingEquipmentAlternatives
 import wallcrawl.elopenmike.com.core.ui.components.StatBadge
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlOutlinedButton
@@ -256,7 +257,7 @@ fun TemplateEditorScreen(
                             total = state.selectedExercises.size,
                             planned = planned,
                             exercise = exercise,
-                            equipmentWarning = exercise?.hasEquipmentMismatch(state.availableEquipment) == true,
+                            availableEquipment = state.availableEquipment,
                             onSetsDown = { viewModel.changeSetCount(index, -1) },
                             onSetsUp = { viewModel.changeSetCount(index, 1) },
                             onMoveUp = { viewModel.moveExercise(index, -1) },
@@ -308,7 +309,7 @@ private fun SelectedExerciseCard(
     total: Int,
     planned: PlannedExercise,
     exercise: Exercise?,
-    equipmentWarning: Boolean,
+    availableEquipment: Set<String>,
     onSetsDown: () -> Unit,
     onSetsUp: () -> Unit,
     onMoveUp: () -> Unit,
@@ -349,14 +350,7 @@ private fun SelectedExerciseCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 13.sp
                 )
-                if (equipmentWarning) {
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = stringResource(R.string.editor_equipment_warning),
-                        color = CrimsonRedLight,
-                        fontSize = 12.sp
-                    )
-                }
+                exercise?.let { EquipmentWarning(it, availableEquipment) }
             }
 
             IconButton(
@@ -625,12 +619,31 @@ private fun ExercisePickerSheet(
     }
 }
 
-private fun Exercise.hasEquipmentMismatch(available: Set<String>): Boolean {
-    val owned = available.map { it.trim().lowercase(Locale.ROOT) }.toSet()
-    val combinations = programming?.requiredEquipmentCombinations
-        ?: listOf(listedEquipment.filter(String::isNotBlank))
-    return combinations.isNotEmpty() && combinations.none { combination ->
-        combination.all { it.trim().lowercase(Locale.ROOT) in owned }
+@Composable
+private fun EquipmentWarning(exercise: Exercise, available: Set<String>) {
+    val unresolved = exercise.hasUnresolvedEquipmentRequirements
+    val missing = exercise.missingEquipmentAlternatives(available)
+    if (!unresolved && missing.isEmpty()) return
+    Spacer(modifier = Modifier.height(4.dp))
+    if (unresolved) {
+        Text(
+            stringResource(R.string.editor_equipment_unresolved),
+            color = MaterialTheme.colorScheme.error,
+            fontSize = 12.sp
+        )
+    } else {
+        val vocabulary = LocalExerciseVocabulary.current
+        val andSeparator = stringResource(R.string.editor_equipment_and_separator)
+        val orSeparator = stringResource(R.string.editor_equipment_or_separator)
+        val alternatives = missing.joinToString(orSeparator) {
+            vocabulary.equipment(it).joinToString(andSeparator, prefix = "(", postfix = ")")
+        }
+        Text(stringResource(R.string.editor_equipment_warning), color = MaterialTheme.colorScheme.error, fontSize = 12.sp)
+        Text(
+            stringResource(R.string.editor_equipment_missing, alternatives),
+            color = MaterialTheme.colorScheme.error,
+            fontSize = 12.sp
+        )
     }
 }
 

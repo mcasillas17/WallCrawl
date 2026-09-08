@@ -42,7 +42,11 @@
       "Plate": { "es": "Disco" },
       "Stability Ball": { "es": "Balón de estabilidad" },
       "Towel": { "es": "Toalla" },
-      "Wall": { "es": "Pared" }
+      "Wall": { "es": "Pared" },
+      "Band Anchor - Upper Body": { "es": "Anclaje de banda: tren superior" },
+      "Band Anchor - Overhead": { "es": "Anclaje de banda: sobre la cabeza" },
+      "Band Anchor - Low": { "es": "Anclaje de banda: bajo" },
+      "Band Kickback Attachment and Support": { "es": "Sujeción y apoyo para patada con banda" }
     }
   },
   "exercises": {

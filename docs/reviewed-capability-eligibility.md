@@ -56,7 +56,7 @@ earlier stages.
 | Stage | Hard decision | Typed reason | Aggregate failure |
 | --- | --- | --- | --- |
 | 1 | Explicitly excluded exercise | `USER_EXCLUDED` | `USER_EXCLUSIONS_REMOVED_ALL` |
-| 2 | No complete reviewed equipment alternative is available | `MISSING_EQUIPMENT` | `EQUIPMENT_REMOVED_ALL` |
+| 2 | No complete reviewed equipment alternative or required fixed-anchor setup is available | `MISSING_EQUIPMENT` | `EQUIPMENT_REMOVED_ALL` |
 | 3 | Metadata is absent or not `APPROVED` | `MISSING_APPROVED_METADATA` | `NO_APPROVED_METADATA` |
 | 4 | A required capability is `AVOID` | `CAPABILITY_AVOID` | `CAPABILITIES_REMOVED_ALL` |
 | 5 | A joint-sensitive constraint has no reviewed exercise mapping | `UNMAPPED_TRAINING_CONSTRAINT` | `TRAINING_CONSTRAINTS_REMOVED_ALL` |
@@ -67,6 +67,12 @@ An eligible exercise has the hard reason `APPROVED`. `EligibilityPreference`
 retains each explicitly required capability that is `LIMITED` or `UNKNOWN`, in
 enum order, as a soft input only. Hard rule output defines candidate
 membership; evidence never edits these decisions.
+
+The [fixed-anchor contract](band-anchor-equipment.md) is shared with the active
+legacy filter and manual equipment warnings. It is a source-bound minimum, not a
+second source of metadata approval. A supported regression must also meet it.
+Neither a DRAFT nor a confirmed setup can pass the separate approval gate, and
+the unresolved `banded-row` setup cannot pass even with a synthetic approval.
 
 ## Capability evidence criteria
 

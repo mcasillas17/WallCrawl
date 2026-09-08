@@ -88,6 +88,22 @@ Filter chips are the exception that proves the rule — they *display* a transla
 *pass* the canonical English key. `LocalizedExerciseSearchTest` pins both halves, including
 that a translated value does not filter.
 
+The four [band setup confirmations](band-anchor-equipment.md) follow the same
+boundary. Their canonical identifiers stay in `StandardEquipment` and the profile;
+Spanish labels live in the equipment vocabulary overlay, and their confirmation
+explanations live in the paired string resources. Selecting the English or Spanish
+control stores the same identifier. Missing-equipment warnings translate each
+canonical item without converting an unresolved setup into an available one.
+New setup identifiers match exactly, so a translated, case-changed or padded
+archive string cannot silently activate an unselected confirmation control.
+
+| Canonical English setup label | Spanish display label |
+| --- | --- |
+| Band Anchor - Upper Body | Anclaje de banda: tren superior |
+| Band Anchor - Overhead | Anclaje de banda: sobre la cabeza |
+| Band Anchor - Low | Anclaje de banda: bajo |
+| Band Kickback Attachment and Support | Sujeción y apoyo para patada con banda |
+
 ## Numbers, dates, and input
 
 Everything numeric goes through `core/ui/format/LocaleFormatting.kt`.

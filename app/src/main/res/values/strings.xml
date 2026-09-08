@@ -88,6 +88,12 @@
     <string name="onboarding_equipment_full_gym">Full gym access</string>
     <string name="onboarding_equipment_heading">AVAILABLE GEAR</string>
     <string name="onboarding_equipment_hint">Select what you have at home or at the gym:</string>
+    <string name="band_setup_heading">Band setups — confirm separately</string>
+    <string name="band_setup_hint">Confirm only setups you actually have. Full gym does not select these. Each is independent; select %1$s separately.</string>
+    <string name="band_setup_upper_body_description">Secured fixed attachment adjustable from chest to face height, for forward or sideways positioning, with graspable band ends.</string>
+    <string name="band_setup_overhead_description">Secured attachment above a seated person, with two graspable band ends.</string>
+    <string name="band_setup_low_description">Secured fixed attachment near floor level.</string>
+    <string name="band_setup_kickback_description">Ankle attachment and reachable stable handhold on the same low-anchor assembly. Also select the low anchor separately.</string>
 
     <string name="onboarding_safety_heading">PROTECT SENSITIVE JOINTS</string>
     <string name="onboarding_safety_hint">Tell us if any joints need conservative exercise selection. WallCrawl filters or substitutes high-stress movements.</string>
@@ -459,6 +465,10 @@
     <string name="editor_action_add">+ Add exercise</string>
     <string name="editor_empty_title">No exercises added yet</string>
     <string name="editor_equipment_warning">⚠️ This equipment is not in your current profile</string>
+    <string name="editor_equipment_missing">Missing: %1$s</string>
+    <string name="editor_equipment_and_separator">\u0020AND\u0020</string>
+    <string name="editor_equipment_or_separator">\u0020OR\u0020</string>
+    <string name="editor_equipment_unresolved">Setup unresolved: the required attachment is not verified. You can keep this manual choice, but it is excluded from automatic workouts.</string>
     <string name="editor_move_up">Move up</string>
     <string name="editor_move_down">Move down</string>
     <string name="editor_target_sets">Target sets</string>

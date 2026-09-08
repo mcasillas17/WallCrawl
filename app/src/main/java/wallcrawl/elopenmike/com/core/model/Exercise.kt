@@ -219,10 +219,22 @@ object StandardEquipment {
     const val STABILITY_BALL = "Stability Ball"
     const val TOWEL = "Towel"
     const val WALL = "Wall"
+    const val BAND_ANCHOR_UPPER_BODY = "Band Anchor - Upper Body"
+    const val BAND_ANCHOR_OVERHEAD = "Band Anchor - Overhead"
+    const val BAND_ANCHOR_LOW = "Band Anchor - Low"
+    const val BAND_KICKBACK_ATTACHMENT_SUPPORT = "Band Kickback Attachment and Support"
 
-    val ALL = listOf(
+    // Presets never confirm attachment hardware, positioning, or support assemblies.
+    val FULL_GYM = listOf(
         BARBELL, DUMBBELL, CABLE, MACHINE, BODYWEIGHT,
         KETTLEBELL, RESISTANCE_BAND, BENCH, PULLUP_BAR, DIP_BARS, SQUAT_RACK,
         BOX, CARDIO, CHAIR, DOORWAY, PLATE, STABILITY_BALL, TOWEL, WALL
     )
+
+    val BAND_SETUPS = listOf(
+        BAND_ANCHOR_UPPER_BODY, BAND_ANCHOR_OVERHEAD, BAND_ANCHOR_LOW,
+        BAND_KICKBACK_ATTACHMENT_SUPPORT
+    )
+
+    val ALL = FULL_GYM + BAND_SETUPS
 }
