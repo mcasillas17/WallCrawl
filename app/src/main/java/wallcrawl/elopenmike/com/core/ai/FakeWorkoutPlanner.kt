@@ -115,7 +115,11 @@ class FakeWorkoutPlanner(
             )
         }
 
-        fun List<WorkoutSplit>.fillable() = filter { split -> candidates.any { it.trains(split) } }
+        // Fillable means genuinely trainable, not merely mentioned. A split whose only
+        // matches are descriptive secondary muscles cannot be filled with the work its name
+        // promises, so it never enters the rotation — see [trainsAsFocus].
+        fun List<WorkoutSplit>.fillable() =
+            filter { split -> candidates.any { split.trainsAsFocus(it) } }
         val trainable = preferred.fillable().ifEmpty { WorkoutSplit.DEFAULT_ROTATION.fillable() }
         if (trainable.isEmpty()) {
             throw WorkoutValidationException(
@@ -138,35 +142,19 @@ class FakeWorkoutPlanner(
     private fun rotationSeed(context: WorkoutGenerationContext, generationIndex: Int): Int =
         context.completedWorkoutCount + generationIndex
 
+    /**
+     * Whether this may occupy a slot in [split] at all.
+     *
+     * Broader than [trainsAsFocus] on purpose: once the focus is genuinely established, an
+     * exercise that only brushes the split is still legal accessory work. What it can never
+     * do is be the evidence for the split's name.
+     */
     private fun Exercise.trains(split: WorkoutSplit): Boolean =
         isStrengthWork() &&
             (
                 primaryMuscles.any { it in split.targetMuscles } ||
                     secondaryMuscles.any { it in split.targetMuscles }
                 )
-
-    /**
-     * Whether this belongs in a prescribed strength slot with sets and reps.
-     *
-     * Cardio machines and stretches are tagged with the muscles they involve, so once
-     * upstream's umbrella names were resolved they started matching splits — putting
-     * "Walking" in a Legs · Hypertrophy plan alongside squats. They stay in the catalog to
-     * browse and to build custom workouts from; they are not prescribed as training slots.
-     *
-     * The test is what can be prescribed, not whether conditioning is involved: a kettlebell
-     * swing is loaded work for reps that happens to be tagged Cardio, and a plank is a timed
-     * hold that is not. Only untimed-distance work and conditioning drills measured purely
-     * in time are dropped.
-     */
-    private fun Exercise.isStrengthWork(): Boolean = when {
-        isStretch -> false
-        type == ExerciseType.DISTANCE_DURATION -> false
-        type == ExerciseType.DURATION -> !isConditioning()
-        else -> true
-    }
-
-    private fun Exercise.isConditioning(): Boolean =
-        (primaryMuscles + secondaryMuscles).any { it == StandardMuscles.CARDIO }
 
     private fun selectExercisesForSplit(
         split: WorkoutSplit,
@@ -223,6 +211,13 @@ class FakeWorkoutPlanner(
             result.addAll(accessories.take(remainingSlots))
         }
 
+        // The pool being fillable is not the promise; the session is. Focus support is the
+        // first ordering key in both passes and at least one accessory slot always exists,
+        // so a supporting exercise is always reachable — this states that as an invariant
+        // instead of leaving it to be re-derived from two comparators.
+        check(result.any { split.trainsAsFocus(it) }) {
+            "Split ${split.name} was selected without an exercise that trains it as a focus."
+        }
         return result
     }
 
@@ -247,7 +242,7 @@ class FakeWorkoutPlanner(
         val compounds = candidates
             .filter { it.programming?.mechanics == MechanicsType.COMPOUND }
             .sortedWith(
-                compareByDescending<Exercise> { it.trainsAsPrimary(split) }
+                compareByDescending<Exercise> { split.trainsAsFocus(it) }
                     .thenBy { capabilityPenalties.getValue(it.id) }
                     .thenBy {
                         difficultyRankingPolicy.aboveExperiencePenalty(
@@ -289,7 +284,7 @@ class FakeWorkoutPlanner(
         reviewedEligibilityEnabled: Boolean,
         capabilityPenalties: Map<String, Int>
     ): Comparator<Exercise> =
-        compareByDescending<Exercise> { it.trainsAsPrimary(split) }
+        compareByDescending<Exercise> { split.trainsAsFocus(it) }
             .thenByDescending { it.programming?.mechanics == MechanicsType.ISOLATION }
             .thenByDescending { it.programming != null }
             .thenBy { capabilityPenalties.getValue(it.id) }
@@ -302,9 +297,6 @@ class FakeWorkoutPlanner(
             }
             .thenByDescending { it.programming?.fatigueScore ?: 0 }
             .thenBy { it.id }
-
-    private fun Exercise.trainsAsPrimary(split: WorkoutSplit): Boolean =
-        primaryMuscles.any { it in split.targetMuscles }
 
     private fun createGeneratedExercise(
         exercise: Exercise,

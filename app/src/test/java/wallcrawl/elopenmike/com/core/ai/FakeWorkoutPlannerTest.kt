@@ -529,10 +529,7 @@ class FakeWorkoutPlannerTest {
             fatigueScore = 5,
             reviewedState = ReviewState.APPROVED,
             reviewedComplexity = ComplexityTier.FOUNDATIONAL
-        ).copy(
-            primaryMuscles = listOf(StandardMuscles.CORE),
-            secondaryMuscles = listOf(StandardMuscles.CHEST)
-        )
+        ).asSecondaryOnly()
 
         val workout = planner.generateWorkout(
             reviewedRankingContext(
@@ -711,10 +708,7 @@ class FakeWorkoutPlannerTest {
             fatigueScore = 5,
             reviewedState = ReviewState.APPROVED,
             reviewedComplexity = ComplexityTier.FOUNDATIONAL
-        ).copy(
-            primaryMuscles = listOf(StandardMuscles.CORE),
-            secondaryMuscles = listOf(StandardMuscles.CHEST)
-        )
+        ).asSecondaryOnly()
         val clearPrimaryAdvancedIsolation = rankingExercise(
             id = "z-clear-primary-advanced-isolation",
             difficulty = Difficulty.ADVANCED,
@@ -1276,6 +1270,22 @@ class FakeWorkoutPlannerTest {
             }
         )
     }
+
+    /**
+     * Makes a ranking fixture brush the split as a descriptive secondary only.
+     *
+     * Both muscle facts have to move together. With the reviewed path enabled, the approved
+     * `directPrimaryMuscle` is what the focus contract reads, so leaving it on Chest would
+     * declare a Chest primary while the fixture claims to train Chest only incidentally.
+     */
+    private fun Exercise.asSecondaryOnly(): Exercise = copy(
+        primaryMuscles = listOf(StandardMuscles.CORE),
+        secondaryMuscles = listOf(StandardMuscles.CHEST),
+        reviewedMetadata = reviewedMetadata?.copy(
+            directPrimaryMuscle = StandardMuscles.CORE,
+            descriptiveSecondaryMuscles = setOf(StandardMuscles.CHEST)
+        )
+    )
 
     private fun reviewedMetadata(
         reviewState: ReviewState,
