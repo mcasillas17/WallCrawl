@@ -265,6 +265,7 @@
     <string name="generated_rationale_reentry">Re-entry ramp-up is on: this plan is capped at 2 sets per movement while you build back up after %1$s.</string>
     <string name="generated_rationale_break_recovery">Generated for %1$s, with a conservative volume after %2$s.</string>
     <string name="generated_rationale_goal_focus">Generated for %1$s, with priority on %2$s.</string>
+    <string name="generated_rationale_focus_unavailable">Nothing you have available trains %1$s as its main target, so this session focuses elsewhere.</string>
 
     <!-- ============================ Today ============================ -->
     <string name="today_loading">Building today\'s plan…</string>

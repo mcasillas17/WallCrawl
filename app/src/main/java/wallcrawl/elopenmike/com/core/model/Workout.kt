@@ -17,7 +17,16 @@ data class GeneratedWorkout(
     val focusMuscles: List<String>,
     val estimatedDurationMinutes: Int,
     val exercises: List<PlannedExercise>,
-    val rationale: WorkoutRationaleSpec
+    val rationale: WorkoutRationaleSpec,
+    /**
+     * High-priority muscles nothing available trains as its own purpose.
+     *
+     * Muscle priorities are soft, so an unavailable one is not a refusal: the session is a
+     * truthfully labelled alternative and this list is why. Canonical muscle names in a
+     * stable order, like every other planner output, so the screen can say it in the
+     * reader's language without the planner knowing one. Empty is the ordinary case.
+     */
+    val unavailableFocusMuscles: List<String> = emptyList()
 )
 
 /**

@@ -38,6 +38,13 @@ class WorkoutFocusCoverageTest {
         ).that(selected.any { workout.title.split.trainsAsFocus(it) }).isTrue()
     }
 
+    @Test
+    fun bandOnlyChestPriority_reportsTheUnavailablePriorityRatherThanConcealingIt() = runTest {
+        val workout = FakeWorkoutPlanner().generateWorkout(bandOnlyContext())
+
+        assertThat(workout.unavailableFocusMuscles).containsExactly(StandardMuscles.CHEST)
+    }
+
     /**
      * The committed reproduction: BEGINNER, BUILD_MUSCLE, 40 minutes, four days a week,
      * Resistance Band only, Chest HIGH, every movement capability COMFORTABLE, no

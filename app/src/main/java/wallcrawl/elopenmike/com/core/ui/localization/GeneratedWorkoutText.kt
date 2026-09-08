@@ -31,9 +31,29 @@ fun generatedWorkoutTitle(spec: WorkoutTitleSpec): String {
     )
 }
 
-/** Why the planner produced this workout, written for the reader. */
+/**
+ * Why the planner produced this workout, written for the reader.
+ *
+ * [unavailableFocusMuscles] adds one sentence naming the prioritised muscles nothing
+ * available trains as its main target. It is appended rather than folded into each
+ * variant so a re-entry or post-break session explains the missing emphasis too, and so
+ * the sentence a started session records is the same one that was on screen.
+ */
 @Composable
-fun generatedWorkoutRationale(spec: WorkoutRationaleSpec): String {
+fun generatedWorkoutRationale(
+    spec: WorkoutRationaleSpec,
+    unavailableFocusMuscles: List<String> = emptyList()
+): String {
+    val vocabulary = LocalExerciseVocabulary.current
+    val reason = rationaleSentence(spec)
+    if (unavailableFocusMuscles.isEmpty()) return reason
+    val separator = stringResource(R.string.list_separator)
+    val muscles = unavailableFocusMuscles.map { vocabulary.muscle(it) }.joinToString(separator)
+    return reason + " " + stringResource(R.string.generated_rationale_focus_unavailable, muscles)
+}
+
+@Composable
+private fun rationaleSentence(spec: WorkoutRationaleSpec): String {
     val vocabulary = LocalExerciseVocabulary.current
     return when (spec) {
         is WorkoutRationaleSpec.ReEntryRamp -> stringResource(

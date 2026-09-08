@@ -144,7 +144,10 @@ fun TodayScreen(
                 // Written here, where the reader's language is known, and handed to the
                 // ViewModel so the session is stored with the wording that was on screen.
                 val workoutName = generatedWorkoutTitle(state.suggestedWorkout.title)
-                val workoutRationale = generatedWorkoutRationale(state.suggestedWorkout.rationale)
+                val workoutRationale = generatedWorkoutRationale(
+                    spec = state.suggestedWorkout.rationale,
+                    unavailableFocusMuscles = state.suggestedWorkout.unavailableFocusMuscles
+                )
                 TodayContent(
                     state = state,
                     workoutName = workoutName,

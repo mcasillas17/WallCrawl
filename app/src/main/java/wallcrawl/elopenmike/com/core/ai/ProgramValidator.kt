@@ -126,6 +126,7 @@ class ProgramValidator(
             return Evaluation(violations.sorted(), emptyList())
         }
 
+        violations += focusViolations(workout, allowedById)
         violations += declaredConstraintViolations(workout, context, allowedById)
         workout.exercises.forEachIndexed { index, planned ->
             violations += exerciseViolations(index, planned, context, allowedById)
@@ -141,6 +142,40 @@ class ProgramValidator(
             attributionByExerciseId = accounting.attributionByExerciseId
         )
     }
+
+    // region advertised focus
+
+    /**
+     * The split a proposal advertises must be one its own exercises train.
+     *
+     * Always on rather than declared in `SessionProgramConstraints`, for the same reason
+     * duration agreement is: a caller cannot reasonably ask for a session whose title
+     * contradicts its content, and the declared constraints are program-design preferences
+     * rather than internal-consistency rules. It shares one predicate with the planner, so
+     * a split the planner considered fillable and a split the validator accepts cannot
+     * mean different things.
+     *
+     * Descriptive secondary involvement is deliberately not enough. It may still justify an
+     * accessory slot; it is simply never the evidence for the name on the session.
+     */
+    private fun focusViolations(
+        workout: GeneratedWorkout,
+        allowedById: Map<String, Exercise>
+    ): List<ProgramViolation> {
+        val split = workout.title.split
+        val supported = workout.exercises.any { planned ->
+            allowedById[planned.exerciseId]?.let(split::trainsAsFocus) == true
+        }
+        if (supported) return emptyList()
+        return listOf(
+            ProgramViolation(
+                code = ProgramViolationCode.UNSUPPORTED_WORKOUT_FOCUS,
+                detail = split.name
+            )
+        )
+    }
+
+    // endregion
 
     // region declared program-design constraints
 

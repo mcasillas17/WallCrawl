@@ -87,9 +87,33 @@ class FakeWorkoutPlanner(
             focusMuscles = focusMuscles,
             estimatedDurationMinutes = estimatedDuration,
             exercises = generatedExerciseList,
-            rationale = rationale
+            rationale = rationale,
+            unavailableFocusMuscles = unavailableFocusMuscles(context, candidates)
         )
     }
+
+    /**
+     * The high-priority muscles nothing available trains as its own purpose.
+     *
+     * Reported rather than papered over: the session above is a truthfully labelled
+     * alternative, and the user is owed the reason their emphasis is missing from it. This
+     * covers both shapes of the problem — a preferred split that nothing can fill, and a
+     * split that is fillable while the specific priority inside it is not.
+     *
+     * Sorted by canonical name, so the order never depends on map iteration or on the
+     * device language. Priorities stay soft; nothing here relaxes equipment, exclusion or
+     * capability constraints to make a muscle available.
+     */
+    private fun unavailableFocusMuscles(
+        context: WorkoutGenerationContext,
+        candidates: List<Exercise>
+    ): List<String> = context.musclePriorities
+        .filterValues { it == PriorityLevel.HIGH }
+        .keys
+        .filterNot { muscle ->
+            candidates.any { it.isStrengthWork() && muscle in it.focusMuscles() }
+        }
+        .sorted()
 
     private fun determineSplit(
         context: WorkoutGenerationContext,
