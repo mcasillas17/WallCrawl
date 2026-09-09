@@ -29,7 +29,7 @@ with upper-body and low setups explicitly selected for illustration.
 
 ## Source-bound requirements
 
-The source remains Workout Guide commit
+The source remains the [pinned catalog](../tools/workout-guide/import-config.json) at commit
 `ba0b709cb20430361b2cb33aaadd20998164a916`. All three PNG and SVG frames for each
 of these six IDs were inspected. The source manifest supplies no written
 installation instructions. Requirements supplement its original equipment field;
@@ -45,8 +45,10 @@ provenance or artwork.
 | `banded-kickback` | Resistance Band + low anchor + kickback attachment/support | The ankle connection and the hand gripping the same upright are visible. A low attachment alone is incomplete. |
 | `banded-row` | **Unresolved; no automatic eligibility** | The forward attachment is cropped out of every frame. Its height and configuration cannot be established. A comparable standing-row guide is not evidence for the missing fixture. |
 
-Pinned illustrations are under
-[`packages/workout-guide/assets/<exercise-id>/frame-{1,2,3}.{png,svg}`](https://github.com/bryllim/workout-guide/tree/ba0b709cb20430361b2cb33aaadd20998164a916/packages/workout-guide/assets).
+Pinned SVG illustrations are in the
+[bundled original assets](../app/src/main/assets/workout-guide/assets/).
+The [upstream manifest](../app/src/main/assets/workout-guide/upstream-manifest.json)
+retains the corresponding source paths and attribution.
 The [per-ID evidence ledger](research/2026-09-07-full-exercise-catalog-review.json)
 retains source observations, non-equipment limitations and held/rejected graph
 decisions. Equipment confirmation does not resolve those decisions.
@@ -93,8 +95,10 @@ and human decisions. Roadmap Package 3 is not complete.
 
 Canonical identifiers, not translated labels, are stored in the existing profile
 equipment list. The normal Room profile mapper and archive codec preserve them
-without new fields, migrations or default expansion: **Room remains schema 12;
-archives remain format 2 with format 1 restore support**. Old profiles, old saved
+without new fields, migrations or default expansion. The equipment change originally
+shipped with Room schema 12 and archive format 2; the later
+[profile gender integration](exercise-illustration-variants.md) advances those versions
+without changing equipment semantics. Old profiles, old saved
 onboarding drafts and archives containing only the previous equipment retain
 exactly those selections and remain unconfirmed for anchor-dependent work.
 

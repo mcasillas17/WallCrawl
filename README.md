@@ -323,7 +323,7 @@ set counts — in the same transaction that writes the session, and that record 
 the export archive. It carries no name, note, load, repetition, effort value, or body
 measurement.
 
-Guidance is persisted with templates and frozen session snapshots in Room schema 12.
+Guidance is persisted with templates and frozen session snapshots in Room schema 13.
 The active timer still reads the persisted exact seconds; add-time, skip, and dismiss are
 one-off timer actions rather than durable preference changes. Production keeps reviewed
 eligibility disabled because the bundled cohort remains 211 `DRAFT` / 0 `APPROVED`, so
@@ -399,16 +399,21 @@ feature/exercises/      searchable/filterable catalog browser
 feature/profile/        local goals, equipment, units, and movement preferences
 ```
 
-Production uses a bundled Workout Guide catalog behind WallCrawl-owned domain
+Production uses a bundled exercise catalog behind WallCrawl-owned domain
 and provider interfaces. Upstream paths are not stored in `Exercise` and are
 not visible to feature screens. `ExerciseVisualProvider` owns that integration
 boundary, while `InMemoryExerciseCatalog` remains an injectable test fixture.
 
-## Offline Workout Guide catalog
+## Offline exercise catalog
 
-WallCrawl bundles the complete catalog from pinned
-[Workout Guide](https://github.com/bryllim/workout-guide) commit
-`ba0b709cb20430361b2cb33aaadd20998164a916`: 302 exercises and 906 SVG frames.
+WallCrawl bundles 302 exercises and 906 original SVG frames from the
+[pinned source catalog](tools/workout-guide/import-config.json).
+[Everkinetic](https://github.com/everkinetic/data) is the original pose-artwork
+reference; Bryl Lim contributed additional exercises and animation frames.
+WallCrawl's [female and male adaptations](docs/exercise-illustration-variants.md)
+add 1,812 SVGs selected automatically from profile gender. The original frames
+remain available as a fallback. Full attribution and source history are retained
+in the bundled notices and provenance.
 The installed app does not use npm, fetch catalog data, or require the upstream
 repository.
 
@@ -513,7 +518,7 @@ into a fresh temporary checkout, verifies its commit and cleanliness, and runs
 `import_catalog.py --source <checkout> --check`. It compares the complete committed
 `app/src/main/assets/workout-guide/` bundle and
 `docs/reviewed-exercise-metadata-review.md` with regenerated output. Success prints
-`Workout Guide up to date` and exits zero; failures exit nonzero. Checked files
+an up-to-date confirmation and exits zero; failures exit nonzero. Checked files
 are never rewritten, and temporary checkouts are removed on success or failure.
 Upstream is input data only: no dependencies or project code are run, and Git
 configuration and credentials are isolated from the calling environment.
@@ -526,19 +531,19 @@ Failure diagnostics identify the stage:
 - Git/start/timeout errors: check Git availability, temporary-directory permissions,
   public HTTPS connectivity, and whether the configured repository and commit exist.
   Each subprocess has a 180-second timeout; upstream unavailability fails the check.
-- `Generated Workout Guide bundle or review report differs`: inspect authored
+- Generated bundle or review-report differences: inspect authored
   inputs and committed output, then deliberately regenerate if the input change
   is intended. Do not change the source pin merely to silence drift.
 
 To regenerate, or check an existing local checkout, point the importer at a clean
-Workout Guide checkout at the configured commit:
+source checkout at the configured commit:
 
 ```bash
 python3 tools/workout-guide/import_catalog.py \
-  --source /path/to/workout-guide
+  --source /path/to/source-checkout
 
 python3 tools/workout-guide/import_catalog.py \
-  --source /path/to/workout-guide \
+  --source /path/to/source-checkout \
   --check
 ```
 
@@ -550,7 +555,7 @@ report; `--check` detects catalog or report drift without writing. It copies SVG
 only; the PNG counterparts would duplicate the same illustrations without
 helping Android's vector rendering path.
 
-Workout Guide visual assets are CC BY-SA 4.0. Its `LICENSE`,
+The source artwork and WallCrawl's adaptations are CC BY-SA 4.0. The source `LICENSE`,
 `LICENSE-ASSETS`, `ATTRIBUTION.md`, full `upstream-manifest.json`, pinned commit,
 and WallCrawl notice are preserved under
 `app/src/main/assets/workout-guide/`. WallCrawl source code remains covered by
@@ -558,10 +563,12 @@ the repository's MIT license; third-party assets retain their own terms.
 
 The license also requires the credit to reach the person using the app, not
 only someone reading this repository. **Training Profile → Credits & Licenses**
-shows the creator, the license and a link to it, the pinned upstream commit,
-and the bundled notices — including the Everkinetic provenance of the original
-artwork. Catalog provenance is carried through `CatalogAttribution` rather than
-discarded at parse, so that screen renders what actually shipped.
+links to Everkinetic as the original pose reference, credits the additional artwork
+and animation frames, and provides the license and bundled notices. Those notices
+retain the exact source revision, creator credits, and adaptation history.
+Catalog provenance is carried through `CatalogAttribution` rather than discarded
+at parse. Source pins, tooling paths, and original notices retain their actual
+identifiers so imports and attribution remain reproducible.
 
 ## Build and test
 
@@ -616,7 +623,7 @@ fail the build when they do not, so `testDebugUnitTest` is the check for this.
 The Python suites run in CI alongside the Gradle build and cover synthetic importer
 and checkout fixtures plus the authored metadata that ships. Pull-request/main CI
 also runs **Check catalog against pinned upstream source** before Java/Gradle setup,
-using the [pinned-source check above](#offline-workout-guide-catalog) to detect drift
+using the [pinned-source check above](#offline-exercise-catalog) to detect drift
 across the real committed bundle and generated review report.
 
 ## Release versioning
@@ -647,10 +654,10 @@ to it, generated-workout validation, template validation, atomic persistence
 boundaries, progress and personal-record calculations, attribution loading,
 Today state, duration calculation, and visual-provider mapping.
 Android instrumentation also validates every supported database migration chain through
-schema 12 without destructive fallback, guidance persistence, the atomic start of a session
+schema 13 without destructive fallback, guidance persistence, the atomic start of a session
 with its validation record, the weekly-ledger DAO/repository,
 capability-control semantics, template/session snapshot behavior, and the local-data archive:
-its round trip from app-written state at both supported format versions, every rejection
+its round trip from app-written state at all three supported format versions, every rejection
 path for untrusted documents, transactional restore and deletion, and the destructive
 confirmation at a large font scale. It parses the
 packaged 302-exercise catalog and opens every one of its 906 SVG paths. Pull-request/main
@@ -691,3 +698,13 @@ a tag cannot publish its prerelease unless instrumentation succeeds.
 Current status, dependency order, and upcoming work live in the
 [WallCrawl roadmap](ROADMAP.md). Detailed design and implementation records remain under
 [`docs/superpowers/`](docs/superpowers/) for execution context.
+
+### Profile gender and exercise artwork
+
+Choose optional gender in onboarding or Profile. Exercise artwork follows that
+single profile setting: female artwork for Woman, male artwork for the other
+options. Exercise screens have no separate gender or illustration selector.
+This changes artwork only. Both sets contain 302 three-frame sequences, including
+current drafts whose continuity corrections remain for a later iteration.
+
+See [artwork packaging, provenance, and known limitations](docs/exercise-illustration-variants.md).

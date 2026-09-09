@@ -171,6 +171,7 @@ private class FakeUserProfileRepository : UserProfileRepository {
         error("Not used")
 
     override suspend fun updateReturningAfterBreakWeeks(weeks: Int) = error("Not used")
+    override suspend fun updateGender(gender: wallcrawl.elopenmike.com.core.model.ProfileGender) = saveProfile(getProfileOnce().copy(gender = gender))
     override suspend fun updateThemePreference(themePreference: ThemePreference) =
         error("Not used")
 }

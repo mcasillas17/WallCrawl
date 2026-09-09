@@ -1,0 +1,3629 @@
+{
+  "exercises": {
+    "ab-wheel": {
+      "female": [
+        "exercise-illustrations/female/ab-wheel/frame-1.svg",
+        "exercise-illustrations/female/ab-wheel/frame-2.svg",
+        "exercise-illustrations/female/ab-wheel/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/ab-wheel/frame-1.svg",
+        "exercise-illustrations/male/ab-wheel/frame-2.svg",
+        "exercise-illustrations/male/ab-wheel/frame-3.svg"
+      ]
+    },
+    "active-hang": {
+      "female": [
+        "exercise-illustrations/female/active-hang/frame-1.svg",
+        "exercise-illustrations/female/active-hang/frame-2.svg",
+        "exercise-illustrations/female/active-hang/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/active-hang/frame-1.svg",
+        "exercise-illustrations/male/active-hang/frame-2.svg",
+        "exercise-illustrations/male/active-hang/frame-3.svg"
+      ]
+    },
+    "archer-push-up": {
+      "female": [
+        "exercise-illustrations/female/archer-push-up/frame-1.svg",
+        "exercise-illustrations/female/archer-push-up/frame-2.svg",
+        "exercise-illustrations/female/archer-push-up/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/archer-push-up/frame-1.svg",
+        "exercise-illustrations/male/archer-push-up/frame-2.svg",
+        "exercise-illustrations/male/archer-push-up/frame-3.svg"
+      ]
+    },
+    "arm-circles": {
+      "female": [
+        "exercise-illustrations/female/arm-circles/frame-1.svg",
+        "exercise-illustrations/female/arm-circles/frame-2.svg",
+        "exercise-illustrations/female/arm-circles/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/arm-circles/frame-1.svg",
+        "exercise-illustrations/male/arm-circles/frame-2.svg",
+        "exercise-illustrations/male/arm-circles/frame-3.svg"
+      ]
+    },
+    "arnold-press": {
+      "female": [
+        "exercise-illustrations/female/arnold-press/frame-1.svg",
+        "exercise-illustrations/female/arnold-press/frame-2.svg",
+        "exercise-illustrations/female/arnold-press/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/arnold-press/frame-1.svg",
+        "exercise-illustrations/male/arnold-press/frame-2.svg",
+        "exercise-illustrations/male/arnold-press/frame-3.svg"
+      ]
+    },
+    "assault-bike": {
+      "female": [
+        "exercise-illustrations/female/assault-bike/frame-1.svg",
+        "exercise-illustrations/female/assault-bike/frame-2.svg",
+        "exercise-illustrations/female/assault-bike/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/assault-bike/frame-1.svg",
+        "exercise-illustrations/male/assault-bike/frame-2.svg",
+        "exercise-illustrations/male/assault-bike/frame-3.svg"
+      ]
+    },
+    "assisted-chin-up": {
+      "female": [
+        "exercise-illustrations/female/assisted-chin-up/frame-1.svg",
+        "exercise-illustrations/female/assisted-chin-up/frame-2.svg",
+        "exercise-illustrations/female/assisted-chin-up/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/assisted-chin-up/frame-1.svg",
+        "exercise-illustrations/male/assisted-chin-up/frame-2.svg",
+        "exercise-illustrations/male/assisted-chin-up/frame-3.svg"
+      ]
+    },
+    "assisted-dip": {
+      "female": [
+        "exercise-illustrations/female/assisted-dip/frame-1.svg",
+        "exercise-illustrations/female/assisted-dip/frame-2.svg",
+        "exercise-illustrations/female/assisted-dip/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/assisted-dip/frame-1.svg",
+        "exercise-illustrations/male/assisted-dip/frame-2.svg",
+        "exercise-illustrations/male/assisted-dip/frame-3.svg"
+      ]
+    },
+    "assisted-pistol-squat": {
+      "female": [
+        "exercise-illustrations/female/assisted-pistol-squat/frame-1.svg",
+        "exercise-illustrations/female/assisted-pistol-squat/frame-2.svg",
+        "exercise-illustrations/female/assisted-pistol-squat/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/assisted-pistol-squat/frame-1.svg",
+        "exercise-illustrations/male/assisted-pistol-squat/frame-2.svg",
+        "exercise-illustrations/male/assisted-pistol-squat/frame-3.svg"
+      ]
+    },
+    "assisted-pull-up": {
+      "female": [
+        "exercise-illustrations/female/assisted-pull-up/frame-1.svg",
+        "exercise-illustrations/female/assisted-pull-up/frame-2.svg",
+        "exercise-illustrations/female/assisted-pull-up/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/assisted-pull-up/frame-1.svg",
+        "exercise-illustrations/male/assisted-pull-up/frame-2.svg",
+        "exercise-illustrations/male/assisted-pull-up/frame-3.svg"
+      ]
+    },
+    "back-extension": {
+      "female": [
+        "exercise-illustrations/female/back-extension/frame-1.svg",
+        "exercise-illustrations/female/back-extension/frame-2.svg",
+        "exercise-illustrations/female/back-extension/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/back-extension/frame-1.svg",
+        "exercise-illustrations/male/back-extension/frame-2.svg",
+        "exercise-illustrations/male/back-extension/frame-3.svg"
+      ]
+    },
+    "band-pull-apart": {
+      "female": [
+        "exercise-illustrations/female/band-pull-apart/frame-1.svg",
+        "exercise-illustrations/female/band-pull-apart/frame-2.svg",
+        "exercise-illustrations/female/band-pull-apart/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/band-pull-apart/frame-1.svg",
+        "exercise-illustrations/male/band-pull-apart/frame-2.svg",
+        "exercise-illustrations/male/band-pull-apart/frame-3.svg"
+      ]
+    },
+    "banded-clamshell": {
+      "female": [
+        "exercise-illustrations/female/banded-clamshell/frame-1.svg",
+        "exercise-illustrations/female/banded-clamshell/frame-2.svg",
+        "exercise-illustrations/female/banded-clamshell/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/banded-clamshell/frame-1.svg",
+        "exercise-illustrations/male/banded-clamshell/frame-2.svg",
+        "exercise-illustrations/male/banded-clamshell/frame-3.svg"
+      ]
+    },
+    "banded-dead-bug": {
+      "female": [
+        "exercise-illustrations/female/banded-dead-bug/frame-1.svg",
+        "exercise-illustrations/female/banded-dead-bug/frame-2.svg",
+        "exercise-illustrations/female/banded-dead-bug/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/banded-dead-bug/frame-1.svg",
+        "exercise-illustrations/male/banded-dead-bug/frame-2.svg",
+        "exercise-illustrations/male/banded-dead-bug/frame-3.svg"
+      ]
+    },
+    "banded-donkey-kick": {
+      "female": [
+        "exercise-illustrations/female/banded-donkey-kick/frame-1.svg",
+        "exercise-illustrations/female/banded-donkey-kick/frame-2.svg",
+        "exercise-illustrations/female/banded-donkey-kick/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/banded-donkey-kick/frame-1.svg",
+        "exercise-illustrations/male/banded-donkey-kick/frame-2.svg",
+        "exercise-illustrations/male/banded-donkey-kick/frame-3.svg"
+      ]
+    },
+    "banded-face-pull": {
+      "female": [
+        "exercise-illustrations/female/banded-face-pull/frame-1.svg",
+        "exercise-illustrations/female/banded-face-pull/frame-2.svg",
+        "exercise-illustrations/female/banded-face-pull/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/banded-face-pull/frame-1.svg",
+        "exercise-illustrations/male/banded-face-pull/frame-2.svg",
+        "exercise-illustrations/male/banded-face-pull/frame-3.svg"
+      ]
+    },
+    "banded-fire-hydrant": {
+      "female": [
+        "exercise-illustrations/female/banded-fire-hydrant/frame-1.svg",
+        "exercise-illustrations/female/banded-fire-hydrant/frame-2.svg",
+        "exercise-illustrations/female/banded-fire-hydrant/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/banded-fire-hydrant/frame-1.svg",
+        "exercise-illustrations/male/banded-fire-hydrant/frame-2.svg",
+        "exercise-illustrations/male/banded-fire-hydrant/frame-3.svg"
+      ]
+    },
+    "banded-frog-pump": {
+      "female": [
+        "exercise-illustrations/female/banded-frog-pump/frame-1.svg",
+        "exercise-illustrations/female/banded-frog-pump/frame-2.svg",
+        "exercise-illustrations/female/banded-frog-pump/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/banded-frog-pump/frame-1.svg",
+        "exercise-illustrations/male/banded-frog-pump/frame-2.svg",
+        "exercise-illustrations/male/banded-frog-pump/frame-3.svg"
+      ]
+    },
+    "banded-glute-bridge": {
+      "female": [
+        "exercise-illustrations/female/banded-glute-bridge/frame-1.svg",
+        "exercise-illustrations/female/banded-glute-bridge/frame-2.svg",
+        "exercise-illustrations/female/banded-glute-bridge/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/banded-glute-bridge/frame-1.svg",
+        "exercise-illustrations/male/banded-glute-bridge/frame-2.svg",
+        "exercise-illustrations/male/banded-glute-bridge/frame-3.svg"
+      ]
+    },
+    "banded-hip-thrust": {
+      "female": [
+        "exercise-illustrations/female/banded-hip-thrust/frame-1.svg",
+        "exercise-illustrations/female/banded-hip-thrust/frame-2.svg",
+        "exercise-illustrations/female/banded-hip-thrust/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/banded-hip-thrust/frame-1.svg",
+        "exercise-illustrations/male/banded-hip-thrust/frame-2.svg",
+        "exercise-illustrations/male/banded-hip-thrust/frame-3.svg"
+      ]
+    },
+    "banded-kickback": {
+      "female": [
+        "exercise-illustrations/female/banded-kickback/frame-1.svg",
+        "exercise-illustrations/female/banded-kickback/frame-2.svg",
+        "exercise-illustrations/female/banded-kickback/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/banded-kickback/frame-1.svg",
+        "exercise-illustrations/male/banded-kickback/frame-2.svg",
+        "exercise-illustrations/male/banded-kickback/frame-3.svg"
+      ]
+    },
+    "banded-lat-pulldown": {
+      "female": [
+        "exercise-illustrations/female/banded-lat-pulldown/frame-1.svg",
+        "exercise-illustrations/female/banded-lat-pulldown/frame-2.svg",
+        "exercise-illustrations/female/banded-lat-pulldown/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/banded-lat-pulldown/frame-1.svg",
+        "exercise-illustrations/male/banded-lat-pulldown/frame-2.svg",
+        "exercise-illustrations/male/banded-lat-pulldown/frame-3.svg"
+      ]
+    },
+    "banded-lateral-walk": {
+      "female": [
+        "exercise-illustrations/female/banded-lateral-walk/frame-1.svg",
+        "exercise-illustrations/female/banded-lateral-walk/frame-2.svg",
+        "exercise-illustrations/female/banded-lateral-walk/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/banded-lateral-walk/frame-1.svg",
+        "exercise-illustrations/male/banded-lateral-walk/frame-2.svg",
+        "exercise-illustrations/male/banded-lateral-walk/frame-3.svg"
+      ]
+    },
+    "banded-monster-walk": {
+      "female": [
+        "exercise-illustrations/female/banded-monster-walk/frame-1.svg",
+        "exercise-illustrations/female/banded-monster-walk/frame-2.svg",
+        "exercise-illustrations/female/banded-monster-walk/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/banded-monster-walk/frame-1.svg",
+        "exercise-illustrations/male/banded-monster-walk/frame-2.svg",
+        "exercise-illustrations/male/banded-monster-walk/frame-3.svg"
+      ]
+    },
+    "banded-pallof-press": {
+      "female": [
+        "exercise-illustrations/female/banded-pallof-press/frame-1.svg",
+        "exercise-illustrations/female/banded-pallof-press/frame-2.svg",
+        "exercise-illustrations/female/banded-pallof-press/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/banded-pallof-press/frame-1.svg",
+        "exercise-illustrations/male/banded-pallof-press/frame-2.svg",
+        "exercise-illustrations/male/banded-pallof-press/frame-3.svg"
+      ]
+    },
+    "banded-row": {
+      "female": [
+        "exercise-illustrations/female/banded-row/frame-1.svg",
+        "exercise-illustrations/female/banded-row/frame-2.svg",
+        "exercise-illustrations/female/banded-row/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/banded-row/frame-1.svg",
+        "exercise-illustrations/male/banded-row/frame-2.svg",
+        "exercise-illustrations/male/banded-row/frame-3.svg"
+      ]
+    },
+    "banded-seated-hip-abduction": {
+      "female": [
+        "exercise-illustrations/female/banded-seated-hip-abduction/frame-1.svg",
+        "exercise-illustrations/female/banded-seated-hip-abduction/frame-2.svg",
+        "exercise-illustrations/female/banded-seated-hip-abduction/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/banded-seated-hip-abduction/frame-1.svg",
+        "exercise-illustrations/male/banded-seated-hip-abduction/frame-2.svg",
+        "exercise-illustrations/male/banded-seated-hip-abduction/frame-3.svg"
+      ]
+    },
+    "banded-squat": {
+      "female": [
+        "exercise-illustrations/female/banded-squat/frame-1.svg",
+        "exercise-illustrations/female/banded-squat/frame-2.svg",
+        "exercise-illustrations/female/banded-squat/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/banded-squat/frame-1.svg",
+        "exercise-illustrations/male/banded-squat/frame-2.svg",
+        "exercise-illustrations/male/banded-squat/frame-3.svg"
+      ]
+    },
+    "banded-standing-hip-abduction": {
+      "female": [
+        "exercise-illustrations/female/banded-standing-hip-abduction/frame-1.svg",
+        "exercise-illustrations/female/banded-standing-hip-abduction/frame-2.svg",
+        "exercise-illustrations/female/banded-standing-hip-abduction/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/banded-standing-hip-abduction/frame-1.svg",
+        "exercise-illustrations/male/banded-standing-hip-abduction/frame-2.svg",
+        "exercise-illustrations/male/banded-standing-hip-abduction/frame-3.svg"
+      ]
+    },
+    "banded-woodchop": {
+      "female": [
+        "exercise-illustrations/female/banded-woodchop/frame-1.svg",
+        "exercise-illustrations/female/banded-woodchop/frame-2.svg",
+        "exercise-illustrations/female/banded-woodchop/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/banded-woodchop/frame-1.svg",
+        "exercise-illustrations/male/banded-woodchop/frame-2.svg",
+        "exercise-illustrations/male/banded-woodchop/frame-3.svg"
+      ]
+    },
+    "barbell-back-squat": {
+      "female": [
+        "exercise-illustrations/female/barbell-back-squat/frame-1.svg",
+        "exercise-illustrations/female/barbell-back-squat/frame-2.svg",
+        "exercise-illustrations/female/barbell-back-squat/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/barbell-back-squat/frame-1.svg",
+        "exercise-illustrations/male/barbell-back-squat/frame-2.svg",
+        "exercise-illustrations/male/barbell-back-squat/frame-3.svg"
+      ]
+    },
+    "barbell-bench-press": {
+      "female": [
+        "exercise-illustrations/female/barbell-bench-press/frame-1.svg",
+        "exercise-illustrations/female/barbell-bench-press/frame-2.svg",
+        "exercise-illustrations/female/barbell-bench-press/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/barbell-bench-press/frame-1.svg",
+        "exercise-illustrations/male/barbell-bench-press/frame-2.svg",
+        "exercise-illustrations/male/barbell-bench-press/frame-3.svg"
+      ]
+    },
+    "barbell-bicep-curl": {
+      "female": [
+        "exercise-illustrations/female/barbell-bicep-curl/frame-1.svg",
+        "exercise-illustrations/female/barbell-bicep-curl/frame-2.svg",
+        "exercise-illustrations/female/barbell-bicep-curl/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/barbell-bicep-curl/frame-1.svg",
+        "exercise-illustrations/male/barbell-bicep-curl/frame-2.svg",
+        "exercise-illustrations/male/barbell-bicep-curl/frame-3.svg"
+      ]
+    },
+    "barbell-deadlift": {
+      "female": [
+        "exercise-illustrations/female/barbell-deadlift/frame-1.svg",
+        "exercise-illustrations/female/barbell-deadlift/frame-2.svg",
+        "exercise-illustrations/female/barbell-deadlift/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/barbell-deadlift/frame-1.svg",
+        "exercise-illustrations/male/barbell-deadlift/frame-2.svg",
+        "exercise-illustrations/male/barbell-deadlift/frame-3.svg"
+      ]
+    },
+    "barbell-glute-bridge": {
+      "female": [
+        "exercise-illustrations/female/barbell-glute-bridge/frame-1.svg",
+        "exercise-illustrations/female/barbell-glute-bridge/frame-2.svg",
+        "exercise-illustrations/female/barbell-glute-bridge/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/barbell-glute-bridge/frame-1.svg",
+        "exercise-illustrations/male/barbell-glute-bridge/frame-2.svg",
+        "exercise-illustrations/male/barbell-glute-bridge/frame-3.svg"
+      ]
+    },
+    "barbell-row": {
+      "female": [
+        "exercise-illustrations/female/barbell-row/frame-1.svg",
+        "exercise-illustrations/female/barbell-row/frame-2.svg",
+        "exercise-illustrations/female/barbell-row/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/barbell-row/frame-1.svg",
+        "exercise-illustrations/male/barbell-row/frame-2.svg",
+        "exercise-illustrations/male/barbell-row/frame-3.svg"
+      ]
+    },
+    "battle-ropes": {
+      "female": [
+        "exercise-illustrations/female/battle-ropes/frame-1.svg",
+        "exercise-illustrations/female/battle-ropes/frame-2.svg",
+        "exercise-illustrations/female/battle-ropes/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/battle-ropes/frame-1.svg",
+        "exercise-illustrations/male/battle-ropes/frame-2.svg",
+        "exercise-illustrations/male/battle-ropes/frame-3.svg"
+      ]
+    },
+    "bear-crawl": {
+      "female": [
+        "exercise-illustrations/female/bear-crawl/frame-1.svg",
+        "exercise-illustrations/female/bear-crawl/frame-2.svg",
+        "exercise-illustrations/female/bear-crawl/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/bear-crawl/frame-1.svg",
+        "exercise-illustrations/male/bear-crawl/frame-2.svg",
+        "exercise-illustrations/male/bear-crawl/frame-3.svg"
+      ]
+    },
+    "bear-plank": {
+      "female": [
+        "exercise-illustrations/female/bear-plank/frame-1.svg",
+        "exercise-illustrations/female/bear-plank/frame-2.svg",
+        "exercise-illustrations/female/bear-plank/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/bear-plank/frame-1.svg",
+        "exercise-illustrations/male/bear-plank/frame-2.svg",
+        "exercise-illustrations/male/bear-plank/frame-3.svg"
+      ]
+    },
+    "belt-squat": {
+      "female": [
+        "exercise-illustrations/female/belt-squat/frame-1.svg",
+        "exercise-illustrations/female/belt-squat/frame-2.svg",
+        "exercise-illustrations/female/belt-squat/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/belt-squat/frame-1.svg",
+        "exercise-illustrations/male/belt-squat/frame-2.svg",
+        "exercise-illustrations/male/belt-squat/frame-3.svg"
+      ]
+    },
+    "bench-dip": {
+      "female": [
+        "exercise-illustrations/female/bench-dip/frame-1.svg",
+        "exercise-illustrations/female/bench-dip/frame-2.svg",
+        "exercise-illustrations/female/bench-dip/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/bench-dip/frame-1.svg",
+        "exercise-illustrations/male/bench-dip/frame-2.svg",
+        "exercise-illustrations/male/bench-dip/frame-3.svg"
+      ]
+    },
+    "bent-over-rear-delt-raise": {
+      "female": [
+        "exercise-illustrations/female/bent-over-rear-delt-raise/frame-1.svg",
+        "exercise-illustrations/female/bent-over-rear-delt-raise/frame-2.svg",
+        "exercise-illustrations/female/bent-over-rear-delt-raise/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/bent-over-rear-delt-raise/frame-1.svg",
+        "exercise-illustrations/male/bent-over-rear-delt-raise/frame-2.svg",
+        "exercise-illustrations/male/bent-over-rear-delt-raise/frame-3.svg"
+      ]
+    },
+    "bicep-curl": {
+      "female": [
+        "exercise-illustrations/female/bicep-curl/frame-1.svg",
+        "exercise-illustrations/female/bicep-curl/frame-2.svg",
+        "exercise-illustrations/female/bicep-curl/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/bicep-curl/frame-1.svg",
+        "exercise-illustrations/male/bicep-curl/frame-2.svg",
+        "exercise-illustrations/male/bicep-curl/frame-3.svg"
+      ]
+    },
+    "bicycle-crunch": {
+      "female": [
+        "exercise-illustrations/female/bicycle-crunch/frame-1.svg",
+        "exercise-illustrations/female/bicycle-crunch/frame-2.svg",
+        "exercise-illustrations/female/bicycle-crunch/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/bicycle-crunch/frame-1.svg",
+        "exercise-illustrations/male/bicycle-crunch/frame-2.svg",
+        "exercise-illustrations/male/bicycle-crunch/frame-3.svg"
+      ]
+    },
+    "bird-dog": {
+      "female": [
+        "exercise-illustrations/female/bird-dog/frame-1.svg",
+        "exercise-illustrations/female/bird-dog/frame-2.svg",
+        "exercise-illustrations/female/bird-dog/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/bird-dog/frame-1.svg",
+        "exercise-illustrations/male/bird-dog/frame-2.svg",
+        "exercise-illustrations/male/bird-dog/frame-3.svg"
+      ]
+    },
+    "bodyweight-squat": {
+      "female": [
+        "exercise-illustrations/female/bodyweight-squat/frame-1.svg",
+        "exercise-illustrations/female/bodyweight-squat/frame-2.svg",
+        "exercise-illustrations/female/bodyweight-squat/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/bodyweight-squat/frame-1.svg",
+        "exercise-illustrations/male/bodyweight-squat/frame-2.svg",
+        "exercise-illustrations/male/bodyweight-squat/frame-3.svg"
+      ]
+    },
+    "bulgarian-split-squat": {
+      "female": [
+        "exercise-illustrations/female/bulgarian-split-squat/frame-1.svg",
+        "exercise-illustrations/female/bulgarian-split-squat/frame-2.svg",
+        "exercise-illustrations/female/bulgarian-split-squat/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/bulgarian-split-squat/frame-1.svg",
+        "exercise-illustrations/male/bulgarian-split-squat/frame-2.svg",
+        "exercise-illustrations/male/bulgarian-split-squat/frame-3.svg"
+      ]
+    },
+    "burpee": {
+      "female": [
+        "exercise-illustrations/female/burpee/frame-1.svg",
+        "exercise-illustrations/female/burpee/frame-2.svg",
+        "exercise-illustrations/female/burpee/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/burpee/frame-1.svg",
+        "exercise-illustrations/male/burpee/frame-2.svg",
+        "exercise-illustrations/male/burpee/frame-3.svg"
+      ]
+    },
+    "butterfly-stretch": {
+      "female": [
+        "exercise-illustrations/female/butterfly-stretch/frame-1.svg",
+        "exercise-illustrations/female/butterfly-stretch/frame-2.svg",
+        "exercise-illustrations/female/butterfly-stretch/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/butterfly-stretch/frame-1.svg",
+        "exercise-illustrations/male/butterfly-stretch/frame-2.svg",
+        "exercise-illustrations/male/butterfly-stretch/frame-3.svg"
+      ]
+    },
+    "cable-crunch": {
+      "female": [
+        "exercise-illustrations/female/cable-crunch/frame-1.svg",
+        "exercise-illustrations/female/cable-crunch/frame-2.svg",
+        "exercise-illustrations/female/cable-crunch/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/cable-crunch/frame-1.svg",
+        "exercise-illustrations/male/cable-crunch/frame-2.svg",
+        "exercise-illustrations/male/cable-crunch/frame-3.svg"
+      ]
+    },
+    "cable-curl": {
+      "female": [
+        "exercise-illustrations/female/cable-curl/frame-1.svg",
+        "exercise-illustrations/female/cable-curl/frame-2.svg",
+        "exercise-illustrations/female/cable-curl/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/cable-curl/frame-1.svg",
+        "exercise-illustrations/male/cable-curl/frame-2.svg",
+        "exercise-illustrations/male/cable-curl/frame-3.svg"
+      ]
+    },
+    "cable-fly": {
+      "female": [
+        "exercise-illustrations/female/cable-fly/frame-1.svg",
+        "exercise-illustrations/female/cable-fly/frame-2.svg",
+        "exercise-illustrations/female/cable-fly/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/cable-fly/frame-1.svg",
+        "exercise-illustrations/male/cable-fly/frame-2.svg",
+        "exercise-illustrations/male/cable-fly/frame-3.svg"
+      ]
+    },
+    "cable-front-raise": {
+      "female": [
+        "exercise-illustrations/female/cable-front-raise/frame-1.svg",
+        "exercise-illustrations/female/cable-front-raise/frame-2.svg",
+        "exercise-illustrations/female/cable-front-raise/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/cable-front-raise/frame-1.svg",
+        "exercise-illustrations/male/cable-front-raise/frame-2.svg",
+        "exercise-illustrations/male/cable-front-raise/frame-3.svg"
+      ]
+    },
+    "cable-kickback": {
+      "female": [
+        "exercise-illustrations/female/cable-kickback/frame-1.svg",
+        "exercise-illustrations/female/cable-kickback/frame-2.svg",
+        "exercise-illustrations/female/cable-kickback/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/cable-kickback/frame-1.svg",
+        "exercise-illustrations/male/cable-kickback/frame-2.svg",
+        "exercise-illustrations/male/cable-kickback/frame-3.svg"
+      ]
+    },
+    "cable-lateral-raise": {
+      "female": [
+        "exercise-illustrations/female/cable-lateral-raise/frame-1.svg",
+        "exercise-illustrations/female/cable-lateral-raise/frame-2.svg",
+        "exercise-illustrations/female/cable-lateral-raise/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/cable-lateral-raise/frame-1.svg",
+        "exercise-illustrations/male/cable-lateral-raise/frame-2.svg",
+        "exercise-illustrations/male/cable-lateral-raise/frame-3.svg"
+      ]
+    },
+    "cable-pallof-hold": {
+      "female": [
+        "exercise-illustrations/female/cable-pallof-hold/frame-1.svg",
+        "exercise-illustrations/female/cable-pallof-hold/frame-2.svg",
+        "exercise-illustrations/female/cable-pallof-hold/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/cable-pallof-hold/frame-1.svg",
+        "exercise-illustrations/male/cable-pallof-hold/frame-2.svg",
+        "exercise-illustrations/male/cable-pallof-hold/frame-3.svg"
+      ]
+    },
+    "cable-pull-through": {
+      "female": [
+        "exercise-illustrations/female/cable-pull-through/frame-1.svg",
+        "exercise-illustrations/female/cable-pull-through/frame-2.svg",
+        "exercise-illustrations/female/cable-pull-through/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/cable-pull-through/frame-1.svg",
+        "exercise-illustrations/male/cable-pull-through/frame-2.svg",
+        "exercise-illustrations/male/cable-pull-through/frame-3.svg"
+      ]
+    },
+    "cable-rear-delt-fly": {
+      "female": [
+        "exercise-illustrations/female/cable-rear-delt-fly/frame-1.svg",
+        "exercise-illustrations/female/cable-rear-delt-fly/frame-2.svg",
+        "exercise-illustrations/female/cable-rear-delt-fly/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/cable-rear-delt-fly/frame-1.svg",
+        "exercise-illustrations/male/cable-rear-delt-fly/frame-2.svg",
+        "exercise-illustrations/male/cable-rear-delt-fly/frame-3.svg"
+      ]
+    },
+    "cable-standing-hip-abduction": {
+      "female": [
+        "exercise-illustrations/female/cable-standing-hip-abduction/frame-1.svg",
+        "exercise-illustrations/female/cable-standing-hip-abduction/frame-2.svg",
+        "exercise-illustrations/female/cable-standing-hip-abduction/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/cable-standing-hip-abduction/frame-1.svg",
+        "exercise-illustrations/male/cable-standing-hip-abduction/frame-2.svg",
+        "exercise-illustrations/male/cable-standing-hip-abduction/frame-3.svg"
+      ]
+    },
+    "cable-standing-hip-adduction": {
+      "female": [
+        "exercise-illustrations/female/cable-standing-hip-adduction/frame-1.svg",
+        "exercise-illustrations/female/cable-standing-hip-adduction/frame-2.svg",
+        "exercise-illustrations/female/cable-standing-hip-adduction/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/cable-standing-hip-adduction/frame-1.svg",
+        "exercise-illustrations/male/cable-standing-hip-adduction/frame-2.svg",
+        "exercise-illustrations/male/cable-standing-hip-adduction/frame-3.svg"
+      ]
+    },
+    "cable-triceps-pushdown": {
+      "female": [
+        "exercise-illustrations/female/cable-triceps-pushdown/frame-1.svg",
+        "exercise-illustrations/female/cable-triceps-pushdown/frame-2.svg",
+        "exercise-illustrations/female/cable-triceps-pushdown/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/cable-triceps-pushdown/frame-1.svg",
+        "exercise-illustrations/male/cable-triceps-pushdown/frame-2.svg",
+        "exercise-illustrations/male/cable-triceps-pushdown/frame-3.svg"
+      ]
+    },
+    "cable-woodchop": {
+      "female": [
+        "exercise-illustrations/female/cable-woodchop/frame-1.svg",
+        "exercise-illustrations/female/cable-woodchop/frame-2.svg",
+        "exercise-illustrations/female/cable-woodchop/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/cable-woodchop/frame-1.svg",
+        "exercise-illustrations/male/cable-woodchop/frame-2.svg",
+        "exercise-illustrations/male/cable-woodchop/frame-3.svg"
+      ]
+    },
+    "calf-raise": {
+      "female": [
+        "exercise-illustrations/female/calf-raise/frame-1.svg",
+        "exercise-illustrations/female/calf-raise/frame-2.svg",
+        "exercise-illustrations/female/calf-raise/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/calf-raise/frame-1.svg",
+        "exercise-illustrations/male/calf-raise/frame-2.svg",
+        "exercise-illustrations/male/calf-raise/frame-3.svg"
+      ]
+    },
+    "captains-chair-knee-raise": {
+      "female": [
+        "exercise-illustrations/female/captains-chair-knee-raise/frame-1.svg",
+        "exercise-illustrations/female/captains-chair-knee-raise/frame-2.svg",
+        "exercise-illustrations/female/captains-chair-knee-raise/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/captains-chair-knee-raise/frame-1.svg",
+        "exercise-illustrations/male/captains-chair-knee-raise/frame-2.svg",
+        "exercise-illustrations/male/captains-chair-knee-raise/frame-3.svg"
+      ]
+    },
+    "cat-cow-stretch": {
+      "female": [
+        "exercise-illustrations/female/cat-cow-stretch/frame-1.svg",
+        "exercise-illustrations/female/cat-cow-stretch/frame-2.svg",
+        "exercise-illustrations/female/cat-cow-stretch/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/cat-cow-stretch/frame-1.svg",
+        "exercise-illustrations/male/cat-cow-stretch/frame-2.svg",
+        "exercise-illustrations/male/cat-cow-stretch/frame-3.svg"
+      ]
+    },
+    "chair-dip": {
+      "female": [
+        "exercise-illustrations/female/chair-dip/frame-1.svg",
+        "exercise-illustrations/female/chair-dip/frame-2.svg",
+        "exercise-illustrations/female/chair-dip/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/chair-dip/frame-1.svg",
+        "exercise-illustrations/male/chair-dip/frame-2.svg",
+        "exercise-illustrations/male/chair-dip/frame-3.svg"
+      ]
+    },
+    "chest-supported-row": {
+      "female": [
+        "exercise-illustrations/female/chest-supported-row/frame-1.svg",
+        "exercise-illustrations/female/chest-supported-row/frame-2.svg",
+        "exercise-illustrations/female/chest-supported-row/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/chest-supported-row/frame-1.svg",
+        "exercise-illustrations/male/chest-supported-row/frame-2.svg",
+        "exercise-illustrations/male/chest-supported-row/frame-3.svg"
+      ]
+    },
+    "childs-pose": {
+      "female": [
+        "exercise-illustrations/female/childs-pose/frame-1.svg",
+        "exercise-illustrations/female/childs-pose/frame-2.svg",
+        "exercise-illustrations/female/childs-pose/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/childs-pose/frame-1.svg",
+        "exercise-illustrations/male/childs-pose/frame-2.svg",
+        "exercise-illustrations/male/childs-pose/frame-3.svg"
+      ]
+    },
+    "chin-up": {
+      "female": [
+        "exercise-illustrations/female/chin-up/frame-1.svg",
+        "exercise-illustrations/female/chin-up/frame-2.svg",
+        "exercise-illustrations/female/chin-up/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/chin-up/frame-1.svg",
+        "exercise-illustrations/male/chin-up/frame-2.svg",
+        "exercise-illustrations/male/chin-up/frame-3.svg"
+      ]
+    },
+    "clamshell": {
+      "female": [
+        "exercise-illustrations/female/clamshell/frame-1.svg",
+        "exercise-illustrations/female/clamshell/frame-2.svg",
+        "exercise-illustrations/female/clamshell/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/clamshell/frame-1.svg",
+        "exercise-illustrations/male/clamshell/frame-2.svg",
+        "exercise-illustrations/male/clamshell/frame-3.svg"
+      ]
+    },
+    "close-grip-bench-press": {
+      "female": [
+        "exercise-illustrations/female/close-grip-bench-press/frame-1.svg",
+        "exercise-illustrations/female/close-grip-bench-press/frame-2.svg",
+        "exercise-illustrations/female/close-grip-bench-press/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/close-grip-bench-press/frame-1.svg",
+        "exercise-illustrations/male/close-grip-bench-press/frame-2.svg",
+        "exercise-illustrations/male/close-grip-bench-press/frame-3.svg"
+      ]
+    },
+    "close-grip-lat-pulldown": {
+      "female": [
+        "exercise-illustrations/female/close-grip-lat-pulldown/frame-1.svg",
+        "exercise-illustrations/female/close-grip-lat-pulldown/frame-2.svg",
+        "exercise-illustrations/female/close-grip-lat-pulldown/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/close-grip-lat-pulldown/frame-1.svg",
+        "exercise-illustrations/male/close-grip-lat-pulldown/frame-2.svg",
+        "exercise-illustrations/male/close-grip-lat-pulldown/frame-3.svg"
+      ]
+    },
+    "commando-pull-up": {
+      "female": [
+        "exercise-illustrations/female/commando-pull-up/frame-1.svg",
+        "exercise-illustrations/female/commando-pull-up/frame-2.svg",
+        "exercise-illustrations/female/commando-pull-up/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/commando-pull-up/frame-1.svg",
+        "exercise-illustrations/male/commando-pull-up/frame-2.svg",
+        "exercise-illustrations/male/commando-pull-up/frame-3.svg"
+      ]
+    },
+    "concentration-curl": {
+      "female": [
+        "exercise-illustrations/female/concentration-curl/frame-1.svg",
+        "exercise-illustrations/female/concentration-curl/frame-2.svg",
+        "exercise-illustrations/female/concentration-curl/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/concentration-curl/frame-1.svg",
+        "exercise-illustrations/male/concentration-curl/frame-2.svg",
+        "exercise-illustrations/male/concentration-curl/frame-3.svg"
+      ]
+    },
+    "copenhagen-plank": {
+      "female": [
+        "exercise-illustrations/female/copenhagen-plank/frame-1.svg",
+        "exercise-illustrations/female/copenhagen-plank/frame-2.svg",
+        "exercise-illustrations/female/copenhagen-plank/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/copenhagen-plank/frame-1.svg",
+        "exercise-illustrations/male/copenhagen-plank/frame-2.svg",
+        "exercise-illustrations/male/copenhagen-plank/frame-3.svg"
+      ]
+    },
+    "cossack-squat": {
+      "female": [
+        "exercise-illustrations/female/cossack-squat/frame-1.svg",
+        "exercise-illustrations/female/cossack-squat/frame-2.svg",
+        "exercise-illustrations/female/cossack-squat/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/cossack-squat/frame-1.svg",
+        "exercise-illustrations/male/cossack-squat/frame-2.svg",
+        "exercise-illustrations/male/cossack-squat/frame-3.svg"
+      ]
+    },
+    "crab-walk": {
+      "female": [
+        "exercise-illustrations/female/crab-walk/frame-1.svg",
+        "exercise-illustrations/female/crab-walk/frame-2.svg",
+        "exercise-illustrations/female/crab-walk/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/crab-walk/frame-1.svg",
+        "exercise-illustrations/male/crab-walk/frame-2.svg",
+        "exercise-illustrations/male/crab-walk/frame-3.svg"
+      ]
+    },
+    "cross-body-shoulder-stretch": {
+      "female": [
+        "exercise-illustrations/female/cross-body-shoulder-stretch/frame-1.svg",
+        "exercise-illustrations/female/cross-body-shoulder-stretch/frame-2.svg",
+        "exercise-illustrations/female/cross-body-shoulder-stretch/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/cross-body-shoulder-stretch/frame-1.svg",
+        "exercise-illustrations/male/cross-body-shoulder-stretch/frame-2.svg",
+        "exercise-illustrations/male/cross-body-shoulder-stretch/frame-3.svg"
+      ]
+    },
+    "crunch": {
+      "female": [
+        "exercise-illustrations/female/crunch/frame-1.svg",
+        "exercise-illustrations/female/crunch/frame-2.svg",
+        "exercise-illustrations/female/crunch/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/crunch/frame-1.svg",
+        "exercise-illustrations/male/crunch/frame-2.svg",
+        "exercise-illustrations/male/crunch/frame-3.svg"
+      ]
+    },
+    "curtsy-lunge": {
+      "female": [
+        "exercise-illustrations/female/curtsy-lunge/frame-1.svg",
+        "exercise-illustrations/female/curtsy-lunge/frame-2.svg",
+        "exercise-illustrations/female/curtsy-lunge/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/curtsy-lunge/frame-1.svg",
+        "exercise-illustrations/male/curtsy-lunge/frame-2.svg",
+        "exercise-illustrations/male/curtsy-lunge/frame-3.svg"
+      ]
+    },
+    "cycling": {
+      "female": [
+        "exercise-illustrations/female/cycling/frame-1.svg",
+        "exercise-illustrations/female/cycling/frame-2.svg",
+        "exercise-illustrations/female/cycling/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/cycling/frame-1.svg",
+        "exercise-illustrations/male/cycling/frame-2.svg",
+        "exercise-illustrations/male/cycling/frame-3.svg"
+      ]
+    },
+    "dead-bug": {
+      "female": [
+        "exercise-illustrations/female/dead-bug/frame-1.svg",
+        "exercise-illustrations/female/dead-bug/frame-2.svg",
+        "exercise-illustrations/female/dead-bug/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/dead-bug/frame-1.svg",
+        "exercise-illustrations/male/dead-bug/frame-2.svg",
+        "exercise-illustrations/male/dead-bug/frame-3.svg"
+      ]
+    },
+    "dead-hang": {
+      "female": [
+        "exercise-illustrations/female/dead-hang/frame-1.svg",
+        "exercise-illustrations/female/dead-hang/frame-2.svg",
+        "exercise-illustrations/female/dead-hang/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/dead-hang/frame-1.svg",
+        "exercise-illustrations/male/dead-hang/frame-2.svg",
+        "exercise-illustrations/male/dead-hang/frame-3.svg"
+      ]
+    },
+    "decline-bench-press": {
+      "female": [
+        "exercise-illustrations/female/decline-bench-press/frame-1.svg",
+        "exercise-illustrations/female/decline-bench-press/frame-2.svg",
+        "exercise-illustrations/female/decline-bench-press/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/decline-bench-press/frame-1.svg",
+        "exercise-illustrations/male/decline-bench-press/frame-2.svg",
+        "exercise-illustrations/male/decline-bench-press/frame-3.svg"
+      ]
+    },
+    "decline-dumbbell-press": {
+      "female": [
+        "exercise-illustrations/female/decline-dumbbell-press/frame-1.svg",
+        "exercise-illustrations/female/decline-dumbbell-press/frame-2.svg",
+        "exercise-illustrations/female/decline-dumbbell-press/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/decline-dumbbell-press/frame-1.svg",
+        "exercise-illustrations/male/decline-dumbbell-press/frame-2.svg",
+        "exercise-illustrations/male/decline-dumbbell-press/frame-3.svg"
+      ]
+    },
+    "decline-push-up": {
+      "female": [
+        "exercise-illustrations/female/decline-push-up/frame-1.svg",
+        "exercise-illustrations/female/decline-push-up/frame-2.svg",
+        "exercise-illustrations/female/decline-push-up/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/decline-push-up/frame-1.svg",
+        "exercise-illustrations/male/decline-push-up/frame-2.svg",
+        "exercise-illustrations/male/decline-push-up/frame-3.svg"
+      ]
+    },
+    "decline-sit-up": {
+      "female": [
+        "exercise-illustrations/female/decline-sit-up/frame-1.svg",
+        "exercise-illustrations/female/decline-sit-up/frame-2.svg",
+        "exercise-illustrations/female/decline-sit-up/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/decline-sit-up/frame-1.svg",
+        "exercise-illustrations/male/decline-sit-up/frame-2.svg",
+        "exercise-illustrations/male/decline-sit-up/frame-3.svg"
+      ]
+    },
+    "deficit-reverse-lunge": {
+      "female": [
+        "exercise-illustrations/female/deficit-reverse-lunge/frame-1.svg",
+        "exercise-illustrations/female/deficit-reverse-lunge/frame-2.svg",
+        "exercise-illustrations/female/deficit-reverse-lunge/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/deficit-reverse-lunge/frame-1.svg",
+        "exercise-illustrations/male/deficit-reverse-lunge/frame-2.svg",
+        "exercise-illustrations/male/deficit-reverse-lunge/frame-3.svg"
+      ]
+    },
+    "diamond-push-up": {
+      "female": [
+        "exercise-illustrations/female/diamond-push-up/frame-1.svg",
+        "exercise-illustrations/female/diamond-push-up/frame-2.svg",
+        "exercise-illustrations/female/diamond-push-up/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/diamond-push-up/frame-1.svg",
+        "exercise-illustrations/male/diamond-push-up/frame-2.svg",
+        "exercise-illustrations/male/diamond-push-up/frame-3.svg"
+      ]
+    },
+    "dip": {
+      "female": [
+        "exercise-illustrations/female/dip/frame-1.svg",
+        "exercise-illustrations/female/dip/frame-2.svg",
+        "exercise-illustrations/female/dip/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/dip/frame-1.svg",
+        "exercise-illustrations/male/dip/frame-2.svg",
+        "exercise-illustrations/male/dip/frame-3.svg"
+      ]
+    },
+    "donkey-calf-raise": {
+      "female": [
+        "exercise-illustrations/female/donkey-calf-raise/frame-1.svg",
+        "exercise-illustrations/female/donkey-calf-raise/frame-2.svg",
+        "exercise-illustrations/female/donkey-calf-raise/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/donkey-calf-raise/frame-1.svg",
+        "exercise-illustrations/male/donkey-calf-raise/frame-2.svg",
+        "exercise-illustrations/male/donkey-calf-raise/frame-3.svg"
+      ]
+    },
+    "donkey-kick": {
+      "female": [
+        "exercise-illustrations/female/donkey-kick/frame-1.svg",
+        "exercise-illustrations/female/donkey-kick/frame-2.svg",
+        "exercise-illustrations/female/donkey-kick/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/donkey-kick/frame-1.svg",
+        "exercise-illustrations/male/donkey-kick/frame-2.svg",
+        "exercise-illustrations/male/donkey-kick/frame-3.svg"
+      ]
+    },
+    "doorway-chest-stretch": {
+      "female": [
+        "exercise-illustrations/female/doorway-chest-stretch/frame-1.svg",
+        "exercise-illustrations/female/doorway-chest-stretch/frame-2.svg",
+        "exercise-illustrations/female/doorway-chest-stretch/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/doorway-chest-stretch/frame-1.svg",
+        "exercise-illustrations/male/doorway-chest-stretch/frame-2.svg",
+        "exercise-illustrations/male/doorway-chest-stretch/frame-3.svg"
+      ]
+    },
+    "doorway-row": {
+      "female": [
+        "exercise-illustrations/female/doorway-row/frame-1.svg",
+        "exercise-illustrations/female/doorway-row/frame-2.svg",
+        "exercise-illustrations/female/doorway-row/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/doorway-row/frame-1.svg",
+        "exercise-illustrations/male/doorway-row/frame-2.svg",
+        "exercise-illustrations/male/doorway-row/frame-3.svg"
+      ]
+    },
+    "drag-curl": {
+      "female": [
+        "exercise-illustrations/female/drag-curl/frame-1.svg",
+        "exercise-illustrations/female/drag-curl/frame-2.svg",
+        "exercise-illustrations/female/drag-curl/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/drag-curl/frame-1.svg",
+        "exercise-illustrations/male/drag-curl/frame-2.svg",
+        "exercise-illustrations/male/drag-curl/frame-3.svg"
+      ]
+    },
+    "dragon-flag": {
+      "female": [
+        "exercise-illustrations/female/dragon-flag/frame-1.svg",
+        "exercise-illustrations/female/dragon-flag/frame-2.svg",
+        "exercise-illustrations/female/dragon-flag/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/dragon-flag/frame-1.svg",
+        "exercise-illustrations/male/dragon-flag/frame-2.svg",
+        "exercise-illustrations/male/dragon-flag/frame-3.svg"
+      ]
+    },
+    "dumbbell-bench-press": {
+      "female": [
+        "exercise-illustrations/female/dumbbell-bench-press/frame-1.svg",
+        "exercise-illustrations/female/dumbbell-bench-press/frame-2.svg",
+        "exercise-illustrations/female/dumbbell-bench-press/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/dumbbell-bench-press/frame-1.svg",
+        "exercise-illustrations/male/dumbbell-bench-press/frame-2.svg",
+        "exercise-illustrations/male/dumbbell-bench-press/frame-3.svg"
+      ]
+    },
+    "dumbbell-bent-over-row": {
+      "female": [
+        "exercise-illustrations/female/dumbbell-bent-over-row/frame-1.svg",
+        "exercise-illustrations/female/dumbbell-bent-over-row/frame-2.svg",
+        "exercise-illustrations/female/dumbbell-bent-over-row/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/dumbbell-bent-over-row/frame-1.svg",
+        "exercise-illustrations/male/dumbbell-bent-over-row/frame-2.svg",
+        "exercise-illustrations/male/dumbbell-bent-over-row/frame-3.svg"
+      ]
+    },
+    "dumbbell-curtsy-lunge": {
+      "female": [
+        "exercise-illustrations/female/dumbbell-curtsy-lunge/frame-1.svg",
+        "exercise-illustrations/female/dumbbell-curtsy-lunge/frame-2.svg",
+        "exercise-illustrations/female/dumbbell-curtsy-lunge/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/dumbbell-curtsy-lunge/frame-1.svg",
+        "exercise-illustrations/male/dumbbell-curtsy-lunge/frame-2.svg",
+        "exercise-illustrations/male/dumbbell-curtsy-lunge/frame-3.svg"
+      ]
+    },
+    "dumbbell-fly": {
+      "female": [
+        "exercise-illustrations/female/dumbbell-fly/frame-1.svg",
+        "exercise-illustrations/female/dumbbell-fly/frame-2.svg",
+        "exercise-illustrations/female/dumbbell-fly/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/dumbbell-fly/frame-1.svg",
+        "exercise-illustrations/male/dumbbell-fly/frame-2.svg",
+        "exercise-illustrations/male/dumbbell-fly/frame-3.svg"
+      ]
+    },
+    "dumbbell-glute-bridge": {
+      "female": [
+        "exercise-illustrations/female/dumbbell-glute-bridge/frame-1.svg",
+        "exercise-illustrations/female/dumbbell-glute-bridge/frame-2.svg",
+        "exercise-illustrations/female/dumbbell-glute-bridge/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/dumbbell-glute-bridge/frame-1.svg",
+        "exercise-illustrations/male/dumbbell-glute-bridge/frame-2.svg",
+        "exercise-illustrations/male/dumbbell-glute-bridge/frame-3.svg"
+      ]
+    },
+    "dumbbell-hip-thrust": {
+      "female": [
+        "exercise-illustrations/female/dumbbell-hip-thrust/frame-1.svg",
+        "exercise-illustrations/female/dumbbell-hip-thrust/frame-2.svg",
+        "exercise-illustrations/female/dumbbell-hip-thrust/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/dumbbell-hip-thrust/frame-1.svg",
+        "exercise-illustrations/male/dumbbell-hip-thrust/frame-2.svg",
+        "exercise-illustrations/male/dumbbell-hip-thrust/frame-3.svg"
+      ]
+    },
+    "dumbbell-lateral-lunge": {
+      "female": [
+        "exercise-illustrations/female/dumbbell-lateral-lunge/frame-1.svg",
+        "exercise-illustrations/female/dumbbell-lateral-lunge/frame-2.svg",
+        "exercise-illustrations/female/dumbbell-lateral-lunge/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/dumbbell-lateral-lunge/frame-1.svg",
+        "exercise-illustrations/male/dumbbell-lateral-lunge/frame-2.svg",
+        "exercise-illustrations/male/dumbbell-lateral-lunge/frame-3.svg"
+      ]
+    },
+    "dumbbell-lateral-raise": {
+      "female": [
+        "exercise-illustrations/female/dumbbell-lateral-raise/frame-1.svg",
+        "exercise-illustrations/female/dumbbell-lateral-raise/frame-2.svg",
+        "exercise-illustrations/female/dumbbell-lateral-raise/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/dumbbell-lateral-raise/frame-1.svg",
+        "exercise-illustrations/male/dumbbell-lateral-raise/frame-2.svg",
+        "exercise-illustrations/male/dumbbell-lateral-raise/frame-3.svg"
+      ]
+    },
+    "dumbbell-overhead-tricep-extension": {
+      "female": [
+        "exercise-illustrations/female/dumbbell-overhead-tricep-extension/frame-1.svg",
+        "exercise-illustrations/female/dumbbell-overhead-tricep-extension/frame-2.svg",
+        "exercise-illustrations/female/dumbbell-overhead-tricep-extension/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/dumbbell-overhead-tricep-extension/frame-1.svg",
+        "exercise-illustrations/male/dumbbell-overhead-tricep-extension/frame-2.svg",
+        "exercise-illustrations/male/dumbbell-overhead-tricep-extension/frame-3.svg"
+      ]
+    },
+    "dumbbell-romanian-deadlift": {
+      "female": [
+        "exercise-illustrations/female/dumbbell-romanian-deadlift/frame-1.svg",
+        "exercise-illustrations/female/dumbbell-romanian-deadlift/frame-2.svg",
+        "exercise-illustrations/female/dumbbell-romanian-deadlift/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/dumbbell-romanian-deadlift/frame-1.svg",
+        "exercise-illustrations/male/dumbbell-romanian-deadlift/frame-2.svg",
+        "exercise-illustrations/male/dumbbell-romanian-deadlift/frame-3.svg"
+      ]
+    },
+    "dumbbell-shoulder-press": {
+      "female": [
+        "exercise-illustrations/female/dumbbell-shoulder-press/frame-1.svg",
+        "exercise-illustrations/female/dumbbell-shoulder-press/frame-2.svg",
+        "exercise-illustrations/female/dumbbell-shoulder-press/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/dumbbell-shoulder-press/frame-1.svg",
+        "exercise-illustrations/male/dumbbell-shoulder-press/frame-2.svg",
+        "exercise-illustrations/male/dumbbell-shoulder-press/frame-3.svg"
+      ]
+    },
+    "dumbbell-shrug": {
+      "female": [
+        "exercise-illustrations/female/dumbbell-shrug/frame-1.svg",
+        "exercise-illustrations/female/dumbbell-shrug/frame-2.svg",
+        "exercise-illustrations/female/dumbbell-shrug/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/dumbbell-shrug/frame-1.svg",
+        "exercise-illustrations/male/dumbbell-shrug/frame-2.svg",
+        "exercise-illustrations/male/dumbbell-shrug/frame-3.svg"
+      ]
+    },
+    "dumbbell-side-bend": {
+      "female": [
+        "exercise-illustrations/female/dumbbell-side-bend/frame-1.svg",
+        "exercise-illustrations/female/dumbbell-side-bend/frame-2.svg",
+        "exercise-illustrations/female/dumbbell-side-bend/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/dumbbell-side-bend/frame-1.svg",
+        "exercise-illustrations/male/dumbbell-side-bend/frame-2.svg",
+        "exercise-illustrations/male/dumbbell-side-bend/frame-3.svg"
+      ]
+    },
+    "dumbbell-skull-crusher": {
+      "female": [
+        "exercise-illustrations/female/dumbbell-skull-crusher/frame-1.svg",
+        "exercise-illustrations/female/dumbbell-skull-crusher/frame-2.svg",
+        "exercise-illustrations/female/dumbbell-skull-crusher/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/dumbbell-skull-crusher/frame-1.svg",
+        "exercise-illustrations/male/dumbbell-skull-crusher/frame-2.svg",
+        "exercise-illustrations/male/dumbbell-skull-crusher/frame-3.svg"
+      ]
+    },
+    "dumbbell-sumo-deadlift": {
+      "female": [
+        "exercise-illustrations/female/dumbbell-sumo-deadlift/frame-1.svg",
+        "exercise-illustrations/female/dumbbell-sumo-deadlift/frame-2.svg",
+        "exercise-illustrations/female/dumbbell-sumo-deadlift/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/dumbbell-sumo-deadlift/frame-1.svg",
+        "exercise-illustrations/male/dumbbell-sumo-deadlift/frame-2.svg",
+        "exercise-illustrations/male/dumbbell-sumo-deadlift/frame-3.svg"
+      ]
+    },
+    "dumbbell-sumo-squat": {
+      "female": [
+        "exercise-illustrations/female/dumbbell-sumo-squat/frame-1.svg",
+        "exercise-illustrations/female/dumbbell-sumo-squat/frame-2.svg",
+        "exercise-illustrations/female/dumbbell-sumo-squat/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/dumbbell-sumo-squat/frame-1.svg",
+        "exercise-illustrations/male/dumbbell-sumo-squat/frame-2.svg",
+        "exercise-illustrations/male/dumbbell-sumo-squat/frame-3.svg"
+      ]
+    },
+    "elliptical": {
+      "female": [
+        "exercise-illustrations/female/elliptical/frame-1.svg",
+        "exercise-illustrations/female/elliptical/frame-2.svg",
+        "exercise-illustrations/female/elliptical/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/elliptical/frame-1.svg",
+        "exercise-illustrations/male/elliptical/frame-2.svg",
+        "exercise-illustrations/male/elliptical/frame-3.svg"
+      ]
+    },
+    "explosive-push-up": {
+      "female": [
+        "exercise-illustrations/female/explosive-push-up/frame-1.svg",
+        "exercise-illustrations/female/explosive-push-up/frame-2.svg",
+        "exercise-illustrations/female/explosive-push-up/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/explosive-push-up/frame-1.svg",
+        "exercise-illustrations/male/explosive-push-up/frame-2.svg",
+        "exercise-illustrations/male/explosive-push-up/frame-3.svg"
+      ]
+    },
+    "face-pull": {
+      "female": [
+        "exercise-illustrations/female/face-pull/frame-1.svg",
+        "exercise-illustrations/female/face-pull/frame-2.svg",
+        "exercise-illustrations/female/face-pull/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/face-pull/frame-1.svg",
+        "exercise-illustrations/male/face-pull/frame-2.svg",
+        "exercise-illustrations/male/face-pull/frame-3.svg"
+      ]
+    },
+    "farmer-carry": {
+      "female": [
+        "exercise-illustrations/female/farmer-carry/frame-1.svg",
+        "exercise-illustrations/female/farmer-carry/frame-2.svg",
+        "exercise-illustrations/female/farmer-carry/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/farmer-carry/frame-1.svg",
+        "exercise-illustrations/male/farmer-carry/frame-2.svg",
+        "exercise-illustrations/male/farmer-carry/frame-3.svg"
+      ]
+    },
+    "fast-feet": {
+      "female": [
+        "exercise-illustrations/female/fast-feet/frame-1.svg",
+        "exercise-illustrations/female/fast-feet/frame-2.svg",
+        "exercise-illustrations/female/fast-feet/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/fast-feet/frame-1.svg",
+        "exercise-illustrations/male/fast-feet/frame-2.svg",
+        "exercise-illustrations/male/fast-feet/frame-3.svg"
+      ]
+    },
+    "feet-elevated-pike-push-up": {
+      "female": [
+        "exercise-illustrations/female/feet-elevated-pike-push-up/frame-1.svg",
+        "exercise-illustrations/female/feet-elevated-pike-push-up/frame-2.svg",
+        "exercise-illustrations/female/feet-elevated-pike-push-up/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/feet-elevated-pike-push-up/frame-1.svg",
+        "exercise-illustrations/male/feet-elevated-pike-push-up/frame-2.svg",
+        "exercise-illustrations/male/feet-elevated-pike-push-up/frame-3.svg"
+      ]
+    },
+    "fire-hydrant": {
+      "female": [
+        "exercise-illustrations/female/fire-hydrant/frame-1.svg",
+        "exercise-illustrations/female/fire-hydrant/frame-2.svg",
+        "exercise-illustrations/female/fire-hydrant/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/fire-hydrant/frame-1.svg",
+        "exercise-illustrations/male/fire-hydrant/frame-2.svg",
+        "exercise-illustrations/male/fire-hydrant/frame-3.svg"
+      ]
+    },
+    "flutter-kick": {
+      "female": [
+        "exercise-illustrations/female/flutter-kick/frame-1.svg",
+        "exercise-illustrations/female/flutter-kick/frame-2.svg",
+        "exercise-illustrations/female/flutter-kick/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/flutter-kick/frame-1.svg",
+        "exercise-illustrations/male/flutter-kick/frame-2.svg",
+        "exercise-illustrations/male/flutter-kick/frame-3.svg"
+      ]
+    },
+    "forward-lunge": {
+      "female": [
+        "exercise-illustrations/female/forward-lunge/frame-1.svg",
+        "exercise-illustrations/female/forward-lunge/frame-2.svg",
+        "exercise-illustrations/female/forward-lunge/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/forward-lunge/frame-1.svg",
+        "exercise-illustrations/male/forward-lunge/frame-2.svg",
+        "exercise-illustrations/male/forward-lunge/frame-3.svg"
+      ]
+    },
+    "frog-pump": {
+      "female": [
+        "exercise-illustrations/female/frog-pump/frame-1.svg",
+        "exercise-illustrations/female/frog-pump/frame-2.svg",
+        "exercise-illustrations/female/frog-pump/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/frog-pump/frame-1.svg",
+        "exercise-illustrations/male/frog-pump/frame-2.svg",
+        "exercise-illustrations/male/frog-pump/frame-3.svg"
+      ]
+    },
+    "front-foot-elevated-split-squat": {
+      "female": [
+        "exercise-illustrations/female/front-foot-elevated-split-squat/frame-1.svg",
+        "exercise-illustrations/female/front-foot-elevated-split-squat/frame-2.svg",
+        "exercise-illustrations/female/front-foot-elevated-split-squat/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/front-foot-elevated-split-squat/frame-1.svg",
+        "exercise-illustrations/male/front-foot-elevated-split-squat/frame-2.svg",
+        "exercise-illustrations/male/front-foot-elevated-split-squat/frame-3.svg"
+      ]
+    },
+    "front-raise": {
+      "female": [
+        "exercise-illustrations/female/front-raise/frame-1.svg",
+        "exercise-illustrations/female/front-raise/frame-2.svg",
+        "exercise-illustrations/female/front-raise/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/front-raise/frame-1.svg",
+        "exercise-illustrations/male/front-raise/frame-2.svg",
+        "exercise-illustrations/male/front-raise/frame-3.svg"
+      ]
+    },
+    "front-squat": {
+      "female": [
+        "exercise-illustrations/female/front-squat/frame-1.svg",
+        "exercise-illustrations/female/front-squat/frame-2.svg",
+        "exercise-illustrations/female/front-squat/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/front-squat/frame-1.svg",
+        "exercise-illustrations/male/front-squat/frame-2.svg",
+        "exercise-illustrations/male/front-squat/frame-3.svg"
+      ]
+    },
+    "glute-bridge": {
+      "female": [
+        "exercise-illustrations/female/glute-bridge/frame-1.svg",
+        "exercise-illustrations/female/glute-bridge/frame-2.svg",
+        "exercise-illustrations/female/glute-bridge/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/glute-bridge/frame-1.svg",
+        "exercise-illustrations/male/glute-bridge/frame-2.svg",
+        "exercise-illustrations/male/glute-bridge/frame-3.svg"
+      ]
+    },
+    "glute-bridge-march": {
+      "female": [
+        "exercise-illustrations/female/glute-bridge-march/frame-1.svg",
+        "exercise-illustrations/female/glute-bridge-march/frame-2.svg",
+        "exercise-illustrations/female/glute-bridge-march/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/glute-bridge-march/frame-1.svg",
+        "exercise-illustrations/male/glute-bridge-march/frame-2.svg",
+        "exercise-illustrations/male/glute-bridge-march/frame-3.svg"
+      ]
+    },
+    "glute-focused-back-extension": {
+      "female": [
+        "exercise-illustrations/female/glute-focused-back-extension/frame-1.svg",
+        "exercise-illustrations/female/glute-focused-back-extension/frame-2.svg",
+        "exercise-illustrations/female/glute-focused-back-extension/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/glute-focused-back-extension/frame-1.svg",
+        "exercise-illustrations/male/glute-focused-back-extension/frame-2.svg",
+        "exercise-illustrations/male/glute-focused-back-extension/frame-3.svg"
+      ]
+    },
+    "goblet-squat": {
+      "female": [
+        "exercise-illustrations/female/goblet-squat/frame-1.svg",
+        "exercise-illustrations/female/goblet-squat/frame-2.svg",
+        "exercise-illustrations/female/goblet-squat/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/goblet-squat/frame-1.svg",
+        "exercise-illustrations/male/goblet-squat/frame-2.svg",
+        "exercise-illustrations/male/goblet-squat/frame-3.svg"
+      ]
+    },
+    "good-morning": {
+      "female": [
+        "exercise-illustrations/female/good-morning/frame-1.svg",
+        "exercise-illustrations/female/good-morning/frame-2.svg",
+        "exercise-illustrations/female/good-morning/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/good-morning/frame-1.svg",
+        "exercise-illustrations/male/good-morning/frame-2.svg",
+        "exercise-illustrations/male/good-morning/frame-3.svg"
+      ]
+    },
+    "hack-squat": {
+      "female": [
+        "exercise-illustrations/female/hack-squat/frame-1.svg",
+        "exercise-illustrations/female/hack-squat/frame-2.svg",
+        "exercise-illustrations/female/hack-squat/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/hack-squat/frame-1.svg",
+        "exercise-illustrations/male/hack-squat/frame-2.svg",
+        "exercise-illustrations/male/hack-squat/frame-3.svg"
+      ]
+    },
+    "half-burpee": {
+      "female": [
+        "exercise-illustrations/female/half-burpee/frame-1.svg",
+        "exercise-illustrations/female/half-burpee/frame-2.svg",
+        "exercise-illustrations/female/half-burpee/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/half-burpee/frame-1.svg",
+        "exercise-illustrations/male/half-burpee/frame-2.svg",
+        "exercise-illustrations/male/half-burpee/frame-3.svg"
+      ]
+    },
+    "half-kneeling-pallof-press": {
+      "female": [
+        "exercise-illustrations/female/half-kneeling-pallof-press/frame-1.svg",
+        "exercise-illustrations/female/half-kneeling-pallof-press/frame-2.svg",
+        "exercise-illustrations/female/half-kneeling-pallof-press/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/half-kneeling-pallof-press/frame-1.svg",
+        "exercise-illustrations/male/half-kneeling-pallof-press/frame-2.svg",
+        "exercise-illustrations/male/half-kneeling-pallof-press/frame-3.svg"
+      ]
+    },
+    "hammer-curl": {
+      "female": [
+        "exercise-illustrations/female/hammer-curl/frame-1.svg",
+        "exercise-illustrations/female/hammer-curl/frame-2.svg",
+        "exercise-illustrations/female/hammer-curl/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/hammer-curl/frame-1.svg",
+        "exercise-illustrations/male/hammer-curl/frame-2.svg",
+        "exercise-illustrations/male/hammer-curl/frame-3.svg"
+      ]
+    },
+    "hamstring-stretch": {
+      "female": [
+        "exercise-illustrations/female/hamstring-stretch/frame-1.svg",
+        "exercise-illustrations/female/hamstring-stretch/frame-2.svg",
+        "exercise-illustrations/female/hamstring-stretch/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/hamstring-stretch/frame-1.svg",
+        "exercise-illustrations/male/hamstring-stretch/frame-2.svg",
+        "exercise-illustrations/male/hamstring-stretch/frame-3.svg"
+      ]
+    },
+    "handstand-push-up": {
+      "female": [
+        "exercise-illustrations/female/handstand-push-up/frame-1.svg",
+        "exercise-illustrations/female/handstand-push-up/frame-2.svg",
+        "exercise-illustrations/female/handstand-push-up/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/handstand-push-up/frame-1.svg",
+        "exercise-illustrations/male/handstand-push-up/frame-2.svg",
+        "exercise-illustrations/male/handstand-push-up/frame-3.svg"
+      ]
+    },
+    "hanging-knee-raise": {
+      "female": [
+        "exercise-illustrations/female/hanging-knee-raise/frame-1.svg",
+        "exercise-illustrations/female/hanging-knee-raise/frame-2.svg",
+        "exercise-illustrations/female/hanging-knee-raise/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/hanging-knee-raise/frame-1.svg",
+        "exercise-illustrations/male/hanging-knee-raise/frame-2.svg",
+        "exercise-illustrations/male/hanging-knee-raise/frame-3.svg"
+      ]
+    },
+    "hanging-leg-raise": {
+      "female": [
+        "exercise-illustrations/female/hanging-leg-raise/frame-1.svg",
+        "exercise-illustrations/female/hanging-leg-raise/frame-2.svg",
+        "exercise-illustrations/female/hanging-leg-raise/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/hanging-leg-raise/frame-1.svg",
+        "exercise-illustrations/male/hanging-leg-raise/frame-2.svg",
+        "exercise-illustrations/male/hanging-leg-raise/frame-3.svg"
+      ]
+    },
+    "heel-elevated-goblet-squat": {
+      "female": [
+        "exercise-illustrations/female/heel-elevated-goblet-squat/frame-1.svg",
+        "exercise-illustrations/female/heel-elevated-goblet-squat/frame-2.svg",
+        "exercise-illustrations/female/heel-elevated-goblet-squat/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/heel-elevated-goblet-squat/frame-1.svg",
+        "exercise-illustrations/male/heel-elevated-goblet-squat/frame-2.svg",
+        "exercise-illustrations/male/heel-elevated-goblet-squat/frame-3.svg"
+      ]
+    },
+    "heel-tap": {
+      "female": [
+        "exercise-illustrations/female/heel-tap/frame-1.svg",
+        "exercise-illustrations/female/heel-tap/frame-2.svg",
+        "exercise-illustrations/female/heel-tap/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/heel-tap/frame-1.svg",
+        "exercise-illustrations/male/heel-tap/frame-2.svg",
+        "exercise-illustrations/male/heel-tap/frame-3.svg"
+      ]
+    },
+    "high-knees": {
+      "female": [
+        "exercise-illustrations/female/high-knees/frame-1.svg",
+        "exercise-illustrations/female/high-knees/frame-2.svg",
+        "exercise-illustrations/female/high-knees/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/high-knees/frame-1.svg",
+        "exercise-illustrations/male/high-knees/frame-2.svg",
+        "exercise-illustrations/male/high-knees/frame-3.svg"
+      ]
+    },
+    "hiking": {
+      "female": [
+        "exercise-illustrations/female/hiking/frame-1.svg",
+        "exercise-illustrations/female/hiking/frame-2.svg",
+        "exercise-illustrations/female/hiking/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/hiking/frame-1.svg",
+        "exercise-illustrations/male/hiking/frame-2.svg",
+        "exercise-illustrations/male/hiking/frame-3.svg"
+      ]
+    },
+    "hindu-push-up": {
+      "female": [
+        "exercise-illustrations/female/hindu-push-up/frame-1.svg",
+        "exercise-illustrations/female/hindu-push-up/frame-2.svg",
+        "exercise-illustrations/female/hindu-push-up/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/hindu-push-up/frame-1.svg",
+        "exercise-illustrations/male/hindu-push-up/frame-2.svg",
+        "exercise-illustrations/male/hindu-push-up/frame-3.svg"
+      ]
+    },
+    "hip-abduction-machine": {
+      "female": [
+        "exercise-illustrations/female/hip-abduction-machine/frame-1.svg",
+        "exercise-illustrations/female/hip-abduction-machine/frame-2.svg",
+        "exercise-illustrations/female/hip-abduction-machine/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/hip-abduction-machine/frame-1.svg",
+        "exercise-illustrations/male/hip-abduction-machine/frame-2.svg",
+        "exercise-illustrations/male/hip-abduction-machine/frame-3.svg"
+      ]
+    },
+    "hip-adduction-machine": {
+      "female": [
+        "exercise-illustrations/female/hip-adduction-machine/frame-1.svg",
+        "exercise-illustrations/female/hip-adduction-machine/frame-2.svg",
+        "exercise-illustrations/female/hip-adduction-machine/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/hip-adduction-machine/frame-1.svg",
+        "exercise-illustrations/male/hip-adduction-machine/frame-2.svg",
+        "exercise-illustrations/male/hip-adduction-machine/frame-3.svg"
+      ]
+    },
+    "hip-airplane": {
+      "female": [
+        "exercise-illustrations/female/hip-airplane/frame-1.svg",
+        "exercise-illustrations/female/hip-airplane/frame-2.svg",
+        "exercise-illustrations/female/hip-airplane/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/hip-airplane/frame-1.svg",
+        "exercise-illustrations/male/hip-airplane/frame-2.svg",
+        "exercise-illustrations/male/hip-airplane/frame-3.svg"
+      ]
+    },
+    "hip-thrust": {
+      "female": [
+        "exercise-illustrations/female/hip-thrust/frame-1.svg",
+        "exercise-illustrations/female/hip-thrust/frame-2.svg",
+        "exercise-illustrations/female/hip-thrust/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/hip-thrust/frame-1.svg",
+        "exercise-illustrations/male/hip-thrust/frame-2.svg",
+        "exercise-illustrations/male/hip-thrust/frame-3.svg"
+      ]
+    },
+    "hollow-body-hold": {
+      "female": [
+        "exercise-illustrations/female/hollow-body-hold/frame-1.svg",
+        "exercise-illustrations/female/hollow-body-hold/frame-2.svg",
+        "exercise-illustrations/female/hollow-body-hold/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/hollow-body-hold/frame-1.svg",
+        "exercise-illustrations/male/hollow-body-hold/frame-2.svg",
+        "exercise-illustrations/male/hollow-body-hold/frame-3.svg"
+      ]
+    },
+    "hollow-rock": {
+      "female": [
+        "exercise-illustrations/female/hollow-rock/frame-1.svg",
+        "exercise-illustrations/female/hollow-rock/frame-2.svg",
+        "exercise-illustrations/female/hollow-rock/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/hollow-rock/frame-1.svg",
+        "exercise-illustrations/male/hollow-rock/frame-2.svg",
+        "exercise-illustrations/male/hollow-rock/frame-3.svg"
+      ]
+    },
+    "inchworm": {
+      "female": [
+        "exercise-illustrations/female/inchworm/frame-1.svg",
+        "exercise-illustrations/female/inchworm/frame-2.svg",
+        "exercise-illustrations/female/inchworm/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/inchworm/frame-1.svg",
+        "exercise-illustrations/male/inchworm/frame-2.svg",
+        "exercise-illustrations/male/inchworm/frame-3.svg"
+      ]
+    },
+    "incline-bench-press": {
+      "female": [
+        "exercise-illustrations/female/incline-bench-press/frame-1.svg",
+        "exercise-illustrations/female/incline-bench-press/frame-2.svg",
+        "exercise-illustrations/female/incline-bench-press/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/incline-bench-press/frame-1.svg",
+        "exercise-illustrations/male/incline-bench-press/frame-2.svg",
+        "exercise-illustrations/male/incline-bench-press/frame-3.svg"
+      ]
+    },
+    "incline-cable-fly": {
+      "female": [
+        "exercise-illustrations/female/incline-cable-fly/frame-1.svg",
+        "exercise-illustrations/female/incline-cable-fly/frame-2.svg",
+        "exercise-illustrations/female/incline-cable-fly/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/incline-cable-fly/frame-1.svg",
+        "exercise-illustrations/male/incline-cable-fly/frame-2.svg",
+        "exercise-illustrations/male/incline-cable-fly/frame-3.svg"
+      ]
+    },
+    "incline-dumbbell-curl": {
+      "female": [
+        "exercise-illustrations/female/incline-dumbbell-curl/frame-1.svg",
+        "exercise-illustrations/female/incline-dumbbell-curl/frame-2.svg",
+        "exercise-illustrations/female/incline-dumbbell-curl/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/incline-dumbbell-curl/frame-1.svg",
+        "exercise-illustrations/male/incline-dumbbell-curl/frame-2.svg",
+        "exercise-illustrations/male/incline-dumbbell-curl/frame-3.svg"
+      ]
+    },
+    "incline-dumbbell-press": {
+      "female": [
+        "exercise-illustrations/female/incline-dumbbell-press/frame-1.svg",
+        "exercise-illustrations/female/incline-dumbbell-press/frame-2.svg",
+        "exercise-illustrations/female/incline-dumbbell-press/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/incline-dumbbell-press/frame-1.svg",
+        "exercise-illustrations/male/incline-dumbbell-press/frame-2.svg",
+        "exercise-illustrations/male/incline-dumbbell-press/frame-3.svg"
+      ]
+    },
+    "incline-push-up": {
+      "female": [
+        "exercise-illustrations/female/incline-push-up/frame-1.svg",
+        "exercise-illustrations/female/incline-push-up/frame-2.svg",
+        "exercise-illustrations/female/incline-push-up/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/incline-push-up/frame-1.svg",
+        "exercise-illustrations/male/incline-push-up/frame-2.svg",
+        "exercise-illustrations/male/incline-push-up/frame-3.svg"
+      ]
+    },
+    "inverted-row": {
+      "female": [
+        "exercise-illustrations/female/inverted-row/frame-1.svg",
+        "exercise-illustrations/female/inverted-row/frame-2.svg",
+        "exercise-illustrations/female/inverted-row/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/inverted-row/frame-1.svg",
+        "exercise-illustrations/male/inverted-row/frame-2.svg",
+        "exercise-illustrations/male/inverted-row/frame-3.svg"
+      ]
+    },
+    "jump-rope": {
+      "female": [
+        "exercise-illustrations/female/jump-rope/frame-1.svg",
+        "exercise-illustrations/female/jump-rope/frame-2.svg",
+        "exercise-illustrations/female/jump-rope/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/jump-rope/frame-1.svg",
+        "exercise-illustrations/male/jump-rope/frame-2.svg",
+        "exercise-illustrations/male/jump-rope/frame-3.svg"
+      ]
+    },
+    "jump-squat": {
+      "female": [
+        "exercise-illustrations/female/jump-squat/frame-1.svg",
+        "exercise-illustrations/female/jump-squat/frame-2.svg",
+        "exercise-illustrations/female/jump-squat/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/jump-squat/frame-1.svg",
+        "exercise-illustrations/male/jump-squat/frame-2.svg",
+        "exercise-illustrations/male/jump-squat/frame-3.svg"
+      ]
+    },
+    "jumping-jack": {
+      "female": [
+        "exercise-illustrations/female/jumping-jack/frame-1.svg",
+        "exercise-illustrations/female/jumping-jack/frame-2.svg",
+        "exercise-illustrations/female/jumping-jack/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/jumping-jack/frame-1.svg",
+        "exercise-illustrations/male/jumping-jack/frame-2.svg",
+        "exercise-illustrations/male/jumping-jack/frame-3.svg"
+      ]
+    },
+    "kettlebell-romanian-deadlift": {
+      "female": [
+        "exercise-illustrations/female/kettlebell-romanian-deadlift/frame-1.svg",
+        "exercise-illustrations/female/kettlebell-romanian-deadlift/frame-2.svg",
+        "exercise-illustrations/female/kettlebell-romanian-deadlift/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/kettlebell-romanian-deadlift/frame-1.svg",
+        "exercise-illustrations/male/kettlebell-romanian-deadlift/frame-2.svg",
+        "exercise-illustrations/male/kettlebell-romanian-deadlift/frame-3.svg"
+      ]
+    },
+    "kettlebell-swing": {
+      "female": [
+        "exercise-illustrations/female/kettlebell-swing/frame-1.svg",
+        "exercise-illustrations/female/kettlebell-swing/frame-2.svg",
+        "exercise-illustrations/female/kettlebell-swing/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/kettlebell-swing/frame-1.svg",
+        "exercise-illustrations/male/kettlebell-swing/frame-2.svg",
+        "exercise-illustrations/male/kettlebell-swing/frame-3.svg"
+      ]
+    },
+    "knee-push-up": {
+      "female": [
+        "exercise-illustrations/female/knee-push-up/frame-1.svg",
+        "exercise-illustrations/female/knee-push-up/frame-2.svg",
+        "exercise-illustrations/female/knee-push-up/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/knee-push-up/frame-1.svg",
+        "exercise-illustrations/male/knee-push-up/frame-2.svg",
+        "exercise-illustrations/male/knee-push-up/frame-3.svg"
+      ]
+    },
+    "kneeling-hip-flexor-stretch": {
+      "female": [
+        "exercise-illustrations/female/kneeling-hip-flexor-stretch/frame-1.svg",
+        "exercise-illustrations/female/kneeling-hip-flexor-stretch/frame-2.svg",
+        "exercise-illustrations/female/kneeling-hip-flexor-stretch/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/kneeling-hip-flexor-stretch/frame-1.svg",
+        "exercise-illustrations/male/kneeling-hip-flexor-stretch/frame-2.svg",
+        "exercise-illustrations/male/kneeling-hip-flexor-stretch/frame-3.svg"
+      ]
+    },
+    "l-sit-hold": {
+      "female": [
+        "exercise-illustrations/female/l-sit-hold/frame-1.svg",
+        "exercise-illustrations/female/l-sit-hold/frame-2.svg",
+        "exercise-illustrations/female/l-sit-hold/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/l-sit-hold/frame-1.svg",
+        "exercise-illustrations/male/l-sit-hold/frame-2.svg",
+        "exercise-illustrations/male/l-sit-hold/frame-3.svg"
+      ]
+    },
+    "l-sit-pull-up": {
+      "female": [
+        "exercise-illustrations/female/l-sit-pull-up/frame-1.svg",
+        "exercise-illustrations/female/l-sit-pull-up/frame-2.svg",
+        "exercise-illustrations/female/l-sit-pull-up/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/l-sit-pull-up/frame-1.svg",
+        "exercise-illustrations/male/l-sit-pull-up/frame-2.svg",
+        "exercise-illustrations/male/l-sit-pull-up/frame-3.svg"
+      ]
+    },
+    "landmine-press": {
+      "female": [
+        "exercise-illustrations/female/landmine-press/frame-1.svg",
+        "exercise-illustrations/female/landmine-press/frame-2.svg",
+        "exercise-illustrations/female/landmine-press/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/landmine-press/frame-1.svg",
+        "exercise-illustrations/male/landmine-press/frame-2.svg",
+        "exercise-illustrations/male/landmine-press/frame-3.svg"
+      ]
+    },
+    "landmine-romanian-deadlift": {
+      "female": [
+        "exercise-illustrations/female/landmine-romanian-deadlift/frame-1.svg",
+        "exercise-illustrations/female/landmine-romanian-deadlift/frame-2.svg",
+        "exercise-illustrations/female/landmine-romanian-deadlift/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/landmine-romanian-deadlift/frame-1.svg",
+        "exercise-illustrations/male/landmine-romanian-deadlift/frame-2.svg",
+        "exercise-illustrations/male/landmine-romanian-deadlift/frame-3.svg"
+      ]
+    },
+    "landmine-squat": {
+      "female": [
+        "exercise-illustrations/female/landmine-squat/frame-1.svg",
+        "exercise-illustrations/female/landmine-squat/frame-2.svg",
+        "exercise-illustrations/female/landmine-squat/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/landmine-squat/frame-1.svg",
+        "exercise-illustrations/male/landmine-squat/frame-2.svg",
+        "exercise-illustrations/male/landmine-squat/frame-3.svg"
+      ]
+    },
+    "lat-pulldown": {
+      "female": [
+        "exercise-illustrations/female/lat-pulldown/frame-1.svg",
+        "exercise-illustrations/female/lat-pulldown/frame-2.svg",
+        "exercise-illustrations/female/lat-pulldown/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/lat-pulldown/frame-1.svg",
+        "exercise-illustrations/male/lat-pulldown/frame-2.svg",
+        "exercise-illustrations/male/lat-pulldown/frame-3.svg"
+      ]
+    },
+    "lateral-lunge": {
+      "female": [
+        "exercise-illustrations/female/lateral-lunge/frame-1.svg",
+        "exercise-illustrations/female/lateral-lunge/frame-2.svg",
+        "exercise-illustrations/female/lateral-lunge/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/lateral-lunge/frame-1.svg",
+        "exercise-illustrations/male/lateral-lunge/frame-2.svg",
+        "exercise-illustrations/male/lateral-lunge/frame-3.svg"
+      ]
+    },
+    "lateral-shuffle": {
+      "female": [
+        "exercise-illustrations/female/lateral-shuffle/frame-1.svg",
+        "exercise-illustrations/female/lateral-shuffle/frame-2.svg",
+        "exercise-illustrations/female/lateral-shuffle/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/lateral-shuffle/frame-1.svg",
+        "exercise-illustrations/male/lateral-shuffle/frame-2.svg",
+        "exercise-illustrations/male/lateral-shuffle/frame-3.svg"
+      ]
+    },
+    "leg-curl": {
+      "female": [
+        "exercise-illustrations/female/leg-curl/frame-1.svg",
+        "exercise-illustrations/female/leg-curl/frame-2.svg",
+        "exercise-illustrations/female/leg-curl/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/leg-curl/frame-1.svg",
+        "exercise-illustrations/male/leg-curl/frame-2.svg",
+        "exercise-illustrations/male/leg-curl/frame-3.svg"
+      ]
+    },
+    "leg-extension": {
+      "female": [
+        "exercise-illustrations/female/leg-extension/frame-1.svg",
+        "exercise-illustrations/female/leg-extension/frame-2.svg",
+        "exercise-illustrations/female/leg-extension/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/leg-extension/frame-1.svg",
+        "exercise-illustrations/male/leg-extension/frame-2.svg",
+        "exercise-illustrations/male/leg-extension/frame-3.svg"
+      ]
+    },
+    "leg-press": {
+      "female": [
+        "exercise-illustrations/female/leg-press/frame-1.svg",
+        "exercise-illustrations/female/leg-press/frame-2.svg",
+        "exercise-illustrations/female/leg-press/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/leg-press/frame-1.svg",
+        "exercise-illustrations/male/leg-press/frame-2.svg",
+        "exercise-illustrations/male/leg-press/frame-3.svg"
+      ]
+    },
+    "leg-press-calf-raise": {
+      "female": [
+        "exercise-illustrations/female/leg-press-calf-raise/frame-1.svg",
+        "exercise-illustrations/female/leg-press-calf-raise/frame-2.svg",
+        "exercise-illustrations/female/leg-press-calf-raise/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/leg-press-calf-raise/frame-1.svg",
+        "exercise-illustrations/male/leg-press-calf-raise/frame-2.svg",
+        "exercise-illustrations/male/leg-press-calf-raise/frame-3.svg"
+      ]
+    },
+    "leg-swings-stretch": {
+      "female": [
+        "exercise-illustrations/female/leg-swings-stretch/frame-1.svg",
+        "exercise-illustrations/female/leg-swings-stretch/frame-2.svg",
+        "exercise-illustrations/female/leg-swings-stretch/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/leg-swings-stretch/frame-1.svg",
+        "exercise-illustrations/male/leg-swings-stretch/frame-2.svg",
+        "exercise-illustrations/male/leg-swings-stretch/frame-3.svg"
+      ]
+    },
+    "lying-hamstring-walkout": {
+      "female": [
+        "exercise-illustrations/female/lying-hamstring-walkout/frame-1.svg",
+        "exercise-illustrations/female/lying-hamstring-walkout/frame-2.svg",
+        "exercise-illustrations/female/lying-hamstring-walkout/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/lying-hamstring-walkout/frame-1.svg",
+        "exercise-illustrations/male/lying-hamstring-walkout/frame-2.svg",
+        "exercise-illustrations/male/lying-hamstring-walkout/frame-3.svg"
+      ]
+    },
+    "lying-leg-curl": {
+      "female": [
+        "exercise-illustrations/female/lying-leg-curl/frame-1.svg",
+        "exercise-illustrations/female/lying-leg-curl/frame-2.svg",
+        "exercise-illustrations/female/lying-leg-curl/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/lying-leg-curl/frame-1.svg",
+        "exercise-illustrations/male/lying-leg-curl/frame-2.svg",
+        "exercise-illustrations/male/lying-leg-curl/frame-3.svg"
+      ]
+    },
+    "lying-leg-raise": {
+      "female": [
+        "exercise-illustrations/female/lying-leg-raise/frame-1.svg",
+        "exercise-illustrations/female/lying-leg-raise/frame-2.svg",
+        "exercise-illustrations/female/lying-leg-raise/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/lying-leg-raise/frame-1.svg",
+        "exercise-illustrations/male/lying-leg-raise/frame-2.svg",
+        "exercise-illustrations/male/lying-leg-raise/frame-3.svg"
+      ]
+    },
+    "machine-chest-press": {
+      "female": [
+        "exercise-illustrations/female/machine-chest-press/frame-1.svg",
+        "exercise-illustrations/female/machine-chest-press/frame-2.svg",
+        "exercise-illustrations/female/machine-chest-press/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/machine-chest-press/frame-1.svg",
+        "exercise-illustrations/male/machine-chest-press/frame-2.svg",
+        "exercise-illustrations/male/machine-chest-press/frame-3.svg"
+      ]
+    },
+    "machine-glute-kickback": {
+      "female": [
+        "exercise-illustrations/female/machine-glute-kickback/frame-1.svg",
+        "exercise-illustrations/female/machine-glute-kickback/frame-2.svg",
+        "exercise-illustrations/female/machine-glute-kickback/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/machine-glute-kickback/frame-1.svg",
+        "exercise-illustrations/male/machine-glute-kickback/frame-2.svg",
+        "exercise-illustrations/male/machine-glute-kickback/frame-3.svg"
+      ]
+    },
+    "machine-lateral-raise": {
+      "female": [
+        "exercise-illustrations/female/machine-lateral-raise/frame-1.svg",
+        "exercise-illustrations/female/machine-lateral-raise/frame-2.svg",
+        "exercise-illustrations/female/machine-lateral-raise/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/machine-lateral-raise/frame-1.svg",
+        "exercise-illustrations/male/machine-lateral-raise/frame-2.svg",
+        "exercise-illustrations/male/machine-lateral-raise/frame-3.svg"
+      ]
+    },
+    "machine-row": {
+      "female": [
+        "exercise-illustrations/female/machine-row/frame-1.svg",
+        "exercise-illustrations/female/machine-row/frame-2.svg",
+        "exercise-illustrations/female/machine-row/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/machine-row/frame-1.svg",
+        "exercise-illustrations/male/machine-row/frame-2.svg",
+        "exercise-illustrations/male/machine-row/frame-3.svg"
+      ]
+    },
+    "machine-shoulder-press": {
+      "female": [
+        "exercise-illustrations/female/machine-shoulder-press/frame-1.svg",
+        "exercise-illustrations/female/machine-shoulder-press/frame-2.svg",
+        "exercise-illustrations/female/machine-shoulder-press/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/machine-shoulder-press/frame-1.svg",
+        "exercise-illustrations/male/machine-shoulder-press/frame-2.svg",
+        "exercise-illustrations/male/machine-shoulder-press/frame-3.svg"
+      ]
+    },
+    "meadows-row": {
+      "female": [
+        "exercise-illustrations/female/meadows-row/frame-1.svg",
+        "exercise-illustrations/female/meadows-row/frame-2.svg",
+        "exercise-illustrations/female/meadows-row/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/meadows-row/frame-1.svg",
+        "exercise-illustrations/male/meadows-row/frame-2.svg",
+        "exercise-illustrations/male/meadows-row/frame-3.svg"
+      ]
+    },
+    "mountain-climber": {
+      "female": [
+        "exercise-illustrations/female/mountain-climber/frame-1.svg",
+        "exercise-illustrations/female/mountain-climber/frame-2.svg",
+        "exercise-illustrations/female/mountain-climber/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/mountain-climber/frame-1.svg",
+        "exercise-illustrations/male/mountain-climber/frame-2.svg",
+        "exercise-illustrations/male/mountain-climber/frame-3.svg"
+      ]
+    },
+    "negative-pull-up": {
+      "female": [
+        "exercise-illustrations/female/negative-pull-up/frame-1.svg",
+        "exercise-illustrations/female/negative-pull-up/frame-2.svg",
+        "exercise-illustrations/female/negative-pull-up/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/negative-pull-up/frame-1.svg",
+        "exercise-illustrations/male/negative-pull-up/frame-2.svg",
+        "exercise-illustrations/male/negative-pull-up/frame-3.svg"
+      ]
+    },
+    "neutral-grip-pull-up": {
+      "female": [
+        "exercise-illustrations/female/neutral-grip-pull-up/frame-1.svg",
+        "exercise-illustrations/female/neutral-grip-pull-up/frame-2.svg",
+        "exercise-illustrations/female/neutral-grip-pull-up/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/neutral-grip-pull-up/frame-1.svg",
+        "exercise-illustrations/male/neutral-grip-pull-up/frame-2.svg",
+        "exercise-illustrations/male/neutral-grip-pull-up/frame-3.svg"
+      ]
+    },
+    "nordic-hamstring-curl": {
+      "female": [
+        "exercise-illustrations/female/nordic-hamstring-curl/frame-1.svg",
+        "exercise-illustrations/female/nordic-hamstring-curl/frame-2.svg",
+        "exercise-illustrations/female/nordic-hamstring-curl/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/nordic-hamstring-curl/frame-1.svg",
+        "exercise-illustrations/male/nordic-hamstring-curl/frame-2.svg",
+        "exercise-illustrations/male/nordic-hamstring-curl/frame-3.svg"
+      ]
+    },
+    "one-arm-dumbbell-row": {
+      "female": [
+        "exercise-illustrations/female/one-arm-dumbbell-row/frame-1.svg",
+        "exercise-illustrations/female/one-arm-dumbbell-row/frame-2.svg",
+        "exercise-illustrations/female/one-arm-dumbbell-row/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/one-arm-dumbbell-row/frame-1.svg",
+        "exercise-illustrations/male/one-arm-dumbbell-row/frame-2.svg",
+        "exercise-illustrations/male/one-arm-dumbbell-row/frame-3.svg"
+      ]
+    },
+    "overhead-press": {
+      "female": [
+        "exercise-illustrations/female/overhead-press/frame-1.svg",
+        "exercise-illustrations/female/overhead-press/frame-2.svg",
+        "exercise-illustrations/female/overhead-press/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/overhead-press/frame-1.svg",
+        "exercise-illustrations/male/overhead-press/frame-2.svg",
+        "exercise-illustrations/male/overhead-press/frame-3.svg"
+      ]
+    },
+    "overhead-tricep-extension": {
+      "female": [
+        "exercise-illustrations/female/overhead-tricep-extension/frame-1.svg",
+        "exercise-illustrations/female/overhead-tricep-extension/frame-2.svg",
+        "exercise-illustrations/female/overhead-tricep-extension/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/overhead-tricep-extension/frame-1.svg",
+        "exercise-illustrations/male/overhead-tricep-extension/frame-2.svg",
+        "exercise-illustrations/male/overhead-tricep-extension/frame-3.svg"
+      ]
+    },
+    "pallof-press": {
+      "female": [
+        "exercise-illustrations/female/pallof-press/frame-1.svg",
+        "exercise-illustrations/female/pallof-press/frame-2.svg",
+        "exercise-illustrations/female/pallof-press/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/pallof-press/frame-1.svg",
+        "exercise-illustrations/male/pallof-press/frame-2.svg",
+        "exercise-illustrations/male/pallof-press/frame-3.svg"
+      ]
+    },
+    "parallel-bar-dips": {
+      "female": [
+        "exercise-illustrations/female/parallel-bar-dips/frame-1.svg",
+        "exercise-illustrations/female/parallel-bar-dips/frame-2.svg",
+        "exercise-illustrations/female/parallel-bar-dips/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/parallel-bar-dips/frame-1.svg",
+        "exercise-illustrations/male/parallel-bar-dips/frame-2.svg",
+        "exercise-illustrations/male/parallel-bar-dips/frame-3.svg"
+      ]
+    },
+    "pec-deck": {
+      "female": [
+        "exercise-illustrations/female/pec-deck/frame-1.svg",
+        "exercise-illustrations/female/pec-deck/frame-2.svg",
+        "exercise-illustrations/female/pec-deck/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/pec-deck/frame-1.svg",
+        "exercise-illustrations/male/pec-deck/frame-2.svg",
+        "exercise-illustrations/male/pec-deck/frame-3.svg"
+      ]
+    },
+    "pendlay-row": {
+      "female": [
+        "exercise-illustrations/female/pendlay-row/frame-1.svg",
+        "exercise-illustrations/female/pendlay-row/frame-2.svg",
+        "exercise-illustrations/female/pendlay-row/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/pendlay-row/frame-1.svg",
+        "exercise-illustrations/male/pendlay-row/frame-2.svg",
+        "exercise-illustrations/male/pendlay-row/frame-3.svg"
+      ]
+    },
+    "pike-push-up": {
+      "female": [
+        "exercise-illustrations/female/pike-push-up/frame-1.svg",
+        "exercise-illustrations/female/pike-push-up/frame-2.svg",
+        "exercise-illustrations/female/pike-push-up/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/pike-push-up/frame-1.svg",
+        "exercise-illustrations/male/pike-push-up/frame-2.svg",
+        "exercise-illustrations/male/pike-push-up/frame-3.svg"
+      ]
+    },
+    "pistol-squat": {
+      "female": [
+        "exercise-illustrations/female/pistol-squat/frame-1.svg",
+        "exercise-illustrations/female/pistol-squat/frame-2.svg",
+        "exercise-illustrations/female/pistol-squat/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/pistol-squat/frame-1.svg",
+        "exercise-illustrations/male/pistol-squat/frame-2.svg",
+        "exercise-illustrations/male/pistol-squat/frame-3.svg"
+      ]
+    },
+    "plank": {
+      "female": [
+        "exercise-illustrations/female/plank/frame-1.svg",
+        "exercise-illustrations/female/plank/frame-2.svg",
+        "exercise-illustrations/female/plank/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/plank/frame-1.svg",
+        "exercise-illustrations/male/plank/frame-2.svg",
+        "exercise-illustrations/male/plank/frame-3.svg"
+      ]
+    },
+    "plank-jack": {
+      "female": [
+        "exercise-illustrations/female/plank-jack/frame-1.svg",
+        "exercise-illustrations/female/plank-jack/frame-2.svg",
+        "exercise-illustrations/female/plank-jack/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/plank-jack/frame-1.svg",
+        "exercise-illustrations/male/plank-jack/frame-2.svg",
+        "exercise-illustrations/male/plank-jack/frame-3.svg"
+      ]
+    },
+    "plank-shoulder-tap": {
+      "female": [
+        "exercise-illustrations/female/plank-shoulder-tap/frame-1.svg",
+        "exercise-illustrations/female/plank-shoulder-tap/frame-2.svg",
+        "exercise-illustrations/female/plank-shoulder-tap/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/plank-shoulder-tap/frame-1.svg",
+        "exercise-illustrations/male/plank-shoulder-tap/frame-2.svg",
+        "exercise-illustrations/male/plank-shoulder-tap/frame-3.svg"
+      ]
+    },
+    "plate-front-raise": {
+      "female": [
+        "exercise-illustrations/female/plate-front-raise/frame-1.svg",
+        "exercise-illustrations/female/plate-front-raise/frame-2.svg",
+        "exercise-illustrations/female/plate-front-raise/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/plate-front-raise/frame-1.svg",
+        "exercise-illustrations/male/plate-front-raise/frame-2.svg",
+        "exercise-illustrations/male/plate-front-raise/frame-3.svg"
+      ]
+    },
+    "preacher-curl": {
+      "female": [
+        "exercise-illustrations/female/preacher-curl/frame-1.svg",
+        "exercise-illustrations/female/preacher-curl/frame-2.svg",
+        "exercise-illustrations/female/preacher-curl/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/preacher-curl/frame-1.svg",
+        "exercise-illustrations/male/preacher-curl/frame-2.svg",
+        "exercise-illustrations/male/preacher-curl/frame-3.svg"
+      ]
+    },
+    "prone-t-raise": {
+      "female": [
+        "exercise-illustrations/female/prone-t-raise/frame-1.svg",
+        "exercise-illustrations/female/prone-t-raise/frame-2.svg",
+        "exercise-illustrations/female/prone-t-raise/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/prone-t-raise/frame-1.svg",
+        "exercise-illustrations/male/prone-t-raise/frame-2.svg",
+        "exercise-illustrations/male/prone-t-raise/frame-3.svg"
+      ]
+    },
+    "prone-y-raise": {
+      "female": [
+        "exercise-illustrations/female/prone-y-raise/frame-1.svg",
+        "exercise-illustrations/female/prone-y-raise/frame-2.svg",
+        "exercise-illustrations/female/prone-y-raise/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/prone-y-raise/frame-1.svg",
+        "exercise-illustrations/male/prone-y-raise/frame-2.svg",
+        "exercise-illustrations/male/prone-y-raise/frame-3.svg"
+      ]
+    },
+    "pull-ups": {
+      "female": [
+        "exercise-illustrations/female/pull-ups/frame-1.svg",
+        "exercise-illustrations/female/pull-ups/frame-2.svg",
+        "exercise-illustrations/female/pull-ups/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/pull-ups/frame-1.svg",
+        "exercise-illustrations/male/pull-ups/frame-2.svg",
+        "exercise-illustrations/male/pull-ups/frame-3.svg"
+      ]
+    },
+    "push-press": {
+      "female": [
+        "exercise-illustrations/female/push-press/frame-1.svg",
+        "exercise-illustrations/female/push-press/frame-2.svg",
+        "exercise-illustrations/female/push-press/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/push-press/frame-1.svg",
+        "exercise-illustrations/male/push-press/frame-2.svg",
+        "exercise-illustrations/male/push-press/frame-3.svg"
+      ]
+    },
+    "push-up": {
+      "female": [
+        "exercise-illustrations/female/push-up/frame-1.svg",
+        "exercise-illustrations/female/push-up/frame-2.svg",
+        "exercise-illustrations/female/push-up/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/push-up/frame-1.svg",
+        "exercise-illustrations/male/push-up/frame-2.svg",
+        "exercise-illustrations/male/push-up/frame-3.svg"
+      ]
+    },
+    "push-up-shoulder-tap": {
+      "female": [
+        "exercise-illustrations/female/push-up-shoulder-tap/frame-1.svg",
+        "exercise-illustrations/female/push-up-shoulder-tap/frame-2.svg",
+        "exercise-illustrations/female/push-up-shoulder-tap/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/push-up-shoulder-tap/frame-1.svg",
+        "exercise-illustrations/male/push-up-shoulder-tap/frame-2.svg",
+        "exercise-illustrations/male/push-up-shoulder-tap/frame-3.svg"
+      ]
+    },
+    "rack-pull": {
+      "female": [
+        "exercise-illustrations/female/rack-pull/frame-1.svg",
+        "exercise-illustrations/female/rack-pull/frame-2.svg",
+        "exercise-illustrations/female/rack-pull/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/rack-pull/frame-1.svg",
+        "exercise-illustrations/male/rack-pull/frame-2.svg",
+        "exercise-illustrations/male/rack-pull/frame-3.svg"
+      ]
+    },
+    "rear-delt-fly": {
+      "female": [
+        "exercise-illustrations/female/rear-delt-fly/frame-1.svg",
+        "exercise-illustrations/female/rear-delt-fly/frame-2.svg",
+        "exercise-illustrations/female/rear-delt-fly/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/rear-delt-fly/frame-1.svg",
+        "exercise-illustrations/male/rear-delt-fly/frame-2.svg",
+        "exercise-illustrations/male/rear-delt-fly/frame-3.svg"
+      ]
+    },
+    "reverse-crunch": {
+      "female": [
+        "exercise-illustrations/female/reverse-crunch/frame-1.svg",
+        "exercise-illustrations/female/reverse-crunch/frame-2.svg",
+        "exercise-illustrations/female/reverse-crunch/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/reverse-crunch/frame-1.svg",
+        "exercise-illustrations/male/reverse-crunch/frame-2.svg",
+        "exercise-illustrations/male/reverse-crunch/frame-3.svg"
+      ]
+    },
+    "reverse-curl": {
+      "female": [
+        "exercise-illustrations/female/reverse-curl/frame-1.svg",
+        "exercise-illustrations/female/reverse-curl/frame-2.svg",
+        "exercise-illustrations/female/reverse-curl/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/reverse-curl/frame-1.svg",
+        "exercise-illustrations/male/reverse-curl/frame-2.svg",
+        "exercise-illustrations/male/reverse-curl/frame-3.svg"
+      ]
+    },
+    "reverse-hyperextension": {
+      "female": [
+        "exercise-illustrations/female/reverse-hyperextension/frame-1.svg",
+        "exercise-illustrations/female/reverse-hyperextension/frame-2.svg",
+        "exercise-illustrations/female/reverse-hyperextension/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/reverse-hyperextension/frame-1.svg",
+        "exercise-illustrations/male/reverse-hyperextension/frame-2.svg",
+        "exercise-illustrations/male/reverse-hyperextension/frame-3.svg"
+      ]
+    },
+    "reverse-lunge": {
+      "female": [
+        "exercise-illustrations/female/reverse-lunge/frame-1.svg",
+        "exercise-illustrations/female/reverse-lunge/frame-2.svg",
+        "exercise-illustrations/female/reverse-lunge/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/reverse-lunge/frame-1.svg",
+        "exercise-illustrations/male/reverse-lunge/frame-2.svg",
+        "exercise-illustrations/male/reverse-lunge/frame-3.svg"
+      ]
+    },
+    "reverse-pec-deck": {
+      "female": [
+        "exercise-illustrations/female/reverse-pec-deck/frame-1.svg",
+        "exercise-illustrations/female/reverse-pec-deck/frame-2.svg",
+        "exercise-illustrations/female/reverse-pec-deck/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/reverse-pec-deck/frame-1.svg",
+        "exercise-illustrations/male/reverse-pec-deck/frame-2.svg",
+        "exercise-illustrations/male/reverse-pec-deck/frame-3.svg"
+      ]
+    },
+    "reverse-snow-angel": {
+      "female": [
+        "exercise-illustrations/female/reverse-snow-angel/frame-1.svg",
+        "exercise-illustrations/female/reverse-snow-angel/frame-2.svg",
+        "exercise-illustrations/female/reverse-snow-angel/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/reverse-snow-angel/frame-1.svg",
+        "exercise-illustrations/male/reverse-snow-angel/frame-2.svg",
+        "exercise-illustrations/male/reverse-snow-angel/frame-3.svg"
+      ]
+    },
+    "romanian-deadlift": {
+      "female": [
+        "exercise-illustrations/female/romanian-deadlift/frame-1.svg",
+        "exercise-illustrations/female/romanian-deadlift/frame-2.svg",
+        "exercise-illustrations/female/romanian-deadlift/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/romanian-deadlift/frame-1.svg",
+        "exercise-illustrations/male/romanian-deadlift/frame-2.svg",
+        "exercise-illustrations/male/romanian-deadlift/frame-3.svg"
+      ]
+    },
+    "rope-hammer-curl": {
+      "female": [
+        "exercise-illustrations/female/rope-hammer-curl/frame-1.svg",
+        "exercise-illustrations/female/rope-hammer-curl/frame-2.svg",
+        "exercise-illustrations/female/rope-hammer-curl/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/rope-hammer-curl/frame-1.svg",
+        "exercise-illustrations/male/rope-hammer-curl/frame-2.svg",
+        "exercise-illustrations/male/rope-hammer-curl/frame-3.svg"
+      ]
+    },
+    "rope-tricep-pushdown": {
+      "female": [
+        "exercise-illustrations/female/rope-tricep-pushdown/frame-1.svg",
+        "exercise-illustrations/female/rope-tricep-pushdown/frame-2.svg",
+        "exercise-illustrations/female/rope-tricep-pushdown/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/rope-tricep-pushdown/frame-1.svg",
+        "exercise-illustrations/male/rope-tricep-pushdown/frame-2.svg",
+        "exercise-illustrations/male/rope-tricep-pushdown/frame-3.svg"
+      ]
+    },
+    "rowing": {
+      "female": [
+        "exercise-illustrations/female/rowing/frame-1.svg",
+        "exercise-illustrations/female/rowing/frame-2.svg",
+        "exercise-illustrations/female/rowing/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/rowing/frame-1.svg",
+        "exercise-illustrations/male/rowing/frame-2.svg",
+        "exercise-illustrations/male/rowing/frame-3.svg"
+      ]
+    },
+    "running": {
+      "female": [
+        "exercise-illustrations/female/running/frame-1.svg",
+        "exercise-illustrations/female/running/frame-2.svg",
+        "exercise-illustrations/female/running/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/running/frame-1.svg",
+        "exercise-illustrations/male/running/frame-2.svg",
+        "exercise-illustrations/male/running/frame-3.svg"
+      ]
+    },
+    "russian-twist": {
+      "female": [
+        "exercise-illustrations/female/russian-twist/frame-1.svg",
+        "exercise-illustrations/female/russian-twist/frame-2.svg",
+        "exercise-illustrations/female/russian-twist/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/russian-twist/frame-1.svg",
+        "exercise-illustrations/male/russian-twist/frame-2.svg",
+        "exercise-illustrations/male/russian-twist/frame-3.svg"
+      ]
+    },
+    "scapular-pull-up": {
+      "female": [
+        "exercise-illustrations/female/scapular-pull-up/frame-1.svg",
+        "exercise-illustrations/female/scapular-pull-up/frame-2.svg",
+        "exercise-illustrations/female/scapular-pull-up/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/scapular-pull-up/frame-1.svg",
+        "exercise-illustrations/male/scapular-pull-up/frame-2.svg",
+        "exercise-illustrations/male/scapular-pull-up/frame-3.svg"
+      ]
+    },
+    "scapular-push-up": {
+      "female": [
+        "exercise-illustrations/female/scapular-push-up/frame-1.svg",
+        "exercise-illustrations/female/scapular-push-up/frame-2.svg",
+        "exercise-illustrations/female/scapular-push-up/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/scapular-push-up/frame-1.svg",
+        "exercise-illustrations/male/scapular-push-up/frame-2.svg",
+        "exercise-illustrations/male/scapular-push-up/frame-3.svg"
+      ]
+    },
+    "seal-jack": {
+      "female": [
+        "exercise-illustrations/female/seal-jack/frame-1.svg",
+        "exercise-illustrations/female/seal-jack/frame-2.svg",
+        "exercise-illustrations/female/seal-jack/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/seal-jack/frame-1.svg",
+        "exercise-illustrations/male/seal-jack/frame-2.svg",
+        "exercise-illustrations/male/seal-jack/frame-3.svg"
+      ]
+    },
+    "seated-calf-raise": {
+      "female": [
+        "exercise-illustrations/female/seated-calf-raise/frame-1.svg",
+        "exercise-illustrations/female/seated-calf-raise/frame-2.svg",
+        "exercise-illustrations/female/seated-calf-raise/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/seated-calf-raise/frame-1.svg",
+        "exercise-illustrations/male/seated-calf-raise/frame-2.svg",
+        "exercise-illustrations/male/seated-calf-raise/frame-3.svg"
+      ]
+    },
+    "seated-forward-fold-stretch": {
+      "female": [
+        "exercise-illustrations/female/seated-forward-fold-stretch/frame-1.svg",
+        "exercise-illustrations/female/seated-forward-fold-stretch/frame-2.svg",
+        "exercise-illustrations/female/seated-forward-fold-stretch/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/seated-forward-fold-stretch/frame-1.svg",
+        "exercise-illustrations/male/seated-forward-fold-stretch/frame-2.svg",
+        "exercise-illustrations/male/seated-forward-fold-stretch/frame-3.svg"
+      ]
+    },
+    "seated-knee-tuck": {
+      "female": [
+        "exercise-illustrations/female/seated-knee-tuck/frame-1.svg",
+        "exercise-illustrations/female/seated-knee-tuck/frame-2.svg",
+        "exercise-illustrations/female/seated-knee-tuck/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/seated-knee-tuck/frame-1.svg",
+        "exercise-illustrations/male/seated-knee-tuck/frame-2.svg",
+        "exercise-illustrations/male/seated-knee-tuck/frame-3.svg"
+      ]
+    },
+    "seated-leg-curl": {
+      "female": [
+        "exercise-illustrations/female/seated-leg-curl/frame-1.svg",
+        "exercise-illustrations/female/seated-leg-curl/frame-2.svg",
+        "exercise-illustrations/female/seated-leg-curl/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/seated-leg-curl/frame-1.svg",
+        "exercise-illustrations/male/seated-leg-curl/frame-2.svg",
+        "exercise-illustrations/male/seated-leg-curl/frame-3.svg"
+      ]
+    },
+    "seated-row": {
+      "female": [
+        "exercise-illustrations/female/seated-row/frame-1.svg",
+        "exercise-illustrations/female/seated-row/frame-2.svg",
+        "exercise-illustrations/female/seated-row/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/seated-row/frame-1.svg",
+        "exercise-illustrations/male/seated-row/frame-2.svg",
+        "exercise-illustrations/male/seated-row/frame-3.svg"
+      ]
+    },
+    "shrimp-squat": {
+      "female": [
+        "exercise-illustrations/female/shrimp-squat/frame-1.svg",
+        "exercise-illustrations/female/shrimp-squat/frame-2.svg",
+        "exercise-illustrations/female/shrimp-squat/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/shrimp-squat/frame-1.svg",
+        "exercise-illustrations/male/shrimp-squat/frame-2.svg",
+        "exercise-illustrations/male/shrimp-squat/frame-3.svg"
+      ]
+    },
+    "shrug": {
+      "female": [
+        "exercise-illustrations/female/shrug/frame-1.svg",
+        "exercise-illustrations/female/shrug/frame-2.svg",
+        "exercise-illustrations/female/shrug/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/shrug/frame-1.svg",
+        "exercise-illustrations/male/shrug/frame-2.svg",
+        "exercise-illustrations/male/shrug/frame-3.svg"
+      ]
+    },
+    "side-lying-hip-abduction": {
+      "female": [
+        "exercise-illustrations/female/side-lying-hip-abduction/frame-1.svg",
+        "exercise-illustrations/female/side-lying-hip-abduction/frame-2.svg",
+        "exercise-illustrations/female/side-lying-hip-abduction/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/side-lying-hip-abduction/frame-1.svg",
+        "exercise-illustrations/male/side-lying-hip-abduction/frame-2.svg",
+        "exercise-illustrations/male/side-lying-hip-abduction/frame-3.svg"
+      ]
+    },
+    "side-lying-leg-raise": {
+      "female": [
+        "exercise-illustrations/female/side-lying-leg-raise/frame-1.svg",
+        "exercise-illustrations/female/side-lying-leg-raise/frame-2.svg",
+        "exercise-illustrations/female/side-lying-leg-raise/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/side-lying-leg-raise/frame-1.svg",
+        "exercise-illustrations/male/side-lying-leg-raise/frame-2.svg",
+        "exercise-illustrations/male/side-lying-leg-raise/frame-3.svg"
+      ]
+    },
+    "side-plank": {
+      "female": [
+        "exercise-illustrations/female/side-plank/frame-1.svg",
+        "exercise-illustrations/female/side-plank/frame-2.svg",
+        "exercise-illustrations/female/side-plank/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/side-plank/frame-1.svg",
+        "exercise-illustrations/male/side-plank/frame-2.svg",
+        "exercise-illustrations/male/side-plank/frame-3.svg"
+      ]
+    },
+    "side-plank-hip-dip": {
+      "female": [
+        "exercise-illustrations/female/side-plank-hip-dip/frame-1.svg",
+        "exercise-illustrations/female/side-plank-hip-dip/frame-2.svg",
+        "exercise-illustrations/female/side-plank-hip-dip/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/side-plank-hip-dip/frame-1.svg",
+        "exercise-illustrations/male/side-plank-hip-dip/frame-2.svg",
+        "exercise-illustrations/male/side-plank-hip-dip/frame-3.svg"
+      ]
+    },
+    "single-arm-cable-row": {
+      "female": [
+        "exercise-illustrations/female/single-arm-cable-row/frame-1.svg",
+        "exercise-illustrations/female/single-arm-cable-row/frame-2.svg",
+        "exercise-illustrations/female/single-arm-cable-row/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/single-arm-cable-row/frame-1.svg",
+        "exercise-illustrations/male/single-arm-cable-row/frame-2.svg",
+        "exercise-illustrations/male/single-arm-cable-row/frame-3.svg"
+      ]
+    },
+    "single-arm-dumbbell-tricep-extension": {
+      "female": [
+        "exercise-illustrations/female/single-arm-dumbbell-tricep-extension/frame-1.svg",
+        "exercise-illustrations/female/single-arm-dumbbell-tricep-extension/frame-2.svg",
+        "exercise-illustrations/female/single-arm-dumbbell-tricep-extension/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/single-arm-dumbbell-tricep-extension/frame-1.svg",
+        "exercise-illustrations/male/single-arm-dumbbell-tricep-extension/frame-2.svg",
+        "exercise-illustrations/male/single-arm-dumbbell-tricep-extension/frame-3.svg"
+      ]
+    },
+    "single-dumbbell-skullcrusher": {
+      "female": [
+        "exercise-illustrations/female/single-dumbbell-skullcrusher/frame-1.svg",
+        "exercise-illustrations/female/single-dumbbell-skullcrusher/frame-2.svg",
+        "exercise-illustrations/female/single-dumbbell-skullcrusher/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/single-dumbbell-skullcrusher/frame-1.svg",
+        "exercise-illustrations/male/single-dumbbell-skullcrusher/frame-2.svg",
+        "exercise-illustrations/male/single-dumbbell-skullcrusher/frame-3.svg"
+      ]
+    },
+    "single-leg-box-squat": {
+      "female": [
+        "exercise-illustrations/female/single-leg-box-squat/frame-1.svg",
+        "exercise-illustrations/female/single-leg-box-squat/frame-2.svg",
+        "exercise-illustrations/female/single-leg-box-squat/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/single-leg-box-squat/frame-1.svg",
+        "exercise-illustrations/male/single-leg-box-squat/frame-2.svg",
+        "exercise-illustrations/male/single-leg-box-squat/frame-3.svg"
+      ]
+    },
+    "single-leg-calf-raise": {
+      "female": [
+        "exercise-illustrations/female/single-leg-calf-raise/frame-1.svg",
+        "exercise-illustrations/female/single-leg-calf-raise/frame-2.svg",
+        "exercise-illustrations/female/single-leg-calf-raise/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/single-leg-calf-raise/frame-1.svg",
+        "exercise-illustrations/male/single-leg-calf-raise/frame-2.svg",
+        "exercise-illustrations/male/single-leg-calf-raise/frame-3.svg"
+      ]
+    },
+    "single-leg-glute-bridge": {
+      "female": [
+        "exercise-illustrations/female/single-leg-glute-bridge/frame-1.svg",
+        "exercise-illustrations/female/single-leg-glute-bridge/frame-2.svg",
+        "exercise-illustrations/female/single-leg-glute-bridge/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/single-leg-glute-bridge/frame-1.svg",
+        "exercise-illustrations/male/single-leg-glute-bridge/frame-2.svg",
+        "exercise-illustrations/male/single-leg-glute-bridge/frame-3.svg"
+      ]
+    },
+    "single-leg-romanian-deadlift": {
+      "female": [
+        "exercise-illustrations/female/single-leg-romanian-deadlift/frame-1.svg",
+        "exercise-illustrations/female/single-leg-romanian-deadlift/frame-2.svg",
+        "exercise-illustrations/female/single-leg-romanian-deadlift/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/single-leg-romanian-deadlift/frame-1.svg",
+        "exercise-illustrations/male/single-leg-romanian-deadlift/frame-2.svg",
+        "exercise-illustrations/male/single-leg-romanian-deadlift/frame-3.svg"
+      ]
+    },
+    "sissy-squat": {
+      "female": [
+        "exercise-illustrations/female/sissy-squat/frame-1.svg",
+        "exercise-illustrations/female/sissy-squat/frame-2.svg",
+        "exercise-illustrations/female/sissy-squat/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/sissy-squat/frame-1.svg",
+        "exercise-illustrations/male/sissy-squat/frame-2.svg",
+        "exercise-illustrations/male/sissy-squat/frame-3.svg"
+      ]
+    },
+    "skater-hop": {
+      "female": [
+        "exercise-illustrations/female/skater-hop/frame-1.svg",
+        "exercise-illustrations/female/skater-hop/frame-2.svg",
+        "exercise-illustrations/female/skater-hop/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/skater-hop/frame-1.svg",
+        "exercise-illustrations/male/skater-hop/frame-2.svg",
+        "exercise-illustrations/male/skater-hop/frame-3.svg"
+      ]
+    },
+    "skater-squat": {
+      "female": [
+        "exercise-illustrations/female/skater-squat/frame-1.svg",
+        "exercise-illustrations/female/skater-squat/frame-2.svg",
+        "exercise-illustrations/female/skater-squat/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/skater-squat/frame-1.svg",
+        "exercise-illustrations/male/skater-squat/frame-2.svg",
+        "exercise-illustrations/male/skater-squat/frame-3.svg"
+      ]
+    },
+    "skierg": {
+      "female": [
+        "exercise-illustrations/female/skierg/frame-1.svg",
+        "exercise-illustrations/female/skierg/frame-2.svg",
+        "exercise-illustrations/female/skierg/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/skierg/frame-1.svg",
+        "exercise-illustrations/male/skierg/frame-2.svg",
+        "exercise-illustrations/male/skierg/frame-3.svg"
+      ]
+    },
+    "skull-crusher": {
+      "female": [
+        "exercise-illustrations/female/skull-crusher/frame-1.svg",
+        "exercise-illustrations/female/skull-crusher/frame-2.svg",
+        "exercise-illustrations/female/skull-crusher/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/skull-crusher/frame-1.svg",
+        "exercise-illustrations/male/skull-crusher/frame-2.svg",
+        "exercise-illustrations/male/skull-crusher/frame-3.svg"
+      ]
+    },
+    "smith-machine-bench-press": {
+      "female": [
+        "exercise-illustrations/female/smith-machine-bench-press/frame-1.svg",
+        "exercise-illustrations/female/smith-machine-bench-press/frame-2.svg",
+        "exercise-illustrations/female/smith-machine-bench-press/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/smith-machine-bench-press/frame-1.svg",
+        "exercise-illustrations/male/smith-machine-bench-press/frame-2.svg",
+        "exercise-illustrations/male/smith-machine-bench-press/frame-3.svg"
+      ]
+    },
+    "smith-machine-bulgarian-split-squat": {
+      "female": [
+        "exercise-illustrations/female/smith-machine-bulgarian-split-squat/frame-1.svg",
+        "exercise-illustrations/female/smith-machine-bulgarian-split-squat/frame-2.svg",
+        "exercise-illustrations/female/smith-machine-bulgarian-split-squat/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/smith-machine-bulgarian-split-squat/frame-1.svg",
+        "exercise-illustrations/male/smith-machine-bulgarian-split-squat/frame-2.svg",
+        "exercise-illustrations/male/smith-machine-bulgarian-split-squat/frame-3.svg"
+      ]
+    },
+    "smith-machine-hip-thrust": {
+      "female": [
+        "exercise-illustrations/female/smith-machine-hip-thrust/frame-1.svg",
+        "exercise-illustrations/female/smith-machine-hip-thrust/frame-2.svg",
+        "exercise-illustrations/female/smith-machine-hip-thrust/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/smith-machine-hip-thrust/frame-1.svg",
+        "exercise-illustrations/male/smith-machine-hip-thrust/frame-2.svg",
+        "exercise-illustrations/male/smith-machine-hip-thrust/frame-3.svg"
+      ]
+    },
+    "smith-machine-reverse-lunge": {
+      "female": [
+        "exercise-illustrations/female/smith-machine-reverse-lunge/frame-1.svg",
+        "exercise-illustrations/female/smith-machine-reverse-lunge/frame-2.svg",
+        "exercise-illustrations/female/smith-machine-reverse-lunge/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/smith-machine-reverse-lunge/frame-1.svg",
+        "exercise-illustrations/male/smith-machine-reverse-lunge/frame-2.svg",
+        "exercise-illustrations/male/smith-machine-reverse-lunge/frame-3.svg"
+      ]
+    },
+    "smith-machine-romanian-deadlift": {
+      "female": [
+        "exercise-illustrations/female/smith-machine-romanian-deadlift/frame-1.svg",
+        "exercise-illustrations/female/smith-machine-romanian-deadlift/frame-2.svg",
+        "exercise-illustrations/female/smith-machine-romanian-deadlift/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/smith-machine-romanian-deadlift/frame-1.svg",
+        "exercise-illustrations/male/smith-machine-romanian-deadlift/frame-2.svg",
+        "exercise-illustrations/male/smith-machine-romanian-deadlift/frame-3.svg"
+      ]
+    },
+    "smith-machine-split-squat": {
+      "female": [
+        "exercise-illustrations/female/smith-machine-split-squat/frame-1.svg",
+        "exercise-illustrations/female/smith-machine-split-squat/frame-2.svg",
+        "exercise-illustrations/female/smith-machine-split-squat/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/smith-machine-split-squat/frame-1.svg",
+        "exercise-illustrations/male/smith-machine-split-squat/frame-2.svg",
+        "exercise-illustrations/male/smith-machine-split-squat/frame-3.svg"
+      ]
+    },
+    "smith-machine-squat": {
+      "female": [
+        "exercise-illustrations/female/smith-machine-squat/frame-1.svg",
+        "exercise-illustrations/female/smith-machine-squat/frame-2.svg",
+        "exercise-illustrations/female/smith-machine-squat/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/smith-machine-squat/frame-1.svg",
+        "exercise-illustrations/male/smith-machine-squat/frame-2.svg",
+        "exercise-illustrations/male/smith-machine-squat/frame-3.svg"
+      ]
+    },
+    "spider-curl": {
+      "female": [
+        "exercise-illustrations/female/spider-curl/frame-1.svg",
+        "exercise-illustrations/female/spider-curl/frame-2.svg",
+        "exercise-illustrations/female/spider-curl/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/spider-curl/frame-1.svg",
+        "exercise-illustrations/male/spider-curl/frame-2.svg",
+        "exercise-illustrations/male/spider-curl/frame-3.svg"
+      ]
+    },
+    "split-squat": {
+      "female": [
+        "exercise-illustrations/female/split-squat/frame-1.svg",
+        "exercise-illustrations/female/split-squat/frame-2.svg",
+        "exercise-illustrations/female/split-squat/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/split-squat/frame-1.svg",
+        "exercise-illustrations/male/split-squat/frame-2.svg",
+        "exercise-illustrations/male/split-squat/frame-3.svg"
+      ]
+    },
+    "sprawl": {
+      "female": [
+        "exercise-illustrations/female/sprawl/frame-1.svg",
+        "exercise-illustrations/female/sprawl/frame-2.svg",
+        "exercise-illustrations/female/sprawl/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/sprawl/frame-1.svg",
+        "exercise-illustrations/male/sprawl/frame-2.svg",
+        "exercise-illustrations/male/sprawl/frame-3.svg"
+      ]
+    },
+    "squat-thrust": {
+      "female": [
+        "exercise-illustrations/female/squat-thrust/frame-1.svg",
+        "exercise-illustrations/female/squat-thrust/frame-2.svg",
+        "exercise-illustrations/female/squat-thrust/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/squat-thrust/frame-1.svg",
+        "exercise-illustrations/male/squat-thrust/frame-2.svg",
+        "exercise-illustrations/male/squat-thrust/frame-3.svg"
+      ]
+    },
+    "stability-ball-hamstring-curl": {
+      "female": [
+        "exercise-illustrations/female/stability-ball-hamstring-curl/frame-1.svg",
+        "exercise-illustrations/female/stability-ball-hamstring-curl/frame-2.svg",
+        "exercise-illustrations/female/stability-ball-hamstring-curl/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/stability-ball-hamstring-curl/frame-1.svg",
+        "exercise-illustrations/male/stability-ball-hamstring-curl/frame-2.svg",
+        "exercise-illustrations/male/stability-ball-hamstring-curl/frame-3.svg"
+      ]
+    },
+    "stair-climber": {
+      "female": [
+        "exercise-illustrations/female/stair-climber/frame-1.svg",
+        "exercise-illustrations/female/stair-climber/frame-2.svg",
+        "exercise-illustrations/female/stair-climber/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/stair-climber/frame-1.svg",
+        "exercise-illustrations/male/stair-climber/frame-2.svg",
+        "exercise-illustrations/male/stair-climber/frame-3.svg"
+      ]
+    },
+    "standing-calf-raise": {
+      "female": [
+        "exercise-illustrations/female/standing-calf-raise/frame-1.svg",
+        "exercise-illustrations/female/standing-calf-raise/frame-2.svg",
+        "exercise-illustrations/female/standing-calf-raise/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/standing-calf-raise/frame-1.svg",
+        "exercise-illustrations/male/standing-calf-raise/frame-2.svg",
+        "exercise-illustrations/male/standing-calf-raise/frame-3.svg"
+      ]
+    },
+    "standing-dumbbell-press": {
+      "female": [
+        "exercise-illustrations/female/standing-dumbbell-press/frame-1.svg",
+        "exercise-illustrations/female/standing-dumbbell-press/frame-2.svg",
+        "exercise-illustrations/female/standing-dumbbell-press/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/standing-dumbbell-press/frame-1.svg",
+        "exercise-illustrations/male/standing-dumbbell-press/frame-2.svg",
+        "exercise-illustrations/male/standing-dumbbell-press/frame-3.svg"
+      ]
+    },
+    "standing-quad-stretch": {
+      "female": [
+        "exercise-illustrations/female/standing-quad-stretch/frame-1.svg",
+        "exercise-illustrations/female/standing-quad-stretch/frame-2.svg",
+        "exercise-illustrations/female/standing-quad-stretch/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/standing-quad-stretch/frame-1.svg",
+        "exercise-illustrations/male/standing-quad-stretch/frame-2.svg",
+        "exercise-illustrations/male/standing-quad-stretch/frame-3.svg"
+      ]
+    },
+    "step-down": {
+      "female": [
+        "exercise-illustrations/female/step-down/frame-1.svg",
+        "exercise-illustrations/female/step-down/frame-2.svg",
+        "exercise-illustrations/female/step-down/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/step-down/frame-1.svg",
+        "exercise-illustrations/male/step-down/frame-2.svg",
+        "exercise-illustrations/male/step-down/frame-3.svg"
+      ]
+    },
+    "step-up": {
+      "female": [
+        "exercise-illustrations/female/step-up/frame-1.svg",
+        "exercise-illustrations/female/step-up/frame-2.svg",
+        "exercise-illustrations/female/step-up/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/step-up/frame-1.svg",
+        "exercise-illustrations/male/step-up/frame-2.svg",
+        "exercise-illustrations/male/step-up/frame-3.svg"
+      ]
+    },
+    "straight-arm-pulldown": {
+      "female": [
+        "exercise-illustrations/female/straight-arm-pulldown/frame-1.svg",
+        "exercise-illustrations/female/straight-arm-pulldown/frame-2.svg",
+        "exercise-illustrations/female/straight-arm-pulldown/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/straight-arm-pulldown/frame-1.svg",
+        "exercise-illustrations/male/straight-arm-pulldown/frame-2.svg",
+        "exercise-illustrations/male/straight-arm-pulldown/frame-3.svg"
+      ]
+    },
+    "sumo-deadlift": {
+      "female": [
+        "exercise-illustrations/female/sumo-deadlift/frame-1.svg",
+        "exercise-illustrations/female/sumo-deadlift/frame-2.svg",
+        "exercise-illustrations/female/sumo-deadlift/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/sumo-deadlift/frame-1.svg",
+        "exercise-illustrations/male/sumo-deadlift/frame-2.svg",
+        "exercise-illustrations/male/sumo-deadlift/frame-3.svg"
+      ]
+    },
+    "superman": {
+      "female": [
+        "exercise-illustrations/female/superman/frame-1.svg",
+        "exercise-illustrations/female/superman/frame-2.svg",
+        "exercise-illustrations/female/superman/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/superman/frame-1.svg",
+        "exercise-illustrations/male/superman/frame-2.svg",
+        "exercise-illustrations/male/superman/frame-3.svg"
+      ]
+    },
+    "superman-hold": {
+      "female": [
+        "exercise-illustrations/female/superman-hold/frame-1.svg",
+        "exercise-illustrations/female/superman-hold/frame-2.svg",
+        "exercise-illustrations/female/superman-hold/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/superman-hold/frame-1.svg",
+        "exercise-illustrations/male/superman-hold/frame-2.svg",
+        "exercise-illustrations/male/superman-hold/frame-3.svg"
+      ]
+    },
+    "swimming": {
+      "female": [
+        "exercise-illustrations/female/swimming/frame-1.svg",
+        "exercise-illustrations/female/swimming/frame-2.svg",
+        "exercise-illustrations/female/swimming/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/swimming/frame-1.svg",
+        "exercise-illustrations/male/swimming/frame-2.svg",
+        "exercise-illustrations/male/swimming/frame-3.svg"
+      ]
+    },
+    "t-bar-row": {
+      "female": [
+        "exercise-illustrations/female/t-bar-row/frame-1.svg",
+        "exercise-illustrations/female/t-bar-row/frame-2.svg",
+        "exercise-illustrations/female/t-bar-row/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/t-bar-row/frame-1.svg",
+        "exercise-illustrations/male/t-bar-row/frame-2.svg",
+        "exercise-illustrations/male/t-bar-row/frame-3.svg"
+      ]
+    },
+    "toe-touch": {
+      "female": [
+        "exercise-illustrations/female/toe-touch/frame-1.svg",
+        "exercise-illustrations/female/toe-touch/frame-2.svg",
+        "exercise-illustrations/female/toe-touch/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/toe-touch/frame-1.svg",
+        "exercise-illustrations/male/toe-touch/frame-2.svg",
+        "exercise-illustrations/male/toe-touch/frame-3.svg"
+      ]
+    },
+    "torso-twist-stretch": {
+      "female": [
+        "exercise-illustrations/female/torso-twist-stretch/frame-1.svg",
+        "exercise-illustrations/female/torso-twist-stretch/frame-2.svg",
+        "exercise-illustrations/female/torso-twist-stretch/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/torso-twist-stretch/frame-1.svg",
+        "exercise-illustrations/male/torso-twist-stretch/frame-2.svg",
+        "exercise-illustrations/male/torso-twist-stretch/frame-3.svg"
+      ]
+    },
+    "towel-hamstring-curl": {
+      "female": [
+        "exercise-illustrations/female/towel-hamstring-curl/frame-1.svg",
+        "exercise-illustrations/female/towel-hamstring-curl/frame-2.svg",
+        "exercise-illustrations/female/towel-hamstring-curl/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/towel-hamstring-curl/frame-1.svg",
+        "exercise-illustrations/male/towel-hamstring-curl/frame-2.svg",
+        "exercise-illustrations/male/towel-hamstring-curl/frame-3.svg"
+      ]
+    },
+    "towel-pull-up": {
+      "female": [
+        "exercise-illustrations/female/towel-pull-up/frame-1.svg",
+        "exercise-illustrations/female/towel-pull-up/frame-2.svg",
+        "exercise-illustrations/female/towel-pull-up/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/towel-pull-up/frame-1.svg",
+        "exercise-illustrations/male/towel-pull-up/frame-2.svg",
+        "exercise-illustrations/male/towel-pull-up/frame-3.svg"
+      ]
+    },
+    "towel-row": {
+      "female": [
+        "exercise-illustrations/female/towel-row/frame-1.svg",
+        "exercise-illustrations/female/towel-row/frame-2.svg",
+        "exercise-illustrations/female/towel-row/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/towel-row/frame-1.svg",
+        "exercise-illustrations/male/towel-row/frame-2.svg",
+        "exercise-illustrations/male/towel-row/frame-3.svg"
+      ]
+    },
+    "trap-bar-deadlift": {
+      "female": [
+        "exercise-illustrations/female/trap-bar-deadlift/frame-1.svg",
+        "exercise-illustrations/female/trap-bar-deadlift/frame-2.svg",
+        "exercise-illustrations/female/trap-bar-deadlift/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/trap-bar-deadlift/frame-1.svg",
+        "exercise-illustrations/male/trap-bar-deadlift/frame-2.svg",
+        "exercise-illustrations/male/trap-bar-deadlift/frame-3.svg"
+      ]
+    },
+    "treadmill-incline-walk": {
+      "female": [
+        "exercise-illustrations/female/treadmill-incline-walk/frame-1.svg",
+        "exercise-illustrations/female/treadmill-incline-walk/frame-2.svg",
+        "exercise-illustrations/female/treadmill-incline-walk/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/treadmill-incline-walk/frame-1.svg",
+        "exercise-illustrations/male/treadmill-incline-walk/frame-2.svg",
+        "exercise-illustrations/male/treadmill-incline-walk/frame-3.svg"
+      ]
+    },
+    "tricep-kickback": {
+      "female": [
+        "exercise-illustrations/female/tricep-kickback/frame-1.svg",
+        "exercise-illustrations/female/tricep-kickback/frame-2.svg",
+        "exercise-illustrations/female/tricep-kickback/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/tricep-kickback/frame-1.svg",
+        "exercise-illustrations/male/tricep-kickback/frame-2.svg",
+        "exercise-illustrations/male/tricep-kickback/frame-3.svg"
+      ]
+    },
+    "typewriter-push-up": {
+      "female": [
+        "exercise-illustrations/female/typewriter-push-up/frame-1.svg",
+        "exercise-illustrations/female/typewriter-push-up/frame-2.svg",
+        "exercise-illustrations/female/typewriter-push-up/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/typewriter-push-up/frame-1.svg",
+        "exercise-illustrations/male/typewriter-push-up/frame-2.svg",
+        "exercise-illustrations/male/typewriter-push-up/frame-3.svg"
+      ]
+    },
+    "upright-row": {
+      "female": [
+        "exercise-illustrations/female/upright-row/frame-1.svg",
+        "exercise-illustrations/female/upright-row/frame-2.svg",
+        "exercise-illustrations/female/upright-row/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/upright-row/frame-1.svg",
+        "exercise-illustrations/male/upright-row/frame-2.svg",
+        "exercise-illustrations/male/upright-row/frame-3.svg"
+      ]
+    },
+    "v-up": {
+      "female": [
+        "exercise-illustrations/female/v-up/frame-1.svg",
+        "exercise-illustrations/female/v-up/frame-2.svg",
+        "exercise-illustrations/female/v-up/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/v-up/frame-1.svg",
+        "exercise-illustrations/male/v-up/frame-2.svg",
+        "exercise-illustrations/male/v-up/frame-3.svg"
+      ]
+    },
+    "walking": {
+      "female": [
+        "exercise-illustrations/female/walking/frame-1.svg",
+        "exercise-illustrations/female/walking/frame-2.svg",
+        "exercise-illustrations/female/walking/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/walking/frame-1.svg",
+        "exercise-illustrations/male/walking/frame-2.svg",
+        "exercise-illustrations/male/walking/frame-3.svg"
+      ]
+    },
+    "walking-lunge": {
+      "female": [
+        "exercise-illustrations/female/walking-lunge/frame-1.svg",
+        "exercise-illustrations/female/walking-lunge/frame-2.svg",
+        "exercise-illustrations/female/walking-lunge/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/walking-lunge/frame-1.svg",
+        "exercise-illustrations/male/walking-lunge/frame-2.svg",
+        "exercise-illustrations/male/walking-lunge/frame-3.svg"
+      ]
+    },
+    "wall-calf-stretch": {
+      "female": [
+        "exercise-illustrations/female/wall-calf-stretch/frame-1.svg",
+        "exercise-illustrations/female/wall-calf-stretch/frame-2.svg",
+        "exercise-illustrations/female/wall-calf-stretch/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/wall-calf-stretch/frame-1.svg",
+        "exercise-illustrations/male/wall-calf-stretch/frame-2.svg",
+        "exercise-illustrations/male/wall-calf-stretch/frame-3.svg"
+      ]
+    },
+    "wall-handstand-push-up": {
+      "female": [
+        "exercise-illustrations/female/wall-handstand-push-up/frame-1.svg",
+        "exercise-illustrations/female/wall-handstand-push-up/frame-2.svg",
+        "exercise-illustrations/female/wall-handstand-push-up/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/wall-handstand-push-up/frame-1.svg",
+        "exercise-illustrations/male/wall-handstand-push-up/frame-2.svg",
+        "exercise-illustrations/male/wall-handstand-push-up/frame-3.svg"
+      ]
+    },
+    "wall-push-up": {
+      "female": [
+        "exercise-illustrations/female/wall-push-up/frame-1.svg",
+        "exercise-illustrations/female/wall-push-up/frame-2.svg",
+        "exercise-illustrations/female/wall-push-up/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/wall-push-up/frame-1.svg",
+        "exercise-illustrations/male/wall-push-up/frame-2.svg",
+        "exercise-illustrations/male/wall-push-up/frame-3.svg"
+      ]
+    },
+    "wall-sit": {
+      "female": [
+        "exercise-illustrations/female/wall-sit/frame-1.svg",
+        "exercise-illustrations/female/wall-sit/frame-2.svg",
+        "exercise-illustrations/female/wall-sit/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/wall-sit/frame-1.svg",
+        "exercise-illustrations/male/wall-sit/frame-2.svg",
+        "exercise-illustrations/male/wall-sit/frame-3.svg"
+      ]
+    },
+    "wall-walk": {
+      "female": [
+        "exercise-illustrations/female/wall-walk/frame-1.svg",
+        "exercise-illustrations/female/wall-walk/frame-2.svg",
+        "exercise-illustrations/female/wall-walk/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/wall-walk/frame-1.svg",
+        "exercise-illustrations/male/wall-walk/frame-2.svg",
+        "exercise-illustrations/male/wall-walk/frame-3.svg"
+      ]
+    },
+    "weighted-chin-up": {
+      "female": [
+        "exercise-illustrations/female/weighted-chin-up/frame-1.svg",
+        "exercise-illustrations/female/weighted-chin-up/frame-2.svg",
+        "exercise-illustrations/female/weighted-chin-up/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/weighted-chin-up/frame-1.svg",
+        "exercise-illustrations/male/weighted-chin-up/frame-2.svg",
+        "exercise-illustrations/male/weighted-chin-up/frame-3.svg"
+      ]
+    },
+    "weighted-crunch": {
+      "female": [
+        "exercise-illustrations/female/weighted-crunch/frame-1.svg",
+        "exercise-illustrations/female/weighted-crunch/frame-2.svg",
+        "exercise-illustrations/female/weighted-crunch/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/weighted-crunch/frame-1.svg",
+        "exercise-illustrations/male/weighted-crunch/frame-2.svg",
+        "exercise-illustrations/male/weighted-crunch/frame-3.svg"
+      ]
+    },
+    "weighted-dip": {
+      "female": [
+        "exercise-illustrations/female/weighted-dip/frame-1.svg",
+        "exercise-illustrations/female/weighted-dip/frame-2.svg",
+        "exercise-illustrations/female/weighted-dip/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/weighted-dip/frame-1.svg",
+        "exercise-illustrations/male/weighted-dip/frame-2.svg",
+        "exercise-illustrations/male/weighted-dip/frame-3.svg"
+      ]
+    },
+    "weighted-pull-up": {
+      "female": [
+        "exercise-illustrations/female/weighted-pull-up/frame-1.svg",
+        "exercise-illustrations/female/weighted-pull-up/frame-2.svg",
+        "exercise-illustrations/female/weighted-pull-up/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/weighted-pull-up/frame-1.svg",
+        "exercise-illustrations/male/weighted-pull-up/frame-2.svg",
+        "exercise-illustrations/male/weighted-pull-up/frame-3.svg"
+      ]
+    },
+    "weighted-push-up": {
+      "female": [
+        "exercise-illustrations/female/weighted-push-up/frame-1.svg",
+        "exercise-illustrations/female/weighted-push-up/frame-2.svg",
+        "exercise-illustrations/female/weighted-push-up/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/weighted-push-up/frame-1.svg",
+        "exercise-illustrations/male/weighted-push-up/frame-2.svg",
+        "exercise-illustrations/male/weighted-push-up/frame-3.svg"
+      ]
+    },
+    "weighted-russian-twist": {
+      "female": [
+        "exercise-illustrations/female/weighted-russian-twist/frame-1.svg",
+        "exercise-illustrations/female/weighted-russian-twist/frame-2.svg",
+        "exercise-illustrations/female/weighted-russian-twist/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/weighted-russian-twist/frame-1.svg",
+        "exercise-illustrations/male/weighted-russian-twist/frame-2.svg",
+        "exercise-illustrations/male/weighted-russian-twist/frame-3.svg"
+      ]
+    },
+    "wide-grip-lat-pulldown": {
+      "female": [
+        "exercise-illustrations/female/wide-grip-lat-pulldown/frame-1.svg",
+        "exercise-illustrations/female/wide-grip-lat-pulldown/frame-2.svg",
+        "exercise-illustrations/female/wide-grip-lat-pulldown/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/wide-grip-lat-pulldown/frame-1.svg",
+        "exercise-illustrations/male/wide-grip-lat-pulldown/frame-2.svg",
+        "exercise-illustrations/male/wide-grip-lat-pulldown/frame-3.svg"
+      ]
+    },
+    "wide-push-up": {
+      "female": [
+        "exercise-illustrations/female/wide-push-up/frame-1.svg",
+        "exercise-illustrations/female/wide-push-up/frame-2.svg",
+        "exercise-illustrations/female/wide-push-up/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/wide-push-up/frame-1.svg",
+        "exercise-illustrations/male/wide-push-up/frame-2.svg",
+        "exercise-illustrations/male/wide-push-up/frame-3.svg"
+      ]
+    },
+    "worlds-greatest-stretch": {
+      "female": [
+        "exercise-illustrations/female/worlds-greatest-stretch/frame-1.svg",
+        "exercise-illustrations/female/worlds-greatest-stretch/frame-2.svg",
+        "exercise-illustrations/female/worlds-greatest-stretch/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/worlds-greatest-stretch/frame-1.svg",
+        "exercise-illustrations/male/worlds-greatest-stretch/frame-2.svg",
+        "exercise-illustrations/male/worlds-greatest-stretch/frame-3.svg"
+      ]
+    },
+    "wrist-curl": {
+      "female": [
+        "exercise-illustrations/female/wrist-curl/frame-1.svg",
+        "exercise-illustrations/female/wrist-curl/frame-2.svg",
+        "exercise-illustrations/female/wrist-curl/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/wrist-curl/frame-1.svg",
+        "exercise-illustrations/male/wrist-curl/frame-2.svg",
+        "exercise-illustrations/male/wrist-curl/frame-3.svg"
+      ]
+    },
+    "wrist-extension": {
+      "female": [
+        "exercise-illustrations/female/wrist-extension/frame-1.svg",
+        "exercise-illustrations/female/wrist-extension/frame-2.svg",
+        "exercise-illustrations/female/wrist-extension/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/wrist-extension/frame-1.svg",
+        "exercise-illustrations/male/wrist-extension/frame-2.svg",
+        "exercise-illustrations/male/wrist-extension/frame-3.svg"
+      ]
+    }
+  },
+  "schemaVersion": 1
+}

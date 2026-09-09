@@ -706,6 +706,7 @@ private class TodayUserProfileRepository(
     override suspend fun updateReturningAfterBreakWeeks(weeks: Int) =
         updateProfile { it.copy(returningAfterBreakWeeks = weeks) }
 
+    override suspend fun updateGender(gender: wallcrawl.elopenmike.com.core.model.ProfileGender) = saveProfile(getProfileOnce().copy(gender = gender))
     override suspend fun updateThemePreference(themePreference: wallcrawl.elopenmike.com.core.model.ThemePreference) =
         updateProfile { it.copy(themePreference = themePreference) }
 

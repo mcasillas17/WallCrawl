@@ -72,6 +72,8 @@ import wallcrawl.elopenmike.com.core.model.MovementCapabilities
 import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
 import wallcrawl.elopenmike.com.core.model.ThemePreference
+import wallcrawl.elopenmike.com.core.model.ProfileGender
+import wallcrawl.elopenmike.com.core.ui.components.ProfileGenderSelector
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
@@ -149,6 +151,7 @@ fun ProfileScreen(
                     onToggleConstraint = { viewModel.toggleTrainingConstraint(it) },
                     onUpdateReturningAfterBreakWeeks = { viewModel.updateReturningAfterBreakWeeks(it) },
                     onUpdateThemePreference = { viewModel.updateThemePreference(it) },
+                    onUpdateGender = viewModel::updateGender,
                     onStartCapabilityEdit = viewModel::startMovementCapabilityEditing,
                     onUpdateCapability = viewModel::updateMovementCapabilityDraft,
                     onCancelCapabilityEdit = viewModel::cancelMovementCapabilityEditing,
@@ -181,6 +184,7 @@ private fun ProfileContent(
     onToggleConstraint: (TrainingConstraint) -> Unit,
     onUpdateReturningAfterBreakWeeks: (Int) -> Unit,
     onUpdateThemePreference: (ThemePreference) -> Unit,
+    onUpdateGender: (ProfileGender) -> Unit,
     onStartCapabilityEdit: () -> Unit,
     onUpdateCapability: (
         MovementCapabilityType,
@@ -653,6 +657,15 @@ private fun ProfileContent(
                     fontSize = 12.sp,
                     color = if (profile.returningAfterBreakWeeks >= 52) CrimsonRedPrimary else MaterialTheme.colorScheme.secondary,
                     fontWeight = FontWeight.Medium
+                )
+            }
+        }
+
+        item {
+            WallCrawlCard(modifier = Modifier.fillMaxWidth(), cornerRadius = 16.dp, contentPadding = 16.dp) {
+                ProfileGenderSelector(
+                    gender = profile.gender,
+                    onGenderChange = onUpdateGender,
                 )
             }
         }

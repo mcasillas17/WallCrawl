@@ -1,6 +1,7 @@
 package wallcrawl.elopenmike.com.core.exercise.visual
 
 import wallcrawl.elopenmike.com.core.model.ExerciseAttribution
+import wallcrawl.elopenmike.com.core.model.IllustrationVariant
 
 data class ExerciseVisual(
     val assetPath: String,
@@ -11,4 +12,7 @@ data class ExerciseVisual(
 
 interface ExerciseVisualProvider {
     fun framesFor(exerciseId: String): List<ExerciseVisual>
+
+    suspend fun framesFor(exerciseId: String, variant: IllustrationVariant): List<ExerciseVisual> =
+        framesFor(exerciseId)
 }

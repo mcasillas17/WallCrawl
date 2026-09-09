@@ -577,12 +577,13 @@
     <string name="credits_error_title">Atribución no disponible</string>
     <string name="credits_error_body">No se pudieron leer los datos de atribución incluidos. Inténtalo de nuevo.</string>
     <string name="credits_illustrations_heading">ILUSTRACIONES DE EJERCICIOS</string>
-    <string name="credits_counts">%1$s · %2$s, importados sin modificar</string>
+    <string name="credits_original_pose_reference">Everkinetic · Referencia de poses originales</string>
+    <string name="credits_additional_artwork">Ejercicios y fotogramas de animación adicionales de %1$s. Las adaptaciones de WallCrawl y el historial completo de las fuentes se documentan a continuación.</string>
+    <string name="credits_counts">Catálogo de origen: %1$s · %2$s</string>
     <string name="credits_label_license">Licencia</string>
-    <string name="credits_label_source">Fuente</string>
-    <string name="credits_label_commit">Commit fijado</string>
+    <string name="credits_action_visit_reference">Visitar Everkinetic</string>
     <string name="credits_action_view_license">Ver la licencia</string>
-    <string name="credits_action_visit_creator">Visitar al autor</string>
+    <string name="credits_action_visit_creator">Visitar al autor de las ilustraciones adicionales</string>
     <string name="credits_link_failed">No hay ninguna app disponible para abrir %1$s</string>
     <string name="credits_notice_attribution">Atribución</string>
     <string name="credits_notice_artwork">Ilustraciones incluidas</string>
@@ -748,4 +749,11 @@
     <string name="schedule_days_4">4 días • frecuencia equilibrada de tren superior e inferior.</string>
     <string name="schedule_days_5">5 días • rutina adaptativa de empuje, tirón y pierna.</string>
     <string name="schedule_days_6">6 días • entrenamiento dedicado de alta frecuencia.</string>
+    <string name="profile_gender_title">Género (opcional)</string>
+    <string name="gender_unspecified">Prefiero no decirlo</string>
+    <string name="gender_woman">Mujer</string>
+    <string name="gender_man">Hombre</string>
+    <string name="gender_non_binary">No binario</string>
+    <string name="credits_notice_illustration_variants">Adaptaciones de ilustraciones de WallCrawl</string>
+    <string name="profile_gender_description">Se usa para elegir las ilustraciones de tus ejercicios.</string>
 </resources>

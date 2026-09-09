@@ -4,6 +4,9 @@ import android.app.Application
 import android.content.Context
 import androidx.core.content.pm.PackageInfoCompat
 import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import wallcrawl.elopenmike.com.core.exercise.visual.IllustrationCatalog
 import wallcrawl.elopenmike.com.core.ai.FakeWorkoutPlanner
 import wallcrawl.elopenmike.com.core.ai.GeneratedWorkoutValidator
 import wallcrawl.elopenmike.com.core.ai.PlannerFeatureFlags
@@ -163,7 +166,11 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
     }
 
     override val exerciseVisualProvider: ExerciseVisualProvider by lazy {
-        WorkoutGuideVisualProvider(workoutGuideCatalogStore)
+        WorkoutGuideVisualProvider(workoutGuideCatalogStore, IllustrationCatalog {
+            withContext(Dispatchers.IO) {
+                context.assets.open("exercise-illustrations/index.json").bufferedReader().use { it.readText() }
+            }
+        })
     }
 
     override val exerciseFilter: ExerciseFilter by lazy {

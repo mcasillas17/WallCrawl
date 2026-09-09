@@ -27,6 +27,9 @@ import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
  * always did and simply carries none, and each version is read strictly: a version 1
  * document that uses a version 2 field is refused rather than quietly upgraded.
  *
+ * Version 3 adds optional gender and preserves the initial preview's legacy illustration
+ * preference. Only gender selects artwork; earlier archives retain their checksums.
+ *
  * ## What it contains
  *
  * Everything the user owns: the profile with its preferences and movement capabilities,
@@ -49,7 +52,7 @@ import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
 object LocalDataArchiveFormat {
 
     /** The only archive format this build writes. */
-    const val ARCHIVE_VERSION: Int = 2
+    const val ARCHIVE_VERSION: Int = 3
 
     /** Every archive format this build can read. */
     val SUPPORTED_ARCHIVE_VERSIONS: IntRange = 1..ARCHIVE_VERSION

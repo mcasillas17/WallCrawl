@@ -7,6 +7,7 @@ import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.ThemePreference
+import wallcrawl.elopenmike.com.core.model.ProfileGender
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
@@ -39,6 +40,7 @@ interface UserProfileRepository {
     suspend fun updateTrainingConstraints(constraints: Set<TrainingConstraint>)
     suspend fun updateReturningAfterBreakWeeks(weeks: Int)
     suspend fun updateThemePreference(theme: ThemePreference)
+    suspend fun updateGender(gender: ProfileGender)
 }
 
 /**
@@ -156,6 +158,10 @@ class OfflineUserProfileRepository(
 
     override suspend fun updateThemePreference(theme: ThemePreference) {
         mutateProfile { current -> current.copy(themePreference = theme) }
+    }
+
+    override suspend fun updateGender(gender: ProfileGender) {
+        mutateProfile { current -> if (current.gender == gender) null else current.copy(gender = gender) }
     }
 
     /**

@@ -1,0 +1,55 @@
+{
+  "verifiedAt": "2026-09-09T04:43:59.253428+00:00",
+  "repository": "mcasillas17/WallCrawl",
+  "branch": "codex/female-exercise-pilot",
+  "baseCommit": "86053e678c74ab18fc003d3ce5ae901a43e880f4",
+  "unitTests": {
+    "tests": 787,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "targetedAndroidTests": {
+    "tests": 66,
+    "failures": 0,
+    "result": "OK (66 tests)",
+    "device": "isolated API 36 emulator"
+  },
+  "catalogToolingTests": {
+    "tests": 104,
+    "result": "OK"
+  },
+  "debugBuild": "BUILD SUCCESSFUL in 22s",
+  "debugLint": {
+    "errors": 0,
+    "warnings": 25,
+    "hints": 1
+  },
+  "packagedSvgCount": 1812,
+  "svgBytes": 54359261,
+  "allPackagedSvgHashesMatchApk": true,
+  "originalSourceBundleUnchanged": true,
+  "apkSha256": "5a57b99b2aefa548bb62ee593024242426dbd37b37b306cef2978937c54c4353",
+  "codeReview": {
+    "blockingFindings": 0,
+    "scope": "Gender-only selection, persistence, archive compatibility, sequence selection, keyed renderer lifecycle and fallback, path restrictions."
+  },
+  "verificationLimits": [
+    "Targeted Android suite; full instrumentation runs in PR CI.",
+    "UI semantics alone do not establish decoder success; actual female/male component captures were also inspected.",
+    "No dedicated renderer tests for mid-load gender cancellation or image-error fallback.",
+    "Legacy archive tests round-trip the current writer v1/v2 branches rather than comparing an immutable old-app fixture."
+  ],
+  "artworkReview": {
+    "femaleUserApprovedPilotFrames": 9,
+    "maleSequencesReviewed": 252,
+    "maleSequencesHeld": 50,
+    "femaleFullAnimationReview": "not completed",
+    "qualifiedMovementExpertApproval": false
+  },
+  "productionWorkspace": "Raster masters, originals, drafts, and full generation history remain preserved locally under art/pilots/female-exercises and are not part of this integration commit.",
+  "previews": [
+    "art/pilots/female-exercises/integration/previews/pr-illustration-female-en.png",
+    "art/pilots/female-exercises/integration/previews/pr-illustration-male-en.png"
+  ]
+}

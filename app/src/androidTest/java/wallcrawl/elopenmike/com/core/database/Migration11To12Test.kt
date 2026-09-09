@@ -42,7 +42,7 @@ class Migration11To12Test {
             .build()
         val sqlite = checkNotNull(database).openHelper.writableDatabase
 
-        assertThat(sqlite.version).isEqualTo(12)
+        assertThat(sqlite.version).isEqualTo(WALLCRAWL_SCHEMA_VERSION)
 
         // Existing rows are untouched, including the guidance columns schema 11 added.
         sqlite.query("SELECT name,revision FROM user_profiles").use { cursor ->

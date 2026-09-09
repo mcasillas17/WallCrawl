@@ -21,11 +21,26 @@ import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.ThemePreference
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
+import wallcrawl.elopenmike.com.core.model.illustrationVariant
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.test.MainDispatcherRule
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ProfileViewModelTest {
+
+    @Test
+    fun genderEditsPersistAndSelectArtwork() = runTest {
+        val repository = repositoryWith(profile())
+        val viewModel = ProfileViewModel(repository)
+        viewModel.updateGender(wallcrawl.elopenmike.com.core.model.ProfileGender.WOMAN)
+        advanceUntilIdle()
+        assertThat(repository.getProfileOnce().illustrationVariant)
+            .isEqualTo(wallcrawl.elopenmike.com.core.model.IllustrationVariant.FEMALE)
+        viewModel.updateGender(wallcrawl.elopenmike.com.core.model.ProfileGender.MAN)
+        advanceUntilIdle()
+        assertThat(repository.getProfileOnce().illustrationVariant)
+            .isEqualTo(wallcrawl.elopenmike.com.core.model.IllustrationVariant.MALE)
+    }
 
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()

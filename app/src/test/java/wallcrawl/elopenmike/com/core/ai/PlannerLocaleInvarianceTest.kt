@@ -67,6 +67,25 @@ class PlannerLocaleInvarianceTest {
     }
 
     @Test
+    fun genderAndIllustrationOverridesDoNotChangeTrainingDecisions() = runTest {
+        val original = context()
+        val baseline = FakeWorkoutPlanner().generateWorkout(original)
+        for (gender in wallcrawl.elopenmike.com.core.model.ProfileGender.entries) {
+            for (preference in wallcrawl.elopenmike.com.core.model.IllustrationPreference.entries) {
+                val changed = original.copy(userProfile = original.userProfile.copy(
+                    gender = gender, illustrationPreference = preference
+                ))
+                val plan = FakeWorkoutPlanner().generateWorkout(changed)
+                assertThat(plan.exercises.map { it.exerciseId to it.prescription })
+                    .isEqualTo(baseline.exercises.map { it.exerciseId to it.prescription })
+                assertThat(plan.estimatedDurationMinutes).isEqualTo(baseline.estimatedDurationMinutes)
+                assertThat(RecommendationContextIdentity.of(changed))
+                    .isEqualTo(RecommendationContextIdentity.of(original))
+            }
+        }
+    }
+
+    @Test
     fun loadsAndRestTargetsAreTheSameNumbersInEveryLocale() = runTest {
         // A decimal comma is the classic way a load silently changes magnitude. The plan
         // carries Doubles, and this pins that they are equal, not merely formatted alike.

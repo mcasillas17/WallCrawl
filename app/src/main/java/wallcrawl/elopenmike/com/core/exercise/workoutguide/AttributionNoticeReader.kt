@@ -65,6 +65,7 @@ class AssetAttributionNoticeReader(
         const val MAX_NOTICE_CHARACTERS = 20_000
 
         val DOCUMENTS = listOf(
+            R.string.credits_notice_illustration_variants to "exercise-illustrations/NOTICE.md",
             R.string.credits_notice_attribution to "workout-guide/ATTRIBUTION.md",
             R.string.credits_notice_artwork to "workout-guide/NOTICE.md",
             R.string.credits_notice_asset_license to "workout-guide/LICENSE-ASSETS",

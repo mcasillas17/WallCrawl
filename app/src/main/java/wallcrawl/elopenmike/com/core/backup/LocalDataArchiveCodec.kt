@@ -57,6 +57,8 @@ import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
 import wallcrawl.elopenmike.com.core.model.SetStopReason
 import wallcrawl.elopenmike.com.core.model.SetType
 import wallcrawl.elopenmike.com.core.model.ThemePreference
+import wallcrawl.elopenmike.com.core.model.ProfileGender
+import wallcrawl.elopenmike.com.core.model.IllustrationPreference
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
@@ -125,6 +127,10 @@ object LocalDataArchiveCodec {
         require(archive.metadata.archiveVersion in SUPPORTED_ARCHIVE_VERSIONS) {
             "Only archive versions $SUPPORTED_ARCHIVE_VERSIONS can be written."
         }
+        require(archive.metadata.archiveVersion >= 3 || archive.snapshot.profile.let {
+            it == null || (it.gender == ProfileGender.UNSPECIFIED &&
+                it.illustrationPreference == IllustrationPreference.AUTOMATIC)
+        }) { "Gender and illustration preferences require archive version 3." }
         require(
             archive.metadata.archiveVersion >= RECOMMENDATION_RECORDS_ARCHIVE_VERSION ||
                 archive.snapshot.recommendationRecords.isEmpty()
@@ -154,7 +160,7 @@ object LocalDataArchiveCodec {
             writer.name(FIELD_METADATA)
             writer.writeMetadata(archive.metadata)
             writer.name(FIELD_DATA)
-            writer.writeSnapshot(archive.snapshot)
+            writer.writeSnapshot(archive.snapshot, archive.metadata.archiveVersion)
             writer.name(FIELD_CHECKSUM)
             writer.beginObject()
             writer.name("algorithm").value(CHECKSUM_ALGORITHM)
@@ -288,7 +294,7 @@ object LocalDataArchiveCodec {
         name(FIELD_METADATA)
         writeMetadata(archive.metadata)
         name(FIELD_DATA)
-        writeSnapshot(archive.snapshot)
+        writeSnapshot(archive.snapshot, archive.metadata.archiveVersion)
         endObject()
     }
 
@@ -305,11 +311,11 @@ object LocalDataArchiveCodec {
         endObject()
     }
 
-    private fun JsonWriter.writeSnapshot(snapshot: LocalDataSnapshot) {
+    private fun JsonWriter.writeSnapshot(snapshot: LocalDataSnapshot, archiveVersion: Int) {
         beginObject()
         snapshot.profile?.let { profile ->
             name("profile")
-            writeProfile(profile)
+            writeProfile(profile, archiveVersion)
         }
         name("templates")
         beginArray()
@@ -356,7 +362,7 @@ object LocalDataArchiveCodec {
         endObject()
     }
 
-    private fun JsonWriter.writeProfile(profile: UserProfile) {
+    private fun JsonWriter.writeProfile(profile: UserProfile, archiveVersion: Int) {
         beginObject()
         name("id").value(profile.id)
         name("revision").value(profile.revision)
@@ -400,6 +406,11 @@ object LocalDataArchiveCodec {
         }
         endObject()
         name("themePreference").value(profile.themePreference.name)
+        // Keep the canonical bytes and checksums of versions 1 and 2 unchanged.
+        if (archiveVersion >= 3) {
+            name("gender").value(profile.gender.name)
+            name("illustrationPreference").value(profile.illustrationPreference.name)
+        }
         endObject()
     }
 
@@ -609,7 +620,7 @@ object LocalDataArchiveCodec {
 
         readObject("archive data") { field ->
             when (field) {
-                "profile" -> profile = readProfile()
+                "profile" -> profile = readProfile(archiveVersion)
                 "templates" -> templates = readArray("templates", MAX_TEMPLATES) { readTemplate() }
                 "sessions" -> sessions = readArray("sessions", MAX_SESSIONS) { readSession() }
                 "recommendations" -> {
@@ -768,7 +779,7 @@ object LocalDataArchiveCodec {
         )
     }
 
-    private fun JsonReader.readProfile(): UserProfile {
+    private fun JsonReader.readProfile(archiveVersion: Int): UserProfile {
         var id: String? = null
         var revision: Long? = null
         var name: String? = null
@@ -786,6 +797,8 @@ object LocalDataArchiveCodec {
         var confirmedStartingLoads: Map<String, Double>? = null
         var movementCapabilities: MovementCapabilities? = null
         var themePreference: ThemePreference? = null
+        var gender: ProfileGender? = null
+        var illustrationPreference: IllustrationPreference? = null
 
         readObject("profile") { field ->
             when (field) {
@@ -874,6 +887,14 @@ object LocalDataArchiveCodec {
 
                 "themePreference" ->
                     themePreference = nextEnum<ThemePreference>("profile.themePreference")
+                "gender" -> {
+                    if (archiveVersion < 3) malformed("Gender requires archive version 3.")
+                    gender = nextEnum<ProfileGender>("profile.gender")
+                }
+                "illustrationPreference" -> {
+                    if (archiveVersion < 3) malformed("Illustration preferences require archive version 3.")
+                    illustrationPreference = nextEnum<IllustrationPreference>("profile.illustrationPreference")
+                }
                 else -> malformed("The archived profile has an unsupported field.")
             }
         }
@@ -920,7 +941,11 @@ object LocalDataArchiveCodec {
             movementCapabilities = movementCapabilities
                 ?: malformed("The archived profile is missing 'movementCapabilities'."),
             themePreference = themePreference
-                ?: malformed("The archived profile is missing 'themePreference'.")
+                ?: malformed("The archived profile is missing 'themePreference'."),
+            gender = gender ?: if (archiveVersion < 3) ProfileGender.UNSPECIFIED
+                else malformed("The archived profile is missing 'gender'."),
+            illustrationPreference = illustrationPreference ?: if (archiveVersion < 3) IllustrationPreference.AUTOMATIC
+                else malformed("The archived profile is missing 'illustrationPreference'.")
         )
     }
 

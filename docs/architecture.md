@@ -72,7 +72,8 @@ dependency-injection framework later without changing the domain boundaries.
 
 ## Exercise catalog and visuals
 
-The production catalog is a normalized, bundled snapshot of Workout Guide:
+The production catalog is a normalized, bundled snapshot of the
+[pinned source catalog](../tools/workout-guide/import-config.json):
 
 ```text
 app/src/main/assets/workout-guide/catalog.json
@@ -88,7 +89,13 @@ interface. It does not parse upstream JSON or construct raw asset paths.
 Likewise, Compose screens request visuals through `ExerciseVisualProvider` and
 render them with `ExerciseIllustration`.
 
-The bundled snapshot contains 302 exercises and 906 SVG frames. Search covers
+The bundled snapshot contains 302 exercises and 906 original SVG frames.
+[Everkinetic](https://github.com/everkinetic/data) is the original pose-artwork
+reference, with additional exercises and animation frames by Bryl Lim. WallCrawl
+also bundles 1,812 female and male adaptation frames; see
+[illustration variants](exercise-illustration-variants.md) for selection, playback,
+and attribution. Internal source identifiers and original notices are preserved.
+Search covers
 IDs, names, aliases, muscles, and listed equipment in every shipped language at
 once, accent-insensitively, and always resolves to the same catalog IDs. The
 Spanish names, coaching summaries, and muscle and equipment vocabulary come from
@@ -109,14 +116,14 @@ A failure to load the overlay is not fatal: lookups fall back to the catalog's
 English. See [Localization](localization.md). The importer under
 `tools/workout-guide/` validates and regenerates this snapshot from a pinned,
 clean upstream checkout; the installed application never runs the importer or
-contacts Workout Guide.
+contacts the source repository.
 
 Pull-request/main CI runs `tools/workout-guide/check_pinned_catalog.py` before
 Java/Gradle setup. It validates `import-config.json`, fetches its exact source pin
 into an isolated temporary checkout, and invokes the importer in `--check` mode
 against the complete committed bundle and generated review report. Drift or an
 unavailable upstream fails the build job without rewriting checked output. See the
-[catalog instructions](../README.md#offline-workout-guide-catalog) for reproduction
+[catalog instructions](../README.md#offline-exercise-catalog) for reproduction
 and failure diagnostics.
 
 `WorkoutGuideCatalogParser` is also where upstream muscle names become
@@ -139,7 +146,7 @@ instead of validating and discarding it, because the CC BY-SA 4.0 license on the
 artwork requires attribution to reach the user. `CreditsScreen` renders it
 alongside the bundled notice files.
 
-See the [README](../README.md#offline-workout-guide-catalog) for import commands,
+See the [README](../README.md#offline-exercise-catalog) for import commands,
 the pinned commit, and licensing details.
 
 ### Type-dependent legacy programming
@@ -497,7 +504,7 @@ no separate write path that copies a logged value back into
 
 ## Room persistence and invariants
 
-`WallCrawlDatabase` is currently schema version 12. Its tables store:
+`WallCrawlDatabase` is currently schema version 13. Its tables store:
 
 - the user profile, including onboarding status, multi-select fitness goals,
   training constraints, return-after-break weeks, confirmed starting loads,
@@ -532,7 +539,7 @@ columns (`feltManageable`, `completedAtTimestamp`, `stoppedAtTimestamp`,
 existed reads back as an honestly unrecorded outcome instead of gaining a
 fabricated completion timestamp or an assumed manageable answer. There is no
 destructive migration fallback on any construction path, and the migration
-tests exercise every supported starting schema through to version 12. Migration
+tests exercise every supported starting schema through to version 13. Migration
 `7 → 8` adds one non-null `movementCapabilitiesJson` column. Existing rows receive `{}`, which the codec
 normalizes to all `UNKNOWN`; their onboarding status, revision, theme, goals,
 equipment, constraints, confirmed loads, templates, sessions, sets, and history
@@ -593,7 +600,7 @@ diagram, OEM limitations, and the lack of any previous-backup erasure guarantee.
 
 ### User-owned export, restore, and deletion
 
-`core/backup` writes archive format **version 2** and reads versions 1 and 2: one JSON
+`core/backup` writes archive format **version 3** and reads versions 1, 2, and 3: one JSON
 document holding the profile, templates, every session with its exercises and sets, and
 the whole-program validation record for each session started from a recommendation. That
 version is independent of the Room schema version, which travels alongside the app
@@ -849,7 +856,7 @@ UserProfile.themePreference (SYSTEM | DARK | LIGHT)
 The JVM suite covers pure domain rules, filtering, context construction,
 capability normalization and codec behavior, planner invariance, validation,
 repository mapping, progress calculations, and ViewModel state. Instrumentation
-tests cover every supported Room migration chain through schema 12, real 7 → 8,
+tests cover every supported Room migration chain through schema 13, real 7 → 8,
 9 → 10, 10 → 11, and 11 → 12 preservation, foreign-key integrity, guidance round trips,
 the atomic start of a session with its validation record, the weekly-ledger repository,
 capability
@@ -864,3 +871,20 @@ API 36 emulator. The importer has a separate Python-standard-library test suite.
 
 See [Build and test](../README.md#build-and-test) for the commands contributors
 should run.
+
+### Exercise illustration variants
+
+`UserProfile.gender` is optional and controls artwork directly: Female for WOMAN,
+Male otherwise. Its selector appears only in onboarding and Profile. There is no
+separate illustration override. The first preview's `illustrationPreference` field
+is retained only for database/archive compatibility and cannot affect artwork.
+Room migration 12 → 13 preserves old rows with conservative defaults. Archive
+version 3 preserves the legacy field; versions 1 and 2 retain their checksums.
+
+The app supplies `LocalIllustrationVariant` from the observed profile to every
+`ExerciseIllustration`. `WorkoutGuideVisualProvider` reads the separate variant index
+off the main thread and returns complete three-frame sequences. A missing variant or
+image-load error falls back to the complete pinned original sequence. A change of
+exercise or variant resets playback and cancels the old load. No frame-by-frame mixing
+occurs. Current selected drafts play 1–2–3–2, including documented continuity issues.
+See [illustration variants](exercise-illustration-variants.md) for packaging and review status.

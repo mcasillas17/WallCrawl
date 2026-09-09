@@ -33,7 +33,7 @@ class MigrationChainTo12Test {
                 .build()
             try {
                 val sqlite = database.openHelper.writableDatabase
-                assertThat(sqlite.version).isEqualTo(12)
+                assertThat(sqlite.version).isEqualTo(WALLCRAWL_SCHEMA_VERSION)
                 sqlite.query(
                     "SELECT name,movementCapabilitiesJson FROM user_profiles"
                 ).use { cursor ->

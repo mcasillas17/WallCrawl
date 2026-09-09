@@ -2,6 +2,8 @@ package wallcrawl.elopenmike.com.core.exercise.visual
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
+import kotlinx.coroutines.test.runTest
+import wallcrawl.elopenmike.com.core.model.IllustrationVariant
 import wallcrawl.elopenmike.com.core.exercise.workoutguide.WorkoutGuideCatalogSnapshot
 import wallcrawl.elopenmike.com.core.exercise.workoutguide.WorkoutGuideCatalogSource
 import wallcrawl.elopenmike.com.core.exercise.workoutguide.testCatalogAttribution
@@ -23,6 +25,17 @@ class WorkoutGuideVisualProviderTest {
         catalogAttribution = testCatalogAttribution(frameCount = 6)
     )
     private val provider = WorkoutGuideVisualProvider(FixedSource(snapshot))
+
+    @Test
+    fun chosenVariantReturnsItsCompleteSequenceAndMissingVariantFallsBackAsAWhole() = runTest {
+        val paths = (1..3).map { "exercise-illustrations/female/pull-ups/frame-$it.svg" }
+        val index = """{"schemaVersion":1,"exercises":{"pull-ups":{"female":${org.json.JSONArray(paths)}}}}"""
+        val variants = WorkoutGuideVisualProvider(FixedSource(snapshot), IllustrationCatalog { index })
+        assertThat(variants.framesFor(" PULL-UPS ", IllustrationVariant.FEMALE).map { it.assetPath })
+            .containsExactlyElementsIn(paths).inOrder()
+        assertThat(variants.framesFor("pull-ups", IllustrationVariant.MALE)).isEqualTo(pullUpFrames)
+        assertThat(variants.framesFor("unknown", IllustrationVariant.FEMALE)).isEmpty()
+    }
 
     @Test
     fun framesFor_directCatalogId_returnsOrderedBundledFrames() {
