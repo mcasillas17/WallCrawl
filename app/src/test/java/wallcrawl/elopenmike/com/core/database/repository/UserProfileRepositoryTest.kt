@@ -77,6 +77,42 @@ class UserProfileRepositoryTest {
     }
 
     @Test
+    fun oldFullGymInventory_survivesMapperAndRepositoryWithoutNewDefaults() = runTest {
+        val oldInventory = listOf(
+            "Barbell", "Dumbbell", "Cable", "Machine", "Bodyweight", "Kettlebell",
+            "Resistance Band", "Bench", "Pull-up Bar", "Dip Bars", "Squat Rack",
+            "Box", "Cardio", "Chair", "Doorway", "Plate", "Stability Ball", "Towel", "Wall"
+        )
+        assertThat(StandardEquipment.FULL_GYM).containsExactlyElementsIn(oldInventory)
+        fakeDao.insertOrUpdate(UserProfile(availableEquipment = oldInventory).toUserProfileEntity())
+
+        assertThat(repository.getProfileOnce().availableEquipment)
+            .containsExactlyElementsIn(oldInventory).inOrder()
+        repository.updatePreferredDuration(60)
+        assertThat(repository.getProfileOnce().availableEquipment)
+            .containsExactlyElementsIn(oldInventory).inOrder()
+    }
+
+    @Test
+    fun explicitBandSetups_surviveProfileSaveAndMapperRoundTrip() = runTest {
+        StandardEquipment.BAND_SETUPS.forEach { setup ->
+            val equipment = listOf(StandardEquipment.RESISTANCE_BAND, setup)
+            repository.saveProfile(UserProfile(availableEquipment = equipment))
+            assertThat(repository.getProfileOnce().availableEquipment)
+                .containsExactlyElementsIn(equipment).inOrder()
+        }
+    }
+
+    @Test
+    fun unknownEquipmentIdentifier_isPreservedByMapperWithoutBecomingAnAnchor() = runTest {
+        val equipment = listOf(StandardEquipment.RESISTANCE_BAND, "Future band anchor")
+        fakeDao.insertOrUpdate(UserProfile(availableEquipment = equipment).toUserProfileEntity())
+
+        assertThat(repository.getProfileOnce().availableEquipment)
+            .containsExactlyElementsIn(equipment).inOrder()
+    }
+
+    @Test
     fun updateMusclePriorities_persistsMap() = runTest {
         val priorities = mapOf(
             StandardMuscles.CHEST to PriorityLevel.HIGH,

@@ -135,8 +135,12 @@ manufactured direct-primary allocations or repetition prescriptions. Type suppor
 single-candidate reachability, full-pool availability, AI readiness and human
 approval are distinct, as the [coverage report](reviewed-catalog-coverage.md) explains.
 
-Fixed band anchors, specialized fixtures, conflicting movement depictions and
-some primary/impact decisions remain unresolved. A generic wall, doorway, bench
+Five of the six fixed-anchor band variants now have explicit runtime equipment
+minimums in the [fixed-anchor contract](band-anchor-equipment.md); the row's
+off-image anchor remains unresolved. Their full reviewed blocks stay withheld:
+this equipment correction does not author or approve their other categorical
+fields or promote any graph edge. Specialized fixtures, conflicting movement
+depictions and some primary/impact decisions remain unresolved. A generic wall, doorway, bench
 or machine is not used to conceal an unrepresented requirement. Broader equipment
 categories also do not prove ownership of every machine subtype or bench configuration.
 Band-only PUSH coverage remains a specific open gap, not a reason to relabel

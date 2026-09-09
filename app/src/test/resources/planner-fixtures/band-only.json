@@ -45,10 +45,16 @@
   "expected": {
     "outcome": "SUCCESS",
     "requiredExerciseIds": [
-      "banded-row"
+      "banded-dead-bug"
     ],
     "forbiddenExerciseIds": [
-      "lat-pulldown"
+      "lat-pulldown",
+      "banded-face-pull",
+      "banded-kickback",
+      "banded-lat-pulldown",
+      "banded-pallof-press",
+      "banded-row",
+      "banded-woodchop"
     ]
   }
 }

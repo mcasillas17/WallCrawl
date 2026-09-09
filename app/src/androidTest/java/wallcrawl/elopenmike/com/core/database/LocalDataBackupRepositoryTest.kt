@@ -39,6 +39,7 @@ import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
 import wallcrawl.elopenmike.com.core.model.UserProfile
+import wallcrawl.elopenmike.com.core.model.hasRequiredEquipment
 
 /**
  * Export, restore, and deletion against a real Room database.
@@ -97,6 +98,56 @@ class LocalDataBackupRepositoryTest {
             .containsExactly("session-1", "session-2")
         assertThat(afterRows.recommendationRecords.single { it.sessionId == "session-2" }.outcome)
             .isEqualTo("REPAIRED")
+    }
+
+    @Test
+    fun restoreOldVersions_keepsTheNineteenItemInventoryWithoutBandDefaults() = runBlocking {
+        listOf(1, 2).forEach { version ->
+            val archive = LocalDataArchiveFixtures.archive(
+                metadata = LocalDataArchiveFixtures.metadata(archiveVersion = version),
+                snapshot = LocalDataArchiveFixtures.snapshot(
+                    profile = LocalDataArchiveFixtures.profile().copy(availableEquipment = StandardEquipment.FULL_GYM),
+                    recommendationRecords = emptyList()
+                )
+            )
+            val document = ByteArrayOutputStream().also { sink ->
+                LocalDataArchiveCodec.write(archive) { sink }
+            }.toByteArray()
+            repository.restoreFrom(ByteArrayInputStream(document))
+            val saved = OfflineUserProfileRepository(database.userProfileDao()).getProfileOnce()
+            assertThat(saved.availableEquipment).containsExactlyElementsIn(StandardEquipment.FULL_GYM).inOrder()
+            repository.deleteAllLocalData()
+        }
+    }
+
+    @Test
+    fun explicitBandSetupsAndUnknownToken_surviveExportRestoreIntoProfileRepository() = runBlocking {
+        val equipment = StandardEquipment.FULL_GYM + StandardEquipment.BAND_SETUPS + "Future band anchor"
+        val archive = LocalDataArchiveFixtures.archive(
+            snapshot = LocalDataArchiveFixtures.snapshot(
+                profile = LocalDataArchiveFixtures.profile().copy(availableEquipment = equipment)
+            )
+        )
+        val initial = ByteArrayOutputStream().also { sink ->
+            LocalDataArchiveCodec.write(archive) { sink }
+        }.toByteArray()
+        repository.restoreFrom(ByteArrayInputStream(initial))
+        val exported = ByteArrayOutputStream().also { sink -> repository.exportTo { sink } }.toByteArray()
+        assertThat(LocalDataArchiveCodec.read(ByteArrayInputStream(exported)).snapshot.profile?.availableEquipment)
+            .containsExactlyElementsIn(equipment).inOrder()
+        repository.deleteAllLocalData()
+        repository.restoreFrom(ByteArrayInputStream(exported))
+
+        val saved = OfflineUserProfileRepository(database.userProfileDao()).getProfileOnce()
+        assertThat(saved.availableEquipment).containsExactlyElementsIn(equipment).inOrder()
+        val facePull = Exercise(
+            id = "banded-face-pull", name = "Banded Face Pull",
+            primaryMuscles = listOf("Back"), listedEquipment = listOf(StandardEquipment.RESISTANCE_BAND),
+            type = ExerciseType.WEIGHT_REPS
+        )
+        assertThat(facePull.hasRequiredEquipment(saved.availableEquipment)).isTrue()
+        assertThat(facePull.hasRequiredEquipment(saved.availableEquipment - StandardEquipment.BAND_SETUPS.toSet()))
+            .isFalse()
     }
 
     @Test

@@ -2924,7 +2924,7 @@
       "policyAssessment": {
         "muscles": "Upper Back stays source primary, Rear Delts and Shoulders descriptive. Face-level pulling does not establish a lat-hang capability or chest-press role.",
         "movement": "Horizontal_pull, standard and band-face-pull categorize the coordinated elbow/shoulder pull. Preserve the source bodyweight_reps convention rather than infer a measurable cable load.",
-        "equipmentAndCapabilities": "A band plus a suitably secured face-height anchor is required. The upright is not a visible doorway or rack, and Wall alone would not encode an anchor. Standing is unsupported with balance; no floor or impact demand.",
+        "equipmentAndCapabilities": "Runtime equipment minimum is now Resistance Band + Band Anchor - Upper Body: secured attachment adjustable from chest through face height, usable facing it or side-on. Frame 1 appears face-height; frames 2-3 upper-chest/shoulder-height, not overhead. Wall, Doorway and a generic Full gym preset do not confirm it. Standing remains unsupported with balance; no floor or impact demand. This source-bound equipment correction does not create a full reviewed metadata proposal or approval.",
         "links": "Current emitted DRAFT outgoing: none. Current emitted DRAFT incoming: none. Explicit decisions: add=0, retain=0, hold=1, reject=0. Each individual semantic rationale and current endpoint comparison is preserved in graphDecisions. Held/rejected proposals are not emitted. This generated adjacency is not human approval or a claim of equivalent outcomes."
       },
       "corrections": [
@@ -2932,22 +2932,22 @@
       ],
       "confidence": "moderate",
       "limitations": [
-        "Current schema cannot encode fixed anchor hardware/height; no token should silently imply attachment suitability."
+        "The explicit upper-body setup confirmation expresses function and positioning, not manufacturer installation, fastening or load-rating certification. No generic object or preset implies it."
       ],
       "remainingDecisions": [
         "Human field-by-field metadata sign-off; no reviewer role or review timestamp has been supplied.",
-        "Resolve explicit anchor representation or separately author a known supported setup before admission."
+        "Equipment representation is resolved for the runtime minimum. Separately author and field-review the full categorical DRAFT before reviewed admission; retain the held face-pull versus straight-arm-opening relationship decision."
       ],
       "artworkReferenceStatus": "no_identity_conflict_observed",
-      "artworkReferenceReason": "The three PNGs consistently depict standing face-height pulling from a fixed upright anchor. The missing anchor equipment token is an unresolved availability-policy issue, not permission to erase the anchor or redraw an unanchored pull-apart. This bounded no-observed-conflict finding is not human artwork approval and does not override the stated equipment, visibility or policy limitations.",
+      "artworkReferenceReason": "The three PNGs depict standing upper-body-height pulling from a fixed upright: face-height in frame 1 and upper-chest/shoulder-height in frames 2-3. The explicit adjustable upper-body equipment confirmation does not permit erasing the anchor or redrawing an unanchored pull-apart. This bounded no-observed-conflict finding is not human artwork approval and does not override the stated equipment, visibility or policy limitations.",
       "classWideReconciliation": {
         "performedOn": "2026-09-07",
         "allAssignedRecordsRechecked": true,
-        "assessment": "The band terminates on a fixed upright; it is not a free hand-to-hand pull-apart or a cable machine simply because strands are drawn. Missing anchor token keeps the block withheld. Unsupported standing balance remains in partial categories. Face-level pulling is not hanging or plyometric jumping.",
+        "assessment": "The band terminates on a fixed upright; it is not a free hand-to-hand pull-apart or a cable machine simply because strands are drawn. At the initial review the anchor token was missing; the runtime correction now represents adjustable upper-body anchoring without authoring a full reviewed block. Unsupported standing balance remains in partial categories. Face-level pulling is not hanging or plyometric jumping.",
         "incidentGraphReview": [],
         "scope": "All 51 assigned records were rechecked across integrated/free equipment, mandatory support and balance, anchors/fixtures, named/depicted impact and every current incident or explicit proposed graph edge. No new approval panel or runtime change."
       },
-      "metadataOmissionReason": "The actual upright anchor is not represented by any current equipment token; a band-only draft would falsely admit unavailable equipment.",
+      "metadataOmissionReason": "The runtime equipment minimum is now representable as Resistance Band + Band Anchor - Upper Body. A full categorical DRAFT is not authored by this equipment-only correction; it still requires separate field review and the held substitute-role decision. A band-only draft remains incomplete.",
       "partialCategoricalProposal": {
         "directPrimaryMuscle": "Upper Back",
         "descriptiveSecondaryMuscles": [
@@ -2967,7 +2967,7 @@
       "withheldProposalFields": [
         "equipmentAlternatives"
       ],
-      "partialCategoricalProposalNote": "Not importable metadata and not approved: one or more required fields cannot faithfully represent the pinned variation, as stated in metadataOmissionReason. No silently substituted source type, generic fixture or optional-support shortcut.",
+      "partialCategoricalProposalNote": "Historical partial categories, not importable metadata or approval. The runtime equipment correction is separate; any future complete DRAFT must use its canonical setup requirements and recheck every categorical field and relationship.",
       "sourceFramePaths": [
         "packages/workout-guide/assets/banded-face-pull/frame-1.png",
         "packages/workout-guide/assets/banded-face-pull/frame-2.png",
@@ -2988,7 +2988,7 @@
           "kind": "substitution",
           "targetId": "band-pull-apart",
           "action": "hold",
-          "rationale": "The source's fixed anchor contract is absent, and an unanchored straight-arm pull-apart is not automatically the same face-level elbow/shoulder pull. Resolve equipment and intended substitute role rather than remove the anchor through a link.",
+          "rationale": "The runtime fixed-anchor minimum is now explicit, but an unanchored straight-arm pull-apart is not automatically the same upper-body-level elbow/shoulder pull. The intended substitute-role decision remains held; equipment resolution does not establish it.",
           "comparison": {
             "status": "not_evaluated_without_complete_endpoints",
             "sourceMetadataPresent": false,
@@ -3789,7 +3789,7 @@
       "policyAssessment": {
         "muscles": "Glutes primary, Hamstrings and Core descriptive are exact source labels. This is a standing moving-leg extension rather than the kneeling donkey kick.",
         "movement": "Isolation, standard and standing-hip-extension separate single-leg motion from a whole-body hinge. Retain source bodyweight_reps despite external elastic resistance.",
-        "equipmentAndCapabilities": "A handhold and a load-bearing low band anchor are required. Because the person holds support, balance_without_support is not assigned. There is no floor transition or impact. Band alone, Chair, Wall and Doorway do not faithfully describe the pictured upright attachment.",
+        "equipmentAndCapabilities": "Runtime equipment minimum is now Resistance Band + Band Anchor - Low + Band Kickback Attachment and Support. The last confirmation requires an ankle connection and a reachable stable handhold on the same low-anchor assembly; a low anchor or unrelated Chair alone is incomplete. Because the person holds support, balance_without_support is not assigned. There is no floor transition or impact. This equipment correction does not create a full reviewed metadata proposal or approval.",
         "links": "Current emitted DRAFT outgoing: none. Current emitted DRAFT incoming: none. Explicit decisions: add=0, retain=0, hold=0, reject=0. Each individual semantic rationale and current endpoint comparison is preserved in graphDecisions. Held/rejected proposals are not emitted. This generated adjacency is not human approval or a claim of equivalent outcomes."
       },
       "corrections": [
@@ -3798,22 +3798,22 @@
       ],
       "confidence": "high",
       "limitations": [
-        "The post's attachment and anchoring properties have no dedicated current enum representation."
+        "Ankle attachment, low anchoring and same-assembly hand support must each be confirmed through the explicit setup selections. The source does not certify fastening methods or load ratings."
       ],
       "remainingDecisions": [
         "Human field-by-field metadata sign-off; no reviewer role or review timestamp has been supplied.",
-        "Choose explicit low-anchor plus handhold representation, or a separately authored supported setup, before admission."
+        "Equipment representation is resolved for the runtime minimum. Separately author and field-review the full categorical DRAFT before reviewed admission, retaining the observed supported stance rather than assigning unsupported balance."
       ],
       "artworkReferenceStatus": "no_identity_conflict_observed",
       "artworkReferenceReason": "All three PNGs consistently show a low externally anchored ankle band and a hand holding the same upright. Preserve both the anchor and the hand support; unresolved equipment vocabulary must not be resolved by drawing an unanchored standing kickback. This bounded no-observed-conflict finding is not human artwork approval and does not override the stated equipment, visibility or policy limitations.",
       "classWideReconciliation": {
         "performedOn": "2026-09-07",
         "allAssignedRecordsRechecked": true,
-        "assessment": "The low ankle-band attachment and held upright are both mandatory; they are not a generic Wall/Doorway or optional support. The missing post/anchor representation still withholds the block. Held support, not omission of a balance demand, explains the absent unheld-balance capability. No hop is depicted or named.",
+        "assessment": "The low ankle-band attachment and held upright are both mandatory; they are not a generic Wall/Doorway or optional support. The initial representation gap is now covered by explicit low-anchor and ankle-attachment/same-assembly support confirmations; a full reviewed block remains separate work. Held support explains the absent unheld-balance capability. No hop is depicted or named.",
         "incidentGraphReview": [],
         "scope": "All 51 assigned records were rechecked across integrated/free equipment, mandatory support and balance, anchors/fixtures, named/depicted impact and every current incident or explicit proposed graph edge. No new approval panel or runtime change."
       },
-      "metadataOmissionReason": "Current enum lacks the mandatory low anchor/support-post assembly; neither an arbitrary chair nor an unanchored band is a faithful complete alternative.",
+      "metadataOmissionReason": "The runtime minimum now represents Band + Low Anchor + Kickback Attachment and Support. The full categorical DRAFT remains unauthored pending separate field review; neither an arbitrary chair nor an unanchored band is a faithful complete alternative.",
       "partialCategoricalProposal": {
         "directPrimaryMuscle": "Glutes",
         "descriptiveSecondaryMuscles": [
@@ -3831,7 +3831,7 @@
       "withheldProposalFields": [
         "equipmentAlternatives"
       ],
-      "partialCategoricalProposalNote": "Not importable metadata and not approved: one or more required fields cannot faithfully represent the pinned variation, as stated in metadataOmissionReason. No silently substituted source type, generic fixture or optional-support shortcut.",
+      "partialCategoricalProposalNote": "Historical partial categories, not importable metadata or approval. The runtime equipment correction is separate; any future complete DRAFT must use its canonical setup requirements and retain the ankle attachment and held support.",
       "sourceFramePaths": [
         "packages/workout-guide/assets/banded-kickback/frame-1.png",
         "packages/workout-guide/assets/banded-kickback/frame-2.png",
@@ -3956,7 +3956,7 @@
       "policyAssessment": {
         "muscles": "Lats exact primary and Biceps/Core descriptive support the catalog role, not exclusive lat-dose equivalence to a pull-up.",
         "movement": "Preserve vertical_pull, foundational, band-vertical-pull and bodyweight_reps as product categories. Bodyweight_reps is the source's elastic-exercise convention, not a hanging claim.",
-        "equipmentAndCapabilities": "Chair support is definite and retained. The overhead attachment is also definite and missing from historical Band+Chair equipment. Per the historical semantic resolution this seated band movement does not receive vertical_pull_or_hang; it is not bodily suspended. No floor-transition gate is invented.",
+        "equipmentAndCapabilities": "Runtime equipment minimum is now Resistance Band + Band Anchor - Overhead + Chair. All three frames show the seated support and overhead ring/loop; Band+Chair or an upper-body-height anchor alone is incomplete. This seated band movement does not receive vertical_pull_or_hang; it is not bodily suspended. No floor-transition gate is invented. This equipment correction does not create a full reviewed metadata proposal or approval.",
         "links": "Current emitted DRAFT outgoing: none. Current emitted DRAFT incoming: none. Explicit decisions: add=0, retain=0, hold=1, reject=0. Each individual semantic rationale and current endpoint comparison is preserved in graphDecisions. Held/rejected proposals are not emitted. This generated adjacency is not human approval or a claim of equivalent outcomes."
       },
       "corrections": [
@@ -3966,22 +3966,22 @@
       "confidence": "high",
       "limitations": [
         "The source depicts a ring but not how it is fastened; arbitrary doorway/wall inventory is insufficient.",
-        "Historical consensus about seated support does not settle anchoring."
+        "The overhead setup is an explicit availability confirmation, not a certification of the unpictured fastening substrate."
       ],
       "remainingDecisions": [
         "Human field-by-field metadata sign-off; no reviewer role or review timestamp has been supplied.",
-        "Parent must ratify a concrete anchor representation or separately author a secured-overhead setup; do not admit on Band+Chair alone."
+        "Equipment representation is resolved for the runtime minimum. Separately author and field-review the full categorical DRAFT before reviewed admission; retain the held seated elastic pull versus suspended pull-up relationship decision."
       ],
       "artworkReferenceStatus": "no_identity_conflict_observed",
-      "artworkReferenceReason": "All three PNGs consistently show chair-seated pulling from a fixed overhead ring. Chair and high attachment are real artwork requirements even though the current equipment schema cannot express the full setup; do not redraw a hang or omit the anchor. This bounded no-observed-conflict finding is not human artwork approval and does not override the stated equipment, visibility or policy limitations.",
+      "artworkReferenceReason": "All three PNGs consistently show chair-seated pulling from a fixed overhead ring. Chair and overhead attachment remain real requirements, now captured by explicit runtime setup confirmations; do not redraw a hang or omit the anchor. This bounded no-observed-conflict finding is not human artwork approval and does not override the stated equipment, visibility or policy limitations.",
       "classWideReconciliation": {
         "performedOn": "2026-09-07",
         "allAssignedRecordsRechecked": true,
-        "assessment": "Chair and high fixed ring are distinct mandatory setup components; it is not an integrated selectorized pulldown or unanchored band exercise. Missing high-anchor hardware keeps the block omitted. Seated body support does not mean bodily hanging. The repetitions are controlled band pulling, not jumping to a bar.",
+        "assessment": "Chair and overhead fixed ring are distinct mandatory setup components, now represented by Resistance Band + Band Anchor - Overhead + Chair. It is not an integrated selectorized pulldown or unanchored band exercise. The full categorical DRAFT and held seated-versus-suspended relationship remain separate review work. Seated body support does not mean bodily hanging. The repetitions are controlled band pulling, not jumping to a bar.",
         "incidentGraphReview": [],
         "scope": "All 51 assigned records were rechecked across integrated/free equipment, mandatory support and balance, anchors/fixtures, named/depicted impact and every current incident or explicit proposed graph edge. No new approval panel or runtime change."
       },
-      "metadataOmissionReason": "Mandatory high anchor hardware is unrepresented; preserving the historical Band+Chair metadata would be materially incomplete.",
+      "metadataOmissionReason": "The runtime equipment minimum now requires Resistance Band + Band Anchor - Overhead + Chair. A full categorical DRAFT remains unauthored pending separate field review and the held seated-versus-suspended relationship decision; Band+Chair alone remains incomplete.",
       "partialCategoricalProposal": {
         "directPrimaryMuscle": "Lats",
         "descriptiveSecondaryMuscles": [
@@ -3999,7 +3999,7 @@
       "withheldProposalFields": [
         "equipmentAlternatives"
       ],
-      "partialCategoricalProposalNote": "Not importable metadata and not approved: one or more required fields cannot faithfully represent the pinned variation, as stated in metadataOmissionReason. No silently substituted source type, generic fixture or optional-support shortcut.",
+      "partialCategoricalProposalNote": "Historical partial categories, not importable metadata or approval. Any future complete DRAFT must use the explicit overhead-anchor plus chair requirement and retain the seated, non-hanging semantics.",
       "sourceFramePaths": [
         "packages/workout-guide/assets/banded-lat-pulldown/frame-1.png",
         "packages/workout-guide/assets/banded-lat-pulldown/frame-2.png",
@@ -4020,7 +4020,7 @@
           "kind": "substitution",
           "targetId": "pull-ups",
           "action": "hold",
-          "rationale": "The source lacks its high-anchor equipment gate; the target suspends and moves bodyweight at a fixed bar instead of seated elastic pulling. Even the equal bodyweight_reps source convention does not establish apparatus or role interchangeability.",
+          "rationale": "The runtime overhead-anchor gate is now explicit, but the target suspends and moves bodyweight at a fixed bar instead of seated elastic pulling. Even the equal bodyweight_reps source convention does not establish apparatus or role interchangeability; the hold remains.",
           "comparison": {
             "status": "not_evaluated_without_complete_endpoints",
             "sourceMetadataPresent": false,
@@ -4434,7 +4434,7 @@
       "policyAssessment": {
         "muscles": "Core is the source primary; Glutes and Shoulders descriptive. The verb press is not evidence of a Chest primary. It must not be recast as a horizontal chest press to fill band-only push coverage.",
         "movement": "Core/foundational/anti-rotation-core and bodyweight_reps retain the existing policy categories for pressing hands while resisting rotation, not a shoulder/chest strength equivalence.",
-        "equipmentAndCapabilities": "The person stands without holding a support: balance_without_support, unsupported and none impact remain correct. A separate fixed lateral band anchor is visibly essential and does not support the body.",
+        "equipmentAndCapabilities": "Runtime equipment minimum is now Resistance Band + Band Anchor - Upper Body, whose explicit contract includes lateral chest-height positioning. The person stands without holding support: balance_without_support, unsupported and none impact remain correct. The anchor does not support the body. This equipment correction does not create a full reviewed metadata proposal or approval.",
         "links": "Current emitted DRAFT outgoing: none. Current emitted DRAFT incoming: none. Explicit decisions: add=0, retain=0, hold=0, reject=1. Each individual semantic rationale and current endpoint comparison is preserved in graphDecisions. Held/rejected proposals are not emitted. This generated adjacency is not human approval or a claim of equivalent outcomes."
       },
       "corrections": [
@@ -4443,22 +4443,22 @@
       ],
       "confidence": "high",
       "limitations": [
-        "No current token certifies the pictured fixed attachment; a Wall or Doorway by itself is not an anchor."
+        "The upper-body setup confirmation includes lateral positioning but does not certify installation or load rating. A Wall or Doorway by itself is not an anchor."
       ],
       "remainingDecisions": [
         "Human field-by-field metadata sign-off; no reviewer role or review timestamp has been supplied.",
-        "Resolve anchor representation before admission; separately review any new chest-press catalog variant rather than repurposing this ID."
+        "Equipment representation is resolved for the runtime minimum. Separately author and field-review the full categorical DRAFT before reviewed admission. A new chest-press variation remains separate catalog work; retain the rejected rep-versus-duration cable-hold relationship."
       ],
       "artworkReferenceStatus": "no_identity_conflict_observed",
       "artworkReferenceReason": "All three PNGs consistently show a lateral fixed band attachment and hands pressing away while the torso stays oriented forward. Preserve the anti-rotation setup; the press name does not authorize female artwork of an unanchored chest press. This bounded no-observed-conflict finding is not human artwork approval and does not override the stated equipment, visibility or policy limitations.",
       "classWideReconciliation": {
         "performedOn": "2026-09-07",
         "allAssignedRecordsRechecked": true,
-        "assessment": "A lateral fixed anchor is explicit and not represented by an arbitrary Wall/Doorway. Block remains withheld, while unsupported standing balance is retained separately from the anchor. Controlled anti-rotation hand pressing is neither hanging nor plyometric pressing and cannot satisfy a Chest push slot.",
+        "assessment": "A lateral fixed anchor is explicit and is now represented by the adjustable upper-body confirmation including chest-height side-on positioning, never an arbitrary Wall/Doorway. A full reviewed block remains separate work; unsupported standing balance is retained. Anti-rotation hand pressing is neither hanging nor plyometric pressing and cannot satisfy a Chest push slot.",
         "incidentGraphReview": [],
         "scope": "All 51 assigned records were rechecked across integrated/free equipment, mandatory support and balance, anchors/fixtures, named/depicted impact and every current incident or explicit proposed graph edge. No new approval panel or runtime change."
       },
-      "metadataOmissionReason": "Missing explicit lateral-anchor equipment representation; historical band-only metadata would claim availability without the required anchor.",
+      "metadataOmissionReason": "The runtime lateral-anchor minimum is now represented by Resistance Band + Band Anchor - Upper Body. A full categorical DRAFT remains unauthored pending separate field review; historical band-only metadata would still claim availability without the required setup.",
       "partialCategoricalProposal": {
         "directPrimaryMuscle": "Core",
         "descriptiveSecondaryMuscles": [
@@ -4478,7 +4478,7 @@
       "withheldProposalFields": [
         "equipmentAlternatives"
       ],
-      "partialCategoricalProposalNote": "Not importable metadata and not approved: one or more required fields cannot faithfully represent the pinned variation, as stated in metadataOmissionReason. No silently substituted source type, generic fixture or optional-support shortcut.",
+      "partialCategoricalProposalNote": "Historical partial categories, not importable metadata or approval. Any future complete DRAFT must use the explicit lateral chest-height setup, retain Core rather than Chest, and preserve the rejected rep-versus-duration relationship.",
       "sourceFramePaths": [
         "packages/workout-guide/assets/banded-pallof-press/frame-1.png",
         "packages/workout-guide/assets/banded-pallof-press/frame-2.png",
@@ -4499,7 +4499,7 @@
           "kind": "substitution",
           "targetId": "cable-pallof-hold",
           "action": "reject",
-          "rationale": "The explicit hold changes bodyweight_reps to duration, so it is not a shape-compatible reviewed substitution. The band source's missing anchor is an additional unresolved problem, not a reason to relabel its shape.",
+          "rationale": "The explicit hold changes bodyweight_reps to duration, so it is not a shape-compatible reviewed substitution. Resolving the band's runtime anchor minimum does not change this recording-shape rejection.",
           "comparison": {
             "status": "not_evaluated_without_complete_endpoints",
             "sourceMetadataPresent": false,
@@ -4628,7 +4628,7 @@
       "policyAssessment": {
         "muscles": "Back source primary with Biceps/Upper Back descriptive is retained. The broad Back label is not silently narrowed to Lats and does not prove equal muscle credit.",
         "movement": "Horizontal_pull, foundational and band-horizontal-row fit the standing elbow-flexion row, retaining bodyweight_reps. It is not the seated self-foot-anchored band row.",
-        "equipmentAndCapabilities": "The actual standing variant requires a forward fixed anchor, corroborated by the physiotherapy row instructions. Unsupported stance adds balance_without_support to the former empty array; no floor or hanging gate. Resistance Band alone is incomplete.",
+        "equipmentAndCapabilities": "The standing variant requires a forward external attachment outside every source frame. Its actual height and configuration remain unresolved, so the application-owned equipment correction gives this ID no satisfiable automatic alternative, even with every available setup confirmed. Comparable physiotherapy row instructions cannot establish the missing pinned fixture. Unsupported stance retains balance_without_support; no floor or hanging gate. Browsing and explicit manual selection remain available with an unresolved-setup warning.",
         "links": "Current emitted DRAFT outgoing: none. Current emitted DRAFT incoming: none. Explicit decisions: add=0, retain=0, hold=1, reject=0. Each individual semantic rationale and current endpoint comparison is preserved in graphDecisions. Held/rejected proposals are not emitted. This generated adjacency is not human approval or a claim of equivalent outcomes."
       },
       "corrections": [
@@ -4641,7 +4641,7 @@
       ],
       "remainingDecisions": [
         "Human field-by-field metadata sign-off; no reviewer role or review timestamp has been supplied.",
-        "Specify and represent a verified forward anchor before readiness, or separately author a genuinely self-anchored row variant."
+        "Establish the exact missing forward anchor height/configuration from source-bound evidence before replacing the unresolved automatic block or authoring a full DRAFT. Do not assign the comparable guide's waist-height anchor, an adjustable upper-body anchor, or a self-anchored variation to this ID."
       ],
       "artworkReferenceStatus": "no_identity_conflict_observed",
       "artworkReferenceReason": "All three PNGs show standing rows with strands running forward outside the frame, not to the feet. The exact off-frame fixture is unknown and must not be invented; equipment omission remains pending separately from the consistent visible standing-row identity. This bounded no-observed-conflict finding is not human artwork approval and does not override the stated equipment, visibility or policy limitations.",
@@ -5334,7 +5334,7 @@
       "policyAssessment": {
         "muscles": "Core source primary with Shoulders/Glutes descriptive; the diagonal arm motion does not justify a Chest or lat-pull primary.",
         "movement": "Core/standard/rotational-core and bodyweight_reps reflect resisted diagonal trunk/arm control. The low fixed attachment must not be relabeled high-to-low from the woodchop name alone.",
-        "equipmentAndCapabilities": "Unsupported standing requires balance_without_support. The low post is an anchor, not a held body support; no hanging or floor-transition capability and no landing impact. Band-only inventory cannot supply the post attachment.",
+        "equipmentAndCapabilities": "Runtime equipment minimum is now Resistance Band + Band Anchor - Low, explicitly confirming the near-floor attachment visible at the bottom of the short post. Unsupported standing requires balance_without_support. The post is not a held body support; no hanging or floor-transition capability and no landing impact. This equipment correction does not create a full reviewed metadata proposal or approval.",
         "links": "Current emitted DRAFT outgoing: none. Current emitted DRAFT incoming: none. Explicit decisions: add=0, retain=0, hold=1, reject=0. Each individual semantic rationale and current endpoint comparison is preserved in graphDecisions. Held/rejected proposals are not emitted. This generated adjacency is not human approval or a claim of equivalent outcomes."
       },
       "corrections": [
@@ -5343,23 +5343,23 @@
       ],
       "confidence": "high",
       "limitations": [
-        "Post fastening is not shown and has no dedicated current equipment token.",
+        "Post fastening is not shown; the explicit low-anchor availability confirmation is not installation or load-rating certification.",
         "Frames do not establish a prescribed amount of spinal versus hip rotation."
       ],
       "remainingDecisions": [
         "Human field-by-field metadata sign-off; no reviewer role or review timestamp has been supplied.",
-        "Resolve explicit low-anchor representation before admission."
+        "Equipment representation is resolved for the runtime minimum. Separately author and field-review the full categorical DRAFT before reviewed admission; retain the held rotation-versus-anti-rotation relationship and the unresolved amount of spinal versus hip rotation."
       ],
       "artworkReferenceStatus": "no_identity_conflict_observed",
       "artworkReferenceReason": "All three PNGs show a low fixed post anchor and diagonal two-hand movement. The anchor is not optional artwork; preserve the low-anchored setup rather than guessing a high-to-low anchored variant. This bounded no-observed-conflict finding is not human artwork approval and does not override the stated equipment, visibility or policy limitations.",
       "classWideReconciliation": {
         "performedOn": "2026-09-07",
         "allAssignedRecordsRechecked": true,
-        "assessment": "A low fixed post, not a foot anchor, supplies the diagonal band resistance. Missing specific anchor representation still withholds the block; no generic wall or machine is substituted. Standing balance remains. Rotational diagonal control is not a plyometric chop/jump sequence.",
+        "assessment": "A low fixed post, not a foot anchor, supplies the diagonal band resistance. The runtime correction now requires an explicit low-anchor confirmation, never a generic wall or machine. A full reviewed block remains separate work. Standing balance remains. Rotational diagonal control is not a plyometric chop/jump sequence.",
         "incidentGraphReview": [],
         "scope": "All 51 assigned records were rechecked across integrated/free equipment, mandatory support and balance, anchors/fixtures, named/depicted impact and every current incident or explicit proposed graph edge. No new approval panel or runtime change."
       },
-      "metadataOmissionReason": "A suitably fixed low anchor is mandatory and not representable without inventing a different named support or pretending band-only suffices.",
+      "metadataOmissionReason": "The runtime minimum now represents Resistance Band + Band Anchor - Low without substituting another variation. A full categorical DRAFT remains unauthored pending separate field review, including the rotation/anti-rotation relationship and motion-amount limitations.",
       "partialCategoricalProposal": {
         "directPrimaryMuscle": "Core",
         "descriptiveSecondaryMuscles": [
@@ -5379,7 +5379,7 @@
       "withheldProposalFields": [
         "equipmentAlternatives"
       ],
-      "partialCategoricalProposalNote": "Not importable metadata and not approved: one or more required fields cannot faithfully represent the pinned variation, as stated in metadataOmissionReason. No silently substituted source type, generic fixture or optional-support shortcut.",
+      "partialCategoricalProposalNote": "Historical partial categories, not importable metadata or approval. Any future complete DRAFT must retain the explicitly low-anchored setup and recheck the separate rotation-versus-anti-rotation relationship.",
       "sourceFramePaths": [
         "packages/workout-guide/assets/banded-woodchop/frame-1.png",
         "packages/workout-guide/assets/banded-woodchop/frame-2.png",
@@ -5400,7 +5400,7 @@
           "kind": "substitution",
           "targetId": "banded-pallof-press",
           "action": "hold",
-          "rationale": "Both fixed-anchor contracts are withheld, and rotating through a diagonal differs from resisting rotation while pressing outward. A Core tag does not itself establish the requested substitution function.",
+          "rationale": "Both runtime anchor minimums are now explicit, but rotating through a diagonal differs from resisting rotation while pressing outward. A Core tag does not itself establish the requested substitution function; the hold remains and no edge is emitted.",
           "comparison": {
             "status": "not_evaluated_without_complete_endpoints",
             "sourceMetadataPresent": false,

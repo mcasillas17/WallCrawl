@@ -24,12 +24,16 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 class ProfileViewModel(
     private val userProfileRepository: UserProfileRepository
 ) : ViewModel() {
 
     private val capabilityEditorFlow = MutableStateFlow(CapabilityEditorState())
+    // Capability saves also replace the equipment list as part of a whole-profile write.
+    private val equipmentEdits = Mutex()
 
     val uiState: StateFlow<ProfileUiState> = combine(
         userProfileRepository.getUserProfile(),
@@ -114,13 +118,15 @@ class ProfileViewModel(
 
     fun toggleEquipment(equipment: String) {
         viewModelScope.launch {
-            val current = userProfileRepository.getProfileOnce()
-            val updated = if (equipment in current.availableEquipment) {
-                current.availableEquipment - equipment
-            } else {
-                current.availableEquipment + equipment
+            equipmentEdits.withLock {
+                val current = userProfileRepository.getProfileOnce()
+                val updated = if (equipment in current.availableEquipment) {
+                    current.availableEquipment - equipment
+                } else {
+                    current.availableEquipment + equipment
+                }
+                userProfileRepository.updateEquipment(updated)
             }
-            userProfileRepository.updateEquipment(updated)
         }
     }
 
@@ -187,10 +193,12 @@ class ProfileViewModel(
                 error = null
             )
             try {
-                val current = userProfileRepository.getProfileOnce()
-                userProfileRepository.saveProfile(
-                    current.copy(movementCapabilities = draft)
-                )
+                equipmentEdits.withLock {
+                    val current = userProfileRepository.getProfileOnce()
+                    userProfileRepository.saveProfile(
+                        current.copy(movementCapabilities = draft)
+                    )
+                }
                 capabilityEditorFlow.value = CapabilityEditorState()
             } catch (error: CancellationException) {
                 throw error

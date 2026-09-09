@@ -85,6 +85,12 @@
     <string name="onboarding_equipment_full_gym">Gimnasio completo</string>
     <string name="onboarding_equipment_heading">EQUIPO DISPONIBLE</string>
     <string name="onboarding_equipment_hint">Marca lo que tengas en casa o en el gimnasio:</string>
+    <string name="band_setup_heading">Anclajes de banda: confirma por separado</string>
+    <string name="band_setup_hint">Confirma solo lo que realmente tengas. Gimnasio completo no selecciona estas opciones. Cada una es independiente; selecciona %1$s por separado.</string>
+    <string name="band_setup_upper_body_description">Anclaje fijo asegurado, ajustable entre el pecho y la cara, que permite colocarte de frente o de lado y agarrar los extremos de la banda.</string>
+    <string name="band_setup_overhead_description">Anclaje asegurado por encima de una persona sentada, con dos extremos de banda que se puedan agarrar.</string>
+    <string name="band_setup_low_description">Anclaje fijo asegurado cerca del suelo.</string>
+    <string name="band_setup_kickback_description">Sujeción al tobillo y apoyo estable al alcance de la mano en el mismo conjunto de anclaje bajo. Selecciona también el anclaje bajo por separado.</string>
 
     <string name="onboarding_safety_heading">PROTEGE LAS ARTICULACIONES SENSIBLES</string>
     <string name="onboarding_safety_hint">Cuéntanos qué articulaciones quieres cuidar. WallCrawl filtra o cambia los movimientos más exigentes.</string>
@@ -453,6 +459,10 @@
     <string name="editor_action_add">+ Agregar ejercicio</string>
     <string name="editor_empty_title">Todavía no agregaste ejercicios</string>
     <string name="editor_equipment_warning">⚠️ Este equipo no está en tu perfil actual</string>
+    <string name="editor_equipment_missing">Falta: %1$s</string>
+    <string name="editor_equipment_and_separator">\u0020Y\u0020</string>
+    <string name="editor_equipment_or_separator">\u0020O\u0020</string>
+    <string name="editor_equipment_unresolved">Configuración sin resolver: no se ha verificado el anclaje necesario. Puedes conservar esta elección manual, pero queda excluida de las rutinas automáticas.</string>
     <string name="editor_move_up">Subir</string>
     <string name="editor_move_down">Bajar</string>
     <string name="editor_target_sets">Series objetivo</string>

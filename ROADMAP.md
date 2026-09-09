@@ -231,7 +231,10 @@ Package 3 is **not complete**.
    per-ID decisions in the [unsigned sign-off worksheet](docs/reviewed-exercise-metadata-human-signoff.md).
    The historical `READY_AFTER_CORRECTIONS` verdicts did not grant approval.
 2. Resolve the separately documented [band-only push and fixed-anchor gaps](docs/reviewed-catalog-coverage.md),
-   specialized equipment requirements and selected joint-constraint mappings. No missing
+   specialized equipment requirements and selected joint-constraint mappings. The
+   [fixed-anchor equipment contract](docs/band-anchor-equipment.md) now gates five
+   representable band setups behind explicit confirmations and blocks the unresolved
+   row; it supplies neither a chest-push variant nor human metadata approval. No missing
    token is filled with a guessed generic apparatus, and no planner/artwork fix is implied.
 3. Human-inspect the source-bound [full-catalog evidence ledger](docs/research/2026-09-07-full-exercise-catalog-review.json),
    including directed edges, complexity, support, impact, prescription shape, withheld

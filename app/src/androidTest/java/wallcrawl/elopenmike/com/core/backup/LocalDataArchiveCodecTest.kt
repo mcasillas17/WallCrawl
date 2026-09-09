@@ -13,6 +13,9 @@ import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetStopReason
 import wallcrawl.elopenmike.com.core.model.WeightUnit
+import wallcrawl.elopenmike.com.core.model.StandardEquipment
+import wallcrawl.elopenmike.com.core.model.Exercise
+import wallcrawl.elopenmike.com.core.model.hasRequiredEquipment
 
 /**
  * Trust-boundary coverage for the archive document.
@@ -22,6 +25,62 @@ import wallcrawl.elopenmike.com.core.model.WeightUnit
  */
 @RunWith(AndroidJUnit4::class)
 class LocalDataArchiveCodecTest {
+
+    @Test
+    fun versionOneAndTwo_keepOldInventoryWithoutInventingBandConfirmations() {
+        listOf(1, 2).forEach { version ->
+            val original = LocalDataArchiveFixtures.archive(
+                metadata = LocalDataArchiveFixtures.metadata(archiveVersion = version),
+                snapshot = LocalDataArchiveFixtures.snapshot(
+                    profile = LocalDataArchiveFixtures.profile().copy(availableEquipment = StandardEquipment.FULL_GYM),
+                    recommendationRecords = emptyList()
+                )
+            )
+            val restored = LocalDataArchiveCodec.read(ByteArrayInputStream(original.toBytes()))
+            assertThat(restored.snapshot.profile?.availableEquipment)
+                .containsExactlyElementsIn(StandardEquipment.FULL_GYM).inOrder()
+        }
+    }
+
+    @Test
+    fun bandConfirmationsAndUnknownEquipment_roundTripExactlyAndRemainChecksumProtected() {
+        val equipment = StandardEquipment.FULL_GYM + StandardEquipment.BAND_SETUPS + "Future band anchor"
+        val original = LocalDataArchiveFixtures.archive(
+            snapshot = LocalDataArchiveFixtures.snapshot(
+                profile = LocalDataArchiveFixtures.profile().copy(availableEquipment = equipment)
+            )
+        )
+        val document = original.toText()
+        val restored = LocalDataArchiveCodec.read(document.byteInputStream())
+        assertThat(restored.snapshot.profile?.availableEquipment)
+            .containsExactlyElementsIn(equipment).inOrder()
+        val edited = document.replace(StandardEquipment.BAND_ANCHOR_LOW, "Future low anchor")
+        assertThat(edited).isNotEqualTo(document)
+        val error = assertThrows(LocalDataArchiveException::class.java) {
+            LocalDataArchiveCodec.read(edited.byteInputStream())
+        }
+        assertThat(error.rejection).isEqualTo(ArchiveRejection.CHECKSUM_MISMATCH)
+    }
+
+    @Test
+    fun unknownAnchorIdentifier_isPreservedButDoesNotEstablishEligibility() {
+        val equipment = listOf(StandardEquipment.RESISTANCE_BAND, "Future band anchor")
+        val archive = LocalDataArchiveFixtures.archive(
+            snapshot = LocalDataArchiveFixtures.snapshot(
+                profile = LocalDataArchiveFixtures.profile().copy(availableEquipment = equipment)
+            )
+        )
+        val restored = requireNotNull(
+            LocalDataArchiveCodec.read(ByteArrayInputStream(archive.toBytes())).snapshot.profile
+        )
+        assertThat(restored.availableEquipment).containsExactlyElementsIn(equipment).inOrder()
+        val facePull = Exercise(
+            id = "banded-face-pull", name = "Banded Face Pull",
+            primaryMuscles = listOf("Back"), listedEquipment = listOf(StandardEquipment.RESISTANCE_BAND),
+            type = ExerciseType.WEIGHT_REPS
+        )
+        assertThat(facePull.hasRequiredEquipment(restored.availableEquipment)).isFalse()
+    }
 
     @Test
     fun roundTrip_preservesEveryUserOwnedValue() {

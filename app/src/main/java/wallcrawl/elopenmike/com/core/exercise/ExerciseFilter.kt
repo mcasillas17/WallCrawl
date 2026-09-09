@@ -1,8 +1,10 @@
 package wallcrawl.elopenmike.com.core.exercise
 
-import java.util.Locale
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.UserProfile
+import wallcrawl.elopenmike.com.core.model.equipmentRequirements
+import wallcrawl.elopenmike.com.core.model.isEquipmentSatisfiedBy
+import wallcrawl.elopenmike.com.core.model.normalizedEquipmentSet
 
 /**
  * Filter layer that enforces hard constraints on the exercise library before
@@ -15,7 +17,7 @@ class ExerciseFilter {
 
     /**
      * Filters a list of exercises based on user profile constraints:
-     * 1. Equipment availability (exercise requires only equipment the user owns or bodyweight)
+     * 1. Explicit equipment availability, including fixed-anchor setup corrections
      * 2. User excluded exercise IDs
      * 3. Target muscle focus (optional)
      */
@@ -24,7 +26,7 @@ class ExerciseFilter {
         profile: UserProfile,
         targetMuscles: List<String>? = null
     ): List<Exercise> {
-        val ownedEquipment = profile.availableEquipment.map { it.normalizedEquipment() }.toSet()
+        val ownedEquipment = profile.availableEquipment.normalizedEquipmentSet()
         val excludedIds = profile.excludedExerciseIds.toSet()
 
         return allExercises.filter { exercise ->
@@ -33,14 +35,8 @@ class ExerciseFilter {
                 return@filter false
             }
 
-            // 2. Reviewed combinations support alternatives. Catalog-only entries use
-            // their listed equipment as one combination with every item required.
-            val combinations = exercise.programming?.requiredEquipmentCombinations
-                ?: listOf(exercise.listedEquipment.filter(String::isNotBlank))
-            val hasRequiredEquipment = combinations.isEmpty() || combinations.any { combination ->
-                combination.all { equipment -> equipment.normalizedEquipment() in ownedEquipment }
-            }
-            if (!hasRequiredEquipment) {
+            // 2. Any complete alternative suffices; unresolved setups have no alternatives.
+            if (!exercise.equipmentRequirements.isEquipmentSatisfiedBy(ownedEquipment)) {
                 return@filter false
             }
 
@@ -59,6 +55,4 @@ class ExerciseFilter {
             true
         }
     }
-
-    private fun String.normalizedEquipment(): String = trim().lowercase(Locale.ROOT)
 }

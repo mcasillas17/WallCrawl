@@ -278,14 +278,15 @@ class PlannerFixtureCorpusTest {
     }
 
     @Test
-    fun loadCorpus_sparseHistoryUsesRegressionsInsteadOfHangingRequirement() {
+    fun loadCorpus_sparseHistoryRetainsAvailableControlsWithoutConfirmingAnAnchor() {
         val fixture = loader.loadCorpus().single { it.id == "sparse-history" }
 
         assertThat(fixture.allowedExerciseIds)
-            .containsExactly("inverted-row", "banded-lat-pulldown", "prone-y-raise")
+            .containsExactly("inverted-row", "prone-y-raise")
             .inOrder()
         assertThat(fixture.expected.requiredAnyExerciseIdGroups)
-            .containsExactly(setOf("inverted-row", "banded-lat-pulldown"))
+            .containsExactly(setOf("inverted-row", "prone-y-raise"))
+        assertThat(fixture.expected.forbiddenExerciseIds).contains("banded-lat-pulldown")
     }
 
     @Test

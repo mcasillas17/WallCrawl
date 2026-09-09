@@ -18,6 +18,7 @@ import wallcrawl.elopenmike.com.core.model.CapabilityLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.MovementCapabilities
 import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
+import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 
@@ -102,15 +103,19 @@ class OnboardingViewModel(
         }
     }
 
-    fun selectAllEquipment() {
+    fun selectFullGymEquipment() {
         updateState { state ->
-            state.copy(equipment = state.equipmentOptions.toSet(), error = null)
+            state.copy(
+                equipment = StandardEquipment.FULL_GYM.toSet() +
+                    state.equipment.filter { it in StandardEquipment.BAND_SETUPS },
+                error = null
+            )
         }
     }
 
     fun resetEquipmentToBodyweight() {
         updateState { state -> state.copy(
-            equipment = setOf(wallcrawl.elopenmike.com.core.model.StandardEquipment.BODYWEIGHT),
+            equipment = setOf(StandardEquipment.BODYWEIGHT),
             error = null
         ) }
     }

@@ -1,5 +1,8 @@
 package wallcrawl.elopenmike.com.feature.onboarding
 
+import wallcrawl.elopenmike.com.core.model.StandardEquipment
+import wallcrawl.elopenmike.com.core.ui.components.BandSetupControls
+
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
@@ -722,7 +725,7 @@ private fun EquipmentStep(
                         .clip(RoundedCornerShape(8.dp))
                         .background(MaterialTheme.colorScheme.surface)
                         .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp))
-                        .clickable { viewModel.selectAllEquipment() }
+                        .clickable { viewModel.selectFullGymEquipment() }
                         .padding(vertical = 10.dp),
                     contentAlignment = Alignment.Center
                 ) {
@@ -761,7 +764,7 @@ private fun EquipmentStep(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                state.equipmentOptions.forEach { equipment ->
+                state.equipmentOptions.filterNot { it in StandardEquipment.BAND_SETUPS }.forEach { equipment ->
                     val isSelected = equipment in state.equipment
                     FilterChip(
                         selected = isSelected,
@@ -791,6 +794,9 @@ private fun EquipmentStep(
                     )
                 }
             }
+        }
+        WallCrawlCard(cornerRadius = 16.dp, contentPadding = 16.dp) {
+            BandSetupControls(state.equipment, viewModel::toggleEquipment)
         }
     }
 }

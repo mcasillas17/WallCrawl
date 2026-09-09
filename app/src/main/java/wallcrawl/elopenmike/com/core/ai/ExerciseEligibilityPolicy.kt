@@ -1,6 +1,5 @@
 package wallcrawl.elopenmike.com.core.ai
 
-import java.util.Locale
 import wallcrawl.elopenmike.com.core.model.AdaptationState
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityFailure
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
@@ -17,6 +16,9 @@ import wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata
 import wallcrawl.elopenmike.com.core.model.SupportRequirement
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.UserProfile
+import wallcrawl.elopenmike.com.core.model.hasRequiredFixedAnchorEquipment
+import wallcrawl.elopenmike.com.core.model.isEquipmentSatisfiedBy
+import wallcrawl.elopenmike.com.core.model.normalizedEquipmentSet
 
 /**
  * Pure reviewed-only legality policy for automatic planning.
@@ -32,8 +34,7 @@ class ExerciseEligibilityPolicy {
         adaptationState: AdaptationState,
         demonstratedProgressionFamilies: Set<String> = emptySet()
     ): AutomaticEligibilityResult {
-        val ownedEquipment = profile.availableEquipment
-            .mapTo(linkedSetOf()) { it.normalizedEquipment() }
+        val ownedEquipment = profile.availableEquipment.normalizedEquipmentSet()
         val excludedExerciseIds = profile.excludedExerciseIds.toSet()
         val exercisesById = exercises.associateBy(Exercise::id)
         val decisions = exercises.map { exercise ->
@@ -47,7 +48,8 @@ class ExerciseEligibilityPolicy {
                 }
                 if (
                     approvedMetadata != null &&
-                    !approvedMetadata.hasAvailableEquipment(ownedEquipment)
+                    (!approvedMetadata.equipmentAlternatives.isEquipmentSatisfiedBy(ownedEquipment) ||
+                        !exercise.hasRequiredFixedAnchorEquipment(ownedEquipment))
                 ) {
                     add(EligibilityReason.MISSING_EQUIPMENT)
                 }
@@ -157,7 +159,8 @@ class ExerciseEligibilityPolicy {
                     regressionMetadata.progressionFamily in demonstratedProgressionFamilies
                 ) &&
             regression.id !in excludedExerciseIds &&
-            regressionMetadata.hasAvailableEquipment(ownedEquipment) &&
+            regressionMetadata.equipmentAlternatives.isEquipmentSatisfiedBy(ownedEquipment) &&
+            regression.hasRequiredFixedAnchorEquipment(ownedEquipment) &&
             regressionMetadata.capabilityRequirements.none { capability ->
                 profile.movementCapabilities[capability] == CapabilityLevel.AVOID
             } &&
@@ -167,14 +170,6 @@ class ExerciseEligibilityPolicy {
                     regressionMetadata.impactLevel == ImpactLevel.HIGH
                 )
     }
-
-    private fun ReviewedExerciseMetadata.hasAvailableEquipment(
-        ownedEquipment: Set<String>
-    ): Boolean = equipmentAlternatives.any { alternative ->
-        alternative.all { it.normalizedEquipment() in ownedEquipment }
-    }
-
-    private fun String.normalizedEquipment(): String = trim().lowercase(Locale.ROOT)
 
     private companion object {
         val AGGREGATE_FAILURE_STAGES = listOf(
