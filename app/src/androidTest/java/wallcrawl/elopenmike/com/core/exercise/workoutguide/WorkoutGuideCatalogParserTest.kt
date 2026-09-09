@@ -103,7 +103,7 @@ class WorkoutGuideCatalogParserTest {
     }
 
     @Test
-    fun packagedCatalog_all302ExercisesCanEnterThePlannerCandidatePool() {
+    fun packagedCatalog_preservesAllEntriesButUnresolvedRowCannotEnterTheCandidatePool() {
         val exercises = assets.open("workout-guide/catalog.json")
             .bufferedReader()
             .use(parser::parse)
@@ -116,7 +116,21 @@ class WorkoutGuideCatalogParserTest {
         )
 
         assertThat(StandardEquipment.ALL).containsAtLeastElementsIn(catalogEquipment)
-        assertThat(candidates.map { it.id }.toSet()).hasSize(302)
+        assertThat(exercises).hasSize(302)
+        assertThat(candidates.map { it.id })
+            .containsExactlyElementsIn(exercises.map { it.id }.filterNot { it == "banded-row" })
+            .inOrder()
+        val anchoredIds = setOf(
+            "banded-face-pull", "banded-kickback", "banded-lat-pulldown",
+            "banded-pallof-press", "banded-row", "banded-woodchop"
+        )
+        exercises.filter { it.id in anchoredIds }.forEach {
+            assertThat(it.source!!.sourceSlug).isEqualTo(it.id)
+            assertThat(it.source.sourceId).isEqualTo("exercise-${it.id}")
+        }
+        assertThat(ExerciseFilter().filterCandidates(
+            exercises, UserProfile(availableEquipment = StandardEquipment.FULL_GYM)
+        ).map { it.id }).containsExactlyElementsIn(exercises.map { it.id } - anchoredIds).inOrder()
     }
 
     @Test
@@ -205,6 +219,31 @@ class WorkoutGuideCatalogParserTest {
         assertThat(metadata?.directPrimaryMuscle).isEqualTo(StandardMuscles.CORE)
         assertThat(metadata?.provenance?.reviewerRole).isNull()
         assertThat(metadata?.approvedRegressions).isEmpty()
+    }
+
+    @Test
+    fun parse_acceptsCanonicalBandSetupsWithoutApprovingOrTranslatingThem() {
+        StandardEquipment.BAND_SETUPS.forEach { setup ->
+            val metadata = JSONObject(reviewedMetadataJson()).put(
+                "equipmentAlternatives", org.json.JSONArray().put(
+                    org.json.JSONArray(listOf(StandardEquipment.RESISTANCE_BAND, setup))
+                )
+            )
+            val exercise = parser.parse(StringReader(
+                catalogJson(exerciseJson(metadata.toString()))
+            )).exercises.single()
+            assertThat(exercise.reviewedMetadata!!.equipmentAlternatives)
+                .containsExactly(listOf(StandardEquipment.RESISTANCE_BAND, setup))
+            assertThat(exercise.reviewedMetadata.reviewState).isEqualTo(ReviewState.DRAFT)
+        }
+        val unknown = JSONObject(reviewedMetadataJson()).put(
+            "equipmentAlternatives", org.json.JSONArray().put(
+                org.json.JSONArray(listOf("Anclaje para banda"))
+            )
+        )
+        assertFormatFailure(
+            catalogJson(exerciseJson(unknown.toString())), "equipmentAlternatives"
+        )
     }
 
     @Test

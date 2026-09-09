@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
 import wallcrawl.elopenmike.com.core.model.UserProfile
+import wallcrawl.elopenmike.com.core.ai.PlannerFixtureContextFactory
 import org.junit.Before
 import org.junit.Test
 
@@ -11,6 +12,26 @@ class ExerciseFilterTest {
 
     private lateinit var filter: ExerciseFilter
     private val allExercises = InMemoryExerciseCatalog.SAMPLE_EXERCISES
+
+    @Test
+    fun filterCandidates_bandOwnershipDoesNotConfirmAnyFixedAnchor() {
+        val catalog = PlannerFixtureContextFactory().bundledCatalogProjection().exercises
+        val anchoredIds = setOf(
+            "banded-face-pull", "banded-kickback", "banded-lat-pulldown",
+            "banded-pallof-press", "banded-row", "banded-woodchop"
+        )
+        val inventory = listOf(
+            StandardEquipment.RESISTANCE_BAND, StandardEquipment.WALL,
+            StandardEquipment.DOORWAY, StandardEquipment.CHAIR
+        )
+
+        val candidates = ExerciseFilter().filterCandidates(
+            catalog, UserProfile(availableEquipment = inventory)
+        )
+
+        assertThat(candidates.map { it.id }.filter { it in anchoredIds }).isEmpty()
+        assertThat(candidates.map { it.id }).contains("band-pull-apart")
+    }
 
     @Before
     fun setup() {
@@ -121,5 +142,30 @@ class ExerciseFilterTest {
         )
 
         assertThat(candidates.map { it.id }).containsExactly("romanian-deadlift")
+    }
+
+    @Test
+    fun filterCandidates_preservesEmptyLegacyMatricesAndLegacyEquipmentCaseNormalization() {
+        val noRequirement = allExercises.first().let {
+            it.copy(programming = it.programming!!.copy(requiredEquipmentCombinations = emptyList()))
+        }
+        assertThat(filter.filterCandidates(listOf(noRequirement), UserProfile(availableEquipment = emptyList())))
+            .containsExactly(noRequirement)
+        val band = PlannerFixtureContextFactory().bundledCatalogProjection().exercises
+            .single { it.id == "banded-pallof-press" }
+        assertThat(filter.filterCandidates(listOf(band), UserProfile(
+            availableEquipment = listOf("  resistance BAND ", StandardEquipment.BAND_ANCHOR_UPPER_BODY)
+        ))).containsExactly(band)
+    }
+
+    @Test
+    fun filterCandidates_noncanonicalSetupStringsNeverConfirmAnchors() {
+        val anchored = PlannerFixtureContextFactory().bundledCatalogProjection().exercises
+            .filter { it.id in setOf("banded-face-pull", "banded-kickback", "banded-lat-pulldown", "banded-pallof-press", "banded-row", "banded-woodchop") }
+        for (alias in listOf<(String) -> String>({ it.lowercase() }, { " $it " }, { it.uppercase() })) {
+            val inventory = StandardEquipment.FULL_GYM + StandardEquipment.BAND_SETUPS.map(alias)
+            assertThat(filter.filterCandidates(anchored, UserProfile(availableEquipment = inventory)))
+                .isEmpty()
+        }
     }
 }

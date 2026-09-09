@@ -230,6 +230,22 @@ available gear, and sensitive-joint restrictions before compiling the initial
 Training Blueprint. Every movement preference requires an explicit answer;
 **Not sure** is a valid answer and persists as `UNKNOWN`.
 
+### Fixed-anchor band setups
+
+Select available band setups explicitly in onboarding or Training Profile.
+Upper-body (adjustable chest-to-face), overhead, low, and kickback
+ankle-attachment/same-assembly hand support are separate confirmations; **Full
+gym never adds them**. A band, wall, doorway or chair does not establish an
+anchor. The seated band pulldown additionally requires Chair. The source row's
+off-image anchor remains unresolved and is excluded from automatic workouts.
+
+Unanchored band work remains available. All 302 exercises remain browseable and
+manually selectable, with accurate missing-equipment or unresolved-setup warnings.
+Existing profiles and archives acquire no new selections; new confirmations use
+the existing canonical equipment list and export/restore format. Older clients
+do not enforce these new requirements. See the
+[equipment contract and source evidence](docs/band-anchor-equipment.md).
+
 ### Movement capability inputs
 
 WallCrawl stores seven local movement preferences: impact tolerance, floor

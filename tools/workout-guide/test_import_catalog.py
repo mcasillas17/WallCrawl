@@ -112,6 +112,27 @@ class ImportCatalogTest(unittest.TestCase):
         self.assertIn("review report differs", report_drift_check.stderr.lower())
         self.assertEqual(self.review_report.read_bytes(), drifted_report)
 
+    def test_reviewed_band_setup_vocabulary_is_explicit_and_remains_draft(self) -> None:
+        reviewed = json.loads(self.reviewed_metadata.read_text())
+        setups = [
+            "Band Anchor - Upper Body", "Band Anchor - Overhead", "Band Anchor - Low",
+            "Band Kickback Attachment and Support",
+        ]
+        metadata = reviewed["exercises"]["barbell-bench-press"]
+        metadata["equipmentAlternatives"] = [["Resistance Band", setup] for setup in setups]
+        self.reviewed_metadata.write_text(json.dumps(reviewed) + "\n")
+        result = self._run_import()
+        self.assertEqual(0, result.returncode, result.stderr)
+        output = json.loads((self.output / "catalog.json").read_text())
+        emitted = output["exercises"][0]["reviewedMetadata"]
+        self.assertEqual(metadata["equipmentAlternatives"], emitted["equipmentAlternatives"])
+        self.assertEqual("draft", emitted["reviewState"])
+        metadata["equipmentAlternatives"] = [["Resistance Band", "Anclaje para banda"]]
+        self.reviewed_metadata.write_text(json.dumps(reviewed) + "\n")
+        result = self._run_import()
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("equipmentAlternatives", result.stderr)
+
     def test_timed_missing_and_null_generate_identical_bytes_and_check_detects_drift(self) -> None:
         manifest = json.loads(self._manifest_path().read_text())
         manifest[0]["exerciseType"] = "duration"

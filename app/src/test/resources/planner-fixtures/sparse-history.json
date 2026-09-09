@@ -44,7 +44,6 @@
   ],
   "allowedExerciseIds": [
     "inverted-row",
-    "banded-lat-pulldown",
     "prone-y-raise"
   ],
   "expected": {
@@ -53,9 +52,11 @@
     "requiredAnyExerciseIdGroups": [
       [
         "inverted-row",
-        "banded-lat-pulldown"
+        "prone-y-raise"
       ]
     ],
-    "forbiddenExerciseIds": []
+    "forbiddenExerciseIds": [
+      "banded-lat-pulldown"
+    ]
   }
 }

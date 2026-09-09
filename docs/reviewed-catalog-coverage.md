@@ -19,12 +19,13 @@ upper-bound experiment, not the actual approved cohort or a content-readiness cl
 
 ## Reproducible band-only PUSH gap
 
-> **Status (2026-09-07):** the mislabelling below is fixed; the equipment gap is not.
-> The band-only inventory still contains no chest or push work, and the planner now says
-> so instead of calling a pulling and core session "Push". The
-> [post-fix result](#post-fix-result-2026-09-07) records the same profile and generation
-> state after the change. Everything above that section is preserved as a dated baseline,
-> not current behavior.
+> **Status (2026-09-08):** two of the three problems recorded below are now fixed, in two
+> separate changes. The anchored band variations no longer pass the equipment filter
+> ([fixed-anchor enforcement](#fixed-anchor-enforcement)), and the session is no longer
+> mislabelled `PUSH` ([post-fix result](#post-fix-result-2026-09-08)). The third is
+> unchanged: the band-only inventory still contains **no chest or push work at all**, and
+> nothing here created any. Every table before those two sections is preserved as a dated
+> baseline, not current behavior.
 
 The following baseline was captured before this review expanded or corrected the
 37-record DRAFT cohort, on catalog commit
@@ -86,7 +87,7 @@ a push.
 
 ### Two separate follow-ups
 
-**Split/goal coverage — resolved 2026-09-07, see the [post-fix result](#post-fix-result-2026-09-07):**
+**Split/goal coverage — resolved 2026-09-07, see the [post-fix result](#post-fix-result-2026-09-08):**
 the legacy planner could label a session `PUSH` without selecting genuine push work.
 Split membership considered descriptive secondary muscles; shoulder involvement in a row
 or anti-rotation movement therefore made that split fillable. This was a concrete
@@ -98,7 +99,7 @@ the fix landed separately and changed no catalog fact.
 generic `Resistance Band` inventory does not establish. An incomplete equipment
 alternative can overstate availability even if the movement label is correct.
 The per-ID review must retain an explicit pending disposition wherever the
-existing equipment vocabulary cannot truthfully describe the demonstrated setup.
+equipment vocabulary cannot truthfully describe the demonstrated setup.
 Neither `Wall` nor `Doorway` is a substitute for an unspecified load-bearing
 anchor. The lack of an anchor token must not be hidden by relabeling the exercise
 or reporting the old synthetic candidate count as usable band-only coverage.
@@ -127,33 +128,103 @@ anchor-dependent IDs are `banded-face-pull`, `banded-kickback`,
 `banded-lat-pulldown`, `banded-pallof-press`, `banded-row` and `banded-woodchop`.
 They remain in the catalog and ledger, not in the proposed reviewed metadata pool.
 
-### Post-fix result (2026-09-07)
+### Fixed-anchor enforcement
 
-The identical profile, catalog, `completedWorkoutCount` of 0 and generation index 0 were
-replayed after split selection, exercise selection and whole-program validation were put
-on one focus rule: a split is genuinely trained when a strength exercise's **own-purpose**
-muscle — the approved `directPrimaryMuscle` where the reviewed contract applies, the
-legacy `primaryMuscles` otherwise — is one of the split's target muscles. Descriptive
-secondary muscles no longer establish a split.
+The earlier tables are historical observations before the equipment correction.
+At application baseline `933c927`, new regressions reproduced all six IDs passing
+the real legacy filter with Band + Wall + Doorway + Chair. The real context-builder
+and planner selected `banded-face-pull`, `banded-pallof-press` and
+`banded-woodchop` from a band-only profile.
+
+The active filter now applies the [source-bound setup contract](band-anchor-equipment.md).
+The same band-only inventory has **13 candidates rather than 19**:
+`band-pull-apart`, `banded-clamshell`, `banded-dead-bug`, `banded-donkey-kick`,
+`banded-fire-hydrant`, `banded-frog-pump`, `banded-glute-bridge`,
+`banded-hip-thrust`, `banded-lateral-walk`, `banded-monster-walk`,
+`banded-seated-hip-abduction`, `banded-squat` and
+`banded-standing-hip-abduction`. None of the six anchored variations is selected.
+This is only the fixed-anchor correction, not a new audit of the other setups.
+
+The original 40-minute, Chest HIGH, beginner band-only profile at completion/
+generation state 0/0 was also replayed through the real planner and validator:
+
+| Legacy replay | Candidates | Selected IDs | Split | Structural validation | Genuine direct-primary push |
+| --- | ---: | --- | --- | --- | ---: |
+| Before correction | 19 | `band-pull-apart`, `banded-dead-bug`, `banded-face-pull`, `banded-pallof-press`, `banded-woodchop` | `PUSH` | Valid | 0 |
+| After correction | 13 | `band-pull-apart`, `banded-dead-bug` | `PUSH` | Valid, no repair | 0 |
+
+The after result contains no invented load and does not expand the inventory.
+The unchanged `PUSH` label is evidence of the separate workout-focus bug, not a
+claim that this is a successful chest-push workout.
+
+The following outcomes concern only the six anchor-dependent IDs. The matrix
+uses the real filter and separately labelled synthetic equipment-policy approvals,
+not production approvals; all other constraints are absent.
+
+| Explicit inventory | Legacy anchored candidates | Synthetic-reviewed anchored candidates |
+| --- | --- | --- |
+| Resistance Band only | None | None |
+| Band + Wall + Doorway + Chair, or generic Full gym | None | None |
+| Anchor setups without Resistance Band | None | None |
+| Band + upper-body anchor | `banded-face-pull`, `banded-pallof-press` | Same |
+| Band + overhead anchor, without Chair | None | None |
+| Band + overhead anchor + Chair | `banded-lat-pulldown` | Same |
+| Band + low anchor | `banded-woodchop` | Same |
+| Band + low anchor + kickback attachment/support | `banded-kickback`, `banded-woodchop` | Same |
+| Band + all four setup confirmations + Chair | All five above; never `banded-row` | Same |
+
+The upper-body confirmation explicitly covers adjustable chest-through-face
+height and forward/lateral positioning. Kickback additionally needs the ankle
+connection and reachable handhold on the same low-anchor assembly. The row's
+anchor is outside every source frame; it remains unresolved and automatically
+unavailable even with all equipment selected. It is still browseable and manually
+selectable with an unresolved-setup warning.
+
+No full reviewed blocks or graph edges were added. The five representable runtime
+minimums do not approve their other categorical fields, and the held/rejected
+relationships retain their separate movement/shape/evidence decisions. The
+production reviewed pool remains zero, with 211 DRAFT records and the feature
+flag disabled. Synthetic approval tests also reject incomplete Band-only
+alternatives rather than letting them bypass the source-bound minimum.
+
+The workout-focus bug remains separate: removing anchored candidates does not
+create a genuine band chest push or change split selection, titles or fallback
+focus rules. Candidate legality is not proof of anatomical push coverage.
+
+### Post-fix result (2026-09-08)
+
+The `PUSH` label the section above deliberately left in place is now corrected. Split
+selection, exercise selection, the focus-muscle line and whole-program validation share
+one rule: a split is genuinely trained when a strength exercise's **own-purpose** muscle —
+the approved `directPrimaryMuscle` where the reviewed contract applies, the legacy
+`primaryMuscles` otherwise — is one of the split's target muscles. Descriptive secondary
+muscles no longer establish a split.
+
+The identical profile, catalog and 0/0 completion/generation state were replayed with both
+corrections in place. The candidate counts are the fixed-anchor result above, unchanged by
+this fix:
 
 | Mode | Candidate count | Synthetic approvals | Actual split | Selected IDs | Genuine direct-primary push selected | Reported unavailable priority |
 | --- | ---: | ---: | --- | --- | ---: | --- |
-| Legacy, reviewed feature disabled | 19 | 0 | `UPPER_BODY` | `banded-lat-pulldown`, `banded-row`, `band-pull-apart`, `banded-face-pull`, `banded-dead-bug` | 0 | `Chest` |
+| Legacy, reviewed feature disabled | 13 | 0 | `UPPER_BODY` | `band-pull-apart`, `banded-dead-bug` | 0 | `Chest` |
 | All-DRAFT structural upper bound | 12 | 211 | `UPPER_BODY` | `band-pull-apart`, `banded-dead-bug` | 0 | `Chest` |
 | AI-ready synthetic subset | 11 | 186 | `UPPER_BODY` | `band-pull-apart`, `banded-dead-bug` | 0 | `Chest` |
 
-The candidate counts, the eligible pool and the equipment inventory are unchanged: no
-band chest exercise was created, no anchor token was invented, and Bodyweight was not
-added to the explicitly band-only inventory. What changed is that the session is now
-labelled with a split its own exercises train, its focus muscles are the back work it
-actually contains, and `Chest` is reported as an unavailable priority so the reader is
-told why the emphasis they asked for is missing. `ProgramValidator` rejects the original
-proposal with `UNSUPPORTED_WORKOUT_FOCUS`, so it can no longer reach display or
-persistence.
+All three cohorts now converge on the same selection, because the anchored pulls the legacy
+pool used to add are gone. Reported focus muscles are `Upper Back` and `Core` — the work the
+session actually contains.
 
-The pre-fix tables above are retained as dated baselines. The
-[fixed-anchor equipment gap](#two-separate-follow-ups) is untouched and still open:
-correcting split selection supplies no missing anchor.
+Neither correction created anything. No band chest exercise exists, no anchor token was
+invented, Bodyweight was not added to the explicitly band-only inventory, and the eligible
+pool is exactly what the fixed-anchor contract admits. What changed is that the session is
+labelled with a split its own exercises train, and `Chest` is reported as an unavailable
+priority so the reader is told why the emphasis they asked for is missing.
+`ProgramValidator` rejects the old proposal with `UNSUPPORTED_WORKOUT_FOCUS`, so it can no
+longer reach display or persistence.
+
+The two gaps this report has always separated are now in different states. **Mislabelling:
+fixed.** **Missing band chest work: still open**, and unaffected — correcting a label
+supplies no exercise, exactly as correcting the anchors supplied none.
 
 ## Full-pool prospective profiles
 

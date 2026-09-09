@@ -180,8 +180,8 @@ class ReviewedMetadataTest(unittest.TestCase):
         cls.reviewed = json.loads(REVIEWED_METADATA.read_text())["exercises"]
 
     def test_fixed_anchor_band_variants_do_not_claim_complete_band_only_equipment(self) -> None:
-        # These exact pinned variants use fixed anchors. The current vocabulary has no
-        # anchor token, so a Band/Chair/Wall/Doorway combination cannot stand in for one.
+        # Runtime setup corrections are not full categorical drafts or human approval.
+        # Row's missing fixture remains unresolved even with the expanded vocabulary.
         anchor_dependent = {
             "banded-face-pull", "banded-kickback", "banded-lat-pulldown",
             "banded-pallof-press", "banded-row", "banded-woodchop",

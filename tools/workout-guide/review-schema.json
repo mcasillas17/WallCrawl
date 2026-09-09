@@ -28,7 +28,9 @@
       "enum": [
         "Barbell", "Dumbbell", "Cable", "Machine", "Bodyweight", "Kettlebell",
         "Resistance Band", "Bench", "Pull-up Bar", "Dip Bars", "Squat Rack", "Box",
-        "Cardio", "Chair", "Doorway", "Plate", "Stability Ball", "Towel", "Wall"
+        "Cardio", "Chair", "Doorway", "Plate", "Stability Ball", "Towel", "Wall",
+        "Band Anchor - Upper Body", "Band Anchor - Overhead", "Band Anchor - Low",
+        "Band Kickback Attachment and Support"
       ]
     },
     "exerciseLink": {

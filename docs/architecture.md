@@ -212,14 +212,19 @@ state:
 - the full bundled catalog after hard filtering.
 
 Production currently uses `ExerciseFilter` to remove explicit exclusions and
-exercises whose required equipment is unavailable. Legacy programming equipment
-combinations take precedence; otherwise, the upstream listed equipment is treated as
-the known minimum. Filtering defines the legal search space but does not choose the
-workout.
+exercises whose required equipment is unavailable. The six-ID application-owned
+fixed-anchor correction in `ExerciseEquipmentRequirements.kt` takes precedence,
+then legacy programming equipment combinations, then the upstream listed
+equipment. Five band setups require explicit matching confirmations; the cropped
+anchor in `banded-row` is unresolved and has no automatic eligibility. Manual
+templates use the same requirements for warnings, not for hiding entries.
+Filtering defines the legal search space but does not choose the workout. See the
+[canonical equipment and compatibility contract](band-anchor-equipment.md).
 
 An implemented, dependency-injected `ExerciseEligibilityPolicy` is the reviewed-only
 automatic legality path. When explicitly enabled it accepts only `APPROVED` reviewed
-metadata, requires one complete reviewed equipment alternative, preserves explicit
+metadata, requires one complete reviewed equipment alternative and the source-bound
+fixed-anchor minimum (also for supported-regression availability), preserves explicit
 exclusions, rejects required capabilities marked `AVOID`, fails closed for joint-
 sensitive constraints that lack reviewed mappings, enforces `LOW_IMPACT_ONLY`, and
 temporarily blocks undemonstrated `ADVANCED` work while uncalibrated or returning. A
@@ -364,7 +369,8 @@ that train the split directly, then isolation work, then the presence of program
 metadata, then that same capability penalty, experience penalty, fatigue, and stable
 ID. Because focus support is the first key in both passes and at least one accessory
 slot always remains, a supporting exercise is always reachable; the planner states that
-as an invariant rather than leaving it to be re-derived from the two comparators. Evidence suppresses only the penalized candidate's one-bit capability penalty; it
+as an invariant rather than leaving it to be re-derived from the two comparators.
+Evidence suppresses only the penalized candidate's one-bit capability penalty; it
 never adds candidates, never removes candidates, and never outweighs the harder split
 or mechanics ordering that already happened before it.
 The legacy `programming.fatigueScore` is an ordinal product ranking label, not a measured

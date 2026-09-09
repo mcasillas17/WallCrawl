@@ -56,6 +56,57 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSummary
 class WorkoutGenerationContextBuilderTest {
 
     @Test
+    fun build_bandOnlyInventoryCannotRecommendFixedAnchorVariations() = runTest {
+        val catalog = PlannerFixtureContextFactory().bundledCatalogProjection().exercises
+        val anchoredIds = setOf(
+            "banded-face-pull", "banded-kickback", "banded-lat-pulldown",
+            "banded-pallof-press", "banded-row", "banded-woodchop"
+        )
+        val profile = UserProfile(availableEquipment = listOf(StandardEquipment.RESISTANCE_BAND))
+        val context = WorkoutGenerationContextBuilder(
+            userProfileRepository = StubUserProfileRepository(profile),
+            workoutRepository = StubWorkoutRepository(emptyList()),
+            exerciseCatalog = InMemoryExerciseCatalog(catalog),
+            exerciseFilter = ExerciseFilter(),
+            historyAnalyzer = WorkoutHistoryAnalyzer(),
+            plannerFeatureFlags = PlannerFeatureFlags()
+        ).build()
+        val proposal = FakeWorkoutPlanner().generateWorkout(context)
+
+        assertThat(proposal.exercises.map { it.exerciseId }.filter { it in anchoredIds }).isEmpty()
+        assertThat(context.allowedExercises.map { it.id }.filter { it in anchoredIds }).isEmpty()
+        assertThat(context.allowedExercises.map { it.id }).contains("band-pull-apart")
+        assertThat(context.userProfile.availableEquipment)
+            .containsExactly(StandardEquipment.RESISTANCE_BAND)
+        assertThat(context.userProfile.confirmedStartingLoads).isEmpty()
+        assertThat(ProgramValidator(GeneratedWorkoutValidator(InMemoryExerciseCatalog(catalog)))
+            .validate(proposal, context, allowRepair = false))
+            .isInstanceOf(ProgramValidationResult.Valid::class.java)
+    }
+
+    @Test
+    fun build_missingAnchorsReturnsNoCandidatesWithoutInventoryOrPlannerFallback() = runTest {
+        val anchored = PlannerFixtureContextFactory().bundledCatalogProjection().exercises
+            .filter { it.id in setOf("banded-row", "banded-face-pull", "banded-woodchop") }
+        val profile = UserProfile(availableEquipment = listOf(StandardEquipment.RESISTANCE_BAND))
+        val context = WorkoutGenerationContextBuilder(
+            userProfileRepository = StubUserProfileRepository(profile),
+            workoutRepository = StubWorkoutRepository(emptyList()),
+            exerciseCatalog = InMemoryExerciseCatalog(anchored),
+            exerciseFilter = ExerciseFilter(),
+            historyAnalyzer = WorkoutHistoryAnalyzer()
+        ).build()
+        assertThat(context.allowedExercises).isEmpty()
+        assertThat(context.userProfile).isEqualTo(profile)
+        try {
+            FakeWorkoutPlanner().generateWorkout(context)
+            org.junit.Assert.fail("Missing equipment must not produce a fallback workout.")
+        } catch (error: WorkoutValidationException) {
+            assertThat(error.failure).isEqualTo(WorkoutPlanningFailure.NO_CANDIDATES)
+        }
+    }
+
+    @Test
     fun build_recordsTheCatalogIdentityWholeProgramValidationHasToReplay() = runTest {
         val approved = syntheticApprovedExercise(
             id = "approved-identity-exercise",

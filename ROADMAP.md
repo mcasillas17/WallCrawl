@@ -27,7 +27,7 @@ network connection, or companion device.
 | Area | Status | Remaining gap |
 | --- | --- | --- |
 | Android foundation | Room schema 12 with a continuous migration chain; implicit Android backup disabled with legacy and modern all-domain exclusions; user-owned export, restore, and delete-all shipped | OEM transfer enforcement varies; restore is empty-destination only; `targetSdk` remains 35 while `compileSdk` is 37 |
-| Catalog and reviewed content | All 302 entries have per-ID AI evidence records; 906 SVG frames and 131 legacy programming entries unchanged; 211 reviewed metadata drafts | Zero human approvals; 81 content/policy decisions pending, 35 entries outside automatic-strength scope; the band-only inventory still contains no chest work and the equipment-representation gap remains, though the session is now labelled truthfully |
+| Catalog and reviewed content | All 302 entries have per-ID AI evidence records; 906 SVG frames and 131 legacy programming entries unchanged; 211 reviewed metadata drafts | Zero human approvals; 81 content/policy decisions pending, 35 entries outside automatic-strength scope; the band-only inventory still contains no chest work, and `banded-row`'s anchor stays unrepresentable, though anchored variations are now gated and the session is labelled truthfully |
 | Onboarding and profile | Shipped as an eight-step flow with seven movement-capability questions, plus export, restore, and delete-all controls | Restore requires a fresh start, so it cannot merge into an installation that already holds data |
 | Templates and logging | Shipped with frozen template snapshots, type-aware outcomes, RPE/RIR, typed stops, and a local rest timer | Template targets are only partly editable; unsaved drafts are not restored after process death |
 | Localization | English and neutral Latin American Spanish shipped across the whole interface, the 302-exercise catalog, generated workout text, and accessibility labels, selectable from onboarding and Profile through Android's per-app language mechanism | Only two languages; historical session text stays in the language it was written in, by design |
@@ -231,13 +231,16 @@ Package 3 is **not complete**.
    per-ID decisions in the [unsigned sign-off worksheet](docs/reviewed-exercise-metadata-human-signoff.md).
    The historical `READY_AFTER_CORRECTIONS` verdicts did not grant approval.
 2. Resolve the separately documented [band-only push and fixed-anchor gaps](docs/reviewed-catalog-coverage.md),
-   specialized equipment requirements and selected joint-constraint mappings. No missing
+   specialized equipment requirements and selected joint-constraint mappings. The
+   [fixed-anchor equipment contract](docs/band-anchor-equipment.md) now gates five
+   representable band setups behind explicit confirmations and blocks the unresolved
+   row; it supplies neither a chest-push variant nor human metadata approval. No missing
    token is filled with a guessed generic apparatus, and no planner/artwork fix is implied.
-   The **mislabelling** half of the band-only finding is closed: the planner no longer
+   The **mislabelling** half of the band-only finding is also closed: the planner no longer
    advertises `PUSH` for a pool whose only push evidence is a descriptive secondary muscle,
-   and it reports the unavailable `Chest` priority instead. The **content** half is
-   unchanged — there is still no band chest exercise and no anchor vocabulary — so this
-   task stays open on exactly the evidence it always concerned.
+   and it reports the unavailable `Chest` priority instead. What remains is the **content**
+   half — there is still no band chest exercise — so this task stays open on exactly the
+   evidence it always concerned. Neither correction created one.
 3. Human-inspect the source-bound [full-catalog evidence ledger](docs/research/2026-09-07-full-exercise-catalog-review.json),
    including directed edges, complexity, support, impact, prescription shape, withheld
    blocks and artwork-reference restrictions. AI judgments and software checks are not

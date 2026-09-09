@@ -85,6 +85,16 @@ refused rather than quietly upgraded.
 A file written by a newer WallCrawl is still refused with a message saying so, rather than
 partially understood — a future format may attach meaning to fields this build would drop.
 
+Equipment confirmations use canonical strings in the existing profile list, not
+new archive fields. Old profiles and supported version 1/2 archives without the
+[fixed-anchor selections](band-anchor-equipment.md) remain unconfirmed; restoring
+never infers anchors from a band, wall, doorway, chair or former Full gym inventory.
+New selections round-trip unchanged. Unknown equipment strings are preserved,
+not remapped to broader categories. This does not make older clients understand
+new strings or enforce the new anchor eligibility rules; an older client's
+profile validation may also reject them. Archive format compatibility is not
+forward behavioral compatibility.
+
 Because a validation record cannot be rebuilt from history the way the weekly-ledger cache
 can, it is exported and restored with the session it belongs to instead of being dropped.
 A record this build cannot read back is left out rather than restored half-understood.

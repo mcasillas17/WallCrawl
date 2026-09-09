@@ -86,25 +86,27 @@ class WorkoutFocusCoverageTest {
 
     @Test
     fun theOriginalMisleadingProposal_isRefusedByWholeProgramValidation() = runTest {
-        // The exact plan the bug produced, handed to the validator directly. Structural
-        // validity was never the question: this is what must now be refused before it can
-        // be displayed or started.
+        // The shape of the plan the bug produced, handed to the validator directly.
+        // Structural validity was never the question: this is what must now be refused
+        // before it can be displayed or started.
+        //
+        // Built from candidates that are still eligible after the fixed-anchor correction
+        // removed the anchored band pulls, so the only thing wrong with it is the label.
+        // Reusing the original five ids would also trip NOT_IN_CANDIDATE_SET and stop
+        // isolating the focus rule.
         val context = bandOnlyContext()
         val misleading = validatedWorkout(
-            exercises = listOf(
-                "band-pull-apart",
-                "banded-dead-bug",
-                "banded-face-pull",
-                "banded-pallof-press",
-                "banded-woodchop"
-            ).map { bodyweightRepPlan(it) },
+            exercises = listOf("band-pull-apart", "banded-dead-bug").map { bodyweightRepPlan(it) },
             split = WorkoutSplit.PUSH
         )
 
         val result = ProgramValidator(GeneratedWorkoutValidator(InMemoryExerciseCatalog(catalog)))
             .validate(misleading, context, allowRepair = true)
 
-        assertThat(result.codes()).contains(ProgramViolationCode.UNSUPPORTED_WORKOUT_FOCUS)
+        assertThat(result.codes())
+            .containsExactly(ProgramViolationCode.UNSUPPORTED_WORKOUT_FOCUS)
+        assertThat((result as ProgramValidationResult.Invalid).violations.single().detail)
+            .isEqualTo(WorkoutSplit.PUSH.name)
     }
 
     // endregion
