@@ -2,7 +2,8 @@
 
 WallCrawl bundles 906 female and 906 male SVGs, covering the same 302 exercises as
 the [pinned source catalog](../tools/workout-guide/import-config.json). Each is a byte-for-byte copy of the selected
-SVG in `art/pilots/female-exercises/catalog` or `male-catalog`.
+SVG selected by the ledgers in `art/pilots/female-exercises/catalog` or
+`male-catalog`, including the retained animation-correction batches.
 
 In onboarding and Profile, the gender dropdown is optional: Prefer not to say, Woman, Man, or
 Nonbinary. This is the only setting that selects artwork: Woman uses the female
@@ -27,8 +28,8 @@ Profile changes still advance the existing profile revision.
 
 Every exercise surface shares the preference through `ExerciseIllustration`.
 Changing profile gender replaces the whole sequence and restarts its 1–2–3–2 playback. All three
-selected frames play, including sequences whose continuity corrections are deferred,
-as explicitly requested for this iteration. No still-frame substitution is applied.
+selected frames play with the review status and remaining visual limitations
+recorded in the distribution provenance. No still-frame substitution is applied.
 If a variant is absent, malformed, or fails to load, the complete pinned original
 sequence is used; the renderer never combines male and female frames in one sequence.
 
@@ -60,7 +61,8 @@ It copies only SVGs and distribution metadata to
 `app/src/main/assets/exercise-illustrations/`. It does not generate images, retrace
 assets, run the upstream importer, modify source artwork, or overwrite the pinned
 `workout-guide` bundle. It stops on unexpected stale SVGs rather than deleting them.
-The two SVG sets total 54,359,261 uncompressed bytes at initial integration.
+After the September 9 correction pass, the two SVG sets total 54,413,948
+uncompressed bytes. This is the asset total, not the compressed APK size.
 
 The compact `index.json` is the runtime lookup. `provenance.json` records selected
 hashes, source paths and attribution, pilot-ledger locations, changes, and review
@@ -71,11 +73,15 @@ are promoted by rerunning the packager after the selected pilot ledgers are upda
 ## Review and licensing
 
 At integration, all frames were produced and individually reviewed by AI. Nine
-female pilot frames were user-approved. The male animation review records 252
-reviewed sequences and 50 held for further correction; the female catalog does not
-have a completed full animation review. These are current drafts, not a claim of
-smooth or anatomically perfect animation. Pending isolated candidates are not
-silently promoted. No qualified movement-expert approval is claimed.
+female pilot frames were user-approved. The September 9 correction pass resolves
+the 50 previously held male sequences to AI-reviewed selections: 138 app SVGs
+changed and 12 existing endpoints were retained. All 302 male sequences now have
+AI animation review records; the female catalog does not have a completed full
+animation review. [Playback previews and per-sequence notes](../art/pilots/female-exercises/animation-corrections-20260909/review/README.md)
+document the changes and remaining contour, alignment and phase-spacing variations.
+Bear crawl and crab walk show partial forward-and-return steps; cycling uses a
+limited pedal arc. These are not claims of anatomically perfect animation or
+qualified movement-expert approval.
 
 [Everkinetic](https://github.com/everkinetic/data) is the original pose-artwork
 reference. The source catalog also includes additional exercises and animation

@@ -1,0 +1,1319 @@
+{
+  "schemaVersion": 1,
+  "baseCommit": "53f3a62cebc83e38c53c5d6f0f09daa5516668ee",
+  "verifiedAt": "2026-09-09T15:47:31.365252+00:00",
+  "changedAppSvgCount": 138,
+  "selectedFrameCount": 150,
+  "correctedSequenceCount": 50,
+  "packagedSvgCount": 1812,
+  "selectedPngRgba512Count": 150,
+  "selectedSvgViewBox512Count": 150,
+  "alphaBorderChecks": "passed",
+  "pngSvgShapeWarnings": [],
+  "minimumBidirectionalLineCoverageWithin2px": 0.9977921833897031,
+  "qualifiedMovementReview": false,
+  "exactPromptFilesRetainedLocally": 82,
+  "historicalPromptGaps": 68,
+  "sequences": [
+    {
+      "exerciseId": "archer-push-up",
+      "review": "AI visual review only",
+      "note": "Distinct near-loaded, middle, opposite-loaded phases in fixed feet-left/head-right view; corrected source reversal. Full-scene translation registers frame3 to shared contact plane. Minor hand-outline and palm-position variation remains; no missing anatomy. PNG/SVG 3-frame sheet inspected; 1-2-3-2 GIF generated. AI visual review only.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/archer-push-up/frame-1.svg",
+          "sha256": "224675c28faf466297de647cf9428135d5e55e89c1ec265a540303c9a741cc8a"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/archer-push-up/frame-2.svg",
+          "sha256": "20b9a71abb6f68328434e8cab6356ce5b6496b8696ec37bdff1ec246d8735f1a"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/archer-push-up/frame-3.svg",
+          "sha256": "92352d2f26a3a31653782546816ab8227782ffc78f922493dfaaab448a88710d"
+        }
+      ],
+      "playback": {
+        "path": "previews/archer-push-up-playback.gif",
+        "sha256": "0bbccd98811f543d4c0f0a55f76541dc20a2867db1ece8c7c8c19e9df961de28"
+      }
+    },
+    {
+      "exerciseId": "arm-circles",
+      "review": "AI visual review only",
+      "note": "Three distinct arm positions with stable trunk and feet. Direction arrows appear only in frame1; recorded as minor annotation discontinuity.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/arm-circles/frame-1.svg",
+          "sha256": "8218ba91491da70aeea45148606d9a80c5ee7b68589f8e73d06f6382cf30fa83"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/arm-circles/frame-2.svg",
+          "sha256": "1cce751da3a34d65126c0c3fb8fc14995b2bae617f405e1f1da9871c5ddbca44"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/arm-circles/frame-3.svg",
+          "sha256": "98cb0d40b6119e177c0a96fc6f98aa67734bd07bd7352e35be912c76c8b340d8"
+        }
+      ],
+      "playback": {
+        "path": "previews/arm-circles-playback.gif",
+        "sha256": "88c441b44acdedd25ec2583ef455f5c4778facbf5625567d5629f89d1df9b391"
+      }
+    },
+    {
+      "exerciseId": "assault-bike",
+      "review": "AI visual review only",
+      "note": "All three male phases retain broadly consistent fan/frame/seat/handle geometry and distinct pedal/leg positions. Minor head angle and contour shifts remain.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/assault-bike/frame-1.svg",
+          "sha256": "bfac2123e42307892a0d649df5f33dbc1b7a4fec5b9e954f5162e9e15d652373"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/assault-bike/frame-2.svg",
+          "sha256": "55adf3bb07691ea37fdb1b78a1d62b9467736b35ef1be66aa491315f17de87de"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/assault-bike/frame-3.svg",
+          "sha256": "2cf74b2715c8009831adad21056a9595dc53678e069ffa20df169e1950d504c6"
+        }
+      ],
+      "playback": {
+        "path": "previews/assault-bike-playback.gif",
+        "sha256": "dce34e380bbb3bd754bb4da2f1c67c09a18e78fb4015c1010576037742304291"
+      }
+    },
+    {
+      "exerciseId": "assisted-chin-up",
+      "review": "AI visual review only",
+      "note": "New middle2 matches fixed machine top/base and handgrips across1/2/3. Body size consistent with raised/intermediate/lowered positions and knee pad travel. Intermediate pad is closer to raised endpoint; small limb/stack contours differ. Actual SVG and PNG alpha inspected, AI visual only.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/assisted-chin-up/frame-1.svg",
+          "sha256": "e5ecaecd41e943888b7f1c7e6c54b5fe1521283cd30bc7a69b09af160950518a"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/assisted-chin-up/frame-2.svg",
+          "sha256": "fb55480dec68cff6c646290c26ef3f6dce61880f75e0641fea32879e4c325b14"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/assisted-chin-up/frame-3.svg",
+          "sha256": "a5c4da46ad8e30b2cbd0b88a39bf580ac585c54d7cb0d42f7c155af993e1ffd0"
+        }
+      ],
+      "playback": {
+        "path": "previews/assisted-chin-up-playback.gif",
+        "sha256": "4e47e39884708de71d40d258ad94880d381c63c27463d32b3c0cd40224cfec02"
+      }
+    },
+    {
+      "exerciseId": "banded-fire-hydrant",
+      "review": "AI visual review only",
+      "note": "Distinct side-raised, partly lowered and knees-down phases with broadly stable hands/support knee. Minor head/torso and band contour variation remains.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/banded-fire-hydrant/frame-1.svg",
+          "sha256": "78e876deec3a0a22e383cd95a0413b192aabf5ecbb691a061d08b73ea55824da"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/banded-fire-hydrant/frame-2.svg",
+          "sha256": "5da4d4cb44c954cafe2a7cf19c0d6276044fd582bd9a2998caed8f52c00ba4fb"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/banded-fire-hydrant/frame-3.svg",
+          "sha256": "e2396b8e13241174c61d6bae6cf0a2a271237a01aa1dc22ab37574f91977c946"
+        }
+      ],
+      "playback": {
+        "path": "previews/banded-fire-hydrant-playback.gif",
+        "sha256": "cbbe8d684436a9cedde6f90e18317245b9fe8f6cc076c6fc067a6c4190557c69"
+      }
+    },
+    {
+      "exerciseId": "banded-pallof-press",
+      "review": "AI visual review only",
+      "note": "Clear extended/middle/retracted grip positions, fixed band anchor and coherent stance. Minor stance/anchor-outline variation.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/banded-pallof-press/frame-1.svg",
+          "sha256": "c69cf4760b8e6790afbea7a63c4ec54396453440f521bea44e80b5bdfbfdc056"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/banded-pallof-press/frame-2.svg",
+          "sha256": "6d4446ad9ba91faaa10ac83dbf24c1df979942c1f89ba2540590c5a1ed7b4241"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/banded-pallof-press/frame-3.svg",
+          "sha256": "88d4f469013be815fc496d1cdca72be458299d3011fbc7b38f425719d08de897"
+        }
+      ],
+      "playback": {
+        "path": "previews/banded-pallof-press-playback.gif",
+        "sha256": "b6c203a061cfe8ffff028dbf54ee58f6758d4c300184f4078209e5b90384a3cd"
+      }
+    },
+    {
+      "exerciseId": "barbell-bench-press",
+      "review": "AI visual review only",
+      "note": "Distinct top/middle/chest-level phases with fixed bench and planted feet after uniform full-scene registration. Replaced old endpoint with head/torso drift. Minor outline differences remain. PNG and SVG compared visually; AI visual review only.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/barbell-bench-press/frame-1.svg",
+          "sha256": "e69f4b32e18a699f0c696829dfbe762ade9e5247c0b626eab7971d0f9a855d35"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/barbell-bench-press/frame-2.svg",
+          "sha256": "64d08bd7e024b8b56441ec69478c9da0d4a34ea911258ec4e04d939bb19b22b0"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/barbell-bench-press/frame-3.svg",
+          "sha256": "39bacdab6487b04cb1c4f2150d05acb854911b49b0347f61e94855177fd4227b"
+        }
+      ],
+      "playback": {
+        "path": "previews/barbell-bench-press-playback.gif",
+        "sha256": "0286b2a9ab7b213afc3051d84b91e5e9816a96498b361d8aa8f1a837bcc5cfb1"
+      }
+    },
+    {
+      "exerciseId": "barbell-glute-bridge",
+      "review": "AI visual review only",
+      "note": "New low and midpoint retain upper-back support bench and show clear if modest hip/bar height progression with stable head/feet. Uniform containment and translation preserve full barbell travel without cropping. Minor bench pad/plate contours and small foot-position residual remain; no qualified movement approval.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/barbell-glute-bridge/frame-1.svg",
+          "sha256": "47704dd73dab26a7fcce1d9a003d31f632e1532665023042f838c23c521e8e2d"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/barbell-glute-bridge/frame-2.svg",
+          "sha256": "7554843fd82fa3a2fb1d35bc47b20025556f643b9396e8ca9d4b05a4607891da"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/barbell-glute-bridge/frame-3.svg",
+          "sha256": "2a52fa757a4227e44df7352c0a3f54b17115200fb1427eef6f7a5f8c969401ca"
+        }
+      ],
+      "playback": {
+        "path": "previews/barbell-glute-bridge-playback.gif",
+        "sha256": "6cd66122502906f3665c9a77bb62f3c53d711763a6ad74f9cf86e3af18bce503"
+      }
+    },
+    {
+      "exerciseId": "barbell-row",
+      "review": "AI visual review only",
+      "note": "Distinct contracted/middle/extended arm phases with stable head, hinge, feet and bar dimensions.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/barbell-row/frame-1.svg",
+          "sha256": "9d3fd2da1ee78ed32740c8a1a9d8448e175e8ad9a87c62d53966ba4b80b67017"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/barbell-row/frame-2.svg",
+          "sha256": "eef8b8408402e2929fcd46db5562e26627ee5ae186a1d47f1bd5873a721b2104"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/barbell-row/frame-3.svg",
+          "sha256": "e4759dd187130a15b8abada107409d6750537d2cc157f0b57bd6dc0d05006f18"
+        }
+      ],
+      "playback": {
+        "path": "previews/barbell-row-playback.gif",
+        "sha256": "371595cf88988dbe9e166423ae6fc1ad28561e1b7f128c404a04ab3ddaf01853"
+      }
+    },
+    {
+      "exerciseId": "bear-crawl",
+      "review": "AI visual review only",
+      "note": "Corrected repeated static frames with native forward reach and opposite leg step. Common-canvas uniform alignment stabilizes head/torso without local anatomy warping. 1-2-3-2 shows a partial forward-and-return crawl step, not a full alternating gait cycle. Minor palm/toe contact shifts and torso contours remain; AI visual review only.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/bear-crawl/frame-1.svg",
+          "sha256": "27ba5691e1f507948fc6309688d9979739773916d1df47a5ae9a5fb2972e0469"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/bear-crawl/frame-2.svg",
+          "sha256": "d2029fcc67417b99bce1fa99fe1a151865d65ce1927e1879c04e0ff945f7a1a3"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/bear-crawl/frame-3.svg",
+          "sha256": "31c052e39f12a94725fce6430e58e0c9392f7312e3768d34ef22c0609db82ed6"
+        }
+      ],
+      "playback": {
+        "path": "previews/bear-crawl-playback.gif",
+        "sha256": "ca1a09f96a61b24b55224b75fb31cf7e571420dcb81cdbce9003a19e1e8ce2e1"
+      }
+    },
+    {
+      "exerciseId": "belt-squat",
+      "review": "AI visual review only",
+      "note": "Standing halfway and deep phases now clearly differ with stable planted feet, platform, vertical post and support bases. Body proportions and facing remain consistent. Chain remains attached to hip belt and loaded lever; small linkage/contour variations remain, hardware mechanics need qualified review. SVG renders match PNGs. AI visual review only.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/belt-squat/frame-1.svg",
+          "sha256": "a36966d75276620258ee005c1d497260f008ba704e0791817bdb5042e6db6333"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/belt-squat/frame-2.svg",
+          "sha256": "9922737590df3e1862e3edfe4649c2a54594667b825665a7f09d90c901279259"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/belt-squat/frame-3.svg",
+          "sha256": "b30dee2d311585cbab266274d45d732829de856245b409d1ba0dc773f417b1bc"
+        }
+      ],
+      "playback": {
+        "path": "previews/belt-squat-playback.gif",
+        "sha256": "6e11f6a864a919278c7dbfc44b147deda7039547c76d2fde5e7de5c85e55cecc"
+      }
+    },
+    {
+      "exerciseId": "bicycle-crunch",
+      "review": "AI visual review only",
+      "note": "Frame3 now preserves feet-left/head-right camera, with an opposite twist and extended leg; middle is both knees bent. Minor torso rise/contour variation in the opposite twist remains.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/bicycle-crunch/frame-1.svg",
+          "sha256": "61edaf8dbea838a387fbd3f35c8b6fea1658ca5497b7b31607ff71f11fd6c883"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/bicycle-crunch/frame-2.svg",
+          "sha256": "1128ffbe9a0d2f0b513374f6726d0f7b3ffcf438bec6c478609ea7dd2320d1c8"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/bicycle-crunch/frame-3.svg",
+          "sha256": "eb14c56d9d8eb3a3492e005fc02f6f1c73bc268c0ab89f3f5286b7838c7b02ec"
+        }
+      ],
+      "playback": {
+        "path": "previews/bicycle-crunch-playback.gif",
+        "sha256": "be21eae19d941be8cab6e5134a720a2293f4f1eafd696af035b0f331f51e42fe"
+      }
+    },
+    {
+      "exerciseId": "bulgarian-split-squat",
+      "review": "AI visual review only",
+      "note": "Corrected perspective/contact drift using common contained low scene, fixed-scene native high and revised middle. Head heights progress nearly evenly, foot/bench base alignment maintained. Failed short-bench and too-low midpoint attempts preserved. Small pad occlusion and foot contour differences remain, no qualified form review.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/bulgarian-split-squat/frame-1.svg",
+          "sha256": "bdcaa6942ef766d0ac40b427054395ed94884a3eff7af0061e263ade50d4e57b"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/bulgarian-split-squat/frame-2.svg",
+          "sha256": "fc5c71d6de817504b0fbc26dfefdc735d568505d2de392a7acccf10b2f6df094"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/bulgarian-split-squat/frame-3.svg",
+          "sha256": "d4d3d6896dc354bd6bb37b6bfbf7e9d7ade01006ec9790f44f9955074b4df052"
+        }
+      ],
+      "playback": {
+        "path": "previews/bulgarian-split-squat-playback.gif",
+        "sha256": "d09fc0ad52cf466197efa84d790aad3a496b41836b115efb7a4d271848ea3e82"
+      }
+    },
+    {
+      "exerciseId": "burpee",
+      "review": "AI visual review only",
+      "note": "Corrected jumping phase now shares screen-right oblique camera with floor poses. Whole-scene fits match head/limb dimensions and register near/far palms across plank/tuck; jumping feet sit above corresponding floor location. Complete hands/feet and genuine extracted-alpha negative spaces preserved in SVGs. Minor contour variation remains. Worker exact native request provenance for retained floor masters is pending recovery. AI visual review only.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/burpee/frame-1.svg",
+          "sha256": "301cd9e706157f174f58c3c2849a1dfd5861bf421f03ab0529ea5fa74af67049"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/burpee/frame-2.svg",
+          "sha256": "105ab2a6b4bd3cbcd955d698059accaab68c757e7c4e1bd22dec70d57bd2c0dc"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/burpee/frame-3.svg",
+          "sha256": "bcd14c44144cc6050e3848220e8c1b88ec205de0d9aaa86740e14caa6dff8916"
+        }
+      ],
+      "playback": {
+        "path": "previews/burpee-playback.gif",
+        "sha256": "081858138438f3cf6380fa12af546d864e7c6df69ccbcd0ad858c54f1e5fee51"
+      }
+    },
+    {
+      "exerciseId": "cable-kickback",
+      "review": "AI visual review only",
+      "note": "Full/half/neutral return phases now distinct on one registered body/support scene. Regenerated neutral rear foot for complete visible anatomy; ankle cuff and cable foreground crossing retained with fixed far endpoint. Minor leg contours vary; AI visual review only.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/cable-kickback/frame-1.svg",
+          "sha256": "685006c1fd57df134b97ed81898f2514357ad233f2293333e2bf62f100227f84"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/cable-kickback/frame-2.svg",
+          "sha256": "6db858dd3a46930a98650090148bb168942de6892b685018bcdf418ca7971d7e"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/cable-kickback/frame-3.svg",
+          "sha256": "1f688c2d37684daee6a7de1c4ead21742b8dbd6dd704e93c4b0983c2b82c175a"
+        }
+      ],
+      "playback": {
+        "path": "previews/cable-kickback-playback.gif",
+        "sha256": "273b78669483ac2b5016e68ef079e1fb54420ac1cf863855e65f834837b2bd70"
+      }
+    },
+    {
+      "exerciseId": "cable-rear-delt-fly",
+      "review": "AI visual review only",
+      "note": "Distinct open/middle/closed arms with broadly registered towers, stance and grips. Minor contour variation. Fresh 512 SVG-wrapper render inspected; same accepted artwork with updated file hashes.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/cable-rear-delt-fly/frame-1.svg",
+          "sha256": "0161ef07ef95a8411089db4daa10d2afa8bcb211c4c63fd8d5ff8409b415baae"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/cable-rear-delt-fly/frame-2.svg",
+          "sha256": "9b2e7640f49a524bb49ab045fcdc1558b51ffdd32f4ce5b81b9127e4b8d0dac2"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/cable-rear-delt-fly/frame-3.svg",
+          "sha256": "4731919041a14c5d1d9704bfb268665e712f4f901167730a947ebe344b8d6e56"
+        }
+      ],
+      "playback": {
+        "path": "previews/cable-rear-delt-fly-playback.gif",
+        "sha256": "449500aeddf6b130c3b05a4eb07e1c6b340750dad15f9577f63d13a21cc9f1a9"
+      }
+    },
+    {
+      "exerciseId": "cable-woodchop",
+      "review": "AI visual review only",
+      "note": "Explicit phase remap produces low/middle/high hand positions with cable attached, complete male anatomy and stable stance/machine framing. Slight machine line-weight/detail variation and head outline change remain. Fresh PNG alpha and actual rendered SVG verified; phase-remap provenance must accompany promotion.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/cable-woodchop/frame-1.svg",
+          "sha256": "3639b1dbede3abf06aeea9bbc72041df54dafea9e28f0354c1136b42cabf4531"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/cable-woodchop/frame-2.svg",
+          "sha256": "3f13eb029070f0b8375752696b195c100be2aff55c8f3a4950ebf3643bc3e333"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/cable-woodchop/frame-3.svg",
+          "sha256": "1670dd73c0845d234efe8a857a5069c5efcabebe7408428dfd2dbc668fbf5760"
+        }
+      ],
+      "playback": {
+        "path": "previews/cable-woodchop-playback.gif",
+        "sha256": "fff43aaa899af8ce6e96dd5ddc5e57f7c9000f82a66fc73cabe150fc1bd86a07"
+      }
+    },
+    {
+      "exerciseId": "captains-chair-knee-raise",
+      "review": "AI visual review only",
+      "note": "Replaced duplicate phase with distinct half knee raise. All three phases share fixed head, torso and machine dimensions, hands remain on vertical grips and forearms on pads. Small support outline differences persist. PNG/SVG compared; AI visual review only.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/captains-chair-knee-raise/frame-1.svg",
+          "sha256": "ff283b4c9b5ca9688984d30cb80ac3140d3a373284d302ca49171c4cf2433891"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/captains-chair-knee-raise/frame-2.svg",
+          "sha256": "4acaab66c86d6f88bf9a46f39d623880ea65a36f89311c9be67184157e38167f"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/captains-chair-knee-raise/frame-3.svg",
+          "sha256": "956af40f90808b7dc245545ed062cf9a4a6ff0d00828d3dc1082c3272aa74ce9"
+        }
+      ],
+      "playback": {
+        "path": "previews/captains-chair-knee-raise-playback.gif",
+        "sha256": "b131444a45cefaa003ac12a50d6a3dcfb5e5bf2552182d22ebe798547d1e2ae6"
+      }
+    },
+    {
+      "exerciseId": "chair-dip",
+      "review": "AI visual review only",
+      "note": "Clear top/middle/lowered phases at broadly stationary chair/hand/heel contacts. Later frames have somewhat bolder linework.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/chair-dip/frame-1.svg",
+          "sha256": "1094bfb4505a9e5327ef43d8616d7f831558c8b988b8d9b65aea20fbf3c10e0f"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/chair-dip/frame-2.svg",
+          "sha256": "a51cd4ecf6aaac7396033e7f2efe50ff5c9c3bf8980846069aa7d873945d29b3"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/chair-dip/frame-3.svg",
+          "sha256": "33ff9c6866432ea1e63423a2dfbe7b6739cac0fec9d82660b022ef0bf37a1c5d"
+        }
+      ],
+      "playback": {
+        "path": "previews/chair-dip-playback.gif",
+        "sha256": "8c57e2de2e223a356047717aaf4734806116a60a31739a2ac5ecd7def2b0cdec"
+      }
+    },
+    {
+      "exerciseId": "chest-supported-row",
+      "review": "AI visual review only",
+      "note": "New focused native middle creates clear elbow/handle progression. Head, torso, chest pad and feet stable; intermediate closer to extended endpoint, small machine base/pivot contour differences at3. AI visual review only; no qualified movement review.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/chest-supported-row/frame-1.svg",
+          "sha256": "119f397e7dc5602fcff4c8d25ced0a75835a6fa45f805aa853c7b7f790eb0e99"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/chest-supported-row/frame-2.svg",
+          "sha256": "b3fe0a79a6b2fc117c650f24887356e0a66508732a35debcb3dc6ea4ab386e06"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/chest-supported-row/frame-3.svg",
+          "sha256": "4200025bf6624577af420d42beaadff59b57d12a99029721068f540f8ec2c27a"
+        }
+      ],
+      "playback": {
+        "path": "previews/chest-supported-row-playback.gif",
+        "sha256": "4aba75b0cd370d19c5559a754a678b0f7ba70c045c79fa769621b796e65cfbda"
+      }
+    },
+    {
+      "exerciseId": "chin-up",
+      "review": "AI visual review only",
+      "note": "Corrected old top-pose body enlargement, new true midpoint, common canvas and stationary bar/hand contacts across all phases. Head/body dimensions now consistent; crossed ankles retained. Minor hand/contour detail differs. SVG matches PNG; AI visual review, no qualified form approval.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/chin-up/frame-1.svg",
+          "sha256": "d70f5a3fba94a82bb1aa4394a65b10da4c44ca89501490ff966df9321fe49ac3"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/chin-up/frame-2.svg",
+          "sha256": "b317f26f1f531e51f38332ca52c03fd883beff71b0924a8a223454ce51b4b458"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/chin-up/frame-3.svg",
+          "sha256": "96ec6ac88b5a10d9b561ac96714ad970dfc908192a584a438c52c770a68c3e23"
+        }
+      ],
+      "playback": {
+        "path": "previews/chin-up-playback.gif",
+        "sha256": "7409f7626a46dabe17b52ba516b40139092ac975a916cbd16101be16b7d09960"
+      }
+    },
+    {
+      "exerciseId": "clamshell",
+      "review": "AI visual review only",
+      "note": "Corrected failed closed/middle phases through focused native edits. Open, halfway and closed knees with fixed supporting forearm, torso, head and touching feet; band follows thigh opening and stays in front. Small contour variations remain; no qualified movement expert review.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/clamshell/frame-1.svg",
+          "sha256": "542ad90b97f67343a5100e35e3ee8a2bdedb76a27858e3ede10efb56d6ca4d45"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/clamshell/frame-2.svg",
+          "sha256": "47c15525b555b730fdd69cb1f2c1ca3d076714aaa8211bc90f4e03485f833e9a"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/clamshell/frame-3.svg",
+          "sha256": "27153d3af1a3f61e4de3d3244c6cc6497b38bbb91eed2a35ba84a8884fbc5579"
+        }
+      ],
+      "playback": {
+        "path": "previews/clamshell-playback.gif",
+        "sha256": "25b6bde8cac49ba826a764da57723d11ba43c4b5920962e3649c4c3b0447962e"
+      }
+    },
+    {
+      "exerciseId": "close-grip-lat-pulldown",
+      "review": "AI visual review only",
+      "note": "Three distinct contracted/middle/overhead phases match pinned source order. One machine tower, pulley geometry, seat, body, feet and camera persist across frames; arm/handle/cable/stack motion is legible and coherent. Worker contracted frame3 was explicitly remapped to source phase1, with provenance lineage retained. AI visual review only; original worker exact request provenance pending recovery.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/close-grip-lat-pulldown/frame-1.svg",
+          "sha256": "b3920a20a95a3dc54098de509c950c26d35d5ef9110ca1b75727428f55cf2627"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/close-grip-lat-pulldown/frame-2.svg",
+          "sha256": "2c4bfccc3134955a974beedfcdbd25078a20e1d89a60fc53ec21eeb21ad37b2f"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/close-grip-lat-pulldown/frame-3.svg",
+          "sha256": "9b7d1c4acb597a81b408dafdbeeeec064b21ae577560769ff04268253f08e074"
+        }
+      ],
+      "playback": {
+        "path": "previews/close-grip-lat-pulldown-playback.gif",
+        "sha256": "161e69f43d3bc7117e366fae27484c599aed585584b2144e54496b7f6d9eee8f"
+      }
+    },
+    {
+      "exerciseId": "commando-pull-up",
+      "review": "AI visual review only",
+      "note": "Corrected source-inherited wide frontal overhand depiction to close tandem grip with male facing along bar. Fixed rack/hand contacts persist through top/middle/full-hang; no added overhead loop or cropped feet. Some hand/palm detail is occluded in this view and minor head/torso contours vary. Technique reference stored in sources/commando-mechanics-reference.json; AI visual review only, no qualified movement approval.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/commando-pull-up/frame-1.svg",
+          "sha256": "dd62cf0a98b4902d69a656c8bcf812669163a58457e48302b77267ccf0ac6b37"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/commando-pull-up/frame-2.svg",
+          "sha256": "81564e9ceba59476f1a2cd7a7fc13558a80b383525098c2fcb326dbb00246aeb"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/commando-pull-up/frame-3.svg",
+          "sha256": "33cb85208a99c1e473e4738c8d68bc3aa56c9c35b32fb244b0f879d04cd84845"
+        }
+      ],
+      "playback": {
+        "path": "previews/commando-pull-up-playback.gif",
+        "sha256": "0a2290b2b1aeab06a59fb246753509de9f4d720a8ae5311f7e8330019c0e5df7"
+      }
+    },
+    {
+      "exerciseId": "concentration-curl",
+      "review": "AI visual review only",
+      "note": "Top/middle/lowered forearm phases, coherent seated body and thigh/elbow relationship. Minor head and dumbbell size variation. Fresh 512 SVG-wrapper render inspected; same accepted artwork with updated file hashes.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/concentration-curl/frame-1.svg",
+          "sha256": "eca6cb810885844b4a82df2649b8f7ddb1032644b244c7f218464eec4b89e8bb"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/concentration-curl/frame-2.svg",
+          "sha256": "09b80933ab4bbc939f9abf0a10e7056af3e06aed0c55e474e4c209b04af40c14"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/concentration-curl/frame-3.svg",
+          "sha256": "7874cfa035b04fc3af65d1e1c1b14d4dbf5e3b04a592f3579e7b32ec81acb0f4"
+        }
+      ],
+      "playback": {
+        "path": "previews/concentration-curl-playback.gif",
+        "sha256": "c574b10b025834dfa951a54d7f3313717b0a129db71537610255a4801c527e6f"
+      }
+    },
+    {
+      "exerciseId": "cossack-squat",
+      "review": "AI visual review only",
+      "note": "Fixed the middle-frame vertical scene offset with a39px upward whole-scene translation at512; no generation, scaling, cropping or warping. PNG/SVG triptychs inspected: left-loaded/center/opposite-loaded poses share the floor plane. Center pose is slightly broader than endpoints. True selected v2 master retained, AI visual review only.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/cossack-squat/frame-1.svg",
+          "sha256": "a569c1c8f209f06d9f48c66b82f9f245a919540448dc2304eb9e4420449fbadf"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/cossack-squat/frame-2.svg",
+          "sha256": "5b94bbca5c1ccbafd48b6269617e00622ad0a6e52698a66a2ccde1db8982aa5c"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/cossack-squat/frame-3.svg",
+          "sha256": "61438ec2e4f682c68805ece52689f499e7e8fd20d975aba906fbaea5b20ba64f"
+        }
+      ],
+      "playback": {
+        "path": "previews/cossack-squat-playback.gif",
+        "sha256": "0d9206516429238e2b75e32435a3023954a556bc448c75d54416e3c5bd51c2d9"
+      }
+    },
+    {
+      "exerciseId": "crab-walk",
+      "review": "AI visual review only",
+      "note": "Fresh SVG/PNG: same camera/head/body scale, initial reverse support, contralateral hand/foot lift, then forward contact. Three distinct coherent phases. Small supporting foot shift and hip height changes remain; partial step demonstration rather than full alternating gait cycle. AI visual only, not expert form approval.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/crab-walk/frame-1.svg",
+          "sha256": "11899d2aee68062fda4119fe1165423b006e6a74a48e6d3c91d2889b297ef2f5"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/crab-walk/frame-2.svg",
+          "sha256": "9df97b695f79a8e4fe71eed9b1e96a9defd445f63855d6e7d9060815cc57d407"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/crab-walk/frame-3.svg",
+          "sha256": "4c1782b0291f7933857192585c032abd1863f0fd1848f5e1ac3289b5e957701e"
+        }
+      ],
+      "playback": {
+        "path": "previews/crab-walk-playback.gif",
+        "sha256": "a5ac9818c9be970f8fe09180aae2324719151d2f4e527c46a8df118bf461ded3"
+      }
+    },
+    {
+      "exerciseId": "curtsy-lunge",
+      "review": "AI visual review only",
+      "note": "Fresh SVGs do have matching clasped hands. Low/crossed transition/standing phases distinguish by rear leg placement and knee flexion, fixed frontal camera. Middle is closer to low than standing, slight head/foot position variation remains; AI visual review only.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/curtsy-lunge/frame-1.svg",
+          "sha256": "cd21ac5bf6b28ad4195e7cf91c5d72ecaf571486b4ac19946e371df1bf175105"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/curtsy-lunge/frame-2.svg",
+          "sha256": "46ad3c24aa9dbcc82ae2778650a91f6dae6dbbe76c2b77ac154b4a60d9eaf6ad"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/curtsy-lunge/frame-3.svg",
+          "sha256": "49277edad9a6d931b4606708f5442d2d593f48755e3f40a2735c1369870e29ea"
+        }
+      ],
+      "playback": {
+        "path": "previews/curtsy-lunge-playback.gif",
+        "sha256": "3bbfcc4876cfcf1639670fc414135946412997d350ec6195d19676a34197200f"
+      }
+    },
+    {
+      "exerciseId": "cycling",
+      "review": "AI visual review only",
+      "note": "Focused middle edit now preserves bike scene/handle contact. Three leg/pedal placements distinguish a partial pedal stroke, not a full rotation; endpoints are close in angle. Small contours and rear-leg overlap vary, but no major machine/camera jump remains in fresh SVG comparison. AI visual review only.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/cycling/frame-1.svg",
+          "sha256": "54ca6fafd7f563e4c9231f34d97daca35bb768da1652980c9135078e3c8a5b11"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/cycling/frame-2.svg",
+          "sha256": "68afc2ca648ac62b170b5353b81cc9de68379b57c38dc2fa57f9f05227006c73"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/cycling/frame-3.svg",
+          "sha256": "40a9f32692f1e3ca3eec21ba5515516ec2fe40debe2ed1f5d4add6308428a02c"
+        }
+      ],
+      "playback": {
+        "path": "previews/cycling-playback.gif",
+        "sha256": "c100c006512965434b9e7cfb8f338f75d3b0ab35b1ac785661ca0237287c0dca"
+      }
+    },
+    {
+      "exerciseId": "dead-bug",
+      "review": "AI visual review only",
+      "note": "Three complete native poses now share head torso pelvis scale and facing. Extended opposite limbs return through a distinct middle phase to tabletop. SVGs match PNGs with transparent negative spaces. Minor uneven spacing: middle foot is slightly lower before returning to tabletop. AI visual review only; not movement-expert-approved.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/dead-bug/frame-1.svg",
+          "sha256": "de714dda2db45ef7ad31ce2ce7863beb07f4dcf27bd66afb14ffacbb55a7e0aa"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/dead-bug/frame-2.svg",
+          "sha256": "40015f4b0daac3605830bee4cc5323182b8e8e9e78a24beb63896bd5e7d4d56a"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/dead-bug/frame-3.svg",
+          "sha256": "737548b39fe7f9947c93bbc6beb05f7be2632699d2632245482965701952abd7"
+        }
+      ],
+      "playback": {
+        "path": "previews/dead-bug-playback.gif",
+        "sha256": "7979f0b1600c48c460cae2c3b713d763ce51eb0478cf7474176df500994c448f"
+      }
+    },
+    {
+      "exerciseId": "decline-bench-press",
+      "review": "AI visual review only",
+      "note": "Replaced rotated middle and high head/bench drift using low scene anchor, one target per native request. Fixed full scene and three bar heights; small top bar angle/plate contour variation and unequal phase spacing remain. AI visual review, not movement-expert approval.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/decline-bench-press/frame-1.svg",
+          "sha256": "9543fc39b73c28da93ae5dc746f06053c2afac7030afda1baa58cd5aecd879af"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/decline-bench-press/frame-2.svg",
+          "sha256": "26e9a41dc4e39bd4a82e4e6c54c5861b1af926ab159548524410b4f12daea0c1"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/decline-bench-press/frame-3.svg",
+          "sha256": "75257bad88d1826cb64c4f428715807e007d2a764ea3db86548402b5e369293e"
+        }
+      ],
+      "playback": {
+        "path": "previews/decline-bench-press-playback.gif",
+        "sha256": "6b47d664b30f501ae6578d80e74ff31d5eb61902dd94e05d09e1e7a5bb646768"
+      }
+    },
+    {
+      "exerciseId": "decline-dumbbell-press",
+      "review": "AI visual review only",
+      "note": "High/intermediate/low press clear with same bench, head, torso, planted feet. Intermediate weight outlines slightly larger than endpoints but no longer tiny. Minor plate/arm contours vary; PNG and SVG alpha reviewed, no expert form approval.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/decline-dumbbell-press/frame-1.svg",
+          "sha256": "ecd2df1d7092d0172618d6e05153e9f80b9bbaad582809bc4dc068479d828105"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/decline-dumbbell-press/frame-2.svg",
+          "sha256": "37668b1c1504e1aaae859a0f7bf0e081918511ac8ee6c4eb83b904295f337c38"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/decline-dumbbell-press/frame-3.svg",
+          "sha256": "5a928f1b0a0b1ab53596a26ade65d6bf655eda56c5b6929095e273bc63e56197"
+        }
+      ],
+      "playback": {
+        "path": "previews/decline-dumbbell-press-playback.gif",
+        "sha256": "254b7b6631e5f8ff1b7aeaa01c9fc3b8432bc9b13ee6ec5de491ca0724e98ebf"
+      }
+    },
+    {
+      "exerciseId": "decline-sit-up",
+      "review": "AI visual review only",
+      "note": "Fresh SVG and PNG review: fixed bench legs and anchored feet across high/middle/low torso angles, consistent clasped hands. Low phase is a partially curled torso rather than fully flat; small outline differences remain. AI visual review only, no expert form approval.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/decline-sit-up/frame-1.svg",
+          "sha256": "6450dcc1e60f1ac1bd08f9566f545a29b09a75914e610380e220df23cb981e1b"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/decline-sit-up/frame-2.svg",
+          "sha256": "800e846bb3945c9cf03cb98e9c86c0cdf34ef6b8dba6200e68c35fe367e4f225"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/decline-sit-up/frame-3.svg",
+          "sha256": "97efe619c4e6ebbb12444b4424d30d5edd339a2ab70ba82f8603def9affcb79b"
+        }
+      ],
+      "playback": {
+        "path": "previews/decline-sit-up-playback.gif",
+        "sha256": "ac8c30e58d31cf533d07296bde0626ce3de54b7fb3c3314bfe305f7fd21f207d"
+      }
+    },
+    {
+      "exerciseId": "deficit-reverse-lunge",
+      "review": "AI visual review only",
+      "note": "Fresh corrected SVG/PNG: low, middle and standing phases, same demonstrator scale and platform dimensions. Whole-scene translation aligns standing over original front-foot platform position. About6px residual platform height change accepted; complete hair retained and zero border alpha. AI visual only.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/deficit-reverse-lunge/frame-1.svg",
+          "sha256": "8b189ad2cedfbcc6d722ac802f114262caf44e4796f13089102c22343536b60c"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/deficit-reverse-lunge/frame-2.svg",
+          "sha256": "c4cbb90fd5bb45e8c8f566c84029b54a4d8e964cf9ef8e7ec9aa5924ee36264e"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/deficit-reverse-lunge/frame-3.svg",
+          "sha256": "247c0fecb1e18c535553b2d990ea67dc34f7c31410f937d643a528b0586c79d7"
+        }
+      ],
+      "playback": {
+        "path": "previews/deficit-reverse-lunge-playback.gif",
+        "sha256": "02c5eb7f2eb9f1d8fe608cc40a85404837c9d533250e726015a3e5bcdfa68377"
+      }
+    },
+    {
+      "exerciseId": "diamond-push-up",
+      "review": "AI visual review only",
+      "note": "Three distinct bottom/middle/top plank phases in same camera with aligned diamond hands and toes; source duplicated low phase and contact drift corrected. PNG/SVG triptychs inspected, trace preserves all limbs and gaps. 1-2-3-2 playback generated; AI visual review only.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/diamond-push-up/frame-1.svg",
+          "sha256": "eb02228158eea416286247cdae86c8b6474b2739706bd0e524df751d8129b7ae"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/diamond-push-up/frame-2.svg",
+          "sha256": "cfbda3c512037f9a3d94570fd24cb0206c21288239d414210e4a03680536e7ea"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/diamond-push-up/frame-3.svg",
+          "sha256": "c171185c4e7fdc299e94b04faf3b88640d9be19cca3ed55a7a970c8a65534fab"
+        }
+      ],
+      "playback": {
+        "path": "previews/diamond-push-up-playback.gif",
+        "sha256": "59299e7d9d8f6f8590f1ea00664efc3ed32a6c3441f6c59116c4e9183c454cc9"
+      }
+    },
+    {
+      "exerciseId": "donkey-kick",
+      "review": "AI visual review only",
+      "note": "High bent-leg kick, distinct halfway lowered thigh, and knees-down phase share facing and aligned palm contact plane. PNG/SVG triptychs inspected after uniform scene translations, no cropping/warping. Slight head-pitch and supporting-foot contour variation remain; source phase duplication and large camera change repaired. AI visual review only, GIF generated.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/donkey-kick/frame-1.svg",
+          "sha256": "d853858410668ef508014663e7a75a366f421e1ffa41f38f68a64a90f8b0d26b"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/donkey-kick/frame-2.svg",
+          "sha256": "eaa4ff4ed005cdf9cff45467e21a0272c16ae63830324602007e0f81467861c3"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/donkey-kick/frame-3.svg",
+          "sha256": "b21d01df71eb79f5d19ec9c5118b8f09d6d12f85fa1d1165816437770d16bbd3"
+        }
+      ],
+      "playback": {
+        "path": "previews/donkey-kick-playback.gif",
+        "sha256": "a6c44a56f5d0e6221db5c42e70c9602ac4e16483085407d144b3912f6c3a4eeb"
+      }
+    },
+    {
+      "exerciseId": "doorway-chest-stretch",
+      "review": "AI visual review only",
+      "note": "Full lean/middle lean/upright three-phase sequence preserves doorway dimensions/perspective, hand heights and exact staggered feet. Source cross-step/viewpoint changes corrected. PNG/SVG triptychs inspected; small head-height/torso contour variation documented. 1-2-3-2 GIF generated. AI visual review only.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/doorway-chest-stretch/frame-1.svg",
+          "sha256": "e26056ad1257fe9d744bba790fe24c76bfab0c74ed30d0d27069f15786864e64"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/doorway-chest-stretch/frame-2.svg",
+          "sha256": "fdfa49613084198455bee63792454abf45667b8f0958f053da8b9f4ee80557ca"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/doorway-chest-stretch/frame-3.svg",
+          "sha256": "050bd31b45df564b79184701131f71af19ed3535c6c5b003597d934e5443c655"
+        }
+      ],
+      "playback": {
+        "path": "previews/doorway-chest-stretch-playback.gif",
+        "sha256": "cf28f8bce648a667300b3f4147652f9469b4f122cc52a94253ce839717945fa9"
+      }
+    },
+    {
+      "exerciseId": "doorway-row",
+      "review": "AI visual review only",
+      "note": "Fresh SVG/PNG: fixed doorway, bar, handgrips and heels after new2/3; distinct bent/intermediate/straight elbow and body angles. Final torso/head outlines appear slightly narrower/foreshortened than raised phase, retained as visual limitation. No qualified movement review.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/doorway-row/frame-1.svg",
+          "sha256": "1c99214c1166c72ecf0add821db0bcdf2bc03904962e2272ca53601d48a76ce5"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/doorway-row/frame-2.svg",
+          "sha256": "3f03d54a5c8849e71ab782f9efe5b721751f33c223df95ac4f5b44ad248aa537"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/doorway-row/frame-3.svg",
+          "sha256": "97953ab2d2498f8e393380ee238915a6fafcecb69452d4982e56e19eeb9f57b2"
+        }
+      ],
+      "playback": {
+        "path": "previews/doorway-row-playback.gif",
+        "sha256": "6644179be3f3ae431299b9de0934f9fd246f353e66cdab7bb84f28e95270bbf5"
+      }
+    },
+    {
+      "exerciseId": "dragon-flag",
+      "review": "AI visual review only",
+      "note": "One bench and upright support, fixed handgrips/head/shoulder contact across horizontal/diagonal/high phases. Common canvas preserves scale and leaves rotation space; targeted high-pose edit corrected exaggerated body length. Modest high-phase torso roll/proportion variation remains. SVGs match the normalized PNGs. AI visual review only, not qualified form approval.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/dragon-flag/frame-1.svg",
+          "sha256": "6f12447dfb23790ae996e0f15a9baf10c5cefa64e6db2dc53072ad071ccc2806"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/dragon-flag/frame-2.svg",
+          "sha256": "3e17fafe1ae1037a550cd9bdf3fd7dc7678fd4566d9d8ef37ed347e2e54ce4d0"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/dragon-flag/frame-3.svg",
+          "sha256": "74ee8c9a381513c6e12368de870e72b0fcd4edc567fb261c5255e7b8ae80c89d"
+        }
+      ],
+      "playback": {
+        "path": "previews/dragon-flag-playback.gif",
+        "sha256": "9d3a3c506c585693f537509fe95013948d8c513846fbd92cbb1a31b158bab372"
+      }
+    },
+    {
+      "exerciseId": "dumbbell-bench-press",
+      "review": "AI visual review only",
+      "note": "Replaced duplicated middle and mismatched high endpoint from one fixed low scene. Whole-scene translation aligns bench/head/feet; both dumbbells retain scale while arms press upward/inward through three phases. Minor arm/plate contour variation; no qualified form review.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/dumbbell-bench-press/frame-1.svg",
+          "sha256": "bedf5084267ac49429f6c964ce123af82e3deb0c3ab780a55f211eab8b668187"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/dumbbell-bench-press/frame-2.svg",
+          "sha256": "1e0e29c8c78c122ff1ff91b6a11aacf79f7444abdf4e7ab4cfaff0fd81e6abc5"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/dumbbell-bench-press/frame-3.svg",
+          "sha256": "e8b4cb179b1a455c96137e7e4190d43e7f5e8d429dee4f3348468c7995395717"
+        }
+      ],
+      "playback": {
+        "path": "previews/dumbbell-bench-press-playback.gif",
+        "sha256": "95760d46485da8c445cab85409eea3fc47a3652ab495b4c2eb83048ae3ff22f6"
+      }
+    },
+    {
+      "exerciseId": "dumbbell-bent-over-row",
+      "review": "AI visual review only",
+      "note": "PNG and SVG triptychs inspected: contracted/middle/extended arm chain, stable head, hinge, hips and feet. Fixed dumbbell type and scale; minor contour variation. Source duplicated middle and body drift repaired. Playback GIF generated, AI visual review only.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/dumbbell-bent-over-row/frame-1.svg",
+          "sha256": "01332f59b46b9c6326dd1dac86043bf5f36a0b3d108e913bae86f937c14e21a0"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/dumbbell-bent-over-row/frame-2.svg",
+          "sha256": "46c4604c71f83b2ee4d2123d101b76d1a82e3e2d3ebc084beed537978d2d720e"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/dumbbell-bent-over-row/frame-3.svg",
+          "sha256": "69f25e70dc412261bb7f70d45d5c500d13584ede5462ae66093ef16b7d0f97ca"
+        }
+      ],
+      "playback": {
+        "path": "previews/dumbbell-bent-over-row-playback.gif",
+        "sha256": "67dab52dc4e48ff30b62dc7fd24f7ba5e20aecf2ffa536ba98279ee4464d899d"
+      }
+    },
+    {
+      "exerciseId": "dumbbell-fly",
+      "review": "AI visual review only",
+      "note": "Valid top pose retained, halfway and full-open poses generated with fixed-scene arm edits. Uniform registration compensates full-open native reframing and preserves complete dumbbells. Three phases are distinct with coherent bench/feet and mild elbow flexion. Small head/upper-torso contour variation remains in open pose. Blocked top-generation attempt is archived and not used. AI visual review only.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/dumbbell-fly/frame-1.svg",
+          "sha256": "43ae1f3719f2ed5294b50885056f803450571cd8356439dfdf5ec18c3f61f303"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/dumbbell-fly/frame-2.svg",
+          "sha256": "9bf05be31599f9ab054e288e000dfcaece0eb31835b3fe3b920628e27c7d76aa"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/dumbbell-fly/frame-3.svg",
+          "sha256": "8ab94722f627f6f810704b3263104946b7b8bac7363781aa7bb5d31868de18b9"
+        }
+      ],
+      "playback": {
+        "path": "previews/dumbbell-fly-playback.gif",
+        "sha256": "877509036abc56d07439503f0acddc06c76b541bd43969c7ab756c9d9f985e28"
+      }
+    },
+    {
+      "exerciseId": "dumbbell-hip-thrust",
+      "review": "AI visual review only",
+      "note": "Three distinct hip heights with broadly consistent bench/shoulder support and loaded pelvis. Small foot and head contour/position variation remains.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/dumbbell-hip-thrust/frame-1.svg",
+          "sha256": "dc6403a38dbdcb463c8fd04c96c90e30355aad46c6d06668232e42e8a554bb74"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/dumbbell-hip-thrust/frame-2.svg",
+          "sha256": "c33bb08e99ec5c53f1a1ffda39f84c9327e7a2df66b73fd1521f4646826bf4f6"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/dumbbell-hip-thrust/frame-3.svg",
+          "sha256": "63d4413055f3ef10d204b00d2e78b67922a5d14009b60ddc8e5fdaa18c505ebc"
+        }
+      ],
+      "playback": {
+        "path": "previews/dumbbell-hip-thrust-playback.gif",
+        "sha256": "b10d7c0cdb0ab495a22def38d09aac467c721a499290e0bd001ee6d34b92f4c6"
+      }
+    },
+    {
+      "exerciseId": "goblet-squat",
+      "review": "AI visual review only",
+      "note": "Retry now places middle pelvis and head visibly between deep and standing endpoints with fixed ankles and matching dumbbell. Minor torso/contour variation remains.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/goblet-squat/frame-1.svg",
+          "sha256": "1a6f8b2b8e65b54d5b12962bad25e8c6519105d121db7eeaff9efb8289b29058"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/goblet-squat/frame-2.svg",
+          "sha256": "df7070dd3d5d88140c9f57b1462c2ee9ef6c3ca54109ad3a98a440ef0bfcd5eb"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/goblet-squat/frame-3.svg",
+          "sha256": "04653b6c4b695eee9d31ee130fa39eebe62f2b3538476adb01c11292a0b7a797"
+        }
+      ],
+      "playback": {
+        "path": "previews/goblet-squat-playback.gif",
+        "sha256": "d3eea297f6e22bbc57847ea7ffd3e1072c5d089562b92457c9787898c4045517"
+      }
+    },
+    {
+      "exerciseId": "incline-bench-press",
+      "review": "AI visual review only",
+      "note": "Distinct extended, partial and lowered press phases. Uniform whole-scene translations register retained endpoints and new middle; bench, head and feet align. Small torso/contour variation and unequal phase spacing remain; AI visual review, not qualified movement approval.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/incline-bench-press/frame-1.svg",
+          "sha256": "56b3ef06f3a63be58aa114f604b169603db4839f0a84c8a8d282d2fe2b905e3b"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/incline-bench-press/frame-2.svg",
+          "sha256": "ff6281784da680a034c174ccecda6e0d082e9c558bbc5cd8cf68677b7a31aadf"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/incline-bench-press/frame-3.svg",
+          "sha256": "b4cf05166ea219675a15e895b7833ad17300dd2bcb9e3d766dd30f32ef4c3675"
+        }
+      ],
+      "playback": {
+        "path": "previews/incline-bench-press-playback.gif",
+        "sha256": "88111ea23dbf78ab6f86365225859a208b02927aaa2c3c5e3b3abdef2be1cb36"
+      }
+    },
+    {
+      "exerciseId": "incline-cable-fly",
+      "review": "AI visual review only",
+      "note": "Restored pinned closed-first/open-last ordering; rebuilt one fixed scene with anchored cable directions and three distinct arm positions. Bench, head and feet remain aligned. Midpoint elbow projection/handle outlines vary and right cable endpoint differs slightly; AI visual review only, not qualified movement approval.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/incline-cable-fly/frame-1.svg",
+          "sha256": "fca9539a9bc0e47684b94291d8d5d304155f25e06aced493964091f0f3195bd9"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/incline-cable-fly/frame-2.svg",
+          "sha256": "a9cefe315b7e2cd0c3fc6de60c093a35ebc698fddc88345aa3268c9b25f4b871"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/incline-cable-fly/frame-3.svg",
+          "sha256": "1867bd7beb682e6f65d114e5654b51383e9caf6f81513ef2e53cf2f01c916d92"
+        }
+      ],
+      "playback": {
+        "path": "previews/incline-cable-fly-playback.gif",
+        "sha256": "cf7c8ff0def1a1907a91a619a0afaa7ed94ccf1bea8f570f5b0954b250dd396f"
+      }
+    },
+    {
+      "exerciseId": "incline-dumbbell-press",
+      "review": "AI visual review only",
+      "note": "Top/half/lowered phases distinct on one fixed bench, feet and lower body registered. Focused native edit reduced middle head drift; slight upper-torso/head outline variation remains. PNG and SVG visually checked; AI review only.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/incline-dumbbell-press/frame-1.svg",
+          "sha256": "3125828daeb76a3003726c945a9a329101b35989f37dab2ff74a67971714b8a9"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/incline-dumbbell-press/frame-2.svg",
+          "sha256": "5ec12731f9a12ee5d519765c28948a4e439de89e525d4a400bcdfcecbb49564a"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/incline-dumbbell-press/frame-3.svg",
+          "sha256": "296258dad28a6da7913b7093df98a13c66c74bec308b0ff36ed9b9ed773047de"
+        }
+      ],
+      "playback": {
+        "path": "previews/incline-dumbbell-press-playback.gif",
+        "sha256": "8f3cd36731fa4c6ae12d61b0a45a0743f84d9a73aa7ffd289aeb92d89b3d2349"
+      }
+    },
+    {
+      "exerciseId": "incline-push-up",
+      "review": "AI visual review only",
+      "note": "Distinct top/middle/bottom elbow phases; apparatus broadly stable. Minor foot/contact and box-outline variation remains. Fresh 512 SVG-wrapper render inspected; same accepted artwork with updated file hashes.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/incline-push-up/frame-1.svg",
+          "sha256": "d2f97f8bb4fe5dd9fa46faff8d322d4cee88d4e5e9416620acb2de59c4c070f0"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/incline-push-up/frame-2.svg",
+          "sha256": "ac98bd205a6326bc35993783022131e7bad0f36d5ad1891df7cd5fd9cc322629"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/incline-push-up/frame-3.svg",
+          "sha256": "98a7340c01664938d155303008a15fbe649ab456c1f8b297a5f681e0dc7af30e"
+        }
+      ],
+      "playback": {
+        "path": "previews/incline-push-up-playback.gif",
+        "sha256": "5a25f794fff5232c9e879ef59b484685a3725a58fbaa8b2b269ed34e826bfb16"
+      }
+    },
+    {
+      "exerciseId": "romanian-deadlift",
+      "review": "AI visual review only",
+      "note": "Standing/middle/deep hinge now distinct, bar dimensions broadly stable and stance consistent. Minor contact/contour variation.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/romanian-deadlift/frame-1.svg",
+          "sha256": "59cda03d4caf372f52016b6230487a0017d52fb20e9458a8789743bd405c0307"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/romanian-deadlift/frame-2.svg",
+          "sha256": "db8e2865c039c86829f5bbca863d28527c8c853a59ecc0bcbf7dcef87258ce1b"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/romanian-deadlift/frame-3.svg",
+          "sha256": "558a5c6df6d1c7829ff62a72dd57b7ef4840449ff347b13bcb234bf81558188f"
+        }
+      ],
+      "playback": {
+        "path": "previews/romanian-deadlift-playback.gif",
+        "sha256": "262c3a25e3349b0898bf217c0ae83e96a447ae6bd3fc5005e7a59b82be36e32c"
+      }
+    },
+    {
+      "exerciseId": "toe-touch",
+      "review": "AI visual review only",
+      "note": "Resolved dominant scale jump deterministically by matching leg lengths and floor to upright3, shrinking overlarge1/2 without crop/stretch/local warping. Frames freshly traced from actual native masters, replacing stale worker-derived pairing. Folded hands reach floor near toes; middle remains a deep hinge. Minor foot/head angles differ. AI visual review only.",
+      "frames": [
+        {
+          "frameNumber": 1,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/toe-touch/frame-1.svg",
+          "sha256": "1256c1cafd54159831fbf5a924cbb21015dbb75b7c685b5634503bb5822c5c0d"
+        },
+        {
+          "frameNumber": 2,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/toe-touch/frame-2.svg",
+          "sha256": "44137e499b6ae627bdc21ad700a285db95393c0731994788865c612e009bbbc2"
+        },
+        {
+          "frameNumber": 3,
+          "appPath": "app/src/main/assets/exercise-illustrations/male/toe-touch/frame-3.svg",
+          "sha256": "6d82f071993a13a46c2bf8a42050c11cb294fdde5c7316a22cdae49db7901bca"
+        }
+      ],
+      "playback": {
+        "path": "previews/toe-touch-playback.gif",
+        "sha256": "c9d72b43af4b959b3d48d5e47ba426399084f4217ead183357ec4865a80d50fa"
+      }
+    }
+  ]
+}

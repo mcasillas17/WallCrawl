@@ -25,7 +25,7 @@ def collect():
         "license": "CC BY-SA 4.0",
         "changes": "Native Codex Imagegen reference edits; female and male demonstrators, documented anatomy/equipment/continuity corrections, white alpha-normalized linework traced using Sharp/Potrace/SVGO. Original assets remain unchanged.",
         "qualifiedMovementReview": False,
-        "playbackPolicy": "Play all three selected frames, including unresolved continuity drafts, per user instruction. Corrections are deferred to the next artwork iteration.",
+        "playbackPolicy": "Play all three selected frames per user instruction. Sequence review status and remaining visual limitations are recorded per exercise.",
         "frames": [],
     }
     male_review = json.loads((PILOT / "male-catalog/previews/sequence-playback-manifest.json").read_text())
@@ -84,7 +84,7 @@ def collect():
         "and traced using Sharp, Potrace and SVGO. Pinned originals were preserved. Selected SVGs are copied byte-for-byte; "
         "masters and full generation records are retained in the local production workspace at art/pilots/female-exercises, "
         "outside the integration commit and app distribution.\n\n"
-        "The three-frame sequences are current artwork drafts. Some animation continuity issues remain for a later iteration. "
+        "The three-frame sequences have the review status recorded in provenance.json. AI-reviewed sequences may retain minor contour, alignment or phase-spacing variations. "
         "AI visual review is not qualified movement-expert approval.\n"
     ).encode()
     return files
