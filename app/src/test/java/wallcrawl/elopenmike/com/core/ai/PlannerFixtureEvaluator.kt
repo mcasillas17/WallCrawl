@@ -1,21 +1,18 @@
 package wallcrawl.elopenmike.com.core.ai
 
+import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityFailure
 import wallcrawl.elopenmike.com.core.model.EligibilityDecision
 import wallcrawl.elopenmike.com.core.model.CapabilityEvidenceSet
-import wallcrawl.elopenmike.com.core.model.ExercisePrescription
 import wallcrawl.elopenmike.com.core.model.ExercisePerformanceHistory
 import wallcrawl.elopenmike.com.core.model.ExerciseProgrammingMetadata
-import wallcrawl.elopenmike.com.core.model.ExerciseSource
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
-import wallcrawl.elopenmike.com.core.model.MovementCapabilities
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
 import wallcrawl.elopenmike.com.core.model.SessionProgramConstraints
-import wallcrawl.elopenmike.com.core.model.RepRange
 import wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata
 import wallcrawl.elopenmike.com.core.model.TrainingProgramState
 import wallcrawl.elopenmike.com.core.model.UserProfile
@@ -24,7 +21,31 @@ import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
-import wallcrawl.elopenmike.com.core.model.WorkoutSet
+
+/**
+ * The one parsed fixture corpus and bundled catalog projection for the planner-fixture
+ * suites and `TimedHoldProgrammingTest`.
+ *
+ * It is deliberately not run-wide: nine other JVM suites build their own
+ * `PlannerFixtureContextFactory` and parse the bundled catalog again. Routing those through
+ * here would be a change to code outside this corpus's surface, so the scope is stated
+ * rather than quietly widened.
+ *
+ * JUnit builds a fresh instance per test method and neither `PlannerFixtureLoader` nor
+ * `PlannerFixtureContextFactory` caches across instances, so without this each suite — and
+ * before that each method — re-read the twelve fixture resources and reparsed the 302-entry
+ * bundled catalog. Everything held here is immutable parsed data.
+ *
+ * Only construction is shared. Every replay still goes through
+ * [PlannerFixtureEvaluator.evaluateFixture], which builds a fresh [FakeWorkoutPlanner] and
+ * therefore a fresh generation counter per attempt, so determinism is unaffected.
+ */
+internal object SharedPlannerFixtureHarness {
+    val loader = PlannerFixtureLoader()
+    val contextFactory = PlannerFixtureContextFactory()
+    val evaluator = PlannerFixtureEvaluator(contextFactory = contextFactory)
+    val corpus: List<PlannerFixture> by lazy { loader.loadCorpus() }
+}
 
 internal sealed interface PlannerFixtureEvaluation {
     val built: PlannerFixtureContext
@@ -39,8 +60,31 @@ internal data class PlannerFixtureSuccessEvaluation(
     override val inputAfterFirstAttempt: PlannerFixtureInputSnapshot,
     override val inputAfterSecondAttempt: PlannerFixtureInputSnapshot,
     val firstWorkout: GeneratedWorkout,
-    val secondWorkout: GeneratedWorkout
+    val secondWorkout: GeneratedWorkout,
+    /**
+     * Validation of [firstWorkout] only.
+     *
+     * The second replay is deliberately not validated: `ProgramValidator` is pure, both
+     * replays are checked against the same context instance, and the two workouts are
+     * already asserted identical in every field but the UUID id. A second verdict would be
+     * a pure function of inputs proven equal, so it could not fail.
+     */
+    val firstValidation: PlannerFixtureValidation
 ) : PlannerFixtureEvaluation
+
+/**
+ * What whole-program validation concluded about one replayed proposal.
+ *
+ * Both passes are kept because they answer different questions. [raw] is what the planner
+ * itself produced, judged with repair disabled — the only evidence that generation was
+ * correct. [displayed] is what `TodayViewModel` would actually be allowed to show, where
+ * exactly one bounded repair pass is permitted. Collapsing them would let a repaired
+ * proposal stand in for a valid one.
+ */
+internal data class PlannerFixtureValidation(
+    val raw: ProgramValidationResult,
+    val displayed: ProgramValidationResult
+)
 
 internal data class PlannerFixtureFailureEvaluation(
     override val built: PlannerFixtureContext,
@@ -79,27 +123,36 @@ internal data class PlannerFixtureInputSnapshot(
      */
     val capabilityEvidence: CapabilityEvidenceSet,
     /**
-     * Deeply immutable, so the snapshot holds the instance directly. Its maps are read-only
-     * and its nested ledger is a value type, so there is no mutable branch to copy.
+     * Deep-copied like every other mutable branch.
+     *
+     * `WeeklyDoseLedger` declares its three count maps as `Map` and stores the caller's
+     * references without a defensive copy, and `WeeklyDoseLedgerCalculator` supplies a
+     * `TreeMap` and a `LinkedHashMap`. Holding the state by reference would make the
+     * non-mutation assertion trivially true for the one input this corpus exists to
+     * reconstruct.
      */
     val trainingProgramState: TrainingProgramState?,
     val priorUserRestPreferences: Map<String, UserRestPreference>,
     val preferredUnits: WeightUnit,
     val catalogVersion: String?,
     val reviewPolicyVersion: Int,
-    /** A value type holding only booleans and an enum set, so the instance is held directly. */
+    /**
+     * Copied, with its one collection re-materialised.
+     *
+     * `requiredMovementPatterns` is declared `Set<MovementPattern>` and can hold a caller's
+     * mutable set; the two booleans beside it need nothing.
+     */
     val programConstraints: SessionProgramConstraints
 )
 
+/**
+ * [contextFactory] is required rather than defaulted on purpose. A default would construct a
+ * second factory and silently reparse the 302-entry bundled catalog — the exact trap round 11
+ * found in a suite that built one factory in a field and another inside this constructor.
+ */
 internal class PlannerFixtureEvaluator(
-    private val loader: PlannerFixtureLoader = PlannerFixtureLoader(),
-    private val contextFactory: PlannerFixtureContextFactory = PlannerFixtureContextFactory()
+    private val contextFactory: PlannerFixtureContextFactory
 ) {
-
-    suspend fun evaluateCorpus(): List<PlannerFixtureEvaluation> =
-        loader.loadCorpus().map { fixture ->
-            evaluateFixture(fixture)
-        }
 
     suspend fun evaluateFixture(fixture: PlannerFixture): PlannerFixtureEvaluation {
         val built = contextFactory.create(fixture)
@@ -117,7 +170,8 @@ internal class PlannerFixtureEvaluator(
                     inputAfterFirstAttempt = inputAfterFirst,
                     inputAfterSecondAttempt = inputAfterSecond,
                     firstWorkout = firstWorkout,
-                    secondWorkout = secondWorkout
+                    secondWorkout = secondWorkout,
+                    firstValidation = validateWholeProgram(firstWorkout, built)
                 )
             }
 
@@ -165,6 +219,35 @@ internal class PlannerFixtureEvaluator(
         }
     }
 
+    /**
+     * Runs the production [ProgramValidator] over a replayed proposal, both ways.
+     *
+     * The validator is built from the same bundled projection the context was built from,
+     * including any synthetic approvals, so the corpus never validates against a catalog
+     * the planner did not see. Nothing here writes to a ledger: validation accounts a
+     * proposal prospectively and a proposed workout is never completed exposure.
+     */
+    private suspend fun validateWholeProgram(
+        workout: GeneratedWorkout,
+        built: PlannerFixtureContext
+    ): PlannerFixtureValidation {
+        val validator = ProgramValidator(
+            GeneratedWorkoutValidator(InMemoryExerciseCatalog(built.catalogExercises))
+        )
+        return PlannerFixtureValidation(
+            raw = validator.validate(
+                workout = workout,
+                context = built.context,
+                allowRepair = false
+            ),
+            displayed = validator.validate(
+                workout = workout,
+                context = built.context,
+                allowRepair = true
+            )
+        )
+    }
+
     private suspend fun captureFailure(context: WorkoutGenerationContext): CapturedPlannerFailure =
         try {
             FakeWorkoutPlanner().generateWorkout(context)
@@ -210,7 +293,7 @@ private fun WorkoutGenerationContext.snapshot(): PlannerFixtureInputSnapshot =
         allowedExercises = allowedExercises.map(Exercise::deepCopy),
         automaticEligibilityResult = automaticEligibilityResult?.deepCopy(),
         capabilityEvidence = capabilityEvidence,
-        trainingProgramState = trainingProgramState,
+        trainingProgramState = trainingProgramState?.deepCopy(),
         priorUserRestPreferences = LinkedHashMap(priorUserRestPreferences),
         preferredUnits = preferredUnits,
         catalogVersion = catalogVersion,
@@ -220,18 +303,30 @@ private fun WorkoutGenerationContext.snapshot(): PlannerFixtureInputSnapshot =
         )
     )
 
+private fun TrainingProgramState.deepCopy(): TrainingProgramState = copy(
+    weeklyLedger = weeklyLedger.copy(
+        directPrimarySets = LinkedHashMap(weeklyLedger.directPrimarySets),
+        secondaryInvolvement = LinkedHashMap(weeklyLedger.secondaryInvolvement),
+        unattributedWorkSets = LinkedHashMap(weeklyLedger.unattributedWorkSets)
+    )
+)
+
 private fun UserProfile.deepCopy(): UserProfile = copy(
     goals = goals.toSet(),
     availableEquipment = availableEquipment.toList(),
     musclePriorities = LinkedHashMap(musclePriorities),
     excludedExerciseIds = excludedExerciseIds.toList(),
     trainingConstraints = trainingConstraints.toSet(),
-    confirmedStartingLoads = LinkedHashMap(confirmedStartingLoads),
-    movementCapabilities = MovementCapabilities.from(movementCapabilities.values)
+    confirmedStartingLoads = LinkedHashMap(confirmedStartingLoads)
+    // `movementCapabilities` is carried across as-is: `MovementCapabilities` has a private
+    // constructor and its only factory wraps a freshly built map in `unmodifiableMap`, so
+    // every reachable instance is deeply immutable — the same reason `capabilityEvidence` is
+    // held directly in the snapshot itself.
 )
 
 private fun ExercisePerformanceHistory.deepCopy(): ExercisePerformanceHistory = copy(
-    recentSets = recentSets.map(WorkoutSet::copy)
+    // `WorkoutSet` is scalars and enums throughout, so only the list needs re-materialising.
+    recentSets = recentSets.toList()
 )
 
 private fun WorkoutSession.deepCopy(): WorkoutSession = copy(
@@ -240,16 +335,14 @@ private fun WorkoutSession.deepCopy(): WorkoutSession = copy(
 )
 
 private fun WorkoutExercise.deepCopy(): WorkoutExercise = copy(
-    prescription = prescription.deepCopy(),
-    sets = sets.map(WorkoutSet::copy)
-)
-
-private fun ExercisePrescription.deepCopy(): ExercisePrescription = copy(
-    repRange = repRange?.let { RepRange(it.min, it.max) }
+    // `ExercisePrescription` and `WorkoutSet` hold nothing mutable, so the prescription is
+    // carried across as-is and only the set list is re-materialised.
+    sets = sets.toList()
 )
 
 private fun Exercise.deepCopy(): Exercise = copy(
-    source = source?.deepCopy(),
+    // `source` is a tree of `String`s with no collection anywhere in it, so it is carried
+    // across as-is, like `capabilityEvidence` in the snapshot itself.
     searchAliases = searchAliases.toList(),
     primaryMuscles = primaryMuscles.toList(),
     secondaryMuscles = secondaryMuscles.toList(),
@@ -276,17 +369,14 @@ private fun EligibilityDecision.deepCopy(): EligibilityDecision = copy(
 
 private fun ReviewedExerciseMetadata.deepCopy(): ReviewedExerciseMetadata = copy(
     descriptiveSecondaryMuscles = descriptiveSecondaryMuscles.toSet(),
-    approvedRegressions = approvedRegressions.map { it.copy() },
-    approvedSubstitutions = approvedSubstitutions.map { it.copy() },
+    // `ReviewedExerciseLink` is two strings, so only the lists need re-materialising.
+    approvedRegressions = approvedRegressions.toList(),
+    approvedSubstitutions = approvedSubstitutions.toList(),
     capabilityRequirements = capabilityRequirements.toSet(),
-    equipmentAlternatives = equipmentAlternatives.map(List<String>::toList),
-    provenance = provenance.copy()
+    equipmentAlternatives = equipmentAlternatives.map(List<String>::toList)
 )
-
-private fun ExerciseSource.deepCopy(): ExerciseSource = copy(attribution = attribution.copy(source = attribution.source?.copy()))
 
 private fun ExerciseProgrammingMetadata.deepCopy(): ExerciseProgrammingMetadata = copy(
     requiredEquipmentCombinations = requiredEquipmentCombinations.map(List<String>::toList),
-    recommendedRepRange = recommendedRepRange?.let { RepRange(it.min, it.max) },
     alternativeExerciseIds = alternativeExerciseIds.toList()
 )

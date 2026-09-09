@@ -664,3 +664,11 @@ internal fun ProgramValidationResult.codes(): List<ProgramViolationCode> = when 
  */
 internal val ProgramValidationResult.acceptedSnapshot: RecommendationSnapshot
     get() = (this as ProgramValidationResult.Valid).snapshot
+
+/**
+ * The plan an accepted result would actually show, which is the input only if nothing was
+ * repaired. Asking a rejection for one is a test bug, so the cast fails loudly.
+ */
+internal val ProgramValidationResult.acceptedWorkout:
+    wallcrawl.elopenmike.com.core.model.GeneratedWorkout
+    get() = (this as ProgramValidationResult.Valid).workout

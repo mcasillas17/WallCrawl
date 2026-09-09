@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "id": "concurrent-activity",
+  "policyVersion": 4,
+  "catalogVersion": "ba0b709cb20430361b2cb33aaadd20998164a916",
+  "profile": {
+    "goals": [
+      "BUILD_MUSCLE",
+      "GENERAL_FITNESS"
+    ],
+    "experienceLevel": "INTERMEDIATE",
+    "preferredDurationMinutes": 45,
+    "daysPerWeek": 4,
+    "availableEquipment": [
+      "Bodyweight",
+      "Dumbbell",
+      "Bench",
+      "Cardio"
+    ],
+    "preferredUnit": "LBS",
+    "musclePriorities": {
+      "Chest": "HIGH"
+    },
+    "excludedExerciseIds": [],
+    "trainingConstraints": [],
+    "returningAfterBreakWeeks": 0,
+    "confirmedStartingLoads": {
+      "dumbbell-bench-press": 40.0
+    },
+    "movementCapabilities": {
+      "CONTINUOUS_ACTIVITY": "COMFORTABLE"
+    }
+  },
+  "completedWorkoutCount": 4,
+  "exerciseHistory": [],
+  "reviewedEligibility": {
+    "adaptationState": "BUILD",
+    "syntheticApprovedExerciseIds": [
+      "dumbbell-bench-press",
+      "incline-dumbbell-press",
+      "dumbbell-shoulder-press",
+      "dumbbell-skull-crusher",
+      "dumbbell-lateral-raise"
+    ]
+  },
+  "completedSessions": [
+    {
+      "id": "resistance-tuesday",
+      "completedDayOffset": 1,
+      "exercises": [
+        {
+          "exerciseId": "dumbbell-bench-press",
+          "sets": [
+            {"type": "WARMUP", "isCompleted": true},
+            {"type": "NORMAL", "isCompleted": true},
+            {"type": "NORMAL", "isCompleted": true},
+            {"type": "NORMAL", "isCompleted": true},
+            {"type": "NORMAL", "isCompleted": true},
+            {"type": "NORMAL", "isCompleted": true},
+            {"type": "NORMAL", "isCompleted": false}
+          ]
+        },
+        {
+          "exerciseId": "incline-dumbbell-press",
+          "sets": [
+            {"type": "NORMAL", "isCompleted": true},
+            {"type": "NORMAL", "isCompleted": true},
+            {"type": "NORMAL", "isCompleted": true},
+            {"type": "NORMAL", "isCompleted": true},
+            {"type": "NORMAL", "isCompleted": true}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "aerobic-thursday",
+      "completedDayOffset": 3,
+      "exercises": [
+        {
+          "exerciseId": "cycling",
+          "sets": [
+            {"type": "NORMAL", "isCompleted": true},
+            {"type": "NORMAL", "isCompleted": true}
+          ]
+        }
+      ]
+    }
+  ],
+  "expected": {
+    "outcome": "SUCCESS",
+    "requiredExerciseIds": [],
+    "forbiddenExerciseIds": [
+      "cycling"
+    ],
+    "expectedTargetWeights": {
+      "dumbbell-bench-press": 40.0
+    },
+    "wholeProgramOutcome": "REPAIRED",
+    "wholeProgramRepairReasonCodes": [
+      "WEEKLY_ALLOWANCE_EXCEEDED"
+    ]
+  }
+}

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "valid-basic",
-  "policyVersion": 3,
+  "policyVersion": 4,
   "catalogVersion": "test-catalog-2026-08-30",
   "profile": {
     "goals": ["BUILD_MUSCLE", "GENERAL_FITNESS"],

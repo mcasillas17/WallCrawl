@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "sparse-history",
-  "policyVersion": 3,
+  "policyVersion": 4,
   "catalogVersion": "ba0b709cb20430361b2cb33aaadd20998164a916",
   "profile": {
     "goals": [

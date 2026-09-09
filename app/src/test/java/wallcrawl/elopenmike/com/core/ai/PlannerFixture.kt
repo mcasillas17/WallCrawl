@@ -20,6 +20,7 @@ import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.MovementCapabilities
 import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
+import wallcrawl.elopenmike.com.core.model.SetType
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
@@ -36,7 +37,40 @@ internal data class PlannerFixture(
     val exerciseHistory: List<ExercisePerformanceHistory>,
     val allowedExerciseIds: List<String> = emptyList(),
     val reviewedEligibility: PlannerFixtureReviewedEligibility? = null,
+    /**
+     * Completed history for the fixture's own ISO week, in ledger terms.
+     *
+     * These are the sessions the harness replays through the production
+     * [WeeklyDoseLedgerCalculator]. They are deliberately separate from [exerciseHistory],
+     * which is the planner's per-exercise load view and credits nothing.
+     */
+    val completedSessions: List<PlannerFixtureCompletedSession> = emptyList(),
     val expected: PlannerFixtureExpected
+)
+
+/** One completed session inside the fixture's accounting week. */
+internal data class PlannerFixtureCompletedSession(
+    val id: String,
+    /** Days after the week's Monday, so a fixture never writes a raw timestamp. */
+    val completedDayOffset: Int,
+    val exercises: List<PlannerFixtureCompletedExercise>
+)
+
+/** One completed exercise instance and the sets that were logged against it. */
+internal data class PlannerFixtureCompletedExercise(
+    val exerciseId: String,
+    val sets: List<PlannerFixtureCompletedSet>
+)
+
+/**
+ * One logged set, reduced to the two fields `PRIMARY_ONLY_V1` actually reads.
+ *
+ * Both are required: a warm-up that had to be spelled out cannot be mistaken for a work
+ * set by a fixture author, and an unfinished set cannot be created by omission.
+ */
+internal data class PlannerFixtureCompletedSet(
+    val type: SetType,
+    val isCompleted: Boolean
 )
 
 internal data class PlannerFixtureReviewedEligibility(
@@ -67,7 +101,17 @@ internal data class PlannerFixtureExpected(
     val expectedTargetWeights: Map<String, Double> = emptyMap(),
     val titleIdentityContains: String? = null,
     val maxTargetSetsPerExercise: Int? = null,
-    val automaticEligibilityFailure: AutomaticEligibilityFailure? = null
+    val automaticEligibilityFailure: AutomaticEligibilityFailure? = null,
+    /**
+     * What whole-program validation is expected to conclude about the **raw** proposal.
+     *
+     * `VALID` means the planner's own output passed with repair disabled. `REPAIRED` means
+     * it did not, and exactly one permitted repair pass made it valid. Keeping the two
+     * apart is the point: a repaired proposal is never evidence that raw output was valid.
+     */
+    val wholeProgramOutcome: RecommendationOutcome = RecommendationOutcome.VALID,
+    /** The violation codes a `REPAIRED` proposal is expected to have been repaired from. */
+    val wholeProgramRepairReasonCodes: List<ProgramViolationCode> = emptyList()
 )
 
 internal enum class PlannerFixtureOutcome {
@@ -139,6 +183,39 @@ internal class PlannerFixtureLoader(
 
     private fun parseFixture(root: JSONObject): PlannerFixture {
         requireExactFields(root, "root", ROOT_FIELDS, OPTIONAL_ROOT_FIELDS)
+        val reviewedEligibility = if (root.has("reviewedEligibility")) {
+            parseReviewedEligibility(
+                requireObject(root, "reviewedEligibility", "root.reviewedEligibility")
+            )
+        } else {
+            null
+        }
+        val completedSessions = if (root.has("completedSessions")) {
+            parseCompletedSessions(
+                requireArray(root, "completedSessions", "root.completedSessions")
+            )
+        } else {
+            emptyList()
+        }
+        val expected = parseExpected(requireObject(root, "expected", "root.expected"))
+        // Production composes a weekly ledger only behind the reviewed gate, and aggregate
+        // dose accounting — the only repairable violation there is — runs on that same gate.
+        // A legacy fixture asking for either would describe a context the app never builds.
+        if (completedSessions.isNotEmpty() && reviewedEligibility == null) {
+            throw PlannerFixtureFormatException(
+                "root.completedSessions requires root.reviewedEligibility; the legacy path " +
+                    "composes no weekly ledger."
+            )
+        }
+        if (
+            expected.wholeProgramOutcome == RecommendationOutcome.REPAIRED &&
+            reviewedEligibility == null
+        ) {
+            throw PlannerFixtureFormatException(
+                "expected.wholeProgramOutcome REPAIRED requires root.reviewedEligibility; only " +
+                    "the reviewed path accounts aggregate weekly dose."
+            )
+        }
         return PlannerFixture(
             schemaVersion = requireExactInt(root, "schemaVersion", "root.schemaVersion", 1..1),
             id = requireSafeId(root, "id", "root.id"),
@@ -162,14 +239,9 @@ internal class PlannerFixtureLoader(
             } else {
                 emptyList()
             },
-            reviewedEligibility = if (root.has("reviewedEligibility")) {
-                parseReviewedEligibility(
-                    requireObject(root, "reviewedEligibility", "root.reviewedEligibility")
-                )
-            } else {
-                null
-            },
-            expected = parseExpected(requireObject(root, "expected", "root.expected"))
+            reviewedEligibility = reviewedEligibility,
+            completedSessions = completedSessions,
+            expected = expected
         )
     }
 
@@ -195,6 +267,70 @@ internal class PlannerFixtureLoader(
                 "root.reviewedEligibility.syntheticApprovedExerciseIds"
             )
         )
+    }
+
+    private fun parseCompletedSessions(
+        sessionsArray: JSONArray
+    ): List<PlannerFixtureCompletedSession> {
+        requireArrayBounds(sessionsArray, "root.completedSessions", MAX_COMPLETED_SESSIONS)
+        val seenSessionIds = linkedSetOf<String>()
+        return List(sessionsArray.length()) { index ->
+            val path = "root.completedSessions[$index]"
+            val session = requireArrayObject(sessionsArray, index, path)
+            requireExactFields(session, path, COMPLETED_SESSION_FIELDS)
+            val id = requireSafeId(session, "id", "$path.id")
+            if (!seenSessionIds.add(id)) {
+                throw PlannerFixtureFormatException("Duplicate value at $path.id.")
+            }
+            PlannerFixtureCompletedSession(
+                id = id,
+                completedDayOffset = requireExactInt(
+                    session,
+                    "completedDayOffset",
+                    "$path.completedDayOffset",
+                    0..6
+                ),
+                exercises = parseCompletedExercises(
+                    requireArray(session, "exercises", "$path.exercises"),
+                    "$path.exercises"
+                )
+            )
+        }
+    }
+
+    private fun parseCompletedExercises(
+        exercisesArray: JSONArray,
+        arrayPath: String
+    ): List<PlannerFixtureCompletedExercise> {
+        requireArrayBounds(exercisesArray, arrayPath, MAX_COLLECTION_SIZE)
+        return List(exercisesArray.length()) { index ->
+            val path = "$arrayPath[$index]"
+            val exercise = requireArrayObject(exercisesArray, index, path)
+            requireExactFields(exercise, path, COMPLETED_EXERCISE_FIELDS)
+            PlannerFixtureCompletedExercise(
+                exerciseId = requireSafeId(exercise, "exerciseId", "$path.exerciseId"),
+                sets = parseCompletedSets(
+                    requireArray(exercise, "sets", "$path.sets"),
+                    "$path.sets"
+                )
+            )
+        }
+    }
+
+    private fun parseCompletedSets(
+        setsArray: JSONArray,
+        arrayPath: String
+    ): List<PlannerFixtureCompletedSet> {
+        requireArrayBounds(setsArray, arrayPath, MAX_COLLECTION_SIZE)
+        return List(setsArray.length()) { index ->
+            val path = "$arrayPath[$index]"
+            val set = requireArrayObject(setsArray, index, path)
+            requireExactFields(set, path, COMPLETED_SET_FIELDS)
+            PlannerFixtureCompletedSet(
+                type = parseEnum<SetType>(set.get("type"), "$path.type"),
+                isCompleted = requireBoolean(set, "isCompleted", "$path.isCompleted")
+            )
+        }
     }
 
     private fun parseProfile(profile: JSONObject): PlannerFixtureProfile {
@@ -374,6 +510,44 @@ internal class PlannerFixtureLoader(
                 "expected.automaticEligibilityFailure is only supported for reviewed eligibility failures."
             )
         }
+        val wholeProgramOutcome = if (expected.has("wholeProgramOutcome")) {
+            parseEnum<RecommendationOutcome>(
+                expected.get("wholeProgramOutcome"),
+                "expected.wholeProgramOutcome"
+            )
+        } else {
+            RecommendationOutcome.VALID
+        }
+        val wholeProgramRepairReasonCodes = if (expected.has("wholeProgramRepairReasonCodes")) {
+            parseEnumSet<ProgramViolationCode>(
+                requireArray(
+                    expected,
+                    "wholeProgramRepairReasonCodes",
+                    "expected.wholeProgramRepairReasonCodes"
+                ),
+                "expected.wholeProgramRepairReasonCodes"
+            ).toList()
+        } else {
+            emptyList()
+        }
+        if (
+            wholeProgramOutcome == RecommendationOutcome.REPAIRED &&
+            wholeProgramRepairReasonCodes.isEmpty()
+        ) {
+            throw PlannerFixtureFormatException(
+                "expected.wholeProgramRepairReasonCodes is required when " +
+                    "expected.wholeProgramOutcome is REPAIRED."
+            )
+        }
+        if (
+            wholeProgramOutcome != RecommendationOutcome.REPAIRED &&
+            wholeProgramRepairReasonCodes.isNotEmpty()
+        ) {
+            throw PlannerFixtureFormatException(
+                "expected.wholeProgramRepairReasonCodes is only supported when " +
+                    "expected.wholeProgramOutcome is REPAIRED."
+            )
+        }
         if (outcome != PlannerFixtureOutcome.SUCCESS) {
             when {
                 requiredExerciseIds.isNotEmpty() ->
@@ -399,6 +573,14 @@ internal class PlannerFixtureLoader(
                 expected.has("maxTargetSetsPerExercise") ->
                     throw PlannerFixtureFormatException(
                         "expected.maxTargetSetsPerExercise is only supported when expected.outcome is SUCCESS."
+                    )
+                expected.has("wholeProgramOutcome") ->
+                    throw PlannerFixtureFormatException(
+                        "expected.wholeProgramOutcome is only supported when expected.outcome is SUCCESS."
+                    )
+                expected.has("wholeProgramRepairReasonCodes") ->
+                    throw PlannerFixtureFormatException(
+                        "expected.wholeProgramRepairReasonCodes is only supported when expected.outcome is SUCCESS."
                     )
             }
         }
@@ -443,7 +625,9 @@ internal class PlannerFixtureLoader(
             } else {
                 null
             },
-            automaticEligibilityFailure = automaticEligibilityFailure
+            automaticEligibilityFailure = automaticEligibilityFailure,
+            wholeProgramOutcome = wholeProgramOutcome,
+            wholeProgramRepairReasonCodes = wholeProgramRepairReasonCodes
         )
     }
 
@@ -832,6 +1016,16 @@ internal class PlannerFixtureLoader(
         private const val MAX_STRING_LENGTH = 256
         private const val MAX_COLLECTION_SIZE = 100
         private const val MAX_HISTORY_SIZE = 8
+
+        /**
+         * How many completed sessions one fixture may declare for its accounting week.
+         *
+         * Deliberately far below the ledger's own 1,000-session ceiling and matched to
+         * [MAX_HISTORY_SIZE]: a corpus persona describes a realistic week, and a fixture
+         * that needed hundreds of sessions would be testing the calculator's bounds, which
+         * `WeeklyDoseLedgerCalculatorTest` already owns.
+         */
+        private const val MAX_COMPLETED_SESSIONS = 8
         private const val MAX_ID_LENGTH = 80
         private const val MAX_WEIGHT = 10_000.0
         private const val MAX_REPS = 1_000
@@ -848,7 +1042,14 @@ internal class PlannerFixtureLoader(
             "exerciseHistory",
             "expected"
         )
-        private val OPTIONAL_ROOT_FIELDS = setOf("allowedExerciseIds", "reviewedEligibility")
+        private val OPTIONAL_ROOT_FIELDS = setOf(
+            "allowedExerciseIds",
+            "reviewedEligibility",
+            "completedSessions"
+        )
+        private val COMPLETED_SESSION_FIELDS = setOf("id", "completedDayOffset", "exercises")
+        private val COMPLETED_EXERCISE_FIELDS = setOf("exerciseId", "sets")
+        private val COMPLETED_SET_FIELDS = setOf("type", "isCompleted")
         private val REVIEWED_ELIGIBILITY_FIELDS = setOf(
             "adaptationState",
             "syntheticApprovedExerciseIds"
@@ -889,7 +1090,9 @@ internal class PlannerFixtureLoader(
             "expectedTargetWeights",
             "titleIdentityContains",
             "maxTargetSetsPerExercise",
-            "automaticEligibilityFailure"
+            "automaticEligibilityFailure",
+            "wholeProgramOutcome",
+            "wholeProgramRepairReasonCodes"
         )
         private val KNOWN_EQUIPMENT = StandardEquipment.ALL.toSet()
         private val KNOWN_MUSCLES = StandardMuscles.ALL.toSet()
@@ -920,9 +1123,7 @@ private class DuplicateFieldScanner(
             'f' -> scanLiteral("false", path)
             'n' -> scanLiteral("null", path)
             '-', in '0'..'9' -> scanNumber(path)
-            else -> throw PlannerFixtureFormatException(
-                if (next == null) "Malformed JSON at $path." else "Malformed JSON at $path."
-            )
+            else -> throw PlannerFixtureFormatException("Malformed JSON at $path.")
         }
     }
 

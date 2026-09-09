@@ -228,3 +228,23 @@ not supported by this evidence clarification and is not a validator requirement;
 copy correction belongs to the roadmap's release-claim audit, not this documentation-only
 change. Browse/manual behavior and the existing legacy prescription/history path remain
 unchanged.
+
+### Release-claim audit outcome (2026-09-08)
+
+The audit this clarification deferred ran with ROADMAP Package 6 and is recorded here so the
+record above is not read as still-open work.
+
+The shipped break and safety copy no longer makes the claim named above. Every
+`break_guidance_*` string in both languages now describes what WallCrawl plans — sets and
+starting loads scaled down, volume capped at two sets per movement — and never what that does
+to a body. `SafetyCopyTest` holds English, Spanish and the translated exercise overlay to that
+boundary, failing on injury, prevention, healing, tendon, connective-tissue and joint-protection
+vocabulary, so no narrowing of the copy was justified in either language and none was made.
+
+Three stale claims in code comments were corrected rather than endorsed.
+`WorkoutPlanner.generateWorkout` no longer says the context supplies "recovery state";
+`WorkoutPlanningFailure.NO_CANDIDATES` no longer names a "recovery filter" that has never
+existed; and the 72-hour history window constant is now `DEFAULT_HISTORY_LOOKBACK_HOURS`,
+carrying an explicit note that it selects history and does not measure recovery. The window's
+value, its behaviour and the ordinal role of `programming.fatigueScore` in ranking are all
+unchanged; only the labels that misdescribed them are.

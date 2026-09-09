@@ -63,7 +63,7 @@ class WorkoutHistoryAnalyzer {
     fun recentlyTrainedMuscles(
         sessions: List<WorkoutSession>,
         nowTimestamp: Long,
-        lookbackHours: Int = DEFAULT_RECOVERY_LOOKBACK_HOURS
+        lookbackHours: Int = DEFAULT_HISTORY_LOOKBACK_HOURS
     ): List<String> {
         require(lookbackHours >= 0) { "lookbackHours must not be negative." }
         val earliestTimestamp = nowTimestamp - (lookbackHours * HOUR_MILLIS)
@@ -144,7 +144,13 @@ class WorkoutHistoryAnalyzer {
     )
 
     private companion object {
-        const val DEFAULT_RECOVERY_LOOKBACK_HOURS = 72
+        /**
+         * How far back completed sessions are read when summarising recent focus muscles.
+         *
+         * This is a history-selection window, not a validated recovery interval: no rule
+         * treats a muscle inside or outside it as recovered, overloaded, or ready.
+         */
+        const val DEFAULT_HISTORY_LOOKBACK_HOURS = 72
         const val HOUR_MILLIS = 60 * 60 * 1_000L
     }
 }

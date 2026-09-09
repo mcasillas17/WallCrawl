@@ -1,6 +1,6 @@
 # WallCrawl Roadmap
 
-> **Status date:** 2026-09-06
+> **Status date:** 2026-09-08
 >
 > **Evidence baseline:** `6a2f624` (roadmap, #55). Package 1 status additionally
 > reflects the checked-in manifest, backup-rule resources, packaged-configuration
@@ -12,6 +12,10 @@
 > packages, the bundled translation overlay, and their JVM and Android tests.
 > Package 5 status reflects `ProgressRepository`, the calendar-week calculators,
 > localized Progress disclosures, and their JVM and Android integration/UI tests.
+> Package 6 status reflects the checked-in twelve-entry `planner-fixtures/manifest.txt`, the
+> corpus harness's reconstruction of the reviewed-enabled personas' weeks through
+> `WeeklyDoseLedgerCalculator`, its whole-program validation of every successful persona, and
+> the pinned-upstream catalog check in CI.
 >
 > This is the single source of truth for current project status, priority, dependency
 > order, and implementation scope. Status must be derived from repository evidence rather
@@ -26,14 +30,14 @@ network connection, or companion device.
 
 | Area | Status | Remaining gap |
 | --- | --- | --- |
-| Android foundation | Room schema 12 with a continuous migration chain; implicit Android backup disabled with legacy and modern all-domain exclusions; user-owned export, restore, and delete-all shipped | OEM transfer enforcement varies; restore is empty-destination only; `targetSdk` remains 35 while `compileSdk` is 37 |
+| Android foundation | Room schema 13 with a continuous migration chain; implicit Android backup disabled with legacy and modern all-domain exclusions; user-owned export, restore, and delete-all shipped | OEM transfer enforcement varies; restore is empty-destination only; `targetSdk` remains 35 while `compileSdk` is 37 |
 | Catalog and reviewed content | All 302 entries have per-ID AI evidence records; 906 SVG frames and 131 legacy programming entries unchanged; 211 reviewed metadata drafts | Zero human approvals; 81 content/policy decisions pending, 35 entries outside automatic-strength scope; the band-only inventory still contains no chest work, and `banded-row`'s anchor stays unrepresentable, though anchored variations are now gated and the session is labelled truthfully |
 | Onboarding and profile | Shipped as an eight-step flow with seven movement-capability questions, plus export, restore, and delete-all controls | Restore requires a fresh start, so it cannot merge into an installation that already holds data |
 | Templates and logging | Shipped with frozen template snapshots, type-aware outcomes, RPE/RIR, typed stops, and a local rest timer | Template targets are only partly editable; unsaved drafts are not restored after process death |
 | Localization | English and neutral Latin American Spanish shipped across the whole interface, the 302-exercise catalog, generated workout text, and accessibility labels, selectable from onboarding and Profile through Android's per-app language mechanism | Only two languages; historical session text stays in the language it was written in, by design |
 | Progress and history | Calendar-week activity, separately labelled reviewed primary dose, non-additive involvement, records, trends, summaries, and recent history implemented | Workout-summary navigation and history drill-down remain incomplete; production reviewed muscle allocation is unavailable while metadata remains unapproved |
-| Deterministic coach | Eligibility, experience ranking, capability evidence, weekly ledger, state-based dose/effort/rest, whole-program validation with recorded recommendation provenance, and a shared advertised-focus contract shipped; reviewed-only rules remain behind a disabled gate | Human approval, release corpus, progression, deload, and rollout gates |
-| Planner evaluation | Versioned corpus, replay harness, importer unit tests, real pinned-upstream regeneration check, JVM tests, and Android CI shipped | `concurrent-activity` and policy-specific assertions |
+| Deterministic coach | Eligibility, experience ranking, capability evidence, weekly ledger, state-based dose/effort/rest, whole-program validation with recorded recommendation provenance, and a shared advertised-focus contract shipped; reviewed-only rules remain behind a disabled gate | Human approval, progression, deload, and rollout gates |
+| Planner evaluation | Twelve-persona versioned corpus, with the reviewed-enabled personas' weeks replayed through the real ledger and every successful persona's proposal validated as a complete program, importer unit tests, real pinned-upstream regeneration check, JVM tests, and Android CI shipped | None for this package; reviewed-planner enablement is package 7 |
 | Optional local model | Not started | Blocked on a stable deterministic release |
 | Health Connect and Wear OS | Not started; only `:app` exists | Shared modules, privacy controls, validation, substitutions, protocol, and device evidence |
 | Operational quality | Dependabot, SBOM submission, JVM/lint/build CI, API 36 instrumentation, and prerelease automation shipped | Accessibility baseline, target SDK review, Room schema export, signed/minified release posture, and next alpha |
@@ -97,8 +101,10 @@ These decisions must be recorded before the related implementation package close
    proposals and unresolved entries, with explicit equipment/persona coverage. Neither
    a smaller rollout cohort nor a completed AI review changes the meaning of approval.
 3. **Validation persistence:** ~~decided~~. A dedicated `workout_recommendation_records`
-   table (Room schema 12) holds one immutable row per started session, written in the same
-   transaction as the session, and travels in archive format version 2. Columns beside the
+   table holds one immutable row per started session, written in the same transaction as the
+   session, and travels in the local-data archive. It arrived in Room schema 12 and archive
+   format version 2; later work advanced those to schema 13 and archive format 3, and the
+   table travels unchanged in both. Columns beside the
    session were rejected: the record is provenance about a decision rather than part of the
    session, and a separate table keeps it out of every ordinary session read.
 4. **Reviewed rollout scope:** decide whether the first reviewed-planning release may remain
@@ -139,7 +145,7 @@ These decisions must be recorded before the related implementation package close
 | Optional sync | 2 -> 28 | Package 28 is a design package first, not implementation authorization |
 
 Safe parallel work now is package 3, package 5 after its product
-decision, package 6, and the audits in packages 19-20. Do not enable package 7 against draft
+decision, and the audits in packages 19-20. Do not enable package 7 against draft
 metadata or a persona cohort that cannot produce valid plans. Do not split adaptation-state
 widening from the advanced-complexity ceiling update in package 9.
 
@@ -260,9 +266,11 @@ does not silently enable production behavior.
 ### 4. Add whole-program validation
 
 **Status:** Complete. `ProgramValidator` checks a complete proposal before it is shown and
-again before it is started, and `workout_recommendation_records` (Room schema 12, archive
-format version 2) records how each started session was decided. Reviewed-only rules stay
-inert while `PlannerFeatureFlags.reviewedCapabilityEligibility` is `false`.
+again before it is started, and `workout_recommendation_records` records how each started
+session was decided. The table arrived in Room schema 12 and archive format version 2; later
+work moved the database to schema 13 and the archive to format 3, and the table travels
+unchanged in both. Reviewed-only rules stay inert while
+`PlannerFeatureFlags.reviewedCapabilityEligibility` is `false`.
 
 **Depends on:** Shipped weekly ledger and state-based policy. Tests use synthetic approved
 metadata while package 3 proceeds; no production approval changed.
@@ -319,14 +327,16 @@ undefined.
    estimator, catalog, review, training-policy, ledger, and program-state versions, the
    adaptation state, accounting week and zone, profile revision, context digest, ordered
    reason codes, and per-muscle completed/proposed/allowance counts. It is written in the same
-   transaction as the session, so a refused start leaves neither, and it travels in archive
-   format version 2 while version 1 archives still restore.
+   transaction as the session, so a refused start leaves neither, and it travels in the archive.
+   It shipped in archive format version 2; the build now writes format 3 and still restores
+   versions 1 through 3.
 
 **Surfaces:** `core/ai/ProgramValidator`, `core/ai/ProgramViolation`,
 `core/ai/RecommendationSnapshot`, `core/ai/RecommendationContextIdentity`,
 `core/ai/WorkoutDurationEstimator`, `core/ai/GeneratedWorkoutValidator`,
-`core/model/RecommendationRecord`, `core/database` (schema 12, DAO, mapper, payload),
-`core/backup` (archive version 2), `feature/today`, `WallCrawlApplication`, string
+`core/model/RecommendationRecord`, `core/database` (schema 12 at the time, DAO, mapper,
+payload), `core/backup` (archive version 2 at the time), `feature/today`,
+`WallCrawlApplication`, string
 resources, and their JVM and instrumentation tests.
 
 **Boundary:** the reviewed path stays production-disabled, all 211 reviewed entries remain
@@ -370,43 +380,76 @@ recommendation snapshots, validation policies and planner behavior are unchanged
 
 ### 6. Complete the deterministic corpus and CI release gate
 
-**Status:** Partly shipped. The corpus has eleven manifest fixtures. CI tests importer and
-checkout behavior with synthetic repositories and checks the complete committed catalog,
-assets, and generated review report against the configured pinned upstream source. The
-remaining persona, policy assertions, documentation audit, and version record are still open.
+**Status:** Complete. The authoritative manifest holds twelve personas. Reviewed-enabled
+personas compose their week through the production weekly ledger, every successful persona's
+proposal is validated as a complete program, and CI runs that corpus alongside the real pinned-upstream
+regeneration check.
 
-**Depends on:** Packages 4-5 for their final policy assertions.
+**Depends on:** Packages 4-5 for their final policy assertions. Both are satisfied.
 
-**Implementation tasks:**
+**Implemented:**
 
-1. Add the missing `concurrent-activity` persona and keep the manifest/count contract explicit.
-2. Add direct corpus assertions for `PRIMARY_ONLY_V1` attribution and state-based set caps;
-   preserve the shipped no-invented-load, reviewed-only candidate-membership, and typed-failure
-   assertions.
-3. **Complete:** CI validates `import-config.json`, obtains a clean temporary Workout Guide
+1. `concurrent-activity` joins the manifest as the twelfth persona, and the exact roster and
+   count are asserted in the loader, corpus and evaluator suites. Its accounting week holds
+   both logged resistance work and an aerobic session, so logged activity and muscle dose stay
+   visibly different things. No activity-intake feature, fatigue score or recovery inference
+   was added to build it, and the `CONTINUOUS_ACTIVITY` capability answer is asserted to be a
+   preference rather than a record of anything the user did.
+2. Fixtures may declare `completedSessions`, and `PlannerFixtureContextFactory` reconstructs
+   the week from them with the production `WeeklyDoseLedgerCalculator` and `TrainingWeek`
+   instead of substituting an empty ledger. That composition runs for reviewed-enabled
+   personas only, matching production: the legacy path builds no program state at all.
+   `PlannerFixtureEvaluator` then runs the production `ProgramValidator` twice over every
+   persona's proposal — repair disabled, then repair permitted — so raw-valid, repaired-valid
+   and typed no-plan outcomes stay distinguishable; a typed no-plan fixture has no proposal to
+   validate and asserts its failure instead. The corpus reuses the shipped
+   focus, equipment, attribution, duration and validation logic; no second classifier or
+   rules engine exists.
+3. Direct assertions cover `PRIMARY_ONLY_V1` attribution, descriptive secondary involvement,
+   typed unattributed work, several proposed exercises sharing one muscle's remaining
+   allowance, an under-target proposal, and repair that only ever reduces sets. Warm-ups,
+   unfinished sets, exhausted remainders, damaged ledgers, arithmetic overflow, per-exercise
+   and capability caps, and ISO-week and time-zone boundaries stay asserted where they already
+   were, and the [traceability table](docs/planner-evaluation.md#release-gate-traceability)
+   names the suite for each one rather than duplicating it.
+4. CI validates `import-config.json`, obtains a clean temporary Workout Guide
    checkout at its exact `sourceCommit`, and runs the real importer in `--check` mode against
    committed assets and the generated review report. Drift and checkout/import failures fail CI.
-4. Correct stale schema/count comments and remove unsupported present-tense claims from active
-   documentation without rewriting historical records as if they were current status.
-   Classify policy assertions using the evidence-to-rule mapping; include negative cases
-   against fatigue-score summation, timestamp-only recovery inference, and forced weekly
-   minimums. Audit legacy recovery/injury-prevention copy rather than endorsing it.
-5. Record the exact policy, catalog, review, fixture, and importer versions used by the gate.
+5. Regression controls pin the rejected inferences: the legacy ordinal
+   `programming.fatigueScore` cannot reach weekly dose accounting, moving completed work inside
+   the same ISO week changes nothing, an under-target week is accepted without a minimum, and
+   no path increases volume toward a target. The aerobic-invariance assertion carries a
+   committed sensitivity control, `concurrentActivityPersona_isChangedWhenTheResistanceSessionIsRemoved`,
+   which removes the logged resistance work at a constant lifetime counter and shows the
+   proposal really does change. The dose assertion is falsifiable by construction: it
+   recomputes both halves of the accounting from set counts and requires equality, so any
+   arithmetic that mixed a fatigue value into dose fails it. Stale recovery claims in
+   `WorkoutPlanner`, `WorkoutPlanningFailure.NO_CANDIDATES` and the history-lookback constant
+   were corrected. The shipped break and safety copy was audited against the corrected
+   evidence mapping: it describes configured product behaviour in both languages and
+   `SafetyCopyTest` already fails any wording that promises a medical outcome, so no copy
+   change was justified.
+6. The exact versions the gate runs under, and which workflow runs which check, are recorded
+   in [planner evaluation](docs/planner-evaluation.md#versions-this-gate-runs-under).
 
-**Likely surfaces:** planner fixtures and evaluator tests, `.github/workflows/ci.yml`, importer
-configuration, and active architecture/evaluation documentation.
+**Surfaces:** `app/src/test/resources/planner-fixtures`, `PlannerFixture`,
+`PlannerFixtureContextFactory`, `PlannerFixtureEvaluator` and their suites,
+`core/ai/WorkoutPlanner`, `core/ai/GeneratedWorkoutValidator`, `core/ai/WorkoutHistoryAnalyzer`
+comments, and active architecture/evaluation documentation.
 
-**Done when:** every supported persona replays deterministically, every policy invariant is
-asserted, and CI proves both importer behavior and real pinned-source regeneration parity.
-Passing this gate demonstrates software-contract conformance, not scientific or clinical
-validation of the complete algorithm.
+**Boundary:** synthetic approvals stay test-only, all 211 reviewed entries remain `DRAFT`, and
+no policy value, allowance, catalog pin or feature flag changed. Passing this gate demonstrates
+software-contract conformance, not scientific or clinical validation of the complete algorithm,
+and it does not enable reviewed planning: that stays package 7.
 
 ### 7. Enable reviewed planning deliberately
 
 **Status:** Blocked; the production flag remains `false`.
 
-**Depends on:** Packages 3-6; Package 1's release gate is satisfied. Package 9 is required only if the
-initial rollout promises progression/deload rather than a conservative reviewed planner.
+**Depends on:** Packages 3-6. Packages 4 and 6 are complete, Package 5 is implemented, and
+Package 1's release gate is satisfied, so Package 3's human approval is the remaining blocker.
+Package 9 is required only if the initial rollout promises progression/deload rather than a
+conservative reviewed planner.
 
 **Implementation tasks:**
 
