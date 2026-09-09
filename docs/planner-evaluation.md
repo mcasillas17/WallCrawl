@@ -155,13 +155,13 @@ Full packaged catalog validity remains the responsibility of the dedicated impor
 The manifest currently contains eleven fixtures:
 
 1. `bodyweight-beginner` — conservative curated bodyweight beginner subset (`push-up`, `knee-push-up`, `bodyweight-squat`, `dead-bug`) requiring at least one beginner push variant.
-2. `band-only` — resistance-band-only back-focused coverage proving a band row can be selected while cable-only pull work is excluded by the real filter.
+2. `band-only` — resistance-band-only coverage after the fixed-anchor gate: `banded-dead-bug` is required, and cable-only pull work is excluded by the real filter alongside every anchor-dependent band variation, `banded-row` included.
 3. `machine-only` — machine-only strength coverage with a confirmed machine press load.
 4. `full-gym-advanced` — broad full-gym strength-plus-hypertrophy coverage against the full bundled candidate pool.
 5. `returning-user` — curated lower-demand full-body subset for re-entry (`incline-dumbbell-press`, `one-arm-dumbbell-row`, `goblet-squat`, `glute-bridge`, `dead-bug`), preserving the `RE_ENTRY` title identity (`WorkoutTitleSpec.isReEntry`), a max-two-set cap, the confirmed incline press load, and keeping `ab-wheel` / `single-leg-romanian-deadlift` out of the curated pool.
 6. `limited-capability` — curated dumbbell/bench push subset (`dumbbell-bench-press`, `dumbbell-shoulder-press`, `incline-dumbbell-press`, `dumbbell-lateral-raise`) that keeps capability metadata present but inert for planner eligibility and asserts the shoulder-press target load from history / confirmed data.
 7. `mixed-unit-history` — kilogram history coverage proving prior KG history is honored and the existing load is preserved when recent sets do not justify an increase.
-8. `sparse-history` — curated regression-friendly upper-body subset using `inverted-row`, `banded-lat-pulldown`, and `prone-y-raise` so sparse history does not freeze a limited-hang profile to pull-ups.
+8. `sparse-history` — curated regression-friendly upper-body subset of `inverted-row` and `prone-y-raise` so sparse history does not freeze a limited-hang profile to pull-ups, with `banded-lat-pulldown` held out as the forbidden control now that its anchor is unconfirmed.
 9. `no-strength-candidates` — harness-only typed-failure case restricted to the cardio-only `walking` entry so the real planner returns `NO_STRENGTH_CANDIDATES`.
 10. `reviewed-enabled-bodyweight` — copies six real bundled DRAFT records to unmistakably synthetic in-memory approvals, composes `BUILD` with an empty `PRIMARY_ONLY_V1` ledger, and proves eligibility plus dose/effort/rest guidance stay inside that reviewed bodyweight pool.
    Its expected selection is `bodyweight-squat`, `glute-bridge`, and `plank`: adding

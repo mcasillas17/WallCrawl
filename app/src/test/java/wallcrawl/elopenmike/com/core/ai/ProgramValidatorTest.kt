@@ -557,6 +557,31 @@ class ProgramValidatorTest {
     }
 
     @Test
+    fun aStretchCannotPutAMuscleOnTheFocusLine() = runTest {
+        // The candidate set still contains stretches and cardio; only the planner filters
+        // them out. Both halves of the focus rule have to hold, or a stretch's primary
+        // muscle could justify a name the split rule would refuse as evidence.
+        val press = syntheticExerciseWithoutReviewedMetadata("press").copy(
+            primaryMuscles = listOf(StandardMuscles.CHEST)
+        )
+        val latStretch = syntheticExerciseWithoutReviewedMetadata("lat-stretch").copy(
+            primaryMuscles = listOf(StandardMuscles.LATS),
+            isStretch = true
+        )
+        val plan = validatedWorkout(
+            exercises = listOf(repetitionPlan(press.id), repetitionPlan(latStretch.id)),
+            focusMuscles = listOf(StandardMuscles.CHEST, StandardMuscles.LATS)
+        )
+
+        val result = validate(plan, validatorContext(listOf(press, latStretch)))
+
+        assertThat(result.codes())
+            .containsExactly(ProgramViolationCode.UNSUPPORTED_WORKOUT_FOCUS)
+        assertThat((result as ProgramValidationResult.Invalid).violations.single().detail)
+            .isEqualTo(StandardMuscles.LATS)
+    }
+
+    @Test
     fun focusMusclesTheSelectionDoesTrain_areAccepted() = runTest {
         val press = syntheticExerciseWithoutReviewedMetadata("press").copy(
             primaryMuscles = listOf(StandardMuscles.CHEST),

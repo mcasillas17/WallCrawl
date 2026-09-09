@@ -24,8 +24,10 @@ upper-bound experiment, not the actual approved cohort or a content-readiness cl
 > ([fixed-anchor enforcement](#fixed-anchor-enforcement)), and the session is no longer
 > mislabelled `PUSH` ([post-fix result](#post-fix-result-2026-09-08)). The third is
 > unchanged: the band-only inventory still contains **no chest or push work at all**, and
-> nothing here created any. Every table before those two sections is preserved as a dated
-> baseline, not current behavior.
+> nothing here created any. Only the [post-fix result](#post-fix-result-2026-09-08) table
+> describes current behavior; every other table in this section is a dated baseline,
+> including the fixed-anchor replay, whose split and validation columns predate the focus
+> fix.
 
 The following baseline was captured before this review expanded or corrected the
 37-record DRAFT cohort, on catalog commit
@@ -146,16 +148,22 @@ The same band-only inventory has **13 candidates rather than 19**:
 This is only the fixed-anchor correction, not a new audit of the other setups.
 
 The original 40-minute, Chest HIGH, beginner band-only profile at completion/
-generation state 0/0 was also replayed through the real planner and validator:
+generation state 0/0 was also replayed through the real planner and validator.
+**Both rows below are dated observations at `86053e67`, before the focus fix; the
+`Split` and `Structural validation` columns no longer describe current behavior —
+see the [post-fix result](#post-fix-result-2026-09-08).**
 
-| Legacy replay | Candidates | Selected IDs | Split | Structural validation | Genuine direct-primary push |
+| Legacy replay (at `86053e67`) | Candidates | Selected IDs | Split | Structural validation | Genuine direct-primary push |
 | --- | ---: | --- | --- | --- | ---: |
 | Before correction | 19 | `band-pull-apart`, `banded-dead-bug`, `banded-face-pull`, `banded-pallof-press`, `banded-woodchop` | `PUSH` | Valid | 0 |
 | After correction | 13 | `band-pull-apart`, `banded-dead-bug` | `PUSH` | Valid, no repair | 0 |
 
 The after result contains no invented load and does not expand the inventory.
-The unchanged `PUSH` label is evidence of the separate workout-focus bug, not a
-claim that this is a successful chest-push workout.
+The unchanged `PUSH` label was evidence of the separate workout-focus bug, not a
+claim that this is a successful chest-push workout. That label is what the
+[post-fix result](#post-fix-result-2026-09-08) corrects: the same profile now
+advertises `UPPER_BODY`, and a `PUSH`-labelled proposal built from those two ids is
+rejected with `UNSUPPORTED_WORKOUT_FOCUS`. The candidate count is unaffected.
 
 The following outcomes concern only the six anchor-dependent IDs. The matrix
 uses the real filter and separately labelled synthetic equipment-policy approvals,

@@ -174,8 +174,12 @@ class ProgramValidator(
 
         // The muscle line under the title is the other claim the card makes, and it is
         // copied onto the started session. Every name on it has to be a muscle something in
-        // the plan actually trains, for the same reason the split does.
-        val trained = selected.flatMapTo(mutableSetOf(), Exercise::focusMuscles)
+        // the plan actually trains, for the same reason the split does — including the
+        // strength-work half of that rule, so a stretch or a cardio entry can never be what
+        // puts a muscle on the line. The candidate set still contains both.
+        val trained = selected
+            .filter(Exercise::isStrengthWork)
+            .flatMapTo(mutableSetOf(), Exercise::focusMuscles)
         (workout.focusMuscles.toSet() - trained).sorted().forEach { muscle ->
             violations += ProgramViolation(
                 code = ProgramViolationCode.UNSUPPORTED_WORKOUT_FOCUS,
