@@ -14,6 +14,7 @@ import wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetStopReason
 import wallcrawl.elopenmike.com.core.model.SetType
+import wallcrawl.elopenmike.com.core.model.StandardMuscles
 import wallcrawl.elopenmike.com.core.model.SupportRequirement
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
@@ -37,12 +38,23 @@ const val SYNTHETIC_CATALOG_VERSION: String = "synthetic-catalog-version-for-tes
 /** 2026-08-31, a Monday, used as a stable ISO week start across the ledger tests. */
 const val MONDAY_EPOCH_DAY: Long = 20_696L
 
+/**
+ * The legacy muscle labels these fixtures carry.
+ *
+ * The sentinel is the point: if it ever appears in weekly accounting, `PRIMARY_ONLY_V1`
+ * has leaked a legacy muscle into credit it must never take. Triceps rides alongside it so
+ * a fixture is also a coherent proposal for the default `PUSH` session — the focus rule
+ * reads legacy primaries where no approved record applies — and it is deliberately a muscle
+ * no approved fixture here designates, so it cannot mask a leak either.
+ */
+val LEGACY_MUSCLES: List<String> = listOf("LEGACY-MUST-NOT-BE-CREDITED", StandardMuscles.TRICEPS)
+
 fun syntheticApprovedExercise(
     id: String,
     directPrimaryMuscle: String,
     descriptiveSecondaryMuscles: Set<String> = emptySet(),
-    legacyPrimaryMuscles: List<String> = listOf("LEGACY-MUST-NOT-BE-CREDITED"),
-    legacySecondaryMuscles: List<String> = listOf("LEGACY-MUST-NOT-BE-CREDITED")
+    legacyPrimaryMuscles: List<String> = LEGACY_MUSCLES,
+    legacySecondaryMuscles: List<String> = LEGACY_MUSCLES
 ): Exercise = syntheticExercise(
     id = id,
     legacyPrimaryMuscles = legacyPrimaryMuscles,
@@ -72,8 +84,8 @@ fun syntheticExerciseWithoutReviewedMetadata(id: String): Exercise =
 
 fun syntheticExercise(
     id: String,
-    legacyPrimaryMuscles: List<String> = listOf("LEGACY-MUST-NOT-BE-CREDITED"),
-    legacySecondaryMuscles: List<String> = listOf("LEGACY-MUST-NOT-BE-CREDITED"),
+    legacyPrimaryMuscles: List<String> = LEGACY_MUSCLES,
+    legacySecondaryMuscles: List<String> = LEGACY_MUSCLES,
     reviewedMetadata: ReviewedExerciseMetadata?
 ): Exercise = Exercise(
     id = id,

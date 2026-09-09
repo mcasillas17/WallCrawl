@@ -68,7 +68,8 @@ class WorkoutGuideCatalogParserTest {
 
         // Upstream files the deadlift under the umbrella term "Posterior Chain". One group
         // is named as the primary mover so weekly set counts stay one per set; the rest
-        // become secondary, which split matching also reads.
+        // become secondary, which keeps the exercise eligible for those splits' accessory
+        // slots without establishing their advertised focus.
         val deadlift = snapshot.exercises.single { it.id == "barbell-deadlift" }
         assertThat(deadlift.primaryMuscles).containsExactly(StandardMuscles.HAMSTRINGS)
         assertThat(deadlift.secondaryMuscles).containsAtLeast(

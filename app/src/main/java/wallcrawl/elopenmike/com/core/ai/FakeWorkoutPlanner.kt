@@ -87,9 +87,38 @@ class FakeWorkoutPlanner(
             focusMuscles = focusMuscles,
             estimatedDurationMinutes = estimatedDuration,
             exercises = generatedExerciseList,
-            rationale = rationale
+            rationale = rationale,
+            unavailableFocusMuscles = unavailableFocusMuscles(context, candidates)
         )
     }
+
+    /**
+     * The high-priority muscles nothing available trains as its own purpose.
+     *
+     * Reported rather than papered over: the session above is a truthfully labelled
+     * alternative, and the user is owed the reason their emphasis is missing from it. This
+     * covers both shapes of the problem — a preferred split that nothing can fill, and a
+     * split that is fillable while the specific priority inside it is not.
+     *
+     * Sorted by canonical name, so the order never depends on map iteration or on the
+     * device language. Priorities stay soft; nothing here relaxes equipment, exclusion or
+     * capability constraints to make a muscle available.
+     *
+     * Capped at the same three entries [extractFocusMuscles] reports, and for a stronger
+     * reason than symmetry: the rendered sentence is stored as the started session's notes,
+     * and a restored archive may legitimately carry up to 2,000 profile-supplied priority
+     * keys of up to 200 characters each. Uncapped, one such profile would produce notes past
+     * the archive's own length limit and break the user's next export.
+     */
+    private fun unavailableFocusMuscles(
+        context: WorkoutGenerationContext,
+        candidates: List<Exercise>
+    ): List<String> = context.musclePriorities
+        .filterValues { it == PriorityLevel.HIGH }
+        .keys
+        .filterNot { muscle -> candidates.any { it.trainsAsFocus(muscle) } }
+        .sorted()
+        .take(MAX_REPORTED_MUSCLES)
 
     private fun determineSplit(
         context: WorkoutGenerationContext,
@@ -115,7 +144,11 @@ class FakeWorkoutPlanner(
             )
         }
 
-        fun List<WorkoutSplit>.fillable() = filter { split -> candidates.any { it.trains(split) } }
+        // Fillable means genuinely trainable, not merely mentioned. A split whose only
+        // matches are descriptive secondary muscles cannot be filled with the work its name
+        // promises, so it never enters the rotation — see [trainsAsFocus].
+        fun List<WorkoutSplit>.fillable() =
+            filter { split -> candidates.any { split.trainsAsFocus(it) } }
         val trainable = preferred.fillable().ifEmpty { WorkoutSplit.DEFAULT_ROTATION.fillable() }
         if (trainable.isEmpty()) {
             throw WorkoutValidationException(
@@ -138,36 +171,6 @@ class FakeWorkoutPlanner(
     private fun rotationSeed(context: WorkoutGenerationContext, generationIndex: Int): Int =
         context.completedWorkoutCount + generationIndex
 
-    private fun Exercise.trains(split: WorkoutSplit): Boolean =
-        isStrengthWork() &&
-            (
-                primaryMuscles.any { it in split.targetMuscles } ||
-                    secondaryMuscles.any { it in split.targetMuscles }
-                )
-
-    /**
-     * Whether this belongs in a prescribed strength slot with sets and reps.
-     *
-     * Cardio machines and stretches are tagged with the muscles they involve, so once
-     * upstream's umbrella names were resolved they started matching splits — putting
-     * "Walking" in a Legs · Hypertrophy plan alongside squats. They stay in the catalog to
-     * browse and to build custom workouts from; they are not prescribed as training slots.
-     *
-     * The test is what can be prescribed, not whether conditioning is involved: a kettlebell
-     * swing is loaded work for reps that happens to be tagged Cardio, and a plank is a timed
-     * hold that is not. Only untimed-distance work and conditioning drills measured purely
-     * in time are dropped.
-     */
-    private fun Exercise.isStrengthWork(): Boolean = when {
-        isStretch -> false
-        type == ExerciseType.DISTANCE_DURATION -> false
-        type == ExerciseType.DURATION -> !isConditioning()
-        else -> true
-    }
-
-    private fun Exercise.isConditioning(): Boolean =
-        (primaryMuscles + secondaryMuscles).any { it == StandardMuscles.CARDIO }
-
     private fun selectExercisesForSplit(
         split: WorkoutSplit,
         candidates: List<Exercise>,
@@ -175,11 +178,9 @@ class FakeWorkoutPlanner(
     ): List<Exercise> {
         // A candidate that trains none of the split's muscles is not a substitute for one that
         // does. Widening back to the whole catalog is what used to hand a Push day whatever
-        // sorted first; determineSplit has already guaranteed this split is fillable.
-        val matchingCandidates = candidates.filter { it.trains(split) }
-        check(matchingCandidates.isNotEmpty()) {
-            "Split ${split.name} was selected without any matching candidate."
-        }
+        // sorted first. `canFill` is a superset of the fillability rule `determineSplit`
+        // already applied, so the candidate that made this split fillable is always here.
+        val matchingCandidates = candidates.filter { split.canFill(it) }
 
         val exerciseCountTarget = when {
             context.preferredWorkoutDurationMinutes <= 35 -> 3
@@ -223,6 +224,13 @@ class FakeWorkoutPlanner(
             result.addAll(accessories.take(remainingSlots))
         }
 
+        // The pool being fillable is not the promise; the session is. Focus support is the
+        // first ordering key in both passes and at least one accessory slot always exists,
+        // so a supporting exercise is always reachable — this states that as an invariant
+        // instead of leaving it to be re-derived from two comparators.
+        check(result.any { split.trainsAsFocus(it) }) {
+            "Split ${split.name} was selected without an exercise that trains it as a focus."
+        }
         return result
     }
 
@@ -247,7 +255,7 @@ class FakeWorkoutPlanner(
         val compounds = candidates
             .filter { it.programming?.mechanics == MechanicsType.COMPOUND }
             .sortedWith(
-                compareByDescending<Exercise> { it.trainsAsPrimary(split) }
+                compareByDescending<Exercise> { split.trainsAsFocus(it) }
                     .thenBy { capabilityPenalties.getValue(it.id) }
                     .thenBy {
                         difficultyRankingPolicy.aboveExperiencePenalty(
@@ -289,7 +297,7 @@ class FakeWorkoutPlanner(
         reviewedEligibilityEnabled: Boolean,
         capabilityPenalties: Map<String, Int>
     ): Comparator<Exercise> =
-        compareByDescending<Exercise> { it.trainsAsPrimary(split) }
+        compareByDescending<Exercise> { split.trainsAsFocus(it) }
             .thenByDescending { it.programming?.mechanics == MechanicsType.ISOLATION }
             .thenByDescending { it.programming != null }
             .thenBy { capabilityPenalties.getValue(it.id) }
@@ -302,9 +310,6 @@ class FakeWorkoutPlanner(
             }
             .thenByDescending { it.programming?.fatigueScore ?: 0 }
             .thenBy { it.id }
-
-    private fun Exercise.trainsAsPrimary(split: WorkoutSplit): Boolean =
-        primaryMuscles.any { it in split.targetMuscles }
 
     private fun createGeneratedExercise(
         exercise: Exercise,
@@ -334,11 +339,23 @@ class FakeWorkoutPlanner(
         else -> WorkoutEmphasis.CONDITIONING
     }
 
+    /**
+     * The muscle line the card shows under the title, and what the session records.
+     *
+     * Reads the same own-purpose muscles the focus contract does, so the reviewed path
+     * names the approved direct primary rather than the broad legacy list. Whole-program
+     * validation holds this line to the plan, and it could not do that against a second
+     * classification.
+     */
     private fun extractFocusMuscles(exercises: List<Exercise>): List<String> {
         return exercises
-            .flatMap { it.primaryMuscles }
+            .flatMap { it.focusMuscles() }
             .distinct()
-            .take(3)
+            .take(MAX_REPORTED_MUSCLES)
     }
 
+    private companion object {
+        /** How many muscle names a card line or explanation may carry. */
+        const val MAX_REPORTED_MUSCLES = 3
+    }
 }

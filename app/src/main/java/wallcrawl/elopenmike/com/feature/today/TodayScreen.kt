@@ -59,6 +59,7 @@ import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.localization.generatedWorkoutRationale
 import wallcrawl.elopenmike.com.core.ui.localization.generatedWorkoutTitle
 import wallcrawl.elopenmike.com.core.ui.localization.labelRes
+import wallcrawl.elopenmike.com.core.ui.localization.unavailableFocusNotice
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 import wallcrawl.elopenmike.com.core.ui.theme.SuccessGreen
@@ -144,7 +145,10 @@ fun TodayScreen(
                 // Written here, where the reader's language is known, and handed to the
                 // ViewModel so the session is stored with the wording that was on screen.
                 val workoutName = generatedWorkoutTitle(state.suggestedWorkout.title)
-                val workoutRationale = generatedWorkoutRationale(state.suggestedWorkout.rationale)
+                val workoutRationale = generatedWorkoutRationale(
+                    spec = state.suggestedWorkout.rationale,
+                    unavailableFocusMuscles = state.suggestedWorkout.unavailableFocusMuscles
+                )
                 TodayContent(
                     state = state,
                     workoutName = workoutName,
@@ -160,8 +164,12 @@ fun TodayScreen(
     }
 }
 
+/**
+ * The success body. Visible to the test source set so a screen test can render the real
+ * card against a state it supplies, rather than asserting on a composable in isolation.
+ */
 @Composable
-private fun TodayContent(
+internal fun TodayContent(
     state: TodayUiState.Success,
     workoutName: String,
     onStartWorkout: () -> Unit,
@@ -521,6 +529,18 @@ private fun SuggestedWorkoutCard(
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
+
+        // Only when there is something to say. A prioritised muscle nothing available can
+        // train is named here, so the alternative above is explained to the reader and not
+        // only to the stored session; an ordinary session adds no line at all.
+        unavailableFocusNotice(workout.unavailableFocusMuscles)?.let { notice ->
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = notice,
+                fontSize = 13.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 

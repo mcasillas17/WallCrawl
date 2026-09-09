@@ -12,6 +12,7 @@ import wallcrawl.elopenmike.com.core.model.MuscleDoseAccounting
 import wallcrawl.elopenmike.com.core.model.PlannedExercise
 import wallcrawl.elopenmike.com.core.model.PrescriptionShape
 import wallcrawl.elopenmike.com.core.model.ReviewState
+import wallcrawl.elopenmike.com.core.model.WorkoutSplit
 
 /**
  * The reviewed-only rules and the whole-proposal dose check.
@@ -427,7 +428,10 @@ class ProgramValidatorAggregateDoseTest {
                         restSeconds = 45
                     )
                 )
-            )
+            ),
+            // Core work belongs to the Full Body split, so that is what this session can
+            // truthfully advertise.
+            split = WorkoutSplit.FULL_BODY
         )
 
         val result = validate(

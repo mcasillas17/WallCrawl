@@ -31,9 +31,44 @@ fun generatedWorkoutTitle(spec: WorkoutTitleSpec): String {
     )
 }
 
-/** Why the planner produced this workout, written for the reader. */
+/**
+ * Why the planner produced this workout, written for the reader.
+ *
+ * [unavailableFocusMuscles] adds one sentence naming the prioritised muscles nothing
+ * available trains as its main target. It is appended rather than folded into each
+ * variant so a re-entry or post-break session explains the missing emphasis too, and so
+ * the sentence a started session records is the same one that was on screen.
+ */
 @Composable
-fun generatedWorkoutRationale(spec: WorkoutRationaleSpec): String {
+fun generatedWorkoutRationale(
+    spec: WorkoutRationaleSpec,
+    unavailableFocusMuscles: List<String> = emptyList()
+): String {
+    val reason = rationaleSentence(spec)
+    val notice = unavailableFocusNotice(unavailableFocusMuscles) ?: return reason
+    return "$reason $notice"
+}
+
+/**
+ * The sentence naming prioritised muscles nothing available trains, or null when there are
+ * none to name.
+ *
+ * Separate from the explanation above because the two have different audiences. The
+ * explanation is what a started session records; this sentence is what the card shows,
+ * and only when there is actually something to say. Surfacing the whole explanation on
+ * every session would be a product change this does not make.
+ */
+@Composable
+fun unavailableFocusNotice(unavailableFocusMuscles: List<String>): String? {
+    if (unavailableFocusMuscles.isEmpty()) return null
+    val vocabulary = LocalExerciseVocabulary.current
+    val separator = stringResource(R.string.list_separator)
+    val muscles = unavailableFocusMuscles.map { vocabulary.muscle(it) }.joinToString(separator)
+    return stringResource(R.string.generated_rationale_focus_unavailable, muscles)
+}
+
+@Composable
+private fun rationaleSentence(spec: WorkoutRationaleSpec): String {
     val vocabulary = LocalExerciseVocabulary.current
     return when (spec) {
         is WorkoutRationaleSpec.ReEntryRamp -> stringResource(

@@ -33,8 +33,19 @@ entire proposal — including several exercises sharing one direct primary, an e
 reached allowance, and one set over it — rather than each prescription against the same
 completed ledger.
 
-Duplicate exercise/family and movement coverage are asserted as **declared** session
-constraints, both in their declared and their default-inert form; duration is asserted
+Advertised focus is asserted separately, in `WorkoutFocusCoverageTest`, and against the
+shipped predicate rather than a classifier written for the test: the committed band-only
+reproduction, secondary-only pools for every split, genuine bodyweight/dumbbell/machine
+/full-gym push days, every prioritised muscle across every split, rotation and
+regeneration over a full cycle, and the original misleading proposal being refused with
+`UNSUPPORTED_WORKOUT_FOCUS`. That rule is a software invariant about one label — the
+[focus contract](architecture.md#advertised-focus) — and not a coverage requirement over
+patterns. `ReviewedCatalogCoverageTest` asserts the same predicate on every reviewed case,
+keeping its stricter reviewed pattern premise as a recorded observation rather than a
+product rule.
+
+Duplicate exercise/family and movement-pattern coverage are asserted as **declared**
+session constraints, both in their declared and their default-inert form; duration is asserted
 against the named `DURATION_ESTIMATOR_V1` and its ±1-minute tolerance, with an explicit
 case proving a proposal far from the requested duration is not rejected for that.
 `PRIMARY_ONLY_V1`, set caps, RIR bands, and rest seconds are product-policy expectations,
@@ -144,13 +155,13 @@ Full packaged catalog validity remains the responsibility of the dedicated impor
 The manifest currently contains eleven fixtures:
 
 1. `bodyweight-beginner` — conservative curated bodyweight beginner subset (`push-up`, `knee-push-up`, `bodyweight-squat`, `dead-bug`) requiring at least one beginner push variant.
-2. `band-only` — resistance-band-only back-focused coverage proving a band row can be selected while cable-only pull work is excluded by the real filter.
+2. `band-only` — resistance-band-only coverage after the fixed-anchor gate: `banded-dead-bug` is required, and cable-only pull work is excluded by the real filter alongside every anchor-dependent band variation, `banded-row` included.
 3. `machine-only` — machine-only strength coverage with a confirmed machine press load.
 4. `full-gym-advanced` — broad full-gym strength-plus-hypertrophy coverage against the full bundled candidate pool.
 5. `returning-user` — curated lower-demand full-body subset for re-entry (`incline-dumbbell-press`, `one-arm-dumbbell-row`, `goblet-squat`, `glute-bridge`, `dead-bug`), preserving the `RE_ENTRY` title identity (`WorkoutTitleSpec.isReEntry`), a max-two-set cap, the confirmed incline press load, and keeping `ab-wheel` / `single-leg-romanian-deadlift` out of the curated pool.
 6. `limited-capability` — curated dumbbell/bench push subset (`dumbbell-bench-press`, `dumbbell-shoulder-press`, `incline-dumbbell-press`, `dumbbell-lateral-raise`) that keeps capability metadata present but inert for planner eligibility and asserts the shoulder-press target load from history / confirmed data.
 7. `mixed-unit-history` — kilogram history coverage proving prior KG history is honored and the existing load is preserved when recent sets do not justify an increase.
-8. `sparse-history` — curated regression-friendly upper-body subset using `inverted-row`, `banded-lat-pulldown`, and `prone-y-raise` so sparse history does not freeze a limited-hang profile to pull-ups.
+8. `sparse-history` — curated regression-friendly upper-body subset of `inverted-row` and `prone-y-raise` so sparse history does not freeze a limited-hang profile to pull-ups, with `banded-lat-pulldown` held out as the forbidden control now that its anchor is unconfirmed.
 9. `no-strength-candidates` — harness-only typed-failure case restricted to the cardio-only `walking` entry so the real planner returns `NO_STRENGTH_CANDIDATES`.
 10. `reviewed-enabled-bodyweight` — copies six real bundled DRAFT records to unmistakably synthetic in-memory approvals, composes `BUILD` with an empty `PRIMARY_ONLY_V1` ledger, and proves eligibility plus dose/effort/rest guidance stay inside that reviewed bodyweight pool.
    Its expected selection is `bodyweight-squat`, `glute-bridge`, and `plank`: adding
@@ -190,10 +201,13 @@ selected IDs, mode/state, raw whole-program validation and typed no-plan outcome
 This suite reads the per-ID evidence ledger for content readiness; readiness is not
 human approval. Known pending records are not promoted in the AI-ready experiment.
 A separate real-planner sole-candidate probe covers every catalog ID, without
-equating that result to full-pool selection. The band-only PUSH case is an explicit
-negative coverage regression: a `PUSH` label and a schema-valid proposal do not
-prove genuine push work. The missing push and fixed-anchor representation remain
-open, and selected joint restrictions continue to fail closed without a fallback.
+equating that result to full-pool selection. The band-only case remains an explicit
+negative coverage regression: there is still no genuine band push, and a schema-valid
+proposal never proved otherwise. Since the [focus contract](architecture.md#advertised-focus)
+landed, that case additionally asserts a truthful non-`PUSH` label and a reported
+unavailable `Chest` priority. The missing push and fixed-anchor representation remain
+open — correcting the label supplied neither — and selected joint restrictions continue
+to fail closed without a fallback.
 
 ## Test entry points
 
@@ -203,6 +217,7 @@ Focused contract / corpus coverage:
 ./gradlew testDebugUnitTest \
   --tests '*PlannerFixture*' \
   --tests '*FakeWorkoutPlannerTest' \
+  --tests '*WorkoutFocusCoverageTest' \
   --tests '*ExerciseFilterTest' \
   --rerun-tasks --no-daemon
 ```

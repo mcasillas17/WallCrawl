@@ -15,9 +15,11 @@ import wallcrawl.elopenmike.com.core.model.MovementPattern
 import wallcrawl.elopenmike.com.core.model.PlannedExercise
 import wallcrawl.elopenmike.com.core.model.RepRange
 import wallcrawl.elopenmike.com.core.model.SessionProgramConstraints
+import wallcrawl.elopenmike.com.core.model.StandardMuscles
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
+import wallcrawl.elopenmike.com.core.model.WorkoutSplit
 
 /**
  * The rules that apply on every path, including the production legacy one.
@@ -512,6 +514,124 @@ class ProgramValidatorTest {
         assertThat(invalid.violations.map { it.code })
             .containsExactly(ProgramViolationCode.UNTRACEABLE_LOAD)
         assertThat(invalid.violations.single().exerciseId).isEqualTo(bench.id)
+    }
+
+    @Test
+    fun aSplitNoSelectedExerciseTrains_isRejected() = runTest {
+        // A row with a descriptive shoulder secondary is what made a band-only Push day
+        // look legitimate. Involvement is not the promise the title makes.
+        val row = syntheticExerciseWithoutReviewedMetadata("row").copy(
+            primaryMuscles = listOf(StandardMuscles.UPPER_BACK),
+            secondaryMuscles = listOf(StandardMuscles.SHOULDERS)
+        )
+        val plan = validatedWorkout(listOf(repetitionPlan(row.id)))
+
+        val result = validate(plan, validatorContext(listOf(row)))
+
+        assertThat(result.codes())
+            .containsExactly(ProgramViolationCode.UNSUPPORTED_WORKOUT_FOCUS)
+        assertThat((result as ProgramValidationResult.Invalid).violations.single().detail)
+            .isEqualTo(WorkoutSplit.PUSH.name)
+    }
+
+    @Test
+    fun aFocusMuscleNoSelectedExerciseTrains_isRejected() = runTest {
+        // The muscle line under the title is the card's other claim, and it is copied onto
+        // the started session. Naming Lats on a chest press is the same defect as calling a
+        // row a Push day.
+        val press = syntheticExerciseWithoutReviewedMetadata("press").copy(
+            primaryMuscles = listOf(StandardMuscles.CHEST),
+            secondaryMuscles = listOf(StandardMuscles.TRICEPS)
+        )
+        val plan = validatedWorkout(
+            exercises = listOf(repetitionPlan(press.id)),
+            focusMuscles = listOf(StandardMuscles.CHEST, StandardMuscles.LATS)
+        )
+
+        val result = validate(plan, validatorContext(listOf(press)))
+
+        assertThat(result.codes())
+            .containsExactly(ProgramViolationCode.UNSUPPORTED_WORKOUT_FOCUS)
+        assertThat((result as ProgramValidationResult.Invalid).violations.single().detail)
+            .isEqualTo(StandardMuscles.LATS)
+    }
+
+    @Test
+    fun aStretchCannotPutAMuscleOnTheFocusLine() = runTest {
+        // The candidate set still contains stretches and cardio; only the planner filters
+        // them out. Both halves of the focus rule have to hold, or a stretch's primary
+        // muscle could justify a name the split rule would refuse as evidence.
+        val press = syntheticExerciseWithoutReviewedMetadata("press").copy(
+            primaryMuscles = listOf(StandardMuscles.CHEST)
+        )
+        val latStretch = syntheticExerciseWithoutReviewedMetadata("lat-stretch").copy(
+            primaryMuscles = listOf(StandardMuscles.LATS),
+            isStretch = true
+        )
+        val plan = validatedWorkout(
+            exercises = listOf(repetitionPlan(press.id), repetitionPlan(latStretch.id)),
+            focusMuscles = listOf(StandardMuscles.CHEST, StandardMuscles.LATS)
+        )
+
+        val result = validate(plan, validatorContext(listOf(press, latStretch)))
+
+        assertThat(result.codes())
+            .containsExactly(ProgramViolationCode.UNSUPPORTED_WORKOUT_FOCUS)
+        assertThat((result as ProgramValidationResult.Invalid).violations.single().detail)
+            .isEqualTo(StandardMuscles.LATS)
+    }
+
+    @Test
+    fun focusMusclesTheSelectionDoesTrain_areAccepted() = runTest {
+        val press = syntheticExerciseWithoutReviewedMetadata("press").copy(
+            primaryMuscles = listOf(StandardMuscles.CHEST),
+            secondaryMuscles = listOf(StandardMuscles.TRICEPS)
+        )
+        val plan = validatedWorkout(
+            exercises = listOf(repetitionPlan(press.id)),
+            focusMuscles = listOf(StandardMuscles.CHEST)
+        )
+
+        val result = validate(plan, validatorContext(listOf(press)))
+
+        assertThat(result).isInstanceOf(ProgramValidationResult.Valid::class.java)
+    }
+
+    @Test
+    fun aSplitOneSelectedExerciseTrains_isAccepted() = runTest {
+        val press = syntheticExerciseWithoutReviewedMetadata("press").copy(
+            primaryMuscles = listOf(StandardMuscles.CHEST),
+            secondaryMuscles = listOf(StandardMuscles.TRICEPS)
+        )
+        val row = syntheticExerciseWithoutReviewedMetadata("row").copy(
+            primaryMuscles = listOf(StandardMuscles.UPPER_BACK),
+            secondaryMuscles = listOf(StandardMuscles.SHOULDERS)
+        )
+        val plan = validatedWorkout(
+            listOf(repetitionPlan(press.id), repetitionPlan(row.id))
+        )
+
+        val result = validate(plan, validatorContext(listOf(press, row)))
+
+        assertThat(result).isInstanceOf(ProgramValidationResult.Valid::class.java)
+    }
+
+    @Test
+    fun theReviewedPathReadsTheApprovedDirectPrimaryRatherThanTheLegacyList() = runTest {
+        // Approved metadata is the authority where the reviewed contract applies, so a
+        // legacy Chest label cannot support a Push day the approved record calls Core work.
+        val approvedCore = syntheticApprovedExercise(
+            id = "approved-core",
+            directPrimaryMuscle = StandardMuscles.CORE
+        ).copy(primaryMuscles = listOf(StandardMuscles.CHEST))
+        val plan = validatedWorkout(listOf(repetitionPlan(approvedCore.id)))
+
+        val result = validate(
+            plan,
+            validatorContext(listOf(approvedCore), reviewedPath = true)
+        )
+
+        assertThat(result.codes()).contains(ProgramViolationCode.UNSUPPORTED_WORKOUT_FOCUS)
     }
 
     private fun history(exerciseId: String, lastWeight: Double) = ExercisePerformanceHistory(

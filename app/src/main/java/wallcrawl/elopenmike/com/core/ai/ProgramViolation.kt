@@ -33,6 +33,17 @@ enum class ProgramViolationCode {
     PRESCRIPTION_TYPE_MISMATCH,
 
     /**
+     * Software invariant: the advertised split must be one the selected exercises train.
+     *
+     * The same class of rule as [DURATION_ESTIMATE_MISMATCH]: a proposal has to agree with
+     * what it reports about itself. What counts as training a split is the versioned
+     * WallCrawl focus rule in `WorkoutFocus.kt` — an exercise's own-purpose muscle, not the
+     * descriptive secondary muscles it merely involves. It is not a claim that a session
+     * must cover every pattern, and it is not a medical or safety judgement.
+     */
+    UNSUPPORTED_WORKOUT_FOCUS,
+
+    /**
      * Product policy: the declared `uniqueExerciseIds` constraint for this session.
      *
      * It is about accounting and identity inside one generated session, not a claim that

@@ -61,6 +61,11 @@ class PlannerLocaleInvarianceTest {
                 .that(plan.estimatedDurationMinutes)
                 .isEqualTo(reference.estimatedDurationMinutes)
             assertWithMessage("title under $locale").that(plan.title).isEqualTo(reference.title)
+            // Canonical muscle names sorted by the planner: a locale-sensitive collator here
+            // would reorder the explanation of a missing emphasis, or worse, change it.
+            assertWithMessage("unavailable focus muscles under $locale")
+                .that(plan.unavailableFocusMuscles)
+                .isEqualTo(reference.unavailableFocusMuscles)
             assertWithMessage("explanation under $locale")
                 .that(plan.rationale).isEqualTo(reference.rationale)
         }
@@ -185,6 +190,39 @@ class PlannerLocaleInvarianceTest {
         assertThat(result.acceptedSnapshot.trainingPolicyVersion).isNull()
         assertThat(result.acceptedSnapshot.ledgerPolicyVersion).isNull()
         assertThat(result.acceptedSnapshot.adaptationState).isNull()
+    }
+
+    @Test
+    fun anUnavailablePriorityIsTheSameFactInEveryLocale() = runTest {
+        // The list is canonical muscle names the screen later translates, and it is sorted.
+        // A locale-sensitive sort or case fold here would change which fact is reported, or
+        // the order it is reported in, purely because the interface language changed.
+        val unreachablePriorities = profile().copy(
+            musclePriorities = mapOf(
+                StandardMuscles.CHEST to PriorityLevel.HIGH,
+                StandardMuscles.CALVES to PriorityLevel.HIGH,
+                StandardMuscles.FOREARMS to PriorityLevel.HIGH
+            )
+        )
+        val plans = LOCALES.associateWith { locale ->
+            Locale.setDefault(locale)
+            FakeWorkoutPlanner().generateWorkout(
+                WorkoutGenerationContext(
+                    userProfile = unreachablePriorities,
+                    allowedExercises = filter.filterCandidates(allExercises, unreachablePriorities)
+                )
+            )
+        }
+
+        val reference = plans.getValue(LOCALES.first())
+        assertThat(reference.unavailableFocusMuscles)
+            .containsExactly(StandardMuscles.CALVES, StandardMuscles.FOREARMS).inOrder()
+        plans.forEach { (locale, plan) ->
+            assertWithMessage("unavailable focus muscles under $locale")
+                .that(plan.unavailableFocusMuscles)
+                .isEqualTo(reference.unavailableFocusMuscles)
+            assertWithMessage("title under $locale").that(plan.title).isEqualTo(reference.title)
+        }
     }
 
     private fun profile() = UserProfile(

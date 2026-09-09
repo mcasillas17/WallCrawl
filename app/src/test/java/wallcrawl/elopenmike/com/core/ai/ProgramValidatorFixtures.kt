@@ -31,11 +31,23 @@ import wallcrawl.elopenmike.com.core.model.WorkoutTitleSpec
  */
 const val VALIDATOR_CATALOG_VERSION: String = "catalog-commit-under-test"
 
-/** A structurally valid plan whose reported duration agrees with `DURATION_ESTIMATOR_V1`. */
-fun validatedWorkout(exercises: List<PlannedExercise>): GeneratedWorkout = GeneratedWorkout(
-    title = WorkoutTitleSpec(split = WorkoutSplit.PUSH, emphasis = WorkoutEmphasis.HYPERTROPHY),
+/**
+ * A structurally valid plan whose reported duration agrees with `DURATION_ESTIMATOR_V1`.
+ *
+ * [split] and [focusMuscles] both have to match what the exercises actually train, because
+ * a proposal advertising a split or a muscle none of its exercises trains is itself a
+ * rejection. The default split suits the `PUSH` fixtures; a `Core` proposal passes
+ * `FULL_BODY`. [focusMuscles] defaults to empty so these fixtures stay about the rule each
+ * one is testing; the muscle line has its own cases in `ProgramValidatorTest`.
+ */
+fun validatedWorkout(
+    exercises: List<PlannedExercise>,
+    split: WorkoutSplit = WorkoutSplit.PUSH,
+    focusMuscles: List<String> = emptyList()
+): GeneratedWorkout = GeneratedWorkout(
+    title = WorkoutTitleSpec(split = split, emphasis = WorkoutEmphasis.HYPERTROPHY),
     rationale = WorkoutRationaleSpec.GoalFocus(goals = emptyList(), focusMuscles = emptyList()),
-    focusMuscles = listOf("Chest"),
+    focusMuscles = focusMuscles,
     estimatedDurationMinutes = WorkoutDurationEstimator.estimateMinutes(exercises),
     exercises = exercises
 )

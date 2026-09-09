@@ -249,7 +249,9 @@ class WorkoutGuideCatalogParser {
         // planner, muscle priorities, and volume attribution all share one set of names.
         // Umbrella names ("Legs", "Posterior Chain") keep a single representative as primary
         // and contribute the rest as secondary, so weekly set counts stay one per set while
-        // split matching — which reads both lists — still sees every group involved.
+        // the demoted groups keep the exercise eligible for those splits' accessory slots.
+        // They do not establish a split's advertised focus, which reads primary muscles only
+        // — see `core/ai/WorkoutFocus.kt`.
         val canonicalPrimary = primary.mapNotNull(MuscleVocabulary::canonicalizePrimary).distinct()
         if (canonicalPrimary.isEmpty()) {
             malformed("Exercise $exerciseId has no recognizable primary muscle.")

@@ -126,6 +126,7 @@ class ProgramValidator(
             return Evaluation(violations.sorted(), emptyList())
         }
 
+        violations += focusViolations(workout, allowedById)
         violations += declaredConstraintViolations(workout, context, allowedById)
         workout.exercises.forEachIndexed { index, planned ->
             violations += exerciseViolations(index, planned, context, allowedById)
@@ -141,6 +142,54 @@ class ProgramValidator(
             attributionByExerciseId = accounting.attributionByExerciseId
         )
     }
+
+    // region advertised focus
+
+    /**
+     * The split a proposal advertises must be one its own exercises train.
+     *
+     * Always on rather than declared in `SessionProgramConstraints`, for the same reason
+     * duration agreement is: a caller cannot reasonably ask for a session whose title
+     * contradicts its content, and the declared constraints are program-design preferences
+     * rather than internal-consistency rules. It shares one predicate with the planner, so
+     * a split the planner considered fillable and a split the validator accepts cannot
+     * mean different things.
+     *
+     * Descriptive secondary involvement is deliberately not enough. It may still justify an
+     * accessory slot; it is simply never the evidence for the name on the session.
+     */
+    private fun focusViolations(
+        workout: GeneratedWorkout,
+        allowedById: Map<String, Exercise>
+    ): List<ProgramViolation> {
+        val violations = mutableListOf<ProgramViolation>()
+        val selected = workout.exercises.mapNotNull { allowedById[it.exerciseId] }
+        val split = workout.title.split
+        if (selected.none(split::trainsAsFocus)) {
+            violations += ProgramViolation(
+                code = ProgramViolationCode.UNSUPPORTED_WORKOUT_FOCUS,
+                detail = split.name
+            )
+        }
+
+        // The muscle line under the title is the other claim the card makes, and it is
+        // copied onto the started session. Every name on it has to be a muscle something in
+        // the plan actually trains, for the same reason the split does — including the
+        // strength-work half of that rule, so a stretch or a cardio entry can never be what
+        // puts a muscle on the line. The candidate set still contains both.
+        val trained = selected
+            .filter(Exercise::isStrengthWork)
+            .flatMapTo(mutableSetOf(), Exercise::focusMuscles)
+        (workout.focusMuscles.toSet() - trained).sorted().forEach { muscle ->
+            violations += ProgramViolation(
+                code = ProgramViolationCode.UNSUPPORTED_WORKOUT_FOCUS,
+                detail = muscle
+            )
+        }
+        return violations
+    }
+
+    // endregion
 
     // region declared program-design constraints
 
@@ -308,11 +357,6 @@ class ProgramValidator(
         }
         return violations
     }
-
-    /** Approved metadata that also carries the human provenance approval requires. */
-    private fun Exercise.approvedMetadata(): ReviewedExerciseMetadata? = reviewedMetadata
-        ?.takeIf { it.reviewState == ReviewState.APPROVED }
-        ?.takeIf { it.isWellFormedApprovedMetadata() }
 
     /**
      * A prescribed load must trace to something the user confirmed or actually lifted.
