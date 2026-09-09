@@ -4,11 +4,22 @@ WallCrawl bundles 906 female and 906 male SVGs, covering the same 302 exercises 
 the [pinned source catalog](../tools/workout-guide/import-config.json). Each is a byte-for-byte copy of the selected
 SVG in `art/pilots/female-exercises/catalog` or `male-catalog`.
 
-In onboarding and Profile, gender is optional: Prefer not to say, Woman, Man, or
+In onboarding and Profile, the gender dropdown is optional: Prefer not to say, Woman, Man, or
 Nonbinary. This is the only setting that selects artwork: Woman uses the female
 set; the other options use the male set. There is no separate illustration override
 and no gender control on exercise-image views. Existing users keep unspecified
 gender and see male artwork.
+
+The closed field shows the current choice; opening it marks that choice with a
+checkmark. Selecting an option closes the menu. Dismissing it leaves the selection
+unchanged. Onboarding groups codename and gender in one card.
+
+These component captures show the shared dropdown in English dark mode and Spanish
+light mode with enlarged text (1.6x), using a disposable test profile:
+
+| English, dark | Spanish, light, enlarged text |
+| --- | --- |
+| ![English gender dropdown with Woman selected](../art/screenshots/gender-dropdown-en.png) | ![Spanish gender dropdown with Mujer selected and enlarged text](../art/screenshots/gender-dropdown-es.png) |
 
 Gender is persisted locally in Room and user-requested backups. It does not
 participate in exercise eligibility, loads, prescriptions, or workout selection.

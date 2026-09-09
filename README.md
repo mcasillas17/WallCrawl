@@ -702,10 +702,17 @@ Current status, dependency order, and upcoming work live in the
 
 ### Profile gender and exercise artwork
 
-Choose optional gender in onboarding or Profile. Exercise artwork follows that
+Choose optional gender from the dropdown in onboarding or Profile. Onboarding keeps
+codename and gender together in one card; the menu marks the current choice and
+closes after selection. Exercise artwork follows that
 single profile setting: female artwork for Woman, male artwork for the other
 options. Exercise screens have no separate gender or illustration selector.
-This changes artwork only. Both sets contain 302 three-frame sequences, including
+Both artwork sets contain 302 three-frame sequences, including
 current drafts whose continuity corrections remain for a later iteration.
+
+<p align="center">
+  <img src="art/screenshots/onboarding-gender-dropdown.png" width="32%" alt="Onboarding with codename and the optional gender dropdown grouped in one card" />
+  <img src="art/screenshots/onboarding-gender-menu.png" width="32%" alt="Gender dropdown expanded with all four choices and a checkmark beside Prefer not to say" />
+</p>
 
 See [artwork packaging, provenance, and known limitations](docs/exercise-illustration-variants.md).

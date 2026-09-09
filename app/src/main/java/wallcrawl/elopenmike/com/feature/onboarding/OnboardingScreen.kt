@@ -389,8 +389,7 @@ private fun WelcomeStep(
                 ),
                 modifier = Modifier.fillMaxWidth()
             )
-        }
-        WallCrawlCard(cornerRadius = 16.dp, contentPadding = 20.dp) {
+            Spacer(modifier = Modifier.height(16.dp))
             ProfileGenderSelector(
                 gender = state.gender,
                 onGenderChange = viewModel::updateGender,

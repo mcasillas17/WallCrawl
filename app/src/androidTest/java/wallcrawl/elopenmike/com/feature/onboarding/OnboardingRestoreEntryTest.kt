@@ -26,6 +26,7 @@ import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
+import wallcrawl.elopenmike.com.core.model.ProfileGender
 import wallcrawl.elopenmike.com.core.model.ThemePreference
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.UserProfile
@@ -51,6 +52,24 @@ class OnboardingRestoreEntryTest {
 
     private fun text(@StringRes id: Int): String =
         InstrumentationRegistry.getInstrumentation().targetContext.getString(id)
+
+    @Test
+    fun genderDropdownKeepsTheNameAndDraftWhenReturningToWelcome() {
+        val viewModel = showWizard()
+        composeRule.onNodeWithText(text(R.string.onboarding_codename_placeholder))
+            .performTextInput("Alex")
+        composeRule.onNodeWithText(text(R.string.profile_gender_title)).performClick()
+        composeRule.onNodeWithText(text(R.string.gender_woman)).performClick()
+        composeRule.onNodeWithText("Alex").assertIsDisplayed()
+        assertThat(viewModel.uiState.value.gender).isEqualTo(ProfileGender.WOMAN)
+
+        composeRule.onNodeWithText(text(R.string.onboarding_action_continue)).performClick()
+        composeRule.runOnIdle { viewModel.previousStep() }
+
+        composeRule.onNodeWithText(text(R.string.gender_woman)).assertIsDisplayed()
+        composeRule.onNodeWithText("Alex").assertIsDisplayed()
+        assertThat(viewModel.uiState.value.currentStep).isEqualTo(OnboardingStep.WELCOME)
+    }
 
     @Test
     fun aRestoreInFlightBlocksTheStepThatWouldOverwriteIt() {
