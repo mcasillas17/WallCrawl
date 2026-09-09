@@ -18,7 +18,7 @@ espressoCore = "3.7.0"
 truth = "1.4.4"
 turbine = "1.2.0"
 coil = "3.0.4"
-json = "20240303"
+json = "20260814"
 
 [libraries]
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
