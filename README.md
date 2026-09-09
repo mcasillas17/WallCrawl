@@ -153,9 +153,11 @@ how to add a string, an exercise, or a language.
   is deliberately never translated, the exercise-translation overlay and its
   stable-ID boundary, number and input formatting, and how to add a string, an
   exercise, or a language without translation drift.
-- [Planner evaluation](docs/planner-evaluation.md) documents the versioned persona
-  corpus, strict fixture validation, deterministic replay, and asserted planner
-  invariants.
+- [Planner evaluation](docs/planner-evaluation.md) documents the versioned twelve-persona
+  corpus, strict fixture validation, deterministic replay, the weekly ledger the
+  reviewed-enabled personas' weeks are reconstructed through, the whole-program validation of
+  every persona that produces a proposal, the asserted planner invariants, and which release
+  checks run in which workflow.
 - The phase-specific design and implementation records under
   [`docs/superpowers/`](docs/superpowers/) provide historical decision context.
 
@@ -651,9 +653,11 @@ bounded history
 analysis, planner constraints and type-aware prescriptions, split selection and
 its failure reasons, whether a session's advertised focus is one its exercises
 actually train, the muscle vocabulary and the shipped catalog's conformance
-to it, generated-workout validation, template validation, atomic persistence
-boundaries, progress and personal-record calculations, attribution loading,
-Today state, duration calculation, and visual-provider mapping.
+to it, generated-workout and whole-program validation, template validation, atomic
+persistence boundaries, progress and personal-record calculations, attribution loading,
+Today state, duration calculation, and visual-provider mapping. The twelve-persona planner
+corpus runs inside it, reconstructing the reviewed-enabled personas' training weeks with the
+shipped weekly ledger and validating the complete proposal behind every successful persona.
 Android instrumentation also validates every supported database migration chain through
 schema 13 without destructive fallback, guidance persistence, the atomic start of a session
 with its validation record, the weekly-ledger DAO/repository,

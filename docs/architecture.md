@@ -916,9 +916,13 @@ UserProfile.themePreference (SYSTEM | DARK | LIGHT)
 
 The JVM suite covers pure domain rules, filtering, context construction,
 capability normalization and codec behavior, planner invariance, validation,
-repository mapping, progress calculations, and ViewModel state. Instrumentation
+repository mapping, progress calculations, and ViewModel state. Its twelve-persona
+[planner evaluation corpus](planner-evaluation.md) composes the reviewed-enabled personas'
+weeks with the real `WeeklyDoseLedgerCalculator` and validates every proposal it produces
+with `ProgramValidator`, keeping raw-valid, repaired-valid and typed no-plan outcomes
+distinct. Instrumentation
 tests cover every supported Room migration chain through schema 13, real 7 → 8,
-9 → 10, 10 → 11, and 11 → 12 preservation, foreign-key integrity, guidance round trips,
+9 → 10, 10 → 11, 11 → 12 and 12 → 13 preservation, foreign-key integrity, guidance round trips,
 the atomic start of a session with its validation record, the weekly-ledger repository,
 capability
 accessibility semantics, packaged catalog parsing, all bundled visual paths, template
@@ -928,7 +932,11 @@ a deletion, and the destructive confirmation at a large font scale), and the
 [packaged backup-policy configuration](privacy.md#verification-boundary)
 (merged manifest flags, resolved XML references, and exclusion semantics).
 Pull-request/main CI and tag-release publication run that connected suite on an
-API 36 emulator. The importer has a separate Python-standard-library test suite.
+API 36 emulator. The importer has a separate Python-standard-library test suite, which runs
+together with the pinned-upstream catalog regeneration check on pull requests and `main` only;
+a tag build does not re-run them, so a release carries their result only when the tagged
+commit already passed CI on `main`, which no workflow currently enforces. The full split is
+recorded in [planner evaluation](planner-evaluation.md#where-the-gate-runs).
 
 See [Build and test](../README.md#build-and-test) for the commands contributors
 should run.

@@ -13,16 +13,17 @@ import wallcrawl.elopenmike.com.core.model.ReviewState
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
 import wallcrawl.elopenmike.com.core.model.WeightUnit
+import wallcrawl.elopenmike.com.core.model.LedgerOmissionReason
 import wallcrawl.elopenmike.com.core.model.LedgerPolicyVersion
+import wallcrawl.elopenmike.com.core.model.SetType
 
 class PlannerFixtureCorpusTest {
 
-    private val loader = PlannerFixtureLoader()
-    private val contextFactory = PlannerFixtureContextFactory()
+    private val contextFactory = SharedPlannerFixtureHarness.contextFactory
 
     @Test
     fun loadCorpus_containsLegacyAndReviewedEligibilityFixtures() {
-        val fixtures = loader.loadCorpus()
+        val fixtures = SharedPlannerFixtureHarness.corpus
 
         assertThat(fixtures.map { it.id }).containsExactly(
             "bodyweight-beginner",
@@ -35,14 +36,15 @@ class PlannerFixtureCorpusTest {
             "sparse-history",
             "no-strength-candidates",
             "reviewed-enabled-bodyweight",
-            "reviewed-enabled-no-approved"
+            "reviewed-enabled-no-approved",
+            "concurrent-activity"
         ).inOrder()
-        assertThat(fixtures.map { it.id }.distinct()).hasSize(11)
+        assertThat(fixtures.map { it.id }.distinct()).hasSize(12)
     }
 
     @Test
     fun loadCorpus_buildsRealProfilesAndContextsFromBundledCatalog() {
-        val fixtures = loader.loadCorpus()
+        val fixtures = SharedPlannerFixtureHarness.corpus
 
         val realized = fixtures.map(contextFactory::create)
 
@@ -65,6 +67,84 @@ class PlannerFixtureCorpusTest {
     }
 
     @Test
+    fun create_composesTheWeeklyLedgerFromDeclaredCompletedSessionsThroughTheRealCalculator() {
+        val base = SharedPlannerFixtureHarness.corpus.single { it.id == "reviewed-enabled-bodyweight" }
+        val withCompletedHistory = base.copy(
+            completedSessions = listOf(
+                PlannerFixtureCompletedSession(
+                    id = "resistance-monday",
+                    completedDayOffset = 0,
+                    exercises = listOf(
+                        PlannerFixtureCompletedExercise(
+                            exerciseId = "push-up",
+                            sets = listOf(
+                                PlannerFixtureCompletedSet(SetType.WARMUP, isCompleted = true),
+                                PlannerFixtureCompletedSet(SetType.NORMAL, isCompleted = true),
+                                PlannerFixtureCompletedSet(SetType.NORMAL, isCompleted = true),
+                                PlannerFixtureCompletedSet(SetType.NORMAL, isCompleted = false)
+                            )
+                        ),
+                        PlannerFixtureCompletedExercise(
+                            exerciseId = "walking",
+                            sets = listOf(
+                                PlannerFixtureCompletedSet(SetType.NORMAL, isCompleted = true)
+                            )
+                        )
+                    )
+                )
+            )
+        )
+
+        val built = contextFactory.create(withCompletedHistory)
+        val ledger = checkNotNull(built.context.trainingProgramState).weeklyLedger
+
+        assertThat(ledger.policyVersion).isEqualTo(LedgerPolicyVersion.PRIMARY_ONLY_V1)
+        assertThat(ledger.weekStartEpochDay).isEqualTo(MONDAY_EPOCH_DAY)
+        assertThat(ledger.timeZoneId).isEqualTo("UTC")
+        assertThat(ledger.catalogVersion).isEqualTo(base.catalogVersion)
+        // Two completed work sets: the warm-up and the unfinished set are not exposure.
+        assertThat(ledger.directPrimarySets).containsExactly(StandardMuscles.CHEST, 2)
+        assertThat(ledger.secondaryInvolvement.keys)
+            .containsExactly(StandardMuscles.CORE, StandardMuscles.TRICEPS)
+        assertThat(ledger.secondaryInvolvement.keys).doesNotContain(StandardMuscles.CHEST)
+        // Distance work carries no reviewed metadata, so it is recorded as omitted rather
+        // than credited to the legs it obviously involves.
+        assertThat(ledger.unattributedWorkSets)
+            .containsExactly(LedgerOmissionReason.MISSING_REVIEWED_METADATA, 1)
+        assertThat(built.context.catalogVersion).isEqualTo(base.catalogVersion)
+        assertThat(built.context.reviewPolicyVersion).isEqualTo(ledger.reviewPolicyVersion)
+    }
+
+    @Test
+    fun create_rejectsCompletedSessionsThatNameAnUnknownExercise() {
+        val base = SharedPlannerFixtureHarness.corpus.single { it.id == "reviewed-enabled-bodyweight" }
+        val withUnknownExercise = base.copy(
+            completedSessions = listOf(
+                PlannerFixtureCompletedSession(
+                    id = "resistance-monday",
+                    completedDayOffset = 0,
+                    exercises = listOf(
+                        PlannerFixtureCompletedExercise(
+                            exerciseId = "not-in-the-catalog",
+                            sets = listOf(
+                                PlannerFixtureCompletedSet(SetType.NORMAL, isCompleted = true)
+                            )
+                        )
+                    )
+                )
+            )
+        )
+
+        val error = org.junit.Assert.assertThrows(PlannerFixtureFormatException::class.java) {
+            contextFactory.create(withUnknownExercise)
+        }
+
+        assertThat(error.message)
+            .contains("root.completedSessions[0].exercises[0].exerciseId")
+        assertThat(error.message).contains("not-in-the-catalog")
+    }
+
+    @Test
     fun bundledCatalogProjection_keepsAllAuthoredReviewedMetadataDraft() {
         val exercises = contextFactory.bundledCatalogProjection().exercises
 
@@ -77,7 +157,7 @@ class PlannerFixtureCorpusTest {
 
     @Test
     fun reviewedEnabledFixture_usesOnlyExplicitSyntheticApprovals() {
-        val fixture = loader.loadCorpus().single { it.id == "reviewed-enabled-bodyweight" }
+        val fixture = SharedPlannerFixtureHarness.corpus.single { it.id == "reviewed-enabled-bodyweight" }
         val reviewedEligibility = requireNotNull(fixture.reviewedEligibility)
         val syntheticIds = reviewedEligibility.syntheticApprovedExerciseIds
         val built = contextFactory.create(fixture)
@@ -114,7 +194,7 @@ class PlannerFixtureCorpusTest {
 
     @Test
     fun reviewedEnabledFixture_withoutSyntheticApprovalsFailsWithTypedReviewGateReason() {
-        val fixture = loader.loadCorpus().single { it.id == "reviewed-enabled-no-approved" }
+        val fixture = SharedPlannerFixtureHarness.corpus.single { it.id == "reviewed-enabled-no-approved" }
         val built = contextFactory.create(fixture)
         val result = built.context.automaticEligibilityResult as
             AutomaticEligibilityResult.NoCandidates
@@ -137,10 +217,10 @@ class PlannerFixtureCorpusTest {
 
     @Test
     fun loadCorpus_usesPinnedCatalogCommitAndSupportedPolicyVersion() {
-        val fixtures = loader.loadCorpus()
+        val fixtures = SharedPlannerFixtureHarness.corpus
 
         fixtures.forEach { fixture ->
-            assertThat(fixture.policyVersion).isEqualTo(3)
+            assertThat(fixture.policyVersion).isEqualTo(4)
             assertThat(fixture.catalogVersion)
                 .isEqualTo("ba0b709cb20430361b2cb33aaadd20998164a916")
         }
@@ -148,7 +228,7 @@ class PlannerFixtureCorpusTest {
 
     @Test
     fun loadCorpus_noStrengthCandidatesIsHarnessOnlyCardioFailureFixture() {
-        val fixture = loader.loadCorpus().single { it.id == "no-strength-candidates" }
+        val fixture = SharedPlannerFixtureHarness.corpus.single { it.id == "no-strength-candidates" }
         val built = contextFactory.create(fixture)
 
         assertThat(fixture.profile.availableEquipment)
@@ -167,7 +247,7 @@ class PlannerFixtureCorpusTest {
 
     @Test
     fun loadCorpus_filteredCandidatesHonorAvailableEquipmentAndConstructionPremises() {
-        val fixtures = loader.loadCorpus()
+        val fixtures = SharedPlannerFixtureHarness.corpus
 
         fixtures.map(contextFactory::create).forEach { built ->
             assertThat(built.filteredExercises.all { candidate ->
@@ -181,7 +261,7 @@ class PlannerFixtureCorpusTest {
 
     @Test
     fun loadCorpus_normalizesMovementCapabilitiesThroughTheLoader() {
-        val fixtures = loader.loadCorpus()
+        val fixtures = SharedPlannerFixtureHarness.corpus
 
         fixtures.forEach { fixture ->
             assertThat(fixture.profile.movementCapabilities.values.keys)
@@ -201,7 +281,7 @@ class PlannerFixtureCorpusTest {
 
     @Test
     fun loadCorpus_returningUserCuratesLowerDemandFullBodyCandidates() {
-        val fixture = loader.loadCorpus().single { it.id == "returning-user" }
+        val fixture = SharedPlannerFixtureHarness.corpus.single { it.id == "returning-user" }
 
         assertThat(fixture.allowedExerciseIds)
             .containsExactly(
@@ -222,7 +302,7 @@ class PlannerFixtureCorpusTest {
 
     @Test
     fun loadCorpus_bodyweightBeginnerModelsConservativeCuratedPushSubset() {
-        val fixture = loader.loadCorpus().single { it.id == "bodyweight-beginner" }
+        val fixture = SharedPlannerFixtureHarness.corpus.single { it.id == "bodyweight-beginner" }
 
         assertThat(fixture.allowedExerciseIds)
             .containsExactly("push-up", "knee-push-up", "bodyweight-squat", "dead-bug")
@@ -235,7 +315,7 @@ class PlannerFixtureCorpusTest {
 
     @Test
     fun loadCorpus_limitedCapabilityModelsCuratedLegalCandidateSubset() {
-        val fixture = loader.loadCorpus().single { it.id == "limited-capability" }
+        val fixture = SharedPlannerFixtureHarness.corpus.single { it.id == "limited-capability" }
 
         assertThat(fixture.allowedExerciseIds)
             .containsExactly(
@@ -256,7 +336,7 @@ class PlannerFixtureCorpusTest {
 
     @Test
     fun loadCorpus_buildsMixedUnitAndSparseHistoryContexts() {
-        val fixturesById = loader.loadCorpus().associateBy { it.id }
+        val fixturesById = SharedPlannerFixtureHarness.corpus.associateBy { it.id }
 
         val mixed = contextFactory.create(checkNotNull(fixturesById["mixed-unit-history"]))
         val sparse = contextFactory.create(checkNotNull(fixturesById["sparse-history"]))
@@ -279,7 +359,7 @@ class PlannerFixtureCorpusTest {
 
     @Test
     fun loadCorpus_sparseHistoryRetainsAvailableControlsWithoutConfirmingAnAnchor() {
-        val fixture = loader.loadCorpus().single { it.id == "sparse-history" }
+        val fixture = SharedPlannerFixtureHarness.corpus.single { it.id == "sparse-history" }
 
         assertThat(fixture.allowedExerciseIds)
             .containsExactly("inverted-row", "prone-y-raise")
@@ -291,7 +371,7 @@ class PlannerFixtureCorpusTest {
 
     @Test
     fun create_rejectsExpectedExerciseAssertionsThatReferenceMissingCatalogIds() {
-        val fixture = loader.loadResource("planner-fixtures/valid-basic.json").copy(
+        val fixture = SharedPlannerFixtureHarness.loader.loadResource("planner-fixtures/valid-basic.json").copy(
             catalogVersion = "ba0b709cb20430361b2cb33aaadd20998164a916",
             expected = PlannerFixtureExpected(
                 outcome = PlannerFixtureOutcome.SUCCESS,
@@ -333,4 +413,5 @@ class PlannerFixtureCorpusTest {
             combination.all { it in owned }
         }
     }
+
 }

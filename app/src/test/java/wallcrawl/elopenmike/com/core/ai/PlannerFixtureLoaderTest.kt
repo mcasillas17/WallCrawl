@@ -8,6 +8,7 @@ import wallcrawl.elopenmike.com.core.model.CapabilityLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
+import wallcrawl.elopenmike.com.core.model.SetType
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.WeightUnit
@@ -22,7 +23,7 @@ class PlannerFixtureLoaderTest {
 
         assertThat(fixture.schemaVersion).isEqualTo(1)
         assertThat(fixture.id).isEqualTo("valid-basic")
-        assertThat(fixture.policyVersion).isEqualTo(3)
+        assertThat(fixture.policyVersion).isEqualTo(4)
         assertThat(fixture.catalogVersion).isEqualTo("test-catalog-2026-08-30")
         assertThat(fixture.profile.goals)
             .containsExactly(FitnessGoal.BUILD_MUSCLE, FitnessGoal.GENERAL_FITNESS)
@@ -86,7 +87,8 @@ class PlannerFixtureLoaderTest {
             "sparse-history",
             "no-strength-candidates",
             "reviewed-enabled-bodyweight",
-            "reviewed-enabled-no-approved"
+            "reviewed-enabled-no-approved",
+            "concurrent-activity"
         ).inOrder()
         assertThat(fixtures.map { it.id }).doesNotContain("valid-basic")
     }
@@ -159,92 +161,225 @@ class PlannerFixtureLoaderTest {
 
     @Test
     fun loadResource_rejectsInvalidExpectedTargetWeightMaps() {
-        val loader = loaderWithResource(
-            resourcePath = "planner-fixtures/invalid-expected-target-weights.json",
-            resourceContents = """
-                {
-                  "schemaVersion": 1,
-                  "id": "invalid-expected-target-weights",
-                  "policyVersion": 3,
-                  "catalogVersion": "test-catalog-2026-08-30",
-                  "profile": {
-                    "goals": ["BUILD_MUSCLE"],
-                    "experienceLevel": "BEGINNER",
-                    "preferredDurationMinutes": 45,
-                    "daysPerWeek": 3,
-                    "availableEquipment": ["Bodyweight"],
-                    "preferredUnit": "LBS",
-                    "musclePriorities": {"Chest": "HIGH"},
-                    "excludedExerciseIds": [],
-                    "trainingConstraints": [],
-                    "returningAfterBreakWeeks": 0,
-                    "confirmedStartingLoads": {},
-                    "movementCapabilities": {}
-                  },
-                  "completedWorkoutCount": 0,
-                  "exerciseHistory": [],
-                  "expected": {
-                    "outcome": "SUCCESS",
-                    "requiredExerciseIds": [],
-                    "forbiddenExerciseIds": [],
+        assertInlineFormatError(
+            id = "invalid-expected-target-weights",
+            expectedExtras = """,
                     "expectedTargetWeights": {
                       "bad id": -1.0
-                    }
-                  }
-                }
-            """.trimIndent()
+                    }""",
+            expectedMessageFragment = "expected.expectedTargetWeights.bad id"
         )
-
-        val error = assertThrows(PlannerFixtureFormatException::class.java) {
-            loader.loadResource("planner-fixtures/invalid-expected-target-weights.json")
-        }
-
-        assertThat(error.message).contains("expected.expectedTargetWeights.bad id")
     }
 
     @Test
     fun loadResource_rejectsRequiredAnyExerciseIdGroupsThatConflictWithForbiddenIds() {
-        val loader = loaderWithResource(
-            resourcePath = "planner-fixtures/invalid-required-any-group.json",
-            resourceContents = """
-                {
-                  "schemaVersion": 1,
-                  "id": "invalid-required-any-group",
-                  "policyVersion": 3,
-                  "catalogVersion": "test-catalog-2026-08-30",
-                  "profile": {
-                    "goals": ["BUILD_MUSCLE"],
-                    "experienceLevel": "BEGINNER",
-                    "preferredDurationMinutes": 45,
-                    "daysPerWeek": 3,
-                    "availableEquipment": ["Bodyweight"],
-                    "preferredUnit": "LBS",
-                    "musclePriorities": {"Chest": "HIGH"},
-                    "excludedExerciseIds": [],
-                    "trainingConstraints": [],
-                    "returningAfterBreakWeeks": 0,
-                    "confirmedStartingLoads": {},
-                    "movementCapabilities": {}
-                  },
-                  "completedWorkoutCount": 0,
-                  "exerciseHistory": [],
-                  "expected": {
-                    "outcome": "SUCCESS",
-                    "requiredExerciseIds": [],
+        assertInlineFormatError(
+            id = "invalid-required-any-group",
+            expectedExtras = """,
                     "requiredAnyExerciseIdGroups": [
                       ["push-up"]
-                    ],
-                    "forbiddenExerciseIds": ["push-up"]
-                  }
-                }
+                    ]""",
+            forbiddenExerciseIds = """["push-up"]""",
+            expectedMessageFragment = "requiredAnyExerciseIdGroups"
+        )
+    }
+
+    @Test
+    fun loadResource_parsesDeclaredCompletedSessions() {
+        val fixture = loadInline(
+            "completed-sessions",
+            reviewedEligibility = REVIEWED_ELIGIBILITY_FRAGMENT,
+            rootExtras = """
+                ,
+                  "completedSessions": [
+                    {
+                      "id": "resistance-monday",
+                      "completedDayOffset": 0,
+                      "exercises": [
+                        {
+                          "exerciseId": "push-up",
+                          "sets": [
+                            {"type": "WARMUP", "isCompleted": true},
+                            {"type": "NORMAL", "isCompleted": true},
+                            {"type": "NORMAL", "isCompleted": false}
+                          ]
+                        }
+                      ]
+                    }
+                  ]
             """.trimIndent()
         )
 
-        val error = assertThrows(PlannerFixtureFormatException::class.java) {
-            loader.loadResource("planner-fixtures/invalid-required-any-group.json")
-        }
+        val session = fixture.completedSessions.single()
+        assertThat(session.id).isEqualTo("resistance-monday")
+        assertThat(session.completedDayOffset).isEqualTo(0)
+        val exercise = session.exercises.single()
+        assertThat(exercise.exerciseId).isEqualTo("push-up")
+        assertThat(exercise.sets.map { it.type })
+            .containsExactly(SetType.WARMUP, SetType.NORMAL, SetType.NORMAL)
+            .inOrder()
+        assertThat(exercise.sets.map { it.isCompleted })
+            .containsExactly(true, true, false)
+            .inOrder()
+    }
 
-        assertThat(error.message).contains("requiredAnyExerciseIdGroups")
+    @Test
+    fun loadResource_rejectsUnknownFieldsInsideCompletedSessions() {
+        assertInlineFormatError(
+            id = "completed-session-unknown-field",
+            reviewedEligibility = REVIEWED_ELIGIBILITY_FRAGMENT,
+            rootExtras = """
+                ,
+                  "completedSessions": [
+                    {
+                      "id": "resistance-monday",
+                      "completedDayOffset": 0,
+                      "note": "not a supported field",
+                      "exercises": []
+                    }
+                  ]
+            """.trimIndent(),
+            expectedMessageFragment = "root.completedSessions[0].note"
+        )
+    }
+
+    @Test
+    fun loadResource_rejectsDuplicateCompletedSessionIds() {
+        assertInlineFormatError(
+            id = "completed-session-duplicate-id",
+            reviewedEligibility = REVIEWED_ELIGIBILITY_FRAGMENT,
+            rootExtras = """
+                ,
+                  "completedSessions": [
+                    {"id": "same", "completedDayOffset": 0, "exercises": []},
+                    {"id": "same", "completedDayOffset": 1, "exercises": []}
+                  ]
+            """.trimIndent(),
+            expectedMessageFragment = "root.completedSessions[1].id"
+        )
+    }
+
+    @Test
+    fun loadResource_rejectsACompletedDayOutsideTheIsoWeek() {
+        assertInlineFormatError(
+            id = "completed-session-out-of-week",
+            reviewedEligibility = REVIEWED_ELIGIBILITY_FRAGMENT,
+            rootExtras = """
+                ,
+                  "completedSessions": [
+                    {"id": "next-week", "completedDayOffset": 7, "exercises": []}
+                  ]
+            """.trimIndent(),
+            expectedMessageFragment = "root.completedSessions[0].completedDayOffset"
+        )
+    }
+
+    @Test
+    fun loadResource_rejectsMoreCompletedSessionsThanTheCorpusBoundAllows() {
+        // The bound is a documented contract, so widening or dropping it has to fail here
+        // rather than silently disagreeing with the documentation.
+        assertInlineFormatError(
+            id = "completed-sessions-over-bound",
+            reviewedEligibility = REVIEWED_ELIGIBILITY_FRAGMENT,
+            rootExtras = """
+                ,
+                  "completedSessions": [
+                    {"id": "session-1", "completedDayOffset": 1, "exercises": []},
+                    {"id": "session-2", "completedDayOffset": 2, "exercises": []},
+                    {"id": "session-3", "completedDayOffset": 3, "exercises": []},
+                    {"id": "session-4", "completedDayOffset": 4, "exercises": []},
+                    {"id": "session-5", "completedDayOffset": 5, "exercises": []},
+                    {"id": "session-6", "completedDayOffset": 6, "exercises": []},
+                    {"id": "session-7", "completedDayOffset": 0, "exercises": []},
+                    {"id": "session-8", "completedDayOffset": 1, "exercises": []},
+                    {"id": "session-9", "completedDayOffset": 2, "exercises": []}
+                  ]
+            """.trimIndent(),
+            expectedMessageFragment = "root.completedSessions must contain at most 8 item(s)."
+        )
+    }
+
+    @Test
+    fun loadResource_rejectsCompletedSessionsWithoutReviewedEligibility() {
+        // Production composes a weekly ledger only behind the reviewed gate, so a legacy
+        // fixture that declared completed sessions would describe a context the app cannot
+        // build.
+        assertInlineFormatError(
+            id = "completed-sessions-on-legacy-path",
+            rootExtras = """
+                ,
+                  "completedSessions": [
+                    {"id": "resistance-monday", "completedDayOffset": 0, "exercises": []}
+                  ]
+            """.trimIndent(),
+            expectedMessageFragment = "requires root.reviewedEligibility"
+        )
+    }
+
+    @Test
+    fun loadResource_defaultsToARawValidWholeProgramExpectation() {
+        val fixture = loadInline("whole-program-default")
+
+        assertThat(fixture.expected.wholeProgramOutcome)
+            .isEqualTo(RecommendationOutcome.VALID)
+        assertThat(fixture.expected.wholeProgramRepairReasonCodes).isEmpty()
+    }
+
+    @Test
+    fun loadResource_rejectsAnUnknownWholeProgramOutcome() {
+        assertInlineFormatError(
+            id = "whole-program-unknown-outcome",
+            expectedExtras = """,
+                    "wholeProgramOutcome": "REWRITTEN"""",
+            expectedMessageFragment = "expected.wholeProgramOutcome"
+        )
+    }
+
+    @Test
+    fun loadResource_rejectsWholeProgramExpectationsOnAFailureOutcome() {
+        assertInlineFormatError(
+            id = "whole-program-on-failure",
+            outcome = "NO_STRENGTH_CANDIDATES",
+            expectedExtras = """,
+                    "wholeProgramOutcome": "VALID"""",
+            expectedMessageFragment = "expected.wholeProgramOutcome is only supported"
+        )
+    }
+
+    @Test
+    fun loadResource_rejectsRepairReasonCodesWithoutARepairedOutcome() {
+        assertInlineFormatError(
+            id = "whole-program-codes-without-repair",
+            expectedExtras = """,
+                    "wholeProgramRepairReasonCodes": ["WEEKLY_ALLOWANCE_EXCEEDED"]""",
+            expectedMessageFragment =
+                "is only supported when expected.wholeProgramOutcome is REPAIRED"
+        )
+    }
+
+    @Test
+    fun loadResource_rejectsARepairedOutcomeThatNamesNoReasonCodes() {
+        assertInlineFormatError(
+            id = "whole-program-repair-without-codes",
+            reviewedEligibility = REVIEWED_ELIGIBILITY_FRAGMENT,
+            expectedExtras = """,
+                    "wholeProgramOutcome": "REPAIRED"""",
+            expectedMessageFragment =
+                "is required when expected.wholeProgramOutcome is REPAIRED"
+        )
+    }
+
+    @Test
+    fun loadResource_rejectsARepairedOutcomeWithoutReviewedEligibility() {
+        // The only repairable violation is an exceeded configured weekly allowance, and
+        // aggregate dose accounting runs only on the reviewed path.
+        assertInlineFormatError(
+            id = "whole-program-repair-on-legacy-path",
+            expectedExtras = """,
+                    "wholeProgramOutcome": "REPAIRED",
+                    "wholeProgramRepairReasonCodes": ["WEEKLY_ALLOWANCE_EXCEEDED"]""",
+            expectedMessageFragment = "REPAIRED requires root.reviewedEligibility"
+        )
     }
 
     @Test
@@ -256,6 +391,94 @@ class PlannerFixtureLoaderTest {
         }
         assertThat(error.message).contains("planner-fixtures/missing.json")
     }
+
+    /**
+     * Loads a fixture assembled in the test rather than committed beside the corpus.
+     *
+     * The manifest is the authoritative persona roster, so a schema guard that needs one
+     * more shape does not deserve another resource file beside the committed personas.
+     */
+    private fun loadInline(
+        id: String,
+        outcome: String = "SUCCESS",
+        reviewedEligibility: String = "",
+        rootExtras: String = "",
+        expectedExtras: String = "",
+        forbiddenExerciseIds: String = "[]"
+    ): PlannerFixture {
+        val path = "planner-fixtures/inline-$id.json"
+        return loaderWithResource(
+            resourcePath = path,
+            resourceContents = inlineFixtureJson(
+                id = id,
+                outcome = outcome,
+                reviewedEligibility = reviewedEligibility,
+                rootExtras = rootExtras,
+                expectedExtras = expectedExtras,
+                forbiddenExerciseIds = forbiddenExerciseIds
+            )
+        ).loadResource(path)
+    }
+
+    private fun assertInlineFormatError(
+        id: String,
+        outcome: String = "SUCCESS",
+        reviewedEligibility: String = "",
+        rootExtras: String = "",
+        expectedExtras: String = "",
+        forbiddenExerciseIds: String = "[]",
+        expectedMessageFragment: String
+    ) {
+        val error = assertThrows(PlannerFixtureFormatException::class.java) {
+            loadInline(
+                id = id,
+                outcome = outcome,
+                reviewedEligibility = reviewedEligibility,
+                rootExtras = rootExtras,
+                expectedExtras = expectedExtras,
+                forbiddenExerciseIds = forbiddenExerciseIds
+            )
+        }
+
+        assertThat(error.message).contains(expectedMessageFragment)
+    }
+
+    private fun inlineFixtureJson(
+        id: String,
+        outcome: String,
+        reviewedEligibility: String,
+        rootExtras: String,
+        expectedExtras: String,
+        forbiddenExerciseIds: String
+    ): String = """
+        {
+          "schemaVersion": 1,
+          "id": "inline-$id",
+          "policyVersion": 4,
+          "catalogVersion": "test-catalog-2026-08-30",
+          "profile": {
+            "goals": ["BUILD_MUSCLE"],
+            "experienceLevel": "BEGINNER",
+            "preferredDurationMinutes": 45,
+            "daysPerWeek": 3,
+            "availableEquipment": ["Bodyweight"],
+            "preferredUnit": "LBS",
+            "musclePriorities": {"Chest": "HIGH"},
+            "excludedExerciseIds": [],
+            "trainingConstraints": [],
+            "returningAfterBreakWeeks": 0,
+            "confirmedStartingLoads": {},
+            "movementCapabilities": {}
+          },
+          "completedWorkoutCount": 0,
+          "exerciseHistory": []$reviewedEligibility$rootExtras,
+          "expected": {
+            "outcome": "$outcome",
+            "requiredExerciseIds": [],
+            "forbiddenExerciseIds": $forbiddenExerciseIds$expectedExtras
+          }
+        }
+    """.trimIndent()
 
     private fun assertFormatError(resourcePath: String, expectedMessageFragment: String) {
         val error = assertThrows(PlannerFixtureFormatException::class.java) {
@@ -290,5 +513,14 @@ class PlannerFixtureLoaderTest {
         } ?: error("PlannerFixtureExpected must expose expectedTargetWeights.")
         val value = getter.invoke(expected) as Map<*, *>
         return value.mapKeys { it.key as String }.mapValues { (_, weight) -> (weight as Number).toDouble() }
+    }
+
+    private companion object {
+        /** Minimal reviewed-enabled block, so reviewed-only guards can be exercised. */
+        const val REVIEWED_ELIGIBILITY_FRAGMENT = """,
+          "reviewedEligibility": {
+            "adaptationState": "BUILD",
+            "syntheticApprovedExerciseIds": ["push-up"]
+          }"""
     }
 }

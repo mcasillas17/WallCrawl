@@ -7,7 +7,8 @@ import org.junit.Test
 import wallcrawl.elopenmike.com.core.model.*
 
 class TimedHoldProgrammingTest {
-    private val exercises = PlannerFixtureContextFactory().bundledCatalogProjection().exercises
+    private val exercises =
+        SharedPlannerFixtureHarness.contextFactory.bundledCatalogProjection().exercises
     private val factory = DefaultExercisePrescriptionFactory()
     private val profile = UserProfile(availableEquipment = StandardEquipment.ALL)
     private val expectedIds = setOf(
@@ -94,11 +95,11 @@ class TimedHoldProgrammingTest {
 
     @Test
     fun timedCohortReplaysDeterministicallyThroughPersonaSnapshotsWithoutLoads() = runTest {
-        val fixture = PlannerFixtureLoader().loadResource("planner-fixtures/full-gym-advanced.json").copy(
+        val fixture = SharedPlannerFixtureHarness.loader.loadResource("planner-fixtures/full-gym-advanced.json").copy(
             allowedExerciseIds = expectedIds.toList(),
             exerciseHistory = emptyList()
         )
-        val evaluation = PlannerFixtureEvaluator().evaluateFixture(fixture) as PlannerFixtureSuccessEvaluation
+        val evaluation = SharedPlannerFixtureHarness.evaluator.evaluateFixture(fixture) as PlannerFixtureSuccessEvaluation
         assertThat(evaluation.firstWorkout.copy(id = evaluation.secondWorkout.id))
             .isEqualTo(evaluation.secondWorkout)
         assertThat(evaluation.inputAfterFirstAttempt).isEqualTo(evaluation.inputBefore)

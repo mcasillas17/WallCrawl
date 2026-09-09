@@ -10,8 +10,16 @@ import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
  */
 interface WorkoutPlanner {
     /**
-     * Generates a structured workout recommendation given user goals, equipment,
-     * recovery state, and pre-filtered allowed candidate exercises.
+     * Generates a structured workout recommendation from the bounded generation context.
+     *
+     * A planner reads only fields of [WorkoutGenerationContext], which is the authoritative
+     * list; this contract deliberately does not restate it, because a partial enumeration
+     * here goes stale the moment a field is consumed. The reviewed-only inputs are the
+     * automatic eligibility result, the capability evidence and the composed training program
+     * state with its weekly dose ledger; everything else applies on both paths.
+     *
+     * There is no recovery state among them. Nothing in WallCrawl derives readiness or a
+     * recovery interval, and an implementation must not invent one here.
      */
     suspend fun generateWorkout(
         context: WorkoutGenerationContext

@@ -333,6 +333,13 @@ selected IDs, split, prescriptions, typed validation results, synthetic approval
 IDs and input non-mutation. Comparisons use fresh planners and normalize only
 the generated workout ID.
 
+This suite and the manifest corpus stay separate and are not summed. This one exercises
+declared full-pool profiles and synthetic approval modes; the
+[manifest corpus](planner-evaluation.md) exercises twelve committed personas, and since its
+policy version 4 it reconstructs the reviewed-enabled personas' weeks through the production
+`WeeklyDoseLedgerCalculator` and validates the whole proposal behind every successful persona,
+rather than composing an empty ledger. Malformed loader fixtures belong to neither roster.
+
 The existing corpus's curated subsets are not substituted for full-pool
 availability. Disabled-mode comparisons use the same catalog with only
 `reviewedMetadata` stripped, preserving all original catalog facts and legacy

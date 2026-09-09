@@ -114,7 +114,15 @@ class GeneratedWorkoutValidator(
  * which string matching on [WorkoutValidationException.message] could not support.
  */
 enum class WorkoutPlanningFailure {
-    /** Nothing survived the equipment, exclusion, and recovery filters. */
+    /**
+     * Nothing survived the legacy candidate filter, which checks exactly two things:
+     * equipment availability and the user's explicit exclusions.
+     *
+     * Declared `TrainingConstraint`s are deliberately absent from that list. They narrow
+     * candidates only on the reviewed path, whose empty result is reported as
+     * [REVIEWED_ELIGIBILITY_NO_CANDIDATES] instead. There is no recovery filter either;
+     * candidate selection reads no timestamps.
+     */
     NO_CANDIDATES,
 
     /** The enabled reviewed eligibility gate rejected every automatic candidate. */

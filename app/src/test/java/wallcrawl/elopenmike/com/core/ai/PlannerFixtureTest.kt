@@ -3,8 +3,26 @@ package wallcrawl.elopenmike.com.core.ai
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import java.util.UUID
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
+import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
+import wallcrawl.elopenmike.com.core.model.AdaptationState
+import wallcrawl.elopenmike.com.core.model.SupportRequirement
+import wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata
+import wallcrawl.elopenmike.com.core.model.ReviewedExerciseLink
+import wallcrawl.elopenmike.com.core.model.ReviewProvenance
+import wallcrawl.elopenmike.com.core.model.PrescriptionShape
+import wallcrawl.elopenmike.com.core.model.ImpactLevel
+import wallcrawl.elopenmike.com.core.model.EligibilityPreference
+import wallcrawl.elopenmike.com.core.model.ComplexityTier
+import wallcrawl.elopenmike.com.core.model.SessionProgramConstraints
+import wallcrawl.elopenmike.com.core.model.EligibilityReason
+import wallcrawl.elopenmike.com.core.model.EligibilityDecision
+import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityFailure
+import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
+import wallcrawl.elopenmike.com.core.model.ReviewState
+import wallcrawl.elopenmike.com.core.model.SetType
 import wallcrawl.elopenmike.com.core.model.CapabilityEvidence
 import wallcrawl.elopenmike.com.core.model.CapabilityEvidencePolicyVersion
 import wallcrawl.elopenmike.com.core.model.CapabilityEvidenceReason
@@ -23,6 +41,11 @@ import wallcrawl.elopenmike.com.core.model.ExerciseSource
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
+import wallcrawl.elopenmike.com.core.model.LedgerOmissionReason
+import wallcrawl.elopenmike.com.core.model.WeeklyDoseLedger
+import wallcrawl.elopenmike.com.core.model.TrainingProgramStatePolicyVersion
+import wallcrawl.elopenmike.com.core.model.TrainingProgramState
+import wallcrawl.elopenmike.com.core.model.LedgerPolicyVersion
 import wallcrawl.elopenmike.com.core.model.MechanicsType
 import wallcrawl.elopenmike.com.core.model.MovementCapabilities
 import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
@@ -46,13 +69,14 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSet
 
 class PlannerFixtureTest {
 
-    private val loader = PlannerFixtureLoader()
-    private val evaluator = PlannerFixtureEvaluator(loader = loader)
+    private val evaluator = SharedPlannerFixtureHarness.evaluator
     private val prescriptionFactory = DefaultExercisePrescriptionFactory()
+
+    private fun corpus(): List<PlannerFixture> = SharedPlannerFixtureHarness.corpus
 
     @Test
     fun evaluateCorpus_runsEveryPlannerFixture() = runTest {
-        val evaluations = evaluator.evaluateCorpus()
+        val evaluations = SHARED_CORPUS_EVALUATIONS
 
         assertThat(evaluations.map { it.built.fixture.id }).containsExactly(
             "bodyweight-beginner",
@@ -65,13 +89,14 @@ class PlannerFixtureTest {
             "sparse-history",
             "no-strength-candidates",
             "reviewed-enabled-bodyweight",
-            "reviewed-enabled-no-approved"
+            "reviewed-enabled-no-approved",
+            "concurrent-activity"
         )
     }
 
     @Test
     fun evaluateCorpus_enforcesDeterminismAndPlannerInvariants() = runTest {
-        val evaluations = evaluator.evaluateCorpus()
+        val evaluations = SHARED_CORPUS_EVALUATIONS
 
         evaluations.forEach { evaluation ->
             assertThat(evaluation.inputAfterFirstAttempt).isEqualTo(evaluation.inputBefore)
@@ -85,9 +110,59 @@ class PlannerFixtureTest {
     }
 
     @Test
+    fun evaluateCorpus_validatesTheWholeProposalAgainstTheContextThatProducedIt() = runTest {
+        val successes = SHARED_CORPUS_EVALUATIONS
+            .filterIsInstance<PlannerFixtureSuccessEvaluation>()
+
+        assertThat(successes).isNotEmpty()
+        successes.forEach { evaluation ->
+            val id = evaluation.built.fixture.id
+            val expected = evaluation.built.fixture.expected
+            val raw = evaluation.firstValidation.raw
+            val displayed = evaluation.firstValidation.displayed
+
+            when (expected.wholeProgramOutcome) {
+                RecommendationOutcome.VALID -> {
+                    assertWithMessage("$id raw violations").that(raw.codes()).isEmpty()
+                    assertWithMessage(id).that(displayed.acceptedSnapshot.outcome)
+                        .isEqualTo(RecommendationOutcome.VALID)
+                    // Permitting repair changed nothing, so what would be displayed is the
+                    // raw plan rather than a silently different one.
+                    assertWithMessage(id).that(displayed.acceptedWorkout.exercises)
+                        .isEqualTo(evaluation.firstWorkout.exercises)
+                }
+
+                RecommendationOutcome.REPAIRED -> {
+                    // The raw proposal really was rejected. A repaired plan is never
+                    // evidence that the planner's own output was valid.
+                    assertWithMessage("$id raw violations").that(raw.codes())
+                        .isEqualTo(expected.wholeProgramRepairReasonCodes)
+                    assertWithMessage(id).that(displayed.acceptedSnapshot.outcome)
+                        .isEqualTo(RecommendationOutcome.REPAIRED)
+                    assertWithMessage(id).that(displayed.acceptedSnapshot.reasonCodes)
+                        .isEqualTo(expected.wholeProgramRepairReasonCodes)
+                }
+            }
+
+            // Whatever repair did, it only ever reduced sets, and never below one.
+            val rawSets = evaluation.firstWorkout.exercises.associate {
+                it.exerciseId to it.targetSets
+            }
+            displayed.acceptedWorkout.exercises.forEach { planned ->
+                val before = checkNotNull(rawSets[planned.exerciseId])
+                assertWithMessage("$id ${planned.exerciseId}")
+                    .that(planned.targetSets).isAtMost(before)
+                assertWithMessage("$id ${planned.exerciseId}")
+                    .that(planned.targetSets).isAtLeast(1)
+            }
+            assertWithMessage(id).that(displayed.acceptedWorkout.exercises.map { it.exerciseId })
+                .isEqualTo(evaluation.firstWorkout.exercises.map { it.exerciseId })
+        }
+    }
+
+    @Test
     fun bodyweightBeginnerPersona_keepsExperienceRankingSoftAndInventsNoLoad() = runTest {
-        val fixture = loader.loadCorpus().single { it.id == "bodyweight-beginner" }
-        val evaluation = evaluator.evaluateFixture(fixture) as PlannerFixtureSuccessEvaluation
+        val evaluation = sharedSuccess("bodyweight-beginner")
         val catalogById = evaluation.built.catalogExercises.associateBy(Exercise::id)
         val selectedIds = evaluation.firstWorkout.exercises.map { it.exerciseId }
         val allowedIds = evaluation.built.context.allowedExercises.map(Exercise::id).toSet()
@@ -113,8 +188,7 @@ class PlannerFixtureTest {
 
     @Test
     fun fullGymAdvancedPersona_preservesLegalPoolAndExistingLoadRules() = runTest {
-        val fixture = loader.loadCorpus().single { it.id == "full-gym-advanced" }
-        val evaluation = evaluator.evaluateFixture(fixture) as PlannerFixtureSuccessEvaluation
+        val evaluation = sharedSuccess("full-gym-advanced")
         val catalogById = evaluation.built.catalogExercises.associateBy(Exercise::id)
         val selectedIds = evaluation.firstWorkout.exercises.map { it.exerciseId }
         val allowedIds = evaluation.built.context.allowedExercises.map(Exercise::id).toSet()
@@ -153,8 +227,306 @@ class PlannerFixtureTest {
     }
 
     @Test
+    fun concurrentActivityPersona_creditsResistanceWorkAndTypesTheAerobicWorkItCannotCredit() =
+        runTest {
+            val evaluation = sharedSuccess("concurrent-activity")
+            val ledger = checkNotNull(evaluation.built.context.trainingProgramState).weeklyLedger
+
+            // Ten completed work sets across two approved chest exercises. The logged warm-up
+            // and the set that was never finished are not exposure and are simply absent.
+            assertThat(ledger.directPrimarySets).containsExactly(StandardMuscles.CHEST, 10)
+            assertThat(ledger.creditedWorkSets).isEqualTo(10)
+            // Descriptive involvement is recorded beside the dose and never inside it.
+            assertThat(ledger.secondaryInvolvement)
+                .containsExactly(StandardMuscles.SHOULDERS, 10, StandardMuscles.TRICEPS, 10)
+            assertThat(ledger.secondaryInvolvement.keys).doesNotContain(StandardMuscles.CHEST)
+            // The cycling session's two completed sets are counted, and typed as work whose
+            // muscle this policy will not guess at, rather than credited to the legs.
+            assertThat(ledger.unattributedWorkSets)
+                .containsExactly(LedgerOmissionReason.MISSING_REVIEWED_METADATA, 2)
+            assertThat(ledger.omittedWorkSets).isEqualTo(2)
+        }
+
+    @Test
+    fun concurrentActivityPersona_keepsUnsupportedActivityOutOfAutomaticStrengthSlots() = runTest {
+        val evaluation = sharedSuccess("concurrent-activity")
+        val catalogById = evaluation.built.catalogExercises.associateBy(Exercise::id)
+
+        // The persona genuinely owns cardio equipment, so the real filter keeps this entry:
+        // it stays browsable and usable in a manual template.
+        assertThat(evaluation.built.filteredExercises.map(Exercise::id)).contains("cycling")
+        // It is still not automatic strength work. On this reviewed-enabled persona the
+        // reviewed gate is what removes it, because it carries no approved metadata at all.
+        assertThat(evaluation.built.context.allowedExercises.map(Exercise::id))
+            .doesNotContain("cycling")
+        evaluation.firstWorkout.exercises.forEach { planned ->
+            val exercise = checkNotNull(catalogById[planned.exerciseId])
+            assertThat(exercise.type).isNotEqualTo(ExerciseType.DISTANCE_DURATION)
+            assertThat(exercise.listedEquipment).doesNotContain(StandardEquipment.CARDIO)
+        }
+    }
+
+    @Test
+    fun concurrentActivityPersona_isNotChangedByTheAerobicSessionAlone() = runTest {
+        val fixture = corpus().single { it.id == "concurrent-activity" }
+        // Only the aerobic record is removed. The lifetime workout counter is held constant
+        // on purpose: adding or removing a completed session legitimately rotates the split,
+        // and that would be a counter effect rather than anything about the activity.
+        val withoutAerobicWork = fixture.copy(
+            completedSessions = fixture.completedSessions.filterNot { it.id == "aerobic-thursday" }
+        )
+
+        val withAerobic = sharedSuccess("concurrent-activity")
+        val control = evaluator.evaluateFixture(withoutAerobicWork)
+            as PlannerFixtureSuccessEvaluation
+        val controlLedger = checkNotNull(control.built.context.trainingProgramState).weeklyLedger
+        val ledger = checkNotNull(withAerobic.built.context.trainingProgramState).weeklyLedger
+
+        assertThat(controlLedger.directPrimarySets).isEqualTo(ledger.directPrimarySets)
+        assertThat(controlLedger.secondaryInvolvement).isEqualTo(ledger.secondaryInvolvement)
+        assertThat(controlLedger.unattributedWorkSets).isEmpty()
+        assertThat(control.firstWorkout.normalizedPlannerFixtureWorkout())
+            .isEqualTo(withAerobic.firstWorkout.normalizedPlannerFixtureWorkout())
+        assertThat(control.firstValidation.raw.codes())
+            .isEqualTo(withAerobic.firstValidation.raw.codes())
+    }
+
+    @Test
+    fun concurrentActivityPersona_isChangedWhenTheResistanceSessionIsRemoved() = runTest {
+        // The sensitivity control for the assertion above: if removing logged resistance work
+        // also changed nothing, the previous test would be proving nothing about aerobic work.
+        val fixture = corpus().single { it.id == "concurrent-activity" }
+        val withoutResistanceWork = fixture.copy(
+            completedSessions = fixture.completedSessions
+                .filterNot { it.id == "resistance-tuesday" }
+        )
+
+        val withResistance = sharedSuccess("concurrent-activity")
+        val control = evaluator.evaluateFixture(withoutResistanceWork)
+            as PlannerFixtureSuccessEvaluation
+        val controlLedger = checkNotNull(control.built.context.trainingProgramState).weeklyLedger
+
+        assertThat(controlLedger.directPrimarySets).isEmpty()
+        // With the week's chest allowance untouched, the same proposal is no longer over it.
+        assertThat(withResistance.firstValidation.raw.codes())
+            .containsExactly(ProgramViolationCode.WEEKLY_ALLOWANCE_EXCEEDED)
+        assertThat(control.firstValidation.raw.codes()).isEmpty()
+        assertThat(control.firstWorkout.normalizedPlannerFixtureWorkout())
+            .isNotEqualTo(withResistance.firstWorkout.normalizedPlannerFixtureWorkout())
+    }
+
+    @Test
+    fun concurrentActivityPersona_readsTheWeekRatherThanTheTimeInsideIt() = runTest {
+        // Nothing infers readiness, overload or recovery from when in the week work happened.
+        // Moving both sessions to other days of the same ISO week must change nothing at all.
+        val fixture = corpus().single { it.id == "concurrent-activity" }
+        val movedWithinTheWeek = fixture.copy(
+            completedSessions = fixture.completedSessions.map { session ->
+                // `+2 mod 7` has no fixed point, so every declared session really moves.
+                // `6 - offset` did not: the Thursday aerobic session sat on offset 3 and
+                // stayed exactly where it was.
+                session.copy(completedDayOffset = (session.completedDayOffset + 2) % 7)
+            }
+        )
+
+        val original = sharedSuccess("concurrent-activity")
+        val moved = evaluator.evaluateFixture(movedWithinTheWeek) as PlannerFixtureSuccessEvaluation
+
+        assertThat(checkNotNull(moved.built.context.trainingProgramState).weeklyLedger)
+            .isEqualTo(checkNotNull(original.built.context.trainingProgramState).weeklyLedger)
+        assertThat(moved.firstValidation.raw.codes())
+            .isEqualTo(original.firstValidation.raw.codes())
+        assertThat(moved.firstWorkout.normalizedPlannerFixtureWorkout())
+            .isEqualTo(original.firstWorkout.normalizedPlannerFixtureWorkout())
+    }
+
+    @Test
+    fun theContinuousActivityAnswerIsNotARecordOfAerobicActivity() = runTest {
+        // The capability answer says how the user feels about sustained work. It is not a log
+        // of anything they did, so it can neither add nor remove a single counted set.
+        //
+        // This is not the same claim as the aerobic-session control above, and neither
+        // subsumes the other: that one varies the *record* of activity, this one varies the
+        // *answer* about it. Keeping them apart is the point — an implementation that read
+        // the capability answer as evidence of training would pass the aerobic control and
+        // fail here. Whether aerobic work is credited at all is asserted separately, by
+        // concurrentActivityPersona_creditsResistanceWorkAndTypesTheAerobicWorkItCannotCredit.
+        // The sensitivity control for this one is
+        // aCapabilityTheReviewedGateDoesReadChangesTheProposal, which proves capability
+        // answers are not simply inert.
+        val fixture = corpus().single { it.id == "concurrent-activity" }
+        val avoidsContinuousActivity = fixture.copy(
+            profile = fixture.profile.copy(
+                movementCapabilities = MovementCapabilities.from(
+                    mapOf(MovementCapabilityType.CONTINUOUS_ACTIVITY to CapabilityLevel.AVOID)
+                )
+            )
+        )
+
+        val comfortable = sharedSuccess("concurrent-activity")
+        val avoiding = evaluator.evaluateFixture(avoidsContinuousActivity)
+            as PlannerFixtureSuccessEvaluation
+
+        assertThat(checkNotNull(avoiding.built.context.trainingProgramState).weeklyLedger)
+            .isEqualTo(checkNotNull(comfortable.built.context.trainingProgramState).weeklyLedger)
+        assertThat(avoiding.firstWorkout.normalizedPlannerFixtureWorkout())
+            .isEqualTo(comfortable.firstWorkout.normalizedPlannerFixtureWorkout())
+    }
+
+    @Test
+    fun aCapabilityTheReviewedGateDoesReadChangesTheProposal() = runTest {
+        // The sensitivity control for the assertion above. `CONTINUOUS_ACTIVITY` changes
+        // nothing because nothing in this persona's pool requires it — not because capability
+        // answers are inert. `BALANCE_WITHOUT_SUPPORT` is required by `dumbbell-lateral-raise`,
+        // so avoiding it must visibly change the candidate set and the plan. Without this,
+        // the invariance above could be read as proof that the harness ignores capabilities.
+        val fixture = corpus().single { it.id == "concurrent-activity" }
+        val avoidsBalance = fixture.copy(
+            profile = fixture.profile.copy(
+                movementCapabilities = MovementCapabilities.from(
+                    mapOf(
+                        MovementCapabilityType.CONTINUOUS_ACTIVITY to CapabilityLevel.COMFORTABLE,
+                        MovementCapabilityType.BALANCE_WITHOUT_SUPPORT to CapabilityLevel.AVOID
+                    )
+                )
+            )
+        )
+
+        val baseline = sharedSuccess("concurrent-activity")
+        val avoiding = evaluator.evaluateFixture(avoidsBalance) as PlannerFixtureSuccessEvaluation
+
+        assertThat(baseline.built.context.allowedExercises.map(Exercise::id))
+            .contains("dumbbell-lateral-raise")
+        assertThat(avoiding.built.context.allowedExercises.map(Exercise::id))
+            .doesNotContain("dumbbell-lateral-raise")
+        assertThat(avoiding.firstWorkout.normalizedPlannerFixtureWorkout())
+            .isNotEqualTo(baseline.firstWorkout.normalizedPlannerFixtureWorkout())
+    }
+
+    @Test
+    fun weeklyDoseIsCountedInSetsRatherThanDerivedFromFatigueScores() = runTest {
+        // The prohibited interpretation is the legacy ordinal `programming.fatigueScore`
+        // becoming a summed physiological budget. The ordinal's real role in ranking is not
+        // asserted against — it is legitimate and unchanged.
+        //
+        // This is checked by recomputing both halves of the accounting from set counts alone
+        // and requiring equality, so any arithmetic that mixed a fatigue value into dose
+        // breaks here. The earlier form of this test compared two validations that differed
+        // only in `fatigueScore`, which the validator never reads: it could not fail.
+        val evaluation = sharedSuccess("concurrent-activity")
+        val fixture = evaluation.built.fixture
+        val catalogById = evaluation.built.catalogExercises.associateBy(Exercise::id)
+        val accounting = evaluation.firstValidation.displayed.acceptedSnapshot.doseAccounting
+        assertThat(accounting).isNotEmpty()
+
+        // Completed exposure, recomputed straight from the declared history: one credit per
+        // completed non-warm-up set of an approved exercise, and nothing else.
+        val expectedCompletedByMuscle = mutableMapOf<String, Int>()
+        fixture.completedSessions.forEach { session ->
+            session.exercises.forEach { logged ->
+                val muscle = catalogById[logged.exerciseId]
+                    ?.reviewedMetadata
+                    ?.takeIf { it.reviewState == ReviewState.APPROVED }
+                    ?.directPrimaryMuscle
+                    ?: return@forEach
+                val creditable = logged.sets.count {
+                    it.isCompleted && it.type != SetType.WARMUP
+                }
+                expectedCompletedByMuscle.merge(muscle, creditable, Int::plus)
+            }
+        }
+
+        // Proposed exposure, recomputed from the plan the accounting actually describes.
+        // That is the repaired plan for this persona, not the raw one: the snapshot on a
+        // REPAIRED result reports the second evaluation, and reading the raw target sets
+        // here would be the very confusion this corpus exists to prevent.
+        val accountedPlan = evaluation.firstValidation.displayed.acceptedWorkout
+        val expectedProposedByMuscle = mutableMapOf<String, Int>()
+        accountedPlan.exercises.forEach { planned ->
+            val muscle = catalogById[planned.exerciseId]
+                ?.reviewedMetadata
+                ?.takeIf { it.reviewState == ReviewState.APPROVED }
+                ?.directPrimaryMuscle
+                ?: return@forEach
+            expectedProposedByMuscle.merge(muscle, planned.targetSets, Int::plus)
+        }
+
+        accounting.forEach { muscle ->
+            assertWithMessage("completed ${muscle.muscle}").that(muscle.completedSets)
+                .isEqualTo(expectedCompletedByMuscle[muscle.muscle] ?: 0)
+            assertWithMessage("proposed ${muscle.muscle}").that(muscle.proposedSets)
+                .isEqualTo(expectedProposedByMuscle[muscle.muscle] ?: 0)
+            // The allowance is the configured product number for this state, not a value
+            // derived from anything the catalog says about the selected exercises.
+            assertWithMessage("allowance ${muscle.muscle}").that(muscle.allowanceSets)
+                .isEqualTo(
+                    StateBasedTrainingPolicyDefaults.V1
+                        .doseLimitsByState[AdaptationState.BUILD]
+                        ?.maxWeeklyDirectPrimarySets
+                )
+        }
+
+        // The fatigue sums the prohibited reading would have produced are genuinely
+        // different numbers, so the equalities above are not accidentally satisfied by one.
+        val completedFatigueSum = fixture.completedSessions.sumOf { session ->
+            session.exercises.sumOf { logged ->
+                val score = catalogById[logged.exerciseId]?.programming?.fatigueScore ?: 0
+                score * logged.sets.count { it.isCompleted && it.type != SetType.WARMUP }
+            }
+        }
+        assertThat(completedFatigueSum)
+            .isNotEqualTo(accounting.sumOf { it.completedSets })
+    }
+
+    @Test
+    fun prospectiveDoseAccountingIgnoresTheLegacyFatigueScore() = runTest {
+        // The narrower companion to the assertion above, kept because it covers the one path
+        // set-count equality cannot: validating an identical proposal against a context whose
+        // candidates carry different ordinal labels must reach an identical verdict.
+        val evaluation = sharedSuccess("concurrent-activity")
+        val context = evaluation.built.context
+        val maximumFatigue = context.copy(
+            allowedExercises = context.allowedExercises.map { exercise ->
+                exercise.copy(
+                    programming = exercise.programming?.copy(fatigueScore = MAX_FATIGUE_SCORE)
+                )
+            }
+        )
+        // Without this the test could quietly compare a context with itself, which is the
+        // exact defect the previous version of this assertion had.
+        assertThat(maximumFatigue.allowedExercises).isNotEqualTo(context.allowedExercises)
+        val validator = ProgramValidator(
+            GeneratedWorkoutValidator(InMemoryExerciseCatalog(evaluation.built.catalogExercises))
+        )
+
+        val baseline = validator.validate(evaluation.firstWorkout, context, allowRepair = true)
+        val loaded = validator.validate(evaluation.firstWorkout, maximumFatigue, allowRepair = true)
+
+        assertThat(loaded.codes()).isEqualTo(baseline.codes())
+        assertThat(loaded.acceptedSnapshot.doseAccounting)
+            .isEqualTo(baseline.acceptedSnapshot.doseAccounting)
+    }
+
+    @Test
+    fun aProposalWellUnderTheConfiguredAllowanceIsAcceptedWithoutAWeeklyMinimum() = runTest {
+        // There is no scientific floor and no automatic increase: proposing far less than the
+        // configured allowance is simply valid, and validation adds no sets to close the gap.
+        val evaluation = sharedSuccess("reviewed-enabled-bodyweight")
+
+        val accounting = evaluation.firstValidation.displayed.acceptedSnapshot.doseAccounting
+        assertThat(accounting).isNotEmpty()
+        accounting.forEach { muscle ->
+            val allowance = checkNotNull(muscle.allowanceSets)
+            assertThat(muscle.completedSets + muscle.proposedSets).isLessThan(allowance)
+        }
+        assertThat(evaluation.firstValidation.raw.codes()).isEmpty()
+        assertThat(evaluation.firstValidation.displayed.acceptedWorkout.exercises)
+            .isEqualTo(evaluation.firstWorkout.exercises)
+    }
+
+    @Test
     fun limitedCapabilityFixture_matchesAllComfortableCapabilitiesControl() = runTest {
-        val limitedFixture = loader.loadCorpus().single { it.id == "limited-capability" }
+        val limitedFixture = corpus().single { it.id == "limited-capability" }
         val comfortableControl = limitedFixture.copy(
             profile = limitedFixture.profile.copy(
                 movementCapabilities = MovementCapabilities.from(
@@ -174,8 +546,7 @@ class PlannerFixtureTest {
 
     @Test
     fun reviewedEnabledPersona_consumesProgramStateWithoutHardRuleOrLoadRegression() = runTest {
-        val fixture = loader.loadCorpus().single { it.id == "reviewed-enabled-bodyweight" }
-        val evaluation = evaluator.evaluateFixture(fixture) as PlannerFixtureSuccessEvaluation
+        val evaluation = sharedSuccess("reviewed-enabled-bodyweight")
         val context = evaluation.built.context
         val allowedIds = context.allowedExercises.map(Exercise::id).toSet()
 
@@ -198,12 +569,12 @@ class PlannerFixtureTest {
 
     @Test
     fun corpusMetadata_usesSupportedVersionsAndBoundedHistory() {
-        val fixtures = loader.loadCorpus()
+        val fixtures = corpus()
 
-        assertThat(fixtures).hasSize(11)
+        assertThat(fixtures).hasSize(12)
         fixtures.forEach { fixture ->
             assertThat(fixture.schemaVersion).isEqualTo(1)
-            assertThat(fixture.policyVersion).isEqualTo(3)
+            assertThat(fixture.policyVersion).isEqualTo(4)
             assertThat(fixture.catalogVersion)
                 .isEqualTo("ba0b709cb20430361b2cb33aaadd20998164a916")
             assertThat(fixture.exerciseHistory.size).isAtMost(8)
@@ -261,6 +632,70 @@ class PlannerFixtureTest {
         assertThat(snapshotRestPreferences)
             .isNotSameInstanceAs(context.priorUserRestPreferences)
 
+        // The reconstructed weekly ledger is this corpus's headline planner input, and
+        // `WeeklyDoseLedger` stores its three count maps by reference, so the snapshot has to
+        // copy them or the non-mutation assertion would be trivially true for exactly the
+        // input it most needs to cover.
+        val snapshotProgramState = readField(snapshot, "trainingProgramState")
+        val sourceProgramState = checkNotNull(context.trainingProgramState)
+        assertThat(snapshotProgramState).isEqualTo(sourceProgramState)
+        assertThat(snapshotProgramState).isNotSameInstanceAs(sourceProgramState)
+        val snapshotEligibility = readField(snapshot, "automaticEligibilityResult")
+        val sourceEligibility = checkNotNull(context.automaticEligibilityResult)
+        assertThat(snapshotEligibility).isEqualTo(sourceEligibility)
+        assertThat(snapshotEligibility).isNotSameInstanceAs(sourceEligibility)
+        val snapshotCandidates = snapshotEligibility as AutomaticEligibilityResult.Candidates
+        val sourceCandidates = sourceEligibility as AutomaticEligibilityResult.Candidates
+        assertThat(snapshotCandidates.exercises).isNotSameInstanceAs(sourceCandidates.exercises)
+        // As with `decisions`, the outer list alone is satisfied by a plain `toList()`.
+        assertThat(snapshotCandidates.exercises.single())
+            .isNotSameInstanceAs(sourceCandidates.exercises.single())
+        assertThat(snapshotCandidates.exercises.single().primaryMuscles)
+            .isNotSameInstanceAs(sourceCandidates.exercises.single().primaryMuscles)
+        assertThat(snapshotCandidates.decisions).isNotSameInstanceAs(sourceCandidates.decisions)
+        // The outer list alone is satisfied by a plain `toList()`, so the element and its
+        // own collections have to be checked too.
+        val snapshotDecision = snapshotCandidates.decisions.single()
+        val sourceDecision = sourceCandidates.decisions.single()
+        assertThat(snapshotDecision).isNotSameInstanceAs(sourceDecision)
+        assertThat(snapshotDecision.reasons).isNotSameInstanceAs(sourceDecision.reasons)
+        assertThat(snapshotDecision.preferences).isNotSameInstanceAs(sourceDecision.preferences)
+
+        // The other arm of the eligibility `when`. Nothing else in the suite enters it:
+        // `reviewed-enabled-no-approved` only ever compares snapshots for value equality,
+        // which passes whether or not its decisions are copied.
+        val noCandidatesContext = context.copy(
+            automaticEligibilityResult = AutomaticEligibilityResult.NoCandidates(
+                failure = AutomaticEligibilityFailure.NO_APPROVED_METADATA,
+                decisions = sourceCandidates.decisions
+            )
+        )
+        val noCandidatesSnapshot = snapshotOf(noCandidatesContext)
+        val snapshotNoCandidates = readField(noCandidatesSnapshot, "automaticEligibilityResult")
+            as AutomaticEligibilityResult.NoCandidates
+        val sourceNoCandidates =
+            noCandidatesContext.automaticEligibilityResult as AutomaticEligibilityResult.NoCandidates
+        assertThat(snapshotNoCandidates).isEqualTo(sourceNoCandidates)
+        assertThat(snapshotNoCandidates).isNotSameInstanceAs(sourceNoCandidates)
+        assertThat(snapshotNoCandidates.decisions)
+            .isNotSameInstanceAs(sourceNoCandidates.decisions)
+        assertThat(snapshotNoCandidates.decisions.single())
+            .isNotSameInstanceAs(sourceNoCandidates.decisions.single())
+
+        val snapshotConstraints = readField(snapshot, "programConstraints")
+        assertThat(snapshotConstraints).isEqualTo(context.programConstraints)
+        assertThat(snapshotConstraints).isNotSameInstanceAs(context.programConstraints)
+        assertThat((snapshotConstraints as SessionProgramConstraints).requiredMovementPatterns)
+            .isNotSameInstanceAs(context.programConstraints.requiredMovementPatterns)
+
+        val snapshotLedger = (snapshotProgramState as TrainingProgramState).weeklyLedger
+        assertThat(snapshotLedger.directPrimarySets)
+            .isNotSameInstanceAs(sourceProgramState.weeklyLedger.directPrimarySets)
+        assertThat(snapshotLedger.secondaryInvolvement)
+            .isNotSameInstanceAs(sourceProgramState.weeklyLedger.secondaryInvolvement)
+        assertThat(snapshotLedger.unattributedWorkSets)
+            .isNotSameInstanceAs(sourceProgramState.weeklyLedger.unattributedWorkSets)
+
         val snapshotSession = snapshotRecentWorkoutHistory.single() as WorkoutSession
         val sourceSession = context.recentWorkoutHistory.single()
         assertThat(snapshotSession).isNotSameInstanceAs(sourceSession)
@@ -268,8 +703,9 @@ class PlannerFixtureTest {
         assertThat(snapshotSession.exercises).isNotSameInstanceAs(sourceSession.exercises)
         assertThat(snapshotSession.exercises.single()).isNotSameInstanceAs(sourceSession.exercises.single())
         assertThat(snapshotSession.exercises.single().sets).isNotSameInstanceAs(sourceSession.exercises.single().sets)
+        // `WorkoutSet` holds nothing mutable, so the elements are deliberately shared.
         assertThat(snapshotSession.exercises.single().sets.single())
-            .isNotSameInstanceAs(sourceSession.exercises.single().sets.single())
+            .isSameInstanceAs(sourceSession.exercises.single().sets.single())
 
         @Suppress("UNCHECKED_CAST")
         val snapshotHistory = (snapshotExerciseHistory as Map<String, *>)
@@ -277,15 +713,15 @@ class PlannerFixtureTest {
         val sourceHistory = context.exerciseHistory.getValue("incline-dumbbell-press")
         assertThat(snapshotHistory).isNotSameInstanceAs(sourceHistory)
         assertThat(snapshotHistory.recentSets).isNotSameInstanceAs(sourceHistory.recentSets)
-        assertThat(snapshotHistory.recentSets.single()).isNotSameInstanceAs(sourceHistory.recentSets.single())
+        // `WorkoutSet` holds nothing mutable, so the elements are deliberately shared.
+        assertThat(snapshotHistory.recentSets.single())
+            .isSameInstanceAs(sourceHistory.recentSets.single())
 
         val snapshotExercise = snapshotAllowedExercises.single() as Exercise
         val sourceExercise = context.allowedExercises.single()
         assertThat(snapshotExercise).isNotSameInstanceAs(sourceExercise)
-        assertThat(snapshotExercise.source).isNotSameInstanceAs(sourceExercise.source)
-        assertThat(snapshotExercise.source!!.attribution).isNotSameInstanceAs(sourceExercise.source!!.attribution)
-        assertThat(snapshotExercise.source!!.attribution.source)
-            .isNotSameInstanceAs(sourceExercise.source!!.attribution.source)
+        // A tree of strings with no collection in it, so it is deliberately shared.
+        assertThat(snapshotExercise.source).isSameInstanceAs(sourceExercise.source)
         assertThat(snapshotExercise.searchAliases).isNotSameInstanceAs(sourceExercise.searchAliases)
         assertThat(snapshotExercise.primaryMuscles).isNotSameInstanceAs(sourceExercise.primaryMuscles)
         assertThat(snapshotExercise.secondaryMuscles).isNotSameInstanceAs(sourceExercise.secondaryMuscles)
@@ -297,7 +733,41 @@ class PlannerFixtureTest {
             .isNotSameInstanceAs(sourceExercise.programming!!.requiredEquipmentCombinations.single())
         assertThat(snapshotExercise.programming!!.alternativeExerciseIds)
             .isNotSameInstanceAs(sourceExercise.programming!!.alternativeExerciseIds)
+
+        val snapshotReviewed = checkNotNull(snapshotExercise.reviewedMetadata)
+        val sourceReviewed = checkNotNull(sourceExercise.reviewedMetadata)
+        assertThat(snapshotReviewed).isEqualTo(sourceReviewed)
+        assertThat(snapshotReviewed).isNotSameInstanceAs(sourceReviewed)
+        assertThat(snapshotReviewed.descriptiveSecondaryMuscles)
+            .isNotSameInstanceAs(sourceReviewed.descriptiveSecondaryMuscles)
+        assertThat(snapshotReviewed.approvedRegressions)
+            .isNotSameInstanceAs(sourceReviewed.approvedRegressions)
+        assertThat(snapshotReviewed.approvedSubstitutions)
+            .isNotSameInstanceAs(sourceReviewed.approvedSubstitutions)
+        // `ReviewedExerciseLink` and `ReviewProvenance` are flat values, deliberately shared.
+        assertThat(snapshotReviewed.approvedRegressions.single())
+            .isSameInstanceAs(sourceReviewed.approvedRegressions.single())
+        assertThat(snapshotReviewed.approvedSubstitutions.single())
+            .isSameInstanceAs(sourceReviewed.approvedSubstitutions.single())
+        assertThat(snapshotReviewed.capabilityRequirements)
+            .isNotSameInstanceAs(sourceReviewed.capabilityRequirements)
+        assertThat(snapshotReviewed.equipmentAlternatives)
+            .isNotSameInstanceAs(sourceReviewed.equipmentAlternatives)
+        assertThat(snapshotReviewed.equipmentAlternatives.single())
+            .isNotSameInstanceAs(sourceReviewed.equipmentAlternatives.single())
+        assertThat(snapshotReviewed.provenance).isSameInstanceAs(sourceReviewed.provenance)
     }
+
+    /**
+     * The unmodified replay of one corpus persona, taken from the single shared corpus run.
+     *
+     * Tests that vary a persona still call [PlannerFixtureEvaluator.evaluateFixture] directly
+     * with their modified fixture, so only unmodified baselines are reused.
+     */
+    private fun sharedSuccess(id: String): PlannerFixtureSuccessEvaluation =
+        SHARED_CORPUS_EVALUATIONS
+            .filterIsInstance<PlannerFixtureSuccessEvaluation>()
+            .single { it.built.fixture.id == id }
 
     private fun assertSuccessfulFixture(evaluation: PlannerFixtureSuccessEvaluation) {
         val normalizedFirst = evaluation.firstWorkout.normalizedPlannerFixtureWorkout()
@@ -502,9 +972,11 @@ class PlannerFixtureTest {
         assertThat(readField(snapshot, "excludedExerciseIds")).isNotSameInstanceAs(source.excludedExerciseIds)
         assertThat(readField(snapshot, "trainingConstraints")).isNotSameInstanceAs(source.trainingConstraints)
         assertThat(readField(snapshot, "confirmedStartingLoads")).isNotSameInstanceAs(source.confirmedStartingLoads)
+        // `MovementCapabilities` has a private constructor and its only factory wraps a
+        // freshly built map in `unmodifiableMap`, so it is deeply immutable and deliberately
+        // shared — the same rule the snapshot applies to `capabilityEvidence`.
         val snapshotCapabilities = readField(snapshot, "movementCapabilities")
-        assertThat(snapshotCapabilities).isNotSameInstanceAs(source.movementCapabilities)
-        assertThat(readField(snapshotCapabilities, "values")).isNotSameInstanceAs(source.movementCapabilities.values)
+        assertThat(snapshotCapabilities).isSameInstanceAs(source.movementCapabilities)
     }
 
     private fun snapshotProbeContext(): WorkoutGenerationContext {
@@ -579,6 +1051,36 @@ class PlannerFixtureTest {
                 progressionType = ProgressionType.REPETITIONS_THEN_LOAD,
                 alternativeExerciseIds = listOf("dumbbell-bench-press"),
                 coachingSummary = "Drive through the upper chest."
+            ),
+            // Populated on purpose: left null, the whole six-branch
+            // `ReviewedExerciseMetadata.deepCopy` is never invoked and could be deleted with
+            // this probe still green. Every reviewed-enabled persona carries such a block.
+            reviewedMetadata = ReviewedExerciseMetadata(
+                reviewState = ReviewState.APPROVED,
+                directPrimaryMuscle = StandardMuscles.CHEST,
+                descriptiveSecondaryMuscles = setOf(
+                    StandardMuscles.SHOULDERS,
+                    StandardMuscles.TRICEPS
+                ),
+                movementPattern = MovementPattern.HORIZONTAL_PUSH,
+                complexity = ComplexityTier.STANDARD,
+                progressionFamily = "probe-family",
+                prescriptionShape = PrescriptionShape.WEIGHT_REPS,
+                approvedRegressions = listOf(ReviewedExerciseLink("knee-push-up")),
+                approvedSubstitutions = listOf(ReviewedExerciseLink("dumbbell-bench-press")),
+                capabilityRequirements = setOf(MovementCapabilityType.IMPACT),
+                supportRequirement = SupportRequirement.SUPPORTED,
+                impactLevel = ImpactLevel.LOW,
+                equipmentAlternatives = listOf(
+                    listOf(StandardEquipment.DUMBBELL, StandardEquipment.BENCH)
+                ),
+                provenance = ReviewProvenance(
+                    reviewerRole = "SYNTHETIC_PROBE_REVIEWER_NOT_A_HUMAN",
+                    rationaleOrSource = "SYNTHETIC PROBE FIXTURE. Never bundled.",
+                    reviewedAtEpochMillis = 1L,
+                    schemaVersion = 1,
+                    policyVersion = 1
+                )
             )
         )
         val profile = UserProfile(
@@ -651,7 +1153,61 @@ class PlannerFixtureTest {
                     restSeconds = 240
                 )
             ),
+            // Both of these are supplied non-empty on purpose. Left at their defaults —
+            // a null eligibility result and an empty pattern set — the snapshot's copies of
+            // them are never exercised, and dropping either copy would still pass.
+            automaticEligibilityResult = AutomaticEligibilityResult.Candidates(
+                exercises = listOf(allowedExercise),
+                decisions = listOf(
+                    EligibilityDecision(
+                        exerciseId = allowedExercise.id,
+                        eligible = true,
+                        reasons = listOf(EligibilityReason.APPROVED),
+                        // Non-empty on purpose: `emptyList().toList()` returns the shared
+                        // singleton, so an empty list could never detect a dropped copy.
+                        preferences = listOf(
+                            EligibilityPreference.Limited(MovementCapabilityType.IMPACT)
+                        )
+                    )
+                )
+            ),
+            programConstraints = SessionProgramConstraints(
+                requiredMovementPatterns = setOf(MovementPattern.HORIZONTAL_PUSH)
+            ),
+            // Deliberately the mutable map types `WeeklyDoseLedgerCalculator` actually
+            // supplies: the ledger stores them by reference, so the probe has to as well.
+            trainingProgramState = TrainingProgramState(
+                policyVersion = TrainingProgramStatePolicyVersion.PROGRAM_STATE_V1,
+                adaptationState = AdaptationState.BUILD,
+                weeklyLedger = WeeklyDoseLedger(
+                    policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+                    weekStartEpochDay = MONDAY_EPOCH_DAY,
+                    timeZoneId = "UTC",
+                    catalogVersion = "probe-catalog",
+                    reviewPolicyVersion = 1,
+                    directPrimarySets = sortedMapOf(StandardMuscles.CHEST to 4),
+                    secondaryInvolvement = sortedMapOf(StandardMuscles.TRICEPS to 4),
+                    unattributedWorkSets = linkedMapOf(
+                        LedgerOmissionReason.MISSING_REVIEWED_METADATA to 2
+                    )
+                )
+            ),
             preferredUnits = WeightUnit.KG
         )
+    }
+
+    private companion object {
+        /** The upper bound the packaged catalog parser accepts for the legacy ordinal label. */
+        const val MAX_FATIGUE_SCORE = 5
+
+        /** One replay of the shared parsed roster, reused by every assertion that reads it. */
+        val SHARED_CORPUS_EVALUATIONS: List<PlannerFixtureEvaluation> by lazy {
+            runBlocking {
+                SharedPlannerFixtureHarness.corpus.map {
+                    SharedPlannerFixtureHarness.evaluator.evaluateFixture(it)
+                }
+            }
+        }
+
     }
 }

@@ -13,8 +13,8 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSet
 
 class PlannerFixtureContextFactoryTest {
 
-    private val loader = PlannerFixtureLoader()
-    private val contextFactory = PlannerFixtureContextFactory()
+    private val loader = SharedPlannerFixtureHarness.loader
+    private val contextFactory = SharedPlannerFixtureHarness.contextFactory
 
     @Test
     fun create_rejectsCorpusFixturesWithUnsupportedPolicyVersion() {
@@ -26,7 +26,7 @@ class PlannerFixtureContextFactoryTest {
 
         assertThat(error.message)
             .isEqualTo(
-                "root.policyVersion must equal supported corpus policy version 3."
+                "root.policyVersion must equal supported corpus policy version 4."
             )
     }
 
@@ -278,4 +278,5 @@ class PlannerFixtureContextFactoryTest {
         val fixture: PlannerFixture,
         val path: String
     )
+
 }

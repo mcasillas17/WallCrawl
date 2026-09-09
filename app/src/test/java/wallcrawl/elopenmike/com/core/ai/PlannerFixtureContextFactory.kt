@@ -6,6 +6,7 @@ import java.nio.ByteBuffer
 import java.nio.charset.CharacterCodingException
 import java.nio.charset.CodingErrorAction
 import java.nio.charset.StandardCharsets
+import java.time.ZoneId
 import java.util.Locale
 import org.json.JSONArray
 import org.json.JSONException
@@ -16,6 +17,7 @@ import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
 import wallcrawl.elopenmike.com.core.model.ComplexityTier
 import wallcrawl.elopenmike.com.core.model.Difficulty
 import wallcrawl.elopenmike.com.core.model.Exercise
+import wallcrawl.elopenmike.com.core.model.ExercisePrescription
 import wallcrawl.elopenmike.com.core.model.ExerciseProgrammingMetadata
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.MechanicsType
@@ -33,10 +35,15 @@ import wallcrawl.elopenmike.com.core.model.ReviewedExerciseLink
 import wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.SupportRequirement
+import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.TrainingProgramState
 import wallcrawl.elopenmike.com.core.model.TrainingProgramStatePolicyVersion
+import wallcrawl.elopenmike.com.core.model.TrainingWeek
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeeklyDoseLedger
+import wallcrawl.elopenmike.com.core.model.WorkoutExercise
+import wallcrawl.elopenmike.com.core.model.WorkoutSession
+import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
 
 internal data class PlannerFixtureContext(
@@ -57,6 +64,9 @@ internal class PlannerFixtureContextFactory(
     private val classLoader: ClassLoader = checkNotNull(PlannerFixtureContextFactory::class.java.classLoader),
     private val exerciseFilter: ExerciseFilter = ExerciseFilter()
 ) {
+
+    /** Stateless and pure, and the corpus exists to run the real one, so it is not a seam. */
+    private val ledgerCalculator = WeeklyDoseLedgerCalculator()
 
     private val catalogProjection: PlannerFixtureBundledCatalogProjection by lazy {
         loadBundledCatalogProjection()
@@ -115,23 +125,19 @@ internal class PlannerFixtureContextFactory(
                 fixture = fixture
             )
         }
+        val reviewPolicyVersion = catalogExercises
+            .mapNotNull { it.reviewedMetadata?.provenance?.policyVersion }
+            .maxOrNull()
+            ?: 0
         val trainingProgramState =
             fixture.reviewedEligibility?.let { reviewedEligibility ->
                 TrainingProgramState(
                     policyVersion = TrainingProgramStatePolicyVersion.PROGRAM_STATE_V1,
                     adaptationState = reviewedEligibility.adaptationState,
-                    weeklyLedger = WeeklyDoseLedger(
-                        policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
-                        weekStartEpochDay = MONDAY_EPOCH_DAY,
-                        timeZoneId = "UTC",
-                        catalogVersion = fixture.catalogVersion,
-                        reviewPolicyVersion = catalogExercises
-                            .mapNotNull { it.reviewedMetadata?.provenance?.policyVersion }
-                            .maxOrNull()
-                            ?: 0,
-                        directPrimarySets = emptyMap(),
-                        secondaryInvolvement = emptyMap(),
-                        unattributedWorkSets = emptyMap()
+                    weeklyLedger = composeWeeklyLedger(
+                        fixture = fixture,
+                        catalogExercises = catalogExercises,
+                        reviewPolicyVersion = reviewPolicyVersion
                     )
                 )
             }
@@ -147,8 +153,81 @@ internal class PlannerFixtureContextFactory(
                 allowedExercises = allowedExercises,
                 automaticEligibilityResult = automaticEligibilityResult,
                 trainingProgramState = trainingProgramState,
-                preferredUnits = profile.preferredUnit
+                preferredUnits = profile.preferredUnit,
+                // Mirrors WorkoutGenerationContextBuilder: the recorded decision has to name
+                // the content it was made against, and whole-program validation writes both
+                // into its recommendation snapshot.
+                catalogVersion = fixture.catalogVersion,
+                reviewPolicyVersion = reviewPolicyVersion
             )
+        )
+    }
+
+    /**
+     * Reconstructs the fixture's week with the production [WeeklyDoseLedgerCalculator].
+     *
+     * The harness deliberately does not build a ledger of its own. Substituting an empty one
+     * — or a hand-written map — would mean the corpus never exercised the accounting the
+     * release gate is supposed to prove, and a fixture claiming prior weekly exposure would
+     * be asserting against a value no production code produced.
+     *
+     * Timestamps are derived from [MONDAY_EPOCH_DAY] and a declared day offset rather than
+     * written into fixtures, so the week identity stays [TrainingWeek]'s and no fixture can
+     * silently drift outside it.
+     */
+    private fun composeWeeklyLedger(
+        fixture: PlannerFixture,
+        catalogExercises: List<Exercise>,
+        reviewPolicyVersion: Int
+    ): WeeklyDoseLedger {
+        val week = TrainingWeek.startingOn(MONDAY_EPOCH_DAY, LEDGER_ZONE)
+        val exercisesById = catalogExercises.associateBy(Exercise::id)
+        val sessions = fixture.completedSessions.map { declared ->
+            WorkoutSession(
+                id = declared.id,
+                name = "Fixture session ${declared.id}",
+                startedAtTimestamp = week.startEpochMillis +
+                    declared.completedDayOffset * MILLIS_PER_DAY,
+                completedAtTimestamp = week.startEpochMillis +
+                    declared.completedDayOffset * MILLIS_PER_DAY + MIDDAY_MILLIS,
+                status = SessionStatus.COMPLETED,
+                exercises = declared.exercises.mapIndexed { exerciseIndex, exercise ->
+                    val instanceId = "${declared.id}-${exercise.exerciseId}-$exerciseIndex"
+                    // The logged shape follows the catalog entry rather than a fixed one, so
+                    // an aerobic entry is never recorded as a weighted set of 8-10 reps. The
+                    // ledger reads only set type and completion today; a fabricated shape
+                    // would still be waiting for the first rule that looks any deeper.
+                    val loggedType = exercisesById.getValue(exercise.exerciseId).type
+                    WorkoutExercise(
+                        id = instanceId,
+                        sessionId = declared.id,
+                        exerciseId = exercise.exerciseId,
+                        orderIndex = exerciseIndex,
+                        prescription = loggedPrescription(
+                            exerciseType = loggedType,
+                            targetSets = exercise.sets.size.coerceAtLeast(1)
+                        ),
+                        sets = exercise.sets.mapIndexed { setIndex, set ->
+                            WorkoutSet(
+                                id = "$instanceId-set-${setIndex + 1}",
+                                workoutExerciseId = instanceId,
+                                setNumber = setIndex + 1,
+                                exerciseType = loggedType,
+                                type = set.type,
+                                isCompleted = set.isCompleted
+                            )
+                        }
+                    )
+                }
+            )
+        }
+        return ledgerCalculator.calculate(
+            sessions = sessions,
+            exercisesById = exercisesById,
+            policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+            week = week,
+            catalogVersion = fixture.catalogVersion,
+            reviewPolicyVersion = reviewPolicyVersion
         )
     }
 
@@ -184,6 +263,35 @@ internal class PlannerFixtureContextFactory(
                 )
             )
         }
+    }
+
+    /**
+     * A structurally valid prescription for one logged exercise of [exerciseType].
+     *
+     * `ExercisePrescription` enforces different required and forbidden fields per type, so
+     * this supplies the minimum each one accepts instead of forcing every logged exercise
+     * into the weight-and-reps shape.
+     */
+    private fun loggedPrescription(
+        exerciseType: ExerciseType,
+        targetSets: Int
+    ): ExercisePrescription = when (exerciseType) {
+        ExerciseType.WEIGHT_REPS,
+        ExerciseType.BODYWEIGHT_REPS,
+        ExerciseType.ASSISTED_BODYWEIGHT -> ExercisePrescription(
+            exerciseType = exerciseType,
+            targetSets = targetSets,
+            repRange = RepRange(8, 10)
+        )
+
+        // A duration target satisfies distance work too, so both timed shapes share one
+        // branch. The `when` stays exhaustive, so a new type still fails compilation here.
+        ExerciseType.DURATION,
+        ExerciseType.DISTANCE_DURATION -> ExercisePrescription(
+            exerciseType = exerciseType,
+            targetSets = targetSets,
+            targetDurationSeconds = LOGGED_DURATION_SECONDS
+        )
     }
 
     private fun validateReviewedFixtureContract(fixture: PlannerFixture) {
@@ -274,6 +382,14 @@ internal class PlannerFixtureContextFactory(
             }
             fixture.exerciseHistory.forEachIndexed { index, history ->
                 add("root.exerciseHistory[$index].exerciseId" to history.exerciseId)
+            }
+            fixture.completedSessions.forEachIndexed { sessionIndex, session ->
+                session.exercises.forEachIndexed { exerciseIndex, exercise ->
+                    add(
+                        "root.completedSessions[$sessionIndex].exercises[$exerciseIndex]" +
+                            ".exerciseId" to exercise.exerciseId
+                    )
+                }
             }
             fixture.expected.requiredExerciseIds.toList().forEachIndexed { index, exerciseId ->
                 add("root.expected.requiredExerciseIds[$index]" to exerciseId)
@@ -723,7 +839,15 @@ internal class PlannerFixtureContextFactory(
 
     private companion object {
         private const val DEFAULT_MANIFEST_RESOURCE = "planner-fixtures/manifest.txt"
-        internal const val SUPPORTED_CORPUS_POLICY_VERSION = 3
+        internal const val SUPPORTED_CORPUS_POLICY_VERSION = 4
+        private val LEDGER_ZONE: ZoneId = ZoneId.of("UTC")
+        private const val MILLIS_PER_DAY = 24L * 60L * 60L * 1_000L
+
+        /** Local midday, so a declared day never lands on either week boundary by accident. */
+        private const val MIDDAY_MILLIS = 12L * 60L * 60L * 1_000L
+
+        /** A plausible timed target for logged duration and distance work. */
+        private const val LOGGED_DURATION_SECONDS = 600
         private const val SUPPORTED_BUNDLED_CATALOG_SCHEMA_VERSION = 1
         private const val EXPECTED_BUNDLED_EXERCISE_COUNT = 302
         private const val MAX_RESOURCE_BYTES = 512 * 1024
