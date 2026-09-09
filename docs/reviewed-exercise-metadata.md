@@ -79,7 +79,7 @@ long-length-partial bonus.
 The trust flow is:
 
 ```text
-pinned Workout Guide checkout + WallCrawl-authored JSON
+pinned source checkout + WallCrawl-authored JSON
   -> Python importer
   -> generated catalog.json
   -> Android streaming JSON parser

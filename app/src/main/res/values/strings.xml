@@ -584,12 +584,13 @@
     <string name="credits_error_title">Attribution unavailable</string>
     <string name="credits_error_body">The bundled attribution details could not be read. Try again.</string>
     <string name="credits_illustrations_heading">EXERCISE ILLUSTRATIONS</string>
-    <string name="credits_counts">%1$s · %2$s, imported unmodified</string>
+    <string name="credits_original_pose_reference">Everkinetic · Original pose reference</string>
+    <string name="credits_additional_artwork">Additional exercises and animation frames by %1$s. WallCrawl adaptations and full source history are documented below.</string>
+    <string name="credits_counts">Original source catalog: %1$s · %2$s</string>
     <string name="credits_label_license">License</string>
-    <string name="credits_label_source">Source</string>
-    <string name="credits_label_commit">Pinned commit</string>
+    <string name="credits_action_visit_reference">Visit Everkinetic</string>
     <string name="credits_action_view_license">View license</string>
-    <string name="credits_action_visit_creator">Visit creator</string>
+    <string name="credits_action_visit_creator">Visit additional artwork creator</string>
     <string name="credits_link_failed">No app available to open %1$s</string>
     <string name="credits_notice_attribution">Attribution</string>
     <string name="credits_notice_artwork">Bundled artwork</string>
@@ -756,4 +757,11 @@
     <string name="schedule_days_4">4 days • upper / lower balanced frequency.</string>
     <string name="schedule_days_5">5 days • push / pull / legs adaptive split.</string>
     <string name="schedule_days_6">6 days • high frequency dedicated training.</string>
+    <string name="profile_gender_title">Gender (optional)</string>
+    <string name="gender_unspecified">Prefer not to say</string>
+    <string name="gender_woman">Woman</string>
+    <string name="gender_man">Man</string>
+    <string name="gender_non_binary">Nonbinary</string>
+    <string name="credits_notice_illustration_variants">WallCrawl illustration adaptations</string>
+    <string name="profile_gender_description">Used to choose your exercise illustrations.</string>
 </resources>

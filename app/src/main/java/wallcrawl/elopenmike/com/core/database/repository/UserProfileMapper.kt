@@ -67,7 +67,9 @@ internal fun UserProfileEntity.toUserProfile(): UserProfile {
         returningAfterBreakWeeks = returningAfterBreakWeeks,
         confirmedStartingLoads = decodeConfirmedStartingLoads(confirmedStartingLoadsJson),
         movementCapabilities = MovementCapabilitiesCodec.decode(movementCapabilitiesJson),
-        themePreference = themePreference
+        themePreference = themePreference,
+        gender = gender,
+        illustrationPreference = illustrationPreference
     )
 }
 
@@ -92,7 +94,9 @@ internal fun UserProfile.toUserProfileEntity(): UserProfileEntity = UserProfileE
         .joinToString(PERSISTED_LIST_SEPARATOR) { "${it.key}$PERSISTED_PAIR_SEPARATOR${it.value}" },
     fitnessGoalsJson = goals.joinToString(PERSISTED_LIST_SEPARATOR) { it.name },
     movementCapabilitiesJson = MovementCapabilitiesCodec.encode(movementCapabilities),
-    themePreference = themePreference
+    themePreference = themePreference,
+    gender = gender,
+    illustrationPreference = illustrationPreference
 )
 
 private fun decodeFitnessGoals(raw: String): Set<FitnessGoal> {

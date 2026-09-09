@@ -15,6 +15,8 @@ import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetStopReason
 import wallcrawl.elopenmike.com.core.model.SetType
 import wallcrawl.elopenmike.com.core.model.ThemePreference
+import wallcrawl.elopenmike.com.core.model.ProfileGender
+import wallcrawl.elopenmike.com.core.model.IllustrationPreference
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
@@ -47,7 +49,11 @@ data class UserProfileEntity(
     @ColumnInfo(defaultValue = "'{}'")
     val movementCapabilitiesJson: String = "{}",
     @ColumnInfo(defaultValue = "'SYSTEM'")
-    val themePreference: ThemePreference = ThemePreference.SYSTEM
+    val themePreference: ThemePreference = ThemePreference.SYSTEM,
+    @ColumnInfo(defaultValue = "'UNSPECIFIED'")
+    val gender: ProfileGender = ProfileGender.UNSPECIFIED,
+    @ColumnInfo(defaultValue = "'AUTOMATIC'")
+    val illustrationPreference: IllustrationPreference = IllustrationPreference.AUTOMATIC
 )
 
 @Entity(

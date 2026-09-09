@@ -17,6 +17,8 @@ import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -42,6 +44,8 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import wallcrawl.elopenmike.com.core.exercise.visual.ExerciseVisualProvider
+import wallcrawl.elopenmike.com.core.exercise.visual.ExerciseVisual
+import wallcrawl.elopenmike.com.core.model.IllustrationVariant
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 import wallcrawl.elopenmike.com.core.ui.theme.GraphiteBorder
@@ -61,8 +65,25 @@ fun ExerciseIllustration(
     modifier: Modifier = Modifier,
     height: Int = 180
 ) {
-    val frames = remember(exercise?.id, visualProvider) {
-        exercise?.id?.let(visualProvider::framesFor).orEmpty()
+    val variant = LocalIllustrationVariant.current
+    key(exercise?.id, visualProvider, variant) {
+        ExerciseIllustrationContent(exercise, visualProvider, variant, modifier, height)
+    }
+}
+
+@Composable
+private fun ExerciseIllustrationContent(
+    exercise: Exercise?,
+    visualProvider: ExerciseVisualProvider,
+    variant: IllustrationVariant,
+    modifier: Modifier,
+    height: Int
+) {
+    var useOriginals by remember { mutableStateOf(false) }
+    val frames by produceState<List<ExerciseVisual>>(emptyList(), useOriginals) {
+        value = exercise?.id?.let { id ->
+            if (useOriginals) visualProvider.framesFor(id) else visualProvider.framesFor(id, variant)
+        }.orEmpty()
     }
     var frameIndex by remember(frames) { mutableIntStateOf(0) }
 
@@ -105,7 +126,10 @@ fun ExerciseIllustration(
                     .fillMaxSize()
                     .padding(8.dp),
                 contentScale = ContentScale.Fit,
-                onError = { imageFailed = true }
+                onError = {
+                    imageFailed = true
+                    useOriginals = true
+                }
             )
         } else {
             IllustrationPlaceholder(exercise = exercise)

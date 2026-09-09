@@ -10,10 +10,26 @@ import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetStopReason
 import wallcrawl.elopenmike.com.core.model.SetType
 import wallcrawl.elopenmike.com.core.model.ThemePreference
+import wallcrawl.elopenmike.com.core.model.ProfileGender
+import wallcrawl.elopenmike.com.core.model.IllustrationPreference
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutOrigin
 
 class RoomTypeConverters {
+
+    @TypeConverter
+    fun fromProfileGender(value: ProfileGender): String = value.name
+
+    @TypeConverter
+    fun toProfileGender(value: String): ProfileGender =
+        ProfileGender.entries.firstOrNull { it.name == value } ?: ProfileGender.UNSPECIFIED
+
+    @TypeConverter
+    fun fromIllustrationPreference(value: IllustrationPreference): String = value.name
+
+    @TypeConverter
+    fun toIllustrationPreference(value: String): IllustrationPreference =
+        IllustrationPreference.entries.firstOrNull { it.name == value } ?: IllustrationPreference.AUTOMATIC
 
     @TypeConverter
     fun fromThemePreference(theme: ThemePreference): String = theme.name

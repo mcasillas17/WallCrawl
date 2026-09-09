@@ -26,6 +26,23 @@ import wallcrawl.elopenmike.com.test.MainDispatcherRule
 @OptIn(ExperimentalCoroutinesApi::class)
 class OnboardingViewModelTest {
 
+    @Test
+    fun profileGenderSurvivesDraftRecreationAndCompletion() = runTest {
+        val repository = RecordingUserProfileRepository()
+        val savedState = SavedStateHandle()
+        val first = OnboardingViewModel(repository, savedState)
+        first.updateName("Illustration Crawler")
+        first.updateGender(wallcrawl.elopenmike.com.core.model.ProfileGender.WOMAN)
+        MovementCapabilityType.entries.forEach { first.updateMovementCapability(it, CapabilityLevel.UNKNOWN) }
+        val restored = OnboardingViewModel(repository, savedState)
+        assertThat(restored.uiState.value.gender).isEqualTo(wallcrawl.elopenmike.com.core.model.ProfileGender.WOMAN)
+        restored.complete()
+        advanceUntilIdle()
+        val profile = repository.getProfileOnce()
+        assertThat(profile.gender).isEqualTo(wallcrawl.elopenmike.com.core.model.ProfileGender.WOMAN)
+        assertThat(profile.onboardingCompleted).isTrue()
+    }
+
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
@@ -557,5 +574,6 @@ private class RecordingUserProfileRepository : UserProfileRepository {
     override suspend fun updateExcludedExercises(excludedIds: List<String>) = error("Not used")
     override suspend fun updateTrainingConstraints(constraints: Set<TrainingConstraint>) = error("Not used")
     override suspend fun updateReturningAfterBreakWeeks(weeks: Int) = error("Not used")
+    override suspend fun updateGender(gender: wallcrawl.elopenmike.com.core.model.ProfileGender) = saveProfile(getProfileOnce().copy(gender = gender))
     override suspend fun updateThemePreference(themePreference: wallcrawl.elopenmike.com.core.model.ThemePreference) = error("Not used")
 }

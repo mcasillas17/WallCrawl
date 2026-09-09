@@ -21,6 +21,7 @@ import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.WeightUnit
+import wallcrawl.elopenmike.com.core.model.ProfileGender
 
 /**
  * Drives first-run onboarding. Nothing here reaches Today: the profile this produces
@@ -38,6 +39,11 @@ class OnboardingViewModel(
     fun updateName(name: String) {
         updateState { it.copy(name = name.take(NAME_MAX_LENGTH), error = null) }
     }
+
+    fun updateGender(gender: ProfileGender) {
+        updateState { it.copy(gender = gender) }
+    }
+
 
     fun toggleGoal(goal: FitnessGoal) {
         val current = mutableState.value.goals
@@ -181,7 +187,8 @@ class OnboardingViewModel(
         constraints: Set<TrainingConstraint> = mutableState.value.constraints,
         returningAfterBreakWeeks: Int = mutableState.value.returningAfterBreakWeeks,
         capabilityAnswers: Map<MovementCapabilityType, CapabilityLevel> =
-            mutableState.value.capabilityAnswers
+            mutableState.value.capabilityAnswers,
+        gender: ProfileGender = mutableState.value.gender
     ) {
         updateState { it.copy(
             name = name,
@@ -193,7 +200,8 @@ class OnboardingViewModel(
             equipment = equipment,
             constraints = constraints,
             returningAfterBreakWeeks = returningAfterBreakWeeks,
-            capabilityAnswers = capabilityAnswers
+            capabilityAnswers = capabilityAnswers,
+            gender = gender,
         ) }
 
         val unansweredCapability = MovementCapabilityType.entries.firstOrNull {
@@ -217,6 +225,7 @@ class OnboardingViewModel(
                     name = name,
                     goals = goals,
                     experienceLevel = experience,
+                    gender = gender,
                     daysPerWeek = daysPerWeek,
                     preferredDurationMinutes = durationMinutes,
                     preferredUnit = unit,
@@ -254,6 +263,7 @@ class OnboardingViewModel(
     private fun persistDraft(state: OnboardingUiState) {
         savedStateHandle[STATE_CURRENT_STEP] = state.currentStep.name
         savedStateHandle[STATE_NAME] = state.name
+        savedStateHandle[STATE_GENDER] = state.gender.name
         savedStateHandle[STATE_GOALS] = ArrayList(state.goals.map { it.name })
         savedStateHandle[STATE_EXPERIENCE] = state.experience.name
         savedStateHandle[STATE_DAYS_PER_WEEK] = state.daysPerWeek
@@ -273,6 +283,7 @@ class OnboardingViewModel(
         private const val NAME_MAX_LENGTH = 60
         private const val STATE_CURRENT_STEP = "onboarding.currentStep"
         private const val STATE_NAME = "onboarding.name"
+        private const val STATE_GENDER = "onboarding.gender"
         private const val STATE_GOALS = "onboarding.goals"
         private const val STATE_EXPERIENCE = "onboarding.experience"
         private const val STATE_DAYS_PER_WEEK = "onboarding.daysPerWeek"
@@ -291,6 +302,7 @@ class OnboardingViewModel(
                     defaults.currentStep
                 ),
                 name = savedStateHandle[STATE_NAME] ?: defaults.name,
+                gender = enumValueOrDefault(savedStateHandle[STATE_GENDER], defaults.gender),
                 goals = enumSetOrDefault(savedStateHandle[STATE_GOALS], defaults.goals),
                 experience = enumValueOrDefault(
                     savedStateHandle[STATE_EXPERIENCE],

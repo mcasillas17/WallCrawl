@@ -31,7 +31,7 @@ import wallcrawl.elopenmike.com.core.database.entity.WorkoutTemplateExerciseEnti
  * Exposed as a constant so provenance recorded in an export names the same number the
  * database is actually built with, rather than a copy that can drift after a migration.
  */
-const val WALLCRAWL_SCHEMA_VERSION = 12
+const val WALLCRAWL_SCHEMA_VERSION = 13
 
 @Database(
     entities = [
@@ -404,6 +404,13 @@ abstract class WallCrawlDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_12_13 = object : Migration(12, 13) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE user_profiles ADD COLUMN gender TEXT NOT NULL DEFAULT 'UNSPECIFIED'")
+                db.execSQL("ALTER TABLE user_profiles ADD COLUMN illustrationPreference TEXT NOT NULL DEFAULT 'AUTOMATIC'")
+            }
+        }
+
         val ALL_MIGRATIONS: Array<Migration>
             get() = arrayOf(
                 MIGRATION_1_2,
@@ -416,7 +423,8 @@ abstract class WallCrawlDatabase : RoomDatabase() {
                 MIGRATION_8_9,
                 MIGRATION_9_10,
                 MIGRATION_10_11,
-                MIGRATION_11_12
+                MIGRATION_11_12,
+                MIGRATION_12_13
             )
     }
 }

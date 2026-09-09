@@ -62,6 +62,9 @@ import wallcrawl.elopenmike.com.feature.workout.ActiveWorkoutViewModel
 
 import androidx.compose.material3.MaterialTheme
 import wallcrawl.elopenmike.com.core.model.UserProfile
+import wallcrawl.elopenmike.com.core.model.illustrationVariant
+import wallcrawl.elopenmike.com.core.model.IllustrationVariant
+import wallcrawl.elopenmike.com.core.ui.components.LocalIllustrationVariant
 import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.localization.rememberExerciseVocabulary
 
@@ -81,7 +84,10 @@ fun WallCrawlApp(
     // re-derived whenever the configuration's locale changes.
     val vocabulary = rememberExerciseVocabulary(container.exerciseLocalizationSource)
 
-    CompositionLocalProvider(LocalExerciseVocabulary provides vocabulary) {
+    CompositionLocalProvider(
+        LocalExerciseVocabulary provides vocabulary,
+        LocalIllustrationVariant provides (effectiveProfile?.illustrationVariant ?: IllustrationVariant.MALE)
+    ) {
         when (effectiveProfile) {
             null -> {
                 Box(

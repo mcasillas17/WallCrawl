@@ -2,7 +2,7 @@
 
 ## Exact cohort and authorship
 
-At Workout Guide `ba0b709cb20430361b2cb33aaadd20998164a916`, the bundled 302-exercise
+At source revision `ba0b709cb20430361b2cb33aaadd20998164a916`, the bundled 302-exercise
 catalog and `FakeWorkoutPlanner` classify exactly these 14 duration exercises as
 strength work. Derivation: `duration`, not `isStretch`, and no `Cardio` in primary or
 secondary muscles; the Kotlin tests additionally run the real planner on every timed

@@ -20,10 +20,10 @@ import wallcrawl.elopenmike.com.core.model.MuscleDoseAccounting
 class LocalDataArchiveRecommendationTest {
 
     @Test
-    fun theCurrentFormat_isVersionTwoAndReadsEveryEarlierVersion() {
-        assertThat(LocalDataArchiveFormat.ARCHIVE_VERSION).isEqualTo(2)
+    fun theCurrentFormat_isVersionThreeAndReadsEveryEarlierVersion() {
+        assertThat(LocalDataArchiveFormat.ARCHIVE_VERSION).isEqualTo(3)
         assertThat(LocalDataArchiveFormat.SUPPORTED_ARCHIVE_VERSIONS.toList())
-            .containsExactly(1, 2)
+            .containsExactly(1, 2, 3)
             .inOrder()
     }
 
@@ -65,7 +65,7 @@ class LocalDataArchiveRecommendationTest {
             .archive()
             .toBytes()
             .decodeToString()
-            .replace("\"archiveVersion\":2", "\"archiveVersion\":1")
+            .replace("\"archiveVersion\":3", "\"archiveVersion\":1")
 
         val error = assertThrows(LocalDataArchiveException::class.java) {
             LocalDataArchiveCodec.read(ByteArrayInputStream(document.encodeToByteArray()))
@@ -80,7 +80,7 @@ class LocalDataArchiveRecommendationTest {
             .archive()
             .toBytes()
             .decodeToString()
-            .replace("\"archiveVersion\":2", "\"archiveVersion\":3")
+            .replace("\"archiveVersion\":3", "\"archiveVersion\":4")
 
         val error = assertThrows(LocalDataArchiveException::class.java) {
             LocalDataArchiveCodec.read(ByteArrayInputStream(document.encodeToByteArray()))

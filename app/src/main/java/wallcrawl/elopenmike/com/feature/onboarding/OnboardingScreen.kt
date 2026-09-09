@@ -1,5 +1,7 @@
 package wallcrawl.elopenmike.com.feature.onboarding
 
+import wallcrawl.elopenmike.com.core.ui.components.ProfileGenderSelector
+
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.ui.components.BandSetupControls
 
@@ -386,6 +388,12 @@ private fun WelcomeStep(
                     unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant
                 ),
                 modifier = Modifier.fillMaxWidth()
+            )
+        }
+        WallCrawlCard(cornerRadius = 16.dp, contentPadding = 20.dp) {
+            ProfileGenderSelector(
+                gender = state.gender,
+                onGenderChange = viewModel::updateGender,
             )
         }
     }

@@ -174,14 +174,17 @@ private fun CreditsContent(
                 )
                 Spacer(Modifier.height(10.dp))
                 Text(
-                    text = catalog.attribution.creator,
+                    text = stringResource(R.string.credits_original_pose_reference),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
-                // Scoped to the WallCrawl -> workout-guide boundary on purpose: some frames
-                // upstream are themselves traced adaptations of Everkinetic originals, which
-                // the Attribution notice below spells out.
+                Text(
+                    text = stringResource(R.string.credits_additional_artwork, catalog.attribution.creator),
+                    fontSize = 13.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                // Counts describe the original catalog; the adaptation notice covers both new sets.
                 Text(
                     text = stringResource(
                         R.string.credits_counts,
@@ -204,16 +207,12 @@ private fun CreditsContent(
                     label = stringResource(R.string.credits_label_license),
                     value = catalog.attribution.license
                 )
-                CreditRow(
-                    label = stringResource(R.string.credits_label_source),
-                    value = catalog.repository
-                )
-                CreditRow(
-                    label = stringResource(R.string.credits_label_commit),
-                    value = catalog.commit.take(12)
-                )
-
                 Spacer(Modifier.height(14.dp))
+                WallCrawlSecondaryButton(
+                    text = stringResource(R.string.credits_action_visit_reference),
+                    onClick = { onOpenUrl("https://github.com/everkinetic/data") }
+                )
+                Spacer(Modifier.height(8.dp))
                 WallCrawlSecondaryButton(
                     text = stringResource(R.string.credits_action_view_license),
                     onClick = { onOpenUrl(catalog.attribution.licenseUrl) }

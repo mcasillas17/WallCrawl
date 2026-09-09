@@ -9,6 +9,7 @@ import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.WeightUnit
+import wallcrawl.elopenmike.com.core.model.ProfileGender
 
 /**
  * Steps in the friendly multi-step onboarding wizard.
@@ -70,6 +71,7 @@ enum class OnboardingError(@StringRes val messageRes: Int) {
 data class OnboardingUiState(
     val currentStep: OnboardingStep = OnboardingStep.WELCOME,
     val name: String = "",
+    val gender: ProfileGender = ProfileGender.UNSPECIFIED,
     val goals: Set<FitnessGoal> = setOf(FitnessGoal.BUILD_MUSCLE),
     val experience: ExperienceLevel = ExperienceLevel.BEGINNER,
     val daysPerWeek: Int = 3,

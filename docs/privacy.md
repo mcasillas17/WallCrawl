@@ -28,7 +28,8 @@ One JSON file, written where you choose:
 
 - the profile: codename, goals, experience, units, schedule, equipment,
   constraints, muscle priorities, confirmed starting loads, movement-capability
-  answers, and theme;
+  answers, theme, and optional self-described gender (plus legacy illustration-preference
+  data from the initial integration preview, if present);
 - every saved template with its exercises and prescriptions;
 - every workout session — completed, cancelled, and one in progress — with its
   planned targets, performed values, unit, effort feedback, timestamps, stop
@@ -73,7 +74,7 @@ simply have no record. Nothing fabricates one.
 ### Archive compatibility
 
 The archive format has its own version, separate from the Room schema version. This
-build **writes version 2** and **reads versions 1 and 2**. The schema version, app
+build **writes version 3** and **reads versions 1, 2, and 3**. The schema version, app
 version, creation time, and the bundled catalog commit are recorded as provenance only;
 they never decide whether a file can be restored.
 
@@ -81,6 +82,13 @@ Version 2 added the validation record described above. A version 1 file — the 
 earlier builds ever wrote — restores exactly as it always did and simply carries none.
 Each version is read strictly: a file claiming version 1 while using a version 2 field is
 refused rather than quietly upgraded.
+
+Version 3 stores optional gender and preserves the first integration preview's legacy
+illustration-preference field. Both stay on-device, are included in user-requested
+exports, and are removed by Delete all data. Only gender selects artwork; the legacy
+field has no effect. No training decision reads either field. Versions 1 and 2 keep
+their original checksums and restore with unspecified gender. Version 3 validates
+both fields to preserve compatibility with exports from the initial preview.
 
 A file written by a newer WallCrawl is still refused with a message saying so, rather than
 partially understood — a future format may attach meaning to fields this build would drop.

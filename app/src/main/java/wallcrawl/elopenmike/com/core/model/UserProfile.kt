@@ -36,7 +36,10 @@ data class UserProfile(
     // user has explicitly confirmed it (see Task 2), so this starts and stays empty.
     val confirmedStartingLoads: Map<String, Double> = emptyMap(),
     val movementCapabilities: MovementCapabilities = MovementCapabilities.unknown(),
-    val themePreference: ThemePreference = ThemePreference.SYSTEM
+    val themePreference: ThemePreference = ThemePreference.SYSTEM,
+    val gender: ProfileGender = ProfileGender.UNSPECIFIED,
+    // Compatibility data from the first integration preview; artwork now reads gender only.
+    val illustrationPreference: IllustrationPreference = IllustrationPreference.AUTOMATIC
 ) {
     val primaryGoal: FitnessGoal get() = goals.firstOrNull() ?: FitnessGoal.BUILD_MUSCLE
 

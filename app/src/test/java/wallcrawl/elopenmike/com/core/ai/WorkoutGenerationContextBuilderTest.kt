@@ -880,6 +880,7 @@ private class StubUserProfileRepository(
         constraints: Set<wallcrawl.elopenmike.com.core.model.TrainingConstraint>
     ) = Unit
     override suspend fun updateReturningAfterBreakWeeks(weeks: Int) = Unit
+    override suspend fun updateGender(gender: wallcrawl.elopenmike.com.core.model.ProfileGender) = saveProfile(getProfileOnce().copy(gender = gender))
     override suspend fun updateThemePreference(themePreference: wallcrawl.elopenmike.com.core.model.ThemePreference) = Unit
 }
 
