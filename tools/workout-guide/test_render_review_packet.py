@@ -11,6 +11,7 @@ class RenderReviewPacketTest(unittest.TestCase):
         self.metadata = {"example-press": {
             "reviewState": "draft",
             "directPrimaryMuscle": "Chest",
+            "clearedTrainingConstraints": [],
             "provenance": {"reviewerRole": None, "reviewedAtEpochMillis": None},
         }}
         digest = hashlib.sha256(json.dumps(
@@ -32,6 +33,24 @@ class RenderReviewPacketTest(unittest.TestCase):
                  "artworkReferenceReason": "Source illustration depicts a different movement."},
             ],
         }
+
+    def test_clearance_summary_is_derived_from_the_metadata_not_asserted(self):
+        """The worksheet a human signs must not carry a hardcoded claim about clearances."""
+        self.assertIn("No record below lists any.", render_packet(self.ledger, self.metadata))
+
+        cleared = copy.deepcopy(self.metadata)
+        cleared["example-press"]["clearedTrainingConstraints"] = ["knee_sensitive"]
+        digest = hashlib.sha256(json.dumps(
+            cleared["example-press"], sort_keys=True,
+            separators=(",", ":"), ensure_ascii=False,
+        ).encode()).hexdigest()
+        ledger = copy.deepcopy(self.ledger)
+        ledger["entries"][0]["metadataSha256"] = digest
+
+        result = render_packet(ledger, cleared)
+
+        self.assertNotIn("No record below lists any.", result)
+        self.assertIn("1 of 1 records list at least one: `example-press`.", result)
 
     def test_packet_keeps_content_readiness_cohort_and_approval_separate(self):
         ledger_before = copy.deepcopy(self.ledger)

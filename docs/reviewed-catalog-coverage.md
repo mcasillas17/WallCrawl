@@ -236,7 +236,7 @@ supplies no exercise, exactly as correcting the anchors supplied none.
 
 ## Full-pool prospective profiles
 
-These are 16 declared test profiles, not an exhaustive capability/equipment
+These are 17 declared test profiles, not an exhaustive capability/equipment
 Cartesian product or a rollout approval. The first two candidate columns report
 actual eligibility from the entire catalog with the indicated synthetic cohort.
 The selected column is the **AI-ready synthetic** result. Every success below
@@ -258,8 +258,18 @@ passed `ProgramValidator` without repair; typed no-plan outcomes remained explic
 | Sparse history | 58 | 52 | `band-pull-apart`, `prone-y-raise`, `reverse-snow-angel` |
 | Uncalibrated full gym | 185 | 167 | `barbell-bench-press`, `overhead-press`, `arnold-press`, `cable-fly`, `cable-lateral-raise`, `cable-triceps-pushdown` |
 | Selected joint constraint | 0 | 0 | `REVIEWED_ELIGIBILITY_NO_CANDIDATES` / `TRAINING_CONSTRAINTS_REMOVED_ALL` |
+| Selected joint constraint, synthetically cleared | 211 | 186 | `barbell-bench-press`, `overhead-press`, `incline-bench-press`, `cable-fly`, `cable-lateral-raise`, `cable-triceps-pushdown` |
 | Empty equipment inventory | 0 | 0 | `REVIEWED_ELIGIBILITY_NO_CANDIDATES` / `NO_APPROVED_METADATA` |
 | Unmodified catalog, no synthetic approvals | 0 | 0 | `REVIEWED_ELIGIBILITY_NO_CANDIDATES` / `NO_APPROVED_METADATA` |
+
+The two joint-constraint rows use the identical `KNEE_SENSITIVE` profile and differ only in
+whether the synthetic approval also carries an explicit `clearedTrainingConstraints` entry
+for it. Every bundled record clears nothing, so the first row is what the reviewed path
+actually does today. The second row measures what a real clearance would unlock and is
+**synthetic test data, not a clearance**: it exists so the matrix distinguishes missing
+reviewed content from a contradictory user request. Its proposal passed whole-program
+validation with repair disabled. The uncleared row's decisions all carry
+`UNMAPPED_TRAINING_CONSTRAINT`, and no fallback workout is produced.
 
 For empty equipment, every synthetically approved record carries
 `MISSING_EQUIPMENT`. The aggregate is nevertheless `NO_APPROVED_METADATA` under
@@ -272,7 +282,7 @@ The mixed-unit case uses explicit completed test sessions in pounds and kilogram
 the most recent 27.5 kg dumbbell bench press stays 27.5 kg, two completed work sets
 are credited to its synthetic approved primary, and no new starting load is
 invented. Sparse history retains a null load. Input snapshots and normalized
-replays remain unchanged. Sixteen separate disabled-mode comparisons preserve
+replays remain unchanged. Seventeen separate disabled-mode comparisons preserve
 legacy recommendations when reviewed metadata is stripped from the same catalog.
 The new standing-balance avoidance case has an explicitly declared 35-minute
 duration. A separate 70-minute exploration produced an over-allowance raw proposal
@@ -319,10 +329,18 @@ images or names.
 The current enum also cannot express every machine subtype, bench adjustment,
 attachment or conditional support arrangement. A generic category match is not
 proof that a particular apparatus is available. Resolving those representation
-and persona requirements, the band-only push gap, selected joint mappings,
-human sign-off and the remaining release corpus are separate gates. Neither
-302 completed AI reviews nor 48 passing software cases closes Roadmap Package 3
-or enables the reviewed planner.
+and persona requirements, the band-only push gap, human sign-off and the
+remaining release corpus are separate gates. Neither 302 completed AI reviews
+nor the passing software cases closes Roadmap Package 3 or enables the reviewed
+planner.
+
+Selected joint mappings now have a contract but no content. `clearedTrainingConstraints`
+is a required reviewed field, and the eligibility policy decides each exercise against it
+instead of rejecting the whole pool whenever any joint sensitivity is selected. All 211
+records clear nothing, so the observable outcome for a joint-sensitive profile is unchanged:
+a typed `TRAINING_CONSTRAINTS_REMOVED_ALL` refusal. Populating the field is part of the same
+human sign-off pass; see the
+[proposed initial rollout contract](reviewed-capability-eligibility.md#proposed-initial-rollout-contract).
 
 ## Reproducibility boundary
 
@@ -335,7 +353,7 @@ the generated workout ID.
 
 This suite and the manifest corpus stay separate and are not summed. This one exercises
 declared full-pool profiles and synthetic approval modes; the
-[manifest corpus](planner-evaluation.md) exercises twelve committed personas, and since its
+[manifest corpus](planner-evaluation.md) exercises fourteen committed personas, and since its
 policy version 4 it reconstructs the reviewed-enabled personas' weeks through the production
 `WeeklyDoseLedgerCalculator` and validates the whole proposal behind every successful persona,
 rather than composing an empty ledger. Malformed loader fixtures belong to neither roster.

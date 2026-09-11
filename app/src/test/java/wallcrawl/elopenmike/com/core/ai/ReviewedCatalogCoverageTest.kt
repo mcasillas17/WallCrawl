@@ -338,8 +338,8 @@ class ReviewedCatalogCoverageTest(private val caseId: String) {
             "band-only-push-gap" -> "band-only"
             "dumbbells-push", "mixed-unit-history" -> "mixed-unit-history"
             "machines-push" -> "machine-only"
-            "full-gym", "uncalibrated", "joint-constraint", "no-equipment",
-            "avoid-standing-balance", "avoid-floor-transition" -> "full-gym-advanced"
+            "full-gym", "uncalibrated", "joint-constraint", "joint-constraint-cleared",
+            "no-equipment", "avoid-standing-balance", "avoid-floor-transition" -> "full-gym-advanced"
             "returning" -> "returning-user"
             "sparse-history" -> "sparse-history"
             else -> "bodyweight-beginner"
@@ -365,7 +365,11 @@ class ReviewedCatalogCoverageTest(private val caseId: String) {
                         )
                 )
             )
-            "joint-constraint" -> profile.copy(
+            // One profile for both cases, so the only difference really is whether the
+            // synthetic cohort carries an explicit clearance for the selected sensitivity.
+            // Bundled records clear nothing; the cleared case measures what a real clearance
+            // would unlock and is not a claim that one exists.
+            "joint-constraint", "joint-constraint-cleared" -> profile.copy(
                 trainingConstraints = setOf(TrainingConstraint.KNEE_SENSITIVE)
             )
             // An explicitly empty equipment inventory is not implicit Bodyweight access.
@@ -408,7 +412,13 @@ class ReviewedCatalogCoverageTest(private val caseId: String) {
                     else -> AdaptationState.BUILD
                 },
                 syntheticApprovedExerciseIds =
-                    if (caseId == "real-no-approved") emptyList() else cohortApprovalIds
+                    if (caseId == "real-no-approved") emptyList() else cohortApprovalIds,
+                syntheticClearedTrainingConstraints =
+                    if (caseId == "joint-constraint-cleared") {
+                        setOf(TrainingConstraint.KNEE_SENSITIVE)
+                    } else {
+                        emptySet()
+                    }
             ),
             expected = PlannerFixtureExpected(
                 outcome = if (caseId in NO_PLAN_CASES) {
@@ -931,8 +941,8 @@ class ReviewedCatalogCoverageTest(private val caseId: String) {
         fun cases(): List<Array<String>> = listOf(
             "bodyweight-push", "band-only-push-gap", "dumbbells-push", "machines-push",
             "full-gym", "limited-push", "avoid-push", "returning", "mixed-unit-history",
-            "sparse-history", "uncalibrated", "joint-constraint", "no-equipment",
-            "real-no-approved", "avoid-standing-balance", "avoid-floor-transition"
+            "sparse-history", "uncalibrated", "joint-constraint", "joint-constraint-cleared",
+            "no-equipment", "real-no-approved", "avoid-standing-balance", "avoid-floor-transition"
         ).map { arrayOf(it) }
     }
 }

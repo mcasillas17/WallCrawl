@@ -150,7 +150,14 @@ class FixedAnchorBandEligibilityTest {
         assertThat(catalog).hasSize(302)
         assertThat(catalog.count { it.reviewedMetadata?.reviewState == ReviewState.APPROVED })
             .isEqualTo(0)
-        assertThat(PlannerFeatureFlags().reviewedCapabilityEligibility).isFalse()
+        // The value WallCrawlApplication injects, not merely the constructor default, so
+        // enabling the rollout cannot pass this suite unnoticed. The composition site is
+        // asserted too, or the constant could stay false while production built its own.
+        assertThat(PlannerFeatureFlags.PRODUCTION.reviewedCapabilityEligibility).isFalse()
+        val application =
+            File("src/main/java/wallcrawl/elopenmike/com/WallCrawlApplication.kt").readText()
+        assertThat(application).contains("plannerFeatureFlags = PlannerFeatureFlags.PRODUCTION")
+        assertThat(application).doesNotContain("PlannerFeatureFlags(")
     }
 
     @Test

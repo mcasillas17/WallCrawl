@@ -577,6 +577,14 @@ private fun ProfileContent(
                     letterSpacing = 0.8.sp,
                     color = CrimsonRedPrimary
                 )
+                Spacer(modifier = Modifier.height(4.dp))
+                // Same honesty note the movement-capability card already carries: this input is
+                // saved but inert until reviewed planning ships.
+                Text(
+                    text = stringResource(R.string.profile_safety_description),
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
                 Spacer(modifier = Modifier.height(10.dp))
 
                 FlowRow(

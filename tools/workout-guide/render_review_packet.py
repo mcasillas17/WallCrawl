@@ -84,6 +84,19 @@ def render_packet(ledger: dict, metadata: dict) -> str:
         if digest != entry["metadataSha256"]:
             raise ValueError(f"{entry['id']}: metadata changed after its recorded review")
     counts = Counter(entry["disposition"] for entry in entries)
+    # Derived, never asserted: the moment a reviewer clears an ID this sentence must change
+    # with the data rather than become a false claim inside the artifact they sign.
+    cleared_ids = sorted(
+        exercise_id for exercise_id, value in metadata.items()
+        if value["clearedTrainingConstraints"]
+    )
+    cleared_summary = (
+        "No record below lists any."
+        if not cleared_ids
+        else f"{len(cleared_ids)} of {len(metadata)} records list at least one: "
+        + ", ".join(f"`{exercise_id}`" for exercise_id in cleared_ids)
+        + "."
+    )
     lines = [
         "# Exercise Metadata Human Sign-off",
         "",
@@ -110,6 +123,15 @@ def render_packet(ledger: dict, metadata: dict) -> str:
         "ledger binds each proposal to its metadata SHA-256; changed proposals need renewed inspection. "
         "The draft fields named `approvedRegressions` and `approvedSubstitutions` are still "
         "unratified proposals while their owning metadata is DRAFT.",
+        "",
+        "Reviewed schema version 2 adds `clearedTrainingConstraints`, so sign-off now also covers "
+        "which selected joint sensitivities — shoulder, elbow, wrist, lower back, hip, knee — the "
+        f"exercise is explicitly cleared for. {cleared_summary} An empty "
+        "list is the fail-closed value: the exercise stays out of automatic planning for a user "
+        "who selected that sensitivity, and no clearance is inferred from its name, muscles or "
+        "movement pattern. `LOW_IMPACT_ONLY` is deliberately not part of that list because "
+        "`impactLevel` already decides it. A clearance is a reviewer's product judgement about a "
+        "self-reported label, never a diagnosis or clinical clearance.",
         "",
         "A human decision must identify the reviewed ID and fields, actual reviewer role, actual "
         "review time, rationale and remaining caveats. Only that explicit decision can support "

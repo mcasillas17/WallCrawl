@@ -21,9 +21,10 @@ class FullCatalogReviewTest(unittest.TestCase):
         self.assertTrue(LEDGER.is_file(), "The full per-ID evidence ledger must be authored.")
         self.ledger = _read_object(LEDGER, "full catalog review")
         self.catalog = _read_object(BUNDLE / "catalog.json", "catalog")
-        self.reviewed = _read_object(
+        self.reviewed_document = _read_object(
             ROOT / "tools/workout-guide/reviewed-metadata.json", "reviewed metadata"
-        )["exercises"]
+        )
+        self.reviewed = self.reviewed_document["exercises"]
         self.entries = self.ledger["entries"]
 
     def test_published_disposition_and_approval_accounting_is_pinned(self):
@@ -43,6 +44,28 @@ class FullCatalogReviewTest(unittest.TestCase):
         self.assertEqual({"draft": 211},
                          Counter(value["reviewState"] for value in self.reviewed.values()))
         self.assertEqual(0, sum(entry["humanSignoff"] is not None for entry in self.entries))
+
+    def test_ledger_records_the_schema_its_refreshed_digests_were_taken_over(self):
+        """A schema bump changes every digest; the ledger must say which schema it covers.
+
+        Otherwise a future bump could refresh all 302 digests while the ledger still claims a
+        version whose fields the named evidence authors actually inspected, quietly extending
+        inspection provenance over content nobody reviewed.
+        """
+        review = self.ledger["review"]
+        self.assertEqual(self.reviewed_document["schemaVersion"], review["metadataSchemaVersion"])
+        for value in self.reviewed.values():
+            self.assertEqual(
+                self.reviewed_document["schemaVersion"], value["provenance"]["schemaVersion"]
+            )
+        note = review["metadataSchemaVersion2Note"]
+        self.assertIn("clearedTrainingConstraints", note)
+        self.assertIn("not renewed inspection", note)
+        self.assertEqual(
+            {()},
+            {tuple(value["clearedTrainingConstraints"]) for value in self.reviewed.values()},
+            "No authored record may clear a joint sensitivity without human sign-off.",
+        )
 
     def test_named_image_conflicts_and_the_trap_bar_retraction_remain_explicit(self):
         records = {entry["id"]: entry for entry in self.entries}

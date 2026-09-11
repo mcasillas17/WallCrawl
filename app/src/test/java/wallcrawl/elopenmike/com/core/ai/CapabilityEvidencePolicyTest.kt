@@ -1363,6 +1363,7 @@ class CapabilityEvidencePolicyTest {
                 supportRequirement = supportRequirement,
                 impactLevel = impactLevel,
                 equipmentAlternatives = equipmentAlternatives,
+                clearedTrainingConstraints = emptySet(),
                 provenance = ReviewProvenance(
                     reviewerRole = if (reviewState == ReviewState.APPROVED) "SYNTHETIC_TEST_REVIEWER_NOT_A_HUMAN" else null,
                     rationaleOrSource = "SYNTHETIC TEST-ONLY REVIEW METADATA. Not bundled in production.",

@@ -1305,6 +1305,7 @@ class FakeWorkoutPlannerTest {
             supportRequirement = SupportRequirement.SUPPORTED,
             impactLevel = ImpactLevel.NONE,
             equipmentAlternatives = listOf(listOf(StandardEquipment.DUMBBELL, StandardEquipment.BENCH)),
+            clearedTrainingConstraints = emptySet(),
             provenance = ReviewProvenance(
                 reviewerRole = if (reviewState == ReviewState.APPROVED) {
                     "Test-only role; not human approval"

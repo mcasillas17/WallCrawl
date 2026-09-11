@@ -31,6 +31,7 @@ class ReviewedExerciseMetadataTest {
             supportRequirement = SupportRequirement.UNSUPPORTED,
             impactLevel = ImpactLevel.NONE,
             equipmentAlternatives = listOf(listOf(StandardEquipment.BODYWEIGHT)),
+            clearedTrainingConstraints = emptySet(),
             provenance = ReviewProvenance(
                 reviewerRole = null,
                 rationaleOrSource = "Initial draft for later human review.",

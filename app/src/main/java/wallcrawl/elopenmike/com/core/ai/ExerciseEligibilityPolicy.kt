@@ -9,14 +9,14 @@ import wallcrawl.elopenmike.com.core.model.EligibilityDecision
 import wallcrawl.elopenmike.com.core.model.EligibilityPreference
 import wallcrawl.elopenmike.com.core.model.EligibilityReason
 import wallcrawl.elopenmike.com.core.model.Exercise
-import wallcrawl.elopenmike.com.core.model.ImpactLevel
 import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.model.ReviewState
 import wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata
 import wallcrawl.elopenmike.com.core.model.SupportRequirement
-import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.UserProfile
+import wallcrawl.elopenmike.com.core.model.clearsJointConstraintsOf
 import wallcrawl.elopenmike.com.core.model.hasRequiredFixedAnchorEquipment
+import wallcrawl.elopenmike.com.core.model.violatesImpactRestrictionOf
 import wallcrawl.elopenmike.com.core.model.isEquipmentSatisfiedBy
 import wallcrawl.elopenmike.com.core.model.normalizedEquipmentSet
 
@@ -63,16 +63,10 @@ class ExerciseEligibilityPolicy {
                     ) {
                         add(EligibilityReason.CAPABILITY_AVOID)
                     }
-                    if (profile.trainingConstraints.any {
-                            it != TrainingConstraint.LOW_IMPACT_ONLY
-                        }
-                    ) {
+                    if (!approvedMetadata.clearsJointConstraintsOf(profile)) {
                         add(EligibilityReason.UNMAPPED_TRAINING_CONSTRAINT)
                     }
-                    if (
-                        TrainingConstraint.LOW_IMPACT_ONLY in profile.trainingConstraints &&
-                        approvedMetadata.impactLevel == ImpactLevel.HIGH
-                    ) {
+                    if (approvedMetadata.violatesImpactRestrictionOf(profile)) {
                         add(EligibilityReason.HIGH_IMPACT_DISALLOWED)
                     }
                     val advancedCeilingApplies =
@@ -164,11 +158,9 @@ class ExerciseEligibilityPolicy {
             regressionMetadata.capabilityRequirements.none { capability ->
                 profile.movementCapabilities[capability] == CapabilityLevel.AVOID
             } &&
-            profile.trainingConstraints.none { it != TrainingConstraint.LOW_IMPACT_ONLY } &&
-            !(
-                TrainingConstraint.LOW_IMPACT_ONLY in profile.trainingConstraints &&
-                    regressionMetadata.impactLevel == ImpactLevel.HIGH
-                )
+            // A regression is an alternative inside the user's restrictions, never around them.
+            regressionMetadata.clearsJointConstraintsOf(profile) &&
+            !regressionMetadata.violatesImpactRestrictionOf(profile)
     }
 
     private companion object {

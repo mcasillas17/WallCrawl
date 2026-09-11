@@ -75,7 +75,16 @@ internal data class PlannerFixtureCompletedSet(
 
 internal data class PlannerFixtureReviewedEligibility(
     val adaptationState: AdaptationState,
-    val syntheticApprovedExerciseIds: List<String>
+    val syntheticApprovedExerciseIds: List<String>,
+    /**
+     * Joint sensitivities the synthetic approval also clears, for every approved ID.
+     *
+     * Bundled DRAFT records clear none, so a fixture that selects a joint sensitivity would
+     * otherwise only ever be able to assert the typed no-plan outcome. This is test-only
+     * synthetic review data, exactly like [syntheticApprovedExerciseIds]; nothing here is
+     * written to bundled assets and it is never human approval.
+     */
+    val syntheticClearedTrainingConstraints: Set<TrainingConstraint> = emptySet()
 )
 
 internal data class PlannerFixtureProfile(
@@ -248,10 +257,13 @@ internal class PlannerFixtureLoader(
     private fun parseReviewedEligibility(
         reviewedEligibility: JSONObject
     ): PlannerFixtureReviewedEligibility {
+        // Mirrors the importer/parser rule: impactLevel is the only source for LOW_IMPACT_ONLY.
+
         requireExactFields(
             reviewedEligibility,
             "root.reviewedEligibility",
-            REVIEWED_ELIGIBILITY_FIELDS
+            REVIEWED_ELIGIBILITY_FIELDS,
+            OPTIONAL_REVIEWED_ELIGIBILITY_FIELDS
         )
         return PlannerFixtureReviewedEligibility(
             adaptationState = parseEnum<AdaptationState>(
@@ -265,8 +277,28 @@ internal class PlannerFixtureLoader(
                     "root.reviewedEligibility.syntheticApprovedExerciseIds"
                 ),
                 "root.reviewedEligibility.syntheticApprovedExerciseIds"
-            )
-        )
+            ),
+            syntheticClearedTrainingConstraints =
+                if (reviewedEligibility.has("syntheticClearedTrainingConstraints")) {
+                    parseEnumSet<TrainingConstraint>(
+                        requireArray(
+                            reviewedEligibility,
+                            "syntheticClearedTrainingConstraints",
+                            "root.reviewedEligibility.syntheticClearedTrainingConstraints"
+                        ),
+                        "root.reviewedEligibility.syntheticClearedTrainingConstraints"
+                    )
+                } else {
+                    emptySet()
+                }
+        ).also {
+            if (TrainingConstraint.LOW_IMPACT_ONLY in it.syntheticClearedTrainingConstraints) {
+                throw PlannerFixtureFormatException(
+                    "root.reviewedEligibility.syntheticClearedTrainingConstraints cannot list " +
+                        "LOW_IMPACT_ONLY."
+                )
+            }
+        }
     }
 
     private fun parseCompletedSessions(
@@ -1053,6 +1085,9 @@ internal class PlannerFixtureLoader(
         private val REVIEWED_ELIGIBILITY_FIELDS = setOf(
             "adaptationState",
             "syntheticApprovedExerciseIds"
+        )
+        private val OPTIONAL_REVIEWED_ELIGIBILITY_FIELDS = setOf(
+            "syntheticClearedTrainingConstraints"
         )
         private val PROFILE_FIELDS = setOf(
             "goals",

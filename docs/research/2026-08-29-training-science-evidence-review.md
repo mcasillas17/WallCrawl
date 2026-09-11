@@ -241,6 +241,23 @@ to a body. `SafetyCopyTest` holds English, Spanish and the translated exercise o
 boundary, failing on injury, prevention, healing, tendon, connective-tissue and joint-protection
 vocabulary, so no narrowing of the copy was justified in either language and none was made.
 
+**Correction (Package 7 preparation).** The conclusion in the paragraph above is preserved as
+the record of what this audit actually concluded, and it was wrong for the Safety & Recovery
+step. `onboarding_safety_hint`, `onboarding_safety_subtitle` and
+`onboarding_safety_none_subtitle` told users that WallCrawl filters or substitutes high-stress
+movements, needs the answer for "conservative exercise selection", and offers a no-restriction
+option "without joint filters" — while the shipped planner reads no `TrainingConstraint` at all
+and the reviewed path is disabled. `onboarding_safety_heading` and
+`onboarding_safety_tag_prompt` also asserted that the app protects joints. The audit missed all
+of this because the forbidden-vocabulary checks look for medical promises, and a false claim
+about *configured behaviour* contains none of that vocabulary — "PROTECT SENSITIVE JOINTS" even
+passed the joint-protection entries, which match "protect your joint" and "protect joint".
+All five strings were narrowed in English and Spanish, and
+`SafetyCopyTest.safetyStepDoesNotPromiseFilteringWhileTheReviewedPathIsDisabled` now binds the
+wording to `PlannerFeatureFlags.PRODUCTION` across every `onboarding_safety_*` string. That
+guard is a literal list of the removed phrasings, so it prevents exactly those from returning
+rather than excluding every possible synonym.
+
 Three stale claims in code comments were corrected rather than endorsed.
 `WorkoutPlanner.generateWorkout` no longer says the context supplies "recovery state";
 `WorkoutPlanningFailure.NO_CANDIDATES` no longer names a "recovery filter" that has never

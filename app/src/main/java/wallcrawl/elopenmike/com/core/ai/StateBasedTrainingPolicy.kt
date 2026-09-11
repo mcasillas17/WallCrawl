@@ -20,6 +20,8 @@ import wallcrawl.elopenmike.com.core.model.TrainingProgramStatePolicyVersion
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.UserRestPreference
 import wallcrawl.elopenmike.com.core.model.WeeklyDoseLedger
+import wallcrawl.elopenmike.com.core.model.clearsJointConstraintsOf
+import wallcrawl.elopenmike.com.core.model.violatesImpactRestrictionOf
 
 enum class TrainingPolicyVersion {
     STATE_BASED_DOSE_EFFORT_REST_V1
@@ -162,7 +164,8 @@ enum class TrainingPolicyFailureReason {
     MALFORMED_APPROVED_METADATA,
     REVIEW_POLICY_VERSION_MISMATCH,
     PRESCRIPTION_SHAPE_MISMATCH,
-    CAPABILITY_AVOID_REACHED_POLICY
+    CAPABILITY_AVOID_REACHED_POLICY,
+    TRAINING_CONSTRAINT_REACHED_POLICY
 }
 
 sealed interface TrainingPolicyResult {
@@ -256,6 +259,17 @@ class StateBasedTrainingPolicy(
         ) {
             return TrainingPolicyResult.Failure(
                 TrainingPolicyFailureReason.CAPABILITY_AVOID_REACHED_POLICY
+            )
+        }
+        // Same second boundary the capability contract already has, over both profile-facing
+        // training-constraint rules: eligibility should have removed this exercise, and a
+        // selected restriction must not survive a gap in one gate.
+        if (
+            !metadata.clearsJointConstraintsOf(profile) ||
+            metadata.violatesImpactRestrictionOf(profile)
+        ) {
+            return TrainingPolicyResult.Failure(
+                TrainingPolicyFailureReason.TRAINING_CONSTRAINT_REACHED_POLICY
             )
         }
 

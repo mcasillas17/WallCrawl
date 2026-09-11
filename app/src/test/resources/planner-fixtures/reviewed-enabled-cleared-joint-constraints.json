@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "id": "reviewed-enabled-cleared-joint-constraints",
+  "policyVersion": 4,
+  "catalogVersion": "ba0b709cb20430361b2cb33aaadd20998164a916",
+  "profile": {
+    "goals": [
+      "GENERAL_FITNESS",
+      "BUILD_MUSCLE"
+    ],
+    "experienceLevel": "BEGINNER",
+    "preferredDurationMinutes": 35,
+    "daysPerWeek": 3,
+    "availableEquipment": [
+      "Bodyweight"
+    ],
+    "preferredUnit": "LBS",
+    "musclePriorities": {
+      "Core": "HIGH"
+    },
+    "excludedExerciseIds": [],
+    "trainingConstraints": [
+      "KNEE_SENSITIVE",
+      "WRIST_SENSITIVE"
+    ],
+    "returningAfterBreakWeeks": 0,
+    "confirmedStartingLoads": {},
+    "movementCapabilities": {
+      "IMPACT": "COMFORTABLE"
+    }
+  },
+  "completedWorkoutCount": 2,
+  "exerciseHistory": [],
+  "reviewedEligibility": {
+    "adaptationState": "BUILD",
+    "syntheticApprovedExerciseIds": [
+      "plank",
+      "side-plank",
+      "dead-bug",
+      "bird-dog",
+      "glute-bridge"
+    ],
+    "syntheticClearedTrainingConstraints": [
+      "KNEE_SENSITIVE",
+      "WRIST_SENSITIVE"
+    ]
+  },
+  "expected": {
+    "outcome": "SUCCESS",
+    "requiredExerciseIds": [],
+    "requiredAnyExerciseIdGroups": [],
+    "forbiddenExerciseIds": []
+  }
+}

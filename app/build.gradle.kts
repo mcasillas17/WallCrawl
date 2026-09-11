@@ -125,3 +125,19 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
+
+// SafetyCopyTest and the reviewed-coverage suite read shipped copy and authored data straight
+// from disk with `File(...)`, outside Gradle's tracked inputs. Without declaring them, a
+// data-only edit leaves the test task UP-TO-DATE and those checks silently do not run — so a
+// claim they exist to catch could ship. CI restores the Gradle cache, so this is not
+// local-only. Only genuinely untracked paths belong here: `src/main/assets` is already a test
+// resources root above, and sources read as text (WallCrawlApplication.kt) recompile, which
+// invalidates the task on their own. Add a glob when a test starts reading a new outside path.
+tasks.withType<Test>().configureEach {
+    inputs.files(
+        fileTree("src/main/res") { include("**/strings.xml") },
+        fileTree(rootProject.file("docs/research")) { include("**/*.json") },
+        rootProject.file("tools/workout-guide/review-schema.json")
+    ).withPropertyName("shippedCopyAndAuthoredContracts")
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+}

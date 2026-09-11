@@ -60,7 +60,7 @@
     <string name="onboarding_equipment_title">Available Equipment</string>
     <string name="onboarding_equipment_subtitle">Select only the equipment you actually have access to.</string>
     <string name="onboarding_safety_title">Safety &amp; Recovery</string>
-    <string name="onboarding_safety_subtitle">Tell us if any areas need conservative exercise selection.</string>
+    <string name="onboarding_safety_subtitle">Tell us which areas you want to work around.</string>
     <string name="onboarding_summary_title">Ready to Begin</string>
     <string name="onboarding_summary_subtitle">Review your setup before generating your first workout.</string>
 
@@ -95,11 +95,11 @@
     <string name="band_setup_low_description">Secured fixed attachment near floor level.</string>
     <string name="band_setup_kickback_description">Ankle attachment and reachable stable handhold on the same low-anchor assembly. Also select the low anchor separately.</string>
 
-    <string name="onboarding_safety_heading">PROTECT SENSITIVE JOINTS</string>
-    <string name="onboarding_safety_hint">Tell us if any joints need conservative exercise selection. WallCrawl filters or substitutes high-stress movements.</string>
+    <string name="onboarding_safety_heading">SENSITIVE JOINTS</string>
+    <string name="onboarding_safety_hint">Tell us which joints you want to work around. WallCrawl saves your answer, but automatic workouts do not filter on it yet: that needs human-reviewed exercise mappings, and guessing them would not be safe. Browsing and manual workouts are unaffected. This is not medical advice.</string>
     <string name="onboarding_safety_none_title">Feeling 100% / no restrictions</string>
-    <string name="onboarding_safety_none_subtitle">Full catalog of exercises available without joint filters.</string>
-    <string name="onboarding_safety_tag_prompt">Or tag specific areas to protect:</string>
+    <string name="onboarding_safety_none_subtitle">No areas to work around.</string>
+    <string name="onboarding_safety_tag_prompt">Or tag specific areas:</string>
 
     <string name="onboarding_summary_heading">TRAINING BLUEPRINT</string>
     <string name="onboarding_summary_label_name">Crawler name</string>
@@ -561,6 +561,7 @@
     <string name="profile_equipment_heading">AVAILABLE EQUIPMENT</string>
     <string name="profile_muscle_heading">MUSCLE PRIORITIES</string>
     <string name="profile_safety_heading">TRAINING SAFETY</string>
+    <string name="profile_safety_description">Your joint selection is saved, but automatic workouts do not filter on it yet. That needs human-reviewed exercise mappings. Browsing and manual workouts are unaffected. This is not medical advice.</string>
     <string name="profile_break_title">Returning after a break</string>
     <string name="profile_break_hint">Adjust your break duration so WallCrawl can scale the volume it plans.</string>
     <string name="profile_app_preferences_heading">APP PREFERENCES</string>

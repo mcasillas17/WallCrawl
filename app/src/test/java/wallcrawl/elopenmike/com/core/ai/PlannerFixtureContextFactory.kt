@@ -35,6 +35,7 @@ import wallcrawl.elopenmike.com.core.model.ReviewedExerciseLink
 import wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.SupportRequirement
+import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.TrainingProgramState
 import wallcrawl.elopenmike.com.core.model.TrainingProgramStatePolicyVersion
@@ -252,6 +253,8 @@ internal class PlannerFixtureContextFactory(
             exercise.copy(
                 reviewedMetadata = metadata.copy(
                     reviewState = ReviewState.APPROVED,
+                    clearedTrainingConstraints =
+                        reviewedEligibility.syntheticClearedTrainingConstraints,
                     provenance = ReviewProvenance(
                         reviewerRole = "Synthetic test-only reviewer",
                         rationaleOrSource =
@@ -605,7 +608,17 @@ internal class PlannerFixtureContextFactory(
         provenance = parseReviewProvenance(
             requireObject(metadata, "provenance", "$path.provenance"),
             "$path.provenance"
-        )
+        ),
+        clearedTrainingConstraints = requireStringList(
+            requireArray(
+                metadata,
+                "clearedTrainingConstraints",
+                "$path.clearedTrainingConstraints"
+            ),
+            "$path.clearedTrainingConstraints"
+        ).mapTo(linkedSetOf()) { value ->
+            readEnum<TrainingConstraint>(value, "$path.clearedTrainingConstraints")
+        }
     )
 
     private fun parseReviewedLinks(array: JSONArray, path: String): List<ReviewedExerciseLink> =

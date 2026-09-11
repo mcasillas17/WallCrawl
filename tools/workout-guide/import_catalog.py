@@ -914,10 +914,12 @@ def _render_review_report(reviewed_by_id: dict[str, dict[str, Any]]) -> str:
     movement_patterns = Counter(value["movementPattern"] for value in reviewed_by_id.values())
     progression_families = Counter(value["progressionFamily"] for value in reviewed_by_id.values())
     capability_requirements: Counter[str] = Counter()
+    cleared_constraints: Counter[str] = Counter()
     equipment_families: Counter[str] = Counter()
     for value in reviewed_by_id.values():
         capabilities = value["capabilityRequirements"] or ["none"]
         capability_requirements.update(capabilities)
+        cleared_constraints.update(value["clearedTrainingConstraints"] or ["none"])
         equipment_families.update(
             sorted({equipment for combination in value["equipmentAlternatives"] for equipment in combination})
         )
@@ -945,6 +947,7 @@ def _render_review_report(reviewed_by_id: dict[str, dict[str, Any]]) -> str:
         ("Movement pattern", movement_patterns),
         ("Progression family", progression_families),
         ("Capability requirement", capability_requirements),
+        ("Cleared joint sensitivity", cleared_constraints),
     ):
         lines.extend([f"## Count by {title.lower()}", "", "| Value | Count |", "| --- | ---: |"])
         lines.extend(f"| `{key}` | {counts[key]} |" for key in sorted(counts))
@@ -962,7 +965,9 @@ def _render_review_report(reviewed_by_id: dict[str, dict[str, Any]]) -> str:
             "For every entry below, a human reviewer must inspect direct/secondary muscles, movement "
             "pattern, complexity, progression family, prescription shape, directed regression and "
             "substitution edges (including exception rationales), capabilities, support, impact, "
-            "equipment alternatives, and provenance before deliberately changing `reviewState`.",
+            "equipment alternatives, cleared joint sensitivities, and provenance before "
+            "deliberately changing `reviewState`. `none` above means no joint sensitivity was "
+            "cleared, so the entry is unavailable to a user who selected one.",
             "",
         ]
     )

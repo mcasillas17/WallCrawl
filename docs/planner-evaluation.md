@@ -173,7 +173,7 @@ Failure fixtures may therefore assert only the typed outcome they expect from th
 - `DefaultExercisePrescriptionFactory`
 - `ExerciseEligibilityPolicy`
 
-That includes exercise identity, canonical muscles, listed equipment, type, stretch flag, and reviewed programming metadata used for filtering, split matching, ordering, and prescriptions. The harness does **not** populate unrelated attribution/source data solely for tests.
+That includes exercise identity, canonical muscles, listed equipment, type, stretch flag, and reviewed programming metadata used for filtering, split matching, ordering, and prescriptions, including the authored `clearedTrainingConstraints` the eligibility policy reads. The harness does **not** populate unrelated attribution/source data solely for tests.
 
 The projection validates the same type-dependent legacy rep-range contract as the
 Python importer and Android parser, using shared fixtures from
@@ -191,7 +191,7 @@ Full packaged catalog validity remains the responsibility of the dedicated impor
 
 ## Persona coverage
 
-The manifest currently contains twelve fixtures:
+The manifest currently contains fourteen fixtures:
 
 1. `bodyweight-beginner` — conservative curated bodyweight beginner subset (`push-up`, `knee-push-up`, `bodyweight-squat`, `dead-bug`) requiring at least one beginner push variant.
 2. `band-only` — resistance-band-only coverage after the fixed-anchor gate: `banded-dead-bug` is required, and cable-only pull work is excluded by the real filter alongside every anchor-dependent band variation, `banded-row` included.
@@ -207,7 +207,20 @@ The manifest currently contains twelve fixtures:
    legacy timed programming makes plank rank ahead of the prior push accessory for this
    leg split. This is synthetic test approval only; production metadata stays DRAFT.
 11. `reviewed-enabled-no-approved` — leaves every bundled record DRAFT and proves the enabled policy returns `REVIEWED_ELIGIBILITY_NO_CANDIDATES` with `NO_APPROVED_METADATA` and no legacy fallback.
-12. `concurrent-activity` — a dumbbell/bench/cardio owner in `BUILD` whose accounting week
+12. `reviewed-enabled-uncleared-joint-constraint` — the `reviewed-enabled-bodyweight` pool with
+    `SHOULDER_SENSITIVE` selected. The fixture declares no
+    `syntheticClearedTrainingConstraints`, so the synthetic approvals clear nothing — matching
+    the bundled records, which clear nothing either — and the enabled policy returns
+    `REVIEWED_ELIGIBILITY_NO_CANDIDATES` with `TRAINING_CONSTRAINTS_REMOVED_ALL` and no legacy
+    fallback. This is the shipped behavior for a joint-sensitive profile.
+13. `reviewed-enabled-cleared-joint-constraints` — `KNEE_SENSITIVE` and `WRIST_SENSITIVE`
+    selected together against a core-priority bodyweight pool whose synthetic approval **sets**
+    `clearedTrainingConstraints` to exactly those two, via the fixture's
+    `syntheticClearedTrainingConstraints`; it replaces the authored value rather than copying it. It proves the
+    combined-restriction path reaches a raw-valid proposal when — and only when — every
+    selected sensitivity is explicitly cleared. The clearance is synthetic test data in the
+    same sense as the approval itself; no bundled record clears anything.
+14. `concurrent-activity` — a dumbbell/bench/cardio owner in `BUILD` whose accounting week
     already holds both logged resistance work and an aerobic session. Its declared history is
     a Tuesday session of twelve logged chest sets (one warm-up and one unfinished set among
     them) and a Thursday cycling session of two completed sets. The reconstructed ledger
@@ -231,7 +244,7 @@ The corpus suite asserts:
 
 - deterministic output equality across two fresh replays, normalized only for the generated workout ID;
 - fixture schema and evaluator support all current typed planner failures (`NO_CANDIDATES`, `NO_STRENGTH_CANDIDATES`, `NO_CANDIDATES_FOR_ANY_SPLIT`, `REVIEWED_ELIGIBILITY_NO_CANDIDATES`) and the reviewed failure's typed aggregate cause;
-- the committed twelve-fixture manifest exercises `NO_STRENGTH_CANDIDATES` and `REVIEWED_ELIGIBILITY_NO_CANDIDATES`; focused planner tests cover `NO_CANDIDATES` and `NO_CANDIDATES_FOR_ANY_SPLIT`;
+- the committed fourteen-fixture manifest exercises `NO_STRENGTH_CANDIDATES` and `REVIEWED_ELIGIBILITY_NO_CANDIDATES`; focused planner tests cover `NO_CANDIDATES` and `NO_CANDIDATES_FOR_ANY_SPLIT`;
 - legality of every selected exercise against the bundled catalog, the real filter result, and any curated allowed-ID subset;
 - non-mutation of the full `WorkoutGenerationContext` input;
 - type-valid prescriptions and no-invented-load behavior through the real prescription factory;
@@ -249,7 +262,7 @@ The corpus suite asserts:
 ## Full-catalog content-review coverage
 
 `ReviewedCatalogCoverageTest` supplements, rather than silently enlarges, the
-twelve-fixture manifest. Its 16 declared profiles each exercise an all-DRAFT
+fourteen-fixture manifest. Its 17 declared profiles each exercise an all-DRAFT
 structural upper bound, a separate AI-ready subset (both using explicitly synthetic
 in-memory approvals), and disabled-mode invariance with reviewed metadata stripped.
 The [coverage report](reviewed-catalog-coverage.md) records actual candidate counts,

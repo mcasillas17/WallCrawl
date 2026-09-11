@@ -90,6 +90,8 @@ class PlannerFixtureTest {
             "no-strength-candidates",
             "reviewed-enabled-bodyweight",
             "reviewed-enabled-no-approved",
+            "reviewed-enabled-uncleared-joint-constraint",
+            "reviewed-enabled-cleared-joint-constraints",
             "concurrent-activity"
         )
     }
@@ -571,7 +573,7 @@ class PlannerFixtureTest {
     fun corpusMetadata_usesSupportedVersionsAndBoundedHistory() {
         val fixtures = corpus()
 
-        assertThat(fixtures).hasSize(12)
+        assertThat(fixtures).hasSize(14)
         fixtures.forEach { fixture ->
             assertThat(fixture.schemaVersion).isEqualTo(1)
             assertThat(fixture.policyVersion).isEqualTo(4)
@@ -1074,6 +1076,7 @@ class PlannerFixtureTest {
                 equipmentAlternatives = listOf(
                     listOf(StandardEquipment.DUMBBELL, StandardEquipment.BENCH)
                 ),
+                clearedTrainingConstraints = emptySet(),
                 provenance = ReviewProvenance(
                     reviewerRole = "SYNTHETIC_PROBE_REVIEWER_NOT_A_HUMAN",
                     rationaleOrSource = "SYNTHETIC PROBE FIXTURE. Never bundled.",
