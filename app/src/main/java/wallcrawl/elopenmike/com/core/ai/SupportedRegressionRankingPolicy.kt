@@ -7,7 +7,6 @@ import wallcrawl.elopenmike.com.core.model.EligibilityDecision
 import wallcrawl.elopenmike.com.core.model.EligibilityPreference
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
-import wallcrawl.elopenmike.com.core.model.ReviewState
 import wallcrawl.elopenmike.com.core.model.SupportRequirement
 
 data class SupportedRegressionPreference(
@@ -42,9 +41,7 @@ class SupportedRegressionRankingPolicy {
             .asSequence()
             .sortedBy(Exercise::id)
             .forEach { source ->
-                val sourceMetadata = source.reviewedMetadata
-                    ?.takeIf { it.reviewState == ReviewState.APPROVED }
-                    ?: return@forEach
+                val sourceMetadata = source.acceptedMetadata() ?: return@forEach
                 val sourceDecision = eligibleDecisionsById[source.id] ?: return@forEach
                 if (capabilityEvidence[source.id] != null) return@forEach
 
@@ -64,9 +61,7 @@ class SupportedRegressionRankingPolicy {
                     .forEach { targetId ->
                         val target = candidatesById[targetId] ?: return@forEach
                         if (eligibleDecisionsById[targetId] == null) return@forEach
-                        val targetMetadata = target.reviewedMetadata
-                            ?.takeIf { it.reviewState == ReviewState.APPROVED }
-                            ?: return@forEach
+                        val targetMetadata = target.acceptedMetadata() ?: return@forEach
                         if (targetMetadata.supportRequirement != SupportRequirement.SUPPORTED) {
                             return@forEach
                         }
