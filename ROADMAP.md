@@ -536,8 +536,9 @@ honest, and the flag change contains no unrelated policy expansion.
 ### 8. Complete capability-aware deterministic ranking
 
 **Status:** Partly shipped. Experience ordering, reviewed capability soft-penalty suppression,
-primary-before-secondary split ordering, and the shared focus contract that ordering now reads
-exist; frequency, recency, and supported-regression preference do not.
+approved supported-regression preference, primary-before-secondary split ordering, structured
+ranking reasons, and the shared focus contract that ordering now reads exist. Frequency and
+recency remain undesigned.
 
 **Depends on:** Package 7 for production reviewed behavior.
 
@@ -547,14 +548,18 @@ exist; frequency, recency, and supported-regression preference do not.
    [focus contract](docs/architecture.md#advertised-focus) as split selection and validation,
    which resolves to the approved `directPrimaryMuscle` on the reviewed path and to the legacy
    list otherwise. Production ordering is unchanged, because the bundled cohort is all `DRAFT`.
-2. Prefer approved supported regressions when capability evidence or a limited preference
-   makes them the clearer fit.
+2. **Complete, pending Package 7 activation:** prefer a direct, approved, explicitly
+   `SUPPORTED` regression when its approved source has an unresolved exercise-specific
+   `LIMITED` capability preference and the target does not require that capability. The
+   preference can only reorder the existing legal candidate set; demonstrated source evidence
+   suppresses it together with the existing soft penalty.
 3. Define training frequency and recency as bounded, explainable scheduling preferences
    before incorporating them as ordering inputs. Specify attribution, lookback, and
    precedence; timestamps must not become overload/readiness judgments or recovery intervals.
-4. Preserve candidate membership and all hard constraints; ranking may only reorder legal
-   candidates.
-5. Emit structured ranking reasons and lock comparator order with policy and planner tests.
+4. **Complete for shipped ranking signals:** preserve candidate membership and all hard
+   constraints; ranking may only reorder legal candidates.
+5. **Complete for supported regressions:** emit structured ranking reasons and lock comparator
+   order with policy, planner, locale, presentation, and persistence tests.
 
 **Likely surfaces:** `FakeWorkoutPlanner`, focused ranking policies,
 `WorkoutGenerationContext`, planner fixtures, and architecture docs.

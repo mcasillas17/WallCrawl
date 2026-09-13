@@ -175,14 +175,41 @@ hard eligibility, candidate membership, explicit exclusions, required
 equipment, joint constraints, `LOW_IMPACT_ONLY`, the approved-metadata gate, or
 the temporary advanced ceiling. A sole eligible candidate is still selected.
 
-Inside `FakeWorkoutPlanner`, that penalty is intentionally weaker than the
-structural split ordering and stronger than the later independent tie-breakers:
+An additional reviewed ranking signal recognizes one narrower case. An eligible
+source must have an exercise-specific `LIMITED` preference with no matching
+source evidence, both endpoints must be `APPROVED`, the source must name the
+target in its direct `approvedRegressions`, the target must be explicitly
+`SupportRequirement.SUPPORTED`, and the target must not require the addressed
+capability. `UNKNOWN` is not treated as proven inability. Missing feedback is
+not evidence, but it also supplies no new meaning beyond the existing unresolved
+preference. `OPTIONAL_SUPPORT`, a shared family, legacy alternatives, names,
+muscles, reverse edges, transitive chains, substitutions, and unreviewed
+intermediates never create this preference.
+
+The policy receives the already legal candidate set and computes a bounded map
+before sorting. It cannot introduce a linked target or modify eligibility.
+Equipment, fixed-anchor requirements, explicit exclusions, `AVOID`, joint
+restrictions, impact rules, approval, and complexity apply to the target before
+ranking. Qualifying source evidence suppresses both the existing capability
+penalty and this supported-regression preference, so evidence never loses under
+a renamed penalty. Target evidence neither creates nor broadens the signal.
+
+Inside `FakeWorkoutPlanner`, both capability signals are intentionally weaker
+than structural session ordering and stronger than later independent
+tie-breakers:
 
 - compound ordering: split-primary match within the compound pool, then
-  capability penalty, then experience penalty, then fatigue, then stable ID;
+  capability penalty, supported-regression preference, experience penalty,
+  fatigue, then stable ID;
 - accessory ordering: split-primary match, isolation preference, presence of
-  programming metadata, then capability penalty, then experience penalty, then
-  fatigue, then stable ID.
+  programming metadata, capability penalty, supported-regression preference,
+  experience penalty, fatigue, then stable ID.
+
+This is an explicit product ordering choice, not a diagnosis, safety promise,
+progression decision, or claim that supported variations are universally
+superior. A structured reason is emitted only when a selected target actually
+outranks a legal source competitor in the same stronger-precedence tier. It
+retains target exercise, source exercise, and capability references.
 
 ## Proposed initial rollout contract
 
@@ -275,7 +302,10 @@ or `DRAFT` reviewed metadata does not hide a browse or manual option.
 
 Task 6A shipped behind the production-disabled reviewed flag: deterministic
 capability evidence exists and soft capability-penalty suppression is wired
-through the reviewed planner path.
+through the reviewed planner path. Package 8's supported-regression ranking
+slice is also integrated there, including structured explanation persistence,
+but is pending the same Package 7 activation. No production approval record or
+feature flag changed.
 
 Task 6B remains open: there is no `ProgressionEngine.kt`, no one-variable
 progression, and no broader derived-state rollout beyond

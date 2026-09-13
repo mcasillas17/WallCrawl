@@ -8,6 +8,9 @@ import org.junit.Assert.assertThrows
 import org.junit.Test
 import org.junit.runner.RunWith
 import wallcrawl.elopenmike.com.core.model.MuscleDoseAccounting
+import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
+import wallcrawl.elopenmike.com.core.model.WorkoutRankingReason
+import wallcrawl.elopenmike.com.core.model.WorkoutRankingReasonCode
 
 /**
  * Archive format version 2 and its recommendation records.
@@ -43,6 +46,142 @@ class LocalDataArchiveRecommendationTest {
         ).inOrder()
         // An absent allowance stays absent rather than becoming zero.
         assertThat(repaired.doseAccounting.single { it.muscle == "Back" }.allowanceSets).isNull()
+    }
+
+    @Test
+    fun roundTrip_preservesStructuredSupportedRegressionReferences() {
+        val reason = WorkoutRankingReason.SupportedRegressionPreference(
+            preferredExerciseId = "supported-press",
+            sourceExerciseId = "source-press",
+            capability = MovementCapabilityType.FLOOR_TRANSITION
+        )
+        val records = LocalDataArchiveFixtures.recommendationRecords()
+        val original = LocalDataArchiveFixtures.archive(
+            snapshot = LocalDataArchiveFixtures.snapshot(
+                recommendationRecords = records.mapIndexed { index, record ->
+                    if (index == 0) {
+                        record.copy(reasonCodes = WorkoutRankingReasonCode.encode(listOf(reason)))
+                    } else {
+                        record
+                    }
+                }
+            )
+        )
+
+        val restored = LocalDataArchiveCodec.read(ByteArrayInputStream(original.toBytes()))
+        val restoredReasonCodes = restored.snapshot.recommendationRecords
+            .first { it.sessionId == records.first().sessionId }
+            .reasonCodes
+
+        assertThat(WorkoutRankingReasonCode.decode(restoredReasonCodes)).containsExactly(reason)
+    }
+
+    @Test
+    fun roundTrip_preservesTheMaximumPlannerRankingProvenance() {
+        val reasons = (0 until 6).flatMap { target ->
+            (0 until 6).map { source ->
+                WorkoutRankingReason.SupportedRegressionPreference(
+                    preferredExerciseId = "target-$target",
+                    sourceExerciseId = "source-$source",
+                    capability = MovementCapabilityType.entries[
+                        (target + source) % MovementCapabilityType.entries.size
+                    ]
+                )
+            }
+        }
+        val records = LocalDataArchiveFixtures.recommendationRecords()
+        val original = LocalDataArchiveFixtures.archive(
+            snapshot = LocalDataArchiveFixtures.snapshot(
+                recommendationRecords = records.mapIndexed { index, record ->
+                    if (index == 0) {
+                        record.copy(
+                            reasonCodes = listOf("WEEKLY_ALLOWANCE_EXCEEDED") +
+                                WorkoutRankingReasonCode.encode(reasons)
+                        )
+                    } else {
+                        record
+                    }
+                }
+            )
+        )
+
+        val restored = LocalDataArchiveCodec.read(ByteArrayInputStream(original.toBytes()))
+        val restoredReasonCodes = restored.snapshot.recommendationRecords
+            .first { it.sessionId == records.first().sessionId }
+            .reasonCodes
+
+        assertThat(restoredReasonCodes).hasSize(145)
+        assertThat(WorkoutRankingReasonCode.decode(restoredReasonCodes))
+            .containsExactlyElementsIn(reasons)
+            .inOrder()
+    }
+
+    @Test
+    fun malformedStructuredSupportedRegressionReferencesAreRefused() {
+        val document = LocalDataArchiveFixtures
+            .archive()
+            .toBytes()
+            .decodeToString()
+            .replace(
+                "\"reasonCodes\":[\"WEEKLY_ALLOWANCE_EXCEEDED\"]",
+                "\"reasonCodes\":[\"SUPPORTED_REGRESSION_PREFERENCE_V1.0\"]"
+            )
+
+        val error = assertThrows(LocalDataArchiveException::class.java) {
+            LocalDataArchiveCodec.read(ByteArrayInputStream(document.encodeToByteArray()))
+        }
+
+        assertThat(error.rejection).isEqualTo(ArchiveRejection.INVALID_VALUE)
+    }
+
+    @Test
+    fun unknownCapabilityCannotHideIdenticalSupportedRegressionEndpoints() {
+        val document = LocalDataArchiveFixtures
+            .archive()
+            .toBytes()
+            .decodeToString()
+            .replace(
+                "\"reasonCodes\":[\"WEEKLY_ALLOWANCE_EXCEEDED\"]",
+                "\"reasonCodes\":[" +
+                    "\"SUPPORTED_REGRESSION_PREFERENCE_V1.0\"," +
+                    "\"SUPPORTED_REGRESSION_PREFERENCE_V1.0.PREFERRED:same-exercise\"," +
+                    "\"SUPPORTED_REGRESSION_PREFERENCE_V1.0.SOURCE:same-exercise\"," +
+                    "\"SUPPORTED_REGRESSION_PREFERENCE_V1.0.CAPABILITY:FUTURE_CAPABILITY\"]"
+            )
+
+        val error = assertThrows(LocalDataArchiveException::class.java) {
+            LocalDataArchiveCodec.read(ByteArrayInputStream(document.encodeToByteArray()))
+        }
+
+        assertThat(error.rejection).isEqualTo(ArchiveRejection.INVALID_VALUE)
+    }
+
+    @Test
+    fun duplicateStructuredReasonsAreRefusedForKnownAndFutureCapabilities() {
+        listOf("FLOOR_TRANSITION", "FUTURE_CAPABILITY").forEach { capability ->
+            val document = LocalDataArchiveFixtures
+                .archive()
+                .toBytes()
+                .decodeToString()
+                .replace(
+                    "\"reasonCodes\":[\"WEEKLY_ALLOWANCE_EXCEEDED\"]",
+                    "\"reasonCodes\":[" +
+                        "\"SUPPORTED_REGRESSION_PREFERENCE_V1.0\"," +
+                        "\"SUPPORTED_REGRESSION_PREFERENCE_V1.0.PREFERRED:target\"," +
+                        "\"SUPPORTED_REGRESSION_PREFERENCE_V1.0.SOURCE:source\"," +
+                        "\"SUPPORTED_REGRESSION_PREFERENCE_V1.0.CAPABILITY:$capability\"," +
+                        "\"SUPPORTED_REGRESSION_PREFERENCE_V1.1\"," +
+                        "\"SUPPORTED_REGRESSION_PREFERENCE_V1.1.PREFERRED:target\"," +
+                        "\"SUPPORTED_REGRESSION_PREFERENCE_V1.1.SOURCE:source\"," +
+                        "\"SUPPORTED_REGRESSION_PREFERENCE_V1.1.CAPABILITY:$capability\"]"
+                )
+
+            val error = assertThrows(LocalDataArchiveException::class.java) {
+                LocalDataArchiveCodec.read(ByteArrayInputStream(document.encodeToByteArray()))
+            }
+
+            assertThat(error.rejection).isEqualTo(ArchiveRejection.INVALID_VALUE)
+        }
     }
 
     @Test

@@ -10,12 +10,27 @@ import org.junit.Test
 import wallcrawl.elopenmike.com.core.exercise.ExerciseFilter
 import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
 import wallcrawl.elopenmike.com.core.model.Exercise
+import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
+import wallcrawl.elopenmike.com.core.model.ComplexityTier
+import wallcrawl.elopenmike.com.core.model.EligibilityDecision
+import wallcrawl.elopenmike.com.core.model.EligibilityPreference
+import wallcrawl.elopenmike.com.core.model.EligibilityReason
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
+import wallcrawl.elopenmike.com.core.model.ImpactLevel
+import wallcrawl.elopenmike.com.core.model.MovementPattern
+import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
+import wallcrawl.elopenmike.com.core.model.PrescriptionShape
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
+import wallcrawl.elopenmike.com.core.model.ReviewProvenance
+import wallcrawl.elopenmike.com.core.model.ReviewState
+import wallcrawl.elopenmike.com.core.model.ReviewedExerciseLink
+import wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
+import wallcrawl.elopenmike.com.core.model.SupportRequirement
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
+import wallcrawl.elopenmike.com.core.model.WorkoutRankingReason
 
 /**
  * Language is presentation. It must never reach a training decision.
@@ -68,6 +83,68 @@ class PlannerLocaleInvarianceTest {
                 .isEqualTo(reference.unavailableFocusMuscles)
             assertWithMessage("explanation under $locale")
                 .that(plan.rationale).isEqualTo(reference.rationale)
+            assertWithMessage("ranking reasons under $locale")
+                .that(plan.rankingReasons).isEqualTo(reference.rankingReasons)
+        }
+    }
+
+    @Test
+    fun appliedSupportedRegressionReasonIsIdenticalInEveryLocale() = runTest {
+        val sourceBase = allExercises.single { it.id == "barbell-bench-press" }
+        val targetBase = sourceBase
+        val source = sourceBase.copy(
+            id = "a-locale-source",
+            reviewedMetadata = localeReviewedMetadata(
+                capabilityRequirements = setOf(MovementCapabilityType.FLOOR_TRANSITION),
+                approvedRegressions = listOf(ReviewedExerciseLink("z-locale-target"))
+            )
+        )
+        val target = targetBase.copy(
+            id = "z-locale-target",
+            reviewedMetadata = localeReviewedMetadata(
+                capabilityRequirements = setOf(
+                    MovementCapabilityType.BALANCE_WITHOUT_SUPPORT
+                )
+            )
+        )
+        val decisions = listOf(
+            approvedDecision(
+                source.id,
+                MovementCapabilityType.FLOOR_TRANSITION
+            ),
+            approvedDecision(
+                target.id,
+                MovementCapabilityType.BALANCE_WITHOUT_SUPPORT
+            )
+        )
+        val reviewedContext = context().copy(
+            allowedExercises = listOf(source, target),
+            automaticEligibilityResult = AutomaticEligibilityResult.Candidates(
+                exercises = listOf(source, target),
+                decisions = decisions
+            )
+        )
+
+        val plans = LOCALES.associateWith { locale ->
+            Locale.setDefault(locale)
+            FakeWorkoutPlanner().generateWorkout(reviewedContext)
+        }
+
+        val reference = plans.getValue(LOCALES.first())
+        assertThat(reference.rankingReasons).containsExactly(
+            WorkoutRankingReason.SupportedRegressionPreference(
+                preferredExerciseId = target.id,
+                sourceExerciseId = source.id,
+                capability = MovementCapabilityType.FLOOR_TRANSITION
+            )
+        )
+        plans.forEach { (locale, plan) ->
+            assertWithMessage("supported ordering under $locale")
+                .that(plan.exercises.map { it.exerciseId })
+                .isEqualTo(reference.exercises.map { it.exerciseId })
+            assertWithMessage("supported reason under $locale")
+                .that(plan.rankingReasons)
+                .isEqualTo(reference.rankingReasons)
         }
     }
 
@@ -256,6 +333,45 @@ class PlannerLocaleInvarianceTest {
     private fun context() = WorkoutGenerationContext(
         userProfile = profile(),
         allowedExercises = filter.filterCandidates(allExercises, profile())
+    )
+
+    private fun approvedDecision(
+        exerciseId: String,
+        capability: MovementCapabilityType
+    ) = EligibilityDecision(
+        exerciseId = exerciseId,
+        eligible = true,
+        reasons = listOf(EligibilityReason.APPROVED),
+        preferences = listOf(EligibilityPreference.Limited(capability))
+    )
+
+    private fun localeReviewedMetadata(
+        capabilityRequirements: Set<MovementCapabilityType>,
+        approvedRegressions: List<ReviewedExerciseLink> = emptyList()
+    ) = ReviewedExerciseMetadata(
+        reviewState = ReviewState.APPROVED,
+        directPrimaryMuscle = StandardMuscles.CHEST,
+        descriptiveSecondaryMuscles = setOf(StandardMuscles.SHOULDERS),
+        movementPattern = MovementPattern.HORIZONTAL_PUSH,
+        complexity = ComplexityTier.FOUNDATIONAL,
+        progressionFamily = "locale-test-push",
+        prescriptionShape = PrescriptionShape.WEIGHT_REPS,
+        approvedRegressions = approvedRegressions,
+        approvedSubstitutions = emptyList(),
+        capabilityRequirements = capabilityRequirements,
+        supportRequirement = SupportRequirement.SUPPORTED,
+        impactLevel = ImpactLevel.NONE,
+        equipmentAlternatives = listOf(
+            listOf(StandardEquipment.BARBELL, StandardEquipment.BENCH)
+        ),
+        clearedTrainingConstraints = emptySet(),
+        provenance = ReviewProvenance(
+            reviewerRole = "Test-only synthetic approval",
+            rationaleOrSource = "Locale invariance fixture; not catalog approval.",
+            reviewedAtEpochMillis = 1L,
+            schemaVersion = 2,
+            policyVersion = 1
+        )
     )
 
     private companion object {

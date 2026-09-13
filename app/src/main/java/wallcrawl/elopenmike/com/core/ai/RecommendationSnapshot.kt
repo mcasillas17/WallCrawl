@@ -5,6 +5,8 @@ import wallcrawl.elopenmike.com.core.model.LedgerPolicyVersion
 import wallcrawl.elopenmike.com.core.model.MuscleDoseAccounting
 import wallcrawl.elopenmike.com.core.model.RecommendationRecord
 import wallcrawl.elopenmike.com.core.model.TrainingProgramStatePolicyVersion
+import wallcrawl.elopenmike.com.core.model.WorkoutRankingReason
+import wallcrawl.elopenmike.com.core.model.WorkoutRankingReasonCode
 
 /** The versioned whole-program validation contract a recommendation was checked under. */
 enum class ProgramValidatorVersion {
@@ -74,12 +76,16 @@ data class RecommendationSnapshot(
     val contextIdentity: String,
     /** Ordered, deduplicated reason codes. Empty when nothing was reported. */
     val reasonCodes: List<ProgramViolationCode>,
+    val rankingReasons: List<WorkoutRankingReason> = emptyList(),
     val doseAccounting: List<MuscleDoseAccounting>
 ) {
     init {
         require(contextIdentity.isNotBlank()) { "A snapshot carries a context identity." }
         require(reasonCodes.size == reasonCodes.distinct().size) {
             "Reason codes are deduplicated before they are recorded."
+        }
+        require(rankingReasons.size == rankingReasons.distinct().size) {
+            "Ranking reasons are deduplicated before they are recorded."
         }
         require(doseAccounting.map { it.muscle }.distinct().size == doseAccounting.size) {
             "Each muscle is accounted for exactly once."
@@ -115,7 +121,7 @@ fun RecommendationSnapshot.asRecord(
     timeZoneId = timeZoneId,
     profileRevision = profileRevision,
     contextIdentity = contextIdentity,
-    reasonCodes = reasonCodes.map { it.name },
+    reasonCodes = reasonCodes.map { it.name } + WorkoutRankingReasonCode.encode(rankingReasons),
     doseAccounting = doseAccounting,
     recordedAtEpochMillis = recordedAtEpochMillis
 )

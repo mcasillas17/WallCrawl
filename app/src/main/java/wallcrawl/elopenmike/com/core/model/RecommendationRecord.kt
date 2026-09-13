@@ -106,6 +106,7 @@ data class RecommendationRecord(
             "Reason codes are deduplicated before they are recorded."
         }
         reasonCodes.forEach { requireToken(it, "reasonCode") }
+        WorkoutRankingReasonCode.decode(reasonCodes)
         require(doseAccounting.size <= MAX_DOSE_ENTRIES) {
             "A record cannot account for more than $MAX_DOSE_ENTRIES muscles."
         }
@@ -131,7 +132,10 @@ data class RecommendationRecord(
 
     companion object {
         const val MAX_TOKEN_LENGTH: Int = 200
-        const val MAX_REASON_CODES: Int = 64
+        // A six-exercise plan and its no-preference baseline can identify at most 36
+        // source-target inversions. Each structured ranking reason uses four tokens, and a
+        // persisted repaired recommendation adds one deduplicated repair reason.
+        const val MAX_REASON_CODES: Int = 160
         const val MAX_DOSE_ENTRIES: Int = 64
     }
 }

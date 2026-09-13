@@ -31,6 +31,7 @@ import wallcrawl.elopenmike.com.core.model.StandardMuscles
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WorkoutEmphasis
 import wallcrawl.elopenmike.com.core.model.WorkoutRationaleSpec
+import wallcrawl.elopenmike.com.core.model.WorkoutRankingReason
 import wallcrawl.elopenmike.com.core.model.WorkoutSplit
 import wallcrawl.elopenmike.com.core.model.WorkoutTitleSpec
 import wallcrawl.elopenmike.com.core.ui.localization.ExerciseVocabulary
@@ -127,6 +128,82 @@ class GeneratedWorkoutFocusNoticeTest {
         )
     }
 
+    @Test
+    fun supportedRegressionPreferenceIsExplainedOnTheTodayCardInEnglish() {
+        renderTodayCard(
+            locale = Locale.ENGLISH,
+            unavailableFocusMuscles = emptyList(),
+            rankingReasons = listOf(supportedRegressionReason())
+        )
+        composeRule.onNodeWithText(
+            english.getString(
+                R.string.generated_rationale_supported_regression_preference,
+                "Floor transitions"
+            ),
+            substring = true
+        ).assertIsDisplayed()
+    }
+
+    @Test
+    fun supportedRegressionPreferenceIsExplainedOnTheTodayCardInSpanish() {
+        renderTodayCard(
+            locale = LATIN_AMERICAN_SPANISH,
+            unavailableFocusMuscles = emptyList(),
+            rankingReasons = listOf(supportedRegressionReason())
+        )
+        composeRule.onNodeWithText(
+            spanish.getString(
+                R.string.generated_rationale_supported_regression_preference,
+                "Transiciones al suelo"
+            ),
+            substring = true
+        ).assertIsDisplayed()
+    }
+
+    @Test
+    fun repeatedCapabilityPreferenceIsExplainedOnceInEnglish() {
+        assertRepeatedCapabilityPreferenceIsExplainedOnce(
+            locale = Locale.ENGLISH,
+            expectedNotice = english.getString(
+                R.string.generated_rationale_supported_regression_preference,
+                "Floor transitions"
+            )
+        )
+    }
+
+    @Test
+    fun repeatedCapabilityPreferenceIsExplainedOnceInSpanish() {
+        assertRepeatedCapabilityPreferenceIsExplainedOnce(
+            locale = LATIN_AMERICAN_SPANISH,
+            expectedNotice = spanish.getString(
+                R.string.generated_rationale_supported_regression_preference,
+                "Transiciones al suelo"
+            )
+        )
+    }
+
+    private fun assertRepeatedCapabilityPreferenceIsExplainedOnce(
+        locale: Locale,
+        expectedNotice: String
+    ) {
+        var explanation = ""
+        renderTodayCard(
+            locale = locale,
+            unavailableFocusMuscles = emptyList(),
+            rankingReasons = listOf(
+                supportedRegressionReason(),
+                supportedRegressionReason(
+                    preferredExerciseId = "second-supported-press",
+                    sourceExerciseId = "second-source-press"
+                )
+            ),
+            onRankingExplanation = { explanation = it }
+        )
+
+        assertThat(explanation).isEqualTo(expectedNotice)
+        composeRule.onNodeWithText(expectedNotice, substring = true).assertIsDisplayed()
+    }
+
     /**
      * The card the reader actually sees, not the composable in isolation.
      *
@@ -176,12 +253,22 @@ class GeneratedWorkoutFocusNoticeTest {
     private fun renderTodayCard(
         locale: Locale,
         unavailableFocusMuscles: List<String>,
-        onOrdinaryExplanation: (String) -> Unit = {}
+        rankingReasons: List<WorkoutRankingReason> = emptyList(),
+        onOrdinaryExplanation: (String) -> Unit = {},
+        onRankingExplanation: (String) -> Unit = {}
     ) {
-        val workout = suggestedWorkout(unavailableFocusMuscles)
+        val workout = suggestedWorkout(unavailableFocusMuscles, rankingReasons)
         composeRule.setContent {
             InLocale(locale) {
                 onOrdinaryExplanation(generatedWorkoutRationale(spec = workout.rationale))
+                onRankingExplanation(
+                    generatedWorkoutRationale(
+                        spec = workout.rationale,
+                        rankingReasons = workout.rankingReasons
+                    ).removePrefix(
+                        generatedWorkoutRationale(spec = workout.rationale) + " "
+                    )
+                )
                 TodayContent(
                     state = TodayUiState.Success(
                         userProfile = UserProfile(),
@@ -197,7 +284,10 @@ class GeneratedWorkoutFocusNoticeTest {
         }
     }
 
-    private fun suggestedWorkout(unavailableFocusMuscles: List<String>) = GeneratedWorkout(
+    private fun suggestedWorkout(
+        unavailableFocusMuscles: List<String>,
+        rankingReasons: List<WorkoutRankingReason>
+    ) = GeneratedWorkout(
         title = WorkoutTitleSpec(
             split = WorkoutSplit.UPPER_BODY,
             emphasis = WorkoutEmphasis.HYPERTROPHY
@@ -216,8 +306,19 @@ class GeneratedWorkoutFocusNoticeTest {
             )
         ),
         rationale = spec,
+        rankingReasons = rankingReasons,
         unavailableFocusMuscles = unavailableFocusMuscles
     )
+
+    private fun supportedRegressionReason(
+        preferredExerciseId: String = "supported-press",
+        sourceExerciseId: String = "source-press"
+    ) =
+        WorkoutRankingReason.SupportedRegressionPreference(
+            preferredExerciseId = preferredExerciseId,
+            sourceExerciseId = sourceExerciseId,
+            capability = wallcrawl.elopenmike.com.core.model.MovementCapabilityType.FLOOR_TRANSITION
+        )
 
     @Test
     fun theOrdinaryCaseAddsNothing() {

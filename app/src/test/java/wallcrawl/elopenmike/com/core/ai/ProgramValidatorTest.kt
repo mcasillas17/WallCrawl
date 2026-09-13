@@ -12,6 +12,7 @@ import wallcrawl.elopenmike.com.core.model.MechanicsType
 import wallcrawl.elopenmike.com.core.model.ProgressionType
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.MovementPattern
+import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.model.PlannedExercise
 import wallcrawl.elopenmike.com.core.model.RepRange
 import wallcrawl.elopenmike.com.core.model.SessionProgramConstraints
@@ -20,6 +21,8 @@ import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.model.WorkoutSplit
+import wallcrawl.elopenmike.com.core.model.WorkoutRankingReason
+import wallcrawl.elopenmike.com.core.model.WorkoutRankingReasonCode
 
 /**
  * The rules that apply on every path, including the production legacy one.
@@ -45,6 +48,35 @@ class ProgramValidatorTest {
         assertThat(snapshot.catalogVersion).isEqualTo(VALIDATOR_CATALOG_VERSION)
         assertThat(snapshot.reviewPolicyVersion).isEqualTo(1)
         assertThat(snapshot.profileRevision).isEqualTo(1)
+    }
+
+    @Test
+    fun aValidProposal_preservesStructuredRankingReasonsInItsRecord() = runTest {
+        val source = syntheticExerciseWithoutReviewedMetadata("source-press")
+        val supported = syntheticExerciseWithoutReviewedMetadata("supported-press")
+        val rankingReason = WorkoutRankingReason.SupportedRegressionPreference(
+            preferredExerciseId = supported.id,
+            sourceExerciseId = source.id,
+            capability = MovementCapabilityType.FLOOR_TRANSITION
+        )
+        val plan = validatedWorkout(
+            exercises = listOf(repetitionPlan(supported.id)),
+            rankingReasons = listOf(rankingReason)
+        )
+
+        val result = validate(plan, validatorContext(listOf(source, supported)))
+        val snapshot = result.acceptedSnapshot
+        val record = snapshot.asRecord("session-id", recordedAtEpochMillis = 123L)
+
+        assertThat(snapshot.rankingReasons).containsExactly(rankingReason)
+        assertThat(WorkoutRankingReasonCode.decode(record.reasonCodes))
+            .containsExactly(rankingReason)
+        assertThat(record.reasonCodes).containsExactly(
+            "SUPPORTED_REGRESSION_PREFERENCE_V1.0",
+            "SUPPORTED_REGRESSION_PREFERENCE_V1.0.PREFERRED:supported-press",
+            "SUPPORTED_REGRESSION_PREFERENCE_V1.0.SOURCE:source-press",
+            "SUPPORTED_REGRESSION_PREFERENCE_V1.0.CAPABILITY:FLOOR_TRANSITION"
+        ).inOrder()
     }
 
     @Test

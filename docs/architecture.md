@@ -262,7 +262,42 @@ catalog IDs with structured prescriptions. Its title and rationale are structure
 (`WorkoutTitleSpec`, `WorkoutRationaleSpec`) rather than rendered sentences, so the
 planner holds no display text and produces the same plan in every language; the screen
 renders them for the reader, and it is that rendered text that a started session stores
-and keeps. `GeneratedWorkoutValidator` verifies that every ID exists, remains in the
+and keeps. Applied ranking explanations remain structured as `WorkoutRankingReason`
+values. The supported-regression reason records the selected target, the directly linked
+source, and the exact `LIMITED` capability that triggered the preference; English and
+Spanish rendering happens only at the screen boundary.
+
+The supported-regression policy runs only on the planner's existing legal candidate set.
+It precomputes direct reviewed relationships before either comparator runs: both endpoints
+must be approved, the source must directly list the target as an approved regression, the
+target must be explicitly `SUPPORTED`, and the source must have an unresolved
+exercise-specific `LIMITED` preference for a capability the target does not require.
+Evidence for the source suppresses this signal along with the existing capability penalty.
+There is no name, muscle, family, reverse-edge, substitution, optional-support, chain, or
+unreviewed inference. Focus and accessory-mechanics ordering remain stronger; experience,
+fatigue, and stable ID remain weaker. Compound and accessory selection share the same
+precomputed map, so comparison is total and performs no graph traversal.
+
+`RecommendationSnapshot` retains applied reasons and encodes each one into four bounded
+versioned `reasonCodes`: an indexed `SUPPORTED_REGRESSION_PREFERENCE_V1` marker plus
+`PREFERRED`, `SOURCE`, and `CAPABILITY` fields. Restore rejects incomplete, duplicate,
+noncontiguous, unknown-field, or identical-endpoint structured groups. An otherwise
+well-formed reason naming a capability introduced by a future build remains opaque and is
+not rendered by an older build, matching the recommendation record's text-version contract.
+Reusing the existing reason-code channel avoids a Room migration or archive format change
+while preserving the decision through session creation, export, and restore.
+
+The record accepts at most 160 reason-code tokens. The current planner selects at most six
+exercises; comparing that result with its six-exercise no-preference baseline can therefore
+attribute at most 36 source-target inversions. Four tokens per inversion plus the single
+repair code that an accepted repaired recommendation can carry uses 145 tokens. The bound
+preserves every applied source reference without truncation and leaves the archive input
+bounded. This validation-only increase is backward compatible when reading records written
+under the former 64-token limit. A build that still enforces 64 may reject a newly written
+record containing more than 64 tokens, so this is not forward compatibility with old
+readers.
+
+`GeneratedWorkoutValidator` verifies that every ID exists, remains in the
 allowed set, matches the catalog exercise type, and belongs to a structurally valid
 workout. Unknown IDs are rejected, never silently substituted. It reports those checks
 as typed `ProgramViolation` values rather than as a first-failure message, because a
@@ -386,17 +421,19 @@ stored user rest preferences win, but timer add/skip controls do not persist pre
 State and capability can reduce sets but cannot change or invent a load.
 
 Within a split, compound slots are chosen first by genuine focus support inside the
-compound pool, then by the reviewed capability soft-penalty bit, then by experience,
-fatigue, and stable ID, while still spreading work across movement patterns so a
-session is not the same lift three times. Remaining accessory slots prefer exercises
-that train the split directly, then isolation work, then the presence of programming
-metadata, then that same capability penalty, experience penalty, fatigue, and stable
-ID. Because focus support is the first key in both passes and at least one accessory
+compound pool, then by the reviewed capability soft-penalty bit, supported-regression
+preference, experience, fatigue, and stable ID, while still spreading work across
+movement patterns so a session is not the same lift three times. Remaining accessory
+slots prefer exercises that train the split directly, then isolation work, then the
+presence of programming metadata, that same capability penalty, supported-regression
+preference, experience penalty, fatigue, and stable ID. Because focus support is the
+first key in both passes and at least one accessory
 slot always remains, a supporting exercise is always reachable; the planner states that
 as an invariant rather than leaving it to be re-derived from the two comparators.
-Evidence suppresses only the penalized candidate's one-bit capability penalty; it
-never adds candidates, never removes candidates, and never outweighs the harder split
-or mechanics ordering that already happened before it.
+Qualifying source evidence suppresses both the penalized candidate's one-bit capability
+penalty and its supported-regression signal; evidence never adds candidates, never
+removes candidates, and never outweighs the harder split or mechanics ordering that
+already happened before it.
 The legacy `programming.fatigueScore` is an ordinal product ranking label, not a measured
 physiological quantity or a budget to sum. Pattern spreading is a preference with a
 fallback to repeated patterns, not a universal uniqueness or all-patterns coverage rule.

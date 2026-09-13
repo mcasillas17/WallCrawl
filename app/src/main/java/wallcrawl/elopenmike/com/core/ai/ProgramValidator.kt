@@ -87,7 +87,13 @@ class ProgramValidator(
         if (first.violations.isEmpty()) {
             return ProgramValidationResult.Valid(
                 workout = workout,
-                snapshot = snapshot(RecommendationOutcome.VALID, emptyList(), first, context)
+                snapshot = snapshot(
+                    RecommendationOutcome.VALID,
+                    emptyList(),
+                    first,
+                    context,
+                    workout
+                )
             )
         }
 
@@ -106,7 +112,8 @@ class ProgramValidator(
                     RecommendationOutcome.REPAIRED,
                     first.reasonCodes(),
                     second,
-                    context
+                    context,
+                    repaired
                 )
             )
         } else {
@@ -636,7 +643,8 @@ class ProgramValidator(
         outcome: RecommendationOutcome,
         reasonCodes: List<ProgramViolationCode>,
         evaluation: Evaluation,
-        context: WorkoutGenerationContext
+        context: WorkoutGenerationContext,
+        workout: GeneratedWorkout
     ): RecommendationSnapshot {
         val reviewedPathEnabled = context.automaticEligibilityResult != null
         // Gated on the same predicate the reviewed rules use, not on the state's mere
@@ -660,6 +668,7 @@ class ProgramValidator(
             profileRevision = context.userProfile.revision,
             contextIdentity = RecommendationContextIdentity.of(context),
             reasonCodes = reasonCodes,
+            rankingReasons = workout.rankingReasons,
             doseAccounting = evaluation.doseAccounting
         )
     }

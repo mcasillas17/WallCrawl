@@ -18,6 +18,8 @@ data class GeneratedWorkout(
     val estimatedDurationMinutes: Int,
     val exercises: List<PlannedExercise>,
     val rationale: WorkoutRationaleSpec,
+    /** Applied, canonical ranking decisions; presentation translates these facts later. */
+    val rankingReasons: List<WorkoutRankingReason> = emptyList(),
     /**
      * High-priority muscles nothing available trains as its own purpose.
      *
@@ -28,6 +30,26 @@ data class GeneratedWorkout(
      */
     val unavailableFocusMuscles: List<String> = emptyList()
 )
+
+sealed interface WorkoutRankingReason {
+    data class SupportedRegressionPreference(
+        val preferredExerciseId: String,
+        val sourceExerciseId: String,
+        val capability: MovementCapabilityType
+    ) : WorkoutRankingReason {
+        init {
+            require(preferredExerciseId.isNotBlank()) {
+                "preferredExerciseId must not be blank."
+            }
+            require(sourceExerciseId.isNotBlank()) {
+                "sourceExerciseId must not be blank."
+            }
+            require(preferredExerciseId != sourceExerciseId) {
+                "A supported regression preference needs distinct endpoints."
+            }
+        }
+    }
+}
 
 /**
  * A persistent workout session representing either an active or completed workout.
