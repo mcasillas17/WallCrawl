@@ -965,9 +965,13 @@ class WorkoutGuideCatalogParser {
                         "provenance.schemaVersion $AI_REVIEWED_SCHEMA_VERSION."
                 )
             }
-            if (aiReviewProvenance == null) {
+            val aiProvenance = aiReviewProvenance ?: malformed(
+                "Exercise $exerciseId ai_accepted reviewedMetadata requires aiReviewProvenance."
+            )
+            if (aiProvenance.reviewedContentId != exerciseId) {
                 malformed(
-                    "Exercise $exerciseId ai_accepted reviewedMetadata requires aiReviewProvenance."
+                    "Exercise $exerciseId aiReviewProvenance.reviewedContentId must match " +
+                        "the enclosing exercise id."
                 )
             }
             if (provenance.reviewerRole != null || provenance.reviewedAtEpochMillis != null) {

@@ -843,6 +843,11 @@ def _validate_ai_acceptance(
         _strict_review_text(
             checked[field], f"{exercise_id}.aiReviewProvenance.{field}", maximum
         )
+    if checked["reviewedContentId"] != exercise_id:
+        raise CatalogImportError(
+            f"{exercise_id}.aiReviewProvenance.reviewedContentId must match "
+            "the enclosing exercise id"
+        )
     for index, reference in enumerate(checked["sourceReferences"]):
         # Authored references are untrusted text; keep them to one safe scheme.
         value = _strict_review_text(

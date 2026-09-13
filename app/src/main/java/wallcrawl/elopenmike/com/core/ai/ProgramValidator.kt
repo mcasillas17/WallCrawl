@@ -310,7 +310,7 @@ class ProgramValidator(
     }
 
     /**
-     * Rules that exist only on the reviewed-only path, which stays disabled in production.
+     * Rules used by the production reviewed path when automatic eligibility is present.
      *
      * They mirror the trust checks `StateBasedTrainingPolicy` already applies, so a
      * proposal can never reach a user through a path that policy would have refused.

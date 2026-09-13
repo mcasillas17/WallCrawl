@@ -101,10 +101,8 @@ private fun String.isWellFormedReviewedKey(): Boolean =
 /**
  * The reviewed schema version that first carried the AI acceptance contract.
  *
- * A floor rather than an equality: a v2 record predates the contract entirely, so an AI
- * feature is refused on one, while a later version that still satisfies the shape stays
- * readable. `WorkoutGuideCatalogParser` pins the exact authored version at the import
- * boundary; this is the runtime's independent refusal.
+ * Runtime acceptance requires exact equality so unknown future contracts fail closed.
+ * `WorkoutGuideCatalogParser` independently pins the authored version at the import boundary.
  */
 private const val AI_ACCEPTED_SCHEMA_VERSION = 3
 

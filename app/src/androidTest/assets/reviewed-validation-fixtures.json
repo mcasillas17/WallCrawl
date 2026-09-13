@@ -260,6 +260,14 @@
       "errorFragment": "reviewedContentSha256"
     },
     {
+      "name": "ai-provenance-bound-to-another-exercise",
+      "base": "baseAiAcceptedReviewedMetadata",
+      "operation": "set",
+      "path": ["aiReviewProvenance", "reviewedContentId"],
+      "value": "another-exercise",
+      "errorFragment": "reviewedContentId"
+    },
+    {
       "name": "ai-provenance-with-malformed-reviewed-content-digest",
       "base": "baseAiAcceptedReviewedMetadata",
       "operation": "set",

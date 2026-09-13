@@ -105,8 +105,8 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
     }
 
     /**
-     * Reconstructs the weekly dose ledger from completed history. The state-based prescription
-     * policy reads it only on the production-disabled reviewed-eligibility path.
+     * Reconstructs the weekly dose ledger from completed history for the production reviewed
+     * eligibility, prescription, and validation path.
      */
     override val weeklyDoseLedgerRepository: WeeklyDoseLedgerRepository by lazy {
         OfflineWeeklyDoseLedgerRepository(

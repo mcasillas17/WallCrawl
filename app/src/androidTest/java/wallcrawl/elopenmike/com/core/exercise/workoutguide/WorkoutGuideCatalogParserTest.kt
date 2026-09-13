@@ -331,6 +331,7 @@ class WorkoutGuideCatalogParserTest {
                 catalogJson(
                     exerciseJson(
                         reviewedMetadata = metadata.toString(),
+                        id = "barbell-bench-press",
                         primaryMuscles = "[\"Chest\"]",
                         secondaryMuscles = "[\"Shoulders\", \"Triceps\"]",
                         exerciseType = "weight_reps"
