@@ -85,13 +85,16 @@ This supplies neither a band chest-push exercise nor a workout-focus fix.
 
 ## Review and compatibility boundary
 
-No full reviewed metadata proposal is added by this equipment-only correction:
-the cohort remains **211 DRAFT / 0 APPROVED**, and
-`reviewedCapabilityEligibility=false`. Five runtime equipment minimums are
-representable; their full categorical proposals and relationship decisions remain
-separate content work. The row's setup itself is still unresolved. Future DRAFT
+No full reviewed metadata proposal is added by this equipment-only correction. An
+owner-authorized audit has since accepted 182 of the catalog's 211 authored records as
+`AI_ACCEPTED`, and `PlannerFeatureFlags.reviewedCapabilityEligibility` is `true` in
+production, but that acceptance is separate from this equipment correction and from
+genuine human `APPROVED` review, of which there is still none. Five runtime equipment
+minimums are representable; their full categorical proposals and relationship decisions
+remain separate content work, whether or not the exercise they belong to has since been
+`AI_ACCEPTED`. The row's setup itself is still unresolved. Future `DRAFT` or `AI_ACCEPTED`
 proposals must use these canonical meanings and retain all other pending evidence
-and human decisions. Roadmap Package 3 is not complete.
+and human decisions. Roadmap Package 3 (genuine human approval) is not complete.
 
 Canonical identifiers, not translated labels, are stored in the existing profile
 equipment list. The normal Room profile mapper and archive codec preserve them

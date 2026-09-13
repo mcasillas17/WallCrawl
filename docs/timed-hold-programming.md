@@ -82,9 +82,13 @@ commit supplies the importer. No networking, analytics, dependency or Room chang
 
 ## Human gate and limits
 
-The separate reviewed cohort now contains 211 DRAFT / 0 APPROVED. Human reviewer identities and
-timestamps remain absent and the production reviewed-capability flag remains false.
-Neither agent code review nor PR approval supplies human exercise-metadata signoff.
+An owner-authorized audit has since accepted 182 of the 211 authored records in the
+separate reviewed cohort as `AI_ACCEPTED`, and production now enables the reviewed
+capability flag (`PlannerFeatureFlags.PRODUCTION.reviewedCapabilityEligibility = true`).
+That is a separate, owner-authorized categorical acceptance, not genuine human review:
+`AI_ACCEPTED` still leaves human reviewer identities and timestamps absent, and zero
+records carry the human-only `APPROVED` state. Neither agent code review nor PR approval
+supplies human exercise-metadata signoff.
 
 This milestone does not implement progression, deloads, substitutions, Health/Wear, or
 LLM behavior. `progressionType` is descriptive; timed targets remain existing defaults,

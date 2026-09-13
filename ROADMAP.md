@@ -1,8 +1,9 @@
 # WallCrawl Roadmap
 
-> **Status date:** 2026-09-08
+> **Status date:** 2026-09-13
 >
-> **Evidence baseline:** `6a2f624` (roadmap, #55). Package 1 status additionally
+> **Evidence baseline:** `2b332ca` (rank AI-accepted supported regressions, #77). Package 1
+> status additionally
 > reflects the checked-in manifest, backup-rule resources, packaged-configuration
 > guard, and [privacy policy](docs/privacy.md). Package 2 status reflects the
 > checked-in `core/backup` archive contract, local-data DAO and repository,
@@ -16,7 +17,14 @@
 > at Package 6, fourteen after Package 7 preparation added the two joint-restriction ones — the
 > corpus harness's reconstruction of the reviewed-enabled personas' weeks through
 > `WeeklyDoseLedgerCalculator`, its whole-program validation of every successful persona, and
-> the pinned-upstream catalog check in CI.
+> the pinned-upstream catalog check in CI. Packages 3 and 7 status reflect the committed
+> `docs/research/2026-09-13-ai-acceptance-audit.json` audit artifact, its offline
+> `verify_ai_acceptance_audit.py` verifier, the 182-record `AI_ACCEPTED` cohort in
+> `tools/workout-guide/reviewed-metadata.json`, `PlannerFeatureFlags.PRODUCTION` now
+> setting `reviewedCapabilityEligibility = true`, and `ProductionPlannerCompositionTest` /
+> `TodayProductionLifecycleTest` exercising that exact composition end to end. Package 8
+> status additionally reflects `SupportedRegressionRankingPolicy` reading
+> `Exercise.acceptedMetadata()` on both endpoints (#77).
 >
 > This is the single source of truth for current project status, priority, dependency
 > order, and implementation scope. Status must be derived from repository evidence rather
@@ -32,23 +40,27 @@ network connection, or companion device.
 | Area | Status | Remaining gap |
 | --- | --- | --- |
 | Android foundation | Room schema 13 with a continuous migration chain; implicit Android backup disabled with legacy and modern all-domain exclusions; user-owned export, restore, and delete-all shipped | OEM transfer enforcement varies; restore is empty-destination only; `targetSdk` remains 35 while `compileSdk` is 37 |
-| Catalog and reviewed content | All 302 entries have per-ID AI evidence records; 906 SVG frames and 131 legacy programming entries unchanged; 211 reviewed metadata drafts | Zero human approvals; 81 content/policy decisions pending, 35 entries outside automatic-strength scope; the band-only inventory still contains no chest work, and `banded-row`'s anchor stays unrepresentable, though anchored variations are now gated and the session is labelled truthfully |
+| Catalog and reviewed content | All 302 entries have per-ID AI evidence records; 906 SVG frames and 131 legacy programming entries unchanged; an owner-authorized audit accepted 182 of 211 authored records as `AI_ACCEPTED` | Zero genuine human approvals; 29 authored drafts and 56 IDs with no authored block remain pending, 35 entries outside automatic-strength scope; the band-only inventory still contains no chest work, and `banded-row`'s anchor stays unrepresentable, though anchored variations are now gated and the session is labelled truthfully |
 | Onboarding and profile | Shipped as an eight-step flow with seven movement-capability questions, plus export, restore, and delete-all controls | Restore requires a fresh start, so it cannot merge into an installation that already holds data |
 | Templates and logging | Shipped with frozen template snapshots, type-aware outcomes, RPE/RIR, typed stops, and a local rest timer | Template targets are only partly editable; unsaved drafts are not restored after process death |
 | Localization | English and neutral Latin American Spanish shipped across the whole interface, the 302-exercise catalog, generated workout text, and accessibility labels, selectable from onboarding and Profile through Android's per-app language mechanism | Only two languages; historical session text stays in the language it was written in, by design |
-| Progress and history | Calendar-week activity, separately labelled reviewed primary dose, non-additive involvement, records, trends, summaries, and recent history implemented | Workout-summary navigation and history drill-down remain incomplete; production reviewed muscle allocation is unavailable while metadata remains unapproved |
-| Deterministic coach | Eligibility, experience ranking, capability evidence, weekly ledger, state-based dose/effort/rest, whole-program validation with recorded recommendation provenance, and a shared advertised-focus contract shipped; reviewed-only rules remain behind a disabled gate | Human approval, progression, deload, and rollout gates |
-| Planner evaluation | Versioned persona corpus (`planner-fixtures/manifest.txt` is the authoritative roster), with the reviewed-enabled personas' weeks replayed through the real ledger and every successful persona's proposal validated as a complete program, importer unit tests, real pinned-upstream regeneration check, JVM tests, and Android CI shipped | None for this package; reviewed-planner enablement is package 7 |
+| Progress and history | Calendar-week activity, separately labelled reviewed primary dose, non-additive involvement, records, trends, summaries, and recent history implemented | Workout-summary navigation and history drill-down remain incomplete; production reviewed muscle allocation now covers the 182 `AI_ACCEPTED` records but no genuinely human-`APPROVED` metadata exists |
+| Deterministic coach | Eligibility, experience ranking, capability evidence, weekly ledger, state-based dose/effort/rest, whole-program validation with recorded recommendation provenance, and a shared advertised-focus contract shipped; reviewed-only rules are now the enabled production path | Genuine human `APPROVED` review, progression, and deload |
+| Planner evaluation | Versioned persona corpus (`planner-fixtures/manifest.txt` is the authoritative roster), with the reviewed-enabled personas' weeks replayed through the real ledger and every successful persona's proposal validated as a complete program, importer unit tests, real pinned-upstream regeneration check, JVM tests, and Android CI shipped | None for this package; reviewed-planner enablement (package 7) is done, and human-approval rollout (package 3) is the remaining gate |
 | Optional local model | Not started | Blocked on a stable deterministic release |
 | Health Connect and Wear OS | Not started; only `:app` exists | Shared modules, privacy controls, validation, substitutions, protocol, and device evidence |
 | Operational quality | Dependabot, SBOM submission, JVM/lint/build CI, API 36 instrumentation, and prerelease automation shipped | Accessibility baseline, target SDK review, Room schema export, signed/minified release posture, and next alpha |
 
-The production path today is the legacy deterministic planner. Reviewed eligibility,
-capability-evidence ranking and state-based guidance are
-compiled but inactive because `PlannerFeatureFlags.reviewedCapabilityEligibility` is `false`.
-Progress reads `PRIMARY_ONLY_V1` for accounting only; that does not enable reviewed planning.
-The reviewed cohort is 211 `DRAFT` / 0 `APPROVED`; approval is a human-authored data change,
-not a consequence of merging a pull request.
+The production path today is the reviewed deterministic planner. Reviewed eligibility,
+capability-evidence ranking and state-based guidance are enabled because
+`PlannerFeatureFlags.reviewedCapabilityEligibility` is `true`, and they run against the
+182 `AI_ACCEPTED` records an owner-authorized audit accepted from the bundled cohort.
+Progress reads `PRIMARY_ONLY_V1` for accounting, crediting those same accepted records.
+**Zero records are `APPROVED`: no genuine human reviewer has signed off on any of them.**
+`AI_ACCEPTED` is a separate, owner-authorized alpha acceptance — it is not human approval
+and not a clinical validation or safety-for-everyone claim; genuine `APPROVED` review
+remains a human-authored data change that no pull request, code review, or test suite can
+supply. See [the AI acceptance audit](docs/reviewed-exercise-metadata.md#ai-acceptance-audit).
 
 ## Recorded decisions
 
@@ -97,10 +109,12 @@ These decisions must be recorded before the related implementation package close
 
 1. **Deadlift direct primary:** a qualified human reviewer must ratify the single
    `directPrimaryMuscle` for `barbell-deadlift`; automation or PR approval cannot decide it.
-2. **Initial approval cohort:** the content review now covers all 302 catalog IDs, not
-   a sample. Separately decide the human-approved rollout cohort from the 211 draft
-   proposals and unresolved entries, with explicit equipment/persona coverage. Neither
-   a smaller rollout cohort nor a completed AI review changes the meaning of approval.
+2. **Genuine human approval cohort:** an owner-authorized AI acceptance audit now covers
+   all 302 catalog IDs and has accepted 182 as `AI_ACCEPTED` — production already plans from
+   that cohort. Separately decide the genuinely human-`APPROVED` rollout cohort from those
+   182 accepted records plus the 29 draft and 56 unauthored pending entries, with explicit
+   equipment/persona coverage. Neither the AI acceptance audit nor a completed software
+   release changes the meaning of `APPROVED`.
 3. **Validation persistence:** ~~decided~~. A dedicated `workout_recommendation_records`
    table holds one immutable row per started session, written in the same transaction as the
    session, and travels in the local-data archive. It arrived in Room schema 12 and archive
@@ -139,15 +153,16 @@ These decisions must be recorded before the related implementation package close
 | --- | --- | --- |
 | Privacy and ownership | 1 (complete) -> 2 (complete) | Users can export, restore into a fresh start, and delete every local record |
 | Reviewed content | 3 | Human-paced and safe to run beside engineering |
-| Deterministic rollout | 4 + 5 + 6 -> 7 | Package 7 also requires package 3; the package 1 release gate is satisfied |
+| Deterministic rollout | 4 + 5 + 6 -> 7 | Package 7 is now enabled via an owner-authorized `AI_ACCEPTED` alpha cohort rather than waiting on package 3's genuine human review; package 3 remains open and independent of package 7's enabled status; the package 1 release gate is satisfied |
 | Adaptive coaching | 7 -> 8 and 17; 4 -> 9; 3 + 4 -> 10; 3 -> 11; 4 + 9 -> 12; 10 -> 13; 5 + 13 -> 14; 3 -> 16 | Package 15 is independently useful but integrates package 10 when it exposes substitutions; package 18 gates only the packages selected for that release |
 | Operational quality | 19 + 20 | Parallel unless a release gate says otherwise |
 | Integrations | 21 -> 22 + 23; 2 + 4 + 10 + 21 + 23 -> 24; 23 + 24 -> 25; 24 + 25 -> 26 -> 27 | Health export and the protocol spike may proceed independently after shared-module extraction |
 | Optional sync | 2 -> 28 | Package 28 is a design package first, not implementation authorization |
 
 Safe parallel work now is package 3, package 5 after its product
-decision, and the audits in packages 19-20. Do not enable package 7 against draft
-metadata or a persona cohort that cannot produce valid plans. Do not split adaptation-state
+decision, and the audits in packages 19-20. Package 7 already reads the actual bundled
+`AI_ACCEPTED` cohort; do not represent that owner-authorized acceptance as package 3's
+genuine human review. Do not split adaptation-state
 widening from the advanced-complexity ceiling update in package 9.
 
 ## Now: make reviewed deterministic planning releasable
@@ -225,18 +240,26 @@ copy.
 
 ### 3. Complete reviewed metadata coverage and human approval
 
-**Status:** Full-catalog AI review and sign-off preparation cover all 302 IDs:
-186 ready for human inspection, 81 pending evidence/policy and 35 outside automatic
-strength scope. There are 211 authored `DRAFT` records and zero `APPROVED`.
-Package 3 is **not complete**.
+**Status:** Full-catalog AI review covers all 302 IDs: an owner-authorized audit accepted
+182 as `AI_ACCEPTED`, 29 stay authored `DRAFT`, 56 have no authored block, and 35 are
+outside automatic-strength scope. Package 7 already plans production workouts from the
+182-record `AI_ACCEPTED` cohort. **Package 3 is still not complete**: zero records are
+genuinely human-`APPROVED`, and `AI_ACCEPTED` is a separate, owner-authorized alpha
+categorical acceptance — not human approval and not a clinical validation or
+safety-for-everyone claim. See
+[the AI acceptance audit](docs/reviewed-exercise-metadata.md#ai-acceptance-audit) for the
+exact partition, the four additional intrinsic holds, the seven accepted sources that
+still name a pending regression/substitution endpoint, and the committed reproducible
+audit artifact plus its offline verifier.
 
 Task 2's selected joint-constraint half is now closed on the implementation side and open on
 the content side. Reviewed schema version 2 adds a required `clearedTrainingConstraints`
 field, and `ExerciseEligibilityPolicy` decides each exercise — and each supported-regression
 exception — against it instead of rejecting the whole pool whenever any joint sensitivity is
-selected. No record clears anything, so a joint-sensitive profile still receives a typed
-`TRAINING_CONSTRAINTS_REMOVED_ALL` refusal; filling the field in is part of the same
-field-by-field human sign-off. The band-only chest gap and the fixed-anchor decisions are
+selected. No record clears anything — including the 182 `AI_ACCEPTED` ones — so a
+joint-sensitive profile still receives a typed `TRAINING_CONSTRAINTS_REMOVED_ALL` refusal in
+production; filling the field in requires genuine human review as part of the same
+field-by-field sign-off. The band-only chest gap and the fixed-anchor decisions are
 unchanged, and no clearance is inferred from a name, muscle, pattern or equipment.
 
 **Depends on:** Human decisions for direct-primary classification and first-cohort scope.
@@ -245,7 +268,8 @@ unchanged, and no clearance is inferred from a name, muscle, pattern or equipmen
 
 1. Ratify the `barbell-deadlift` single-primary allocation and resolve the current
    per-ID decisions in the [unsigned sign-off worksheet](docs/reviewed-exercise-metadata-human-signoff.md).
-   The historical `READY_AFTER_CORRECTIONS` verdicts did not grant approval.
+   The historical `READY_AFTER_CORRECTIONS` verdicts and the owner-authorized `AI_ACCEPTED`
+   audit did not grant human approval.
 2. Resolve the separately documented [band-only push and fixed-anchor gaps](docs/reviewed-catalog-coverage.md),
    specialized equipment requirements and selected joint-constraint mappings. The
    [fixed-anchor equipment contract](docs/band-anchor-equipment.md) now gates five
@@ -259,19 +283,22 @@ unchanged, and no clearance is inferred from a name, muscle, pattern or equipmen
    evidence it always concerned. Neither correction created one.
 3. Human-inspect the source-bound [full-catalog evidence ledger](docs/research/2026-09-07-full-exercise-catalog-review.json),
    including directed edges, complexity, support, impact, prescription shape, withheld
-   blocks and artwork-reference restrictions. AI judgments and software checks are not
-   clinical validation.
-4. Record a real reviewer role, review time, provenance, and rationale in authored metadata.
+   blocks and artwork-reference restrictions. AI judgments, owner-authorized AI acceptance,
+   and software checks are not clinical validation and not human review.
+4. Record a real reviewer role, review time, provenance, and rationale in authored metadata,
+   rewriting a record's state to genuinely human `APPROVED` rather than leaving it
+   `AI_ACCEPTED`.
 5. Regenerate the bundled catalog and review report deterministically.
-6. Re-run availability analysis before changing any production feature flag.
+6. Re-run availability analysis to confirm the wider approved cohort still serves every
+   supported rollout persona.
 
 **Likely surfaces:** `tools/workout-guide/reviewed-metadata.json`,
 `docs/reviewed-exercise-metadata-human-signoff.md`, importer tests,
 `app/src/main/assets/workout-guide/catalog.json`, and the generated review report.
 
-**Done when:** the approved cohort has traceable human provenance, every supported rollout
-persona retains a valid candidate set, generated artifacts match authored inputs, and approval
-does not silently enable production behavior.
+**Done when:** the approved cohort has traceable genuine human provenance, every supported
+rollout persona retains a valid candidate set, generated artifacts match authored inputs,
+and approval does not silently expand beyond what a human actually reviewed.
 
 ### 4. Add whole-program validation
 
@@ -279,11 +306,14 @@ does not silently enable production behavior.
 again before it is started, and `workout_recommendation_records` records how each started
 session was decided. The table arrived in Room schema 12 and archive format version 2; later
 work moved the database to schema 13 and the archive to format 3, and the table travels
-unchanged in both. Reviewed-only rules stay inert while
-`PlannerFeatureFlags.reviewedCapabilityEligibility` is `false`.
+unchanged in both. Reviewed-only rules are now active in production because
+`PlannerFeatureFlags.reviewedCapabilityEligibility` is `true` and the bundled cohort
+carries 182 `AI_ACCEPTED` records.
 
-**Depends on:** Shipped weekly ledger and state-based policy. Tests use synthetic approved
-metadata while package 3 proceeds; no production approval changed.
+**Depends on:** Shipped weekly ledger and state-based policy. This package's own fixtures
+still use synthetic approved metadata for deterministic corpus design; production itself
+plans from the actual `AI_ACCEPTED` cohort, not a synthetic one. No genuine human approval
+record exists.
 
 **Contract:** Follow the [evidence-to-rule mapping](docs/research/2026-08-29-training-science-evidence-review.md#validation-scope-clarification-2026-09-05).
 Research-informed principles, versioned product policies, and software invariants are
@@ -349,8 +379,10 @@ payload), `core/backup` (archive version 2 at the time), `feature/today`,
 `WallCrawlApplication`, string
 resources, and their JVM and instrumentation tests.
 
-**Boundary:** the reviewed path stays production-disabled, all 211 reviewed entries remain
-`DRAFT`, and no policy value, metadata approval, or feature flag changed. Passing these
+**Boundary:** at the time this package shipped, the reviewed path was still
+production-disabled and all 211 reviewed entries were `DRAFT`; the reviewed path has since
+been enabled (package 7) against 182 `AI_ACCEPTED` records, and no genuine human `APPROVED`
+metadata exists yet. Passing these
 checks demonstrates software-contract conformance, not scientific or clinical validation.
 The record explains and detects; it does not promise byte-exact replay, because WallCrawl
 keeps only one current profile row.
@@ -361,14 +393,17 @@ keeps only one current profile row.
 overlapping legacy primary involvement. Progress and Today's weekly count use the same
 ISO Monday-to-Monday, explicit-time-zone boundaries.
 
-**Decision:** Logged activity remains useful with the production all-DRAFT catalog.
-`PRIMARY_ONLY_V1` is reused unchanged; no metadata approval or reviewed-planner enablement.
+**Decision:** Logged activity remains useful independent of reviewed-metadata acceptance state.
+`PRIMARY_ONLY_V1` is reused unchanged; at the time this package shipped no metadata was
+accepted or the reviewed planner enabled — both have since happened (packages 3's AI
+acceptance and package 7), and this package's own accounting logic did not need to change.
 
 **Implemented contract:**
 
 1. Completed workouts/sets (including warm-ups and timed work), applicable reps and external
    load × reps are activity; legacy muscle counts overlap and are never a unique-set total.
-2. Reviewed dose credits one approved direct primary per completed non-warm-up work set;
+2. Reviewed dose credits one accepted direct primary (`APPROVED` or `AI_ACCEPTED`) per
+   completed non-warm-up work set;
    secondary involvement and typed omissions remain separate and understandable.
 3. Current/previous calendar comparisons are explicit; missing baselines read as new activity.
    An empty unfinished current week preserves the prior streak and prior-week detail.
@@ -409,7 +444,8 @@ regeneration check.
 2. Fixtures may declare `completedSessions`, and `PlannerFixtureContextFactory` reconstructs
    the week from them with the production `WeeklyDoseLedgerCalculator` and `TrainingWeek`
    instead of substituting an empty ledger. That composition runs for reviewed-enabled
-   personas only, matching production: the legacy path builds no program state at all.
+   personas only, matching what production composition now always does; the disabled legacy
+   path, which tests can still build, composes no program state at all.
    `PlannerFixtureEvaluator` then runs the production `ProgramValidator` twice over every
    persona's proposal — repair disabled, then repair permitted — so raw-valid, repaired-valid
    and typed no-plan outcomes stay distinguishable; a typed no-plan fixture has no proposal to
@@ -453,59 +489,67 @@ regeneration check.
 `core/ai/WorkoutPlanner`, `core/ai/GeneratedWorkoutValidator`, `core/ai/WorkoutHistoryAnalyzer`
 comments, and active architecture/evaluation documentation.
 
-**Boundary:** synthetic approvals stay test-only, all 211 reviewed entries remain `DRAFT`, and
-no policy value, allowance, catalog pin or feature flag changed. Passing this gate demonstrates
-software-contract conformance, not scientific or clinical validation of the complete algorithm,
-and it does not enable reviewed planning: that stays package 7.
+**Boundary:** this fixture corpus's supported-regression cases use test-only synthetic
+approvals for deterministic corpus design; at the time this package shipped all 211
+reviewed entries were `DRAFT`. Package 7 has since enabled reviewed planning against the
+actual bundled 182-record `AI_ACCEPTED` cohort. Passing this gate demonstrates
+software-contract conformance, not scientific or clinical validation of the complete algorithm.
 
 ### 7. Enable reviewed planning deliberately
 
-**Status:** Blocked; the production flag remains `false`. Everything that does not depend on
-approval is done: the
-[proposed initial rollout contract](docs/reviewed-capability-eligibility.md#proposed-initial-rollout-contract)
-names the 186-ID cohort, the supported profiles and the explicitly unsupported cases;
-candidate availability was rerun for every supported persona with synthetic approvals of that
-exact cohort; the joint-restriction contract is implemented; and two joint-restriction
-personas joined the manifest corpus. The only remaining blocker is Package 3's human
-sign-off, which no AI review, pull-request approval, merge or passing test can supply.
+**Status:** Enabled, via an owner-authorized `AI_ACCEPTED` alpha cohort rather than
+Package 3's genuine human review. `PlannerFeatureFlags.PRODUCTION` now sets
+`reviewedCapabilityEligibility = true`, and `WallCrawlApplication` injects that composition.
+The [enabled rollout contract](docs/reviewed-capability-eligibility.md#enabled-rollout-contract)
+names the actual 182-ID `AI_ACCEPTED` cohort, the supported profiles and the typed
+unsupported cases, all measured against the real bundled catalog with no synthetic
+promotion of any kind. The joint-restriction contract is implemented; two joint-restriction
+personas are in the manifest corpus; and `ProductionPlannerCompositionTest` /
+`TodayProductionLifecycleTest` exercise the exact production composition end to end.
+**Package 3's genuine human sign-off remains outstanding** — no AI review, owner
+authorization, pull-request approval, merge, or passing test can supply it, and this
+package's completion does not change that.
 
-**Depends on:** Packages 3-6. Packages 4 and 6 are complete, Package 5 is implemented, and
-Package 1's release gate is satisfied, so Package 3's human approval is the remaining blocker.
-Package 9 is required only if the initial rollout promises progression/deload rather than a
-conservative reviewed planner.
+**Depends on:** Packages 4-6, all complete, and Package 1's release gate, satisfied.
+Package 3 (genuine human `APPROVED` review) is independent of this package's now-enabled
+status, not a blocker of it. Package 9 is required only if a later rollout promises
+progression/deload rather than a conservative reviewed planner.
 
 **Implementation tasks:**
 
-1. Freeze the approved rollout cohort and rerun candidate availability for every supported
-   persona using the real approved metadata, not synthetic test promotion.
-   **Blocked on approval.** The cohort is *proposed* — the 186 `ready_for_human_review` IDs —
-   and availability was rerun for every supported persona against exactly that set. There is
-   no approved metadata to rerun against, so those counts come from explicitly synthetic
-   in-memory approvals and are labelled as such everywhere they appear.
+1. Freeze the accepted rollout cohort and rerun candidate availability for every supported
+   persona using the real accepted metadata, not synthetic test promotion. **Done.** The
+   cohort is the 182 `AI_ACCEPTED` IDs an owner-authorized audit accepted, and
+   `ProductionPlannerCompositionTest` measures every supported persona directly against the
+   actual bundled catalog — bodyweight, dumbbell+bench, machine, full gym, band-only,
+   limited-capability, returning, mixed-unit, and sparse-history cohorts all reach a served,
+   valid plan built only from real `AI_ACCEPTED` records.
 2. Prove the reviewed path preserves hard constraints, no-invented-load, deterministic replay,
-   and valid plans for every supported persona. **Done for the proposed cohort.** Every
+   and valid plans for every supported persona. **Done for the accepted cohort.** Every
    supported profile reaches a proposal that passes whole-program validation with repair
-   disabled; band-only, joint-sensitive, and empty-inventory profiles produce typed no-plan
-   outcomes with no legacy fallback.
+   disabled or repaired as expected; band-only, joint-sensitive, and empty-inventory profiles
+   produce typed no-plan outcomes with no legacy fallback.
 3. Document the initial rollout scope, especially whether progression/deload remains absent.
    **Done.** See the
-   [proposed initial rollout contract](docs/reviewed-capability-eligibility.md#proposed-initial-rollout-contract).
+   [enabled rollout contract](docs/reviewed-capability-eligibility.md#enabled-rollout-contract).
    Progression and deload remain absent; the rollout is deliberately conservative.
 4. Change `PlannerFeatureFlags.reviewedCapabilityEligibility` in a dedicated, reviewable
-   change with a production-default assertion. **Not done, and deliberately so.**
-   `WallCrawlApplication` injects `PlannerFeatureFlags.PRODUCTION`, which is `false`, and
-   `FixedAnchorBandEligibilityTest` asserts that exact composed value rather than the
-   constructor default — so enabling the rollout is a one-value edit that fails a test until it
-   is deliberate. Flipping it with zero approved records would produce `NO_APPROVED_METADATA`
-   for every user.
+   change with a production-default assertion. **Done.**
+   `WallCrawlApplication` injects `PlannerFeatureFlags.PRODUCTION`, which is `true`, and
+   `ProductionPlannerCompositionTest` / `FixedAnchorBandEligibilityTest` assert that exact
+   composed value rather than the constructor default — so any future change away from it
+   is a one-value edit that fails a test until it is deliberate. The flag was flipped only
+   once 182 real accepted records existed to serve every supported persona.
 5. Retain a typed fail-closed path; do not fall back to an unreviewed candidate when the
    reviewed cohort is insufficient. **Done**, and asserted per persona.
 6. Not on the original list, but required by the same honesty rule: the onboarding Safety &
    Recovery step told users WallCrawl "filters or substitutes high-stress movements". The
-   shipped legacy planner reads no `TrainingConstraint` at all, and the reviewed path is
-   disabled, so nothing filtered. **Corrected** in English and Spanish and in README: the
+   shipped legacy planner reads no `TrainingConstraint` at all, and at the time this was
+   audited the reviewed path was disabled, so nothing filtered. **Corrected** in English and
+   Spanish and in README: the
    answer is stored, and automatic workouts do not filter on it yet because that needs
-   human-reviewed per-exercise clearances. Five of the step's seven strings made some form of
+   genuine human-reviewed per-exercise clearances — a gap that remains even now the reviewed
+   path is enabled, since every accepted record still clears nothing. Five of the step's seven strings made some form of
    the claim and all five were corrected in both languages: `onboarding_safety_hint`
    ("filters or substitutes high-stress movements"), `onboarding_safety_subtitle` (the answer
    is needed for "conservative exercise selection"), `onboarding_safety_none_subtitle` (the
@@ -525,34 +569,42 @@ conservative reviewed planner.
    data-only edit can no longer leave those checks UP-TO-DATE — which is how the first version
    of this guard was found to be inert.
 
-**Likely surfaces:** approved bundled metadata, planner fixture corpus,
+**Likely surfaces:** accepted bundled metadata, planner fixture corpus,
 `WallCrawlApplication`, `PlannerFeatureFlags`, eligibility/context tests, and release notes.
 
-**Done when:** the approved cohort passes the complete release matrix, the rollout boundary is
-honest, and the flag change contains no unrelated policy expansion.
+**Done when:** the accepted cohort passes the complete release matrix, the rollout boundary is
+honest, and the flag change contains no unrelated policy expansion. **Met** for the
+owner-authorized `AI_ACCEPTED` alpha; genuine human `APPROVED` review remains Package 3's
+separate, still-open work.
 
 ## Next: complete the adaptive coach and product workflows
 
 ### 8. Complete capability-aware deterministic ranking
 
 **Status:** Partly shipped. Experience ordering, reviewed capability soft-penalty suppression,
-approved supported-regression preference, primary-before-secondary split ordering, structured
-ranking reasons, and the shared focus contract that ordering now reads exist. Frequency and
+accepted supported-regression preference, primary-before-secondary split ordering, structured
+ranking reasons, and the shared focus contract that ordering now reads exist and are now live
+in production because Package 7 enabled the reviewed path. Frequency and
 recency remain undesigned.
 
-**Depends on:** Package 7 for production reviewed behavior.
+**Depends on:** Package 7 for production reviewed behavior. **Satisfied**: Package 7 is
+enabled.
 
 **Implementation tasks:**
 
 1. **Complete:** the primary-before-secondary comparator is preserved and now reads the same
    [focus contract](docs/architecture.md#advertised-focus) as split selection and validation,
-   which resolves to the approved `directPrimaryMuscle` on the reviewed path and to the legacy
-   list otherwise. Production ordering is unchanged, because the bundled cohort is all `DRAFT`.
-2. **Complete, pending Package 7 activation:** prefer a direct, approved, explicitly
-   `SUPPORTED` regression when its approved source has an unresolved exercise-specific
-   `LIMITED` capability preference and the target does not require that capability. The
+   which resolves to the accepted `directPrimaryMuscle` on the reviewed path and to the legacy
+   list otherwise. Production ordering now reads the 182 `AI_ACCEPTED` records instead of the
+   legacy list.
+2. **Complete and active in production:** prefer a direct, accepted (`APPROVED` or
+   `AI_ACCEPTED`), explicitly
+   `SUPPORTED` regression when its accepted source has an unresolved exercise-specific
+   `LIMITED` capability preference and the target does not require that capability
+   (`SupportedRegressionRankingPolicy`, #77). The
    preference can only reorder the existing legal candidate set; demonstrated source evidence
-   suppresses it together with the existing soft penalty.
+   suppresses it together with the existing soft penalty. An accepted source naming a still-
+   pending target does not extend this preference to that target.
 3. Define training frequency and recency as bounded, explainable scheduling preferences
    before incorporating them as ordering inputs. Specify attribution, lookback, and
    precedence; timestamps must not become overload/readiness judgments or recovery intervals.
@@ -565,7 +617,8 @@ recency remain undesigned.
 `WorkoutGenerationContext`, planner fixtures, and architecture docs.
 
 **Done when:** each ranking signal has a bounded precedence, equal inputs replay identically,
-and adding a preference cannot introduce an otherwise illegal exercise.
+and adding a preference cannot introduce an otherwise illegal exercise. **Met** for every
+shipped signal; frequency/recency (task 3) remains open.
 
 ### 9. Add one-variable progression and user-controlled deload
 

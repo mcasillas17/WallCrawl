@@ -9,13 +9,16 @@ The boundary is explicit:
 - production still owns equipment filtering, split selection, prescription generation, and typed failures;
 - legacy corpus fixtures can optionally narrow the legal candidate pool with curated `allowedExerciseIds`;
 - reviewed-enabled fixtures exercise the production eligibility and state-based
-  prescription policies with explicitly synthetic in-memory approvals while the production
-  rollout flag remains disabled; their weekly ledger is reconstructed from the fixture's own
-  declared completed sessions by the production `WeeklyDoseLedgerCalculator`, so a fixture
-  claiming prior weekly exposure is asserting against accounting the app actually produces;
-- capability inputs and `TrainingConstraint` metadata remain inert on legacy fixtures,
-  matching the production-disabled rollout, and become policy inputs only on
-  reviewed-enabled fixtures.
+  prescription policies with their own explicitly synthetic in-memory approvals, kept
+  deliberately independent of `PlannerFeatureFlags.PRODUCTION`; that production flag is
+  now enabled and reads the actual bundled `AI_ACCEPTED` cohort instead of any synthetic
+  promotion (see [the enabled rollout contract](reviewed-capability-eligibility.md#enabled-rollout-contract)
+  and `ProductionPlannerCompositionTest`). Their weekly ledger is reconstructed from the
+  fixture's own declared completed sessions by the production `WeeklyDoseLedgerCalculator`,
+  so a fixture claiming prior weekly exposure is asserting against accounting the app
+  actually produces;
+- capability inputs and `TrainingConstraint` metadata are inert on legacy fixtures and
+  become policy inputs on reviewed-enabled fixtures and in production alike.
 
 These fixtures therefore model the planner **inside** a curated legal set. They do not claim that the current planner discovered capability, safety, or persona appropriateness on its own.
 
@@ -94,8 +97,8 @@ Every corpus fixture uses this root shape:
 
 A reviewed-enabled fixture always composes a program state; one that declares no
 `completedSessions` composes a genuinely empty week through the same calculator. Legacy
-fixtures compose none at all, which is exactly what production does while the reviewed gate
-is disabled.
+fixtures compose none at all, matching the disabled legacy code path that tests can still
+build, even though production no longer composes that path by default.
 
 `completedSessions` is the ledger input and is deliberately separate from `exerciseHistory`,
 which is the planner's per-exercise load view and credits nothing. Each entry names an `id`,
@@ -250,8 +253,9 @@ The corpus suite asserts:
 - type-valid prescriptions and no-invented-load behavior through the real prescription factory;
 - reviewed-enabled prescriptions consume composed program state, attach deterministic
   effort/rest guidance, never increase base sets, and preserve no-invented-load behavior;
-- capability invariance for the current production legacy path by comparing
-  `limited-capability` with an all-`COMFORTABLE` control;
+- capability invariance for the disabled legacy path, exercised by this fixture rather
+  than production composition, by comparing `limited-capability` with an
+  all-`COMFORTABLE` control;
 - focused synthetic-approved planner cases in which an exercise-specific
   `LIMITED` answer reorders both compound and accessory candidates toward a
   direct approved `SUPPORTED` regression, while source evidence suppresses the
@@ -266,15 +270,18 @@ The corpus suite asserts:
 ## Full-catalog content-review coverage
 
 `ReviewedCatalogCoverageTest` supplements, rather than silently enlarges, the
-fourteen-fixture manifest. Its 17 declared profiles each exercise an all-DRAFT
-structural upper bound, a separate AI-ready subset (both using explicitly synthetic
-in-memory approvals), and disabled-mode invariance with reviewed metadata stripped.
-The [coverage report](reviewed-catalog-coverage.md) records actual candidate counts,
-selected IDs, mode/state, raw whole-program validation and typed no-plan outcomes.
+fourteen-fixture manifest. Its 17 declared profiles each exercise a historical,
+pre-acceptance all-DRAFT structural upper bound and a separate AI-ready subset (both
+using explicitly synthetic in-memory approvals, dated before the AI acceptance audit
+existed), plus disabled-mode invariance with reviewed metadata stripped. The
+[coverage report](reviewed-catalog-coverage.md) records those dated candidate counts,
+selected IDs, mode/state, raw whole-program validation and typed no-plan outcomes,
+clearly labelled as historical; the actual accepted-cohort counts now in production are
+in [the enabled rollout contract](reviewed-capability-eligibility.md#enabled-rollout-contract).
 
 This suite reads the per-ID evidence ledger for content readiness; readiness is not
-human approval. Known pending records are not promoted in the AI-ready experiment.
-A separate real-planner sole-candidate probe covers every catalog ID, without
+human or AI acceptance on its own. Known pending records are not promoted in the
+AI-ready experiment. A separate real-planner sole-candidate probe covers every catalog ID, without
 equating that result to full-pool selection. The band-only case remains an explicit
 negative coverage regression: there is still no genuine band push, and a schema-valid
 proposal never proved otherwise. Since the [focus contract](architecture.md#advertised-focus)
@@ -318,11 +325,17 @@ consistency, and passing either demonstrates software conformance only.
 | A capability answer is not a record of activity | Rejected inference | `PlannerFixtureTest.theContinuousActivityAnswerIsNotARecordOfAerobicActivity`, with `aCapabilityTheReviewedGateDoesReadChangesTheProposal` as its sensitivity control |
 | Locale and gender independence of canonical training decisions | Software invariant | `PlannerLocaleInvarianceTest` |
 
-The supported-regression cases use explicitly synthetic in-memory approvals because the
-bundled cohort remains 211 `DRAFT` / 0 `APPROVED` and production reviewed planning remains
-disabled. They do not promote metadata, change graph edges, enable a flag, or claim live
-availability. Frequency and recency scheduling are separate open policy work; no timestamp
-or completed-session count participates in this comparator.
+The supported-regression cases in this fixture corpus use explicitly synthetic
+in-memory approvals so the corpus stays a stable, controlled input independent of the
+bundled catalog's own content; that is a corpus-design choice, not a statement about
+production. Production composition is `PlannerFeatureFlags.PRODUCTION`, which is enabled
+and reads the actual 182 `AI_ACCEPTED` records (0 `APPROVED`, 29 `DRAFT`) — see
+[the enabled rollout contract](reviewed-capability-eligibility.md#enabled-rollout-contract)
+and `SupportedRegressionRankingPolicyTest`, which exercises
+`Exercise.acceptedMetadata()` directly rather than through a synthetic promotion. The
+fixture corpus's synthetic cases do not promote bundled metadata, change graph edges, or
+claim live availability on their own. Frequency and recency scheduling are separate open
+policy work; no timestamp or completed-session count participates in this comparator.
 
 The `concurrent-activity` assertions carry their own sensitivity control:
 `concurrentActivityPersona_isChangedWhenTheResistanceSessionIsRemoved` removes the logged
@@ -376,7 +389,7 @@ future rule that reads those fields has to close it.
 | Fixture wire format | `schemaVersion` 1 | `PlannerFixtureLoader` |
 | Corpus expectation contract | `policyVersion` 4 | `PlannerFixtureContextFactory.SUPPORTED_CORPUS_POLICY_VERSION` |
 | Bundled catalog | commit `ba0b709cb20430361b2cb33aaadd20998164a916`, `schemaVersion` 1, 302 exercises | fixture `catalogVersion` versus the catalog's `source.commit` |
-| Reviewed metadata | review policy version 1; 211 `DRAFT`, 0 `APPROVED` | `PlannerFixtureCorpusTest`, `ReviewedExerciseMetadataTest` |
+| Reviewed metadata | review policy version 2; 182 `AI_ACCEPTED`, 29 `DRAFT`, 0 `APPROVED` | `PlannerFixtureCorpusTest`, `ReviewedExerciseMetadataTest`, `AiAcceptedCatalogTest`, `BundledCatalogLedgerAttributionTest` |
 | Training policy | `STATE_BASED_DOSE_EFFORT_REST_V1` | `StateBasedTrainingPolicyDefaults.V1` |
 | Ledger policy | `PRIMARY_ONLY_V1` | `WeeklyDoseLedgerCalculator` |
 | Program state policy | `PROGRAM_STATE_V1` | `TrainingProgramState` |

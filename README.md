@@ -17,8 +17,8 @@ validation, reusable custom workout templates, type-aware active set logging
 with no fabricated starting loads, a complete English and neutral Latin American
 Spanish interface, Room persistence with user-owned export,
 restore, and deletion, workout-history context,
-experience-aware exercise ordering, a production-disabled reviewed capability-
-evidence soft-penalty relaxation, a production-disabled reviewed state-based
+experience-aware exercise ordering, a production reviewed capability-
+evidence soft-penalty relaxation, a production reviewed state-based
 dose/effort/rest policy, and progress calculations. The current
 `FakeWorkoutPlanner` is deliberately replaceable; no production local LLM
 runtime is integrated yet.
@@ -83,12 +83,15 @@ exercise's listed primary muscles: those counts overlap and are **not a total of
 sets**. Comparisons show the current, unfinished week against the full previous week;
 without a baseline, involvement reads as new activity rather than an invented percentage.
 
-**Reviewed primary dose** uses the existing `PRIMARY_ONLY_V1` ledger: one approved direct
-primary per completed non-warm-up work set. Its details distinguish descriptive secondary
-involvement from unattributed work. The current catalog remains **211 DRAFT / 0 APPROVED**,
-so real workouts remain visible even when reviewed allocation is unavailable. Neither an
-empty allocation nor this accounting convention measures physiological stimulus or
-diagnoses readiness. See the [exact metric and read contracts](docs/weekly-dose-ledger.md#progress-metric-contract).
+**Reviewed primary dose** uses the existing `PRIMARY_ONLY_V1` ledger: one accepted direct
+primary per completed non-warm-up work set, credited for both owner-authorized `AI_ACCEPTED`
+and genuinely human-`APPROVED` metadata alike. Its details distinguish descriptive secondary
+involvement from unattributed work. The current catalog has 182 `AI_ACCEPTED` records and
+0 `APPROVED` — no genuine human review has occurred — so reviewed allocation now covers
+most logged strength work, while the remaining 29 `DRAFT` and 91 unaccepted/out-of-scope
+exercises still surface as unattributed. Neither an empty allocation nor this accounting
+convention measures physiological stimulus or diagnoses readiness. See the
+[exact metric and read contracts](docs/weekly-dose-ledger.md#progress-metric-contract).
 
 <p align="center">
   <img src="art/screenshots/progress-screen.png" width="24%" alt="English Progress in dark mode: logged activity stays visible with no approved muscle allocation" />
@@ -97,7 +100,7 @@ diagnoses readiness. See the [exact metric and read contracts](docs/weekly-dose-
   <img src="art/screenshots/progress-screen-es-light.png" width="24%" alt="Spanish Progress in light mode with readable, expandable accounting explanations" />
 </p>
 <p align="center">
-  <em>Disposable example logs with no approved muscle allocation; production metadata is unchanged.</em>
+  <em>Disposable example logs from exercises outside the accepted cohort; production metadata (182 `AI_ACCEPTED`, 0 `APPROVED`) is unchanged by these captures.</em>
 </p>
 
 ### English & Spanish
@@ -268,12 +271,14 @@ are stored in the existing local Room profile. This milestone adds no weight,
 height, BMI, age, body composition, cloud sync, analytics, Health Connect,
 Wear OS, network, or LLM data flow.
 
-The reviewed-only deterministic path can consume these values for automatic
-planning, but production composition deliberately keeps that path disabled while
-every reviewed-metadata entry is still `DRAFT`. The current production
-recommendation therefore remains unchanged when a movement preference changes.
-Tests enable the path only with unmistakably synthetic in-memory approvals and
-verify equipment, exclusions, single and combined joint sensitivities, capability
+The reviewed-only deterministic path consumes these values for automatic
+planning, and production composition enables that path against an owner-authorized
+`AI_ACCEPTED` cohort (182 of 211 authored records; zero genuinely human-`APPROVED`).
+The current production recommendation therefore does change when a movement
+preference changes. Tests can still compose the disabled legacy path with an
+explicitly synthetic in-memory flag object; production itself uses only the actual
+bundled acceptance, never a synthetic promotion. Automatic planning
+verifies equipment, exclusions, single and combined joint sensitivities, capability
 `AVOID`, impact, reviewed-state, temporary advanced-complexity rules, and
 capability-evidence soft-penalty suppression without changing browse or
 manual-workout access. A restriction cannot be bypassed by an easier regression:
@@ -291,7 +296,7 @@ cannot emit free text for them at all.
 
 ### Reviewed state-based prescription policy
 
-When tests explicitly enable reviewed eligibility, `TrainingProgramState` supplies
+Production reviewed eligibility is now enabled, and `TrainingProgramState` supplies
 `PRIMARY_ONLY_V1` weekly direct-primary exposure to a pure, versioned prescription policy.
 The policy can only reduce a valid base prescription: it never raises target sets or
 changes/invents a load. Remaining weekly allowance is an upper-cap calculation with no
@@ -303,7 +308,7 @@ dose measurement. These defaults are configurable through policy construction; u
 allowance, RIR-band, and rest-default editors are not shipped.
 
 The same reviewed path adds nullable effort guidance: conservative states or a relevant
-approved `LIMITED` capability use 2-4 RIR, established strength uses the configured 1-2 RIR
+accepted `LIMITED` capability use 2-4 RIR, established strength uses the configured 1-2 RIR
 product target, and established general/hypertrophy uses 1-3 RIR. Automatic guidance
 never targets 0 RIR/failure. Rest is classified as `SHORT`, `MODERATE`, or `LONG` and
 mapped to configured 60/90/180-second defaults. A valid stored explicit per-exercise rest
@@ -313,7 +318,7 @@ shipped preference-editing UI.
 That policy caps each prescription against the supplied completed ledger. Whole-program
 validation closes the gap that leaves: `ProgramValidator` checks a complete proposed
 session against the exact context that produced it, aggregating the whole proposal by
-approved direct-primary muscle before comparing it once to the configured weekly
+accepted direct-primary muscle before comparing it once to the configured weekly
 allowance, so exercises sharing a muscle can no longer each spend the same remainder. It
 also checks identifiers and candidate membership, declared session constraints, explicit
 exclusions, reviewed provenance on the enabled path, load provenance, and agreement with
@@ -333,9 +338,11 @@ measurement.
 
 Guidance is persisted with templates and frozen session snapshots in Room schema 13.
 The active timer still reads the persisted exact seconds; add-time, skip, and dismiss are
-one-off timer actions rather than durable preference changes. Production keeps reviewed
-eligibility disabled because the bundled cohort remains 211 `DRAFT` / 0 `APPROVED`, so
-today's legacy automatic prescriptions and manual template defaults are unchanged.
+one-off timer actions rather than durable preference changes. Production now runs
+reviewed eligibility because an owner-authorized audit accepted 182 of the bundled
+cohort's 211 authored records as `AI_ACCEPTED` (0 `APPROVED`, 29 `DRAFT`, 56 with no
+authored block, 35 outside automatic-strength scope); today's automatic prescriptions
+and manual template defaults reflect that accepted cohort rather than the legacy filter.
 
 Manual templates use the same exercise IDs and type-aware prescriptions but do
 not pass through `WorkoutPlanner`. See [WallCrawl Architecture](docs/architecture.md)
@@ -376,7 +383,7 @@ keeps every control large, explicit, and local.
 
 Logging and evidence processing run locally; persisted data follows the
 [backup and privacy policy](docs/privacy.md). Reviewed capability evidence reads a
-strict subset of that history behind the production-disabled reviewed gate: two
+strict subset of that history behind the now-enabled reviewed gate: two
 distinct `SessionStatus.COMPLETED` sessions for the same exercise ID, with only
 qualifying non-warm-up work and explicit `feltManageable == true`. Completion
 and stop fields only disqualify invalid observations; they do not create
@@ -458,16 +465,22 @@ prescriptions are unchanged. New timed metadata can affect ranking, equipment fi
 and coaching. Stretches and pure conditioning still cannot fill strength slots.
 
 A separate optional `reviewedMetadata` block defines categorical input for the
-production-disabled deterministic eligibility gate. The 211 authored records are
-entirely `DRAFT`, including their AI-authored rationale: they are not human-approved and do
-not affect current workouts. Reviewed schema version 2 adds `clearedTrainingConstraints`,
-the joint sensitivities a reviewer explicitly cleared an exercise for; every record currently
-clears none, so a profile that selects shoulder, elbow, wrist, lower-back, hip or knee
-sensitivity gets a typed no-plan rather than a guess. Absence is never read as clearance, and
-a clearance is a reviewer's judgement about a self-reported label, not a diagnosis. `APPROVED` requires an explicit human-review role,
-timestamp, and provenance change; pull-request approval does not change review state.
-Missing or draft reviewed metadata never hides an exercise from browsing or manual
-templates. See [Reviewed exercise metadata](docs/reviewed-exercise-metadata.md), its
+deterministic eligibility gate, which production now enables. An owner-authorized audit
+accepted 182 of the 211 authored records as `AI_ACCEPTED`; the remaining 29 stay `DRAFT`.
+`AI_ACCEPTED` is an owner-authorized alpha categorical acceptance, recorded with its own
+AI provenance (reviewer model, review time, content digest, source references, rationale
+and limitations) — it is **not** human approval and **not** a clinical validation or
+safety-for-everyone claim. **Zero records are `APPROVED`: no genuine human reviewer has
+signed off on any of them.** Reviewed schema version 2 adds `clearedTrainingConstraints`,
+the joint sensitivities a reviewer explicitly cleared an exercise for; every record —
+`AI_ACCEPTED` included — currently clears none, so a profile that selects shoulder, elbow,
+wrist, lower-back, hip or knee sensitivity gets a typed no-plan rather than a guess.
+Absence is never read as clearance, and a clearance is a reviewer's judgement about a
+self-reported label, not a diagnosis. `APPROVED` requires an explicit human-review role,
+timestamp, and provenance change; pull-request approval, code review, or a passing test
+suite does not change review state. Missing, draft, or otherwise-unaccepted reviewed
+metadata never hides an exercise from browsing or manual templates. See
+[Reviewed exercise metadata](docs/reviewed-exercise-metadata.md), its
 generated [review report](docs/reviewed-exercise-metadata-review.md), the
 [eligibility boundary](docs/reviewed-capability-eligibility.md), and the
 [human sign-off packet](docs/reviewed-exercise-metadata-human-signoff.md). The
@@ -695,16 +708,17 @@ a tag cannot publish its prerelease unless instrumentation succeeds.
 - Each session retains its weight unit; mixed-unit history is converted only for
   planner and analytics calculations, never silently relabeled.
 - Profile experience softly ranks otherwise-comparable automatic candidates; it
-  is not a permanent legality gate. The default legacy path reads
-  `programming.difficulty`. The reviewed-enabled path reads only human-approved
-  `reviewedMetadata.complexity`, never draft metadata.
+  is not a permanent legality gate. The disabled legacy path reads
+  `programming.difficulty`. The reviewed-enabled production path reads only accepted
+  `reviewedMetadata.complexity` — `APPROVED` or owner-authorized `AI_ACCEPTED` — never
+  draft or otherwise-unaccepted metadata.
 - Analytics are derived from completed local sessions, not sample metrics.
-- Movement-capability values already drive the reviewed-only automatic path's
-  hard eligibility, soft preferences, evidence-backed soft-capability penalty
-  suppression, and relevant limited-capability effort guidance, but production
-  keeps that path disabled until human-approved metadata and an explicit
-  enablement review exist. They do not affect today's production filtering,
-  ranking, substitutions, dose, effort, or rest guidance.
+- Movement-capability values drive the reviewed automatic path's hard eligibility, soft
+  preferences, evidence-backed soft-capability penalty suppression, and relevant
+  limited-capability effort guidance, which production now runs against the audited
+  `AI_ACCEPTED` cohort. Owner-authorized AI acceptance is not genuine human review; that
+  remains a separate, still-outstanding gate. They affect today's production filtering,
+  ranking, substitutions, dose, effort, and rest guidance for every accepted exercise.
 - Database migrations must preserve user history; destructive migration fallback
   is intentionally disabled.
 
