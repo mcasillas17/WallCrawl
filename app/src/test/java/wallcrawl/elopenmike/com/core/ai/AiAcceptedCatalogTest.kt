@@ -2,6 +2,8 @@ package wallcrawl.elopenmike.com.core.ai
 
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
+import java.io.File
+import java.security.MessageDigest
 import org.json.JSONArray
 import org.json.JSONObject
 import org.junit.Test
@@ -43,6 +45,36 @@ class AiAcceptedCatalogTest {
             .containsExactlyElementsIn(pendingAbsentIds + outsideIds)
         assertThat(exercises.any { it.reviewedMetadata?.reviewState == ReviewState.APPROVED }).isFalse()
         assertThat(PlannerFeatureFlags.PRODUCTION.reviewedCapabilityEligibility).isFalse()
+    }
+
+    @Test
+    fun committedAuditReproducesThePartitionAndBindsTheActualReviewerAndTimestamp() {
+        val auditPath = "docs/research/2026-09-13-ai-acceptance-audit.json"
+        val reference = partition.getJSONObject("auditArtifact")
+        assertThat(reference.getString("path")).isEqualTo(auditPath)
+        val bytes = File("../$auditPath").readBytes()
+        assertThat(bytes.size).isAtMost(64 * 1024)
+        val digest = MessageDigest.getInstance("SHA-256").digest(bytes)
+            .joinToString("") { "%02x".format(it.toInt() and 0xff) }
+        assertThat(digest).isEqualTo(reference.getString("sha256"))
+        val audit = JSONObject(bytes.toString(Charsets.UTF_8))
+        val report = audit.getJSONObject("report")
+        val pending = report.getJSONObject("pending_withheld")
+        val held = pending.getJSONObject("existingDrafts").keys().asSequence().toSet() +
+            pending.getJSONObject("existingOmittedMetadata").keys().asSequence().toSet() +
+            pending.getJSONObject("additionalAuditHolds").keys().asSequence().toSet()
+        val outside = report.getJSONObject("outside_scope")
+        val outsideScope = listOf("excluded_stretch", "excluded_distance_duration", "excluded_timed_conditioning")
+            .flatMap { outside.getJSONArray(it).strings() }.toSet()
+        assertThat(byId.keys - held - outsideScope).containsExactlyElementsIn(acceptedIds)
+        assertThat(held).containsExactlyElementsIn(pendingDraftIds + pendingAbsentIds)
+        assertThat(outsideScope).containsExactlyElementsIn(outsideIds)
+        assertThat(audit.getString("sourceAuditSha256")).isEqualTo(partition.getString("auditSha256"))
+        for (id in acceptedIds) {
+            val provenance = requireNotNull(byId.getValue(id).reviewedMetadata?.aiReviewProvenance)
+            assertThat(provenance.reviewerModelId).isEqualTo(audit.getString("reviewerModelId"))
+            assertThat(provenance.reviewedAtEpochMillis).isEqualTo(audit.getLong("reviewedAtEpochMillis"))
+        }
     }
 
     @Test

@@ -316,5 +316,9 @@
     "plank-jack",
     "seal-jack",
     "stair-climber"
-  ]
+  ],
+  "auditArtifact": {
+    "path": "docs/research/2026-09-13-ai-acceptance-audit.json",
+    "sha256": "4db437f325898fbed786071fd68d284759cea2b45421a28a753880129bfa82c1"
+  }
 }

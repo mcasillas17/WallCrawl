@@ -12,12 +12,40 @@ from import_catalog import (
     CatalogImportError, _atomic_write_text, _read_object,
     _validate_ai_acceptance, _validate_json_schema,
 )
+from verify_ai_acceptance_audit import AUDIT_PATH, MAX_AUDIT_BYTES, parse_audit
 
 
 ROOT = Path(__file__).resolve().parents[2]
 LEDGER = ROOT / "docs/research/2026-09-07-full-exercise-catalog-review.json"
 METADATA = Path(__file__).with_name("reviewed-metadata.json")
 OUTPUT = ROOT / "docs/reviewed-exercise-metadata-human-signoff.md"
+
+
+def _audit_summary(ledger: dict) -> list[str]:
+    review = ledger.get("review", {}).get("aiAcceptanceReview", {})
+    reference = review.get("auditArtifact")
+    if reference is None:
+        return []
+    if reference["path"] != AUDIT_PATH:
+        raise ValueError("Worksheet requires the canonical committed audit path")
+    with (ROOT / AUDIT_PATH).open("rb") as stream:
+        raw = stream.read(MAX_AUDIT_BYTES + 1)
+    audit = parse_audit(raw)
+    digest = hashlib.sha256(raw).hexdigest()
+    if (
+        reference["sha256"] != digest
+        or review["reviewerModelId"] != audit["reviewerModelId"]
+        or review["reviewedAtEpochMillis"] != audit["reviewedAtEpochMillis"]
+    ):
+        raise ValueError("Worksheet audit hash, reviewer or original timestamp differs")
+    return [
+        f"- Canonical AI audit: [complete report, criteria, IDs and reasons]({AUDIT_PATH.removeprefix('docs/')})",
+        f"- Audit artifact SHA-256: `{digest}`",
+        f"- Recorded AI reviewer: `{audit['reviewerModelId']}`; original decision timestamp: "
+        f"`{audit['reviewedAtEpochMillis']}` epoch milliseconds",
+        "- Reproduce the partition and proposal bindings offline: "
+        "`python3 tools/workout-guide/verify_ai_acceptance_audit.py`",
+    ]
 
 
 def classification_reason(entry: dict) -> str:
@@ -133,6 +161,7 @@ def render_packet(ledger: dict, metadata: dict) -> str:
         f"(AI_ACCEPTED: **{states['ai_accepted']}**, DRAFT: **{states['draft']}**)",
         "- Human-approved metadata: **0**",
         f"- Pinned source: `{ledger['source']['commit']}`",
+        *_audit_summary(ledger),
         "",
         "`AI_ACCEPTED` records an owner-authorized AI categorical decision, not human sign-off. "
         "`DRAFT` remains pending and ineligible for reviewed planning. "
@@ -154,8 +183,9 @@ def render_packet(ledger: dict, metadata: dict) -> str:
         "endpoints and all other eligibility conditions before using a link.",
         "",
         "Schema version 3 adds dedicated `aiReviewProvenance` without filling human provenance. "
-        "The acceptance timestamp records the external corpus audit's final filesystem mtime, "
-        "not a new per-source fetch or illustration inspection. AI policy version 2 applies to "
+        "The committed audit preserves the complete original report and its final source-file "
+        "mtime as the acceptance timestamp, not the archival copy's mtime or a new per-source "
+        "fetch or illustration inspection. AI policy version 2 applies to "
         "accepted records; schema-only refreshes of pending drafts retain their original policy "
         "version and do not imply renewed acceptance.",
         "",

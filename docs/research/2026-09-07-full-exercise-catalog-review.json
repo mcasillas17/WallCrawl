@@ -290,11 +290,11 @@
       ],
       "humanApprovals": 0
     },
-    "metadataSchemaVersion3Note": "Schema version 3 records the owner-authorized AI acceptance separately from human approval. The corpus auditor gpt-6-astra decided over the exact schema-v2, policy-v1 pre-disposition proposals in the external audit, not the subsequently decorated records. Each auditedProposalSha256 preserves that entry's previous metadataSha256; AI reviewedContentSha256 copies it verbatim. Digests use UTF-8 JSON with sorted keys, compact separators and ensure_ascii=false. Current metadataSha256 and graph source/target digests are refreshed over the complete current records under the existing digest contract. Pending drafts receive only provenance.schemaVersion=3 and keep policyVersion=1: that bookkeeping is not renewed inspection or acceptance. Accepted records use policyVersion=2 in both provenance objects. Original draft rationale/source, named evidence authors, historical corrections and human nulls remain intact; all clearedTrainingConstraints stay empty.",
+    "metadataSchemaVersion3Note": "Schema version 3 records the owner-authorized AI acceptance separately from human approval. The corpus auditor gpt-6-astra decided over the exact schema-v2, policy-v1 pre-disposition proposals in the committed audit at docs/research/2026-09-13-ai-acceptance-audit.json, not the subsequently decorated records. Each auditedProposalSha256 preserves that entry's previous metadataSha256; AI reviewedContentSha256 copies it verbatim. Digests use UTF-8 JSON with sorted keys, compact separators and ensure_ascii=false. Current metadataSha256 and graph source/target digests are refreshed over the complete current records under the existing digest contract. Pending drafts receive only provenance.schemaVersion=3 and keep policyVersion=1: that bookkeeping is not renewed inspection or acceptance. Accepted records use policyVersion=2 in both provenance objects. Original draft rationale/source, named evidence authors, historical corrections and human nulls remain intact; all clearedTrainingConstraints stay empty.",
     "aiAcceptanceReview": {
       "reviewerModelId": "gpt-6-astra",
       "reviewedAtEpochMillis": 1789278919309,
-      "timestampSource": "Final external corpus-audit.json filesystem mtime, st_mtime_ns // 1000000. This records the final corpus-audit decision, not fresh source/image inspections or the time these dispositions were applied.",
+      "timestampSource": "The original audit mtime (st_mtime_ns // 1000000) is preserved in docs/research/2026-09-13-ai-acceptance-audit.json as reviewedAtEpochMillis. It records the final corpus-audit decision, not the archival copy's mtime, fresh source/image inspection, or the disposition application time.",
       "externalAuditSha256": "f7601e48f77f6d03ff0efe2f75dfac6ee5605074b18f1fbe8da47ee16edb3c61",
       "auditedSourceSha256": {
         "ledger": "b98550992b61615d804a0c12991335caa30c22e03978f6d8b0d682e90763f3f1",
@@ -543,7 +543,11 @@
         }
       },
       "limitations": "AI categorical acceptance is not human approval or clinical validation. Uses recorded observations only; no new web research or independent image inspection. No exercise-specific dosing, inferred joint clearance, equipment inventory or quantity guarantee, or endpoint acceptance is supplied. Exact station/attachment/setup and the ledger's per-ID caveats remain required; empty clearances stay fail-closed.",
-      "historyNote": "The earlier graphIntegration and round2/3/4 reconciliation records remain historical, including their original counts and superseded proposals. Current arrays and refreshed endpoint-bound graphDecisions are authoritative; no add/retain/hold/reject decision, rationale, comparison, or directed edge was removed. The audit's remark that no AI state existed predates schema v3 and is not a description of the current schema. Legacy programming disagreements and missing ranges remain unresolved; none was ratified or edited."
+      "historyNote": "The earlier graphIntegration and round2/3/4 reconciliation records remain historical, including their original counts and superseded proposals. Current arrays and refreshed endpoint-bound graphDecisions are authoritative; no add/retain/hold/reject decision, rationale, comparison, or directed edge was removed. The audit's remark that no AI state existed predates schema v3 and is not a description of the current schema. Legacy programming disagreements and missing ranges remain unresolved; none was ratified or edited.",
+      "auditArtifact": {
+        "path": "docs/research/2026-09-13-ai-acceptance-audit.json",
+        "sha256": "4db437f325898fbed786071fd68d284759cea2b45421a28a753880129bfa82c1"
+      }
     }
   },
   "entries": [

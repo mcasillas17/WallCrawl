@@ -10,6 +10,10 @@ This unsigned worksheet is generated from the [full per-exercise evidence ledger
 - Authored reviewed metadata: **211** (AI_ACCEPTED: **182**, DRAFT: **29**)
 - Human-approved metadata: **0**
 - Pinned source: `ba0b709cb20430361b2cb33aaadd20998164a916`
+- Canonical AI audit: [complete report, criteria, IDs and reasons](research/2026-09-13-ai-acceptance-audit.json)
+- Audit artifact SHA-256: `4db437f325898fbed786071fd68d284759cea2b45421a28a753880129bfa82c1`
+- Recorded AI reviewer: `gpt-6-astra`; original decision timestamp: `1789278919309` epoch milliseconds
+- Reproduce the partition and proposal bindings offline: `python3 tools/workout-guide/verify_ai_acceptance_audit.py`
 
 `AI_ACCEPTED` records an owner-authorized AI categorical decision, not human sign-off. `DRAFT` remains pending and ineligible for reviewed planning. Automatic-strength classification describes the current importer/planner boundary. Source acceptance, endpoint acceptance, type scope and human approval are separate judgments; none establishes suitability for every user.
 
@@ -17,7 +21,7 @@ This unsigned worksheet is generated from the [full per-exercise evidence ledger
 
 For each ID, inspect the cited source and illustrations, the exact proposed metadata, its corrections and limitations, and every directed regression/substitution. The ledger's `metadataSha256` binds the exact current metadata, while `auditedProposalSha256` and AI `reviewedContentSha256` identify the exact pre-disposition proposal inspected by the corpus auditor, not a self-referential hash of the final record. Changed categorical proposals need renewed inspection. The fields named `approvedRegressions` and `approvedSubstitutions` preserve directed relationship history: they remain proposals on DRAFT sources and authorizations on accepted sources, never acceptance of a pending endpoint. Runtime independently requires relevant accepted endpoints and all other eligibility conditions before using a link.
 
-Schema version 3 adds dedicated `aiReviewProvenance` without filling human provenance. The acceptance timestamp records the external corpus audit's final filesystem mtime, not a new per-source fetch or illustration inspection. AI policy version 2 applies to accepted records; schema-only refreshes of pending drafts retain their original policy version and do not imply renewed acceptance.
+Schema version 3 adds dedicated `aiReviewProvenance` without filling human provenance. The committed audit preserves the complete original report and its final source-file mtime as the acceptance timestamp, not the archival copy's mtime or a new per-source fetch or illustration inspection. AI policy version 2 applies to accepted records; schema-only refreshes of pending drafts retain their original policy version and do not imply renewed acceptance.
 
 Reviewed schema version 2 adds `clearedTrainingConstraints`, so sign-off now also covers which selected joint sensitivities — shoulder, elbow, wrist, lower back, hip, knee — the exercise is explicitly cleared for. No record below lists any. An empty list is the fail-closed value: the exercise stays out of automatic planning for a user who selected that sensitivity, and no clearance is inferred from its name, muscles or movement pattern. `LOW_IMPACT_ONLY` is deliberately not part of that list because `impactLevel` already decides it. A clearance is a reviewer's product judgement about a self-reported label, never a diagnosis or clinical clearance.
 
