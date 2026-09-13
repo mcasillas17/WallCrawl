@@ -268,6 +268,7 @@
     <string name="generated_rationale_break_recovery">Generado para %1$s, con un volumen conservador después de %2$s.</string>
     <string name="generated_rationale_goal_focus">Generado para %1$s, con prioridad en %2$s.</string>
     <string name="generated_rationale_focus_unavailable">Nada de lo que tienes disponible entrena %1$s como objetivo principal, así que esta sesión se enfoca en otra cosa.</string>
+    <string name="generated_rationale_supported_regression_preference">Se priorizó una variación con apoyo según tu preferencia limitada de %1$s.</string>
 
     <!-- ============================ Today ============================ -->
     <string name="today_loading">Preparando el plan de hoy…</string>

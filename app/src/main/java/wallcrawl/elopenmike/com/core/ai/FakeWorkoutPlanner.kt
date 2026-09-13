@@ -14,6 +14,7 @@ import wallcrawl.elopenmike.com.core.model.StandardMuscles
 import wallcrawl.elopenmike.com.core.model.WorkoutEmphasis
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
 import wallcrawl.elopenmike.com.core.model.WorkoutRationaleSpec
+import wallcrawl.elopenmike.com.core.model.WorkoutRankingReason
 import wallcrawl.elopenmike.com.core.model.WorkoutSplit
 import wallcrawl.elopenmike.com.core.model.WorkoutTitleSpec
 import java.util.concurrent.atomic.AtomicInteger
@@ -31,7 +32,9 @@ class FakeWorkoutPlanner(
     private val difficultyRankingPolicy: ExerciseDifficultyRankingPolicy =
         ExerciseDifficultyRankingPolicy(),
     private val capabilityPreferenceRankingPolicy: CapabilityPreferenceRankingPolicy =
-        CapabilityPreferenceRankingPolicy()
+        CapabilityPreferenceRankingPolicy(),
+    private val supportedRegressionRankingPolicy: SupportedRegressionRankingPolicy =
+        SupportedRegressionRankingPolicy()
 ) : WorkoutPlanner {
 
     private val generationCounter = AtomicInteger(0)
@@ -55,7 +58,8 @@ class FakeWorkoutPlanner(
         val generationIndex = generationCounter.getAndIncrement()
         val splitType = determineSplit(context, generationIndex, candidates)
 
-        val selectedExercises = selectExercisesForSplit(splitType, candidates, context)
+        val selection = selectExercisesForSplit(splitType, candidates, context)
+        val selectedExercises = selection.exercises
         val generatedExerciseList = selectedExercises.map { exercise ->
             createGeneratedExercise(exercise, context)
         }
@@ -88,6 +92,7 @@ class FakeWorkoutPlanner(
             estimatedDurationMinutes = estimatedDuration,
             exercises = generatedExerciseList,
             rationale = rationale,
+            rankingReasons = selection.rankingReasons,
             unavailableFocusMuscles = unavailableFocusMuscles(context, candidates)
         )
     }
@@ -175,7 +180,7 @@ class FakeWorkoutPlanner(
         split: WorkoutSplit,
         candidates: List<Exercise>,
         context: WorkoutGenerationContext
-    ): List<Exercise> {
+    ): ExerciseSelection {
         // A candidate that trains none of the split's muscles is not a substitute for one that
         // does. Widening back to the whole catalog is what used to hand a Push day whatever
         // sorted first. `canFill` is a superset of the fillability rule `determineSplit`
@@ -194,44 +199,95 @@ class FakeWorkoutPlanner(
             automaticEligibilityResult = context.automaticEligibilityResult,
             capabilityEvidence = context.capabilityEvidence
         )
+        val supportedRegressionPreferences = supportedRegressionRankingPolicy.preferences(
+            candidates = matchingCandidates,
+            automaticEligibilityResult = context.automaticEligibilityResult,
+            capabilityEvidence = context.capabilityEvidence
+        )
 
-        val result = mutableListOf<Exercise>()
-        result.addAll(
-            chooseCompounds(
+        val selectionTrace = selectExercises(
+            split = split,
+            matchingCandidates = matchingCandidates,
+            exerciseCountTarget = exerciseCountTarget,
+            compoundSlots = compoundSlots,
+            context = context,
+            reviewedEligibilityEnabled = reviewedEligibilityEnabled,
+            capabilityPenalties = capabilityPenalties,
+            supportedRegressionPreferences = supportedRegressionPreferences
+        )
+        val result = selectionTrace.exercises
+        val baselineResult = if (supportedRegressionPreferences.isEmpty()) {
+            selectionTrace
+        } else {
+            selectExercises(
+                split = split,
+                matchingCandidates = matchingCandidates,
+                exerciseCountTarget = exerciseCountTarget,
+                compoundSlots = compoundSlots,
+                context = context,
+                reviewedEligibilityEnabled = reviewedEligibilityEnabled,
+                capabilityPenalties = capabilityPenalties,
+                supportedRegressionPreferences = emptyMap()
+            )
+        }
+
+        check(result.any { split.trainsAsFocus(it) }) {
+            "Split ${split.name} was selected without an exercise that trains it as a focus."
+        }
+        return ExerciseSelection(
+            exercises = result,
+            rankingReasons = appliedRankingReasons(
+                candidates = matchingCandidates,
+                selectedExercises = selectionTrace,
+                baselineExercises = baselineResult,
+                split = split,
+                capabilityPenalties = capabilityPenalties,
+                supportedRegressionPreferences = supportedRegressionPreferences
+            )
+        )
+    }
+
+    private fun selectExercises(
+        split: WorkoutSplit,
+        matchingCandidates: List<Exercise>,
+        exerciseCountTarget: Int,
+        compoundSlots: Int,
+        context: WorkoutGenerationContext,
+        reviewedEligibilityEnabled: Boolean,
+        capabilityPenalties: Map<String, Int>,
+        supportedRegressionPreferences: Map<String, List<SupportedRegressionPreference>>
+    ): SelectionTrace {
+        val compounds = chooseCompounds(
                 split = split,
                 candidates = matchingCandidates,
                 slots = compoundSlots,
                 context = context,
                 reviewedEligibilityEnabled = reviewedEligibilityEnabled,
-                capabilityPenalties = capabilityPenalties
+                capabilityPenalties = capabilityPenalties,
+                supportedRegressionPreferences = supportedRegressionPreferences
             )
-        )
+        val accessories = mutableListOf<Exercise>()
 
         // Fill the remaining slots from every matching exercise. Programming metadata
         // influences ordering but never prevents an otherwise valid exercise from selection.
-        val remainingSlots = exerciseCountTarget - result.size
+        val remainingSlots = exerciseCountTarget - compounds.size
         if (remainingSlots > 0) {
-            val accessories = matchingCandidates
-                .filterNot { it in result }
+            accessories.addAll(
+                matchingCandidates
+                .filterNot { it in compounds }
                 .sortedWith(
                     accessoryOrder(
                         split = split,
                         context = context,
                         reviewedEligibilityEnabled = reviewedEligibilityEnabled,
-                        capabilityPenalties = capabilityPenalties
+                        capabilityPenalties = capabilityPenalties,
+                        supportedRegressionPreferences = supportedRegressionPreferences
                     )
                 )
-            result.addAll(accessories.take(remainingSlots))
+                .take(remainingSlots)
+            )
         }
-
-        // The pool being fillable is not the promise; the session is. Focus support is the
-        // first ordering key in both passes and at least one accessory slot always exists,
-        // so a supporting exercise is always reachable — this states that as an invariant
-        // instead of leaving it to be re-derived from two comparators.
-        check(result.any { split.trainsAsFocus(it) }) {
-            "Split ${split.name} was selected without an exercise that trains it as a focus."
-        }
-        return result
+        return SelectionTrace(compounds = compounds, accessories = accessories)
     }
 
     /**
@@ -249,7 +305,8 @@ class FakeWorkoutPlanner(
         slots: Int,
         context: WorkoutGenerationContext,
         reviewedEligibilityEnabled: Boolean,
-        capabilityPenalties: Map<String, Int>
+        capabilityPenalties: Map<String, Int>,
+        supportedRegressionPreferences: Map<String, List<SupportedRegressionPreference>>
     ): List<Exercise> {
         if (slots <= 0) return emptyList()
         val compounds = candidates
@@ -257,6 +314,7 @@ class FakeWorkoutPlanner(
             .sortedWith(
                 compareByDescending<Exercise> { split.trainsAsFocus(it) }
                     .thenBy { capabilityPenalties.getValue(it.id) }
+                    .thenBy { if (it.id in supportedRegressionPreferences) 0 else 1 }
                     .thenBy {
                         difficultyRankingPolicy.aboveExperiencePenalty(
                             exercise = it,
@@ -295,12 +353,14 @@ class FakeWorkoutPlanner(
         split: WorkoutSplit,
         context: WorkoutGenerationContext,
         reviewedEligibilityEnabled: Boolean,
-        capabilityPenalties: Map<String, Int>
+        capabilityPenalties: Map<String, Int>,
+        supportedRegressionPreferences: Map<String, List<SupportedRegressionPreference>>
     ): Comparator<Exercise> =
         compareByDescending<Exercise> { split.trainsAsFocus(it) }
             .thenByDescending { it.programming?.mechanics == MechanicsType.ISOLATION }
             .thenByDescending { it.programming != null }
             .thenBy { capabilityPenalties.getValue(it.id) }
+            .thenBy { if (it.id in supportedRegressionPreferences) 0 else 1 }
             .thenBy {
                 difficultyRankingPolicy.aboveExperiencePenalty(
                     exercise = it,
@@ -310,6 +370,90 @@ class FakeWorkoutPlanner(
             }
             .thenByDescending { it.programming?.fatigueScore ?: 0 }
             .thenBy { it.id }
+
+    private fun appliedRankingReasons(
+        split: WorkoutSplit,
+        candidates: List<Exercise>,
+        selectedExercises: SelectionTrace,
+        baselineExercises: SelectionTrace,
+        capabilityPenalties: Map<String, Int>,
+        supportedRegressionPreferences: Map<String, List<SupportedRegressionPreference>>
+    ): List<WorkoutRankingReason> {
+        return supportedRegressionPreferences.entries
+            .flatMap { (targetId, preferences) ->
+                val targetIsCompound = selectedExercises.compounds.any { it.id == targetId }
+                val selectedPass = if (targetIsCompound) {
+                    selectedExercises.compounds
+                } else {
+                    selectedExercises.accessories.takeIf { pass ->
+                        pass.any { it.id == targetId }
+                    } ?: return@flatMap emptyList()
+                }
+                val baselinePass = if (targetIsCompound) {
+                    baselineExercises.compounds
+                } else {
+                    baselineExercises.accessories
+                }
+                val targetSelectedPosition = selectedPass.indexOfFirst { it.id == targetId }
+                val targetBaselinePosition = baselinePass.indexOfFirst { it.id == targetId }
+                    .takeIf { it >= 0 }
+                    ?: baselinePass.size
+                if (targetSelectedPosition >= targetBaselinePosition) {
+                    return@flatMap emptyList()
+                }
+
+                preferences.mapNotNull { preference ->
+                    val source = candidates.firstOrNull {
+                        it.id == preference.sourceExerciseId
+                    } ?: return@mapNotNull null
+                    val target = candidates.first { it.id == targetId }
+                    val sourceBaselinePosition = baselinePass.indexOfFirst {
+                        it.id == preference.sourceExerciseId
+                    }
+                    if (!targetIsCompound && selectedExercises.compounds.any {
+                            it.id == preference.sourceExerciseId
+                        }) {
+                        return@mapNotNull null
+                    }
+                    val sourceSelectedPosition = selectedPass.indexOfFirst {
+                        it.id == preference.sourceExerciseId
+                    }.takeIf { it >= 0 } ?: selectedPass.size
+                    val applied = sourceBaselinePosition in 0 until targetBaselinePosition &&
+                        source.sharesStrongerRankingTierWith(
+                            other = target,
+                            split = split,
+                            capabilityPenalties = capabilityPenalties
+                        ) &&
+                        targetSelectedPosition < sourceSelectedPosition
+                    if (!applied) return@mapNotNull null
+
+                    WorkoutRankingReason.SupportedRegressionPreference(
+                        preferredExerciseId = preference.preferredExerciseId,
+                        sourceExerciseId = preference.sourceExerciseId,
+                        capability = preference.capability
+                    )
+                }
+            }
+    }
+
+    private fun Exercise.sharesStrongerRankingTierWith(
+        other: Exercise,
+        split: WorkoutSplit,
+        capabilityPenalties: Map<String, Int>
+    ): Boolean {
+        if (split.trainsAsFocus(this) != split.trainsAsFocus(other)) return false
+        if (capabilityPenalties.getValue(id) != capabilityPenalties.getValue(other.id)) {
+            return false
+        }
+
+        val bothCompounds = programming?.mechanics == MechanicsType.COMPOUND &&
+            other.programming?.mechanics == MechanicsType.COMPOUND
+        if (bothCompounds) return true
+
+        return (programming?.mechanics == MechanicsType.ISOLATION) ==
+            (other.programming?.mechanics == MechanicsType.ISOLATION) &&
+            (programming != null) == (other.programming != null)
+    }
 
     private fun createGeneratedExercise(
         exercise: Exercise,
@@ -357,5 +501,17 @@ class FakeWorkoutPlanner(
     private companion object {
         /** How many muscle names a card line or explanation may carry. */
         const val MAX_REPORTED_MUSCLES = 3
+    }
+
+    private data class ExerciseSelection(
+        val exercises: List<Exercise>,
+        val rankingReasons: List<WorkoutRankingReason>
+    )
+
+    private data class SelectionTrace(
+        val compounds: List<Exercise>,
+        val accessories: List<Exercise>
+    ) {
+        val exercises: List<Exercise> = compounds + accessories
     }
 }

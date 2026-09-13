@@ -252,6 +252,10 @@ The corpus suite asserts:
   effort/rest guidance, never increase base sets, and preserve no-invented-load behavior;
 - capability invariance for the current production legacy path by comparing
   `limited-capability` with an all-`COMFORTABLE` control;
+- focused synthetic-approved planner cases in which an exercise-specific
+  `LIMITED` answer reorders both compound and accessory candidates toward a
+  direct approved `SUPPORTED` regression, while source evidence suppresses the
+  preference and stronger focus/mechanics tiers remain authoritative;
 - parity checks that the lightweight catalog projection preserves planner-consumed fields for representative entries without broadening into full parser duplication;
 - whole-program validation of every successful persona's proposal, raw and repair-permitted, with a
   repair that only ever reduced sets and never below one.
@@ -301,6 +305,8 @@ consistency, and passing either demonstrates software conformance only.
 | One bounded repair pass preserving candidates and hard constraints; none at start | Software invariant | `ProgramValidatorRepairTest`, `TodayViewModelTest` |
 | No invented load; valid history/confirmed-load provenance; mixed units | Software invariant | `PlannerFixtureTest`, `mixed-unit-history`, `ProgramValidatorTest` |
 | Candidate membership, explicit exclusions, reviewed provenance | Software invariant | `ProgramValidatorTest`, `ProgramValidatorAggregateDoseTest`, corpus legality assertions |
+| Direct approved supported regression can reorder only legal peers for unresolved exercise-specific `LIMITED`; source evidence suppresses it | Product policy | `SupportedRegressionRankingPolicyTest`, `FakeWorkoutPlannerTest`, `ProgramValidatorTest`, `GeneratedWorkoutFocusNoticeTest`, `LocalDataArchiveRecommendationTest` |
+| Every applied supported-regression source survives snapshot/archive persistence within the bounded reason budget | Software invariant (six selected × six baseline = 36 reasons; four tokens each + one repair code = 145, under the 160-token limit) | `FakeWorkoutPlannerTest.generateWorkout_persistsTheBoundedMaximumAppliedRankingProvenance`, `RecommendationSnapshotRankingReasonTest`, `LocalDataArchiveRecommendationTest.roundTrip_preservesTheMaximumPlannerRankingProvenance` |
 | Deterministic replay and input non-mutation | Software invariant | `PlannerFixtureTest.evaluateCorpus_enforcesDeterminismAndPlannerInvariants` |
 | Band-only chest priority produces no misleading `PUSH` label | Software invariant (focus contract) | `WorkoutFocusCoverageTest`, `ReviewedCatalogCoverageTest`, `band-only` |
 | Fixed anchors require explicit confirmation; `banded-row` stays unresolved | Product policy | `FixedAnchorBandEligibilityTest`, `band-only`, `sparse-history` |
@@ -311,6 +317,12 @@ consistency, and passing either demonstrates software conformance only.
 | No forced weekly minimum and no automatic volume increase | Rejected inference | `PlannerFixtureTest.aProposalWellUnderTheConfiguredAllowanceIsAcceptedWithoutAWeeklyMinimum`, the repair-only-reduces assertion |
 | A capability answer is not a record of activity | Rejected inference | `PlannerFixtureTest.theContinuousActivityAnswerIsNotARecordOfAerobicActivity`, with `aCapabilityTheReviewedGateDoesReadChangesTheProposal` as its sensitivity control |
 | Locale and gender independence of canonical training decisions | Software invariant | `PlannerLocaleInvarianceTest` |
+
+The supported-regression cases use explicitly synthetic in-memory approvals because the
+bundled cohort remains 211 `DRAFT` / 0 `APPROVED` and production reviewed planning remains
+disabled. They do not promote metadata, change graph edges, enable a flag, or claim live
+availability. Frequency and recency scheduling are separate open policy work; no timestamp
+or completed-session count participates in this comparator.
 
 The `concurrent-activity` assertions carry their own sensitivity control:
 `concurrentActivityPersona_isChangedWhenTheResistanceSessionIsRemoved` removes the logged

@@ -5,6 +5,7 @@ import androidx.compose.ui.res.stringResource
 import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.WorkoutRationaleSpec
+import wallcrawl.elopenmike.com.core.model.WorkoutRankingReason
 import wallcrawl.elopenmike.com.core.model.WorkoutTitleSpec
 
 /**
@@ -42,11 +43,28 @@ fun generatedWorkoutTitle(spec: WorkoutTitleSpec): String {
 @Composable
 fun generatedWorkoutRationale(
     spec: WorkoutRationaleSpec,
-    unavailableFocusMuscles: List<String> = emptyList()
+    unavailableFocusMuscles: List<String> = emptyList(),
+    rankingReasons: List<WorkoutRankingReason> = emptyList()
 ): String {
-    val reason = rationaleSentence(spec)
-    val notice = unavailableFocusNotice(unavailableFocusMuscles) ?: return reason
-    return "$reason $notice"
+    val sentences = buildList {
+        add(rationaleSentence(spec))
+        unavailableFocusNotice(unavailableFocusMuscles)?.let(::add)
+        workoutRankingNotice(rankingReasons)?.let(::add)
+    }
+    return sentences.joinToString(separator = " ")
+}
+
+@Composable
+fun workoutRankingNotice(rankingReasons: List<WorkoutRankingReason>): String? {
+    if (rankingReasons.isEmpty()) return null
+    return rankingReasons.map { rankingReason ->
+        when (rankingReason) {
+            is WorkoutRankingReason.SupportedRegressionPreference -> stringResource(
+                R.string.generated_rationale_supported_regression_preference,
+                stringResource(rankingReason.capability.labelRes)
+            )
+        }
+    }.distinct().joinToString(separator = " ")
 }
 
 /**

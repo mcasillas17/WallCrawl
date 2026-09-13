@@ -6,6 +6,7 @@ import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityFailure
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
+import wallcrawl.elopenmike.com.core.model.AdaptationState
 import wallcrawl.elopenmike.com.core.model.CapabilityEvidence
 import wallcrawl.elopenmike.com.core.model.CapabilityEvidencePolicyVersion
 import wallcrawl.elopenmike.com.core.model.CapabilityEvidenceReason
@@ -29,6 +30,7 @@ import wallcrawl.elopenmike.com.core.model.PrescriptionShape
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
 import wallcrawl.elopenmike.com.core.model.ReviewProvenance
 import wallcrawl.elopenmike.com.core.model.ReviewState
+import wallcrawl.elopenmike.com.core.model.ReviewedExerciseLink
 import wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
@@ -38,10 +40,13 @@ import wallcrawl.elopenmike.com.core.model.WorkoutEmphasis
 import wallcrawl.elopenmike.com.core.model.WorkoutRationaleSpec
 import wallcrawl.elopenmike.com.core.model.WorkoutSplit
 import wallcrawl.elopenmike.com.core.model.SupportRequirement
+import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
 import wallcrawl.elopenmike.com.core.model.WorkoutOrigin
+import wallcrawl.elopenmike.com.core.model.WorkoutRankingReason
+import wallcrawl.elopenmike.com.core.model.WorkoutRankingReasonCode
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import kotlinx.coroutines.test.runTest
@@ -514,7 +519,8 @@ class FakeWorkoutPlannerTest {
             difficulty = Difficulty.BEGINNER,
             fatigueScore = 1,
             reviewedState = ReviewState.APPROVED,
-            reviewedComplexity = ComplexityTier.FOUNDATIONAL
+            reviewedComplexity = ComplexityTier.FOUNDATIONAL,
+            reviewedCapabilities = setOf(MovementCapabilityType.BALANCE_WITHOUT_SUPPORT)
         )
         val clearPrimary = rankingExercise(
             id = "z-clear-primary",
@@ -676,6 +682,835 @@ class FakeWorkoutPlannerTest {
         assertThat(withDirectRegressionEvidence.exercises.map { it.exerciseId })
             .containsExactly(anchor.id, limited.id, clear.id, unknown.id)
             .inOrder()
+    }
+
+    @Test
+    fun generateWorkout_prefersDirectSupportedRegressionForLimitedCompoundDemand() = runTest {
+        val source = rankingExercise(
+            id = "a-source-compound",
+            difficulty = Difficulty.BEGINNER,
+            fatigueScore = 5,
+            reviewedState = ReviewState.APPROVED,
+            reviewedComplexity = ComplexityTier.FOUNDATIONAL,
+            reviewedCapabilities = setOf(MovementCapabilityType.FLOOR_TRANSITION),
+            approvedRegressions = listOf(ReviewedExerciseLink("z-supported-compound"))
+        )
+        val supported = rankingExercise(
+            id = "z-supported-compound",
+            difficulty = Difficulty.BEGINNER,
+            fatigueScore = 1,
+            reviewedState = ReviewState.APPROVED,
+            reviewedComplexity = ComplexityTier.ADVANCED,
+            reviewedCapabilities = setOf(MovementCapabilityType.BALANCE_WITHOUT_SUPPORT)
+        )
+        val workout = planner.generateWorkout(
+            reviewedRankingContext(
+                experienceLevel = ExperienceLevel.BEGINNER,
+                candidates = listOf(source, supported),
+                decisions = listOf(
+                    reviewedDecision(
+                        id = source.id,
+                        preferences = listOf(
+                            EligibilityPreference.Limited(
+                                MovementCapabilityType.FLOOR_TRANSITION
+                            )
+                        )
+                    ),
+                    reviewedDecision(
+                        id = supported.id,
+                        preferences = listOf(
+                            EligibilityPreference.Limited(
+                                MovementCapabilityType.BALANCE_WITHOUT_SUPPORT
+                            )
+                        )
+                    )
+                )
+            )
+        )
+
+        assertThat(workout.exercises.map { it.exerciseId })
+            .containsExactly(supported.id, source.id)
+            .inOrder()
+        assertThat(workout.rankingReasons).containsExactly(
+            WorkoutRankingReason.SupportedRegressionPreference(
+                preferredExerciseId = supported.id,
+                sourceExerciseId = source.id,
+                capability = MovementCapabilityType.FLOOR_TRANSITION
+            )
+        )
+    }
+
+    @Test
+    fun generateWorkout_retainsEverySamePassSourceThatTheTargetOutranks() = runTest {
+        val floorSource = rankingExercise(
+            id = "a-floor-source",
+            difficulty = Difficulty.BEGINNER,
+            fatigueScore = 5,
+            reviewedState = ReviewState.APPROVED,
+            reviewedComplexity = ComplexityTier.FOUNDATIONAL,
+            reviewedCapabilities = setOf(MovementCapabilityType.FLOOR_TRANSITION),
+            approvedRegressions = listOf(ReviewedExerciseLink("z-shared-target"))
+        )
+        val balanceSource = rankingExercise(
+            id = "b-balance-source",
+            difficulty = Difficulty.BEGINNER,
+            fatigueScore = 4,
+            reviewedState = ReviewState.APPROVED,
+            reviewedComplexity = ComplexityTier.FOUNDATIONAL,
+            reviewedCapabilities = setOf(MovementCapabilityType.BALANCE_WITHOUT_SUPPORT),
+            approvedRegressions = listOf(ReviewedExerciseLink("z-shared-target"))
+        )
+        val target = rankingExercise(
+            id = "z-shared-target",
+            difficulty = Difficulty.BEGINNER,
+            fatigueScore = 1,
+            reviewedState = ReviewState.APPROVED,
+            reviewedComplexity = ComplexityTier.FOUNDATIONAL,
+            reviewedCapabilities = setOf(MovementCapabilityType.CONTINUOUS_ACTIVITY)
+        )
+        val workout = planner.generateWorkout(
+            reviewedRankingContext(
+                experienceLevel = ExperienceLevel.BEGINNER,
+                candidates = listOf(floorSource, balanceSource, target),
+                decisions = listOf(
+                    reviewedDecision(
+                        floorSource.id,
+                        listOf(
+                            EligibilityPreference.Limited(
+                                MovementCapabilityType.FLOOR_TRANSITION
+                            )
+                        )
+                    ),
+                    reviewedDecision(
+                        balanceSource.id,
+                        listOf(
+                            EligibilityPreference.Limited(
+                                MovementCapabilityType.BALANCE_WITHOUT_SUPPORT
+                            )
+                        )
+                    ),
+                    reviewedDecision(
+                        target.id,
+                        listOf(
+                            EligibilityPreference.Limited(
+                                MovementCapabilityType.CONTINUOUS_ACTIVITY
+                            )
+                        )
+                    )
+                )
+            )
+        )
+
+        assertThat(workout.exercises.map { it.exerciseId })
+            .containsExactly(target.id, floorSource.id, balanceSource.id)
+            .inOrder()
+        assertThat(workout.rankingReasons).containsExactly(
+            WorkoutRankingReason.SupportedRegressionPreference(
+                preferredExerciseId = target.id,
+                sourceExerciseId = floorSource.id,
+                capability = MovementCapabilityType.FLOOR_TRANSITION
+            ),
+            WorkoutRankingReason.SupportedRegressionPreference(
+                preferredExerciseId = target.id,
+                sourceExerciseId = balanceSource.id,
+                capability = MovementCapabilityType.BALANCE_WITHOUT_SUPPORT
+            )
+        ).inOrder()
+    }
+
+    @Test
+    fun generateWorkout_persistsTheBoundedMaximumAppliedRankingProvenance() = runTest {
+        val targets = (0 until 6).map { index ->
+            rankingExercise(
+                id = "z-target-$index",
+                difficulty = Difficulty.BEGINNER,
+                mechanics = MechanicsType.ISOLATION,
+                reviewedState = ReviewState.APPROVED,
+                reviewedComplexity = ComplexityTier.FOUNDATIONAL,
+                reviewedCapabilities = setOf(MovementCapabilityType.CONTINUOUS_ACTIVITY)
+            )
+        }
+        val targetLinks = targets.map { ReviewedExerciseLink(it.id) }
+        val sources = (0 until 6).map { index ->
+            rankingExercise(
+                id = "a-source-$index",
+                difficulty = Difficulty.BEGINNER,
+                mechanics = MechanicsType.ISOLATION,
+                reviewedState = ReviewState.APPROVED,
+                reviewedComplexity = ComplexityTier.FOUNDATIONAL,
+                reviewedCapabilities = setOf(MovementCapabilityType.FLOOR_TRANSITION),
+                approvedRegressions = targetLinks
+            )
+        }
+        val candidates = sources + targets
+        val decisions = sources.map {
+            reviewedDecision(
+                it.id,
+                listOf(
+                    EligibilityPreference.Limited(MovementCapabilityType.FLOOR_TRANSITION)
+                )
+            )
+        } + targets.map {
+            reviewedDecision(
+                it.id,
+                listOf(
+                    EligibilityPreference.Limited(MovementCapabilityType.CONTINUOUS_ACTIVITY)
+                )
+            )
+        }
+
+        val workout = planner.generateWorkout(
+            reviewedRankingContext(
+                experienceLevel = ExperienceLevel.BEGINNER,
+                candidates = candidates,
+                decisions = decisions
+            )
+        )
+
+        assertThat(workout.exercises.map { it.exerciseId })
+            .containsExactlyElementsIn(targets.map { it.id })
+            .inOrder()
+        assertThat(workout.rankingReasons).hasSize(36)
+        val snapshot = RecommendationSnapshot(
+            validatorVersion = ProgramValidatorVersion.WHOLE_PROGRAM_V1,
+            durationEstimatorVersion = "test",
+            outcome = RecommendationOutcome.REPAIRED,
+            reviewedPathEnabled = true,
+            catalogVersion = "test",
+            reviewPolicyVersion = 2,
+            trainingPolicyVersion = null,
+            ledgerPolicyVersion = null,
+            programStatePolicyVersion = null,
+            adaptationState = null,
+            weekStartEpochDay = null,
+            timeZoneId = null,
+            profileRevision = 1,
+            contextIdentity = "context",
+            reasonCodes = listOf(ProgramViolationCode.WEEKLY_ALLOWANCE_EXCEEDED),
+            rankingReasons = workout.rankingReasons,
+            doseAccounting = emptyList()
+        )
+
+        val record = snapshot.asRecord(sessionId = "session", recordedAtEpochMillis = 1)
+
+        assertThat(record.reasonCodes).hasSize(145)
+        assertThat(WorkoutRankingReasonCode.decode(record.reasonCodes))
+            .containsExactlyElementsIn(workout.rankingReasons)
+            .inOrder()
+    }
+
+    @Test
+    fun generateWorkout_supportedPreferenceCannotBypassJointClearance() = runTest {
+        val source = rankingExercise(
+            id = "a-joint-sensitive-source",
+            difficulty = Difficulty.BEGINNER,
+            fatigueScore = 5,
+            reviewedState = ReviewState.APPROVED,
+            reviewedComplexity = ComplexityTier.FOUNDATIONAL,
+            reviewedCapabilities = setOf(MovementCapabilityType.FLOOR_TRANSITION),
+            approvedRegressions = listOf(ReviewedExerciseLink("z-cleared-supported-target"))
+        )
+        val supported = rankingExercise(
+            id = "z-cleared-supported-target",
+            difficulty = Difficulty.BEGINNER,
+            fatigueScore = 1,
+            reviewedState = ReviewState.APPROVED,
+            reviewedComplexity = ComplexityTier.FOUNDATIONAL,
+            reviewedCapabilities = setOf(MovementCapabilityType.BALANCE_WITHOUT_SUPPORT)
+        )
+        val profile = UserProfile(
+            experienceLevel = ExperienceLevel.BEGINNER,
+            preferredDurationMinutes = 60,
+            availableEquipment = listOf(
+                StandardEquipment.BODYWEIGHT,
+                StandardEquipment.DUMBBELL,
+                StandardEquipment.BENCH
+            ),
+            musclePriorities = mapOf(StandardMuscles.CHEST to PriorityLevel.HIGH),
+            trainingConstraints = setOf(TrainingConstraint.KNEE_SENSITIVE),
+            movementCapabilities = MovementCapabilities.from(
+                mapOf(
+                    MovementCapabilityType.FLOOR_TRANSITION to CapabilityLevel.LIMITED,
+                    MovementCapabilityType.BALANCE_WITHOUT_SUPPORT to CapabilityLevel.LIMITED
+                )
+            )
+        )
+        val unclearedResult = ExerciseEligibilityPolicy().evaluate(
+            exercises = listOf(source, supported),
+            profile = profile,
+            adaptationState = AdaptationState.BUILD
+        )
+
+        assertThat(unclearedResult).isInstanceOf(AutomaticEligibilityResult.NoCandidates::class.java)
+        unclearedResult.decisions.forEach { decision ->
+            assertThat(decision.reasons).contains(EligibilityReason.UNMAPPED_TRAINING_CONSTRAINT)
+        }
+
+        val clearedExercises = listOf(source, supported).map { exercise ->
+            exercise.copy(
+                reviewedMetadata = checkNotNull(exercise.reviewedMetadata).copy(
+                    clearedTrainingConstraints = setOf(TrainingConstraint.KNEE_SENSITIVE)
+                )
+            )
+        }
+        val clearedResult = ExerciseEligibilityPolicy().evaluate(
+            exercises = clearedExercises,
+            profile = profile,
+            adaptationState = AdaptationState.BUILD
+        )
+        val clearedCandidates = (clearedResult as AutomaticEligibilityResult.Candidates).exercises
+        val workout = planner.generateWorkout(
+            WorkoutGenerationContext(
+                userProfile = profile,
+                allowedExercises = clearedCandidates,
+                automaticEligibilityResult = clearedResult
+            )
+        )
+
+        assertThat(workout.exercises.map { it.exerciseId })
+            .containsExactly(supported.id, source.id)
+            .inOrder()
+        assertThat(workout.rankingReasons).containsExactly(
+            WorkoutRankingReason.SupportedRegressionPreference(
+                preferredExerciseId = supported.id,
+                sourceExerciseId = source.id,
+                capability = MovementCapabilityType.FLOOR_TRANSITION
+            )
+        )
+    }
+
+    @Test
+    fun generateWorkout_prefersDirectSupportedRegressionForLimitedAccessoryDemand() = runTest {
+        val anchor = rankingExercise(
+            id = "anchor-compound",
+            difficulty = Difficulty.BEGINNER,
+            reviewedState = ReviewState.APPROVED,
+            reviewedComplexity = ComplexityTier.FOUNDATIONAL
+        )
+        val source = rankingExercise(
+            id = "a-source-accessory",
+            difficulty = Difficulty.BEGINNER,
+            mechanics = MechanicsType.ISOLATION,
+            reviewedState = ReviewState.APPROVED,
+            reviewedComplexity = ComplexityTier.FOUNDATIONAL,
+            reviewedCapabilities = setOf(MovementCapabilityType.FLOOR_TRANSITION),
+            approvedRegressions = listOf(ReviewedExerciseLink("z-supported-accessory"))
+        )
+        val supported = rankingExercise(
+            id = "z-supported-accessory",
+            difficulty = Difficulty.BEGINNER,
+            mechanics = MechanicsType.ISOLATION,
+            reviewedState = ReviewState.APPROVED,
+            reviewedComplexity = ComplexityTier.FOUNDATIONAL,
+            reviewedCapabilities = setOf(MovementCapabilityType.BALANCE_WITHOUT_SUPPORT)
+        )
+        val workout = planner.generateWorkout(
+            reviewedRankingContext(
+                experienceLevel = ExperienceLevel.BEGINNER,
+                candidates = listOf(anchor, source, supported),
+                decisions = listOf(
+                    reviewedDecision(id = anchor.id),
+                    reviewedDecision(
+                        id = source.id,
+                        preferences = listOf(
+                            EligibilityPreference.Limited(
+                                MovementCapabilityType.FLOOR_TRANSITION
+                            )
+                        )
+                    ),
+                    reviewedDecision(
+                        id = supported.id,
+                        preferences = listOf(
+                            EligibilityPreference.Limited(
+                                MovementCapabilityType.BALANCE_WITHOUT_SUPPORT
+                            )
+                        )
+                    )
+                )
+            )
+        )
+
+        assertThat(workout.exercises.map { it.exerciseId })
+            .containsExactly(anchor.id, supported.id, source.id)
+            .inOrder()
+        assertThat(workout.rankingReasons).hasSize(1)
+    }
+
+    @Test
+    fun generateWorkout_doesNotClaimPreferenceWhenLinkedSourceStillRanksAhead() = runTest {
+        val source = rankingExercise(
+            id = "a-source",
+            difficulty = Difficulty.BEGINNER,
+            reviewedState = ReviewState.APPROVED,
+            reviewedCapabilities = setOf(MovementCapabilityType.FLOOR_TRANSITION),
+            approvedRegressions = listOf(ReviewedExerciseLink("b-middle"))
+        )
+        val middle = rankingExercise(
+            id = "b-middle",
+            difficulty = Difficulty.BEGINNER,
+            reviewedState = ReviewState.APPROVED,
+            reviewedCapabilities = setOf(MovementCapabilityType.BALANCE_WITHOUT_SUPPORT),
+            approvedRegressions = listOf(ReviewedExerciseLink("c-target"))
+        )
+        val target = rankingExercise(
+            id = "c-target",
+            difficulty = Difficulty.BEGINNER,
+            reviewedState = ReviewState.APPROVED
+        )
+
+        val workout = planner.generateWorkout(
+            reviewedRankingContext(
+                experienceLevel = ExperienceLevel.BEGINNER,
+                candidates = listOf(source, middle, target),
+                decisions = listOf(
+                    reviewedDecision(
+                        id = source.id,
+                        preferences = listOf(
+                            EligibilityPreference.Limited(
+                                MovementCapabilityType.FLOOR_TRANSITION
+                            )
+                        )
+                    ),
+                    reviewedDecision(
+                        id = middle.id,
+                        preferences = listOf(
+                            EligibilityPreference.Limited(
+                                MovementCapabilityType.BALANCE_WITHOUT_SUPPORT
+                            )
+                        )
+                    ),
+                    reviewedDecision(id = target.id)
+                )
+            )
+        )
+
+        assertThat(workout.exercises.map { it.exerciseId })
+            .containsExactly(target.id, middle.id, source.id)
+            .inOrder()
+        assertThat(
+            workout.rankingReasons
+                .filterIsInstance<WorkoutRankingReason.SupportedRegressionPreference>()
+                .map { it.preferredExerciseId }
+        )
+            .containsExactly(middle.id)
+    }
+
+    @Test
+    fun generateWorkout_attributesPreferenceToTheActualSamePassCompetitor() = runTest {
+        val earlierCompoundSource = rankingExercise(
+            id = "a-compound-source",
+            difficulty = Difficulty.BEGINNER,
+            reviewedState = ReviewState.APPROVED,
+            reviewedCapabilities = setOf(MovementCapabilityType.FLOOR_TRANSITION),
+            approvedRegressions = listOf(ReviewedExerciseLink("zz-supported-target"))
+        )
+        val compoundAnchor = rankingExercise(
+            id = "b-compound-anchor",
+            difficulty = Difficulty.BEGINNER,
+            reviewedState = ReviewState.APPROVED
+        )
+        val accessorySource = rankingExercise(
+            id = "z-accessory-source",
+            difficulty = Difficulty.BEGINNER,
+            mechanics = MechanicsType.ISOLATION,
+            reviewedState = ReviewState.APPROVED,
+            reviewedCapabilities = setOf(MovementCapabilityType.FLOOR_TRANSITION),
+            approvedRegressions = listOf(ReviewedExerciseLink("zz-supported-target"))
+        )
+        val supportedTarget = rankingExercise(
+            id = "zz-supported-target",
+            difficulty = Difficulty.BEGINNER,
+            mechanics = MechanicsType.ISOLATION,
+            reviewedState = ReviewState.APPROVED,
+            reviewedCapabilities = setOf(MovementCapabilityType.BALANCE_WITHOUT_SUPPORT)
+        )
+        val limited = listOf(
+            EligibilityPreference.Limited(MovementCapabilityType.FLOOR_TRANSITION)
+        )
+
+        val workout = planner.generateWorkout(
+            reviewedRankingContext(
+                experienceLevel = ExperienceLevel.BEGINNER,
+                candidates = listOf(
+                    earlierCompoundSource,
+                    compoundAnchor,
+                    accessorySource,
+                    supportedTarget
+                ),
+                decisions = listOf(
+                    reviewedDecision(earlierCompoundSource.id, limited),
+                    reviewedDecision(compoundAnchor.id),
+                    reviewedDecision(accessorySource.id, limited),
+                    reviewedDecision(
+                        supportedTarget.id,
+                        listOf(
+                            EligibilityPreference.Limited(
+                                MovementCapabilityType.BALANCE_WITHOUT_SUPPORT
+                            )
+                        )
+                    )
+                )
+            )
+        )
+
+        assertThat(workout.exercises.map { it.exerciseId })
+            .containsExactly(
+                compoundAnchor.id,
+                earlierCompoundSource.id,
+                supportedTarget.id,
+                accessorySource.id
+            )
+            .inOrder()
+        assertThat(workout.rankingReasons).containsExactly(
+            WorkoutRankingReason.SupportedRegressionPreference(
+                preferredExerciseId = supportedTarget.id,
+                sourceExerciseId = accessorySource.id,
+                capability = MovementCapabilityType.FLOOR_TRANSITION
+            )
+        )
+    }
+
+    @Test
+    fun generateWorkout_doesNotAttributeAnAccessoryWinToACompoundSource() = runTest {
+        val source = rankingExercise(
+            id = "a-source",
+            difficulty = Difficulty.BEGINNER,
+            reviewedState = ReviewState.APPROVED,
+            reviewedCapabilities = setOf(MovementCapabilityType.FLOOR_TRANSITION),
+            approvedRegressions = listOf(
+                ReviewedExerciseLink("y-compound-target"),
+                ReviewedExerciseLink("z-accessory-target")
+            )
+        )
+        val otherPattern = rankingExercise(
+            id = "b-other-pattern",
+            difficulty = Difficulty.BEGINNER,
+            movementPattern = MovementPattern.VERTICAL_PUSH,
+            reviewedState = ReviewState.APPROVED
+        )
+        val accessoryCompetitor = rankingExercise(
+            id = "c-accessory-competitor",
+            difficulty = Difficulty.BEGINNER,
+            reviewedState = ReviewState.APPROVED
+        )
+        val compoundTarget = rankingExercise(
+            id = "y-compound-target",
+            difficulty = Difficulty.BEGINNER,
+            reviewedState = ReviewState.APPROVED,
+            reviewedCapabilities = setOf(MovementCapabilityType.BALANCE_WITHOUT_SUPPORT)
+        )
+        val accessoryTarget = rankingExercise(
+            id = "z-accessory-target",
+            difficulty = Difficulty.BEGINNER,
+            reviewedState = ReviewState.APPROVED,
+            reviewedCapabilities = setOf(MovementCapabilityType.BALANCE_WITHOUT_SUPPORT)
+        )
+        val floorLimited = listOf(
+            EligibilityPreference.Limited(MovementCapabilityType.FLOOR_TRANSITION)
+        )
+        val balanceLimited = listOf(
+            EligibilityPreference.Limited(MovementCapabilityType.BALANCE_WITHOUT_SUPPORT)
+        )
+
+        val workout = planner.generateWorkout(
+            reviewedRankingContext(
+                experienceLevel = ExperienceLevel.BEGINNER,
+                candidates = listOf(
+                    source,
+                    otherPattern,
+                    accessoryCompetitor,
+                    compoundTarget,
+                    accessoryTarget
+                ),
+                decisions = listOf(
+                    reviewedDecision(source.id, floorLimited),
+                    reviewedDecision(otherPattern.id),
+                    reviewedDecision(accessoryCompetitor.id),
+                    reviewedDecision(compoundTarget.id, balanceLimited),
+                    reviewedDecision(accessoryTarget.id, balanceLimited)
+                )
+            )
+        )
+
+        assertThat(workout.rankingReasons).containsExactly(
+            WorkoutRankingReason.SupportedRegressionPreference(
+                preferredExerciseId = compoundTarget.id,
+                sourceExerciseId = source.id,
+                capability = MovementCapabilityType.FLOOR_TRANSITION
+            )
+        )
+    }
+
+    @Test
+    fun generateWorkout_doesNotTreatACompoundPromotedSourceAsAnAccessoryLoss() = runTest {
+        val source = rankingExercise(
+            id = "b-source",
+            difficulty = Difficulty.BEGINNER,
+            reviewedState = ReviewState.APPROVED,
+            reviewedCapabilities = setOf(MovementCapabilityType.FLOOR_TRANSITION),
+            approvedRegressions = listOf(
+                ReviewedExerciseLink("c-promoted"),
+                ReviewedExerciseLink("d-compound-target")
+            )
+        )
+        val promoted = rankingExercise(
+            id = "c-promoted",
+            difficulty = Difficulty.BEGINNER,
+            reviewedState = ReviewState.APPROVED,
+            reviewedCapabilities = setOf(MovementCapabilityType.BALANCE_WITHOUT_SUPPORT),
+            approvedRegressions = listOf(ReviewedExerciseLink("e-accessory-target"))
+        )
+        val compoundTarget = rankingExercise(
+            id = "d-compound-target",
+            difficulty = Difficulty.BEGINNER,
+            reviewedState = ReviewState.APPROVED,
+            reviewedCapabilities = setOf(MovementCapabilityType.BALANCE_WITHOUT_SUPPORT)
+        )
+        val accessoryTarget = rankingExercise(
+            id = "e-accessory-target",
+            difficulty = Difficulty.BEGINNER,
+            reviewedState = ReviewState.APPROVED,
+            reviewedCapabilities = setOf(MovementCapabilityType.CONTINUOUS_ACTIVITY)
+        )
+        val firstBaselineLeader = rankingExercise(
+            id = "a-first-baseline-leader",
+            difficulty = Difficulty.BEGINNER,
+            movementPattern = MovementPattern.VERTICAL_PUSH,
+            reviewedState = ReviewState.APPROVED
+        )
+        val secondBaselineLeader = rankingExercise(
+            id = "a-second-baseline-leader",
+            difficulty = Difficulty.BEGINNER,
+            movementPattern = MovementPattern.HORIZONTAL_PULL,
+            reviewedState = ReviewState.APPROVED
+        )
+        val floorLimited = listOf(
+            EligibilityPreference.Limited(MovementCapabilityType.FLOOR_TRANSITION)
+        )
+        val balanceLimited = listOf(
+            EligibilityPreference.Limited(MovementCapabilityType.BALANCE_WITHOUT_SUPPORT)
+        )
+
+        val workout = planner.generateWorkout(
+            reviewedRankingContext(
+                experienceLevel = ExperienceLevel.BEGINNER,
+                candidates = listOf(
+                    firstBaselineLeader,
+                    secondBaselineLeader,
+                    source,
+                    promoted,
+                    compoundTarget,
+                    accessoryTarget
+                ),
+                decisions = listOf(
+                    reviewedDecision(firstBaselineLeader.id),
+                    reviewedDecision(secondBaselineLeader.id),
+                    reviewedDecision(source.id, floorLimited),
+                    reviewedDecision(promoted.id, balanceLimited),
+                    reviewedDecision(compoundTarget.id, balanceLimited),
+                    reviewedDecision(
+                        accessoryTarget.id,
+                        listOf(
+                            EligibilityPreference.Limited(
+                                MovementCapabilityType.CONTINUOUS_ACTIVITY
+                            )
+                        )
+                    )
+                )
+            )
+        )
+
+        val baselineCandidates = listOf(
+            firstBaselineLeader,
+            secondBaselineLeader,
+            source.copy(
+                reviewedMetadata = checkNotNull(source.reviewedMetadata)
+                    .copy(approvedRegressions = emptyList())
+            ),
+            promoted.copy(
+                reviewedMetadata = checkNotNull(promoted.reviewedMetadata)
+                    .copy(approvedRegressions = emptyList())
+            ),
+            compoundTarget,
+            accessoryTarget
+        )
+        val baselineWorkout = planner.generateWorkout(
+            reviewedRankingContext(
+                experienceLevel = ExperienceLevel.BEGINNER,
+                candidates = baselineCandidates,
+                decisions = listOf(
+                    reviewedDecision(firstBaselineLeader.id),
+                    reviewedDecision(secondBaselineLeader.id),
+                    reviewedDecision(source.id, floorLimited),
+                    reviewedDecision(promoted.id, balanceLimited),
+                    reviewedDecision(compoundTarget.id, balanceLimited),
+                    reviewedDecision(
+                        accessoryTarget.id,
+                        listOf(
+                            EligibilityPreference.Limited(
+                                MovementCapabilityType.CONTINUOUS_ACTIVITY
+                            )
+                        )
+                    )
+                )
+            )
+        )
+
+        assertThat(baselineWorkout.exercises.map { it.exerciseId }).containsExactly(
+            firstBaselineLeader.id,
+            secondBaselineLeader.id,
+            source.id,
+            promoted.id,
+            compoundTarget.id,
+            accessoryTarget.id
+        ).inOrder()
+        val selectedIds = workout.exercises.map { it.exerciseId }
+        assertThat(selectedIds).containsExactly(
+            firstBaselineLeader.id,
+            secondBaselineLeader.id,
+            promoted.id,
+            compoundTarget.id,
+            accessoryTarget.id,
+            source.id
+        ).inOrder()
+        assertThat(
+            workout.rankingReasons
+                .filterIsInstance<WorkoutRankingReason.SupportedRegressionPreference>()
+                .map { it.sourceExerciseId to it.preferredExerciseId }
+        ).doesNotContain(promoted.id to accessoryTarget.id)
+    }
+
+    @Test
+    fun generateWorkout_supportedPreferenceDoesNotOutrankAccessoryMechanics() = runTest {
+        val anchor = rankingExercise(
+            id = "anchor-compound",
+            difficulty = Difficulty.BEGINNER,
+            reviewedState = ReviewState.APPROVED
+        )
+        val source = rankingExercise(
+            id = "a-programmed-source",
+            difficulty = Difficulty.BEGINNER,
+            mechanics = MechanicsType.ISOLATION,
+            reviewedState = ReviewState.APPROVED,
+            reviewedCapabilities = setOf(MovementCapabilityType.FLOOR_TRANSITION),
+            approvedRegressions = listOf(ReviewedExerciseLink("z-unprogrammed-target"))
+        )
+        val target = rankingExercise(
+            id = "z-unprogrammed-target",
+            difficulty = Difficulty.BEGINNER,
+            reviewedState = ReviewState.APPROVED
+        ).copy(programming = null)
+
+        val workout = planner.generateWorkout(
+            reviewedRankingContext(
+                experienceLevel = ExperienceLevel.BEGINNER,
+                candidates = listOf(anchor, source, target),
+                decisions = listOf(
+                    reviewedDecision(anchor.id),
+                    reviewedDecision(
+                        source.id,
+                        listOf(
+                            EligibilityPreference.Limited(
+                                MovementCapabilityType.FLOOR_TRANSITION
+                            )
+                        )
+                    ),
+                    reviewedDecision(target.id)
+                )
+            )
+        )
+
+        assertThat(workout.exercises.map { it.exerciseId })
+            .containsExactly(anchor.id, source.id, target.id)
+            .inOrder()
+        assertThat(workout.rankingReasons).isEmpty()
+    }
+
+    @Test
+    fun generateWorkout_sourceEvidenceSuppressesSupportedRegressionPreference() = runTest {
+        val source = rankingExercise(
+            id = "a-source-compound",
+            difficulty = Difficulty.BEGINNER,
+            reviewedState = ReviewState.APPROVED,
+            reviewedComplexity = ComplexityTier.FOUNDATIONAL,
+            reviewedCapabilities = setOf(MovementCapabilityType.FLOOR_TRANSITION),
+            approvedRegressions = listOf(ReviewedExerciseLink("z-supported-compound"))
+        )
+        val supported = rankingExercise(
+            id = "z-supported-compound",
+            difficulty = Difficulty.BEGINNER,
+            reviewedState = ReviewState.APPROVED,
+            reviewedComplexity = ComplexityTier.FOUNDATIONAL
+        )
+        val workout = planner.generateWorkout(
+            reviewedRankingContext(
+                experienceLevel = ExperienceLevel.BEGINNER,
+                candidates = listOf(source, supported),
+                decisions = listOf(
+                    reviewedDecision(
+                        id = source.id,
+                        preferences = listOf(
+                            EligibilityPreference.Limited(
+                                MovementCapabilityType.FLOOR_TRANSITION
+                            )
+                        )
+                    ),
+                    reviewedDecision(id = supported.id)
+                ),
+                capabilityEvidence = capabilityEvidenceSet(
+                    source.id to capabilityEvidence(
+                        appliesToExerciseId = source.id,
+                        demonstratedExerciseId = source.id,
+                        scope = CapabilityEvidenceScope.EXACT_EXERCISE
+                    )
+                )
+            )
+        )
+
+        assertThat(workout.exercises.map { it.exerciseId })
+            .containsExactly(source.id, supported.id)
+            .inOrder()
+        assertThat(workout.rankingReasons).isEmpty()
+    }
+
+    @Test
+    fun generateWorkout_supportedRegressionNeverOutranksRequiredFocus() = runTest {
+        val source = rankingExercise(
+            id = "a-source-primary",
+            difficulty = Difficulty.BEGINNER,
+            reviewedState = ReviewState.APPROVED,
+            reviewedComplexity = ComplexityTier.FOUNDATIONAL,
+            reviewedCapabilities = setOf(MovementCapabilityType.FLOOR_TRANSITION),
+            approvedRegressions = listOf(ReviewedExerciseLink("z-supported-secondary"))
+        )
+        val supportedSecondary = rankingExercise(
+            id = "z-supported-secondary",
+            difficulty = Difficulty.BEGINNER,
+            reviewedState = ReviewState.APPROVED,
+            reviewedComplexity = ComplexityTier.FOUNDATIONAL
+        ).asSecondaryOnly()
+        val workout = planner.generateWorkout(
+            reviewedRankingContext(
+                experienceLevel = ExperienceLevel.BEGINNER,
+                candidates = listOf(source, supportedSecondary),
+                decisions = listOf(
+                    reviewedDecision(
+                        id = source.id,
+                        preferences = listOf(
+                            EligibilityPreference.Limited(
+                                MovementCapabilityType.FLOOR_TRANSITION
+                            )
+                        )
+                    ),
+                    reviewedDecision(id = supportedSecondary.id)
+                )
+            )
+        )
+
+        assertThat(workout.exercises.map { it.exerciseId })
+            .containsExactly(source.id, supportedSecondary.id)
+            .inOrder()
+        assertThat(workout.rankingReasons).isEmpty()
     }
 
     @Test
@@ -1246,9 +2081,13 @@ class FakeWorkoutPlannerTest {
         id: String,
         difficulty: Difficulty,
         mechanics: MechanicsType = MechanicsType.COMPOUND,
+        movementPattern: MovementPattern = MovementPattern.HORIZONTAL_PUSH,
         fatigueScore: Int = 3,
         reviewedState: ReviewState? = null,
-        reviewedComplexity: ComplexityTier = ComplexityTier.STANDARD
+        reviewedComplexity: ComplexityTier = ComplexityTier.STANDARD,
+        reviewedCapabilities: Set<MovementCapabilityType> = emptySet(),
+        approvedRegressions: List<ReviewedExerciseLink> = emptyList(),
+        supportRequirement: SupportRequirement = SupportRequirement.SUPPORTED
     ): Exercise {
         val base = allExercises.single { it.id == "barbell-bench-press" }
         return base.copy(
@@ -1259,13 +2098,16 @@ class FakeWorkoutPlannerTest {
             programming = checkNotNull(base.programming).copy(
                 difficulty = difficulty,
                 mechanics = mechanics,
-                movementPattern = MovementPattern.HORIZONTAL_PUSH,
+                movementPattern = movementPattern,
                 fatigueScore = fatigueScore
             ),
             reviewedMetadata = reviewedState?.let {
                 reviewedMetadata(
                     reviewState = it,
-                    complexity = reviewedComplexity
+                    complexity = reviewedComplexity,
+                    capabilityRequirements = reviewedCapabilities,
+                    approvedRegressions = approvedRegressions,
+                    supportRequirement = supportRequirement
                 )
             }
         )
@@ -1289,7 +2131,10 @@ class FakeWorkoutPlannerTest {
 
     private fun reviewedMetadata(
         reviewState: ReviewState,
-        complexity: ComplexityTier = ComplexityTier.STANDARD
+        complexity: ComplexityTier = ComplexityTier.STANDARD,
+        capabilityRequirements: Set<MovementCapabilityType> = emptySet(),
+        approvedRegressions: List<ReviewedExerciseLink> = emptyList(),
+        supportRequirement: SupportRequirement = SupportRequirement.SUPPORTED
     ): ReviewedExerciseMetadata =
         ReviewedExerciseMetadata(
             reviewState = reviewState,
@@ -1299,10 +2144,10 @@ class FakeWorkoutPlannerTest {
             complexity = complexity,
             progressionFamily = "dumbbell-horizontal-push",
             prescriptionShape = PrescriptionShape.WEIGHT_REPS,
-            approvedRegressions = emptyList(),
+            approvedRegressions = approvedRegressions,
             approvedSubstitutions = emptyList(),
-            capabilityRequirements = emptySet(),
-            supportRequirement = SupportRequirement.SUPPORTED,
+            capabilityRequirements = capabilityRequirements,
+            supportRequirement = supportRequirement,
             impactLevel = ImpactLevel.NONE,
             equipmentAlternatives = listOf(listOf(StandardEquipment.DUMBBELL, StandardEquipment.BENCH)),
             clearedTrainingConstraints = emptySet(),
@@ -1314,7 +2159,7 @@ class FakeWorkoutPlannerTest {
                 },
                 rationaleOrSource = "Planner invariance fixture; not authored catalog approval.",
                 reviewedAtEpochMillis = if (reviewState == ReviewState.APPROVED) 1L else null,
-                schemaVersion = 1,
+                schemaVersion = 2,
                 policyVersion = 1
             )
         )
