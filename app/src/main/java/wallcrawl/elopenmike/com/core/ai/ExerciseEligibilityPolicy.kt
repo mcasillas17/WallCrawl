@@ -10,7 +10,6 @@ import wallcrawl.elopenmike.com.core.model.EligibilityPreference
 import wallcrawl.elopenmike.com.core.model.EligibilityReason
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
-import wallcrawl.elopenmike.com.core.model.ReviewState
 import wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata
 import wallcrawl.elopenmike.com.core.model.SupportRequirement
 import wallcrawl.elopenmike.com.core.model.UserProfile
@@ -38,41 +37,38 @@ class ExerciseEligibilityPolicy {
         val excludedExerciseIds = profile.excludedExerciseIds.toSet()
         val exercisesById = exercises.associateBy(Exercise::id)
         val decisions = exercises.map { exercise ->
-            val metadata = exercise.reviewedMetadata
-            val approvedMetadata = metadata?.takeIf {
-                it.reviewState == ReviewState.APPROVED
-            }
+            val acceptedMetadata = exercise.acceptedMetadata()
             val reasons = buildList {
                 if (exercise.id in excludedExerciseIds) {
                     add(EligibilityReason.USER_EXCLUDED)
                 }
                 if (
-                    approvedMetadata != null &&
-                    (!approvedMetadata.equipmentAlternatives.isEquipmentSatisfiedBy(ownedEquipment) ||
+                    acceptedMetadata != null &&
+                    (!acceptedMetadata.equipmentAlternatives.isEquipmentSatisfiedBy(ownedEquipment) ||
                         !exercise.hasRequiredFixedAnchorEquipment(ownedEquipment))
                 ) {
                     add(EligibilityReason.MISSING_EQUIPMENT)
                 }
-                if (approvedMetadata == null) {
+                if (acceptedMetadata == null) {
                     add(EligibilityReason.MISSING_APPROVED_METADATA)
                 }
-                if (approvedMetadata != null) {
-                    if (approvedMetadata.capabilityRequirements.any { capability ->
+                if (acceptedMetadata != null) {
+                    if (acceptedMetadata.capabilityRequirements.any { capability ->
                             profile.movementCapabilities[capability] == CapabilityLevel.AVOID
                         }
                     ) {
                         add(EligibilityReason.CAPABILITY_AVOID)
                     }
-                    if (!approvedMetadata.clearsJointConstraintsOf(profile)) {
+                    if (!acceptedMetadata.clearsJointConstraintsOf(profile)) {
                         add(EligibilityReason.UNMAPPED_TRAINING_CONSTRAINT)
                     }
-                    if (approvedMetadata.violatesImpactRestrictionOf(profile)) {
+                    if (acceptedMetadata.violatesImpactRestrictionOf(profile)) {
                         add(EligibilityReason.HIGH_IMPACT_DISALLOWED)
                     }
                     val advancedCeilingApplies =
-                        approvedMetadata.complexity == ComplexityTier.ADVANCED &&
-                            approvedMetadata.progressionFamily !in demonstratedProgressionFamilies &&
-                            !approvedMetadata.hasAvailableApprovedSupportedRegression(
+                        acceptedMetadata.complexity == ComplexityTier.ADVANCED &&
+                            acceptedMetadata.progressionFamily !in demonstratedProgressionFamilies &&
+                            !acceptedMetadata.hasAvailableAcceptedSupportedRegression(
                                 exercisesById = exercisesById,
                                 profile = profile,
                                 ownedEquipment = ownedEquipment,
@@ -89,7 +85,7 @@ class ExerciseEligibilityPolicy {
             }
             val eligible = reasons.isEmpty()
             val preferences = if (eligible) {
-                requireNotNull(approvedMetadata).capabilityRequirements
+                requireNotNull(acceptedMetadata).capabilityRequirements
                     .sortedBy(MovementCapabilityType::ordinal)
                     .mapNotNull { capability ->
                         when (profile.movementCapabilities[capability]) {
@@ -137,7 +133,14 @@ class ExerciseEligibilityPolicy {
         return AutomaticEligibilityFailure.NO_ELIGIBLE_CANDIDATES
     }
 
-    private fun ReviewedExerciseMetadata.hasAvailableApprovedSupportedRegression(
+    /**
+     * Whether a documented regression edge resolves to a usable, independently accepted target.
+     *
+     * The edge authorizes the relationship; it never carries the target's acceptance with it.
+     * A regression whose own record is a draft, missing or malformed opens no exception here,
+     * and no link is inferred: only the edges this record already declares are read.
+     */
+    private fun ReviewedExerciseMetadata.hasAvailableAcceptedSupportedRegression(
         exercisesById: Map<String, Exercise>,
         profile: UserProfile,
         ownedEquipment: Set<String>,
@@ -145,9 +148,8 @@ class ExerciseEligibilityPolicy {
         demonstratedProgressionFamilies: Set<String>
     ): Boolean = approvedRegressions.any { link ->
         val regression = exercisesById[link.exerciseId] ?: return@any false
-        val regressionMetadata = regression.reviewedMetadata ?: return@any false
-        regressionMetadata.reviewState == ReviewState.APPROVED &&
-            regressionMetadata.supportRequirement == SupportRequirement.SUPPORTED &&
+        val regressionMetadata = regression.acceptedMetadata() ?: return@any false
+        regressionMetadata.supportRequirement == SupportRequirement.SUPPORTED &&
             (
                 regressionMetadata.complexity != ComplexityTier.ADVANCED ||
                     regressionMetadata.progressionFamily in demonstratedProgressionFamilies

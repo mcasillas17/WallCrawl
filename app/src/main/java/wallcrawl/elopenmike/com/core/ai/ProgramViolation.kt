@@ -60,7 +60,14 @@ enum class ProgramViolationCode {
     /** Product policy: an exercise the user excluded, or one the enabled path ruled out. */
     EXPLICIT_CONSTRAINT_VIOLATED,
 
-    /** Software invariant, reviewed path: automatic planning needs `APPROVED` metadata. */
+    /**
+     * Software invariant, reviewed path: automatic planning needs accepted reviewed metadata.
+     *
+     * The name predates the `AI_ACCEPTED` state and is frozen: this code is persisted by name
+     * in a recommendation snapshot. It fires whenever a candidate is not accepted — a draft,
+     * or a record whose provenance does not match its state — and not only when a human
+     * approval is missing.
+     */
     MISSING_APPROVED_METADATA,
 
     /** Software invariant, reviewed path: metadata and ledger must share a review policy. */

@@ -46,6 +46,30 @@ boundary is not a universal claim about Android/OEM transfer behavior; see
 [Privacy and backup](privacy.md) for the configuration, recovery tradeoffs, and
 previous-backup limitations.
 
+## What "accepted" means at runtime
+
+Every runtime consumer of reviewed metadata reads one gate,
+`Exercise.acceptedMetadata()` in `core/ai/ReviewedMetadataAcceptance.kt`. It accepts two
+review states and nothing else:
+
+- `APPROVED` — human-only. It requires the human reviewer role and review time, and a record
+  in this state carrying `aiReviewProvenance` is malformed, not a softer approval.
+- `AI_ACCEPTED` — owner-authorized alpha. It requires `aiReviewProvenance` recorded over this
+  exact exercise id, on reviewed schema v3 or later, with a SHA-256 content digest and HTTPS
+  source references, and every human-review field left null.
+
+`DRAFT`, an absent block, and any record whose provenance does not match its state are
+refused. Acceptance never promotes an AI acceptance into a human approval; the two states
+stay separately recorded and separately provenanced, and only the question "may automatic
+planning read this?" is answered in one place.
+
+A record's `approvedRegressions` and `approvedSubstitutions` edges authorize a relationship
+and nothing more. A consumer that wants to use an edge runs its target through this same
+gate, so an accepted source pointing at a pending target opens no capability exception,
+propagates no evidence, and ranks as no supported regression. Holding such an edge does not
+make the source's own metadata unaccepted, and no graph link is ever inferred or widened.
+The parser's structural graph validation at import is a separate contract.
+
 ## Deterministic hard rule order
 
 Rules are evaluated in incoming catalog order. Reasons within a decision use
@@ -57,13 +81,13 @@ earlier stages.
 | --- | --- | --- | --- |
 | 1 | Explicitly excluded exercise | `USER_EXCLUDED` | `USER_EXCLUSIONS_REMOVED_ALL` |
 | 2 | No complete reviewed equipment alternative or required fixed-anchor setup is available | `MISSING_EQUIPMENT` | `EQUIPMENT_REMOVED_ALL` |
-| 3 | Metadata is absent or not `APPROVED` | `MISSING_APPROVED_METADATA` | `NO_APPROVED_METADATA` |
+| 3 | Metadata is absent or not accepted | `MISSING_APPROVED_METADATA` | `NO_APPROVED_METADATA` |
 | 4 | A required capability is `AVOID` | `CAPABILITY_AVOID` | `CAPABILITIES_REMOVED_ALL` |
 | 5 | A selected joint sensitivity is not in this exercise's `clearedTrainingConstraints` | `UNMAPPED_TRAINING_CONSTRAINT` | `TRAINING_CONSTRAINTS_REMOVED_ALL` |
 | 5 | `LOW_IMPACT_ONLY` meets `ImpactLevel.HIGH` | `HIGH_IMPACT_DISALLOWED` | `TRAINING_CONSTRAINTS_REMOVED_ALL` |
 | 6 | `ADVANCED` is temporarily above the uncalibrated/returning ceiling | `ADVANCED_WHILE_UNCALIBRATED` or `ADVANCED_WHILE_RETURNING` | `CALIBRATION_COMPLEXITY_REMOVED_ALL` |
 
-Stage 5's joint decision is **per exercise**, not per pool. Each approved record carries
+Stage 5's joint decision is **per exercise**, not per pool. Each accepted record carries
 `clearedTrainingConstraints`: the joint sensitivities a reviewer explicitly cleared it for.
 A selected sensitivity that the record does not list keeps that one exercise out of the
 automatic pool; it no longer removes every candidate on the strength of the profile alone.
@@ -87,7 +111,8 @@ same clearance, and `LOW_IMPACT_ONLY` against `ImpactLevel.HIGH` — and refuses
 already had. The clearance check is one shared predicate called from both policies, so they
 cannot drift into different readings of the same reviewed field.
 
-An eligible exercise has the hard reason `APPROVED`. `EligibilityPreference`
+An eligible exercise has the hard reason `APPROVED`, whose name is frozen and means
+accepted. `EligibilityPreference`
 retains each explicitly required capability that is `LIMITED` or `UNKNOWN`, in
 enum order, as a soft input only. Hard rule output defines candidate
 membership; evidence never edits these decisions.
@@ -141,17 +166,18 @@ magnitudes, deltas, readiness, recovery, or medical thresholds.
 Evidence applies only to:
 
 1. the exact demonstrated exercise; or
-2. one direct `approvedRegressions` target when both the demonstrated exercise
-   metadata and the target metadata are `ReviewState.APPROVED`.
+2. one direct `approvedRegressions` target when the demonstrated exercise metadata and
+   the target metadata are **each independently accepted**. The edge authorizes the
+   relationship only; it never carries the source's acceptance to the target.
 
 There is no draft, missing-metadata, inferred, substitution, blank-ID,
 unrelated-peer, or transitive expansion. If a target has its own exact
-evidence, exact evidence wins over inherited evidence. If multiple approved
-sources point directly to the same approved target, the derived inherited record
+evidence, exact evidence wins over inherited evidence. If multiple accepted
+sources point directly to the same accepted target, the derived inherited record
 uses the lexicographically first demonstrated exercise ID, so results stay
 stable regardless of caller collection order.
 
-Focused tests construct `APPROVED` reviewed metadata only in memory, with
+Focused tests construct accepted reviewed metadata only in memory, with
 synthetic provenance that clearly says it is test data. No synthetic approval is
 written into `tools/workout-guide/reviewed-metadata.json`, the bundled catalog,
 or bundled provenance assets.
@@ -215,8 +241,8 @@ retains target exercise, source exercise, and capability references.
 
 This section is a **proposal awaiting human sign-off**, not a shipped configuration.
 `PlannerFeatureFlags.reviewedCapabilityEligibility` is still `false` in
-`WallCrawlApplication`, and the bundled catalog still holds 211 `DRAFT` and 0 `APPROVED`
-records, so nothing below is in effect.
+`WallCrawlApplication`, and the bundled catalog still holds 211 `DRAFT`, 0 `APPROVED` and
+0 `AI_ACCEPTED` records, so nothing below is in effect.
 
 ### Proposed cohort
 

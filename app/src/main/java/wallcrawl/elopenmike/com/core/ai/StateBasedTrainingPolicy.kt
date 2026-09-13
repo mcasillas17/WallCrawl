@@ -13,7 +13,6 @@ import wallcrawl.elopenmike.com.core.model.MovementPattern
 import wallcrawl.elopenmike.com.core.model.PrescriptionShape
 import wallcrawl.elopenmike.com.core.model.RestClass
 import wallcrawl.elopenmike.com.core.model.RestTargetSource
-import wallcrawl.elopenmike.com.core.model.ReviewState
 import wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata
 import wallcrawl.elopenmike.com.core.model.TrainingProgramState
 import wallcrawl.elopenmike.com.core.model.TrainingProgramStatePolicyVersion
@@ -160,8 +159,8 @@ enum class TrainingPolicyFailureReason {
     UNSUPPORTED_TRAINING_PROGRAM_STATE_POLICY,
     UNSUPPORTED_LEDGER_POLICY,
     MALFORMED_WEEKLY_LEDGER,
-    MISSING_APPROVED_METADATA,
-    MALFORMED_APPROVED_METADATA,
+    MISSING_ACCEPTED_METADATA,
+    MALFORMED_ACCEPTED_METADATA,
     REVIEW_POLICY_VERSION_MISMATCH,
     PRESCRIPTION_SHAPE_MISMATCH,
     CAPABILITY_AVOID_REACHED_POLICY,
@@ -234,13 +233,13 @@ class StateBasedTrainingPolicy(
         }
 
         val metadata = exercise.reviewedMetadata
-            ?.takeIf { it.reviewState == ReviewState.APPROVED }
+            ?.takeIf { it.reviewState.isAcceptedReviewState() }
             ?: return TrainingPolicyResult.Failure(
-                TrainingPolicyFailureReason.MISSING_APPROVED_METADATA
+                TrainingPolicyFailureReason.MISSING_ACCEPTED_METADATA
             )
-        if (!metadata.isWellFormedApprovedMetadata()) {
+        if (!metadata.isWellFormedAcceptedMetadata(exercise.id)) {
             return TrainingPolicyResult.Failure(
-                TrainingPolicyFailureReason.MALFORMED_APPROVED_METADATA
+                TrainingPolicyFailureReason.MALFORMED_ACCEPTED_METADATA
             )
         }
         if (metadata.provenance.policyVersion != ledger.reviewPolicyVersion) {
@@ -444,23 +443,12 @@ internal fun WeeklyDoseLedger.isWellFormed(): Boolean {
 
 private fun Map<String, Int>.hasWellFormedCounts(): Boolean = all { (key, count) ->
     key.isNotBlank() &&
-        key.length <= MAX_LEDGER_KEY_LENGTH &&
+        key.length <= MAX_REVIEWED_MUSCLE_KEY_LENGTH &&
         key.none(Char::isISOControl) &&
         count > 0
 }
 
-/** Whether approved metadata carries the human provenance approval requires. */
-internal fun ReviewedExerciseMetadata.isWellFormedApprovedMetadata(): Boolean =
-    directPrimaryMuscle.isNotBlank() &&
-        directPrimaryMuscle.length <= MAX_LEDGER_KEY_LENGTH &&
-        directPrimaryMuscle.none(Char::isISOControl) &&
-        provenance.reviewerRole?.isNotBlank() == true &&
-        provenance.rationaleOrSource.isNotBlank() &&
-        (provenance.reviewedAtEpochMillis ?: 0L) > 0L &&
-        provenance.schemaVersion > 0 &&
-        provenance.policyVersion > 0
-
-/** Whether the approved prescription shape agrees with the catalog and prescribed type. */
+/** Whether the accepted prescription shape agrees with the catalog and prescribed type. */
 internal fun ReviewedExerciseMetadata.matches(
     exerciseType: ExerciseType,
     basePrescriptionType: ExerciseType
@@ -475,8 +463,6 @@ internal fun ReviewedExerciseMetadata.matches(
         PrescriptionShape.DURATION -> exerciseType == ExerciseType.DURATION
     }
 }
-
-private const val MAX_LEDGER_KEY_LENGTH = 64
 
 private fun TrainingPolicyResult.failureMessage(): String = when (this) {
     is TrainingPolicyResult.NoGuidance ->

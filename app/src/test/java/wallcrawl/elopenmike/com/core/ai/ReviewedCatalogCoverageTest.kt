@@ -125,7 +125,7 @@ class ReviewedCatalogCoverageTest(private val caseId: String) {
                     .isEqualTo("Synthetic test-only reviewer")
                 assertThat(it.reviewedMetadata.provenance.rationaleOrSource)
                     .startsWith("SYNTHETIC PLANNER FIXTURE")
-                assertThat(it.reviewedMetadata.isWellFormedApprovedMetadata()).isTrue()
+                assertThat(it.reviewedMetadata.isWellFormedAcceptedMetadata(it.id)).isTrue()
                 assertThat(it.reviewedMetadata.matches(it.type, it.type)).isTrue()
             }
 

@@ -67,13 +67,14 @@ Work that was never finished earns nothing: incomplete sets, sets stopped with a
 in-progress sessions all contribute zero. Planned target sets and prescriptions are not
 exposure and are never counted as such.
 
-## Missing, unknown, and `DRAFT` metadata
+## Missing, unknown, and unaccepted metadata
 
 A set is credited only when all of the following hold:
 
 - the exercise id resolves **exactly** in the current bundled catalog;
 - that exercise carries a `reviewedMetadata` block;
-- its `reviewState` is `APPROVED`;
+- it is **accepted for automatic planning** by `Exercise.acceptedMetadata()`: its
+  `reviewState` is `APPROVED` or `AI_ACCEPTED`, and its provenance matches that state;
 - its `directPrimaryMuscle` is present in the parsed reviewed contract.
 
 Otherwise the work set is counted in `unattributedWorkSets` under a typed reason:
@@ -82,15 +83,15 @@ Otherwise the work set is counted in `unattributedWorkSets` under a typed reason
 | --- | --- |
 | `UNKNOWN_EXERCISE` | the id is not in the current bundled catalog |
 | `MISSING_REVIEWED_METADATA` | the exercise exists but has no reviewed block |
-| `METADATA_NOT_APPROVED` | reviewed metadata exists but is not `APPROVED` |
+| `METADATA_NOT_APPROVED` | reviewed metadata exists but is not accepted (a draft, or provenance that does not match its state). The name is frozen because it is persisted. |
 
 Nothing is guessed. There is no fallback to legacy `primaryMuscles`, to exercise names, to
 the legacy `programming` block, or to an inferred movement pattern. The attribution branch
 is a sealed `LedgerAttribution` with exactly two outcomes — credited, or omitted with a
 reason — so there is no third path that could invent a muscle.
 
-The bundled catalog currently ships 302 exercises with 211 reviewed entries, **all `DRAFT`
-and none `APPROVED`**. Today the ledger therefore credits nothing from real history and
+The bundled catalog currently ships 302 exercises with 211 reviewed entries, **all `DRAFT`,
+none `APPROVED` and none `AI_ACCEPTED`**. Today the ledger therefore credits nothing from real history and
 reports every completed work set as `METADATA_NOT_APPROVED` or
 `MISSING_REVIEWED_METADATA`. `BundledCatalogLedgerAttributionTest` fails the build if that
 changes without deliberate human approval. Tests that need approved metadata build their
@@ -240,15 +241,15 @@ current inputs. `LedgerSourceFingerprint` is a SHA-256 digest, computed with the
 - the included completed session ids and their completion timestamps;
 - exercise-instance ids and the catalog exercise ids they reference;
 - set ids, types, and completion state (including sets not credited as work);
-- for every referenced exercise: whether it resolves, its review state, and — when
-  approved — its direct primary, its descriptive secondaries, and its provenance policy
-  version;
+- for every referenced exercise: whether it resolves, whether it is accepted, its review
+  state, and — when accepted — its direct primary, its descriptive secondaries, and its
+  provenance policy version;
 - the policy version, catalog version, review-policy version, week start, and zone id.
 
 Everything is canonically ordered before hashing, so the same history read back in a
-different order can never look like different history. Newly completed work, an approved
-entry, a new catalog, a new review policy, a different week, and a different zone all
-invalidate the cache and force a recomputation.
+different order can never look like different history. Newly completed work, a newly
+accepted entry, a new catalog, a new review policy, a different week, and a different zone
+all invalidate the cache and force a recomputation.
 
 Deleting or corrupting the cache cannot change a result. A row that does not decode exactly
 reads back as "no usable cache" and the ledger is recomputed from history; a tampered

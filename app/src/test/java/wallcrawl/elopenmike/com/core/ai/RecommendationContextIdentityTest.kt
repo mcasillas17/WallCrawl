@@ -130,18 +130,67 @@ class RecommendationContextIdentityTest {
         }
     }
 
+    @Test
+    fun acceptedAndPendingCandidates_produceDifferentIdentitiesWithoutLosingHistory() {
+        // An accepted candidate is a candidate; a pending one never reaches the list at all,
+        // so the two contexts can never be mistaken for the same one. Reviewed content and
+        // policy travel with the catalog commit and the review-policy version, both of which
+        // are hashed, and the completed-history count stays untouched by either.
+        val aiAccepted = context(
+            candidates = listOf(
+                syntheticAiAcceptedExercise(id = "incline-press", directPrimaryMuscle = "Chest")
+            )
+        )
+        val humanApproved = context(
+            candidates = listOf(
+                syntheticApprovedExercise(id = "incline-press", directPrimaryMuscle = "Chest")
+            )
+        )
+        val pending = context(candidates = emptyList())
+
+        assertThat(RecommendationContextIdentity.of(aiAccepted))
+            .isNotEqualTo(RecommendationContextIdentity.of(humanApproved))
+        assertThat(RecommendationContextIdentity.of(aiAccepted))
+            .isNotEqualTo(RecommendationContextIdentity.of(pending))
+        assertThat(RecommendationContextIdentity.of(aiAccepted.copy(catalogVersion = "later-commit")))
+            .isNotEqualTo(RecommendationContextIdentity.of(aiAccepted))
+        assertThat(RecommendationContextIdentity.of(aiAccepted.copy(reviewPolicyVersion = 2)))
+            .isNotEqualTo(RecommendationContextIdentity.of(aiAccepted))
+        assertThat(aiAccepted.completedWorkoutCount)
+            .isEqualTo(humanApproved.completedWorkoutCount)
+    }
+
+    @Test
+    fun changedAcceptedMetadataContent_changesTheIdentityWithoutChangingTheCatalogCommit() {
+        val original = context(
+            candidates = listOf(
+                syntheticAiAcceptedExercise(id = "incline-press", directPrimaryMuscle = "Chest")
+            )
+        )
+        val changed = original.copy(
+            allowedExercises = listOf(
+                syntheticAiAcceptedExercise(id = "incline-press", directPrimaryMuscle = "Back")
+            )
+        )
+
+        assertThat(changed.catalogVersion).isEqualTo(original.catalogVersion)
+        assertThat(RecommendationContextIdentity.of(changed))
+            .isNotEqualTo(RecommendationContextIdentity.of(original))
+    }
+
     private fun context(
         weekStartEpochDay: Long = MONDAY_EPOCH_DAY,
         timeZoneId: String = "America/Mexico_City",
         adaptationState: AdaptationState = AdaptationState.UNCALIBRATED,
-        withProgramState: Boolean = true
+        withProgramState: Boolean = true,
+        candidates: List<wallcrawl.elopenmike.com.core.model.Exercise> = listOf(
+            syntheticApprovedExercise(id = "incline-press", directPrimaryMuscle = "Chest"),
+            syntheticApprovedExercise(id = "seated-row", directPrimaryMuscle = "Back")
+        )
     ): WorkoutGenerationContext = WorkoutGenerationContext(
         userProfile = UserProfile(id = "profile-under-test", revision = 3),
         completedWorkoutCount = 2,
-        allowedExercises = listOf(
-            syntheticApprovedExercise(id = "incline-press", directPrimaryMuscle = "Chest"),
-            syntheticApprovedExercise(id = "seated-row", directPrimaryMuscle = "Back")
-        ),
+        allowedExercises = candidates,
         catalogVersion = "catalog-commit",
         reviewPolicyVersion = 1,
         trainingProgramState = if (withProgramState) {

@@ -8,7 +8,6 @@ import wallcrawl.elopenmike.com.core.model.ImpactLevel
 import wallcrawl.elopenmike.com.core.model.MovementPattern
 import wallcrawl.elopenmike.com.core.model.PrescriptionShape
 import wallcrawl.elopenmike.com.core.model.RepRange
-import wallcrawl.elopenmike.com.core.model.ReviewProvenance
 import wallcrawl.elopenmike.com.core.model.ReviewState
 import wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata
 import wallcrawl.elopenmike.com.core.model.SessionStatus
@@ -24,15 +23,11 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSet
  * Test-only fixtures for the weekly dose ledger.
  *
  * Every reviewed block built here is **synthetic** and exists only so the ledger can be
- * tested against `APPROVED` metadata while the shipped reviewed cohort stays `DRAFT`.
- * The provenance strings say so explicitly, and nothing in `src/main` can read this file,
- * so a synthetic approval can never reach the bundled catalog or a real user's ledger.
+ * tested against accepted metadata while the shipped reviewed cohort stays `DRAFT`. Its
+ * provenance comes from [syntheticProvenance] and [syntheticAiProvenance], whose strings say
+ * so explicitly, and nothing in `src/main` can read this file, so a synthetic approval or
+ * acceptance can never reach the bundled catalog or a real user's ledger.
  */
-const val SYNTHETIC_REVIEWER_ROLE: String = "SYNTHETIC_TEST_REVIEWER_NOT_A_HUMAN"
-
-const val SYNTHETIC_REVIEW_RATIONALE: String =
-    "SYNTHETIC TEST FIXTURE. Not a human review and never shipped in the bundled catalog."
-
 const val SYNTHETIC_CATALOG_VERSION: String = "synthetic-catalog-version-for-tests"
 
 /** 2026-08-31, a Monday, used as a stable ISO week start across the ledger tests. */
@@ -49,6 +44,14 @@ const val MONDAY_EPOCH_DAY: Long = 20_696L
  */
 val LEGACY_MUSCLES: List<String> = listOf("LEGACY-MUST-NOT-BE-CREDITED", StandardMuscles.TRICEPS)
 
+/**
+ * The exercise id an AI acceptance is recorded over when a caller does not name one.
+ *
+ * It is deliberately a real-looking id rather than a blank: a test that wants a mismatch
+ * between the accepted content and the exercise carrying it has to ask for one.
+ */
+const val SYNTHETIC_DEFAULT_EXERCISE_ID: String = "synthetic-exercise"
+
 fun syntheticApprovedExercise(
     id: String,
     directPrimaryMuscle: String,
@@ -62,7 +65,27 @@ fun syntheticApprovedExercise(
     reviewedMetadata = syntheticReviewedMetadata(
         reviewState = ReviewState.APPROVED,
         directPrimaryMuscle = directPrimaryMuscle,
-        descriptiveSecondaryMuscles = descriptiveSecondaryMuscles
+        descriptiveSecondaryMuscles = descriptiveSecondaryMuscles,
+        exerciseId = id
+    )
+)
+
+/** The AI-accepted counterpart of [syntheticApprovedExercise], with matching AI provenance. */
+fun syntheticAiAcceptedExercise(
+    id: String,
+    directPrimaryMuscle: String,
+    descriptiveSecondaryMuscles: Set<String> = emptySet(),
+    legacyPrimaryMuscles: List<String> = LEGACY_MUSCLES,
+    legacySecondaryMuscles: List<String> = LEGACY_MUSCLES
+): Exercise = syntheticExercise(
+    id = id,
+    legacyPrimaryMuscles = legacyPrimaryMuscles,
+    legacySecondaryMuscles = legacySecondaryMuscles,
+    reviewedMetadata = syntheticReviewedMetadata(
+        reviewState = ReviewState.AI_ACCEPTED,
+        directPrimaryMuscle = directPrimaryMuscle,
+        descriptiveSecondaryMuscles = descriptiveSecondaryMuscles,
+        exerciseId = id
     )
 )
 
@@ -75,7 +98,8 @@ fun syntheticDraftExercise(
     reviewedMetadata = syntheticReviewedMetadata(
         reviewState = ReviewState.DRAFT,
         directPrimaryMuscle = directPrimaryMuscle,
-        descriptiveSecondaryMuscles = descriptiveSecondaryMuscles
+        descriptiveSecondaryMuscles = descriptiveSecondaryMuscles,
+        exerciseId = id
     )
 )
 
@@ -100,7 +124,9 @@ fun syntheticExercise(
 fun syntheticReviewedMetadata(
     reviewState: ReviewState,
     directPrimaryMuscle: String,
-    descriptiveSecondaryMuscles: Set<String> = emptySet()
+    descriptiveSecondaryMuscles: Set<String> = emptySet(),
+    exerciseId: String = SYNTHETIC_DEFAULT_EXERCISE_ID,
+    policyVersion: Int = 1
 ): ReviewedExerciseMetadata = ReviewedExerciseMetadata(
     reviewState = reviewState,
     directPrimaryMuscle = directPrimaryMuscle,
@@ -116,12 +142,14 @@ fun syntheticReviewedMetadata(
     impactLevel = ImpactLevel.LOW,
     equipmentAlternatives = listOf(listOf("Bodyweight")),
     clearedTrainingConstraints = emptySet(),
-    provenance = ReviewProvenance(
-        reviewerRole = if (reviewState == ReviewState.APPROVED) SYNTHETIC_REVIEWER_ROLE else null,
-        rationaleOrSource = SYNTHETIC_REVIEW_RATIONALE,
-        reviewedAtEpochMillis = if (reviewState == ReviewState.APPROVED) 1_756_000_000_000L else null,
-        schemaVersion = 1,
-        policyVersion = 1
+    provenance = syntheticProvenance(
+        reviewState = reviewState,
+        policyVersion = policyVersion
+    ),
+    aiReviewProvenance = syntheticAiProvenance(
+        reviewState = reviewState,
+        reviewedContentId = exerciseId,
+        policyVersion = policyVersion
     )
 )
 

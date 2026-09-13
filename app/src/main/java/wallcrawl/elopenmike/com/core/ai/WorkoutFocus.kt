@@ -2,8 +2,6 @@ package wallcrawl.elopenmike.com.core.ai
 
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.ExerciseType
-import wallcrawl.elopenmike.com.core.model.ReviewState
-import wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
 import wallcrawl.elopenmike.com.core.model.WorkoutSplit
 
@@ -28,37 +26,25 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSplit
 /**
  * The muscles [this] trains as its own purpose, rather than ones it merely involves.
  *
- * Approved reviewed metadata wins where the reviewed contract applies, so the enabled path
+ * Accepted reviewed metadata wins where the reviewed contract applies, so the enabled path
  * reads the single designated `directPrimaryMuscle` instead of the broad legacy list. A
  * `DRAFT` record is skipped for the same reason every other rule skips one: a draft is not
- * approval, and it must never become a silent source of production behaviour. Legacy
+ * acceptance, and it must never become a silent source of production behaviour. Legacy
  * `primaryMuscles` is the fallback, which is what the shipped path uses today.
  */
 internal fun Exercise.focusMuscles(): List<String> =
-    approvedMetadata()?.let { listOf(it.directPrimaryMuscle) } ?: primaryMuscles
-
-/**
- * Reviewed metadata that is actually authoritative: approved, and carrying the human
- * provenance approval requires.
- *
- * One definition for the whole package. This is the gate that decides whether the reviewed
- * contract applies at all, so it is exactly the thing that must not be spelled out in
- * several places and tightened in only some of them.
- */
-internal fun Exercise.approvedMetadata(): ReviewedExerciseMetadata? = reviewedMetadata
-    ?.takeIf { it.reviewState == ReviewState.APPROVED }
-    ?.takeIf { it.isWellFormedApprovedMetadata() }
+    acceptedMetadata()?.let { listOf(it.directPrimaryMuscle) } ?: primaryMuscles
 
 /**
  * The muscles [this] involves without training them as its own purpose.
  *
- * The same approved-then-legacy resolution as [focusMuscles], so both halves of an
- * exercise's muscle description come from one source. Reading the approved record's
+ * The same accepted-then-legacy resolution as [focusMuscles], so both halves of an
+ * exercise's muscle description come from one source. Reading the accepted record's
  * `directPrimaryMuscle` while still reading the legacy secondary list would mix two
  * classifications of the same exercise.
  */
 internal fun Exercise.involvedMuscles(): List<String> =
-    approvedMetadata()?.descriptiveSecondaryMuscles?.toList() ?: secondaryMuscles
+    acceptedMetadata()?.descriptiveSecondaryMuscles?.toList() ?: secondaryMuscles
 
 /** Whether [this] trains [muscle] as its own purpose rather than merely involving it. */
 internal fun Exercise.trainsAsFocus(muscle: String): Boolean =
@@ -82,7 +68,7 @@ internal fun WorkoutSplit.trainsAsFocus(exercise: Exercise): Boolean =
  * the evidence for the split's name.
  *
  * The superset relation is what keeps fillability and selection honest. A predicate that
- * read the approved `directPrimaryMuscle` for fillability and the legacy muscle lists for
+ * read the accepted `directPrimaryMuscle` for fillability and the legacy muscle lists for
  * slot eligibility could call a split fillable and then drop the only candidate that made
  * it so, which is the mismatch this whole contract exists to remove.
  */

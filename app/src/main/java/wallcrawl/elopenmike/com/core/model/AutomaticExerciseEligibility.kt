@@ -12,6 +12,14 @@ enum class AdaptationState {
     RECALIBRATE
 }
 
+/**
+ * Why one exercise was allowed into, or kept out of, automatic planning.
+ *
+ * `APPROVED` and `MISSING_APPROVED_METADATA` are named for the human-only review state that
+ * predates `AI_ACCEPTED`, and both names are frozen because they are reported outward. They
+ * mean accepted and not accepted: an AI-accepted record reports `APPROVED`, and a draft or a
+ * record whose provenance does not match its state reports `MISSING_APPROVED_METADATA`.
+ */
 enum class EligibilityReason {
     APPROVED,
     MISSING_APPROVED_METADATA,
@@ -44,6 +52,7 @@ data class EligibilityDecision(
 )
 
 enum class AutomaticEligibilityFailure {
+    /** No candidate carried accepted reviewed metadata; the name is frozen, see above. */
     NO_APPROVED_METADATA,
     USER_EXCLUSIONS_REMOVED_ALL,
     EQUIPMENT_REMOVED_ALL,

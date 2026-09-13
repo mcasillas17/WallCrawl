@@ -6,7 +6,6 @@ import wallcrawl.elopenmike.com.core.model.LedgerPolicyVersion
 import wallcrawl.elopenmike.com.core.model.MovementPattern
 import wallcrawl.elopenmike.com.core.model.MuscleDoseAccounting
 import wallcrawl.elopenmike.com.core.model.PlannedExercise
-import wallcrawl.elopenmike.com.core.model.ReviewState
 import wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata
 import wallcrawl.elopenmike.com.core.model.TrainingProgramState
 import wallcrawl.elopenmike.com.core.model.TrainingProgramStatePolicyVersion
@@ -230,11 +229,11 @@ class ProgramValidator(
         if (constraints.uniqueProgressionFamilies) {
             val seen = mutableSetOf<String>()
             workout.exercises.forEachIndexed { index, planned ->
-                // Approved metadata only, matching the constraint's own contract: an
-                // unapproved draft record still carries an authored family, and a draft must
+                // Accepted metadata only, matching the constraint's own contract: an
+                // unaccepted draft record still carries an authored family, and a draft must
                 // never be what drives a product-policy rejection.
                 val family = allowedById[planned.exerciseId]
-                    ?.approvedMetadata()
+                    ?.acceptedMetadata()
                     ?.progressionFamily
                     ?: return@forEachIndexed
                 if (!seen.add(family)) {
@@ -268,14 +267,14 @@ class ProgramValidator(
     /**
      * The pattern a declared coverage rule may be satisfied or rejected by.
      *
-     * Approved metadata first, then the legacy authored block. An unapproved draft is
+     * Accepted metadata first, then the legacy authored block. An unaccepted draft is
      * skipped for the same reason the family rule skips one: a draft record still carries an
      * authored pattern, and a draft must never be what drives a product-policy rejection.
-     * The legacy fallback stays so the legacy path, where nothing is approved, can still
+     * The legacy fallback stays so the legacy path, where nothing is accepted, can still
      * satisfy a declared requirement.
      */
     private fun Exercise.movementPattern(): MovementPattern? =
-        approvedMetadata()?.movementPattern ?: programming?.movementPattern
+        acceptedMetadata()?.movementPattern ?: programming?.movementPattern
 
     // endregion
 
@@ -336,8 +335,8 @@ class ProgramValidator(
             )
         }
 
-        val approved = candidate.approvedMetadata()
-        if (approved == null) {
+        val accepted = candidate.acceptedMetadata()
+        if (accepted == null) {
             violations += ProgramViolation(
                 code = ProgramViolationCode.MISSING_APPROVED_METADATA,
                 exerciseId = candidate.id,
@@ -347,19 +346,19 @@ class ProgramValidator(
         }
 
         val ledger = context.trainingProgramState?.weeklyLedger
-        if (ledger != null && approved.provenance.policyVersion != ledger.reviewPolicyVersion) {
+        if (ledger != null && accepted.provenance.policyVersion != ledger.reviewPolicyVersion) {
             violations += ProgramViolation(
                 code = ProgramViolationCode.REVIEW_POLICY_VERSION_MISMATCH,
                 exerciseId = candidate.id,
                 orderIndex = index
             )
         }
-        if (!approved.matches(candidate.type, planned.prescription.exerciseType)) {
+        if (!accepted.matches(candidate.type, planned.prescription.exerciseType)) {
             violations += ProgramViolation(
                 code = ProgramViolationCode.PRESCRIPTION_SHAPE_MISMATCH,
                 exerciseId = candidate.id,
                 orderIndex = index,
-                detail = approved.prescriptionShape.name
+                detail = accepted.prescriptionShape.name
             )
         }
         return violations
@@ -487,7 +486,7 @@ class ProgramValidator(
         val attribution = linkedMapOf<String, String>()
         workout.exercises.forEach { planned ->
             val muscle = allowedById[planned.exerciseId]
-                ?.approvedMetadata()
+                ?.acceptedMetadata()
                 ?.directPrimaryMuscle
                 ?: return@forEach
             attribution[planned.exerciseId] = muscle
