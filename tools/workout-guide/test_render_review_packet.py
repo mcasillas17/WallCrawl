@@ -65,6 +65,11 @@ class RenderReviewPacketTest(unittest.TestCase):
         self.assertIn("| `example-stretch` | outside_automatic_strength_scope | Not allocated | N/A |", result)
         self.assertIn("Unsuitable as references for new illustrations until reconciled", result)
         self.assertIn("| `example-stretch` | Source illustration depicts a different movement. |", result)
+        self.assertIn(
+            "Production reviewed planning has no accepted metadata to plan from; "
+            "no record is genuinely human-`approved` yet",
+            result,
+        )
         self.assertEqual(ledger_before, self.ledger)
         self.assertEqual(metadata_before, self.metadata)
 
@@ -106,7 +111,12 @@ class RenderReviewPacketTest(unittest.TestCase):
         self.assertIn("| `example-press` | ai_accepted | Chest | Pending |", result)
         self.assertIn("pre-disposition proposal", result)
         self.assertIn("pending endpoint", result)
-        self.assertIn("Production reviewed planning remains disabled", result)
+        self.assertIn(
+            "Production reviewed planning is enabled and plans from the "
+            "1 `AI_ACCEPTED` record(s) above",
+            result,
+        )
+        self.assertIn("no record is genuinely human-`approved` yet", result)
         self.assertNotIn("`DRAFT` describes missing human sign-off", result)
 
     def test_pending_decision_text_cannot_break_table_rows(self):

@@ -70,9 +70,16 @@ requiring a push accessory. This is an expected metadata ordering change.
 
 Per-exercise rep prescriptions are pinned against the pre-change baseline across goals,
 return durations and weight units. The factory implementation is unchanged. Ordinary
-timed strength retains 3 sets × 45 seconds with 45-second rests. Stretches retain
+timed strength retains a **base** prescription of 3 sets × 45 seconds with 45-second rests
+from `DefaultExercisePrescriptionFactory`. Stretches retain
 1 set × 30 seconds with 15-second rests; distance/duration retains 1 × 600 seconds
-with no rest. No reps are converted into seconds, and no load is invented. Duration
+with no rest. On the now-enabled reviewed path, `StateBasedTrainingPolicy` can further cap
+that base prescription's sets against the remaining weekly allowance for an `AI_ACCEPTED`
+or `APPROVED` exercise, and adds its own nullable RIR and rest-class guidance on top; it
+never raises sets or invents a load. The base numbers above are what the factory itself
+produces before that policy runs, not a guarantee of what an accepted timed exercise's
+final displayed prescription will be. No reps are converted into seconds, and no load is
+invented. Duration
 metadata does not make stretches or pure conditioning eligible for strength slots.
 
 All 302 identities, source metadata, 906 frames, licensing, and reviewed records remain

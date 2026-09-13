@@ -205,11 +205,29 @@ The manifest currently contains fourteen fixtures:
 7. `mixed-unit-history` — kilogram history coverage proving prior KG history is honored and the existing load is preserved when recent sets do not justify an increase.
 8. `sparse-history` — curated regression-friendly upper-body subset of `inverted-row` and `prone-y-raise` so sparse history does not freeze a limited-hang profile to pull-ups, with `banded-lat-pulldown` held out as the forbidden control now that its anchor is unconfirmed.
 9. `no-strength-candidates` — harness-only typed-failure case restricted to the cardio-only `walking` entry so the real planner returns `NO_STRENGTH_CANDIDATES`.
-10. `reviewed-enabled-bodyweight` — copies six real bundled DRAFT records to unmistakably synthetic in-memory approvals, composes `BUILD` with an empty `PRIMARY_ONLY_V1` ledger, and proves eligibility plus dose/effort/rest guidance stay inside that reviewed bodyweight pool.
+10. `reviewed-enabled-bodyweight` — declares six exercise IDs as its synthetic-approved
+    cohort. `PlannerFixtureContextFactory` masks every *other* bundled exercise's real
+    `AI_ACCEPTED` state down to `DRAFT` for this fixture's in-memory view (never in the
+    bundled catalog itself), then rewrites the declared six to synthetic test-only
+    `APPROVED` regardless of their real bundled state: four of the six
+    (`push-up`, `bodyweight-squat`, `glute-bridge`, `side-plank`) are already `AI_ACCEPTED`
+    in the real bundle, and two (`knee-push-up`, `plank`) are `DRAFT`; the fixture treats
+    both alike as synthetic test data either way. It composes `BUILD` with an empty
+    `PRIMARY_ONLY_V1` ledger, and proves eligibility plus dose/effort/rest guidance stay
+    inside that reviewed bodyweight pool.
    Its expected selection is `bodyweight-squat`, `glute-bridge`, and `plank`: adding
    legacy timed programming makes plank rank ahead of the prior push accessory for this
-   leg split. This is synthetic test approval only; production metadata stays DRAFT.
-11. `reviewed-enabled-no-approved` — leaves every bundled record DRAFT and proves the enabled policy returns `REVIEWED_ELIGIBILITY_NO_CANDIDATES` with `NO_APPROVED_METADATA` and no legacy fallback.
+   leg split. This is synthetic test approval only; it neither reads nor changes the real
+   bundled cohort's `AI_ACCEPTED` records.
+11. `reviewed-enabled-no-approved` — declares an empty synthetic cohort, so
+    `PlannerFixtureContextFactory` masks every bundled exercise's real `AI_ACCEPTED` state
+    down to `DRAFT` for this fixture's in-memory view only, and proves the enabled policy
+    returns `REVIEWED_ELIGIBILITY_NO_CANDIDATES` with `NO_APPROVED_METADATA` and no legacy
+    fallback when nothing is accepted. It does not claim the real bundled catalog has no
+    accepted records — production carries 182 `AI_ACCEPTED` records; see
+    `ProductionPlannerCompositionTest` and
+    [the enabled rollout contract](reviewed-capability-eligibility.md#enabled-rollout-contract)
+    for that actual behavior.
 12. `reviewed-enabled-uncleared-joint-constraint` — the `reviewed-enabled-bodyweight` pool with
     `SHOULDER_SENSITIVE` selected. The fixture declares no
     `syntheticClearedTrainingConstraints`, so the synthetic approvals clear nothing — matching

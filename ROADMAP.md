@@ -526,9 +526,11 @@ progression/deload rather than a conservative reviewed planner.
    valid plan built only from real `AI_ACCEPTED` records.
 2. Prove the reviewed path preserves hard constraints, no-invented-load, deterministic replay,
    and valid plans for every supported persona. **Done for the accepted cohort.** Every
-   supported profile reaches a proposal that passes whole-program validation with repair
-   disabled or repaired as expected; band-only, joint-sensitive, and empty-inventory profiles
-   produce typed no-plan outcomes with no legacy fallback.
+   supported profile — including band-only, which reaches 11 accepted candidates and a
+   served two-exercise plan — reaches a proposal that passes whole-program validation with
+   repair disabled or repaired as expected; joint-sensitive and empty-inventory (or
+   inventory matching no accepted record) profiles produce typed no-plan outcomes instead,
+   with no legacy fallback.
 3. Document the initial rollout scope, especially whether progression/deload remains absent.
    **Done.** See the
    [enabled rollout contract](docs/reviewed-capability-eligibility.md#enabled-rollout-contract).
@@ -547,9 +549,12 @@ progression/deload rather than a conservative reviewed planner.
    shipped legacy planner reads no `TrainingConstraint` at all, and at the time this was
    audited the reviewed path was disabled, so nothing filtered. **Corrected** in English and
    Spanish and in README: the
-   answer is stored, and automatic workouts do not filter on it yet because that needs
-   genuine human-reviewed per-exercise clearances — a gap that remains even now the reviewed
-   path is enabled, since every accepted record still clears nothing. Five of the step's seven strings made some form of
+   answer is stored, and production now reads it — but not as a selective filter that
+   substitutes specific high-stress movements while keeping the rest. Because every
+   accepted record's `clearedTrainingConstraints` is still empty, selecting any joint
+   sensitivity refuses the whole automatic pool with a typed no-plan outcome instead;
+   genuine human-reviewed per-exercise clearances are what would let automatic planning
+   serve a joint-sensitive profile at all. Five of the step's seven strings made some form of
    the claim and all five were corrected in both languages: `onboarding_safety_hint`
    ("filters or substitutes high-stress movements"), `onboarding_safety_subtitle` (the answer
    is needed for "conservative exercise selection"), `onboarding_safety_none_subtitle` (the
@@ -885,7 +890,9 @@ gate is green at one commit, and optional inference can be removed without affec
 4. Correct stale schema-10 CI comments and keep migration-chain tests aligned with each schema.
 5. Decide signing, shrinking, and distribution requirements before a production release.
 6. Cut a new alpha when testers should receive the merged #49-#54 behavior, with release notes
-   that reviewed features remain disabled.
+   that reviewed features are enabled and plan from the owner-authorized `AI_ACCEPTED`
+   cohort, distinguished clearly from genuine human `APPROVED` review, which remains absent
+   for every record.
 
 **Likely surfaces:** Gradle configuration, Room processor options/schema directory, CI/release
 workflows, emulator matrix, Issue #45, and release tooling.

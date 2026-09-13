@@ -29,7 +29,7 @@ Reviewed schema version 2 adds `clearedTrainingConstraints`, so sign-off now als
 
 A human decision must identify the reviewed ID and fields, actual reviewer role, actual review time, rationale and remaining caveats. Only that explicit decision can support a later authored change to `reviewState=approved` with truthful provenance. A checklist, model consensus, software check, pull-request approval or merge is not that decision. No sign-off has been supplied for any row below.
 
-All 302 exercises remain available for browsing and manual workouts. Excluded categories receive no manufactured strength allocation. Production reviewed planning remains disabled; metadata acceptance, human approval, equipment/profile availability and rollout are separate gates.
+All 302 exercises remain available for browsing and manual workouts. Excluded categories receive no manufactured strength allocation. Production reviewed planning is enabled and plans from the 182 `AI_ACCEPTED` record(s) above; no record is genuinely human-`approved` yet; metadata acceptance, human approval, equipment/profile availability and rollout are separate gates.
 
 ## Per-ID sign-off register
 

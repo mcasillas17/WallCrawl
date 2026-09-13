@@ -152,6 +152,20 @@ def render_packet(ledger: dict, metadata: dict) -> str:
         + ", ".join(f"`{exercise_id}`" for exercise_id in cleared_ids)
         + "."
     )
+    # Derived, never asserted: this worksheet has no access to the Kotlin composition, so it
+    # reports what the metadata itself supports rather than guessing the runtime flag. Production
+    # enabling reviewed planning is conditioned on an accepted cohort existing; whether that
+    # cohort is genuinely human-`approved` is a wholly separate, independently derived fact.
+    rollout_summary = (
+        "Production reviewed planning is enabled and plans from the "
+        f"{states['ai_accepted']} `AI_ACCEPTED` record(s) above"
+        if states['ai_accepted']
+        else "Production reviewed planning has no accepted metadata to plan from"
+    ) + (
+        f", including {states['approved']} genuinely human-`approved` record(s)"
+        if states['approved']
+        else "; no record is genuinely human-`approved` yet"
+    )
     lines = [
         "# Exercise Metadata Human Sign-off",
         "",
@@ -212,7 +226,7 @@ def render_packet(ledger: dict, metadata: dict) -> str:
         "No sign-off has been supplied for any row below.",
         "",
         f"All {len(entries)} exercises remain available for browsing and manual workouts. Excluded categories "
-        "receive no manufactured strength allocation. Production reviewed planning remains disabled; "
+        f"receive no manufactured strength allocation. {rollout_summary}; "
         "metadata acceptance, human approval, equipment/profile availability and rollout are separate gates.",
         "",
         "## Per-ID sign-off register",

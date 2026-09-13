@@ -14,9 +14,17 @@ have different owners and must not be treated as interchangeable:
 - `reviewedMetadata` is WallCrawl-owned categorical input for the deterministic
   reviewed capability-eligibility gate. Production composition now sets that gate's
   local feature flag to `true`, and the current planner reads this block for
-  production filtering, ranking, dose, progression, substitution, and validation
+  production filtering, ranking, dose, and validation
   wherever a record is **accepted** — `APPROVED` or `AI_ACCEPTED` — through the
-  shared `Exercise.acceptedMetadata()` gate. See
+  shared `Exercise.acceptedMetadata()` gate. Directed `approvedRegressions` edges are
+  consumed today for three things only: the advanced-complexity ceiling exception in
+  `ExerciseEligibilityPolicy`, capability-evidence propagation to one direct target in
+  `CapabilityEvidencePolicy`, and ranking preference in
+  `SupportedRegressionRankingPolicy` (#77). `approvedSubstitutions` edges are parsed,
+  validated, and folded into the recommendation context fingerprint, but nothing yet
+  performs an actual in-session substitution from them; that remains Roadmap Package
+  10. Progression (Package 9) is not implemented either — this block supplies no
+  progression input. See
   [reviewed capability eligibility](reviewed-capability-eligibility.md).
 
 The complete 302-exercise catalog remains available to browsing and manual
@@ -62,12 +70,30 @@ all 302 IDs:
 
 Four IDs the audit could otherwise have accepted were deliberately withheld as
 **intrinsic holds** — `cable-kickback`, `cable-standing-hip-abduction`,
-`cable-standing-hip-adduction`, and `fire-hydrant` — and remain `DRAFT`. Seven accepted
-sources — `archer-push-up`, `dumbbell-bent-over-row`, `hindu-push-up`,
-`hip-adduction-machine`, `pistol-squat`, `push-up`, and `seated-row` — keep their
-`AI_ACCEPTED` state while still naming a regression or substitution target that is
-itself pending (`machine-row`, `cable-standing-hip-adduction`, `assisted-pistol-squat`,
-or `knee-push-up`). This is expected: relationship authorization and endpoint
+`cable-standing-hip-adduction`, and `fire-hydrant` — and remain `DRAFT`.
+
+Seven sources — `archer-push-up`, `dumbbell-bent-over-row`, `hindu-push-up`,
+`hip-adduction-machine`, `pistol-squat`, `push-up`, and `seated-row` — were held during
+an earlier graph-only review pass and are now `AI_ACCEPTED`. Of those seven, only five
+currently name a regression or substitution target that is itself still pending, across
+five edges naming four unique targets (`machine-row` is named twice, by
+`dumbbell-bent-over-row` and `seated-row`):
+
+| Source | Edge type | Pending target |
+| --- | --- | --- |
+| `dumbbell-bent-over-row` | `approvedRegressions` | `machine-row` |
+| `hip-adduction-machine` | `approvedSubstitutions` | `cable-standing-hip-adduction` |
+| `pistol-squat` | `approvedRegressions` | `assisted-pistol-squat` |
+| `push-up` | `approvedRegressions` | `knee-push-up` |
+| `seated-row` | `approvedSubstitutions` | `machine-row` |
+
+The remaining two — `archer-push-up` and `hindu-push-up` — both name `push-up` as their
+`approvedRegressions` target, and `push-up` is itself `AI_ACCEPTED`. Their edges are the
+positive control, not another pending-endpoint example: `CapabilityEvidencePolicy` can
+propagate capability evidence from `archer-push-up` across that accepted edge to
+`push-up`, while it cannot propagate from `dumbbell-bent-over-row`, `pistol-squat`, or
+`push-up` itself across their still-pending edges. This is expected: relationship
+authorization and endpoint
 acceptance are independent decisions, so an accepted source's edge to a pending target
 authorizes the relationship only — it grants no eligibility exception, no capability
 evidence, and no substitution eligibility until the target is independently accepted.
@@ -141,9 +167,10 @@ that a reviewer explicitly cleared the exercise for. It is a compatibility state
 self-reported label, not a diagnosis, an injury rule, or clinical clearance. Absence is not
 clearance: a selected sensitivity that a record does not list keeps that record out of
 automatic planning. `LOW_IMPACT_ONLY` cannot appear there, because `impactLevel` already
-decides it; the importer and the parser both reject a record that lists it. All 302
-`reviewedMetadata` entries currently clear nothing — including the 182 `AI_ACCEPTED`
-ones — so a joint-sensitive profile receives a typed refusal on the production path.
+decides it; the importer and the parser both reject a record that lists it. All 211
+authored `reviewedMetadata` entries currently clear nothing — including the 182
+`AI_ACCEPTED` ones — so a joint-sensitive profile receives a typed refusal on the
+production path.
 Nothing in this contract infers a clearance from a name, a muscle, a movement pattern or
 equipment.
 
@@ -173,8 +200,9 @@ pinned source checkout + WallCrawl-authored JSON
   -> deterministic reviewed eligibility policy (production flag enabled)
 ```
 
-`tools/workout-guide/reviewed-metadata.json` is the authored data source, at
-schema version 2. `tools/workout-guide/review-schema.json` is its strict schema. The importer uses
+`tools/workout-guide/reviewed-metadata.json` is the authored data source, currently at
+schema version 3 (the version that first carried the AI acceptance contract).
+`tools/workout-guide/review-schema.json` is its strict schema. The importer uses
 Python standard-library validation and rejects unknown or duplicate fields,
 missing fields, bad types/enums, unsafe or oversized values, non-finite numbers,
 excessive depth/count/payload, unknown catalog IDs, catalog/type mismatches,

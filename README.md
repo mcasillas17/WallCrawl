@@ -234,9 +234,12 @@ experience level, seven movement preferences, schedule and break duration,
 available gear, and sensitive-joint restrictions before compiling the initial
 Training Blueprint. Every movement preference requires an explicit answer;
 **Not sure** is a valid answer and persists as `UNKNOWN`. A sensitive-joint
-selection is saved, but automatic workouts do not filter on it yet: that needs
-human-reviewed per-exercise clearances, and the step says so rather than implying
-a filter that does not run. Movement preferences are the answers today's
+selection is saved and automatic workouts do read it: production checks each
+candidate's `clearedTrainingConstraints`, and because every accepted record
+currently clears none, selecting any joint sensitivity refuses automatic
+planning with a typed `TRAINING_CONSTRAINTS_REMOVED_ALL` reason rather than
+silently ignoring the selection. Browsing and manual workouts are unaffected.
+Movement preferences are the answers today's
 reviewed-path tests already act on.
 
 ### Fixed-anchor band setups
@@ -341,8 +344,11 @@ The active timer still reads the persisted exact seconds; add-time, skip, and di
 one-off timer actions rather than durable preference changes. Production now runs
 reviewed eligibility because an owner-authorized audit accepted 182 of the bundled
 cohort's 211 authored records as `AI_ACCEPTED` (0 `APPROVED`, 29 `DRAFT`, 56 with no
-authored block, 35 outside automatic-strength scope); today's automatic prescriptions
-and manual template defaults reflect that accepted cohort rather than the legacy filter.
+authored block, 35 outside automatic-strength scope); today's automatic recommendations
+reflect that accepted cohort rather than the legacy filter. Manual template defaults are
+unaffected: they are built by `DefaultExercisePrescriptionFactory` alone, which reads only
+the catalog type and legacy `programming` fallback ranges and never consults reviewed
+metadata, `TrainingProgramState`, or the accepted cohort.
 
 Manual templates use the same exercise IDs and type-aware prescriptions but do
 not pass through `WorkoutPlanner`. See [WallCrawl Architecture](docs/architecture.md)
@@ -441,17 +447,26 @@ bundled catalog.json → WorkoutGuideCatalogStore
 ```
 
 All catalog facts are browseable and searchable by name, alias, muscle, and
-listed equipment. Every bundled exercise can enter workout planning with a
-structurally valid prescription appropriate to its catalog type. Legacy
-`programming` metadata enriches those defaults when available; otherwise
+listed equipment. Every bundled exercise can be added to a **manual** template with a
+structurally valid prescription appropriate to its catalog type — manual selection
+reads no acceptance gate. **Automatic** planning is stricter: only the 182 `AI_ACCEPTED`
+records can enter it today; the remaining 120 pending/outside-scope exercises are
+excluded from automatic planning entirely (`MISSING_APPROVED_METADATA`), though they
+stay browseable and manually selectable. Legacy
+`programming` metadata enriches base prescriptions when available; otherwise
 WallCrawl uses conservative fallback targets. Its 131 authored entries (117 rep-based and 14 timed strength entries) cover
 every muscle group with beginner options throughout. The planner draws its
-compound slots from that set, softly demotes work above the profile's
-experience level, and prefers authored entries when filling the rest. Difficulty
-never removes an otherwise-legal candidate: an exercise without legacy
+compound slots from the accepted set, softly demotes work above the profile's
+experience level via legacy `programming.difficulty`, and prefers authored entries when
+filling the rest. That experience-based ranking demotion never removes an otherwise-legal
+candidate: an accepted exercise without legacy
 programming can still appear in a plan with fallback targets and no coaching
-note, and a higher-difficulty exercise remains selectable when it is the only
-fillable option.
+note, and a higher-difficulty accepted exercise remains selectable when it is the only
+fillable option. Reviewed `complexity` is a separate, harder rule on the automatic path:
+`ComplexityTier.ADVANCED` work is temporarily excluded outright while a profile is
+`UNCALIBRATED` or `RETURNING`, unless a demonstrated progression family or an accepted
+`SUPPORTED` regression is available — that is a hard eligibility exclusion, not a soft
+ranking demotion, and it applies only to automatic planning.
 
 Timed strength programming now carries difficulty, mechanics, fatigue, coaching,
 movement pattern, progression type, equipment, and alternatives without fabricated reps.

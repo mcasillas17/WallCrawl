@@ -5,8 +5,15 @@
 WallCrawl ships an implemented reviewed-only automatic-planning path, and
 production composition now sets `PlannerFeatureFlags.reviewedCapabilityEligibility`
 to `true`: `WallCrawlApplication` injects `PlannerFeatureFlags.PRODUCTION`, and
-shipped recommendations are generated from this path instead of the legacy
-`ExerciseFilter` and legacy `programming` metadata. The flag is local and set in
+shipped recommendations are filtered for eligibility through this path instead of the
+legacy `ExerciseFilter`. This does **not** replace legacy `programming` metadata:
+`fatigueScore`, `mechanics`, `movementPattern`, `coachingSummary`, and
+`recommendedRepRange` still drive ranking, coaching text, and the base rep-range/set
+prescription for every candidate the reviewed path admits. `reviewedMetadata` supplies
+the categorical eligibility gate (accepted-record membership, equipment, capability,
+constraint, and complexity rules) and the state-based dose/effort/rest policy layered
+on top of that base prescription; it does not itself supply ranking, coaching, or the
+base prescription. The flag is local and set in
 application composition; there is no remote configuration, analytics event,
 automatic activation, or network rollout path.
 
@@ -65,7 +72,9 @@ review states and nothing else:
 - `APPROVED` — human-only. It requires the human reviewer role and review time, and a record
   in this state carrying `aiReviewProvenance` is malformed, not a softer approval.
 - `AI_ACCEPTED` — owner-authorized alpha. It requires `aiReviewProvenance` recorded over this
-  exact exercise id, on reviewed schema v3 or later, with a SHA-256 content digest and HTTPS
+  exact exercise id, on exactly reviewed schema v3 (both `provenance.schemaVersion` and the
+  AI provenance's own `schemaVersion` must equal 3; a v2 record is refused outright, and the
+  runtime check is an equality, not a floor), with a SHA-256 content digest and HTTPS
   source references, and every human-review field left null.
 
 `DRAFT`, an absent block, and any record whose provenance does not match its state are

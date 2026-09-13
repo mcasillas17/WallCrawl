@@ -218,14 +218,20 @@ state:
 - normalized exercise history and recently trained muscles;
 - the full bundled catalog after hard filtering.
 
-Production currently uses `ExerciseFilter` to remove explicit exclusions and
-exercises whose required equipment is unavailable. The six-ID application-owned
-fixed-anchor correction in `ExerciseEquipmentRequirements.kt` takes precedence,
-then legacy programming equipment combinations, then the upstream listed
-equipment. Five band setups require explicit matching confirmations; the cropped
-anchor in `banded-row` is unresolved and has no automatic eligibility. Manual
-templates use the same requirements for warnings, not for hiding entries.
-Filtering defines the legal search space but does not choose the workout. See the
+Production filtering is `ExerciseEligibilityPolicy` — the reviewed eligibility path,
+described just below — because production composition has
+`PlannerFeatureFlags.reviewedCapabilityEligibility` enabled. `ExerciseFilter`, which
+removes explicit exclusions and exercises whose required equipment is unavailable using
+only legacy `programming` equipment combinations and the upstream listed equipment, is
+the disabled-path fallback `WorkoutGenerationContextBuilder` uses only when that flag is
+off (as tests can still compose). The six-ID application-owned fixed-anchor correction
+in `ExerciseEquipmentRequirements.kt` takes precedence for both paths, then legacy
+programming equipment combinations or the reviewed equipment alternatives depending on
+which path is active, then the upstream listed equipment. Five band setups require
+explicit matching confirmations; the cropped anchor in `banded-row` is unresolved and
+has no automatic eligibility on either path. Manual templates use the same requirements
+for warnings, not for hiding entries. Filtering defines the legal search space but does
+not choose the workout. See the
 [canonical equipment and compatibility contract](band-anchor-equipment.md).
 
 An implemented, dependency-injected `ExerciseEligibilityPolicy` is the reviewed-only
@@ -272,7 +278,9 @@ Spanish rendering happens only at the screen boundary.
 
 The supported-regression policy runs only on the planner's existing legal candidate set.
 It precomputes direct reviewed relationships before either comparator runs: both endpoints
-must be approved, the source must directly list the target as an approved regression, the
+must independently pass `Exercise.acceptedMetadata()` — `APPROVED` or `AI_ACCEPTED`,
+through the same shared seam every other consumer reads — the source must directly list
+the target as an accepted regression, the
 target must be explicitly `SUPPORTED`, and the source must have an unresolved
 exercise-specific `LIMITED` preference for a capability the target does not require.
 Evidence for the source suppresses this signal along with the existing capability penalty.
