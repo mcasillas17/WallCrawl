@@ -69,7 +69,14 @@ class AiAcceptedCatalogTest {
         assertThat(byId.keys - held - outsideScope).containsExactlyElementsIn(acceptedIds)
         assertThat(held).containsExactlyElementsIn(pendingDraftIds + pendingAbsentIds)
         assertThat(outsideScope).containsExactlyElementsIn(outsideIds)
-        assertThat(audit.getString("sourceAuditSha256")).isEqualTo(partition.getString("auditSha256"))
+        assertThat(audit.has("sourceAuditSha256")).isFalse()
+        assertThat(audit.has("auditSha256")).isFalse()
+        assertThat(partition.has("auditSha256")).isFalse()
+        val programmingBytes = File("../tools/workout-guide/programming-overrides.json").readBytes()
+        val programmingDigest = MessageDigest.getInstance("SHA-256").digest(programmingBytes)
+            .joinToString("") { "%02x".format(it.toInt() and 0xff) }
+        assertThat(audit.getString("currentProgrammingSha256")).isEqualTo(programmingDigest)
+        assertThat(partition.getString("currentProgrammingSha256")).isEqualTo(programmingDigest)
         for (id in acceptedIds) {
             val provenance = requireNotNull(byId.getValue(id).reviewedMetadata?.aiReviewProvenance)
             assertThat(provenance.reviewerModelId).isEqualTo(audit.getString("reviewerModelId"))

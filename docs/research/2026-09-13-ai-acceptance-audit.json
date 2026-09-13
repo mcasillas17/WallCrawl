@@ -1,5 +1,6 @@
 {
-  "preservationNote": "The complete original report is preserved as canonical JSON. sourceAuditSha256 is historical byte provenance; reportCanonicalSha256 verifies the parsed report content independently of formatting. The report predates schema-v3 acceptance: its descriptions of draft states and the then-unavailable AI schema remain historical, not current dispositions. This archival copy records no new acceptance, source retrieval or illustration inspection.",
+  "currentProgrammingSha256": "8a3ea988d0f32954fd4a03e2f58a2e4b65bce6db6b638dd0475a1f0994b92c24",
+  "preservationNote": "The complete original parsed report is preserved as canonical JSON; reportCanonicalSha256 binds that report. No unavailable original audit-file byte hash is asserted. This committed artifact's own identity is computed over its bytes and stored only in ledger/partition references, never inside the artifact itself. currentProgrammingSha256 binds the current committed programming-overrides.json bytes, not dosing approval. The verifier reconstructs the inspected pre-disposition ledger, metadata and catalog before hashing them; it does not treat copied source hashes as verification. Prior audit hashes quoted within the historical report are context only, not independently verified byte claims. The report predates schema-v3 acceptance; its original draft/schema descriptions remain historical. This bookkeeping records no new acceptance, source retrieval or illustration inspection.",
   "report": {
     "acceptanceLimits": [
       "Empty clearedTrainingConstraints are preserved for every candidate.",
@@ -763,7 +764,6 @@
   "reportCanonicalSha256": "78ea7058c01e779303dd67daffe64774fb2286a9713f2dfffe3c9a11b90f9091",
   "reviewedAtEpochMillis": 1789278919309,
   "reviewerModelId": "gpt-6-astra",
-  "schemaVersion": 1,
-  "sourceAuditSha256": "f7601e48f77f6d03ff0efe2f75dfac6ee5605074b18f1fbe8da47ee16edb3c61",
+  "schemaVersion": 2,
   "timestampSource": "Original corpus-audit.json mtime, st_mtime_ns // 1000000, recorded once for the completed audit. This is not the modification time of the committed archival copy."
 }

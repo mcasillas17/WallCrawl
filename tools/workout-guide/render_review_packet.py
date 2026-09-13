@@ -12,7 +12,7 @@ from import_catalog import (
     CatalogImportError, _atomic_write_text, _read_object,
     _validate_ai_acceptance, _validate_json_schema,
 )
-from verify_ai_acceptance_audit import AUDIT_PATH, MAX_AUDIT_BYTES, parse_audit
+from verify_ai_acceptance_audit import AUDIT_PATH, MAX_AUDIT_BYTES, PROGRAMMING_PATH, parse_audit
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -38,6 +38,9 @@ def _audit_summary(ledger: dict) -> list[str]:
         or review["reviewedAtEpochMillis"] != audit["reviewedAtEpochMillis"]
     ):
         raise ValueError("Worksheet audit hash, reviewer or original timestamp differs")
+    programming_sha = hashlib.sha256((ROOT / PROGRAMMING_PATH).read_bytes()).hexdigest()
+    if programming_sha != audit["currentProgrammingSha256"] or programming_sha != review["currentProgrammingSha256"]:
+        raise ValueError("Worksheet current programming bytes differ from the recorded hash")
     return [
         f"- Canonical AI audit: [complete report, criteria, IDs and reasons]({AUDIT_PATH.removeprefix('docs/')})",
         f"- Audit artifact SHA-256: `{digest}`",
@@ -45,6 +48,10 @@ def _audit_summary(ledger: dict) -> list[str]:
         f"`{audit['reviewedAtEpochMillis']}` epoch milliseconds",
         "- Reproduce the partition and proposal bindings offline: "
         "`python3 tools/workout-guide/verify_ai_acceptance_audit.py`",
+        f"- Current programming SHA-256 (committed bytes): `{programming_sha}`",
+        "- Independent source verification reconstructs the inspected schema-v2 ledger, metadata "
+        "and catalog before hashing, and reads/hashes current programming bytes. Copied historical "
+        "hashes alone are not verification; no unavailable original audit-file byte identity is asserted.",
     ]
 
 

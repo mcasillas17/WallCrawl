@@ -5,6 +5,8 @@ import hashlib
 import importlib
 import json
 from pathlib import Path
+import shutil
+import tempfile
 import unittest
 
 from import_catalog import _read_object
@@ -15,6 +17,7 @@ ROOT = Path(__file__).resolve().parents[2]
 AUDIT_PATH = "docs/research/2026-09-13-ai-acceptance-audit.json"
 LEDGER_PATH = "docs/research/2026-09-07-full-exercise-catalog-review.json"
 FIXTURE_PATH = "app/src/test/resources/ai-acceptance/partition-v2.json"
+PROGRAMMING_PATH = "tools/workout-guide/programming-overrides.json"
 
 
 def canonical_bytes(value):
@@ -37,11 +40,12 @@ class VerifyAiAcceptanceAuditTest(unittest.TestCase):
         self.metadata = _read_object(ROOT / "tools/workout-guide/reviewed-metadata.json", "metadata")
         self.catalog = _read_object(ROOT / "app/src/main/assets/workout-guide/catalog.json", "catalog")
         self.fixture = _read_object(ROOT / FIXTURE_PATH, "partition")
+        self.programming = (ROOT / PROGRAMMING_PATH).read_bytes()
         self.verifier = importlib.import_module("verify_ai_acceptance_audit")
 
     def verify(self):
         return self.verifier.verify_audit(
-            self.raw, self.ledger, self.metadata, self.catalog, self.fixture
+            self.raw, self.ledger, self.metadata, self.catalog, self.fixture, self.programming
         )
 
     def rebind_changed_audit(self):
@@ -54,8 +58,10 @@ class VerifyAiAcceptanceAuditTest(unittest.TestCase):
     def test_full_original_report_is_canonical_bounded_and_free_of_private_paths(self):
         self.assertLessEqual(len(self.raw), 64 * 1024)
         self.assertEqual(canonical_bytes(self.audit), self.raw)
-        self.assertEqual("f7601e48f77f6d03ff0efe2f75dfac6ee5605074b18f1fbe8da47ee16edb3c61",
-                         self.audit["sourceAuditSha256"])
+        self.assertNotIn("sourceAuditSha256", self.audit)
+        self.assertNotIn("auditSha256", self.audit, "The artifact must not hash itself.")
+        self.assertNotIn("auditSha256", self.fixture)
+        self.assertNotIn("externalAuditSha256", self.ledger["review"]["aiAcceptanceReview"])
         # Pin the entire parsed source report, including prose, corrections and historical limits.
         self.assertEqual("78ea7058c01e779303dd67daffe64774fb2286a9713f2dfffe3c9a11b90f9091",
                          compact_digest(self.audit["report"]))
@@ -79,7 +85,72 @@ class VerifyAiAcceptanceAuditTest(unittest.TestCase):
         self.assertEqual(sorted(self.fixture["outsideScope"]), result["outsideIds"])
         self.assertEqual(211, result["auditedProposalsVerified"])
         self.assertEqual(hashlib.sha256(self.raw).hexdigest(), result["auditSha256"])
+        self.assertIn("verifiedSourceSha256", result)
+        self.assertEqual("b98550992b61615d804a0c12991335caa30c22e03978f6d8b0d682e90763f3f1",
+                         result["verifiedSourceSha256"]["auditedLedger"])
+        self.assertEqual(hashlib.sha256((ROOT / PROGRAMMING_PATH).read_bytes()).hexdigest(),
+                         result["verifiedSourceSha256"]["currentProgramming"])
         self.assertEqual(before, (self.raw, self.ledger, self.metadata, self.catalog, self.fixture))
+
+    def test_current_programming_hash_binds_actual_committed_bytes(self):
+        actual = hashlib.sha256((ROOT / PROGRAMMING_PATH).read_bytes()).hexdigest()
+        self.assertEqual(actual, self.audit.get("currentProgrammingSha256"))
+        self.assertEqual(actual, self.fixture.get("currentProgrammingSha256"))
+        self.assertEqual(actual, self.ledger["review"]["aiAcceptanceReview"].get("currentProgrammingSha256"))
+
+    def test_repository_verifier_rejects_changed_or_missing_programming_despite_unchanged_claims(self):
+        (ROOT / "build").mkdir(exist_ok=True)
+        with tempfile.TemporaryDirectory(prefix="audit-source-test-", dir=ROOT / "build") as directory:
+            root = Path(directory)
+            for relative in (
+                AUDIT_PATH, LEDGER_PATH, FIXTURE_PATH, PROGRAMMING_PATH,
+                "tools/workout-guide/reviewed-metadata.json",
+                "app/src/main/assets/workout-guide/catalog.json",
+            ):
+                destination = root / relative
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(ROOT / relative, destination)
+            self.assertEqual(self.verify(), self.verifier.verify_repository(root))
+            programming = root / PROGRAMMING_PATH
+            programming.write_bytes(programming.read_bytes() + b"\n")
+            with self.assertRaisesRegex(ValueError, "programming"):
+                self.verifier.verify_repository(root)
+            programming.unlink()
+            with self.assertRaises((ValueError, OSError)):
+                self.verifier.verify_repository(root)
+
+    def test_audited_ledger_reconstruction_reproduces_the_recorded_bytes_without_mutation(self):
+        reconstruct = getattr(self.verifier, "reconstruct_audited_ledger", None)
+        self.assertTrue(callable(reconstruct), "Historical ledger hash needs an actual reconstruction.")
+        before = copy.deepcopy(self.ledger)
+        proposals = {
+            exercise_id: self.verifier._proposal(value)
+            for exercise_id, value in self.metadata["exercises"].items()
+        }
+        reconstructed = reconstruct(self.ledger, proposals)
+        encoded = (json.dumps(reconstructed, ensure_ascii=False, indent=2) + "\n").encode()
+        self.assertEqual("b98550992b61615d804a0c12991335caa30c22e03978f6d8b0d682e90763f3f1",
+                         hashlib.sha256(encoded).hexdigest())
+        self.assertEqual(before, self.ledger)
+
+    def test_rejects_changed_ledger_evidence_and_corrections_even_when_copied_hashes_match(self):
+        for field in ("evidence", "corrections"):
+            with self.subTest(field=field):
+                ledger = copy.deepcopy(self.ledger)
+                entry = next(value for value in ledger["entries"] if value["id"] == "push-up")
+                if field == "evidence":
+                    entry["evidence"][0]["observation"] += " Unreviewed observation."
+                else:
+                    entry["corrections"].append("Unreviewed correction.")
+                with self.assertRaisesRegex(ValueError, "audited ledger"):
+                    self.verifier.verify_audit(
+                        self.raw, ledger, self.metadata, self.catalog, self.fixture, self.programming
+                    )
+
+    def test_rejects_changed_ledger_evidence_author_even_when_copied_hashes_match(self):
+        self.ledger["review"]["authors"][0]["author"] = "unreviewed-author"
+        with self.assertRaisesRegex(ValueError, "audited ledger"):
+            self.verify()
 
     def test_rejects_stale_artifact_hash(self):
         self.raw += b" "
@@ -138,7 +209,9 @@ class VerifyAiAcceptanceAuditTest(unittest.TestCase):
                 )
                 destination[field] = replacement
                 with self.assertRaises(ValueError):
-                    self.verifier.verify_audit(self.raw, ledger, metadata, self.catalog, fixture)
+                    self.verifier.verify_audit(
+                        self.raw, ledger, metadata, self.catalog, fixture, self.programming
+                    )
 
     def test_rejects_malformed_oversized_and_nonportable_audit_documents(self):
         for raw in (
@@ -160,6 +233,8 @@ class VerifyAiAcceptanceAuditTest(unittest.TestCase):
         self.assertIn(hashlib.sha256(self.raw).hexdigest(), rendered)
         self.assertIn("1789278919309", rendered)
         self.assertIn("gpt-6-astra", rendered)
+        self.assertIn(hashlib.sha256(self.programming).hexdigest(), rendered)
+        self.assertIn("reconstructs the inspected schema-v2 ledger", rendered)
         self.assertIn("python3 tools/workout-guide/verify_ai_acceptance_audit.py", rendered)
         self.assertEqual(rendered, (ROOT / "docs/reviewed-exercise-metadata-human-signoff.md").read_text())
 

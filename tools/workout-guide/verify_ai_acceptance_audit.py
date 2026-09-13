@@ -9,6 +9,7 @@ and schema-v3 provenance. Verification never changes either representation.
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 import copy
 import hashlib
 import json
@@ -26,6 +27,7 @@ ROOT = Path(__file__).resolve().parents[2]
 AUDIT_PATH = "docs/research/2026-09-13-ai-acceptance-audit.json"
 LEDGER_PATH = "docs/research/2026-09-07-full-exercise-catalog-review.json"
 FIXTURE_PATH = "app/src/test/resources/ai-acceptance/partition-v2.json"
+PROGRAMMING_PATH = "tools/workout-guide/programming-overrides.json"
 MAX_AUDIT_BYTES = 64 * 1024
 OUTSIDE_CLASSES = ("excluded_stretch", "excluded_distance_duration", "excluded_timed_conditioning")
 
@@ -67,10 +69,10 @@ def parse_audit(raw: bytes) -> dict:
     _require(not re.search(r"[A-Za-z]:\\\\", text),
              "committed audit contains an absolute filesystem path")
     _require(set(value) == {
-        "schemaVersion", "reviewerModelId", "reviewedAtEpochMillis", "sourceAuditSha256",
+        "schemaVersion", "reviewerModelId", "reviewedAtEpochMillis", "currentProgrammingSha256",
         "reportCanonicalSha256", "timestampSource", "preservationNote", "report",
     }, "committed audit envelope fields differ")
-    _require(value["schemaVersion"] == 1, "unsupported committed audit schema")
+    _require(value["schemaVersion"] == 2, "unsupported committed audit schema")
     _require(isinstance(value["reviewerModelId"], str) and bool(value["reviewerModelId"].strip()),
              "committed audit requires its actual reviewer model")
     _require(type(value["reviewedAtEpochMillis"]) is int and value["reviewedAtEpochMillis"] > 0,
@@ -160,8 +162,64 @@ def _proposal(value: dict) -> dict:
     return proposal
 
 
+def reconstruct_audited_ledger(ledger: dict, proposals: dict[str, dict]) -> dict:
+    """Reverse only the recorded v3 disposition bookkeeping, preserving inspected evidence.
+
+    The original ledger used ordered, indented UTF-8 JSON. Its current/proposed
+    digests and generated adjacency must be rebuilt from the inspected proposals,
+    not copied from the historical whole-file hash being checked.
+    """
+    original = copy.deepcopy(ledger)
+    review = original["review"]
+    review["metadataSchemaVersion"] = 2
+    review["metadataPolicyVersion"] = 1
+    review.pop("metadataSchemaVersion3Note")
+    review.pop("aiAcceptanceReview")
+    entries = original["entries"]
+    proposal_hashes = {exercise_id: _digest(value) for exercise_id, value in proposals.items()}
+    outgoing = {entry["id"]: [] for entry in entries}
+    incoming = {entry["id"]: [] for entry in entries}
+    for source_id, value in proposals.items():
+        for kind, field in (("regression", "approvedRegressions"), ("substitution", "approvedSubstitutions")):
+            for edge in value[field]:
+                outgoing[source_id].append(f"{kind} -> {edge['exerciseId']}")
+                incoming[edge["exerciseId"]].append(f"{source_id} ({kind})")
+    for entry in entries:
+        exercise_id = entry["id"]
+        history = entry.pop("dispositionHistory", [])
+        if history:
+            _require(len(history) == 1, f"{exercise_id}: ambiguous audited ledger disposition history")
+            entry["disposition"] = history[0]["priorDisposition"]
+        entry["metadataReviewState"] = "draft" if exercise_id in proposals else "absent"
+        entry["metadataSha256"] = proposal_hashes.get(exercise_id)
+        entry.pop("auditedProposalSha256", None)
+        hold = entry.pop("auditHold", None)
+        if hold is not None:
+            _require(entry["limitations"][-1:] == [hold["finding"]] and
+                     entry["remainingDecisions"][-1:] == [hold["requiredDecision"]],
+                     f"{exercise_id}: audited ledger hold addenda differ")
+            entry["limitations"] = entry["limitations"][:-1]
+            entry["remainingDecisions"] = entry["remainingDecisions"][:-1]
+        for decision in entry["graphDecisions"]:
+            decision["sourceMetadataSha256"] = proposal_hashes.get(exercise_id)
+            decision["targetMetadataSha256"] = proposal_hashes.get(decision["targetId"])
+        counts = Counter(decision["action"] for decision in entry["graphDecisions"])
+        # This is the archived generator's representation, not current review prose.
+        entry["policyAssessment"]["links"] = (
+            "Current emitted DRAFT outgoing: " + (", ".join(sorted(outgoing[exercise_id])) or "none") +
+            ". Current emitted DRAFT incoming: " + (", ".join(sorted(incoming[exercise_id])) or "none") +
+            ". Explicit decisions: " +
+            ", ".join(f"{action}={counts[action]}" for action in ("add", "retain", "hold", "reject")) +
+            ". Each individual semantic rationale and current endpoint comparison is "
+            "preserved in graphDecisions. Held/rejected proposals are not emitted. "
+            "This generated adjacency is not human approval or a claim of equivalent outcomes."
+        )
+    return original
+
+
 def verify_audit(
     raw: bytes, ledger: dict, metadata_document: dict, catalog: dict, fixture: dict,
+    programming_bytes: bytes,
 ) -> dict:
     audit = parse_audit(raw)
     artifact_sha = hashlib.sha256(raw).hexdigest()
@@ -169,8 +227,12 @@ def verify_audit(
     review = ledger["review"]["aiAcceptanceReview"]
     _require(fixture["auditArtifact"] == reference and review["auditArtifact"] == reference,
              "committed audit artifact hash/reference differs from ledger or partition fixture")
-    _require(audit["sourceAuditSha256"] == fixture["auditSha256"] == review["externalAuditSha256"],
-             "historical source audit hash differs")
+    _require("auditSha256" not in fixture and "externalAuditSha256" not in review,
+             "unavailable source-audit byte identities must not be asserted")
+    programming_sha = hashlib.sha256(programming_bytes).hexdigest()
+    _require(programming_sha == audit["currentProgrammingSha256"] ==
+             fixture["currentProgrammingSha256"] == review["currentProgrammingSha256"],
+             "current programming bytes differ from currentProgrammingSha256")
     model = audit["reviewerModelId"]
     timestamp = audit["reviewedAtEpochMillis"]
     _require(model == fixture["reviewerModelId"] == review["reviewerModelId"],
@@ -179,6 +241,8 @@ def verify_audit(
              "original audit timestamp differs from ledger or partition fixture")
     report = audit["report"]
     source_hashes = report["sources"]["sha256"]
+    _require(programming_sha == source_hashes["programming"],
+             "current programming bytes differ from the audited programming source")
     _require(source_hashes == review["auditedSourceSha256"], "audited source hashes differ")
     _require(source_hashes["metadata"] == fixture["auditedMetadataSha256"] and
              source_hashes["ledger"] == fixture["auditedLedgerSha256"],
@@ -191,6 +255,18 @@ def verify_audit(
              len(entries) == len(ledger["entries"]), "duplicate canonical ID")
     _require(set(entries) == set(catalog_by_id), "ledger/catalog canonical IDs differ")
     partition = derive_partition(report, set(catalog_by_id))
+    audit_holds = report["pending_withheld"]["additionalAuditHolds"]
+    _require({exercise_id for exercise_id, entry in entries.items() if "auditHold" in entry} ==
+             set(audit_holds), "audited ledger intrinsic hold records differ")
+    for exercise_id, recorded in audit_holds.items():
+        hold = entries[exercise_id]["auditHold"]
+        correction = report["corrections"][recorded["correction"]]
+        _require(hold["reason"] == recorded["reason"] and
+                 hold["correction"] == recorded["correction"] and
+                 hold["finding"] == correction["finding"] and
+                 hold["requiredDecision"] == correction["requiredDecision"] and
+                 hold["auditArtifactPath"] == AUDIT_PATH and "auditSha256" not in hold,
+                 f"{exercise_id}: audited ledger hold differs from the committed audit")
     for name, ids in partition.items():
         _require(ids == _ids(fixture[name], f"fixture {name}"), f"derived {name} partition differs from fixture")
     accepted = partition["aiAccepted"]
@@ -205,7 +281,8 @@ def verify_audit(
     original_proposals = {exercise_id: _proposal(value) for exercise_id, value in metadata.items()}
     original_document = {"schemaVersion": 2, "exercises": original_proposals}
     original_bytes = (json.dumps(original_document, ensure_ascii=False, indent=2) + "\n").encode()
-    _require(hashlib.sha256(original_bytes).hexdigest() == source_hashes["metadata"],
+    metadata_sha = hashlib.sha256(original_bytes).hexdigest()
+    _require(metadata_sha == source_hashes["metadata"],
              "audited proposal document differs from the inspected source hash")
     for exercise_id, entry in entries.items():
         disposition = ("ai_accepted" if exercise_id in accepted else
@@ -242,16 +319,21 @@ def verify_audit(
         else:
             _require("aiReviewProvenance" not in value, f"{exercise_id}: draft acquired AI acceptance")
         for history in entry.get("dispositionHistory", []):
-            _require(history["auditSha256"] == audit["sourceAuditSha256"] and
+            _require(history["auditArtifactPath"] == AUDIT_PATH and "auditSha256" not in history and
                      history["reviewedAtEpochMillis"] == timestamp and
                      history["priorMetadataSha256"] == proposal_sha,
                      f"{exercise_id}: disposition history does not resolve to the committed audit")
+    original_ledger = reconstruct_audited_ledger(ledger, original_proposals)
+    ledger_bytes = (json.dumps(original_ledger, ensure_ascii=False, indent=2) + "\n").encode()
+    ledger_sha = hashlib.sha256(ledger_bytes).hexdigest()
+    _require(ledger_sha == source_hashes["ledger"],
+             "reconstructed audited ledger source hash differs")
     original_catalog = copy.deepcopy(catalog)
     for value in original_catalog["exercises"]:
         if value["id"] in original_proposals:
             value["reviewedMetadata"] = original_proposals[value["id"]]
-    _require(hashlib.sha256(_compact_bytes(original_catalog) + b"\n").hexdigest() ==
-             source_hashes["catalog"], "audited catalog source hash differs")
+    catalog_sha = hashlib.sha256(_compact_bytes(original_catalog) + b"\n").hexdigest()
+    _require(catalog_sha == source_hashes["catalog"], "audited catalog source hash differs")
     return {
         "auditPath": AUDIT_PATH, "auditSha256": artifact_sha,
         "reviewerModelId": model, "reviewedAtEpochMillis": timestamp,
@@ -260,6 +342,10 @@ def verify_audit(
         "acceptedIds": sorted(accepted),
         "pendingIds": sorted(drafts | partition["pendingWithoutMetadata"]),
         "outsideIds": sorted(outside), "auditedProposalsVerified": len(original_proposals),
+        "verifiedSourceSha256": {
+            "auditedLedger": ledger_sha, "auditedMetadata": metadata_sha,
+            "auditedCatalog": catalog_sha, "currentProgramming": programming_sha,
+        },
     }
 
 
@@ -271,6 +357,7 @@ def verify_repository(root: Path = ROOT) -> dict:
         _read_object(root / "tools/workout-guide/reviewed-metadata.json", "reviewed metadata"),
         _read_object(root / "app/src/main/assets/workout-guide/catalog.json", "catalog"),
         _read_object(root / FIXTURE_PATH, "partition fixture"),
+        (root / PROGRAMMING_PATH).read_bytes(),
     )
 
 

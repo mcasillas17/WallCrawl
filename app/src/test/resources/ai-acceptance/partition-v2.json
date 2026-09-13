@@ -1,6 +1,5 @@
 {
-  "fixtureVersion": 1,
-  "auditSha256": "f7601e48f77f6d03ff0efe2f75dfac6ee5605074b18f1fbe8da47ee16edb3c61",
+  "fixtureVersion": 2,
   "auditMtimeEpochMillis": 1789278919309,
   "auditedMetadataSha256": "0b94b26725f949af35b4c13a638552524134871f1c9a0fb5e3bb5fc56cf68481",
   "auditedLedgerSha256": "b98550992b61615d804a0c12991335caa30c22e03978f6d8b0d682e90763f3f1",
@@ -319,6 +318,7 @@
   ],
   "auditArtifact": {
     "path": "docs/research/2026-09-13-ai-acceptance-audit.json",
-    "sha256": "4db437f325898fbed786071fd68d284759cea2b45421a28a753880129bfa82c1"
-  }
+    "sha256": "840a70b0881f6511a56040cd316fc455c2f8d3921d2a3ff38dc9858dbd87ec4b"
+  },
+  "currentProgrammingSha256": "8a3ea988d0f32954fd4a03e2f58a2e4b65bce6db6b638dd0475a1f0994b92c24"
 }

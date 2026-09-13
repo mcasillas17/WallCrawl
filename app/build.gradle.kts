@@ -137,7 +137,8 @@ tasks.withType<Test>().configureEach {
     inputs.files(
         fileTree("src/main/res") { include("**/strings.xml") },
         fileTree(rootProject.file("docs/research")) { include("**/*.json") },
-        rootProject.file("tools/workout-guide/review-schema.json")
+        rootProject.file("tools/workout-guide/review-schema.json"),
+        rootProject.file("tools/workout-guide/programming-overrides.json")
     ).withPropertyName("shippedCopyAndAuthoredContracts")
         .withPathSensitivity(PathSensitivity.RELATIVE)
 }

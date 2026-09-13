@@ -11,9 +11,11 @@ This unsigned worksheet is generated from the [full per-exercise evidence ledger
 - Human-approved metadata: **0**
 - Pinned source: `ba0b709cb20430361b2cb33aaadd20998164a916`
 - Canonical AI audit: [complete report, criteria, IDs and reasons](research/2026-09-13-ai-acceptance-audit.json)
-- Audit artifact SHA-256: `4db437f325898fbed786071fd68d284759cea2b45421a28a753880129bfa82c1`
+- Audit artifact SHA-256: `840a70b0881f6511a56040cd316fc455c2f8d3921d2a3ff38dc9858dbd87ec4b`
 - Recorded AI reviewer: `gpt-6-astra`; original decision timestamp: `1789278919309` epoch milliseconds
 - Reproduce the partition and proposal bindings offline: `python3 tools/workout-guide/verify_ai_acceptance_audit.py`
+- Current programming SHA-256 (committed bytes): `8a3ea988d0f32954fd4a03e2f58a2e4b65bce6db6b638dd0475a1f0994b92c24`
+- Independent source verification reconstructs the inspected schema-v2 ledger, metadata and catalog before hashing, and reads/hashes current programming bytes. Copied historical hashes alone are not verification; no unavailable original audit-file byte identity is asserted.
 
 `AI_ACCEPTED` records an owner-authorized AI categorical decision, not human sign-off. `DRAFT` remains pending and ineligible for reviewed planning. Automatic-strength classification describes the current importer/planner boundary. Source acceptance, endpoint acceptance, type scope and human approval are separate judgments; none establishes suitability for every user.
 

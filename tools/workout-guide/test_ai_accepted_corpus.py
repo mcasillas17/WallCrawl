@@ -123,7 +123,11 @@ class AiAcceptedCorpusTest(unittest.TestCase):
 
     def test_ledger_acceptance_history_names_the_same_audit_and_actual_partition(self):
         review = self.ledger["review"]["aiAcceptanceReview"]
-        self.assertEqual(self.fixture["auditSha256"], review["externalAuditSha256"])
+        reference = self.fixture["auditArtifact"]
+        self.assertEqual(reference, review["auditArtifact"])
+        self.assertEqual(hashlib.sha256((ROOT / reference["path"]).read_bytes()).hexdigest(),
+                         reference["sha256"])
+        self.assertNotIn("externalAuditSha256", review)
         self.assertEqual(self.fixture["auditMtimeEpochMillis"], review["reviewedAtEpochMillis"])
         self.assertEqual("gpt-6-astra", review["reviewerModelId"])
         self.assertEqual(self.fixture["auditedMetadataSha256"],
@@ -149,7 +153,8 @@ class AiAcceptedCorpusTest(unittest.TestCase):
             self.assertEqual("draft", history["priorMetadataReviewState"])
             self.assertEqual(entry["auditedProposalSha256"], history["priorMetadataSha256"])
             self.assertEqual(entry["disposition"], history["decision"])
-            self.assertEqual(self.fixture["auditSha256"], history["auditSha256"])
+            self.assertEqual(reference["path"], history["auditArtifactPath"])
+            self.assertNotIn("auditSha256", history)
             self.assertEqual(self.fixture["auditMtimeEpochMillis"], history["reviewedAtEpochMillis"])
 
     def test_ai_provenance_uses_real_auditor_time_exact_id_and_only_recorded_evidence(self):
