@@ -504,6 +504,36 @@ def _validate_json_schema(
         _validate_json_schema(value, definition, root_schema, label, depth + 1)
         return
 
+    # Conditional keywords run before the field checks so the most specific contradiction,
+    # such as AI provenance on a human-reviewed entry, is the one reported.
+    for subschema in _schema_branches(schema, "allOf"):
+        _validate_json_schema(value, subschema, root_schema, label, depth + 1)
+
+    condition = schema.get("if")
+    if condition is not None:
+        branch = "then" if _json_schema_matches(
+            value, _expect_object(condition, "review schema if"), root_schema, depth + 1
+        ) else "else"
+        applied = schema.get(branch)
+        if applied is not None:
+            _validate_json_schema(
+                value,
+                _expect_object(applied, f"review schema {branch}"),
+                root_schema,
+                label,
+                depth + 1,
+            )
+
+    forbidden = schema.get("not")
+    if forbidden is not None:
+        checked = _expect_object(forbidden, "review schema not")
+        if _json_schema_matches(value, checked, root_schema, depth + 1):
+            required_names = checked.get("required")
+            if isinstance(required_names, list) and required_names:
+                named = ", ".join(_safe_error_field(item) for item in required_names)
+                raise CatalogImportError(f"{label} must not contain {named}")
+            raise CatalogImportError(f"{label} matches a forbidden schema combination")
+
     expected_types = schema.get("type")
     if expected_types is not None:
         type_names = [expected_types] if isinstance(expected_types, str) else expected_types
@@ -618,6 +648,33 @@ def _validate_json_schema(
                 )
             elif additional is not True:
                 raise CatalogImportError("review schema additionalProperties is invalid")
+
+
+def _schema_branches(schema: dict[str, Any], keyword: str) -> list[dict[str, Any]]:
+    branches = schema.get(keyword)
+    if branches is None:
+        return []
+    if not isinstance(branches, list):
+        raise CatalogImportError(f"review schema {keyword} must be an array")
+    return [_expect_object(item, f"review schema {keyword}") for item in branches]
+
+
+def _json_schema_matches(
+    value: Any,
+    schema: dict[str, Any],
+    root_schema: dict[str, Any],
+    depth: int,
+) -> bool:
+    """Evaluate a subschema as a condition rather than an assertion.
+
+    Only used for `if` and `not`, where a non-match selects a branch instead of failing.
+    The instance is still validated against the surrounding schema, so nothing is skipped.
+    """
+    try:
+        _validate_json_schema(value, schema, root_schema, "schema condition", depth)
+    except CatalogImportError:
+        return False
+    return True
 
 
 def _matches_json_schema_type(value: Any, type_name: str) -> bool:

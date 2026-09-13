@@ -139,14 +139,14 @@
       "operation": "set",
       "path": ["provenance", "reviewerRole"],
       "value": "AI model posing as a reviewer",
-      "errorFragment": "draft provenance"
+      "errorFragment": "reviewerRole"
     },
     {
       "name": "draft-with-review-time",
       "operation": "set",
       "path": ["provenance", "reviewedAtEpochMillis"],
       "value": 1,
-      "errorFragment": "draft provenance"
+      "errorFragment": "reviewedAtEpochMillis"
     },
     {
       "name": "oversized-progression-family",
@@ -234,7 +234,7 @@
       "operation": "set",
       "path": ["provenance", "reviewerRole"],
       "value": "AI model posing as a reviewer",
-      "errorFragment": "ai_accepted provenance"
+      "errorFragment": "reviewerRole"
     },
     {
       "name": "ai-accepted-claiming-a-human-review-time",
@@ -242,7 +242,7 @@
       "operation": "set",
       "path": ["provenance", "reviewedAtEpochMillis"],
       "value": 1,
-      "errorFragment": "ai_accepted provenance"
+      "errorFragment": "reviewedAtEpochMillis"
     },
     {
       "name": "ai-accepted-authored-against-the-older-schema",

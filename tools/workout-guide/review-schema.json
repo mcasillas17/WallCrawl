@@ -14,7 +14,38 @@
       "additionalProperties": {"$ref": "#/$defs/reviewedExerciseMetadata"}
     }
   },
+  "allOf": [
+    {
+      "if": {"properties": {"schemaVersion": {"const": 2}}, "required": ["schemaVersion"]},
+      "then": {
+        "properties": {
+          "exercises": {"additionalProperties": {"$ref": "#/$defs/version2Entry"}}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"schemaVersion": {"const": 3}}, "required": ["schemaVersion"]},
+      "then": {
+        "properties": {
+          "exercises": {"additionalProperties": {"$ref": "#/$defs/version3Entry"}}
+        }
+      }
+    }
+  ],
   "$defs": {
+    "version2Entry": {
+      "type": "object",
+      "properties": {
+        "reviewState": {"type": "string", "enum": ["draft", "approved"]},
+        "provenance": {"properties": {"schemaVersion": {"const": 2}}}
+      }
+    },
+    "version3Entry": {
+      "type": "object",
+      "properties": {
+        "provenance": {"properties": {"schemaVersion": {"const": 3}}}
+      }
+    },
     "canonicalMuscle": {
       "type": "string",
       "enum": [
@@ -172,7 +203,60 @@
         },
         "provenance": {"$ref": "#/$defs/provenance"},
         "aiReviewProvenance": {"$ref": "#/$defs/aiReviewProvenance"}
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {"reviewState": {"const": "ai_accepted"}},
+            "required": ["reviewState"]
+          },
+          "then": {
+            "required": ["aiReviewProvenance"],
+            "properties": {
+              "provenance": {
+                "properties": {
+                  "reviewerRole": {"type": "null"},
+                  "reviewedAtEpochMillis": {"type": "null"},
+                  "schemaVersion": {"const": 3}
+                }
+              }
+            }
+          },
+          "else": {"not": {"required": ["aiReviewProvenance"]}}
+        },
+        {
+          "if": {
+            "properties": {"reviewState": {"const": "approved"}},
+            "required": ["reviewState"]
+          },
+          "then": {
+            "properties": {
+              "provenance": {
+                "properties": {
+                  "reviewerRole": {"type": "string"},
+                  "reviewedAtEpochMillis": {"type": "integer"}
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {"reviewState": {"const": "draft"}},
+            "required": ["reviewState"]
+          },
+          "then": {
+            "properties": {
+              "provenance": {
+                "properties": {
+                  "reviewerRole": {"type": "null"},
+                  "reviewedAtEpochMillis": {"type": "null"}
+                }
+              }
+            }
+          }
+        }
+      ]
     }
   }
 }

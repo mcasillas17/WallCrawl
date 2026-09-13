@@ -371,7 +371,7 @@ class ImportCatalogTest(unittest.TestCase):
         result = self._run_import()
 
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn("requires reviewerRole and reviewedAtEpochMillis", result.stderr)
+        self.assertIn("reviewerRole", result.stderr)
 
     def test_accepts_ai_accepted_entry_carrying_only_ai_provenance(self) -> None:
         self._write_reviewed_metadata(schema_version=3, ai_accepted=True)
@@ -425,7 +425,7 @@ class ImportCatalogTest(unittest.TestCase):
                 result = self._run_import()
 
                 self.assertNotEqual(result.returncode, 0)
-                self.assertIn("ai_accepted provenance", result.stderr)
+                self.assertIn(field, result.stderr)
 
     def test_rejects_ai_provenance_on_human_reviewed_states(self) -> None:
         for state in ("draft", "approved"):
@@ -454,7 +454,8 @@ class ImportCatalogTest(unittest.TestCase):
         result = self._run_import()
 
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn("schemaVersion", result.stderr)
+        # `ai_accepted` is not a v2 state, so a v2 document cannot carry the AI contract.
+        self.assertIn("reviewState", result.stderr)
 
     def test_rejects_reviewed_document_from_an_unsupported_future_schema(self) -> None:
         self._write_reviewed_metadata(schema_version=4)
