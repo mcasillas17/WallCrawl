@@ -211,6 +211,34 @@ class WorkoutGenerationContextBuilderTest {
     }
 
     @Test
+    fun build_ignoresHigherPolicyVersionsFromPendingMetadata() = runTest {
+        val base = InMemoryExerciseCatalog.SAMPLE_EXERCISES.first()
+        val accepted = base.copy(
+            reviewedMetadata = syntheticReviewedMetadata(
+                reviewState = ReviewState.AI_ACCEPTED,
+                exerciseId = base.id,
+                policyVersion = 2
+            )
+        )
+        val pending = base.copy(
+            id = "pending-higher-policy-version",
+            reviewedMetadata = syntheticReviewedMetadata(
+                reviewState = ReviewState.DRAFT,
+                exerciseId = "pending-higher-policy-version",
+                policyVersion = 3
+            )
+        )
+
+        val context = reviewedEligibilityBuilder(
+            exercises = listOf(accepted, pending),
+            completedSessions = emptyList()
+        ).build()
+
+        assertThat(context.reviewPolicyVersion).isEqualTo(2)
+        assertThat(context.allowedExercises).containsExactly(accepted)
+    }
+
+    @Test
     fun build_declaresOnlyTheSessionConstraintsTheProductActuallyChose() = runTest {
         val builder = WorkoutGenerationContextBuilder(
             userProfileRepository = StubUserProfileRepository(UserProfile()),

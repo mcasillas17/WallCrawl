@@ -119,10 +119,7 @@ class WorkoutGenerationContextBuilder(
             priorUserRestPreferences = priorUserRestPreferences,
             preferredUnits = profile.preferredUnit,
             catalogVersion = catalogVersion(),
-            reviewPolicyVersion = allExercises
-                .mapNotNull { it.reviewedMetadata?.provenance?.policyVersion }
-                .maxOrNull()
-                ?: 0
+            reviewPolicyVersion = allExercises.acceptedReviewPolicyVersion()
         )
     }
 

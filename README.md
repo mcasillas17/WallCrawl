@@ -455,14 +455,14 @@ excluded from automatic planning entirely (`MISSING_APPROVED_METADATA`), though 
 stay browseable and manually selectable. Legacy
 `programming` metadata enriches base prescriptions when available; otherwise
 WallCrawl uses conservative fallback targets. Its 131 authored entries (117 rep-based and 14 timed strength entries) cover
-every muscle group with beginner options throughout. The planner draws its
-compound slots from the accepted set, softly demotes work above the profile's
-experience level via legacy `programming.difficulty`, and prefers authored entries when
-filling the rest. That experience-based ranking demotion never removes an otherwise-legal
-candidate: an accepted exercise without legacy
-programming can still appear in a plan with fallback targets and no coaching
-note, and a higher-difficulty accepted exercise remains selectable when it is the only
-fillable option. Reviewed `complexity` is a separate, harder rule on the automatic path:
+every muscle group with beginner options throughout. The planner draws its compound slots
+from the accepted set, softly demotes accepted work above the profile's experience level via
+reviewed `complexity`, and prefers authored programming entries when filling the rest. That
+experience-based ranking demotion never removes an otherwise-legal candidate: an accepted
+exercise without legacy programming can still appear in a plan with fallback targets and no
+coaching note, and a higher-complexity accepted exercise remains selectable when it is the
+only fillable option. Reviewed `complexity` also supplies a separate, harder rule on the
+automatic path:
 `ComplexityTier.ADVANCED` work is temporarily excluded outright while a profile is
 `UNCALIBRATED` or `RETURNING`, unless a demonstrated progression family or an accepted
 `SUPPORTED` regression is available — that is a hard eligibility exclusion, not a soft
@@ -735,7 +735,9 @@ a tag cannot publish its prerelease unless instrumentation succeeds.
   limited-capability effort guidance, which production now runs against the audited
   `AI_ACCEPTED` cohort. Owner-authorized AI acceptance is not genuine human review; that
   remains a separate, still-outstanding gate. They affect today's production filtering,
-  ranking, substitutions, dose, effort, and rest guidance for every accepted exercise.
+  ranking, dose, effort, and rest guidance for every accepted exercise. Directed substitution
+  authorizations are retained and validated for future substitution functionality; they do
+  not yet drive an in-session substitution flow.
 - Database migrations must preserve user history; destructive migration fallback
   is intentionally disabled.
 

@@ -43,6 +43,14 @@ internal fun Exercise.acceptedMetadata(): ReviewedExerciseMetadata? = reviewedMe
     ?.takeIf { it.isWellFormedAcceptedMetadata(id) }
 
 /**
+ * The newest policy version represented by metadata this runtime can actually consume.
+ *
+ * Draft, malformed, and future-contract records cannot invalidate planning or ledger caches.
+ */
+internal fun Iterable<Exercise>.acceptedReviewPolicyVersion(): Int =
+    mapNotNull { it.acceptedMetadata()?.provenance?.policyVersion }.maxOrNull() ?: 0
+
+/**
  * Whether this state is one automatic planning may act on at all, before any well-formedness.
  *
  * Exhaustive on purpose: a review state added later fails compilation here, so it has to be
