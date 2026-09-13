@@ -27,6 +27,8 @@ MAX_URL_LENGTH = 2_048
 MAX_RAW_JSON_STRING_LENGTH = 8_192
 MAX_JSON_DEPTH = 12
 MAX_REVIEWED_PAYLOAD_BYTES = 1_000_000
+# v3 added the ai_accepted state and aiReviewProvenance; v2 records keep their exact meaning.
+AI_REVIEWED_SCHEMA_VERSION = 3
 SAFE_ID_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 SUPPORTED_EXERCISE_TYPES = {
     "assisted_bodyweight",
@@ -321,11 +323,13 @@ def import_catalog(
             "Reviewed metadata references an unknown WallCrawl exercise ID"
         )
     exercises_by_id = {exercise["id"]: exercise for exercise in normalized_exercises}
+    reviewed_schema_version = reviewed_root["schemaVersion"]
     normalized_reviewed = {
         exercise_id: _normalize_reviewed_metadata(
             raw_value,
             exercise_id,
             exercises_by_id[exercise_id],
+            reviewed_schema_version,
         )
         for exercise_id, raw_value in reviewed_by_id.items()
     }
@@ -638,6 +642,7 @@ def _normalize_reviewed_metadata(
     raw_value: Any,
     exercise_id: str,
     catalog_exercise: dict[str, Any],
+    document_schema_version: int,
 ) -> dict[str, Any]:
     raw = _expect_object(raw_value, f"reviewed metadata.{exercise_id}")
     _reject_forbidden_reviewed_numeric_fields(raw, exercise_id)
@@ -691,6 +696,11 @@ def _normalize_reviewed_metadata(
         f"{exercise_id}.provenance.rationaleOrSource",
         1_000,
     )
+    if provenance["schemaVersion"] != document_schema_version:
+        raise CatalogImportError(
+            f"{exercise_id}.provenance.schemaVersion must match the document schemaVersion"
+        )
+    _validate_ai_acceptance(raw, exercise_id, review_state, provenance)
     if review_state == "approved" and (reviewer_role is None or reviewed_at is None):
         raise CatalogImportError(
             f"{exercise_id}.provenance requires reviewerRole and reviewedAtEpochMillis when approved"
@@ -730,6 +740,61 @@ def _normalize_reviewed_metadata(
                     500,
                 )
     return normalized
+
+
+def _validate_ai_acceptance(
+    raw: dict[str, Any],
+    exercise_id: str,
+    review_state: str,
+    provenance: dict[str, Any],
+) -> None:
+    """AI acceptance is its own state and never a back door into human approval.
+
+    Both directions are closed: an ``ai_accepted`` entry must carry AI provenance and leave
+    every human-review field null, and a draft or approved entry must not carry AI provenance
+    at all.
+    """
+    ai_provenance = raw.get("aiReviewProvenance")
+    if review_state != "ai_accepted":
+        if ai_provenance is not None:
+            raise CatalogImportError(
+                f"{exercise_id} {review_state} metadata must not carry aiReviewProvenance"
+            )
+        return
+    if provenance["schemaVersion"] < AI_REVIEWED_SCHEMA_VERSION:
+        raise CatalogImportError(
+            f"{exercise_id} ai_accepted metadata requires provenance.schemaVersion "
+            f"{AI_REVIEWED_SCHEMA_VERSION}"
+        )
+    if ai_provenance is None:
+        raise CatalogImportError(
+            f"{exercise_id} ai_accepted metadata requires aiReviewProvenance"
+        )
+    if provenance["reviewerRole"] is not None or provenance["reviewedAtEpochMillis"] is not None:
+        raise CatalogImportError(
+            f"{exercise_id}.provenance ai_accepted provenance requires null reviewerRole "
+            "and reviewedAtEpochMillis"
+        )
+    checked = _expect_object(ai_provenance, f"{exercise_id}.aiReviewProvenance")
+    for field, maximum in (
+        ("reviewerModelId", 120),
+        ("reviewedContentId", 128),
+        ("reviewedContentSha256", 64),
+        ("decisionRationale", 1_000),
+        ("limitations", 1_000),
+    ):
+        _strict_review_text(
+            checked[field], f"{exercise_id}.aiReviewProvenance.{field}", maximum
+        )
+    for index, reference in enumerate(checked["sourceReferences"]):
+        # Authored references are untrusted text; keep them to one safe scheme.
+        value = _strict_review_text(
+            reference, f"{exercise_id}.aiReviewProvenance.sourceReferences[{index}]", 2_048
+        )
+        if not value.startswith("https://"):
+            raise CatalogImportError(
+                f"{exercise_id}.aiReviewProvenance.sourceReferences must be HTTPS URLs"
+            )
 
 
 def _strict_review_text(value: Any, label: str, maximum: int) -> str:
@@ -910,6 +975,7 @@ def _regression_shapes_compatible(source_shape: str, target_shape: str) -> bool:
 def _render_review_report(reviewed_by_id: dict[str, dict[str, Any]]) -> str:
     review_states = Counter(value["reviewState"] for value in reviewed_by_id.values())
     review_states.setdefault("approved", 0)
+    review_states.setdefault("ai_accepted", 0)
     review_states.setdefault("draft", 0)
     movement_patterns = Counter(value["movementPattern"] for value in reviewed_by_id.values())
     progression_families = Counter(value["progressionFamily"] for value in reviewed_by_id.values())
@@ -932,6 +998,10 @@ def _render_review_report(reviewed_by_id: dict[str, dict[str, Any]]) -> str:
     drafts = sorted(
         exercise_id for exercise_id, value in reviewed_by_id.items()
         if value["reviewState"] == "draft"
+    )
+    ai_accepted = sorted(
+        exercise_id for exercise_id, value in reviewed_by_id.items()
+        if value["reviewState"] == "ai_accepted"
     )
     lines = [
         "# Reviewed Exercise Metadata Report",
@@ -973,6 +1043,21 @@ def _render_review_report(reviewed_by_id: dict[str, dict[str, Any]]) -> str:
     )
     lines.extend(f"- `{exercise_id}`" for exercise_id in drafts)
     if not drafts:
+        lines.append("- None")
+    lines.extend(
+        [
+            "",
+            "## AI_ACCEPTED entries (owner-authorized alpha, not human approved)",
+            "",
+            "These entries were accepted by an AI reviewer under `aiReviewProvenance`. That is a "
+            "separate state from `approved`, which stays human-only: nothing below carries a human "
+            "reviewer or review time, and listing an entry here never substitutes for the human "
+            "review described above.",
+            "",
+        ]
+    )
+    lines.extend(f"- `{exercise_id}`" for exercise_id in ai_accepted)
+    if not ai_accepted:
         lines.append("- None")
     return "\n".join(lines) + "\n"
 

@@ -7,6 +7,7 @@ import java.io.Reader
 import java.util.Locale
 import wallcrawl.elopenmike.com.core.exercise.visual.ExerciseVisual
 import wallcrawl.elopenmike.com.core.io.BoundedCharacterReader
+import wallcrawl.elopenmike.com.core.model.AiReviewProvenance
 import wallcrawl.elopenmike.com.core.model.ComplexityTier
 import wallcrawl.elopenmike.com.core.model.Difficulty
 import wallcrawl.elopenmike.com.core.model.Exercise
@@ -437,6 +438,7 @@ class WorkoutGuideCatalogParser {
         var impactLevel: ImpactLevel? = null
         var equipmentAlternatives: List<List<String>>? = null
         var provenance: ReviewProvenance? = null
+        var aiReviewProvenance: AiReviewProvenance? = null
         var clearedTrainingConstraints: Set<TrainingConstraint>? = null
         val seenFields = mutableSetOf<String>()
 
@@ -484,6 +486,8 @@ class WorkoutGuideCatalogParser {
                 "equipmentAlternatives" -> equipmentAlternatives =
                     readReviewedEquipmentAlternatives("$label.equipmentAlternatives")
                 "provenance" -> provenance = readReviewProvenance("$label.provenance")
+                "aiReviewProvenance" -> aiReviewProvenance =
+                    readAiReviewProvenance("$label.aiReviewProvenance")
                 "clearedTrainingConstraints" -> clearedTrainingConstraints =
                     readReviewedEnumSet(
                         "$label.clearedTrainingConstraints",
@@ -540,7 +544,8 @@ class WorkoutGuideCatalogParser {
             equipmentAlternatives = equipmentAlternatives
                 ?: malformed("$label is missing equipmentAlternatives."),
             provenance = provenance ?: malformed("$label is missing provenance."),
-            clearedTrainingConstraints = cleared
+            clearedTrainingConstraints = cleared,
+            aiReviewProvenance = aiReviewProvenance
         )
     }
 
@@ -581,8 +586,8 @@ class WorkoutGuideCatalogParser {
                 }
                 "schemaVersion" -> schemaVersion = readBoundedInt(
                     "$label.schemaVersion",
-                    REVIEWED_SCHEMA_VERSION,
-                    REVIEWED_SCHEMA_VERSION
+                    MIN_REVIEWED_SCHEMA_VERSION,
+                    MAX_REVIEWED_SCHEMA_VERSION
                 )
                 "policyVersion" -> policyVersion = readBoundedInt(
                     "$label.policyVersion",
@@ -601,6 +606,102 @@ class WorkoutGuideCatalogParser {
             rationaleOrSource = rationaleOrSource
                 ?: malformed("$label is missing rationaleOrSource."),
             reviewedAtEpochMillis = reviewedAtEpochMillis,
+            schemaVersion = schemaVersion ?: malformed("$label is missing schemaVersion."),
+            policyVersion = policyVersion ?: malformed("$label is missing policyVersion.")
+        )
+    }
+
+    private fun JsonReader.readAiReviewProvenance(label: String): AiReviewProvenance {
+        expectToken(JsonToken.BEGIN_OBJECT, label)
+        var reviewerModelId: String? = null
+        var reviewedAtEpochMillis: Long? = null
+        var reviewedContentId: String? = null
+        var reviewedContentSha256: String? = null
+        var sourceReferences: List<String>? = null
+        var decisionRationale: String? = null
+        var limitations: String? = null
+        var schemaVersion: Int? = null
+        var policyVersion: Int? = null
+        val seenFields = mutableSetOf<String>()
+
+        beginObject()
+        while (hasNext()) {
+            val field = nextName()
+            requireUniqueField(seenFields, field, label)
+            when (field) {
+                "reviewerModelId" -> reviewerModelId = readReviewedString(
+                    "$label.reviewerModelId",
+                    MAX_AI_REVIEWER_MODEL_ID_LENGTH
+                )
+                "reviewedAtEpochMillis" -> reviewedAtEpochMillis = readNullableReviewedLong(
+                    "$label.reviewedAtEpochMillis",
+                    MIN_REVIEWED_AT_EPOCH_MILLIS,
+                    MAX_REVIEWED_AT_EPOCH_MILLIS
+                )
+                "reviewedContentId" -> reviewedContentId = readReviewedString(
+                    "$label.reviewedContentId",
+                    MAX_EXERCISE_ID_LENGTH
+                )
+                "reviewedContentSha256" -> reviewedContentSha256 = readReviewedString(
+                    "$label.reviewedContentSha256",
+                    SHA256_HEX_LENGTH
+                )
+                "sourceReferences" -> sourceReferences = readReviewedStringList(
+                    "$label.sourceReferences",
+                    MAX_AI_SOURCE_REFERENCES,
+                    MAX_URL_LENGTH,
+                    requireNonEmpty = true
+                )
+                "decisionRationale" -> decisionRationale = readReviewedString(
+                    "$label.decisionRationale",
+                    MAX_PROVENANCE_RATIONALE_LENGTH
+                )
+                "limitations" -> limitations = readReviewedString(
+                    "$label.limitations",
+                    MAX_PROVENANCE_RATIONALE_LENGTH
+                )
+                "schemaVersion" -> schemaVersion = readBoundedInt(
+                    "$label.schemaVersion",
+                    AI_REVIEWED_SCHEMA_VERSION,
+                    AI_REVIEWED_SCHEMA_VERSION
+                )
+                "policyVersion" -> policyVersion = readBoundedInt(
+                    "$label.policyVersion",
+                    MIN_POLICY_VERSION,
+                    MAX_POLICY_VERSION
+                )
+                else -> malformed("$label.${safeField(field)} is unknown.")
+            }
+        }
+        endObject()
+
+        val contentId = reviewedContentId
+            ?: malformed("$label is missing reviewedContentId.")
+        if (!SAFE_IDENTIFIER.matches(contentId)) {
+            malformed("$label.reviewedContentId is not a safe identifier.")
+        }
+        val digest = reviewedContentSha256
+            ?: malformed("$label is missing reviewedContentSha256.")
+        if (!SHA256_HEX.matches(digest)) {
+            malformed("$label.reviewedContentSha256 is not a SHA-256 hex digest.")
+        }
+        val references = sourceReferences
+            ?: malformed("$label is missing sourceReferences.")
+        // Source references are untrusted authored strings; keep them to one safe scheme.
+        if (references.any { !it.startsWith("https://") }) {
+            malformed("$label.sourceReferences must contain HTTPS URLs only.")
+        }
+        return AiReviewProvenance(
+            reviewerModelId = reviewerModelId
+                ?: malformed("$label is missing reviewerModelId."),
+            reviewedAtEpochMillis = reviewedAtEpochMillis
+                ?: malformed("$label is missing reviewedAtEpochMillis."),
+            reviewedContentId = contentId,
+            reviewedContentSha256 = digest,
+            sourceReferences = references,
+            decisionRationale = decisionRationale
+                ?: malformed("$label is missing decisionRationale."),
+            limitations = limitations ?: malformed("$label is missing limitations."),
             schemaVersion = schemaVersion ?: malformed("$label is missing schemaVersion."),
             policyVersion = policyVersion ?: malformed("$label is missing policyVersion.")
         )
@@ -830,6 +931,7 @@ class WorkoutGuideCatalogParser {
         if (type == ExerciseType.DURATION && StandardMuscles.CARDIO in representedMuscles) {
             malformed("Exercise $exerciseId is cardio duration work and cannot have reviewedMetadata.")
         }
+        validateAiAcceptanceFor(exerciseId)
         if (
             reviewState == ReviewState.APPROVED &&
             (provenance.reviewerRole == null || provenance.reviewedAtEpochMillis == null)
@@ -845,6 +947,39 @@ class WorkoutGuideCatalogParser {
             malformed(
                 "Exercise $exerciseId draft provenance requires null reviewerRole and " +
                     "reviewedAtEpochMillis."
+            )
+        }
+    }
+
+    /**
+     * AI acceptance is a separate state, never a shortcut into human approval.
+     *
+     * Both directions are closed here: an AI-accepted entry may not carry a human reviewer or
+     * review time, and a draft or human-approved entry may not carry AI provenance at all.
+     */
+    private fun ReviewedExerciseMetadata.validateAiAcceptanceFor(exerciseId: String) {
+        if (reviewState == ReviewState.AI_ACCEPTED) {
+            if (provenance.schemaVersion < AI_REVIEWED_SCHEMA_VERSION) {
+                malformed(
+                    "Exercise $exerciseId ai_accepted reviewedMetadata requires " +
+                        "provenance.schemaVersion $AI_REVIEWED_SCHEMA_VERSION."
+                )
+            }
+            if (aiReviewProvenance == null) {
+                malformed(
+                    "Exercise $exerciseId ai_accepted reviewedMetadata requires aiReviewProvenance."
+                )
+            }
+            if (provenance.reviewerRole != null || provenance.reviewedAtEpochMillis != null) {
+                malformed(
+                    "Exercise $exerciseId ai_accepted provenance requires null reviewerRole and " +
+                        "reviewedAtEpochMillis."
+                )
+            }
+        } else if (aiReviewProvenance != null) {
+            malformed(
+                "Exercise $exerciseId ${reviewState.name.lowercase(Locale.ROOT)} " +
+                    "reviewedMetadata must not carry aiReviewProvenance."
             )
         }
     }
@@ -1264,8 +1399,15 @@ class WorkoutGuideCatalogParser {
         const val MAX_PROVENANCE_RATIONALE_LENGTH = 1_000
         const val MIN_REVIEWED_AT_EPOCH_MILLIS = 1L
         const val MAX_REVIEWED_AT_EPOCH_MILLIS = 253_402_300_799_999L
-        // v2 added clearedTrainingConstraints; the bundled catalog is regenerated in lockstep.
-        const val REVIEWED_SCHEMA_VERSION = 2
+        // v2 added clearedTrainingConstraints; v3 added the AI_ACCEPTED state and its provenance.
+        // Both are accepted so v2-authored records keep their exact meaning instead of being
+        // reinterpreted; anything outside the range fails closed as an unsupported version.
+        const val MIN_REVIEWED_SCHEMA_VERSION = 2
+        const val MAX_REVIEWED_SCHEMA_VERSION = 3
+        const val AI_REVIEWED_SCHEMA_VERSION = 3
+        const val MAX_AI_REVIEWER_MODEL_ID_LENGTH = 120
+        const val MAX_AI_SOURCE_REFERENCES = 8
+        const val SHA256_HEX_LENGTH = 64
         const val MIN_POLICY_VERSION = 1
         const val MAX_POLICY_VERSION = 10_000
         val SAFE_IDENTIFIER = Regex("[a-z0-9]+(?:-[a-z0-9]+)*")
@@ -1273,6 +1415,7 @@ class WorkoutGuideCatalogParser {
         val SAFE_PROGRESSION_FAMILY = Regex("[a-z0-9]+(?:-[a-z0-9]+)*")
         val SAFE_POSITIVE_INTEGER_LITERAL = Regex("[1-9][0-9]*")
         val SAFE_ERROR_FIELD = Regex("[A-Za-z0-9_.-]{1,80}")
+        val SHA256_HEX = Regex("[0-9a-f]{64}")
         val COMPLEXITY_DEMAND = mapOf(
             ComplexityTier.FOUNDATIONAL to 0,
             ComplexityTier.STANDARD to 1,

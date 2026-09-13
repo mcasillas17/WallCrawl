@@ -23,6 +23,40 @@
       "policyVersion": 1
     }
   },
+  "baseAiAcceptedReviewedMetadata": {
+    "reviewState": "ai_accepted",
+    "directPrimaryMuscle": "Chest",
+    "descriptiveSecondaryMuscles": ["Shoulders", "Triceps"],
+    "movementPattern": "horizontal_push",
+    "complexity": "standard",
+    "progressionFamily": "barbell-horizontal-push",
+    "prescriptionShape": "weight_reps",
+    "approvedRegressions": [],
+    "approvedSubstitutions": [],
+    "capabilityRequirements": [],
+    "supportRequirement": "supported",
+    "impactLevel": "none",
+    "equipmentAlternatives": [["Barbell", "Bench"]],
+    "clearedTrainingConstraints": [],
+    "provenance": {
+      "reviewerRole": null,
+      "rationaleOrSource": "Shared AI-accepted fixture; never human reviewed.",
+      "reviewedAtEpochMillis": null,
+      "schemaVersion": 3,
+      "policyVersion": 1
+    },
+    "aiReviewProvenance": {
+      "reviewerModelId": "test-model-1",
+      "reviewedAtEpochMillis": 1756000000000,
+      "reviewedContentId": "barbell-bench-press",
+      "reviewedContentSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "sourceReferences": ["https://example.test/reference"],
+      "decisionRationale": "Alpha AI acceptance for owner-authorized planning only.",
+      "limitations": "Not a human review and not clinical clearance.",
+      "schemaVersion": 3,
+      "policyVersion": 1
+    }
+  },
   "invalidCases": [
     {
       "name": "unknown-field",
@@ -129,10 +163,10 @@
       "errorFragment": "reviewedAtEpochMillis"
     },
     {
-      "name": "wrong-provenance-schema-version",
+      "name": "unsupported-provenance-schema-version",
       "operation": "set",
       "path": ["provenance", "schemaVersion"],
-      "value": 3,
+      "value": 4,
       "errorFragment": "schemaVersion"
     },
     {
@@ -161,6 +195,109 @@
       "path": ["clearedTrainingConstraints"],
       "value": ["low_impact_only"],
       "errorFragment": "clearedTrainingConstraints"
+    },
+    {
+      "name": "ai-provenance-on-draft",
+      "operation": "set",
+      "path": ["aiReviewProvenance"],
+      "value": {
+        "reviewerModelId": "test-model-1",
+        "reviewedAtEpochMillis": 1756000000000,
+        "reviewedContentId": "barbell-bench-press",
+        "reviewedContentSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "sourceReferences": ["https://example.test/reference"],
+        "decisionRationale": "AI acceptance smuggled onto a draft.",
+        "limitations": "Not a human review.",
+        "schemaVersion": 3,
+        "policyVersion": 1
+      },
+      "errorFragment": "aiReviewProvenance"
+    },
+    {
+      "name": "ai-provenance-on-approved",
+      "base": "baseAiAcceptedReviewedMetadata",
+      "operation": "set",
+      "path": ["reviewState"],
+      "value": "approved",
+      "errorFragment": "aiReviewProvenance"
+    },
+    {
+      "name": "ai-accepted-without-ai-provenance",
+      "base": "baseAiAcceptedReviewedMetadata",
+      "operation": "remove",
+      "path": ["aiReviewProvenance"],
+      "errorFragment": "aiReviewProvenance"
+    },
+    {
+      "name": "ai-accepted-claiming-a-human-reviewer",
+      "base": "baseAiAcceptedReviewedMetadata",
+      "operation": "set",
+      "path": ["provenance", "reviewerRole"],
+      "value": "AI model posing as a reviewer",
+      "errorFragment": "ai_accepted provenance"
+    },
+    {
+      "name": "ai-accepted-claiming-a-human-review-time",
+      "base": "baseAiAcceptedReviewedMetadata",
+      "operation": "set",
+      "path": ["provenance", "reviewedAtEpochMillis"],
+      "value": 1,
+      "errorFragment": "ai_accepted provenance"
+    },
+    {
+      "name": "ai-accepted-authored-against-the-older-schema",
+      "base": "baseAiAcceptedReviewedMetadata",
+      "operation": "set",
+      "path": ["provenance", "schemaVersion"],
+      "value": 2,
+      "errorFragment": "schemaVersion"
+    },
+    {
+      "name": "ai-provenance-missing-reviewed-content-digest",
+      "base": "baseAiAcceptedReviewedMetadata",
+      "operation": "remove",
+      "path": ["aiReviewProvenance", "reviewedContentSha256"],
+      "errorFragment": "reviewedContentSha256"
+    },
+    {
+      "name": "ai-provenance-with-malformed-reviewed-content-digest",
+      "base": "baseAiAcceptedReviewedMetadata",
+      "operation": "set",
+      "path": ["aiReviewProvenance", "reviewedContentSha256"],
+      "value": "not-a-digest",
+      "errorFragment": "reviewedContentSha256"
+    },
+    {
+      "name": "ai-provenance-without-source-references",
+      "base": "baseAiAcceptedReviewedMetadata",
+      "operation": "set",
+      "path": ["aiReviewProvenance", "sourceReferences"],
+      "value": [],
+      "errorFragment": "sourceReferences"
+    },
+    {
+      "name": "ai-provenance-with-insecure-source-reference",
+      "base": "baseAiAcceptedReviewedMetadata",
+      "operation": "set",
+      "path": ["aiReviewProvenance", "sourceReferences"],
+      "value": ["http://example.test/reference"],
+      "errorFragment": "sourceReferences"
+    },
+    {
+      "name": "ai-provenance-with-unknown-field",
+      "base": "baseAiAcceptedReviewedMetadata",
+      "operation": "set",
+      "path": ["aiReviewProvenance", "confidenceScore"],
+      "value": "high",
+      "errorFragment": "confidenceScore"
+    },
+    {
+      "name": "ai-provenance-with-unsupported-schema-version",
+      "base": "baseAiAcceptedReviewedMetadata",
+      "operation": "set",
+      "path": ["aiReviewProvenance", "schemaVersion"],
+      "value": 2,
+      "errorFragment": "schemaVersion"
     }
   ]
 }

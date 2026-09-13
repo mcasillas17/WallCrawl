@@ -53,5 +53,52 @@ class ReviewedExerciseMetadataTest {
         assertThat(exercise.programming).isSameInstanceAs(legacy)
         assertThat(exercise.reviewedMetadata).isSameInstanceAs(reviewed)
         assertThat(exercise.reviewedMetadata?.reviewState).isEqualTo(ReviewState.DRAFT)
+        assertThat(exercise.reviewedMetadata?.aiReviewProvenance).isNull()
+    }
+
+    @Test
+    fun aiAcceptedMetadata_recordsAiProvenanceWithoutImplyingHumanReview() {
+        val aiProvenance = AiReviewProvenance(
+            reviewerModelId = "test-model-1",
+            reviewedAtEpochMillis = 1_756_000_000_000L,
+            reviewedContentId = "push-up",
+            reviewedContentSha256 = "a".repeat(64),
+            sourceReferences = listOf("https://example.test/reference"),
+            decisionRationale = "Alpha AI acceptance for owner-authorized planning only.",
+            limitations = "Not a human review and not clinical clearance.",
+            schemaVersion = 3,
+            policyVersion = 1
+        )
+
+        val reviewed = ReviewedExerciseMetadata(
+            reviewState = ReviewState.AI_ACCEPTED,
+            directPrimaryMuscle = StandardMuscles.CHEST,
+            descriptiveSecondaryMuscles = setOf(StandardMuscles.TRICEPS),
+            movementPattern = MovementPattern.HORIZONTAL_PUSH,
+            complexity = ComplexityTier.FOUNDATIONAL,
+            progressionFamily = "bodyweight-horizontal-push",
+            prescriptionShape = PrescriptionShape.BODYWEIGHT_REPS,
+            approvedRegressions = emptyList(),
+            approvedSubstitutions = emptyList(),
+            capabilityRequirements = emptySet(),
+            supportRequirement = SupportRequirement.UNSUPPORTED,
+            impactLevel = ImpactLevel.NONE,
+            equipmentAlternatives = listOf(listOf(StandardEquipment.BODYWEIGHT)),
+            clearedTrainingConstraints = emptySet(),
+            provenance = ReviewProvenance(
+                reviewerRole = null,
+                rationaleOrSource = "AI-accepted alpha entry; never human reviewed.",
+                reviewedAtEpochMillis = null,
+                schemaVersion = 3,
+                policyVersion = 1
+            ),
+            aiReviewProvenance = aiProvenance
+        )
+
+        // AI acceptance is its own state: it must never read as, or back-fill, human review.
+        assertThat(reviewed.reviewState).isNotEqualTo(ReviewState.APPROVED)
+        assertThat(reviewed.provenance.reviewerRole).isNull()
+        assertThat(reviewed.provenance.reviewedAtEpochMillis).isNull()
+        assertThat(reviewed.aiReviewProvenance).isSameInstanceAs(aiProvenance)
     }
 }

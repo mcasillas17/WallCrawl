@@ -210,7 +210,7 @@ private fun WorkoutExercise.resolveAttribution(
         ?: return LedgerAttribution.Omitted(LedgerOmissionReason.MISSING_REVIEWED_METADATA)
     return when (reviewed.reviewState) {
         ReviewState.APPROVED -> LedgerAttribution.Credited(reviewed)
-        ReviewState.DRAFT ->
+        ReviewState.DRAFT, ReviewState.AI_ACCEPTED ->
             LedgerAttribution.Omitted(LedgerOmissionReason.METADATA_NOT_APPROVED)
     }
 }

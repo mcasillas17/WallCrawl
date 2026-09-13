@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://wallcrawl.local/schemas/reviewed-exercise-metadata-v2.json",
+  "$id": "https://wallcrawl.local/schemas/reviewed-exercise-metadata-v3.json",
   "title": "WallCrawl reviewed exercise metadata",
   "type": "object",
   "additionalProperties": false,
   "required": ["schemaVersion", "exercises"],
   "properties": {
-    "schemaVersion": {"type": "integer", "const": 2},
+    "schemaVersion": {"type": "integer", "enum": [2, 3]},
     "exercises": {
       "type": "object",
       "maxProperties": 500,
@@ -61,7 +61,41 @@
           "minimum": 1,
           "maximum": 253402300799999
         },
-        "schemaVersion": {"type": "integer", "const": 2},
+        "schemaVersion": {"type": "integer", "enum": [2, 3]},
+        "policyVersion": {"type": "integer", "minimum": 1, "maximum": 10000}
+      }
+    },
+    "aiReviewProvenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reviewerModelId", "reviewedAtEpochMillis", "reviewedContentId",
+        "reviewedContentSha256", "sourceReferences", "decisionRationale", "limitations",
+        "schemaVersion", "policyVersion"
+      ],
+      "properties": {
+        "reviewerModelId": {"type": "string", "minLength": 1, "maxLength": 120},
+        "reviewedAtEpochMillis": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 253402300799999
+        },
+        "reviewedContentId": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+          "maxLength": 128
+        },
+        "reviewedContentSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "sourceReferences": {
+          "type": "array", "minItems": 1, "maxItems": 8, "uniqueItems": true,
+          "items": {
+            "type": "string", "minLength": 1, "maxLength": 2048,
+            "pattern": "^https://"
+          }
+        },
+        "decisionRationale": {"type": "string", "minLength": 1, "maxLength": 1000},
+        "limitations": {"type": "string", "minLength": 1, "maxLength": 1000},
+        "schemaVersion": {"type": "integer", "const": 3},
         "policyVersion": {"type": "integer", "minimum": 1, "maximum": 10000}
       }
     },
@@ -76,7 +110,7 @@
         "clearedTrainingConstraints", "provenance"
       ],
       "properties": {
-        "reviewState": {"type": "string", "enum": ["draft", "approved"]},
+        "reviewState": {"type": "string", "enum": ["draft", "approved", "ai_accepted"]},
         "directPrimaryMuscle": {"$ref": "#/$defs/canonicalMuscle"},
         "descriptiveSecondaryMuscles": {
           "type": "array", "maxItems": 16, "uniqueItems": true,
@@ -136,7 +170,8 @@
             ]
           }
         },
-        "provenance": {"$ref": "#/$defs/provenance"}
+        "provenance": {"$ref": "#/$defs/provenance"},
+        "aiReviewProvenance": {"$ref": "#/$defs/aiReviewProvenance"}
       }
     }
   }

@@ -281,16 +281,51 @@ class WorkoutGuideCatalogParserTest {
     }
 
     @Test
+    fun parse_readsAiAcceptedMetadataWithoutTreatingItAsHumanApproval() {
+        val metadata = aiAcceptedReviewedMetadataJson()
+
+        val reviewed = parser.parse(StringReader(catalogJson(exerciseJson(metadata))))
+            .exercises.single().reviewedMetadata
+
+        assertThat(reviewed?.reviewState).isEqualTo(ReviewState.AI_ACCEPTED)
+        assertThat(reviewed?.provenance?.reviewerRole).isNull()
+        assertThat(reviewed?.provenance?.reviewedAtEpochMillis).isNull()
+        val aiProvenance = reviewed?.aiReviewProvenance
+        assertThat(aiProvenance?.reviewerModelId).isEqualTo("test-model-1")
+        assertThat(aiProvenance?.reviewedAtEpochMillis).isEqualTo(1_756_000_000_000L)
+        assertThat(aiProvenance?.reviewedContentId).isEqualTo("sample")
+        assertThat(aiProvenance?.reviewedContentSha256).isEqualTo("a".repeat(64))
+        assertThat(aiProvenance?.sourceReferences)
+            .containsExactly("https://example.test/reference")
+        assertThat(aiProvenance?.decisionRationale).isNotEmpty()
+        assertThat(aiProvenance?.limitations).isNotEmpty()
+        assertThat(aiProvenance?.schemaVersion).isEqualTo(3)
+    }
+
+    @Test
+    fun parse_keepsReadingTheAuthoredV2ReviewedContract() {
+        val reviewed = parser.parse(StringReader(catalogJson(exerciseJson(reviewedMetadataJson()))))
+            .exercises.single().reviewedMetadata
+
+        assertThat(reviewed?.provenance?.schemaVersion).isEqualTo(2)
+        assertThat(reviewed?.aiReviewProvenance).isNull()
+    }
+
+    @Test
     fun parse_rejectsMalformedReviewedMetadataAtTheSameContractBoundariesAsTheImporter() {
         val fixtures = testAssets.open("reviewed-validation-fixtures.json")
             .bufferedReader()
             .use { JSONObject(it.readText()) }
-        val base = fixtures.getJSONObject("baseReviewedMetadata")
         val cases = fixtures.getJSONArray("invalidCases")
 
         for (index in 0 until cases.length()) {
             val case = cases.getJSONObject(index)
-            val metadata = JSONObject(base.toString())
+            val baseName = if (case.has("base")) {
+                case.getString("base")
+            } else {
+                "baseReviewedMetadata"
+            }
+            val metadata = JSONObject(fixtures.getJSONObject(baseName).toString())
             applyFixtureOperation(metadata, case)
             assertFormatFailure(
                 catalogJson(
@@ -693,6 +728,43 @@ class WorkoutGuideCatalogParserTest {
             "rationaleOrSource": "Draft fixture awaiting human review.",
             "reviewedAtEpochMillis": null,
             "schemaVersion": 2,
+            "policyVersion": 1
+          }
+        }
+    """.trimIndent()
+
+    private fun aiAcceptedReviewedMetadataJson(): String = """
+        {
+          "reviewState": "ai_accepted",
+          "directPrimaryMuscle": "Core",
+          "descriptiveSecondaryMuscles": [],
+          "movementPattern": "core",
+          "complexity": "foundational",
+          "progressionFamily": "core-hold",
+          "prescriptionShape": "bodyweight_reps",
+          "approvedRegressions": [],
+          "approvedSubstitutions": [],
+          "capabilityRequirements": [],
+          "supportRequirement": "supported",
+          "impactLevel": "none",
+          "equipmentAlternatives": [["Bodyweight"]],
+          "clearedTrainingConstraints": [],
+          "provenance": {
+            "reviewerRole": null,
+            "rationaleOrSource": "AI-accepted fixture; never human reviewed.",
+            "reviewedAtEpochMillis": null,
+            "schemaVersion": 3,
+            "policyVersion": 1
+          },
+          "aiReviewProvenance": {
+            "reviewerModelId": "test-model-1",
+            "reviewedAtEpochMillis": 1756000000000,
+            "reviewedContentId": "sample",
+            "reviewedContentSha256": "${"a".repeat(64)}",
+            "sourceReferences": ["https://example.test/reference"],
+            "decisionRationale": "Alpha AI acceptance for owner-authorized planning only.",
+            "limitations": "Not a human review and not clinical clearance.",
+            "schemaVersion": 3,
             "policyVersion": 1
           }
         }
