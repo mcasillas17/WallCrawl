@@ -248,8 +248,9 @@ genuinely human-`APPROVED`, and `AI_ACCEPTED` is a separate, owner-authorized al
 categorical acceptance — not human approval and not a clinical validation or
 safety-for-everyone claim. See
 [the AI acceptance audit](docs/reviewed-exercise-metadata.md#ai-acceptance-audit) for the
-exact partition, the four additional intrinsic holds, the seven accepted sources that
-still name a pending regression/substitution endpoint, and the committed reproducible
+exact partition, the four additional intrinsic holds, the seven accepted sources restored
+after graph-only review holds (five retain five edges to four unique pending endpoints),
+and the committed reproducible
 audit artifact plus its offline verifier.
 
 Task 2's selected joint-constraint half is now closed on the implementation side and open on

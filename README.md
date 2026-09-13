@@ -525,9 +525,11 @@ byte-identical to what the importer produces, so `--check` still verifies it.
 
 Cardio machines, distance work, and stretches stay browseable and usable in
 custom workouts, but are not prescribed as automatic training slots. The test
-is whether the movement fits the existing strength classification: a kettlebell swing is
-loaded work for reps that happens to involve conditioning, and a plank is a
-timed hold that does not — both are planned; treadmills and jump rope are not.
+is whether the movement fits the existing strength classification and carries accepted
+reviewed metadata. A kettlebell swing is accepted loaded work for reps that happens to
+involve conditioning. The current plank record remains `DRAFT`, so it is browseable and
+manually selectable but not automatically planned; treadmills and jump rope remain outside
+automatic strength scope.
 
 Custom workout templates are stored locally in Room. Starting a template
 creates a frozen active-session snapshot, so later template edits or deletion

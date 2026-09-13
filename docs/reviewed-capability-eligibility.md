@@ -12,8 +12,10 @@ legacy `ExerciseFilter`. This does **not** replace legacy `programming` metadata
 prescription for every candidate the reviewed path admits. `reviewedMetadata` supplies
 the categorical eligibility gate (accepted-record membership, equipment, capability,
 constraint, and complexity rules) and the state-based dose/effort/rest policy layered
-on top of that base prescription; it does not itself supply ranking, coaching, or the
-base prescription. The flag is local and set in
+on top of that base prescription. Accepted complexity, capability requirements, and
+directed supported-regression links also contribute ranking signals alongside legacy
+programming; reviewed metadata still does not replace coaching text or the base
+prescription. The flag is local and set in
 application composition; there is no remote configuration, analytics event,
 automatic activation, or network rollout path.
 
@@ -30,8 +32,9 @@ are outside automatic-strength scope. **Zero entries are `APPROVED`: no genuine 
 reviewer has signed off on any record.** `AI_ACCEPTED` is a separate, owner-authorized
 alpha categorical acceptance — it is not human approval and not a clinical validation or
 safety-for-everyone claim. See [the exact partition and audit](reviewed-exercise-metadata.md#ai-acceptance-audit)
-for the four additional intrinsic holds, the seven sources that keep acceptance while
-pointing at a still-pending endpoint, and why the audit found no way to record a
+for the four additional intrinsic holds, the seven sources restored after graph-only
+review holds (five of which retain five edges to four unique pending endpoints), and why
+the audit found no way to record a
 non-empty `clearedTrainingConstraints` list for any record. The
 [full-catalog review](research/2026-09-07-full-exercise-catalog-review.json)
 distinguishes content readiness, unresolved evidence and excluded categories; it is

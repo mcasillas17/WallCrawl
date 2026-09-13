@@ -67,11 +67,12 @@ fatigue score or starting load. The unresolved row has no satisfiable alternativ
 there is deliberately no selectable "unknown anchor" token. Existing empty
 legacy matrices keep their previous equipment-free meaning.
 
-The active `ExerciseFilter` uses these effective requirements. The reviewed
-`ExerciseEligibilityPolicy` requires both approved equipment alternatives and
+The production `ExerciseEligibilityPolicy` uses these effective requirements and requires
+both accepted equipment alternatives and
 the same source-bound minimum, including when considering an available supported
 regression. A synthetic or later incomplete approval cannot waive that minimum.
-Exclusions and all other applicable eligibility rules still apply.
+Exclusions and all other applicable eligibility rules still apply. `ExerciseFilter`
+remains only the fallback when reviewed eligibility is explicitly disabled.
 
 All 302 entries remain browseable and explicitly selectable in manual templates.
 The editor reports missing equipment alternatives or an unresolved setup without
