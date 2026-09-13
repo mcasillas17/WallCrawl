@@ -158,7 +158,7 @@
 
     <!-- ============================ Movement preferences ============================ -->
     <string name="movement_capability_intro">Answer each preference, including Not sure when that fits best.</string>
-    <string name="movement_capability_current_use">Automatic workouts read these settings. A movement that needs something you mark Avoid is left out of your recommendations, and one that needs something you mark Limited is prescribed with fewer sets.</string>
+    <string name="movement_capability_current_use">Automatic workouts read these settings. A movement that needs something you mark Avoid is left out of your recommendations, and if that leaves nothing to plan, WallCrawl says so instead of offering one.</string>
     <string name="movement_capability_answer_required">Choose an answer for this movement preference.</string>
     <string name="movement_capability_summary_label">Movement preferences</string>
     <string name="movement_capability_option_accessibility">%1$s, %2$s</string>
@@ -306,11 +306,11 @@
     <string name="today_error_start_validation_failed">This suggestion no longer fits your current setup. Regenerate it and try again.</string>
     <string name="today_error_weekly_allowance_reached">Your planned sets for this week are already covered for these muscles. You can still build your own workout.</string>
 
-    <string name="today_error_reviewed_no_approved_metadata">Reviewed automatic planning isn\'t available yet, because no exercise metadata has human approval. You can still build your own workout.</string>
+    <string name="today_error_reviewed_no_approved_metadata">No exercise that fits your setup is in the reviewed automatic scope yet. You can still build your own workout.</string>
     <string name="today_error_reviewed_exclusions">Your exercise exclusions leave no reviewed automatic options. Update your exclusions in Profile, or build your own workout.</string>
     <string name="today_error_reviewed_equipment">Your available equipment leaves no reviewed automatic options. Update your equipment in Profile, or build your own workout.</string>
     <string name="today_error_reviewed_capabilities">Your movement preferences leave no reviewed automatic options. Update them in Profile, or build your own workout.</string>
-    <string name="today_error_reviewed_constraints">Your training restrictions leave no reviewed automatic options. Some restrictions still need human-reviewed exercise mappings.</string>
+    <string name="today_error_reviewed_constraints">Your training restrictions leave no reviewed automatic options. Those restrictions are not in the reviewed automatic scope yet.</string>
     <string name="today_error_reviewed_calibration">Your current calibration stage leaves no reviewed automatic options. You can still build your own workout.</string>
     <string name="today_error_reviewed_none_eligible">No exercise meets every reviewed automatic-planning rule. You can still build your own workout.</string>
 
@@ -572,7 +572,7 @@
     <string name="profile_load_error">Your profile could not be loaded. Try again.</string>
 
     <string name="profile_capability_title">MOVEMENT PREFERENCES</string>
-    <string name="profile_capability_description">Automatic workouts read these settings. A movement that needs something you mark Avoid is left out of your recommendations, and one that needs something you mark Limited is prescribed with fewer sets.</string>
+    <string name="profile_capability_description">Automatic workouts read these settings. A movement that needs something you mark Avoid is left out of your recommendations, and if that leaves nothing to plan, WallCrawl says so instead of offering one.</string>
     <string name="profile_capability_edit">Edit movement preferences</string>
     <string name="profile_capability_save">Save preferences</string>
     <string name="profile_capability_saving">Saving preferences…</string>

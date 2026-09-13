@@ -376,6 +376,44 @@ class ProductionPlannerCompositionTest {
         assertThat(record.doseAccounting.map { it.muscle }).containsNoDuplicates()
     }
 
+    @Test
+    fun aLimitedCapabilityRemovesNoSetInAnyStateProductionCanReach() = runTest {
+        // The copy on both movement-preference surfaces may only claim what this proves.
+        // `AdaptationStatePolicy` derives UNCALIBRATED or RETURNING and nothing else, and
+        // both cap a single exercise at the same number the limited-capability rule does, so
+        // answering Limited changes no set count. A copy change claiming a reduction has to
+        // change this first.
+        val defaults = StateBasedTrainingPolicyDefaults.V1
+        val reachableStates = setOf(AdaptationState.UNCALIBRATED, AdaptationState.RETURNING)
+        assertThat(AdaptationStatePolicy().derive(UserProfile())).isIn(reachableStates)
+        assertThat(
+            AdaptationStatePolicy().derive(UserProfile(returningAfterBreakWeeks = 12))
+        ).isIn(reachableStates)
+        reachableStates.forEach { state ->
+            val limits = requireNotNull(defaults.doseLimitsByState[state]) { state.name }
+            assertWithMessage(state.name).that(defaults.limitedCapabilityMaxTargetSets)
+                .isAtLeast(limits.maxTargetSetsPerExercise)
+        }
+
+        // And the plans agree: the same profile answered Comfortable and Limited is
+        // prescribed the same sets for the same exercises.
+        val comfortable = planFor(
+            Cohort("full-gym-comfortable", fullGymProfile())
+        ) as Served
+        val limited = planFor(
+            Cohort(
+                "full-gym-limited",
+                fullGymProfile().copy(
+                    movementCapabilities = MovementCapabilities.from(
+                        MovementCapabilityType.entries.associateWith { CapabilityLevel.LIMITED }
+                    )
+                )
+            )
+        ) as Served
+        assertThat(limited.workout.exercises.map { it.targetSets })
+            .isEqualTo(comfortable.workout.exercises.map { it.targetSets })
+    }
+
     // region harness
 
     private suspend fun planFor(
@@ -701,7 +739,7 @@ class ProductionPlannerCompositionTest {
     }
 }
 
-private class StaticUserProfileRepository(
+internal class StaticUserProfileRepository(
     private val profile: UserProfile
 ) : UserProfileRepository {
     override fun getUserProfile(): Flow<UserProfile> = flowOf(profile)
@@ -735,7 +773,7 @@ private class StaticUserProfileRepository(
         error("This composition reads a profile; it never writes one.")
 }
 
-private class StaticWorkoutRepository(
+internal class StaticWorkoutRepository(
     private val completedSessions: List<WorkoutSession>
 ) : WorkoutRepository {
     override fun observeActiveSession(): Flow<WorkoutSession?> = flowOf(null)
@@ -799,7 +837,7 @@ private class StaticWorkoutRepository(
  * produces; the point of these cohorts is that completed history is credited by the same
  * accounting the app runs.
  */
-private class RecomputingLedgerRepository(
+internal class RecomputingLedgerRepository(
     private val sessions: List<WorkoutSession>,
     private val exercises: List<Exercise>,
     private val week: TrainingWeek,

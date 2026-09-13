@@ -168,6 +168,80 @@ class SafetyCopyTest {
         assertWithMessage("the Spanish Profile disclaimer must name what it covers")
             .that(spanish.getValue("profile_safety_description"))
             .startsWith("Tu selección de articulaciones")
+    }
+
+    @Test
+    fun aReachableNoAcceptedMetadataRefusalDescribesScopeRatherThanMissingHumanApproval() {
+        // `NO_APPROVED_METADATA` is reachable in production: an inventory that satisfies no
+        // accepted record leaves the still-pending ones as the last decisions standing. The
+        // copy therefore cannot say nothing has been reviewed — 182 records have been — only
+        // that nothing matching this user is inside the reviewed automatic scope.
+        listOf("en" to english, "es" to spanish).forEach { (language, strings) ->
+            REVIEWED_REFUSAL_KEYS.forEach { key ->
+                HUMAN_REVIEW_CLAIMS.forEach { claim ->
+                    assertWithMessage("$key ($language) must not claim human approval: $claim")
+                        .that(strings.getValue(key).lowercase()).doesNotContain(claim)
+                }
+            }
+        }
+
+        assertWithMessage("the English refusal must name the reviewed automatic scope")
+            .that(english.getValue("today_error_reviewed_no_approved_metadata"))
+            .contains("reviewed automatic scope")
+        assertWithMessage("the Spanish refusal must name the reviewed automatic scope")
+            .that(spanish.getValue("today_error_reviewed_no_approved_metadata"))
+            .contains("alcance automático revisado")
+        assertWithMessage("the English constraint refusal must name the reviewed scope too")
+            .that(english.getValue("today_error_reviewed_constraints"))
+            .contains("reviewed automatic scope")
+        assertWithMessage("the Spanish constraint refusal must name the reviewed scope too")
+            .that(spanish.getValue("today_error_reviewed_constraints"))
+            .contains("alcance automático revisado")
+
+        // Still no medical or diagnostic framing on a refusal a user will actually see.
+        listOf(english, spanish).forEach { strings ->
+            REVIEWED_REFUSAL_KEYS.forEach { key ->
+                assertNoMedicalPromise(key, strings.getValue(key))
+                assertNoDiagnosticLanguage(key, strings.getValue(key))
+            }
+        }
+    }
+
+    @Test
+    fun theMovementPreferenceCopyClaimsNoSetReductionThePolicyDoesNotMake() {
+        // `limitedCapabilityMaxTargetSets` and the per-exercise cap of every adaptation state
+        // production can reach are both 2, so a Limited answer removes no set from anything.
+        // Claiming otherwise would be the kind of sentence that passes a vocabulary check and
+        // is still untrue. `ProductionPlannerCompositionTest` holds the policy side of this.
+        listOf("en" to english, "es" to spanish).forEach { (language, strings) ->
+            listOf("profile_capability_description", "movement_capability_current_use")
+                .forEach { key ->
+                    listOf("fewer sets", "menos series", "fewer repetitions", "menos repeticiones")
+                        .forEach { claim ->
+                            assertWithMessage("$key ($language) must not promise $claim")
+                                .that(strings.getValue(key).lowercase()).doesNotContain(claim)
+                        }
+                }
+        }
+
+        assertWithMessage("the English capability copy must name the exclusion")
+            .that(english.getValue("movement_capability_current_use"))
+            .contains("left out of your recommendations")
+        assertWithMessage("the English capability copy must name the no-plan outcome")
+            .that(english.getValue("movement_capability_current_use"))
+            .contains("WallCrawl says so instead of offering one")
+        assertWithMessage("the Spanish capability copy must name the exclusion")
+            .that(spanish.getValue("movement_capability_current_use"))
+            .contains("queda fuera de tus recomendaciones")
+        assertWithMessage("the Spanish capability copy must name the no-plan outcome")
+            .that(spanish.getValue("movement_capability_current_use"))
+            .contains("WallCrawl lo dice en vez de ofrecer uno")
+        assertWithMessage("both capability surfaces must carry the same sentence in English")
+            .that(english.getValue("profile_capability_description"))
+            .isEqualTo(english.getValue("movement_capability_current_use"))
+        assertWithMessage("both capability surfaces must carry the same sentence in Spanish")
+            .that(spanish.getValue("profile_capability_description"))
+            .isEqualTo(spanish.getValue("movement_capability_current_use"))
 
         // Every string on both surfaces that offer the selector, not just the hint: a sibling
         // option subtitle is just as able to imply a filter that does not run, and the Profile
@@ -275,6 +349,25 @@ class SafetyCopyTest {
     }
 
     private companion object {
+        /** Every typed reviewed refusal a user can actually be shown. */
+        val REVIEWED_REFUSAL_KEYS = listOf(
+            "today_error_reviewed_no_approved_metadata",
+            "today_error_reviewed_exclusions",
+            "today_error_reviewed_equipment",
+            "today_error_reviewed_capabilities",
+            "today_error_reviewed_constraints",
+            "today_error_reviewed_calibration",
+            "today_error_reviewed_none_eligible"
+        )
+
+        /** Phrasings that describe the accepted cohort as human or clinical review. */
+        val HUMAN_REVIEW_CLAIMS = listOf(
+            "human approval", "human-approved", "human approved", "human-reviewed",
+            "aprobados por una persona", "aprobado por una persona",
+            "revisadas por una persona", "revisado por una persona",
+            "clinically", "clínicamente", "clinicamente"
+        )
+
         val RESOURCE_ROOT: File = generateSequence(File(".").absoluteFile) { it.parentFile }
             .map { File(it, "app/src/main/res") }
             .firstOrNull(File::isDirectory)

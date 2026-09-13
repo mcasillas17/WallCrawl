@@ -155,7 +155,7 @@
 
     <!-- ============================ Movement preferences ============================ -->
     <string name="movement_capability_intro">Responde cada preferencia, incluida «No estoy seguro» cuando sea la mejor opción.</string>
-    <string name="movement_capability_current_use">Los entrenamientos automáticos leen estos ajustes. Un movimiento que requiere algo marcado como Evitar queda fuera de tus recomendaciones, y uno que requiere algo marcado como Limitado se prescribe con menos series.</string>
+    <string name="movement_capability_current_use">Los entrenamientos automáticos leen estos ajustes. Un movimiento que requiere algo marcado como Evitar queda fuera de tus recomendaciones y, si no queda nada que planificar, WallCrawl lo dice en vez de ofrecer uno.</string>
     <string name="movement_capability_answer_required">Elige una respuesta para esta preferencia de movimiento.</string>
     <string name="movement_capability_summary_label">Preferencias de movimiento</string>
     <string name="movement_capability_option_accessibility">%1$s, %2$s</string>
@@ -302,11 +302,11 @@
     <string name="today_error_start_validation_failed">Esta sugerencia ya no encaja con tu configuración actual. Regenérala e inténtalo de nuevo.</string>
     <string name="today_error_weekly_allowance_reached">Las series planeadas de esta semana ya están cubiertas para esos músculos. Aun así puedes crear tu propia rutina.</string>
 
-    <string name="today_error_reviewed_no_approved_metadata">La planificación automática revisada todavía no está disponible, porque ningún ejercicio tiene metadatos aprobados por una persona. Aun así puedes crear tu propia rutina.</string>
+    <string name="today_error_reviewed_no_approved_metadata">Todavía ningún ejercicio que encaje con tu configuración está dentro del alcance automático revisado. Aun así puedes crear tu propia rutina.</string>
     <string name="today_error_reviewed_exclusions">Tus exclusiones de ejercicios no dejan opciones automáticas revisadas. Actualiza tus exclusiones en el perfil o crea tu propia rutina.</string>
     <string name="today_error_reviewed_equipment">Tu equipo disponible no deja opciones automáticas revisadas. Actualiza tu equipo en el perfil o crea tu propia rutina.</string>
     <string name="today_error_reviewed_capabilities">Tus preferencias de movimiento no dejan opciones automáticas revisadas. Actualízalas en el perfil o crea tu propia rutina.</string>
-    <string name="today_error_reviewed_constraints">Tus restricciones de entrenamiento no dejan opciones automáticas revisadas. Algunas restricciones todavía necesitan asignaciones de ejercicios revisadas por una persona.</string>
+    <string name="today_error_reviewed_constraints">Tus restricciones de entrenamiento no dejan opciones automáticas revisadas. Esas restricciones todavía no están dentro del alcance automático revisado.</string>
     <string name="today_error_reviewed_calibration">Tu etapa de calibración actual no deja opciones automáticas revisadas. Aun así puedes crear tu propia rutina.</string>
     <string name="today_error_reviewed_none_eligible">Ningún ejercicio cumple todas las reglas de la planificación automática revisada. Aun así puedes crear tu propia rutina.</string>
 
@@ -566,7 +566,7 @@
     <string name="profile_load_error">No se pudo cargar tu perfil. Inténtalo de nuevo.</string>
 
     <string name="profile_capability_title">PREFERENCIAS DE MOVIMIENTO</string>
-    <string name="profile_capability_description">Los entrenamientos automáticos leen estos ajustes. Un movimiento que requiere algo marcado como Evitar queda fuera de tus recomendaciones, y uno que requiere algo marcado como Limitado se prescribe con menos series.</string>
+    <string name="profile_capability_description">Los entrenamientos automáticos leen estos ajustes. Un movimiento que requiere algo marcado como Evitar queda fuera de tus recomendaciones y, si no queda nada que planificar, WallCrawl lo dice en vez de ofrecer uno.</string>
     <string name="profile_capability_edit">Editar las preferencias de movimiento</string>
     <string name="profile_capability_save">Guardar preferencias</string>
     <string name="profile_capability_saving">Guardando preferencias…</string>
