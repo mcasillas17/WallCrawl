@@ -147,12 +147,14 @@ class PlannerFixtureCorpusTest {
     }
 
     @Test
-    fun bundledCatalogProjection_keepsAllAuthoredReviewedMetadataDraft() {
+    fun bundledCatalogProjection_distinguishesAiAcceptanceFromPendingAndHumanApproval() {
         val exercises = contextFactory.bundledCatalogProjection().exercises
 
         assertThat(exercises).hasSize(302)
         assertThat(exercises.count { it.reviewedMetadata?.reviewState == ReviewState.DRAFT })
-            .isEqualTo(211)
+            .isEqualTo(29)
+        assertThat(exercises.count { it.reviewedMetadata?.reviewState == ReviewState.AI_ACCEPTED })
+            .isEqualTo(182)
         assertThat(exercises.count { it.reviewedMetadata?.reviewState == ReviewState.APPROVED })
             .isEqualTo(0)
         // The rollout contract's central claim: no bundled record clears any joint
@@ -197,7 +199,14 @@ class PlannerFixtureCorpusTest {
         result.exercises.forEach { exercise ->
             assertThat(exercise.reviewedMetadata!!.provenance.rationaleOrSource)
                 .startsWith("SYNTHETIC PLANNER FIXTURE")
+            assertThat(exercise.reviewedMetadata.aiReviewProvenance).isNull()
         }
+        assertThat(built.catalogExercises.filter { it.acceptedMetadata() != null }.map(Exercise::id))
+            .containsExactlyElementsIn(syntheticIds)
+        // Synthetic cohorts must stay isolated even as the real bundle gains acceptance.
+        assertThat(contextFactory.bundledCatalogProjection().exercises.count {
+            it.reviewedMetadata?.reviewState == ReviewState.AI_ACCEPTED
+        }).isEqualTo(182)
     }
 
     @Test

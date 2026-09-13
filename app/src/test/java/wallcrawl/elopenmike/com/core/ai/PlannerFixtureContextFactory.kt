@@ -13,6 +13,7 @@ import org.json.JSONException
 import org.json.JSONObject
 import org.json.JSONTokener
 import wallcrawl.elopenmike.com.core.exercise.ExerciseFilter
+import wallcrawl.elopenmike.com.core.model.AiReviewProvenance
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
 import wallcrawl.elopenmike.com.core.model.ComplexityTier
 import wallcrawl.elopenmike.com.core.model.Difficulty
@@ -238,21 +239,34 @@ internal class PlannerFixtureContextFactory(
     ): List<Exercise> {
         val approvedIds = reviewedEligibility?.syntheticApprovedExerciseIds?.toSet()
             ?: return exercises
+        val syntheticPolicyVersion = exercises.mapNotNull {
+            it.reviewedMetadata?.provenance?.policyVersion
+        }.maxOrNull() ?: 1
         return exercises.map { exercise ->
-            if (exercise.id !in approvedIds) return@map exercise
+            if (exercise.id !in approvedIds) {
+                val metadata = exercise.reviewedMetadata
+                // These fixtures deliberately admit only their declared synthetic cohort.
+                // Mask real AI acceptance in this in-memory test view, never in the projection.
+                return@map if (metadata?.reviewState == ReviewState.AI_ACCEPTED) {
+                    exercise.copy(reviewedMetadata = metadata.copy(
+                        reviewState = ReviewState.DRAFT, aiReviewProvenance = null
+                    ))
+                } else exercise
+            }
             val metadata = exercise.reviewedMetadata ?: throw PlannerFixtureFormatException(
                 "root.reviewedEligibility.syntheticApprovedExerciseIds contains '${exercise.id}', " +
                     "which has no bundled reviewed metadata."
             )
-            if (metadata.reviewState != ReviewState.DRAFT) {
+            if (metadata.reviewState !in setOf(ReviewState.DRAFT, ReviewState.AI_ACCEPTED)) {
                 throw PlannerFixtureFormatException(
                     "root.reviewedEligibility.syntheticApprovedExerciseIds contains '${exercise.id}', " +
-                        "which is not bundled as DRAFT."
+                        "which is not bundled as DRAFT or AI_ACCEPTED."
                 )
             }
             exercise.copy(
                 reviewedMetadata = metadata.copy(
                     reviewState = ReviewState.APPROVED,
+                    aiReviewProvenance = null,
                     clearedTrainingConstraints =
                         reviewedEligibility.syntheticClearedTrainingConstraints,
                     provenance = ReviewProvenance(
@@ -261,7 +275,7 @@ internal class PlannerFixtureContextFactory(
                             "SYNTHETIC PLANNER FIXTURE — never bundled in production assets.",
                         reviewedAtEpochMillis = 1L,
                         schemaVersion = metadata.provenance.schemaVersion,
-                        policyVersion = metadata.provenance.policyVersion
+                        policyVersion = syntheticPolicyVersion
                     )
                 )
             )
@@ -609,6 +623,10 @@ internal class PlannerFixtureContextFactory(
             requireObject(metadata, "provenance", "$path.provenance"),
             "$path.provenance"
         ),
+        aiReviewProvenance = if (metadata.isNull("aiReviewProvenance")) null else parseAiReviewProvenance(
+            requireObject(metadata, "aiReviewProvenance", "$path.aiReviewProvenance"),
+            "$path.aiReviewProvenance"
+        ),
         clearedTrainingConstraints = requireStringList(
             requireArray(
                 metadata,
@@ -662,6 +680,26 @@ internal class PlannerFixtureContextFactory(
         schemaVersion = requireInt(provenance, "schemaVersion", "$path.schemaVersion"),
         policyVersion = requireInt(provenance, "policyVersion", "$path.policyVersion")
     )
+
+    private fun parseAiReviewProvenance(provenance: JSONObject, path: String): AiReviewProvenance =
+        AiReviewProvenance(
+            reviewerModelId = requireString(provenance, "reviewerModelId", "$path.reviewerModelId"),
+            reviewedAtEpochMillis = requireLong(
+                provenance, "reviewedAtEpochMillis", "$path.reviewedAtEpochMillis"
+            ),
+            reviewedContentId = requireString(provenance, "reviewedContentId", "$path.reviewedContentId"),
+            reviewedContentSha256 = requireString(
+                provenance, "reviewedContentSha256", "$path.reviewedContentSha256"
+            ),
+            sourceReferences = requireStringList(
+                requireArray(provenance, "sourceReferences", "$path.sourceReferences"),
+                "$path.sourceReferences", minSize = 1
+            ),
+            decisionRationale = requireString(provenance, "decisionRationale", "$path.decisionRationale"),
+            limitations = requireString(provenance, "limitations", "$path.limitations"),
+            schemaVersion = requireInt(provenance, "schemaVersion", "$path.schemaVersion"),
+            policyVersion = requireInt(provenance, "policyVersion", "$path.policyVersion")
+        )
 
     private fun parseProgramming(programming: JSONObject, path: String): ExerciseProgrammingMetadata =
         ExerciseProgrammingMetadata(
@@ -824,15 +862,20 @@ internal class PlannerFixtureContextFactory(
     }
 
     private fun readBoundedBytes(input: InputStream, path: String): ByteArray {
+        val maximumBytes = if (path in BUNDLED_CATALOG_RESOURCE_PATHS) {
+            MAX_CATALOG_RESOURCE_BYTES
+        } else {
+            MAX_RESOURCE_BYTES
+        }
         val output = ByteArrayOutputStream()
         val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
         while (true) {
             val read = input.read(buffer)
             if (read < 0) break
             output.write(buffer, 0, read)
-            if (output.size() > MAX_RESOURCE_BYTES) {
+            if (output.size() > maximumBytes) {
                 throw PlannerFixtureFormatException(
-                    "$path exceeds the maximum resource size of $MAX_RESOURCE_BYTES bytes."
+                    "$path exceeds the maximum resource size of $maximumBytes bytes."
                 )
             }
         }
@@ -864,6 +907,8 @@ internal class PlannerFixtureContextFactory(
         private const val SUPPORTED_BUNDLED_CATALOG_SCHEMA_VERSION = 1
         private const val EXPECTED_BUNDLED_EXERCISE_COUNT = 302
         private const val MAX_RESOURCE_BYTES = 512 * 1024
+        // Dedicated AI provenance enlarges the catalog, not the persona fixture contract.
+        private const val MAX_CATALOG_RESOURCE_BYTES = 2 * 1024 * 1024
         private val BUNDLED_CATALOG_RESOURCE_PATHS = listOf(
             "workout-guide/catalog.json",
             "assets/workout-guide/catalog.json"

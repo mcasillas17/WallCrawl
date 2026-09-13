@@ -187,6 +187,7 @@ class FixedAnchorBandEligibilityTest {
         val seed = catalog.single { it.id == "band-pull-apart" }.reviewedMetadata!!
         return exercise.copy(reviewedMetadata = seed.copy(
             reviewState = ReviewState.APPROVED,
+            aiReviewProvenance = null,
             equipmentAlternatives = listOf(REQUIRED.getValue(exercise.id) ?: listOf(BAND)),
             capabilityRequirements = setOf(MovementCapabilityType.BALANCE_WITHOUT_SUPPORT),
             provenance = seed.provenance.copy(

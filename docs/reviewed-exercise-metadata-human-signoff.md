@@ -3,24 +3,27 @@
 This unsigned worksheet is generated from the [full per-exercise evidence ledger](research/2026-09-07-full-exercise-catalog-review.json). It records AI recommendations for human inspection, **not human approval or clinical validation**.
 
 - Catalog entries examined: **302**
-- AI-ready for human inspection: **186**
-- Pending evidence or policy decisions: **81**
+- AI-ready for human inspection: **0**
+- AI-accepted categorical metadata: **182**
+- Pending evidence or policy decisions: **85**
 - Outside automatic-strength scope: **35**
-- Authored reviewed metadata: **211 DRAFT**
+- Authored reviewed metadata: **211** (AI_ACCEPTED: **182**, DRAFT: **29**)
 - Human-approved metadata: **0**
 - Pinned source: `ba0b709cb20430361b2cb33aaadd20998164a916`
 
-Readiness describes the content review. `DRAFT` describes missing human sign-off. Automatic-strength classification describes the current importer/planner boundary. These are three different judgments; none establishes suitability for every user.
+`AI_ACCEPTED` records an owner-authorized AI categorical decision, not human sign-off. `DRAFT` remains pending and ineligible for reviewed planning. Automatic-strength classification describes the current importer/planner boundary. Source acceptance, endpoint acceptance, type scope and human approval are separate judgments; none establishes suitability for every user.
 
 ## What human sign-off covers
 
-For each ID, inspect the cited source and illustrations, the exact proposed metadata, its corrections and limitations, and every directed regression/substitution. The ledger binds each proposal to its metadata SHA-256; changed proposals need renewed inspection. The draft fields named `approvedRegressions` and `approvedSubstitutions` are still unratified proposals while their owning metadata is DRAFT.
+For each ID, inspect the cited source and illustrations, the exact proposed metadata, its corrections and limitations, and every directed regression/substitution. The ledger's `metadataSha256` binds the exact current metadata, while `auditedProposalSha256` and AI `reviewedContentSha256` identify the exact pre-disposition proposal inspected by the corpus auditor, not a self-referential hash of the final record. Changed categorical proposals need renewed inspection. The fields named `approvedRegressions` and `approvedSubstitutions` preserve directed relationship history: they remain proposals on DRAFT sources and authorizations on accepted sources, never acceptance of a pending endpoint. Runtime independently requires relevant accepted endpoints and all other eligibility conditions before using a link.
+
+Schema version 3 adds dedicated `aiReviewProvenance` without filling human provenance. The acceptance timestamp records the external corpus audit's final filesystem mtime, not a new per-source fetch or illustration inspection. AI policy version 2 applies to accepted records; schema-only refreshes of pending drafts retain their original policy version and do not imply renewed acceptance.
 
 Reviewed schema version 2 adds `clearedTrainingConstraints`, so sign-off now also covers which selected joint sensitivities — shoulder, elbow, wrist, lower back, hip, knee — the exercise is explicitly cleared for. No record below lists any. An empty list is the fail-closed value: the exercise stays out of automatic planning for a user who selected that sensitivity, and no clearance is inferred from its name, muscles or movement pattern. `LOW_IMPACT_ONLY` is deliberately not part of that list because `impactLevel` already decides it. A clearance is a reviewer's product judgement about a self-reported label, never a diagnosis or clinical clearance.
 
 A human decision must identify the reviewed ID and fields, actual reviewer role, actual review time, rationale and remaining caveats. Only that explicit decision can support a later authored change to `reviewState=approved` with truthful provenance. A checklist, model consensus, software check, pull-request approval or merge is not that decision. No sign-off has been supplied for any row below.
 
-All 302 exercises remain available for browsing and manual workouts. Excluded categories receive no manufactured strength allocation. Production reviewed planning remains disabled; human approval, equipment/profile availability and rollout are separate gates.
+All 302 exercises remain available for browsing and manual workouts. Excluded categories receive no manufactured strength allocation. Production reviewed planning remains disabled; metadata acceptance, human approval, equipment/profile availability and rollout are separate gates.
 
 ## Per-ID sign-off register
 
@@ -29,311 +32,311 @@ The ledger contains the field-group evidence and complete remaining decisions fo
 | Exercise ID | AI content disposition | Proposed direct primary | Human decision |
 | --- | --- | --- | --- |
 | `ab-wheel` | pending_evidence_or_policy | Not allocated | Pending |
-| `active-hang` | ready_for_human_review | Lats | Pending |
-| `archer-push-up` | ready_for_human_review | Chest | Pending |
+| `active-hang` | ai_accepted | Lats | Pending |
+| `archer-push-up` | ai_accepted | Chest | Pending |
 | `arm-circles` | outside_automatic_strength_scope | Not allocated | N/A |
-| `arnold-press` | ready_for_human_review | Shoulders | Pending |
+| `arnold-press` | ai_accepted | Shoulders | Pending |
 | `assault-bike` | outside_automatic_strength_scope | Not allocated | N/A |
-| `assisted-chin-up` | ready_for_human_review | Biceps | Pending |
+| `assisted-chin-up` | ai_accepted | Biceps | Pending |
 | `assisted-dip` | pending_evidence_or_policy | Not allocated | Pending |
 | `assisted-pistol-squat` | pending_evidence_or_policy | Quadriceps | Pending |
-| `assisted-pull-up` | ready_for_human_review | Lats | Pending |
+| `assisted-pull-up` | ai_accepted | Lats | Pending |
 | `back-extension` | pending_evidence_or_policy | Not allocated | Pending |
-| `band-pull-apart` | ready_for_human_review | Upper Back | Pending |
-| `banded-clamshell` | ready_for_human_review | Glutes | Pending |
-| `banded-dead-bug` | ready_for_human_review | Core | Pending |
-| `banded-donkey-kick` | ready_for_human_review | Glutes | Pending |
+| `band-pull-apart` | ai_accepted | Upper Back | Pending |
+| `banded-clamshell` | ai_accepted | Glutes | Pending |
+| `banded-dead-bug` | ai_accepted | Core | Pending |
+| `banded-donkey-kick` | ai_accepted | Glutes | Pending |
 | `banded-face-pull` | pending_evidence_or_policy | Not allocated | Pending |
-| `banded-fire-hydrant` | ready_for_human_review | Glutes | Pending |
+| `banded-fire-hydrant` | ai_accepted | Glutes | Pending |
 | `banded-frog-pump` | pending_evidence_or_policy | Glutes | Pending |
-| `banded-glute-bridge` | ready_for_human_review | Glutes | Pending |
+| `banded-glute-bridge` | ai_accepted | Glutes | Pending |
 | `banded-hip-thrust` | pending_evidence_or_policy | Not allocated | Pending |
 | `banded-kickback` | pending_evidence_or_policy | Not allocated | Pending |
 | `banded-lat-pulldown` | pending_evidence_or_policy | Not allocated | Pending |
-| `banded-lateral-walk` | ready_for_human_review | Glutes | Pending |
-| `banded-monster-walk` | ready_for_human_review | Glutes | Pending |
+| `banded-lateral-walk` | ai_accepted | Glutes | Pending |
+| `banded-monster-walk` | ai_accepted | Glutes | Pending |
 | `banded-pallof-press` | pending_evidence_or_policy | Not allocated | Pending |
 | `banded-row` | pending_evidence_or_policy | Not allocated | Pending |
-| `banded-seated-hip-abduction` | ready_for_human_review | Glutes | Pending |
-| `banded-squat` | ready_for_human_review | Quadriceps | Pending |
-| `banded-standing-hip-abduction` | ready_for_human_review | Glutes | Pending |
+| `banded-seated-hip-abduction` | ai_accepted | Glutes | Pending |
+| `banded-squat` | ai_accepted | Quadriceps | Pending |
+| `banded-standing-hip-abduction` | ai_accepted | Glutes | Pending |
 | `banded-woodchop` | pending_evidence_or_policy | Not allocated | Pending |
-| `barbell-back-squat` | ready_for_human_review | Quadriceps | Pending |
-| `barbell-bench-press` | ready_for_human_review | Chest | Pending |
-| `barbell-bicep-curl` | ready_for_human_review | Biceps | Pending |
+| `barbell-back-squat` | ai_accepted | Quadriceps | Pending |
+| `barbell-bench-press` | ai_accepted | Chest | Pending |
+| `barbell-bicep-curl` | ai_accepted | Biceps | Pending |
 | `barbell-deadlift` | pending_evidence_or_policy | Hamstrings | Pending |
-| `barbell-glute-bridge` | ready_for_human_review | Glutes | Pending |
-| `barbell-row` | ready_for_human_review | Back | Pending |
+| `barbell-glute-bridge` | ai_accepted | Glutes | Pending |
+| `barbell-row` | ai_accepted | Back | Pending |
 | `battle-ropes` | outside_automatic_strength_scope | Not allocated | N/A |
 | `bear-crawl` | outside_automatic_strength_scope | Not allocated | N/A |
 | `bear-plank` | pending_evidence_or_policy | Core | Pending |
 | `belt-squat` | pending_evidence_or_policy | Quadriceps | Pending |
-| `bench-dip` | ready_for_human_review | Triceps | Pending |
-| `bent-over-rear-delt-raise` | ready_for_human_review | Rear Delts | Pending |
-| `bicep-curl` | ready_for_human_review | Biceps | Pending |
-| `bicycle-crunch` | ready_for_human_review | Core | Pending |
-| `bird-dog` | ready_for_human_review | Core | Pending |
-| `bodyweight-squat` | ready_for_human_review | Quadriceps | Pending |
-| `bulgarian-split-squat` | ready_for_human_review | Quadriceps | Pending |
+| `bench-dip` | ai_accepted | Triceps | Pending |
+| `bent-over-rear-delt-raise` | ai_accepted | Rear Delts | Pending |
+| `bicep-curl` | ai_accepted | Biceps | Pending |
+| `bicycle-crunch` | ai_accepted | Core | Pending |
+| `bird-dog` | ai_accepted | Core | Pending |
+| `bodyweight-squat` | ai_accepted | Quadriceps | Pending |
+| `bulgarian-split-squat` | ai_accepted | Quadriceps | Pending |
 | `burpee` | pending_evidence_or_policy | Quadriceps | Pending |
 | `butterfly-stretch` | outside_automatic_strength_scope | Not allocated | N/A |
 | `cable-crunch` | pending_evidence_or_policy | Core | Pending |
-| `cable-curl` | ready_for_human_review | Biceps | Pending |
-| `cable-fly` | ready_for_human_review | Chest | Pending |
-| `cable-front-raise` | ready_for_human_review | Shoulders | Pending |
-| `cable-kickback` | ready_for_human_review | Glutes | Pending |
-| `cable-lateral-raise` | ready_for_human_review | Shoulders | Pending |
-| `cable-pallof-hold` | ready_for_human_review | Core | Pending |
-| `cable-pull-through` | ready_for_human_review | Glutes | Pending |
-| `cable-rear-delt-fly` | ready_for_human_review | Rear Delts | Pending |
-| `cable-standing-hip-abduction` | ready_for_human_review | Glutes | Pending |
-| `cable-standing-hip-adduction` | ready_for_human_review | Adductors | Pending |
-| `cable-triceps-pushdown` | ready_for_human_review | Triceps | Pending |
-| `cable-woodchop` | ready_for_human_review | Core | Pending |
+| `cable-curl` | ai_accepted | Biceps | Pending |
+| `cable-fly` | ai_accepted | Chest | Pending |
+| `cable-front-raise` | ai_accepted | Shoulders | Pending |
+| `cable-kickback` | pending_evidence_or_policy | Glutes | Pending |
+| `cable-lateral-raise` | ai_accepted | Shoulders | Pending |
+| `cable-pallof-hold` | ai_accepted | Core | Pending |
+| `cable-pull-through` | ai_accepted | Glutes | Pending |
+| `cable-rear-delt-fly` | ai_accepted | Rear Delts | Pending |
+| `cable-standing-hip-abduction` | pending_evidence_or_policy | Glutes | Pending |
+| `cable-standing-hip-adduction` | pending_evidence_or_policy | Adductors | Pending |
+| `cable-triceps-pushdown` | ai_accepted | Triceps | Pending |
+| `cable-woodchop` | ai_accepted | Core | Pending |
 | `calf-raise` | pending_evidence_or_policy | Not allocated | Pending |
-| `captains-chair-knee-raise` | ready_for_human_review | Core | Pending |
+| `captains-chair-knee-raise` | ai_accepted | Core | Pending |
 | `cat-cow-stretch` | outside_automatic_strength_scope | Not allocated | N/A |
-| `chair-dip` | ready_for_human_review | Triceps | Pending |
-| `chest-supported-row` | ready_for_human_review | Back | Pending |
+| `chair-dip` | ai_accepted | Triceps | Pending |
+| `chest-supported-row` | ai_accepted | Back | Pending |
 | `childs-pose` | outside_automatic_strength_scope | Not allocated | N/A |
-| `chin-up` | ready_for_human_review | Biceps | Pending |
-| `clamshell` | ready_for_human_review | Glutes | Pending |
-| `close-grip-bench-press` | ready_for_human_review | Triceps | Pending |
-| `close-grip-lat-pulldown` | ready_for_human_review | Lats | Pending |
+| `chin-up` | ai_accepted | Biceps | Pending |
+| `clamshell` | ai_accepted | Glutes | Pending |
+| `close-grip-bench-press` | ai_accepted | Triceps | Pending |
+| `close-grip-lat-pulldown` | ai_accepted | Lats | Pending |
 | `commando-pull-up` | pending_evidence_or_policy | Not allocated | Pending |
 | `concentration-curl` | pending_evidence_or_policy | Not allocated | Pending |
 | `copenhagen-plank` | pending_evidence_or_policy | Core | Pending |
-| `cossack-squat` | ready_for_human_review | Quadriceps | Pending |
+| `cossack-squat` | ai_accepted | Quadriceps | Pending |
 | `crab-walk` | pending_evidence_or_policy | Triceps | Pending |
 | `cross-body-shoulder-stretch` | outside_automatic_strength_scope | Not allocated | N/A |
-| `crunch` | ready_for_human_review | Core | Pending |
-| `curtsy-lunge` | ready_for_human_review | Glutes | Pending |
+| `crunch` | ai_accepted | Core | Pending |
+| `curtsy-lunge` | ai_accepted | Glutes | Pending |
 | `cycling` | outside_automatic_strength_scope | Not allocated | N/A |
-| `dead-bug` | ready_for_human_review | Core | Pending |
-| `dead-hang` | ready_for_human_review | Forearms | Pending |
-| `decline-bench-press` | ready_for_human_review | Chest | Pending |
-| `decline-dumbbell-press` | ready_for_human_review | Chest | Pending |
-| `decline-push-up` | ready_for_human_review | Chest | Pending |
-| `decline-sit-up` | ready_for_human_review | Core | Pending |
-| `deficit-reverse-lunge` | ready_for_human_review | Glutes | Pending |
-| `diamond-push-up` | ready_for_human_review | Triceps | Pending |
+| `dead-bug` | ai_accepted | Core | Pending |
+| `dead-hang` | ai_accepted | Forearms | Pending |
+| `decline-bench-press` | ai_accepted | Chest | Pending |
+| `decline-dumbbell-press` | ai_accepted | Chest | Pending |
+| `decline-push-up` | ai_accepted | Chest | Pending |
+| `decline-sit-up` | ai_accepted | Core | Pending |
+| `deficit-reverse-lunge` | ai_accepted | Glutes | Pending |
+| `diamond-push-up` | ai_accepted | Triceps | Pending |
 | `dip` | pending_evidence_or_policy | Triceps | Pending |
 | `donkey-calf-raise` | pending_evidence_or_policy | Not allocated | Pending |
-| `donkey-kick` | ready_for_human_review | Glutes | Pending |
+| `donkey-kick` | ai_accepted | Glutes | Pending |
 | `doorway-chest-stretch` | outside_automatic_strength_scope | Not allocated | N/A |
-| `doorway-row` | ready_for_human_review | Back | Pending |
-| `drag-curl` | ready_for_human_review | Biceps | Pending |
+| `doorway-row` | ai_accepted | Back | Pending |
+| `drag-curl` | ai_accepted | Biceps | Pending |
 | `dragon-flag` | pending_evidence_or_policy | Not allocated | Pending |
-| `dumbbell-bench-press` | ready_for_human_review | Chest | Pending |
-| `dumbbell-bent-over-row` | ready_for_human_review | Back | Pending |
-| `dumbbell-curtsy-lunge` | ready_for_human_review | Glutes | Pending |
-| `dumbbell-fly` | ready_for_human_review | Chest | Pending |
-| `dumbbell-glute-bridge` | ready_for_human_review | Glutes | Pending |
-| `dumbbell-hip-thrust` | ready_for_human_review | Glutes | Pending |
-| `dumbbell-lateral-lunge` | ready_for_human_review | Quadriceps | Pending |
-| `dumbbell-lateral-raise` | ready_for_human_review | Shoulders | Pending |
+| `dumbbell-bench-press` | ai_accepted | Chest | Pending |
+| `dumbbell-bent-over-row` | ai_accepted | Back | Pending |
+| `dumbbell-curtsy-lunge` | ai_accepted | Glutes | Pending |
+| `dumbbell-fly` | ai_accepted | Chest | Pending |
+| `dumbbell-glute-bridge` | ai_accepted | Glutes | Pending |
+| `dumbbell-hip-thrust` | ai_accepted | Glutes | Pending |
+| `dumbbell-lateral-lunge` | ai_accepted | Quadriceps | Pending |
+| `dumbbell-lateral-raise` | ai_accepted | Shoulders | Pending |
 | `dumbbell-overhead-tricep-extension` | pending_evidence_or_policy | Not allocated | Pending |
-| `dumbbell-romanian-deadlift` | ready_for_human_review | Hamstrings | Pending |
-| `dumbbell-shoulder-press` | ready_for_human_review | Shoulders | Pending |
-| `dumbbell-shrug` | ready_for_human_review | Upper Back | Pending |
-| `dumbbell-side-bend` | ready_for_human_review | Core | Pending |
-| `dumbbell-skull-crusher` | ready_for_human_review | Triceps | Pending |
+| `dumbbell-romanian-deadlift` | ai_accepted | Hamstrings | Pending |
+| `dumbbell-shoulder-press` | ai_accepted | Shoulders | Pending |
+| `dumbbell-shrug` | ai_accepted | Upper Back | Pending |
+| `dumbbell-side-bend` | ai_accepted | Core | Pending |
+| `dumbbell-skull-crusher` | ai_accepted | Triceps | Pending |
 | `dumbbell-sumo-deadlift` | pending_evidence_or_policy | Not allocated | Pending |
-| `dumbbell-sumo-squat` | ready_for_human_review | Glutes | Pending |
+| `dumbbell-sumo-squat` | ai_accepted | Glutes | Pending |
 | `elliptical` | outside_automatic_strength_scope | Not allocated | N/A |
 | `explosive-push-up` | pending_evidence_or_policy | Not allocated | Pending |
-| `face-pull` | ready_for_human_review | Upper Back | Pending |
+| `face-pull` | ai_accepted | Upper Back | Pending |
 | `farmer-carry` | outside_automatic_strength_scope | Not allocated | N/A |
 | `fast-feet` | outside_automatic_strength_scope | Not allocated | N/A |
 | `feet-elevated-pike-push-up` | pending_evidence_or_policy | Shoulders | Pending |
-| `fire-hydrant` | ready_for_human_review | Glutes | Pending |
-| `flutter-kick` | ready_for_human_review | Core | Pending |
-| `forward-lunge` | ready_for_human_review | Quadriceps | Pending |
-| `frog-pump` | ready_for_human_review | Glutes | Pending |
+| `fire-hydrant` | pending_evidence_or_policy | Glutes | Pending |
+| `flutter-kick` | ai_accepted | Core | Pending |
+| `forward-lunge` | ai_accepted | Quadriceps | Pending |
+| `frog-pump` | ai_accepted | Glutes | Pending |
 | `front-foot-elevated-split-squat` | pending_evidence_or_policy | Quadriceps | Pending |
-| `front-raise` | ready_for_human_review | Shoulders | Pending |
-| `front-squat` | ready_for_human_review | Quadriceps | Pending |
-| `glute-bridge` | ready_for_human_review | Glutes | Pending |
-| `glute-bridge-march` | ready_for_human_review | Glutes | Pending |
+| `front-raise` | ai_accepted | Shoulders | Pending |
+| `front-squat` | ai_accepted | Quadriceps | Pending |
+| `glute-bridge` | ai_accepted | Glutes | Pending |
+| `glute-bridge-march` | ai_accepted | Glutes | Pending |
 | `glute-focused-back-extension` | pending_evidence_or_policy | Not allocated | Pending |
-| `goblet-squat` | ready_for_human_review | Quadriceps | Pending |
+| `goblet-squat` | ai_accepted | Quadriceps | Pending |
 | `good-morning` | pending_evidence_or_policy | Not allocated | Pending |
-| `hack-squat` | ready_for_human_review | Quadriceps | Pending |
+| `hack-squat` | ai_accepted | Quadriceps | Pending |
 | `half-burpee` | pending_evidence_or_policy | Not allocated | Pending |
-| `half-kneeling-pallof-press` | ready_for_human_review | Core | Pending |
-| `hammer-curl` | ready_for_human_review | Biceps | Pending |
+| `half-kneeling-pallof-press` | ai_accepted | Core | Pending |
+| `hammer-curl` | ai_accepted | Biceps | Pending |
 | `hamstring-stretch` | outside_automatic_strength_scope | Not allocated | N/A |
 | `handstand-push-up` | pending_evidence_or_policy | Not allocated | Pending |
-| `hanging-knee-raise` | ready_for_human_review | Core | Pending |
+| `hanging-knee-raise` | ai_accepted | Core | Pending |
 | `hanging-leg-raise` | pending_evidence_or_policy | Core | Pending |
 | `heel-elevated-goblet-squat` | pending_evidence_or_policy | Not allocated | Pending |
-| `heel-tap` | ready_for_human_review | Core | Pending |
+| `heel-tap` | ai_accepted | Core | Pending |
 | `high-knees` | outside_automatic_strength_scope | Not allocated | N/A |
 | `hiking` | outside_automatic_strength_scope | Not allocated | N/A |
-| `hindu-push-up` | ready_for_human_review | Chest | Pending |
-| `hip-abduction-machine` | ready_for_human_review | Glutes | Pending |
-| `hip-adduction-machine` | ready_for_human_review | Adductors | Pending |
+| `hindu-push-up` | ai_accepted | Chest | Pending |
+| `hip-abduction-machine` | ai_accepted | Glutes | Pending |
+| `hip-adduction-machine` | ai_accepted | Adductors | Pending |
 | `hip-airplane` | pending_evidence_or_policy | Not allocated | Pending |
-| `hip-thrust` | ready_for_human_review | Glutes | Pending |
+| `hip-thrust` | ai_accepted | Glutes | Pending |
 | `hollow-body-hold` | pending_evidence_or_policy | Not allocated | Pending |
-| `hollow-rock` | ready_for_human_review | Core | Pending |
-| `inchworm` | ready_for_human_review | Core | Pending |
-| `incline-bench-press` | ready_for_human_review | Chest | Pending |
-| `incline-cable-fly` | ready_for_human_review | Chest | Pending |
-| `incline-dumbbell-curl` | ready_for_human_review | Biceps | Pending |
-| `incline-dumbbell-press` | ready_for_human_review | Chest | Pending |
-| `incline-push-up` | ready_for_human_review | Chest | Pending |
+| `hollow-rock` | ai_accepted | Core | Pending |
+| `inchworm` | ai_accepted | Core | Pending |
+| `incline-bench-press` | ai_accepted | Chest | Pending |
+| `incline-cable-fly` | ai_accepted | Chest | Pending |
+| `incline-dumbbell-curl` | ai_accepted | Biceps | Pending |
+| `incline-dumbbell-press` | ai_accepted | Chest | Pending |
+| `incline-push-up` | ai_accepted | Chest | Pending |
 | `inverted-row` | pending_evidence_or_policy | Not allocated | Pending |
 | `jump-rope` | outside_automatic_strength_scope | Not allocated | N/A |
-| `jump-squat` | ready_for_human_review | Quadriceps | Pending |
+| `jump-squat` | ai_accepted | Quadriceps | Pending |
 | `jumping-jack` | outside_automatic_strength_scope | Not allocated | N/A |
-| `kettlebell-romanian-deadlift` | ready_for_human_review | Hamstrings | Pending |
-| `kettlebell-swing` | ready_for_human_review | Glutes | Pending |
+| `kettlebell-romanian-deadlift` | ai_accepted | Hamstrings | Pending |
+| `kettlebell-swing` | ai_accepted | Glutes | Pending |
 | `knee-push-up` | pending_evidence_or_policy | Chest | Pending |
 | `kneeling-hip-flexor-stretch` | outside_automatic_strength_scope | Not allocated | N/A |
 | `l-sit-hold` | pending_evidence_or_policy | Core | Pending |
-| `l-sit-pull-up` | ready_for_human_review | Lats | Pending |
+| `l-sit-pull-up` | ai_accepted | Lats | Pending |
 | `landmine-press` | pending_evidence_or_policy | Not allocated | Pending |
 | `landmine-romanian-deadlift` | pending_evidence_or_policy | Not allocated | Pending |
 | `landmine-squat` | pending_evidence_or_policy | Not allocated | Pending |
-| `lat-pulldown` | ready_for_human_review | Lats | Pending |
-| `lateral-lunge` | ready_for_human_review | Quadriceps | Pending |
+| `lat-pulldown` | ai_accepted | Lats | Pending |
+| `lateral-lunge` | ai_accepted | Quadriceps | Pending |
 | `lateral-shuffle` | outside_automatic_strength_scope | Not allocated | N/A |
-| `leg-curl` | ready_for_human_review | Hamstrings | Pending |
-| `leg-extension` | ready_for_human_review | Quadriceps | Pending |
-| `leg-press` | ready_for_human_review | Quadriceps | Pending |
-| `leg-press-calf-raise` | ready_for_human_review | Calves | Pending |
+| `leg-curl` | ai_accepted | Hamstrings | Pending |
+| `leg-extension` | ai_accepted | Quadriceps | Pending |
+| `leg-press` | ai_accepted | Quadriceps | Pending |
+| `leg-press-calf-raise` | ai_accepted | Calves | Pending |
 | `leg-swings-stretch` | outside_automatic_strength_scope | Not allocated | N/A |
 | `lying-hamstring-walkout` | pending_evidence_or_policy | Not allocated | Pending |
-| `lying-leg-curl` | ready_for_human_review | Hamstrings | Pending |
-| `lying-leg-raise` | ready_for_human_review | Core | Pending |
-| `machine-chest-press` | ready_for_human_review | Chest | Pending |
+| `lying-leg-curl` | ai_accepted | Hamstrings | Pending |
+| `lying-leg-raise` | ai_accepted | Core | Pending |
+| `machine-chest-press` | ai_accepted | Chest | Pending |
 | `machine-glute-kickback` | pending_evidence_or_policy | Not allocated | Pending |
-| `machine-lateral-raise` | ready_for_human_review | Shoulders | Pending |
+| `machine-lateral-raise` | ai_accepted | Shoulders | Pending |
 | `machine-row` | pending_evidence_or_policy | Back | Pending |
-| `machine-shoulder-press` | ready_for_human_review | Shoulders | Pending |
+| `machine-shoulder-press` | ai_accepted | Shoulders | Pending |
 | `meadows-row` | pending_evidence_or_policy | Not allocated | Pending |
 | `mountain-climber` | pending_evidence_or_policy | Not allocated | Pending |
 | `negative-pull-up` | pending_evidence_or_policy | Lats | Pending |
 | `neutral-grip-pull-up` | pending_evidence_or_policy | Lats | Pending |
 | `nordic-hamstring-curl` | pending_evidence_or_policy | Not allocated | Pending |
-| `one-arm-dumbbell-row` | ready_for_human_review | Back | Pending |
-| `overhead-press` | ready_for_human_review | Shoulders | Pending |
-| `overhead-tricep-extension` | ready_for_human_review | Triceps | Pending |
-| `pallof-press` | ready_for_human_review | Core | Pending |
+| `one-arm-dumbbell-row` | ai_accepted | Back | Pending |
+| `overhead-press` | ai_accepted | Shoulders | Pending |
+| `overhead-tricep-extension` | ai_accepted | Triceps | Pending |
+| `pallof-press` | ai_accepted | Core | Pending |
 | `parallel-bar-dips` | pending_evidence_or_policy | Chest | Pending |
-| `pec-deck` | ready_for_human_review | Chest | Pending |
+| `pec-deck` | ai_accepted | Chest | Pending |
 | `pendlay-row` | pending_evidence_or_policy | Back | Pending |
-| `pike-push-up` | ready_for_human_review | Shoulders | Pending |
-| `pistol-squat` | ready_for_human_review | Quadriceps | Pending |
+| `pike-push-up` | ai_accepted | Shoulders | Pending |
+| `pistol-squat` | ai_accepted | Quadriceps | Pending |
 | `plank` | pending_evidence_or_policy | Core | Pending |
 | `plank-jack` | outside_automatic_strength_scope | Not allocated | N/A |
-| `plank-shoulder-tap` | ready_for_human_review | Core | Pending |
-| `plate-front-raise` | ready_for_human_review | Shoulders | Pending |
-| `preacher-curl` | ready_for_human_review | Biceps | Pending |
+| `plank-shoulder-tap` | ai_accepted | Core | Pending |
+| `plate-front-raise` | ai_accepted | Shoulders | Pending |
+| `preacher-curl` | ai_accepted | Biceps | Pending |
 | `prone-t-raise` | pending_evidence_or_policy | Not allocated | Pending |
-| `prone-y-raise` | ready_for_human_review | Upper Back | Pending |
-| `pull-ups` | ready_for_human_review | Lats | Pending |
-| `push-press` | ready_for_human_review | Shoulders | Pending |
-| `push-up` | ready_for_human_review | Chest | Pending |
-| `push-up-shoulder-tap` | ready_for_human_review | Core | Pending |
+| `prone-y-raise` | ai_accepted | Upper Back | Pending |
+| `pull-ups` | ai_accepted | Lats | Pending |
+| `push-press` | ai_accepted | Shoulders | Pending |
+| `push-up` | ai_accepted | Chest | Pending |
+| `push-up-shoulder-tap` | ai_accepted | Core | Pending |
 | `rack-pull` | pending_evidence_or_policy | Not allocated | Pending |
-| `rear-delt-fly` | ready_for_human_review | Rear Delts | Pending |
-| `reverse-crunch` | ready_for_human_review | Core | Pending |
-| `reverse-curl` | ready_for_human_review | Forearms | Pending |
+| `rear-delt-fly` | ai_accepted | Rear Delts | Pending |
+| `reverse-crunch` | ai_accepted | Core | Pending |
+| `reverse-curl` | ai_accepted | Forearms | Pending |
 | `reverse-hyperextension` | pending_evidence_or_policy | Not allocated | Pending |
-| `reverse-lunge` | ready_for_human_review | Quadriceps | Pending |
-| `reverse-pec-deck` | ready_for_human_review | Rear Delts | Pending |
-| `reverse-snow-angel` | ready_for_human_review | Upper Back | Pending |
-| `romanian-deadlift` | ready_for_human_review | Hamstrings | Pending |
-| `rope-hammer-curl` | ready_for_human_review | Biceps | Pending |
-| `rope-tricep-pushdown` | ready_for_human_review | Triceps | Pending |
+| `reverse-lunge` | ai_accepted | Quadriceps | Pending |
+| `reverse-pec-deck` | ai_accepted | Rear Delts | Pending |
+| `reverse-snow-angel` | ai_accepted | Upper Back | Pending |
+| `romanian-deadlift` | ai_accepted | Hamstrings | Pending |
+| `rope-hammer-curl` | ai_accepted | Biceps | Pending |
+| `rope-tricep-pushdown` | ai_accepted | Triceps | Pending |
 | `rowing` | outside_automatic_strength_scope | Not allocated | N/A |
 | `running` | outside_automatic_strength_scope | Not allocated | N/A |
 | `russian-twist` | pending_evidence_or_policy | Not allocated | Pending |
-| `scapular-pull-up` | ready_for_human_review | Lats | Pending |
-| `scapular-push-up` | ready_for_human_review | Upper Back | Pending |
+| `scapular-pull-up` | ai_accepted | Lats | Pending |
+| `scapular-push-up` | ai_accepted | Upper Back | Pending |
 | `seal-jack` | outside_automatic_strength_scope | Not allocated | N/A |
-| `seated-calf-raise` | ready_for_human_review | Calves | Pending |
+| `seated-calf-raise` | ai_accepted | Calves | Pending |
 | `seated-forward-fold-stretch` | outside_automatic_strength_scope | Not allocated | N/A |
 | `seated-knee-tuck` | pending_evidence_or_policy | Not allocated | Pending |
-| `seated-leg-curl` | ready_for_human_review | Hamstrings | Pending |
-| `seated-row` | ready_for_human_review | Back | Pending |
+| `seated-leg-curl` | ai_accepted | Hamstrings | Pending |
+| `seated-row` | ai_accepted | Back | Pending |
 | `shrimp-squat` | pending_evidence_or_policy | Not allocated | Pending |
-| `shrug` | ready_for_human_review | Upper Back | Pending |
-| `side-lying-hip-abduction` | ready_for_human_review | Glutes | Pending |
-| `side-lying-leg-raise` | ready_for_human_review | Glutes | Pending |
-| `side-plank` | ready_for_human_review | Core | Pending |
-| `side-plank-hip-dip` | ready_for_human_review | Core | Pending |
+| `shrug` | ai_accepted | Upper Back | Pending |
+| `side-lying-hip-abduction` | ai_accepted | Glutes | Pending |
+| `side-lying-leg-raise` | ai_accepted | Glutes | Pending |
+| `side-plank` | ai_accepted | Core | Pending |
+| `side-plank-hip-dip` | ai_accepted | Core | Pending |
 | `single-arm-cable-row` | pending_evidence_or_policy | Not allocated | Pending |
-| `single-arm-dumbbell-tricep-extension` | ready_for_human_review | Triceps | Pending |
-| `single-dumbbell-skullcrusher` | ready_for_human_review | Triceps | Pending |
+| `single-arm-dumbbell-tricep-extension` | ai_accepted | Triceps | Pending |
+| `single-dumbbell-skullcrusher` | ai_accepted | Triceps | Pending |
 | `single-leg-box-squat` | pending_evidence_or_policy | Quadriceps | Pending |
 | `single-leg-calf-raise` | pending_evidence_or_policy | Not allocated | Pending |
-| `single-leg-glute-bridge` | ready_for_human_review | Glutes | Pending |
-| `single-leg-romanian-deadlift` | ready_for_human_review | Hamstrings | Pending |
+| `single-leg-glute-bridge` | ai_accepted | Glutes | Pending |
+| `single-leg-romanian-deadlift` | ai_accepted | Hamstrings | Pending |
 | `sissy-squat` | pending_evidence_or_policy | Not allocated | Pending |
 | `skater-hop` | pending_evidence_or_policy | Not allocated | Pending |
 | `skater-squat` | pending_evidence_or_policy | Not allocated | Pending |
 | `skierg` | outside_automatic_strength_scope | Not allocated | N/A |
-| `skull-crusher` | ready_for_human_review | Triceps | Pending |
-| `smith-machine-bench-press` | ready_for_human_review | Chest | Pending |
-| `smith-machine-bulgarian-split-squat` | ready_for_human_review | Quadriceps | Pending |
-| `smith-machine-hip-thrust` | ready_for_human_review | Glutes | Pending |
-| `smith-machine-reverse-lunge` | ready_for_human_review | Quadriceps | Pending |
-| `smith-machine-romanian-deadlift` | ready_for_human_review | Hamstrings | Pending |
-| `smith-machine-split-squat` | ready_for_human_review | Quadriceps | Pending |
-| `smith-machine-squat` | ready_for_human_review | Quadriceps | Pending |
+| `skull-crusher` | ai_accepted | Triceps | Pending |
+| `smith-machine-bench-press` | ai_accepted | Chest | Pending |
+| `smith-machine-bulgarian-split-squat` | ai_accepted | Quadriceps | Pending |
+| `smith-machine-hip-thrust` | ai_accepted | Glutes | Pending |
+| `smith-machine-reverse-lunge` | ai_accepted | Quadriceps | Pending |
+| `smith-machine-romanian-deadlift` | ai_accepted | Hamstrings | Pending |
+| `smith-machine-split-squat` | ai_accepted | Quadriceps | Pending |
+| `smith-machine-squat` | ai_accepted | Quadriceps | Pending |
 | `spider-curl` | pending_evidence_or_policy | Not allocated | Pending |
-| `split-squat` | ready_for_human_review | Quadriceps | Pending |
+| `split-squat` | ai_accepted | Quadriceps | Pending |
 | `sprawl` | pending_evidence_or_policy | Not allocated | Pending |
 | `squat-thrust` | pending_evidence_or_policy | Not allocated | Pending |
 | `stability-ball-hamstring-curl` | pending_evidence_or_policy | Not allocated | Pending |
 | `stair-climber` | outside_automatic_strength_scope | Not allocated | N/A |
-| `standing-calf-raise` | ready_for_human_review | Calves | Pending |
-| `standing-dumbbell-press` | ready_for_human_review | Shoulders | Pending |
+| `standing-calf-raise` | ai_accepted | Calves | Pending |
+| `standing-dumbbell-press` | ai_accepted | Shoulders | Pending |
 | `standing-quad-stretch` | outside_automatic_strength_scope | Not allocated | N/A |
-| `step-down` | ready_for_human_review | Quadriceps | Pending |
-| `step-up` | ready_for_human_review | Quadriceps | Pending |
-| `straight-arm-pulldown` | ready_for_human_review | Lats | Pending |
+| `step-down` | ai_accepted | Quadriceps | Pending |
+| `step-up` | ai_accepted | Quadriceps | Pending |
+| `straight-arm-pulldown` | ai_accepted | Lats | Pending |
 | `sumo-deadlift` | pending_evidence_or_policy | Hamstrings | Pending |
-| `superman` | ready_for_human_review | Lower Back | Pending |
-| `superman-hold` | ready_for_human_review | Lower Back | Pending |
+| `superman` | ai_accepted | Lower Back | Pending |
+| `superman-hold` | ai_accepted | Lower Back | Pending |
 | `swimming` | outside_automatic_strength_scope | Not allocated | N/A |
-| `t-bar-row` | ready_for_human_review | Back | Pending |
+| `t-bar-row` | ai_accepted | Back | Pending |
 | `toe-touch` | pending_evidence_or_policy | Not allocated | Pending |
 | `torso-twist-stretch` | outside_automatic_strength_scope | Not allocated | N/A |
 | `towel-hamstring-curl` | pending_evidence_or_policy | Not allocated | Pending |
-| `towel-pull-up` | ready_for_human_review | Lats | Pending |
+| `towel-pull-up` | ai_accepted | Lats | Pending |
 | `towel-row` | pending_evidence_or_policy | Not allocated | Pending |
 | `trap-bar-deadlift` | pending_evidence_or_policy | Not allocated | Pending |
 | `treadmill-incline-walk` | outside_automatic_strength_scope | Not allocated | N/A |
-| `tricep-kickback` | ready_for_human_review | Triceps | Pending |
-| `typewriter-push-up` | ready_for_human_review | Chest | Pending |
-| `upright-row` | ready_for_human_review | Shoulders | Pending |
-| `v-up` | ready_for_human_review | Core | Pending |
+| `tricep-kickback` | ai_accepted | Triceps | Pending |
+| `typewriter-push-up` | ai_accepted | Chest | Pending |
+| `upright-row` | ai_accepted | Shoulders | Pending |
+| `v-up` | ai_accepted | Core | Pending |
 | `walking` | outside_automatic_strength_scope | Not allocated | N/A |
-| `walking-lunge` | ready_for_human_review | Quadriceps | Pending |
+| `walking-lunge` | ai_accepted | Quadriceps | Pending |
 | `wall-calf-stretch` | outside_automatic_strength_scope | Not allocated | N/A |
-| `wall-handstand-push-up` | ready_for_human_review | Shoulders | Pending |
-| `wall-push-up` | ready_for_human_review | Chest | Pending |
-| `wall-sit` | ready_for_human_review | Quadriceps | Pending |
-| `wall-walk` | ready_for_human_review | Shoulders | Pending |
+| `wall-handstand-push-up` | ai_accepted | Shoulders | Pending |
+| `wall-push-up` | ai_accepted | Chest | Pending |
+| `wall-sit` | ai_accepted | Quadriceps | Pending |
+| `wall-walk` | ai_accepted | Shoulders | Pending |
 | `weighted-chin-up` | pending_evidence_or_policy | Not allocated | Pending |
-| `weighted-crunch` | ready_for_human_review | Core | Pending |
+| `weighted-crunch` | ai_accepted | Core | Pending |
 | `weighted-dip` | pending_evidence_or_policy | Not allocated | Pending |
 | `weighted-pull-up` | pending_evidence_or_policy | Not allocated | Pending |
-| `weighted-push-up` | ready_for_human_review | Chest | Pending |
-| `weighted-russian-twist` | ready_for_human_review | Core | Pending |
-| `wide-grip-lat-pulldown` | ready_for_human_review | Lats | Pending |
-| `wide-push-up` | ready_for_human_review | Chest | Pending |
+| `weighted-push-up` | ai_accepted | Chest | Pending |
+| `weighted-russian-twist` | ai_accepted | Core | Pending |
+| `wide-grip-lat-pulldown` | ai_accepted | Lats | Pending |
+| `wide-push-up` | ai_accepted | Chest | Pending |
 | `worlds-greatest-stretch` | outside_automatic_strength_scope | Not allocated | N/A |
 | `wrist-curl` | pending_evidence_or_policy | Forearms | Pending |
 | `wrist-extension` | pending_evidence_or_policy | Forearms | Pending |
 
 ## Additional evidence and policy decisions
 
-All strength proposals still require field-by-field human inspection. These rows also have unresolved content or representation decisions; they are not ready recommendations.
+Human approval still requires field-by-field human inspection. These rows additionally have unresolved content or representation decisions; they are not ready recommendations.
 
 | Exercise ID | Remaining decisions |
 | --- | --- |
@@ -354,6 +357,9 @@ All strength proposals still require field-by-field human inspection. These rows
 | `belt-squat` | Human field-by-field metadata sign-off; no reviewer role or review timestamp has been supplied. Ratify supportRequirement for a belt-loaded but unheld squat; keep actual balance/squat demands unless a held-support variant is separately authored. |
 | `burpee` | Human field-by-field metadata sign-off; no reviewer role or review timestamp has been supplied. Ratify a single-primary allocation for this composite movement. Confirm whether this catalog variant includes a push-up; if yes, add the bodyweight-push capability and reconcile artwork before readiness. |
 | `cable-crunch` | Human field-by-field metadata sign-off; no reviewer role or review timestamp has been supplied. Owner must choose kneeling or standing/crouched cable crunch, reconcile frames, and ratify floor-transition/support/balance fields. |
+| `cable-kickback` | Human field-by-field sign-off on the draft (muscles, pattern, complexity, family, capabilities, support, impact, equipment, and any graph edges) before reviewState changes. Confirm movementPattern (isolation vs hinge) and the balance_without_support capability. Establish an explicit source-bound attachment requirement or keep withheld. Do not silently reuse a band-specific attachment token or assume Cable includes a cuff. |
+| `cable-standing-hip-abduction` | Human field-by-field sign-off on the draft (muscles, pattern, complexity, family, capabilities, support, impact, equipment, and any graph edges) before reviewState changes. Confirm supported vs unsupported given the hand-on-frame is a balance aid a user could release. Establish an explicit source-bound attachment requirement or keep withheld. Do not silently reuse a band-specific attachment token or assume Cable includes a cuff. |
+| `cable-standing-hip-adduction` | Human field-by-field sign-off on the draft (muscles, pattern, complexity, family, capabilities, support, impact, equipment, and any graph edges) before reviewState changes. Confirm supported vs unsupported. Establish an explicit source-bound attachment requirement or keep withheld. Do not silently reuse a band-specific attachment token or assume Cable includes a cuff. |
 | `calf-raise` | Withhold the incomplete Bodyweight-only block: both hands use separate vertical rails in the exact source frames. Supported plus no balance demand cannot be combined with absent rail availability. The current vocabulary does not establish this rail setup; a free-standing variant would need separate evidence and balance_without_support. Human must resolve the complete named setup before authoring and approving metadata. |
 | `commando-pull-up` | Human must reconcile the exact named variation, complete setup and appropriate source illustrations before authoring and approving its metadata. |
 | `concentration-curl` | Human must establish the exact pinned variation and complete apparatus/support/capability contract before authoring and approving metadata. |
@@ -366,6 +372,7 @@ All strength proposals still require field-by-field human inspection. These rows
 | `dumbbell-sumo-deadlift` | Human must ratify the movement-pattern policy and choose one canonical primary from Posterior Chain; the artwork should not be treated as a proven identity mismatch. Metadata omitted because: The unresolved issue is movement-pattern and single-primary policy, not a proven artwork identity error. |
 | `explosive-push-up` | Human must define or ratify the LOW/HIGH impact category for explosive push-ups before a required impactLevel can be authored. Metadata omitted because: Impact is material and the schema requires LOW or HIGH, but no sourced product-policy threshold distinguishes them for this upper-body landing. |
 | `feet-elevated-pike-push-up` | Human must confirm the box-supported illustration is canonical for this entry and ratify supported semantics. |
+| `fire-hydrant` | Human must sign off fire-hydrant: direct primary Glutes, isolation pattern, foundational complexity, setup/support, capabilities, impact, and the empty directed graph arrays. Resolve the support convention explicitly. This is a policy-consistency hold, not proof of different anatomy or a prescription to choose a value automatically. |
 | `front-foot-elevated-split-squat` | Human must confirm Box as the intended schema label and supported semantics for a foot-elevation surface. |
 | `glute-focused-back-extension` | Human must establish the exact pinned variation and complete apparatus/support/capability contract before authoring and approving metadata. |
 | `good-morning` | Withhold the incomplete back-bar setup proposal. The pictures begin with the bar already across the upper back and do not establish how it is positioned. ExRx's BBGoodMorning preparation, retrieved on 2026-09-07, also only says to position the bar on the shoulders; it does not settle rack or self-placement requirements. Neither a free rack nor a new loading skill is assumed; a human must define and substantiate the intended setup. Human must resolve the complete named setup before authoring and approving metadata. |
