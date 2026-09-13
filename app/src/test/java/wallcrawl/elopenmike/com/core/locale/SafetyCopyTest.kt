@@ -92,26 +92,72 @@ class SafetyCopyTest {
     }
 
     @Test
-    fun safetyStepDoesNotPromiseFilteringWhileTheReviewedPathIsDisabled() {
+    fun theSafetyAndCapabilityCopySaysWhatTheEnabledReviewedPathActuallyDoes() {
         // The forbidden-vocabulary checks above are about medical claims, and a sentence can
         // be untrue without using any of those words: "WallCrawl filters or substitutes
-        // high-stress movements" shipped and passed them, while the active planner ignores
-        // TrainingConstraint entirely. This binds the copy to the flag instead.
-        assertThat(PlannerFeatureFlags.PRODUCTION.reviewedCapabilityEligibility).isFalse()
+        // high-stress movements" shipped and passed them while the planner ignored
+        // TrainingConstraint entirely, and "they do not change current recommendations yet"
+        // became false the moment the reviewed path was enabled. This binds the copy to the
+        // flag in both directions.
+        assertThat(PlannerFeatureFlags.PRODUCTION.reviewedCapabilityEligibility).isTrue()
 
-        assertWithMessage("the English hint must say filtering is not live")
+        assertWithMessage("the English hint must say the selection is read")
             .that(english.getValue("onboarding_safety_hint"))
-            .contains("do not filter on it yet")
-        assertWithMessage("the Spanish hint must say filtering is not live")
+            .contains("Automatic workouts read your answer")
+        assertWithMessage("the Spanish hint must say the selection is read")
             .that(spanish.getValue("onboarding_safety_hint"))
-            .contains("todavía no filtran por ella")
+            .contains("leen tu respuesta")
 
-        assertWithMessage("the English Profile card must say filtering is not live")
+        // No accepted record clears any specific joint, so choosing one leaves no automatic
+        // workout at all. Low-impact-only is the exception — it is decided by each record's
+        // impact level rather than by a clearance — and the copy has to separate the two, or
+        // it understates one option and overstates the rest.
+        assertWithMessage("the English hint must say no automatic workout is left to offer")
+            .that(english.getValue("onboarding_safety_hint"))
+            .contains("no automatic workout to offer")
+        assertWithMessage("the English hint must say low impact only is live")
+            .that(english.getValue("onboarding_safety_hint"))
+            .contains("Low impact only takes effect today")
+        assertWithMessage("the Spanish hint must say no automatic workout is left to offer")
+            .that(spanish.getValue("onboarding_safety_hint"))
+            .contains("no tendrá entrenamientos automáticos que ofrecer")
+        assertWithMessage("the Spanish hint must say low impact only is live")
+            .that(spanish.getValue("onboarding_safety_hint"))
+            .contains("«Solo bajo impacto» ya se aplica hoy")
+
+        assertWithMessage("the English Profile card must carry the same two statements")
             .that(english.getValue("profile_safety_description"))
-            .contains("do not filter on it yet")
-        assertWithMessage("the Spanish Profile card must say filtering is not live")
+            .contains("no automatic workout to offer")
+        assertWithMessage("the Spanish Profile card must carry the same two statements")
             .that(spanish.getValue("profile_safety_description"))
-            .contains("todavía no filtran por ella")
+            .contains("no tendrá entrenamientos automáticos que ofrecer")
+
+        // The reviewed cohort is AI-accepted under owner authorization. Neither surface may
+        // describe it as human review or as clinical validation.
+        listOf("en" to english, "es" to spanish).forEach { (language, strings) ->
+            listOf(
+                "onboarding_safety_hint", "profile_safety_description",
+                "profile_capability_description", "movement_capability_current_use"
+            ).forEach { key ->
+                listOf(
+                    "human-reviewed", "revisadas por una persona", "revisado por una persona",
+                    "clinically", "clínicamente", "clinicamente", "doctor", "physician",
+                    "physical therapist", "fisioterapeuta"
+                ).forEach { claim ->
+                    assertWithMessage("$key ($language) must not claim human or clinical review")
+                        .that(strings.getValue(key).lowercase()).doesNotContain(claim)
+                }
+            }
+        }
+
+        // Movement capabilities do change recommendations now, on both surfaces that edit
+        // them, so neither may still say they are saved for later.
+        listOf("profile_capability_description", "movement_capability_current_use").forEach { key ->
+            assertWithMessage("$key (en) must say the settings are read")
+                .that(english.getValue(key)).contains("Automatic workouts read these settings")
+            assertWithMessage("$key (es) must say the settings are read")
+                .that(spanish.getValue(key)).contains("leen estos ajustes")
+        }
 
         // The Profile card also holds the return-after-break selector, which the planner does
         // consume. The disclaimer must name the joint selection, or it reads as a card-level

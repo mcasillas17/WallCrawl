@@ -8,13 +8,13 @@ data class PlannerFeatureFlags(
         /**
          * The exact composition `WallCrawlApplication` injects.
          *
-         * Enabling reviewed planning is a deliberate edit to this one value.
-         * `FixedAnchorBandEligibilityTest` asserts both halves — that this value is `false`, and
-         * that the application still injects this constant rather than building its own — so
-         * neither route flips the rollout without a failing test. Reviewed planning needs
-         * human-approved metadata first; the bundled catalog has none, so an enabled flag would
-         * refuse every automatic workout.
+         * Changing this one value is the whole rollout. `ProductionPlannerCompositionTest`
+         * asserts both halves — that this value is `true`, and that the application still
+         * injects this constant rather than building its own — so neither route changes the
+         * rollout without a failing test. Reviewed planning needs accepted metadata, and the
+         * bundled catalog now carries an audited `AI_ACCEPTED` cohort, which is what that
+         * suite and `TodayProductionLifecycleTest` plan from end to end.
          */
-        val PRODUCTION = PlannerFeatureFlags(reviewedCapabilityEligibility = false)
+        val PRODUCTION = PlannerFeatureFlags(reviewedCapabilityEligibility = true)
     }
 }

@@ -96,7 +96,7 @@
     <string name="band_setup_kickback_description">Ankle attachment and reachable stable handhold on the same low-anchor assembly. Also select the low anchor separately.</string>
 
     <string name="onboarding_safety_heading">SENSITIVE JOINTS</string>
-    <string name="onboarding_safety_hint">Tell us which joints you want to work around. WallCrawl saves your answer, but automatic workouts do not filter on it yet: that needs human-reviewed exercise mappings, and guessing them would not be safe. Browsing and manual workouts are unaffected. This is not medical advice.</string>
+    <string name="onboarding_safety_hint">Tell us which joints you want to work around. Automatic workouts read your answer. Low impact only takes effect today; no reviewed exercise is cleared for a specific joint yet, so choosing one of those leaves WallCrawl with no automatic workout to offer until such a review exists. Browsing and manual workouts are unaffected. This is not medical advice.</string>
     <string name="onboarding_safety_none_title">Feeling 100% / no restrictions</string>
     <string name="onboarding_safety_none_subtitle">No areas to work around.</string>
     <string name="onboarding_safety_tag_prompt">Or tag specific areas:</string>
@@ -158,7 +158,7 @@
 
     <!-- ============================ Movement preferences ============================ -->
     <string name="movement_capability_intro">Answer each preference, including Not sure when that fits best.</string>
-    <string name="movement_capability_future_use">These settings prepare future personalized exercise selection. They do not change current recommendations yet.</string>
+    <string name="movement_capability_current_use">Automatic workouts read these settings. A movement that needs something you mark Avoid is left out of your recommendations, and one that needs something you mark Limited is prescribed with fewer sets.</string>
     <string name="movement_capability_answer_required">Choose an answer for this movement preference.</string>
     <string name="movement_capability_summary_label">Movement preferences</string>
     <string name="movement_capability_option_accessibility">%1$s, %2$s</string>
@@ -562,7 +562,7 @@
     <string name="profile_equipment_heading">AVAILABLE EQUIPMENT</string>
     <string name="profile_muscle_heading">MUSCLE PRIORITIES</string>
     <string name="profile_safety_heading">TRAINING SAFETY</string>
-    <string name="profile_safety_description">Your joint selection is saved, but automatic workouts do not filter on it yet. That needs human-reviewed exercise mappings. Browsing and manual workouts are unaffected. This is not medical advice.</string>
+    <string name="profile_safety_description">Your joint selection is read when automatic workouts are built. Low impact only takes effect today; no reviewed exercise is cleared for a specific joint yet, so choosing one of those leaves WallCrawl with no automatic workout to offer until such a review exists. Browsing and manual workouts are unaffected. This is not medical advice.</string>
     <string name="profile_break_title">Returning after a break</string>
     <string name="profile_break_hint">Adjust your break duration so WallCrawl can scale the volume it plans.</string>
     <string name="profile_app_preferences_heading">APP PREFERENCES</string>
@@ -572,7 +572,7 @@
     <string name="profile_load_error">Your profile could not be loaded. Try again.</string>
 
     <string name="profile_capability_title">MOVEMENT PREFERENCES</string>
-    <string name="profile_capability_description">These settings prepare future personalized exercise selection. They do not change current recommendations yet.</string>
+    <string name="profile_capability_description">Automatic workouts read these settings. A movement that needs something you mark Avoid is left out of your recommendations, and one that needs something you mark Limited is prescribed with fewer sets.</string>
     <string name="profile_capability_edit">Edit movement preferences</string>
     <string name="profile_capability_save">Save preferences</string>
     <string name="profile_capability_saving">Saving preferences…</string>

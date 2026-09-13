@@ -20,7 +20,7 @@ import wallcrawl.elopenmike.com.core.model.ReviewState
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.UserProfile
 
-/** The actual bundle, without synthetic approvals or production rollout changes. */
+/** The actual bundle, with no synthetic approvals anywhere in it. */
 class AiAcceptedCatalogTest {
     private val factory = PlannerFixtureContextFactory()
     private val exercises = factory.bundledCatalogProjection().exercises
@@ -44,7 +44,7 @@ class AiAcceptedCatalogTest {
         assertThat(exercises.filter { it.reviewedMetadata == null }.map(Exercise::id))
             .containsExactlyElementsIn(pendingAbsentIds + outsideIds)
         assertThat(exercises.any { it.reviewedMetadata?.reviewState == ReviewState.APPROVED }).isFalse()
-        assertThat(PlannerFeatureFlags.PRODUCTION.reviewedCapabilityEligibility).isFalse()
+        assertThat(PlannerFeatureFlags.PRODUCTION.reviewedCapabilityEligibility).isTrue()
     }
 
     @Test

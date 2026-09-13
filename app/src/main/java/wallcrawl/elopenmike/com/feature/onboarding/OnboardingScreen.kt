@@ -944,7 +944,7 @@ private fun MovementCapabilityStep(
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = stringResource(
-                    wallcrawl.elopenmike.com.R.string.movement_capability_future_use
+                    wallcrawl.elopenmike.com.R.string.movement_capability_current_use
                 ),
                 fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
