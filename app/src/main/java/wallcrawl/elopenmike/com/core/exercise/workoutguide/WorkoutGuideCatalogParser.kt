@@ -30,6 +30,7 @@ import wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
 import wallcrawl.elopenmike.com.core.model.SupportRequirement
+import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 
 class WorkoutGuideCatalogFormatException(
     message: String,
@@ -436,6 +437,7 @@ class WorkoutGuideCatalogParser {
         var impactLevel: ImpactLevel? = null
         var equipmentAlternatives: List<List<String>>? = null
         var provenance: ReviewProvenance? = null
+        var clearedTrainingConstraints: Set<TrainingConstraint>? = null
         val seenFields = mutableSetOf<String>()
 
         beginObject()
@@ -482,6 +484,11 @@ class WorkoutGuideCatalogParser {
                 "equipmentAlternatives" -> equipmentAlternatives =
                     readReviewedEquipmentAlternatives("$label.equipmentAlternatives")
                 "provenance" -> provenance = readReviewProvenance("$label.provenance")
+                "clearedTrainingConstraints" -> clearedTrainingConstraints =
+                    readReviewedEnumSet(
+                        "$label.clearedTrainingConstraints",
+                        MAX_CLEARED_TRAINING_CONSTRAINTS
+                    )
                 else -> malformed("$label.${safeField(field)} is unknown.")
             }
         }
@@ -505,6 +512,12 @@ class WorkoutGuideCatalogParser {
         if (primary in secondaries) {
             malformed("$label.descriptiveSecondaryMuscles duplicates directPrimaryMuscle.")
         }
+        val cleared = clearedTrainingConstraints
+            ?: malformed("$label is missing clearedTrainingConstraints.")
+        // impactLevel is the only source of truth for LOW_IMPACT_ONLY; two would contradict.
+        if (TrainingConstraint.LOW_IMPACT_ONLY in cleared) {
+            malformed("$label.clearedTrainingConstraints cannot list LOW_IMPACT_ONLY.")
+        }
 
         return ReviewedExerciseMetadata(
             reviewState = reviewState ?: malformed("$label is missing reviewState."),
@@ -526,7 +539,8 @@ class WorkoutGuideCatalogParser {
             impactLevel = impactLevel ?: malformed("$label is missing impactLevel."),
             equipmentAlternatives = equipmentAlternatives
                 ?: malformed("$label is missing equipmentAlternatives."),
-            provenance = provenance ?: malformed("$label is missing provenance.")
+            provenance = provenance ?: malformed("$label is missing provenance."),
+            clearedTrainingConstraints = cleared
         )
     }
 
@@ -1241,6 +1255,7 @@ class WorkoutGuideCatalogParser {
         const val MAX_EXERCISE_ID_LENGTH = 128
         const val MAX_LINK_RATIONALE_LENGTH = 500
         const val MAX_CAPABILITY_REQUIREMENTS = 7
+        const val MAX_CLEARED_TRAINING_CONSTRAINTS = 6
         const val MAX_REVIEWED_EQUIPMENT_ALTERNATIVES = 20
         const val MAX_REVIEWED_EQUIPMENT_PER_ALTERNATIVE = 20
         const val MAX_REVIEWED_EQUIPMENT_LENGTH = 64
@@ -1249,7 +1264,8 @@ class WorkoutGuideCatalogParser {
         const val MAX_PROVENANCE_RATIONALE_LENGTH = 1_000
         const val MIN_REVIEWED_AT_EPOCH_MILLIS = 1L
         const val MAX_REVIEWED_AT_EPOCH_MILLIS = 253_402_300_799_999L
-        const val REVIEWED_SCHEMA_VERSION = 1
+        // v2 added clearedTrainingConstraints; the bundled catalog is regenerated in lockstep.
+        const val REVIEWED_SCHEMA_VERSION = 2
         const val MIN_POLICY_VERSION = 1
         const val MAX_POLICY_VERSION = 10_000
         val SAFE_IDENTIFIER = Regex("[a-z0-9]+(?:-[a-z0-9]+)*")

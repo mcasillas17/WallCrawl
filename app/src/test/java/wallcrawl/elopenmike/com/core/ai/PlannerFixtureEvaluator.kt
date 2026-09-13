@@ -33,8 +33,9 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSession
  *
  * JUnit builds a fresh instance per test method and neither `PlannerFixtureLoader` nor
  * `PlannerFixtureContextFactory` caches across instances, so without this each suite — and
- * before that each method — re-read the twelve fixture resources and reparsed the 302-entry
- * bundled catalog. Everything held here is immutable parsed data.
+ * before that each method — re-read every fixture resource named in
+ * `planner-fixtures/manifest.txt` and reparsed the 302-entry bundled catalog. Everything held
+ * here is immutable parsed data.
  *
  * Only construction is shared. Every replay still goes through
  * [PlannerFixtureEvaluator.evaluateFixture], which builds a fresh [FakeWorkoutPlanner] and
@@ -373,6 +374,7 @@ private fun ReviewedExerciseMetadata.deepCopy(): ReviewedExerciseMetadata = copy
     approvedRegressions = approvedRegressions.toList(),
     approvedSubstitutions = approvedSubstitutions.toList(),
     capabilityRequirements = capabilityRequirements.toSet(),
+    clearedTrainingConstraints = clearedTrainingConstraints.toSet(),
     equipmentAlternatives = equipmentAlternatives.map(List<String>::toList)
 )
 

@@ -830,6 +830,7 @@ class WorkoutGenerationContextBuilderTest {
             equipmentAlternatives = listOf(
                 listOf(StandardEquipment.DUMBBELL, StandardEquipment.BENCH)
             ),
+            clearedTrainingConstraints = emptySet(),
             provenance = ReviewProvenance(
                 reviewerRole = if (reviewState == ReviewState.APPROVED) {
                     "Synthetic test-only reviewer"

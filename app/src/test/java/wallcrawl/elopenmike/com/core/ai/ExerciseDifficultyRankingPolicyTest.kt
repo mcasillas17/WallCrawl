@@ -145,6 +145,7 @@ class ExerciseDifficultyRankingPolicyTest {
                 equipmentAlternatives = listOf(
                     listOf(StandardEquipment.DUMBBELL, StandardEquipment.BENCH)
                 ),
+                clearedTrainingConstraints = emptySet(),
                 provenance = ReviewProvenance(
                     reviewerRole = if (it == ReviewState.APPROVED) "Test reviewer" else null,
                     rationaleOrSource = "Synthetic ranking policy fixture.",

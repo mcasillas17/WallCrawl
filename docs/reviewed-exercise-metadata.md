@@ -49,6 +49,7 @@ could not be established; earlier model consensus is not authoritative.
 For each draft, a human reviewer must inspect:
 
 - the single direct-primary muscle and descriptive-only secondary muscles;
+- the joint sensitivities in `clearedTrainingConstraints`, if any;
 - movement pattern, complexity, progression family, and prescription shape;
 - every directed regression and substitution edge, including exception
   rationales;
@@ -64,8 +65,25 @@ Approval of this pull request does not rewrite any draft to `APPROVED`.
 The reviewed block uses bounded, typed values for review state, canonical muscle
 names, `MovementPattern`, `ComplexityTier`, progression-family slugs,
 `PrescriptionShape`, `MovementCapabilityType`, `SupportRequirement`,
-`ImpactLevel`, and `StandardEquipment`. Regression and substitution edges are
-directed and may carry a bounded rationale for an explicit exception.
+`ImpactLevel`, `TrainingConstraint`, and `StandardEquipment`. Regression and
+substitution edges are directed and may carry a bounded rationale for an explicit
+exception.
+
+`clearedTrainingConstraints` arrived with reviewed schema version 2. It is required on every
+record and lists the joint sensitivities — shoulder, elbow, wrist, lower back, hip, knee —
+that a reviewer explicitly cleared the exercise for. It is a compatibility statement about a
+self-reported label, not a diagnosis, an injury rule, or clinical clearance. Absence is not
+clearance: a selected sensitivity that a record does not list keeps that record out of
+automatic planning. `LOW_IMPACT_ONLY` cannot appear there, because `impactLevel` already
+decides it; the importer and the parser both reject a record that lists it. All 211 records
+currently clear nothing, so a joint-sensitive profile receives a typed refusal. Nothing in
+this contract infers a clearance from a name, a muscle, a movement pattern or equipment.
+
+Version 2 also refreshed every `metadataSha256` in the evidence ledger, because the recorded
+digest binds a proposal to the inspection of its exact fields. No human sign-off was voided
+by that: `humanSignoff` is `null` for all 302 entries. Nothing is persisted per user and no
+archive or Room migration is involved; the bundled catalog is regenerated from the authored
+source and the app reads only that one asset.
 
 `PRIMARY_ONLY_V1` has exactly one direct-primary muscle. Secondary muscles are
 descriptive only, cannot repeat the direct primary, and receive no fractional
@@ -87,8 +105,8 @@ pinned source checkout + WallCrawl-authored JSON
   -> deterministic reviewed eligibility policy (production flag disabled)
 ```
 
-`tools/workout-guide/reviewed-metadata.json` is the authored data source.
-`tools/workout-guide/review-schema.json` is its strict schema. The importer uses
+`tools/workout-guide/reviewed-metadata.json` is the authored data source, at
+schema version 2. `tools/workout-guide/review-schema.json` is its strict schema. The importer uses
 Python standard-library validation and rejects unknown or duplicate fields,
 missing fields, bad types/enums, unsafe or oversized values, non-finite numbers,
 excessive depth/count/payload, unknown catalog IDs, catalog/type mismatches,

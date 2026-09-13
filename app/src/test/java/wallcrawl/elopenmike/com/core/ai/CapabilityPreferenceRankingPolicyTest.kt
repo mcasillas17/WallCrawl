@@ -346,6 +346,7 @@ class CapabilityPreferenceRankingPolicyTest {
             supportRequirement = SupportRequirement.SUPPORTED,
             impactLevel = ImpactLevel.NONE,
             equipmentAlternatives = listOf(listOf("bodyweight")),
+            clearedTrainingConstraints = emptySet(),
             provenance = ReviewProvenance(
                 reviewerRole = "tester",
                 rationaleOrSource = "test",

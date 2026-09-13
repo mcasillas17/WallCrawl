@@ -88,6 +88,8 @@ class PlannerFixtureLoaderTest {
             "no-strength-candidates",
             "reviewed-enabled-bodyweight",
             "reviewed-enabled-no-approved",
+            "reviewed-enabled-uncleared-joint-constraint",
+            "reviewed-enabled-cleared-joint-constraints",
             "concurrent-activity"
         ).inOrder()
         assertThat(fixtures.map { it.id }).doesNotContain("valid-basic")
@@ -134,6 +136,11 @@ class PlannerFixtureLoaderTest {
         assertFormatError("planner-fixtures/invalid-unknown-equipment.json", "profile.availableEquipment[1]")
         assertFormatError("planner-fixtures/invalid-unknown-muscle.json", "profile.musclePriorities.Serratus")
         assertFormatError("planner-fixtures/invalid-unknown-capability.json", "profile.movementCapabilities.FLYING")
+        // impactLevel is the only source for LOW_IMPACT_ONLY, in fixtures as in production.
+        assertFormatError(
+            "planner-fixtures/invalid-low-impact-clearance.json",
+            "syntheticClearedTrainingConstraints"
+        )
     }
 
     @Test

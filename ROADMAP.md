@@ -12,7 +12,8 @@
 > packages, the bundled translation overlay, and their JVM and Android tests.
 > Package 5 status reflects `ProgressRepository`, the calendar-week calculators,
 > localized Progress disclosures, and their JVM and Android integration/UI tests.
-> Package 6 status reflects the checked-in twelve-entry `planner-fixtures/manifest.txt`, the
+> Package 6 status reflects the checked-in `planner-fixtures/manifest.txt` — twelve personas
+> at Package 6, fourteen after Package 7 preparation added the two joint-restriction ones — the
 > corpus harness's reconstruction of the reviewed-enabled personas' weeks through
 > `WeeklyDoseLedgerCalculator`, its whole-program validation of every successful persona, and
 > the pinned-upstream catalog check in CI.
@@ -37,7 +38,7 @@ network connection, or companion device.
 | Localization | English and neutral Latin American Spanish shipped across the whole interface, the 302-exercise catalog, generated workout text, and accessibility labels, selectable from onboarding and Profile through Android's per-app language mechanism | Only two languages; historical session text stays in the language it was written in, by design |
 | Progress and history | Calendar-week activity, separately labelled reviewed primary dose, non-additive involvement, records, trends, summaries, and recent history implemented | Workout-summary navigation and history drill-down remain incomplete; production reviewed muscle allocation is unavailable while metadata remains unapproved |
 | Deterministic coach | Eligibility, experience ranking, capability evidence, weekly ledger, state-based dose/effort/rest, whole-program validation with recorded recommendation provenance, and a shared advertised-focus contract shipped; reviewed-only rules remain behind a disabled gate | Human approval, progression, deload, and rollout gates |
-| Planner evaluation | Twelve-persona versioned corpus, with the reviewed-enabled personas' weeks replayed through the real ledger and every successful persona's proposal validated as a complete program, importer unit tests, real pinned-upstream regeneration check, JVM tests, and Android CI shipped | None for this package; reviewed-planner enablement is package 7 |
+| Planner evaluation | Versioned persona corpus (`planner-fixtures/manifest.txt` is the authoritative roster), with the reviewed-enabled personas' weeks replayed through the real ledger and every successful persona's proposal validated as a complete program, importer unit tests, real pinned-upstream regeneration check, JVM tests, and Android CI shipped | None for this package; reviewed-planner enablement is package 7 |
 | Optional local model | Not started | Blocked on a stable deterministic release |
 | Health Connect and Wear OS | Not started; only `:app` exists | Shared modules, privacy controls, validation, substitutions, protocol, and device evidence |
 | Operational quality | Dependabot, SBOM submission, JVM/lint/build CI, API 36 instrumentation, and prerelease automation shipped | Accessibility baseline, target SDK review, Room schema export, signed/minified release posture, and next alpha |
@@ -229,6 +230,15 @@ copy.
 strength scope. There are 211 authored `DRAFT` records and zero `APPROVED`.
 Package 3 is **not complete**.
 
+Task 2's selected joint-constraint half is now closed on the implementation side and open on
+the content side. Reviewed schema version 2 adds a required `clearedTrainingConstraints`
+field, and `ExerciseEligibilityPolicy` decides each exercise — and each supported-regression
+exception — against it instead of rejecting the whole pool whenever any joint sensitivity is
+selected. No record clears anything, so a joint-sensitive profile still receives a typed
+`TRAINING_CONSTRAINTS_REMOVED_ALL` refusal; filling the field in is part of the same
+field-by-field human sign-off. The band-only chest gap and the fixed-anchor decisions are
+unchanged, and no clearance is inferred from a name, muscle, pattern or equipment.
+
 **Depends on:** Human decisions for direct-primary classification and first-cohort scope.
 
 **Implementation tasks:**
@@ -380,7 +390,8 @@ recommendation snapshots, validation policies and planner behavior are unchanged
 
 ### 6. Complete the deterministic corpus and CI release gate
 
-**Status:** Complete. The authoritative manifest holds twelve personas. Reviewed-enabled
+**Status:** Complete. The authoritative manifest holds fourteen personas: Package 6 shipped
+twelve, and Package 7 preparation added the two joint-restriction personas. Reviewed-enabled
 personas compose their week through the production weekly ledger, every successful persona's
 proposal is validated as a complete program, and CI runs that corpus alongside the real pinned-upstream
 regeneration check.
@@ -426,9 +437,14 @@ regeneration check.
    arithmetic that mixed a fatigue value into dose fails it. Stale recovery claims in
    `WorkoutPlanner`, `WorkoutPlanningFailure.NO_CANDIDATES` and the history-lookback constant
    were corrected. The shipped break and safety copy was audited against the corrected
-   evidence mapping: it describes configured product behaviour in both languages and
-   `SafetyCopyTest` already fails any wording that promises a medical outcome, so no copy
-   change was justified.
+   evidence mapping and judged to describe configured product behaviour in both languages,
+   with `SafetyCopyTest` failing any wording that promises a medical outcome, so no copy
+   change was made. **That conclusion was wrong for the Safety & Recovery step's strings**, and
+   Package 7 preparation corrected them: they claimed WallCrawl "filters or substitutes
+   high-stress movements" while the shipped planner ignores `TrainingConstraint` entirely.
+   The audit missed this because the miss was a false claim about configured behaviour, not a
+   medical promise, so the forbidden-vocabulary checks passed it. The audit record itself
+   carries the same correction. See Package 7.
 6. The exact versions the gate runs under, and which workflow runs which check, are recorded
    in [planner evaluation](docs/planner-evaluation.md#versions-this-gate-runs-under).
 
@@ -444,7 +460,14 @@ and it does not enable reviewed planning: that stays package 7.
 
 ### 7. Enable reviewed planning deliberately
 
-**Status:** Blocked; the production flag remains `false`.
+**Status:** Blocked; the production flag remains `false`. Everything that does not depend on
+approval is done: the
+[proposed initial rollout contract](docs/reviewed-capability-eligibility.md#proposed-initial-rollout-contract)
+names the 186-ID cohort, the supported profiles and the explicitly unsupported cases;
+candidate availability was rerun for every supported persona with synthetic approvals of that
+exact cohort; the joint-restriction contract is implemented; and two joint-restriction
+personas joined the manifest corpus. The only remaining blocker is Package 3's human
+sign-off, which no AI review, pull-request approval, merge or passing test can supply.
 
 **Depends on:** Packages 3-6. Packages 4 and 6 are complete, Package 5 is implemented, and
 Package 1's release gate is satisfied, so Package 3's human approval is the remaining blocker.
@@ -455,15 +478,52 @@ conservative reviewed planner.
 
 1. Freeze the approved rollout cohort and rerun candidate availability for every supported
    persona using the real approved metadata, not synthetic test promotion.
+   **Blocked on approval.** The cohort is *proposed* — the 186 `ready_for_human_review` IDs —
+   and availability was rerun for every supported persona against exactly that set. There is
+   no approved metadata to rerun against, so those counts come from explicitly synthetic
+   in-memory approvals and are labelled as such everywhere they appear.
 2. Prove the reviewed path preserves hard constraints, no-invented-load, deterministic replay,
-   and valid plans for every supported persona.
+   and valid plans for every supported persona. **Done for the proposed cohort.** Every
+   supported profile reaches a proposal that passes whole-program validation with repair
+   disabled; band-only, joint-sensitive, and empty-inventory profiles produce typed no-plan
+   outcomes with no legacy fallback.
 3. Document the initial rollout scope, especially whether progression/deload remains absent.
-   Distinguish configured policy limits from medical safety and planned controls from shipped
-   UI; metadata approval and passing fixtures do not validate the algorithm clinically.
+   **Done.** See the
+   [proposed initial rollout contract](docs/reviewed-capability-eligibility.md#proposed-initial-rollout-contract).
+   Progression and deload remain absent; the rollout is deliberately conservative.
 4. Change `PlannerFeatureFlags.reviewedCapabilityEligibility` in a dedicated, reviewable
-   change with a production-default assertion.
+   change with a production-default assertion. **Not done, and deliberately so.**
+   `WallCrawlApplication` injects `PlannerFeatureFlags.PRODUCTION`, which is `false`, and
+   `FixedAnchorBandEligibilityTest` asserts that exact composed value rather than the
+   constructor default — so enabling the rollout is a one-value edit that fails a test until it
+   is deliberate. Flipping it with zero approved records would produce `NO_APPROVED_METADATA`
+   for every user.
 5. Retain a typed fail-closed path; do not fall back to an unreviewed candidate when the
-   reviewed cohort is insufficient.
+   reviewed cohort is insufficient. **Done**, and asserted per persona.
+6. Not on the original list, but required by the same honesty rule: the onboarding Safety &
+   Recovery step told users WallCrawl "filters or substitutes high-stress movements". The
+   shipped legacy planner reads no `TrainingConstraint` at all, and the reviewed path is
+   disabled, so nothing filtered. **Corrected** in English and Spanish and in README: the
+   answer is stored, and automatic workouts do not filter on it yet because that needs
+   human-reviewed per-exercise clearances. Five of the step's seven strings made some form of
+   the claim and all five were corrected in both languages: `onboarding_safety_hint`
+   ("filters or substitutes high-stress movements"), `onboarding_safety_subtitle` (the answer
+   is needed for "conservative exercise selection"), `onboarding_safety_none_subtitle` (the
+   no-restriction option is the one "without joint filters"), `onboarding_safety_heading`
+   ("PROTECT SENSITIVE JOINTS", an imperative claim sitting directly above the disclaimer) and
+   `onboarding_safety_tag_prompt` ("areas to protect"). `onboarding_safety_title` and
+   `onboarding_safety_none_title` are neutral labels and were left alone. `SafetyCopyTest`
+   binds the wording to `PlannerFeatureFlags.PRODUCTION` and checks **every**
+   `onboarding_safety_*` string rather than only the hint. The same selector is editable from
+   Training Profile after onboarding, and that card carried no note at all, so it gained
+   `profile_safety_description` in both languages, modelled on the movement-capability card's
+   existing "do not change current recommendations yet" wording; the guard covers
+   `profile_safety_*` too. That check is a regression guard over the exact removed phrasings
+   and their Spanish equivalents, so those cannot come back on either surface; it is a literal
+   list, not a synonym filter, so a differently worded claim would still need review. The
+   unit-test task declares the shipped resource files and the evidence ledger as inputs, so a
+   data-only edit can no longer leave those checks UP-TO-DATE — which is how the first version
+   of this guard was found to be inert.
 
 **Likely surfaces:** approved bundled metadata, planner fixture corpus,
 `WallCrawlApplication`, `PlannerFeatureFlags`, eligibility/context tests, and release notes.

@@ -13,6 +13,7 @@ import wallcrawl.elopenmike.com.core.model.MuscleVocabulary
 import wallcrawl.elopenmike.com.core.model.ReviewState
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
+import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.UserProfile
 
 @RunWith(AndroidJUnit4::class)
@@ -222,6 +223,29 @@ class WorkoutGuideCatalogParserTest {
     }
 
     @Test
+    fun parse_surfacesEveryAuthoredJointClearanceIntoTheTypedSet() {
+        // The field is fail-closed, so it is not enough to reject malformed input: an authored
+        // clearance must survive parsing, or eligibility would silently refuse a cleared entry.
+        val cleared = JSONObject(reviewedMetadataJson()).put(
+            "clearedTrainingConstraints",
+            org.json.JSONArray(listOf("knee_sensitive", "wrist_sensitive"))
+        )
+
+        val metadata = parser.parse(StringReader(
+            catalogJson(exerciseJson(cleared.toString()))
+        )).exercises.single().reviewedMetadata
+
+        assertThat(metadata!!.clearedTrainingConstraints).containsExactly(
+            TrainingConstraint.KNEE_SENSITIVE,
+            TrainingConstraint.WRIST_SENSITIVE
+        )
+        assertThat(
+            parser.parse(StringReader(catalogJson(exerciseJson(reviewedMetadataJson()))))
+                .exercises.single().reviewedMetadata!!.clearedTrainingConstraints
+        ).isEmpty()
+    }
+
+    @Test
     fun parse_acceptsCanonicalBandSetupsWithoutApprovingOrTranslatingThem() {
         StandardEquipment.BAND_SETUPS.forEach { setup ->
             val metadata = JSONObject(reviewedMetadataJson()).put(
@@ -306,10 +330,10 @@ class WorkoutGuideCatalogParserTest {
 
     @Test
     fun parse_rejectsDecimalNotationForReviewedIntegerFields() {
-        for (field in listOf("schemaVersion", "policyVersion")) {
+        for ((field, value) in listOf("schemaVersion" to 2, "policyVersion" to 1)) {
             val metadata = reviewedMetadataJson().replace(
-                "\"$field\": 1",
-                "\"$field\": 1.0"
+                "\"$field\": $value",
+                "\"$field\": $value.0"
             )
 
             assertFormatFailure(catalogJson(exerciseJson(metadata)), field)
@@ -663,11 +687,12 @@ class WorkoutGuideCatalogParserTest {
           "supportRequirement": "supported",
           "impactLevel": "none",
           "equipmentAlternatives": [["Bodyweight"]],
+          "clearedTrainingConstraints": [],
           "provenance": {
             "reviewerRole": null,
             "rationaleOrSource": "Draft fixture awaiting human review.",
             "reviewedAtEpochMillis": null,
-            "schemaVersion": 1,
+            "schemaVersion": 2,
             "policyVersion": 1
           }
         }

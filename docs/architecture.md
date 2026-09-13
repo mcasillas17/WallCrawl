@@ -348,11 +348,28 @@ reviewed no-candidate result reaches `TodayViewModel` as a typed reason and neve
 back to an unreviewed exercise. Enabling production requires explicit human metadata
 signoff plus a deliberate availability/persona review and flag change.
 
+Selected joint sensitivities are decided per exercise on that path, against the reviewed
+`clearedTrainingConstraints` field, and the supported-regression exception applies the same
+rule so a restriction cannot be routed around. No bundled record clears any sensitivity, so
+a joint-sensitive profile currently receives a typed `TRAINING_CONSTRAINTS_REMOVED_ALL`
+refusal. `LOW_IMPACT_ONLY` is decided by `impactLevel` alone. See the
+[eligibility boundary](reviewed-capability-eligibility.md).
+
 On that reviewed-enabled path only, `StateBasedTrainingPolicy` consumes the composed
 `TrainingProgramState`. It validates `PROGRAM_STATE_V1`, `PRIMARY_ONLY_V1`, approved
 provenance, review-policy equality, and prescription shape before using the approved
-direct-primary muscle. It caps a base prescription by the remaining configured weekly
-product allowance and never increases it. Exact/over-cap exposure returns typed
+direct-primary muscle. It independently re-checks the capability and training-constraint
+rules the eligibility gate already applied, and returns a typed failure rather than
+prescribing: `CAPABILITY_AVOID_REACHED_POLICY` for an `AVOID` capability requirement, and
+`TRAINING_CONSTRAINT_REACHED_POLICY` for either training-constraint rule — a selected joint
+sensitivity the exercise does not clear, or `LOW_IMPACT_ONLY` meeting `ImpactLevel.HIGH`.
+Those names all say the same thing: eligibility should have removed the exercise, so for those
+rules a gap in one gate cannot let a user's restriction through. Other gate rules, such as
+explicit exercise exclusions, equipment availability and the temporary advanced-complexity
+ceiling, have no second boundary here and are enforced by `ExerciseEligibilityPolicy` alone.
+
+It caps a base prescription by the remaining configured weekly product allowance and never
+increases it. Exact/over-cap exposure returns typed
 no-guidance instead of a zero-set or over-cap prescription; malformed or version-mismatched
 input returns a typed failure with no legacy fallback.
 Each exercise reads the same completed ledger; aggregate reservation across a proposal
@@ -916,7 +933,7 @@ UserProfile.themePreference (SYSTEM | DARK | LIGHT)
 
 The JVM suite covers pure domain rules, filtering, context construction,
 capability normalization and codec behavior, planner invariance, validation,
-repository mapping, progress calculations, and ViewModel state. Its twelve-persona
+repository mapping, progress calculations, and ViewModel state. Its fourteen-persona
 [planner evaluation corpus](planner-evaluation.md) composes the reviewed-enabled personas'
 weeks with the real `WeeklyDoseLedgerCalculator` and validates every proposal it produces
 with `ProgramValidator`, keeping raw-valid, repaired-valid and typed no-plan outcomes

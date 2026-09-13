@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "exercises": {
     "active-hang": {
       "directPrimaryMuscle": "Lats",
@@ -25,11 +25,12 @@
       "prescriptionShape": "duration",
       "approvedRegressions": [],
       "approvedSubstitutions": [],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "reviewedAtEpochMillis": null,
         "rationaleOrSource": "AI draft by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916; evidence ledger docs/research/2026-09-07-full-exercise-catalog-review.json entries[active-hang] records exact manifest facts, three actually viewed PNG frames, categorical policy reasoning and bounded external sources. No exclusive muscle-dose claim. Disposition: ready_for_human_review. Human field-by-field ratification remains pending; this is not expert approval.",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -63,11 +64,12 @@
         }
       ],
       "approvedSubstitutions": [],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "reviewedAtEpochMillis": null,
         "rationaleOrSource": "AI draft by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916; evidence ledger docs/research/2026-09-07-full-exercise-catalog-review.json entries[archer-push-up] records exact manifest facts, three actually viewed PNG frames, categorical policy reasoning and bounded external sources. No exclusive muscle-dose claim. Disposition: ready_for_human_review. Human field-by-field ratification remains pending; this is not expert approval.",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -93,11 +95,12 @@
       "prescriptionShape": "weight_reps",
       "approvedRegressions": [],
       "approvedSubstitutions": [],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "reviewedAtEpochMillis": null,
         "rationaleOrSource": "AI draft by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916; evidence ledger docs/research/2026-09-07-full-exercise-catalog-review.json entries[arnold-press] records exact manifest facts, three actually viewed PNG frames, categorical policy reasoning and bounded external sources. No exclusive muscle-dose claim. Disposition: ready_for_human_review. Human field-by-field ratification remains pending; this is not expert approval.",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -123,11 +126,12 @@
       "prescriptionShape": "assisted_bodyweight",
       "approvedRegressions": [],
       "approvedSubstitutions": [],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "reviewedAtEpochMillis": null,
         "rationaleOrSource": "AI draft by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916; evidence ledger docs/research/2026-09-07-full-exercise-catalog-review.json entries[assisted-chin-up] records exact manifest facts, three actually viewed PNG frames, categorical policy reasoning and bounded external sources. No exclusive muscle-dose claim. Disposition: ready_for_human_review. Human field-by-field ratification remains pending; this is not expert approval.",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -154,11 +158,12 @@
       "prescriptionShape": "bodyweight_reps",
       "approvedRegressions": [],
       "approvedSubstitutions": [],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "reviewedAtEpochMillis": null,
         "rationaleOrSource": "AI draft by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916; evidence ledger docs/research/2026-09-07-full-exercise-catalog-review.json entries[assisted-pistol-squat] records exact manifest facts, three actually viewed PNG frames, categorical policy reasoning and bounded external sources. No exclusive muscle-dose claim. Disposition: pending_evidence_or_policy. Human field-by-field ratification remains pending; this is not expert approval.",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -184,11 +189,12 @@
       "prescriptionShape": "assisted_bodyweight",
       "approvedRegressions": [],
       "approvedSubstitutions": [],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "reviewedAtEpochMillis": null,
         "rationaleOrSource": "AI draft by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916; evidence ledger docs/research/2026-09-07-full-exercise-catalog-review.json entries[assisted-pull-up] records exact manifest facts, three actually viewed PNG frames, categorical policy reasoning and bounded external sources. No exclusive muscle-dose claim. Disposition: ready_for_human_review. Human field-by-field ratification remains pending; this is not expert approval.",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -215,11 +221,12 @@
       "prescriptionShape": "bodyweight_reps",
       "approvedRegressions": [],
       "approvedSubstitutions": [],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "reviewedAtEpochMillis": null,
         "rationaleOrSource": "AI draft by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916; evidence ledger docs/research/2026-09-07-full-exercise-catalog-review.json entries[band-pull-apart] records exact manifest facts, three actually viewed PNG frames, categorical policy reasoning and bounded external sources. No exclusive muscle-dose claim. Disposition: ready_for_human_review. Human field-by-field ratification remains pending; this is not expert approval.",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -245,11 +252,12 @@
       "prescriptionShape": "bodyweight_reps",
       "approvedRegressions": [],
       "approvedSubstitutions": [],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "reviewedAtEpochMillis": null,
         "rationaleOrSource": "AI draft by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916; evidence ledger docs/research/2026-09-07-full-exercise-catalog-review.json entries[banded-clamshell] records exact manifest facts, three actually viewed PNG frames, categorical policy reasoning and bounded external sources. No exclusive muscle-dose claim. Disposition: ready_for_human_review. Human field-by-field ratification remains pending; this is not expert approval.",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -281,11 +289,12 @@
         }
       ],
       "approvedSubstitutions": [],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "reviewedAtEpochMillis": null,
         "rationaleOrSource": "AI draft by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916; evidence ledger docs/research/2026-09-07-full-exercise-catalog-review.json entries[banded-dead-bug] records exact manifest facts, three actually viewed PNG frames, categorical policy reasoning and bounded external sources. No exclusive muscle-dose claim. Disposition: ready_for_human_review. Human field-by-field ratification remains pending; this is not expert approval.",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -312,11 +321,12 @@
       "prescriptionShape": "bodyweight_reps",
       "approvedRegressions": [],
       "approvedSubstitutions": [],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "reviewedAtEpochMillis": null,
         "rationaleOrSource": "AI draft by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916; evidence ledger docs/research/2026-09-07-full-exercise-catalog-review.json entries[banded-donkey-kick] records exact manifest facts, three actually viewed PNG frames, categorical policy reasoning and bounded external sources. No exclusive muscle-dose claim. Disposition: ready_for_human_review. Human field-by-field ratification remains pending; this is not expert approval.",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -342,11 +352,12 @@
       "prescriptionShape": "bodyweight_reps",
       "approvedRegressions": [],
       "approvedSubstitutions": [],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "reviewedAtEpochMillis": null,
         "rationaleOrSource": "AI draft by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916; evidence ledger docs/research/2026-09-07-full-exercise-catalog-review.json entries[banded-fire-hydrant] records exact manifest facts, three actually viewed PNG frames, categorical policy reasoning and bounded external sources. No exclusive muscle-dose claim. Disposition: ready_for_human_review. Human field-by-field ratification remains pending; this is not expert approval.",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -372,11 +383,12 @@
       "prescriptionShape": "bodyweight_reps",
       "approvedRegressions": [],
       "approvedSubstitutions": [],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "reviewedAtEpochMillis": null,
         "rationaleOrSource": "AI draft by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916; evidence ledger docs/research/2026-09-07-full-exercise-catalog-review.json entries[banded-frog-pump] records exact manifest facts, three actually viewed PNG frames, categorical policy reasoning and bounded external sources. No exclusive muscle-dose claim. Disposition: pending_evidence_or_policy. Human field-by-field ratification remains pending; this is not expert approval.",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -408,11 +420,12 @@
         }
       ],
       "approvedSubstitutions": [],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "reviewedAtEpochMillis": null,
         "rationaleOrSource": "AI draft by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916; evidence ledger docs/research/2026-09-07-full-exercise-catalog-review.json entries[banded-glute-bridge] records exact manifest facts, three actually viewed PNG frames, categorical policy reasoning and bounded external sources. No exclusive muscle-dose claim. Disposition: ready_for_human_review. Human field-by-field ratification remains pending; this is not expert approval.",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -439,11 +452,12 @@
       "prescriptionShape": "bodyweight_reps",
       "approvedRegressions": [],
       "approvedSubstitutions": [],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "reviewedAtEpochMillis": null,
         "rationaleOrSource": "AI draft by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916; evidence ledger docs/research/2026-09-07-full-exercise-catalog-review.json entries[banded-lateral-walk] records exact manifest facts, three actually viewed PNG frames, categorical policy reasoning and bounded external sources. No exclusive muscle-dose claim. Disposition: ready_for_human_review. Human field-by-field ratification remains pending; this is not expert approval.",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -471,11 +485,12 @@
       "prescriptionShape": "bodyweight_reps",
       "approvedRegressions": [],
       "approvedSubstitutions": [],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "reviewedAtEpochMillis": null,
         "rationaleOrSource": "AI draft by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916; evidence ledger docs/research/2026-09-07-full-exercise-catalog-review.json entries[banded-monster-walk] records exact manifest facts, three actually viewed PNG frames, categorical policy reasoning and bounded external sources. No exclusive muscle-dose claim. Disposition: ready_for_human_review. Human field-by-field ratification remains pending; this is not expert approval.",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -500,11 +515,12 @@
       "prescriptionShape": "bodyweight_reps",
       "approvedRegressions": [],
       "approvedSubstitutions": [],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "reviewedAtEpochMillis": null,
         "rationaleOrSource": "AI draft by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916; evidence ledger docs/research/2026-09-07-full-exercise-catalog-review.json entries[banded-seated-hip-abduction] records exact manifest facts, three actually viewed PNG frames, categorical policy reasoning and bounded external sources. No exclusive muscle-dose claim. Disposition: ready_for_human_review. Human field-by-field ratification remains pending; this is not expert approval.",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -538,11 +554,12 @@
           "rationale": "Both are unheld bilateral squats for repetitions with Quadriceps primary. The unbanded target is a concrete equipment alternative to the foot-anchored band squat; it is not an assertion of equal load and is not duplicated as a regression."
         }
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "reviewedAtEpochMillis": null,
         "rationaleOrSource": "AI draft by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916; evidence ledger docs/research/2026-09-07-full-exercise-catalog-review.json entries[banded-squat] records exact manifest facts, three actually viewed PNG frames, categorical policy reasoning and bounded external sources. No exclusive muscle-dose claim. Disposition: ready_for_human_review. Human field-by-field ratification remains pending; this is not expert approval.",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -573,11 +590,12 @@
         }
       ],
       "approvedSubstitutions": [],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "reviewedAtEpochMillis": null,
         "rationaleOrSource": "AI draft by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916; evidence ledger docs/research/2026-09-07-full-exercise-catalog-review.json entries[banded-standing-hip-abduction] records exact manifest facts, three actually viewed PNG frames, categorical policy reasoning and bounded external sources. No exclusive muscle-dose claim. Disposition: ready_for_human_review. Human field-by-field ratification remains pending; this is not expert approval.",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -611,11 +629,12 @@
         }
       ],
       "approvedSubstitutions": [],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "reviewedAtEpochMillis": null,
         "rationaleOrSource": "AI draft by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916; evidence ledger docs/research/2026-09-07-full-exercise-catalog-review.json entries[barbell-back-squat] records exact manifest facts, three actually viewed PNG frames, categorical policy reasoning and bounded external sources. No exclusive muscle-dose claim. Disposition: ready_for_human_review. Human field-by-field ratification remains pending; this is not expert approval.",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -647,11 +666,12 @@
         }
       ],
       "approvedSubstitutions": [],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "reviewedAtEpochMillis": null,
         "rationaleOrSource": "AI draft by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916; evidence ledger docs/research/2026-09-07-full-exercise-catalog-review.json entries[barbell-bench-press] records exact manifest facts, three actually viewed PNG frames, categorical policy reasoning and bounded external sources. No exclusive muscle-dose claim. Disposition: ready_for_human_review. Human field-by-field ratification remains pending; this is not expert approval.",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -682,11 +702,12 @@
           "rationale": "Both observations are unheld standing elbow-flexion repetitions with Biceps primary and explicit balance demand. This assessed implement alternative changes an EZ/curl bar to separate dumbbells, retaining the arm-curl role without claiming identical grip mechanics or dose."
         }
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "reviewedAtEpochMillis": null,
         "rationaleOrSource": "AI draft by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916; evidence ledger docs/research/2026-09-07-full-exercise-catalog-review.json entries[barbell-bicep-curl] records exact manifest facts, three actually viewed PNG frames, categorical policy reasoning and bounded external sources. No exclusive muscle-dose claim. Disposition: ready_for_human_review. Human field-by-field ratification remains pending; this is not expert approval.",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -715,11 +736,12 @@
       "prescriptionShape": "weight_reps",
       "approvedRegressions": [],
       "approvedSubstitutions": [],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "reviewedAtEpochMillis": null,
         "rationaleOrSource": "AI draft by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916; evidence ledger docs/research/2026-09-07-full-exercise-catalog-review.json entries[barbell-deadlift] records exact manifest facts, three actually viewed PNG frames, categorical policy reasoning and bounded external sources. No exclusive muscle-dose claim. Disposition: pending_evidence_or_policy. Human field-by-field ratification remains pending; this is not expert approval.",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -746,11 +768,12 @@
       "prescriptionShape": "weight_reps",
       "approvedRegressions": [],
       "approvedSubstitutions": [],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "reviewedAtEpochMillis": null,
         "rationaleOrSource": "AI draft by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916; evidence ledger docs/research/2026-09-07-full-exercise-catalog-review.json entries[barbell-glute-bridge] records exact manifest facts, three actually viewed PNG frames, categorical policy reasoning and bounded external sources. No exclusive muscle-dose claim. Disposition: ready_for_human_review. Human field-by-field ratification remains pending; this is not expert approval.",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -777,11 +800,12 @@
       "prescriptionShape": "weight_reps",
       "approvedRegressions": [],
       "approvedSubstitutions": [],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "reviewedAtEpochMillis": null,
         "rationaleOrSource": "AI draft by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916; evidence ledger docs/research/2026-09-07-full-exercise-catalog-review.json entries[barbell-row] records exact manifest facts, three actually viewed PNG frames, categorical policy reasoning and bounded external sources. No exclusive muscle-dose claim. Disposition: ready_for_human_review. Human field-by-field ratification remains pending; this is not expert approval.",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -808,11 +832,12 @@
       "prescriptionShape": "duration",
       "approvedRegressions": [],
       "approvedSubstitutions": [],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "reviewedAtEpochMillis": null,
         "rationaleOrSource": "AI draft by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916; evidence ledger docs/research/2026-09-07-full-exercise-catalog-review.json entries[bear-plank] records exact manifest facts, three actually viewed PNG frames, categorical policy reasoning and bounded external sources. No exclusive muscle-dose claim. Disposition: pending_evidence_or_policy. Human field-by-field ratification remains pending; this is not expert approval.",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -839,11 +864,12 @@
       "prescriptionShape": "weight_reps",
       "approvedRegressions": [],
       "approvedSubstitutions": [],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "reviewedAtEpochMillis": null,
         "rationaleOrSource": "AI draft by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916; evidence ledger docs/research/2026-09-07-full-exercise-catalog-review.json entries[belt-squat] records exact manifest facts, three actually viewed PNG frames, categorical policy reasoning and bounded external sources. No exclusive muscle-dose claim. Disposition: pending_evidence_or_policy. Human field-by-field ratification remains pending; this is not expert approval.",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -871,11 +897,12 @@
       "prescriptionShape": "bodyweight_reps",
       "approvedRegressions": [],
       "approvedSubstitutions": [],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "reviewedAtEpochMillis": null,
         "rationaleOrSource": "AI draft by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916; evidence ledger docs/research/2026-09-07-full-exercise-catalog-review.json entries[bench-dip] records exact manifest facts, three actually viewed PNG frames, categorical policy reasoning and bounded external sources. No exclusive muscle-dose claim. Disposition: ready_for_human_review. Human field-by-field ratification remains pending; this is not expert approval.",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -901,11 +928,12 @@
       "prescriptionShape": "weight_reps",
       "approvedRegressions": [],
       "approvedSubstitutions": [],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "reviewedAtEpochMillis": null,
         "rationaleOrSource": "AI draft by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916; evidence ledger docs/research/2026-09-07-full-exercise-catalog-review.json entries[bent-over-rear-delt-raise] records exact manifest facts, three actually viewed PNG frames, categorical policy reasoning and bounded external sources. No exclusive muscle-dose claim. Disposition: ready_for_human_review. Human field-by-field ratification remains pending; this is not expert approval.",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -940,11 +968,12 @@
           "rationale": "Both inspected entries perform standing elbow flexion with Biceps primary; the target uses a specific low pulley and handle and correctly records unheld balance. This is a bounded curl-role equipment substitution, not universal cable/dumbbell equivalence."
         }
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "reviewedAtEpochMillis": null,
         "rationaleOrSource": "AI draft by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916; evidence ledger docs/research/2026-09-07-full-exercise-catalog-review.json entries[bicep-curl] records exact manifest facts, three actually viewed PNG frames, categorical policy reasoning and bounded external sources. No exclusive muscle-dose claim. Disposition: ready_for_human_review. Human field-by-field ratification remains pending; this is not expert approval.",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -968,11 +997,12 @@
       "prescriptionShape": "bodyweight_reps",
       "approvedRegressions": [],
       "approvedSubstitutions": [],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "reviewedAtEpochMillis": null,
         "rationaleOrSource": "AI draft by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916; evidence ledger docs/research/2026-09-07-full-exercise-catalog-review.json entries[bicycle-crunch] records exact manifest facts, three actually viewed PNG frames, categorical policy reasoning and bounded external sources. No exclusive muscle-dose claim. Disposition: ready_for_human_review. Human field-by-field ratification remains pending; this is not expert approval.",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -999,11 +1029,12 @@
       "prescriptionShape": "bodyweight_reps",
       "approvedRegressions": [],
       "approvedSubstitutions": [],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "reviewedAtEpochMillis": null,
         "rationaleOrSource": "AI draft by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916; evidence ledger docs/research/2026-09-07-full-exercise-catalog-review.json entries[bird-dog] records exact manifest facts, three actually viewed PNG frames, categorical policy reasoning and bounded external sources. No exclusive muscle-dose claim. Disposition: ready_for_human_review. Human field-by-field ratification remains pending; this is not expert approval.",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -1032,11 +1063,12 @@
       "prescriptionShape": "bodyweight_reps",
       "approvedRegressions": [],
       "approvedSubstitutions": [],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "reviewedAtEpochMillis": null,
         "rationaleOrSource": "AI draft by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916; evidence ledger docs/research/2026-09-07-full-exercise-catalog-review.json entries[bodyweight-squat] records exact manifest facts, three actually viewed PNG frames, categorical policy reasoning and bounded external sources. No exclusive muscle-dose claim. Disposition: ready_for_human_review. Human field-by-field ratification remains pending; this is not expert approval.",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -1064,11 +1096,12 @@
       "prescriptionShape": "weight_reps",
       "approvedRegressions": [],
       "approvedSubstitutions": [],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "reviewedAtEpochMillis": null,
         "rationaleOrSource": "AI draft by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916; evidence ledger docs/research/2026-09-07-full-exercise-catalog-review.json entries[bulgarian-split-squat] records exact manifest facts, three actually viewed PNG frames, categorical policy reasoning and bounded external sources. No exclusive muscle-dose claim. Disposition: ready_for_human_review. Human field-by-field ratification remains pending; this is not expert approval.",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -1101,11 +1134,12 @@
       "prescriptionShape": "bodyweight_reps",
       "approvedRegressions": [],
       "approvedSubstitutions": [],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "reviewedAtEpochMillis": null,
         "rationaleOrSource": "AI draft by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916; evidence ledger docs/research/2026-09-07-full-exercise-catalog-review.json entries[burpee] records exact manifest facts, three actually viewed PNG frames, categorical policy reasoning and bounded external sources. No exclusive muscle-dose claim. Disposition: pending_evidence_or_policy. Human field-by-field ratification remains pending; this is not expert approval.",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -1129,11 +1163,12 @@
       "prescriptionShape": "weight_reps",
       "approvedRegressions": [],
       "approvedSubstitutions": [],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "reviewedAtEpochMillis": null,
         "rationaleOrSource": "AI draft by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916; evidence ledger docs/research/2026-09-07-full-exercise-catalog-review.json entries[cable-crunch] records exact manifest facts, three actually viewed PNG frames, categorical policy reasoning and bounded external sources. No exclusive muscle-dose claim. Disposition: pending_evidence_or_policy. Human field-by-field ratification remains pending; this is not expert approval.",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -1168,11 +1203,12 @@
           "rationale": "The source low-cable curl and target original EZ-bar curl both retain the standing elbow-flexion role and same recorded balance demand. State the connected-handle versus curl-bar difference and check target Barbell availability, without asserting equal resistance profiles."
         }
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "reviewedAtEpochMillis": null,
         "rationaleOrSource": "AI draft by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916; evidence ledger docs/research/2026-09-07-full-exercise-catalog-review.json entries[cable-curl] records exact manifest facts, three actually viewed PNG frames, categorical policy reasoning and bounded external sources. No exclusive muscle-dose claim. Disposition: ready_for_human_review. Human field-by-field ratification remains pending; this is not expert approval.",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -1207,11 +1243,12 @@
           "Cable"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for cable-fly; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-ID source facts, three PNG observations, exact equipment/capability correction and graph review are in docs/research/2026-09-07-full-exercise-catalog-review.json. Categorical policy interpretation is not biological exclusivity or clinical validation. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -1237,11 +1274,12 @@
           "Cable"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for cable-front-raise; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-ID source facts, three PNG observations, exact equipment/capability correction and graph review are in docs/research/2026-09-07-full-exercise-catalog-review.json. Categorical policy interpretation is not biological exclusivity or clinical validation. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -1267,11 +1305,12 @@
           "Cable"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT (cable-kickback) from pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916: manifest.json establishes exerciseType, muscle labels and listed equipment ('Cable'); the three pinned frame illustrations establish the shown setup. WallCrawl product policy supplies movementPattern, complexity, progressionFamily, capabilities, support, impact, equipmentAlternatives and any graph edges. Single directPrimaryMuscle is a policy choice, not biological exclusivity; general training literature was not used to prove equipment. Authored by claude-opus-4.8; not human-approved (reviewState=draft) pending field-by-field human review.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -1297,11 +1336,12 @@
           "Cable"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for cable-lateral-raise; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-ID source facts, three PNG observations, exact equipment/capability correction and graph review are in docs/research/2026-09-07-full-exercise-catalog-review.json. Categorical policy interpretation is not biological exclusivity or clinical validation. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -1328,11 +1368,12 @@
           "Cable"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT (cable-pallof-hold) from pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916: manifest.json establishes exerciseType, muscle labels and listed equipment ('Cable'); the three pinned frame illustrations establish the shown setup. WallCrawl product policy supplies movementPattern, complexity, progressionFamily, capabilities, support, impact, equipmentAlternatives and any graph edges. Single directPrimaryMuscle is a policy choice, not biological exclusivity; general training literature was not used to prove equipment. Authored by claude-opus-4.8; not human-approved (reviewState=draft) pending field-by-field human review.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -1359,11 +1400,12 @@
           "Cable"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT (cable-pull-through) from pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916: manifest.json establishes exerciseType, muscle labels and listed equipment ('Cable'); the three pinned frame illustrations establish the shown setup. WallCrawl product policy supplies movementPattern, complexity, progressionFamily, capabilities, support, impact, equipmentAlternatives and any graph edges. Single directPrimaryMuscle is a policy choice, not biological exclusivity; general training literature was not used to prove equipment. Authored by claude-opus-4.8; not human-approved (reviewState=draft) pending field-by-field human review.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -1389,11 +1431,12 @@
           "Cable"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT (cable-rear-delt-fly) from pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916: manifest.json establishes exerciseType, muscle labels and listed equipment ('Cable'); the three pinned frame illustrations establish the shown setup. WallCrawl product policy supplies movementPattern, complexity, progressionFamily, capabilities, support, impact, equipmentAlternatives and any graph edges. Single directPrimaryMuscle is a policy choice, not biological exclusivity; general training literature was not used to prove equipment. Authored by claude-opus-4.8; not human-approved (reviewState=draft) pending field-by-field human review.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -1417,11 +1460,12 @@
           "Cable"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT (cable-standing-hip-abduction) from pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916: manifest.json establishes exerciseType, muscle labels and listed equipment ('Cable'); the three pinned frame illustrations establish the shown setup. WallCrawl product policy supplies movementPattern, complexity, progressionFamily, capabilities, support, impact, equipmentAlternatives and any graph edges. Single directPrimaryMuscle is a policy choice, not biological exclusivity; general training literature was not used to prove equipment. Authored by claude-opus-4.8; not human-approved (reviewState=draft) pending field-by-field human review.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -1446,11 +1490,12 @@
           "Cable"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT (cable-standing-hip-adduction) from pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916: manifest.json establishes exerciseType, muscle labels and listed equipment ('Cable'); the three pinned frame illustrations establish the shown setup. WallCrawl product policy supplies movementPattern, complexity, progressionFamily, capabilities, support, impact, equipmentAlternatives and any graph edges. Single directPrimaryMuscle is a policy choice, not biological exclusivity; general training literature was not used to prove equipment. Authored by claude-opus-4.8; not human-approved (reviewState=draft) pending field-by-field human review.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -1476,11 +1521,12 @@
           "Cable"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for cable-triceps-pushdown; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-ID source facts, three PNG observations, exact equipment/capability correction and graph review are in docs/research/2026-09-07-full-exercise-catalog-review.json. Categorical policy interpretation is not biological exclusivity or clinical validation. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -1506,11 +1552,12 @@
           "Cable"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT (cable-woodchop) from pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916: manifest.json establishes exerciseType, muscle labels and listed equipment ('Cable'); the three pinned frame illustrations establish the shown setup. WallCrawl product policy supplies movementPattern, complexity, progressionFamily, capabilities, support, impact, equipmentAlternatives and any graph edges. Single directPrimaryMuscle is a policy choice, not biological exclusivity; general training literature was not used to prove equipment. Authored by claude-opus-4.8; not human-approved (reviewState=draft) pending field-by-field human review.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -1534,11 +1581,12 @@
           "Machine"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT (captains-chair-knee-raise) from pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916: manifest.json establishes exerciseType, muscle labels and listed equipment ('Machine'); the three pinned frame illustrations establish the shown setup. WallCrawl product policy supplies movementPattern, complexity, progressionFamily, capabilities, support, impact, equipmentAlternatives and any graph edges. Single directPrimaryMuscle is a policy choice, not biological exclusivity; general training literature was not used to prove equipment. Authored by claude-opus-4.8; not human-approved (reviewState=draft) pending field-by-field human review.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -1565,11 +1613,12 @@
           "Chair"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT (chair-dip) from pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916: manifest.json establishes exerciseType, muscle labels and listed equipment ('Chair'); the three pinned frame illustrations establish the shown setup. WallCrawl product policy supplies movementPattern, complexity, progressionFamily, capabilities, support, impact, equipmentAlternatives and any graph edges. Single directPrimaryMuscle is a policy choice, not biological exclusivity; general training literature was not used to prove equipment. Authored by claude-opus-4.8; not human-approved (reviewState=draft) pending field-by-field human review.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -1594,11 +1643,12 @@
           "Machine"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT (chest-supported-row) from pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916: manifest.json establishes exerciseType, muscle labels and listed equipment ('Machine'); the three pinned frame illustrations establish the shown setup. WallCrawl product policy supplies movementPattern, complexity, progressionFamily, capabilities, support, impact, equipmentAlternatives and any graph edges. Single directPrimaryMuscle is a policy choice, not biological exclusivity; general training literature was not used to prove equipment. Authored by claude-opus-4.8; not human-approved (reviewState=draft) pending field-by-field human review.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -1624,11 +1674,12 @@
           "Pull-up Bar"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT (chin-up) from pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916: manifest.json establishes exerciseType, muscle labels and listed equipment ('Bodyweight'); the three pinned frame illustrations establish the shown setup. WallCrawl product policy supplies movementPattern, complexity, progressionFamily, capabilities, support, impact, equipmentAlternatives and any graph edges. Single directPrimaryMuscle is a policy choice, not biological exclusivity; general training literature was not used to prove equipment. Authored by claude-opus-4.8; not human-approved (reviewState=draft) pending field-by-field human review.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -1654,11 +1705,12 @@
           "Resistance Band"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for clamshell; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-ID source facts, three PNG observations, exact equipment/capability correction and graph review are in docs/research/2026-09-07-full-exercise-catalog-review.json. Categorical policy interpretation is not biological exclusivity or clinical validation. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -1685,11 +1737,12 @@
           "Squat Rack"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT (close-grip-bench-press) from pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916: manifest.json establishes exerciseType, muscle labels and listed equipment ('Barbell'); the three pinned frame illustrations establish the shown setup. WallCrawl product policy supplies movementPattern, complexity, progressionFamily, capabilities, support, impact, equipmentAlternatives and any graph edges. Single directPrimaryMuscle is a policy choice, not biological exclusivity; general training literature was not used to prove equipment. Authored by claude-opus-4.8; not human-approved (reviewState=draft) pending field-by-field human review.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -1713,11 +1766,12 @@
           "Cable"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT (close-grip-lat-pulldown) from pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916: manifest.json establishes exerciseType, muscle labels and listed equipment ('Cable'); the three pinned frame illustrations establish the shown setup. WallCrawl product policy supplies movementPattern, complexity, progressionFamily, capabilities, support, impact, equipmentAlternatives and any graph edges. Single directPrimaryMuscle is a policy choice, not biological exclusivity; general training literature was not used to prove equipment. Authored by claude-opus-4.8; not human-approved (reviewState=draft) pending field-by-field human review.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -1745,11 +1799,12 @@
           "Bench"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT (copenhagen-plank) from pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916: manifest.json establishes exerciseType, muscle labels and listed equipment ('Bodyweight'); the three pinned frame illustrations establish the shown setup. WallCrawl product policy supplies movementPattern, complexity, progressionFamily, capabilities, support, impact, equipmentAlternatives and any graph edges. Single directPrimaryMuscle is a policy choice, not biological exclusivity; general training literature was not used to prove equipment. Authored by claude-opus-4.8; not human-approved (reviewState=draft) pending field-by-field human review.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -1783,11 +1838,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT (cossack-squat) from pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916: manifest.json establishes exerciseType, muscle labels and listed equipment ('Bodyweight'); the three pinned frame illustrations establish the shown setup. WallCrawl product policy supplies movementPattern, complexity, progressionFamily, capabilities, support, impact, equipmentAlternatives and any graph edges. Single directPrimaryMuscle is a policy choice, not biological exclusivity; general training literature was not used to prove equipment. Authored by claude-opus-4.8; not human-approved (reviewState=draft) pending field-by-field human review.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -1816,11 +1872,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT (crab-walk) from pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916: manifest.json establishes exerciseType, muscle labels and listed equipment ('Bodyweight'); the three pinned frame illustrations establish the shown setup. WallCrawl product policy supplies movementPattern, complexity, progressionFamily, capabilities, support, impact, equipmentAlternatives and any graph edges. Single directPrimaryMuscle is a policy choice, not biological exclusivity; general training literature was not used to prove equipment. Authored by claude-opus-4.8; not human-approved (reviewState=draft) pending field-by-field human review.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -1845,11 +1902,12 @@
           "Bench"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for crunch; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-ID source facts, three PNG observations, exact equipment/capability correction and graph review are in docs/research/2026-09-07-full-exercise-catalog-review.json. Categorical policy interpretation is not biological exclusivity or clinical validation. Human field-by-field review required. Full-resolution support reinspection retains Bench only; Box is not an evidenced alternative.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -1877,11 +1935,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT (curtsy-lunge) from pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916: manifest.json establishes exerciseType, muscle labels and listed equipment ('Bodyweight'); the three pinned frame illustrations establish the shown setup. WallCrawl product policy supplies movementPattern, complexity, progressionFamily, capabilities, support, impact, equipmentAlternatives and any graph edges. Single directPrimaryMuscle is a policy choice, not biological exclusivity; general training literature was not used to prove equipment. Authored by claude-opus-4.8; not human-approved (reviewState=draft) pending field-by-field human review.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -1907,11 +1966,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT (dead-bug) from pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916: manifest.json establishes exerciseType, muscle labels and listed equipment ('Bodyweight'); the three pinned frame illustrations establish the shown setup. WallCrawl product policy supplies movementPattern, complexity, progressionFamily, capabilities, support, impact, equipmentAlternatives and any graph edges. Single directPrimaryMuscle is a policy choice, not biological exclusivity; general training literature was not used to prove equipment. Authored by claude-opus-4.8; not human-approved (reviewState=draft) pending field-by-field human review.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -1939,11 +1999,12 @@
           "Pull-up Bar"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT (dead-hang) from pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916: manifest.json establishes exerciseType, muscle labels and listed equipment ('Pull-up Bar'); the three pinned frame illustrations establish the shown setup. WallCrawl product policy supplies movementPattern, complexity, progressionFamily, capabilities, support, impact, equipmentAlternatives and any graph edges. Single directPrimaryMuscle is a policy choice, not biological exclusivity; general training literature was not used to prove equipment. Authored by claude-opus-4.8; not human-approved (reviewState=draft) pending field-by-field human review.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -1975,11 +2036,12 @@
           "Squat Rack"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT (decline-bench-press) from pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916: manifest.json establishes exerciseType, muscle labels and listed equipment ('Barbell'); the three pinned frame illustrations establish the shown setup. WallCrawl product policy supplies movementPattern, complexity, progressionFamily, capabilities, support, impact, equipmentAlternatives and any graph edges. Single directPrimaryMuscle is a policy choice, not biological exclusivity; general training literature was not used to prove equipment. Authored by claude-opus-4.8; not human-approved (reviewState=draft) pending field-by-field human review.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -2005,11 +2067,12 @@
           "Bench"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT (decline-dumbbell-press) from pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916: manifest.json establishes exerciseType, muscle labels and listed equipment ('Dumbbell'); the three pinned frame illustrations establish the shown setup. WallCrawl product policy supplies movementPattern, complexity, progressionFamily, capabilities, support, impact, equipmentAlternatives and any graph edges. Single directPrimaryMuscle is a policy choice, not biological exclusivity; general training literature was not used to prove equipment. Authored by claude-opus-4.8; not human-approved (reviewState=draft) pending field-by-field human review.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -2039,11 +2102,12 @@
           "Bench"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for decline-push-up; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-ID source facts, three PNG observations, exact equipment/capability correction and graph review are in docs/research/2026-09-07-full-exercise-catalog-review.json. Categorical policy interpretation is not biological exclusivity or clinical validation. Human field-by-field review required. Full-resolution support reinspection retains Bench only; Box is not an evidenced alternative.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -2067,11 +2131,12 @@
           "Bench"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT (decline-sit-up) from pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916: manifest.json establishes exerciseType, muscle labels and listed equipment ('Bench'); the three pinned frame illustrations establish the shown setup. WallCrawl product policy supplies movementPattern, complexity, progressionFamily, capabilities, support, impact, equipmentAlternatives and any graph edges. Single directPrimaryMuscle is a policy choice, not biological exclusivity; general training literature was not used to prove equipment. Authored by claude-opus-4.8; not human-approved (reviewState=draft) pending field-by-field human review.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -2100,11 +2165,12 @@
           "Box"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT (deficit-reverse-lunge) from pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916: manifest.json establishes exerciseType, muscle labels and listed equipment ('Dumbbell'); the three pinned frame illustrations establish the shown setup. WallCrawl product policy supplies movementPattern, complexity, progressionFamily, capabilities, support, impact, equipmentAlternatives and any graph edges. Single directPrimaryMuscle is a policy choice, not biological exclusivity; general training literature was not used to prove equipment. Authored by claude-opus-4.8; not human-approved (reviewState=draft) pending field-by-field human review.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -2133,11 +2199,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT (diamond-push-up) from pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916: manifest.json establishes exerciseType, muscle labels and listed equipment ('Bodyweight'); the three pinned frame illustrations establish the shown setup. WallCrawl product policy supplies movementPattern, complexity, progressionFamily, capabilities, support, impact, equipmentAlternatives and any graph edges. Single directPrimaryMuscle is a policy choice, not biological exclusivity; general training literature was not used to prove equipment. Authored by claude-opus-4.8; not human-approved (reviewState=draft) pending field-by-field human review.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -2164,11 +2231,12 @@
           "Dip Bars"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT (dip) from pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916: manifest.json establishes exerciseType, muscle labels and listed equipment ('Bodyweight'); the three pinned frame illustrations establish the shown setup. WallCrawl product policy supplies movementPattern, complexity, progressionFamily, capabilities, support, impact, equipmentAlternatives and any graph edges. Single directPrimaryMuscle is a policy choice, not biological exclusivity; general training literature was not used to prove equipment. Authored by claude-opus-4.8; not human-approved (reviewState=draft) pending field-by-field human review.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -2195,11 +2263,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT (donkey-kick) from pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916: manifest.json establishes exerciseType, muscle labels and listed equipment ('Bodyweight'); the three pinned frame illustrations establish the shown setup. WallCrawl product policy supplies movementPattern, complexity, progressionFamily, capabilities, support, impact, equipmentAlternatives and any graph edges. Single directPrimaryMuscle is a policy choice, not biological exclusivity; general training literature was not used to prove equipment. Authored by claude-opus-4.8; not human-approved (reviewState=draft) pending field-by-field human review.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -2225,11 +2294,12 @@
           "Doorway"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT (doorway-row) from pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916: manifest.json establishes exerciseType, muscle labels and listed equipment ('Doorway'); the three pinned frame illustrations establish the shown setup. WallCrawl product policy supplies movementPattern, complexity, progressionFamily, capabilities, support, impact, equipmentAlternatives and any graph edges. Single directPrimaryMuscle is a policy choice, not biological exclusivity; general training literature was not used to prove equipment. Authored by claude-opus-4.8; not human-approved (reviewState=draft) pending field-by-field human review.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -2255,11 +2325,12 @@
           "Barbell"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT (drag-curl) from pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916: manifest.json establishes exerciseType, muscle labels and listed equipment ('Barbell'); the three pinned frame illustrations establish the shown setup. WallCrawl product policy supplies movementPattern, complexity, progressionFamily, capabilities, support, impact, equipmentAlternatives and any graph edges. Single directPrimaryMuscle is a policy choice, not biological exclusivity; general training literature was not used to prove equipment. Authored by claude-opus-4.8; not human-approved (reviewState=draft) pending field-by-field human review.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -2290,11 +2361,12 @@
           "Bench"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT (dumbbell-bench-press) from pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916: manifest.json establishes exerciseType, muscle labels and listed equipment ('Dumbbell'); the three pinned frame illustrations establish the shown setup. WallCrawl product policy supplies movementPattern, complexity, progressionFamily, capabilities, support, impact, equipmentAlternatives and any graph edges. Single directPrimaryMuscle is a policy choice, not biological exclusivity; general training literature was not used to prove equipment. Authored by claude-opus-4.8; not human-approved (reviewState=draft) pending field-by-field human review.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -2326,11 +2398,12 @@
           "Dumbbell"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT (dumbbell-bent-over-row) from pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916: manifest.json establishes exerciseType, muscle labels and listed equipment ('Dumbbell'); the three pinned frame illustrations establish the shown setup. WallCrawl product policy supplies movementPattern, complexity, progressionFamily, capabilities, support, impact, equipmentAlternatives and any graph edges. Single directPrimaryMuscle is a policy choice, not biological exclusivity; general training literature was not used to prove equipment. Authored by claude-opus-4.8; not human-approved (reviewState=draft) pending field-by-field human review.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -2358,11 +2431,12 @@
           "Dumbbell"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT (dumbbell-curtsy-lunge) from pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916: manifest.json establishes exerciseType, muscle labels and listed equipment ('Dumbbell'); the three pinned frame illustrations establish the shown setup. WallCrawl product policy supplies movementPattern, complexity, progressionFamily, capabilities, support, impact, equipmentAlternatives and any graph edges. Single directPrimaryMuscle is a policy choice, not biological exclusivity; general training literature was not used to prove equipment. Authored by claude-opus-4.8; not human-approved (reviewState=draft) pending field-by-field human review.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -2392,11 +2466,12 @@
           "Bench"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT (dumbbell-fly) from pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916: manifest.json establishes exerciseType, muscle labels and listed equipment ('Dumbbell'); the three pinned frame illustrations establish the shown setup. WallCrawl product policy supplies movementPattern, complexity, progressionFamily, capabilities, support, impact, equipmentAlternatives and any graph edges. Single directPrimaryMuscle is a policy choice, not biological exclusivity; general training literature was not used to prove equipment. Authored by claude-opus-4.8; not human-approved (reviewState=draft) pending field-by-field human review.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -2423,11 +2498,12 @@
           "Dumbbell"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT (dumbbell-glute-bridge) from pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916: manifest.json establishes exerciseType, muscle labels and listed equipment ('Dumbbell'); the three pinned frame illustrations establish the shown setup. WallCrawl product policy supplies movementPattern, complexity, progressionFamily, capabilities, support, impact, equipmentAlternatives and any graph edges. Single directPrimaryMuscle is a policy choice, not biological exclusivity; general training literature was not used to prove equipment. Authored by claude-opus-4.8; not human-approved (reviewState=draft) pending field-by-field human review.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -2452,11 +2528,12 @@
           "Bench"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT (dumbbell-hip-thrust) from pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916: manifest.json establishes exerciseType, muscle labels and listed equipment ('Dumbbell'); the three pinned frame illustrations establish the shown setup. WallCrawl product policy supplies movementPattern, complexity, progressionFamily, capabilities, support, impact, equipmentAlternatives and any graph edges. Single directPrimaryMuscle is a policy choice, not biological exclusivity; general training literature was not used to prove equipment. Authored by claude-opus-4.8; not human-approved (reviewState=draft) pending field-by-field human review.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -2484,11 +2561,12 @@
           "Dumbbell"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for dumbbell-lateral-lunge in evidence-3: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports bounded source and setup facts; WallCrawl policy supplies canonical muscles, pattern, complexity, family, capabilities, support, impact, and empty/new graph decisions. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -2523,11 +2601,12 @@
           "Dumbbell"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for dumbbell-lateral-raise in evidence-3: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports bounded source and setup facts; WallCrawl policy supplies canonical muscles, pattern, complexity, family, capabilities, support, impact, and empty/new graph decisions. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -2557,15 +2636,16 @@
       "movementPattern": "hinge",
       "prescriptionShape": "weight_reps",
       "progressionFamily": "loaded-hinge",
+      "reviewState": "draft",
+      "supportRequirement": "unsupported",
+      "clearedTrainingConstraints": [],
       "provenance": {
         "policyVersion": 1,
         "rationaleOrSource": "AI-authored DRAFT for dumbbell-romanian-deadlift: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "reviewerRole": null,
-        "schemaVersion": 1
-      },
-      "reviewState": "draft",
-      "supportRequirement": "unsupported"
+        "schemaVersion": 2
+      }
     },
     "dumbbell-shoulder-press": {
       "reviewState": "draft",
@@ -2597,11 +2677,12 @@
           "Bench"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for dumbbell-shoulder-press in evidence-3: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports bounded source and setup facts; WallCrawl policy supplies canonical muscles, pattern, complexity, family, capabilities, support, impact, and empty/new graph decisions. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -2632,11 +2713,12 @@
           "Dumbbell"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for dumbbell-shrug in evidence-3: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports bounded source and setup facts; WallCrawl policy supplies canonical muscles, pattern, complexity, family, capabilities, support, impact, and empty/new graph decisions. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -2662,11 +2744,12 @@
           "Dumbbell"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for dumbbell-side-bend in evidence-3: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports bounded source and setup facts; WallCrawl policy supplies canonical muscles, pattern, complexity, family, capabilities, support, impact, and empty/new graph decisions. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -2691,11 +2774,12 @@
           "Bench"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for dumbbell-skull-crusher in evidence-3: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports bounded source and setup facts; WallCrawl policy supplies canonical muscles, pattern, complexity, family, capabilities, support, impact, and empty/new graph decisions. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -2724,11 +2808,12 @@
           "Dumbbell"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for dumbbell-sumo-squat in evidence-3: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports bounded source and setup facts; WallCrawl policy supplies canonical muscles, pattern, complexity, family, capabilities, support, impact, and empty/new graph decisions. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -2755,11 +2840,12 @@
           "Cable"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for face-pull in evidence-3: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports bounded source and setup facts; WallCrawl policy supplies canonical muscles, pattern, complexity, family, capabilities, support, impact, and empty/new graph decisions. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -2789,11 +2875,12 @@
           "Box"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for feet-elevated-pike-push-up in evidence-3: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports bounded source and setup facts; WallCrawl policy supplies canonical muscles, pattern, complexity, family, capabilities, support, impact, and empty/new graph decisions. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -2819,11 +2906,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for fire-hydrant in evidence-3: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports bounded source and setup facts; WallCrawl policy supplies canonical muscles, pattern, complexity, family, capabilities, support, impact, and empty/new graph decisions. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -2849,11 +2937,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for flutter-kick in evidence-3: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports bounded source and setup facts; WallCrawl policy supplies canonical muscles, pattern, complexity, family, capabilities, support, impact, and empty/new graph decisions. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -2881,11 +2970,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for forward-lunge in evidence-3: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports bounded source and setup facts; WallCrawl policy supplies canonical muscles, pattern, complexity, family, capabilities, support, impact, and empty/new graph decisions. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -2911,11 +3001,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for frog-pump in evidence-3: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports bounded source and setup facts; WallCrawl policy supplies canonical muscles, pattern, complexity, family, capabilities, support, impact, and empty/new graph decisions. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -2943,11 +3034,12 @@
           "Box"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for front-foot-elevated-split-squat in evidence-3: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports bounded source and setup facts; WallCrawl policy supplies canonical muscles, pattern, complexity, family, capabilities, support, impact, and empty/new graph decisions. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -2982,11 +3074,12 @@
           "Dumbbell"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for front-raise in evidence-3: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports bounded source and setup facts; WallCrawl policy supplies canonical muscles, pattern, complexity, family, capabilities, support, impact, and empty/new graph decisions. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -3025,11 +3118,12 @@
           "Squat Rack"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for front-squat in evidence-3: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports bounded source and setup facts; WallCrawl policy supplies canonical muscles, pattern, complexity, family, capabilities, support, impact, and empty/new graph decisions. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -3053,15 +3147,16 @@
       "movementPattern": "hinge",
       "prescriptionShape": "bodyweight_reps",
       "progressionFamily": "glute-bridge",
+      "reviewState": "draft",
+      "supportRequirement": "supported",
+      "clearedTrainingConstraints": [],
       "provenance": {
         "policyVersion": 1,
         "rationaleOrSource": "AI-authored DRAFT for glute-bridge: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "reviewerRole": null,
-        "schemaVersion": 1
-      },
-      "reviewState": "draft",
-      "supportRequirement": "supported"
+        "schemaVersion": 2
+      }
     },
     "glute-bridge-march": {
       "reviewState": "draft",
@@ -3091,11 +3186,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for glute-bridge-march in evidence-3: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports bounded source and setup facts; WallCrawl policy supplies canonical muscles, pattern, complexity, family, capabilities, support, impact, and empty/new graph decisions. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -3129,15 +3225,16 @@
       "movementPattern": "squat",
       "prescriptionShape": "weight_reps",
       "progressionFamily": "loaded-squat",
+      "reviewState": "draft",
+      "supportRequirement": "unsupported",
+      "clearedTrainingConstraints": [],
       "provenance": {
         "policyVersion": 1,
         "rationaleOrSource": "AI-authored DRAFT for goblet-squat: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
         "reviewerRole": null,
-        "schemaVersion": 1
-      },
-      "reviewState": "draft",
-      "supportRequirement": "unsupported"
+        "schemaVersion": 2
+      }
     },
     "hack-squat": {
       "reviewState": "draft",
@@ -3168,11 +3265,12 @@
           "Machine"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for hack-squat in evidence-3: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports bounded source and setup facts; WallCrawl policy supplies canonical muscles, pattern, complexity, family, capabilities, support, impact, and empty/new graph decisions. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -3199,11 +3297,12 @@
           "Cable"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for half-kneeling-pallof-press in evidence-3: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports bounded source and setup facts; WallCrawl policy supplies canonical muscles, pattern, complexity, family, capabilities, support, impact, and empty/new graph decisions. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -3238,11 +3337,12 @@
           "Dumbbell"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for hammer-curl in evidence-3: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports bounded source and setup facts; WallCrawl policy supplies canonical muscles, pattern, complexity, family, capabilities, support, impact, and empty/new graph decisions. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -3268,11 +3368,12 @@
           "Pull-up Bar"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for hanging-knee-raise in evidence-3: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports bounded source and setup facts; WallCrawl policy supplies canonical muscles, pattern, complexity, family, capabilities, support, impact, and empty/new graph decisions. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -3298,11 +3399,12 @@
           "Pull-up Bar"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for hanging-leg-raise in evidence-3: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports bounded source and setup facts; WallCrawl policy supplies canonical muscles, pattern, complexity, family, capabilities, support, impact, and empty/new graph decisions. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -3326,11 +3428,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for heel-tap in evidence-3: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports bounded source and setup facts; WallCrawl policy supplies canonical muscles, pattern, complexity, family, capabilities, support, impact, and empty/new graph decisions. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -3364,11 +3467,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for hindu-push-up in evidence-3: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports bounded source and setup facts; WallCrawl policy supplies canonical muscles, pattern, complexity, family, capabilities, support, impact, and empty/new graph decisions. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -3392,11 +3496,12 @@
           "Machine"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for hip-abduction-machine in evidence-3: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports bounded source and setup facts; WallCrawl policy supplies canonical muscles, pattern, complexity, family, capabilities, support, impact, and empty/new graph decisions. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -3425,11 +3530,12 @@
           "Machine"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for hip-adduction-machine in evidence-3: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports bounded source and setup facts; WallCrawl policy supplies canonical muscles, pattern, complexity, family, capabilities, support, impact, and empty/new graph decisions. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -3459,11 +3565,12 @@
           "Bench"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for hip-thrust in evidence-3: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports bounded source and setup facts; WallCrawl policy supplies canonical muscles, pattern, complexity, family, capabilities, support, impact, and empty/new graph decisions. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -3489,11 +3596,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for hollow-rock in evidence-3: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports bounded source and setup facts; WallCrawl policy supplies canonical muscles, pattern, complexity, family, capabilities, support, impact, and empty/new graph decisions. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -3522,11 +3630,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for inchworm in evidence-3: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports bounded source and setup facts; WallCrawl policy supplies canonical muscles, pattern, complexity, family, capabilities, support, impact, and empty/new graph decisions. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -3562,11 +3671,12 @@
           "Squat Rack"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for incline-bench-press in evidence-3: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports bounded source and setup facts; WallCrawl policy supplies canonical muscles, pattern, complexity, family, capabilities, support, impact, and empty/new graph decisions. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -3591,11 +3701,12 @@
           "Bench"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for incline-cable-fly in evidence-3: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports bounded source and setup facts; WallCrawl policy supplies canonical muscles, pattern, complexity, family, capabilities, support, impact, and empty/new graph decisions. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -3625,11 +3736,12 @@
           "Bench"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for incline-dumbbell-curl in evidence-3: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports bounded source and setup facts; WallCrawl policy supplies canonical muscles, pattern, complexity, family, capabilities, support, impact, and empty/new graph decisions. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -3655,11 +3767,12 @@
           "Bench"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-exercise evidence/limits: docs/research/2026-09-07-full-exercise-catalog-review.json entries[id=incline-dumbbell-press]. Manifest supplies original type/muscle labels; all three pinned PNG/source illustrations were viewed using supplied contact sheets, not separately rendered SVG exports. Pattern, single-primary allocation, complexity, family, capabilities, support, impact and directed edges are WallCrawl policy proposals. Source discrepancies and equipment constraints in the ledger override any impression of approval. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -3693,11 +3806,12 @@
           "Box"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-exercise evidence/limits: docs/research/2026-09-07-full-exercise-catalog-review.json entries[id=incline-push-up]. Manifest supplies original type/muscle labels; all three pinned PNG/source illustrations were viewed using supplied contact sheets, not separately rendered SVG exports. Pattern, single-primary allocation, complexity, family, capabilities, support, impact and directed edges are WallCrawl policy proposals. Source discrepancies and equipment constraints in the ledger override any impression of approval. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -3731,11 +3845,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-exercise evidence/limits: docs/research/2026-09-07-full-exercise-catalog-review.json entries[id=jump-squat]. Manifest supplies original type/muscle labels; all three pinned PNG/source illustrations were viewed using supplied contact sheets, not separately rendered SVG exports. Pattern, single-primary allocation, complexity, family, capabilities, support, impact and directed edges are WallCrawl policy proposals. Source discrepancies and equipment constraints in the ledger override any impression of approval. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -3767,11 +3882,12 @@
           "Kettlebell"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-exercise evidence/limits: docs/research/2026-09-07-full-exercise-catalog-review.json entries[id=kettlebell-romanian-deadlift]. Manifest supplies original type/muscle labels; all three pinned PNG/source illustrations were viewed using supplied contact sheets, not separately rendered SVG exports. Pattern, single-primary allocation, complexity, family, capabilities, support, impact and directed edges are WallCrawl policy proposals. Source discrepancies and equipment constraints in the ledger override any impression of approval. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -3803,11 +3919,12 @@
           "Kettlebell"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-exercise evidence/limits: docs/research/2026-09-07-full-exercise-catalog-review.json entries[id=kettlebell-swing]. Manifest supplies original type/muscle labels; all three pinned PNG/source illustrations were viewed using supplied contact sheets, not separately rendered SVG exports. Pattern, single-primary allocation, complexity, family, capabilities, support, impact and directed edges are WallCrawl policy proposals. Source discrepancies and equipment constraints in the ledger override any impression of approval. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -3841,11 +3958,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-exercise evidence/limits: docs/research/2026-09-07-full-exercise-catalog-review.json entries[id=knee-push-up]. Manifest supplies original type/muscle labels; all three pinned PNG/source illustrations were viewed using supplied contact sheets, not separately rendered SVG exports. Pattern, single-primary allocation, complexity, family, capabilities, support, impact and directed edges are WallCrawl policy proposals. Source discrepancies and equipment constraints in the ledger override any impression of approval. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -3874,11 +3992,12 @@
           "Dip Bars"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-exercise evidence/limits: docs/research/2026-09-07-full-exercise-catalog-review.json entries[id=l-sit-hold]. Manifest supplies original type/muscle labels; all three pinned PNG/source illustrations were viewed using supplied contact sheets, not separately rendered SVG exports. Pattern, single-primary allocation, complexity, family, capabilities, support, impact and directed edges are WallCrawl policy proposals. Source discrepancies and equipment constraints in the ledger override any impression of approval. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -3911,11 +4030,12 @@
           "Pull-up Bar"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-exercise evidence/limits: docs/research/2026-09-07-full-exercise-catalog-review.json entries[id=l-sit-pull-up]. Manifest supplies original type/muscle labels; all three pinned PNG/source illustrations were viewed using supplied contact sheets, not separately rendered SVG exports. Pattern, single-primary allocation, complexity, family, capabilities, support, impact and directed edges are WallCrawl policy proposals. Source discrepancies and equipment constraints in the ledger override any impression of approval. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -3944,11 +4064,12 @@
           "Cable"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-exercise evidence/limits: docs/research/2026-09-07-full-exercise-catalog-review.json entries[id=lat-pulldown]. Manifest supplies original type/muscle labels; all three pinned PNG/source illustrations were viewed using supplied contact sheets, not separately rendered SVG exports. Pattern, single-primary allocation, complexity, family, capabilities, support, impact and directed edges are WallCrawl policy proposals. Source discrepancies and equipment constraints in the ledger override any impression of approval. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -3976,11 +4097,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-exercise evidence/limits: docs/research/2026-09-07-full-exercise-catalog-review.json entries[id=lateral-lunge]. Manifest supplies original type/muscle labels; all three pinned PNG/source illustrations were viewed using supplied contact sheets, not separately rendered SVG exports. Pattern, single-primary allocation, complexity, family, capabilities, support, impact and directed edges are WallCrawl policy proposals. Source discrepancies and equipment constraints in the ledger override any impression of approval. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -4013,11 +4135,12 @@
           "Machine"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-exercise evidence/limits: docs/research/2026-09-07-full-exercise-catalog-review.json entries[id=leg-curl]. Manifest supplies original type/muscle labels; all three pinned PNG/source illustrations were viewed using supplied contact sheets, not separately rendered SVG exports. Pattern, single-primary allocation, complexity, family, capabilities, support, impact and directed edges are WallCrawl policy proposals. Source discrepancies and equipment constraints in the ledger override any impression of approval. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -4039,11 +4162,12 @@
           "Machine"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-exercise evidence/limits: docs/research/2026-09-07-full-exercise-catalog-review.json entries[id=leg-extension]. Manifest supplies original type/muscle labels; all three pinned PNG/source illustrations were viewed using supplied contact sheets, not separately rendered SVG exports. Pattern, single-primary allocation, complexity, family, capabilities, support, impact and directed edges are WallCrawl policy proposals. Source discrepancies and equipment constraints in the ledger override any impression of approval. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -4068,11 +4192,12 @@
           "Machine"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-exercise evidence/limits: docs/research/2026-09-07-full-exercise-catalog-review.json entries[id=leg-press]. Manifest supplies original type/muscle labels; all three pinned PNG/source illustrations were viewed using supplied contact sheets, not separately rendered SVG exports. Pattern, single-primary allocation, complexity, family, capabilities, support, impact and directed edges are WallCrawl policy proposals. Source discrepancies and equipment constraints in the ledger override any impression of approval. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -4094,11 +4219,12 @@
           "Machine"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-exercise evidence/limits: docs/research/2026-09-07-full-exercise-catalog-review.json entries[id=leg-press-calf-raise]. Manifest supplies original type/muscle labels; all three pinned PNG/source illustrations were viewed using supplied contact sheets, not separately rendered SVG exports. Pattern, single-primary allocation, complexity, family, capabilities, support, impact and directed edges are WallCrawl policy proposals. Source discrepancies and equipment constraints in the ledger override any impression of approval. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -4122,11 +4248,12 @@
           "Machine"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-exercise evidence/limits: docs/research/2026-09-07-full-exercise-catalog-review.json entries[id=lying-leg-curl]. Manifest supplies original type/muscle labels; all three pinned PNG/source illustrations were viewed using supplied contact sheets, not separately rendered SVG exports. Pattern, single-primary allocation, complexity, family, capabilities, support, impact and directed edges are WallCrawl policy proposals. Source discrepancies and equipment constraints in the ledger override any impression of approval. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -4152,11 +4279,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-exercise evidence/limits: docs/research/2026-09-07-full-exercise-catalog-review.json entries[id=lying-leg-raise]. Manifest supplies original type/muscle labels; all three pinned PNG/source illustrations were viewed using supplied contact sheets, not separately rendered SVG exports. Pattern, single-primary allocation, complexity, family, capabilities, support, impact and directed edges are WallCrawl policy proposals. Source discrepancies and equipment constraints in the ledger override any impression of approval. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -4181,11 +4309,12 @@
           "Machine"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-exercise evidence/limits: docs/research/2026-09-07-full-exercise-catalog-review.json entries[id=machine-chest-press]. Manifest supplies original type/muscle labels; all three pinned PNG/source illustrations were viewed using supplied contact sheets, not separately rendered SVG exports. Pattern, single-primary allocation, complexity, family, capabilities, support, impact and directed edges are WallCrawl policy proposals. Source discrepancies and equipment constraints in the ledger override any impression of approval. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -4214,11 +4343,12 @@
           "Machine"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-exercise evidence/limits: docs/research/2026-09-07-full-exercise-catalog-review.json entries[id=machine-lateral-raise]. Manifest supplies original type/muscle labels; all three pinned PNG/source illustrations were viewed using supplied contact sheets, not separately rendered SVG exports. Pattern, single-primary allocation, complexity, family, capabilities, support, impact and directed edges are WallCrawl policy proposals. Source discrepancies and equipment constraints in the ledger override any impression of approval. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -4242,11 +4372,12 @@
           "Machine"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-exercise evidence/limits: docs/research/2026-09-07-full-exercise-catalog-review.json entries[id=machine-row]. Manifest supplies original type/muscle labels; all three pinned PNG/source illustrations were viewed using supplied contact sheets, not separately rendered SVG exports. Pattern, single-primary allocation, complexity, family, capabilities, support, impact and directed edges are WallCrawl policy proposals. Source discrepancies and equipment constraints in the ledger override any impression of approval. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -4275,11 +4406,12 @@
           "Machine"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-exercise evidence/limits: docs/research/2026-09-07-full-exercise-catalog-review.json entries[id=machine-shoulder-press]. Manifest supplies original type/muscle labels; all three pinned PNG/source illustrations were viewed using supplied contact sheets, not separately rendered SVG exports. Pattern, single-primary allocation, complexity, family, capabilities, support, impact and directed edges are WallCrawl policy proposals. Source discrepancies and equipment constraints in the ledger override any impression of approval. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -4312,11 +4444,12 @@
           "Pull-up Bar"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-exercise evidence/limits: docs/research/2026-09-07-full-exercise-catalog-review.json entries[id=negative-pull-up]. Manifest supplies original type/muscle labels; all three pinned PNG/source illustrations were viewed using supplied contact sheets, not separately rendered SVG exports. Pattern, single-primary allocation, complexity, family, capabilities, support, impact and directed edges are WallCrawl policy proposals. Source discrepancies and equipment constraints in the ledger override any impression of approval. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -4343,11 +4476,12 @@
           "Pull-up Bar"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-exercise evidence/limits: docs/research/2026-09-07-full-exercise-catalog-review.json entries[id=neutral-grip-pull-up]. Manifest supplies original type/muscle labels; all three pinned PNG/source illustrations were viewed using supplied contact sheets, not separately rendered SVG exports. Pattern, single-primary allocation, complexity, family, capabilities, support, impact and directed edges are WallCrawl policy proposals. Source discrepancies and equipment constraints in the ledger override any impression of approval. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -4372,11 +4506,12 @@
           "Bench"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-exercise evidence/limits: docs/research/2026-09-07-full-exercise-catalog-review.json entries[id=one-arm-dumbbell-row]. Manifest supplies original type/muscle labels; all three pinned PNG/source illustrations were viewed using supplied contact sheets, not separately rendered SVG exports. Pattern, single-primary allocation, complexity, family, capabilities, support, impact and directed edges are WallCrawl policy proposals. Source discrepancies and equipment constraints in the ledger override any impression of approval. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -4407,11 +4542,12 @@
           "Barbell"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-exercise evidence/limits: docs/research/2026-09-07-full-exercise-catalog-review.json entries[id=overhead-press]. Manifest supplies original type/muscle labels; all three pinned PNG/source illustrations were viewed using supplied contact sheets, not separately rendered SVG exports. Pattern, single-primary allocation, complexity, family, capabilities, support, impact and directed edges are WallCrawl policy proposals. Source discrepancies and equipment constraints in the ledger override any impression of approval. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -4437,11 +4573,12 @@
           "Cable"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-exercise evidence/limits: docs/research/2026-09-07-full-exercise-catalog-review.json entries[id=overhead-tricep-extension]. Manifest supplies original type/muscle labels; all three pinned PNG/source illustrations were viewed using supplied contact sheets, not separately rendered SVG exports. Pattern, single-primary allocation, complexity, family, capabilities, support, impact and directed edges are WallCrawl policy proposals. Source discrepancies and equipment constraints in the ledger override any impression of approval. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -4467,11 +4604,12 @@
           "Cable"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-exercise evidence/limits: docs/research/2026-09-07-full-exercise-catalog-review.json entries[id=pallof-press]. Manifest supplies original type/muscle labels; all three pinned PNG/source illustrations were viewed using supplied contact sheets, not separately rendered SVG exports. Pattern, single-primary allocation, complexity, family, capabilities, support, impact and directed edges are WallCrawl policy proposals. Source discrepancies and equipment constraints in the ledger override any impression of approval. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -4498,11 +4636,12 @@
           "Dip Bars"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-exercise evidence/limits: docs/research/2026-09-07-full-exercise-catalog-review.json entries[id=parallel-bar-dips]. Manifest supplies original type/muscle labels; all three pinned PNG/source illustrations were viewed using supplied contact sheets, not separately rendered SVG exports. Pattern, single-primary allocation, complexity, family, capabilities, support, impact and directed edges are WallCrawl policy proposals. Source discrepancies and equipment constraints in the ledger override any impression of approval. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -4535,11 +4674,12 @@
           "Machine"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-exercise evidence/limits: docs/research/2026-09-07-full-exercise-catalog-review.json entries[id=pec-deck]. Manifest supplies original type/muscle labels; all three pinned PNG/source illustrations were viewed using supplied contact sheets, not separately rendered SVG exports. Pattern, single-primary allocation, complexity, family, capabilities, support, impact and directed edges are WallCrawl policy proposals. Source discrepancies and equipment constraints in the ledger override any impression of approval. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -4566,11 +4706,12 @@
           "Barbell"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-exercise evidence/limits: docs/research/2026-09-07-full-exercise-catalog-review.json entries[id=pendlay-row]. Manifest supplies original type/muscle labels; all three pinned PNG/source illustrations were viewed using supplied contact sheets, not separately rendered SVG exports. Pattern, single-primary allocation, complexity, family, capabilities, support, impact and directed edges are WallCrawl policy proposals. Source discrepancies and equipment constraints in the ledger override any impression of approval. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -4599,11 +4740,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-exercise evidence/limits: docs/research/2026-09-07-full-exercise-catalog-review.json entries[id=pike-push-up]. Manifest supplies original type/muscle labels; all three pinned PNG/source illustrations were viewed using supplied contact sheets, not separately rendered SVG exports. Pattern, single-primary allocation, complexity, family, capabilities, support, impact and directed edges are WallCrawl policy proposals. Source discrepancies and equipment constraints in the ledger override any impression of approval. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -4637,11 +4779,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-exercise evidence/limits: docs/research/2026-09-07-full-exercise-catalog-review.json entries[id=pistol-squat]. Manifest supplies original type/muscle labels; all three pinned PNG/source illustrations were viewed using supplied contact sheets, not separately rendered SVG exports. Pattern, single-primary allocation, complexity, family, capabilities, support, impact and directed edges are WallCrawl policy proposals. Source discrepancies and equipment constraints in the ledger override any impression of approval. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -4667,11 +4810,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-exercise evidence/limits: docs/research/2026-09-07-full-exercise-catalog-review.json entries[id=plank]. Manifest supplies original type/muscle labels; all three pinned PNG/source illustrations were viewed using supplied contact sheets, not separately rendered SVG exports. Pattern, single-primary allocation, complexity, family, capabilities, support, impact and directed edges are WallCrawl policy proposals. Source discrepancies and equipment constraints in the ledger override any impression of approval. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -4699,11 +4843,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-exercise evidence/limits: docs/research/2026-09-07-full-exercise-catalog-review.json entries[id=plank-shoulder-tap]. Manifest supplies original type/muscle labels; all three pinned PNG/source illustrations were viewed using supplied contact sheets, not separately rendered SVG exports. Pattern, single-primary allocation, complexity, family, capabilities, support, impact and directed edges are WallCrawl policy proposals. Source discrepancies and equipment constraints in the ledger override any impression of approval. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -4729,11 +4874,12 @@
           "Plate"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-exercise evidence/limits: docs/research/2026-09-07-full-exercise-catalog-review.json entries[id=plate-front-raise]. Manifest supplies original type/muscle labels; all three pinned PNG/source illustrations were viewed using supplied contact sheets, not separately rendered SVG exports. Pattern, single-primary allocation, complexity, family, capabilities, support, impact and directed edges are WallCrawl policy proposals. Source discrepancies and equipment constraints in the ledger override any impression of approval. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -4757,11 +4903,12 @@
           "Machine"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT by gpt-6-astra; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-exercise evidence/limits: docs/research/2026-09-07-full-exercise-catalog-review.json entries[id=preacher-curl]. Manifest supplies original type/muscle labels; all three pinned PNG/source illustrations were viewed using supplied contact sheets, not separately rendered SVG exports. Pattern, single-primary allocation, complexity, family, capabilities, support, impact and directed edges are WallCrawl policy proposals. Source discrepancies and equipment constraints in the ledger override any impression of approval. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -4788,11 +4935,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for prone-y-raise: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -4819,11 +4967,12 @@
           "Pull-up Bar"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for pull-ups: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -4855,11 +5004,12 @@
           "Barbell"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for push-press; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-ID source facts, three PNG observations, exact equipment/capability correction and graph review are in docs/research/2026-09-07-full-exercise-catalog-review.json. Categorical policy interpretation is not biological exclusivity or clinical validation. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -4892,11 +5042,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for push-up: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -4925,11 +5076,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for push-up-shoulder-tap: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -4960,11 +5112,12 @@
           "Dumbbell"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for rear-delt-fly: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -4988,11 +5141,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for reverse-crunch: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -5018,11 +5172,12 @@
           "Barbell"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for reverse-curl; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-ID source facts, three PNG observations, exact equipment/capability correction and graph review are in docs/research/2026-09-07-full-exercise-catalog-review.json. Categorical policy interpretation is not biological exclusivity or clinical validation. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -5054,11 +5209,12 @@
           "Dumbbell"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for reverse-lunge; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-ID source facts, three PNG observations, exact equipment/capability correction and graph review are in docs/research/2026-09-07-full-exercise-catalog-review.json. Categorical policy interpretation is not biological exclusivity or clinical validation. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -5087,11 +5243,12 @@
           "Machine"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for reverse-pec-deck: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -5119,11 +5276,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for reverse-snow-angel: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -5150,11 +5308,12 @@
           "Barbell"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for romanian-deadlift: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -5180,11 +5339,12 @@
           "Cable"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for rope-hammer-curl; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-ID source facts, three PNG observations, exact equipment/capability correction and graph review are in docs/research/2026-09-07-full-exercise-catalog-review.json. Categorical policy interpretation is not biological exclusivity or clinical validation. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -5215,11 +5375,12 @@
           "Cable"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for rope-tricep-pushdown; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-ID source facts, three PNG observations, exact equipment/capability correction and graph review are in docs/research/2026-09-07-full-exercise-catalog-review.json. Categorical policy interpretation is not biological exclusivity or clinical validation. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -5247,11 +5408,12 @@
           "Pull-up Bar"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for scapular-pull-up: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -5280,11 +5442,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for scapular-push-up: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -5306,11 +5469,12 @@
           "Machine"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for seated-calf-raise: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -5343,11 +5507,12 @@
           "Machine"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for seated-leg-curl: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -5377,11 +5542,12 @@
           "Cable"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for seated-row: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -5412,11 +5578,12 @@
           "Barbell"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for shrug; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-ID source facts, three PNG observations, exact equipment/capability correction and graph review are in docs/research/2026-09-07-full-exercise-catalog-review.json. Categorical policy interpretation is not biological exclusivity or clinical validation. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -5447,11 +5614,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for side-lying-hip-abduction: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -5482,11 +5650,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for side-lying-leg-raise: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -5512,11 +5681,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for side-plank: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -5543,11 +5713,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for side-plank-hip-dip: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -5573,11 +5744,12 @@
           "Dumbbell"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for single-arm-dumbbell-tricep-extension; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-ID source facts, three PNG observations, exact equipment/capability correction and graph review are in docs/research/2026-09-07-full-exercise-catalog-review.json. Categorical policy interpretation is not biological exclusivity or clinical validation. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -5607,11 +5779,12 @@
           "Bench"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for single-dumbbell-skullcrusher: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -5639,11 +5812,12 @@
           "Box"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for single-leg-box-squat: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -5674,11 +5848,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for single-leg-glute-bridge: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -5710,11 +5885,12 @@
           "Dumbbell"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for single-leg-romanian-deadlift; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-ID source facts, three PNG observations, exact equipment/capability correction and graph review are in docs/research/2026-09-07-full-exercise-catalog-review.json. Categorical policy interpretation is not biological exclusivity or clinical validation. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -5744,11 +5920,12 @@
           "Bench"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for skull-crusher: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -5783,11 +5960,12 @@
           "Bench"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for smith-machine-bench-press: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -5818,11 +5996,12 @@
           "Bench"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for smith-machine-bulgarian-split-squat: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -5848,11 +6027,12 @@
           "Bench"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for smith-machine-hip-thrust: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -5883,11 +6063,12 @@
           "Machine"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for smith-machine-reverse-lunge: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -5917,11 +6098,12 @@
           "Machine"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for smith-machine-romanian-deadlift: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -5946,11 +6128,12 @@
           "Machine"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for smith-machine-split-squat: pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports muscles, prescription shape, and equipment; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact, and graph edges. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -5980,11 +6163,12 @@
           "Machine"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for smith-machine-squat by GPT-5.6 Sol (gpt-5.6-sol): pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports only the cited source facts and observations; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact and graph interpretation. Evidence ledger: docs/research/2026-09-07-full-exercise-catalog-review.json. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -6016,11 +6200,12 @@
           "Dumbbell"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for split-squat by GPT-5.6 Sol (gpt-5.6-sol): pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports only the cited source facts and observations; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact and graph interpretation. Evidence ledger: docs/research/2026-09-07-full-exercise-catalog-review.json. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -6042,11 +6227,12 @@
           "Machine"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for standing-calf-raise by GPT-5.6 Sol (gpt-5.6-sol): pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports only the cited source facts and observations; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact and graph interpretation. Evidence ledger: docs/research/2026-09-07-full-exercise-catalog-review.json. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -6073,11 +6259,12 @@
           "Dumbbell"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for standing-dumbbell-press by GPT-5.6 Sol (gpt-5.6-sol): pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports only the cited source facts and observations; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact and graph interpretation. Evidence ledger: docs/research/2026-09-07-full-exercise-catalog-review.json. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -6105,11 +6292,12 @@
           "Box"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for step-down by GPT-5.6 Sol (gpt-5.6-sol): pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports only the cited source facts and observations; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact and graph interpretation. Evidence ledger: docs/research/2026-09-07-full-exercise-catalog-review.json. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -6136,11 +6324,12 @@
           "Bench"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for step-up by GPT-5.6 Sol (gpt-5.6-sol): pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports only the cited source facts and observations; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact and graph interpretation. Evidence ledger: docs/research/2026-09-07-full-exercise-catalog-review.json. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -6166,11 +6355,12 @@
           "Cable"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for straight-arm-pulldown by GPT-5.6 Sol (gpt-5.6-sol): pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports only the cited source facts and observations; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact and graph interpretation. Evidence ledger: docs/research/2026-09-07-full-exercise-catalog-review.json. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -6198,11 +6388,12 @@
           "Barbell"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for sumo-deadlift by GPT-5.6 Sol (gpt-5.6-sol): pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports only the cited source facts and observations; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact and graph interpretation. Evidence ledger: docs/research/2026-09-07-full-exercise-catalog-review.json. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -6230,11 +6421,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for superman by GPT-5.6 Sol (gpt-5.6-sol): pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports only the cited source facts and observations; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact and graph interpretation. Evidence ledger: docs/research/2026-09-07-full-exercise-catalog-review.json. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -6262,11 +6454,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for superman-hold by GPT-5.6 Sol (gpt-5.6-sol): pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports only the cited source facts and observations; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact and graph interpretation. Evidence ledger: docs/research/2026-09-07-full-exercise-catalog-review.json. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -6293,11 +6486,12 @@
           "Machine"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for t-bar-row; pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916. Per-ID source facts, three PNG observations, exact equipment/capability correction and graph review are in docs/research/2026-09-07-full-exercise-catalog-review.json. Categorical policy interpretation is not biological exclusivity or clinical validation. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -6331,11 +6525,12 @@
           "Pull-up Bar"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for towel-pull-up by GPT-5.6 Sol (gpt-5.6-sol): pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports only the cited source facts and observations; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact and graph interpretation. Evidence ledger: docs/research/2026-09-07-full-exercise-catalog-review.json. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -6360,11 +6555,12 @@
           "Bench"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for tricep-kickback by GPT-5.6 Sol (gpt-5.6-sol): pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports only the cited source facts and observations; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact and graph interpretation. Evidence ledger: docs/research/2026-09-07-full-exercise-catalog-review.json. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -6398,11 +6594,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for typewriter-push-up by GPT-5.6 Sol (gpt-5.6-sol): pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports only the cited source facts and observations; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact and graph interpretation. Evidence ledger: docs/research/2026-09-07-full-exercise-catalog-review.json. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -6429,11 +6626,12 @@
           "Barbell"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for upright-row by GPT-5.6 Sol (gpt-5.6-sol): pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports only the cited source facts and observations; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact and graph interpretation. Evidence ledger: docs/research/2026-09-07-full-exercise-catalog-review.json. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -6464,11 +6662,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for v-up by GPT-5.6 Sol (gpt-5.6-sol): pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports only the cited source facts and observations; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact and graph interpretation. Evidence ledger: docs/research/2026-09-07-full-exercise-catalog-review.json. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -6500,11 +6699,12 @@
           "Dumbbell"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for walking-lunge by GPT-5.6 Sol (gpt-5.6-sol): pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports only the cited source facts and observations; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact and graph interpretation. Evidence ledger: docs/research/2026-09-07-full-exercise-catalog-review.json. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -6533,11 +6733,12 @@
           "Wall"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for wall-handstand-push-up by GPT-5.6 Sol (gpt-5.6-sol): pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports only the cited source facts and observations; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact and graph interpretation. Evidence ledger: docs/research/2026-09-07-full-exercise-catalog-review.json. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -6564,11 +6765,12 @@
           "Wall"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for wall-push-up by GPT-5.6 Sol (gpt-5.6-sol): pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports only the cited source facts and observations; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact and graph interpretation. Evidence ledger: docs/research/2026-09-07-full-exercise-catalog-review.json. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -6594,11 +6796,12 @@
           "Wall"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for wall-sit by GPT-5.6 Sol (gpt-5.6-sol): pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports only the cited source facts and observations; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact and graph interpretation. Evidence ledger: docs/research/2026-09-07-full-exercise-catalog-review.json. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -6627,11 +6830,12 @@
           "Wall"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for wall-walk by GPT-5.6 Sol (gpt-5.6-sol): pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports only the cited source facts and observations; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact and graph interpretation. Evidence ledger: docs/research/2026-09-07-full-exercise-catalog-review.json. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -6655,11 +6859,12 @@
           "Plate"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for weighted-crunch by GPT-5.6 Sol (gpt-5.6-sol): pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports only the cited source facts and observations; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact and graph interpretation. Evidence ledger: docs/research/2026-09-07-full-exercise-catalog-review.json. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -6688,11 +6893,12 @@
           "Plate"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for weighted-push-up by GPT-5.6 Sol (gpt-5.6-sol): pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports only the cited source facts and observations; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact and graph interpretation. Evidence ledger: docs/research/2026-09-07-full-exercise-catalog-review.json. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -6718,11 +6924,12 @@
           "Dumbbell"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for weighted-russian-twist by GPT-5.6 Sol (gpt-5.6-sol): pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports only the cited source facts and observations; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact and graph interpretation. Evidence ledger: docs/research/2026-09-07-full-exercise-catalog-review.json. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -6751,11 +6958,12 @@
           "Cable"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for wide-grip-lat-pulldown by GPT-5.6 Sol (gpt-5.6-sol): pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports only the cited source facts and observations; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact and graph interpretation. Evidence ledger: docs/research/2026-09-07-full-exercise-catalog-review.json. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -6784,11 +6992,12 @@
           "Bodyweight"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for wide-push-up by GPT-5.6 Sol (gpt-5.6-sol): pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports only the cited source facts and observations; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact and graph interpretation. Evidence ledger: docs/research/2026-09-07-full-exercise-catalog-review.json. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -6812,11 +7021,12 @@
           "Barbell"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for wrist-curl by GPT-5.6 Sol (gpt-5.6-sol): pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports only the cited source facts and observations; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact and graph interpretation. Evidence ledger: docs/research/2026-09-07-full-exercise-catalog-review.json. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     },
@@ -6840,11 +7050,12 @@
           "Dumbbell"
         ]
       ],
+      "clearedTrainingConstraints": [],
       "provenance": {
         "reviewerRole": null,
         "rationaleOrSource": "AI-authored DRAFT for wrist-extension by GPT-5.6 Sol (gpt-5.6-sol): pinned Workout Guide ba0b709cb20430361b2cb33aaadd20998164a916 manifest/artwork supports only the cited source facts and observations; WallCrawl policy supplies pattern, complexity, family, capabilities, support, impact and graph interpretation. Evidence ledger: docs/research/2026-09-07-full-exercise-catalog-review.json. Human field-by-field review required.",
         "reviewedAtEpochMillis": null,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "policyVersion": 1
       }
     }

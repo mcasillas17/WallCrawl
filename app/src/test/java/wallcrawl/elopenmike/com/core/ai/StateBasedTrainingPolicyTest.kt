@@ -20,6 +20,8 @@ import wallcrawl.elopenmike.com.core.model.RepRange
 import wallcrawl.elopenmike.com.core.model.RestClass
 import wallcrawl.elopenmike.com.core.model.RestTargetSource
 import wallcrawl.elopenmike.com.core.model.ReviewState
+import wallcrawl.elopenmike.com.core.model.ImpactLevel
+import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.TrainingProgramState
 import wallcrawl.elopenmike.com.core.model.TrainingProgramStatePolicyVersion
 import wallcrawl.elopenmike.com.core.model.UserProfile
@@ -302,6 +304,77 @@ class StateBasedTrainingPolicyTest {
                 TrainingPolicyFailureReason.CAPABILITY_AVOID_REACHED_POLICY
             )
         )
+    }
+
+    @Test
+    fun unclearedJointConstraint_failsIfACallerBypassesHardEligibility() {
+        val restrictedProfile = UserProfile(
+            goals = setOf(FitnessGoal.BUILD_MUSCLE),
+            trainingConstraints = setOf(TrainingConstraint.KNEE_SENSITIVE)
+        )
+
+        assertThat(
+            evaluate(
+                exercise = approvedExercise,
+                profile = restrictedProfile,
+                adaptationState = AdaptationState.BUILD
+            )
+        ).isEqualTo(
+            TrainingPolicyResult.Failure(
+                TrainingPolicyFailureReason.TRAINING_CONSTRAINT_REACHED_POLICY
+            )
+        )
+
+        val clearedExercise = approvedExercise.withMetadata {
+            copy(clearedTrainingConstraints = setOf(TrainingConstraint.KNEE_SENSITIVE))
+        }
+        assertThat(
+            evaluate(
+                exercise = clearedExercise,
+                profile = restrictedProfile,
+                adaptationState = AdaptationState.BUILD
+            )
+        ).isInstanceOf(TrainingPolicyResult.Applied::class.java)
+    }
+
+    @Test
+    fun lowImpactOnly_isEnforcedByImpactLevelRatherThanJointClearance() {
+        val lowImpactProfile = UserProfile(
+            goals = setOf(FitnessGoal.BUILD_MUSCLE),
+            trainingConstraints = setOf(TrainingConstraint.LOW_IMPACT_ONLY)
+        )
+
+        // The shared fixture is ImpactLevel.LOW and clears nothing: LOW_IMPACT_ONLY must not
+        // demand a joint clearance, because impactLevel is what decides it.
+        assertThat(
+            evaluate(
+                exercise = approvedExercise,
+                profile = lowImpactProfile,
+                adaptationState = AdaptationState.BUILD
+            )
+        ).isInstanceOf(TrainingPolicyResult.Applied::class.java)
+
+        // The risky combination the second boundary exists for.
+        val highImpact = approvedExercise.withMetadata { copy(impactLevel = ImpactLevel.HIGH) }
+        assertThat(
+            evaluate(
+                exercise = highImpact,
+                profile = lowImpactProfile,
+                adaptationState = AdaptationState.BUILD
+            )
+        ).isEqualTo(
+            TrainingPolicyResult.Failure(
+                TrainingPolicyFailureReason.TRAINING_CONSTRAINT_REACHED_POLICY
+            )
+        )
+        // Without the restriction selected, the same HIGH-impact exercise still prescribes.
+        assertThat(
+            evaluate(
+                exercise = highImpact,
+                profile = UserProfile(goals = setOf(FitnessGoal.BUILD_MUSCLE)),
+                adaptationState = AdaptationState.BUILD
+            )
+        ).isInstanceOf(TrainingPolicyResult.Applied::class.java)
     }
 
     @Test

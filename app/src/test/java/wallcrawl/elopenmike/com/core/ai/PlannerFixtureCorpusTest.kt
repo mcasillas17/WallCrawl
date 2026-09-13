@@ -37,9 +37,11 @@ class PlannerFixtureCorpusTest {
             "no-strength-candidates",
             "reviewed-enabled-bodyweight",
             "reviewed-enabled-no-approved",
+            "reviewed-enabled-uncleared-joint-constraint",
+            "reviewed-enabled-cleared-joint-constraints",
             "concurrent-activity"
         ).inOrder()
-        assertThat(fixtures.map { it.id }.distinct()).hasSize(12)
+        assertThat(fixtures.map { it.id }.distinct()).hasSize(14)
     }
 
     @Test
@@ -153,6 +155,12 @@ class PlannerFixtureCorpusTest {
             .isEqualTo(211)
         assertThat(exercises.count { it.reviewedMetadata?.reviewState == ReviewState.APPROVED })
             .isEqualTo(0)
+        // The rollout contract's central claim: no bundled record clears any joint
+        // sensitivity, so a joint-sensitive profile gets a typed refusal rather than a guess.
+        assertThat(
+            exercises.mapNotNull { it.reviewedMetadata }
+                .flatMap { it.clearedTrainingConstraints }
+        ).isEmpty()
     }
 
     @Test

@@ -59,9 +59,33 @@ earlier stages.
 | 2 | No complete reviewed equipment alternative or required fixed-anchor setup is available | `MISSING_EQUIPMENT` | `EQUIPMENT_REMOVED_ALL` |
 | 3 | Metadata is absent or not `APPROVED` | `MISSING_APPROVED_METADATA` | `NO_APPROVED_METADATA` |
 | 4 | A required capability is `AVOID` | `CAPABILITY_AVOID` | `CAPABILITIES_REMOVED_ALL` |
-| 5 | A joint-sensitive constraint has no reviewed exercise mapping | `UNMAPPED_TRAINING_CONSTRAINT` | `TRAINING_CONSTRAINTS_REMOVED_ALL` |
+| 5 | A selected joint sensitivity is not in this exercise's `clearedTrainingConstraints` | `UNMAPPED_TRAINING_CONSTRAINT` | `TRAINING_CONSTRAINTS_REMOVED_ALL` |
 | 5 | `LOW_IMPACT_ONLY` meets `ImpactLevel.HIGH` | `HIGH_IMPACT_DISALLOWED` | `TRAINING_CONSTRAINTS_REMOVED_ALL` |
 | 6 | `ADVANCED` is temporarily above the uncalibrated/returning ceiling | `ADVANCED_WHILE_UNCALIBRATED` or `ADVANCED_WHILE_RETURNING` | `CALIBRATION_COMPLEXITY_REMOVED_ALL` |
+
+Stage 5's joint decision is **per exercise**, not per pool. Each approved record carries
+`clearedTrainingConstraints`: the joint sensitivities a reviewer explicitly cleared it for.
+A selected sensitivity that the record does not list keeps that one exercise out of the
+automatic pool; it no longer removes every candidate on the strength of the profile alone.
+`LOW_IMPACT_ONLY` is never listed there, because `impactLevel` already decides it, and both
+the importer and the Android parser reject a record that tries to list it.
+
+Absence is not clearance. No clearance is inferred from an exercise's name, muscles,
+movement pattern, complexity or equipment, and there is no numeric joint-stress score. Every
+bundled record currently clears nothing, so any selected joint sensitivity still produces
+`TRAINING_CONSTRAINTS_REMOVED_ALL` — an honest typed refusal, not a blanket policy. A
+clearance is a reviewer's product judgement about a self-reported label; it is not a
+diagnosis, and reviewer agreement is not clinical validation.
+
+The supported-regression exception applies the same rule. A regression is an alternative
+*inside* the user's restrictions: an uncleared regression cannot lift the advanced ceiling,
+so a restriction can never be bypassed by substituting an easier movement.
+
+`StateBasedTrainingPolicy` re-checks both training-constraint rules before prescribing — the
+same clearance, and `LOW_IMPACT_ONLY` against `ImpactLevel.HIGH` — and refuses either with
+`TRAINING_CONSTRAINT_REACHED_POLICY`. That is the second boundary the `AVOID` capability rule
+already had. The clearance check is one shared predicate called from both policies, so they
+cannot drift into different readings of the same reviewed field.
 
 An eligible exercise has the hard reason `APPROVED`. `EligibilityPreference`
 retains each explicitly required capability that is `LIMITED` or `UNKNOWN`, in
@@ -160,6 +184,80 @@ structural split ordering and stronger than the later independent tie-breakers:
   programming metadata, then capability penalty, then experience penalty, then
   fatigue, then stable ID.
 
+## Proposed initial rollout contract
+
+This section is a **proposal awaiting human sign-off**, not a shipped configuration.
+`PlannerFeatureFlags.reviewedCapabilityEligibility` is still `false` in
+`WallCrawlApplication`, and the bundled catalog still holds 211 `DRAFT` and 0 `APPROVED`
+records, so nothing below is in effect.
+
+### Proposed cohort
+
+The 186 IDs the [evidence ledger](research/2026-09-07-full-exercise-catalog-review.json)
+dispositions as `ready_for_human_review`. Each has an authored metadata block bound to a
+`metadataSha256`, and no unresolved content decision other than field-by-field sign-off.
+Deliberately outside the cohort, and unavailable to automatic planning until separately
+resolved:
+
+- the 81 `pending_evidence_or_policy` IDs, including `banded-row`'s unresolved anchor,
+  `barbell-deadlift`'s and `sumo-deadlift`'s unratified single primary, `trap-bar-deadlift`'s
+  unrepresented implement, and the 56 IDs with no authored block at all;
+- the 35 IDs outside automatic-strength scope (stretches, distance-duration and other timed
+  conditioning work).
+
+All 302 remain browseable and manually selectable. Exclusion from the cohort removes an
+exercise from automatic planning only.
+
+### Supported profiles
+
+Candidate counts below come from `ReviewedCatalogCoverageTest` against the full 302-entry
+catalog, using **explicitly synthetic in-memory approvals** of the proposed cohort. They
+measure what the cohort would make available; they are not approval, and not a claim that
+the content is correct. Every listed success passed `ProgramValidator` with repair disabled.
+
+| Profile | Cohort candidates | Outcome |
+| --- | ---: | --- |
+| Bodyweight, uncalibrated | 34 | Valid `PUSH` proposal |
+| Dumbbells + bench | 37 | Valid `PUSH` proposal |
+| Machines | 26 | Valid `PUSH` proposal |
+| Full gym | 186 | Valid `PUSH` proposal |
+| Full gym, uncalibrated | 167 | Valid `PUSH` proposal |
+| Returning after a break | 73 | Valid `PUSH` proposal, returner caps retained |
+| Mixed-unit history | 81 | Valid `PUSH` proposal, no invented load |
+| Sparse history | 52 | Valid `PULL` proposal, null load retained |
+| `LIMITED` bodyweight push | 41 | Valid `PUSH` proposal |
+| `AVOID` bodyweight push | 31 | Valid `UPPER_BODY` proposal, avoided demand excluded |
+| `AVOID` standing balance, 35 min | 117 | Valid `PUSH` proposal |
+| `AVOID` floor transition, 35 min | 136 | Valid `PUSH` proposal |
+| Band-only | 11 | Valid `UPPER_BODY` proposal; `Chest` reported unavailable |
+| Any selected joint sensitivity | 0 | `TRAINING_CONSTRAINTS_REMOVED_ALL` |
+| Empty equipment inventory | 0 | `NO_APPROVED_METADATA` (staged aggregate; see the coverage report) |
+
+### Not supported at this rollout
+
+- **Any selected joint sensitivity.** No record clears one, so the reviewed path refuses.
+  This is missing reviewed content, not a contradictory user request: the same profile with a
+  synthetic knee clearance yields 186 candidates and a raw-valid proposal, recorded as the
+  `joint-constraint-cleared` case. Populating `clearedTrainingConstraints` is part of the same
+  human sign-off pass.
+- **Band-only chest or push work.** No band chest exercise exists in the pinned source. The
+  session is labelled by what it actually trains and reports `Chest` as an unavailable
+  priority. See the [coverage report](reviewed-catalog-coverage.md).
+- **The six fixed-anchor band variants** without their explicit setup confirmations, and
+  `banded-row` under any inventory.
+- **Progression and deload.** The rollout is deliberately conservative: dose, effort and rest
+  come from the existing `STATE_BASED_DOSE_EFFORT_REST_V1` policy and the current
+  `UNCALIBRATED`/`RETURNING`/`BUILD` states only. There is no one-variable progression and no
+  deload offer; those remain Roadmap Package 9.
+
+### Remaining sign-off request
+
+Approval is a human decision that names the IDs and fields reviewed, a real reviewer role, a
+real review time and a rationale, per the
+[sign-off worksheet](reviewed-exercise-metadata-human-signoff.md). No such decision has been
+supplied for any ID. AI review, model consensus, pull-request approval, merge and passing
+tests are not that decision and cannot substitute for it.
+
 ## Rollout and manual-workout preservation
 
 When the flag is disabled, `WorkoutGenerationContext.automaticEligibilityResult`
@@ -185,6 +283,11 @@ progression, and no broader derived-state rollout beyond
 
 Task 6C remains open: there is no `DeloadOfferPolicy.kt`, no user-controlled
 `DeloadOffer`, and no multi-session deload state machine.
+
+Selected joint sensitivities are mapped but unpopulated: the
+`clearedTrainingConstraints` contract exists in the schema, the importer, the Android parser
+and the eligibility policy, and every bundled record clears nothing. Filling it in is part of
+the same human sign-off pass, not separate work.
 
 The next enablement requirement is still deliberate human review and approval of
 the metadata, followed by an explicit availability/persona review and a

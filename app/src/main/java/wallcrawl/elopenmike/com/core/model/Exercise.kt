@@ -143,8 +143,40 @@ data class ReviewedExerciseMetadata(
     val supportRequirement: SupportRequirement,
     val impactLevel: ImpactLevel,
     val equipmentAlternatives: List<List<String>>,
-    val provenance: ReviewProvenance
+    val provenance: ReviewProvenance,
+    /**
+     * Joint sensitivities a reviewer explicitly cleared this exercise for.
+     *
+     * Absence is not clearance: a selected [TrainingConstraint] that is not listed keeps the
+     * exercise out of automatic planning. [TrainingConstraint.LOW_IMPACT_ONLY] is never listed
+     * because [impactLevel] already decides it; the parser and importer reject it here so the
+     * two contracts cannot disagree. This is a reviewer's product judgement about a
+     * self-reported sensitivity label, not a diagnosis or clinical clearance.
+     */
+    val clearedTrainingConstraints: Set<TrainingConstraint>
 )
+
+/**
+ * True when every joint sensitivity [profile] selected was explicitly cleared for this exercise.
+ *
+ * `LOW_IMPACT_ONLY` is excluded because [ReviewedExerciseMetadata.impactLevel] already decides
+ * it. Shared so the eligibility gate and the prescription policy cannot drift into two
+ * different readings of the same reviewed field.
+ */
+internal fun ReviewedExerciseMetadata.clearsJointConstraintsOf(profile: UserProfile): Boolean =
+    profile.trainingConstraints.none { constraint ->
+        constraint != TrainingConstraint.LOW_IMPACT_ONLY &&
+            constraint !in clearedTrainingConstraints
+    }
+
+/**
+ * The other half of the training-constraint contract: `LOW_IMPACT_ONLY` meeting a high-impact
+ * exercise. Shared for the same reason as [clearsJointConstraintsOf] — the eligibility gate,
+ * its supported-regression exception and the prescription policy must read one rule.
+ */
+internal fun ReviewedExerciseMetadata.violatesImpactRestrictionOf(profile: UserProfile): Boolean =
+    TrainingConstraint.LOW_IMPACT_ONLY in profile.trainingConstraints &&
+        impactLevel == ImpactLevel.HIGH
 
 enum class ExerciseType {
     WEIGHT_REPS,

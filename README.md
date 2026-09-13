@@ -153,7 +153,7 @@ how to add a string, an exercise, or a language.
   is deliberately never translated, the exercise-translation overlay and its
   stable-ID boundary, number and input formatting, and how to add a string, an
   exercise, or a language without translation drift.
-- [Planner evaluation](docs/planner-evaluation.md) documents the versioned twelve-persona
+- [Planner evaluation](docs/planner-evaluation.md) documents the versioned fourteen-persona
   corpus, strict fixture validation, deterministic replay, the weekly ledger the
   reviewed-enabled personas' weeks are reconstructed through, the whole-program validation of
   every persona that produces a proposal, the asserted planner invariants, and which release
@@ -230,7 +230,11 @@ The 8-step wizard collects user codename, multi-select fitness goals, units and
 experience level, seven movement preferences, schedule and break duration,
 available gear, and sensitive-joint restrictions before compiling the initial
 Training Blueprint. Every movement preference requires an explicit answer;
-**Not sure** is a valid answer and persists as `UNKNOWN`.
+**Not sure** is a valid answer and persists as `UNKNOWN`. A sensitive-joint
+selection is saved, but automatic workouts do not filter on it yet: that needs
+human-reviewed per-exercise clearances, and the step says so rather than implying
+a filter that does not run. Movement preferences are the answers today's
+reviewed-path tests already act on.
 
 ### Fixed-anchor band setups
 
@@ -269,9 +273,11 @@ planning, but production composition deliberately keeps that path disabled while
 every reviewed-metadata entry is still `DRAFT`. The current production
 recommendation therefore remains unchanged when a movement preference changes.
 Tests enable the path only with unmistakably synthetic in-memory approvals and
-verify equipment, exclusions, constraints, capability `AVOID`, impact,
-reviewed-state, temporary advanced-complexity rules, and capability-evidence
-soft-penalty suppression without changing browse or manual-workout access.
+verify equipment, exclusions, single and combined joint sensitivities, capability
+`AVOID`, impact, reviewed-state, temporary advanced-complexity rules, and
+capability-evidence soft-penalty suppression without changing browse or
+manual-workout access. A restriction cannot be bypassed by an easier regression:
+a supported regression must itself be cleared for every selected sensitivity.
 
 The fake planner uses the same `WorkoutPlanner` contract intended for a future
 Qwen, Gemma, or LiteRT-backed implementation. It only selects IDs from
@@ -454,7 +460,11 @@ and coaching. Stretches and pure conditioning still cannot fill strength slots.
 A separate optional `reviewedMetadata` block defines categorical input for the
 production-disabled deterministic eligibility gate. The 211 authored records are
 entirely `DRAFT`, including their AI-authored rationale: they are not human-approved and do
-not affect current workouts. `APPROVED` requires an explicit human-review role,
+not affect current workouts. Reviewed schema version 2 adds `clearedTrainingConstraints`,
+the joint sensitivities a reviewer explicitly cleared an exercise for; every record currently
+clears none, so a profile that selects shoulder, elbow, wrist, lower-back, hip or knee
+sensitivity gets a typed no-plan rather than a guess. Absence is never read as clearance, and
+a clearance is a reviewer's judgement about a self-reported label, not a diagnosis. `APPROVED` requires an explicit human-review role,
 timestamp, and provenance change; pull-request approval does not change review state.
 Missing or draft reviewed metadata never hides an exercise from browsing or manual
 templates. See [Reviewed exercise metadata](docs/reviewed-exercise-metadata.md), its
@@ -655,7 +665,7 @@ its failure reasons, whether a session's advertised focus is one its exercises
 actually train, the muscle vocabulary and the shipped catalog's conformance
 to it, generated-workout and whole-program validation, template validation, atomic
 persistence boundaries, progress and personal-record calculations, attribution loading,
-Today state, duration calculation, and visual-provider mapping. The twelve-persona planner
+Today state, duration calculation, and visual-provider mapping. The fourteen-persona planner
 corpus runs inside it, reconstructing the reviewed-enabled personas' training weeks with the
 shipped weekly ledger and validating the complete proposal behind every successful persona.
 Android instrumentation also validates every supported database migration chain through

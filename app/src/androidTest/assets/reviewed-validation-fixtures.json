@@ -14,11 +14,12 @@
     "supportRequirement": "supported",
     "impactLevel": "none",
     "equipmentAlternatives": [["Barbell", "Bench"]],
+    "clearedTrainingConstraints": [],
     "provenance": {
       "reviewerRole": null,
       "rationaleOrSource": "Shared draft fixture awaiting human review.",
       "reviewedAtEpochMillis": null,
-      "schemaVersion": 1,
+      "schemaVersion": 2,
       "policyVersion": 1
     }
   },
@@ -131,7 +132,7 @@
       "name": "wrong-provenance-schema-version",
       "operation": "set",
       "path": ["provenance", "schemaVersion"],
-      "value": 2,
+      "value": 3,
       "errorFragment": "schemaVersion"
     },
     {
@@ -140,6 +141,26 @@
       "path": ["jointStressScore"],
       "value": 3,
       "errorFragment": "jointStressScore"
+    },
+    {
+      "name": "missing-cleared-training-constraints",
+      "operation": "remove",
+      "path": ["clearedTrainingConstraints"],
+      "errorFragment": "clearedTrainingConstraints"
+    },
+    {
+      "name": "unknown-cleared-training-constraint",
+      "operation": "set",
+      "path": ["clearedTrainingConstraints"],
+      "value": ["ankle_sensitive"],
+      "errorFragment": "clearedTrainingConstraints"
+    },
+    {
+      "name": "low-impact-only-is-not-a-joint-clearance",
+      "operation": "set",
+      "path": ["clearedTrainingConstraints"],
+      "value": ["low_impact_only"],
+      "errorFragment": "clearedTrainingConstraints"
     }
   ]
 }

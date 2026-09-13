@@ -115,6 +115,7 @@ fun syntheticReviewedMetadata(
     supportRequirement = SupportRequirement.SUPPORTED,
     impactLevel = ImpactLevel.LOW,
     equipmentAlternatives = listOf(listOf("Bodyweight")),
+    clearedTrainingConstraints = emptySet(),
     provenance = ReviewProvenance(
         reviewerRole = if (reviewState == ReviewState.APPROVED) SYNTHETIC_REVIEWER_ROLE else null,
         rationaleOrSource = SYNTHETIC_REVIEW_RATIONALE,

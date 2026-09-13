@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "low-impact-clearance",
+  "policyVersion": 1,
+  "catalogVersion": "test-catalog-v1",
+  "profile": {
+    "goals": ["BUILD_MUSCLE"],
+    "experienceLevel": "BEGINNER",
+    "preferredDurationMinutes": 45,
+    "daysPerWeek": 3,
+    "availableEquipment": ["Bodyweight"],
+    "preferredUnit": "KG",
+    "musclePriorities": {"Chest": "HIGH"},
+    "excludedExerciseIds": [],
+    "trainingConstraints": [],
+    "returningAfterBreakWeeks": 0,
+    "confirmedStartingLoads": {},
+    "movementCapabilities": {}
+  },
+  "completedWorkoutCount": 0,
+  "exerciseHistory": [],
+  "reviewedEligibility": {
+    "adaptationState": "BUILD",
+    "syntheticApprovedExerciseIds": [],
+    "syntheticClearedTrainingConstraints": ["LOW_IMPACT_ONLY"]
+  },
+  "expected": {
+    "outcome": "SUCCESS",
+    "requiredExerciseIds": [],
+    "forbiddenExerciseIds": []
+  }
+}

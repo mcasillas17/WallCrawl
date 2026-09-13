@@ -200,9 +200,7 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
             exerciseCatalog = exerciseCatalog,
             exerciseFilter = exerciseFilter,
             historyAnalyzer = workoutHistoryAnalyzer,
-            plannerFeatureFlags = PlannerFeatureFlags(
-                reviewedCapabilityEligibility = false
-            ),
+            plannerFeatureFlags = PlannerFeatureFlags.PRODUCTION,
             trainingProgramStateProvider = TrainingProgramStateProvider(
                 weeklyDoseLedgerRepository = weeklyDoseLedgerRepository
             ),

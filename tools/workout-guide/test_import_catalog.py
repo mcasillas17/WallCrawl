@@ -139,7 +139,7 @@ class ImportCatalogTest(unittest.TestCase):
         self._manifest_path().write_text(json.dumps(manifest))
         self._commit_fixture_change("timed fixture")
         self._write_config(source_commit=self._head_commit())
-        self.reviewed_metadata.write_text(json.dumps({"schemaVersion": 1, "exercises": {}}))
+        self.reviewed_metadata.write_text(json.dumps({"schemaVersion": 2, "exercises": {}}))
         overrides = json.loads(self.overrides.read_text())
         programming = overrides["exercises"]["barbell-bench-press"]
         programming.pop("recommendedRepRange")
@@ -382,7 +382,7 @@ class ImportCatalogTest(unittest.TestCase):
 
     def test_rejects_decimal_notation_for_reviewed_integer_fields(self) -> None:
         for old, new, field in (
-            ('"schemaVersion": 1', '"schemaVersion": 1.0', "schemaVersion"),
+            ('"schemaVersion": 2', '"schemaVersion": 2.0', "schemaVersion"),
             ('"policyVersion": 1', '"policyVersion": 1.0', "policyVersion"),
             (
                 '"reviewedAtEpochMillis": null',
@@ -694,7 +694,7 @@ class ImportCatalogTest(unittest.TestCase):
     def test_python_and_android_share_type_dependent_rep_range_contract(self) -> None:
         fixtures = json.loads(PARITY_FIXTURES.with_name("programming-validation-fixtures.json").read_text())
         # Reviewed metadata is a separate contract; these fixtures isolate legacy programming.
-        self.reviewed_metadata.write_text(json.dumps({"schemaVersion": 1, "exercises": {}}))
+        self.reviewed_metadata.write_text(json.dumps({"schemaVersion": 2, "exercises": {}}))
         for exercise_type in sorted({case["exerciseType"] for case in fixtures["cases"]}):
             manifest = json.loads(self._manifest_path().read_text())
             manifest[0]["exerciseType"] = exercise_type
@@ -996,7 +996,7 @@ class ImportCatalogTest(unittest.TestCase):
 
     def _write_reviewed_metadata(self) -> None:
         reviewed = {
-            "schemaVersion": 1,
+            "schemaVersion": 2,
             "exercises": {
                 "barbell-bench-press": {
                     "reviewState": "draft",
@@ -1012,11 +1012,12 @@ class ImportCatalogTest(unittest.TestCase):
                     "supportRequirement": "supported",
                     "impactLevel": "none",
                     "equipmentAlternatives": [["Barbell", "Bench"]],
+                    "clearedTrainingConstraints": [],
                     "provenance": {
                         "reviewerRole": None,
                         "rationaleOrSource": "Initial draft for later human review.",
                         "reviewedAtEpochMillis": None,
-                        "schemaVersion": 1,
+                        "schemaVersion": 2,
                         "policyVersion": 1,
                     },
                 }
