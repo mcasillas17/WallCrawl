@@ -60,6 +60,7 @@ import wallcrawl.elopenmike.com.core.ui.localization.generatedWorkoutRationale
 import wallcrawl.elopenmike.com.core.ui.localization.generatedWorkoutTitle
 import wallcrawl.elopenmike.com.core.ui.localization.labelRes
 import wallcrawl.elopenmike.com.core.ui.localization.unavailableFocusNotice
+import wallcrawl.elopenmike.com.core.ui.localization.workoutRankingNotice
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 import wallcrawl.elopenmike.com.core.ui.theme.SuccessGreen
@@ -147,7 +148,8 @@ fun TodayScreen(
                 val workoutName = generatedWorkoutTitle(state.suggestedWorkout.title)
                 val workoutRationale = generatedWorkoutRationale(
                     spec = state.suggestedWorkout.rationale,
-                    unavailableFocusMuscles = state.suggestedWorkout.unavailableFocusMuscles
+                    unavailableFocusMuscles = state.suggestedWorkout.unavailableFocusMuscles,
+                    rankingReasons = state.suggestedWorkout.rankingReasons
                 )
                 TodayContent(
                     state = state,
@@ -534,6 +536,14 @@ private fun SuggestedWorkoutCard(
         // train is named here, so the alternative above is explained to the reader and not
         // only to the stored session; an ordinary session adds no line at all.
         unavailableFocusNotice(workout.unavailableFocusMuscles)?.let { notice ->
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = notice,
+                fontSize = 13.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        workoutRankingNotice(workout.rankingReasons)?.let { notice ->
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = notice,

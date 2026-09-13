@@ -19,6 +19,7 @@ import wallcrawl.elopenmike.com.core.model.WeeklyDoseLedger
 import wallcrawl.elopenmike.com.core.model.WorkoutEmphasis
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
 import wallcrawl.elopenmike.com.core.model.WorkoutRationaleSpec
+import wallcrawl.elopenmike.com.core.model.WorkoutRankingReason
 import wallcrawl.elopenmike.com.core.model.WorkoutSplit
 import wallcrawl.elopenmike.com.core.model.WorkoutTitleSpec
 
@@ -43,13 +44,15 @@ const val VALIDATOR_CATALOG_VERSION: String = "catalog-commit-under-test"
 fun validatedWorkout(
     exercises: List<PlannedExercise>,
     split: WorkoutSplit = WorkoutSplit.PUSH,
-    focusMuscles: List<String> = emptyList()
+    focusMuscles: List<String> = emptyList(),
+    rankingReasons: List<WorkoutRankingReason> = emptyList()
 ): GeneratedWorkout = GeneratedWorkout(
     title = WorkoutTitleSpec(split = split, emphasis = WorkoutEmphasis.HYPERTROPHY),
     rationale = WorkoutRationaleSpec.GoalFocus(goals = emptyList(), focusMuscles = emptyList()),
     focusMuscles = focusMuscles,
     estimatedDurationMinutes = WorkoutDurationEstimator.estimateMinutes(exercises),
-    exercises = exercises
+    exercises = exercises,
+    rankingReasons = rankingReasons
 )
 
 fun repetitionPlan(
