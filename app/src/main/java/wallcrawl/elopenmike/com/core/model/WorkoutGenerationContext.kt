@@ -55,11 +55,12 @@ data class WorkoutGenerationContext(
      */
     val catalogVersion: String? = null,
     /**
-     * The highest review-policy version authored in that catalog's reviewed metadata.
+     * The highest review-policy version authored in that catalog's accepted metadata.
      *
      * Read from the catalog for the same reason the weekly ledger reads it there: shipping
-     * metadata authored under a new review policy must invalidate old identity rather than
-     * silently reinterpret it. A catalog with no reviewed metadata reports 0.
+     * consumable metadata under a new review policy must invalidate old identity rather than
+     * silently reinterpret it. Draft and malformed records do not affect this value. A catalog
+     * with no accepted metadata reports 0.
      */
     val reviewPolicyVersion: Int = 0,
     /** The program-design rules this session was asked to satisfy. */

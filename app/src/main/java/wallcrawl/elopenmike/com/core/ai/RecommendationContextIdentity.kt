@@ -17,11 +17,11 @@ import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
  *
  * ## What it covers
  *
- * Profile identity and revision, lifetime completed workouts, the ordered candidate id
- * list, catalog and review-policy identity, whether the reviewed path was enabled, the
- * derived adaptation state, the declared session constraints, and the accounting week and
- * zone when a program state exists. Candidate **order** is included because it is an input
- * to selection.
+ * Profile identity and revision, lifetime completed workouts, the ordered candidate id and
+ * accepted-metadata content list, catalog and review-policy identity, whether the reviewed
+ * path was enabled, the derived adaptation state, the declared session constraints, and the
+ * accounting week and zone when a program state exists. Candidate **order** is included
+ * because it is an input to selection.
  *
  * ## What it deliberately excludes
  *
@@ -63,7 +63,12 @@ object RecommendationContextIdentity {
         // Positional, so a reordered candidate list is a different context. The list is not
         // sorted for the same reason: order is an input, not an incidental detail.
         context.allowedExercises.forEachIndexed { index, exercise ->
-            lines += line("candidate", index.toString(), exercise.id)
+            lines += line(
+                "candidate",
+                index.toString(),
+                exercise.id,
+                exercise.acceptedMetadata()?.contextIdentityForm() ?: "legacy"
+            )
         }
 
         val canonical = (sequenceOf(FORMAT_VERSION) + lines.asSequence()).joinToString("\n")
@@ -77,6 +82,30 @@ object RecommendationContextIdentity {
         uniqueProgressionFamilies.toString(),
         requiredMovementPatterns.map { it.name }.sorted().joinToString(",")
     ).joinToString(",")
+
+    private fun wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata.contextIdentityForm():
+        String {
+        val fields = buildList {
+            add(reviewState.name)
+            add(directPrimaryMuscle)
+            add(descriptiveSecondaryMuscles.sorted().joinToString(","))
+            add(movementPattern.name)
+            add(complexity.name)
+            add(progressionFamily)
+            add(prescriptionShape.name)
+            add(approvedRegressions.joinToString(",") { "${it.exerciseId}:${it.rationale.orEmpty()}" })
+            add(approvedSubstitutions.joinToString(",") { "${it.exerciseId}:${it.rationale.orEmpty()}" })
+            add(capabilityRequirements.map { it.name }.sorted().joinToString(","))
+            add(supportRequirement.name)
+            add(impactLevel.name)
+            add(equipmentAlternatives.joinToString(";") { it.sorted().joinToString(",") })
+            add(clearedTrainingConstraints.map { it.name }.sorted().joinToString(","))
+            add(provenance.schemaVersion.toString())
+            add(provenance.policyVersion.toString())
+            add(aiReviewProvenance?.reviewedContentSha256 ?: "human")
+        }
+        return fields.joinToString(FIELD_SEPARATOR)
+    }
 
     private fun line(vararg fields: String): String = fields.joinToString(FIELD_SEPARATOR)
 }

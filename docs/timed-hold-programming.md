@@ -70,9 +70,16 @@ requiring a push accessory. This is an expected metadata ordering change.
 
 Per-exercise rep prescriptions are pinned against the pre-change baseline across goals,
 return durations and weight units. The factory implementation is unchanged. Ordinary
-timed strength retains 3 sets × 45 seconds with 45-second rests. Stretches retain
+timed strength retains a **base** prescription of 3 sets × 45 seconds with 45-second rests
+from `DefaultExercisePrescriptionFactory`. Stretches retain
 1 set × 30 seconds with 15-second rests; distance/duration retains 1 × 600 seconds
-with no rest. No reps are converted into seconds, and no load is invented. Duration
+with no rest. On the now-enabled reviewed path, `StateBasedTrainingPolicy` can further cap
+that base prescription's sets against the remaining weekly allowance for an `AI_ACCEPTED`
+or `APPROVED` exercise, and adds its own nullable RIR and rest-class guidance on top; it
+never raises sets or invents a load. The base numbers above are what the factory itself
+produces before that policy runs, not a guarantee of what an accepted timed exercise's
+final displayed prescription will be. No reps are converted into seconds, and no load is
+invented. Duration
 metadata does not make stretches or pure conditioning eligible for strength slots.
 
 All 302 identities, source metadata, 906 frames, licensing, and reviewed records remain
@@ -82,9 +89,13 @@ commit supplies the importer. No networking, analytics, dependency or Room chang
 
 ## Human gate and limits
 
-The separate reviewed cohort now contains 211 DRAFT / 0 APPROVED. Human reviewer identities and
-timestamps remain absent and the production reviewed-capability flag remains false.
-Neither agent code review nor PR approval supplies human exercise-metadata signoff.
+An owner-authorized audit has since accepted 182 of the 211 authored records in the
+separate reviewed cohort as `AI_ACCEPTED`, and production now enables the reviewed
+capability flag (`PlannerFeatureFlags.PRODUCTION.reviewedCapabilityEligibility = true`).
+That is a separate, owner-authorized categorical acceptance, not genuine human review:
+`AI_ACCEPTED` still leaves human reviewer identities and timestamps absent, and zero
+records carry the human-only `APPROVED` state. Neither agent code review nor PR approval
+supplies human exercise-metadata signoff.
 
 This milestone does not implement progression, deloads, substitutions, Health/Wear, or
 LLM behavior. `progressionType` is descriptive; timed targets remain existing defaults,

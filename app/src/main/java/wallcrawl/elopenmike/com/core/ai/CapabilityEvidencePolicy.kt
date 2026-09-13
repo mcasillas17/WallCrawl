@@ -9,7 +9,6 @@ import wallcrawl.elopenmike.com.core.model.ComparableMovementShape
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.ExercisePrescription
 import wallcrawl.elopenmike.com.core.model.ExerciseType
-import wallcrawl.elopenmike.com.core.model.ReviewState
 import wallcrawl.elopenmike.com.core.model.ReviewedExerciseLink
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetType
@@ -75,9 +74,10 @@ class CapabilityEvidencePolicy(
             records[exactRecord.appliesToExerciseId] = exactRecord
         }
         exactRecords.forEach { exactRecord ->
+            // The demonstrated exercise must be accepted in its own right before any of its
+            // documented regression edges are read at all.
             val reviewedMetadata = exercisesById[exactRecord.demonstratedExerciseId]
-                ?.reviewedMetadata
-                ?.takeIf { it.reviewState == ReviewState.APPROVED }
+                ?.acceptedMetadata()
                 ?: return@forEach
 
             reviewedMetadata.approvedRegressions
@@ -89,10 +89,9 @@ class CapabilityEvidencePolicy(
                     if (targetExerciseId.isBlank()) return@forEach
                     if (targetExerciseId == exactRecord.demonstratedExerciseId) return@forEach
 
-                    exercisesById[targetExerciseId]
-                        ?.reviewedMetadata
-                        ?.takeIf { it.reviewState == ReviewState.APPROVED }
-                        ?: return@forEach
+                    // And the endpoint must pass the same gate independently: an edge to a
+                    // pending target authorizes the relationship, never the propagation.
+                    exercisesById[targetExerciseId]?.acceptedMetadata() ?: return@forEach
 
                     records.putIfAbsent(
                         targetExerciseId,

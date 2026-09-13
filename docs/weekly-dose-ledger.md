@@ -22,10 +22,11 @@ not universal physiological laws or medical safety thresholds. Storage/codec bou
 software limits, not training ceilings. See the
 [evidence-to-rule mapping](research/2026-08-29-training-science-evidence-review.md#validation-scope-clarification-2026-09-05).
 
-The prescription consumer is reachable only when
-`PlannerFeatureFlags.reviewedCapabilityEligibility` is enabled, which production does
-not do. The bundled catalog remains 211 `DRAFT` / 0 `APPROVED`, so current production
-planner selection and prescriptions are unchanged. See the
+The prescription consumer is reachable because
+`PlannerFeatureFlags.reviewedCapabilityEligibility` is enabled in production. The
+bundled catalog carries 182 `AI_ACCEPTED` records (0 `APPROVED`, 29 `DRAFT`, 56 with no
+authored block, 35 outside automatic-strength scope), so production planner selection
+and prescriptions now read this policy for every accepted exercise. See the
 [state-based policy design](superpowers/specs/2026-09-01-state-based-dose-effort-rest-design.md).
 
 Progress also reads the ledger for separately labelled reviewed primary-dose accounting.
@@ -67,13 +68,14 @@ Work that was never finished earns nothing: incomplete sets, sets stopped with a
 in-progress sessions all contribute zero. Planned target sets and prescriptions are not
 exposure and are never counted as such.
 
-## Missing, unknown, and `DRAFT` metadata
+## Missing, unknown, and unaccepted metadata
 
 A set is credited only when all of the following hold:
 
 - the exercise id resolves **exactly** in the current bundled catalog;
 - that exercise carries a `reviewedMetadata` block;
-- its `reviewState` is `APPROVED`;
+- it is **accepted for automatic planning** by `Exercise.acceptedMetadata()`: its
+  `reviewState` is `APPROVED` or `AI_ACCEPTED`, and its provenance matches that state;
 - its `directPrimaryMuscle` is present in the parsed reviewed contract.
 
 Otherwise the work set is counted in `unattributedWorkSets` under a typed reason:
@@ -82,20 +84,25 @@ Otherwise the work set is counted in `unattributedWorkSets` under a typed reason
 | --- | --- |
 | `UNKNOWN_EXERCISE` | the id is not in the current bundled catalog |
 | `MISSING_REVIEWED_METADATA` | the exercise exists but has no reviewed block |
-| `METADATA_NOT_APPROVED` | reviewed metadata exists but is not `APPROVED` |
+| `METADATA_NOT_APPROVED` | reviewed metadata exists but is not accepted (a draft, or provenance that does not match its state). The name is frozen because it is persisted. |
 
 Nothing is guessed. There is no fallback to legacy `primaryMuscles`, to exercise names, to
 the legacy `programming` block, or to an inferred movement pattern. The attribution branch
 is a sealed `LedgerAttribution` with exactly two outcomes — credited, or omitted with a
 reason — so there is no third path that could invent a muscle.
 
-The bundled catalog currently ships 302 exercises with 211 reviewed entries, **all `DRAFT`
-and none `APPROVED`**. Today the ledger therefore credits nothing from real history and
-reports every completed work set as `METADATA_NOT_APPROVED` or
-`MISSING_REVIEWED_METADATA`. `BundledCatalogLedgerAttributionTest` fails the build if that
-changes without deliberate human approval. Tests that need approved metadata build their
-own clearly labelled synthetic entries; those fixtures live only in test sources and are
-never shipped.
+The bundled catalog currently ships 302 exercises with 211 authored reviewed entries:
+**182 `AI_ACCEPTED`, 29 `DRAFT`, and none `APPROVED`.** The ledger credits every completed
+work set for an `AI_ACCEPTED` exercise exactly as it would for a human-`APPROVED` one —
+one `directPrimarySets` credit per completed non-warm-up work set — and reports the rest
+as `METADATA_NOT_APPROVED` (the 29 `DRAFT` entries) or `MISSING_REVIEWED_METADATA` (the 91
+entries with no reviewed block, including the 35 outside automatic-strength scope).
+`BundledCatalogLedgerAttributionTest` fails the build if the accepted/pending/outside
+partition changes without deliberate, recorded acceptance. A full-catalog week of two
+sets per exercise credits 364 work sets and reports 58 as `METADATA_NOT_APPROVED` and 182
+as `MISSING_REVIEWED_METADATA`. Tests that need `APPROVED` (genuinely human-reviewed)
+metadata build their own clearly labelled synthetic entries; those fixtures live only in
+test sources and are never shipped.
 
 ## Week boundary and time zone
 
@@ -164,8 +171,8 @@ secondary involvement and legacy primary involvement add no sets to either equal
 
 A genuinely empty week, a warm-ups-only week, a week with unattributed completed work,
 loading, a deleted/missing local profile, and a repository/catalog failure have distinct
-presentation. The all-DRAFT catalog does not produce a "no workouts" state when workouts
-exist. Disclosure buttons expose the policy, omissions, prior-week comparison and metric
+presentation. An unaccepted or missing metadata block does not produce a "no workouts" state
+when workouts exist. Disclosure buttons expose the policy, omissions, prior-week comparison and metric
 definitions without competing technical summaries.
 
 <p align="center">
@@ -174,7 +181,9 @@ definitions without competing technical summaries.
 </p>
 
 These disposable examples contain 14 completed sets, including two warm-ups. The remaining
-12 work sets are unattributed, not missing activity; no production metadata was approved.
+12 work sets are unattributed, not missing activity: the exercises logged in this particular
+example are not among the 182 currently `AI_ACCEPTED` records, and none of them carry
+genuine human `APPROVED` metadata either.
 
 ### Coherent reads and refresh
 
@@ -240,15 +249,15 @@ current inputs. `LedgerSourceFingerprint` is a SHA-256 digest, computed with the
 - the included completed session ids and their completion timestamps;
 - exercise-instance ids and the catalog exercise ids they reference;
 - set ids, types, and completion state (including sets not credited as work);
-- for every referenced exercise: whether it resolves, its review state, and — when
-  approved — its direct primary, its descriptive secondaries, and its provenance policy
-  version;
+- for every referenced exercise: whether it resolves, whether it is accepted, its review
+  state, and — when accepted — its direct primary, its descriptive secondaries, and its
+  provenance policy version;
 - the policy version, catalog version, review-policy version, week start, and zone id.
 
 Everything is canonically ordered before hashing, so the same history read back in a
-different order can never look like different history. Newly completed work, an approved
-entry, a new catalog, a new review policy, a different week, and a different zone all
-invalidate the cache and force a recomputation.
+different order can never look like different history. Newly completed work, a newly
+accepted entry, a new catalog, a new review policy, a different week, and a different zone
+all invalidate the cache and force a recomputation.
 
 Deleting or corrupting the cache cannot change a result. A row that does not decode exactly
 reads back as "no usable cache" and the ledger is recomputed from history; a tampered

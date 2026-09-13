@@ -7,7 +7,11 @@ answers, preferences, templates, active/completed workouts, logged set feedback,
 and the reconstructable weekly-ledger cache are stored locally in Room. The
 catalog and exercise artwork are bundled with the app. The current application
 has no cloud-sync service, analytics upload, Health Connect or Wear integration,
-or production local-model runtime.
+or production local-model runtime. The bundled catalog's `AI_ACCEPTED` metadata
+(see [reviewed exercise metadata](reviewed-exercise-metadata.md)) was produced by an
+offline, one-time authoring and acceptance process before this build was assembled;
+running the app never calls an AI model, uploads profile or workout data for review,
+or re-runs that acceptance at runtime.
 
 **Implicit Android backup stays disabled.** The application sets
 `android:allowBackup="false"` and explicitly excludes all documented app-data

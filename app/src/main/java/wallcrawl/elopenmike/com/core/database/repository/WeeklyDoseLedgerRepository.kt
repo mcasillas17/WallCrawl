@@ -5,6 +5,7 @@ import java.time.Instant
 import java.time.ZoneId
 import wallcrawl.elopenmike.com.core.ai.LedgerSourceFingerprint
 import wallcrawl.elopenmike.com.core.ai.WeeklyDoseLedgerCalculator
+import wallcrawl.elopenmike.com.core.ai.acceptedReviewPolicyVersion
 import wallcrawl.elopenmike.com.core.database.dao.CompletedWorkoutHistoryDao
 import wallcrawl.elopenmike.com.core.database.dao.WeeklyDoseLedgerStateDao
 import wallcrawl.elopenmike.com.core.database.entity.WeeklyDoseLedgerStateEntity
@@ -177,14 +178,14 @@ class OfflineWeeklyDoseLedgerRepository(
         exercises.associateBy(Exercise::id)
 
     /**
-     * The review-policy version this catalog's reviewed metadata was authored under.
+     * The review-policy version this catalog's accepted metadata was authored under.
      *
-     * It is read from the catalog rather than hard-coded, so shipping metadata authored
-     * under a new review policy invalidates every cached ledger instead of silently
-     * reinterpreting old counts. A catalog carrying no reviewed metadata reports 0.
+     * It is read from accepted records rather than hard-coded, so shipping consumable metadata
+     * under a new review policy invalidates every cached ledger without allowing draft or
+     * malformed records to disable planning. A catalog carrying no accepted metadata reports 0.
      */
     private fun WorkoutGuideCatalogSnapshot.reviewPolicyVersion(): Int =
-        exercises.mapNotNull { it.reviewedMetadata?.provenance?.policyVersion }.maxOrNull() ?: 0
+        exercises.acceptedReviewPolicyVersion()
 
     private companion object {
         val POLICY_VERSION = LedgerPolicyVersion.PRIMARY_ONLY_V1

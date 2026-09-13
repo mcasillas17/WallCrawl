@@ -12,41 +12,132 @@ have different owners and must not be treated as interchangeable:
   [the timed programming contract](timed-hold-programming.md). `fatigueScore` is not part of the reviewed scientific contract and
   remains only until the later planner-policy migration.
 - `reviewedMetadata` is WallCrawl-owned categorical input for the deterministic
-  reviewed capability-eligibility gate. The gate exists behind an explicit
-  local feature flag that is `false` in production. The current planner therefore
-  does not read this block for production filtering, ranking, dose, progression,
-  substitution, or validation.
+  reviewed capability-eligibility gate. Production composition now sets that gate's
+  local feature flag to `true`, and the current planner reads this block for
+  production filtering, ranking, dose, and validation
+  wherever a record is **accepted** — `APPROVED` or `AI_ACCEPTED` — through the
+  shared `Exercise.acceptedMetadata()` gate. Directed `approvedRegressions` edges are
+  consumed today for three things only: the advanced-complexity ceiling exception in
+  `ExerciseEligibilityPolicy`, capability-evidence propagation to one direct target in
+  `CapabilityEvidencePolicy`, and ranking preference in
+  `SupportedRegressionRankingPolicy` (#77). `approvedSubstitutions` edges are parsed,
+  validated, and folded into the recommendation context fingerprint, but nothing yet
+  performs an actual in-session substitution from them; that remains Roadmap Package
+  10. Progression (Package 9) is not implemented either — this block supplies no
+  progression input. See
+  [reviewed capability eligibility](reviewed-capability-eligibility.md).
 
 The complete 302-exercise catalog remains available to browsing and manual
 templates whether either optional block is present or absent.
 
-## Review state and human approval
+## Review state, AI acceptance, and human approval
 
-`DRAFT` means the metadata has not received the required human review. An
-AI-authored entry must remain `DRAFT`, with no fabricated reviewer role or review
-time. `APPROVED` requires a deliberate authored-data change plus a non-empty
-reviewer role, review timestamp, rationale or source, schema version, and policy
-version. Tooling validates the presence and shape of that provenance; it cannot
-authenticate a person's identity or turn pull-request approval into metadata
-approval.
+`DRAFT` means the metadata has not received acceptance of either kind: no genuine
+human review and no owner-authorized AI acceptance. An AI-authored entry defaults
+to `DRAFT`, with no fabricated reviewer role or review time.
 
-The 211 authored records are entirely AI-authored and `DRAFT`. They are not
-eligible for the reviewed-only gate until a human inspects each entry and
-deliberately approves it. The
-[full per-ID evidence ledger](research/2026-09-07-full-exercise-catalog-review.json)
-accounts for all 302 catalog entries: 186 AI-ready recommendations for human
-inspection, 81 pending evidence/policy decisions, and 35 outside automatic-strength
-scope. Of the 81 pending entries, 25 have a representable draft and 56 have their
-metadata block withheld. Readiness is not approval.
+Two separate states may be **accepted** for automatic planning, and they must never be
+conflated:
+
+- `APPROVED` is human-only. It requires a deliberate authored-data change plus a
+  non-empty reviewer role, review timestamp, rationale or source, schema version, and
+  policy version, and it rejects any AI provenance outright. **Zero records carry this
+  state.** Tooling validates the presence and shape of that provenance; it cannot
+  authenticate a person's identity or turn pull-request approval, code review, merge,
+  or a passing test suite into metadata approval.
+- `AI_ACCEPTED` is an owner-authorized alpha categorical acceptance, recorded with its
+  own `aiReviewProvenance` block (reviewer model id, review time, a SHA-256 digest of
+  the exact content reviewed, HTTPS source references, decision rationale, and stated
+  limitations) and with every human-review field left null. It is **not** human
+  approval, **not** a clinical validation, and **not** a claim that an exercise is safe
+  for everyone. It exists specifically so the two kinds of acceptance stay separately
+  provenanced instead of one being represented as the other.
+
+### AI acceptance audit
+
+An owner-authorized audit accepted **182** of the catalog's 211 authored records as
+`AI_ACCEPTED`. The remaining catalog resolves as an exhaustive, disjoint partition of
+all 302 IDs:
+
+| Group | Count | Meaning |
+| --- | ---: | --- |
+| `AI_ACCEPTED` | 182 | Accepted for automatic planning; owner-authorized, not human-approved |
+| Authored `DRAFT` | 29 | Has a metadata block; not accepted |
+| No authored block | 56 | No `reviewedMetadata` at all; not accepted |
+| Outside automatic-strength scope | 35 | Stretches, distance-duration, and other timed-conditioning IDs; never proposed as strength work |
+
+182 + 29 + 56 + 35 = 302, with no overlap and no ID left out.
+
+Four IDs the audit could otherwise have accepted were deliberately withheld as
+**intrinsic holds** — `cable-kickback`, `cable-standing-hip-abduction`,
+`cable-standing-hip-adduction`, and `fire-hydrant` — and remain `DRAFT`.
+
+Seven sources — `archer-push-up`, `dumbbell-bent-over-row`, `hindu-push-up`,
+`hip-adduction-machine`, `pistol-squat`, `push-up`, and `seated-row` — were held during
+an earlier graph-only review pass and are now `AI_ACCEPTED`. Of those seven, only five
+currently name a regression or substitution target that is itself still pending, across
+five edges naming four unique targets (`machine-row` is named twice, by
+`dumbbell-bent-over-row` and `seated-row`):
+
+| Source | Edge type | Pending target |
+| --- | --- | --- |
+| `dumbbell-bent-over-row` | `approvedRegressions` | `machine-row` |
+| `hip-adduction-machine` | `approvedSubstitutions` | `cable-standing-hip-adduction` |
+| `pistol-squat` | `approvedRegressions` | `assisted-pistol-squat` |
+| `push-up` | `approvedRegressions` | `knee-push-up` |
+| `seated-row` | `approvedSubstitutions` | `machine-row` |
+
+The remaining two — `archer-push-up` and `hindu-push-up` — both name `push-up` as their
+`approvedRegressions` target, and `push-up` is itself `AI_ACCEPTED`. Their edges are the
+positive control, not another pending-endpoint example: `CapabilityEvidencePolicy` can
+propagate capability evidence from `archer-push-up` across that accepted edge to
+`push-up`, while it cannot propagate from `dumbbell-bent-over-row`, `pistol-squat`, or
+`push-up` itself across their still-pending edges. This is expected: relationship
+authorization and endpoint
+acceptance are independent decisions, so an accepted source's edge to a pending target
+authorizes the relationship only — it grants no eligibility exception, no capability
+evidence, and no substitution eligibility until the target is independently accepted.
+Every one of the 182 accepted records still carries an **empty**
+`clearedTrainingConstraints` list: the audit found no basis to record a joint-sensitivity
+clearance for any exercise, so a joint-sensitive profile still receives a typed refusal
+(see [reviewed capability eligibility](reviewed-capability-eligibility.md)).
+
+The audit is a **committed, reproducible artifact**, not a one-time claim:
+[`docs/research/2026-09-13-ai-acceptance-audit.json`](research/2026-09-13-ai-acceptance-audit.json)
+is the original read-only report, preserved as canonical JSON and bound by its own
+digest. [`tools/workout-guide/verify_ai_acceptance_audit.py`](../tools/workout-guide/verify_ai_acceptance_audit.py)
+reconstructs the exact 302-ID partition from that committed report plus the current
+evidence ledger, metadata, and catalog, offline and without any new source retrieval or
+illustration inspection:
+
+```bash
+python3 tools/workout-guide/verify_ai_acceptance_audit.py
+```
+
+`app/src/test/resources/ai-acceptance/partition-v2.json` pins the same partition, the
+audit's own SHA-256, and the actual reviewer/timestamp for JVM tests
+(`AiAcceptedCorpusTest`, `AiAcceptedCatalogTest`) to assert against, so the fixture, the
+committed audit, and the bundled catalog cannot silently drift apart.
+
+Recorded per accepted record: `reviewerModelId` is `gpt-6-astra`; `reviewedAtEpochMillis`
+is the audit's own original decision timestamp (not a placeholder and not the current
+time); `reviewedContentSha256` binds the exact pre-disposition proposal that was
+reviewed; `sourceReferences` are the same recorded evidence URLs the ledger already
+cites. Nothing here is a clinical or medical review; it is a categorical product
+decision about existing recorded evidence.
 
 The generated [metadata report](reviewed-exercise-metadata-review.md) and
-[human sign-off worksheet](reviewed-exercise-metadata-human-signoff.md) retain
-those distinctions. The [37-entry review from August](research/2026-08-30-exercise-metadata-agent-review.md)
-is historical evidence, not a current approval certificate. Later source inspection
-corrected or withheld drafts where complete equipment or the depicted variation
-could not be established; earlier model consensus is not authoritative.
+[human sign-off worksheet](reviewed-exercise-metadata-human-signoff.md) retain these
+exact distinctions and are produced by tooling from the same sources; do not hand-edit
+either without regenerating from `import_catalog.py` / `render_review_packet.py`. The
+[37-entry review from August](research/2026-08-30-exercise-metadata-agent-review.md) and
+the [September full-catalog review](research/2026-09-07-full-exercise-catalog-review.json)
+remain historical evidence about content readiness — the `ready_for_human_review`
+disposition they used predates AI acceptance and is not itself an acceptance record.
+Later source inspection corrected or withheld drafts where complete equipment or the
+depicted variation could not be established; earlier model consensus is not authoritative.
 
-For each draft, a human reviewer must inspect:
+For each `DRAFT` entry, a human reviewer must still inspect:
 
 - the single direct-primary muscle and descriptive-only secondary muscles;
 - the joint sensitivities in `clearedTrainingConstraints`, if any;
@@ -58,7 +149,8 @@ For each draft, a human reviewer must inspect:
 - rationale/source, reviewer role, review time, schema version, and policy
   version.
 
-Approval of this pull request does not rewrite any draft to `APPROVED`.
+Approval of a pull request does not rewrite any draft to `APPROVED`, and it does not
+retroactively rewrite an `AI_ACCEPTED` record into one either.
 
 ## Categorical contract
 
@@ -75,9 +167,12 @@ that a reviewer explicitly cleared the exercise for. It is a compatibility state
 self-reported label, not a diagnosis, an injury rule, or clinical clearance. Absence is not
 clearance: a selected sensitivity that a record does not list keeps that record out of
 automatic planning. `LOW_IMPACT_ONLY` cannot appear there, because `impactLevel` already
-decides it; the importer and the parser both reject a record that lists it. All 211 records
-currently clear nothing, so a joint-sensitive profile receives a typed refusal. Nothing in
-this contract infers a clearance from a name, a muscle, a movement pattern or equipment.
+decides it; the importer and the parser both reject a record that lists it. All 211
+authored `reviewedMetadata` entries currently clear nothing — including the 182
+`AI_ACCEPTED` ones — so a joint-sensitive profile receives a typed refusal on the
+production path.
+Nothing in this contract infers a clearance from a name, a muscle, a movement pattern or
+equipment.
 
 Version 2 also refreshed every `metadataSha256` in the evidence ledger, because the recorded
 digest binds a proposal to the inspection of its exact fields. No human sign-off was voided
@@ -102,11 +197,12 @@ pinned source checkout + WallCrawl-authored JSON
   -> generated catalog.json
   -> Android streaming JSON parser
   -> typed Exercise.reviewedMetadata
-  -> deterministic reviewed eligibility policy (production flag disabled)
+  -> deterministic reviewed eligibility policy (production flag enabled)
 ```
 
-`tools/workout-guide/reviewed-metadata.json` is the authored data source, at
-schema version 2. `tools/workout-guide/review-schema.json` is its strict schema. The importer uses
+`tools/workout-guide/reviewed-metadata.json` is the authored data source, currently at
+schema version 3 (the version that first carried the AI acceptance contract).
+`tools/workout-guide/review-schema.json` is its strict schema. The importer uses
 Python standard-library validation and rejects unknown or duplicate fields,
 missing fields, bad types/enums, unsafe or oversized values, non-finite numbers,
 excessive depth/count/payload, unknown catalog IDs, catalog/type mismatches,
@@ -137,26 +233,26 @@ validated.
 
 ## Full-catalog review and current behavior
 
-The deterministic report records 211 drafts across bodyweight, bands,
-machines/cables, dumbbells, barbells, kettlebells and supported-equipment families.
-The ledger records exact original source facts, the three inspected PNG source
-illustrations and their pinned paths, field-group citations, categorical reasoning,
-corrections, confidence, limitations and remaining human decisions for every ID.
-Each present proposal is bound to its authored metadata SHA-256. It separately
-flags unresolved source/illustration conflicts as unsuitable references for new
-artwork until reconciled; the bundled artwork itself is unchanged.
+The deterministic report records 211 authored entries — 182 `AI_ACCEPTED` and 29
+`DRAFT` — across bodyweight, bands, machines/cables, dumbbells, barbells, kettlebells
+and supported-equipment families. The ledger records exact original source facts, the
+three inspected PNG source illustrations and their pinned paths, field-group citations,
+categorical reasoning, corrections, confidence, limitations and remaining human
+decisions for every ID. Each present proposal is bound to its authored metadata
+SHA-256. It separately flags unresolved source/illustration conflicts as unsuitable
+references for new artwork until reconciled; the bundled artwork itself is unchanged.
 
 The current code classifies 267 entries as type-supported and excludes 14
 stretches, 10 distance-duration entries and 11 other timed-conditioning entries.
 The excluded entries still receive individual factual review; they are not given
 manufactured direct-primary allocations or repetition prescriptions. Type support,
-single-candidate reachability, full-pool availability, AI readiness and human
+single-candidate reachability, full-pool availability, AI acceptance and human
 approval are distinct, as the [coverage report](reviewed-catalog-coverage.md) explains.
 
 Five of the six fixed-anchor band variants now have explicit runtime equipment
 minimums in the [fixed-anchor contract](band-anchor-equipment.md); the row's
 off-image anchor remains unresolved. Their full reviewed blocks stay withheld:
-this equipment correction does not author or approve their other categorical
+this equipment correction does not author or accept their other categorical
 fields or promote any graph edge. Specialized fixtures, conflicting movement
 depictions and some primary/impact decisions remain unresolved. A generic wall, doorway, bench
 or machine is not used to conceal an unrepresented requirement. Broader equipment
@@ -165,17 +261,16 @@ Band-only PUSH coverage remains a specific open gap, not a reason to relabel
 back/core movements or imply universal modality equivalence.
 
 The importer produces both the catalog and report deterministically; `--check`
-detects drift without writing. Regression tests hold the catalog at 302 entries
-and prove the disabled rollout keeps current context and planner output unchanged
-in representative bodyweight, band, machine, and full-gym contexts. Synthetic,
-test-only enabled fixtures prove that absent and `DRAFT` blocks cannot enter the
-reviewed automatic pool and that typed no-candidate causes are preserved without
-fallback. Movement-capability values remain unused on the disabled production
-path.
+detects drift without writing. Regression tests confirm the catalog holds 302 entries,
+that production selection is built only from the actual `AI_ACCEPTED` cohort in
+representative bodyweight, band, machine, and full-gym contexts, and that no legacy
+fallback exists when the reviewed pool is insufficient. Fixtures prove that absent,
+`DRAFT`, and unaccepted blocks cannot enter the reviewed automatic pool and that typed
+no-candidate causes are preserved without fallback.
 
 The focused policy, rollout boundary, typed results, constraint gap, and
 verification commands are documented in
 [Reviewed capability eligibility](reviewed-capability-eligibility.md). The next
-integration milestone remains human review and deliberate approval of the
-cohort, followed by availability/persona review and an explicit production flag
-change. Approval does not happen automatically when reviewed entries appear.
+integration milestone is genuine human review and approval of the metadata — the
+reviewed path is already enabled and already reads the audited `AI_ACCEPTED` cohort.
+Approval does not happen automatically when reviewed entries appear.

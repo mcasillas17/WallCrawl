@@ -55,7 +55,7 @@ data class RecommendationSnapshot(
     val validatorVersion: ProgramValidatorVersion,
     val durationEstimatorVersion: String,
     val outcome: RecommendationOutcome,
-    /** Whether the reviewed-only rule set applied, which is the disabled production gate. */
+    /** Whether the reviewed rule set applied to this recommendation. */
     val reviewedPathEnabled: Boolean,
     val catalogVersion: String?,
     val reviewPolicyVersion: Int,

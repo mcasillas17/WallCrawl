@@ -4,7 +4,6 @@ import wallcrawl.elopenmike.com.core.model.ComplexityTier
 import wallcrawl.elopenmike.com.core.model.Difficulty
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
-import wallcrawl.elopenmike.com.core.model.ReviewState
 
 /** Computes a soft penalty without changing automatic exercise eligibility. */
 class ExerciseDifficultyRankingPolicy {
@@ -15,10 +14,7 @@ class ExerciseDifficultyRankingPolicy {
         reviewedEligibilityEnabled: Boolean
     ): Int {
         val exerciseTier = if (reviewedEligibilityEnabled) {
-            exercise.reviewedMetadata
-                ?.takeIf { it.reviewState == ReviewState.APPROVED }
-                ?.complexity
-                ?.rankingTier()
+            exercise.acceptedMetadata()?.complexity?.rankingTier()
         } else {
             exercise.programming?.difficulty?.rankingTier()
         } ?: return 0

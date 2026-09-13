@@ -67,11 +67,12 @@ fatigue score or starting load. The unresolved row has no satisfiable alternativ
 there is deliberately no selectable "unknown anchor" token. Existing empty
 legacy matrices keep their previous equipment-free meaning.
 
-The active `ExerciseFilter` uses these effective requirements. The reviewed
-`ExerciseEligibilityPolicy` requires both approved equipment alternatives and
+The production `ExerciseEligibilityPolicy` uses these effective requirements and requires
+both accepted equipment alternatives and
 the same source-bound minimum, including when considering an available supported
 regression. A synthetic or later incomplete approval cannot waive that minimum.
-Exclusions and all other applicable eligibility rules still apply.
+Exclusions and all other applicable eligibility rules still apply. `ExerciseFilter`
+remains only the fallback when reviewed eligibility is explicitly disabled.
 
 All 302 entries remain browseable and explicitly selectable in manual templates.
 The editor reports missing equipment alternatives or an unresolved setup without
@@ -85,13 +86,16 @@ This supplies neither a band chest-push exercise nor a workout-focus fix.
 
 ## Review and compatibility boundary
 
-No full reviewed metadata proposal is added by this equipment-only correction:
-the cohort remains **211 DRAFT / 0 APPROVED**, and
-`reviewedCapabilityEligibility=false`. Five runtime equipment minimums are
-representable; their full categorical proposals and relationship decisions remain
-separate content work. The row's setup itself is still unresolved. Future DRAFT
+No full reviewed metadata proposal is added by this equipment-only correction. An
+owner-authorized audit has since accepted 182 of the catalog's 211 authored records as
+`AI_ACCEPTED`, and `PlannerFeatureFlags.reviewedCapabilityEligibility` is `true` in
+production, but that acceptance is separate from this equipment correction and from
+genuine human `APPROVED` review, of which there is still none. Five runtime equipment
+minimums are representable; their full categorical proposals and relationship decisions
+remain separate content work, whether or not the exercise they belong to has since been
+`AI_ACCEPTED`. The row's setup itself is still unresolved. Future `DRAFT` or `AI_ACCEPTED`
 proposals must use these canonical meanings and retain all other pending evidence
-and human decisions. Roadmap Package 3 is not complete.
+and human decisions. Roadmap Package 3 (genuine human approval) is not complete.
 
 Canonical identifiers, not translated labels, are stored in the existing profile
 equipment list. The normal Room profile mapper and archive codec preserve them

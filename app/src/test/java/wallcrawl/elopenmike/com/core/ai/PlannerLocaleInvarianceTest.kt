@@ -266,11 +266,12 @@ class PlannerLocaleInvarianceTest {
     }
 
     @Test
-    fun theProductionLegacyPlanValidatesUnchangedWhileTheReviewedGateIsDisabled() = runTest {
-        // The shipped catalog carries only DRAFT reviewed records and zero APPROVED ones, and
-        // production leaves `reviewedCapabilityEligibility` false. Whole-program validation
-        // must therefore accept exactly what the legacy planner already produced: no
-        // approved-metadata rule, no eligibility-decision rule, and no dose accounting.
+    fun aContextWithNoEligibilityResultValidatesWithoutAnyReviewedRule() = runTest {
+        // This is the shape a caller builds when the reviewed gate is off, which the sample
+        // catalog here still models. Production now enables that gate — see
+        // `ProductionEnabledInvarianceTest` for the same invariance over the bundled
+        // accepted cohort — so this case exists to keep the disabled shape honest: no
+        // accepted-metadata rule, no eligibility-decision rule, and no dose accounting.
         val context = context()
         assertThat(context.automaticEligibilityResult).isNull()
         assertThat(context.trainingProgramState).isNull()

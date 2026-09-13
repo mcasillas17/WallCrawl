@@ -40,11 +40,11 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutSplit
 
 /**
- * Separate prospective structural upper-bound and AI-ready cohorts, neither human-approved
- * nor clinically validated. The research ledger supplies readiness, never production approval.
+ * Separate prospective structural upper-bound and AI-accepted synthetic cohorts.
+ * Neither synthetic approval nor corpus acceptance is human or clinical validation.
  *
  * Only the existing fixture factory synthesizes approvals, in memory. No reviewed records
- * are copied into fixtures. Production drafts and absent metadata remain unchanged.
+ * are copied into fixtures. The actual bundle retains its AI acceptance, drafts and omissions.
  */
 @RunWith(Parameterized::class)
 class ReviewedCatalogCoverageTest(private val caseId: String) {
@@ -54,14 +54,17 @@ class ReviewedCatalogCoverageTest(private val caseId: String) {
     private val draftIds = projection.exercises
         .filter { it.reviewedMetadata?.reviewState == ReviewState.DRAFT }
         .map(Exercise::id)
+    private val authoredIds = projection.exercises.filter { it.reviewedMetadata != null }.map(Exercise::id)
+    private val aiAcceptedIds = projection.exercises
+        .filter { it.reviewedMetadata?.reviewState == ReviewState.AI_ACCEPTED }.map(Exercise::id)
 
     @Test
-    fun allDraftStructuralUpperBound_exercisesActualEligibilityPlannerAndValidator() = runTest {
-        verifyProspectiveCohort(COHORT, draftIds)
+    fun allAuthoredStructuralUpperBound_exercisesActualEligibilityPlannerAndValidator() = runTest {
+        verifyProspectiveCohort(COHORT, authoredIds)
     }
 
     @Test
-    fun aiReadySynthetic_exercisesActualEligibilityPlannerAndValidator() = runTest {
+    fun aiAcceptedSynthetic_exercisesActualEligibilityPlannerAndValidator() = runTest {
         val ledgerFile = File("../$READINESS_LEDGER_PATH")
         val preparationReport = JSONObject().put("schemaVersion", 1)
             .put("cohort", READY_COHORT).put("caseId", caseId)
@@ -75,15 +78,15 @@ class ReviewedCatalogCoverageTest(private val caseId: String) {
                 .that(ledgerFile.isFile).isTrue()
             val entries = JSONObject(ledgerFile.readText()).getJSONArray("entries")
             val readyIds = (0 until entries.length()).map { entries.getJSONObject(it) }
-                .filter { it.getString("disposition") == "ready_for_human_review" }
+                .filter { it.getString("disposition") == "ai_accepted" }
                 .map { it.getString("id") }
-            preparationReport.put("readyForHumanReviewIds", JSONArray(readyIds))
-            assertThat(readyIds).isNotEmpty()
+            preparationReport.put("aiAcceptedIds", JSONArray(readyIds))
+            assertThat(readyIds).hasSize(182)
             assertThat(readyIds).containsNoDuplicates()
-            assertWithMessage("Every ready ID must name existing bundled DRAFT metadata")
-                .that(draftIds).containsAtLeastElementsIn(readyIds)
+            assertWithMessage("Every accepted ID must name existing bundled AI_ACCEPTED metadata")
+                .that(aiAcceptedIds).containsExactlyElementsIn(readyIds)
             val readyIdSet = readyIds.toSet()
-            val orderedReadyIds = draftIds.filter { it in readyIdSet }
+            val orderedReadyIds = authoredIds.filter { it in readyIdSet }
             verificationStarted = true
             verifyProspectiveCohort(READY_COHORT, orderedReadyIds)
         } finally {
@@ -125,7 +128,7 @@ class ReviewedCatalogCoverageTest(private val caseId: String) {
                     .isEqualTo("Synthetic test-only reviewer")
                 assertThat(it.reviewedMetadata.provenance.rationaleOrSource)
                     .startsWith("SYNTHETIC PLANNER FIXTURE")
-                assertThat(it.reviewedMetadata.isWellFormedApprovedMetadata()).isTrue()
+                assertThat(it.reviewedMetadata.isWellFormedAcceptedMetadata(it.id)).isTrue()
                 assertThat(it.reviewedMetadata.matches(it.type, it.type)).isTrue()
             }
 
@@ -210,7 +213,7 @@ class ReviewedCatalogCoverageTest(private val caseId: String) {
         val report = JSONObject().put("schemaVersion", 1).put("caseId", caseId)
             .put("cohort", "disabled-metadata-invariance")
             .put("context", contextSettings(withDrafts))
-            .put("metadataWithDrafts", "Unmodified bundled DRAFT metadata; no synthetic approvals")
+            .put("metadataWithDrafts", "Unmodified bundled AI_ACCEPTED/DRAFT metadata; no synthetic approvals")
             .put("metadataWithoutDrafts", "Only reviewedMetadata stripped from the same full catalog")
             .put("catalogCount", built.catalogExercises.size)
             .put("draftCount", draftIds.size)
@@ -333,7 +336,7 @@ class ReviewedCatalogCoverageTest(private val caseId: String) {
         }
     }
 
-    private fun fixture(cohortApprovalIds: List<String> = draftIds): PlannerFixture {
+    private fun fixture(cohortApprovalIds: List<String> = authoredIds): PlannerFixture {
         val resource = when (caseId) {
             "band-only-push-gap" -> "band-only"
             "dumbbells-push", "mixed-unit-history" -> "mixed-unit-history"
@@ -412,7 +415,7 @@ class ReviewedCatalogCoverageTest(private val caseId: String) {
                     else -> AdaptationState.BUILD
                 },
                 syntheticApprovedExerciseIds =
-                    if (caseId == "real-no-approved") emptyList() else cohortApprovalIds,
+                    if (caseId == "synthetic-no-accepted") emptyList() else cohortApprovalIds,
                 syntheticClearedTrainingConstraints =
                     if (caseId == "joint-constraint-cleared") {
                         setOf(TrainingConstraint.KNEE_SENSITIVE)
@@ -525,7 +528,7 @@ class ReviewedCatalogCoverageTest(private val caseId: String) {
             }
         }
         when (caseId) {
-            "real-no-approved" -> {
+            "synthetic-no-accepted" -> {
                 assertThat(result.failure).isEqualTo(AutomaticEligibilityFailure.NO_APPROVED_METADATA)
                 result.decisions.forEach {
                     assertThat(it.reasons).containsExactly(EligibilityReason.MISSING_APPROVED_METADATA)
@@ -669,7 +672,7 @@ class ReviewedCatalogCoverageTest(private val caseId: String) {
                     it.reviewedMetadata!!.capabilityRequirements
             }.map(Exercise::id).toSet()
             assertThat(affected).contains("push-up")
-            // A pending knee-push-up support-label decision excludes it from the AI-ready cohort.
+            // A pending knee-push-up support-label decision excludes it from the accepted cohort.
             if ("knee-push-up" in syntheticApprovedIds) {
                 assertThat(affected).contains("knee-push-up")
             }
@@ -757,13 +760,15 @@ class ReviewedCatalogCoverageTest(private val caseId: String) {
             .put("reviewPolicyVersion", context.reviewPolicyVersion)
             .put("catalogCount", projection.exercises.size)
             .put("draftCount", draftIds.size)
+            .put("aiAcceptedCount", aiAcceptedIds.size)
+            .put("authoredCount", authoredIds.size)
             .put("cohortApprovalIds", JSONArray(cohortApprovalIds))
             .put("readinessLedgerPath", if (cohort == READY_COHORT) READINESS_LEDGER_PATH else JSONObject.NULL)
-            .put("readyForHumanReviewIds", if (cohort == READY_COHORT) JSONArray(cohortApprovalIds) else JSONObject.NULL)
+            .put("aiAcceptedIds", if (cohort == READY_COHORT) JSONArray(cohortApprovalIds) else JSONObject.NULL)
             .put("readinessInterpretation", if (cohort == READY_COHORT) {
-                "AI-ready for human review only; synthetic approvals are not human approval or clinical validation"
+                "AI-accepted categorical cohort; this scenario's synthetic approvals are not human approval or clinical validation"
             } else {
-                "All-DRAFT structural upper bound includes pending conflicts; not an AI-ready cohort"
+                "All-authored structural upper bound includes pending conflicts; not an accepted cohort"
             })
             .put("syntheticApprovedIds", JSONArray(
                 built.fixture.reviewedEligibility!!.syntheticApprovedExerciseIds
@@ -926,10 +931,10 @@ class ReviewedCatalogCoverageTest(private val caseId: String) {
     }
 
     companion object {
-        private const val COHORT = "all-draft-structural-upper-bound"
-        private const val READY_COHORT = "ai-ready-synthetic"
+        private const val COHORT = "all-authored-structural-upper-bound"
+        private const val READY_COHORT = "ai-accepted-synthetic"
         private const val READINESS_LEDGER_PATH = "docs/research/2026-09-07-full-exercise-catalog-review.json"
-        private val NO_PLAN_CASES = setOf("joint-constraint", "no-equipment", "real-no-approved")
+        private val NO_PLAN_CASES = setOf("joint-constraint", "no-equipment", "synthetic-no-accepted")
         private val PUSH_PATTERNS = setOf(MovementPattern.HORIZONTAL_PUSH, MovementPattern.VERTICAL_PUSH)
         private val PUSH_CASES = setOf(
             "bodyweight-push", "dumbbells-push", "machines-push",
@@ -942,7 +947,7 @@ class ReviewedCatalogCoverageTest(private val caseId: String) {
             "bodyweight-push", "band-only-push-gap", "dumbbells-push", "machines-push",
             "full-gym", "limited-push", "avoid-push", "returning", "mixed-unit-history",
             "sparse-history", "uncalibrated", "joint-constraint", "joint-constraint-cleared",
-            "no-equipment", "real-no-approved", "avoid-standing-balance", "avoid-floor-transition"
+            "no-equipment", "synthetic-no-accepted", "avoid-standing-balance", "avoid-floor-transition"
         ).map { arrayOf(it) }
     }
 }

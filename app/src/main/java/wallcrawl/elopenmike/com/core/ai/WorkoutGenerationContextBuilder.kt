@@ -7,7 +7,6 @@ import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
 import wallcrawl.elopenmike.com.core.exercise.ExerciseFilter
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
 import wallcrawl.elopenmike.com.core.model.CapabilityEvidenceSet
-import wallcrawl.elopenmike.com.core.model.ReviewState
 import wallcrawl.elopenmike.com.core.model.UserRestPreference
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
@@ -81,8 +80,7 @@ class WorkoutGenerationContextBuilder(
                 demonstratedProgressionFamilies = exerciseHistory.keys.mapNotNullTo(linkedSetOf()) {
                     exerciseId ->
                     exercisesById[exerciseId]
-                        ?.reviewedMetadata
-                        ?.takeIf { it.reviewState == ReviewState.APPROVED }
+                        ?.acceptedMetadata()
                         ?.progressionFamily
                 }
             )
@@ -121,10 +119,7 @@ class WorkoutGenerationContextBuilder(
             priorUserRestPreferences = priorUserRestPreferences,
             preferredUnits = profile.preferredUnit,
             catalogVersion = catalogVersion(),
-            reviewPolicyVersion = allExercises
-                .mapNotNull { it.reviewedMetadata?.provenance?.policyVersion }
-                .maxOrNull()
-                ?: 0
+            reviewPolicyVersion = allExercises.acceptedReviewPolicyVersion()
         )
     }
 

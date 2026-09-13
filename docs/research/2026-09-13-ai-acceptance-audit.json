@@ -1,0 +1,769 @@
+{
+  "currentProgrammingSha256": "8a3ea988d0f32954fd4a03e2f58a2e4b65bce6db6b638dd0475a1f0994b92c24",
+  "preservationNote": "The complete original parsed report is preserved as canonical JSON; reportCanonicalSha256 binds that report. No unavailable original audit-file byte hash is asserted. This committed artifact's own identity is computed over its bytes and stored only in ledger/partition references, never inside the artifact itself. currentProgrammingSha256 binds the current committed programming-overrides.json bytes, not dosing approval. The verifier reconstructs the inspected pre-disposition ledger, metadata and catalog before hashing them; it does not treat copied source hashes as verification. Prior audit hashes quoted within the historical report are context only, not independently verified byte claims. The report predates schema-v3 acceptance; its original draft/schema descriptions remain historical. This bookkeeping records no new acceptance, source retrieval or illustration inspection.",
+  "report": {
+    "acceptanceLimits": [
+      "Empty clearedTrainingConstraints are preserved for every candidate.",
+      "Historical shoulder-friendly or lower-back-easier coaching is not a clearance.",
+      "No fatigueScore, rep range, modality equivalence or difficulty-to-complexity conversion is newly validated here.",
+      "No band-only Chest horizontal-push or Shoulders vertical-push variant is supplied by the existing reviewed corpus.",
+      "Current schema allows draft/approved, not a distinct alpha AI acceptance state. Owner authorization must not be represented as fictitious human inspection.",
+      "An authorized relationship to pending metadata does not block intrinsic source acceptance, but cannot grant eligibility exceptions, capability evidence or substitution eligibility until the relevant endpoints are independently accepted and satisfy all other runtime requirements. Relationship history is retained; acceptance is not inherited."
+    ],
+    "acceptancePerformed": false,
+    "candidatePolicy": {
+      "additionalHoldsBeyondLedger": 4,
+      "boundaries": [
+        "No approval or production-flag mutation is authorized by this report.",
+        "Preserve all 302 browse/manual records, including excluded and unresolved IDs.",
+        "Do not invent per-ID rep ranges, clearedTrainingConstraints, fixtures, variants or relationships.",
+        "Equipment categories still require the exact recorded station, attachment, configuration and quantity; generic Machine, Cable or Bench ownership is insufficient proof.",
+        "The 101 candidates carrying legacy programming are not a separately certified dosing cohort.",
+        "The 81 candidates without programming are categorical-only candidates; no exercise-specific prescription is supplied by this audit.",
+        "Relationship authorization is distinct from endpoint acceptance. Runtime must independently fail closed on acceptance of the relevant endpoints and all other eligibility requirements; an authorized edge to pending metadata cannot grant an eligibility exception, capability evidence or substitution eligibility."
+      ],
+      "candidateCount": 182,
+      "candidateEdges": 83,
+      "candidateEdgesToPendingEndpoints": 5,
+      "candidateEdgesWithinCohort": 78,
+      "candidateRegressions": 33,
+      "candidateSubstitutions": 50,
+      "graphClosureIsConservativeAuditChoice": false,
+      "graphClosureIsCurrentSchemaRequirement": false,
+      "meaning": "Candidate for explicit owner-authorized alpha categorical acceptance, not current APPROVED status or clinical approval.",
+      "outsideCount": 35,
+      "pendingCount": 85,
+      "requiresAcceptedRelationshipEndpointsForSourceAcceptance": false,
+      "selection": [
+        "Start with current ready_for_human_review entries.",
+        "Withhold three ankle-attachment gaps and one unresolved cross-record support-policy inconsistency.",
+        "Evaluate intrinsic source acceptance independently of relationship authorization and endpoint acceptance. An authorized relationship to a pending endpoint does not withhold an otherwise intrinsically supported source."
+      ]
+    },
+    "candidate_accepted": {
+      "withExistingProgramming": [
+        "active-hang",
+        "arnold-press",
+        "assisted-pull-up",
+        "band-pull-apart",
+        "barbell-back-squat",
+        "barbell-bench-press",
+        "barbell-bicep-curl",
+        "barbell-row",
+        "bench-dip",
+        "bicep-curl",
+        "bird-dog",
+        "bodyweight-squat",
+        "bulgarian-split-squat",
+        "cable-curl",
+        "cable-fly",
+        "cable-lateral-raise",
+        "cable-pallof-hold",
+        "cable-pull-through",
+        "cable-rear-delt-fly",
+        "cable-triceps-pushdown",
+        "chest-supported-row",
+        "chin-up",
+        "close-grip-bench-press",
+        "close-grip-lat-pulldown",
+        "crunch",
+        "dead-bug",
+        "dead-hang",
+        "diamond-push-up",
+        "dumbbell-bench-press",
+        "dumbbell-bent-over-row",
+        "dumbbell-fly",
+        "dumbbell-hip-thrust",
+        "dumbbell-lateral-raise",
+        "dumbbell-romanian-deadlift",
+        "dumbbell-shoulder-press",
+        "dumbbell-shrug",
+        "dumbbell-sumo-squat",
+        "face-pull",
+        "flutter-kick",
+        "forward-lunge",
+        "front-raise",
+        "front-squat",
+        "glute-bridge",
+        "goblet-squat",
+        "hack-squat",
+        "hammer-curl",
+        "hanging-knee-raise",
+        "hip-abduction-machine",
+        "hip-adduction-machine",
+        "hip-thrust",
+        "incline-bench-press",
+        "incline-dumbbell-curl",
+        "incline-dumbbell-press",
+        "incline-push-up",
+        "kettlebell-romanian-deadlift",
+        "kettlebell-swing",
+        "lat-pulldown",
+        "leg-curl",
+        "leg-extension",
+        "leg-press",
+        "lying-leg-raise",
+        "machine-chest-press",
+        "machine-shoulder-press",
+        "one-arm-dumbbell-row",
+        "overhead-press",
+        "pallof-press",
+        "pec-deck",
+        "pike-push-up",
+        "preacher-curl",
+        "prone-y-raise",
+        "pull-ups",
+        "push-press",
+        "push-up",
+        "rear-delt-fly",
+        "reverse-crunch",
+        "reverse-curl",
+        "reverse-lunge",
+        "reverse-pec-deck",
+        "romanian-deadlift",
+        "rope-tricep-pushdown",
+        "seated-calf-raise",
+        "seated-leg-curl",
+        "seated-row",
+        "shrug",
+        "side-plank",
+        "single-leg-glute-bridge",
+        "single-leg-romanian-deadlift",
+        "skull-crusher",
+        "standing-calf-raise",
+        "standing-dumbbell-press",
+        "step-up",
+        "straight-arm-pulldown",
+        "superman",
+        "superman-hold",
+        "v-up",
+        "walking-lunge",
+        "wall-push-up",
+        "wall-sit",
+        "weighted-push-up",
+        "wide-grip-lat-pulldown",
+        "wide-push-up"
+      ],
+      "withoutExistingProgramming": [
+        "archer-push-up",
+        "assisted-chin-up",
+        "banded-clamshell",
+        "banded-dead-bug",
+        "banded-donkey-kick",
+        "banded-fire-hydrant",
+        "banded-glute-bridge",
+        "banded-lateral-walk",
+        "banded-monster-walk",
+        "banded-seated-hip-abduction",
+        "banded-squat",
+        "banded-standing-hip-abduction",
+        "barbell-glute-bridge",
+        "bent-over-rear-delt-raise",
+        "bicycle-crunch",
+        "cable-front-raise",
+        "cable-woodchop",
+        "captains-chair-knee-raise",
+        "chair-dip",
+        "clamshell",
+        "cossack-squat",
+        "curtsy-lunge",
+        "decline-bench-press",
+        "decline-dumbbell-press",
+        "decline-push-up",
+        "decline-sit-up",
+        "deficit-reverse-lunge",
+        "donkey-kick",
+        "doorway-row",
+        "drag-curl",
+        "dumbbell-curtsy-lunge",
+        "dumbbell-glute-bridge",
+        "dumbbell-lateral-lunge",
+        "dumbbell-side-bend",
+        "dumbbell-skull-crusher",
+        "frog-pump",
+        "glute-bridge-march",
+        "half-kneeling-pallof-press",
+        "heel-tap",
+        "hindu-push-up",
+        "hollow-rock",
+        "inchworm",
+        "incline-cable-fly",
+        "jump-squat",
+        "l-sit-pull-up",
+        "lateral-lunge",
+        "leg-press-calf-raise",
+        "lying-leg-curl",
+        "machine-lateral-raise",
+        "overhead-tricep-extension",
+        "pistol-squat",
+        "plank-shoulder-tap",
+        "plate-front-raise",
+        "push-up-shoulder-tap",
+        "reverse-snow-angel",
+        "rope-hammer-curl",
+        "scapular-pull-up",
+        "scapular-push-up",
+        "side-lying-hip-abduction",
+        "side-lying-leg-raise",
+        "side-plank-hip-dip",
+        "single-arm-dumbbell-tricep-extension",
+        "single-dumbbell-skullcrusher",
+        "smith-machine-bench-press",
+        "smith-machine-bulgarian-split-squat",
+        "smith-machine-hip-thrust",
+        "smith-machine-reverse-lunge",
+        "smith-machine-romanian-deadlift",
+        "smith-machine-split-squat",
+        "smith-machine-squat",
+        "split-squat",
+        "step-down",
+        "t-bar-row",
+        "towel-pull-up",
+        "tricep-kickback",
+        "typewriter-push-up",
+        "upright-row",
+        "wall-handstand-push-up",
+        "wall-walk",
+        "weighted-crunch",
+        "weighted-russian-twist"
+      ]
+    },
+    "corrections": {
+      "C1": {
+        "existingExternalCitation": "https://www.parabodyfitness.com/kickbackinstr",
+        "field": "equipmentAlternatives",
+        "finding": "Each recorded observation explicitly requires an ankle strap, but metadata requires only Cable. The corpus withholds machine-glute-kickback for this same missing separate accessory.",
+        "ids": [
+          "cable-kickback",
+          "cable-standing-hip-abduction",
+          "cable-standing-hip-adduction"
+        ],
+        "references": [
+          "ledger#/entries/53/evidence/1",
+          "ledger#/entries/58/evidence/1",
+          "ledger#/entries/59/evidence/1",
+          "ledger#/entries/180/policyAssessment/equipmentAndCapabilities",
+          "ledger#/entries/180/evidence/4",
+          "schema#/$defs/equipment"
+        ],
+        "requiredDecision": "Establish an explicit source-bound attachment requirement or keep withheld. Do not silently reuse a band-specific attachment token or assume Cable includes a cuff."
+      },
+      "C2": {
+        "field": "supportRequirement",
+        "finding": "Unbanded fire-hydrant is unsupported while the otherwise comparable grounded hand/knee banded variant explicitly counts that grounded contact as required support.",
+        "ids": [
+          "fire-hydrant"
+        ],
+        "references": [
+          "ledger#/entries/118/policyAssessment/equipmentAndCapabilities",
+          "ledger#/entries/118/illustrationObservation",
+          "ledger#/entries/16/classWideReconciliation",
+          "metadata#/exercises/fire-hydrant/supportRequirement",
+          "metadata#/exercises/banded-fire-hydrant/supportRequirement"
+        ],
+        "requiredDecision": "Resolve the support convention explicitly. This is a policy-consistency hold, not proof of different anatomy or a prescription to choose a value automatically."
+      },
+      "C3": {
+        "authority": "Owner-supplied authoritative product rule in the 2026-09-12 audit-refinement request.",
+        "authorizedLinksWithPendingEndpoints": [
+          {
+            "field": "approvedRegressions",
+            "source": "dumbbell-bent-over-row",
+            "target": "machine-row"
+          },
+          {
+            "field": "approvedSubstitutions",
+            "source": "hip-adduction-machine",
+            "target": "cable-standing-hip-adduction"
+          },
+          {
+            "field": "approvedRegressions",
+            "source": "pistol-squat",
+            "target": "assisted-pistol-squat"
+          },
+          {
+            "field": "approvedRegressions",
+            "source": "push-up",
+            "target": "knee-push-up"
+          },
+          {
+            "field": "approvedSubstitutions",
+            "source": "seated-row",
+            "target": "machine-row"
+          }
+        ],
+        "candidateCountUnderAuthoritativeRule": 182,
+        "finding": "The authoritative product rule separates relationship authorization from endpoint acceptance. An otherwise intrinsically supported source may be AI-accepted while an authorized relationship targets pending metadata; the relationship cannot confer endpoint acceptance.",
+        "qualification": "These seven sources return to the candidate cohort without quarantining or deleting authorized relationships. The three ankle-attachment gaps and fire-hydrant intrinsic hold remain pending. Runtime endpoint-acceptance enforcement is a required product boundary, not a newly implemented or verified runtime change.",
+        "relationshipHistory": {
+          "perSourceLookup": ".entries[] | select(.id == $id) | {id, metadataSha256, graphDecisions}",
+          "preservation": "No graph decision, rationale, comparison or endpoint digest was changed or deleted. Existing ledger graphDecisions remain authoritative historical records, bound by the unchanged ledger and metadata hashes.",
+          "previousArtifactSha256": "8ee226f1058a145c6b11e57573103e137f04198e103f8545ec0b29689cc5ee29",
+          "sources": [
+            "archer-push-up",
+            "dumbbell-bent-over-row",
+            "hindu-push-up",
+            "hip-adduction-machine",
+            "pistol-squat",
+            "push-up",
+            "seated-row"
+          ],
+          "supersededGraphOnlyHolds": {
+            "archer-push-up": {
+              "reason": "CONSERVATIVE_GRAPH_CLOSURE",
+              "target": "push-up"
+            },
+            "dumbbell-bent-over-row": {
+              "reason": "RELATIONSHIP_TARGET_PENDING",
+              "target": "machine-row"
+            },
+            "hindu-push-up": {
+              "reason": "CONSERVATIVE_GRAPH_CLOSURE",
+              "target": "push-up"
+            },
+            "hip-adduction-machine": {
+              "reason": "RELATIONSHIP_TARGET_WITHHELD_BY_AUDIT",
+              "target": "cable-standing-hip-adduction"
+            },
+            "pistol-squat": {
+              "reason": "RELATIONSHIP_TARGET_PENDING",
+              "target": "assisted-pistol-squat"
+            },
+            "push-up": {
+              "reason": "RELATIONSHIP_TARGET_PENDING",
+              "target": "knee-push-up"
+            },
+            "seated-row": {
+              "reason": "RELATIONSHIP_TARGET_PENDING",
+              "target": "machine-row"
+            }
+          },
+          "supersededHoldStatus": "Historical audit reasons only; none of these seven IDs remains pending solely because of a relationship endpoint."
+        },
+        "runtimeRule": {
+          "acceptancePropagatesAcrossRelationships": false,
+          "allOtherEligibilityRequirementsRemainRequired": true,
+          "independentEndpointAcceptanceChecksRequired": true,
+          "pendingEndpointsEligibleAsSubstitutions": false,
+          "pendingEndpointsGrantCapabilityEvidence": false,
+          "pendingEndpointsGrantEligibilityExceptions": false,
+          "relationshipAuthorizationDistinctFromEndpointAcceptance": true,
+          "rule": "Preserve relationship authorization and history, but fail closed on the relevant source and target acceptance checks before any eligibility exception, inherited evidence or eligible substitution. Pending endpoints remain pending even when their source is accepted. Candidate designation in this report is not actual endpoint acceptance."
+        },
+        "sourcesRestoredToCandidateCohort": [
+          "archer-push-up",
+          "dumbbell-bent-over-row",
+          "hindu-push-up",
+          "hip-adduction-machine",
+          "pistol-squat",
+          "push-up",
+          "seated-row"
+        ]
+      },
+      "C4": {
+        "currentReviewedAlternativesById": {
+          "bench-dip": [
+            [
+              "Bodyweight",
+              "Bench"
+            ]
+          ],
+          "bulgarian-split-squat": [
+            [
+              "Dumbbell",
+              "Bench"
+            ]
+          ],
+          "crunch": [
+            [
+              "Bodyweight",
+              "Bench"
+            ]
+          ],
+          "incline-push-up": [
+            [
+              "Bodyweight",
+              "Box"
+            ]
+          ],
+          "one-arm-dumbbell-row": [
+            [
+              "Dumbbell",
+              "Bench"
+            ]
+          ],
+          "reverse-lunge": [
+            [
+              "Dumbbell"
+            ]
+          ],
+          "romanian-deadlift": [
+            [
+              "Barbell"
+            ]
+          ],
+          "single-leg-romanian-deadlift": [
+            [
+              "Dumbbell"
+            ]
+          ],
+          "step-up": [
+            [
+              "Dumbbell",
+              "Bench"
+            ]
+          ],
+          "walking-lunge": [
+            [
+              "Dumbbell"
+            ]
+          ]
+        },
+        "finding": "Ten existing programming equipment contracts disagree with the current source-bound reviewed equipment contract.",
+        "references": [
+          "programming#/exercises/{id}/requiredEquipmentCombinations",
+          "metadata#/exercises/{id}/equipmentAlternatives",
+          "ledger entry for each ID: illustrationObservation, corrections and limitations"
+        ],
+        "requiredDecision": "Choose an authoritative setup contract before using legacy programming for alpha availability. Do not overwrite legacy ranges, progression or alternatives as an incidental categorical acceptance.",
+        "specialQuantityLimit": "bench-dip requires two support surfaces; the Bench token does not encode quantity."
+      },
+      "C5": {
+        "finding": "Legacy movementPattern is isolation; reviewed movementPattern is horizontal_pull.",
+        "ids": [
+          "rear-delt-fly",
+          "reverse-pec-deck"
+        ],
+        "references": [
+          "programming#/exercises/{id}/movementPattern",
+          "metadata#/exercises/{id}/movementPattern"
+        ],
+        "requiredDecision": "Keep these distinct contracts explicit or resolve taxonomy during migration. Neither category is newly established as a scientific fact by schema validity."
+      },
+      "C6": {
+        "examples": [
+          "review.graphIntegration.criticalHolds describes pull-ups -> negative-pull-up and side-plank -> plank as currently present; neither is emitted now.",
+          "Earlier crunch, decline-push-up and step-up correction strings mention Box alternatives subsequently removed."
+        ],
+        "finding": "Some summary/correction prose describes historical states rather than current emitted data.",
+        "references": [
+          "ledger#/review/graphIntegration/criticalHolds",
+          "metadata#/exercises/pull-ups/approvedRegressions",
+          "metadata#/exercises/side-plank/approvedRegressions",
+          "ledger entries crunch, decline-push-up and step-up: corrections"
+        ],
+        "requiredTreatment": "Use current metadata arrays, endpoint-bound graphDecisions and latest reconciliations. Do not replay chronological correction strings or supersededGraphNarrative as patches."
+      }
+    },
+    "currentArtworkConflictCounts": {
+      "outsideScope": 5,
+      "pendingWithDraft": 9,
+      "pendingWithoutMetadata": 21,
+      "total": 35
+    },
+    "currentClassificationCounts": {
+      "excluded_distance_duration": 10,
+      "excluded_stretch": 14,
+      "excluded_timed_conditioning": 11,
+      "supported": 267
+    },
+    "currentDispositionCounts": {
+      "humanSignoff": 0,
+      "metadataApproved": 0,
+      "metadataDraft": 211,
+      "outside_automatic_strength_scope": 35,
+      "pendingWithDraft": 25,
+      "pendingWithoutMetadata": 56,
+      "pending_evidence_or_policy": 81,
+      "ready_for_human_review": 186
+    },
+    "existingCorrectionsToPreserve": {
+      "allHeldAndRejectedRelationships": "Preserve the 77 hold and 103 reject decisions unless independently resolved.",
+      "banded-row": "Anchor remains unresolved despite five other fixed-anchor runtime corrections.",
+      "chest-supported-row": "Integrated plate-loaded lever Machine, not free Barbell plus Bench.",
+      "clamshell": "Resistance Band is required; no unweighted substitute inferred.",
+      "crunch": "Required lower-leg support is the depicted Bench, not generic Box.",
+      "decline-push-up": "Required foot support is Bench; supported status does not erase floor/push capabilities.",
+      "inchworm": "Retain floor_transition and balance_without_support.",
+      "machine-row": "Rigid-arm, torso-pad Machine interpretation is corrected; not a loose-handle V-bar cable row.",
+      "reverse-lunge": "Dumbbell-loaded variant, not a Bodyweight equipment alternative.",
+      "romanian-deadlift": "Barbell-only reviewed setup; legacy Dumbbell alternative is not upstream evidence.",
+      "single-leg-romanian-deadlift": "Dumbbell-loaded variant, not a Bodyweight equipment alternative.",
+      "step-up": "Dumbbell plus depicted Bench, not Box-only.",
+      "trap-bar-deadlift": "Retracted artwork-conflict allegation stays retracted; equipment vocabulary remains unresolved.",
+      "wall-handstand-push-up": "Retain floor_transition and upper_body_bodyweight_push."
+    },
+    "fullAutomaticPrescriptionCertified": false,
+    "implementationPerformed": false,
+    "internallySupportedFacts": {
+      "allAuthoredProposals": "All 211 satisfy the current schema and importer normalization, match bundled metadata and have current ledger digests.",
+      "allCanonicalIds": "Catalog, upstream source IDs and ledger coverage reconcile exactly; 302 unique entries, each retaining three source and bundled frame references.",
+      "capabilitySupportImpact": "Assessed against each recorded observation and current corrections. Standing-balance, floor-access, required supports and actual implements are generally explicit. These categorical mappings are product judgments; they do not establish medical or quantitative risk claims.",
+      "clearedTrainingConstraints": {
+        "emptyLists": 211,
+        "evidenceReference": "ledger#/review/metadataSchemaVersion2Note",
+        "nonemptyLists": 0,
+        "requiredTreatment": "Preserve every empty list. Do not infer clearances from muscles, equipment, complexity, low impact, historical consensus or this audit."
+      },
+      "directPrimary": {
+        "compositeAllocationStillPending": [
+          "barbell-deadlift",
+          "burpee",
+          "sumo-deadlift"
+        ],
+        "matchesExactSourceLabel": 179,
+        "quadsToQuadricepsAlias": 29,
+        "qualification": "Source-label agreement supports attribution, not biological exclusivity or suitability."
+      },
+      "equipment": {
+        "exactSingleSourceLabel": 164,
+        "expandedOrAmendedAlternatives": 47,
+        "qualification": "A source equipment label is not proof of complete setup. Three ready Cable-only proposals omit recorded ankle attachments."
+      },
+      "prescriptionShape": {
+        "all211MatchCatalogType": true,
+        "assisted_bodyweight": 2,
+        "bodyweight_reps": 79,
+        "duration": 12,
+        "qualification": "Type agreement does not resolve a contradictory illustrated identity.",
+        "weight_reps": 118
+      },
+      "provenance": "All proposals remain AI-authored drafts with null reviewerRole and reviewedAtEpochMillis. Schema-v2 digest refresh was bookkeeping, not renewed inspection.",
+      "relationships": {
+        "add": 66,
+        "decisions": 265,
+        "emitted": 85,
+        "hold": 77,
+        "qualification": "Current endpoint digests, capability comparisons and emitted adjacency reconcile. Structural validity is not equivalence or approval. Four retained links currently target pending records.",
+        "regressions": 35,
+        "reject": 103,
+        "retain": 19,
+        "substitutions": 50
+      },
+      "secondaryMuscles": "Every proposed secondary is represented by current catalog muscles or importer aliases. Secondary muscles remain descriptive, without fractional set credit."
+    },
+    "legacyProgrammingAccounting": {
+      "authoredMetadataWithoutProgramming": 93,
+      "currentlyReadyWithProgramming": 101,
+      "currentlyReadyWithoutProgramming": 85,
+      "durationWithNullRepRange": 14,
+      "fallbackReference": "app/src/main/java/wallcrawl/elopenmike/com/core/ai/DefaultExercisePrescriptionFactory.kt:87-96,130-139",
+      "fallbackWarning": "The current factory contains goal-based/default ranges. Those defaults must not be reported as exercise-specific evidence supplied by this ledger.",
+      "overlapWithAuthoredMetadata": 118,
+      "programmingOnPendingUnauthoredIds": 13,
+      "qualification": "Existing ranges, fatigue scores, coaching and legacy alternatives are not ratified by categorical metadata readiness. Missing programming is not a schema failure of reviewed metadata.",
+      "records": 131,
+      "repBasedWithRanges": 117
+    },
+    "outside_scope": {
+      "excluded_distance_duration": [
+        "assault-bike",
+        "cycling",
+        "farmer-carry",
+        "hiking",
+        "rowing",
+        "running",
+        "skierg",
+        "swimming",
+        "treadmill-incline-walk",
+        "walking"
+      ],
+      "excluded_stretch": [
+        "arm-circles",
+        "butterfly-stretch",
+        "cat-cow-stretch",
+        "childs-pose",
+        "cross-body-shoulder-stretch",
+        "doorway-chest-stretch",
+        "hamstring-stretch",
+        "kneeling-hip-flexor-stretch",
+        "leg-swings-stretch",
+        "seated-forward-fold-stretch",
+        "standing-quad-stretch",
+        "torso-twist-stretch",
+        "wall-calf-stretch",
+        "worlds-greatest-stretch"
+      ],
+      "excluded_timed_conditioning": [
+        "battle-ropes",
+        "bear-crawl",
+        "elliptical",
+        "fast-feet",
+        "high-knees",
+        "jump-rope",
+        "jumping-jack",
+        "lateral-shuffle",
+        "plank-jack",
+        "seal-jack",
+        "stair-climber"
+      ],
+      "preserveBrowsingManualAccessAndCurrentClassification": true,
+      "retainUnresolvedArtworkFlags": [
+        "hiking",
+        "plank-jack",
+        "seal-jack",
+        "swimming",
+        "torso-twist-stretch"
+      ]
+    },
+    "pending_withheld": {
+      "additionalAuditHolds": {
+        "cable-kickback": {
+          "correction": "C1",
+          "reason": "ANKLE_ATTACHMENT_GAP"
+        },
+        "cable-standing-hip-abduction": {
+          "correction": "C1",
+          "reason": "ANKLE_ATTACHMENT_GAP"
+        },
+        "cable-standing-hip-adduction": {
+          "correction": "C1",
+          "reason": "ANKLE_ATTACHMENT_GAP"
+        },
+        "fire-hydrant": {
+          "correction": "C2",
+          "reason": "GROUNDED_SUPPORT_POLICY_CONFLICT"
+        }
+      },
+      "existingDrafts": {
+        "assisted-pistol-squat": "Exact parallel-rail to Dip Bars mapping remains unratified.",
+        "banded-frog-pump": "Frog bridge versus rear-hand-supported seated abduction is unresolved.",
+        "barbell-deadlift": "Conventional deadlift single-primary allocation remains unresolved; do not substitute RDL identity.",
+        "bear-plank": "Static knee-hover frames conflict with crawl-like first frame.",
+        "belt-squat": "Supported label versus unheld belt-loaded squat requires a support-policy decision.",
+        "burpee": "Composite primary allocation and inclusion of a push-up remain unresolved.",
+        "cable-crunch": "Kneeling versus standing/crouched frames change floor, support and balance requirements.",
+        "copenhagen-plank": "Core allocation versus missing Adductors representation remains unresolved.",
+        "crab-walk": "Primary muscle, movement role and continuous_activity applicability remain unresolved.",
+        "dip": "Completed Dip Bars setup and vertical_push classification await record-specific ratification.",
+        "feet-elevated-pike-push-up": "Canonical Box-supported variant and support semantics await ratification.",
+        "front-foot-elevated-split-squat": "Box mapping and foot-elevation support semantics await ratification.",
+        "hanging-leg-raise": "Pull-up Bar correction is supported, but the existing pending decision remains unratified.",
+        "knee-push-up": "Knee-floor leverage versus external-support convention remains unresolved.",
+        "l-sit-hold": "Straight-leg L-sit and tucked holds are mixed.",
+        "machine-row": "Rigid-arm Machine identity is corrected; exact inventory/subtype and incident relationships remain pending.",
+        "negative-pull-up": "Eccentric-only execution and top-position access are not established.",
+        "neutral-grip-pull-up": "Straight-bar images do not establish required neutral-grip handles.",
+        "parallel-bar-dips": "Bars are omitted from drawings; apparatus detail and support convention remain unresolved.",
+        "pendlay-row": "Defining dead-stop floor reset and posture are not established.",
+        "plank": "Full forearm-and-toe and knee-supported holds are mixed.",
+        "single-leg-box-squat": "Box seat versus tap-target support convention remains unresolved.",
+        "sumo-deadlift": "Hamstrings versus other represented direct-primary allocation remains unresolved.",
+        "wrist-curl": "Wrist-flexion motion is insufficiently legible; standing balance correction does not resolve it.",
+        "wrist-extension": "Wrist-extension motion is insufficiently legible; standing balance correction does not resolve it."
+      },
+      "existingOmittedMetadata": {
+        "ab-wheel": "Mixed wheel/barbell rollout variants; exact implement and setup are unrepresentable.",
+        "assisted-dip": "Seated externally resisted machine press conflicts with assisted_bodyweight recording identity.",
+        "back-extension": "Required thigh-pad and ankle-retaining apparatus is not faithfully represented.",
+        "banded-face-pull": "Runtime anchor minimum is resolved, but full categorical proposal and held relationship remain unauthored.",
+        "banded-hip-thrust": "Additional lap resistance/anchor and floor-entry setup are uncertain.",
+        "banded-kickback": "Runtime attachment/support minimum is resolved; full categorical proposal remains unauthored.",
+        "banded-lat-pulldown": "Runtime overhead anchor plus Chair is resolved; full proposal and seated-versus-suspended relationship remain unresolved.",
+        "banded-pallof-press": "Runtime lateral anchor minimum is resolved; full categorical proposal remains unauthored.",
+        "banded-row": "Exact off-image forward anchor height/configuration is unknown.",
+        "banded-woodchop": "Runtime low anchor is resolved; full proposal and rotation relationship remain unresolved.",
+        "calf-raise": "Two required held vertical rails are not represented by Bodyweight alone.",
+        "commando-pull-up": "Separated transverse grips do not establish lengthwise commando execution.",
+        "concentration-curl": "Seated versus standing setup is not established; support and balance cannot be selected.",
+        "donkey-calf-raise": "Partner-loaded artwork conflicts with intended machine/setup contract.",
+        "dragon-flag": "Required fixed overhead grip post cannot be assumed from a plain Bench.",
+        "dumbbell-overhead-tricep-extension": "Exact backed seat is unresolved between Chair and Bench.",
+        "dumbbell-sumo-deadlift": "Movement-pattern and composite single-primary allocation remain unresolved.",
+        "explosive-push-up": "Impact is evident, but required LOW/HIGH product threshold is unresolved.",
+        "glute-focused-back-extension": "Stationary Roman-chair thigh/ankle retaining fixture is not generic Machine.",
+        "good-morning": "Back-bar acquisition/setup is not established; neither rack nor self-placement may be assumed.",
+        "half-burpee": "Hopping versus stepping transition is unresolved, preventing impact assignment.",
+        "handstand-push-up": "Pictured parallettes are not represented; Bodyweight or Dip Bars would substitute another setup.",
+        "heel-elevated-goblet-squat": "Heel-elevation fixture is unidentified; Plate or Box cannot be guessed.",
+        "hip-airplane": "Upright supported leg abduction conflicts with named hinged airplane; post support also unresolved.",
+        "hollow-body-hold": "V-sit/tuck frames do not establish the named stable hollow hold.",
+        "inverted-row": "Suspended overhead-pull artwork does not establish a feet-supported row.",
+        "landmine-press": "Required secured pivot/landmine fixture lacks exact representation.",
+        "landmine-romanian-deadlift": "Required secured pivot/landmine fixture lacks exact representation.",
+        "landmine-squat": "Required pivot fixture and support/unsupported_squat treatment remain unresolved.",
+        "lying-hamstring-walkout": "Suspended curl artwork conflicts with floor-walkout identity and omits suspension requirements.",
+        "machine-glute-kickback": "Required separate ankle attachment is not ensured by Cable or Machine.",
+        "meadows-row": "Secured landmine pivot and exact self-bracing/setup contract remain unresolved.",
+        "mountain-climber": "Hopping versus stepping execution and impact level remain unresolved.",
+        "nordic-hamstring-curl": "Required secured ankle restraint lacks exact equipment representation.",
+        "prone-t-raise": "Bench and dumbbell artwork conflicts with Bodyweight/bodyweight_reps identity.",
+        "rack-pull": "Defining elevated supported start is absent from the recorded frames.",
+        "reverse-hyperextension": "Apparatus and moving segment do not establish the named reverse-hyper variation.",
+        "russian-twist": "All recorded frames include a ball; unweighted external examples cannot remove the implement.",
+        "seated-knee-tuck": "Raised seat/frame is unresolved between Bench, Machine or a different floor variant.",
+        "shrimp-squat": "Held pole-assisted variant is not a complete Bodyweight-only unsupported setup.",
+        "single-arm-cable-row": "Held and unheld non-working-hand positions do not establish one support contract.",
+        "single-leg-calf-raise": "Required held support surface is unidentified.",
+        "sissy-squat": "Required foot-anchor apparatus is not represented.",
+        "skater-hop": "LOW/HIGH impact policy and broad Legs single-primary allocation remain unresolved.",
+        "skater-squat": "Unilateral, bilateral and lateral stances do not establish one named variation.",
+        "spider-curl": "Preacher-style curved-bar artwork conflicts with the named chest-down dumbbell variant.",
+        "sprawl": "Exact sprawl endpoints and distinction from squat-thrust are unresolved.",
+        "squat-thrust": "Exact endpoints and distinction from sprawl are unresolved.",
+        "stability-ball-hamstring-curl": "Prone ball knee-tuck/pike artwork conflicts with supine heel-on-ball curl.",
+        "toe-touch": "Standing forward-fold artwork conflicts with Core repetition identity.",
+        "towel-hamstring-curl": "Towel-assisted straight-leg stretch conflicts with slider-curl identity.",
+        "towel-row": "Resistance source and anchor/self-resistance method are not established.",
+        "trap-bar-deadlift": "Trap/hex-bar artwork is coherent; exact Trap Bar equipment representation remains absent.",
+        "weighted-chin-up": "Required belt/chain representation and Biceps allocation remain unresolved.",
+        "weighted-dip": "Required belt/chain representation and vertical_push classification remain unresolved.",
+        "weighted-pull-up": "Required belt/chain representation and cross-shape progression policy remain unresolved."
+      }
+    },
+    "readOnly": true,
+    "reportVersion": 1,
+    "scope": {
+      "authoredProposalsInspected": 211,
+      "canonicalIds": 302,
+      "distinctRegisteredEvidenceUrls": 348,
+      "evidenceBoundary": "Uses recorded source observations, existing citations, corrections, current metadata and endpoint-specific relationship assessments. Prior authors' image/source inspection claims were not independently repeated.",
+      "legacyProgrammingRecordsInspected": 131,
+      "newIllustrationInspection": false,
+      "newWebResearch": false,
+      "registeredEvidenceItems": 916
+    },
+    "sources": {
+      "catalog": "app/src/main/assets/workout-guide/catalog.json",
+      "ledger": "docs/research/2026-09-07-full-exercise-catalog-review.json",
+      "manifest": "app/src/main/assets/workout-guide/upstream-manifest.json",
+      "metadata": "tools/workout-guide/reviewed-metadata.json",
+      "perIdReferenceRule": {
+        "ledgerFields": [
+          "sourceId",
+          "sourceSlug",
+          "sourcePrimary",
+          "sourceSecondary",
+          "sourceType",
+          "sourceEquipment",
+          "illustrationObservation",
+          "evidence",
+          "policyAssessment",
+          "corrections",
+          "limitations",
+          "remainingDecisions",
+          "graphDecisions",
+          "metadataSha256"
+        ],
+        "ledgerJq": ".entries[] | select(.id == $id)",
+        "metadataPointer": "/exercises/{id}",
+        "note": "These references apply to every ID below. Ledger evidence items contain the exercise-specific source URLs and observations.",
+        "programmingPointer": "/exercises/{id}"
+      },
+      "pinnedUpstreamCommit": "ba0b709cb20430361b2cb33aaadd20998164a916",
+      "programming": "tools/workout-guide/programming-overrides.json",
+      "schema": "tools/workout-guide/review-schema.json",
+      "sha256": {
+        "catalog": "6d92f16032dc325777d9a6c9a2d8dcef980506b0bf9fa001ae894799e03872f4",
+        "ledger": "b98550992b61615d804a0c12991335caa30c22e03978f6d8b0d682e90763f3f1",
+        "metadata": "0b94b26725f949af35b4c13a638552524134871f1c9a0fb5e3bb5fc56cf68481",
+        "programming": "8a3ea988d0f32954fd4a03e2f58a2e4b65bce6db6b638dd0475a1f0994b92c24"
+      }
+    }
+  },
+  "reportCanonicalSha256": "78ea7058c01e779303dd67daffe64774fb2286a9713f2dfffe3c9a11b90f9091",
+  "reviewedAtEpochMillis": 1789278919309,
+  "reviewerModelId": "gpt-6-astra",
+  "schemaVersion": 2,
+  "timestampSource": "Original corpus-audit.json mtime, st_mtime_ns // 1000000, recorded once for the completed audit. This is not the modification time of the committed archival copy."
+}

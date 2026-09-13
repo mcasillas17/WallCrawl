@@ -15,7 +15,7 @@ enum class TrainingProgramStatePolicyVersion {
  *
  * [wallcrawl.elopenmike.com.core.ai.StateBasedTrainingPolicy] reads the ledger only on the
  * reviewed-enabled path to cap future automatic sets by remaining direct-primary allowance.
- * Its credited counts are all zero while the bundled catalog carries no `APPROVED` reviewed
+ * Its credited counts are all zero while the bundled catalog carries no accepted reviewed
  * metadata, and every completed work set is reported as unattributed instead.
  */
 data class TrainingProgramState(

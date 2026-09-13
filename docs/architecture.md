@@ -218,27 +218,35 @@ state:
 - normalized exercise history and recently trained muscles;
 - the full bundled catalog after hard filtering.
 
-Production currently uses `ExerciseFilter` to remove explicit exclusions and
-exercises whose required equipment is unavailable. The six-ID application-owned
-fixed-anchor correction in `ExerciseEquipmentRequirements.kt` takes precedence,
-then legacy programming equipment combinations, then the upstream listed
-equipment. Five band setups require explicit matching confirmations; the cropped
-anchor in `banded-row` is unresolved and has no automatic eligibility. Manual
-templates use the same requirements for warnings, not for hiding entries.
-Filtering defines the legal search space but does not choose the workout. See the
+Production filtering is `ExerciseEligibilityPolicy` — the reviewed eligibility path,
+described just below — because production composition has
+`PlannerFeatureFlags.reviewedCapabilityEligibility` enabled. `ExerciseFilter`, which
+removes explicit exclusions and exercises whose required equipment is unavailable using
+only legacy `programming` equipment combinations and the upstream listed equipment, is
+the disabled-path fallback `WorkoutGenerationContextBuilder` uses only when that flag is
+off (as tests can still compose). The six-ID application-owned fixed-anchor correction
+in `ExerciseEquipmentRequirements.kt` takes precedence for both paths, then legacy
+programming equipment combinations or the reviewed equipment alternatives depending on
+which path is active, then the upstream listed equipment. Five band setups require
+explicit matching confirmations; the cropped anchor in `banded-row` is unresolved and
+has no automatic eligibility on either path. Manual templates use the same requirements
+for warnings, not for hiding entries. Filtering defines the legal search space but does
+not choose the workout. See the
 [canonical equipment and compatibility contract](band-anchor-equipment.md).
 
 An implemented, dependency-injected `ExerciseEligibilityPolicy` is the reviewed-only
-automatic legality path. When explicitly enabled it accepts only `APPROVED` reviewed
-metadata, requires one complete reviewed equipment alternative and the source-bound
-fixed-anchor minimum (also for supported-regression availability), preserves explicit
-exclusions, rejects required capabilities marked `AVOID`, fails closed for joint-
-sensitive constraints that lack reviewed mappings, enforces `LOW_IMPACT_ONLY`, and
-temporarily blocks undemonstrated `ADVANCED` work while uncalibrated or returning. A
-supported regression lifts that ceiling only when the regression itself is below the
-advanced ceiling or its family has demonstrated history. `LIMITED` and `UNKNOWN`
-capability requirements remain typed soft preferences rather than becoming favorable
-assumptions.
+automatic legality path, and production composition has it enabled. It accepts only
+metadata that passes `Exercise.acceptedMetadata()` — `APPROVED` (human-only, and
+currently held by zero bundled records) or `AI_ACCEPTED` (owner-authorized, currently
+held by 182 bundled records) — requires one complete reviewed equipment alternative and
+the source-bound fixed-anchor minimum (also for supported-regression availability),
+preserves explicit exclusions, rejects required capabilities marked `AVOID`, fails
+closed for joint-sensitive constraints that lack reviewed mappings, enforces
+`LOW_IMPACT_ONLY`, and temporarily blocks undemonstrated `ADVANCED` work while
+uncalibrated or returning. A supported regression lifts that ceiling only when the
+regression itself is below the advanced ceiling or its family has demonstrated history.
+`LIMITED` and `UNKNOWN` capability requirements remain typed soft preferences rather
+than becoming favorable assumptions.
 
 On that same reviewed-only path, `WorkoutGenerationContextBuilder` derives
 `CapabilityEvidenceSet` locally and on demand from the same bounded max-eight completed
@@ -253,7 +261,8 @@ measurement shape: `WEIGHT_REPETITIONS`, `BODYWEIGHT_REPETITIONS`,
 shape consistency but compares no magnitudes or thresholds. This is product
 reproducibility, not physiology, readiness, recovery, or medical inference. Evidence
 applies only to the demonstrated exercise or one direct `approvedRegressions` target
-when both source and target metadata are `APPROVED`; there is no draft, missing,
+when both source and target metadata independently pass `Exercise.acceptedMetadata()`
+(`APPROVED` or `AI_ACCEPTED`); there is no draft, missing,
 inferred, substitution, blank-ID, or transitive expansion.
 
 `WorkoutPlanner` receives only structured `WorkoutGenerationContext`. The current
@@ -269,7 +278,9 @@ Spanish rendering happens only at the screen boundary.
 
 The supported-regression policy runs only on the planner's existing legal candidate set.
 It precomputes direct reviewed relationships before either comparator runs: both endpoints
-must be approved, the source must directly list the target as an approved regression, the
+must independently pass `Exercise.acceptedMetadata()` — `APPROVED` or `AI_ACCEPTED`,
+through the same shared seam every other consumer reads — the source must directly list
+the target as an accepted regression, the
 target must be explicitly `SUPPORTED`, and the source must have an unresolved
 exercise-specific `LIMITED` preference for a capability the target does not require.
 Evidence for the source suppresses this signal along with the existing capability penalty.
@@ -375,13 +386,15 @@ only a history summary; the planner does not use it as a scheduling or recovery 
 
 `WorkoutGenerationContext` already carries the complete `UserProfile`, so no second
 capability field exists. Production composition sets
-`PlannerFeatureFlags.reviewedCapabilityEligibility = false` because the bundled cohort
-contains 211 `DRAFT` entries and zero `APPROVED` entries. The current production
-recommendation therefore still follows the legacy filter and remains invariant to
-capability changes. Tests enable the gate only with synthetic in-memory approvals; a
-reviewed no-candidate result reaches `TodayViewModel` as a typed reason and never falls
-back to an unreviewed exercise. Enabling production requires explicit human metadata
-signoff plus a deliberate availability/persona review and flag change.
+`PlannerFeatureFlags.reviewedCapabilityEligibility = true` because an owner-authorized
+audit accepted 182 of the bundled cohort's 211 authored entries as `AI_ACCEPTED` (0 are
+human `APPROVED`; 29 stay `DRAFT`; 56 carry no authored block; 35 sit outside
+automatic-strength scope). The current production recommendation therefore follows the
+reviewed eligibility gate and responds to capability changes. Tests can still compose the
+disabled legacy path with a locally built `PlannerFeatureFlags(reviewedCapabilityEligibility
+= false)`; a reviewed no-candidate result reaches `TodayViewModel` as a typed reason and
+never falls back to an unreviewed exercise. Genuine human `APPROVED` review of the
+metadata remains the outstanding gate before any record can carry that state instead.
 
 Selected joint sensitivities are decided per exercise on that path, against the reviewed
 `clearedTrainingConstraints` field, and the supported-regression exception applies the same
@@ -452,10 +465,11 @@ across process death, not just within a session.
 A split is a promise about what a session trains, and `WorkoutFocus.kt` holds the one
 rule that decides whether the promise is true. A split is **genuinely trained** by an
 exercise when that exercise is strength work and one of the muscles it trains as its own
-purpose is in the split's `targetMuscles`. Own-purpose means the approved
-`directPrimaryMuscle` where the reviewed contract applies — `APPROVED` plus well-formed
-human provenance — and the legacy `primaryMuscles` otherwise, so a `DRAFT` record drives
-nothing here either. Descriptive secondary muscles are excluded.
+purpose is in the split's `targetMuscles`. Own-purpose means the accepted
+`directPrimaryMuscle` where the reviewed contract applies — `Exercise.acceptedMetadata()`
+returning non-null, whether that record is human `APPROVED` or owner-authorized
+`AI_ACCEPTED` — and the legacy `primaryMuscles` otherwise, so a `DRAFT` or unaccepted
+record drives nothing here either. Descriptive secondary muscles are excluded.
 
 Split fillability, both ordering passes, the selection invariant, the muscle line the card
 shows and whole-program validation all read that one predicate, so a split the planner
@@ -810,10 +824,12 @@ Progress answers two different questions without combining their totals:
   positive repetitions from rep-based sets; external-load volume from completed
   `WEIGHT_REPS` measurements, converted to the preferred unit and expressed as load × reps.
   Assistance, body mass, duration and distance are not converted into tonnage.
-- **Reviewed primary dose:** the existing `PRIMARY_ONLY_V1` ledger, with one approved direct
-  primary per completed non-warm-up set. Descriptive secondaries and typed unattributed
-  work stay separate. The 211 DRAFT / 0 APPROVED catalog means reviewed allocation can be
-  empty while logged activity is not.
+- **Reviewed primary dose:** the existing `PRIMARY_ONLY_V1` ledger, with one accepted direct
+  primary per completed non-warm-up set — credited for both `APPROVED` and `AI_ACCEPTED`
+  metadata alike. Descriptive secondaries and typed unattributed work stay separate. The
+  bundled cohort's 182 `AI_ACCEPTED` records (0 `APPROVED`) mean reviewed allocation now
+  covers most, but not all, logged exercises: the 29 `DRAFT` and 91 unaccepted/out-of-scope
+  entries still contribute typed unattributed work instead of dose credit.
 
 Legacy primary-muscle involvement is a distinct descriptive view: a completed set can
 appear under multiple muscles, so those counts must not be summed as unique sets. Warm-ups
@@ -887,8 +903,9 @@ set for loaded work, more reps for bodyweight work, and no record without prior
 history to beat — so the two surfaces cannot disagree.
 
 `WeeklyDoseLedgerRepository` reconstructs a `PRIMARY_ONLY_V1` ledger from completed history
-and approved direct-primary metadata. Missing and `DRAFT` metadata become typed unattributed
-work sets rather than guessed muscle credit.
+and accepted direct-primary metadata (`APPROVED` or `AI_ACCEPTED`). Missing, `DRAFT`, and
+otherwise-unaccepted metadata become typed unattributed work sets rather than guessed
+muscle credit.
 
 `TrainingProgramStateProvider` composes that ledger with the adaptation state derived by
 `AdaptationStatePolicy` into a `TrainingProgramState`, which rides on

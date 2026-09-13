@@ -24,7 +24,13 @@ enum class LedgerOmissionReason {
     /** The exercise exists but carries no reviewed metadata block. */
     MISSING_REVIEWED_METADATA,
 
-    /** Reviewed metadata exists but has not been approved by a human reviewer. */
+    /**
+     * Reviewed metadata exists but is not accepted for automatic planning.
+     *
+     * The name predates the `AI_ACCEPTED` state and is frozen: this reason is persisted by
+     * name in the stored ledger. It covers a draft and a record whose provenance does not
+     * match its state; an accepted record, human or AI, is credited instead.
+     */
     METADATA_NOT_APPROVED
 }
 

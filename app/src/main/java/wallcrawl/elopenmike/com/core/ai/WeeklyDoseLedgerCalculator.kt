@@ -4,7 +4,6 @@ import java.util.EnumMap
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.LedgerOmissionReason
 import wallcrawl.elopenmike.com.core.model.LedgerPolicyVersion
-import wallcrawl.elopenmike.com.core.model.ReviewState
 import wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetType
@@ -48,7 +47,7 @@ class WeeklyDoseLedgerCalculator {
 
                     is LedgerAttribution.Credited -> {
                         require(attribution.reviewed.directPrimaryMuscle.isNotBlank()) {
-                            "Approved reviewed metadata is missing directPrimaryMuscle for " +
+                            "Accepted reviewed metadata is missing directPrimaryMuscle for " +
                                 "exercise '${exercise.exerciseId}'."
                         }
                         directPrimarySets.merge(
@@ -191,10 +190,13 @@ class WeeklyDoseLedgerCalculator {
 /**
  * How one completed exercise instance's work sets are attributed.
  *
- * Attribution is deliberately total and fail-closed: an exercise either resolves to approved
+ * Attribution is deliberately total and fail-closed: an exercise either resolves to accepted
  * reviewed metadata or is counted as omitted with a typed reason. There is no third branch
  * that falls back to legacy `primaryMuscles`, the exercise name, legacy `programming`, or an
  * inferred movement pattern.
+ *
+ * It reads the same acceptance gate selection does, which is what stops an exercise that was
+ * legally planned from being silently uncreditable once its sets are completed.
  */
 private sealed interface LedgerAttribution {
     data class Credited(val reviewed: ReviewedExerciseMetadata) : LedgerAttribution
@@ -206,13 +208,12 @@ private fun WorkoutExercise.resolveAttribution(
 ): LedgerAttribution {
     val exercise = exercisesById[exerciseId]
         ?: return LedgerAttribution.Omitted(LedgerOmissionReason.UNKNOWN_EXERCISE)
-    val reviewed = exercise.reviewedMetadata
-        ?: return LedgerAttribution.Omitted(LedgerOmissionReason.MISSING_REVIEWED_METADATA)
-    return when (reviewed.reviewState) {
-        ReviewState.APPROVED -> LedgerAttribution.Credited(reviewed)
-        ReviewState.DRAFT ->
-            LedgerAttribution.Omitted(LedgerOmissionReason.METADATA_NOT_APPROVED)
+    if (exercise.reviewedMetadata == null) {
+        return LedgerAttribution.Omitted(LedgerOmissionReason.MISSING_REVIEWED_METADATA)
     }
+    return exercise.acceptedMetadata()
+        ?.let(LedgerAttribution::Credited)
+        ?: LedgerAttribution.Omitted(LedgerOmissionReason.METADATA_NOT_APPROVED)
 }
 
 /**

@@ -11,6 +11,9 @@ import wallcrawl.elopenmike.com.core.ai.ProgramViolation
 import wallcrawl.elopenmike.com.core.ai.ProgramViolationCode
 import wallcrawl.elopenmike.com.core.ai.RecommendationContextIdentity
 import wallcrawl.elopenmike.com.core.ai.RecommendationSnapshot
+import wallcrawl.elopenmike.com.core.ai.TrainingPolicyNoGuidanceReason
+import wallcrawl.elopenmike.com.core.ai.TrainingPolicyResult
+import wallcrawl.elopenmike.com.core.ai.TrainingPolicyResultException
 import wallcrawl.elopenmike.com.core.ai.WorkoutGenerationContextBuilder
 import wallcrawl.elopenmike.com.core.ai.WorkoutPlanner
 import wallcrawl.elopenmike.com.core.ai.WorkoutPlanningFailure
@@ -223,8 +226,18 @@ class TodayViewModel(
      * the planner should not have to phrase user-facing text in any language, and "no
      * allowed candidate exercises available" is not something to show a person
      * mid-workout-planning.
+     *
+     * A week whose configured allowance is already spent reaches this as a refusal from the
+     * prescription policy rather than as a whole-program rejection, because no prescription
+     * can be written at all. It is the same configured-policy limit either way, so it gets
+     * the same copy as [validationError] gives it instead of a generic failure.
      */
     private fun userFacingError(error: Exception, isRegeneration: Boolean): TodayError {
+        val exhaustedAllowance = (error as? TrainingPolicyResultException)?.result
+            ?.let { it as? TrainingPolicyResult.NoGuidance }
+            ?.reason == TrainingPolicyNoGuidanceReason.WEEKLY_DIRECT_PRIMARY_ALLOWANCE_EXHAUSTED
+        if (exhaustedAllowance) return TodayError.WEEKLY_ALLOWANCE_REACHED
+
         val planningError = error as? WorkoutValidationException
         return when (planningError?.failure) {
             WorkoutPlanningFailure.NO_CANDIDATES -> TodayError.NO_CANDIDATES

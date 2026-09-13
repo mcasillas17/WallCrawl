@@ -93,7 +93,7 @@
     <string name="band_setup_kickback_description">Sujeción al tobillo y apoyo estable al alcance de la mano en el mismo conjunto de anclaje bajo. Selecciona también el anclaje bajo por separado.</string>
 
     <string name="onboarding_safety_heading">ARTICULACIONES SENSIBLES</string>
-    <string name="onboarding_safety_hint">Cuéntanos qué articulaciones quieres cuidar. WallCrawl guarda tu respuesta, pero los entrenamientos automáticos todavía no filtran por ella: hacen falta asignaciones de ejercicios revisadas por una persona, y suponerlas no sería seguro. La exploración y los entrenamientos manuales no cambian. Esto no es consejo médico.</string>
+    <string name="onboarding_safety_hint">Cuéntanos qué articulaciones quieres cuidar. Los entrenamientos automáticos leen tu respuesta. «Solo bajo impacto» ya se aplica hoy; todavía ningún ejercicio revisado está autorizado para una articulación concreta, así que si eliges una de esas, WallCrawl no tendrá entrenamientos automáticos que ofrecer hasta que exista esa revisión. La exploración y los entrenamientos manuales no cambian. Esto no es consejo médico.</string>
     <string name="onboarding_safety_none_title">Sin molestias / sin restricciones</string>
     <string name="onboarding_safety_none_subtitle">Ninguna zona que cuidar.</string>
     <string name="onboarding_safety_tag_prompt">O marca zonas específicas:</string>
@@ -155,7 +155,7 @@
 
     <!-- ============================ Movement preferences ============================ -->
     <string name="movement_capability_intro">Responde cada preferencia, incluida «No estoy seguro» cuando sea la mejor opción.</string>
-    <string name="movement_capability_future_use">Estos ajustes preparan una selección de ejercicios personalizada a futuro. Todavía no cambian las recomendaciones actuales.</string>
+    <string name="movement_capability_current_use">Los entrenamientos automáticos leen estos ajustes. Un movimiento que requiere algo marcado como Evitar queda fuera de tus recomendaciones y, si no queda nada que planificar, WallCrawl lo dice en vez de ofrecer uno.</string>
     <string name="movement_capability_answer_required">Elige una respuesta para esta preferencia de movimiento.</string>
     <string name="movement_capability_summary_label">Preferencias de movimiento</string>
     <string name="movement_capability_option_accessibility">%1$s, %2$s</string>
@@ -302,11 +302,11 @@
     <string name="today_error_start_validation_failed">Esta sugerencia ya no encaja con tu configuración actual. Regenérala e inténtalo de nuevo.</string>
     <string name="today_error_weekly_allowance_reached">Las series planeadas de esta semana ya están cubiertas para esos músculos. Aun así puedes crear tu propia rutina.</string>
 
-    <string name="today_error_reviewed_no_approved_metadata">La planificación automática revisada todavía no está disponible, porque ningún ejercicio tiene metadatos aprobados por una persona. Aun así puedes crear tu propia rutina.</string>
+    <string name="today_error_reviewed_no_approved_metadata">Todavía ningún ejercicio que encaje con tu configuración está dentro del alcance automático revisado. Aun así puedes crear tu propia rutina.</string>
     <string name="today_error_reviewed_exclusions">Tus exclusiones de ejercicios no dejan opciones automáticas revisadas. Actualiza tus exclusiones en el perfil o crea tu propia rutina.</string>
     <string name="today_error_reviewed_equipment">Tu equipo disponible no deja opciones automáticas revisadas. Actualiza tu equipo en el perfil o crea tu propia rutina.</string>
     <string name="today_error_reviewed_capabilities">Tus preferencias de movimiento no dejan opciones automáticas revisadas. Actualízalas en el perfil o crea tu propia rutina.</string>
-    <string name="today_error_reviewed_constraints">Tus restricciones de entrenamiento no dejan opciones automáticas revisadas. Algunas restricciones todavía necesitan asignaciones de ejercicios revisadas por una persona.</string>
+    <string name="today_error_reviewed_constraints">Tus restricciones de entrenamiento no dejan opciones automáticas revisadas. Esas restricciones todavía no están dentro del alcance automático revisado.</string>
     <string name="today_error_reviewed_calibration">Tu etapa de calibración actual no deja opciones automáticas revisadas. Aun así puedes crear tu propia rutina.</string>
     <string name="today_error_reviewed_none_eligible">Ningún ejercicio cumple todas las reglas de la planificación automática revisada. Aun así puedes crear tu propia rutina.</string>
 
@@ -556,7 +556,7 @@
     <string name="profile_equipment_heading">EQUIPO DISPONIBLE</string>
     <string name="profile_muscle_heading">PRIORIDADES MUSCULARES</string>
     <string name="profile_safety_heading">SEGURIDAD AL ENTRENAR</string>
-    <string name="profile_safety_description">Tu selección de articulaciones se guarda, pero los entrenamientos automáticos todavía no filtran por ella. Hacen falta asignaciones de ejercicios revisadas por una persona. La exploración y los entrenamientos manuales no cambian. Esto no es consejo médico.</string>
+    <string name="profile_safety_description">Tu selección de articulaciones se lee al crear entrenamientos automáticos. «Solo bajo impacto» ya se aplica hoy; todavía ningún ejercicio revisado está autorizado para una articulación concreta, así que si eliges una de esas, WallCrawl no tendrá entrenamientos automáticos que ofrecer hasta que exista esa revisión. La exploración y los entrenamientos manuales no cambian. Esto no es consejo médico.</string>
     <string name="profile_break_title">Regreso después de una pausa</string>
     <string name="profile_break_hint">Ajusta la duración de tu pausa para que WallCrawl adapte el volumen que planifica.</string>
     <string name="profile_app_preferences_heading">PREFERENCIAS DE LA APP</string>
@@ -566,7 +566,7 @@
     <string name="profile_load_error">No se pudo cargar tu perfil. Inténtalo de nuevo.</string>
 
     <string name="profile_capability_title">PREFERENCIAS DE MOVIMIENTO</string>
-    <string name="profile_capability_description">Estos ajustes preparan una selección de ejercicios personalizada a futuro. Todavía no cambian las recomendaciones actuales.</string>
+    <string name="profile_capability_description">Los entrenamientos automáticos leen estos ajustes. Un movimiento que requiere algo marcado como Evitar queda fuera de tus recomendaciones y, si no queda nada que planificar, WallCrawl lo dice en vez de ofrecer uno.</string>
     <string name="profile_capability_edit">Editar las preferencias de movimiento</string>
     <string name="profile_capability_save">Guardar preferencias</string>
     <string name="profile_capability_saving">Guardando preferencias…</string>

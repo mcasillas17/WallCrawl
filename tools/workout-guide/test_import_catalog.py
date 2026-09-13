@@ -347,9 +347,13 @@ class ImportCatalogTest(unittest.TestCase):
         fixtures = json.loads(PARITY_FIXTURES.read_text())
         for case in fixtures["invalidCases"]:
             with self.subTest(case=case["name"]):
-                self._write_reviewed_metadata()
+                metadata = json.loads(
+                    json.dumps(fixtures[case.get("base", "baseReviewedMetadata")])
+                )
+                self._write_reviewed_metadata(
+                    schema_version=metadata["provenance"]["schemaVersion"]
+                )
                 reviewed = json.loads(self.reviewed_metadata.read_text())
-                metadata = json.loads(json.dumps(fixtures["baseReviewedMetadata"]))
                 self._apply_fixture_operation(metadata, case)
                 reviewed["exercises"]["barbell-bench-press"] = metadata
                 self.reviewed_metadata.write_text(json.dumps(reviewed, indent=2) + "\n")
@@ -367,7 +371,109 @@ class ImportCatalogTest(unittest.TestCase):
         result = self._run_import()
 
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn("requires reviewerRole and reviewedAtEpochMillis", result.stderr)
+        self.assertIn("reviewerRole", result.stderr)
+
+    def test_accepts_ai_accepted_entry_carrying_only_ai_provenance(self) -> None:
+        self._write_reviewed_metadata(schema_version=3, ai_accepted=True)
+
+        result = self._run_import()
+
+        self.assertEqual(0, result.returncode, result.stderr)
+        emitted = json.loads((self.output / "catalog.json").read_text())
+        metadata = emitted["exercises"][0]["reviewedMetadata"]
+        self.assertEqual("ai_accepted", metadata["reviewState"])
+        self.assertIsNone(metadata["provenance"]["reviewerRole"])
+        self.assertIsNone(metadata["provenance"]["reviewedAtEpochMillis"])
+        self.assertEqual(
+            self._ai_review_provenance(), metadata["aiReviewProvenance"]
+        )
+
+    def test_review_report_counts_every_state_separately(self) -> None:
+        self._write_reviewed_metadata(schema_version=3, ai_accepted=True)
+
+        result = self._run_import()
+
+        self.assertEqual(0, result.returncode, result.stderr)
+        report = self.review_report.read_text()
+        self.assertIn("| `ai_accepted` | 1 |", report)
+        self.assertIn("| `approved` | 0 |", report)
+        self.assertIn("| `draft` | 0 |", report)
+        self.assertIn("AI_ACCEPTED", report)
+
+    def test_rejects_ai_accepted_entry_without_ai_provenance(self) -> None:
+        self._write_reviewed_metadata(schema_version=3, ai_accepted=True)
+        reviewed = json.loads(self.reviewed_metadata.read_text())
+        del reviewed["exercises"]["barbell-bench-press"]["aiReviewProvenance"]
+        self.reviewed_metadata.write_text(json.dumps(reviewed, indent=2) + "\n")
+
+        result = self._run_import()
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("aiReviewProvenance", result.stderr)
+
+    def test_rejects_ai_accepted_entry_that_claims_human_review(self) -> None:
+        for field, value in (
+            ("reviewerRole", "Certified strength coach"),
+            ("reviewedAtEpochMillis", 1_756_000_000_000),
+        ):
+            with self.subTest(field=field):
+                self._write_reviewed_metadata(schema_version=3, ai_accepted=True)
+                reviewed = json.loads(self.reviewed_metadata.read_text())
+                reviewed["exercises"]["barbell-bench-press"]["provenance"][field] = value
+                self.reviewed_metadata.write_text(json.dumps(reviewed, indent=2) + "\n")
+
+                result = self._run_import()
+
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn(field, result.stderr)
+
+    def test_rejects_ai_provenance_on_human_reviewed_states(self) -> None:
+        for state in ("draft", "approved"):
+            with self.subTest(state=state):
+                self._write_reviewed_metadata(schema_version=3, ai_accepted=True)
+                reviewed = json.loads(self.reviewed_metadata.read_text())
+                metadata = reviewed["exercises"]["barbell-bench-press"]
+                metadata["reviewState"] = state
+                if state == "approved":
+                    metadata["provenance"]["reviewerRole"] = "Certified strength coach"
+                    metadata["provenance"]["reviewedAtEpochMillis"] = 1_756_000_000_000
+                self.reviewed_metadata.write_text(json.dumps(reviewed, indent=2) + "\n")
+
+                result = self._run_import()
+
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn("aiReviewProvenance", result.stderr)
+
+    def test_rejects_ai_contract_authored_against_the_older_schema_version(self) -> None:
+        self._write_reviewed_metadata(schema_version=3, ai_accepted=True)
+        reviewed = json.loads(self.reviewed_metadata.read_text())
+        reviewed["schemaVersion"] = 2
+        reviewed["exercises"]["barbell-bench-press"]["provenance"]["schemaVersion"] = 2
+        self.reviewed_metadata.write_text(json.dumps(reviewed, indent=2) + "\n")
+
+        result = self._run_import()
+
+        self.assertNotEqual(result.returncode, 0)
+        # `ai_accepted` is not a v2 state, so a v2 document cannot carry the AI contract.
+        self.assertIn("reviewState", result.stderr)
+
+    def test_rejects_reviewed_document_from_an_unsupported_future_schema(self) -> None:
+        self._write_reviewed_metadata(schema_version=4)
+
+        result = self._run_import()
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("schemaVersion", result.stderr)
+
+    def test_keeps_accepting_the_authored_v2_contract_unchanged(self) -> None:
+        result = self._run_import()
+
+        self.assertEqual(0, result.returncode, result.stderr)
+        metadata = json.loads(
+            (self.output / "catalog.json").read_text()
+        )["exercises"][0]["reviewedMetadata"]
+        self.assertEqual("draft", metadata["reviewState"])
+        self.assertNotIn("aiReviewProvenance", metadata)
 
     def test_rejects_review_timestamp_outside_android_parser_bound(self) -> None:
         reviewed = json.loads(self.reviewed_metadata.read_text())
@@ -994,36 +1100,52 @@ class ImportCatalogTest(unittest.TestCase):
         }
         self.overrides.write_text(json.dumps(overrides, indent=2) + "\n")
 
-    def _write_reviewed_metadata(self) -> None:
-        reviewed = {
-            "schemaVersion": 2,
-            "exercises": {
-                "barbell-bench-press": {
-                    "reviewState": "draft",
-                    "directPrimaryMuscle": "Chest",
-                    "descriptiveSecondaryMuscles": ["Shoulders", "Triceps"],
-                    "movementPattern": "horizontal_push",
-                    "complexity": "standard",
-                    "progressionFamily": "barbell-horizontal-push",
-                    "prescriptionShape": "weight_reps",
-                    "approvedRegressions": [],
-                    "approvedSubstitutions": [],
-                    "capabilityRequirements": [],
-                    "supportRequirement": "supported",
-                    "impactLevel": "none",
-                    "equipmentAlternatives": [["Barbell", "Bench"]],
-                    "clearedTrainingConstraints": [],
-                    "provenance": {
-                        "reviewerRole": None,
-                        "rationaleOrSource": "Initial draft for later human review.",
-                        "reviewedAtEpochMillis": None,
-                        "schemaVersion": 2,
-                        "policyVersion": 1,
-                    },
-                }
+    def _write_reviewed_metadata(
+        self,
+        schema_version: int = 2,
+        ai_accepted: bool = False,
+    ) -> None:
+        entry = {
+            "reviewState": "ai_accepted" if ai_accepted else "draft",
+            "directPrimaryMuscle": "Chest",
+            "descriptiveSecondaryMuscles": ["Shoulders", "Triceps"],
+            "movementPattern": "horizontal_push",
+            "complexity": "standard",
+            "progressionFamily": "barbell-horizontal-push",
+            "prescriptionShape": "weight_reps",
+            "approvedRegressions": [],
+            "approvedSubstitutions": [],
+            "capabilityRequirements": [],
+            "supportRequirement": "supported",
+            "impactLevel": "none",
+            "equipmentAlternatives": [["Barbell", "Bench"]],
+            "clearedTrainingConstraints": [],
+            "provenance": {
+                "reviewerRole": None,
+                "rationaleOrSource": "Initial draft for later human review.",
+                "reviewedAtEpochMillis": None,
+                "schemaVersion": schema_version,
+                "policyVersion": 1,
             },
         }
+        if ai_accepted:
+            entry["aiReviewProvenance"] = self._ai_review_provenance()
+        reviewed = {"schemaVersion": schema_version, "exercises": {"barbell-bench-press": entry}}
         self.reviewed_metadata.write_text(json.dumps(reviewed, indent=2) + "\n")
+
+    @staticmethod
+    def _ai_review_provenance() -> dict:
+        return {
+            "reviewerModelId": "test-model-1",
+            "reviewedAtEpochMillis": 1_756_000_000_000,
+            "reviewedContentId": "barbell-bench-press",
+            "reviewedContentSha256": "a" * 64,
+            "sourceReferences": ["https://example.test/reference"],
+            "decisionRationale": "Alpha AI acceptance for owner-authorized planning only.",
+            "limitations": "Not a human review and not clinical clearance.",
+            "schemaVersion": 3,
+            "policyVersion": 1,
+        }
 
     @staticmethod
     def _apply_fixture_operation(metadata: dict, case: dict) -> None:

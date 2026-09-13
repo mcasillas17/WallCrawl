@@ -214,7 +214,7 @@ class StateBasedTrainingPolicyTest {
         listOf(missing, draft).forEach { result ->
             assertThat(result).isEqualTo(
                 TrainingPolicyResult.Failure(
-                    TrainingPolicyFailureReason.MISSING_APPROVED_METADATA
+                    TrainingPolicyFailureReason.MISSING_ACCEPTED_METADATA
                 )
             )
         }
@@ -228,7 +228,7 @@ class StateBasedTrainingPolicyTest {
 
         assertThat(evaluate(exercise = malformed)).isEqualTo(
             TrainingPolicyResult.Failure(
-                TrainingPolicyFailureReason.MALFORMED_APPROVED_METADATA
+                TrainingPolicyFailureReason.MALFORMED_ACCEPTED_METADATA
             )
         )
     }

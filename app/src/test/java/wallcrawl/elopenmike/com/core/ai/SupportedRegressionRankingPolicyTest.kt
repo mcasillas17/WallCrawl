@@ -64,6 +64,42 @@ class SupportedRegressionRankingPolicyTest {
     }
 
     @Test
+    fun preferences_acceptsAiReviewedSourceAndTargetThroughTheCanonicalSeam() {
+        val source = exercise(
+            id = "ai-source",
+            reviewState = ReviewState.AI_ACCEPTED,
+            regressions = listOf(ReviewedExerciseLink("ai-target"))
+        )
+        val target = exercise(
+            id = "ai-target",
+            reviewState = ReviewState.AI_ACCEPTED,
+            support = SupportRequirement.SUPPORTED
+        )
+
+        val preferences = policy.preferences(
+            candidates = listOf(source, target),
+            automaticEligibilityResult = eligibility(
+                source to listOf(
+                    EligibilityPreference.Limited(MovementCapabilityType.FLOOR_TRANSITION)
+                ),
+                target to emptyList()
+            ),
+            capabilityEvidence = CapabilityEvidenceSet.empty()
+        )
+
+        assertThat(preferences).containsExactly(
+            "ai-target",
+            listOf(
+                SupportedRegressionPreference(
+                    preferredExerciseId = "ai-target",
+                    sourceExerciseId = "ai-source",
+                    capability = MovementCapabilityType.FLOOR_TRANSITION
+                )
+            )
+        )
+    }
+
+    @Test
     fun preferences_isStableAcrossCandidateAndEdgeOrder() {
         val sourceA = exercise(
             id = "source-a",
@@ -383,9 +419,11 @@ class SupportedRegressionRankingPolicyTest {
             listedEquipment = listOf("Bodyweight"),
             type = ExerciseType.BODYWEIGHT_REPS,
             reviewedMetadata = if (reviewed) {
-                ReviewedExerciseMetadata(
+                syntheticReviewedMetadata(
                     reviewState = reviewState,
                     directPrimaryMuscle = "Chest",
+                    exerciseId = id
+                ).copy(
                     descriptiveSecondaryMuscles = emptySet(),
                     movementPattern = MovementPattern.HORIZONTAL_PUSH,
                     complexity = ComplexityTier.FOUNDATIONAL,
@@ -397,14 +435,7 @@ class SupportedRegressionRankingPolicyTest {
                     supportRequirement = support,
                     impactLevel = ImpactLevel.NONE,
                     equipmentAlternatives = listOf(listOf("Bodyweight")),
-                    clearedTrainingConstraints = emptySet(),
-                    provenance = ReviewProvenance(
-                        reviewerRole = "synthetic-test",
-                        rationaleOrSource = "synthetic approved fixture",
-                        reviewedAtEpochMillis = 1L,
-                        schemaVersion = 2,
-                        policyVersion = 1
-                    )
+                    clearedTrainingConstraints = emptySet()
                 )
             } else {
                 null

@@ -150,6 +150,95 @@ class WorkoutGenerationContextBuilderTest {
     }
 
     @Test
+    fun build_readsTheDemonstratedProgressionFamilyOfAnAiAcceptedRecordLikeAnApprovedOne() = runTest {
+        // History demonstrates the advanced target's own family, which is what lifts the
+        // uncalibrated ceiling. Reading it only from `APPROVED` records would have left an
+        // AI-accepted history silently undemonstrated.
+        val base = InMemoryExerciseCatalog.SAMPLE_EXERCISES.first()
+        val demonstrated = base.copy(
+            reviewedMetadata = syntheticReviewedMetadata(
+                reviewState = ReviewState.AI_ACCEPTED,
+                complexity = ComplexityTier.ADVANCED,
+                progressionFamily = "synthetic-ai-demonstrated-family",
+                exerciseId = base.id
+            )
+        )
+        val pendingHistory = demonstrated.copy(
+            reviewedMetadata = syntheticReviewedMetadata(
+                reviewState = ReviewState.DRAFT,
+                complexity = ComplexityTier.ADVANCED,
+                progressionFamily = "synthetic-ai-demonstrated-family",
+                exerciseId = base.id
+            )
+        )
+        val completedSession = completedInclinePressSession(completedAtTimestamp = 10_000L)
+
+        val demonstratedContext = reviewedEligibilityBuilder(
+            exercises = listOf(demonstrated),
+            completedSessions = listOf(completedSession),
+            returningAfterBreakWeeks = 8
+        ).build()
+        val pendingContext = reviewedEligibilityBuilder(
+            exercises = listOf(pendingHistory),
+            completedSessions = listOf(completedSession),
+            returningAfterBreakWeeks = 8
+        ).build()
+
+        assertThat(demonstratedContext.allowedExercises).containsExactly(demonstrated)
+        assertThat(pendingContext.allowedExercises).isEmpty()
+    }
+
+    @Test
+    fun build_readsTheReviewPolicyVersionOfAnAiAcceptedRecord() = runTest {
+        val base = InMemoryExerciseCatalog.SAMPLE_EXERCISES.first()
+        val aiAccepted = base.copy(
+            reviewedMetadata = syntheticReviewedMetadata(
+                reviewState = ReviewState.AI_ACCEPTED,
+                exerciseId = base.id,
+                policyVersion = 3
+            )
+        )
+        val builder = WorkoutGenerationContextBuilder(
+            userProfileRepository = StubUserProfileRepository(UserProfile()),
+            workoutRepository = StubWorkoutRepository(emptyList()),
+            exerciseCatalog = InMemoryExerciseCatalog(listOf(aiAccepted)),
+            exerciseFilter = ExerciseFilter(),
+            historyAnalyzer = WorkoutHistoryAnalyzer(),
+            plannerFeatureFlags = PlannerFeatureFlags()
+        )
+
+        assertThat(builder.build().reviewPolicyVersion).isEqualTo(3)
+    }
+
+    @Test
+    fun build_ignoresHigherPolicyVersionsFromPendingMetadata() = runTest {
+        val base = InMemoryExerciseCatalog.SAMPLE_EXERCISES.first()
+        val accepted = base.copy(
+            reviewedMetadata = syntheticReviewedMetadata(
+                reviewState = ReviewState.AI_ACCEPTED,
+                exerciseId = base.id,
+                policyVersion = 2
+            )
+        )
+        val pending = base.copy(
+            id = "pending-higher-policy-version",
+            reviewedMetadata = syntheticReviewedMetadata(
+                reviewState = ReviewState.DRAFT,
+                exerciseId = "pending-higher-policy-version",
+                policyVersion = 3
+            )
+        )
+
+        val context = reviewedEligibilityBuilder(
+            exercises = listOf(accepted, pending),
+            completedSessions = emptyList()
+        ).build()
+
+        assertThat(context.reviewPolicyVersion).isEqualTo(2)
+        assertThat(context.allowedExercises).containsExactly(accepted)
+    }
+
+    @Test
     fun build_declaresOnlyTheSessionConstraintsTheProductActuallyChose() = runTest {
         val builder = WorkoutGenerationContextBuilder(
             userProfileRepository = StubUserProfileRepository(UserProfile()),
@@ -812,7 +901,9 @@ class WorkoutGenerationContextBuilderTest {
         reviewState: ReviewState,
         complexity: ComplexityTier = ComplexityTier.FOUNDATIONAL,
         progressionFamily: String = "synthetic-builder-test-family",
-        approvedRegressions: List<ReviewedExerciseLink> = emptyList()
+        approvedRegressions: List<ReviewedExerciseLink> = emptyList(),
+        exerciseId: String = SYNTHETIC_DEFAULT_EXERCISE_ID,
+        policyVersion: Int = 1
     ): ReviewedExerciseMetadata =
         ReviewedExerciseMetadata(
             reviewState = reviewState,
@@ -831,16 +922,14 @@ class WorkoutGenerationContextBuilderTest {
                 listOf(StandardEquipment.DUMBBELL, StandardEquipment.BENCH)
             ),
             clearedTrainingConstraints = emptySet(),
-            provenance = ReviewProvenance(
-                reviewerRole = if (reviewState == ReviewState.APPROVED) {
-                    "Synthetic test-only reviewer"
-                } else {
-                    null
-                },
-                rationaleOrSource = "SYNTHETIC TEST DATA — never bundled in production assets.",
-                reviewedAtEpochMillis = if (reviewState == ReviewState.APPROVED) 1L else null,
-                schemaVersion = 1,
-                policyVersion = 1
+            provenance = syntheticProvenance(
+                reviewState = reviewState,
+                policyVersion = policyVersion
+            ),
+            aiReviewProvenance = syntheticAiProvenance(
+                reviewState = reviewState,
+                reviewedContentId = exerciseId,
+                policyVersion = policyVersion
             )
         )
 

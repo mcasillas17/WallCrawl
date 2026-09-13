@@ -1,4 +1,4 @@
-"""Integrity checks for the authored evidence ledger, not content approval."""
+"""Integrity checks for the evidence ledger and unsigned AI acceptance decisions."""
 
 import hashlib
 import json
@@ -29,19 +29,19 @@ class FullCatalogReviewTest(unittest.TestCase):
 
     def test_published_disposition_and_approval_accounting_is_pinned(self):
         self.assertEqual({
-            "ready_for_human_review": 186,
-            "pending_evidence_or_policy": 81,
+            "ai_accepted": 182,
+            "pending_evidence_or_policy": 85,
             "outside_automatic_strength_scope": 35,
         }, Counter(entry["disposition"] for entry in self.entries))
         pending = [entry for entry in self.entries
                    if entry["disposition"] == "pending_evidence_or_policy"]
-        self.assertEqual({"absent": 56, "draft": 25},
+        self.assertEqual({"absent": 56, "draft": 29},
                          Counter(entry["metadataReviewState"] for entry in pending))
         self.assertEqual({
             "do_not_use_until_reconciled": 35,
             "no_identity_conflict_observed": 267,
         }, Counter(entry["artworkReferenceStatus"] for entry in self.entries))
-        self.assertEqual({"draft": 211},
+        self.assertEqual({"ai_accepted": 182, "draft": 29},
                          Counter(value["reviewState"] for value in self.reviewed.values()))
         self.assertEqual(0, sum(entry["humanSignoff"] is not None for entry in self.entries))
 
@@ -122,7 +122,7 @@ class FullCatalogReviewTest(unittest.TestCase):
         for entry in self.entries:
             with self.subTest(exercise=entry["id"]):
                 self.assertIn(entry["disposition"], {
-                    "ready_for_human_review",
+                    "ai_accepted",
                     "pending_evidence_or_policy",
                     "outside_automatic_strength_scope",
                 })
@@ -135,15 +135,16 @@ class FullCatalogReviewTest(unittest.TestCase):
                 })
                 self.assertGreater(len(entry["artworkReferenceReason"].strip()), 20)
                 if entry["artworkReferenceStatus"] == "do_not_use_until_reconciled":
-                    self.assertNotEqual("ready_for_human_review", entry["disposition"])
+                    self.assertNotEqual("ai_accepted", entry["disposition"])
                 metadata = self.reviewed.get(entry["id"])
                 if metadata is None:
-                    self.assertNotEqual("ready_for_human_review", entry["disposition"])
+                    self.assertNotEqual("ai_accepted", entry["disposition"])
                     self.assertEqual("absent", entry["metadataReviewState"])
                     self.assertIsNone(entry["metadataSha256"])
                     continue
-                self.assertEqual("draft", entry["metadataReviewState"])
-                self.assertEqual("draft", metadata["reviewState"])
+                expected_state = "ai_accepted" if entry["disposition"] == "ai_accepted" else "draft"
+                self.assertEqual(expected_state, entry["metadataReviewState"])
+                self.assertEqual(expected_state, metadata["reviewState"])
                 self.assertIsNone(metadata["provenance"]["reviewerRole"])
                 self.assertIsNone(metadata["provenance"]["reviewedAtEpochMillis"])
                 self.assertIn("AI", metadata["provenance"]["rationaleOrSource"])
@@ -282,8 +283,11 @@ class FullCatalogReviewTest(unittest.TestCase):
                         self.assertIsNotNone(target)
                         self.assertIn(decision["targetId"], self.reviewed)
                         emitted.add((decision["kind"], decision["targetId"]))
-                        if decision["action"] == "add":
-                            self.assertEqual("ready_for_human_review", target["disposition"])
+                        # Authorization survives a pending endpoint; runtime checks both
+                        # endpoints independently before using any relationship.
+                        self.assertIn(target["disposition"], {
+                            "ai_accepted", "pending_evidence_or_policy"
+                        })
                 metadata = self.reviewed.get(entry["id"])
                 actual = {
                     (kind, link["exerciseId"])

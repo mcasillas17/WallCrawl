@@ -2,7 +2,7 @@
 
 ## Interpretation
 
-This report separates catalog classification, content readiness, metadata approval,
+This report separates catalog classification, content readiness, metadata acceptance,
 candidate availability, selected movements and whole-proposal validation. None is a
 substitute for the others, and none establishes clinical suitability.
 
@@ -10,12 +10,18 @@ The pinned catalog contains 302 entries. The current importer and
 `FakeWorkoutPlanner` classify 267 as type-supported automatic strength work and
 exclude 35: 14 stretches, 10 distance-duration entries and 11 other timed
 conditioning entries. That does **not** mean 267 entries have complete evidence,
-approved metadata, compatible equipment or a place in every generated workout.
+accepted metadata, compatible equipment or a place in every generated workout.
 
-Production `PlannerFeatureFlags.reviewedCapabilityEligibility` remains `false`.
-No human metadata approvals have been supplied. Prospective tests copy DRAFT
-records to explicitly synthetic approvals **in memory only**. They are a structural
-upper-bound experiment, not the actual approved cohort or a content-readiness claim.
+`PlannerFeatureFlags.reviewedCapabilityEligibility` is now `true` in production, and an
+owner-authorized audit accepted 182 of the 211 authored records as `AI_ACCEPTED`. **No
+human metadata approvals have been supplied — zero records are `APPROVED`.** The
+sections below through [Directed relationship review](#directed-relationship-review)
+record the historical, pre-acceptance experiments that led here: they copied `DRAFT`
+records to explicitly synthetic in-memory approvals **in memory only**, as a structural
+upper-bound experiment, before any acceptance existed. They remain useful as dated
+baselines and are labelled as such throughout. The
+[current, real accepted-cohort candidate counts](reviewed-capability-eligibility.md#enabled-rollout-contract)
+now in production are recorded separately, in that companion document.
 
 ## Reproducible band-only PUSH gap
 
@@ -189,10 +195,13 @@ unavailable even with all equipment selected. It is still browseable and manuall
 selectable with an unresolved-setup warning.
 
 No full reviewed blocks or graph edges were added. The five representable runtime
-minimums do not approve their other categorical fields, and the held/rejected
-relationships retain their separate movement/shape/evidence decisions. The
-production reviewed pool remains zero, with 211 DRAFT records and the feature
-flag disabled. Synthetic approval tests also reject incomplete Band-only
+minimums do not accept their other categorical fields, and the held/rejected
+relationships retain their separate movement/shape/evidence decisions. **At the time of
+this baseline** the production reviewed pool was zero, with 211 `DRAFT` records and the
+feature flag disabled; production has since accepted 182 of those records as
+`AI_ACCEPTED` and enabled the flag (see
+[the enabled rollout contract](reviewed-capability-eligibility.md#enabled-rollout-contract)).
+This dated baseline's own synthetic approval tests also reject incomplete Band-only
 alternatives rather than letting them bypass the source-bound minimum.
 
 The workout-focus bug remains separate: removing anchored candidates does not
@@ -235,6 +244,13 @@ fixed.** **Missing band chest work: still open**, and unaffected — correcting 
 supplies no exercise, exactly as correcting the anchors supplied none.
 
 ## Full-pool prospective profiles
+
+> **Historical, pre-acceptance baseline.** This section's "AI-ready" cohort is the
+> 186-ID `ready_for_human_review` set copied to synthetic in-memory approvals, captured
+> before the AI acceptance audit existed. It is retained as a dated structural-upper-bound
+> experiment. For the actual accepted cohort (182 IDs) now in production, with real
+> candidate counts and no synthetic approval of any kind, see
+> [the enabled rollout contract](reviewed-capability-eligibility.md#enabled-rollout-contract).
 
 These are 17 declared test profiles, not an exhaustive capability/equipment
 Cartesian product or a rollout approval. The first two candidate columns report
@@ -319,28 +335,30 @@ or modality outcomes.
 
 ## Remaining enablement decisions
 
-Human field-by-field approval is still required for every proposed record.
-The 81 pending entries identify additional issues, including unsupported fixtures,
-uncertain depicted variants, single-primary allocations and unresolved impact
-categories; 56 have no proposed metadata block. The 35 artwork-reference
-restrictions are recorded per ID with exact pinned paths, not fixed by swapping
-images or names.
+Genuine human field-by-field `APPROVED` review is still required for every accepted or
+pending record; the AI acceptance audit (182 `AI_ACCEPTED`) is a separate, owner-authorized
+categorical decision, not a substitute for it. The 85 pending entries (29 authored `DRAFT`
+plus 56 with no proposed metadata block) identify additional issues, including unsupported
+fixtures, uncertain depicted variants, single-primary allocations and unresolved impact
+categories. The 35 artwork-reference restrictions are recorded per ID with exact pinned
+paths, not fixed by swapping images or names.
 
 The current enum also cannot express every machine subtype, bench adjustment,
 attachment or conditional support arrangement. A generic category match is not
 proof that a particular apparatus is available. Resolving those representation
 and persona requirements, the band-only push gap, human sign-off and the
-remaining release corpus are separate gates. Neither 302 completed AI reviews
-nor the passing software cases closes Roadmap Package 3 or enables the reviewed
-planner.
+remaining release corpus are separate gates. Neither the AI acceptance audit
+nor the passing software cases closes Roadmap Package 3, which still requires
+genuine human `APPROVED` review.
 
-Selected joint mappings now have a contract but no content. `clearedTrainingConstraints`
-is a required reviewed field, and the eligibility policy decides each exercise against it
-instead of rejecting the whole pool whenever any joint sensitivity is selected. All 211
-records clear nothing, so the observable outcome for a joint-sensitive profile is unchanged:
-a typed `TRAINING_CONSTRAINTS_REMOVED_ALL` refusal. Populating the field is part of the same
-human sign-off pass; see the
-[proposed initial rollout contract](reviewed-capability-eligibility.md#proposed-initial-rollout-contract).
+Selected joint mappings now have a contract but no cleared content.
+`clearedTrainingConstraints` is a required reviewed field, and the eligibility policy
+decides each exercise against it instead of rejecting the whole pool whenever any joint
+sensitivity is selected. All 302 `reviewedMetadata` records — including the 182
+`AI_ACCEPTED` ones — clear nothing, so the observable outcome for a joint-sensitive
+profile is unchanged in production: a typed `TRAINING_CONSTRAINTS_REMOVED_ALL` refusal.
+Populating the field requires genuine human review; see the
+[enabled rollout contract](reviewed-capability-eligibility.md#enabled-rollout-contract).
 
 ## Reproducibility boundary
 

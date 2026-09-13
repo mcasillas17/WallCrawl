@@ -224,7 +224,7 @@ class ReviewedMetadataTest(unittest.TestCase):
     def test_expanded_cohort_remains_awaiting_human_review(self) -> None:
         self.assertEqual(211, len(self.reviewed))
         for exercise_id, metadata in self.reviewed.items():
-            self.assertEqual("draft", metadata["reviewState"], exercise_id)
+            self.assertIn(metadata["reviewState"], {"draft", "ai_accepted"}, exercise_id)
             self.assertIsNone(metadata["provenance"]["reviewerRole"], exercise_id)
             self.assertIsNone(metadata["provenance"]["reviewedAtEpochMillis"], exercise_id)
 

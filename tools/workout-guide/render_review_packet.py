@@ -8,13 +8,51 @@ import json
 from pathlib import Path
 import sys
 
-from import_catalog import CatalogImportError, _atomic_write_text, _read_object
+from import_catalog import (
+    CatalogImportError, _atomic_write_text, _read_object,
+    _validate_ai_acceptance, _validate_json_schema,
+)
+from verify_ai_acceptance_audit import AUDIT_PATH, MAX_AUDIT_BYTES, PROGRAMMING_PATH, parse_audit
 
 
 ROOT = Path(__file__).resolve().parents[2]
 LEDGER = ROOT / "docs/research/2026-09-07-full-exercise-catalog-review.json"
 METADATA = Path(__file__).with_name("reviewed-metadata.json")
 OUTPUT = ROOT / "docs/reviewed-exercise-metadata-human-signoff.md"
+
+
+def _audit_summary(ledger: dict) -> list[str]:
+    review = ledger.get("review", {}).get("aiAcceptanceReview", {})
+    reference = review.get("auditArtifact")
+    if reference is None:
+        return []
+    if reference["path"] != AUDIT_PATH:
+        raise ValueError("Worksheet requires the canonical committed audit path")
+    with (ROOT / AUDIT_PATH).open("rb") as stream:
+        raw = stream.read(MAX_AUDIT_BYTES + 1)
+    audit = parse_audit(raw)
+    digest = hashlib.sha256(raw).hexdigest()
+    if (
+        reference["sha256"] != digest
+        or review["reviewerModelId"] != audit["reviewerModelId"]
+        or review["reviewedAtEpochMillis"] != audit["reviewedAtEpochMillis"]
+    ):
+        raise ValueError("Worksheet audit hash, reviewer or original timestamp differs")
+    programming_sha = hashlib.sha256((ROOT / PROGRAMMING_PATH).read_bytes()).hexdigest()
+    if programming_sha != audit["currentProgrammingSha256"] or programming_sha != review["currentProgrammingSha256"]:
+        raise ValueError("Worksheet current programming bytes differ from the recorded hash")
+    return [
+        f"- Canonical AI audit: [complete report, criteria, IDs and reasons]({AUDIT_PATH.removeprefix('docs/')})",
+        f"- Audit artifact SHA-256: `{digest}`",
+        f"- Recorded AI reviewer: `{audit['reviewerModelId']}`; original decision timestamp: "
+        f"`{audit['reviewedAtEpochMillis']}` epoch milliseconds",
+        "- Reproduce the partition and proposal bindings offline: "
+        "`python3 tools/workout-guide/verify_ai_acceptance_audit.py`",
+        f"- Current programming SHA-256 (committed bytes): `{programming_sha}`",
+        "- Independent source verification reconstructs the inspected schema-v2 ledger, metadata "
+        "and catalog before hashing, and reads/hashes current programming bytes. Copied historical "
+        "hashes alone are not verification; no unavailable original audit-file byte identity is asserted.",
+    ]
 
 
 def classification_reason(entry: dict) -> str:
@@ -50,12 +88,14 @@ def graph_assessments(metadata: dict, entries: list[dict]) -> dict[str, str]:
         exercise_id = entry["id"]
         counts = Counter(decision["action"] for decision in entry["graphDecisions"])
         result[exercise_id] = (
-            "Current emitted DRAFT outgoing: " + (", ".join(sorted(outgoing[exercise_id])) or "none") +
-            ". Current emitted DRAFT incoming: " + (", ".join(sorted(incoming[exercise_id])) or "none") +
+            "Current emitted reviewed-metadata outgoing: " + (", ".join(sorted(outgoing[exercise_id])) or "none") +
+            ". Current emitted reviewed-metadata incoming: " + (", ".join(sorted(incoming[exercise_id])) or "none") +
             ". Explicit decisions: " +
             ", ".join(f"{action}={counts[action]}" for action in ("add", "retain", "hold", "reject")) +
             ". Each individual semantic rationale and current endpoint comparison is "
             "preserved in graphDecisions. Held/rejected proposals are not emitted. "
+            "Source acceptance and relationship authorization do not accept a pending endpoint. "
+            "Runtime independently requires accepted endpoints and all other eligibility gates. "
             "This generated adjacency is not human approval or a claim of equivalent outcomes."
         )
     return result
@@ -66,24 +106,39 @@ def render_packet(ledger: dict, metadata: dict) -> str:
     ids = [entry["id"] for entry in entries]
     if len(ids) != len(set(ids)) or set(metadata) - set(ids):
         raise ValueError("Worksheet requires unique review IDs covering every metadata record")
+    schema = _read_object(Path(__file__).with_name("review-schema.json"), "review schema")
     for entry in entries:
+        if entry.get("humanSignoff") is not None:
+            raise ValueError(f"{entry['id']}: this unsigned packet cannot certify human sign-off")
         value = metadata.get(entry["id"])
         if value is None:
-            if entry["metadataSha256"] is not None or entry["disposition"] == "ready_for_human_review":
+            if entry["metadataSha256"] is not None or entry["disposition"] in {
+                "ready_for_human_review", "ai_accepted"
+            }:
                 raise ValueError(f"{entry['id']}: ready/stale review without authored metadata")
             continue
         if (
-            value["reviewState"] != "draft"
+            value["reviewState"] not in {"draft", "ai_accepted"}
             or value["provenance"]["reviewerRole"] is not None
             or value["provenance"]["reviewedAtEpochMillis"] is not None
         ):
             raise ValueError(f"{entry['id']}: this unsigned AI packet cannot certify human approval")
+        if (entry["disposition"] == "ai_accepted") != (value["reviewState"] == "ai_accepted"):
+            raise ValueError(f"{entry['id']}: ledger and metadata acceptance disagree")
+        _validate_ai_acceptance(value, entry["id"], value["reviewState"], value["provenance"])
+        if value["reviewState"] == "ai_accepted":
+            ai = value["aiReviewProvenance"]
+            _validate_json_schema(ai, schema["$defs"]["aiReviewProvenance"], schema,
+                                  f"{entry['id']}.aiReviewProvenance", depth=0)
+            if ai["reviewedContentId"] != entry["id"]:
+                raise ValueError(f"{entry['id']}: AI acceptance describes a different proposal")
         digest = hashlib.sha256(json.dumps(
             value, sort_keys=True, separators=(",", ":"), ensure_ascii=False
         ).encode()).hexdigest()
         if digest != entry["metadataSha256"]:
             raise ValueError(f"{entry['id']}: metadata changed after its recorded review")
     counts = Counter(entry["disposition"] for entry in entries)
+    states = Counter(value["reviewState"] for value in metadata.values())
     # Derived, never asserted: the moment a reviewer clears an ID this sentence must change
     # with the data rather than become a false claim inside the artifact they sign.
     cleared_ids = sorted(
@@ -97,6 +152,20 @@ def render_packet(ledger: dict, metadata: dict) -> str:
         + ", ".join(f"`{exercise_id}`" for exercise_id in cleared_ids)
         + "."
     )
+    # Derived, never asserted: this worksheet has no access to the Kotlin composition, so it
+    # reports what the metadata itself supports rather than guessing the runtime flag. Production
+    # enabling reviewed planning is conditioned on an accepted cohort existing; whether that
+    # cohort is genuinely human-`approved` is a wholly separate, independently derived fact.
+    rollout_summary = (
+        "Production reviewed planning is enabled and plans from the "
+        f"{states['ai_accepted']} `AI_ACCEPTED` record(s) above"
+        if states['ai_accepted']
+        else "Production reviewed planning has no accepted metadata to plan from"
+    ) + (
+        f", including {states['approved']} genuinely human-`approved` record(s)"
+        if states['approved']
+        else "; no record is genuinely human-`approved` yet"
+    )
     lines = [
         "# Exercise Metadata Human Sign-off",
         "",
@@ -106,23 +175,40 @@ def render_packet(ledger: dict, metadata: dict) -> str:
         "",
         f"- Catalog entries examined: **{len(entries)}**",
         f"- AI-ready for human inspection: **{counts['ready_for_human_review']}**",
+        f"- AI-accepted categorical metadata: **{counts['ai_accepted']}**",
         f"- Pending evidence or policy decisions: **{counts['pending_evidence_or_policy']}**",
         f"- Outside automatic-strength scope: **{counts['outside_automatic_strength_scope']}**",
-        f"- Authored reviewed metadata: **{len(metadata)} DRAFT**",
+        f"- Authored reviewed metadata: **{len(metadata)}** "
+        f"(AI_ACCEPTED: **{states['ai_accepted']}**, DRAFT: **{states['draft']}**)",
         "- Human-approved metadata: **0**",
         f"- Pinned source: `{ledger['source']['commit']}`",
+        *_audit_summary(ledger),
         "",
-        "Readiness describes the content review. `DRAFT` describes missing human sign-off. "
+        "`AI_ACCEPTED` records an owner-authorized AI categorical decision, not human sign-off. "
+        "`DRAFT` remains pending and ineligible for reviewed planning. "
         "Automatic-strength classification describes the current importer/planner boundary. "
-        "These are three different judgments; none establishes suitability for every user.",
+        "Source acceptance, endpoint acceptance, type scope and human approval are separate "
+        "judgments; none establishes suitability for every user.",
         "",
         "## What human sign-off covers",
         "",
         "For each ID, inspect the cited source and illustrations, the exact proposed metadata, "
         "its corrections and limitations, and every directed regression/substitution. The "
-        "ledger binds each proposal to its metadata SHA-256; changed proposals need renewed inspection. "
-        "The draft fields named `approvedRegressions` and `approvedSubstitutions` are still "
-        "unratified proposals while their owning metadata is DRAFT.",
+        "ledger's `metadataSha256` binds the exact current metadata, while "
+        "`auditedProposalSha256` and AI `reviewedContentSha256` identify the exact pre-disposition "
+        "proposal inspected by the corpus auditor, not a self-referential hash of the final record. "
+        "Changed categorical proposals need renewed inspection. The fields named "
+        "`approvedRegressions` and `approvedSubstitutions` preserve directed relationship history: "
+        "they remain proposals on DRAFT sources and authorizations on accepted sources, never "
+        "acceptance of a pending endpoint. Runtime independently requires relevant accepted "
+        "endpoints and all other eligibility conditions before using a link.",
+        "",
+        "Schema version 3 adds dedicated `aiReviewProvenance` without filling human provenance. "
+        "The committed audit preserves the complete original report and its final source-file "
+        "mtime as the acceptance timestamp, not the archival copy's mtime or a new per-source "
+        "fetch or illustration inspection. AI policy version 2 applies to "
+        "accepted records; schema-only refreshes of pending drafts retain their original policy "
+        "version and do not imply renewed acceptance.",
         "",
         "Reviewed schema version 2 adds `clearedTrainingConstraints`, so sign-off now also covers "
         "which selected joint sensitivities — shoulder, elbow, wrist, lower back, hip, knee — the "
@@ -140,8 +226,8 @@ def render_packet(ledger: dict, metadata: dict) -> str:
         "No sign-off has been supplied for any row below.",
         "",
         f"All {len(entries)} exercises remain available for browsing and manual workouts. Excluded categories "
-        "receive no manufactured strength allocation. Production reviewed planning remains disabled; "
-        "human approval, equipment/profile availability and rollout are separate gates.",
+        f"receive no manufactured strength allocation. {rollout_summary}; "
+        "metadata acceptance, human approval, equipment/profile availability and rollout are separate gates.",
         "",
         "## Per-ID sign-off register",
         "",
@@ -157,7 +243,7 @@ def render_packet(ledger: dict, metadata: dict) -> str:
         lines.append(f"| `{entry['id']}` | {entry['disposition']} | {primary} | {decision} |")
     lines.extend([
         "", "## Additional evidence and policy decisions", "",
-        "All strength proposals still require field-by-field human inspection. These rows also "
+        "Human approval still requires field-by-field human inspection. These rows additionally "
         "have unresolved content or representation decisions; they are not ready recommendations.",
         "",
         "| Exercise ID | Remaining decisions |",

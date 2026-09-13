@@ -3,34 +3,28 @@ package wallcrawl.elopenmike.com.core.ai
 import com.google.common.truth.Truth.assertThat
 import java.io.File
 import java.time.ZoneId
-import org.json.JSONObject
 import org.junit.Test
 import wallcrawl.elopenmike.com.core.model.Exercise
+import wallcrawl.elopenmike.com.core.model.ExercisePrescription
+import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.LedgerOmissionReason
 import wallcrawl.elopenmike.com.core.model.LedgerPolicyVersion
+import wallcrawl.elopenmike.com.core.model.RepRange
 import wallcrawl.elopenmike.com.core.model.ReviewState
 import wallcrawl.elopenmike.com.core.model.TrainingWeek
+import wallcrawl.elopenmike.com.core.model.WorkoutExercise
 
 /**
  * What the *shipped* catalog credits today, read straight from the bundled asset.
  *
- * The authored reviewed cohort is entirely AI-authored and `DRAFT`. Until a human reviewer
- * deliberately approves an entry, `PRIMARY_ONLY_V1` must credit nothing at all from it, and
- * this test fails the build the moment that stops being true — whether because an entry was
- * approved without review or because the ledger started guessing from legacy fields.
+ * Uses parsed, unmodified AI_ACCEPTED metadata, never synthetic muscles or approvals.
+ * Pending drafts and missing metadata stay typed omissions; descriptive secondaries do
+ * not become direct-primary set credit.
  */
 class BundledCatalogLedgerAttributionTest {
 
-    private val catalog = JSONObject(CATALOG_FILE.readText())
-    private val exercises: List<CatalogEntry> = catalog.getJSONArray("exercises").let { array ->
-        (0 until array.length()).map { index ->
-            val entry = array.getJSONObject(index)
-            CatalogEntry(
-                id = entry.getString("id"),
-                reviewState = entry.optJSONObject("reviewedMetadata")?.getString("reviewState")
-            )
-        }
-    }
+    private val projection = PlannerFixtureContextFactory().bundledCatalogProjection()
+    private val exercises = projection.exercises
 
     private val calculator = WeeklyDoseLedgerCalculator()
     private val week = TrainingWeek.startingOn(MONDAY_EPOCH_DAY, ZoneId.of("UTC"))
@@ -43,73 +37,73 @@ class BundledCatalogLedgerAttributionTest {
     }
 
     @Test
-    fun allAuthoredReviewedEntriesAreStillDraftAndNoneAreApproved() {
-        val reviewed = exercises.filter { it.reviewState != null }
+    fun authoredEntriesSeparateAiAcceptancePendingDraftsAndHumanApproval() {
+        val reviewed = exercises.mapNotNull { it.reviewedMetadata }
 
         assertThat(reviewed).hasSize(EXPECTED_REVIEWED_ENTRIES)
-        assertThat(reviewed.map { it.reviewState }.toSet()).containsExactly("draft")
-        assertThat(reviewed.filter { it.reviewState == "approved" }).isEmpty()
+        assertThat(reviewed.count { it.reviewState == ReviewState.AI_ACCEPTED }).isEqualTo(182)
+        assertThat(reviewed.count { it.reviewState == ReviewState.DRAFT }).isEqualTo(29)
+        assertThat(reviewed.filter { it.reviewState == ReviewState.APPROVED }).isEmpty()
     }
 
     @Test
-    fun aWeekOfWorkAgainstTheShippedCatalogCreditsNothingAndOmitsEverythingWithATypedReason() {
-        val reviewedIds = exercises.filter { it.reviewState != null }.map { it.id }
-        val unreviewedIds = exercises.filter { it.reviewState == null }.map { it.id }.take(5)
-        val exercisesById = (reviewedIds + unreviewedIds).associateWith { id ->
-            bundledExercise(id, hasReviewedBlock = id in reviewedIds)
-        }
-
+    fun aWeekOfWorkCreditsOnlyTheActualAcceptedCohortAndTypesEveryOmission() {
         val ledger = calculator.calculate(
             sessions = listOf(
                 completedSession(
                     id = "bundled-week",
                     completedAtEpochMillis = week.startEpochMillis,
-                    exercises = (reviewedIds + unreviewedIds).mapIndexed { index, exerciseId ->
-                        exerciseInstance(
-                            exerciseId = exerciseId,
-                            id = "instance-$index",
-                            orderIndex = index,
-                            sets = listOf(completedNormalSet(), completedNormalSet())
-                        )
-                    }
+                    exercises = exercises.mapIndexed(::completedInstance)
                 )
             ),
-            exercisesById = exercisesById,
+            exercisesById = exercises.associateBy(Exercise::id),
             policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
             week = week,
-            catalogVersion = catalog.getJSONObject("source").getString("commit"),
-            reviewPolicyVersion = 1
+            catalogVersion = projection.sourceCommit,
+            reviewPolicyVersion = 2
         )
 
-        assertThat(ledger.directPrimarySets).isEmpty()
-        assertThat(ledger.secondaryInvolvement).isEmpty()
+        val accepted = exercises.mapNotNull { it.reviewedMetadata }
+            .filter { it.reviewState == ReviewState.AI_ACCEPTED }
+        val expectedPrimary = accepted.groupingBy { it.directPrimaryMuscle }.eachCount()
+            .mapValues { (_, count) -> count * 2 }
+        val expectedSecondary = accepted.flatMap { it.descriptiveSecondaryMuscles }
+            .groupingBy { it }.eachCount().mapValues { (_, count) -> count * 2 }
+        assertThat(ledger.creditedWorkSets).isEqualTo(364)
+        assertThat(ledger.directPrimarySets).containsExactlyEntriesIn(expectedPrimary)
+        assertThat(ledger.secondaryInvolvement).containsExactlyEntriesIn(expectedSecondary)
         assertThat(ledger.unattributedWorkSets).containsExactly(
-            LedgerOmissionReason.MISSING_REVIEWED_METADATA, 2 * unreviewedIds.size,
-            LedgerOmissionReason.METADATA_NOT_APPROVED, 2 * reviewedIds.size
+            LedgerOmissionReason.MISSING_REVIEWED_METADATA, 182,
+            LedgerOmissionReason.METADATA_NOT_APPROVED, 58
         )
+        assertThat(ledger.creditedWorkSets + ledger.omittedWorkSets).isEqualTo(604)
     }
 
-    /**
-     * Builds the domain shape of a bundled entry.
-     *
-     * A valid synthetic muscle value isolates the DRAFT-state gate from missing-field
-     * handling. Packaged parser and source-bound evidence tests check the real muscles.
-     */
-    private fun bundledExercise(id: String, hasReviewedBlock: Boolean): Exercise =
-        if (hasReviewedBlock) {
-            syntheticExercise(
-                id = id,
-                reviewedMetadata = syntheticReviewedMetadata(
-                    reviewState = ReviewState.DRAFT,
-                    directPrimaryMuscle = "Chest",
-                    descriptiveSecondaryMuscles = setOf("Triceps")
+    private fun completedInstance(index: Int, exercise: Exercise): WorkoutExercise {
+        val timed = exercise.type in setOf(ExerciseType.DURATION, ExerciseType.DISTANCE_DURATION)
+        val prescription = ExercisePrescription(
+            exerciseType = exercise.type,
+            targetSets = 2,
+            repRange = if (timed) null else RepRange(8, 10),
+            targetDurationSeconds = if (timed) 30 else null
+        )
+        return exerciseInstance(
+            exerciseId = exercise.id,
+            id = "instance-$index",
+            orderIndex = index,
+            sets = (1..2).map { setIndex ->
+                completedNormalSet(id = "set-$index-$setIndex").copy(
+                    exerciseType = exercise.type,
+                    targetReps = if (timed) null else 10,
+                    completedReps = if (timed) null else 10,
+                    targetWeight = null,
+                    completedWeight = null,
+                    targetDurationSeconds = prescription.targetDurationSeconds,
+                    completedDurationSeconds = prescription.targetDurationSeconds
                 )
-            )
-        } else {
-            syntheticExerciseWithoutReviewedMetadata(id)
-        }
-
-    private data class CatalogEntry(val id: String, val reviewState: String?)
+            }
+        ).copy(prescription = prescription)
+    }
 
     private companion object {
         const val EXPECTED_EXERCISES = 302

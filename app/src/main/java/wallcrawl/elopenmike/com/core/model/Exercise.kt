@@ -74,7 +74,16 @@ data class ExerciseProgrammingMetadata(
 /** Human-review status for the future automatic-planning metadata contract. */
 enum class ReviewState {
     DRAFT,
-    APPROVED
+    APPROVED,
+
+    /**
+     * Owner-authorized alpha acceptance recorded by an AI reviewer.
+     *
+     * Deliberately distinct from [APPROVED], which stays human-only. An entry in this state
+     * carries [ReviewedExerciseMetadata.aiReviewProvenance] and must leave every human-review
+     * field of [ReviewProvenance] null, so AI acceptance can never read as human sign-off.
+     */
+    AI_ACCEPTED
 }
 
 enum class ComplexityTier {
@@ -117,6 +126,25 @@ data class ReviewProvenance(
     val policyVersion: Int
 )
 
+/**
+ * Provenance for an [ReviewState.AI_ACCEPTED] entry, kept apart from [ReviewProvenance].
+ *
+ * A separate structure is the point: an AI acceptance records the model that actually decided,
+ * when, over exactly which content, against which sources, and with which stated limitations,
+ * without ever borrowing a field that a human reviewer would fill in.
+ */
+data class AiReviewProvenance(
+    val reviewerModelId: String,
+    val reviewedAtEpochMillis: Long,
+    val reviewedContentId: String,
+    val reviewedContentSha256: String,
+    val sourceReferences: List<String>,
+    val decisionRationale: String,
+    val limitations: String,
+    val schemaVersion: Int,
+    val policyVersion: Int
+)
+
 /** A directed reviewed graph edge; rationale is required for documented exceptions. */
 data class ReviewedExerciseLink(
     val exerciseId: String,
@@ -153,7 +181,13 @@ data class ReviewedExerciseMetadata(
      * two contracts cannot disagree. This is a reviewer's product judgement about a
      * self-reported sensitivity label, not a diagnosis or clinical clearance.
      */
-    val clearedTrainingConstraints: Set<TrainingConstraint>
+    val clearedTrainingConstraints: Set<TrainingConstraint>,
+    /**
+     * Present only for [ReviewState.AI_ACCEPTED]; absent for drafts and human-approved entries.
+     * The importer and parser enforce that pairing, so a record can never carry both an AI
+     * acceptance and a human sign-off.
+     */
+    val aiReviewProvenance: AiReviewProvenance? = null
 )
 
 /**

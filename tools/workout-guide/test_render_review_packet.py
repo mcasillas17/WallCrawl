@@ -65,6 +65,11 @@ class RenderReviewPacketTest(unittest.TestCase):
         self.assertIn("| `example-stretch` | outside_automatic_strength_scope | Not allocated | N/A |", result)
         self.assertIn("Unsuitable as references for new illustrations until reconciled", result)
         self.assertIn("| `example-stretch` | Source illustration depicts a different movement. |", result)
+        self.assertIn(
+            "Production reviewed planning has no accepted metadata to plan from; "
+            "no record is genuinely human-`approved` yet",
+            result,
+        )
         self.assertEqual(ledger_before, self.ledger)
         self.assertEqual(metadata_before, self.metadata)
 
@@ -76,6 +81,43 @@ class RenderReviewPacketTest(unittest.TestCase):
             with self.subTest(changed=changed):
                 with self.assertRaises(ValueError):
                     render_packet(self.ledger, {"example-press": changed})
+
+    def test_ai_accepted_packet_remains_unsigned_and_names_endpoint_gate(self):
+        metadata = copy.deepcopy(self.metadata)
+        metadata["example-press"]["reviewState"] = "ai_accepted"
+        metadata["example-press"]["provenance"].update(schemaVersion=3, policyVersion=2)
+        metadata["example-press"]["aiReviewProvenance"] = {
+            "reviewerModelId": "gpt-6-astra",
+            "reviewedAtEpochMillis": 1789278919309,
+            "reviewedContentId": "example-press",
+            "reviewedContentSha256": self.ledger["entries"][0]["metadataSha256"],
+            "sourceReferences": ["https://example.test/press"],
+            "decisionRationale": "Synthetic rendering test of an AI acceptance, not a human decision.",
+            "limitations": "Synthetic test only; no clinical validation or constraint clearance.",
+            "schemaVersion": 3, "policyVersion": 2,
+        }
+        ledger = copy.deepcopy(self.ledger)
+        ledger["entries"][0]["disposition"] = "ai_accepted"
+        ledger["entries"][0]["metadataSha256"] = hashlib.sha256(json.dumps(
+            metadata["example-press"], sort_keys=True,
+            separators=(",", ":"), ensure_ascii=False,
+        ).encode()).hexdigest()
+
+        result = render_packet(ledger, metadata)
+
+        self.assertIn("AI-accepted categorical metadata: **1**", result)
+        self.assertIn("Authored reviewed metadata: **1** (AI_ACCEPTED: **1**, DRAFT: **0**)", result)
+        self.assertIn("Human-approved metadata: **0**", result)
+        self.assertIn("| `example-press` | ai_accepted | Chest | Pending |", result)
+        self.assertIn("pre-disposition proposal", result)
+        self.assertIn("pending endpoint", result)
+        self.assertIn(
+            "Production reviewed planning is enabled and plans from the "
+            "1 `AI_ACCEPTED` record(s) above",
+            result,
+        )
+        self.assertIn("no record is genuinely human-`approved` yet", result)
+        self.assertNotIn("`DRAFT` describes missing human sign-off", result)
 
     def test_pending_decision_text_cannot_break_table_rows(self):
         self.ledger["entries"][0]["disposition"] = "pending_evidence_or_policy"

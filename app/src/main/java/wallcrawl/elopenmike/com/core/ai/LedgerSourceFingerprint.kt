@@ -3,7 +3,6 @@ package wallcrawl.elopenmike.com.core.ai
 import java.security.MessageDigest
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.LedgerPolicyVersion
-import wallcrawl.elopenmike.com.core.model.ReviewState
 import wallcrawl.elopenmike.com.core.model.TrainingWeek
 import wallcrawl.elopenmike.com.core.model.WeeklyDoseLedger
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
@@ -84,9 +83,11 @@ object LedgerSourceFingerprint {
     /**
      * The mapping a referenced exercise currently resolves to.
      *
-     * Unresolved and unapproved exercises are hashed too, so approving metadata or shipping
-     * a catalog that adds a missing exercise invalidates the cached ledger instead of
-     * leaving stale omission counts in place.
+     * Unresolved and unaccepted exercises are hashed too, and an accepted record hashes its
+     * content and policy version on top of its state. Accepting metadata, editing an accepted
+     * record, or shipping a catalog that adds a missing exercise therefore invalidates the
+     * cached ledger instead of leaving stale omission counts in place, and an accepted record
+     * never hashes the same as the record it replaced.
      */
     private fun mappingLine(
         exerciseId: String,
@@ -96,16 +97,16 @@ object LedgerSourceFingerprint {
             ?: return line("mapping", exerciseId, "UNKNOWN_EXERCISE")
         val reviewed = exercise.reviewedMetadata
             ?: return line("mapping", exerciseId, "NO_REVIEWED_METADATA")
-        if (reviewed.reviewState != ReviewState.APPROVED) {
-            return line("mapping", exerciseId, reviewed.reviewState.name)
-        }
+        val accepted = exercise.acceptedMetadata()
+            ?: return line("mapping", exerciseId, "NOT_ACCEPTED", reviewed.reviewState.name)
         return line(
             "mapping",
             exerciseId,
-            reviewed.reviewState.name,
-            reviewed.directPrimaryMuscle,
-            reviewed.descriptiveSecondaryMuscles.sorted().joinToString(","),
-            reviewed.provenance.policyVersion.toString()
+            "ACCEPTED",
+            accepted.reviewState.name,
+            accepted.directPrimaryMuscle,
+            accepted.descriptiveSecondaryMuscles.sorted().joinToString(","),
+            accepted.provenance.policyVersion.toString()
         )
     }
 
