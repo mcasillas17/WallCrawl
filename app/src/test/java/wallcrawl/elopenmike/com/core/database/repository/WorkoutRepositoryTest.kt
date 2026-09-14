@@ -3,6 +3,7 @@ package wallcrawl.elopenmike.com.core.database.repository
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.fail
 import org.junit.Before
@@ -20,6 +21,29 @@ import wallcrawl.elopenmike.com.core.model.SetType
 import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
 
 class WorkoutRepositoryTest {
+    @Test
+    fun observedRangeRetainsTheAscendingSentinelForTheConsumersNowBound() = runTest {
+        val now = 10_000L
+        val limit = wallcrawl.elopenmike.com.core.ai.TrainingFrequencyRecencyPolicy.MAX_SESSIONS
+        val rows = (0 until limit + 10).map { index ->
+            WorkoutSessionWithExercisesAndSets(
+                WorkoutSessionEntity(
+                    id = "session-$index", name = "Test", startedAtTimestamp = 1,
+                    completedAtTimestamp = if (index < limit) now else now + index - limit + 1,
+                    targetDurationMinutes = 30, actualDurationMinutes = 1,
+                    status = SessionStatus.COMPLETED, focusMusclesJson = "", notes = ""
+                ), emptyList()
+            )
+        }
+        val repository = OfflineWorkoutRepository(EmptyWorkoutSessionDao(rows.reversed()), RecordingWorkoutSetDao())
+        val probe = repository.observeCompletedSessionProbeInRange(1, now + 100).first()
+        assertThat(probe).hasSize(limit + 1)
+        assertThat(probe.last().completedAtTimestamp).isEqualTo(now + 1)
+        assertThat(repository.getCompletedSessionsInRange(1, now + 1)).hasSize(limit)
+        org.junit.Assert.assertThrows(IllegalArgumentException::class.java) {
+            kotlinx.coroutines.runBlocking { repository.getCompletedSessionsInRange(1, now + 2) }
+        }
+    }
 
     private lateinit var setDao: RecordingWorkoutSetDao
     private lateinit var repository: OfflineWorkoutRepository
@@ -476,7 +500,20 @@ private class RecordingWorkoutSetDao : WorkoutSetDao {
         emptyList()
 }
 
-private class EmptyWorkoutSessionDao : WorkoutSessionDao {
+private class EmptyWorkoutSessionDao(
+    private val rangeRows: List<WorkoutSessionWithExercisesAndSets> = emptyList()
+) : WorkoutSessionDao {
+    override suspend fun getCompletedTimestamps(status: SessionStatus): List<Long> = emptyList()
+    override suspend fun selectCompletedSessionsInRange(
+        startEpochMillis: Long, endEpochMillisExclusive: Long, status: SessionStatus, limit: Int
+    ): List<WorkoutSessionWithExercisesAndSets> = rangeRows.filter {
+        it.session.completedAtTimestamp?.let { time -> time >= startEpochMillis && time < endEpochMillisExclusive } == true
+    }.sortedWith(compareBy<WorkoutSessionWithExercisesAndSets> { it.session.completedAtTimestamp }
+        .thenBy { it.session.id }).take(limit)
+    override fun observeCompletedSessionsInRange(startEpochMillis: Long, endEpochMillisExclusive: Long, limit: Int):
+        Flow<List<WorkoutSessionWithExercisesAndSets>> = kotlinx.coroutines.flow.flow {
+            emit(selectCompletedSessionsInRange(startEpochMillis, endEpochMillisExclusive, SessionStatus.COMPLETED, limit))
+        }
     override fun observeSessionWithDetails(
         sessionId: String
     ): Flow<WorkoutSessionWithExercisesAndSets?> = flowOf(null)

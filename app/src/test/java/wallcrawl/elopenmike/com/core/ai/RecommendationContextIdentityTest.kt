@@ -18,6 +18,29 @@ import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
  * language throws away valid ones.
  */
 class RecommendationContextIdentityTest {
+    @Test
+    fun directFrequencyAndCanonicalSchedulingDatesZoneAndWindowChangeIdentity() {
+        val original = context().copy(schedulingEvidence =
+            wallcrawl.elopenmike.com.core.model.TrainingFrequencyRecencyEvidence(
+                20_000, "UTC", mapOf("Chest" to listOf(19_996, 19_997))
+            ))
+        val changes = listOf(
+            original.copy(userProfile = original.userProfile.copy(daysPerWeek = 6)),
+            original.copy(trainingFrequencyDaysPerWeek = 6),
+            original.copy(schedulingEvidence = wallcrawl.elopenmike.com.core.model.TrainingFrequencyRecencyEvidence(
+                20_000, "UTC", mapOf("Chest" to listOf(19_996, 19_998))
+            )),
+            original.copy(schedulingEvidence = wallcrawl.elopenmike.com.core.model.TrainingFrequencyRecencyEvidence(
+                20_001, "UTC", mapOf("Chest" to listOf(19_996, 19_997))
+            )),
+            original.copy(schedulingEvidence = wallcrawl.elopenmike.com.core.model.TrainingFrequencyRecencyEvidence(
+                20_000, "Europe/Madrid", mapOf("Chest" to listOf(19_996, 19_997))
+            ))
+        )
+        changes.forEach {
+            assertThat(RecommendationContextIdentity.of(it)).isNotEqualTo(RecommendationContextIdentity.of(original))
+        }
+    }
 
     @Test
     fun identicalContexts_produceTheSameIdentity() {

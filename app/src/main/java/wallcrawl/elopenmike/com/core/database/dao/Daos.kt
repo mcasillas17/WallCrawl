@@ -41,7 +41,7 @@ interface UserProfileDao {
 }
 
 @Dao
-interface WorkoutSessionDao {
+interface WorkoutSessionDao : CompletedWorkoutHistoryDao {
     @Transaction
     @Query("SELECT * FROM workout_sessions WHERE id = :sessionId LIMIT 1")
     fun observeSessionWithDetails(sessionId: String): Flow<WorkoutSessionWithExercisesAndSets?>

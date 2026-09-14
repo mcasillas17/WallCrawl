@@ -7,17 +7,34 @@ import androidx.room.Upsert
 import wallcrawl.elopenmike.com.core.database.entity.WeeklyDoseLedgerStateEntity
 import wallcrawl.elopenmike.com.core.database.relation.WorkoutSessionWithExercisesAndSets
 import wallcrawl.elopenmike.com.core.model.SessionStatus
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Reads the completed history a weekly ledger is reconstructed from.
  *
  * This is separate from the general workout DAO on purpose: reconstruction needs the whole
- * week, so there is no result limit here. A capped "recent sessions" query would silently
- * under-report a busy week, which is exactly the kind of quiet inaccuracy the ledger exists
- * to avoid.
+ * week, so reads are uncapped by default. Scheduling supplies a pathological maximum; that
+ * overload reads one extra row and refuses overflow rather than silently sampling history.
  */
 @Dao
 interface CompletedWorkoutHistoryDao {
+    /** Room observes sessions AND relation tables, including equal-count restores/edits. */
+    @Transaction
+    @Query(
+        """
+        SELECT * FROM workout_sessions
+        WHERE status = 'COMPLETED'
+          AND completedAtTimestamp >= :startEpochMillis
+          AND completedAtTimestamp < :endEpochMillisExclusive
+        ORDER BY completedAtTimestamp ASC, id ASC
+        LIMIT :limit
+        """
+    )
+    fun observeCompletedSessionsInRange(
+        startEpochMillis: Long,
+        endEpochMillisExclusive: Long,
+        limit: Int
+    ): Flow<List<WorkoutSessionWithExercisesAndSets>>
 
     /** Lightweight, uncapped history for calendar streaks and the all-time workout count. */
     @Query(
@@ -48,23 +65,29 @@ interface CompletedWorkoutHistoryDao {
           AND completedAtTimestamp >= :startEpochMillis
           AND completedAtTimestamp < :endEpochMillisExclusive
         ORDER BY completedAtTimestamp ASC, id ASC
+        LIMIT :limit
         """
     )
     suspend fun selectCompletedSessionsInRange(
         startEpochMillis: Long,
         endEpochMillisExclusive: Long,
-        status: SessionStatus = SessionStatus.COMPLETED
+        status: SessionStatus = SessionStatus.COMPLETED,
+        limit: Int = Int.MAX_VALUE
     ): List<WorkoutSessionWithExercisesAndSets>
 
     /** Rejects an unusable range before it can quietly return an empty week. */
     suspend fun getCompletedSessionsInRange(
         startEpochMillis: Long,
-        endEpochMillisExclusive: Long
+        endEpochMillisExclusive: Long,
+        maximumSessions: Int = Int.MAX_VALUE
     ): List<WorkoutSessionWithExercisesAndSets> {
         require(endEpochMillisExclusive > startEpochMillis) {
             "endEpochMillisExclusive must be greater than startEpochMillis."
         }
-        return selectCompletedSessionsInRange(startEpochMillis, endEpochMillisExclusive)
+        require(maximumSessions > 0)
+        val probeLimit = if (maximumSessions == Int.MAX_VALUE) maximumSessions else maximumSessions + 1
+        return selectCompletedSessionsInRange(startEpochMillis, endEpochMillisExclusive, limit = probeLimit)
+            .also { require(it.size <= maximumSessions) { "Completed history range exceeds its bound." } }
     }
 }
 

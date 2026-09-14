@@ -265,3 +265,26 @@ existed; and the 72-hour history window constant is now `DEFAULT_HISTORY_LOOKBAC
 carrying an explicit note that it selects history and does not measure recovery. The window's
 value, its behaviour and the ordinal role of `programming.fatigueScore` in ranking are all
 unchanged; only the labels that misdescribed them are.
+
+### Package 8 scheduling implementation (2026-09-14)
+
+`TRAINING_FREQUENCY_RECENCY_V1` implements the preference-distribution principle already
+recorded under R2, not a new physiological claim. The exact
+[scheduling contract](../architecture.md#frequency-and-recency-scheduling) is **product
+policy**: fourteen local calendar dates, two distinct completed-practice dates to establish
+familiarity, and a `ceil(7 / preferred weekly days)` revisit band. No cited source directly
+supports these constants or validates this interpretation of an individual's schedule.
+
+Completed work is attributed only to the accepted designated direct primary; secondary
+involvement adds no practice dates. Frequency sets one band and recency determines one
+binary positive preference below capability, supported-regression and experience ordering.
+The policy does not penalize an exercise merely for having been performed, prefer unseen
+variants, impose a muscle quota or mandatory wait, or diagnose recovery, fatigue or overload.
+It changes neither weekly-dose credit nor progression.
+
+Deterministic reconstruction, unchanged candidate membership, counterfactual typed reasons,
+bounded reads, context invalidation and record compatibility are **software invariants**.
+Their regression tests establish implementation conformance, not scientific or clinical
+validation. Historical statements above about the previously undesigned scheduling rule
+describe their dated baseline; no blocking recency rule has been added to `ProgramValidator`,
+and ROADMAP Package 9's progression/deload work remains separate and unimplemented.

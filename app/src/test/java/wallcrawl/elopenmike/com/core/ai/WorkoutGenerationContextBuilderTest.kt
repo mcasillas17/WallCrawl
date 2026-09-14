@@ -4,6 +4,11 @@ import com.google.common.truth.Truth.assertThat
 import java.time.ZoneId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import wallcrawl.elopenmike.com.core.database.repository.WeeklyDoseLedgerRepository
@@ -54,6 +59,71 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.model.WorkoutSummary
 
 class WorkoutGenerationContextBuilderTest {
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    @Test
+    fun observationBoundsOnlyNowEligibleRowsAndRetainsAFutureOverflowSentinel() = runTest {
+        val now = 1_800_000_000_000L
+        val clock = MutableStateFlow(now)
+        val limit = TrainingFrequencyRecencyPolicy.MAX_SESSIONS
+        val sessions = (0 until limit).map { completedSession("past-$it", now, emptyList()) } +
+            (1..10).map { completedSession("future-$it", now + it, emptyList()) }
+        val repository = object : WorkoutRepository by StaticWorkoutRepository(sessions) {
+            override fun observeCompletedSessionProbeInRange(startTimestamp: Long, endTimestampExclusive: Long) =
+                flowOf(sessions.take(limit + 1))
+        }
+        val builder = WorkoutGenerationContextBuilder(
+            StaticUserProfileRepository(UserProfile()), repository,
+            wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog(
+                PlannerFixtureContextFactory().bundledCatalogProjection().exercises
+            ), ExerciseFilter(), WorkoutHistoryAnalyzer(),
+            plannerFeatureFlags = PlannerFeatureFlags.PRODUCTION,
+            nowTimestamp = { clock.value }, zoneId = { ZoneId.of("UTC") }
+        )
+        val emissions = mutableListOf<wallcrawl.elopenmike.com.core.model.TrainingFrequencyRecencyEvidence>()
+        val failures = mutableListOf<Throwable>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            builder.observeSchedulingEvidence(clock).catch { failures += it }.collect { emissions += it }
+        }
+        advanceUntilIdle()
+        assertThat(failures).isEmpty()
+        assertThat(emissions).containsExactly(builder.build().schedulingEvidence)
+        clock.value = now + 1
+        advanceUntilIdle()
+        assertThat(failures.single()).isInstanceOf(IllegalArgumentException::class.java)
+        assertThat(emissions).hasSize(1)
+        org.junit.Assert.assertThrows(IllegalArgumentException::class.java) {
+            kotlinx.coroutines.runBlocking { builder.build() }
+        }
+    }
+    @Test
+    fun reviewedBuildSamplesNowAndZoneOnceAndDoesNotHideRangeReadFailures() = runTest {
+        val exercises = PlannerFixtureContextFactory().bundledCatalogProjection().exercises
+        var nowCalls = 0
+        var zoneCalls = 0
+        val repository = object : WorkoutRepository by StaticWorkoutRepository(emptyList()) {
+            var shouldFail = false
+            override suspend fun getCompletedSessionsInRange(startTimestamp: Long, endTimestampExclusive: Long): List<WorkoutSession> {
+                if (shouldFail) throw java.io.IOException("test range read failed")
+                assertThat(endTimestampExclusive).isEqualTo(1_800_000_000_001L)
+                return emptyList()
+            }
+        }
+        val builder = WorkoutGenerationContextBuilder(
+            StaticUserProfileRepository(UserProfile()),
+            repository, wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog(exercises),
+            ExerciseFilter(), WorkoutHistoryAnalyzer(),
+            plannerFeatureFlags = PlannerFeatureFlags.PRODUCTION,
+            nowTimestamp = { nowCalls++; 1_800_000_000_000L },
+            zoneId = { zoneCalls++; ZoneId.of("America/Los_Angeles") }
+        )
+        assertThat(builder.build().schedulingEvidence).isNotNull()
+        assertThat(nowCalls).isEqualTo(1)
+        assertThat(zoneCalls).isEqualTo(1)
+        repository.shouldFail = true
+        org.junit.Assert.assertThrows(java.io.IOException::class.java) {
+            kotlinx.coroutines.runBlocking { builder.build() }
+        }
+    }
 
     @Test
     fun build_bandOnlyInventoryCannotRecommendFixedAnchorVariations() = runTest {
@@ -977,6 +1047,10 @@ private class StubUserProfileRepository(
 private class StubWorkoutRepository(
     private val completedSessions: List<WorkoutSession>
 ) : WorkoutRepository {
+    override suspend fun getCompletedSessionsInRange(startTimestamp: Long, endTimestampExclusive: Long) =
+        completedSessions.filter { it.completedAtTimestamp?.let { time ->
+            time >= startTimestamp && time < endTimestampExclusive
+        } == true }
     var getRecentCompletedSessionsCallCount: Int = 0
         private set
 

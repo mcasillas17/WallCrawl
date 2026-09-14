@@ -2,12 +2,20 @@ package wallcrawl.elopenmike.com.core.ai
 
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.ExercisePrescription
+import wallcrawl.elopenmike.com.core.model.ExercisePerformanceHistory
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.MechanicsType
 import wallcrawl.elopenmike.com.core.model.RepRange
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
+
+/**
+ * Sufficient history for the factory's all-completed-sets comparison, shared with identity.
+ * Null means no completed sets; missing reps retain the existing comparison-only zero.
+ */
+internal fun ExercisePerformanceHistory.minimumCompletedReps(): Int? =
+    recentSets.asSequence().filter { it.isCompleted }.minOfOrNull { it.completedReps ?: 0 }
 
 /**
  * Creates conservative, structurally valid targets for any catalog exercise.
@@ -155,9 +163,8 @@ class DefaultExercisePrescriptionFactory(
         val priorPerformance = context.exerciseHistory[exercise.id]
         val priorWeight = priorPerformance?.lastWeight
         if (priorWeight != null && priorWeight.isFinite() && priorWeight >= 0.0) {
-            val completedRecentSets = priorPerformance.recentSets.filter { it.isCompleted }
-            val reachedTopOfRange = completedRecentSets.isNotEmpty() &&
-                completedRecentSets.all { (it.completedReps ?: 0) >= targetRepMaximum }
+            val reachedTopOfRange = priorPerformance.minimumCompletedReps()
+                ?.let { it >= targetRepMaximum } == true
             return if (reachedTopOfRange) {
                 priorWeight + when (context.preferredUnits) {
                     WeightUnit.LBS -> 5.0

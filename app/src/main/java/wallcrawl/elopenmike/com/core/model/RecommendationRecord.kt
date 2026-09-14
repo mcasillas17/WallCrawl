@@ -52,8 +52,9 @@ data class MuscleDoseAccounting(
  * ## What it deliberately omits
  *
  * The plan's own exercises and prescriptions are not duplicated — a started session already
- * stores them under the same [sessionId]. Nothing personal is present: no name, note, load,
- * repetition count, effort value, body measurement, or free text.
+ * stores them under the same [sessionId]. Raw names, notes, loads, repetitions, effort and
+ * body measurements are not duplicated here. [contextIdentity] summarizes consumed history
+ * projections for local freshness detection, not anonymization.
  *
  * ## What it does not claim
  *
@@ -135,7 +136,8 @@ data class RecommendationRecord(
         // A six-exercise plan and its no-preference baseline can identify at most 36
         // source-target inversions. Each structured ranking reason uses four tokens, and a
         // persisted repaired recommendation adds one deduplicated repair reason.
-        const val MAX_REASON_CODES: Int = 160
+        // Scheduling adds at most six reasons of six tokens, plus policy and replay tokens.
+        const val MAX_REASON_CODES: Int = 6 * 6 * 4 + 6 * 6 + 1 + 2
         const val MAX_DOSE_ENTRIES: Int = 64
     }
 }

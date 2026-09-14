@@ -320,7 +320,8 @@ class PlannerFixtureTest {
     @Test
     fun concurrentActivityPersona_readsTheWeekRatherThanTheTimeInsideIt() = runTest {
         // Nothing infers readiness, overload or recovery from when in the week work happened.
-        // Moving both sessions to other days of the same ISO week must change nothing at all.
+        // This persona has only one practice date per credited primary. Moving those dates
+        // changes scheduling evidence, but keeps its preference neutral and its plan unchanged.
         val fixture = corpus().single { it.id == "concurrent-activity" }
         val movedWithinTheWeek = fixture.copy(
             completedSessions = fixture.completedSessions.map { session ->
@@ -340,6 +341,13 @@ class PlannerFixtureTest {
             .isEqualTo(original.firstValidation.raw.codes())
         assertThat(moved.firstWorkout.normalizedPlannerFixtureWorkout())
             .isEqualTo(original.firstWorkout.normalizedPlannerFixtureWorkout())
+        val originalScheduling = checkNotNull(original.built.context.schedulingEvidence)
+        val movedScheduling = checkNotNull(moved.built.context.schedulingEvidence)
+        assertThat(movedScheduling).isNotEqualTo(originalScheduling)
+        for (evidence in listOf(originalScheduling, movedScheduling)) {
+            assertThat(TrainingFrequencyRecencyPolicy().preferredMuscles(evidence, fixture.profile.daysPerWeek))
+                .isEmpty()
+        }
     }
 
     @Test

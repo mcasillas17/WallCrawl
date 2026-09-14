@@ -6,6 +6,8 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.first
 import org.junit.After
 import org.junit.Assert.assertThrows
@@ -24,6 +26,40 @@ import wallcrawl.elopenmike.com.core.model.SetType
  */
 @RunWith(AndroidJUnit4::class)
 class CompletedWorkoutHistoryDaoTest {
+    @Test
+    fun observingTheRangeNoticesAChildOutcomeChangeAtEqualCompletedCount() = runBlocking {
+        insertSession("observed", 1_000L)
+        val emissions = kotlinx.coroutines.channels.Channel<List<wallcrawl.elopenmike.com.core.database.relation.WorkoutSessionWithExercisesAndSets>>(
+            kotlinx.coroutines.channels.Channel.UNLIMITED
+        )
+        val job = launch {
+            database.workoutSessionDao().observeCompletedSessionsInRange(0, 2_000, 10)
+                .collect { emissions.send(it) }
+        }
+        try {
+            val before = kotlinx.coroutines.withTimeout(5_000) { emissions.receive() }
+            assertThat(before.single().exercisesWithSets.single().sets.single().isCompleted).isTrue()
+            val changedSet = before.single().exercisesWithSets.single().sets.single().copy(
+                isCompleted = false,
+                completedAtTimestamp = null
+            )
+            // Use a Room-managed write, as logging/restore do. Raw openHelper SQL bypasses
+            // Room's post-write invalidation refresh and cannot exercise this contract.
+            database.workoutSetDao().insertOrUpdateSet(changedSet)
+            assertThat(database.workoutSetDao().getSetById(changedSet.id)).isEqualTo(changedSet)
+            val after = kotlinx.coroutines.withTimeout(5_000) {
+                var rows = emissions.receive()
+                while (rows.single().exercisesWithSets.single().sets.single().isCompleted) rows = emissions.receive()
+                rows
+            }
+            assertThat(after).hasSize(before.size)
+            assertThat(after.single().session).isEqualTo(before.single().session)
+            assertThat(after.single().exercisesWithSets.single().sets.single().isCompleted).isFalse()
+        } finally {
+            job.cancelAndJoin()
+            emissions.close()
+        }
+    }
 
     private val context: Context = ApplicationProvider.getApplicationContext()
     private lateinit var database: WallCrawlDatabase
@@ -50,6 +86,11 @@ class CompletedWorkoutHistoryDaoTest {
             .getCompletedSessionsInRange(startEpochMillis = 1_000L, endEpochMillisExclusive = 2_000L)
 
         assertThat(sessions).hasSize(20)
+        val observed = database.workoutSessionDao().observeCompletedSessionsInRange(1_000, 2_000, 21).first()
+        assertThat(observed).isEqualTo(sessions)
+        assertThrows(IllegalArgumentException::class.java) {
+            runBlocking { database.workoutSessionDao().getCompletedSessionsInRange(1_000, 2_000, maximumSessions = 19) }
+        }
     }
 
     @Test

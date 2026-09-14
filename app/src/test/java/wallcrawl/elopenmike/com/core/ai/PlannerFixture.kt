@@ -38,10 +38,11 @@ internal data class PlannerFixture(
     val allowedExerciseIds: List<String> = emptyList(),
     val reviewedEligibility: PlannerFixtureReviewedEligibility? = null,
     /**
-     * Completed history for the fixture's own ISO week, in ledger terms.
+     * Completed history for the fixture's own ISO week.
      *
      * These are the sessions the harness replays through the production
-     * [WeeklyDoseLedgerCalculator]. They are deliberately separate from [exerciseHistory],
+     * [WeeklyDoseLedgerCalculator] and [TrainingFrequencyRecencyPolicy], using one canonical
+     * session materialization. They are deliberately separate from [exerciseHistory],
      * which is the planner's per-exercise load view and credits nothing.
      */
     val completedSessions: List<PlannerFixtureCompletedSession> = emptyList(),

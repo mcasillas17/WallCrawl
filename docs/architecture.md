@@ -216,6 +216,7 @@ state:
 - the current profile and preferences;
 - at most eight recent completed sessions;
 - normalized exercise history and recently trained muscles;
+- a separate bounded fourteen-local-date completed-work range for scheduling;
 - the full bundled catalog after hard filtering.
 
 Production filtering is `ExerciseEligibilityPolicy` — the reviewed eligibility path,
@@ -275,6 +276,8 @@ and keeps. Applied ranking explanations remain structured as `WorkoutRankingReas
 values. The supported-regression reason records the selected target, the directly linked
 source, and the exact `LIMITED` capability that triggered the preference; English and
 Spanish rendering happens only at the screen boundary.
+Scheduling reasons additionally name the preferred exercise, its counterfactual alternative,
+the accepted direct primary, preferred weekly frequency, and elapsed calendar dates.
 
 The supported-regression policy runs only on the planner's existing legal candidate set.
 It precomputes direct reviewed relationships before either comparator runs: both endpoints
@@ -286,10 +289,10 @@ exercise-specific `LIMITED` preference for a capability the target does not requ
 Evidence for the source suppresses this signal along with the existing capability penalty.
 There is no name, muscle, family, reverse-edge, substitution, optional-support, chain, or
 unreviewed inference. Focus and accessory-mechanics ordering remain stronger; experience,
-fatigue, and stable ID remain weaker. Compound and accessory selection share the same
+scheduling, fatigue, and stable ID remain weaker. Compound and accessory selection share the same
 precomputed map, so comparison is total and performs no graph traversal.
 
-`RecommendationSnapshot` retains applied reasons and encodes each one into four bounded
+`RecommendationSnapshot` retains applied supported-regression reasons and encodes each into four bounded
 versioned `reasonCodes`: an indexed `SUPPORTED_REGRESSION_PREFERENCE_V1` marker plus
 `PREFERRED`, `SOURCE`, and `CAPABILITY` fields. Restore rejects incomplete, duplicate,
 noncontiguous, unknown-field, or identical-endpoint structured groups. An otherwise
@@ -298,15 +301,21 @@ not rendered by an older build, matching the recommendation record's text-versio
 Reusing the existing reason-code channel avoids a Room migration or archive format change
 while preserving the decision through session creation, export, and restore.
 
-The record accepts at most 160 reason-code tokens. The current planner selects at most six
+Each scheduling reason uses six bounded `TRAINING_FREQUENCY_RECENCY_V1.<index>` tokens:
+the marker plus preferred ID, alternative ID, direct primary, weekly frequency and elapsed
+calendar dates. Current structured reason types share a contiguous index space; malformed
+current groups are rejected rather than partially rendered.
+
+The record accepts at most 183 reason-code tokens. The current planner selects at most six
 exercises; comparing that result with its six-exercise no-preference baseline can therefore
 attribute at most 36 source-target inversions. Four tokens per inversion plus the single
-repair code that an accepted repaired recommendation can carry uses 145 tokens. The bound
-preserves every applied source reference without truncation and leaves the archive input
-bounded. This validation-only increase is backward compatible when reading records written
-under the former 64-token limit. A build that still enforces 64 may reject a newly written
-record containing more than 64 tokens, so this is not forward compatibility with old
-readers.
+repair code uses 145 tokens. At most six scheduling reasons use six tokens each, and
+scheduling-policy and generation-index provenance use two more: `144 + 1 + 36 + 2 = 183`.
+This preserves every applied supported-regression source without truncation and bounds
+scheduling explanations to one witness per selected exercise. The validation-only increase
+reads older 64- and 160-token records unchanged; older readers may reject new records beyond
+their own limit. Room schema 13 and archive format 3 are unchanged, not forward-compatible
+promises to old readers. Unknown future reason-version tokens remain opaque.
 
 `GeneratedWorkoutValidator` verifies that every ID exists, remains in the
 allowed set, matches the catalog exercise type, and belongs to a structurally valid
@@ -380,9 +389,10 @@ exercise, and a focus violation is not an exceeded allowance, so its presence bl
 outright.
 
 There is no numeric physiological fatigue budget here, no summation of the legacy ordinal
-`programming.fatigueScore`, no timestamp-derived readiness or overload rule, and no
-recency rule. `WorkoutHistoryAnalyzer`'s default 72-hour `focusMuscles` lookback remains
-only a history summary; the planner does not use it as a scheduling or recovery rule.
+`programming.fatigueScore`, and no timestamp-derived readiness, overload, or blocking
+recency rule. The separate [scheduling preference](#frequency-and-recency-scheduling)
+only changes ordering. `WorkoutHistoryAnalyzer`'s default 72-hour `focusMuscles` lookback
+remains a history summary; the new preference does not consume those labels.
 
 `WorkoutGenerationContext` already carries the complete `UserProfile`, so no second
 capability field exists. Production composition sets
@@ -435,11 +445,11 @@ State and capability can reduce sets but cannot change or invent a load.
 
 Within a split, compound slots are chosen first by genuine focus support inside the
 compound pool, then by the reviewed capability soft-penalty bit, supported-regression
-preference, experience, fatigue, and stable ID, while still spreading work across
+preference, experience, scheduling, fatigue, and stable ID, while still spreading work across
 movement patterns so a session is not the same lift three times. Remaining accessory
 slots prefer exercises that train the split directly, then isolation work, then the
 presence of programming metadata, that same capability penalty, supported-regression
-preference, experience penalty, fatigue, and stable ID. Because focus support is the
+preference, experience penalty, scheduling, fatigue, and stable ID. Because focus support is the
 first key in both passes and at least one accessory
 slot always remains, a supporting exercise is always reachable; the planner states that
 as an invariant rather than leaving it to be re-derived from the two comparators.
@@ -459,6 +469,106 @@ produced push days padded with unrelated work — but the planner only fails whe
 nothing at all is trainable, so failure never depends on what the user
 prioritized. Rotation is seeded from completed-workout count so it advances
 across process death, not just within a session.
+
+### Frequency and recency scheduling
+
+`TRAINING_FREQUENCY_RECENCY_V1` is one positive, binary **repeat-practice preference**.
+The profile's `daysPerWeek` still means total preferred training days, not a per-muscle
+quota. It sets a product revisit band of `ceil(7 / daysPerWeek)`:
+
+| Preferred weekly days | Revisit band in local calendar dates |
+| --- | --- |
+| 2 | 4 |
+| 3 | 3 |
+| 4, 5, or 6 | 2 |
+
+These bands, the fourteen-date lookback, and the two-date familiarity condition are named,
+versioned product choices. Research informs distributing practice around preference, not
+these constants. None is a recovery interval, physiological score, dose floor, obligation
+to train, or automatic progression rule.
+
+`WorkoutGenerationContextBuilder` preserves the recent-eight view for loading, capability
+evidence and rest choices. Separately, it reads the canonical completed scheduling range
+through the existing history DAO/repository: local today minus thirteen at start-of-day,
+through the sampled instant **inclusive**. One explicit instant and zone also determine
+the program-state week. The range spans fourteen local calendar dates, respects DST and
+midnight transitions, and does not reset on Monday. Future completion timestamps contribute
+nothing. Neither comparators nor the pure scheduling policy read the system clock.
+
+A `COMPLETED` session contributes a primary-muscle practice date only when an exercise
+instance contains completed non-warm-up work. The policy reuses `isCreditableWorkSet` and
+`SetOutcomeRules`: completed work in a partially performed completed session counts, while
+unfinished/stopped/skipped sets, planned or abandoned sessions, and warm-up-only work do
+not. Legacy missing set timestamps remain missing; the date comes from the canonical
+session completion timestamp. No load, reps, effort, or manageable threshold is introduced.
+
+Attribution is exact catalog ID through `Exercise.acceptedMetadata().directPrimaryMuscle`.
+There is no session-focus, legacy-muscle, secondary-involvement, name, or movement-family
+fallback. Unknown and unaccepted work supplies no attributed date. Multiple sets, exercise
+instances, or sessions on one local date count as **one** date per primary. Two distinct
+dates inside the window establish familiarity. A familiar primary receives the preference
+when its latest practice is at least the revisit band old; additional age earns no extra
+weight. Unseen, once-seen, stale, future-only, and more-recent primaries stay neutral.
+Every exercise sharing that primary receives the same key, so changing an exercise ID
+merely for novelty earns nothing.
+
+Frequency sets the band and recency tests membership: they are not two additive scores.
+The precomputed key sits after experience and before the legacy fatigue ordinal and stable
+ID in both selection passes. Focus, accessory mechanics/programming presence, capability
+evidence, and supported regressions remain stronger. Eligibility, compound slots, pattern
+spreading/fill, weekly allowances, prescriptions and whole-program validation are unchanged.
+
+Applied reasons compare the actual selection with the same selection with **only**
+scheduling disabled. A same-pass, stronger-tier-equivalent alternative must actually lose
+position or selection; signal presence alone emits nothing. The supported-regression
+counterfactual conversely retains scheduling. Scheduling reasons render equivalent English
+and Spanish copy at the UI boundary; stored values never depend on language or gender.
+
+One complete range is bounded to 2,000 sessions, 100,000 examined sets and 64 primary keys.
+Malformed input or overflow fails explicitly, never as a successfully truncated history.
+The observable day-range query retains an ascending 2,001-row probe; filtering to `<= now`
+precedes the 2,000-session check. Thus future rows cannot create false overflow, while the
+first future sentinel detects real overflow once it becomes current. Candidate keys are
+precomputed once; comparators perform no database calls, history scans or graph traversal.
+Selection needs at most three traces: actual, supported-regression-off, and scheduling-off.
+
+**Freshness and replay.** Context identity format `wallcrawl-recommendation-context-v3`
+includes both frequency fields, scheduling policy, canonical practice dates, local date and
+zone, even when scheduling is neutral. It also fingerprints the derived history projections
+the planner actually consumes: candidate capability-evidence membership, usable load sources
+and units, the shared completed-rep comparison, explicit rest choices, and ledger direct
+counts/provenance/integrity. Same-day history changes cannot disappear behind an unchanged
+date set or lifetime count. It excludes language, gender, raw session/set identifiers and
+unused performance metrics; the digest is local change detection, not anonymization or a
+promise of transactional reads.
+
+Today observes while **RESUMED**, releases its expensive range subscription immediately
+when hidden, and rechecks on resume. Room changes trigger context checks even if practice
+dates are unchanged; unchanged clock ticks do not poll the database. Retry/resume reconnect
+failed observation, whose error cannot be hidden by an unrelated successful generation.
+Passive invalidations coalesce only when their consumed context is already settled; explicit
+regeneration remains separate. Superseded or cancelled attempts cannot settle an identity,
+and lifecycle teardown is not treated as new history. Start still revalidates the captured
+recommendation against a fresh context with no repair.
+
+Equal-input replay includes the generation ordinal as well as the same canonical context.
+`regenerationIndex` supplies it explicitly; null retains the existing in-memory counter and
+completed-workout-count split rotation. `PLANNER_GENERATION_V1:<index>` and the scheduling
+policy travel in the existing record reason-code channel, including neutral scheduling.
+The ordinal is separate from freshness so advancing a counter cannot invalidate its own
+displayed recommendation. Restart/restore reconstructs evidence from immutable completed
+history; replaying an old recommendation still requires its original profile/context, which
+the archive does not promise to reconstruct from a digest.
+
+**Production example.** `ProductionPlannerCompositionTest` controls an otherwise comparable
+four-candidate PUSH pool of real bundled `AI_ACCEPTED` records. With the same two completed
+shoulder-practice dates aged three and two dates, completed count, and generation ordinal,
+two days/week orders `dumbbell-bench-press` before `dumbbell-shoulder-press` and selects
+`cable-fly`; six days/week orders shoulder press first and selects `cable-lateral-raise`.
+Moving that history to yesterday/today at six days/week restores neutral ordering. Both
+passes change without changing the legal set. Exact typed witnesses survive validator,
+record and codec round trips; full-cohort and constrained-profile tests separately preserve
+valid plans and honest typed refusals. This is software conformance, not clinical validation.
 
 ### Advertised focus
 
@@ -698,7 +808,9 @@ muscle the completed, proposed, and configured allowance counts. Version-like co
 text rather than converted enums, exactly as the ledger cache stores its policy version, so
 a value written by a future build reads back as unrecognised rather than coerced. The plan
 itself is not duplicated — `workout_exercises` already holds it under the same session id —
-and no name, note, load, repetition, effort value, or body measurement is stored. The row
+and no raw name, note, load, repetition, effort value, or body measurement field is stored.
+The context digest nevertheless derives from consumed planning inputs for freshness; it
+is not an anonymization guarantee. The row
 is written inside the same transaction that inserts the session, its exercises, and its
 sets, and cascades away with the session.
 
@@ -882,8 +994,9 @@ representational bounds still fail explicitly rather than truncating counts.
 and clears replay when hidden, then samples fresh time/zone on resubscription. A single
 delay to the next calendar boundary handles rollover without a workout write. Protected
 device clock/time-zone broadcasts and Retry also refresh. Today uses the same bounded
-calendar range for its workout counter; its existing clock feed is reduced to distinct
-weeks before subscribing to the count query. This does not change recommendation logic.
+calendar range for its workout counter; its shared clock feed is reduced to distinct weeks
+before subscribing to the count query. Its separate visibility-bound scheduling observation
+and resume checks follow the [freshness contract](#frequency-and-recency-scheduling).
 
 The complete [metric table](weekly-dose-ledger.md#progress-metric-contract) specifies
 measurement omissions and the preserved independent personal-record/strength rules.

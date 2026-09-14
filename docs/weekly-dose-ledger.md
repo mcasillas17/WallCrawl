@@ -11,6 +11,18 @@ session count as dose, never increases a base prescription, and defines no manda
 weekly floor. Exact or exceeded allowance returns typed no-guidance instead of zero sets
 or over-cap work.
 
+The planner's separate
+[`TRAINING_FREQUENCY_RECENCY_V1` scheduling preference](architecture.md#frequency-and-recency-scheduling)
+reuses completed-work classification and accepted direct-primary attribution, but counts
+**distinct practice dates**, not sets or dose. It reconstructs a fourteen-local-date range
+through the explicit current instant, excluding future work, whereas this ledger retains
+the full selected ISO week's existing membership. Two practice dates establish familiarity;
+preferred weekly days set a binary revisit band, not a muscle quota or mandatory frequency.
+Neither primary practice dates nor secondary involvement are added to `directPrimarySets`,
+and no second weekly-dose calculator, counter, cache, or progression system is introduced.
+The scheduling range's 2,000-session and 100,000-set bounds are separate representational
+limits, not replacements for this ledger's weekly limits.
+
 That cap stays per prescription, where several proposed exercises could each read the same
 remaining allowance. Checking the whole proposal is
 [whole-program validation](superpowers/specs/2026-09-06-whole-program-validation-design.md)'s

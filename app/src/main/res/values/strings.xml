@@ -7,6 +7,8 @@
     what is substituted is the formatted text. See docs/localization.md before adding keys.
 -->
 <resources>
+    <!-- Both counts are at least two under TRAINING_FREQUENCY_RECENCY_V1. -->
+    <string name="generated_rationale_frequency_recency_preference">Repeat practice for %1$s was preferred for your %2$s-day weekly schedule; last completed practice was %3$s calendar days ago. This is an ordering preference, not a recovery requirement.</string>
     <string name="app_name" translatable="false">WallCrawl</string>
 
     <!-- ============================ Shared actions ============================ -->

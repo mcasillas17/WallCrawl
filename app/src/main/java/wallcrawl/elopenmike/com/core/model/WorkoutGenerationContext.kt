@@ -30,6 +30,8 @@ data class WorkoutGenerationContext(
      * Empty on the legacy path.
      */
     val capabilityEvidence: CapabilityEvidenceSet = CapabilityEvidenceSet.empty(),
+    /** Reconstructed once from all canonical completed work in the 14-local-date window. */
+    val schedulingEvidence: TrainingFrequencyRecencyEvidence? = null,
     /**
      * The composed program state, present only when reviewed eligibility is enabled.
      *
@@ -64,7 +66,9 @@ data class WorkoutGenerationContext(
      */
     val reviewPolicyVersion: Int = 0,
     /** The program-design rules this session was asked to satisfy. */
-    val programConstraints: SessionProgramConstraints = SessionProgramConstraints()
+    val programConstraints: SessionProgramConstraints = SessionProgramConstraints(),
+    /** Optional replay input. Null uses the planner's intentional in-process regeneration counter. */
+    val regenerationIndex: Int? = null
 )
 
 /**

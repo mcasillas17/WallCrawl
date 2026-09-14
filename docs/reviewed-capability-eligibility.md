@@ -252,16 +252,25 @@ tie-breakers:
 
 - compound ordering: split-primary match within the compound pool, then
   capability penalty, supported-regression preference, experience penalty,
-  fatigue, then stable ID;
+  frequency/recency scheduling preference, fatigue, then stable ID;
 - accessory ordering: split-primary match, isolation preference, presence of
   programming metadata, capability penalty, supported-regression preference,
-  experience penalty, fatigue, then stable ID.
+  experience penalty, frequency/recency scheduling preference, fatigue, then stable ID.
 
 This is an explicit product ordering choice, not a diagnosis, safety promise,
 progression decision, or claim that supported variations are universally
 superior. A structured reason is emitted only when a selected target actually
 outranks a legal source competitor in the same stronger-precedence tier. It
 retains target exercise, source exercise, and capability references.
+
+`TRAINING_FREQUENCY_RECENCY_V1` adds only the
+[bounded repeat-practice tie-break](architecture.md#frequency-and-recency-scheduling).
+It attributes completed work through the same accepted direct-primary contract, groups
+practice by local date, and uses the weekly frequency preference to set a versioned revisit
+band. Unseen, sparse, stale and recent practice remains neutral; no exercise is removed or
+admitted by a timestamp. Capability evidence and the supported-regression preference remain
+stronger, and their counterfactual explanation keeps scheduling enabled. The new preference
+does not alter any eligibility decision, metadata acceptance or prescription.
 
 ## Enabled rollout contract
 
@@ -363,6 +372,8 @@ also live there: `SupportedRegressionRankingPolicy` reads `Exercise.acceptedMeta
 on both the source and the target, so a source's `LIMITED` preference can prefer an
 accepted `SUPPORTED` regression whether either record is `APPROVED` or `AI_ACCEPTED`
 (#77). No genuine human approval record exists for any of it.
+Package 8's frequency/recency scheduling preference is now also implemented; it does not
+implement any of the progression or deload work below.
 
 Task 6B remains open: there is no `ProgressionEngine.kt`, no one-variable
 progression, and no broader derived-state rollout beyond

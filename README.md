@@ -330,14 +330,21 @@ the named `DURATION_ESTIMATOR_V1`, all under the
 At most one deterministic repair pass may reduce sets; it never weakens a constraint,
 widens the candidate set, or invents a load, and it is disabled when a workout is started.
 Exceeding a configured allowance is a policy mismatch, not a medical judgement, and no
-weekly minimum, automatic increase, fatigue budget, or recency rule was added.
+weekly minimum, automatic increase, fatigue budget, or blocking recency rule was added.
+
+Within that legal set, the planner also applies a
+[bounded frequency/recency scheduling preference](docs/architecture.md#frequency-and-recency-scheduling).
+It can prioritize repeating familiar direct-primary practice using completed-work dates
+and the preferred weekly schedule, below focus, capability, supported-regression and
+experience priorities. It neither rewards exercise novelty nor declares a muscle recovered.
 
 A workout started from a recommendation records how it was decided — the validator,
 estimator, catalog, review, policy and ledger versions, the adaptation state, the
 accounting week and zone, ordered reason codes, and the completed, proposed and allowed
 set counts — in the same transaction that writes the session, and that record travels in
-the export archive. It carries no name, note, load, repetition, effort value, or body
-measurement.
+the export archive. It carries no raw name, note, load, repetition, effort value, or body
+measurement fields. Its local context digest derives from consumed planning inputs for
+freshness and is not an anonymization guarantee.
 
 Guidance is persisted with templates and frozen session snapshots in Room schema 13.
 The active timer still reads the persisted exact seconds; add-time, skip, and dismiss are

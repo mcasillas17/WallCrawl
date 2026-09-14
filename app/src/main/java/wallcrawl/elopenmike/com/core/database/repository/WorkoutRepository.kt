@@ -1,6 +1,7 @@
 package wallcrawl.elopenmike.com.core.database.repository
 
 import wallcrawl.elopenmike.com.core.ai.RecommendationSnapshot
+import wallcrawl.elopenmike.com.core.ai.TrainingFrequencyRecencyPolicy
 import wallcrawl.elopenmike.com.core.ai.asRecord
 import wallcrawl.elopenmike.com.core.database.PERSISTED_LIST_SEPARATOR
 import wallcrawl.elopenmike.com.core.database.dao.WorkoutSessionDao
@@ -25,6 +26,7 @@ import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
 import wallcrawl.elopenmike.com.core.progress.ProgressCalculator
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.flow
 import java.util.UUID
 
 interface WorkoutRepository {
@@ -36,6 +38,19 @@ interface WorkoutRepository {
     fun observeCompletedWorkoutCount(): Flow<Int>
     fun observeCompletedWorkoutCountInRange(startTimestamp: Long, endTimestampExclusive: Long): Flow<Int>
     suspend fun getRecentCompletedSessions(limit: Int = 8): List<WorkoutSession>
+    /** Complete canonical range, never the recent-eight loading/capability sample. */
+    suspend fun getCompletedSessionsInRange(startTimestamp: Long, endTimestampExclusive: Long): List<WorkoutSession>
+    /**
+     * Ascending MAX_SESSIONS + 1 probe, not an unrestricted complete range.
+     * The consumer filters its sampled inclusive now, then rejects overflow. Keeping the
+     * first future sentinel allows a clock tick to detect overflow without another query.
+     */
+    fun observeCompletedSessionProbeInRange(startTimestamp: Long, endTimestampExclusive: Long): Flow<List<WorkoutSession>> =
+        flow {
+            emit(getCompletedSessionsInRange(startTimestamp, endTimestampExclusive)
+                .sortedWith(compareBy<WorkoutSession> { it.completedAtTimestamp }.thenBy { it.id })
+                .take(TrainingFrequencyRecencyPolicy.MAX_SESSIONS + 1))
+        }
     /**
      * Starts a session from a generated plan.
      *
@@ -123,6 +138,24 @@ class OfflineWorkoutRepository(
     override suspend fun getRecentCompletedSessions(limit: Int): List<WorkoutSession> {
         require(limit > 0) { "limit must be greater than zero." }
         return sessionDao.getRecentCompletedSessions(limit).map { it.toWorkoutSession() }
+    }
+
+    override suspend fun getCompletedSessionsInRange(
+        startTimestamp: Long,
+        endTimestampExclusive: Long
+    ): List<WorkoutSession> = sessionDao.getCompletedSessionsInRange(
+        startTimestamp, endTimestampExclusive,
+        maximumSessions = TrainingFrequencyRecencyPolicy.MAX_SESSIONS
+    ).map { it.toWorkoutSession() }
+
+    override fun observeCompletedSessionProbeInRange(
+        startTimestamp: Long,
+        endTimestampExclusive: Long
+    ): Flow<List<WorkoutSession>> {
+        require(endTimestampExclusive > startTimestamp) { "The history range must be nonempty." }
+        val bound = TrainingFrequencyRecencyPolicy.MAX_SESSIONS
+        return sessionDao.observeCompletedSessionsInRange(startTimestamp, endTimestampExclusive, bound + 1)
+            .map { rows -> rows.map { it.toWorkoutSession() } }
     }
 
     override suspend fun startWorkoutFromGenerated(

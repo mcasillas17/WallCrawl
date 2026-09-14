@@ -145,6 +145,28 @@ class GeneratedWorkoutFocusNoticeTest {
     }
 
     @Test
+    fun schedulingPreferenceIsExplainedOnceOnTheTodayCardInEnglish() {
+        assertSchedulingNotice(Locale.ENGLISH, english, "Shoulders")
+    }
+
+    @Test
+    fun schedulingPreferenceIsExplainedOnceOnTheTodayCardInSpanish() {
+        assertSchedulingNotice(LATIN_AMERICAN_SPANISH, spanish,
+            checkNotNull(readBundledOverlay(context).muscle(StandardMuscles.SHOULDERS, "es")))
+    }
+
+    private fun assertSchedulingNotice(locale: Locale, resources: Context, muscle: String) {
+        var notice = ""
+        renderTodayCard(locale, emptyList(), rankingReasons = listOf(
+            WorkoutRankingReason.TrainingFrequencyRecencyPreference("press", "bench", "Shoulders", 6, 3),
+            WorkoutRankingReason.TrainingFrequencyRecencyPreference("lateral", "fly", "Shoulders", 6, 3)
+        ), onRankingExplanation = { notice = it })
+        val expected = resources.getString(R.string.generated_rationale_frequency_recency_preference, muscle, 6, 3)
+        assertThat(notice).isEqualTo(expected)
+        composeRule.onNodeWithText(expected, substring = true).assertIsDisplayed()
+    }
+
+    @Test
     fun supportedRegressionPreferenceIsExplainedOnTheTodayCardInSpanish() {
         renderTodayCard(
             locale = LATIN_AMERICAN_SPANISH,

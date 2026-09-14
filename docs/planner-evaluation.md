@@ -69,7 +69,10 @@ case proving a proposal far from the requested duration is not rejected for that
 not medical thresholds; a malformed ledger and unrepresentable arithmetic are asserted as
 distinct from an exceeded allowance. No fixture encodes a numeric physiological fatigue
 budget, timestamp-only overload or readiness inference, a mandatory weekly minimum, or an
-automatic volume increase, and no recency rule exists to assert.
+automatic volume increase, or blocking recency rule. The
+[frequency/recency scheduling preference](architecture.md#frequency-and-recency-scheduling)
+is tested separately as a versioned, non-physiological ordering choice, including through
+the actual enabled production composition.
 
 Passing fixtures/CI establishes software conformance, not scientific or clinical
 validation of WallCrawl's complete algorithm. Approval provenance and expert review do
@@ -100,7 +103,7 @@ A reviewed-enabled fixture always composes a program state; one that declares no
 fixtures compose none at all, matching the disabled legacy code path that tests can still
 build, even though production no longer composes that path by default.
 
-`completedSessions` is the ledger input and is deliberately separate from `exerciseHistory`,
+`completedSessions` feeds the ledger and scheduling evidence and is deliberately separate from `exerciseHistory`,
 which is the planner's per-exercise load view and credits nothing. Each entry names an `id`,
 a `completedDayOffset` in `0..6`, and exercises whose `sets` each spell out a `SetType` and
 `isCompleted`. Timestamps are derived from the corpus week's Monday rather than written into
@@ -331,12 +334,17 @@ consistency, and passing either demonstrates software conformance only.
 | No invented load; valid history/confirmed-load provenance; mixed units | Software invariant | `PlannerFixtureTest`, `mixed-unit-history`, `ProgramValidatorTest` |
 | Candidate membership, explicit exclusions, reviewed provenance | Software invariant | `ProgramValidatorTest`, `ProgramValidatorAggregateDoseTest`, corpus legality assertions |
 | Direct approved supported regression can reorder only legal peers for unresolved exercise-specific `LIMITED`; source evidence suppresses it | Product policy | `SupportedRegressionRankingPolicyTest`, `FakeWorkoutPlannerTest`, `ProgramValidatorTest`, `GeneratedWorkoutFocusNoticeTest`, `LocalDataArchiveRecommendationTest` |
-| Every applied supported-regression source survives snapshot/archive persistence within the bounded reason budget | Software invariant (six selected × six baseline = 36 reasons; four tokens each + one repair code = 145, under the 160-token limit) | `FakeWorkoutPlannerTest.generateWorkout_persistsTheBoundedMaximumAppliedRankingProvenance`, `RecommendationSnapshotRankingReasonTest`, `LocalDataArchiveRecommendationTest.roundTrip_preservesTheMaximumPlannerRankingProvenance` |
+| Every applied supported-regression source survives snapshot/archive persistence within the bounded reason budget | Software invariant (36 regression reasons × four tokens + six scheduling reasons × six tokens + one repair code + two provenance tokens = 183) | `FakeWorkoutPlannerTest.generateWorkout_persistsTheBoundedMaximumAppliedRankingProvenance`, `RecommendationSnapshotRankingReasonTest`, `LocalDataArchiveRecommendationTest.roundTrip_preservesTheMaximumPlannerRankingProvenance` |
+| Frequency/recency reorder only legal peers below capability, supported-regression and experience priorities | Product policy `TRAINING_FREQUENCY_RECENCY_V1`, not a recovery rule | `TrainingFrequencyRecencyPolicyTest`, `ProductionPlannerCompositionTest`, `ProductionEnabledInvarianceTest` |
+| Completed distinct-date attribution, fourteen-date/DST/zone/future boundaries, and bounded complete history | Product policy and software invariants | `TrainingFrequencyRecencyPolicyTest`, `WorkoutGenerationContextBuilderTest`, `CompletedWorkoutHistoryDaoTest`, `ProductionPlannerPersistenceTest` |
+| Only actual scheduling decisions produce exact typed, localized, persisted witnesses | Software invariant | `ProductionPlannerCompositionTest`, `WorkoutRankingReasonCodeTest`, `RecommendationSnapshotRankingReasonTest`, `GeneratedWorkoutFocusNoticeTest`, `RecommendationRecordDaoTest`, `LocalDataArchiveRecommendationTest` |
 | Deterministic replay and input non-mutation | Software invariant | `PlannerFixtureTest.evaluateCorpus_enforcesDeterminismAndPlannerInvariants` |
 | Band-only chest priority produces no misleading `PUSH` label | Software invariant (focus contract) | `WorkoutFocusCoverageTest`, `ReviewedCatalogCoverageTest`, `band-only` |
 | Fixed anchors require explicit confirmation; `banded-row` stays unresolved | Product policy | `FixedAnchorBandEligibilityTest`, `band-only`, `sparse-history` |
 | Typed no-plan outcomes preserved, including zero approved metadata | Software invariant | `reviewed-enabled-no-approved`, `ReviewedCatalogCoverageTest` |
 | Stale context refused at start; no partial start | Software invariant | `RecommendationContextIdentityTest`, `TodayViewModelTest` |
+| Same-day capability/load/rest/ledger changes invalidate consumed context even at equal counts or scheduling dates | Software invariant (context identity v3) | `RecommendationHistoryIdentityTest`, `TodayProductionLifecycleTest` |
+| Passive invalidations coalesce; explicit regeneration survives; retry/resume/teardown/cancellation cannot strand freshness | Software invariant | `TodayProductionLifecycleTest`, `TodayViewModelTest` |
 | Weekly dose is counted in sets, never derived from the legacy `fatigueScore` | Rejected inference | `PlannerFixtureTest.weeklyDoseIsCountedInSetsRatherThanDerivedFromFatigueScores` recomputes completed and proposed exposure from set counts alone and requires equality; `PlannerFixtureTest.prospectiveDoseAccountingIgnoresTheLegacyFatigueScore` adds the ordinal-invariance half. The ordinal's real ranking role is deliberately not asserted against. |
 | Readiness is never inferred from elapsed time alone | Rejected inference | `PlannerFixtureTest.concurrentActivityPersona_readsTheWeekRatherThanTheTimeInsideIt` |
 | No forced weekly minimum and no automatic volume increase | Rejected inference | `PlannerFixtureTest.aProposalWellUnderTheConfiguredAllowanceIsAcceptedWithoutAWeeklyMinimum`, the repair-only-reduces assertion |
@@ -352,8 +360,16 @@ and reads the actual 182 `AI_ACCEPTED` records (0 `APPROVED`, 29 `DRAFT`) — se
 and `SupportedRegressionRankingPolicyTest`, which exercises
 `Exercise.acceptedMetadata()` directly rather than through a synthetic promotion. The
 fixture corpus's synthetic cases do not promote bundled metadata, change graph edges, or
-claim live availability on their own. Frequency and recency scheduling are separate open
-policy work; no timestamp or completed-session count participates in this comparator.
+claim live availability on their own. Frequency/recency now participates as the lower-priority
+`TRAINING_FREQUENCY_RECENCY_V1` signal; timestamps are practice dates, not readiness evidence.
+`ProductionPlannerCompositionTest` independently exercises actual accepted bundled metadata
+through the production builder: a controlled PUSH pool and the same two shoulder-practice
+dates aged three and two dates produce bench press before shoulder press plus cable fly
+at two days/week, but shoulder press first plus cable lateral raise at six days/week.
+Moving the same sessions to yesterday/today restores the neutral ordering. Both compound
+and accessory changes retain identical legal membership, and exact reasons are asserted
+through the validator, stored record, and decoding. Full-cohort and constrained profiles
+remain covered separately; no synthetic acceptance is used in those production checks.
 
 The `concurrent-activity` assertions carry their own sensitivity control:
 `concurrentActivityPersona_isChangedWhenTheResistanceSessionIsRemoved` removes the logged
@@ -379,7 +395,9 @@ stating rather than glossing:
   week does produce different timestamps, and `TrainingWeek.contains` is what accepts them —
   a session moved outside the week is rejected by the calculator, which
   `WeeklyDoseLedgerCalculatorTest` asserts directly and the loader's `0..6` bound prevents a
-  fixture from expressing. Nothing downstream reads the timestamp, which is the point.
+  fixture from expressing. Scheduling evidence now reads those dates, and the test asserts
+  that its dates change. This persona remains neutral because it has only one Chest
+  practice date, not because timestamps cannot influence ordering anywhere in the planner.
 
 Three limits are recorded rather than worked around.
 
@@ -388,17 +406,24 @@ rejects one by contract and that rejection is asserted directly in
 `WeeklyDoseLedgerCalculatorTest`. It also has no gender field, so gender independence stays
 where it is already asserted, against a real profile, in `PlannerLocaleInvarianceTest`.
 
-Third, declared `completedSessions` are a **ledger input only**. Production's
-`WorkoutGenerationContextBuilder` derives four further context fields from completed history —
+Third, declared `completedSessions` now feed **both ledger and scheduling**. The factory
+materializes them once and passes the same canonical sessions to the production calculators.
+Scheduling uses explicit `UTC` at `2026-09-06T23:59:59.999Z`, the final millisecond of the
+existing corpus week, so all declared day offsets 0..6 are included without a wall clock.
+Reviewed fixtures receive dated evidence, including an honestly empty map; legacy fixtures
+retain null. Every current manifest persona remains scheduling-neutral, so fixture
+expectations and the wire/policy versions are unchanged. In `concurrent-activity`, several
+Chest exercise instances on Tuesday still establish only one practice date.
+
+Production's `WorkoutGenerationContextBuilder` derives four other fields from completed history —
 `recentWorkoutHistory`, `recentlyTrainedMuscles`, capability evidence and prior rest
 preferences — and the harness deliberately leaves all four at their empty defaults. That is
-safe today and not merely convenient: no planner in `src/main` reads the first two as a
-ranking or blocking input, deriving `recentlyTrainedMuscles` would pull a clock into a corpus
-whose whole purpose is determinism, and `CapabilityEvidencePolicy` requires `feltManageable`
+an explicit remaining fixture boundary: no planner in `src/main` reads the first two as a
+ranking or blocking input, and `CapabilityEvidencePolicy` requires `feltManageable`
 plus two comparable sessions per exercise, neither of which these bounded synthetic sets can
-express. Before this contract version the reviewed fixtures declared no completed history at
-all, so the empty values were trivially consistent; now they are a stated divergence, and any
-future rule that reads those fields has to close it.
+express. Explicit per-exercise loading history and lifetime completed counts are unchanged.
+The real production-composition, lifecycle, and Room/archive tests cover those additional
+history consumers rather than pretending the persona corpus models them all.
 
 ## Versions this gate runs under
 

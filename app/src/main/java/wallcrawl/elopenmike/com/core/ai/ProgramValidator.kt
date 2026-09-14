@@ -668,6 +668,8 @@ class ProgramValidator(
             contextIdentity = RecommendationContextIdentity.of(context),
             reasonCodes = reasonCodes,
             rankingReasons = workout.rankingReasons,
+            schedulingPolicyVersion = context.schedulingEvidence?.policyVersion?.takeIf { reviewedPathEnabled },
+            generationIndex = workout.generationIndex,
             doseAccounting = evaluation.doseAccounting
         )
     }

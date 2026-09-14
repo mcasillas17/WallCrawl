@@ -123,6 +123,9 @@ internal data class PlannerFixtureInputSnapshot(
      * Deeply immutable, so the snapshot holds the instance directly.
      */
     val capabilityEvidence: CapabilityEvidenceSet,
+    /** Deeply immutable like capability evidence; no rematerialization needed. */
+    val schedulingEvidence: wallcrawl.elopenmike.com.core.model.TrainingFrequencyRecencyEvidence?,
+    val regenerationIndex: Int?,
     /**
      * Deep-copied like every other mutable branch.
      *
@@ -294,6 +297,8 @@ private fun WorkoutGenerationContext.snapshot(): PlannerFixtureInputSnapshot =
         allowedExercises = allowedExercises.map(Exercise::deepCopy),
         automaticEligibilityResult = automaticEligibilityResult?.deepCopy(),
         capabilityEvidence = capabilityEvidence,
+        schedulingEvidence = schedulingEvidence,
+        regenerationIndex = regenerationIndex,
         trainingProgramState = trainingProgramState?.deepCopy(),
         priorUserRestPreferences = LinkedHashMap(priorUserRestPreferences),
         preferredUnits = preferredUnits,

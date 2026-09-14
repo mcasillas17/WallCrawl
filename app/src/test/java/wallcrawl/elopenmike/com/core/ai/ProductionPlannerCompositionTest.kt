@@ -40,6 +40,8 @@ import wallcrawl.elopenmike.com.core.model.WeeklyDoseLedger
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
+import wallcrawl.elopenmike.com.core.model.WorkoutRankingReason
+import wallcrawl.elopenmike.com.core.model.WorkoutRankingReasonCode
 
 /**
  * The composition `WallCrawlApplication` builds, run against the actual bundled catalog.
@@ -57,6 +59,174 @@ class ProductionPlannerCompositionTest {
     private val bundledExercises = bundledCatalog.exercises
     private val acceptedIds =
         bundledExercises.filter { it.acceptedMetadata() != null }.map(Exercise::id).toSet()
+
+    @Test
+    fun recencyAloneChangesBothPassesAndPreservesTheOtherPrescriptionInputs() = runTest {
+        val oldHistory = schedulingHistory()
+        val recentHistory = oldHistory.mapIndexed { index, session ->
+            session.copy(completedAtTimestamp = schedulingNow() - index * DAY_MILLIS)
+        }
+        val old = productionContextBuilder(schedulingProfile(), oldHistory).build()
+        val recent = productionContextBuilder(schedulingProfile(), recentHistory).build()
+        val repeat = FakeWorkoutPlanner().generateWorkout(old)
+        val neutral = FakeWorkoutPlanner().generateWorkout(recent)
+        assertThat(old.completedWorkoutCount).isEqualTo(recent.completedWorkoutCount)
+        assertThat(old.allowedExercises).isEqualTo(recent.allowedExercises)
+        assertThat(repeat.exercises.map { it.exerciseId }).containsExactly(
+            "dumbbell-shoulder-press", "dumbbell-bench-press", "cable-lateral-raise"
+        ).inOrder()
+        assertThat(neutral.exercises.map { it.exerciseId }).containsExactly(
+            "dumbbell-bench-press", "dumbbell-shoulder-press", "cable-fly"
+        ).inOrder()
+        assertThat(neutral.rankingReasons).isEmpty()
+        // Recency changes order only, not the prescribed targets for any candidate.
+        val factory = DefaultExercisePrescriptionFactory()
+        old.allowedExercises.forEach {
+            assertThat(factory.create(it, old)).isEqualTo(factory.create(it, recent))
+        }
+    }
+
+    @Test
+    fun allFourteenDatesAreReadEvenWhenPracticeIsOutsideTheRecentEightAndCurrentWeek() = runTest {
+        val history = schedulingHistory().map {
+            it.copy(completedAtTimestamp = requireNotNull(it.completedAtTimestamp) - 7 * DAY_MILLIS)
+        } + (1..9).map { index ->
+            completedSession("empty-$index", schedulingNow() - HOUR_MILLIS, emptyList())
+        }
+        val context = productionContextBuilder(schedulingProfile(), history).build()
+        assertThat(context.recentWorkoutHistory).hasSize(8)
+        assertThat(context.exerciseHistory).isEmpty()
+        assertThat(context.schedulingEvidence?.practiceDates?.get("Shoulders")).hasSize(2)
+        assertThat(FakeWorkoutPlanner().generateWorkout(context).exercises.first().exerciseId)
+            .isEqualTo("dumbbell-shoulder-press")
+        assertThat(context.trainingProgramState?.weeklyLedger?.creditedWorkSets).isEqualTo(0)
+    }
+
+    @Test
+    fun samePrimaryHasNoExactExerciseNoveltyRotationOrSignalOnlyReason() = runTest {
+        val ids = setOf("arnold-press", "dumbbell-shoulder-press", "standing-dumbbell-press", "cable-lateral-raise")
+        val context = productionContextBuilder(schedulingProfile(ids), schedulingHistory()).build()
+        val actual = FakeWorkoutPlanner().generateWorkout(context)
+        val baseline = FakeWorkoutPlanner().generateWorkout(context.copy(schedulingEvidence = null))
+        assertThat(actual.exercises).isEqualTo(baseline.exercises)
+        assertThat(actual.rankingReasons).isEmpty()
+        assertThat(actual.exercises.first().exerciseId).isEqualTo("arnold-press")
+    }
+
+    @Test
+    fun capabilityExperienceAndFocusRemainStrongerThanScheduling() = runTest {
+        val ids = setOf("overhead-press", "dumbbell-bench-press", "cable-fly")
+        val limited = schedulingProfile(ids).copy(
+            movementCapabilities = MovementCapabilities.from(
+                MovementCapabilityType.entries.associateWith { CapabilityLevel.COMFORTABLE } +
+                    (MovementCapabilityType.BALANCE_WITHOUT_SUPPORT to CapabilityLevel.LIMITED)
+            )
+        )
+        val limitedContext = productionContextBuilder(limited, schedulingHistory("overhead-press")).build()
+        val limitedPlan = FakeWorkoutPlanner().generateWorkout(limitedContext)
+        assertThat(limitedPlan.exercises.first().exerciseId).isEqualTo("dumbbell-bench-press")
+        assertThat(limitedPlan.rankingReasons).isEmpty()
+
+        val beginner = schedulingProfile(setOf("machine-chest-press", "dumbbell-shoulder-press", "cable-fly"))
+            .copy(experienceLevel = ExperienceLevel.BEGINNER)
+        val beginnerContext = productionContextBuilder(beginner, schedulingHistory()).build()
+        val beginnerPlan = FakeWorkoutPlanner().generateWorkout(beginnerContext)
+        assertThat(beginnerPlan.exercises.first().exerciseId).isEqualTo("machine-chest-press")
+        assertThat(beginnerPlan.rankingReasons).isEmpty()
+
+        val focusProfile = schedulingProfile().copy(musclePriorities = mapOf(StandardMuscles.CHEST to PriorityLevel.HIGH))
+        val focusContext = productionContextBuilder(focusProfile, schedulingHistory()).build()
+        val focused = FakeWorkoutPlanner().generateWorkout(focusContext)
+        assertThat(focused.title.split).isEqualTo(wallcrawl.elopenmike.com.core.model.WorkoutSplit.FULL_BODY)
+        assertThat(focused.rankingReasons).isEmpty()
+        val validator = ProgramValidator(GeneratedWorkoutValidator(InMemoryExerciseCatalog(bundledExercises)))
+        for ((context, plan) in listOf(limitedContext to limitedPlan, beginnerContext to beginnerPlan, focusContext to focused)) {
+            val raw = validator.validate(plan, context, allowRepair = false)
+            if (raw is ProgramValidationResult.Invalid) {
+                assertThat(raw.violations.map { it.code }.distinct())
+                    .containsExactly(ProgramViolationCode.WEEKLY_ALLOWANCE_EXCEEDED)
+            }
+            assertThat(validator.validate(plan, context, allowRepair = true))
+                .isInstanceOf(ProgramValidationResult.Valid::class.java)
+        }
+    }
+
+    @Test
+    fun recordedRegenerationInputReplaysWithoutBecomingPartOfStartFreshness() = runTest {
+        val context = productionContextBuilder(schedulingProfile(), schedulingHistory()).build()
+        val planner = FakeWorkoutPlanner()
+        repeat(4) { index ->
+            val plan = planner.generateWorkout(context)
+            assertThat(plan.generationIndex).isEqualTo(index)
+            val replay = context.copy(regenerationIndex = index)
+            assertThat(FakeWorkoutPlanner().generateWorkout(replay).normalizedPlannerFixtureWorkout())
+                .isEqualTo(plan.normalizedPlannerFixtureWorkout())
+            assertThat(RecommendationContextIdentity.of(replay)).isEqualTo(RecommendationContextIdentity.of(context))
+        }
+    }
+
+    private fun schedulingNow() = TrainingWeek.startingOn(MONDAY_EPOCH_DAY, LEDGER_ZONE).startEpochMillis + 3 * DAY_MILLIS
+
+    private fun schedulingHistory(exerciseId: String = "dumbbell-shoulder-press") = listOf(3L, 2L).map { age ->
+        completedSessionOf("practice-$age", bundledExercises.single { it.id == exerciseId }, 1,
+            schedulingNow() - age * DAY_MILLIS)
+    }
+
+    private fun schedulingProfile(ids: Set<String> = setOf(
+        "dumbbell-bench-press", "dumbbell-shoulder-press", "cable-fly", "cable-lateral-raise"
+    )) = fullGymProfile().copy(
+        daysPerWeek = 6, preferredDurationMinutes = 30,
+        musclePriorities = mapOf(StandardMuscles.SHOULDERS to PriorityLevel.HIGH),
+        excludedExerciseIds = bundledExercises.map(Exercise::id).filterNot { it in ids }
+    )
+    @Test
+    fun frequencyAloneReordersBothPassesUsingActualCompletedPrimaryWork() = runTest {
+        val ids = setOf(
+            "dumbbell-bench-press", "dumbbell-shoulder-press",
+            "cable-fly", "cable-lateral-raise"
+        )
+        val history = schedulingHistory()
+        val profile = fullGymProfile().copy(
+            preferredDurationMinutes = 30,
+            musclePriorities = mapOf(StandardMuscles.SHOULDERS to PriorityLevel.HIGH),
+            excludedExerciseIds = bundledExercises.map(Exercise::id).filterNot { it in ids }
+        )
+        val twice = productionContextBuilder(profile.copy(daysPerWeek = 2), history).build()
+        val six = productionContextBuilder(profile.copy(daysPerWeek = 6), history).build()
+        val before = FakeWorkoutPlanner().generateWorkout(twice)
+        val after = FakeWorkoutPlanner().generateWorkout(six)
+
+        assertThat(six.allowedExercises).containsExactlyElementsIn(twice.allowedExercises).inOrder()
+        assertThat(before.exercises.map { it.exerciseId }).containsExactly(
+            "dumbbell-bench-press", "dumbbell-shoulder-press", "cable-fly"
+        ).inOrder()
+        assertThat(after.exercises.map { it.exerciseId }).containsExactly(
+            "dumbbell-shoulder-press", "dumbbell-bench-press", "cable-lateral-raise"
+        ).inOrder()
+        val expectedReasons = listOf(
+            WorkoutRankingReason.TrainingFrequencyRecencyPreference(
+                "dumbbell-shoulder-press", "dumbbell-bench-press", StandardMuscles.SHOULDERS, 6, 2
+            ),
+            WorkoutRankingReason.TrainingFrequencyRecencyPreference(
+                "cable-lateral-raise", "cable-fly", StandardMuscles.SHOULDERS, 6, 2
+            )
+        )
+        assertThat(before.rankingReasons).isEmpty()
+        assertThat(after.rankingReasons).containsExactlyElementsIn(expectedReasons).inOrder()
+        for ((context, workout) in listOf(twice to before, six to after)) {
+            val validation = ProgramValidator(GeneratedWorkoutValidator(InMemoryExerciseCatalog(bundledExercises)))
+                .validate(workout, context, allowRepair = true)
+            assertThat(validation)
+                .isInstanceOf(ProgramValidationResult.Valid::class.java)
+            val record = (validation as ProgramValidationResult.Valid).snapshot.asRecord("test", 1)
+            val expected = if (context == six) expectedReasons else emptyList()
+            assertThat(validation.snapshot.rankingReasons).containsExactlyElementsIn(expected).inOrder()
+            assertThat(WorkoutRankingReasonCode.decode(record.reasonCodes))
+                .containsExactlyElementsIn(expected).inOrder()
+            assertThat(record.reasonCodes).contains("TRAINING_FREQUENCY_RECENCY_V1")
+            assertThat(record.reasonCodes).contains("PLANNER_GENERATION_V1:0")
+        }
+    }
 
     @Test
     fun productionInjectsTheEnabledReviewedFlagAndNothingElseBuildsItsOwn() {
@@ -486,7 +656,8 @@ class ProductionPlannerCompositionTest {
             zoneId = { LEDGER_ZONE }
         ),
         catalogVersion = { bundledCatalog.sourceCommit },
-        nowTimestamp = { week.startEpochMillis + 3 * DAY_MILLIS }
+        nowTimestamp = { week.startEpochMillis + 3 * DAY_MILLIS },
+        zoneId = { LEDGER_ZONE }
     )
 
     private fun ledgerFor(
@@ -776,6 +947,9 @@ internal class StaticUserProfileRepository(
 internal class StaticWorkoutRepository(
     private val completedSessions: List<WorkoutSession>
 ) : WorkoutRepository {
+    override suspend fun getCompletedSessionsInRange(startTimestamp: Long, endTimestampExclusive: Long) =
+        completedSessions.filter { it.status == wallcrawl.elopenmike.com.core.model.SessionStatus.COMPLETED &&
+            it.completedAtTimestamp?.let { time -> time >= startTimestamp && time < endTimestampExclusive } == true }
     override fun observeActiveSession(): Flow<WorkoutSession?> = flowOf(null)
     override suspend fun getActiveSessionOnce(): WorkoutSession? = null
     override suspend fun getSessionById(sessionId: String): WorkoutSession? =
@@ -857,7 +1031,7 @@ internal class RecomputingLedgerRepository(
     ): WeeklyDoseLedger = current()
 
     private fun current(): WeeklyDoseLedger = calculator.calculate(
-        sessions = sessions,
+        sessions = sessions.filter { it.completedAtTimestamp?.let(week::contains) == true },
         exercisesById = exercises.associateBy(Exercise::id),
         policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
         week = week,

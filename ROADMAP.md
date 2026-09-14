@@ -1,8 +1,8 @@
 # WallCrawl Roadmap
 
-> **Status date:** 2026-09-13
+> **Status date:** 2026-09-14
 >
-> **Evidence baseline:** `2b332ca` (rank AI-accepted supported regressions, #77). Package 1
+> **Evidence baseline:** `002cfde` (enable AI-reviewed production planning, #78). Package 1
 > status additionally
 > reflects the checked-in manifest, backup-rule resources, packaged-configuration
 > guard, and [privacy policy](docs/privacy.md). Package 2 status reflects the
@@ -24,7 +24,9 @@
 > setting `reviewedCapabilityEligibility = true`, and `ProductionPlannerCompositionTest` /
 > `TodayProductionLifecycleTest` exercising that exact composition end to end. Package 8
 > status additionally reflects `SupportedRegressionRankingPolicy` reading
-> `Exercise.acceptedMetadata()` on both endpoints (#77).
+> `Exercise.acceptedMetadata()` on both endpoints (#77), and
+> `TrainingFrequencyRecencyPolicy`, its production-composition and lifecycle tests,
+> and the versioned scheduling reasons carried through recommendation persistence.
 >
 > This is the single source of truth for current project status, priority, dependency
 > order, and implementation scope. Status must be derived from repository evidence rather
@@ -144,7 +146,8 @@ These decisions must be recorded before the related implementation package close
     `DURATION_ESTIMATOR_V1` is the named estimator with a ±1-minute tolerance and no
     requested-duration rule; the whole proposal is accounted prospectively against one
     configured allowance; a changed context fingerprint refuses a stale start rather than
-    repairing it. Recency remains undesigned and no blocking recency rule was added. See the
+    repairing it. Package 8 now defines a bounded recency ranking preference, not a
+    blocking recency rule. See the
     [evidence-to-rule mapping](docs/research/2026-08-29-training-science-evidence-review.md#validation-scope-clarification-2026-09-05).
 
 ## Dependency map
@@ -587,11 +590,13 @@ separate, still-open work.
 
 ### 8. Complete capability-aware deterministic ranking
 
-**Status:** Partly shipped. Experience ordering, reviewed capability soft-penalty suppression,
+**Status:** Complete. Experience ordering, reviewed capability soft-penalty suppression,
 accepted supported-regression preference, primary-before-secondary split ordering, structured
 ranking reasons, and the shared focus contract that ordering now reads exist and are now live
-in production because Package 7 enabled the reviewed path. Frequency and
-recency remain undesigned.
+in production because Package 7 enabled the reviewed path. `TRAINING_FREQUENCY_RECENCY_V1`
+adds the bounded repeat-practice preference described in
+[architecture](docs/architecture.md#frequency-and-recency-scheduling); progression and
+deload remain separate Package 9 work.
 
 **Depends on:** Package 7 for production reviewed behavior. **Satisfied**: Package 7 is
 enabled.
@@ -611,20 +616,28 @@ enabled.
    preference can only reorder the existing legal candidate set; demonstrated source evidence
    suppresses it together with the existing soft penalty. An accepted source naming a still-
    pending target does not extend this preference to that target.
-3. Define training frequency and recency as bounded, explainable scheduling preferences
-   before incorporating them as ordering inputs. Specify attribution, lookback, and
-   precedence; timestamps must not become overload/readiness judgments or recovery intervals.
-4. **Complete for shipped ranking signals:** preserve candidate membership and all hard
+3. **Complete:** reconstruct accepted direct-primary practice on distinct completed-work
+   dates in a fourteen-local-date window. Two dates establish familiarity; preferred weekly
+   training frequency sets a `ceil(7 / daysPerWeek)` product revisit band. This is one binary
+   preference below capability, supported-regression, and experience signals, not an
+   exercise-novelty penalty, dose quota, readiness judgment, or mandatory recovery interval.
+   Both production selection passes consume it. Context identity and Today refresh cover
+   relevant history, frequency, policy, local date and zone; restart/restore reconstruct
+   the evidence rather than relying on a mutable counter.
+4. **Complete:** preserve candidate membership and all hard
    constraints; ranking may only reorder legal candidates.
-5. **Complete for supported regressions:** emit structured ranking reasons and lock comparator
-   order with policy, planner, locale, presentation, and persistence tests.
+5. **Complete:** emit typed reasons only for actual counterfactual ordering/selection changes
+   and lock comparator order with policy, real-catalog production, lifecycle, locale/gender,
+   presentation, and Room/archive tests. Existing recommendation records remain readable;
+   scheduling policy and regeneration provenance use the existing reason-code channel.
 
-**Likely surfaces:** `FakeWorkoutPlanner`, focused ranking policies,
-`WorkoutGenerationContext`, planner fixtures, and architecture docs.
+**Surfaces:** `FakeWorkoutPlanner`, focused ranking policies, canonical completed-history
+queries, `WorkoutGenerationContext`, recommendation identity/reasons, Today, localized
+presentation, planner fixtures, and architecture/evaluation documentation.
 
 **Done when:** each ranking signal has a bounded precedence, equal inputs replay identically,
-and adding a preference cannot introduce an otherwise illegal exercise. **Met** for every
-shipped signal; frequency/recency (task 3) remains open.
+and adding a preference cannot introduce an otherwise illegal exercise. **Met**, including
+frequency/recency, with the same regeneration input included in equal-input replay.
 
 ### 9. Add one-variable progression and user-controlled deload
 
