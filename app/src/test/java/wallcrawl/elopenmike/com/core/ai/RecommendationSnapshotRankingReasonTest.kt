@@ -46,6 +46,18 @@ class RecommendationSnapshotRankingReasonTest {
 
         assertThat(record.reasonCodes).hasSize(145)
         assertThat(record.reasonCodes.size).isAtMost(RecommendationRecord.MAX_REASON_CODES)
+        val scheduling = (0 until 6).map {
+            WorkoutRankingReason.TrainingFrequencyRecencyPreference("repeat-$it", "alternative-$it", "Chest", 6, 3)
+        }
+        val mixed = snapshot.copy(
+            rankingReasons = rankingReasons + scheduling,
+            schedulingPolicyVersion = "TRAINING_FREQUENCY_RECENCY_V1",
+            generationIndex = 42
+        ).asRecord("mixed-session", 1)
+        assertThat(mixed.reasonCodes).hasSize(183)
+        assertThat(mixed.reasonCodes.size).isEqualTo(RecommendationRecord.MAX_REASON_CODES)
+        assertThat(wallcrawl.elopenmike.com.core.model.WorkoutRankingReasonCode.decode(mixed.reasonCodes))
+            .containsExactlyElementsIn(rankingReasons + scheduling).inOrder()
     }
 
     @Test

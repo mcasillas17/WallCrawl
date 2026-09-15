@@ -21,6 +21,26 @@ import wallcrawl.elopenmike.com.core.model.WorkoutRankingReasonCode
  */
 @RunWith(AndroidJUnit4::class)
 class LocalDataArchiveRecommendationTest {
+    @Test
+    fun mixedSchedulingAndRegressionReasonsAndOpaqueFutureVersionsRoundTrip() {
+        val reasons = listOf(
+            WorkoutRankingReason.SupportedRegressionPreference("supported", "source", MovementCapabilityType.FLOOR_TRANSITION),
+            WorkoutRankingReason.TrainingFrequencyRecencyPreference("press", "fly", "Shoulders", 6, 3)
+        )
+        val codes = WorkoutRankingReasonCode.encode(reasons) + listOf(
+            "TRAINING_FREQUENCY_RECENCY_V1", "PLANNER_GENERATION_V1:12", "TRAINING_FREQUENCY_RECENCY_V2.2"
+        )
+        val records = LocalDataArchiveFixtures.recommendationRecords().mapIndexed { index, record ->
+            if (index == 0) record.copy(reasonCodes = codes) else record
+        }
+        val archive = LocalDataArchiveFixtures.archive(snapshot = LocalDataArchiveFixtures.snapshot(
+            recommendationRecords = records
+        ))
+        val restored = LocalDataArchiveCodec.read(ByteArrayInputStream(archive.toBytes()))
+        val stored = restored.snapshot.recommendationRecords.first { it.sessionId == records.first().sessionId }
+        assertThat(stored.reasonCodes).isEqualTo(codes)
+        assertThat(WorkoutRankingReasonCode.decode(stored.reasonCodes)).containsExactlyElementsIn(reasons).inOrder()
+    }
 
     @Test
     fun theCurrentFormat_isVersionThreeAndReadsEveryEarlierVersion() {
@@ -88,6 +108,7 @@ class LocalDataArchiveRecommendationTest {
                     ]
                 )
             }
+
         }
         val records = LocalDataArchiveFixtures.recommendationRecords()
         val original = LocalDataArchiveFixtures.archive(

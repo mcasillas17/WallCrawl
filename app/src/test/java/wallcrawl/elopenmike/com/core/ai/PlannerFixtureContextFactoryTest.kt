@@ -10,11 +10,79 @@ import wallcrawl.elopenmike.com.core.model.ExercisePerformanceHistory
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
+import wallcrawl.elopenmike.com.core.model.CapabilityEvidenceSet
+import wallcrawl.elopenmike.com.core.model.SetType
 
 class PlannerFixtureContextFactoryTest {
 
     private val loader = SharedPlannerFixtureHarness.loader
     private val contextFactory = SharedPlannerFixtureHarness.contextFactory
+
+    @Test
+    fun create_composesSchedulingFromCanonicalDeclaredWorkAtFixedCorpusTime() {
+        val base = loader.loadResource("planner-fixtures/reviewed-enabled-bodyweight.json")
+        fun session(id: String, day: Int, type: SetType = SetType.NORMAL, completed: Boolean = true) =
+            PlannerFixtureCompletedSession(id, day, listOf(
+                PlannerFixtureCompletedExercise("push-up", listOf(PlannerFixtureCompletedSet(type, completed)))
+            ))
+        val fixture = base.copy(completedWorkoutCount = 5, completedSessions = listOf(
+            session("later", 3),
+            session("earlier", 1),
+            session("same-date", 3),
+            session("warmup", 6, SetType.WARMUP),
+            session("unfinished", 5, completed = false)
+        ))
+
+        val built = contextFactory.create(fixture)
+        val evidence = built.context.schedulingEvidence
+        assertThat(evidence).isNotNull()
+        checkNotNull(evidence)
+        assertThat(evidence.todayEpochDay).isEqualTo(MONDAY_EPOCH_DAY + 6)
+        assertThat(evidence.timeZoneId).isEqualTo("UTC")
+        assertThat(evidence.practiceDates).containsExactly(
+            StandardMuscles.CHEST, listOf(MONDAY_EPOCH_DAY + 1, MONDAY_EPOCH_DAY + 3)
+        )
+        assertThat(TrainingFrequencyRecencyPolicy().preferredMuscles(evidence, 3))
+            .containsExactly(StandardMuscles.CHEST)
+        assertThat(TrainingFrequencyRecencyPolicy().preferredMuscles(evidence, 2)).isEmpty()
+        assertThat(built.context.trainingProgramState?.weeklyLedger?.directPrimarySets)
+            .containsExactly(StandardMuscles.CHEST, 3)
+        assertThat(contextFactory.create(fixture.copy(completedSessions = fixture.completedSessions.reversed()))
+            .context.schedulingEvidence).isEqualTo(evidence)
+
+        assertThat(built.context.recentWorkoutHistory).isEmpty()
+        assertThat(built.context.recentlyTrainedMuscles).isEmpty()
+        assertThat(built.context.capabilityEvidence).isEqualTo(CapabilityEvidenceSet.empty())
+        assertThat(built.context.priorUserRestPreferences).isEmpty()
+        assertThat(built.context.exerciseHistory).isEqualTo(base.exerciseHistory.associateBy { it.exerciseId })
+        assertThat(built.catalogExercises).isEqualTo(contextFactory.create(base).catalogExercises)
+        assertThat(built.context.allowedExercises).isEqualTo(contextFactory.create(base).context.allowedExercises)
+        assertThat(contextFactory.create(base.copy(completedSessions = listOf(session("sunday", 6))))
+            .context.schedulingEvidence?.practiceDates)
+            .containsExactly(StandardMuscles.CHEST, listOf(MONDAY_EPOCH_DAY + 6))
+    }
+
+    @Test
+    fun create_composesNeutralSchedulingForExistingReviewedCorpusAndNoneForLegacy() {
+        for (fixture in loader.loadCorpus()) {
+            val context = contextFactory.create(fixture).context
+            if (fixture.reviewedEligibility == null) {
+                assertWithMessage(fixture.id).that(context.schedulingEvidence).isNull()
+            } else {
+                assertWithMessage(fixture.id).that(context.schedulingEvidence).isNotNull()
+                val evidence = checkNotNull(context.schedulingEvidence)
+                assertWithMessage(fixture.id)
+                    .that(TrainingFrequencyRecencyPolicy().preferredMuscles(evidence, fixture.profile.daysPerWeek))
+                    .isEmpty()
+                assertThat(evidence.todayEpochDay).isEqualTo(MONDAY_EPOCH_DAY + 6)
+                if (fixture.id == "concurrent-activity") {
+                    assertThat(evidence.practiceDates).containsExactly(
+                        StandardMuscles.CHEST, listOf(MONDAY_EPOCH_DAY + 1)
+                    )
+                }
+            }
+        }
+    }
 
     @Test
     fun create_rejectsCorpusFixturesWithUnsupportedPolicyVersion() {

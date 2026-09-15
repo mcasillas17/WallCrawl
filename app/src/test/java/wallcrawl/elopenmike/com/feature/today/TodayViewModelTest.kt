@@ -54,6 +54,45 @@ import wallcrawl.elopenmike.com.test.MainDispatcherRule
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class TodayViewModelTest {
+    @Test
+    fun startWorkout_revalidatesTheProposalEvenWhenContextIdentityMatches() = runTest {
+        val now = 20 * DAY_MILLIS
+        val catalog = InMemoryExerciseCatalog(listOf(
+            syntheticApprovedExercise(id = "press-a", directPrimaryMuscle = "Chest")
+        ))
+        val profileRepository = TodayUserProfileRepository(
+            UserProfile(availableEquipment = listOf(StandardEquipment.BODYWEIGHT))
+        )
+        val workoutRepository = TodayWorkoutRepository(emptyList())
+        val builder = WorkoutGenerationContextBuilder(
+            profileRepository, workoutRepository, catalog, ExerciseFilter(), WorkoutHistoryAnalyzer(),
+            nowTimestamp = { now }
+        )
+        val mutableProposal = mutableListOf<GeneratedExercise>()
+        val planner = object : WorkoutPlanner {
+            override suspend fun generateWorkout(context: WorkoutGenerationContext): GeneratedWorkout {
+                val result = FixedPlanWorkoutPlanner(setsPerExercise = 2).generateWorkout(context)
+                mutableProposal.addAll(result.exercises)
+                return result.copy(exercises = mutableProposal)
+            }
+        }
+        val viewModel = TodayViewModel(
+            profileRepository, workoutRepository, builder, planner,
+            ProgramValidator(GeneratedWorkoutValidator(catalog)),
+            nowTimestamp = { now }, clock = flowOf(now)
+        )
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        advanceUntilIdle()
+        assertThat(viewModel.uiState.value).isInstanceOf(TodayUiState.Success::class.java)
+        val originalIdentity = wallcrawl.elopenmike.com.core.ai.RecommendationContextIdentity.of(builder.build())
+        mutableProposal += mutableProposal.first()
+        assertThat(wallcrawl.elopenmike.com.core.ai.RecommendationContextIdentity.of(builder.build()))
+            .isEqualTo(originalIdentity)
+        viewModel.startWorkout(WORKOUT_NAME, WORKOUT_RATIONALE) {}
+        advanceUntilIdle()
+        assertThat(workoutRepository.startRequests).isEmpty()
+        assertThat((viewModel.uiState.value as TodayUiState.Error).error).isEqualTo(TodayError.START_VALIDATION_FAILED)
+    }
 
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
@@ -501,11 +540,8 @@ class TodayViewModelTest {
     }
 
     @Test
-    fun startWorkout_whenRevalidationRejectsAnUnchangedContext_startsNothing() = runTest {
-        // The context fingerprint deliberately does not cover everything a decision reads —
-        // completed set counts inside the week are one such thing — so revalidation at start
-        // is a second, independent gate. This drives that gate: the digest still matches,
-        // and the fresh check rejects anyway.
+    fun startWorkout_whenLedgerCountsChangeInsideTheSameWeek_refusesStaleContext() = runTest {
+        // Count/date identity alone used to miss this. Derived dose is now part of freshness.
         val now = 20 * DAY_MILLIS
         val exercises = listOf(
             syntheticApprovedExercise(id = "press-a", directPrimaryMuscle = "Chest")
@@ -542,15 +578,14 @@ class TodayViewModelTest {
         advanceUntilIdle()
         assertThat(viewModel.uiState.value).isInstanceOf(TodayUiState.Success::class.java)
 
-        // The week fills up underneath the displayed card. Neither the week identity nor any
-        // other digest input moves, so only the fresh validation can catch it.
+        // The week and session count stay unchanged, but its completed dose moves.
         ledgerRepository.chestSets = 4
         viewModel.startWorkout(WORKOUT_NAME, WORKOUT_RATIONALE) {}
         advanceUntilIdle()
 
         assertThat(workoutRepository.startRequests).isEmpty()
         assertThat((viewModel.uiState.value as TodayUiState.Error).error)
-            .isEqualTo(TodayError.START_VALIDATION_FAILED)
+            .isEqualTo(TodayError.RECOMMENDATION_OUT_OF_DATE)
     }
 
     @Test
@@ -743,6 +778,11 @@ private class TodayWorkoutRepository(
     override suspend fun getRecentCompletedSessions(limit: Int): List<WorkoutSession> =
         completed.value.sortedByDescending { it.completedAtTimestamp }.take(limit)
 
+    override suspend fun getCompletedSessionsInRange(startTimestamp: Long, endTimestampExclusive: Long) =
+        completed.value.filter { it.completedAtTimestamp?.let { time ->
+            time >= startTimestamp && time < endTimestampExclusive
+        } == true }
+
     override suspend fun startWorkoutFromGenerated(
         generated: GeneratedWorkout,
         displayName: String,
@@ -827,8 +867,8 @@ private class FixedPlanWorkoutPlanner(
  * A week a test can change between generation and start.
  *
  * [chestSets] moves completed exposure without moving the week; [weekStartEpochDay] moves
- * the week itself. The two exercise the two different gates at start: the second changes
- * the context fingerprint, the first deliberately does not.
+ * the week itself. Both now change context identity; proposal revalidation remains an
+ * independent gate even when that identity matches.
  */
 private class MutableWeekLedgerRepository(
     var chestSets: Int,

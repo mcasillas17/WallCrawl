@@ -25,6 +25,7 @@ import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityFailure
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.TrainingWeek
+import wallcrawl.elopenmike.com.core.model.TrainingFrequencyRecencyEvidence
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -34,12 +35,16 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -69,12 +74,24 @@ class TodayViewModel(
      * plan it belongs to is still the one on screen.
      */
     private var generatedSnapshot: RecommendationSnapshot? = null
+    private var lastSettledContextIdentity: String? = null
+    private var observedSchedulingEvidence: TrainingFrequencyRecencyEvidence? = null
     private val isRegeneratingFlow = MutableStateFlow(false)
     private val errorFlow = MutableStateFlow<TodayError?>(null)
+    private val schedulingObservationFailed = MutableStateFlow(false)
+    private val visibleErrorFlow = combine(errorFlow, schedulingObservationFailed) { error, failed ->
+        if (failed) TodayError.RECOMMENDATION_OUT_OF_DATE else error
+    }
+    private var schedulingObserverJob: Job? = null
+    private var isTodayVisible = false
     private var generationJob: Job? = null
-    private var hasPendingRegeneration = false
+    private var pendingExplicitGenerations = 0
+    private var hasPendingFreshnessCheck = false
 
-    private val completedThisWeekFlow = clock
+    private val sharedClock = clock.shareIn(
+        viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 0, replayExpirationMillis = 0), replay = 1
+    )
+    private val completedThisWeekFlow = sharedClock
         .map { TrainingWeek.containing(Instant.ofEpochMilli(it), zoneId()) }
         .distinctUntilChanged()
         .flatMapLatest { week ->
@@ -100,7 +117,7 @@ class TodayViewModel(
         sourceStateFlow,
         generatedWorkoutFlow,
         isRegeneratingFlow,
-        errorFlow
+        visibleErrorFlow
     ) { sourceState, generatedWorkout, isRegenerating, error ->
         if (error != null) {
             TodayUiState.Error(error = error, activeSession = sourceState.activeSession)
@@ -115,9 +132,17 @@ class TodayViewModel(
                 completedThisWeek = sourceState.completedThisWeek
             )
         }
+    }.onStart {
+        isTodayVisible = true
+        refreshRecommendation()
+    }.onCompletion {
+        isTodayVisible = false
+        schedulingObserverJob?.cancel()
+        schedulingObserverJob = null
+        observedSchedulingEvidence = null
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
+        started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 0, replayExpirationMillis = 0),
         initialValue = TodayUiState.Loading
     )
 
@@ -136,26 +161,56 @@ class TodayViewModel(
                 .drop(1)
                 .collect { requestWorkoutGeneration(isRegeneration = true) }
         }
-        requestWorkoutGeneration(isRegeneration = false)
+        requestWorkoutGeneration(isRegeneration = false, explicit = true)
     }
 
     fun regenerateWorkout() {
+        ensureSchedulingObservation()
+        requestWorkoutGeneration(isRegeneration = true, explicit = true)
+    }
+
+    /** Resume/clock-change check: never leave a stale-looking card until the user starts it. */
+    fun refreshRecommendation() {
+        ensureSchedulingObservation()
         requestWorkoutGeneration(isRegeneration = true)
     }
 
-    private fun requestWorkoutGeneration(isRegeneration: Boolean) {
+    private fun ensureSchedulingObservation() {
+        if (!isTodayVisible || (schedulingObserverJob?.isActive == true && !schedulingObservationFailed.value)) return
+        schedulingObserverJob?.cancel()
+        schedulingObserverJob = viewModelScope.launch {
+            workoutGenerationContextBuilder.observeSchedulingEvidence(sharedClock)
+                .catch { error ->
+                    if (error is CancellationException) throw error
+                    schedulingObservationFailed.value = true
+                }
+                .collect { evidence ->
+                    // Only a successful subscription read clears an observation failure.
+                    // A one-shot generation is not proof that live freshness reconnected.
+                    schedulingObservationFailed.value = false
+                    observedSchedulingEvidence = evidence
+                    // Equal scheduling dates need not mean equal capability/load/rest/dose.
+                    // The full consumed-context identity coalesces redundant history reads.
+                    requestWorkoutGeneration(isRegeneration = true)
+                }
+        }
+    }
+
+    private fun requestWorkoutGeneration(isRegeneration: Boolean, explicit: Boolean = false) {
+        if (explicit) pendingExplicitGenerations++ else hasPendingFreshnessCheck = true
         if (generationJob?.isActive == true) {
-            hasPendingRegeneration = hasPendingRegeneration || isRegeneration
             return
         }
 
         generationJob = viewModelScope.launch {
             var currentRequestIsRegeneration = isRegeneration
-            do {
-                hasPendingRegeneration = false
+            while (pendingExplicitGenerations > 0 || hasPendingFreshnessCheck) {
+                val forceGeneration = pendingExplicitGenerations > 0
+                if (forceGeneration) pendingExplicitGenerations--
+                hasPendingFreshnessCheck = false
                 isRegeneratingFlow.value = currentRequestIsRegeneration
                 try {
-                    generateValidatedWorkout(currentRequestIsRegeneration)
+                    generateValidatedWorkout(currentRequestIsRegeneration, forceGeneration)
                 } catch (e: CancellationException) {
                     throw e
                 } catch (e: Exception) {
@@ -164,7 +219,7 @@ class TodayViewModel(
                     isRegeneratingFlow.value = false
                 }
                 currentRequestIsRegeneration = true
-            } while (hasPendingRegeneration)
+            }
         }
     }
 
@@ -175,17 +230,37 @@ class TodayViewModel(
      * screen or the database until whole-program validation has accepted the complete plan
      * against the exact context that produced it.
      */
-    private suspend fun generateValidatedWorkout(isRegeneration: Boolean) {
+    private suspend fun generateValidatedWorkout(isRegeneration: Boolean, forceGeneration: Boolean) {
+        val observedBeforeBuild = observedSchedulingEvidence
         val context = workoutGenerationContextBuilder.build()
-        val generated = workoutPlanner.generateWorkout(context)
-        when (
-            val result = programValidator.validate(
-                workout = generated,
+        // Count/history/profile notifications can describe the context just published.
+        // Only an explicit variation request may spend another ordinal for equal inputs.
+        val identity = RecommendationContextIdentity.of(context)
+        if (!forceGeneration && (identity == generatedSnapshot?.contextIdentity ||
+            identity == lastSettledContextIdentity)) return
+        val result = try {
+            programValidator.validate(
+                workout = workoutPlanner.generateWorkout(context),
                 context = context,
                 allowRepair = true
             )
-        ) {
+        } catch (error: CancellationException) {
+            throw error
+        } catch (error: Exception) {
+            lastSettledContextIdentity = identity
+            throw error
+        }
+        when (result) {
             is ProgramValidationResult.Valid -> {
+                // Initial Room observation can arrive after the builder's read. Do not
+                // discard that notification. Teardown's null is not newer evidence.
+                val latestObservation = observedSchedulingEvidence
+                if (latestObservation != null && latestObservation != observedBeforeBuild &&
+                    latestObservation != context.schedulingEvidence
+                ) {
+                    hasPendingFreshnessCheck = true
+                    return
+                }
                 generatedWorkoutFlow.value = result.workout
                 generatedSnapshot = result.snapshot
                 errorFlow.value = null
@@ -197,6 +272,8 @@ class TodayViewModel(
                 errorFlow.value = validationError(result.violations, isRegeneration)
             }
         }
+        // Published or failed proposals settle an identity; superseded/cancelled ones do not.
+        lastSettledContextIdentity = identity
     }
 
     /**
@@ -279,7 +356,7 @@ class TodayViewModel(
         displayRationale: String,
         onWorkoutStarted: (sessionId: String) -> Unit
     ) {
-        if (generationJob?.isActive == true) return
+        if (generationJob?.isActive == true || schedulingObservationFailed.value) return
         viewModelScope.launch {
             val currentWorkout = generatedWorkoutFlow.value ?: return@launch
             val recommendation = generatedSnapshot ?: return@launch

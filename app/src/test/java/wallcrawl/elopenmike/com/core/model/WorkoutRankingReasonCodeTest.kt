@@ -5,6 +5,27 @@ import org.junit.Assert.assertThrows
 import org.junit.Test
 
 class WorkoutRankingReasonCodeTest {
+    @Test
+    fun mixedReasonsUseContiguousGlobalIndicesAndPreserveFutureTokens() {
+        val reasons = listOf(
+            reason("target", "source", MovementCapabilityType.FLOOR_TRANSITION),
+            WorkoutRankingReason.TrainingFrequencyRecencyPreference("press", "fly", "Shoulders", 6, 3),
+            reason("target-b", "source-b", MovementCapabilityType.BALANCE_WITHOUT_SUPPORT)
+        )
+        val codes = WorkoutRankingReasonCode.encode(reasons)
+        assertThat(WorkoutRankingReasonCode.decode(codes + "TRAINING_FREQUENCY_RECENCY_V2.3"))
+            .containsExactlyElementsIn(reasons).inOrder()
+        for (malformed in listOf(
+            codes.filterNot { it.contains(".PRIMARY:") },
+            codes.map { it.replace("FREQUENCY:6", "FREQUENCY:7") },
+            codes.map { it.replace("ELAPSED:3", "ELAPSED:1") },
+            codes.map { it.replace("ALTERNATIVE:fly", "ALTERNATIVE:press") },
+            codes.map { it.replace("RECENCY_V1.1", "RECENCY_V1.0") },
+            codes + "TRAINING_FREQUENCY_RECENCY_V1.1.PRIMARY:Chest"
+        )) {
+            assertThrows(IllegalArgumentException::class.java) { WorkoutRankingReasonCode.decode(malformed) }
+        }
+    }
 
     @Test
     fun encodeAndDecode_roundTripsMultipleReasons() {
@@ -71,6 +92,15 @@ class WorkoutRankingReasonCodeTest {
         }
 
         assertThat(WorkoutRankingReasonCode.decode(futureCodes)).isEmpty()
+    }
+
+    @Test
+    fun unknownFutureVersionsRemainOpaqueRegardlessOfTheirOwnGroupingConvention() {
+        for (opaque in listOf("TRAINING_FREQUENCY_RECENCY_V2.999",
+            "TRAINING_FREQUENCY_RECENCY_V2.0", "TRAINING_FREQUENCY_RECENCY_V2.future-format")) {
+            assertThat(WorkoutRankingReasonCode.decode(validCodes() + opaque))
+                .containsExactly(reason("target", "source", MovementCapabilityType.FLOOR_TRANSITION))
+        }
     }
 
     private fun validCodes(): List<String> = WorkoutRankingReasonCode.encode(

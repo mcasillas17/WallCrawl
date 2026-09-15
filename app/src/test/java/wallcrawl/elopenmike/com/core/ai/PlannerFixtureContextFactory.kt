@@ -6,6 +6,7 @@ import java.nio.ByteBuffer
 import java.nio.charset.CharacterCodingException
 import java.nio.charset.CodingErrorAction
 import java.nio.charset.StandardCharsets
+import java.time.Instant
 import java.time.ZoneId
 import java.util.Locale
 import org.json.JSONArray
@@ -131,6 +132,9 @@ internal class PlannerFixtureContextFactory(
             .mapNotNull { it.reviewedMetadata?.provenance?.policyVersion }
             .maxOrNull()
             ?: 0
+        val completedSessions = if (fixture.reviewedEligibility != null) {
+            composeCompletedSessions(fixture, catalogExercises)
+        } else emptyList()
         val trainingProgramState =
             fixture.reviewedEligibility?.let { reviewedEligibility ->
                 TrainingProgramState(
@@ -138,6 +142,7 @@ internal class PlannerFixtureContextFactory(
                     adaptationState = reviewedEligibility.adaptationState,
                     weeklyLedger = composeWeeklyLedger(
                         fixture = fixture,
+                        sessions = completedSessions,
                         catalogExercises = catalogExercises,
                         reviewPolicyVersion = reviewPolicyVersion
                     )
@@ -155,6 +160,14 @@ internal class PlannerFixtureContextFactory(
                 allowedExercises = allowedExercises,
                 automaticEligibilityResult = automaticEligibilityResult,
                 trainingProgramState = trainingProgramState,
+                schedulingEvidence = fixture.reviewedEligibility?.let {
+                    TrainingFrequencyRecencyPolicy().derive(
+                        sessions = completedSessions,
+                        exercises = catalogExercises,
+                        now = CORPUS_NOW,
+                        zoneId = CORPUS_ZONE
+                    )
+                },
                 preferredUnits = profile.preferredUnit,
                 // Mirrors WorkoutGenerationContextBuilder: the recorded decision has to name
                 // the content it was made against, and whole-program validation writes both
@@ -179,26 +192,39 @@ internal class PlannerFixtureContextFactory(
      */
     private fun composeWeeklyLedger(
         fixture: PlannerFixture,
+        sessions: List<WorkoutSession>,
         catalogExercises: List<Exercise>,
         reviewPolicyVersion: Int
-    ): WeeklyDoseLedger {
-        val week = TrainingWeek.startingOn(MONDAY_EPOCH_DAY, LEDGER_ZONE)
+    ): WeeklyDoseLedger = ledgerCalculator.calculate(
+        sessions = sessions,
+        exercisesById = catalogExercises.associateBy(Exercise::id),
+        policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+        week = CORPUS_WEEK,
+        catalogVersion = fixture.catalogVersion,
+        reviewPolicyVersion = reviewPolicyVersion
+    )
+
+    /** One canonical materialization shared by dose accounting and scheduling evidence. */
+    private fun composeCompletedSessions(
+        fixture: PlannerFixture,
+        catalogExercises: List<Exercise>
+    ): List<WorkoutSession> {
         val exercisesById = catalogExercises.associateBy(Exercise::id)
-        val sessions = fixture.completedSessions.map { declared ->
+        return fixture.completedSessions.map { declared ->
             WorkoutSession(
                 id = declared.id,
                 name = "Fixture session ${declared.id}",
-                startedAtTimestamp = week.startEpochMillis +
+                startedAtTimestamp = CORPUS_WEEK.startEpochMillis +
                     declared.completedDayOffset * MILLIS_PER_DAY,
-                completedAtTimestamp = week.startEpochMillis +
+                completedAtTimestamp = CORPUS_WEEK.startEpochMillis +
                     declared.completedDayOffset * MILLIS_PER_DAY + MIDDAY_MILLIS,
                 status = SessionStatus.COMPLETED,
                 exercises = declared.exercises.mapIndexed { exerciseIndex, exercise ->
                     val instanceId = "${declared.id}-${exercise.exerciseId}-$exerciseIndex"
                     // The logged shape follows the catalog entry rather than a fixed one, so
                     // an aerobic entry is never recorded as a weighted set of 8-10 reps. The
-                    // ledger reads only set type and completion today; a fabricated shape
-                    // would still be waiting for the first rule that looks any deeper.
+                    // history policies read set type and completion without manufacturing
+                    // measured performance or manageability evidence.
                     val loggedType = exercisesById.getValue(exercise.exerciseId).type
                     WorkoutExercise(
                         id = instanceId,
@@ -223,14 +249,6 @@ internal class PlannerFixtureContextFactory(
                 }
             )
         }
-        return ledgerCalculator.calculate(
-            sessions = sessions,
-            exercisesById = exercisesById,
-            policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
-            week = week,
-            catalogVersion = fixture.catalogVersion,
-            reviewPolicyVersion = reviewPolicyVersion
-        )
     }
 
     private fun applySyntheticApprovals(
@@ -896,7 +914,10 @@ internal class PlannerFixtureContextFactory(
     private companion object {
         private const val DEFAULT_MANIFEST_RESOURCE = "planner-fixtures/manifest.txt"
         internal const val SUPPORTED_CORPUS_POLICY_VERSION = 4
-        private val LEDGER_ZONE: ZoneId = ZoneId.of("UTC")
+        private val CORPUS_ZONE: ZoneId = ZoneId.of("UTC")
+        private val CORPUS_WEEK = TrainingWeek.startingOn(MONDAY_EPOCH_DAY, CORPUS_ZONE)
+        /** Sunday end-of-day includes every declared 0..6 midday without reading a clock. */
+        private val CORPUS_NOW: Instant = Instant.ofEpochMilli(CORPUS_WEEK.endEpochMillisExclusive - 1)
         private const val MILLIS_PER_DAY = 24L * 60L * 60L * 1_000L
 
         /** Local midday, so a declared day never lands on either week boundary by accident. */

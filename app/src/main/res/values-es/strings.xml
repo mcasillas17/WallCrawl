@@ -17,6 +17,7 @@
     a "many" item would be inventing a form nobody will ever read.
 -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingQuantity">
+    <string name="generated_rationale_frequency_recency_preference">Se priorizó repetir la práctica de %1$s según tu preferencia de entrenar %2$s días por semana; la última práctica completada fue hace %3$s días calendario. Es una preferencia de orden, no un requisito de recuperación.</string>
 
     <!-- ============================ Shared actions ============================ -->
     <string name="action_back">Atrás</string>

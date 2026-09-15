@@ -1,12 +1,23 @@
 package wallcrawl.elopenmike.com.core.ai
 
+import java.time.Instant
+import java.time.ZoneId
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.withIndex
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
 import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
 import wallcrawl.elopenmike.com.core.exercise.ExerciseFilter
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
 import wallcrawl.elopenmike.com.core.model.CapabilityEvidenceSet
+import wallcrawl.elopenmike.com.core.model.TrainingFrequencyRecencyEvidence
 import wallcrawl.elopenmike.com.core.model.UserRestPreference
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
@@ -34,10 +45,51 @@ class WorkoutGenerationContextBuilder(
      * identity. An unavailable snapshot records absence; it never blocks generation.
      */
     private val catalogVersion: () -> String? = { null },
-    private val nowTimestamp: () -> Long = System::currentTimeMillis
+    private val nowTimestamp: () -> Long = System::currentTimeMillis,
+    private val zoneId: () -> ZoneId = ZoneId::systemDefault
 ) {
+    /**
+     * Reuses Today’s clock and Room invalidation, not polling queries. A day/zone change
+     * switches the bounded range. Within a date, only changed rows or a future completion
+     * becoming nonfuture can alter evidence. Unchanged minute ticks do no reconstruction.
+     * Each Room read also remains a freshness signal when the practice dates are equal:
+     * other consumed history projections may have changed, even outside this date range.
+     */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun observeSchedulingEvidence(clock: Flow<Long>): Flow<TrainingFrequencyRecencyEvidence> {
+        if (!plannerFeatureFlags.reviewedCapabilityEligibility) return emptyFlow()
+        val policy = TrainingFrequencyRecencyPolicy()
+        return clock.map { timestamp ->
+            val zone = zoneId()
+            Instant.ofEpochMilli(timestamp).atZone(zone).toLocalDate() to zone
+        }.distinctUntilChanged().flatMapLatest { (date, zone) ->
+            combine(
+                workoutRepository.observeCompletedSessionProbeInRange(
+                    date.minusDays(TrainingFrequencyRecencyEvidence.LOOKBACK_DATES - 1)
+                        .atStartOfDay(zone).toInstant().toEpochMilli(),
+                    date.plusDays(1).atStartOfDay(zone).toInstant().toEpochMilli()
+                ).withIndex(),
+                exerciseCatalog.getAllExercises(),
+                clock
+            ) { read, exercises, timestamp ->
+                val completedByNow = read.value.filter { (it.completedAtTimestamp ?: Long.MAX_VALUE) <= timestamp }
+                require(completedByNow.size <= TrainingFrequencyRecencyPolicy.MAX_SESSIONS) {
+                    "Scheduling history exceeds its reconstruction bound."
+                }
+                Triple(
+                    read.index to completedByNow,
+                    exercises,
+                    Instant.ofEpochMilli(timestamp)
+                )
+            }.distinctUntilChanged { previous, next ->
+                previous.first == next.first && previous.second == next.second
+            }.map { (read, exercises, now) -> policy.derive(read.second, exercises, now, zone) }
+        }
+    }
 
     suspend fun build(): WorkoutGenerationContext {
+        val now = Instant.ofEpochMilli(nowTimestamp())
+        val zone = zoneId()
         val profile = userProfileRepository.getProfileOnce()
         val recentCompletedSessions = workoutRepository.getRecentCompletedSessions(
             limit = MAX_RECENT_SESSIONS
@@ -50,7 +102,7 @@ class WorkoutGenerationContextBuilder(
         )
         // Composed only on the reviewed path, so the legacy path reads no extra history.
         val trainingProgramState = if (plannerFeatureFlags.reviewedCapabilityEligibility) {
-            trainingProgramStateProvider?.currentState(profile)
+            trainingProgramStateProvider?.stateAt(profile, now, zone)
         } else {
             null
         }
@@ -95,6 +147,15 @@ class WorkoutGenerationContextBuilder(
                 profile = profile
             )
         }
+        val schedulingEvidence = if (plannerFeatureFlags.reviewedCapabilityEligibility) {
+            val policy = TrainingFrequencyRecencyPolicy()
+            policy.derive(
+                workoutRepository.getCompletedSessionsInRange(
+                    policy.windowStart(now, zone), Math.addExact(now.toEpochMilli(), 1)
+                ),
+                allExercises, now, zone
+            )
+        } else null
 
         return WorkoutGenerationContext(
             userProfile = profile,
@@ -109,12 +170,13 @@ class WorkoutGenerationContextBuilder(
             exerciseHistory = exerciseHistory,
             recentlyTrainedMuscles = historyAnalyzer.recentlyTrainedMuscles(
                 sessions = recentCompletedSessions,
-                nowTimestamp = nowTimestamp()
+                nowTimestamp = now.toEpochMilli()
             ),
             excludedExerciseIds = profile.excludedExerciseIds,
             allowedExercises = allowedExercises,
             automaticEligibilityResult = automaticEligibilityResult,
             capabilityEvidence = capabilityEvidence,
+            schedulingEvidence = schedulingEvidence,
             trainingProgramState = trainingProgramState,
             priorUserRestPreferences = priorUserRestPreferences,
             preferredUnits = profile.preferredUnit,
