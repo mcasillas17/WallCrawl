@@ -24,6 +24,18 @@ These fixtures therefore model the planner **inside** a curated legal set. They 
 
 ## Whole-program assertions
 
+Package 9 adds `ProgressionEngineTest`'s seven-shape matrix and actual
+`AI_ACCEPTED` production cases in `ProductionPlannerCompositionTest` for
+single-axis advancement, continuation, missing evidence, deload precedence,
+warm-up/future load sources, assistance provenance and one-pass repair.
+`TodayProductionLifecycleTest` covers durable choices, revision-zero guards,
+stale starts, passive-refresh invariance and interim unit binding.
+`DeloadPersistenceTest`, `DeloadDiskPersistenceTest`,
+`LocalDataArchiveDeloadTest`, `LocalDataArchiveProgressionTest`,
+`Migration13To14Test` and `TodayDeloadScreenTest` extend real Android evidence.
+The authoritative manifest remains fourteen personas; these focused scenarios
+are not synthetic promotion of the bundled catalog or new automatic eligibility.
+
 Every persona whose replay produces a proposal is now also validated as a complete program.
 Each successful persona is replayed twice, and the proposal from the first replay is validated
 twice against the exact context that produced it: once with repair disabled, which is the only
@@ -334,7 +346,7 @@ consistency, and passing either demonstrates software conformance only.
 | No invented load; valid history/confirmed-load provenance; mixed units | Software invariant | `PlannerFixtureTest`, `mixed-unit-history`, `ProgramValidatorTest` |
 | Candidate membership, explicit exclusions, reviewed provenance | Software invariant | `ProgramValidatorTest`, `ProgramValidatorAggregateDoseTest`, corpus legality assertions |
 | Direct approved supported regression can reorder only legal peers for unresolved exercise-specific `LIMITED`; source evidence suppresses it | Product policy | `SupportedRegressionRankingPolicyTest`, `FakeWorkoutPlannerTest`, `ProgramValidatorTest`, `GeneratedWorkoutFocusNoticeTest`, `LocalDataArchiveRecommendationTest` |
-| Every applied supported-regression source survives snapshot/archive persistence within the bounded reason budget | Software invariant (36 regression reasons × four tokens + six scheduling reasons × six tokens + one repair code + two provenance tokens = 183) | `FakeWorkoutPlannerTest.generateWorkout_persistsTheBoundedMaximumAppliedRankingProvenance`, `RecommendationSnapshotRankingReasonTest`, `LocalDataArchiveRecommendationTest.roundTrip_preservesTheMaximumPlannerRankingProvenance` |
+| Every applied reason survives bounded snapshot/archive persistence | Software invariant (183 existing ranking/repair tokens + six seven-token progression groups + three deload tokens = 228; reason-token length 320, other tokens 200) | `RecommendationSnapshotRankingReasonTest`, `LocalDataArchiveRecommendationTest`, `LocalDataArchiveProgressionTest` |
 | Frequency/recency reorder only legal peers below capability, supported-regression and experience priorities | Product policy `TRAINING_FREQUENCY_RECENCY_V1`, not a recovery rule | `TrainingFrequencyRecencyPolicyTest`, `ProductionPlannerCompositionTest`, `ProductionEnabledInvarianceTest` |
 | Completed distinct-date attribution, fourteen-date/DST/zone/future boundaries, and bounded complete history | Product policy and software invariants | `TrainingFrequencyRecencyPolicyTest`, `WorkoutGenerationContextBuilderTest`, `CompletedWorkoutHistoryDaoTest`, `ProductionPlannerPersistenceTest` |
 | Only actual scheduling decisions produce exact typed, localized, persisted witnesses | Software invariant | `ProductionPlannerCompositionTest`, `WorkoutRankingReasonCodeTest`, `RecommendationSnapshotRankingReasonTest`, `GeneratedWorkoutFocusNoticeTest`, `RecommendationRecordDaoTest`, `LocalDataArchiveRecommendationTest` |
@@ -343,7 +355,7 @@ consistency, and passing either demonstrates software conformance only.
 | Fixed anchors require explicit confirmation; `banded-row` stays unresolved | Product policy | `FixedAnchorBandEligibilityTest`, `band-only`, `sparse-history` |
 | Typed no-plan outcomes preserved, including zero approved metadata | Software invariant | `reviewed-enabled-no-approved`, `ReviewedCatalogCoverageTest` |
 | Stale context refused at start; no partial start | Software invariant | `RecommendationContextIdentityTest`, `TodayViewModelTest` |
-| Same-day capability/load/rest/ledger changes invalidate consumed context even at equal counts or scheduling dates | Software invariant (context identity v3) | `RecommendationHistoryIdentityTest`, `TodayProductionLifecycleTest` |
+| Same-day evidence, feedback, choices, load/rest/ledger changes invalidate context at equal counts/dates | Software invariant (context identity v4) | `RecommendationHistoryIdentityTest`, `TodayProductionLifecycleTest` |
 | Passive invalidations coalesce; explicit regeneration survives; retry/resume/teardown/cancellation cannot strand freshness | Software invariant | `TodayProductionLifecycleTest`, `TodayViewModelTest` |
 | Weekly dose is counted in sets, never derived from the legacy `fatigueScore` | Rejected inference | `PlannerFixtureTest.weeklyDoseIsCountedInSetsRatherThanDerivedFromFatigueScores` recomputes completed and proposed exposure from set counts alone and requires equality; `PlannerFixtureTest.prospectiveDoseAccountingIgnoresTheLegacyFatigueScore` adds the ordinal-invariance half. The ordinal's real ranking role is deliberately not asserted against. |
 | Readiness is never inferred from elapsed time alone | Rejected inference | `PlannerFixtureTest.concurrentActivityPersona_readsTheWeekRatherThanTheTimeInsideIt` |
@@ -415,15 +427,21 @@ retain null. Every current manifest persona remains scheduling-neutral, so fixtu
 expectations and the wire/policy versions are unchanged. In `concurrent-activity`, several
 Chest exercise instances on Tuesday still establish only one practice date.
 
-Production's `WorkoutGenerationContextBuilder` derives four other fields from completed history —
+Production's `WorkoutGenerationContextBuilder` derives other fields from history —
 `recentWorkoutHistory`, `recentlyTrainedMuscles`, capability evidence and prior rest
 preferences — and the harness deliberately leaves all four at their empty defaults. That is
-an explicit remaining fixture boundary: no planner in `src/main` reads the first two as a
-ranking or blocking input, and `CapabilityEvidencePolicy` requires `feltManageable`
+an explicit remaining fixture boundary: a recent-focus label supplies no readiness
+evidence, and `CapabilityEvidencePolicy` requires `feltManageable`
 plus two comparable sessions per exercise, neither of which these bounded synthetic sets can
 express. Explicit per-exercise loading history and lifetime completed counts are unchanged.
-The real production-composition, lifecycle, and Room/archive tests cover those additional
-history consumers rather than pretending the persona corpus models them all.
+Package 9 additionally reads a bounded all-status attempt history, batched
+recommendation continuity records and owned deload preferences. These remain
+empty in the historical persona wire format, so its progression results are
+honest holds, not simulated positive evidence. The real production-composition,
+lifecycle and Room/archive suites cover these consumers instead of pretending
+the persona corpus models them all. The factory now reads completed snapshots
+for typed working-load sources; the legacy recent-focus-muscle summary remains
+unused as readiness or a blocking rule.
 
 ## Versions this gate runs under
 
@@ -433,10 +451,11 @@ history consumers rather than pretending the persona corpus models them all.
 | Corpus expectation contract | `policyVersion` 4 | `PlannerFixtureContextFactory.SUPPORTED_CORPUS_POLICY_VERSION` |
 | Bundled catalog | commit `ba0b709cb20430361b2cb33aaadd20998164a916`, `schemaVersion` 1, 302 exercises | fixture `catalogVersion` versus the catalog's `source.commit` |
 | Reviewed metadata | review policy version 2; 182 `AI_ACCEPTED`, 29 `DRAFT`, 0 `APPROVED` | `PlannerFixtureCorpusTest`, `ReviewedExerciseMetadataTest`, `AiAcceptedCatalogTest`, `BundledCatalogLedgerAttributionTest` |
-| Training policy | `STATE_BASED_DOSE_EFFORT_REST_V1` | `StateBasedTrainingPolicyDefaults.V1` |
+| Training policy | `STATE_BASED_DOSE_EFFORT_REST_V2` | `StateBasedTrainingPolicyDefaults.V2` |
 | Ledger policy | `PRIMARY_ONLY_V1` | `WeeklyDoseLedgerCalculator` |
-| Program state policy | `PROGRAM_STATE_V1` | `TrainingProgramState` |
-| Validator | `WHOLE_PROGRAM_V1` with `DURATION_ESTIMATOR_V1` | `ProgramValidator` |
+| Program state policy | `PROGRAM_STATE_V2` in production; V1 contexts remain test-compatible | `TrainingProgramStateProvider` |
+| Progression / deload | `ONE_VARIABLE_PROGRESSION_V1` / `DELOAD_ONE_WORKOUT_V1` | Shared factory, policies, typed reasons and Today |
+| Validator | `WHOLE_PROGRAM_V2` with `DURATION_ESTIMATOR_V1` | `ProgramValidator` |
 | Importer pin | `tools/workout-guide/import-config.json` `sourceCommit` | `tools/workout-guide/check_pinned_catalog.py` |
 
 These are separate from the Room schema and archive format versions, which this corpus does
@@ -463,6 +482,20 @@ it one would need tag protection or an explicit ancestry check, which this packa
 add.
 
 ## Test entry points
+
+Package 9 UI evidence lives in `art/screenshots/progression-deload-*.png`.
+The dedicated target was `WallCrawl_Package9_API36`, `emulator-5554`,
+API 36 `arm64-v8a` (Pixel 7). Actual installed-app request/accept/cancel/decline
+and process restart were exercised in English/Spanish; large Spanish text used
+system font scale 1.8. Pixel-based Compose tests additionally guard new-card
+light-theme contrast and the large-text weekly header.
+
+For reproducible manual setup on a **dedicated test device only**,
+`DeloadDiskPersistenceTest` accepts the explicit instrumentation argument
+`seedPackage9Demo=true`. Its normal test uses and deletes only a unique test
+database; this opt-in additionally saves a demo onboarding profile through the
+actual app repository. It is not enabled by the normal connected suite and
+does not create synthetic catalog acceptance.
 
 Focused contract / corpus coverage:
 

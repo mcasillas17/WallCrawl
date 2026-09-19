@@ -9,6 +9,8 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import wallcrawl.elopenmike.com.core.database.converter.RoomTypeConverters
 import wallcrawl.elopenmike.com.core.database.dao.CompletedWorkoutHistoryDao
+import wallcrawl.elopenmike.com.core.database.dao.DeloadPreferencesDao
+import wallcrawl.elopenmike.com.core.database.entity.DeloadPreferencesEntity
 import wallcrawl.elopenmike.com.core.database.dao.LocalDataBackupDao
 import wallcrawl.elopenmike.com.core.database.dao.UserProfileDao
 import wallcrawl.elopenmike.com.core.database.dao.WeeklyDoseLedgerStateDao
@@ -31,7 +33,7 @@ import wallcrawl.elopenmike.com.core.database.entity.WorkoutTemplateExerciseEnti
  * Exposed as a constant so provenance recorded in an export names the same number the
  * database is actually built with, rather than a copy that can drift after a migration.
  */
-const val WALLCRAWL_SCHEMA_VERSION = 13
+const val WALLCRAWL_SCHEMA_VERSION = 14
 
 @Database(
     entities = [
@@ -42,7 +44,8 @@ const val WALLCRAWL_SCHEMA_VERSION = 13
         WorkoutTemplateEntity::class,
         WorkoutTemplateExerciseEntity::class,
         WeeklyDoseLedgerStateEntity::class,
-        WorkoutRecommendationRecordEntity::class
+        WorkoutRecommendationRecordEntity::class,
+        DeloadPreferencesEntity::class
     ],
     version = WALLCRAWL_SCHEMA_VERSION,
     exportSchema = false
@@ -58,6 +61,7 @@ abstract class WallCrawlDatabase : RoomDatabase() {
     abstract fun completedWorkoutHistoryDao(): CompletedWorkoutHistoryDao
     abstract fun weeklyDoseLedgerStateDao(): WeeklyDoseLedgerStateDao
     abstract fun localDataBackupDao(): LocalDataBackupDao
+    abstract fun deloadPreferencesDao(): DeloadPreferencesDao
 
     companion object {
         private const val DATABASE_NAME = "wallcrawl.db"
@@ -411,6 +415,28 @@ abstract class WallCrawlDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_13_14 = object : Migration(13, 14) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // Profile REPLACE and cancelled-session deletion must not discard the choice.
+                db.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS deload_preferences (
+                        profileId TEXT NOT NULL,
+                        revision INTEGER NOT NULL,
+                        offerId TEXT,
+                        source TEXT,
+                        policyVersion TEXT,
+                        status TEXT,
+                        decidedAtEpochMillis INTEGER,
+                        sessionId TEXT,
+                        lastHandledReturnKey TEXT,
+                        PRIMARY KEY(profileId)
+                    )
+                    """.trimIndent()
+                )
+            }
+        }
+
         val ALL_MIGRATIONS: Array<Migration>
             get() = arrayOf(
                 MIGRATION_1_2,
@@ -424,7 +450,8 @@ abstract class WallCrawlDatabase : RoomDatabase() {
                 MIGRATION_9_10,
                 MIGRATION_10_11,
                 MIGRATION_11_12,
-                MIGRATION_12_13
+                MIGRATION_12_13,
+                MIGRATION_13_14
             )
     }
 }

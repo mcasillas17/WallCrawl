@@ -5,6 +5,8 @@ import java.util.Locale
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.SessionProgramConstraints
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
+import wallcrawl.elopenmike.com.core.model.ProgressionDecision
+import wallcrawl.elopenmike.com.core.model.ProgressionReasonCode
 
 /**
  * A deterministic digest of the generation inputs that decide whether a displayed
@@ -25,13 +27,15 @@ import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
  * because it is an input to selection. Frequency and the scheduling policy's canonical
  * practice dates, current local date and zone are included even when no muscle is preferred.
  * Independently read history must not compare equal merely because count/dates match:
- * candidate capability-evidence membership, usable load sources, the shared completed-rep
+ * candidate capability-evidence membership, usable load sources, the legacy-only completed-rep
  * floor, explicit rest choices, and ledger direct counts/provenance/integrity also participate.
+ * Reviewed progression consumes bounded full outcomes and target-continuity provenance,
+ * including source identities, timestamps, measurements, feedback and user deload choices.
  *
  * ## What it deliberately excludes
  *
- * Display language, translated names, notes, body/gender fields, raw session/set identities
- * and timestamps, and unused performance metrics are excluded. Capability evidence is read
+ * Display language, translated names, notes, body/gender fields, and unused performance
+ * metrics are excluded. Capability evidence is read
  * as membership by ranking, not as session-id or measurement provenance. Valid secondary
  * and omitted ledger counts are analytics-only; their shared integrity verdict is consumed.
  * The same canonical inputs read in either language produce the same digest, which makes the
@@ -42,13 +46,12 @@ import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
  *
  * ## Scope
  *
- * A freshness check over local, derived state, not a security control or a promise of
- * transactional reads. It detects changed consumed projections without reconstructing
- * or retaining the raw history it summarises.
+ * A freshness check over local state, not a security control or a promise of transactional
+ * reads. It retains only the digest, not another copy of history.
  */
 object RecommendationContextIdentity {
 
-    private const val FORMAT_VERSION = "wallcrawl-recommendation-context-v3"
+    private const val FORMAT_VERSION = "wallcrawl-recommendation-context-v4"
 
     /** ASCII unit separator: it cannot occur in a catalog id, muscle name, or zone id. */
     private const val FIELD_SEPARATOR = "\u001F"
@@ -57,6 +60,8 @@ object RecommendationContextIdentity {
         val programState = context.trainingProgramState
         val ledger = programState?.weeklyLedger
         val lines = mutableListOf(
+            line("validator", ProgramValidatorVersion.WHOLE_PROGRAM_V2.name),
+            line("durationEstimator", WorkoutDurationEstimator.VERSION),
             line("profile", context.userProfile.id),
             line("profileRevision", context.userProfile.revision.toString()),
             line("completedWorkouts", context.completedWorkoutCount.toString()),
@@ -90,6 +95,32 @@ object RecommendationContextIdentity {
                 lines += line("practice", primary, dates.joinToString(","))
             }
         }
+        if (programState != null) {
+            lines += line("trainingPolicy", TrainingPolicyVersion.STATE_BASED_DOSE_EFFORT_REST_V2.name)
+            lines += line("progressionPolicy", ProgressionDecision.VERSION)
+            lines += line("deloadPolicy", DeloadOfferPolicy.VERSION)
+            lines += line("deloadChoice", context.deloadPreferences.toString())
+            ProgressionEngine.requireBounded(context.progressionHistory)
+            context.progressionHistory.sortedBy { it.id }.forEach { session ->
+                lines += line(
+                    "progressionSession", session.id, session.startedAtTimestamp.toString(),
+                    session.completedAtTimestamp.toString(), session.status.name, session.weightUnit.name,
+                    session.origin.name,
+                    ((session.completedAtTimestamp ?: Long.MAX_VALUE) <= context.historyAsOfTimestamp).toString()
+                )
+                session.exercises.sortedWith(compareBy({ it.exerciseId }, { it.id })).forEach { exercise ->
+                    lines += line("progressionExercise", exercise.id, exercise.sessionId,
+                        exercise.exerciseId, exercise.prescription.toString())
+                    exercise.sets.sortedWith(compareBy({ it.setNumber }, { it.id })).forEach { set ->
+                        lines += line("progressionSet", set.toString())
+                    }
+                }
+                context.recentRecommendationRecords[session.id]?.let { record ->
+                    lines += line("progressionBasis", ProgressionReasonCode.decode(record.reasonCodes)
+                        .sortedBy { it.exerciseId }.toString())
+                }
+            }
+        }
 
         // Positional, so a reordered candidate list is a different context. The list is not
         // sorted for the same reason: order is an input, not an incidental detail.
@@ -102,7 +133,7 @@ object RecommendationContextIdentity {
             )
             val performance = context.exerciseHistory[exercise.id]
             val lastWeight = performance?.lastWeight.usableLoad()
-            val minimumReps = if (lastWeight != null && exercise.type == ExerciseType.WEIGHT_REPS) {
+            val minimumReps = if (programState == null && lastWeight != null && exercise.type == ExerciseType.WEIGHT_REPS) {
                 performance?.minimumCompletedReps()
             } else null
             lines += line(
@@ -110,6 +141,9 @@ object RecommendationContextIdentity {
                 minimumReps?.toString() ?: "none",
                 context.userProfile.confirmedStartingLoads[exercise.id].usableLoad()?.toString() ?: "none"
             )
+            if (programState != null) {
+                lines += line("reviewedWorkLoad", exercise.id, context.recordedWorkLoad(exercise.id, exercise.type).toString())
+            }
             if (context.automaticEligibilityResult != null) {
                 lines += line("capabilityEvidence", exercise.id, context.capabilityEvidence.appliesTo(exercise.id).toString())
             }

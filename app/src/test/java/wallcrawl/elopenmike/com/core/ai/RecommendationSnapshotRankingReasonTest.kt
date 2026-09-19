@@ -55,7 +55,23 @@ class RecommendationSnapshotRankingReasonTest {
             generationIndex = 42
         ).asRecord("mixed-session", 1)
         assertThat(mixed.reasonCodes).hasSize(183)
-        assertThat(mixed.reasonCodes.size).isEqualTo(RecommendationRecord.MAX_REASON_CODES)
+        assertThat(mixed.reasonCodes.size).isAtMost(RecommendationRecord.MAX_REASON_CODES)
+        val full = snapshot.copy(
+            rankingReasons = rankingReasons + scheduling,
+            schedulingPolicyVersion = "TRAINING_FREQUENCY_RECENCY_V1",
+            generationIndex = 42,
+            deloadDecisionRevision = 2,
+            acceptedDeloadOfferId = "accepted",
+            acceptedDeloadSource = wallcrawl.elopenmike.com.core.model.DeloadSource.EXPLICIT_REQUEST,
+            progression = (0 until 6).map { index ->
+                wallcrawl.elopenmike.com.core.model.ProgressionProvenance(
+                    "exercise-$index", wallcrawl.elopenmike.com.core.model.ProgressionReason.HOLD_VALIDATION_REPAIR,
+                    null,
+                    listOf("source-a", "source-b"), "a".repeat(64)
+                )
+            }
+        ).asRecord("maximum", 1)
+        assertThat(full.reasonCodes.size).isEqualTo(RecommendationRecord.MAX_REASON_CODES)
         assertThat(wallcrawl.elopenmike.com.core.model.WorkoutRankingReasonCode.decode(mixed.reasonCodes))
             .containsExactlyElementsIn(rankingReasons + scheduling).inOrder()
     }

@@ -8,6 +8,12 @@ import androidx.room.Transaction
 import androidx.room.Update
 import androidx.room.Upsert
 import wallcrawl.elopenmike.com.core.database.entity.UserProfileEntity
+import wallcrawl.elopenmike.com.core.database.entity.DeloadPreferencesEntity
+import wallcrawl.elopenmike.com.core.database.repository.toDeloadPreferences
+import wallcrawl.elopenmike.com.core.database.repository.toEntity
+import wallcrawl.elopenmike.com.core.model.DeloadChoiceStatus
+import wallcrawl.elopenmike.com.core.model.DeloadPreferences
+import wallcrawl.elopenmike.com.core.ai.DeloadOfferPolicy
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutExerciseEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutRecommendationRecordEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSessionEntity
@@ -88,6 +94,10 @@ interface WorkoutSessionDao : CompletedWorkoutHistoryDao {
     ): List<WorkoutSessionWithExercisesAndSets>
 
     @Transaction
+    @Query("SELECT * FROM workout_sessions ORDER BY startedAtTimestamp DESC, id ASC LIMIT :limit")
+    suspend fun getRecentSessions(limit: Int): List<WorkoutSessionWithExercisesAndSets>
+
+    @Transaction
     @Query("SELECT * FROM workout_sessions ORDER BY startedAtTimestamp DESC")
     fun observeAllSessions(): Flow<List<WorkoutSessionWithExercisesAndSets>>
 
@@ -117,6 +127,15 @@ interface WorkoutSessionDao : CompletedWorkoutHistoryDao {
     @Query("SELECT * FROM workout_recommendation_records WHERE sessionId = :sessionId")
     suspend fun getRecommendationRecord(sessionId: String): WorkoutRecommendationRecordEntity?
 
+    @Query("SELECT * FROM workout_recommendation_records WHERE sessionId IN (:sessionIds) ORDER BY sessionId ASC")
+    suspend fun getRecommendationRecords(sessionIds: List<String>): List<WorkoutRecommendationRecordEntity>
+
+    @Query("SELECT * FROM deload_preferences WHERE profileId = :profileId")
+    suspend fun getDeloadPreferences(profileId: String): DeloadPreferencesEntity?
+
+    @Upsert
+    suspend fun upsertDeloadPreferences(preferences: DeloadPreferencesEntity)
+
     /**
      * Starts a workout, or changes nothing at all.
      *
@@ -133,7 +152,9 @@ interface WorkoutSessionDao : CompletedWorkoutHistoryDao {
         sets: List<WorkoutSetEntity>,
         expectedProfileId: String,
         expectedProfileRevision: Long,
-        recommendation: WorkoutRecommendationRecordEntity? = null
+        recommendation: WorkoutRecommendationRecordEntity? = null,
+        expectedDeloadDecisionRevision: Long? = null,
+        acceptedDeloadOfferId: String? = null
     ): WorkoutSessionWithExercisesAndSets {
         check(getProfileRevision(expectedProfileId) == expectedProfileRevision) {
             "User profile changed while the workout recommendation was being started."
@@ -141,12 +162,36 @@ interface WorkoutSessionDao : CompletedWorkoutHistoryDao {
         val existingActiveSession = getActiveSession()
         if (existingActiveSession != null) return existingActiveSession
 
+        // Null is legacy revision zero, never permission to skip the freshness check.
+        // Manual templates have no recommendation and neither read nor consume a choice.
+        val preferences = if (recommendation != null) {
+            (getDeloadPreferences(expectedProfileId)?.toDeloadPreferences()
+                ?: DeloadPreferences(expectedProfileId)).also {
+                check(it.revision == (expectedDeloadDecisionRevision ?: 0L)) {
+                    "The deload decision changed while the workout was being started."
+                }
+                check(DeloadOfferPolicy.accepted(it)?.offer?.id == acceptedDeloadOfferId) {
+                    "The accepted deload offer does not match the recommendation."
+                }
+            }
+        } else null
+
         insertWorkout(session, exercises, sets)
         recommendation?.let { record ->
             check(record.sessionId == session.id) {
                 "A recommendation record must belong to the session it is written with."
             }
             insertRecommendationRecord(record)
+        }
+        preferences?.let { current ->
+            DeloadOfferPolicy.accepted(current)?.let { accepted ->
+                check(current.revision < Long.MAX_VALUE) { "Deload revision is exhausted." }
+                upsertDeloadPreferences(current.copy(
+                    revision = current.revision + 1,
+                    choice = accepted.copy(status = DeloadChoiceStatus.CONSUMED,
+                        decidedAtEpochMillis = session.startedAtTimestamp, sessionId = session.id)
+                ).toEntity())
+            }
         }
         return checkNotNull(getSessionWithDetails(session.id)) {
             "Inserted workout session '${session.id}' could not be read back."

@@ -19,6 +19,11 @@ import wallcrawl.elopenmike.com.core.ai.WorkoutPlanner
 import wallcrawl.elopenmike.com.core.ai.WorkoutPlanningFailure
 import wallcrawl.elopenmike.com.core.ai.WorkoutValidationException
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
+import wallcrawl.elopenmike.com.core.database.repository.DeloadRepository
+import wallcrawl.elopenmike.com.core.model.DeloadPreferences
+import wallcrawl.elopenmike.com.core.model.DeloadAction
+import wallcrawl.elopenmike.com.core.model.WeightUnit
+import wallcrawl.elopenmike.com.core.ai.DeloadOfferPolicy
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityFailure
@@ -56,33 +61,46 @@ class TodayViewModel(
     private val programValidator: ProgramValidator,
     nowTimestamp: () -> Long = System::currentTimeMillis,
     clock: Flow<Long> = minuteClock(nowTimestamp),
-    zoneId: () -> ZoneId = ZoneId::systemDefault
+    zoneId: () -> ZoneId = ZoneId::systemDefault,
+    private val deloadRepository: DeloadRepository? = null
 ) : ViewModel() {
 
-    private val generatedWorkoutFlow = MutableStateFlow<GeneratedWorkout?>(null)
-
     /**
-     * The validation evidence for the workout currently on screen.
+     * The workout, validation evidence, and source unit currently on screen.
      *
-     * It carries its own context fingerprint, which is what makes "is this still the right
-     * plan?" answerable at start. Starting captures this reference alongside the workout and
-     * then compares that captured copy, never the field: a regeneration finishing while the
-     * start is suspended replaces the field, and answering the freshness question from it
-     * would check one recommendation's identity while starting another's plan.
+     * Publish and capture these together: a profile update may arrive while generation is
+     * suspended, and a completed generation may arrive while start revalidation is suspended.
+     * Neither can pair one plan's values with another plan's unit or context identity.
      *
      * A rejected regeneration deliberately leaves the previous value in place, because the
      * plan it belongs to is still the one on screen.
      */
-    private var generatedSnapshot: RecommendationSnapshot? = null
+    private val recommendationFlow = MutableStateFlow<PublishedRecommendation?>(null)
     private var lastSettledContextIdentity: String? = null
     private var observedSchedulingEvidence: TrainingFrequencyRecencyEvidence? = null
     private val isRegeneratingFlow = MutableStateFlow(false)
     private val errorFlow = MutableStateFlow<TodayError?>(null)
     private val schedulingObservationFailed = MutableStateFlow(false)
-    private val visibleErrorFlow = combine(errorFlow, schedulingObservationFailed) { error, failed ->
-        if (failed) TodayError.RECOMMENDATION_OUT_OF_DATE else error
+    private val deloadObservationFailed = MutableStateFlow(false)
+    private val isSavingDeloadFlow = MutableStateFlow(false)
+    private val isStartingFlow = MutableStateFlow(false)
+    private val deloadDecisionErrorFlow = MutableStateFlow<TodayError?>(null)
+    private val visibleErrorFlow = combine(errorFlow, schedulingObservationFailed, deloadObservationFailed) { error, failed, deloadFailed ->
+        when {
+            deloadFailed -> TodayError.DELOAD_READ_FAILED
+            failed -> TodayError.RECOMMENDATION_OUT_OF_DATE
+            else -> error
+        }
     }
     private var schedulingObserverJob: Job? = null
+    private var deloadObserverJob: Job? = null
+    private val deloadPreferencesFlow = MutableStateFlow<DeloadPreferences?>(null)
+    private val deloadControlFlow = combine(
+        deloadPreferencesFlow, isSavingDeloadFlow, deloadDecisionErrorFlow
+    ) { preferences, saving, error -> Triple(preferences, saving, error) }
+    private val isBusyFlow = combine(isRegeneratingFlow, isSavingDeloadFlow, isStartingFlow) { generating, saving, starting ->
+        generating || saving || starting
+    }
     private var isTodayVisible = false
     private var generationJob: Job? = null
     private var pendingExplicitGenerations = 0
@@ -115,21 +133,37 @@ class TodayViewModel(
 
     val uiState: StateFlow<TodayUiState> = combine(
         sourceStateFlow,
-        generatedWorkoutFlow,
-        isRegeneratingFlow,
-        visibleErrorFlow
-    ) { sourceState, generatedWorkout, isRegenerating, error ->
+        recommendationFlow,
+        isBusyFlow,
+        visibleErrorFlow,
+        deloadControlFlow
+    ) { sourceState, recommendation, isRegenerating, error, deloadControl ->
+        val (preferences, saving, decisionError) = deloadControl
+        val deload = preferences?.takeIf {
+            sourceState.userProfile.onboardingCompleted && sourceState.activeSession == null
+        }?.let {
+            TodayDeloadState(
+                profileRevision = sourceState.userProfile.revision,
+                preferences = it,
+                offer = DeloadOfferPolicy.offer(sourceState.userProfile, it),
+                acceptedChoice = DeloadOfferPolicy.accepted(it),
+                isSaving = saving || isStartingFlow.value,
+                error = decisionError
+            )
+        }
         if (error != null) {
-            TodayUiState.Error(error = error, activeSession = sourceState.activeSession)
-        } else if (generatedWorkout == null) {
-            TodayUiState.Loading
+            TodayUiState.Error(error = error, activeSession = sourceState.activeSession, deload = deload)
+        } else if (recommendation == null) {
+            sourceState.activeSession?.let { TodayUiState.Preparing(it) } ?: TodayUiState.Loading
         } else {
             TodayUiState.Success(
                 userProfile = sourceState.userProfile,
-                suggestedWorkout = generatedWorkout,
+                suggestedWorkout = recommendation.workout,
                 activeSession = sourceState.activeSession,
                 isRegenerating = isRegenerating,
-                completedThisWeek = sourceState.completedThisWeek
+                completedThisWeek = sourceState.completedThisWeek,
+                deload = deload,
+                prescriptionUnit = recommendation.prescriptionUnit
             )
         }
     }.onStart {
@@ -139,6 +173,8 @@ class TodayViewModel(
         isTodayVisible = false
         schedulingObserverJob?.cancel()
         schedulingObserverJob = null
+        deloadObserverJob?.cancel()
+        deloadObserverJob = null
         observedSchedulingEvidence = null
     }.stateIn(
         scope = viewModelScope,
@@ -166,13 +202,62 @@ class TodayViewModel(
 
     fun regenerateWorkout() {
         ensureSchedulingObservation()
+        ensureDeloadObservation()
         requestWorkoutGeneration(isRegeneration = true, explicit = true)
     }
 
     /** Resume/clock-change check: never leave a stale-looking card until the user starts it. */
     fun refreshRecommendation() {
         ensureSchedulingObservation()
+        ensureDeloadObservation()
         requestWorkoutGeneration(isRegeneration = true)
+    }
+
+    private fun ensureDeloadObservation() {
+        val repository = deloadRepository ?: return
+        if (!isTodayVisible || (deloadObserverJob?.isActive == true && !deloadObservationFailed.value)) return
+        deloadObserverJob?.cancel()
+        deloadObserverJob = viewModelScope.launch {
+            repository.observe().distinctUntilChanged().catch { error ->
+                if (error is CancellationException) throw error
+                deloadObservationFailed.value = true
+                deloadPreferencesFlow.value = null
+            }.collect {
+                deloadObservationFailed.value = false
+                deloadPreferencesFlow.value = it
+                requestWorkoutGeneration(isRegeneration = true)
+            }
+        }
+    }
+
+    fun decideDeload(action: DeloadAction) {
+        val repository = deloadRepository ?: return
+        if (isSavingDeloadFlow.value || isStartingFlow.value || deloadObservationFailed.value) return
+        val state = when (val current = uiState.value) {
+            is TodayUiState.Success -> current.deload.takeIf { current.activeSession == null }
+            is TodayUiState.Error -> current.deload.takeIf { current.activeSession == null }
+            TodayUiState.Loading, is TodayUiState.Preparing -> null
+        } ?: return
+        val offerId = when (action) {
+            DeloadAction.REQUEST -> null
+            DeloadAction.CANCEL -> state.acceptedChoice?.offer?.id ?: return
+            else -> state.offer?.id ?: return
+        }
+        // Set before launching: a tap on Start in the same frame must not race this write.
+        isSavingDeloadFlow.value = true
+        deloadDecisionErrorFlow.value = null
+        viewModelScope.launch {
+            try {
+                repository.decide(action, state.profileRevision, state.preferences.revision, offerId)
+                requestWorkoutGeneration(isRegeneration = true)
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                deloadDecisionErrorFlow.value = TodayError.DELOAD_WRITE_FAILED
+            } finally {
+                isSavingDeloadFlow.value = false
+            }
+        }
     }
 
     private fun ensureSchedulingObservation() {
@@ -232,11 +317,17 @@ class TodayViewModel(
      */
     private suspend fun generateValidatedWorkout(isRegeneration: Boolean, forceGeneration: Boolean) {
         val observedBeforeBuild = observedSchedulingEvidence
-        val context = workoutGenerationContextBuilder.build()
+        val deloadBeforeBuild = deloadPreferencesFlow.value
+        val context = workoutGenerationContextBuilder.build().let { current ->
+            // Freshness rebuilds the displayed variant; only an explicit variation request
+            // advances the planner counter. Completed history already advances the split.
+            if (forceGeneration) current
+            else current.copy(regenerationIndex = recommendationFlow.value?.workout?.generationIndex)
+        }
         // Count/history/profile notifications can describe the context just published.
         // Only an explicit variation request may spend another ordinal for equal inputs.
         val identity = RecommendationContextIdentity.of(context)
-        if (!forceGeneration && (identity == generatedSnapshot?.contextIdentity ||
+        if (!forceGeneration && (identity == recommendationFlow.value?.snapshot?.contextIdentity ||
             identity == lastSettledContextIdentity)) return
         val result = try {
             programValidator.validate(
@@ -261,8 +352,16 @@ class TodayViewModel(
                     hasPendingFreshnessCheck = true
                     return
                 }
-                generatedWorkoutFlow.value = result.workout
-                generatedSnapshot = result.snapshot
+                if (deloadPreferencesFlow.value?.let {
+                        it != deloadBeforeBuild && it != context.deloadPreferences
+                    } == true
+                ) {
+                    hasPendingFreshnessCheck = true
+                    return
+                }
+                recommendationFlow.value = PublishedRecommendation(
+                    result.workout, result.snapshot, context.userProfile.preferredUnit
+                )
                 errorFlow.value = null
             }
 
@@ -356,11 +455,17 @@ class TodayViewModel(
         displayRationale: String,
         onWorkoutStarted: (sessionId: String) -> Unit
     ) {
-        if (generationJob?.isActive == true || schedulingObservationFailed.value) return
+        if (generationJob?.isActive == true || schedulingObservationFailed.value ||
+            deloadObservationFailed.value || isSavingDeloadFlow.value || isStartingFlow.value ||
+            errorFlow.value != null
+        ) return
+        val published = recommendationFlow.value ?: return
+        val currentWorkout = published.workout
+        val recommendation = published.snapshot
+        isStartingFlow.value = true
         viewModelScope.launch {
-            val currentWorkout = generatedWorkoutFlow.value ?: return@launch
-            val recommendation = generatedSnapshot ?: return@launch
             try {
+                if (workoutRepository.getActiveSessionOnce() != null) return@launch
                 val currentContext = workoutGenerationContextBuilder.build()
                 if (
                     RecommendationContextIdentity.of(currentContext) !=
@@ -393,6 +498,8 @@ class TodayViewModel(
                 throw e
             } catch (e: Exception) {
                 errorFlow.value = TodayError.START_FAILED
+            } finally {
+                isStartingFlow.value = false
             }
         }
     }
@@ -403,7 +510,8 @@ class TodayViewModel(
             workoutRepository: WorkoutRepository,
             workoutGenerationContextBuilder: WorkoutGenerationContextBuilder,
             workoutPlanner: WorkoutPlanner,
-            programValidator: ProgramValidator
+            programValidator: ProgramValidator,
+            deloadRepository: DeloadRepository? = null
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -412,11 +520,18 @@ class TodayViewModel(
                     workoutRepository,
                     workoutGenerationContextBuilder,
                     workoutPlanner,
-                    programValidator
+                    programValidator,
+                    deloadRepository = deloadRepository
                 ) as T
             }
         }
     }
+
+    private data class PublishedRecommendation(
+        val workout: GeneratedWorkout,
+        val snapshot: RecommendationSnapshot,
+        val prescriptionUnit: WeightUnit
+    )
 
     private data class TodaySourceState(
         val userProfile: UserProfile,

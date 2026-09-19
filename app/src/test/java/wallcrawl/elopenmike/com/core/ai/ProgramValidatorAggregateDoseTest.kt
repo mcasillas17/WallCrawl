@@ -239,7 +239,7 @@ class ProgramValidatorAggregateDoseTest {
 
         assertThat(snapshot.reviewedPathEnabled).isTrue()
         assertThat(snapshot.trainingPolicyVersion)
-            .isEqualTo(TrainingPolicyVersion.STATE_BASED_DOSE_EFFORT_REST_V1)
+            .isEqualTo(TrainingPolicyVersion.STATE_BASED_DOSE_EFFORT_REST_V2)
         assertThat(snapshot.ledgerPolicyVersion).isEqualTo(LedgerPolicyVersion.PRIMARY_ONLY_V1)
         assertThat(snapshot.adaptationState).isEqualTo(AdaptationState.UNCALIBRATED)
         assertThat(snapshot.weekStartEpochDay).isEqualTo(MONDAY_EPOCH_DAY)

@@ -133,7 +133,7 @@ data class ExercisePrescription(
         }
     }
 
-    private companion object {
+    companion object {
         const val MIN_TARGET_SETS = 1
         const val MAX_TARGET_SETS = 20
         const val MIN_REST_SECONDS = 0

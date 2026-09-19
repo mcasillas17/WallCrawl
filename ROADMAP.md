@@ -1,6 +1,6 @@
 # WallCrawl Roadmap
 
-> **Status date:** 2026-09-14
+> **Status date:** 2026-09-19
 >
 > **Evidence baseline:** `002cfde` (enable AI-reviewed production planning, #78). Package 1
 > status additionally
@@ -27,6 +27,10 @@
 > `Exercise.acceptedMetadata()` on both endpoints (#77), and
 > `TrainingFrequencyRecencyPolicy`, its production-composition and lifecycle tests,
 > and the versioned scheduling reasons carried through recommendation persistence.
+> Package 9 implementation is based on freshly fetched `df4c376` (#85), with
+> comparison, lifecycle and persistence decisions recorded in the focused
+> [design](docs/superpowers/specs/2026-09-19-progression-and-deload-design.md).
+> Its final delivery gates are tracked in the Package 9 status below.
 >
 > This is the single source of truth for current project status, priority, dependency
 > order, and implementation scope. Status must be derived from repository evidence rather
@@ -41,13 +45,13 @@ network connection, or companion device.
 
 | Area | Status | Remaining gap |
 | --- | --- | --- |
-| Android foundation | Room schema 13 with a continuous migration chain; implicit Android backup disabled with legacy and modern all-domain exclusions; user-owned export, restore, and delete-all shipped | OEM transfer enforcement varies; restore is empty-destination only; `targetSdk` remains 35 while `compileSdk` is 37 |
+| Android foundation | Room schema 14 with an additive deload-choice table and continuous migration chain; archive 4 reads formats 1–4; implicit backup remains disabled | OEM transfer enforcement varies; restore is empty-destination only; `targetSdk` remains 35 while `compileSdk` is 37 |
 | Catalog and reviewed content | All 302 entries have per-ID AI evidence records; 906 SVG frames and 131 legacy programming entries unchanged; an owner-authorized audit accepted 182 of 211 authored records as `AI_ACCEPTED` | Zero genuine human approvals; 29 authored drafts and 56 IDs with no authored block remain pending, 35 entries outside automatic-strength scope; the band-only inventory still contains no chest work, and `banded-row`'s anchor stays unrepresentable, though anchored variations are now gated and the session is labelled truthfully |
 | Onboarding and profile | Shipped as an eight-step flow with seven movement-capability questions, plus export, restore, and delete-all controls | Restore requires a fresh start, so it cannot merge into an installation that already holds data |
 | Templates and logging | Shipped with frozen template snapshots, type-aware outcomes, RPE/RIR, typed stops, and a local rest timer | Template targets are only partly editable; unsaved drafts are not restored after process death |
 | Localization | English and neutral Latin American Spanish shipped across the whole interface, the 302-exercise catalog, generated workout text, and accessibility labels, selectable from onboarding and Profile through Android's per-app language mechanism | Only two languages; historical session text stays in the language it was written in, by design |
 | Progress and history | Calendar-week activity, separately labelled reviewed primary dose, non-additive involvement, records, trends, summaries, and recent history implemented | Workout-summary navigation and history drill-down remain incomplete; production reviewed muscle allocation now covers the 182 `AI_ACCEPTED` records but no genuinely human-`APPROVED` metadata exists |
-| Deterministic coach | Eligibility, experience ranking, capability evidence, weekly ledger, state-based dose/effort/rest, whole-program validation with recorded recommendation provenance, and a shared advertised-focus contract shipped; reviewed-only rules are now the enabled production path | Genuine human `APPROVED` review, progression, and deload |
+| Deterministic coach | Reviewed eligibility/ranking, weekly ledger, state guidance and whole-program validation; Package 9 adds single-axis progression and persistent user-controlled deload in the production composition | Genuine human `APPROVED` review remains independent; Package 9 delivery gates are recorded below |
 | Planner evaluation | Versioned persona corpus (`planner-fixtures/manifest.txt` is the authoritative roster), with the reviewed-enabled personas' weeks replayed through the real ledger and every successful persona's proposal validated as a complete program, importer unit tests, real pinned-upstream regeneration check, JVM tests, and Android CI shipped | None for this package; reviewed-planner enablement (package 7) is done, and human-approval rollout (package 3) is the remaining gate |
 | Optional local model | Not started | Blocked on a stable deterministic release |
 | Health Connect and Wear OS | Not started; only `:app` exists | Shared modules, privacy controls, validation, substitutions, protocol, and device evidence |
@@ -124,11 +128,15 @@ These decisions must be recorded before the related implementation package close
    table travels unchanged in both. Columns beside the
    session were rejected: the record is provenance about a decision rather than part of the
    session, and a separate table keeps it out of every ordinary session read.
-4. **Reviewed rollout scope:** decide whether the first reviewed-planning release may remain
-   conservatively non-progressing or must wait for progression and user-controlled deload.
-   This is a product/release decision, not a technical dependency of eligibility.
-5. **Deload experience:** define where an offer appears, how the user accepts or declines it,
-   and whether that choice persists. Deload must never be automatic or diagnostic.
+4. **Reviewed rollout scope:** ~~decided~~. Package 7 enabled the conservative
+   `AI_ACCEPTED` alpha before progression/deload. Package 9 adds those behaviors
+   without expanding acceptance or authorizing a release.
+5. **Deload experience:** ~~decided~~. Today previews a one-workout, one-fewer-set
+   option with held reference targets and any pending progression paused.
+   Explicit request or reported return may offer it; acceptance alone applies it.
+   Decline/dismiss/cancel and accepted consumption persist locally across restart
+   and archive operations. See the [lifecycle](docs/superpowers/specs/2026-09-19-progression-and-deload-design.md).
+   No automatic diagnosis, calendar rule or multi-session block is introduced.
 6. **Release posture:** decide when to raise `targetSdk`, enable release shrinking, configure
    signing, and move beyond debug prerelease APKs.
 7. **Optional sync:** explicitly approve the product/privacy scope before a sync design is
@@ -538,7 +546,8 @@ progression/deload rather than a conservative reviewed planner.
 3. Document the initial rollout scope, especially whether progression/deload remains absent.
    **Done.** See the
    [enabled rollout contract](docs/reviewed-capability-eligibility.md#enabled-rollout-contract).
-   Progression and deload remain absent; the rollout is deliberately conservative.
+   That initial rollout was deliberately non-progressing. Package 9 subsequently
+   adds progression and user-controlled deload without changing metadata acceptance.
 4. Change `PlannerFeatureFlags.reviewedCapabilityEligibility` in a dedicated, reviewable
    change with a production-default assertion. **Done.**
    `WallCrawlApplication` injects `PlannerFeatureFlags.PRODUCTION`, which is `true`, and
@@ -641,28 +650,43 @@ frequency/recency, with the same regeneration input included in equal-input repl
 
 ### 9. Add one-variable progression and user-controlled deload
 
-**Status:** Capability evidence shipped; progression, deload offers, and broader state
-derivation are not started.
+**Status:** Implemented. All seven tasks are wired into the production path;
+the independent implementation panel converged after repair. Publication
+requires the separate final documented-state review and passing checks.
+This package authorizes neither genuine human metadata approval nor a release.
 
 **Depends on:** Package 4. Package 7 depends on this only when progression is part of the first
 reviewed rollout.
 
 **Implementation tasks:**
 
-1. Define comparable completed outcomes for load/reps, bodyweight reps, assistance,
-   duration, and distance without treating missing effort as favorable.
-2. Progress exactly one variable at a time and preserve no-invented-load behavior.
-3. Replace or contain the existing simple history bump so two progression systems cannot
-   stack.
-4. Define a typed, versioned deload offer from an explicit request, returning state, or a
-   reviewed multi-session pattern.
-5. Add accept/decline UI and persistence only after the deload experience is decided.
-6. Widen `AdaptationStatePolicy` and the advanced-complexity ceiling in the same change.
-7. Add state-transition tables, mixed-unit cases, missing-feedback cases, and regression
-   tests for the ceiling coupling.
+1. Exact-ID comparable completed attempts cover all seven measurement shapes,
+   with explicit targets/units/timestamps/feedback and typed holds for missing,
+   stopped, warm-up-only, changed, duplicate or out-of-bounds evidence.
+2. `ONE_VARIABLE_PROGRESSION_V1` advances one axis; no set increase, invented load,
+   assistance inferred from external load, or capability-only progression.
+3. The old history-only bump is isolated to manual/disabled defaults. Conservative
+   guidance and accepted deload suppress progression; one-pass validation repair
+   restores an affected progression axis before reducing sets.
+4. `DELOAD_ONE_WORKOUT_V1` derives returning offers and persists explicit requests.
+   No multi-session fatigue pattern or recovery diagnosis is invented.
+5. Today offers request/accept/decline/dismiss/cancel and an exact held-target
+   preview in English/Spanish. Room 13→14 adds owned choices; archive 4 preserves
+   formats 1–3. Start checks and consumes the choice atomically with session/record.
+6. `PROGRAM_STATE_V2` derives `RETURNING`, accepted `HOLD`, otherwise
+   `UNCALIBRATED`. All keep the advanced ceiling's existing exceptions.
+   `DELOAD_OFFERED` never activates guidance merely by being displayed.
+7. State, shape/units/feedback, real accepted-catalog composition, provenance,
+   freshness, repair, Room/archive and Today lifecycle/UI tests extend the
+   existing suites. `PRIMARY_ONLY_V1`, Package 8 ranking and joint refusals remain.
 
-**Likely surfaces:** progression/deload policies, prescription factory, adaptation and
-eligibility policies, generation context, Today/Profile UI, and optional persistence.
+**Surfaces:** progression/deload policies, shared prescription factory, adaptation
+and eligibility, context identity v4, validator V2, immutable recommendation
+provenance, Today, choice persistence and local-data operations.
+
+**Records:** [Design](docs/superpowers/specs/2026-09-19-progression-and-deload-design.md)
+and [implementation plan](docs/superpowers/plans/2026-09-19-progression-and-deload.md).
+No reviewed catalog content or genuine human sign-off is changed; Package 3 stays open.
 
 **Done when:** recommendations advance one explainable variable from comparable evidence,
 missing inputs remain neutral, deload is always user-controlled, and no newly derivable state

@@ -11,6 +11,8 @@ import wallcrawl.elopenmike.com.core.database.entity.WorkoutSessionEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSetEntity
 import wallcrawl.elopenmike.com.core.database.relation.toWorkoutSession
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
+import wallcrawl.elopenmike.com.core.model.RecommendationRecord
+import wallcrawl.elopenmike.com.core.backup.LocalDataArchiveLimits
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.PlannedExercise
 import wallcrawl.elopenmike.com.core.model.SessionStatus
@@ -38,6 +40,9 @@ interface WorkoutRepository {
     fun observeCompletedWorkoutCount(): Flow<Int>
     fun observeCompletedWorkoutCountInRange(startTimestamp: Long, endTimestampExclusive: Long): Flow<Int>
     suspend fun getRecentCompletedSessions(limit: Int = 8): List<WorkoutSession>
+    /** Latest attempts of every status; an incomplete attempt must not be skipped. */
+    suspend fun getRecentSessions(limit: Int = 8): List<WorkoutSession>
+    suspend fun getRecommendationRecords(sessionIds: List<String>): List<RecommendationRecord>
     /** Complete canonical range, never the recent-eight loading/capability sample. */
     suspend fun getCompletedSessionsInRange(startTimestamp: Long, endTimestampExclusive: Long): List<WorkoutSession>
     /**
@@ -138,6 +143,26 @@ class OfflineWorkoutRepository(
     override suspend fun getRecentCompletedSessions(limit: Int): List<WorkoutSession> {
         require(limit > 0) { "limit must be greater than zero." }
         return sessionDao.getRecentCompletedSessions(limit).map { it.toWorkoutSession() }
+    }
+
+    override suspend fun getRecentSessions(limit: Int): List<WorkoutSession> {
+        require(limit in 1..8) { "Recent attempt history is bounded to eight sessions." }
+        return sessionDao.getRecentSessions(limit).map { row ->
+            check(row.exercisesWithSets.size <= LocalDataArchiveLimits.MAX_EXERCISES_PER_SESSION &&
+                row.exercisesWithSets.all { it.sets.size <= LocalDataArchiveLimits.MAX_SETS_PER_EXERCISE }) {
+                "Recent attempt history exceeds supported per-session bounds."
+            }
+            row.toWorkoutSession()
+        }
+    }
+
+    override suspend fun getRecommendationRecords(sessionIds: List<String>): List<RecommendationRecord> {
+        require(sessionIds.size <= 8 && sessionIds.distinct().size == sessionIds.size &&
+            sessionIds.all { it.isNotBlank() && it.length <= 200 && it.none(Char::isISOControl) }) {
+            "Recommendation history requires at most eight distinct bounded session identifiers."
+        }
+        if (sessionIds.isEmpty()) return emptyList()
+        return sessionDao.getRecommendationRecords(sessionIds).map { it.toRecommendationRecord() }
     }
 
     override suspend fun getCompletedSessionsInRange(
@@ -284,7 +309,9 @@ class OfflineWorkoutRepository(
                     sessionId = sessionId,
                     recordedAtEpochMillis = sessionEntity.startedAtTimestamp
                 )
-                ?.toEntity()
+                ?.toEntity(),
+            expectedDeloadDecisionRevision = recommendation?.deloadDecisionRevision,
+            acceptedDeloadOfferId = recommendation?.acceptedDeloadOfferId
         ).toWorkoutSession()
     }
 

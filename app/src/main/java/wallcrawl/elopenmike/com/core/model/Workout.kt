@@ -20,6 +20,7 @@ data class GeneratedWorkout(
     val rationale: WorkoutRationaleSpec,
     /** Applied, canonical ranking decisions; presentation translates these facts later. */
     val rankingReasons: List<WorkoutRankingReason> = emptyList(),
+    val progressionDecisions: List<ProgressionDecision> = emptyList(),
     /**
      * High-priority muscles nothing available trains as its own purpose.
      *

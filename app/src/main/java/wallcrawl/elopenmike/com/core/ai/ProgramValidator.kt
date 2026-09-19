@@ -11,6 +11,9 @@ import wallcrawl.elopenmike.com.core.model.TrainingProgramState
 import wallcrawl.elopenmike.com.core.model.TrainingProgramStatePolicyVersion
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
+import wallcrawl.elopenmike.com.core.model.ProgressionDecision
+import wallcrawl.elopenmike.com.core.model.ProgressionReason
+import wallcrawl.elopenmike.com.core.model.provenance
 
 /** What whole-program validation concluded. */
 sealed interface ProgramValidationResult {
@@ -67,7 +70,7 @@ sealed interface ProgramValidationResult {
  */
 class ProgramValidator(
     private val structuralValidator: GeneratedWorkoutValidator,
-    private val defaults: StateBasedTrainingPolicyDefaults = StateBasedTrainingPolicyDefaults.V1
+    private val defaults: StateBasedTrainingPolicyDefaults = StateBasedTrainingPolicyDefaults.V2
 ) {
 
     /**
@@ -135,8 +138,13 @@ class ProgramValidator(
         violations += focusViolations(workout, allowedById)
         violations += declaredConstraintViolations(workout, context, allowedById)
         workout.exercises.forEachIndexed { index, planned ->
-            violations += exerciseViolations(index, planned, context, allowedById)
+            violations += exerciseViolations(index, planned, context, allowedById, workout)
         }
+        val requiresProgressionReceipts = context.automaticEligibilityResult != null &&
+            context.trainingProgramState?.policyVersion == TrainingProgramStatePolicyVersion.PROGRAM_STATE_V2
+        if ((requiresProgressionReceipts || workout.progressionDecisions.isNotEmpty()) &&
+            workout.progressionDecisions.map { it.exerciseId } != workout.exercises.map { it.exerciseId }
+        ) violations += ProgramViolation(ProgramViolationCode.PROGRESSION_POLICY_MISMATCH)
         violations += durationViolations(workout)
 
         val accounting = accountProposedDose(workout, context, allowedById)
@@ -284,7 +292,8 @@ class ProgramValidator(
         index: Int,
         planned: PlannedExercise,
         context: WorkoutGenerationContext,
-        allowedById: Map<String, Exercise>
+        allowedById: Map<String, Exercise>,
+        workout: GeneratedWorkout
     ): List<ProgramViolation> {
         val violations = mutableListOf<ProgramViolation>()
 
@@ -297,14 +306,66 @@ class ProgramValidator(
             )
         }
 
-        violations += loadProvenanceViolations(index, planned, context)
-
         // An exercise that is not a legal candidate has already been reported as such.
         // Piling reviewed-metadata reasons on top of that would describe a plan nobody
         // proposed, so the remaining per-exercise rules need a resolved candidate.
         val candidate = allowedById[planned.exerciseId] ?: return violations
         if (context.automaticEligibilityResult != null) {
             violations += reviewedViolations(index, planned, candidate, context)
+        }
+        val state = context.trainingProgramState
+        if (context.automaticEligibilityResult != null && state != null) {
+            if (violations.isEmpty() && unusableStateViolation(state) == null) {
+                violations += reviewedPrescriptionViolations(
+                    index, planned, candidate, context,
+                    workout.progressionDecisions.singleOrNull { it.exerciseId == planned.exerciseId }
+                )
+            }
+        } else {
+            violations += loadProvenanceViolations(index, planned, context)
+        }
+        return violations
+    }
+
+    private fun reviewedPrescriptionViolations(
+        index: Int,
+        planned: PlannedExercise,
+        candidate: Exercise,
+        context: WorkoutGenerationContext,
+        recorded: ProgressionDecision?
+    ): List<ProgramViolation> {
+        fun violation(code: ProgramViolationCode, detail: String? = null) =
+            ProgramViolation(code, candidate.id, index, detail)
+        if (recorded == null && planned.prescription.targetWeight == null &&
+            planned.prescription.targetAssistanceWeight == null
+        ) return emptyList()
+        val expected = try {
+            DefaultExercisePrescriptionFactory(StateBasedTrainingPolicy(defaults)).createDecision(candidate, context)
+        } catch (error: TrainingPolicyResultException) {
+            val exhausted = (error.result as? TrainingPolicyResult.NoGuidance)?.reason ==
+                TrainingPolicyNoGuidanceReason.WEEKLY_DIRECT_PRIMARY_ALLOWANCE_EXHAUSTED
+            return listOf(violation(
+                if (exhausted) ProgramViolationCode.WEEKLY_ALLOWANCE_EXCEEDED else ProgramViolationCode.PROGRESSION_POLICY_MISMATCH,
+                if (exhausted) candidate.acceptedMetadata()?.directPrimaryMuscle else null
+            ))
+        }
+        val violations = mutableListOf<ProgramViolation>()
+        val prescription = planned.prescription
+        fun traceable(value: Double?, first: Double?, second: Double?): Boolean =
+            value == null || first?.let { closeEnough(value, it) } == true ||
+                second?.let { closeEnough(value, it) } == true
+        if (!traceable(prescription.targetWeight, expected.referencePrescription.targetWeight, expected.prescription.targetWeight) ||
+            !traceable(prescription.targetAssistanceWeight, expected.referencePrescription.targetAssistanceWeight, expected.prescription.targetAssistanceWeight)
+        ) violations += violation(ProgramViolationCode.UNTRACEABLE_LOAD)
+        if (recorded != null) {
+            val repaired = recorded.reason == ProgressionReason.HOLD_VALIDATION_REPAIR &&
+                recorded.referencePrescription == expected.referencePrescription &&
+                recorded.baseConfigurationDigest == expected.baseConfigurationDigest &&
+                recorded.prescription == expected.referencePrescription.copy(targetSets = prescription.targetSets) &&
+                prescription.targetSets <= expected.prescription.targetSets
+            if (recorded.prescription != prescription || (recorded != expected && !repaired)) {
+                violations += violation(ProgramViolationCode.PROGRESSION_POLICY_MISMATCH)
+            }
         }
         return violations
     }
@@ -365,13 +426,13 @@ class ProgramValidator(
     }
 
     /**
-     * A prescribed load must trace to something the user confirmed or actually lifted.
+     * Load provenance for legacy/disabled contexts only.
      *
      * A null load stays null: no body measurement, score, or metadata approval authorizes
      * inventing a starting number. Equality to the last recorded load is deliberately not
      * required, because the shipped legacy path may add its documented unit-aware increment
-     * once the top of a rep range has been reached. This task neither replaces progression
-     * nor introduces one, and provenance proves origin, never safety.
+     * once the top of a rep range has been reached. Reviewed production instead uses
+     * [reviewedPrescriptionViolations]; the two increment paths cannot stack.
      */
     private fun loadProvenanceViolations(
         index: Int,
@@ -531,7 +592,7 @@ class ProgramValidator(
      * allowance being full. The specific cause travels in the violation's detail.
      */
     private fun unusableStateViolation(state: TrainingProgramState): ProgramViolation? = when {
-        state.policyVersion != TrainingProgramStatePolicyVersion.PROGRAM_STATE_V1 ->
+        state.policyVersion !in setOf(TrainingProgramStatePolicyVersion.PROGRAM_STATE_V1, TrainingProgramStatePolicyVersion.PROGRAM_STATE_V2) ->
             ProgramViolation(
                 code = ProgramViolationCode.MALFORMED_WEEKLY_LEDGER,
                 detail = "UNSUPPORTED_TRAINING_PROGRAM_STATE_POLICY"
@@ -608,9 +669,9 @@ class ProgramValidator(
             if (setsByIndex[index] == planned.targetSets) {
                 planned
             } else {
-                planned.copy(
-                    prescription = planned.prescription.copy(targetSets = setsByIndex[index])
-                )
+                val decision = workout.progressionDecisions.singleOrNull { it.exerciseId == planned.exerciseId }
+                planned.copy(prescription = (decision?.referencePrescription ?: planned.prescription)
+                    .copy(targetSets = setsByIndex[index]))
             }
         }
         if (exercises == workout.exercises) return null
@@ -619,6 +680,15 @@ class ProgramValidator(
         // same named estimator the agreement rule checks.
         return workout.copy(
             exercises = exercises,
+            progressionDecisions = workout.progressionDecisions.map { decision ->
+                val index = exercises.indexOfFirst { it.exerciseId == decision.exerciseId }
+                if (index >= 0 && exercises[index].prescription != decision.prescription) {
+                    decision.copy(
+                        reason = ProgressionReason.HOLD_VALIDATION_REPAIR, axis = null,
+                        prescription = exercises[index].prescription
+                    )
+                } else decision
+            },
             estimatedDurationMinutes = WorkoutDurationEstimator.estimateMinutes(exercises)
         )
     }
@@ -652,7 +722,7 @@ class ProgramValidator(
         // a decision that never happened.
         val programState = context.trainingProgramState?.takeIf { reviewedPathEnabled }
         return RecommendationSnapshot(
-            validatorVersion = ProgramValidatorVersion.WHOLE_PROGRAM_V1,
+            validatorVersion = ProgramValidatorVersion.WHOLE_PROGRAM_V2,
             durationEstimatorVersion = WorkoutDurationEstimator.VERSION,
             outcome = outcome,
             reviewedPathEnabled = reviewedPathEnabled,
@@ -670,6 +740,10 @@ class ProgramValidator(
             rankingReasons = workout.rankingReasons,
             schedulingPolicyVersion = context.schedulingEvidence?.policyVersion?.takeIf { reviewedPathEnabled },
             generationIndex = workout.generationIndex,
+            progression = workout.progressionDecisions.map { it.provenance() },
+            deloadDecisionRevision = context.deloadPreferences?.revision,
+            acceptedDeloadOfferId = context.deloadPreferences?.let(DeloadOfferPolicy::accepted)?.offer?.id,
+            acceptedDeloadSource = context.deloadPreferences?.let(DeloadOfferPolicy::accepted)?.offer?.source,
             doseAccounting = evaluation.doseAccounting
         )
     }

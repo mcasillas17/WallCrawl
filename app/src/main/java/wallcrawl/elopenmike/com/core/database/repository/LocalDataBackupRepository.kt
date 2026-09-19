@@ -173,6 +173,7 @@ class OfflineLocalDataBackupRepository(
         check(rows.profiles.size <= 1) {
             "The local database holds more than one profile row."
         }
+        check(rows.deloadPreferences.size <= 1) { "The local database holds more than one deload preference row." }
 
         val templateExercisesByTemplate = rows.templateExercises.groupBy { it.templateId }
         val templates = rows.templates.map { template ->
@@ -201,7 +202,8 @@ class OfflineLocalDataBackupRepository(
             templates = templates,
             sessions = sessions,
             recommendationRecords = rows.recommendationRecords
-                .mapNotNull { it.toRecommendationRecord() }
+                .map { it.toRecommendationRecord() },
+            deloadPreferences = rows.deloadPreferences.firstOrNull()?.toDeloadPreferences()
         )
     }
 
@@ -218,7 +220,8 @@ class OfflineLocalDataBackupRepository(
                 exercise.sets.map { set -> set.toSetEntity() }
             }
         },
-        recommendationRecords = recommendationRecords.map { it.toEntity() }
+        recommendationRecords = recommendationRecords.map { it.toEntity() },
+        deloadPreferences = listOfNotNull(deloadPreferences?.toEntity())
     )
 
     private fun WorkoutTemplate.toTemplateEntity() = WorkoutTemplateEntity(

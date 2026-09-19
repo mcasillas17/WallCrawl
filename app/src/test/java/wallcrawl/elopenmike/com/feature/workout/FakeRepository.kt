@@ -50,6 +50,8 @@ internal class FakeRepository(initialSession: WorkoutSession) : WorkoutRepositor
     override fun observeCompletedWorkoutCountInRange(startTimestamp: Long, endTimestampExclusive: Long): Flow<Int> = flowOf(0)
 
     override suspend fun getRecentCompletedSessions(limit: Int): List<WorkoutSession> = emptyList()
+    override suspend fun getRecentSessions(limit: Int): List<WorkoutSession> = emptyList()
+    override suspend fun getRecommendationRecords(sessionIds: List<String>): List<wallcrawl.elopenmike.com.core.model.RecommendationRecord> = emptyList()
     override suspend fun getCompletedSessionsInRange(startTimestamp: Long, endTimestampExclusive: Long): List<WorkoutSession> = emptyList()
 
     override suspend fun startWorkoutFromGenerated(

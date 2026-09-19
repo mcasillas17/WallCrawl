@@ -215,6 +215,8 @@ state:
 
 - the current profile and preferences;
 - at most eight recent completed sessions;
+- at most eight recent attempts of every status, plus a bounded batch of their
+  recommendation records and the current durable deload choice;
 - normalized exercise history and recently trained muscles;
 - a separate bounded fourteen-local-date completed-work range for scheduling;
 - the full bundled catalog after hard filtering.
@@ -243,8 +245,7 @@ held by 182 bundled records) — requires one complete reviewed equipment altern
 the source-bound fixed-anchor minimum (also for supported-regression availability),
 preserves explicit exclusions, rejects required capabilities marked `AVOID`, fails
 closed for joint-sensitive constraints that lack reviewed mappings, enforces
-`LOW_IMPACT_ONLY`, and temporarily blocks undemonstrated `ADVANCED` work while
-uncalibrated or returning. A supported regression lifts that ceiling only when the
+`LOW_IMPACT_ONLY`, and blocks undemonstrated `ADVANCED` work in every state. A supported regression lifts that ceiling only when the
 regression itself is below the advanced ceiling or its family has demonstrated history.
 `LIMITED` and `UNKNOWN` capability requirements remain typed soft preferences rather
 than becoming favorable assumptions.
@@ -306,16 +307,20 @@ the marker plus preferred ID, alternative ID, direct primary, weekly frequency a
 calendar dates. Current structured reason types share a contiguous index space; malformed
 current groups are rejected rather than partially rendered.
 
-The record accepts at most 183 reason-code tokens. The current planner selects at most six
+The record accepts at most 228 reason-code tokens. The current planner selects at most six
 exercises; comparing that result with its six-exercise no-preference baseline can therefore
 attribute at most 36 source-target inversions. Four tokens per inversion plus the single
 repair code uses 145 tokens. At most six scheduling reasons use six tokens each, and
 scheduling-policy and generation-index provenance use two more: `144 + 1 + 36 + 2 = 183`.
+Package 9 adds six seven-token progression groups and three deload tokens:
+`183 + 42 + 3 = 228`. Reason tokens allow 320 characters to retain source IDs
+with their prefixes; other identity/version tokens retain the 200-character limit.
 This preserves every applied supported-regression source without truncation and bounds
 scheduling explanations to one witness per selected exercise. The validation-only increase
 reads older 64- and 160-token records unchanged; older readers may reject new records beyond
-their own limit. Room schema 13 and archive format 3 are unchanged, not forward-compatible
-promises to old readers. Unknown future reason-version tokens remain opaque.
+their own limit. Package 9 separately adds Room schema 14 and archive format 4
+for owned choices, not forward-compatible promises to older readers.
+Unknown future reason-version tokens remain opaque.
 
 `GeneratedWorkoutValidator` verifies that every ID exists, remains in the
 allowed set, matches the catalog exercise type, and belongs to a structurally valid
@@ -355,10 +360,12 @@ metadata only — coverage falling back to the legacy authored pattern — so an
 draft record can never drive a product-policy rejection. The planner's pattern spreading
 stays a ranking preference with an explicit fallback to repeated patterns.
 
-Load provenance accepts a null target always, and a non-null one only when it traces to a
-confirmed starting load or to the last recorded load, optionally plus the shipped legacy
-history increment of 5.0 lb or 2.5 kg in the context's unit. Equality to the last recorded
-load is deliberately not required, and nothing here replaces or introduces progression.
+Reviewed load/assistance provenance reuses the shared prescription decision.
+A number must match its held source or exact authorized progression. External
+load and assistance have separate sources; external-load confirmation cannot
+authorize assistance. Warm-up-only/future work supplies no reviewed starting
+load. Null remains null. Only manual/disabled defaults retain the history-only
+5 lb / 2.5 kg increment; it cannot stack with reviewed progression.
 
 `DURATION_ESTIMATOR_V1` in `WorkoutDurationEstimator` is the single named estimator the
 planner and the validator share: `targetDurationSeconds` or 45 seconds of work per set,
@@ -375,12 +382,14 @@ per exercise. A damaged ledger (`MALFORMED_WEEKLY_LEDGER`), unrepresentable arit
 (`WEEKLY_ALLOWANCE_EXCEEDED`) stay three distinct reasons. `NEEDS_ONBOARDING` configures
 no allowance, which is recorded as absent rather than treated as a violation. Exceeding an
 allowance is a mismatch with a versioned WallCrawl number, never proof of overload or
-medical danger, and no weekly minimum or automatic increase exists.
+medical danger, and no weekly minimum or automatic set-count increase exists.
 
 At most **one** deterministic repair pass runs, and only at generation time. It may only
 reduce `targetSets` so aggregate accounting holds — allocated in recommendation order with
 every affected exercise keeping at least one set — and then recompute the duration under
-the same estimator. It never weakens a constraint, widens the candidate set, changes
+the same estimator. If an affected exercise had a pending progression, repair first
+restores its reference axis and records `HOLD_VALIDATION_REPAIR`.
+It never weakens a constraint, widens the candidate set, changes
 selection, invents a load, alters effort or rest, or falls back off the reviewed path; when
 the remainder cannot leave every affected exercise a set it fails closed rather than
 dropping one. Repair is disabled at workout start, so a displayed plan is never silently
@@ -414,7 +423,8 @@ refusal. `LOW_IMPACT_ONLY` is decided by `impactLevel` alone. See the
 [eligibility boundary](reviewed-capability-eligibility.md).
 
 On that reviewed-enabled path only, `StateBasedTrainingPolicy` consumes the composed
-`TrainingProgramState`. It validates `PROGRAM_STATE_V1`, `PRIMARY_ONLY_V1`, approved
+`TrainingProgramState`. Production emits `PROGRAM_STATE_V2` (V1 contexts remain
+compatible at the policy boundary). It validates `PRIMARY_ONLY_V1`, accepted
 provenance, review-policy equality, and prescription shape before using the approved
 direct-primary muscle. It independently re-checks the capability and training-constraint
 rules the eligibility gate already applied, and returns a typed failure rather than
@@ -430,8 +440,9 @@ It caps a base prescription by the remaining configured weekly product allowance
 increases it. Exact/over-cap exposure returns typed
 no-guidance instead of a zero-set or over-cap prescription; malformed or version-mismatched
 input returns a typed failure with no legacy fallback.
-Each exercise reads the same completed ledger; aggregate reservation across a proposal
-is not implemented. Exceeding an allowance is not proof of overload or medical danger.
+Each exercise reads the same completed ledger; `ProgramValidator` checks the
+aggregate proposal without writing reservations to history.
+Exceeding an allowance is not proof of overload or medical danger.
 
 The same pure result carries nullable RIR guidance and a classified rest target. Product
 defaults are 2-4 RIR for conservative states or a relevant approved `LIMITED` capability,
@@ -469,6 +480,46 @@ produced push days padded with unrelated work — but the planner only fails whe
 nothing at all is trainable, so failure never depends on what the user
 prioritized. Rotation is seeded from completed-workout count so it advances
 across process death, not just within a session.
+
+### Progression and user-controlled deload
+
+`ONE_VARIABLE_PROGRESSION_V1` compares exact-ID completed attempts, full
+prescriptions, typed measurements, units, timestamps and explicit feedback.
+Two latest comparable attempts must fully complete their prescribed normal work,
+confirm manageability and report qualifying RIR or RPE. Missing feedback, stopped
+work, duplicates and changed targets produce typed holds, not readiness guesses.
+Capability evidence stays separate. Defaults propose one axis only: external
+load +2.5 kg, bodyweight rep range +1, assistance -2.5 kg, or duration +5 seconds.
+Distance shapes are domain-tested, not admitted to automatic strength planning.
+These are versioned product rules, not physiology.
+
+The factory retains compatible earned targets using stored base-configuration
+digests. Dynamic set/rest/effort changes can suppress progression without resetting
+that earned axis. Comparison respects the actual logger's two-decimal
+representation, including conversion and rounding; stored history is unchanged.
+`WHOLE_PROGRAM_V2` requires complete ordered decision provenance for production
+`PROGRAM_STATE_V2` proposals and recomputes the same policy for validation.
+
+`DELOAD_ONE_WORKOUT_V1` is an explicit request or returning-user offer on Today.
+It previews held reference targets with one fewer work set per exercise, minimum
+one; any pending progression increase is paused. Displaying/declining/dismissing
+does not accept. Acceptance persists until cancellation or one automatic start;
+templates do not consume it and frozen workouts never change.
+There is no calendar law, fatigue diagnosis or multi-session block.
+
+State precedence is reported `RETURNING`, then accepted `HOLD`, otherwise
+`UNCALIBRATED`. No `DELOAD_OFFERED` state is derived. Training policy V2 keeps
+all three at 6 weekly primary sets, two sets per exercise and conservative effort
+before deload. Every state retains the advanced ceiling unless the existing
+demonstrated-family or legal supported-regression exception applies.
+
+Context identity v4 includes richer outcomes/feedback, continuity provenance,
+working-load sources, choices/revisions and relevant policy/time inputs. Today
+publishes proposal/unit/snapshot together, preserves the variation index during
+passive refresh, and refuses stale starts. The Room start transaction independently
+checks the choice revision, including zero, before writing session, record and
+consumption together. The [focused contract](superpowers/specs/2026-09-19-progression-and-deload-design.md)
+contains the full comparison, state and lifecycle tables.
 
 ### Frequency and recency scheduling
 
@@ -720,16 +771,17 @@ feedback behind the reviewed-only flag: only non-warm-up work from two distinct
 completed sessions for the same exercise ID, and every qualifying set must have
 `feltManageable == true` plus a valid shape-specific logged payload. Null or false
 manageable answers, completion alone, RPE, and RIR do not qualify evidence.
-`ProgressionEngine` and `DeloadOfferPolicy` do not exist yet. Only completed work
-counts toward volume, history, and progress today.
+`ProgressionEngine` additionally consumes explicit effort and matching targets.
+`DeloadOfferPolicy` consumes explicit request/return status, not an invented
+multi-session fatigue signal. Only completed work earns ledger credit.
 
 `DefaultExercisePrescriptionFactory` never invents a `WEIGHT_REPS` starting
 load. It suggests a weight only when either applies, in that priority order:
 
 1. bounded exercise history exists for that catalog ID, converted to the
    profile's current unit — the existing weight, or a unit-appropriate
-   increment (+5 lb / +2.5 kg) once every recent completed set reached the
-   top of the target rep range; or
+   increment only on the isolated manual/disabled path; reviewed progression
+   requires the stricter comparable-outcome policy; or
 2. the user has explicitly confirmed a baseline in
    `UserProfile.confirmedStartingLoads` for that ID.
 
@@ -743,7 +795,7 @@ no separate write path that copies a logged value back into
 
 ## Room persistence and invariants
 
-`WallCrawlDatabase` is currently schema version 13. Its tables store:
+`WallCrawlDatabase` is currently schema version 14. Its tables store:
 
 - the user profile, including onboarding status, multi-select fitness goals,
   training constraints, return-after-break weeks, confirmed starting loads,
@@ -758,7 +810,14 @@ no separate write path that copies a logged value back into
 - a fingerprinted, reconstructable `PRIMARY_ONLY_V1` weekly-ledger cache whose
   authority remains immutable completed history;
 - one immutable whole-program validation record per session started from a
-  recommendation, keyed by that session's own id.
+  recommendation, keyed by that session's own id;
+- one versioned deload-preferences row per profile, containing its latest choice,
+  handled return key and revision, without persisting derived evidence.
+
+Migration `13 -> 14` creates only `deload_preferences`; old rows are untouched.
+Choices are separate from replaceable profile rows and survive profile edits.
+There is no session foreign key because cancelled workouts are deleted;
+consumption stays terminal even when its audit-linked session is absent.
 
 Migration `3 → 4` adds template storage, session provenance, and type-aware
 target/outcome columns while converting older repetition-based history to
@@ -778,7 +837,7 @@ columns (`feltManageable`, `completedAtTimestamp`, `stoppedAtTimestamp`,
 existed reads back as an honestly unrecorded outcome instead of gaining a
 fabricated completion timestamp or an assumed manageable answer. There is no
 destructive migration fallback on any construction path, and the migration
-tests exercise every supported starting schema through to version 13. Migration
+tests exercise every supported starting schema through to version 14. Migration
 `7 → 8` adds one non-null `movementCapabilitiesJson` column. Existing rows receive `{}`, which the codec
 normalizes to all `UNKNOWN`; their onboarding status, revision, theme, goals,
 equipment, constraints, confirmed loads, templates, sessions, sets, and history
@@ -841,7 +900,7 @@ diagram, OEM limitations, and the lack of any previous-backup erasure guarantee.
 
 ### User-owned export, restore, and deletion
 
-`core/backup` writes archive format **version 3** and reads versions 1, 2, and 3: one JSON
+`core/backup` writes archive format **version 4** and reads versions 1, 2, 3, and 4: one JSON
 document holding the profile, templates, every session with its exercises and sets, and
 the whole-program validation record for each session started from a recommendation. That
 version is independent of the Room schema version, which travels alongside the app
@@ -849,8 +908,10 @@ version, the creation time, and the bundled catalog commit as provenance only.
 
 Version 2 added the `recommendations` array. A version 1 document restores exactly as it
 always did and simply carries none; a version 1 document that uses a version 2 field is
-refused rather than quietly upgraded, and a version 3 document is still refused as
+refused rather than quietly upgraded. Versions newer than 4 are refused as
 unsupported. Each record must name a session the same document carries, exactly once.
+Version 4 adds owned deload preferences; older checksums and missing-choice
+semantics are preserved. A choice row also makes a restore destination nonempty.
 
 ```text
 Room (profile, templates, sessions, exercises, sets, recommendation records)
@@ -895,7 +956,10 @@ both clear it, and it is rebuilt from restored history on the next read. Recomme
 records are the opposite case — nothing can rebuild how a past plan was validated from the
 history it produced — so they are exported and restored with the sessions they belong to,
 and removed by deletion with everything else. A record this build cannot read back is
-dropped rather than restored half-understood.
+reported as an error rather than dropped: it now supplies progression continuity.
+Export fails before opening its destination. Known progression sources and
+exercise membership are validated by the archive. Deload writes share the
+existing local-data gate; restore/delete include choices in their transaction.
 
 The persistence layer enforces several important invariants:
 
@@ -1105,7 +1169,7 @@ repository mapping, progress calculations, and ViewModel state. Its fourteen-per
 weeks with the real `WeeklyDoseLedgerCalculator` and validates every proposal it produces
 with `ProgramValidator`, keeping raw-valid, repaired-valid and typed no-plan outcomes
 distinct. Instrumentation
-tests cover every supported Room migration chain through schema 13, real 7 → 8,
+tests cover every supported Room migration chain through schema 14, real 7 → 8,
 9 → 10, 10 → 11, 11 → 12 and 12 → 13 preservation, foreign-key integrity, guidance round trips,
 the atomic start of a session with its validation record, the weekly-ledger repository,
 capability

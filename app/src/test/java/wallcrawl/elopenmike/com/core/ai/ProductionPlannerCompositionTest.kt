@@ -61,6 +61,289 @@ class ProductionPlannerCompositionTest {
         bundledExercises.filter { it.acceptedMetadata() != null }.map(Exercise::id).toSet()
 
     @Test
+    fun unrepresentableWorkingLoadsProduceAnExplicitHoldAfterUnitConversion() = runTest {
+        for (id in listOf("assisted-chin-up", "dumbbell-bench-press")) {
+            val exercise = bundledExercises.single { it.id == id }
+            for ((logged, targetUnit) in listOf(10_001.0 to WeightUnit.KG, 5_000.0 to WeightUnit.LBS)) {
+                val profile = fullGymProfile().copy(
+                    preferredUnit = targetUnit,
+                    confirmedStartingLoads = mapOf(id to 20.0),
+                    excludedExerciseIds = bundledExercises.map { it.id }.filterNot { it == id }
+                )
+                val reference = if (exercise.type == ExerciseType.ASSISTED_BODYWEIGHT) {
+                    wallcrawl.elopenmike.com.core.model.ExercisePrescription(
+                        exercise.type, 2, wallcrawl.elopenmike.com.core.model.RepRange(6, 10),
+                        targetAssistanceWeight = 5_000.0
+                    )
+                } else wallcrawl.elopenmike.com.core.model.ExercisePrescription(
+                    exercise.type, 2, wallcrawl.elopenmike.com.core.model.RepRange(8, 12), targetWeight = 5_000.0
+                )
+                val history = progressionSession("recorded", id, reference, schedulingNow() - 8 * DAY_MILLIS)
+                    .let { session -> session.copy(exercises = session.exercises.map { instance ->
+                        instance.copy(sets = instance.sets.map { set ->
+                            if (exercise.type == ExerciseType.ASSISTED_BODYWEIGHT) set.copy(completedAssistanceWeight = logged)
+                            else set.copy(completedWeight = logged)
+                        })
+                    }) }
+                val context = productionContextBuilder(profile, listOf(history)).build()
+                val plan = FakeWorkoutPlanner().generateWorkout(context)
+                assertThat(plan.exercises.single().prescription.targetWeight).isNull()
+                assertThat(plan.exercises.single().prescription.targetAssistanceWeight).isNull()
+                assertThat(plan.progressionDecisions.single().reason)
+                    .isEqualTo(wallcrawl.elopenmike.com.core.model.ProgressionReason.HOLD_AT_BOUND)
+                assertThat(ProgramValidator(GeneratedWorkoutValidator(InMemoryExerciseCatalog(bundledExercises)))
+                    .validate(plan, context)).isInstanceOf(ProgramValidationResult.Valid::class.java)
+                assertThat(context.progressionHistory.single()).isEqualTo(history)
+            }
+        }
+    }
+
+    @Test
+    fun advancedRepTargetsPersistAcrossNewEvidenceAndChangedGoalsResetComparison() = runTest {
+        val id = "push-up"
+        val exercise = bundledExercises.single { it.id == id }
+        val profile = bodyweightProfile().copy(
+            preferredUnit = WeightUnit.KG,
+            excludedExerciseIds = bundledExercises.map { it.id }.filterNot { it == id }
+        )
+        val validator = ProgramValidator(GeneratedWorkoutValidator(InMemoryExerciseCatalog(bundledExercises)))
+        val base = DefaultExercisePrescriptionFactory().create(exercise, productionContextBuilder(profile).build())
+        val history = mutableListOf(
+            progressionSession("one", id, base, schedulingNow() - 12 * DAY_MILLIS),
+            progressionSession("two", id, base, schedulingNow() - 11 * DAY_MILLIS)
+        )
+        val firstContext = productionContextBuilder(profile, history).build()
+        val first = validator.validate(FakeWorkoutPlanner().generateWorkout(firstContext), firstContext) as ProgramValidationResult.Valid
+        val advanced = first.workout.exercises.single().prescription
+        assertThat(advanced.repRange!!.max).isEqualTo(base.repRange!!.max + 1)
+        history += progressionSession("three", id, advanced, schedulingNow() - 10 * DAY_MILLIS)
+        val records = mutableListOf(first.snapshot.asRecord("three", schedulingNow() - 10 * DAY_MILLIS))
+        val betweenContext = productionContextBuilder(profile, history, records = records).build()
+        val between = validator.validate(FakeWorkoutPlanner().generateWorkout(betweenContext), betweenContext) as ProgramValidationResult.Valid
+        assertThat(between.workout.exercises.single().prescription).isEqualTo(advanced)
+        assertThat(between.workout.progressionDecisions.single().reason)
+            .isEqualTo(wallcrawl.elopenmike.com.core.model.ProgressionReason.HOLD_TARGETS_CHANGED)
+        val constrainedContext = productionContextBuilder(
+            profile,
+            history + completedSessionOf(
+                "current-week-dose", bundledExercises.single { it.id == "cable-fly" }, 5,
+                schedulingNow() - HOUR_MILLIS
+            ),
+            records = records
+        ).build()
+        val constrained = FakeWorkoutPlanner().generateWorkout(constrainedContext)
+        assertThat(constrained.exercises.single().prescription)
+            .isEqualTo(advanced.copy(targetSets = 1))
+        assertThat(constrained.progressionDecisions.single().reason)
+            .isEqualTo(wallcrawl.elopenmike.com.core.model.ProgressionReason.HOLD_TARGETS_CHANGED)
+        history += progressionSession("four", id, advanced, schedulingNow() - 9 * DAY_MILLIS)
+        records += between.snapshot.asRecord("four", schedulingNow() - 9 * DAY_MILLIS)
+        val nextContext = productionContextBuilder(profile, history, records = records).build()
+        val next = FakeWorkoutPlanner().generateWorkout(nextContext)
+        assertThat(next.exercises.single().prescription.repRange!!.max).isEqualTo(base.repRange.max + 2)
+        val changed = productionContextBuilder(
+            profile.copy(goals = setOf(FitnessGoal.ATHLETIC_PERFORMANCE)), history, records = records
+        ).build()
+        assertThat(FakeWorkoutPlanner().generateWorkout(changed).progressionDecisions.single().reason)
+            .isEqualTo(wallcrawl.elopenmike.com.core.model.ProgressionReason.HOLD_CONFIGURATION_CHANGED)
+    }
+
+    @Test
+    fun repairSuppressesAProgressionInsteadOfChangingBothSetsAndLoad() = runTest {
+        val ids = setOf("dumbbell-bench-press", "machine-chest-press")
+        val profile = fullGymProfile().copy(
+            preferredUnit = WeightUnit.KG,
+            confirmedStartingLoads = ids.associateWith { 40.0 },
+            excludedExerciseIds = bundledExercises.map { it.id }.filterNot { it in ids }
+        )
+        val baseContext = productionContextBuilder(profile).build()
+        val history = ids.flatMapIndexed { index, id ->
+            val exercise = bundledExercises.single { it.id == id }
+            val reference = DefaultExercisePrescriptionFactory().create(exercise, baseContext)
+            listOf(
+                progressionSession("old-$index", id, reference, schedulingNow() - 9 * DAY_MILLIS + index * HOUR_MILLIS),
+                progressionSession("new-$index", id, reference, schedulingNow() - 8 * DAY_MILLIS + index * HOUR_MILLIS)
+            )
+        } + completedSessionOf("current-dose", bundledExercises.single { it.id == "cable-fly" }, 3, schedulingNow() - HOUR_MILLIS)
+        val context = productionContextBuilder(profile, history).build()
+        val proposal = FakeWorkoutPlanner().generateWorkout(context)
+        assertThat(proposal.progressionDecisions.all { it.axis == wallcrawl.elopenmike.com.core.model.ProgressionAxis.LOAD }).isTrue()
+        val validator = ProgramValidator(GeneratedWorkoutValidator(InMemoryExerciseCatalog(bundledExercises)))
+        val result = validator.validate(proposal, context, allowRepair = true) as ProgramValidationResult.Valid
+        assertThat(result.snapshot.outcome).isEqualTo(RecommendationOutcome.REPAIRED)
+        val reduced = result.workout.progressionDecisions.single {
+            it.reason == wallcrawl.elopenmike.com.core.model.ProgressionReason.HOLD_VALIDATION_REPAIR
+        }
+        assertThat(reduced.axis).isNull()
+        assertThat(reduced.prescription.targetWeight).isEqualTo(40.0)
+        assertThat(reduced.prescription.targetSets).isEqualTo(1)
+        assertThat(validator.validate(result.workout, context, allowRepair = false))
+            .isInstanceOf(ProgramValidationResult.Valid::class.java)
+    }
+
+    @Test
+    fun assistanceCannotBeAuthorizedByExternalLoadConfirmationOrByTheLegacyIncrement() = runTest {
+        val id = "assisted-chin-up"
+        val profile = fullGymProfile().copy(
+            confirmedStartingLoads = mapOf(id to 40.0),
+            excludedExerciseIds = bundledExercises.map { it.id }.filterNot { it == id }
+        )
+        val context = productionContextBuilder(profile).build()
+        val normal = FakeWorkoutPlanner().generateWorkout(context)
+        val tampered = normal.copy(
+            progressionDecisions = emptyList(),
+            exercises = normal.exercises.map { it.copy(prescription = it.prescription.copy(targetAssistanceWeight = 40.0)) }
+        )
+        val validation = ProgramValidator(GeneratedWorkoutValidator(InMemoryExerciseCatalog(bundledExercises)))
+            .validate(tampered, context)
+        assertThat((validation as ProgramValidationResult.Invalid).violations.map { it.code })
+            .contains(ProgramViolationCode.UNTRACEABLE_LOAD)
+    }
+
+    @Test
+    fun removingProgressionProvenanceCannotBypassTheProductionSingleAxisContract() = runTest {
+        val context = productionContextBuilder(bodyweightProfile()).build()
+        val plan = FakeWorkoutPlanner().generateWorkout(context)
+        val stripped = plan.copy(progressionDecisions = emptyList())
+        val validation = ProgramValidator(GeneratedWorkoutValidator(InMemoryExerciseCatalog(bundledExercises)))
+            .validate(stripped, context)
+        assertThat(validation).isInstanceOf(ProgramValidationResult.Invalid::class.java)
+        assertThat((validation as ProgramValidationResult.Invalid).violations.map { it.code })
+            .contains(ProgramViolationCode.PROGRESSION_POLICY_MISMATCH)
+    }
+
+    @Test
+    fun duplicateHistoricalRecommendationRowsAreRejectedInsteadOfLastWriteWinning() = runTest {
+        val context = productionContextBuilder(bodyweightProfile()).build()
+        val workout = FakeWorkoutPlanner().generateWorkout(context)
+        val exercise = workout.exercises.first()
+        val session = progressionSession("source", exercise.exerciseId, exercise.prescription, schedulingNow() - DAY_MILLIS)
+        val record = progressionRecord("source", workout.progressionDecisions)
+        try {
+            productionContextBuilder(bodyweightProfile(), listOf(session), records = listOf(record, record)).build()
+            org.junit.Assert.fail("Duplicate records must not be silently collapsed.")
+        } catch (expected: IllegalArgumentException) {
+            assertThat(expected.message).contains("recommendation")
+        }
+    }
+
+    @Test
+    fun warmupOnlyAndFutureWorkCannotSupplyAReviewedStartingLoad() = runTest {
+        val id = "dumbbell-bench-press"
+        val exercise = bundledExercises.single { it.id == id }
+        val profile = fullGymProfile().copy(
+            preferredUnit = WeightUnit.KG,
+            excludedExerciseIds = bundledExercises.map { it.id }.filterNot { it == id }
+        )
+        val reference = DefaultExercisePrescriptionFactory().create(
+            exercise, productionContextBuilder(profile.copy(confirmedStartingLoads = mapOf(id to 40.0))).build()
+        )
+        val normal = progressionSession("normal", id, reference, schedulingNow() - DAY_MILLIS)
+        val warmup = normal.copy(exercises = normal.exercises.map { ex ->
+            ex.copy(sets = ex.sets.map { it.copy(type = wallcrawl.elopenmike.com.core.model.SetType.WARMUP) })
+        })
+        val future = progressionSession("future", id, reference, schedulingNow() + DAY_MILLIS)
+        for (history in listOf(listOf(warmup), listOf(future))) {
+            val context = productionContextBuilder(profile, history).build()
+            assertThat(FakeWorkoutPlanner().generateWorkout(context).exercises.single().prescription.targetWeight).isNull()
+        }
+        val actualWork = productionContextBuilder(profile, listOf(normal)).build()
+        assertThat(FakeWorkoutPlanner().generateWorkout(actualWork).exercises.single().prescription.targetWeight)
+            .isEqualTo(40.0)
+    }
+
+    @Test
+    fun progressionUsesTheActualAcceptedCohortThroughContextLedgerPlannerAndValidator() = runTest {
+        val axes = mapOf(
+            "dumbbell-bench-press" to wallcrawl.elopenmike.com.core.model.ProgressionAxis.LOAD,
+            "push-up" to wallcrawl.elopenmike.com.core.model.ProgressionAxis.REP_RANGE,
+            "assisted-chin-up" to wallcrawl.elopenmike.com.core.model.ProgressionAxis.ASSISTANCE,
+            "wall-sit" to wallcrawl.elopenmike.com.core.model.ProgressionAxis.DURATION
+        )
+        for ((id, axis) in axes) {
+            val exercise = bundledExercises.single { it.id == id }
+            assertThat(exercise.reviewedMetadata?.reviewState).isEqualTo(ReviewState.AI_ACCEPTED)
+            val profile = fullGymProfile().copy(
+                preferredUnit = WeightUnit.KG,
+                confirmedStartingLoads = if (axis == wallcrawl.elopenmike.com.core.model.ProgressionAxis.LOAD) mapOf(id to 40.0) else emptyMap(),
+                excludedExerciseIds = bundledExercises.map { it.id }.filterNot { it == id }
+            )
+            val empty = productionContextBuilder(profile).build()
+            var reference = DefaultExercisePrescriptionFactory().create(exercise, empty)
+            if (axis == wallcrawl.elopenmike.com.core.model.ProgressionAxis.ASSISTANCE) {
+                reference = reference.copy(targetAssistanceWeight = 20.0)
+            }
+            val history = listOf(
+                progressionSession("one", id, reference, schedulingNow() - 9 * DAY_MILLIS),
+                progressionSession("two", id, reference, schedulingNow() - 8 * DAY_MILLIS)
+            )
+            val context = productionContextBuilder(profile, history).build()
+            val plan = FakeWorkoutPlanner().generateWorkout(context)
+            assertThat(plan.exercises).hasSize(1)
+            val result = ProgramValidator(GeneratedWorkoutValidator(InMemoryExerciseCatalog(bundledExercises)))
+                .validate(plan, context, allowRepair = true)
+            assertWithMessage(id).that(result).isInstanceOf(ProgramValidationResult.Valid::class.java)
+            val valid = result as ProgramValidationResult.Valid
+            assertThat(valid.workout.progressionDecisions.single().axis).isEqualTo(axis)
+            assertThat(wallcrawl.elopenmike.com.core.model.ProgressionReasonCode.decode(
+                valid.snapshot.asRecord("started", schedulingNow()).reasonCodes
+            ).single().axis).isEqualTo(axis)
+            val accepted = wallcrawl.elopenmike.com.core.model.DeloadPreferences(
+                profile.id, 1, wallcrawl.elopenmike.com.core.model.DeloadChoice(
+                    wallcrawl.elopenmike.com.core.model.DeloadOffer(
+                        "request", wallcrawl.elopenmike.com.core.model.DeloadSource.EXPLICIT_REQUEST, DeloadOfferPolicy.VERSION
+                    ),
+                    wallcrawl.elopenmike.com.core.model.DeloadChoiceStatus.ACCEPTED, 1
+                )
+            )
+            val deloadContext = productionContextBuilder(profile, history, deload = accepted).build()
+            val held = FakeWorkoutPlanner().generateWorkout(deloadContext)
+            assertThat(held.exercises.single().prescription)
+                .isEqualTo(reference.copy(targetSets = maxOf(1, reference.targetSets - 1)))
+            assertThat(held.progressionDecisions.single().axis).isNull()
+            assertThat(held.progressionDecisions.single().reason)
+                .isEqualTo(wallcrawl.elopenmike.com.core.model.ProgressionReason.HOLD_ACCEPTED_DELOAD)
+            assertThat(ProgramValidator(GeneratedWorkoutValidator(InMemoryExerciseCatalog(bundledExercises)))
+                .validate(held, deloadContext)).isInstanceOf(ProgramValidationResult.Valid::class.java)
+        }
+    }
+
+    @Test
+    fun displayedOrDeclinedDeloadDoesNotChangeProductionPlan_butAcceptedChoiceDoes() = runTest {
+        val profile = bodyweightProfile()
+        val offer = wallcrawl.elopenmike.com.core.model.DeloadOffer(
+            "request", wallcrawl.elopenmike.com.core.model.DeloadSource.EXPLICIT_REQUEST, DeloadOfferPolicy.VERSION
+        )
+        val plain = productionContextBuilder(profile).build()
+        val baseline = FakeWorkoutPlanner().generateWorkout(plain)
+        for (status in listOf(
+            wallcrawl.elopenmike.com.core.model.DeloadChoiceStatus.OFFERED,
+            wallcrawl.elopenmike.com.core.model.DeloadChoiceStatus.DECLINED,
+            wallcrawl.elopenmike.com.core.model.DeloadChoiceStatus.ACCEPTED
+        )) {
+            val preferences = wallcrawl.elopenmike.com.core.model.DeloadPreferences(
+                profile.id, 1, wallcrawl.elopenmike.com.core.model.DeloadChoice(offer, status, 1)
+            )
+            val context = productionContextBuilder(profile, deload = preferences).build()
+            assertThat(context.allowedExercises).isEqualTo(plain.allowedExercises)
+            val accepted = status == wallcrawl.elopenmike.com.core.model.DeloadChoiceStatus.ACCEPTED
+            assertThat(context.trainingProgramState?.adaptationState)
+                .isEqualTo(if (accepted) AdaptationState.HOLD else AdaptationState.UNCALIBRATED)
+            val plan = FakeWorkoutPlanner().generateWorkout(context)
+            val expected = baseline.exercises.map {
+                if (accepted) it.copy(prescription = it.prescription.copy(targetSets = maxOf(1, it.targetSets - 1))) else it
+            }
+            assertThat(plan.exercises).isEqualTo(expected)
+            val result = ProgramValidator(GeneratedWorkoutValidator(InMemoryExerciseCatalog(bundledExercises)))
+                .validate(plan, context, allowRepair = true)
+            assertThat(result).isInstanceOf(ProgramValidationResult.Valid::class.java)
+            val snapshot = (result as ProgramValidationResult.Valid).snapshot
+            assertThat(snapshot.deloadDecisionRevision).isEqualTo(1)
+            assertThat(snapshot.acceptedDeloadOfferId).isEqualTo(if (accepted) offer.id else null)
+        }
+    }
+
+    @Test
     fun recencyAloneChangesBothPassesAndPreservesTheOtherPrescriptionInputs() = runTest {
         val oldHistory = schedulingHistory()
         val recentHistory = oldHistory.mapIndexed { index, session ->
@@ -304,7 +587,7 @@ class ProductionPlannerCompositionTest {
             }
             assertWithMessage(cohort.name).that(served.snapshot.reviewedPathEnabled).isTrue()
             assertWithMessage(cohort.name).that(served.snapshot.trainingPolicyVersion)
-                .isEqualTo(TrainingPolicyVersion.STATE_BASED_DOSE_EFFORT_REST_V1)
+                .isEqualTo(TrainingPolicyVersion.STATE_BASED_DOSE_EFFORT_REST_V2)
             assertWithMessage(cohort.name).that(served.snapshot.ledgerPolicyVersion)
                 .isEqualTo(LedgerPolicyVersion.PRIMARY_ONLY_V1)
             assertWithMessage(cohort.name).that(served.snapshot.outcome)
@@ -531,9 +814,9 @@ class ProductionPlannerCompositionTest {
         assertThat(record.reviewedPathEnabled).isTrue()
         assertThat(record.catalogVersion).isEqualTo(bundledCatalog.sourceCommit)
         assertThat(record.reviewPolicyVersion).isEqualTo(REVIEW_POLICY_VERSION)
-        assertThat(record.trainingPolicyVersion).isEqualTo("STATE_BASED_DOSE_EFFORT_REST_V1")
+        assertThat(record.trainingPolicyVersion).isEqualTo("STATE_BASED_DOSE_EFFORT_REST_V2")
         assertThat(record.ledgerPolicyVersion).isEqualTo("PRIMARY_ONLY_V1")
-        assertThat(record.programStatePolicyVersion).isEqualTo("PROGRAM_STATE_V1")
+        assertThat(record.programStatePolicyVersion).isEqualTo("PROGRAM_STATE_V2")
         assertThat(record.adaptationState).isEqualTo(AdaptationState.UNCALIBRATED.name)
         assertThat(record.weekStartEpochDay).isEqualTo(MONDAY_EPOCH_DAY)
         assertThat(record.timeZoneId).isEqualTo(LEDGER_ZONE.id)
@@ -637,10 +920,12 @@ class ProductionPlannerCompositionTest {
     private fun productionContextBuilder(
         profile: UserProfile,
         history: List<WorkoutSession> = emptyList(),
-        week: TrainingWeek = TrainingWeek.startingOn(MONDAY_EPOCH_DAY, LEDGER_ZONE)
+        week: TrainingWeek = TrainingWeek.startingOn(MONDAY_EPOCH_DAY, LEDGER_ZONE),
+        deload: wallcrawl.elopenmike.com.core.model.DeloadPreferences? = null,
+        records: List<RecommendationRecord> = emptyList()
     ) = WorkoutGenerationContextBuilder(
         userProfileRepository = StaticUserProfileRepository(profile),
-        workoutRepository = StaticWorkoutRepository(history),
+        workoutRepository = StaticWorkoutRepository(history, records),
         exerciseCatalog = InMemoryExerciseCatalog(bundledExercises),
         exerciseFilter = ExerciseFilter(),
         historyAnalyzer = WorkoutHistoryAnalyzer(),
@@ -657,7 +942,19 @@ class ProductionPlannerCompositionTest {
         ),
         catalogVersion = { bundledCatalog.sourceCommit },
         nowTimestamp = { week.startEpochMillis + 3 * DAY_MILLIS },
-        zoneId = { LEDGER_ZONE }
+        zoneId = { LEDGER_ZONE },
+        deloadRepository = (deload ?: wallcrawl.elopenmike.com.core.model.DeloadPreferences(profile.id)).let { preferences ->
+            object : wallcrawl.elopenmike.com.core.database.repository.DeloadRepository {
+                override fun observe() = flowOf(preferences)
+                override suspend fun get() = preferences
+                override suspend fun decide(
+                    action: wallcrawl.elopenmike.com.core.model.DeloadAction,
+                    expectedProfileRevision: Long,
+                    expectedDecisionRevision: Long,
+                    offerId: String?
+                ) = error("Read-only composition fixture.")
+            }
+        }
     )
 
     private fun ledgerFor(
@@ -945,7 +1242,8 @@ internal class StaticUserProfileRepository(
 }
 
 internal class StaticWorkoutRepository(
-    private val completedSessions: List<WorkoutSession>
+    private val completedSessions: List<WorkoutSession>,
+    private val records: List<RecommendationRecord> = emptyList()
 ) : WorkoutRepository {
     override suspend fun getCompletedSessionsInRange(startTimestamp: Long, endTimestampExclusive: Long) =
         completedSessions.filter { it.status == wallcrawl.elopenmike.com.core.model.SessionStatus.COMPLETED &&
@@ -973,6 +1271,12 @@ internal class StaticWorkoutRepository(
 
     override suspend fun getRecentCompletedSessions(limit: Int): List<WorkoutSession> =
         completedSessions.sortedByDescending { it.completedAtTimestamp }.take(limit)
+
+    override suspend fun getRecentSessions(limit: Int): List<WorkoutSession> =
+        completedSessions.sortedWith(compareByDescending<WorkoutSession> { it.startedAtTimestamp }.thenBy { it.id }).take(limit)
+
+    override suspend fun getRecommendationRecords(sessionIds: List<String>): List<wallcrawl.elopenmike.com.core.model.RecommendationRecord> =
+        records.filter { it.sessionId in sessionIds }
 
     override suspend fun startWorkoutFromGenerated(
         generated: GeneratedWorkout,

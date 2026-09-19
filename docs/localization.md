@@ -142,6 +142,13 @@ Everything numeric goes through `core/ui/format/LocaleFormatting.kt`.
 
 ## Claim boundaries
 
+Today's progression reasons and deload request/accept/decline/dismiss/cancel
+controls ship in both languages. Proposed targets come from the held reference,
+not a translated description: accepting pauses any pending increase. Measurement
+units remain bound to the published recommendation during regeneration; a new
+profile unit cannot relabel old numbers. Passive refresh preserves the generation
+index, so theme/gender/unit edits do not spend a new workout variation.
+
 Translation must not strengthen a claim. WallCrawl describes what it plans — conservative
 volume, capped sets — and never promises injury prevention, healing, or a physiological
 outcome. `SafetyCopyTest` reads both shipped resource files **and the translation overlay's

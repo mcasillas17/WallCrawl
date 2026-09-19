@@ -120,7 +120,10 @@ class AiAcceptedCatalogTest {
     @Test
     fun allAcceptedRecordsAreEligibleOnlyUnderAnExplicitUnrestrictedTestProfile() {
         val decisions = ExerciseEligibilityPolicy()
-            .evaluate(exercises, fullInventoryProfile(), AdaptationState.BUILD).decisions
+            .evaluate(exercises, fullInventoryProfile(), AdaptationState.BUILD,
+                demonstratedProgressionFamilies = exercises.mapNotNullTo(mutableSetOf()) {
+                    it.acceptedMetadata()?.progressionFamily
+                }).decisions
 
         assertThat(decisions.filter { it.eligible }.map { it.exerciseId })
             .containsExactlyElementsIn(acceptedIds)

@@ -25,6 +25,8 @@ import wallcrawl.elopenmike.com.core.database.repository.OfflineWeeklyDoseLedger
 import wallcrawl.elopenmike.com.core.database.repository.OfflineProgressRepository
 import wallcrawl.elopenmike.com.core.database.repository.ProgressRepository
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
+import wallcrawl.elopenmike.com.core.database.repository.DeloadRepository
+import wallcrawl.elopenmike.com.core.database.repository.OfflineDeloadRepository
 import wallcrawl.elopenmike.com.core.database.repository.WeeklyDoseLedgerRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutTemplateRepository
@@ -47,6 +49,7 @@ import wallcrawl.elopenmike.com.core.progress.ProgressCalculator
 interface AppContainer {
     val database: WallCrawlDatabase
     val userProfileRepository: UserProfileRepository
+    val deloadRepository: DeloadRepository
     val workoutRepository: WorkoutRepository
     val weeklyDoseLedgerRepository: WeeklyDoseLedgerRepository
     val progressRepository: ProgressRepository
@@ -101,6 +104,13 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
         OfflineWorkoutRepository(
             sessionDao = database.workoutSessionDao(),
             setDao = database.workoutSetDao()
+        )
+    }
+
+    override val deloadRepository: DeloadRepository by lazy {
+        OfflineDeloadRepository(
+            deloadPreferencesDao = database.deloadPreferencesDao(),
+            localDataWriteGate = localDataWriteGate
         )
     }
 
@@ -186,7 +196,7 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
      *
      * The structural validator is private: it exists only as the piece this composes, so
      * exposing it on the container would offer a second, weaker way to check a plan. The
-     * defaults are the same `STATE_BASED_DOSE_EFFORT_REST_V1` values the prescription policy
+     * defaults are the same `STATE_BASED_DOSE_EFFORT_REST_V2` values the prescription policy
      * uses, so the allowance a plan is checked against is the one it was built under.
      */
     override val programValidator: ProgramValidator by lazy {
@@ -208,7 +218,8 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
             // built against never forces asset I/O on the generation path.
             catalogVersion = {
                 workoutGuideCatalogStore.currentSnapshot()?.catalogAttribution?.commit
-            }
+            },
+            deloadRepository = deloadRepository
         )
     }
 

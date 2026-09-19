@@ -5,6 +5,7 @@ import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.text.NumberFormat
 import java.util.Locale
+import wallcrawl.elopenmike.com.core.model.MeasurementPrecision
 
 /**
  * Every number the interface shows or accepts passes through here.
@@ -16,8 +17,7 @@ import java.util.Locale
  */
 object LocaleFormatting {
 
-    /** Fraction digits kept in an editable field. Loads step by 2.5, so two is enough. */
-    private const val MAX_EDITABLE_FRACTION_DIGITS = 2
+    private const val MAX_EDITABLE_FRACTION_DIGITS = MeasurementPrecision.EDITABLE_FRACTION_DIGITS
 
     /**
      * A measurement as it appears in an editable field.

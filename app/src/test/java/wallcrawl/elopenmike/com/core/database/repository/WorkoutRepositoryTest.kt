@@ -22,6 +22,25 @@ import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
 
 class WorkoutRepositoryTest {
     @Test
+    fun unreadableRecommendationHistoryIsAnErrorNotAnEmptySuccessfulBatch() = runTest {
+        val corrupt = WorkoutRecommendationRecordEntity(
+            sessionId = "session", validatorVersion = "WHOLE_PROGRAM_V2",
+            durationEstimatorVersion = "DURATION_ESTIMATOR_V1", outcome = "VALID",
+            reviewedPathEnabled = true, catalogVersion = null, reviewPolicyVersion = 2,
+            trainingPolicyVersion = null, ledgerPolicyVersion = null, programStatePolicyVersion = null,
+            adaptationState = null, weekStartEpochDay = null, timeZoneId = null,
+            profileRevision = 0, contextIdentity = "context", reasonCodes = "",
+            doseAccounting = "malformed", recordedAtTimestamp = 1
+        )
+        val repository = OfflineWorkoutRepository(
+            EmptyWorkoutSessionDao(records = listOf(corrupt)), RecordingWorkoutSetDao()
+        )
+        org.junit.Assert.assertThrows(IllegalArgumentException::class.java) {
+            kotlinx.coroutines.runBlocking { repository.getRecommendationRecords(listOf("session")) }
+        }
+    }
+
+    @Test
     fun observedRangeRetainsTheAscendingSentinelForTheConsumersNowBound() = runTest {
         val now = 10_000L
         val limit = wallcrawl.elopenmike.com.core.ai.TrainingFrequencyRecencyPolicy.MAX_SESSIONS
@@ -501,8 +520,16 @@ private class RecordingWorkoutSetDao : WorkoutSetDao {
 }
 
 private class EmptyWorkoutSessionDao(
-    private val rangeRows: List<WorkoutSessionWithExercisesAndSets> = emptyList()
+    private val rangeRows: List<WorkoutSessionWithExercisesAndSets> = emptyList(),
+    private val records: List<WorkoutRecommendationRecordEntity> = emptyList()
 ) : WorkoutSessionDao {
+    override suspend fun getRecentSessions(limit: Int): List<WorkoutSessionWithExercisesAndSets> =
+        rangeRows.sortedWith(compareByDescending<WorkoutSessionWithExercisesAndSets> { it.session.startedAtTimestamp }
+            .thenBy { it.session.id }).take(limit)
+    override suspend fun getRecommendationRecords(sessionIds: List<String>): List<WorkoutRecommendationRecordEntity> =
+        records.filter { it.sessionId in sessionIds }
+    override suspend fun getDeloadPreferences(profileId: String): wallcrawl.elopenmike.com.core.database.entity.DeloadPreferencesEntity? = null
+    override suspend fun upsertDeloadPreferences(preferences: wallcrawl.elopenmike.com.core.database.entity.DeloadPreferencesEntity) = Unit
     override suspend fun getCompletedTimestamps(status: SessionStatus): List<Long> = emptyList()
     override suspend fun selectCompletedSessionsInRange(
         startEpochMillis: Long, endEpochMillisExclusive: Long, status: SessionStatus, limit: Int
