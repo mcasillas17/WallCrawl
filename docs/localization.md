@@ -167,6 +167,11 @@ stop reason that reads as a diagnosis rather than as the user's own decision to 
    missing or mismatched, and if a Spanish string was left identical to its English source
    without being listed as deliberately identical.
 
+Check long translations at narrow widths as well as large font scales.
+`TodayDeloadScreenTest` pins the weekly summary to 320 dp at 1.8× Spanish text,
+checking full text, compact height, and vertically stacked labels. Its small-body
+typography keeps line spacing proportional without shrinking or truncating the text.
+
 **A new exercise, or a catalog update that adds one**
 
 1. Re-run the importer as usual. Do not hand-edit `catalog.json`.

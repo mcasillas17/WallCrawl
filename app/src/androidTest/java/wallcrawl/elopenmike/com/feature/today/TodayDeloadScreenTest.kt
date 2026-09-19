@@ -2,6 +2,8 @@ package wallcrawl.elopenmike.com.feature.today
 
 import android.content.res.Configuration
 import android.os.LocaleList
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -9,11 +11,13 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toPixelMap
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
@@ -27,7 +31,10 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performSemanticsAction
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -139,6 +146,7 @@ class TodayDeloadScreenTest {
 
     @Test fun largeSpanishWeeklySummaryStacksWithoutNarrowingToOneWord() {
         render(Locale.forLanguageTag("es-MX"), fontScale = 1.8f,
+            maxWidth = 320.dp,
             profile = UserProfile(onboardingCompleted = true, daysPerWeek = 4))
         val progress = compose.onNodeWithText("0 de 4 entrenamientos completados esta semana")
         val remaining = compose.onNodeWithText("Faltan 4 para la meta semanal")
@@ -148,7 +156,15 @@ class TodayDeloadScreenTest {
         val remainingBounds = remaining.fetchSemanticsNode().boundsInRoot
         val maximumHeightPx = 100f *
             InstrumentationRegistry.getInstrumentation().targetContext.resources.displayMetrics.density
-        assertTrue("Weekly summary must remain below 100 dp", progressBounds.height <= maximumHeightPx)
+        val layouts = mutableListOf<TextLayoutResult>()
+        progress.performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layouts) }
+        assertEquals(1, layouts.size)
+        assertTrue("Weekly summary must not clip or ellipsize", !layouts.single().hasVisualOverflow)
+        assertTrue(
+            "Weekly summary height ${progressBounds.height} px must remain below $maximumHeightPx px " +
+                "(100 dp); ${layouts.single().lineCount} lines at ${layouts.single().layoutInput.style.lineHeight}",
+            progressBounds.height <= maximumHeightPx
+        )
         assertTrue("Remaining-goal label must remain below 100 dp", remainingBounds.height <= maximumHeightPx)
         assertTrue(
             "Weekly labels must stack rather than compete for horizontal space",
@@ -318,7 +334,8 @@ class TodayDeloadScreenTest {
         profile: UserProfile = UserProfile(onboardingCompleted = true),
         prescriptionUnit: WeightUnit = profile.preferredUnit,
         saving: Boolean = false,
-        theme: ThemePreference = ThemePreference.SYSTEM
+        theme: ThemePreference = ThemePreference.SYSTEM,
+        maxWidth: Dp = Dp.Infinity
     ) {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val configuration = Configuration(context.resources.configuration).apply {
@@ -348,24 +365,26 @@ class TodayDeloadScreenTest {
                         val flow = remember { repository?.observe() ?: flowOf(preferences) }
                         val stored by flow.collectAsState(initial = preferences)
                         val scope = rememberCoroutineScope()
-                        TodayContent(
-                            state = TodayUiState.Success(profile, workout, activeSession = active,
-                                prescriptionUnit = prescriptionUnit,
-                                deload = TodayDeloadState(profile.revision, stored,
-                                    DeloadOfferPolicy.offer(profile, stored), DeloadOfferPolicy.accepted(stored), isSaving = saving)),
-                            workoutName = "Workout",
-                            onStartWorkout = {}, onResumeWorkout = {}, onRegenerate = {}, onOpenTemplates = {},
-                            onDeloadAction = { action ->
-                                scope.launch {
-                                    val offerId = when (action) {
-                                        DeloadAction.REQUEST -> null
-                                        DeloadAction.CANCEL -> DeloadOfferPolicy.accepted(stored)?.offer?.id
-                                        else -> DeloadOfferPolicy.offer(profile, stored)?.id
+                        Box(Modifier.widthIn(max = maxWidth)) {
+                            TodayContent(
+                                state = TodayUiState.Success(profile, workout, activeSession = active,
+                                    prescriptionUnit = prescriptionUnit,
+                                    deload = TodayDeloadState(profile.revision, stored,
+                                        DeloadOfferPolicy.offer(profile, stored), DeloadOfferPolicy.accepted(stored), isSaving = saving)),
+                                workoutName = "Workout",
+                                onStartWorkout = {}, onResumeWorkout = {}, onRegenerate = {}, onOpenTemplates = {},
+                                onDeloadAction = { action ->
+                                    scope.launch {
+                                        val offerId = when (action) {
+                                            DeloadAction.REQUEST -> null
+                                            DeloadAction.CANCEL -> DeloadOfferPolicy.accepted(stored)?.offer?.id
+                                            else -> DeloadOfferPolicy.offer(profile, stored)?.id
+                                        }
+                                        repository?.decide(action, profile.revision, stored.revision, offerId)
                                     }
-                                    repository?.decide(action, profile.revision, stored.revision, offerId)
                                 }
-                            }
-                        )
+                            )
+                        }
                     }
                 }
             }

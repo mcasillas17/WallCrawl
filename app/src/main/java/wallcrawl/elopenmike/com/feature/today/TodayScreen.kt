@@ -408,6 +408,7 @@ private fun TodayHeader(
                             LocaleFormatting.formatCount(completedThisWeek, locale),
                             LocaleFormatting.formatCount(weeklyGoal, locale)
                         ),
+                        style = MaterialTheme.typography.bodySmall,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onSurface,
@@ -425,6 +426,7 @@ private fun TodayHeader(
                             LocaleFormatting.formatCount(remaining, locale)
                         )
                     },
+                    style = MaterialTheme.typography.bodySmall,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.secondary,
