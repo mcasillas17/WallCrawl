@@ -61,8 +61,9 @@ class FakeWorkoutPlanner(
 
         val selection = selectExercisesForSplit(splitType, candidates, context)
         val selectedExercises = selection.exercises
-        val generatedExerciseList = selectedExercises.map { exercise ->
-            createGeneratedExercise(exercise, context)
+        val prescriptionDecisions = selectedExercises.map { prescriptionFactory.createDecision(it, context) }
+        val generatedExerciseList = selectedExercises.zip(prescriptionDecisions).map { (exercise, decision) ->
+            GeneratedExercise(exercise.id, decision.prescription, exercise.programming?.coachingSummary.orEmpty())
         }
 
         val breakWeeks = context.userProfile.returningAfterBreakWeeks
@@ -94,6 +95,7 @@ class FakeWorkoutPlanner(
             exercises = generatedExerciseList,
             rationale = rationale,
             rankingReasons = selection.rankingReasons,
+            progressionDecisions = prescriptionDecisions.takeIf { context.trainingProgramState != null }.orEmpty(),
             unavailableFocusMuscles = unavailableFocusMuscles(context, candidates),
             generationIndex = generationIndex
         )
@@ -530,16 +532,6 @@ class FakeWorkoutPlanner(
             (programming != null) == (other.programming != null)
     }
 
-    private fun createGeneratedExercise(
-        exercise: Exercise,
-        context: WorkoutGenerationContext
-    ): GeneratedExercise {
-        return GeneratedExercise(
-            exerciseId = exercise.id,
-            prescription = prescriptionFactory.create(exercise, context),
-            notes = exercise.programming?.coachingSummary.orEmpty()
-        )
-    }
 
     private fun emphasisFor(goals: Set<FitnessGoal>): WorkoutEmphasis = when {
         FitnessGoal.STRENGTH in goals && FitnessGoal.BUILD_MUSCLE in goals ->

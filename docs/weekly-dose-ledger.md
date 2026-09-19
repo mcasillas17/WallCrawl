@@ -366,6 +366,15 @@ git diff --check
 
 ## Not in this milestone
 
+This list describes the original ledger milestone, not current application gaps.
+Production reviewed planning is enabled. Package 9 now derives `RETURNING`,
+accepted-deload `HOLD`, or `UNCALIBRATED`, and implements progression and a
+one-workout user-controlled deload. Neither advances set counts or changes
+`PRIMARY_ONLY_V1`: progression changes one non-set axis, accepted deload reduces
+sets, and whole-program repair can only reduce sets further while suppressing
+an affected pending progression. All three derived states retain the configured
+6-set weekly allowance and two-set cap before deload.
+
 - Metadata approval of any kind.
 - Production enablement of reviewed eligibility or state-based prescription guidance.
 - Any new adaptation-state transition; derivation remains limited to `UNCALIBRATED` and

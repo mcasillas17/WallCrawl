@@ -107,7 +107,7 @@ earlier stages.
 | 4 | A required capability is `AVOID` | `CAPABILITY_AVOID` | `CAPABILITIES_REMOVED_ALL` |
 | 5 | A selected joint sensitivity is not in this exercise's `clearedTrainingConstraints` | `UNMAPPED_TRAINING_CONSTRAINT` | `TRAINING_CONSTRAINTS_REMOVED_ALL` |
 | 5 | `LOW_IMPACT_ONLY` meets `ImpactLevel.HIGH` | `HIGH_IMPACT_DISALLOWED` | `TRAINING_CONSTRAINTS_REMOVED_ALL` |
-| 6 | `ADVANCED` is temporarily above the uncalibrated/returning ceiling | `ADVANCED_WHILE_UNCALIBRATED` or `ADVANCED_WHILE_RETURNING` | `CALIBRATION_COMPLEXITY_REMOVED_ALL` |
+| 6 | `ADVANCED` lacks the existing demonstrated-family or legal supported-regression exception, in any state | `ADVANCED_WHILE_UNCALIBRATED` or `ADVANCED_WHILE_RETURNING` | `CALIBRATION_COMPLEXITY_REMOVED_ALL` |
 
 Stage 5's joint decision is **per exercise**, not per pool. Each accepted record carries
 `clearedTrainingConstraints`: the joint sensitivities a reviewer explicitly cleared it for.
@@ -342,10 +342,11 @@ assert it as an unsupported case.
   as an unavailable priority. See the [coverage report](reviewed-catalog-coverage.md).
 - **The six fixed-anchor band variants** without their explicit setup confirmations, and
   `banded-row` under any inventory (its own anchor is unresolved and stays pending).
-- **Progression and deload.** The rollout is deliberately conservative: dose, effort and
-  rest come from the existing `STATE_BASED_DOSE_EFFORT_REST_V1` policy and the current
-  `UNCALIBRATED`/`RETURNING`/`BUILD` states only. There is no one-variable progression and
-  no deload offer; those remain Roadmap Package 9.
+- **Automatic deloads, global calibration, and conditioning progression.** Package 9
+  adds comparable-outcome progression and explicit one-workout deload choices, not
+  these broader capabilities. Only `UNCALIBRATED`, `RETURNING`, and accepted
+  `HOLD` are derived; `BUILD` was not a production-derived state. None silently
+  lifts the advanced ceiling.
 - **Genuine human `APPROVED` review.** Zero records carry it. `AI_ACCEPTED` is an
   owner-authorized categorical acceptance, not a clinical or safety-for-everyone claim,
   and nothing here promotes one into the other.
@@ -375,12 +376,13 @@ accepted `SUPPORTED` regression whether either record is `APPROVED` or `AI_ACCEP
 Package 8's frequency/recency scheduling preference is now also implemented; it does not
 implement any of the progression or deload work below.
 
-Task 6B remains open: there is no `ProgressionEngine.kt`, no one-variable
-progression, and no broader derived-state rollout beyond
-`AdaptationStatePolicy`'s current `UNCALIBRATED`/`RETURNING` outputs.
-
-Task 6C remains open: there is no `DeloadOfferPolicy.kt`, no user-controlled
-`DeloadOffer`, and no multi-session deload state machine.
+Package 9 implements Task 6B/6C through `ProgressionEngine`,
+`DeloadOfferPolicy`, the shared factory/validator, persistent choices and Today.
+See the [comparison and lifecycle contract](superpowers/specs/2026-09-19-progression-and-deload-design.md).
+Capability evidence is still not progression evidence. An offer alone changes
+neither state nor dose. Returning guidance is independent of acceptance; accepted
+`HOLD` retains the conservative allowance rather than raising it to the old
+inert `HOLD` default. There is no multi-session block or pattern-based diagnosis.
 
 Selected joint sensitivities are mapped but unpopulated: the
 `clearedTrainingConstraints` contract exists in the schema, the importer, the Android parser

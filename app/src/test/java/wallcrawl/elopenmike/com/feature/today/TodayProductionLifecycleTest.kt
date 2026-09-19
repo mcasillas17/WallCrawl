@@ -42,6 +42,14 @@ import wallcrawl.elopenmike.com.core.ai.exerciseInstance
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.WeeklyDoseLedgerRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
+import wallcrawl.elopenmike.com.core.database.repository.DeloadRepository
+import wallcrawl.elopenmike.com.core.ai.DeloadOfferPolicy
+import wallcrawl.elopenmike.com.core.model.DeloadAction
+import wallcrawl.elopenmike.com.core.model.DeloadPreferences
+import wallcrawl.elopenmike.com.core.model.DeloadChoice
+import wallcrawl.elopenmike.com.core.model.DeloadChoiceStatus
+import wallcrawl.elopenmike.com.core.model.DeloadOffer
+import wallcrawl.elopenmike.com.core.model.DeloadSource
 import wallcrawl.elopenmike.com.core.exercise.ExerciseFilter
 import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
 import wallcrawl.elopenmike.com.core.model.CapabilityLevel
@@ -85,6 +93,382 @@ import wallcrawl.elopenmike.com.test.MainDispatcherRule
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class TodayProductionLifecycleTest {
+    @Test
+    fun delayedUnitRegenerationKeepsTheOldProposalBoundToItsGenerationUnit() = runTest {
+        val exercise = bundledExercises.single { it.id == "overhead-press" }
+        val history = completedSessionOf("old-load", exercise, 1, NOW - 20 * 24 * HOUR_MILLIS).let { session ->
+            session.copy(weightUnit = WeightUnit.LBS, exercises = session.exercises.map {
+                it.copy(sets = it.sets.map { set -> set.copy(completedWeight = 40.0, completedReps = 8) })
+            })
+        }
+        val profile = LifecycleProfileRepository(freshlyOnboardedProfile().copy(
+            preferredUnit = WeightUnit.LBS, availableEquipment = StandardEquipment.ALL,
+            excludedExerciseIds = bundledExercises.map { it.id }.filterNot { it == exercise.id }
+        ))
+        val started = kotlinx.coroutines.CompletableDeferred<Unit>()
+        val release = kotlinx.coroutines.CompletableDeferred<Unit>()
+        val delegate = FakeWorkoutPlanner()
+        val planner = object : WorkoutPlanner {
+            override suspend fun generateWorkout(context: WorkoutGenerationContext): GeneratedWorkout {
+                if (context.preferredUnits == WeightUnit.KG) {
+                    started.complete(Unit)
+                    release.await()
+                }
+                return delegate.generateWorkout(context)
+            }
+        }
+        val viewModel = todayViewModel(profile, LifecycleWorkoutRepository(listOf(history)), planner)
+        val states = mutableListOf<TodayUiState.Success>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiState.collect { if (it is TodayUiState.Success) states += it }
+        }
+        advanceUntilIdle()
+        val original = viewModel.uiState.value as TodayUiState.Success
+        profile.updateUnit(WeightUnit.KG)
+        advanceUntilIdle()
+        assertThat(started.isCompleted).isTrue()
+        val interim = viewModel.uiState.value as TodayUiState.Success
+        assertThat(interim.userProfile.preferredUnit).isEqualTo(WeightUnit.KG)
+        assertThat(interim.isRegenerating).isTrue()
+        assertThat(interim.suggestedWorkout).isEqualTo(original.suggestedWorkout)
+        assertThat(interim.prescriptionUnit).isEqualTo(WeightUnit.LBS)
+        assertThat(interim.suggestedWorkout.exercises.single().targetWeight).isEqualTo(40.0)
+        release.complete(Unit)
+        advanceUntilIdle()
+        val fresh = viewModel.uiState.value as TodayUiState.Success
+        assertThat(fresh.prescriptionUnit).isEqualTo(WeightUnit.KG)
+        assertThat(fresh.suggestedWorkout.exercises.single().targetWeight).isWithin(0.000001).of(
+            wallcrawl.elopenmike.com.core.model.convertWeight(40.0, WeightUnit.LBS, WeightUnit.KG)
+        )
+        states.forEach { state ->
+            val pounds = wallcrawl.elopenmike.com.core.model.convertWeight(
+                requireNotNull(state.suggestedWorkout.exercises.single().targetWeight),
+                state.prescriptionUnit, WeightUnit.LBS
+            )
+            assertThat(pounds).isWithin(0.000001).of(40.0)
+        }
+    }
+
+    @Test
+    fun defaultProductionCompositionRecordsTheRevisionZeroDecisionGuard() = runTest {
+        val repository = LifecycleWorkoutRepository()
+        val viewModel = todayViewModel(LifecycleProfileRepository(freshlyOnboardedProfile()), repository)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        advanceUntilIdle()
+        viewModel.startWorkout(WORKOUT_NAME, WORKOUT_RATIONALE) {}
+        advanceUntilIdle()
+        val snapshot = requireNotNull(repository.startRequests.single().recommendation)
+        assertThat(snapshot.deloadDecisionRevision).isEqualTo(0L)
+        assertThat(snapshot.acceptedDeloadOfferId).isNull()
+    }
+
+    @Test
+    fun initialGenerationCannotHideAnActiveWorkoutBehindLoading() = runTest {
+        val repository = LifecycleWorkoutRepository()
+        val active = WorkoutSession(id = "active", name = "Existing session", status = SessionStatus.IN_PROGRESS)
+        repository.setActive(active)
+        val gate = kotlinx.coroutines.CompletableDeferred<Unit>()
+        repository.recentReadGate = gate
+        val viewModel = todayViewModel(LifecycleProfileRepository(freshlyOnboardedProfile()), repository)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        advanceUntilIdle()
+        assertThat(viewModel.uiState.value).isNotEqualTo(TodayUiState.Loading)
+        assertThat((viewModel.uiState.value as TodayUiState.Preparing).activeSession).isEqualTo(active)
+        gate.complete(Unit)
+        advanceUntilIdle()
+        assertThat((viewModel.uiState.value as TodayUiState.Success).activeSession).isEqualTo(active)
+    }
+
+    @Test
+    fun passivePresentationEditsKeepSelectionAndTargetsButRefreshRecordedRevision() = runTest {
+        val profile = LifecycleProfileRepository(freshlyOnboardedProfile())
+        val repository = LifecycleWorkoutRepository()
+        val viewModel = todayViewModel(profile, repository)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        advanceUntilIdle()
+        val original = (viewModel.uiState.value as TodayUiState.Success).suggestedWorkout
+        profile.updateThemePreference(ThemePreference.LIGHT)
+        advanceUntilIdle()
+        val themed = (viewModel.uiState.value as TodayUiState.Success).suggestedWorkout
+        assertThat(themed.generationIndex).isEqualTo(original.generationIndex)
+        assertThat(themed.title).isEqualTo(original.title)
+        assertThat(themed.exercises).isEqualTo(original.exercises)
+        profile.updateGender(ProfileGender.WOMAN)
+        advanceUntilIdle()
+        val gendered = (viewModel.uiState.value as TodayUiState.Success).suggestedWorkout
+        assertThat(gendered.exercises).isEqualTo(original.exercises)
+        assertThat(gendered.progressionDecisions).isEqualTo(original.progressionDecisions)
+        viewModel.startWorkout(WORKOUT_NAME, WORKOUT_RATIONALE) {}
+        advanceUntilIdle()
+        assertThat(repository.startRequests.single().recommendation!!.profileRevision)
+            .isEqualTo(profile.getProfileOnce().revision)
+        viewModel.regenerateWorkout()
+        advanceUntilIdle()
+        assertThat((viewModel.uiState.value as TodayUiState.Success).suggestedWorkout.generationIndex)
+            .isEqualTo(requireNotNull(original.generationIndex) + 1)
+    }
+
+    @Test
+    fun passiveUnitEditConvertsHistoricalLoadWithoutSpendingVariant() = runTest {
+        val exercise = bundledExercises.single { it.id == "overhead-press" }
+        val session = completedSessionOf("old-load", exercise, 1, NOW - 20 * 24 * HOUR_MILLIS).let { logged ->
+            logged.copy(weightUnit = WeightUnit.LBS, exercises = logged.exercises.map {
+                it.copy(sets = it.sets.map { set -> set.copy(completedWeight = 40.0, completedReps = 8) })
+            })
+        }
+        val profile = LifecycleProfileRepository(freshlyOnboardedProfile().copy(
+            preferredUnit = WeightUnit.LBS,
+            availableEquipment = StandardEquipment.ALL,
+            excludedExerciseIds = bundledExercises.map { it.id }.filterNot { it == exercise.id }
+        ))
+        val repository = LifecycleWorkoutRepository(listOf(session))
+        val viewModel = todayViewModel(profile, repository)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        advanceUntilIdle()
+        val pounds = (viewModel.uiState.value as TodayUiState.Success).suggestedWorkout
+        profile.updateUnit(WeightUnit.KG)
+        advanceUntilIdle()
+        val kilograms = (viewModel.uiState.value as TodayUiState.Success).suggestedWorkout
+        assertThat(kilograms.generationIndex).isEqualTo(pounds.generationIndex)
+        assertThat(kilograms.exercises.single().prescription).isEqualTo(
+            pounds.exercises.single().prescription.copy(targetWeight =
+                wallcrawl.elopenmike.com.core.model.convertWeight(40.0, WeightUnit.LBS, WeightUnit.KG))
+        )
+        viewModel.startWorkout(WORKOUT_NAME, WORKOUT_RATIONALE) {}
+        advanceUntilIdle()
+        assertThat(repository.startRequests.single().userProfile.preferredUnit).isEqualTo(WeightUnit.KG)
+    }
+
+    @Test
+    fun startRebuildRejectsAnUnobservedDecisionRevisionWithoutCreatingAnything() = runTest {
+        val repository = LifecycleWorkoutRepository()
+        val deload = LifecycleDeloadRepository()
+        val viewModel = todayViewModel(LifecycleProfileRepository(freshlyOnboardedProfile()), repository,
+            deloadRepository = deload)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        advanceUntilIdle()
+        deload.unobservedPreferences = DeloadPreferences(revision = 1, choice = DeloadChoice(
+            DeloadOffer("new-offer", DeloadSource.EXPLICIT_REQUEST, DeloadOfferPolicy.VERSION),
+            DeloadChoiceStatus.OFFERED, 1
+        ))
+        viewModel.startWorkout(WORKOUT_NAME, WORKOUT_RATIONALE) { error("stale start") }
+        advanceUntilIdle()
+        assertThat(repository.startRequests).isEmpty()
+        assertThat((viewModel.uiState.value as TodayUiState.Error).error)
+            .isEqualTo(TodayError.RECOMMENDATION_OUT_OF_DATE)
+    }
+
+    @Test
+    fun acceptedChoiceSurvivesProfileAndUnitEditsAndStartRecordsCurrentIdentity() = runTest {
+        val profile = LifecycleProfileRepository(freshlyOnboardedProfile())
+        val repository = LifecycleWorkoutRepository()
+        val deload = LifecycleDeloadRepository()
+        val viewModel = todayViewModel(profile, repository, deloadRepository = deload)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        advanceUntilIdle()
+        viewModel.decideDeload(DeloadAction.REQUEST)
+        advanceUntilIdle()
+        viewModel.decideDeload(DeloadAction.ACCEPT)
+        advanceUntilIdle()
+        val accepted = deload.get()
+        profile.updateUnit(WeightUnit.KG)
+        profile.updateGoals(setOf(FitnessGoal.BUILD_MUSCLE))
+        advanceUntilIdle()
+        val state = viewModel.uiState.value as TodayUiState.Success
+        assertThat(state.deload!!.acceptedChoice).isEqualTo(accepted.choice)
+        assertThat(state.suggestedWorkout.progressionDecisions.map { it.reason }.toSet())
+            .containsExactly(wallcrawl.elopenmike.com.core.model.ProgressionReason.HOLD_ACCEPTED_DELOAD)
+        viewModel.startWorkout(WORKOUT_NAME, WORKOUT_RATIONALE) {}
+        advanceUntilIdle()
+        val request = repository.startRequests.single()
+        assertThat(request.userProfile.preferredUnit).isEqualTo(WeightUnit.KG)
+        assertThat(request.recommendation!!.deloadDecisionRevision).isEqualTo(accepted.revision)
+        assertThat(request.recommendation.acceptedDeloadOfferId).isEqualTo(accepted.choice!!.offer.id)
+    }
+
+    @Test
+    fun cancellationDoesNotBecomeDecisionFailureOrAcceptance() = runTest {
+        val repository = LifecycleWorkoutRepository()
+        val deload = LifecycleDeloadRepository()
+        val viewModel = todayViewModel(LifecycleProfileRepository(freshlyOnboardedProfile()), repository,
+            deloadRepository = deload)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        advanceUntilIdle()
+        deload.cancelWrite = true
+        viewModel.decideDeload(DeloadAction.REQUEST)
+        advanceUntilIdle()
+        val state = (viewModel.uiState.value as TodayUiState.Success).deload!!
+        assertThat(state.error).isNull()
+        assertThat(state.isSaving).isFalse()
+        assertThat(deload.get().revision).isEqualTo(0)
+    }
+
+    @Test
+    fun deloadControlsPersistOnlyExplicitDecisionsAndRestoreAfterNavigation() = runTest {
+        val profile = LifecycleProfileRepository(freshlyOnboardedProfile())
+        val repository = LifecycleWorkoutRepository()
+        val deload = LifecycleDeloadRepository()
+        val viewModel = todayViewModel(profile, repository, deloadRepository = deload)
+        val subscription = backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        advanceUntilIdle()
+        assertThat((viewModel.uiState.value as TodayUiState.Success).deload!!.offer).isNull()
+        assertThat(deload.get().revision).isEqualTo(0)
+        viewModel.decideDeload(DeloadAction.REQUEST)
+        advanceUntilIdle()
+        val offer = (viewModel.uiState.value as TodayUiState.Success).deload!!.offer!!
+        assertThat(offer.source).isEqualTo(DeloadSource.EXPLICIT_REQUEST)
+        assertThat(deload.get().choice!!.status).isEqualTo(DeloadChoiceStatus.OFFERED)
+        viewModel.decideDeload(DeloadAction.ACCEPT)
+        advanceUntilIdle()
+        assertThat((viewModel.uiState.value as TodayUiState.Success).deload!!.acceptedChoice!!.offer).isEqualTo(offer)
+        subscription.cancel()
+        runCurrent()
+        val restored = todayViewModel(profile, repository, deloadRepository = deload)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { restored.uiState.collect {} }
+        advanceUntilIdle()
+        assertThat((restored.uiState.value as TodayUiState.Success).deload!!.acceptedChoice!!.offer).isEqualTo(offer)
+        restored.decideDeload(DeloadAction.CANCEL)
+        advanceUntilIdle()
+        assertThat(deload.get().choice!!.status).isEqualTo(DeloadChoiceStatus.CANCELLED)
+        assertThat((restored.uiState.value as TodayUiState.Success).deload!!.acceptedChoice).isNull()
+        for ((action, status) in listOf(
+            DeloadAction.DECLINE to DeloadChoiceStatus.DECLINED,
+            DeloadAction.DISMISS to DeloadChoiceStatus.DISMISSED
+        )) {
+            restored.decideDeload(DeloadAction.REQUEST)
+            advanceUntilIdle()
+            restored.decideDeload(action)
+            advanceUntilIdle()
+            assertThat(deload.get().choice!!.status).isEqualTo(status)
+            assertThat((restored.uiState.value as TodayUiState.Success).deload!!.offer).isNull()
+            assertThat((restored.uiState.value as TodayUiState.Success).suggestedWorkout.exercises.map { it.targetSets })
+                .containsNoneOf(0, 1)
+        }
+    }
+
+    @Test
+    fun returningOfferIsNotAcceptanceAndDeclineIsRestored() = runTest {
+        val profile = LifecycleProfileRepository(freshlyOnboardedProfile().copy(returningAfterBreakWeeks = 4))
+        val repository = LifecycleWorkoutRepository()
+        val deload = LifecycleDeloadRepository()
+        val viewModel = todayViewModel(profile, repository, deloadRepository = deload)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        advanceUntilIdle()
+        val before = viewModel.uiState.value as TodayUiState.Success
+        assertThat(before.deload!!.offer!!.source).isEqualTo(DeloadSource.RETURNING)
+        assertThat(before.deload.acceptedChoice).isNull()
+        assertThat(deload.get().revision).isEqualTo(0)
+        viewModel.decideDeload(DeloadAction.DECLINE)
+        advanceUntilIdle()
+        val restored = todayViewModel(profile, repository, deloadRepository = deload)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { restored.uiState.collect {} }
+        advanceUntilIdle()
+        assertThat((restored.uiState.value as TodayUiState.Success).deload!!.offer).isNull()
+        assertThat((restored.uiState.value as TodayUiState.Success).suggestedWorkout.exercises.map { it.targetSets })
+            .containsNoneOf(0, 1)
+    }
+
+    @Test
+    fun decisionWriteInFlightBlocksStartAndFailureRetainsOfferWithTypedError() = runTest {
+        val profile = LifecycleProfileRepository(freshlyOnboardedProfile())
+        val repository = LifecycleWorkoutRepository()
+        val deload = LifecycleDeloadRepository()
+        val viewModel = todayViewModel(profile, repository, deloadRepository = deload)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        advanceUntilIdle()
+        viewModel.decideDeload(DeloadAction.REQUEST)
+        advanceUntilIdle()
+        deload.writeGate = kotlinx.coroutines.CompletableDeferred()
+        deload.writeFailure = true
+        viewModel.decideDeload(DeloadAction.ACCEPT)
+        viewModel.startWorkout(WORKOUT_NAME, WORKOUT_RATIONALE) { error("stale start") }
+        advanceUntilIdle()
+        assertThat((viewModel.uiState.value as TodayUiState.Success).deload!!.isSaving).isTrue()
+        assertThat(repository.startRequests).isEmpty()
+        deload.writeGate!!.complete(Unit)
+        advanceUntilIdle()
+        val failed = (viewModel.uiState.value as TodayUiState.Success).deload!!
+        assertThat(failed.isSaving).isFalse()
+        assertThat(failed.error).isEqualTo(TodayError.DELOAD_WRITE_FAILED)
+        assertThat(failed.offer).isNotNull()
+        assertThat(deload.get().choice!!.status).isEqualTo(DeloadChoiceStatus.OFFERED)
+        deload.writeFailure = false
+        viewModel.decideDeload(DeloadAction.ACCEPT)
+        advanceUntilIdle()
+        assertThat((viewModel.uiState.value as TodayUiState.Success).deload!!.error).isNull()
+        assertThat(deload.get().choice!!.status).isEqualTo(DeloadChoiceStatus.ACCEPTED)
+    }
+
+    @Test
+    fun deloadReadFailureKeepsActiveResumeAndRetryReconnects() = runTest {
+        val repository = LifecycleWorkoutRepository()
+        val active = WorkoutSession(id = "active", name = "In progress", status = SessionStatus.IN_PROGRESS)
+        repository.setActive(active)
+        val deload = LifecycleDeloadRepository().apply { readFailure = true }
+        val viewModel = todayViewModel(LifecycleProfileRepository(freshlyOnboardedProfile()), repository,
+            deloadRepository = deload)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        advanceUntilIdle()
+        val failed = viewModel.uiState.value as TodayUiState.Error
+        assertThat(failed.error).isEqualTo(TodayError.DELOAD_READ_FAILED)
+        assertThat(failed.activeSession).isEqualTo(active)
+        assertThat(failed.deload).isNull()
+        viewModel.decideDeload(DeloadAction.REQUEST)
+        advanceUntilIdle()
+        deload.readFailure = false
+        assertThat(deload.get().revision).isEqualTo(0)
+        viewModel.regenerateWorkout()
+        advanceUntilIdle()
+        assertThat((viewModel.uiState.value as TodayUiState.Success).activeSession).isEqualTo(active)
+        assertThat((viewModel.uiState.value as TodayUiState.Success).deload).isNull()
+    }
+
+    @Test
+    fun generationFailureStillAllowsExplicitRequestWithoutActiveSession() = runTest {
+        val deload = LifecycleDeloadRepository()
+        val viewModel = todayViewModel(
+            LifecycleProfileRepository(freshlyOnboardedProfile()), LifecycleWorkoutRepository(),
+            planner = object : WorkoutPlanner {
+                override suspend fun generateWorkout(context: WorkoutGenerationContext): GeneratedWorkout =
+                    throw java.io.IOException("test planner failure")
+            }, deloadRepository = deload
+        )
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        advanceUntilIdle()
+        assertThat((viewModel.uiState.value as TodayUiState.Error).deload).isNotNull()
+        viewModel.decideDeload(DeloadAction.REQUEST)
+        advanceUntilIdle()
+        assertThat((viewModel.uiState.value as TodayUiState.Error).deload!!.offer).isNotNull()
+        assertThat(deload.get().choice!!.status).isEqualTo(DeloadChoiceStatus.OFFERED)
+    }
+
+    @Test
+    fun acceptedAndConsumedChoiceRefreshVisibleProductionRecommendation() = runTest {
+        val profile = LifecycleProfileRepository(freshlyOnboardedProfile().copy(
+            excludedExerciseIds = bundledExercises.map { it.id }.filterNot { it == "push-up" }
+        ))
+        val repository = LifecycleWorkoutRepository()
+        val deload = LifecycleDeloadRepository()
+        val viewModel = todayViewModel(profile, repository, deloadRepository = deload)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        advanceUntilIdle()
+        val ordinary = (viewModel.uiState.value as TodayUiState.Success).suggestedWorkout
+        deload.decide(DeloadAction.REQUEST, 0, 0, null)
+        advanceUntilIdle()
+        val offered = (viewModel.uiState.value as TodayUiState.Success).suggestedWorkout
+        assertThat(offered.exercises).isEqualTo(ordinary.exercises)
+        deload.decide(DeloadAction.ACCEPT, 0, 1, deload.get().choice!!.offer.id)
+        advanceUntilIdle()
+        val accepted = (viewModel.uiState.value as TodayUiState.Success).suggestedWorkout
+        assertThat(accepted.exercises.map { it.prescription }).containsExactlyElementsIn(
+            ordinary.exercises.map { it.prescription.copy(targetSets = (it.targetSets - 1).coerceAtLeast(1)) }
+        ).inOrder()
+        deload.consume("automatic-session")
+        advanceUntilIdle()
+        assertThat((viewModel.uiState.value as TodayUiState.Success).suggestedWorkout.exercises)
+            .isEqualTo(ordinary.exercises)
+    }
+
     @Test
     fun recentLoadAndRestChangesOutsideSchedulingWindowStillRefreshThePlan() = runTest {
         val exercise = bundledExercises.single { it.id == "overhead-press" }
@@ -276,7 +660,7 @@ class TodayProductionLifecycleTest {
         collector = backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
         advanceUntilIdle()
         assertThat(generations).isEqualTo(3)
-        assertThat((viewModel.uiState.value as TodayUiState.Success).suggestedWorkout.generationIndex).isEqualTo(1)
+        assertThat((viewModel.uiState.value as TodayUiState.Success).suggestedWorkout.generationIndex).isEqualTo(0)
         viewModel.startWorkout(WORKOUT_NAME, WORKOUT_RATIONALE) {}
         advanceUntilIdle()
         assertThat(repository.startRequests).hasSize(1)
@@ -328,7 +712,7 @@ class TodayProductionLifecycleTest {
             }
             assertThat(plans).hasSize(2)
             assertThat((viewModel.uiState.value as TodayUiState.Success).suggestedWorkout).isEqualTo(plans.last())
-            assertThat(plans.last().generationIndex).isEqualTo(1)
+            assertThat(plans.last().generationIndex).isEqualTo(0)
             viewModel.startWorkout(WORKOUT_NAME, WORKOUT_RATIONALE) {}
             advanceUntilIdle()
             assertThat(repository.startRequests).hasSize(1)
@@ -453,12 +837,12 @@ class TodayProductionLifecycleTest {
             advanceUntilIdle()
             assertThat(contexts).hasSize(2)
             val plan = (viewModel.uiState.value as TodayUiState.Success).suggestedWorkout
-            assertThat(plan.generationIndex).isEqualTo(1)
+            assertThat(plan.generationIndex).isEqualTo(0)
             finalPlans += plan
             viewModel.regenerateWorkout()
             advanceUntilIdle()
             assertThat(contexts).hasSize(3)
-            assertThat((viewModel.uiState.value as TodayUiState.Success).suggestedWorkout.generationIndex).isEqualTo(2)
+            assertThat((viewModel.uiState.value as TodayUiState.Success).suggestedWorkout.generationIndex).isEqualTo(1)
             collector.cancel()
             advanceUntilIdle()
         }
@@ -488,7 +872,7 @@ class TodayProductionLifecycleTest {
         gate.complete(Unit)
         advanceUntilIdle()
         assertThat(generations).isEqualTo(3)
-        assertThat((viewModel.uiState.value as TodayUiState.Success).suggestedWorkout.generationIndex).isEqualTo(2)
+        assertThat((viewModel.uiState.value as TodayUiState.Success).suggestedWorkout.generationIndex).isEqualTo(1)
     }
 
     @Test
@@ -940,7 +1324,8 @@ class TodayProductionLifecycleTest {
         ledgerRepository: LifecycleLedgerRepository = ledgerRepositoryFor(workoutRepository),
         now: () -> Long = { NOW },
         clock: Flow<Long> = flowOf(NOW),
-        zone: () -> ZoneId = { LEDGER_ZONE }
+        zone: () -> ZoneId = { LEDGER_ZONE },
+        deloadRepository: DeloadRepository? = LifecycleDeloadRepository()
     ): TodayViewModel {
         val catalog = InMemoryExerciseCatalog(bundledExercises)
         return TodayViewModel(
@@ -959,13 +1344,15 @@ class TodayProductionLifecycleTest {
                 ),
                 catalogVersion = { bundledCatalog.sourceCommit },
                 nowTimestamp = now,
-                zoneId = zone
+                zoneId = zone,
+                deloadRepository = deloadRepository
             ),
             workoutPlanner = planner,
             programValidator = ProgramValidator(GeneratedWorkoutValidator(catalog)),
             nowTimestamp = now,
             clock = clock,
-            zoneId = zone
+            zoneId = zone,
+            deloadRepository = deloadRepository
         )
     }
 
@@ -1023,6 +1410,57 @@ class TodayProductionLifecycleTest {
         /** Already in the reader's language when it reaches the ViewModel, as in production. */
         const val WORKOUT_NAME = "Empuje · Hipertrofia"
         const val WORKOUT_RATIONALE = "Generado para Ganar músculo, con prioridad en Pecho."
+    }
+}
+
+private class LifecycleDeloadRepository : DeloadRepository {
+    val preferences = MutableStateFlow(DeloadPreferences())
+    var writeFailure = false
+    var readFailure = false
+    var cancelWrite = false
+    var unobservedPreferences: DeloadPreferences? = null
+    var writeGate: kotlinx.coroutines.CompletableDeferred<Unit>? = null
+    override fun observe(): Flow<DeloadPreferences> = preferences.map {
+        if (readFailure) throw java.io.IOException("test deload read failure")
+        it
+    }
+    override suspend fun get(): DeloadPreferences {
+        if (readFailure) throw java.io.IOException("test deload read failure")
+        return unobservedPreferences ?: preferences.value
+    }
+    override suspend fun decide(
+        action: DeloadAction,
+        expectedProfileRevision: Long,
+        expectedDecisionRevision: Long,
+        offerId: String?
+    ) {
+        writeGate?.await()
+        if (cancelWrite) throw kotlinx.coroutines.CancellationException("test cancellation")
+        if (writeFailure) throw java.io.IOException("test deload write failure")
+        val current = preferences.value
+        check(current.revision == expectedDecisionRevision)
+        val offer = if (action == DeloadAction.REQUEST)
+            DeloadOffer("request-${current.revision}", DeloadSource.EXPLICIT_REQUEST, DeloadOfferPolicy.VERSION)
+        else current.choice?.offer ?: DeloadOffer(requireNotNull(offerId), DeloadSource.RETURNING, DeloadOfferPolicy.VERSION)
+        if (action != DeloadAction.REQUEST) check(offer.id == offerId)
+        preferences.value = current.copy(
+            revision = current.revision + 1,
+            choice = DeloadChoice(offer, when (action) {
+                DeloadAction.REQUEST -> DeloadChoiceStatus.OFFERED
+                DeloadAction.ACCEPT -> DeloadChoiceStatus.ACCEPTED
+                DeloadAction.DECLINE -> DeloadChoiceStatus.DECLINED
+                DeloadAction.DISMISS -> DeloadChoiceStatus.DISMISSED
+                DeloadAction.CANCEL -> DeloadChoiceStatus.CANCELLED
+            }, 1),
+            lastHandledReturnKey = offer.id.takeIf { offer.source == DeloadSource.RETURNING }
+                ?: current.lastHandledReturnKey
+        )
+    }
+    fun consume(sessionId: String) {
+        preferences.update { it.copy(
+            revision = it.revision + 1,
+            choice = requireNotNull(it.choice).copy(status = DeloadChoiceStatus.CONSUMED, sessionId = sessionId)
+        ) }
     }
 }
 
@@ -1100,6 +1538,7 @@ private class LifecycleWorkoutRepository(
     var activeObservations = 0
     var observedRangeReads = 0
     private val activeSession = MutableStateFlow<WorkoutSession?>(null)
+    fun setActive(session: WorkoutSession?) { activeSession.value = session }
 
     fun completedSessions(): List<WorkoutSession> = completed.value
     fun replaceCompleted(sessions: List<WorkoutSession>) { completed.value = sessions }
@@ -1203,6 +1642,12 @@ private class LifecycleWorkoutRepository(
         recentReadGate?.await()
         return snapshot
     }
+
+    override suspend fun getRecentSessions(limit: Int): List<WorkoutSession> =
+        completed.value.sortedWith(compareByDescending<WorkoutSession> { it.startedAtTimestamp }.thenBy { it.id }).take(limit)
+
+    override suspend fun getRecommendationRecords(sessionIds: List<String>): List<wallcrawl.elopenmike.com.core.model.RecommendationRecord> =
+        emptyList()
 
     override suspend fun getCompletedSessionsInRange(startTimestamp: Long, endTimestampExclusive: Long): List<WorkoutSession> {
         rangeReadEntered?.complete(Unit)
@@ -1321,10 +1766,13 @@ private class SharedMuscleOverAllowancePlanner(
                 WorkoutSplit.entries.firstOrNull { muscle in it.targetMuscles }
                     ?.let { muscle to it }
             }
-        val planned = byMuscle.getValue(muscle).take(exerciseCount).map { exercise ->
+        val decisions = byMuscle.getValue(muscle).take(exerciseCount).map { exercise ->
+            prescriptionFactory.createDecision(exercise, context)
+        }
+        val planned = decisions.map { decision ->
             PlannedExercise(
-                exerciseId = exercise.id,
-                prescription = prescriptionFactory.create(exercise, context)
+                exerciseId = decision.exerciseId,
+                prescription = decision.prescription
             )
         }
         return GeneratedWorkout(
@@ -1332,6 +1780,7 @@ private class SharedMuscleOverAllowancePlanner(
             focusMuscles = listOf(muscle),
             estimatedDurationMinutes = WorkoutDurationEstimator.estimateMinutes(planned),
             exercises = planned,
+            progressionDecisions = decisions,
             rationale = WorkoutRationaleSpec.GoalFocus(
                 goals = emptyList(),
                 focusMuscles = listOf(muscle)

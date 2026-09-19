@@ -19,6 +19,7 @@ class IllustrationArchiveTest {
             illustrationPreference = IllustrationPreference.MALE
         )
         val archive = LocalDataArchiveFixtures.archive(
+            metadata = LocalDataArchiveFixtures.metadata(archiveVersion = 3),
             snapshot = LocalDataArchiveFixtures.snapshot().copy(profile = profile)
         )
         val bytes = encode(archive)
@@ -52,8 +53,9 @@ class IllustrationArchiveTest {
         for (bad in listOf(
             json.replace("\"gender\":\"UNSPECIFIED\"", "\"gender\":\"UNKNOWN_VALUE\""),
             json.replace(",\"illustrationPreference\":\"AUTOMATIC\"", ""),
-            json.replace("\"archiveVersion\":3", "\"archiveVersion\":2")
+            json.replace("\"archiveVersion\":${LocalDataArchiveFormat.ARCHIVE_VERSION}", "\"archiveVersion\":2")
         )) {
+            assertThat(bad).isNotEqualTo(json)
             assertThrows(LocalDataArchiveException::class.java) {
                 LocalDataArchiveCodec.read(ByteArrayInputStream(bad.encodeToByteArray()))
             }

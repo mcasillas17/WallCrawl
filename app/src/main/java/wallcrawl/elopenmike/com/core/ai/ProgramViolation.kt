@@ -78,6 +78,8 @@ enum class ProgramViolationCode {
 
     /** Software invariant: a prescribed load must trace to a confirmed or recorded source. */
     UNTRACEABLE_LOAD,
+    /** Software invariant: progression provenance and targets must match the shared policy. */
+    PROGRESSION_POLICY_MISMATCH,
 
     /**
      * Software invariant for the arithmetic, product policy for the tolerance.

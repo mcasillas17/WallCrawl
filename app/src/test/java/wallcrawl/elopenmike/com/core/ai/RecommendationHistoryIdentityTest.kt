@@ -20,6 +20,42 @@ import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
 
 class RecommendationHistoryIdentityTest {
     @Test
+    fun progressionFeedbackTargetsStatusAndChoiceChangeFreshnessAtEqualCounts() {
+        val context = context()
+        val prescription = DefaultExercisePrescriptionFactory().create(context.allowedExercises.first(), context)
+        val session = progressionSession("source", PRESS, prescription, 10_000)
+        val original = context.copy(progressionHistory = listOf(session), historyAsOfTimestamp = 30_000)
+        val instance = session.exercises.single()
+        val set = instance.sets.first()
+        val changed = listOf(
+            original.copy(progressionHistory = listOf(session.copy(status = wallcrawl.elopenmike.com.core.model.SessionStatus.CANCELLED))),
+            original.copy(progressionHistory = listOf(session.copy(exercises = listOf(instance.copy(
+                sets = listOf(set.copy(rir = null)) + instance.sets.drop(1)
+            ))))),
+            original.copy(progressionHistory = listOf(session.copy(exercises = listOf(instance.copy(
+                sets = listOf(set.copy(feltManageable = null)) + instance.sets.drop(1)
+            ))))),
+            original.copy(progressionHistory = listOf(session.copy(exercises = listOf(instance.copy(
+                prescription = prescription.copy(restSeconds = prescription.restSeconds + 1)
+            ))))),
+            original.copy(deloadPreferences = wallcrawl.elopenmike.com.core.model.DeloadPreferences(
+                original.userProfile.id, revision = 1,
+                choice = wallcrawl.elopenmike.com.core.model.DeloadChoice(
+                    wallcrawl.elopenmike.com.core.model.DeloadOffer("offer", wallcrawl.elopenmike.com.core.model.DeloadSource.EXPLICIT_REQUEST, DeloadOfferPolicy.VERSION),
+                    wallcrawl.elopenmike.com.core.model.DeloadChoiceStatus.ACCEPTED, 1
+                )
+            ))
+        )
+        changed.forEach {
+            assertThat(RecommendationContextIdentity.of(it)).isNotEqualTo(RecommendationContextIdentity.of(original))
+        }
+        assertThat(RecommendationContextIdentity.of(original.copy(historyAsOfTimestamp = 30_001)))
+            .isEqualTo(RecommendationContextIdentity.of(original))
+        assertThat(RecommendationContextIdentity.of(original.copy(historyAsOfTimestamp = 11_000)))
+            .isNotEqualTo(RecommendationContextIdentity.of(original))
+    }
+
+    @Test
     fun sharedRepProjectionPreservesTheOriginalAllCompletedSetsComparison() {
         val sets = listOf(
             emptyList(),
@@ -66,12 +102,6 @@ class RecommendationHistoryIdentityTest {
         val changes = linkedMapOf(
             "capability membership" to original.copy(capabilityEvidence = evidence()),
             "latest usable load" to original.copy(exerciseHistory = mapOf(PRESS to performance.copy(lastWeight = 60.0))),
-            "completed rep floor" to original.copy(exerciseHistory = mapOf(PRESS to performance.copy(
-                recentSets = performance.recentSets.map { it.copy(completedReps = 15) }
-            ))),
-            "no completed sets" to original.copy(exerciseHistory = mapOf(PRESS to performance.copy(
-                recentSets = performance.recentSets.map { it.copy(isCompleted = false) }
-            ))),
             "history load units" to original.copy(preferredUnits = WeightUnit.KG),
             "confirmed load provenance" to original.copy(userProfile = original.userProfile.copy(
                 confirmedStartingLoads = mapOf(PRESS to 90.0)
@@ -190,7 +220,7 @@ class RecommendationHistoryIdentityTest {
     }
 
     @Test
-    fun changingTheMinimumCompletedRepsChangesTheActualPrescription() {
+    fun legacyMinimumRepsNoLongerProgressTheReviewedPrescriptionWithoutEffort() {
         val original = context()
         val performance = original.exerciseHistory.getValue(PRESS)
         val topped = original.copy(exerciseHistory = mapOf(PRESS to performance.copy(
@@ -198,8 +228,8 @@ class RecommendationHistoryIdentityTest {
         )))
         val exercise = original.allowedExercises.first()
         assertThat(DefaultExercisePrescriptionFactory().create(exercise, topped).targetWeight)
-            .isNotEqualTo(DefaultExercisePrescriptionFactory().create(exercise, original).targetWeight)
-        assertThat(RecommendationContextIdentity.of(topped)).isNotEqualTo(RecommendationContextIdentity.of(original))
+            .isEqualTo(DefaultExercisePrescriptionFactory().create(exercise, original).targetWeight)
+        assertThat(RecommendationContextIdentity.of(topped)).isEqualTo(RecommendationContextIdentity.of(original))
     }
 
     private fun context(): WorkoutGenerationContext = validatorContext(

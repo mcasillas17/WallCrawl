@@ -21,10 +21,11 @@ Current repository status: the reviewed-only deterministic path already ships
 `ExerciseEligibilityPolicy`, `WeeklyDoseLedgerCalculator`, `TrainingProgramStateProvider`,
 `StateBasedTrainingPolicy`, `CapabilityEvidencePolicy`, and
 `CapabilityPreferenceRankingPolicy`, all behind
-`PlannerFeatureFlags.reviewedCapabilityEligibility = false` in production. Task 6A
-capability evidence and reviewed soft-penalty relaxation are implemented. Task 6B
-one-variable progression, broader adaptation-state derivation, and Task 6C
-user-controlled `DeloadOffer` remain unimplemented.
+`PlannerFeatureFlags.PRODUCTION.reviewedCapabilityEligibility = true`.
+Production uses 182 `AI_ACCEPTED` records, not a 37-draft cohort; zero records
+have genuine human approval. Package 9 adds Task 6B progression and Task 6C
+one-workout deload choices under the
+[focused contract](2026-09-19-progression-and-deload-design.md).
 
 ## Final Roundtable Consensus
 
@@ -84,9 +85,10 @@ roundtable appendix records the retractions and citation corrections.
 
 ## Product Boundary
 
-WallCrawl builds a deterministic, replayable, multi-week resistance-training
-(RT) program and a valid Today session entirely on-device, offline-first, with
-no network dependency. Deterministic Kotlin/Room code owns every decision that
+WallCrawl's current deterministic engine builds a valid single Today
+resistance-training (RT) session with a weekly completed-dose ledger entirely
+on-device. The multi-week program remains a future boundary, not a Package 9
+feature. Core operation is offline-first with no network dependency. Deterministic Kotlin/Room code owns every decision that
 touches safety, eligibility, dose, effort, progression, substitution legality,
 validation, persistence, audit, and fallback.
 
@@ -199,7 +201,7 @@ enum class RestClass { SHORT, MODERATE, LONG }
 enum class ComplexityTier { FOUNDATIONAL, STANDARD, ADVANCED }
 enum class ImpactLevel { NONE, LOW, HIGH }
 enum class SupportRequirement { SUPPORTED, OPTIONAL_SUPPORT, UNSUPPORTED }
-enum class ReviewState { DRAFT, APPROVED }
+enum class ReviewState { DRAFT, AI_ACCEPTED, APPROVED }
 enum class PrescriptionShape { WEIGHT_REPS, BODYWEIGHT_REPS, ASSISTED_BODYWEIGHT, DURATION }
 
 data class EffortTarget(val minRir: Int, val maxRir: Int)
@@ -270,7 +272,7 @@ data class CapabilityEvidence(
     val qualifyingSessionIds: List<String>
 )
 
-enum class TrainingProgramStatePolicyVersion { PROGRAM_STATE_V1 }
+enum class TrainingProgramStatePolicyVersion { PROGRAM_STATE_V1, PROGRAM_STATE_V2 }
 
 data class TrainingProgramState(
     val policyVersion: TrainingProgramStatePolicyVersion,
@@ -286,36 +288,33 @@ until confirmed by history or explicit user confirmation.
 
 ## Adaptation state
 
-`AdaptationState` already declares a broader shared vocabulary, but the current
-implementation deliberately derives only two values in `AdaptationStatePolicy`:
+`PROGRAM_STATE_V2` derives only justified states, in order:
 
-- `RETURNING` when `UserProfile.returningAfterBreakWeeks > 0`
-- `UNCALIBRATED` otherwise
+- `RETURNING` for explicitly reported break weeks > 0;
+- `HOLD` for an accepted, unconsumed deload when not returning;
+- `UNCALIBRATED` otherwise.
 
-That limitation is intentional. `ExerciseEligibilityPolicy` withholds
-`ComplexityTier.ADVANCED` work on exactly `UNCALIBRATED` and `RETURNING`, so
-widening derivation without updating the matching ceiling would silently make
-more advanced work eligible. Task 6A capability evidence shipped without
-changing derived-state behavior. Broader state transitions, one-variable
-progression, and any `DeloadOffer` state remain future Task 6B/6C work.
+Offers never derive `DELOAD_OFFERED`. All state names retain the advanced
+ceiling unless the existing demonstrated-family or legal supported-regression
+exception applies. The state and ceiling change together; no global calibration
+or readiness is inferred. The focused Package 9 design records entry/exit and
+the independent accepted-choice effect for returning users.
 
 ## Reviewed Metadata and Provenance
 
-Automatic candidates require `APPROVED`, categorical, versioned, human-reviewed metadata:
+Automatic candidates require categorical, versioned metadata accepted by
+`Exercise.acceptedMetadata()`:
 direct-primary and descriptive-secondary muscles; exercise type, equipment
 alternatives, movement pattern, complexity; progression family and prescription
 shape; approved regressions/substitutions; capability requirements, support
 requirement, impact level; and full provenance (`reviewerRole`,
 `rationaleOrSource`, `reviewedAtEpochMillis`, `schemaVersion`, `policyVersion`).
-Tooling may accept AI-authored `DRAFT` entries as candidates for later human
-inspection, but they are never auto-approved: drafts omit reviewer role and
-review time. Band, machine, supported, bodyweight, and timed-hold families must
-be human-reviewed before the automatic gate is enabled, so gating does not
-silently strip equipment-limited users of eligible plans. The reviewed-only
-automatic gate is already implemented but production-disabled; while it remains
-off, missing or `DRAFT` metadata still leaves an exercise available to automatic
-planning through the legacy path, and always leaves it available for browse and
-manual templates.
+`APPROVED` requires genuine human provenance. `AI_ACCEPTED` is a separate
+owner-authorized alpha state with source-bound AI provenance and no human
+sign-off. Production is enabled against 182 such accepted records; drafts,
+missing blocks and malformed provenance remain excluded, with no unreviewed
+fallback. Browse/manual workflows retain the complete catalog. Package 3's
+human review and all currently empty joint clearances remain separate work.
 
 ## PRIMARY_ONLY Weekly Ledger
 
@@ -349,12 +348,12 @@ malformed inputs decode conservatively (capabilities to `UNKNOWN`, never
 
 ## Calibration, Complexity Ceiling, and Ranking
 
-Experience is ordinarily a soft complexity input. While `UNCALIBRATED` or
-`RETURNING`, exercises tagged `ADVANCED` are temporarily removed from the
-automatic legal set unless the user has demonstrated relevant family history or
-an approved supported regression exists. Once calibrated, the ceiling lifts and
-complexity becomes a soft rank; capability, explicit constraints, equipment, and
-history remain stronger. Catalog difficulty is reviewer opinion, not a safety
+Experience is ordinarily a soft complexity input. Current production has no
+global calibration transition: `ADVANCED` work requires the existing demonstrated
+family or legal accepted supported-regression exception in every state.
+Merely selecting another enum value never lifts the ceiling. Broader calibration
+requires a separate justified contract; hard capability, equipment and explicit
+constraints remain intact. Catalog difficulty is reviewer opinion, not a safety
 score, and never a permanent hard gate on self-reported experience.
 
 Current reviewed soft ranking is intentionally smaller in scope. Eligible
@@ -396,19 +395,21 @@ No body-mass or BMI value participates in ranking.
 
 ## Progression
 
-Task 6B remains open. There is no `ProgressionEngine.kt`, no one-variable
-progression pass, and no broader derived-state rollout yet. The current shipped
-Task 6A behavior stops at deterministic capability evidence and reviewed soft-
-penalty suppression. Missing effort therefore remains neutral today because
-nothing progresses from it.
+Task 6B is implemented by `ONE_VARIABLE_PROGRESSION_V1` and the shared factory,
+context, validator and immutable provenance path. Two latest comparable exact-ID
+attempts, full valid completed work, manageable confirmation and qualifying
+explicit RPE/RIR are required. Otherwise there is a typed hold. One declared
+axis changes; capability evidence alone never authorizes it. The focused
+Package 9 contract defines units, logger precision, bounds, continuity and repair.
 
 ## DeloadOffer
 
-Task 6C remains open. There is no `DeloadOfferPolicy.kt`, no persisted
-`DeloadOffer`, and no user-controlled multi-session deload flow in the current
-product. The design constraints still stand for later work: no fixed calendar,
-percentage, RIR, volume, or diagnostic threshold, and no diagnosis or recovery
-claim.
+Task 6C implements Today request/accept/decline/dismiss/cancel for one automatic
+workout. The offer previews held targets with one fewer work set per exercise
+(minimum one), explicitly pausing pending progression. Only acceptance applies
+it; choices persist and are consumed atomically at start. Returning guidance
+remains independent. There is no multi-session block, calendar law, percentage
+rule, pattern-based diagnosis or recovery claim.
 
 ## Planned Task 7: Session and Weekly Validation
 
@@ -473,10 +474,10 @@ reconstructable authority. On the reviewed-only path, `CapabilityEvidencePolicy`
 now relaxes a soft penalty only after two distinct comparable completed sessions
 for the same exercise ID plus explicit per-set `feltManageable == true`, and
 only for that exercise or one direct approved regression target whose source and
-target metadata are both `APPROVED`. It never relaxes a hard exclusion and
+target metadata are both accepted by `Exercise.acceptedMetadata()`. It never relaxes a hard exclusion and
 never auto-writes `COMFORTABLE` into the profile. This is a reproducibility
-policy, not physiology. Progression and deload logic still do not update from
-that history.
+policy, not physiology. Progression has stricter target/effort comparisons;
+deload uses explicit request or reported return, not inferred recovery.
 
 ## Today vs Program Horizon
 
@@ -645,13 +646,12 @@ credited to the model.
    data.
 3. Shipped: the `PRIMARY_ONLY_V1` weekly ledger plus `TrainingProgramState`
    composition.
-4. Shipped in code but production-disabled: reviewed-only eligibility, the
+4. Enabled against owner-authorized `AI_ACCEPTED` content: reviewed-only eligibility, the
    temporary advanced ceiling, and typed reviewed no-candidate failures.
-5. Shipped in code but production-disabled: state-based dose/effort/rest policy
+5. Enabled: state-based dose/effort/rest policy
    and reviewed soft-capability ranking behind the local flag.
-6. Partly shipped: Task 6A history-derived capability evidence is live behind
-   that same local flag; Task 6B progression and Task 6C `DeloadOffer` remain
-   open.
+6. Task 6A capability evidence and Package 9 progression/one-workout deload are
+   implemented in the production composition. ROADMAP records delivery gates.
 7. Keep LLM reranking disabled until every deterministic gate and every LLM gate
    passes; ship it opt-in, removable, with an immediate kill switch.
 

@@ -20,6 +20,14 @@ class CapabilityEvidencePolicy(
     private val policyVersion: CapabilityEvidencePolicyVersion =
         CapabilityEvidencePolicyVersion.TWO_COMPARABLE_MANAGEABLE_SESSIONS_V1
 ) {
+    internal fun measurementShape(prescription: ExercisePrescription): ComparableMovementShape? =
+        prescription.comparableShapeOrNull()
+
+    internal fun isConfirmedComparableSet(
+        set: WorkoutSet,
+        prescription: ExercisePrescription,
+        shape: ComparableMovementShape
+    ): Boolean = set.qualifiesForComparableShape(prescription, shape)
 
     fun derive(sessions: List<WorkoutSession>, exercises: List<Exercise>): CapabilityEvidenceSet {
         val exactCandidates = sessions.asSequence()

@@ -2,6 +2,16 @@
 
 ## Status and authority
 
+**Current supersession:** Package 4 is complete and reviewed planning is enabled
+against the actual `AI_ACCEPTED` cohort. Package 9 adds `WHOLE_PROGRAM_V2`:
+strict shared progression/load/assistance provenance, required V2 decision
+records, and suppression of a repaired exercise's progression before reducing
+sets. The old fixed increment is isolated to legacy/manual defaults. Room is 14,
+archives write 4/read 1–4, and unreadable stored recommendation records now fail
+planning/export rather than being dropped because they supply target continuity.
+The original one-session/one-repair contract below remains; see the
+[Package 9 design](2026-09-19-progression-and-deload-design.md).
+
 This design is the validation contract required before
 [ROADMAP Package 4](../../../ROADMAP.md#4-add-whole-program-validation) is implemented. It
 resolves the open contract decisions the roadmap listed: proposal scope, duplicate and

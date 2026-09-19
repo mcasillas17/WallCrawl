@@ -7,10 +7,16 @@ import wallcrawl.elopenmike.com.core.model.RecommendationRecord
 import wallcrawl.elopenmike.com.core.model.TrainingProgramStatePolicyVersion
 import wallcrawl.elopenmike.com.core.model.WorkoutRankingReason
 import wallcrawl.elopenmike.com.core.model.WorkoutRankingReasonCode
+import wallcrawl.elopenmike.com.core.model.ProgressionProvenance
+import wallcrawl.elopenmike.com.core.model.ProgressionReasonCode
+import wallcrawl.elopenmike.com.core.model.DeloadSource
+import wallcrawl.elopenmike.com.core.model.DeloadReasonCode
+import wallcrawl.elopenmike.com.core.model.DeloadRecommendationProvenance
 
 /** The versioned whole-program validation contract a recommendation was checked under. */
 enum class ProgramValidatorVersion {
-    WHOLE_PROGRAM_V1
+    WHOLE_PROGRAM_V1,
+    WHOLE_PROGRAM_V2
 }
 
 /**
@@ -79,7 +85,11 @@ data class RecommendationSnapshot(
     val rankingReasons: List<WorkoutRankingReason> = emptyList(),
     val doseAccounting: List<MuscleDoseAccounting>,
     val schedulingPolicyVersion: String? = null,
-    val generationIndex: Int? = null
+    val generationIndex: Int? = null,
+    val deloadDecisionRevision: Long? = null,
+    val acceptedDeloadOfferId: String? = null,
+    val acceptedDeloadSource: DeloadSource? = null,
+    val progression: List<ProgressionProvenance> = emptyList()
 ) {
     init {
         require(generationIndex == null || generationIndex >= 0)
@@ -125,7 +135,11 @@ fun RecommendationSnapshot.asRecord(
     profileRevision = profileRevision,
     contextIdentity = contextIdentity,
     reasonCodes = reasonCodes.map { it.name } + WorkoutRankingReasonCode.encode(rankingReasons) +
-        listOfNotNull(schedulingPolicyVersion, generationIndex?.let { "PLANNER_GENERATION_V1:$it" }),
+        listOfNotNull(schedulingPolicyVersion, generationIndex?.let { "PLANNER_GENERATION_V1:$it" }) +
+        ProgressionReasonCode.encode(progression) +
+        DeloadReasonCode.encode(deloadDecisionRevision?.let {
+            DeloadRecommendationProvenance(it, acceptedDeloadOfferId, acceptedDeloadSource)
+        }),
     doseAccounting = doseAccounting,
     recordedAtEpochMillis = recordedAtEpochMillis
 )

@@ -1,6 +1,7 @@
 package wallcrawl.elopenmike.com.core.backup
 
 import wallcrawl.elopenmike.com.core.model.RecommendationRecord
+import wallcrawl.elopenmike.com.core.model.DeloadPreferences
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
@@ -29,6 +30,7 @@ import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
  *
  * Version 3 adds optional gender and preserves the initial preview's legacy illustration
  * preference. Only gender selects artwork; earlier archives retain their checksums.
+ * Version 4 adds owned deload decisions; formats 1..3 retain their original checksums.
  *
  * ## What it contains
  *
@@ -52,7 +54,7 @@ import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
 object LocalDataArchiveFormat {
 
     /** The only archive format this build writes. */
-    const val ARCHIVE_VERSION: Int = 3
+    const val ARCHIVE_VERSION: Int = 4
 
     /** Every archive format this build can read. */
     val SUPPORTED_ARCHIVE_VERSIONS: IntRange = 1..ARCHIVE_VERSION
@@ -146,7 +148,8 @@ data class LocalDataSnapshot(
      * existing session exactly once; sessions started before whole-program validation
      * existed, and sessions started from a manual template, simply have none.
      */
-    val recommendationRecords: List<RecommendationRecord> = emptyList()
+    val recommendationRecords: List<RecommendationRecord> = emptyList(),
+    val deloadPreferences: DeloadPreferences? = null
 )
 
 /** A complete archive: its provenance and the records it carries. */

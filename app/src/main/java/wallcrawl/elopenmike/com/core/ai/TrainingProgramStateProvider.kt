@@ -27,16 +27,18 @@ class TrainingProgramStateProvider(
     private val zoneId: () -> ZoneId = ZoneId::systemDefault
 ) {
     /** The builder supplies its single sampled instant/zone to both history policies. */
-    suspend fun stateAt(profile: UserProfile, instant: Instant, zone: ZoneId): TrainingProgramState =
+    suspend fun stateAt(
+        profile: UserProfile, instant: Instant, zone: ZoneId, acceptedDeload: Boolean = false
+    ): TrainingProgramState =
         TrainingProgramState(
-            policyVersion = TrainingProgramStatePolicyVersion.PROGRAM_STATE_V1,
-            adaptationState = adaptationStatePolicy.derive(profile),
+            policyVersion = TrainingProgramStatePolicyVersion.PROGRAM_STATE_V2,
+            adaptationState = adaptationStatePolicy.derive(profile, acceptedDeload),
             weeklyLedger = weeklyDoseLedgerRepository.weeklyLedgerAt(profile.id, instant, zone)
         )
 
     suspend fun currentState(profile: UserProfile): TrainingProgramState =
         TrainingProgramState(
-            policyVersion = TrainingProgramStatePolicyVersion.PROGRAM_STATE_V1,
+            policyVersion = TrainingProgramStatePolicyVersion.PROGRAM_STATE_V2,
             adaptationState = adaptationStatePolicy.derive(profile),
             weeklyLedger = weeklyDoseLedgerRepository.currentWeeklyLedger(
                 profileId = profile.id,

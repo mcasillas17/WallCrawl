@@ -75,11 +75,14 @@ class ExerciseEligibilityPolicy {
                                 excludedExerciseIds = excludedExerciseIds,
                                 demonstratedProgressionFamilies = demonstratedProgressionFamilies
                             )
-                    if (advancedCeilingApplies && adaptationState == AdaptationState.UNCALIBRATED) {
-                        add(EligibilityReason.ADVANCED_WHILE_UNCALIBRATED)
-                    }
-                    if (advancedCeilingApplies && adaptationState == AdaptationState.RETURNING) {
-                        add(EligibilityReason.ADVANCED_WHILE_RETURNING)
+                    if (advancedCeilingApplies) {
+                        add(
+                            if (adaptationState == AdaptationState.RETURNING) {
+                                EligibilityReason.ADVANCED_WHILE_RETURNING
+                            } else {
+                                EligibilityReason.ADVANCED_WHILE_UNCALIBRATED
+                            }
+                        )
                     }
                 }
             }

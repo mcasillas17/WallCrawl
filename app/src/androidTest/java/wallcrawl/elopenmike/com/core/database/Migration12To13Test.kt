@@ -43,7 +43,7 @@ class Migration12To13Test {
             .addMigrations(*WallCrawlDatabase.ALL_MIGRATIONS).build()
         try {
             val sqlite = database.openHelper.writableDatabase
-            assertThat(sqlite.version).isEqualTo(13)
+            assertThat(sqlite.version).isEqualTo(WALLCRAWL_SCHEMA_VERSION)
             val profile = database.userProfileDao().getProfile("default_user")!!
             assertThat(profile.name).isEqualTo("Migration Crawler")
             assertThat(profile.revision).isEqualTo(17L)

@@ -33,6 +33,24 @@ class ExerciseEligibilityPolicyTest {
     private val policy = ExerciseEligibilityPolicy()
 
     @Test
+    fun evaluate_stateNameAloneNeverLiftsTheAdvancedCeiling() {
+        val advanced = exercise(id = "advanced").copy(
+            reviewedMetadata = reviewedMetadata(
+                reviewState = ReviewState.APPROVED,
+                complexity = ComplexityTier.ADVANCED
+            )
+        )
+        AdaptationState.entries.forEach { state ->
+            val result = policy.evaluate(
+                listOf(advanced),
+                UserProfile(availableEquipment = listOf(StandardEquipment.BODYWEIGHT)),
+                state
+            )
+            assertThat(result).isInstanceOf(AutomaticEligibilityResult.NoCandidates::class.java)
+        }
+    }
+
+    @Test
     fun evaluate_rejectsExerciseWithoutApprovedMetadata() {
         val exercise = exercise(id = "missing-reviewed-metadata")
 
@@ -595,7 +613,7 @@ class ExerciseEligibilityPolicyTest {
     }
 
     @Test
-    fun evaluate_blocksAdvancedOnlyWhileUncalibratedOrReturning() {
+    fun evaluate_returningAndUncalibratedReasonsRemainExplicit_withoutGlobalStateUnlock() {
         val exercise = exercise(id = "advanced").copy(
             reviewedMetadata = reviewedMetadata(
                 reviewState = ReviewState.APPROVED,
@@ -644,18 +662,7 @@ class ExerciseEligibilityPolicyTest {
                 )
             )
         )
-        assertThat(build).isEqualTo(
-            AutomaticEligibilityResult.Candidates(
-                exercises = listOf(exercise),
-                decisions = listOf(
-                    EligibilityDecision(
-                        exerciseId = exercise.id,
-                        eligible = true,
-                        reasons = listOf(EligibilityReason.APPROVED)
-                    )
-                )
-            )
-        )
+        assertThat(build).isEqualTo(uncalibrated)
     }
 
     @Test
@@ -891,8 +898,8 @@ class ExerciseEligibilityPolicyTest {
         )
 
         assertThat(advancedResult).isEqualTo(beginnerResult)
-        assertThat((beginnerResult as AutomaticEligibilityResult.Candidates).exercises)
-            .containsExactly(exercise)
+        assertThat((beginnerResult as AutomaticEligibilityResult.NoCandidates).failure)
+            .isEqualTo(AutomaticEligibilityFailure.CALIBRATION_COMPLEXITY_REMOVED_ALL)
     }
 
     @Test

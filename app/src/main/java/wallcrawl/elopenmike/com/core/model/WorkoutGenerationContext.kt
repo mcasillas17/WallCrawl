@@ -17,6 +17,10 @@ data class WorkoutGenerationContext(
     val trainingFrequencyDaysPerWeek: Int = userProfile.daysPerWeek,
     val musclePriorities: Map<String, PriorityLevel> = userProfile.musclePriorities,
     val recentWorkoutHistory: List<WorkoutSession> = emptyList(),
+    val progressionHistory: List<WorkoutSession> = recentWorkoutHistory,
+    val recentRecommendationRecords: Map<String, RecommendationRecord> = emptyMap(),
+    val historyAsOfTimestamp: Long = Long.MAX_VALUE,
+    val deloadPreferences: DeloadPreferences? = null,
     /** Lifetime completed workouts, so split rotation survives the process being killed. */
     val completedWorkoutCount: Int = 0,
     val exerciseHistory: Map<String, ExercisePerformanceHistory> = emptyMap(),

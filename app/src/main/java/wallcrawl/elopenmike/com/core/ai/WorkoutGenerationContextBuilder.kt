@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.withIndex
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
+import wallcrawl.elopenmike.com.core.database.repository.DeloadRepository
 import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
 import wallcrawl.elopenmike.com.core.exercise.ExerciseFilter
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
@@ -46,7 +47,8 @@ class WorkoutGenerationContextBuilder(
      */
     private val catalogVersion: () -> String? = { null },
     private val nowTimestamp: () -> Long = System::currentTimeMillis,
-    private val zoneId: () -> ZoneId = ZoneId::systemDefault
+    private val zoneId: () -> ZoneId = ZoneId::systemDefault,
+    private val deloadRepository: DeloadRepository? = null
 ) {
     /**
      * Reuses Today’s clock and Room invalidation, not polling queries. A day/zone change
@@ -100,9 +102,24 @@ class WorkoutGenerationContextBuilder(
             sessions = recentCompletedSessions,
             targetWeightUnit = profile.preferredUnit
         )
+        val progressionHistory = if (plannerFeatureFlags.reviewedCapabilityEligibility) {
+            workoutRepository.getRecentSessions(ProgressionEngine.MAX_SESSIONS).also(ProgressionEngine::requireBounded)
+        } else emptyList()
+        val recentRecommendationRecords = if (progressionHistory.isNotEmpty()) {
+            val ids = progressionHistory.map { it.id }
+            val records = workoutRepository.getRecommendationRecords(ids)
+            require(records.size <= ids.size && records.map { it.sessionId }.distinct().size == records.size &&
+                records.all { it.sessionId in ids }
+            ) { "Historical recommendation records are duplicated or outside the requested batch." }
+            records.associateBy { it.sessionId }
+        } else emptyMap()
+        val deloadPreferences = if (plannerFeatureFlags.reviewedCapabilityEligibility) {
+            deloadRepository?.get()
+        } else null
+        val acceptedDeload = deloadPreferences?.let(DeloadOfferPolicy::accepted) != null
         // Composed only on the reviewed path, so the legacy path reads no extra history.
         val trainingProgramState = if (plannerFeatureFlags.reviewedCapabilityEligibility) {
-            trainingProgramStateProvider?.stateAt(profile, now, zone)
+            trainingProgramStateProvider?.stateAt(profile, now, zone, acceptedDeload)
         } else {
             null
         }
@@ -128,7 +145,7 @@ class WorkoutGenerationContextBuilder(
                 // Both branches use the same policy, so the value cannot diverge when no
                 // provider is supplied.
                 adaptationState = trainingProgramState?.adaptationState
-                    ?: adaptationStatePolicy.derive(profile),
+                    ?: adaptationStatePolicy.derive(profile, acceptedDeload),
                 demonstratedProgressionFamilies = exerciseHistory.keys.mapNotNullTo(linkedSetOf()) {
                     exerciseId ->
                     exercisesById[exerciseId]
@@ -166,6 +183,10 @@ class WorkoutGenerationContextBuilder(
             trainingFrequencyDaysPerWeek = profile.daysPerWeek,
             musclePriorities = profile.musclePriorities,
             recentWorkoutHistory = recentCompletedSessions,
+            progressionHistory = progressionHistory,
+            recentRecommendationRecords = recentRecommendationRecords,
+            historyAsOfTimestamp = now.toEpochMilli(),
+            deloadPreferences = deloadPreferences,
             completedWorkoutCount = completedWorkoutCount,
             exerciseHistory = exerciseHistory,
             recentlyTrainedMuscles = historyAnalyzer.recentlyTrainedMuscles(

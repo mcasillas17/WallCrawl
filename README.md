@@ -346,7 +346,7 @@ the export archive. It carries no raw name, note, load, repetition, effort value
 measurement fields. Its local context digest derives from consumed planning inputs for
 freshness and is not an anonymization guarantee.
 
-Guidance is persisted with templates and frozen session snapshots in Room schema 13.
+Guidance is persisted with templates and frozen session snapshots in Room schema 14.
 The active timer still reads the persisted exact seconds; add-time, skip, and dismiss are
 one-off timer actions rather than durable preference changes. Production now runs
 reviewed eligibility because an owner-authorized audit accepted 182 of the bundled
@@ -402,8 +402,44 @@ qualifying non-warm-up work and explicit `feltManageable == true`. Completion
 and stop fields only disqualify invalid observations; they do not create
 evidence on their own. Null/false manageable answers, completion alone, RPE,
 and RIR do not qualify. RPE/RIR remain stored for logging and are unused by
-capability evidence. Progression and deload logic still do not consume the
-feedback.
+capability evidence. Progression separately requires explicit manageable feedback
+and qualifying RPE or RIR in two comparable completed attempts; missing feedback
+never authorizes an increase.
+
+## One-variable progression and one-workout deload
+
+Automatic recommendations explain one proposed change: load +2.5 kg (converted
+to the selected unit), one more rep at each end of a bodyweight rep range,
+assistance -2.5 kg, or duration +5 seconds. These are versioned product choices,
+not physiological thresholds. Exact exercise identity, matching prescriptions,
+valid completed work and explicit feedback are required. Otherwise the plan
+explains why progression is held. Unknown load and assistance stay unknown.
+The old history-only increment remains isolated to manual/disabled defaults.
+
+Today offers **Request fewer sets**, or an optional offer when a break is
+explicitly reported. Before accepting, it previews the held working targets:
+one fewer work set per exercise, never below one, for the next automatic workout
+only. Any suggested progression increase is paused. Declining or dismissing
+does not reduce the workout; acceptance can be cancelled before start.
+An accepted choice must be cancelled before requesting another. Choices survive
+app restart, profile edits and export/restore, and are consumed
+atomically when an automatic workout starts. Manual templates and in-progress
+workouts are never rewritten. There is no fatigue diagnosis or scheduled deload.
+
+See the [Package 9 contract](docs/superpowers/specs/2026-09-19-progression-and-deload-design.md)
+for comparison rules, policy versions, state precedence, persistence and limits.
+
+<p>
+  <img src="art/screenshots/progression-deload-offer-en.png" width="24%" alt="English deload offer showing held reference targets before acceptance" />
+  <img src="art/screenshots/progression-deload-accepted-en.png" width="24%" alt="Accepted one-workout choice restored after terminating and relaunching the app" />
+  <img src="art/screenshots/progression-deload-declined-es.png" width="24%" alt="Spanish Today after declining and restarting: ordinary ten-set workout retained" />
+  <img src="art/screenshots/progression-deload-large-es.png" width="24%" alt="Spanish Today at 1.8 times system font scale, with readable stacked weekly summary and request control" />
+</p>
+
+These are actual light-theme Pixel 7 API 36 emulator captures using a test
+profile and the bundled accepted catalog. Acceptance and decline were exercised
+through the installed app and survived real process termination/relaunch; no
+workout was started for these screenshots.
 
 ## Architecture
 
@@ -471,7 +507,7 @@ coaching note, and a higher-complexity accepted exercise remains selectable when
 only fillable option. Reviewed `complexity` also supplies a separate, harder rule on the
 automatic path:
 `ComplexityTier.ADVANCED` work is temporarily excluded outright while a profile is
-`UNCALIBRATED` or `RETURNING`, unless a demonstrated progression family or an accepted
+any adaptation state, unless a demonstrated progression family or an accepted
 `SUPPORTED` regression is available — that is a hard eligibility exclusion, not a soft
 ranking demotion, and it applies only to automatic planning.
 
@@ -706,7 +742,7 @@ Today state, duration calculation, and visual-provider mapping. The fourteen-per
 corpus runs inside it, reconstructing the reviewed-enabled personas' training weeks with the
 shipped weekly ledger and validating the complete proposal behind every successful persona.
 Android instrumentation also validates every supported database migration chain through
-schema 13 without destructive fallback, guidance persistence, the atomic start of a session
+schema 14 without destructive fallback, guidance persistence, the atomic start of a session
 with its validation record, the weekly-ledger DAO/repository,
 capability-control semantics, template/session snapshot behavior, and the local-data archive:
 its round trip from app-written state at all three supported format versions, every rejection

@@ -322,6 +322,8 @@ private class ScreenTestRepository(initial: WorkoutSession) : WorkoutRepository 
     override fun observeCompletedWorkoutCount(): Flow<Int> = flowOf(0)
     override fun observeCompletedWorkoutCountInRange(startTimestamp: Long, endTimestampExclusive: Long): Flow<Int> = flowOf(0)
     override suspend fun getRecentCompletedSessions(limit: Int): List<WorkoutSession> = emptyList()
+    override suspend fun getRecentSessions(limit: Int): List<WorkoutSession> = emptyList()
+    override suspend fun getRecommendationRecords(sessionIds: List<String>): List<wallcrawl.elopenmike.com.core.model.RecommendationRecord> = emptyList()
 
     override suspend fun startWorkoutFromGenerated(
         generated: GeneratedWorkout,

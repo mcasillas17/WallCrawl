@@ -142,6 +142,13 @@ Everything numeric goes through `core/ui/format/LocaleFormatting.kt`.
 
 ## Claim boundaries
 
+Today's progression reasons and deload request/accept/decline/dismiss/cancel
+controls ship in both languages. Proposed targets come from the held reference,
+not a translated description: accepting pauses any pending increase. Measurement
+units remain bound to the published recommendation during regeneration; a new
+profile unit cannot relabel old numbers. Passive refresh preserves the generation
+index, so theme/gender/unit edits do not spend a new workout variation.
+
 Translation must not strengthen a claim. WallCrawl describes what it plans — conservative
 volume, capped sets — and never promises injury prevention, healing, or a physiological
 outcome. `SafetyCopyTest` reads both shipped resource files **and the translation overlay's
@@ -159,6 +166,11 @@ stop reason that reads as a diagnosis rather than as the user's own decision to 
 3. `StringResourceParityTest` fails if a key, a plural quantity, or a format argument is
    missing or mismatched, and if a Spanish string was left identical to its English source
    without being listed as deliberately identical.
+
+Check long translations at narrow widths as well as large font scales.
+`TodayDeloadScreenTest` pins the weekly summary to 320 dp at 1.8× Spanish text,
+checking full text, compact height, and vertically stacked labels. Its small-body
+typography keeps line spacing proportional without shrinking or truncating the text.
 
 **A new exercise, or a catalog update that adds one**
 

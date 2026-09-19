@@ -36,6 +36,11 @@ import wallcrawl.elopenmike.com.core.database.PERSISTED_PAIR_SEPARATOR
 import wallcrawl.elopenmike.com.core.database.repository.RecommendationDoseAccountingPayload
 import wallcrawl.elopenmike.com.core.io.BoundedCharacterReader
 import wallcrawl.elopenmike.com.core.model.CapabilityLevel
+import wallcrawl.elopenmike.com.core.model.DeloadChoice
+import wallcrawl.elopenmike.com.core.model.DeloadChoiceStatus
+import wallcrawl.elopenmike.com.core.model.DeloadOffer
+import wallcrawl.elopenmike.com.core.model.DeloadPreferences
+import wallcrawl.elopenmike.com.core.model.DeloadSource
 import wallcrawl.elopenmike.com.core.model.EffortTarget
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.ExercisePrescription
@@ -47,6 +52,7 @@ import wallcrawl.elopenmike.com.core.model.MuscleDoseAccounting
 import wallcrawl.elopenmike.com.core.model.MuscleVocabulary
 import wallcrawl.elopenmike.com.core.model.PlannedExercise
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
+import wallcrawl.elopenmike.com.core.model.ProgressionReasonCode
 import wallcrawl.elopenmike.com.core.model.RecommendationRecord
 import wallcrawl.elopenmike.com.core.model.RepRange
 import wallcrawl.elopenmike.com.core.model.RestClass
@@ -131,6 +137,9 @@ object LocalDataArchiveCodec {
             it == null || (it.gender == ProfileGender.UNSPECIFIED &&
                 it.illustrationPreference == IllustrationPreference.AUTOMATIC)
         }) { "Gender and illustration preferences require archive version 3." }
+        require(archive.metadata.archiveVersion >= 4 || archive.snapshot.deloadPreferences == null) {
+            "Deload preferences require archive version 4."
+        }
         require(
             archive.metadata.archiveVersion >= RECOMMENDATION_RECORDS_ARCHIVE_VERSION ||
                 archive.snapshot.recommendationRecords.isEmpty()
@@ -333,6 +342,32 @@ object LocalDataArchiveCodec {
             snapshot.recommendationRecords.forEach { record -> writeRecommendation(record) }
             endArray()
         }
+        snapshot.deloadPreferences?.let {
+            name("deloadPreferences")
+            writeDeloadPreferences(it)
+        }
+        endObject()
+    }
+
+    private fun JsonWriter.writeDeloadPreferences(preferences: DeloadPreferences) {
+        beginObject()
+        name("profileId").value(preferences.profileId)
+        name("revision").value(preferences.revision)
+        preferences.choice?.let { choice ->
+            name("choice")
+            beginObject()
+            name("offer")
+            beginObject()
+            name("id").value(choice.offer.id)
+            name("source").value(choice.offer.source.name)
+            name("policyVersion").value(choice.offer.policyVersion)
+            endObject()
+            name("status").value(choice.status.name)
+            name("decidedAtEpochMillis").value(choice.decidedAtEpochMillis)
+            choice.sessionId?.let { name("sessionId").value(it) }
+            endObject()
+        }
+        preferences.lastHandledReturnKey?.let { name("lastHandledReturnKey").value(it) }
         endObject()
     }
 
@@ -617,6 +652,7 @@ object LocalDataArchiveCodec {
         var templates: List<WorkoutTemplate>? = null
         var sessions: List<WorkoutSession>? = null
         var recommendations: List<RecommendationRecord>? = null
+        var deloadPreferences: DeloadPreferences? = null
 
         readObject("archive data") { field ->
             when (field) {
@@ -634,6 +670,10 @@ object LocalDataArchiveCodec {
                         MAX_RECOMMENDATION_RECORDS
                     ) { readRecommendation() }
                 }
+                "deloadPreferences" -> {
+                    if (archiveVersion < 4) malformed("Deload preferences require archive version 4.")
+                    deloadPreferences = readDeloadPreferences()
+                }
 
                 else -> malformed("The archive data has an unsupported field.")
             }
@@ -643,8 +683,87 @@ object LocalDataArchiveCodec {
             profile = profile,
             templates = templates ?: malformed("The archive data is missing 'templates'."),
             sessions = sessions ?: malformed("The archive data is missing 'sessions'."),
-            recommendationRecords = recommendations.orEmpty()
+            recommendationRecords = recommendations.orEmpty(),
+            deloadPreferences = deloadPreferences
         )
+    }
+
+    private fun JsonReader.readDeloadPreferences(): DeloadPreferences {
+        var profileId: String? = null
+        var revision: Long? = null
+        var choice: DeloadChoice? = null
+        var handledKey: String? = null
+        readObject("deload preferences") { field ->
+            when (field) {
+                "profileId" -> profileId = nextDeloadString("deload.profileId", MAX_ID_LENGTH)
+                "revision" -> revision = nextDeloadLong("deload.revision", Long.MAX_VALUE)
+                "choice" -> choice = readDeloadChoice()
+                "lastHandledReturnKey" -> handledKey = nextDeloadString("deload.lastHandledReturnKey", 256)
+                else -> malformed("Archived deload preferences have an unsupported field.")
+            }
+        }
+        return DeloadPreferences(
+            profileId ?: malformed("Archived deload preferences are missing 'profileId'."),
+            revision ?: malformed("Archived deload preferences are missing 'revision'."),
+            choice, handledKey
+        )
+    }
+
+    private fun JsonReader.readDeloadChoice(): DeloadChoice {
+        var offer: DeloadOffer? = null
+        var status: DeloadChoiceStatus? = null
+        var time: Long? = null
+        var sessionId: String? = null
+        readObject("deload choice") { field ->
+            when (field) {
+                "offer" -> offer = readDeloadOffer()
+                "status" -> {
+                    if (peek() != JsonToken.STRING) invalidValue("Deload status must be text.")
+                    status = nextEnum<DeloadChoiceStatus>("deload.status")
+                }
+                "decidedAtEpochMillis" -> time = nextDeloadLong("deload.decidedAtEpochMillis", MAX_TIMESTAMP_MILLIS)
+                "sessionId" -> sessionId = nextDeloadString("deload.sessionId", MAX_ID_LENGTH)
+                else -> malformed("An archived deload choice has an unsupported field.")
+            }
+        }
+        return DeloadChoice(
+            offer ?: malformed("An archived deload choice is missing 'offer'."),
+            status ?: malformed("An archived deload choice is missing 'status'."),
+            time ?: malformed("An archived deload choice is missing 'decidedAtEpochMillis'."),
+            sessionId
+        )
+    }
+
+    private fun JsonReader.readDeloadOffer(): DeloadOffer {
+        var id: String? = null
+        var source: DeloadSource? = null
+        var version: String? = null
+        readObject("deload offer") { field ->
+            when (field) {
+                "id" -> id = nextDeloadString("deload.offer.id", 256)
+                "source" -> {
+                    if (peek() != JsonToken.STRING) invalidValue("Deload source must be text.")
+                    source = nextEnum<DeloadSource>("deload.offer.source")
+                }
+                "policyVersion" -> version = nextDeloadString("deload.offer.policyVersion", MAX_SHORT_TEXT_LENGTH)
+                else -> malformed("An archived deload offer has an unsupported field.")
+            }
+        }
+        return DeloadOffer(
+            id ?: malformed("An archived deload offer is missing 'id'."),
+            source ?: malformed("An archived deload offer is missing 'source'."),
+            version ?: malformed("An archived deload offer is missing 'policyVersion'.")
+        )
+    }
+
+    private fun JsonReader.nextDeloadString(label: String, maximumLength: Int): String {
+        if (peek() != JsonToken.STRING) invalidValue("The archived $label must be text.")
+        return nextBoundedString(label, maximumLength)
+    }
+
+    private fun JsonReader.nextDeloadLong(label: String, maximum: Long): Long {
+        if (peek() != JsonToken.NUMBER) invalidValue("The archived $label must be a number.")
+        return nextBoundedLong(label, 0, maximum)
     }
 
     private fun JsonReader.readRecommendation(): RecommendationRecord {
@@ -726,7 +845,7 @@ object LocalDataArchiveCodec {
                 "reasonCodes" -> reasonCodes = readArray(
                     "recommendation.reasonCodes",
                     RecommendationRecord.MAX_REASON_CODES
-                ) { nextBoundedString("recommendation.reasonCode", MAX_SHORT_TEXT_LENGTH) }
+                ) { nextBoundedString("recommendation.reasonCode", RecommendationRecord.MAX_REASON_TOKEN_LENGTH) }
 
                 "doseAccounting" -> doseAccounting = RecommendationDoseAccountingPayload
                     .decode(nextBoundedString("recommendation.doseAccounting", MAX_NOTES_LENGTH))
@@ -746,37 +865,45 @@ object LocalDataArchiveCodec {
         // The domain type owns the remaining rules — bounds, blank and control-character
         // tokens, duplicate reason codes, duplicate muscles — so the archive and the
         // database cannot disagree about what a well-formed record is.
-        return RecommendationRecord(
-            sessionId = sessionId
-                ?: malformed("The archived recommendation is missing 'sessionId'."),
-            validatorVersion = validatorVersion
-                ?: malformed("The archived recommendation is missing 'validatorVersion'."),
-            durationEstimatorVersion = durationEstimatorVersion
-                ?: malformed("The archived recommendation is missing 'durationEstimatorVersion'."),
-            outcome = outcome
-                ?: malformed("The archived recommendation is missing 'outcome'."),
-            reviewedPathEnabled = reviewedPathEnabled
-                ?: malformed("The archived recommendation is missing 'reviewedPathEnabled'."),
-            catalogVersion = catalogVersion,
-            reviewPolicyVersion = reviewPolicyVersion
-                ?: malformed("The archived recommendation is missing 'reviewPolicyVersion'."),
-            trainingPolicyVersion = trainingPolicyVersion,
-            ledgerPolicyVersion = ledgerPolicyVersion,
-            programStatePolicyVersion = programStatePolicyVersion,
-            adaptationState = adaptationState,
-            weekStartEpochDay = weekStartEpochDay,
-            timeZoneId = timeZoneId,
-            profileRevision = profileRevision
-                ?: malformed("The archived recommendation is missing 'profileRevision'."),
-            contextIdentity = contextIdentity
-                ?: malformed("The archived recommendation is missing 'contextIdentity'."),
-            reasonCodes = reasonCodes
-                ?: malformed("The archived recommendation is missing 'reasonCodes'."),
-            doseAccounting = doseAccounting
-                ?: malformed("The archived recommendation is missing 'doseAccounting'."),
-            recordedAtEpochMillis = recordedAtEpochMillis
-                ?: malformed("The archived recommendation is missing 'recordedAtEpochMillis'.")
-        )
+        return try {
+            RecommendationRecord(
+                sessionId = sessionId
+                    ?: malformed("The archived recommendation is missing 'sessionId'."),
+                validatorVersion = validatorVersion
+                    ?: malformed("The archived recommendation is missing 'validatorVersion'."),
+                durationEstimatorVersion = durationEstimatorVersion
+                    ?: malformed("The archived recommendation is missing 'durationEstimatorVersion'."),
+                outcome = outcome
+                    ?: malformed("The archived recommendation is missing 'outcome'."),
+                reviewedPathEnabled = reviewedPathEnabled
+                    ?: malformed("The archived recommendation is missing 'reviewedPathEnabled'."),
+                catalogVersion = catalogVersion,
+                reviewPolicyVersion = reviewPolicyVersion
+                    ?: malformed("The archived recommendation is missing 'reviewPolicyVersion'."),
+                trainingPolicyVersion = trainingPolicyVersion,
+                ledgerPolicyVersion = ledgerPolicyVersion,
+                programStatePolicyVersion = programStatePolicyVersion,
+                adaptationState = adaptationState,
+                weekStartEpochDay = weekStartEpochDay,
+                timeZoneId = timeZoneId,
+                profileRevision = profileRevision
+                    ?: malformed("The archived recommendation is missing 'profileRevision'."),
+                contextIdentity = contextIdentity
+                    ?: malformed("The archived recommendation is missing 'contextIdentity'."),
+                reasonCodes = reasonCodes
+                    ?: malformed("The archived recommendation is missing 'reasonCodes'."),
+                doseAccounting = doseAccounting
+                    ?: malformed("The archived recommendation is missing 'doseAccounting'."),
+                recordedAtEpochMillis = recordedAtEpochMillis
+                    ?: malformed("The archived recommendation is missing 'recordedAtEpochMillis'.")
+            )
+        } catch (error: LocalDataArchiveException) {
+            throw error
+        } catch (error: IllegalArgumentException) {
+            // Structured domain decoders may include rejected enum literals in their
+            // exception messages. Never copy those archived values into diagnostics.
+            invalidValue("The archived recommendation violates its supported contract.")
+        }
     }
 
     private fun JsonReader.readProfile(archiveVersion: Int): UserProfile {
@@ -848,7 +975,7 @@ object LocalDataArchiveCodec {
 
                 "returningAfterBreakWeeks" ->
                     returningAfterBreakWeeks =
-                        nextBoundedInt("profile.returningAfterBreakWeeks", 0, MAX_BREAK_WEEKS)
+                        nextBoundedInt("profile.returningAfterBreakWeeks", 0, UserProfile.MAX_PERSISTED_BREAK_WEEKS)
 
                 "confirmedStartingLoads" -> confirmedStartingLoads =
                     readMap("profile.confirmedStartingLoads") {
@@ -1402,6 +1529,24 @@ object LocalDataArchiveCodec {
         }
 
         validateRecommendations(snapshot)
+        validateDeloadPreferences(snapshot)
+    }
+
+    private fun validateDeloadPreferences(snapshot: LocalDataSnapshot) {
+        val preferences = snapshot.deloadPreferences ?: return
+        if (snapshot.profile?.id != preferences.profileId || snapshot.profile.onboardingCompleted != true) {
+            inconsistent("Archived deload preferences require their owning onboarded profile.")
+        }
+        val choice = preferences.choice ?: return
+        if (choice.status == DeloadChoiceStatus.CONSUMED) {
+            // An absent session can be a cancelled workout, which is deleted. Never rearm it.
+            val session = snapshot.sessions.firstOrNull { it.id == choice.sessionId } ?: return
+            if (session.origin != WorkoutOrigin.PLANNER ||
+                session.startedAtTimestamp != choice.decidedAtEpochMillis ||
+                snapshot.recommendationRecords.none { it.sessionId == session.id }) {
+                inconsistent("The consumed deload choice does not match an automatic workout start.")
+            }
+        }
     }
 
     /**
@@ -1419,13 +1564,12 @@ object LocalDataArchiveCodec {
         }
         if (snapshot.recommendationRecords.isEmpty()) return
 
-        val sessionIds = snapshot.sessions.mapTo(mutableSetOf(), WorkoutSession::id)
+        val sessionsById = snapshot.sessions.associateBy(WorkoutSession::id)
         val seen = mutableSetOf<String>()
         snapshot.recommendationRecords.forEach { record ->
             requireIdentifier(record.sessionId, "recommendation.sessionId")
-            if (record.sessionId !in sessionIds) {
-                inconsistent("An archived recommendation references an unknown session.")
-            }
+            val session = sessionsById[record.sessionId]
+                ?: inconsistent("An archived recommendation references an unknown session.")
             if (!seen.add(record.sessionId)) {
                 inconsistent("The archive holds more than one recommendation for a session.")
             }
@@ -1433,7 +1577,23 @@ object LocalDataArchiveCodec {
             // reserved-separator guard as every other joined value. Without it a restored
             // code of "A|||B" would read back as two codes the document never contained.
             record.reasonCodes.forEach { code ->
-                requireJoinableText(code, "recommendation.reasonCode", MAX_SHORT_TEXT_LENGTH)
+                requireJoinableText(code, "recommendation.reasonCode", RecommendationRecord.MAX_REASON_TOKEN_LENGTH)
+            }
+            // Only known structured versions have these relationships. Future opaque
+            // tokens remain readable; no historical outcomes or profile rules are rerun.
+            val progression = try {
+                ProgressionReasonCode.decode(record.reasonCodes)
+            } catch (error: IllegalArgumentException) {
+                invalidValue("The archived progression provenance is invalid.")
+            }
+            val exerciseIds = session.exercises.mapTo(mutableSetOf()) { it.exerciseId }
+            progression.forEach { provenance ->
+                if (provenance.exerciseId !in exerciseIds) {
+                    inconsistent("Archived progression references an exercise outside its recommendation session.")
+                }
+                if (provenance.sourceSessionIds.any { it !in sessionsById }) {
+                    inconsistent("Archived progression references a session absent from the archive.")
+                }
             }
         }
     }
@@ -1483,7 +1643,7 @@ object LocalDataArchiveCodec {
             profile.returningAfterBreakWeeks,
             "profile.returningAfterBreakWeeks",
             0,
-            MAX_BREAK_WEEKS
+            UserProfile.MAX_PERSISTED_BREAK_WEEKS
         )
 
         requireCollection(profile.availableEquipment, "profile.availableEquipment")
@@ -1936,7 +2096,6 @@ object LocalDataArchiveCodec {
     private const val MAX_SESSION_MINUTES = 10_080
     private const val MAX_DAYS_PER_WEEK = 7
     private const val MAX_PREFERRED_DURATION_MINUTES = 1_440
-    private const val MAX_BREAK_WEEKS = 5_200
 
     /** The first archive format that can carry recommendation records. */
     private const val RECOMMENDATION_RECORDS_ARCHIVE_VERSION = 2

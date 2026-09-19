@@ -43,7 +43,7 @@ class ProgramValidatorTest {
         val snapshot = result.acceptedSnapshot
         assertThat(snapshot.outcome).isEqualTo(RecommendationOutcome.VALID)
         assertThat(snapshot.reasonCodes).isEmpty()
-        assertThat(snapshot.validatorVersion).isEqualTo(ProgramValidatorVersion.WHOLE_PROGRAM_V1)
+        assertThat(snapshot.validatorVersion.name).isEqualTo("WHOLE_PROGRAM_V2")
         assertThat(snapshot.durationEstimatorVersion).isEqualTo(WorkoutDurationEstimator.VERSION)
         assertThat(snapshot.catalogVersion).isEqualTo(VALIDATOR_CATALOG_VERSION)
         assertThat(snapshot.reviewPolicyVersion).isEqualTo(1)

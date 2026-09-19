@@ -45,6 +45,13 @@ data class UserProfile(
 
     companion object {
         const val DEFAULT_PROFILE_ID = "default_user"
+
+        /**
+         * Read-compatibility bound already supported by local archives. Derived decisions
+         * must accept these persisted values without clamping or rewriting them.
+         * Interactive profile edits retain their separate, stricter 0..520-week bound.
+         */
+        const val MAX_PERSISTED_BREAK_WEEKS = 5_200
     }
 }
 

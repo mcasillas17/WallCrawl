@@ -17,6 +17,42 @@
     a "many" item would be inventing a form nobody will ever read.
 -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingQuantity">
+    <string name="today_error_deload_read">No se pudo cargar tu elección para un entrenamiento. Vuelve a intentarlo antes de iniciar un entrenamiento automático.</string>
+    <string name="today_error_deload_write">No se pudo guardar tu elección. Aquí no se aceptó ni cambió nada. Vuelve a intentarlo.</string>
+    <string name="today_deload_title">Un entrenamiento con menos series</string>
+    <string name="today_deload_accepted">Menos series aceptadas para un entrenamiento</string>
+    <string name="today_deload_reason_request">Solicitaste menos series.</string>
+    <string name="today_deload_reason_returning">Indicaste que vuelves después de una pausa. La orientación de regreso ya se aplica independientemente de esta elección.</string>
+    <string name="today_deload_effect">Tu próximo entrenamiento automático, y solo UNO, usa las metas de trabajo de referencia actuales con una serie de trabajo menos por ejercicio, mínimo una. Mantiene las metas de referencia de carga, asistencia, repeticiones, duración, esfuerzo y descanso. La progresión queda en pausa, incluido cualquier aumento sugerido.</string>
+    <string name="today_deload_preview_title">Si aceptas</string>
+    <string name="today_deload_preview_rest">Descanso: %1$s</string>
+    <string name="today_deload_preview_effort">Esfuerzo objetivo: %1$s RIR</string>
+    <string name="today_deload_accepted_detail">Esta elección queda pendiente hasta que inicies un entrenamiento automático. Una rutina manual no la utiliza. Puedes cancelarla antes de empezar.</string>
+    <string name="today_deload_request">Solicitar menos series</string>
+    <string name="today_deload_accept">Aceptar para un entrenamiento</string>
+    <string name="today_deload_decline">Rechazar</string>
+    <string name="today_deload_dismiss">Descartar</string>
+    <string name="today_deload_cancel">Cancelar antes de empezar</string>
+    <string name="today_deload_saving">Guardando tu elección…</string>
+    <string name="progression_advanced">Progresión: %1$s %2$s → %3$s. Las demás metas no cambian.</string>
+    <string name="progression_axis_load">carga</string>
+    <string name="progression_axis_reps">repeticiones</string>
+    <string name="progression_axis_assistance">asistencia</string>
+    <string name="progression_axis_duration">duración</string>
+    <string name="progression_axis_distance">distancia</string>
+    <string name="progression_hold_evidence">Progresión en pausa: no hay suficiente trabajo completado válido y comparable.</string>
+    <string name="progression_hold_legacy">La progresión no se aplica en esta modalidad de planificación.</string>
+    <string name="progression_hold_unsupported">La progresión no está disponible para este formato de ejercicio.</string>
+    <string name="progression_hold_unknown_load">Progresión en pausa: no se ha establecido una meta de carga o asistencia.</string>
+    <string name="progression_hold_changed">Progresión en pausa: cambiaron las metas o los ajustes del plan.</string>
+    <string name="progression_hold_target">Progresión en pausa: el trabajo registrado no alcanzó todas las metas.</string>
+    <string name="progression_hold_manageable">Progresión en pausa: no se confirmó un esfuerzo manejable en todas las series de trabajo.</string>
+    <string name="progression_hold_effort_missing">Progresión en pausa: faltan datos de esfuerzo.</string>
+    <string name="progression_hold_effort">Progresión en pausa: el esfuerzo registrado no cumple la regla de progresión.</string>
+    <string name="progression_hold_bound">Progresión en pausa: el siguiente paso supera un límite de meta configurado.</string>
+    <string name="progression_hold_returning">Progresión en pausa: se aplica la orientación de regreso.</string>
+    <string name="progression_hold_deload">Progresión en pausa: se aplica tu elección aceptada para un entrenamiento.</string>
+    <string name="progression_hold_repair">Progresión en pausa: la validación redujo las series para ajustarse al plan configurado.</string>
     <string name="generated_rationale_frequency_recency_preference">Se priorizó repetir la práctica de %1$s según tu preferencia de entrenar %2$s días por semana; la última práctica completada fue hace %3$s días calendario. Es una preferencia de orden, no un requisito de recuperación.</string>
 
     <!-- ============================ Shared actions ============================ -->

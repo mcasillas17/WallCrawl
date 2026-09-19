@@ -2,6 +2,14 @@
 
 ## Status and boundary
 
+**Historical milestone:** the disabled rollout and 37-draft cohort below describe
+2026-09-01, not current production. Package 7 enabled 182 `AI_ACCEPTED` records
+(zero human approvals). Package 9's
+[state contract](2026-09-19-progression-and-deload-design.md) now emits
+`PROGRAM_STATE_V2`: `RETURNING`, accepted `HOLD`, otherwise `UNCALIBRATED`, with
+the advanced ceiling updated in the same change. The original composition
+boundary remains; deload choices are separate owned data, not a ledger counter.
+
 This milestone composes the two independently shipped halves of the deterministic engine —
 the `PRIMARY_ONLY_V1` weekly dose ledger and reviewed capability eligibility — into one
 derived value, `TrainingProgramState`.

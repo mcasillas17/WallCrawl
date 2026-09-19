@@ -2,7 +2,8 @@ package wallcrawl.elopenmike.com.core.model
 
 /** The versioned policy under which a [TrainingProgramState] was composed. */
 enum class TrainingProgramStatePolicyVersion {
-    PROGRAM_STATE_V1
+    PROGRAM_STATE_V1,
+    PROGRAM_STATE_V2
 }
 
 /**
@@ -11,12 +12,11 @@ enum class TrainingProgramStatePolicyVersion {
  *
  * Both halves are derived, never accumulated. [weeklyLedger] is reconstructed from immutable
  * completed history, and [adaptationState] is a pure function of the profile, so an identical
- * profile and history always compose an identical state.
+ * profile, accepted choice and history always compose an identical state.
  *
  * [wallcrawl.elopenmike.com.core.ai.StateBasedTrainingPolicy] reads the ledger only on the
  * reviewed-enabled path to cap future automatic sets by remaining direct-primary allowance.
- * Its credited counts are all zero while the bundled catalog carries no accepted reviewed
- * metadata, and every completed work set is reported as unattributed instead.
+ * The current production catalog attributes its accepted cohort under PRIMARY_ONLY_V1.
  */
 data class TrainingProgramState(
     val policyVersion: TrainingProgramStatePolicyVersion,

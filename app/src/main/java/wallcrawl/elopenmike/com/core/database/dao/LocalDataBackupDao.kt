@@ -7,6 +7,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import wallcrawl.elopenmike.com.core.backup.LocalDataRestoreRefusedException
 import wallcrawl.elopenmike.com.core.database.entity.UserProfileEntity
+import wallcrawl.elopenmike.com.core.database.entity.DeloadPreferencesEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutExerciseEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutRecommendationRecordEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSessionEntity
@@ -22,7 +23,8 @@ data class LocalDataRows(
     val sessions: List<WorkoutSessionEntity>,
     val sessionExercises: List<WorkoutExerciseEntity>,
     val sets: List<WorkoutSetEntity>,
-    val recommendationRecords: List<WorkoutRecommendationRecordEntity>
+    val recommendationRecords: List<WorkoutRecommendationRecordEntity>,
+    val deloadPreferences: List<DeloadPreferencesEntity> = emptyList()
 )
 
 /**
@@ -63,6 +65,9 @@ interface LocalDataBackupDao {
     @Query("SELECT * FROM workout_recommendation_records ORDER BY sessionId ASC")
     suspend fun selectRecommendationRecords(): List<WorkoutRecommendationRecordEntity>
 
+    @Query("SELECT * FROM deload_preferences ORDER BY profileId ASC")
+    suspend fun selectDeloadPreferences(): List<DeloadPreferencesEntity>
+
     /**
      * One transactionally consistent snapshot of every user-owned table.
      *
@@ -78,7 +83,8 @@ interface LocalDataBackupDao {
         sessions = selectSessions(),
         sessionExercises = selectSessionExercises(),
         sets = selectSets(),
-        recommendationRecords = selectRecommendationRecords()
+        recommendationRecords = selectRecommendationRecords(),
+        deloadPreferences = selectDeloadPreferences()
     )
 
     @Query("SELECT COUNT(*) FROM workout_sessions")
@@ -90,6 +96,9 @@ interface LocalDataBackupDao {
     @Query("SELECT COUNT(*) FROM user_profiles WHERE onboardingCompleted = 1")
     suspend fun countOnboardedProfiles(): Int
 
+    @Query("SELECT COUNT(*) FROM deload_preferences")
+    suspend fun countDeloadPreferences(): Int
+
     /**
      * Whether this installation still looks like a fresh start.
      *
@@ -99,10 +108,17 @@ interface LocalDataBackupDao {
      */
     @Transaction
     suspend fun isEmptyDestination(): Boolean =
-        countSessions() == 0 && countTemplates() == 0 && countOnboardedProfiles() == 0
+        countSessions() == 0 && countTemplates() == 0 && countOnboardedProfiles() == 0 &&
+            countDeloadPreferences() == 0
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertProfile(profile: UserProfileEntity)
+
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    suspend fun insertDeloadPreferences(preferences: List<DeloadPreferencesEntity>)
+
+    @Query("DELETE FROM deload_preferences")
+    suspend fun deleteDeloadPreferences()
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertTemplates(templates: List<WorkoutTemplateEntity>)
@@ -157,6 +173,7 @@ interface LocalDataBackupDao {
      */
     @Transaction
     suspend fun deleteAll() {
+        deleteDeloadPreferences()
         deleteRecommendationRecords()
         deleteSets()
         deleteSessionExercises()
@@ -198,5 +215,6 @@ interface LocalDataBackupDao {
         // After the sessions they belong to, so the foreign key holds at every point in the
         // transaction rather than only at its end.
         insertRecommendationRecords(rows.recommendationRecords)
+        insertDeloadPreferences(rows.deloadPreferences)
     }
 }

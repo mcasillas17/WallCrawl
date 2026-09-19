@@ -113,6 +113,10 @@ internal data class PlannerFixtureInputSnapshot(
     val trainingFrequencyDaysPerWeek: Int,
     val musclePriorities: Map<String, PriorityLevel>,
     val recentWorkoutHistory: List<WorkoutSession>,
+    val progressionHistory: List<WorkoutSession>,
+    val recentRecommendationRecords: Map<String, wallcrawl.elopenmike.com.core.model.RecommendationRecord>,
+    val historyAsOfTimestamp: Long,
+    val deloadPreferences: wallcrawl.elopenmike.com.core.model.DeloadPreferences?,
     val completedWorkoutCount: Int,
     val exerciseHistory: Map<String, ExercisePerformanceHistory>,
     val recentlyTrainedMuscles: List<String>,
@@ -288,6 +292,12 @@ private fun WorkoutGenerationContext.snapshot(): PlannerFixtureInputSnapshot =
         trainingFrequencyDaysPerWeek = trainingFrequencyDaysPerWeek,
         musclePriorities = LinkedHashMap(musclePriorities),
         recentWorkoutHistory = recentWorkoutHistory.map(WorkoutSession::deepCopy),
+        progressionHistory = progressionHistory.map(WorkoutSession::deepCopy),
+        recentRecommendationRecords = recentRecommendationRecords.mapValues { (_, record) ->
+            record.copy(reasonCodes = record.reasonCodes.toList(), doseAccounting = record.doseAccounting.toList())
+        },
+        historyAsOfTimestamp = historyAsOfTimestamp,
+        deloadPreferences = deloadPreferences,
         completedWorkoutCount = completedWorkoutCount,
         exerciseHistory = exerciseHistory.entries.associate { (exerciseId, history) ->
             exerciseId to history.deepCopy()

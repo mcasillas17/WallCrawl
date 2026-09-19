@@ -820,16 +820,16 @@ class WorkoutGenerationContextBuilderTest {
                 )
             )
         }
-        val session = WorkoutSession(
-            id = "historical-session",
-            name = "Historical",
-            completedAtTimestamp = 20L,
-            status = SessionStatus.COMPLETED,
-            exercises = exercises
-        )
+        val sessions = exercises.chunked(100).mapIndexed { index, chunk ->
+            WorkoutSession(
+                id = "historical-session-$index", name = "Historical",
+                completedAtTimestamp = 20L - index, status = SessionStatus.COMPLETED,
+                exercises = chunk.map { it.copy(sessionId = "historical-session-$index") }
+            )
+        }
         val builder = reviewedEligibilityBuilder(
             exercises = InMemoryExerciseCatalog.SAMPLE_EXERCISES,
-            completedSessions = listOf(session)
+            completedSessions = sessions
         )
 
         val context = builder.build()
@@ -1072,6 +1072,12 @@ private class StubWorkoutRepository(
         completedSessions.sortedByDescending { it.completedAtTimestamp }
             .take(limit)
             .also { getRecentCompletedSessionsCallCount += 1 }
+
+    override suspend fun getRecentSessions(limit: Int): List<WorkoutSession> =
+        completedSessions.sortedWith(compareByDescending<WorkoutSession> { it.startedAtTimestamp }.thenBy { it.id }).take(limit)
+
+    override suspend fun getRecommendationRecords(sessionIds: List<String>): List<wallcrawl.elopenmike.com.core.model.RecommendationRecord> =
+        emptyList()
 
     override suspend fun startWorkoutFromGenerated(
         generated: GeneratedWorkout,

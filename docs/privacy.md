@@ -3,7 +3,7 @@
 ## Policy
 
 WallCrawl operates offline without an account. Profile and movement-capability
-answers, preferences, templates, active/completed workouts, logged set feedback,
+answers, preferences, user-controlled deload choices, templates, active/completed workouts, logged set feedback,
 and the reconstructable weekly-ledger cache are stored locally in Room. The
 catalog and exercise artwork are bundled with the app. The current application
 has no cloud-sync service, analytics upload, Health Connect or Wear integration,
@@ -40,7 +40,9 @@ One JSON file, written where you choose:
   reasons, and status.
 
 It also contains, for each session started from an automatic recommendation, the
-validation record described below.
+validation record described below, plus the latest deload choice and handled
+return-offer key. Offers and comparison evidence are reconstructed; no mutable
+training-history counter is exported.
 
 It does **not** contain the bundled catalog or artwork, which ship with the app,
 or the weekly-ledger cache, which is derived (see
@@ -65,12 +67,16 @@ decided: the validator, duration-estimator, catalog, review-policy, training-pol
 ledger, and program-state versions, the adaptation state, the ISO week and time zone it was
 accounted against, the profile revision, a digest of the generation inputs, ordered reason
 codes, and per muscle the completed, proposed, and configured allowance set counts.
+Package 9 adds bounded progression policy/reason/axis, source-session identifiers,
+target-continuity digests and accepted deload identity/source/revision. These
+explain a decision without duplicating its measurements.
 
 It holds **no** name, note, load, repetition count, effort value, body measurement, or free
 text, and it does not repeat the plan itself — the session's own exercises already hold
 that. The digest is built only from values a training decision can read (profile identity
-and revision, completed-workout count, candidate ids, catalog and policy versions, week and
-zone); it contains no measurement and is a freshness check, not a security control.
+and revision, completed-workout count, candidates, catalog/policies, week/zone,
+bounded outcomes and feedback, target continuity, working-load sources and deload
+decisions). The hash is a freshness check, not anonymization or a security control.
 
 Sessions started from a manual template, and every session recorded before this existed,
 simply have no record. Nothing fabricates one.
@@ -78,7 +84,7 @@ simply have no record. Nothing fabricates one.
 ### Archive compatibility
 
 The archive format has its own version, separate from the Room schema version. This
-build **writes version 3** and **reads versions 1, 2, and 3**. The schema version, app
+build **writes version 4** and **reads versions 1, 2, 3, and 4**. The schema version, app
 version, creation time, and the bundled catalog commit are recorded as provenance only;
 they never decide whether a file can be restored.
 
@@ -93,6 +99,12 @@ exports, and are removed by Delete all data. Only gender selects artwork; the le
 field has no effect. No training decision reads either field. Versions 1 and 2 keep
 their original checksums and restore with unspecified gender. Version 3 validates
 both fields to preserve compatibility with exports from the initial preview.
+
+Version 4 adds the owned deload preferences. Earlier archives retain their
+original checksums and restore without an invented acceptance or decline.
+Known progression provenance must reference archived source sessions and an
+exercise in its recommendation's session. Unknown future reason versions remain
+opaque; malformed known groups are refused.
 
 A file written by a newer WallCrawl is still refused with a message saying so, rather than
 partially understood — a future format may attach meaning to fields this build would drop.
@@ -109,12 +121,14 @@ forward behavioral compatibility.
 
 Because a validation record cannot be rebuilt from history the way the weekly-ledger cache
 can, it is exported and restored with the session it belongs to instead of being dropped.
-A record this build cannot read back is left out rather than restored half-understood.
+Since records now supply progression continuity, an unreadable stored record
+fails planning/export rather than being silently omitted. An export failure is
+reported before opening its destination.
 
 ### Restore prerequisites
 
 **Restore needs a fresh start**: no workouts, no templates, and onboarding not
-completed. There is no merge and no replace, so restoring can never overwrite
+completed, and no deload-choice row. There is no merge and no replace, so restoring can never overwrite
 data you still have. The profile row an app creates for itself before onboarding
 finishes does not count as your data and is replaced.
 
@@ -143,7 +157,7 @@ no longer contains keeps its identifier rather than being remapped.
 Deleting all local data asks for explicit confirmation, naming what is lost —
 including a workout in progress — and then removes the profile and preferences,
 movement answers, templates, every session with its exercises and sets, every
-validation record, and the derived weekly-ledger cache. The app returns to
+validation record, deload preferences, and the derived weekly-ledger cache. The app returns to
 first-run onboarding.
 
 It does **not** touch:

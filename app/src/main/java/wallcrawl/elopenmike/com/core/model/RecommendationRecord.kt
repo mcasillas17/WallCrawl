@@ -106,8 +106,16 @@ data class RecommendationRecord(
         require(reasonCodes.size == reasonCodes.distinct().size) {
             "Reason codes are deduplicated before they are recorded."
         }
-        reasonCodes.forEach { requireToken(it, "reasonCode") }
+        reasonCodes.forEach {
+            requireToken(it, "reasonCode", MAX_REASON_TOKEN_LENGTH)
+            require("|||" !in it) { "Reason codes cannot contain the persisted list separator." }
+        }
         WorkoutRankingReasonCode.decode(reasonCodes)
+        val progression = ProgressionReasonCode.decode(reasonCodes)
+        val deload = DeloadReasonCode.decode(reasonCodes)
+        require(deload?.acceptedOfferId == null || progression.none { it.reason == ProgressionReason.ADVANCED }) {
+            "An accepted deload cannot also advance a prescription."
+        }
         require(doseAccounting.size <= MAX_DOSE_ENTRIES) {
             "A record cannot account for more than $MAX_DOSE_ENTRIES muscles."
         }
@@ -122,9 +130,9 @@ data class RecommendationRecord(
         }
     }
 
-    private fun requireToken(value: String, label: String) {
-        require(value.isNotBlank() && value.length <= MAX_TOKEN_LENGTH) {
-            "$label must be non-blank and at most $MAX_TOKEN_LENGTH characters."
+    private fun requireToken(value: String, label: String, maximumLength: Int = MAX_TOKEN_LENGTH) {
+        require(value.isNotBlank() && value.length <= maximumLength) {
+            "$label must be non-blank and at most $maximumLength characters."
         }
         require(value.none(Char::isISOControl)) {
             "$label cannot contain control characters."
@@ -133,11 +141,14 @@ data class RecommendationRecord(
 
     companion object {
         const val MAX_TOKEN_LENGTH: Int = 200
+        const val MAX_REASON_TOKEN_LENGTH: Int = 320
         // A six-exercise plan and its no-preference baseline can identify at most 36
         // source-target inversions. Each structured ranking reason uses four tokens, and a
         // persisted repaired recommendation adds one deduplicated repair reason.
-        // Scheduling adds at most six reasons of six tokens, plus policy and replay tokens.
-        const val MAX_REASON_CODES: Int = 6 * 6 * 4 + 6 * 6 + 1 + 2
+        // Scheduling adds six six-token witnesses plus policy/replay tokens.
+        // Progression adds six seven-token groups; a deload adds revision, offer and source.
+        const val MAX_REASON_CODES: Int = 6 * 6 * 4 + 6 * 6 + 1 + 2 +
+            ProgressionReasonCode.MAX_EXERCISES * ProgressionReasonCode.MAX_TOKENS_PER_EXERCISE + DeloadReasonCode.MAX_TOKENS
         const val MAX_DOSE_ENTRIES: Int = 64
     }
 }

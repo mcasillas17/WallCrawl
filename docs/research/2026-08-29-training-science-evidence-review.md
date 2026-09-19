@@ -36,6 +36,16 @@ The cross-review corrected material citation errors:
 
 ## Consensus Doctrine
 
+**Current implementation note (2026-09-19):** Package 7 enabled the reviewed
+alpha against 182 owner-authorized `AI_ACCEPTED` records, not human approvals.
+Package 9 implements the [one-variable/one-workout contract](../superpowers/specs/2026-09-19-progression-and-deload-design.md).
+Its two-attempt comparison, explicit manageable/effort requirements, increments,
+representation bounds and one-fewer-set choice are versioned product rules.
+They are not new study results, individual readiness diagnoses, universal
+physiological thresholds or clinical validation. No automatic deload pattern
+or multi-week program has been added. Earlier rollout counts/flags below remain
+dated evidence, not current status.
+
 The doctrine and signed decisions below preserve the original review record. The
 [2026-09-05 clarification](#validation-scope-clarification-2026-09-05) separates their
 research, product-policy, and software meanings and corrects any implication that planned

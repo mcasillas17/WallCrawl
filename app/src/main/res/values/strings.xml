@@ -7,6 +7,42 @@
     what is substituted is the formatted text. See docs/localization.md before adding keys.
 -->
 <resources>
+    <string name="today_error_deload_read">Your one-workout choice could not be loaded. Try again before starting an automatic workout.</string>
+    <string name="today_error_deload_write">Your choice could not be saved. Nothing was accepted or changed here. Try again.</string>
+    <string name="today_deload_title">One workout with fewer sets</string>
+    <string name="today_deload_accepted">Fewer sets accepted for one workout</string>
+    <string name="today_deload_reason_request">You requested fewer sets.</string>
+    <string name="today_deload_reason_returning">You reported returning after a break. Returning guidance already applies independently of this choice.</string>
+    <string name="today_deload_effect">Your next ONE automatic workout uses the current reference working targets with one fewer work set per exercise, minimum one. It keeps reference load, assistance, repetition, duration, effort, and rest targets. Progression is paused, including any suggested increase.</string>
+    <string name="today_deload_preview_title">If you accept</string>
+    <string name="today_deload_preview_rest">Rest: %1$s</string>
+    <string name="today_deload_preview_effort">Target effort: %1$s RIR</string>
+    <string name="today_deload_accepted_detail">This choice stays pending until you start an automatic workout. A manual routine does not use it. You can cancel before starting.</string>
+    <string name="today_deload_request">Request fewer sets</string>
+    <string name="today_deload_accept">Accept for one workout</string>
+    <string name="today_deload_decline">Decline</string>
+    <string name="today_deload_dismiss">Dismiss</string>
+    <string name="today_deload_cancel">Cancel before starting</string>
+    <string name="today_deload_saving">Saving your choice…</string>
+    <string name="progression_advanced">Progression: %1$s %2$s → %3$s. Other targets stay unchanged.</string>
+    <string name="progression_axis_load">load</string>
+    <string name="progression_axis_reps">repetitions</string>
+    <string name="progression_axis_assistance">assistance</string>
+    <string name="progression_axis_duration">duration</string>
+    <string name="progression_axis_distance">distance</string>
+    <string name="progression_hold_evidence">Progression paused: not enough valid, comparable completed work.</string>
+    <string name="progression_hold_legacy">Progression is not applied on this planning path.</string>
+    <string name="progression_hold_unsupported">Progression is unavailable for this exercise format.</string>
+    <string name="progression_hold_unknown_load">Progression paused: a load or assistance target is not established.</string>
+    <string name="progression_hold_changed">Progression paused: the targets or plan settings changed.</string>
+    <string name="progression_hold_target">Progression paused: the recorded work did not meet every target.</string>
+    <string name="progression_hold_manageable">Progression paused: manageable effort was not confirmed for every work set.</string>
+    <string name="progression_hold_effort_missing">Progression paused: effort feedback is missing.</string>
+    <string name="progression_hold_effort">Progression paused: recorded effort does not meet the progression rule.</string>
+    <string name="progression_hold_bound">Progression paused: the next step exceeds a configured target bound.</string>
+    <string name="progression_hold_returning">Progression paused: returning guidance applies.</string>
+    <string name="progression_hold_deload">Progression paused: your accepted one-workout choice applies.</string>
+    <string name="progression_hold_repair">Progression paused: validation reduced sets to fit the configured plan.</string>
     <!-- Both counts are at least two under TRAINING_FREQUENCY_RECENCY_V1. -->
     <string name="generated_rationale_frequency_recency_preference">Repeat practice for %1$s was preferred for your %2$s-day weekly schedule; last completed practice was %3$s calendar days ago. This is an ordering preference, not a recovery requirement.</string>
     <string name="app_name" translatable="false">WallCrawl</string>
