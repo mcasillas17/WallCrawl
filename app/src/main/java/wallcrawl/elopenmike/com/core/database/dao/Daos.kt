@@ -21,6 +21,9 @@ import wallcrawl.elopenmike.com.core.database.entity.WorkoutSetEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutTemplateEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutTemplateExerciseEntity
 import wallcrawl.elopenmike.com.core.database.relation.WorkoutSessionWithExercisesAndSets
+import wallcrawl.elopenmike.com.core.database.relation.toWorkoutSession
+import wallcrawl.elopenmike.com.core.model.WorkoutSummary
+import wallcrawl.elopenmike.com.core.progress.ProgressCalculator
 import wallcrawl.elopenmike.com.core.database.relation.WorkoutTemplateWithExercises
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetStopReason
@@ -47,7 +50,27 @@ interface UserProfileDao {
 }
 
 @Dao
-interface WorkoutSessionDao : CompletedWorkoutHistoryDao {
+interface WorkoutSessionDao : CompletedWorkoutHistoryDao, WorkoutHistoryDao {
+    @Transaction
+    suspend fun readWorkoutSummary(sessionId: String, calculator: ProgressCalculator): WorkoutSummary? {
+        val session = getBoundedHistorySessions(listOf(sessionId)).singleOrNull()?.toWorkoutSession()
+            ?: return null
+        if (session.status != SessionStatus.COMPLETED) return null
+        return calculator.summarize(session, getPersonalRecordBaselines(sessionId))
+    }
+
+    @Transaction
+    suspend fun completeWorkoutAndReadSummary(
+        sessionId: String, completedAt: Long, actualDuration: Int, calculator: ProgressCalculator
+    ): WorkoutSummary {
+        check(completeSessionIfActive(sessionId, completedAt = completedAt, actualDuration = actualDuration) == 1) {
+            "Workout session '$sessionId' was not found or is not in progress."
+        }
+        return checkNotNull(readWorkoutSummary(sessionId, calculator)) {
+            "Completed workout session '$sessionId' could not be read back."
+        }
+    }
+
     @Transaction
     @Query("SELECT * FROM workout_sessions WHERE id = :sessionId LIMIT 1")
     fun observeSessionWithDetails(sessionId: String): Flow<WorkoutSessionWithExercisesAndSets?>

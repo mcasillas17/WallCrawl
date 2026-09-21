@@ -62,8 +62,8 @@ WallCrawl supports **Dark Theme** (stealth suit graphite aesthetic), **Light The
 - **Custom Workout Builder**: Interactive routine editor with full 302-exercise bottom sheet picker, drag/reorder controls, and type-aware target set steppers.
 - **Exercise Library**: Searchable catalog of 302 exercises across all muscle groups and equipment types.
 - **Active Workout Session**: Type-aware logging for load/reps, bodyweight reps, assisted reps, duration, and distance/duration, with one-tap set completion, plus/minus and text entry for every value, a local rest countdown, optional RPE/RIR, animated SVG movement previews, and previous performance comparisons.
-- **Workout Summary**: Post-workout card displaying session duration, total volume lifted, sets completed, and personal records set against your logged history.
-- **Progress Tracking**: Calendar-week logged workouts, completed sets, reps and external-load volume, with reviewed primary dose and overlapping muscle involvement clearly separated. Includes weekly streaks, strength trends, and recent history.
+- **Workout Summary**: The existing Finish flow shows recorded duration, external-load volume, completed sets, and records against genuinely earlier performance. View workout details opens the read-only record; Done returns to Progress.
+- **Progress Tracking & History**: Calendar-week activity and separately labelled reviewed dose, weekly streaks, and strength trends. Tap a completed-workout card to reopen its frozen targets, performed sets, feedback and recorded decision reasons. View all workouts browses older sessions in fixed 20-workout pages.
 - **Training Profile & App Preferences**: Full local customization of app language (System default / English / Español) and theme preference (Auto System / Dark Mode / Light Mode) with compact switchers, multi-select fitness goals, preferred weight units (LBS/KG), session duration targets, available gym equipment, return-after-break calibration, muscle priorities, and seven movement preferences.
 - **Your Data**: Export everything stored on the device to one versioned, checksummed file you choose the destination for; restore it onto a fresh start; or delete every local record behind an explicit destructive confirmation. Restore is also offered on the first onboarding step — a quiet button under Continue opens the whole flow in a sheet — so a reinstall does not have to build a throwaway profile first.
 - **Language**: English and neutral Latin American Spanish across the whole app, following the device by default, switchable from a chip in the onboarding wizard's header before any details are entered and from Training Profile → App preferences, and stored as a device setting rather than as part of the profile or the export archive.
@@ -101,6 +101,48 @@ convention measures physiological stimulus or diagnoses readiness. See the
 </p>
 <p align="center">
   <em>Disposable example logs from exercises outside the accepted cohort; production metadata (182 `AI_ACCEPTED`, 0 `APPROVED`) is unchanged by these captures.</em>
+</p>
+
+### Reopen a recorded workout
+
+From **Progress**, tap a completed workout or choose **View all workouts** and use
+**Older workouts / Newer workouts**. Every completed session is reachable, not just
+the ten shown on the overview. Back returns to the list or summary you came from.
+History has no logging, editing, deletion, re-planning or repeat-workout action.
+
+Detail reads the persisted session: original title and notes, recorded units and
+times, exercise prescriptions, each set's separate planned targets and actual
+measurements, warm-up/work classification, completed/stopped/unresolved outcomes,
+effort, manageable feedback and rest guidance. Missing values say **Not recorded**;
+assistance is not lifted load. Exercise IDs remain usable even if the catalog no
+longer contains them. Current profile, template, catalog programming and planner
+output never supply historical facts.
+
+Stored progression holds/advances, accepted deload and ranking/validation reasons
+are decoded without running today's policies. Technical identities and accounting
+are expandable. Manual and older sessions can legitimately have no recommendation
+record; unsupported versions remain identifiable, and malformed known records
+produce a retryable error. Recorded source sessions are distinct from ordinary
+previous performance; an absent source does not become an invented before/after
+prescription or growth percentage.
+
+An earlier comparison must have completed **strictly before this workout started**;
+timestamp ties and overlapping workouts do not establish that baseline. Summary
+records use all eligible earlier evidence through bounded SQL aggregates rather
+than the overview's recent-history sample. Later stronger workouts cannot rewrite
+an old achievement. See the [design contract](docs/superpowers/specs/2026-09-21-workout-history-detail-design.md)
+and [metric contract](docs/weekly-dose-ledger.md#individual-workout-history-and-records).
+
+<p align="center">
+  <img src="art/screenshots/history-detail-en.png" width="24%" alt="English read-only workout detail with original notes, recorded kilogram units and persisted summary metrics" />
+  <img src="art/screenshots/history-older-en.png" width="24%" alt="Second history page exposing older completed workouts beyond the ten-entry Progress overview" />
+  <img src="art/screenshots/history-detail-es-dark.png" width="24%" alt="Spanish dark-theme history labels around the original English session title and notes" />
+  <img src="art/screenshots/history-exercise-es-large-light.png" width="24%" alt="Spanish light-theme detail at 320 dp and 1.8 font scale, preserving a missing catalog ID and original exercise notes" />
+</p>
+<p align="center">
+  <em>Actual API 36 emulator captures through the Room-backed application navigation,
+  using disposable example records, not production user data. The missing catalog ID
+  and absent older recommendation are deliberate examples; no metadata approval is implied.</em>
 </p>
 
 ### English & Spanish
@@ -223,6 +265,7 @@ Bundled catalog ─────────┤  profile + bounded history
                                           ▼
                               set logging → completed history
                                    ├─ ProgressRepository → logged activity + reviewed ledger
+                                   ├─ read-only history → stored targets, outcomes and reasons
                                    └─ next generation context
 ```
 
@@ -745,12 +788,22 @@ Android instrumentation also validates every supported database migration chain 
 schema 14 without destructive fallback, guidance persistence, the atomic start of a session
 with its validation record, the weekly-ledger DAO/repository,
 capability-control semantics, template/session snapshot behavior, and the local-data archive:
-its round trip from app-written state at all three supported format versions, every rejection
+its round trip from app-written state across supported format versions 1–4, every rejection
 path for untrusted documents, transactional restore and deletion, and the destructive
 confirmation at a large font scale. It parses the
 packaged 302-exercise catalog and opens every one of its 906 SVG paths. Pull-request/main
 CI and tagged-release publication both run this connected suite on an API 36 emulator;
 a tag cannot publish its prerelease unless instrumentation succeeds.
+
+`WorkoutHistoryRepositoryTest` exercises coherent Room reads, all measurement shapes,
+historical boundaries and more than 500 later/unrelated sessions. History ViewModel,
+presentation and Compose tests cover retry/missing/status states, stored reasons and
+narrow large-text layouts. `WorkoutHistoryNavigationTest` drives the real graph and
+Room-backed repositories, including saved-state recreation, deletion/restore, encoded
+IDs, older pages and the existing completion Done flow. Its explicit
+`captureHistoryScreenshots=true` argument captures the images above;
+`seedHistoryDemo=true` additionally restores disposable logs into a **fresh, dedicated
+test installation only** for installed-app lifecycle checks.
 
 ## Product and engineering principles
 

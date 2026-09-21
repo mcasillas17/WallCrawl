@@ -2,13 +2,19 @@ package wallcrawl.elopenmike.com.feature.workout
 
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.runCurrent
 import org.junit.Rule
 import org.junit.Test
 import wallcrawl.elopenmike.com.core.ai.WorkoutHistoryAnalyzer
@@ -36,6 +42,66 @@ class ActiveWorkoutViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     @Test
+    fun setUpdatesKeepTheLoggerActiveAndKeepOneHistorySubscription() = runTest {
+        val stored = FakeRepository(workoutSession(SessionStatus.IN_PROGRESS))
+        var historySubscriptions = 0
+        val repository = object : WorkoutRepository by stored {
+            override fun observeCompletedSessions(limit: Int): Flow<List<WorkoutSession>> = flow {
+                historySubscriptions++
+                delay(1_000)
+                emit(emptyList())
+                awaitCancellation()
+            }
+        }
+        val viewModel = viewModel(repository)
+        val states = mutableListOf<ActiveWorkoutUiState>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiState.collect { states += it }
+        }
+        advanceUntilIdle()
+        assertThat(viewModel.uiState.value).isInstanceOf(ActiveWorkoutUiState.Active::class.java)
+        states.clear()
+
+        viewModel.updateSet("set", reps = 11, weight = 20.0, isCompleted = true)
+        runCurrent()
+        viewModel.updateSet("set", reps = 12, weight = 20.0, isCompleted = true)
+        advanceUntilIdle()
+
+        assertThat(historySubscriptions).isEqualTo(1)
+        assertThat(states).isNotEmpty()
+        assertThat(states.all { it is ActiveWorkoutUiState.Active }).isTrue()
+        assertThat(stored.persistedInputs.map { it.reps }).containsExactly(11, 12).inOrder()
+    }
+
+    @Test
+    fun delayedCompletionReturnCannotOverwriteANewerObservedSummary() = runTest {
+        val stored = FakeRepository(workoutSession(SessionStatus.IN_PROGRESS))
+        val returnCompletion = CompletableDeferred<Unit>()
+        val repository = object : WorkoutRepository by stored {
+            override suspend fun completeWorkout(sessionId: String, actualDurationMinutes: Int): WorkoutSummary {
+                val original = stored.completeWorkout(sessionId, actualDurationMinutes)
+                returnCompletion.await()
+                return original
+            }
+        }
+        val viewModel = viewModel(repository)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        advanceUntilIdle()
+        viewModel.finishWorkout()
+        runCurrent()
+        stored.publishSession(workoutSession(SessionStatus.COMPLETED).copy(
+            name = "Restored snapshot", actualDurationMinutes = 25
+        ))
+        runCurrent()
+        returnCompletion.complete(Unit)
+        advanceUntilIdle()
+        val completed = viewModel.uiState.value as ActiveWorkoutUiState.Completed
+        assertThat(completed.summary.workoutName).isEqualTo("Restored snapshot")
+        assertThat(completed.summary.durationMinutes).isEqualTo(25)
+        assertThat(stored.completeCalls).isEqualTo(1)
+    }
+
+    @Test
     fun completedPersistedSession_restoresCompletedUiWithActualDurationAndStoredUnit() = runTest {
         val repository = FakeRepository(
             workoutSession(status = SessionStatus.COMPLETED).copy(
@@ -56,6 +122,102 @@ class ActiveWorkoutViewModelTest {
         assertThat(state.summary.durationMinutes).isEqualTo(12)
         assertThat(state.summary.unit).isEqualTo(WeightUnit.KG)
         assertThat(state.summary.totalSetsCompleted).isEqualTo(1)
+    }
+
+    @Test
+    fun missingSession_leavesLoadingWithoutWriting() = runTest {
+        val repository = FakeRepository(null)
+        val viewModel = viewModel(repository)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiState.collect {}
+        }
+        advanceUntilIdle()
+
+        assertThat(viewModel.uiState.value).isInstanceOf(ActiveWorkoutUiState.Error::class.java)
+        assertThat(repository.completeCalls).isEqualTo(0)
+        assertThat(repository.persistedInputs).isEmpty()
+    }
+
+    @Test
+    fun deletedAndRestoredSession_doesNotReuseCachedSummary() = runTest {
+        val original = workoutSession(SessionStatus.COMPLETED).copy(actualDurationMinutes = 12)
+        val repository = FakeRepository(original)
+        val viewModel = viewModel(repository)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiState.collect {}
+        }
+        advanceUntilIdle()
+
+        repository.publishSession(null)
+        advanceUntilIdle()
+        assertThat(viewModel.uiState.value).isInstanceOf(ActiveWorkoutUiState.Error::class.java)
+
+        repository.publishSession(original.copy(name = "Restored record", actualDurationMinutes = 25))
+        advanceUntilIdle()
+        val state = viewModel.uiState.value as ActiveWorkoutUiState.Completed
+        assertThat(state.summary.workoutName).isEqualTo("Restored record")
+        assertThat(state.summary.durationMinutes).isEqualTo(25)
+        assertThat(repository.completeCalls).isEqualTo(0)
+    }
+
+    @Test
+    fun completedRoute_neverLogsSetsOrLoadsCatalogOrCompletesAgain() = runTest {
+        val repository = FakeRepository(workoutSession(SessionStatus.COMPLETED))
+        val viewModel = viewModel(repository, FailingExerciseCatalog())
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiState.collect {}
+        }
+        advanceUntilIdle()
+
+        viewModel.updateSet("set", reps = 30, weight = 80.0, isCompleted = true)
+        viewModel.finishWorkout()
+        advanceUntilIdle()
+
+        assertThat(viewModel.uiState.value).isInstanceOf(ActiveWorkoutUiState.Completed::class.java)
+        assertThat(repository.completeCalls).isEqualTo(0)
+        assertThat(repository.persistedInputs).isEmpty()
+    }
+
+    @Test
+    fun failedSessionRead_hasRetryWithoutCompletingWorkout() = runTest {
+        val stored = FakeRepository(workoutSession(SessionStatus.COMPLETED))
+        var failRead = true
+        val repository = object : WorkoutRepository by stored {
+            override fun observeSession(sessionId: String): Flow<WorkoutSession?> = flow {
+                check(!failRead) { "Read unavailable" }
+                emitAll(stored.observeSession(sessionId))
+            }
+        }
+        val viewModel = viewModel(repository)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiState.collect {}
+        }
+        advanceUntilIdle()
+        assertThat(viewModel.uiState.value).isInstanceOf(ActiveWorkoutUiState.Error::class.java)
+
+        failRead = false
+        viewModel.retry()
+        advanceUntilIdle()
+        assertThat(viewModel.uiState.value).isInstanceOf(ActiveWorkoutUiState.Completed::class.java)
+        assertThat(stored.completeCalls).isEqualTo(0)
+    }
+
+    @Test
+    fun failedSummaryRead_hasRetryAndNeverReturnsEmptySuccess() = runTest {
+        val repository = FakeRepository(workoutSession(SessionStatus.COMPLETED))
+        repository.failSummaryReads = true
+        val viewModel = viewModel(repository)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiState.collect {}
+        }
+        advanceUntilIdle()
+        assertThat(viewModel.uiState.value).isInstanceOf(ActiveWorkoutUiState.Error::class.java)
+
+        repository.failSummaryReads = false
+        viewModel.retry()
+        advanceUntilIdle()
+        assertThat(viewModel.uiState.value).isInstanceOf(ActiveWorkoutUiState.Completed::class.java)
+        assertThat(repository.completeCalls).isEqualTo(0)
     }
 
     @Test

@@ -19,8 +19,13 @@ import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
  * exactly as the real repository does, so ViewModel tests observe the same state
  * transitions the app does -- including the same rejections.
  */
-internal class FakeRepository(initialSession: WorkoutSession) : WorkoutRepository {
+internal class FakeRepository(initialSession: WorkoutSession?) : WorkoutRepository {
     private val session = MutableStateFlow<WorkoutSession?>(initialSession)
+    var failSummaryReads = false
+
+    fun publishSession(value: WorkoutSession?) {
+        session.value = value
+    }
 
     var completeCalls: Int = 0
         private set
@@ -126,6 +131,7 @@ internal class FakeRepository(initialSession: WorkoutSession) : WorkoutRepositor
     }
 
     override suspend fun getWorkoutSummary(sessionId: String): WorkoutSummary? {
+        check(!failSummaryReads) { "Summary read failed" }
         val current = session.value ?: return null
         if (current.status != SessionStatus.COMPLETED) return null
         return current.toSummary()

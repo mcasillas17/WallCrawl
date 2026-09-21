@@ -80,7 +80,8 @@ fun ActiveWorkoutScreen(
     visualProvider: ExerciseVisualProvider,
     onNavigateBack: () -> Unit,
     onWorkoutFinished: (summarySessionId: String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onOpenHistory: ((String) -> Unit)? = null
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -119,6 +120,10 @@ fun ActiveWorkoutScreen(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         WallCrawlSecondaryButton(
+                            text = stringResource(R.string.action_try_again),
+                            onClick = viewModel::retry
+                        )
+                        WallCrawlSecondaryButton(
                             text = stringResource(R.string.workout_action_go_back),
                             onClick = onNavigateBack
                         )
@@ -129,7 +134,8 @@ fun ActiveWorkoutScreen(
             is ActiveWorkoutUiState.Completed -> {
                 WorkoutSummaryScreen(
                     summary = state.summary,
-                    onDone = { onWorkoutFinished(state.summary.sessionId) }
+                    onDone = { onWorkoutFinished(state.summary.sessionId) },
+                    onOpenDetails = onOpenHistory?.let { open -> { open(state.summary.sessionId) } }
                 )
             }
 

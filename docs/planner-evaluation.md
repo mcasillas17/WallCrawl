@@ -483,6 +483,35 @@ add.
 
 ## Test entry points
 
+Package 13 adds read-only history coverage without changing the planner corpus,
+policy identities, acceptance metadata or archive format:
+
+```bash
+./gradlew testDebugUnitTest \
+  --tests '*HistoryPresentationTest' --tests '*WorkoutHistoryViewModelTest' \
+  --tests '*ProgressCalculatorTest' --tests '*WorkoutRepositoryTest' \
+  --tests '*ActiveWorkoutViewModelTest' --no-daemon
+./gradlew connectedDebugAndroidTest --no-daemon \
+  -Pandroid.testInstrumentationRunnerArguments.class=wallcrawl.elopenmike.com.core.database.WorkoutHistoryRepositoryTest
+./gradlew connectedDebugAndroidTest --no-daemon \
+  -Pandroid.testInstrumentationRunnerArguments.class=wallcrawl.elopenmike.com.app.WorkoutHistoryNavigationTest
+```
+
+Room tests cover all persisted shapes, unknown/malformed provenance, strict prior
+chronology, uncapped summary baselines, no-write reads and deletion/restore.
+Application navigation covers older pages, encoded persisted IDs, saved-state
+recreation and the single completion-summary flow. Paired-resource and Compose
+tests cover English/Spanish, light/dark, contrast and 320 dp / 1.8× text. The
+task-owned API 36 emulator also retained the viewed session after actual rotation
+and a verified background process kill/recreation. These are emulator results,
+not physical-device or manual TalkBack claims.
+
+History images in `art/screenshots/history-*.png` come from the real Room-backed
+navigation test with `captureHistoryScreenshots=true`. Its `seedHistoryDemo=true`
+option restores disposable example logs into a fresh dedicated installation for
+installed-app lifecycle checks; the ordinary connected suite never seeds the
+application database. No synthetic metadata approval is created.
+
 Package 9 UI evidence lives in `art/screenshots/progression-deload-*.png`.
 The dedicated target was `WallCrawl_Package9_API36`, `emulator-5554`,
 API 36 `arm64-v8a` (Pixel 7). Actual installed-app request/accept/cancel/decline

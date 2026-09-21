@@ -29,6 +29,8 @@ import wallcrawl.elopenmike.com.core.database.repository.DeloadRepository
 import wallcrawl.elopenmike.com.core.database.repository.OfflineDeloadRepository
 import wallcrawl.elopenmike.com.core.database.repository.WeeklyDoseLedgerRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
+import wallcrawl.elopenmike.com.core.database.repository.WorkoutHistoryRepository
+import wallcrawl.elopenmike.com.core.database.repository.OfflineWorkoutHistoryRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutTemplateRepository
 import wallcrawl.elopenmike.com.core.exercise.BundledExerciseCatalog
 import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
@@ -51,6 +53,7 @@ interface AppContainer {
     val userProfileRepository: UserProfileRepository
     val deloadRepository: DeloadRepository
     val workoutRepository: WorkoutRepository
+    val workoutHistoryRepository: WorkoutHistoryRepository
     val weeklyDoseLedgerRepository: WeeklyDoseLedgerRepository
     val progressRepository: ProgressRepository
     val workoutTemplateRepository: WorkoutTemplateRepository
@@ -105,6 +108,10 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
             sessionDao = database.workoutSessionDao(),
             setDao = database.workoutSetDao()
         )
+    }
+
+    override val workoutHistoryRepository: WorkoutHistoryRepository by lazy {
+        OfflineWorkoutHistoryRepository(database, localDataWriteGate)
     }
 
     override val deloadRepository: DeloadRepository by lazy {

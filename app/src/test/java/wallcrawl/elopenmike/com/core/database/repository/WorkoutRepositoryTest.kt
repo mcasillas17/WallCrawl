@@ -523,6 +523,31 @@ private class EmptyWorkoutSessionDao(
     private val rangeRows: List<WorkoutSessionWithExercisesAndSets> = emptyList(),
     private val records: List<WorkoutRecommendationRecordEntity> = emptyList()
 ) : WorkoutSessionDao {
+    override suspend fun selectCitedPerformanceIds(sessionId: String, sourceIds: List<String>, sourceExercisePairs: List<String>):
+        List<wallcrawl.elopenmike.com.core.database.dao.PreviousPerformanceIds> =
+        error("This fake does not model cited performance.")
+    override suspend fun selectHistoricalExercises(exerciseIds: List<String>):
+        List<wallcrawl.elopenmike.com.core.database.dao.HistoricalExerciseRow> =
+        error("This fake does not model exercise projections.")
+    override suspend fun selectHistoricalSetCounts(exerciseIds: List<String>):
+        List<wallcrawl.elopenmike.com.core.database.dao.HistoricalSetCount> =
+        error("This fake does not model eligible set counts.")
+    override suspend fun selectEligibleHistoricalSets(exerciseIds: List<String>): List<WorkoutSetEntity> =
+        error("This fake does not model previous performance sets.")
+    override suspend fun selectPreviousPerformanceIds(sessionId: String):
+        List<wallcrawl.elopenmike.com.core.database.dao.PreviousPerformanceIds> =
+        error("This fake does not model previous performance.")
+    override suspend fun selectHistoryPage(limit: Int, offset: Long): List<wallcrawl.elopenmike.com.core.model.WorkoutHistoryEntry> =
+        error("This fake does not model paged history.")
+    override suspend fun selectHistorySizes(sessionIds: List<String>):
+        List<wallcrawl.elopenmike.com.core.database.dao.HistorySessionSize> =
+        error("This fake does not model bounded history.")
+    override suspend fun selectHistorySessions(sessionIds: List<String>): List<WorkoutSessionWithExercisesAndSets> =
+        error("This fake does not model bounded history.")
+    override suspend fun selectPersonalRecordBaselines(sessionId: String):
+        List<wallcrawl.elopenmike.com.core.database.dao.PersonalRecordBaselineRow> =
+        error("This fake does not model record aggregation.")
+
     override suspend fun getRecentSessions(limit: Int): List<WorkoutSessionWithExercisesAndSets> =
         rangeRows.sortedWith(compareByDescending<WorkoutSessionWithExercisesAndSets> { it.session.startedAtTimestamp }
             .thenBy { it.session.id }).take(limit)

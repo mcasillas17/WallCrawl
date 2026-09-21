@@ -106,6 +106,23 @@ enum class SessionStatus {
     CANCELLED
 }
 
+/** Lightweight browsing entry; exercises, sets and provenance belong to the detail read. */
+data class WorkoutHistoryEntry(
+    val id: String,
+    val name: String,
+    val completedAtTimestamp: Long?,
+    val actualDurationMinutes: Int
+)
+
+/** A timestamp tie or an overlapping workout cannot establish historical evidence. */
+internal fun WorkoutSession.hasValidCompletedChronology(): Boolean =
+    status == SessionStatus.COMPLETED && startedAtTimestamp > 0 &&
+        completedAtTimestamp != null && completedAtTimestamp >= startedAtTimestamp
+
+internal fun WorkoutSession.isStrictlyPriorTo(viewed: WorkoutSession): Boolean =
+    id != viewed.id && hasValidCompletedChronology() && viewed.hasValidCompletedChronology() &&
+        requireNotNull(completedAtTimestamp) < viewed.startedAtTimestamp
+
 /**
  * An exercise instance within an active or completed [WorkoutSession].
  */

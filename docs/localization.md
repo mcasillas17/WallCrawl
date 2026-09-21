@@ -142,6 +142,29 @@ Everything numeric goes through `core/ui/format/LocaleFormatting.kt`.
 
 ## Claim boundaries
 
+History follows the same split: original session names, rationale and notes stay
+as stored, while field labels, typed outcomes and supported structured reasons
+use English/Spanish resources. Exercise IDs never need a translated catalog
+record to remain readable. The viewed workout uses its recorded unit; earlier
+comparison sets retain their own recorded units, never a relabelled number.
+Historical dates use the reader's locale/time zone without changing stored epoch
+timestamps.
+
+Missing applicable measurements and feedback read as not recorded; fields that
+do not apply to the stored exercise shape are omitted. Unknown policy/reason
+versions show an unsupported-details notice, with their exact identities in the
+technical disclosure. Known malformed provenance becomes a retryable error.
+No prose parsing or current-policy rerun translates an old decision into a new one.
+Progression copy is direction-neutral across axes: in particular, an assistance
+advance must not be translated as an increase in assistance. The Spanish
+assistance-provenance regression renders at 320 dp / 1.8× text.
+
+`WorkoutHistoryScreenTest`, `WorkoutHistoryNavigationTest` and summary/Progress
+entry tests exercise light/dark themes, complete measurement text, disclosure and
+navigation semantics, and actual density scaling at 320 dp / 1.8× Spanish text.
+The navigation suite also captures real Room-backed screens. Automated semantics
+and contrast checks do not constitute manual TalkBack certification.
+
 Today's progression reasons and deload request/accept/decline/dismiss/cancel
 controls ship in both languages. Proposed targets come from the held reference,
 not a translated description: accepting pauses any pending increase. Measurement
