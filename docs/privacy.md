@@ -81,6 +81,23 @@ decisions). The hash is a freshness check, not anonymization or a security contr
 Sessions started from a manual template, and every session recorded before this existed,
 simply have no record. Nothing fabricates one.
 
+### Reading completed workouts
+
+Progress cards, full-history pages and read-only detail expose records already on
+this device. Detail reads the session, sets, recommendation and comparisons
+coherently in one Room transaction; it never edits or re-plans a workout, logs
+another set, consumes a deload choice, bootstraps a profile or rebuilds a ledger
+cache. No new history fields, analytics collection, account or network path are
+introduced. Room remains schema 14 and the archive remains format 4.
+
+Historical title/rationale, notes and measurements are shown as stored. Current
+profile, template or catalog programming cannot fill missing historical facts.
+Unknown decision versions remain opaque, malformed known records surface an error,
+and a manual/older session's missing recommendation is an expected unavailable
+state. Deletion removes the complete related projection and returns protected
+screens to onboarding; a fresh-start restore cannot revive an obsolete detail
+back stack. The existing export and deletion boundaries below still apply.
+
 ### Archive compatibility
 
 The archive format has its own version, separate from the Room schema version. This

@@ -5,6 +5,9 @@ import java.time.ZoneId
 import kotlin.math.roundToInt
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.ExerciseType
+import wallcrawl.elopenmike.com.core.model.WorkoutSummary
+import wallcrawl.elopenmike.com.core.model.hasValidCompletedChronology
+import wallcrawl.elopenmike.com.core.model.isStrictlyPriorTo
 import wallcrawl.elopenmike.com.core.model.MuscleProgressStat
 import wallcrawl.elopenmike.com.core.model.MuscleVocabulary
 import wallcrawl.elopenmike.com.core.model.PersonalRecord
@@ -98,58 +101,81 @@ class ProgressCalculator {
 
     /**
      * Counts exercises in [session] that beat every prior completed performance of the same
-     * exercise, using the same rules as the Progress screen's records list: a heavier top set
-     * for loaded work, more reps for bodyweight work, and no record without prior history to
-     * beat. [session] must already carry its own completed sets; [priorCompletedSessions] may
-     * include [session] itself, which is filtered out.
+     * exercise and persisted type: a heavier top set for loaded work, more reps otherwise,
+     * and no record without prior history to beat. Warm-ups retain their existing eligibility.
+     * Both sessions need valid completed chronology; only completion strictly before the
+     * viewed start is prior evidence, regardless of the order or scope of the supplied list.
      */
     fun countPersonalRecords(
         session: WorkoutSession,
         priorCompletedSessions: List<WorkoutSession>
     ): Int {
-        val bestByExercise = mutableMapOf<String, ExerciseBest>()
-        priorCompletedSessions
+        val baselines = priorCompletedSessions
             .asSequence()
-            .filter { it.id != session.id && it.status == SessionStatus.COMPLETED }
-            .map { it.convertWeightsTo(session.weightUnit) }
-            .forEach { prior ->
-                prior.exercises.forEach { exercise ->
-                    val completedSets = exercise.sets.filter { it.isValidCompletedSet() }
-                    if (completedSets.isEmpty()) return@forEach
-                    val existing = bestByExercise[exercise.exerciseId]
-                    bestByExercise[exercise.exerciseId] = ExerciseBest(
-                        weight = maxOfNullable(
-                            existing?.weight,
-                            completedSets.mapNotNull { it.validPositiveWeight() }.maxOrNull()
-                        ),
-                        reps = maxOfNullable(
-                            existing?.reps,
-                            completedSets.mapNotNull { it.completedReps }.maxOrNull()
-                        )
+            .filter { it.isStrictlyPriorTo(session) }
+            .flatMap { prior ->
+                prior.exercises.mapNotNull { exercise ->
+                    val sets = exercise.sets.filter {
+                        it.exerciseType == exercise.prescription.exerciseType && it.isValidRecordSet()
+                    }
+                    if (sets.isEmpty()) return@mapNotNull null
+                    PersonalRecordBaseline(
+                        exerciseId = exercise.exerciseId,
+                        exerciseType = exercise.prescription.exerciseType,
+                        weightUnit = prior.weightUnit,
+                        maxWeight = sets.mapNotNull { it.validPositiveWeight() }.maxOrNull(),
+                        maxReps = sets.mapNotNull { it.completedReps }.maxOrNull()
                     )
                 }
-            }
+            }.toList()
+        return countPersonalRecordsFromBaselines(session, baselines)
+    }
 
-        // Grouped by exercise so the same lift entered twice in one session counts once,
-        // matching how the Progress screen lists records.
+    /** SQL supplies these maxima only from strictly prior sessions; never a capped sample. */
+    internal fun countPersonalRecordsFromBaselines(
+        session: WorkoutSession,
+        baselines: List<PersonalRecordBaseline>
+    ): Int {
+        if (!session.hasValidCompletedChronology()) return 0
+        val bestByExercise = baselines.groupBy { it.exerciseId to it.exerciseType }
         return session.exercises
             .groupBy { it.exerciseId }
             .count { (exerciseId, entries) ->
-                val completedSets = entries.flatMap { entry ->
-                    entry.sets.filter { it.isValidCompletedSet() }
-                }
-                if (completedSets.isEmpty()) return@count false
-                val best = bestByExercise[exerciseId] ?: return@count false
-
-                val topWeight = completedSets.mapNotNull { it.validPositiveWeight() }.maxOrNull()
-                if (topWeight != null) {
-                    best.weight != null && topWeight > best.weight
-                } else {
-                    val topReps = completedSets.mapNotNull { it.completedReps }.maxOrNull()
-                    topReps != null && best.reps != null && topReps > best.reps
+                entries.groupBy { it.prescription.exerciseType }.any { (type, typedEntries) ->
+                    val sets = typedEntries.flatMap { it.sets }.filter {
+                        it.exerciseType == type && it.isValidRecordSet()
+                    }
+                    val previous = bestByExercise[exerciseId to type].orEmpty()
+                    val topWeight = sets.mapNotNull { it.validPositiveWeight() }.maxOrNull()
+                    if (topWeight != null) {
+                        val priorWeight = previous.mapNotNull { baseline ->
+                            baseline.maxWeight?.let { convertWeight(it, baseline.weightUnit, session.weightUnit) }
+                        }.maxOrNull()
+                        priorWeight != null && topWeight > priorWeight
+                    } else {
+                        val topReps = sets.mapNotNull { it.completedReps }.maxOrNull()
+                        val priorReps = previous.mapNotNull { it.maxReps }.maxOrNull()
+                        topReps != null && priorReps != null && topReps > priorReps
+                    }
                 }
             }
     }
+
+    private fun WorkoutSet.isValidRecordSet(): Boolean =
+        exerciseType in REP_BASED_TYPES && stopReason == null && stoppedAtTimestamp == null &&
+            isValidCompletedSet()
+
+    internal fun summarize(session: WorkoutSession, baselines: List<PersonalRecordBaseline>): WorkoutSummary =
+        WorkoutSummary(
+            sessionId = session.id,
+            workoutName = session.name,
+            durationMinutes = session.actualDurationMinutes,
+            totalSetsCompleted = session.completedSetsCount,
+            totalVolume = session.totalVolume,
+            prCount = countPersonalRecordsFromBaselines(session, baselines),
+            unit = session.weightUnit,
+            completedAtTimestamp = session.completedAtTimestamp ?: session.startedAtTimestamp
+        )
 
     private fun calculateStreakWeeks(
         completedTimestamps: List<Long>,
@@ -457,25 +483,6 @@ class ProgressCalculator {
         val sets: List<WorkoutSet>
     )
 
-    private data class ExerciseBest(
-        val weight: Double?,
-        val reps: Int?
-    )
-
-    private fun maxOfNullable(first: Double?, second: Double?): Double? =
-        when {
-            first == null -> second
-            second == null -> first
-            else -> maxOf(first, second)
-        }
-
-    private fun maxOfNullable(first: Int?, second: Int?): Int? =
-        when {
-            first == null -> second
-            second == null -> first
-            else -> maxOf(first, second)
-        }
-
     private companion object {
         const val MAX_RECENT_HISTORY = 10
         const val MAX_RECORDS = 3
@@ -486,4 +493,14 @@ class ProgressCalculator {
             ExerciseType.ASSISTED_BODYWEIGHT
         )
     }
+
 }
+
+/** A grouped maximum in its original unit, shared by in-memory and Room history reads. */
+data class PersonalRecordBaseline(
+    val exerciseId: String,
+    val exerciseType: ExerciseType,
+    val weightUnit: WeightUnit,
+    val maxWeight: Double?,
+    val maxReps: Int?
+)

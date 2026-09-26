@@ -50,10 +50,13 @@ import wallcrawl.elopenmike.com.core.model.ThemePreference
 import wallcrawl.elopenmike.com.core.model.TrainingWeek
 import wallcrawl.elopenmike.com.core.model.WeeklyDoseLedger
 import wallcrawl.elopenmike.com.core.model.WeightUnit
+import wallcrawl.elopenmike.com.core.model.WorkoutSession
+import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.ui.localization.ExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.theme.WallCrawlTheme
 import wallcrawl.elopenmike.com.core.ui.theme.LightSurfaceCard
+import wallcrawl.elopenmike.com.core.ui.theme.LightBackground
 
 /**
  * Drives the stateless Progress surface across languages, themes, real large text, and every
@@ -75,6 +78,44 @@ class ProgressScreenTest {
     private val context: Context = InstrumentationRegistry.getInstrumentation().targetContext
     private val english: Context = context.localized(Locale.ENGLISH)
     private val spanish: Context = context.localized(LATIN_AMERICAN_SPANISH)
+
+    @Test
+    fun completedHistoryCardIsAnAccessibleDetailNavigationAction() {
+        var openedId: String? = null
+        render(success(overview = emptyOverview().copy(
+            recentHistory = listOf(WorkoutSession(
+                id = "recorded-session",
+                name = "Original historical title",
+                status = SessionStatus.COMPLETED
+            ))
+        )), Locale.ENGLISH, ThemePreference.LIGHT, onOpenSession = { openedId = it })
+
+        scrollTo("Original historical title")
+        composeRule.onNodeWithText("Original historical title")
+            .assertHasClickAction()
+            .assertHeightIsAtLeast(48.dp)
+            .performClick()
+        assertThat(openedId).isEqualTo("recorded-session")
+    }
+
+    @Test
+    fun olderHistoryHasADiscoverableNavigationAction() {
+        render(success(), Locale.ENGLISH, ThemePreference.DARK)
+
+        scrollTo("View all workouts")
+        composeRule.onNodeWithText("View all workouts").assertHasClickAction()
+    }
+
+    @Test fun olderHistoryEntryHasReadableLightThemeContrast() {
+        render(success(), Locale.ENGLISH, ThemePreference.LIGHT)
+        scrollTo("View all workouts")
+        val layouts = mutableListOf<TextLayoutResult>()
+        composeRule.onNodeWithText("View all workouts", useUnmergedTree = true)
+            .performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layouts) }
+        assertThat(ColorUtils.calculateContrast(
+            layouts.single().layoutInput.style.color.toArgb(), LightBackground.toArgb()
+        )).isAtLeast(4.5)
+    }
 
     @Test
     fun loadedProgressLabelsActivityDoseAndInvolvementSeparately() {
@@ -347,7 +388,8 @@ class ProgressScreenTest {
         locale: Locale,
         theme: ThemePreference,
         fontScale: Float = 1.0f,
-        onRetry: () -> Unit = {}
+        onRetry: () -> Unit = {},
+        onOpenSession: (String) -> Unit = {}
     ) {
         composeRule.setContent {
             val localized = LocalContext.current.localized(locale, fontScale)
@@ -364,7 +406,7 @@ class ProgressScreenTest {
                 LocalExerciseVocabulary provides vocabulary
             ) {
                 WallCrawlTheme(themePreference = theme) {
-                    ProgressScreen(uiState = state, onRetry = onRetry)
+                    ProgressScreen(uiState = state, onRetry = onRetry, onOpenSession = onOpenSession)
                 }
             }
         }

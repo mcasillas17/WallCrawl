@@ -38,6 +38,7 @@ Bundled catalog ─────────┤  profile + history → filter →
                                           ▼
                               completed local history
                                  ├─ progress metrics
+                                 ├─ read-only targets, outcomes and decision detail
                                  └─ future planner context
 ```
 
@@ -1073,11 +1074,84 @@ the same explicit confirmation. Backing out of either dialog does nothing, and
 repeated taps stay idempotent. Skipped sets stay distinguishable from sets that
 were never started, and neither contributes volume, history, or progress.
 
-`WorkoutSummary` is built only by `WorkoutRepository`, from one history window,
-whether a workout has just been completed or is being revisited. Personal
-records use the same rules as the Progress screen's record list — a heavier top
-set for loaded work, more reps for bodyweight work, and no record without prior
-history to beat — so the two surfaces cannot disagree.
+`WorkoutSummary` uses one shared `ProgressCalculator.summarize` calculation for
+the completion transaction, reopened summaries and history detail. Its baseline
+is a grouped SQL aggregate over all eligible earlier observations for the viewed
+exercise IDs and stored types, in their recorded units before explicit load
+conversion. It is not a global recent-200/500-session sample. The established
+record types, warm-up treatment and volume semantics remain; an initial
+observation is not a record. The Progress overview's separate record/trend
+window remains bounded at 500 sessions and is not the authority for an older
+workout's achievement.
+
+### Immutable history detail
+
+Completion remains `ActiveWorkoutScreen`'s completed state. The unused summary
+route is removed. Progress cards and the completion summary open
+`history/{sessionId}`; `history` browses completed sessions in fixed pages of 20
+with older/newer controls. The route carries an encoded persisted ID, not a
+serialized workout. The direct lookup is independent of the overview's recent
+ten. Back returns to the caller, and completion Done retains its Progress flow.
+
+The detail read in `OfflineWorkoutHistoryRepository` observes session, exercise,
+set and recommendation-table invalidations. Under the existing local-data gate, one Room
+transaction reads the session, its recommendation, bounded earlier/cited
+exercise projections and its summary. Child cardinalities are checked before relation loads;
+overflow and malformed known data fail explicitly rather than producing
+truncated success. Previous-performance selection and summary maxima are
+database queries, not unbounded in-memory history or queries per set.
+No read bootstraps a profile, writes history, rebuilds a ledger cache or consumes
+a deload choice.
+
+Both ordinary and cited comparisons select only the needed exercise instances,
+eligible sets and `HistoricalSessionHeader` metadata. They share SQL chronology,
+measurement-shape and eligible-set predicates and the existing exercise/set
+mapper. Required projection sizes are checked before sets are materialized;
+unrelated exercises in a large prior workout are neither loaded nor counted
+against comparison limits. A citation is keyed by source session and viewed
+exercise instance, so repeated instances cannot overwrite one another. The
+viewed workout stays a complete snapshot; headers never masquerade as partial
+`WorkoutSession` values.
+
+Browsing observes only the session table and selects at most 21 scalar
+`WorkoutHistoryEntry` rows (ID, original name, completion time and recorded
+duration), returning 20 plus an older-page sentinel. It does not load exercise,
+set or provenance object graphs. The size of unrelated workouts therefore cannot
+make an otherwise valid history page exceed a detail/archive batch ceiling.
+
+The detail renders the stored session origin, times, units, duration and original
+text; ordered exercise prescriptions and notes; and each set's own planned
+targets, performed measurements, classification, outcome, feedback and times.
+Exercise-level rep ranges and per-set rep targets remain separate facts.
+Assistance is not external load, bodyweight has no invented load field, and null
+applicable values stay unrecorded. Exercise IDs are the display fallback without
+any catalog dependency. Current profile, template, catalog programming and policy
+outputs never fill historical gaps. `USER_PREFERENCE` rest provenance can be
+shown because it exists; value differences do not imply an override. Substitution
+history remains unavailable until Package 10 creates those snapshots.
+
+Prior sessions must be distinct, completed, have positive ordered session times,
+and finish **strictly before the viewed start**. Equal boundary times and overlaps
+are excluded. Latest completion, then latest start, then ascending session ID,
+exercise order and instance ID determine ordinary comparison ties. Exact
+exercise ID and persisted measurement shape must match; distance-only,
+duration-only and combined shapes differ. Ordinary/cited comparison sets exclude
+warm-ups, stopped/unresolved or invalid measurements and recorded outcome times
+outside their session. Legacy null outcome times remain null. Performed-value
+bounds follow archive compatibility, not current target ceilings. Earlier values
+keep their original units; no growth percentage is fabricated.
+
+Stored `ProgressionReasonCode`, `DeloadReasonCode` and `WorkoutRankingReasonCode`
+explain the recorded decision, while validation reasons are interpreted only
+under supported validator versions. Useful reasons precede an expandable
+technical/accounting disclosure. Unknown versions retain their identities
+without adopting today's meaning; malformed known groups produce Error with
+Retry. Manual/older sessions without a recommendation report that absence.
+Accepted deload is read from the session's record, not today's mutable choice.
+Progression source IDs are distinct from ordinary previous performance. A source
+must exist and be compatible and genuinely earlier to supply measurements;
+the stored reason/axis does not contain a frozen before/after prescription or
+enough inputs to rerun the historical planner.
 
 `WeeklyDoseLedgerRepository` reconstructs a `PRIMARY_ONLY_V1` ledger from completed history
 and accepted direct-primary metadata (`APPROVED` or `AI_ACCEPTED`). Missing, `DRAFT`, and
@@ -1096,10 +1170,10 @@ suppress a soft capability penalty for the matching candidate. Progression and s
 transitions still do not consume the ledger. On the legacy path the state is absent,
 `capabilityEvidence` is empty, and the existing prescription path is returned unchanged.
 
-The adaptation policy derives only `UNCALIBRATED` and `RETURNING`. `ExerciseEligibilityPolicy`
-withholds advanced-complexity work on exactly those two states, so a third derived state
-would lift that ceiling; a regression test couples them so widening the policy cannot happen
-by accident.
+The adaptation policy derives reported `RETURNING`, accepted-deload `HOLD`, otherwise
+`UNCALIBRATED`. Every state keeps the advanced-complexity ceiling unless the existing
+demonstrated-family or legal supported-regression exception applies; historical state
+identities in a recommendation are not recomputed from today's profile.
 
 ## Lifecycle and failure handling
 
@@ -1122,6 +1196,21 @@ previous process's elapsed-realtime baseline would restore as a misleading
 countdown, so the timer resets to `Idle` while the session itself is resumed
 intact. This milestone adds no foreground service, notification, alarm, or Wear
 behaviour.
+
+History ViewModels collect only while RESUMED and clear replay when hidden.
+Loading, loaded, missing/deleted session, unsupported status and recoverable read
+error are distinct; Retry resubscribes instead of returning an empty success.
+Deletion/restore invalidates the whole projection. A profile reset clears
+protected destinations and saved tab back stacks, preserving the onboarding
+contract even when a history screen is open.
+
+The active logger keeps its history subscription stable while sets change, so
+partial input, focus and feedback controls survive persistence emissions.
+A short subscription grace preserves rotation without restoring a rest timer
+after process death. Completed-state restoration only reads its summary.
+Finish deliberately performs one observed summary read after its atomic
+completion transaction: a delayed returned summary must not overwrite newer
+history after deletion/restore.
 
 ## Dynamic Theming and Visual Contrast
 

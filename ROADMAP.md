@@ -1,6 +1,6 @@
 # WallCrawl Roadmap
 
-> **Status date:** 2026-09-19
+> **Status date:** 2026-09-21
 >
 > **Evidence baseline:** `002cfde` (enable AI-reviewed production planning, #78). Package 1
 > status additionally
@@ -30,7 +30,12 @@
 > Package 9 implementation is based on freshly fetched `df4c376` (#85), with
 > comparison, lifecycle and persistence decisions recorded in the focused
 > [design](docs/superpowers/specs/2026-09-19-progression-and-deload-design.md).
-> Its final delivery gates are tracked in the Package 9 status below.
+> Its merged status is recorded in the Package 9 section below.
+> Package 13 is based on freshly fetched `91a0938` (#86). Its implementation
+> includes coherent Room history reads, stable chronological summary records,
+> paged navigation and English/Spanish detail, with the focused
+> [design](docs/superpowers/specs/2026-09-21-workout-history-detail-design.md)
+> defining the persisted-data and comparison contracts.
 >
 > This is the single source of truth for current project status, priority, dependency
 > order, and implementation scope. Status must be derived from repository evidence rather
@@ -50,8 +55,8 @@ network connection, or companion device.
 | Onboarding and profile | Shipped as an eight-step flow with seven movement-capability questions, plus export, restore, and delete-all controls | Restore requires a fresh start, so it cannot merge into an installation that already holds data |
 | Templates and logging | Shipped with frozen template snapshots, type-aware outcomes, RPE/RIR, typed stops, and a local rest timer | Template targets are only partly editable; unsaved drafts are not restored after process death |
 | Localization | English and neutral Latin American Spanish shipped across the whole interface, the 302-exercise catalog, generated workout text, and accessibility labels, selectable from onboarding and Profile through Android's per-app language mechanism | Only two languages; historical session text stays in the language it was written in, by design |
-| Progress and history | Calendar-week activity, separately labelled reviewed primary dose, non-additive involvement, records, trends, summaries, and recent history implemented | Workout-summary navigation and history drill-down remain incomplete; production reviewed muscle allocation now covers the 182 `AI_ACCEPTED` records but no genuinely human-`APPROVED` metadata exists |
-| Deterministic coach | Reviewed eligibility/ranking, weekly ledger, state guidance and whole-program validation; Package 9 adds single-axis progression and persistent user-controlled deload in the production composition | Genuine human `APPROVED` review remains independent; Package 9 delivery gates are recorded below |
+| Progress and history | Calendar-week activity, separately labelled reviewed primary dose, records/trends, one completion-summary flow, paged completed history and read-only snapshot detail implemented | Substitution-specific detail awaits Package 10; deeper charts/filters remain Package 14; no genuinely human-`APPROVED` metadata exists |
+| Deterministic coach | Reviewed eligibility/ranking, weekly ledger, state guidance and whole-program validation; Package 9 adds single-axis progression and persistent user-controlled deload in the production composition | Genuine human `APPROVED` review remains independent; substitutions and multi-week programs remain future packages |
 | Planner evaluation | Versioned persona corpus (`planner-fixtures/manifest.txt` is the authoritative roster), with the reviewed-enabled personas' weeks replayed through the real ledger and every successful persona's proposal validated as a complete program, importer unit tests, real pinned-upstream regeneration check, JVM tests, and Android CI shipped | None for this package; reviewed-planner enablement (package 7) is done, and human-approval rollout (package 3) is the remaining gate |
 | Optional local model | Not started | Blocked on a stable deterministic release |
 | Health Connect and Wear OS | Not started; only `:app` exists | Shared modules, privacy controls, validation, substitutions, protocol, and device evidence |
@@ -124,10 +129,11 @@ These decisions must be recorded before the related implementation package close
 3. **Validation persistence:** ~~decided~~. A dedicated `workout_recommendation_records`
    table holds one immutable row per started session, written in the same transaction as the
    session, and travels in the local-data archive. It arrived in Room schema 12 and archive
-   format version 2; later work advanced those to schema 13 and archive format 3, and the
-   table travels unchanged in both. Columns beside the
+   format version 2; the current schema is 14 and archive format 4 still preserves
+   this record. Columns beside the
    session were rejected: the record is provenance about a decision rather than part of the
-   session, and a separate table keeps it out of every ordinary session read.
+   session,    and a separate table keeps it out of ordinary session reads; the history-detail
+   projection explicitly joins its related record in a coherent transaction.
 4. **Reviewed rollout scope:** ~~decided~~. Package 7 enabled the conservative
    `AI_ACCEPTED` alpha before progression/deload. Package 9 adds those behaviors
    without expanding acceptance or authorizing a release.
@@ -316,9 +322,9 @@ and approval does not silently expand beyond what a human actually reviewed.
 
 **Status:** Complete. `ProgramValidator` checks a complete proposal before it is shown and
 again before it is started, and `workout_recommendation_records` records how each started
-session was decided. The table arrived in Room schema 12 and archive format version 2; later
-work moved the database to schema 13 and the archive to format 3, and the table travels
-unchanged in both. Reviewed-only rules are now active in production because
+session was decided. The table arrived in Room schema 12 and archive format version 2;
+the current database is schema 14 and archive format 4 reads versions 1–4.
+Reviewed-only rules are now active in production because
 `PlannerFeatureFlags.reviewedCapabilityEligibility` is `true` and the bundled cohort
 carries 182 `AI_ACCEPTED` records.
 
@@ -363,12 +369,14 @@ undefined.
    unrepresentable arithmetic, and a full configured allowance remain three distinct typed
    reasons, and `NEEDS_ONBOARDING` records an absent allowance rather than a violation. No
    weekly minimum and no automatic increase were added.
-4. Load provenance keeps a null target null and accepts a value only from a confirmed
-   starting load or the last recorded load, optionally plus the shipped legacy 5.0 lb /
-   2.5 kg increment. `DURATION_ESTIMATOR_V1` is shared by the planner and the validator with
+4. Reviewed load/assistance provenance uses the shared prescription decision: a held
+   recorded/confirmed reference or the authorized single-axis progression. The old
+   5.0 lb / 2.5 kg default is isolated to manual/disabled paths.
+   `DURATION_ESTIMATOR_V1` is shared by the planner and the validator with
    a ±1-minute tolerance and deliberately no requested-duration rule.
 5. Exactly one deterministic repair pass may reduce sets, in recommendation order, with every
-   affected exercise keeping at least one; it recomputes the duration and fails closed rather
+   affected exercise keeping at least one; a pending progression on that exercise first
+   returns to its reference axis. It recomputes the duration and fails closed rather
    than dropping an exercise. It never weakens a constraint, widens the candidate set,
    invents a load, or leaves reviewed-only eligibility. Repair is disabled at start.
 6. `TodayViewModel` validates before display and revalidates at start against a freshly built
@@ -380,8 +388,8 @@ undefined.
    adaptation state, accounting week and zone, profile revision, context digest, ordered
    reason codes, and per-muscle completed/proposed/allowance counts. It is written in the same
    transaction as the session, so a refused start leaves neither, and it travels in the archive.
-   It shipped in archive format version 2; the build now writes format 3 and still restores
-   versions 1 through 3.
+   It shipped in archive format version 2; the build now writes format 4 and still restores
+   versions 1 through 4.
 
 **Surfaces:** `core/ai/ProgramValidator`, `core/ai/ProgramViolation`,
 `core/ai/RecommendationSnapshot`, `core/ai/RecommendationContextIdentity`,
@@ -650,9 +658,8 @@ frequency/recency, with the same regeneration input included in equal-input repl
 
 ### 9. Add one-variable progression and user-controlled deload
 
-**Status:** Implemented. All seven tasks are wired into the production path;
-the independent implementation panel converged after repair. Publication
-requires the separate final documented-state review and passing checks.
+**Status:** Complete; merged in #86 (`91a0938`). All seven tasks are wired into
+the production path.
 This package authorizes neither genuine human metadata approval nor a release.
 
 **Depends on:** Package 4. Package 7 depends on this only when progression is part of the first
@@ -764,26 +771,39 @@ passes the single-session gates, and historical recommendations remain reproduci
 
 ### 13. Wire workout summary and immutable history detail
 
-**Status:** Partly shipped. `WorkoutSummaryScreen` renders inside the active-workout state, but
-the declared summary route is not registered; recent history has no detail destination.
+**Status:** Complete for the existing immutable-history scope. The substitution-specific
+part of task 3 remains explicitly pending until Package 10 supplies its snapshots.
 
 **Depends on:** Shipped immutable session snapshots; package 10 for substitution detail.
 
-**Implementation tasks:**
+**Implemented:**
 
-1. Decide whether summary remains an active-workout state or becomes the declared
-   `workout_summary/{sessionId}` destination; remove the unused alternative.
-2. Add `history/{sessionId}` navigation from completed-workout cards.
-3. Render stored targets, performed values, unit, timestamps, effort, stop reasons,
-   substitutions, notes, guidance, explicit user overrides, and policy reasons from the
-   snapshot rather than the current catalog/profile.
-4. Handle missing/deleted catalog records with stored IDs and measurements.
-5. Show prior-versus-planned-versus-performed comparisons without manufacturing a trend or
-   growth percentage from one observation.
-6. Add route, state-restoration, and ViewModel tests.
+1. Kept the existing active-workout completion summary and Done-to-Progress flow;
+   removed the unused summary route. Reopening only reads; no repeated completion,
+   set logging, timer startup or deload consumption.
+2. Added encoded-ID `history/{sessionId}` navigation from Progress and summary, plus
+   fixed 20-entry older/newer history pages independent of the overview's recent ten.
+3. Rendered session/exercise/set snapshots, separate exercise prescriptions and set
+   targets/results, units, times, typed feedback/stops, notes and stored guidance.
+   Only recorded rest-preference provenance is labelled explicit; differences from
+   targets do not invent overrides. Supported stored reasons are localized, unknown
+   versions remain opaque, and malformed known records fail explicitly.
+4. Used stored exercise IDs without requiring current catalog data. Missing sessions,
+   unsupported status, loading and retryable read errors are distinct.
+5. Separated ordinary prior performance from cited progression sources; all prior
+   sessions must finish strictly before the viewed start. Bounded grouped SQL record
+   baselines have no global recent-session cap and cannot leak future workouts.
+6. Added pure, ViewModel, real Room, navigation/restoration and Compose coverage,
+   including no-write reads, deletion/restore, English/Spanish, 320 dp and 1.8 text.
+   Actual task-owned API 36 rotation and background process-death restoration were
+   also exercised; this is not physical-device or manual TalkBack certification.
 
-**Likely surfaces:** app routes/NavHost, active workout, workout summary, Progress history cards,
-new history feature state/UI, and repository summary/detail queries.
+**Surfaces:** app routes/NavHost, active workout/summary, Progress cards, `feature/history`,
+`WorkoutHistoryRepository`/DAO, shared summary calculations and paired string resources.
+Room 14 and archive 4 (reads 1–4) are unchanged.
+
+**Still dependent on Package 10:** planned-versus-performed substitution identities
+and targets. No substitution data or historical override events were invented.
 
 **Done when:** completion has one intentional summary flow and any completed session can be
 opened as an honest immutable historical record.

@@ -18,14 +18,26 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.model.WorkoutSummary
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.transformLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class ActiveWorkoutViewModel(
     private val sessionId: String,
     private val workoutRepository: WorkoutRepository,
@@ -47,9 +59,8 @@ class ActiveWorkoutViewModel(
     // errorFlow does (see uiState below): it is a recoverable, dismissible condition on
     // the Active state, cleared automatically the next time a set update succeeds.
     private val setUpdateErrorFlow = MutableStateFlow<Int?>(null)
-    private val summaryFlow = MutableStateFlow<WorkoutSummary?>(null)
+    private val refreshRequests = MutableStateFlow(0L)
     private var finishRequested = false
-    private var summaryJob: Job? = null
 
     // Rest timer state lives here so it survives recomposition and configuration changes.
     // It is intentionally not restored after process death; see RestTimerStateMachine.
@@ -70,11 +81,37 @@ class ActiveWorkoutViewModel(
     private val outcomesAwaitingObservation = mutableMapOf<String, SetPerformanceInput>()
     private var latestSession: WorkoutSession? = null
 
-    private val sessionHistoryFlow = combine(
-        workoutRepository.observeSession(sessionId),
-        workoutRepository.observeCompletedSessions(limit = MAX_PREVIOUS_PERFORMANCE_SESSIONS)
-    ) { session, completedSessions ->
-        SessionHistory(session, completedSessions)
+    private val sessionHistoryFlow = refreshRequests.flatMapLatest {
+        flow {
+            coroutineScope {
+                val sessions = flow {
+                    emitAll(workoutRepository.observeSession(sessionId))
+                }.stateIn(this)
+                emitAll(sessions.map { it?.status }.distinctUntilChanged().flatMapLatest { status ->
+                    val matchingSessions = sessions.filter { it?.status == status }
+                    if (status == SessionStatus.IN_PROGRESS) {
+                        combine(matchingSessions, workoutRepository.observeCompletedSessions(
+                            limit = MAX_PREVIOUS_PERFORMANCE_SESSIONS
+                        )) { session, history -> SessionHistory(session, history) }
+                    } else {
+                        matchingSessions.transformLatest { session ->
+                            if (session?.status == SessionStatus.COMPLETED) {
+                                emit(SessionHistory(null, emptyList(), isLoading = true))
+                                emit(SessionHistory(session, emptyList(),
+                                    summary = workoutRepository.getWorkoutSummary(session.id)))
+                            } else {
+                                emit(SessionHistory(session, emptyList()))
+                            }
+                        }
+                    }
+                })
+            }
+        }.onStart {
+            emit(SessionHistory(null, emptyList(), isLoading = true))
+        }.catch { error ->
+            if (error is CancellationException) throw error
+            emit(SessionHistory(null, emptyList(), readError = R.string.workout_summary_error))
+        }
     }
 
     private val errorStateFlow = combine(
@@ -90,26 +127,21 @@ class ActiveWorkoutViewModel(
         sessionHistoryFlow,
         currentExerciseIndexFlow,
         currentCatalogExerciseFlow,
-        errorStateFlow,
-        summaryFlow
-    ) { sessionHistory, exerciseIndex, catalogEx, screenState, summary ->
+        errorStateFlow
+    ) { sessionHistory, exerciseIndex, catalogEx, screenState ->
         val (session, completedSessions) = sessionHistory
         latestSession = session
         forgetOutcomesObservedIn(session)
         val error = screenState.error
-        if (session == null) {
+        if (sessionHistory.isLoading) {
             ActiveWorkoutUiState.Loading
+        } else if (sessionHistory.readError != null) {
+            ActiveWorkoutUiState.Error(sessionHistory.readError)
+        } else if (session == null) {
+            ActiveWorkoutUiState.Error(R.string.workout_no_longer_active)
         } else if (session.status == SessionStatus.COMPLETED) {
-            // The repository owns the summary so its personal-record count is computed once,
-            // over one history window, whether the workout just finished or is revisited.
-            when {
-                summary?.sessionId == session.id -> ActiveWorkoutUiState.Completed(summary)
-                error != null -> ActiveWorkoutUiState.Error(error)
-                else -> {
-                    loadSummary(session.id)
-                    ActiveWorkoutUiState.Loading
-                }
-            }
+            sessionHistory.summary?.let { ActiveWorkoutUiState.Completed(it) }
+                ?: ActiveWorkoutUiState.Error(R.string.workout_no_longer_active)
         } else if (error != null) {
             ActiveWorkoutUiState.Error(error)
         } else if (session.status != SessionStatus.IN_PROGRESS) {
@@ -144,9 +176,14 @@ class ActiveWorkoutViewModel(
         }
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
+        started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5_000, replayExpirationMillis = 0),
         initialValue = ActiveWorkoutUiState.Loading
     )
+
+    fun retry() {
+        errorFlow.value = null
+        refreshRequests.update { it + 1 }
+    }
 
     private fun loadCatalogExercise(exerciseId: String) {
         viewModelScope.launch {
@@ -192,6 +229,7 @@ class ActiveWorkoutViewModel(
     }
 
     fun updateSet(setId: String, performance: SetPerformanceInput) {
+        if (uiState.value !is ActiveWorkoutUiState.Active) return
         val current = currentOutcome(setId)
         // A repeat of the outcome this set already has is a duplicate tap or a re-emitted
         // edit, not new information, so it is never written again.
@@ -375,7 +413,9 @@ class ActiveWorkoutViewModel(
                     startedAtTimestamp = currentState.session.startedAtTimestamp,
                     nowTimestamp = nowMillis()
                 )
-                summaryFlow.value = workoutRepository.completeWorkout(sessionId, elapsedMinutes)
+                // Its return describes the completion transaction. The observed read stays
+                // authoritative if deletion/restore replaces history before this call resumes.
+                workoutRepository.completeWorkout(sessionId, elapsedMinutes)
                 restTimer.cancel()
                 publishRestTimer()
             } catch (e: CancellationException) {
@@ -473,7 +513,10 @@ class ActiveWorkoutViewModel(
 
     private data class SessionHistory(
         val session: WorkoutSession?,
-        val completedSessions: List<WorkoutSession>
+        val completedSessions: List<WorkoutSession>,
+        val summary: WorkoutSummary? = null,
+        val isLoading: Boolean = false,
+        @StringRes val readError: Int? = null
     )
 
     private data class ConfirmationState(
@@ -487,21 +530,6 @@ class ActiveWorkoutViewModel(
         val restTimer: RestTimerUiState,
         val confirmations: ConfirmationState
     )
-
-    private fun loadSummary(completedSessionId: String) {
-        // completeWorkout already returns the summary, and Room publishes the completed
-        // session before it returns; without this the finish path reads history twice.
-        if (finishRequested || summaryJob?.isActive == true) return
-        summaryJob = viewModelScope.launch {
-            try {
-                summaryFlow.value = workoutRepository.getWorkoutSummary(completedSessionId)
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Exception) {
-                errorFlow.value = R.string.workout_summary_error
-            }
-        }
-    }
 
 }
 

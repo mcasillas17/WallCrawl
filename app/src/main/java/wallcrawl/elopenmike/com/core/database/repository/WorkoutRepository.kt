@@ -92,7 +92,7 @@ interface WorkoutRepository {
 
     /**
      * Summary of an already completed session, including its personal-record count.
-     * Shares one implementation and one history window with [completeWorkout] so the
+     * Shares one calculation and strictly-prior baseline with [completeWorkout] so the
      * number cannot differ between finishing a workout and revisiting it.
      */
     suspend fun getWorkoutSummary(sessionId: String): WorkoutSummary?
@@ -468,45 +468,18 @@ class OfflineWorkoutRepository(
     override suspend fun completeWorkout(sessionId: String, actualDurationMinutes: Int): WorkoutSummary {
         require(sessionId.isNotBlank()) { "sessionId must not be blank." }
         require(actualDurationMinutes > 0) { "actualDurationMinutes must be greater than zero." }
-        val completedTimestamp = System.currentTimeMillis()
-        val affectedRows = sessionDao.completeSessionIfActive(
+        return sessionDao.completeWorkoutAndReadSummary(
             sessionId = sessionId,
-            completedAt = completedTimestamp,
-            actualDuration = actualDurationMinutes
+            completedAt = System.currentTimeMillis(),
+            actualDuration = actualDurationMinutes,
+            calculator = progressCalculator
         )
-        check(affectedRows == 1) {
-            "Workout session '$sessionId' was not found or is not in progress."
-        }
-
-        val session = checkNotNull(getSessionById(sessionId)) {
-            "Completed workout session '$sessionId' could not be read back."
-        }
-        return session.toSummary(durationMinutes = actualDurationMinutes)
     }
 
     override suspend fun getWorkoutSummary(sessionId: String): WorkoutSummary? {
         require(sessionId.isNotBlank()) { "sessionId must not be blank." }
-        val session = getSessionById(sessionId) ?: return null
-        if (session.status != SessionStatus.COMPLETED) return null
-        return session.toSummary(durationMinutes = session.actualDurationMinutes)
+        return sessionDao.readWorkoutSummary(sessionId, progressCalculator)
     }
-
-    private suspend fun WorkoutSession.toSummary(durationMinutes: Int): WorkoutSummary =
-        WorkoutSummary(
-            sessionId = id,
-            workoutName = name,
-            durationMinutes = durationMinutes,
-            totalSetsCompleted = completedSetsCount,
-            totalVolume = totalVolume,
-            prCount = progressCalculator.countPersonalRecords(
-                session = this,
-                priorCompletedSessions = getRecentCompletedSessions(
-                    limit = PERSONAL_RECORD_HISTORY_SESSIONS
-                )
-            ),
-            unit = weightUnit,
-            completedAtTimestamp = completedAtTimestamp ?: startedAtTimestamp
-        )
 
     override suspend fun cancelWorkout(sessionId: String) {
         require(sessionId.isNotBlank()) { "sessionId must not be blank." }
@@ -520,7 +493,6 @@ class OfflineWorkoutRepository(
         const val MAX_LOGGED_WEIGHT = 100_000.0
         const val MAX_LOGGED_DURATION_SECONDS = 86_400
         const val MAX_LOGGED_DISTANCE_METERS = 1_000_000.0
-        const val PERSONAL_RECORD_HISTORY_SESSIONS = 200
     }
 }
 

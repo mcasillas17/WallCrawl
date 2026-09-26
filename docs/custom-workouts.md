@@ -13,6 +13,8 @@ Room persistence, history, and progress pipeline as a planner-generated workout.
 4. Use the move controls to set exercise order and adjust each set count.
 5. Save the template locally.
 6. Start it from **My Workouts**, log the workout, and finish normally.
+7. Reopen it from **Progress** by tapping its completed-workout card. **View all
+   workouts** exposes older entries in fixed pages with older/newer controls.
 
 Saved templates can be reopened, edited, started again, or deleted after
 confirmation. A template must have a name and at least one exercise.
@@ -82,6 +84,20 @@ session does not read through to the template afterward. This means:
 The session stores `CUSTOM_TEMPLATE` as its origin and retains the template ID
 for future attribution. The reference is informational so template deletion is
 safe.
+
+Read-only history shows that copied prescription alongside each set's separate
+planned targets and recorded results, units, times, notes and optional feedback.
+Changing or deleting the template, editing the profile, switching language, or
+changing catalog programming cannot rewrite those facts. Missing catalog entries
+remain readable by their stored ID and measurements; this does not change the
+template editor's missing-reference error behavior.
+
+Manual sessions legitimately have no automatic recommendation record. Detail
+says it was not recorded rather than implying automatic validation or inventing
+progression/deload reasons. A stored user rest preference can be identified; a
+different performed number is not proof of an explicit override. History has no
+edit/delete/repeat action. Substitution-specific detail remains dependent on
+Package 10, and detailed template editing remains separate Package 15 work.
 
 ## Active workout logging
 

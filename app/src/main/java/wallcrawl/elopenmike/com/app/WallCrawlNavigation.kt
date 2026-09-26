@@ -1,5 +1,6 @@
 package wallcrawl.elopenmike.com.app
 
+import android.net.Uri
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.FitnessCenter
@@ -37,10 +38,11 @@ object AppRoutes {
     const val WORKOUT_TEMPLATES = "workout_templates"
     const val TEMPLATE_NEW = "workout_template/new"
     const val TEMPLATE_EDIT = "workout_template/{templateId}"
-    const val WORKOUT_SUMMARY = "workout_summary/{sessionId}"
+    const val HISTORY = "history"
+    const val HISTORY_DETAIL = "history/{sessionId}"
     const val CREDITS = "credits"
 
-    fun activeWorkout(sessionId: String) = "workout_active/$sessionId"
+    fun activeWorkout(sessionId: String) = "workout_active/${Uri.encode(sessionId)}"
     fun editTemplate(templateId: String) = "workout_template/$templateId"
-    fun workoutSummary(sessionId: String) = "workout_summary/$sessionId"
+    fun historyDetail(sessionId: String) = "history/${Uri.encode(sessionId)}"
 }

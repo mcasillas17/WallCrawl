@@ -46,8 +46,8 @@ data class MuscleDoseAccounting(
  * Every version-like field is a string rather than a converted enum, for the same reason
  * the weekly-ledger cache stores its policy version as text: a value written by a future
  * build has to read back as something this build does not recognise, instead of being
- * coerced into a meaning it never had. Nothing in the app branches on these values; they
- * exist to be read back and compared.
+ * coerced into a meaning it never had. History interprets explicitly supported versions;
+ * unknown identities remain opaque in the recorded technical details.
  *
  * ## What it deliberately omits
  *

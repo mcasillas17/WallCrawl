@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -98,7 +99,9 @@ internal const val PROGRESS_REVIEWED_DOSE_TEST_TAG = "progress-reviewed-dose"
 @Composable
 fun ProgressScreen(
     viewModel: ProgressViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onOpenSession: (String) -> Unit = {},
+    onOpenHistory: () -> Unit = {}
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
@@ -139,7 +142,10 @@ fun ProgressScreen(
         }
     }
 
-    ProgressScreen(uiState = uiState, onRetry = viewModel::refresh, modifier = modifier)
+    ProgressScreen(
+        uiState = uiState, onRetry = viewModel::refresh, modifier = modifier,
+        onOpenSession = onOpenSession, onOpenHistory = onOpenHistory
+    )
 }
 
 /**
@@ -152,7 +158,9 @@ fun ProgressScreen(
 fun ProgressScreen(
     uiState: ProgressUiState,
     onRetry: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onOpenSession: (String) -> Unit = {},
+    onOpenHistory: () -> Unit = {}
 ) {
     Box(
         modifier = modifier
@@ -199,13 +207,17 @@ fun ProgressScreen(
                 }
             }
 
-            is ProgressUiState.Success -> ProgressContent(state)
+            is ProgressUiState.Success -> ProgressContent(state, onOpenSession, onOpenHistory)
         }
     }
 }
 
 @Composable
-private fun ProgressContent(state: ProgressUiState.Success) {
+private fun ProgressContent(
+    state: ProgressUiState.Success,
+    onOpenSession: (String) -> Unit,
+    onOpenHistory: () -> Unit
+) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -264,10 +276,15 @@ private fun ProgressContent(state: ProgressUiState.Success) {
             }
         } else {
             items(state.overview.recentHistory) { session ->
-                WorkoutHistoryCard(session = session)
+                WorkoutHistoryCard(session = session, onClick = { onOpenSession(session.id) })
             }
         }
 
+        item {
+            TextButton(onClick = onOpenHistory) {
+                Text(stringResource(R.string.progress_all_workouts), color = MaterialTheme.colorScheme.onSurface)
+            }
+        }
         item { Spacer(modifier = Modifier.height(24.dp)) }
     }
 }
@@ -876,7 +893,7 @@ private fun StrengthTrendsSection(
 }
 
 @Composable
-private fun WorkoutHistoryCard(session: WorkoutSession) {
+private fun WorkoutHistoryCard(session: WorkoutSession, onClick: () -> Unit) {
     val locale = LocalConfiguration.current.locales[0]
     // Medium date plus short time, resolved by the platform for this locale rather than
     // pinned to an English "MMM d, yyyy" pattern.
@@ -885,7 +902,14 @@ private fun WorkoutHistoryCard(session: WorkoutSession) {
             .format(Date(session.startedAtTimestamp))
     }
 
-    WallCrawlCard(cornerRadius = 12.dp, contentPadding = 12.dp) {
+    WallCrawlCard(
+        cornerRadius = 12.dp, contentPadding = 12.dp,
+        modifier = Modifier.clickable(
+            role = Role.Button,
+            onClickLabel = stringResource(R.string.history_open_workout),
+            onClick = onClick
+        )
+    ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,

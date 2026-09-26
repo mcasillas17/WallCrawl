@@ -232,6 +232,43 @@ restart the read; Room invalidations cover completion, import and deletion. Ther
 periodic Progress query loop. Today also uses `TrainingWeek` for its count range, without
 changing planning behavior.
 
+## Individual workout history and records
+
+The overview's 500-session analytics window and ten recent cards do not limit
+history access. **View all workouts** uses fixed 20-session pages; detail looks up
+one persisted ID directly. None of these reads reconstructs historical
+measurements or acceptance state from current catalog programming.
+
+A summary record is evaluated against genuinely earlier work: a distinct completed
+session with positive, ordered start/completion times whose completion is **strictly
+before the viewed workout started**. A timestamp equal to that start, an overlapping
+session, and a later workout are not prior evidence. Missing/invalid chronology
+supplies no baseline. Grouped SQL maxima cover all eligible earlier data for the
+relevant exercise IDs, stored types and units; there is no global recent-history
+cap. Loads are explicitly converted before comparing. The established heavier
+top-load / higher-reps record types and warm-up treatment are retained, and the
+first observation remains zero records. Finish and reopening use the same summary
+calculation. Adding future stronger workouts cannot erase an old achievement.
+
+Ordinary previous performance instead selects the latest compatible earlier
+exercise observation: completion descending, start descending, session ID
+ascending, then exercise order and instance ID. Exact exercise ID and persisted
+measurement dimensions must match; distance-only, time-only and combined work
+are separate shapes. It displays completed, unstopped, type-valid non-warm-up sets,
+excluding known outcome timestamps outside their session. Legacy missing set times
+remain unavailable, not invented. Archived performed-value bounds apply rather
+than today's target limits, and prior values retain their recorded units.
+
+Recorded progression-source sessions have a separate label and selection;
+they are not interchangeable with the ordinary previous observation. A missing
+source leaves its recorded reason/axis readable but comparison detail unavailable.
+No before/after prescription or growth percentage is synthesized. These detail
+rules change neither weekly activity nor `PRIMARY_ONLY_V1` accounting, and do not
+turn assistance, duration, distance or body mass into external-load volume.
+Both paths share the same SQL eligibility rules and batch-read only the selected
+exercise instances, eligible sets and source headers. Unrelated source graphs
+cannot exhaust a comparison's set bound or hide an otherwise valid workout.
+
 ## Reconstruction and cache invalidation
 
 ```text

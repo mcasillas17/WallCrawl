@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.runtime.CompositionLocalProvider
@@ -59,6 +60,10 @@ import wallcrawl.elopenmike.com.feature.templates.WorkoutTemplatesScreen
 import wallcrawl.elopenmike.com.feature.templates.WorkoutTemplatesViewModel
 import wallcrawl.elopenmike.com.feature.workout.ActiveWorkoutScreen
 import wallcrawl.elopenmike.com.feature.workout.ActiveWorkoutViewModel
+import wallcrawl.elopenmike.com.feature.history.WorkoutHistoryDetailScreen
+import wallcrawl.elopenmike.com.feature.history.WorkoutHistoryDetailViewModel
+import wallcrawl.elopenmike.com.feature.history.WorkoutHistoryListScreen
+import wallcrawl.elopenmike.com.feature.history.WorkoutHistoryListViewModel
 
 import androidx.compose.material3.MaterialTheme
 import wallcrawl.elopenmike.com.core.model.UserProfile
@@ -134,9 +139,18 @@ private fun WallCrawlAppContent(
      * every local record the back stack has to be replaced rather than merely added to.
      */
     fun restartAtOnboarding() {
+        Screen.bottomNavItems.forEach { navController.clearBackStack(it.route) }
         navController.navigate(AppRoutes.ONBOARDING) {
-            popUpTo(navController.graph.findStartDestination().id) { inclusive = true }
+            popUpTo(navController.graph.id) { inclusive = true }
             launchSingleTop = true
+        }
+    }
+
+    LaunchedEffect(startDestination, currentRoute) {
+        if (startDestination == AppRoutes.ONBOARDING &&
+            currentRoute != null && currentRoute != AppRoutes.ONBOARDING
+        ) {
+            restartAtOnboarding()
         }
     }
 
@@ -252,7 +266,39 @@ private fun WallCrawlAppContent(
                         progressRepository = container.progressRepository
                     )
                 )
-                ProgressScreen(viewModel = progressViewModel)
+                ProgressScreen(
+                    viewModel = progressViewModel,
+                    onOpenSession = { navController.navigate(AppRoutes.historyDetail(it)) },
+                    onOpenHistory = { navController.navigate(AppRoutes.HISTORY) }
+                )
+            }
+
+            composable(AppRoutes.HISTORY) {
+                val historyViewModel: WorkoutHistoryListViewModel = viewModel(
+                    factory = WorkoutHistoryListViewModel.provideFactory(container.workoutHistoryRepository)
+                )
+                WorkoutHistoryListScreen(
+                    viewModel = historyViewModel,
+                    onOpenSession = { navController.navigate(AppRoutes.historyDetail(it)) },
+                    onBack = { navController.popBackStack() }
+                )
+            }
+
+            composable(
+                route = AppRoutes.HISTORY_DETAIL,
+                arguments = listOf(navArgument("sessionId") { type = NavType.StringType })
+            ) { entry ->
+                val sessionId = requireNotNull(entry.arguments?.getString("sessionId"))
+                val historyViewModel: WorkoutHistoryDetailViewModel = viewModel(
+                    key = sessionId,
+                    factory = WorkoutHistoryDetailViewModel.provideFactory(
+                        sessionId, container.workoutHistoryRepository
+                    )
+                )
+                WorkoutHistoryDetailScreen(
+                    viewModel = historyViewModel,
+                    onBack = { navController.popBackStack() }
+                )
             }
 
             composable(AppRoutes.EXERCISES) {
@@ -327,6 +373,7 @@ private fun WallCrawlAppContent(
                     viewModel = workoutViewModel,
                     visualProvider = container.exerciseVisualProvider,
                     onNavigateBack = { navController.popBackStack() },
+                    onOpenHistory = { navController.navigate(AppRoutes.historyDetail(it)) },
                     onWorkoutFinished = {
                         navController.popBackStack()
                         navController.navigate(AppRoutes.PROGRESS) {
