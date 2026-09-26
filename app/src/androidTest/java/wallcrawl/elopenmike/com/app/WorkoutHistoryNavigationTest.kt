@@ -6,6 +6,7 @@ import android.os.LocaleList
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalConfiguration
@@ -36,10 +37,11 @@ import java.util.Locale
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.sync.Mutex
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.ExternalResource
+import org.junit.rules.RuleChain
 import org.junit.runner.RunWith
 import wallcrawl.elopenmike.com.AppContainer
 import wallcrawl.elopenmike.com.DefaultAppContainer
@@ -69,12 +71,19 @@ import wallcrawl.elopenmike.com.core.ui.theme.WallCrawlTheme
 
 @RunWith(AndroidJUnit4::class)
 class WorkoutHistoryNavigationTest {
-    @get:Rule val compose = createComposeRule()
+    private val compose = createComposeRule()
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
     private lateinit var database: WallCrawlDatabase
     private lateinit var container: AppContainer
     private lateinit var navigation: NavHostController
     private lateinit var restoration: StateRestorationTester
+
+    // Compose and navigation ViewModels must stop observing Room before it is closed.
+    @get:Rule val rules = RuleChain.outerRule(object : ExternalResource() {
+        override fun after() {
+            if (::database.isInitialized) database.close()
+        }
+    }).around(compose)
 
     @Before fun setup() = runBlocking {
         database = Room.inMemoryDatabaseBuilder(context, WallCrawlDatabase::class.java).build()
@@ -109,8 +118,13 @@ class WorkoutHistoryNavigationTest {
         repeat(25) { index -> seed("history-$index", index) }
     }
 
-    @After fun close() {
-        database.close()
+    @Test fun databaseRemainsOpenUntilCompositionIsDisposed() {
+        compose.setContent {
+            DisposableEffect(Unit) {
+                onDispose { assertThat(database.isOpen).isTrue() }
+            }
+        }
+        compose.waitForIdle()
     }
 
     @Test fun progressCardOpensPersistedDetailAndBackReturnsToProgress() {
