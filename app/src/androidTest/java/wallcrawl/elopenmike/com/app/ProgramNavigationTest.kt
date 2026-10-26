@@ -386,7 +386,11 @@ class ProgramNavigationTest {
         container.programRepository.act(ProgramAction.START, ProgramExpectation(profile.id, profile.revision, null, 0))
     }
     private fun chooseProgram() {
+        compose.waitUntil(15_000) { compose.onNodeWithTag("today-list").isDisplayed() }
         compose.onNodeWithTag("today-list").performScrollToNode(hasTestTag("planning-PROGRAM"))
+        compose.waitUntil(15_000) {
+            compose.onNode(hasTestTag("planning-PROGRAM") and isEnabled()).isDisplayed()
+        }
         compose.onNodeWithTag("planning-PROGRAM").performClick()
         compose.onNodeWithTag("today-list").performScrollToNode(hasText(text(R.string.today_plan_heading)))
         waitText(R.string.program_start_session)

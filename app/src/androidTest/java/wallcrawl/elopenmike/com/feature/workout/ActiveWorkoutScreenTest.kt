@@ -112,7 +112,7 @@ class ActiveWorkoutScreenTest {
     fun completingASet_showsTheRestCountdownWithItsExplicitControls() {
         showScreen()
 
-        composeRule.onNodeWithContentDescription("Set 1 complete").performClick()
+        composeRule.onNodeWithContentDescription("Set 1 complete").performScrollTo().assertIsDisplayed().performClick()
         composeRule.waitForIdle()
 
         composeRule.onNodeWithContentDescription("Rest remaining 2:00").assertIsDisplayed()
@@ -133,7 +133,7 @@ class ActiveWorkoutScreenTest {
     @Test
     fun timeSpentInTheBackground_isReflectedWhenTheCountdownIsRefreshed() {
         showScreen()
-        composeRule.onNodeWithContentDescription("Set 1 complete").performClick()
+        composeRule.onNodeWithContentDescription("Set 1 complete").performScrollTo().assertIsDisplayed().performClick()
         composeRule.waitForIdle()
 
         // The app was away for ninety seconds and ticked nothing while it was gone.
@@ -160,7 +160,7 @@ class ActiveWorkoutScreenTest {
             }
         }
 
-        composeRule.onNodeWithContentDescription("Set 1 complete").performClick()
+        composeRule.onNodeWithContentDescription("Set 1 complete").performScrollTo().assertIsDisplayed().performClick()
         composeRule.waitForIdle()
         composeRule.onNodeWithContentDescription("Rest remaining 2:00").assertIsDisplayed()
 
