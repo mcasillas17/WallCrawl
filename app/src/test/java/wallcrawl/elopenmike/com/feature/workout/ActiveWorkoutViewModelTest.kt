@@ -42,6 +42,55 @@ class ActiveWorkoutViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     @Test
+    fun invalidMembershipIdentityAtSubscriptionKeepsTheLoggerAndReadRetryAvailable() = runTest {
+        val stored = FakeRepository(workoutSession(SessionStatus.IN_PROGRESS))
+        val programs = object : wallcrawl.elopenmike.com.core.database.repository.ProgramRepository by
+            wallcrawl.elopenmike.com.core.ai.ReadOnlyProgramRepository(
+                wallcrawl.elopenmike.com.core.model.ProgramReadState.Empty(
+                    wallcrawl.elopenmike.com.core.model.ProgramHeader.absent(UserProfile.DEFAULT_PROFILE_ID))) {
+            override fun observeAssociation(sessionId: String): Flow<wallcrawl.elopenmike.com.core.model.ProgramHistoryAssociation?> {
+                throw wallcrawl.elopenmike.com.core.model.ProgramException(
+                    wallcrawl.elopenmike.com.core.model.ProgramFailure.INVALID_IDENTITY)
+            }
+        }
+        val vm = ActiveWorkoutViewModel(SESSION_ID, stored, InMemoryExerciseCatalog(), WorkoutHistoryAnalyzer(), programRepository = programs)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { vm.uiState.collect {} }
+        advanceUntilIdle()
+        val active = vm.uiState.value as ActiveWorkoutUiState.Active
+        assertThat(active.programReadError).isEqualTo(R.string.program_read_failed)
+        assertThat(active.session.id).isEqualTo(SESSION_ID)
+        vm.retry(); advanceUntilIdle()
+        assertThat(vm.uiState.value).isInstanceOf(ActiveWorkoutUiState.Active::class.java)
+    }
+
+    @Test
+    fun unsupportedProgramFinishKeepsLoggingAndCancelAvailable() = runTest {
+        val stored = FakeRepository(workoutSession(SessionStatus.IN_PROGRESS))
+        val repository = object : WorkoutRepository by stored {
+            override suspend fun completeWorkout(sessionId: String, actualDurationMinutes: Int): WorkoutSummary {
+                throw wallcrawl.elopenmike.com.core.model.ProgramException(
+                    wallcrawl.elopenmike.com.core.model.ProgramFailure.UNSUPPORTED_POLICY)
+            }
+        }
+        val viewModel = viewModel(repository)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        advanceUntilIdle()
+        viewModel.finishWorkout()
+        advanceUntilIdle()
+        assertThat(viewModel.uiState.value).isInstanceOf(ActiveWorkoutUiState.Active::class.java)
+        assertThat((viewModel.uiState.value as ActiveWorkoutUiState.Active).programFinishUnsupported).isTrue()
+        viewModel.dismissSetUpdateError()
+        assertThat((viewModel.uiState.value as ActiveWorkoutUiState.Active).programFinishUnsupported).isTrue()
+        viewModel.updateSet("set", reps = 12, weight = 20.0, isCompleted = true)
+        advanceUntilIdle()
+        assertThat(stored.persistedInputs).hasSize(1)
+        var cancelled = false
+        viewModel.cancelWorkout { cancelled = true }
+        advanceUntilIdle()
+        assertThat(cancelled).isTrue()
+    }
+
+    @Test
     fun setUpdatesKeepTheLoggerActiveAndKeepOneHistorySubscription() = runTest {
         val stored = FakeRepository(workoutSession(SessionStatus.IN_PROGRESS))
         var historySubscriptions = 0

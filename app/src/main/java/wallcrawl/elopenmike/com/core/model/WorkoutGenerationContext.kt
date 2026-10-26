@@ -71,8 +71,21 @@ data class WorkoutGenerationContext(
     val reviewPolicyVersion: Int = 0,
     /** The program-design rules this session was asked to satisfy. */
     val programConstraints: SessionProgramConstraints = SessionProgramConstraints(),
-    /** Optional replay input. Null uses the planner's intentional in-process regeneration counter. */
-    val regenerationIndex: Int? = null
+    /** Null uses zero in program mode, or the existing in-process counter in ordinary mode. */
+    val regenerationIndex: Int? = null,
+    val planningIntent: WorkoutPlanningIntent = WorkoutPlanningIntent.ORDINARY,
+    val programHeader: ProgramHeader = ProgramHeader.absent(userProfile.id),
+    val programInput: ProgramPlanningInput? = null
+)
+
+enum class WorkoutPlanningIntent { ORDINARY, PROGRAM }
+
+/** Bounded immutable program facts; completed work remains in the independent ledger. */
+data class ProgramPlanningInput(
+    val enrollment: ProgramEnrollment,
+    val sessions: List<ProgramSlotSession>,
+    val position: ProgramPosition,
+    val objective: ProgramObjective
 )
 
 /**

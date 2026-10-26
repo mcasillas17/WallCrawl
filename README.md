@@ -13,8 +13,8 @@ user-owned export, restore, and deletion under an explicit
 The app combines first-run onboarding, equipment and movement preferences, a
 complete bundled exercise catalog, rules-based workout generation and validation,
 reusable custom templates, and type-aware set logging with no fabricated starting
-loads. Single-variable progression, user-controlled deload, progress tracking,
-and read-only workout history help you understand what was planned and what you
+loads. Single-variable progression, user-controlled deload, optional four-week programs,
+progress tracking and read-only workout history help you understand what was planned and what you
 performed. The interface is available in English and neutral Latin American Spanish.
 
 Workout recommendations use explicit rules and recorded training history.
@@ -66,6 +66,47 @@ WallCrawl supports **Dark Theme** (stealth suit graphite aesthetic), **Light The
 - **Your Data**: Export everything stored on the device to one versioned, checksummed file you choose the destination for; restore it onto a fresh start; or delete every local record behind an explicit destructive confirmation. Restore is also offered on the first onboarding step — a quiet button under Continue opens the whole flow in a sheet — so a reinstall does not have to build a throwaway profile first.
 - **Language**: English and neutral Latin American Spanish across the whole app, following the device by default, switchable from a chip in the onboarding wizard's header before any details are entered and from Training Profile → App preferences, and stored as a device setting rather than as part of the profile or the export archive.
 - **Credits & Licenses**: In-app attribution for the bundled exercise artwork, reachable from the Training Profile screen.
+
+### Optional four-week programs
+
+Open **Today or Progress → Manage program** to start an optional sequence: four
+completion-driven weeks in two two-week blocks. Enrollment captures your primary
+goal, selected goals and preferred frequency of 2–6 sessions per week, for 8–24 slots.
+On Today, explicitly choose **Program session** or **Ordinary workout** before starting;
+manual templates remain available. Only a program session counts toward the sequence.
+
+A confirmed **Finish** advances one slot, including a partial or zero-set workout.
+Finished sessions appear in workout counts, including zero-set workouts. Only actually
+completed sets earn set, performance or reviewed-dose credit.
+**Cancel** deletes the active session and its membership and leaves that slot next.
+Program weeks can take longer than seven days: missed sessions wait, without catch-up
+volume. Calendar-week allowances stay shared with ordinary and manual workouts.
+
+Pause and resume keep your position. Restart or replacement needs confirmation and
+creates a new run; completed history and accepted/consumed deload choices stay intact.
+Replacement captures the current profile. Goal or frequency changes require restoring
+those captured settings or replacing the program; equipment, constraints, capabilities
+and units stay live for the next recommendation. An active workout keeps its frozen plan.
+All program management waits until any active workout is finished or cancelled.
+Completion ends the sequence without automatic reenrollment or boundary deloads.
+
+If program planning fails, its position stays put: use Retry, edit the profile, or
+explicitly choose ordinary/manual work. Resume and logging remain available during
+program errors. Unsupported program versions allow supported recovery actions such as
+Cancel or, with no active workout, explicit replacement; they do not silently advance.
+History shows recorded membership independently of the latest run. Older and manual
+sessions retain honestly absent membership.
+
+<p align="center">
+  <img src="art/screenshots/program-today-en.png" width="24%" alt="Today with the complete program-week and shared calendar-allowance explanation and explicit Program session selection" />
+  <img src="art/screenshots/program-completed-en.png" width="24%" alt="Completed eight-slot program with recorded-workout links and no invented next slot" />
+  <img src="art/screenshots/program-partial-finish-en.png" width="24%" alt="Partial Finish confirmation distinguishing program advancement from actual completed-set credit" />
+</p>
+<p align="center">
+  <em>Actual API 36 emulator captures with disposable test profiles. See
+  <a href="docs/localization.md#program-controls-and-large-text-evidence">Spanish management, confirmation and large-text evidence</a>
+  and the <a href="docs/architecture.md#optional-multi-week-programs">persistence and recovery contract</a>.</em>
+</p>
 
 ### Progress: activity and reviewed dose
 
@@ -217,7 +258,7 @@ onboarding step offers restore on its own:
 
 | Control | What it does |
 | --- | --- |
-| Export my data | Writes one JSON archive — profile, capabilities, templates, and every session including one in progress — to a document you pick, with a format version and a SHA-256 checksum |
+| Export my data | Writes one JSON archive — profile, capabilities, templates, program enrollment and frozen memberships, and every session including one in progress — to a document you pick, with a format version and a SHA-256 checksum |
 | Restore from a file | Reads an archive into a **fresh start only**: no workouts, no templates, onboarding unfinished. It never merges and never overwrites |
 | Delete all local data | Removes every local record behind a confirmation naming what is lost, then returns to first-run onboarding |
 
@@ -386,7 +427,7 @@ the export archive. It carries no raw name, note, load, repetition, effort value
 measurement fields. Its local context digest derives from consumed planning inputs for
 freshness and is not an anonymization guarantee.
 
-Guidance is persisted with templates and frozen session snapshots in Room schema 14.
+Guidance is persisted with templates and frozen session snapshots in Room schema 15.
 The active timer still reads the persisted exact seconds; add-time, skip, and dismiss are
 one-off timer actions rather than durable preference changes. Production now runs
 reviewed eligibility because an owner-authorized audit accepted 182 of the bundled
@@ -499,6 +540,7 @@ feature/today/          daily recommendation and regeneration
 feature/templates/      local custom-workout library and editor
 feature/workout/        active workout logging and completion
 feature/progress/       history-derived progress UI
+feature/program/        optional completion-driven program management
 feature/exercises/      searchable/filterable catalog browser
 feature/profile/        local goals, equipment, units, and movement preferences
 ```
@@ -782,10 +824,10 @@ Today state, duration calculation, and visual-provider mapping. The fourteen-per
 corpus runs inside it, reconstructing the reviewed-enabled personas' training weeks with the
 shipped weekly ledger and validating the complete proposal behind every successful persona.
 Android instrumentation also validates every supported database migration chain through
-schema 14 without destructive fallback, guidance persistence, the atomic start of a session
+schema 15 without destructive fallback, guidance persistence, the atomic start of a session
 with its validation record, the weekly-ledger DAO/repository,
 capability-control semantics, template/session snapshot behavior, and the local-data archive:
-its round trip from app-written state across supported format versions 1–4, every rejection
+its round trip from app-written state across supported format versions 1–5, every rejection
 path for untrusted documents, transactional restore and deletion, and the destructive
 confirmation at a large font scale. It parses the
 packaged 302-exercise catalog and opens every one of its 906 SVG paths. Pull-request/main
@@ -801,6 +843,17 @@ IDs, older pages and the existing completion Done flow. Its explicit
 `captureHistoryScreenshots=true` argument captures the images above;
 `seedHistoryDemo=true` additionally restores disposable logs into a **fresh, dedicated
 test installation only** for installed-app lifecycle checks.
+
+`MultiWeekProgramPolicyTest`, `MultiWeekProgramPlanningTest` and
+`MultiWeekProgramProductionReplayTest` cover lifecycle, freshness, actual bundled-catalog
+replays and calendar-dose separation. `ProgramPersistenceTest`, `Migration14To15Test`,
+`LocalDataArchiveProgramTest` and `LocalDataProgramBackupRepositoryTest` cover atomic writes,
+frozen membership, archive compatibility and deletion/restore. `ProgramViewModelTest`,
+`TodayProductionLifecycleTest`, `ProgramNavigationTest`, `ProgramAccessibilityTest` and
+`ProgressScreenTest` cover errors/retry, saved state, real navigation and narrow large text.
+Installed-app checks exercised background process death and the Profile language picker;
+Spanish native-dialog evidence used physical emulator settings of 320 dp and font scale 1.8.
+These checks do not certify physical-device behavior or manual TalkBack use.
 
 ## Product and engineering principles
 

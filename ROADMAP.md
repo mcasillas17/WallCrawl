@@ -51,13 +51,13 @@ model downloads, model-driven features, a network connection, or a companion dev
 
 | Area | Status | Remaining gap |
 | --- | --- | --- |
-| Android foundation | Room schema 14 with an additive deload-choice table and continuous migration chain; archive 4 reads formats 1–4; implicit backup remains disabled | OEM transfer enforcement varies; restore is empty-destination only; `targetSdk` remains 35 while `compileSdk` is 37 |
+| Android foundation | Room schema 15 with additive program enrollment/association storage and continuous migration chain; archive 5 reads formats 1–5; implicit backup remains disabled | OEM transfer enforcement varies; restore is empty-destination only; `targetSdk` remains 35 while `compileSdk` is 37 |
 | Catalog and reviewed content | All 302 entries have per-ID AI evidence records; 906 SVG frames and 131 legacy programming entries unchanged; an owner-authorized audit accepted 182 of 211 authored records as `AI_ACCEPTED` | Zero genuine human approvals; 29 authored drafts and 56 IDs with no authored block remain pending, 35 entries outside automatic-strength scope; the band-only inventory still contains no chest work, and `banded-row`'s anchor stays unrepresentable, though anchored variations are now gated and the session is labelled truthfully |
 | Onboarding and profile | Shipped as an eight-step flow with seven movement-capability questions, plus export, restore, and delete-all controls | Restore requires a fresh start, so it cannot merge into an installation that already holds data |
 | Templates and logging | Shipped with frozen template snapshots, type-aware outcomes, RPE/RIR, typed stops, and a local rest timer | Template targets are only partly editable; unsaved drafts are not restored after process death |
 | Localization | English and neutral Latin American Spanish shipped across the whole interface, the 302-exercise catalog, generated workout text, and accessibility labels, selectable from onboarding and Profile through Android's per-app language mechanism | Only two languages; historical session text stays in the language it was written in, by design |
 | Progress and history | Calendar-week activity, separately labelled reviewed primary dose, records/trends, one completion-summary flow, paged completed history and read-only snapshot detail implemented | Substitution-specific detail awaits Package 10; deeper charts/filters remain Package 14; no genuinely human-`APPROVED` metadata exists |
-| Deterministic coach | Reviewed eligibility/ranking, weekly ledger, state guidance and whole-program validation; Package 9 adds single-axis progression and persistent user-controlled deload in the production composition | Genuine human `APPROVED` review remains independent; substitutions and multi-week programs remain future packages |
+| Deterministic coach | Reviewed eligibility/ranking, weekly ledger, state guidance and whole-program validation; Packages 9 and 12 add single-axis progression, persistent user-controlled deload and optional completion-driven programs in the production composition | Genuine human `APPROVED` review remains independent; substitutions remain future work |
 | Planner evaluation | Versioned persona corpus (`planner-fixtures/manifest.txt` is the authoritative roster), with the reviewed-enabled personas' weeks replayed through the real ledger and every successful persona's proposal validated as a complete program, importer unit tests, real pinned-upstream regeneration check, JVM tests, and Android CI shipped | None for this package; reviewed-planner enablement (package 7) is done, and human-approval rollout (package 3) is the remaining gate |
 | Health Connect and Wear OS | Not started; only `:app` exists | Shared modules, privacy controls, validation, substitutions, protocol, and device evidence |
 | Operational quality | Dependabot, SBOM submission, JVM/lint/build CI, API 36 instrumentation, and prerelease automation shipped | Accessibility baseline, target SDK review, Room schema export, signed/minified release posture, and next alpha |
@@ -138,7 +138,7 @@ These decisions must be recorded before the related implementation package close
 3. **Validation persistence:** ~~decided~~. A dedicated `workout_recommendation_records`
    table holds one immutable row per started session, written in the same transaction as the
    session, and travels in the local-data archive. It arrived in Room schema 12 and archive
-   format version 2; the current schema is 14 and archive format 4 still preserves
+   format version 2; the current schema is 15 and archive format 5 still preserves
    this record. Columns beside the
    session were rejected: the record is provenance about a decision rather than part of the
    session,    and a separate table keeps it out of ordinary session reads; the history-detail
@@ -185,11 +185,11 @@ These decisions must be recorded before the related implementation package close
 | Integrations | 21 -> 22 + 23; 2 + 4 + 10 + 21 + 23 -> 24; 23 + 24 -> 25; 24 + 25 -> 26 -> 27 | Health export and the protocol spike may proceed independently after shared-module extraction |
 | Optional sync | 2 -> 28 | Package 28 is a design package first, not implementation authorization |
 
-Available work includes package 12's multi-week programs, package 14's deeper
+Available work includes package 14's deeper
 analytics, and package 15's template editing and draft recovery; their existing
 engineering prerequisites are satisfied. Package 3's human-paced content review
 and the audits in packages 19-20 can proceed alongside engineering. Packages 5,
-9, and the existing-history scope of 13 are complete. Package 7 already reads the
+9, 12, and the existing-history scope of 13 are complete. Package 7 already reads the
 bundled `AI_ACCEPTED` cohort; do not represent that owner-authorized acceptance
 as package 3's genuine human review.
 
@@ -334,7 +334,7 @@ and approval does not silently expand beyond what a human actually reviewed.
 **Status:** Complete. `ProgramValidator` checks a complete proposal before it is shown and
 again before it is started, and `workout_recommendation_records` records how each started
 session was decided. The table arrived in Room schema 12 and archive format version 2;
-the current database is schema 14 and archive format 4 reads versions 1–4.
+the current database is schema 15 and archive format 5 reads versions 1–5.
 Reviewed-only rules are now active in production because
 `PlannerFeatureFlags.reviewedCapabilityEligibility` is `true` and the bundled cohort
 carries 182 `AI_ACCEPTED` records.
@@ -399,8 +399,8 @@ undefined.
    adaptation state, accounting week and zone, profile revision, context digest, ordered
    reason codes, and per-muscle completed/proposed/allowance counts. It is written in the same
    transaction as the session, so a refused start leaves neither, and it travels in the archive.
-   It shipped in archive format version 2; the build now writes format 4 and still restores
-   versions 1 through 4.
+   It shipped in archive format version 2; the build now writes format 5 and still restores
+   versions 1 through 5.
 
 **Surfaces:** `core/ai/ProgramValidator`, `core/ai/ProgramViolation`,
 `core/ai/RecommendationSnapshot`, `core/ai/RecommendationContextIdentity`,
@@ -760,25 +760,45 @@ distinguishable from unreviewed upstream prose.
 
 ### 12. Add explicit multi-week program blocks
 
-**Status:** Not started.
+**Status:** Complete. Required local validation and independent implementation and
+documented-state reviews passed.
 
 **Depends on:** Packages 4 and 9.
 
-**Implementation tasks:**
+**Implemented:**
 
-1. Define versioned block, week, objective, and transition contracts without mutating completed
-   session snapshots.
-2. Persist active block state separately from immutable history.
-3. Generate each session through the same deterministic eligibility, dose, progression,
-   validation, and no-invented-load pipeline.
-4. Define pause, resume, restart, completion, and policy-version migration behavior.
-5. Add replayable multi-week fixtures and program-level validation.
+1. Optional four completion-driven weeks in two two-week blocks, capturing primary goal,
+   selected goals and frequency 2–6, bounded to 24 slots. Only an explicit program start
+   associates; ordinary recommendations and manual templates remain available.
+2. Versioned enrollment separate from derived `TrainingProgramState` and immutable
+   history. Finish advances exactly once even with partial/zero sets; actual logged work
+   alone earns dose/performance credit. Cancel deletes the active membership and leaves
+   the same slot. Reads, elapsed time and regeneration never advance it.
+3. Pause/resume preserve position; confirmed restart/replacement creates a new UUID with
+   monotonic revisions and retained completed history/deload choices. Any active workout
+   blocks management. Captured goal/frequency mismatch requires restoration/replacement;
+   equipment, constraints, capabilities and units remain live for the next plan.
+4. Reused deterministic eligibility, prescription, progression, explicit one-workout
+   deload and single-session validation. Program weeks do not reset calendar-week
+   `PRIMARY_ONLY_V1` allowances or reserve future dose. No catch-up, automatic boundary
+   deload, calibration/advanced bypass or guaranteed outcome is introduced.
+5. Room 14→15 adds `program_enrollments`, `program_session_associations` and frozen
+   membership binding. Archive 5 reads 1–5 with legacy checksums intact. Atomic
+   start/Finish/Cancel, deletion/restore, unsupported-version recovery and bounded
+   reconstruction preserve immutable facts; older history is never backfilled.
+6. Today/Progress management, explicit planning choice, recorded history, bilingual
+   errors/retry and partial-Finish explanation. Production-catalog replays and focused
+   Room/archive/navigation/large-text/process-recovery evidence cover the implementation.
 
-**Likely surfaces:** new program domain and repository boundaries, generation context, planner,
-Today/Progress UI, Room migration, and program fixtures.
+**Surfaces:** program model/policy/repository, normal generation context and planner,
+Today/Progress, history and active workout, Room/backup and paired EN/es resources.
+See the [approved design](docs/superpowers/specs/2026-10-25-multi-week-programs-design.md)
+and [implementation record](docs/superpowers/plans/2026-10-26-multi-week-programs.md).
 
-**Done when:** a versioned block can survive process death and app upgrade, every session still
-passes the single-session gates, and historical recommendations remain reproducible.
+**Completion boundary:** recorded program facts remain readable, and equal captured
+inputs replay deterministically. A digest cannot recover historical profile/catalog
+inputs that were never stored. Physical-device and manual TalkBack certification remain
+outside the validation performed for this package.
 
 ### 13. Wire workout summary and immutable history detail
 
@@ -811,7 +831,8 @@ part of task 3 remains explicitly pending until Package 10 supplies its snapshot
 
 **Surfaces:** app routes/NavHost, active workout/summary, Progress cards, `feature/history`,
 `WorkoutHistoryRepository`/DAO, shared summary calculations and paired string resources.
-Room 14 and archive 4 (reads 1–4) are unchanged.
+Package 13 itself left Room 14 and archive 4 (reads 1–4) unchanged. Package 12
+subsequently adds Room 15 and archive 5; see its dated history compatibility note.
 
 **Still dependent on Package 10:** planned-versus-performed substitution identities
 and targets. No substitution data or historical override events were invented.

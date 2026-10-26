@@ -18,6 +18,9 @@ import wallcrawl.elopenmike.com.core.model.WeightUnit
  * same thing in whichever language the reader chose.
  */
 enum class TodayError(@StringRes val messageRes: Int) {
+    PROGRAM_UNSUPPORTED(R.string.program_unsupported),
+    PROGRAM_PROFILE_MISMATCH(R.string.program_profile_mismatch),
+    PROGRAM_UNAVAILABLE(R.string.program_read_failed),
     NO_CANDIDATES(R.string.today_error_no_candidates),
     NO_STRENGTH_CANDIDATES(R.string.today_error_no_strength_candidates),
     NO_CANDIDATES_FOR_ANY_SPLIT(R.string.today_error_no_split),
@@ -71,7 +74,9 @@ sealed interface TodayUiState {
         val completedThisWeek: Int = 0,
         val deload: TodayDeloadState? = null,
         /** Published with the workout; profile preferences may already be newer during regeneration. */
-        val prescriptionUnit: WeightUnit = userProfile.preferredUnit
+        val prescriptionUnit: WeightUnit = userProfile.preferredUnit,
+        val planningIntent: wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent = wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent.ORDINARY,
+        val programSession: wallcrawl.elopenmike.com.core.model.ProgramSessionSnapshot? = null
     ) : TodayUiState
 
     /**

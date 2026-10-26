@@ -22,7 +22,7 @@ class LocalDataArchiveDeloadTest {
         }
 
     @Test fun allChoicesRoundTripIncludingConsumedLinkToDeletedCancelledWorkout() {
-        assertEquals(4, LocalDataArchiveFormat.ARCHIVE_VERSION)
+        assertEquals(5, LocalDataArchiveFormat.ARCHIVE_VERSION)
         DeloadChoiceStatus.entries.forEach { status ->
             val original = archive(status)
             assertEquals(original, LocalDataArchiveCodec.read(ByteArrayInputStream(bytes(original))))

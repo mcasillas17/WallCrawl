@@ -89,7 +89,9 @@ data class RecommendationSnapshot(
     val deloadDecisionRevision: Long? = null,
     val acceptedDeloadOfferId: String? = null,
     val acceptedDeloadSource: DeloadSource? = null,
-    val progression: List<ProgressionProvenance> = emptyList()
+    val progression: List<ProgressionProvenance> = emptyList(),
+    val expectedProgramHeader: wallcrawl.elopenmike.com.core.model.ProgramHeader? = null,
+    val programSession: wallcrawl.elopenmike.com.core.model.ProgramSessionSnapshot? = null
 ) {
     init {
         require(generationIndex == null || generationIndex >= 0)
@@ -141,5 +143,9 @@ fun RecommendationSnapshot.asRecord(
             DeloadRecommendationProvenance(it, acceptedDeloadOfferId, acceptedDeloadSource)
         }),
     doseAccounting = doseAccounting,
-    recordedAtEpochMillis = recordedAtEpochMillis
+    recordedAtEpochMillis = recordedAtEpochMillis,
+    programAssociationDigest = programSession?.let { snapshot ->
+        val profileId = requireNotNull(expectedProgramHeader).profileId
+        MultiWeekProgramPolicy.associationDigest(wallcrawl.elopenmike.com.core.model.ProgramAssociation(sessionId, profileId, snapshot))
+    }
 )

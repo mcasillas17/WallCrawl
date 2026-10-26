@@ -94,6 +94,182 @@ import wallcrawl.elopenmike.com.test.MainDispatcherRule
 @OptIn(ExperimentalCoroutinesApi::class)
 class TodayProductionLifecycleTest {
     @Test
+    fun supersededProgramFailureCannotSuppressTheNewlySelectedProgramAttempt() = runTest {
+        val captured = freshlyOnboardedProfile()
+        val started = kotlinx.coroutines.CompletableDeferred<Unit>()
+        val release = kotlinx.coroutines.CompletableDeferred<Unit>()
+        var programAttempts = 0
+        val planner = object : WorkoutPlanner {
+            val delegate = FakeWorkoutPlanner()
+            override suspend fun generateWorkout(context: WorkoutGenerationContext): GeneratedWorkout {
+                if (context.planningIntent == wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent.PROGRAM) {
+                    programAttempts++
+                    if (programAttempts == 1) {
+                        started.complete(Unit)
+                        release.await()
+                        throw wallcrawl.elopenmike.com.core.ai.WorkoutValidationException(
+                            "Superseded program attempt", wallcrawl.elopenmike.com.core.ai.WorkoutPlanningFailure.NO_CANDIDATES)
+                    }
+                }
+                return delegate.generateWorkout(context)
+            }
+        }
+        val workouts = LifecycleWorkoutRepository()
+        val vm = todayViewModel(LifecycleProfileRepository(captured), workouts, planner,
+            programRepository = programReads(captured))
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { vm.uiState.collect {} }
+        advanceUntilIdle()
+        val ordinary = vm.uiState.value as TodayUiState.Success
+        vm.selectPlanningIntent(wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent.PROGRAM)
+        advanceUntilIdle()
+        assertThat(started.isCompleted).isTrue()
+        vm.selectPlanningIntent(wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent.ORDINARY)
+        vm.selectPlanningIntent(wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent.PROGRAM)
+        assertThat((vm.uiState.value as TodayUiState.Success).suggestedWorkout).isEqualTo(ordinary.suggestedWorkout)
+        release.complete(Unit)
+        advanceUntilIdle()
+
+        assertThat(programAttempts).isEqualTo(2)
+        val current = vm.uiState.value as TodayUiState.Success
+        assertThat(current.planningIntent).isEqualTo(wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent.PROGRAM)
+        assertThat(current.programSession?.position?.slotOrdinal).isEqualTo(0)
+        vm.startWorkout("Program session", "Test fixture") {}
+        advanceUntilIdle()
+        assertThat(workouts.startRequests.single().recommendation?.programSession?.position?.slotOrdinal).isEqualTo(0)
+    }
+
+    @Test
+    fun returningToAFailedProgramModeRetriesInsteadOfLeavingAnInertOrdinaryStart() = runTest {
+        val captured = freshlyOnboardedProfile()
+        val programs = programReads(captured)
+        var programAttempts = 0
+        var programUnavailable = true
+        val planner = object : WorkoutPlanner {
+            val delegate = FakeWorkoutPlanner()
+            override suspend fun generateWorkout(context: WorkoutGenerationContext): GeneratedWorkout {
+                if (context.planningIntent == wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent.PROGRAM) {
+                    programAttempts++
+                    if (programUnavailable) throw wallcrawl.elopenmike.com.core.ai.WorkoutValidationException(
+                        "No program candidates in this fixture", wallcrawl.elopenmike.com.core.ai.WorkoutPlanningFailure.NO_CANDIDATES)
+                }
+                return delegate.generateWorkout(context)
+            }
+        }
+        val workouts = LifecycleWorkoutRepository()
+        val vm = todayViewModel(LifecycleProfileRepository(captured), workouts, planner, programRepository = programs)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { vm.uiState.collect {} }
+        advanceUntilIdle()
+        val ordinary = vm.uiState.value as TodayUiState.Success
+        vm.selectPlanningIntent(wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent.PROGRAM); advanceUntilIdle()
+        assertThat((vm.uiState.value as TodayUiState.Error).error).isEqualTo(TodayError.NO_CANDIDATES)
+        assertThat(programAttempts).isEqualTo(1)
+        vm.selectPlanningIntent(wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent.ORDINARY); advanceUntilIdle()
+        assertThat((vm.uiState.value as TodayUiState.Success).suggestedWorkout).isEqualTo(ordinary.suggestedWorkout)
+        vm.selectPlanningIntent(wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent.PROGRAM); advanceUntilIdle()
+        assertThat(programAttempts).isEqualTo(2)
+        assertThat((vm.uiState.value as TodayUiState.Error).error).isEqualTo(TodayError.NO_CANDIDATES)
+        assertThat(workouts.startRequests).isEmpty()
+        programUnavailable = false
+        vm.regenerateWorkout(); advanceUntilIdle()
+        val recovered = vm.uiState.value as TodayUiState.Success
+        assertThat(recovered.planningIntent).isEqualTo(wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent.PROGRAM)
+        assertThat(recovered.programSession?.position?.slotOrdinal).isEqualTo(0)
+        vm.startWorkout("Program session", "Test fixture") {}; advanceUntilIdle()
+        assertThat(workouts.startRequests.single().recommendation?.programSession?.position?.slotOrdinal).isEqualTo(0)
+    }
+
+    @Test
+    fun aFailedSupersededProgramGenerationCannotHideOrRelabelTheOrdinaryProposal() = runTest {
+        val captured = freshlyOnboardedProfile()
+        val programs = programReads(captured)
+        val started = kotlinx.coroutines.CompletableDeferred<Unit>()
+        val release = kotlinx.coroutines.CompletableDeferred<Unit>()
+        val planner = object : WorkoutPlanner {
+            val delegate = FakeWorkoutPlanner()
+            override suspend fun generateWorkout(context: WorkoutGenerationContext): GeneratedWorkout {
+                if (context.planningIntent == wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent.PROGRAM) {
+                    started.complete(Unit); release.await()
+                    throw IllegalStateException("program generation unavailable")
+                }
+                return delegate.generateWorkout(context)
+            }
+        }
+        val vm = todayViewModel(LifecycleProfileRepository(captured), LifecycleWorkoutRepository(), planner,
+            programRepository = programs)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { vm.uiState.collect {} }
+        advanceUntilIdle()
+        val ordinary = vm.uiState.value as TodayUiState.Success
+        vm.selectPlanningIntent(wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent.PROGRAM); advanceUntilIdle()
+        assertThat(started.isCompleted).isTrue()
+        val stillOrdinary = vm.uiState.value as TodayUiState.Success
+        assertThat(stillOrdinary.programSession).isNull()
+        assertThat(stillOrdinary.suggestedWorkout).isEqualTo(ordinary.suggestedWorkout)
+        vm.selectPlanningIntent(wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent.ORDINARY)
+        release.complete(Unit); advanceUntilIdle()
+        val result = vm.uiState.value as TodayUiState.Success
+        assertThat(result.planningIntent).isEqualTo(wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent.ORDINARY)
+        assertThat(result.programSession).isNull()
+    }
+
+    @Test
+    fun restoredVariationFromAReplacedRunResetsBeforePublishing() = runTest {
+        val captured = freshlyOnboardedProfile()
+        val programs = programReads(captured)
+        val saved = androidx.lifecycle.SavedStateHandle(mapOf("today.intent" to "PROGRAM",
+            "today.program.position" to "22222222-2222-2222-2222-222222222222:0", "today.program.variation" to 7))
+        val workouts = LifecycleWorkoutRepository()
+        val vm = todayViewModel(LifecycleProfileRepository(captured), workouts, programRepository = programs, savedStateHandle = saved)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { vm.uiState.collect {} }
+        advanceUntilIdle()
+        assertThat((vm.uiState.value as TodayUiState.Success).suggestedWorkout.generationIndex).isEqualTo(0)
+        assertThat(saved.get<Int>("today.program.variation")).isEqualTo(0)
+    }
+
+    private fun programReads(profile: UserProfile): wallcrawl.elopenmike.com.core.database.repository.ProgramRepository {
+        val config = wallcrawl.elopenmike.com.core.model.ProgramConfiguration(profile.primaryGoal, profile.goals.sortedBy { it.name }, profile.daysPerWeek)
+        val enrollment = wallcrawl.elopenmike.com.core.model.ProgramEnrollment(profile.id,
+            "11111111-1111-1111-1111-111111111111", 1, config, wallcrawl.elopenmike.com.core.model.ProgramStatus.ACTIVE, NOW, NOW)
+        return wallcrawl.elopenmike.com.core.ai.ReadOnlyProgramRepository(wallcrawl.elopenmike.com.core.model.ProgramReadState.Supported(
+            wallcrawl.elopenmike.com.core.model.ProgramHeader(profile.id, enrollment.programId, 1, "a".repeat(64)),
+            enrollment, wallcrawl.elopenmike.com.core.ai.MultiWeekProgramPolicy.reconstruct(enrollment, emptyList()), emptyList(), profile))
+    }
+
+    @Test
+    fun restoredProgramChoiceUsesTheSameRunSlotVariationAndExplicitMembership() = runTest {
+        val profile = LifecycleProfileRepository(freshlyOnboardedProfile())
+        val captured = freshlyOnboardedProfile()
+        val config = wallcrawl.elopenmike.com.core.model.ProgramConfiguration(captured.primaryGoal,
+            captured.goals.sortedBy { it.name }, captured.daysPerWeek)
+        val enrollment = wallcrawl.elopenmike.com.core.model.ProgramEnrollment(captured.id,
+            "11111111-1111-1111-1111-111111111111", 1, config,
+            wallcrawl.elopenmike.com.core.model.ProgramStatus.ACTIVE, NOW, NOW)
+        val read = wallcrawl.elopenmike.com.core.model.ProgramReadState.Supported(
+            wallcrawl.elopenmike.com.core.model.ProgramHeader(captured.id, enrollment.programId, 1, "a".repeat(64)),
+            enrollment, wallcrawl.elopenmike.com.core.ai.MultiWeekProgramPolicy.reconstruct(enrollment, emptyList()), emptyList(), captured)
+        val programs = wallcrawl.elopenmike.com.core.ai.ReadOnlyProgramRepository(read)
+        val saved = androidx.lifecycle.SavedStateHandle(mapOf(
+            "today.intent" to "PROGRAM", "today.program.position" to (enrollment.programId + ":0"), "today.program.variation" to 3))
+        val workouts = LifecycleWorkoutRepository()
+        val vm = todayViewModel(profile, workouts, programRepository = programs, savedStateHandle = saved)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { vm.uiState.collect {} }
+        advanceUntilIdle()
+        val program = vm.uiState.value as TodayUiState.Success
+        assertThat(program.planningIntent).isEqualTo(wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent.PROGRAM)
+        assertThat(program.programSession?.programId).isEqualTo(enrollment.programId)
+        assertThat(program.suggestedWorkout.generationIndex).isEqualTo(3)
+        vm.regenerateWorkout(); advanceUntilIdle()
+        assertThat((vm.uiState.value as TodayUiState.Success).suggestedWorkout.generationIndex).isEqualTo(4)
+        vm.refreshRecommendation(); advanceUntilIdle()
+        assertThat((vm.uiState.value as TodayUiState.Success).suggestedWorkout.generationIndex).isEqualTo(4)
+        vm.selectPlanningIntent(wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent.ORDINARY); advanceUntilIdle()
+        val ordinary = vm.uiState.value as TodayUiState.Success
+        assertThat(ordinary.programSession).isNull()
+        assertThat(ordinary.planningIntent).isEqualTo(wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent.ORDINARY)
+        vm.startWorkout("Ordinary", "Ordinary") {}; advanceUntilIdle()
+        assertThat(workouts.startRequests.single().recommendation?.programSession).isNull()
+    }
+
+    @Test
     fun delayedUnitRegenerationKeepsTheOldProposalBoundToItsGenerationUnit() = runTest {
         val exercise = bundledExercises.single { it.id == "overhead-press" }
         val history = completedSessionOf("old-load", exercise, 1, NOW - 20 * 24 * HOUR_MILLIS).let { session ->
@@ -1325,7 +1501,9 @@ class TodayProductionLifecycleTest {
         now: () -> Long = { NOW },
         clock: Flow<Long> = flowOf(NOW),
         zone: () -> ZoneId = { LEDGER_ZONE },
-        deloadRepository: DeloadRepository? = LifecycleDeloadRepository()
+        deloadRepository: DeloadRepository? = LifecycleDeloadRepository(),
+        programRepository: wallcrawl.elopenmike.com.core.database.repository.ProgramRepository? = null,
+        savedStateHandle: androidx.lifecycle.SavedStateHandle = androidx.lifecycle.SavedStateHandle()
     ): TodayViewModel {
         val catalog = InMemoryExerciseCatalog(bundledExercises)
         return TodayViewModel(
@@ -1345,14 +1523,17 @@ class TodayProductionLifecycleTest {
                 catalogVersion = { bundledCatalog.sourceCommit },
                 nowTimestamp = now,
                 zoneId = zone,
-                deloadRepository = deloadRepository
+                deloadRepository = deloadRepository,
+                programRepository = programRepository
             ),
             workoutPlanner = planner,
             programValidator = ProgramValidator(GeneratedWorkoutValidator(catalog)),
             nowTimestamp = now,
             clock = clock,
             zoneId = zone,
-            deloadRepository = deloadRepository
+            deloadRepository = deloadRepository,
+            programRepository = programRepository,
+            savedStateHandle = savedStateHandle
         )
     }
 

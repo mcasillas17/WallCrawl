@@ -23,6 +23,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.ArrowDownward
@@ -101,7 +103,8 @@ fun ProgressScreen(
     viewModel: ProgressViewModel,
     modifier: Modifier = Modifier,
     onOpenSession: (String) -> Unit = {},
-    onOpenHistory: () -> Unit = {}
+    onOpenHistory: () -> Unit = {},
+    programContent: @Composable () -> Unit = {}
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
@@ -144,7 +147,7 @@ fun ProgressScreen(
 
     ProgressScreen(
         uiState = uiState, onRetry = viewModel::refresh, modifier = modifier,
-        onOpenSession = onOpenSession, onOpenHistory = onOpenHistory
+        onOpenSession = onOpenSession, onOpenHistory = onOpenHistory, programContent = programContent
     )
 }
 
@@ -160,7 +163,8 @@ fun ProgressScreen(
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
     onOpenSession: (String) -> Unit = {},
-    onOpenHistory: () -> Unit = {}
+    onOpenHistory: () -> Unit = {},
+    programContent: @Composable () -> Unit = {}
 ) {
     Box(
         modifier = modifier
@@ -191,10 +195,11 @@ fun ProgressScreen(
 
             is ProgressUiState.Error -> {
                 Column(
-                    modifier = Modifier.fillMaxSize().padding(24.dp),
+                    modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
+                    programContent()
                     Text(
                         text = stringResource(state.messageRes),
                         color = MaterialTheme.colorScheme.error,
@@ -207,7 +212,7 @@ fun ProgressScreen(
                 }
             }
 
-            is ProgressUiState.Success -> ProgressContent(state, onOpenSession, onOpenHistory)
+            is ProgressUiState.Success -> ProgressContent(state, onOpenSession, onOpenHistory, programContent)
         }
     }
 }
@@ -216,7 +221,8 @@ fun ProgressScreen(
 private fun ProgressContent(
     state: ProgressUiState.Success,
     onOpenSession: (String) -> Unit,
-    onOpenHistory: () -> Unit
+    onOpenHistory: () -> Unit,
+    programContent: @Composable () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -224,6 +230,7 @@ private fun ProgressContent(
             .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        item { programContent() }
         item {
             Spacer(modifier = Modifier.height(16.dp))
             Text(

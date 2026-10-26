@@ -40,6 +40,7 @@ class FakeWorkoutPlanner(
     private val generationCounter = AtomicInteger(0)
 
     override suspend fun generateWorkout(context: WorkoutGenerationContext): GeneratedWorkout {
+        context.validatedProgramSession()
         val candidates = context.allowedExercises
         if (candidates.isEmpty()) {
             val reviewedFailure =
@@ -55,7 +56,7 @@ class FakeWorkoutPlanner(
                 automaticEligibilityFailure = reviewedFailure
             )
         }
-        val generationIndex = context.regenerationIndex ?: generationCounter.getAndIncrement()
+        val generationIndex = context.regenerationIndex ?: if (context.programInput != null) 0 else generationCounter.getAndIncrement()
         require(generationIndex >= 0) { "Generation index must not be negative." }
         val splitType = determineSplit(context, generationIndex, candidates)
 
@@ -174,11 +175,12 @@ class FakeWorkoutPlanner(
      *
      * The in-memory counter alone resets whenever the process is killed, so a user who
      * opens the app once a day would see the first split every day. Completed workouts
-     * carry the rotation across restarts; the counter still varies within a session so
+     * carry ordinary rotation across restarts; explicit program slots replace that base.
+     * The counter still varies within a session so
      * regenerating offers something different.
      */
-    private fun rotationSeed(context: WorkoutGenerationContext, generationIndex: Int): Int =
-        context.completedWorkoutCount + generationIndex
+    private fun rotationSeed(context: WorkoutGenerationContext, generationIndex: Int): Long =
+        (context.programInput?.position?.slotOrdinal ?: context.completedWorkoutCount).toLong() + generationIndex
 
     private fun selectExercisesForSplit(
         split: WorkoutSplit,

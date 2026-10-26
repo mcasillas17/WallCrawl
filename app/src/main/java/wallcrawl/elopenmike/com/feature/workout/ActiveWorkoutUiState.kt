@@ -52,7 +52,10 @@ sealed interface ActiveWorkoutUiState {
         /** Non-null while the user is being asked to confirm finishing with open sets. */
         val pendingFinish: FinishDecision.ConfirmIncomplete? = null,
         /** True while the user is being asked to confirm discarding this workout. */
-        val isConfirmingDiscard: Boolean = false
+        val isConfirmingDiscard: Boolean = false,
+        val programAssociation: wallcrawl.elopenmike.com.core.model.ProgramHistoryAssociation? = null,
+        @StringRes val programReadError: Int? = null,
+        val programFinishUnsupported: Boolean = false
     ) : ActiveWorkoutUiState {
         val currentExercise: WorkoutExercise?
             get() = session.exercises.getOrNull(currentExerciseIndex)

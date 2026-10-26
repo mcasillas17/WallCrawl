@@ -51,7 +51,7 @@ import wallcrawl.elopenmike.com.core.model.ProgressionReasonCode
  */
 object RecommendationContextIdentity {
 
-    private const val FORMAT_VERSION = "wallcrawl-recommendation-context-v4"
+    private const val FORMAT_VERSION = "wallcrawl-recommendation-context-v5"
 
     /** ASCII unit separator: it cannot occur in a catalog id, muscle name, or zone id. */
     private const val FIELD_SEPARATOR = "\u001F"
@@ -80,6 +80,21 @@ object RecommendationContextIdentity {
             line("zone", ledger?.timeZoneId ?: "none"),
             line("constraints", context.programConstraints.canonicalForm())
         )
+        val header = context.programHeader
+        lines += line("planningIntent", context.planningIntent.name)
+        lines += line("programHeader", header.profileId, header.programId ?: "none", header.revision.toString(),
+            header.rawStorageFingerprint ?: "none")
+        context.programInput?.let { input ->
+            val enrollment = input.enrollment
+            val config = enrollment.configuration
+            lines += line("enrollment", enrollment.profileId, enrollment.programId, enrollment.revision.toString(),
+                enrollment.status.name, enrollment.lifecyclePolicyVersion)
+            lines += line("programConfiguration", config.policyVersion, config.primaryGoal.name,
+                config.goals.map { it.name }.sorted().joinToString(","), config.sessionsPerWeek.toString())
+            val position = input.position
+            lines += line("programPosition", position.slotOrdinal.toString(), position.blockNumber.toString(),
+                position.weekNumber.toString(), position.sessionInWeek.toString(), input.objective.name)
+        }
         ledger?.let {
             val usable = it.isWellFormed()
             lines += line("ledgerIntegrity", usable.toString())

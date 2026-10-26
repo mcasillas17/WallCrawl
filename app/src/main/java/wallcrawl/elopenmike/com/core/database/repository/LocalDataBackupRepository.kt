@@ -5,6 +5,9 @@ import java.io.OutputStream
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import wallcrawl.elopenmike.com.core.backup.LocalDataArchive
+import wallcrawl.elopenmike.com.core.backup.archivedProgramValue
+import wallcrawl.elopenmike.com.core.backup.LocalDataArchiveException
+import wallcrawl.elopenmike.com.core.backup.ArchiveRejection
 import wallcrawl.elopenmike.com.core.backup.LocalDataArchiveCodec
 import wallcrawl.elopenmike.com.core.backup.LocalDataArchiveFormat
 import wallcrawl.elopenmike.com.core.backup.LocalDataArchiveMetadata
@@ -173,6 +176,8 @@ class OfflineLocalDataBackupRepository(
         check(rows.profiles.size <= 1) {
             "The local database holds more than one profile row."
         }
+        if (rows.programEnrollments.size > 1) throw LocalDataArchiveException(
+            ArchiveRejection.INCONSISTENT, "The local database holds more than one program enrollment.")
         check(rows.deloadPreferences.size <= 1) { "The local database holds more than one deload preference row." }
 
         val templateExercisesByTemplate = rows.templateExercises.groupBy { it.templateId }
@@ -203,7 +208,9 @@ class OfflineLocalDataBackupRepository(
             sessions = sessions,
             recommendationRecords = rows.recommendationRecords
                 .map { it.toRecommendationRecord() },
-            deloadPreferences = rows.deloadPreferences.firstOrNull()?.toDeloadPreferences()
+            deloadPreferences = rows.deloadPreferences.firstOrNull()?.toDeloadPreferences(),
+            programEnrollment = archivedProgramValue { rows.programEnrollments.firstOrNull()?.toProgramEnrollment() },
+            programAssociations = archivedProgramValue { rows.programAssociations.map { it.toProgramAssociation() } }
         )
     }
 
@@ -221,7 +228,9 @@ class OfflineLocalDataBackupRepository(
             }
         },
         recommendationRecords = recommendationRecords.map { it.toEntity() },
-        deloadPreferences = listOfNotNull(deloadPreferences?.toEntity())
+        deloadPreferences = listOfNotNull(deloadPreferences?.toEntity()),
+        programEnrollments = listOfNotNull(programEnrollment?.toEntity()),
+        programAssociations = programAssociations.map { it.toEntity() }
     )
 
     private fun WorkoutTemplate.toTemplateEntity() = WorkoutTemplateEntity(

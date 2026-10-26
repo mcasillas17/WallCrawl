@@ -311,7 +311,9 @@ class OfflineWorkoutRepository(
                 )
                 ?.toEntity(),
             expectedDeloadDecisionRevision = recommendation?.deloadDecisionRevision,
-            acceptedDeloadOfferId = recommendation?.acceptedDeloadOfferId
+            acceptedDeloadOfferId = recommendation?.acceptedDeloadOfferId,
+            expectedProgramHeader = recommendation?.expectedProgramHeader,
+            programSession = recommendation?.programSession
         ).toWorkoutSession()
     }
 
@@ -483,8 +485,8 @@ class OfflineWorkoutRepository(
 
     override suspend fun cancelWorkout(sessionId: String) {
         require(sessionId.isNotBlank()) { "sessionId must not be blank." }
-        check(sessionDao.deleteActiveSession(sessionId) == 1) {
-            "Workout session '$sessionId' was not found or is not in progress."
+        if (sessionDao.deleteActiveSession(sessionId) != 1) {
+            throw wallcrawl.elopenmike.com.core.model.ProgramException(wallcrawl.elopenmike.com.core.model.ProgramFailure.MISSING_OR_NOT_ACTIVE)
         }
     }
 

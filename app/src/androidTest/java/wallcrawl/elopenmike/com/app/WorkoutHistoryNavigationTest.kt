@@ -96,6 +96,7 @@ class WorkoutHistoryNavigationTest {
                 database.workoutSessionDao(), database.workoutSetDao()
             )
             override val workoutHistoryRepository = OfflineWorkoutHistoryRepository(database, gate)
+            override val programRepository = wallcrawl.elopenmike.com.core.database.repository.OfflineProgramRepository(database, gate)
             override val deloadRepository = OfflineDeloadRepository(database.deloadPreferencesDao(), gate)
             override val weeklyDoseLedgerRepository = OfflineWeeklyDoseLedgerRepository(
                 database.completedWorkoutHistoryDao(), database.weeklyDoseLedgerStateDao(),
@@ -111,7 +112,8 @@ class WorkoutHistoryNavigationTest {
                 userProfileRepository, workoutRepository, exerciseCatalog, exerciseFilter,
                 workoutHistoryAnalyzer, plannerFeatureFlags = PlannerFeatureFlags.PRODUCTION,
                 trainingProgramStateProvider = TrainingProgramStateProvider(weeklyDoseLedgerRepository),
-                deloadRepository = deloadRepository
+                deloadRepository = deloadRepository,
+                programRepository = programRepository
             )
         }
         container.userProfileRepository.saveProfile(UserProfile(onboardingCompleted = true))
