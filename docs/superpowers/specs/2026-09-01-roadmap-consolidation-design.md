@@ -1,5 +1,9 @@
 # Roadmap Consolidation Design
 
+> **Historical design:** The optional local-model phase referenced below was
+> retired on 2026-10-25. The [canonical roadmap](../../../ROADMAP.md) owns current
+> scope; this consolidation record does not reactivate superseded model proposals.
+
 **Goal:** Make one document authoritative for WallCrawl's current status, ordered future work,
 and dependencies without deleting the detailed implementation history.
 

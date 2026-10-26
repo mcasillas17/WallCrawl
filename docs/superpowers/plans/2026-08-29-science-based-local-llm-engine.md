@@ -1,16 +1,15 @@
 # Science-Based Local LLM Engine Implementation Plan
 
-> **Planning record:** Current status, priority, and dependency order live in the
-> [canonical roadmap](../../../ROADMAP.md). This document preserves detailed implementation
-> context; unchecked boxes are not authoritative project status.
+> **Retired 2026-10-25:** This model-integration proposal is no longer part of
+> WallCrawl's product direction. [Roadmap Package 17](../../../ROADMAP.md#17-optional-local-inference-retired)
+> is retired, not deferred. The original proposal below is retained as historical
+> context, not instructions to implement it or prerequisites for a release.
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+**Historical goal:** Add an optional on-device LLM that improves preference handling and explanations without controlling safety, eligibility, exercise identity, dose, progression, or persistence.
 
-**Goal:** Add an optional on-device LLM that improves preference handling and explanations without controlling safety, eligibility, exercise identity, dose, progression, or persistence.
+**Historical architecture:** The completed deterministic engine produces exact candidate slots, fallback ranking, dose, and reason codes. A provider-agnostic local runtime may parse non-safety preferences, rerank only those IDs, and verbalize reasons; strict schemas, deterministic compilation/validation, audit records, and immediate fallback enclose every model call.
 
-**Architecture:** The completed deterministic engine produces exact candidate slots, fallback ranking, dose, and reason codes. A provider-agnostic local runtime may parse non-safety preferences, rerank only those IDs, and verbalize reasons; strict schemas, deterministic compilation/validation, audit records, and immediate fallback enclose every model call.
-
-**Tech Stack:** Kotlin, Coroutines/Flow, provider abstraction for Android local inference, strict JSON/schema parser, Room audit metadata, JUnit/property tests, physical-device benchmarks.
+**Historical tech stack:** Kotlin, Coroutines/Flow, provider abstraction for Android local inference, strict JSON/schema parser, Room audit metadata, JUnit/property tests, physical-device benchmarks.
 
 ---
 

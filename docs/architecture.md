@@ -7,11 +7,13 @@ the current architecture.
 
 ## Product boundary
 
-WallCrawl is local-first. The exercise catalog, profile, workout templates,
+WallCrawl is a private, offline workout app. The exercise catalog, profile, workout templates,
 active workout, completed history, and progress data are stored and processed locally.
-There is no account requirement, catalog network request, or production LLM in
-the current application. Movement-capability answers add no cloud sync,
-analytics, Health Connect, Wear OS, network, or model data flow.
+Workout recommendations come from deterministic rules, not a model runtime.
+There is no account requirement or catalog network request. Movement-capability
+answers add no cloud sync, analytics, Health Connect, Wear OS, network, or model
+data flow. Model integration is not planned; see the
+[recorded product direction](../ROADMAP.md#recorded-decisions).
 The app opts out of implicit Android backup and excludes app data from cloud
 backup and device transfer through both legacy and modern rules. The
 [privacy policy and storage-boundary diagram](privacy.md) distinguish that
@@ -44,8 +46,8 @@ Bundled catalog ─────────┤  profile + history → filter →
 
 Automatic recommendations and manual templates intentionally share exercise
 IDs, prescriptions, active-session persistence, logging, and analytics. This
-keeps a future local model behind a replaceable planning boundary instead of
-making the rest of the app depend on one inference implementation.
+keeps planning policies separate from logging and persistence while giving both
+entry points the same recorded-workout and history contracts.
 
 ## Source organization
 
@@ -61,7 +63,7 @@ boundaries:
 | `core/io` | Bounded reading shared by the parsers that accept untrusted input |
 | `core/locale` | The app language preference and the platform per-app locale boundary |
 | `core/exercise` | Catalog search/filtering and the visual-provider boundary |
-| `core/ai` | Context building, workout planning, prescription defaults, and validation |
+| `core/ai` | Deterministic context building, workout planning, prescription defaults, and validation; the historical package name does not imply a model runtime |
 | `core/progress` | Pure calculations over completed sessions |
 | `core/ui` | Theme, reusable Compose components, locale-aware number formatting and parsing, and the read side of the translation overlay |
 | `feature/*` | Screen state, ViewModels, and Compose UI for each product area |
@@ -676,10 +678,9 @@ workouts. Rep work and non-stretch duration work without a Cardio muscle tag can
 fill strength slots; metadata presence does not change this classification.
 
 Planning failures carry a `WorkoutPlanningFailure` reason rather than
-user-facing text; `TodayViewModel` maps reasons to copy. A future planner chain
-branches on the same reason to decide between repairing, falling back to another
-tier, and surfacing the failure — string matching on messages could not support
-that.
+user-facing text; `TodayViewModel` maps reasons to copy. Typed failures keep
+handling independent of translated messages and do not authorize a fallback to
+an unreviewed candidate.
 
 `TodayViewModel` validates in two places. After generation it runs `ProgramValidator`
 with repair permitted, and shows nothing when the result is a rejection; a rejection
@@ -691,10 +692,6 @@ flag, adaptation state, declared constraints, and the accounting week and zone �
 revalidates with repair disabled. An edited profile, newly completed history, or a crossed
 week or time-zone boundary is reported as an out-of-date recommendation, not started
 quietly. The digest reads no locale and no display text, so language cannot move it.
-
-A future local LLM should implement the same `WorkoutPlanner` interface. Model
-integration does not remove the hard filter or validator; constrained decoding
-and schema enforcement would be additional defenses at the inference boundary.
 
 ## Manual workout templates
 

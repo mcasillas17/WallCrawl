@@ -123,9 +123,9 @@ part of Milestone 1.
 - [ ] Whole-program replay and persona evaluation.
 
 These later milestones must remain deterministic and explainable. They cannot
-use body measurements as capability proxies or invent starting loads. LLM work
-remains blocked behind the complete deterministic pipeline and its independent
-evaluation gates.
+use body measurements as capability proxies or invent starting loads.
+Model integration is retired, not waiting on deterministic completion or evaluation;
+see the [2026-10-25 product decision](../../../ROADMAP.md#17-optional-local-inference-retired).
 
 ## Data-flow verification map
 
