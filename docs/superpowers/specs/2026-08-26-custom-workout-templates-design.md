@@ -1,5 +1,11 @@
 # Custom Workout Templates and Full-Catalog Planning Design
 
+> **Partial supersession, 2026-10-25:** The future local-model planner and template
+> advisor discussed below are retired under
+> [Roadmap Package 17](../../../ROADMAP.md#17-optional-local-inference-retired).
+> This document preserves the original design; only the deterministic template
+> and session contracts remain part of the product direction, subject to later designs.
+
 ## Goal
 
 Let a user build, save, edit, delete, and repeatedly start custom workout templates entirely on-device. Manual templates and automated planners may select from the complete 302-exercise Workout Guide catalog. Automatic planning still applies equipment and exclusion constraints; manual selection shows the complete catalog and warns when an exercise appears incompatible with the current equipment profile.
@@ -109,6 +115,8 @@ The active workout logger renders and records fields by exercise type. Existing 
 - Missing catalog exercises in an old template block loading or starting with an error; they are never silently substituted.
 
 ## Future AI Boundary
+
+**Status:** Retired on 2026-10-25. The proposal below is historical, not planned work.
 
 No production local model is added in this phase. Templates remain structured data that a future `WorkoutTemplateAdvisor` can consume alongside user profile, equipment, and history. Suggestions must return catalog exercise IDs and structured edits, pass the same validator, and require explicit user acceptance before mutating a saved template.
 

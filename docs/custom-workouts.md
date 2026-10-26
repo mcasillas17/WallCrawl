@@ -137,12 +137,13 @@ The current feature does not include:
 - detailed target and rest editing;
 - unsaved-draft restoration or leave confirmation;
 - exercise supersets or circuits;
-- AI analysis or suggestions for a saved template;
 - cloud backup or synchronization.
 
-Future AI assistance should operate on this structured template model, select
-only catalog exercise IDs, pass the same validation boundaries, and require the
-user to accept changes before a saved template is modified.
+Model-based template analysis and suggestions are not planned features.
+The former AI-assistance proposal is retired with
+[Roadmap Package 17](../ROADMAP.md#17-optional-local-inference-retired).
+Templates remain user-controlled, structured local data; editing and starting them
+use the existing deterministic validation and immutable-session boundaries.
 
 ## Contributor map
 

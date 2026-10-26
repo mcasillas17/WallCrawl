@@ -1,5 +1,12 @@
 # Training Science Evidence Review for WallCrawl
 
+> **Product-direction supersession, 2026-10-25:** The optional-model proposal,
+> its enablement conditions, and its release gates are retired under
+> [Roadmap Package 17](../../ROADMAP.md#17-optional-local-inference-retired).
+> References below to future LLM work, including signed decision 10, preserve
+> the original research/design record; they are not active implementation requirements.
+> The deterministic evidence boundaries and truthful content-authoring provenance remain.
+
 ## Method
 
 Four research agents (Claude Opus 4.8, Grok 4.6, Gemini 3.7 Flash, and GPT-5.6 Terra) completed four rounds:
@@ -17,7 +24,7 @@ The full per-agent, per-round record — distinct Round-1 findings, Round-2 cita
 
 - Detailed engine architecture: `docs/superpowers/specs/2026-08-29-science-based-workout-engines-design.md`.
 - Deterministic engine implementation plan: `docs/superpowers/plans/2026-08-29-science-based-deterministic-engine.md`.
-- Local LLM engine implementation plan: `docs/superpowers/plans/2026-08-29-science-based-local-llm-engine.md`.
+- Retired local LLM proposal (historical only): `docs/superpowers/plans/2026-08-29-science-based-local-llm-engine.md`.
 - Body-aware personalization design: `docs/superpowers/specs/2026-08-29-body-aware-personalization-design.md`.
 - Body-aware personalization plan: `docs/superpowers/plans/2026-08-29-body-aware-personalization.md`.
 - Roundtable agent findings appendix: `docs/research/2026-08-29-roundtable-agent-findings.md`.

@@ -4,24 +4,22 @@
 
 # WallCrawl
 
-WallCrawl is an open-source, local-first workout planner and progress tracker
-for Android. It is building toward a private on-device coach that chooses
-workouts from a constrained exercise catalog, with workout data stored locally
-under an explicit [backup and privacy policy](docs/privacy.md).
+WallCrawl is an open-source, **private, offline workout app for Android**.
+Plan workouts, log training, and understand your progress without an account or
+network connection. Your profile and training history are stored locally, with
+user-owned export, restore, and deletion under an explicit
+[backup and privacy policy](docs/privacy.md).
 
-This repository currently contains the working application around that future
-model: first-run onboarding with conservative equipment defaults, profile
-constraints and local movement-capability inputs, a complete bundled catalog,
-structured workout generation and
-validation, reusable custom workout templates, type-aware active set logging
-with no fabricated starting loads, a complete English and neutral Latin American
-Spanish interface, Room persistence with user-owned export,
-restore, and deletion, workout-history context,
-experience-aware exercise ordering, a production reviewed capability-
-evidence soft-penalty relaxation, a production reviewed state-based
-dose/effort/rest policy, and progress calculations. The current
-`FakeWorkoutPlanner` is deliberately replaceable; no production local LLM
-runtime is integrated yet.
+The app combines first-run onboarding, equipment and movement preferences, a
+complete bundled exercise catalog, rules-based workout generation and validation,
+reusable custom templates, and type-aware set logging with no fabricated starting
+loads. Single-variable progression, user-controlled deload, progress tracking,
+and read-only workout history help you understand what was planned and what you
+performed. The interface is available in English and neutral Latin American Spanish.
+
+Workout recommendations use explicit rules and recorded training history.
+Model downloads and model-driven workout features are not part of the product
+direction; the app's existing deterministic planner remains the foundation.
 
 ## Screenshots & App Experience
 
@@ -330,8 +328,7 @@ capability-evidence soft-penalty suppression without changing browse or
 manual-workout access. A restriction cannot be bypassed by an easier regression:
 a supported regression must itself be cleared for every selected sensitivity.
 
-The fake planner uses the same `WorkoutPlanner` contract intended for a future
-Qwen, Gemma, or LiteRT-backed implementation. It only selects IDs from
+The production rules-based planner implements `WorkoutPlanner` and only selects IDs from
 `WorkoutGenerationContext.allowedExercises`. `ExercisePrescription` rejects
 malformed set, rep, weight, rest, and duration values as it is constructed, and
 `GeneratedWorkoutValidator` rejects unknown or disallowed exercise IDs, an empty
@@ -811,9 +808,10 @@ test installation only** for installed-app lifecycle checks.
 - A fresh install must complete explicit onboarding before it can reach
   automatic planning; nothing about equipment, experience, or gym access is
   assumed on its behalf.
-- A future model chooses the workout, but only inside a deterministic legal
-  exercise set created from equipment, exclusions, and hard limitations.
-- Model output is structured and always validated before persistence or UI.
+- Deterministic rules choose workouts from the eligible exercise set created
+  from equipment, exclusions, and hard limitations.
+- Generated recommendations are structured and validated before display and again
+  before starting a session.
 - No unconfirmed starting load is ever prescribed: a `WEIGHT_REPS` target
   weight comes only from bounded history or a load the user explicitly
   confirmed, never a sample or catalog default.
@@ -841,7 +839,8 @@ test installation only** for installed-app lifecycle checks.
 
 Current status, dependency order, and upcoming work live in the
 [WallCrawl roadmap](ROADMAP.md). Detailed design and implementation records remain under
-[`docs/superpowers/`](docs/superpowers/) for execution context.
+[`docs/superpowers/`](docs/superpowers/) for historical context; superseded model
+proposals are not active implementation plans.
 
 ### Profile gender and exercise artwork
 

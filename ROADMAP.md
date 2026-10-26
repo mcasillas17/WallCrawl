@@ -1,6 +1,6 @@
 # WallCrawl Roadmap
 
-> **Status date:** 2026-09-21
+> **Status date:** 2026-10-25
 >
 > **Evidence baseline:** `002cfde` (enable AI-reviewed production planning, #78). Package 1
 > status additionally
@@ -41,10 +41,11 @@
 > order, and implementation scope. Status must be derived from repository evidence rather
 > than unchecked boxes in older planning records.
 
-WallCrawl is building from a local-first Android workout planner into a deterministic
-adaptive coach, followed by optional on-device ranking and optional Health Connect/Wear OS
-integrations. Core workouts must remain offline, account-free, and usable without a model,
-network connection, or companion device.
+WallCrawl is a private, offline workout app for Android. Its direction is rules-based
+workout planning, complete logging and templates, understandable progress and history,
+and explicit multi-week programs. Optional Health Connect/Wear OS integrations must
+never be required for core use. Core workouts remain offline and account-free, without
+model downloads, model-driven features, a network connection, or a companion device.
 
 ## Verified status
 
@@ -58,7 +59,6 @@ network connection, or companion device.
 | Progress and history | Calendar-week activity, separately labelled reviewed primary dose, records/trends, one completion-summary flow, paged completed history and read-only snapshot detail implemented | Substitution-specific detail awaits Package 10; deeper charts/filters remain Package 14; no genuinely human-`APPROVED` metadata exists |
 | Deterministic coach | Reviewed eligibility/ranking, weekly ledger, state guidance and whole-program validation; Package 9 adds single-axis progression and persistent user-controlled deload in the production composition | Genuine human `APPROVED` review remains independent; substitutions and multi-week programs remain future packages |
 | Planner evaluation | Versioned persona corpus (`planner-fixtures/manifest.txt` is the authoritative roster), with the reviewed-enabled personas' weeks replayed through the real ledger and every successful persona's proposal validated as a complete program, importer unit tests, real pinned-upstream regeneration check, JVM tests, and Android CI shipped | None for this package; reviewed-planner enablement (package 7) is done, and human-approval rollout (package 3) is the remaining gate |
-| Optional local model | Not started | Blocked on a stable deterministic release |
 | Health Connect and Wear OS | Not started; only `:app` exists | Shared modules, privacy controls, validation, substitutions, protocol, and device evidence |
 | Operational quality | Dependabot, SBOM submission, JVM/lint/build CI, API 36 instrumentation, and prerelease automation shipped | Accessibility baseline, target SDK review, Room schema export, signed/minified release posture, and next alpha |
 
@@ -74,6 +74,15 @@ remains a human-authored data change that no pull request, code review, or test 
 supply. See [the AI acceptance audit](docs/reviewed-exercise-metadata.md#ai-acceptance-audit).
 
 ## Recorded decisions
+
+**Product direction (2026-10-25):** position WallCrawl as a private, offline workout
+app, not an AI app. Keep the deterministic planner, progression, deload, templates,
+and history; retire Package 17's optional model integration rather than defer it.
+Historical model proposals remain archived context, not future requirements or
+release gates. This does not erase AI-assisted content authoring or change
+`AI_ACCEPTED` into human `APPROVED`: metadata provenance and its limitations stay
+documented. No catalog, persisted identifier, or workout behavior changes as part
+of this positioning decision.
 
 **Android backup policy (Package 1):** disable implicit Android cloud backup and
 request exclusion of all app data from device transfer. The manifest sets
@@ -171,16 +180,18 @@ These decisions must be recorded before the related implementation package close
 | Privacy and ownership | 1 (complete) -> 2 (complete) | Users can export, restore into a fresh start, and delete every local record |
 | Reviewed content | 3 | Human-paced and safe to run beside engineering |
 | Deterministic rollout | 4 + 5 + 6 -> 7 | Package 7 is now enabled via an owner-authorized `AI_ACCEPTED` alpha cohort rather than waiting on package 3's genuine human review; package 3 remains open and independent of package 7's enabled status; the package 1 release gate is satisfied |
-| Adaptive coaching | 7 -> 8 and 17; 4 -> 9; 3 + 4 -> 10; 3 -> 11; 4 + 9 -> 12; 10 -> 13; 5 + 13 -> 14; 3 -> 16 | Package 15 is independently useful but integrates package 10 when it exposes substitutions; package 18 gates only the packages selected for that release |
+| Adaptive coaching | 7 -> 8; 4 -> 9; 3 + 4 -> 10; 3 -> 11; 4 + 9 -> 12; 10 -> 13 (substitution detail only); 5 + 13 -> 14; 3 -> 16 | Package 13's existing-history scope is complete; package 15 is independently useful but integrates package 10 when it exposes substitutions. Package 17 is retired, and package 18 gates only the active packages selected for that release |
 | Operational quality | 19 + 20 | Parallel unless a release gate says otherwise |
 | Integrations | 21 -> 22 + 23; 2 + 4 + 10 + 21 + 23 -> 24; 23 + 24 -> 25; 24 + 25 -> 26 -> 27 | Health export and the protocol spike may proceed independently after shared-module extraction |
 | Optional sync | 2 -> 28 | Package 28 is a design package first, not implementation authorization |
 
-Safe parallel work now is package 3, package 5 after its product
-decision, and the audits in packages 19-20. Package 7 already reads the actual bundled
-`AI_ACCEPTED` cohort; do not represent that owner-authorized acceptance as package 3's
-genuine human review. Do not split adaptation-state
-widening from the advanced-complexity ceiling update in package 9.
+Available work includes package 12's multi-week programs, package 14's deeper
+analytics, and package 15's template editing and draft recovery; their existing
+engineering prerequisites are satisfied. Package 3's human-paced content review
+and the audits in packages 19-20 can proceed alongside engineering. Packages 5,
+9, and the existing-history scope of 13 are complete. Package 7 already reads the
+bundled `AI_ACCEPTED` cohort; do not represent that owner-authorized acceptance
+as package 3's genuine human review.
 
 ## Now: make reviewed deterministic planning releasable
 
@@ -877,41 +888,28 @@ library/detail, templates, and catalog tests.
 **Done when:** coverage can grow incrementally without changing the meaning of approval or
 making browsing/manual workouts depend on automatic-planning eligibility.
 
-### 17. Add optional bounded local inference
+### 17. Optional local inference (retired)
 
-**Status:** Not started.
+**Status:** Retired by the 2026-10-25 product-direction decision, not waiting on
+deterministic completion or a later release.
 
-**Depends on:** Stable deterministic rollout and release corpus; core workouts must already be
-complete without a model.
+Model runtimes, downloads, prompt-based preferences, model reranking, and model-generated
+explanations are no longer planned features. Rules-based planning and explanations
+from recorded decisions remain the product path.
 
-**Implementation tasks:**
-
-1. Add a deterministic readiness gate and provider-neutral states for unavailable, download
-   required, ready, busy, timeout, cancellation, thermal/battery abort, and corrupt model.
-2. Parse only bounded non-safety preferences and require explicit confirmation before applying
-   them.
-3. Serialize exact candidate-slot IDs, allowlisted preferences, reason keys, and policy
-   versions; exclude measurements, constraints, notes, and raw history.
-4. Accept only exact candidate IDs and structured explanation keys; deterministic code retains
-   eligibility, dose, progression, validation, and persistence.
-5. Fall back immediately to the unchanged deterministic plan on every runtime, parser, schema,
-   or validation failure.
-6. Add privacy-safe audit records, adversarial fixtures, physical-device benchmarks, blind
-   review, explicit opt-in, removal, and a kill switch.
-
-**Likely surfaces:** a new `core/ai/local` boundary, tiered planner composition, profile/model
-controls, evaluation fixtures, benchmark/evaluation docs, and deterministic fallback tests.
-
-**Done when:** model absence or failure cannot block or change core workout behavior, hard
-constraints pass every adversarial case, device limits are measured, and a predefined user
-benefit beats the deterministic baseline.
+The [original model plan](docs/superpowers/plans/2026-08-29-science-based-local-llm-engine.md)
+and the optional-model portions of the
+[historical engine design](docs/superpowers/specs/2026-08-29-science-based-workout-engines-design.md)
+are retained only as superseded records. The package number stays reserved so existing
+references do not silently change meaning. Retirement does not remove the bundled
+AI-authored metadata or its provenance, and does not confer human approval.
 
 ### 18. Close the adaptive-coach release
 
 **Status:** Not started.
 
-**Depends on:** Packages 7-17 selected for the release scope. Optional package 17 must pass its
-own gates if included; it is not required for deterministic operation.
+**Depends on:** The active packages from 7-16 selected for the release scope.
+Retired Package 17 is neither included nor a release gate.
 
 **Implementation tasks:**
 
@@ -927,7 +925,7 @@ own gates if included; it is not required for deterministic operation.
 configuration, and release artifacts.
 
 **Done when:** the release artifact matches its documented capability boundary, every included
-gate is green at one commit, and optional inference can be removed without affecting core use.
+gate is green at one commit, and core workout flows remain offline and account-free.
 
 ## Keep the foundation healthy
 
@@ -947,7 +945,8 @@ gate is green at one commit, and optional inference can be removed without affec
    treat it as an artifact.
 4. Correct stale schema-10 CI comments and keep migration-chain tests aligned with each schema.
 5. Decide signing, shrinking, and distribution requirements before a production release.
-6. Cut a new alpha when testers should receive the merged #49-#54 behavior, with release notes
+6. Cut a new alpha when testers should receive the merged, unreleased deterministic-planning,
+   progression/deload, and workout-history behavior, with release notes
    that reviewed features are enabled and plan from the owner-authorized `AI_ACCEPTED`
    cohort, distinguished clearly from genuine human `APPROVED` review, which remains absent
    for every record.

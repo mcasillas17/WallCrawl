@@ -46,7 +46,7 @@ import wallcrawl.elopenmike.com.core.exercise.workoutguide.WorkoutGuideCatalogSt
 import wallcrawl.elopenmike.com.core.progress.ProgressCalculator
 
 /**
- * Dependency container providing core database, catalog, filter, and AI planner instances.
+ * Dependency container providing core database, catalog, filter, and deterministic planner instances.
  */
 interface AppContainer {
     val database: WallCrawlDatabase

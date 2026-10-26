@@ -1,8 +1,8 @@
 package wallcrawl.elopenmike.com.core.model
 
 /**
- * Rich contextual payload provided to [wallcrawl.elopenmike.com.core.ai.WorkoutPlanner]
- * so an on-device local model (or fake planner) can select the optimal workout.
+ * Inputs used by [wallcrawl.elopenmike.com.core.ai.WorkoutPlanner]
+ * to generate a rules-based workout recommendation.
  *
  * Notice: [allowedExercises] contains only candidates that passed the active eligibility
  * path. The planner must choose ONLY from these candidate IDs.

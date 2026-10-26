@@ -1,5 +1,11 @@
 # WallCrawl Full Workout Guide Catalog Design
 
+> **Partial supersession, 2026-10-25:** References below to a future model describe
+> the original proposal, not the current product direction. Model integration is
+> retired under [Roadmap Package 17](../../../ROADMAP.md#17-optional-local-inference-retired).
+> The catalog's deterministic import, eligibility, validation, and attribution
+> contracts remain subject to the current roadmap and later implementation records.
+
 ## Goal
 
 Replace the production 12-exercise sample catalog and three-exercise visual proof with a complete, reproducible, offline Workout Guide import. Every imported exercise must be browseable, searchable, filterable, and connected to its bundled SVG frames. Workout generation must remain restricted to exercises whose WallCrawl-specific programming and required-equipment metadata has been reviewed.

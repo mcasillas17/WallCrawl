@@ -1,5 +1,10 @@
 # Roadmap Consolidation Implementation Plan
 
+> **Historical execution record:** The example counts, rollout state, and model
+> phase below describe the original consolidation, not current project status.
+> [Roadmap Package 17](../../../ROADMAP.md#17-optional-local-inference-retired)
+> retired model integration on 2026-10-25; this plan does not authorize restoring it.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Establish one canonical WallCrawl roadmap while preserving detailed implementation

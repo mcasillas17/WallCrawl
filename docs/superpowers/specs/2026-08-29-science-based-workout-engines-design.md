@@ -4,9 +4,16 @@
 > [canonical roadmap](../../../ROADMAP.md). This document preserves the reviewed architecture
 > and safety boundaries for the deterministic and optional local-model engines.
 
-This document is the detailed architecture for WallCrawl's two workout-planning
+> **Partial supersession, 2026-10-25:** The optional-model engine, its enablement
+> requirements, and its release gates are retired under
+> [Roadmap Package 17](../../../ROADMAP.md#17-optional-local-inference-retired).
+> Those portions remain historical proposals, not future implementation work.
+> The deterministic contracts remain subject to the current roadmap and later
+> focused designs; content provenance and human-review requirements are unchanged.
+
+This document records the original architecture proposal for two workout-planning
 engines: a mandatory on-device **deterministic engine** and an optional,
-strictly bounded **local LLM assistant**. It consolidates the four-agent
+strictly bounded **local LLM assistant**, now retired. It consolidates the four-agent
 roundtable (see the appendix at
 `docs/research/2026-08-29-roundtable-agent-findings.md`) and the twelve signed v1
 decisions recorded in `docs/research/2026-08-29-training-science-evidence-review.md`.
