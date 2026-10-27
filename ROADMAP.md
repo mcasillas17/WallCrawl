@@ -1,6 +1,6 @@
 # WallCrawl Roadmap
 
-> **Status date:** 2026-10-25
+> **Status date:** 2026-10-26
 >
 > **Evidence baseline:** `002cfde` (enable AI-reviewed production planning, #78). Package 1
 > status additionally
@@ -36,6 +36,9 @@
 > paged navigation and English/Spanish detail, with the focused
 > [design](docs/superpowers/specs/2026-09-21-workout-history-detail-design.md)
 > defining the persisted-data and comparison contracts.
+> Package 15 is based on freshly fetched `f7dec8b` (#90); its editor, unit and recovery
+> contracts are in the focused
+> [design](docs/superpowers/specs/2026-10-26-template-prescription-editor-design.md).
 >
 > This is the single source of truth for current project status, priority, dependency
 > order, and implementation scope. Status must be derived from repository evidence rather
@@ -51,10 +54,10 @@ model downloads, model-driven features, a network connection, or a companion dev
 
 | Area | Status | Remaining gap |
 | --- | --- | --- |
-| Android foundation | Room schema 14 with an additive deload-choice table and continuous migration chain; archive 4 reads formats 1–4; implicit backup remains disabled | OEM transfer enforcement varies; restore is empty-destination only; `targetSdk` remains 35 while `compileSdk` is 37 |
+| Android foundation | Room schema 15 (Package 15's additive, nullable template unit; provisional, becomes 16 after Package 12) with a continuous migration chain; archive 5 reads formats 1–5; implicit backup remains disabled | OEM transfer enforcement varies; restore is empty-destination only; `targetSdk` remains 35 while `compileSdk` is 37 |
 | Catalog and reviewed content | All 302 entries have per-ID AI evidence records; 906 SVG frames and 131 legacy programming entries unchanged; an owner-authorized audit accepted 182 of 211 authored records as `AI_ACCEPTED` | Zero genuine human approvals; 29 authored drafts and 56 IDs with no authored block remain pending, 35 entries outside automatic-strength scope; the band-only inventory still contains no chest work, and `banded-row`'s anchor stays unrepresentable, though anchored variations are now gated and the session is labelled truthfully |
 | Onboarding and profile | Shipped as an eight-step flow with seven movement-capability questions, plus export, restore, and delete-all controls | Restore requires a fresh start, so it cannot merge into an installation that already holds data |
-| Templates and logging | Shipped with frozen template snapshots, type-aware outcomes, RPE/RIR, typed stops, and a local rest timer | Template targets are only partly editable; unsaved drafts are not restored after process death |
+| Templates and logging | Shipped with frozen template snapshots, type-aware outcomes, RPE/RIR, typed stops, a local rest timer, complete type-aware template editing, unit-safe template loads, and draft recovery across configuration change and background process death | Drafts do not survive force-stop, task removal, reboot or uninstall, by design; legacy unitless loads need a one-time unit confirmation |
 | Localization | English and neutral Latin American Spanish shipped across the whole interface, the 302-exercise catalog, generated workout text, and accessibility labels, selectable from onboarding and Profile through Android's per-app language mechanism | Only two languages; historical session text stays in the language it was written in, by design |
 | Progress and history | Calendar-week activity, separately labelled reviewed primary dose, records/trends, one completion-summary flow, paged completed history and read-only snapshot detail implemented | Substitution-specific detail awaits Package 10; deeper charts/filters remain Package 14; no genuinely human-`APPROVED` metadata exists |
 | Deterministic coach | Reviewed eligibility/ranking, weekly ledger, state guidance and whole-program validation; Package 9 adds single-axis progression and persistent user-controlled deload in the production composition | Genuine human `APPROVED` review remains independent; substitutions and multi-week programs remain future packages |
@@ -138,7 +141,7 @@ These decisions must be recorded before the related implementation package close
 3. **Validation persistence:** ~~decided~~. A dedicated `workout_recommendation_records`
    table holds one immutable row per started session, written in the same transaction as the
    session, and travels in the local-data archive. It arrived in Room schema 12 and archive
-   format version 2; the current schema is 14 and archive format 4 still preserves
+   format version 2; the current schema is 15 and archive format 5 still preserves
    this record. Columns beside the
    session were rejected: the record is provenance about a decision rather than part of the
    session,    and a separate table keeps it out of ordinary session reads; the history-detail
@@ -185,9 +188,9 @@ These decisions must be recorded before the related implementation package close
 | Integrations | 21 -> 22 + 23; 2 + 4 + 10 + 21 + 23 -> 24; 23 + 24 -> 25; 24 + 25 -> 26 -> 27 | Health export and the protocol spike may proceed independently after shared-module extraction |
 | Optional sync | 2 -> 28 | Package 28 is a design package first, not implementation authorization |
 
-Available work includes package 12's multi-week programs, package 14's deeper
-analytics, and package 15's template editing and draft recovery; their existing
-engineering prerequisites are satisfied. Package 3's human-paced content review
+Available work includes package 12's multi-week programs and package 14's deeper
+analytics; their existing engineering prerequisites are satisfied. Package 15 is
+complete. Package 3's human-paced content review
 and the audits in packages 19-20 can proceed alongside engineering. Packages 5,
 9, and the existing-history scope of 13 are complete. Package 7 already reads the
 bundled `AI_ACCEPTED` cohort; do not represent that owner-authorized acceptance
@@ -334,7 +337,7 @@ and approval does not silently expand beyond what a human actually reviewed.
 **Status:** Complete. `ProgramValidator` checks a complete proposal before it is shown and
 again before it is started, and `workout_recommendation_records` records how each started
 session was decided. The table arrived in Room schema 12 and archive format version 2;
-the current database is schema 14 and archive format 4 reads versions 1–4.
+the current database is schema 15 and archive format 5 reads versions 1–5.
 Reviewed-only rules are now active in production because
 `PlannerFeatureFlags.reviewedCapabilityEligibility` is `true` and the bundled cohort
 carries 182 `AI_ACCEPTED` records.
@@ -399,8 +402,8 @@ undefined.
    adaptation state, accounting week and zone, profile revision, context digest, ordered
    reason codes, and per-muscle completed/proposed/allowance counts. It is written in the same
    transaction as the session, so a refused start leaves neither, and it travels in the archive.
-   It shipped in archive format version 2; the build now writes format 4 and still restores
-   versions 1 through 4.
+   It shipped in archive format version 2; the build now writes format 5 and still restores
+   versions 1 through 5.
 
 **Surfaces:** `core/ai/ProgramValidator`, `core/ai/ProgramViolation`,
 `core/ai/RecommendationSnapshot`, `core/ai/RecommendationContextIdentity`,
@@ -811,7 +814,7 @@ part of task 3 remains explicitly pending until Package 10 supplies its snapshot
 
 **Surfaces:** app routes/NavHost, active workout/summary, Progress cards, `feature/history`,
 `WorkoutHistoryRepository`/DAO, shared summary calculations and paired string resources.
-Room 14 and archive 4 (reads 1–4) are unchanged.
+Package 13 left Room 14 and archive 4 (reads 1–4) unchanged.
 
 **Still dependent on Package 10:** planned-versus-performed substitution identities
 and targets. No substitution data or historical override events were invented.
@@ -842,23 +845,35 @@ completed sessions.
 
 ### 15. Complete template prescription editing and draft recovery
 
-**Status:** Templates support catalog selection, ordering, deletion, and set-count changes.
+**Status:** Complete. Designed in the
+[template editor design](docs/superpowers/specs/2026-10-26-template-prescription-editor-design.md).
+Its Room 15 / archive 5 numbers are provisional: Package 12 merges first and owns them,
+and this package is then renumbered to Room 16 / archive 6 and re-verified.
 
 **Depends on:** Existing prescription validation; package 10 if templates expose reviewed
 substitution choices.
 
-**Implementation tasks:**
+**Implemented:**
 
-1. Add a typed draft for sets, rep range, confirmed load/assistance, duration, distance, rest,
-   effort target, and note fields appropriate to each exercise type.
-2. Validate the complete draft before conversion to `ExercisePrescription`.
-3. Preserve unsaved edits across configuration and process recreation.
-4. Add discard confirmation and recoverable save errors.
-5. Prove starting a template still creates an immutable session snapshot unaffected by later
-   template edits.
-
-**Likely surfaces:** template editor state/ViewModel/UI, prescription factory/validation,
-saved-state or draft persistence, repository tests, and custom-workout docs.
+1. A typed, text-holding draft per exercise occurrence with a stable row identity, offering
+   exactly the fields each type supports — sets, rep range, optional load or assistance,
+   duration, distance — plus rest, an optional planned effort target and notes. Blank stays
+   unknown, `0` stays zero, and nothing is clamped or parsed by a fallback.
+2. The complete draft validates against the domain's own bounds before
+   `ExercisePrescription` is built; the repository stays authoritative.
+3. Templates record their load unit (nullable `weightUnit`; legacy rows stay unknown).
+   Unit switches convert, a profile unit change never relabels a draft, legacy loads
+   need an explicit unit confirmation before save or start, and a started session
+   converts into the profile unit without touching the template. Archive 5 carries the
+   unit; formats 1–4 restore as unknown.
+4. Drafts recover through `SavedStateHandle` across configuration change and
+   system-initiated process death, measured above the supported limits (152 112 bytes),
+   never overwritten by late loading. They do not survive force-stop, task removal,
+   reboot or uninstall. Discard confirmation covers toolbar and system back after any
+   open picker or sheet closes; saves keep one identity, refuse edits in flight, and
+   never write a deleted template back.
+5. Started templates remain immutable `CUSTOM_TEMPLATE` snapshots with no
+   recommendation record, program membership or deload consumption.
 
 **Done when:** every supported prescription shape is editable without invalid field
 combinations, drafts recover predictably, and completed history never changes with a template.

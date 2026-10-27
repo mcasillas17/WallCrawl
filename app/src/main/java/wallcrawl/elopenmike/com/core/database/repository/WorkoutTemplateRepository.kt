@@ -16,9 +16,18 @@ interface WorkoutTemplateRepository {
     fun observeTemplates(): Flow<List<WorkoutTemplate>>
     fun observeTemplate(templateId: String): Flow<WorkoutTemplate?>
     suspend fun getTemplate(templateId: String): WorkoutTemplate?
-    suspend fun saveTemplate(template: WorkoutTemplate)
+    /**
+     * Writes [template]. With [mustExist], the write is an edit of a template already
+     * saved: if it is gone — deleted, or removed with all local data — this throws
+     * [MissingTemplateException] rather than writing it back into existence.
+     */
+    suspend fun saveTemplate(template: WorkoutTemplate, mustExist: Boolean = false)
     suspend fun deleteTemplate(templateId: String)
 }
+
+/** An edit was saved for a template that no longer exists. */
+class MissingTemplateException(templateId: String) :
+    IllegalStateException("Template '$templateId' no longer exists.")
 
 /**
  * @param localDataWriteGate serialises template writes against destructive local-data
@@ -49,11 +58,23 @@ class OfflineWorkoutTemplateRepository(
         return template
     }
 
-    override suspend fun saveTemplate(template: WorkoutTemplate) {
+    override suspend fun saveTemplate(template: WorkoutTemplate, mustExist: Boolean) {
+        // Reading a legacy template is fine; writing a new load without saying what unit it
+        // is in would recreate the ambiguity the unit column exists to end.
+        require(!template.requiresUnitConfirmation) {
+            "A template that carries a load must record its weight unit."
+        }
         // Catalog validation may load the bundled catalog, so it happens before the gate is
         // taken rather than blocking a deletion behind asset I/O.
         validateCatalogReferences(template)
-        localDataWriteGate.withLock { writeTemplate(template) }
+        localDataWriteGate.withLock {
+            // Checked under the same gate delete-all takes, so the check and the write
+            // cannot straddle a deletion.
+            if (mustExist && !templateDao.templateExists(template.id)) {
+                throw MissingTemplateException(template.id)
+            }
+            writeTemplate(template)
+        }
     }
 
     private suspend fun writeTemplate(template: WorkoutTemplate) {
@@ -63,7 +84,8 @@ class OfflineWorkoutTemplateRepository(
                 name = template.name.trim(),
                 notes = template.notes.trim(),
                 createdAtTimestamp = template.createdAtTimestamp,
-                updatedAtTimestamp = template.updatedAtTimestamp
+                updatedAtTimestamp = template.updatedAtTimestamp,
+                weightUnit = template.weightUnit?.name
             ),
             exercises = template.exercises.mapIndexed { index, exercise ->
                 val prescription = exercise.prescription
@@ -92,7 +114,8 @@ class OfflineWorkoutTemplateRepository(
 
     override suspend fun deleteTemplate(templateId: String) {
         requireValidTemplateId(templateId)
-        templateDao.deleteTemplateById(templateId)
+        // Under the gate an edit's existence check takes, so the two cannot interleave.
+        localDataWriteGate.withLock { templateDao.deleteTemplateById(templateId) }
     }
 
     private suspend fun validateCatalogReferences(template: WorkoutTemplate) {

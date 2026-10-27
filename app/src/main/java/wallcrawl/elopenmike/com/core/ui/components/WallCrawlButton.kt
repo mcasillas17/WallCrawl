@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -33,7 +34,9 @@ fun WallCrawlPrimaryButton(
         onClick = onClick,
         modifier = modifier
             .fillMaxWidth()
-            .height(52.dp),
+            // A minimum rather than a fixed height: at a large font scale the label is
+            // taller than 52.dp and a fixed height clips it. Unchanged at the default scale.
+            .heightIn(min = 52.dp),
         enabled = enabled,
         shape = RoundedCornerShape(14.dp),
         colors = ButtonDefaults.buttonColors(
@@ -95,7 +98,7 @@ fun WallCrawlOutlinedButton(
 ) {
     OutlinedButton(
         onClick = onClick,
-        modifier = modifier.height(52.dp),
+        modifier = modifier.heightIn(min = 52.dp),
         enabled = enabled,
         shape = RoundedCornerShape(14.dp),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
@@ -106,11 +109,20 @@ fun WallCrawlOutlinedButton(
         ),
         contentPadding = contentPadding
     ) {
+        // Named, and named per state. Dropping the colour so `disabledContentColor` could
+        // reach the label does not work here: `Text` prefers its style's colour over
+        // `LocalContentColor`, and `Typography` sets one on every style, so the label took
+        // `labelLarge`'s white and vanished into the container at 1:1. Naming it restores
+        // the label and still tells the two states apart.
         Text(
             text = text,
             fontSize = 15.sp,
             fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onSurface
+            color = if (enabled) {
+                MaterialTheme.colorScheme.onSurface
+            } else {
+                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+            }
         )
     }
 }

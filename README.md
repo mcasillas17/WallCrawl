@@ -37,7 +37,7 @@ WallCrawl supports **Dark Theme** (stealth suit graphite aesthetic), **Light The
   <img src="art/screenshots/profile-screen.png" width="24%" alt="Training Profile & Preferences (Dark)" />
   <img src="art/screenshots/profile-screen-light.png" width="24%" alt="Training Profile & Preferences (Light)" />
   <img src="art/screenshots/workout-templates-light.png" width="24%" alt="My Workouts (Light)" />
-  <img src="art/screenshots/template-editor-light.png" width="24%" alt="Workout Builder (Light)" />
+  <img src="art/screenshots/template-editor-light.png" width="24%" alt="Workout Builder (Light): the Loads in control with Kilograms selected and one exercise row whose summary reads 3 sets · 6–8 · 45.36 KG · rest 90 s" />
 </p>
 <p align="center">
   <img src="art/screenshots/profile-your-data.png" width="24%" alt="Your Data card on the Training Profile screen: export, restore, and delete-all controls, with restore explaining that it needs a fresh start" />
@@ -57,7 +57,7 @@ WallCrawl supports **Dark Theme** (stealth suit graphite aesthetic), **Light The
 
 - **Today Recommendation**: Offline planner-generated routine tailored to equipment and training goals, with instant regeneration and custom routine shortcuts.
 - **My Workouts & Templates**: Manage and launch saved custom routines with total sets, exercise counts, and quick-start actions.
-- **Custom Workout Builder**: Interactive routine editor with full 302-exercise bottom sheet picker, drag/reorder controls, and type-aware target set steppers.
+- **Custom Workout Builder**: Interactive routine editor with full 302-exercise bottom sheet picker, move controls for ordering, type-aware editing of every prescription target, unit-safe loads, and unsaved drafts recovered after configuration change or background process death.
 - **Exercise Library**: Searchable catalog of 302 exercises across all muscle groups and equipment types.
 - **Active Workout Session**: Type-aware logging for load/reps, bodyweight reps, assisted reps, duration, and distance/duration, with one-tap set completion, plus/minus and text entry for every value, a local rest countdown, optional RPE/RIR, animated SVG movement previews, and previous performance comparisons.
 - **Workout Summary**: The existing Finish flow shows recorded duration, external-load volume, completed sets, and records against genuinely earlier performance. View workout details opens the read-only record; Done returns to Progress.
@@ -191,7 +191,8 @@ how to add a string, an exercise, or a language.
   exclusions, user-owned export/restore/deletion, archive compatibility, recovery
   tradeoffs, and platform limitations.
 - [Custom Workouts](docs/custom-workouts.md) documents the user flow, full-catalog
-  selection rules, frozen session snapshots, and current editor limitations.
+  selection rules, type-aware target editing, template units, unsaved-draft
+  recovery and its limits, and frozen session snapshots.
 - [Localization](docs/localization.md) explains where each kind of text lives, what
   is deliberately never translated, the exercise-translation overlay and its
   stable-ID boundary, number and input formatting, and how to add a string, an
@@ -386,7 +387,7 @@ the export archive. It carries no raw name, note, load, repetition, effort value
 measurement fields. Its local context digest derives from consumed planning inputs for
 freshness and is not an anonymization guarantee.
 
-Guidance is persisted with templates and frozen session snapshots in Room schema 14.
+Guidance is persisted with templates and frozen session snapshots in Room schema 15.
 The active timer still reads the persisted exact seconds; add-time, skip, and dismiss are
 one-off timer actions rather than durable preference changes. Production now runs
 reviewed eligibility because an owner-authorized audit accepted 182 of the bundled
@@ -618,9 +619,10 @@ Custom workout templates are stored locally in Room. Starting a template
 creates a frozen active-session snapshot, so later template edits or deletion
 do not rewrite workout history. Completed measurements retain their exercise
 type and feed the same history and progress pipeline used by planned workouts.
-Detailed target editing and unsaved-draft process restoration are intentionally
-out of scope for this phase; the editor currently saves exercise order and set
-count with conservative, type-specific targets.
+The editor edits every target an exercise's type uses, records the unit a
+template's loads are in, and recovers an unsaved draft after a configuration change
+or a background process death; a force-stop, removal from Recents, reboot or
+uninstall loses it.
 
 Each exercise resolves to three bundled frames that animate in a lightweight
 `1 → 2 → 3 → 2` loop using Coil 3 with SVG support. The compact normalized
@@ -782,10 +784,10 @@ Today state, duration calculation, and visual-provider mapping. The fourteen-per
 corpus runs inside it, reconstructing the reviewed-enabled personas' training weeks with the
 shipped weekly ledger and validating the complete proposal behind every successful persona.
 Android instrumentation also validates every supported database migration chain through
-schema 14 without destructive fallback, guidance persistence, the atomic start of a session
+schema 15 without destructive fallback, guidance persistence, the atomic start of a session
 with its validation record, the weekly-ledger DAO/repository,
 capability-control semantics, template/session snapshot behavior, and the local-data archive:
-its round trip from app-written state across supported format versions 1–4, every rejection
+its round trip from app-written state across supported format versions 1–5, every rejection
 path for untrusted documents, transactional restore and deletion, and the destructive
 confirmation at a large font scale. It parses the
 packaged 302-exercise catalog and opens every one of its 906 SVG paths. Pull-request/main

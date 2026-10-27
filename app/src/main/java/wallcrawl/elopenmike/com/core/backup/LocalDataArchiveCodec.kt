@@ -141,6 +141,10 @@ object LocalDataArchiveCodec {
             "Deload preferences require archive version 4."
         }
         require(
+            archive.metadata.archiveVersion >= TEMPLATE_UNIT_ARCHIVE_VERSION ||
+                archive.snapshot.templates.all { it.weightUnit == null }
+        ) { "Template weight units require archive version $TEMPLATE_UNIT_ARCHIVE_VERSION." }
+        require(
             archive.metadata.archiveVersion >= RECOMMENDATION_RECORDS_ARCHIVE_VERSION ||
                 archive.snapshot.recommendationRecords.isEmpty()
         ) {
@@ -456,6 +460,10 @@ object LocalDataArchiveCodec {
         name("notes").value(template.notes)
         name("createdAtTimestamp").value(template.createdAtTimestamp)
         name("updatedAtTimestamp").value(template.updatedAtTimestamp)
+        // Absent rather than null for a legacy template. Below version 5 no template has a
+        // unit: write() refuses one and read() rejects one, so earlier formats keep their
+        // canonical bytes and checksums.
+        template.weightUnit?.let { name("weightUnit").value(it.name) }
         name("exercises")
         beginArray()
         template.exercises.forEach { exercise ->
@@ -657,7 +665,8 @@ object LocalDataArchiveCodec {
         readObject("archive data") { field ->
             when (field) {
                 "profile" -> profile = readProfile(archiveVersion)
-                "templates" -> templates = readArray("templates", MAX_TEMPLATES) { readTemplate() }
+                "templates" -> templates =
+                    readArray("templates", MAX_TEMPLATES) { readTemplate(archiveVersion) }
                 "sessions" -> sessions = readArray("sessions", MAX_SESSIONS) { readSession() }
                 "recommendations" -> {
                     if (archiveVersion < RECOMMENDATION_RECORDS_ARCHIVE_VERSION) {
@@ -1076,7 +1085,8 @@ object LocalDataArchiveCodec {
         )
     }
 
-    private fun JsonReader.readTemplate(): WorkoutTemplate {
+    private fun JsonReader.readTemplate(archiveVersion: Int): WorkoutTemplate {
+        var weightUnit: WeightUnit? = null
         var id: String? = null
         var name: String? = null
         var notes: String? = null
@@ -1091,6 +1101,15 @@ object LocalDataArchiveCodec {
                 "notes" -> notes = nextBoundedString("template.notes", MAX_NOTES_LENGTH)
                 "createdAtTimestamp" -> createdAt = nextTimestamp("template.createdAtTimestamp")
                 "updatedAtTimestamp" -> updatedAt = nextTimestamp("template.updatedAtTimestamp")
+                "weightUnit" -> {
+                    if (archiveVersion < TEMPLATE_UNIT_ARCHIVE_VERSION) {
+                        malformed(
+                            "Template weight units require archive version " +
+                                "$TEMPLATE_UNIT_ARCHIVE_VERSION."
+                        )
+                    }
+                    weightUnit = nextEnum<WeightUnit>("template.weightUnit")
+                }
                 "exercises" -> exercises =
                     readArray("template.exercises", MAX_EXERCISES_PER_SESSION) {
                         readPlannedExercise("template.exercises")
@@ -1110,7 +1129,8 @@ object LocalDataArchiveCodec {
                 ?: malformed("An archived template is missing 'createdAtTimestamp'."),
             updatedAtTimestamp = updatedAt
                 ?: malformed("An archived template is missing 'updatedAtTimestamp'."),
-            exercises = exercises ?: malformed("An archived template is missing 'exercises'.")
+            exercises = exercises ?: malformed("An archived template is missing 'exercises'."),
+            weightUnit = weightUnit
         )
     }
 
@@ -2096,6 +2116,9 @@ object LocalDataArchiveCodec {
     private const val MAX_SESSION_MINUTES = 10_080
     private const val MAX_DAYS_PER_WEEK = 7
     private const val MAX_PREFERRED_DURATION_MINUTES = 1_440
+
+    /** The first archive format that records a template's weight unit. */
+    private const val TEMPLATE_UNIT_ARCHIVE_VERSION = 5
 
     /** The first archive format that can carry recommendation records. */
     private const val RECOMMENDATION_RECORDS_ARCHIVE_VERSION = 2

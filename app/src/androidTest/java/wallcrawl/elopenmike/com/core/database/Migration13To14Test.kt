@@ -36,9 +36,9 @@ class Migration13To14Test {
         helper.writableDatabase
         helper.close()
         val database = Room.databaseBuilder(context, WallCrawlDatabase::class.java, name)
-            .addMigrations(WallCrawlDatabase.MIGRATION_13_14).build()
+            .addMigrations(WallCrawlDatabase.MIGRATION_13_14, WallCrawlDatabase.MIGRATION_14_15).build()
         try {
-            assertEquals(14, database.openHelper.writableDatabase.version)
+            assertEquals(WALLCRAWL_SCHEMA_VERSION, database.openHelper.writableDatabase.version)
             assertEquals(17L, database.userProfileDao().getProfile("default_user")!!.revision)
             assertNull(database.deloadPreferencesDao().get("default_user"))
             database.openHelper.writableDatabase.query("PRAGMA foreign_key_list(deload_preferences)").use {

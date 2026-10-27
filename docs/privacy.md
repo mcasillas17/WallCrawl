@@ -89,7 +89,7 @@ this device. Detail reads the session, sets, recommendation and comparisons
 coherently in one Room transaction; it never edits or re-plans a workout, logs
 another set, consumes a deload choice, bootstraps a profile or rebuilds a ledger
 cache. No new history fields, analytics collection, account or network path are
-introduced. Room remains schema 14 and the archive remains format 4.
+introduced. Package 13 changed neither the Room schema nor the archive format.
 
 Historical title/rationale, notes and measurements are shown as stored. Current
 profile, template or catalog programming cannot fill missing historical facts.
@@ -102,7 +102,7 @@ back stack. The existing export and deletion boundaries below still apply.
 ### Archive compatibility
 
 The archive format has its own version, separate from the Room schema version. This
-build **writes version 4** and **reads versions 1, 2, 3, and 4**. The schema version, app
+build **writes version 5** and **reads versions 1 through 5**. The schema version, app
 version, creation time, and the bundled catalog commit are recorded as provenance only;
 they never decide whether a file can be restored.
 
@@ -123,6 +123,13 @@ original checksums and restore without an invented acceptance or decline.
 Known progression provenance must reference archived source sessions and an
 exercise in its recommendation's session. Unknown future reason versions remain
 opaque; malformed known groups are refused.
+
+Version 5 records the weight unit a template's loads are in, when the template has
+one. It is the same kind of training data the template already held, stays on-device,
+is exported only when the user asks, and is removed by Delete all data. Earlier
+archives keep their checksums and restore their templates with no unit. Unsaved
+template-editor drafts are never written to the database, a file, or an archive.
+Version 5 is provisional and becomes version 6 when rebased onto Package 12.
 
 A file written by a newer WallCrawl is still refused with a message saying so, rather than
 partially understood — a future format may attach meaning to fields this build would drop.

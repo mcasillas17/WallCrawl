@@ -20,6 +20,7 @@ import wallcrawl.elopenmike.com.core.model.PlannedExercise
 import wallcrawl.elopenmike.com.core.model.RepRange
 import wallcrawl.elopenmike.com.core.model.RestClass
 import wallcrawl.elopenmike.com.core.model.RestTargetSource
+import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
 
 class WorkoutTemplateRepositoryTest {
@@ -42,6 +43,7 @@ class WorkoutTemplateRepositoryTest {
             notes = "Technique first",
             createdAtTimestamp = 1_000L,
             updatedAtTimestamp = 2_000L,
+            weightUnit = WeightUnit.KG,
             exercises = listOf(
                 PlannedExercise(
                     exerciseId = "assisted-pull-up",
@@ -63,6 +65,7 @@ class WorkoutTemplateRepositoryTest {
         repository.saveTemplate(template)
 
         assertThat(dao.replacedTemplate?.name).isEqualTo("Assisted Pull")
+        assertThat(dao.replacedTemplate?.weightUnit).isEqualTo("KG")
         val exercise = dao.replacedExercises.single()
         assertThat(exercise.exerciseType).isEqualTo(ExerciseType.ASSISTED_BODYWEIGHT)
         assertThat(exercise.targetSets).isEqualTo(4)
@@ -268,6 +271,101 @@ class WorkoutTemplateRepositoryTest {
         listedEquipment = listOf("Bodyweight"),
         type = type
     )
+
+    private fun assisted(unit: WeightUnit?, assistance: Double? = 35.0) = WorkoutTemplate(
+        id = "template",
+        name = "Assisted Pull",
+        weightUnit = unit,
+        exercises = listOf(
+            PlannedExercise(
+                exerciseId = "assisted-pull-up",
+                prescription = ExercisePrescription(
+                    exerciseType = ExerciseType.ASSISTED_BODYWEIGHT,
+                    targetSets = 3,
+                    repRange = RepRange(6, 10),
+                    targetAssistanceWeight = assistance
+                )
+            )
+        )
+    )
+
+    @Test
+    fun saveTemplate_refusesANewLoadWithoutAUnitButAcceptsAnUnloadedOne() = runTest {
+        val dao = RecordingWorkoutTemplateDao()
+        val repository = OfflineWorkoutTemplateRepository(dao, catalog)
+
+        assertThrows(IllegalArgumentException::class.java) {
+            kotlinx.coroutines.runBlocking { repository.saveTemplate(assisted(null)) }
+        }
+        assertThat(dao.replacedTemplate).isNull()
+
+        repository.saveTemplate(assisted(null, assistance = null))
+        assertThat(dao.replacedTemplate?.weightUnit).isNull()
+    }
+
+    @Test
+    fun saveTemplate_withMustExistRefusesToRecreateADeletedTemplate() = runTest {
+        val dao = RecordingWorkoutTemplateDao()
+        val repository = OfflineWorkoutTemplateRepository(dao, catalog)
+
+        assertThrows(MissingTemplateException::class.java) {
+            kotlinx.coroutines.runBlocking {
+                repository.saveTemplate(assisted(WeightUnit.LBS), mustExist = true)
+            }
+        }
+        assertThat(dao.replacedTemplate).isNull()
+
+        // A new template is created as before.
+        repository.saveTemplate(assisted(WeightUnit.LBS))
+        assertThat(dao.replacedTemplate?.id).isEqualTo("template")
+    }
+
+    @Test
+    fun aStoredUnitThisBuildDoesNotKnowIsAnErrorRatherThanPounds() = runTest {
+        fun stored(unit: String?) = WorkoutTemplateWithExercises(
+            template = WorkoutTemplateEntity(
+                id = "template",
+                name = "Old",
+                notes = "",
+                createdAtTimestamp = 1L,
+                updatedAtTimestamp = 1L,
+                weightUnit = unit
+            ),
+            exercises = listOf(
+                WorkoutTemplateExerciseEntity(
+                    templateId = "template",
+                    orderIndex = 0,
+                    exerciseId = "push-up",
+                    exerciseType = ExerciseType.BODYWEIGHT_REPS,
+                    targetSets = 3,
+                    targetRepMin = 8,
+                    targetRepMax = 12,
+                    targetWeight = null,
+                    targetAssistanceWeight = null,
+                    targetDurationSeconds = null,
+                    targetDistanceMeters = null,
+                    restSeconds = 90,
+                    notes = ""
+                )
+            )
+        )
+        assertThat(
+            OfflineWorkoutTemplateRepository(RecordingWorkoutTemplateDao(listOf(stored("KG"))), catalog)
+                .getTemplate("template")?.weightUnit
+        ).isEqualTo(WeightUnit.KG)
+        assertThat(
+            OfflineWorkoutTemplateRepository(RecordingWorkoutTemplateDao(listOf(stored(null))), catalog)
+                .getTemplate("template")?.weightUnit
+        ).isNull()
+        assertThrows(IllegalArgumentException::class.java) {
+            kotlinx.coroutines.runBlocking {
+                OfflineWorkoutTemplateRepository(
+                    RecordingWorkoutTemplateDao(listOf(stored("STONE"))),
+                    catalog
+                ).getTemplate("template")
+            }
+        }
+    }
 }
 
 private class RecordingWorkoutTemplateDao(
@@ -297,6 +395,8 @@ private class RecordingWorkoutTemplateDao(
     override suspend fun insertTemplateExercises(exercises: List<WorkoutTemplateExerciseEntity>) = Unit
     override suspend fun deleteExercisesForTemplate(templateId: String) = Unit
     override suspend fun deleteTemplateById(templateId: String): Int = 1
+    override suspend fun templateExists(templateId: String): Boolean =
+        stored.any { it.template.id == templateId }
 
     override suspend fun replaceTemplate(
         template: WorkoutTemplateEntity,

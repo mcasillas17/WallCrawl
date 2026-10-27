@@ -12,7 +12,11 @@ import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasScrollAction
+import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -34,6 +38,7 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.Locale
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.sync.Mutex
@@ -68,6 +73,7 @@ import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutOrigin
 import wallcrawl.elopenmike.com.core.model.ThemePreference
 import wallcrawl.elopenmike.com.core.ui.theme.WallCrawlTheme
+import wallcrawl.elopenmike.com.test.hasLiveRegion
 
 @RunWith(AndroidJUnit4::class)
 class WorkoutHistoryNavigationTest {
@@ -77,6 +83,12 @@ class WorkoutHistoryNavigationTest {
     private lateinit var container: AppContainer
     private lateinit var navigation: NavHostController
     private lateinit var restoration: StateRestorationTester
+    // When set, a template start waits for it, so the library can be seen mid-start.
+    private var startGate: CompletableDeferred<Unit>? = null
+    // Starts the list accepted (its first act is reading the template, before it suspends),
+    // and those the workout repository has answered.
+    private val startsAccepted = java.util.concurrent.atomic.AtomicInteger()
+    private val startsFinished = java.util.concurrent.atomic.AtomicInteger()
 
     // Compose and navigation ViewModels must stop observing Room before it is closed.
     @get:Rule val rules = RuleChain.outerRule(object : ExternalResource() {
@@ -92,11 +104,31 @@ class WorkoutHistoryNavigationTest {
         container = object : AppContainer by assets {
             override val database = this@WorkoutHistoryNavigationTest.database
             override val userProfileRepository = OfflineUserProfileRepository(database.userProfileDao(), gate)
-            override val workoutRepository = OfflineWorkoutRepository(
+            private val offlineWorkouts = OfflineWorkoutRepository(
                 database.workoutSessionDao(), database.workoutSetDao()
             )
+            override val workoutRepository = object :
+                wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository by offlineWorkouts {
+                override suspend fun startWorkoutFromTemplate(
+                    template: wallcrawl.elopenmike.com.core.model.WorkoutTemplate,
+                    userProfile: UserProfile
+                ): wallcrawl.elopenmike.com.core.model.WorkoutSession {
+                    startGate?.await()
+                    return offlineWorkouts.startWorkoutFromTemplate(template, userProfile)
+                        .also { startsFinished.incrementAndGet() }
+                }
+            }
             override val workoutHistoryRepository = OfflineWorkoutHistoryRepository(database, gate)
             override val deloadRepository = OfflineDeloadRepository(database.deloadPreferencesDao(), gate)
+            // In-memory too, so the template tests below never read the device's own data.
+            private val offlineTemplates = wallcrawl.elopenmike.com.core.database.repository.OfflineWorkoutTemplateRepository(
+                database.workoutTemplateDao(), exerciseCatalog, gate
+            )
+            override val workoutTemplateRepository = object :
+                wallcrawl.elopenmike.com.core.database.repository.WorkoutTemplateRepository by offlineTemplates {
+                override suspend fun getTemplate(templateId: String) =
+                    offlineTemplates.getTemplate(templateId.also { startsAccepted.incrementAndGet() })
+            }
             override val weeklyDoseLedgerRepository = OfflineWeeklyDoseLedgerRepository(
                 database.completedWorkoutHistoryDao(), database.weeklyDoseLedgerStateDao(),
                 workoutGuideCatalogSource
@@ -125,6 +157,179 @@ class WorkoutHistoryNavigationTest {
             }
         }
         compose.waitForIdle()
+    }
+
+    @Test fun aDoubleTapOnCreateWorkoutOpensOneEditor() {
+        show()
+        compose.runOnIdle { navigation.navigate(AppRoutes.WORKOUT_TEMPLATES) }
+        compose.waitUntil(10_000) { navigation.currentDestination?.route == AppRoutes.WORKOUT_TEMPLATES }
+        compose.waitForIdle()
+        val create = compose.onNodeWithText(context.getString(R.string.templates_action_create))
+        // Both taps land before a frame, as a fast double tap does during the transition.
+        compose.mainClock.autoAdvance = false
+        create.performClick()
+        create.performClick()
+        compose.mainClock.autoAdvance = true
+        compose.waitForIdle()
+        compose.runOnIdle {
+            assertThat(navigation.currentBackStack.value.count { it.destination.route == AppRoutes.TEMPLATE_NEW })
+                .isEqualTo(1)
+        }
+    }
+
+    @Test fun aDoubleTapOnTheLibraryBackArrowLeavesOnce() {
+        show()
+        compose.runOnIdle { navigation.navigate(AppRoutes.WORKOUT_TEMPLATES) }
+        compose.waitUntil(10_000) { navigation.currentDestination?.route == AppRoutes.WORKOUT_TEMPLATES }
+        compose.waitForIdle()
+        val back = compose.onNodeWithContentDescription(context.getString(R.string.action_back))
+        // Both taps land before a frame, as a fast double tap does during the transition.
+        compose.mainClock.autoAdvance = false
+        back.performClick()
+        back.performClick()
+        compose.mainClock.autoAdvance = true
+        compose.waitForIdle()
+        compose.runOnIdle { assertThat(navigation.currentDestination?.route).isEqualTo(AppRoutes.TODAY) }
+    }
+
+    @Test fun whileAStartIsInFlightNothingElseInTheLibraryOpens() {
+        val gate = CompletableDeferred<Unit>()
+        startGate = gate
+        saveNavTemplate()
+        show()
+        compose.runOnIdle { navigation.navigate(AppRoutes.WORKOUT_TEMPLATES) }
+        compose.waitUntil(10_000) {
+            compose.onAllNodes(hasText(context.getString(R.string.template_action_start)))
+                .fetchSemanticsNodes().isNotEmpty()
+        }
+        compose.onNodeWithText(context.getString(R.string.template_action_start)).performClick()
+        compose.waitUntil(10_000) {
+            compose.onAllNodes(hasText(context.getString(R.string.template_action_starting)))
+                .fetchSemanticsNodes().isNotEmpty()
+        }
+        compose.onNodeWithText(context.getString(R.string.template_action_starting)).assertIsNotEnabled()
+        compose.onNodeWithContentDescription(context.getString(R.string.templates_create_content_description))
+            .assertIsNotEnabled()
+        compose.onNodeWithContentDescription(context.getString(R.string.action_edit)).assertIsNotEnabled()
+        compose.onNodeWithContentDescription(context.getString(R.string.action_delete)).assertIsNotEnabled()
+        // Leaving now would cancel a start that may already have written its session.
+        compose.onNodeWithContentDescription(context.getString(R.string.action_back)).assertIsNotEnabled()
+        androidx.test.espresso.Espresso.pressBack()
+        compose.waitForIdle()
+        compose.runOnIdle {
+            assertThat(navigation.currentDestination?.route).isEqualTo(AppRoutes.WORKOUT_TEMPLATES)
+        }
+
+        gate.complete(Unit)
+        compose.waitUntil(10_000) { navigation.currentDestination?.route == AppRoutes.ACTIVE_WORKOUT }
+    }
+
+    @Test fun aStartThatFinishesAfterRecreationOpensTheWorkoutThroughTheNewNavigator() {
+        val gate = CompletableDeferred<Unit>()
+        startGate = gate
+        saveNavTemplate()
+        show()
+        compose.runOnIdle { navigation.navigate(AppRoutes.WORKOUT_TEMPLATES) }
+        compose.waitUntil(10_000) {
+            compose.onAllNodes(hasText(context.getString(R.string.template_action_start)))
+                .fetchSemanticsNodes().isNotEmpty()
+        }
+        compose.onNodeWithText(context.getString(R.string.template_action_start)).performClick()
+        compose.waitUntil(10_000) {
+            compose.onAllNodes(hasText(context.getString(R.string.template_action_starting)))
+                .fetchSemanticsNodes().isNotEmpty()
+        }
+        // A rotation mid-start: the composition and its navigator are rebuilt, the list's
+        // ViewModel and its running start are not.
+        restoration.emulateSavedInstanceStateRestore()
+        gate.complete(Unit)
+        compose.waitUntil(10_000) { navigation.currentDestination?.route == AppRoutes.ACTIVE_WORKOUT }
+        compose.runOnIdle {
+            assertThat(navigation.currentBackStack.value.count { it.destination.route == AppRoutes.ACTIVE_WORKOUT })
+                .isEqualTo(1)
+        }
+    }
+
+    @Test fun startingATemplateAgainDuringTheTransitionOpensOneWorkout() {
+        saveNavTemplate()
+        show()
+        compose.runOnIdle { navigation.navigate(AppRoutes.WORKOUT_TEMPLATES) }
+        compose.waitUntil(10_000) { navigation.currentDestination?.route == AppRoutes.WORKOUT_TEMPLATES }
+        compose.waitUntil(10_000) {
+            compose.onAllNodes(hasText(context.getString(R.string.template_action_start)))
+                .fetchSemanticsNodes().isNotEmpty()
+        }
+        val start = compose.onNodeWithText(context.getString(R.string.template_action_start))
+        start.performClick()
+        compose.waitUntil(10_000) { navigation.currentDestination?.route == AppRoutes.ACTIVE_WORKOUT }
+        // The list is still composed while the transition runs; its start button is enabled
+        // again once the first start returned.
+        // The second start is held until the list has left composition, the slowest case:
+        // a start that finished then would have nobody on screen to consume it.
+        val second = CompletableDeferred<Unit>()
+        startGate = second
+        compose.mainClock.autoAdvance = false
+        start.assertIsEnabled()
+        start.performClick()
+        compose.mainClock.autoAdvance = true
+        compose.waitForIdle()
+        second.complete(Unit)
+        // The repository answers off the main thread, where idling does not reach. A start
+        // that got through was counted the moment it was tapped, so it is waited for here.
+        compose.waitUntil(10_000) { startsFinished.get() == startsAccepted.get() }
+        compose.waitForIdle()
+        compose.runOnIdle {
+            assertThat(navigation.currentBackStack.value.count { it.destination.route == AppRoutes.ACTIVE_WORKOUT })
+                .isEqualTo(1)
+        }
+        // Back reaches the list and stays there: the tap during the transition left no
+        // started session behind to send the user forward again.
+        compose.runOnIdle { navigation.popBackStack() }
+        compose.waitForIdle()
+        compose.runOnIdle {
+            assertThat(navigation.currentDestination?.route).isEqualTo(AppRoutes.WORKOUT_TEMPLATES)
+        }
+    }
+
+    @Test fun aRefusedStartIsAnnouncedAndOpeningTheEditorClearsIt() {
+        runBlocking {
+            // Written beneath the repository, as a template saved before units were recorded.
+            database.workoutTemplateDao().replaceTemplate(
+                wallcrawl.elopenmike.com.core.database.entity.WorkoutTemplateEntity(
+                    id = "legacy", name = "Legacy", notes = "",
+                    createdAtTimestamp = 1L, updatedAtTimestamp = 1L, weightUnit = null
+                ),
+                listOf(
+                    wallcrawl.elopenmike.com.core.database.entity.WorkoutTemplateExerciseEntity(
+                        templateId = "legacy", orderIndex = 0, exerciseId = "barbell-back-squat",
+                        exerciseType = wallcrawl.elopenmike.com.core.model.ExerciseType.WEIGHT_REPS,
+                        targetSets = 3, targetRepMin = 5, targetRepMax = 8, targetWeight = 100.0,
+                        targetAssistanceWeight = null, targetDurationSeconds = null,
+                        targetDistanceMeters = null, restSeconds = 90, notes = ""
+                    )
+                )
+            )
+        }
+        show()
+        compose.runOnIdle { navigation.navigate(AppRoutes.WORKOUT_TEMPLATES) }
+        compose.waitUntil(10_000) { navigation.currentDestination?.route == AppRoutes.WORKOUT_TEMPLATES }
+        val startLabel = context.getString(R.string.template_action_start)
+        // The list loads from Room after navigation settles.
+        compose.waitUntil(10_000) { compose.onAllNodes(hasText(startLabel)).fetchSemanticsNodes().isNotEmpty() }
+        compose.onNodeWithText(startLabel).performClick()
+        val message = context.getString(R.string.template_error_unit_unconfirmed)
+        compose.waitUntil(10_000) {
+            compose.onAllNodes(hasText(message)).fetchSemanticsNodes().isNotEmpty()
+        }
+        compose.onNode(
+            hasText(message).and(hasLiveRegion())
+        ).assertExists()
+
+        compose.onNodeWithContentDescription(context.getString(R.string.action_edit)).performClick()
+        compose.waitUntil(10_000) { navigation.currentDestination?.route == AppRoutes.TEMPLATE_EDIT }
+        compose.runOnIdle { navigation.popBackStack() }
+        compose.waitUntil(10_000) { navigation.currentDestination?.route == AppRoutes.WORKOUT_TEMPLATES }
+        compose.onAllNodes(hasText(message)).assertCountEquals(0)
     }
 
     @Test fun progressCardOpensPersistedDetailAndBackReturnsToProgress() {
@@ -280,6 +485,27 @@ class WorkoutHistoryNavigationTest {
             val backup = application.container.localDataBackupRepository
             check(backup.isRestoreAllowed()) { "History demo requires a fresh destination." }
             backup.restoreFrom(ByteArrayInputStream(archive.toByteArray()))
+        }
+    }
+
+    private fun saveNavTemplate() {
+        runBlocking {
+            container.workoutTemplateRepository.saveTemplate(
+                wallcrawl.elopenmike.com.core.model.WorkoutTemplate(
+                    id = "nav-template",
+                    name = "Nav template",
+                    exercises = listOf(
+                        wallcrawl.elopenmike.com.core.model.PlannedExercise(
+                            "push-up",
+                            wallcrawl.elopenmike.com.core.model.ExercisePrescription(
+                                exerciseType = wallcrawl.elopenmike.com.core.model.ExerciseType.BODYWEIGHT_REPS,
+                                targetSets = 1,
+                                repRange = wallcrawl.elopenmike.com.core.model.RepRange(5, 8)
+                            )
+                        )
+                    )
+                )
+            )
         }
     }
 

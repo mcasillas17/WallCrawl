@@ -204,19 +204,27 @@ class OfflineWorkoutRepository(
     override suspend fun startWorkoutFromTemplate(
         template: WorkoutTemplate,
         userProfile: UserProfile
-    ): WorkoutSession = startWorkout(
-        name = template.name,
-        notes = template.notes,
-        focusMuscles = emptyList(),
-        estimatedDurationMinutes = estimateDurationMinutes(template.exercises),
-        exercises = template.exercises,
-        origin = WorkoutOrigin.CUSTOM_TEMPLATE,
-        sourceTemplateId = template.id,
-        userProfile = userProfile,
-        // A manual template is an explicit user choice, not an automatic recommendation, so
-        // there is no validation provenance to record for it.
-        recommendation = null
-    )
+    ): WorkoutSession {
+        // A workout already in progress is resumed rather than competed with, as for any
+        // template, and resuming copies nothing from this one, so an unconfirmed unit is no
+        // obstacle to it. Any other start still goes through the atomic insert below.
+        if (template.requiresUnitConfirmation) getActiveSessionOnce()?.let { return it }
+        return startWorkout(
+            name = template.name,
+            notes = template.notes,
+            focusMuscles = emptyList(),
+            estimatedDurationMinutes = estimateDurationMinutes(template.exercises),
+            // The session is recorded in the profile's unit, so a template saved in the other
+            // one is converted rather than relabelled; an unconfirmed legacy unit is refused.
+            exercises = template.exercisesIn(userProfile.preferredUnit),
+            origin = WorkoutOrigin.CUSTOM_TEMPLATE,
+            sourceTemplateId = template.id,
+            userProfile = userProfile,
+            // A manual template is an explicit user choice, not an automatic recommendation, so
+            // there is no validation provenance to record for it.
+            recommendation = null
+        )
+    }
 
     private suspend fun startWorkout(
         name: String,

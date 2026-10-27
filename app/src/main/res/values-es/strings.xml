@@ -487,6 +487,7 @@
     <string name="template_error_start_failed">No se pudo iniciar este entrenamiento. Inténtalo de nuevo.</string>
     <string name="template_error_delete_failed">No se pudo eliminar esta rutina. Inténtalo de nuevo.</string>
     <string name="template_error_missing">Esta rutina ya no existe.</string>
+    <string name="template_error_unit_unconfirmed">Abre esta rutina y confirma la unidad de sus cargas antes de iniciarla.</string>
 
     <string name="editor_title_create">Crear rutina</string>
     <string name="editor_title_edit">Editar rutina</string>
@@ -514,6 +515,52 @@
     <string name="editor_error_save_failed">No se pudo guardar esta rutina. Inténtalo de nuevo.</string>
     <string name="editor_error_load_failed">No se pudo abrir el editor de rutinas. Inténtalo de nuevo.</string>
     <string name="editor_position">%1$s.</string>
+
+    <!-- Edición de objetivos por ejercicio -->
+    <string name="editor_action_edit">Editar objetivos</string>
+    <string name="editor_edit_accessibility">Editar objetivos de %1$s</string>
+    <string name="editor_field_rep_min">Reps mínimas</string>
+    <string name="editor_field_rep_max">Reps máximas</string>
+    <string name="editor_field_rest">Descanso (s)</string>
+    <string name="editor_field_effort_min">RIR mínimo</string>
+    <string name="editor_field_effort_max">RIR máximo</string>
+    <string name="editor_field_exercise_notes">Notas del ejercicio (opcional)</string>
+    <string name="editor_field_range_hint">Permitido: %1$s</string>
+    <string name="editor_field_accessibility">%1$s de %2$s</string>
+    <string name="editor_optional_unset_hint">Déjalo vacío para no definir este valor.</string>
+    <string name="editor_effort_eyebrow">ESFUERZO OBJETIVO</string>
+    <string name="editor_effort_help">Repeticiones que planeas dejar en reserva. Es un objetivo que defines, no una respuesta sobre una serie que ya terminaste.</string>
+    <string name="editor_action_apply">Aplicar</string>
+    <string name="editor_summary_load">%1$s %2$s</string>
+    <string name="editor_summary_assistance">asistencia %1$s</string>
+    <string name="editor_summary_rest">descanso %1$s</string>
+    <string name="editor_summary_effort">%1$s RIR</string>
+    <string name="editor_discard_title">¿Descartar los cambios?</string>
+    <string name="editor_discard_message">Se perderán los cambios sin guardar de esta rutina.</string>
+    <string name="editor_discard_confirm">Descartar</string>
+    <string name="editor_sheet_discard_title">¿Descartar los cambios de este ejercicio?</string>
+    <string name="editor_sheet_discard_message">Se perderán los objetivos que cambiaste aquí.</string>
+    <string name="editor_discard_keep">Seguir editando</string>
+    <string name="editor_error_invalid_fields">Corrige los objetivos marcados.</string>
+    <string name="editor_error_exercise_limit">Esta rutina ya tiene el máximo de ejercicios que puede contener.</string>
+    <string name="editor_error_draft_incomplete">No se pudo restaurar una parte de tu rutina sin guardar, así que no se puede guardar. Descártala para empezar de nuevo.</string>
+    <string name="editor_error_missing_exercise">Quita los ejercicios que ya no se pueden usar como se guardaron.</string>
+    <string name="editor_rounded_stored_values">Esta rutina se guardó con algunos objetivos de más de dos decimales. El editor los muestra redondeados a dos, y al guardar se almacenan redondeados.</string>
+    <string name="editor_unit_label">Cargas en</string>
+    <string name="editor_unit_conversion_note">Al cambiar, se convierten todas las cargas de esta rutina.</string>
+    <string name="editor_unit_unconfirmed_title">¿En qué unidad están estas cargas?</string>
+    <string name="editor_unit_unconfirmed_message">Esta rutina se guardó antes de que WallCrawl registrara unidades, así que sus cargas no tienen unidad. Elige la unidad en que se ingresaron. Los números no cambiarán.</string>
+    <string name="editor_error_unit_unconfirmed">Elige en qué unidad están las cargas de esta rutina antes de guardarla.</string>
+    <string name="editor_error_unit_confirm_too_large">Un peso aquí supera %1$s, lo máximo que admite una rutina en kilogramos, así que estos pesos no se ingresaron en kilogramos. Elige libras o corrige ese peso.</string>
+    <string name="editor_error_unit_convert_invalid">Corrige los valores de carga y asistencia antes de cambiar de unidad.</string>
+    <string name="draft_error_too_precise">Usa como máximo dos decimales.</string>
+    <string name="draft_error_required">Escribe un valor.</string>
+    <string name="draft_error_out_of_range_with_range">Está fuera del rango permitido (%1$s).</string>
+    <string name="draft_error_range_inverted">El máximo debe ser al menos igual al mínimo.</string>
+    <string name="draft_error_effort_pair">Escribe los dos valores de esfuerzo o deja ambos vacíos.</string>
+    <string name="draft_error_distance_or_duration">Escribe una distancia, una duración o ambas.</string>
+    <string name="draft_error_invalid_combination">Estos objetivos no se pueden combinar en este ejercicio.</string>
+    <string name="draft_error_missing_exercise">Este ejercicio ya no se puede usar como se guardó.</string>
 
     <string name="picker_eyebrow">CATÁLOGO</string>
     <string name="picker_title">Agregar ejercicio</string>

@@ -31,6 +31,9 @@ import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
  * Version 3 adds optional gender and preserves the initial preview's legacy illustration
  * preference. Only gender selects artwork; earlier archives retain their checksums.
  * Version 4 adds owned deload decisions; formats 1..3 retain their original checksums.
+ * Version 5 records a template's weight unit when it has one. Formats 1..4 never carried
+ * it, so their templates read back as unit-unknown and keep their checksums. Provisional:
+ * Package 12 merges first and owns 5, so this becomes version 6 when rebased onto it.
  *
  * ## What it contains
  *
@@ -54,7 +57,7 @@ import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
 object LocalDataArchiveFormat {
 
     /** The only archive format this build writes. */
-    const val ARCHIVE_VERSION: Int = 4
+    const val ARCHIVE_VERSION: Int = 5
 
     /** Every archive format this build can read. */
     val SUPPORTED_ARCHIVE_VERSIONS: IntRange = 1..ARCHIVE_VERSION

@@ -494,6 +494,7 @@
     <string name="template_error_start_failed">Couldn\'t start this workout. Try again.</string>
     <string name="template_error_delete_failed">Couldn\'t delete this workout. Try again.</string>
     <string name="template_error_missing">This workout no longer exists.</string>
+    <string name="template_error_unit_unconfirmed">Open this workout and confirm the unit of its loads before starting it.</string>
 
     <string name="editor_title_create">Create workout</string>
     <string name="editor_title_edit">Edit workout</string>
@@ -521,6 +522,52 @@
     <string name="editor_error_save_failed">Couldn\'t save this workout. Try again.</string>
     <string name="editor_error_load_failed">Couldn\'t open the workout editor. Try again.</string>
     <string name="editor_position">%1$s.</string>
+
+    <!-- Per-exercise prescription editing -->
+    <string name="editor_action_edit">Edit targets</string>
+    <string name="editor_edit_accessibility">Edit targets for %1$s</string>
+    <string name="editor_field_rep_min">Min reps</string>
+    <string name="editor_field_rep_max">Max reps</string>
+    <string name="editor_field_rest">Rest (s)</string>
+    <string name="editor_field_effort_min">Min RIR</string>
+    <string name="editor_field_effort_max">Max RIR</string>
+    <string name="editor_field_exercise_notes">Exercise notes (optional)</string>
+    <string name="editor_field_range_hint">Allowed: %1$s</string>
+    <string name="editor_field_accessibility">%1$s for %2$s</string>
+    <string name="editor_optional_unset_hint">Leave empty to keep this unset.</string>
+    <string name="editor_effort_eyebrow">EFFORT TARGET</string>
+    <string name="editor_effort_help">Repetitions you plan to leave in reserve. This is a target you are setting, not feedback about a set you finished.</string>
+    <string name="editor_action_apply">Apply</string>
+    <string name="editor_summary_load">%1$s %2$s</string>
+    <string name="editor_summary_assistance">assistance %1$s</string>
+    <string name="editor_summary_rest">rest %1$s</string>
+    <string name="editor_summary_effort">%1$s RIR</string>
+    <string name="editor_discard_title">Discard changes?</string>
+    <string name="editor_discard_message">Your unsaved edits to this workout will be lost.</string>
+    <string name="editor_discard_confirm">Discard</string>
+    <string name="editor_sheet_discard_title">Discard changes to this exercise?</string>
+    <string name="editor_sheet_discard_message">The targets you changed here will be lost.</string>
+    <string name="editor_discard_keep">Keep editing</string>
+    <string name="editor_error_invalid_fields">Fix the highlighted targets.</string>
+    <string name="editor_error_exercise_limit">This workout already has the most exercises a workout can hold.</string>
+    <string name="editor_error_draft_incomplete">Part of your unsaved workout could not be restored, so it can\'t be saved. Discard it to start again.</string>
+    <string name="editor_error_missing_exercise">Remove the exercises that can no longer be used as saved.</string>
+    <string name="editor_rounded_stored_values">This workout was saved with some targets at more than two decimal places. The editor shows them rounded to two, and saving stores the rounded values.</string>
+    <string name="editor_unit_label">Loads in</string>
+    <string name="editor_unit_conversion_note">Switching converts every load in this workout.</string>
+    <string name="editor_unit_unconfirmed_title">Which unit are these loads in?</string>
+    <string name="editor_unit_unconfirmed_message">This workout was saved before WallCrawl recorded units, so its loads have no unit. Choose the one they were entered in. The numbers won\'t change.</string>
+    <string name="editor_error_unit_unconfirmed">Choose which unit this workout\'s loads are in before saving.</string>
+    <string name="editor_error_unit_confirm_too_large">A weight here is above %1$s, the most a kilogram workout can hold, so these weights weren\'t entered in kilograms. Choose pounds, or correct that weight.</string>
+    <string name="editor_error_unit_convert_invalid">Fix the load and assistance values before changing units.</string>
+    <string name="draft_error_too_precise">Use at most two decimal places.</string>
+    <string name="draft_error_required">Enter a value.</string>
+    <string name="draft_error_out_of_range_with_range">Outside the allowed range (%1$s).</string>
+    <string name="draft_error_range_inverted">The maximum must be at least the minimum.</string>
+    <string name="draft_error_effort_pair">Enter both effort values, or leave both empty.</string>
+    <string name="draft_error_distance_or_duration">Enter a distance, a duration, or both.</string>
+    <string name="draft_error_invalid_combination">These targets cannot be combined for this exercise.</string>
+    <string name="draft_error_missing_exercise">This exercise can no longer be used as it was saved.</string>
 
     <string name="picker_eyebrow">CATALOG</string>
     <string name="picker_title">Add exercise</string>
