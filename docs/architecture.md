@@ -1060,7 +1060,7 @@ version, the creation time, and the bundled catalog commit as provenance only.
 
 Version 2 added the `recommendations` array. A version 1 document restores exactly as it
 always did and simply carries none; a version 1 document that uses a version 2 field is
-refused rather than quietly upgraded. Versions newer than 5 are refused as
+refused rather than quietly upgraded. Versions newer than 6 are refused as
 unsupported. Each record must name a session the same document carries, exactly once.
 Version 4 adds owned deload preferences; older checksums and missing-choice
 semantics are preserved. A choice row also makes a restore destination nonempty.
@@ -1430,7 +1430,7 @@ repository mapping, progress calculations, and ViewModel state. Its fourteen-per
 weeks with the real `WeeklyDoseLedgerCalculator` and validates every proposal it produces
 with `ProgramValidator`, keeping raw-valid, repaired-valid and typed no-plan outcomes
 distinct. Instrumentation
-tests cover every supported Room migration chain through schema 15, real 7 → 8,
+tests cover every supported Room migration chain through schema 16, real 7 → 8,
 9 → 10, 10 → 11, 11 → 12, 12 → 13, 14 → 15 and 15 → 16 preservation, foreign-key integrity, guidance round trips,
 the atomic start of a session with its validation record, the weekly-ledger repository,
 capability

@@ -829,7 +829,7 @@ Android instrumentation also validates every supported database migration chain 
 schema 16 without destructive fallback, guidance persistence, the atomic start of a session
 with its validation record, the weekly-ledger DAO/repository,
 capability-control semantics, template/session snapshot behavior, and the local-data archive:
-its round trip from app-written state across supported format versions 1–5, every rejection
+its round trip from app-written state across supported format versions 1–6, every rejection
 path for untrusted documents, transactional restore and deletion, and the destructive
 confirmation at a large font scale. It parses the
 packaged 302-exercise catalog and opens every one of its 906 SVG paths. Pull-request/main

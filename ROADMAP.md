@@ -141,7 +141,7 @@ These decisions must be recorded before the related implementation package close
 3. **Validation persistence:** ~~decided~~. A dedicated `workout_recommendation_records`
    table holds one immutable row per started session, written in the same transaction as the
    session, and travels in the local-data archive. It arrived in Room schema 12 and archive
-   format version 2; the current schema is 15 and archive format 5 still preserves
+   format version 2; the current schema is 16 and archive format 6 still preserves
    this record. Columns beside the
    session were rejected: the record is provenance about a decision rather than part of the
    session,    and a separate table keeps it out of ordinary session reads; the history-detail
@@ -336,7 +336,7 @@ and approval does not silently expand beyond what a human actually reviewed.
 **Status:** Complete. `ProgramValidator` checks a complete proposal before it is shown and
 again before it is started, and `workout_recommendation_records` records how each started
 session was decided. The table arrived in Room schema 12 and archive format version 2;
-the current database is schema 15 and archive format 5 reads versions 1–5.
+the current database is schema 16 and archive format 6 reads versions 1–6.
 Reviewed-only rules are now active in production because
 `PlannerFeatureFlags.reviewedCapabilityEligibility` is `true` and the bundled cohort
 carries 182 `AI_ACCEPTED` records.
@@ -401,8 +401,8 @@ undefined.
    adaptation state, accounting week and zone, profile revision, context digest, ordered
    reason codes, and per-muscle completed/proposed/allowance counts. It is written in the same
    transaction as the session, so a refused start leaves neither, and it travels in the archive.
-   It shipped in archive format version 2; the build now writes format 5 and still restores
-   versions 1 through 5.
+   It shipped in archive format version 2; the build now writes format 6 and still restores
+   versions 1 through 6.
 
 **Surfaces:** `core/ai/ProgramValidator`, `core/ai/ProgramViolation`,
 `core/ai/RecommendationSnapshot`, `core/ai/RecommendationContextIdentity`,

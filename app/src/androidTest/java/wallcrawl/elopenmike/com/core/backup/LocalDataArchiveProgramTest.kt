@@ -322,7 +322,9 @@ class LocalDataArchiveProgramTest {
     }
 
     @Test fun originalCanonicalChecksumsArePinned() {
-        val checksums = (1..4).map { version ->
+        // Format 5 is pinned to the checksum main's codec produced while 5 was current
+        // (08f027026), so the template-unit format 6 provably leaves it byte for byte.
+        val checksums = (1..5).map { version ->
             val base = LocalDataArchiveFixtures.archive()
             val archive = base.copy(metadata = base.metadata.copy(archiveVersion = version),
                 snapshot = base.snapshot.copy(recommendationRecords =
@@ -334,7 +336,7 @@ class LocalDataArchiveProgramTest {
             assertArrayEquals(encoded, bytes(restored))
             Regex("\\\"value\\\":\\\"([a-f0-9]{64})\\\"").find(encoded.decodeToString())!!.groupValues[1]
         }
-        assertEquals(listOf("63d059a6e3c1253121dec66f923977cdfd5fb279efa19056a3cd51c3f0649358", "4449245d8d02c7f51bdc1ae6b5ecbf0f70c9b7dd0b77ee3a007f33d138d66bf0", "1a3a5a3e72850887fde7b18e4bb836d5ade84aa73465c50f13e6ddc453c7778d", "5fbbf382e960640eefbe8eb25b88ad7c31851c2e55413fe35af6908f2ee8f05e"), checksums)
+        assertEquals(listOf("63d059a6e3c1253121dec66f923977cdfd5fb279efa19056a3cd51c3f0649358", "4449245d8d02c7f51bdc1ae6b5ecbf0f70c9b7dd0b77ee3a007f33d138d66bf0", "1a3a5a3e72850887fde7b18e4bb836d5ade84aa73465c50f13e6ddc453c7778d", "5fbbf382e960640eefbe8eb25b88ad7c31851c2e55413fe35af6908f2ee8f05e", "d3548046604c87939b2e6c088c25676cdf0f3ff0606b2c06a927fc1e491699b6"), checksums)
     }
 
     private fun bytes(archive: LocalDataArchive): ByteArray =

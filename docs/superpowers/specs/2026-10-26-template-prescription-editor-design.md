@@ -14,7 +14,9 @@ user-approved choices here:
    Room 15 / archive 5 on today's main and **must be renumbered to Room 16 / archive 6**,
    then rebased and re-verified, once Package 12 merges. *Done:* Package 12 merged
    (#93); the template unit is now migration 15→16 and archive format 6. Where this
-   spec says provisional 14→15 or format 5 below, read 15→16 and format 6.
+   spec says provisional 14→15 or format 5 below, read 15→16 and format 6, and read
+   its earlier-format ranges one higher: formats 1–4 / ≤ 4 are 1–5 / ≤ 5, and "reads
+   formats 1–5" is 1–6. Format 5 (programs) never carries the template unit.
 2. **Start unit.** A template started in a profile whose unit differs from the
    template's converts loads into the profile unit; the template keeps its own values.
 
