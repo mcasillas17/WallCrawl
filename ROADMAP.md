@@ -189,9 +189,9 @@ These decisions must be recorded before the related implementation package close
 | Optional sync | 2 -> 28 | Package 28 is a design package first, not implementation authorization |
 
 Available work includes package 14's deeper analytics; its existing engineering
-prerequisites are satisfied. Packages 12 and 15 are complete. Package 3's human-paced content review
+prerequisites are satisfied. Package 3's human-paced content review
 and the audits in packages 19-20 can proceed alongside engineering. Packages 5,
-9, 12, and the existing-history scope of 13 are complete. Package 7 already reads the
+9, 12, 15, and the existing-history scope of 13 are complete. Package 7 already reads the
 bundled `AI_ACCEPTED` cohort; do not represent that owner-authorized acceptance
 as package 3's genuine human review.
 

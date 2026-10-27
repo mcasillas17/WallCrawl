@@ -3,7 +3,6 @@ package wallcrawl.elopenmike.com.feature.templates
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.os.LocaleList
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.width
@@ -40,6 +39,7 @@ import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.ColorUtils
 import androidx.room.Room
 import androidx.test.espresso.Espresso
 import androidx.test.platform.app.InstrumentationRegistry
@@ -1315,7 +1315,7 @@ class TemplateEditorScreenTest {
                 .asAndroidBitmap()
             val colours = image.pixelCounts()
             val background = colours.maxBy { it.value }.key
-            val best = colours.keys.maxOf { contrastRatio(it, background) }
+            val best = colours.keys.maxOf { ColorUtils.calculateContrast(it, background) }
             assertWithMessage(
                 "\"$label\" reaches only ${"%.2f".format(best)}:1 against the " +
                     "${image.width}x${image.height} px behind it, so it is on screen but " +
@@ -1335,20 +1335,10 @@ class TemplateEditorScreenTest {
         node.fetchSemanticsNode().config[SemanticsActions.GetTextLayoutResult].action!!.invoke(layouts)
         val textColor = layouts.single().layoutInput.style.color.toArgb()
         val surface = node.captureToImage().asAndroidBitmap().pixelCounts().maxBy { it.value }.key
-        val ratio = contrastRatio(textColor.over(surface), surface)
+        // calculateContrast draws a translucent text colour over the opaque surface first.
+        val ratio = ColorUtils.calculateContrast(textColor, surface)
         assertWithMessage("\"$text\" is laid out at ${"%.2f".format(ratio)}:1 against what is behind it")
             .that(ratio).isAtLeast(minimum)
-    }
-
-    /** This colour as drawn over [background]: a muted colour is partly transparent. */
-    private fun Int.over(background: Int): Int {
-        val alpha = android.graphics.Color.alpha(this) / 255.0
-        fun mix(front: Int, back: Int) = (front * alpha + back * (1 - alpha)).toInt()
-        return android.graphics.Color.rgb(
-            mix(android.graphics.Color.red(this), android.graphics.Color.red(background)),
-            mix(android.graphics.Color.green(this), android.graphics.Color.green(background)),
-            mix(android.graphics.Color.blue(this), android.graphics.Color.blue(background))
-        )
     }
 
     /** How often each colour occurs; the commonest is the surface behind what a node draws. */
@@ -1361,23 +1351,6 @@ class TemplateEditorScreenTest {
             }
         }
         return counts
-    }
-
-    private fun contrastRatio(first: Int, second: Int): Double {
-        val lighter = maxOf(relativeLuminance(first), relativeLuminance(second))
-        val darker = minOf(relativeLuminance(first), relativeLuminance(second))
-        return (lighter + 0.05) / (darker + 0.05)
-    }
-
-    /** WCAG 2.1 relative luminance. */
-    private fun relativeLuminance(color: Int): Double {
-        fun channel(value: Int): Double {
-            val v = value / 255.0
-            return if (v <= 0.03928) v / 12.92 else Math.pow((v + 0.055) / 1.055, 2.4)
-        }
-        return 0.2126 * channel(Color.red(color)) +
-            0.7152 * channel(Color.green(color)) +
-            0.0722 * channel(Color.blue(color))
     }
 
     /** Evidence for the pull request; written only inside the app's own files directory. */

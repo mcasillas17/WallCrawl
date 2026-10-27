@@ -1064,6 +1064,7 @@ refused rather than quietly upgraded. Versions newer than 6 are refused as
 unsupported. Each record must name a session the same document carries, exactly once.
 Version 4 adds owned deload preferences; older checksums and missing-choice
 semantics are preserved. A choice row also makes a restore destination nonempty.
+
 Version 5 adds enrollment, frozen associations and recommendation membership digests.
 Formats 1–4 preserve their exact canonical checksums and restore without invented
 program state. Both new tables make a restore destination nonempty. The coherent

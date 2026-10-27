@@ -4,6 +4,8 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import org.junit.After
@@ -70,6 +72,22 @@ class WorkoutTemplateRepositoryRoomTest {
         // A new template's save is a create, whatever happened before.
         repository.saveTemplate(legs, mustExist = false)
         assertThat(repository.getTemplate("legs")?.name).isEqualTo("Legs")
+    }
+
+    /** Deleting waits for the gate too, so it cannot slip between an edit's check and write. */
+    @Test fun deletingATemplateWaitsForTheWriteGate() = runBlocking {
+        val repository = templates()
+        repository.saveTemplate(legs, mustExist = false)
+        gate.lock()
+        val deletion = launch { repository.deleteTemplate("legs") }
+        // ponytail: a fixed wait, ample for an in-memory delete; without the gate it would be done.
+        delay(500)
+        assertThat(deletion.isCompleted).isFalse()
+        assertThat(repository.getTemplate("legs")).isNotNull()
+
+        gate.unlock()
+        deletion.join()
+        assertThat(repository.getTemplate("legs")).isNull()
     }
 
     @Test fun anEditOpenBeforeDeleteAllCannotBringTheTemplateBack() = runBlocking {
