@@ -210,8 +210,10 @@ index, artwork, profile and repositories are never serialized; exercises resolve
 - **Missing or retyped catalog exercise.** The row is flagged and save is refused;
   nothing is substituted.
 - **Corrupt saved state.** Undecodable rows, rows repeating one identity (only the first
-  is kept), an undecodable open sheet or one that does not match its row, and an unknown
-  unit mark the draft incomplete, and save is refused; discard is the way out.
+  is kept), an undecodable open sheet or one that does not match its row, an unknown
+  unit, and a name, notes, exercise note or row count beyond what typing allows (kept
+  within the limit, never saved silently shortened) mark the draft incomplete, and save
+  is refused; discard is the way out.
 - **New vs existing.** Separate navigation entries, separate handles.
 - **Delete-all / restore.** Both run from Profile; the editor hides the bottom bar, so
   it cannot be on the back stack beneath them, and their completion

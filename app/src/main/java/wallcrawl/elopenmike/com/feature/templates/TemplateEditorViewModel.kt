@@ -877,7 +877,12 @@ class TemplateEditorViewModel(
             val encodedRows = savedStateHandle.get<ArrayList<String>>(STATE_ROWS).orEmpty()
             // Two rows with one identity would be keyed, edited and removed as one, so a
             // repeated id keeps its first row only and the shortfall marks the draft incomplete.
+            // More rows than a template holds is not a list this app wrote either; the
+            // shortfall marks the draft incomplete like any other unreadable row.
             val rows = encodedRows.mapNotNull(TemplateExerciseDraft::decode).distinctBy { it.rowId }
+                .take(WorkoutTemplate.MAX_EXERCISES)
+            val name = savedStateHandle.get<String>(STATE_NAME).orEmpty()
+            val notes = savedStateHandle.get<String>(STATE_NOTES).orEmpty()
             val unitName = savedStateHandle.get<String>(STATE_UNIT)
             val encodedSheet = savedStateHandle.get<String>(STATE_EDITING_ROW)
             val sheet = encodedSheet?.let(TemplateExerciseDraft::decode)
@@ -891,11 +896,10 @@ class TemplateEditorViewModel(
                     it.exerciseType == sheet.exerciseType
             }
             return RestoredDraft(
-                // Capped like typing is, so a recovered draft can always be saved.
-                name = savedStateHandle.get<String>(STATE_NAME).orEmpty()
-                    .takeWhole(WorkoutTemplate.MAX_NAME_LENGTH),
-                notes = savedStateHandle.get<String>(STATE_NOTES).orEmpty()
-                    .takeWhole(WorkoutTemplate.MAX_NOTES_LENGTH),
+                // Capped like typing is, so the text stays bounded; text that was longer is
+                // not what this app wrote, so the draft is marked incomplete below.
+                name = name.takeWhole(WorkoutTemplate.MAX_NAME_LENGTH),
+                notes = notes.takeWhole(WorkoutTemplate.MAX_NOTES_LENGTH),
                 rows = rows,
                 editorDraft = sheet,
                 weightUnit = unit,
@@ -907,6 +911,8 @@ class TemplateEditorViewModel(
                     (unitName != null && unit == null) ||
                     (encodedSheet != null && sheet == null) ||
                     !sheetMatchesItsRow ||
+                    name.length > WorkoutTemplate.MAX_NAME_LENGTH ||
+                    notes.length > WorkoutTemplate.MAX_NOTES_LENGTH ||
                     savedStateHandle.get<Boolean>(STATE_ROWS_DROPPED) == true
             )
         }

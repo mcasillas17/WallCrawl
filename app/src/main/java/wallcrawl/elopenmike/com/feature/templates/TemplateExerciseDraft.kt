@@ -534,7 +534,9 @@ data class TemplateExerciseDraft(
                 restSeconds = parts[10],
                 effortMinRir = parts[11],
                 effortMaxRir = parts[12],
-                notes = parts[13],
+                // Longer than typing allows: not a row this app wrote, so unreadable.
+                notes = parts[13].takeIf { it.length <= WorkoutTemplate.MAX_EXERCISE_NOTES_LENGTH }
+                    ?: return null,
                 restWasEdited = parts[14].toBooleanStrictOrNull() ?: return null,
                 originalRestClass = restClass,
                 originalRestTargetSource = restTargetSource,

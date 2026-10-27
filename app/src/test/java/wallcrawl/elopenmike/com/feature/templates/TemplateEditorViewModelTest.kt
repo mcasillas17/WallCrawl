@@ -2,6 +2,7 @@ package wallcrawl.elopenmike.com.feature.templates
 
 import androidx.lifecycle.SavedStateHandle
 import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.Truth.assertWithMessage
 import java.util.Locale
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -234,7 +235,7 @@ class TemplateEditorViewModelTest {
     }
 
     @Test
-    fun anOverLongRecoveredNameAndNotesAreCappedSoTheDraftStaysSaveable() = runTest {
+    fun recoveredTextOrRowsBeyondWhatTypingAllowsMarkTheDraftIncomplete() = runTest {
         val row = TemplateExerciseDraft(
             rowId = "row-1",
             exerciseId = "barbell-back-squat",
@@ -244,23 +245,47 @@ class TemplateEditorViewModelTest {
             repMax = "12",
             restSeconds = "90"
         )
-        val handle = SavedStateHandle(
+        fun restored(vararg values: Pair<String, Any>) = SavedStateHandle(
             mapOf(
                 "templateEditor.hasDraft" to true,
-                "templateEditor.name" to "n".repeat(WorkoutTemplate.MAX_NAME_LENGTH + 5),
-                "templateEditor.notes" to "x".repeat(WorkoutTemplate.MAX_NOTES_LENGTH + 5),
+                "templateEditor.name" to "Legs",
+                "templateEditor.notes" to "",
                 "templateEditor.rows" to arrayListOf(row.encode())
+            ) + values
+        )
+        val cases = mapOf(
+            "name" to restored("templateEditor.name" to "n".repeat(WorkoutTemplate.MAX_NAME_LENGTH + 1)),
+            "notes" to restored("templateEditor.notes" to "x".repeat(WorkoutTemplate.MAX_NOTES_LENGTH + 1)),
+            "exercise notes" to restored(
+                "templateEditor.rows" to arrayListOf(
+                    row.copy(notes = "x".repeat(WorkoutTemplate.MAX_EXERCISE_NOTES_LENGTH + 1)).encode()
+                )
+            ),
+            "row count" to restored(
+                "templateEditor.rows" to ArrayList(
+                    (0..WorkoutTemplate.MAX_EXERCISES).map { row.copy(rowId = "row-$it").encode() }
+                )
             )
         )
-        val templates = RecordingTemplateRepository()
-        val viewModel = loadedEditor(templates = templates, handle = handle)
-        viewModel.save()
-        advanceUntilIdle()
-
-        assertThat(viewModel.uiState.value.isSaved).isTrue()
-        val saved = templates.values.value.single()
-        assertThat(saved.name).isEqualTo("n".repeat(WorkoutTemplate.MAX_NAME_LENGTH))
-        assertThat(saved.notes).isEqualTo("x".repeat(WorkoutTemplate.MAX_NOTES_LENGTH))
+        cases.forEach { (case, handle) ->
+            val templates = RecordingTemplateRepository()
+            val viewModel = loadedEditor(templates = templates, handle = handle)
+            assertWithMessage(case).that(viewModel.uiState.value.isDraftIncomplete).isTrue()
+            assertWithMessage(case).that(viewModel.uiState.value.name.length)
+                .isAtMost(WorkoutTemplate.MAX_NAME_LENGTH)
+            assertWithMessage(case).that(viewModel.rows().size).isAtMost(WorkoutTemplate.MAX_EXERCISES)
+            viewModel.save()
+            advanceUntilIdle()
+            assertWithMessage(case).that(templates.values.value).isEmpty()
+        }
+        // At the limits themselves the draft is whole.
+        val atLimit = loadedEditor(
+            handle = restored(
+                "templateEditor.name" to "n".repeat(WorkoutTemplate.MAX_NAME_LENGTH),
+                "templateEditor.notes" to "x".repeat(WorkoutTemplate.MAX_NOTES_LENGTH)
+            )
+        )
+        assertThat(atLimit.uiState.value.isDraftIncomplete).isFalse()
     }
 
     @Test
