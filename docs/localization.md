@@ -186,6 +186,44 @@ outcome. `SafetyCopyTest` reads both shipped resource files **and the translatio
 names and coaching summaries**, and fails on that vocabulary in either language, and on any
 stop reason that reads as a diagnosis rather than as the user's own decision to stop.
 
+## Program controls and large-text evidence
+
+Program management, Today/Progress summaries and mode selection, captured goals/frequency,
+status/objective/position, history membership, confirmations, partial-Finish guidance and
+typed errors/retry use paired `values/` and `values-es/` resources. Selected/disabled controls
+retain accessible semantics. Structured supported labels translate; recorded run IDs,
+policy identities, historical free text and stored decisions stay unchanged. Program
+weeks are explicitly completion-driven in both languages, and Finish advancement is
+explained separately from actual set credit and shared calendar-week allowances.
+
+Controls wrap in scrollable layouts at 320 dp and font scale 1.8 without suppressing
+font scaling. Progress error recovery also scrolls when a populated program summary
+precedes Manage/Retry. `ProgramAccessibilityTest`, `ProgramNavigationTest` and
+`ProgressScreenTest` check line bounds, reachability and enabled actions in English/Spanish;
+`StringResourceParityTest` and `SafetyCopyTest` cover resources and claim wording.
+
+<p align="center">
+  <img src="../art/screenshots/program-actions-es-large.png" width="32%" alt="Spanish program management actions wrapping at physical emulator 320 dp and font scale 1.8" />
+  <img src="../art/screenshots/program-confirmation-es-large.png" width="32%" alt="Scrolled Spanish restart confirmation retaining recorded run and reachable confirm/keep actions at physical emulator 320 dp and font scale 1.8" />
+</p>
+
+These actual API 36 installed-app captures use a test profile after selecting **Español**
+through **Profile → App preferences**. Device density made the 1080 px viewport 320 dp,
+and the system font scale was 1.8. The confirmation is scrolled to expose the run; content
+above that position is offscreen. No restart was applied by that capture.
+
+<p align="center">
+  <img src="../art/screenshots/program-partial-finish-es-large-top.png" width="32%" alt="Spanish native partial-Finish dialog before scrolling, showing incomplete-set text and beginning of the program explanation" />
+  <img src="../art/screenshots/program-partial-finish-es-large.png" width="32%" alt="Same Spanish native dialog after scrolling, showing the complete final calendar-credit sentence and both reachable actions" />
+</p>
+
+The paired native-dialog captures use the final installed instrumentation app at the same
+physical emulator 320 dp/1.8 settings. They show separate scroll positions because the
+explanation does not fit at once; assertions reach the first and final lines and both
+actions, and Keep preserves the active session. This evidence is distinct from tests that
+scale only a Compose content wrapper. Device settings were restored afterward. None of
+these checks certifies physical-device behavior or manual TalkBack use.
+
 ## Adding to it
 
 **A new interface string**

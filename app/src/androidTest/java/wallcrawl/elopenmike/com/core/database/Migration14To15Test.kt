@@ -11,13 +11,12 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
-import wallcrawl.elopenmike.com.core.model.WeightUnit
 
 @RunWith(AndroidJUnit4::class)
 class Migration14To15Test {
-    @Test fun templateUnitIsAddedAsUnknownAndNothingElseIsRewritten() = runBlocking {
+    @Test fun migrationPreservesLegacyRecordsAndStartsWithNoProgramFacts() = runBlocking {
         val context: Context = ApplicationProvider.getApplicationContext()
-        val name = "template-unit-migration-14-15.db"
+        val name = "program-migration-14-15.db"
         context.deleteDatabase(name)
         context.openOrCreateDatabase(name, Context.MODE_PRIVATE, null).use {
             LegacyDatabaseFixtures.createSchema(it, 11)
@@ -33,33 +32,28 @@ class Migration14To15Test {
                         WallCrawlDatabase.MIGRATION_11_12.migrate(db)
                         WallCrawlDatabase.MIGRATION_12_13.migrate(db)
                         WallCrawlDatabase.MIGRATION_13_14.migrate(db)
+                        db.execSQL("""INSERT INTO workout_recommendation_records
+                            (sessionId,validatorVersion,durationEstimatorVersion,outcome,reviewedPathEnabled,reviewPolicyVersion,
+                            profileRevision,contextIdentity,reasonCodes,doseAccounting,recordedAtTimestamp)
+                            SELECT id,'WHOLE_PROGRAM_V2','DURATION_V1','VALID',0,0,17,'legacy','','wallcrawl-recommendation-dose-v1',1000
+                            FROM workout_sessions LIMIT 1""")
                     }
                 }).build())
         helper.writableDatabase
         helper.close()
         val database = Room.databaseBuilder(context, WallCrawlDatabase::class.java, name)
-            .addMigrations(WallCrawlDatabase.MIGRATION_14_15).build()
+            .addMigrations(WallCrawlDatabase.MIGRATION_14_15, WallCrawlDatabase.MIGRATION_15_16).build()
         try {
             assertEquals(WALLCRAWL_SCHEMA_VERSION, database.openHelper.writableDatabase.version)
-            val template = database.workoutTemplateDao().getTemplateWithExercises("template-7")!!
-            // A legacy template's unit was never recorded, so the migration must not pick one.
-            assertNull(template.template.weightUnit)
-            assertEquals(24.0, template.exercises.single().targetWeight!!, 0.0)
-            // The session started from it keeps its own, separately recorded unit.
-            val session = database.workoutSessionDao().getSessionWithDetails("session-7")!!
-            assertEquals(WeightUnit.KG, session.session.weightUnit)
-            assertEquals(24.0, session.exercisesWithSets.single().exercise.targetWeight!!, 0.0)
-
-            database.workoutTemplateDao().upsertTemplate(
-                template.template.copy(weightUnit = WeightUnit.KG.name)
-            )
-            assertEquals(
-                "KG",
-                database.workoutTemplateDao().getTemplateWithExercises("template-7")!!.template.weightUnit
-            )
-        } finally {
-            database.close()
-            context.deleteDatabase(name)
-        }
+            assertEquals(17L, database.userProfileDao().getProfile("default_user")!!.revision)
+            assertNull(database.programDao().getProgramEnrollment("default_user"))
+            database.openHelper.writableDatabase.query("SELECT programAssociationDigest FROM workout_recommendation_records").use {
+                assertTrue(it.moveToFirst()); assertTrue(it.isNull(0)); assertFalse(it.moveToNext())
+            }
+            database.openHelper.writableDatabase.query("SELECT COUNT(*) FROM program_session_associations").use {
+                assertTrue(it.moveToFirst()); assertEquals(0, it.getInt(0))
+            }
+            database.openHelper.writableDatabase.query("PRAGMA foreign_key_check").use { assertEquals(0, it.count) }
+        } finally { database.close(); context.deleteDatabase(name) }
     }
 }

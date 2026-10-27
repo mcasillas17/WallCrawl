@@ -81,7 +81,8 @@ fun TodayScreen(
     onStartWorkout: (sessionId: String) -> Unit,
     onResumeWorkout: (sessionId: String) -> Unit,
     onOpenTemplates: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    programContent: @Composable () -> Unit = {}
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val uiState by produceState<TodayUiState>(TodayUiState.Loading, viewModel, lifecycleOwner) {
@@ -102,7 +103,7 @@ fun TodayScreen(
             TodayUiState.Loading, is TodayUiState.Preparing -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Column(
-                        modifier = Modifier.padding(24.dp),
+                        modifier = Modifier.verticalScroll(rememberScrollState()).padding(24.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         (state as? TodayUiState.Preparing)?.activeSession?.let { session ->
@@ -114,6 +115,7 @@ fun TodayScreen(
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                         }
+                        programContent()
                         CircularProgressIndicator(color = CrimsonRedPrimary)
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
@@ -143,6 +145,7 @@ fun TodayScreen(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                     }
+                    programContent()
                     if (state.activeSession == null) {
                         state.deload?.let {
                             TodayDeloadCard(it, viewModel::decideDeload)
@@ -194,7 +197,8 @@ fun TodayScreen(
                     onResumeWorkout = { state.activeSession?.let { onResumeWorkout(it.id) } },
                     onRegenerate = { viewModel.regenerateWorkout() },
                     onOpenTemplates = onOpenTemplates,
-                    onDeloadAction = viewModel::decideDeload
+                    onDeloadAction = viewModel::decideDeload,
+                    programContent = programContent
                 )
             }
         }
@@ -213,7 +217,8 @@ internal fun TodayContent(
     onResumeWorkout: () -> Unit,
     onRegenerate: () -> Unit,
     onOpenTemplates: () -> Unit,
-    onDeloadAction: (DeloadAction) -> Unit = {}
+    onDeloadAction: (DeloadAction) -> Unit = {},
+    programContent: @Composable () -> Unit = {}
 ) {
     LazyColumn(
         modifier = Modifier
@@ -243,6 +248,8 @@ internal fun TodayContent(
             }
         }
 
+        item { programContent() }
+
         if (state.activeSession == null) {
             state.deload?.let { deload ->
                 item {
@@ -263,7 +270,8 @@ internal fun TodayContent(
                 isRegenerating = state.isRegenerating || state.activeSession != null || state.deload?.isSaving == true,
                 prescriptionUnit = state.prescriptionUnit,
                 onStartWorkout = onStartWorkout,
-                onRegenerate = onRegenerate
+                onRegenerate = onRegenerate,
+                programSession = state.programSession
             )
         }
 
@@ -512,7 +520,8 @@ private fun SuggestedWorkoutCard(
     isRegenerating: Boolean,
     prescriptionUnit: WeightUnit,
     onStartWorkout: () -> Unit,
-    onRegenerate: () -> Unit
+    onRegenerate: () -> Unit,
+    programSession: wallcrawl.elopenmike.com.core.model.ProgramSessionSnapshot? = null
 ) {
     val locale = LocalConfiguration.current.locales[0]
     val vocabulary = LocalExerciseVocabulary.current
@@ -521,6 +530,7 @@ private fun SuggestedWorkoutCard(
         contentPadding = 20.dp,
         borderColor = CrimsonRedPrimary.copy(alpha = 0.4f)
     ) {
+        programSession?.let { Text(wallcrawl.elopenmike.com.feature.program.positionText(it.position)) }
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -677,7 +687,7 @@ private fun SuggestedWorkoutCard(
 
         // Large Start Workout CTA
         WallCrawlPrimaryButton(
-            text = stringResource(R.string.today_action_start),
+            text = stringResource(if (programSession != null) R.string.program_start_session else R.string.today_action_start),
             onClick = onStartWorkout,
             enabled = !isRegenerating,
             leadingIcon = {

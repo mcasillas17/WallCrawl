@@ -4,7 +4,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -34,8 +33,6 @@ fun WallCrawlPrimaryButton(
         onClick = onClick,
         modifier = modifier
             .fillMaxWidth()
-            // A minimum rather than a fixed height: at a large font scale the label is
-            // taller than 52.dp and a fixed height clips it. Unchanged at the default scale.
             .heightIn(min = 52.dp),
         enabled = enabled,
         shape = RoundedCornerShape(14.dp),
@@ -70,7 +67,7 @@ fun WallCrawlSecondaryButton(
         onClick = onClick,
         modifier = modifier
             .fillMaxWidth()
-            .height(48.dp),
+            .heightIn(min = 48.dp),
         enabled = enabled,
         shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.buttonColors(

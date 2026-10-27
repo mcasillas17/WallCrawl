@@ -12,7 +12,9 @@ user-approved choices here:
 1. **Merge order.** Codex's Package 12 (multi-week programs) merges first and keeps
    Room 15 / archive 5. This package is built and tested against a *provisional*
    Room 15 / archive 5 on today's main and **must be renumbered to Room 16 / archive 6**,
-   then rebased and re-verified, once Package 12 merges.
+   then rebased and re-verified, once Package 12 merges. *Done:* Package 12 merged
+   (#93); the template unit is now migration 15→16 and archive format 6. Where this
+   spec says provisional 14→15 or format 5 below, read 15→16 and format 6.
 2. **Start unit.** A template started in a profile whose unit differs from the
    template's converts loads into the profile unit; the template keeps its own values.
 

@@ -508,7 +508,8 @@ It previews held reference targets with one fewer work set per exercise, minimum
 one; any pending progression increase is paused. Displaying/declining/dismissing
 does not accept. Acceptance persists until cancellation or one automatic start;
 templates do not consume it and frozen workouts never change.
-There is no calendar law, fatigue diagnosis or multi-session block.
+There is no calendar law or fatigue diagnosis. An optional multi-week enrollment
+does not turn this one-workout choice into a block-wide deload.
 
 State precedence is reported `RETURNING`, then accepted `HOLD`, otherwise
 `UNCALIBRATED`. No `DELOAD_OFFERED` state is derived. Training policy V2 keeps
@@ -516,13 +517,95 @@ all three at 6 weekly primary sets, two sets per exercise and conservative effor
 before deload. Every state retains the advanced ceiling unless the existing
 demonstrated-family or legal supported-regression exception applies.
 
-Context identity v4 includes richer outcomes/feedback, continuity provenance,
+Context identity v5 includes explicit planning intent and the consumed enrollment
+header/program projection, as well as richer outcomes/feedback, continuity provenance,
 working-load sources, choices/revisions and relevant policy/time inputs. Today
 publishes proposal/unit/snapshot together, preserves the variation index during
 passive refresh, and refuses stale starts. The Room start transaction independently
 checks the choice revision, including zero, before writing session, record and
 consumption together. The [focused contract](superpowers/specs/2026-09-19-progression-and-deload-design.md)
 contains the full comparison, state and lifecycle tables.
+
+### Optional multi-week programs
+
+`MultiWeekProgramPolicy` implements `MULTI_WEEK_PROGRAM_V1` with captured
+`PROGRAM_CONFIGURATION_V1`: primary goal, canonical selected goals and frequency
+2–6. Four completion-driven weeks form two two-week blocks, bounded to 24 slots.
+Their objectives are `ESTABLISH_ROUTINE` then `CONTINUE_AND_RECORD`; these labels
+organize the sequence rather than prescribe a physiological phase.
+This persisted enrollment is separate from derived `TrainingProgramState`,
+`PROGRAM_STATE_V2` and the `PRIMARY_ONLY_V1` calendar ledger. Only the next explicit
+`WorkoutPlanningIntent.PROGRAM` proposal consumes its validated configuration,
+position and objective. Ordinary automatic and manual paths stay available.
+
+`OfflineProgramRepository.getHeader` reads profile/run identity, revision and a
+SHA-256 fingerprint over all raw enrollment fields without decoding program semantics.
+Ordinary context consumes this header, including explicit absence. Unsupported policy
+or malformed configuration does not become absence or block ordinary planning;
+unparseable identity/revision and database errors still surface. Manual starts and
+active resume need no program header. Program context additionally reads the coherent
+full projection and validates captured goals/frequency against the current profile.
+Equipment, constraints, capabilities and units remain live for the next plan.
+
+`ProgramDao` reconstructs the exact completed prefix and optional next active
+reservation from association/session headers, with at most 24 slots plus one overflow
+sentinel. It reads no exercise/set graph and performs no per-candidate queries.
+A retained non-null recommendation digest with no association is an integrity failure,
+including a lost final row; the remaining prefix cannot silently hide it. Completed
+management links use these bounded headers, at most 24 per run, and reuse history detail.
+
+Context identity v5 binds intent, raw header, lifecycle/config versions and consumed
+configuration/position/objective. Program rotation uses its slot rather than lifetime
+completed count. Normal eligibility, prescription, progression, explicit deload and
+single-session `ProgramValidator`/bounded repair stay authoritative. Position never
+creates BUILD/DEVELOP, calibration, advanced eligibility or a new dose allowance.
+Program weeks are completion counters, not accounting weeks: no catch-up, future-dose
+reservation, automatic boundary deload or read-driven advancement.
+
+Start's `insertWorkoutUnlessActive` transaction first preserves the existing-active
+return path: it writes no new reservation, association, revision or deload consumption.
+A new automatic start checks profile, header and deload revisions. Program mode also
+checks supported ACTIVE state/current slot, then atomically inserts the session,
+frozen prescription, recommendation, association, enrollment revision and accepted
+one-workout deload consumption. Ordinary carries no membership; templates consume no
+deload. Frozen `programAssociationDigest` binds session/profile/run/start revision,
+configuration, policies, position and objective in both directions. This is integrity
+framing, not authentication or reconstruction of unstored historical inputs.
+
+Finish validates the active association and performs completion, revision/status update
+and summary read in one transaction. A repeated completed Finish returns its summary
+without a second advance; failure rolls everything back. Confirmed partial/zero-set
+Finish counts once, but never fabricates completed sets, dose or progression evidence.
+Cancel deletes the active session and association and increments revision without
+advancing; it does not rearm consumed deload. All management is blocked while any
+workout is active. Pause/resume preserve position; confirmed restart/replacement creates
+a new UUID, keeps monotonic revision and leaves immutable older-run history intact.
+Completion ends the sequence; no automatic reenrollment occurs.
+
+Program reads/actions share the existing local-data write gate and coherent Room
+transactions. Expected profile/run/revision guards reject stale confirmations and
+prevent post-deletion resurrection. The gate is never held over document I/O.
+Lifecycle-aware observations refresh on invalidation/resume/retry without polling.
+Today publishes proposal/unit/snapshot/program facts together; the actual navigation
+factory supplies `SavedStateHandle` for selection/variation restoration. Run/slot
+changes reset the relevant saved variation, and restore/delete clear protected routes.
+Obsolete generation success or failure cannot settle a later selection's identity.
+
+Typed program failures retain Retry, profile editing and explicit ordinary/manual
+access; active resume/logging/Cancel remain available. Structurally valid unknown-policy
+rows remain opaque. PROGRAM generation, resume/restart and Finish refuse unsupported
+semantics; Pause where valid, Cancel and explicit replacement without an active workout
+remain recovery paths. Known corrupt state is an error rather than a default program.
+Read-only history uses the frozen association in its coherent detail transaction,
+independently of current enrollment; legitimate old null membership is never backfilled.
+
+<p align="center">
+  <img src="../art/screenshots/program-history-en.png" width="32%" alt="Recorded program identity, captured configuration, position, objective and policies in read-only workout history" />
+  <img src="../art/screenshots/program-unsupported-finish-en.png" width="32%" alt="Unsupported program Finish error preserves the active logger and explicit Cancel without promising advancement" />
+</p>
+
+Actual API 36 emulator captures with test profiles demonstrate recorded provenance
+and unsupported Finish recovery. They are not physical-device or TalkBack certification.
 
 ### Frequency and recency scheduling
 
@@ -714,7 +797,7 @@ creates a standalone session snapshot tagged with:
   small to show becomes 0.01 rather than 0).
 
 Each template records the unit of its loads in a nullable `weightUnit` column
-(schema 15, provisional — see the archive section). Null means the template was saved
+(schema 16, see the archive section). Null means the template was saved
 before units were recorded: the migration leaves it null rather than guessing, the
 repository refuses to *write* a load without a unit, and such a template cannot start a
 new workout until the editor has recorded which unit its numbers were entered in (Start
@@ -849,8 +932,7 @@ no separate write path that copies a logged value back into
 
 ## Room persistence and invariants
 
-`WallCrawlDatabase` is currently schema version 15 (provisional; 16 once rebased onto
-Package 12). Its tables store:
+`WallCrawlDatabase` is currently schema version 16. Its tables store:
 
 - the user profile, including onboarding status, multi-select fitness goals,
   training constraints, return-after-break weeks, confirmed starting loads,
@@ -868,15 +950,24 @@ Package 12). Its tables store:
 - one immutable whole-program validation record per session started from a
   recommendation, keyed by that session's own id;
 - one versioned deload-preferences row per profile, containing its latest choice,
-  handled return key and revision, without persisting derived evidence.
+  handled return key and revision, without persisting derived evidence;
+- one latest optional `program_enrollments` row per profile and immutable
+  `program_session_associations` keyed to sessions, plus a nullable membership
+  digest on recommendation records.
+
+Migration `14 → 15` additively creates `program_enrollments` and
+`program_session_associations`, and adds nullable `programAssociationDigest` to
+`workout_recommendation_records`. Legacy tables start without enrollment/associations;
+legacy digests remain null. Profile replacement does not cascade into enrollment.
+Associations cascade with their session and uniquely index run/slot; they have no FK
+to the mutable latest enrollment, so restart/replacement cannot rewrite old membership.
 
 Migration `13 -> 14` creates only `deload_preferences`; old rows are untouched.
 Choices are separate from replaceable profile rows and survive profile edits.
 There is no session foreign key because cancelled workouts are deleted;
 consumption stays terminal even when its audit-linked session is absent.
 
-Migration `14 -> 15` (provisional; it becomes `15 -> 16` once Package 12's schema 15
-lands) adds only the nullable `workout_templates.weightUnit` column. Existing templates
+Migration `15 -> 16` adds only the nullable `workout_templates.weightUnit` column. Existing templates
 read back as unknown rather than guessed, and no session, set or history row is
 rewritten.
 
@@ -961,7 +1052,7 @@ diagram, OEM limitations, and the lack of any previous-backup erasure guarantee.
 
 ### User-owned export, restore, and deletion
 
-`core/backup` writes archive format **version 5** and reads versions 1 through 5: one JSON
+`core/backup` writes archive format **version 6** and reads versions 1 through 6: one JSON
 document holding the profile, templates, every session with its exercises and sets, and
 the whole-program validation record for each session started from a recommendation. That
 version is independent of the Room schema version, which travels alongside the app
@@ -973,14 +1064,22 @@ refused rather than quietly upgraded. Versions newer than 5 are refused as
 unsupported. Each record must name a session the same document carries, exactly once.
 Version 4 adds owned deload preferences; older checksums and missing-choice
 semantics are preserved. A choice row also makes a restore destination nonempty.
-Version 5 adds a template's optional `weightUnit`. It is written only when the template
-has one, a version 1–4 document carrying it is refused, and older documents restore
-their templates with no unit, never an assumed one. Version 5 and Room schema 15 are
-provisional: Package 12 merges first and takes them, after which this work becomes
-archive 6 and schema 16.
+Version 5 adds enrollment, frozen associations and recommendation membership digests.
+Formats 1–4 preserve their exact canonical checksums and restore without invented
+program state. Both new tables make a restore destination nonempty. The coherent
+backup projection validates current and retained older runs, exact prefix/reservation,
+configuration and lifecycle agreement, parent sessions and bidirectional digest binding.
+Missing/extra membership is rejected rather than relabelled as ordinary. Unsupported
+program policies remain readable as opaque Room/history facts, but export and restore
+refuse them before any export destination is opened. Restore inserts the complete
+validated projection transactionally and never reserves/completes a slot anew.
+Version 6 adds a template's optional `weightUnit`. It is written only when the template
+has one, a version 1–5 document carrying it is refused, and older documents restore
+their templates with no unit, never an assumed one.
 
 ```text
-Room (profile, templates, sessions, exercises, sets, recommendation records)
+Room (profile, templates, sessions, exercises, sets, recommendation records,
+      deload preferences, program enrollment and associations)
         │  LocalDataBackupDao.readAll()  ── one @Transaction
         ▼
   LocalDataSnapshot  ──►  validate  ──►  checksum  ──►  open document  ──►  write
@@ -1005,17 +1104,20 @@ resources, so no parser text — which can quote an offending value — reaches 
 screen.
 
 Restore requires an **empty destination**: no sessions, no templates, and onboarding
-unfinished. The bootstrap profile row an app creates for itself does not count and is
+unfinished, with no deload preferences, program enrollment or associations.
+The bootstrap profile row an app creates for itself does not count and is
 replaced. Eligibility is rechecked inside the restore transaction, so a concurrent
 write cannot slip past the check a caller made earlier, and a refused or failed
 restore leaves nothing behind.
 
-`DefaultAppContainer` owns one `Mutex` that the backup, profile, and template
+`DefaultAppContainer` owns one `Mutex` that the backup, profile, template and program
 repositories share, so an ordinary write already in flight cannot land after a
 deletion and resurrect erased data. Workout writes deliberately stay outside it:
 creating a session already fails inside its own transaction when the profile revision
-it was started against is gone, and set and completion writes are `UPDATE`s that match
-nothing once history is deleted. The gate is never held across document I/O.
+it was started against is gone. Set writes only update retained rows; Finish/Cancel
+recheck the active session and any associated enrollment identity/revision before
+changing them in one transaction, so a late lifecycle write cannot recreate deleted
+enrollment or history. The gate is never held across document I/O.
 
 The weekly-ledger cache is never exported and never restored; deletion and restore
 both clear it, and it is rebuilt from restored history on the next read. Recommendation
@@ -1329,7 +1431,7 @@ weeks with the real `WeeklyDoseLedgerCalculator` and validates every proposal it
 with `ProgramValidator`, keeping raw-valid, repaired-valid and typed no-plan outcomes
 distinct. Instrumentation
 tests cover every supported Room migration chain through schema 15, real 7 → 8,
-9 → 10, 10 → 11, 11 → 12, 12 → 13 and 14 → 15 preservation, foreign-key integrity, guidance round trips,
+9 → 10, 10 → 11, 11 → 12, 12 → 13, 14 → 15 and 15 → 16 preservation, foreign-key integrity, guidance round trips,
 the atomic start of a session with its validation record, the weekly-ledger repository,
 capability
 accessibility semantics, packaged catalog parsing, all bundled visual paths, template
@@ -1344,6 +1446,16 @@ together with the pinned-upstream catalog regeneration check on pull requests an
 a tag build does not re-run them, so a release carries their result only when the tagged
 commit already passed CI on `main`, which no workflow currently enforces. The full split is
 recorded in [planner evaluation](planner-evaluation.md#where-the-gate-runs).
+
+Program coverage adds `MultiWeekProgramPolicyTest`, `MultiWeekProgramPlanningTest`,
+`MultiWeekProgramProductionReplayTest`, `ProgramPersistenceTest`, `Migration14To15Test`,
+`LocalDataArchiveProgramTest` and `LocalDataProgramBackupRepositoryTest`. UI coverage
+includes `ProgramViewModelTest`, `TodayProductionLifecycleTest`, `ProgramNavigationTest`,
+`ProgramAccessibilityTest` and populated-summary error recovery in `ProgressScreenTest`.
+Installed-app evidence includes actual background process death with restored variation
+and frozen active rows, plus Spanish native dialogs at physical emulator 320 dp/1.8.
+These are focused implementation checks; final global commands and publication review
+are recorded by the delivery process, not implied by this suite inventory.
 
 See [Build and test](../README.md#build-and-test) for the commands contributors
 should run.

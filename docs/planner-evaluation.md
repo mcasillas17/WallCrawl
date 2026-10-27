@@ -300,6 +300,38 @@ The corpus suite asserts:
 
 `PlannerFixtureCorpusTest` avoids a second inaccurate strength classifier. It checks fixture-construction premises and curated candidate subsets, while typed strength/failure behavior is left to the real planner evaluator.
 
+## Completion-driven program replay
+
+`MultiWeekProgramPlanningTest` covers explicit intent, raw-header ordinary planning,
+full program projection, captured-profile mismatch, v5 freshness, passive regeneration
+and slot-based rotation. `MultiWeekProgramPolicyTest` separately checks lifecycle,
+revision expectations and read-only bounded prefix reconstruction. These are distinct
+from the original persona wire format and derived `PROGRAM_STATE_V2`.
+
+`MultiWeekProgramProductionReplayTest` uses `PlannerFeatureFlags.PRODUCTION`, the actual
+bundled accepted catalog and normal context/history/ledger, prescription, progression,
+deload and `ProgramValidator` composition. Four completion-driven weeks replay at
+frequencies 2/3/6 (8/12/24 slots), with eight actual days between slots. Confirmed
+zero-set Finish advances exactly once without dose, performance or progression credit.
+A separate performed eight-slot run logs generated push-up prescriptions, credits only
+actual sets, demonstrates one-axis rep progression with unchanged set count, and applies
+an explicitly chosen one-workout deload. Its block-boundary choice is a test scenario,
+not an automatic boundary transition or deload rule.
+
+Equal-input replay compares complete proposals and membership with only generated UUID
+identity normalized. Calendar cases include Sunday/Monday, both DST transitions, zone
+change, clock rollback and missed months: accounting follows its ordinary week/zone,
+while program position waits. Partial Finish, cancellation, ordinary/manual shared dose,
+live equipment/unit/constraint changes and preserved advanced restrictions are covered.
+Unsupported cardio inventory, all-excluded and knee-sensitive personas retain typed
+refusals; the test does not relax eligibility to fill a slot.
+
+The replay confirms 182 `AI_ACCEPTED`, zero human `APPROVED` records and empty joint
+clearances. No catalog approval, mandatory weekly dose floor, readiness/recovery diagnosis
+or guaranteed physiological outcome follows from passing these software checks.
+Atomic persistence and deload consumption belong to `ProgramPersistenceTest` and the
+archive/Room suites; the JVM replay does not claim to exercise Android transactions.
+
 ## Full-catalog content-review coverage
 
 `ReviewedCatalogCoverageTest` supplements, rather than silently enlarges, the
@@ -355,7 +387,7 @@ consistency, and passing either demonstrates software conformance only.
 | Fixed anchors require explicit confirmation; `banded-row` stays unresolved | Product policy | `FixedAnchorBandEligibilityTest`, `band-only`, `sparse-history` |
 | Typed no-plan outcomes preserved, including zero approved metadata | Software invariant | `reviewed-enabled-no-approved`, `ReviewedCatalogCoverageTest` |
 | Stale context refused at start; no partial start | Software invariant | `RecommendationContextIdentityTest`, `TodayViewModelTest` |
-| Same-day evidence, feedback, choices, load/rest/ledger changes invalidate context at equal counts/dates | Software invariant (context identity v4) | `RecommendationHistoryIdentityTest`, `TodayProductionLifecycleTest` |
+| Same-day evidence, feedback, choices, load/rest/ledger changes invalidate context at equal counts/dates | Software invariant (context identity v5) | `RecommendationHistoryIdentityTest`, `TodayProductionLifecycleTest` |
 | Passive invalidations coalesce; explicit regeneration survives; retry/resume/teardown/cancellation cannot strand freshness | Software invariant | `TodayProductionLifecycleTest`, `TodayViewModelTest` |
 | Weekly dose is counted in sets, never derived from the legacy `fatigueScore` | Rejected inference | `PlannerFixtureTest.weeklyDoseIsCountedInSetsRatherThanDerivedFromFatigueScores` recomputes completed and proposed exposure from set counts alone and requires equality; `PlannerFixtureTest.prospectiveDoseAccountingIgnoresTheLegacyFatigueScore` adds the ordinal-invariance half. The ordinal's real ranking role is deliberately not asserted against. |
 | Readiness is never inferred from elapsed time alone | Rejected inference | `PlannerFixtureTest.concurrentActivityPersona_readsTheWeekRatherThanTheTimeInsideIt` |
@@ -453,7 +485,9 @@ unused as readiness or a blocking rule.
 | Reviewed metadata | review policy version 2; 182 `AI_ACCEPTED`, 29 `DRAFT`, 0 `APPROVED` | `PlannerFixtureCorpusTest`, `ReviewedExerciseMetadataTest`, `AiAcceptedCatalogTest`, `BundledCatalogLedgerAttributionTest` |
 | Training policy | `STATE_BASED_DOSE_EFFORT_REST_V2` | `StateBasedTrainingPolicyDefaults.V2` |
 | Ledger policy | `PRIMARY_ONLY_V1` | `WeeklyDoseLedgerCalculator` |
-| Program state policy | `PROGRAM_STATE_V2` in production; V1 contexts remain test-compatible | `TrainingProgramStateProvider` |
+| Derived program state policy | `PROGRAM_STATE_V2` in production; V1 contexts remain test-compatible | `TrainingProgramStateProvider` |
+| Optional enrollment lifecycle / configuration | `MULTI_WEEK_PROGRAM_V1` / `PROGRAM_CONFIGURATION_V1` | `MultiWeekProgramPolicy` |
+| Recommendation context identity | v5, binding explicit intent and consumed enrollment header/projection | `RecommendationContextIdentityTest`, `MultiWeekProgramPlanningTest` |
 | Progression / deload | `ONE_VARIABLE_PROGRESSION_V1` / `DELOAD_ONE_WORKOUT_V1` | Shared factory, policies, typed reasons and Today |
 | Validator | `WHOLE_PROGRAM_V2` with `DURATION_ESTIMATOR_V1` | `ProgramValidator` |
 | Importer pin | `tools/workout-guide/import-config.json` `sourceCommit` | `tools/workout-guide/check_pinned_catalog.py` |
@@ -545,6 +579,18 @@ Repository hygiene for this work still includes:
 ```bash
 git diff --check
 ```
+
+Focused optional-program entry points (the full project gates above still apply):
+
+```sh
+./gradlew testDebugUnitTest --tests '*MultiWeekProgramPolicyTest' \
+  --tests '*MultiWeekProgramPlanningTest' --tests '*MultiWeekProgramProductionReplayTest' --no-daemon
+```
+
+`ProgramPersistenceTest`, `Migration14To15Test`, `LocalDataArchiveProgramTest`,
+`LocalDataProgramBackupRepositoryTest` and `ProgramNavigationTest` supply the corresponding
+Android lifecycle/archive/application checks. Final command results belong to the
+delivery record; naming these suites does not imply an unrun global gate passed.
 
 ## Maintenance expectations
 

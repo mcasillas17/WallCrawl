@@ -202,6 +202,9 @@ private fun HistoryScaffold(@StringRes title: Int, onBack: () -> Unit, content: 
 }
 
 private fun LazyListScope.sessionFacts(detail: WorkoutHistoryDetail) {
+    detail.programAssociation?.let { association ->
+        item { wallcrawl.elopenmike.com.feature.program.ProgramAssociationText(association) }
+    }
     val session = detail.session
     item { HistoryHeading(session.name) }
     message(R.string.history_read_only)
@@ -447,6 +450,7 @@ private fun setStatusRes(set: WorkoutSet) = when {
     else -> R.string.history_unresolved
 }
 private fun violationRes(code: ProgramViolationCode) = when (code) {
+    ProgramViolationCode.MULTI_WEEK_PROGRAM_INVALID -> R.string.history_violation_constraint
     ProgramViolationCode.EMPTY_RECOMMENDATION -> R.string.history_violation_empty
     ProgramViolationCode.DURATION_OUT_OF_BOUNDS -> R.string.history_violation_duration_bounds
     ProgramViolationCode.BLANK_EXERCISE_ID, ProgramViolationCode.UNKNOWN_EXERCISE_ID -> R.string.history_violation_id

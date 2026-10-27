@@ -82,9 +82,11 @@ data class RecommendationRecord(
     /** Ordered, deduplicated reason-code names. Empty when nothing was reported. */
     val reasonCodes: List<String>,
     val doseAccounting: List<MuscleDoseAccounting>,
-    val recordedAtEpochMillis: Long
+    val recordedAtEpochMillis: Long,
+    val programAssociationDigest: String? = null
 ) {
     init {
+        require(programAssociationDigest == null || programAssociationDigest.matches(Regex("[0-9a-f]{64}"))) { "Invalid program association digest." }
         requireToken(sessionId, "sessionId")
         requireToken(validatorVersion, "validatorVersion")
         requireToken(durationEstimatorVersion, "durationEstimatorVersion")

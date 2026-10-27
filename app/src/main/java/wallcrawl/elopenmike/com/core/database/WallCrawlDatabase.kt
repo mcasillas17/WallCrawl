@@ -8,6 +8,9 @@ import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import wallcrawl.elopenmike.com.core.database.converter.RoomTypeConverters
+import wallcrawl.elopenmike.com.core.database.dao.ProgramDao
+import wallcrawl.elopenmike.com.core.database.entity.ProgramEnrollmentEntity
+import wallcrawl.elopenmike.com.core.database.entity.ProgramSessionAssociationEntity
 import wallcrawl.elopenmike.com.core.database.dao.CompletedWorkoutHistoryDao
 import wallcrawl.elopenmike.com.core.database.dao.DeloadPreferencesDao
 import wallcrawl.elopenmike.com.core.database.entity.DeloadPreferencesEntity
@@ -33,9 +36,7 @@ import wallcrawl.elopenmike.com.core.database.entity.WorkoutTemplateExerciseEnti
  * Exposed as a constant so provenance recorded in an export names the same number the
  * database is actually built with, rather than a copy that can drift after a migration.
  */
-// Provisional: Package 12 (multi-week programs) merges first and owns 15, so this package's
-// template-unit migration is renumbered to 15 -> 16 when it rebases onto that work.
-const val WALLCRAWL_SCHEMA_VERSION = 15
+const val WALLCRAWL_SCHEMA_VERSION = 16
 
 @Database(
     entities = [
@@ -47,7 +48,9 @@ const val WALLCRAWL_SCHEMA_VERSION = 15
         WorkoutTemplateExerciseEntity::class,
         WeeklyDoseLedgerStateEntity::class,
         WorkoutRecommendationRecordEntity::class,
-        DeloadPreferencesEntity::class
+        DeloadPreferencesEntity::class,
+        ProgramEnrollmentEntity::class,
+        ProgramSessionAssociationEntity::class
     ],
     version = WALLCRAWL_SCHEMA_VERSION,
     exportSchema = false
@@ -55,6 +58,7 @@ const val WALLCRAWL_SCHEMA_VERSION = 15
 @TypeConverters(RoomTypeConverters::class)
 abstract class WallCrawlDatabase : RoomDatabase() {
 
+    abstract fun programDao(): ProgramDao
     abstract fun userProfileDao(): UserProfileDao
     abstract fun workoutSessionDao(): WorkoutSessionDao
     abstract fun workoutExerciseDao(): WorkoutExerciseDao
@@ -441,6 +445,27 @@ abstract class WallCrawlDatabase : RoomDatabase() {
 
         val MIGRATION_14_15 = object : Migration(14, 15) {
             override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE workout_recommendation_records ADD COLUMN programAssociationDigest TEXT")
+                db.execSQL("""CREATE TABLE IF NOT EXISTS program_enrollments (
+                    profileId TEXT NOT NULL PRIMARY KEY, programId TEXT NOT NULL, revision INTEGER NOT NULL,
+                    lifecyclePolicyVersion TEXT NOT NULL, configurationPolicyVersion TEXT NOT NULL,
+                    primaryGoal TEXT NOT NULL, goals TEXT NOT NULL, sessionsPerWeek INTEGER NOT NULL,
+                    status TEXT NOT NULL, createdAtTimestamp INTEGER NOT NULL, updatedAtTimestamp INTEGER NOT NULL)""")
+                db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_program_enrollments_programId ON program_enrollments(programId)")
+                db.execSQL("""CREATE TABLE IF NOT EXISTS program_session_associations (
+                    sessionId TEXT NOT NULL PRIMARY KEY, profileId TEXT NOT NULL, programId TEXT NOT NULL,
+                    enrollmentRevision INTEGER NOT NULL, lifecyclePolicyVersion TEXT NOT NULL,
+                    configurationPolicyVersion TEXT NOT NULL, primaryGoal TEXT NOT NULL, goals TEXT NOT NULL,
+                    sessionsPerWeek INTEGER NOT NULL, slotOrdinal INTEGER NOT NULL, blockNumber INTEGER NOT NULL,
+                    weekNumber INTEGER NOT NULL, sessionInWeek INTEGER NOT NULL, objective TEXT NOT NULL,
+                    FOREIGN KEY(sessionId) REFERENCES workout_sessions(id) ON UPDATE NO ACTION ON DELETE CASCADE)""")
+                db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_program_session_associations_programId_slotOrdinal ON program_session_associations(programId, slotOrdinal)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_program_session_associations_profileId ON program_session_associations(profileId)")
+            }
+        }
+
+        val MIGRATION_15_16 = object : Migration(15, 16) {
+            override fun migrate(db: SupportSQLiteDatabase) {
                 // Nullable on purpose: no existing template recorded which unit its loads
                 // were entered in, and filling one in here would invent that history.
                 db.execSQL("ALTER TABLE workout_templates ADD COLUMN weightUnit TEXT")
@@ -462,7 +487,8 @@ abstract class WallCrawlDatabase : RoomDatabase() {
                 MIGRATION_11_12,
                 MIGRATION_12_13,
                 MIGRATION_13_14,
-                MIGRATION_14_15
+                MIGRATION_14_15,
+                MIGRATION_15_16
             )
     }
 }

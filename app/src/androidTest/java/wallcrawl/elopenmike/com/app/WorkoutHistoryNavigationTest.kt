@@ -119,6 +119,7 @@ class WorkoutHistoryNavigationTest {
                 }
             }
             override val workoutHistoryRepository = OfflineWorkoutHistoryRepository(database, gate)
+            override val programRepository = wallcrawl.elopenmike.com.core.database.repository.OfflineProgramRepository(database, gate)
             override val deloadRepository = OfflineDeloadRepository(database.deloadPreferencesDao(), gate)
             // In-memory too, so the template tests below never read the device's own data.
             private val offlineTemplates = wallcrawl.elopenmike.com.core.database.repository.OfflineWorkoutTemplateRepository(
@@ -143,7 +144,8 @@ class WorkoutHistoryNavigationTest {
                 userProfileRepository, workoutRepository, exerciseCatalog, exerciseFilter,
                 workoutHistoryAnalyzer, plannerFeatureFlags = PlannerFeatureFlags.PRODUCTION,
                 trainingProgramStateProvider = TrainingProgramStateProvider(weeklyDoseLedgerRepository),
-                deloadRepository = deloadRepository
+                deloadRepository = deloadRepository,
+                programRepository = programRepository
             )
         }
         container.userProfileRepository.saveProfile(UserProfile(onboardingCompleted = true))

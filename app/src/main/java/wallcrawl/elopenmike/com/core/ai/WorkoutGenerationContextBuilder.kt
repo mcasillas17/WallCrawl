@@ -14,6 +14,13 @@ import kotlinx.coroutines.flow.withIndex
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
 import wallcrawl.elopenmike.com.core.database.repository.DeloadRepository
+import wallcrawl.elopenmike.com.core.database.repository.ProgramRepository
+import wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent
+import wallcrawl.elopenmike.com.core.model.ProgramReadState
+import wallcrawl.elopenmike.com.core.model.ProgramHeader
+import wallcrawl.elopenmike.com.core.model.ProgramException
+import wallcrawl.elopenmike.com.core.model.ProgramFailure
+import wallcrawl.elopenmike.com.core.model.ProgramPlanningInput
 import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
 import wallcrawl.elopenmike.com.core.exercise.ExerciseFilter
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
@@ -48,7 +55,8 @@ class WorkoutGenerationContextBuilder(
     private val catalogVersion: () -> String? = { null },
     private val nowTimestamp: () -> Long = System::currentTimeMillis,
     private val zoneId: () -> ZoneId = ZoneId::systemDefault,
-    private val deloadRepository: DeloadRepository? = null
+    private val deloadRepository: DeloadRepository? = null,
+    private val programRepository: ProgramRepository? = null
 ) {
     /**
      * Reuses Today’s clock and Room invalidation, not polling queries. A day/zone change
@@ -89,10 +97,30 @@ class WorkoutGenerationContextBuilder(
         }
     }
 
-    suspend fun build(): WorkoutGenerationContext {
+    suspend fun build(
+        intent: WorkoutPlanningIntent = WorkoutPlanningIntent.ORDINARY,
+        regenerationIndex: Int? = null
+    ): WorkoutGenerationContext {
         val now = Instant.ofEpochMilli(nowTimestamp())
         val zone = zoneId()
-        val profile = userProfileRepository.getProfileOnce()
+        val initialProfile = userProfileRepository.getProfileOnce()
+        val projection = if (intent == WorkoutPlanningIntent.PROGRAM) {
+            when (val state = programRepository?.get(initialProfile.id)) {
+                is ProgramReadState.Supported -> state
+                is ProgramReadState.Unsupported -> throw ProgramException(ProgramFailure.UNSUPPORTED_POLICY)
+                is ProgramReadState.Empty, null -> throw ProgramException(ProgramFailure.MISSING_OR_NOT_ACTIVE)
+            }
+        } else null
+        // Program configuration and the live constraints must come from one coherent read.
+        val profile = if (projection != null) projection.profile
+            ?: throw ProgramException(ProgramFailure.PROFILE_UNAVAILABLE) else initialProfile
+        val programHeader = projection?.header ?: programRepository?.getHeader(profile.id) ?: ProgramHeader.absent(profile.id)
+        val programInput = projection?.let {
+            val progress = MultiWeekProgramPolicy.reconstruct(it.enrollment, it.sessions)
+            if (progress != it.progress) throw ProgramException(ProgramFailure.INVALID_PROGRESS)
+            val position = progress.nextPosition ?: throw ProgramException(ProgramFailure.MISSING_OR_NOT_ACTIVE)
+            ProgramPlanningInput(it.enrollment, it.sessions.toList(), position, MultiWeekProgramPolicy.objective(position))
+        }
         val recentCompletedSessions = workoutRepository.getRecentCompletedSessions(
             limit = MAX_RECENT_SESSIONS
         )
@@ -176,11 +204,12 @@ class WorkoutGenerationContextBuilder(
 
         return WorkoutGenerationContext(
             userProfile = profile,
-            fitnessGoal = profile.primaryGoal,
+            fitnessGoals = programInput?.enrollment?.configuration?.goals?.toSet() ?: profile.goals,
+            fitnessGoal = programInput?.enrollment?.configuration?.primaryGoal ?: profile.primaryGoal,
             experienceLevel = profile.experienceLevel,
             availableEquipment = profile.availableEquipment,
             preferredWorkoutDurationMinutes = profile.preferredDurationMinutes,
-            trainingFrequencyDaysPerWeek = profile.daysPerWeek,
+            trainingFrequencyDaysPerWeek = programInput?.enrollment?.configuration?.sessionsPerWeek ?: profile.daysPerWeek,
             musclePriorities = profile.musclePriorities,
             recentWorkoutHistory = recentCompletedSessions,
             progressionHistory = progressionHistory,
@@ -202,8 +231,12 @@ class WorkoutGenerationContextBuilder(
             priorUserRestPreferences = priorUserRestPreferences,
             preferredUnits = profile.preferredUnit,
             catalogVersion = catalogVersion(),
-            reviewPolicyVersion = allExercises.acceptedReviewPolicyVersion()
-        )
+            reviewPolicyVersion = allExercises.acceptedReviewPolicyVersion(),
+            regenerationIndex = regenerationIndex,
+            planningIntent = intent,
+            programHeader = programHeader,
+            programInput = programInput
+        ).also { it.validatedProgramSession() }
     }
 
     private fun priorUserRestPreferences(

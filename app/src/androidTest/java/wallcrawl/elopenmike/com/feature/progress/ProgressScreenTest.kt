@@ -4,7 +4,11 @@ import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.os.LocaleList
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
@@ -13,6 +17,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.hasAnyAncestor
@@ -22,6 +27,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.semantics.SemanticsActions
@@ -52,6 +58,15 @@ import wallcrawl.elopenmike.com.core.model.WeeklyDoseLedger
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.SessionStatus
+import wallcrawl.elopenmike.com.core.model.UserProfile
+import wallcrawl.elopenmike.com.core.model.FitnessGoal
+import wallcrawl.elopenmike.com.core.model.ProgramEnrollment
+import wallcrawl.elopenmike.com.core.model.ProgramHeader
+import wallcrawl.elopenmike.com.core.model.ProgramReadState
+import wallcrawl.elopenmike.com.core.model.ProgramStatus
+import wallcrawl.elopenmike.com.core.ai.MultiWeekProgramPolicy
+import wallcrawl.elopenmike.com.feature.program.ProgramSummary
+import wallcrawl.elopenmike.com.feature.program.ProgramUiState
 import wallcrawl.elopenmike.com.core.ui.localization.ExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.theme.WallCrawlTheme
@@ -376,6 +391,59 @@ class ProgressScreenTest {
         composeRule.onNodeWithText(english.getString(R.string.progress_error)).assertIsDisplayed()
         composeRule.onNodeWithText(english.getString(R.string.action_try_again)).performClick()
 
+        assertThat(retries).isEqualTo(1)
+    }
+
+    @Test fun programManagementAndProgressRetryRemainReachableAt320DpWithLargeText() =
+        assertProgramErrorActionsReachable(Locale.ENGLISH)
+
+    @Test fun spanishProgramManagementAndProgressRetryRemainReachableAt320DpWithLargeText() =
+        assertProgramErrorActionsReachable(LATIN_AMERICAN_SPANISH)
+
+    private fun assertProgramErrorActionsReachable(locale: Locale) {
+        val profile = UserProfile(onboardingCompleted = true,
+            goals = linkedSetOf(FitnessGoal.GENERAL_FITNESS, FitnessGoal.ATHLETIC_PERFORMANCE, FitnessGoal.BUILD_MUSCLE))
+        val enrollment = ProgramEnrollment(profile.id, "11111111-1111-1111-1111-111111111111", 1,
+            MultiWeekProgramPolicy.configurationFromProfile(profile), ProgramStatus.ACTIVE, 0, 0)
+        val program = ProgramUiState(loading = false, program = ProgramReadState.Supported(
+            ProgramHeader(profile.id, enrollment.programId, 1, "a".repeat(64)), enrollment,
+            MultiWeekProgramPolicy.reconstruct(enrollment, emptyList()), emptyList(), profile))
+        val localized = context.localized(locale, 1.8f)
+        var manages = 0
+        var retries = 0
+        composeRule.setContent {
+            val density = LocalDensity.current.density
+            CompositionLocalProvider(LocalContext provides localized,
+                LocalConfiguration provides localized.resources.configuration,
+                LocalDensity provides Density(density, 1.8f)) {
+                WallCrawlTheme {
+                    Box(Modifier.width(320.dp).height(640.dp)) {
+                        ProgressScreen(ProgressUiState.Error(), onRetry = { retries++ }, programContent = {
+                            ProgramSummary(program, onManage = { manages++ })
+                        })
+                    }
+                }
+            }
+        }
+        listOf(R.string.program_manage, R.string.progress_error, R.string.action_try_again).forEach { res ->
+            val label = localized.getString(res)
+            val node = composeRule.onNodeWithText(label)
+            if (composeRule.onAllNodes(hasScrollAction()).fetchSemanticsNodes().isNotEmpty()) node.performScrollTo()
+            node.assertIsDisplayed()
+            val layouts = mutableListOf<TextLayoutResult>()
+            composeRule.onNodeWithText(label, useUnmergedTree = true)
+                .performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layouts) }
+            val layout = layouts.single()
+            assertThat(layout.layoutInput.density.fontScale).isEqualTo(1.8f)
+            assertThat(layout.didOverflowHeight).isFalse()
+            assertThat(node.fetchSemanticsNode().boundsInRoot.height).isAtLeast(layout.size.height.toFloat() - 1f)
+            repeat(layout.lineCount) { line ->
+                assertThat(layout.getLineLeft(line)).isAtLeast(0f)
+                assertThat(layout.getLineRight(line)).isAtMost(layout.size.width.toFloat())
+            }
+            if (res != R.string.progress_error) node.assertIsEnabled().assertHasClickAction().performClick()
+        }
+        assertThat(manages).isEqualTo(1)
         assertThat(retries).isEqualTo(1)
     }
 

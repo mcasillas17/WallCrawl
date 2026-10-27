@@ -130,6 +130,12 @@ class ProgramValidator(
         val allowedById = context.allowedExercises.associateBy(Exercise::id)
         val violations = mutableListOf<ProgramViolation>()
 
+        try {
+            context.validatedProgramSession()
+        } catch (failure: wallcrawl.elopenmike.com.core.model.ProgramException) {
+            violations += ProgramViolation(ProgramViolationCode.MULTI_WEEK_PROGRAM_INVALID, detail = failure.failure.name)
+        }
+
         violations += structuralValidator.structuralViolations(workout, allowedById.keys)
         if (violations.any { it.code == ProgramViolationCode.EMPTY_RECOMMENDATION }) {
             return Evaluation(violations.sorted(), emptyList())
@@ -744,7 +750,9 @@ class ProgramValidator(
             deloadDecisionRevision = context.deloadPreferences?.revision,
             acceptedDeloadOfferId = context.deloadPreferences?.let(DeloadOfferPolicy::accepted)?.offer?.id,
             acceptedDeloadSource = context.deloadPreferences?.let(DeloadOfferPolicy::accepted)?.offer?.source,
-            doseAccounting = evaluation.doseAccounting
+            doseAccounting = evaluation.doseAccounting,
+            expectedProgramHeader = context.programHeader,
+            programSession = context.validatedProgramSession()
         )
     }
 

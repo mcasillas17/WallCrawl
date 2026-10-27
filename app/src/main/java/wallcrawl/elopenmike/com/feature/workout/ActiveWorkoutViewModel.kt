@@ -46,7 +46,8 @@ class ActiveWorkoutViewModel(
     // Wall-clock stamp for persisted set outcomes, injected so tests are deterministic.
     // The rest timer never uses this clock; it has its own monotonic one.
     private val nowMillis: () -> Long = System::currentTimeMillis,
-    elapsedRealtimeClock: ElapsedRealtimeClock = ElapsedRealtimeClock.System
+    elapsedRealtimeClock: ElapsedRealtimeClock = ElapsedRealtimeClock.System,
+    private val programRepository: wallcrawl.elopenmike.com.core.database.repository.ProgramRepository? = null
 ) : ViewModel() {
 
     private val currentExerciseIndexFlow = MutableStateFlow(0)
@@ -59,6 +60,7 @@ class ActiveWorkoutViewModel(
     // errorFlow does (see uiState below): it is a recoverable, dismissible condition on
     // the Active state, cleared automatically the next time a set update succeeds.
     private val setUpdateErrorFlow = MutableStateFlow<Int?>(null)
+    private val programFinishUnsupportedFlow = MutableStateFlow(false)
     private val refreshRequests = MutableStateFlow(0L)
     private var finishRequested = false
 
@@ -114,21 +116,37 @@ class ActiveWorkoutViewModel(
         }
     }
 
+    private val associationFlow = refreshRequests.flatMapLatest {
+        programRepository?.let { repository ->
+            flow { emitAll(repository.observeAssociation(sessionId)) }
+        }?.map { AssociationState(it) }
+            ?.catch { error ->
+                if (error is CancellationException) throw error
+                if (!wallcrawl.elopenmike.com.feature.program.isExpectedProgramReadFailure(error)) throw error
+                emit(AssociationState(error = R.string.program_read_failed))
+            } ?: kotlinx.coroutines.flow.flowOf(AssociationState())
+    }
+    private data class AssociationState(
+        val association: wallcrawl.elopenmike.com.core.model.ProgramHistoryAssociation? = null,
+        val error: Int? = null
+    )
     private val errorStateFlow = combine(
         errorFlow,
         setUpdateErrorFlow,
         restTimerFlow,
-        confirmationFlow
-    ) { error, setUpdateError, restTimerState, confirmations ->
-        ScreenState(error, setUpdateError, restTimerState, confirmations)
+        confirmationFlow,
+        programFinishUnsupportedFlow
+    ) { error, setUpdateError, restTimerState, confirmations, programFinishUnsupported ->
+        ScreenState(error, setUpdateError, restTimerState, confirmations, programFinishUnsupported)
     }
 
     val uiState: StateFlow<ActiveWorkoutUiState> = combine(
         sessionHistoryFlow,
         currentExerciseIndexFlow,
         currentCatalogExerciseFlow,
-        errorStateFlow
-    ) { sessionHistory, exerciseIndex, catalogEx, screenState ->
+        errorStateFlow,
+        associationFlow
+    ) { sessionHistory, exerciseIndex, catalogEx, screenState, associationState ->
         val (session, completedSessions) = sessionHistory
         latestSession = session
         forgetOutcomesObservedIn(session)
@@ -171,12 +189,15 @@ class ActiveWorkoutViewModel(
                 setUpdateError = screenState.setUpdateError,
                 restTimer = screenState.restTimer,
                 pendingFinish = screenState.confirmations.pendingFinish,
-                isConfirmingDiscard = screenState.confirmations.isConfirmingDiscard
+                isConfirmingDiscard = screenState.confirmations.isConfirmingDiscard,
+                programAssociation = associationState.association,
+                programReadError = associationState.error,
+                programFinishUnsupported = screenState.programFinishUnsupported
             )
         }
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5_000, replayExpirationMillis = 0),
+        started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 0, replayExpirationMillis = 0),
         initialValue = ActiveWorkoutUiState.Loading
     )
 
@@ -421,6 +442,12 @@ class ActiveWorkoutViewModel(
             } catch (e: CancellationException) {
                 finishRequested = false
                 throw e
+            } catch (e: wallcrawl.elopenmike.com.core.model.ProgramException) {
+                finishRequested = false
+                if (e.failure == wallcrawl.elopenmike.com.core.model.ProgramFailure.UNSUPPORTED_POLICY) {
+                    programFinishUnsupportedFlow.value = true
+                    setUpdateErrorFlow.value = R.string.program_finish_unsupported
+                } else setUpdateErrorFlow.value = R.string.workout_finish_error
             } catch (e: Exception) {
                 finishRequested = false
                 errorFlow.value = R.string.workout_finish_error
@@ -497,7 +524,8 @@ class ActiveWorkoutViewModel(
             sessionId: String,
             workoutRepository: WorkoutRepository,
             exerciseCatalog: ExerciseCatalog,
-            workoutHistoryAnalyzer: WorkoutHistoryAnalyzer
+            workoutHistoryAnalyzer: WorkoutHistoryAnalyzer,
+            programRepository: wallcrawl.elopenmike.com.core.database.repository.ProgramRepository? = null
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -505,7 +533,8 @@ class ActiveWorkoutViewModel(
                     sessionId,
                     workoutRepository,
                     exerciseCatalog,
-                    workoutHistoryAnalyzer
+                    workoutHistoryAnalyzer,
+                    programRepository = programRepository
                 ) as T
             }
         }
@@ -528,7 +557,8 @@ class ActiveWorkoutViewModel(
         @StringRes val error: Int?,
         @StringRes val setUpdateError: Int?,
         val restTimer: RestTimerUiState,
-        val confirmations: ConfirmationState
+        val confirmations: ConfirmationState,
+        val programFinishUnsupported: Boolean
     )
 
 }

@@ -3,7 +3,8 @@
 ## Policy
 
 WallCrawl operates offline without an account. Profile and movement-capability
-answers, preferences, user-controlled deload choices, templates, active/completed workouts, logged set feedback,
+answers, preferences, user-controlled deload choices, optional program enrollment and
+frozen session memberships, templates, active/completed workouts, logged set feedback,
 and the reconstructable weekly-ledger cache are stored locally in Room. The
 catalog and exercise artwork are bundled with the app. The current application
 has no cloud-sync service, analytics upload, Health Connect or Wear integration.
@@ -42,7 +43,9 @@ One JSON file, written where you choose:
 
 It also contains, for each session started from an automatic recommendation, the
 validation record described below, plus the latest deload choice and handled
-return-offer key. Offers and comparison evidence are reconstructed; no mutable
+return-offer key. It includes the latest optional program enrollment and each recorded
+program membership (run, configuration, position, objective and policy versions).
+Offers and comparison evidence are reconstructed; no mutable
 training-history counter is exported.
 
 It does **not** contain the bundled catalog or artwork, which ship with the app,
@@ -88,8 +91,9 @@ Progress cards, full-history pages and read-only detail expose records already o
 this device. Detail reads the session, sets, recommendation and comparisons
 coherently in one Room transaction; it never edits or re-plans a workout, logs
 another set, consumes a deload choice, bootstraps a profile or rebuilds a ledger
-cache. No new history fields, analytics collection, account or network path are
-introduced. Package 13 changed neither the Room schema nor the archive format.
+cache. Package 12 adds optional frozen program membership, with no analytics collection,
+account or network path. Package 15 adds the weight unit a template's loads are in.
+Current storage is Room 16 and archive 6.
 
 Historical title/rationale, notes and measurements are shown as stored. Current
 profile, template or catalog programming cannot fill missing historical facts.
@@ -99,10 +103,15 @@ state. Deletion removes the complete related projection and returns protected
 screens to onboarding; a fresh-start restore cannot revive an obsolete detail
 back stack. The existing export and deletion boundaries below still apply.
 
+A program membership is read from the historical session, not today's enrollment.
+Restart or replacement preserves completed old-run facts. Older/manual sessions have
+no invented membership. The membership digest checks consistency in both directions;
+it cannot recreate historical profile or catalog inputs that were never stored.
+
 ### Archive compatibility
 
 The archive format has its own version, separate from the Room schema version. This
-build **writes version 5** and **reads versions 1 through 5**. The schema version, app
+build **writes version 6** and **reads versions 1 through 6**. The schema version, app
 version, creation time, and the bundled catalog commit are recorded as provenance only;
 they never decide whether a file can be restored.
 
@@ -124,12 +133,21 @@ Known progression provenance must reference archived source sessions and an
 exercise in its recommendation's session. Unknown future reason versions remain
 opaque; malformed known groups are refused.
 
-Version 5 records the weight unit a template's loads are in, when the template has
+Version 5 adds program enrollment, frozen associations and their recommendation
+digests. Formats 1–4 keep their exact checksums and restore without inventing a
+program or backfilling history. Both sides validate coherent run progress, active
+reservation and membership/digest agreement. Missing or extra associations are errors.
+Unsupported program policies stay opaque in local history; this build refuses their
+export/restore rather than writing a partial archive. Export validates before opening
+the selected destination, so this refusal cannot truncate a file there. With no active
+workout, explicit program replacement is available for structurally valid unsupported
+state; active logging and Cancel remain available while unsupported Finish is refused.
+
+Version 6 records the weight unit a template's loads are in, when the template has
 one. It is the same kind of training data the template already held, stays on-device,
 is exported only when the user asks, and is removed by Delete all data. Earlier
 archives keep their checksums and restore their templates with no unit. Unsaved
 template-editor drafts are never written to the database, a file, or an archive.
-Version 5 is provisional and becomes version 6 when rebased onto Package 12.
 
 A file written by a newer WallCrawl is still refused with a message saying so, rather than
 partially understood — a future format may attach meaning to fields this build would drop.
@@ -153,7 +171,7 @@ reported before opening its destination.
 ### Restore prerequisites
 
 **Restore needs a fresh start**: no workouts, no templates, and onboarding not
-completed, and no deload-choice row. There is no merge and no replace, so restoring can never overwrite
+completed, and no deload-choice, program-enrollment or program-association row. There is no merge and no replace, so restoring can never overwrite
 data you still have. The profile row an app creates for itself before onboarding
 finishes does not count as your data and is replaced.
 
@@ -182,7 +200,8 @@ no longer contains keeps its identifier rather than being remapped.
 Deleting all local data asks for explicit confirmation, naming what is lost —
 including a workout in progress — and then removes the profile and preferences,
 movement answers, templates, every session with its exercises and sets, every
-validation record, deload preferences, and the derived weekly-ledger cache. The app returns to
+validation record, deload preferences, program enrollment and associations, and the
+derived weekly-ledger cache. The app returns to
 first-run onboarding.
 
 It does **not** touch:

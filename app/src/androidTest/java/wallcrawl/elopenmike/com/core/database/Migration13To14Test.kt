@@ -36,7 +36,7 @@ class Migration13To14Test {
         helper.writableDatabase
         helper.close()
         val database = Room.databaseBuilder(context, WallCrawlDatabase::class.java, name)
-            .addMigrations(WallCrawlDatabase.MIGRATION_13_14, WallCrawlDatabase.MIGRATION_14_15).build()
+            .addMigrations(*WallCrawlDatabase.ALL_MIGRATIONS).build()
         try {
             assertEquals(WALLCRAWL_SCHEMA_VERSION, database.openHelper.writableDatabase.version)
             assertEquals(17L, database.userProfileDao().getProfile("default_user")!!.revision)
