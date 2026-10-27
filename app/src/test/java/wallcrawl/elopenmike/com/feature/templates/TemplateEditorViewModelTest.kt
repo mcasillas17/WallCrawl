@@ -234,6 +234,36 @@ class TemplateEditorViewModelTest {
     }
 
     @Test
+    fun anOverLongRecoveredNameAndNotesAreCappedSoTheDraftStaysSaveable() = runTest {
+        val row = TemplateExerciseDraft(
+            rowId = "row-1",
+            exerciseId = "barbell-back-squat",
+            exerciseType = ExerciseType.WEIGHT_REPS,
+            sets = "3",
+            repMin = "8",
+            repMax = "12",
+            restSeconds = "90"
+        )
+        val handle = SavedStateHandle(
+            mapOf(
+                "templateEditor.hasDraft" to true,
+                "templateEditor.name" to "n".repeat(WorkoutTemplate.MAX_NAME_LENGTH + 5),
+                "templateEditor.notes" to "x".repeat(WorkoutTemplate.MAX_NOTES_LENGTH + 5),
+                "templateEditor.rows" to arrayListOf(row.encode())
+            )
+        )
+        val templates = RecordingTemplateRepository()
+        val viewModel = loadedEditor(templates = templates, handle = handle)
+        viewModel.save()
+        advanceUntilIdle()
+
+        assertThat(viewModel.uiState.value.isSaved).isTrue()
+        val saved = templates.values.value.single()
+        assertThat(saved.name).isEqualTo("n".repeat(WorkoutTemplate.MAX_NAME_LENGTH))
+        assertThat(saved.notes).isEqualTo("x".repeat(WorkoutTemplate.MAX_NOTES_LENGTH))
+    }
+
+    @Test
     fun everyEditedFieldReachesTheSavedTemplate() = runTest {
         val templates = RecordingTemplateRepository()
         val viewModel = loadedEditor(templates = templates)

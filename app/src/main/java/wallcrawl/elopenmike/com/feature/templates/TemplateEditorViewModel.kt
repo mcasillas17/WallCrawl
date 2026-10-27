@@ -891,8 +891,11 @@ class TemplateEditorViewModel(
                     it.exerciseType == sheet.exerciseType
             }
             return RestoredDraft(
-                name = savedStateHandle.get<String>(STATE_NAME).orEmpty(),
-                notes = savedStateHandle.get<String>(STATE_NOTES).orEmpty(),
+                // Capped like typing is, so a recovered draft can always be saved.
+                name = savedStateHandle.get<String>(STATE_NAME).orEmpty()
+                    .takeWhole(WorkoutTemplate.MAX_NAME_LENGTH),
+                notes = savedStateHandle.get<String>(STATE_NOTES).orEmpty()
+                    .takeWhole(WorkoutTemplate.MAX_NOTES_LENGTH),
                 rows = rows,
                 editorDraft = sheet,
                 weightUnit = unit,
