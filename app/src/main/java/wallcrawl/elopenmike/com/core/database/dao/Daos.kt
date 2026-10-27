@@ -7,6 +7,9 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
 import androidx.room.Upsert
+import wallcrawl.elopenmike.com.core.ai.MultiWeekProgramPolicy
+import wallcrawl.elopenmike.com.core.database.repository.*
+import wallcrawl.elopenmike.com.core.model.*
 import wallcrawl.elopenmike.com.core.database.entity.UserProfileEntity
 import wallcrawl.elopenmike.com.core.database.entity.DeloadPreferencesEntity
 import wallcrawl.elopenmike.com.core.database.repository.toDeloadPreferences
@@ -50,12 +53,13 @@ interface UserProfileDao {
 }
 
 @Dao
-interface WorkoutSessionDao : CompletedWorkoutHistoryDao, WorkoutHistoryDao {
+interface WorkoutSessionDao : CompletedWorkoutHistoryDao, WorkoutHistoryDao, ProgramDao {
     @Transaction
     suspend fun readWorkoutSummary(sessionId: String, calculator: ProgressCalculator): WorkoutSummary? {
         val session = getBoundedHistorySessions(listOf(sessionId)).singleOrNull()?.toWorkoutSession()
             ?: return null
         if (session.status != SessionStatus.COMPLETED) return null
+        validateProgramBinding(getRecommendationRecord(sessionId), getProgramAssociation(sessionId))
         return calculator.summarize(session, getPersonalRecordBaselines(sessionId))
     }
 
@@ -63,12 +67,25 @@ interface WorkoutSessionDao : CompletedWorkoutHistoryDao, WorkoutHistoryDao {
     suspend fun completeWorkoutAndReadSummary(
         sessionId: String, completedAt: Long, actualDuration: Int, calculator: ProgressCalculator
     ): WorkoutSummary {
+        readWorkoutSummary(sessionId, calculator)?.let { return it }
+        if (!isLifecycleSessionActive(sessionId)) {
+            throw ProgramException(ProgramFailure.MISSING_OR_NOT_ACTIVE)
+        }
         check(completeSessionIfActive(sessionId, completedAt = completedAt, actualDuration = actualDuration) == 1) {
             "Workout session '$sessionId' was not found or is not in progress."
         }
         return checkNotNull(readWorkoutSummary(sessionId, calculator)) {
             "Completed workout session '$sessionId' could not be read back."
         }
+    }
+
+    @Query("SELECT status FROM workout_sessions WHERE id = :sessionId LIMIT 1")
+    suspend fun getLifecycleSessionStatus(sessionId: String): String?
+
+    suspend fun isLifecycleSessionActive(sessionId: String): Boolean {
+        val status = getLifecycleSessionStatus(sessionId) ?: return false
+        if (SessionStatus.entries.none { it.name == status }) throw ProgramException(ProgramFailure.INVALID_PROGRESS)
+        return status == SessionStatus.IN_PROGRESS.name
     }
 
     @Transaction
@@ -124,7 +141,7 @@ interface WorkoutSessionDao : CompletedWorkoutHistoryDao, WorkoutHistoryDao {
     @Query("SELECT * FROM workout_sessions ORDER BY startedAtTimestamp DESC")
     fun observeAllSessions(): Flow<List<WorkoutSessionWithExercisesAndSets>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertSession(session: WorkoutSessionEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -177,13 +194,39 @@ interface WorkoutSessionDao : CompletedWorkoutHistoryDao, WorkoutHistoryDao {
         expectedProfileRevision: Long,
         recommendation: WorkoutRecommendationRecordEntity? = null,
         expectedDeloadDecisionRevision: Long? = null,
-        acceptedDeloadOfferId: String? = null
+        acceptedDeloadOfferId: String? = null,
+        expectedProgramHeader: ProgramHeader? = null,
+        programSession: ProgramSessionSnapshot? = null
     ): WorkoutSessionWithExercisesAndSets {
         check(getProfileRevision(expectedProfileId) == expectedProfileRevision) {
             "User profile changed while the workout recommendation was being started."
         }
         val existingActiveSession = getActiveSession()
         if (existingActiveSession != null) return existingActiveSession
+
+        val header = if (session.origin == WorkoutOrigin.PLANNER) readProgramHeader(expectedProfileId) else null
+        if (header != null && expectedProgramHeader != header &&
+            (expectedProgramHeader != null || header.programId != null)) {
+            throw ProgramException(ProgramFailure.STALE_STATE)
+        }
+        val association = programSession?.let { ProgramAssociation(session.id, expectedProfileId, it) }
+        require((recommendation?.programAssociationDigest != null) == (association != null)) {
+            "Program membership requires a bound recommendation and association."
+        }
+        val enrollmentUpdate = association?.let {
+            require(session.status == SessionStatus.IN_PROGRESS && session.origin == WorkoutOrigin.PLANNER)
+            require(recommendation?.programAssociationDigest == MultiWeekProgramPolicy.associationDigest(it))
+            val enrollment = getProgramEnrollment(expectedProfileId)?.toProgramEnrollment()
+                ?: throw ProgramException(ProgramFailure.STALE_STATE)
+            val slots = getProgramSlots(enrollment.programId).map { row -> row.toSlot() }
+            val progress = MultiWeekProgramPolicy.reconstruct(enrollment, slots)
+            val expectedSnapshot = MultiWeekProgramPolicy.snapshot(enrollment,
+                progress.nextPosition ?: throw ProgramException(ProgramFailure.INVALID_ACTION))
+            if (it.snapshot != expectedSnapshot) throw ProgramException(ProgramFailure.STALE_STATE)
+            MultiWeekProgramPolicy.transition(getProgramProfile(expectedProfileId)?.toUserProfile(), enrollment, slots,
+                ProgramAction.START_SESSION, ProgramExpectation(expectedProfileId, expectedProfileRevision, enrollment.programId, enrollment.revision),
+                session.startedAtTimestamp)
+        }
 
         // Null is legacy revision zero, never permission to skip the freshness check.
         // Manual templates have no recommendation and neither read nor consume a choice.
@@ -206,6 +249,8 @@ interface WorkoutSessionDao : CompletedWorkoutHistoryDao, WorkoutHistoryDao {
             }
             insertRecommendationRecord(record)
         }
+        association?.let { insertProgramAssociation(it.toEntity()) }
+        enrollmentUpdate?.let { upsertProgramEnrollment(it.toEntity()) }
         preferences?.let { current ->
             DeloadOfferPolicy.accepted(current)?.let { accepted ->
                 check(current.revision < Long.MAX_VALUE) { "Deload revision is exhausted." }
@@ -222,22 +267,77 @@ interface WorkoutSessionDao : CompletedWorkoutHistoryDao, WorkoutHistoryDao {
     }
 
     @Update
-    suspend fun updateSession(session: WorkoutSessionEntity)
+    suspend fun updateSessionRow(session: WorkoutSessionEntity)
+
+    @Transaction
+    suspend fun updateSession(session: WorkoutSessionEntity) {
+        require(getProgramAssociation(session.id) == null && getRecommendationRecord(session.id)?.programAssociationDigest == null) {
+            "Program sessions must use the atomic lifecycle operations."
+        }
+        updateSessionRow(session)
+    }
 
     @Query("UPDATE workout_sessions SET status = :completedStatus, completedAtTimestamp = :completedAt, actualDurationMinutes = :actualDuration WHERE id = :sessionId AND status = :requiredStatus")
+    suspend fun completeSessionRow(
+        sessionId: String, completedStatus: SessionStatus, requiredStatus: SessionStatus,
+        completedAt: Long, actualDuration: Int
+    ): Int
+
+    @Transaction
     suspend fun completeSessionIfActive(
         sessionId: String,
         completedStatus: SessionStatus = SessionStatus.COMPLETED,
         requiredStatus: SessionStatus = SessionStatus.IN_PROGRESS,
         completedAt: Long = System.currentTimeMillis(),
         actualDuration: Int
-    ): Int
+    ): Int {
+        require(completedStatus == SessionStatus.COMPLETED && requiredStatus == SessionStatus.IN_PROGRESS)
+        if (!isLifecycleSessionActive(sessionId)) return 0
+        transitionAssociatedSession(sessionId, true, completedAt)
+        return completeSessionRow(sessionId, completedStatus, requiredStatus, completedAt, actualDuration)
+    }
 
     @Query("DELETE FROM workout_sessions WHERE id = :sessionId AND status = :requiredStatus")
+    suspend fun deleteActiveSessionRow(sessionId: String, requiredStatus: SessionStatus): Int
+
+    @Transaction
     suspend fun deleteActiveSession(
         sessionId: String,
         requiredStatus: SessionStatus = SessionStatus.IN_PROGRESS
-    ): Int
+    ): Int {
+        require(requiredStatus == SessionStatus.IN_PROGRESS)
+        if (!isLifecycleSessionActive(sessionId)) return 0
+        transitionAssociatedSession(sessionId, false, System.currentTimeMillis())
+        return deleteActiveSessionRow(sessionId, requiredStatus)
+    }
+
+    suspend fun transitionAssociatedSession(sessionId: String, finish: Boolean, at: Long) {
+        val association = getProgramAssociation(sessionId)
+        validateProgramBinding(getRecommendationRecord(sessionId), association)
+        association ?: return
+        val row = getProgramEnrollment(association.profileId) ?: throw ProgramException(ProgramFailure.INVALID_IDENTITY)
+        row.validateRaw()
+        if (row.programId != association.programId || row.profileId != association.profileId ||
+            row.status != ProgramStatus.ACTIVE.name || association.enrollmentRevision != row.revision - 1) {
+            throw ProgramException(ProgramFailure.INVALID_PROGRESS)
+        }
+        val profile = getProgramProfile(row.profileId)?.toUserProfile()
+        val expected = ProgramExpectation(row.profileId, profile?.revision ?: 0, row.programId, row.revision)
+        if (!row.supported() || !association.supported()) {
+            if (finish) throw ProgramException(ProgramFailure.UNSUPPORTED_POLICY)
+            MultiWeekProgramPolicy.checkExpected(profile, row.header(), expected)
+            val active = validateOpaqueProgramSlots(row.profileId, row.programId).filter { it.sessionStatus == SessionStatus.IN_PROGRESS.name }
+            if (active.singleOrNull()?.association?.sessionId != sessionId) throw ProgramException(ProgramFailure.INVALID_PROGRESS)
+            if (at !in 0..4_102_444_800_000L) throw ProgramException(ProgramFailure.INVALID_IDENTITY)
+            upsertProgramEnrollment(row.copy(revision = MultiWeekProgramPolicy.nextRevision(row.revision), updatedAtTimestamp = at))
+        } else {
+            val update = MultiWeekProgramPolicy.transition(profile, row.toProgramEnrollment(),
+                getProgramSlots(row.programId).map { it.toSlot() },
+                if (finish) ProgramAction.FINISH_SESSION else ProgramAction.CANCEL_SESSION, expected, at, sessionId = sessionId)
+            upsertProgramEnrollment(update.toEntity())
+        }
+    }
+
 }
 
 @Dao

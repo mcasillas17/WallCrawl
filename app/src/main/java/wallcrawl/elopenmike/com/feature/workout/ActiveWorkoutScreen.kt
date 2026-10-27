@@ -1,6 +1,8 @@
 package wallcrawl.elopenmike.com.feature.workout
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -34,9 +36,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -83,7 +88,12 @@ fun ActiveWorkoutScreen(
     modifier: Modifier = Modifier,
     onOpenHistory: ((String) -> Unit)? = null
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val uiState by produceState<ActiveWorkoutUiState>(ActiveWorkoutUiState.Loading, viewModel, lifecycleOwner) {
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            viewModel.uiState.collect { value = it }
+        }
+    }
 
     Box(
         modifier = modifier
@@ -170,12 +180,14 @@ fun ActiveWorkoutScreen(
                     onAddRest = { viewModel.addRestTime() },
                     onSkipRest = { viewModel.skipRest() },
                     onCancelRest = { viewModel.cancelRest() },
-                    onClose = { viewModel.requestCancel() }
+                    onClose = { viewModel.requestCancel() },
+                    onRetryProgramRead = viewModel::retry
                 )
 
                 state.pendingFinish?.let { pending ->
                     FinishConfirmationDialog(
                         openSetCount = pending.openSetCount,
+                        isProgram = state.programAssociation?.supportedSnapshot != null && !state.programFinishUnsupported,
                         onConfirm = { viewModel.confirmFinish() },
                         onDismiss = { viewModel.dismissFinishConfirmation() }
                     )
@@ -208,7 +220,8 @@ private fun ActiveWorkoutContent(
     onAddRest: () -> Unit,
     onSkipRest: () -> Unit,
     onCancelRest: () -> Unit,
-    onClose: () -> Unit
+    onClose: () -> Unit,
+    onRetryProgramRead: () -> Unit
 ) {
     val currentExercise = state.currentExercise
     val locale = LocalConfiguration.current.locales[0]
@@ -261,22 +274,12 @@ private fun ActiveWorkoutContent(
             WallCrawlOutlinedButton(
                 text = stringResource(R.string.workout_action_finish),
                 onClick = onRequestFinish,
-                modifier = Modifier
-                    .widthIn(min = 76.dp)
-                    .height(36.dp),
+                modifier = Modifier.widthIn(min = 76.dp).heightIn(min = 36.dp),
                 contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
             )
         }
 
         Spacer(modifier = Modifier.height(8.dp))
-
-        if (state.setUpdateError != null) {
-            SetUpdateErrorBanner(
-                messageRes = state.setUpdateError,
-                onDismiss = onDismissSetUpdateError
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-        }
 
         if (state.restTimer.isVisible) {
             RestTimerBar(
@@ -296,6 +299,19 @@ private fun ActiveWorkoutContent(
                 contentPadding = PaddingValues(bottom = 24.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
+                state.setUpdateError?.let { error ->
+                    item { SetUpdateErrorBanner(error, onDismissSetUpdateError) }
+                }
+                state.programAssociation?.let { association ->
+                    item { Text(wallcrawl.elopenmike.com.feature.program.positionText(association.position), color = MaterialTheme.colorScheme.onSurface) }
+                    if (association.supportedSnapshot != null && !state.programFinishUnsupported) {
+                        item { Text(stringResource(R.string.program_partial_finish), color = MaterialTheme.colorScheme.onSurfaceVariant) }
+                    }
+                }
+                state.programReadError?.let { error -> item {
+                    Text(stringResource(error), color = MaterialTheme.colorScheme.error)
+                    TextButton(onClick = onRetryProgramRead) { Text(stringResource(R.string.action_try_again), color = MaterialTheme.colorScheme.primary) }
+                } }
                 item {
                     ExerciseIllustration(
                         exercise = state.currentCatalogExercise,
@@ -453,41 +469,33 @@ private fun RestTimerBar(
 @Composable
 private fun FinishConfirmationDialog(
     openSetCount: Int,
+    isProgram: Boolean,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
     val locale = LocalConfiguration.current.locales[0]
     val openSets = LocaleFormatting.formatCount(openSetCount, locale)
+    val title = pluralStringResource(R.plurals.finish_confirm_title, openSetCount, openSets)
+    val body = pluralStringResource(R.plurals.finish_confirm_body, openSetCount, openSets)
+    val programExplanation = if (isProgram) stringResource(R.string.program_partial_finish) else null
+    val confirmLabel = stringResource(R.string.finish_confirm_action)
+    val keepLabel = stringResource(R.string.finish_confirm_keep_going)
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = {
-            Text(
-                pluralStringResource(R.plurals.finish_confirm_title, openSetCount, openSets),
-                color = MaterialTheme.colorScheme.onSurface
-            )
-        },
+        title = { Text(title, color = MaterialTheme.colorScheme.onSurface) },
         text = {
-            Text(
-                pluralStringResource(R.plurals.finish_confirm_body, openSetCount, openSets),
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                Text(body, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                programExplanation?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+            }
         },
         confirmButton = {
             TextButton(onClick = onConfirm) {
-                Text(
-                    stringResource(R.string.finish_confirm_action),
-                    color = CrimsonRedPrimary,
-                    fontWeight = FontWeight.Bold
-                )
+                Text(confirmLabel, color = CrimsonRedPrimary, fontWeight = FontWeight.Bold)
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(
-                    stringResource(R.string.finish_confirm_keep_going),
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
+            TextButton(onClick = onDismiss) { Text(keepLabel, color = MaterialTheme.colorScheme.onSurface) }
         },
         containerColor = MaterialTheme.colorScheme.surface
     )

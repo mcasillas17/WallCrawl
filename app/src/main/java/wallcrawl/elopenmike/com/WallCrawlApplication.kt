@@ -51,6 +51,7 @@ import wallcrawl.elopenmike.com.core.progress.ProgressCalculator
 interface AppContainer {
     val database: WallCrawlDatabase
     val userProfileRepository: UserProfileRepository
+    val programRepository: wallcrawl.elopenmike.com.core.database.repository.ProgramRepository
     val deloadRepository: DeloadRepository
     val workoutRepository: WorkoutRepository
     val workoutHistoryRepository: WorkoutHistoryRepository
@@ -112,6 +113,10 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
 
     override val workoutHistoryRepository: WorkoutHistoryRepository by lazy {
         OfflineWorkoutHistoryRepository(database, localDataWriteGate)
+    }
+
+    override val programRepository: wallcrawl.elopenmike.com.core.database.repository.ProgramRepository by lazy {
+        wallcrawl.elopenmike.com.core.database.repository.OfflineProgramRepository(database, localDataWriteGate)
     }
 
     override val deloadRepository: DeloadRepository by lazy {
@@ -226,7 +231,8 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
             catalogVersion = {
                 workoutGuideCatalogStore.currentSnapshot()?.catalogAttribution?.commit
             },
-            deloadRepository = deloadRepository
+            deloadRepository = deloadRepository,
+            programRepository = programRepository
         )
     }
 

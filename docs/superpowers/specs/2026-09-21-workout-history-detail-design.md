@@ -13,6 +13,19 @@ remain dependent on Package 10; analytics filters/charts and template editing
 remain Packages 14 and 15. The 182 AI_ACCEPTED / zero APPROVED distinction,
 joint-sensitive refusals, progression rules and deload lifecycle are unchanged.
 
+## Package 12 compatibility note — 2026-10-26
+
+The Room 14/archive 4 baseline above describes Package 13's original scope.
+Package 12 adds Room 15 and archive 5 (readers 1–5), with optional immutable
+`program_session_associations` and a nullable recommendation membership digest.
+Detail reads recorded run/configuration/position/objective/policy facts in the same
+coherent transaction, independently of the latest enrollment. Unsupported versions
+remain opaque; malformed known membership or missing digest/association counterparts
+fail explicitly. Old/manual/unassociated sessions retain null membership without
+backfill. A hash does not reconstruct unstored historical profile/catalog inputs.
+This additive compatibility note does not change the original Package 13 approval
+or confer human exercise-metadata approval.
+
 ## Navigation alternatives and decision
 
 1. **Selected: retain the completion summary inside ActiveWorkoutScreen.** This

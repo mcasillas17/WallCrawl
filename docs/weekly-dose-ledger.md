@@ -335,6 +335,27 @@ configured allowance is a mismatch with a versioned WallCrawl number, never proo
 overload or medical danger, and a damaged ledger is reported as its own distinct reason
 rather than as a full one.
 
+## Completion-driven programs share calendar accounting
+
+Optional Package 12 enrollment uses four completion-driven weeks in two blocks, with
+2–6 slots per week. Those weeks describe sequence position, not ISO accounting windows.
+Only a confirmed Finish of an explicitly started program session advances one slot;
+a partial or zero-set Finish earns only its actual completed-set credit. Ordinary/manual
+sessions do not advance a program, but their eligible completed work uses the same
+`PRIMARY_ONLY_V1` allowance. Planned sessions and future slots reserve no dose.
+
+Start, Cancel, pause/resume, restart/replacement, completion, passive reads and missed
+months never reset or relabel ledger history. Cancellation leaves the same slot next
+and adds no completed exposure. There is no catch-up volume, automatic block deload or
+separate program allowance. Existing one-variable progression, explicit one-workout
+deload, eligibility and whole-session validation remain authoritative; a program position
+cannot establish calibration or physiological readiness.
+
+`MultiWeekProgramProductionReplayTest` exercises real bundled-catalog sequences at
+frequencies 2/3/6 and a performed eight-slot run, including actual-set credit, explicit
+deload, calendar/DST/zone boundaries and clock rollback. `ProgramPersistenceTest` covers
+transactional start/Finish/Cancel. Lifecycle counters are not training-performance evidence.
+
 ## Privacy boundary
 
 Ledger reconstruction and cache access run locally. No analytics event, network call,
@@ -414,9 +435,10 @@ an affected pending progression. All three derived states retain the configured
 
 - Metadata approval of any kind.
 - Production enablement of reviewed eligibility or state-based prescription guidance.
-- Any new adaptation-state transition; derivation remains limited to `UNCALIBRATED` and
-  `RETURNING`.
-- Progression, deloads, substitutions, and program blocks.
+- Substitutions remain separate Package 10 work.
+- Optional program blocks are implemented by Package 12; they do not expand derived
+  states beyond `RETURNING`, accepted `HOLD` and
+  `UNCALIBRATED` or change this ledger policy.
 - Any change to legacy planner selection or prescriptions.
 - Fractional secondary-muscle credit.
 - Body measurements, BMI, Health Connect, Wear OS, LLM, analytics, or networking.

@@ -1,6 +1,11 @@
 package wallcrawl.elopenmike.com.feature.today
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.createSavedStateHandle
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import java.time.Instant
@@ -62,9 +67,18 @@ class TodayViewModel(
     nowTimestamp: () -> Long = System::currentTimeMillis,
     clock: Flow<Long> = minuteClock(nowTimestamp),
     zoneId: () -> ZoneId = ZoneId::systemDefault,
-    private val deloadRepository: DeloadRepository? = null
+    private val deloadRepository: DeloadRepository? = null,
+    private val programRepository: wallcrawl.elopenmike.com.core.database.repository.ProgramRepository? = null,
+    private val savedStateHandle: androidx.lifecycle.SavedStateHandle = androidx.lifecycle.SavedStateHandle()
 ) : ViewModel() {
 
+    private val selectedIntentFlow = MutableStateFlow(
+        savedStateHandle.get<String>("today.intent")?.let { name -> WorkoutPlanningIntent.entries.firstOrNull { it.name == name } }
+            ?: WorkoutPlanningIntent.ORDINARY)
+    val planningIntent: StateFlow<WorkoutPlanningIntent> = selectedIntentFlow
+    private var selectionRevision = 0L
+    private var programObserverJob: Job? = null
+    private val programObservationFailed = MutableStateFlow(false)
     /**
      * The workout, validation evidence, and source unit currently on screen.
      *
@@ -85,10 +99,10 @@ class TodayViewModel(
     private val isSavingDeloadFlow = MutableStateFlow(false)
     private val isStartingFlow = MutableStateFlow(false)
     private val deloadDecisionErrorFlow = MutableStateFlow<TodayError?>(null)
-    private val visibleErrorFlow = combine(errorFlow, schedulingObservationFailed, deloadObservationFailed) { error, failed, deloadFailed ->
+    private val visibleErrorFlow = combine(errorFlow, schedulingObservationFailed, deloadObservationFailed, programObservationFailed) { error, failed, deloadFailed, programFailed ->
         when {
             deloadFailed -> TodayError.DELOAD_READ_FAILED
-            failed -> TodayError.RECOMMENDATION_OUT_OF_DATE
+            failed || programFailed -> TodayError.RECOMMENDATION_OUT_OF_DATE
             else -> error
         }
     }
@@ -163,7 +177,9 @@ class TodayViewModel(
                 isRegenerating = isRegenerating,
                 completedThisWeek = sourceState.completedThisWeek,
                 deload = deload,
-                prescriptionUnit = recommendation.prescriptionUnit
+                prescriptionUnit = recommendation.prescriptionUnit,
+                planningIntent = recommendation.intent,
+                programSession = recommendation.snapshot.programSession
             )
         }
     }.onStart {
@@ -175,6 +191,8 @@ class TodayViewModel(
         schedulingObserverJob = null
         deloadObserverJob?.cancel()
         deloadObserverJob = null
+        programObserverJob?.cancel()
+        programObserverJob = null
         observedSchedulingEvidence = null
     }.stateIn(
         scope = viewModelScope,
@@ -200,7 +218,38 @@ class TodayViewModel(
         requestWorkoutGeneration(isRegeneration = false, explicit = true)
     }
 
+    fun selectPlanningIntent(intent: WorkoutPlanningIntent) {
+        if (isStartingFlow.value || selectedIntentFlow.value == intent) return
+        selectedIntentFlow.value = intent
+        savedStateHandle["today.intent"] = intent.name
+        selectionRevision++
+        lastSettledContextIdentity = null
+        errorFlow.value = null
+        requestWorkoutGeneration(isRegeneration = true)
+    }
+
+    private fun ensureProgramObservation() {
+        val repository = programRepository ?: return
+        if (!isTodayVisible || (programObserverJob?.isActive == true && !programObservationFailed.value)) return
+        programObserverJob?.cancel()
+        programObserverJob = viewModelScope.launch {
+            repository.observeHeader().distinctUntilChanged().catch { error ->
+                if (error is CancellationException) throw error
+                if (!wallcrawl.elopenmike.com.feature.program.isExpectedProgramReadFailure(error)) throw error
+                programObservationFailed.value = true
+            }.collect {
+                programObservationFailed.value = false
+                requestWorkoutGeneration(isRegeneration = true)
+            }
+        }
+    }
+
     fun regenerateWorkout() {
+        if (selectedIntentFlow.value == WorkoutPlanningIntent.PROGRAM) {
+            val variation = savedStateHandle.get<Int>("today.program.variation") ?: 0
+            if (variation < Int.MAX_VALUE) savedStateHandle["today.program.variation"] = variation + 1
+        }
+        ensureProgramObservation()
         ensureSchedulingObservation()
         ensureDeloadObservation()
         requestWorkoutGeneration(isRegeneration = true, explicit = true)
@@ -208,6 +257,7 @@ class TodayViewModel(
 
     /** Resume/clock-change check: never leave a stale-looking card until the user starts it. */
     fun refreshRecommendation() {
+        ensureProgramObservation()
         ensureSchedulingObservation()
         ensureDeloadObservation()
         requestWorkoutGeneration(isRegeneration = true)
@@ -294,12 +344,14 @@ class TodayViewModel(
                 if (forceGeneration) pendingExplicitGenerations--
                 hasPendingFreshnessCheck = false
                 isRegeneratingFlow.value = currentRequestIsRegeneration
+                val processingSelectionRevision = selectionRevision
                 try {
                     generateValidatedWorkout(currentRequestIsRegeneration, forceGeneration)
                 } catch (e: CancellationException) {
                     throw e
                 } catch (e: Exception) {
-                    errorFlow.value = userFacingError(e, currentRequestIsRegeneration)
+                    if (processingSelectionRevision == selectionRevision) errorFlow.value = userFacingError(e, currentRequestIsRegeneration)
+                    else hasPendingFreshnessCheck = true
                 } finally {
                     isRegeneratingFlow.value = false
                 }
@@ -318,11 +370,27 @@ class TodayViewModel(
     private suspend fun generateValidatedWorkout(isRegeneration: Boolean, forceGeneration: Boolean) {
         val observedBeforeBuild = observedSchedulingEvidence
         val deloadBeforeBuild = deloadPreferencesFlow.value
-        val context = workoutGenerationContextBuilder.build().let { current ->
+        val intent = selectedIntentFlow.value
+        val requestedSelectionRevision = selectionRevision
+        val context = workoutGenerationContextBuilder.build(intent, if (intent == WorkoutPlanningIntent.PROGRAM)
+            savedStateHandle.get<Int>("today.program.variation")?.coerceAtLeast(0) ?: 0 else null).let { current ->
+            if (intent == WorkoutPlanningIntent.PROGRAM) {
+                val input = requireNotNull(current.programInput)
+                val positionKey = "${input.enrollment.programId}:${input.position.slotOrdinal}"
+                if (savedStateHandle.get<String>("today.program.position") != positionKey) {
+                    savedStateHandle["today.program.position"] = positionKey
+                    savedStateHandle["today.program.variation"] = 0
+                    current.copy(regenerationIndex = 0)
+                } else current
+            } else
             // Freshness rebuilds the displayed variant; only an explicit variation request
             // advances the planner counter. Completed history already advances the split.
             if (forceGeneration) current
             else current.copy(regenerationIndex = recommendationFlow.value?.workout?.generationIndex)
+        }
+        if (requestedSelectionRevision != selectionRevision) {
+            hasPendingFreshnessCheck = true
+            return
         }
         // Count/history/profile notifications can describe the context just published.
         // Only an explicit variation request may spend another ordinal for equal inputs.
@@ -338,8 +406,12 @@ class TodayViewModel(
         } catch (error: CancellationException) {
             throw error
         } catch (error: Exception) {
-            lastSettledContextIdentity = identity
+            if (requestedSelectionRevision == selectionRevision) lastSettledContextIdentity = identity
             throw error
+        }
+        if (requestedSelectionRevision != selectionRevision) {
+            hasPendingFreshnessCheck = true
+            return
         }
         when (result) {
             is ProgramValidationResult.Valid -> {
@@ -360,7 +432,7 @@ class TodayViewModel(
                     return
                 }
                 recommendationFlow.value = PublishedRecommendation(
-                    result.workout, result.snapshot, context.userProfile.preferredUnit
+                    result.workout, result.snapshot, context.userProfile.preferredUnit, intent
                 )
                 errorFlow.value = null
             }
@@ -409,6 +481,11 @@ class TodayViewModel(
      * the same copy as [validationError] gives it instead of a generic failure.
      */
     private fun userFacingError(error: Exception, isRegeneration: Boolean): TodayError {
+        if (error is wallcrawl.elopenmike.com.core.model.ProgramException) return when (error.failure) {
+            wallcrawl.elopenmike.com.core.model.ProgramFailure.UNSUPPORTED_POLICY -> TodayError.PROGRAM_UNSUPPORTED
+            wallcrawl.elopenmike.com.core.model.ProgramFailure.PROFILE_MISMATCH -> TodayError.PROGRAM_PROFILE_MISMATCH
+            else -> TodayError.PROGRAM_UNAVAILABLE
+        }
         val exhaustedAllowance = (error as? TrainingPolicyResultException)?.result
             ?.let { it as? TrainingPolicyResult.NoGuidance }
             ?.reason == TrainingPolicyNoGuidanceReason.WEEKLY_DIRECT_PRIMARY_ALLOWANCE_EXHAUSTED
@@ -457,16 +534,17 @@ class TodayViewModel(
     ) {
         if (generationJob?.isActive == true || schedulingObservationFailed.value ||
             deloadObservationFailed.value || isSavingDeloadFlow.value || isStartingFlow.value ||
-            errorFlow.value != null
+            programObservationFailed.value || errorFlow.value != null
         ) return
         val published = recommendationFlow.value ?: return
+        if (published.intent != selectedIntentFlow.value) return
         val currentWorkout = published.workout
         val recommendation = published.snapshot
         isStartingFlow.value = true
         viewModelScope.launch {
             try {
                 if (workoutRepository.getActiveSessionOnce() != null) return@launch
-                val currentContext = workoutGenerationContextBuilder.build()
+                val currentContext = workoutGenerationContextBuilder.build(published.intent, currentWorkout.generationIndex)
                 if (
                     RecommendationContextIdentity.of(currentContext) !=
                     recommendation.contextIdentity
@@ -511,18 +589,20 @@ class TodayViewModel(
             workoutGenerationContextBuilder: WorkoutGenerationContextBuilder,
             workoutPlanner: WorkoutPlanner,
             programValidator: ProgramValidator,
-            deloadRepository: DeloadRepository? = null
-        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return TodayViewModel(
+            deloadRepository: DeloadRepository? = null,
+            programRepository: wallcrawl.elopenmike.com.core.database.repository.ProgramRepository? = null
+        ): ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                TodayViewModel(
                     userProfileRepository,
                     workoutRepository,
                     workoutGenerationContextBuilder,
                     workoutPlanner,
                     programValidator,
-                    deloadRepository = deloadRepository
-                ) as T
+                    deloadRepository = deloadRepository,
+                    programRepository = programRepository,
+                    savedStateHandle = createSavedStateHandle()
+                )
             }
         }
     }
@@ -530,7 +610,8 @@ class TodayViewModel(
     private data class PublishedRecommendation(
         val workout: GeneratedWorkout,
         val snapshot: RecommendationSnapshot,
-        val prescriptionUnit: WeightUnit
+        val prescriptionUnit: WeightUnit,
+        val intent: WorkoutPlanningIntent
     )
 
     private data class TodaySourceState(

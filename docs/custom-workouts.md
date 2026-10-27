@@ -19,6 +19,21 @@ Room persistence, history, and progress pipeline as a planner-generated workout.
 Saved templates can be reopened, edited, started again, or deleted after
 confirmation. A template must have a name and at least one exercise.
 
+## Templates alongside an optional program
+
+Templates remain independent of optional four-week program enrollment. Only an explicit
+**Program session** start on Today creates program membership; starting or finishing a
+manual template never reserves/advances a slot, changes captured configuration or consumes
+an accepted one-workout deload. Templates require no program-header read, so program
+configuration/policy failures do not hide this workflow. Ordinary automatic recommendations
+are also available through their explicit Today choice.
+
+A completed manual session contributes only its actual eligible work to the same calendar
+ledger used by program sessions; enrollment, pause, restart or replacement never clears that
+history or creates a second allowance. Any active workout, including a template, blocks
+program-management actions until it is finished or cancelled. Resuming an existing active
+workout preserves its original provenance rather than associating it with a new program.
+
 ## Exercise availability
 
 Both workout sources use the same 302-exercise catalog, but their selection

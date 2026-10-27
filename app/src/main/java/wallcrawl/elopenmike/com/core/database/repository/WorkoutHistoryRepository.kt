@@ -37,7 +37,8 @@ data class WorkoutHistoryDetail(
     /** Keys are viewed exercise-instance IDs, not catalog IDs. */
     val previousPerformances: Map<String, HistoricalExercisePerformance>,
     /** Only the cited exercise slice for this viewed instance, never a partial session graph. */
-    val progressionSources: Map<HistoricalSourceKey, HistoricalExercisePerformance>
+    val progressionSources: Map<HistoricalSourceKey, HistoricalExercisePerformance>,
+    val programAssociation: wallcrawl.elopenmike.com.core.model.ProgramHistoryAssociation? = null
 )
 
 data class HistoricalSourceKey(val sourceSessionId: String, val viewedExerciseInstanceId: String)
@@ -65,13 +66,16 @@ class OfflineWorkoutHistoryRepository(
     override fun observeDetail(sessionId: String): Flow<WorkoutHistoryDetail?> {
         require(sessionId.isNotBlank()) { "sessionId must not be blank." }
         return observeRead(
-            "workout_sessions", "workout_exercises", "workout_sets", "workout_recommendation_records"
+            "workout_sessions", "workout_exercises", "workout_sets", "workout_recommendation_records", "program_session_associations"
         ) {
             val dao = database.workoutSessionDao()
             val session = dao.getBoundedHistorySessions(listOf(sessionId)).singleOrNull()?.toWorkoutSession()
                 ?: return@observeRead null
             // The mapper rejects known corrupt accounting/reason groups; absence alone is normal.
-            val recommendation = dao.getRecommendationRecord(sessionId)?.toRecommendationRecord()
+            val storedRecommendation = dao.getRecommendationRecord(sessionId)
+            val association = dao.getProgramAssociation(sessionId)
+            validateProgramBinding(storedRecommendation, association)
+            val recommendation = storedRecommendation?.toRecommendationRecord()
             val provenance = recommendation?.let { ProgressionReasonCode.decode(it.reasonCodes) }.orEmpty()
             val sourcePairs = provenance.flatMap { reason ->
                 reason.sourceSessionIds.map { it + '\u001f' + reason.exerciseId }
@@ -101,7 +105,8 @@ class OfflineWorkoutHistoryRepository(
                 } else null,
                 recommendation = recommendation,
                 previousPerformances = previous,
-                progressionSources = sources
+                progressionSources = sources,
+                programAssociation = association?.toHistoryAssociation()
             )
         }
     }

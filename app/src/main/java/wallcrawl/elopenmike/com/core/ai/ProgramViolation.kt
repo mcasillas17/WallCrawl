@@ -14,6 +14,9 @@ package wallcrawl.elopenmike.com.core.ai
  * program-design ones and program-design ones before accounting.
  */
 enum class ProgramViolationCode {
+    /** Software invariant: explicit membership must name a supported, current next slot. */
+    MULTI_WEEK_PROGRAM_INVALID,
+
     /** Software invariant: a recommendation with no exercises is not a session. */
     EMPTY_RECOMMENDATION,
 

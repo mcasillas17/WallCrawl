@@ -404,8 +404,8 @@ class WorkoutRepositoryTest {
         try {
             repository.completeWorkout(sessionId = "missing", actualDurationMinutes = 30)
             fail("Expected an unknown session to be rejected")
-        } catch (exception: IllegalStateException) {
-            assertThat(exception.message).contains("missing")
+        } catch (exception: wallcrawl.elopenmike.com.core.model.ProgramException) {
+            assertThat(exception.failure).isEqualTo(wallcrawl.elopenmike.com.core.model.ProgramFailure.MISSING_OR_NOT_ACTIVE)
         }
     }
 
@@ -541,9 +541,9 @@ private class EmptyWorkoutSessionDao(
         error("This fake does not model paged history.")
     override suspend fun selectHistorySizes(sessionIds: List<String>):
         List<wallcrawl.elopenmike.com.core.database.dao.HistorySessionSize> =
-        error("This fake does not model bounded history.")
+        emptyList()
     override suspend fun selectHistorySessions(sessionIds: List<String>): List<WorkoutSessionWithExercisesAndSets> =
-        error("This fake does not model bounded history.")
+        emptyList()
     override suspend fun selectPersonalRecordBaselines(sessionId: String):
         List<wallcrawl.elopenmike.com.core.database.dao.PersonalRecordBaselineRow> =
         error("This fake does not model record aggregation.")
@@ -604,6 +604,20 @@ private class EmptyWorkoutSessionDao(
 
     override fun observeAllSessions(): Flow<List<WorkoutSessionWithExercisesAndSets>> =
         flowOf(emptyList())
+
+    override suspend fun getLifecycleSessionStatus(sessionId: String): String? = null
+    override suspend fun getProgramEnrollment(profileId: String): wallcrawl.elopenmike.com.core.database.entity.ProgramEnrollmentEntity? = null
+    override suspend fun getProgramAssociation(sessionId: String): wallcrawl.elopenmike.com.core.database.entity.ProgramSessionAssociationEntity? = null
+    override suspend fun hasUnboundProgramRecommendations(): Boolean = false
+    override suspend fun selectProgramSlots(programId: String): List<wallcrawl.elopenmike.com.core.database.dao.ProgramSlotRow> = emptyList()
+    override suspend fun programIdExists(programId: String): Boolean = false
+    override suspend fun getProgramProfile(profileId: String): wallcrawl.elopenmike.com.core.database.entity.UserProfileEntity? = null
+    override suspend fun hasProgramActiveWorkout(): Boolean = false
+    override suspend fun upsertProgramEnrollment(enrollment: wallcrawl.elopenmike.com.core.database.entity.ProgramEnrollmentEntity) = Unit
+    override suspend fun insertProgramAssociation(association: wallcrawl.elopenmike.com.core.database.entity.ProgramSessionAssociationEntity) = Unit
+    override suspend fun updateSessionRow(session: WorkoutSessionEntity) = Unit
+    override suspend fun completeSessionRow(sessionId: String, completedStatus: SessionStatus, requiredStatus: SessionStatus, completedAt: Long, actualDuration: Int): Int = 0
+    override suspend fun deleteActiveSessionRow(sessionId: String, requiredStatus: SessionStatus): Int = 0
 
     override suspend fun insertSession(session: WorkoutSessionEntity) = Unit
     override suspend fun insertWorkoutExercises(

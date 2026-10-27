@@ -6,6 +6,10 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import wallcrawl.elopenmike.com.core.backup.LocalDataRestoreRefusedException
+import wallcrawl.elopenmike.com.core.backup.LocalDataArchiveException
+import wallcrawl.elopenmike.com.core.backup.ArchiveRejection
+import wallcrawl.elopenmike.com.core.database.entity.ProgramEnrollmentEntity
+import wallcrawl.elopenmike.com.core.database.entity.ProgramSessionAssociationEntity
 import wallcrawl.elopenmike.com.core.database.entity.UserProfileEntity
 import wallcrawl.elopenmike.com.core.database.entity.DeloadPreferencesEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutExerciseEntity
@@ -24,7 +28,9 @@ data class LocalDataRows(
     val sessionExercises: List<WorkoutExerciseEntity>,
     val sets: List<WorkoutSetEntity>,
     val recommendationRecords: List<WorkoutRecommendationRecordEntity>,
-    val deloadPreferences: List<DeloadPreferencesEntity> = emptyList()
+    val deloadPreferences: List<DeloadPreferencesEntity> = emptyList(),
+    val programEnrollments: List<ProgramEnrollmentEntity> = emptyList(),
+    val programAssociations: List<ProgramSessionAssociationEntity> = emptyList()
 )
 
 /**
@@ -68,6 +74,36 @@ interface LocalDataBackupDao {
     @Query("SELECT * FROM deload_preferences ORDER BY profileId ASC")
     suspend fun selectDeloadPreferences(): List<DeloadPreferencesEntity>
 
+    @Query("SELECT * FROM program_enrollments ORDER BY profileId ASC")
+    suspend fun selectProgramEnrollments(): List<ProgramEnrollmentEntity>
+
+    @Query("SELECT * FROM program_session_associations ORDER BY programId ASC, slotOrdinal ASC")
+    suspend fun selectProgramAssociations(): List<ProgramSessionAssociationEntity>
+
+    // Read raw text before Room's legacy enum converters can substitute valid defaults.
+    @Query("""SELECT EXISTS(SELECT 1 FROM program_session_associations a
+        LEFT JOIN workout_sessions s ON s.id = a.sessionId
+        WHERE s.id IS NULL OR s.status NOT IN ('IN_PROGRESS', 'COMPLETED') OR s.origin != 'PLANNER')""")
+    suspend fun hasInvalidProgramSessionHeaders(): Boolean
+
+    @Query("SELECT COUNT(*) FROM program_enrollments")
+    suspend fun countProgramEnrollments(): Int
+
+    @Query("SELECT COUNT(*) FROM program_session_associations")
+    suspend fun countProgramAssociations(): Int
+
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    suspend fun insertProgramEnrollments(enrollments: List<ProgramEnrollmentEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    suspend fun insertProgramAssociations(associations: List<ProgramSessionAssociationEntity>)
+
+    @Query("DELETE FROM program_session_associations")
+    suspend fun deleteProgramAssociations()
+
+    @Query("DELETE FROM program_enrollments")
+    suspend fun deleteProgramEnrollments()
+
     /**
      * One transactionally consistent snapshot of every user-owned table.
      *
@@ -76,16 +112,22 @@ interface LocalDataBackupDao {
      * that no longer matches. The transaction makes the reads one point in time.
      */
     @Transaction
-    suspend fun readAll(): LocalDataRows = LocalDataRows(
-        profiles = selectProfiles(),
-        templates = selectTemplates(),
-        templateExercises = selectTemplateExercises(),
-        sessions = selectSessions(),
-        sessionExercises = selectSessionExercises(),
-        sets = selectSets(),
-        recommendationRecords = selectRecommendationRecords(),
-        deloadPreferences = selectDeloadPreferences()
-    )
+    suspend fun readAll(): LocalDataRows {
+        if (hasInvalidProgramSessionHeaders()) throw LocalDataArchiveException(
+            ArchiveRejection.INCONSISTENT, "An archived program session has an invalid raw status or origin.")
+        return LocalDataRows(
+            profiles = selectProfiles(),
+            templates = selectTemplates(),
+            templateExercises = selectTemplateExercises(),
+            sessions = selectSessions(),
+            sessionExercises = selectSessionExercises(),
+            sets = selectSets(),
+            recommendationRecords = selectRecommendationRecords(),
+            deloadPreferences = selectDeloadPreferences(),
+            programEnrollments = selectProgramEnrollments(),
+            programAssociations = selectProgramAssociations()
+        )
+    }
 
     @Query("SELECT COUNT(*) FROM workout_sessions")
     suspend fun countSessions(): Int
@@ -109,7 +151,7 @@ interface LocalDataBackupDao {
     @Transaction
     suspend fun isEmptyDestination(): Boolean =
         countSessions() == 0 && countTemplates() == 0 && countOnboardedProfiles() == 0 &&
-            countDeloadPreferences() == 0
+            countDeloadPreferences() == 0 && countProgramEnrollments() == 0 && countProgramAssociations() == 0
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertProfile(profile: UserProfileEntity)
@@ -173,6 +215,8 @@ interface LocalDataBackupDao {
      */
     @Transaction
     suspend fun deleteAll() {
+        deleteProgramAssociations()
+        deleteProgramEnrollments()
         deleteDeloadPreferences()
         deleteRecommendationRecords()
         deleteSets()
@@ -216,5 +260,7 @@ interface LocalDataBackupDao {
         // transaction rather than only at its end.
         insertRecommendationRecords(rows.recommendationRecords)
         insertDeloadPreferences(rows.deloadPreferences)
+        insertProgramEnrollments(rows.programEnrollments)
+        insertProgramAssociations(rows.programAssociations)
     }
 }

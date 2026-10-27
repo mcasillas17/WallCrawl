@@ -605,9 +605,31 @@ class PlannerFixtureTest {
 
     @Test
     fun plannerFixtureInputSnapshot_deepCopiesEveryMutableContextBranch() {
-        val context = snapshotProbeContext()
+        val base = snapshotProbeContext()
+        val config = MultiWeekProgramPolicy.configurationFromProfile(base.userProfile)
+        val enrollment = wallcrawl.elopenmike.com.core.model.ProgramEnrollment(base.userProfile.id,
+            "00000000-0000-0000-0000-000000000001", 3, config,
+            wallcrawl.elopenmike.com.core.model.ProgramStatus.ACTIVE, 0, 0)
+        val position = MultiWeekProgramPolicy.position(config, 1)
+        val input = wallcrawl.elopenmike.com.core.model.ProgramPlanningInput(enrollment, listOf(
+            wallcrawl.elopenmike.com.core.model.ProgramSlotSession(wallcrawl.elopenmike.com.core.model.ProgramAssociation(
+                "probe-slot", base.userProfile.id, MultiWeekProgramPolicy.snapshot(enrollment.copy(revision = 1),
+                    MultiWeekProgramPolicy.position(config, 0))), SessionStatus.COMPLETED, 0)
+        ), position, MultiWeekProgramPolicy.objective(position))
+        val context = base.copy(planningIntent = wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent.PROGRAM,
+            programHeader = wallcrawl.elopenmike.com.core.model.ProgramHeader(base.userProfile.id, enrollment.programId, 3, "a".repeat(64)),
+            programInput = input)
 
         val snapshot = snapshotOf(context)
+        val capturedProgram = readField(snapshot, "programInput") as wallcrawl.elopenmike.com.core.model.ProgramPlanningInput
+        assertThat(capturedProgram).isEqualTo(input)
+        assertThat(capturedProgram).isNotSameInstanceAs(input)
+        assertThat(capturedProgram.enrollment.configuration.goals).isNotSameInstanceAs(input.enrollment.configuration.goals)
+        assertThat(capturedProgram.sessions).isNotSameInstanceAs(input.sessions)
+        assertThat(capturedProgram.sessions.single().association.snapshot.configuration.goals)
+            .isNotSameInstanceAs(input.sessions.single().association.snapshot.configuration.goals)
+        assertThat(readField(snapshot, "programHeader")).isEqualTo(context.programHeader)
+        assertThat(readField(snapshot, "planningIntent")).isEqualTo(context.planningIntent)
         val snapshotUserProfile = readField(snapshot, "userProfile")
         val snapshotRecentWorkoutHistory = readField(snapshot, "recentWorkoutHistory") as List<*>
         val snapshotExerciseHistory = readField(snapshot, "exerciseHistory") as Map<*, *>
