@@ -278,10 +278,22 @@ class TemplateEditorViewModel(
                     // here would throw away the edits this screen just restored. The one
                     // addition is a unit for a draft with no unit and nothing weighed
                     // ([withUnitIfUnweighed]).
-                    mutableState.value.copy(
+                    val restored = mutableState.value
+                    // Only a legacy template holds loads with no unit. A new template, or one
+                    // that recorded its unit, never does, so such a draft is not one this app
+                    // wrote and is treated like an unreadable unit, not asked about.
+                    val unitLost = restored.weightUnit == null && restored.hasLoads &&
+                        (template == null || template.weightUnit != null)
+                    restored.copy(
                         isLoading = false,
                         availableEquipment = loadedProfile.availableEquipment.toSet(),
-                        searchIndex = searchIndex
+                        searchIndex = searchIndex,
+                        isDraftIncomplete = restored.isDraftIncomplete || unitLost,
+                        errorMessage = if (unitLost) {
+                            R.string.editor_error_draft_incomplete
+                        } else {
+                            restored.errorMessage
+                        }
                     ).withUnitIfUnweighed(loadedProfile.preferredUnit)
                 } else {
                     fresh

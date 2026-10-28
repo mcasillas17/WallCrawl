@@ -289,6 +289,54 @@ class TemplateEditorViewModelTest {
     }
 
     @Test
+    fun recoveredLoadsWithNoUnitAreIncompleteUnlessTheTemplateIsLegacy() = runTest {
+        val weighed = TemplateExerciseDraft(
+            rowId = "row-1",
+            exerciseId = "barbell-back-squat",
+            exerciseType = ExerciseType.WEIGHT_REPS,
+            sets = "3",
+            repMin = "5",
+            repMax = "8",
+            load = "100",
+            restSeconds = "90"
+        )
+        // No unit is saved with the draft: only a legacy template ever holds loads like that.
+        fun restored() = SavedStateHandle(
+            mapOf(
+                "templateEditor.hasDraft" to true,
+                "templateEditor.name" to "Leg day",
+                "templateEditor.notes" to "",
+                "templateEditor.rows" to arrayListOf(weighed.encode())
+            )
+        )
+        val legacy = templateWith(
+            ExercisePrescription(
+                exerciseType = ExerciseType.WEIGHT_REPS,
+                targetSets = 3,
+                repRange = RepRange(5, 8),
+                targetWeight = 100.0
+            )
+        )
+        val cases = mapOf(
+            "new template" to null,
+            "template with a unit" to legacy.copy(weightUnit = WeightUnit.LBS),
+            "legacy template" to legacy
+        )
+        cases.forEach { (case, template) ->
+            val templates = RecordingTemplateRepository().apply { values.value = listOfNotNull(template) }
+            val viewModel = loadedEditor(
+                templateId = template?.id,
+                templates = templates,
+                profiles = profilesWith(UserProfile(preferredUnit = WeightUnit.KG)),
+                handle = restored()
+            )
+            assertWithMessage(case).that(viewModel.uiState.value.weightUnit).isNull()
+            assertWithMessage(case).that(viewModel.uiState.value.isDraftIncomplete)
+                .isEqualTo(template !== legacy)
+        }
+    }
+
+    @Test
     fun everyEditedFieldReachesTheSavedTemplate() = runTest {
         val templates = RecordingTemplateRepository()
         val viewModel = loadedEditor(templates = templates)
