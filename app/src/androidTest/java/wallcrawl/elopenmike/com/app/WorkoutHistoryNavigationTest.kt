@@ -165,8 +165,12 @@ class WorkoutHistoryNavigationTest {
         show()
         compose.runOnIdle { navigation.navigate(AppRoutes.WORKOUT_TEMPLATES) }
         compose.waitUntil(10_000) { navigation.currentDestination?.route == AppRoutes.WORKOUT_TEMPLATES }
-        compose.waitForIdle()
-        val create = compose.onNodeWithText(context.getString(R.string.templates_action_create))
+        // The button belongs to the empty state, which appears once the library has loaded.
+        val createLabel = context.getString(R.string.templates_action_create)
+        compose.waitUntil(10_000) {
+            compose.onAllNodes(hasText(createLabel)).fetchSemanticsNodes().size == 1
+        }
+        val create = compose.onNodeWithText(createLabel)
         // Both taps land before a frame, as a fast double tap does during the transition.
         compose.mainClock.autoAdvance = false
         create.performClick()
