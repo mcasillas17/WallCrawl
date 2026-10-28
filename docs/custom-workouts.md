@@ -283,11 +283,12 @@ A new workout keeps one identity from its first save attempt on, so a retry — 
 after the app was recreated — updates the same workout rather than creating a
 second, and a repeated tap saves and leaves once. A template that was deleted while you
 were editing it is reported rather than quietly saved again as a new one; a draft record
-this version of the app cannot read back — one an older or newer build wrote — is reported
-and the workout is not saved while that is true, because saving it would drop an exercise;
-and an
-exercise that can no longer be used as it was saved — gone from the catalog, or still
-there under a different type — is flagged on its row rather than dropped, because the
+this version of the app cannot read back — one an older or newer build wrote, one holding
+more text or exercises than the editor lets you type, or loads with no unit on a workout
+that is not a legacy one — is reported and the workout is not saved while that is true,
+because saving it would drop, shorten or misread what you entered; discard it to start
+again. An exercise that can no longer be used as it was saved — gone from the catalog, or
+still there under a different type — is flagged on its row rather than dropped, because the
 template's prescription has to match the catalog's exercise type.
 
 ## Local-first behavior

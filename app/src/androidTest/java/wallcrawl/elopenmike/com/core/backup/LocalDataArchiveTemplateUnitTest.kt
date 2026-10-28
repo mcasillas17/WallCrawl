@@ -63,23 +63,27 @@ class LocalDataArchiveTemplateUnitTest {
             val error = assertThrows(LocalDataArchiveException::class.java) {
                 LocalDataArchiveCodec.read(ByteArrayInputStream(smuggled.encodeToByteArray()))
             }
-            assertNotEquals(ArchiveRejection.CHECKSUM_MISMATCH, error.rejection)
+            assertEquals(ArchiveRejection.MALFORMED, error.rejection)
         }
     }
 
     @Test fun unknownUnitNamesAndDuplicatesAreRejectedBeforeTheChecksum() {
         val valid = bytes(archive(unit = WeightUnit.KG)).decodeToString()
         listOf(
-            "\"weightUnit\":\"KG\"" to "\"weightUnit\":\"STONE\"",
-            "\"weightUnit\":\"KG\"" to "\"weightUnit\":\"kg\"",
-            "\"weightUnit\":\"KG\"" to "\"weightUnit\":null",
-            "\"weightUnit\":\"KG\"" to "\"weightUnit\":\"KG\",\"weightUnit\":\"KG\""
-        ).forEach { (from, to) ->
+            Triple("\"weightUnit\":\"KG\"", "\"weightUnit\":\"STONE\"", ArchiveRejection.INVALID_VALUE),
+            Triple("\"weightUnit\":\"KG\"", "\"weightUnit\":\"kg\"", ArchiveRejection.INVALID_VALUE),
+            Triple("\"weightUnit\":\"KG\"", "\"weightUnit\":null", ArchiveRejection.MALFORMED),
+            Triple(
+                "\"weightUnit\":\"KG\"",
+                "\"weightUnit\":\"KG\",\"weightUnit\":\"KG\"",
+                ArchiveRejection.MALFORMED
+            )
+        ).forEach { (from, to, expected) ->
             assertTrue(valid.contains(from))
             val error = assertThrows(LocalDataArchiveException::class.java) {
                 LocalDataArchiveCodec.read(ByteArrayInputStream(valid.replaceFirst(from, to).encodeToByteArray()))
             }
-            assertNotEquals(ArchiveRejection.CHECKSUM_MISMATCH, error.rejection)
+            assertEquals(to, expected, error.rejection)
         }
     }
 
