@@ -438,10 +438,16 @@ private fun WallCrawlAppContent(
                 WorkoutTemplatesScreen(
                     viewModel = templatesViewModel,
                     onBack = { navController.popBackStack() },
+                    // The list takes these only while settled; see WorkoutTemplatesScreen.
                     onCreate = { navController.navigate(AppRoutes.TEMPLATE_NEW) },
                     onEdit = { navController.navigate(AppRoutes.editTemplate(it)) },
+                    // Called by the list once it holds a started session, including one that
+                    // finished while the app was paused or recreated; single-top keeps any
+                    // repeat to one entry.
                     onWorkoutStarted = { sessionId ->
-                        navController.navigate(AppRoutes.activeWorkout(sessionId))
+                        navController.navigate(AppRoutes.activeWorkout(sessionId)) {
+                            launchSingleTop = true
+                        }
                     }
                 )
             }

@@ -160,7 +160,13 @@ data class WorkoutTemplateEntity(
     val name: String,
     val notes: String,
     val createdAtTimestamp: Long,
-    val updatedAtTimestamp: Long
+    val updatedAtTimestamp: Long,
+    /**
+     * Unit of every load in the template, by `WeightUnit` name; null for a template saved
+     * before it was recorded. Text rather than the enum so the shared converter's fallback
+     * to pounds can never invent a unit: the template mapper reads it strictly.
+     */
+    val weightUnit: String? = null
 )
 
 @Entity(

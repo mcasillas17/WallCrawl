@@ -42,9 +42,9 @@ class Migration14To15Test {
         helper.writableDatabase
         helper.close()
         val database = Room.databaseBuilder(context, WallCrawlDatabase::class.java, name)
-            .addMigrations(WallCrawlDatabase.MIGRATION_14_15).build()
+            .addMigrations(WallCrawlDatabase.MIGRATION_14_15, WallCrawlDatabase.MIGRATION_15_16).build()
         try {
-            assertEquals(15, database.openHelper.writableDatabase.version)
+            assertEquals(WALLCRAWL_SCHEMA_VERSION, database.openHelper.writableDatabase.version)
             assertEquals(17L, database.userProfileDao().getProfile("default_user")!!.revision)
             assertNull(database.programDao().getProgramEnrollment("default_user"))
             database.openHelper.writableDatabase.query("SELECT programAssociationDigest FROM workout_recommendation_records").use {

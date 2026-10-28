@@ -415,6 +415,7 @@ class LocalDataBackupRepositoryTest {
         notes = "Written through the editor's repository",
         createdAtTimestamp = 1_700_000_000_000L,
         updatedAtTimestamp = 1_700_000_000_000L,
+        weightUnit = wallcrawl.elopenmike.com.core.model.WeightUnit.LBS,
         exercises = listOf(
             PlannedExercise(
                 exerciseId = "dumbbell-curl",

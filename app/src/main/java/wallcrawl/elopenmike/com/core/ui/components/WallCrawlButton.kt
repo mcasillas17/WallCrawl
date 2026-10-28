@@ -106,11 +106,20 @@ fun WallCrawlOutlinedButton(
         ),
         contentPadding = contentPadding
     ) {
+        // Named, and named per state. Dropping the colour so `disabledContentColor` could
+        // reach the label does not work here: `Text` prefers its style's colour over
+        // `LocalContentColor`, and `Typography` sets one on every style, so the label took
+        // `labelLarge`'s white and vanished into the container at 1:1. Naming it restores
+        // the label and still tells the two states apart.
         Text(
             text = text,
             fontSize = 15.sp,
             fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onSurface
+            color = if (enabled) {
+                MaterialTheme.colorScheme.onSurface
+            } else {
+                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+            }
         )
     }
 }

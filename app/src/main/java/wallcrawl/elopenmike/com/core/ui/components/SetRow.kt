@@ -271,7 +271,8 @@ fun GymFloorSetRow(
     }
 
     val accent = completedAccent()
-    val setNumber = LocaleFormatting.formatEditableInt(set.setNumber, locale)
+    // Read-only labels use the locale's own digits; only field text must be ASCII.
+    val setNumber = LocaleFormatting.formatCount(set.setNumber, locale)
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -553,7 +554,7 @@ private fun SetValueRow(
             onClick = { onStep(true) }
         )
         if (previousValue != null) {
-            val previousText = LocaleFormatting.formatEditableDecimal(previousValue, locale)
+            val previousText = LocaleFormatting.formatMeasurement(previousValue, locale)
             val copyDescription = stringResource(
                 R.string.set_copy_previous_accessibility,
                 fieldLabel,
@@ -695,7 +696,7 @@ private fun EffortControls(
     onRecordEffort: (rpe: Float?, rir: Int?) -> Unit
 ) {
     val locale = LocalConfiguration.current.locales[0]
-    val rpeText = rpe?.let { LocaleFormatting.formatEditableDecimal(it.toDouble(), locale) }
+    val rpeText = rpe?.let { LocaleFormatting.formatMeasurement(it.toDouble(), locale) }
     val rpeAnnouncement = stringResource(
         R.string.effort_rpe_value_accessibility,
         setNumber,
@@ -769,7 +770,7 @@ private fun EffortControls(
                     .heightIn(min = MIN_TOUCH_TARGET)
             )
             (0..5).forEach { value ->
-                val valueText = LocaleFormatting.formatEditableInt(value, locale)
+                val valueText = LocaleFormatting.formatCount(value, locale)
                 val description = stringResource(
                     R.string.effort_rir_accessibility,
                     valueText,
@@ -789,7 +790,7 @@ private fun EffortControls(
 }
 
 private const val MAX_INPUT_LENGTH = LocaleFormatting.MAX_INPUT_LENGTH
-private val MIN_TOUCH_TARGET = 48.dp
+internal val MIN_TOUCH_TARGET = 48.dp
 private val LARGE_TOUCH_TARGET = 56.dp
 
 /**

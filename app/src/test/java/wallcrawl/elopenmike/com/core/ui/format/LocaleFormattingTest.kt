@@ -111,4 +111,27 @@ class LocaleFormattingTest {
             assertThat(LocaleFormatting.countdownParts(-5, locale)).isEqualTo("0" to "00")
         }
     }
+
+    @Test
+    fun editableTextReadsBackEvenWhereTheLocaleDefaultsToNonAsciiDigits() {
+        // What a device reading Arabic-Indic or Persian digits by default would otherwise
+        // seed into a field the parser then refuses.
+        listOf("ar-EG-u-nu-arab", "fa-IR-u-nu-arabext", "bn-BD-u-nu-beng").map(Locale::forLanguageTag)
+            .forEach { locale ->
+                val decimal = LocaleFormatting.formatEditableDecimal(61.25, locale)
+                val whole = LocaleFormatting.formatEditableInt(90, locale)
+                assertWithMessage(locale.toLanguageTag()).that(LocaleFormatting.parseDecimalInput(decimal))
+                    .isEqualTo(61.25)
+                assertWithMessage(locale.toLanguageTag()).that(LocaleFormatting.parseIntInput(whole))
+                    .isEqualTo(90)
+            }
+    }
+
+    @Test
+    fun theCountdownKeepsTheLocalesOwnDigitsIncludingItsPadding() {
+        val arabic = Locale.forLanguageTag("ar-EG-u-nu-arab")
+        val (minutes, seconds) = LocaleFormatting.countdownParts(65, arabic)
+        assertThat(minutes).isEqualTo("\u0661")
+        assertThat(seconds).isEqualTo("\u0660\u0665")
+    }
 }

@@ -59,7 +59,7 @@ class ProgramPersistenceTest {
     }
 
     @Test fun newDatabaseHasNoEnrollmentAndNullLegacyDigest() = runBlocking {
-        assertEquals(15, db.openHelper.writableDatabase.version)
+        assertEquals(WALLCRAWL_SCHEMA_VERSION, db.openHelper.writableDatabase.version)
         assertEquals(ProgramHeader.absent("default_user"), repository.getHeader())
         assertTrue(repository.get() is ProgramReadState.Empty)
         assertEquals(0, db.programDao().getProgramSlots(run).size)

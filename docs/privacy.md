@@ -92,7 +92,8 @@ this device. Detail reads the session, sets, recommendation and comparisons
 coherently in one Room transaction; it never edits or re-plans a workout, logs
 another set, consumes a deload choice, bootstraps a profile or rebuilds a ledger
 cache. Package 12 adds optional frozen program membership, with no analytics collection,
-account or network path. Current storage is Room 15 and archive 5.
+account or network path. Package 15 adds the weight unit a template's loads are in.
+Current storage is Room 16 and archive 6.
 
 Historical title/rationale, notes and measurements are shown as stored. Current
 profile, template or catalog programming cannot fill missing historical facts.
@@ -110,7 +111,7 @@ it cannot recreate historical profile or catalog inputs that were never stored.
 ### Archive compatibility
 
 The archive format has its own version, separate from the Room schema version. This
-build **writes version 5** and **reads versions 1–5**. The schema version, app
+build **writes version 6** and **reads versions 1 through 6**. The schema version, app
 version, creation time, and the bundled catalog commit are recorded as provenance only;
 they never decide whether a file can be restored.
 
@@ -141,6 +142,12 @@ export/restore rather than writing a partial archive. Export validates before op
 the selected destination, so this refusal cannot truncate a file there. With no active
 workout, explicit program replacement is available for structurally valid unsupported
 state; active logging and Cancel remain available while unsupported Finish is refused.
+
+Version 6 records the weight unit a template's loads are in, when the template has
+one. It is the same kind of training data the template already held, stays on-device,
+is exported only when the user asks, and is removed by Delete all data. Earlier
+archives keep their checksums and restore their templates with no unit. Unsaved
+template-editor drafts are never written to the database, a file, or an archive.
 
 A file written by a newer WallCrawl is still refused with a message saying so, rather than
 partially understood — a future format may attach meaning to fields this build would drop.

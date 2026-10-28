@@ -117,8 +117,16 @@ Everything numeric goes through `core/ui/format/LocaleFormatting.kt`.
 - **A half-typed value is not a value.** Set logging submits on every keystroke, so
   `47.` — what a reader types on the way to `47.5` — is held back rather than submitted
   as a null. Only a blank field clears a stored value.
+- **Editable numbers use ASCII digits** and a `.` or `,` mark, whatever digits the device
+  locale reads by default, because those are the only ones the parser accepts. That
+  covers text in a field, the template editor's row summaries (which repeat that text)
+  and its range hints (which say what to type). Read-only labels — set numbers, effort
+  values, previous-set chips, the rest countdown, the frame counter, counts, volumes and
+  measurements — keep the locale's own digits.
 - **Units are independent of language.** Switching to Spanish never converts pounds to
-  kilograms or changes a stored value.
+  kilograms or changes a stored value. A template's unit changes only through its own **Loads in** control,
+  which converts the numbers; a converted value is written back with the reader's decimal
+  mark, so `22,5` lb becomes `10,21` kg in a comma locale.
 - **Dates** use the platform's locale formats, not a pinned English pattern.
 - **Machine-readable output is locale-independent.** The archive is JSON: a load is
   written with a decimal point whatever the reader's language writes decimals with.

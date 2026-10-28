@@ -28,6 +28,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.activity.compose.BackHandler
+import androidx.compose.runtime.LaunchedEffect
+import androidx.lifecycle.compose.dropUnlessResumed
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,6 +38,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -65,6 +71,25 @@ fun WorkoutTemplatesScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
     var pendingDelete by remember { mutableStateOf<WorkoutTemplate?>(null) }
+    // While a start is in flight nothing else opens: the start navigates when it returns,
+    // and would land on top of whatever was opened meanwhile.
+    val anyStarting = state.startingTemplateId != null
+    // Every action is taken only from the settled list (dropUnlessResumed). A second tap
+    // while the list animates away would otherwise stack a second editor, or start a
+    // workout that finishes after the list left composition, with nobody to open it until
+    // the user comes back here and is sent forward again. A dropped tap changes nothing,
+    // so it does not clear a message either.
+    // Opening the editor is acting on the last message (for example, confirming a unit).
+    val openCreate = dropUnlessResumed { viewModel.clearError(); onCreate() }
+    // Leaving would clear this screen's ViewModel and cancel a start that may already have
+    // written its session, which then opens nowhere; as the editor does during a save,
+    // back waits for the start to finish.
+    BackHandler(enabled = anyStarting) {}
+    LaunchedEffect(state.startedSessionId) {
+        val sessionId = state.startedSessionId ?: return@LaunchedEffect
+        viewModel.onStartHandled()
+        onWorkoutStarted(sessionId)
+    }
 
     Box(modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         WebBackgroundPattern()
@@ -73,7 +98,7 @@ fun WorkoutTemplatesScreen(
                 Modifier.fillMaxWidth().padding(vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = onBack) {
+                IconButton(onClick = dropUnlessResumed { onBack() }, enabled = !anyStarting) {
                     Icon(
                         Icons.AutoMirrored.Filled.ArrowBack,
                         stringResource(R.string.action_back),
@@ -95,7 +120,7 @@ fun WorkoutTemplatesScreen(
                         fontWeight = FontWeight.Black
                     )
                 }
-                IconButton(onClick = onCreate) {
+                IconButton(onClick = openCreate, enabled = !anyStarting) {
                     Icon(
                         Icons.Default.Add,
                         stringResource(R.string.templates_create_content_description),
@@ -108,7 +133,10 @@ fun WorkoutTemplatesScreen(
                 Text(
                     stringResource(messageRes),
                     color = CrimsonRedPrimary,
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    // Announced: a refused Start leaves the tapped button unchanged.
+                    modifier = Modifier
+                        .padding(bottom = 8.dp)
+                        .semantics { liveRegion = LiveRegionMode.Polite }
                 )
             }
 
@@ -117,7 +145,7 @@ fun WorkoutTemplatesScreen(
                     CircularProgressIndicator(color = CrimsonRedPrimary)
                 }
                 state.templates.isEmpty() -> EmptyTemplates(
-                    onCreate = onCreate,
+                    onCreate = openCreate,
                     catalogSize = state.catalogSize
                 )
                 else -> LazyColumn(verticalArrangement = Arrangement.spacedBy(14.dp)) {
@@ -125,8 +153,9 @@ fun WorkoutTemplatesScreen(
                         TemplateCard(
                             template = template,
                             isStarting = state.startingTemplateId == template.id,
-                            onStart = { viewModel.startTemplate(template, onWorkoutStarted) },
-                            onEdit = { onEdit(template.id) },
+                            anyStarting = anyStarting,
+                            onStart = dropUnlessResumed { viewModel.startTemplate(template) },
+                            onEdit = dropUnlessResumed { viewModel.clearError(); onEdit(template.id) },
                             onDelete = { pendingDelete = template }
                         )
                     }
@@ -229,6 +258,7 @@ private fun EmptyTemplates(onCreate: () -> Unit, catalogSize: Int) {
 private fun TemplateCard(
     template: WorkoutTemplate,
     isStarting: Boolean,
+    anyStarting: Boolean,
     onStart: () -> Unit,
     onEdit: () -> Unit,
     onDelete: () -> Unit
@@ -269,14 +299,14 @@ private fun TemplateCard(
                     Text(template.notes, color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f), fontSize = 12.sp)
                 }
             }
-            IconButton(onClick = onEdit) {
+            IconButton(onClick = onEdit, enabled = !anyStarting) {
                 Icon(
                     Icons.Default.Edit,
                     stringResource(R.string.action_edit),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-            IconButton(onClick = onDelete) {
+            IconButton(onClick = onDelete, enabled = !anyStarting) {
                 Icon(
                     Icons.Default.Delete,
                     stringResource(R.string.action_delete),
@@ -289,7 +319,7 @@ private fun TemplateCard(
             text = stringResource(
                 if (isStarting) R.string.template_action_starting else R.string.template_action_start
             ),
-            enabled = !isStarting,
+            enabled = !anyStarting,
             onClick = onStart,
             leadingIcon = { Icon(Icons.Default.PlayArrow, null, tint = TextWhite) }
         )

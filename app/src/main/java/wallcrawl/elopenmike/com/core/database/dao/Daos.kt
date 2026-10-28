@@ -452,6 +452,9 @@ interface WorkoutTemplateDao {
     @Query("DELETE FROM workout_templates WHERE id = :templateId")
     suspend fun deleteTemplateById(templateId: String): Int
 
+    @Query("SELECT EXISTS(SELECT 1 FROM workout_templates WHERE id = :templateId)")
+    suspend fun templateExists(templateId: String): Boolean
+
     @Transaction
     suspend fun replaceTemplate(
         template: WorkoutTemplateEntity,

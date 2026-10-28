@@ -238,7 +238,8 @@ class OfflineLocalDataBackupRepository(
         name = name,
         notes = notes,
         createdAtTimestamp = createdAtTimestamp,
-        updatedAtTimestamp = updatedAtTimestamp
+        updatedAtTimestamp = updatedAtTimestamp,
+        weightUnit = weightUnit?.name
     )
 
     private fun WorkoutTemplate.toTemplateExerciseEntities() =

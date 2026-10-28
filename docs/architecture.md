@@ -791,12 +791,68 @@ creates a standalone session snapshot tagged with:
 - `origin = CUSTOM_TEMPLATE`;
 - the informational `sourceTemplateId`;
 - the profile's current weight unit;
-- copied exercise order, notes, prescriptions, and set targets.
+- copied exercise order, notes, prescriptions, and set targets, with every load
+  and assistance target converted from the template's own unit into the session's
+  (`WorkoutTemplate.exercisesIn`, rounded half-up to two decimals; a positive load too
+  small to show becomes 0.01 rather than 0).
+
+Each template records the unit of its loads in a nullable `weightUnit` column
+(schema 16, see the archive section). Null means the template was saved
+before units were recorded: the migration leaves it null rather than guessing, the
+repository refuses to *write* a load without a unit, and such a template cannot start a
+new workout until the editor has recorded which unit its numbers were entered in (Start
+still resumes a workout already in progress). A
+kilogram template's loads are bounded by `WorkoutTemplate.maxLoad`, the pound bound
+expressed in kilograms, so every template stays startable in either unit. An edit
+is written with `mustExist`, checked under the local-data write gate, so a template
+deleted after the editor loaded it is reported rather than recreated.
 
 The source template ID is not a foreign key. Editing or deleting the template
 therefore cannot alter an active or completed session. See
-[Custom Workouts](custom-workouts.md) for product behavior and current editor
-limits.
+[Custom Workouts](custom-workouts.md) for product behavior.
+
+### Editing state
+
+`ExercisePrescription` validates in its constructor, so a field being typed is not
+a prescription yet. `feature/templates/TemplateExerciseDraft` holds one row of the
+editor as the text the user entered plus a `rowId` that stays with the row through
+reordering, which is what keeps two rows of the same exercise independent.
+`validate()` is the only path from that text to a `PlannedExercise`; it parses
+through `core/ui/format/LocaleFormatting` and checks the bounds
+`ExercisePrescription` itself enforces, rather than a second copy of them. It runs
+twice: when one row's edits are applied, and again over every row before a save.
+
+Nothing relaxes the domain. A blank optional load or assistance stays unspecified
+and `"0"` stays an explicit zero. A rest value the user changed is stored through
+`withUserRestPreference`, classified against the one product rest table, so it
+cannot keep `PRODUCT_POLICY` provenance; an untouched one keeps its original
+class and source as a pair. A rest preference that reaches a completed session
+this way is readable by later automatic planning, which is what
+`UserRestPreference` is for.
+
+`TemplateEditorViewModel` mirrors the whole draft into its `SavedStateHandle` on
+every change -- name, notes, the ordered rows with their identities, and the
+incomplete text in the field being typed -- encoded as short strings. Only
+canonical exercise ids are stored; the catalog, the search index and `Exercise`
+objects are reconstructed after loading. A restored draft is put in place
+synchronously before the load coroutine starts, and that coroutine then fills in
+only reference data, so asynchronous loading cannot overwrite recovered edits. (A
+recovered draft with no unit and no loads also takes the profile unit, as any draft
+with nothing weighed does.)
+A row the editor cannot resolve against the catalog — the exercise is gone, or it is
+still present under a different type — is flagged on the row and blocks the save. Both are
+what `WorkoutTemplateRepository` enforces on write, checked here so neither arrives as a
+retryable write failure that no retry could satisfy.
+
+A row the current build cannot decode — a record an older or newer build wrote — is
+reported and blocks the save rather than being dropped, and that fact is itself mirrored
+into saved state, because the next write of the row list would otherwise erase the evidence
+and leave a shorter draft looking complete. Discarding restores the stored template and
+clears it.
+
+This is `onSaveInstanceState`, not storage: it survives configuration change and
+system-initiated process death, and is gone after uninstall, cleared app data, a
+force-stop or task removal. No table, file or archive field was added for drafts.
 
 ## Shared prescription and logging model
 
@@ -876,12 +932,13 @@ no separate write path that copies a logged value back into
 
 ## Room persistence and invariants
 
-`WallCrawlDatabase` is currently schema version 15. Its tables store:
+`WallCrawlDatabase` is currently schema version 16. Its tables store:
 
 - the user profile, including onboarding status, multi-select fitness goals,
   training constraints, return-after-break weeks, confirmed starting loads,
   theme preference (`SYSTEM`, `DARK`, `LIGHT`), and movement capabilities;
-- reusable workout templates and their ordered exercises;
+- reusable workout templates and their ordered exercises, each template with a nullable
+  `weightUnit` for its loads (`NULL` means it was saved before units were recorded);
 - workout sessions and their ordered exercise snapshots;
 - nullable effort targets, rest classes/sources, and exact rest seconds on template and
   workout exercise prescriptions;
@@ -910,6 +967,10 @@ Choices are separate from replaceable profile rows and survive profile edits.
 There is no session foreign key because cancelled workouts are deleted;
 consumption stays terminal even when its audit-linked session is absent.
 
+Migration `15 -> 16` adds only the nullable `workout_templates.weightUnit` column. Existing templates
+read back as unknown rather than guessed, and no session, set or history row is
+rewritten.
+
 Migration `3 → 4` adds template storage, session provenance, and type-aware
 target/outcome columns while converting older repetition-based history to
 `WEIGHT_REPS`. Migration `4 → 5` is additive-only: it adds
@@ -928,7 +989,7 @@ columns (`feltManageable`, `completedAtTimestamp`, `stoppedAtTimestamp`,
 existed reads back as an honestly unrecorded outcome instead of gaining a
 fabricated completion timestamp or an assumed manageable answer. There is no
 destructive migration fallback on any construction path, and the migration
-tests exercise every supported starting schema through to version 15. Migration
+tests migrate every supported starting schema (1–15) to the current schema 16. Migration
 `7 → 8` adds one non-null `movementCapabilitiesJson` column. Existing rows receive `{}`, which the codec
 normalizes to all `UNKNOWN`; their onboarding status, revision, theme, goals,
 equipment, constraints, confirmed loads, templates, sessions, sets, and history
@@ -991,7 +1052,7 @@ diagram, OEM limitations, and the lack of any previous-backup erasure guarantee.
 
 ### User-owned export, restore, and deletion
 
-`core/backup` writes archive format **version 5** and reads versions 1–5: one JSON
+`core/backup` writes archive format **version 6** and reads versions 1 through 6: one JSON
 document holding the profile, templates, every session with its exercises and sets, and
 the whole-program validation record for each session started from a recommendation. That
 version is independent of the Room schema version, which travels alongside the app
@@ -999,7 +1060,7 @@ version, the creation time, and the bundled catalog commit as provenance only.
 
 Version 2 added the `recommendations` array. A version 1 document restores exactly as it
 always did and simply carries none; a version 1 document that uses a version 2 field is
-refused rather than quietly upgraded. Versions newer than 5 are refused as
+refused rather than quietly upgraded. Versions newer than 6 are refused as
 unsupported. Each record must name a session the same document carries, exactly once.
 Version 4 adds owned deload preferences; older checksums and missing-choice
 semantics are preserved. A choice row also makes a restore destination nonempty.
@@ -1013,6 +1074,9 @@ Missing/extra membership is rejected rather than relabelled as ordinary. Unsuppo
 program policies remain readable as opaque Room/history facts, but export and restore
 refuse them before any export destination is opened. Restore inserts the complete
 validated projection transactionally and never reserves/completes a slot anew.
+Version 6 adds a template's optional `weightUnit`. It is written only when the template
+has one, a version 1–5 document carrying it is refused, and older documents restore
+their templates with no unit, never an assumed one.
 
 ```text
 Room (profile, templates, sessions, exercises, sets, recommendation records,
@@ -1089,8 +1153,9 @@ Room-backed `Flow` streams make the active workout and completed history
 observable after navigation or process recreation. Onboarding capability draft
 answers are restored through `SavedStateHandle` without inventing answers;
 Profile capability drafts remain in memory and are discarded on Cancel or Back.
-Unsaved template-editor
-drafts are in-memory state and are not yet restored after process death.
+Unsaved template-editor drafts are mirrored into the editor's `SavedStateHandle`
+and come back after configuration change and system-initiated process death;
+see [Editing state](#editing-state) for what that covers and what it does not.
 
 ## Feedback loop and progress
 
@@ -1287,8 +1352,12 @@ is rethrown. A failed template save keeps the draft available, and a failed
 workout start cannot leave a partial session.
 
 The active session is persisted immediately, so it can be resumed after normal
-navigation or process recreation. The template editor does not yet persist an
-unsaved draft or prompt before leaving with unsaved changes.
+navigation or process recreation. The template editor mirrors an unsaved draft
+into saved state, and both the toolbar arrow and system back route through a
+discard confirmation while that draft differs from what was loaded. While a save
+is in flight the editor refuses edits, discards and both leave routes, so the
+write cannot be cancelled halfway by a navigation pop; the back handler stays
+armed and swallows the press rather than letting it reach the navigation host.
 
 The rest timer is in-memory ViewModel state driven by an injected monotonic
 elapsed-realtime clock. Remaining time is always derived from a deadline rather
@@ -1362,8 +1431,8 @@ repository mapping, progress calculations, and ViewModel state. Its fourteen-per
 weeks with the real `WeeklyDoseLedgerCalculator` and validates every proposal it produces
 with `ProgramValidator`, keeping raw-valid, repaired-valid and typed no-plan outcomes
 distinct. Instrumentation
-tests cover every supported Room migration chain through schema 15, real 7 → 8,
-9 → 10, 10 → 11, 11 → 12 and 12 → 13 preservation, foreign-key integrity, guidance round trips,
+tests cover every supported Room migration chain through schema 16, real 7 → 8,
+9 → 10, 10 → 11, 11 → 12, 12 → 13, 14 → 15 and 15 → 16 preservation, foreign-key integrity, guidance round trips,
 the atomic start of a session with its validation record, the weekly-ledger repository,
 capability
 accessibility semantics, packaged catalog parsing, all bundled visual paths, template
