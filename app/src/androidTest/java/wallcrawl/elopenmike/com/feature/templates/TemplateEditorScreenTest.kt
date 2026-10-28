@@ -213,9 +213,10 @@ class TemplateEditorScreenTest {
             // rather than scrolled to.
             composeRule.onNodeWithText(editor.resources.getString(label)).assertIsDisplayed()
         }
-        composeRule.onNodeWithContentDescription(
-            editor.resources.getString(R.string.editor_edit_accessibility, editor.exerciseName)
-        ).assertIsDisplayed()
+        val edit = editor.resources.getString(R.string.editor_edit_accessibility, editor.exerciseName)
+        // The list is lazy: on a short screen the row is composed only once scrolled to.
+        composeRule.onNode(hasScrollAction()).performScrollToNode(hasContentDescription(edit))
+        composeRule.onNodeWithContentDescription(edit).assertIsDisplayed()
         capture("editor-screen-es")
     }
 
@@ -957,9 +958,10 @@ class TemplateEditorScreenTest {
         // Save stays where it was when refused, so the reason has to be spoken for anyone
         // not looking at the card it appears in.
         val editor = showEditor(language = "en")
-        composeRule.onNodeWithText(editor.resources.getString(R.string.editor_action_save))
-            .performScrollTo()
-            .performClick()
+        val save = editor.resources.getString(R.string.editor_action_save)
+        // The list is lazy: on a short screen Save is composed only once scrolled to.
+        composeRule.onNode(hasScrollAction()).performScrollToNode(hasText(save))
+        composeRule.onNodeWithText(save).performClick()
         val message = editor.resources.getString(R.string.editor_error_name_required)
         composeRule.onNode(
             hasText(message).and(hasLiveRegion())
