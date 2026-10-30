@@ -403,7 +403,12 @@ class ProgramNavigationTest {
                 compose.onAllNodesWithText(text(id)).fetchSemanticsNodes().isNotEmpty()
         }
         if (compose.onAllNodesWithTag("today-list").fetchSemanticsNodes().isNotEmpty()) {
-            compose.onNodeWithTag("today-list").performScrollToNode(hasText(text(id)))
+            // The list can be on screen before the item is in it, so the scroll is retried.
+            compose.waitUntil(15_000) {
+                runCatching {
+                    compose.onNodeWithTag("today-list").performScrollToNode(hasText(text(id)))
+                }.isSuccess
+            }
         }
         compose.waitUntil(15_000) {
             compose.onAllNodes(hasText(text(id)) and hasClickAction()).fetchSemanticsNodes().any {

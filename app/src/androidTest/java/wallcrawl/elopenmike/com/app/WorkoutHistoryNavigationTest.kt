@@ -95,7 +95,11 @@ class WorkoutHistoryNavigationTest {
         override fun after() {
             if (::database.isInitialized) database.close()
         }
-    }).around(compose)
+    }).around(compose).around(object : ExternalResource() {
+        // A test can end mid-transition; disposing a composition that is still recomposing
+        // crashed Compose's slot table on CI, so each test settles before the screen is torn down.
+        override fun after() = compose.waitForIdle()
+    })
 
     @Before fun setup() = runBlocking {
         database = Room.inMemoryDatabaseBuilder(context, WallCrawlDatabase::class.java).build()
