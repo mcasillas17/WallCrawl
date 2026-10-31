@@ -74,8 +74,10 @@ import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 internal const val PROGRESS_ANALYTICS_TEST_TAG = "progress-analytics"
 
 /**
- * The "Over time" card. Its filters change only this card; every value has a list row that
- * reads it out in full and opens the workouts behind it, so the chart is never the only way in.
+ * The "Over time" card. Its filters change only this card. Every week has a row that reads its
+ * value out in full and lists the workouts behind it, each opening its history; observation and
+ * decision rows open their workout. Range-wide totals and omission counts are text only, so the
+ * chart is never the only way to read a value.
  */
 @Composable
 internal fun ProgressAnalyticsCard(
@@ -493,11 +495,14 @@ private fun Menu(
     emptyText: String?,
     onSelect: (String) -> Unit
 ) {
+    val locale = LocalConfiguration.current.locales[0]
+    // A page at a time, like the row lists: the menu is not lazy, and up to 1,000 options can exist.
+    var shown by remember(options) { mutableStateOf(ROW_PAGE_SIZE) }
     DropdownMenu(expanded = expanded, onDismissRequest = onDismiss, modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
         if (options.isEmpty() && emptyText != null) {
             DropdownMenuItem(text = { Text(emptyText, color = MaterialTheme.colorScheme.onSurface) }, onClick = onDismiss)
         }
-        options.forEach { (id, label) ->
+        options.take(shown).forEach { (id, label) ->
             DropdownMenuItem(
                 text = {
                     Text(label, color = MaterialTheme.colorScheme.onSurface,
@@ -505,6 +510,16 @@ private fun Menu(
                 },
                 onClick = { onDismiss(); onSelect(id) },
                 modifier = Modifier.semantics { selected = id == selectedId; role = Role.RadioButton }
+            )
+        }
+        val remaining = options.size - shown
+        if (remaining > 0) {
+            DropdownMenuItem(
+                text = {
+                    Text(pluralStringResource(R.plurals.analytics_show_more, remaining,
+                        LocaleFormatting.formatCount(remaining, locale)), color = MaterialTheme.colorScheme.onSurface)
+                },
+                onClick = { shown += ROW_PAGE_SIZE }
             )
         }
     }

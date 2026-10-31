@@ -24,6 +24,7 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.text.TextLayoutResult
@@ -198,6 +199,19 @@ class ProgressAnalyticsCardTest {
         composeRule.onNodeWithText(english.getString(R.string.analytics_scope_exercise)).performClick()
         val popup = androidx.compose.ui.test.hasAnyAncestor(androidx.compose.ui.test.isPopup())
         composeRule.onNode(popup and hasText(english.getString(R.string.analytics_exercise_options_too_many))).assertExists()
+    }
+
+    @Test fun aLongExerciseChooserIsPagedLikeTheRowLists() {
+        val ids = (1..30).map { "exercise-%02d".format(it) }
+        render(loaded().copy(exerciseOptions = ids, catalogNames = ids.associateWith { "Option ${it.takeLast(2)}" }))
+        scrollTo(english.getString(R.string.analytics_scope_exercise))
+        composeRule.onNodeWithText(english.getString(R.string.analytics_scope_exercise)).performClick()
+        val popup = androidx.compose.ui.test.hasAnyAncestor(androidx.compose.ui.test.isPopup())
+        composeRule.onNode(popup and hasText("Option 20")).assertExists()
+        composeRule.onNode(popup and hasText("Option 21")).assertDoesNotExist()
+        // The menu scrolls; the control sits below the first page, as it would for a reader.
+        composeRule.onNode(popup and hasText("Show more (10 not shown yet)")).performScrollTo().performClick()
+        composeRule.onNode(popup and hasText("Option 30")).assertExists()
     }
 
     @Test fun theExerciseChooserExplainsTheCardStateInsteadOfLoadingForever() {
