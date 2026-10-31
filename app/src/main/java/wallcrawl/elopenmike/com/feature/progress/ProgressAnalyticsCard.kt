@@ -264,8 +264,9 @@ private fun LoadedContent(
         Section(stringResource(R.string.analytics_performance_heading))
         Body(stringResource(R.string.analytics_performance_note))
         if (analytics.performance.isEmpty()) Body(stringResource(R.string.analytics_performance_empty))
-        analytics.performance.forEach { PerformanceSection(it, unit, dates, onOpenSession) }
-        DecisionsSection(state.decisions, dates, onOpenSession)
+        // Paging restarts at 20 rows for every new selection.
+        analytics.performance.forEach { PerformanceSection(it, selection, unit, dates, onOpenSession) }
+        DecisionsSection(state.decisions, selection, dates, onOpenSession)
     }
 }
 
@@ -317,7 +318,13 @@ private fun WeeklySeries(
 }
 
 @Composable
-private fun PerformanceSection(series: PerformanceSeries, unit: WeightUnit, dates: DateFormat, onOpenSession: (String) -> Unit) {
+private fun PerformanceSection(
+    series: PerformanceSeries,
+    selection: AnalyticsSelection,
+    unit: WeightUnit,
+    dates: DateFormat,
+    onOpenSession: (String) -> Unit
+) {
     Label(stringResource(series.shape.labelRes()))
     when (series.shape) {
         PerformanceShape.ASSISTED_REPS -> Body(stringResource(R.string.analytics_shape_assisted_note))
@@ -344,7 +351,7 @@ private fun PerformanceSection(series: PerformanceSeries, unit: WeightUnit, date
             }
         }
     }
-    PagedRows(series.observations.asReversed(), series.shape) { observation ->
+    PagedRows(series.observations.asReversed(), selection to series.shape) { observation ->
         LinkRow(stringResource(R.string.analytics_contributor_row, observation.sessionName,
             dates.format(Date(observation.completedAtTimestamp)), observationValue(series.shape, observation, unit))) {
             onOpenSession(observation.sessionId)
@@ -353,12 +360,17 @@ private fun PerformanceSection(series: PerformanceSeries, unit: WeightUnit, date
 }
 
 @Composable
-private fun DecisionsSection(decisions: List<AnalyticsDecision>, dates: DateFormat, onOpenSession: (String) -> Unit) {
+private fun DecisionsSection(
+    decisions: List<AnalyticsDecision>,
+    selection: AnalyticsSelection,
+    dates: DateFormat,
+    onOpenSession: (String) -> Unit
+) {
     val locale = LocalConfiguration.current.locales[0]
     Section(stringResource(R.string.analytics_decisions_heading))
     Body(stringResource(R.string.analytics_decisions_note))
     if (decisions.isEmpty()) Body(stringResource(R.string.analytics_decisions_empty))
-    PagedRows(decisions.asReversed(), decisions.size) { decision ->
+    PagedRows(decisions.asReversed(), selection) { decision ->
         val lines = buildList {
             decision.progression?.let { reason ->
                 add(recordedProgressionText(reason))
@@ -573,8 +585,9 @@ private fun observationValue(shape: PerformanceShape, observation: PerformanceOb
 }
 
 /** A value at the precision the card shows it, so a shown difference reconciles with shown endpoints. */
+// Rounds the shortest decimal form, as the platform number formatter does, not the exact binary value.
 private fun displayed(value: Double): Double =
-    java.math.BigDecimal(value).setScale(MeasurementPrecision.EDITABLE_FRACTION_DIGITS, java.math.RoundingMode.HALF_UP).toDouble()
+    value.toBigDecimal().setScale(MeasurementPrecision.EDITABLE_FRACTION_DIGITS, java.math.RoundingMode.HALF_UP).toDouble()
 
 /** The recorded difference in the shape's own unit, with an explicit sign and no percentage. */
 @Composable

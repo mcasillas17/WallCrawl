@@ -252,6 +252,18 @@ class ProgressAnalyticsCardTest {
         composeRule.onNode(hasText(": +1 lb.", substring = true)).assertExists()
     }
 
+    @Test fun aHalfwayValueRoundsLikeItsShownEndpoint() {
+        // 100.005 is shown as "100.01 lb"; the shown change must be measured from that, not from 100.00.
+        val earlier = PerformanceObservation("earlier", "Earlier bench", WEEKS[1].startEpochMillis + HOUR, listOf("i1"), 100.005, 5)
+        val later = PerformanceObservation("later", "Later bench", WEEKS[3].startEpochMillis + HOUR, listOf("i2"), 101.0, 5)
+        val series = PerformanceSeries(PerformanceShape.WEIGHTED_REPS, listOf(earlier, later),
+            PerformanceComparison(earlier, later, later.value - earlier.value))
+        render(loaded(scope = AnalyticsScope.Exercise("bench"), performance = listOf(series)))
+        scrollTo("This is a recorded difference")
+        composeRule.onNode(hasText("From 100.01 lb", substring = true)).assertExists()
+        composeRule.onNode(hasText(": +0.99 lb.", substring = true)).assertExists()
+    }
+
     @Test fun oneObservationSaysThereIsNoChangeToShow() {
         val single = weightedSeries().let { it.copy(observations = it.observations.take(1), comparison = null) }
         render(loaded(scope = AnalyticsScope.Exercise("bench"), performance = listOf(single)))
