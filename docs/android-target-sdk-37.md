@@ -105,8 +105,8 @@ acceleration. All three AVDs use English (US), font scale 1.0 and 4 KB pages.
 | Check | Result |
 | --- | --- |
 | `./gradlew test lint assembleDebug` | 1,283 JVM tests passed. Lint reports 27 warnings and 1 hint; at target 35 it reported 28 warnings and the same hint. Only `OldTargetApi` is gone, and nothing was added |
-| Connected suite, target 37, API 37 | 531 of 532 on the final code. The failure, `TemplateEditorScreenTest.aKilogramLoadStatesTheKilogramBoundItIsCheckedAgainst`, then passed 5 of 5 alone and in two full runs of its class (34 of 34). Earlier full runs: 530 of 530, and 530 of 531 (the intermittent `ProgramNavigationTest` case, then 14 of 14 twice) |
-| Connected suite, target 37, API 36 | 532 of 532 on the final code. Earlier full runs: 530 of 530 and 531 of 531 |
+| Connected suite, target 37, API 37 | 532 of 532 on the final code. Earlier full runs, before the `ProgramNavigationTest` fix below, gave 530 of 530; 530 of 531, where the failure was that class's deletion case, which then passed 14 of 14 twice; and 531 of 532, where `TemplateEditorScreenTest.aKilogramLoadStatesTheKilogramBoundItIsCheckedAgainst` failed and then passed 5 of 5 alone and 34 of 34 twice in its class |
+| Connected suite, target 37, API 36 | 532 of 532 on the final code. Earlier full runs: 530 of 530, 531 of 531 and 532 of 532 |
 | Target-35 baseline (`ead925f`), API 36 and 37 | 4 failures under heavy host load; each passed when rerun alone |
 | CI's API 26 leg (app package) | 37 of 37, run locally with CI's two-step script; the report check passed |
 | Full suite on API 26, target 37 | 516 of 529 passed. The same 12 tests fail at target 35, and the 13th was a timing failure that passes on rerun. The 12 are test-environment limits, listed under Limitations. This run came before the two sheet tests, which also pass on API 26 |
@@ -168,7 +168,8 @@ image matched: 12.0 wrote `target=android-0` and the boot stalled, while 23.0 wr
 `target=android-37.0` and the device booted in 24 seconds. Both workflows therefore install
 command-line tools 23.0 before the emulator action creates a dotted-level AVD
 (emulator action [issue #482](https://github.com/ReactiveCircus/android-emulator-runner/issues/482); its fix, [pull request #494](https://github.com/ReactiveCircus/android-emulator-runner/pull/494), was still open).
-To create Android 17 AVDs locally, use command-line tools 22 or newer.
+With that step, the API 37.0 leg passed the full suite on this change's pull request. To create
+Android 17 AVDs locally, use command-line tools 22 or newer.
 
 ## Limitations and follow-ups
 
@@ -186,18 +187,17 @@ To create Android 17 AVDs locally, use command-line tools 22 or newer.
   read in the light theme; bottom-bar labels break mid-word at 320 dp with font scale 1.8; and
   the predictive preview from a full-screen route shows the previous tab without the bottom bar
   until the gesture commits.
-- Some device tests fail intermittently, mostly under heavy host load or on a slow emulator:
-  - `ProgramNavigationTest.deletionDuringProgramConfirmationClearsProtectedNavigationAndSavedModeBeforeRestore`
-    sometimes misses the Today list after a restore. This happens at target 35 too.
-  - `TemplateEditorScreenTest.withTheKeyboardOpenTheSheetStillReachesItsFieldErrorAndApply`
-    failed `main`'s API 36 run at `d790077`, which targets 35.
-  - `TemplateEditorScreenTest.aKilogramLoadStatesTheKilogramBoundItIsCheckedAgainst` failed once
-    here on API 37 while the keyboard opened, then passed every rerun.
-  - `ProgramNavigationTest.spanishLargeTextKeepsControlsReachableAndModeAndSlotDoNotDependOnLocale`
-    timed out once in this change's first CI run on API 26. Locally, on an API 26 emulator with
-    CI's 320×640 screen, it then passed 5 of 5 alone, and its package passed 37 of 37.
-
-  All pass in other runs. Three legs make such failures more likely to show up, so stabilizing
-  these tests is a follow-up.
+- The API 26 runs on this change's pull request exposed a race in `ProgramNavigationTest` that
+  also failed locally at target 35 under load. While Today builds the workout, it shows the program
+  card on its own and then moves the card into its list. The tests acted on that interim layout:
+  the deletion case scrolled a list that did not exist yet, and the Spanish large-text case could
+  tap **Manage** while the card moved. The tests now wait for the list before scrolling and for the
+  build to finish before tapping. With the workout build slowed by 1.5 seconds, the deletion case
+  failed every time before the fix and passed every time after it.
+- Two `TemplateEditorScreenTest` keyboard cases fail intermittently, mostly under heavy host
+  load. `withTheKeyboardOpenTheSheetStillReachesItsFieldErrorAndApply` failed `main`'s API 36
+  run at `d790077`, which targets 35. `aKilogramLoadStatesTheKilogramBoundItIsCheckedAgainst`
+  failed once here on API 37 while the keyboard opened, then passed every rerun. Stabilizing both
+  is a follow-up, because three legs make such failures more likely to show up.
 - Package 19 still owns Room schema export, the stale schema-10 CI comments, signing and
   shrinking, and the next alpha.
