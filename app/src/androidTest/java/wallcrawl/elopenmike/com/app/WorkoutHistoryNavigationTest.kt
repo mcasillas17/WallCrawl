@@ -364,6 +364,75 @@ class WorkoutHistoryNavigationTest {
         assertThat(navigation.currentDestination?.route).isEqualTo(AppRoutes.PROGRESS)
     }
 
+    @Test fun anAnalyticsObservationOpensThatExactWorkoutAndTheFilterSurvivesRecreation() = runBlocking {
+        val now = System.currentTimeMillis()
+        seedPushUps("analytics-older", "Analytics push older", now - 9 * DAY, 10)
+        seedPushUps("analytics-newer", "Analytics push newer", now - 60_000L, 12)
+        show()
+        compose.runOnIdle { navigation.navigate(AppRoutes.PROGRESS) }
+        selectPushUpScope()
+        restoration.emulateSavedInstanceStateRestore()
+        // Bounded saved state: the selection, not the chart, returns after recreation.
+        scrollProgressTo(hasText(context.getString(R.string.analytics_shape_bodyweight)))
+        scrollProgressTo(hasText("Analytics push older", substring = true))
+        compose.onNode(hasText("Analytics push older", substring = true)).performClick()
+        compose.waitUntil(10_000) { navigation.currentDestination?.route == AppRoutes.HISTORY_DETAIL }
+        assertThat(navigation.currentBackStackEntry?.arguments?.getString("sessionId")).isEqualTo("analytics-older")
+        compose.runOnIdle { navigation.popBackStack() }
+        scrollProgressTo(hasText(context.getString(R.string.analytics_choose_exercise, "Push-up")))
+    }
+
+    @Test fun anAnalyticsWeekListsItsContributorsAndEachOpensItsOwnWorkout() = runBlocking {
+        val now = System.currentTimeMillis()
+        seedPushUps("analytics-this-week", "Analytics push this week", now - 60_000L, 12)
+        show()
+        compose.runOnIdle { navigation.navigate(AppRoutes.PROGRESS) }
+        scrollProgressTo(hasText("(this week so far)", substring = true))
+        compose.onNode(hasText("(this week so far)", substring = true)).performClick()
+        scrollProgressTo(hasText("Analytics push this week", substring = true))
+        capture("progress-analytics-en")
+        compose.onNode(hasText("Analytics push this week", substring = true)).performClick()
+        compose.waitUntil(10_000) { navigation.currentDestination?.route == AppRoutes.HISTORY_DETAIL }
+        assertThat(navigation.currentBackStackEntry?.arguments?.getString("sessionId")).isEqualTo("analytics-this-week")
+    }
+
+    private fun selectPushUpScope() {
+        val chip = context.getString(R.string.analytics_scope_exercise)
+        scrollProgressTo(hasText(chip))
+        compose.onNodeWithText(chip).performClick()
+        val menuItem = androidx.compose.ui.test.hasAnyAncestor(androidx.compose.ui.test.isPopup()) and hasText("Push-up")
+        compose.waitUntil(10_000) { compose.onAllNodes(menuItem).fetchSemanticsNodes().isNotEmpty() }
+        compose.onNode(menuItem).performClick()
+    }
+
+    /** Lazy rows below the fold are not composed, so scroll until the (async) node exists. */
+    private fun scrollProgressTo(matcher: androidx.compose.ui.test.SemanticsMatcher) {
+        compose.waitUntil(10_000) {
+            runCatching { compose.onNode(hasScrollAction()).performScrollToNode(matcher) }.isSuccess
+        }
+    }
+
+    private suspend fun seedPushUps(id: String, name: String, completedAt: Long, reps: Int) {
+        database.workoutSessionDao().insertWorkout(
+            WorkoutSessionEntity(
+                id, name, completedAt - 600_000L, completedAt, 15, 10, WeightUnit.KG,
+                SessionStatus.COMPLETED, WorkoutOrigin.CUSTOM_TEMPLATE, null, "", ""
+            ),
+            listOf(WorkoutExerciseEntity(
+                id = "$id-exercise", sessionId = id, exerciseId = "push-up", orderIndex = 0,
+                exerciseType = wallcrawl.elopenmike.com.core.model.ExerciseType.BODYWEIGHT_REPS,
+                targetSets = 1, targetRepMin = 8, targetRepMax = 12, targetWeight = null, notes = ""
+            )),
+            listOf(WorkoutSetEntity(
+                id = "$id-set", workoutExerciseId = "$id-exercise", setNumber = 1,
+                exerciseType = wallcrawl.elopenmike.com.core.model.ExerciseType.BODYWEIGHT_REPS,
+                targetReps = reps, completedReps = reps, targetWeight = null, completedWeight = null,
+                isCompleted = true, rpe = null, rir = null, completedAtTimestamp = completedAt - 60_000L,
+                type = SetType.NORMAL
+            ))
+        )
+    }
+
     @Test fun directOldDetailSurvivesSavedStateRecreationAndDoesNotWrite() = runBlocking {
         val original = container.workoutRepository.getSessionById("history-0")
         val choice = container.deloadRepository.get()
@@ -545,6 +614,10 @@ class WorkoutHistoryNavigationTest {
             }
         }
         compose.waitUntil(10_000) { navigation.currentDestination?.route == AppRoutes.TODAY }
+    }
+
+    private companion object {
+        const val DAY = 24 * 3_600_000L
     }
 
     private fun capture(name: String) {
