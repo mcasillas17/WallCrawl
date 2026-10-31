@@ -181,13 +181,21 @@ class ProgressAnalyticsCardTest {
         composeRule.onNode(hasText(english.getString(R.string.analytics_muscle_basis))).assertDoesNotExist()
     }
 
-    @Test fun theExerciseChooserReportsAFailedReadInsteadOfLoadingForever() {
-        render(ProgressAnalyticsUiState.TooLarge)
-        scrollTo(english.getString(R.string.analytics_scope_exercise))
-        composeRule.onNodeWithText(english.getString(R.string.analytics_scope_exercise)).performClick()
-        val popup = androidx.compose.ui.test.hasAnyAncestor(androidx.compose.ui.test.isPopup())
-        composeRule.onNode(popup and hasText(english.getString(R.string.analytics_error))).assertExists()
-        composeRule.onNode(popup and hasText(english.getString(R.string.analytics_loading))).assertDoesNotExist()
+    @Test fun theExerciseChooserExplainsTheCardStateInsteadOfLoadingForever() {
+        listOf(
+            ProgressAnalyticsUiState.TooLarge to R.string.analytics_too_large,
+            ProgressAnalyticsUiState.Error to R.string.analytics_error,
+            ProgressAnalyticsUiState.NoProfile to R.string.progress_no_profile
+        ).forEach { (state, res) ->
+            renderOnce(state)
+            scrollTo(english.getString(R.string.analytics_scope_exercise))
+            composeRule.onNodeWithText(english.getString(R.string.analytics_scope_exercise)).performClick()
+            val popup = androidx.compose.ui.test.hasAnyAncestor(androidx.compose.ui.test.isPopup())
+            composeRule.onNode(popup and hasText(english.getString(res))).assertExists()
+            composeRule.onNode(popup and hasText(english.getString(R.string.analytics_loading))).assertDoesNotExist()
+            androidx.test.espresso.Espresso.pressBack()
+            composeRule.waitForIdle()
+        }
     }
 
     @Test fun aWeekWithNothingApplicableSaysSoInsteadOfZero() {

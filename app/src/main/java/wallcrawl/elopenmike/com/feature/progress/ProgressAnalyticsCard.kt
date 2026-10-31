@@ -98,7 +98,12 @@ internal fun ProgressAnalyticsCard(
             modifier = Modifier.semantics { heading() }
         )
         Body(stringResource(R.string.analytics_scope_note, zoneId.id))
-        Filters(selection, options?.first, options?.second.orEmpty(), state is ProgressAnalyticsUiState.Loading, actions)
+        Filters(selection, options?.first, options?.second.orEmpty(), when (state) {
+            ProgressAnalyticsUiState.TooLarge -> R.string.analytics_too_large
+            ProgressAnalyticsUiState.NoProfile -> R.string.progress_no_profile
+            ProgressAnalyticsUiState.Error -> R.string.analytics_error
+            else -> R.string.analytics_loading
+        }, actions)
         Spacer(Modifier.height(8.dp))
         when (state) {
             ProgressAnalyticsUiState.Loading -> AnalyticsLoading()
@@ -145,7 +150,8 @@ private fun Filters(
     /** Null until a read has supplied them, which is not the same as none recorded. */
     exerciseOptions: List<String>?,
     catalogNames: Map<String, String>,
-    loading: Boolean,
+    /** Why options are missing before any read supplied them: the card's own state. */
+    @androidx.annotation.StringRes unavailableRes: Int,
     actions: ProgressAnalyticsActions
 ) {
     val locale = LocalConfiguration.current.locales[0]
@@ -168,19 +174,18 @@ private fun Filters(
         Box {
             Chip(stringResource(R.string.analytics_scope_exercise), selection.scope is AnalyticsScope.Exercise) { exerciseMenu = true }
             val labelled = remember(exerciseOptions, catalogNames, vocabulary) {
-                exerciseOptions.orEmpty().map { it to vocabulary.exerciseName(it, catalogNames[it]) }.sortedBy { it.second }
+                vocabulary.exerciseIdsByLabel(exerciseOptions.orEmpty(), catalogNames)
+                    .map { it to vocabulary.exerciseName(it, catalogNames[it]) }
             }
             Menu(exerciseMenu, { exerciseMenu = false }, labelled, (selection.scope as? AnalyticsScope.Exercise)?.exerciseId,
-                stringResource(when {
-                    exerciseOptions != null -> R.string.analytics_no_exercise_options
-                    loading -> R.string.analytics_loading
-                    else -> R.string.analytics_error
-                })
+                stringResource(if (exerciseOptions != null) R.string.analytics_no_exercise_options else unavailableRes)
             ) { actions.onSelectScope(AnalyticsScope.Exercise(it)) }
         }
         Box {
             Chip(stringResource(R.string.analytics_scope_muscle), selection.scope is AnalyticsScope.Muscle) { muscleMenu = true }
-            val labelled = remember(vocabulary) { StandardMuscles.TRAINABLE.map { it to vocabulary.muscle(it) }.sortedBy { it.second } }
+            val labelled = remember(vocabulary) {
+                vocabulary.musclesByLabel(StandardMuscles.TRAINABLE).map { it to vocabulary.muscle(it) }
+            }
             Menu(muscleMenu, { muscleMenu = false }, labelled, (selection.scope as? AnalyticsScope.Muscle)?.muscle, null) {
                 actions.onSelectScope(AnalyticsScope.Muscle(it))
             }

@@ -198,6 +198,33 @@ class ProgressAnalyticsRepositoryTest {
         }
     }
 
+    @Test fun aPreferredUnitChangeReExpressesALiveRangeWithoutManufacturingChange() = runBlocking {
+        insert("lb", monday.toEpochMilli(), "approved", weight = 100.0)
+        val values = Channel<ProgressAnalyticsSnapshot?>(Channel.UNLIMITED)
+        val collector = launch {
+            repository().observeAnalytics(AnalyticsRange.WEEKS_4, AnalyticsScope.Exercise("approved"), { now }, zone)
+                .collect { values.send(it) }
+        }
+        try {
+            val first = withTimeout(10_000) { requireNotNull(values.receive()) }
+            assertThat(first.series(AnalyticsMetric.EXTERNAL_LOAD_VOLUME).rangeTotal).isEqualTo(1_000.0)
+            val profiles = OfflineUserProfileRepository(db.userProfileDao(), gate)
+            profiles.saveProfile(profiles.getProfileOnce().copy(preferredUnit = WeightUnit.KG))
+            val converted = withTimeout(10_000) {
+                var value = values.receive()
+                while (value?.preferredUnit != WeightUnit.KG) value = values.receive()
+                requireNotNull(value)
+            }
+            assertThat(converted.series(AnalyticsMetric.EXTERNAL_LOAD_VOLUME).rangeTotal)
+                .isWithin(1e-9).of(1_000.0 * 0.45359237)
+            assertThat(converted.analytics.performance.single().observations.single().value)
+                .isWithin(1e-9).of(100.0 * 0.45359237)
+        } finally {
+            collector.cancel()
+            values.close()
+        }
+    }
+
     @Test fun deletedProfileReadsAsNoProfileAndALiveObserverRefreshes() = runBlocking {
         val values = Channel<ProgressAnalyticsSnapshot?>(Channel.UNLIMITED)
         val collector = launch {

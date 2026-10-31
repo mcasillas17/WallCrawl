@@ -159,8 +159,9 @@ shared local-data write gate; one Room transaction; profile read without bootstr
 (null → *no profile*). Inside it:
 
 1. One aggregate query counts the range's sessions, exercise rows and sets and
-   checks every stored session unit, exercise/set type, set classification and
-   rep-range pair as text. It runs before any graph is loaded, because Room's
+   checks every stored session unit, exercise and set exercise type, set type
+   (warm-up, normal, drop, myo, failure), rep-range pair and distance/time target
+   presence as text; stop reasons are decoded by the strict Room converter. It runs before any graph is loaded, because Room's
    converters would otherwise relabel an unknown value; an invalid value fails the
    read.
 2. The existing bounded range query (`getCompletedSessionsInRange`, the weekly
@@ -185,7 +186,7 @@ range because there is no global latest-N sample. The ledger is computed with th
 pure calculator; analytics never writes its cache or any other row.
 
 The ViewModel keeps the selection in `SavedStateHandle` as four short strings
-(range, scope kind, scope ID capped at 200 characters, metric), validated on restore;
+(range, scope kind, scope ID capped at the archive's 200-character ID bound, metric), validated on restore;
 no history or chart data is saved. Range and scope (not the metric), clock/zone
 refresh and the existing week-boundary wakeup feed a `flatMapLatest`, so a slow
 previous read is cancelled and cannot overwrite a newer selection. Every metric is
@@ -200,8 +201,9 @@ are decoded off the main thread. Collection is RESUMED-only with
 Loading, no profile, no workouts in range, no matches for the filter, an empty week,
 insufficient comparable observations, range too large, and read error with Retry are
 distinct. Classification and omission notes appear before "no matches" so they can
-explain it. Each measure has its own no-matches copy (sets, reps, load volume, reviewed
-dose), and the exercise chooser says it is loading until a read has supplied options.
+explain it. Each of the five measures has its own no-matches copy. Until a read has supplied
+options, the exercise chooser repeats the card's own state: loading, range too large,
+no profile, or read error. Option labels use the shared locale collation.
 Errors never render as zero.
 
 The chart is a small Compose canvas bar chart with no new dependency. It draws at most

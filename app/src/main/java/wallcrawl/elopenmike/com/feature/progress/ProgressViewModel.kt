@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import wallcrawl.elopenmike.com.core.backup.LocalDataArchiveLimits
 import wallcrawl.elopenmike.com.core.database.repository.AnalyticsRangeTooLargeException
 import wallcrawl.elopenmike.com.core.database.repository.ProgressAnalyticsSnapshot
 import wallcrawl.elopenmike.com.core.database.repository.ProgressRepository
@@ -173,7 +174,7 @@ class ProgressViewModel(
 
     private fun AnalyticsScope.isValid(): Boolean = when (this) {
         AnalyticsScope.All -> true
-        is AnalyticsScope.Exercise -> exerciseId.isNotBlank() && exerciseId.length <= MAX_SCOPE_ID_LENGTH &&
+        is AnalyticsScope.Exercise -> exerciseId.isNotBlank() && exerciseId.length <= LocalDataArchiveLimits.MAX_ID_LENGTH &&
             exerciseId.none(Char::isISOControl)
         is AnalyticsScope.Muscle -> muscle in StandardMuscles.TRAINABLE
     }
@@ -208,7 +209,6 @@ class ProgressViewModel(
         private const val SCOPE_ALL = "ALL"
         private const val SCOPE_EXERCISE = "EXERCISE"
         private const val SCOPE_MUSCLE = "MUSCLE"
-        private const val MAX_SCOPE_ID_LENGTH = 200
 
         fun provideFactory(progressRepository: ProgressRepository): ViewModelProvider.Factory = viewModelFactory {
             initializer { ProgressViewModel(progressRepository, createSavedStateHandle()) }

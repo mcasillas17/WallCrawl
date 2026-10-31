@@ -89,6 +89,10 @@ class ExerciseVocabulary(
     fun musclesByLabel(canonicalNames: List<String>): List<String> =
         canonicalNames.sortedWith(labelOrder(::muscle))
 
+    /** Recorded exercise IDs in the order their names read to this reader; [fallbacks] are catalog names. */
+    fun exerciseIdsByLabel(exerciseIds: List<String>, fallbacks: Map<String, String>): List<String> =
+        exerciseIds.sortedWith(labelOrder { exerciseName(it, fallbacks[it]) })
+
     /** [canonicalNames] in the order their labels read to this reader. */
     fun equipmentByLabel(canonicalNames: List<String>): List<String> =
         canonicalNames.sortedWith(labelOrder(::equipment))

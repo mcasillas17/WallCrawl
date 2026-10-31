@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
@@ -130,6 +131,26 @@ class ProgressAnalyticsViewModelTest {
     }
 
     @Test
+    fun analyticsReadsAgainAtTheWeekBoundaryAndForANewZone() = runTest {
+        val repository = FakeRepository()
+        val start = MONDAY - 1_000L
+        var zone = UTC
+        val viewModel = ProgressViewModel(repository, SavedStateHandle(),
+            nowTimestamp = { start + testScheduler.currentTime }, zoneId = { zone },
+            analyticsDispatcher = kotlinx.coroutines.Dispatchers.Main)
+        collect(viewModel)
+        assertThat(repository.zones).containsExactly(UTC)
+        advanceTimeBy(1_000)
+        runCurrent()
+        assertThat(repository.zones).containsExactly(UTC, UTC)
+        zone = ZoneId.of("America/Los_Angeles")
+        viewModel.refresh()
+        runCurrent()
+        assertThat(repository.zones.last()).isEqualTo(zone)
+        assertThat(repository.requests.map { it.scope }.distinct()).containsExactly(AnalyticsScope.All)
+    }
+
+    @Test
     fun changingOnlyTheMetricDoesNotReadAgain() = runTest {
         val repository = FakeRepository()
         val viewModel = viewModel(repository)
@@ -209,6 +230,7 @@ class ProgressAnalyticsViewModelTest {
 
     private class FakeRepository : ProgressRepository {
         val requests = mutableListOf<AnalyticsSelection>()
+        val zones = mutableListOf<ZoneId>()
         var overviewReads = 0
         var respond: suspend (AnalyticsSelection) -> ProgressAnalyticsSnapshot? = { snapshot(it) }
         override fun observeProgress(now: () -> Instant, zoneId: ZoneId): Flow<ProgressSnapshot?> =
@@ -219,6 +241,7 @@ class ProgressAnalyticsViewModelTest {
         ): Flow<ProgressAnalyticsSnapshot?> = flow {
             val selection = AnalyticsSelection(range, scope)
             requests += selection
+            zones += zoneId
             emit(respond(selection))
         }
     }
@@ -226,6 +249,7 @@ class ProgressAnalyticsViewModelTest {
     companion object {
         private val UTC = ZoneId.of("UTC")
         private val NOW = Instant.parse("2026-09-02T12:00:00Z").toEpochMilli()
+        private val MONDAY = Instant.parse("2026-09-07T00:00:00Z").toEpochMilli()
 
         private fun decision(sessionId: String, codes: List<String>) = RecordedSessionDecision(
             sessionId, "Recorded $sessionId", NOW, RecommendationRecord(
