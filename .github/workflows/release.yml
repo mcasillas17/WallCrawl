@@ -14,9 +14,20 @@ concurrency:
 
 jobs:
   instrumentation:
-    name: Instrumentation tests
+    name: Instrumentation tests (API ${{ matrix.api-level }})
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    # Same matrix as ci.yml; publication waits for every leg.
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - api-level: "36"
+            instrumentation-args: ""
+          - api-level: "37.0"
+            instrumentation-args: ""
+          - api-level: "26"
+            instrumentation-args: "-Pandroid.testInstrumentationRunnerArguments.package=wallcrawl.elopenmike.com.app"
 
     steps:
       - name: Check out tagged commit
@@ -45,21 +56,27 @@ jobs:
       # Tag publication is gated on the same real Room migration and runtime schema
       # validation that protects pull requests and main. A JVM-only release build cannot
       # prove that an installed database survives the complete schema-10 chain.
+      # AGP's connected-test runner can log an APK install failure and still exit 0
+      # without a report, so a leg passes only if its report recorded at least one test.
       - name: Run instrumentation tests
         uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
+        env:
+          INSTRUMENTATION_ARGS: ${{ matrix.instrumentation-args }}
         with:
-          api-level: 36
+          api-level: ${{ matrix.api-level }}
           arch: x86_64
           target: google_apis
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
-          script: ./gradlew connectedDebugAndroidTest --stacktrace --no-daemon
+          script: |
+            ./gradlew connectedDebugAndroidTest $INSTRUMENTATION_ARGS --stacktrace --no-daemon
+            grep -q 'tests="[1-9]' app/build/outputs/androidTest-results/connected/debug/TEST-*.xml
 
       - name: Upload instrumentation report
         if: failure()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: release-instrumentation-report
+          name: release-instrumentation-report-api-${{ matrix.api-level }}
           path: |
             app/build/reports/androidTests/connected/
             app/build/outputs/androidTest-results/connected/

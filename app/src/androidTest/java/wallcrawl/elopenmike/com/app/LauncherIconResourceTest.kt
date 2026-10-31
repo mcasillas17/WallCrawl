@@ -3,8 +3,10 @@ package wallcrawl.elopenmike.com.app
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.AdaptiveIconDrawable
+import android.os.Build
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.filters.SdkSuppress
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -30,6 +32,8 @@ class LauncherIconResourceTest {
         assertThat(opaqueBounds.height).isAtLeast((size * 0.9f).toInt())
     }
 
+    // Themed icons, and AdaptiveIconDrawable.getMonochrome(), exist from Android 13.
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.TIRAMISU)
     @Test
     fun monochromeIcon_hasTransparentBackgroundForThemedIcons() {
         val context = ApplicationProvider.getApplicationContext<android.content.Context>()
