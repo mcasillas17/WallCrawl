@@ -128,6 +128,51 @@ class ProgressAnalyticsCardTest {
         scrollTo("Extra session 22")
     }
 
+    @Test fun aDifferenceThatRoundsToZeroCarriesNoSign() {
+        val series = weightedSeries().let { it.copy(comparison = it.comparison!!.copy(difference = -0.001)) }
+        render(loaded(scope = AnalyticsScope.Exercise("bench"), performance = listOf(series)))
+        scrollTo("This is a recorded difference")
+        composeRule.onNode(hasText(": 0 lb.", substring = true)).assertExists()
+        composeRule.onNode(hasText("−0", substring = true)).assertDoesNotExist()
+        composeRule.onNode(hasText("+0", substring = true)).assertDoesNotExist()
+    }
+
+    @Test fun eachMeasureExplainsItsOwnNoMatchState() {
+        metric = AnalyticsMetric.REVIEWED_PRIMARY_DOSE
+        render(loaded(scope = AnalyticsScope.Muscle("Back"), hasMatches = false))
+        scrollTo(english.getString(R.string.analytics_no_matches_dose))
+        composeRule.onNode(hasText(english.getString(R.string.analytics_no_matches))).assertDoesNotExist()
+    }
+
+    @Test fun recordedDecisionsRemainVisibleWhenTheMeasureHasNoMatches() {
+        val decision = AnalyticsDecision("skipped", "Skipped bench day", WEEKS.last().startEpochMillis + 1,
+            ProgressionProvenance("bench", ProgressionReason.HOLD_INCOMPLETE_WORK, null, emptyList(), "a".repeat(64)),
+            null, emptyList())
+        render(loaded(scope = AnalyticsScope.Exercise("bench"), hasMatches = false, decisions = listOf(decision)))
+        scrollTo("Skipped bench day")
+        composeRule.onNode(hasText(english.getString(R.string.analytics_no_matches))).assertExists()
+    }
+
+    @Test fun moreThan52ObservationsAreListedWithoutAnUnreadableChart() {
+        val observations = (0 until 53).map {
+            PerformanceObservation("s$it", "Session $it", WEEKS.first().startEpochMillis + it * HOUR, listOf("i$it"), 100.0 + it, 5)
+        }
+        val series = PerformanceSeries(PerformanceShape.WEIGHTED_REPS, observations,
+            PerformanceComparison(observations.first(), observations.last(), 52.0))
+        render(loaded(scope = AnalyticsScope.Exercise("bench"), performance = listOf(series)))
+        scrollTo(english.getString(R.string.analytics_observation_chart_omitted))
+        composeRule.onNode(hasContentDescription("for each workout", substring = true)).assertDoesNotExist()
+    }
+
+    @Test fun theExerciseChooserSaysLoadingBeforeAnyOptionsArrive() {
+        render(ProgressAnalyticsUiState.Loading)
+        scrollTo(english.getString(R.string.analytics_scope_exercise))
+        composeRule.onNodeWithText(english.getString(R.string.analytics_scope_exercise)).performClick()
+        composeRule.onNode(androidx.compose.ui.test.hasAnyAncestor(androidx.compose.ui.test.isPopup()) and
+            hasText(english.getString(R.string.analytics_loading))).assertExists()
+        composeRule.onNode(hasText(english.getString(R.string.analytics_no_exercise_options))).assertDoesNotExist()
+    }
+
     @Test fun oneObservationSaysThereIsNoChangeToShow() {
         val single = weightedSeries().let { it.copy(observations = it.observations.take(1), comparison = null) }
         render(loaded(scope = AnalyticsScope.Exercise("bench"), performance = listOf(single)))

@@ -89,9 +89,13 @@ class ProgressAnalyticsCalculator(
                     when (metric) {
                         AnalyticsMetric.WORKOUTS -> 1.0.takeIf { member }
                         AnalyticsMetric.COMPLETED_SETS -> completed.size.toDouble().takeIf { member }
-                        AnalyticsMetric.REPS -> completed.sumOf { it.loggedReps() }.toDouble().takeIf { member }
-                        AnalyticsMetric.EXTERNAL_LOAD_VOLUME ->
-                            completed.sumOf { it.externalLoadVolume(session.weightUnit, preferredUnit) }.takeIf { member }
+                        // Reps and load volume count only work they apply to: timed, distance or
+                        // body-mass work is not a recorded zero of either.
+                        AnalyticsMetric.REPS -> completed.sumOf { it.loggedReps() }.toDouble()
+                            .takeIf { completed.any { it.loggedReps() > 0 } }
+                        AnalyticsMetric.EXTERNAL_LOAD_VOLUME -> completed
+                            .sumOf { it.externalLoadVolume(session.weightUnit, preferredUnit) }
+                            .takeIf { completed.any { it.exerciseType == ExerciseType.WEIGHT_REPS && it.loggedReps() > 0 } }
                         // A muscle's reviewed dose is the ledger's accepted direct primary, which can be a
                         // legacy secondary muscle, so its membership is the ledger credit itself.
                         AnalyticsMetric.REVIEWED_PRIMARY_DOSE -> when (scope) {

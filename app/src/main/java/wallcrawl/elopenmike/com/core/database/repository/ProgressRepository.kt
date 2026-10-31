@@ -186,26 +186,31 @@ class OfflineProgressRepository(
                 val options = dao.selectAnalyticsExerciseIds(MAX_EXERCISE_OPTIONS + 1)
                 require(options.size <= MAX_EXERCISE_OPTIONS) { "Recorded exercise options exceed their bound." }
                 val exercisesById = catalog.exercises.associateBy { it.id }
-                ProgressAnalyticsSnapshot(
-                    analytics = analyticsCalculator.calculate(
-                        range = range,
-                        scope = scope,
-                        sessions = sessions,
-                        comparableSetIds = comparable,
-                        exercisesById = exercisesById,
-                        catalogVersion = catalog.catalogAttribution.commit,
-                        reviewPolicyVersion = catalog.exercises.acceptedReviewPolicyVersion(),
+                // Everything is read; the pure calculation runs after the gate and transaction are
+                // released, so writers wait only for the reads, not for the computation.
+                val compute: () -> ProgressAnalyticsSnapshot = {
+                    ProgressAnalyticsSnapshot(
+                        analytics = analyticsCalculator.calculate(
+                            range = range,
+                            scope = scope,
+                            sessions = sessions,
+                            comparableSetIds = comparable,
+                            exercisesById = exercisesById,
+                            catalogVersion = catalog.catalogAttribution.commit,
+                            reviewPolicyVersion = catalog.exercises.acceptedReviewPolicyVersion(),
+                            preferredUnit = profile.preferredUnit,
+                            now = instant,
+                            zoneId = zoneId
+                        ),
                         preferredUnit = profile.preferredUnit,
-                        now = instant,
-                        zoneId = zoneId
-                    ),
-                    preferredUnit = profile.preferredUnit,
-                    exerciseOptions = options,
-                    catalogNames = options.mapNotNull { id -> exercisesById[id]?.let { id to it.name } }.toMap(),
-                    decisions = decisions
-                )
+                        exerciseOptions = options,
+                        catalogNames = options.mapNotNull { id -> exercisesById[id]?.let { id to it.name } }.toMap(),
+                        decisions = decisions
+                    )
+                }
+                compute
             }
-        }
+        }?.invoke()
     }.flowOn(Dispatchers.Default)
 
     private companion object {

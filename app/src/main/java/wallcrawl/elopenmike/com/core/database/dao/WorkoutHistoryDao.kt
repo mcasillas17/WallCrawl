@@ -110,7 +110,9 @@ interface WorkoutHistoryDao {
                 OR EXISTS (SELECT 1 FROM workout_exercises e WHERE e.sessionId = s.id
                     AND (e.exerciseType NOT IN ('WEIGHT_REPS', 'BODYWEIGHT_REPS', 'ASSISTED_BODYWEIGHT',
                         'DURATION', 'DISTANCE_DURATION')
-                        OR (e.targetRepMin IS NULL) != (e.targetRepMax IS NULL)))
+                        OR (e.targetRepMin IS NULL) != (e.targetRepMax IS NULL)
+                        OR (e.exerciseType = 'DISTANCE_DURATION'
+                            AND e.targetDurationSeconds IS NULL AND e.targetDistanceMeters IS NULL)))
                 OR EXISTS (SELECT 1 FROM workout_sets w JOIN workout_exercises e ON e.id = w.workoutExerciseId
                     WHERE e.sessionId = s.id AND (
                         w.exerciseType NOT IN ('WEIGHT_REPS', 'BODYWEIGHT_REPS', 'ASSISTED_BODYWEIGHT',
@@ -279,7 +281,9 @@ interface WorkoutHistoryDao {
                     s.weightUnit NOT IN ('LBS', 'KG')
                     OR (e.id IS NOT NULL AND (e.exerciseType NOT IN ('WEIGHT_REPS', 'BODYWEIGHT_REPS',
                         'ASSISTED_BODYWEIGHT', 'DURATION', 'DISTANCE_DURATION')
-                        OR (e.targetRepMin IS NULL) != (e.targetRepMax IS NULL)))
+                        OR (e.targetRepMin IS NULL) != (e.targetRepMax IS NULL)
+                        OR (e.exerciseType = 'DISTANCE_DURATION'
+                            AND e.targetDurationSeconds IS NULL AND e.targetDistanceMeters IS NULL)))
                     OR (w.id IS NOT NULL AND (w.exerciseType NOT IN ('WEIGHT_REPS', 'BODYWEIGHT_REPS',
                         'ASSISTED_BODYWEIGHT', 'DURATION', 'DISTANCE_DURATION')
                         OR w.type NOT IN ('WARMUP', 'NORMAL', 'DROPSET', 'MYOREP', 'FAILURE'))))) AS invalidMetadata

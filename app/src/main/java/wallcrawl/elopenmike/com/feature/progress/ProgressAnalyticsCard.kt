@@ -54,9 +54,11 @@ import wallcrawl.elopenmike.com.core.model.AnalyticsBucket
 import wallcrawl.elopenmike.com.core.model.AnalyticsMetric
 import wallcrawl.elopenmike.com.core.model.AnalyticsRange
 import wallcrawl.elopenmike.com.core.model.AnalyticsScope
+import wallcrawl.elopenmike.com.core.model.AnalyticsSeries
 import wallcrawl.elopenmike.com.core.model.AnalyticsSelection
 import wallcrawl.elopenmike.com.core.model.DeloadSource
 import wallcrawl.elopenmike.com.core.model.LedgerOmissionReason
+import wallcrawl.elopenmike.com.core.model.MeasurementPrecision
 import wallcrawl.elopenmike.com.core.model.PerformanceObservation
 import wallcrawl.elopenmike.com.core.model.PerformanceSeries
 import wallcrawl.elopenmike.com.core.model.PerformanceShape
@@ -85,7 +87,7 @@ internal fun ProgressAnalyticsCard(
     onOpenSession: (String) -> Unit
 ) {
     // Options survive a reload so the chooser stays usable while a new range is read.
-    var options by remember { mutableStateOf<Pair<List<String>, Map<String, String>>>(emptyList<String>() to emptyMap()) }
+    var options by remember { mutableStateOf<Pair<List<String>, Map<String, String>>?>(null) }
     if (state is ProgressAnalyticsUiState.Loaded) options = state.exerciseOptions to state.catalogNames
 
     WallCrawlCard(cornerRadius = 16.dp, contentPadding = 16.dp, modifier = Modifier.testTag(PROGRESS_ANALYTICS_TEST_TAG)) {
@@ -97,7 +99,7 @@ internal fun ProgressAnalyticsCard(
             modifier = Modifier.semantics { heading() }
         )
         Body(stringResource(R.string.analytics_scope_note, zoneId.id))
-        Filters(selection, options.first, options.second, actions)
+        Filters(selection, options?.first, options?.second.orEmpty(), actions)
         Spacer(Modifier.height(8.dp))
         when (state) {
             ProgressAnalyticsUiState.Loading -> Box(Modifier.fillMaxWidth().padding(16.dp)) {
@@ -129,7 +131,8 @@ class ProgressAnalyticsActions(
 @Composable
 private fun Filters(
     selection: AnalyticsSelection,
-    exerciseOptions: List<String>,
+    /** Null until a read has supplied them, which is not the same as none recorded. */
+    exerciseOptions: List<String>?,
     catalogNames: Map<String, String>,
     actions: ProgressAnalyticsActions
 ) {
@@ -152,13 +155,16 @@ private fun Filters(
         }
         Box {
             Chip(stringResource(R.string.analytics_scope_exercise), selection.scope is AnalyticsScope.Exercise) { exerciseMenu = true }
-            val labelled = exerciseOptions.map { it to vocabulary.exerciseName(it, catalogNames[it]) }.sortedBy { it.second }
+            val labelled = remember(exerciseOptions, catalogNames, vocabulary) {
+                exerciseOptions.orEmpty().map { it to vocabulary.exerciseName(it, catalogNames[it]) }.sortedBy { it.second }
+            }
             Menu(exerciseMenu, { exerciseMenu = false }, labelled, (selection.scope as? AnalyticsScope.Exercise)?.exerciseId,
-                stringResource(R.string.analytics_no_exercise_options)) { actions.onSelectScope(AnalyticsScope.Exercise(it)) }
+                stringResource(if (exerciseOptions == null) R.string.analytics_loading else R.string.analytics_no_exercise_options)
+            ) { actions.onSelectScope(AnalyticsScope.Exercise(it)) }
         }
         Box {
             Chip(stringResource(R.string.analytics_scope_muscle), selection.scope is AnalyticsScope.Muscle) { muscleMenu = true }
-            val labelled = StandardMuscles.TRAINABLE.map { it to vocabulary.muscle(it) }.sortedBy { it.second }
+            val labelled = remember(vocabulary) { StandardMuscles.TRAINABLE.map { it to vocabulary.muscle(it) }.sortedBy { it.second } }
             Menu(muscleMenu, { muscleMenu = false }, labelled, (selection.scope as? AnalyticsScope.Muscle)?.muscle, null) {
                 actions.onSelectScope(AnalyticsScope.Muscle(it))
             }
@@ -221,18 +227,40 @@ private fun LoadedContent(
             }
         }
     }
-    if (!series.hasScopeMatches) return Body(stringResource(R.string.analytics_no_matches))
-
-    val metricName = stringResource(selection.metric.labelRes())
     val dates = rememberDateFormat(zoneId)
+    if (series.hasScopeMatches) {
+        WeeklySeries(series, selection, unit, dates, analytics.fullWeeks, onOpenSession)
+    } else {
+        Body(stringResource(selection.metric.noMatchesRes()))
+    }
+    // Performance and recorded decisions do not depend on the selected measure's matches.
+    if (selection.scope is AnalyticsScope.Exercise) {
+        Section(stringResource(R.string.analytics_performance_heading))
+        Body(stringResource(R.string.analytics_performance_note))
+        if (analytics.performance.isEmpty()) Body(stringResource(R.string.analytics_performance_empty))
+        analytics.performance.forEach { PerformanceSection(it, unit, dates, onOpenSession) }
+        DecisionsSection(state.decisions, dates, onOpenSession)
+    }
+}
+
+@Composable
+private fun WeeklySeries(
+    series: AnalyticsSeries,
+    selection: AnalyticsSelection,
+    unit: WeightUnit,
+    dates: DateFormat,
+    fullWeeks: Int,
+    onOpenSession: (String) -> Unit
+) {
+    val locale = LocalConfiguration.current.locales[0]
+    val metricName = stringResource(selection.metric.labelRes())
     val buckets = series.buckets
     val highest = buckets.maxByOrNull { it.value }?.value ?: 0.0
     Text(
         text = stringResource(R.string.analytics_total, metricValue(selection.metric, series.rangeTotal, unit)),
         fontSize = 14.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface
     )
-    Body(pluralStringResource(R.plurals.analytics_full_weeks, analytics.fullWeeks,
-        LocaleFormatting.formatCount(analytics.fullWeeks, locale)))
+    Body(pluralStringResource(R.plurals.analytics_full_weeks, fullWeeks, LocaleFormatting.formatCount(fullWeeks, locale)))
     Spacer(Modifier.height(8.dp))
     AnalyticsBarChart(
         values = buckets.map { it.value },
@@ -260,14 +288,6 @@ private fun LoadedContent(
             if (bucket.contributors.isEmpty()) Body(stringResource(R.string.analytics_week_empty))
         }
     }
-
-    if (selection.scope is AnalyticsScope.Exercise) {
-        Section(stringResource(R.string.analytics_performance_heading))
-        Body(stringResource(R.string.analytics_performance_note))
-        if (analytics.performance.isEmpty()) Body(stringResource(R.string.analytics_performance_empty))
-        analytics.performance.forEach { PerformanceSection(it, unit, dates, onOpenSession) }
-        DecisionsSection(state.decisions, dates, onOpenSession)
-    }
 }
 
 @Composable
@@ -286,7 +306,9 @@ private fun PerformanceSection(series: PerformanceSeries, unit: WeightUnit, date
                     observationValue(series.shape, comparison.latest, unit), dates.format(Date(comparison.latest.completedAtTimestamp)),
                     signedDifference(series.shape, comparison.difference, unit)))
             }
-            if (series.observations.size > 1) {
+            if (series.observations.size > MAX_CHART_BARS) {
+                Body(stringResource(R.string.analytics_observation_chart_omitted))
+            } else if (series.observations.size > 1) {
                 AnalyticsBarChart(series.observations.map { it.value },
                     stringResource(R.string.analytics_observation_chart_description, stringResource(series.shape.labelRes()),
                         dates.format(Date(series.observations.first().completedAtTimestamp)),
@@ -370,6 +392,8 @@ private fun <T> PagedRows(items: List<T>, key: Any, row: @Composable (T) -> Unit
 }
 
 private const val ROW_PAGE_SIZE = 20
+// The chart draws every value it is given, so it is used only where bars stay readable.
+private const val MAX_CHART_BARS = 52
 
 @Composable
 private fun LinkRow(title: String, lines: List<String> = emptyList(), onClick: () -> Unit) {
@@ -514,12 +538,13 @@ private fun observationValue(shape: PerformanceShape, observation: PerformanceOb
 @Composable
 private fun signedDifference(shape: PerformanceShape, difference: Double, unit: WeightUnit): String {
     val locale = LocalConfiguration.current.locales[0]
+    val magnitude = java.math.BigDecimal(kotlin.math.abs(difference))
+        .setScale(MeasurementPrecision.EDITABLE_FRACTION_DIGITS, java.math.RoundingMode.HALF_UP).toDouble()
     val sign = when {
+        magnitude == 0.0 -> ""
         difference > 0 -> "+"
-        difference < 0 -> "−"
-        else -> ""
+        else -> "−"
     }
-    val magnitude = kotlin.math.abs(difference)
     val text = when (shape) {
         PerformanceShape.WEIGHTED_REPS -> stringResource(R.string.progress_volume_value, LocaleFormatting.formatMeasurement(magnitude, locale), unit.symbol)
         PerformanceShape.BODYWEIGHT_REPS, PerformanceShape.ASSISTED_REPS ->
@@ -530,6 +555,13 @@ private fun signedDifference(shape: PerformanceShape, difference: Double, unit: 
             stringResource(R.string.prescription_meters, LocaleFormatting.formatMeasurement(magnitude, locale))
     }
     return sign + text
+}
+
+private fun AnalyticsMetric.noMatchesRes(): Int = when (this) {
+    AnalyticsMetric.WORKOUTS, AnalyticsMetric.COMPLETED_SETS -> R.string.analytics_no_matches
+    AnalyticsMetric.REPS -> R.string.analytics_no_matches_reps
+    AnalyticsMetric.EXTERNAL_LOAD_VOLUME -> R.string.analytics_no_matches_volume
+    AnalyticsMetric.REVIEWED_PRIMARY_DOSE -> R.string.analytics_no_matches_dose
 }
 
 private fun AnalyticsMetric.labelRes(): Int = when (this) {

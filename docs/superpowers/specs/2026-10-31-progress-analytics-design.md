@@ -89,6 +89,10 @@ Scope classification:
   Work sets without accepted metadata are reported range-wide by typed omission
   reason, because they cannot be assigned to any muscle.
 
+Reps and load volume count only work they apply to: a session contributes reps only
+with a completed rep-based in-scope set, and load volume only with a completed
+weighted set. Timed, distance or body-mass work is never a recorded zero of either.
+
 No new classifier, dose policy or record definition is introduced.
 
 ## Exercise performance
@@ -114,8 +118,9 @@ duplicates and multiple sets never count as several sessions.
 
 A comparison needs **two observations from distinct sessions** in the range. It
 reports the earliest and latest observed values and their signed difference in
-the shape's own unit. No percentage, regression line, projection, score or
-readiness claim. One observation is *insufficient comparable observations*.
+the shape's own unit, rounded to the displayed precision before its sign is chosen,
+so a unit conversion that rounds to no change shows no sign. No percentage,
+regression line, projection, score or readiness claim. One observation is *insufficient comparable observations*.
 Missing values are not zero; a session with no eligible set for a shape produces
 no observation for it. Loads convert through `convertWeight`; stored values and
 units are never edited, so changing the preferred unit re-expresses every point
@@ -131,8 +136,10 @@ history detail already separates cited sources from ordinary previous performanc
 and shows missing sources as unavailable. Decisions are not re-evaluated, no
 before/after prescription is synthesised, and a cited source is never treated as
 "the previous workout". Accepted one-workout deloads recorded by those sessions are
-listed the same way. Unsupported identities are reported as a count; a known
-malformed group fails the read.
+listed the same way. A decision row with identities this build cannot interpret is
+marked unsupported and opens the workout, whose history detail shows them; a known
+malformed group fails the read. Decisions stay listed even when the selected measure
+has no matches.
 
 ## Drill-down
 
@@ -167,7 +174,10 @@ shared local-data write gate; one Room transaction; profile read without bootstr
 
 The range is bounded by 2,000 sessions, 200,000 exercise rows (2,000 × the archive's
 100 per session) and 100,000 sets, the scheduling range's representational bounds.
-Overflow is an explicit *range too large* state, never a truncated chart. More than
+Overflow is an explicit *range too large* state, never a truncated chart. A distance/time
+exercise row with neither target is invalid stored data and fails the read. The pure
+calculation runs after the gate and transaction are released, so writers wait only
+for the reads. More than
 1,000 distinct recorded exercise IDs fails the read rather than hiding some from the
 filter. These are software
 limits, not training limits. Unrelated recent sessions cannot crowd a selected
@@ -188,10 +198,13 @@ a filter does not reload the weekly cards. Collection is RESUMED-only with
 Loading, no profile, no workouts in range, no matches for the filter, an empty week,
 insufficient comparable observations, range too large, and read error with Retry are
 distinct. Classification and omission notes appear before "no matches" so they can
-explain it.
+explain it. Each measure has its own no-matches copy (sets, reps, load volume, reviewed
+dose), and the exercise chooser says it is loading until a read has supplied options.
 Errors never render as zero.
 
-The chart is a small Compose canvas bar chart with no new dependency. It has a
+The chart is a small Compose canvas bar chart with no new dependency. It draws at most
+52 bars: every weekly series fits, and a performance series with more observations is
+listed without a chart rather than resampled. It has a
 text summary as its content description and is decorative beyond that; the
 accessible interface is the data list beside it. Each week/observation row is a
 ≥48 dp button with a full spoken label (date range, value with unit, partial

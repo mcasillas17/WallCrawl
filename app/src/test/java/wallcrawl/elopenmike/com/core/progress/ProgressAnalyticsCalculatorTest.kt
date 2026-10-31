@@ -233,6 +233,24 @@ class ProgressAnalyticsCalculatorTest {
     }
 
     @Test
+    fun repsAndLoadVolumeDoNotTurnWorkTheyDoNotApplyToIntoZero() {
+        val plank = session("plank", THIS_WEEK, type = ExerciseType.DURATION, sets = listOf(timed(1, 45), timed(2, 50)))
+        val pullUps = session("pull", THIS_WEEK + HOUR, type = ExerciseType.BODYWEIGHT_REPS, sets = listOf(bodyweight(1, 8)))
+        val scope = AnalyticsScope.Exercise("bench")
+        val reps = calculate(listOf(plank), metric = AnalyticsMetric.REPS, scope = scope)
+        assertThat(reps.buckets.flatMap { it.contributors }).isEmpty()
+        assertThat(reps.hasScopeMatches).isFalse()
+        val volume = calculate(listOf(pullUps), metric = AnalyticsMetric.EXTERNAL_LOAD_VOLUME, scope = scope)
+        assertThat(volume.buckets.flatMap { it.contributors }).isEmpty()
+        assertThat(volume.hasScopeMatches).isFalse()
+        // The same timed sets are still completed sets.
+        assertThat(calculate(listOf(plank), scope = scope).rangeTotal).isEqualTo(2.0)
+        // Across all exercises, a timed-only workout is not a zero-rep contributor either.
+        assertThat(calculate(listOf(plank, pullUps), metric = AnalyticsMetric.REPS).buckets.last().contributors
+            .map { it.sessionId }).containsExactly("pull")
+    }
+
+    @Test
     fun everyMetricComesFromOnePassSoChangingTheMetricNeedsNoNewRead() {
         val result = calculateAll(listOf(session("a", THIS_WEEK, sets = listOf(weighted(1, 100.0, 5)))))
         assertThat(result.series.keys).containsExactlyElementsIn(AnalyticsMetric.entries)

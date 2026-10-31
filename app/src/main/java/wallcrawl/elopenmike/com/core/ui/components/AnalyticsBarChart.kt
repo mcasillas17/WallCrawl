@@ -23,7 +23,7 @@ const val ANALYTICS_CHART_TEST_TAG = "analytics-bar-chart"
  *
  * It is a picture with a text [description], not an interactive control: every value, and every
  * drill-down, lives in the data list beside it. Nothing is resampled, so the caller bounds the
- * number of values (at most 52 weekly buckets).
+ * number of values (at most 52: weekly buckets, or a short performance series).
  */
 @Composable
 fun AnalyticsBarChart(

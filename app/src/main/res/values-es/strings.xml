@@ -1095,5 +1095,9 @@
         <item quantity="one">Mostrar más (falta %1$s)</item>
         <item quantity="other">Mostrar más (faltan %1$s)</item>
     </plurals>
+    <string name="analytics_no_matches_reps">Ninguna serie completada con repeticiones coincide con este filtro en este periodo. El trabajo por tiempo o distancia no tiene repeticiones.</string>
+    <string name="analytics_no_matches_volume">Ninguna serie completada con carga coincide con este filtro en este periodo. El peso corporal, la asistencia, el tiempo y la distancia no son volumen de carga.</string>
+    <string name="analytics_no_matches_dose">Ninguna serie de trabajo se asigna a esta selección en la dosis revisada de este periodo.</string>
+    <string name="analytics_observation_chart_omitted">Hay demasiados entrenamientos para dibujar barras legibles. La lista de abajo tiene todos los valores.</string>
     <string name="analytics_decision_row">%1$s, %2$s</string>
 </resources>

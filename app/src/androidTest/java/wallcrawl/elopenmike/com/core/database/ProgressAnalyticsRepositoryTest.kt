@@ -142,7 +142,10 @@ class ProgressAnalyticsRepositoryTest {
             "UPDATE workout_sets SET type = 'MEGA'",
             "UPDATE workout_exercises SET exerciseType = 'LASER'",
             "UPDATE workout_exercises SET targetRepMax = NULL",
-            "UPDATE workout_sessions SET weightUnit = 'STONE'"
+            "UPDATE workout_sessions SET weightUnit = 'STONE'",
+            // A distance/time exercise with neither target cannot be given a measurement shape.
+            "UPDATE workout_exercises SET exerciseType = 'DISTANCE_DURATION', targetRepMin = NULL, " +
+                "targetRepMax = NULL, targetWeight = NULL, targetDurationSeconds = NULL, targetDistanceMeters = NULL"
         ).forEachIndexed { index, corruption ->
             runBlocking { insert("c$index", monday.toEpochMilli() + index, "approved") }
             // Session, exercise and set IDs of this fixture all start with its session ID.
