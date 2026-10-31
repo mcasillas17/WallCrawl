@@ -534,6 +534,16 @@ private class EmptyWorkoutSessionDao(
         error("This fake does not model eligible set counts.")
     override suspend fun selectEligibleHistoricalSets(exerciseIds: List<String>): List<WorkoutSetEntity> =
         error("This fake does not model previous performance sets.")
+    override suspend fun selectAnalyticsRangeSize(startEpochMillis: Long, endEpochMillisExclusive: Long):
+        wallcrawl.elopenmike.com.core.database.dao.AnalyticsRangeSize = error("This fake does not model analytics.")
+    override suspend fun selectAnalyticsComparableSetIds(
+        startEpochMillis: Long, endEpochMillisExclusive: Long, exerciseId: String
+    ): List<String> = error("This fake does not model analytics.")
+    override suspend fun selectAnalyticsRecommendationRecords(
+        startEpochMillis: Long, endEpochMillisExclusive: Long, exerciseId: String
+    ): List<WorkoutRecommendationRecordEntity> = error("This fake does not model analytics.")
+    override suspend fun selectAnalyticsExerciseIds(limit: Int): List<String> =
+        error("This fake does not model analytics.")
     override suspend fun selectPreviousPerformanceIds(sessionId: String):
         List<wallcrawl.elopenmike.com.core.database.dao.PreviousPerformanceIds> =
         error("This fake does not model previous performance.")
