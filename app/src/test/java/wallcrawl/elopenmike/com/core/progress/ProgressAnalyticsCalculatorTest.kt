@@ -204,7 +204,9 @@ class ProgressAnalyticsCalculatorTest {
             scope = AnalyticsScope.Muscle(StandardMuscles.CHEST)).buckets.last().value).isEqualTo(2.0)
         val draftOnly = calculate(listOf(s), metric = AnalyticsMetric.REVIEWED_PRIMARY_DOSE,
             scope = AnalyticsScope.Exercise("draft-press"))
-        assertThat(draftOnly.buckets.last().value).isEqualTo(0.0)
+        // Uncreditable work is not a zero-valued dose contributor; its omission is still reported.
+        assertThat(draftOnly.buckets.last().contributors).isEmpty()
+        assertThat(draftOnly.hasScopeMatches).isFalse()
         assertThat(draftOnly.unattributedWorkSets).containsExactly(LedgerOmissionReason.MISSING_REVIEWED_METADATA, 1)
     }
 
@@ -308,7 +310,9 @@ class ProgressAnalyticsCalculatorTest {
             status = SessionStatus.COMPLETED,
             exercises = listOf(
                 instance("dup", "i1", "bench", 0, listOf(weighted(1, 100.0, 5, id = "a"))),
-                instance("dup", "i2", "bench", 1, listOf(weighted(1, 110.0, 3, id = "b"), weighted(2, 200.0, 1, id = "warm")))
+                instance("dup", "i2", "bench", 1, listOf(weighted(1, 110.0, 3, id = "b"), weighted(2, 200.0, 1, id = "warm"))),
+                // Only a non-comparable set: an instance that contributes nothing is not cited.
+                instance("dup", "i3", "bench", 2, listOf(weighted(1, 300.0, 1, id = "not-comparable")))
             )
         )
         val result = calculate(listOf(s), scope = AnalyticsScope.Exercise("bench"), comparable = setOf("a", "b"))

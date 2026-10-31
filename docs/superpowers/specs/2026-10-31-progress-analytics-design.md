@@ -71,7 +71,7 @@ Formulas reuse the Progress metric contract; scope narrows the sets considered.
 | Completed sets | Count of completed sets, warm-ups and timed work included | In-scope sets |
 | Repetitions | Sum of positive `completedReps` on completed rep-based sets | In-scope sets; duration/distance never become reps |
 | External-load volume | Σ finite non-negative load × positive reps over completed `WEIGHT_REPS` sets, each session's load converted to the preferred unit before summing, unrounded until display | In-scope sets; body mass, assistance, duration and distance are excluded |
-| Reviewed primary dose | `PRIMARY_ONLY_V1` credited work sets from `WeeklyDoseLedgerCalculator` run on the bucket's sessions | All: `creditedWorkSets`. Muscle: `directPrimarySets[muscle]`. Exercise: credited sets after restricting sessions to that exercise ID |
+| Reviewed primary dose | `PRIMARY_ONLY_V1` credited work sets from `WeeklyDoseLedgerCalculator` run on the bucket's sessions | All: `creditedWorkSets` (every workout listed). Muscle: `directPrimarySets[muscle]`. Exercise: credited sets after restricting sessions to that exercise ID. In muscle and exercise scope only credited sessions contribute; uncreditable work is an omission, not a zero |
 
 Scope classification:
 
@@ -190,7 +190,9 @@ no history or chart data is saved. Range and scope (not the metric), clock/zone
 refresh and the existing week-boundary wakeup feed a `flatMapLatest`, so a slow
 previous read is cancelled and cannot overwrite a newer selection. Every metric is
 computed in one pass, so changing the metric selects another series without a read. The overview state is separate, so changing
-a filter does not reload the weekly cards. Collection is RESUMED-only with
+a filter does not reload the weekly cards. The card's Retry has its own trigger, so it
+re-reads only the card; resume and clock/zone changes refresh both. Recorded decisions
+are decoded off the main thread. Collection is RESUMED-only with
 `WhileSubscribed(0, 0)`; there is no polling.
 
 ## States and accessibility
@@ -206,9 +208,10 @@ The chart is a small Compose canvas bar chart with no new dependency. It draws a
 52 bars: every weekly series fits, and a performance series with more observations is
 listed without a chart rather than resampled. It has a
 text summary as its content description and is decorative beyond that; the
-accessible interface is the data list beside it. Each week/observation row is a
-≥48 dp button with a full spoken label (date range, value with unit, partial
-marker) that selects it; contributors are buttons that open history. Contributor,
+accessible interface is the data list beside it. Each week row is a ≥48 dp toggle
+button with a full spoken label (date range, value with unit or "nothing recorded",
+partial marker) that reveals its contributors. Contributor, observation and decision
+rows are ≥48 dp buttons that open that workout's history detail. Contributor,
 observation and decision lists show 20 rows at a time with a "Show more (N not shown
 yet)" control, so nothing is hidden silently and a long range is not composed at once. The partial
 week uses a hatched bar plus the text marker. Selection chips expose selected

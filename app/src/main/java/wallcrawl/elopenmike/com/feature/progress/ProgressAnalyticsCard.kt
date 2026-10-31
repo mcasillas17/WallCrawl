@@ -56,7 +56,6 @@ import wallcrawl.elopenmike.com.core.model.AnalyticsRange
 import wallcrawl.elopenmike.com.core.model.AnalyticsScope
 import wallcrawl.elopenmike.com.core.model.AnalyticsSeries
 import wallcrawl.elopenmike.com.core.model.AnalyticsSelection
-import wallcrawl.elopenmike.com.core.model.DeloadSource
 import wallcrawl.elopenmike.com.core.model.LedgerOmissionReason
 import wallcrawl.elopenmike.com.core.model.MeasurementPrecision
 import wallcrawl.elopenmike.com.core.model.PerformanceObservation
@@ -68,8 +67,8 @@ import wallcrawl.elopenmike.com.core.ui.components.AnalyticsBarChart
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
 import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
-import wallcrawl.elopenmike.com.core.ui.localization.progressionAxisRes
-import wallcrawl.elopenmike.com.core.ui.localization.progressionHoldReasonRes
+import wallcrawl.elopenmike.com.core.ui.localization.recordedDeloadRes
+import wallcrawl.elopenmike.com.core.ui.localization.recordedProgressionText
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 
 internal const val PROGRESS_ANALYTICS_TEST_TAG = "progress-analytics"
@@ -99,22 +98,34 @@ internal fun ProgressAnalyticsCard(
             modifier = Modifier.semantics { heading() }
         )
         Body(stringResource(R.string.analytics_scope_note, zoneId.id))
-        Filters(selection, options?.first, options?.second.orEmpty(), actions)
+        Filters(selection, options?.first, options?.second.orEmpty(), state is ProgressAnalyticsUiState.Loading, actions)
         Spacer(Modifier.height(8.dp))
         when (state) {
-            ProgressAnalyticsUiState.Loading -> Box(Modifier.fillMaxWidth().padding(16.dp)) {
-                CircularProgressIndicator(color = CrimsonRedPrimary, modifier = Modifier.size(24.dp))
-                Text(stringResource(R.string.analytics_loading), color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontSize = 13.sp, modifier = Modifier.padding(start = 36.dp))
-            }
+            ProgressAnalyticsUiState.Loading -> AnalyticsLoading()
             ProgressAnalyticsUiState.NoProfile -> Body(stringResource(R.string.progress_no_profile))
             ProgressAnalyticsUiState.TooLarge -> Body(stringResource(R.string.analytics_too_large))
             ProgressAnalyticsUiState.Error -> {
                 Text(stringResource(R.string.analytics_error), color = MaterialTheme.colorScheme.error, fontSize = 13.sp)
                 Button(onClick = actions.onRetry) { Text(stringResource(R.string.action_try_again)) }
             }
-            is ProgressAnalyticsUiState.Loaded -> LoadedContent(state, selection, zoneId, onOpenSession)
+            is ProgressAnalyticsUiState.Loaded -> if (state.analytics.range == selection.range &&
+                state.analytics.scope == selection.scope
+            ) {
+                LoadedContent(state, selection, zoneId, onOpenSession)
+            } else {
+                // A result for a previous filter is shown as loading, never under the new filter's labels.
+                AnalyticsLoading()
+            }
         }
+    }
+}
+
+@Composable
+private fun AnalyticsLoading() {
+    Box(Modifier.fillMaxWidth().padding(16.dp)) {
+        CircularProgressIndicator(color = CrimsonRedPrimary, modifier = Modifier.size(24.dp))
+        Text(stringResource(R.string.analytics_loading), color = MaterialTheme.colorScheme.onSurfaceVariant,
+            fontSize = 13.sp, modifier = Modifier.padding(start = 36.dp))
     }
 }
 
@@ -134,6 +145,7 @@ private fun Filters(
     /** Null until a read has supplied them, which is not the same as none recorded. */
     exerciseOptions: List<String>?,
     catalogNames: Map<String, String>,
+    loading: Boolean,
     actions: ProgressAnalyticsActions
 ) {
     val locale = LocalConfiguration.current.locales[0]
@@ -159,7 +171,11 @@ private fun Filters(
                 exerciseOptions.orEmpty().map { it to vocabulary.exerciseName(it, catalogNames[it]) }.sortedBy { it.second }
             }
             Menu(exerciseMenu, { exerciseMenu = false }, labelled, (selection.scope as? AnalyticsScope.Exercise)?.exerciseId,
-                stringResource(if (exerciseOptions == null) R.string.analytics_loading else R.string.analytics_no_exercise_options)
+                stringResource(when {
+                    exerciseOptions != null -> R.string.analytics_no_exercise_options
+                    loading -> R.string.analytics_loading
+                    else -> R.string.analytics_error
+                })
             ) { actions.onSelectScope(AnalyticsScope.Exercise(it)) }
         }
         Box {
@@ -334,17 +350,12 @@ private fun DecisionsSection(decisions: List<AnalyticsDecision>, dates: DateForm
     PagedRows(decisions.asReversed(), decisions.size) { decision ->
         val lines = buildList {
             decision.progression?.let { reason ->
-                add(progressionHoldReasonRes(reason.reason)?.let { stringResource(it) }
-                    ?: stringResource(R.string.history_advanced, stringResource(progressionAxisRes(requireNotNull(reason.axis)))))
+                add(recordedProgressionText(reason))
                 add(if (reason.sourceSessionIds.isEmpty()) stringResource(R.string.analytics_decision_no_sources)
                 else pluralStringResource(R.plurals.analytics_decision_sources, reason.sourceSessionIds.size,
                     LocaleFormatting.formatCount(reason.sourceSessionIds.size, locale)))
             }
-            when (decision.acceptedDeload) {
-                DeloadSource.EXPLICIT_REQUEST -> add(stringResource(R.string.history_deload_requested))
-                DeloadSource.RETURNING -> add(stringResource(R.string.history_deload_returning))
-                null -> Unit
-            }
+            decision.acceptedDeload?.let { add(stringResource(recordedDeloadRes(it))) }
             if (decision.unsupportedIdentities.isNotEmpty()) add(stringResource(R.string.history_unsupported_details))
         }
         LinkRow(stringResource(R.string.analytics_decision_row, decision.sessionName,
@@ -354,7 +365,8 @@ private fun DecisionsSection(decisions: List<AnalyticsDecision>, dates: DateForm
 
 @Composable
 private fun WeekRow(bucket: AnalyticsBucket, metric: AnalyticsMetric, unit: WeightUnit, dates: DateFormat, expanded: Boolean, onToggle: () -> Unit) {
-    val value = metricValue(metric, bucket.value, unit)
+    val value = if (bucket.contributors.isEmpty()) stringResource(R.string.analytics_week_value_none)
+    else metricValue(metric, bucket.value, unit)
     val start = dates.format(Date(bucket.week.startEpochMillis))
     val end = dates.format(Date(bucket.week.endEpochMillisExclusive - 1))
     val text = stringResource(if (bucket.partial) R.string.analytics_week_row_partial else R.string.analytics_week_row, start, end, value)
@@ -558,7 +570,8 @@ private fun signedDifference(shape: PerformanceShape, difference: Double, unit: 
 }
 
 private fun AnalyticsMetric.noMatchesRes(): Int = when (this) {
-    AnalyticsMetric.WORKOUTS, AnalyticsMetric.COMPLETED_SETS -> R.string.analytics_no_matches
+    AnalyticsMetric.WORKOUTS -> R.string.analytics_no_matches_workouts
+    AnalyticsMetric.COMPLETED_SETS -> R.string.analytics_no_matches
     AnalyticsMetric.REPS -> R.string.analytics_no_matches_reps
     AnalyticsMetric.EXTERNAL_LOAD_VOLUME -> R.string.analytics_no_matches_volume
     AnalyticsMetric.REVIEWED_PRIMARY_DOSE -> R.string.analytics_no_matches_dose

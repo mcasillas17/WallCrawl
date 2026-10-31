@@ -1107,5 +1107,7 @@
     <string name="analytics_no_matches_volume">No completed weighted sets match this filter in this range. Body weight, assistance, time and distance are not load volume.</string>
     <string name="analytics_no_matches_dose">No work sets are credited to this selection under reviewed dose in this range.</string>
     <string name="analytics_observation_chart_omitted">There are too many workouts to draw readable bars. The list below has every value.</string>
+    <string name="analytics_no_matches_workouts">No completed workouts match this filter in this range.</string>
+    <string name="analytics_week_value_none">nothing recorded</string>
     <string name="analytics_decision_row">%1$s, %2$s</string>
 </resources>

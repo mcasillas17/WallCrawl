@@ -10,6 +10,8 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import java.time.Instant
 import java.time.ZoneId
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -22,6 +24,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
@@ -42,9 +45,13 @@ class ProgressViewModel(
     private val progressRepository: ProgressRepository,
     private val savedStateHandle: SavedStateHandle = SavedStateHandle(),
     private val nowTimestamp: () -> Long = System::currentTimeMillis,
-    private val zoneId: () -> ZoneId = ZoneId::systemDefault
+    private val zoneId: () -> ZoneId = ZoneId::systemDefault,
+    /** Decoding recorded decisions is off the main thread; tests pass their own dispatcher. */
+    private val analyticsDispatcher: CoroutineDispatcher = Dispatchers.Default
 ) : ViewModel() {
     private val refreshRequests = MutableStateFlow(0L)
+    // The card's Retry re-reads only the card; the weekly overview keeps its state and scroll.
+    private val analyticsRetries = MutableStateFlow(0L)
 
     /** Restored from four short saved strings; anything invalid falls back to the defaults. */
     private val selection = MutableStateFlow(restoreSelection())
@@ -97,12 +104,13 @@ class ProgressViewModel(
      * flatMapLatest cancels an obsolete read, so a slow earlier filter cannot overwrite a newer one.
      */
     val analyticsState: StateFlow<ProgressAnalyticsUiState> = combine(
-        selection.map { it.range to it.scope }.distinctUntilChanged(), calendarZones, ::Pair
-    ).flatMapLatest { (read, zone) ->
+        selection.map { it.range to it.scope }.distinctUntilChanged(), calendarZones, analyticsRetries
+    ) { read, zone, _ -> read to zone }.flatMapLatest { (read, zone) ->
             val (range, scope) = read
             flow {
                 emitAll(progressRepository.observeAnalytics(range, scope, { Instant.ofEpochMilli(nowTimestamp()) }, zone))
             }.map { snapshot -> snapshot?.toUiState(scope) ?: ProgressAnalyticsUiState.NoProfile }
+                .flowOn(analyticsDispatcher)
                 .onStart { emit(ProgressAnalyticsUiState.Loading) }
                 .catch { error ->
                     if (error is CancellationException) throw error
@@ -119,6 +127,10 @@ class ProgressViewModel(
     /** Resume, a clock/zone change, and explicit Retry all request fresh calendar inputs. */
     fun refresh() {
         refreshRequests.update { it + 1 }
+    }
+
+    fun retryAnalytics() {
+        analyticsRetries.update { it + 1 }
     }
 
     fun selectAnalyticsRange(range: AnalyticsRange) = save(selection.value.copy(range = range))
@@ -177,7 +189,8 @@ class ProgressViewModel(
             decisions = decisions.mapNotNull { decision ->
                 val reasons = decodeHistoryReasons(decision.record)
                 val progression = reasons.progression.firstOrNull { it.exerciseId == exerciseId }
-                val deload = reasons.deload?.takeIf { it.acceptedOfferId != null }?.source
+                // The provenance type guarantees a source exactly when an offer was accepted.
+                val deload = reasons.deload?.source
                 if (progression == null && deload == null && reasons.unsupportedIdentities.isEmpty()) return@mapNotNull null
                 AnalyticsDecision(
                     decision.sessionId, decision.sessionName, decision.completedAtTimestamp,

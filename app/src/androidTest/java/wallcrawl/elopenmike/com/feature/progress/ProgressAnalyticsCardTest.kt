@@ -173,6 +173,34 @@ class ProgressAnalyticsCardTest {
         composeRule.onNode(hasText(english.getString(R.string.analytics_no_exercise_options))).assertDoesNotExist()
     }
 
+    @Test fun aResultForThePreviousFilterIsShownAsLoadingUnderTheNewFilter() {
+        selectionOverride = AnalyticsSelection(scope = AnalyticsScope.Muscle("Chest"))
+        render(loaded())
+        scrollTo(english.getString(R.string.analytics_loading))
+        composeRule.onNode(hasText("this week so far)", substring = true)).assertDoesNotExist()
+        composeRule.onNode(hasText(english.getString(R.string.analytics_muscle_basis))).assertDoesNotExist()
+    }
+
+    @Test fun theExerciseChooserReportsAFailedReadInsteadOfLoadingForever() {
+        render(ProgressAnalyticsUiState.TooLarge)
+        scrollTo(english.getString(R.string.analytics_scope_exercise))
+        composeRule.onNodeWithText(english.getString(R.string.analytics_scope_exercise)).performClick()
+        val popup = androidx.compose.ui.test.hasAnyAncestor(androidx.compose.ui.test.isPopup())
+        composeRule.onNode(popup and hasText(english.getString(R.string.analytics_error))).assertExists()
+        composeRule.onNode(popup and hasText(english.getString(R.string.analytics_loading))).assertDoesNotExist()
+    }
+
+    @Test fun aWeekWithNothingApplicableSaysSoInsteadOfZero() {
+        val base = loaded()
+        val empty = base.analytics.series.getValue(AnalyticsMetric.COMPLETED_SETS).let { series ->
+            series.copy(buckets = series.buckets.mapIndexed { index, bucket ->
+                if (index == 0) bucket.copy(value = 0.0, contributors = emptyList()) else bucket
+            })
+        }
+        render(base.copy(analytics = base.analytics.copy(series = AnalyticsMetric.entries.associateWith { empty })))
+        scrollTo(": nothing recorded")
+    }
+
     @Test fun oneObservationSaysThereIsNoChangeToShow() {
         val single = weightedSeries().let { it.copy(observations = it.observations.take(1), comparison = null) }
         render(loaded(scope = AnalyticsScope.Exercise("bench"), performance = listOf(single)))
@@ -274,10 +302,14 @@ class ProgressAnalyticsCardTest {
         }
     }
 
+    /** When set, the rendered selection differs from the state's own range/scope (a stale result). */
+    private var selectionOverride: AnalyticsSelection? = null
+
     @androidx.compose.runtime.Composable
     private fun screen(state: ProgressAnalyticsUiState) {
         val analytics = (state as? ProgressAnalyticsUiState.Loaded)?.analytics
-        val selection = analytics?.let { AnalyticsSelection(it.range, it.scope, metric) } ?: AnalyticsSelection()
+        val selection = selectionOverride
+            ?: analytics?.let { AnalyticsSelection(it.range, it.scope, metric) } ?: AnalyticsSelection()
         ProgressScreen(
             uiState = success(), onRetry = {}, onOpenSession = { opened = it },
             analyticsState = state, analyticsSelection = selection,

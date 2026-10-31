@@ -111,6 +111,25 @@ class ProgressAnalyticsViewModelTest {
     }
 
     @Test
+    fun analyticsRetryReadsAgainWithoutReloadingTheWeeklyOverview() = runTest {
+        val repository = FakeRepository().apply { respond = { error("read failed") } }
+        val viewModel = viewModel(repository)
+        val overview = mutableListOf<ProgressUiState>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect { overview += it } }
+        collect(viewModel)
+        assertThat(viewModel.analyticsState.value).isEqualTo(ProgressAnalyticsUiState.Error)
+        val overviewEmissions = overview.size
+        val reads = repository.requests.size
+        repository.respond = { snapshot(it) }
+        viewModel.retryAnalytics()
+        runCurrent()
+        assertThat(repository.requests).hasSize(reads + 1)
+        assertThat(viewModel.analyticsState.value).isInstanceOf(ProgressAnalyticsUiState.Loaded::class.java)
+        assertThat(overview).hasSize(overviewEmissions)
+        assertThat(repository.overviewReads).isEqualTo(1)
+    }
+
+    @Test
     fun changingOnlyTheMetricDoesNotReadAgain() = runTest {
         val repository = FakeRepository()
         val viewModel = viewModel(repository)
@@ -185,12 +204,15 @@ class ProgressAnalyticsViewModelTest {
     }
 
     private fun viewModel(repository: ProgressRepository, handle: SavedStateHandle = SavedStateHandle()) =
-        ProgressViewModel(repository, handle, nowTimestamp = { NOW }, zoneId = { UTC })
+        ProgressViewModel(repository, handle, nowTimestamp = { NOW }, zoneId = { UTC },
+            analyticsDispatcher = kotlinx.coroutines.Dispatchers.Main)
 
     private class FakeRepository : ProgressRepository {
         val requests = mutableListOf<AnalyticsSelection>()
+        var overviewReads = 0
         var respond: suspend (AnalyticsSelection) -> ProgressAnalyticsSnapshot? = { snapshot(it) }
-        override fun observeProgress(now: () -> Instant, zoneId: ZoneId): Flow<ProgressSnapshot?> = emptyFlow()
+        override fun observeProgress(now: () -> Instant, zoneId: ZoneId): Flow<ProgressSnapshot?> =
+            flow<ProgressSnapshot?> { overviewReads++ }
         // Recorded as a selection with the default metric: the metric is never part of a read.
         override fun observeAnalytics(
             range: AnalyticsRange, scope: AnalyticsScope, now: () -> Instant, zoneId: ZoneId

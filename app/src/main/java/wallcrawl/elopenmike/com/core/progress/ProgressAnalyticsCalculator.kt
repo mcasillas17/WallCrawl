@@ -98,9 +98,13 @@ class ProgressAnalyticsCalculator(
                             .takeIf { completed.any { it.exerciseType == ExerciseType.WEIGHT_REPS && it.loggedReps() > 0 } }
                         // A muscle's reviewed dose is the ledger's accepted direct primary, which can be a
                         // legacy secondary muscle, so its membership is the ledger credit itself.
+                        // An exercise's reviewed dose is likewise its credit: uncreditable work (unaccepted
+                        // metadata, warm-ups only) is an omission, not a zero-valued contributor. Across all
+                        // exercises every workout stays listed beside the range-wide omission total.
                         AnalyticsMetric.REVIEWED_PRIMARY_DOSE -> when (scope) {
                             is AnalyticsScope.Muscle -> ledger.directPrimarySets[scope.muscle]?.takeIf { it > 0 }?.toDouble()
-                            else -> ledger.creditedWorkSets.toDouble().takeIf { member }
+                            is AnalyticsScope.Exercise -> ledger.creditedWorkSets.takeIf { it > 0 }?.toDouble()
+                            AnalyticsScope.All -> ledger.creditedWorkSets.toDouble()
                         }
                     }
                 }
@@ -156,8 +160,9 @@ class ProgressAnalyticsCalculator(
                     .sortedWith(compareBy({ it.orderIndex }, { it.id }))
                     .groupBy { it.shape() }
                     .mapNotNull { (shape, instances) ->
-                        val sets = instances.flatMap { it.sets }.filter { it.id in comparableSetIds }
-                        observe(shape, session, instances.map { it.id }, sets, unit)?.let { shape to it }
+                        val contributing = instances.filter { instance -> instance.sets.any { it.id in comparableSetIds } }
+                        val sets = contributing.flatMap { it.sets }.filter { it.id in comparableSetIds }
+                        observe(shape, session, contributing.map { it.id }, sets, unit)?.let { shape to it }
                     }
             }
         return observations.groupBy({ it.first }, { it.second })

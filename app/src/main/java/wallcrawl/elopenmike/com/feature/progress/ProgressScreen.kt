@@ -141,7 +141,7 @@ fun ProgressScreen(
             onSelectScope = viewModel::selectAnalyticsScope,
             onSelectMetric = viewModel::selectAnalyticsMetric,
             onReset = viewModel::resetAnalytics,
-            onRetry = viewModel::refresh
+            onRetry = viewModel::retryAnalytics
         )
     }
 
