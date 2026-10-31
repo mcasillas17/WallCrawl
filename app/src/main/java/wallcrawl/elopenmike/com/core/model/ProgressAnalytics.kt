@@ -87,3 +87,117 @@ data class WorkoutSummary(
     val unit: WeightUnit = WeightUnit.LBS,
     val completedAtTimestamp: Long = System.currentTimeMillis()
 )
+
+/** Monday-start calendar weeks ending with the current, partial week; never a rolling window or a program week. */
+enum class AnalyticsRange(val weeks: Int) {
+    WEEKS_4(4),
+    WEEKS_12(12),
+    WEEKS_26(26),
+    WEEKS_52(52)
+}
+
+/** One canonical selection; exercise IDs and muscle names are never translated labels. */
+sealed interface AnalyticsScope {
+    data object All : AnalyticsScope
+    data class Exercise(val exerciseId: String) : AnalyticsScope
+    data class Muscle(val muscle: String) : AnalyticsScope
+}
+
+enum class AnalyticsMetric {
+    WORKOUTS,
+    COMPLETED_SETS,
+    REPS,
+    EXTERNAL_LOAD_VOLUME,
+    REVIEWED_PRIMARY_DOSE
+}
+
+data class AnalyticsSelection(
+    val range: AnalyticsRange = AnalyticsRange.WEEKS_4,
+    val scope: AnalyticsScope = AnalyticsScope.All,
+    val metric: AnalyticsMetric = AnalyticsMetric.COMPLETED_SETS
+)
+
+/**
+ * Every metric over the range's weekly buckets, computed in one pass so switching the metric
+ * needs no new read. Range and scope decide what is read; the metric only picks a [series].
+ *
+ * [unclassifiableSets] counts in-range completed sets whose exercise the current catalog does
+ * not know, which a muscle scope cannot classify. [unattributedWorkSets] is the ledger's typed
+ * omission total for the scope's sessions (all exercises for a muscle scope).
+ */
+data class ProgressAnalytics(
+    val range: AnalyticsRange,
+    val scope: AnalyticsScope,
+    val series: Map<AnalyticsMetric, AnalyticsSeries>,
+    val fullWeeks: Int,
+    val hasWorkoutsInRange: Boolean,
+    val unclassifiableSets: Int,
+    val unattributedWorkSets: Map<LedgerOmissionReason, Int>,
+    val performance: List<PerformanceSeries>
+)
+
+/** One metric's buckets; the total and match flag are derived from them, so they cannot disagree. */
+data class AnalyticsSeries(val buckets: List<AnalyticsBucket>) {
+    val rangeTotal: Double get() = buckets.sumOf { it.value }
+
+    /** False when no session contributes to this metric anywhere in the range. */
+    val hasScopeMatches: Boolean get() = buckets.any { it.contributors.isNotEmpty() }
+}
+
+/** One calendar [TrainingWeek]; [partial] marks the unfinished current week, which is never compared. */
+data class AnalyticsBucket(
+    val week: TrainingWeek,
+    val partial: Boolean,
+    val value: Double,
+    val contributors: List<AnalyticsContributor>
+)
+
+/** One completed session's share of a bucket, in the selected metric. */
+data class AnalyticsContributor(
+    val sessionId: String,
+    val name: String,
+    val completedAtTimestamp: Long,
+    val value: Double
+)
+
+/** A persisted measurement shape; only [charted] shapes have a comparable single value. */
+enum class PerformanceShape(val charted: Boolean) {
+    WEIGHTED_REPS(true),
+    BODYWEIGHT_REPS(true),
+    ASSISTED_REPS(false),
+    HOLD_DURATION(true),
+    DISTANCE_ONLY(true),
+    TIME_ONLY(true),
+    DISTANCE_AND_TIME(false)
+}
+
+data class PerformanceSeries(
+    val shape: PerformanceShape,
+    val observations: List<PerformanceObservation>,
+    /** Null with fewer than two sessions or for a shape that is listed but not compared. */
+    val comparison: PerformanceComparison?
+)
+
+/**
+ * One session's best comparable set for one shape. [value] is load in the preferred unit,
+ * reps, seconds or metres; [reps] accompanies a weighted or assisted value and
+ * [secondaryValue] is assistance (preferred unit) or the seconds of a distance-and-time set.
+ */
+data class PerformanceObservation(
+    val sessionId: String,
+    val sessionName: String,
+    val completedAtTimestamp: Long,
+    val exerciseInstanceIds: List<String>,
+    val value: Double,
+    val reps: Int? = null,
+    val secondaryValue: Double? = null
+)
+
+/**
+ * The earliest and latest observation in the range. The card shows their change from the values
+ * as displayed, in the shape's own unit; there is no percentage and no stored difference.
+ */
+data class PerformanceComparison(
+    val earliest: PerformanceObservation,
+    val latest: PerformanceObservation
+)

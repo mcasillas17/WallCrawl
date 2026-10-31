@@ -1022,4 +1022,93 @@
     <string name="program_session_choice">Program session</string>
     <string name="program_start_session">Start program session</string>
     <string name="local_data_rejected_program">Export or restore needs an app version that supports all recorded program policies. Your local data is preserved; nothing was omitted.</string>
+
+    <!-- Progress: over-time analytics (Package 14). Filters affect only this card. -->
+    <string name="analytics_heading">Over time</string>
+    <string name="analytics_scope_note">These filters change only this card. Weeks run Monday to Sunday, in %1$s.</string>
+    <string name="analytics_range_label">Range</string>
+    <plurals name="analytics_range_weeks">
+        <item quantity="one">Last %1$s week</item>
+        <item quantity="other">Last %1$s weeks</item>
+    </plurals>
+    <string name="analytics_scope_label">Show</string>
+    <string name="analytics_scope_all">All exercises</string>
+    <string name="analytics_scope_exercise">One exercise</string>
+    <string name="analytics_scope_muscle">One muscle</string>
+    <string name="analytics_choose_exercise">Exercise: %1$s</string>
+    <string name="analytics_choose_muscle">Muscle: %1$s</string>
+    <string name="analytics_no_exercise_options">No exercises have been recorded yet.</string>
+    <string name="analytics_metric_label">Measure</string>
+    <string name="analytics_metric_workouts">Workouts</string>
+    <string name="analytics_metric_sets">Completed sets</string>
+    <string name="analytics_metric_reps">Reps</string>
+    <string name="analytics_metric_volume">Load volume</string>
+    <string name="analytics_metric_dose">Reviewed dose</string>
+    <string name="analytics_reset">Reset filters</string>
+    <string name="analytics_loading">Loading this range from your workout history</string>
+    <string name="analytics_error">This range could not be loaded from your workout data. Nothing is shown rather than a zero.</string>
+    <string name="analytics_too_large">This range holds more recorded workouts or sets than this version can chart, so it is not shown rather than cut short.</string>
+    <string name="analytics_empty_range">No completed workouts in this range.</string>
+    <string name="analytics_no_matches">No completed sets match this filter in this range.</string>
+    <string name="analytics_def_workouts">Each completed workout counts once. With a filter, only workouts with at least one completed matching set count.</string>
+    <string name="analytics_def_volume_units">Loads logged in another unit are converted to %1$s before adding.</string>
+    <string name="analytics_muscle_basis">The muscle filter uses today\'s catalog primary muscles, which overlap. Past workouts did not record a muscle classification.</string>
+    <plurals name="analytics_unclassifiable">
+        <item quantity="one">%1$s completed set is from an exercise not in the current catalog, so it cannot be assigned a muscle.</item>
+        <item quantity="other">%1$s completed sets are from exercises not in the current catalog, so they cannot be assigned a muscle.</item>
+    </plurals>
+    <plurals name="analytics_unattributed">
+        <item quantity="one">%1$s work set in this range has no accepted reviewed muscle data. It still counts in logged activity.</item>
+        <item quantity="other">%1$s work sets in this range have no accepted reviewed muscle data. They still count in logged activity.</item>
+    </plurals>
+    <string name="analytics_total">%1$s in this range, including this week so far</string>
+    <plurals name="analytics_full_weeks">
+        <item quantity="one">%1$s full week plus this week so far. Weeks are not compared with each other.</item>
+        <item quantity="other">%1$s full weeks plus this week so far. Weeks are not compared with each other.</item>
+    </plurals>
+    <string name="analytics_week_row">%1$s to %2$s: %3$s</string>
+    <string name="analytics_week_row_partial">%1$s to %2$s: %3$s (this week so far)</string>
+    <string name="analytics_chart_description">Bar chart of %1$s per week from %2$s to %3$s. Highest week: %4$s. The last bar is this week so far. The list below has every value.</string>
+    <string name="analytics_select_week">Show the workouts behind this week</string>
+    <string name="analytics_week_contributors">Workouts behind this week</string>
+    <string name="analytics_contributor_row">%1$s, %2$s: %3$s</string>
+    <string name="analytics_performance_heading">Exercise performance</string>
+    <string name="analytics_performance_note">Each point is one workout\'s best comparable work set: completed, not a warm-up and not stopped. Repeated entries in one workout count once.</string>
+    <string name="analytics_performance_empty">No comparable work sets for this exercise in this range.</string>
+    <string name="analytics_shape_weighted">Heaviest work-set load</string>
+    <string name="analytics_shape_bodyweight">Most reps in one work set</string>
+    <string name="analytics_shape_assisted">Assisted reps (listed, not compared)</string>
+    <string name="analytics_shape_hold">Longest hold</string>
+    <string name="analytics_shape_distance">Longest distance</string>
+    <string name="analytics_shape_time">Longest time</string>
+    <string name="analytics_shape_distance_time">Distance with time (listed, not compared)</string>
+    <string name="analytics_shape_assisted_note">Reps at different assistance are not comparable, and less assistance is not assumed to be better.</string>
+    <string name="analytics_shape_distance_time_note">Distance and time are shown together. No pace is calculated.</string>
+    <string name="analytics_insufficient">Only one comparable workout in this range, so there is no change to show.</string>
+    <string name="analytics_comparison">From %1$s on %2$s to %3$s on %4$s: %5$s. This is a recorded difference, not a percentage or a strength estimate.</string>
+    <string name="analytics_value_assisted">%1$s with %2$s %3$s assistance</string>
+    <string name="analytics_value_distance_time">%1$s in %2$s</string>
+    <string name="analytics_decisions_heading">Recorded progression decisions</string>
+    <string name="analytics_decisions_note">Each decision is what a workout recorded when it was started. Open that workout to see the earlier workouts it cited.</string>
+    <string name="analytics_decisions_empty">No progression decisions were recorded for this exercise in this range.</string>
+    <plurals name="analytics_decision_sources">
+        <item quantity="one">Cites %1$s earlier workout.</item>
+        <item quantity="other">Cites %1$s earlier workouts.</item>
+    </plurals>
+    <string name="analytics_decision_no_sources">No earlier workout was cited.</string>
+    <string name="analytics_muscle_dose_basis">Reviewed dose credits each work set to its one accepted direct primary muscle in today\'s reviewed data. Past workouts did not record it.</string>
+    <string name="analytics_observation_chart_description">Bar chart of %1$s for each workout from %2$s to %3$s. Highest: %4$s. The list below has every value.</string>
+    <string name="analytics_week_empty">Nothing recorded for this selection in this week.</string>
+    <plurals name="analytics_show_more">
+        <item quantity="one">Show more (%1$s not shown yet)</item>
+        <item quantity="other">Show more (%1$s not shown yet)</item>
+    </plurals>
+    <string name="analytics_no_matches_reps">No completed sets with reps match this filter in this range. Timed and distance work have no reps.</string>
+    <string name="analytics_no_matches_volume">No completed weighted sets with a recorded load match this filter in this range. Body weight, assistance, time, distance and missing loads are not load volume.</string>
+    <string name="analytics_no_matches_dose">No work sets are credited to this selection under reviewed dose in this range.</string>
+    <string name="analytics_observation_chart_omitted">There are too many workouts to draw readable bars. The list below has every value.</string>
+    <string name="analytics_no_matches_workouts">No completed workouts match this filter in this range.</string>
+    <string name="analytics_week_value_none">nothing recorded</string>
+    <string name="analytics_exercise_options_too_many">There are too many recorded exercises to list here.</string>
+    <string name="analytics_decision_row">%1$s, %2$s</string>
 </resources>

@@ -1,6 +1,6 @@
 # WallCrawl Roadmap
 
-> **Status date:** 2026-10-26
+> **Status date:** 2026-10-31
 >
 > **Evidence baseline:** `002cfde` (enable AI-reviewed production planning, #78). Package 1
 > status additionally
@@ -39,6 +39,9 @@
 > Package 15 was built on `f7dec8b` (#90) and merged with Package 12 (#93); its editor, unit and recovery
 > contracts are in the focused
 > [design](docs/superpowers/specs/2026-10-26-template-prescription-editor-design.md).
+> Package 14 was built on `ead925f` (#82) and rebased onto `d790077` (#97); its metric, read and
+> drill-down contracts are in the focused
+> [design](docs/superpowers/specs/2026-10-31-progress-analytics-design.md).
 >
 > This is the single source of truth for current project status, priority, dependency
 > order, and implementation scope. Status must be derived from repository evidence rather
@@ -59,7 +62,7 @@ model downloads, model-driven features, a network connection, or a companion dev
 | Onboarding and profile | Shipped as an eight-step flow with seven movement-capability questions, plus export, restore, and delete-all controls | Restore requires a fresh start, so it cannot merge into an installation that already holds data |
 | Templates and logging | Shipped with frozen template snapshots, type-aware outcomes, RPE/RIR, typed stops, a local rest timer, complete type-aware template editing, unit-safe template loads, and draft recovery across configuration change and background process death | Drafts do not survive force-stop, task removal, reboot or uninstall, by design; legacy unitless loads need a one-time unit confirmation |
 | Localization | English and neutral Latin American Spanish shipped across the whole interface, the 302-exercise catalog, generated workout text, and accessibility labels, selectable from onboarding and Profile through Android's per-app language mechanism | Only two languages; historical session text stays in the language it was written in, by design |
-| Progress and history | Calendar-week activity, separately labelled reviewed primary dose, records/trends, one completion-summary flow, paged completed history and read-only snapshot detail implemented | Substitution-specific detail awaits Package 10; deeper charts/filters remain Package 14; no genuinely human-`APPROVED` metadata exists |
+| Progress and history | Calendar-week activity, separately labelled reviewed primary dose, records/trends, one completion-summary flow, paged completed history, read-only snapshot detail, and a filterable 4–52-week Over time card whose week rows list the workouts behind each week and whose observations open their workout; range-wide omission counts are not linked | Substitution-specific detail awaits Package 10; no genuinely human-`APPROVED` metadata exists |
 | Deterministic coach | Reviewed eligibility/ranking, weekly ledger, state guidance and whole-program validation; Packages 9 and 12 add single-axis progression, persistent user-controlled deload and optional completion-driven programs in the production composition | Genuine human `APPROVED` review remains independent; substitutions remain future work |
 | Planner evaluation | Versioned persona corpus (`planner-fixtures/manifest.txt` is the authoritative roster), with the reviewed-enabled personas' weeks replayed through the real ledger and every successful persona's proposal validated as a complete program, importer unit tests, real pinned-upstream regeneration check, JVM tests, and Android CI shipped | None for this package; reviewed-planner enablement (package 7) is done, and human-approval rollout (package 3) is the remaining gate |
 | Health Connect and Wear OS | Not started; only `:app` exists | Shared modules, privacy controls, validation, substitutions, protocol, and device evidence |
@@ -189,10 +192,9 @@ These decisions must be recorded before the related implementation package close
 | Integrations | 21 -> 22 + 23; 2 + 4 + 10 + 21 + 23 -> 24; 23 + 24 -> 25; 24 + 25 -> 26 -> 27 | Health export and the protocol spike may proceed independently after shared-module extraction |
 | Optional sync | 2 -> 28 | Package 28 is a design package first, not implementation authorization |
 
-Available work includes package 14's deeper analytics; its existing engineering
-prerequisites are satisfied. Package 3's human-paced content review
+Package 14's deeper analytics is implemented. Package 3's human-paced content review
 and the audits in packages 19-20 can proceed alongside engineering. Packages 5,
-9, 12, 15, and the existing-history scope of 13 are complete. Package 7 already reads the
+9, 12, 14, 15, and the existing-history scope of 13 are complete. Package 7 already reads the
 bundled `AI_ACCEPTED` cohort; do not represent that owner-authorized acceptance
 as package 3's genuine human review.
 
@@ -454,7 +456,7 @@ acceptance and package 7), and this package's own accounting logic did not need 
 [architecture](docs/architecture.md#feedback-loop-and-progress), and
 [Progress screenshots](README.md#progress-activity-and-reviewed-dose).
 
-History drill-down and deeper analytics remain Packages 13 and 14. Schema, archives,
+History drill-down and deeper analytics were delivered later by Packages 13 and 14. Schema, archives,
 recommendation snapshots, validation policies and planner behavior are unchanged.
 
 ### 6. Complete the deterministic corpus and CI release gate
@@ -846,24 +848,34 @@ opened as an honest immutable historical record.
 
 ### 14. Deepen progress analytics
 
-**Status:** Overview metrics, records, muscle counts, trends, and recent history shipped.
+**Status:** Implemented. Design choices were agent-selected under autonomous execution,
+not human-approved; see the [design](docs/superpowers/specs/2026-10-31-progress-analytics-design.md).
 
 **Depends on:** Package 5 for weekly semantics and package 13 for drill-down.
 
-**Implementation tasks:**
+**Implemented:**
 
-1. Add time-range and exercise/muscle filters with explicit unit conversion.
-2. Add charts only for metrics with enough observations and a defined calculation contract.
-3. Explain omissions for duration, distance, bodyweight, mixed-unit, and unreviewed work.
-4. Link chart points and progression decisions to immutable history detail.
-5. Add boundary, sparse-data, unit, and accessibility tests.
+1. An **Over time** card after the weekly cards: 4/12/26/52 `TrainingWeek` ranges ending with
+   the labelled partial week, scoped to all exercises, one exercise ID or one trainable muscle.
+   Filters change only that card and persist as four bounded saved-state strings.
+2. Five documented measures (workouts, completed sets, reps, load volume converted before
+   summing, `PRIMARY_ONLY_V1` reviewed dose without the cache), each counting only work it
+   applies to. Exercise performance per measurement shape uses history's comparison
+   eligibility, and needs two sessions for a signed difference with no percentage.
+3. Omissions are explained: not-applicable measures, unclassifiable exercise IDs, unaccepted
+   metadata, muscle classification from today's catalog, assisted and distance-with-time work
+   listed but not compared.
+4. Every week row lists its contributing workouts and every observation opens its workout.
+   Recorded progression and deload decisions open the session that recorded them, decoded
+   with the existing codecs.
+5. Coherent bounded reads (2,000 sessions, 200,000 exercise rows, 100,000 sets, and the
+   weekly ledger's per-week bounds; overflow reported as too large, never truncated) with no writes. Pure calculator, ViewModel, real Room, Compose
+   and app-navigation tests cover boundaries, DST and zones, units, sparse data, stale reads,
+   saved state, accessibility, and Spanish at 1.8× in 320 dp in both themes.
 
-**Likely surfaces:** progress calculator/models, Progress ViewModel/UI, reusable chart
-components, history navigation, and calculation docs.
-
-**Done when:** every chart has a documented formula, sparse history never manufactures a
-trend, mixed units are converted rather than relabeled, and displayed numbers trace to
-completed sessions.
+**Completion boundary:** no Room or archive change and no new dependency. Planner, programs,
+progression and history behavior are unchanged. Physical-device, manual TalkBack and
+process-death verification were not performed for this package.
 
 ### 15. Complete template prescription editing and draft recovery
 

@@ -7,6 +7,7 @@ import androidx.room.Transaction
 import wallcrawl.elopenmike.com.core.backup.LocalDataArchiveLimits
 import wallcrawl.elopenmike.com.core.database.relation.WorkoutSessionWithExercisesAndSets
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutExerciseEntity
+import wallcrawl.elopenmike.com.core.database.entity.WorkoutRecommendationRecordEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSetEntity
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.WeightUnit
@@ -76,6 +77,12 @@ private const val ELIGIBLE_PREVIOUS_EXERCISE = """
     )
 """
 
+// Progress analytics ranges use the weekly accounting membership: completion in [start, end).
+private const val ANALYTICS_RANGE_SESSION = """
+    s.status = 'COMPLETED' AND s.completedAtTimestamp IS NOT NULL
+    AND s.completedAtTimestamp >= :startEpochMillis AND s.completedAtTimestamp < :endEpochMillisExclusive
+"""
+
 /** Bounded read projections; no cache, catalog, profile, or policy is involved. */
 @Dao
 interface WorkoutHistoryDao {
@@ -103,7 +110,9 @@ interface WorkoutHistoryDao {
                 OR EXISTS (SELECT 1 FROM workout_exercises e WHERE e.sessionId = s.id
                     AND (e.exerciseType NOT IN ('WEIGHT_REPS', 'BODYWEIGHT_REPS', 'ASSISTED_BODYWEIGHT',
                         'DURATION', 'DISTANCE_DURATION')
-                        OR (e.targetRepMin IS NULL) != (e.targetRepMax IS NULL)))
+                        OR (e.targetRepMin IS NULL) != (e.targetRepMax IS NULL)
+                        OR (e.exerciseType = 'DISTANCE_DURATION'
+                            AND e.targetDurationSeconds IS NULL AND e.targetDistanceMeters IS NULL)))
                 OR EXISTS (SELECT 1 FROM workout_sets w JOIN workout_exercises e ON e.id = w.workoutExerciseId
                     WHERE e.sessionId = s.id AND (
                         w.exerciseType NOT IN ('WEIGHT_REPS', 'BODYWEIGHT_REPS', 'ASSISTED_BODYWEIGHT',
@@ -253,7 +262,73 @@ interface WorkoutHistoryDao {
         WHERE e.id IN (:exerciseIds) AND ($ELIGIBLE_PREVIOUS_SET)
     """)
     suspend fun selectEligibleHistoricalSets(exerciseIds: List<String>): List<WorkoutSetEntity>
+
+    /**
+     * Cardinality and strict type/unit validity of an analytics range, checked before any graph is
+     * loaded. Room's lenient converters would otherwise relabel an unknown stored type.
+     */
+    @Query("""
+        SELECT
+            (SELECT COUNT(*) FROM workout_sessions s WHERE $ANALYTICS_RANGE_SESSION) AS sessionCount,
+            (SELECT COUNT(*) FROM workout_exercises e JOIN workout_sessions s ON s.id = e.sessionId
+                WHERE $ANALYTICS_RANGE_SESSION) AS exerciseCount,
+            (SELECT COUNT(*) FROM workout_sets w JOIN workout_exercises e ON e.id = w.workoutExerciseId
+                JOIN workout_sessions s ON s.id = e.sessionId WHERE $ANALYTICS_RANGE_SESSION) AS setCount,
+            EXISTS (SELECT 1 FROM workout_sessions s
+                LEFT JOIN workout_exercises e ON e.sessionId = s.id
+                LEFT JOIN workout_sets w ON w.workoutExerciseId = e.id
+                WHERE ($ANALYTICS_RANGE_SESSION) AND (
+                    s.weightUnit NOT IN ('LBS', 'KG')
+                    OR (e.id IS NOT NULL AND (e.exerciseType NOT IN ('WEIGHT_REPS', 'BODYWEIGHT_REPS',
+                        'ASSISTED_BODYWEIGHT', 'DURATION', 'DISTANCE_DURATION')
+                        OR (e.targetRepMin IS NULL) != (e.targetRepMax IS NULL)
+                        OR (e.exerciseType = 'DISTANCE_DURATION'
+                            AND e.targetDurationSeconds IS NULL AND e.targetDistanceMeters IS NULL)))
+                    OR (w.id IS NOT NULL AND (w.exerciseType NOT IN ('WEIGHT_REPS', 'BODYWEIGHT_REPS',
+                        'ASSISTED_BODYWEIGHT', 'DURATION', 'DISTANCE_DURATION')
+                        OR w.type NOT IN ('WARMUP', 'NORMAL', 'DROPSET', 'MYOREP', 'FAILURE'))))) AS invalidMetadata
+    """)
+    suspend fun selectAnalyticsRangeSize(startEpochMillis: Long, endEpochMillisExclusive: Long): AnalyticsRangeSize
+
+    /** The same comparison eligibility as history detail, for one exercise's sets in the range. */
+    @Query("""
+        SELECT w.id FROM workout_sets w
+        JOIN workout_exercises e ON e.id = w.workoutExerciseId
+        JOIN workout_sessions s ON s.id = e.sessionId
+        WHERE ($ANALYTICS_RANGE_SESSION) AND e.exerciseId = :exerciseId AND ($ELIGIBLE_PREVIOUS_SET)
+    """)
+    suspend fun selectAnalyticsComparableSetIds(
+        startEpochMillis: Long, endEpochMillisExclusive: Long, exerciseId: String
+    ): List<String>
+
+    /** Recorded provenance of range sessions that contain the exercise; no other session is read. */
+    @Query("""
+        SELECT r.* FROM workout_recommendation_records r
+        JOIN workout_sessions s ON s.id = r.sessionId
+        WHERE ($ANALYTICS_RANGE_SESSION)
+          AND EXISTS (SELECT 1 FROM workout_exercises e WHERE e.sessionId = s.id AND e.exerciseId = :exerciseId)
+        ORDER BY s.completedAtTimestamp ASC, s.id ASC
+    """)
+    suspend fun selectAnalyticsRecommendationRecords(
+        startEpochMillis: Long, endEpochMillisExclusive: Long, exerciseId: String
+    ): List<WorkoutRecommendationRecordEntity>
+
+    /** Distinct recorded exercise IDs for the filter, probing one past [limit]. */
+    @Query("""
+        SELECT DISTINCT e.exerciseId FROM workout_exercises e
+        JOIN workout_sessions s ON s.id = e.sessionId
+        WHERE s.status = 'COMPLETED' AND s.completedAtTimestamp IS NOT NULL
+        ORDER BY e.exerciseId ASC LIMIT :limit
+    """)
+    suspend fun selectAnalyticsExerciseIds(limit: Int): List<String>
 }
+
+data class AnalyticsRangeSize(
+    val sessionCount: Long,
+    val exerciseCount: Long,
+    val setCount: Long,
+    val invalidMetadata: Boolean
+)
 
 data class HistoricalExerciseRow(
     @Embedded val exercise: WorkoutExerciseEntity,

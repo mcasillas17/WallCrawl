@@ -61,7 +61,7 @@ WallCrawl supports **Dark Theme** (stealth suit graphite aesthetic), **Light The
 - **Exercise Library**: Searchable catalog of 302 exercises across all muscle groups and equipment types.
 - **Active Workout Session**: Type-aware logging for load/reps, bodyweight reps, assisted reps, duration, and distance/duration, with one-tap set completion, plus/minus and text entry for every value, a local rest countdown, optional RPE/RIR, animated SVG movement previews, and previous performance comparisons.
 - **Workout Summary**: The existing Finish flow shows recorded duration, external-load volume, completed sets, and records against genuinely earlier performance. View workout details opens the read-only record; Done returns to Progress.
-- **Progress Tracking & History**: Calendar-week activity and separately labelled reviewed dose, weekly streaks, and strength trends. Tap a completed-workout card to reopen its frozen targets, performed sets, feedback and recorded decision reasons. View all workouts browses older sessions in fixed 20-workout pages.
+- **Progress Tracking & History**: Calendar-week activity and separately labelled reviewed dose, weekly streaks, and strength trends, plus an Over time card that charts 4–52 calendar weeks for all exercises, one exercise or one muscle, whose week rows list the workouts behind each week and whose data points open their workout. Tap a completed-workout card to reopen its frozen targets, performed sets, feedback and recorded decision reasons. View all workouts browses older sessions in fixed 20-workout pages.
 - **Training Profile & App Preferences**: Full local customization of app language (System default / English / Español) and theme preference (Auto System / Dark Mode / Light Mode) with compact switchers, multi-select fitness goals, preferred weight units (LBS/KG), session duration targets, available gym equipment, return-after-break calibration, muscle priorities, and seven movement preferences.
 - **Your Data**: Export everything stored on the device to one versioned, checksummed file you choose the destination for; restore it onto a fresh start; or delete every local record behind an explicit destructive confirmation. Restore is also offered on the first onboarding step — a quiet button under Continue opens the whole flow in a sheet — so a reinstall does not have to build a throwaway profile first.
 - **Language**: English and neutral Latin American Spanish across the whole app, following the device by default, switchable from a chip in the onboarding wizard's header before any details are entered and from Training Profile → App preferences, and stored as a device setting rather than as part of the profile or the export archive.
@@ -140,6 +140,36 @@ convention measures physiological stimulus or diagnoses readiness. See the
 </p>
 <p align="center">
   <em>Disposable example logs from exercises outside the accepted cohort; production metadata (182 `AI_ACCEPTED`, 0 `APPROVED`) is unchanged by these captures.</em>
+</p>
+
+### See progress over time
+
+Below the weekly cards, **Over time** charts the last 4, 12, 26 or 52 calendar weeks
+(Monday to Sunday in your time zone) for all exercises, one exercise or one muscle. Its
+filters change only that card. Measures are workouts, completed sets, reps, load volume
+(load × reps, converted to your unit before adding) and reviewed dose. Each one counts only
+work it applies to, so a plank never becomes "0 reps". This week's bar is hatched and
+labelled "so far", and weeks are never compared with each other as if a partial week were
+complete.
+
+Every bar has a row that reads its value aloud; opening a week lists the workouts behind it,
+and each opens its own history. For one exercise, **Exercise performance** shows each
+workout's best comparable work set per measurement shape and, with at least two workouts,
+the recorded difference between the earliest and latest. It shows no percentage, trend
+line or strength estimate. Assisted reps and distance-with-time work are listed but not
+compared. Progression decisions recorded by those workouts open the workout that recorded
+them. Muscle filters use today's catalog classification, which the card states. Nothing is
+written, uploaded or re-planned. See the [design](docs/superpowers/specs/2026-10-31-progress-analytics-design.md)
+for every formula and limit.
+
+<p align="center">
+  <img src="art/screenshots/progress-analytics-en.png" width="24%" alt="English Over time card in light mode: range, scope and measure chips, a total including this week so far, and four weekly bars with the current week hatched" />
+  <img src="art/screenshots/progress-analytics-week-en.png" width="24%" alt="The current week's row expanded to list the workout behind it, which opens that workout's history" />
+  <img src="art/screenshots/progress-analytics-performance-es.png" width="24%" alt="Spanish dark mode: weekly rows for one exercise and exercise performance comparing 8 reps with 12 reps as a recorded +4 reps, not a percentage" />
+</p>
+<p align="center">
+  <em>Captured on the API 36 emulator from disposable Room history seeded by
+  <code>WorkoutHistoryNavigationTest</code>.</em>
 </p>
 
 ### Reopen a recorded workout
@@ -849,10 +879,17 @@ historical boundaries and more than 500 later/unrelated sessions. History ViewMo
 presentation and Compose tests cover retry/missing/status states, stored reasons and
 narrow large-text layouts. `WorkoutHistoryNavigationTest` drives the real graph and
 Room-backed repositories, including saved-state recreation, deletion/restore, encoded
-IDs, older pages and the existing completion Done flow. Its explicit
-`captureHistoryScreenshots=true` argument captures the images above;
-`seedHistoryDemo=true` additionally restores disposable logs into a **fresh, dedicated
-test installation only** for installed-app lifecycle checks.
+IDs, older pages and the existing completion Done flow, and the Over time drill-down.
+Its explicit `captureHistoryScreenshots=true` argument captures the history images above
+and `progress-analytics-en`, `-week-en` and `-performance-es` into the app's
+`history-screenshots` external files directory. Gradle's connected task uninstalls the app
+afterwards, so capture with `installDebug installDebugAndroidTest` and `adb shell am instrument`.
+Its `seedHistoryDemo=true` argument additionally restores disposable logs into a **fresh,
+dedicated test installation only** for installed-app lifecycle checks.
+`ProgressAnalyticsCalculatorTest`, `ProgressAnalyticsViewModelTest`,
+`ProgressAnalyticsRepositoryTest` and `ProgressAnalyticsCardTest` cover the Over time
+formulas, saved state and stale reads, real Room bounds and no-write reads, and accessible
+UI states.
 
 `MultiWeekProgramPolicyTest`, `MultiWeekProgramPlanningTest` and
 `MultiWeekProgramProductionReplayTest` cover lifecycle, freshness, actual bundled-catalog

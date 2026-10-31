@@ -6,6 +6,7 @@ import java.time.ZoneId
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.launch
@@ -16,8 +17,11 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
 import wallcrawl.elopenmike.com.R
+import wallcrawl.elopenmike.com.core.database.repository.ProgressAnalyticsSnapshot
 import wallcrawl.elopenmike.com.core.database.repository.ProgressRepository
 import wallcrawl.elopenmike.com.core.database.repository.ProgressSnapshot
+import wallcrawl.elopenmike.com.core.model.AnalyticsRange
+import wallcrawl.elopenmike.com.core.model.AnalyticsScope
 import wallcrawl.elopenmike.com.core.model.LedgerPolicyVersion
 import wallcrawl.elopenmike.com.core.model.ProgressOverview
 import wallcrawl.elopenmike.com.core.model.TrainingWeek
@@ -129,6 +133,9 @@ class ProgressViewModelTest {
             check(!failure) { "query or catalog failure" }
             emitAll(snapshot)
         }
+        override fun observeAnalytics(
+            range: AnalyticsRange, scope: AnalyticsScope, now: () -> Instant, zoneId: ZoneId
+        ): Flow<ProgressAnalyticsSnapshot?> = emptyFlow()
     }
 
     companion object {

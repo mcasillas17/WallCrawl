@@ -185,6 +185,8 @@ class StringResourceParityTest {
          * that are pure layout.
          */
         val IDENTICAL_BY_DESIGN = setOf(
+            "analytics_contributor_row",
+            "analytics_decision_row",
             "value_not_available",
             "answer_no",
             "priority_normal",

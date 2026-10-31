@@ -4,9 +4,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import wallcrawl.elopenmike.com.R
+import wallcrawl.elopenmike.com.core.model.DeloadSource
 import wallcrawl.elopenmike.com.core.model.ExercisePrescription
 import wallcrawl.elopenmike.com.core.model.ProgressionAxis
 import wallcrawl.elopenmike.com.core.model.ProgressionDecision
+import wallcrawl.elopenmike.com.core.model.ProgressionProvenance
 import wallcrawl.elopenmike.com.core.model.ProgressionReason
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.convertWeight
@@ -45,6 +47,19 @@ fun progressionHoldReasonRes(reason: ProgressionReason): Int? = when (reason) {
     ProgressionReason.HOLD_ACCEPTED_DELOAD -> R.string.progression_hold_deload
     ProgressionReason.HOLD_VALIDATION_REPAIR -> R.string.progression_hold_repair
     ProgressionReason.ADVANCED -> null
+}
+
+/** A recorded decision's reason as history states it; never a re-evaluated decision. */
+@Composable
+fun recordedProgressionText(provenance: ProgressionProvenance): String =
+    progressionHoldReasonRes(provenance.reason)?.let { stringResource(it) }
+        ?: stringResource(R.string.history_advanced, stringResource(progressionAxisRes(requireNotNull(provenance.axis))))
+
+/** A recorded one-workout deload choice; null source means none was accepted. */
+fun recordedDeloadRes(source: DeloadSource?): Int = when (source) {
+    DeloadSource.EXPLICIT_REQUEST -> R.string.history_deload_requested
+    DeloadSource.RETURNING -> R.string.history_deload_returning
+    null -> R.string.history_deload_not_accepted
 }
 
 fun progressionAxisRes(axis: ProgressionAxis): Int = when (axis) {

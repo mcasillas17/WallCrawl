@@ -120,6 +120,15 @@ class ExerciseVocabularyTest {
     }
 
     @Test
+    fun recordedExerciseIdsAreOrderedByCollatedLabelNotCodePoint() {
+        // Code-point order would put "Zebra" before "apple"; collation reads alphabetically.
+        val ordered = ExerciseVocabulary(localization, "en").exerciseIdsByLabel(
+            listOf("z-id", "a-id", "b-id"), mapOf("z-id" to "Zebra", "a-id" to "apple", "b-id" to "Banana")
+        )
+        assertThat(ordered).containsExactly("a-id", "b-id", "z-id").inOrder()
+    }
+
+    @Test
     fun englishKeepsItsOwnOrderingAndItsOwnWords() {
         val vocabulary = ExerciseVocabulary(localization, "en")
 

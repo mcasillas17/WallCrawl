@@ -34,8 +34,8 @@ import wallcrawl.elopenmike.com.core.model.*
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
 import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.localization.labelRes
-import wallcrawl.elopenmike.com.core.ui.localization.progressionAxisRes
-import wallcrawl.elopenmike.com.core.ui.localization.progressionHoldReasonRes
+import wallcrawl.elopenmike.com.core.ui.localization.recordedDeloadRes
+import wallcrawl.elopenmike.com.core.ui.localization.recordedProgressionText
 import wallcrawl.elopenmike.com.core.ui.localization.workoutRankingNotice
 
 @Composable
@@ -318,17 +318,10 @@ private fun LazyListScope.recordedReasons(reasons: HistoryReasons?) {
     reasons.progression.forEach { reason ->
         item {
             HistoryText(reason.exerciseId, style = MaterialTheme.typography.titleSmall)
-            HistoryText(progressionHoldReasonRes(reason.reason)?.let { stringResource(it) }
-                ?: stringResource(R.string.history_advanced, stringResource(progressionAxisRes(requireNotNull(reason.axis)))))
+            HistoryText(recordedProgressionText(reason))
         }
     }
-    reasons.deload?.let {
-        message(when (it.source) {
-            DeloadSource.EXPLICIT_REQUEST -> R.string.history_deload_requested
-            DeloadSource.RETURNING -> R.string.history_deload_returning
-            null -> R.string.history_deload_not_accepted
-        })
-    }
+    reasons.deload?.let { message(recordedDeloadRes(it.source)) }
     reasons.ranking.forEach { reason ->
         item { workoutRankingNotice(listOf(reason))?.let { HistoryText(it) } }
     }

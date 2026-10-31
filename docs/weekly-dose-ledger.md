@@ -269,6 +269,37 @@ Both paths share the same SQL eligibility rules and batch-read only the selected
 exercise instances, eligible sets and source headers. Unrelated source graphs
 cannot exhaust a comparison's set bound or hide an otherwise valid workout.
 
+## Progress over time
+
+Package 14's **Over time** card answers "am I progressing, and which workouts explain it?"
+over 4, 12, 26 or 52 `TrainingWeek` buckets ending with the current, partial week. Weekly
+membership is the same as above, including a clock-skewed completion inside the current
+week; nothing after the current week's end is read. Filters are canonical exercise IDs or
+trainable muscle names and change only that card.
+
+| Measure | Per week | Scope rule |
+| --- | --- | --- |
+| Workouts | Distinct completed sessions | All: every session, including zero-set Finishes. Exercise/muscle: sessions with a completed in-scope set |
+| Completed sets | Completed in-scope sets, warm-ups and timed work included | — |
+| Reps | Positive logged reps of completed rep-based sets | Only sessions with such a set contribute |
+| Load volume | Load × reps of completed `WEIGHT_REPS` sets, each converted to the preferred unit before summing | Only sessions with such a set and a valid recorded load contribute |
+| Reviewed dose | `WeeklyDoseLedgerCalculator` on the bucket's sessions, without the cache | All: `creditedWorkSets`. Exercise: credit after restricting to that ID. Muscle: `directPrimarySets[muscle]`, which can be a legacy secondary |
+
+Muscle scope for activity measures uses the current catalog's legacy primaries, which overlap,
+exactly as the weekly involvement card does. Sets of unknown exercise IDs are reported as not
+classifiable, not dropped. Classification was never snapshotted, and the card says so.
+Exercise performance reuses history's `ELIGIBLE_PREVIOUS_SET` predicate. It reports one
+observation per session and measurement shape, and compares the earliest and latest of at
+least two sessions as a signed difference in the shape's own unit, never a percentage. The
+complete contract, bounds and states are in the
+[design](superpowers/specs/2026-10-31-progress-analytics-design.md).
+
+The read takes the shared write gate and one Room transaction, like the overview, but never
+writes the ledger cache: reviewed dose is recomputed by the pure calculator. Ranges are bounded
+at 2,000 sessions, 200,000 exercise rows and 100,000 sets, and each week to this ledger's
+1,000 sessions and 50,000 work sets. Overflow is reported, never
+truncated, and selected older weeks cannot be crowded out by recent workouts.
+
 ## Reconstruction and cache invalidation
 
 ```text
@@ -392,6 +423,15 @@ Synthetic approved metadata lives only in tests; the production catalog is uncha
   -Pandroid.testInstrumentationRunnerArguments.class=\
 wallcrawl.elopenmike.com.core.database.ProgressRepositoryTest,\
 wallcrawl.elopenmike.com.feature.progress.ProgressScreenTest
+
+# Over time analytics (Package 14): pure calculator/ViewModel, then Room, card and app navigation.
+./gradlew testDebugUnitTest --tests '*ProgressAnalytics*Test*' --tests '*ExerciseVocabularyTest*' --no-daemon
+./gradlew connectedDebugAndroidTest --no-daemon \
+  -Pandroid.testInstrumentationRunnerArguments.class=wallcrawl.elopenmike.com.core.database.ProgressAnalyticsRepositoryTest
+./gradlew connectedDebugAndroidTest --no-daemon \
+  -Pandroid.testInstrumentationRunnerArguments.class=wallcrawl.elopenmike.com.feature.progress.ProgressAnalyticsCardTest
+./gradlew connectedDebugAndroidTest --no-daemon \
+  -Pandroid.testInstrumentationRunnerArguments.class=wallcrawl.elopenmike.com.app.WorkoutHistoryNavigationTest
 ```
 
 ```bash
