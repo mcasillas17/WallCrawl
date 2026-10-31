@@ -1039,7 +1039,7 @@
     <string name="analytics_reset">Restablecer filtros</string>
     <string name="analytics_loading">Cargando este periodo de tu historial de entrenamientos</string>
     <string name="analytics_error">No se pudo cargar este periodo de tus datos de entrenamiento. No se muestra nada en lugar de un cero.</string>
-    <string name="analytics_too_large">Este periodo tiene más entrenamientos de los que esta versión puede graficar, así que no se recortó nada para que cupiera. Elige un periodo más corto.</string>
+    <string name="analytics_too_large">Este historial tiene más entrenamientos de los que esta versión puede graficar, así que no se recortó nada para que cupiera.</string>
     <string name="analytics_empty_range">No hay entrenamientos completados en este periodo.</string>
     <string name="analytics_no_matches">Ninguna serie completada coincide con este filtro en este periodo.</string>
     <string name="analytics_def_workouts">Cada entrenamiento completado cuenta una vez. Con un filtro, solo cuentan los entrenamientos con al menos una serie completada que coincida.</string>
@@ -1102,6 +1102,5 @@
     <string name="analytics_no_matches_workouts">Ningún entrenamiento completado coincide con este filtro en este periodo.</string>
     <string name="analytics_week_value_none">nada registrado</string>
     <string name="analytics_exercise_options_too_many">Hay demasiados ejercicios registrados para listarlos aquí.</string>
-    <string name="analytics_too_large_shortest">Este historial tiene más entrenamientos de los que esta versión puede graficar, así que no se recortó nada para que cupiera.</string>
     <string name="analytics_decision_row">%1$s, %2$s</string>
 </resources>

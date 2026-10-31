@@ -129,7 +129,11 @@ class ProgressAnalyticsCardTest {
     }
 
     @Test fun aDifferenceThatRoundsToZeroCarriesNoSign() {
-        val series = weightedSeries().let { it.copy(comparison = it.comparison!!.copy(difference = -0.001)) }
+        // 100 kg re-expressed in lb and back can differ by a rounding residue that displays as no change.
+        val earlier = PerformanceObservation("earlier", "Earlier bench", WEEKS[1].startEpochMillis + HOUR, listOf("i1"), 100.0, 5)
+        val later = PerformanceObservation("later", "Later bench", WEEKS[3].startEpochMillis + HOUR, listOf("i2"), 99.999, 5)
+        val series = PerformanceSeries(PerformanceShape.WEIGHTED_REPS, listOf(earlier, later),
+            PerformanceComparison(earlier, later, later.value - earlier.value))
         render(loaded(scope = AnalyticsScope.Exercise("bench"), performance = listOf(series)))
         scrollTo("This is a recorded difference")
         composeRule.onNode(hasText(": 0 lb.", substring = true)).assertExists()
@@ -196,21 +200,9 @@ class ProgressAnalyticsCardTest {
         composeRule.onNode(popup and hasText(english.getString(R.string.analytics_exercise_options_too_many))).assertExists()
     }
 
-    @Test fun tooLargeOffersAShorterRangeOnlyWhenOneExists() {
-        selectionOverride = AnalyticsSelection(range = AnalyticsRange.WEEKS_12)
-        renderOnce(ProgressAnalyticsUiState.TooLarge)
-        scrollTo(english.getString(R.string.analytics_too_large))
-        selectionOverride = AnalyticsSelection(range = AnalyticsRange.WEEKS_4)
-        renderOnce(ProgressAnalyticsUiState.Loading)
-        renderOnce(ProgressAnalyticsUiState.TooLarge)
-        scrollTo(english.getString(R.string.analytics_too_large_shortest))
-        composeRule.onNode(hasText("shorter range", substring = true)).assertDoesNotExist()
-    }
-
     @Test fun theExerciseChooserExplainsTheCardStateInsteadOfLoadingForever() {
         listOf(
-            // The default selection is already the shortest range, so no shorter range is offered.
-            ProgressAnalyticsUiState.TooLarge to R.string.analytics_too_large_shortest,
+            ProgressAnalyticsUiState.TooLarge to R.string.analytics_too_large,
             ProgressAnalyticsUiState.Error to R.string.analytics_error,
             ProgressAnalyticsUiState.NoProfile to R.string.progress_no_profile
         ).forEach { (state, res) ->
@@ -249,6 +241,17 @@ class ProgressAnalyticsCardTest {
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, androidx.compose.ui.semantics.Role.RadioButton))
     }
 
+    @Test fun theShownDifferenceIsTheDifferenceOfTheShownEndpoints() {
+        val earlier = PerformanceObservation("earlier", "Earlier bench", WEEKS[1].startEpochMillis + HOUR, listOf("i1"), 100.004, 5)
+        val later = PerformanceObservation("later", "Later bench", WEEKS[3].startEpochMillis + HOUR, listOf("i2"), 100.996, 5)
+        val series = PerformanceSeries(PerformanceShape.WEIGHTED_REPS, listOf(earlier, later),
+            PerformanceComparison(earlier, later, later.value - earlier.value))
+        render(loaded(scope = AnalyticsScope.Exercise("bench"), performance = listOf(series)))
+        scrollTo("This is a recorded difference")
+        // 100 lb and 101 lb are shown, so the change reads +1 lb, not +0.99 lb.
+        composeRule.onNode(hasText(": +1 lb.", substring = true)).assertExists()
+    }
+
     @Test fun oneObservationSaysThereIsNoChangeToShow() {
         val single = weightedSeries().let { it.copy(observations = it.observations.take(1), comparison = null) }
         render(loaded(scope = AnalyticsScope.Exercise("bench"), performance = listOf(single)))
@@ -269,7 +272,7 @@ class ProgressAnalyticsCardTest {
         listOf(
             ProgressAnalyticsUiState.Loading to R.string.analytics_loading,
             // The default selection is already the shortest range, so no shorter range is offered.
-            ProgressAnalyticsUiState.TooLarge to R.string.analytics_too_large_shortest,
+            ProgressAnalyticsUiState.TooLarge to R.string.analytics_too_large,
             ProgressAnalyticsUiState.Error to R.string.analytics_error,
             loaded(hasWorkouts = false) to R.string.analytics_empty_range,
             loaded(hasMatches = false) to R.string.analytics_no_matches

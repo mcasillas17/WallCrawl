@@ -88,7 +88,7 @@ data class WorkoutSummary(
     val completedAtTimestamp: Long = System.currentTimeMillis()
 )
 
-/** Calendar weeks ending with the current, partial ISO week; never a rolling window. */
+/** Monday-start calendar weeks ending with the current, partial week; never a rolling window or a program week. */
 enum class AnalyticsRange(val weeks: Int) {
     WEEKS_4(4),
     WEEKS_12(12),
@@ -144,7 +144,7 @@ data class AnalyticsSeries(val buckets: List<AnalyticsBucket>) {
     val hasScopeMatches: Boolean get() = buckets.any { it.contributors.isNotEmpty() }
 }
 
-/** One ISO week; [partial] marks the unfinished current week, which is never compared. */
+/** One calendar [TrainingWeek]; [partial] marks the unfinished current week, which is never compared. */
 data class AnalyticsBucket(
     val week: TrainingWeek,
     val partial: Boolean,

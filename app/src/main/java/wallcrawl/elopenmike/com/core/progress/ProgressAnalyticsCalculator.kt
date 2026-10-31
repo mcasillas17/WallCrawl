@@ -240,7 +240,7 @@ class ProgressAnalyticsCalculator(
                     session.exercises.sumOf { exercise -> exercise.sets.count { it.isCreditableWorkSet } }
                 } > WeeklyDoseLedgerCalculator.MAX_WORK_SETS_PER_WEEK
 
-        /** The range's ISO weeks, oldest first; the last contains [now] and is partial. */
+        /** The range's Monday-start calendar [TrainingWeek]s, oldest first; the last contains [now] and is partial. */
         fun rangeWeeks(range: AnalyticsRange, now: Instant, zoneId: ZoneId): List<TrainingWeek> {
             val current = TrainingWeek.containing(now, zoneId)
             return (range.weeks - 1 downTo 0).map {

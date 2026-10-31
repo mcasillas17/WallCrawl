@@ -99,12 +99,9 @@ internal fun ProgressAnalyticsCard(
             modifier = Modifier.semantics { heading() }
         )
         Body(stringResource(R.string.analytics_scope_note, zoneId.id))
-        // The shortest range has no shorter alternative, so its copy offers no remedy.
-        val tooLargeRes = if (selection.range == AnalyticsRange.entries.first()) R.string.analytics_too_large_shortest
-        else R.string.analytics_too_large
         Filters(selection, options?.first, options?.second.orEmpty(), when {
             options != null -> R.string.analytics_exercise_options_too_many
-            state == ProgressAnalyticsUiState.TooLarge -> tooLargeRes
+            state == ProgressAnalyticsUiState.TooLarge -> R.string.analytics_too_large
             state == ProgressAnalyticsUiState.NoProfile -> R.string.progress_no_profile
             state == ProgressAnalyticsUiState.Error -> R.string.analytics_error
             else -> R.string.analytics_loading
@@ -113,7 +110,8 @@ internal fun ProgressAnalyticsCard(
         when (state) {
             ProgressAnalyticsUiState.Loading -> AnalyticsLoading()
             ProgressAnalyticsUiState.NoProfile -> Body(stringResource(R.string.progress_no_profile))
-            ProgressAnalyticsUiState.TooLarge -> Body(stringResource(tooLargeRes))
+            // No remedy is offered: every range ends with the current weeks, where the overflow may lie.
+            ProgressAnalyticsUiState.TooLarge -> Body(stringResource(R.string.analytics_too_large))
             ProgressAnalyticsUiState.Error -> {
                 Text(stringResource(R.string.analytics_error), color = MaterialTheme.colorScheme.error, fontSize = 13.sp)
                 Button(onClick = actions.onRetry) { Text(stringResource(R.string.action_try_again)) }
@@ -332,7 +330,8 @@ private fun PerformanceSection(series: PerformanceSeries, unit: WeightUnit, date
                 Body(stringResource(R.string.analytics_comparison,
                     observationValue(series.shape, comparison.earliest, unit), dates.format(Date(comparison.earliest.completedAtTimestamp)),
                     observationValue(series.shape, comparison.latest, unit), dates.format(Date(comparison.latest.completedAtTimestamp)),
-                    signedDifference(series.shape, comparison.difference, unit)))
+                    signedDifference(series.shape,
+                        displayed(comparison.latest.value) - displayed(comparison.earliest.value), unit)))
             }
             if (series.observations.size > MAX_CHART_BARS) {
                 Body(stringResource(R.string.analytics_observation_chart_omitted))
@@ -573,12 +572,15 @@ private fun observationValue(shape: PerformanceShape, observation: PerformanceOb
     }
 }
 
+/** A value at the precision the card shows it, so a shown difference reconciles with shown endpoints. */
+private fun displayed(value: Double): Double =
+    java.math.BigDecimal(value).setScale(MeasurementPrecision.EDITABLE_FRACTION_DIGITS, java.math.RoundingMode.HALF_UP).toDouble()
+
 /** The recorded difference in the shape's own unit, with an explicit sign and no percentage. */
 @Composable
 private fun signedDifference(shape: PerformanceShape, difference: Double, unit: WeightUnit): String {
     val locale = LocalConfiguration.current.locales[0]
-    val magnitude = java.math.BigDecimal(kotlin.math.abs(difference))
-        .setScale(MeasurementPrecision.EDITABLE_FRACTION_DIGITS, java.math.RoundingMode.HALF_UP).toDouble()
+    val magnitude = displayed(kotlin.math.abs(difference))
     val sign = when {
         magnitude == 0.0 -> ""
         difference > 0 -> "+"

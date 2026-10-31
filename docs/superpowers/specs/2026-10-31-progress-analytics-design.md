@@ -42,8 +42,9 @@ state, not an error, and stays selected.
 
 ## Range and buckets
 
-A range of *N* weeks is `[start of the ISO week N−1 weeks before the current one,
-end of the current week)`, built from `TrainingWeek.startingOn` in the device's
+A range of *N* weeks runs from the start of the Monday-start calendar week N−1 weeks before
+the current one to the end of the current week, exclusive. These are the weekly cards'
+`TrainingWeek`s, never program weeks, built from `TrainingWeek.startingOn` in the device's
 explicit zone, so DST weeks are 167/169 h and a zone change rebuilds the buckets.
 Each bucket is exactly one `TrainingWeek`; at most 52 buckets exist, so the chart
 payload is bounded without point reduction. No bucket is merged, dropped or
@@ -180,7 +181,8 @@ The range is bounded by 2,000 sessions, 200,000 exercise rows (2,000 × the arch
 100 per session) and 100,000 sets, the scheduling range's representational bounds.
 Each week is also held to the existing weekly ledger's own bounds (1,000 sessions and 50,000
 creditable work sets). Any overflow is an explicit *range too large* state, never a truncated
-chart or a retryable read error; it suggests a shorter range only when one exists. A distance/time
+chart or a retryable read error. It suggests no remedy, because every range ends with the
+current weeks, where the overflow may lie. A distance/time
 exercise row with neither target is invalid stored data and fails the read. The pure
 calculation runs after the gate and transaction are released, so writers wait only
 for the reads. These are software
