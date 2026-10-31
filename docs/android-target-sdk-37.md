@@ -160,6 +160,16 @@ locally. CI uses x86_64 Google APIs images, which run only on GitHub-hosted runn
 evidence above comes from arm64 images. The stable-channel emulator that CI installs (37.2.13)
 meets the Android 17 image's 37.2.11 minimum.
 
+The runner's preinstalled command-line tools (12.0) cannot create a working AVD for a dotted API
+level. Their `avdmanager` writes `target=android-0`, so the emulator skips the RAM and Vulkan
+setup Android 17 needs. On this change's first CI run the API 37.0 leg stayed `offline` until
+the 600-second boot timeout, while API 36 booted in about 40 seconds. A local A/B with the arm64
+image matched: 12.0 wrote `target=android-0` and the boot stalled, while 23.0 wrote
+`target=android-37.0` and the device booted in 24 seconds. Both workflows therefore install
+command-line tools 23.0 before the emulator action creates a dotted-level AVD
+(emulator action [issue #482](https://github.com/ReactiveCircus/android-emulator-runner/issues/482); its fix, [pull request #494](https://github.com/ReactiveCircus/android-emulator-runner/pull/494), was still open).
+To create Android 17 AVDs locally, use command-line tools 22 or newer.
+
 ## Limitations and follow-ups
 
 - No physical device, API 35 (Android 15) or API 27–34 device, tablet or foldable was tested;
@@ -176,13 +186,16 @@ meets the Android 17 image's 37.2.11 minimum.
   read in the light theme; bottom-bar labels break mid-word at 320 dp with font scale 1.8; and
   the predictive preview from a full-screen route shows the previous tab without the bottom bar
   until the gesture commits.
-- Some device tests fail intermittently under heavy host load:
+- Some device tests fail intermittently, mostly under heavy host load or on a slow emulator:
   - `ProgramNavigationTest.deletionDuringProgramConfirmationClearsProtectedNavigationAndSavedModeBeforeRestore`
     sometimes misses the Today list after a restore. This happens at target 35 too.
   - `TemplateEditorScreenTest.withTheKeyboardOpenTheSheetStillReachesItsFieldErrorAndApply`
     failed `main`'s API 36 run at `d790077`, which targets 35.
   - `TemplateEditorScreenTest.aKilogramLoadStatesTheKilogramBoundItIsCheckedAgainst` failed once
     here on API 37 while the keyboard opened, then passed every rerun.
+  - `ProgramNavigationTest.spanishLargeTextKeepsControlsReachableAndModeAndSlotDoNotDependOnLocale`
+    timed out once in this change's first CI run on API 26. Locally, on an API 26 emulator with
+    CI's 320×640 screen, it then passed 5 of 5 alone, and its package passed 37 of 37.
 
   All pass in other runs. Three legs make such failures more likely to show up, so stabilizing
   these tests is a follow-up.

@@ -770,8 +770,9 @@ python3 -m unittest discover -s tools/release -p 'test_*.py' -v
 Run the targeted backup guard on a dedicated API 26-30 emulator and an API 31+
 emulator; it has been exercised on API 26, 30, 36 and 37. Use `ANDROID_SERIAL=<serial>`
 to select a device when more than one is connected. Run the full connected suite
-on API 36 and API 37, matching CI. Android 17's SDK packages are versioned `37.0`, and
-its emulator images need emulator 37.2.11 or newer. Do not reset or erase a shared
+on API 36 and API 37, matching CI. Android 17's SDK packages are versioned `37.0`; its
+emulator images need emulator 37.2.11 or newer, and its AVDs need command-line tools 22 or
+newer (older `avdmanager` writes `target=android-0`). Do not reset or erase a shared
 device for these checks.
 For fresh execution evidence, append `--rerun-tasks --no-build-cache` to Gradle
 commands and inspect the reports under `app/build/test-results/` and
