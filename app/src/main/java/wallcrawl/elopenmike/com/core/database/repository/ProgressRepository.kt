@@ -171,6 +171,15 @@ class OfflineProgressRepository(
                 require(!size.invalidMetadata) { "Stored workout history contains invalid typed metadata." }
                 val sessions = dao.getCompletedSessionsInRange(start, end, MAX_RANGE_SESSIONS)
                     .map { it.toWorkoutSession() }
+                // One week can also exceed the existing weekly ledger's own bounds; that is too large, not a read error.
+                if (weeks.any { week ->
+                        ProgressAnalyticsCalculator.exceedsLedgerWeekBounds(
+                            sessions.filter { week.contains(requireNotNull(it.completedAtTimestamp)) }
+                        )
+                    }
+                ) {
+                    throw AnalyticsRangeTooLargeException()
+                }
                 val exerciseId = (scope as? AnalyticsScope.Exercise)?.exerciseId
                 val comparable = exerciseId
                     ?.let { dao.selectAnalyticsComparableSetIds(start, end, it).toSet() }
@@ -207,7 +216,9 @@ class OfflineProgressRepository(
                         ),
                         preferredUnit = profile.preferredUnit,
                         exerciseOptions = options,
-                        catalogNames = options.orEmpty().mapNotNull { id -> exercisesById[id]?.let { id to it.name } }.toMap(),
+                        // The selected exercise keeps its name even when the option list overflows.
+                        catalogNames = (options.orEmpty() + listOfNotNull(exerciseId)).distinct()
+                            .mapNotNull { id -> exercisesById[id]?.let { id to it.name } }.toMap(),
                         decisions = decisions
                     )
                 }

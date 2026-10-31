@@ -4,6 +4,7 @@ import java.time.Instant
 import java.time.ZoneId
 import java.util.EnumMap
 import wallcrawl.elopenmike.com.core.ai.WeeklyDoseLedgerCalculator
+import wallcrawl.elopenmike.com.core.ai.isCreditableWorkSet
 import wallcrawl.elopenmike.com.core.model.AnalyticsBucket
 import wallcrawl.elopenmike.com.core.model.AnalyticsContributor
 import wallcrawl.elopenmike.com.core.model.AnalyticsMetric
@@ -68,12 +69,8 @@ class ProgressAnalyticsCalculator(
         // One row per (week, session): what it contributes to each metric, or null when it is
         // not a member of that metric's scope.
         val rows = weeks.map { week ->
-            // The whole week once, so the existing ledger's per-week bounds apply exactly as they do
-            // to the weekly card; the per-session calls below give each contributor its share.
-            ledgerCalculator.calculate(
-                byWeek[week].orEmpty().map { it.restrictedTo(scope) },
-                exercisesById, LedgerPolicyVersion.PRIMARY_ONLY_V1, week, catalogVersion, reviewPolicyVersion
-            )
+            // Per-session ledger calls cannot see a whole week, so its existing bounds are checked here.
+            require(!exceedsLedgerWeekBounds(byWeek[week].orEmpty())) { "A week exceeds the weekly ledger's bounds." }
             byWeek[week].orEmpty().sortedWith(compareBy({ it.completedAtTimestamp }, { it.id })).map { session ->
                 val completed = session.exercises
                     .filter { it.inScope(scope, exercisesById) }
@@ -232,6 +229,16 @@ class ProgressAnalyticsCalculator(
     }
 
     companion object {
+        /**
+         * True when one week holds more than the existing weekly ledger accepts (sessions or creditable
+         * work sets), so the repository can report it as too large instead of failing as a read error.
+         */
+        fun exceedsLedgerWeekBounds(weekSessions: List<WorkoutSession>): Boolean =
+            weekSessions.size > WeeklyDoseLedgerCalculator.MAX_SESSIONS_PER_WEEK ||
+                weekSessions.sumOf { session ->
+                    session.exercises.sumOf { exercise -> exercise.sets.count { it.isCreditableWorkSet } }
+                } > WeeklyDoseLedgerCalculator.MAX_WORK_SETS_PER_WEEK
+
         /** The range's ISO weeks, oldest first; the last contains [now] and is partial. */
         fun rangeWeeks(range: AnalyticsRange, now: Instant, zoneId: ZoneId): List<TrainingWeek> {
             val current = TrainingWeek.containing(now, zoneId)

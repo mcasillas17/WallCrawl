@@ -296,7 +296,8 @@ complete contract, bounds and states are in the
 
 The read takes the shared write gate and one Room transaction, like the overview, but never
 writes the ledger cache: reviewed dose is recomputed by the pure calculator. Ranges are bounded
-at 2,000 sessions, 200,000 exercise rows and 100,000 sets. Overflow is reported, never
+at 2,000 sessions, 200,000 exercise rows and 100,000 sets, and each week to this ledger's
+1,000 sessions and 50,000 work sets. Overflow is reported, never
 truncated, and selected older weeks cannot be crowded out by recent workouts.
 
 ## Reconstruction and cache invalidation

@@ -178,7 +178,9 @@ shared local-data write gate; one Room transaction; profile read without bootstr
 
 The range is bounded by 2,000 sessions, 200,000 exercise rows (2,000 × the archive's
 100 per session) and 100,000 sets, the scheduling range's representational bounds.
-Overflow is an explicit *range too large* state, never a truncated chart. A distance/time
+Each week is also held to the existing weekly ledger's own bounds (1,000 sessions and 50,000
+creditable work sets). Any overflow is an explicit *range too large* state, never a truncated
+chart or a retryable read error. A distance/time
 exercise row with neither target is invalid stored data and fails the read. The pure
 calculation runs after the gate and transaction are released, so writers wait only
 for the reads. These are software

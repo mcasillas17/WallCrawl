@@ -867,8 +867,8 @@ not human-approved; see the [design](docs/superpowers/specs/2026-10-31-progress-
 4. Every week row lists its contributing workouts and every observation opens its workout.
    Recorded progression and deload decisions open the session that recorded them, decoded
    with the existing codecs.
-5. Coherent bounded reads (2,000 sessions, 200,000 exercise rows, 100,000 sets; overflow
-   reported, never truncated) with no writes. Pure calculator, ViewModel, real Room, Compose
+5. Coherent bounded reads (2,000 sessions, 200,000 exercise rows, 100,000 sets, and the
+   weekly ledger's per-week bounds; overflow reported as too large, never truncated) with no writes. Pure calculator, ViewModel, real Room, Compose
    and app-navigation tests cover boundaries, DST and zones, units, sparse data, stale reads,
    saved state, accessibility, and Spanish at 1.8× in 320 dp in both themes.
 

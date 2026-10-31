@@ -191,6 +191,18 @@ class ProgressAnalyticsRepositoryTest {
         assertThat(snapshot.exerciseOptions).isNull()
         assertThat(snapshot.catalogNames).isEmpty()
         assertThat(snapshot.series(AnalyticsMetric.WORKOUTS).rangeTotal).isEqualTo(1.0)
+        // A selected exercise keeps its catalog name for the chooser label.
+        val selected = runBlocking { read(AnalyticsSelection(scope = AnalyticsScope.Exercise("approved"))) }
+        assertThat(selected.exerciseOptions).isNull()
+        assertThat(selected.catalogNames).containsKey("approved")
+    }
+
+    @Test fun aWeekBeyondTheWeeklyLedgerBoundsIsReportedAsTooLarge() {
+        // 1,001 sessions in one week passes the 2,000-session range bound but not the weekly ledger's 1,000.
+        runBlocking { repeat(1_001) { insert("w-$it", monday.toEpochMilli() - 2 * week + it, "approved") } }
+        assertThrows(AnalyticsRangeTooLargeException::class.java) {
+            runBlocking { read(AnalyticsSelection(AnalyticsRange.WEEKS_4)) }
+        }
     }
 
     @Test fun anOversizedRangeIsReportedNotTruncated() {
