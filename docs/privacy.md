@@ -237,7 +237,7 @@ under the other. See [Localization](localization.md).
 | Android branch | Manifest attribute | Resource and exclusions |
 | --- | --- | --- |
 | API 26-30 | `android:fullBackupContent` | `res/xml/backup_rules.xml`: `<full-backup-content>` excludes all nine domains |
-| API 31+ (current target is 35) | `android:dataExtractionRules` | `res/xml/data_extraction_rules.xml`: separate `<cloud-backup>` and `<device-transfer>` sections each exclude all nine domains |
+| API 31+ (current target is 37) | `android:dataExtractionRules` | `res/xml/data_extraction_rules.xml`: separate `<cloud-backup>` and `<device-transfer>` sections each exclude all nine domains |
 | All supported versions | `android:allowBackup="false"` | Opts out of Android backup/restore participation, subject to the OEM D2D caveat below |
 
 Every exclusion uses `path="."`: all files and recursive subdirectories within
@@ -356,7 +356,7 @@ whole-domain exclusions, no includes or conditional attributes, and both modern
 sections. It also rejects a custom backup agent or a new transfer section
 without a deliberate test/policy update.
 
-The guard has been exercised on API 30 and 36. On each it parses both packaged
+The guard has been exercised on API 26, 30, 36 and 37. On each it parses both packaged
 XML resources; it does **not** invoke both versions of Android's backup rule
 engine. Regression exercises have demonstrated failure with the original
 backup-enabled manifest, a filename-only legacy database exclusion, and a

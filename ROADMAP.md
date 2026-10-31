@@ -54,7 +54,7 @@ model downloads, model-driven features, a network connection, or a companion dev
 
 | Area | Status | Remaining gap |
 | --- | --- | --- |
-| Android foundation | Room schema 16 (15 adds program enrollment/association storage; 16 adds the nullable template unit) with a continuous migration chain; archive 6 reads formats 1–6; implicit backup remains disabled | OEM transfer enforcement varies; restore is empty-destination only; `targetSdk` remains 35 while `compileSdk` is 37 |
+| Android foundation | Room schema 16 (15 adds program enrollment/association storage; 16 adds the nullable template unit) with a continuous migration chain; archive 6 reads formats 1–6; implicit backup remains disabled; `targetSdk` and `compileSdk` are both 37 ([compatibility record](docs/android-target-sdk-37.md)) | OEM transfer enforcement varies; restore is empty-destination only |
 | Catalog and reviewed content | All 302 entries have per-ID AI evidence records; 906 SVG frames and 131 legacy programming entries unchanged; an owner-authorized audit accepted 182 of 211 authored records as `AI_ACCEPTED` | Zero genuine human approvals; 29 authored drafts and 56 IDs with no authored block remain pending, 35 entries outside automatic-strength scope; the band-only inventory still contains no chest work, and `banded-row`'s anchor stays unrepresentable, though anchored variations are now gated and the session is labelled truthfully |
 | Onboarding and profile | Shipped as an eight-step flow with seven movement-capability questions, plus export, restore, and delete-all controls | Restore requires a fresh start, so it cannot merge into an installation that already holds data |
 | Templates and logging | Shipped with frozen template snapshots, type-aware outcomes, RPE/RIR, typed stops, a local rest timer, complete type-aware template editing, unit-safe template loads, and draft recovery across configuration change and background process death | Drafts do not survive force-stop, task removal, reboot or uninstall, by design; legacy unitless loads need a one-time unit confirmation |
@@ -63,7 +63,7 @@ model downloads, model-driven features, a network connection, or a companion dev
 | Deterministic coach | Reviewed eligibility/ranking, weekly ledger, state guidance and whole-program validation; Packages 9 and 12 add single-axis progression, persistent user-controlled deload and optional completion-driven programs in the production composition | Genuine human `APPROVED` review remains independent; substitutions remain future work |
 | Planner evaluation | Versioned persona corpus (`planner-fixtures/manifest.txt` is the authoritative roster), with the reviewed-enabled personas' weeks replayed through the real ledger and every successful persona's proposal validated as a complete program, importer unit tests, real pinned-upstream regeneration check, JVM tests, and Android CI shipped | None for this package; reviewed-planner enablement (package 7) is done, and human-approval rollout (package 3) is the remaining gate |
 | Health Connect and Wear OS | Not started; only `:app` exists | Shared modules, privacy controls, validation, substitutions, protocol, and device evidence |
-| Operational quality | Dependabot, SBOM submission, JVM/lint/build CI, API 36 instrumentation, and prerelease automation shipped | Accessibility baseline, target SDK review, Room schema export, signed/minified release posture, and next alpha |
+| Operational quality | Dependabot, SBOM submission, JVM/lint/build CI, API 36 and 37 instrumentation with an API 26 smoke, the target SDK 37 review, and prerelease automation shipped | Accessibility baseline, Room schema export, signed/minified release posture, and next alpha |
 
 The production path today is the reviewed deterministic planner. Reviewed eligibility,
 capability-evidence ranking and state-based guidance are enabled because
@@ -155,8 +155,9 @@ These decisions must be recorded before the related implementation package close
    Decline/dismiss/cancel and accepted consumption persist locally across restart
    and archive operations. See the [lifecycle](docs/superpowers/specs/2026-09-19-progression-and-deload-design.md).
    No automatic diagnosis, calendar rule or multi-session block is introduced.
-6. **Release posture:** decide when to raise `targetSdk`, enable release shrinking, configure
-   signing, and move beyond debug prerelease APKs.
+6. **Release posture:** `targetSdk` is now 37 (see the
+   [compatibility record](docs/android-target-sdk-37.md)); decide when to enable release
+   shrinking, configure signing, and move beyond debug prerelease APKs.
 7. **Optional sync:** explicitly approve the product/privacy scope before a sync design is
    written; local operation without an account remains non-negotiable.
 8. **External-record deletion:** disabling an integration must stop future writes without
@@ -967,7 +968,8 @@ gate is green at one commit, and core workout flows remain offline and account-f
 
 ### 19. Complete Android and release maintenance
 
-**Status:** Ongoing; Issue #45 tracks `targetSdk` 35 versus `compileSdk` 37.
+**Status:** Ongoing. Issue #45's target slice raised `targetSdk` from 35 to 37; the
+[2026-10-31 target SDK 37 record](docs/android-target-sdk-37.md) holds its review and evidence.
 
 The [2026-10-31 dependency-health record](docs/dependency-health.md) covers a focused
 tooling remediation and remaining advisories; the release-maintenance package remains open.
@@ -977,9 +979,10 @@ tooling remediation and remaining advisories; the release-maintenance package re
 **Implementation tasks:**
 
 1. Review Android 16/17 target behavior changes and decide whether to step through 36 or move
-   directly to 37.
+   directly to 37. **Done:** moved directly to 37.
 2. Test permissions, notifications, edge-to-edge, background work, and critical flows on a
-   matching emulator/device before raising `targetSdk`.
+   matching emulator/device before raising `targetSdk`. **Done** on API 37, 36 and 26
+   emulators. CI runs the suite on API 36 and 37, and a smoke run on API 26.
 3. Enable Room schema export and commit schema JSON when the migration workflow is ready to
    treat it as an artifact.
 4. Correct stale schema-10 CI comments and keep migration-chain tests aligned with each schema.

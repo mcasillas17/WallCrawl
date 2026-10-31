@@ -243,6 +243,9 @@ how to add a string, an exercise, or a language.
   reviewed-enabled personas' weeks are reconstructed through, the whole-program validation of
   every persona that produces a proposal, the asserted planner invariants, and which release
   checks run in which workflow.
+- [Android target SDK 37](docs/android-target-sdk-37.md) records the Android 16 and 17
+  behavior review, the one Back fix it needed, the emulator evidence, and what CI runs on
+  API 26, 36 and 37.
 - The phase-specific design and implementation records under
   [`docs/superpowers/`](docs/superpowers/) provide historical decision context.
 
@@ -744,7 +747,8 @@ identifiers so imports and attribution remain reproducible.
 Requirements:
 
 - JDK 17 (the project compiles to Java 17 bytecode)
-- Android SDK platform 37, which the app compiles against; it still targets API 35
+- Android SDK platform 37, which the app compiles against and targets; `minSdk` is 26
+  (see the [target SDK 37 record](docs/android-target-sdk-37.md))
 - `JAVA_HOME` and `ANDROID_HOME` configured
 
 Gradle, the Android Gradle Plugin, and Kotlin come from the wrapper and the version
@@ -764,9 +768,11 @@ python3 -m unittest discover -s tools/release -p 'test_*.py' -v
 ```
 
 Run the targeted backup guard on a dedicated API 26-30 emulator and an API 31+
-emulator; it has been exercised on API 30 and 36. Use `ANDROID_SERIAL=<serial>`
+emulator; it has been exercised on API 26, 30, 36 and 37. Use `ANDROID_SERIAL=<serial>`
 to select a device when more than one is connected. Run the full connected suite
-on API 36, matching CI. Do not reset or erase a shared device for these checks.
+on API 36 and API 37, matching CI. Android 17's SDK packages are versioned `37.0`, and
+its emulator images need emulator 37.2.11 or newer. Do not reset or erase a shared
+device for these checks.
 For fresh execution evidence, append `--rerun-tasks --no-build-cache` to Gradle
 commands and inspect the reports under `app/build/test-results/` and
 `app/build/outputs/androidTest-results/`: zero, skipped, or cached tests are not
@@ -833,8 +839,9 @@ its round trip from app-written state across supported format versions 1–6, ev
 path for untrusted documents, transactional restore and deletion, and the destructive
 confirmation at a large font scale. It parses the
 packaged 302-exercise catalog and opens every one of its 906 SVG paths. Pull-request/main
-CI and tagged-release publication both run this connected suite on an API 36 emulator;
-a tag cannot publish its prerelease unless instrumentation succeeds.
+CI and tagged-release publication both run this connected suite on API 36 and API 37
+emulators, and its `wallcrawl.elopenmike.com.app` package on an API 26 (`minSdk`) emulator;
+a tag cannot publish its prerelease unless every instrumentation run succeeds.
 
 `WorkoutHistoryRepositoryTest` exercises coherent Room reads, all measurement shapes,
 historical boundaries and more than 500 later/unrelated sessions. History ViewModel,
