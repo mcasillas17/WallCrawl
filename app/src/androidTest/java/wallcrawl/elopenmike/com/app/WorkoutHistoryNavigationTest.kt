@@ -384,16 +384,45 @@ class WorkoutHistoryNavigationTest {
 
     @Test fun anAnalyticsWeekListsItsContributorsAndEachOpensItsOwnWorkout() = runBlocking {
         val now = System.currentTimeMillis()
+        // Earlier weeks give the documentation screenshot a real chart; only this week is asserted.
+        listOf(3 to 8, 2 to 10, 1 to 9).forEach { (weeksAgo, reps) ->
+            seedPushUps("analytics-week-$weeksAgo", "Push-ups week $weeksAgo", now - weeksAgo * 7 * DAY, reps)
+        }
         seedPushUps("analytics-this-week", "Analytics push this week", now - 60_000L, 12)
-        show()
+        show(theme = ThemePreference.LIGHT)
         compose.runOnIdle { navigation.navigate(AppRoutes.PROGRESS) }
+        scrollProgressTo(androidx.compose.ui.test.hasContentDescription("Bar chart of", substring = true))
+        capture("progress-analytics-en")
         scrollProgressTo(hasText("(this week so far)", substring = true))
         compose.onNode(hasText("(this week so far)", substring = true)).performClick()
         scrollProgressTo(hasText("Analytics push this week", substring = true))
-        capture("progress-analytics-en")
+        capture("progress-analytics-week-en")
         compose.onNode(hasText("Analytics push this week", substring = true)).performClick()
         compose.waitUntil(10_000) { navigation.currentDestination?.route == AppRoutes.HISTORY_DETAIL }
         assertThat(navigation.currentBackStackEntry?.arguments?.getString("sessionId")).isEqualTo("analytics-this-week")
+    }
+
+    @Test fun spanishDarkExercisePerformanceComparesRecordedWorkoutsFromRoom() = runBlocking {
+        val now = System.currentTimeMillis()
+        listOf(3 to 8, 2 to 10, 1 to 11).forEach { (weeksAgo, reps) ->
+            seedPushUps("es-week-$weeksAgo", "Flexiones semana $weeksAgo", now - weeksAgo * 7 * DAY, reps)
+        }
+        seedPushUps("es-this-week", "Flexiones de hoy", now - 60_000L, 12)
+        show(locale = Locale.forLanguageTag("es-MX"), theme = ThemePreference.DARK)
+        compose.runOnIdle { navigation.navigate(AppRoutes.PROGRESS) }
+        val spanish = context.createConfigurationContext(Configuration(context.resources.configuration).apply {
+            setLocales(LocaleList(Locale.forLanguageTag("es-MX")))
+        })
+        val chip = spanish.getString(R.string.analytics_scope_exercise)
+        scrollProgressTo(hasText(chip))
+        compose.onNodeWithText(chip).performClick()
+        val item = androidx.compose.ui.test.hasAnyAncestor(androidx.compose.ui.test.isPopup()) and hasText("Flexión de brazos")
+        compose.waitUntil(10_000) { compose.onAllNodes(item).fetchSemanticsNodes().isNotEmpty() }
+        compose.onNode(item).performClick()
+        scrollProgressTo(hasText(spanish.getString(R.string.analytics_shape_bodyweight)))
+        // Earliest 8 reps against the latest 12: a recorded difference, never a percentage.
+        scrollProgressTo(hasText("+4 reps", substring = true))
+        capture("progress-analytics-performance-es")
     }
 
     private fun selectPushUpScope() {

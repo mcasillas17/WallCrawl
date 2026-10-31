@@ -1253,6 +1253,32 @@ observation is not a record. The Progress overview's separate record/trend
 window remains bounded at 500 sessions and is not the authority for an older
 workout's achievement.
 
+### Progress over time
+
+`ProgressViewModel` keeps the Over time selection (range, scope kind, scope ID, measure) in
+`SavedStateHandle` as four short strings. Only range and scope select a read, so changing the
+measure picks another precomputed series without I/O.
+
+```text
+selection (range, scope) + calendar zone/boundary + card Retry
+                 |  flatMapLatest (an obsolete read is cancelled)
+     OfflineProgressRepository.observeAnalytics
+     write gate -> one Room transaction: no-bootstrap profile, size/strict-type pre-check,
+     bounded range graph, exercise-scope comparable set IDs and recommendation records,
+     recorded exercise IDs
+                 |  gate released
+     pure ProgressAnalyticsCalculator (+ WeeklyDoseLedgerCalculator, no cache)
+                 |
+     ProgressAnalyticsUiState -> ProgressAnalyticsCard (chart + accessible rows -> history/{id})
+```
+
+The card's Retry has its own trigger, so the weekly overview keeps its state and scroll.
+Recorded decisions are decoded by the history presenter's `decodeHistoryReasons` off the
+main thread, and history and the card share `recordedProgressionText` and
+`recordedDeloadRes`. `AnalyticsBarChart` is a small Canvas with a text description; the rows
+beside it are the accessible interface. No dependency, schema or archive change was needed.
+See the [design](superpowers/specs/2026-10-31-progress-analytics-design.md).
+
 ### Immutable history detail
 
 Completion remains `ActiveWorkoutScreen`'s completed state. The unused summary

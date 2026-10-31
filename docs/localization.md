@@ -186,6 +186,17 @@ outcome. `SafetyCopyTest` reads both shipped resource files **and the translatio
 names and coaching summaries**, and fails on that vocabulary in either language, and on any
 stop reason that reads as a diagnosis rather than as the user's own decision to stop.
 
+## Progress over time
+
+The Over time card's labels, measure definitions, no-match messages, chart descriptions and
+paging controls are paired `analytics_*` resources in `values/` and `values-es/`. Counts,
+measurements and dates go through `LocaleFormatting`, the existing plurals and the platform
+date format, and unit symbols stay as stored. Exercise and muscle choices are ordered by the
+shared `ExerciseVocabulary` collation (`exerciseIdsByLabel`, `musclesByLabel`), while
+selections keep canonical IDs. Historical session names stay as recorded.
+`ProgressAnalyticsCardTest` checks Spanish at 1.8× in 320 dp in light and dark themes,
+including rows that carry units.
+
 ## Program controls and large-text evidence
 
 Program management, Today/Progress summaries and mode selection, captured goals/frequency,

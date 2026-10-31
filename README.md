@@ -142,6 +142,36 @@ convention measures physiological stimulus or diagnoses readiness. See the
   <em>Disposable example logs from exercises outside the accepted cohort; production metadata (182 `AI_ACCEPTED`, 0 `APPROVED`) is unchanged by these captures.</em>
 </p>
 
+### See progress over time
+
+Below the weekly cards, **Over time** charts the last 4, 12, 26 or 52 calendar weeks
+(Monday to Sunday in your time zone) for all exercises, one exercise or one muscle. Its
+filters change only that card. Measures are workouts, completed sets, reps, load volume
+(load × reps, converted to your unit before adding) and reviewed dose. Each one counts only
+work it applies to, so a plank never becomes "0 reps". This week's bar is hatched and
+labelled "so far", and weeks are never compared with each other as if a partial week were
+complete.
+
+Every bar has a row that reads its value aloud; opening a week lists the workouts behind it,
+and each opens its own history. For one exercise, **Exercise performance** shows each
+workout's best comparable work set per measurement shape and, with at least two workouts,
+the recorded difference between the earliest and latest. It shows no percentage, trend
+line or strength estimate. Assisted reps and distance-with-time work are listed but not
+compared. Progression decisions recorded by those workouts open the workout that recorded
+them. Muscle filters use today's catalog classification, which the card states. Nothing is
+written, uploaded or re-planned. See the [design](docs/superpowers/specs/2026-10-31-progress-analytics-design.md)
+for every formula and limit.
+
+<p align="center">
+  <img src="art/screenshots/progress-analytics-en.png" width="24%" alt="English Over time card in light mode: range, scope and measure chips, a total including this week so far, and four weekly bars with the current week hatched" />
+  <img src="art/screenshots/progress-analytics-week-en.png" width="24%" alt="The current week's row expanded to list the workout behind it, which opens that workout's history" />
+  <img src="art/screenshots/progress-analytics-performance-es.png" width="24%" alt="Spanish dark mode: weekly rows for one exercise and exercise performance comparing 8 reps with 12 reps as a recorded +4 reps, not a percentage" />
+</p>
+<p align="center">
+  <em>Captured on the API 36 emulator from disposable Room history seeded by
+  <code>WorkoutHistoryNavigationTest</code>.</em>
+</p>
+
 ### Reopen a recorded workout
 
 From **Progress**, tap a completed workout or choose **View all workouts** and use
