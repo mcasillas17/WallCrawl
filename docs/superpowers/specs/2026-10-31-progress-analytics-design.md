@@ -1,0 +1,197 @@
+# Package 14: progress analytics over time
+
+## Authority and scope
+
+Based on `origin/main` at `ead925f` (#82), fetched on 2026-10-31. ROADMAP.md remains
+the status authority. The persistence contract is Room 16 and archive 6 (reads 1–6);
+this package changes neither. Design choices below are agent-selected under the
+task's autonomous execution mode. They are not human product approval and confer
+no exercise-metadata approval.
+
+The question this answers: *am I progressing over time, and which recorded workouts
+explain the numbers?* It is a read-only presentation of completed history. It does
+not change prescriptions, program advancement, progression or deload policy,
+history, the ledger cache, or catalog acceptance. Everything runs locally; no
+model, network, telemetry or account is involved.
+
+## Placement
+
+The existing calendar-week Progress cards (logged activity, reviewed primary dose,
+legacy involvement, short strength comparisons, recent history, program content)
+are unchanged and keep describing **this calendar week**. A new **Over time** card
+follows them. Its filters affect only that card, which says so in its own
+subtitle. Nothing on the weekly cards changes scope.
+
+## Selection
+
+| Control | Values | Default |
+| --- | --- | --- |
+| Range | Last 4, 12, 26 or 52 calendar weeks | 4 |
+| Scope | All exercises, one exercise (catalog/persisted exercise ID), or one muscle (`StandardMuscles.TRAINABLE` name) | All |
+| Metric | Workouts, completed sets, repetitions, external-load volume, reviewed primary dose | Completed sets |
+
+Scope is a single choice, not a combination: an exercise already implies its
+muscles, and combining both would create an intersection with two classifications
+at once. Selections are canonical IDs/enum names; translated names are only labels.
+**Reset** restores the defaults. Exercise options are the distinct exercise IDs
+found in completed history (bounded); muscle options are the trainable canonical
+muscles. A selected exercise that has no data in the chosen range is a *no matches*
+state, not an error, and stays selected.
+
+## Range and buckets
+
+A range of *N* weeks is `[start of the ISO week N−1 weeks before the current one,
+end of the current week)`, built from `TrainingWeek.startingOn` in the device's
+explicit zone, so DST weeks are 167/169 h and a zone change rebuilds the buckets.
+Each bucket is exactly one `TrainingWeek`; at most 52 buckets exist, so the chart
+payload is bounded without point reduction. No bucket is merged, dropped or
+resampled.
+
+Membership follows the weekly accounting rule: a `COMPLETED` session whose
+`completedAtTimestamp` falls in a bucket's `[start, end)`. A completion later in the
+current week than "now" (clock skew) counts in the current week exactly as the
+weekly overview counts it; anything after the current week's end is outside every
+range. The bounded records/trend surface keeps its own `completedAt <= now` rule.
+
+The current week is **partial**. Its bucket is flagged and labelled "so far" in
+text (not by colour alone). The card shows the range total ("including this week
+so far") and the number of full weeks; it never presents a week-over-week change
+or compares the partial week with a full one. Program weeks are completion
+positions and play no part in bucketing.
+
+## Weekly metrics
+
+All metrics come from completed sets (`isCompleted`) in sessions in the bucket.
+Formulas reuse the Progress metric contract; scope narrows the sets considered.
+
+| Metric | Per-bucket value | Scope behaviour |
+| --- | --- | --- |
+| Workouts | Distinct sessions. All scope: every completed session, including zero-set Finishes. Exercise/muscle scope: sessions with ≥1 completed in-scope set | — |
+| Completed sets | Count of completed sets, warm-ups and timed work included | In-scope sets |
+| Repetitions | Sum of positive `completedReps` on completed rep-based sets | In-scope sets; duration/distance never become reps |
+| External-load volume | Σ finite non-negative load × positive reps over completed `WEIGHT_REPS` sets, each session's load converted to the preferred unit before summing, unrounded until display | In-scope sets; body mass, assistance, duration and distance are excluded |
+| Reviewed primary dose | `PRIMARY_ONLY_V1` credited work sets from `WeeklyDoseLedgerCalculator` run on the bucket's sessions | All: `creditedWorkSets`. Muscle: `directPrimarySets[muscle]`. Exercise: credited sets after restricting sessions to that exercise ID |
+
+Scope classification:
+
+- **Exercise:** exact persisted exercise ID; every instance of it in a session.
+- **Muscle (activity metrics):** the *current* bundled catalog's legacy
+  `primaryMuscles` through `MuscleVocabulary`, the same descriptive, overlapping
+  rule as the weekly involvement card. A set of an exercise with two primaries counts
+  for both muscles. History never snapshotted muscle classifications; the card
+  says the classification is today's catalog. Sets of exercise IDs the current
+  catalog does not know are counted and reported as *not classifiable*, not erased.
+- **Muscle (reviewed dose):** the accepted `directPrimaryMuscle` via the existing
+  ledger. Work sets without accepted metadata are reported range-wide by typed
+  omission reason, because they cannot be assigned to any muscle.
+
+No new classifier, dose policy or record definition is introduced.
+
+## Exercise performance
+
+Shown only in exercise scope. One **observation** is one session × one persisted
+measurement shape: `WEIGHT_REPS`, `BODYWEIGHT_REPS`, `ASSISTED_BODYWEIGHT`,
+`DURATION`, and `DISTANCE_DURATION` split into distance-only, time-only and combined
+by the exercise's stored target dimensions (the existing history comparison rule).
+Eligible sets are exactly the SQL `ELIGIBLE_PREVIOUS_SET` predicate used by history
+comparisons: completed, non-warm-up, unstopped, type-matching, within archived value
+bounds, and with any set timestamp inside its session. Repeated instances of the
+exercise in one session pool their eligible sets into the same observation, so
+duplicates and multiple sets never count as several sessions.
+
+| Shape | Charted value | Notes |
+| --- | --- | --- |
+| Weighted reps | Heaviest eligible load, converted to the preferred unit, with the reps of that set | Not an estimated 1RM or "strength" |
+| Bodyweight reps | Most reps in one eligible set | Body mass is never load |
+| Distance only | Longest distance, metres | — |
+| Time only / duration | Longest duration, seconds | — |
+| Assisted bodyweight | Not charted. Listed with reps and assistance | Reps at different assistance are not comparable; less assistance is not claimed to be better |
+| Distance + time | Not charted. Listed with both values | No invented pace |
+
+A comparison needs **two observations from distinct sessions** in the range. It
+reports the earliest and latest observed values and their signed difference in
+the shape's own unit. No percentage, regression line, projection, score or
+readiness claim. One observation is *insufficient comparable observations*.
+Missing values are not zero; a session with no eligible set for a shape produces
+no observation for it. Loads convert through `convertWeight`; stored values and
+units are never edited, so changing the preferred unit re-expresses every point
+and cannot create a change by itself.
+
+## Recorded decisions
+
+In exercise scope the card lists recorded `ONE_VARIABLE_PROGRESSION_V1` decisions
+for that exercise from recommendation records of sessions in the range, decoded by
+the existing `decodeHistoryReasons` path: reason, axis when advanced, and the number
+of cited source sessions. Each row opens **the session that recorded it**; that
+history detail already separates cited sources from ordinary previous performance
+and shows missing sources as unavailable. Decisions are not re-evaluated, no
+before/after prescription is synthesised, and a cited source is never treated as
+"the previous workout". Accepted one-workout deloads recorded by those sessions are
+listed the same way. Unsupported identities are reported as a count; a known
+malformed group fails the read.
+
+## Drill-down
+
+- A performance observation is one session: it opens `history/{sessionId}` and
+  carries the contributing exercise-instance IDs.
+- A weekly bucket aggregates several sessions: selecting it shows its contributor
+  list (name as recorded, completion date, that session's contribution in the
+  selected metric), each opening its own history detail. The bucket never sends the
+  user to one arbitrary workout.
+- A deleted target shows history detail's existing *missing* state.
+
+## Reads, bounds and lifecycle
+
+`OfflineProgressRepository.observeAnalytics` follows the existing Progress read:
+invalidations of profile, session, exercise, set and recommendation tables; the
+shared local-data write gate; one Room transaction; profile read without bootstrap
+(null → *no profile*). Inside it:
+
+1. One flat projection of completed sessions in the range left-joined to exercises
+   and sets (zero-set sessions included), with an SQL-computed comparability flag
+   from the shared eligibility predicate. Types are read as text and decoded
+   strictly; an unknown stored type fails the read. No `@Relation` graph is loaded.
+2. One bounded distinct-exercise-ID query for options.
+3. In exercise scope only, recommendation records for range sessions containing
+   the exercise.
+
+The range read is bounded by 2,000 sessions and 100,000 sets (the same
+representational bounds as the scheduling range), probing one extra row; overflow
+is an explicit *range too large* error, never a truncated chart. These are software
+limits, not training limits. Unrelated recent sessions cannot crowd a selected
+range because there is no global latest-N sample. The ledger is computed with the
+pure calculator; analytics never writes its cache or any other row.
+
+The ViewModel keeps the selection in `SavedStateHandle` as four short strings
+(range, scope kind, scope ID capped at 200 characters, metric), validated on restore;
+no history or chart data is saved. Selection, clock/zone refresh and the existing
+week-boundary wakeup feed a `flatMapLatest`, so a slow previous read is cancelled
+and cannot overwrite a newer selection. The overview state is separate, so changing
+a filter does not reload the weekly cards. Collection is RESUMED-only with
+`WhileSubscribed(0, 0)`; there is no polling.
+
+## States and accessibility
+
+Loading, no profile, no workouts in range, no matches for the filter, insufficient
+comparable observations, range too large, and read error with Retry are distinct.
+Errors never render as zero.
+
+The chart is a small Compose canvas bar chart with no new dependency. It has a
+text summary as its content description and is decorative beyond that; the
+accessible interface is the data list beside it. Each week/observation row is a
+≥48 dp button with a full spoken label (date range, value with unit, partial
+marker) that selects it; contributors are buttons that open history. The partial
+week uses a hatched bar plus the text marker. Selection chips expose selected
+state. English and neutral Latin American Spanish strings use existing plural,
+number, date and unit formatting; historical names stay as recorded. Layout wraps
+at 320 dp and 1.8× font scale in light and dark themes.
+
+## Verification
+
+TDD: pure calculator cases for every formula, scope, shape, unit, boundary, DST,
+zone, partial week, future-dated completion, duplicate instances, warm-up/stopped
+sets, zero-baseline and one-observation; ViewModel saved state, cancellation,
+retry and refresh; real Room repository coverage with more than 500 unrelated
+sessions, no-write reads, deletion/restore, bounds and malformed rows; Compose
+semantics/state tests; app navigation from an observation and a contributor into
+history detail. Actual emulator screenshots document the card.

@@ -375,16 +375,7 @@ class ProgressCalculator {
     /** External-load tonnage: completed WEIGHT_REPS sets only, warm-ups included. */
     private fun weeklyExternalLoadVolume(session: WorkoutSession): Double =
         session.exercises.sumOf { exercise ->
-            exercise.sets.sumOf { set ->
-                if (set.isCompletedRepBasedSet() &&
-                    set.exerciseType == ExerciseType.WEIGHT_REPS
-                ) {
-                    val load = set.completedWeight?.takeIf { it.isFinite() && it >= 0.0 } ?: 0.0
-                    (load * requireNotNull(set.completedReps)).takeIf(Double::isFinite) ?: 0.0
-                } else {
-                    0.0
-                }
-            }
+            exercise.sets.sumOf { it.externalLoadVolume(session.weightUnit, session.weightUnit) }
         }
 
     /**
@@ -392,11 +383,7 @@ class ProgressCalculator {
      * Load validity is irrelevant to a rep count, and timed work has no reps to count.
      */
     private fun weeklyCompletedReps(session: WorkoutSession): Int =
-        session.exercises.sumOf { exercise ->
-            exercise.sets.sumOf { set ->
-                if (set.isCompletedRepBasedSet()) requireNotNull(set.completedReps) else 0
-            }
-        }
+        session.exercises.sumOf { exercise -> exercise.sets.sumOf { it.loggedReps() } }
 
     /** Completed warm-up sets, so the reviewed-dose difference can be explained. */
     private fun warmupSetCount(session: WorkoutSession): Int =
@@ -446,12 +433,6 @@ class ProgressCalculator {
             completedReps > 0 &&
             (completedWeight == null || (completedWeight.isFinite() && completedWeight >= 0.0))
 
-    /** A completed rep-based set with a positive rep count; timed and distance work excluded. */
-    private fun WorkoutSet.isCompletedRepBasedSet(): Boolean =
-        isCompleted &&
-            exerciseType in REP_BASED_TYPES &&
-            (completedReps ?: 0) > 0
-
     private fun WorkoutSet.validPositiveWeight(): Double? =
         completedWeight?.takeIf { it.isFinite() && it > 0.0 }
 
@@ -487,13 +468,34 @@ class ProgressCalculator {
         const val MAX_RECENT_HISTORY = 10
         const val MAX_RECORDS = 3
         const val MAX_STRENGTH_TRENDS = 3
-        val REP_BASED_TYPES = setOf(
-            ExerciseType.WEIGHT_REPS,
-            ExerciseType.BODYWEIGHT_REPS,
-            ExerciseType.ASSISTED_BODYWEIGHT
-        )
     }
 
+}
+
+private val REP_BASED_TYPES = setOf(
+    ExerciseType.WEIGHT_REPS,
+    ExerciseType.BODYWEIGHT_REPS,
+    ExerciseType.ASSISTED_BODYWEIGHT
+)
+
+/** A completed rep-based set with a positive rep count; timed and distance work excluded. */
+private fun WorkoutSet.isCompletedRepBasedSet(): Boolean =
+    isCompleted &&
+        exerciseType in REP_BASED_TYPES &&
+        (completedReps ?: 0) > 0
+
+/** Logged reps under the Progress contract, shared by weekly activity and analytics. */
+internal fun WorkoutSet.loggedReps(): Int = if (isCompletedRepBasedSet()) requireNotNull(completedReps) else 0
+
+/**
+ * Load × reps for a completed WEIGHT_REPS set, its load converted from the session's [from]
+ * unit to [to] first. Invalid loads and non-finite products contribute nothing; body mass,
+ * assistance, duration and distance are never tonnage.
+ */
+internal fun WorkoutSet.externalLoadVolume(from: WeightUnit, to: WeightUnit): Double {
+    if (!isCompletedRepBasedSet() || exerciseType != ExerciseType.WEIGHT_REPS) return 0.0
+    val load = completedWeight?.takeIf { it.isFinite() && it >= 0.0 }?.let { convertWeight(it, from, to) } ?: 0.0
+    return (load * requireNotNull(completedReps)).takeIf(Double::isFinite) ?: 0.0
 }
 
 /** A grouped maximum in its original unit, shared by in-memory and Room history reads. */
