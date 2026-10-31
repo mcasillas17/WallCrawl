@@ -124,7 +124,7 @@ class ProgressAnalyticsCalculator(
                     AnalyticsBucket(week, partial = index == weeks.lastIndex, value = contributors.sumOf { it.value },
                         contributors = contributors)
                 }
-                AnalyticsSeries(buckets, buckets.sumOf { it.value }, buckets.any { it.contributors.isNotEmpty() })
+                AnalyticsSeries(buckets)
             },
             fullWeeks = weeks.size - 1,
             hasWorkoutsInRange = sessions.isNotEmpty(),

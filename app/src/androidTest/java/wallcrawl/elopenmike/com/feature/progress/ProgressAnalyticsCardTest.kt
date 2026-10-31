@@ -209,6 +209,19 @@ class ProgressAnalyticsCardTest {
         scrollTo(": nothing recorded")
     }
 
+    @Test fun scopeChipsThatOpenAChooserAreButtonsNotRadioButtons() {
+        render(loaded())
+        scrollTo(english.getString(R.string.analytics_scope_muscle))
+        listOf(R.string.analytics_scope_exercise, R.string.analytics_scope_muscle).forEach { res ->
+            composeRule.onNodeWithText(english.getString(res))
+                .assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, androidx.compose.ui.semantics.Role.Button))
+                .assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription,
+                    english.getString(R.string.progress_details_collapsed)))
+        }
+        composeRule.onNodeWithText(english.getString(R.string.analytics_scope_all))
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, androidx.compose.ui.semantics.Role.RadioButton))
+    }
+
     @Test fun oneObservationSaysThereIsNoChangeToShow() {
         val single = weightedSeries().let { it.copy(observations = it.observations.take(1), comparison = null) }
         render(loaded(scope = AnalyticsScope.Exercise("bench"), performance = listOf(single)))
@@ -249,20 +262,38 @@ class ProgressAnalyticsCardTest {
         assertThat(calls).containsExactly("retry", "range:WEEKS_12").inOrder()
     }
 
-    @Test fun spanishLargeTextAt320DpWrapsWithoutClipping() {
+    @Test fun spanishLargeTextAt320DpWrapsUnitsWithoutClippingInDarkTheme() =
+        assertSpanishLargeTextWraps(ThemePreference.DARK)
+
+    @Test fun spanishLargeTextAt320DpWrapsUnitsWithoutClippingInLightTheme() =
+        assertSpanishLargeTextWraps(ThemePreference.LIGHT)
+
+    /** Rows that carry units, the comparison sentence and the headings all wrap inside 320 dp at 1.8x. */
+    private fun assertSpanishLargeTextWraps(theme: ThemePreference) {
         val spanish = context.localized(Locale.forLanguageTag("es-MX"), 1.8f)
+        metric = AnalyticsMetric.EXTERNAL_LOAD_VOLUME
         composeRule.setContent {
             val density = LocalDensity.current.density
             CompositionLocalProvider(LocalContext provides spanish,
                 LocalConfiguration provides spanish.resources.configuration,
                 LocalDensity provides Density(density, 1.8f)) {
-                WallCrawlTheme(themePreference = ThemePreference.DARK) {
-                    Box(Modifier.width(320.dp).height(640.dp)) { screen(loaded()) }
+                WallCrawlTheme(themePreference = theme) {
+                    Box(Modifier.width(320.dp).height(640.dp)) {
+                        screen(loaded(scope = AnalyticsScope.Exercise("bench"), performance = listOf(weightedSeries())))
+                    }
                 }
             }
         }
-        listOf(R.string.analytics_heading, R.string.analytics_scope_note, R.string.analytics_metric_volume).forEach { res ->
-            val label = spanish.getString(res).substringBefore("%1")
+        composeRule.onNode(hasScrollAction()).performScrollToNode(hasText("(esta semana hasta ahora)", substring = true))
+        composeRule.onNode(hasText("(esta semana hasta ahora)", substring = true)).performClick()
+        listOf(
+            spanish.getString(R.string.analytics_heading),
+            spanish.getString(R.string.analytics_scope_note).substringBefore("%1"),
+            "(esta semana hasta ahora)", // a week row: dates and "N lb × repeticiones"
+            "Thursday push", // a contributor row with its volume
+            "Es una diferencia registrada", // the comparison sentence with signed "+5 lb"
+            "Later bench" // an observation row: load, unit and reps
+        ).forEach { label ->
             composeRule.onNode(hasScrollAction()).performScrollToNode(hasText(label, substring = true))
             val node = composeRule.onNode(hasText(label, substring = true), useUnmergedTree = true)
             node.assertIsDisplayed()
@@ -368,7 +399,8 @@ class ProgressAnalyticsCardTest {
             } else listOf(AnalyticsContributor("w$index", "Week $index session", week.startEpochMillis + HOUR, 4.0 + index))
             AnalyticsBucket(week, index == WEEKS.lastIndex, contributors.sumOf { it.value }, contributors)
         }
-        val series = AnalyticsSeries(buckets, buckets.sumOf { it.value }, hasMatches)
+        // "No matches" is what the calculator produces: buckets without contributors.
+        val series = AnalyticsSeries(if (hasMatches) buckets else buckets.map { it.copy(value = 0.0, contributors = emptyList()) })
         return ProgressAnalyticsUiState.Loaded(
             ProgressAnalytics(AnalyticsRange.WEEKS_4, scope, AnalyticsMetric.entries.associateWith { series }, 3,
                 hasWorkouts, unclassifiable, emptyMap(), performance),

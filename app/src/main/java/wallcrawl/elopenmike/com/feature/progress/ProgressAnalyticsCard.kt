@@ -172,7 +172,8 @@ private fun Filters(
             actions.onSelectScope(AnalyticsScope.All)
         }
         Box {
-            Chip(stringResource(R.string.analytics_scope_exercise), selection.scope is AnalyticsScope.Exercise) { exerciseMenu = true }
+            Chip(stringResource(R.string.analytics_scope_exercise), selection.scope is AnalyticsScope.Exercise,
+                opensMenu = exerciseMenu) { exerciseMenu = true }
             val labelled = remember(exerciseOptions, catalogNames, vocabulary) {
                 vocabulary.exerciseIdsByLabel(exerciseOptions.orEmpty(), catalogNames)
                     .map { it to vocabulary.exerciseName(it, catalogNames[it]) }
@@ -182,7 +183,8 @@ private fun Filters(
             ) { actions.onSelectScope(AnalyticsScope.Exercise(it)) }
         }
         Box {
-            Chip(stringResource(R.string.analytics_scope_muscle), selection.scope is AnalyticsScope.Muscle) { muscleMenu = true }
+            Chip(stringResource(R.string.analytics_scope_muscle), selection.scope is AnalyticsScope.Muscle,
+                opensMenu = muscleMenu) { muscleMenu = true }
             val labelled = remember(vocabulary) {
                 vocabulary.musclesByLabel(StandardMuscles.TRAINABLE).map { it to vocabulary.muscle(it) }
             }
@@ -436,13 +438,28 @@ private fun ChipRow(content: @Composable () -> Unit) {
     ) { content() }
 }
 
+/**
+ * A choice chip. [opensMenu] non-null marks a chip that opens a chooser rather than selecting
+ * a value, so it is announced as a button with its expanded state, not as a radio button.
+ */
 @Composable
-private fun Chip(label: String, selected: Boolean, onClick: () -> Unit) {
+private fun Chip(label: String, selected: Boolean, opensMenu: Boolean? = null, onClick: () -> Unit) {
+    val menuState = opensMenu?.let {
+        stringResource(if (it) R.string.progress_details_expanded else R.string.progress_details_collapsed)
+    }
     FilterChip(
         selected = selected,
         onClick = onClick,
         label = { Text(label, color = if (selected) Color.White else MaterialTheme.colorScheme.onSurface) },
-        modifier = Modifier.heightIn(min = 48.dp).semantics { this.selected = selected; role = Role.RadioButton },
+        modifier = Modifier.heightIn(min = 48.dp).semantics {
+            this.selected = selected
+            if (menuState == null) {
+                role = Role.RadioButton
+            } else {
+                role = Role.Button
+                stateDescription = menuState
+            }
+        },
         colors = FilterChipDefaults.filterChipColors(
             containerColor = MaterialTheme.colorScheme.surface,
             selectedContainerColor = CrimsonRedPrimary,

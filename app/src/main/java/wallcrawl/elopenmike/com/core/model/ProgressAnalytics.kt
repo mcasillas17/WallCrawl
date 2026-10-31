@@ -136,12 +136,13 @@ data class ProgressAnalytics(
     val performance: List<PerformanceSeries>
 )
 
-/** One metric's buckets; [hasScopeMatches] is false when no session contributes to it. */
-data class AnalyticsSeries(
-    val buckets: List<AnalyticsBucket>,
-    val rangeTotal: Double,
-    val hasScopeMatches: Boolean
-)
+/** One metric's buckets; the total and match flag are derived from them, so they cannot disagree. */
+data class AnalyticsSeries(val buckets: List<AnalyticsBucket>) {
+    val rangeTotal: Double get() = buckets.sumOf { it.value }
+
+    /** False when no session contributes to this metric anywhere in the range. */
+    val hasScopeMatches: Boolean get() = buckets.any { it.contributors.isNotEmpty() }
+}
 
 /** One ISO week; [partial] marks the unfinished current week, which is never compared. */
 data class AnalyticsBucket(

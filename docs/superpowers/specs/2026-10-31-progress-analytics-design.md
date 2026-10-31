@@ -20,8 +20,9 @@ model, network, telemetry or account is involved.
 The existing calendar-week Progress cards (logged activity, reviewed primary dose,
 legacy involvement, short strength comparisons, recent history, program content)
 are unchanged and keep describing **this calendar week**. A new **Over time** card
-follows them. Its filters affect only that card, which says so in its own
-subtitle. Nothing on the weekly cards changes scope.
+sits after the strength comparisons and before the recent-history list and its
+all-workouts link; program content stays first. Its filters affect only that card,
+which says so in its own subtitle. Nothing on the weekly cards changes scope.
 
 ## Selection
 
