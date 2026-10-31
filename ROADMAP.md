@@ -969,6 +969,9 @@ gate is green at one commit, and core workout flows remain offline and account-f
 
 **Status:** Ongoing; Issue #45 tracks `targetSdk` 35 versus `compileSdk` 37.
 
+The [2026-10-31 dependency-health record](docs/dependency-health.md) covers a focused
+tooling remediation and remaining advisories; the release-maintenance package remains open.
+
 **Depends on:** Platform behavior review before changing runtime targets.
 
 **Implementation tasks:**

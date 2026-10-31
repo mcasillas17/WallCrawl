@@ -1,6 +1,6 @@
 [versions]
 agp = "9.4.0"
-kotlin = "2.4.10"
+kotlin = "2.4.21"
 ksp = "2.3.11"
 appcompat = "1.8.0"
 coreKtx = "1.19.0"
@@ -19,8 +19,13 @@ truth = "1.4.5"
 turbine = "1.2.0"
 coil = "3.6.2"
 json = "20260814"
+commonsLang = "3.18.0"
+httpClient = "4.5.14"
 
 [libraries]
+# Build-tool constraints only; see docs/dependency-health.md.
+build-commons-lang = { group = "org.apache.commons", name = "commons-lang3", version.ref = "commonsLang" }
+build-httpclient = { group = "org.apache.httpcomponents", name = "httpclient", version.ref = "httpClient" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
