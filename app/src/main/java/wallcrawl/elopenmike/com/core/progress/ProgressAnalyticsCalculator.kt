@@ -144,7 +144,7 @@ class ProgressAnalyticsCalculator(
     /** A weighted set with reps and a valid recorded load; a missing load is not zero volume. */
     private fun WorkoutSet.hasRecordedExternalLoad(): Boolean =
         exerciseType == ExerciseType.WEIGHT_REPS && loggedReps() > 0 &&
-            completedWeight?.let { it.isFinite() && it >= 0.0 } == true
+            recordedExternalLoadOrNull() != null
 
     /** Exercise scope credits only that exercise's sets; other scopes read the whole session. */
     private fun WorkoutSession.restrictedTo(scope: AnalyticsScope): WorkoutSession =
@@ -184,7 +184,7 @@ class ProgressAnalyticsCalculator(
             .toSortedMap()
             .map { (shape, points) ->
                 val comparison = if (shape.charted && points.size >= 2) {
-                    PerformanceComparison(points.first(), points.last(), points.last().value - points.first().value)
+                    PerformanceComparison(points.first(), points.last())
                 } else null
                 PerformanceSeries(shape, points, comparison)
             }

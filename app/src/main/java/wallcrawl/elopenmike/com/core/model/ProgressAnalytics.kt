@@ -193,9 +193,11 @@ data class PerformanceObservation(
     val secondaryValue: Double? = null
 )
 
-/** Earliest and latest observation in the range and their signed difference; no percentage. */
+/**
+ * The earliest and latest observation in the range. The card shows their change from the values
+ * as displayed, in the shape's own unit; there is no percentage and no stored difference.
+ */
 data class PerformanceComparison(
     val earliest: PerformanceObservation,
-    val latest: PerformanceObservation,
-    val difference: Double
+    val latest: PerformanceObservation
 )

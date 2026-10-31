@@ -107,7 +107,7 @@ class ProgressAnalyticsRepositoryTest {
         val series = read(AnalyticsSelection(scope = AnalyticsScope.Exercise("approved"))).analytics.performance.single()
         assertThat(series.observations.map { it.sessionId }).containsExactly("kg", "lb").inOrder()
         assertThat(series.observations.first().value).isWithin(1e-9).of(100.0 / 0.45359237)
-        assertThat(series.comparison!!.difference).isWithin(1e-9).of(225.0 - 100.0 / 0.45359237)
+        assertThat(series.comparison!!.change).isWithin(1e-9).of(225.0 - 100.0 / 0.45359237)
     }
 
     @Test fun recordedDecisionsAreReadOnlyForRangeSessionsContainingTheExercise() = runBlocking {
@@ -333,3 +333,7 @@ class ProgressAnalyticsRepositoryTest {
         )
     }
 }
+
+/** The recorded change between the compared observations, as tests read it. */
+private val wallcrawl.elopenmike.com.core.model.PerformanceComparison.change: Double
+    get() = latest.value - earliest.value

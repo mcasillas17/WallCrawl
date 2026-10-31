@@ -120,8 +120,9 @@ duplicates and multiple sets never count as several sessions.
 
 A comparison needs **two observations from distinct sessions** in the range. It
 reports the earliest and latest observed values and their signed difference in
-the shape's own unit, rounded to the displayed precision before its sign is chosen,
-so a unit conversion that rounds to no change shows no sign. No percentage,
+the shape's own unit, taken as the latest shown endpoint minus the earliest shown endpoint
+(each rounded as the formatter rounds it), so the change always reconciles with the values
+on screen and a unit conversion that rounds to no change shows no sign. No percentage,
 regression line, projection, score or readiness claim. One observation is *insufficient comparable observations*.
 Missing values are not zero; a session with no eligible set for a shape produces
 no observation for it. Loads convert through `convertWeight`; stored values and
@@ -218,8 +219,8 @@ text summary as its content description and is decorative beyond that; the
 accessible interface is the data list beside it. Each week row is a ≥48 dp toggle
 button with a full spoken label (date range, value with unit or "nothing recorded",
 partial marker) that reveals its contributors. Contributor, observation and decision
-rows are ≥48 dp buttons that open that workout's history detail. Contributor,
-observation and decision lists show 20 rows at a time with a "Show more (N not shown
+rows are ≥48 dp buttons that open that workout's history detail. The exercise chooser and contributor,
+observation and decision lists show 20 entries at a time with a "Show more (N not shown
 yet)" control, so nothing is hidden silently and a long range is not composed at once. The partial
 week uses a hatched bar plus the text marker. Selection chips expose selected
 state. English and neutral Latin American Spanish strings use existing plural,

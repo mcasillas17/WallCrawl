@@ -494,9 +494,12 @@ internal fun WorkoutSet.loggedReps(): Int = if (isCompletedRepBasedSet()) requir
  */
 internal fun WorkoutSet.externalLoadVolume(from: WeightUnit, to: WeightUnit): Double {
     if (!isCompletedRepBasedSet() || exerciseType != ExerciseType.WEIGHT_REPS) return 0.0
-    val load = completedWeight?.takeIf { it.isFinite() && it >= 0.0 }?.let { convertWeight(it, from, to) } ?: 0.0
+    val load = recordedExternalLoadOrNull()?.let { convertWeight(it, from, to) } ?: 0.0
     return (load * requireNotNull(completedReps)).takeIf(Double::isFinite) ?: 0.0
 }
+
+/** A finite, non-negative recorded load; anything else is a missing load, never zero. */
+internal fun WorkoutSet.recordedExternalLoadOrNull(): Double? = completedWeight?.takeIf { it.isFinite() && it >= 0.0 }
 
 /** A grouped maximum in its original unit, shared by in-memory and Room history reads. */
 data class PersonalRecordBaseline(

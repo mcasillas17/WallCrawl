@@ -361,7 +361,7 @@ class ProgressAnalyticsCalculatorTest {
         assertThat(series.observations.map { it.sessionId }).containsExactly("first", "second").inOrder()
         assertThat(series.comparison!!.earliest.sessionId).isEqualTo("first")
         assertThat(series.comparison!!.latest.sessionId).isEqualTo("second")
-        assertThat(series.comparison!!.difference).isEqualTo(-5.0)
+        assertThat(series.comparison!!.change).isEqualTo(-5.0)
     }
 
     @Test
@@ -372,7 +372,7 @@ class ProgressAnalyticsCalculatorTest {
         listOf(WeightUnit.KG, WeightUnit.LBS).forEach { unit ->
             val series = calculate(listOf(kg, lb), scope = AnalyticsScope.Exercise("bench"),
                 comparable = setOf("k", "l"), unit = unit).performance.single()
-            assertThat(series.comparison!!.difference).isWithin(1e-9).of(0.0)
+            assertThat(series.comparison!!.change).isWithin(1e-9).of(0.0)
         }
         val inKg = calculate(listOf(kg, lb), scope = AnalyticsScope.Exercise("bench"),
             comparable = setOf("k", "l"), unit = WeightUnit.KG).performance.single()
@@ -407,7 +407,7 @@ class ProgressAnalyticsCalculatorTest {
         assertThat(series.keys).containsExactly(
             PerformanceShape.DISTANCE_ONLY, PerformanceShape.TIME_ONLY, PerformanceShape.DISTANCE_AND_TIME
         )
-        assertThat(series.getValue(PerformanceShape.DISTANCE_ONLY).comparison!!.difference).isEqualTo(100.0)
+        assertThat(series.getValue(PerformanceShape.DISTANCE_ONLY).comparison!!.change).isEqualTo(100.0)
         assertThat(series.getValue(PerformanceShape.TIME_ONLY).comparison).isNull()
         assertThat(PerformanceShape.DISTANCE_AND_TIME.charted).isFalse()
         assertThat(series.getValue(PerformanceShape.DISTANCE_AND_TIME).comparison).isNull()
@@ -433,7 +433,7 @@ class ProgressAnalyticsCalculatorTest {
         val bw = calculate(listOf(bw1, bw2), scope = AnalyticsScope.Exercise("bench"),
             comparable = setOf("p", "q")).performance.single()
         assertThat(bw.shape).isEqualTo(PerformanceShape.BODYWEIGHT_REPS)
-        assertThat(bw.comparison!!.difference).isEqualTo(2.0)
+        assertThat(bw.comparison!!.change).isEqualTo(2.0)
 
         val hold = session("h", THIS_WEEK, type = ExerciseType.DURATION, sets = listOf(timed(1, 45, id = "h1")))
         val holdSeries = calculate(listOf(hold), scope = AnalyticsScope.Exercise("bench"),
@@ -550,3 +550,7 @@ class ProgressAnalyticsCalculatorTest {
         val PREV_WEEK = ms("2026-08-26T09:00:00Z")
     }
 }
+
+/** The recorded change between the compared observations, as tests read it. */
+private val wallcrawl.elopenmike.com.core.model.PerformanceComparison.change: Double
+    get() = latest.value - earliest.value

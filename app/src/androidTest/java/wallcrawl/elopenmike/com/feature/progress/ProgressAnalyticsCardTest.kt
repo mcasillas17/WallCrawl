@@ -134,7 +134,7 @@ class ProgressAnalyticsCardTest {
         val earlier = PerformanceObservation("earlier", "Earlier bench", WEEKS[1].startEpochMillis + HOUR, listOf("i1"), 100.0, 5)
         val later = PerformanceObservation("later", "Later bench", WEEKS[3].startEpochMillis + HOUR, listOf("i2"), 99.999, 5)
         val series = PerformanceSeries(PerformanceShape.WEIGHTED_REPS, listOf(earlier, later),
-            PerformanceComparison(earlier, later, later.value - earlier.value))
+            PerformanceComparison(earlier, later))
         render(loaded(scope = AnalyticsScope.Exercise("bench"), performance = listOf(series)))
         scrollTo("This is a recorded difference")
         composeRule.onNode(hasText(": 0 lb.", substring = true)).assertExists()
@@ -170,7 +170,7 @@ class ProgressAnalyticsCardTest {
             PerformanceObservation("s$it", "Session $it", WEEKS.first().startEpochMillis + it * HOUR, listOf("i$it"), 100.0 + it, 5)
         }
         val series = PerformanceSeries(PerformanceShape.WEIGHTED_REPS, observations,
-            PerformanceComparison(observations.first(), observations.last(), 52.0))
+            PerformanceComparison(observations.first(), observations.last()))
         render(loaded(scope = AnalyticsScope.Exercise("bench"), performance = listOf(series)))
         scrollTo(english.getString(R.string.analytics_observation_chart_omitted))
         composeRule.onNode(hasContentDescription("for each workout", substring = true)).assertDoesNotExist()
@@ -259,7 +259,7 @@ class ProgressAnalyticsCardTest {
         val earlier = PerformanceObservation("earlier", "Earlier bench", WEEKS[1].startEpochMillis + HOUR, listOf("i1"), 100.004, 5)
         val later = PerformanceObservation("later", "Later bench", WEEKS[3].startEpochMillis + HOUR, listOf("i2"), 100.996, 5)
         val series = PerformanceSeries(PerformanceShape.WEIGHTED_REPS, listOf(earlier, later),
-            PerformanceComparison(earlier, later, later.value - earlier.value))
+            PerformanceComparison(earlier, later))
         render(loaded(scope = AnalyticsScope.Exercise("bench"), performance = listOf(series)))
         scrollTo("This is a recorded difference")
         // 100 lb and 101 lb are shown, so the change reads +1 lb, not +0.99 lb.
@@ -271,7 +271,7 @@ class ProgressAnalyticsCardTest {
         val earlier = PerformanceObservation("earlier", "Earlier bench", WEEKS[1].startEpochMillis + HOUR, listOf("i1"), 100.005, 5)
         val later = PerformanceObservation("later", "Later bench", WEEKS[3].startEpochMillis + HOUR, listOf("i2"), 101.0, 5)
         val series = PerformanceSeries(PerformanceShape.WEIGHTED_REPS, listOf(earlier, later),
-            PerformanceComparison(earlier, later, later.value - earlier.value))
+            PerformanceComparison(earlier, later))
         render(loaded(scope = AnalyticsScope.Exercise("bench"), performance = listOf(series)))
         scrollTo("This is a recorded difference")
         composeRule.onNode(hasText("From 100.01 lb", substring = true)).assertExists()
@@ -468,7 +468,7 @@ class ProgressAnalyticsCardTest {
     private fun weightedSeries(): PerformanceSeries {
         val earlier = PerformanceObservation("earlier", "Earlier bench", WEEKS[1].startEpochMillis + HOUR, listOf("i1"), 100.0, 5)
         val later = PerformanceObservation("later", "Later bench", WEEKS[3].startEpochMillis + HOUR, listOf("i2"), 105.0, 5)
-        return PerformanceSeries(PerformanceShape.WEIGHTED_REPS, listOf(earlier, later), PerformanceComparison(earlier, later, 5.0))
+        return PerformanceSeries(PerformanceShape.WEIGHTED_REPS, listOf(earlier, later), PerformanceComparison(earlier, later))
     }
 
     private companion object {
