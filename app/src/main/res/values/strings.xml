@@ -1047,7 +1047,7 @@
     <string name="analytics_reset">Reset filters</string>
     <string name="analytics_loading">Loading this range from your workout history</string>
     <string name="analytics_error">This range could not be loaded from your workout data. Nothing is shown rather than a zero.</string>
-    <string name="analytics_too_large">This history holds more workouts than this version can chart, so nothing was cut off to fit.</string>
+    <string name="analytics_too_large">This range holds more recorded workouts or sets than this version can chart, so it is not shown rather than cut short.</string>
     <string name="analytics_empty_range">No completed workouts in this range.</string>
     <string name="analytics_no_matches">No completed sets match this filter in this range.</string>
     <string name="analytics_def_workouts">Each completed workout counts once. With a filter, only workouts with at least one completed matching set count.</string>

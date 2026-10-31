@@ -271,7 +271,7 @@ class ProgressAnalyticsCardTest {
     @Test fun loadingTooLargeErrorEmptyAndNoMatchStatesAreDistinct() {
         listOf(
             ProgressAnalyticsUiState.Loading to R.string.analytics_loading,
-            // The default selection is already the shortest range, so no shorter range is offered.
+            // Too large never suggests a remedy; every range ends with the current weeks.
             ProgressAnalyticsUiState.TooLarge to R.string.analytics_too_large,
             ProgressAnalyticsUiState.Error to R.string.analytics_error,
             loaded(hasWorkouts = false) to R.string.analytics_empty_range,
