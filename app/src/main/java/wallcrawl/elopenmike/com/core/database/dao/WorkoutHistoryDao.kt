@@ -268,6 +268,8 @@ interface WorkoutHistoryDao {
     @Query("""
         SELECT
             (SELECT COUNT(*) FROM workout_sessions s WHERE $ANALYTICS_RANGE_SESSION) AS sessionCount,
+            (SELECT COUNT(*) FROM workout_exercises e JOIN workout_sessions s ON s.id = e.sessionId
+                WHERE $ANALYTICS_RANGE_SESSION) AS exerciseCount,
             (SELECT COUNT(*) FROM workout_sets w JOIN workout_exercises e ON e.id = w.workoutExerciseId
                 JOIN workout_sessions s ON s.id = e.sessionId WHERE $ANALYTICS_RANGE_SESSION) AS setCount,
             EXISTS (SELECT 1 FROM workout_sessions s
@@ -317,7 +319,12 @@ interface WorkoutHistoryDao {
     suspend fun selectAnalyticsExerciseIds(limit: Int): List<String>
 }
 
-data class AnalyticsRangeSize(val sessionCount: Long, val setCount: Long, val invalidMetadata: Boolean)
+data class AnalyticsRangeSize(
+    val sessionCount: Long,
+    val exerciseCount: Long,
+    val setCount: Long,
+    val invalidMetadata: Boolean
+)
 
 data class HistoricalExerciseRow(
     @Embedded val exercise: WorkoutExerciseEntity,

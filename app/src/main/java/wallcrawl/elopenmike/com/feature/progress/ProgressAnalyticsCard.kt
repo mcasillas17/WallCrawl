@@ -111,7 +111,7 @@ internal fun ProgressAnalyticsCard(
                 Text(stringResource(R.string.analytics_error), color = MaterialTheme.colorScheme.error, fontSize = 13.sp)
                 Button(onClick = actions.onRetry) { Text(stringResource(R.string.action_try_again)) }
             }
-            is ProgressAnalyticsUiState.Loaded -> LoadedContent(state, zoneId, onOpenSession)
+            is ProgressAnalyticsUiState.Loaded -> LoadedContent(state, selection, zoneId, onOpenSession)
         }
     }
 }
@@ -189,19 +189,24 @@ private fun Filters(
 }
 
 @Composable
-private fun LoadedContent(state: ProgressAnalyticsUiState.Loaded, zoneId: ZoneId, onOpenSession: (String) -> Unit) {
+private fun LoadedContent(
+    state: ProgressAnalyticsUiState.Loaded,
+    selection: AnalyticsSelection,
+    zoneId: ZoneId,
+    onOpenSession: (String) -> Unit
+) {
     val analytics = state.analytics
-    val selection = analytics.selection
+    val series = analytics.series.getValue(selection.metric)
     val locale = LocalConfiguration.current.locales[0]
     val unit = state.preferredUnit
-    when {
-        !analytics.hasWorkoutsInRange -> return Body(stringResource(R.string.analytics_empty_range))
-        !analytics.hasScopeMatches -> return Body(stringResource(R.string.analytics_no_matches))
-    }
+    if (!analytics.hasWorkoutsInRange) return Body(stringResource(R.string.analytics_empty_range))
+    // Classification and omission notes come before "no matches", so they can explain it.
     Body(metricDefinition(selection.metric, unit))
-    if (selection.scope is AnalyticsScope.Muscle && selection.metric != AnalyticsMetric.REVIEWED_PRIMARY_DOSE) {
-        Body(stringResource(R.string.analytics_muscle_basis))
-        if (analytics.unclassifiableSets > 0) {
+    if (selection.scope is AnalyticsScope.Muscle) {
+        Body(stringResource(if (selection.metric == AnalyticsMetric.REVIEWED_PRIMARY_DOSE) {
+            R.string.analytics_muscle_dose_basis
+        } else R.string.analytics_muscle_basis))
+        if (selection.metric != AnalyticsMetric.REVIEWED_PRIMARY_DOSE && analytics.unclassifiableSets > 0) {
             Body(pluralStringResource(R.plurals.analytics_unclassifiable, analytics.unclassifiableSets,
                 LocaleFormatting.formatCount(analytics.unclassifiableSets, locale)))
         }
@@ -216,13 +221,14 @@ private fun LoadedContent(state: ProgressAnalyticsUiState.Loaded, zoneId: ZoneId
             }
         }
     }
+    if (!series.hasScopeMatches) return Body(stringResource(R.string.analytics_no_matches))
 
     val metricName = stringResource(selection.metric.labelRes())
     val dates = rememberDateFormat(zoneId)
-    val buckets = analytics.buckets
+    val buckets = series.buckets
     val highest = buckets.maxByOrNull { it.value }?.value ?: 0.0
     Text(
-        text = stringResource(R.string.analytics_total, metricValue(selection.metric, analytics.rangeTotal, unit)),
+        text = stringResource(R.string.analytics_total, metricValue(selection.metric, series.rangeTotal, unit)),
         fontSize = 14.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface
     )
     Body(pluralStringResource(R.plurals.analytics_full_weeks, analytics.fullWeeks,
@@ -245,13 +251,13 @@ private fun LoadedContent(state: ProgressAnalyticsUiState.Loaded, zoneId: ZoneId
         }
         if (bucket.week.startEpochDay == expandedWeek) {
             Label(stringResource(R.string.analytics_week_contributors))
-            bucket.contributors.forEach { contributor ->
+            PagedRows(bucket.contributors, bucket.week to selection) { contributor ->
                 LinkRow(stringResource(R.string.analytics_contributor_row, contributor.name,
                     dates.format(Date(contributor.completedAtTimestamp)), metricValue(selection.metric, contributor.value, unit))) {
                     onOpenSession(contributor.sessionId)
                 }
             }
-            if (bucket.contributors.isEmpty()) Body(stringResource(R.string.analytics_no_matches))
+            if (bucket.contributors.isEmpty()) Body(stringResource(R.string.analytics_week_empty))
         }
     }
 
@@ -282,14 +288,14 @@ private fun PerformanceSection(series: PerformanceSeries, unit: WeightUnit, date
             }
             if (series.observations.size > 1) {
                 AnalyticsBarChart(series.observations.map { it.value },
-                    stringResource(R.string.analytics_chart_description, stringResource(series.shape.labelRes()),
+                    stringResource(R.string.analytics_observation_chart_description, stringResource(series.shape.labelRes()),
                         dates.format(Date(series.observations.first().completedAtTimestamp)),
                         dates.format(Date(series.observations.last().completedAtTimestamp)),
                         observationValue(series.shape, series.observations.maxBy { it.value }, unit)))
             }
         }
     }
-    series.observations.asReversed().forEach { observation ->
+    PagedRows(series.observations.asReversed(), series.shape) { observation ->
         LinkRow(stringResource(R.string.analytics_contributor_row, observation.sessionName,
             dates.format(Date(observation.completedAtTimestamp)), observationValue(series.shape, observation, unit))) {
             onOpenSession(observation.sessionId)
@@ -303,7 +309,7 @@ private fun DecisionsSection(decisions: List<AnalyticsDecision>, dates: DateForm
     Section(stringResource(R.string.analytics_decisions_heading))
     Body(stringResource(R.string.analytics_decisions_note))
     if (decisions.isEmpty()) Body(stringResource(R.string.analytics_decisions_empty))
-    decisions.asReversed().forEach { decision ->
+    PagedRows(decisions.asReversed(), decisions.size) { decision ->
         val lines = buildList {
             decision.progression?.let { reason ->
                 add(progressionHoldReasonRes(reason.reason)?.let { stringResource(it) }
@@ -344,6 +350,26 @@ private fun WeekRow(bucket: AnalyticsBucket, metric: AnalyticsMetric, unit: Weig
             .padding(vertical = 12.dp)
     )
 }
+
+/**
+ * Rows a page at a time with an explicit count of what is not shown yet, so a range near its
+ * representation bound neither composes thousands of rows at once nor hides any silently.
+ */
+@Composable
+private fun <T> PagedRows(items: List<T>, key: Any, row: @Composable (T) -> Unit) {
+    val locale = LocalConfiguration.current.locales[0]
+    var shown by rememberSaveable(key) { mutableStateOf(ROW_PAGE_SIZE) }
+    items.take(shown).forEach { row(it) }
+    val remaining = items.size - shown
+    if (remaining > 0) {
+        TextButton(onClick = { shown += ROW_PAGE_SIZE }, modifier = Modifier.heightIn(min = 48.dp)) {
+            Text(pluralStringResource(R.plurals.analytics_show_more, remaining, LocaleFormatting.formatCount(remaining, locale)),
+                color = MaterialTheme.colorScheme.onSurface)
+        }
+    }
+}
+
+private const val ROW_PAGE_SIZE = 20
 
 @Composable
 private fun LinkRow(title: String, lines: List<String> = emptyList(), onClick: () -> Unit) {

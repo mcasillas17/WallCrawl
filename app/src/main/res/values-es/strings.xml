@@ -1028,9 +1028,7 @@
     <string name="analytics_scope_exercise">Un ejercicio</string>
     <string name="analytics_scope_muscle">Un músculo</string>
     <string name="analytics_choose_exercise">Ejercicio: %1$s</string>
-    <string name="analytics_choose_exercise_none">Elige un ejercicio</string>
     <string name="analytics_choose_muscle">Músculo: %1$s</string>
-    <string name="analytics_choose_muscle_none">Elige un músculo</string>
     <string name="analytics_no_exercise_options">Todavía no hay ejercicios registrados.</string>
     <string name="analytics_metric_label">Medida</string>
     <string name="analytics_metric_workouts">Entrenamientos</string>
@@ -1090,5 +1088,12 @@
         <item quantity="other">Cita %1$s entrenamientos anteriores.</item>
     </plurals>
     <string name="analytics_decision_no_sources">No se citó ningún entrenamiento anterior.</string>
+    <string name="analytics_muscle_dose_basis">La dosis revisada asigna cada serie de trabajo a su único músculo principal directo aceptado en los datos revisados actuales. Los entrenamientos pasados no lo registraron.</string>
+    <string name="analytics_observation_chart_description">Gráfica de barras de %1$s por entrenamiento del %2$s al %3$s. Valor más alto: %4$s. La lista de abajo tiene todos los valores.</string>
+    <string name="analytics_week_empty">No hay nada registrado para esta selección en esta semana.</string>
+    <plurals name="analytics_show_more">
+        <item quantity="one">Mostrar más (falta %1$s)</item>
+        <item quantity="other">Mostrar más (faltan %1$s)</item>
+    </plurals>
     <string name="analytics_decision_row">%1$s, %2$s</string>
 </resources>

@@ -1036,9 +1036,7 @@
     <string name="analytics_scope_exercise">One exercise</string>
     <string name="analytics_scope_muscle">One muscle</string>
     <string name="analytics_choose_exercise">Exercise: %1$s</string>
-    <string name="analytics_choose_exercise_none">Choose an exercise</string>
     <string name="analytics_choose_muscle">Muscle: %1$s</string>
-    <string name="analytics_choose_muscle_none">Choose a muscle</string>
     <string name="analytics_no_exercise_options">No exercises have been recorded yet.</string>
     <string name="analytics_metric_label">Measure</string>
     <string name="analytics_metric_workouts">Workouts</string>
@@ -1098,5 +1096,12 @@
         <item quantity="other">Cites %1$s earlier workouts.</item>
     </plurals>
     <string name="analytics_decision_no_sources">No earlier workout was cited.</string>
+    <string name="analytics_muscle_dose_basis">Reviewed dose credits each work set to its one accepted direct primary muscle in today\'s reviewed data. Past workouts did not record it.</string>
+    <string name="analytics_observation_chart_description">Bar chart of %1$s for each workout from %2$s to %3$s. Highest: %4$s. The list below has every value.</string>
+    <string name="analytics_week_empty">Nothing recorded for this selection in this week.</string>
+    <plurals name="analytics_show_more">
+        <item quantity="one">Show more (%1$s not shown yet)</item>
+        <item quantity="other">Show more (%1$s not shown yet)</item>
+    </plurals>
     <string name="analytics_decision_row">%1$s, %2$s</string>
 </resources>

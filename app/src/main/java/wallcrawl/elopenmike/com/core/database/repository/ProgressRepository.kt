@@ -12,10 +12,11 @@ import kotlinx.coroutines.sync.withLock
 import wallcrawl.elopenmike.com.core.database.WallCrawlDatabase
 import wallcrawl.elopenmike.com.core.database.relation.toWorkoutSession
 import wallcrawl.elopenmike.com.core.ai.TrainingFrequencyRecencyPolicy
+import wallcrawl.elopenmike.com.core.backup.LocalDataArchiveLimits
 import wallcrawl.elopenmike.com.core.ai.acceptedReviewPolicyVersion
 import wallcrawl.elopenmike.com.core.exercise.workoutguide.WorkoutGuideCatalogSource
 import wallcrawl.elopenmike.com.core.model.AnalyticsScope
-import wallcrawl.elopenmike.com.core.model.AnalyticsSelection
+import wallcrawl.elopenmike.com.core.model.AnalyticsRange
 import wallcrawl.elopenmike.com.core.model.ProgressAnalytics
 import wallcrawl.elopenmike.com.core.model.RecommendationRecord
 import wallcrawl.elopenmike.com.core.model.ProgressOverview
@@ -60,9 +61,13 @@ interface ProgressRepository {
     /** Null means the local profile was deleted or has not been created, not a read failure. */
     fun observeProgress(now: () -> Instant, zoneId: ZoneId): Flow<ProgressSnapshot?>
 
-    /** Null means no local profile. Reads only; never writes history, provenance or the ledger cache. */
+    /**
+     * Null means no local profile. Reads only; never writes history, provenance or the ledger cache.
+     * Every metric is computed per read, so only [range] and [scope] select what is read.
+     */
     fun observeAnalytics(
-        selection: AnalyticsSelection,
+        range: AnalyticsRange,
+        scope: AnalyticsScope,
         now: () -> Instant,
         zoneId: ZoneId
     ): Flow<ProgressAnalyticsSnapshot?>
@@ -137,7 +142,8 @@ class OfflineProgressRepository(
      * by the pure calculator, so no cache row is written.
      */
     override fun observeAnalytics(
-        selection: AnalyticsSelection,
+        range: AnalyticsRange,
+        scope: AnalyticsScope,
         now: () -> Instant,
         zoneId: ZoneId
     ): Flow<ProgressAnalyticsSnapshot?> = database.invalidationTracker.createFlow(
@@ -146,7 +152,7 @@ class OfflineProgressRepository(
         localDataWriteGate.withLock {
             database.withTransaction {
                 val instant = now()
-                val weeks = ProgressAnalyticsCalculator.rangeWeeks(selection.range, instant, zoneId)
+                val weeks = ProgressAnalyticsCalculator.rangeWeeks(range, instant, zoneId)
                 val start = weeks.first().startEpochMillis
                 val end = weeks.last().endEpochMillisExclusive
                 val profile = database.userProfileDao().getProfile(UserProfile.DEFAULT_PROFILE_ID)
@@ -154,13 +160,15 @@ class OfflineProgressRepository(
                 val catalog = catalogSource.snapshot()
                 val dao = database.workoutSessionDao()
                 val size = dao.selectAnalyticsRangeSize(start, end)
-                if (size.sessionCount > MAX_RANGE_SESSIONS || size.setCount > MAX_RANGE_SETS) {
+                if (size.sessionCount > MAX_RANGE_SESSIONS || size.exerciseCount > MAX_RANGE_EXERCISES ||
+                    size.setCount > MAX_RANGE_SETS
+                ) {
                     throw AnalyticsRangeTooLargeException()
                 }
                 require(!size.invalidMetadata) { "Stored workout history contains invalid typed metadata." }
                 val sessions = dao.getCompletedSessionsInRange(start, end, MAX_RANGE_SESSIONS)
                     .map { it.toWorkoutSession() }
-                val exerciseId = (selection.scope as? AnalyticsScope.Exercise)?.exerciseId
+                val exerciseId = (scope as? AnalyticsScope.Exercise)?.exerciseId
                 val comparable = exerciseId
                     ?.let { dao.selectAnalyticsComparableSetIds(start, end, it).toSet() }
                     .orEmpty()
@@ -174,12 +182,14 @@ class OfflineProgressRepository(
                         )
                     }
                 }.orEmpty()
+                // Overflow fails the read explicitly rather than hiding recorded exercises from the filter.
                 val options = dao.selectAnalyticsExerciseIds(MAX_EXERCISE_OPTIONS + 1)
                 require(options.size <= MAX_EXERCISE_OPTIONS) { "Recorded exercise options exceed their bound." }
                 val exercisesById = catalog.exercises.associateBy { it.id }
                 ProgressAnalyticsSnapshot(
                     analytics = analyticsCalculator.calculate(
-                        selection = selection,
+                        range = range,
+                        scope = scope,
                         sessions = sessions,
                         comparableSetIds = comparable,
                         exercisesById = exercisesById,
@@ -203,6 +213,7 @@ class OfflineProgressRepository(
         // The scheduling range's representational bounds; software limits, not training ones.
         const val MAX_RANGE_SESSIONS = TrainingFrequencyRecencyPolicy.MAX_SESSIONS
         const val MAX_RANGE_SETS = TrainingFrequencyRecencyPolicy.MAX_SETS
+        const val MAX_RANGE_EXERCISES = MAX_RANGE_SESSIONS * LocalDataArchiveLimits.MAX_EXERCISES_PER_SESSION
         const val MAX_EXERCISE_OPTIONS = 1_000
     }
 }

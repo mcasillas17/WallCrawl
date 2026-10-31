@@ -18,6 +18,8 @@ import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import wallcrawl.elopenmike.com.core.ai.TrainingFrequencyRecencyPolicy
+import wallcrawl.elopenmike.com.core.backup.LocalDataArchiveLimits
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutExerciseEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSessionEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSetEntity
@@ -72,13 +74,14 @@ class ProgressAnalyticsRepositoryTest {
         listOf(30, 40, 50).forEach { weeksAgo -> insert("old-$weeksAgo", monday.toEpochMilli() - weeksAgo * week + 1, "approved") }
         repeat(600) { insert("recent-$it", monday.toEpochMilli() + it, "draft") }
 
-        val scoped = read(AnalyticsSelection(AnalyticsRange.WEEKS_52, AnalyticsScope.Exercise("approved"), AnalyticsMetric.WORKOUTS))
-        assertThat(scoped.analytics.rangeTotal).isEqualTo(3.0)
-        assertThat(scoped.analytics.buckets.flatMap { it.contributors }.map { it.sessionId })
+        val scoped = read(AnalyticsSelection(AnalyticsRange.WEEKS_52, AnalyticsScope.Exercise("approved")))
+            .series(AnalyticsMetric.WORKOUTS)
+        assertThat(scoped.rangeTotal).isEqualTo(3.0)
+        assertThat(scoped.buckets.flatMap { it.contributors }.map { it.sessionId })
             .containsExactly("old-50", "old-40", "old-30").inOrder()
         val all = read(AnalyticsSelection(AnalyticsRange.WEEKS_52))
-        assertThat(all.analytics.rangeTotal).isEqualTo(603.0)
-        assertThat(all.analytics.buckets.last().contributors).hasSize(600)
+        assertThat(all.series(AnalyticsMetric.COMPLETED_SETS).rangeTotal).isEqualTo(603.0)
+        assertThat(all.series(AnalyticsMetric.COMPLETED_SETS).buckets.last().contributors).hasSize(600)
         assertThat(all.exerciseOptions).containsExactly("approved", "draft").inOrder()
     }
 
@@ -89,7 +92,7 @@ class ProgressAnalyticsRepositoryTest {
         insert("next-week", monday.toEpochMilli() + week, "approved")
         insert("cancelled", monday.toEpochMilli() + 1, "approved", status = SessionStatus.CANCELLED)
 
-        val result = read(AnalyticsSelection(metric = AnalyticsMetric.WORKOUTS)).analytics
+        val result = read(AnalyticsSelection()).series(AnalyticsMetric.WORKOUTS)
         assertThat(result.buckets.flatMap { it.contributors }.map { it.sessionId })
             .containsExactly("first-day", "later-this-week").inOrder()
     }
@@ -125,18 +128,64 @@ class ProgressAnalyticsRepositoryTest {
     @Test fun readsWriteNothing() = runBlocking {
         insert("a", monday.toEpochMilli(), "approved")
         val before = tableContents()
-        AnalyticsMetric.entries.forEach { metric ->
-            read(AnalyticsSelection(AnalyticsRange.WEEKS_52, AnalyticsScope.Exercise("approved"), metric))
-            read(AnalyticsSelection(AnalyticsRange.WEEKS_12, AnalyticsScope.Muscle("Chest"), metric))
+        // Every metric is computed on each read, so one read per scope covers them all.
+        listOf(AnalyticsScope.All, AnalyticsScope.Exercise("approved"), AnalyticsScope.Muscle("Chest")).forEach { scope ->
+            read(AnalyticsSelection(AnalyticsRange.WEEKS_52, scope))
         }
         assertThat(tableContents()).isEqualTo(before)
         assertThat(tableContents().getValue("weekly_dose_ledger_state")).isEmpty()
     }
 
-    @Test fun anUnknownStoredTypeFailsInsteadOfBeingRelabelled() {
-        runBlocking { insert("a", monday.toEpochMilli(), "approved") }
-        db.openHelper.writableDatabase.execSQL("UPDATE workout_sets SET exerciseType = 'LASER'")
-        assertThrows(IllegalArgumentException::class.java) { runBlocking { read(AnalyticsSelection()) } }
+    @Test fun everyUnknownStoredTypeOrUnitFailsInsteadOfBeingRelabelled() {
+        listOf(
+            "UPDATE workout_sets SET exerciseType = 'LASER'",
+            "UPDATE workout_sets SET type = 'MEGA'",
+            "UPDATE workout_exercises SET exerciseType = 'LASER'",
+            "UPDATE workout_exercises SET targetRepMax = NULL",
+            "UPDATE workout_sessions SET weightUnit = 'STONE'"
+        ).forEachIndexed { index, corruption ->
+            runBlocking { insert("c$index", monday.toEpochMilli() + index, "approved") }
+            // Session, exercise and set IDs of this fixture all start with its session ID.
+            db.openHelper.writableDatabase.execSQL("$corruption WHERE id LIKE 'c$index%'")
+            assertThrows(corruption, IllegalArgumentException::class.java) { runBlocking { read(AnalyticsSelection()) } }
+            db.openHelper.writableDatabase.execSQL("DELETE FROM workout_sessions WHERE id = 'c$index'")
+        }
+    }
+
+    @Test fun moreThanTheSetBoundInFewSessionsIsReportedNotTruncated() {
+        runBlocking { insert("big", monday.toEpochMilli(), "approved") }
+        // A recursive CTE writes the rows directly; the app path would take minutes for 100,001 sets.
+        db.openHelper.writableDatabase.execSQL("""
+            WITH RECURSIVE n(i) AS (SELECT 1 UNION ALL SELECT i + 1 FROM n WHERE i < 100001)
+            INSERT INTO workout_sets (id, workoutExerciseId, setNumber, exerciseType, targetReps, completedReps,
+                targetWeight, completedWeight, isCompleted, rpe, rir, type)
+            SELECT 'bulk-' || i, 'big-exercise', i, 'WEIGHT_REPS', 5, 5, 20.0, 20.0, 1, NULL, NULL, 'NORMAL' FROM n
+        """)
+        assertThrows(AnalyticsRangeTooLargeException::class.java) { runBlocking { read(AnalyticsSelection()) } }
+    }
+
+    @Test fun moreThanTheExerciseRowBoundIsReportedNotTruncated() {
+        runBlocking { insert("wide", monday.toEpochMilli(), "approved") }
+        db.openHelper.writableDatabase.execSQL("""
+            WITH RECURSIVE n(i) AS (SELECT 1 UNION ALL SELECT i + 1 FROM n WHERE i <
+                ${TrainingFrequencyRecencyPolicy.MAX_SESSIONS * LocalDataArchiveLimits.MAX_EXERCISES_PER_SESSION + 1})
+            INSERT INTO workout_exercises (id, sessionId, exerciseId, orderIndex, exerciseType, targetSets,
+                targetRepMin, targetRepMax, targetWeight, notes, restSeconds)
+            SELECT 'row-' || i, 'wide', 'approved', i, 'WEIGHT_REPS', 1, 5, 10, NULL, '', 90 FROM n
+        """)
+        assertThrows(AnalyticsRangeTooLargeException::class.java) { runBlocking { read(AnalyticsSelection()) } }
+    }
+
+    @Test fun anExerciseOptionOverflowFailsExplicitlyInsteadOfHidingRecordedExercises() {
+        runBlocking { insert("many", monday.toEpochMilli(), "approved") }
+        db.openHelper.writableDatabase.execSQL("""
+            WITH RECURSIVE n(i) AS (SELECT 1 UNION ALL SELECT i + 1 FROM n WHERE i < 1001)
+            INSERT INTO workout_exercises (id, sessionId, exerciseId, orderIndex, exerciseType, targetSets,
+                targetRepMin, targetRepMax, targetWeight, notes, restSeconds)
+            SELECT 'option-' || i, 'many', 'recorded-' || i, i, 'WEIGHT_REPS', 1, 5, 10, NULL, '', 90 FROM n
+        """)
+        val failure = assertThrows(IllegalArgumentException::class.java) { runBlocking { read(AnalyticsSelection()) } }
+        assertThat(failure.message).contains("exercise options")
     }
 
     @Test fun anOversizedRangeIsReportedNotTruncated() {
@@ -149,15 +198,15 @@ class ProgressAnalyticsRepositoryTest {
     @Test fun deletedProfileReadsAsNoProfileAndALiveObserverRefreshes() = runBlocking {
         val values = Channel<ProgressAnalyticsSnapshot?>(Channel.UNLIMITED)
         val collector = launch {
-            repository().observeAnalytics(AnalyticsSelection(metric = AnalyticsMetric.WORKOUTS), { now }, zone)
+            repository().observeAnalytics(AnalyticsRange.WEEKS_4, AnalyticsScope.All, { now }, zone)
                 .collect { values.send(it) }
         }
         try {
-            withTimeout(10_000) { assertThat(values.receive()?.analytics?.rangeTotal).isEqualTo(0.0) }
+            withTimeout(10_000) { assertThat(values.receive()?.series(AnalyticsMetric.WORKOUTS)?.rangeTotal).isEqualTo(0.0) }
             insert("new", monday.toEpochMilli(), "approved")
             withTimeout(10_000) {
                 var value = values.receive()
-                while (value?.analytics?.rangeTotal != 1.0) value = values.receive()
+                while (value?.series(AnalyticsMetric.WORKOUTS)?.rangeTotal != 1.0) value = values.receive()
             }
             backup().deleteAllLocalData()
             withTimeout(10_000) {
@@ -171,7 +220,9 @@ class ProgressAnalyticsRepositoryTest {
     }
 
     private suspend fun read(selection: AnalyticsSelection) =
-        requireNotNull(repository().observeAnalytics(selection, { now }, zone).first())
+        requireNotNull(repository().observeAnalytics(selection.range, selection.scope, { now }, zone).first())
+
+    private fun ProgressAnalyticsSnapshot.series(metric: AnalyticsMetric) = analytics.series.getValue(metric)
 
     private fun repository() = OfflineProgressRepository(
         db, catalog, OfflineWeeklyDoseLedgerRepository(db.completedWorkoutHistoryDao(), db.weeklyDoseLedgerStateDao(), catalog), gate

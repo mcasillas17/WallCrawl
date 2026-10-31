@@ -118,22 +118,29 @@ data class AnalyticsSelection(
 )
 
 /**
- * The selected metric over the range's weekly buckets.
+ * Every metric over the range's weekly buckets, computed in one pass so switching the metric
+ * needs no new read. Range and scope decide what is read; the metric only picks a [series].
  *
  * [unclassifiableSets] counts in-range completed sets whose exercise the current catalog does
  * not know, which a muscle scope cannot classify. [unattributedWorkSets] is the ledger's typed
  * omission total for the scope's sessions (all exercises for a muscle scope).
  */
 data class ProgressAnalytics(
-    val selection: AnalyticsSelection,
-    val buckets: List<AnalyticsBucket>,
-    val rangeTotal: Double,
+    val range: AnalyticsRange,
+    val scope: AnalyticsScope,
+    val series: Map<AnalyticsMetric, AnalyticsSeries>,
     val fullWeeks: Int,
     val hasWorkoutsInRange: Boolean,
-    val hasScopeMatches: Boolean,
     val unclassifiableSets: Int,
     val unattributedWorkSets: Map<LedgerOmissionReason, Int>,
     val performance: List<PerformanceSeries>
+)
+
+/** One metric's buckets; [hasScopeMatches] is false when no session contributes to it. */
+data class AnalyticsSeries(
+    val buckets: List<AnalyticsBucket>,
+    val rangeTotal: Double,
+    val hasScopeMatches: Boolean
 )
 
 /** One ISO week; [partial] marks the unfinished current week, which is never compared. */

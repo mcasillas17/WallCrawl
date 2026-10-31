@@ -53,8 +53,9 @@ class ProgressAnalyticsViewModelTest {
         )))
         collect(restored)
         assertThat(repository.requests.last()).isEqualTo(
-            AnalyticsSelection(AnalyticsRange.WEEKS_26, AnalyticsScope.Exercise("pull-ups"), AnalyticsMetric.REPS)
+            AnalyticsSelection(AnalyticsRange.WEEKS_26, AnalyticsScope.Exercise("pull-ups"))
         )
+        assertThat(restored.analyticsSelection.value.metric).isEqualTo(AnalyticsMetric.REPS)
     }
 
     @Test
@@ -106,7 +107,19 @@ class ProgressAnalyticsViewModelTest {
         slow.complete(Unit)
         runCurrent()
         val state = viewModel.analyticsState.value as ProgressAnalyticsUiState.Loaded
-        assertThat(state.analytics.selection.range).isEqualTo(AnalyticsRange.WEEKS_12)
+        assertThat(state.analytics.range).isEqualTo(AnalyticsRange.WEEKS_12)
+    }
+
+    @Test
+    fun changingOnlyTheMetricDoesNotReadAgain() = runTest {
+        val repository = FakeRepository()
+        val viewModel = viewModel(repository)
+        collect(viewModel)
+        val reads = repository.requests.size
+        viewModel.selectAnalyticsMetric(AnalyticsMetric.EXTERNAL_LOAD_VOLUME)
+        runCurrent()
+        assertThat(repository.requests).hasSize(reads)
+        assertThat(viewModel.analyticsState.value).isInstanceOf(ProgressAnalyticsUiState.Loaded::class.java)
     }
 
     @Test
@@ -178,9 +191,11 @@ class ProgressAnalyticsViewModelTest {
         val requests = mutableListOf<AnalyticsSelection>()
         var respond: suspend (AnalyticsSelection) -> ProgressAnalyticsSnapshot? = { snapshot(it) }
         override fun observeProgress(now: () -> Instant, zoneId: ZoneId): Flow<ProgressSnapshot?> = emptyFlow()
+        // Recorded as a selection with the default metric: the metric is never part of a read.
         override fun observeAnalytics(
-            selection: AnalyticsSelection, now: () -> Instant, zoneId: ZoneId
+            range: AnalyticsRange, scope: AnalyticsScope, now: () -> Instant, zoneId: ZoneId
         ): Flow<ProgressAnalyticsSnapshot?> = flow {
+            val selection = AnalyticsSelection(range, scope)
             requests += selection
             emit(respond(selection))
         }
@@ -204,7 +219,7 @@ class ProgressAnalyticsViewModelTest {
             selection: AnalyticsSelection,
             decisions: List<RecordedSessionDecision> = emptyList()
         ) = ProgressAnalyticsSnapshot(
-            analytics = ProgressAnalytics(selection, emptyList(), 0.0, 3, false, false, 0, emptyMap(), emptyList()),
+            analytics = ProgressAnalytics(selection.range, selection.scope, emptyMap(), 3, false, 0, emptyMap(), emptyList()),
             preferredUnit = WeightUnit.KG,
             exerciseOptions = emptyList(),
             catalogNames = emptyMap(),

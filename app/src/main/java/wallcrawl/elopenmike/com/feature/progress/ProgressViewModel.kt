@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
@@ -91,12 +92,17 @@ class ProgressViewModel(
         initialValue = ProgressUiState.Loading
     )
 
-    /** flatMapLatest cancels an obsolete read, so a slow earlier filter cannot overwrite a newer one. */
-    val analyticsState: StateFlow<ProgressAnalyticsUiState> = combine(selection, calendarZones, ::Pair)
-        .flatMapLatest { (current, zone) ->
+    /**
+     * Only range and scope decide the read; the metric is chosen from the already computed series.
+     * flatMapLatest cancels an obsolete read, so a slow earlier filter cannot overwrite a newer one.
+     */
+    val analyticsState: StateFlow<ProgressAnalyticsUiState> = combine(
+        selection.map { it.range to it.scope }.distinctUntilChanged(), calendarZones, ::Pair
+    ).flatMapLatest { (read, zone) ->
+            val (range, scope) = read
             flow {
-                emitAll(progressRepository.observeAnalytics(current, { Instant.ofEpochMilli(nowTimestamp()) }, zone))
-            }.map { snapshot -> snapshot?.toUiState(current) ?: ProgressAnalyticsUiState.NoProfile }
+                emitAll(progressRepository.observeAnalytics(range, scope, { Instant.ofEpochMilli(nowTimestamp()) }, zone))
+            }.map { snapshot -> snapshot?.toUiState(scope) ?: ProgressAnalyticsUiState.NoProfile }
                 .onStart { emit(ProgressAnalyticsUiState.Loading) }
                 .catch { error ->
                     if (error is CancellationException) throw error
@@ -161,8 +167,8 @@ class ProgressViewModel(
     }
 
     /** Decoding uses the history presenter, so a known malformed group fails like history detail. */
-    private fun ProgressAnalyticsSnapshot.toUiState(current: AnalyticsSelection): ProgressAnalyticsUiState {
-        val exerciseId = (current.scope as? AnalyticsScope.Exercise)?.exerciseId
+    private fun ProgressAnalyticsSnapshot.toUiState(scope: AnalyticsScope): ProgressAnalyticsUiState {
+        val exerciseId = (scope as? AnalyticsScope.Exercise)?.exerciseId
         return ProgressAnalyticsUiState.Loaded(
             analytics = analytics,
             preferredUnit = preferredUnit,

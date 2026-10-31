@@ -2,7 +2,8 @@
 
 ## Authority and scope
 
-Based on `origin/main` at `ead925f` (#82), fetched on 2026-10-31. ROADMAP.md remains
+Written against `origin/main` at `ead925f` (#82) and rebased onto `d790077` (#97,
+tooling only) on 2026-10-31. ROADMAP.md remains
 the status authority. The persistence contract is Room 16 and archive 6 (reads 1–6);
 this package changes neither. Design choices below are agent-selected under the
 task's autonomous execution mode. They are not human product approval and confer
@@ -82,8 +83,11 @@ Scope classification:
   says the classification is today's catalog. Sets of exercise IDs the current
   catalog does not know are counted and reported as *not classifiable*, not erased.
 - **Muscle (reviewed dose):** the accepted `directPrimaryMuscle` via the existing
-  ledger. Work sets without accepted metadata are reported range-wide by typed
-  omission reason, because they cannot be assigned to any muscle.
+  ledger, which may be a legacy *secondary* muscle. A session contributes exactly
+  when the ledger credits that muscle, independently of the legacy-primary rule
+  above. It is also today's reviewed data, not a snapshot, and the card says so.
+  Work sets without accepted metadata are reported range-wide by typed omission
+  reason, because they cannot be assigned to any muscle.
 
 No new classifier, dose policy or record definition is introduced.
 
@@ -147,40 +151,53 @@ invalidations of profile, session, exercise, set and recommendation tables; the
 shared local-data write gate; one Room transaction; profile read without bootstrap
 (null → *no profile*). Inside it:
 
-1. One flat projection of completed sessions in the range left-joined to exercises
-   and sets (zero-set sessions included), with an SQL-computed comparability flag
-   from the shared eligibility predicate. Types are read as text and decoded
-   strictly; an unknown stored type fails the read. No `@Relation` graph is loaded.
-2. One bounded distinct-exercise-ID query for options.
-3. In exercise scope only, recommendation records for range sessions containing
-   the exercise.
+1. One aggregate query counts the range's sessions, exercise rows and sets and
+   checks every stored session unit, exercise/set type, set classification and
+   rep-range pair as text. It runs before any graph is loaded, because Room's
+   converters would otherwise relabel an unknown value; an invalid value fails the
+   read.
+2. The existing bounded range query (`getCompletedSessionsInRange`, the weekly
+   ledger's own read) loads that range's sessions with their exercises and sets in
+   Room's batched relation queries — never a query per session, point or exercise.
+   Zero-set sessions are included.
+3. In exercise scope only: the IDs of that exercise's sets in the range that satisfy
+   the shared `ELIGIBLE_PREVIOUS_SET` predicate, and the recommendation records of
+   range sessions containing the exercise.
+4. The distinct recorded exercise IDs for the filter options, at most 1,000.
 
-The range read is bounded by 2,000 sessions and 100,000 sets (the same
-representational bounds as the scheduling range), probing one extra row; overflow
-is an explicit *range too large* error, never a truncated chart. These are software
+The range is bounded by 2,000 sessions, 200,000 exercise rows (2,000 × the archive's
+100 per session) and 100,000 sets, the scheduling range's representational bounds.
+Overflow is an explicit *range too large* state, never a truncated chart. More than
+1,000 distinct recorded exercise IDs fails the read rather than hiding some from the
+filter. These are software
 limits, not training limits. Unrelated recent sessions cannot crowd a selected
 range because there is no global latest-N sample. The ledger is computed with the
 pure calculator; analytics never writes its cache or any other row.
 
 The ViewModel keeps the selection in `SavedStateHandle` as four short strings
 (range, scope kind, scope ID capped at 200 characters, metric), validated on restore;
-no history or chart data is saved. Selection, clock/zone refresh and the existing
-week-boundary wakeup feed a `flatMapLatest`, so a slow previous read is cancelled
-and cannot overwrite a newer selection. The overview state is separate, so changing
+no history or chart data is saved. Range and scope (not the metric), clock/zone
+refresh and the existing week-boundary wakeup feed a `flatMapLatest`, so a slow
+previous read is cancelled and cannot overwrite a newer selection. Every metric is
+computed in one pass, so changing the metric selects another series without a read. The overview state is separate, so changing
 a filter does not reload the weekly cards. Collection is RESUMED-only with
 `WhileSubscribed(0, 0)`; there is no polling.
 
 ## States and accessibility
 
-Loading, no profile, no workouts in range, no matches for the filter, insufficient
-comparable observations, range too large, and read error with Retry are distinct.
+Loading, no profile, no workouts in range, no matches for the filter, an empty week,
+insufficient comparable observations, range too large, and read error with Retry are
+distinct. Classification and omission notes appear before "no matches" so they can
+explain it.
 Errors never render as zero.
 
 The chart is a small Compose canvas bar chart with no new dependency. It has a
 text summary as its content description and is decorative beyond that; the
 accessible interface is the data list beside it. Each week/observation row is a
 ≥48 dp button with a full spoken label (date range, value with unit, partial
-marker) that selects it; contributors are buttons that open history. The partial
+marker) that selects it; contributors are buttons that open history. Contributor,
+observation and decision lists show 20 rows at a time with a "Show more (N not shown
+yet)" control, so nothing is hidden silently and a long range is not composed at once. The partial
 week uses a hatched bar plus the text marker. Selection chips expose selected
 state. English and neutral Latin American Spanish strings use existing plural,
 number, date and unit formatting; historical names stay as recorded. Layout wraps

@@ -11,12 +11,12 @@ import wallcrawl.elopenmike.com.core.ai.syntheticExerciseWithoutReviewedMetadata
 import wallcrawl.elopenmike.com.core.model.AnalyticsMetric
 import wallcrawl.elopenmike.com.core.model.AnalyticsRange
 import wallcrawl.elopenmike.com.core.model.AnalyticsScope
-import wallcrawl.elopenmike.com.core.model.AnalyticsSelection
 import wallcrawl.elopenmike.com.core.model.ExercisePrescription
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.LedgerOmissionReason
 import wallcrawl.elopenmike.com.core.model.LedgerPolicyVersion
 import wallcrawl.elopenmike.com.core.model.PerformanceShape
+import wallcrawl.elopenmike.com.core.model.ProgressAnalytics
 import wallcrawl.elopenmike.com.core.model.RepRange
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetStopReason
@@ -43,7 +43,10 @@ class ProgressAnalyticsCalculatorTest {
         legacyPrimaryMuscles = listOf(StandardMuscles.BACK))
     private val draft = syntheticExerciseWithoutReviewedMetadata("draft-press")
         .copy(primaryMuscles = listOf(StandardMuscles.CHEST))
-    private val catalog = listOf(bench, row, draft).associateBy { it.id }
+    // The parser allows a reviewed direct primary that is only a legacy secondary muscle.
+    private val pulldown = syntheticApprovedExercise("pulldown", StandardMuscles.LATS,
+        legacyPrimaryMuscles = listOf(StandardMuscles.BACK), legacySecondaryMuscles = listOf(StandardMuscles.LATS))
+    private val catalog = listOf(bench, row, draft, pulldown).associateBy { it.id }
 
     @Test
     fun rangeIsCalendarWeeksEndingWithThePartialCurrentWeek() {
@@ -206,6 +209,49 @@ class ProgressAnalyticsCalculatorTest {
     }
 
     @Test
+    fun muscleDoseFollowsTheReviewedPrimaryEvenWhenItIsOnlyALegacySecondary() {
+        val s = WorkoutSession(
+            id = "lats", name = "Lats", startedAtTimestamp = THIS_WEEK - HOUR, completedAtTimestamp = THIS_WEEK,
+            status = SessionStatus.COMPLETED,
+            exercises = listOf(instance("lats", "i1", "pulldown", 0, listOf(weighted(1, 80.0, 8), weighted(2, 80.0, 8))))
+        )
+        val ledger = WeeklyDoseLedgerCalculator().calculate(
+            listOf(s), catalog, LedgerPolicyVersion.PRIMARY_ONLY_V1, TrainingWeek.containing(NOW, UTC), CATALOG_VERSION, 1
+        )
+        val dose = calculate(listOf(s), metric = AnalyticsMetric.REVIEWED_PRIMARY_DOSE,
+            scope = AnalyticsScope.Muscle(StandardMuscles.LATS))
+        assertThat(dose.buckets.last().value).isEqualTo(ledger.directPrimarySets.getValue(StandardMuscles.LATS).toDouble())
+        assertThat(dose.buckets.last().contributors.map { it.sessionId }).containsExactly("lats")
+        assertThat(dose.hasScopeMatches).isTrue()
+        // Activity under the same muscle uses legacy primaries, where Lats is not listed.
+        assertThat(calculate(listOf(s), scope = AnalyticsScope.Muscle(StandardMuscles.LATS)).hasScopeMatches).isFalse()
+        // A legacy match with no reviewed credit is not a zero-valued dose contributor.
+        val back = calculate(listOf(s), metric = AnalyticsMetric.REVIEWED_PRIMARY_DOSE,
+            scope = AnalyticsScope.Muscle(StandardMuscles.BACK))
+        assertThat(back.buckets.last().contributors).isEmpty()
+        assertThat(back.hasScopeMatches).isFalse()
+    }
+
+    @Test
+    fun everyMetricComesFromOnePassSoChangingTheMetricNeedsNoNewRead() {
+        val result = calculateAll(listOf(session("a", THIS_WEEK, sets = listOf(weighted(1, 100.0, 5)))))
+        assertThat(result.series.keys).containsExactlyElementsIn(AnalyticsMetric.entries)
+        assertThat(result.series.getValue(AnalyticsMetric.REPS).rangeTotal).isEqualTo(5.0)
+        assertThat(result.series.getValue(AnalyticsMetric.EXTERNAL_LOAD_VOLUME).rangeTotal).isEqualTo(500.0)
+    }
+
+    @Test
+    fun tiedBestSetsAreChosenDeterministicallyRegardlessOfStoredOrder() {
+        val sets = listOf(assisted(1, 10, 30.0, id = "x"), assisted(2, 10, 20.0, id = "y"))
+        val values = listOf(sets, sets.reversed()).map { ordered ->
+            calculate(listOf(session("a", THIS_WEEK, type = ExerciseType.ASSISTED_BODYWEIGHT, sets = ordered)),
+                scope = AnalyticsScope.Exercise("bench"), comparable = setOf("x", "y")).performance.single()
+                .observations.single().secondaryValue
+        }
+        assertThat(values[0]).isEqualTo(values[1])
+    }
+
+    @Test
     fun aCompletionLaterThisWeekThanTheClockStillCountsLikeWeeklyActivity() {
         val skewed = session("skewed", ms("2026-09-05T09:00:00Z"))
         assertThat(calculate(listOf(skewed)).buckets.last().value).isEqualTo(1.0)
@@ -357,6 +403,19 @@ class ProgressAnalyticsCalculatorTest {
         assertThat(result.hasScopeMatches).isTrue()
     }
 
+    /** One metric's series beside the shared range facts, so each case reads like the card. */
+    private class Result(val analytics: ProgressAnalytics, metric: AnalyticsMetric) {
+        private val series = analytics.series.getValue(metric)
+        val buckets = series.buckets
+        val rangeTotal = series.rangeTotal
+        val hasScopeMatches = series.hasScopeMatches
+        val fullWeeks = analytics.fullWeeks
+        val hasWorkoutsInRange = analytics.hasWorkoutsInRange
+        val unclassifiableSets = analytics.unclassifiableSets
+        val unattributedWorkSets = analytics.unattributedWorkSets
+        val performance = analytics.performance
+    }
+
     private fun calculate(
         sessions: List<WorkoutSession>,
         metric: AnalyticsMetric = AnalyticsMetric.COMPLETED_SETS,
@@ -365,8 +424,18 @@ class ProgressAnalyticsCalculatorTest {
         unit: WeightUnit = WeightUnit.LBS,
         now: Instant = NOW,
         zone: ZoneId = UTC
+    ) = Result(calculateAll(sessions, scope, comparable, unit, now, zone), metric)
+
+    private fun calculateAll(
+        sessions: List<WorkoutSession>,
+        scope: AnalyticsScope = AnalyticsScope.All,
+        comparable: Set<String> = emptySet(),
+        unit: WeightUnit = WeightUnit.LBS,
+        now: Instant = NOW,
+        zone: ZoneId = UTC
     ) = calculator.calculate(
-        selection = AnalyticsSelection(AnalyticsRange.WEEKS_4, scope, metric),
+        range = AnalyticsRange.WEEKS_4,
+        scope = scope,
         sessions = sessions,
         comparableSetIds = comparable,
         exercisesById = catalog,

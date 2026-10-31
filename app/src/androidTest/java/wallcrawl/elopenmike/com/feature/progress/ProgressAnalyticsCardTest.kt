@@ -45,6 +45,7 @@ import wallcrawl.elopenmike.com.core.model.AnalyticsMetric
 import wallcrawl.elopenmike.com.core.model.AnalyticsRange
 import wallcrawl.elopenmike.com.core.model.AnalyticsScope
 import wallcrawl.elopenmike.com.core.model.AnalyticsSelection
+import wallcrawl.elopenmike.com.core.model.AnalyticsSeries
 import wallcrawl.elopenmike.com.core.model.LedgerPolicyVersion
 import wallcrawl.elopenmike.com.core.model.PerformanceComparison
 import wallcrawl.elopenmike.com.core.model.PerformanceObservation
@@ -96,6 +97,35 @@ class ProgressAnalyticsCardTest {
         scrollTo("Later bench")
         composeRule.onNode(hasText("Later bench", substring = true)).performClick()
         assertThat(opened).isEqualTo("later")
+    }
+
+    @Test fun theObservationChartDescribesWorkoutsNotWeeks() {
+        render(loaded(scope = AnalyticsScope.Exercise("bench"), performance = listOf(weightedSeries())))
+        scrollTo("for each workout", contentDescription = true)
+        composeRule.onNode(hasContentDescription("Heaviest work-set load for each workout", substring = true)).assertExists()
+    }
+
+    @Test fun noMatchesForAMuscleStillReportsUnclassifiableActivity() {
+        render(loaded(scope = AnalyticsScope.Muscle("Chest"), hasMatches = false, unclassifiable = 3))
+        scrollTo(english.getString(R.string.analytics_no_matches))
+        composeRule.onNode(hasText("3 completed sets are from exercises not in the current catalog", substring = true)).assertExists()
+        composeRule.onNode(hasText(english.getString(R.string.analytics_muscle_basis))).assertExists()
+    }
+
+    @Test fun muscleReviewedDoseStatesItsOwnCurrentCatalogBasis() {
+        metric = AnalyticsMetric.REVIEWED_PRIMARY_DOSE
+        render(loaded(scope = AnalyticsScope.Muscle("Chest")))
+        scrollTo(english.getString(R.string.analytics_muscle_dose_basis))
+    }
+
+    @Test fun longContributorListsArePagedWithAnExplicitRemainingCount() {
+        render(loaded(contributorsThisWeek = 25))
+        scrollTo("this week so far)")
+        composeRule.onNode(hasText("this week so far)", substring = true)).performClick()
+        scrollTo("Show more (5 not shown yet)")
+        composeRule.onNode(hasText("Extra session 22", substring = true)).assertDoesNotExist()
+        composeRule.onNode(hasText("Show more (5 not shown yet)")).performClick()
+        scrollTo("Extra session 22")
     }
 
     @Test fun oneObservationSaysThereIsNoChangeToShow() {
@@ -201,7 +231,8 @@ class ProgressAnalyticsCardTest {
 
     @androidx.compose.runtime.Composable
     private fun screen(state: ProgressAnalyticsUiState) {
-        val selection = (state as? ProgressAnalyticsUiState.Loaded)?.analytics?.selection ?: AnalyticsSelection()
+        val analytics = (state as? ProgressAnalyticsUiState.Loaded)?.analytics
+        val selection = analytics?.let { AnalyticsSelection(it.range, it.scope, metric) } ?: AnalyticsSelection()
         ProgressScreen(
             uiState = success(), onRetry = {}, onOpenSession = { opened = it },
             analyticsState = state, analyticsSelection = selection,
@@ -231,24 +262,31 @@ class ProgressAnalyticsCardTest {
         LedgerPolicyVersion.PRIMARY_ONLY_V1, week.startEpochDay, "UTC", "test", 1, emptyMap(), emptyMap(), emptyMap()
     )
 
+    /** The metric the rendered selection shows; every metric gets the same fixture series. */
+    private var metric = AnalyticsMetric.COMPLETED_SETS
+
     private fun loaded(
         scope: AnalyticsScope = AnalyticsScope.All,
         performance: List<PerformanceSeries> = emptyList(),
         decisions: List<AnalyticsDecision> = emptyList(),
         hasWorkouts: Boolean = true,
-        hasMatches: Boolean = true
+        hasMatches: Boolean = true,
+        unclassifiable: Int = 0,
+        contributorsThisWeek: Int = 2
     ): ProgressAnalyticsUiState.Loaded {
         val buckets = WEEKS.mapIndexed { index, week ->
             val contributors = if (index == WEEKS.lastIndex) listOf(
                 AnalyticsContributor("monday", "Monday pull", week.startEpochMillis + HOUR, 6.0),
                 AnalyticsContributor("thursday", "Thursday push", week.startEpochMillis + 3 * DAY, 8.0)
-            ) else listOf(AnalyticsContributor("w$index", "Week $index session", week.startEpochMillis + HOUR, 4.0 + index))
+            ) + (2 until contributorsThisWeek).map {
+                AnalyticsContributor("extra-$it", "Extra session $it", week.startEpochMillis + 4 * DAY + it, 1.0)
+            } else listOf(AnalyticsContributor("w$index", "Week $index session", week.startEpochMillis + HOUR, 4.0 + index))
             AnalyticsBucket(week, index == WEEKS.lastIndex, contributors.sumOf { it.value }, contributors)
         }
-        val selection = AnalyticsSelection(AnalyticsRange.WEEKS_4, scope, AnalyticsMetric.COMPLETED_SETS)
+        val series = AnalyticsSeries(buckets, buckets.sumOf { it.value }, hasMatches)
         return ProgressAnalyticsUiState.Loaded(
-            ProgressAnalytics(selection, buckets, buckets.sumOf { it.value }, 3, hasWorkouts, hasMatches, 0,
-                emptyMap(), performance),
+            ProgressAnalytics(AnalyticsRange.WEEKS_4, scope, AnalyticsMetric.entries.associateWith { series }, 3,
+                hasWorkouts, unclassifiable, emptyMap(), performance),
             WeightUnit.LBS, listOf("bench"), mapOf("bench" to "Bench Press"), decisions
         )
     }

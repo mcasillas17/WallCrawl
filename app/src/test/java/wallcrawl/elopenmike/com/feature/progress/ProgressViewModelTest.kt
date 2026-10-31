@@ -20,7 +20,8 @@ import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.database.repository.ProgressAnalyticsSnapshot
 import wallcrawl.elopenmike.com.core.database.repository.ProgressRepository
 import wallcrawl.elopenmike.com.core.database.repository.ProgressSnapshot
-import wallcrawl.elopenmike.com.core.model.AnalyticsSelection
+import wallcrawl.elopenmike.com.core.model.AnalyticsRange
+import wallcrawl.elopenmike.com.core.model.AnalyticsScope
 import wallcrawl.elopenmike.com.core.model.LedgerPolicyVersion
 import wallcrawl.elopenmike.com.core.model.ProgressOverview
 import wallcrawl.elopenmike.com.core.model.TrainingWeek
@@ -133,7 +134,7 @@ class ProgressViewModelTest {
             emitAll(snapshot)
         }
         override fun observeAnalytics(
-            selection: AnalyticsSelection, now: () -> Instant, zoneId: ZoneId
+            range: AnalyticsRange, scope: AnalyticsScope, now: () -> Instant, zoneId: ZoneId
         ): Flow<ProgressAnalyticsSnapshot?> = emptyFlow()
     }
 

@@ -9,7 +9,7 @@ import wallcrawl.elopenmike.com.core.model.AnalyticsContributor
 import wallcrawl.elopenmike.com.core.model.AnalyticsMetric
 import wallcrawl.elopenmike.com.core.model.AnalyticsRange
 import wallcrawl.elopenmike.com.core.model.AnalyticsScope
-import wallcrawl.elopenmike.com.core.model.AnalyticsSelection
+import wallcrawl.elopenmike.com.core.model.AnalyticsSeries
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.LedgerOmissionReason
@@ -44,7 +44,8 @@ class ProgressAnalyticsCalculator(
      *   predicate, computed in SQL so performance and history detail cannot disagree.
      */
     fun calculate(
-        selection: AnalyticsSelection,
+        range: AnalyticsRange,
+        scope: AnalyticsScope,
         sessions: List<WorkoutSession>,
         comparableSetIds: Set<String>,
         exercisesById: Map<String, Exercise>,
@@ -54,65 +55,71 @@ class ProgressAnalyticsCalculator(
         now: Instant,
         zoneId: ZoneId
     ): ProgressAnalytics {
-        val weeks = rangeWeeks(selection.range, now, zoneId)
+        val weeks = rangeWeeks(range, now, zoneId)
         require(sessions.map { it.id }.distinct().size == sessions.size) { "Duplicate analytics session." }
         val byWeek = sessions.groupBy { session ->
             require(session.status == SessionStatus.COMPLETED) { "Analytics reads completed sessions only." }
             val completedAt = requireNotNull(session.completedAtTimestamp) { "Completed session lacks completion." }
             requireNotNull(weeks.firstOrNull { it.contains(completedAt) }) { "Analytics session outside its range." }
         }
-        val scope = selection.scope
         val unattributed = EnumMap<LedgerOmissionReason, Int>(LedgerOmissionReason::class.java)
         var unclassifiable = 0
-        var matches = false
 
-        val buckets = weeks.mapIndexed { index, week ->
-            val contributors = byWeek[week].orEmpty()
-                .sortedWith(compareBy({ it.completedAtTimestamp }, { it.id }))
-                .mapNotNull { session ->
-                    val inScope = session.exercises.flatMap { exercise ->
-                        if (exercise.inScope(scope, exercisesById)) exercise.sets else emptyList()
-                    }
-                    val completed = inScope.filter { it.isCompleted }
-                    if (scope is AnalyticsScope.Muscle) {
-                        unclassifiable += session.exercises
-                            .filter { it.exerciseId !in exercisesById }
-                            .sumOf { exercise -> exercise.sets.count { it.isCompleted } }
-                    }
-                    val ledger = ledgerCalculator.calculate(
-                        listOf(if (scope is AnalyticsScope.Exercise) {
-                            session.copy(exercises = session.exercises.filter { it.exerciseId == scope.exerciseId })
-                        } else session),
-                        exercisesById, LedgerPolicyVersion.PRIMARY_ONLY_V1, week, catalogVersion, reviewPolicyVersion
-                    )
-                    ledger.unattributedWorkSets.forEach { (reason, count) -> unattributed.merge(reason, count, Int::plus) }
-                    val sessionMatches = scope == AnalyticsScope.All || completed.isNotEmpty()
-                    if (!sessionMatches) return@mapNotNull null
-                    matches = true
-                    val value = when (selection.metric) {
-                        AnalyticsMetric.WORKOUTS -> 1.0
-                        AnalyticsMetric.COMPLETED_SETS -> completed.size.toDouble()
-                        AnalyticsMetric.REPS -> completed.sumOf { it.loggedReps() }.toDouble()
-                        AnalyticsMetric.EXTERNAL_LOAD_VOLUME ->
-                            completed.sumOf { it.externalLoadVolume(session.weightUnit, preferredUnit) }
-                        AnalyticsMetric.REVIEWED_PRIMARY_DOSE -> when (scope) {
-                            is AnalyticsScope.Muscle -> ledger.directPrimarySets[scope.muscle] ?: 0
-                            else -> ledger.creditedWorkSets
-                        }.toDouble()
-                    }
-                    AnalyticsContributor(session.id, session.name, session.completedAtTimestamp!!, value)
+        // One row per (week, session): what it contributes to each metric, or null when it is
+        // not a member of that metric's scope.
+        val rows = weeks.map { week ->
+            byWeek[week].orEmpty().sortedWith(compareBy({ it.completedAtTimestamp }, { it.id })).map { session ->
+                val completed = session.exercises
+                    .filter { it.inScope(scope, exercisesById) }
+                    .flatMap { exercise -> exercise.sets.filter { it.isCompleted } }
+                if (scope is AnalyticsScope.Muscle) {
+                    unclassifiable += session.exercises
+                        .filter { it.exerciseId !in exercisesById }
+                        .sumOf { exercise -> exercise.sets.count { it.isCompleted } }
                 }
-            AnalyticsBucket(week, partial = index == weeks.lastIndex, value = contributors.sumOf { it.value },
-                contributors = contributors)
+                val ledger = ledgerCalculator.calculate(
+                    listOf(if (scope is AnalyticsScope.Exercise) {
+                        session.copy(exercises = session.exercises.filter { it.exerciseId == scope.exerciseId })
+                    } else session),
+                    exercisesById, LedgerPolicyVersion.PRIMARY_ONLY_V1, week, catalogVersion, reviewPolicyVersion
+                )
+                ledger.unattributedWorkSets.forEach { (reason, count) -> unattributed.merge(reason, count, Int::plus) }
+                val member = scope == AnalyticsScope.All || completed.isNotEmpty()
+                session to AnalyticsMetric.entries.associateWith { metric ->
+                    when (metric) {
+                        AnalyticsMetric.WORKOUTS -> 1.0.takeIf { member }
+                        AnalyticsMetric.COMPLETED_SETS -> completed.size.toDouble().takeIf { member }
+                        AnalyticsMetric.REPS -> completed.sumOf { it.loggedReps() }.toDouble().takeIf { member }
+                        AnalyticsMetric.EXTERNAL_LOAD_VOLUME ->
+                            completed.sumOf { it.externalLoadVolume(session.weightUnit, preferredUnit) }.takeIf { member }
+                        // A muscle's reviewed dose is the ledger's accepted direct primary, which can be a
+                        // legacy secondary muscle, so its membership is the ledger credit itself.
+                        AnalyticsMetric.REVIEWED_PRIMARY_DOSE -> when (scope) {
+                            is AnalyticsScope.Muscle -> ledger.directPrimarySets[scope.muscle]?.takeIf { it > 0 }?.toDouble()
+                            else -> ledger.creditedWorkSets.toDouble().takeIf { member }
+                        }
+                    }
+                }
+            }
         }
 
         return ProgressAnalytics(
-            selection = selection,
-            buckets = buckets,
-            rangeTotal = buckets.sumOf { it.value },
+            range = range,
+            scope = scope,
+            series = AnalyticsMetric.entries.associateWith { metric ->
+                val buckets = weeks.mapIndexed { index, week ->
+                    val contributors = rows[index].mapNotNull { (session, values) ->
+                        values.getValue(metric)?.let {
+                            AnalyticsContributor(session.id, session.name, session.completedAtTimestamp!!, it)
+                        }
+                    }
+                    AnalyticsBucket(week, partial = index == weeks.lastIndex, value = contributors.sumOf { it.value },
+                        contributors = contributors)
+                }
+                AnalyticsSeries(buckets, buckets.sumOf { it.value }, buckets.any { it.contributors.isNotEmpty() })
+            },
             fullWeeks = weeks.size - 1,
             hasWorkoutsInRange = sessions.isNotEmpty(),
-            hasScopeMatches = matches,
             unclassifiableSets = unclassifiable,
             unattributedWorkSets = unattributed.filterValues { it > 0 },
             performance = if (scope is AnalyticsScope.Exercise) {
@@ -145,11 +152,7 @@ class ProgressAnalyticsCalculator(
                     .sortedWith(compareBy({ it.orderIndex }, { it.id }))
                     .groupBy { it.shape() }
                     .mapNotNull { (shape, instances) ->
-                        val sets = instances.flatMap { instance ->
-                            instance.sets.filter {
-                                it.id in comparableSetIds && it.exerciseType == instance.prescription.exerciseType
-                            }
-                        }
+                        val sets = instances.flatMap { it.sets }.filter { it.id in comparableSetIds }
                         observe(shape, session, instances.map { it.id }, sets, unit)?.let { shape to it }
                     }
             }
@@ -176,15 +179,17 @@ class ProgressAnalyticsCalculator(
         fun Double.inUnit() = convertWeight(this, session.weightUnit, unit)
         return when (shape) {
             PerformanceShape.WEIGHTED_REPS -> sets
-                .maxWithOrNull(compareBy<WorkoutSet>({ it.completedWeight }, { it.completedReps }))
+                .maxWithOrNull(compareBy<WorkoutSet>({ it.completedWeight }, { it.completedReps }, { it.id }))
                 ?.let { point(it.completedWeight!!.inUnit(), it.completedReps) }
             PerformanceShape.BODYWEIGHT_REPS -> sets.maxOfOrNull { it.completedReps!! }?.let { point(it.toDouble()) }
-            PerformanceShape.ASSISTED_REPS -> sets.maxByOrNull { it.completedReps!! }
+            // Ties resolve by set ID, never by stored order or by preferring less assistance.
+            PerformanceShape.ASSISTED_REPS -> sets.maxWithOrNull(compareBy<WorkoutSet>({ it.completedReps }, { it.id }))
                 ?.let { point(it.completedReps!!.toDouble(), it.completedReps, it.completedAssistanceWeight?.inUnit()) }
             PerformanceShape.HOLD_DURATION, PerformanceShape.TIME_ONLY ->
                 sets.maxOfOrNull { it.completedDurationSeconds!! }?.let { point(it.toDouble()) }
             PerformanceShape.DISTANCE_ONLY -> sets.maxOfOrNull { it.completedDistanceMeters!! }?.let { point(it) }
-            PerformanceShape.DISTANCE_AND_TIME -> sets.maxByOrNull { it.completedDistanceMeters!! }
+            PerformanceShape.DISTANCE_AND_TIME -> sets
+                .maxWithOrNull(compareBy<WorkoutSet>({ it.completedDistanceMeters }, { it.id }))
                 ?.let { point(it.completedDistanceMeters!!, secondary = it.completedDurationSeconds!!.toDouble()) }
         }
     }
