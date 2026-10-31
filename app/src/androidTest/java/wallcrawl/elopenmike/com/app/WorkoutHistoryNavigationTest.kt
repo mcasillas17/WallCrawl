@@ -383,12 +383,11 @@ class WorkoutHistoryNavigationTest {
     }
 
     @Test fun anAnalyticsWeekListsItsContributorsAndEachOpensItsOwnWorkout() = runBlocking {
-        val now = System.currentTimeMillis()
         // Earlier weeks give the documentation screenshot a real chart; only this week is asserted.
         listOf(3 to 8, 2 to 10, 1 to 9).forEach { (weeksAgo, reps) ->
-            seedPushUps("analytics-week-$weeksAgo", "Push-ups week $weeksAgo", now - weeksAgo * 7 * DAY, reps)
+            seedPushUps("analytics-week-$weeksAgo", "Push-ups week $weeksAgo", insideWeek(weeksAgo), reps)
         }
-        seedPushUps("analytics-this-week", "Analytics push this week", now - 60_000L, 12)
+        seedPushUps("analytics-this-week", "Analytics push this week", insideWeek(0), 12)
         show(theme = ThemePreference.LIGHT)
         compose.runOnIdle { navigation.navigate(AppRoutes.PROGRESS) }
         scrollProgressTo(androidx.compose.ui.test.hasContentDescription("Bar chart of", substring = true))
@@ -403,11 +402,10 @@ class WorkoutHistoryNavigationTest {
     }
 
     @Test fun spanishDarkExercisePerformanceComparesRecordedWorkoutsFromRoom() = runBlocking {
-        val now = System.currentTimeMillis()
         listOf(3 to 8, 2 to 10, 1 to 11).forEach { (weeksAgo, reps) ->
-            seedPushUps("es-week-$weeksAgo", "Flexiones semana $weeksAgo", now - weeksAgo * 7 * DAY, reps)
+            seedPushUps("es-week-$weeksAgo", "Flexiones semana $weeksAgo", insideWeek(weeksAgo), reps)
         }
-        seedPushUps("es-this-week", "Flexiones de hoy", now - 60_000L, 12)
+        seedPushUps("es-this-week", "Flexiones de hoy", insideWeek(0), 12)
         show(locale = Locale.forLanguageTag("es-MX"), theme = ThemePreference.DARK)
         compose.runOnIdle { navigation.navigate(AppRoutes.PROGRESS) }
         val spanish = context.createConfigurationContext(Configuration(context.resources.configuration).apply {
@@ -423,6 +421,20 @@ class WorkoutHistoryNavigationTest {
         // Earliest 8 reps against the latest 12: a recorded difference, never a percentage.
         scrollProgressTo(hasText("+4 reps", substring = true))
         capture("progress-analytics-performance-es")
+    }
+
+    /**
+     * A completion inside the calendar week [weeksAgo] before the current one, independent of the
+     * wall-clock time, so a Monday-morning or DST-week run cannot move a seed into another week.
+     * In the current week it is a minute ago, or the week's first second if the week began under a minute ago.
+     */
+    private fun insideWeek(weeksAgo: Int): Long {
+        val now = System.currentTimeMillis()
+        val zone = java.time.ZoneId.systemDefault()
+        val current = wallcrawl.elopenmike.com.core.model.TrainingWeek.containing(java.time.Instant.ofEpochMilli(now), zone)
+        if (weeksAgo == 0) return maxOf(current.startEpochMillis + 1_000L, now - 60_000L)
+        return wallcrawl.elopenmike.com.core.model.TrainingWeek
+            .startingOn(current.startEpochDay - 7L * weeksAgo, zone).startEpochMillis + 12 * 3_600_000L
     }
 
     private fun selectPushUpScope() {

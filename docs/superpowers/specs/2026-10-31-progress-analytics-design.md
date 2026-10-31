@@ -172,16 +172,16 @@ shared local-data write gate; one Room transaction; profile read without bootstr
 3. In exercise scope only: the IDs of that exercise's sets in the range that satisfy
    the shared `ELIGIBLE_PREVIOUS_SET` predicate, and the recommendation records of
    range sessions containing the exercise.
-4. The distinct recorded exercise IDs for the filter options, at most 1,000.
+4. The distinct recorded exercise IDs for the filter options, at most 1,000; beyond that the
+   chooser says there are too many to list instead of showing a partial list, and the chart is
+   unaffected.
 
 The range is bounded by 2,000 sessions, 200,000 exercise rows (2,000 × the archive's
 100 per session) and 100,000 sets, the scheduling range's representational bounds.
 Overflow is an explicit *range too large* state, never a truncated chart. A distance/time
 exercise row with neither target is invalid stored data and fails the read. The pure
 calculation runs after the gate and transaction are released, so writers wait only
-for the reads. More than
-1,000 distinct recorded exercise IDs fails the read rather than hiding some from the
-filter. These are software
+for the reads. These are software
 limits, not training limits. Unrelated recent sessions cannot crowd a selected
 range because there is no global latest-N sample. The ledger is computed with the
 pure calculator; analytics never writes its cache or any other row.

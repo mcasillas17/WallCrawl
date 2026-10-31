@@ -46,8 +46,11 @@ data class RecordedSessionDecision(
 data class ProgressAnalyticsSnapshot(
     val analytics: ProgressAnalytics,
     val preferredUnit: WeightUnit,
-    /** Distinct exercise IDs in completed history, the exercise filter's options. */
-    val exerciseOptions: List<String>,
+    /**
+     * Distinct exercise IDs in completed history, the exercise filter's options; null when there are
+     * more than the chooser can list, so none is hidden from a partial list.
+     */
+    val exerciseOptions: List<String>?,
     /** Current catalog names, an untranslated fallback label only; IDs remain the identity. */
     val catalogNames: Map<String, String>,
     /** Exercise scope only: recorded provenance of range sessions containing the exercise. */
@@ -182,9 +185,9 @@ class OfflineProgressRepository(
                         )
                     }
                 }.orEmpty()
-                // Overflow fails the read explicitly rather than hiding recorded exercises from the filter.
+                // Overflow lists nothing rather than a partial list; the chart itself is unaffected.
                 val options = dao.selectAnalyticsExerciseIds(MAX_EXERCISE_OPTIONS + 1)
-                require(options.size <= MAX_EXERCISE_OPTIONS) { "Recorded exercise options exceed their bound." }
+                    .takeIf { it.size <= MAX_EXERCISE_OPTIONS }
                 val exercisesById = catalog.exercises.associateBy { it.id }
                 // Everything is read; the pure calculation runs after the gate and transaction are
                 // released, so writers wait only for the reads, not for the computation.
@@ -204,7 +207,7 @@ class OfflineProgressRepository(
                         ),
                         preferredUnit = profile.preferredUnit,
                         exerciseOptions = options,
-                        catalogNames = options.mapNotNull { id -> exercisesById[id]?.let { id to it.name } }.toMap(),
+                        catalogNames = options.orEmpty().mapNotNull { id -> exercisesById[id]?.let { id to it.name } }.toMap(),
                         decisions = decisions
                     )
                 }

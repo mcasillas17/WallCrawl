@@ -188,6 +188,14 @@ class ProgressAnalyticsCardTest {
         composeRule.onNode(hasText(english.getString(R.string.analytics_muscle_basis))).assertDoesNotExist()
     }
 
+    @Test fun tooManyRecordedExercisesAreNamedInsteadOfAPartialList() {
+        render(loaded().copy(exerciseOptions = null, catalogNames = emptyMap()))
+        scrollTo(english.getString(R.string.analytics_scope_exercise))
+        composeRule.onNodeWithText(english.getString(R.string.analytics_scope_exercise)).performClick()
+        val popup = androidx.compose.ui.test.hasAnyAncestor(androidx.compose.ui.test.isPopup())
+        composeRule.onNode(popup and hasText(english.getString(R.string.analytics_exercise_options_too_many))).assertExists()
+    }
+
     @Test fun theExerciseChooserExplainsTheCardStateInsteadOfLoadingForever() {
         listOf(
             ProgressAnalyticsUiState.TooLarge to R.string.analytics_too_large,

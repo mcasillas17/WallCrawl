@@ -33,7 +33,8 @@ sealed interface ProgressAnalyticsUiState {
     data class Loaded(
         val analytics: ProgressAnalytics,
         val preferredUnit: WeightUnit,
-        val exerciseOptions: List<String>,
+        /** Null when there are too many recorded exercises to list. */
+        val exerciseOptions: List<String>?,
         val catalogNames: Map<String, String>,
         val decisions: List<AnalyticsDecision>
     ) : ProgressAnalyticsUiState

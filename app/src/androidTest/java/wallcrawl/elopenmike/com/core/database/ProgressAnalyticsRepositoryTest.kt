@@ -179,7 +179,7 @@ class ProgressAnalyticsRepositoryTest {
         assertThrows(AnalyticsRangeTooLargeException::class.java) { runBlocking { read(AnalyticsSelection()) } }
     }
 
-    @Test fun anExerciseOptionOverflowFailsExplicitlyInsteadOfHidingRecordedExercises() {
+    @Test fun anExerciseOptionOverflowListsNoneRatherThanAPartialListAndKeepsTheChart() {
         runBlocking { insert("many", monday.toEpochMilli(), "approved") }
         db.openHelper.writableDatabase.execSQL("""
             WITH RECURSIVE n(i) AS (SELECT 1 UNION ALL SELECT i + 1 FROM n WHERE i < 1001)
@@ -187,8 +187,10 @@ class ProgressAnalyticsRepositoryTest {
                 targetRepMin, targetRepMax, targetWeight, notes, restSeconds)
             SELECT 'option-' || i, 'many', 'recorded-' || i, i, 'WEIGHT_REPS', 1, 5, 10, NULL, '', 90 FROM n
         """)
-        val failure = assertThrows(IllegalArgumentException::class.java) { runBlocking { read(AnalyticsSelection()) } }
-        assertThat(failure.message).contains("exercise options")
+        val snapshot = runBlocking { read(AnalyticsSelection()) }
+        assertThat(snapshot.exerciseOptions).isNull()
+        assertThat(snapshot.catalogNames).isEmpty()
+        assertThat(snapshot.series(AnalyticsMetric.WORKOUTS).rangeTotal).isEqualTo(1.0)
     }
 
     @Test fun anOversizedRangeIsReportedNotTruncated() {

@@ -86,7 +86,8 @@ internal fun ProgressAnalyticsCard(
     onOpenSession: (String) -> Unit
 ) {
     // Options survive a reload so the chooser stays usable while a new range is read.
-    var options by remember { mutableStateOf<Pair<List<String>, Map<String, String>>?>(null) }
+    // Null pair: no read has supplied options yet. Null list: too many recorded exercises to list.
+    var options by remember { mutableStateOf<Pair<List<String>?, Map<String, String>>?>(null) }
     if (state is ProgressAnalyticsUiState.Loaded) options = state.exerciseOptions to state.catalogNames
 
     WallCrawlCard(cornerRadius = 16.dp, contentPadding = 16.dp, modifier = Modifier.testTag(PROGRESS_ANALYTICS_TEST_TAG)) {
@@ -98,10 +99,11 @@ internal fun ProgressAnalyticsCard(
             modifier = Modifier.semantics { heading() }
         )
         Body(stringResource(R.string.analytics_scope_note, zoneId.id))
-        Filters(selection, options?.first, options?.second.orEmpty(), when (state) {
-            ProgressAnalyticsUiState.TooLarge -> R.string.analytics_too_large
-            ProgressAnalyticsUiState.NoProfile -> R.string.progress_no_profile
-            ProgressAnalyticsUiState.Error -> R.string.analytics_error
+        Filters(selection, options?.first, options?.second.orEmpty(), when {
+            options != null -> R.string.analytics_exercise_options_too_many
+            state == ProgressAnalyticsUiState.TooLarge -> R.string.analytics_too_large
+            state == ProgressAnalyticsUiState.NoProfile -> R.string.progress_no_profile
+            state == ProgressAnalyticsUiState.Error -> R.string.analytics_error
             else -> R.string.analytics_loading
         }, actions)
         Spacer(Modifier.height(8.dp))
@@ -150,7 +152,7 @@ private fun Filters(
     /** Null until a read has supplied them, which is not the same as none recorded. */
     exerciseOptions: List<String>?,
     catalogNames: Map<String, String>,
-    /** Why options are missing before any read supplied them: the card's own state. */
+    /** Why there are no options to list: too many to list, or the card's own state before any read. */
     @androidx.annotation.StringRes unavailableRes: Int,
     actions: ProgressAnalyticsActions
 ) {

@@ -876,12 +876,12 @@ Its explicit `captureHistoryScreenshots=true` argument captures the history imag
 and `progress-analytics-en`, `-week-en` and `-performance-es` into the app's
 `history-screenshots` external files directory. Gradle's connected task uninstalls the app
 afterwards, so capture with `installDebug installDebugAndroidTest` and `adb shell am instrument`.
+Its `seedHistoryDemo=true` argument additionally restores disposable logs into a **fresh,
+dedicated test installation only** for installed-app lifecycle checks.
 `ProgressAnalyticsCalculatorTest`, `ProgressAnalyticsViewModelTest`,
 `ProgressAnalyticsRepositoryTest` and `ProgressAnalyticsCardTest` cover the Over time
 formulas, saved state and stale reads, real Room bounds and no-write reads, and accessible
-UI states;
-`seedHistoryDemo=true` additionally restores disposable logs into a **fresh, dedicated
-test installation only** for installed-app lifecycle checks.
+UI states.
 
 `MultiWeekProgramPolicyTest`, `MultiWeekProgramPlanningTest` and
 `MultiWeekProgramProductionReplayTest` cover lifecycle, freshness, actual bundled-catalog
