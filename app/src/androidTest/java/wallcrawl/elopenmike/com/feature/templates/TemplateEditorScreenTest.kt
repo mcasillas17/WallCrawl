@@ -4,6 +4,10 @@ import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.os.LocaleList
+import android.view.View
+import androidx.activity.BackEventCompat
+import androidx.activity.OnBackPressedDispatcher
+import androidx.activity.findViewTreeOnBackPressedDispatcherOwner
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
@@ -42,12 +46,17 @@ import androidx.compose.ui.unit.dp
 import androidx.core.graphics.ColorUtils
 import androidx.room.Room
 import androidx.test.espresso.Espresso
+import androidx.test.espresso.UiController
+import androidx.test.espresso.ViewAction
+import androidx.test.espresso.matcher.RootMatchers
+import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import java.io.File
 import java.util.Locale
 import kotlinx.coroutines.runBlocking
+import org.hamcrest.Matcher
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -580,6 +589,62 @@ class TemplateEditorScreenTest {
         composeRule.waitForIdle()
         composeRule.onNodeWithText(editor.resources.getString(R.string.editor_discard_title))
             .assertIsDisplayed()
+    }
+
+    @Test
+    fun aBackGestureOnAnEditedSheetAsksFirstAndLeavesTheSheetFullSize() {
+        val editor = showEditor(language = "en")
+        openSheetFor(editor)
+        val repMin = editor.resources.fieldNode(R.string.editor_field_rep_min)
+        val restingWidth = repMin.fetchSemanticsNode().boundsInRoot.width
+        assertThat(restingWidth).isGreaterThan(0f)
+        repMin.performTextReplacement("4")
+        Espresso.closeSoftKeyboard()
+        composeRule.waitForIdle()
+
+        // What a predictive back gesture delivers once the app targets API 36 or higher:
+        // progress the sheet can draw, then a commit.
+        val sheetBack = sheetBackDispatcher()
+        composeRule.runOnUiThread {
+            sheetBack.dispatchOnBackStarted(BackEventCompat(0f, 1200f, 0f, BackEventCompat.EDGE_LEFT))
+            sheetBack.dispatchOnBackProgressed(BackEventCompat(600f, 1200f, 1f, BackEventCompat.EDGE_LEFT))
+            sheetBack.onBackPressed()
+        }
+        composeRule.waitForIdle()
+        composeRule.onNodeWithText(editor.resources.getString(R.string.editor_sheet_discard_title))
+            .assertIsDisplayed()
+        composeRule.onNodeWithText(editor.resources.getString(R.string.editor_discard_keep))
+            .performClick()
+        composeRule.waitForIdle()
+
+        composeRule.runOnIdle {
+            assertThat(editor.viewModel.uiState.value.editorDraft?.repMin).isEqualTo("4")
+        }
+        // Keeping the edits must not leave the sheet shrunk to the gesture's last frame.
+        assertThat(repMin.fetchSemanticsNode().boundsInRoot.width).isWithin(0.5f).of(restingWidth)
+    }
+
+    @Test
+    fun aBackGestureOnAnUneditedSheetKeepsMaterialsPredictivePreview() {
+        val editor = showEditor(language = "en")
+        openSheetFor(editor)
+        val repMin = editor.resources.fieldNode(R.string.editor_field_rep_min)
+        val restingWidth = repMin.fetchSemanticsNode().boundsInRoot.width
+        assertThat(restingWidth).isGreaterThan(0f)
+
+        val sheetBack = sheetBackDispatcher()
+        composeRule.runOnUiThread {
+            sheetBack.dispatchOnBackStarted(BackEventCompat(0f, 1200f, 0f, BackEventCompat.EDGE_LEFT))
+            sheetBack.dispatchOnBackProgressed(BackEventCompat(600f, 1200f, 1f, BackEventCompat.EDGE_LEFT))
+        }
+        composeRule.waitForIdle()
+        assertWithMessage("With nothing to protect, the sheet should still preview its dismissal")
+            .that(repMin.fetchSemanticsNode().boundsInRoot.width).isLessThan(restingWidth)
+
+        composeRule.runOnUiThread { sheetBack.dispatchOnBackCancelled() }
+        composeRule.waitForIdle()
+        assertThat(repMin.fetchSemanticsNode().boundsInRoot.width).isWithin(0.5f).of(restingWidth)
+        composeRule.runOnIdle { assertThat(editor.viewModel.uiState.value.editorDraft).isNotNull() }
     }
 
     @Test
@@ -1159,6 +1224,22 @@ class TemplateEditorScreenTest {
             composeRule.onAllNodesWithText(apply).fetchSemanticsNodes().size == 1
         }
         composeRule.waitForIdle()
+    }
+
+    /** The open sheet's own back dispatcher: the sheet is a dialog window, not the activity. */
+    private fun sheetBackDispatcher(): OnBackPressedDispatcher {
+        var dispatcher: OnBackPressedDispatcher? = null
+        Espresso.onView(ViewMatchers.isRoot()).inRoot(RootMatchers.isDialog()).perform(
+            object : ViewAction {
+                override fun getConstraints(): Matcher<View> = ViewMatchers.isRoot()
+                override fun getDescription() = "read the sheet window's back dispatcher"
+                override fun perform(uiController: UiController, view: View) {
+                    dispatcher = view.findViewTreeOnBackPressedDispatcherOwner()
+                        ?.onBackPressedDispatcher
+                }
+            }
+        )
+        return checkNotNull(dispatcher)
     }
 
     private fun showEditor(
