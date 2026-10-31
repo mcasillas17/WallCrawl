@@ -79,6 +79,16 @@ android {
 }
 
 dependencies {
+    // Lint has a separate tool classloader from AGP and the application.
+    constraints {
+        add("androidLintTool", libs.build.commons.lang) {
+            because("GHSA-j288-q9x7-2f5v; see docs/dependency-health.md")
+        }
+        add("androidLintTool", libs.build.httpclient) {
+            because("GHSA-7r82-7xv7-xcpj; match the patched version already selected by AGP")
+        }
+    }
+
     // Carries the per-app language APIs back to minSdk 26. On API 33+ AppCompatDelegate
     // delegates to the platform LocaleManager, so the app selector and the system per-app
     // language screen always report the same choice.
