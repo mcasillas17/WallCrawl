@@ -277,6 +277,13 @@ class ProgressAnalyticsCalculatorTest {
     }
 
     @Test
+    fun aWeekBeyondTheExistingLedgerBoundsFailsLikeTheWeeklyLedgerDoes() {
+        // The weekly ledger refuses more than 1,000 sessions in one week; analytics must not show a value for it.
+        val crowded = (0..1_000).map { session("s$it", THIS_WEEK + it) }
+        assertThrows(IllegalArgumentException::class.java) { calculateAll(crowded) }
+    }
+
+    @Test
     fun aCompletionLaterThisWeekThanTheClockStillCountsLikeWeeklyActivity() {
         val skewed = session("skewed", ms("2026-09-05T09:00:00Z"))
         assertThat(calculate(listOf(skewed)).buckets.last().value).isEqualTo(1.0)

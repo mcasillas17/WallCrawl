@@ -68,6 +68,12 @@ class ProgressAnalyticsCalculator(
         // One row per (week, session): what it contributes to each metric, or null when it is
         // not a member of that metric's scope.
         val rows = weeks.map { week ->
+            // The whole week once, so the existing ledger's per-week bounds apply exactly as they do
+            // to the weekly card; the per-session calls below give each contributor its share.
+            ledgerCalculator.calculate(
+                byWeek[week].orEmpty().map { it.restrictedTo(scope) },
+                exercisesById, LedgerPolicyVersion.PRIMARY_ONLY_V1, week, catalogVersion, reviewPolicyVersion
+            )
             byWeek[week].orEmpty().sortedWith(compareBy({ it.completedAtTimestamp }, { it.id })).map { session ->
                 val completed = session.exercises
                     .filter { it.inScope(scope, exercisesById) }
@@ -78,9 +84,7 @@ class ProgressAnalyticsCalculator(
                         .sumOf { exercise -> exercise.sets.count { it.isCompleted } }
                 }
                 val ledger = ledgerCalculator.calculate(
-                    listOf(if (scope is AnalyticsScope.Exercise) {
-                        session.copy(exercises = session.exercises.filter { it.exerciseId == scope.exerciseId })
-                    } else session),
+                    listOf(session.restrictedTo(scope)),
                     exercisesById, LedgerPolicyVersion.PRIMARY_ONLY_V1, week, catalogVersion, reviewPolicyVersion
                 )
                 ledger.unattributedWorkSets.forEach { (reason, count) -> unattributed.merge(reason, count, Int::plus) }
@@ -140,6 +144,11 @@ class ProgressAnalyticsCalculator(
     private fun WorkoutSet.hasRecordedExternalLoad(): Boolean =
         exerciseType == ExerciseType.WEIGHT_REPS && loggedReps() > 0 &&
             completedWeight?.let { it.isFinite() && it >= 0.0 } == true
+
+    /** Exercise scope credits only that exercise's sets; other scopes read the whole session. */
+    private fun WorkoutSession.restrictedTo(scope: AnalyticsScope): WorkoutSession =
+        if (scope is AnalyticsScope.Exercise) copy(exercises = exercises.filter { it.exerciseId == scope.exerciseId })
+        else this
 
     private fun WorkoutExercise.inScope(scope: AnalyticsScope, exercisesById: Map<String, Exercise>): Boolean =
         when (scope) {
