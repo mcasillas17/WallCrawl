@@ -196,9 +196,21 @@ class ProgressAnalyticsCardTest {
         composeRule.onNode(popup and hasText(english.getString(R.string.analytics_exercise_options_too_many))).assertExists()
     }
 
+    @Test fun tooLargeOffersAShorterRangeOnlyWhenOneExists() {
+        selectionOverride = AnalyticsSelection(range = AnalyticsRange.WEEKS_12)
+        renderOnce(ProgressAnalyticsUiState.TooLarge)
+        scrollTo(english.getString(R.string.analytics_too_large))
+        selectionOverride = AnalyticsSelection(range = AnalyticsRange.WEEKS_4)
+        renderOnce(ProgressAnalyticsUiState.Loading)
+        renderOnce(ProgressAnalyticsUiState.TooLarge)
+        scrollTo(english.getString(R.string.analytics_too_large_shortest))
+        composeRule.onNode(hasText("shorter range", substring = true)).assertDoesNotExist()
+    }
+
     @Test fun theExerciseChooserExplainsTheCardStateInsteadOfLoadingForever() {
         listOf(
-            ProgressAnalyticsUiState.TooLarge to R.string.analytics_too_large,
+            // The default selection is already the shortest range, so no shorter range is offered.
+            ProgressAnalyticsUiState.TooLarge to R.string.analytics_too_large_shortest,
             ProgressAnalyticsUiState.Error to R.string.analytics_error,
             ProgressAnalyticsUiState.NoProfile to R.string.progress_no_profile
         ).forEach { (state, res) ->
@@ -256,7 +268,8 @@ class ProgressAnalyticsCardTest {
     @Test fun loadingTooLargeErrorEmptyAndNoMatchStatesAreDistinct() {
         listOf(
             ProgressAnalyticsUiState.Loading to R.string.analytics_loading,
-            ProgressAnalyticsUiState.TooLarge to R.string.analytics_too_large,
+            // The default selection is already the shortest range, so no shorter range is offered.
+            ProgressAnalyticsUiState.TooLarge to R.string.analytics_too_large_shortest,
             ProgressAnalyticsUiState.Error to R.string.analytics_error,
             loaded(hasWorkouts = false) to R.string.analytics_empty_range,
             loaded(hasMatches = false) to R.string.analytics_no_matches

@@ -1102,5 +1102,6 @@
     <string name="analytics_no_matches_workouts">Ningún entrenamiento completado coincide con este filtro en este periodo.</string>
     <string name="analytics_week_value_none">nada registrado</string>
     <string name="analytics_exercise_options_too_many">Hay demasiados ejercicios registrados para listarlos aquí.</string>
+    <string name="analytics_too_large_shortest">Este historial tiene más entrenamientos de los que esta versión puede graficar, así que no se recortó nada para que cupiera.</string>
     <string name="analytics_decision_row">%1$s, %2$s</string>
 </resources>

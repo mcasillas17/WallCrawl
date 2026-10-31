@@ -16,7 +16,7 @@ import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
-import wallcrawl.elopenmike.com.core.database.repository.AnalyticsRangeTooLargeException
+import wallcrawl.elopenmike.com.core.progress.AnalyticsRangeTooLargeException
 import wallcrawl.elopenmike.com.core.database.repository.ProgressAnalyticsSnapshot
 import wallcrawl.elopenmike.com.core.database.repository.ProgressRepository
 import wallcrawl.elopenmike.com.core.database.repository.ProgressSnapshot

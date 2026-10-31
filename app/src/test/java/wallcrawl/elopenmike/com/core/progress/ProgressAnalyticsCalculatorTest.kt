@@ -280,7 +280,20 @@ class ProgressAnalyticsCalculatorTest {
     fun aWeekBeyondTheExistingLedgerBoundsFailsLikeTheWeeklyLedgerDoes() {
         // The weekly ledger refuses more than 1,000 sessions in one week; analytics must not show a value for it.
         val crowded = (0..1_000).map { session("s$it", THIS_WEEK + it) }
-        assertThrows(IllegalArgumentException::class.java) { calculateAll(crowded) }
+        assertThrows(AnalyticsRangeTooLargeException::class.java) { calculateAll(crowded) }
+    }
+
+    @Test
+    fun theWeeklyWorkSetBoundCountsOnlyCreditableWorkSets() {
+        fun week(work: Int, warmups: Int) = (0 until 5).map { index ->
+            session("w$index", THIS_WEEK + index, sets = (0 until (work / 5 + if (index < work % 5) 1 else 0)).map {
+                weighted(it, 100.0, 5, id = "w$index-$it")
+            } + (0 until if (index == 0) warmups else 0).map {
+                weighted(it, 40.0, 5, type = SetType.WARMUP, id = "u$index-$it")
+            })
+        }
+        assertThat(ProgressAnalyticsCalculator.exceedsLedgerWeekBounds(week(work = 50_001, warmups = 0))).isTrue()
+        assertThat(ProgressAnalyticsCalculator.exceedsLedgerWeekBounds(week(work = 50_000, warmups = 1))).isFalse()
     }
 
     @Test

@@ -1110,5 +1110,6 @@
     <string name="analytics_no_matches_workouts">No completed workouts match this filter in this range.</string>
     <string name="analytics_week_value_none">nothing recorded</string>
     <string name="analytics_exercise_options_too_many">There are too many recorded exercises to list here.</string>
+    <string name="analytics_too_large_shortest">This history holds more workouts than this version can chart, so nothing was cut off to fit.</string>
     <string name="analytics_decision_row">%1$s, %2$s</string>
 </resources>

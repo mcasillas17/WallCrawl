@@ -23,7 +23,7 @@ import wallcrawl.elopenmike.com.core.backup.LocalDataArchiveLimits
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutExerciseEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSessionEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSetEntity
-import wallcrawl.elopenmike.com.core.database.repository.AnalyticsRangeTooLargeException
+import wallcrawl.elopenmike.com.core.progress.AnalyticsRangeTooLargeException
 import wallcrawl.elopenmike.com.core.database.repository.OfflineLocalDataBackupRepository
 import wallcrawl.elopenmike.com.core.database.repository.OfflineProgressRepository
 import wallcrawl.elopenmike.com.core.database.repository.OfflineUserProfileRepository

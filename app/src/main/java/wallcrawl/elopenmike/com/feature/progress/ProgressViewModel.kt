@@ -30,7 +30,6 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import wallcrawl.elopenmike.com.core.backup.LocalDataArchiveLimits
-import wallcrawl.elopenmike.com.core.database.repository.AnalyticsRangeTooLargeException
 import wallcrawl.elopenmike.com.core.database.repository.ProgressAnalyticsSnapshot
 import wallcrawl.elopenmike.com.core.database.repository.ProgressRepository
 import wallcrawl.elopenmike.com.core.model.AnalyticsMetric
@@ -39,6 +38,7 @@ import wallcrawl.elopenmike.com.core.model.AnalyticsScope
 import wallcrawl.elopenmike.com.core.model.AnalyticsSelection
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
 import wallcrawl.elopenmike.com.core.model.TrainingWeek
+import wallcrawl.elopenmike.com.core.progress.AnalyticsRangeTooLargeException
 import wallcrawl.elopenmike.com.feature.history.decodeHistoryReasons
 
 @OptIn(ExperimentalCoroutinesApi::class)

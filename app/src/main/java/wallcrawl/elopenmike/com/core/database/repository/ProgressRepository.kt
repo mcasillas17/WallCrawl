@@ -24,6 +24,7 @@ import wallcrawl.elopenmike.com.core.model.TrainingWeek
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeeklyDoseLedger
 import wallcrawl.elopenmike.com.core.model.WeightUnit
+import wallcrawl.elopenmike.com.core.progress.AnalyticsRangeTooLargeException
 import wallcrawl.elopenmike.com.core.progress.ProgressAnalyticsCalculator
 import wallcrawl.elopenmike.com.core.progress.ProgressCalculator
 
@@ -56,9 +57,6 @@ data class ProgressAnalyticsSnapshot(
     /** Exercise scope only: recorded provenance of range sessions containing the exercise. */
     val decisions: List<RecordedSessionDecision>
 )
-
-/** A range beyond the analytics representation bounds; reported, never truncated. */
-class AnalyticsRangeTooLargeException : IllegalStateException("Analytics range exceeds its representation bound.")
 
 interface ProgressRepository {
     /** Null means the local profile was deleted or has not been created, not a read failure. */
@@ -171,15 +169,6 @@ class OfflineProgressRepository(
                 require(!size.invalidMetadata) { "Stored workout history contains invalid typed metadata." }
                 val sessions = dao.getCompletedSessionsInRange(start, end, MAX_RANGE_SESSIONS)
                     .map { it.toWorkoutSession() }
-                // One week can also exceed the existing weekly ledger's own bounds; that is too large, not a read error.
-                if (weeks.any { week ->
-                        ProgressAnalyticsCalculator.exceedsLedgerWeekBounds(
-                            sessions.filter { week.contains(requireNotNull(it.completedAtTimestamp)) }
-                        )
-                    }
-                ) {
-                    throw AnalyticsRangeTooLargeException()
-                }
                 val exerciseId = (scope as? AnalyticsScope.Exercise)?.exerciseId
                 val comparable = exerciseId
                     ?.let { dao.selectAnalyticsComparableSetIds(start, end, it).toSet() }

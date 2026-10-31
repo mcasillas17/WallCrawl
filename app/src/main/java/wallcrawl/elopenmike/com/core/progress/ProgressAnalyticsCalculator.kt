@@ -29,6 +29,9 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.model.convertWeight
 
+/** A range beyond the analytics representation bounds; reported as too large, never truncated. */
+class AnalyticsRangeTooLargeException : IllegalStateException("Analytics range exceeds its representation bound.")
+
 /**
  * Range analytics from completed history, with no I/O, clock or state.
  *
@@ -69,8 +72,9 @@ class ProgressAnalyticsCalculator(
         // One row per (week, session): what it contributes to each metric, or null when it is
         // not a member of that metric's scope.
         val rows = weeks.map { week ->
-            // Per-session ledger calls cannot see a whole week, so its existing bounds are checked here.
-            require(!exceedsLedgerWeekBounds(byWeek[week].orEmpty())) { "A week exceeds the weekly ledger's bounds." }
+            // Per-session ledger calls cannot see a whole week, so the existing weekly ledger's own bounds are
+            // checked here once per week and reported as too large rather than as a read error.
+            if (exceedsLedgerWeekBounds(byWeek[week].orEmpty())) throw AnalyticsRangeTooLargeException()
             byWeek[week].orEmpty().sortedWith(compareBy({ it.completedAtTimestamp }, { it.id })).map { session ->
                 val completed = session.exercises
                     .filter { it.inScope(scope, exercisesById) }
@@ -229,11 +233,8 @@ class ProgressAnalyticsCalculator(
     }
 
     companion object {
-        /**
-         * True when one week holds more than the existing weekly ledger accepts (sessions or creditable
-         * work sets), so the repository can report it as too large instead of failing as a read error.
-         */
-        fun exceedsLedgerWeekBounds(weekSessions: List<WorkoutSession>): Boolean =
+        /** True when one week holds more than the existing weekly ledger accepts: sessions or creditable work sets. */
+        internal fun exceedsLedgerWeekBounds(weekSessions: List<WorkoutSession>): Boolean =
             weekSessions.size > WeeklyDoseLedgerCalculator.MAX_SESSIONS_PER_WEEK ||
                 weekSessions.sumOf { session ->
                     session.exercises.sumOf { exercise -> exercise.sets.count { it.isCreditableWorkSet } }

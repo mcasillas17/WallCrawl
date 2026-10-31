@@ -99,9 +99,12 @@ internal fun ProgressAnalyticsCard(
             modifier = Modifier.semantics { heading() }
         )
         Body(stringResource(R.string.analytics_scope_note, zoneId.id))
+        // The shortest range has no shorter alternative, so its copy offers no remedy.
+        val tooLargeRes = if (selection.range == AnalyticsRange.entries.first()) R.string.analytics_too_large_shortest
+        else R.string.analytics_too_large
         Filters(selection, options?.first, options?.second.orEmpty(), when {
             options != null -> R.string.analytics_exercise_options_too_many
-            state == ProgressAnalyticsUiState.TooLarge -> R.string.analytics_too_large
+            state == ProgressAnalyticsUiState.TooLarge -> tooLargeRes
             state == ProgressAnalyticsUiState.NoProfile -> R.string.progress_no_profile
             state == ProgressAnalyticsUiState.Error -> R.string.analytics_error
             else -> R.string.analytics_loading
@@ -110,7 +113,7 @@ internal fun ProgressAnalyticsCard(
         when (state) {
             ProgressAnalyticsUiState.Loading -> AnalyticsLoading()
             ProgressAnalyticsUiState.NoProfile -> Body(stringResource(R.string.progress_no_profile))
-            ProgressAnalyticsUiState.TooLarge -> Body(stringResource(R.string.analytics_too_large))
+            ProgressAnalyticsUiState.TooLarge -> Body(stringResource(tooLargeRes))
             ProgressAnalyticsUiState.Error -> {
                 Text(stringResource(R.string.analytics_error), color = MaterialTheme.colorScheme.error, fontSize = 13.sp)
                 Button(onClick = actions.onRetry) { Text(stringResource(R.string.action_try_again)) }
