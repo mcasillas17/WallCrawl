@@ -155,7 +155,8 @@ for upgrading vulnerable tooling.
   requires Gradle `9.6.0+`, JDK 17 and Build Tools `36.0.0`, and supports API 37.
   Those requirements are retained. Local checks use Homebrew JDK `17.0.20.1`,
   macOS arm64, SDK platform 37 and a dedicated API 36 arm64 emulator; CI uses
-  Temurin 17 and API 36 x86_64. `targetSdk` stays 35.
+  Temurin 17 and API 36 x86_64. `targetSdk` stays 35 in this slice; the later move to 37 is
+  recorded in the [target SDK 37 record](android-target-sdk-37.md).
 - [Commons Lang 3.18.0 release notes](https://github.com/apache/commons-lang/blob/rel/commons-lang-3.18.0/RELEASE-NOTES.txt)
   retain Java 8+ and identify the recursion fix. A japicmp `0.23.1` comparison
   of the published `3.16.0` and `3.18.0` jars found no binary-incompatible public/

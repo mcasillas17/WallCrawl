@@ -1441,8 +1441,10 @@ state, every rejection path, transactional restore and deletion, a profile write
 a deletion, and the destructive confirmation at a large font scale), and the
 [packaged backup-policy configuration](privacy.md#verification-boundary)
 (merged manifest flags, resolved XML references, and exclusion semantics).
-Pull-request/main CI and tag-release publication run that connected suite on an
-API 36 emulator. The importer has a separate Python-standard-library test suite, which runs
+Pull-request/main CI and tag-release publication run that connected suite on API 36 and
+API 37 emulators, and its `wallcrawl.elopenmike.com.app` package on API 26 (see the
+[target SDK 37 record](android-target-sdk-37.md#ci)). The importer has a separate
+Python-standard-library test suite, which runs
 together with the pinned-upstream catalog regeneration check on pull requests and `main` only;
 a tag build does not re-run them, so a release carries their result only when the tagged
 commit already passed CI on `main`, which no workflow currently enforces. The full split is

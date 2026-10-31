@@ -503,7 +503,7 @@ not touch.
 | Catalog importer tests (`tools/workout-guide`) | yes | no |
 | Release tooling tests (`tools/release`) | yes | yes |
 | JVM unit tests including this corpus, lint, debug build | yes | yes |
-| API 36 instrumentation suite | yes | yes |
+| Instrumentation suite on API 36 and 37; its app-level package on API 26 | yes | yes |
 | Release version validation and prerelease publication | no | yes |
 
 The catalog regeneration check and the importer suite run on pull requests and `main` only;

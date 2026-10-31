@@ -345,6 +345,7 @@ class ProgramNavigationTest {
             }
         }
         waitText(R.string.program_manage)
+        awaitTodayList()
         compose.onNodeWithTag("today-list").performScrollToNode(hasTestTag("planning-ORDINARY"))
         compose.onNodeWithTag("planning-ORDINARY").assertIsSelected()
         compose.onNodeWithText(text(R.string.program_confirm)).assertDoesNotExist()
@@ -386,7 +387,7 @@ class ProgramNavigationTest {
         container.programRepository.act(ProgramAction.START, ProgramExpectation(profile.id, profile.revision, null, 0))
     }
     private fun chooseProgram() {
-        compose.waitUntil(15_000) { compose.onNodeWithTag("today-list").isDisplayed() }
+        awaitTodayList()
         compose.onNodeWithTag("today-list").performScrollToNode(hasTestTag("planning-PROGRAM"))
         compose.waitUntil(15_000) {
             compose.onNode(hasTestTag("planning-PROGRAM") and isEnabled()).isDisplayed()
@@ -397,10 +398,15 @@ class ProgramNavigationTest {
     }
     private fun text(id: Int) = localized.getString(id)
     private fun waitText(id: Int) { compose.waitUntil(15_000) { compose.onAllNodesWithText(text(id), substring = true).fetchSemanticsNodes().isNotEmpty() } }
+    // While Today builds the workout it shows the program card on its own, then moves the card into
+    // its list. Scrolling waits for the list, and a tap waits for the build to finish, so neither
+    // acts on the layout being replaced.
+    private fun awaitTodayList() = compose.waitUntil(15_000) { compose.onNodeWithTag("today-list").isDisplayed() }
     private fun click(id: Int) {
         compose.waitUntil(15_000) {
-            compose.onAllNodesWithTag("today-list").fetchSemanticsNodes().isNotEmpty() ||
-                compose.onAllNodesWithText(text(id)).fetchSemanticsNodes().isNotEmpty()
+            compose.onAllNodesWithText(text(R.string.today_loading)).fetchSemanticsNodes().isEmpty() && (
+                compose.onAllNodesWithTag("today-list").fetchSemanticsNodes().isNotEmpty() ||
+                    compose.onAllNodesWithText(text(id)).fetchSemanticsNodes().isNotEmpty())
         }
         if (compose.onAllNodesWithTag("today-list").fetchSemanticsNodes().isNotEmpty()) {
             // The list can be on screen before the item is in it, so the scroll is retried.

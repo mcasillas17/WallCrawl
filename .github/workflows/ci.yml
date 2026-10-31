@@ -54,9 +54,26 @@ jobs:
         run: ./gradlew test lint assembleDebug --stacktrace --no-daemon
 
   instrumentation:
-    name: Instrumentation tests
+    name: Instrumentation tests (API ${{ matrix.api-level }})
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    # The matrix and its limits are explained in docs/android-target-sdk-37.md.
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Regression baseline the suite has always run on.
+          - api-level: "36"
+            instrumentation-args: ""
+          # targetSdk. Android 17's SDK packages are versioned 37.0, not 37.
+          - api-level: "37.0"
+            instrumentation-args: ""
+          # minSdk boundary: only the app-level suites (installed SDK levels, packaged
+          # backup rules, launcher icon, and real navigation, Back, recreation and
+          # restore), so the matrix stays bounded. A package, not a class list: AGP keeps
+          # only the first class of a comma-separated `class` argument.
+          - api-level: "26"
+            instrumentation-args: "-Pandroid.testInstrumentationRunnerArguments.package=wallcrawl.elopenmike.com.app"
 
     steps:
       - name: Check out repository
@@ -84,25 +101,48 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
+      # The runner's preinstalled command-line tools (12.0) write `target=android-0` into
+      # an AVD for a dotted API level such as 37.0, so the emulator skips the RAM and
+      # Vulkan setup Android 17 needs and the image never finishes booting. The emulator
+      # action keeps a preinstalled copy, so replace it before the action creates the AVD.
+      # https://github.com/ReactiveCircus/android-emulator-runner/issues/482 (open fix: #494)
+      - name: Update Android command-line tools
+        if: contains(matrix.api-level, '.')
+        run: |
+          sdk="${ANDROID_HOME:?}"
+          # Accepting licenses first keeps the install outside a `yes` pipeline, so its exit
+          # status is checked even under pipefail.
+          yes | "$sdk/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
+          "$sdk/cmdline-tools/latest/bin/sdkmanager" --install "cmdline-tools;23.0"
+          rm -rf "$sdk/cmdline-tools/latest"
+          mv "$sdk/cmdline-tools/23.0" "$sdk/cmdline-tools/latest"
+          grep -qx 'Pkg.Revision=23.0' "$sdk/cmdline-tools/latest/source.properties"
+
       # Room migrations, the schema-10 chain, and the weekly ledger DAO/repository are
       # only covered here: the JVM suite cannot run Room's real migration or its runtime
       # schema validation. Without this job a Room, AGP, or Gradle bump can pass every
       # other check while leaving the migration chain broken.
+      # AGP's connected-test runner can log an APK install failure and still exit 0
+      # without a report, so a leg passes only if its report recorded at least one test.
       - name: Run instrumentation tests
         uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
+        env:
+          INSTRUMENTATION_ARGS: ${{ matrix.instrumentation-args }}
         with:
-          api-level: 36
+          api-level: ${{ matrix.api-level }}
           arch: x86_64
           target: google_apis
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
-          script: ./gradlew connectedDebugAndroidTest --stacktrace --no-daemon
+          script: |
+            ./gradlew connectedDebugAndroidTest $INSTRUMENTATION_ARGS --stacktrace --no-daemon
+            grep -q 'tests="[1-9]' app/build/outputs/androidTest-results/connected/debug/TEST-*.xml
 
       - name: Upload instrumentation report
         if: failure()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: instrumentation-report
+          name: instrumentation-report-api-${{ matrix.api-level }}
           path: |
             app/build/reports/androidTests/connected/
             app/build/outputs/androidTest-results/connected/

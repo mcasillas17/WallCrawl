@@ -815,6 +815,9 @@ private fun ExercisePrescriptionSheet(
         containerColor = MaterialTheme.colorScheme.surfaceVariant,
         scrimColor = MaterialTheme.colorScheme.scrim.copy(alpha = 0.5f)
     ) {
+        // In the sheet's own window, so it outranks the sheet's predictive back: that scales the
+        // sheet with the gesture and keeps the scale for a hide, which typing here vetoes.
+        BackHandler(enabled = isModified) { viewModel.dismissSheet() }
         PrescriptionSheetContent(
             state = state,
             draft = draft,

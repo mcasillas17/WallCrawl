@@ -26,7 +26,7 @@ android {
     defaultConfig {
         applicationId = "wallcrawl.elopenmike.com"
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 37
         versionCode = wallcrawlVersionCode
         versionName = wallcrawlVersionName
 
