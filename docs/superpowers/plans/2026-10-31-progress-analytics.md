@@ -2,6 +2,15 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+> **Execution record (2026-10-31):** executed in full. This plan is preserved as written; the
+> shipped design is the [spec](../specs/2026-10-31-progress-analytics-design.md), ROADMAP Package 14
+> and the code. Review rounds changed the shape: the range read reuses the bounded relation query
+> after a size/strict-type pre-check (2,000 sessions, 200,000 exercise rows, 100,000 sets) instead of a
+> flat projection; every measure is computed in one pass and the read is keyed on range and scope;
+> names are `selectAnalyticsRange/Scope/Metric`, `RecordedSessionDecision`, `AnalyticsBarChart` and
+> `ProgressAnalyticsRepositoryTest`; app navigation coverage lives in `WorkoutHistoryNavigationTest`.
+> Unchecked boxes are not status.
+
 **Goal:** Add a filterable, range-scoped "Over time" Progress card whose every number traces to completed sessions.
 
 **Architecture:** One flat Room projection per read feeds a pure `ProgressAnalyticsCalculator`; the ViewModel keeps a bounded saved selection and a separate analytics state; a small Compose bar chart plus an accessible data list drives drill-down into existing history routes.

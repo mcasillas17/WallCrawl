@@ -455,7 +455,7 @@ acceptance and package 7), and this package's own accounting logic did not need 
 [architecture](docs/architecture.md#feedback-loop-and-progress), and
 [Progress screenshots](README.md#progress-activity-and-reviewed-dose).
 
-History drill-down and deeper analytics remain Packages 13 and 14. Schema, archives,
+History drill-down and deeper analytics were delivered later by Packages 13 and 14. Schema, archives,
 recommendation snapshots, validation policies and planner behavior are unchanged.
 
 ### 6. Complete the deterministic corpus and CI release gate

@@ -144,6 +144,13 @@ class ProgressAnalyticsCardTest {
         composeRule.onNode(hasText(english.getString(R.string.analytics_no_matches))).assertDoesNotExist()
     }
 
+    @Test fun loadVolumeWithNoMatchesNamesMissingLoadsToo() {
+        metric = AnalyticsMetric.EXTERNAL_LOAD_VOLUME
+        render(loaded(scope = AnalyticsScope.Exercise("bench"), hasMatches = false))
+        scrollTo(english.getString(R.string.analytics_no_matches_volume))
+        composeRule.onNode(hasText("missing loads are not load volume", substring = true)).assertExists()
+    }
+
     @Test fun recordedDecisionsRemainVisibleWhenTheMeasureHasNoMatches() {
         val decision = AnalyticsDecision("skipped", "Skipped bench day", WEEKS.last().startEpochMillis + 1,
             ProgressionProvenance("bench", ProgressionReason.HOLD_INCOMPLETE_WORK, null, emptyList(), "a".repeat(64)),
