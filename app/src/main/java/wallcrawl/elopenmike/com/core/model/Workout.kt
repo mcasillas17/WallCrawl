@@ -20,6 +20,7 @@ data class GeneratedWorkout(
     val rationale: WorkoutRationaleSpec,
     /** Applied, canonical ranking decisions; presentation translates these facts later. */
     val rankingReasons: List<WorkoutRankingReason> = emptyList(),
+    val progressionDecisions: List<ProgressionDecision> = emptyList(),
     /**
      * High-priority muscles nothing available trains as its own purpose.
      *
@@ -28,10 +29,30 @@ data class GeneratedWorkout(
      * stable order, like every other planner output, so the screen can say it in the
      * reader's language without the planner knowing one. Empty is the ordinary case.
      */
-    val unavailableFocusMuscles: List<String> = emptyList()
+    val unavailableFocusMuscles: List<String> = emptyList(),
+    /** Recorded separately from freshness: advancing the planner must not stale this plan. */
+    val generationIndex: Int? = null
 )
 
 sealed interface WorkoutRankingReason {
+    data class TrainingFrequencyRecencyPreference(
+        val preferredExerciseId: String,
+        val alternativeExerciseId: String,
+        val directPrimaryMuscle: String,
+        val daysPerWeek: Int,
+        val daysSinceLastPractice: Int
+    ) : WorkoutRankingReason {
+        init {
+            require(preferredExerciseId.isNotBlank() && alternativeExerciseId.isNotBlank())
+            require(preferredExerciseId != alternativeExerciseId)
+            require(directPrimaryMuscle.isNotBlank() &&
+                directPrimaryMuscle.length <= MuscleDoseAccounting.MAX_MUSCLE_LENGTH &&
+                directPrimaryMuscle.none(Char::isISOControl))
+            require(daysPerWeek in 2..6)
+            require(daysSinceLastPractice in ((7 + daysPerWeek - 1) / daysPerWeek)..
+                TrainingFrequencyRecencyEvidence.MAX_LAST_PRACTICE_AGE_DATES)
+        }
+    }
     data class SupportedRegressionPreference(
         val preferredExerciseId: String,
         val sourceExerciseId: String,
@@ -84,6 +105,23 @@ enum class SessionStatus {
     COMPLETED,
     CANCELLED
 }
+
+/** Lightweight browsing entry; exercises, sets and provenance belong to the detail read. */
+data class WorkoutHistoryEntry(
+    val id: String,
+    val name: String,
+    val completedAtTimestamp: Long?,
+    val actualDurationMinutes: Int
+)
+
+/** A timestamp tie or an overlapping workout cannot establish historical evidence. */
+internal fun WorkoutSession.hasValidCompletedChronology(): Boolean =
+    status == SessionStatus.COMPLETED && startedAtTimestamp > 0 &&
+        completedAtTimestamp != null && completedAtTimestamp >= startedAtTimestamp
+
+internal fun WorkoutSession.isStrictlyPriorTo(viewed: WorkoutSession): Boolean =
+    id != viewed.id && hasValidCompletedChronology() && viewed.hasValidCompletedChronology() &&
+        requireNotNull(completedAtTimestamp) < viewed.startedAtTimestamp
 
 /**
  * An exercise instance within an active or completed [WorkoutSession].

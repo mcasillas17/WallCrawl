@@ -257,7 +257,7 @@ class DefaultExercisePrescriptionFactoryTest {
     }
 
     @Test
-    fun create_extendedBreakOverOneYear_capsSetsToTwoAndProtectsTendons() {
+    fun create_extendedBreakOverOneYear_capsSetsToTwoAndUsesReentryRepRange() {
         val compoundExercise = exercise(ExerciseType.WEIGHT_REPS).copy(
             id = "barbell-bench-press",
             programming = wallcrawl.elopenmike.com.core.model.ExerciseProgrammingMetadata(
@@ -279,7 +279,7 @@ class DefaultExercisePrescriptionFactoryTest {
 
         val prescription = factory.create(compoundExercise, context)
 
-        // Strict 2 working sets to prevent severe DOMS and protect tendons
+        // A configured product cap, not a claim about physiological protection.
         assertThat(prescription.targetSets).isEqualTo(2)
         // Rep range uses introductory 6–8 reps rather than heavy 4–6 grinders
         assertThat(prescription.repRange?.min).isEqualTo(6)
@@ -357,6 +357,89 @@ class DefaultExercisePrescriptionFactoryTest {
         assertThat(prescription.effortTarget).isEqualTo(EffortTarget(2, 4))
         assertThat(prescription.restClass).isEqualTo(RestClass.MODERATE)
         assertThat(prescription.restTargetSource).isEqualTo(RestTargetSource.PRODUCT_POLICY)
+    }
+
+    @Test
+    fun reviewedHistoryWithoutEffort_doesNotUseTheLegacyIncrement() {
+        val exercise = syntheticApprovedExercise(
+            id = "barbell-bench-press",
+            directPrimaryMuscle = "Chest"
+        )
+        val context = WorkoutGenerationContext(
+            userProfile = UserProfile(
+                goals = setOf(FitnessGoal.GENERAL_FITNESS),
+                preferredUnit = WeightUnit.KG
+            ),
+            exerciseHistory = mapOf(exercise.id to completedTopOfRangeHistory(40.0)),
+            trainingProgramState = programState(AdaptationState.UNCALIBRATED)
+        )
+
+        val recorded = progressionSession(
+            "recorded", exercise.id,
+            factory.create(exercise, context.copy(userProfile = context.userProfile.copy(
+                confirmedStartingLoads = mapOf(exercise.id to 40.0)
+            ))),
+            10_000
+        ).let { session ->
+            session.copy(exercises = session.exercises.map { instance ->
+                instance.copy(sets = instance.sets.map { it.copy(rir = null, feltManageable = null) })
+            })
+        }
+        assertThat(factory.create(exercise, context.copy(
+            recentWorkoutHistory = listOf(recorded), progressionHistory = listOf(recorded),
+            historyAsOfTimestamp = 20_000
+        )).targetWeight).isEqualTo(40.0)
+    }
+
+    @Test
+    fun reviewedComparableFeedback_advancesOneLoadStep_withoutLegacyStacking() {
+        val exercise = syntheticApprovedExercise(id = "barbell-bench-press", directPrimaryMuscle = "Chest")
+        val initial = WorkoutGenerationContext(
+            userProfile = UserProfile(
+                goals = setOf(FitnessGoal.GENERAL_FITNESS), preferredUnit = WeightUnit.LBS,
+                confirmedStartingLoads = mapOf(exercise.id to 100.0)
+            ),
+            trainingProgramState = programState(AdaptationState.UNCALIBRATED)
+        )
+        val baseline = factory.create(exercise, initial)
+        val sessions = listOf(
+            progressionSession("one", exercise.id, baseline, 10_000, WeightUnit.LBS),
+            progressionSession("two", exercise.id, baseline, 20_000, WeightUnit.LBS)
+        )
+        val context = initial.copy(
+            progressionHistory = sessions, historyAsOfTimestamp = 30_000,
+            exerciseHistory = mapOf(exercise.id to completedTopOfRangeHistory(100.0))
+        )
+        val result = factory.create(exercise, context)
+        assertThat(result.targetWeight).isWithin(1e-8).of(
+            100.0 + wallcrawl.elopenmike.com.core.model.convertWeight(2.5, WeightUnit.KG, WeightUnit.LBS)
+        )
+        assertThat(result.copy(targetWeight = baseline.targetWeight)).isEqualTo(baseline)
+    }
+
+    @Test
+    fun offerDoesNotReduceSets_acceptanceDoes_andReturningGuidanceRemains() {
+        val exercise = syntheticApprovedExercise(id = "reviewed-press", directPrimaryMuscle = "Chest")
+        val context = WorkoutGenerationContext(
+            userProfile = UserProfile(goals = setOf(FitnessGoal.GENERAL_FITNESS)),
+            trainingProgramState = programState(AdaptationState.RETURNING)
+        )
+        val baseline = factory.create(exercise, context)
+        val offered = wallcrawl.elopenmike.com.core.model.DeloadChoice(
+            wallcrawl.elopenmike.com.core.model.DeloadOffer("offer", wallcrawl.elopenmike.com.core.model.DeloadSource.EXPLICIT_REQUEST, DeloadOfferPolicy.VERSION),
+            wallcrawl.elopenmike.com.core.model.DeloadChoiceStatus.OFFERED, 1
+        )
+        fun withChoice(status: wallcrawl.elopenmike.com.core.model.DeloadChoiceStatus) = context.copy(
+            deloadPreferences = wallcrawl.elopenmike.com.core.model.DeloadPreferences(
+                context.userProfile.id, 1, offered.copy(status = status)
+            )
+        )
+        assertThat(factory.create(exercise, withChoice(wallcrawl.elopenmike.com.core.model.DeloadChoiceStatus.OFFERED)))
+            .isEqualTo(baseline)
+        assertThat(factory.create(exercise, withChoice(wallcrawl.elopenmike.com.core.model.DeloadChoiceStatus.DECLINED)))
+            .isEqualTo(baseline)
+        assertThat(factory.create(exercise, withChoice(wallcrawl.elopenmike.com.core.model.DeloadChoiceStatus.ACCEPTED)))
+            .isEqualTo(baseline.copy(targetSets = 1))
     }
 
     @Test

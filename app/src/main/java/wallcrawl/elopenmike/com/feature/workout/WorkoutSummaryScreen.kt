@@ -2,26 +2,24 @@ package wallcrawl.elopenmike.com.feature.workout
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.EmojiEvents
-import androidx.compose.material.icons.filled.FitnessCenter
-import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,7 +43,8 @@ import wallcrawl.elopenmike.com.core.ui.theme.SuccessGreen
 fun WorkoutSummaryScreen(
     summary: WorkoutSummary,
     onDone: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onOpenDetails: (() -> Unit)? = null
 ) {
     val locale = LocalConfiguration.current.locales[0]
     Box(
@@ -58,9 +57,10 @@ fun WorkoutSummaryScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -104,7 +104,6 @@ fun WorkoutSummaryScreen(
                 )
             }
 
-            // Summary Metrics Grid
             WallCrawlCard(
                 cornerRadius = 20.dp,
                 contentPadding = 20.dp,
@@ -120,9 +119,9 @@ fun WorkoutSummaryScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Row(
+                Column(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     MetricHighlight(
                         title = stringResource(R.string.summary_metric_duration),
@@ -131,14 +130,14 @@ fun WorkoutSummaryScreen(
                             LocaleFormatting.formatCount(summary.durationMinutes, locale)
                         ),
                         valueColor = MaterialTheme.colorScheme.secondary,
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.fillMaxWidth()
                     )
 
                     MetricHighlight(
                         title = stringResource(R.string.summary_metric_sets),
                         value = LocaleFormatting.formatCount(summary.totalSetsCompleted, locale),
                         valueColor = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
 
@@ -146,40 +145,41 @@ fun WorkoutSummaryScreen(
 
                 val formattedVolume = if (summary.totalVolume > 0) {
                     stringResource(
-                        R.string.progress_volume_value,
+                        R.string.progress_volume_tonnage,
                         LocaleFormatting.formatVolume(summary.totalVolume, locale),
                         summary.unit.symbol
                     )
                 } else {
-                    stringResource(R.string.summary_bodyweight)
+                    stringResource(R.string.summary_no_external_volume)
                 }
 
-                Row(
+                Column(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     MetricHighlight(
                         title = stringResource(R.string.summary_metric_volume),
                         value = formattedVolume,
                         valueColor = CrimsonRedLight,
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.fillMaxWidth()
                     )
 
                     MetricHighlight(
                         title = stringResource(R.string.summary_metric_prs),
-                        value = if (summary.prCount == 0) {
-                            stringResource(R.string.value_not_available)
-                        } else {
-                            LocaleFormatting.formatCount(summary.prCount, locale)
-                        },
+                        value = LocaleFormatting.formatCount(summary.prCount, locale),
                         valueColor = SuccessGreen,
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
             }
 
             // Done Action Button
             Column(modifier = Modifier.fillMaxWidth()) {
+                onOpenDetails?.let { open ->
+                    TextButton(onClick = open, modifier = Modifier.fillMaxWidth()) {
+                        Text(stringResource(R.string.history_open_workout), color = MaterialTheme.colorScheme.onSurface)
+                    }
+                }
                 WallCrawlPrimaryButton(
                     text = stringResource(R.string.summary_action_done),
                     onClick = onDone

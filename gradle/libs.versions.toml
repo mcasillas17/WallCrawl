@@ -1,26 +1,31 @@
 [versions]
 agp = "9.4.0"
-kotlin = "2.4.10"
+kotlin = "2.4.21"
 ksp = "2.3.11"
 appcompat = "1.8.0"
 coreKtx = "1.19.0"
 lifecycleRuntimeKtx = "2.8.7"
 lifecycleViewModelCompose = "2.8.7"
 activityCompose = "1.9.3"
-composeBom = "2026.08.00"
+composeBom = "2026.09.00"
 navigationCompose = "2.10.1"
-room = "2.8.4"
+room = "2.8.5"
 coroutines = "1.11.0"
 materialIconsExtended = "1.7.8"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
-truth = "1.4.4"
+truth = "1.4.5"
 turbine = "1.2.0"
-coil = "3.0.4"
+coil = "3.6.2"
 json = "20260814"
+commonsLang = "3.18.0"
+httpClient = "4.5.14"
 
 [libraries]
+# Build-tool constraints only; see docs/dependency-health.md.
+build-commons-lang = { group = "org.apache.commons", name = "commons-lang3", version.ref = "commonsLang" }
+build-httpclient = { group = "org.apache.httpcomponents", name = "httpclient", version.ref = "httpClient" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }

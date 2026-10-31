@@ -14,9 +14,20 @@ concurrency:
 
 jobs:
   instrumentation:
-    name: Instrumentation tests
+    name: Instrumentation tests (API ${{ matrix.api-level }})
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    # Same matrix as ci.yml; publication waits for every leg.
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - api-level: "36"
+            instrumentation-args: ""
+          - api-level: "37.0"
+            instrumentation-args: ""
+          - api-level: "26"
+            instrumentation-args: "-Pandroid.testInstrumentationRunnerArguments.package=wallcrawl.elopenmike.com.app"
 
     steps:
       - name: Check out tagged commit
@@ -25,13 +36,13 @@ jobs:
           persist-credentials: false
 
       - name: Set up JDK 17
-        uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c # v6.0.0
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         with:
           distribution: temurin
           java-version: "17"
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6.3.0
+        uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
         with:
           cache-provider: basic
 
@@ -42,24 +53,45 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
+      # Same as ci.yml: an AVD for a dotted API level such as 37.0 needs newer
+      # command-line tools than the runner preinstalls.
+      # https://github.com/ReactiveCircus/android-emulator-runner/issues/482 (open fix: #494)
+      - name: Update Android command-line tools
+        if: contains(matrix.api-level, '.')
+        run: |
+          sdk="${ANDROID_HOME:?}"
+          # Accepting licenses first keeps the install outside a `yes` pipeline, so its exit
+          # status is checked even under pipefail.
+          yes | "$sdk/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
+          "$sdk/cmdline-tools/latest/bin/sdkmanager" --install "cmdline-tools;23.0"
+          rm -rf "$sdk/cmdline-tools/latest"
+          mv "$sdk/cmdline-tools/23.0" "$sdk/cmdline-tools/latest"
+          grep -qx 'Pkg.Revision=23.0' "$sdk/cmdline-tools/latest/source.properties"
+
       # Tag publication is gated on the same real Room migration and runtime schema
       # validation that protects pull requests and main. A JVM-only release build cannot
       # prove that an installed database survives the complete schema-10 chain.
+      # AGP's connected-test runner can log an APK install failure and still exit 0
+      # without a report, so a leg passes only if its report recorded at least one test.
       - name: Run instrumentation tests
         uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
+        env:
+          INSTRUMENTATION_ARGS: ${{ matrix.instrumentation-args }}
         with:
-          api-level: 36
+          api-level: ${{ matrix.api-level }}
           arch: x86_64
           target: google_apis
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
-          script: ./gradlew connectedDebugAndroidTest --stacktrace --no-daemon
+          script: |
+            ./gradlew connectedDebugAndroidTest $INSTRUMENTATION_ARGS --stacktrace --no-daemon
+            grep -q 'tests="[1-9]' app/build/outputs/androidTest-results/connected/debug/TEST-*.xml
 
       - name: Upload instrumentation report
         if: failure()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: release-instrumentation-report
+          name: release-instrumentation-report-api-${{ matrix.api-level }}
           path: |
             app/build/reports/androidTests/connected/
             app/build/outputs/androidTest-results/connected/
@@ -80,13 +112,13 @@ jobs:
           persist-credentials: false
 
       - name: Set up JDK 17
-        uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c # v6.0.0
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         with:
           distribution: temurin
           java-version: "17"
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6.3.0
+        uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
         with:
           cache-provider: basic
 

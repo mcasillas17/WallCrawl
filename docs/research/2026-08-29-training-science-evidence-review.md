@@ -1,5 +1,12 @@
 # Training Science Evidence Review for WallCrawl
 
+> **Product-direction supersession, 2026-10-25:** The optional-model proposal,
+> its enablement conditions, and its release gates are retired under
+> [Roadmap Package 17](../../ROADMAP.md#17-optional-local-inference-retired).
+> References below to future LLM work, including signed decision 10, preserve
+> the original research/design record; they are not active implementation requirements.
+> The deterministic evidence boundaries and truthful content-authoring provenance remain.
+
 ## Method
 
 Four research agents (Claude Opus 4.8, Grok 4.6, Gemini 3.7 Flash, and GPT-5.6 Terra) completed four rounds:
@@ -17,7 +24,7 @@ The full per-agent, per-round record — distinct Round-1 findings, Round-2 cita
 
 - Detailed engine architecture: `docs/superpowers/specs/2026-08-29-science-based-workout-engines-design.md`.
 - Deterministic engine implementation plan: `docs/superpowers/plans/2026-08-29-science-based-deterministic-engine.md`.
-- Local LLM engine implementation plan: `docs/superpowers/plans/2026-08-29-science-based-local-llm-engine.md`.
+- Retired local LLM proposal (historical only): `docs/superpowers/plans/2026-08-29-science-based-local-llm-engine.md`.
 - Body-aware personalization design: `docs/superpowers/specs/2026-08-29-body-aware-personalization-design.md`.
 - Body-aware personalization plan: `docs/superpowers/plans/2026-08-29-body-aware-personalization.md`.
 - Roundtable agent findings appendix: `docs/research/2026-08-29-roundtable-agent-findings.md`.
@@ -35,6 +42,16 @@ The cross-review corrected material citation errors:
 - Baz-Valle exercise-variation trial: DOI `10.1371/journal.pone.0226989`, not `...0226981`.
 
 ## Consensus Doctrine
+
+**Current implementation note (2026-09-19):** Package 7 enabled the reviewed
+alpha against 182 owner-authorized `AI_ACCEPTED` records, not human approvals.
+Package 9 implements the [one-variable/one-workout contract](../superpowers/specs/2026-09-19-progression-and-deload-design.md).
+Its two-attempt comparison, explicit manageable/effort requirements, increments,
+representation bounds and one-fewer-set choice are versioned product rules.
+They are not new study results, individual readiness diagnoses, universal
+physiological thresholds or clinical validation. No automatic deload pattern
+or multi-week program has been added. Earlier rollout counts/flags below remain
+dated evidence, not current status.
 
 The doctrine and signed decisions below preserve the original review record. The
 [2026-09-05 clarification](#validation-scope-clarification-2026-09-05) separates their
@@ -265,3 +282,26 @@ existed; and the 72-hour history window constant is now `DEFAULT_HISTORY_LOOKBAC
 carrying an explicit note that it selects history and does not measure recovery. The window's
 value, its behaviour and the ordinal role of `programming.fatigueScore` in ranking are all
 unchanged; only the labels that misdescribed them are.
+
+### Package 8 scheduling implementation (2026-09-14)
+
+`TRAINING_FREQUENCY_RECENCY_V1` implements the preference-distribution principle already
+recorded under R2, not a new physiological claim. The exact
+[scheduling contract](../architecture.md#frequency-and-recency-scheduling) is **product
+policy**: fourteen local calendar dates, two distinct completed-practice dates to establish
+familiarity, and a `ceil(7 / preferred weekly days)` revisit band. No cited source directly
+supports these constants or validates this interpretation of an individual's schedule.
+
+Completed work is attributed only to the accepted designated direct primary; secondary
+involvement adds no practice dates. Frequency sets one band and recency determines one
+binary positive preference below capability, supported-regression and experience ordering.
+The policy does not penalize an exercise merely for having been performed, prefer unseen
+variants, impose a muscle quota or mandatory wait, or diagnose recovery, fatigue or overload.
+It changes neither weekly-dose credit nor progression.
+
+Deterministic reconstruction, unchanged candidate membership, counterfactual typed reasons,
+bounded reads, context invalidation and record compatibility are **software invariants**.
+Their regression tests establish implementation conformance, not scientific or clinical
+validation. Historical statements above about the previously undesigned scheduling rule
+describe their dated baseline; no blocking recency rule has been added to `ProgramValidator`,
+and ROADMAP Package 9's progression/deload work remains separate and unimplemented.

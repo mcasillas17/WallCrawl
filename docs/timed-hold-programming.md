@@ -97,9 +97,13 @@ That is a separate, owner-authorized categorical acceptance, not genuine human r
 records carry the human-only `APPROVED` state. Neither agent code review nor PR approval
 supplies human exercise-metadata signoff.
 
-This milestone does not implement progression, deloads, substitutions, Health/Wear, or
-LLM behavior. `progressionType` is descriptive; timed targets remain existing defaults,
-not exercise-specific duration recommendations. Coaching makes no medical, prevention,
+This original milestone did not implement progression or deloads. Package 9 now
+allows a five-second duration step only from two comparable completed attempts
+with explicit qualifying feedback, and preserves compatible earned targets.
+It does not infer progression from the descriptive `progressionType` label or
+expand automatic eligibility to distance/conditioning work. Deload pauses a
+pending step and reduces sets only after acceptance. Substitutions, Health/Wear
+and LLM behavior remain outside scope. Coaching makes no medical, prevention,
 optimality, or efficacy claims. Broader classification changes and human field-by-field
 review are outside this milestone.
 

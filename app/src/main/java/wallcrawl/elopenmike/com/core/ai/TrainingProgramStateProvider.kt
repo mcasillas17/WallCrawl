@@ -1,6 +1,7 @@
 package wallcrawl.elopenmike.com.core.ai
 
 import java.time.ZoneId
+import java.time.Instant
 import wallcrawl.elopenmike.com.core.database.repository.WeeklyDoseLedgerRepository
 import wallcrawl.elopenmike.com.core.model.TrainingProgramState
 import wallcrawl.elopenmike.com.core.model.TrainingProgramStatePolicyVersion
@@ -25,10 +26,19 @@ class TrainingProgramStateProvider(
     private val adaptationStatePolicy: AdaptationStatePolicy = AdaptationStatePolicy(),
     private val zoneId: () -> ZoneId = ZoneId::systemDefault
 ) {
+    /** The builder supplies its single sampled instant/zone to both history policies. */
+    suspend fun stateAt(
+        profile: UserProfile, instant: Instant, zone: ZoneId, acceptedDeload: Boolean = false
+    ): TrainingProgramState =
+        TrainingProgramState(
+            policyVersion = TrainingProgramStatePolicyVersion.PROGRAM_STATE_V2,
+            adaptationState = adaptationStatePolicy.derive(profile, acceptedDeload),
+            weeklyLedger = weeklyDoseLedgerRepository.weeklyLedgerAt(profile.id, instant, zone)
+        )
 
     suspend fun currentState(profile: UserProfile): TrainingProgramState =
         TrainingProgramState(
-            policyVersion = TrainingProgramStatePolicyVersion.PROGRAM_STATE_V1,
+            policyVersion = TrainingProgramStatePolicyVersion.PROGRAM_STATE_V2,
             adaptationState = adaptationStatePolicy.derive(profile),
             weeklyLedger = weeklyDoseLedgerRepository.currentWeeklyLedger(
                 profileId = profile.id,

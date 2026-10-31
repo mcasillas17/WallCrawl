@@ -703,8 +703,7 @@ class FakeWorkoutPlannerTest {
             reviewedComplexity = ComplexityTier.ADVANCED,
             reviewedCapabilities = setOf(MovementCapabilityType.BALANCE_WITHOUT_SUPPORT)
         )
-        val workout = planner.generateWorkout(
-            reviewedRankingContext(
+        val context = reviewedRankingContext(
                 experienceLevel = ExperienceLevel.BEGINNER,
                 candidates = listOf(source, supported),
                 decisions = listOf(
@@ -725,19 +724,24 @@ class FakeWorkoutPlannerTest {
                         )
                     )
                 )
-            )
         )
-
-        assertThat(workout.exercises.map { it.exerciseId })
-            .containsExactly(supported.id, source.id)
-            .inOrder()
-        assertThat(workout.rankingReasons).containsExactly(
-            WorkoutRankingReason.SupportedRegressionPreference(
-                preferredExerciseId = supported.id,
-                sourceExerciseId = source.id,
-                capability = MovementCapabilityType.FLOOR_TRANSITION
+        for (scheduling in listOf(null,
+            wallcrawl.elopenmike.com.core.model.TrainingFrequencyRecencyEvidence(
+                20_000, "UTC", mapOf(StandardMuscles.CHEST to listOf(19_996, 19_997))
             )
-        )
+        )) {
+            val workout = FakeWorkoutPlanner().generateWorkout(context.copy(schedulingEvidence = scheduling))
+            assertThat(workout.exercises.map { it.exerciseId })
+                .containsExactly(supported.id, source.id)
+                .inOrder()
+            assertThat(workout.rankingReasons).containsExactly(
+                WorkoutRankingReason.SupportedRegressionPreference(
+                    preferredExerciseId = supported.id,
+                    sourceExerciseId = source.id,
+                    capability = MovementCapabilityType.FLOOR_TRANSITION
+                )
+            )
+        }
     }
 
     @Test

@@ -40,6 +40,7 @@ class FakeWorkoutPlanner(
     private val generationCounter = AtomicInteger(0)
 
     override suspend fun generateWorkout(context: WorkoutGenerationContext): GeneratedWorkout {
+        context.validatedProgramSession()
         val candidates = context.allowedExercises
         if (candidates.isEmpty()) {
             val reviewedFailure =
@@ -55,13 +56,15 @@ class FakeWorkoutPlanner(
                 automaticEligibilityFailure = reviewedFailure
             )
         }
-        val generationIndex = generationCounter.getAndIncrement()
+        val generationIndex = context.regenerationIndex ?: if (context.programInput != null) 0 else generationCounter.getAndIncrement()
+        require(generationIndex >= 0) { "Generation index must not be negative." }
         val splitType = determineSplit(context, generationIndex, candidates)
 
         val selection = selectExercisesForSplit(splitType, candidates, context)
         val selectedExercises = selection.exercises
-        val generatedExerciseList = selectedExercises.map { exercise ->
-            createGeneratedExercise(exercise, context)
+        val prescriptionDecisions = selectedExercises.map { prescriptionFactory.createDecision(it, context) }
+        val generatedExerciseList = selectedExercises.zip(prescriptionDecisions).map { (exercise, decision) ->
+            GeneratedExercise(exercise.id, decision.prescription, exercise.programming?.coachingSummary.orEmpty())
         }
 
         val breakWeeks = context.userProfile.returningAfterBreakWeeks
@@ -93,7 +96,9 @@ class FakeWorkoutPlanner(
             exercises = generatedExerciseList,
             rationale = rationale,
             rankingReasons = selection.rankingReasons,
-            unavailableFocusMuscles = unavailableFocusMuscles(context, candidates)
+            progressionDecisions = prescriptionDecisions.takeIf { context.trainingProgramState != null }.orEmpty(),
+            unavailableFocusMuscles = unavailableFocusMuscles(context, candidates),
+            generationIndex = generationIndex
         )
     }
 
@@ -170,11 +175,12 @@ class FakeWorkoutPlanner(
      *
      * The in-memory counter alone resets whenever the process is killed, so a user who
      * opens the app once a day would see the first split every day. Completed workouts
-     * carry the rotation across restarts; the counter still varies within a session so
+     * carry ordinary rotation across restarts; explicit program slots replace that base.
+     * The counter still varies within a session so
      * regenerating offers something different.
      */
-    private fun rotationSeed(context: WorkoutGenerationContext, generationIndex: Int): Int =
-        context.completedWorkoutCount + generationIndex
+    private fun rotationSeed(context: WorkoutGenerationContext, generationIndex: Int): Long =
+        (context.programInput?.position?.slotOrdinal ?: context.completedWorkoutCount).toLong() + generationIndex
 
     private fun selectExercisesForSplit(
         split: WorkoutSplit,
@@ -204,6 +210,14 @@ class FakeWorkoutPlanner(
             automaticEligibilityResult = context.automaticEligibilityResult,
             capabilityEvidence = context.capabilityEvidence
         )
+        val preferredMuscles = context.schedulingEvidence
+            ?.takeIf { reviewedEligibilityEnabled }
+            ?.let { TrainingFrequencyRecencyPolicy().preferredMuscles(it, context.trainingFrequencyDaysPerWeek) }
+            .orEmpty()
+        // Precomputed once, shared by both passes and the regression counterfactual.
+        val schedulingPreferences = matchingCandidates.filter {
+            it.acceptedMetadata()?.directPrimaryMuscle in preferredMuscles
+        }.mapTo(hashSetOf(), Exercise::id)
 
         val selectionTrace = selectExercises(
             split = split,
@@ -213,7 +227,8 @@ class FakeWorkoutPlanner(
             context = context,
             reviewedEligibilityEnabled = reviewedEligibilityEnabled,
             capabilityPenalties = capabilityPenalties,
-            supportedRegressionPreferences = supportedRegressionPreferences
+            supportedRegressionPreferences = supportedRegressionPreferences,
+            schedulingPreferences = schedulingPreferences
         )
         val result = selectionTrace.exercises
         val baselineResult = if (supportedRegressionPreferences.isEmpty()) {
@@ -227,9 +242,14 @@ class FakeWorkoutPlanner(
                 context = context,
                 reviewedEligibilityEnabled = reviewedEligibilityEnabled,
                 capabilityPenalties = capabilityPenalties,
-                supportedRegressionPreferences = emptyMap()
+                supportedRegressionPreferences = emptyMap(),
+                schedulingPreferences = schedulingPreferences
             )
         }
+        val schedulingBaseline = if (schedulingPreferences.isEmpty()) selectionTrace else selectExercises(
+            split, matchingCandidates, exerciseCountTarget, compoundSlots, context,
+            reviewedEligibilityEnabled, capabilityPenalties, supportedRegressionPreferences, emptySet()
+        )
 
         check(result.any { split.trainsAsFocus(it) }) {
             "Split ${split.name} was selected without an exercise that trains it as a focus."
@@ -243,6 +263,9 @@ class FakeWorkoutPlanner(
                 split = split,
                 capabilityPenalties = capabilityPenalties,
                 supportedRegressionPreferences = supportedRegressionPreferences
+            ) + appliedSchedulingReasons(
+                split, context, selectionTrace, schedulingBaseline,
+                capabilityPenalties, supportedRegressionPreferences, schedulingPreferences
             )
         )
     }
@@ -255,7 +278,8 @@ class FakeWorkoutPlanner(
         context: WorkoutGenerationContext,
         reviewedEligibilityEnabled: Boolean,
         capabilityPenalties: Map<String, Int>,
-        supportedRegressionPreferences: Map<String, List<SupportedRegressionPreference>>
+        supportedRegressionPreferences: Map<String, List<SupportedRegressionPreference>>,
+        schedulingPreferences: Set<String>
     ): SelectionTrace {
         val compounds = chooseCompounds(
                 split = split,
@@ -264,7 +288,8 @@ class FakeWorkoutPlanner(
                 context = context,
                 reviewedEligibilityEnabled = reviewedEligibilityEnabled,
                 capabilityPenalties = capabilityPenalties,
-                supportedRegressionPreferences = supportedRegressionPreferences
+                supportedRegressionPreferences = supportedRegressionPreferences,
+                schedulingPreferences = schedulingPreferences
             )
         val accessories = mutableListOf<Exercise>()
 
@@ -281,7 +306,8 @@ class FakeWorkoutPlanner(
                         context = context,
                         reviewedEligibilityEnabled = reviewedEligibilityEnabled,
                         capabilityPenalties = capabilityPenalties,
-                        supportedRegressionPreferences = supportedRegressionPreferences
+                        supportedRegressionPreferences = supportedRegressionPreferences,
+                        schedulingPreferences = schedulingPreferences
                     )
                 )
                 .take(remainingSlots)
@@ -306,7 +332,8 @@ class FakeWorkoutPlanner(
         context: WorkoutGenerationContext,
         reviewedEligibilityEnabled: Boolean,
         capabilityPenalties: Map<String, Int>,
-        supportedRegressionPreferences: Map<String, List<SupportedRegressionPreference>>
+        supportedRegressionPreferences: Map<String, List<SupportedRegressionPreference>>,
+        schedulingPreferences: Set<String>
     ): List<Exercise> {
         if (slots <= 0) return emptyList()
         val compounds = candidates
@@ -322,6 +349,7 @@ class FakeWorkoutPlanner(
                             reviewedEligibilityEnabled = reviewedEligibilityEnabled
                         )
                     }
+                    .thenBy { if (it.id in schedulingPreferences) 0 else 1 }
                     .thenByDescending { it.programming?.fatigueScore ?: 0 }
                     .thenBy { it.id }
             )
@@ -354,7 +382,8 @@ class FakeWorkoutPlanner(
         context: WorkoutGenerationContext,
         reviewedEligibilityEnabled: Boolean,
         capabilityPenalties: Map<String, Int>,
-        supportedRegressionPreferences: Map<String, List<SupportedRegressionPreference>>
+        supportedRegressionPreferences: Map<String, List<SupportedRegressionPreference>>,
+        schedulingPreferences: Set<String>
     ): Comparator<Exercise> =
         compareByDescending<Exercise> { split.trainsAsFocus(it) }
             .thenByDescending { it.programming?.mechanics == MechanicsType.ISOLATION }
@@ -368,8 +397,58 @@ class FakeWorkoutPlanner(
                     reviewedEligibilityEnabled = reviewedEligibilityEnabled
                 )
             }
+            .thenBy { if (it.id in schedulingPreferences) 0 else 1 }
             .thenByDescending { it.programming?.fatigueScore ?: 0 }
             .thenBy { it.id }
+
+    /**
+     * One deterministic inversion witness per preferred selected exercise (at most six).
+     * Compare the same full selection with only scheduling disabled, within the same pass.
+     * Tier equality and the lower-order comparison rule out incidental pattern/fill movement.
+     */
+    private fun appliedSchedulingReasons(
+        split: WorkoutSplit,
+        context: WorkoutGenerationContext,
+        selected: SelectionTrace,
+        baseline: SelectionTrace,
+        capabilityPenalties: Map<String, Int>,
+        regressions: Map<String, List<SupportedRegressionPreference>>,
+        preferred: Set<String>
+    ): List<WorkoutRankingReason> {
+        val evidence = context.schedulingEvidence ?: return emptyList()
+        return listOf(selected.compounds to baseline.compounds, selected.accessories to baseline.accessories)
+            .flatMap { (pass, baselinePass) ->
+                pass.mapIndexedNotNull { position, target ->
+                    if (target.id !in preferred) return@mapIndexedNotNull null
+                    val oldPosition = baselinePass.indexOfFirst { it.id == target.id }
+                        .takeIf { it >= 0 } ?: baselinePass.size
+                    if (position >= oldPosition) return@mapIndexedNotNull null
+                    val witness = baselinePass.take(oldPosition).firstOrNull { alternative ->
+                        val newPosition = pass.indexOfFirst { it.id == alternative.id }
+                            .takeIf { it >= 0 } ?: pass.size
+                        alternative.id !in preferred && position < newPosition &&
+                            // An accessory cannot claim a cross-pass compound displacement.
+                            (pass !== selected.accessories ||
+                                (alternative !in selected.compounds && target !in baseline.compounds)) &&
+                            target.sharesStrongerRankingTierWith(alternative, split, capabilityPenalties) &&
+                            (target.id in regressions) == (alternative.id in regressions) &&
+                            difficultyRankingPolicy.aboveExperiencePenalty(target, context.experienceLevel, true) ==
+                                difficultyRankingPolicy.aboveExperiencePenalty(alternative, context.experienceLevel, true) &&
+                            compareValuesBy(target, alternative,
+                                { -(it.programming?.fatigueScore ?: 0) }, { it.id }) > 0
+                    } ?: return@mapIndexedNotNull null
+                    val primary = requireNotNull(target.acceptedMetadata()).directPrimaryMuscle
+                    WorkoutRankingReason.TrainingFrequencyRecencyPreference(
+                        preferredExerciseId = target.id,
+                        alternativeExerciseId = witness.id,
+                        directPrimaryMuscle = primary,
+                        daysPerWeek = context.trainingFrequencyDaysPerWeek,
+                        daysSinceLastPractice = (evidence.todayEpochDay -
+                            evidence.practiceDates.getValue(primary).last()).toInt()
+                    )
+                }
+            }
+    }
 
     private fun appliedRankingReasons(
         split: WorkoutSplit,
@@ -455,16 +534,6 @@ class FakeWorkoutPlanner(
             (programming != null) == (other.programming != null)
     }
 
-    private fun createGeneratedExercise(
-        exercise: Exercise,
-        context: WorkoutGenerationContext
-    ): GeneratedExercise {
-        return GeneratedExercise(
-            exerciseId = exercise.id,
-            prescription = prescriptionFactory.create(exercise, context),
-            notes = exercise.programming?.coachingSummary.orEmpty()
-        )
-    }
 
     private fun emphasisFor(goals: Set<FitnessGoal>): WorkoutEmphasis = when {
         FitnessGoal.STRENGTH in goals && FitnessGoal.BUILD_MUSCLE in goals ->

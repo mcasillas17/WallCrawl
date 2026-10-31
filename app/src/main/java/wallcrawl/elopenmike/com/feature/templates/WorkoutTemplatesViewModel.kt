@@ -17,12 +17,19 @@ import kotlinx.coroutines.launch
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutTemplateRepository
+import wallcrawl.elopenmike.com.core.model.UnconfirmedTemplateUnitException
 import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
 
 data class WorkoutTemplatesUiState(
     val isLoading: Boolean = true,
     val templates: List<WorkoutTemplate> = emptyList(),
     val startingTemplateId: String? = null,
+    /**
+     * A session a start created, until the screen has navigated to it. State rather than a
+     * callback held by the start, so a start that finishes after the activity is recreated
+     * opens the workout through the current navigator, not the destroyed one.
+     */
+    val startedSessionId: String? = null,
     /**
      * How many exercises the bundled catalog holds, so the empty state can say so without
      * a number hard-coded into a translated sentence that would then need updating twice.
@@ -39,17 +46,20 @@ class WorkoutTemplatesViewModel(
 ) : ViewModel() {
     private val startingTemplateId = MutableStateFlow<String?>(null)
     private val errorMessage = MutableStateFlow<Int?>(null)
+    private val startedSessionId = MutableStateFlow<String?>(null)
 
     val uiState: StateFlow<WorkoutTemplatesUiState> = combine(
         templateRepository.observeTemplates(),
         startingTemplateId,
         errorMessage,
+        startedSessionId,
         exerciseCatalog.getAllExercises()
-    ) { templates, startingId, error, catalog ->
+    ) { templates, startingId, error, startedId, catalog ->
         WorkoutTemplatesUiState(
             isLoading = false,
             templates = templates,
             startingTemplateId = startingId,
+            startedSessionId = startedId,
             catalogSize = catalog.size,
             errorMessage = error
         )
@@ -69,10 +79,14 @@ class WorkoutTemplatesViewModel(
         initialValue = WorkoutTemplatesUiState()
     )
 
-    fun startTemplate(template: WorkoutTemplate, onStarted: (String) -> Unit) {
+    fun startTemplate(template: WorkoutTemplate) {
         if (startingTemplateId.value != null) return
+        // Locked before launching, so a second call cannot pass the check whatever the
+        // dispatcher, as the editor's save sets isSaving.
+        startingTemplateId.value = template.id
+        // A new attempt answers whatever the last one said, such as a unit to confirm.
+        errorMessage.value = null
         viewModelScope.launch {
-            startingTemplateId.value = template.id
             try {
                 val currentTemplate = templateRepository.getTemplate(template.id)
                 if (currentTemplate == null) {
@@ -80,16 +94,25 @@ class WorkoutTemplatesViewModel(
                     return@launch
                 }
                 val profile = userProfileRepository.getProfileOnce()
-                val session = workoutRepository.startWorkoutFromTemplate(currentTemplate, profile)
-                onStarted(session.id)
+                startedSessionId.value = workoutRepository.startWorkoutFromTemplate(currentTemplate, profile).id
             } catch (error: CancellationException) {
                 throw error
+            } catch (error: UnconfirmedTemplateUnitException) {
+                // Its loads were saved before templates recorded a unit, so it cannot start a
+                // new workout without guessing one. (A workout in progress is resumed by the
+                // repository instead, which copies nothing and needs no unit.)
+                errorMessage.value = R.string.template_error_unit_unconfirmed
             } catch (error: Exception) {
                 errorMessage.value = R.string.template_error_start_failed
             } finally {
                 startingTemplateId.value = null
             }
         }
+    }
+
+    /** The screen has navigated to [WorkoutTemplatesUiState.startedSessionId]. */
+    fun onStartHandled() {
+        startedSessionId.value = null
     }
 
     fun deleteTemplate(templateId: String) {

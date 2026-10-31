@@ -1,12 +1,31 @@
 package wallcrawl.elopenmike.com.core.ai
 
+import java.time.Instant
+import java.time.ZoneId
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.withIndex
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
+import wallcrawl.elopenmike.com.core.database.repository.DeloadRepository
+import wallcrawl.elopenmike.com.core.database.repository.ProgramRepository
+import wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent
+import wallcrawl.elopenmike.com.core.model.ProgramReadState
+import wallcrawl.elopenmike.com.core.model.ProgramHeader
+import wallcrawl.elopenmike.com.core.model.ProgramException
+import wallcrawl.elopenmike.com.core.model.ProgramFailure
+import wallcrawl.elopenmike.com.core.model.ProgramPlanningInput
 import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
 import wallcrawl.elopenmike.com.core.exercise.ExerciseFilter
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
 import wallcrawl.elopenmike.com.core.model.CapabilityEvidenceSet
+import wallcrawl.elopenmike.com.core.model.TrainingFrequencyRecencyEvidence
 import wallcrawl.elopenmike.com.core.model.UserRestPreference
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
@@ -34,11 +53,74 @@ class WorkoutGenerationContextBuilder(
      * identity. An unavailable snapshot records absence; it never blocks generation.
      */
     private val catalogVersion: () -> String? = { null },
-    private val nowTimestamp: () -> Long = System::currentTimeMillis
+    private val nowTimestamp: () -> Long = System::currentTimeMillis,
+    private val zoneId: () -> ZoneId = ZoneId::systemDefault,
+    private val deloadRepository: DeloadRepository? = null,
+    private val programRepository: ProgramRepository? = null
 ) {
+    /**
+     * Reuses Today’s clock and Room invalidation, not polling queries. A day/zone change
+     * switches the bounded range. Within a date, only changed rows or a future completion
+     * becoming nonfuture can alter evidence. Unchanged minute ticks do no reconstruction.
+     * Each Room read also remains a freshness signal when the practice dates are equal:
+     * other consumed history projections may have changed, even outside this date range.
+     */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun observeSchedulingEvidence(clock: Flow<Long>): Flow<TrainingFrequencyRecencyEvidence> {
+        if (!plannerFeatureFlags.reviewedCapabilityEligibility) return emptyFlow()
+        val policy = TrainingFrequencyRecencyPolicy()
+        return clock.map { timestamp ->
+            val zone = zoneId()
+            Instant.ofEpochMilli(timestamp).atZone(zone).toLocalDate() to zone
+        }.distinctUntilChanged().flatMapLatest { (date, zone) ->
+            combine(
+                workoutRepository.observeCompletedSessionProbeInRange(
+                    date.minusDays(TrainingFrequencyRecencyEvidence.LOOKBACK_DATES - 1)
+                        .atStartOfDay(zone).toInstant().toEpochMilli(),
+                    date.plusDays(1).atStartOfDay(zone).toInstant().toEpochMilli()
+                ).withIndex(),
+                exerciseCatalog.getAllExercises(),
+                clock
+            ) { read, exercises, timestamp ->
+                val completedByNow = read.value.filter { (it.completedAtTimestamp ?: Long.MAX_VALUE) <= timestamp }
+                require(completedByNow.size <= TrainingFrequencyRecencyPolicy.MAX_SESSIONS) {
+                    "Scheduling history exceeds its reconstruction bound."
+                }
+                Triple(
+                    read.index to completedByNow,
+                    exercises,
+                    Instant.ofEpochMilli(timestamp)
+                )
+            }.distinctUntilChanged { previous, next ->
+                previous.first == next.first && previous.second == next.second
+            }.map { (read, exercises, now) -> policy.derive(read.second, exercises, now, zone) }
+        }
+    }
 
-    suspend fun build(): WorkoutGenerationContext {
-        val profile = userProfileRepository.getProfileOnce()
+    suspend fun build(
+        intent: WorkoutPlanningIntent = WorkoutPlanningIntent.ORDINARY,
+        regenerationIndex: Int? = null
+    ): WorkoutGenerationContext {
+        val now = Instant.ofEpochMilli(nowTimestamp())
+        val zone = zoneId()
+        val initialProfile = userProfileRepository.getProfileOnce()
+        val projection = if (intent == WorkoutPlanningIntent.PROGRAM) {
+            when (val state = programRepository?.get(initialProfile.id)) {
+                is ProgramReadState.Supported -> state
+                is ProgramReadState.Unsupported -> throw ProgramException(ProgramFailure.UNSUPPORTED_POLICY)
+                is ProgramReadState.Empty, null -> throw ProgramException(ProgramFailure.MISSING_OR_NOT_ACTIVE)
+            }
+        } else null
+        // Program configuration and the live constraints must come from one coherent read.
+        val profile = if (projection != null) projection.profile
+            ?: throw ProgramException(ProgramFailure.PROFILE_UNAVAILABLE) else initialProfile
+        val programHeader = projection?.header ?: programRepository?.getHeader(profile.id) ?: ProgramHeader.absent(profile.id)
+        val programInput = projection?.let {
+            val progress = MultiWeekProgramPolicy.reconstruct(it.enrollment, it.sessions)
+            if (progress != it.progress) throw ProgramException(ProgramFailure.INVALID_PROGRESS)
+            val position = progress.nextPosition ?: throw ProgramException(ProgramFailure.MISSING_OR_NOT_ACTIVE)
+            ProgramPlanningInput(it.enrollment, it.sessions.toList(), position, MultiWeekProgramPolicy.objective(position))
+        }
         val recentCompletedSessions = workoutRepository.getRecentCompletedSessions(
             limit = MAX_RECENT_SESSIONS
         )
@@ -48,9 +130,24 @@ class WorkoutGenerationContextBuilder(
             sessions = recentCompletedSessions,
             targetWeightUnit = profile.preferredUnit
         )
+        val progressionHistory = if (plannerFeatureFlags.reviewedCapabilityEligibility) {
+            workoutRepository.getRecentSessions(ProgressionEngine.MAX_SESSIONS).also(ProgressionEngine::requireBounded)
+        } else emptyList()
+        val recentRecommendationRecords = if (progressionHistory.isNotEmpty()) {
+            val ids = progressionHistory.map { it.id }
+            val records = workoutRepository.getRecommendationRecords(ids)
+            require(records.size <= ids.size && records.map { it.sessionId }.distinct().size == records.size &&
+                records.all { it.sessionId in ids }
+            ) { "Historical recommendation records are duplicated or outside the requested batch." }
+            records.associateBy { it.sessionId }
+        } else emptyMap()
+        val deloadPreferences = if (plannerFeatureFlags.reviewedCapabilityEligibility) {
+            deloadRepository?.get()
+        } else null
+        val acceptedDeload = deloadPreferences?.let(DeloadOfferPolicy::accepted) != null
         // Composed only on the reviewed path, so the legacy path reads no extra history.
         val trainingProgramState = if (plannerFeatureFlags.reviewedCapabilityEligibility) {
-            trainingProgramStateProvider?.currentState(profile)
+            trainingProgramStateProvider?.stateAt(profile, now, zone, acceptedDeload)
         } else {
             null
         }
@@ -76,7 +173,7 @@ class WorkoutGenerationContextBuilder(
                 // Both branches use the same policy, so the value cannot diverge when no
                 // provider is supplied.
                 adaptationState = trainingProgramState?.adaptationState
-                    ?: adaptationStatePolicy.derive(profile),
+                    ?: adaptationStatePolicy.derive(profile, acceptedDeload),
                 demonstratedProgressionFamilies = exerciseHistory.keys.mapNotNullTo(linkedSetOf()) {
                     exerciseId ->
                     exercisesById[exerciseId]
@@ -95,32 +192,51 @@ class WorkoutGenerationContextBuilder(
                 profile = profile
             )
         }
+        val schedulingEvidence = if (plannerFeatureFlags.reviewedCapabilityEligibility) {
+            val policy = TrainingFrequencyRecencyPolicy()
+            policy.derive(
+                workoutRepository.getCompletedSessionsInRange(
+                    policy.windowStart(now, zone), Math.addExact(now.toEpochMilli(), 1)
+                ),
+                allExercises, now, zone
+            )
+        } else null
 
         return WorkoutGenerationContext(
             userProfile = profile,
-            fitnessGoal = profile.primaryGoal,
+            fitnessGoals = programInput?.enrollment?.configuration?.goals?.toSet() ?: profile.goals,
+            fitnessGoal = programInput?.enrollment?.configuration?.primaryGoal ?: profile.primaryGoal,
             experienceLevel = profile.experienceLevel,
             availableEquipment = profile.availableEquipment,
             preferredWorkoutDurationMinutes = profile.preferredDurationMinutes,
-            trainingFrequencyDaysPerWeek = profile.daysPerWeek,
+            trainingFrequencyDaysPerWeek = programInput?.enrollment?.configuration?.sessionsPerWeek ?: profile.daysPerWeek,
             musclePriorities = profile.musclePriorities,
             recentWorkoutHistory = recentCompletedSessions,
+            progressionHistory = progressionHistory,
+            recentRecommendationRecords = recentRecommendationRecords,
+            historyAsOfTimestamp = now.toEpochMilli(),
+            deloadPreferences = deloadPreferences,
             completedWorkoutCount = completedWorkoutCount,
             exerciseHistory = exerciseHistory,
             recentlyTrainedMuscles = historyAnalyzer.recentlyTrainedMuscles(
                 sessions = recentCompletedSessions,
-                nowTimestamp = nowTimestamp()
+                nowTimestamp = now.toEpochMilli()
             ),
             excludedExerciseIds = profile.excludedExerciseIds,
             allowedExercises = allowedExercises,
             automaticEligibilityResult = automaticEligibilityResult,
             capabilityEvidence = capabilityEvidence,
+            schedulingEvidence = schedulingEvidence,
             trainingProgramState = trainingProgramState,
             priorUserRestPreferences = priorUserRestPreferences,
             preferredUnits = profile.preferredUnit,
             catalogVersion = catalogVersion(),
-            reviewPolicyVersion = allExercises.acceptedReviewPolicyVersion()
-        )
+            reviewPolicyVersion = allExercises.acceptedReviewPolicyVersion(),
+            regenerationIndex = regenerationIndex,
+            planningIntent = intent,
+            programHeader = programHeader,
+            programInput = programInput
+        ).also { it.validatedProgramSession() }
     }
 
     private fun priorUserRestPreferences(

@@ -3,6 +3,7 @@ package wallcrawl.elopenmike.com.core.database.relation
 import wallcrawl.elopenmike.com.core.model.ExercisePrescription
 import wallcrawl.elopenmike.com.core.model.PlannedExercise
 import wallcrawl.elopenmike.com.core.model.RepRange
+import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
 
 /**
@@ -18,6 +19,8 @@ internal fun WorkoutTemplateWithExercises.toWorkoutTemplate(): WorkoutTemplate =
     notes = template.notes,
     createdAtTimestamp = template.createdAtTimestamp,
     updatedAtTimestamp = template.updatedAtTimestamp,
+    // Strict: an unrecognised name throws rather than becoming some default unit.
+    weightUnit = template.weightUnit?.let(WeightUnit::valueOf),
     exercises = exercises.sortedBy { it.orderIndex }.map { exercise ->
         val effortTarget = persistedEffortTarget(
             minRir = exercise.effortMinRir,

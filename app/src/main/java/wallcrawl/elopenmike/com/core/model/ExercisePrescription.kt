@@ -133,7 +133,11 @@ data class ExercisePrescription(
         }
     }
 
-    private companion object {
+    /**
+     * The bounds the constructor enforces, readable by the template editor draft so that
+     * an editable field validates against these numbers rather than a second copy of them.
+     */
+    companion object {
         const val MIN_TARGET_SETS = 1
         const val MAX_TARGET_SETS = 20
         const val MIN_REST_SECONDS = 0

@@ -161,8 +161,9 @@ class LocalDataArchiveCodecTest {
 
     @Test
     fun read_rejectsAFutureArchiveVersion() {
+        val currentVersion = LocalDataArchiveFormat.ARCHIVE_VERSION
         val document = LocalDataArchiveFixtures.archive().toText()
-            .replace("\"archiveVersion\":3", "\"archiveVersion\":4")
+            .replace("\"archiveVersion\":$currentVersion", "\"archiveVersion\":${currentVersion + 1}")
 
         val error = assertThrows(LocalDataArchiveException::class.java) {
             LocalDataArchiveCodec.read(document.byteInputStream())

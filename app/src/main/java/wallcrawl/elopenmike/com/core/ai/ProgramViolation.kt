@@ -14,6 +14,9 @@ package wallcrawl.elopenmike.com.core.ai
  * program-design ones and program-design ones before accounting.
  */
 enum class ProgramViolationCode {
+    /** Software invariant: explicit membership must name a supported, current next slot. */
+    MULTI_WEEK_PROGRAM_INVALID,
+
     /** Software invariant: a recommendation with no exercises is not a session. */
     EMPTY_RECOMMENDATION,
 
@@ -78,6 +81,8 @@ enum class ProgramViolationCode {
 
     /** Software invariant: a prescribed load must trace to a confirmed or recorded source. */
     UNTRACEABLE_LOAD,
+    /** Software invariant: progression provenance and targets must match the shared policy. */
+    PROGRESSION_POLICY_MISMATCH,
 
     /**
      * Software invariant for the arithmetic, product policy for the tolerance.

@@ -1,5 +1,11 @@
 # Roundtable Agent Findings Appendix
 
+> **Historical scope:** The optional-model architecture discussed in this record
+> was retired on 2026-10-25; see
+> [Roadmap Package 17](../../ROADMAP.md#17-optional-local-inference-retired).
+> Original agent findings, citations, and attribution are preserved below. They
+> neither authorize model integration nor constitute genuine human metadata approval.
+
 This appendix preserves the four-agent research roundtable that produced
 `docs/research/2026-08-29-training-science-evidence-review.md` and the two
 engine designs. It records each agent's distinct Round-1 findings, Round-2

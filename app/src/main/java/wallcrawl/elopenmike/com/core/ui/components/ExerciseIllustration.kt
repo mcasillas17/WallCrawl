@@ -148,8 +148,8 @@ private fun ExerciseIllustrationContent(
                 Text(
                     text = stringResource(
                         R.string.illustration_frame_counter,
-                        LocaleFormatting.formatEditableInt(frameIndex + 1, locale),
-                        LocaleFormatting.formatEditableInt(frames.size, locale)
+                        LocaleFormatting.formatCount(frameIndex + 1, locale),
+                        LocaleFormatting.formatCount(frames.size, locale)
                     ),
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold,

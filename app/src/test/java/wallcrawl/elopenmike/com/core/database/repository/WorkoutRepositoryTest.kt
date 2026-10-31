@@ -3,6 +3,7 @@ package wallcrawl.elopenmike.com.core.database.repository
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.fail
 import org.junit.Before
@@ -20,6 +21,48 @@ import wallcrawl.elopenmike.com.core.model.SetType
 import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
 
 class WorkoutRepositoryTest {
+    @Test
+    fun unreadableRecommendationHistoryIsAnErrorNotAnEmptySuccessfulBatch() = runTest {
+        val corrupt = WorkoutRecommendationRecordEntity(
+            sessionId = "session", validatorVersion = "WHOLE_PROGRAM_V2",
+            durationEstimatorVersion = "DURATION_ESTIMATOR_V1", outcome = "VALID",
+            reviewedPathEnabled = true, catalogVersion = null, reviewPolicyVersion = 2,
+            trainingPolicyVersion = null, ledgerPolicyVersion = null, programStatePolicyVersion = null,
+            adaptationState = null, weekStartEpochDay = null, timeZoneId = null,
+            profileRevision = 0, contextIdentity = "context", reasonCodes = "",
+            doseAccounting = "malformed", recordedAtTimestamp = 1
+        )
+        val repository = OfflineWorkoutRepository(
+            EmptyWorkoutSessionDao(records = listOf(corrupt)), RecordingWorkoutSetDao()
+        )
+        org.junit.Assert.assertThrows(IllegalArgumentException::class.java) {
+            kotlinx.coroutines.runBlocking { repository.getRecommendationRecords(listOf("session")) }
+        }
+    }
+
+    @Test
+    fun observedRangeRetainsTheAscendingSentinelForTheConsumersNowBound() = runTest {
+        val now = 10_000L
+        val limit = wallcrawl.elopenmike.com.core.ai.TrainingFrequencyRecencyPolicy.MAX_SESSIONS
+        val rows = (0 until limit + 10).map { index ->
+            WorkoutSessionWithExercisesAndSets(
+                WorkoutSessionEntity(
+                    id = "session-$index", name = "Test", startedAtTimestamp = 1,
+                    completedAtTimestamp = if (index < limit) now else now + index - limit + 1,
+                    targetDurationMinutes = 30, actualDurationMinutes = 1,
+                    status = SessionStatus.COMPLETED, focusMusclesJson = "", notes = ""
+                ), emptyList()
+            )
+        }
+        val repository = OfflineWorkoutRepository(EmptyWorkoutSessionDao(rows.reversed()), RecordingWorkoutSetDao())
+        val probe = repository.observeCompletedSessionProbeInRange(1, now + 100).first()
+        assertThat(probe).hasSize(limit + 1)
+        assertThat(probe.last().completedAtTimestamp).isEqualTo(now + 1)
+        assertThat(repository.getCompletedSessionsInRange(1, now + 1)).hasSize(limit)
+        org.junit.Assert.assertThrows(IllegalArgumentException::class.java) {
+            kotlinx.coroutines.runBlocking { repository.getCompletedSessionsInRange(1, now + 2) }
+        }
+    }
 
     private lateinit var setDao: RecordingWorkoutSetDao
     private lateinit var repository: OfflineWorkoutRepository
@@ -361,8 +404,8 @@ class WorkoutRepositoryTest {
         try {
             repository.completeWorkout(sessionId = "missing", actualDurationMinutes = 30)
             fail("Expected an unknown session to be rejected")
-        } catch (exception: IllegalStateException) {
-            assertThat(exception.message).contains("missing")
+        } catch (exception: wallcrawl.elopenmike.com.core.model.ProgramException) {
+            assertThat(exception.failure).isEqualTo(wallcrawl.elopenmike.com.core.model.ProgramFailure.MISSING_OR_NOT_ACTIVE)
         }
     }
 
@@ -476,7 +519,63 @@ private class RecordingWorkoutSetDao : WorkoutSetDao {
         emptyList()
 }
 
-private class EmptyWorkoutSessionDao : WorkoutSessionDao {
+private class EmptyWorkoutSessionDao(
+    private val rangeRows: List<WorkoutSessionWithExercisesAndSets> = emptyList(),
+    private val records: List<WorkoutRecommendationRecordEntity> = emptyList()
+) : WorkoutSessionDao {
+    override suspend fun selectCitedPerformanceIds(sessionId: String, sourceIds: List<String>, sourceExercisePairs: List<String>):
+        List<wallcrawl.elopenmike.com.core.database.dao.PreviousPerformanceIds> =
+        error("This fake does not model cited performance.")
+    override suspend fun selectHistoricalExercises(exerciseIds: List<String>):
+        List<wallcrawl.elopenmike.com.core.database.dao.HistoricalExerciseRow> =
+        error("This fake does not model exercise projections.")
+    override suspend fun selectHistoricalSetCounts(exerciseIds: List<String>):
+        List<wallcrawl.elopenmike.com.core.database.dao.HistoricalSetCount> =
+        error("This fake does not model eligible set counts.")
+    override suspend fun selectEligibleHistoricalSets(exerciseIds: List<String>): List<WorkoutSetEntity> =
+        error("This fake does not model previous performance sets.")
+    override suspend fun selectAnalyticsRangeSize(startEpochMillis: Long, endEpochMillisExclusive: Long):
+        wallcrawl.elopenmike.com.core.database.dao.AnalyticsRangeSize = error("This fake does not model analytics.")
+    override suspend fun selectAnalyticsComparableSetIds(
+        startEpochMillis: Long, endEpochMillisExclusive: Long, exerciseId: String
+    ): List<String> = error("This fake does not model analytics.")
+    override suspend fun selectAnalyticsRecommendationRecords(
+        startEpochMillis: Long, endEpochMillisExclusive: Long, exerciseId: String
+    ): List<WorkoutRecommendationRecordEntity> = error("This fake does not model analytics.")
+    override suspend fun selectAnalyticsExerciseIds(limit: Int): List<String> =
+        error("This fake does not model analytics.")
+    override suspend fun selectPreviousPerformanceIds(sessionId: String):
+        List<wallcrawl.elopenmike.com.core.database.dao.PreviousPerformanceIds> =
+        error("This fake does not model previous performance.")
+    override suspend fun selectHistoryPage(limit: Int, offset: Long): List<wallcrawl.elopenmike.com.core.model.WorkoutHistoryEntry> =
+        error("This fake does not model paged history.")
+    override suspend fun selectHistorySizes(sessionIds: List<String>):
+        List<wallcrawl.elopenmike.com.core.database.dao.HistorySessionSize> =
+        emptyList()
+    override suspend fun selectHistorySessions(sessionIds: List<String>): List<WorkoutSessionWithExercisesAndSets> =
+        emptyList()
+    override suspend fun selectPersonalRecordBaselines(sessionId: String):
+        List<wallcrawl.elopenmike.com.core.database.dao.PersonalRecordBaselineRow> =
+        error("This fake does not model record aggregation.")
+
+    override suspend fun getRecentSessions(limit: Int): List<WorkoutSessionWithExercisesAndSets> =
+        rangeRows.sortedWith(compareByDescending<WorkoutSessionWithExercisesAndSets> { it.session.startedAtTimestamp }
+            .thenBy { it.session.id }).take(limit)
+    override suspend fun getRecommendationRecords(sessionIds: List<String>): List<WorkoutRecommendationRecordEntity> =
+        records.filter { it.sessionId in sessionIds }
+    override suspend fun getDeloadPreferences(profileId: String): wallcrawl.elopenmike.com.core.database.entity.DeloadPreferencesEntity? = null
+    override suspend fun upsertDeloadPreferences(preferences: wallcrawl.elopenmike.com.core.database.entity.DeloadPreferencesEntity) = Unit
+    override suspend fun getCompletedTimestamps(status: SessionStatus): List<Long> = emptyList()
+    override suspend fun selectCompletedSessionsInRange(
+        startEpochMillis: Long, endEpochMillisExclusive: Long, status: SessionStatus, limit: Int
+    ): List<WorkoutSessionWithExercisesAndSets> = rangeRows.filter {
+        it.session.completedAtTimestamp?.let { time -> time >= startEpochMillis && time < endEpochMillisExclusive } == true
+    }.sortedWith(compareBy<WorkoutSessionWithExercisesAndSets> { it.session.completedAtTimestamp }
+        .thenBy { it.session.id }).take(limit)
+    override fun observeCompletedSessionsInRange(startEpochMillis: Long, endEpochMillisExclusive: Long, limit: Int):
+        Flow<List<WorkoutSessionWithExercisesAndSets>> = kotlinx.coroutines.flow.flow {
+            emit(selectCompletedSessionsInRange(startEpochMillis, endEpochMillisExclusive, SessionStatus.COMPLETED, limit))
+        }
     override fun observeSessionWithDetails(
         sessionId: String
     ): Flow<WorkoutSessionWithExercisesAndSets?> = flowOf(null)
@@ -515,6 +614,20 @@ private class EmptyWorkoutSessionDao : WorkoutSessionDao {
 
     override fun observeAllSessions(): Flow<List<WorkoutSessionWithExercisesAndSets>> =
         flowOf(emptyList())
+
+    override suspend fun getLifecycleSessionStatus(sessionId: String): String? = null
+    override suspend fun getProgramEnrollment(profileId: String): wallcrawl.elopenmike.com.core.database.entity.ProgramEnrollmentEntity? = null
+    override suspend fun getProgramAssociation(sessionId: String): wallcrawl.elopenmike.com.core.database.entity.ProgramSessionAssociationEntity? = null
+    override suspend fun hasUnboundProgramRecommendations(): Boolean = false
+    override suspend fun selectProgramSlots(programId: String): List<wallcrawl.elopenmike.com.core.database.dao.ProgramSlotRow> = emptyList()
+    override suspend fun programIdExists(programId: String): Boolean = false
+    override suspend fun getProgramProfile(profileId: String): wallcrawl.elopenmike.com.core.database.entity.UserProfileEntity? = null
+    override suspend fun hasProgramActiveWorkout(): Boolean = false
+    override suspend fun upsertProgramEnrollment(enrollment: wallcrawl.elopenmike.com.core.database.entity.ProgramEnrollmentEntity) = Unit
+    override suspend fun insertProgramAssociation(association: wallcrawl.elopenmike.com.core.database.entity.ProgramSessionAssociationEntity) = Unit
+    override suspend fun updateSessionRow(session: WorkoutSessionEntity) = Unit
+    override suspend fun completeSessionRow(sessionId: String, completedStatus: SessionStatus, requiredStatus: SessionStatus, completedAt: Long, actualDuration: Int): Int = 0
+    override suspend fun deleteActiveSessionRow(sessionId: String, requiredStatus: SessionStatus): Int = 0
 
     override suspend fun insertSession(session: WorkoutSessionEntity) = Unit
     override suspend fun insertWorkoutExercises(

@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,6 +23,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.ArrowDownward
@@ -36,6 +39,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -67,6 +71,7 @@ import java.text.DateFormat
 import java.util.Date
 import java.util.TimeZone
 import wallcrawl.elopenmike.com.R
+import wallcrawl.elopenmike.com.core.model.AnalyticsSelection
 import wallcrawl.elopenmike.com.core.model.LedgerOmissionReason
 import wallcrawl.elopenmike.com.core.model.MuscleProgressStat
 import wallcrawl.elopenmike.com.core.model.ProgressOverview
@@ -98,7 +103,10 @@ internal const val PROGRESS_REVIEWED_DOSE_TEST_TAG = "progress-reviewed-dose"
 @Composable
 fun ProgressScreen(
     viewModel: ProgressViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onOpenSession: (String) -> Unit = {},
+    onOpenHistory: () -> Unit = {},
+    programContent: @Composable () -> Unit = {}
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
@@ -115,6 +123,26 @@ fun ProgressScreen(
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
             viewModel.uiState.collect { value = it }
         }
+    }
+    // The "Over time" card has its own lifecycle-scoped read, so a filter change leaves the week alone.
+    val analyticsState by produceState<ProgressAnalyticsUiState>(
+        initialValue = ProgressAnalyticsUiState.Loading,
+        viewModel,
+        lifecycleOwner
+    ) {
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            viewModel.analyticsState.collect { value = it }
+        }
+    }
+    val analyticsSelection by viewModel.analyticsSelection.collectAsState()
+    val analyticsActions = remember(viewModel) {
+        ProgressAnalyticsActions(
+            onSelectRange = viewModel::selectAnalyticsRange,
+            onSelectScope = viewModel::selectAnalyticsScope,
+            onSelectMetric = viewModel::selectAnalyticsMetric,
+            onReset = viewModel::resetAnalytics,
+            onRetry = viewModel::retryAnalytics
+        )
     }
 
     DisposableEffect(viewModel, context) {
@@ -139,7 +167,11 @@ fun ProgressScreen(
         }
     }
 
-    ProgressScreen(uiState = uiState, onRetry = viewModel::refresh, modifier = modifier)
+    ProgressScreen(
+        uiState = uiState, onRetry = viewModel::refresh, modifier = modifier,
+        onOpenSession = onOpenSession, onOpenHistory = onOpenHistory, programContent = programContent,
+        analyticsState = analyticsState, analyticsSelection = analyticsSelection, analyticsActions = analyticsActions
+    )
 }
 
 /**
@@ -152,7 +184,13 @@ fun ProgressScreen(
 fun ProgressScreen(
     uiState: ProgressUiState,
     onRetry: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onOpenSession: (String) -> Unit = {},
+    onOpenHistory: () -> Unit = {},
+    programContent: @Composable () -> Unit = {},
+    analyticsState: ProgressAnalyticsUiState? = null,
+    analyticsSelection: AnalyticsSelection = AnalyticsSelection(),
+    analyticsActions: ProgressAnalyticsActions? = null
 ) {
     Box(
         modifier = modifier
@@ -183,10 +221,11 @@ fun ProgressScreen(
 
             is ProgressUiState.Error -> {
                 Column(
-                    modifier = Modifier.fillMaxSize().padding(24.dp),
+                    modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
+                    programContent()
                     Text(
                         text = stringResource(state.messageRes),
                         color = MaterialTheme.colorScheme.error,
@@ -199,19 +238,30 @@ fun ProgressScreen(
                 }
             }
 
-            is ProgressUiState.Success -> ProgressContent(state)
+            is ProgressUiState.Success -> ProgressContent(state, onOpenSession, onOpenHistory, programContent) {
+                if (analyticsState != null && analyticsActions != null) {
+                    ProgressAnalyticsCard(analyticsState, analyticsSelection, state.week.zoneId, analyticsActions, onOpenSession)
+                }
+            }
         }
     }
 }
 
 @Composable
-private fun ProgressContent(state: ProgressUiState.Success) {
+private fun ProgressContent(
+    state: ProgressUiState.Success,
+    onOpenSession: (String) -> Unit,
+    onOpenHistory: () -> Unit,
+    programContent: @Composable () -> Unit,
+    analyticsContent: @Composable () -> Unit
+) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        item { programContent() }
         item {
             Spacer(modifier = Modifier.height(16.dp))
             Text(
@@ -242,6 +292,8 @@ private fun ProgressContent(state: ProgressUiState.Success) {
             )
         }
 
+        item { analyticsContent() }
+
         item {
             Text(
                 text = stringResource(R.string.progress_history_heading),
@@ -264,10 +316,15 @@ private fun ProgressContent(state: ProgressUiState.Success) {
             }
         } else {
             items(state.overview.recentHistory) { session ->
-                WorkoutHistoryCard(session = session)
+                WorkoutHistoryCard(session = session, onClick = { onOpenSession(session.id) })
             }
         }
 
+        item {
+            TextButton(onClick = onOpenHistory) {
+                Text(stringResource(R.string.progress_all_workouts), color = MaterialTheme.colorScheme.onSurface)
+            }
+        }
         item { Spacer(modifier = Modifier.height(24.dp)) }
     }
 }
@@ -876,7 +933,7 @@ private fun StrengthTrendsSection(
 }
 
 @Composable
-private fun WorkoutHistoryCard(session: WorkoutSession) {
+private fun WorkoutHistoryCard(session: WorkoutSession, onClick: () -> Unit) {
     val locale = LocalConfiguration.current.locales[0]
     // Medium date plus short time, resolved by the platform for this locale rather than
     // pinned to an English "MMM d, yyyy" pattern.
@@ -885,7 +942,14 @@ private fun WorkoutHistoryCard(session: WorkoutSession) {
             .format(Date(session.startedAtTimestamp))
     }
 
-    WallCrawlCard(cornerRadius = 12.dp, contentPadding = 12.dp) {
+    WallCrawlCard(
+        cornerRadius = 12.dp, contentPadding = 12.dp,
+        modifier = Modifier.clickable(
+            role = Role.Button,
+            onClickLabel = stringResource(R.string.history_open_workout),
+            onClick = onClick
+        )
+    ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -984,7 +1048,7 @@ private fun rememberWeekLabels(week: TrainingWeek): WeekLabels {
     }
 }
 
-private fun LedgerOmissionReason.labelRes(): Int = when (this) {
+internal fun LedgerOmissionReason.labelRes(): Int = when (this) {
     LedgerOmissionReason.UNKNOWN_EXERCISE -> R.string.progress_omission_unknown_exercise
     LedgerOmissionReason.MISSING_REVIEWED_METADATA -> R.string.progress_omission_missing_metadata
     LedgerOmissionReason.METADATA_NOT_APPROVED -> R.string.progress_omission_not_approved

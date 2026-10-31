@@ -35,7 +35,19 @@ import wallcrawl.elopenmike.com.core.database.PERSISTED_LIST_SEPARATOR
 import wallcrawl.elopenmike.com.core.database.PERSISTED_PAIR_SEPARATOR
 import wallcrawl.elopenmike.com.core.database.repository.RecommendationDoseAccountingPayload
 import wallcrawl.elopenmike.com.core.io.BoundedCharacterReader
+import wallcrawl.elopenmike.com.core.model.ProgramAssociation
+import wallcrawl.elopenmike.com.core.model.ProgramConfiguration
+import wallcrawl.elopenmike.com.core.model.ProgramEnrollment
+import wallcrawl.elopenmike.com.core.model.ProgramObjective
+import wallcrawl.elopenmike.com.core.model.ProgramPosition
+import wallcrawl.elopenmike.com.core.model.ProgramSessionSnapshot
+import wallcrawl.elopenmike.com.core.model.ProgramStatus
 import wallcrawl.elopenmike.com.core.model.CapabilityLevel
+import wallcrawl.elopenmike.com.core.model.DeloadChoice
+import wallcrawl.elopenmike.com.core.model.DeloadChoiceStatus
+import wallcrawl.elopenmike.com.core.model.DeloadOffer
+import wallcrawl.elopenmike.com.core.model.DeloadPreferences
+import wallcrawl.elopenmike.com.core.model.DeloadSource
 import wallcrawl.elopenmike.com.core.model.EffortTarget
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.ExercisePrescription
@@ -47,6 +59,7 @@ import wallcrawl.elopenmike.com.core.model.MuscleDoseAccounting
 import wallcrawl.elopenmike.com.core.model.MuscleVocabulary
 import wallcrawl.elopenmike.com.core.model.PlannedExercise
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
+import wallcrawl.elopenmike.com.core.model.ProgressionReasonCode
 import wallcrawl.elopenmike.com.core.model.RecommendationRecord
 import wallcrawl.elopenmike.com.core.model.RepRange
 import wallcrawl.elopenmike.com.core.model.RestClass
@@ -131,6 +144,18 @@ object LocalDataArchiveCodec {
             it == null || (it.gender == ProfileGender.UNSPECIFIED &&
                 it.illustrationPreference == IllustrationPreference.AUTOMATIC)
         }) { "Gender and illustration preferences require archive version 3." }
+        require(archive.metadata.archiveVersion >= 5 ||
+            (archive.snapshot.programEnrollment == null && archive.snapshot.programAssociations.isEmpty() &&
+                archive.snapshot.recommendationRecords.all { it.programAssociationDigest == null })) {
+            "Program membership requires archive version 5."
+        }
+        require(archive.metadata.archiveVersion >= 4 || archive.snapshot.deloadPreferences == null) {
+            "Deload preferences require archive version 4."
+        }
+        require(
+            archive.metadata.archiveVersion >= TEMPLATE_UNIT_ARCHIVE_VERSION ||
+                archive.snapshot.templates.all { it.weightUnit == null }
+        ) { "Template weight units require archive version $TEMPLATE_UNIT_ARCHIVE_VERSION." }
         require(
             archive.metadata.archiveVersion >= RECOMMENDATION_RECORDS_ARCHIVE_VERSION ||
                 archive.snapshot.recommendationRecords.isEmpty()
@@ -330,13 +355,205 @@ object LocalDataArchiveCodec {
         if (snapshot.recommendationRecords.isNotEmpty()) {
             name("recommendations")
             beginArray()
-            snapshot.recommendationRecords.forEach { record -> writeRecommendation(record) }
+            snapshot.recommendationRecords.forEach { record -> writeRecommendation(record, archiveVersion) }
+            endArray()
+        }
+        snapshot.deloadPreferences?.let {
+            name("deloadPreferences")
+            writeDeloadPreferences(it)
+        }
+        snapshot.programEnrollment?.let {
+            name("programEnrollment")
+            writeProgramEnrollment(it)
+        }
+        if (snapshot.programAssociations.isNotEmpty()) {
+            name("programAssociations").beginArray()
+            snapshot.programAssociations.forEach { writeProgramAssociation(it) }
             endArray()
         }
         endObject()
     }
 
-    private fun JsonWriter.writeRecommendation(record: RecommendationRecord) {
+    private fun JsonWriter.writeProgramConfiguration(configuration: ProgramConfiguration) {
+        beginObject()
+        name("policyVersion").value(configuration.policyVersion)
+        name("primaryGoal").value(configuration.primaryGoal.name)
+        name("goals").writeStringArray(configuration.goals.map { it.name })
+        name("sessionsPerWeek").value(configuration.sessionsPerWeek.toLong())
+        endObject()
+    }
+
+    private fun JsonWriter.writeProgramEnrollment(enrollment: ProgramEnrollment) {
+        beginObject()
+        name("profileId").value(enrollment.profileId)
+        name("programId").value(enrollment.programId)
+        name("revision").value(enrollment.revision)
+        name("lifecyclePolicyVersion").value(enrollment.lifecyclePolicyVersion)
+        name("configuration")
+        writeProgramConfiguration(enrollment.configuration)
+        name("status").value(enrollment.status.name)
+        name("createdAtEpochMillis").value(enrollment.createdAtEpochMillis)
+        name("updatedAtEpochMillis").value(enrollment.updatedAtEpochMillis)
+        endObject()
+    }
+
+    private fun JsonWriter.writeProgramAssociation(association: ProgramAssociation) {
+        val snapshot = association.snapshot
+        beginObject()
+        name("sessionId").value(association.sessionId)
+        name("profileId").value(association.profileId)
+        name("programId").value(snapshot.programId)
+        name("enrollmentRevision").value(snapshot.enrollmentRevision)
+        name("lifecyclePolicyVersion").value(snapshot.lifecyclePolicyVersion)
+        name("configuration")
+        writeProgramConfiguration(snapshot.configuration)
+        name("slotOrdinal").value(snapshot.position.slotOrdinal.toLong())
+        name("blockNumber").value(snapshot.position.blockNumber.toLong())
+        name("weekNumber").value(snapshot.position.weekNumber.toLong())
+        name("sessionInWeek").value(snapshot.position.sessionInWeek.toLong())
+        name("objective").value(snapshot.objective.name)
+        endObject()
+    }
+
+    private fun JsonReader.readProgramConfiguration(): ProgramConfiguration {
+        var policy: String? = null
+        var primary: FitnessGoal? = null
+        var goals: List<FitnessGoal>? = null
+        var frequency: Int? = null
+        readObject("program configuration") { field ->
+            when (field) {
+                "policyVersion" -> policy = nextProgramString("program.configuration.policyVersion", MAX_SHORT_TEXT_LENGTH)
+                "primaryGoal" -> primary = nextProgramEnum<FitnessGoal>("program.primaryGoal")
+                "goals" -> goals = readArray("program.goals", FitnessGoal.entries.size) { nextProgramEnum<FitnessGoal>("program.goal") }
+                "sessionsPerWeek" -> frequency = nextProgramInt("program.sessionsPerWeek", 2, 6)
+                else -> malformed("The program configuration has an unsupported field.")
+            }
+        }
+        return ProgramConfiguration(primary ?: malformed("Program configuration is missing primaryGoal."),
+            goals ?: malformed("Program configuration is missing goals."),
+            frequency ?: malformed("Program configuration is missing sessionsPerWeek."),
+            policy ?: malformed("Program configuration is missing policyVersion."))
+    }
+
+    private fun JsonReader.readProgramEnrollment(): ProgramEnrollment {
+        var profileId: String? = null
+        var programId: String? = null
+        var revision: Long? = null
+        var policy: String? = null
+        var configuration: ProgramConfiguration? = null
+        var status: ProgramStatus? = null
+        var created: Long? = null
+        var updated: Long? = null
+        readObject("program enrollment") { field ->
+            when (field) {
+                "profileId" -> profileId = nextProgramString("program.profileId", MAX_ID_LENGTH)
+                "programId" -> programId = nextProgramString("program.programId", MAX_ID_LENGTH)
+                "revision" -> revision = nextProgramLong("program.revision", 1, Long.MAX_VALUE)
+                "lifecyclePolicyVersion" -> policy = nextProgramString("program.lifecyclePolicyVersion", MAX_SHORT_TEXT_LENGTH)
+                "configuration" -> configuration = readProgramConfiguration()
+                "status" -> status = nextProgramEnum<ProgramStatus>("program.status")
+                "createdAtEpochMillis" -> created = nextProgramLong("program.createdAtEpochMillis", 0, MAX_TIMESTAMP_MILLIS)
+                "updatedAtEpochMillis" -> updated = nextProgramLong("program.updatedAtEpochMillis", 0, MAX_TIMESTAMP_MILLIS)
+                else -> malformed("The program enrollment has an unsupported field.")
+            }
+        }
+        return ProgramEnrollment(profileId ?: malformed("Program enrollment is missing profileId."),
+            programId ?: malformed("Program enrollment is missing programId."),
+            revision ?: malformed("Program enrollment is missing revision."),
+            configuration ?: malformed("Program enrollment is missing configuration."),
+            status ?: malformed("Program enrollment is missing status."),
+            created ?: malformed("Program enrollment is missing createdAtEpochMillis."),
+            updated ?: malformed("Program enrollment is missing updatedAtEpochMillis."),
+            policy ?: malformed("Program enrollment is missing lifecyclePolicyVersion."))
+    }
+
+    private fun JsonReader.readProgramAssociation(): ProgramAssociation {
+        var sessionId: String? = null
+        var profileId: String? = null
+        var programId: String? = null
+        var revision: Long? = null
+        var policy: String? = null
+        var configuration: ProgramConfiguration? = null
+        var ordinal: Int? = null
+        var block: Int? = null
+        var week: Int? = null
+        var session: Int? = null
+        var objective: ProgramObjective? = null
+        readObject("program association") { field ->
+            when (field) {
+                "sessionId" -> sessionId = nextProgramString("program.sessionId", MAX_ID_LENGTH)
+                "profileId" -> profileId = nextProgramString("program.profileId", MAX_ID_LENGTH)
+                "programId" -> programId = nextProgramString("program.programId", MAX_ID_LENGTH)
+                "enrollmentRevision" -> revision = nextProgramLong("program.enrollmentRevision", 1, Long.MAX_VALUE)
+                "lifecyclePolicyVersion" -> policy = nextProgramString("program.lifecyclePolicyVersion", MAX_SHORT_TEXT_LENGTH)
+                "configuration" -> configuration = readProgramConfiguration()
+                "slotOrdinal" -> ordinal = nextProgramInt("program.slotOrdinal", 0, 23)
+                "blockNumber" -> block = nextProgramInt("program.blockNumber", 1, 2)
+                "weekNumber" -> week = nextProgramInt("program.weekNumber", 1, 4)
+                "sessionInWeek" -> session = nextProgramInt("program.sessionInWeek", 1, 6)
+                "objective" -> objective = nextProgramEnum<ProgramObjective>("program.objective")
+                else -> malformed("The program association has an unsupported field.")
+            }
+        }
+        return ProgramAssociation(sessionId ?: malformed("Program association is missing sessionId."),
+            profileId ?: malformed("Program association is missing profileId."),
+            ProgramSessionSnapshot(programId ?: malformed("Program association is missing programId."),
+                revision ?: malformed("Program association is missing enrollmentRevision."),
+                configuration ?: malformed("Program association is missing configuration."),
+                ProgramPosition(ordinal ?: malformed("Program association is missing slotOrdinal."),
+                    block ?: malformed("Program association is missing blockNumber."),
+                    week ?: malformed("Program association is missing weekNumber."),
+                    session ?: malformed("Program association is missing sessionInWeek.")),
+                objective ?: malformed("Program association is missing objective."),
+                policy ?: malformed("Program association is missing lifecyclePolicyVersion.")))
+    }
+
+    private fun JsonReader.nextProgramString(label: String, maximumLength: Int): String {
+        if (peek() != JsonToken.STRING) invalidValue("The archived $label must be text.")
+        return nextBoundedString(label, maximumLength)
+    }
+
+    private inline fun <reified T : Enum<T>> JsonReader.nextProgramEnum(label: String): T {
+        val raw = nextProgramString(label, MAX_SHORT_TEXT_LENGTH)
+        return enumValues<T>().firstOrNull { it.name == raw }
+            ?: invalidValue("The archived $label is not a value this build supports.")
+    }
+
+    private fun JsonReader.nextProgramLong(label: String, minimum: Long, maximum: Long): Long {
+        if (peek() != JsonToken.NUMBER) invalidValue("The archived $label must be a number.")
+        // nextLong falls back to Double and can round overflow; parse the original token exactly.
+        val value = nextString().toLongOrNull()
+            ?: invalidValue("The archived $label is not a representable whole number.")
+        if (value < minimum || value > maximum) outOfRange(label)
+        return value
+    }
+
+    private fun JsonReader.nextProgramInt(label: String, minimum: Int, maximum: Int): Int =
+        nextProgramLong(label, minimum.toLong(), maximum.toLong()).toInt()
+
+    private fun JsonWriter.writeDeloadPreferences(preferences: DeloadPreferences) {
+        beginObject()
+        name("profileId").value(preferences.profileId)
+        name("revision").value(preferences.revision)
+        preferences.choice?.let { choice ->
+            name("choice")
+            beginObject()
+            name("offer")
+            beginObject()
+            name("id").value(choice.offer.id)
+            name("source").value(choice.offer.source.name)
+            name("policyVersion").value(choice.offer.policyVersion)
+            endObject()
+            name("status").value(choice.status.name)
+            name("decidedAtEpochMillis").value(choice.decidedAtEpochMillis)
+            choice.sessionId?.let { name("sessionId").value(it) }
+            endObject()
+        }
+        preferences.lastHandledReturnKey?.let { name("lastHandledReturnKey").value(it) }
+        endObject()
+    }
+
+    private fun JsonWriter.writeRecommendation(record: RecommendationRecord, archiveVersion: Int) {
         beginObject()
         name("sessionId").value(record.sessionId)
         name("validatorVersion").value(record.validatorVersion)
@@ -359,6 +576,7 @@ object LocalDataArchiveCodec {
         name("doseAccounting")
             .value(RecommendationDoseAccountingPayload.encode(record.doseAccounting))
         name("recordedAtEpochMillis").value(record.recordedAtEpochMillis)
+        if (archiveVersion >= 5) record.programAssociationDigest?.let { name("programAssociationDigest").value(it) }
         endObject()
     }
 
@@ -421,6 +639,10 @@ object LocalDataArchiveCodec {
         name("notes").value(template.notes)
         name("createdAtTimestamp").value(template.createdAtTimestamp)
         name("updatedAtTimestamp").value(template.updatedAtTimestamp)
+        // Absent rather than null for a legacy template. Below version 6 no template has a
+        // unit: write() refuses one and read() rejects one, so earlier formats keep their
+        // canonical bytes and checksums.
+        template.weightUnit?.let { name("weightUnit").value(it.name) }
         name("exercises")
         beginArray()
         template.exercises.forEach { exercise ->
@@ -617,11 +839,15 @@ object LocalDataArchiveCodec {
         var templates: List<WorkoutTemplate>? = null
         var sessions: List<WorkoutSession>? = null
         var recommendations: List<RecommendationRecord>? = null
+        var deloadPreferences: DeloadPreferences? = null
+        var programEnrollment: ProgramEnrollment? = null
+        var programAssociations: List<ProgramAssociation> = emptyList()
 
         readObject("archive data") { field ->
             when (field) {
                 "profile" -> profile = readProfile(archiveVersion)
-                "templates" -> templates = readArray("templates", MAX_TEMPLATES) { readTemplate() }
+                "templates" -> templates =
+                    readArray("templates", MAX_TEMPLATES) { readTemplate(archiveVersion) }
                 "sessions" -> sessions = readArray("sessions", MAX_SESSIONS) { readSession() }
                 "recommendations" -> {
                     if (archiveVersion < RECOMMENDATION_RECORDS_ARCHIVE_VERSION) {
@@ -632,7 +858,19 @@ object LocalDataArchiveCodec {
                     recommendations = readArray(
                         "recommendations",
                         MAX_RECOMMENDATION_RECORDS
-                    ) { readRecommendation() }
+                    ) { readRecommendation(archiveVersion) }
+                }
+                "programEnrollment" -> {
+                    if (archiveVersion < 5) malformed("Program enrollment requires archive version 5.")
+                    programEnrollment = readProgramEnrollment()
+                }
+                "programAssociations" -> {
+                    if (archiveVersion < 5) malformed("Program associations require archive version 5.")
+                    programAssociations = readArray("programAssociations", MAX_SESSIONS) { readProgramAssociation() }
+                }
+                "deloadPreferences" -> {
+                    if (archiveVersion < 4) malformed("Deload preferences require archive version 4.")
+                    deloadPreferences = readDeloadPreferences()
                 }
 
                 else -> malformed("The archive data has an unsupported field.")
@@ -643,11 +881,92 @@ object LocalDataArchiveCodec {
             profile = profile,
             templates = templates ?: malformed("The archive data is missing 'templates'."),
             sessions = sessions ?: malformed("The archive data is missing 'sessions'."),
-            recommendationRecords = recommendations.orEmpty()
+            recommendationRecords = recommendations.orEmpty(),
+            deloadPreferences = deloadPreferences,
+            programEnrollment = programEnrollment,
+            programAssociations = programAssociations
         )
     }
 
-    private fun JsonReader.readRecommendation(): RecommendationRecord {
+    private fun JsonReader.readDeloadPreferences(): DeloadPreferences {
+        var profileId: String? = null
+        var revision: Long? = null
+        var choice: DeloadChoice? = null
+        var handledKey: String? = null
+        readObject("deload preferences") { field ->
+            when (field) {
+                "profileId" -> profileId = nextDeloadString("deload.profileId", MAX_ID_LENGTH)
+                "revision" -> revision = nextDeloadLong("deload.revision", Long.MAX_VALUE)
+                "choice" -> choice = readDeloadChoice()
+                "lastHandledReturnKey" -> handledKey = nextDeloadString("deload.lastHandledReturnKey", 256)
+                else -> malformed("Archived deload preferences have an unsupported field.")
+            }
+        }
+        return DeloadPreferences(
+            profileId ?: malformed("Archived deload preferences are missing 'profileId'."),
+            revision ?: malformed("Archived deload preferences are missing 'revision'."),
+            choice, handledKey
+        )
+    }
+
+    private fun JsonReader.readDeloadChoice(): DeloadChoice {
+        var offer: DeloadOffer? = null
+        var status: DeloadChoiceStatus? = null
+        var time: Long? = null
+        var sessionId: String? = null
+        readObject("deload choice") { field ->
+            when (field) {
+                "offer" -> offer = readDeloadOffer()
+                "status" -> {
+                    if (peek() != JsonToken.STRING) invalidValue("Deload status must be text.")
+                    status = nextEnum<DeloadChoiceStatus>("deload.status")
+                }
+                "decidedAtEpochMillis" -> time = nextDeloadLong("deload.decidedAtEpochMillis", MAX_TIMESTAMP_MILLIS)
+                "sessionId" -> sessionId = nextDeloadString("deload.sessionId", MAX_ID_LENGTH)
+                else -> malformed("An archived deload choice has an unsupported field.")
+            }
+        }
+        return DeloadChoice(
+            offer ?: malformed("An archived deload choice is missing 'offer'."),
+            status ?: malformed("An archived deload choice is missing 'status'."),
+            time ?: malformed("An archived deload choice is missing 'decidedAtEpochMillis'."),
+            sessionId
+        )
+    }
+
+    private fun JsonReader.readDeloadOffer(): DeloadOffer {
+        var id: String? = null
+        var source: DeloadSource? = null
+        var version: String? = null
+        readObject("deload offer") { field ->
+            when (field) {
+                "id" -> id = nextDeloadString("deload.offer.id", 256)
+                "source" -> {
+                    if (peek() != JsonToken.STRING) invalidValue("Deload source must be text.")
+                    source = nextEnum<DeloadSource>("deload.offer.source")
+                }
+                "policyVersion" -> version = nextDeloadString("deload.offer.policyVersion", MAX_SHORT_TEXT_LENGTH)
+                else -> malformed("An archived deload offer has an unsupported field.")
+            }
+        }
+        return DeloadOffer(
+            id ?: malformed("An archived deload offer is missing 'id'."),
+            source ?: malformed("An archived deload offer is missing 'source'."),
+            version ?: malformed("An archived deload offer is missing 'policyVersion'.")
+        )
+    }
+
+    private fun JsonReader.nextDeloadString(label: String, maximumLength: Int): String {
+        if (peek() != JsonToken.STRING) invalidValue("The archived $label must be text.")
+        return nextBoundedString(label, maximumLength)
+    }
+
+    private fun JsonReader.nextDeloadLong(label: String, maximum: Long): Long {
+        if (peek() != JsonToken.NUMBER) invalidValue("The archived $label must be a number.")
+        return nextBoundedLong(label, 0, maximum)
+    }
+
+    private fun JsonReader.readRecommendation(archiveVersion: Int): RecommendationRecord {
         var sessionId: String? = null
         var validatorVersion: String? = null
         var durationEstimatorVersion: String? = null
@@ -666,6 +985,7 @@ object LocalDataArchiveCodec {
         var reasonCodes: List<String>? = null
         var doseAccounting: List<MuscleDoseAccounting>? = null
         var recordedAtEpochMillis: Long? = null
+        var programAssociationDigest: String? = null
 
         readObject("recommendation") { field ->
             when (field) {
@@ -726,7 +1046,7 @@ object LocalDataArchiveCodec {
                 "reasonCodes" -> reasonCodes = readArray(
                     "recommendation.reasonCodes",
                     RecommendationRecord.MAX_REASON_CODES
-                ) { nextBoundedString("recommendation.reasonCode", MAX_SHORT_TEXT_LENGTH) }
+                ) { nextBoundedString("recommendation.reasonCode", RecommendationRecord.MAX_REASON_TOKEN_LENGTH) }
 
                 "doseAccounting" -> doseAccounting = RecommendationDoseAccountingPayload
                     .decode(nextBoundedString("recommendation.doseAccounting", MAX_NOTES_LENGTH))
@@ -736,6 +1056,10 @@ object LocalDataArchiveCodec {
                         ArchiveRejection.INVALID_VALUE
                     )
 
+                "programAssociationDigest" -> {
+                    if (archiveVersion < 5) malformed("Program membership requires archive version 5.")
+                    programAssociationDigest = nextProgramString("programAssociationDigest", 64)
+                }
                 "recordedAtEpochMillis" ->
                     recordedAtEpochMillis = nextTimestamp("recommendation.recordedAtEpochMillis")
 
@@ -746,37 +1070,46 @@ object LocalDataArchiveCodec {
         // The domain type owns the remaining rules — bounds, blank and control-character
         // tokens, duplicate reason codes, duplicate muscles — so the archive and the
         // database cannot disagree about what a well-formed record is.
-        return RecommendationRecord(
-            sessionId = sessionId
-                ?: malformed("The archived recommendation is missing 'sessionId'."),
-            validatorVersion = validatorVersion
-                ?: malformed("The archived recommendation is missing 'validatorVersion'."),
-            durationEstimatorVersion = durationEstimatorVersion
-                ?: malformed("The archived recommendation is missing 'durationEstimatorVersion'."),
-            outcome = outcome
-                ?: malformed("The archived recommendation is missing 'outcome'."),
-            reviewedPathEnabled = reviewedPathEnabled
-                ?: malformed("The archived recommendation is missing 'reviewedPathEnabled'."),
-            catalogVersion = catalogVersion,
-            reviewPolicyVersion = reviewPolicyVersion
-                ?: malformed("The archived recommendation is missing 'reviewPolicyVersion'."),
-            trainingPolicyVersion = trainingPolicyVersion,
-            ledgerPolicyVersion = ledgerPolicyVersion,
-            programStatePolicyVersion = programStatePolicyVersion,
-            adaptationState = adaptationState,
-            weekStartEpochDay = weekStartEpochDay,
-            timeZoneId = timeZoneId,
-            profileRevision = profileRevision
-                ?: malformed("The archived recommendation is missing 'profileRevision'."),
-            contextIdentity = contextIdentity
-                ?: malformed("The archived recommendation is missing 'contextIdentity'."),
-            reasonCodes = reasonCodes
-                ?: malformed("The archived recommendation is missing 'reasonCodes'."),
-            doseAccounting = doseAccounting
-                ?: malformed("The archived recommendation is missing 'doseAccounting'."),
-            recordedAtEpochMillis = recordedAtEpochMillis
-                ?: malformed("The archived recommendation is missing 'recordedAtEpochMillis'.")
-        )
+        return try {
+            RecommendationRecord(
+                sessionId = sessionId
+                    ?: malformed("The archived recommendation is missing 'sessionId'."),
+                validatorVersion = validatorVersion
+                    ?: malformed("The archived recommendation is missing 'validatorVersion'."),
+                durationEstimatorVersion = durationEstimatorVersion
+                    ?: malformed("The archived recommendation is missing 'durationEstimatorVersion'."),
+                outcome = outcome
+                    ?: malformed("The archived recommendation is missing 'outcome'."),
+                reviewedPathEnabled = reviewedPathEnabled
+                    ?: malformed("The archived recommendation is missing 'reviewedPathEnabled'."),
+                catalogVersion = catalogVersion,
+                reviewPolicyVersion = reviewPolicyVersion
+                    ?: malformed("The archived recommendation is missing 'reviewPolicyVersion'."),
+                trainingPolicyVersion = trainingPolicyVersion,
+                ledgerPolicyVersion = ledgerPolicyVersion,
+                programStatePolicyVersion = programStatePolicyVersion,
+                adaptationState = adaptationState,
+                weekStartEpochDay = weekStartEpochDay,
+                timeZoneId = timeZoneId,
+                profileRevision = profileRevision
+                    ?: malformed("The archived recommendation is missing 'profileRevision'."),
+                contextIdentity = contextIdentity
+                    ?: malformed("The archived recommendation is missing 'contextIdentity'."),
+                reasonCodes = reasonCodes
+                    ?: malformed("The archived recommendation is missing 'reasonCodes'."),
+                doseAccounting = doseAccounting
+                    ?: malformed("The archived recommendation is missing 'doseAccounting'."),
+                recordedAtEpochMillis = recordedAtEpochMillis
+                    ?: malformed("The archived recommendation is missing 'recordedAtEpochMillis'."),
+                programAssociationDigest = programAssociationDigest
+            )
+        } catch (error: LocalDataArchiveException) {
+            throw error
+        } catch (error: IllegalArgumentException) {
+            // Structured domain decoders may include rejected enum literals in their
+            // exception messages. Never copy those archived values into diagnostics.
+            invalidValue("The archived recommendation violates its supported contract.")
+        }
     }
 
     private fun JsonReader.readProfile(archiveVersion: Int): UserProfile {
@@ -848,7 +1181,7 @@ object LocalDataArchiveCodec {
 
                 "returningAfterBreakWeeks" ->
                     returningAfterBreakWeeks =
-                        nextBoundedInt("profile.returningAfterBreakWeeks", 0, MAX_BREAK_WEEKS)
+                        nextBoundedInt("profile.returningAfterBreakWeeks", 0, UserProfile.MAX_PERSISTED_BREAK_WEEKS)
 
                 "confirmedStartingLoads" -> confirmedStartingLoads =
                     readMap("profile.confirmedStartingLoads") {
@@ -949,7 +1282,8 @@ object LocalDataArchiveCodec {
         )
     }
 
-    private fun JsonReader.readTemplate(): WorkoutTemplate {
+    private fun JsonReader.readTemplate(archiveVersion: Int): WorkoutTemplate {
+        var weightUnit: WeightUnit? = null
         var id: String? = null
         var name: String? = null
         var notes: String? = null
@@ -964,6 +1298,15 @@ object LocalDataArchiveCodec {
                 "notes" -> notes = nextBoundedString("template.notes", MAX_NOTES_LENGTH)
                 "createdAtTimestamp" -> createdAt = nextTimestamp("template.createdAtTimestamp")
                 "updatedAtTimestamp" -> updatedAt = nextTimestamp("template.updatedAtTimestamp")
+                "weightUnit" -> {
+                    if (archiveVersion < TEMPLATE_UNIT_ARCHIVE_VERSION) {
+                        malformed(
+                            "Template weight units require archive version " +
+                                "$TEMPLATE_UNIT_ARCHIVE_VERSION."
+                        )
+                    }
+                    weightUnit = nextEnum<WeightUnit>("template.weightUnit")
+                }
                 "exercises" -> exercises =
                     readArray("template.exercises", MAX_EXERCISES_PER_SESSION) {
                         readPlannedExercise("template.exercises")
@@ -983,7 +1326,8 @@ object LocalDataArchiveCodec {
                 ?: malformed("An archived template is missing 'createdAtTimestamp'."),
             updatedAtTimestamp = updatedAt
                 ?: malformed("An archived template is missing 'updatedAtTimestamp'."),
-            exercises = exercises ?: malformed("An archived template is missing 'exercises'.")
+            exercises = exercises ?: malformed("An archived template is missing 'exercises'."),
+            weightUnit = weightUnit
         )
     }
 
@@ -1402,6 +1746,25 @@ object LocalDataArchiveCodec {
         }
 
         validateRecommendations(snapshot)
+        validateDeloadPreferences(snapshot)
+        validateArchivedPrograms(snapshot)
+    }
+
+    private fun validateDeloadPreferences(snapshot: LocalDataSnapshot) {
+        val preferences = snapshot.deloadPreferences ?: return
+        if (snapshot.profile?.id != preferences.profileId || snapshot.profile.onboardingCompleted != true) {
+            inconsistent("Archived deload preferences require their owning onboarded profile.")
+        }
+        val choice = preferences.choice ?: return
+        if (choice.status == DeloadChoiceStatus.CONSUMED) {
+            // An absent session can be a cancelled workout, which is deleted. Never rearm it.
+            val session = snapshot.sessions.firstOrNull { it.id == choice.sessionId } ?: return
+            if (session.origin != WorkoutOrigin.PLANNER ||
+                session.startedAtTimestamp != choice.decidedAtEpochMillis ||
+                snapshot.recommendationRecords.none { it.sessionId == session.id }) {
+                inconsistent("The consumed deload choice does not match an automatic workout start.")
+            }
+        }
     }
 
     /**
@@ -1419,13 +1782,12 @@ object LocalDataArchiveCodec {
         }
         if (snapshot.recommendationRecords.isEmpty()) return
 
-        val sessionIds = snapshot.sessions.mapTo(mutableSetOf(), WorkoutSession::id)
+        val sessionsById = snapshot.sessions.associateBy(WorkoutSession::id)
         val seen = mutableSetOf<String>()
         snapshot.recommendationRecords.forEach { record ->
             requireIdentifier(record.sessionId, "recommendation.sessionId")
-            if (record.sessionId !in sessionIds) {
-                inconsistent("An archived recommendation references an unknown session.")
-            }
+            val session = sessionsById[record.sessionId]
+                ?: inconsistent("An archived recommendation references an unknown session.")
             if (!seen.add(record.sessionId)) {
                 inconsistent("The archive holds more than one recommendation for a session.")
             }
@@ -1433,7 +1795,23 @@ object LocalDataArchiveCodec {
             // reserved-separator guard as every other joined value. Without it a restored
             // code of "A|||B" would read back as two codes the document never contained.
             record.reasonCodes.forEach { code ->
-                requireJoinableText(code, "recommendation.reasonCode", MAX_SHORT_TEXT_LENGTH)
+                requireJoinableText(code, "recommendation.reasonCode", RecommendationRecord.MAX_REASON_TOKEN_LENGTH)
+            }
+            // Only known structured versions have these relationships. Future opaque
+            // tokens remain readable; no historical outcomes or profile rules are rerun.
+            val progression = try {
+                ProgressionReasonCode.decode(record.reasonCodes)
+            } catch (error: IllegalArgumentException) {
+                invalidValue("The archived progression provenance is invalid.")
+            }
+            val exerciseIds = session.exercises.mapTo(mutableSetOf()) { it.exerciseId }
+            progression.forEach { provenance ->
+                if (provenance.exerciseId !in exerciseIds) {
+                    inconsistent("Archived progression references an exercise outside its recommendation session.")
+                }
+                if (provenance.sourceSessionIds.any { it !in sessionsById }) {
+                    inconsistent("Archived progression references a session absent from the archive.")
+                }
             }
         }
     }
@@ -1483,7 +1861,7 @@ object LocalDataArchiveCodec {
             profile.returningAfterBreakWeeks,
             "profile.returningAfterBreakWeeks",
             0,
-            MAX_BREAK_WEEKS
+            UserProfile.MAX_PERSISTED_BREAK_WEEKS
         )
 
         requireCollection(profile.availableEquipment, "profile.availableEquipment")
@@ -1936,7 +2314,9 @@ object LocalDataArchiveCodec {
     private const val MAX_SESSION_MINUTES = 10_080
     private const val MAX_DAYS_PER_WEEK = 7
     private const val MAX_PREFERRED_DURATION_MINUTES = 1_440
-    private const val MAX_BREAK_WEEKS = 5_200
+
+    /** The first archive format that records a template's weight unit. */
+    private const val TEMPLATE_UNIT_ARCHIVE_VERSION = 6
 
     /** The first archive format that can carry recommendation records. */
     private const val RECOMMENDATION_RECORDS_ARCHIVE_VERSION = 2

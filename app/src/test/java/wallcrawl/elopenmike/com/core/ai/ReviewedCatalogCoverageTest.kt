@@ -687,10 +687,13 @@ class ReviewedCatalogCoverageTest(private val caseId: String) {
             assertThat(affectedDecisions).isNotEmpty()
             if (caseId == "limited-push") {
                 affectedDecisions.forEach {
-                    assertThat(it.eligible).isTrue()
-                    assertThat(it.preferences).contains(
-                        EligibilityPreference.Limited(MovementCapabilityType.UPPER_BODY_BODYWEIGHT_PUSH)
-                    )
+                    if (it.eligible) {
+                        assertThat(it.preferences).contains(
+                            EligibilityPreference.Limited(MovementCapabilityType.UPPER_BODY_BODYWEIGHT_PUSH)
+                        )
+                    } else {
+                        assertThat(it.reasons).containsExactly(EligibilityReason.ADVANCED_WHILE_UNCALIBRATED)
+                    }
                 }
                 val affectedSelected = workout.exercises.filter { it.exerciseId in affected }
                 assertThat(affectedSelected).isNotEmpty()

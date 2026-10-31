@@ -2,6 +2,14 @@
 
 ## Status and authority
 
+**Current supersession:** this records the original V1 milestone. Production
+reviewed planning is now enabled against 182 `AI_ACCEPTED` records, with no human
+approval implied. Package 9 uses `STATE_BASED_DOSE_EFFORT_REST_V2`, changing
+`HOLD` to the same 6-set weekly allowance as `UNCALIBRATED`/`RETURNING`.
+Only an accepted choice reduces the next automatic workout; the new state
+must not activate the old inert 8-set default. See the
+[comparison and deload contract](2026-09-19-progression-and-deload-design.md).
+
 This design implements deterministic-engine Task 4 under the signed decisions in
 `docs/research/2026-08-29-training-science-evidence-review.md` and the architecture in
 `docs/superpowers/specs/2026-08-29-science-based-workout-engines-design.md`.

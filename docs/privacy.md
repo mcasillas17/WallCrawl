@@ -3,11 +3,13 @@
 ## Policy
 
 WallCrawl operates offline without an account. Profile and movement-capability
-answers, preferences, templates, active/completed workouts, logged set feedback,
+answers, preferences, user-controlled deload choices, optional program enrollment and
+frozen session memberships, templates, active/completed workouts, logged set feedback,
 and the reconstructable weekly-ledger cache are stored locally in Room. The
 catalog and exercise artwork are bundled with the app. The current application
-has no cloud-sync service, analytics upload, Health Connect or Wear integration,
-or production local-model runtime. The bundled catalog's `AI_ACCEPTED` metadata
+has no cloud-sync service, analytics upload, Health Connect or Wear integration.
+Workout recommendations are computed by local rules, without model downloads or
+runtime model calls. The bundled catalog's `AI_ACCEPTED` metadata
 (see [reviewed exercise metadata](reviewed-exercise-metadata.md)) was produced by an
 offline, one-time authoring and acceptance process before this build was assembled;
 running the app never calls an AI model, uploads profile or workout data for review,
@@ -40,7 +42,11 @@ One JSON file, written where you choose:
   reasons, and status.
 
 It also contains, for each session started from an automatic recommendation, the
-validation record described below.
+validation record described below, plus the latest deload choice and handled
+return-offer key. It includes the latest optional program enrollment and each recorded
+program membership (run, configuration, position, objective and policy versions).
+Offers and comparison evidence are reconstructed; no mutable
+training-history counter is exported.
 
 It does **not** contain the bundled catalog or artwork, which ship with the app,
 or the weekly-ledger cache, which is derived (see
@@ -65,20 +71,51 @@ decided: the validator, duration-estimator, catalog, review-policy, training-pol
 ledger, and program-state versions, the adaptation state, the ISO week and time zone it was
 accounted against, the profile revision, a digest of the generation inputs, ordered reason
 codes, and per muscle the completed, proposed, and configured allowance set counts.
+Package 9 adds bounded progression policy/reason/axis, source-session identifiers,
+target-continuity digests and accepted deload identity/source/revision. These
+explain a decision without duplicating its measurements.
 
 It holds **no** name, note, load, repetition count, effort value, body measurement, or free
 text, and it does not repeat the plan itself — the session's own exercises already hold
 that. The digest is built only from values a training decision can read (profile identity
-and revision, completed-workout count, candidate ids, catalog and policy versions, week and
-zone); it contains no measurement and is a freshness check, not a security control.
+and revision, completed-workout count, candidates, catalog/policies, week/zone,
+bounded outcomes and feedback, target continuity, working-load sources and deload
+decisions). The hash is a freshness check, not anonymization or a security control.
 
 Sessions started from a manual template, and every session recorded before this existed,
 simply have no record. Nothing fabricates one.
 
+### Reading completed workouts
+
+Progress cards, full-history pages and read-only detail expose records already on
+this device. Detail reads the session, sets, recommendation and comparisons
+coherently in one Room transaction; it never edits or re-plans a workout, logs
+another set, consumes a deload choice, bootstraps a profile or rebuilds a ledger
+cache. Package 12 adds optional frozen program membership, with no analytics collection,
+account or network path. Package 14's **Over time** card computes its charts on the device
+from the same local history. It writes nothing, not even the ledger cache. Its saved state
+holds only the four filter choices, which week is expanded and how many rows are shown,
+never history or chart values. It sends no telemetry and makes no
+network or model call. Package 15 adds the weight unit a template's loads are in.
+Current storage is Room 16 and archive 6.
+
+Historical title/rationale, notes and measurements are shown as stored. Current
+profile, template or catalog programming cannot fill missing historical facts.
+Unknown decision versions remain opaque, malformed known records surface an error,
+and a manual/older session's missing recommendation is an expected unavailable
+state. Deletion removes the complete related projection and returns protected
+screens to onboarding; a fresh-start restore cannot revive an obsolete detail
+back stack. The existing export and deletion boundaries below still apply.
+
+A program membership is read from the historical session, not today's enrollment.
+Restart or replacement preserves completed old-run facts. Older/manual sessions have
+no invented membership. The membership digest checks consistency in both directions;
+it cannot recreate historical profile or catalog inputs that were never stored.
+
 ### Archive compatibility
 
 The archive format has its own version, separate from the Room schema version. This
-build **writes version 3** and **reads versions 1, 2, and 3**. The schema version, app
+build **writes version 6** and **reads versions 1 through 6**. The schema version, app
 version, creation time, and the bundled catalog commit are recorded as provenance only;
 they never decide whether a file can be restored.
 
@@ -93,6 +130,28 @@ exports, and are removed by Delete all data. Only gender selects artwork; the le
 field has no effect. No training decision reads either field. Versions 1 and 2 keep
 their original checksums and restore with unspecified gender. Version 3 validates
 both fields to preserve compatibility with exports from the initial preview.
+
+Version 4 adds the owned deload preferences. Earlier archives retain their
+original checksums and restore without an invented acceptance or decline.
+Known progression provenance must reference archived source sessions and an
+exercise in its recommendation's session. Unknown future reason versions remain
+opaque; malformed known groups are refused.
+
+Version 5 adds program enrollment, frozen associations and their recommendation
+digests. Formats 1–4 keep their exact checksums and restore without inventing a
+program or backfilling history. Both sides validate coherent run progress, active
+reservation and membership/digest agreement. Missing or extra associations are errors.
+Unsupported program policies stay opaque in local history; this build refuses their
+export/restore rather than writing a partial archive. Export validates before opening
+the selected destination, so this refusal cannot truncate a file there. With no active
+workout, explicit program replacement is available for structurally valid unsupported
+state; active logging and Cancel remain available while unsupported Finish is refused.
+
+Version 6 records the weight unit a template's loads are in, when the template has
+one. It is the same kind of training data the template already held, stays on-device,
+is exported only when the user asks, and is removed by Delete all data. Earlier
+archives keep their checksums and restore their templates with no unit. Unsaved
+template-editor drafts are never written to the database, a file, or an archive.
 
 A file written by a newer WallCrawl is still refused with a message saying so, rather than
 partially understood — a future format may attach meaning to fields this build would drop.
@@ -109,12 +168,14 @@ forward behavioral compatibility.
 
 Because a validation record cannot be rebuilt from history the way the weekly-ledger cache
 can, it is exported and restored with the session it belongs to instead of being dropped.
-A record this build cannot read back is left out rather than restored half-understood.
+Since records now supply progression continuity, an unreadable stored record
+fails planning/export rather than being silently omitted. An export failure is
+reported before opening its destination.
 
 ### Restore prerequisites
 
 **Restore needs a fresh start**: no workouts, no templates, and onboarding not
-completed. There is no merge and no replace, so restoring can never overwrite
+completed, and no deload-choice, program-enrollment or program-association row. There is no merge and no replace, so restoring can never overwrite
 data you still have. The profile row an app creates for itself before onboarding
 finishes does not count as your data and is replaced.
 
@@ -143,7 +204,8 @@ no longer contains keeps its identifier rather than being remapped.
 Deleting all local data asks for explicit confirmation, naming what is lost —
 including a workout in progress — and then removes the profile and preferences,
 movement answers, templates, every session with its exercises and sets, every
-validation record, and the derived weekly-ledger cache. The app returns to
+validation record, deload preferences, program enrollment and associations, and the
+derived weekly-ledger cache. The app returns to
 first-run onboarding.
 
 It does **not** touch:
@@ -179,7 +241,7 @@ under the other. See [Localization](localization.md).
 | Android branch | Manifest attribute | Resource and exclusions |
 | --- | --- | --- |
 | API 26-30 | `android:fullBackupContent` | `res/xml/backup_rules.xml`: `<full-backup-content>` excludes all nine domains |
-| API 31+ (current target is 35) | `android:dataExtractionRules` | `res/xml/data_extraction_rules.xml`: separate `<cloud-backup>` and `<device-transfer>` sections each exclude all nine domains |
+| API 31+ (current target is 37) | `android:dataExtractionRules` | `res/xml/data_extraction_rules.xml`: separate `<cloud-backup>` and `<device-transfer>` sections each exclude all nine domains |
 | All supported versions | `android:allowBackup="false"` | Opts out of Android backup/restore participation, subject to the OEM D2D caveat below |
 
 Every exclusion uses `path="."`: all files and recursive subdirectories within
@@ -298,7 +360,7 @@ whole-domain exclusions, no includes or conditional attributes, and both modern
 sections. It also rejects a custom backup agent or a new transfer section
 without a deliberate test/policy update.
 
-The guard has been exercised on API 30 and 36. On each it parses both packaged
+The guard has been exercised on API 26, 30, 36 and 37. On each it parses both packaged
 XML resources; it does **not** invoke both versions of Android's backup rule
 engine. Regression exercises have demonstrated failure with the original
 backup-enabled manifest, a filename-only legacy database exclusion, and a

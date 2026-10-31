@@ -45,6 +45,17 @@ class StateBasedTrainingPolicyTest {
     )
 
     @Test
+    fun holdCannotIncreaseTheUncalibratedWeeklyAllowance() {
+        val result = evaluate(
+            adaptationState = AdaptationState.HOLD,
+            directPrimarySets = mapOf(DIRECT_PRIMARY to 6)
+        )
+        assertThat(result).isEqualTo(TrainingPolicyResult.NoGuidance(
+            TrainingPolicyNoGuidanceReason.WEEKLY_DIRECT_PRIMARY_ALLOWANCE_EXHAUSTED
+        ))
+    }
+
+    @Test
     fun v1Defaults_defineEveryDeclaredStateAndRestClass() {
         val defaults = StateBasedTrainingPolicyDefaults.V1
 

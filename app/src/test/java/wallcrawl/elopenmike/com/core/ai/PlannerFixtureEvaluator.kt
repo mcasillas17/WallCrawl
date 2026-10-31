@@ -21,6 +21,9 @@ import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
+import wallcrawl.elopenmike.com.core.model.ProgramPlanningInput
+import wallcrawl.elopenmike.com.core.model.ProgramHeader
+import wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent
 
 /**
  * The one parsed fixture corpus and bundled catalog projection for the planner-fixture
@@ -113,6 +116,10 @@ internal data class PlannerFixtureInputSnapshot(
     val trainingFrequencyDaysPerWeek: Int,
     val musclePriorities: Map<String, PriorityLevel>,
     val recentWorkoutHistory: List<WorkoutSession>,
+    val progressionHistory: List<WorkoutSession>,
+    val recentRecommendationRecords: Map<String, wallcrawl.elopenmike.com.core.model.RecommendationRecord>,
+    val historyAsOfTimestamp: Long,
+    val deloadPreferences: wallcrawl.elopenmike.com.core.model.DeloadPreferences?,
     val completedWorkoutCount: Int,
     val exerciseHistory: Map<String, ExercisePerformanceHistory>,
     val recentlyTrainedMuscles: List<String>,
@@ -123,6 +130,9 @@ internal data class PlannerFixtureInputSnapshot(
      * Deeply immutable, so the snapshot holds the instance directly.
      */
     val capabilityEvidence: CapabilityEvidenceSet,
+    /** Deeply immutable like capability evidence; no rematerialization needed. */
+    val schedulingEvidence: wallcrawl.elopenmike.com.core.model.TrainingFrequencyRecencyEvidence?,
+    val regenerationIndex: Int?,
     /**
      * Deep-copied like every other mutable branch.
      *
@@ -143,7 +153,10 @@ internal data class PlannerFixtureInputSnapshot(
      * `requiredMovementPatterns` is declared `Set<MovementPattern>` and can hold a caller's
      * mutable set; the two booleans beside it need nothing.
      */
-    val programConstraints: SessionProgramConstraints
+    val programConstraints: SessionProgramConstraints,
+    val planningIntent: WorkoutPlanningIntent,
+    val programHeader: ProgramHeader,
+    val programInput: ProgramPlanningInput?
 )
 
 /**
@@ -285,6 +298,12 @@ private fun WorkoutGenerationContext.snapshot(): PlannerFixtureInputSnapshot =
         trainingFrequencyDaysPerWeek = trainingFrequencyDaysPerWeek,
         musclePriorities = LinkedHashMap(musclePriorities),
         recentWorkoutHistory = recentWorkoutHistory.map(WorkoutSession::deepCopy),
+        progressionHistory = progressionHistory.map(WorkoutSession::deepCopy),
+        recentRecommendationRecords = recentRecommendationRecords.mapValues { (_, record) ->
+            record.copy(reasonCodes = record.reasonCodes.toList(), doseAccounting = record.doseAccounting.toList())
+        },
+        historyAsOfTimestamp = historyAsOfTimestamp,
+        deloadPreferences = deloadPreferences,
         completedWorkoutCount = completedWorkoutCount,
         exerciseHistory = exerciseHistory.entries.associate { (exerciseId, history) ->
             exerciseId to history.deepCopy()
@@ -294,6 +313,8 @@ private fun WorkoutGenerationContext.snapshot(): PlannerFixtureInputSnapshot =
         allowedExercises = allowedExercises.map(Exercise::deepCopy),
         automaticEligibilityResult = automaticEligibilityResult?.deepCopy(),
         capabilityEvidence = capabilityEvidence,
+        schedulingEvidence = schedulingEvidence,
+        regenerationIndex = regenerationIndex,
         trainingProgramState = trainingProgramState?.deepCopy(),
         priorUserRestPreferences = LinkedHashMap(priorUserRestPreferences),
         preferredUnits = preferredUnits,
@@ -301,8 +322,20 @@ private fun WorkoutGenerationContext.snapshot(): PlannerFixtureInputSnapshot =
         reviewPolicyVersion = reviewPolicyVersion,
         programConstraints = programConstraints.copy(
             requiredMovementPatterns = programConstraints.requiredMovementPatterns.toSet()
-        )
+        ),
+        planningIntent = planningIntent,
+        programHeader = programHeader,
+        programInput = programInput?.deepCopy()
     )
+
+private fun ProgramPlanningInput.deepCopy(): ProgramPlanningInput = copy(
+    enrollment = enrollment.copy(configuration = enrollment.configuration.copy(goals = enrollment.configuration.goals.toList())),
+    sessions = sessions.map { row ->
+        val snapshot = row.association.snapshot
+        row.copy(association = row.association.copy(snapshot = snapshot.copy(
+            configuration = snapshot.configuration.copy(goals = snapshot.configuration.goals.toList()))))
+    }
+)
 
 private fun TrainingProgramState.deepCopy(): TrainingProgramState = copy(
     weeklyLedger = weeklyLedger.copy(

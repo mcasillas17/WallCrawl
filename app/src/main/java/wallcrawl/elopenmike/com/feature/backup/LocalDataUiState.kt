@@ -50,6 +50,7 @@ sealed interface LocalDataMessage {
 fun rejectionMessage(rejection: ArchiveRejection): LocalDataMessage.Failure =
     LocalDataMessage.Failure(
         when (rejection) {
+            ArchiveRejection.UNSUPPORTED_PROGRAM -> R.string.local_data_rejected_program
             ArchiveRejection.UNSUPPORTED_VERSION -> R.string.local_data_rejected_version
             ArchiveRejection.CHECKSUM_MISMATCH -> R.string.local_data_rejected_checksum
             ArchiveRejection.TOO_LARGE -> R.string.local_data_rejected_too_large

@@ -1,12 +1,14 @@
 package wallcrawl.elopenmike.com.core.ui.localization
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.WorkoutRationaleSpec
 import wallcrawl.elopenmike.com.core.model.WorkoutRankingReason
 import wallcrawl.elopenmike.com.core.model.WorkoutTitleSpec
+import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
 
 /**
  * Writes the planner's structured output as a sentence in the reader's language.
@@ -57,8 +59,15 @@ fun generatedWorkoutRationale(
 @Composable
 fun workoutRankingNotice(rankingReasons: List<WorkoutRankingReason>): String? {
     if (rankingReasons.isEmpty()) return null
+    val locale = LocalConfiguration.current.locales[0]
     return rankingReasons.map { rankingReason ->
         when (rankingReason) {
+            is WorkoutRankingReason.TrainingFrequencyRecencyPreference -> stringResource(
+                R.string.generated_rationale_frequency_recency_preference,
+                LocalExerciseVocabulary.current.muscle(rankingReason.directPrimaryMuscle),
+                LocaleFormatting.formatCount(rankingReason.daysPerWeek, locale),
+                LocaleFormatting.formatCount(rankingReason.daysSinceLastPractice, locale)
+            )
             is WorkoutRankingReason.SupportedRegressionPreference -> stringResource(
                 R.string.generated_rationale_supported_regression_preference,
                 stringResource(rankingReason.capability.labelRes)

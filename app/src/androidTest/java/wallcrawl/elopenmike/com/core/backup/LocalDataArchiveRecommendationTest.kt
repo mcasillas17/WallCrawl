@@ -21,12 +21,32 @@ import wallcrawl.elopenmike.com.core.model.WorkoutRankingReasonCode
  */
 @RunWith(AndroidJUnit4::class)
 class LocalDataArchiveRecommendationTest {
+    @Test
+    fun mixedSchedulingAndRegressionReasonsAndOpaqueFutureVersionsRoundTrip() {
+        val reasons = listOf(
+            WorkoutRankingReason.SupportedRegressionPreference("supported", "source", MovementCapabilityType.FLOOR_TRANSITION),
+            WorkoutRankingReason.TrainingFrequencyRecencyPreference("press", "fly", "Shoulders", 6, 3)
+        )
+        val codes = WorkoutRankingReasonCode.encode(reasons) + listOf(
+            "TRAINING_FREQUENCY_RECENCY_V1", "PLANNER_GENERATION_V1:12", "TRAINING_FREQUENCY_RECENCY_V2.2"
+        )
+        val records = LocalDataArchiveFixtures.recommendationRecords().mapIndexed { index, record ->
+            if (index == 0) record.copy(reasonCodes = codes) else record
+        }
+        val archive = LocalDataArchiveFixtures.archive(snapshot = LocalDataArchiveFixtures.snapshot(
+            recommendationRecords = records
+        ))
+        val restored = LocalDataArchiveCodec.read(ByteArrayInputStream(archive.toBytes()))
+        val stored = restored.snapshot.recommendationRecords.first { it.sessionId == records.first().sessionId }
+        assertThat(stored.reasonCodes).isEqualTo(codes)
+        assertThat(WorkoutRankingReasonCode.decode(stored.reasonCodes)).containsExactlyElementsIn(reasons).inOrder()
+    }
 
     @Test
-    fun theCurrentFormat_isVersionThreeAndReadsEveryEarlierVersion() {
-        assertThat(LocalDataArchiveFormat.ARCHIVE_VERSION).isEqualTo(3)
+    fun theCurrentFormat_isVersionSixAndReadsEveryEarlierVersion() {
+        assertThat(LocalDataArchiveFormat.ARCHIVE_VERSION).isEqualTo(6)
         assertThat(LocalDataArchiveFormat.SUPPORTED_ARCHIVE_VERSIONS.toList())
-            .containsExactly(1, 2, 3)
+            .containsExactly(1, 2, 3, 4, 5, 6)
             .inOrder()
     }
 
@@ -88,6 +108,7 @@ class LocalDataArchiveRecommendationTest {
                     ]
                 )
             }
+
         }
         val records = LocalDataArchiveFixtures.recommendationRecords()
         val original = LocalDataArchiveFixtures.archive(
@@ -201,10 +222,10 @@ class LocalDataArchiveRecommendationTest {
     @Test
     fun aVersionOneArchiveCarryingRecords_isRefusedRatherThanQuietlyUpgraded() {
         val document = LocalDataArchiveFixtures
-            .archive()
+            .archive(metadata = LocalDataArchiveFixtures.metadata(archiveVersion = 2))
             .toBytes()
             .decodeToString()
-            .replace("\"archiveVersion\":3", "\"archiveVersion\":1")
+            .replace("\"archiveVersion\":2", "\"archiveVersion\":1")
 
         val error = assertThrows(LocalDataArchiveException::class.java) {
             LocalDataArchiveCodec.read(ByteArrayInputStream(document.encodeToByteArray()))
@@ -215,11 +236,12 @@ class LocalDataArchiveRecommendationTest {
 
     @Test
     fun anArchiveFromANewerBuild_isStillRefused() {
+        val currentVersion = LocalDataArchiveFormat.ARCHIVE_VERSION
         val document = LocalDataArchiveFixtures
             .archive()
             .toBytes()
             .decodeToString()
-            .replace("\"archiveVersion\":3", "\"archiveVersion\":4")
+            .replace("\"archiveVersion\":$currentVersion", "\"archiveVersion\":${currentVersion + 1}")
 
         val error = assertThrows(LocalDataArchiveException::class.java) {
             LocalDataArchiveCodec.read(ByteArrayInputStream(document.encodeToByteArray()))
@@ -266,21 +288,14 @@ class LocalDataArchiveRecommendationTest {
         // Reason codes are persisted into a "|||"-joined column. Restoring "A|||B" would
         // read back as two codes the document never contained, so the archive refuses it
         // here rather than letting a value change meaning after a successful restore.
-        val archive = LocalDataArchiveFixtures.archive(
-            snapshot = LocalDataArchiveFixtures.snapshot(
-                recommendationRecords = LocalDataArchiveFixtures.recommendationRecords()
-                    .map { record ->
-                        if (record.reasonCodes.isEmpty()) {
-                            record
-                        } else {
-                            record.copy(reasonCodes = listOf("WEEKLY|||ALLOWANCE_EXCEEDED"))
-                        }
-                    }
-            )
-        )
+        // The domain constructor also rejects it, so exercise the import boundary using
+        // an edited document rather than attempting to construct an invalid domain value.
+        val document = LocalDataArchiveFixtures.archive().toBytes().decodeToString()
+            .replace("\"reasonCodes\":[\"WEEKLY_ALLOWANCE_EXCEEDED\"]",
+                "\"reasonCodes\":[\"WEEKLY|||ALLOWANCE_EXCEEDED\"]")
 
         val error = assertThrows(LocalDataArchiveException::class.java) {
-            LocalDataArchiveCodec.read(ByteArrayInputStream(archive.toBytes()))
+            LocalDataArchiveCodec.read(ByteArrayInputStream(document.encodeToByteArray()))
         }
 
         assertThat(error.rejection).isEqualTo(ArchiveRejection.INVALID_VALUE)

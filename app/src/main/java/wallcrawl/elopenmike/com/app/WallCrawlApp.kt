@@ -14,9 +14,15 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import wallcrawl.elopenmike.com.R
+import wallcrawl.elopenmike.com.feature.program.*
+import wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent
+import wallcrawl.elopenmike.com.core.model.ProgramReadState
+import wallcrawl.elopenmike.com.core.model.ProgramStatus
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.runtime.CompositionLocalProvider
@@ -59,6 +65,10 @@ import wallcrawl.elopenmike.com.feature.templates.WorkoutTemplatesScreen
 import wallcrawl.elopenmike.com.feature.templates.WorkoutTemplatesViewModel
 import wallcrawl.elopenmike.com.feature.workout.ActiveWorkoutScreen
 import wallcrawl.elopenmike.com.feature.workout.ActiveWorkoutViewModel
+import wallcrawl.elopenmike.com.feature.history.WorkoutHistoryDetailScreen
+import wallcrawl.elopenmike.com.feature.history.WorkoutHistoryDetailViewModel
+import wallcrawl.elopenmike.com.feature.history.WorkoutHistoryListScreen
+import wallcrawl.elopenmike.com.feature.history.WorkoutHistoryListViewModel
 
 import androidx.compose.material3.MaterialTheme
 import wallcrawl.elopenmike.com.core.model.UserProfile
@@ -134,13 +144,23 @@ private fun WallCrawlAppContent(
      * every local record the back stack has to be replaced rather than merely added to.
      */
     fun restartAtOnboarding() {
+        Screen.bottomNavItems.forEach { navController.clearBackStack(it.route) }
         navController.navigate(AppRoutes.ONBOARDING) {
-            popUpTo(navController.graph.findStartDestination().id) { inclusive = true }
+            popUpTo(navController.graph.id) { inclusive = true }
             launchSingleTop = true
         }
     }
 
+    LaunchedEffect(startDestination, currentRoute) {
+        if (startDestination == AppRoutes.ONBOARDING &&
+            currentRoute != null && currentRoute != AppRoutes.ONBOARDING
+        ) {
+            restartAtOnboarding()
+        }
+    }
+
     fun openTodayAfterRestore() {
+        Screen.bottomNavItems.forEach { navController.clearBackStack(it.route) }
         navController.navigate(AppRoutes.TODAY) {
             popUpTo(navController.graph.findStartDestination().id) { inclusive = true }
             launchSingleTop = true
@@ -223,16 +243,30 @@ private fun WallCrawlAppContent(
                 )
             }
 
-            composable(AppRoutes.TODAY) {
+            composable(AppRoutes.TODAY) { entry ->
                 val todayViewModel: TodayViewModel = viewModel(
+                    viewModelStoreOwner = entry,
+                    extras = entry.defaultViewModelCreationExtras,
                     factory = TodayViewModel.provideFactory(
                         userProfileRepository = container.userProfileRepository,
                         workoutRepository = container.workoutRepository,
                         workoutGenerationContextBuilder = container.workoutGenerationContextBuilder,
                         workoutPlanner = container.workoutPlanner,
-                        programValidator = container.programValidator
+                        programValidator = container.programValidator,
+                        deloadRepository = container.deloadRepository,
+                        programRepository = container.programRepository
                     )
                 )
+                val programViewModel: ProgramViewModel = viewModel(factory = ProgramViewModel.provideFactory(
+                    container.programRepository, container.workoutRepository.observeActiveSession()))
+                val programState = rememberProgramState(programViewModel)
+                val selectedIntent by todayViewModel.planningIntent.collectAsState()
+                val known = programState.program as? ProgramReadState.Supported
+                LaunchedEffect(known?.enrollment?.status) {
+                    if (known != null && known.enrollment.status != ProgramStatus.ACTIVE) {
+                        todayViewModel.selectPlanningIntent(WorkoutPlanningIntent.ORDINARY)
+                    }
+                }
                 TodayScreen(
                     viewModel = todayViewModel,
                     onStartWorkout = { sessionId ->
@@ -241,7 +275,13 @@ private fun WallCrawlAppContent(
                     onResumeWorkout = { sessionId ->
                         navController.navigate(AppRoutes.activeWorkout(sessionId))
                     },
-                    onOpenTemplates = { navController.navigate(AppRoutes.WORKOUT_TEMPLATES) }
+                    onOpenTemplates = { navController.navigate(AppRoutes.WORKOUT_TEMPLATES) },
+                    programContent = {
+                        ProgramSummary(programState, { navController.navigate(AppRoutes.PROGRAM) }, programViewModel::retry)
+                        Text(stringResource(R.string.program_disclosure), color = MaterialTheme.colorScheme.onSurface)
+                        ProgramPlanningChoice(selectedIntent, known?.enrollment?.status == ProgramStatus.ACTIVE,
+                            programState.activeSession == null, todayViewModel::selectPlanningIntent)
+                    }
                 )
             }
 
@@ -251,7 +291,52 @@ private fun WallCrawlAppContent(
                         progressRepository = container.progressRepository
                     )
                 )
-                ProgressScreen(viewModel = progressViewModel)
+                val programViewModel: ProgramViewModel = viewModel(factory = ProgramViewModel.provideFactory(
+                    container.programRepository, container.workoutRepository.observeActiveSession()))
+                val programState = rememberProgramState(programViewModel)
+                ProgressScreen(
+                    viewModel = progressViewModel,
+                    onOpenSession = { navController.navigate(AppRoutes.historyDetail(it)) },
+                    onOpenHistory = { navController.navigate(AppRoutes.HISTORY) },
+                    programContent = { ProgramSummary(programState, { navController.navigate(AppRoutes.PROGRAM) }, programViewModel::retry) }
+                )
+            }
+
+            composable(AppRoutes.PROGRAM) {
+                val programViewModel: ProgramViewModel = viewModel(factory = ProgramViewModel.provideFactory(
+                    container.programRepository, container.workoutRepository.observeActiveSession()))
+                ProgramScreen(programViewModel, onBack = { navController.popBackStack() },
+                    onEditProfile = { navController.navigate(AppRoutes.PROFILE) },
+                    onResume = { navController.navigate(AppRoutes.activeWorkout(it)) },
+                    onOpenHistory = { navController.navigate(AppRoutes.historyDetail(it)) })
+            }
+
+            composable(AppRoutes.HISTORY) {
+                val historyViewModel: WorkoutHistoryListViewModel = viewModel(
+                    factory = WorkoutHistoryListViewModel.provideFactory(container.workoutHistoryRepository)
+                )
+                WorkoutHistoryListScreen(
+                    viewModel = historyViewModel,
+                    onOpenSession = { navController.navigate(AppRoutes.historyDetail(it)) },
+                    onBack = { navController.popBackStack() }
+                )
+            }
+
+            composable(
+                route = AppRoutes.HISTORY_DETAIL,
+                arguments = listOf(navArgument("sessionId") { type = NavType.StringType })
+            ) { entry ->
+                val sessionId = requireNotNull(entry.arguments?.getString("sessionId"))
+                val historyViewModel: WorkoutHistoryDetailViewModel = viewModel(
+                    key = sessionId,
+                    factory = WorkoutHistoryDetailViewModel.provideFactory(
+                        sessionId, container.workoutHistoryRepository
+                    )
+                )
+                WorkoutHistoryDetailScreen(
+                    viewModel = historyViewModel,
+                    onBack = { navController.popBackStack() }
+                )
             }
 
             composable(AppRoutes.EXERCISES) {
@@ -319,13 +404,15 @@ private fun WallCrawlAppContent(
                         sessionId = sessionId,
                         workoutRepository = container.workoutRepository,
                         exerciseCatalog = container.exerciseCatalog,
-                        workoutHistoryAnalyzer = container.workoutHistoryAnalyzer
+                        workoutHistoryAnalyzer = container.workoutHistoryAnalyzer,
+                        programRepository = container.programRepository
                     )
                 )
                 ActiveWorkoutScreen(
                     viewModel = workoutViewModel,
                     visualProvider = container.exerciseVisualProvider,
                     onNavigateBack = { navController.popBackStack() },
+                    onOpenHistory = { navController.navigate(AppRoutes.historyDetail(it)) },
                     onWorkoutFinished = {
                         navController.popBackStack()
                         navController.navigate(AppRoutes.PROGRESS) {
@@ -351,10 +438,16 @@ private fun WallCrawlAppContent(
                 WorkoutTemplatesScreen(
                     viewModel = templatesViewModel,
                     onBack = { navController.popBackStack() },
+                    // The list takes these only while settled; see WorkoutTemplatesScreen.
                     onCreate = { navController.navigate(AppRoutes.TEMPLATE_NEW) },
                     onEdit = { navController.navigate(AppRoutes.editTemplate(it)) },
+                    // Called by the list once it holds a started session, including one that
+                    // finished while the app was paused or recreated; single-top keeps any
+                    // repeat to one entry.
                     onWorkoutStarted = { sessionId ->
-                        navController.navigate(AppRoutes.activeWorkout(sessionId))
+                        navController.navigate(AppRoutes.activeWorkout(sessionId)) {
+                            launchSingleTop = true
+                        }
                     }
                 )
             }

@@ -23,10 +23,11 @@ import wallcrawl.elopenmike.com.core.model.clearsJointConstraintsOf
 import wallcrawl.elopenmike.com.core.model.violatesImpactRestrictionOf
 
 enum class TrainingPolicyVersion {
-    STATE_BASED_DOSE_EFFORT_REST_V1
+    STATE_BASED_DOSE_EFFORT_REST_V1,
+    STATE_BASED_DOSE_EFFORT_REST_V2
 }
 
-/** Editable WallCrawl product limits for one adaptation state. */
+/** Construction-time WallCrawl product limits for one adaptation state. */
 data class StateDoseLimits(
     val maxWeeklyDirectPrimarySets: Int,
     val maxTargetSetsPerExercise: Int
@@ -134,6 +135,11 @@ class StateBasedTrainingPolicyDefaults(
             establishedGeneralOrHypertrophyEffort = EffortTarget(1, 3)
         )
 
+        val V2: StateBasedTrainingPolicyDefaults = V1.copy(
+            policyVersion = TrainingPolicyVersion.STATE_BASED_DOSE_EFFORT_REST_V2,
+            doseLimitsByState = V1.doseLimitsByState + (AdaptationState.HOLD to StateDoseLimits(6, 2))
+        )
+
         private const val MAX_REST_SECONDS = 1_800
         private const val MAX_TARGET_SETS_PER_EXERCISE = 20
     }
@@ -201,8 +207,9 @@ class TrainingPolicyResultException(
  */
 class StateBasedTrainingPolicy(
     private val defaults: StateBasedTrainingPolicyDefaults =
-        StateBasedTrainingPolicyDefaults.V1
+        StateBasedTrainingPolicyDefaults.V2
 ) {
+    val policyVersion: TrainingPolicyVersion get() = defaults.policyVersion
 
     fun evaluate(
         exercise: Exercise,
@@ -213,8 +220,10 @@ class StateBasedTrainingPolicy(
         priorUserRestPreference: UserRestPreference? = null
     ): TrainingPolicyResult {
         if (
-            programState.policyVersion !=
-            TrainingProgramStatePolicyVersion.PROGRAM_STATE_V1
+            programState.policyVersion !in setOf(
+                TrainingProgramStatePolicyVersion.PROGRAM_STATE_V1,
+                TrainingProgramStatePolicyVersion.PROGRAM_STATE_V2
+            )
         ) {
             return TrainingPolicyResult.Failure(
                 TrainingPolicyFailureReason.UNSUPPORTED_TRAINING_PROGRAM_STATE_POLICY

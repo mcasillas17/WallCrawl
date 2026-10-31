@@ -23,6 +23,15 @@ class AdaptationStatePolicyTest {
         assertThat(policy.derive(profile)).isEqualTo(AdaptationState.UNCALIBRATED)
     }
 
+    @Test
+    fun acceptedDeloadDerivesHoldOnlyUntilConsumedOrCancelled() {
+        val profile = UserProfile(returningAfterBreakWeeks = 0)
+        assertThat(policy.derive(profile, acceptedDeload = true)).isEqualTo(AdaptationState.HOLD)
+        assertThat(policy.derive(profile, acceptedDeload = false)).isEqualTo(AdaptationState.UNCALIBRATED)
+        assertThat(policy.derive(profile.copy(returningAfterBreakWeeks = 4), acceptedDeload = true))
+            .isEqualTo(AdaptationState.RETURNING)
+    }
+
     /**
      * `ExerciseEligibilityPolicy` applies the temporary advanced-complexity ceiling with an
      * allow-by-default check on exactly UNCALIBRATED and RETURNING. Emitting any other state
@@ -34,8 +43,10 @@ class AdaptationStatePolicyTest {
      */
     @Test
     fun everyDerivableStateIsOneTheAdvancedCeilingCovers() {
-        val derivable = (0..12).mapTo(mutableSetOf()) { weeks ->
-            policy.derive(UserProfile(returningAfterBreakWeeks = weeks))
+        val derivable = (0..12).flatMapTo(mutableSetOf()) { weeks ->
+            listOf(false, true).map { accepted ->
+                policy.derive(UserProfile(returningAfterBreakWeeks = weeks), accepted)
+            }
         }
 
         assertThat(derivable).isNotEmpty()

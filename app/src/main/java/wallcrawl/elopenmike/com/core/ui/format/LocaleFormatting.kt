@@ -5,6 +5,7 @@ import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.text.NumberFormat
 import java.util.Locale
+import wallcrawl.elopenmike.com.core.model.MeasurementPrecision
 
 /**
  * Every number the interface shows or accepts passes through here.
@@ -16,8 +17,7 @@ import java.util.Locale
  */
 object LocaleFormatting {
 
-    /** Fraction digits kept in an editable field. Loads step by 2.5, so two is enough. */
-    private const val MAX_EDITABLE_FRACTION_DIGITS = 2
+    private const val MAX_EDITABLE_FRACTION_DIGITS = MeasurementPrecision.EDITABLE_FRACTION_DIGITS
 
     /**
      * A measurement as it appears in an editable field.
@@ -99,15 +99,27 @@ object LocaleFormatting {
         return trimmed.toIntOrNull()
     }
 
-    /** Minutes and seconds for the rest countdown; the caller supplies the separator. */
+    /**
+     * Minutes and seconds for the rest countdown, in the locale's own digits; the caller
+     * supplies the separator. The formatter pads seconds, so the padding is in the same
+     * digits as the number.
+     */
     fun countdownParts(remainingSeconds: Int, locale: Locale): Pair<String, String> {
         val safeSeconds = remainingSeconds.coerceAtLeast(0)
-        return formatEditableInt(safeSeconds / 60, locale) to
-            formatEditableInt(safeSeconds % 60, locale).padStart(2, '0')
+        return formatCount(safeSeconds / 60, locale) to String.format(locale, "%02d", safeSeconds % 60)
     }
 
+    /**
+     * Editable text has to read back through [parseDecimalInput], which accepts ASCII digits
+     * and a "." or "," mark. A locale whose default digits are not ASCII (Arabic-Indic, say)
+     * would otherwise seed fields its own parser refuses, so the digits and the mark are
+     * pinned to that set while every other symbol stays the locale's.
+     */
     private fun editableFormat(locale: Locale): DecimalFormat =
-        DecimalFormat("0.##", DecimalFormatSymbols.getInstance(locale)).apply {
+        DecimalFormat("0.##", DecimalFormatSymbols.getInstance(locale).apply {
+            zeroDigit = '0'
+            if (decimalSeparator != '.' && decimalSeparator != ',') decimalSeparator = '.'
+        }).apply {
             isGroupingUsed = false
             maximumFractionDigits = MAX_EDITABLE_FRACTION_DIGITS
             roundingMode = RoundingMode.HALF_UP

@@ -8,10 +8,15 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsFocused
+import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toPixelMap
 import androidx.compose.ui.semantics.SemanticsProperties
@@ -21,6 +26,10 @@ import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
 import wallcrawl.elopenmike.com.R
@@ -75,10 +84,35 @@ class ActiveWorkoutScreenTest {
     )
 
     @Test
+    fun persistedSetUpdateKeepsFocusedPartialInputAndFeedbackOpen() {
+        showScreen()
+        composeRule.onAllNodesWithText(text(R.string.set_feedback_show))[0].performScrollTo().performClick()
+        val load = composeRule.onNodeWithContentDescription("Load (lb) for set 1")
+        load.performScrollTo().performClick().performTextReplacement("47.")
+        load.assertIsFocused()
+        repository.historyReady.value = false
+        try {
+            composeRule.runOnIdle {
+                runBlocking {
+                    repository.logSetCompletion("set-2", SetPerformanceInput(
+                        reps = 11, weight = 40.0, isCompleted = false
+                    ))
+                }
+            }
+            composeRule.waitForIdle()
+            load.assertTextContains("47.").assertIsFocused()
+            composeRule.onNodeWithText(text(R.string.set_feedback_hide)).assertExists()
+            assertThat(repository.historySubscriptions).isEqualTo(1)
+        } finally {
+            repository.historyReady.value = true
+        }
+    }
+
+    @Test
     fun completingASet_showsTheRestCountdownWithItsExplicitControls() {
         showScreen()
 
-        composeRule.onNodeWithContentDescription("Set 1 complete").performClick()
+        composeRule.onNodeWithContentDescription("Set 1 complete").performScrollTo().assertIsDisplayed().performClick()
         composeRule.waitForIdle()
 
         composeRule.onNodeWithContentDescription("Rest remaining 2:00").assertIsDisplayed()
@@ -99,7 +133,7 @@ class ActiveWorkoutScreenTest {
     @Test
     fun timeSpentInTheBackground_isReflectedWhenTheCountdownIsRefreshed() {
         showScreen()
-        composeRule.onNodeWithContentDescription("Set 1 complete").performClick()
+        composeRule.onNodeWithContentDescription("Set 1 complete").performScrollTo().assertIsDisplayed().performClick()
         composeRule.waitForIdle()
 
         // The app was away for ninety seconds and ticked nothing while it was gone.
@@ -126,7 +160,7 @@ class ActiveWorkoutScreenTest {
             }
         }
 
-        composeRule.onNodeWithContentDescription("Set 1 complete").performClick()
+        composeRule.onNodeWithContentDescription("Set 1 complete").performScrollTo().assertIsDisplayed().performClick()
         composeRule.waitForIdle()
         composeRule.onNodeWithContentDescription("Rest remaining 2:00").assertIsDisplayed()
 
@@ -305,22 +339,32 @@ private object NoVisualProvider : ExerciseVisualProvider {
 }
 
 private class ScreenTestRepository(initial: WorkoutSession) : WorkoutRepository {
+    override suspend fun getCompletedSessionsInRange(startTimestamp: Long, endTimestampExclusive: Long): List<WorkoutSession> = emptyList()
     private val session = MutableStateFlow<WorkoutSession?>(initial)
     var completeCalls: Int = 0
         private set
     var cancelCalls: Int = 0
+        private set
+    val historyReady = MutableStateFlow(true)
+    var historySubscriptions = 0
         private set
 
     override fun observeActiveSession(): Flow<WorkoutSession?> = session
     override suspend fun getActiveSessionOnce(): WorkoutSession? = session.value
     override suspend fun getSessionById(sessionId: String): WorkoutSession? = session.value
     override fun observeSession(sessionId: String): Flow<WorkoutSession?> = session
-    override fun observeCompletedSessions(limit: Int): Flow<List<WorkoutSession>> =
-        flowOf(emptyList())
+    override fun observeCompletedSessions(limit: Int): Flow<List<WorkoutSession>> = flow {
+        historySubscriptions++
+        historyReady.first { it }
+        emit(emptyList())
+        awaitCancellation()
+    }
 
     override fun observeCompletedWorkoutCount(): Flow<Int> = flowOf(0)
     override fun observeCompletedWorkoutCountInRange(startTimestamp: Long, endTimestampExclusive: Long): Flow<Int> = flowOf(0)
     override suspend fun getRecentCompletedSessions(limit: Int): List<WorkoutSession> = emptyList()
+    override suspend fun getRecentSessions(limit: Int): List<WorkoutSession> = emptyList()
+    override suspend fun getRecommendationRecords(sessionIds: List<String>): List<wallcrawl.elopenmike.com.core.model.RecommendationRecord> = emptyList()
 
     override suspend fun startWorkoutFromGenerated(
         generated: GeneratedWorkout,

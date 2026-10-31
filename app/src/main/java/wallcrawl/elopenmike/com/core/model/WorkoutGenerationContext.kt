@@ -1,8 +1,8 @@
 package wallcrawl.elopenmike.com.core.model
 
 /**
- * Rich contextual payload provided to [wallcrawl.elopenmike.com.core.ai.WorkoutPlanner]
- * so an on-device local model (or fake planner) can select the optimal workout.
+ * Inputs used by [wallcrawl.elopenmike.com.core.ai.WorkoutPlanner]
+ * to generate a rules-based workout recommendation.
  *
  * Notice: [allowedExercises] contains only candidates that passed the active eligibility
  * path. The planner must choose ONLY from these candidate IDs.
@@ -17,6 +17,10 @@ data class WorkoutGenerationContext(
     val trainingFrequencyDaysPerWeek: Int = userProfile.daysPerWeek,
     val musclePriorities: Map<String, PriorityLevel> = userProfile.musclePriorities,
     val recentWorkoutHistory: List<WorkoutSession> = emptyList(),
+    val progressionHistory: List<WorkoutSession> = recentWorkoutHistory,
+    val recentRecommendationRecords: Map<String, RecommendationRecord> = emptyMap(),
+    val historyAsOfTimestamp: Long = Long.MAX_VALUE,
+    val deloadPreferences: DeloadPreferences? = null,
     /** Lifetime completed workouts, so split rotation survives the process being killed. */
     val completedWorkoutCount: Int = 0,
     val exerciseHistory: Map<String, ExercisePerformanceHistory> = emptyMap(),
@@ -30,6 +34,8 @@ data class WorkoutGenerationContext(
      * Empty on the legacy path.
      */
     val capabilityEvidence: CapabilityEvidenceSet = CapabilityEvidenceSet.empty(),
+    /** Reconstructed once from all canonical completed work in the 14-local-date window. */
+    val schedulingEvidence: TrainingFrequencyRecencyEvidence? = null,
     /**
      * The composed program state, present only when reviewed eligibility is enabled.
      *
@@ -64,7 +70,22 @@ data class WorkoutGenerationContext(
      */
     val reviewPolicyVersion: Int = 0,
     /** The program-design rules this session was asked to satisfy. */
-    val programConstraints: SessionProgramConstraints = SessionProgramConstraints()
+    val programConstraints: SessionProgramConstraints = SessionProgramConstraints(),
+    /** Null uses zero in program mode, or the existing in-process counter in ordinary mode. */
+    val regenerationIndex: Int? = null,
+    val planningIntent: WorkoutPlanningIntent = WorkoutPlanningIntent.ORDINARY,
+    val programHeader: ProgramHeader = ProgramHeader.absent(userProfile.id),
+    val programInput: ProgramPlanningInput? = null
+)
+
+enum class WorkoutPlanningIntent { ORDINARY, PROGRAM }
+
+/** Bounded immutable program facts; completed work remains in the independent ledger. */
+data class ProgramPlanningInput(
+    val enrollment: ProgramEnrollment,
+    val sessions: List<ProgramSlotSession>,
+    val position: ProgramPosition,
+    val objective: ProgramObjective
 )
 
 /**

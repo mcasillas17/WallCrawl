@@ -5,6 +5,10 @@ import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
+import wallcrawl.elopenmike.com.core.model.DeloadChoice
+import wallcrawl.elopenmike.com.core.model.DeloadOffer
+import wallcrawl.elopenmike.com.core.model.DeloadPreferences
+import wallcrawl.elopenmike.com.core.model.WeightUnit
 
 /**
  * Why Today has nothing to show.
@@ -14,12 +18,17 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSession
  * same thing in whichever language the reader chose.
  */
 enum class TodayError(@StringRes val messageRes: Int) {
+    PROGRAM_UNSUPPORTED(R.string.program_unsupported),
+    PROGRAM_PROFILE_MISMATCH(R.string.program_profile_mismatch),
+    PROGRAM_UNAVAILABLE(R.string.program_read_failed),
     NO_CANDIDATES(R.string.today_error_no_candidates),
     NO_STRENGTH_CANDIDATES(R.string.today_error_no_strength_candidates),
     NO_CANDIDATES_FOR_ANY_SPLIT(R.string.today_error_no_split),
     REGENERATION_FAILED(R.string.today_error_regenerate_failed),
     FIRST_GENERATION_FAILED(R.string.today_error_first_failed),
     START_FAILED(R.string.today_error_start_failed),
+    DELOAD_READ_FAILED(R.string.today_error_deload_read),
+    DELOAD_WRITE_FAILED(R.string.today_error_deload_write),
 
     /** The generation context changed after this recommendation was produced. */
     RECOMMENDATION_OUT_OF_DATE(R.string.today_error_recommendation_out_of_date),
@@ -43,15 +52,31 @@ enum class TodayError(@StringRes val messageRes: Int) {
     REVIEWED_NONE_ELIGIBLE(R.string.today_error_reviewed_none_eligible)
 }
 
+/** Durable decision plus transient write feedback; displaying an offer never accepts it. */
+data class TodayDeloadState(
+    val profileRevision: Long,
+    val preferences: DeloadPreferences,
+    val offer: DeloadOffer? = null,
+    val acceptedChoice: DeloadChoice? = null,
+    val isSaving: Boolean = false,
+    val error: TodayError? = null
+)
+
 sealed interface TodayUiState {
     data object Loading : TodayUiState
+    data class Preparing(val activeSession: WorkoutSession) : TodayUiState
 
     data class Success(
         val userProfile: UserProfile,
         val suggestedWorkout: GeneratedWorkout,
         val activeSession: WorkoutSession? = null,
         val isRegenerating: Boolean = false,
-        val completedThisWeek: Int = 0
+        val completedThisWeek: Int = 0,
+        val deload: TodayDeloadState? = null,
+        /** Published with the workout; profile preferences may already be newer during regeneration. */
+        val prescriptionUnit: WeightUnit = userProfile.preferredUnit,
+        val planningIntent: wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent = wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent.ORDINARY,
+        val programSession: wallcrawl.elopenmike.com.core.model.ProgramSessionSnapshot? = null
     ) : TodayUiState
 
     /**
@@ -61,6 +86,7 @@ sealed interface TodayUiState {
      */
     data class Error(
         val error: TodayError,
-        val activeSession: WorkoutSession? = null
+        val activeSession: WorkoutSession? = null,
+        val deload: TodayDeloadState? = null
     ) : TodayUiState
 }

@@ -1,6 +1,7 @@
 package wallcrawl.elopenmike.com.core.database.repository
 
 import wallcrawl.elopenmike.com.core.ai.RecommendationSnapshot
+import wallcrawl.elopenmike.com.core.ai.TrainingFrequencyRecencyPolicy
 import wallcrawl.elopenmike.com.core.ai.asRecord
 import wallcrawl.elopenmike.com.core.database.PERSISTED_LIST_SEPARATOR
 import wallcrawl.elopenmike.com.core.database.dao.WorkoutSessionDao
@@ -10,6 +11,8 @@ import wallcrawl.elopenmike.com.core.database.entity.WorkoutSessionEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSetEntity
 import wallcrawl.elopenmike.com.core.database.relation.toWorkoutSession
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
+import wallcrawl.elopenmike.com.core.model.RecommendationRecord
+import wallcrawl.elopenmike.com.core.backup.LocalDataArchiveLimits
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.PlannedExercise
 import wallcrawl.elopenmike.com.core.model.SessionStatus
@@ -25,6 +28,7 @@ import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
 import wallcrawl.elopenmike.com.core.progress.ProgressCalculator
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.flow
 import java.util.UUID
 
 interface WorkoutRepository {
@@ -36,6 +40,22 @@ interface WorkoutRepository {
     fun observeCompletedWorkoutCount(): Flow<Int>
     fun observeCompletedWorkoutCountInRange(startTimestamp: Long, endTimestampExclusive: Long): Flow<Int>
     suspend fun getRecentCompletedSessions(limit: Int = 8): List<WorkoutSession>
+    /** Latest attempts of every status; an incomplete attempt must not be skipped. */
+    suspend fun getRecentSessions(limit: Int = 8): List<WorkoutSession>
+    suspend fun getRecommendationRecords(sessionIds: List<String>): List<RecommendationRecord>
+    /** Complete canonical range, never the recent-eight loading/capability sample. */
+    suspend fun getCompletedSessionsInRange(startTimestamp: Long, endTimestampExclusive: Long): List<WorkoutSession>
+    /**
+     * Ascending MAX_SESSIONS + 1 probe, not an unrestricted complete range.
+     * The consumer filters its sampled inclusive now, then rejects overflow. Keeping the
+     * first future sentinel allows a clock tick to detect overflow without another query.
+     */
+    fun observeCompletedSessionProbeInRange(startTimestamp: Long, endTimestampExclusive: Long): Flow<List<WorkoutSession>> =
+        flow {
+            emit(getCompletedSessionsInRange(startTimestamp, endTimestampExclusive)
+                .sortedWith(compareBy<WorkoutSession> { it.completedAtTimestamp }.thenBy { it.id })
+                .take(TrainingFrequencyRecencyPolicy.MAX_SESSIONS + 1))
+        }
     /**
      * Starts a session from a generated plan.
      *
@@ -72,7 +92,7 @@ interface WorkoutRepository {
 
     /**
      * Summary of an already completed session, including its personal-record count.
-     * Shares one implementation and one history window with [completeWorkout] so the
+     * Shares one calculation and strictly-prior baseline with [completeWorkout] so the
      * number cannot differ between finishing a workout and revisiting it.
      */
     suspend fun getWorkoutSummary(sessionId: String): WorkoutSummary?
@@ -125,6 +145,44 @@ class OfflineWorkoutRepository(
         return sessionDao.getRecentCompletedSessions(limit).map { it.toWorkoutSession() }
     }
 
+    override suspend fun getRecentSessions(limit: Int): List<WorkoutSession> {
+        require(limit in 1..8) { "Recent attempt history is bounded to eight sessions." }
+        return sessionDao.getRecentSessions(limit).map { row ->
+            check(row.exercisesWithSets.size <= LocalDataArchiveLimits.MAX_EXERCISES_PER_SESSION &&
+                row.exercisesWithSets.all { it.sets.size <= LocalDataArchiveLimits.MAX_SETS_PER_EXERCISE }) {
+                "Recent attempt history exceeds supported per-session bounds."
+            }
+            row.toWorkoutSession()
+        }
+    }
+
+    override suspend fun getRecommendationRecords(sessionIds: List<String>): List<RecommendationRecord> {
+        require(sessionIds.size <= 8 && sessionIds.distinct().size == sessionIds.size &&
+            sessionIds.all { it.isNotBlank() && it.length <= 200 && it.none(Char::isISOControl) }) {
+            "Recommendation history requires at most eight distinct bounded session identifiers."
+        }
+        if (sessionIds.isEmpty()) return emptyList()
+        return sessionDao.getRecommendationRecords(sessionIds).map { it.toRecommendationRecord() }
+    }
+
+    override suspend fun getCompletedSessionsInRange(
+        startTimestamp: Long,
+        endTimestampExclusive: Long
+    ): List<WorkoutSession> = sessionDao.getCompletedSessionsInRange(
+        startTimestamp, endTimestampExclusive,
+        maximumSessions = TrainingFrequencyRecencyPolicy.MAX_SESSIONS
+    ).map { it.toWorkoutSession() }
+
+    override fun observeCompletedSessionProbeInRange(
+        startTimestamp: Long,
+        endTimestampExclusive: Long
+    ): Flow<List<WorkoutSession>> {
+        require(endTimestampExclusive > startTimestamp) { "The history range must be nonempty." }
+        val bound = TrainingFrequencyRecencyPolicy.MAX_SESSIONS
+        return sessionDao.observeCompletedSessionsInRange(startTimestamp, endTimestampExclusive, bound + 1)
+            .map { rows -> rows.map { it.toWorkoutSession() } }
+    }
+
     override suspend fun startWorkoutFromGenerated(
         generated: GeneratedWorkout,
         displayName: String,
@@ -146,19 +204,27 @@ class OfflineWorkoutRepository(
     override suspend fun startWorkoutFromTemplate(
         template: WorkoutTemplate,
         userProfile: UserProfile
-    ): WorkoutSession = startWorkout(
-        name = template.name,
-        notes = template.notes,
-        focusMuscles = emptyList(),
-        estimatedDurationMinutes = estimateDurationMinutes(template.exercises),
-        exercises = template.exercises,
-        origin = WorkoutOrigin.CUSTOM_TEMPLATE,
-        sourceTemplateId = template.id,
-        userProfile = userProfile,
-        // A manual template is an explicit user choice, not an automatic recommendation, so
-        // there is no validation provenance to record for it.
-        recommendation = null
-    )
+    ): WorkoutSession {
+        // A workout already in progress is resumed rather than competed with, as for any
+        // template, and resuming copies nothing from this one, so an unconfirmed unit is no
+        // obstacle to it. Any other start still goes through the atomic insert below.
+        if (template.requiresUnitConfirmation) getActiveSessionOnce()?.let { return it }
+        return startWorkout(
+            name = template.name,
+            notes = template.notes,
+            focusMuscles = emptyList(),
+            estimatedDurationMinutes = estimateDurationMinutes(template.exercises),
+            // The session is recorded in the profile's unit, so a template saved in the other
+            // one is converted rather than relabelled; an unconfirmed legacy unit is refused.
+            exercises = template.exercisesIn(userProfile.preferredUnit),
+            origin = WorkoutOrigin.CUSTOM_TEMPLATE,
+            sourceTemplateId = template.id,
+            userProfile = userProfile,
+            // A manual template is an explicit user choice, not an automatic recommendation, so
+            // there is no validation provenance to record for it.
+            recommendation = null
+        )
+    }
 
     private suspend fun startWorkout(
         name: String,
@@ -251,7 +317,11 @@ class OfflineWorkoutRepository(
                     sessionId = sessionId,
                     recordedAtEpochMillis = sessionEntity.startedAtTimestamp
                 )
-                ?.toEntity()
+                ?.toEntity(),
+            expectedDeloadDecisionRevision = recommendation?.deloadDecisionRevision,
+            acceptedDeloadOfferId = recommendation?.acceptedDeloadOfferId,
+            expectedProgramHeader = recommendation?.expectedProgramHeader,
+            programSession = recommendation?.programSession
         ).toWorkoutSession()
     }
 
@@ -408,50 +478,23 @@ class OfflineWorkoutRepository(
     override suspend fun completeWorkout(sessionId: String, actualDurationMinutes: Int): WorkoutSummary {
         require(sessionId.isNotBlank()) { "sessionId must not be blank." }
         require(actualDurationMinutes > 0) { "actualDurationMinutes must be greater than zero." }
-        val completedTimestamp = System.currentTimeMillis()
-        val affectedRows = sessionDao.completeSessionIfActive(
+        return sessionDao.completeWorkoutAndReadSummary(
             sessionId = sessionId,
-            completedAt = completedTimestamp,
-            actualDuration = actualDurationMinutes
+            completedAt = System.currentTimeMillis(),
+            actualDuration = actualDurationMinutes,
+            calculator = progressCalculator
         )
-        check(affectedRows == 1) {
-            "Workout session '$sessionId' was not found or is not in progress."
-        }
-
-        val session = checkNotNull(getSessionById(sessionId)) {
-            "Completed workout session '$sessionId' could not be read back."
-        }
-        return session.toSummary(durationMinutes = actualDurationMinutes)
     }
 
     override suspend fun getWorkoutSummary(sessionId: String): WorkoutSummary? {
         require(sessionId.isNotBlank()) { "sessionId must not be blank." }
-        val session = getSessionById(sessionId) ?: return null
-        if (session.status != SessionStatus.COMPLETED) return null
-        return session.toSummary(durationMinutes = session.actualDurationMinutes)
+        return sessionDao.readWorkoutSummary(sessionId, progressCalculator)
     }
-
-    private suspend fun WorkoutSession.toSummary(durationMinutes: Int): WorkoutSummary =
-        WorkoutSummary(
-            sessionId = id,
-            workoutName = name,
-            durationMinutes = durationMinutes,
-            totalSetsCompleted = completedSetsCount,
-            totalVolume = totalVolume,
-            prCount = progressCalculator.countPersonalRecords(
-                session = this,
-                priorCompletedSessions = getRecentCompletedSessions(
-                    limit = PERSONAL_RECORD_HISTORY_SESSIONS
-                )
-            ),
-            unit = weightUnit,
-            completedAtTimestamp = completedAtTimestamp ?: startedAtTimestamp
-        )
 
     override suspend fun cancelWorkout(sessionId: String) {
         require(sessionId.isNotBlank()) { "sessionId must not be blank." }
-        check(sessionDao.deleteActiveSession(sessionId) == 1) {
-            "Workout session '$sessionId' was not found or is not in progress."
+        if (sessionDao.deleteActiveSession(sessionId) != 1) {
+            throw wallcrawl.elopenmike.com.core.model.ProgramException(wallcrawl.elopenmike.com.core.model.ProgramFailure.MISSING_OR_NOT_ACTIVE)
         }
     }
 
@@ -460,7 +503,6 @@ class OfflineWorkoutRepository(
         const val MAX_LOGGED_WEIGHT = 100_000.0
         const val MAX_LOGGED_DURATION_SECONDS = 86_400
         const val MAX_LOGGED_DISTANCE_METERS = 1_000_000.0
-        const val PERSONAL_RECORD_HISTORY_SESSIONS = 200
     }
 }
 

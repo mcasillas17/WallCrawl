@@ -4,24 +4,22 @@
 
 # WallCrawl
 
-WallCrawl is an open-source, local-first workout planner and progress tracker
-for Android. It is building toward a private on-device coach that chooses
-workouts from a constrained exercise catalog, with workout data stored locally
-under an explicit [backup and privacy policy](docs/privacy.md).
+WallCrawl is an open-source, **private, offline workout app for Android**.
+Plan workouts, log training, and understand your progress without an account or
+network connection. Your profile and training history are stored locally, with
+user-owned export, restore, and deletion under an explicit
+[backup and privacy policy](docs/privacy.md).
 
-This repository currently contains the working application around that future
-model: first-run onboarding with conservative equipment defaults, profile
-constraints and local movement-capability inputs, a complete bundled catalog,
-structured workout generation and
-validation, reusable custom workout templates, type-aware active set logging
-with no fabricated starting loads, a complete English and neutral Latin American
-Spanish interface, Room persistence with user-owned export,
-restore, and deletion, workout-history context,
-experience-aware exercise ordering, a production reviewed capability-
-evidence soft-penalty relaxation, a production reviewed state-based
-dose/effort/rest policy, and progress calculations. The current
-`FakeWorkoutPlanner` is deliberately replaceable; no production local LLM
-runtime is integrated yet.
+The app combines first-run onboarding, equipment and movement preferences, a
+complete bundled exercise catalog, rules-based workout generation and validation,
+reusable custom templates, and type-aware set logging with no fabricated starting
+loads. Single-variable progression, user-controlled deload, optional four-week programs,
+progress tracking and read-only workout history help you understand what was planned and what you
+performed. The interface is available in English and neutral Latin American Spanish.
+
+Workout recommendations use explicit rules and recorded training history.
+Model downloads and model-driven workout features are not part of the product
+direction; the app's existing deterministic planner remains the foundation.
 
 ## Screenshots & App Experience
 
@@ -39,7 +37,7 @@ WallCrawl supports **Dark Theme** (stealth suit graphite aesthetic), **Light The
   <img src="art/screenshots/profile-screen.png" width="24%" alt="Training Profile & Preferences (Dark)" />
   <img src="art/screenshots/profile-screen-light.png" width="24%" alt="Training Profile & Preferences (Light)" />
   <img src="art/screenshots/workout-templates-light.png" width="24%" alt="My Workouts (Light)" />
-  <img src="art/screenshots/template-editor-light.png" width="24%" alt="Workout Builder (Light)" />
+  <img src="art/screenshots/template-editor-light.png" width="24%" alt="Workout Builder (Light): the Loads in control with Kilograms selected and one exercise row whose summary reads 3 sets · 6–8 · 45.36 KG · rest 90 s" />
 </p>
 <p align="center">
   <img src="art/screenshots/profile-your-data.png" width="24%" alt="Your Data card on the Training Profile screen: export, restore, and delete-all controls, with restore explaining that it needs a fresh start" />
@@ -59,15 +57,56 @@ WallCrawl supports **Dark Theme** (stealth suit graphite aesthetic), **Light The
 
 - **Today Recommendation**: Offline planner-generated routine tailored to equipment and training goals, with instant regeneration and custom routine shortcuts.
 - **My Workouts & Templates**: Manage and launch saved custom routines with total sets, exercise counts, and quick-start actions.
-- **Custom Workout Builder**: Interactive routine editor with full 302-exercise bottom sheet picker, drag/reorder controls, and type-aware target set steppers.
+- **Custom Workout Builder**: Interactive routine editor with full 302-exercise bottom sheet picker, move controls for ordering, type-aware editing of every prescription target, unit-safe loads, and unsaved drafts recovered after configuration change or background process death.
 - **Exercise Library**: Searchable catalog of 302 exercises across all muscle groups and equipment types.
 - **Active Workout Session**: Type-aware logging for load/reps, bodyweight reps, assisted reps, duration, and distance/duration, with one-tap set completion, plus/minus and text entry for every value, a local rest countdown, optional RPE/RIR, animated SVG movement previews, and previous performance comparisons.
-- **Workout Summary**: Post-workout card displaying session duration, total volume lifted, sets completed, and personal records set against your logged history.
-- **Progress Tracking**: Calendar-week logged workouts, completed sets, reps and external-load volume, with reviewed primary dose and overlapping muscle involvement clearly separated. Includes weekly streaks, strength trends, and recent history.
+- **Workout Summary**: The existing Finish flow shows recorded duration, external-load volume, completed sets, and records against genuinely earlier performance. View workout details opens the read-only record; Done returns to Progress.
+- **Progress Tracking & History**: Calendar-week activity and separately labelled reviewed dose, weekly streaks, and strength trends, plus an Over time card that charts 4–52 calendar weeks for all exercises, one exercise or one muscle, whose week rows list the workouts behind each week and whose data points open their workout. Tap a completed-workout card to reopen its frozen targets, performed sets, feedback and recorded decision reasons. View all workouts browses older sessions in fixed 20-workout pages.
 - **Training Profile & App Preferences**: Full local customization of app language (System default / English / Español) and theme preference (Auto System / Dark Mode / Light Mode) with compact switchers, multi-select fitness goals, preferred weight units (LBS/KG), session duration targets, available gym equipment, return-after-break calibration, muscle priorities, and seven movement preferences.
 - **Your Data**: Export everything stored on the device to one versioned, checksummed file you choose the destination for; restore it onto a fresh start; or delete every local record behind an explicit destructive confirmation. Restore is also offered on the first onboarding step — a quiet button under Continue opens the whole flow in a sheet — so a reinstall does not have to build a throwaway profile first.
 - **Language**: English and neutral Latin American Spanish across the whole app, following the device by default, switchable from a chip in the onboarding wizard's header before any details are entered and from Training Profile → App preferences, and stored as a device setting rather than as part of the profile or the export archive.
 - **Credits & Licenses**: In-app attribution for the bundled exercise artwork, reachable from the Training Profile screen.
+
+### Optional four-week programs
+
+Open **Today or Progress → Manage program** to start an optional sequence: four
+completion-driven weeks in two two-week blocks. Enrollment captures your primary
+goal, selected goals and preferred frequency of 2–6 sessions per week, for 8–24 slots.
+On Today, explicitly choose **Program session** or **Ordinary workout** before starting;
+manual templates remain available. Only a program session counts toward the sequence.
+
+A confirmed **Finish** advances one slot, including a partial or zero-set workout.
+Finished sessions appear in workout counts, including zero-set workouts. Only actually
+completed sets earn set, performance or reviewed-dose credit.
+**Cancel** deletes the active session and its membership and leaves that slot next.
+Program weeks can take longer than seven days: missed sessions wait, without catch-up
+volume. Calendar-week allowances stay shared with ordinary and manual workouts.
+
+Pause and resume keep your position. Restart or replacement needs confirmation and
+creates a new run; completed history and accepted/consumed deload choices stay intact.
+Replacement captures the current profile. Goal or frequency changes require restoring
+those captured settings or replacing the program; equipment, constraints, capabilities
+and units stay live for the next recommendation. An active workout keeps its frozen plan.
+All program management waits until any active workout is finished or cancelled.
+Completion ends the sequence without automatic reenrollment or boundary deloads.
+
+If program planning fails, its position stays put: use Retry, edit the profile, or
+explicitly choose ordinary/manual work. Resume and logging remain available during
+program errors. Unsupported program versions allow supported recovery actions such as
+Cancel or, with no active workout, explicit replacement; they do not silently advance.
+History shows recorded membership independently of the latest run. Older and manual
+sessions retain honestly absent membership.
+
+<p align="center">
+  <img src="art/screenshots/program-today-en.png" width="24%" alt="Today with the complete program-week and shared calendar-allowance explanation and explicit Program session selection" />
+  <img src="art/screenshots/program-completed-en.png" width="24%" alt="Completed eight-slot program with recorded-workout links and no invented next slot" />
+  <img src="art/screenshots/program-partial-finish-en.png" width="24%" alt="Partial Finish confirmation distinguishing program advancement from actual completed-set credit" />
+</p>
+<p align="center">
+  <em>Actual API 36 emulator captures with disposable test profiles. See
+  <a href="docs/localization.md#program-controls-and-large-text-evidence">Spanish management, confirmation and large-text evidence</a>
+  and the <a href="docs/architecture.md#optional-multi-week-programs">persistence and recovery contract</a>.</em>
+</p>
 
 ### Progress: activity and reviewed dose
 
@@ -101,6 +140,78 @@ convention measures physiological stimulus or diagnoses readiness. See the
 </p>
 <p align="center">
   <em>Disposable example logs from exercises outside the accepted cohort; production metadata (182 `AI_ACCEPTED`, 0 `APPROVED`) is unchanged by these captures.</em>
+</p>
+
+### See progress over time
+
+Below the weekly cards, **Over time** charts the last 4, 12, 26 or 52 calendar weeks
+(Monday to Sunday in your time zone) for all exercises, one exercise or one muscle. Its
+filters change only that card. Measures are workouts, completed sets, reps, load volume
+(load × reps, converted to your unit before adding) and reviewed dose. Each one counts only
+work it applies to, so a plank never becomes "0 reps". This week's bar is hatched and
+labelled "so far", and weeks are never compared with each other as if a partial week were
+complete.
+
+Every bar has a row that reads its value aloud; opening a week lists the workouts behind it,
+and each opens its own history. For one exercise, **Exercise performance** shows each
+workout's best comparable work set per measurement shape and, with at least two workouts,
+the recorded difference between the earliest and latest. It shows no percentage, trend
+line or strength estimate. Assisted reps and distance-with-time work are listed but not
+compared. Progression decisions recorded by those workouts open the workout that recorded
+them. Muscle filters use today's catalog classification, which the card states. Nothing is
+written, uploaded or re-planned. See the [design](docs/superpowers/specs/2026-10-31-progress-analytics-design.md)
+for every formula and limit.
+
+<p align="center">
+  <img src="art/screenshots/progress-analytics-en.png" width="24%" alt="English Over time card in light mode: range, scope and measure chips, a total including this week so far, and four weekly bars with the current week hatched" />
+  <img src="art/screenshots/progress-analytics-week-en.png" width="24%" alt="The current week's row expanded to list the workout behind it, which opens that workout's history" />
+  <img src="art/screenshots/progress-analytics-performance-es.png" width="24%" alt="Spanish dark mode: weekly rows for one exercise and exercise performance comparing 8 reps with 12 reps as a recorded +4 reps, not a percentage" />
+</p>
+<p align="center">
+  <em>Captured on the API 36 emulator from disposable Room history seeded by
+  <code>WorkoutHistoryNavigationTest</code>.</em>
+</p>
+
+### Reopen a recorded workout
+
+From **Progress**, tap a completed workout or choose **View all workouts** and use
+**Older workouts / Newer workouts**. Every completed session is reachable, not just
+the ten shown on the overview. Back returns to the list or summary you came from.
+History has no logging, editing, deletion, re-planning or repeat-workout action.
+
+Detail reads the persisted session: original title and notes, recorded units and
+times, exercise prescriptions, each set's separate planned targets and actual
+measurements, warm-up/work classification, completed/stopped/unresolved outcomes,
+effort, manageable feedback and rest guidance. Missing values say **Not recorded**;
+assistance is not lifted load. Exercise IDs remain usable even if the catalog no
+longer contains them. Current profile, template, catalog programming and planner
+output never supply historical facts.
+
+Stored progression holds/advances, accepted deload and ranking/validation reasons
+are decoded without running today's policies. Technical identities and accounting
+are expandable. Manual and older sessions can legitimately have no recommendation
+record; unsupported versions remain identifiable, and malformed known records
+produce a retryable error. Recorded source sessions are distinct from ordinary
+previous performance; an absent source does not become an invented before/after
+prescription or growth percentage.
+
+An earlier comparison must have completed **strictly before this workout started**;
+timestamp ties and overlapping workouts do not establish that baseline. Summary
+records use all eligible earlier evidence through bounded SQL aggregates rather
+than the overview's recent-history sample. Later stronger workouts cannot rewrite
+an old achievement. See the [design contract](docs/superpowers/specs/2026-09-21-workout-history-detail-design.md)
+and [metric contract](docs/weekly-dose-ledger.md#individual-workout-history-and-records).
+
+<p align="center">
+  <img src="art/screenshots/history-detail-en.png" width="24%" alt="English read-only workout detail with original notes, recorded kilogram units and persisted summary metrics" />
+  <img src="art/screenshots/history-older-en.png" width="24%" alt="Second history page exposing older completed workouts beyond the ten-entry Progress overview" />
+  <img src="art/screenshots/history-detail-es-dark.png" width="24%" alt="Spanish dark-theme history labels around the original English session title and notes" />
+  <img src="art/screenshots/history-exercise-es-large-light.png" width="24%" alt="Spanish light-theme detail at 320 dp and 1.8 font scale, preserving a missing catalog ID and original exercise notes" />
+</p>
+<p align="center">
+  <em>Actual API 36 emulator captures through the Room-backed application navigation,
+  using disposable example records, not production user data. The missing catalog ID
+  and absent older recommendation are deliberate examples; no metadata approval is implied.</em>
 </p>
 
 ### English & Spanish
@@ -151,7 +262,8 @@ how to add a string, an exercise, or a language.
   exclusions, user-owned export/restore/deletion, archive compatibility, recovery
   tradeoffs, and platform limitations.
 - [Custom Workouts](docs/custom-workouts.md) documents the user flow, full-catalog
-  selection rules, frozen session snapshots, and current editor limitations.
+  selection rules, type-aware target editing, template units, unsaved-draft
+  recovery and its limits, and frozen session snapshots.
 - [Localization](docs/localization.md) explains where each kind of text lives, what
   is deliberately never translated, the exercise-translation overlay and its
   stable-ID boundary, number and input formatting, and how to add a string, an
@@ -161,6 +273,9 @@ how to add a string, an exercise, or a language.
   reviewed-enabled personas' weeks are reconstructed through, the whole-program validation of
   every persona that produces a proposal, the asserted planner invariants, and which release
   checks run in which workflow.
+- [Android target SDK 37](docs/android-target-sdk-37.md) records the Android 16 and 17
+  behavior review, the one Back fix it needed, the emulator evidence, and what CI runs on
+  API 26, 36 and 37.
 - The phase-specific design and implementation records under
   [`docs/superpowers/`](docs/superpowers/) provide historical decision context.
 
@@ -177,7 +292,7 @@ onboarding step offers restore on its own:
 
 | Control | What it does |
 | --- | --- |
-| Export my data | Writes one JSON archive — profile, capabilities, templates, and every session including one in progress — to a document you pick, with a format version and a SHA-256 checksum |
+| Export my data | Writes one JSON archive — profile, capabilities, templates, program enrollment and frozen memberships, and every session including one in progress — to a document you pick, with a format version and a SHA-256 checksum |
 | Restore from a file | Reads an archive into a **fresh start only**: no workouts, no templates, onboarding unfinished. It never merges and never overwrites |
 | Delete all local data | Removes every local record behind a confirmation naming what is lost, then returns to first-run onboarding |
 
@@ -223,6 +338,7 @@ Bundled catalog ─────────┤  profile + bounded history
                                           ▼
                               set logging → completed history
                                    ├─ ProgressRepository → logged activity + reviewed ledger
+                                   ├─ read-only history → stored targets, outcomes and reasons
                                    └─ next generation context
 ```
 
@@ -287,8 +403,7 @@ capability-evidence soft-penalty suppression without changing browse or
 manual-workout access. A restriction cannot be bypassed by an easier regression:
 a supported regression must itself be cleared for every selected sensitivity.
 
-The fake planner uses the same `WorkoutPlanner` contract intended for a future
-Qwen, Gemma, or LiteRT-backed implementation. It only selects IDs from
+The production rules-based planner implements `WorkoutPlanner` and only selects IDs from
 `WorkoutGenerationContext.allowedExercises`. `ExercisePrescription` rejects
 malformed set, rep, weight, rest, and duration values as it is constructed, and
 `GeneratedWorkoutValidator` rejects unknown or disallowed exercise IDs, an empty
@@ -330,16 +445,23 @@ the named `DURATION_ESTIMATOR_V1`, all under the
 At most one deterministic repair pass may reduce sets; it never weakens a constraint,
 widens the candidate set, or invents a load, and it is disabled when a workout is started.
 Exceeding a configured allowance is a policy mismatch, not a medical judgement, and no
-weekly minimum, automatic increase, fatigue budget, or recency rule was added.
+weekly minimum, automatic increase, fatigue budget, or blocking recency rule was added.
+
+Within that legal set, the planner also applies a
+[bounded frequency/recency scheduling preference](docs/architecture.md#frequency-and-recency-scheduling).
+It can prioritize repeating familiar direct-primary practice using completed-work dates
+and the preferred weekly schedule, below focus, capability, supported-regression and
+experience priorities. It neither rewards exercise novelty nor declares a muscle recovered.
 
 A workout started from a recommendation records how it was decided — the validator,
 estimator, catalog, review, policy and ledger versions, the adaptation state, the
 accounting week and zone, ordered reason codes, and the completed, proposed and allowed
 set counts — in the same transaction that writes the session, and that record travels in
-the export archive. It carries no name, note, load, repetition, effort value, or body
-measurement.
+the export archive. It carries no raw name, note, load, repetition, effort value, or body
+measurement fields. Its local context digest derives from consumed planning inputs for
+freshness and is not an anonymization guarantee.
 
-Guidance is persisted with templates and frozen session snapshots in Room schema 13.
+Guidance is persisted with templates and frozen session snapshots in Room schema 16.
 The active timer still reads the persisted exact seconds; add-time, skip, and dismiss are
 one-off timer actions rather than durable preference changes. Production now runs
 reviewed eligibility because an owner-authorized audit accepted 182 of the bundled
@@ -395,8 +517,44 @@ qualifying non-warm-up work and explicit `feltManageable == true`. Completion
 and stop fields only disqualify invalid observations; they do not create
 evidence on their own. Null/false manageable answers, completion alone, RPE,
 and RIR do not qualify. RPE/RIR remain stored for logging and are unused by
-capability evidence. Progression and deload logic still do not consume the
-feedback.
+capability evidence. Progression separately requires explicit manageable feedback
+and qualifying RPE or RIR in two comparable completed attempts; missing feedback
+never authorizes an increase.
+
+## One-variable progression and one-workout deload
+
+Automatic recommendations explain one proposed change: load +2.5 kg (converted
+to the selected unit), one more rep at each end of a bodyweight rep range,
+assistance -2.5 kg, or duration +5 seconds. These are versioned product choices,
+not physiological thresholds. Exact exercise identity, matching prescriptions,
+valid completed work and explicit feedback are required. Otherwise the plan
+explains why progression is held. Unknown load and assistance stay unknown.
+The old history-only increment remains isolated to manual/disabled defaults.
+
+Today offers **Request fewer sets**, or an optional offer when a break is
+explicitly reported. Before accepting, it previews the held working targets:
+one fewer work set per exercise, never below one, for the next automatic workout
+only. Any suggested progression increase is paused. Declining or dismissing
+does not reduce the workout; acceptance can be cancelled before start.
+An accepted choice must be cancelled before requesting another. Choices survive
+app restart, profile edits and export/restore, and are consumed
+atomically when an automatic workout starts. Manual templates and in-progress
+workouts are never rewritten. There is no fatigue diagnosis or scheduled deload.
+
+See the [Package 9 contract](docs/superpowers/specs/2026-09-19-progression-and-deload-design.md)
+for comparison rules, policy versions, state precedence, persistence and limits.
+
+<p>
+  <img src="art/screenshots/progression-deload-offer-en.png" width="24%" alt="English deload offer showing held reference targets before acceptance" />
+  <img src="art/screenshots/progression-deload-accepted-en.png" width="24%" alt="Accepted one-workout choice restored after terminating and relaunching the app" />
+  <img src="art/screenshots/progression-deload-declined-es.png" width="24%" alt="Spanish Today after declining and restarting: ordinary ten-set workout retained" />
+  <img src="art/screenshots/progression-deload-large-es.png" width="24%" alt="Spanish Today at 1.8 times system font scale, with readable stacked weekly summary and request control" />
+</p>
+
+These are actual light-theme Pixel 7 API 36 emulator captures using a test
+profile and the bundled accepted catalog. Acceptance and decline were exercised
+through the installed app and survived real process termination/relaunch; no
+workout was started for these screenshots.
 
 ## Architecture
 
@@ -416,6 +574,7 @@ feature/today/          daily recommendation and regeneration
 feature/templates/      local custom-workout library and editor
 feature/workout/        active workout logging and completion
 feature/progress/       history-derived progress UI
+feature/program/        optional completion-driven program management
 feature/exercises/      searchable/filterable catalog browser
 feature/profile/        local goals, equipment, units, and movement preferences
 ```
@@ -464,7 +623,7 @@ coaching note, and a higher-complexity accepted exercise remains selectable when
 only fillable option. Reviewed `complexity` also supplies a separate, harder rule on the
 automatic path:
 `ComplexityTier.ADVANCED` work is temporarily excluded outright while a profile is
-`UNCALIBRATED` or `RETURNING`, unless a demonstrated progression family or an accepted
+any adaptation state, unless a demonstrated progression family or an accepted
 `SUPPORTED` regression is available — that is a hard eligibility exclusion, not a soft
 ranking demotion, and it applies only to automatic planning.
 
@@ -535,9 +694,10 @@ Custom workout templates are stored locally in Room. Starting a template
 creates a frozen active-session snapshot, so later template edits or deletion
 do not rewrite workout history. Completed measurements retain their exercise
 type and feed the same history and progress pipeline used by planned workouts.
-Detailed target editing and unsaved-draft process restoration are intentionally
-out of scope for this phase; the editor currently saves exercise order and set
-count with conservative, type-specific targets.
+The editor edits every target an exercise's type uses, records the unit a
+template's loads are in, and recovers an unsaved draft after a configuration change
+or a background process death; a force-stop, removal from Recents, reboot or
+uninstall loses it.
 
 Each exercise resolves to three bundled frames that animate in a lightweight
 `1 → 2 → 3 → 2` loop using Coil 3 with SVG support. The compact normalized
@@ -617,7 +777,8 @@ identifiers so imports and attribution remain reproducible.
 Requirements:
 
 - JDK 17 (the project compiles to Java 17 bytecode)
-- Android SDK platform 37, which the app compiles against; it still targets API 35
+- Android SDK platform 37, which the app compiles against and targets; `minSdk` is 26
+  (see the [target SDK 37 record](docs/android-target-sdk-37.md))
 - `JAVA_HOME` and `ANDROID_HOME` configured
 
 Gradle, the Android Gradle Plugin, and Kotlin come from the wrapper and the version
@@ -637,9 +798,12 @@ python3 -m unittest discover -s tools/release -p 'test_*.py' -v
 ```
 
 Run the targeted backup guard on a dedicated API 26-30 emulator and an API 31+
-emulator; it has been exercised on API 30 and 36. Use `ANDROID_SERIAL=<serial>`
+emulator; it has been exercised on API 26, 30, 36 and 37. Use `ANDROID_SERIAL=<serial>`
 to select a device when more than one is connected. Run the full connected suite
-on API 36, matching CI. Do not reset or erase a shared device for these checks.
+on API 36 and API 37, matching CI. Android 17's SDK packages are versioned `37.0`; its
+emulator images need emulator 37.2.11 or newer, and its AVDs need command-line tools 22 or
+newer (older `avdmanager` writes `target=android-0`). Do not reset or erase a shared
+device for these checks.
 For fresh execution evidence, append `--rerun-tasks --no-build-cache` to Gradle
 commands and inspect the reports under `app/build/test-results/` and
 `app/build/outputs/androidTest-results/`: zero, skipped, or cached tests are not
@@ -699,15 +863,44 @@ Today state, duration calculation, and visual-provider mapping. The fourteen-per
 corpus runs inside it, reconstructing the reviewed-enabled personas' training weeks with the
 shipped weekly ledger and validating the complete proposal behind every successful persona.
 Android instrumentation also validates every supported database migration chain through
-schema 13 without destructive fallback, guidance persistence, the atomic start of a session
+schema 16 without destructive fallback, guidance persistence, the atomic start of a session
 with its validation record, the weekly-ledger DAO/repository,
 capability-control semantics, template/session snapshot behavior, and the local-data archive:
-its round trip from app-written state at all three supported format versions, every rejection
+its round trip from app-written state across supported format versions 1–6, every rejection
 path for untrusted documents, transactional restore and deletion, and the destructive
 confirmation at a large font scale. It parses the
 packaged 302-exercise catalog and opens every one of its 906 SVG paths. Pull-request/main
-CI and tagged-release publication both run this connected suite on an API 36 emulator;
-a tag cannot publish its prerelease unless instrumentation succeeds.
+CI and tagged-release publication both run this connected suite on API 36 and API 37
+emulators, and its `wallcrawl.elopenmike.com.app` package on an API 26 (`minSdk`) emulator;
+a tag cannot publish its prerelease unless every instrumentation run succeeds.
+
+`WorkoutHistoryRepositoryTest` exercises coherent Room reads, all measurement shapes,
+historical boundaries and more than 500 later/unrelated sessions. History ViewModel,
+presentation and Compose tests cover retry/missing/status states, stored reasons and
+narrow large-text layouts. `WorkoutHistoryNavigationTest` drives the real graph and
+Room-backed repositories, including saved-state recreation, deletion/restore, encoded
+IDs, older pages and the existing completion Done flow, and the Over time drill-down.
+Its explicit `captureHistoryScreenshots=true` argument captures the history images above
+and `progress-analytics-en`, `-week-en` and `-performance-es` into the app's
+`history-screenshots` external files directory. Gradle's connected task uninstalls the app
+afterwards, so capture with `installDebug installDebugAndroidTest` and `adb shell am instrument`.
+Its `seedHistoryDemo=true` argument additionally restores disposable logs into a **fresh,
+dedicated test installation only** for installed-app lifecycle checks.
+`ProgressAnalyticsCalculatorTest`, `ProgressAnalyticsViewModelTest`,
+`ProgressAnalyticsRepositoryTest` and `ProgressAnalyticsCardTest` cover the Over time
+formulas, saved state and stale reads, real Room bounds and no-write reads, and accessible
+UI states.
+
+`MultiWeekProgramPolicyTest`, `MultiWeekProgramPlanningTest` and
+`MultiWeekProgramProductionReplayTest` cover lifecycle, freshness, actual bundled-catalog
+replays and calendar-dose separation. `ProgramPersistenceTest`, `Migration14To15Test`,
+`LocalDataArchiveProgramTest` and `LocalDataProgramBackupRepositoryTest` cover atomic writes,
+frozen membership, archive compatibility and deletion/restore. `ProgramViewModelTest`,
+`TodayProductionLifecycleTest`, `ProgramNavigationTest`, `ProgramAccessibilityTest` and
+`ProgressScreenTest` cover errors/retry, saved state, real navigation and narrow large text.
+Installed-app checks exercised background process death and the Profile language picker;
+Spanish native-dialog evidence used physical emulator settings of 320 dp and font scale 1.8.
+These checks do not certify physical-device behavior or manual TalkBack use.
 
 ## Product and engineering principles
 
@@ -715,9 +908,10 @@ a tag cannot publish its prerelease unless instrumentation succeeds.
 - A fresh install must complete explicit onboarding before it can reach
   automatic planning; nothing about equipment, experience, or gym access is
   assumed on its behalf.
-- A future model chooses the workout, but only inside a deterministic legal
-  exercise set created from equipment, exclusions, and hard limitations.
-- Model output is structured and always validated before persistence or UI.
+- Deterministic rules choose workouts from the eligible exercise set created
+  from equipment, exclusions, and hard limitations.
+- Generated recommendations are structured and validated before display and again
+  before starting a session.
 - No unconfirmed starting load is ever prescribed: a `WEIGHT_REPS` target
   weight comes only from bounded history or a load the user explicitly
   confirmed, never a sample or catalog default.
@@ -745,7 +939,8 @@ a tag cannot publish its prerelease unless instrumentation succeeds.
 
 Current status, dependency order, and upcoming work live in the
 [WallCrawl roadmap](ROADMAP.md). Detailed design and implementation records remain under
-[`docs/superpowers/`](docs/superpowers/) for execution context.
+[`docs/superpowers/`](docs/superpowers/) for historical context; superseded model
+proposals are not active implementation plans.
 
 ### Profile gender and exercise artwork
 

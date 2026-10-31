@@ -7,10 +7,16 @@ import wallcrawl.elopenmike.com.core.model.RecommendationRecord
 import wallcrawl.elopenmike.com.core.model.TrainingProgramStatePolicyVersion
 import wallcrawl.elopenmike.com.core.model.WorkoutRankingReason
 import wallcrawl.elopenmike.com.core.model.WorkoutRankingReasonCode
+import wallcrawl.elopenmike.com.core.model.ProgressionProvenance
+import wallcrawl.elopenmike.com.core.model.ProgressionReasonCode
+import wallcrawl.elopenmike.com.core.model.DeloadSource
+import wallcrawl.elopenmike.com.core.model.DeloadReasonCode
+import wallcrawl.elopenmike.com.core.model.DeloadRecommendationProvenance
 
 /** The versioned whole-program validation contract a recommendation was checked under. */
 enum class ProgramValidatorVersion {
-    WHOLE_PROGRAM_V1
+    WHOLE_PROGRAM_V1,
+    WHOLE_PROGRAM_V2
 }
 
 /**
@@ -40,9 +46,9 @@ enum class RecommendationOutcome {
  * ## What it deliberately omits
  *
  * The plan's own exercises and prescriptions are not duplicated: a started session already
- * stores them. Nothing personal is present — no name, note, load, repetition count, effort
- * value, body measurement, or free text — so a recorded snapshot can never become a
- * fingerprint of someone's training log.
+ * stores them. Raw names, notes, loads, repetitions, effort and body measurements are not
+ * copied into this record. Its context digest does summarize consumed history projections
+ * for freshness; that local change-detection provenance is not an anonymization guarantee.
  *
  * ## What it does not claim
  *
@@ -77,9 +83,18 @@ data class RecommendationSnapshot(
     /** Ordered, deduplicated reason codes. Empty when nothing was reported. */
     val reasonCodes: List<ProgramViolationCode>,
     val rankingReasons: List<WorkoutRankingReason> = emptyList(),
-    val doseAccounting: List<MuscleDoseAccounting>
+    val doseAccounting: List<MuscleDoseAccounting>,
+    val schedulingPolicyVersion: String? = null,
+    val generationIndex: Int? = null,
+    val deloadDecisionRevision: Long? = null,
+    val acceptedDeloadOfferId: String? = null,
+    val acceptedDeloadSource: DeloadSource? = null,
+    val progression: List<ProgressionProvenance> = emptyList(),
+    val expectedProgramHeader: wallcrawl.elopenmike.com.core.model.ProgramHeader? = null,
+    val programSession: wallcrawl.elopenmike.com.core.model.ProgramSessionSnapshot? = null
 ) {
     init {
+        require(generationIndex == null || generationIndex >= 0)
         require(contextIdentity.isNotBlank()) { "A snapshot carries a context identity." }
         require(reasonCodes.size == reasonCodes.distinct().size) {
             "Reason codes are deduplicated before they are recorded."
@@ -121,7 +136,16 @@ fun RecommendationSnapshot.asRecord(
     timeZoneId = timeZoneId,
     profileRevision = profileRevision,
     contextIdentity = contextIdentity,
-    reasonCodes = reasonCodes.map { it.name } + WorkoutRankingReasonCode.encode(rankingReasons),
+    reasonCodes = reasonCodes.map { it.name } + WorkoutRankingReasonCode.encode(rankingReasons) +
+        listOfNotNull(schedulingPolicyVersion, generationIndex?.let { "PLANNER_GENERATION_V1:$it" }) +
+        ProgressionReasonCode.encode(progression) +
+        DeloadReasonCode.encode(deloadDecisionRevision?.let {
+            DeloadRecommendationProvenance(it, acceptedDeloadOfferId, acceptedDeloadSource)
+        }),
     doseAccounting = doseAccounting,
-    recordedAtEpochMillis = recordedAtEpochMillis
+    recordedAtEpochMillis = recordedAtEpochMillis,
+    programAssociationDigest = programSession?.let { snapshot ->
+        val profileId = requireNotNull(expectedProgramHeader).profileId
+        MultiWeekProgramPolicy.associationDigest(wallcrawl.elopenmike.com.core.model.ProgramAssociation(sessionId, profileId, snapshot))
+    }
 )

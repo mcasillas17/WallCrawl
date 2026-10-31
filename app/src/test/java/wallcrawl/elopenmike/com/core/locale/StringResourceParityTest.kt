@@ -185,6 +185,8 @@ class StringResourceParityTest {
          * that are pure layout.
          */
         val IDENTICAL_BY_DESIGN = setOf(
+            "analytics_contributor_row",
+            "analytics_decision_row",
             "value_not_available",
             "answer_no",
             "priority_normal",
@@ -202,6 +204,10 @@ class StringResourceParityTest {
             "today_stat_duration",
             "today_exercise_position",
             "editor_position",
+            // "RIR" is the same abbreviation for repetitions in reserve in both languages.
+            "editor_summary_effort",
+            // A number next to its unit, with no words of its own.
+            "editor_summary_load",
             "previous_load",
             "previous_weight_reps",
             "previous_entry",

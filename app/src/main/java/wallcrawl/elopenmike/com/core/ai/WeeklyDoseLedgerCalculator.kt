@@ -222,7 +222,7 @@ private fun WorkoutExercise.resolveAttribution(
  * The classification is exhaustive on purpose: adding a set type later fails compilation
  * here, so a new type has to be credited or excluded deliberately rather than by default.
  */
-private val WorkoutSet.isCreditableWorkSet: Boolean
+internal val WorkoutSet.isCreditableWorkSet: Boolean
     get() = isCompleted && when (type) {
         // Warm-ups are preparation, not exposure, however they were logged.
         SetType.WARMUP -> false

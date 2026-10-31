@@ -41,6 +41,18 @@ class WorkoutLifecycleDaoTest {
     }
 
     @Test
+    fun summaryFinishRetryReturnsPersistedSummaryWithoutRewritingCompletion() = runBlocking {
+        val dao = database.workoutSessionDao()
+        dao.insertWorkout(sessionEntity("retry"), emptyList(), emptyList())
+        val first = dao.completeWorkoutAndReadSummary("retry", 2_000L, 20,
+            wallcrawl.elopenmike.com.core.progress.ProgressCalculator())
+        val retry = dao.completeWorkoutAndReadSummary("retry", 3_000L, 30,
+            wallcrawl.elopenmike.com.core.progress.ProgressCalculator())
+        assertThat(retry).isEqualTo(first)
+        assertThat(dao.getSessionWithDetails("retry")!!.session.completedAtTimestamp).isEqualTo(2_000L)
+    }
+
+    @Test
     fun concurrentStarts_createOnlyOneActiveSession() = runBlocking {
         val sessionDao = database.workoutSessionDao()
         database.userProfileDao().insertOrUpdate(profileEntity())

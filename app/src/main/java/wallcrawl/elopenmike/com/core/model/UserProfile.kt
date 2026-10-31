@@ -45,6 +45,13 @@ data class UserProfile(
 
     companion object {
         const val DEFAULT_PROFILE_ID = "default_user"
+
+        /**
+         * Read-compatibility bound already supported by local archives. Derived decisions
+         * must accept these persisted values without clamping or rewriting them.
+         * Interactive profile edits retain their separate, stricter 0..520-week bound.
+         */
+        const val MAX_PERSISTED_BREAK_WEEKS = 5_200
     }
 }
 
@@ -88,6 +95,27 @@ fun convertWeight(value: Double, from: WeightUnit, to: WeightUnit): Double {
         WeightUnit.KG -> value / KILOGRAMS_PER_POUND
     }
 }
+
+/**
+ * [value] at the precision an editable field shows, rounded half-up. A positive value never
+ * becomes 0, an explicit zero being a different statement from a small one: anything too
+ * small to show becomes the smallest step, 0.01.
+ */
+fun roundForEditing(value: Double): Double {
+    val rounded = java.math.BigDecimal(value)
+        .setScale(MeasurementPrecision.EDITABLE_FRACTION_DIGITS, java.math.RoundingMode.HALF_UP)
+    if (value > 0.0 && rounded.signum() == 0) {
+        return java.math.BigDecimal.ONE.movePointLeft(MeasurementPrecision.EDITABLE_FRACTION_DIGITS).toDouble()
+    }
+    return rounded.toDouble()
+}
+
+/**
+ * [convertWeight] at editable precision ([roundForEditing]), so a converted template load
+ * and the session started from it always agree: 0.01 lb is 0.0045 kg, and becomes 0.01 kg.
+ */
+fun convertWeightForEditing(value: Double, from: WeightUnit, to: WeightUnit): Double =
+    roundForEditing(convertWeight(value, from, to))
 
 private const val KILOGRAMS_PER_POUND = 0.45359237
 

@@ -19,8 +19,13 @@ import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
  * exactly as the real repository does, so ViewModel tests observe the same state
  * transitions the app does -- including the same rejections.
  */
-internal class FakeRepository(initialSession: WorkoutSession) : WorkoutRepository {
+internal class FakeRepository(initialSession: WorkoutSession?) : WorkoutRepository {
     private val session = MutableStateFlow<WorkoutSession?>(initialSession)
+    var failSummaryReads = false
+
+    fun publishSession(value: WorkoutSession?) {
+        session.value = value
+    }
 
     var completeCalls: Int = 0
         private set
@@ -50,6 +55,9 @@ internal class FakeRepository(initialSession: WorkoutSession) : WorkoutRepositor
     override fun observeCompletedWorkoutCountInRange(startTimestamp: Long, endTimestampExclusive: Long): Flow<Int> = flowOf(0)
 
     override suspend fun getRecentCompletedSessions(limit: Int): List<WorkoutSession> = emptyList()
+    override suspend fun getRecentSessions(limit: Int): List<WorkoutSession> = emptyList()
+    override suspend fun getRecommendationRecords(sessionIds: List<String>): List<wallcrawl.elopenmike.com.core.model.RecommendationRecord> = emptyList()
+    override suspend fun getCompletedSessionsInRange(startTimestamp: Long, endTimestampExclusive: Long): List<WorkoutSession> = emptyList()
 
     override suspend fun startWorkoutFromGenerated(
         generated: GeneratedWorkout,
@@ -123,6 +131,7 @@ internal class FakeRepository(initialSession: WorkoutSession) : WorkoutRepositor
     }
 
     override suspend fun getWorkoutSummary(sessionId: String): WorkoutSummary? {
+        check(!failSummaryReads) { "Summary read failed" }
         val current = session.value ?: return null
         if (current.status != SessionStatus.COMPLETED) return null
         return current.toSummary()

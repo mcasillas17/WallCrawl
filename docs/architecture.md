@@ -7,11 +7,13 @@ the current architecture.
 
 ## Product boundary
 
-WallCrawl is local-first. The exercise catalog, profile, workout templates,
+WallCrawl is a private, offline workout app. The exercise catalog, profile, workout templates,
 active workout, completed history, and progress data are stored and processed locally.
-There is no account requirement, catalog network request, or production LLM in
-the current application. Movement-capability answers add no cloud sync,
-analytics, Health Connect, Wear OS, network, or model data flow.
+Workout recommendations come from deterministic rules, not a model runtime.
+There is no account requirement or catalog network request. Movement-capability
+answers add no cloud sync, analytics, Health Connect, Wear OS, network, or model
+data flow. Model integration is not planned; see the
+[recorded product direction](../ROADMAP.md#recorded-decisions).
 The app opts out of implicit Android backup and excludes app data from cloud
 backup and device transfer through both legacy and modern rules. The
 [privacy policy and storage-boundary diagram](privacy.md) distinguish that
@@ -38,13 +40,14 @@ Bundled catalog ─────────┤  profile + history → filter →
                                           ▼
                               completed local history
                                  ├─ progress metrics
+                                 ├─ read-only targets, outcomes and decision detail
                                  └─ future planner context
 ```
 
 Automatic recommendations and manual templates intentionally share exercise
 IDs, prescriptions, active-session persistence, logging, and analytics. This
-keeps a future local model behind a replaceable planning boundary instead of
-making the rest of the app depend on one inference implementation.
+keeps planning policies separate from logging and persistence while giving both
+entry points the same recorded-workout and history contracts.
 
 ## Source organization
 
@@ -60,7 +63,7 @@ boundaries:
 | `core/io` | Bounded reading shared by the parsers that accept untrusted input |
 | `core/locale` | The app language preference and the platform per-app locale boundary |
 | `core/exercise` | Catalog search/filtering and the visual-provider boundary |
-| `core/ai` | Context building, workout planning, prescription defaults, and validation |
+| `core/ai` | Deterministic context building, workout planning, prescription defaults, and validation; the historical package name does not imply a model runtime |
 | `core/progress` | Pure calculations over completed sessions |
 | `core/ui` | Theme, reusable Compose components, locale-aware number formatting and parsing, and the read side of the translation overlay |
 | `feature/*` | Screen state, ViewModels, and Compose UI for each product area |
@@ -215,7 +218,10 @@ state:
 
 - the current profile and preferences;
 - at most eight recent completed sessions;
+- at most eight recent attempts of every status, plus a bounded batch of their
+  recommendation records and the current durable deload choice;
 - normalized exercise history and recently trained muscles;
+- a separate bounded fourteen-local-date completed-work range for scheduling;
 - the full bundled catalog after hard filtering.
 
 Production filtering is `ExerciseEligibilityPolicy` — the reviewed eligibility path,
@@ -242,8 +248,7 @@ held by 182 bundled records) — requires one complete reviewed equipment altern
 the source-bound fixed-anchor minimum (also for supported-regression availability),
 preserves explicit exclusions, rejects required capabilities marked `AVOID`, fails
 closed for joint-sensitive constraints that lack reviewed mappings, enforces
-`LOW_IMPACT_ONLY`, and temporarily blocks undemonstrated `ADVANCED` work while
-uncalibrated or returning. A supported regression lifts that ceiling only when the
+`LOW_IMPACT_ONLY`, and blocks undemonstrated `ADVANCED` work in every state. A supported regression lifts that ceiling only when the
 regression itself is below the advanced ceiling or its family has demonstrated history.
 `LIMITED` and `UNKNOWN` capability requirements remain typed soft preferences rather
 than becoming favorable assumptions.
@@ -275,6 +280,8 @@ and keeps. Applied ranking explanations remain structured as `WorkoutRankingReas
 values. The supported-regression reason records the selected target, the directly linked
 source, and the exact `LIMITED` capability that triggered the preference; English and
 Spanish rendering happens only at the screen boundary.
+Scheduling reasons additionally name the preferred exercise, its counterfactual alternative,
+the accepted direct primary, preferred weekly frequency, and elapsed calendar dates.
 
 The supported-regression policy runs only on the planner's existing legal candidate set.
 It precomputes direct reviewed relationships before either comparator runs: both endpoints
@@ -286,10 +293,10 @@ exercise-specific `LIMITED` preference for a capability the target does not requ
 Evidence for the source suppresses this signal along with the existing capability penalty.
 There is no name, muscle, family, reverse-edge, substitution, optional-support, chain, or
 unreviewed inference. Focus and accessory-mechanics ordering remain stronger; experience,
-fatigue, and stable ID remain weaker. Compound and accessory selection share the same
+scheduling, fatigue, and stable ID remain weaker. Compound and accessory selection share the same
 precomputed map, so comparison is total and performs no graph traversal.
 
-`RecommendationSnapshot` retains applied reasons and encodes each one into four bounded
+`RecommendationSnapshot` retains applied supported-regression reasons and encodes each into four bounded
 versioned `reasonCodes`: an indexed `SUPPORTED_REGRESSION_PREFERENCE_V1` marker plus
 `PREFERRED`, `SOURCE`, and `CAPABILITY` fields. Restore rejects incomplete, duplicate,
 noncontiguous, unknown-field, or identical-endpoint structured groups. An otherwise
@@ -298,15 +305,25 @@ not rendered by an older build, matching the recommendation record's text-versio
 Reusing the existing reason-code channel avoids a Room migration or archive format change
 while preserving the decision through session creation, export, and restore.
 
-The record accepts at most 160 reason-code tokens. The current planner selects at most six
+Each scheduling reason uses six bounded `TRAINING_FREQUENCY_RECENCY_V1.<index>` tokens:
+the marker plus preferred ID, alternative ID, direct primary, weekly frequency and elapsed
+calendar dates. Current structured reason types share a contiguous index space; malformed
+current groups are rejected rather than partially rendered.
+
+The record accepts at most 228 reason-code tokens. The current planner selects at most six
 exercises; comparing that result with its six-exercise no-preference baseline can therefore
 attribute at most 36 source-target inversions. Four tokens per inversion plus the single
-repair code that an accepted repaired recommendation can carry uses 145 tokens. The bound
-preserves every applied source reference without truncation and leaves the archive input
-bounded. This validation-only increase is backward compatible when reading records written
-under the former 64-token limit. A build that still enforces 64 may reject a newly written
-record containing more than 64 tokens, so this is not forward compatibility with old
-readers.
+repair code uses 145 tokens. At most six scheduling reasons use six tokens each, and
+scheduling-policy and generation-index provenance use two more: `144 + 1 + 36 + 2 = 183`.
+Package 9 adds six seven-token progression groups and three deload tokens:
+`183 + 42 + 3 = 228`. Reason tokens allow 320 characters to retain source IDs
+with their prefixes; other identity/version tokens retain the 200-character limit.
+This preserves every applied supported-regression source without truncation and bounds
+scheduling explanations to one witness per selected exercise. The validation-only increase
+reads older 64- and 160-token records unchanged; older readers may reject new records beyond
+their own limit. Package 9 separately adds Room schema 14 and archive format 4
+for owned choices, not forward-compatible promises to older readers.
+Unknown future reason-version tokens remain opaque.
 
 `GeneratedWorkoutValidator` verifies that every ID exists, remains in the
 allowed set, matches the catalog exercise type, and belongs to a structurally valid
@@ -346,10 +363,12 @@ metadata only — coverage falling back to the legacy authored pattern — so an
 draft record can never drive a product-policy rejection. The planner's pattern spreading
 stays a ranking preference with an explicit fallback to repeated patterns.
 
-Load provenance accepts a null target always, and a non-null one only when it traces to a
-confirmed starting load or to the last recorded load, optionally plus the shipped legacy
-history increment of 5.0 lb or 2.5 kg in the context's unit. Equality to the last recorded
-load is deliberately not required, and nothing here replaces or introduces progression.
+Reviewed load/assistance provenance reuses the shared prescription decision.
+A number must match its held source or exact authorized progression. External
+load and assistance have separate sources; external-load confirmation cannot
+authorize assistance. Warm-up-only/future work supplies no reviewed starting
+load. Null remains null. Only manual/disabled defaults retain the history-only
+5 lb / 2.5 kg increment; it cannot stack with reviewed progression.
 
 `DURATION_ESTIMATOR_V1` in `WorkoutDurationEstimator` is the single named estimator the
 planner and the validator share: `targetDurationSeconds` or 45 seconds of work per set,
@@ -366,12 +385,14 @@ per exercise. A damaged ledger (`MALFORMED_WEEKLY_LEDGER`), unrepresentable arit
 (`WEEKLY_ALLOWANCE_EXCEEDED`) stay three distinct reasons. `NEEDS_ONBOARDING` configures
 no allowance, which is recorded as absent rather than treated as a violation. Exceeding an
 allowance is a mismatch with a versioned WallCrawl number, never proof of overload or
-medical danger, and no weekly minimum or automatic increase exists.
+medical danger, and no weekly minimum or automatic set-count increase exists.
 
 At most **one** deterministic repair pass runs, and only at generation time. It may only
 reduce `targetSets` so aggregate accounting holds — allocated in recommendation order with
 every affected exercise keeping at least one set — and then recompute the duration under
-the same estimator. It never weakens a constraint, widens the candidate set, changes
+the same estimator. If an affected exercise had a pending progression, repair first
+restores its reference axis and records `HOLD_VALIDATION_REPAIR`.
+It never weakens a constraint, widens the candidate set, changes
 selection, invents a load, alters effort or rest, or falls back off the reviewed path; when
 the remainder cannot leave every affected exercise a set it fails closed rather than
 dropping one. Repair is disabled at workout start, so a displayed plan is never silently
@@ -380,9 +401,10 @@ exercise, and a focus violation is not an exceeded allowance, so its presence bl
 outright.
 
 There is no numeric physiological fatigue budget here, no summation of the legacy ordinal
-`programming.fatigueScore`, no timestamp-derived readiness or overload rule, and no
-recency rule. `WorkoutHistoryAnalyzer`'s default 72-hour `focusMuscles` lookback remains
-only a history summary; the planner does not use it as a scheduling or recovery rule.
+`programming.fatigueScore`, and no timestamp-derived readiness, overload, or blocking
+recency rule. The separate [scheduling preference](#frequency-and-recency-scheduling)
+only changes ordering. `WorkoutHistoryAnalyzer`'s default 72-hour `focusMuscles` lookback
+remains a history summary; the new preference does not consume those labels.
 
 `WorkoutGenerationContext` already carries the complete `UserProfile`, so no second
 capability field exists. Production composition sets
@@ -404,7 +426,8 @@ refusal. `LOW_IMPACT_ONLY` is decided by `impactLevel` alone. See the
 [eligibility boundary](reviewed-capability-eligibility.md).
 
 On that reviewed-enabled path only, `StateBasedTrainingPolicy` consumes the composed
-`TrainingProgramState`. It validates `PROGRAM_STATE_V1`, `PRIMARY_ONLY_V1`, approved
+`TrainingProgramState`. Production emits `PROGRAM_STATE_V2` (V1 contexts remain
+compatible at the policy boundary). It validates `PRIMARY_ONLY_V1`, accepted
 provenance, review-policy equality, and prescription shape before using the approved
 direct-primary muscle. It independently re-checks the capability and training-constraint
 rules the eligibility gate already applied, and returns a typed failure rather than
@@ -420,8 +443,9 @@ It caps a base prescription by the remaining configured weekly product allowance
 increases it. Exact/over-cap exposure returns typed
 no-guidance instead of a zero-set or over-cap prescription; malformed or version-mismatched
 input returns a typed failure with no legacy fallback.
-Each exercise reads the same completed ledger; aggregate reservation across a proposal
-is not implemented. Exceeding an allowance is not proof of overload or medical danger.
+Each exercise reads the same completed ledger; `ProgramValidator` checks the
+aggregate proposal without writing reservations to history.
+Exceeding an allowance is not proof of overload or medical danger.
 
 The same pure result carries nullable RIR guidance and a classified rest target. Product
 defaults are 2-4 RIR for conservative states or a relevant approved `LIMITED` capability,
@@ -435,11 +459,11 @@ State and capability can reduce sets but cannot change or invent a load.
 
 Within a split, compound slots are chosen first by genuine focus support inside the
 compound pool, then by the reviewed capability soft-penalty bit, supported-regression
-preference, experience, fatigue, and stable ID, while still spreading work across
+preference, experience, scheduling, fatigue, and stable ID, while still spreading work across
 movement patterns so a session is not the same lift three times. Remaining accessory
 slots prefer exercises that train the split directly, then isolation work, then the
 presence of programming metadata, that same capability penalty, supported-regression
-preference, experience penalty, fatigue, and stable ID. Because focus support is the
+preference, experience penalty, scheduling, fatigue, and stable ID. Because focus support is the
 first key in both passes and at least one accessory
 slot always remains, a supporting exercise is always reachable; the planner states that
 as an invariant rather than leaving it to be re-derived from the two comparators.
@@ -459,6 +483,229 @@ produced push days padded with unrelated work — but the planner only fails whe
 nothing at all is trainable, so failure never depends on what the user
 prioritized. Rotation is seeded from completed-workout count so it advances
 across process death, not just within a session.
+
+### Progression and user-controlled deload
+
+`ONE_VARIABLE_PROGRESSION_V1` compares exact-ID completed attempts, full
+prescriptions, typed measurements, units, timestamps and explicit feedback.
+Two latest comparable attempts must fully complete their prescribed normal work,
+confirm manageability and report qualifying RIR or RPE. Missing feedback, stopped
+work, duplicates and changed targets produce typed holds, not readiness guesses.
+Capability evidence stays separate. Defaults propose one axis only: external
+load +2.5 kg, bodyweight rep range +1, assistance -2.5 kg, or duration +5 seconds.
+Distance shapes are domain-tested, not admitted to automatic strength planning.
+These are versioned product rules, not physiology.
+
+The factory retains compatible earned targets using stored base-configuration
+digests. Dynamic set/rest/effort changes can suppress progression without resetting
+that earned axis. Comparison respects the actual logger's two-decimal
+representation, including conversion and rounding; stored history is unchanged.
+`WHOLE_PROGRAM_V2` requires complete ordered decision provenance for production
+`PROGRAM_STATE_V2` proposals and recomputes the same policy for validation.
+
+`DELOAD_ONE_WORKOUT_V1` is an explicit request or returning-user offer on Today.
+It previews held reference targets with one fewer work set per exercise, minimum
+one; any pending progression increase is paused. Displaying/declining/dismissing
+does not accept. Acceptance persists until cancellation or one automatic start;
+templates do not consume it and frozen workouts never change.
+There is no calendar law or fatigue diagnosis. An optional multi-week enrollment
+does not turn this one-workout choice into a block-wide deload.
+
+State precedence is reported `RETURNING`, then accepted `HOLD`, otherwise
+`UNCALIBRATED`. No `DELOAD_OFFERED` state is derived. Training policy V2 keeps
+all three at 6 weekly primary sets, two sets per exercise and conservative effort
+before deload. Every state retains the advanced ceiling unless the existing
+demonstrated-family or legal supported-regression exception applies.
+
+Context identity v5 includes explicit planning intent and the consumed enrollment
+header/program projection, as well as richer outcomes/feedback, continuity provenance,
+working-load sources, choices/revisions and relevant policy/time inputs. Today
+publishes proposal/unit/snapshot together, preserves the variation index during
+passive refresh, and refuses stale starts. The Room start transaction independently
+checks the choice revision, including zero, before writing session, record and
+consumption together. The [focused contract](superpowers/specs/2026-09-19-progression-and-deload-design.md)
+contains the full comparison, state and lifecycle tables.
+
+### Optional multi-week programs
+
+`MultiWeekProgramPolicy` implements `MULTI_WEEK_PROGRAM_V1` with captured
+`PROGRAM_CONFIGURATION_V1`: primary goal, canonical selected goals and frequency
+2–6. Four completion-driven weeks form two two-week blocks, bounded to 24 slots.
+Their objectives are `ESTABLISH_ROUTINE` then `CONTINUE_AND_RECORD`; these labels
+organize the sequence rather than prescribe a physiological phase.
+This persisted enrollment is separate from derived `TrainingProgramState`,
+`PROGRAM_STATE_V2` and the `PRIMARY_ONLY_V1` calendar ledger. Only the next explicit
+`WorkoutPlanningIntent.PROGRAM` proposal consumes its validated configuration,
+position and objective. Ordinary automatic and manual paths stay available.
+
+`OfflineProgramRepository.getHeader` reads profile/run identity, revision and a
+SHA-256 fingerprint over all raw enrollment fields without decoding program semantics.
+Ordinary context consumes this header, including explicit absence. Unsupported policy
+or malformed configuration does not become absence or block ordinary planning;
+unparseable identity/revision and database errors still surface. Manual starts and
+active resume need no program header. Program context additionally reads the coherent
+full projection and validates captured goals/frequency against the current profile.
+Equipment, constraints, capabilities and units remain live for the next plan.
+
+`ProgramDao` reconstructs the exact completed prefix and optional next active
+reservation from association/session headers, with at most 24 slots plus one overflow
+sentinel. It reads no exercise/set graph and performs no per-candidate queries.
+A retained non-null recommendation digest with no association is an integrity failure,
+including a lost final row; the remaining prefix cannot silently hide it. Completed
+management links use these bounded headers, at most 24 per run, and reuse history detail.
+
+Context identity v5 binds intent, raw header, lifecycle/config versions and consumed
+configuration/position/objective. Program rotation uses its slot rather than lifetime
+completed count. Normal eligibility, prescription, progression, explicit deload and
+single-session `ProgramValidator`/bounded repair stay authoritative. Position never
+creates BUILD/DEVELOP, calibration, advanced eligibility or a new dose allowance.
+Program weeks are completion counters, not accounting weeks: no catch-up, future-dose
+reservation, automatic boundary deload or read-driven advancement.
+
+Start's `insertWorkoutUnlessActive` transaction first preserves the existing-active
+return path: it writes no new reservation, association, revision or deload consumption.
+A new automatic start checks profile, header and deload revisions. Program mode also
+checks supported ACTIVE state/current slot, then atomically inserts the session,
+frozen prescription, recommendation, association, enrollment revision and accepted
+one-workout deload consumption. Ordinary carries no membership; templates consume no
+deload. Frozen `programAssociationDigest` binds session/profile/run/start revision,
+configuration, policies, position and objective in both directions. This is integrity
+framing, not authentication or reconstruction of unstored historical inputs.
+
+Finish validates the active association and performs completion, revision/status update
+and summary read in one transaction. A repeated completed Finish returns its summary
+without a second advance; failure rolls everything back. Confirmed partial/zero-set
+Finish counts once, but never fabricates completed sets, dose or progression evidence.
+Cancel deletes the active session and association and increments revision without
+advancing; it does not rearm consumed deload. All management is blocked while any
+workout is active. Pause/resume preserve position; confirmed restart/replacement creates
+a new UUID, keeps monotonic revision and leaves immutable older-run history intact.
+Completion ends the sequence; no automatic reenrollment occurs.
+
+Program reads/actions share the existing local-data write gate and coherent Room
+transactions. Expected profile/run/revision guards reject stale confirmations and
+prevent post-deletion resurrection. The gate is never held over document I/O.
+Lifecycle-aware observations refresh on invalidation/resume/retry without polling.
+Today publishes proposal/unit/snapshot/program facts together; the actual navigation
+factory supplies `SavedStateHandle` for selection/variation restoration. Run/slot
+changes reset the relevant saved variation, and restore/delete clear protected routes.
+Obsolete generation success or failure cannot settle a later selection's identity.
+
+Typed program failures retain Retry, profile editing and explicit ordinary/manual
+access; active resume/logging/Cancel remain available. Structurally valid unknown-policy
+rows remain opaque. PROGRAM generation, resume/restart and Finish refuse unsupported
+semantics; Pause where valid, Cancel and explicit replacement without an active workout
+remain recovery paths. Known corrupt state is an error rather than a default program.
+Read-only history uses the frozen association in its coherent detail transaction,
+independently of current enrollment; legitimate old null membership is never backfilled.
+
+<p align="center">
+  <img src="../art/screenshots/program-history-en.png" width="32%" alt="Recorded program identity, captured configuration, position, objective and policies in read-only workout history" />
+  <img src="../art/screenshots/program-unsupported-finish-en.png" width="32%" alt="Unsupported program Finish error preserves the active logger and explicit Cancel without promising advancement" />
+</p>
+
+Actual API 36 emulator captures with test profiles demonstrate recorded provenance
+and unsupported Finish recovery. They are not physical-device or TalkBack certification.
+
+### Frequency and recency scheduling
+
+`TRAINING_FREQUENCY_RECENCY_V1` is one positive, binary **repeat-practice preference**.
+The profile's `daysPerWeek` still means total preferred training days, not a per-muscle
+quota. It sets a product revisit band of `ceil(7 / daysPerWeek)`:
+
+| Preferred weekly days | Revisit band in local calendar dates |
+| --- | --- |
+| 2 | 4 |
+| 3 | 3 |
+| 4, 5, or 6 | 2 |
+
+These bands, the fourteen-date lookback, and the two-date familiarity condition are named,
+versioned product choices. Research informs distributing practice around preference, not
+these constants. None is a recovery interval, physiological score, dose floor, obligation
+to train, or automatic progression rule.
+
+`WorkoutGenerationContextBuilder` preserves the recent-eight view for loading, capability
+evidence and rest choices. Separately, it reads the canonical completed scheduling range
+through the existing history DAO/repository: local today minus thirteen at start-of-day,
+through the sampled instant **inclusive**. One explicit instant and zone also determine
+the program-state week. The range spans fourteen local calendar dates, respects DST and
+midnight transitions, and does not reset on Monday. Future completion timestamps contribute
+nothing. Neither comparators nor the pure scheduling policy read the system clock.
+
+A `COMPLETED` session contributes a primary-muscle practice date only when an exercise
+instance contains completed non-warm-up work. The policy reuses `isCreditableWorkSet` and
+`SetOutcomeRules`: completed work in a partially performed completed session counts, while
+unfinished/stopped/skipped sets, planned or abandoned sessions, and warm-up-only work do
+not. Legacy missing set timestamps remain missing; the date comes from the canonical
+session completion timestamp. No load, reps, effort, or manageable threshold is introduced.
+
+Attribution is exact catalog ID through `Exercise.acceptedMetadata().directPrimaryMuscle`.
+There is no session-focus, legacy-muscle, secondary-involvement, name, or movement-family
+fallback. Unknown and unaccepted work supplies no attributed date. Multiple sets, exercise
+instances, or sessions on one local date count as **one** date per primary. Two distinct
+dates inside the window establish familiarity. A familiar primary receives the preference
+when its latest practice is at least the revisit band old; additional age earns no extra
+weight. Unseen, once-seen, stale, future-only, and more-recent primaries stay neutral.
+Every exercise sharing that primary receives the same key, so changing an exercise ID
+merely for novelty earns nothing.
+
+Frequency sets the band and recency tests membership: they are not two additive scores.
+The precomputed key sits after experience and before the legacy fatigue ordinal and stable
+ID in both selection passes. Focus, accessory mechanics/programming presence, capability
+evidence, and supported regressions remain stronger. Eligibility, compound slots, pattern
+spreading/fill, weekly allowances, prescriptions and whole-program validation are unchanged.
+
+Applied reasons compare the actual selection with the same selection with **only**
+scheduling disabled. A same-pass, stronger-tier-equivalent alternative must actually lose
+position or selection; signal presence alone emits nothing. The supported-regression
+counterfactual conversely retains scheduling. Scheduling reasons render equivalent English
+and Spanish copy at the UI boundary; stored values never depend on language or gender.
+
+One complete range is bounded to 2,000 sessions, 100,000 examined sets and 64 primary keys.
+Malformed input or overflow fails explicitly, never as a successfully truncated history.
+The observable day-range query retains an ascending 2,001-row probe; filtering to `<= now`
+precedes the 2,000-session check. Thus future rows cannot create false overflow, while the
+first future sentinel detects real overflow once it becomes current. Candidate keys are
+precomputed once; comparators perform no database calls, history scans or graph traversal.
+Selection needs at most three traces: actual, supported-regression-off, and scheduling-off.
+
+**Freshness and replay.** Context identity format `wallcrawl-recommendation-context-v3`
+includes both frequency fields, scheduling policy, canonical practice dates, local date and
+zone, even when scheduling is neutral. It also fingerprints the derived history projections
+the planner actually consumes: candidate capability-evidence membership, usable load sources
+and units, the shared completed-rep comparison, explicit rest choices, and ledger direct
+counts/provenance/integrity. Same-day history changes cannot disappear behind an unchanged
+date set or lifetime count. It excludes language, gender, raw session/set identifiers and
+unused performance metrics; the digest is local change detection, not anonymization or a
+promise of transactional reads.
+
+Today observes while **RESUMED**, releases its expensive range subscription immediately
+when hidden, and rechecks on resume. Room changes trigger context checks even if practice
+dates are unchanged; unchanged clock ticks do not poll the database. Retry/resume reconnect
+failed observation, whose error cannot be hidden by an unrelated successful generation.
+Passive invalidations coalesce only when their consumed context is already settled; explicit
+regeneration remains separate. Superseded or cancelled attempts cannot settle an identity,
+and lifecycle teardown is not treated as new history. Start still revalidates the captured
+recommendation against a fresh context with no repair.
+
+Equal-input replay includes the generation ordinal as well as the same canonical context.
+`regenerationIndex` supplies it explicitly; null retains the existing in-memory counter and
+completed-workout-count split rotation. `PLANNER_GENERATION_V1:<index>` and the scheduling
+policy travel in the existing record reason-code channel, including neutral scheduling.
+The ordinal is separate from freshness so advancing a counter cannot invalidate its own
+displayed recommendation. Restart/restore reconstructs evidence from immutable completed
+history; replaying an old recommendation still requires its original profile/context, which
+the archive does not promise to reconstruct from a digest.
+
+**Production example.** `ProductionPlannerCompositionTest` controls an otherwise comparable
+four-candidate PUSH pool of real bundled `AI_ACCEPTED` records. With the same two completed
+shoulder-practice dates aged three and two dates, completed count, and generation ordinal,
+two days/week orders `dumbbell-bench-press` before `dumbbell-shoulder-press` and selects
+`cable-fly`; six days/week orders shoulder press first and selects `cable-lateral-raise`.
+Moving that history to yesterday/today at six days/week restores neutral ordering. Both
+passes change without changing the legal set. Exact typed witnesses survive validator,
+record and codec round trips; full-cohort and constrained-profile tests separately preserve
+valid plans and honest typed refusals. This is software conformance, not clinical validation.
 
 ### Advertised focus
 
@@ -514,10 +761,9 @@ workouts. Rep work and non-stretch duration work without a Cardio muscle tag can
 fill strength slots; metadata presence does not change this classification.
 
 Planning failures carry a `WorkoutPlanningFailure` reason rather than
-user-facing text; `TodayViewModel` maps reasons to copy. A future planner chain
-branches on the same reason to decide between repairing, falling back to another
-tier, and surfacing the failure — string matching on messages could not support
-that.
+user-facing text; `TodayViewModel` maps reasons to copy. Typed failures keep
+handling independent of translated messages and do not authorize a fallback to
+an unreviewed candidate.
 
 `TodayViewModel` validates in two places. After generation it runs `ProgramValidator`
 with repair permitted, and shows nothing when the result is a rejection; a rejection
@@ -529,10 +775,6 @@ flag, adaptation state, declared constraints, and the accounting week and zone �
 revalidates with repair disabled. An edited profile, newly completed history, or a crossed
 week or time-zone boundary is reported as an out-of-date recommendation, not started
 quietly. The digest reads no locale and no display text, so language cannot move it.
-
-A future local LLM should implement the same `WorkoutPlanner` interface. Model
-integration does not remove the hard filter or validator; constrained decoding
-and schema enforcement would be additional defenses at the inference boundary.
 
 ## Manual workout templates
 
@@ -549,12 +791,68 @@ creates a standalone session snapshot tagged with:
 - `origin = CUSTOM_TEMPLATE`;
 - the informational `sourceTemplateId`;
 - the profile's current weight unit;
-- copied exercise order, notes, prescriptions, and set targets.
+- copied exercise order, notes, prescriptions, and set targets, with every load
+  and assistance target converted from the template's own unit into the session's
+  (`WorkoutTemplate.exercisesIn`, rounded half-up to two decimals; a positive load too
+  small to show becomes 0.01 rather than 0).
+
+Each template records the unit of its loads in a nullable `weightUnit` column
+(schema 16, see the archive section). Null means the template was saved
+before units were recorded: the migration leaves it null rather than guessing, the
+repository refuses to *write* a load without a unit, and such a template cannot start a
+new workout until the editor has recorded which unit its numbers were entered in (Start
+still resumes a workout already in progress). A
+kilogram template's loads are bounded by `WorkoutTemplate.maxLoad`, the pound bound
+expressed in kilograms, so every template stays startable in either unit. An edit
+is written with `mustExist`, checked under the local-data write gate, so a template
+deleted after the editor loaded it is reported rather than recreated.
 
 The source template ID is not a foreign key. Editing or deleting the template
 therefore cannot alter an active or completed session. See
-[Custom Workouts](custom-workouts.md) for product behavior and current editor
-limits.
+[Custom Workouts](custom-workouts.md) for product behavior.
+
+### Editing state
+
+`ExercisePrescription` validates in its constructor, so a field being typed is not
+a prescription yet. `feature/templates/TemplateExerciseDraft` holds one row of the
+editor as the text the user entered plus a `rowId` that stays with the row through
+reordering, which is what keeps two rows of the same exercise independent.
+`validate()` is the only path from that text to a `PlannedExercise`; it parses
+through `core/ui/format/LocaleFormatting` and checks the bounds
+`ExercisePrescription` itself enforces, rather than a second copy of them. It runs
+twice: when one row's edits are applied, and again over every row before a save.
+
+Nothing relaxes the domain. A blank optional load or assistance stays unspecified
+and `"0"` stays an explicit zero. A rest value the user changed is stored through
+`withUserRestPreference`, classified against the one product rest table, so it
+cannot keep `PRODUCT_POLICY` provenance; an untouched one keeps its original
+class and source as a pair. A rest preference that reaches a completed session
+this way is readable by later automatic planning, which is what
+`UserRestPreference` is for.
+
+`TemplateEditorViewModel` mirrors the whole draft into its `SavedStateHandle` on
+every change -- name, notes, the ordered rows with their identities, and the
+incomplete text in the field being typed -- encoded as short strings. Only
+canonical exercise ids are stored; the catalog, the search index and `Exercise`
+objects are reconstructed after loading. A restored draft is put in place
+synchronously before the load coroutine starts, and that coroutine then fills in
+only reference data, so asynchronous loading cannot overwrite recovered edits. (A
+recovered draft with no unit and no loads also takes the profile unit, as any draft
+with nothing weighed does.)
+A row the editor cannot resolve against the catalog — the exercise is gone, or it is
+still present under a different type — is flagged on the row and blocks the save. Both are
+what `WorkoutTemplateRepository` enforces on write, checked here so neither arrives as a
+retryable write failure that no retry could satisfy.
+
+A row the current build cannot decode — a record an older or newer build wrote — is
+reported and blocks the save rather than being dropped, and that fact is itself mirrored
+into saved state, because the next write of the row list would otherwise erase the evidence
+and leave a shorter draft looking complete. Discarding restores the stored template and
+clears it.
+
+This is `onSaveInstanceState`, not storage: it survives configuration change and
+system-initiated process death, and is gone after uninstall, cleared app data, a
+force-stop or task removal. No table, file or archive field was added for drafts.
 
 ## Shared prescription and logging model
 
@@ -610,16 +908,17 @@ feedback behind the reviewed-only flag: only non-warm-up work from two distinct
 completed sessions for the same exercise ID, and every qualifying set must have
 `feltManageable == true` plus a valid shape-specific logged payload. Null or false
 manageable answers, completion alone, RPE, and RIR do not qualify evidence.
-`ProgressionEngine` and `DeloadOfferPolicy` do not exist yet. Only completed work
-counts toward volume, history, and progress today.
+`ProgressionEngine` additionally consumes explicit effort and matching targets.
+`DeloadOfferPolicy` consumes explicit request/return status, not an invented
+multi-session fatigue signal. Only completed work earns ledger credit.
 
 `DefaultExercisePrescriptionFactory` never invents a `WEIGHT_REPS` starting
 load. It suggests a weight only when either applies, in that priority order:
 
 1. bounded exercise history exists for that catalog ID, converted to the
    profile's current unit — the existing weight, or a unit-appropriate
-   increment (+5 lb / +2.5 kg) once every recent completed set reached the
-   top of the target rep range; or
+   increment only on the isolated manual/disabled path; reviewed progression
+   requires the stricter comparable-outcome policy; or
 2. the user has explicitly confirmed a baseline in
    `UserProfile.confirmedStartingLoads` for that ID.
 
@@ -633,12 +932,13 @@ no separate write path that copies a logged value back into
 
 ## Room persistence and invariants
 
-`WallCrawlDatabase` is currently schema version 13. Its tables store:
+`WallCrawlDatabase` is currently schema version 16. Its tables store:
 
 - the user profile, including onboarding status, multi-select fitness goals,
   training constraints, return-after-break weeks, confirmed starting loads,
   theme preference (`SYSTEM`, `DARK`, `LIGHT`), and movement capabilities;
-- reusable workout templates and their ordered exercises;
+- reusable workout templates and their ordered exercises, each template with a nullable
+  `weightUnit` for its loads (`NULL` means it was saved before units were recorded);
 - workout sessions and their ordered exercise snapshots;
 - nullable effort targets, rest classes/sources, and exact rest seconds on template and
   workout exercise prescriptions;
@@ -648,7 +948,28 @@ no separate write path that copies a logged value back into
 - a fingerprinted, reconstructable `PRIMARY_ONLY_V1` weekly-ledger cache whose
   authority remains immutable completed history;
 - one immutable whole-program validation record per session started from a
-  recommendation, keyed by that session's own id.
+  recommendation, keyed by that session's own id;
+- one versioned deload-preferences row per profile, containing its latest choice,
+  handled return key and revision, without persisting derived evidence;
+- one latest optional `program_enrollments` row per profile and immutable
+  `program_session_associations` keyed to sessions, plus a nullable membership
+  digest on recommendation records.
+
+Migration `14 → 15` additively creates `program_enrollments` and
+`program_session_associations`, and adds nullable `programAssociationDigest` to
+`workout_recommendation_records`. Legacy tables start without enrollment/associations;
+legacy digests remain null. Profile replacement does not cascade into enrollment.
+Associations cascade with their session and uniquely index run/slot; they have no FK
+to the mutable latest enrollment, so restart/replacement cannot rewrite old membership.
+
+Migration `13 -> 14` creates only `deload_preferences`; old rows are untouched.
+Choices are separate from replaceable profile rows and survive profile edits.
+There is no session foreign key because cancelled workouts are deleted;
+consumption stays terminal even when its audit-linked session is absent.
+
+Migration `15 -> 16` adds only the nullable `workout_templates.weightUnit` column. Existing templates
+read back as unknown rather than guessed, and no session, set or history row is
+rewritten.
 
 Migration `3 → 4` adds template storage, session provenance, and type-aware
 target/outcome columns while converting older repetition-based history to
@@ -668,7 +989,7 @@ columns (`feltManageable`, `completedAtTimestamp`, `stoppedAtTimestamp`,
 existed reads back as an honestly unrecorded outcome instead of gaining a
 fabricated completion timestamp or an assumed manageable answer. There is no
 destructive migration fallback on any construction path, and the migration
-tests exercise every supported starting schema through to version 13. Migration
+tests migrate every supported starting schema (1–15) to the current schema 16. Migration
 `7 → 8` adds one non-null `movementCapabilitiesJson` column. Existing rows receive `{}`, which the codec
 normalizes to all `UNKNOWN`; their onboarding status, revision, theme, goals,
 equipment, constraints, confirmed loads, templates, sessions, sets, and history
@@ -698,7 +1019,9 @@ muscle the completed, proposed, and configured allowance counts. Version-like co
 text rather than converted enums, exactly as the ledger cache stores its policy version, so
 a value written by a future build reads back as unrecognised rather than coerced. The plan
 itself is not duplicated — `workout_exercises` already holds it under the same session id —
-and no name, note, load, repetition, effort value, or body measurement is stored. The row
+and no raw name, note, load, repetition, effort value, or body measurement field is stored.
+The context digest nevertheless derives from consumed planning inputs for freshness; it
+is not an anonymization guarantee. The row
 is written inside the same transaction that inserts the session, its exercises, and its
 sets, and cascades away with the session.
 
@@ -729,7 +1052,7 @@ diagram, OEM limitations, and the lack of any previous-backup erasure guarantee.
 
 ### User-owned export, restore, and deletion
 
-`core/backup` writes archive format **version 3** and reads versions 1, 2, and 3: one JSON
+`core/backup` writes archive format **version 6** and reads versions 1 through 6: one JSON
 document holding the profile, templates, every session with its exercises and sets, and
 the whole-program validation record for each session started from a recommendation. That
 version is independent of the Room schema version, which travels alongside the app
@@ -737,11 +1060,27 @@ version, the creation time, and the bundled catalog commit as provenance only.
 
 Version 2 added the `recommendations` array. A version 1 document restores exactly as it
 always did and simply carries none; a version 1 document that uses a version 2 field is
-refused rather than quietly upgraded, and a version 3 document is still refused as
+refused rather than quietly upgraded. Versions newer than 6 are refused as
 unsupported. Each record must name a session the same document carries, exactly once.
+Version 4 adds owned deload preferences; older checksums and missing-choice
+semantics are preserved. A choice row also makes a restore destination nonempty.
+
+Version 5 adds enrollment, frozen associations and recommendation membership digests.
+Formats 1–4 preserve their exact canonical checksums and restore without invented
+program state. Both new tables make a restore destination nonempty. The coherent
+backup projection validates current and retained older runs, exact prefix/reservation,
+configuration and lifecycle agreement, parent sessions and bidirectional digest binding.
+Missing/extra membership is rejected rather than relabelled as ordinary. Unsupported
+program policies remain readable as opaque Room/history facts, but export and restore
+refuse them before any export destination is opened. Restore inserts the complete
+validated projection transactionally and never reserves/completes a slot anew.
+Version 6 adds a template's optional `weightUnit`. It is written only when the template
+has one, a version 1–5 document carrying it is refused, and older documents restore
+their templates with no unit, never an assumed one.
 
 ```text
-Room (profile, templates, sessions, exercises, sets, recommendation records)
+Room (profile, templates, sessions, exercises, sets, recommendation records,
+      deload preferences, program enrollment and associations)
         │  LocalDataBackupDao.readAll()  ── one @Transaction
         ▼
   LocalDataSnapshot  ──►  validate  ──►  checksum  ──►  open document  ──►  write
@@ -766,24 +1105,30 @@ resources, so no parser text — which can quote an offending value — reaches 
 screen.
 
 Restore requires an **empty destination**: no sessions, no templates, and onboarding
-unfinished. The bootstrap profile row an app creates for itself does not count and is
+unfinished, with no deload preferences, program enrollment or associations.
+The bootstrap profile row an app creates for itself does not count and is
 replaced. Eligibility is rechecked inside the restore transaction, so a concurrent
 write cannot slip past the check a caller made earlier, and a refused or failed
 restore leaves nothing behind.
 
-`DefaultAppContainer` owns one `Mutex` that the backup, profile, and template
+`DefaultAppContainer` owns one `Mutex` that the backup, profile, template and program
 repositories share, so an ordinary write already in flight cannot land after a
 deletion and resurrect erased data. Workout writes deliberately stay outside it:
 creating a session already fails inside its own transaction when the profile revision
-it was started against is gone, and set and completion writes are `UPDATE`s that match
-nothing once history is deleted. The gate is never held across document I/O.
+it was started against is gone. Set writes only update retained rows; Finish/Cancel
+recheck the active session and any associated enrollment identity/revision before
+changing them in one transaction, so a late lifecycle write cannot recreate deleted
+enrollment or history. The gate is never held across document I/O.
 
 The weekly-ledger cache is never exported and never restored; deletion and restore
 both clear it, and it is rebuilt from restored history on the next read. Recommendation
 records are the opposite case — nothing can rebuild how a past plan was validated from the
 history it produced — so they are exported and restored with the sessions they belong to,
 and removed by deletion with everything else. A record this build cannot read back is
-dropped rather than restored half-understood.
+reported as an error rather than dropped: it now supplies progression continuity.
+Export fails before opening its destination. Known progression sources and
+exercise membership are validated by the archive. Deload writes share the
+existing local-data gate; restore/delete include choices in their transaction.
 
 The persistence layer enforces several important invariants:
 
@@ -808,8 +1153,9 @@ Room-backed `Flow` streams make the active workout and completed history
 observable after navigation or process recreation. Onboarding capability draft
 answers are restored through `SavedStateHandle` without inventing answers;
 Profile capability drafts remain in memory and are discarded on Cancel or Back.
-Unsaved template-editor
-drafts are in-memory state and are not yet restored after process death.
+Unsaved template-editor drafts are mirrored into the editor's `SavedStateHandle`
+and come back after configuration change and system-initiated process death;
+see [Editing state](#editing-state) for what that covers and what it does not.
 
 ## Feedback loop and progress
 
@@ -882,8 +1228,9 @@ representational bounds still fail explicitly rather than truncating counts.
 and clears replay when hidden, then samples fresh time/zone on resubscription. A single
 delay to the next calendar boundary handles rollover without a workout write. Protected
 device clock/time-zone broadcasts and Retry also refresh. Today uses the same bounded
-calendar range for its workout counter; its existing clock feed is reduced to distinct
-weeks before subscribing to the count query. This does not change recommendation logic.
+calendar range for its workout counter; its shared clock feed is reduced to distinct weeks
+before subscribing to the count query. Its separate visibility-bound scheduling observation
+and resume checks follow the [freshness contract](#frequency-and-recency-scheduling).
 
 The complete [metric table](weekly-dose-ledger.md#progress-metric-contract) specifies
 measurement omissions and the preserved independent personal-record/strength rules.
@@ -896,11 +1243,110 @@ the same explicit confirmation. Backing out of either dialog does nothing, and
 repeated taps stay idempotent. Skipped sets stay distinguishable from sets that
 were never started, and neither contributes volume, history, or progress.
 
-`WorkoutSummary` is built only by `WorkoutRepository`, from one history window,
-whether a workout has just been completed or is being revisited. Personal
-records use the same rules as the Progress screen's record list — a heavier top
-set for loaded work, more reps for bodyweight work, and no record without prior
-history to beat — so the two surfaces cannot disagree.
+`WorkoutSummary` uses one shared `ProgressCalculator.summarize` calculation for
+the completion transaction, reopened summaries and history detail. Its baseline
+is a grouped SQL aggregate over all eligible earlier observations for the viewed
+exercise IDs and stored types, in their recorded units before explicit load
+conversion. It is not a global recent-200/500-session sample. The established
+record types, warm-up treatment and volume semantics remain; an initial
+observation is not a record. The Progress overview's separate record/trend
+window remains bounded at 500 sessions and is not the authority for an older
+workout's achievement.
+
+### Progress over time
+
+`ProgressViewModel` keeps the Over time selection (range, scope kind, scope ID, measure) in
+`SavedStateHandle` as four short strings. Only range and scope select a read, so changing the
+measure picks another precomputed series without I/O.
+
+```text
+selection (range, scope) + calendar zone/boundary + card Retry
+                 |  flatMapLatest (an obsolete read is cancelled)
+     OfflineProgressRepository.observeAnalytics
+     write gate -> one Room transaction: no-bootstrap profile, size/strict-type pre-check,
+     bounded range graph, exercise-scope comparable set IDs and recommendation records,
+     recorded exercise IDs
+                 |  gate released
+     pure ProgressAnalyticsCalculator (+ WeeklyDoseLedgerCalculator, no cache)
+                 |
+     ProgressAnalyticsUiState -> ProgressAnalyticsCard (chart + accessible rows -> history/{id})
+```
+
+The card's Retry has its own trigger, so the weekly overview keeps its state and scroll.
+Recorded decisions are decoded by the history presenter's `decodeHistoryReasons` off the
+main thread, and history and the card share `recordedProgressionText` and
+`recordedDeloadRes`. `AnalyticsBarChart` is a small Canvas with a text description; the rows
+beside it are the accessible interface. No dependency, schema or archive change was needed.
+See the [design](superpowers/specs/2026-10-31-progress-analytics-design.md).
+
+### Immutable history detail
+
+Completion remains `ActiveWorkoutScreen`'s completed state. The unused summary
+route is removed. Progress cards and the completion summary open
+`history/{sessionId}`; `history` browses completed sessions in fixed pages of 20
+with older/newer controls. The route carries an encoded persisted ID, not a
+serialized workout. The direct lookup is independent of the overview's recent
+ten. Back returns to the caller, and completion Done retains its Progress flow.
+
+The detail read in `OfflineWorkoutHistoryRepository` observes session, exercise,
+set and recommendation-table invalidations. Under the existing local-data gate, one Room
+transaction reads the session, its recommendation, bounded earlier/cited
+exercise projections and its summary. Child cardinalities are checked before relation loads;
+overflow and malformed known data fail explicitly rather than producing
+truncated success. Previous-performance selection and summary maxima are
+database queries, not unbounded in-memory history or queries per set.
+No read bootstraps a profile, writes history, rebuilds a ledger cache or consumes
+a deload choice.
+
+Both ordinary and cited comparisons select only the needed exercise instances,
+eligible sets and `HistoricalSessionHeader` metadata. They share SQL chronology,
+measurement-shape and eligible-set predicates and the existing exercise/set
+mapper. Required projection sizes are checked before sets are materialized;
+unrelated exercises in a large prior workout are neither loaded nor counted
+against comparison limits. A citation is keyed by source session and viewed
+exercise instance, so repeated instances cannot overwrite one another. The
+viewed workout stays a complete snapshot; headers never masquerade as partial
+`WorkoutSession` values.
+
+Browsing observes only the session table and selects at most 21 scalar
+`WorkoutHistoryEntry` rows (ID, original name, completion time and recorded
+duration), returning 20 plus an older-page sentinel. It does not load exercise,
+set or provenance object graphs. The size of unrelated workouts therefore cannot
+make an otherwise valid history page exceed a detail/archive batch ceiling.
+
+The detail renders the stored session origin, times, units, duration and original
+text; ordered exercise prescriptions and notes; and each set's own planned
+targets, performed measurements, classification, outcome, feedback and times.
+Exercise-level rep ranges and per-set rep targets remain separate facts.
+Assistance is not external load, bodyweight has no invented load field, and null
+applicable values stay unrecorded. Exercise IDs are the display fallback without
+any catalog dependency. Current profile, template, catalog programming and policy
+outputs never fill historical gaps. `USER_PREFERENCE` rest provenance can be
+shown because it exists; value differences do not imply an override. Substitution
+history remains unavailable until Package 10 creates those snapshots.
+
+Prior sessions must be distinct, completed, have positive ordered session times,
+and finish **strictly before the viewed start**. Equal boundary times and overlaps
+are excluded. Latest completion, then latest start, then ascending session ID,
+exercise order and instance ID determine ordinary comparison ties. Exact
+exercise ID and persisted measurement shape must match; distance-only,
+duration-only and combined shapes differ. Ordinary/cited comparison sets exclude
+warm-ups, stopped/unresolved or invalid measurements and recorded outcome times
+outside their session. Legacy null outcome times remain null. Performed-value
+bounds follow archive compatibility, not current target ceilings. Earlier values
+keep their original units; no growth percentage is fabricated.
+
+Stored `ProgressionReasonCode`, `DeloadReasonCode` and `WorkoutRankingReasonCode`
+explain the recorded decision, while validation reasons are interpreted only
+under supported validator versions. Useful reasons precede an expandable
+technical/accounting disclosure. Unknown versions retain their identities
+without adopting today's meaning; malformed known groups produce Error with
+Retry. Manual/older sessions without a recommendation report that absence.
+Accepted deload is read from the session's record, not today's mutable choice.
+Progression source IDs are distinct from ordinary previous performance. A source
+must exist and be compatible and genuinely earlier to supply measurements;
+the stored reason/axis does not contain a frozen before/after prescription or
+enough inputs to rerun the historical planner.
 
 `WeeklyDoseLedgerRepository` reconstructs a `PRIMARY_ONLY_V1` ledger from completed history
 and accepted direct-primary metadata (`APPROVED` or `AI_ACCEPTED`). Missing, `DRAFT`, and
@@ -919,10 +1365,10 @@ suppress a soft capability penalty for the matching candidate. Progression and s
 transitions still do not consume the ledger. On the legacy path the state is absent,
 `capabilityEvidence` is empty, and the existing prescription path is returned unchanged.
 
-The adaptation policy derives only `UNCALIBRATED` and `RETURNING`. `ExerciseEligibilityPolicy`
-withholds advanced-complexity work on exactly those two states, so a third derived state
-would lift that ceiling; a regression test couples them so widening the policy cannot happen
-by accident.
+The adaptation policy derives reported `RETURNING`, accepted-deload `HOLD`, otherwise
+`UNCALIBRATED`. Every state keeps the advanced-complexity ceiling unless the existing
+demonstrated-family or legal supported-regression exception applies; historical state
+identities in a recommendation are not recomputed from today's profile.
 
 ## Lifecycle and failure handling
 
@@ -932,8 +1378,12 @@ is rethrown. A failed template save keeps the draft available, and a failed
 workout start cannot leave a partial session.
 
 The active session is persisted immediately, so it can be resumed after normal
-navigation or process recreation. The template editor does not yet persist an
-unsaved draft or prompt before leaving with unsaved changes.
+navigation or process recreation. The template editor mirrors an unsaved draft
+into saved state, and both the toolbar arrow and system back route through a
+discard confirmation while that draft differs from what was loaded. While a save
+is in flight the editor refuses edits, discards and both leave routes, so the
+write cannot be cancelled halfway by a navigation pop; the back handler stays
+armed and swallows the press rather than letting it reach the navigation host.
 
 The rest timer is in-memory ViewModel state driven by an injected monotonic
 elapsed-realtime clock. Remaining time is always derived from a deadline rather
@@ -945,6 +1395,21 @@ previous process's elapsed-realtime baseline would restore as a misleading
 countdown, so the timer resets to `Idle` while the session itself is resumed
 intact. This milestone adds no foreground service, notification, alarm, or Wear
 behaviour.
+
+History ViewModels collect only while RESUMED and clear replay when hidden.
+Loading, loaded, missing/deleted session, unsupported status and recoverable read
+error are distinct; Retry resubscribes instead of returning an empty success.
+Deletion/restore invalidates the whole projection. A profile reset clears
+protected destinations and saved tab back stacks, preserving the onboarding
+contract even when a history screen is open.
+
+The active logger keeps its history subscription stable while sets change, so
+partial input, focus and feedback controls survive persistence emissions.
+A short subscription grace preserves rotation without restoring a rest timer
+after process death. Completed-state restoration only reads its summary.
+Finish deliberately performs one observed summary read after its atomic
+completion transaction: a delayed returned summary must not overwrite newer
+history after deletion/restore.
 
 ## Dynamic Theming and Visual Contrast
 
@@ -992,8 +1457,8 @@ repository mapping, progress calculations, and ViewModel state. Its fourteen-per
 weeks with the real `WeeklyDoseLedgerCalculator` and validates every proposal it produces
 with `ProgramValidator`, keeping raw-valid, repaired-valid and typed no-plan outcomes
 distinct. Instrumentation
-tests cover every supported Room migration chain through schema 13, real 7 → 8,
-9 → 10, 10 → 11, 11 → 12 and 12 → 13 preservation, foreign-key integrity, guidance round trips,
+tests cover every supported Room migration chain through schema 16, real 7 → 8,
+9 → 10, 10 → 11, 11 → 12, 12 → 13, 14 → 15 and 15 → 16 preservation, foreign-key integrity, guidance round trips,
 the atomic start of a session with its validation record, the weekly-ledger repository,
 capability
 accessibility semantics, packaged catalog parsing, all bundled visual paths, template
@@ -1002,12 +1467,24 @@ state, every rejection path, transactional restore and deletion, a profile write
 a deletion, and the destructive confirmation at a large font scale), and the
 [packaged backup-policy configuration](privacy.md#verification-boundary)
 (merged manifest flags, resolved XML references, and exclusion semantics).
-Pull-request/main CI and tag-release publication run that connected suite on an
-API 36 emulator. The importer has a separate Python-standard-library test suite, which runs
+Pull-request/main CI and tag-release publication run that connected suite on API 36 and
+API 37 emulators, and its `wallcrawl.elopenmike.com.app` package on API 26 (see the
+[target SDK 37 record](android-target-sdk-37.md#ci)). The importer has a separate
+Python-standard-library test suite, which runs
 together with the pinned-upstream catalog regeneration check on pull requests and `main` only;
 a tag build does not re-run them, so a release carries their result only when the tagged
 commit already passed CI on `main`, which no workflow currently enforces. The full split is
 recorded in [planner evaluation](planner-evaluation.md#where-the-gate-runs).
+
+Program coverage adds `MultiWeekProgramPolicyTest`, `MultiWeekProgramPlanningTest`,
+`MultiWeekProgramProductionReplayTest`, `ProgramPersistenceTest`, `Migration14To15Test`,
+`LocalDataArchiveProgramTest` and `LocalDataProgramBackupRepositoryTest`. UI coverage
+includes `ProgramViewModelTest`, `TodayProductionLifecycleTest`, `ProgramNavigationTest`,
+`ProgramAccessibilityTest` and populated-summary error recovery in `ProgressScreenTest`.
+Installed-app evidence includes actual background process death with restored variation
+and frozen active rows, plus Spanish native dialogs at physical emulator 320 dp/1.8.
+These are focused implementation checks; final global commands and publication review
+are recorded by the delivery process, not implied by this suite inventory.
 
 See [Build and test](../README.md#build-and-test) for the commands contributors
 should run.

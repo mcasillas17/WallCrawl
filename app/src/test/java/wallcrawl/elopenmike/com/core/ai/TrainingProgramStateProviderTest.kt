@@ -60,7 +60,7 @@ class TrainingProgramStateProviderTest {
         val state = provider.currentState(UserProfile(returningAfterBreakWeeks = 2))
 
         assertThat(state.policyVersion)
-            .isEqualTo(TrainingProgramStatePolicyVersion.PROGRAM_STATE_V1)
+            .isEqualTo(TrainingProgramStatePolicyVersion.PROGRAM_STATE_V2)
         assertThat(state.adaptationState).isEqualTo(AdaptationState.RETURNING)
         assertThat(state.weeklyLedger).isEqualTo(ledger)
     }

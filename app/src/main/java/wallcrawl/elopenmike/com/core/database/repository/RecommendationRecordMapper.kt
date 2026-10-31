@@ -7,10 +7,8 @@ import wallcrawl.elopenmike.com.core.model.RecommendationRecord
 /**
  * Maps a recommendation record between its domain shape and its stored row.
  *
- * Reading is strict: a row whose bounded lists no longer decode, or whose values no longer
- * satisfy [RecommendationRecord]'s own contract, reads back as `null` rather than as a
- * partially understood record. Provenance that cannot be trusted is worse than provenance
- * that is missing, and every caller already handles a session that has no record.
+ * Records now supply progression continuity. An unreadable row must fail the read/export,
+ * not masquerade as an honestly absent historical record.
  */
 internal fun RecommendationRecord.toEntity(): WorkoutRecommendationRecordEntity =
     WorkoutRecommendationRecordEntity(
@@ -31,18 +29,20 @@ internal fun RecommendationRecord.toEntity(): WorkoutRecommendationRecordEntity 
         contextIdentity = contextIdentity,
         reasonCodes = reasonCodes.joinToString(PERSISTED_LIST_SEPARATOR),
         doseAccounting = RecommendationDoseAccountingPayload.encode(doseAccounting),
-        recordedAtTimestamp = recordedAtEpochMillis
+        recordedAtTimestamp = recordedAtEpochMillis,
+        programAssociationDigest = programAssociationDigest
     )
 
-internal fun WorkoutRecommendationRecordEntity.toRecommendationRecord(): RecommendationRecord? {
-    val accounting = RecommendationDoseAccountingPayload.decode(doseAccounting) ?: return null
+internal fun WorkoutRecommendationRecordEntity.toRecommendationRecord(): RecommendationRecord {
+    val accounting = requireNotNull(RecommendationDoseAccountingPayload.decode(doseAccounting)) {
+        "Stored recommendation accounting is unreadable."
+    }
     val codes = if (reasonCodes.isEmpty()) {
         emptyList()
     } else {
         reasonCodes.split(PERSISTED_LIST_SEPARATOR)
     }
-    return runCatching {
-        RecommendationRecord(
+    return RecommendationRecord(
             sessionId = sessionId,
             validatorVersion = validatorVersion,
             durationEstimatorVersion = durationEstimatorVersion,
@@ -60,7 +60,7 @@ internal fun WorkoutRecommendationRecordEntity.toRecommendationRecord(): Recomme
             contextIdentity = contextIdentity,
             reasonCodes = codes,
             doseAccounting = accounting,
-            recordedAtEpochMillis = recordedAtTimestamp
-        )
-    }.getOrNull()
+            recordedAtEpochMillis = recordedAtTimestamp,
+            programAssociationDigest = programAssociationDigest
+    )
 }

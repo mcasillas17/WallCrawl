@@ -117,8 +117,16 @@ Everything numeric goes through `core/ui/format/LocaleFormatting.kt`.
 - **A half-typed value is not a value.** Set logging submits on every keystroke, so
   `47.` — what a reader types on the way to `47.5` — is held back rather than submitted
   as a null. Only a blank field clears a stored value.
+- **Editable numbers use ASCII digits** and a `.` or `,` mark, whatever digits the device
+  locale reads by default, because those are the only ones the parser accepts. That
+  covers text in a field, the template editor's row summaries (which repeat that text)
+  and its range hints (which say what to type). Read-only labels — set numbers, effort
+  values, previous-set chips, the rest countdown, the frame counter, counts, volumes and
+  measurements — keep the locale's own digits.
 - **Units are independent of language.** Switching to Spanish never converts pounds to
-  kilograms or changes a stored value.
+  kilograms or changes a stored value. A template's unit changes only through its own **Loads in** control,
+  which converts the numbers; a converted value is written back with the reader's decimal
+  mark, so `22,5` lb becomes `10,21` kg in a comma locale.
 - **Dates** use the platform's locale formats, not a pinned English pattern.
 - **Machine-readable output is locale-independent.** The archive is JSON: a load is
   written with a decimal point whatever the reader's language writes decimals with.
@@ -142,11 +150,91 @@ Everything numeric goes through `core/ui/format/LocaleFormatting.kt`.
 
 ## Claim boundaries
 
+History follows the same split: original session names, rationale and notes stay
+as stored, while field labels, typed outcomes and supported structured reasons
+use English/Spanish resources. Exercise IDs never need a translated catalog
+record to remain readable. The viewed workout uses its recorded unit; earlier
+comparison sets retain their own recorded units, never a relabelled number.
+Historical dates use the reader's locale/time zone without changing stored epoch
+timestamps.
+
+Missing applicable measurements and feedback read as not recorded; fields that
+do not apply to the stored exercise shape are omitted. Unknown policy/reason
+versions show an unsupported-details notice, with their exact identities in the
+technical disclosure. Known malformed provenance becomes a retryable error.
+No prose parsing or current-policy rerun translates an old decision into a new one.
+Progression copy is direction-neutral across axes: in particular, an assistance
+advance must not be translated as an increase in assistance. The Spanish
+assistance-provenance regression renders at 320 dp / 1.8× text.
+
+`WorkoutHistoryScreenTest`, `WorkoutHistoryNavigationTest` and summary/Progress
+entry tests exercise light/dark themes, complete measurement text, disclosure and
+navigation semantics, and actual density scaling at 320 dp / 1.8× Spanish text.
+The navigation suite also captures real Room-backed screens. Automated semantics
+and contrast checks do not constitute manual TalkBack certification.
+
+Today's progression reasons and deload request/accept/decline/dismiss/cancel
+controls ship in both languages. Proposed targets come from the held reference,
+not a translated description: accepting pauses any pending increase. Measurement
+units remain bound to the published recommendation during regeneration; a new
+profile unit cannot relabel old numbers. Passive refresh preserves the generation
+index, so theme/gender/unit edits do not spend a new workout variation.
+
 Translation must not strengthen a claim. WallCrawl describes what it plans — conservative
 volume, capped sets — and never promises injury prevention, healing, or a physiological
 outcome. `SafetyCopyTest` reads both shipped resource files **and the translation overlay's
 names and coaching summaries**, and fails on that vocabulary in either language, and on any
 stop reason that reads as a diagnosis rather than as the user's own decision to stop.
+
+## Progress over time
+
+The Over time card's labels, measure definitions, no-match messages, chart descriptions and
+paging controls are paired `analytics_*` resources in `values/` and `values-es/`. Counts,
+measurements and dates go through `LocaleFormatting`, the existing plurals and the platform
+date format. Loads are converted to the preferred unit and shown with its untranslated
+symbol (kg or lb); stored values and units are never edited. Exercise and muscle choices are ordered by the
+shared `ExerciseVocabulary` collation (`exerciseIdsByLabel`, `musclesByLabel`), while
+selections keep canonical IDs. Historical session names stay as recorded.
+`ProgressAnalyticsCardTest` checks Spanish at 1.8× in 320 dp in light and dark themes,
+including rows that carry units.
+
+## Program controls and large-text evidence
+
+Program management, Today/Progress summaries and mode selection, captured goals/frequency,
+status/objective/position, history membership, confirmations, partial-Finish guidance and
+typed errors/retry use paired `values/` and `values-es/` resources. Selected/disabled controls
+retain accessible semantics. Structured supported labels translate; recorded run IDs,
+policy identities, historical free text and stored decisions stay unchanged. Program
+weeks are explicitly completion-driven in both languages, and Finish advancement is
+explained separately from actual set credit and shared calendar-week allowances.
+
+Controls wrap in scrollable layouts at 320 dp and font scale 1.8 without suppressing
+font scaling. Progress error recovery also scrolls when a populated program summary
+precedes Manage/Retry. `ProgramAccessibilityTest`, `ProgramNavigationTest` and
+`ProgressScreenTest` check line bounds, reachability and enabled actions in English/Spanish;
+`StringResourceParityTest` and `SafetyCopyTest` cover resources and claim wording.
+
+<p align="center">
+  <img src="../art/screenshots/program-actions-es-large.png" width="32%" alt="Spanish program management actions wrapping at physical emulator 320 dp and font scale 1.8" />
+  <img src="../art/screenshots/program-confirmation-es-large.png" width="32%" alt="Scrolled Spanish restart confirmation retaining recorded run and reachable confirm/keep actions at physical emulator 320 dp and font scale 1.8" />
+</p>
+
+These actual API 36 installed-app captures use a test profile after selecting **Español**
+through **Profile → App preferences**. Device density made the 1080 px viewport 320 dp,
+and the system font scale was 1.8. The confirmation is scrolled to expose the run; content
+above that position is offscreen. No restart was applied by that capture.
+
+<p align="center">
+  <img src="../art/screenshots/program-partial-finish-es-large-top.png" width="32%" alt="Spanish native partial-Finish dialog before scrolling, showing incomplete-set text and beginning of the program explanation" />
+  <img src="../art/screenshots/program-partial-finish-es-large.png" width="32%" alt="Same Spanish native dialog after scrolling, showing the complete final calendar-credit sentence and both reachable actions" />
+</p>
+
+The paired native-dialog captures use the final installed instrumentation app at the same
+physical emulator 320 dp/1.8 settings. They show separate scroll positions because the
+explanation does not fit at once; assertions reach the first and final lines and both
+actions, and Keep preserves the active session. This evidence is distinct from tests that
+scale only a Compose content wrapper. Device settings were restored afterward. None of
+these checks certifies physical-device behavior or manual TalkBack use.
 
 ## Adding to it
 
@@ -159,6 +247,11 @@ stop reason that reads as a diagnosis rather than as the user's own decision to 
 3. `StringResourceParityTest` fails if a key, a plural quantity, or a format argument is
    missing or mismatched, and if a Spanish string was left identical to its English source
    without being listed as deliberately identical.
+
+Check long translations at narrow widths as well as large font scales.
+`TodayDeloadScreenTest` pins the weekly summary to 320 dp at 1.8× Spanish text,
+checking full text, compact height, and vertically stacked labels. Its small-body
+typography keeps line spacing proportional without shrinking or truncating the text.
 
 **A new exercise, or a catalog update that adds one**
 

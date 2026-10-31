@@ -3,6 +3,8 @@ package wallcrawl.elopenmike.com.feature.today
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,12 +34,16 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.produceState
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -48,6 +54,8 @@ import androidx.compose.material3.MaterialTheme
 import wallcrawl.elopenmike.com.core.model.GeneratedExercise
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
 import wallcrawl.elopenmike.com.core.model.ExerciseType
+import wallcrawl.elopenmike.com.core.model.DeloadAction
+import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.ui.components.StatBadge
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlWordmark
@@ -61,6 +69,7 @@ import wallcrawl.elopenmike.com.core.ui.localization.generatedWorkoutTitle
 import wallcrawl.elopenmike.com.core.ui.localization.labelRes
 import wallcrawl.elopenmike.com.core.ui.localization.unavailableFocusNotice
 import wallcrawl.elopenmike.com.core.ui.localization.workoutRankingNotice
+import wallcrawl.elopenmike.com.core.ui.localization.progressionNotice
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 import wallcrawl.elopenmike.com.core.ui.theme.SuccessGreen
@@ -72,9 +81,16 @@ fun TodayScreen(
     onStartWorkout: (sessionId: String) -> Unit,
     onResumeWorkout: (sessionId: String) -> Unit,
     onOpenTemplates: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    programContent: @Composable () -> Unit = {}
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val uiState by produceState<TodayUiState>(TodayUiState.Loading, viewModel, lifecycleOwner) {
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            value = TodayUiState.Loading
+            viewModel.uiState.collect { value = it }
+        }
+    }
 
     Box(
         modifier = modifier
@@ -84,9 +100,22 @@ fun TodayScreen(
         WebBackgroundPattern()
 
         when (val state = uiState) {
-            is TodayUiState.Loading -> {
+            TodayUiState.Loading, is TodayUiState.Preparing -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(
+                        modifier = Modifier.verticalScroll(rememberScrollState()).padding(24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        (state as? TodayUiState.Preparing)?.activeSession?.let { session ->
+                            ActiveSessionBanner(
+                                sessionName = session.name,
+                                completedSets = session.completedSetsCount,
+                                totalSets = session.totalSetsCount,
+                                onResume = { onResumeWorkout(session.id) }
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
+                        programContent()
                         CircularProgressIndicator(color = CrimsonRedPrimary)
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
@@ -101,6 +130,7 @@ fun TodayScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
                         .padding(24.dp),
                     verticalArrangement = Arrangement.Center
                 ) {
@@ -114,6 +144,13 @@ fun TodayScreen(
                             onResume = { onResumeWorkout(session.id) }
                         )
                         Spacer(modifier = Modifier.height(16.dp))
+                    }
+                    programContent()
+                    if (state.activeSession == null) {
+                        state.deload?.let {
+                            TodayDeloadCard(it, viewModel::decideDeload)
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
                     }
                     WallCrawlCard(borderColor = CrimsonRedPrimary) {
                         Text(
@@ -159,7 +196,9 @@ fun TodayScreen(
                     },
                     onResumeWorkout = { state.activeSession?.let { onResumeWorkout(it.id) } },
                     onRegenerate = { viewModel.regenerateWorkout() },
-                    onOpenTemplates = onOpenTemplates
+                    onOpenTemplates = onOpenTemplates,
+                    onDeloadAction = viewModel::decideDeload,
+                    programContent = programContent
                 )
             }
         }
@@ -177,11 +216,14 @@ internal fun TodayContent(
     onStartWorkout: () -> Unit,
     onResumeWorkout: () -> Unit,
     onRegenerate: () -> Unit,
-    onOpenTemplates: () -> Unit
+    onOpenTemplates: () -> Unit,
+    onDeloadAction: (DeloadAction) -> Unit = {},
+    programContent: @Composable () -> Unit = {}
 ) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
+            .testTag("today-list")
             .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -206,14 +248,30 @@ internal fun TodayContent(
             }
         }
 
+        item { programContent() }
+
+        if (state.activeSession == null) {
+            state.deload?.let { deload ->
+                item {
+                    TodayDeloadCard(deload, onDeloadAction) {
+                        DeloadPrescriptionPreview(
+                            state.suggestedWorkout, state.prescriptionUnit
+                        )
+                    }
+                }
+            }
+        }
+
         // Main Recommended Workout Card
         item {
             SuggestedWorkoutCard(
                 workout = state.suggestedWorkout,
                 workoutName = workoutName,
-                isRegenerating = state.isRegenerating,
+                isRegenerating = state.isRegenerating || state.activeSession != null || state.deload?.isSaving == true,
+                prescriptionUnit = state.prescriptionUnit,
                 onStartWorkout = onStartWorkout,
-                onRegenerate = onRegenerate
+                onRegenerate = onRegenerate,
+                programSession = state.programSession
             )
         }
 
@@ -223,7 +281,7 @@ internal fun TodayContent(
         item {
             PlanContextCard(
                 goal = stringResource(state.userProfile.primaryGoal.labelRes),
-                unit = state.userProfile.preferredUnit.symbol,
+                unit = state.prescriptionUnit.symbol,
                 equipmentCount = state.userProfile.availableEquipment.size
             )
         }
@@ -336,14 +394,13 @@ private fun TodayHeader(
             cornerRadius = 12.dp,
             contentPadding = 12.dp
         ) {
-            Row(
+            Column(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Icon(
                         imageVector = Icons.Default.CheckCircle,
@@ -359,12 +416,13 @@ private fun TodayHeader(
                             LocaleFormatting.formatCount(completedThisWeek, locale),
                             LocaleFormatting.formatCount(weeklyGoal, locale)
                         ),
+                        style = MaterialTheme.typography.bodySmall,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.weight(1f)
                     )
                 }
-                Spacer(modifier = Modifier.width(8.dp))
                 val remaining = (weeklyGoal - completedThisWeek).coerceAtLeast(0)
                 Text(
                     text = if (completedThisWeek >= weeklyGoal) {
@@ -376,9 +434,11 @@ private fun TodayHeader(
                             LocaleFormatting.formatCount(remaining, locale)
                         )
                     },
+                    style = MaterialTheme.typography.bodySmall,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.secondary
+                    color = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
@@ -458,8 +518,10 @@ private fun SuggestedWorkoutCard(
     workout: GeneratedWorkout,
     workoutName: String,
     isRegenerating: Boolean,
+    prescriptionUnit: WeightUnit,
     onStartWorkout: () -> Unit,
-    onRegenerate: () -> Unit
+    onRegenerate: () -> Unit,
+    programSession: wallcrawl.elopenmike.com.core.model.ProgramSessionSnapshot? = null
 ) {
     val locale = LocalConfiguration.current.locales[0]
     val vocabulary = LocalExerciseVocabulary.current
@@ -468,6 +530,7 @@ private fun SuggestedWorkoutCard(
         contentPadding = 20.dp,
         borderColor = CrimsonRedPrimary.copy(alpha = 0.4f)
     ) {
+        programSession?.let { Text(wallcrawl.elopenmike.com.feature.program.positionText(it.position)) }
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -607,7 +670,16 @@ private fun SuggestedWorkoutCard(
             )
 
             workout.exercises.forEachIndexed { index, exercise ->
-                ExercisePreviewRow(index = index + 1, exercise = exercise)
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    ExercisePreviewRow(index = index + 1, exercise = exercise)
+                    workout.progressionDecisions.firstOrNull { it.exerciseId == exercise.exerciseId }?.let {
+                        Text(
+                            progressionNotice(it, prescriptionUnit, prescriptionUnit),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
             }
         }
 
@@ -615,7 +687,7 @@ private fun SuggestedWorkoutCard(
 
         // Large Start Workout CTA
         WallCrawlPrimaryButton(
-            text = stringResource(R.string.today_action_start),
+            text = stringResource(if (programSession != null) R.string.program_start_session else R.string.today_action_start),
             onClick = onStartWorkout,
             enabled = !isRegenerating,
             leadingIcon = {
@@ -689,7 +761,7 @@ private fun ExercisePreviewRow(
 
 /** The compact "3 × 8–12" style target shown beside a planned exercise. */
 @Composable
-private fun prescriptionSummary(exercise: GeneratedExercise): String {
+internal fun prescriptionSummary(exercise: GeneratedExercise): String {
     val locale = LocalConfiguration.current.locales[0]
     val prescription = exercise.prescription
     val sets = LocaleFormatting.formatCount(exercise.targetSets, locale)

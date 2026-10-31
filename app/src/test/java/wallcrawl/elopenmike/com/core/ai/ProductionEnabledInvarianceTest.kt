@@ -34,6 +34,30 @@ import wallcrawl.elopenmike.com.core.model.convertWeight
  * prescribed load silently stayed in the unit it was logged in.
  */
 class ProductionEnabledInvarianceTest {
+    @Test
+    fun activeSchedulingReasonsAndSelectionsAreInvariantAcrossLanguageAndGender() = runTest {
+        val ids = setOf("dumbbell-bench-press", "dumbbell-shoulder-press", "cable-fly", "cable-lateral-raise")
+        val history = (0L..1L).map { day ->
+            completedSession("practice-$day", WEEK.startEpochMillis + day * DAY_MILLIS,
+                listOf(exerciseInstance("dumbbell-shoulder-press",
+                    listOf(completedNormalSet("set-$day")), id = "instance-$day")))
+        }
+        val results = LOCALES.flatMap { locale ->
+            Locale.setDefault(locale)
+            ProfileGender.entries.map { gender ->
+                val context = productionContext(fullGymProfile().copy(
+                    daysPerWeek = 6, preferredDurationMinutes = 30, gender = gender,
+                    musclePriorities = mapOf(wallcrawl.elopenmike.com.core.model.StandardMuscles.SHOULDERS to
+                        wallcrawl.elopenmike.com.core.model.PriorityLevel.HIGH),
+                    excludedExerciseIds = bundledExercises.map(Exercise::id).filterNot { it in ids }
+                ), history)
+                FakeWorkoutPlanner().generateWorkout(context).normalizedPlannerFixtureWorkout() to
+                    RecommendationContextIdentity.of(context)
+            }
+        }
+        assertThat(results.first().first.rankingReasons).hasSize(2)
+        results.forEach { assertThat(it).isEqualTo(results.first()) }
+    }
 
     private val bundledCatalog = PlannerFixtureContextFactory().bundledCatalogProjection()
     private val bundledExercises = bundledCatalog.exercises
@@ -207,7 +231,8 @@ class ProductionEnabledInvarianceTest {
             zoneId = { LEDGER_ZONE }
         ),
         catalogVersion = { bundledCatalog.sourceCommit },
-        nowTimestamp = { WEEK.startEpochMillis + 3 * DAY_MILLIS }
+        nowTimestamp = { WEEK.startEpochMillis + 3 * DAY_MILLIS },
+        zoneId = { LEDGER_ZONE }
     ).build()
 
     private fun sessionLoggedIn(

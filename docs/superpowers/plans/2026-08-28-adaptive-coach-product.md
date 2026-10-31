@@ -4,6 +4,12 @@
 > [canonical roadmap](../../../ROADMAP.md). This document preserves detailed implementation
 > context; unchecked boxes are not authoritative project status.
 
+> **Partial supersession, 2026-10-25:** Task 13 and the model-integration portions
+> of the original goal, architecture, tech stack, and release tasks are retired.
+> WallCrawl's direction is a private, offline workout app with deterministic
+> planning. See [Roadmap Package 17](../../../ROADMAP.md#17-optional-local-inference-retired).
+> The original proposal below is preserved as history, not authorization to add a model.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Turn WallCrawl's current local-first vertical slice into a safe, transparent, deterministic adaptive coach, then add an optional on-device LLM that ranks and explains only within validated boundaries.
@@ -41,7 +47,7 @@
 | Progress/history and template editing are shallow | **Open** | Progress is a single screen with no drill-down; the template editor still changes set count only | Task 10 |
 | Local privacy promise is underspecified | **Open** | `android:allowBackup="true"` still ships; no export, delete or diagnostic policy | Task 11 |
 | No systematic planner evaluation corpus | **Open** | Unit tests cover components. CI now runs the Python suites, including a guard on the shipped programming metadata, which is a foundation for this rather than a substitute | Task 12 |
-| No production local model and no runtime capability tier | **Open** | `FakeWorkoutPlanner` is still the only `WorkoutPlanner` | Task 13 |
+| No production local model and no runtime capability tier | **Retired, 2026-10-25** | Deterministic planning is the product direction; a model runtime is not a missing feature | Task 13 retired with Roadmap Package 17 |
 | Static catalog storage is already appropriate | Unchanged | 302 records parsed once from assets | Keep asset/in-memory storage; do not add Room/FTS without measured need |
 | Kabi already covers broad tracker features | Unchanged | Its listing advertises nutrition, recovery, backup, and beginner features | Keep WallCrawl focused on transparent local adaptation rather than feature-parity sprawl |
 
@@ -939,6 +945,9 @@ git commit -m "test: add workout planner evaluation corpus"
 ---
 
 ### Task 13: Add Optional Local-Model Ranking
+
+**Status:** Retired on 2026-10-25. The original steps below are historical only;
+they are not implementation tasks or release requirements.
 
 **Files:**
 - Create: `app/src/main/java/wallcrawl/elopenmike/com/core/ai/local/LocalModelRuntime.kt`

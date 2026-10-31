@@ -21,6 +21,10 @@ import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetType
 import wallcrawl.elopenmike.com.core.model.WeightUnit
+import wallcrawl.elopenmike.com.core.model.WorkoutRankingReason
+import wallcrawl.elopenmike.com.core.model.WorkoutRankingReasonCode
+import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
+import wallcrawl.elopenmike.com.core.database.repository.toRecommendationRecord
 
 /**
  * A started session and the provenance of the plan it came from land together, or not at all.
@@ -31,6 +35,25 @@ import wallcrawl.elopenmike.com.core.model.WeightUnit
  */
 @RunWith(AndroidJUnit4::class)
 class RecommendationRecordDaoTest {
+    @Test
+    fun mixedReasonsRoundTripThroughTheExistingRoomColumnAndStrictDomainMapper() = runBlocking {
+        val reasons = listOf(
+            WorkoutRankingReason.SupportedRegressionPreference("supported", "source", MovementCapabilityType.FLOOR_TRANSITION),
+            WorkoutRankingReason.TrainingFrequencyRecencyPreference("press", "fly", "Shoulders", 6, 3)
+        )
+        val codes = listOf("WEEKLY_ALLOWANCE_EXCEEDED") + WorkoutRankingReasonCode.encode(reasons) +
+            listOf("TRAINING_FREQUENCY_RECENCY_V1", "PLANNER_GENERATION_V1:7", "TRAINING_FREQUENCY_RECENCY_V2.2")
+        database.userProfileDao().insertOrUpdate(profileEntity())
+        database.workoutSessionDao().insertWorkoutUnlessActive(
+            sessionEntity(SESSION_ID), listOf(exerciseEntity(SESSION_ID)), listOf(setEntity()),
+            expectedProfileId = PROFILE_ID, expectedProfileRevision = 0L,
+            recommendation = recordEntity(SESSION_ID).copy(reasonCodes = codes.joinToString(PERSISTED_LIST_SEPARATOR))
+        )
+        val row = checkNotNull(database.workoutSessionDao().getRecommendationRecord(SESSION_ID))
+        val record = checkNotNull(row.toRecommendationRecord())
+        assertThat(record.reasonCodes).isEqualTo(codes)
+        assertThat(WorkoutRankingReasonCode.decode(record.reasonCodes)).containsExactlyElementsIn(reasons).inOrder()
+    }
 
     private lateinit var database: WallCrawlDatabase
 

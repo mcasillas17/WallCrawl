@@ -11,6 +11,18 @@ session count as dose, never increases a base prescription, and defines no manda
 weekly floor. Exact or exceeded allowance returns typed no-guidance instead of zero sets
 or over-cap work.
 
+The planner's separate
+[`TRAINING_FREQUENCY_RECENCY_V1` scheduling preference](architecture.md#frequency-and-recency-scheduling)
+reuses completed-work classification and accepted direct-primary attribution, but counts
+**distinct practice dates**, not sets or dose. It reconstructs a fourteen-local-date range
+through the explicit current instant, excluding future work, whereas this ledger retains
+the full selected ISO week's existing membership. Two practice dates establish familiarity;
+preferred weekly days set a binary revisit band, not a muscle quota or mandatory frequency.
+Neither primary practice dates nor secondary involvement are added to `directPrimarySets`,
+and no second weekly-dose calculator, counter, cache, or progression system is introduced.
+The scheduling range's 2,000-session and 100,000-set bounds are separate representational
+limits, not replacements for this ledger's weekly limits.
+
 That cap stays per prescription, where several proposed exercises could each read the same
 remaining allowance. Checking the whole proposal is
 [whole-program validation](superpowers/specs/2026-09-06-whole-program-validation-design.md)'s
@@ -220,6 +232,74 @@ restart the read; Room invalidations cover completion, import and deletion. Ther
 periodic Progress query loop. Today also uses `TrainingWeek` for its count range, without
 changing planning behavior.
 
+## Individual workout history and records
+
+The overview's 500-session analytics window and ten recent cards do not limit
+history access. **View all workouts** uses fixed 20-session pages; detail looks up
+one persisted ID directly. None of these reads reconstructs historical
+measurements or acceptance state from current catalog programming.
+
+A summary record is evaluated against genuinely earlier work: a distinct completed
+session with positive, ordered start/completion times whose completion is **strictly
+before the viewed workout started**. A timestamp equal to that start, an overlapping
+session, and a later workout are not prior evidence. Missing/invalid chronology
+supplies no baseline. Grouped SQL maxima cover all eligible earlier data for the
+relevant exercise IDs, stored types and units; there is no global recent-history
+cap. Loads are explicitly converted before comparing. The established heavier
+top-load / higher-reps record types and warm-up treatment are retained, and the
+first observation remains zero records. Finish and reopening use the same summary
+calculation. Adding future stronger workouts cannot erase an old achievement.
+
+Ordinary previous performance instead selects the latest compatible earlier
+exercise observation: completion descending, start descending, session ID
+ascending, then exercise order and instance ID. Exact exercise ID and persisted
+measurement dimensions must match; distance-only, time-only and combined work
+are separate shapes. It displays completed, unstopped, type-valid non-warm-up sets,
+excluding known outcome timestamps outside their session. Legacy missing set times
+remain unavailable, not invented. Archived performed-value bounds apply rather
+than today's target limits, and prior values retain their recorded units.
+
+Recorded progression-source sessions have a separate label and selection;
+they are not interchangeable with the ordinary previous observation. A missing
+source leaves its recorded reason/axis readable but comparison detail unavailable.
+No before/after prescription or growth percentage is synthesized. These detail
+rules change neither weekly activity nor `PRIMARY_ONLY_V1` accounting, and do not
+turn assistance, duration, distance or body mass into external-load volume.
+Both paths share the same SQL eligibility rules and batch-read only the selected
+exercise instances, eligible sets and source headers. Unrelated source graphs
+cannot exhaust a comparison's set bound or hide an otherwise valid workout.
+
+## Progress over time
+
+Package 14's **Over time** card answers "am I progressing, and which workouts explain it?"
+over 4, 12, 26 or 52 `TrainingWeek` buckets ending with the current, partial week. Weekly
+membership is the same as above, including a clock-skewed completion inside the current
+week; nothing after the current week's end is read. Filters are canonical exercise IDs or
+trainable muscle names and change only that card.
+
+| Measure | Per week | Scope rule |
+| --- | --- | --- |
+| Workouts | Distinct completed sessions | All: every session, including zero-set Finishes. Exercise/muscle: sessions with a completed in-scope set |
+| Completed sets | Completed in-scope sets, warm-ups and timed work included | — |
+| Reps | Positive logged reps of completed rep-based sets | Only sessions with such a set contribute |
+| Load volume | Load × reps of completed `WEIGHT_REPS` sets, each converted to the preferred unit before summing | Only sessions with such a set and a valid recorded load contribute |
+| Reviewed dose | `WeeklyDoseLedgerCalculator` on the bucket's sessions, without the cache | All: `creditedWorkSets`. Exercise: credit after restricting to that ID. Muscle: `directPrimarySets[muscle]`, which can be a legacy secondary |
+
+Muscle scope for activity measures uses the current catalog's legacy primaries, which overlap,
+exactly as the weekly involvement card does. Sets of unknown exercise IDs are reported as not
+classifiable, not dropped. Classification was never snapshotted, and the card says so.
+Exercise performance reuses history's `ELIGIBLE_PREVIOUS_SET` predicate. It reports one
+observation per session and measurement shape, and compares the earliest and latest of at
+least two sessions as a signed difference in the shape's own unit, never a percentage. The
+complete contract, bounds and states are in the
+[design](superpowers/specs/2026-10-31-progress-analytics-design.md).
+
+The read takes the shared write gate and one Room transaction, like the overview, but never
+writes the ledger cache: reviewed dose is recomputed by the pure calculator. Ranges are bounded
+at 2,000 sessions, 200,000 exercise rows and 100,000 sets, and each week to this ledger's
+1,000 sessions and 50,000 work sets. Overflow is reported, never
+truncated, and selected older weeks cannot be crowded out by recent workouts.
+
 ## Reconstruction and cache invalidation
 
 ```text
@@ -286,6 +366,27 @@ configured allowance is a mismatch with a versioned WallCrawl number, never proo
 overload or medical danger, and a damaged ledger is reported as its own distinct reason
 rather than as a full one.
 
+## Completion-driven programs share calendar accounting
+
+Optional Package 12 enrollment uses four completion-driven weeks in two blocks, with
+2–6 slots per week. Those weeks describe sequence position, not ISO accounting windows.
+Only a confirmed Finish of an explicitly started program session advances one slot;
+a partial or zero-set Finish earns only its actual completed-set credit. Ordinary/manual
+sessions do not advance a program, but their eligible completed work uses the same
+`PRIMARY_ONLY_V1` allowance. Planned sessions and future slots reserve no dose.
+
+Start, Cancel, pause/resume, restart/replacement, completion, passive reads and missed
+months never reset or relabel ledger history. Cancellation leaves the same slot next
+and adds no completed exposure. There is no catch-up volume, automatic block deload or
+separate program allowance. Existing one-variable progression, explicit one-workout
+deload, eligibility and whole-session validation remain authoritative; a program position
+cannot establish calibration or physiological readiness.
+
+`MultiWeekProgramProductionReplayTest` exercises real bundled-catalog sequences at
+frequencies 2/3/6 and a performed eight-slot run, including actual-set credit, explicit
+deload, calendar/DST/zone boundaries and clock rollback. `ProgramPersistenceTest` covers
+transactional start/Finish/Cancel. Lifecycle counters are not training-performance evidence.
+
 ## Privacy boundary
 
 Ledger reconstruction and cache access run locally. No analytics event, network call,
@@ -322,6 +423,15 @@ Synthetic approved metadata lives only in tests; the production catalog is uncha
   -Pandroid.testInstrumentationRunnerArguments.class=\
 wallcrawl.elopenmike.com.core.database.ProgressRepositoryTest,\
 wallcrawl.elopenmike.com.feature.progress.ProgressScreenTest
+
+# Over time analytics (Package 14): pure calculator/ViewModel, then Room, card and app navigation.
+./gradlew testDebugUnitTest --tests '*ProgressAnalytics*Test*' --tests '*ExerciseVocabularyTest*' --no-daemon
+./gradlew connectedDebugAndroidTest --no-daemon \
+  -Pandroid.testInstrumentationRunnerArguments.class=wallcrawl.elopenmike.com.core.database.ProgressAnalyticsRepositoryTest
+./gradlew connectedDebugAndroidTest --no-daemon \
+  -Pandroid.testInstrumentationRunnerArguments.class=wallcrawl.elopenmike.com.feature.progress.ProgressAnalyticsCardTest
+./gradlew connectedDebugAndroidTest --no-daemon \
+  -Pandroid.testInstrumentationRunnerArguments.class=wallcrawl.elopenmike.com.app.WorkoutHistoryNavigationTest
 ```
 
 ```bash
@@ -354,11 +464,21 @@ git diff --check
 
 ## Not in this milestone
 
+This list describes the original ledger milestone, not current application gaps.
+Production reviewed planning is enabled. Package 9 now derives `RETURNING`,
+accepted-deload `HOLD`, or `UNCALIBRATED`, and implements progression and a
+one-workout user-controlled deload. Neither advances set counts or changes
+`PRIMARY_ONLY_V1`: progression changes one non-set axis, accepted deload reduces
+sets, and whole-program repair can only reduce sets further while suppressing
+an affected pending progression. All three derived states retain the configured
+6-set weekly allowance and two-set cap before deload.
+
 - Metadata approval of any kind.
 - Production enablement of reviewed eligibility or state-based prescription guidance.
-- Any new adaptation-state transition; derivation remains limited to `UNCALIBRATED` and
-  `RETURNING`.
-- Progression, deloads, substitutions, and program blocks.
+- Substitutions remain separate Package 10 work.
+- Optional program blocks are implemented by Package 12; they do not expand derived
+  states beyond `RETURNING`, accepted `HOLD` and
+  `UNCALIBRATED` or change this ledger policy.
 - Any change to legacy planner selection or prescriptions.
 - Fractional secondary-muscle credit.
 - Body measurements, BMI, Health Connect, Wear OS, LLM, analytics, or networking.

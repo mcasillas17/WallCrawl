@@ -11,6 +11,7 @@ import java.time.Clock
 import java.time.Instant
 import java.time.ZoneId
 import kotlinx.coroutines.flow.first
+import wallcrawl.elopenmike.com.core.model.SetType
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import org.junit.After
@@ -31,6 +32,7 @@ import wallcrawl.elopenmike.com.core.ai.WorkoutHistoryAnalyzer
 import wallcrawl.elopenmike.com.core.ai.acceptedMetadata
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSetEntity
 import wallcrawl.elopenmike.com.core.database.repository.OfflineLocalDataBackupRepository
+import wallcrawl.elopenmike.com.core.database.repository.OfflineDeloadRepository
 import wallcrawl.elopenmike.com.core.database.repository.OfflineUserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.OfflineWeeklyDoseLedgerRepository
 import wallcrawl.elopenmike.com.core.database.repository.OfflineWorkoutRepository
@@ -64,6 +66,142 @@ import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
  */
 @RunWith(AndroidJUnit4::class)
 class ProductionPlannerPersistenceTest {
+    @Test
+    fun corruptRecommendationFailsHistoryAndExportBeforeOpeningTheDestination() = runBlocking<Unit> {
+        profileRepository.saveProfile(onboardedProfile())
+        val profile = profileRepository.getProfileOnce()
+        val proposal = validatedPlan(contextBuilder.build())
+        val session = workoutRepository.startWorkoutFromGenerated(
+            proposal.workout, DISPLAY_NAME, DISPLAY_RATIONALE, profile, proposal.snapshot
+        )
+        database.openHelper.writableDatabase.execSQL(
+            "UPDATE workout_recommendation_records SET doseAccounting = ? WHERE sessionId = ?",
+            arrayOf("malformed", session.id)
+        )
+        org.junit.Assert.assertThrows(IllegalArgumentException::class.java) {
+            runBlocking { workoutRepository.getRecommendationRecords(listOf(session.id)) }
+        }
+        val backup = OfflineLocalDataBackupRepository(
+            database.localDataBackupDao(), "test", 1L, catalogCommit = { null },
+            localDataWriteGate = writeGate
+        )
+        var opened = false
+        org.junit.Assert.assertThrows(IllegalArgumentException::class.java) {
+            runBlocking { backup.exportTo { opened = true; ByteArrayOutputStream() } }
+        }
+        assertThat(opened).isFalse()
+        assertThat(database.workoutSessionDao().getRecommendationRecord(session.id)).isNotNull()
+    }
+
+    @Test
+    fun defaultProductionCompositionRecordsRevisionZeroAndRefusesAConcurrentFirstRequest() = runBlocking<Unit> {
+        profileRepository.saveProfile(onboardedProfile())
+        val storedProfile = profileRepository.getProfileOnce()
+        val generationContext = contextBuilder.build()
+        assertThat(generationContext.deloadPreferences)
+            .isEqualTo(wallcrawl.elopenmike.com.core.model.DeloadPreferences())
+        val accepted = validatedPlan(generationContext)
+        assertThat(accepted.snapshot.deloadDecisionRevision).isEqualTo(0L)
+        assertThat(accepted.snapshot.acceptedDeloadOfferId).isNull()
+        wallcrawl.elopenmike.com.core.database.repository.OfflineDeloadRepository(
+            database.deloadPreferencesDao(), writeGate
+        ).decide(wallcrawl.elopenmike.com.core.model.DeloadAction.REQUEST,
+            storedProfile.revision, 0, null)
+
+        org.junit.Assert.assertThrows(IllegalStateException::class.java) {
+            runBlocking {
+                workoutRepository.startWorkoutFromGenerated(
+                    accepted.workout, DISPLAY_NAME, DISPLAY_RATIONALE, storedProfile, accepted.snapshot
+                )
+            }
+        }
+        assertThat(database.workoutSessionDao().getActiveSession()).isNull()
+        assertThat(database.localDataBackupDao().selectRecommendationRecords()).isEmpty()
+    }
+
+    @Test
+    fun schedulingReadsBeyondRecentEightAndSurvivesRoomArchiveAndFreshReconstruction() = runBlocking {
+        val all = catalog.getAllExercises().first()
+        val ids = setOf("dumbbell-bench-press", "dumbbell-shoulder-press", "cable-fly", "cable-lateral-raise")
+        val profile = onboardedProfile().copy(
+            daysPerWeek = 6, preferredDurationMinutes = 30,
+            musclePriorities = mapOf(
+                wallcrawl.elopenmike.com.core.model.StandardMuscles.SHOULDERS to
+                    wallcrawl.elopenmike.com.core.model.PriorityLevel.HIGH
+            ),
+            excludedExerciseIds = all.map { it.id }.filterNot { it in ids }
+        )
+        profileRepository.saveProfile(profile)
+        val today = fixedInstant.atZone(zone).toLocalDate()
+        repeat(11) { index ->
+            val id = "practice-$index"
+            val completedAt = today.minusDays(if (index < 2) 4L - index else 0L)
+                .atStartOfDay(zone).toInstant().toEpochMilli()
+            val exerciseId = "$id-exercise"
+            database.workoutSessionDao().insertWorkout(
+                session = wallcrawl.elopenmike.com.core.database.entity.WorkoutSessionEntity(
+                    id = id, name = "Practice", startedAtTimestamp = completedAt - 1,
+                    completedAtTimestamp = completedAt, targetDurationMinutes = 30,
+                    actualDurationMinutes = 1, status = SessionStatus.COMPLETED,
+                    focusMusclesJson = "", notes = ""
+                ),
+                exercises = if (index >= 2) emptyList() else listOf(
+                    wallcrawl.elopenmike.com.core.database.entity.WorkoutExerciseEntity(
+                        id = exerciseId, sessionId = id, exerciseId = "dumbbell-shoulder-press",
+                        orderIndex = 0, exerciseType = ExerciseType.WEIGHT_REPS,
+                        targetSets = 1, targetRepMin = 8, targetRepMax = 10, targetWeight = null, notes = ""
+                    )
+                ),
+                sets = if (index >= 2) emptyList() else listOf(WorkoutSetEntity(
+                    id = "$id-set", workoutExerciseId = exerciseId, setNumber = 1,
+                    exerciseType = ExerciseType.WEIGHT_REPS, targetReps = 10, completedReps = null,
+                    targetWeight = null, completedWeight = null, isCompleted = true,
+                    rpe = null, rir = null, completedAtTimestamp = null, type = SetType.NORMAL
+                ))
+            )
+        }
+        fun freshBuilder() = WorkoutGenerationContextBuilder(
+            profileRepository, workoutRepository, catalog, ExerciseFilter(), WorkoutHistoryAnalyzer(),
+            plannerFeatureFlags = PlannerFeatureFlags.PRODUCTION,
+            trainingProgramStateProvider = TrainingProgramStateProvider(ledgerRepository),
+            catalogVersion = { runBlocking { catalogStore.snapshot() }.catalogAttribution.commit },
+            nowTimestamp = { fixedInstant.toEpochMilli() }, zoneId = { zone },
+            deloadRepository = OfflineDeloadRepository(database.deloadPreferencesDao(), writeGate)
+        )
+        val before = freshBuilder().build()
+        assertThat(before.recentWorkoutHistory).hasSize(8)
+        assertThat(before.exerciseHistory).isEmpty()
+        assertThat(before.schedulingEvidence?.practiceDates?.get("Shoulders")).hasSize(2)
+        val accepted = validatedPlan(before)
+        assertThat(accepted.workout.exercises.map { it.exerciseId }).containsExactly(
+            "dumbbell-shoulder-press", "dumbbell-bench-press", "cable-lateral-raise"
+        ).inOrder()
+        assertThat(accepted.workout.rankingReasons).hasSize(2)
+        workoutRepository.startWorkoutFromGenerated(accepted.workout, DISPLAY_NAME, DISPLAY_RATIONALE,
+            profileRepository.getProfileOnce(), accepted.snapshot)
+        // The new active attempt is a progression input. Compare the state actually
+        // exported, not the earlier context from before this session existed.
+        val beforeExport = freshBuilder().build()
+        assertThat(wallcrawl.elopenmike.com.core.ai.RecommendationContextIdentity.of(beforeExport))
+            .isNotEqualTo(wallcrawl.elopenmike.com.core.ai.RecommendationContextIdentity.of(before))
+        val planBeforeExport = FakeWorkoutPlanner().generateWorkout(beforeExport)
+        val backup = OfflineLocalDataBackupRepository(
+            database.localDataBackupDao(), "test", 1L,
+            catalogCommit = { runBlocking { catalogStore.snapshot() }.catalogAttribution.commit },
+            localDataWriteGate = writeGate
+        )
+        val originalRows = database.localDataBackupDao().readAll()
+        val bytes = ByteArrayOutputStream().also { backup.exportTo { it } }.toByteArray()
+        backup.deleteAllLocalData() // This fixture owns only its in-memory database.
+        backup.restoreFrom(ByteArrayInputStream(bytes))
+        assertThat(database.localDataBackupDao().readAll()).isEqualTo(originalRows)
+        val rebuilt = freshBuilder().build()
+        assertThat(rebuilt.schedulingEvidence).isEqualTo(before.schedulingEvidence)
+        assertThat(wallcrawl.elopenmike.com.core.ai.RecommendationContextIdentity.of(rebuilt))
+            .isEqualTo(wallcrawl.elopenmike.com.core.ai.RecommendationContextIdentity.of(beforeExport))
+        assertThat(FakeWorkoutPlanner().generateWorkout(rebuilt).copy(id = planBeforeExport.id))
+            .isEqualTo(planBeforeExport)
+    }
 
     private val context: Context = ApplicationProvider.getApplicationContext()
     private val writeGate = Mutex()
@@ -112,7 +250,8 @@ class ProductionPlannerPersistenceTest {
                 weeklyDoseLedgerRepository = ledgerRepository,
                 zoneId = { zone }
             ),
-            catalogVersion = { runBlocking { catalogStore.snapshot() }.catalogAttribution.commit }
+            catalogVersion = { runBlocking { catalogStore.snapshot() }.catalogAttribution.commit },
+            deloadRepository = OfflineDeloadRepository(database.deloadPreferencesDao(), writeGate)
         )
         validator = ProgramValidator(GeneratedWorkoutValidator(catalog))
     }
@@ -164,7 +303,7 @@ class ProductionPlannerPersistenceTest {
         val storedRecord = storedRows.recommendationRecords.single()
         assertThat(storedRecord.sessionId).isEqualTo(session.id)
         assertThat(storedRecord.reviewedPathEnabled).isTrue()
-        assertThat(storedRecord.trainingPolicyVersion).isEqualTo("STATE_BASED_DOSE_EFFORT_REST_V1")
+        assertThat(storedRecord.trainingPolicyVersion).isEqualTo("STATE_BASED_DOSE_EFFORT_REST_V2")
         assertThat(storedRecord.ledgerPolicyVersion).isEqualTo("PRIMARY_ONLY_V1")
         assertThat(storedRecord.adaptationState).isNotNull()
         assertThat(storedRows.sets).hasSize(accepted.workout.exercises.sumOf { it.targetSets })

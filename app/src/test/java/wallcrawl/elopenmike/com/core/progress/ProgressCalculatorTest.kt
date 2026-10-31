@@ -631,6 +631,56 @@ class ProgressCalculatorTest {
         assertThat(calculator.countPersonalRecords(abandoned, listOf(older))).isEqualTo(0)
     }
 
+    @Test
+    fun countPersonalRecords_futureStrongerWorkCannotRewriteAnEarlierRecord() {
+        val prior = session("prior", PREV_WEEK, sets = listOf(completedSet(1, 40.0, 10)))
+        val viewed = session("viewed", THIS_WEEK, sets = listOf(completedSet(1, 50.0, 10)))
+        val later = (1..501).map {
+            session("future-$it", THIS_WEEK_2, sets = listOf(completedSet(1, 100.0, 10)))
+        }
+        assertThat(calculator.countPersonalRecords(viewed, later + prior)).isEqualTo(1)
+    }
+
+    @Test
+    fun countPersonalRecords_equalBoundaryOverlappingAndInvalidChronologyAreNotPriorEvidence() {
+        val viewed = session("viewed", THIS_WEEK, sets = listOf(completedSet(1, 50.0, 10)))
+        val earlier = session("earlier", PREV_WEEK, sets = listOf(completedSet(1, 40.0, 10)))
+        val invalid = listOf(
+            earlier.copy(completedAtTimestamp = viewed.startedAtTimestamp),
+            earlier.copy(completedAtTimestamp = viewed.startedAtTimestamp + 1),
+            earlier.copy(completedAtTimestamp = null),
+            earlier.copy(startedAtTimestamp = 0),
+            earlier.copy(startedAtTimestamp = earlier.completedAtTimestamp!! + 1),
+            earlier.copy(status = SessionStatus.CANCELLED)
+        )
+        invalid.forEach {
+            assertThat(calculator.countPersonalRecords(viewed, listOf(it))).isEqualTo(0)
+        }
+        assertThat(calculator.countPersonalRecords(viewed.copy(startedAtTimestamp = 0), listOf(earlier)))
+            .isEqualTo(0)
+        assertThat(calculator.countPersonalRecords(viewed.copy(completedAtTimestamp = null), listOf(earlier)))
+            .isEqualTo(0)
+    }
+
+    @Test
+    fun countPersonalRecords_mixedUnitsUseTheTruePriorMaximumNotFutureWeights() {
+        val prior = session("kg", PREV_WEEK, sets = listOf(completedSet(1, 20.0, 10)), weightUnit = WeightUnit.KG)
+        val viewed = session("lb", THIS_WEEK, sets = listOf(completedSet(1, 50.0, 10)))
+        val future = session("later-kg", THIS_WEEK_2, sets = listOf(completedSet(1, 30.0, 10)), weightUnit = WeightUnit.KG)
+        assertThat(calculator.countPersonalRecords(viewed, listOf(future, prior))).isEqualTo(1)
+    }
+
+    @Test
+    fun countPersonalRecords_differentPersistedTypesCannotSupplyARepBaseline() {
+        val viewed = session("viewed", THIS_WEEK, sets = listOf(completedSet(1, null, 12)))
+        val prior = session("prior", PREV_WEEK, sets = listOf(bodyweightSet(1, 8))).let {
+            it.copy(exercises = it.exercises.map { exercise ->
+                exercise.copy(prescription = exercise.prescription.copy(exerciseType = ExerciseType.BODYWEIGHT_REPS))
+            })
+        }
+        assertThat(calculator.countPersonalRecords(viewed, listOf(prior))).isEqualTo(0)
+    }
+
     private fun session(
         id: String,
         completedAt: Long,
@@ -642,6 +692,7 @@ class ProgressCalculatorTest {
         return WorkoutSession(
             id = id,
             name = "Workout $id",
+            startedAtTimestamp = completedAt - 60_000,
             completedAtTimestamp = completedAt,
             actualDurationMinutes = 45,
             weightUnit = weightUnit,

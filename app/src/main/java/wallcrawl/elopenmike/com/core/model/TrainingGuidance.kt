@@ -14,7 +14,8 @@ data class EffortTarget(
         }
     }
 
-    private companion object {
+    /** The range the constructor enforces, so the editor validates against these. */
+    internal companion object {
         const val MIN_RIR = 1
         const val MAX_RIR = 10
     }
@@ -39,13 +40,13 @@ data class UserRestPreference(
     val restSeconds: Int
 ) {
     init {
-        require(restSeconds in MIN_REST_SECONDS..MAX_REST_SECONDS) {
-            "Rest seconds must be between $MIN_REST_SECONDS and $MAX_REST_SECONDS."
+        // The same bound the prescription enforces, read rather than restated.
+        require(
+            restSeconds in ExercisePrescription.MIN_REST_SECONDS..
+                ExercisePrescription.MAX_REST_SECONDS
+        ) {
+            "Rest seconds must be between ${ExercisePrescription.MIN_REST_SECONDS} and " +
+                "${ExercisePrescription.MAX_REST_SECONDS}."
         }
-    }
-
-    private companion object {
-        const val MIN_REST_SECONDS = 0
-        const val MAX_REST_SECONDS = 1_800
     }
 }

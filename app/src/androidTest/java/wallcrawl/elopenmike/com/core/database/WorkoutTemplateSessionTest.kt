@@ -229,13 +229,136 @@ class WorkoutTemplateSessionTest {
         ).isEqualTo(1_000.0)
     }
 
-    private fun template(exercises: List<PlannedExercise>) = WorkoutTemplate(
+    private fun template(
+        exercises: List<PlannedExercise>,
+        weightUnit: WeightUnit? = WeightUnit.LBS
+    ) = WorkoutTemplate(
         id = "template",
         name = "My Workout",
         createdAtTimestamp = 1_000L,
         updatedAtTimestamp = 1_000L,
-        exercises = exercises
+        exercises = exercises,
+        weightUnit = weightUnit
     )
+
+    private fun loadedTemplate(unit: WeightUnit?) = template(
+        listOf(
+            planned(
+                "dumbbell-curl",
+                ExercisePrescription(
+                    exerciseType = ExerciseType.WEIGHT_REPS,
+                    targetSets = 2,
+                    repRange = RepRange(8, 12),
+                    targetWeight = 20.0
+                )
+            ),
+            planned(
+                "assisted-pull-up",
+                ExercisePrescription(
+                    exerciseType = ExerciseType.ASSISTED_BODYWEIGHT,
+                    targetSets = 1,
+                    repRange = RepRange(6, 10),
+                    targetAssistanceWeight = 35.5
+                )
+            )
+        ),
+        weightUnit = unit
+    )
+
+    @Test
+    fun startTemplate_convertsLoadsIntoTheProfileUnitAndLeavesTheTemplateAlone() = runBlocking {
+        val kilograms = loadedTemplate(WeightUnit.KG)
+        templateRepository.saveTemplate(kilograms)
+
+        val session = workoutRepository.startWorkoutFromTemplate(
+            kilograms,
+            UserProfile(preferredUnit = WeightUnit.LBS)
+        )
+
+        val persisted = checkNotNull(workoutRepository.getSessionById(session.id))
+        assertThat(persisted.weightUnit).isEqualTo(WeightUnit.LBS)
+        // 20 kg = 44.0924... lb and 35.5 kg = 78.2643... lb, rounded to the editable precision.
+        assertThat(persisted.exercises[0].prescription.targetWeight).isEqualTo(44.09)
+        assertThat(persisted.exercises[0].sets.map { it.targetWeight }).containsExactly(44.09, 44.09)
+        assertThat(persisted.exercises[1].prescription.targetAssistanceWeight).isEqualTo(78.26)
+        assertThat(templateRepository.getTemplate(kilograms.id)).isEqualTo(kilograms)
+        database.openHelper.readableDatabase.query("SELECT COUNT(*) FROM workout_recommendation_records").use {
+            it.moveToFirst()
+            assertThat(it.getInt(0)).isEqualTo(0)
+        }
+    }
+
+    @Test
+    fun startTemplate_inItsOwnUnitCopiesLoadsExactly() = runBlocking {
+        val kilograms = loadedTemplate(WeightUnit.KG)
+        val session = workoutRepository.startWorkoutFromTemplate(
+            kilograms,
+            UserProfile(preferredUnit = WeightUnit.KG)
+        )
+        assertThat(session.weightUnit).isEqualTo(WeightUnit.KG)
+        assertThat(session.exercises[0].prescription.targetWeight).isEqualTo(20.0)
+        assertThat(session.exercises[1].prescription.targetAssistanceWeight).isEqualTo(35.5)
+    }
+
+    @Test
+    fun startTemplate_neverTurnsASmallLoadIntoAnExplicitZero() = runBlocking {
+        val tiny = template(
+            listOf(
+                planned(
+                    "barbell-back-squat",
+                    ExercisePrescription(
+                        exerciseType = ExerciseType.WEIGHT_REPS,
+                        targetSets = 1,
+                        repRange = RepRange(5, 8),
+                        targetWeight = 0.01
+                    )
+                )
+            ),
+            weightUnit = WeightUnit.LBS
+        )
+        // 0.01 lb is 0.0045 kg; rounded to two places that would be a stated 0.
+        val session = workoutRepository.startWorkoutFromTemplate(tiny, UserProfile(preferredUnit = WeightUnit.KG))
+        assertThat(session.exercises.single().prescription.targetWeight).isEqualTo(0.01)
+    }
+
+    @Test
+    fun startTemplate_resumesAWorkoutInProgressEvenForAnUnconfirmedLegacyTemplate() = runBlocking {
+        val inProgress = workoutRepository.startWorkoutFromTemplate(
+            loadedTemplate(WeightUnit.KG),
+            UserProfile(preferredUnit = WeightUnit.KG)
+        )
+        // Nothing is copied from the legacy template, so no unit has to be guessed.
+        val resumed = workoutRepository.startWorkoutFromTemplate(loadedTemplate(null), UserProfile())
+        assertThat(resumed.id).isEqualTo(inProgress.id)
+    }
+
+    @Test
+    fun startTemplate_refusesALegacyLoadWhoseUnitWasNeverRecorded() = runBlocking {
+        val legacy = loadedTemplate(null)
+        val refusal = runCatching { workoutRepository.startWorkoutFromTemplate(legacy, UserProfile()) }
+            .exceptionOrNull()
+        // The domain's own refusal, not any failure that happens to stop the start.
+        assertThat(refusal).isInstanceOf(IllegalStateException::class.java)
+        assertThat(refusal).hasMessageThat().contains("not been confirmed")
+        assertThat(workoutRepository.getActiveSessionOnce()).isNull()
+
+        // Without a load there is nothing to misread, so a legacy template still starts.
+        val bodyweight = template(
+            listOf(
+                planned(
+                    "push-up",
+                    ExercisePrescription(
+                        exerciseType = ExerciseType.BODYWEIGHT_REPS,
+                        targetSets = 1,
+                        repRange = RepRange(8, 15)
+                    )
+                )
+            ),
+            weightUnit = null
+        )
+        assertThat(workoutRepository.startWorkoutFromTemplate(bodyweight, UserProfile()).origin)
+            .isEqualTo(WorkoutOrigin.CUSTOM_TEMPLATE)
+    }
 
     private fun planned(id: String, prescription: ExercisePrescription) = PlannedExercise(
         exerciseId = id,
