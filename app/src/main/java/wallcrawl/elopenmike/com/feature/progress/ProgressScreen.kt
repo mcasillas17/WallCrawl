@@ -39,6 +39,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -70,6 +71,7 @@ import java.text.DateFormat
 import java.util.Date
 import java.util.TimeZone
 import wallcrawl.elopenmike.com.R
+import wallcrawl.elopenmike.com.core.model.AnalyticsSelection
 import wallcrawl.elopenmike.com.core.model.LedgerOmissionReason
 import wallcrawl.elopenmike.com.core.model.MuscleProgressStat
 import wallcrawl.elopenmike.com.core.model.ProgressOverview
@@ -122,6 +124,26 @@ fun ProgressScreen(
             viewModel.uiState.collect { value = it }
         }
     }
+    // The "Over time" card has its own lifecycle-scoped read, so a filter change leaves the week alone.
+    val analyticsState by produceState<ProgressAnalyticsUiState>(
+        initialValue = ProgressAnalyticsUiState.Loading,
+        viewModel,
+        lifecycleOwner
+    ) {
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            viewModel.analyticsState.collect { value = it }
+        }
+    }
+    val analyticsSelection by viewModel.analyticsSelection.collectAsState()
+    val analyticsActions = remember(viewModel) {
+        ProgressAnalyticsActions(
+            onSelectRange = viewModel::selectAnalyticsRange,
+            onSelectScope = viewModel::selectAnalyticsScope,
+            onSelectMetric = viewModel::selectAnalyticsMetric,
+            onReset = viewModel::resetAnalytics,
+            onRetry = viewModel::refresh
+        )
+    }
 
     DisposableEffect(viewModel, context) {
         val clockChangeReceiver = object : BroadcastReceiver() {
@@ -147,7 +169,8 @@ fun ProgressScreen(
 
     ProgressScreen(
         uiState = uiState, onRetry = viewModel::refresh, modifier = modifier,
-        onOpenSession = onOpenSession, onOpenHistory = onOpenHistory, programContent = programContent
+        onOpenSession = onOpenSession, onOpenHistory = onOpenHistory, programContent = programContent,
+        analyticsState = analyticsState, analyticsSelection = analyticsSelection, analyticsActions = analyticsActions
     )
 }
 
@@ -164,7 +187,10 @@ fun ProgressScreen(
     modifier: Modifier = Modifier,
     onOpenSession: (String) -> Unit = {},
     onOpenHistory: () -> Unit = {},
-    programContent: @Composable () -> Unit = {}
+    programContent: @Composable () -> Unit = {},
+    analyticsState: ProgressAnalyticsUiState? = null,
+    analyticsSelection: AnalyticsSelection = AnalyticsSelection(),
+    analyticsActions: ProgressAnalyticsActions? = null
 ) {
     Box(
         modifier = modifier
@@ -212,7 +238,11 @@ fun ProgressScreen(
                 }
             }
 
-            is ProgressUiState.Success -> ProgressContent(state, onOpenSession, onOpenHistory, programContent)
+            is ProgressUiState.Success -> ProgressContent(state, onOpenSession, onOpenHistory, programContent) {
+                if (analyticsState != null && analyticsActions != null) {
+                    ProgressAnalyticsCard(analyticsState, analyticsSelection, state.week.zoneId, analyticsActions, onOpenSession)
+                }
+            }
         }
     }
 }
@@ -222,7 +252,8 @@ private fun ProgressContent(
     state: ProgressUiState.Success,
     onOpenSession: (String) -> Unit,
     onOpenHistory: () -> Unit,
-    programContent: @Composable () -> Unit
+    programContent: @Composable () -> Unit,
+    analyticsContent: @Composable () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -260,6 +291,8 @@ private fun ProgressContent(
                 unit = state.preferredUnit.symbol
             )
         }
+
+        item { analyticsContent() }
 
         item {
             Text(
@@ -1015,7 +1048,7 @@ private fun rememberWeekLabels(week: TrainingWeek): WeekLabels {
     }
 }
 
-private fun LedgerOmissionReason.labelRes(): Int = when (this) {
+internal fun LedgerOmissionReason.labelRes(): Int = when (this) {
     LedgerOmissionReason.UNKNOWN_EXERCISE -> R.string.progress_omission_unknown_exercise
     LedgerOmissionReason.MISSING_REVIEWED_METADATA -> R.string.progress_omission_missing_metadata
     LedgerOmissionReason.METADATA_NOT_APPROVED -> R.string.progress_omission_not_approved

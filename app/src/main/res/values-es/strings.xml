@@ -1014,4 +1014,81 @@
     <string name="program_session_choice">Sesión del programa</string>
     <string name="program_start_session">Iniciar sesión del programa</string>
     <string name="local_data_rejected_program">La exportación o restauración requiere una versión de la app compatible con todas las políticas de programa registradas. Se conservan tus datos locales; no se omitió nada.</string>
+
+    <!-- Progreso: análisis a lo largo del tiempo (Paquete 14). Los filtros solo afectan esta tarjeta. -->
+    <string name="analytics_heading">A lo largo del tiempo</string>
+    <string name="analytics_scope_note">Estos filtros solo cambian esta tarjeta. Las semanas van de lunes a domingo, en %1$s.</string>
+    <string name="analytics_range_label">Periodo</string>
+    <plurals name="analytics_range_weeks">
+        <item quantity="one">Última %1$s semana</item>
+        <item quantity="other">Últimas %1$s semanas</item>
+    </plurals>
+    <string name="analytics_scope_label">Mostrar</string>
+    <string name="analytics_scope_all">Todos los ejercicios</string>
+    <string name="analytics_scope_exercise">Un ejercicio</string>
+    <string name="analytics_scope_muscle">Un músculo</string>
+    <string name="analytics_choose_exercise">Ejercicio: %1$s</string>
+    <string name="analytics_choose_exercise_none">Elige un ejercicio</string>
+    <string name="analytics_choose_muscle">Músculo: %1$s</string>
+    <string name="analytics_choose_muscle_none">Elige un músculo</string>
+    <string name="analytics_no_exercise_options">Todavía no hay ejercicios registrados.</string>
+    <string name="analytics_metric_label">Medida</string>
+    <string name="analytics_metric_workouts">Entrenamientos</string>
+    <string name="analytics_metric_sets">Series completadas</string>
+    <string name="analytics_metric_reps">Repeticiones</string>
+    <string name="analytics_metric_volume">Volumen de carga</string>
+    <string name="analytics_metric_dose">Dosis revisada</string>
+    <string name="analytics_reset">Restablecer filtros</string>
+    <string name="analytics_loading">Cargando este periodo de tu historial de entrenamientos</string>
+    <string name="analytics_error">No se pudo cargar este periodo de tus datos de entrenamiento. No se muestra nada en lugar de un cero.</string>
+    <string name="analytics_too_large">Este periodo tiene más entrenamientos de los que esta versión puede graficar, así que no se recortó nada para que cupiera. Elige un periodo más corto.</string>
+    <string name="analytics_empty_range">No hay entrenamientos completados en este periodo.</string>
+    <string name="analytics_no_matches">Ninguna serie completada coincide con este filtro en este periodo.</string>
+    <string name="analytics_def_workouts">Cada entrenamiento completado cuenta una vez. Con un filtro, solo cuentan los entrenamientos con al menos una serie completada que coincida.</string>
+    <string name="analytics_def_volume_units">Las cargas registradas en otra unidad se convierten a %1$s antes de sumarse.</string>
+    <string name="analytics_muscle_basis">El filtro por músculo usa los músculos principales del catálogo actual, que se superponen. Los entrenamientos pasados no registraron una clasificación muscular.</string>
+    <plurals name="analytics_unclassifiable">
+        <item quantity="one">%1$s serie completada es de un ejercicio que no está en el catálogo actual, así que no se le puede asignar un músculo.</item>
+        <item quantity="other">%1$s series completadas son de ejercicios que no están en el catálogo actual, así que no se les puede asignar un músculo.</item>
+    </plurals>
+    <plurals name="analytics_unattributed">
+        <item quantity="one">%1$s serie de trabajo de este periodo no tiene datos musculares revisados aceptados. Sigue contando en la actividad registrada.</item>
+        <item quantity="other">%1$s series de trabajo de este periodo no tienen datos musculares revisados aceptados. Siguen contando en la actividad registrada.</item>
+    </plurals>
+    <string name="analytics_total">%1$s en este periodo, incluida esta semana hasta ahora</string>
+    <plurals name="analytics_full_weeks">
+        <item quantity="one">%1$s semana completa más esta semana hasta ahora. Las semanas no se comparan entre sí.</item>
+        <item quantity="other">%1$s semanas completas más esta semana hasta ahora. Las semanas no se comparan entre sí.</item>
+    </plurals>
+    <string name="analytics_week_row">Del %1$s al %2$s: %3$s</string>
+    <string name="analytics_week_row_partial">Del %1$s al %2$s: %3$s (esta semana hasta ahora)</string>
+    <string name="analytics_chart_description">Gráfica de barras de %1$s por semana del %2$s al %3$s. Semana más alta: %4$s. La última barra es esta semana hasta ahora. La lista de abajo tiene todos los valores.</string>
+    <string name="analytics_select_week">Mostrar los entrenamientos de esta semana</string>
+    <string name="analytics_week_contributors">Entrenamientos de esta semana</string>
+    <string name="analytics_contributor_row">%1$s, %2$s: %3$s</string>
+    <string name="analytics_performance_heading">Rendimiento del ejercicio</string>
+    <string name="analytics_performance_note">Cada punto es la mejor serie de trabajo comparable de un entrenamiento: completada, no de calentamiento y no detenida. Las entradas repetidas en un entrenamiento cuentan una vez.</string>
+    <string name="analytics_performance_empty">No hay series de trabajo comparables de este ejercicio en este periodo.</string>
+    <string name="analytics_shape_weighted">Carga más alta en una serie de trabajo</string>
+    <string name="analytics_shape_bodyweight">Más repeticiones en una serie de trabajo</string>
+    <string name="analytics_shape_assisted">Repeticiones asistidas (se listan, no se comparan)</string>
+    <string name="analytics_shape_hold">Sostén más largo</string>
+    <string name="analytics_shape_distance">Distancia más larga</string>
+    <string name="analytics_shape_time">Tiempo más largo</string>
+    <string name="analytics_shape_distance_time">Distancia con tiempo (se listan, no se comparan)</string>
+    <string name="analytics_shape_assisted_note">Las repeticiones con distinta asistencia no son comparables, y no se supone que menos asistencia sea mejor.</string>
+    <string name="analytics_shape_distance_time_note">La distancia y el tiempo se muestran juntos. No se calcula un ritmo.</string>
+    <string name="analytics_insufficient">Solo hay un entrenamiento comparable en este periodo, así que no hay un cambio que mostrar.</string>
+    <string name="analytics_comparison">De %1$s el %2$s a %3$s el %4$s: %5$s. Es una diferencia registrada, no un porcentaje ni una estimación de fuerza.</string>
+    <string name="analytics_value_assisted">%1$s con %2$s %3$s de asistencia</string>
+    <string name="analytics_value_distance_time">%1$s en %2$s</string>
+    <string name="analytics_decisions_heading">Decisiones de progresión registradas</string>
+    <string name="analytics_decisions_note">Cada decisión es lo que registró un entrenamiento al iniciarse. Abre ese entrenamiento para ver los entrenamientos anteriores que citó.</string>
+    <string name="analytics_decisions_empty">No se registraron decisiones de progresión para este ejercicio en este periodo.</string>
+    <plurals name="analytics_decision_sources">
+        <item quantity="one">Cita %1$s entrenamiento anterior.</item>
+        <item quantity="other">Cita %1$s entrenamientos anteriores.</item>
+    </plurals>
+    <string name="analytics_decision_no_sources">No se citó ningún entrenamiento anterior.</string>
+    <string name="analytics_decision_row">%1$s, %2$s</string>
 </resources>

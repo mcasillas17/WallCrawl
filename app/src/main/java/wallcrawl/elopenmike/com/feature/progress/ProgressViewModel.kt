@@ -171,8 +171,8 @@ class ProgressViewModel(
             decisions = decisions.mapNotNull { decision ->
                 val reasons = decodeHistoryReasons(decision.record)
                 val progression = reasons.progression.firstOrNull { it.exerciseId == exerciseId }
-                val deload = reasons.deload?.acceptedOfferId != null
-                if (progression == null && !deload && reasons.unsupportedIdentities.isEmpty()) return@mapNotNull null
+                val deload = reasons.deload?.takeIf { it.acceptedOfferId != null }?.source
+                if (progression == null && deload == null && reasons.unsupportedIdentities.isEmpty()) return@mapNotNull null
                 AnalyticsDecision(
                     decision.sessionId, decision.sessionName, decision.completedAtTimestamp,
                     progression, deload, reasons.unsupportedIdentities

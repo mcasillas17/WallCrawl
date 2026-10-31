@@ -2,6 +2,7 @@ package wallcrawl.elopenmike.com.feature.progress
 
 import androidx.annotation.StringRes
 import wallcrawl.elopenmike.com.R
+import wallcrawl.elopenmike.com.core.model.DeloadSource
 import wallcrawl.elopenmike.com.core.model.ProgressAnalytics
 import wallcrawl.elopenmike.com.core.model.ProgressOverview
 import wallcrawl.elopenmike.com.core.model.ProgressionProvenance
@@ -47,6 +48,6 @@ data class AnalyticsDecision(
     val sessionName: String,
     val completedAtTimestamp: Long,
     val progression: ProgressionProvenance?,
-    val acceptedDeload: Boolean,
+    val acceptedDeload: DeloadSource?,
     val unsupportedIdentities: List<String>
 )

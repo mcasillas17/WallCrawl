@@ -150,7 +150,7 @@ class ProgressAnalyticsViewModelTest {
         assertThat(recorded.sessionId).isEqualTo("recorded")
         assertThat(recorded.progression!!.exerciseId).isEqualTo("pull-ups")
         assertThat(recorded.progression!!.sourceSessionIds).containsExactly("s0", "s1").inOrder()
-        assertThat(recorded.acceptedDeload).isTrue()
+        assertThat(recorded.acceptedDeload).isEqualTo(DeloadSource.EXPLICIT_REQUEST)
         assertThat(recorded.unsupportedIdentities).containsExactly("FUTURE_POLICY_V9.SOMETHING")
     }
 

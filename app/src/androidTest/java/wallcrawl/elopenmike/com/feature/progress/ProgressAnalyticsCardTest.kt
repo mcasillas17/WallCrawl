@@ -1,0 +1,269 @@
+package wallcrawl.elopenmike.com.feature.progress
+
+import android.content.Context
+import android.content.res.Configuration
+import android.os.LocaleList
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assert
+import androidx.compose.ui.test.assertHasClickAction
+import androidx.compose.ui.test.assertHeightIsAtLeast
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.hasScrollAction
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollToNode
+import androidx.compose.ui.test.performSemanticsAction
+import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.dp
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
+import com.google.common.truth.Truth.assertThat
+import java.time.Instant
+import java.time.ZoneId
+import java.util.Locale
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
+import wallcrawl.elopenmike.com.R
+import wallcrawl.elopenmike.com.core.model.AnalyticsBucket
+import wallcrawl.elopenmike.com.core.model.AnalyticsContributor
+import wallcrawl.elopenmike.com.core.model.AnalyticsMetric
+import wallcrawl.elopenmike.com.core.model.AnalyticsRange
+import wallcrawl.elopenmike.com.core.model.AnalyticsScope
+import wallcrawl.elopenmike.com.core.model.AnalyticsSelection
+import wallcrawl.elopenmike.com.core.model.LedgerPolicyVersion
+import wallcrawl.elopenmike.com.core.model.PerformanceComparison
+import wallcrawl.elopenmike.com.core.model.PerformanceObservation
+import wallcrawl.elopenmike.com.core.model.PerformanceSeries
+import wallcrawl.elopenmike.com.core.model.PerformanceShape
+import wallcrawl.elopenmike.com.core.model.ProgressAnalytics
+import wallcrawl.elopenmike.com.core.model.ProgressOverview
+import wallcrawl.elopenmike.com.core.model.ProgressionProvenance
+import wallcrawl.elopenmike.com.core.model.ProgressionReason
+import wallcrawl.elopenmike.com.core.model.ThemePreference
+import wallcrawl.elopenmike.com.core.model.TrainingWeek
+import wallcrawl.elopenmike.com.core.model.WeeklyDoseLedger
+import wallcrawl.elopenmike.com.core.model.WeightUnit
+import wallcrawl.elopenmike.com.core.progress.ProgressAnalyticsCalculator
+import wallcrawl.elopenmike.com.core.ui.theme.WallCrawlTheme
+
+/** The "Over time" card: every value is readable as text and leads to the workouts behind it. */
+@RunWith(AndroidJUnit4::class)
+class ProgressAnalyticsCardTest {
+    @get:Rule val composeRule = createComposeRule()
+
+    private val context: Context = InstrumentationRegistry.getInstrumentation().targetContext
+    private val english = context.localized(Locale.ENGLISH)
+    private var opened: String? = null
+    private val calls = mutableListOf<String>()
+
+    @Test fun aWeekRowRevealsItsContributorsAndEachOpensItsOwnWorkout() {
+        render(loaded())
+        scrollTo("this week so far)")
+        composeRule.onNode(hasText("this week so far)", substring = true))
+            .assertHasClickAction().assertHeightIsAtLeast(48.dp).performClick()
+        scrollTo("Thursday push")
+        composeRule.onNode(hasText("Thursday push", substring = true)).assertHasClickAction().performClick()
+        assertThat(opened).isEqualTo("thursday")
+    }
+
+    @Test fun theChartHasATextSummaryAndThePartialWeekIsMarkedInText() {
+        render(loaded())
+        scrollTo("Bar chart of", contentDescription = true)
+        composeRule.onNode(hasContentDescription("The last bar is this week so far", substring = true)).assertExists()
+        composeRule.onNode(hasText("including this week so far", substring = true)).assertExists()
+    }
+
+    @Test fun aPerformanceObservationOpensExactlyThatWorkoutAndNoPercentageIsShown() {
+        render(loaded(scope = AnalyticsScope.Exercise("bench"), performance = listOf(weightedSeries())))
+        scrollTo("This is a recorded difference")
+        composeRule.onNode(hasText("+5 lb", substring = true)).assertExists()
+        composeRule.onNode(hasText("%", substring = true)).assertDoesNotExist()
+        scrollTo("Later bench")
+        composeRule.onNode(hasText("Later bench", substring = true)).performClick()
+        assertThat(opened).isEqualTo("later")
+    }
+
+    @Test fun oneObservationSaysThereIsNoChangeToShow() {
+        val single = weightedSeries().let { it.copy(observations = it.observations.take(1), comparison = null) }
+        render(loaded(scope = AnalyticsScope.Exercise("bench"), performance = listOf(single)))
+        scrollTo(english.getString(R.string.analytics_insufficient))
+    }
+
+    @Test fun aRecordedDecisionOpensTheWorkoutThatRecordedIt() {
+        val decision = AnalyticsDecision("recorder", "Recorder session", WEEKS.last().startEpochMillis + 1,
+            ProgressionProvenance("bench", ProgressionReason.HOLD_TARGET_NOT_MET, null, listOf("cited"), "a".repeat(64)),
+            null, emptyList())
+        render(loaded(scope = AnalyticsScope.Exercise("bench"), decisions = listOf(decision)))
+        scrollTo("Cites 1 earlier workout.")
+        composeRule.onNode(hasText("Recorder session", substring = true)).performClick()
+        assertThat(opened).isEqualTo("recorder")
+    }
+
+    @Test fun loadingTooLargeErrorEmptyAndNoMatchStatesAreDistinct() {
+        listOf(
+            ProgressAnalyticsUiState.Loading to R.string.analytics_loading,
+            ProgressAnalyticsUiState.TooLarge to R.string.analytics_too_large,
+            ProgressAnalyticsUiState.Error to R.string.analytics_error,
+            loaded(hasWorkouts = false) to R.string.analytics_empty_range,
+            loaded(hasMatches = false) to R.string.analytics_no_matches
+        ).forEach { (state, res) ->
+            renderOnce(state)
+            scrollTo(english.getString(res))
+        }
+    }
+
+    @Test fun errorRetryAndFilterChipsCallTheirActionsWithSelectedState() {
+        render(ProgressAnalyticsUiState.Error)
+        scrollTo(english.getString(R.string.action_try_again))
+        composeRule.onNode(hasText(english.getString(R.string.action_try_again))).performClick()
+        scrollTo("Last 12 weeks")
+        composeRule.onNodeWithText("Last 4 weeks").assert(SemanticsMatcher.expectValue(SemanticsProperties.Selected, true))
+        composeRule.onNodeWithText("Last 12 weeks").assert(SemanticsMatcher.expectValue(SemanticsProperties.Selected, false))
+            .performClick()
+        assertThat(calls).containsExactly("retry", "range:WEEKS_12").inOrder()
+    }
+
+    @Test fun spanishLargeTextAt320DpWrapsWithoutClipping() {
+        val spanish = context.localized(Locale.forLanguageTag("es-MX"), 1.8f)
+        composeRule.setContent {
+            val density = LocalDensity.current.density
+            CompositionLocalProvider(LocalContext provides spanish,
+                LocalConfiguration provides spanish.resources.configuration,
+                LocalDensity provides Density(density, 1.8f)) {
+                WallCrawlTheme(themePreference = ThemePreference.DARK) {
+                    Box(Modifier.width(320.dp).height(640.dp)) { screen(loaded()) }
+                }
+            }
+        }
+        listOf(R.string.analytics_heading, R.string.analytics_scope_note, R.string.analytics_metric_volume).forEach { res ->
+            val label = spanish.getString(res).substringBefore("%1")
+            composeRule.onNode(hasScrollAction()).performScrollToNode(hasText(label, substring = true))
+            val node = composeRule.onNode(hasText(label, substring = true), useUnmergedTree = true)
+            node.assertIsDisplayed()
+            val layouts = mutableListOf<TextLayoutResult>()
+            node.performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layouts) }
+            val layout = layouts.single()
+            assertThat(layout.layoutInput.density.fontScale).isEqualTo(1.8f)
+            com.google.common.truth.Truth.assertWithMessage(label).that(layout.didOverflowHeight).isFalse()
+            // The same wrapping contract as ProgressScreenTest: every line inside the laid-out width.
+            repeat(layout.lineCount) { line ->
+                com.google.common.truth.Truth.assertWithMessage(label).that(layout.getLineLeft(line)).isAtLeast(0f)
+                com.google.common.truth.Truth.assertWithMessage(label).that(layout.getLineRight(line))
+                    .isAtMost(layout.size.width.toFloat())
+            }
+            assertThat(node.fetchSemanticsNode().boundsInRoot.height).isAtLeast(layout.size.height.toFloat() - 1f)
+        }
+    }
+
+    private fun scrollTo(text: String, contentDescription: Boolean = false) {
+        composeRule.onNode(hasScrollAction()).performScrollToNode(
+            if (contentDescription) hasContentDescription(text, substring = true) else hasText(text, substring = true)
+        )
+    }
+
+    // The rule allows one setContent per test, so the distinct-state test swaps state in place.
+    private var rendered = false
+    private val current = androidx.compose.runtime.mutableStateOf<ProgressAnalyticsUiState>(ProgressAnalyticsUiState.Loading)
+    private fun renderOnce(state: ProgressAnalyticsUiState) {
+        current.value = state
+        if (!rendered) {
+            rendered = true
+            composeRule.setContent { localizedScreen { screen(current.value) } }
+        }
+        composeRule.waitForIdle()
+    }
+
+    private fun render(state: ProgressAnalyticsUiState) {
+        composeRule.setContent { localizedScreen { screen(state) } }
+    }
+
+    @androidx.compose.runtime.Composable
+    private fun localizedScreen(content: @androidx.compose.runtime.Composable () -> Unit) {
+        CompositionLocalProvider(LocalContext provides english, LocalConfiguration provides english.resources.configuration) {
+            WallCrawlTheme(themePreference = ThemePreference.LIGHT) { content() }
+        }
+    }
+
+    @androidx.compose.runtime.Composable
+    private fun screen(state: ProgressAnalyticsUiState) {
+        val selection = (state as? ProgressAnalyticsUiState.Loaded)?.analytics?.selection ?: AnalyticsSelection()
+        ProgressScreen(
+            uiState = success(), onRetry = {}, onOpenSession = { opened = it },
+            analyticsState = state, analyticsSelection = selection,
+            analyticsActions = ProgressAnalyticsActions(
+                onSelectRange = { calls += "range:${it.name}" },
+                onSelectScope = { calls += "scope" },
+                onSelectMetric = { calls += "metric:${it.name}" },
+                onReset = { calls += "reset" },
+                onRetry = { calls += "retry" }
+            )
+        )
+    }
+
+    private fun Context.localized(locale: Locale, fontScale: Float = 1f): Context {
+        val configuration = Configuration(resources.configuration)
+        configuration.setLocales(LocaleList(locale))
+        configuration.fontScale = fontScale
+        return createConfigurationContext(configuration)
+    }
+
+    private fun success() = ProgressUiState.Success(
+        overview = ProgressOverview(), preferredUnit = WeightUnit.LBS, week = WEEKS.last(),
+        reviewedDose = ledger(WEEKS.last()), previousReviewedDose = ledger(WEEKS[2])
+    )
+
+    private fun ledger(week: TrainingWeek) = WeeklyDoseLedger(
+        LedgerPolicyVersion.PRIMARY_ONLY_V1, week.startEpochDay, "UTC", "test", 1, emptyMap(), emptyMap(), emptyMap()
+    )
+
+    private fun loaded(
+        scope: AnalyticsScope = AnalyticsScope.All,
+        performance: List<PerformanceSeries> = emptyList(),
+        decisions: List<AnalyticsDecision> = emptyList(),
+        hasWorkouts: Boolean = true,
+        hasMatches: Boolean = true
+    ): ProgressAnalyticsUiState.Loaded {
+        val buckets = WEEKS.mapIndexed { index, week ->
+            val contributors = if (index == WEEKS.lastIndex) listOf(
+                AnalyticsContributor("monday", "Monday pull", week.startEpochMillis + HOUR, 6.0),
+                AnalyticsContributor("thursday", "Thursday push", week.startEpochMillis + 3 * DAY, 8.0)
+            ) else listOf(AnalyticsContributor("w$index", "Week $index session", week.startEpochMillis + HOUR, 4.0 + index))
+            AnalyticsBucket(week, index == WEEKS.lastIndex, contributors.sumOf { it.value }, contributors)
+        }
+        val selection = AnalyticsSelection(AnalyticsRange.WEEKS_4, scope, AnalyticsMetric.COMPLETED_SETS)
+        return ProgressAnalyticsUiState.Loaded(
+            ProgressAnalytics(selection, buckets, buckets.sumOf { it.value }, 3, hasWorkouts, hasMatches, 0,
+                emptyMap(), performance),
+            WeightUnit.LBS, listOf("bench"), mapOf("bench" to "Bench Press"), decisions
+        )
+    }
+
+    private fun weightedSeries(): PerformanceSeries {
+        val earlier = PerformanceObservation("earlier", "Earlier bench", WEEKS[1].startEpochMillis + HOUR, listOf("i1"), 100.0, 5)
+        val later = PerformanceObservation("later", "Later bench", WEEKS[3].startEpochMillis + HOUR, listOf("i2"), 105.0, 5)
+        return PerformanceSeries(PerformanceShape.WEIGHTED_REPS, listOf(earlier, later), PerformanceComparison(earlier, later, 5.0))
+    }
+
+    private companion object {
+        const val HOUR = 3_600_000L
+        const val DAY = 24 * HOUR
+        val WEEKS = ProgressAnalyticsCalculator.rangeWeeks(
+            AnalyticsRange.WEEKS_4, Instant.parse("2026-09-05T12:00:00Z"), ZoneId.of("UTC")
+        )
+    }
+}
