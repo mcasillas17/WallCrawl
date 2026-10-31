@@ -53,7 +53,11 @@ class ProgramNavigationTest {
     private var localized = context
     @get:Rule val rules = RuleChain.outerRule(object : ExternalResource() {
         override fun after() { if (::database.isInitialized) database.close() }
-    }).around(compose)
+    }).around(compose).around(object : ExternalResource() {
+        // Same as WorkoutHistoryNavigationTest: disposing a composition that is still recomposing
+        // crashed Compose's slot table on CI's API 26 emulator, so each test settles before teardown.
+        override fun after() = compose.waitForIdle()
+    })
 
     @Before fun setup() = runBlocking {
         database = Room.inMemoryDatabaseBuilder(context, WallCrawlDatabase::class.java).build()
@@ -127,7 +131,7 @@ class ProgramNavigationTest {
         compose.onNodeWithTag("planning-PROGRAM").assertIsSelected()
         capture("program-today-en")
         click(R.string.program_start_session)
-        compose.waitUntil(15_000) { nav.currentDestination?.route == AppRoutes.ACTIVE_WORKOUT }
+        awaitActiveWorkout()
         val session = checkNotNull(container.workoutRepository.getActiveSessionOnce())
         val membership = checkNotNull(container.programRepository.observeAssociation(session.id).first())
         compose.onAllNodesWithText(text(R.string.workout_action_finish)).onFirst().performClick()
@@ -162,7 +166,7 @@ class ProgramNavigationTest {
 
     @Test fun spanishPartialFinishExplanationAndActionsRemainReachable() = runBlocking {
         enroll(); show(Locale.forLanguageTag("es-MX"), 1.8f); chooseProgram(); click(R.string.program_start_session)
-        compose.waitUntil(15_000) { nav.currentDestination?.route == AppRoutes.ACTIVE_WORKOUT }
+        awaitActiveWorkout()
         val finishLayouts = mutableListOf<androidx.compose.ui.text.TextLayoutResult>()
         compose.onNodeWithText(text(R.string.workout_action_finish), useUnmergedTree = true)
             .performSemanticsAction(androidx.compose.ui.semantics.SemanticsActions.GetTextLayoutResult) { it(finishLayouts) }
@@ -208,7 +212,7 @@ class ProgramNavigationTest {
         compose.waitUntil(15_000) { nav.currentDestination?.route == AppRoutes.WORKOUT_TEMPLATES }
         compose.runOnIdle { nav.popBackStack() }
         click(R.string.today_action_start)
-        compose.waitUntil(15_000) { nav.currentDestination?.route == AppRoutes.ACTIVE_WORKOUT }
+        awaitActiveWorkout()
         val active = checkNotNull(container.workoutRepository.getActiveSessionOnce())
         assertThat(container.programRepository.observeAssociation(active.id).first()).isNull()
         compose.runOnIdle { nav.popBackStack() }
@@ -237,7 +241,7 @@ class ProgramNavigationTest {
 
     @Test fun unsupportedFrozenProgramFinishKeepsTheActiveLoggerAndExplicitCancel() = runBlocking {
         enroll(); show(); chooseProgram(); click(R.string.program_start_session)
-        compose.waitUntil(15_000) { nav.currentDestination?.route == AppRoutes.ACTIVE_WORKOUT }
+        awaitActiveWorkout()
         val session = checkNotNull(container.workoutRepository.getActiveSessionOnce())
         database.withTransaction {
             database.openHelper.writableDatabase.execSQL("UPDATE program_enrollments SET configurationPolicyVersion='FUTURE_POLICY'")
@@ -265,7 +269,7 @@ class ProgramNavigationTest {
 
     @Test fun unsupportedEnrollmentRefusalRemovesAdvancePromiseForAKnownFrozenSnapshot() = runBlocking {
         enroll(); show(); chooseProgram(); click(R.string.program_start_session)
-        compose.waitUntil(15_000) { nav.currentDestination?.route == AppRoutes.ACTIVE_WORKOUT }
+        awaitActiveWorkout()
         val session = checkNotNull(container.workoutRepository.getActiveSessionOnce())
         database.openHelper.writableDatabase.execSQL("UPDATE program_enrollments SET configurationPolicyVersion='FUTURE_POLICY'")
         compose.onAllNodesWithText(text(R.string.workout_action_finish)).onFirst().performClick()
@@ -402,6 +406,11 @@ class ProgramNavigationTest {
     // its list. Scrolling waits for the list, and a tap waits for the build to finish, so neither
     // acts on the layout being replaced.
     private fun awaitTodayList() = compose.waitUntil(15_000) { compose.onNodeWithTag("today-list").isDisplayed() }
+    // The logger route is current while the session is still loading, before Finish exists.
+    private fun awaitActiveWorkout() {
+        compose.waitUntil(15_000) { nav.currentDestination?.route == AppRoutes.ACTIVE_WORKOUT }
+        waitText(R.string.workout_action_finish)
+    }
     private fun click(id: Int) {
         compose.waitUntil(15_000) {
             compose.onAllNodesWithText(text(R.string.today_loading)).fetchSemanticsNodes().isEmpty() && (
