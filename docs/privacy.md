@@ -93,8 +93,9 @@ coherently in one Room transaction; it never edits or re-plans a workout, logs
 another set, consumes a deload choice, bootstraps a profile or rebuilds a ledger
 cache. Package 12 adds optional frozen program membership, with no analytics collection,
 account or network path. Package 14's **Over time** card computes its charts on the device
-from the same local history. It writes nothing, not even the ledger cache, and keeps only
-its four filter choices in the screen's saved state. It sends no telemetry and makes no
+from the same local history. It writes nothing, not even the ledger cache. Its saved state
+holds only the four filter choices, which week is expanded and how many rows are shown,
+never history or chart values. It sends no telemetry and makes no
 network or model call. Package 15 adds the weight unit a template's loads are in.
 Current storage is Room 16 and archive 6.
 

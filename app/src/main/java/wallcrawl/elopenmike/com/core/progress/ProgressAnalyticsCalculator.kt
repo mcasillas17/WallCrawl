@@ -95,7 +95,7 @@ class ProgressAnalyticsCalculator(
                             .takeIf { completed.any { it.loggedReps() > 0 } }
                         AnalyticsMetric.EXTERNAL_LOAD_VOLUME -> completed
                             .sumOf { it.externalLoadVolume(session.weightUnit, preferredUnit) }
-                            .takeIf { completed.any { it.exerciseType == ExerciseType.WEIGHT_REPS && it.loggedReps() > 0 } }
+                            .takeIf { completed.any { it.hasRecordedExternalLoad() } }
                         // A muscle's reviewed dose is the ledger's accepted direct primary, which can be a
                         // legacy secondary muscle, so its membership is the ledger credit itself.
                         // An exercise's reviewed dose is likewise its credit: uncreditable work (unaccepted
@@ -135,6 +135,11 @@ class ProgressAnalyticsCalculator(
             } else emptyList()
         )
     }
+
+    /** A weighted set with reps and a valid recorded load; a missing load is not zero volume. */
+    private fun WorkoutSet.hasRecordedExternalLoad(): Boolean =
+        exerciseType == ExerciseType.WEIGHT_REPS && loggedReps() > 0 &&
+            completedWeight?.let { it.isFinite() && it >= 0.0 } == true
 
     private fun WorkoutExercise.inScope(scope: AnalyticsScope, exercisesById: Map<String, Exercise>): Boolean =
         when (scope) {

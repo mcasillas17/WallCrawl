@@ -282,7 +282,7 @@ trainable muscle names and change only that card.
 | Workouts | Distinct completed sessions | All: every session, including zero-set Finishes. Exercise/muscle: sessions with a completed in-scope set |
 | Completed sets | Completed in-scope sets, warm-ups and timed work included | — |
 | Reps | Positive logged reps of completed rep-based sets | Only sessions with such a set contribute |
-| Load volume | Load × reps of completed `WEIGHT_REPS` sets, each converted to the preferred unit before summing | Only sessions with such a set contribute |
+| Load volume | Load × reps of completed `WEIGHT_REPS` sets, each converted to the preferred unit before summing | Only sessions with such a set and a valid recorded load contribute |
 | Reviewed dose | `WeeklyDoseLedgerCalculator` on the bucket's sessions, without the cache | All: `creditedWorkSets`. Exercise: credit after restricting to that ID. Muscle: `directPrimarySets[muscle]`, which can be a legacy secondary |
 
 Muscle scope for activity measures uses the current catalog's legacy primaries, which overlap,
@@ -429,6 +429,8 @@ wallcrawl.elopenmike.com.feature.progress.ProgressScreenTest
   -Pandroid.testInstrumentationRunnerArguments.class=wallcrawl.elopenmike.com.core.database.ProgressAnalyticsRepositoryTest
 ./gradlew connectedDebugAndroidTest --no-daemon \
   -Pandroid.testInstrumentationRunnerArguments.class=wallcrawl.elopenmike.com.feature.progress.ProgressAnalyticsCardTest
+./gradlew connectedDebugAndroidTest --no-daemon \
+  -Pandroid.testInstrumentationRunnerArguments.class=wallcrawl.elopenmike.com.app.WorkoutHistoryNavigationTest
 ```
 
 ```bash

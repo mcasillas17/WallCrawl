@@ -245,6 +245,11 @@ class ProgressAnalyticsCalculatorTest {
         val volume = calculate(listOf(pullUps), metric = AnalyticsMetric.EXTERNAL_LOAD_VOLUME, scope = scope)
         assertThat(volume.buckets.flatMap { it.contributors }).isEmpty()
         assertThat(volume.hasScopeMatches).isFalse()
+        // A weighted set with reps but no recorded load is missing load, not zero volume.
+        val unloaded = session("unloaded", THIS_WEEK + 2 * HOUR, sets = listOf(
+            weighted(1, 100.0, 5).copy(completedWeight = null)))
+        val missingLoad = calculate(listOf(unloaded), metric = AnalyticsMetric.EXTERNAL_LOAD_VOLUME, scope = scope)
+        assertThat(missingLoad.hasScopeMatches).isFalse()
         // The same timed sets are still completed sets.
         assertThat(calculate(listOf(plank), scope = scope).rangeTotal).isEqualTo(2.0)
         // Across all exercises, a timed-only workout is not a zero-rep contributor either.

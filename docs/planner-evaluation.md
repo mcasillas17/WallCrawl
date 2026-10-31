@@ -540,8 +540,9 @@ task-owned API 36 emulator also retained the viewed session after actual rotatio
 and a verified background process kill/recreation. These are emulator results,
 not physical-device or manual TalkBack claims.
 
-History images in `art/screenshots/history-*.png` come from the real Room-backed
-navigation test with `captureHistoryScreenshots=true`. Its `seedHistoryDemo=true`
+History images in `art/screenshots/history-*.png`, and Package 14's
+`art/screenshots/progress-analytics-*.png`, come from the real Room-backed navigation test
+with `captureHistoryScreenshots=true`. Its `seedHistoryDemo=true`
 option restores disposable example logs into a fresh dedicated installation for
 installed-app lifecycle checks; the ordinary connected suite never seeds the
 application database. No synthetic metadata approval is created.

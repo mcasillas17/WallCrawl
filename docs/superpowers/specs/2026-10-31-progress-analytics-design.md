@@ -92,7 +92,7 @@ Scope classification:
 
 Reps and load volume count only work they apply to: a session contributes reps only
 with a completed rep-based in-scope set, and load volume only with a completed
-weighted set. Timed, distance or body-mass work is never a recorded zero of either.
+weighted set that has a valid recorded load. Timed, distance or body-mass work is never a recorded zero of either.
 
 No new classifier, dose policy or record definition is introduced.
 

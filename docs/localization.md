@@ -191,7 +191,8 @@ stop reason that reads as a diagnosis rather than as the user's own decision to 
 The Over time card's labels, measure definitions, no-match messages, chart descriptions and
 paging controls are paired `analytics_*` resources in `values/` and `values-es/`. Counts,
 measurements and dates go through `LocaleFormatting`, the existing plurals and the platform
-date format, and unit symbols stay as stored. Exercise and muscle choices are ordered by the
+date format. Loads are converted to the preferred unit and shown with its untranslated
+symbol (kg or lb); stored values and units are never edited. Exercise and muscle choices are ordered by the
 shared `ExerciseVocabulary` collation (`exerciseIdsByLabel`, `musclesByLabel`), while
 selections keep canonical IDs. Historical session names stay as recorded.
 `ProgressAnalyticsCardTest` checks Spanish at 1.8× in 320 dp in light and dark themes,
