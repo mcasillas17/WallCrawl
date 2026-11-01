@@ -50,6 +50,11 @@ jobs:
       - name: Run release tooling tests
         run: python3 -m unittest discover -s tools/release -p 'test_*.py' -v
 
+      - name: Check Room schema artifacts
+        run: |
+          python3 -m unittest discover -s tools/room -p 'test_*.py' -v
+          python3 tools/room/check_schemas.py
+
       - name: Run tests, lint, and debug build
         run: ./gradlew test lint assembleDebug --stacktrace --no-daemon
 
@@ -118,7 +123,8 @@ jobs:
           mv "$sdk/cmdline-tools/23.0" "$sdk/cmdline-tools/latest"
           grep -qx 'Pkg.Revision=23.0' "$sdk/cmdline-tools/latest/source.properties"
 
-      # Room migrations, the schema-10 chain, and the weekly ledger DAO/repository are
+      # Room migrations from every supported starting schema to the current version,
+      # exported-schema validation, and the weekly ledger DAO/repository are
       # only covered here: the JVM suite cannot run Room's real migration or its runtime
       # schema validation. Without this job a Room, AGP, or Gradle bump can pass every
       # other check while leaving the migration chain broken.

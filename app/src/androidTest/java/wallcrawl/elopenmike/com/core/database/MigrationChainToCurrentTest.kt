@@ -9,14 +9,14 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class MigrationChainTo12Test {
+class MigrationChainToCurrentTest {
 
     private val context: Context = ApplicationProvider.getApplicationContext()
 
     @Test
-    fun everyHistoricallySupportedSchemaMigratesToVersion12() {
+    fun everyLegacyFixtureSchemaMigratesToCurrentVersion() {
         (1..11).forEach { startingVersion ->
-            val databaseName = "migration-$startingVersion-12.db"
+            val databaseName = "migration-$startingVersion-current.db"
             context.deleteDatabase(databaseName)
             context.openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null).use { db ->
                 LegacyDatabaseFixtures.createSchema(db, startingVersion)
