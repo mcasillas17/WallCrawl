@@ -1,0 +1,70 @@
+import groovy.json.JsonOutput
+import org.gradle.api.artifacts.result.ResolvedDependencyResult
+
+gradle.projectsEvaluated {
+    rootProject.tasks.register('dependencyHealthInventory') {
+        doLast {
+            def out = new File(System.getProperty('health.output'))
+            out.mkdirs()
+            def interesting = ['com.google.guava', 'org.bouncycastle', 'org.bitbucket.b_c', 'org.jdom', 'org.apache.commons', 'org.apache.httpcomponents', 'org.jetbrains.kotlin']
+            new File(out, 'gradle-distribution.txt').text = gradle.gradleHomeDir.absolutePath + '\n' + new File(gradle.gradleHomeDir, 'lib').listFiles().findAll { it.name.startsWith('guava-') }.collect { it.name }.join('\n')
+            def inventory = [:]
+            def artifacts = [:]
+            def kspEngines = [:]
+            rootProject.allprojects.each { p ->
+                def configs = p.configurations.findAll { it.canBeResolved } + p.buildscript.configurations.findAll { it.canBeResolved }
+                configs.each { c ->
+                    def key = "${p.path}:${c.name}"
+                    def all = c.incoming.resolutionResult.allComponents.collect { it.id.displayName }
+                    def flagged = all.findAll { id -> interesting.any { id.startsWith(it + ':') } }
+                    inventory[key] = flagged
+                    if (flagged.any { it.startsWith('com.google.guava:guava:') }) {
+                        artifacts[key] = c.incoming.artifactView { componentFilter { id -> id instanceof org.gradle.api.artifacts.component.ModuleComponentIdentifier && id.group == 'com.google.guava' && id.module == 'guava' } }.artifacts.artifacts.collect { it.file.absolutePath }
+                    }
+                    if (c.name == 'classpath' || c.name == 'androidLintTool' || c.name.contains('kspClasspath') || c.name == 'kspDebugKotlinProcessorClasspath' || c.name == 'kspReleaseKotlinProcessorClasspath') {
+                        new File(out, p.path.replace(':','_') + c.name + '.classpath').text = c.files.collect { it.absolutePath }.join(File.pathSeparator)
+                        new File(out, p.path.replace(':','_') + c.name + '-edges.txt').text = c.incoming.resolutionResult.allDependencies.findAll { it instanceof ResolvedDependencyResult }.collect { "${it.from.id} -> ${it.selected.id} (requested ${it.requested})" }.join('\n')
+                    }
+                }
+                p.tasks.matching { it.name in ['kspDebugKotlin', 'kspReleaseKotlin'] }.each { t ->
+                    // KSP resolves its engine in a detached configuration outside the processor graph.
+                    def files = t.kspClasspath.files
+                    new File(out, t.path.replace(':', '_') + '-engine.classpath').text = files.collect { it.absolutePath }.join(File.pathSeparator)
+                    files.findAll { it.name.startsWith('symbol-processing-aa-embeddable-') }.each { jar ->
+                        new java.util.zip.ZipFile(jar).withCloseable { zip ->
+                            def props = new Properties()
+                            zip.getInputStream(zip.getEntry('META-INF/maven/com.google.guava/guava/pom.properties')).withCloseable { props.load(it) }
+                            kspEngines[t.path] = [artifact: jar.absolutePath, embeddedGuava: props.getProperty('version')]
+                        }
+                    }
+                    new URLClassLoader(files.collect { it.toURI().toURL() } as URL[], ClassLoader.getPlatformClassLoader()).withCloseable { engineLoader ->
+                        def c = engineLoader.loadClass('ksp.com.google.common.collect.ImmutableList')
+                        println "KSP isolated reconstruction ${t.path} ${c.name} ${c.protectionDomain.codeSource.location}"
+                    }
+                }
+            }
+            new File(out, 'configurations.json').text = JsonOutput.prettyPrint(JsonOutput.toJson(inventory))
+            new File(out, 'guava-artifacts.json').text = JsonOutput.prettyPrint(JsonOutput.toJson(artifacts))
+            new File(out, 'ksp-engines.json').text = JsonOutput.prettyPrint(JsonOutput.toJson(kspEngines))
+            def plugin = rootProject.project(':app').plugins.findPlugin('com.android.application')
+            def classes = ['com.google.common.collect.CompactHashMap','org.bouncycastle.jce.provider.BouncyCastleProvider','org.bouncycastle.cert.X509CertificateHolder','org.bouncycastle.asn1.cms.ContentInfo','org.jose4j.jws.JsonWebSignature','org.jdom2.input.SAXBuilder','org.apache.commons.lang3.ClassUtils','org.apache.http.client.HttpClient']
+            def origins = classes.collect { n ->
+                def c=plugin.class.classLoader.loadClass(n)
+                "AGP ${n} ${c.protectionDomain.codeSource.location} loader=${c.classLoader}"
+            }
+            def lint = rootProject.project(':app').configurations.getByName('androidLintTool')
+            def loader = new URLClassLoader(lint.files.collect { it.toURI().toURL() } as URL[], ClassLoader.getPlatformClassLoader())
+            classes.findAll { !it.startsWith('org.jose4j') && !it.startsWith('org.jdom2') }.each { n ->
+                def c=loader.loadClass(n);origins.add("Lint isolated reconstruction ${n} ${c.protectionDomain.codeSource.location}")
+            }
+            loader.close()
+            new File(out,'origins.txt').text=origins.join('\n')
+            println origins.join('\n')
+            if (System.getProperty('health.probes')) {
+                def probes = new URLClassLoader([new File(System.getProperty('health.probes')).toURI().toURL()] as URL[], plugin.class.classLoader)
+                ['CryptoProbe', 'OwnerProbe'].each { n -> probes.loadClass(n).main(['fixed'] as String[]) }
+                probes.close()
+            }
+        }
+    }
+}
