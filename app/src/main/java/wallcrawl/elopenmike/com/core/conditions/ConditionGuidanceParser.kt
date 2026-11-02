@@ -84,7 +84,8 @@ class ConditionGuidanceParser {
             if (result.size >= MAX_EXERCISES) malformed("exerciseDemands has too many entries.")
             val id = readExerciseIdKey("exerciseDemands")
             if (id in result) malformed("exerciseDemands repeats an exercise.")
-            result[id] = readDemandSet("exerciseDemands.$id", allowEmpty = false)
+            // Presence means reviewed, so an empty set is "reviewed, carries no demand".
+            result[id] = readDemandSet("exerciseDemands.$id", allowEmpty = true)
         }
         endObject()
         return result

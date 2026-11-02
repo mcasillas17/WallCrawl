@@ -404,3 +404,43 @@ when deliberately isolated. It does not establish selection from a full pool,
 complete equipment representation, movement-goal coverage, reviewed readiness or
 human approval. The per-ID evidence ledger retains the observed outcome and
 selected split rather than replacing them with an inferred classifier result.
+
+## Condition and joint-label candidate counts (2026-11-01)
+
+Measured on the booted emulator, through `WorkoutGenerationContextBuilder`, `FakeWorkoutPlanner`
+and `ProgramValidator` with the shipped catalog and `conditions/condition-guidance.json`, for a
+default profile with every capability comfortable, no history and one input selected
+at a time. Each cell reads **candidates / candidates with no modify demand; planned exercises
+(of which carry a modify demand)**. These counts describe availability under the overlay. They say
+nothing about clinical suitability, and an exercise with no demand is not thereby cleared.
+
+Equipment: bodyweight; dumbbell = bodyweight, dumbbell, bench; machine = machine, cable, bench;
+band = resistance band only; full gym = all equipment.
+
+| Input | Bodyweight | Dumbbell | Machine | Band | Full gym |
+| --- | --- | --- | --- | --- | --- |
+| `piriformis_syndrome` | 33/20; 5 (0) | 72/47; 5 (0) | 51/24; 5 (2) | 11/4; 2 (0) | 163/87; 5 (0) |
+| `gluteal_tendinopathy` | 33/24; 5 (0) | 72/56; 5 (0) | 51/25; 5 (2) | 11/8; 2 (0) | 163/103; 5 (0) |
+| `lumbar_radiculopathy` | 33/31; 5 (0) | 72/65; 5 (0) | 51/24; 5 (2) | 11/11; 2 (0) | 163/113; 5 (0) |
+| `nonspecific_low_back_pain`, `LOWER_BACK_SENSITIVE` | 33/33; 5 (0) | 72/71; 5 (0) | 51/25; 5 (2) | 11/11; 2 (0) | 163/121; 5 (0) |
+| `rotator_cuff_related_shoulder_pain`, `SHOULDER_SENSITIVE` | 33/33; 5 (0) | 72/72; 5 (0) | 51/25; 5 (2) | 11/11; 2 (0) | 163/123; 5 (0) |
+| `lateral_elbow_tendinopathy`, `ELBOW_SENSITIVE` | 33/33; 5 (0) | 72/61; 5 (0) | 51/18; 5 (3) | 11/11; 2 (0) | 163/98; 5 (0) |
+| `carpal_tunnel_syndrome`, `WRIST_SENSITIVE` | 33/24; 5 (3) | 72/60; 5 (0) | 51/51; 5 (0) | 11/9; 2 (0) | 163/138; 5 (0) |
+| `patellofemoral_pain`, `KNEE_SENSITIVE` | 33/29; 5 (0) | 72/59; 5 (0) | 51/44; 5 (0) | 11/10; 2 (0) | 163/140; 5 (0) |
+| `HIP_SENSITIVE` | 33/28; 5 (0) | 72/60; 5 (0) | 51/25; 5 (2) | 11/10; 2 (0) | 163/109; 5 (0) |
+
+Every cell above produced a valid plan, and no input produced a refusal. Paired inputs have the
+same counts because they restrict the same demands among the tagged exercises.
+
+Limitations:
+
+- **Modify work can dominate a plan.** Elbow on the machine profile and wrist on the bodyweight
+  profile each plan 3 of 5 exercises with a modify demand, because the non-modify candidates do
+  not fill the session's slots. On the machine profile, most inputs plan 2 of 5, since
+  `HEAVY_EXTERNAL_LOAD` is applied to all machine work.
+- **Band-only plans stay small.** Two exercises for every input, as they are without conditions.
+- **`HEAVY_EXTERNAL_LOAD` follows equipment, not load.** The catalog has no load data, so the
+  machine column's low non-modify counts reflect that proxy.
+- **Some demands tag no accepted exercise.** `PROLONGED_SITTING`, `SUSTAINED_LOCOMOTION`,
+  `CROSS_BODY_HIP_STRETCH` and `NERVE_TENSIONING` have no member, so a restriction on them does not
+  change these counts.

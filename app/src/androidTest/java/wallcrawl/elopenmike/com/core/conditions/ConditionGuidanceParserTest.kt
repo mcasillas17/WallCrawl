@@ -110,6 +110,12 @@ class ConditionGuidanceParserTest {
     }
 
     @Test
+    fun reviewedExerciseWithNoDemandsIsKept() {
+        val json = overlay().replace("\"exerciseDemands\": {", "\"exerciseDemands\": {\n\"dumbbell-fly\": [],")
+        assertThat(parser.parse(json.reader()).exerciseDemands["dumbbell-fly"]).isEmpty()
+    }
+
+    @Test
     fun trailingContentIsRejected() {
         assertRejected(overlay() + " {}")
     }

@@ -680,8 +680,8 @@ class ProductionPlannerCompositionTest {
 
     @Test
     fun aSelectedJointConstraintRefusesAutomaticPlanningRatherThanIgnoringIt() = runTest {
-        // The condition overlay is not bundled yet, so a selected joint label cannot be applied
-        // and is a typed refusal on the production path. Ignoring the selection silently
+        // This composition passes no overlay source, so a selected joint label cannot be applied
+        // and is a typed refusal. Ignoring the selection silently
         // would be the untruthful alternative, and the legacy filter does exactly that.
         val constrained = fullGymProfile().copy(
             trainingConstraints = setOf(TrainingConstraint.KNEE_SENSITIVE)
