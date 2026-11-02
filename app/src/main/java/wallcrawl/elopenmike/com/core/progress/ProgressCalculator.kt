@@ -10,7 +10,6 @@ import wallcrawl.elopenmike.com.core.model.mainExercises
 import wallcrawl.elopenmike.com.core.model.hasValidCompletedChronology
 import wallcrawl.elopenmike.com.core.model.isMobilityOnly
 import wallcrawl.elopenmike.com.core.model.isStrictlyPriorTo
-import wallcrawl.elopenmike.com.core.model.mainExercises
 import wallcrawl.elopenmike.com.core.model.MuscleProgressStat
 import wallcrawl.elopenmike.com.core.model.MuscleVocabulary
 import wallcrawl.elopenmike.com.core.model.PersonalRecord

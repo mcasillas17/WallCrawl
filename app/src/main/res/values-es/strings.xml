@@ -345,7 +345,7 @@
     <string name="today_error_reviewed_capabilities">Tus preferencias de movimiento no dejan opciones automáticas revisadas. Actualízalas en el perfil o crea tu propia rutina.</string>
     <string name="today_error_reviewed_constraints">Tu ajuste de solo bajo impacto no deja opciones dentro del alcance automático revisado.</string>
     <string name="today_error_reviewed_conditions">Las condiciones y etiquetas de articulaciones que indicaste no dejan opciones automáticas revisadas. WallCrawl evita los movimientos indicados para ellas, así que hoy no se pudo planificar nada.</string>
-    <string name="today_error_condition_guidance_unavailable">WallCrawl no pudo cargar la guía que corresponde a las condiciones o etiquetas de articulaciones que indicaste, así que no planificó un entrenamiento. Reiniciar la app puede ayudar. Si restauraste una copia de una versión más reciente, quita en Perfil cualquier condición que esta versión no reconozca.</string>
+    <string name="today_error_condition_guidance_unavailable">WallCrawl no pudo cargar la guía que corresponde a las condiciones o etiquetas de articulaciones que indicaste, así que no planificó un entrenamiento. Reiniciar la app puede ayudar. Si restauraste un archivo exportado de una versión más reciente, quita en Perfil cualquier condición que esta versión no reconozca.</string>
     <string name="today_error_reviewed_calibration">Tu etapa de calibración actual no deja opciones automáticas revisadas. Aun así puedes crear tu propia rutina.</string>
     <string name="today_error_reviewed_none_eligible">Ningún ejercicio cumple todas las reglas de la planificación automática revisada. Aun así puedes crear tu propia rutina.</string>
 
@@ -468,7 +468,7 @@
     <string name="summary_success_content_description">Entrenamiento completado</string>
     <string name="summary_section">RESUMEN DE LA SESIÓN</string>
     <string name="summary_metric_duration">Duración</string>
-    <string name="summary_metric_sets">Series registradas</string>
+    <string name="summary_metric_sets">Series principales registradas</string>
     <string name="summary_metric_volume">Volumen levantado</string>
     <string name="summary_metric_prs">Récords logrados</string>
     <string name="summary_no_external_volume">No se registró volumen de carga externa</string>
@@ -910,7 +910,7 @@
     <string name="history_stopped">Interrumpida</string>
     <string name="history_skipped">Omitida</string>
     <string name="history_stop_reason">Motivo de interrupción registrado</string>
-    <string name="history_summary_semantics">Las series incluyen calentamientos completados y trabajo por tiempo. El volumen solo cuenta carga externa × repeticiones. Los récords cuentan ejercicios que superaron una carga o cantidad de repeticiones anterior válida; la primera observación no es un récord.</string>
+    <string name="history_summary_semantics">Las series incluyen calentamientos completados y trabajo por tiempo, pero no el trabajo de movilidad. El volumen solo cuenta carga externa × repeticiones, sin el trabajo de movilidad. Los récords cuentan ejercicios que superaron una carga o cantidad de repeticiones anterior válida; la primera observación no es un récord.</string>
     <string name="history_explanations">Recomendación registrada</string>
     <string name="history_no_recommendation">No se registró una explicación de la recomendación para este entrenamiento. Esto no implica que haya pasado una validación automática.</string>
     <string name="history_validation_valid">Validación de software registrada: aceptado tal como se propuso.</string>
@@ -1114,7 +1114,7 @@
     <string name="condition_name_lateral_elbow_tendinopathy">Tendinopatía lateral del codo</string>
     <string name="condition_name_carpal_tunnel_syndrome">Síndrome del túnel carpiano</string>
     <string name="condition_name_patellofemoral_pain">Dolor patelofemoral</string>
-    <string name="condition_name_unknown">Condición guardada</string>
+    <string name="condition_name_unknown">Condición que esta versión no reconoce</string>
     <string name="condition_section_heading">CONDICIONES A TENER EN CUENTA</string>
     <string name="condition_section_hint">Opcional. Los entrenamientos automáticos se eligen para sortear las condiciones que agregues y pueden incluir una rutina corta de movilidad como información general. Esto no es consejo médico y no puede garantizar que un entrenamiento no empeore una condición.</string>
     <string name="condition_unavailable">No se pudo cargar la guía de condiciones, así que por ahora no se pueden agregar. Las condiciones que ya agregaste siguen en la lista y puedes quitarlas. Inténtalo de nuevo después de reiniciar la app.</string>

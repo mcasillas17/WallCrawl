@@ -350,7 +350,7 @@
     <string name="today_error_reviewed_capabilities">Your movement preferences leave no reviewed automatic options. Update them in Profile, or build your own workout.</string>
     <string name="today_error_reviewed_constraints">Your low impact only setting leaves no options inside the reviewed automatic scope.</string>
     <string name="today_error_reviewed_conditions">The conditions and joint labels you reported leave no reviewed automatic options. WallCrawl avoids the movements listed for them, so nothing could be planned today.</string>
-    <string name="today_error_condition_guidance_unavailable">WallCrawl could not load the guidance that goes with the conditions or joint labels you reported, so it did not plan a workout. Restarting the app may help. If you restored a backup from a newer version, remove any condition this version does not recognise in Profile.</string>
+    <string name="today_error_condition_guidance_unavailable">WallCrawl could not load the guidance that goes with the conditions or joint labels you reported, so it did not plan a workout. Restarting the app may help. If you restored an exported file from a newer version, remove any condition this version doesn\'t recognize in Profile.</string>
     <string name="today_error_reviewed_calibration">Your current calibration stage leaves no reviewed automatic options. You can still build your own workout.</string>
     <string name="today_error_reviewed_none_eligible">No exercise meets every reviewed automatic-planning rule. You can still build your own workout.</string>
 
@@ -475,7 +475,7 @@
     <string name="summary_success_content_description">Workout complete</string>
     <string name="summary_section">SESSION SUMMARY</string>
     <string name="summary_metric_duration">Duration</string>
-    <string name="summary_metric_sets">Sets logged</string>
+    <string name="summary_metric_sets">Main sets logged</string>
     <string name="summary_metric_volume">Volume lifted</string>
     <string name="summary_metric_prs">PRs hit</string>
     <string name="summary_no_external_volume">No external-load volume recorded</string>
@@ -918,7 +918,7 @@
     <string name="history_stopped">Stopped</string>
     <string name="history_skipped">Skipped</string>
     <string name="history_stop_reason">Recorded stop reason</string>
-    <string name="history_summary_semantics">Sets include completed warm-ups and timed work. Volume counts external load × repetitions only. PRs count exercises exceeding an eligible earlier load or repetition record; a first observation is not a PR.</string>
+    <string name="history_summary_semantics">Sets include completed warm-ups and timed work, but not mobility work. Volume counts external load × repetitions only, and mobility work is not counted. PRs count exercises exceeding an eligible earlier load or repetition record; a first observation is not a PR.</string>
     <string name="history_explanations">Recorded recommendation</string>
     <string name="history_no_recommendation">No recommendation explanation was recorded for this workout. This does not imply automatic validation passed.</string>
     <string name="history_validation_valid">Recorded software validation: accepted as proposed.</string>
@@ -1122,7 +1122,7 @@
     <string name="condition_name_lateral_elbow_tendinopathy">Lateral elbow tendinopathy</string>
     <string name="condition_name_carpal_tunnel_syndrome">Carpal tunnel syndrome</string>
     <string name="condition_name_patellofemoral_pain">Patellofemoral pain</string>
-    <string name="condition_name_unknown">Saved condition</string>
+    <string name="condition_name_unknown">Condition this version doesn\'t recognize</string>
     <string name="condition_section_heading">CONDITIONS TO WORK AROUND</string>
     <string name="condition_section_hint">Optional. Automatic workouts are chosen to work around the conditions you add, and may include a short mobility routine as general information. This is not medical advice, and it cannot guarantee that a workout will not make a condition worse.</string>
     <string name="condition_unavailable">The guidance for conditions could not be loaded, so conditions cannot be added right now. Conditions you already added stay listed and you can remove them. Try again after restarting the app.</string>
