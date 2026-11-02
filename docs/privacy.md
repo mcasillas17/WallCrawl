@@ -381,3 +381,5 @@ not erase/reset a shared device or run destructive restore scripts on real data.
 - [Application manifest: allowBackup and manufacturer caveats](https://developer.android.com/guide/topics/manifest/application-element#allowbackup)
 - [Android 12 backup/restore behavior changes](https://developer.android.com/about/versions/12/behavior-changes-12#backup-restore)
 - [Testing backup and transfer](https://developer.android.com/identity/data/testingbackup)
+
+Condition selections (which may reveal diagnoses), session context and pending reassessments are stored locally. A user-selected export includes these details in readable form; deleting local data removes them from the device but does not delete previously exported files.

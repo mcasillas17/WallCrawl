@@ -43,10 +43,10 @@ class LocalDataArchiveRecommendationTest {
     }
 
     @Test
-    fun theCurrentFormat_isVersionSixAndReadsEveryEarlierVersion() {
-        assertThat(LocalDataArchiveFormat.ARCHIVE_VERSION).isEqualTo(6)
+    fun theCurrentFormat_isVersionSevenAndReadsEveryEarlierVersion() {
+        assertThat(LocalDataArchiveFormat.ARCHIVE_VERSION).isEqualTo(7)
         assertThat(LocalDataArchiveFormat.SUPPORTED_ARCHIVE_VERSIONS.toList())
-            .containsExactly(1, 2, 3, 4, 5, 6)
+            .containsExactly(1, 2, 3, 4, 5, 6, 7)
             .inOrder()
     }
 

@@ -55,50 +55,42 @@ import wallcrawl.elopenmike.com.core.database.entity.ConditionReassessmentPendin
  */
 @RunWith(AndroidJUnit4::class)
 class LocalDataBackupRepositoryTest {
-    @Test fun conditionFieldsRefuseExportBeforeDestinationOpensWithoutChangingRows() = runBlocking {
-        val context = SessionConditionContext(1, 1, emptyList(), emptyMap(), emptyList(), emptyList(), emptyList())
-        val updates = listOf(
-            "UPDATE user_profiles SET activeConditionsJson = ?" to ConditionContextCodec.encodeSelections(
-                listOf(SelectedCondition("future-condition", 1, emptyMap()))),
-            "UPDATE workout_sessions SET conditionContextJson = ?" to ConditionContextCodec.encodeSession(context),
-            "UPDATE workout_recommendation_records SET conditionContextDigest = ?" to context.canonicalDigest,
-            "UPDATE workout_exercises SET purpose = ?" to "SUPPORTIVE",
-            "UPDATE workout_template_exercises SET purpose = ?" to "SUPPORTIVE"
-        )
-        updates.forEach { (sql, value) ->
-            seedFixtureData()
-            database.openHelper.writableDatabase.execSQL(sql, arrayOf(value))
-            val before = database.localDataBackupDao().readAll()
-            var opened = false
-            assertThrows(IllegalArgumentException::class.java) {
-                runBlocking { repository.exportTo { opened = true; ByteArrayOutputStream() } }
-            }
-            assertThat(opened).isFalse()
-            assertThat(database.localDataBackupDao().readAll()).isEqualTo(before)
-            repository.deleteAllLocalData()
-        }
+    @Test fun conditionRowsSurviveExportDeleteAndRestore() = runBlocking<Unit> {
+        seedFixtureData()
+        val context = SessionConditionContext(1, 1,
+            listOf(SelectedCondition("z-future", 2, mapOf("q" to "unknown")), SelectedCondition("a-future", 1, emptyMap())),
+            mapOf("z-future" to "v1", "a-future" to "v1"), emptyList(), emptyList(), listOf("z-event", "a-event"))
+        val db = database.openHelper.writableDatabase
+        val sessionId = database.localDataBackupDao().selectRecommendationRecords().first().sessionId
+        db.execSQL("UPDATE user_profiles SET activeConditionsJson = ?, trainingConstraintsJson = ?", arrayOf(
+            ConditionContextCodec.encodeSelections(context.selectedConditions), "KNEE_SENSITIVE|||FUTURE_SENSITIVE"))
+        db.execSQL("UPDATE workout_sessions SET conditionContextJson = ? WHERE id = ?", arrayOf(ConditionContextCodec.encodeSession(context), sessionId))
+        db.execSQL("UPDATE workout_recommendation_records SET conditionContextDigest = ? WHERE sessionId = ?", arrayOf(context.canonicalDigest, sessionId))
+        db.execSQL("UPDATE workout_exercises SET purpose = ?", arrayOf("SUPPORTIVE"))
+        db.execSQL("UPDATE workout_template_exercises SET purpose = ?", arrayOf("SUPPORTIVE"))
+        val before = database.localDataBackupDao().readAll()
+        val output = ByteArrayOutputStream()
+        repository.exportTo { output }
+        repository.deleteAllLocalData()
+        repository.restoreFrom(ByteArrayInputStream(output.toByteArray()))
+        assertThat(database.localDataBackupDao().readAll()).isEqualTo(before)
     }
 
-    @Test fun pendingMarkerRefusesExportAndSurvivesUntilExplicitDeleteAll() = runBlocking {
+    @Test fun pendingMarkerRoundTripsAndSurvivesUntilExplicitDeleteAll() = runBlocking<Unit> {
         val marker = ConditionReassessmentPendingEntity("default_user", "future-condition", "future-exercise", "event-1",
-            "a".repeat(64), 1, 100, null)
+            "a".repeat(64), 99, 100, "deleted-set-id")
         database.conditionReassessmentDao().upsertIfNewer(marker)
-        var opened = false
-        assertThrows(IllegalArgumentException::class.java) {
-            runBlocking { repository.exportTo { opened = true; ByteArrayOutputStream() } }
-        }
-        assertThat(opened).isFalse()
-        assertThat(database.conditionReassessmentDao().forProfile("default_user")).containsExactly(marker)
+        val output = ByteArrayOutputStream()
+        repository.exportTo { output }
         assertThat(repository.isRestoreAllowed()).isFalse()
         assertThrows(LocalDataRestoreRefusedException::class.java) {
-            runBlocking { repository.restoreFrom(ByteArrayInputStream(exportedFixtureDocument())) }
+            runBlocking { repository.restoreFrom(ByteArrayInputStream(output.toByteArray())) }
         }
         assertThat(database.conditionReassessmentDao().forProfile("default_user")).containsExactly(marker)
-        assertThat(database.localDataBackupDao().readAll().sessions).isEmpty()
         repository.deleteAllLocalData()
         assertThat(database.conditionReassessmentDao().forProfile("default_user")).isEmpty()
-        repository.exportTo { opened = true; ByteArrayOutputStream() }
-        assertThat(opened).isTrue()
+        repository.restoreFrom(ByteArrayInputStream(output.toByteArray()))
+        assertThat(database.conditionReassessmentDao().forProfile("default_user")).containsExactly(marker)
     }
 
     @Test fun directArchiveWriterRefusesEveryConditionCarrier() {
@@ -120,7 +112,7 @@ class LocalDataBackupRepositoryTest {
         snapshots.forEach { snapshot ->
             var opened = false
             val failure = assertThrows(IllegalArgumentException::class.java) {
-                LocalDataArchiveCodec.write(LocalDataArchiveFixtures.archive(snapshot = snapshot)) {
+                LocalDataArchiveCodec.write(LocalDataArchiveFixtures.archive(snapshot = snapshot).let { it.copy(metadata = it.metadata.copy(archiveVersion = 6)) }) {
                     opened = true; ByteArrayOutputStream()
                 }
             }
@@ -134,7 +126,7 @@ class LocalDataBackupRepositoryTest {
             unresolvedTrainingConstraintsRaw = "KNEE_SENSITIVE|||FUTURE_SENSITIVE")
         database.userProfileDao().insertOrUpdate(profile.toUserProfileEntity())
         val archive = LocalDataArchiveFixtures.archive(
-            snapshot = LocalDataArchiveFixtures.snapshot(profile = profile))
+            snapshot = LocalDataArchiveFixtures.snapshot(profile = profile)).let { it.copy(metadata = it.metadata.copy(archiveVersion = 6)) }
         var opened = false
         assertThrows(IllegalArgumentException::class.java) {
             LocalDataArchiveCodec.write(archive) {

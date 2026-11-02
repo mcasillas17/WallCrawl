@@ -1,5 +1,6 @@
 package wallcrawl.elopenmike.com.core.backup
 
+import wallcrawl.elopenmike.com.core.model.PendingConditionReassessment
 import wallcrawl.elopenmike.com.core.model.ProgramEnrollment
 import wallcrawl.elopenmike.com.core.model.ProgramAssociation
 import wallcrawl.elopenmike.com.core.model.RecommendationRecord
@@ -36,6 +37,8 @@ import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
  * Version 5 adds owned program enrollment and frozen membership; formats 1..4 stay unchanged.
  * Version 6 records a template's weight unit when it has one. Formats 1..5 never carried
  * it, so their templates read back as unit-unknown and keep their checksums.
+ * Version 7 adds condition selections, session context, prescription purpose, receipt
+ * binding, unresolved legacy restrictions and independently owned reassessment markers.
  *
  * ## What it contains
  *
@@ -51,7 +54,7 @@ import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
  * ## Sensitivity
  *
  * An archive is readable personal information: training history, physical capability
- * answers, and body-adjacent preferences in clear text. The checksum detects corruption or
+ * answers, condition selections and context, and body-adjacent preferences in clear text. The checksum detects corruption or
  * accidental modification. It is **not** encryption and **not** proof of authenticity;
  * anyone who edits an archive can recompute it. Users choose where an archive is written,
  * and a Storage Access Framework destination may be a cloud-backed provider.
@@ -59,7 +62,7 @@ import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
 object LocalDataArchiveFormat {
 
     /** The only archive format this build writes. */
-    const val ARCHIVE_VERSION: Int = 6
+    const val ARCHIVE_VERSION: Int = 7
 
     /** Every archive format this build can read. */
     val SUPPORTED_ARCHIVE_VERSIONS: IntRange = 1..ARCHIVE_VERSION
@@ -156,7 +159,8 @@ data class LocalDataSnapshot(
     val recommendationRecords: List<RecommendationRecord> = emptyList(),
     val deloadPreferences: DeloadPreferences? = null,
     val programEnrollment: ProgramEnrollment? = null,
-    val programAssociations: List<ProgramAssociation> = emptyList()
+    val programAssociations: List<ProgramAssociation> = emptyList(),
+    val pendingConditionReassessments: List<PendingConditionReassessment> = emptyList()
 )
 
 /** A complete archive: its provenance and the records it carries. */

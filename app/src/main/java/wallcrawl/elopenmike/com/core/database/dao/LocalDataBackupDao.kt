@@ -8,6 +8,7 @@ import androidx.room.Transaction
 import wallcrawl.elopenmike.com.core.backup.LocalDataRestoreRefusedException
 import wallcrawl.elopenmike.com.core.backup.LocalDataArchiveException
 import wallcrawl.elopenmike.com.core.backup.ArchiveRejection
+import wallcrawl.elopenmike.com.core.database.entity.ConditionReassessmentPendingEntity
 import wallcrawl.elopenmike.com.core.database.entity.ProgramEnrollmentEntity
 import wallcrawl.elopenmike.com.core.database.entity.ProgramSessionAssociationEntity
 import wallcrawl.elopenmike.com.core.database.entity.UserProfileEntity
@@ -30,7 +31,8 @@ data class LocalDataRows(
     val recommendationRecords: List<WorkoutRecommendationRecordEntity>,
     val deloadPreferences: List<DeloadPreferencesEntity> = emptyList(),
     val programEnrollments: List<ProgramEnrollmentEntity> = emptyList(),
-    val programAssociations: List<ProgramSessionAssociationEntity> = emptyList()
+    val programAssociations: List<ProgramSessionAssociationEntity> = emptyList(),
+    val pendingConditionReassessments: List<ConditionReassessmentPendingEntity> = emptyList()
 )
 
 /**
@@ -110,13 +112,14 @@ interface LocalDataBackupDao {
     @Query("SELECT EXISTS(SELECT 1 FROM condition_reassessment_pending)")
     suspend fun hasConditionReassessmentPending(): Boolean
 
+    @Query("SELECT * FROM condition_reassessment_pending ORDER BY profileId, conditionId, exerciseId")
+    suspend fun selectPendingConditionReassessments(): List<ConditionReassessmentPendingEntity>
+
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    suspend fun insertPendingConditionReassessments(rows: List<ConditionReassessmentPendingEntity>)
+
     @Transaction
-    suspend fun readAllForExport(): LocalDataRows {
-        require(!hasConditionReassessmentPending()) {
-            "Pending condition reassessments cannot be represented by this archive."
-        }
-        return readAll()
-    }
+    suspend fun readAllForExport(): LocalDataRows = readAll()
 
     /**
      * One transactionally consistent snapshot of every user-owned table.
@@ -139,7 +142,8 @@ interface LocalDataBackupDao {
             recommendationRecords = selectRecommendationRecords(),
             deloadPreferences = selectDeloadPreferences(),
             programEnrollments = selectProgramEnrollments(),
-            programAssociations = selectProgramAssociations()
+            programAssociations = selectProgramAssociations(),
+            pendingConditionReassessments = selectPendingConditionReassessments()
         )
     }
 
@@ -278,5 +282,6 @@ interface LocalDataBackupDao {
         insertDeloadPreferences(rows.deloadPreferences)
         insertProgramEnrollments(rows.programEnrollments)
         insertProgramAssociations(rows.programAssociations)
+        insertPendingConditionReassessments(rows.pendingConditionReassessments)
     }
 }

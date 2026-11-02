@@ -683,7 +683,7 @@
     <string name="local_data_description">Exporta todo lo que WallCrawl guarda en este dispositivo, restáuralo en una instalación nueva o elimínalo.</string>
     <string name="local_data_export">Exportar mis datos</string>
     <string name="local_data_export_progress">Exportando…</string>
-    <string name="local_data_export_hint">Escribe un solo archivo con tu perfil, tus respuestas de movimiento, tus rutinas y todos tus entrenamientos. Es información personal legible: elige un lugar de confianza y ten en cuenta que el selector puede ofrecerte almacenamiento en la nube.</string>
+    <string name="local_data_export_hint">Escribe un solo archivo con tu perfil, tus respuestas de movimiento, tus condiciones seleccionadas y el contexto de tus sesiones, tus rutinas y todos tus entrenamientos. Es información personal legible: elige un lugar de confianza y ten en cuenta que el selector puede ofrecerte almacenamiento en la nube.</string>
     <string name="local_data_export_success">Se exportaron %1$s y %2$s.</string>
     <string name="local_data_export_failed">La exportación falló. Si se creó un archivo, está incompleto: elimínalo e inténtalo de nuevo.</string>
     <string name="local_data_export_too_large">Tus datos de entrenamiento son demasiado grandes para escribirlos en un solo archivo de exportación, así que reintentar no funcionará. Si se creó un archivo, está incompleto: elimínalo.</string>
@@ -709,7 +709,7 @@
     <string name="local_data_delete_hint">Elimina solo la copia de este dispositivo. Los archivos que ya exportaste, y cualquier copia de seguridad que haya conservado una versión anterior de Android, no se tocan.</string>
     <string name="local_data_delete_failed">No se pudieron eliminar los datos locales. Inténtalo de nuevo.</string>
     <string name="local_data_delete_confirm_title">¿Eliminar todos los datos locales?</string>
-    <string name="local_data_delete_confirm_body">Esto elimina de forma permanente tu perfil y tus preferencias, tus respuestas de movimiento, tus rutinas guardadas, todos los entrenamientos registrados (incluido uno en curso) y los totales semanales en caché. No se puede deshacer, y la app vuelve a la configuración inicial. Los archivos que ya exportaste no se eliminan. Las ilustraciones de los ejercicios y el catálogo incluido se conservan. Tu idioma es un ajuste del dispositivo y no se modifica.</string>
+    <string name="local_data_delete_confirm_body">Esto elimina de forma permanente tu perfil y tus preferencias, tus respuestas de movimiento, tus condiciones seleccionadas, el contexto de las sesiones y las reevaluaciones pendientes, tus rutinas guardadas, todos los entrenamientos registrados (incluido uno en curso) y los totales semanales en caché. No se puede deshacer, y la app vuelve a la configuración inicial. Los archivos que ya exportaste no se eliminan. Las ilustraciones de los ejercicios y el catálogo incluido se conservan. Tu idioma es un ajuste del dispositivo y no se modifica.</string>
     <string name="local_data_delete_confirm_action">Eliminar todo</string>
     <string name="local_data_delete_confirm_cancel">Conservar mis datos</string>
     <string name="local_data_busy">Trabajando…</string>

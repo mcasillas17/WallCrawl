@@ -691,7 +691,7 @@
     <string name="local_data_description">Export everything WallCrawl keeps on this device, restore it onto a fresh start, or delete it.</string>
     <string name="local_data_export">Export my data</string>
     <string name="local_data_export_progress">Exporting…</string>
-    <string name="local_data_export_hint">Writes one file holding your profile, movement answers, templates, and every workout. It is readable personal information: choose a place you trust, and remember the picker can offer cloud storage.</string>
+    <string name="local_data_export_hint">Writes one file holding your profile, movement answers, condition selections and session context, templates, and every workout. It is readable personal information: choose a place you trust, and remember the picker can offer cloud storage.</string>
     <string name="local_data_export_success">Exported %1$s and %2$s.</string>
     <string name="local_data_export_failed">Export failed. If a file was created it is incomplete, so delete it and try again.</string>
     <string name="local_data_export_too_large">Your saved training data is too large to write into one export file, so this won\'t succeed by retrying. If a file was created it is incomplete, so delete it.</string>
@@ -717,7 +717,7 @@
     <string name="local_data_delete_hint">Deletes this device\'s copy only. Files you already exported, and any backup a previous version of Android kept, are not touched.</string>
     <string name="local_data_delete_failed">Couldn\'t delete local data. Try again.</string>
     <string name="local_data_delete_confirm_title">Delete all local data?</string>
-    <string name="local_data_delete_confirm_body">This permanently removes your profile and preferences, movement answers, saved templates, every logged workout including one in progress, and cached weekly totals. It cannot be undone, and the app returns to first-run onboarding. Files you already exported are not deleted. Exercise artwork and the bundled catalog stay. Your language choice is a device setting and is left as it is.</string>
+    <string name="local_data_delete_confirm_body">This permanently removes your profile and preferences, movement answers, condition selections, session context and pending reassessments, saved templates, every logged workout including one in progress, and cached weekly totals. It cannot be undone, and the app returns to first-run onboarding. Files you already exported are not deleted. Exercise artwork and the bundled catalog stay. Your language choice is a device setting and is left as it is.</string>
     <string name="local_data_delete_confirm_action">Delete everything</string>
     <string name="local_data_delete_confirm_cancel">Keep my data</string>
     <string name="local_data_busy">Working…</string>
