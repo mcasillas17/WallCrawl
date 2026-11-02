@@ -4,7 +4,7 @@ Working evidence review for personalized workouts. This inventory contains 50 ca
 
 Each regional evidence report links the actual medical papers and guidelines inspected, distinguishes full-text from abstract-only access, and records study populations, interventions, outcomes, harms, conflicts and limits. A study protocol is not an approved app prescription. Unavailable details stay unknown; no restriction is justified merely because another exercise helped.
 
-Current state: linked source reports cover 39 of 50 conditions; 8 structured dossiers have been reconciled. Independent source verification and clinical review are separate gates. This is a targeted evidence review, not an exhaustive systematic review.
+Current state: linked source reports cover 45 of 50 conditions; 14 structured dossiers have been reconciled. Independent source verification and clinical review are separate gates. This is a targeted evidence review, not an exhaustive systematic review.
 
 ## Inventory and evidence links
 
@@ -31,12 +31,12 @@ Current state: linked source reports cover 39 of 50 conditions; 8 structured dos
 | de Quervain tenosynovitis | [Study extraction](evidence/elbow-hand.md) | Pending reconciliation |
 | thumb carpometacarpal osteoarthritis | [Study extraction](evidence/elbow-hand.md) | Pending reconciliation |
 | finger interphalangeal osteoarthritis | [Study extraction](evidence/elbow-hand.md) | Pending reconciliation |
-| Hip osteoarthritis | In progress | Pending reconciliation |
-| gluteal tendinopathy | In progress | Pending reconciliation |
-| femoroacetabular impingement syndrome | In progress | Pending reconciliation |
-| adductor-related groin pain | In progress | Pending reconciliation |
-| proximal hamstring tendinopathy | In progress | Pending reconciliation |
-| iliopsoas-related groin pain | In progress | Pending reconciliation |
+| Hip osteoarthritis | [Study extraction](evidence/hip.md) | [complete](hip-osteoarthritis.json) |
+| gluteal tendinopathy | [Study extraction](evidence/hip.md) | [complete](gluteal-tendinopathy.json) |
+| femoroacetabular impingement syndrome | [Study extraction](evidence/hip.md) | [complete](femoroacetabular-impingement-syndrome.json) |
+| adductor-related groin pain | [Study extraction](evidence/hip.md) | [complete](adductor-related-groin-pain.json) |
+| proximal hamstring tendinopathy | [Study extraction](evidence/hip.md) | [complete](proximal-hamstring-tendinopathy.json) |
+| iliopsoas-related groin pain | [Study extraction](evidence/hip.md) | [complete](iliopsoas-related-groin-pain.json) |
 | piriformis syndrome | [Study extraction](evidence/piriformis.md) | [complete](piriformis-syndrome.json) |
 | Knee osteoarthritis | [Study extraction](evidence/knee.md) | [complete](knee-osteoarthritis.json) |
 | patellofemoral pain | [Study extraction](evidence/knee.md) | [complete](patellofemoral-pain.json) |

@@ -1,0 +1,288 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "gluteal-tendinopathy",
+    "label": "gluteal tendinopathy",
+    "aliases": [],
+    "distinctions": "Gluteus medius/minimus tendinopathy; broader GTPS/bursitis and referred pain are not synonymous."
+  },
+  "scope": {
+    "population": "Clinically diagnosed persistent lateral hip tendon pain.",
+    "stage": "Persistent nonoperative; not acute tear or repair.",
+    "operativeStatus": "Nonoperative rehabilitation only; postoperative pathways require separate assessment.",
+    "exclusions": "Recent surgery, THA and major competing pain presentations not represented.",
+    "uncertainty": "Source eligibility limits applicability; it does not establish contraindications."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "Web search; primary publisher/PubMed/Europe PMC retrieval",
+      "query": "gluteal tendinopathy LEAP trial protocol Mellor 2016 compression exercises",
+      "decision": "Retrieved final LEAP and original protocol/Table 3.",
+      "limitations": "Focused regional review, not an exhaustive systematic search; English-accessible sources prioritized."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Web search; primary publisher/PubMed/Europe PMC retrieval",
+      "query": "gluteal tendinopathy exercise systematic review meta-analysis 2024",
+      "decision": "Retained certainty/heterogeneity context.",
+      "limitations": "Focused regional review, not an exhaustive systematic search; English-accessible sources prioritized."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Web search; primary publisher/PubMed/Europe PMC retrieval",
+      "query": "\"10.1136/bmj.k1662\" correction retraction",
+      "decision": "No notice located in retrieved primary archive/text.",
+      "limitations": "Focused regional review, not an exhaustive systematic search; English-accessible sources prioritized."
+    }
+  ],
+  "sources": [
+    {
+      "id": "mellor-2018",
+      "title": "Education plus exercise versus corticosteroid injection use versus a wait and see approach on global outcome and pain from gluteal tendinopathy: prospective, single blinded, randomised clinical trial",
+      "doi": "10.1136/bmj.k1662",
+      "pmid": "29720374",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5930290/",
+      "publicationStatus": "Final journal publication, before access date.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Primary full text inspected at linked archive/publisher; Europe PMC XML used where PMC HTML challenged."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Primary metadata and retrieved text inspected; regional update searches. Bounded check, not registry-wide clearance.",
+        "result": "No notice identified in inspected text; no formal replacement established."
+      },
+      "design": "Assessor-blinded three-arm RCT; n=204.",
+      "population": "Age 35–70, lateral pain > 3 months, MRI/clinical gluteal tendinopathy; major lumbar/groin pain and THA excluded.",
+      "comparator": "Single corticosteroid injection; wait-and-see.",
+      "coInterventions": "Load-management education + exercises bundled.",
+      "outcomes": "52-week global success risk difference exercise vs injection 20.4% (4.9–35.9); pain difference −0.3/10 (−1.06 to 0.55).",
+      "followUp": "4, 8, 12, 26, 52 weeks.",
+      "uncertainty": "Unblinded participants; mostly women; cannot isolate education/exercises.",
+      "harms": "No serious adverse events reported; diaries and therapist records.",
+      "limitations": "Not clinical approval or a universal ordinary-training restriction.",
+      "protocol": {
+        "execution": "Targeted abductor strength and dynamic adduction control.",
+        "dose": "4–6 home exercises.",
+        "frequency": "Daily home; 14 contacts/8 weeks.",
+        "supervision": "Individual physiotherapist.",
+        "progression": "Gradual tendon loading.",
+        "stoppingRules": "Detailed in protocol below."
+      },
+      "locations": [
+        "Methods > Study treatments",
+        "Results > Table 2; adverse events"
+      ]
+    },
+    {
+      "id": "mellor-2016-protocol",
+      "title": "Exercise and load modification versus corticosteroid injection versus ‘wait and see’ for persistent gluteus medius/minimus tendinopathy (the LEAP trial): a protocol for a randomised clinical trial",
+      "doi": "10.1186/s12891-016-1043-6",
+      "pmid": "27139495",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4852446/",
+      "publicationStatus": "Final journal publication, before access date.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Publisher/Europe PMC full text and Table 3 inspected. Figure 1 publisher GIF downloaded from its observed media.springernature.com link and visually inspected with view_image; static-abduction setup not shown there. No figure copied into app artwork."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Primary metadata and retrieved text inspected; regional update searches. Bounded check, not registry-wide clearance.",
+        "result": "No notice identified in inspected text; no formal replacement established."
+      },
+      "design": "Protocol; not a separate efficacy trial.",
+      "population": "Persistent gluteal tendinopathy, as final trial.",
+      "comparator": "Injection; wait-and-see.",
+      "coInterventions": "Education to reduce compressive adduction in daily activity.",
+      "outcomes": "Published load-management/execution framework.",
+      "followUp": "Planned through 52 weeks.",
+      "uncertainty": "Compression rationale and individual components not separately randomized.",
+      "harms": "Weekly symptom/adverse-event diary planned.",
+      "limitations": "Not clinical approval or a universal ordinary-training restriction.",
+      "protocol": {
+        "execution": "Supine/standing static abduction; bridges, squats, sidesteps; later offset variants and band sideslides.",
+        "dose": "Week 1 supine static abduction 3–5 repetitions of 5–10-second holds; one set; light effort.",
+        "frequency": "Static abduction twice daily; 8-week staged program.",
+        "supervision": "14 supervised sessions/8 weeks plus home work.",
+        "progression": "Functional work Borg 13–15; heavy work 14–17 as tolerated.",
+        "stoppingRules": "No pain increase functional retraining; heavy slow work ≤ 5/10 only if settles and no worse that night/next morning."
+      },
+      "locations": [
+        "Methods > Interventions; Table 3",
+        "Background; Discussion",
+        "Methods > Interventions; Figure 1 (Offset bridging exercise)"
+      ]
+    },
+    {
+      "id": "exercise-review-2024",
+      "title": "Effects of exercise-based interventions on gluteal tendinopathy. Systematic review with meta-analysis",
+      "doi": "10.1038/s41598-024-53283-x",
+      "pmid": "38336959",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10858207/",
+      "publicationStatus": "Final journal publication, before access date.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "Indexed primary abstract inspected; full methods not extracted."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Primary metadata and retrieved text inspected; regional update searches. Bounded check, not registry-wide clearance.",
+        "result": "No notice identified in inspected text; no formal replacement established."
+      },
+      "design": "Review, five eligible studies; three/383 pooled.",
+      "population": "Gluteal tendinopathy trial populations.",
+      "comparator": "Minimal intervention/injection.",
+      "coInterventions": "not reported",
+      "outcomes": "Function favored exercise short-term MD 10.24 (5.98–14.50), long-term 6.54 (1.88–11.21); pain vs injection uncertain.",
+      "followUp": "Short and long term, heterogeneous.",
+      "uncertainty": "GRADE low/very low; no optimal protocol.",
+      "harms": "not reported in accessible abstract.",
+      "limitations": "Not clinical approval or a universal ordinary-training restriction.",
+      "protocol": {
+        "execution": "not reported",
+        "dose": "not reported",
+        "frequency": "not reported",
+        "supervision": "not reported",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Abstract; Discussion > Limitations"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "education-exercise-effect",
+      "kind": "study-result",
+      "statement": "52-week global success risk difference exercise vs injection 20.4% (4.9–35.9); pain difference −0.3/10 (−1.06 to 0.55).",
+      "citations": [
+        {
+          "sourceId": "mellor-2018",
+          "location": "Results > Table 2; adverse events"
+        }
+      ],
+      "applicability": "Age 35–70, lateral pain > 3 months, MRI/clinical gluteal tendinopathy; major lumbar/groin pain and THA excluded.",
+      "limitations": "Unblinded participants; mostly women; cannot isolate education/exercises."
+    },
+    {
+      "id": "compression-managed-loading",
+      "kind": "published-recommendation",
+      "statement": "LEAP protocol reduces compressive adduction while progressively loading abductors; symptom rules differ by exercise type.",
+      "citations": [
+        {
+          "sourceId": "mellor-2016-protocol",
+          "location": "Methods > Interventions; Table 3"
+        }
+      ],
+      "applicability": "Persistent gluteal tendinopathy, as final trial.",
+      "limitations": "Compression rationale and individual components not separately randomized."
+    },
+    {
+      "id": "low-certainty-synthesis",
+      "kind": "study-result",
+      "statement": "Function favored exercise short-term MD 10.24 (5.98–14.50), long-term 6.54 (1.88–11.21); pain vs injection uncertain.",
+      "citations": [
+        {
+          "sourceId": "exercise-review-2024",
+          "location": "Abstract; Discussion > Limitations"
+        }
+      ],
+      "applicability": "Gluteal tendinopathy trial populations.",
+      "limitations": "GRADE low/very low; no optimal protocol."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "leap-supine-static-hip-abduction-mapping",
+      "exerciseId": null,
+      "requestId": "leap-supine-static-hip-abduction",
+      "findingIds": [
+        "compression-managed-loading"
+      ],
+      "matchRationale": "Existing dynamic abduction entries do not verify static supine execution; preserve missing setup rather than invent a band or angle.",
+      "status": "candidate"
+    },
+    {
+      "id": "leap-offset-bridge-mapping",
+      "exerciseId": null,
+      "requestId": "leap-offset-bridge",
+      "findingIds": [
+        "compression-managed-loading"
+      ],
+      "matchRationale": "Figure 1 shows a supine bridge with bent knees and staggered supported feet; catalog single-leg bridge lifts a foot. No numeric angle, precise loading distribution or clinical clearance inferred.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "review-compression-positions",
+      "kind": "range-limit",
+      "basis": "published-recommendation",
+      "statement": "Draft review should flag sustained compressive adduction/stretching in symptomatic tendon presentations, with individualized alternatives.",
+      "findingIds": [
+        "compression-managed-loading"
+      ],
+      "citations": [
+        {
+          "sourceId": "mellor-2016-protocol",
+          "location": "Methods > Interventions; Table 3"
+        }
+      ],
+      "applicability": {
+        "population": "Adults aged 35–70 with persistent lateral hip pain over three months and clinically/MRI-confirmed gluteal tendinopathy, resembling LEAP eligibility.",
+        "stage": "Persistent nonoperative; not acute tear or repair.",
+        "rationale": "Draft inference constrained to the linked population and intervention; no individual clearance."
+      },
+      "limitations": "Protocol precaution; no tested universal angle or permanent ban.",
+      "mappingIds": [],
+      "status": "candidate"
+    },
+    {
+      "id": "leap-load-candidates",
+      "kind": "supportive-prescription",
+      "basis": "unresolved-hypothesis",
+      "statement": "Retain static abduction and offset bridge as package-derived candidates for clinical review.",
+      "findingIds": [
+        "education-exercise-effect",
+        "compression-managed-loading"
+      ],
+      "citations": [
+        {
+          "sourceId": "mellor-2016-protocol",
+          "location": "Methods > Interventions; Table 3"
+        }
+      ],
+      "applicability": {
+        "population": "Adults aged 35–70 with persistent lateral hip pain over three months and clinically/MRI-confirmed gluteal tendinopathy, resembling LEAP eligibility.",
+        "stage": "Persistent nonoperative; not acute tear or repair.",
+        "rationale": "Draft inference constrained to the linked population and intervention; no individual clearance."
+      },
+      "limitations": "No isolated effect or default app dose.",
+      "mappingIds": [
+        "leap-supine-static-hip-abduction-mapping",
+        "leap-offset-bridge-mapping"
+      ],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "All material is draft and clinically unreviewed; no runtime mapping, supported-condition claim, default dose or escalation clearance follows.",
+    "No universal numeric load/range cap or hard exercise contraindication was established; benefit from alternatives and trial exclusions do not prove harm.",
+    "Concurrent condition restrictions, equipment requirements and independent joint limits remain controlling; stretching never earns strength-set credit or generic five-second progression.",
+    "Trial package does not isolate compression avoidance or any exercise; avoid treating all adduction or side-lying as permanently contraindicated.",
+    "Offset bridge Figure 1 visually inspected; static abduction setup and other figures still require verification. Clinical and exact catalog-match review remain open."
+  ],
+  "disposition": "research-only",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

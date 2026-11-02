@@ -354,6 +354,245 @@
         }
       ],
       "status": "candidate"
+    },
+    {
+      "id": "phoenix-bilateral-floor-bridge",
+      "conditionIds": [
+        "hip-osteoarthritis"
+      ],
+      "name": "PHOENIX bilateral floor bridge",
+      "execution": "Firm surface, knees bent, feet flat hip-width; raise hips/buttocks, hold 2–3 seconds, slowly lower.",
+      "equipment": [
+        "floor mat"
+      ],
+      "movementRequirements": [
+        "Floor transfer",
+        "Hip extension"
+      ],
+      "artwork": "Candidate supplement: retain actual PNG sequence after execution and clinical review. No PNG/artwork generated here; source illustration text is not verified visual provenance.",
+      "reason": "Catalog glute-bridge names floor bridging but does not verify the study hold/stance from inspected metadata; exact-match review remains open.",
+      "sourceRefs": [
+        {
+          "conditionId": "hip-osteoarthritis",
+          "sourceId": "hall-2022-protocol",
+          "location": "Additional file 5 > Bridging; Functional / Knee Extensors"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "phoenix-chair-sit-to-stand",
+      "conditionIds": [
+        "hip-osteoarthritis"
+      ],
+      "name": "PHOENIX chair sit-to-stand",
+      "execution": "Chair, feet shoulder-width; slowly stand fully and sit slowly; base variant without added band, load or lower chair.",
+      "equipment": [
+        "chair"
+      ],
+      "movementRequirements": [
+        "Hip/knee flexion-extension",
+        "Standing balance"
+      ],
+      "artwork": "Candidate supplement: retain actual PNG sequence after execution and clinical review. No PNG/artwork generated here; source illustration text is not verified visual provenance.",
+      "reason": "Catalog squat variants do not verify this chair execution; inspect artwork and source supplement before reuse.",
+      "sourceRefs": [
+        {
+          "conditionId": "hip-osteoarthritis",
+          "sourceId": "hall-2022-protocol",
+          "location": "Additional file 5 > Bridging; Functional / Knee Extensors"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "leap-supine-static-hip-abduction",
+      "conditionIds": [
+        "gluteal-tendinopathy"
+      ],
+      "name": "LEAP supine static hip abduction",
+      "execution": "Supine static abduction at light effort, avoiding compressive hip adduction; resistance setup/angles need source figure verification.",
+      "equipment": [
+        "Resistance setup unresolved",
+        "floor mat"
+      ],
+      "movementRequirements": [
+        "Floor transfer",
+        "Isometric hip abduction"
+      ],
+      "artwork": "Candidate supplement: retain actual PNG sequence after execution and clinical review. No PNG/artwork generated here; source illustration text is not verified visual provenance.",
+      "reason": "Existing dynamic abduction entries do not verify static supine execution; preserve missing setup rather than invent a band or angle.",
+      "sourceRefs": [
+        {
+          "conditionId": "gluteal-tendinopathy",
+          "sourceId": "mellor-2016-protocol",
+          "location": "Methods > Interventions; Table 3"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "leap-offset-bridge",
+      "conditionIds": [
+        "gluteal-tendinopathy"
+      ],
+      "name": "LEAP offset bridge",
+      "execution": "Figure 1: supine bridge, knees bent, both feet supported in a staggered position, one closer to the buttocks. No numeric angles or precise side-load distribution inferred.",
+      "equipment": [
+        "floor mat"
+      ],
+      "movementRequirements": [
+        "Floor transfer",
+        "Asymmetric hip extension"
+      ],
+      "artwork": "Create and retain a new PNG sequence only after clinical/execution review; Figure 1 was inspected as evidence and is not app artwork or reusable provenance.",
+      "reason": "Visually verified staggered-foot execution differs from catalog single-leg bridge with one leg lifted. Clinical/catalog match review remains open.",
+      "sourceRefs": [
+        {
+          "conditionId": "gluteal-tendinopathy",
+          "sourceId": "mellor-2016-protocol",
+          "location": "Methods > Interventions; Table 3"
+        },
+        {
+          "conditionId": "gluteal-tendinopathy",
+          "sourceId": "mellor-2016-protocol",
+          "location": "Methods > Interventions; Figure 1 (Offset bridging exercise)"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "adductor-supine-ball-squeeze-feet",
+      "conditionIds": [
+        "adductor-related-groin-pain"
+      ],
+      "name": "Supine adductor ball squeeze between feet",
+      "execution": "Supine; soccer ball between feet; isometric adduction. Knee/hip angles unresolved.",
+      "equipment": [
+        "soccer ball",
+        "floor mat"
+      ],
+      "movementRequirements": [
+        "Floor transfer",
+        "Isometric hip adduction"
+      ],
+      "artwork": "Candidate supplement: retain actual PNG sequence after execution and clinical review. No PNG/artwork generated here; source illustration text is not verified visual provenance.",
+      "reason": "Cable/machine adduction is different; source-specific isometric hold needs retained PNGs after angle verification.",
+      "sourceRefs": [
+        {
+          "conditionId": "adductor-related-groin-pain",
+          "sourceId": "yousefzadeh-2018",
+          "location": "Materials and methods > Treatment; Tables 1 and 2"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "adductor-supine-ball-squeeze-knees",
+      "conditionIds": [
+        "adductor-related-groin-pain"
+      ],
+      "name": "Supine adductor ball squeeze between knees",
+      "execution": "Supine; soccer ball between knees; isometric adduction. Knee/hip angles unresolved.",
+      "equipment": [
+        "soccer ball",
+        "floor mat"
+      ],
+      "movementRequirements": [
+        "Floor transfer",
+        "Isometric hip adduction"
+      ],
+      "artwork": "Candidate supplement: retain actual PNG sequence after execution and clinical review. No PNG/artwork generated here; source illustration text is not verified visual provenance.",
+      "reason": "Separate lever/ball position from feet variant; do not deduplicate by name alone.",
+      "sourceRefs": [
+        {
+          "conditionId": "adductor-related-groin-pain",
+          "sourceId": "yousefzadeh-2018",
+          "location": "Materials and methods > Treatment; Tables 1 and 2"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "pht-isometric-hamstring-bridge",
+      "conditionIds": [
+        "proximal-hamstring-tendinopathy"
+      ],
+      "name": "PHT isometric hamstring bridge",
+      "execution": "Supine hamstring bridge held isometrically; double/single-leg and leg-support progression require Figure 3 visual verification.",
+      "equipment": [
+        "floor mat",
+        "leg support variant unresolved"
+      ],
+      "movementRequirements": [
+        "Floor transfer",
+        "Sustained hamstring/hip extension",
+        "Pelvic control"
+      ],
+      "artwork": "Candidate supplement: retain actual PNG sequence after execution and clinical review. No PNG/artwork generated here; source illustration text is not verified visual provenance.",
+      "reason": "Catalog glute-bridge/bodyweight_reps cannot verify hamstring emphasis/support or timed isometric measurement; preserve distinct candidate.",
+      "sourceRefs": [
+        {
+          "conditionId": "proximal-hamstring-tendinopathy",
+          "sourceId": "rich-2025-commentary",
+          "location": "Stage 1—Isometric; Table 1; Figure 3"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "pht-graded-compression-deadlift",
+      "conditionIds": [
+        "proximal-hamstring-tendinopathy"
+      ],
+      "name": "PHT modified deadlift with progressive hip flexion",
+      "execution": "Modified double/single-leg deadlift progressively increases hip flexion to functional demand; exact load/setup individualized.",
+      "equipment": [
+        "External load type unresolved"
+      ],
+      "movementRequirements": [
+        "Standing balance",
+        "Graded hip flexion",
+        "Hip hinge"
+      ],
+      "artwork": "Candidate supplement: retain actual PNG sequence after execution and clinical review. No PNG/artwork generated here; source illustration text is not verified visual provenance.",
+      "reason": "Generic Romanian-deadlift name does not encode graded compression angle or clinical progression; Figure 8 visual review needed.",
+      "sourceRefs": [
+        {
+          "conditionId": "proximal-hamstring-tendinopathy",
+          "sourceId": "rich-2025-commentary",
+          "location": "Stage 4—Compressive loading; Table 1; Figure 8; Pain monitoring"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "iliopsoas-side-lying-band-eccentric",
+      "conditionIds": [
+        "iliopsoas-related-groin-pain"
+      ],
+      "name": "Side-lying band-resisted eccentric-biased hip flexion",
+      "execution": "Opposite side-lying; affected ankle band anchored behind at knee height; knee flexed; controlled hip extension 3 counts, quick flexion 1 count; abdominals engaged and no loss of neutral spine.",
+      "equipment": [
+        "Resistance band",
+        "Sturdy anchor",
+        "floor mat"
+      ],
+      "movementRequirements": [
+        "Floor transfer",
+        "Hip flexion-extension with bent knee",
+        "Neutral spine"
+      ],
+      "artwork": "Candidate supplement: retain actual PNG sequence after execution and clinical review. No PNG/artwork generated here; source illustration text is not verified visual provenance.",
+      "reason": "Standing knee raises and generic stretches are not equivalent; retain new identity pending Figures 2–3 visual review.",
+      "sourceRefs": [
+        {
+          "conditionId": "iliopsoas-related-groin-pain",
+          "sourceId": "rauseo-2017",
+          "location": "Intervention > Eccentric biased exercise; Table 5; Figures 2–3"
+        }
+      ],
+      "status": "candidate"
     }
   ]
 }

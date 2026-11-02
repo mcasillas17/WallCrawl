@@ -132,37 +132,37 @@
       "id": "hip-osteoarthritis",
       "label": "Hip osteoarthritis",
       "region": "Hip, groin, gluteal (7)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "gluteal-tendinopathy",
       "label": "gluteal tendinopathy",
       "region": "Hip, groin, gluteal (7)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "femoroacetabular-impingement-syndrome",
       "label": "femoroacetabular impingement syndrome",
       "region": "Hip, groin, gluteal (7)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "adductor-related-groin-pain",
       "label": "adductor-related groin pain",
       "region": "Hip, groin, gluteal (7)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "proximal-hamstring-tendinopathy",
       "label": "proximal hamstring tendinopathy",
       "region": "Hip, groin, gluteal (7)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "iliopsoas-related-groin-pain",
       "label": "iliopsoas-related groin pain",
       "region": "Hip, groin, gluteal (7)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "piriformis-syndrome",

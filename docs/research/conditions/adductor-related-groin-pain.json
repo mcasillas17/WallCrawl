@@ -1,0 +1,321 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "adductor-related-groin-pain",
+    "label": "adductor-related groin pain",
+    "aliases": [],
+    "distinctions": "Adductor tenderness and recognizable pain on resisted adduction; do not merge iliopsoas, inguinal, pubic, intra-articular hip or acute avulsion presentations."
+  },
+  "scope": {
+    "population": "Predominantly male athletes with long-standing adductor-related pain.",
+    "stage": "Chronic nonoperative, not acute tear/repair.",
+    "operativeStatus": "Nonoperative rehabilitation only; postoperative pathways require separate assessment.",
+    "exclusions": "Acute injuries, other groin causes and women/non-athlete applicability poorly represented.",
+    "uncertainty": "Source eligibility limits applicability; it does not establish contraindications."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "Web search; primary publisher/PubMed/Europe PMC retrieval",
+      "query": "\"Hölmich\" 1999 groin trial 68 23 4 exercise pdf",
+      "decision": "Primary abstract retained; original institutional fulltext 404.",
+      "limitations": "Focused regional review, not an exhaustive systematic search; English-accessible sources prioritized."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Web search; primary publisher/PubMed/Europe PMC retrieval",
+      "query": "adductor related groin pain Weir 2011 manual exercise randomized 16 weeks 50 athletes",
+      "decision": "Retained contrary active-comparator result.",
+      "limitations": "Focused regional review, not an exhaustive systematic search; English-accessible sources prioritized."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Web search; primary publisher/PubMed/Europe PMC retrieval",
+      "query": "\"Hölmich\" \"03340\" pdf trial",
+      "decision": "Original fulltext not obtained; 2018 fulltext supplies separately labeled execution.",
+      "limitations": "Focused regional review, not an exhaustive systematic search; English-accessible sources prioritized."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Web search; primary publisher/PubMed/Europe PMC retrieval",
+      "query": "\"10.1016/S0140-6736(98)03340-6\" correction retraction",
+      "decision": "No correction found in bounded search.",
+      "limitations": "Focused regional review, not an exhaustive systematic search; English-accessible sources prioritized."
+    }
+  ],
+  "sources": [
+    {
+      "id": "holmich-1999",
+      "title": "Effectiveness of active physical training as treatment for long-standing adductor-related groin pain in athletes: randomised trial",
+      "doi": "10.1016/S0140-6736(98)03340-6",
+      "pmid": "9989713",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/9989713/",
+      "publicationStatus": "Final journal publication, before access date.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "PubMed abstract inspected; institutional ctu.dk PDF repeatedly 404; indexed fragments are not fulltext inspection."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "PubMed, institutional record, DOI correction/retraction search.",
+        "result": "No correction located; later primary comparison/syntheses retained."
+      },
+      "design": "Blinded-examiner RCT; n=68.",
+      "population": "Athletes, long-standing adductor-related pain; median 40 weeks.",
+      "comparator": "Physiotherapy without active training.",
+      "coInterventions": "not reported",
+      "outcomes": "Return to same sport without pain 23 vs 4; adjusted OR 12.7 (3.4–47.2).",
+      "followUp": "Four months after 8–12 week treatment.",
+      "uncertainty": "Older narrow athletic population; full execution/harms inaccessible.",
+      "harms": "not reported in abstract.",
+      "limitations": "Not clinical approval or a universal ordinary-training restriction.",
+      "protocol": {
+        "execution": "not reported",
+        "dose": "not reported",
+        "frequency": "not reported",
+        "supervision": "not reported",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Abstract > Methods and Findings"
+      ]
+    },
+    {
+      "id": "weir-2011",
+      "title": "Manual or exercise therapy for long-standing adductor-related groin pain: a randomised controlled clinical trial",
+      "doi": "10.1016/j.math.2010.09.001",
+      "pmid": "20952244",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20952244/",
+      "publicationStatus": "Final journal publication, before access date.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "PubMed abstract and indexed publisher abstract inspected; full intervention tables not accessed."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Primary metadata and retrieved text inspected; regional update searches. Bounded check, not registry-wide clearance.",
+        "result": "No notice identified in inspected text; no formal replacement established."
+      },
+      "design": "Single-blind RCT; 54 athletes.",
+      "population": "Proximal adductor tenderness and resisted-adduction pain≥ 2 months.",
+      "comparator": "Heat/manual/stretching plus return-to-running vs home exercise.",
+      "coInterventions": "Structured return-to-running both arms; three therapist instructions exercise arm.",
+      "outcomes": "Only 50–55% returned fully; among returners MMT 12.8 weeks(SD 6.0) vs exercise 17.3(4.4), p=.043.",
+      "followUp": "0, 6, 16, 24 weeks.",
+      "uncertainty": "Returner-only time comparison; not proof of equivalence.",
+      "harms": "Abstract calls MMT safe; ascertainment not reported.",
+      "limitations": "Not clinical approval or a universal ordinary-training restriction.",
+      "protocol": {
+        "execution": "not reported",
+        "dose": "not reported",
+        "frequency": "not reported",
+        "supervision": "not reported",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Abstract > Patients; Interventions; Results"
+      ]
+    },
+    {
+      "id": "yousefzadeh-2018",
+      "title": "Effect of Holmich protocol exercise therapy on long-standing adductor-related groin pain in athletes: an objective evaluation",
+      "doi": "10.1136/bmjsem-2018-000343",
+      "pmid": "30018787",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6045696/",
+      "publicationStatus": "Final journal publication, before access date.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Primary full text inspected at linked archive/publisher; Europe PMC XML used where PMC HTML challenged."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Primary metadata and retrieved text inspected; regional update searches. Bounded check, not registry-wide clearance.",
+        "result": "No notice identified in inspected text; no formal replacement established."
+      },
+      "design": "Uncontrolled before/after; 14 completers.",
+      "population": "Male athletes 18–35, chronic adductor-related symptoms≥ 2 months.",
+      "comparator": "No control.",
+      "coInterventions": "Bicycle if pain-free; sport withheld; pain-free slow running from week 6.",
+      "outcomes": "11/14 returned symptom-free; mean 14.2 weeks(range 10–20).",
+      "followUp": "20 weeks.",
+      "uncertainty": "Small uncontrolled; specified rests/weights added to original protocol.",
+      "harms": "Formal adverse-event ascertainment not reported.",
+      "limitations": "Not clinical approval or a universal ordinary-training restriction.",
+      "protocol": {
+        "execution": "Supine soccer-ball adduction between feet or knees; abdominal/coordination exercises.",
+        "dose": "Ball squeezes: 10 repetitions of 30-second contractions with 30-second rests; whole sessions about 90 minutes initially, 120 minutes later.",
+        "frequency": "Three supervised sessions/week for 10–12 weeks; from week 3, module 1 every other day between sessions.",
+        "supervision": "Physiotherapist; weekly resistance adjustment.",
+        "progression": "Later pain-free 10 RM adduction/abduction; not original 1999 specified dose.",
+        "stoppingRules": "Adductor stretching forbidden in this program; bicycle/slow running allowed only pain-free. These were study procedures, not universal validated contraindications."
+      },
+      "locations": [
+        "Materials and methods > Treatment; Tables 1 and 2",
+        "Discussion > Return to sports activities"
+      ]
+    },
+    {
+      "id": "cochrane-groin-2013",
+      "title": "Conservative interventions for treating exercise-related musculotendinous, ligamentous and osseous groin pain",
+      "doi": "10.1002/14651858.CD009565.pub2",
+      "pmid": "23740671",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9719104/",
+      "publicationStatus": "Final journal publication, before access date.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "Primary abstract/indexed review results inspected; full study-characteristic table not comprehensively extracted."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Primary metadata and retrieved text inspected; regional update searches. Bounded check, not registry-wide clearance.",
+        "result": "No notice identified in inspected text; no formal replacement established."
+      },
+      "design": "Cochrane review; two RCTs/122.",
+      "population": "Almost entirely male chronic adductor-related athletes.",
+      "comparator": "Active/passive/multimodal comparisons.",
+      "coInterventions": "not reported",
+      "outcomes": "Exercise vs passive successful treatment RR 2.50(1.43–4.37); multimodal vs exercise no clear return-rate difference.",
+      "followUp": "16 weeks; long-term differences uncertain.",
+      "uncertainty": "Each trial high risk in at least one bias domain; small evidence base.",
+      "harms": "Not established from accessed abstract.",
+      "limitations": "Not clinical approval or a universal ordinary-training restriction.",
+      "protocol": {
+        "execution": "not reported",
+        "dose": "not reported",
+        "frequency": "not reported",
+        "supervision": "not reported",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Main results; Discussion > Quality of evidence"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "active-v-passive",
+      "kind": "study-result",
+      "statement": "Return to same sport without pain 23 vs 4; adjusted OR 12.7 (3.4–47.2).",
+      "citations": [
+        {
+          "sourceId": "holmich-1999",
+          "location": "Abstract > Methods and Findings"
+        }
+      ],
+      "applicability": "Athletes, long-standing adductor-related pain; median 40 weeks.",
+      "limitations": "Older narrow athletic population; full execution/harms inaccessible."
+    },
+    {
+      "id": "manual-comparison",
+      "kind": "study-result",
+      "statement": "Only 50–55% returned fully; among returners MMT 12.8 weeks(SD 6.0) vs exercise 17.3(4.4), p=.043.",
+      "citations": [
+        {
+          "sourceId": "weir-2011",
+          "location": "Abstract > Patients; Interventions; Results"
+        }
+      ],
+      "applicability": "Proximal adductor tenderness and resisted-adduction pain≥ 2 months.",
+      "limitations": "Returner-only time comparison; not proof of equivalence."
+    },
+    {
+      "id": "ball-squeeze-candidate",
+      "kind": "study-result",
+      "statement": "A later supervised protocol reports specific ball-squeeze execution/dose with uncontrolled return-to-sport outcomes.",
+      "citations": [
+        {
+          "sourceId": "yousefzadeh-2018",
+          "location": "Materials and methods > Treatment; Tables 1 and 2"
+        }
+      ],
+      "applicability": "Male athletes 18–35, chronic adductor-related symptoms≥ 2 months.",
+      "limitations": "Small uncontrolled; specified rests/weights added to original protocol."
+    },
+    {
+      "id": "groin-certainty",
+      "kind": "evidence-gap",
+      "statement": "Each trial high risk in at least one bias domain; small evidence base.",
+      "citations": [
+        {
+          "sourceId": "cochrane-groin-2013",
+          "location": "Main results; Discussion > Quality of evidence"
+        }
+      ],
+      "applicability": "Almost entirely male chronic adductor-related athletes.",
+      "limitations": "Does not identify a universally superior exercise or load cap."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "adductor-supine-ball-squeeze-feet-mapping",
+      "exerciseId": null,
+      "requestId": "adductor-supine-ball-squeeze-feet",
+      "findingIds": [
+        "ball-squeeze-candidate"
+      ],
+      "matchRationale": "Cable/machine adduction is different; source-specific isometric hold needs retained PNGs after angle verification.",
+      "status": "candidate"
+    },
+    {
+      "id": "adductor-supine-ball-squeeze-knees-mapping",
+      "exerciseId": null,
+      "requestId": "adductor-supine-ball-squeeze-knees",
+      "findingIds": [
+        "ball-squeeze-candidate"
+      ],
+      "matchRationale": "Separate lever/ball position from feet variant; do not deduplicate by name alone.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "adductor-loading-review",
+      "kind": "supportive-prescription",
+      "basis": "unresolved-hypothesis",
+      "statement": "Retain ball-squeeze variants as review candidates within progressive adductor/abdominal coordination care.",
+      "findingIds": [
+        "ball-squeeze-candidate",
+        "active-v-passive"
+      ],
+      "citations": [
+        {
+          "sourceId": "yousefzadeh-2018",
+          "location": "Materials and methods > Treatment; Tables 1 and 2"
+        }
+      ],
+      "applicability": {
+        "population": "Male athletes aged 18–35 with adductor-related symptoms for at least two months; execution source has 14 completers.",
+        "stage": "Chronic nonoperative, not acute tear/repair.",
+        "rationale": "Draft inference constrained to the linked population and intervention; no individual clearance."
+      },
+      "limitations": "Uncontrolled execution source; no isolated component effect or universal dose.",
+      "mappingIds": [
+        "adductor-supine-ball-squeeze-feet-mapping",
+        "adductor-supine-ball-squeeze-knees-mapping"
+      ],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "All material is draft and clinically unreviewed; no runtime mapping, supported-condition claim, default dose or escalation clearance follows.",
+    "No universal numeric load/range cap or hard exercise contraindication was established; benefit from alternatives and trial exclusions do not prove harm.",
+    "Concurrent condition restrictions, equipment requirements and independent joint limits remain controlling; stretching never earns strength-set credit or generic five-second progression.",
+    "Do not silently import 2018 rest/load additions into 1999 RCT efficacy claim.",
+    "Sport restriction/return criteria not independently randomized; no universal cessation of all ordinary strength work supported."
+  ],
+  "disposition": "research-only",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}
