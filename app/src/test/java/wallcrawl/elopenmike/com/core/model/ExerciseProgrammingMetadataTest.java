@@ -38,6 +38,6 @@ public class ExerciseProgrammingMetadataTest {
             range, 1, ProgressionType.DURATION, Collections.emptyList(), "Fixture coaching.");
         return new Exercise("sample", null, "Sample", Collections.emptyList(),
             Collections.singletonList("Core"), Collections.emptyList(), Collections.singletonList("Bodyweight"),
-            type, false, programming, null);
+            type, false, programming, null, null);
     }
 }

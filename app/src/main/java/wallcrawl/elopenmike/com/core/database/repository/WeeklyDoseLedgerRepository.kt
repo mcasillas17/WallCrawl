@@ -79,7 +79,7 @@ class OfflineWeeklyDoseLedgerRepository(
 
         val snapshot = catalogSource.snapshot()
         val exercisesById = snapshot.exercisesById()
-        val catalogVersion = snapshot.catalogAttribution.commit
+        val catalogVersion = snapshot.catalogVersion
         check(catalogVersion.isNotBlank()) {
             "The bundled catalog is missing the source commit that identifies its version."
         }

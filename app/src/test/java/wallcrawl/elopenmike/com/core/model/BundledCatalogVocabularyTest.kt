@@ -15,15 +15,17 @@ import org.junit.Test
  */
 class BundledCatalogVocabularyTest {
 
-    private val catalog: String = CATALOG_FILE.readText()
+    private val supplement = File("src/main/assets/wallcrawl/catalog.json").readText()
+    private val catalog: String = CATALOG_FILE.readText() + supplement
+    private val supplementCount = org.json.JSONObject(supplement).getJSONArray("exercises").length()
 
     @Test
     fun bundledCatalogIsPresentAndParsedByThisTest() {
         // If the extraction below silently matched nothing, every other assertion here
         // would pass vacuously. Pin the shape of what was read instead.
         assertThat(CATALOG_FILE.exists()).isTrue()
-        assertThat(muscleArrays("primaryMuscles")).hasSize(EXPECTED_EXERCISES)
-        assertThat(muscleArrays("secondaryMuscles")).hasSize(EXPECTED_EXERCISES)
+        assertThat(muscleArrays("primaryMuscles")).hasSize(EXPECTED_EXERCISES + supplementCount)
+        assertThat(muscleArrays("secondaryMuscles")).hasSize(EXPECTED_EXERCISES + supplementCount)
     }
 
     @Test

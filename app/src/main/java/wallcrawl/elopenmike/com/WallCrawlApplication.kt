@@ -180,7 +180,7 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
             appVersionName = packageInfo?.versionName ?: UNKNOWN_APP_VERSION,
             appVersionCode = packageInfo?.let(PackageInfoCompat::getLongVersionCode) ?: 0L,
             catalogCommit = {
-                workoutGuideCatalogStore.currentSnapshot()?.catalogAttribution?.commit
+                workoutGuideCatalogStore.currentSnapshot()?.catalogVersion
             },
             localDataWriteGate = localDataWriteGate
         )
@@ -236,7 +236,7 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
             // Read from the already-loaded snapshot, so recording the catalog a plan was
             // built against never forces asset I/O on the generation path.
             catalogVersion = {
-                workoutGuideCatalogStore.currentSnapshot()?.catalogAttribution?.commit
+                workoutGuideCatalogStore.currentSnapshot()?.catalogVersion
             },
             deloadRepository = deloadRepository,
             programRepository = programRepository

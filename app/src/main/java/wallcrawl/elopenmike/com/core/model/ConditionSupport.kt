@@ -94,7 +94,10 @@ data class ConditionExerciseIdentity(val exerciseId: String, val contentSha256: 
     init { requireConditionToken(exerciseId); requireConditionDigest(contentSha256); requireConditionDigest(artworkSha256) }
     companion object {
         fun from(exercise: Exercise, artworkSha256: String): ConditionExerciseIdentity = ConditionExerciseIdentity(
-            exercise.id, conditionDigest(mapOf(
+            exercise.id, contentSha256(exercise), exercise.type, artworkSha256
+        )
+
+        internal fun contentSha256(exercise: Exercise): String = conditionDigest(mapOf(
                 "id" to exercise.id, "name" to exercise.name, "type" to exercise.type.name,
                 "isStretch" to exercise.isStretch, "primaryMuscles" to exercise.primaryMuscles,
                 "secondaryMuscles" to exercise.secondaryMuscles, "equipment" to exercise.listedEquipment,
@@ -122,8 +125,9 @@ data class ConditionExerciseIdentity(val exerciseId: String, val contentSha256: 
                         it.reviewedAtEpochMillis, it.reviewedContentId, it.reviewedContentSha256, it.sourceReferences,
                         it.decisionRationale, it.limitations, it.schemaVersion, it.policyVersion) }
                 ) }
-            )), exercise.type, artworkSha256
-        )
+            ) + if (exercise.executionGuidance == null) emptyMap() else mapOf(
+                "executionGuidance" to exercise.executionGuidance
+            ))
     }
 }
 

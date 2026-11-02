@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "id": "wallcrawl",
+    "version": 1,
+    "repository": "https://github.com/mcasillas17/WallCrawl",
+    "assetLicense": "MIT",
+    "attribution": {
+      "creator": "WallCrawl contributors",
+      "creatorUrl": "https://github.com/mcasillas17/WallCrawl",
+      "license": "MIT",
+      "licenseUrl": "https://github.com/mcasillas17/WallCrawl/blob/main/LICENSE"
+    }
+  },
+  "visuals": {
+    "frameCount": 3,
+    "widthPx": 320,
+    "heightPx": 320,
+    "format": "svg",
+    "assetPathPrefix": "exercise-illustrations/male/"
+  },
+  "exercises": []
+}

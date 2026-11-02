@@ -1111,4 +1111,6 @@
     <string name="analytics_week_value_none">nothing recorded</string>
     <string name="analytics_exercise_options_too_many">There are too many recorded exercises to list here.</string>
     <string name="analytics_decision_row">%1$s, %2$s</string>
+    <string name="credits_notice_supplement">WallCrawl authored catalog</string>
+    <string name="credits_notice_supplement_license">WallCrawl supplement license</string>
 </resources>

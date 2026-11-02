@@ -45,12 +45,13 @@ class ExerciseVocabulary(
             ?: fallback
             ?: exerciseId.split('-').joinToString(" ") { word -> word.replaceFirstChar(Char::uppercase) }
 
-    /** The coaching summary for this reader, or null when it is not translated. */
+    /** The localized summary, with neutral catalog guidance as its original-language fallback. */
     fun coachingSummary(exercise: Exercise): String? =
         localization.coachingSummary(exercise.id, languageTag)
+            ?: exercise.executionGuidance
 
     /**
-     * True when the exercise has programming text but none of it in the reader's language.
+     * True when execution or programming text has no translation in the reader's language.
      *
      * A reader of the catalog's own language is never in that position: the overlay carries
      * no English block because the catalog already is the English, so asking it for one
@@ -59,8 +60,8 @@ class ExerciseVocabulary(
      */
     fun hasUntranslatedCoachingSummary(exercise: Exercise): Boolean =
         !readsCatalogLanguage &&
-            exercise.programming?.coachingSummary != null &&
-            coachingSummary(exercise) == null
+            (exercise.executionGuidance != null || exercise.programming?.coachingSummary != null) &&
+            localization.coachingSummary(exercise.id, languageTag) == null
 
     /** Whether this reader reads the language the catalog itself is written in. */
     private val readsCatalogLanguage: Boolean =

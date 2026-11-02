@@ -15,7 +15,8 @@ data class Exercise(
     val type: ExerciseType,
     val isStretch: Boolean = false,
     val programming: ExerciseProgrammingMetadata? = null,
-    val reviewedMetadata: ReviewedExerciseMetadata? = null
+    val reviewedMetadata: ReviewedExerciseMetadata? = null,
+    val executionGuidance: String? = null
 ) {
     init {
         programming?.validateFor(type)

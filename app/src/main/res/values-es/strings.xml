@@ -1103,4 +1103,6 @@
     <string name="analytics_week_value_none">nada registrado</string>
     <string name="analytics_exercise_options_too_many">Hay demasiados ejercicios registrados para listarlos aquí.</string>
     <string name="analytics_decision_row">%1$s, %2$s</string>
+    <string name="credits_notice_supplement">Catálogo creado para WallCrawl</string>
+    <string name="credits_notice_supplement_license">Licencia del suplemento de WallCrawl</string>
 </resources>
