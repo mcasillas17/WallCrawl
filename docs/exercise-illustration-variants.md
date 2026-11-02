@@ -1,7 +1,9 @@
 # Exercise illustration variants
 
 WallCrawl bundles 906 female and 906 male SVGs, covering the same 302 exercises as
-the [pinned source catalog](../tools/workout-guide/import-config.json). Each is a byte-for-byte copy of the selected
+the [pinned source catalog](../tools/workout-guide/import-config.json). The 7 WallCrawl-owned
+exercises have no variants: they use one gender-neutral original sequence, loaded as the pinned fallback.
+Each variant is a byte-for-byte copy of the selected
 SVG selected by the ledgers in `art/pilots/female-exercises/catalog` or
 `male-catalog`, including the retained animation-correction batches.
 

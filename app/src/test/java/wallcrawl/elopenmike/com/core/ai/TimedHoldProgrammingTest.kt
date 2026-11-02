@@ -7,8 +7,10 @@ import org.junit.Test
 import wallcrawl.elopenmike.com.core.model.*
 
 class TimedHoldProgrammingTest {
-    private val exercises =
-        SharedPlannerFixtureHarness.contextFactory.bundledCatalogProjection().exercises
+    private val projection = SharedPlannerFixtureHarness.contextFactory.bundledCatalogProjection()
+
+    /** The recorded baseline covers the pinned upstream entries; owned ones are checked elsewhere. */
+    private val exercises = projection.exercises.filter { it.id !in projection.ownedExerciseIds }
     private val factory = DefaultExercisePrescriptionFactory()
     private val profile = UserProfile(availableEquipment = StandardEquipment.ALL)
     private val expectedIds = setOf(

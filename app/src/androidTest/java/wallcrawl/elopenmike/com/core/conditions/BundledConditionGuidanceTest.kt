@@ -314,6 +314,75 @@ class BundledConditionGuidanceTest {
     }
 
     @Test
+    fun piriformisRoutineIncludesTheFigureFourStretch() = runBlocking<Unit> {
+        val routine = guidance.conditions.getValue("piriformis_syndrome").routine
+        assertThat(routine.map { it.exerciseId })
+            .containsExactly("figure-four-stretch", "lying-piriformis-stretch", "glute-bridge").inOrder()
+
+        val profile = inputs().toMap().getValue("piriformis_syndrome")
+        val block = (plan(profile) as ProgramValidationResult.Valid).workout.mobilityBlock
+
+        // Production composition: real catalog, real overlay, real planner and validator.
+        val figureFour = block.single { it.exerciseId == "figure-four-stretch" }
+        assertThat(figureFour.prescription.targetSets).isEqualTo(3)
+        assertThat(figureFour.prescription.targetDurationSeconds).isEqualTo(120)
+        assertThat(figureFour.prescription.restSeconds).isEqualTo(120)
+    }
+
+    @Test
+    fun bridgesInTheMobilityBlockKeepWorking() {
+        val restrictions = restrictionsFor(
+            inputs().toMap().getValue("piriformis_syndrome"), ConditionGuidanceResult.Loaded(guidance)
+        )
+        val profile = inputs().toMap().getValue("piriformis_syndrome")
+
+        val block = MobilityBlockPolicy.select(restrictions, exercises, profile, emptySet(), seed = 0)
+
+        assertThat(block.map { it.exerciseId })
+            .containsExactly("figure-four-stretch", "lying-piriformis-stretch", "glute-bridge")
+        // A bridge chosen for the main session is still left out of the block, as before.
+        val withBridgeInMain = MobilityBlockPolicy.select(restrictions, exercises, profile, setOf("glute-bridge"), 0)
+        assertThat(withBridgeInMain.map { it.exerciseId })
+            .containsExactly("figure-four-stretch", "lying-piriformis-stretch")
+    }
+
+    @Test
+    fun aGlutealAvoidRemovesTheLyingStretchForAUserReportingBoth() = runBlocking<Unit> {
+        val base = inputs().toMap().getValue("piriformis_syndrome")
+        val both = base.copy(reportedConditions = setOf("piriformis_syndrome", "gluteal_tendinopathy"))
+        val bothRestrictions = restrictionsFor(both, ConditionGuidanceResult.Loaded(guidance))
+        val piriformisOnly = restrictionsFor(base, ConditionGuidanceResult.Loaded(guidance))
+
+        assertThat(guidance.exerciseDemands.getValue("lying-piriformis-stretch"))
+            .containsExactly(MovementDemand.CROSS_BODY_HIP_STRETCH)
+        assertThat(MobilityBlockPolicy.isAvoided(bothRestrictions, "lying-piriformis-stretch")).isTrue()
+        assertThat(MobilityBlockPolicy.isAvoided(bothRestrictions, "figure-four-stretch")).isFalse()
+        assertThat(MobilityBlockPolicy.isAvoided(piriformisOnly, "lying-piriformis-stretch")).isFalse()
+        (0L..9L).forEach { seed ->
+            val block = MobilityBlockPolicy.select(bothRestrictions, exercises, both, emptySet(), seed)
+            assertWithMessage("seed $seed").that(block.map { it.exerciseId })
+                .doesNotContain("lying-piriformis-stretch")
+        }
+        val planned = (plan(both) as ProgramValidationResult.Valid).workout.mobilityBlock
+        assertThat(planned.map { it.exerciseId }).doesNotContain("lying-piriformis-stretch")
+    }
+
+    @Test
+    fun ownedExercisesNeverEnterMainSelectionButStayInTheCatalog() = runBlocking<Unit> {
+        assertThat(exercises.keys).containsAtLeastElementsIn(OWNED_IDS)
+        OWNED_IDS.forEach { id ->
+            assertWithMessage(id).that(exercises.getValue(id).reviewedMetadata).isNull()
+            assertWithMessage(id).that(exercises.getValue(id).source?.attribution?.license)
+                .isEqualTo("Original work by the WallCrawl project")
+        }
+        (listOf(inputs().first().second.copy(reportedConditions = emptySet())) + inputs().map { it.second })
+            .forEach { profile ->
+                val main = generationContext(profile).allowedExercises.map(Exercise::id)
+                assertThat(main).containsNoneIn(OWNED_IDS)
+            }
+    }
+
+    @Test
     fun floorTransitionAvoidRemovesFloorRoutineItems() = runBlocking<Unit> {
         val base = inputs().toMap().getValue("nonspecific_low_back_pain")
         val avoidsFloor = base.copy(
@@ -409,20 +478,38 @@ class BundledConditionGuidanceTest {
         )
 
         /** Items performed on the floor; the rest are standing. */
-        val FLOOR_ITEMS = setOf("glute-bridge", "side-lying-hip-abduction", "bird-dog", "dead-bug")
+        val FLOOR_ITEMS = setOf(
+            "glute-bridge", "side-lying-hip-abduction", "bird-dog", "dead-bug",
+            "figure-four-stretch", "lying-piriformis-stretch", "side-lying-isometric-hip-abduction-hold",
+            "straight-leg-raise"
+        )
+
+        /** The seven owned exercises; they have no reviewed metadata. */
+        val OWNED_IDS = setOf(
+            "figure-four-stretch", "lying-piriformis-stretch", "side-lying-isometric-hip-abduction-hold",
+            "standing-isometric-gluteal-contraction", "wrist-extensor-stretch", "tendon-gliding-sequence",
+            "straight-leg-raise"
+        )
 
         fun reps(id: String, sets: Int, reps: Int, hold: Int? = null, rest: Int = 0) =
             RoutineEntry(id, sets, reps, null, hold, rest, requiresFloorTransition = id in FLOOR_ITEMS)
 
-        fun timed(id: String, sets: Int, seconds: Int) = RoutineEntry(id, sets, null, seconds, null, 0, requiresFloorTransition = id in FLOOR_ITEMS)
+        fun timed(id: String, sets: Int, seconds: Int, rest: Int = 0) =
+            RoutineEntry(id, sets, null, seconds, null, rest, requiresFloorTransition = id in FLOOR_ITEMS)
 
-        /** Section 5, catalog-backed entries only. Task 9 appends the new exercises. */
+        /** Section 5, in its order, with the published doses of the seven owned exercises. */
         val EXPECTED_ROUTINES = mapOf(
-            "piriformis_syndrome" to listOf(reps("glute-bridge", 3, 15)),
+            "piriformis_syndrome" to listOf(
+                timed("figure-four-stretch", 3, 120, rest = 120),
+                reps("lying-piriformis-stretch", 1, 10, hold = 30),
+                reps("glute-bridge", 3, 15)
+            ),
             "gluteal_tendinopathy" to listOf(
                 reps("side-lying-hip-abduction", 3, 10, rest = 60),
                 reps("glute-bridge", 1, 10),
-                reps("bodyweight-squat", 1, 10)
+                reps("bodyweight-squat", 1, 10),
+                reps("side-lying-isometric-hip-abduction-hold", 1, 6, hold = 30, rest = 60),
+                reps("standing-isometric-gluteal-contraction", 3, 10, hold = 6, rest = 60)
             ),
             "lumbar_radiculopathy" to listOf(reps("bird-dog", 2, 10), reps("glute-bridge", 2, 10)),
             "nonspecific_low_back_pain" to listOf(
@@ -432,11 +519,12 @@ class BundledConditionGuidanceTest {
                 timed("hamstring-stretch", 5, 30)
             ),
             "rotator_cuff_related_shoulder_pain" to listOf(timed("cross-body-shoulder-stretch", 3, 30)),
-            "lateral_elbow_tendinopathy" to emptyList(),
-            "carpal_tunnel_syndrome" to emptyList(),
+            "lateral_elbow_tendinopathy" to listOf(timed("wrist-extensor-stretch", 3, 30)),
+            "carpal_tunnel_syndrome" to listOf(reps("tendon-gliding-sequence", 3, 5, hold = 7)),
             "patellofemoral_pain" to listOf(
                 reps("side-lying-hip-abduction", 3, 10, rest = 30),
-                reps("bodyweight-squat", 3, 10, hold = 2, rest = 120)
+                reps("bodyweight-squat", 3, 10, hold = 2, rest = 120),
+                reps("straight-leg-raise", 3, 10)
             )
         )
 

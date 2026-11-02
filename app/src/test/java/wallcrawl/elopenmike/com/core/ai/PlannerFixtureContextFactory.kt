@@ -64,7 +64,9 @@ internal data class PlannerFixtureContext(
 internal data class PlannerFixtureBundledCatalogProjection(
     val schemaVersion: Int,
     val sourceCommit: String,
-    val exercises: List<Exercise>
+    val exercises: List<Exercise>,
+    /** Entries WallCrawl owns beside the pinned upstream ones; they carry no reviewed metadata. */
+    val ownedExerciseIds: Set<String> = emptySet()
 )
 
 internal class PlannerFixtureContextFactory(
@@ -521,10 +523,17 @@ internal class PlannerFixtureContextFactory(
         if (duplicateId != null) {
             throw PlannerFixtureFormatException("Bundled planner catalog contains duplicate exercise id $duplicateId.")
         }
+        val ownedIds = buildSet {
+            for (index in 0 until exercisesArray.length()) {
+                val entry = exercisesArray.getJSONObject(index)
+                if (entry.has("attribution")) add(entry.getString("id"))
+            }
+        }
         return PlannerFixtureBundledCatalogProjection(
             schemaVersion = schemaVersion,
             sourceCommit = sourceCommit,
-            exercises = exercises
+            exercises = exercises,
+            ownedExerciseIds = ownedIds
         )
     }
 
@@ -959,7 +968,7 @@ internal class PlannerFixtureContextFactory(
         /** A plausible timed target for logged duration and distance work. */
         private const val LOGGED_DURATION_SECONDS = 600
         private const val SUPPORTED_BUNDLED_CATALOG_SCHEMA_VERSION = 1
-        private const val EXPECTED_BUNDLED_EXERCISE_COUNT = 302
+        private const val EXPECTED_BUNDLED_EXERCISE_COUNT = 309
         private const val MAX_RESOURCE_BYTES = 512 * 1024
         // Dedicated AI provenance enlarges the catalog, not the persona fixture contract.
         private const val MAX_CATALOG_RESOURCE_BYTES = 2 * 1024 * 1024

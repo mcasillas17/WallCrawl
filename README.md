@@ -57,8 +57,8 @@ WallCrawl supports **Dark Theme** (stealth suit graphite aesthetic), **Light The
 
 - **Today Recommendation**: Offline planner-generated routine tailored to equipment and training goals, with instant regeneration and custom routine shortcuts.
 - **My Workouts & Templates**: Manage and launch saved custom routines with total sets, exercise counts, and quick-start actions.
-- **Custom Workout Builder**: Interactive routine editor with full 302-exercise bottom sheet picker, move controls for ordering, type-aware editing of every prescription target, unit-safe loads, and unsaved drafts recovered after configuration change or background process death.
-- **Exercise Library**: Searchable catalog of 302 exercises across all muscle groups and equipment types.
+- **Custom Workout Builder**: Interactive routine editor with full 309-exercise bottom sheet picker, move controls for ordering, type-aware editing of every prescription target, unit-safe loads, and unsaved drafts recovered after configuration change or background process death.
+- **Exercise Library**: Searchable catalog of 309 exercises across all muscle groups and equipment types: 302 from the pinned source plus 7 WallCrawl-owned mobility exercises.
 - **Active Workout Session**: Type-aware logging for load/reps, bodyweight reps, assisted reps, duration, and distance/duration, with one-tap set completion, plus/minus and text entry for every value, a local rest countdown, optional RPE/RIR, animated SVG movement previews, and previous performance comparisons.
 - **Workout Summary**: The existing Finish flow shows recorded duration, external-load volume, completed sets, and records against genuinely earlier performance. View workout details opens the read-only record; Done returns to Progress.
 - **Progress Tracking & History**: Calendar-week activity and separately labelled reviewed dose, weekly streaks, and strength trends, plus an Over time card that charts 4–52 calendar weeks for all exercises, one exercise or one muscle, whose week rows list the workouts behind each week and whose data points open their workout. Tap a completed-workout card to reopen its frozen targets, performed sets, feedback and recorded decision reasons. View all workouts browses older sessions in fixed 20-workout pages.
@@ -217,7 +217,7 @@ and [metric contract](docs/weekly-dose-ledger.md#individual-workout-history-and-
 ### English & Spanish
 
 Every screen ships in **English** and **neutral Latin American Spanish**, including the
-302-exercise catalog, generated workout titles and explanations, destructive
+309-exercise catalog, generated workout titles and explanations, destructive
 confirmations, and TalkBack labels. Both languages work fully offline; nothing is
 translated at runtime.
 
@@ -330,7 +330,7 @@ Bundled catalog ─────────┤  profile + bounded history
                          │  hard filter → WorkoutPlanner → validator
                          │
                          └─ manual template
-                            all 302 exercises → local template
+                            all 309 exercises → local template
                                           │
                                           ▼
                               transactional active session
@@ -367,7 +367,7 @@ gym never adds them**. A band, wall, doorway or chair does not establish an
 anchor. The seated band pulldown additionally requires Chair. The source row's
 off-image anchor remains unresolved and is excluded from automatic workouts.
 
-Unanchored band work remains available. All 302 exercises remain browseable and
+Unanchored band work remains available. All 309 exercises remain browseable and
 manually selectable, with accurate missing-equipment or unresolved-setup warnings.
 Existing profiles and archives acquire no new selections; new confirmations use
 the existing canonical equipment list and export/restore format. Older clients
@@ -587,7 +587,9 @@ boundary, while `InMemoryExerciseCatalog` remains an injectable test fixture.
 ## Offline exercise catalog
 
 WallCrawl bundles 302 exercises and 906 original SVG frames from the
-[pinned source catalog](tools/workout-guide/import-config.json).
+[pinned source catalog](tools/workout-guide/import-config.json), plus 7 mobility exercises
+and 21 simple SVG frames that WallCrawl owns
+([`owned-exercises.json`](tools/workout-guide/owned-exercises.json)), 309 exercises in all.
 [Everkinetic](https://github.com/everkinetic/data) is the original pose-artwork
 reference; Bryl Lim contributed additional exercises and animation frames.
 WallCrawl's [female and male adaptations](docs/exercise-illustration-variants.md)
@@ -753,15 +755,21 @@ The import validates the exact commit, source cleanliness, IDs, metadata,
 licenses, paths, frame counts, legacy programming overrides, strict reviewed
 metadata schema, and reviewed graphs before atomically replacing the generated
 Android asset directory. It also regenerates the deterministic human-review
-report; `--check` detects catalog or report drift without writing. It copies SVG
-only; the PNG counterparts would duplicate the same illustrations without
+report; `--check` detects catalog or report drift without writing. It also merges
+the WallCrawl-owned exercises from `tools/workout-guide/owned-exercises.json` (a second
+source with its own licence marking, never edited into the pinned upstream entries);
+`--check` fails if an upstream entry or SVG, or an owned one, differs from the committed
+bundle. It copies SVG only; the PNG counterparts would duplicate the same illustrations without
 helping Android's vector rendering path.
 
 The source artwork and WallCrawl's adaptations are CC BY-SA 4.0. The source `LICENSE`,
 `LICENSE-ASSETS`, `ATTRIBUTION.md`, full `upstream-manifest.json`, pinned commit,
 and WallCrawl notice are preserved under
 `app/src/main/assets/workout-guide/`. WallCrawl source code remains covered by
-the repository's MIT license; third-party assets retain their own terms.
+the repository's MIT license; third-party assets retain their own terms. The 7 owned
+exercises are marked "Original work by the WallCrawl project" in `catalog.json` and in the
+owned section of `ATTRIBUTION.md`; their art is simple original line art, not copied or
+traced from upstream or third-party artwork.
 
 The license also requires the credit to reach the person using the app, not
 only someone reading this repository. **Training Profile → Credits & Licenses**
@@ -869,7 +877,7 @@ capability-control semantics, template/session snapshot behavior, and the local-
 its round trip from app-written state across supported format versions 1–6, every rejection
 path for untrusted documents, transactional restore and deletion, and the destructive
 confirmation at a large font scale. It parses the
-packaged 302-exercise catalog and opens every one of its 906 SVG paths. Pull-request/main
+packaged 309-exercise catalog and opens every one of its 927 SVG paths. Pull-request/main
 CI and tagged-release publication both run this connected suite on API 36 and API 37
 emulators, and its `wallcrawl.elopenmike.com.app` package on an API 26 (`minSdk`) emulator;
 a tag cannot publish its prerelease unless every instrumentation run succeeds.
@@ -949,7 +957,7 @@ codename and gender together in one card; the menu marks the current choice and
 closes after selection. Exercise artwork follows that
 single profile setting: female artwork for Woman, male artwork for the other
 options. Exercise screens have no separate gender or illustration selector.
-Both artwork sets contain 302 three-frame sequences, including
+Both artwork sets contain 302 three-frame sequences (the 7 owned exercises use one gender-neutral original sequence), including
 current drafts whose continuity corrections remain for a later iteration.
 
 <p align="center">

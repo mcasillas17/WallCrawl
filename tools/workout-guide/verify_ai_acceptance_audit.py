@@ -19,7 +19,7 @@ import sys
 
 from import_catalog import (
     CatalogImportError, SAFE_ID_PATTERN, _bounded_json_value, _read_object,
-    _reject_duplicate_json_fields, _reject_non_finite_number,
+    _reject_duplicate_json_fields, _reject_non_finite_number, upstream_entries_only,
 )
 
 
@@ -355,7 +355,7 @@ def verify_repository(root: Path = ROOT) -> dict:
     return verify_audit(
         raw, _read_object(root / LEDGER_PATH, "evidence ledger"),
         _read_object(root / "tools/workout-guide/reviewed-metadata.json", "reviewed metadata"),
-        _read_object(root / "app/src/main/assets/workout-guide/catalog.json", "catalog"),
+        upstream_entries_only(_read_object(root / "app/src/main/assets/workout-guide/catalog.json", "catalog")),
         _read_object(root / FIXTURE_PATH, "partition fixture"),
         (root / PROGRAMMING_PATH).read_bytes(),
     )

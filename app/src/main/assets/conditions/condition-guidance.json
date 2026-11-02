@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "2026-11-01.1",
+  "version": "2026-11-02.1",
   "exerciseDemands": {
     "active-hang": [
       "HAND_GRIP_LOAD"
@@ -207,6 +207,7 @@
       "DEEP_KNEE_FLEXION_LOAD"
     ],
     "face-pull": [],
+    "figure-four-stretch": [],
     "flutter-kick": [],
     "forward-lunge": [
       "DEEP_KNEE_FLEXION_LOAD",
@@ -314,6 +315,9 @@
       "HEAVY_EXTERNAL_LOAD"
     ],
     "lying-leg-raise": [],
+    "lying-piriformis-stretch": [
+      "CROSS_BODY_HIP_STRETCH"
+    ],
     "machine-chest-press": [
       "HEAVY_EXTERNAL_LOAD"
     ],
@@ -420,6 +424,10 @@
       "RESISTED_HIP_EXTERNAL_ROTATION",
       "SIDE_LYING_HIP_COMPRESSION"
     ],
+    "side-lying-isometric-hip-abduction-hold": [
+      "RESISTED_HIP_EXTERNAL_ROTATION",
+      "SIDE_LYING_HIP_COMPRESSION"
+    ],
     "side-lying-leg-raise": [
       "RESISTED_HIP_EXTERNAL_ROTATION",
       "SIDE_LYING_HIP_COMPRESSION"
@@ -493,6 +501,9 @@
       "HEAVY_EXTERNAL_LOAD"
     ],
     "standing-dumbbell-press": [],
+    "standing-isometric-gluteal-contraction": [
+      "SINGLE_LEG_HIP_CONTROL"
+    ],
     "step-down": [
       "DEEP_KNEE_FLEXION_LOAD",
       "SINGLE_LEG_HIP_CONTROL"
@@ -502,6 +513,7 @@
       "SINGLE_LEG_HIP_CONTROL"
     ],
     "straight-arm-pulldown": [],
+    "straight-leg-raise": [],
     "superman": [
       "END_RANGE_HIP_EXTENSION",
       "END_RANGE_SPINE_POSITION"
@@ -514,6 +526,7 @@
       "HAMSTRING_LENGTH_LOAD",
       "HEAVY_EXTERNAL_LOAD"
     ],
+    "tendon-gliding-sequence": [],
     "towel-pull-up": [
       "HAND_GRIP_LOAD"
     ],
@@ -559,6 +572,9 @@
     "wide-grip-lat-pulldown": [],
     "wide-push-up": [
       "WRIST_END_RANGE_LOAD"
+    ],
+    "wrist-extensor-stretch": [
+      "WRIST_END_RANGE_LOAD"
     ]
   },
   "conditions": {
@@ -578,6 +594,24 @@
       ],
       "routine": [
         {
+          "exerciseId": "figure-four-stretch",
+          "targetSets": 3,
+          "targetReps": null,
+          "targetDurationSeconds": 120,
+          "holdSeconds": null,
+          "restSeconds": 120,
+          "requiresFloorTransition": true
+        },
+        {
+          "exerciseId": "lying-piriformis-stretch",
+          "targetSets": 1,
+          "targetReps": 10,
+          "targetDurationSeconds": null,
+          "holdSeconds": 30,
+          "restSeconds": 0,
+          "requiresFloorTransition": true
+        },
+        {
           "exerciseId": "glute-bridge",
           "targetSets": 3,
           "targetReps": 15,
@@ -588,6 +622,14 @@
         }
       ],
       "exerciseCues": {
+        "figure-four-stretch": {
+          "en": "Aim for a slight stretch only. Stop if the position brings on buttock or leg symptoms.",
+          "es": "Busca solo un estiramiento leve. Detente si la posición te provoca síntomas en el glúteo o la pierna."
+        },
+        "lying-piriformis-stretch": {
+          "en": "Keep it gentle. Stop if leg or buttock symptoms increase.",
+          "es": "Hazlo con suavidad. Detente si aumentan los síntomas en la pierna o el glúteo."
+        },
         "glute-bridge": {
           "en": "Stop if leg symptoms increase.",
           "es": "Detente si aumentan los síntomas en la pierna."
@@ -598,15 +640,13 @@
           "Avoid long spells sitting cross-legged or slumped back on your tailbone.",
           "Squats and resistance work are not banned. Ease off if they bring on your symptoms.",
           "Staying in bed or stopping all activity for long is not advised. Keep moving within what you can tolerate.",
-          "Go easy on foam rollers or other strong pressure right on the sore spot, especially when symptoms are highly irritable.",
-          "A position with your ankle over the opposite knee can bring on symptoms. Ease out of it if it does."
+          "Go easy on foam rollers or other strong pressure right on the sore spot, especially when symptoms are highly irritable."
         ],
         "es": [
           "Evita pasar mucho tiempo sentado con las piernas cruzadas o encorvado sobre el coxis.",
           "Las sentadillas y el trabajo con resistencia no están prohibidos. Baja la intensidad si te provocan síntomas.",
           "No se recomienda quedarte en cama ni dejar toda actividad por mucho tiempo. Sigue moviéndote dentro de lo que toleres.",
-          "Ve con cuidado con los rodillos de espuma u otra presión fuerte justo sobre el punto adolorido, sobre todo cuando los síntomas están muy irritables.",
-          "La posición con el tobillo sobre la rodilla contraria puede provocar síntomas. Sal de ella si es tu caso."
+          "Ve con cuidado con los rodillos de espuma u otra presión fuerte justo sobre el punto adolorido, sobre todo cuando los síntomas están muy irritables."
         ]
       },
       "redFlags": {
@@ -650,7 +690,7 @@
         "reviewerModelId": "claude-opus-5-5",
         "reviewedAtEpochMillis": 1793491200000,
         "reviewedContentId": "piriformis_syndrome",
-        "reviewedContentSha256": "b3281a5a4d6e1e6dba5b2d37d80ad54a008730a54506fa48cb80e836726c7034",
+        "reviewedContentSha256": "ffe25f33b7cab4351f32c0880c8c44487d706a54d3c5e9f81bc2c7f45f7f4c23",
         "sourceReferences": [
           "https://doi.org/10.7759/cureus.43804",
           "https://doi.org/10.7759/cureus.32952",
@@ -664,7 +704,7 @@
           "https://doi.org/10.1002/14651858.CD007612.pub2"
         ],
         "decisionRationale": "Owner-authorized AI authoring for alpha use. Restrictions, red flags and doses follow the research consolidation for this condition; nothing here is a care plan.",
-        "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. Evidence is very low: restrictions are mostly expert opinion and no routine item is shown to work. The glute bridge dose comes from a trial registry record whose results were not found, which has no DOI or PMID and so is not listed. The figure-four and lying stretches arrive with the new catalog entries.",
+        "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. Evidence is very low: restrictions are mostly expert opinion and no routine item is shown to work. The glute bridge dose comes from a trial registry record whose results were not found, which has no DOI or PMID and so is not listed. The figure-four dose comes from a supervised trial in which stretching did not beat a hot pack plus TENS for pain, and calling the position a figure-four is this review's mapping, not a term the papers use. The lying stretch reads its dose as one set of 10 repetitions with 30 s holds, because the source says '10 repetitions/sets' and the set count is unclear; the source also does not specify the position, which comes from separate biomechanical studies, and it had no untreated control group.",
         "schemaVersion": 1,
         "policyVersion": 1
       }
@@ -708,6 +748,24 @@
           "holdSeconds": null,
           "restSeconds": 0,
           "requiresFloorTransition": false
+        },
+        {
+          "exerciseId": "side-lying-isometric-hip-abduction-hold",
+          "targetSets": 1,
+          "targetReps": 6,
+          "targetDurationSeconds": null,
+          "holdSeconds": 30,
+          "restSeconds": 60,
+          "requiresFloorTransition": true
+        },
+        {
+          "exerciseId": "standing-isometric-gluteal-contraction",
+          "targetSets": 3,
+          "targetReps": 10,
+          "targetDurationSeconds": null,
+          "holdSeconds": 6,
+          "restSeconds": 60,
+          "requiresFloorTransition": false
         }
       ],
       "exerciseCues": {
@@ -722,6 +780,14 @@
         "bodyweight-squat": {
           "en": "Move slowly, about 3 seconds each way. Do not let your pelvis shift over one hip.",
           "es": "Muévete despacio, unos 3 segundos en cada dirección. No dejes que la pelvis se cargue sobre una cadera."
+        },
+        "side-lying-isometric-hip-abduction-hold": {
+          "en": "Lie with the painful side up, with a pillow between your knees. If both hips hurt, skip this one. Stop if your symptoms increase.",
+          "es": "Acuéstate con el lado doloroso arriba y una almohada entre las rodillas. Si te duelen las dos caderas, omite este ejercicio. Detente si aumentan los síntomas."
+        },
+        "standing-isometric-gluteal-contraction": {
+          "en": "Hold a wall or chair for support. Stop if your symptoms increase.",
+          "es": "Apóyate en una pared o una silla. Detente si aumentan los síntomas."
         }
       },
       "notes": {
@@ -777,7 +843,7 @@
         "reviewerModelId": "claude-opus-5-5",
         "reviewedAtEpochMillis": 1793491200000,
         "reviewedContentId": "gluteal_tendinopathy",
-        "reviewedContentSha256": "a5fe35d66bdf43e4e0ef5d958fbef7313c37540236d07678a7b867ec9e2beac9",
+        "reviewedContentSha256": "01d796f5184798b7d17fc21f1b12a3dd6be0e0fe7d85f27dbd398f8f332ee84d",
         "sourceReferences": [
           "https://doi.org/10.2519/jospt.2015.5829",
           "https://doi.org/10.1186/s12891-016-1043-6",
@@ -789,7 +855,7 @@
           "https://doi.org/10.1016/j.clinbiomech.2016.10.003"
         ],
         "decisionRationale": "Owner-authorized AI authoring for alpha use. Restrictions, red flags and doses follow the research consolidation for this condition; nothing here is a care plan.",
-        "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. Evidence is low: all but one restriction is expert opinion, and no individual exercise is shown to work. The doses come from one pilot and from a protocol that did not test these exercises alone. No study tested the three-exercise combination.",
+        "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. Evidence is low: all but one restriction is expert opinion, and no individual exercise is shown to work. The doses come from one pilot and from a protocol that did not test these exercises alone. No study tested the three-exercise combination. The two isometric holds come from one 30-person pilot trial, and the side-lying hold showed no advantage over isotonic work there.",
         "schemaVersion": 1,
         "policyVersion": 1
       }
@@ -1239,8 +1305,23 @@
         "HEAVY_EXTERNAL_LOAD",
         "HAND_GRIP_LOAD"
       ],
-      "routine": [],
-      "exerciseCues": {},
+      "routine": [
+        {
+          "exerciseId": "wrist-extensor-stretch",
+          "targetSets": 3,
+          "targetReps": null,
+          "targetDurationSeconds": 30,
+          "holdSeconds": null,
+          "restSeconds": 0,
+          "requiresFloorTransition": false
+        }
+      ],
+      "exerciseCues": {
+        "wrist-extensor-stretch": {
+          "en": "Stretch gently, only to a pull. Stop if your elbow symptoms increase.",
+          "es": "Estira con suavidad, solo hasta sentir tensión. Detente si aumentan los síntomas del codo."
+        }
+      },
       "notes": {
         "en": [
           "Keep wrist holds and gripping below the point where they hurt. Do not count on them for quick relief.",
@@ -1286,7 +1367,7 @@
         "reviewerModelId": "claude-opus-5-5",
         "reviewedAtEpochMillis": 1793491200000,
         "reviewedContentId": "lateral_elbow_tendinopathy",
-        "reviewedContentSha256": "953e5f5eb09af259ff3053bb1538922df282f7c0cc7c1be297c25257c9116232",
+        "reviewedContentSha256": "4f1d048e1d3d533579883eb0a38878c279fd1aeaec63006d8bd3eb4d460e680b",
         "sourceReferences": [
           "https://doi.org/10.2519/jospt.2022.0302",
           "https://doi.org/10.1136/bmjopen-2021-053841",
@@ -1298,7 +1379,7 @@
           "https://doi.org/10.1080/0014013031000107595"
         ],
         "decisionRationale": "Owner-authorized AI authoring for alpha use. Restrictions, red flags and doses follow the research consolidation for this condition; nothing here is a care plan.",
-        "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. Evidence is low and exercise benefits may not be clinically worthwhile. No load or hold time is established. The routine stays empty until the wrist extensor stretch is in the catalog; its dose is a consensus choice made for practicality.",
+        "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. Evidence is low and exercise benefits may not be clinically worthwhile. No load or hold time is established. The wrist extensor stretch dose is a consensus choice made for practicality. The source describes three 30 s holds before and three after loading exercises; this routine has no loading, so one block of 3 x 30 s is authored here, which the source does not state.",
         "schemaVersion": 1,
         "policyVersion": 1
       }
@@ -1310,8 +1391,23 @@
         "HAND_GRIP_LOAD",
         "NERVE_TENSIONING"
       ],
-      "routine": [],
-      "exerciseCues": {},
+      "routine": [
+        {
+          "exerciseId": "tendon-gliding-sequence",
+          "targetSets": 3,
+          "targetReps": 5,
+          "targetDurationSeconds": null,
+          "holdSeconds": 7,
+          "restSeconds": 0,
+          "requiresFloorTransition": false
+        }
+      ],
+      "exerciseCues": {
+        "tendon-gliding-sequence": {
+          "en": "Move slowly and keep it gentle. Stop if numbness or tingling increases.",
+          "es": "Muévete despacio y con suavidad. Detente si aumentan el adormecimiento o el hormigueo."
+        }
+      },
       "notes": {
         "en": [
           "After carpal tunnel surgery, follow your surgeon's timing for repeated loading, lifting over 10 kg and vibrating tools."
@@ -1355,7 +1451,7 @@
         "reviewerModelId": "claude-opus-5-5",
         "reviewedAtEpochMillis": 1793491200000,
         "reviewedContentId": "carpal_tunnel_syndrome",
-        "reviewedContentSha256": "83148ecccd162704d738bd13f0ff7117ff5f9fcfc2eb345ad66742d8e4115988",
+        "reviewedContentSha256": "d70beb5936793870af1c52ae6d9b0d2045e665a6f4bb2f68af8d6fd16dd652b7",
         "sourceReferences": [
           "https://doi.org/10.1002/14651858.CD009899",
           "https://doi.org/10.1518/001872007779598127",
@@ -1367,7 +1463,7 @@
           "https://doi.org/10.1177/17589983221113870"
         ],
         "decisionRationale": "Owner-authorized AI authoring for alpha use. Restrictions, red flags and doses follow the research consolidation for this condition; nothing here is a care plan.",
-        "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. Evidence is very low: restrictions come from healthy-volunteer, cadaver or workplace data, and reviews disagree about exercise. The routine stays empty until the tendon gliding sequence is in the catalog, and its dose comes from a study with no control group.",
+        "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. Evidence is very low: restrictions come from healthy-volunteer, cadaver or workplace data, and reviews disagree about exercise. The tendon gliding dose comes from a study with no control group, given alongside manual therapy, so it is not a stand-alone dose.",
         "schemaVersion": 1,
         "policyVersion": 1
       }
@@ -1399,12 +1495,25 @@
           "holdSeconds": 2,
           "restSeconds": 120,
           "requiresFloorTransition": false
+        },
+        {
+          "exerciseId": "straight-leg-raise",
+          "targetSets": 3,
+          "targetReps": 10,
+          "targetDurationSeconds": null,
+          "holdSeconds": null,
+          "restSeconds": 0,
+          "requiresFloorTransition": true
         }
       ],
       "exerciseCues": {
         "bodyweight-squat": {
           "en": "Lower only to about 45 degrees of knee bend, and hold there for 2 seconds.",
           "es": "Baja solo hasta unos 45 grados de flexión de rodilla y sostén ahí 2 segundos."
+        },
+        "straight-leg-raise": {
+          "en": "Keep the knee straight and lift slowly. Stop if your knee pain increases.",
+          "es": "Mantén la rodilla recta y levanta despacio. Detente si aumenta el dolor de rodilla."
         }
       },
       "notes": {
@@ -1457,7 +1566,7 @@
         "reviewerModelId": "claude-opus-5-5",
         "reviewedAtEpochMillis": 1793491200000,
         "reviewedContentId": "patellofemoral_pain",
-        "reviewedContentSha256": "e59c57f2f8fce62c4b98dd33d91764fec1c77d12956d40c780d677b45edbb96b",
+        "reviewedContentSha256": "0a93fb48fcd366245d135a4d82e9e1abe85351f767602da3bdcb4151289e63ab",
         "sourceReferences": [
           "https://doi.org/10.2519/jospt.2014.4936",
           "https://doi.org/10.4085/1062-6050-231-15",
@@ -1470,7 +1579,7 @@
           "https://doi.org/10.1080/17461391.2020.1806935"
         ],
         "decisionRationale": "Owner-authorized AI authoring for alpha use. Restrictions, red flags and doses follow the research consolidation for this condition; nothing here is a care plan.",
-        "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. Evidence is low: most restrictions rest on biomechanical data and no validated pain limit exists. The partial squat depth was not precisely monitored in its trial. The straight leg raise arrives with the new catalog entries; quadriceps setting is out because it has no hold time.",
+        "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. Evidence is low: most restrictions rest on biomechanical data and no validated pain limit exists. The partial squat depth was not precisely monitored in its trial. The straight leg raise dose comes from one trial and describes common practice, not efficacy. Quadriceps setting is out because it has no hold time.",
         "schemaVersion": 1,
         "policyVersion": 1
       }

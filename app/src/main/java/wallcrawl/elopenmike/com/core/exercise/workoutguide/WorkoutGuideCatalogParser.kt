@@ -111,10 +111,13 @@ class WorkoutGuideCatalogParser {
                         assetPath = "$ASSET_PATH_PREFIX${entry.sourceSlug}/frame-$frameIndex.svg",
                         widthPx = visuals.widthPx,
                         heightPx = visuals.heightPx,
-                        attribution = validatedSource.attribution
+                        attribution = entry.attribution ?: validatedSource.attribution
                     )
                 }
             }
+            // The credits screen states the original source catalog's size, so the entries
+            // WallCrawl owns (they carry their own attribution) stay out of both counts.
+            val upstreamIds = entries.filter { it.attribution == null }.mapTo(mutableSetOf(), ParsedExercise::id)
 
             return WorkoutGuideCatalogSnapshot(
                 exercises = entries.map { entry -> entry.toExercise(validatedSource.attribution) },
@@ -124,9 +127,9 @@ class WorkoutGuideCatalogParser {
                     commit = validatedSource.commit,
                     assetLicense = validatedSource.assetLicense,
                     attribution = validatedSource.attribution,
-                    exerciseCount = entries.size,
+                    exerciseCount = upstreamIds.size,
                     // Counted, not inferred: the credits screen states this number publicly.
-                    frameCount = framesByExerciseId.values.sumOf { it.size }
+                    frameCount = framesByExerciseId.filterKeys { it in upstreamIds }.values.sumOf { it.size }
                 )
             )
         } catch (error: WorkoutGuideCatalogFormatException) {
@@ -208,6 +211,7 @@ class WorkoutGuideCatalogParser {
         var isStretch: Boolean? = null
         var programming: ExerciseProgrammingMetadata? = null
         var reviewedMetadata: ReviewedExerciseMetadata? = null
+        var ownAttribution: ExerciseAttribution? = null
         val seenFields = mutableSetOf<String>()
 
         beginObject()
@@ -226,6 +230,8 @@ class WorkoutGuideCatalogParser {
                 "exerciseType" -> exerciseType = readExerciseType(readString("exercise.exerciseType"))
                 "isStretch" -> isStretch = nextBoolean()
                 "programming" -> programming = readProgramming()
+                // Present only on entries WallCrawl owns; upstream entries inherit the catalog's.
+                "attribution" -> ownAttribution = readAttribution("exercise[$position].attribution")
                 "reviewedMetadata" -> reviewedMetadata = readReviewedMetadata(
                     id?.takeIf(SAFE_IDENTIFIER::matches)?.let { safeId ->
                         "Exercise $safeId reviewedMetadata"
@@ -292,7 +298,8 @@ class WorkoutGuideCatalogParser {
             type = resolvedType,
             isStretch = resolvedIsStretch,
             programming = programming,
-            reviewedMetadata = reviewedMetadata
+            reviewedMetadata = reviewedMetadata,
+            attribution = ownAttribution
         )
     }
 
@@ -1325,15 +1332,17 @@ class WorkoutGuideCatalogParser {
         val type: ExerciseType,
         val isStretch: Boolean,
         val programming: ExerciseProgrammingMetadata?,
-        val reviewedMetadata: ReviewedExerciseMetadata?
+        val reviewedMetadata: ReviewedExerciseMetadata?,
+        /** Set only for exercises WallCrawl owns; null means the upstream catalog attribution. */
+        val attribution: ExerciseAttribution?
     ) {
-        fun toExercise(attribution: ExerciseAttribution): Exercise = Exercise(
+        fun toExercise(catalogAttribution: ExerciseAttribution): Exercise = Exercise(
             id = id,
             source = ExerciseSource(
-                catalogId = CATALOG_ID,
+                catalogId = if (attribution == null) CATALOG_ID else OWNED_CATALOG_ID,
                 sourceId = sourceId,
                 sourceSlug = sourceSlug,
-                attribution = attribution
+                attribution = attribution ?: catalogAttribution
             ),
             name = name,
             searchAliases = searchAliases,
@@ -1370,6 +1379,7 @@ class WorkoutGuideCatalogParser {
     private companion object {
         const val SUPPORTED_SCHEMA_VERSION = 1
         const val CATALOG_ID = "workout-guide"
+        const val OWNED_CATALOG_ID = "wallcrawl-owned"
         const val ASSET_PATH_PREFIX = "workout-guide/assets/"
         const val EXPECTED_FRAME_COUNT = 3
         const val MAX_VISUAL_DIMENSION = 8_192

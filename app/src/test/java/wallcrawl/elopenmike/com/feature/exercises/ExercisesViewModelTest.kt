@@ -36,7 +36,7 @@ class ExercisesViewModelTest {
         advanceUntilIdle()
 
         val state = viewModel.uiState.value as ExercisesUiState.Success
-        assertThat(state.exercises).hasSize(302)
+        assertThat(state.exercises).hasSize(309)
         assertThat(state.exercises.map(Exercise::id))
             .containsExactlyElementsIn(bundledExercises.map(Exercise::id))
             .inOrder()

@@ -149,7 +149,7 @@ class FixedAnchorBandEligibilityTest {
         )
         assertThat(profile.availableEquipment).containsExactly(BAND)
         assertThat(profile.confirmedStartingLoads).isEmpty()
-        assertThat(catalog).hasSize(302)
+        assertThat(catalog).hasSize(309)
         assertThat(catalog.count { it.reviewedMetadata?.reviewState == ReviewState.APPROVED })
             .isEqualTo(0)
         // The value WallCrawlApplication injects, not merely the constructor default, so a

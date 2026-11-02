@@ -24,7 +24,8 @@ import wallcrawl.elopenmike.com.core.model.UserProfile
 /** The actual bundle, with no synthetic approvals anywhere in it. */
 class AiAcceptedCatalogTest {
     private val factory = PlannerFixtureContextFactory()
-    private val exercises = factory.bundledCatalogProjection().exercises
+    private val projection = factory.bundledCatalogProjection()
+    private val exercises = projection.exercises.filter { it.id !in projection.ownedExerciseIds }
     private val byId = exercises.associateBy(Exercise::id)
     private val partition = JSONObject(factory.readResourceText("ai-acceptance/partition-v2.json"))
     private val acceptedIds = partition.getJSONArray("aiAccepted").strings().toSet()

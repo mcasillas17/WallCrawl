@@ -144,7 +144,7 @@ The test projection also validates the bundled catalog root fields it relies on:
 
 - `catalog.schemaVersion == 1`
 - `catalog.source.commit` is present and non-blank
-- exactly 302 unique exercises are available to the harness
+- exactly 309 unique exercises are available to the harness
 
 Before a context is built, every exercise reference in a fixture is validated against the bundled catalog with field-level errors. This includes:
 
@@ -481,7 +481,7 @@ unused as readiness or a blocking rule.
 | --- | --- | --- |
 | Fixture wire format | `schemaVersion` 1 | `PlannerFixtureLoader` |
 | Corpus expectation contract | `policyVersion` 4 | `PlannerFixtureContextFactory.SUPPORTED_CORPUS_POLICY_VERSION` |
-| Bundled catalog | commit `ba0b709cb20430361b2cb33aaadd20998164a916`, `schemaVersion` 1, 302 exercises | fixture `catalogVersion` versus the catalog's `source.commit` |
+| Bundled catalog | commit `ba0b709cb20430361b2cb33aaadd20998164a916`, `schemaVersion` 1, 309 exercises (302 pinned, 7 owned) | fixture `catalogVersion` versus the catalog's `source.commit` |
 | Reviewed metadata | review policy version 2; 182 `AI_ACCEPTED`, 29 `DRAFT`, 0 `APPROVED` | `PlannerFixtureCorpusTest`, `ReviewedExerciseMetadataTest`, `AiAcceptedCatalogTest`, `BundledCatalogLedgerAttributionTest` |
 | Training policy | `STATE_BASED_DOSE_EFFORT_REST_V2` | `StateBasedTrainingPolicyDefaults.V2` |
 | Ledger policy | `PRIMARY_ONLY_V1` | `WeeklyDoseLedgerCalculator` |

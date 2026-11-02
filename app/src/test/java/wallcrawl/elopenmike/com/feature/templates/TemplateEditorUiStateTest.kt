@@ -66,7 +66,7 @@ class TemplateEditorUiStateTest {
             availableEquipment = emptySet()
         )
 
-        assertThat(state.filteredExercises).hasSize(302)
+        assertThat(state.filteredExercises).hasSize(309)
         assertThat(state.filteredExercises.map(Exercise::id))
             .containsExactlyElementsIn(bundledExercises.map(Exercise::id))
             .inOrder()

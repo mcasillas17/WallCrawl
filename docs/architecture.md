@@ -92,7 +92,10 @@ interface. It does not parse upstream JSON or construct raw asset paths.
 Likewise, Compose screens request visuals through `ExerciseVisualProvider` and
 render them with `ExerciseIllustration`.
 
-The bundled snapshot contains 302 exercises and 906 original SVG frames.
+The bundled snapshot contains 309 exercises: 302 with 906 original SVG frames from the pinned source, and 7
+WallCrawl-owned mobility exercises with 21 original SVG frames and their own attribution
+(`owned-exercises.json`, merged by the importer). Owned entries have no reviewed metadata, so they
+never enter automatic selection, and the credits counts stay those of the pinned source.
 [Everkinetic](https://github.com/everkinetic/data) is the original pose-artwork
 reference, with additional exercises and animation frames by Bryl Lim. WallCrawl
 also bundles 1,812 female and male adaptation frames; see
@@ -779,7 +782,7 @@ quietly. The digest reads no locale and no display text, so language cannot move
 ## Manual workout templates
 
 Manual templates intentionally bypass automatic equipment filtering because the
-user is making an explicit choice. The editor searches all 302 exercises and
+user is making an explicit choice. The editor searches all 309 exercises and
 shows equipment mismatches as warnings. Catalog existence and exercise-type
 agreement remain hard requirements.
 

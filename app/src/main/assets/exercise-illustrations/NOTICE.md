@@ -14,4 +14,6 @@ These adaptations are licensed under CC BY-SA 4.0: https://creativecommons.org/l
 
 Changes (2026): Native Codex Imagegen reference editing created adult female and male demonstrators in a matching white line style. Documented anatomy, equipment and perspective corrections were applied. Raster linework was converted to alpha, normalized, and traced using Sharp, Potrace and SVGO. Pinned originals were preserved. Selected SVGs are copied byte-for-byte; masters and full generation records are retained in the local production workspace at art/pilots/female-exercises, outside the integration commit and app distribution.
 
+WallCrawl-owned exercises (listed in ATTRIBUTION.md) are original simple vector art by the WallCrawl project, not adaptations of the source catalog, and have no female or male variants.
+
 The three-frame sequences have the review status recorded in provenance.json. AI-reviewed sequences may retain minor contour, alignment or phase-spacing variations. AI visual review is not qualified movement-expert approval.

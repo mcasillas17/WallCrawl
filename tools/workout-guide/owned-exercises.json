@@ -1,0 +1,116 @@
+{
+  "schemaVersion": 1,
+  "attribution": {
+    "creator": "WallCrawl project",
+    "creatorUrl": "https://github.com/mcasillas17/WallCrawl",
+    "license": "Original work by the WallCrawl project",
+    "licenseUrl": "https://github.com/mcasillas17/WallCrawl/blob/main/LICENSE"
+  },
+  "exercises": [
+    {
+      "id": "figure-four-stretch",
+      "name": "Figure-Four Stretch, Foot Against a Wall",
+      "searchAliases": [],
+      "exerciseType": "duration",
+      "equipment": "Bodyweight",
+      "primaryMuscle": "Hips",
+      "secondaryMuscles": ["Glutes", "Mobility"],
+      "isStretch": true,
+      "frames": [
+        "owned-art/figure-four-stretch/frame-1.svg",
+        "owned-art/figure-four-stretch/frame-2.svg",
+        "owned-art/figure-four-stretch/frame-3.svg"
+      ]
+    },
+    {
+      "id": "lying-piriformis-stretch",
+      "name": "Lying Piriformis Stretch, Knee Toward Opposite Shoulder",
+      "searchAliases": [],
+      "exerciseType": "bodyweight_reps",
+      "equipment": "Bodyweight",
+      "primaryMuscle": "Hips",
+      "secondaryMuscles": ["Glutes", "Mobility"],
+      "isStretch": true,
+      "frames": [
+        "owned-art/lying-piriformis-stretch/frame-1.svg",
+        "owned-art/lying-piriformis-stretch/frame-2.svg",
+        "owned-art/lying-piriformis-stretch/frame-3.svg"
+      ]
+    },
+    {
+      "id": "side-lying-isometric-hip-abduction-hold",
+      "name": "Side-Lying Isometric Hip Abduction Hold, Painful Side Up",
+      "searchAliases": [],
+      "exerciseType": "bodyweight_reps",
+      "equipment": "Bodyweight",
+      "primaryMuscle": "Glutes",
+      "secondaryMuscles": ["Core"],
+      "isStretch": false,
+      "frames": [
+        "owned-art/side-lying-isometric-hip-abduction-hold/frame-1.svg",
+        "owned-art/side-lying-isometric-hip-abduction-hold/frame-2.svg",
+        "owned-art/side-lying-isometric-hip-abduction-hold/frame-3.svg"
+      ]
+    },
+    {
+      "id": "standing-isometric-gluteal-contraction",
+      "name": "Standing Isometric Gluteal Contraction",
+      "searchAliases": [],
+      "exerciseType": "bodyweight_reps",
+      "equipment": "Bodyweight",
+      "primaryMuscle": "Glutes",
+      "secondaryMuscles": ["Hips", "Core"],
+      "isStretch": false,
+      "frames": [
+        "owned-art/standing-isometric-gluteal-contraction/frame-1.svg",
+        "owned-art/standing-isometric-gluteal-contraction/frame-2.svg",
+        "owned-art/standing-isometric-gluteal-contraction/frame-3.svg"
+      ]
+    },
+    {
+      "id": "wrist-extensor-stretch",
+      "name": "Wrist Extensor Stretch",
+      "searchAliases": [],
+      "exerciseType": "duration",
+      "equipment": "Bodyweight",
+      "primaryMuscle": "Forearms",
+      "secondaryMuscles": ["Mobility"],
+      "isStretch": true,
+      "frames": [
+        "owned-art/wrist-extensor-stretch/frame-1.svg",
+        "owned-art/wrist-extensor-stretch/frame-2.svg",
+        "owned-art/wrist-extensor-stretch/frame-3.svg"
+      ]
+    },
+    {
+      "id": "tendon-gliding-sequence",
+      "name": "Tendon Gliding Sequence",
+      "searchAliases": [],
+      "exerciseType": "bodyweight_reps",
+      "equipment": "Bodyweight",
+      "primaryMuscle": "Forearms",
+      "secondaryMuscles": ["Mobility"],
+      "isStretch": false,
+      "frames": [
+        "owned-art/tendon-gliding-sequence/frame-1.svg",
+        "owned-art/tendon-gliding-sequence/frame-2.svg",
+        "owned-art/tendon-gliding-sequence/frame-3.svg"
+      ]
+    },
+    {
+      "id": "straight-leg-raise",
+      "name": "Straight Leg Raise",
+      "searchAliases": [],
+      "exerciseType": "bodyweight_reps",
+      "equipment": "Bodyweight",
+      "primaryMuscle": "Quads",
+      "secondaryMuscles": ["Hips", "Core"],
+      "isStretch": false,
+      "frames": [
+        "owned-art/straight-leg-raise/frame-1.svg",
+        "owned-art/straight-leg-raise/frame-2.svg",
+        "owned-art/straight-leg-raise/frame-3.svg"
+      ]
+    }
+  ]
+}

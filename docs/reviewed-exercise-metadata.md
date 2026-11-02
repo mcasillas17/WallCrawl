@@ -27,7 +27,7 @@ have different owners and must not be treated as interchangeable:
   progression input. See
   [reviewed capability eligibility](reviewed-capability-eligibility.md).
 
-The complete 302-exercise catalog remains available to browsing and manual
+The complete 309-exercise catalog remains available to browsing and manual
 templates whether either optional block is present or absent.
 
 ## Review state, AI acceptance, and human approval
@@ -261,7 +261,7 @@ Band-only PUSH coverage remains a specific open gap, not a reason to relabel
 back/core movements or imply universal modality equivalence.
 
 The importer produces both the catalog and report deterministically; `--check`
-detects drift without writing. Regression tests confirm the catalog holds 302 entries,
+detects drift without writing. Regression tests confirm the catalog holds 309 entries (the 302 audited ones plus 7 owned ones with no reviewed metadata),
 that production selection is built only from the actual `AI_ACCEPTED` cohort in
 representative bodyweight, band, machine, and full-gym contexts, and that no legacy
 fallback exists when the reviewed pool is insufficient. Fixtures prove that absent,

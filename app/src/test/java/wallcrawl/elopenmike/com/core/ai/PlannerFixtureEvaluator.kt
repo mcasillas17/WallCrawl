@@ -37,7 +37,7 @@ import wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent
  * JUnit builds a fresh instance per test method and neither `PlannerFixtureLoader` nor
  * `PlannerFixtureContextFactory` caches across instances, so without this each suite — and
  * before that each method — re-read every fixture resource named in
- * `planner-fixtures/manifest.txt` and reparsed the 302-entry bundled catalog. Everything held
+ * `planner-fixtures/manifest.txt` and reparsed the 309-entry bundled catalog. Everything held
  * here is immutable parsed data.
  *
  * Only construction is shared. Every replay still goes through
@@ -164,7 +164,7 @@ internal data class PlannerFixtureInputSnapshot(
 
 /**
  * [contextFactory] is required rather than defaulted on purpose. A default would construct a
- * second factory and silently reparse the 302-entry bundled catalog — the exact trap round 11
+ * second factory and silently reparse the 309-entry bundled catalog — the exact trap round 11
  * found in a suite that built one factory in a field and another inside this constructor.
  */
 internal class PlannerFixtureEvaluator(

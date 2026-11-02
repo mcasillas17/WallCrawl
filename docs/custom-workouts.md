@@ -39,13 +39,13 @@ workout preserves its original provenance rather than associating it with a new 
 
 ## Exercise availability
 
-Both workout sources use the same 302-exercise catalog, but their selection
+Both workout sources use the same 309-exercise catalog, but their selection
 rules differ intentionally:
 
 | Workout source | Catalog access | Equipment behavior |
 | --- | --- | --- |
 | Automatic planner | Any catalog exercise that survives hard constraints | Unavailable equipment and profile exclusions remove candidates before planning |
-| Manual template | All 302 catalog exercises | A possible equipment mismatch is shown as a warning, but the user may still select the exercise |
+| Manual template | All 309 catalog exercises | A possible equipment mismatch is shown as a warning, but the user may still select the exercise |
 
 Manual selection does not weaken catalog integrity. A template can only store a
 known catalog exercise ID with a prescription matching that exercise's type. If

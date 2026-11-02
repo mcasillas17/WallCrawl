@@ -25,7 +25,7 @@ That same reviewed-only flag gates three local features together:
 - `CapabilityEvidencePolicy` and `CapabilityEvidenceSet`
 - `TrainingProgramStateProvider` + `StateBasedTrainingPolicy`
 
-The bundled catalog remains at 302 exercises. An owner-authorized audit accepted 182 of
+The bundled catalog holds 309 exercises: the 302 pinned ones and 7 owned ones without reviewed metadata. An owner-authorized audit accepted 182 of
 its 211 authored `reviewedMetadata` entries as `AI_ACCEPTED`; the remaining 29 authored
 entries stay `DRAFT`, 56 catalog entries carry no authored block at all, and 35 entries
 are outside automatic-strength scope. **Zero entries are `APPROVED`: no genuine human
@@ -302,7 +302,7 @@ outside it, and unavailable to automatic planning until separately resolved:
 - the 35 IDs outside automatic-strength scope (stretches, distance-duration and other
   timed conditioning work).
 
-All 302 remain browseable and manually selectable. Exclusion from the cohort removes an
+All 309 remain browseable and manually selectable. Exclusion from the cohort removes an
 exercise from automatic planning only.
 
 ### Supported profiles
@@ -365,7 +365,7 @@ tests but is no longer what `WallCrawlApplication` composes.
 
 The reviewed gate exists only on automatic context construction. The exercise
 library still reads the full catalog, and the manual template editor still reads
-all 302 exercises and displays its existing profile-equipment warnings. Missing,
+all 309 exercises and displays its existing profile-equipment warnings. Missing,
 `DRAFT`, or unaccepted reviewed metadata does not hide a browse or manual option.
 
 ## Deliberately incomplete work

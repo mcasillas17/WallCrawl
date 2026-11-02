@@ -7,7 +7,7 @@ import wallcrawl.elopenmike.com.core.model.IllustrationVariant
 
 class IllustrationCatalogTest {
     @Test
-    fun bundledVariantsCoverEveryCatalogExerciseWithThreeOrderedFrames() = runTest {
+    fun bundledVariantsCoverEveryUpstreamExerciseAndNoOwnedOneWithThreeOrderedFrames() = runTest {
         val loader = javaClass.classLoader!!
         val source = loader.getResourceAsStream("exercise-illustrations/index.json")
         assertThat(source).isNotNull()
@@ -16,6 +16,11 @@ class IllustrationCatalogTest {
             .getJSONArray("exercises")
         for (i in 0 until exercises.length()) {
             val id = exercises.getJSONObject(i).getString("id")
+            if (exercises.getJSONObject(i).has("attribution")) {
+                // Owned art is one gender-neutral sequence, loaded as the original fallback.
+                IllustrationVariant.entries.forEach { assertThat(catalog.framesFor(id, it)).isEmpty() }
+                continue
+            }
             for (variant in IllustrationVariant.entries) {
                 val paths = catalog.framesFor(id, variant)
                 assertThat(paths).hasSize(3)
