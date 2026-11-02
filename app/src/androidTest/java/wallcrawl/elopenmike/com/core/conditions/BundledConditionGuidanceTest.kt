@@ -6,11 +6,14 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
+import java.security.MessageDigest
 import java.time.ZoneId
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
+import org.json.JSONArray
+import org.json.JSONObject
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -20,10 +23,12 @@ import wallcrawl.elopenmike.com.core.ai.GeneratedWorkoutValidator
 import wallcrawl.elopenmike.com.core.ai.PlannerFeatureFlags
 import wallcrawl.elopenmike.com.core.ai.ProgramValidationResult
 import wallcrawl.elopenmike.com.core.ai.ProgramValidator
+import wallcrawl.elopenmike.com.core.ai.TrainingPolicyResult
 import wallcrawl.elopenmike.com.core.ai.TrainingPolicyResultException
 import wallcrawl.elopenmike.com.core.ai.TrainingProgramStateProvider
 import wallcrawl.elopenmike.com.core.ai.WorkoutGenerationContextBuilder
 import wallcrawl.elopenmike.com.core.ai.WorkoutHistoryAnalyzer
+import wallcrawl.elopenmike.com.core.ai.WorkoutPlanningFailure
 import wallcrawl.elopenmike.com.core.ai.WorkoutValidationException
 import wallcrawl.elopenmike.com.core.ai.acceptedMetadata
 import wallcrawl.elopenmike.com.core.database.WallCrawlDatabase
@@ -44,6 +49,7 @@ import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.UserProfile
+import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
 
 /**
  * Guards the shipped overlay against the catalog, its research doses and its copy rules, then
@@ -138,7 +144,7 @@ class BundledConditionGuidanceTest {
     @Test
     fun everyRoutineStretchHasAStopIfSymptomsCue() {
         routineEntries()
-            .filter { (_, entry) -> exercises.getValue(entry.exerciseId).isStretchEntry() }
+            .filter { (_, entry) -> exercises.getValue(entry.exerciseId).isStretch }
             .also { assertThat(it).isNotEmpty() }
             .forEach { (conditionId, entry) ->
                 val cues = guidance.conditions.getValue(conditionId).exerciseCues[entry.exerciseId]
@@ -219,14 +225,84 @@ class BundledConditionGuidanceTest {
             } catch (refused: TrainingPolicyResultException) {
                 refused.result
             }
-            assertWithMessage(name).that(typed).isNotNull()
-            if (typed is ProgramValidationResult.Invalid) {
-                assertWithMessage(name).that(typed.violations).isNotEmpty()
+            when (typed) {
+                is ProgramValidationResult.Valid ->
+                    assertWithMessage(name).that(typed.workout.exercises).isNotEmpty()
+                is ProgramValidationResult.Invalid ->
+                    assertWithMessage(name).that(typed.violations).isNotEmpty()
+                is WorkoutPlanningFailure, is TrainingPolicyResult -> Unit
+                else -> throw AssertionError("$name: untyped outcome $typed")
             }
         }
     }
 
-    private fun Exercise.isStretchEntry() = id in STRETCH_IDS
+    @Test
+    fun spineConditionsNameTheEmergencySignsInBothLanguages() {
+        val signs = mapOf(
+            "en" to listOf("genitals", "bladder", "poop", "both legs"),
+            "es" to listOf("genitales", "vejiga", "evacuaciones", "las dos piernas")
+        )
+        val action = mapOf("en" to "call emergency services", "es" to "servicios de emergencia")
+        listOf("piriformis_syndrome", "lumbar_radiculopathy", "nonspecific_low_back_pain").forEach { id ->
+            signs.forEach { (language, words) ->
+                val emergency = guidance.conditions.getValue(id).redFlags.getValue(language)
+                    .filter { action.getValue(language) in it }
+                words.forEach { word ->
+                    assertWithMessage("$id/$language/$word").that(emergency.any { word in it }).isTrue()
+                }
+            }
+        }
+    }
+
+    @Test
+    fun everyDigestMatchesItsRecord() {
+        val root = context.assets.open(ASSET).reader().use { JSONObject(it.readText()) }
+        val conditions = root.getJSONObject("conditions")
+        conditions.keys().forEach { id ->
+            val record = conditions.getJSONObject(id)
+            val provenance = record.remove("provenance") as JSONObject
+            val digest = MessageDigest.getInstance("SHA-256")
+                .digest(canonical(record).toByteArray())
+                .joinToString("") { "%02x".format(it) }
+            assertWithMessage(id).that(provenance.getString("reviewedContentSha256")).isEqualTo(digest)
+        }
+    }
+
+    /** Compact JSON with sorted keys; the form each `reviewedContentSha256` is taken over. */
+    private fun canonical(value: Any?): String = when (value) {
+        is JSONObject -> value.keys().asSequence().toList().sorted()
+            .joinToString(",", "{", "}") { "${canonical(it)}:${canonical(value.get(it))}" }
+        is JSONArray -> (0 until value.length()).joinToString(",", "[", "]") { canonical(value.get(it)) }
+        is String -> "\"" + value.replace("\\", "\\\\").replace("\"", "\\\"") + "\""
+        JSONObject.NULL -> "null"
+        else -> value.toString()
+    }
+
+    @Test
+    fun candidateCountsMatchTheCoverageReport() = runBlocking<Unit> {
+        val profiles = mapOf(
+            "bodyweight" to listOf(StandardEquipment.BODYWEIGHT),
+            "dumbbell" to listOf(StandardEquipment.BODYWEIGHT, StandardEquipment.DUMBBELL, StandardEquipment.BENCH),
+            "machine" to listOf(StandardEquipment.MACHINE, StandardEquipment.CABLE, StandardEquipment.BENCH),
+            "band" to listOf(StandardEquipment.RESISTANCE_BAND),
+            "full-gym" to StandardEquipment.ALL
+        )
+        val overlay = ConditionGuidanceResult.Loaded(guidance)
+        val measured = (listOf("none" to inputs().first().second.copy(reportedConditions = emptySet())) + inputs())
+            .associate { (name, base) ->
+                name to profiles.values.joinToString(" | ") { equipment ->
+                    val profile = base.copy(availableEquipment = equipment)
+                    val restrictions = restrictionsFor(profile, overlay)
+                    val generation = runBlocking { generationContext(profile) }
+                    val allowed = generation.allowedExercises.map(Exercise::id)
+                    val valid = runBlocking { plan(profile) } as ProgramValidationResult.Valid
+                    val planned = valid.workout.exercises.map { it.exerciseId }
+                    "${allowed.size}/${allowed.count { !restrictions.ranksLower(it) }}; " +
+                        "${planned.size} (${planned.count { restrictions.ranksLower(it) }})"
+                }
+            }
+        assertThat(measured).containsExactlyEntriesIn(COVERAGE_TABLE)
+    }
 
     private fun routineEntries(): List<Pair<String, RoutineEntry>> =
         guidance.conditions.values.flatMap { record -> record.routine.map { record.id to it } }
@@ -246,6 +322,13 @@ class BundledConditionGuidanceTest {
     }
 
     private suspend fun plan(profile: UserProfile): ProgramValidationResult {
+        val generationContext = generationContext(profile)
+        val workout = FakeWorkoutPlanner().generateWorkout(generationContext)
+        return ProgramValidator(GeneratedWorkoutValidator(catalog))
+            .validate(workout, generationContext, allowRepair = true)
+    }
+
+    private suspend fun generationContext(profile: UserProfile): WorkoutGenerationContext {
         val workoutRepository = OfflineWorkoutRepository(
             sessionDao = database.workoutSessionDao(),
             setDao = database.workoutSetDao()
@@ -276,20 +359,17 @@ class BundledConditionGuidanceTest {
             deloadRepository = OfflineDeloadRepository(database.deloadPreferencesDao(), writeGate),
             conditionGuidanceSource = ConditionGuidanceStore(context.assets)
         )
-        val generationContext = builder.build()
-        val workout = FakeWorkoutPlanner().generateWorkout(generationContext)
-        return ProgramValidator(GeneratedWorkoutValidator(catalog))
-            .validate(workout, generationContext, allowRepair = true)
+        return builder.build()
     }
 
     private companion object {
         const val ASSET = "conditions/condition-guidance.json"
         val DOI_OR_PMID = Regex("https://(doi\\.org/10\\.\\S+|pubmed\\.ncbi\\.nlm\\.nih\\.gov/\\d+/?)").pattern
-        val STRETCH_IDS = setOf("hamstring-stretch", "cross-body-shoulder-stretch")
 
         val FORBIDDEN_COPY = Regex(
             "(?i)\\b(safe for|helps? heal|treats?|cures?|prevents?|seguro para|segura para|" +
                 "ayuda a sanar|ayuda a curar|trata|tratan|cura|curan|previene|previenen|" +
+                "heal|prevention|preventing|treating|sanar|curar|prevenir|tratar|seguro|" +
                 "A&E|999|NHS|GP|clinician referral|referral|derivaci[oó]n)\\b"
         )
 
@@ -317,9 +397,31 @@ class BundledConditionGuidanceTest {
             "lateral_elbow_tendinopathy" to emptyList(),
             "carpal_tunnel_syndrome" to emptyList(),
             "patellofemoral_pain" to listOf(
-                reps("side-lying-hip-abduction", 3, 10),
+                reps("side-lying-hip-abduction", 3, 10, rest = 30),
                 reps("bodyweight-squat", 3, 10, hold = 2, rest = 120)
             )
+        )
+
+        /**
+         * `docs/reviewed-catalog-coverage.md`. Each cell is candidates / candidates with no modify
+         * demand; planned exercises (with a modify demand), per equipment profile.
+         */
+        val COVERAGE_TABLE = mapOf(
+            "none" to "33/33; 5 (0) | 72/72; 5 (0) | 51/51; 5 (0) | 11/11; 2 (0) | 163/163; 5 (0)",
+            "piriformis_syndrome" to "33/20; 5 (0) | 72/45; 5 (0) | 51/24; 5 (2) | 11/3; 2 (0) | 163/84; 5 (0)",
+            "gluteal_tendinopathy" to "33/24; 5 (0) | 72/56; 5 (0) | 51/25; 5 (2) | 11/8; 2 (0) | 163/103; 5 (0)",
+            "lumbar_radiculopathy" to "33/31; 5 (0) | 72/64; 5 (0) | 51/24; 5 (2) | 11/11; 2 (0) | 163/112; 5 (0)",
+            "nonspecific_low_back_pain" to "33/31; 5 (0) | 72/69; 5 (0) | 51/25; 5 (2) | 11/11; 2 (0) | 163/119; 5 (0)",
+            "rotator_cuff_related_shoulder_pain" to "33/33; 5 (0) | 72/72; 5 (0) | 51/25; 5 (2) | 11/11; 2 (0) | 163/123; 5 (0)",
+            "lateral_elbow_tendinopathy" to "33/33; 5 (0) | 72/59; 5 (0) | 51/15; 5 (3) | 11/11; 2 (0) | 163/93; 5 (0)",
+            "carpal_tunnel_syndrome" to "33/24; 5 (3) | 72/60; 5 (0) | 51/49; 5 (0) | 11/9; 2 (0) | 163/136; 5 (0)",
+            "patellofemoral_pain" to "33/29; 5 (0) | 72/59; 5 (0) | 51/44; 5 (0) | 11/10; 2 (0) | 163/140; 5 (0)",
+            "SHOULDER_SENSITIVE" to "33/33; 5 (0) | 72/72; 5 (0) | 51/25; 5 (2) | 11/11; 2 (0) | 163/123; 5 (0)",
+            "ELBOW_SENSITIVE" to "33/33; 5 (0) | 72/59; 5 (0) | 51/15; 5 (3) | 11/11; 2 (0) | 163/93; 5 (0)",
+            "WRIST_SENSITIVE" to "33/24; 5 (3) | 72/60; 5 (0) | 51/49; 5 (0) | 11/9; 2 (0) | 163/136; 5 (0)",
+            "LOWER_BACK_SENSITIVE" to "33/33; 5 (0) | 72/71; 5 (0) | 51/25; 5 (2) | 11/11; 2 (0) | 163/121; 5 (0)",
+            "HIP_SENSITIVE" to "33/28; 5 (0) | 72/60; 5 (0) | 51/25; 5 (2) | 11/10; 2 (0) | 163/109; 5 (0)",
+            "KNEE_SENSITIVE" to "33/29; 5 (0) | 72/59; 5 (0) | 51/44; 5 (0) | 11/10; 2 (0) | 163/140; 5 (0)"
         )
 
         /** Section 4 minus the dropped tags. */

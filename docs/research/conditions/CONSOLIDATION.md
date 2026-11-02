@@ -81,6 +81,12 @@ These rules refine the definitions above for authoring:
 - **END_RANGE_HIP_EXTENSION:** active or loaded work only, not stretches.
 - **HEAVY_EXTERNAL_LOAD:** barbell, Smith machine, landmine and machine exercises. The catalog holds no load data, so this is equipment standing in for load. Dumbbell, cable and band work do not get it, even though a heavy dumbbell is heavy.
 - **SINGLE_LEG_HIP_CONTROL:** includes split squats and alternating single-leg work. Lateral band walks do not count.
+- **END_RANGE_HIP_EXTENSION:** includes loaded bridges and thrusts. Bodyweight bridges do not get it.
+- **HAND_GRIP_LOAD:** hanging from a bar, including assisted machines, and ballistic or heavy one-hand holds. Pulldowns do not count.
+- **RESISTED_HIP_EXTERNAL_ROTATION:** includes banded bridges.
+- **FOREARM_TWIST_OR_PRONATED_LIFT:** pronated pulls and raises, including rear-delt flies.
+- **HAMSTRING_LENGTH_LOAD:** a sustained forward trunk bend includes supported single-arm rows and pike push-ups.
+- **END_RANGE_SPINE_POSITION:** includes superman and superman hold.
 
 ## 3. Condition restrictions
 
