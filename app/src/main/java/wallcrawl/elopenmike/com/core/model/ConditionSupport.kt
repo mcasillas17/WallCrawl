@@ -103,14 +103,35 @@ data class ConditionExerciseIdentity(val exerciseId: String, val contentSha256: 
                     source.attribution.source?.let { listOf(it.name, it.url, it.license, it.licenseUrl, it.changes) }) },
                 "programming" to exercise.programming?.let { listOf(it.requiredEquipmentCombinations,
                     it.movementPattern.name, it.difficulty.name, it.mechanics.name, it.recommendedRepRange?.let { range -> listOf(range.min, range.max) },
-                    it.fatigueScore, it.progressionType.name, it.alternativeExerciseIds, it.coachingSummary) }
+                    it.fatigueScore, it.progressionType.name, it.alternativeExerciseIds, it.coachingSummary) },
+                "reviewedMetadata" to exercise.reviewedMetadata?.let { metadata -> mapOf(
+                    "reviewState" to metadata.reviewState.name,
+                    "directPrimaryMuscle" to metadata.directPrimaryMuscle,
+                    "descriptiveSecondaryMuscles" to metadata.descriptiveSecondaryMuscles.sorted(),
+                    "movementPattern" to metadata.movementPattern.name, "complexity" to metadata.complexity.name,
+                    "progressionFamily" to metadata.progressionFamily, "prescriptionShape" to metadata.prescriptionShape.name,
+                    "approvedRegressions" to metadata.approvedRegressions.map { listOf(it.exerciseId, it.rationale) },
+                    "approvedSubstitutions" to metadata.approvedSubstitutions.map { listOf(it.exerciseId, it.rationale) },
+                    "capabilityRequirements" to metadata.capabilityRequirements.map { it.name }.sorted(),
+                    "supportRequirement" to metadata.supportRequirement.name, "impactLevel" to metadata.impactLevel.name,
+                    "equipmentAlternatives" to metadata.equipmentAlternatives.map { it.sorted() },
+                    "clearedTrainingConstraints" to metadata.clearedTrainingConstraints.map { it.name }.sorted(),
+                    "provenance" to metadata.provenance.let { listOf(it.reviewerRole, it.rationaleOrSource,
+                        it.reviewedAtEpochMillis, it.schemaVersion, it.policyVersion) },
+                    "aiReviewProvenance" to metadata.aiReviewProvenance?.let { listOf(it.reviewerModelId,
+                        it.reviewedAtEpochMillis, it.reviewedContentId, it.reviewedContentSha256, it.sourceReferences,
+                        it.decisionRationale, it.limitations, it.schemaVersion, it.policyVersion) }
+                ) }
             )), exercise.type, artworkSha256
         )
     }
 }
 
 data class ConditionSchedule(val sessionsPerWeek: Int, val minimumHoursBetweenSessions: Int, val instructions: ConditionText) {
-    init { require(sessionsPerWeek in 1..7 && minimumHoursBetweenSessions in 0..168) }
+    init {
+        require(sessionsPerWeek in 1..7 && minimumHoursBetweenSessions in 0..168)
+        require(sessionsPerWeek * minimumHoursBetweenSessions <= 168) { "Recurring schedule intervals must fit the full weekly cycle." }
+    }
 }
 
 /** All response choices are authored tokens; no symptom interpretation or default threshold. */

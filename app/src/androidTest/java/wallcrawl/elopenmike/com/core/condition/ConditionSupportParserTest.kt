@@ -48,6 +48,51 @@ class ConditionSupportParserTest {
         assertThat(rule.schedule!!.sessionsPerWeek).isEqualTo(2)
         assertThat(rule.allowOrdinaryProgression).isFalse()
     }
+    @Test fun resigningUnchangedFixturePreservesTheReviewedDigest() {
+        val root = JSONObject(fixture())
+        val review = root.getJSONArray("records").getJSONObject(0).getJSONObject("review")
+        val original = review.getString("reviewedContentSha256")
+        rebindReview(root)
+        assertThat(review.getString("reviewedContentSha256")).isEqualTo(original)
+        assertThat(parse(root.toString()).records).hasSize(1)
+    }
+    @Test fun changedReviewedRequirementsRejectThePreviouslyBoundRelease() {
+        val metadata = fictionalReviewedMetadata()
+        val originalExercise = fictionalExercise.copy(reviewedMetadata = metadata)
+        val originalIdentity = ConditionExerciseIdentity.from(originalExercise, "b".repeat(64))
+        val root = JSONObject(fixture())
+        val content = root.getJSONArray("records").getJSONObject(0).getJSONObject("content")
+        content.getJSONArray("cases").getJSONObject(0).getJSONArray("rules").getJSONObject(0)
+            .getJSONObject("exerciseIdentity").put("contentSha256", originalIdentity.contentSha256)
+        rebindReview(root)
+        val released = root.toString()
+        assertThat(ConditionSupportParser(mapOf(originalExercise.id to originalIdentity)).parse(StringReader(released)).records).hasSize(1)
+        listOf(
+            metadata.copy(equipmentAlternatives = listOf(listOf(StandardEquipment.WALL))),
+            metadata.copy(supportRequirement = SupportRequirement.UNSUPPORTED),
+            metadata.copy(impactLevel = ImpactLevel.HIGH),
+            metadata.copy(provenance = metadata.provenance.copy(policyVersion = 2)),
+            metadata.copy(aiReviewProvenance = metadata.aiReviewProvenance!!.copy(reviewedContentSha256 = "c".repeat(64)))
+        ).forEach { changed ->
+            val actual = ConditionExerciseIdentity.from(originalExercise.copy(reviewedMetadata = changed), "b".repeat(64))
+            assertThrows(ConditionSupportFormatException::class.java) {
+                ConditionSupportParser(mapOf(actual.exerciseId to actual)).parse(StringReader(released))
+            }
+        }
+    }
+    @Test fun correctlyReboundSupportiveScheduleMustFitItsWeeklyCycle() {
+        val exercise = fictionalExercise.copy(type = ExerciseType.DURATION)
+        val parser = ConditionSupportParser(mapOf(exercise.id to ConditionExerciseIdentity.from(exercise, "b".repeat(64))))
+        val root = JSONObject(instrumentation.context.assets.open("conditions/fictional-supportive.json").bufferedReader().use { it.readText() })
+        val schedule = root.getJSONArray("records").getJSONObject(0).getJSONObject("content")
+            .getJSONArray("cases").getJSONObject(0).getJSONArray("rules").getJSONObject(0).getJSONObject("schedule")
+        schedule.put("sessionsPerWeek", 7).put("minimumHoursBetweenSessions", 24)
+        rebindReview(root)
+        assertThat(parser.parse(StringReader(root.toString())).records).hasSize(1)
+        schedule.put("minimumHoursBetweenSessions", 168)
+        rebindReview(root)
+        assertThrows(ConditionSupportFormatException::class.java) { parser.parse(StringReader(root.toString())) }
+    }
     @Test fun immutableParsedContractsCompareStructurallyAcrossLoads() {
         val first = parse(fixture()); val second = parse(fixture())
         assertThat(first).isEqualTo(second)
@@ -122,18 +167,32 @@ class ConditionSupportParserTest {
     // Independent fixture canonicalizer allows each malformed contract to reach its own validator.
     private fun fixtureCanonical(value: Any?): String = when (value) {
         null, JSONObject.NULL -> "null"
-        is JSONObject -> value.keys().asSequence().sorted().joinToString(",", "{", "}") { JSONObject.quote(it) + ":" + fixtureCanonical(value.get(it)) }
+        is JSONObject -> value.keys().asSequence().sorted().joinToString(",", "{", "}") { JSONObject.quote(it).replace("\\/", "/") + ":" + fixtureCanonical(value.get(it)) }
         is JSONArray -> (0 until value.length()).joinToString(",", "[", "]") { fixtureCanonical(value.get(it)) }
         is Number -> BigDecimal(value.toString()).stripTrailingZeros().toPlainString()
         is Boolean -> value.toString()
-        else -> JSONObject.quote(value.toString())
+        else -> JSONObject.quote(value.toString()).replace("\\/", "/")
     }
     private fun fixtureDigest(content: JSONObject): String = MessageDigest.getInstance("SHA-256").digest(fixtureCanonical(content).toByteArray(Charsets.UTF_8)).joinToString("") { "%02x".format(it) }
+    private fun fictionalReviewedMetadata() = ReviewedExerciseMetadata(
+        reviewState = ReviewState.AI_ACCEPTED, directPrimaryMuscle = "Core", descriptiveSecondaryMuscles = emptySet(),
+        movementPattern = MovementPattern.CORE, complexity = ComplexityTier.FOUNDATIONAL, progressionFamily = "fictional-family",
+        prescriptionShape = PrescriptionShape.WEIGHT_REPS, approvedRegressions = emptyList(), approvedSubstitutions = emptyList(),
+        capabilityRequirements = emptySet(), supportRequirement = SupportRequirement.SUPPORTED, impactLevel = ImpactLevel.NONE,
+        equipmentAlternatives = listOf(listOf(StandardEquipment.BODYWEIGHT)), clearedTrainingConstraints = emptySet(),
+        provenance = ReviewProvenance(null, "FICTIONAL TEST ONLY — NO CLINICAL APPROVAL", null, 1, 1),
+        aiReviewProvenance = AiReviewProvenance("FICTIONAL TEST MODEL", 1L, "fictional-exercise", "a".repeat(64),
+            listOf("https://example.invalid/fictional-review"), "FICTIONAL TEST ONLY", "NOT CLINICAL APPROVAL", 1, 1)
+    )
+    private fun rebindReview(root: JSONObject) {
+        val record = root.getJSONArray("records").getJSONObject(0)
+        record.getJSONObject("review").put("reviewedContentSha256", fixtureDigest(record.getJSONObject("content")))
+    }
     private fun mutateContent(change: (JSONObject) -> Unit) {
         val root = JSONObject(fixture())
         val record = root.getJSONArray("records").getJSONObject(0)
         change(record.getJSONObject("content"))
-        record.getJSONObject("review").put("reviewedContentSha256", fixtureDigest(record.getJSONObject("content")))
+        rebindReview(root)
         reject(root.toString())
     }
 }

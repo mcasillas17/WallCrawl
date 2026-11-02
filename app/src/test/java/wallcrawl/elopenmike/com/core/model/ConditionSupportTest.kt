@@ -78,6 +78,43 @@ class ConditionSupportTest {
         assertThrows(IllegalArgumentException::class.java) { ConditionSchedule(2, -1, ConditionText("Test", "Prueba")) }
     }
 
+    @Test fun recurringScheduleIntervalsMustFitTheWholeWeeklyCycle() {
+        val instructions = ConditionText("FICTIONAL schedule", "Programa FICTICIO")
+        listOf(1 to 168, 3 to 56, 7 to 24, 7 to 0).forEach { (frequency, spacing) ->
+            assertThat(ConditionSchedule(frequency, spacing, instructions).minimumHoursBetweenSessions).isEqualTo(spacing)
+        }
+        listOf(7 to 168, 7 to 25, 2 to 85).forEach { (frequency, spacing) ->
+            assertThrows(IllegalArgumentException::class.java) { ConditionSchedule(frequency, spacing, instructions) }
+        }
+    }
+
+    @Test fun reviewedExecutionRequirementsChangeConditionContentIdentity() {
+        val metadata = fictionalReviewedMetadata()
+        val exercise = Exercise("fictional-exercise", name = "FICTIONAL EXERCISE", primaryMuscles = listOf("Core"), type = ExerciseType.WEIGHT_REPS, reviewedMetadata = metadata)
+        val original = ConditionExerciseIdentity.from(exercise, "b".repeat(64)).contentSha256
+        listOf(
+            metadata.copy(equipmentAlternatives = listOf(listOf(StandardEquipment.WALL))),
+            metadata.copy(supportRequirement = SupportRequirement.UNSUPPORTED),
+            metadata.copy(impactLevel = ImpactLevel.HIGH)
+        ).forEach { changed ->
+            assertThat(ConditionExerciseIdentity.from(exercise.copy(reviewedMetadata = changed), "b".repeat(64)).contentSha256).isNotEqualTo(original)
+        }
+    }
+
+    @Test fun reviewedMetadataVersionsAndContentBindingChangeConditionIdentity() {
+        val metadata = fictionalReviewedMetadata()
+        val exercise = Exercise("fictional-exercise", name = "FICTIONAL EXERCISE", primaryMuscles = listOf("Core"), type = ExerciseType.WEIGHT_REPS, reviewedMetadata = metadata)
+        val original = ConditionExerciseIdentity.from(exercise, "b".repeat(64)).contentSha256
+        listOf(
+            metadata.copy(provenance = metadata.provenance.copy(schemaVersion = 2)),
+            metadata.copy(provenance = metadata.provenance.copy(policyVersion = 2)),
+            metadata.copy(aiReviewProvenance = metadata.aiReviewProvenance!!.copy(reviewedContentSha256 = "c".repeat(64))),
+            metadata.copy(aiReviewProvenance = metadata.aiReviewProvenance!!.copy(policyVersion = 2))
+        ).forEach { changed ->
+            assertThat(ConditionExerciseIdentity.from(exercise.copy(reviewedMetadata = changed), "b".repeat(64)).contentSha256).isNotEqualTo(original)
+        }
+    }
+
     @Test fun sessionDigestIsCanonicalAndChangesWhenUnknownAnswerBecomesKnown() {
         fun context(answers: Map<String, String?>) = SessionConditionContext(
             formatVersion = 1, policyVersion = 1,
@@ -108,4 +145,15 @@ class ConditionSupportTest {
             ExerciseAttribution("FICTIONAL CREATOR", "https://example.invalid", "FICTIONAL LICENSE", "https://example.invalid/license"))
         assertThat(identity.contentSha256).isNotEqualTo(ConditionExerciseIdentity.from(exercise.copy(source = source), "b".repeat(64)).contentSha256)
     }
+
+    private fun fictionalReviewedMetadata() = ReviewedExerciseMetadata(
+        reviewState = ReviewState.AI_ACCEPTED, directPrimaryMuscle = "Core", descriptiveSecondaryMuscles = emptySet(),
+        movementPattern = MovementPattern.CORE, complexity = ComplexityTier.FOUNDATIONAL, progressionFamily = "fictional-family",
+        prescriptionShape = PrescriptionShape.WEIGHT_REPS, approvedRegressions = emptyList(), approvedSubstitutions = emptyList(),
+        capabilityRequirements = emptySet(), supportRequirement = SupportRequirement.SUPPORTED, impactLevel = ImpactLevel.NONE,
+        equipmentAlternatives = listOf(listOf(StandardEquipment.BODYWEIGHT)), clearedTrainingConstraints = emptySet(),
+        provenance = ReviewProvenance(null, "FICTIONAL TEST ONLY — NO CLINICAL APPROVAL", null, 1, 1),
+        aiReviewProvenance = AiReviewProvenance("FICTIONAL TEST MODEL", 1L, "fictional-exercise", "a".repeat(64),
+            listOf("https://example.invalid/fictional-review"), "FICTIONAL TEST ONLY", "NOT CLINICAL APPROVAL", 1, 1)
+    )
 }
