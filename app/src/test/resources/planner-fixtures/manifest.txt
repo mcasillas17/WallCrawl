@@ -12,3 +12,6 @@ planner-fixtures/reviewed-enabled-no-approved.json
 planner-fixtures/reviewed-enabled-uncleared-joint-constraint.json
 planner-fixtures/reviewed-enabled-cleared-joint-constraints.json
 planner-fixtures/concurrent-activity.json
+planner-fixtures/condition-piriformis.json
+planner-fixtures/joint-label-hip.json
+planner-fixtures/condition-removes-all.json

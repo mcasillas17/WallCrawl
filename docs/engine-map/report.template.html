@@ -114,20 +114,20 @@ blockquote cite{display:block;font:400 13px var(--mono);color:var(--muted);margi
 <div class="layout">
 <nav class="toc" aria-label="Contents">
   <b>Engine map</b>
-  <a href="#summary">Summary</a><a href="#map">The pipeline</a><a href="#gate">Legality gate</a><a href="#select">Selection</a><a href="#dose">Dose</a><a href="#validate">Validation</a><a href="#trace">A hip-sensitive trace</a><a href="#seams">Injury seams</a><a href="#bounds">Recorded limits</a><a href="#refs">Code references</a>
+  <a href="#summary">Summary</a><a href="#map">The pipeline</a><a href="#gate">Legality gate</a><a href="#select">Selection</a><a href="#dose">Dose</a><a href="#validate">Validation</a><a href="#trace">A piriformis trace</a><a href="#seams">Condition seams</a><a href="#bounds">Recorded limits</a><a href="#refs">Code references</a>
   <button id="theme" type="button">Switch theme</button>
 </nav>
 <main>
 <header class="top" id="summary">
-  <p class="eyebrow">WallCrawl · mapped at da8b24b51 · 2026-11-01</p>
+  <p class="eyebrow">WallCrawl · mapped at 0781ad59d · 2026-11-01</p>
   <h1>How a workout gets decided</h1>
   <p class="lede">WallCrawl has no model runtime. A pure Kotlin pipeline turns a stored profile, a bundled catalog and bounded local history into one session. Hard rules decide what is legal, comparators decide what is chosen, and a validator rejects anything that breaks the contract. The same inputs and generation index always give the same plan.</p>
 </header>
 <div class="kpis">
-  <div class="kpi"><b>302</b><span>exercises in the catalog</span></div>
+  <div class="kpi"><b>309</b><span>exercises: 302 upstream, 7 owned</span></div>
   <div class="kpi"><b>182</b><span>AI_ACCEPTED, so plannable</span></div>
   <div class="kpi warn"><b>0</b><span>human APPROVED records</span></div>
-  <div class="kpi warn"><b>0</b><span>records cleared for any joint</span></div>
+  <div class="kpi"><b>8</b><span>conditions, 21 movement demands</span></div>
   <div class="kpi"><b>6</b><span>hard legality stages</span></div>
   <div class="kpi"><b>1</b><span>repair pass, sets only</span></div>
 </div>
@@ -135,7 +135,7 @@ blockquote cite{display:block;font:400 13px var(--mono);color:var(--muted);margi
 <section id="map">
   <p class="eyebrow">The pipeline</p>
   <h2>One context in, one frozen session out</h2>
-  <p>Step through the chapters to follow a recommendation. The two nodes tagged <code>SEAM</code> are where health constraints touch the engine today.</p>
+  <p>Step through the chapters to follow a recommendation. The nodes tagged <code>OVERLAY</code> and <code>BLOCK</code> are where reported conditions touch the engine.</p>
   <div class="chapters" id="chapters" role="group" aria-label="Pipeline chapters"></div>
   <p id="narr"></p>
   <div class="scroll"><!-- ARCHFLOW_HERO --></div>
@@ -152,7 +152,7 @@ blockquote cite{display:block;font:400 13px var(--mono);color:var(--muted);margi
       <tr><td>2</td><td>No complete reviewed equipment alternative or fixed-anchor setup</td><td><code>MISSING_EQUIPMENT</code></td><td><code>EQUIPMENT_REMOVED_ALL</code></td></tr>
       <tr><td>3</td><td>Metadata absent or not accepted</td><td><code>MISSING_APPROVED_METADATA</code></td><td><code>NO_APPROVED_METADATA</code></td></tr>
       <tr><td>4</td><td>A required movement capability is marked <code>AVOID</code></td><td><code>CAPABILITY_AVOID</code></td><td><code>CAPABILITIES_REMOVED_ALL</code></td></tr>
-      <tr class="hot"><td>5</td><td>A selected joint sensitivity is not in <code>clearedTrainingConstraints</code>, or <code>LOW_IMPACT_ONLY</code> meets high impact</td><td><code>UNMAPPED_TRAINING_CONSTRAINT</code>, <code>HIGH_IMPACT_DISALLOWED</code></td><td><code>TRAINING_CONSTRAINTS_REMOVED_ALL</code></td></tr>
+      <tr class="hot"><td>5</td><td>A demand of the exercise is one the reported conditions say to avoid, the exercise has no overlay entry, or <code>LOW_IMPACT_ONLY</code> meets high impact</td><td><code>CONDITION_RESTRICTED_DEMAND</code>, <code>CONDITION_DEMANDS_UNREVIEWED</code>, <code>HIGH_IMPACT_DISALLOWED</code></td><td><code>CONDITIONS_REMOVED_ALL</code> (or <code>CONDITION_GUIDANCE_UNAVAILABLE</code>)</td></tr>
       <tr><td>6</td><td><code>ADVANCED</code> work without demonstrated family history or a legal supported regression</td><td><code>ADVANCED_WHILE_*</code></td><td><code>CALIBRATION_COMPLEXITY_REMOVED_ALL</code></td></tr>
     </tbody>
   </table></div>
@@ -164,10 +164,10 @@ blockquote cite{display:block;font:400 13px var(--mono);color:var(--muted);margi
   <h2>Selection is a sorted list</h2>
   <p>The planner picks a split from high-priority muscles it can actually fill, falling back to the default rotation. The rotation advances with the completed-workout count, or the program slot. Session length sets the slot count: up to 35 minutes gives 3 exercises, up to 55 gives 5, and longer gives 6. Up to 3 slots are compounds, and at least one slot always stays an accessory.</p>
   <div class="ladders">
-    <div><h3>Compound order</h3><ol class="ladder"><li>Trains the split as its own purpose</li><li>No unresolved capability penalty</li><li>Supported-regression preference</li><li>No above-experience penalty</li><li>Frequency and recency preference</li><li>Higher legacy fatigue ordinal</li><li>Stable exercise ID</li></ol></div>
-    <div><h3>Accessory order</h3><ol class="ladder"><li>Trains the split as its own purpose</li><li>Isolation before compound</li><li>Has programming metadata</li><li>No unresolved capability penalty</li><li>Supported-regression preference</li><li>No above-experience penalty</li><li>Frequency and recency, fatigue, then ID</li></ol></div>
+    <div><h3>Compound order</h3><ol class="ladder"><li>Trains the split as its own purpose</li><li>No modify demand</li><li>No unresolved capability penalty</li><li>Supported-regression preference</li><li>No above-experience penalty</li><li>Frequency and recency preference</li><li>Higher legacy fatigue ordinal</li><li>Stable exercise ID</li></ol></div>
+    <div><h3>Accessory order</h3><ol class="ladder"><li>Trains the split as its own purpose</li><li>No modify demand</li><li>Isolation before compound</li><li>Has programming metadata</li><li>No unresolved capability penalty</li><li>Supported-regression preference</li><li>No above-experience penalty</li><li>Frequency and recency, fatigue, then ID</li></ol></div>
   </div>
-  <p>Compounds also spread across movement patterns, one per pattern first, with a fallback to repeats. <code>isStrengthWork()</code> returns false for all 14 catalog stretches, so they can never enter a generated session.</p>
+  <p>Compounds also spread across movement patterns, one per pattern first, with a fallback to repeats. <code>isStrengthWork()</code> returns false for all 14 catalog stretches, so they can never enter the compound or accessory slots. A modify demand is a yes or no, never a count, and the exercise still appears when nothing better fits, with a cue. Stretches reach a session only through the separate mobility block, which holds at most three items from the reported conditions&#39; routines, rotates with the split seed and never fails a plan.</p>
 </section>
 
 <section class="dose" id="dose">
@@ -175,7 +175,7 @@ blockquote cite{display:block;font:400 13px var(--mono);color:var(--muted);margi
   <h2>Dose can only shrink</h2>
   <div class="split">
     <div>
-      <p><code>DefaultExercisePrescriptionFactory</code> builds a base prescription and applies progression or an accepted deload. <code>StateBasedTrainingPolicy</code> then caps it and re-checks the capability and training-constraint rules, so a gap in the gate cannot let a restriction through. It never invents a load: with no history or confirmed baseline, the load stays null.</p>
+      <p><code>DefaultExercisePrescriptionFactory</code> builds a base prescription and applies progression or an accepted deload. <code>StateBasedTrainingPolicy</code> then caps it and re-checks the capability and condition rules, so a gap in the gate cannot let a restriction through. It never invents a load: with no history or confirmed baseline, the load stays null.</p>
       <div class="table-wrap"><table>
         <caption>The states production derives today, under the default V2 policy. BUILD and DEVELOP are defined at 12 weekly and 4 per exercise, but are not currently derived.</caption><thead><tr><th>Derived state</th><th>Weekly direct sets</th><th>Sets per exercise</th><th>Effort</th></tr></thead>
         <tbody><tr><td><code>UNCALIBRATED</code></td><td>6</td><td>2</td><td>2–4 RIR</td></tr><tr><td><code>RETURNING</code></td><td>6</td><td>2</td><td>2–4 RIR</td></tr><tr><td><code>HOLD</code></td><td>6</td><td>2</td><td>2–4 RIR</td></tr></tbody>
@@ -206,35 +206,36 @@ blockquote cite{display:block;font:400 13px var(--mono);color:var(--muted);margi
 
 <section class="trace" id="trace">
   <p class="eyebrow">Worked trace</p>
-  <h2>What happens today if you tick “hip”</h2>
-  <p>This is the path a piriformis diagnosis would most plausibly take through the current app, using the closest available label.</p>
-<div class="term"><span class="d">// profile.trainingConstraints = {HIP_SENSITIVE}, full gym</span>
-<span class="k">ExerciseEligibilityPolicy</span>  stages 1-4 leave the accepted candidates
-<span class="k">clearsJointConstraintsOf</span>   HIP_SENSITIVE not in clearedTrainingConstraints <span class="d">// for all 182</span>
-<span class="k">aggregateFailure</span>           <span class="g">TRAINING_CONSTRAINTS_REMOVED_ALL</span>
-<span class="k">FakeWorkoutPlanner</span>         throws REVIEWED_ELIGIBILITY_NO_CANDIDATES
-<span class="k">TodayViewModel</span>             TodayError.REVIEWED_CONSTRAINTS_REMOVED_ALL
-<span class="k">Result</span>                     no automatic workout, of any split, including upper body</div>
-  <p>The refusal is honest and the onboarding copy discloses it, but the constraint currently has only one effect: it switches automatic planning off. Manual templates and the library still work.</p>
+  <h2>What happens if you report piriformis syndrome</h2>
+  <p>A reported condition is chosen from a fixed list; the app asks no other medical question. This trace follows the shipped overlay.</p>
+<div class="term"><span class="d">// profile.reportedConditions = {piriformis_syndrome}, full gym</span>
+<span class="k">restrictionsFor</span>             <span class="g">Active(avoid = {}, modify = 10 demands)</span>
+<span class="k">ExerciseEligibilityPolicy</span>  <span class="g">decisionFor(id)</span> is null for reviewed exercises <span class="d">// nothing avoided</span>
+                           <span class="g">CONDITION_DEMANDS_UNREVIEWED</span> only for an exercise with no overlay entry
+<span class="k">FakeWorkoutPlanner</span>         a modify exercise ranks after a clean one, and still appears if nothing fits
+<span class="k">MobilityBlockPolicy</span>        figure-four, lying stretch, glute bridge, rotated by the seed, at most 3
+<span class="k">ProgramValidator</span>           checks the block; a violation is typed and not repairable
+<span class="k">Result</span>                     a normal plan, plus a block labelled as general information</div>
+  <p>Nothing here says the plan is safe for the condition. A condition with an avoid demand removes only the exercises carrying it, and a profile whose avoid demands remove every candidate gets the typed <code>CONDITIONS_REMOVED_ALL</code> refusal. No shipped condition does. A joint label such as <code>HIP_SENSITIVE</code> now only ranks exercises lower, and never switches automatic planning off.</p>
 </section>
 
 <section class="seams" id="seams">
-  <p class="eyebrow">Injury seams</p>
-  <h2>Where health constraints would plug in</h2>
-  <div class="seam"><div><h3>Profile</h3><p><code>TrainingConstraint</code> has six joint labels plus <code>LOW_IMPACT_ONLY</code>. There is no condition, region, phase or end date.</p></div><div><span class="todo">Gap</span><p>A condition model needs Room schema 17, an archive format bump and a place in the context digest.</p></div></div>
-  <div class="seam"><div><h3>Exercise metadata</h3><p><code>clearedTrainingConstraints</code> is enforced in the importer, parser, gate and policy, and every record leaves it empty.</p></div><div><span class="todo">Gap</span><p>Content, not code. The contract reserves filling it for the human sign-off pass.</p></div></div>
-  <div class="seam"><div><h3>Session shape</h3><p>A generated session has compound and accessory slots only, and stretches are excluded from both.</p></div><div><span class="todo">Gap</span><p>No warm-up, mobility or rehab block exists. Prescribed stretches need a new slot type that stays out of the strength dose ledger and focus rules.</p></div></div>
-  <div class="seam"><div><h3>Catalog</h3><p>There are 14 stretches, and none is a piriformis or figure-four stretch. Glute work such as <code>clamshell</code> and <code>glute-bridge</code> already exists.</p></div><div><span class="todo">Gap</span><p>New entries need illustrations, Spanish overlay text and provenance. The upstream catalog is pinned, so additions need an owned source.</p></div></div>
-  <div class="seam"><div><h3>Feedback</h3><p><code>PAIN_STOP</code> is recorded per set. Like any stopped set, it holds progression and disqualifies capability evidence.</p></div><div><span class="todo">Gap</span><p>The planner does not distinguish pain from any other stop reason. Using it as a signal must stay a user-facing offer, not an inference.</p></div></div>
-  <div class="seam"><div><h3>Manual templates</h3><p>Templates bypass the gate on purpose and warn only about equipment.</p></div><div><span class="todo">Gap</span><p>A declared condition would need its own warning here, without hiding exercises.</p></div></div>
+  <p class="eyebrow">Condition seams</p>
+  <h2>Where conditions plug in, and what remains open</h2>
+  <div class="seam"><div><h3>Profile</h3><p><code>reportedConditions</code> is a set of ids from the shipped list, stored in Room schema 17 and archive format 7, and part of the context digest.</p></div><div><span class="todo">Open</span><p>Conditions are health-related information. They stay on the device under the backup exclusions and appear in a user-chosen export.</p></div></div>
+  <div class="seam"><div><h3>Overlay</h3><p>Bundled <code>condition-guidance.json</code> holds 21 categorical demands, eight conditions and joint-label demands, with AI review provenance. A load failure fails closed.</p></div><div><span class="todo">Open</span><p>A qualified clinician must review all overlay content, including red-flag tiers and owned setup wording, before any public release.</p></div></div>
+  <div class="seam"><div><h3>Session shape</h3><p>The mobility block is separate from compound and accessory slots. Entries carry the <code>MOBILITY</code> role and earn no ledger, scheduling, progression, focus or analytics credit.</p></div><div><span class="todo">Open</span><p>Evidence is weak overall: 654 linked sources, most read as abstract only. The app makes no benefit claim.</p></div></div>
+  <div class="seam"><div><h3>Catalog</h3><p>Seven owned mobility exercises join the 302 upstream entries, 309 in all, under MIT as original work.</p></div><div><span class="todo">Open</span><p>An illustrator must redraw the figure-four, lying piriformis and side-lying hold art, and the owner must confirm the MIT wording.</p></div></div>
+  <div class="seam"><div><h3>Feedback</h3><p>After a <code>PAIN_STOP</code> the logger offers to exclude that exercise. Profile undoes it. The planner never reads <code>PAIN_STOP</code> itself.</p></div><div><span class="todo">Open</span><p>Nothing is inferred from repeated stops, by design.</p></div></div>
+  <div class="seam"><div><h3>Manual templates</h3><p>Templates still allow every exercise and warn beside an avoid, modify or unreviewed one. Nothing is hidden.</p></div><div><span class="todo">Open</span><p>Scaling past eight conditions is a separate decision; the pilot criterion failed narrowly.</p></div></div>
 </section>
 
 <section id="bounds">
   <p class="eyebrow">Recorded limits</p>
   <h2>Boundaries this feature has to change or respect</h2>
-  <blockquote>Exclude medical, injury-prevention, diagnostic, and unsupported performance claims.<cite>ROADMAP.md:758, Package 11</cite></blockquote>
+  <blockquote>Exclude medical, injury-prevention, diagnostic, and unsupported performance claims.<cite>ROADMAP.md, Package 11 (claims exclusion kept; condition content allowed)</cite></blockquote>
   <blockquote>A clearance is a reviewer's product judgement about a self-reported label; it is not a diagnosis, and reviewer agreement is not clinical validation.<cite>docs/reviewed-capability-eligibility.md:122-124</cite></blockquote>
-  <p><code>SafetyCopyTest</code> fails the build on injury, prevention, healing and joint-protection vocabulary in either language. The evidence review also rules out numeric joint-stress and injury-risk scores. A rehab feature is a product decision that reopens these rules, so it should be recorded in the roadmap first.</p>
+  <p><code>SafetyCopyTest</code> fails the build on injury, prevention, healing and joint-protection vocabulary in either language. The evidence review also rules out numeric joint-stress and injury-risk scores. The 2026-11-01 decision in <code>ROADMAP.md</code> keeps the claims exclusion and allows condition names and condition-linked routines as general information.</p>
 </section>
 
 <section class="refs" id="refs">
@@ -245,7 +246,8 @@ blockquote cite{display:block;font:400 13px var(--mono);color:var(--muted);margi
     <tbody>
       <tr><td>core/ai/WorkoutGenerationContextBuilder.kt:100</td><td>Bounded context assembly</td></tr>
       <tr><td>core/ai/ExerciseEligibilityPolicy.kt:30</td><td>Six-stage legality decisions</td></tr>
-      <tr><td>core/model/Exercise.kt:200</td><td>Shared joint and impact predicates</td></tr>
+      <tr><td>core/conditions/ConditionRestrictions.kt:37</td><td>The shared predicate: avoid, unreviewed and modify</td></tr>
+      <tr><td>core/conditions/MobilityBlockPolicy.kt:23</td><td>Mobility block selection</td></tr>
       <tr><td>core/ai/FakeWorkoutPlanner.kt:42</td><td>Split choice, selection and ranking reasons</td></tr>
       <tr><td>core/ai/WorkoutFocus.kt:92</td><td><code>isStrengthWork()</code>, which excludes stretches</td></tr>
       <tr><td>core/ai/DefaultExercisePrescriptionFactory.kt:74</td><td>Base prescription, progression and deload</td></tr>
@@ -270,11 +272,11 @@ blockquote cite{display:block;font:400 13px var(--mono);color:var(--muted);margi
   });
   var narr={
     c1:'The builder reads the profile, the full catalog and bounded history: at most eight recent completed sessions, plus a separate 14-date scheduling range. It derives capability evidence and the program state with its weekly ledger.',
-    c2:'Every exercise passes through six hard stages. acceptedMetadata() is the single review gate. A selected joint sensitivity must be explicitly cleared per exercise, and today none is.',
-    c3:'The planner chooses a split, sorts the legal candidates with two comparators, then builds a prescription per pick. The state policy can only reduce sets.',
+    c2:'Every exercise passes through six hard stages. acceptedMetadata() is the single review gate. One shared predicate reads the condition overlay: avoid demands exclude, an exercise without an overlay entry is excluded as unreviewed, and a joint label only ranks lower.',
+    c3:'The planner chooses a split, sorts the legal candidates with two comparators (a modify demand ranks after a clean exercise), then builds a prescription per pick. The state policy can only reduce sets. A mobility block of at most three routine items is chosen separately.',
     c4:'The proposal is checked as a whole and returns typed violations. An exceeded allowance alone earns one repair pass that reduces sets and pauses any pending progression, then the plan is re-evaluated once.',
     c5:'Today publishes the plan or a typed error. Start rebuilds the context, compares the digest, revalidates with repair off and writes one frozen session atomically.',
-    c6:'Sets log typed outcomes, and completed work becomes immutable history that the next context reads. PAIN_STOP is stored, but only acts like any other stop.'
+    c6:'Sets log typed outcomes, and completed work becomes immutable history that the next context reads. PAIN_STOP is stored and offers to exclude that exercise; nothing changes unless the user accepts. Mobility work earns no ledger, progression or focus credit.'
   };
   var svg=document.querySelector('svg.archflow-hero');
   var chapters=JSON.parse(svg.querySelector('#afh-chapters').textContent);

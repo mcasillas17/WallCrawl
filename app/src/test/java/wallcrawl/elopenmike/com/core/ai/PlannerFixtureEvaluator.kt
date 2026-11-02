@@ -356,6 +356,7 @@ private fun UserProfile.deepCopy(): UserProfile = copy(
     musclePriorities = LinkedHashMap(musclePriorities),
     excludedExerciseIds = excludedExerciseIds.toList(),
     trainingConstraints = trainingConstraints.toSet(),
+    reportedConditions = reportedConditions.toSet(),
     confirmedStartingLoads = LinkedHashMap(confirmedStartingLoads)
     // `movementCapabilities` is carried across as-is: `MovementCapabilities` has a private
     // constructor and its only factory wraps a freshly built map in `unmodifiableMap`, so

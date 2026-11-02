@@ -92,7 +92,10 @@ class PlannerFixtureTest {
             "reviewed-enabled-no-approved",
             "reviewed-enabled-uncleared-joint-constraint",
             "reviewed-enabled-cleared-joint-constraints",
-            "concurrent-activity"
+            "concurrent-activity",
+            "condition-piriformis",
+            "joint-label-hip",
+            "condition-removes-all"
         )
     }
 
@@ -581,7 +584,7 @@ class PlannerFixtureTest {
     fun corpusMetadata_usesSupportedVersionsAndBoundedHistory() {
         val fixtures = corpus()
 
-        assertThat(fixtures).hasSize(14)
+        assertThat(fixtures).hasSize(17)
         fixtures.forEach { fixture ->
             assertThat(fixture.schemaVersion).isEqualTo(1)
             assertThat(fixture.policyVersion).isEqualTo(4)

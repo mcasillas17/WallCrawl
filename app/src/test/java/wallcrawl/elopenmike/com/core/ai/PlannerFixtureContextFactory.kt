@@ -41,6 +41,8 @@ import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.SupportRequirement
 import wallcrawl.elopenmike.com.core.conditions.ConditionGuidance
 import wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceResult
+import wallcrawl.elopenmike.com.core.conditions.ConditionRecord
+import wallcrawl.elopenmike.com.core.conditions.MovementDemand
 import wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions
 import wallcrawl.elopenmike.com.core.conditions.restrictionsFor
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
@@ -104,6 +106,7 @@ internal class PlannerFixtureContextFactory(
             excludedExerciseIds = fixture.profile.excludedExerciseIds,
             onboardingCompleted = true,
             trainingConstraints = fixture.profile.trainingConstraints,
+            reportedConditions = fixture.profile.reportedConditions,
             returningAfterBreakWeeks = fixture.profile.returningAfterBreakWeeks,
             confirmedStartingLoads = fixture.profile.confirmedStartingLoads,
             movementCapabilities = fixture.profile.movementCapabilities
@@ -120,20 +123,48 @@ internal class PlannerFixtureContextFactory(
                 it == TrainingConstraint.LOW_IMPACT_ONLY ||
                     it in reviewedEligibility.syntheticClearedTrainingConstraints
             }
+            val synthetic = reviewedEligibility.syntheticGuidance
             restrictionsFor(
                 profile,
                 ConditionGuidanceResult.Loaded(
                     ConditionGuidance(
                         version = "fixture",
-                        exerciseDemands = if (cleared) {
-                            reviewedEligibility.syntheticApprovedExerciseIds.associateWith { emptySet() }
+                        // A fixture that declares guidance owns the whole overlay; otherwise
+                        // approved exercises carry no demands, and only when labels are cleared.
+                        exerciseDemands = if (synthetic != null || cleared) {
+                            reviewedEligibility.syntheticApprovedExerciseIds
+                                .associateWith { emptySet<MovementDemand>() } +
+                                synthetic?.exerciseDemands.orEmpty()
                         } else {
                             emptyMap()
                         },
-                        conditions = emptyMap(),
+                        conditions = synthetic?.conditions.orEmpty().mapValues { (id, condition) ->
+                            ConditionRecord(
+                                id = id,
+                                avoidDemands = condition.avoidDemands,
+                                modifyDemands = condition.modifyDemands,
+                                routine = emptyList(),
+                                exerciseCues = emptyMap(),
+                                notes = emptyMap(),
+                                redFlags = emptyMap(),
+                                evidenceGrade = "C",
+                                sources = emptyList(),
+                                provenance = AiReviewProvenance(
+                                    reviewerModelId = "fixture",
+                                    reviewedAtEpochMillis = 1L,
+                                    reviewedContentId = id,
+                                    reviewedContentSha256 = "0",
+                                    sourceReferences = emptyList(),
+                                    decisionRationale = "SYNTHETIC PLANNER FIXTURE",
+                                    limitations = "Test-only; never bundled.",
+                                    schemaVersion = 1,
+                                    policyVersion = 1
+                                )
+                            )
+                        },
                         jointLabelDemands = profile.trainingConstraints
                             .filter { it != TrainingConstraint.LOW_IMPACT_ONLY }
-                            .associateWith { emptySet() },
+                            .associateWith { synthetic?.jointLabelDemands?.get(it).orEmpty() },
                         demandCues = emptyMap()
                     )
                 )

@@ -99,8 +99,9 @@ authorizes the relationship only — it grants no eligibility exception, no capa
 evidence, and no substitution eligibility until the target is independently accepted.
 Every one of the 182 accepted records still carries an **empty**
 `clearedTrainingConstraints` list: the audit found no basis to record a joint-sensitivity
-clearance for any exercise, so a joint-sensitive profile still receives a typed refusal
-(see [reviewed capability eligibility](reviewed-capability-eligibility.md)).
+clearance for any exercise. Joint labels are now decided by the condition overlay instead
+(see [reviewed capability eligibility](reviewed-capability-eligibility.md) and the
+2026-11-01 decision in the roadmap), which never refuses the pool on a label alone.
 
 The audit is a **committed, reproducible artifact**, not a one-time claim:
 [`docs/research/2026-09-13-ai-acceptance-audit.json`](research/2026-09-13-ai-acceptance-audit.json)
@@ -169,8 +170,8 @@ clearance: a selected sensitivity that a record does not list keeps that record 
 automatic planning. `LOW_IMPACT_ONLY` cannot appear there, because `impactLevel` already
 decides it; the importer and the parser both reject a record that lists it. All 211
 authored `reviewedMetadata` entries currently clear nothing — including the 182
-`AI_ACCEPTED` ones — so a joint-sensitive profile receives a typed refusal on the
-production path.
+`AI_ACCEPTED` ones. Production no longer reads the field for joint labels; the condition
+overlay does.
 Nothing in this contract infers a clearance from a name, a muscle, a movement pattern or
 equipment.
 

@@ -33,7 +33,7 @@ stale starts, passive-refresh invariance and interim unit binding.
 `DeloadPersistenceTest`, `DeloadDiskPersistenceTest`,
 `LocalDataArchiveDeloadTest`, `LocalDataArchiveProgressionTest`,
 `Migration13To14Test` and `TodayDeloadScreenTest` extend real Android evidence.
-The authoritative manifest remains fourteen personas; these focused scenarios
+The authoritative manifest is seventeen personas; these focused scenarios
 are not synthetic promotion of the bundled catalog or new automatic eligibility.
 
 Every persona whose replay produces a proposal is now also validated as a complete program.
@@ -209,7 +209,7 @@ Full packaged catalog validity remains the responsibility of the dedicated impor
 
 ## Persona coverage
 
-The manifest currently contains fourteen fixtures:
+The manifest currently contains seventeen fixtures:
 
 1. `bodyweight-beginner` — conservative curated bodyweight beginner subset (`push-up`, `knee-push-up`, `bodyweight-squat`, `dead-bug`) requiring at least one beginner push variant.
 2. `band-only` — resistance-band-only coverage after the fixed-anchor gate: `banded-dead-bug` is required, and cable-only pull work is excluded by the real filter alongside every anchor-dependent band variation, `banded-row` included.
@@ -245,16 +245,17 @@ The manifest currently contains fourteen fixtures:
     for that actual behavior.
 12. `reviewed-enabled-uncleared-joint-constraint` — the `reviewed-enabled-bodyweight` pool with
     `SHOULDER_SENSITIVE` selected. The fixture declares no
-    `syntheticClearedTrainingConstraints`, so the synthetic approvals clear nothing — matching
-    the bundled records, which clear nothing either — and the enabled policy returns
-    `REVIEWED_ELIGIBILITY_NO_CANDIDATES` with `TRAINING_CONSTRAINTS_REMOVED_ALL` and no legacy
-    fallback. This is the shipped behavior for a joint-sensitive profile.
+    `syntheticClearedTrainingConstraints`, so the synthetic overlay lists no exercise for the
+    label, every candidate is unreviewed for it, and the enabled policy returns
+    `REVIEWED_ELIGIBILITY_NO_CANDIDATES` with `CONDITIONS_REMOVED_ALL` and no legacy
+    fallback.
 13. `reviewed-enabled-cleared-joint-constraints` — `KNEE_SENSITIVE` and `WRIST_SENSITIVE`
     selected together against a core-priority bodyweight pool whose synthetic approval **sets**
     `clearedTrainingConstraints` to exactly those two, via the fixture's
-    `syntheticClearedTrainingConstraints`; it replaces the authored value rather than copying it. It proves the
+    `syntheticClearedTrainingConstraints`; it replaces the authored value rather than copying it. The
+    factory turns that into a synthetic overlay that lists the approved exercises, so the
     combined-restriction path reaches a raw-valid proposal when — and only when — every
-    selected sensitivity is explicitly cleared. The clearance is synthetic test data in the
+    selected label is covered. The clearance is synthetic test data in the
     same sense as the approval itself; no bundled record clears anything.
 14. `concurrent-activity` — a dumbbell/bench/cardio owner in `BUILD` whose accounting week
     already holds both logged resistance work and an aerobic session. Its declared history is
@@ -271,6 +272,23 @@ The manifest currently contains fourteen fixtures:
     filter — the persona owns cardio equipment and can still browse or template it — but it
     has no approved metadata, so the reviewed gate keeps it out of the candidate set and no
     distance work reaches an automatic strength slot.
+15. `condition-piriformis` — `piriformis_syndrome` reported on a bodyweight profile. The
+    fixture's `reviewedEligibility.syntheticGuidance` is a test-only overlay (never bundled):
+    a condition with modify demands, and demands on `side-plank` and `bodyweight-squat`. It
+    proves a reported condition with modify demands still yields a valid, deterministic plan
+    rather than a refusal.
+16. `joint-label-hip` — `HIP_SENSITIVE` selected, with synthetic joint-label demands. It proves
+    a joint label ranks exercises lower and no longer produces a no-plan outcome.
+17. `condition-removes-all` — a synthetic condition whose avoid demand sits on every approved
+    candidate. No shipped condition avoids enough to remove the pool, so the fixture supplies
+    one; it proves the typed `REVIEWED_ELIGIBILITY_NO_CANDIDATES` outcome with
+    `CONDITIONS_REMOVED_ALL` and no legacy fallback.
+
+`PlannerFixtureContextFactory` builds the overlay for a reviewed-enabled fixture. Without
+`syntheticGuidance` it lists every approved exercise with no demands when the selected labels
+are cleared, and nothing otherwise. With it, the fixture owns the whole overlay:
+`exerciseDemands` (unlisted approved exercises get none), `conditions` (avoid and modify sets)
+and `jointLabelDemands`. `profile.reportedConditions` selects the conditions.
 
 ## Replay semantics and asserted invariants
 
@@ -280,7 +298,7 @@ The corpus suite asserts:
 
 - deterministic output equality across two fresh replays, normalized only for the generated workout ID;
 - fixture schema and evaluator support all current typed planner failures (`NO_CANDIDATES`, `NO_STRENGTH_CANDIDATES`, `NO_CANDIDATES_FOR_ANY_SPLIT`, `REVIEWED_ELIGIBILITY_NO_CANDIDATES`) and the reviewed failure's typed aggregate cause;
-- the committed fourteen-fixture manifest exercises `NO_STRENGTH_CANDIDATES` and `REVIEWED_ELIGIBILITY_NO_CANDIDATES`; focused planner tests cover `NO_CANDIDATES` and `NO_CANDIDATES_FOR_ANY_SPLIT`;
+- the committed seventeen-fixture manifest exercises `NO_STRENGTH_CANDIDATES` and `REVIEWED_ELIGIBILITY_NO_CANDIDATES`; focused planner tests cover `NO_CANDIDATES` and `NO_CANDIDATES_FOR_ANY_SPLIT`;
 - legality of every selected exercise against the bundled catalog, the real filter result, and any curated allowed-ID subset;
 - non-mutation of the full `WorkoutGenerationContext` input;
 - type-valid prescriptions and no-invented-load behavior through the real prescription factory;
@@ -335,7 +353,7 @@ archive/Room suites; the JVM replay does not claim to exercise Android transacti
 ## Full-catalog content-review coverage
 
 `ReviewedCatalogCoverageTest` supplements, rather than silently enlarges, the
-fourteen-fixture manifest. Its 17 declared profiles each exercise a historical,
+fixture manifest. Its 17 declared profiles each exercise a historical,
 pre-acceptance all-DRAFT structural upper bound and a separate AI-ready subset (both
 using explicitly synthetic in-memory approvals, dated before the AI acceptance audit
 existed), plus disabled-mode invariance with reviewed metadata stripped. The
@@ -353,7 +371,7 @@ proposal never proved otherwise. Since the [focus contract](architecture.md#adve
 landed, that case additionally asserts a truthful non-`PUSH` label and a reported
 unavailable `Chest` priority. The missing push and fixed-anchor representation remain
 open — correcting the label supplied neither — and selected joint restrictions continue
-to fail closed without a fallback.
+to be read through the condition overlay (see persona 15 to 17).
 
 ## Release-gate traceability
 

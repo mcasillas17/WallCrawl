@@ -91,7 +91,7 @@
   {
    "id": "profile",
    "title": "UserProfile",
-   "caption": "Goals, equipment, constraints",
+   "caption": "Goals, gear, conditions",
    "kind": "source",
    "zone": "z-input",
    "tag": "ROOM",
@@ -112,7 +112,7 @@
   {
    "id": "catalog",
    "title": "Exercise catalog",
-   "caption": "302 bundled exercises",
+   "caption": "309 exercises, 7 owned",
    "kind": "source",
    "zone": "z-input",
    "tag": "ASSET",
@@ -258,11 +258,11 @@
   },
   {
    "id": "clears",
-   "title": "Joint clearance",
-   "caption": "Clears nothing today",
+   "title": "Condition overlay",
+   "caption": "8 conditions, 21 demands",
    "kind": "control",
    "zone": "z-gate",
-   "tag": "SEAM",
+   "tag": "OVERLAY",
    "frame": {
     "x": 520,
     "y": 390,
@@ -271,30 +271,30 @@
    },
    "evidence": [
     {
-     "path": "app/src/main/java/wallcrawl/elopenmike/com/core/model/Exercise.kt",
-     "start_line": 200,
-     "end_line": 213
+     "path": "app/src/main/java/wallcrawl/elopenmike/com/core/conditions/ConditionRestrictions.kt",
+     "start_line": 37,
+     "end_line": 83
     }
    ]
   },
   {
    "id": "planner",
    "title": "FakeWorkoutPlanner",
-   "caption": "Split, then ranked selection",
+   "caption": "Modify demands rank lower",
    "kind": "process",
    "zone": "z-plan",
    "tag": "SELECT",
    "frame": {
     "x": 760,
-    "y": 110,
+    "y": 98,
     "w": 180,
-    "h": 84
+    "h": 68
    },
    "evidence": [
     {
      "path": "app/src/main/java/wallcrawl/elopenmike/com/core/ai/FakeWorkoutPlanner.kt",
      "start_line": 42,
-     "end_line": 103
+     "end_line": 112
     }
    ]
   },
@@ -307,9 +307,9 @@
    "tag": "DOSE",
    "frame": {
     "x": 760,
-    "y": 250,
+    "y": 204,
     "w": 180,
-    "h": 84
+    "h": 68
    },
    "evidence": [
     {
@@ -328,15 +328,36 @@
    "tag": "CAP",
    "frame": {
     "x": 760,
-    "y": 390,
+    "y": 310,
     "w": 180,
-    "h": 84
+    "h": 68
    },
    "evidence": [
     {
      "path": "app/src/main/java/wallcrawl/elopenmike/com/core/ai/StateBasedTrainingPolicy.kt",
      "start_line": 214,
      "end_line": 341
+    }
+   ]
+  },
+  {
+   "id": "mobility",
+   "title": "MobilityBlock",
+   "caption": "At most 3, no training credit",
+   "kind": "process",
+   "zone": "z-plan",
+   "tag": "BLOCK",
+   "frame": {
+    "x": 760,
+    "y": 416,
+    "w": 180,
+    "h": 68
+   },
+   "evidence": [
+    {
+     "path": "app/src/main/java/wallcrawl/elopenmike/com/core/conditions/MobilityBlockPolicy.kt",
+     "start_line": 23,
+     "end_line": 97
     }
    ]
   },
@@ -364,7 +385,7 @@
   {
    "id": "validator",
    "title": "ProgramValidator",
-   "caption": "Typed violations, no writes",
+   "caption": "Typed violations, block too",
    "kind": "control",
    "zone": "z-valid",
    "tag": "CHECK",
@@ -406,7 +427,7 @@
   {
    "id": "identity",
    "title": "ContextIdentity",
-   "caption": "Digest catches stale plans",
+   "caption": "Digest includes conditions",
    "kind": "control",
    "zone": "z-commit",
    "tag": "DIGEST",
@@ -447,7 +468,7 @@
   },
   {
    "id": "repo",
-   "title": "startWorkout…",
+   "title": "startWorkout\u2026",
    "caption": "Frozen session, atomic write",
    "kind": "store",
    "zone": "z-commit",
@@ -490,7 +511,7 @@
   {
    "id": "pain",
    "title": "PAIN_STOP",
-   "caption": "Acts like any other stop",
+   "caption": "Offers to exclude it",
    "kind": "source",
    "zone": "z-loop",
    "tag": "SEAM",
@@ -502,9 +523,9 @@
    },
    "evidence": [
     {
-     "path": "app/src/main/java/wallcrawl/elopenmike/com/core/model/SetOutcome.kt",
-     "start_line": 6,
-     "end_line": 13
+     "path": "app/src/main/java/wallcrawl/elopenmike/com/feature/workout/ActiveWorkoutViewModel.kt",
+     "start_line": 361,
+     "end_line": 380
     }
    ]
   },
@@ -640,7 +661,7 @@
    "id": "f-clr",
    "source": "clears",
    "target": "eligibility",
-   "label": "cleared?",
+   "label": "avoid?",
    "kind": "data",
    "source_port": "top",
    "target_port": "bottom"
@@ -660,7 +681,7 @@
     ],
     [
      730,
-     152
+     132
     ]
    ]
   },
@@ -693,7 +714,7 @@
    "via": [
     [
      970,
-     152
+     132
     ],
     [
      970,
@@ -788,6 +809,43 @@
    "target_port": "right",
    "source_offset": -28,
    "target_offset": 0
+  },
+  {
+   "id": "f-mob",
+   "source": "clears",
+   "target": "mobility",
+   "kind": "data",
+   "source_port": "right",
+   "target_port": "left",
+   "via": [
+    [
+     730,
+     432
+    ],
+    [
+     730,
+     450
+    ]
+   ]
+  },
+  {
+   "id": "f-mobv",
+   "source": "mobility",
+   "target": "validator",
+   "kind": "data",
+   "source_port": "right",
+   "target_port": "left",
+   "target_offset": 14,
+   "via": [
+    [
+     975,
+     450
+    ],
+    [
+     975,
+     306
+    ]
+   ]
   }
  ],
  "chapters": [
@@ -843,12 +901,15 @@
    "entities": [
     "planner",
     "factory",
-    "policy"
+    "policy",
+    "mobility"
    ],
    "flows": [
     "f-can",
     "f-sel",
-    "f-cap"
+    "f-cap",
+    "f-mob",
+    "f-mobv"
    ]
   },
   {

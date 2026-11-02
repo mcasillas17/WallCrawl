@@ -350,11 +350,17 @@ experience level, seven movement preferences, schedule and break duration,
 available gear, and sensitive-joint restrictions before compiling the initial
 Training Blueprint. Every movement preference requires an explicit answer;
 **Not sure** is a valid answer and persists as `UNKNOWN`. A sensitive-joint
-selection is saved and automatic workouts do read it: production checks each
-candidate's `clearedTrainingConstraints`, and because every accepted record
-currently clears none, selecting any joint sensitivity refuses automatic
-planning with a typed `TRAINING_CONSTRAINTS_REMOVED_ALL` reason rather than
-silently ignoring the selection. Browsing and manual workouts are unaffected.
+selection is saved and automatic workouts read it: a bundled condition overlay marks which
+movements a joint label should rank lower, and a chosen label never removes the whole pool
+on its own. Onboarding and Profile also let you report one or more of eight musculoskeletal
+conditions. A reported condition leaves out a short list of movements the research says to
+avoid, ranks movements it says to modify lower with a cue, and adds an optional mobility
+block of at most three items to the workout. The mobility block earns no training credit.
+Conditions are health-related information kept on the device (see
+[privacy](docs/privacy.md)); WallCrawl makes no claim that a workout is safe for, or helps,
+any condition, and the research behind it is weak overall. See the
+[design](docs/superpowers/specs/2026-11-01-condition-aware-planning-design.md). Browsing and
+manual workouts are unaffected.
 Movement preferences are the answers today's
 reviewed-path tests already act on.
 
@@ -649,10 +655,11 @@ and limitations) — it is **not** human approval and **not** a clinical validat
 safety-for-everyone claim. **Zero records are `APPROVED`: no genuine human reviewer has
 signed off on any of them.** Reviewed schema version 2 adds `clearedTrainingConstraints`,
 the joint sensitivities a reviewer explicitly cleared an exercise for; every record —
-`AI_ACCEPTED` included — currently clears none, so a profile that selects shoulder, elbow,
-wrist, lower-back, hip or knee sensitivity gets a typed no-plan rather than a guess.
-Absence is never read as clearance, and a clearance is a reviewer's judgement about a
-self-reported label, not a diagnosis. `APPROVED` requires an explicit human-review role,
+`AI_ACCEPTED` included — currently clears none. Joint labels and reported conditions are
+decided by the separate condition overlay instead, which carries its own AI review
+provenance and awaits clinician review before any public release. A clearance is a
+reviewer's judgement about a self-reported label, not a diagnosis, and absence is never
+read as clearance. `APPROVED` requires an explicit human-review role,
 timestamp, and provenance change; pull-request approval, code review, or a passing test
 suite does not change review state. Missing, draft, or otherwise-unaccepted reviewed
 metadata never hides an exercise from browsing or manual templates. See

@@ -10,6 +10,7 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import org.json.JSONTokener
+import wallcrawl.elopenmike.com.core.conditions.MovementDemand
 import wallcrawl.elopenmike.com.core.model.CapabilityLevel
 import wallcrawl.elopenmike.com.core.model.AdaptationState
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityFailure
@@ -85,7 +86,23 @@ internal data class PlannerFixtureReviewedEligibility(
      * synthetic review data, exactly like [syntheticApprovedExerciseIds]; nothing here is
      * written to bundled assets and it is never human approval.
      */
-    val syntheticClearedTrainingConstraints: Set<TrainingConstraint> = emptySet()
+    val syntheticClearedTrainingConstraints: Set<TrainingConstraint> = emptySet(),
+    /**
+     * Test-only condition overlay for the fixture, never bundled. Absent means the legacy
+     * behaviour: every approved exercise carries no demands and joint labels carry none.
+     */
+    val syntheticGuidance: PlannerFixtureConditionGuidance? = null
+)
+
+internal data class PlannerFixtureCondition(
+    val avoidDemands: Set<MovementDemand>,
+    val modifyDemands: Set<MovementDemand>
+)
+
+internal data class PlannerFixtureConditionGuidance(
+    val exerciseDemands: Map<String, Set<MovementDemand>>,
+    val conditions: Map<String, PlannerFixtureCondition>,
+    val jointLabelDemands: Map<TrainingConstraint, Set<MovementDemand>>
 )
 
 internal data class PlannerFixtureProfile(
@@ -100,7 +117,8 @@ internal data class PlannerFixtureProfile(
     val trainingConstraints: Set<TrainingConstraint>,
     val returningAfterBreakWeeks: Int,
     val confirmedStartingLoads: Map<String, Double>,
-    val movementCapabilities: MovementCapabilities
+    val movementCapabilities: MovementCapabilities,
+    val reportedConditions: Set<String> = emptySet()
 )
 
 internal data class PlannerFixtureExpected(
@@ -291,7 +309,18 @@ internal class PlannerFixtureLoader(
                     )
                 } else {
                     emptySet()
-                }
+                },
+            syntheticGuidance = if (reviewedEligibility.has("syntheticGuidance")) {
+                parseSyntheticGuidance(
+                    requireObject(
+                        reviewedEligibility,
+                        "syntheticGuidance",
+                        "root.reviewedEligibility.syntheticGuidance"
+                    )
+                )
+            } else {
+                null
+            }
         ).also {
             if (TrainingConstraint.LOW_IMPACT_ONLY in it.syntheticClearedTrainingConstraints) {
                 throw PlannerFixtureFormatException(
@@ -300,6 +329,51 @@ internal class PlannerFixtureLoader(
                 )
             }
         }
+    }
+
+    private fun parseConditionIds(array: JSONArray, path: String): Set<String> {
+        requireArrayBounds(array, path, MAX_COLLECTION_SIZE)
+        return List(array.length()) { index ->
+            requireString(array.get(index), "$path[$index]", allowBlank = false, maxLength = MAX_ID_LENGTH)
+        }.toSet()
+    }
+
+    private fun parseSyntheticGuidance(guidance: JSONObject): PlannerFixtureConditionGuidance {
+        val path = "root.reviewedEligibility.syntheticGuidance"
+        requireExactFields(guidance, path, emptySet(), SYNTHETIC_GUIDANCE_FIELDS)
+        fun demands(array: Any, itemPath: String): Set<MovementDemand> =
+            parseEnumSet<MovementDemand>(array as? JSONArray
+                ?: throw PlannerFixtureFormatException("$itemPath must be an array."), itemPath)
+        fun JSONObject.entries(key: String): JSONObject? =
+            if (has(key)) requireObject(this, key, "$path.$key").also {
+                requireObjectBounds(it, "$path.$key", MAX_COLLECTION_SIZE)
+            } else null
+        val exerciseDemands = guidance.entries("exerciseDemands")?.let { obj ->
+            obj.keys().asSequence().associate { id ->
+                requireSafeId(id, "$path.exerciseDemands key") to
+                    demands(obj.get(id), "$path.exerciseDemands.$id")
+            }
+        }.orEmpty()
+        val conditions = guidance.entries("conditions")?.let { obj ->
+            obj.keys().asSequence().associate { id ->
+                val conditionPath = "$path.conditions.$id"
+                val condition = requireObject(obj, id, conditionPath)
+                requireExactFields(condition, conditionPath, emptySet(), SYNTHETIC_CONDITION_FIELDS)
+                id to PlannerFixtureCondition(
+                    avoidDemands = condition.optJSONArray("avoidDemands")
+                        ?.let { demands(it, "$conditionPath.avoidDemands") }.orEmpty(),
+                    modifyDemands = condition.optJSONArray("modifyDemands")
+                        ?.let { demands(it, "$conditionPath.modifyDemands") }.orEmpty()
+                )
+            }
+        }.orEmpty()
+        val jointLabelDemands = guidance.entries("jointLabelDemands")?.let { obj ->
+            obj.keys().asSequence().associate { label ->
+                parseEnum<TrainingConstraint>(label, "$path.jointLabelDemands key") to
+                    demands(obj.get(label), "$path.jointLabelDemands.$label")
+            }
+        }.orEmpty()
+        return PlannerFixtureConditionGuidance(exerciseDemands, conditions, jointLabelDemands)
     }
 
     private fun parseCompletedSessions(
@@ -367,7 +441,7 @@ internal class PlannerFixtureLoader(
     }
 
     private fun parseProfile(profile: JSONObject): PlannerFixtureProfile {
-        requireExactFields(profile, "profile", PROFILE_FIELDS)
+        requireExactFields(profile, "profile", PROFILE_FIELDS, setOf("reportedConditions"))
         return PlannerFixtureProfile(
             goals = parseEnumSet<FitnessGoal>(
                 requireArray(profile, "goals", "profile.goals"),
@@ -415,7 +489,15 @@ internal class PlannerFixtureLoader(
             ),
             movementCapabilities = parseMovementCapabilities(
                 requireObject(profile, "movementCapabilities", "profile.movementCapabilities")
-            )
+            ),
+            reportedConditions = if (profile.has("reportedConditions")) {
+                parseConditionIds(
+                    requireArray(profile, "reportedConditions", "profile.reportedConditions"),
+                    "profile.reportedConditions"
+                )
+            } else {
+                emptySet()
+            }
         )
     }
 
@@ -1088,8 +1170,15 @@ internal class PlannerFixtureLoader(
             "syntheticApprovedExerciseIds"
         )
         private val OPTIONAL_REVIEWED_ELIGIBILITY_FIELDS = setOf(
-            "syntheticClearedTrainingConstraints"
+            "syntheticClearedTrainingConstraints",
+            "syntheticGuidance"
         )
+        private val SYNTHETIC_GUIDANCE_FIELDS = setOf(
+            "exerciseDemands",
+            "conditions",
+            "jointLabelDemands"
+        )
+        private val SYNTHETIC_CONDITION_FIELDS = setOf("avoidDemands", "modifyDemands")
         private val PROFILE_FIELDS = setOf(
             "goals",
             "experienceLevel",

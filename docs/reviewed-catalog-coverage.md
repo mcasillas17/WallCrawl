@@ -273,7 +273,7 @@ passed `ProgramValidator` without repair; typed no-plan outcomes remained explic
 | Mixed-unit history | 88 | 81 | `arnold-press`, `dumbbell-bench-press`, `dumbbell-shoulder-press`, `dumbbell-fly`, `dumbbell-lateral-raise` |
 | Sparse history | 58 | 52 | `band-pull-apart`, `prone-y-raise`, `reverse-snow-angel` |
 | Uncalibrated full gym | 185 | 167 | `barbell-bench-press`, `overhead-press`, `arnold-press`, `cable-fly`, `cable-lateral-raise`, `cable-triceps-pushdown` |
-| Selected joint constraint | 0 | 0 | `REVIEWED_ELIGIBILITY_NO_CANDIDATES` / `TRAINING_CONSTRAINTS_REMOVED_ALL` |
+| Selected joint constraint (historical, before the 2026-11-01 condition overlay) | 0 | 0 | `REVIEWED_ELIGIBILITY_NO_CANDIDATES` / `TRAINING_CONSTRAINTS_REMOVED_ALL` |
 | Selected joint constraint, synthetically cleared | 211 | 186 | `barbell-bench-press`, `overhead-press`, `incline-bench-press`, `cable-fly`, `cable-lateral-raise`, `cable-triceps-pushdown` |
 | Empty equipment inventory | 0 | 0 | `REVIEWED_ELIGIBILITY_NO_CANDIDATES` / `NO_APPROVED_METADATA` |
 | Unmodified catalog, no synthetic approvals | 0 | 0 | `REVIEWED_ELIGIBILITY_NO_CANDIDATES` / `NO_APPROVED_METADATA` |
@@ -356,7 +356,9 @@ Selected joint mappings now have a contract but no cleared content.
 decides each exercise against it instead of rejecting the whole pool whenever any joint
 sensitivity is selected. All 302 `reviewedMetadata` records — including the 182
 `AI_ACCEPTED` ones — clear nothing, so the observable outcome for a joint-sensitive
-profile is unchanged in production: a typed `TRAINING_CONSTRAINTS_REMOVED_ALL` refusal.
+profile was a typed `TRAINING_CONSTRAINTS_REMOVED_ALL` refusal until the 2026-11-01 condition
+overlay, which now decides joint labels (they rank exercises lower and no longer refuse the pool).
+The field itself is still unread for that purpose and still empty.
 Populating the field requires genuine human review; see the
 [enabled rollout contract](reviewed-capability-eligibility.md#enabled-rollout-contract).
 

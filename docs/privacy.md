@@ -15,6 +15,12 @@ offline, one-time authoring and acceptance process before this build was assembl
 running the app never calls an AI model, uploads profile or workout data for review,
 or re-runs that acceptance at runtime.
 
+**Reported conditions are health-related information.** If you choose any, the condition
+names are stored with your profile in the same local Room database. They stay on the device
+under the backup exclusions below and are used only by local planning rules. They are written
+to an export only when you ask for one, and a restore brings them back. An exported file holds
+them in clear text.
+
 **Implicit Android backup stays disabled.** The application sets
 `android:allowBackup="false"` and explicitly excludes all documented app-data
 domains from legacy full backup and modern cloud backup and device-to-device
@@ -33,7 +39,8 @@ install can use it without first building a profile it would discard.
 One JSON file, written where you choose:
 
 - the profile: codename, goals, experience, units, schedule, equipment,
-  constraints, muscle priorities, confirmed starting loads, movement-capability
+  constraints, reported conditions (health-related; see the Policy section),
+  muscle priorities, confirmed starting loads, movement-capability
   answers, theme, and optional self-described gender (plus legacy illustration-preference
   data from the initial integration preview, if present);
 - every saved template with its exercises and prescriptions;
@@ -53,7 +60,7 @@ or the weekly-ledger cache, which is derived (see
 [deriving the ledger](weekly-dose-ledger.md)).
 
 **An export is readable personal information.** Training history, physical
-capability answers, and body-adjacent preferences are in clear text. Anyone who
+capability answers, reported conditions, and body-adjacent preferences are in clear text. Anyone who
 opens the file can read them. Choose the destination deliberately: Android's
 document picker can offer cloud-backed providers as well as local storage, and
 WallCrawl cannot tell which one you picked. The app itself never uploads
@@ -202,7 +209,8 @@ no longer contains keeps its identifier rather than being remapped.
 ### What deletion does and does not reach
 
 Deleting all local data asks for explicit confirmation, naming what is lost —
-including a workout in progress — and then removes the profile and preferences,
+including a workout in progress — and then removes the profile (with any reported
+conditions) and preferences,
 movement answers, templates, every session with its exercises and sets, every
 validation record, deload preferences, program enrollment and associations, and the
 derived weekly-ledger cache. The app returns to
