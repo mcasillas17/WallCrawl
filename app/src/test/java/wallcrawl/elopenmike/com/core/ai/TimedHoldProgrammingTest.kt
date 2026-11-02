@@ -129,7 +129,7 @@ class TimedHoldProgrammingTest {
                                 ))
                                 val prescription = factory.create(exercise, context)
                                 assertThat(prescription.targetWeight).isNull()
-                                add("${exercise.id}|$goal|$breakWeeks|$unit|${prescription.toString().replace(", holdSeconds=null)", ")")}")
+                                add("${exercise.id}|$goal|$breakWeeks|$unit|$prescription")
                             }
                         }
                     }

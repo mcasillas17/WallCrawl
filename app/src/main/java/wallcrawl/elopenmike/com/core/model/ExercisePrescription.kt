@@ -111,6 +111,17 @@ data class ExercisePrescription(
         }
     }
 
+    /**
+     * The data class text as it was before holds existed, with the hold appended only when
+     * present. The recommendation digest hashes this text, so an absent hold must not alter it.
+     */
+    override fun toString(): String =
+        "ExercisePrescription(exerciseType=$exerciseType, targetSets=$targetSets, repRange=$repRange, " +
+            "targetWeight=$targetWeight, targetAssistanceWeight=$targetAssistanceWeight, " +
+            "targetDurationSeconds=$targetDurationSeconds, targetDistanceMeters=$targetDistanceMeters, " +
+            "restSeconds=$restSeconds, effortTarget=$effortTarget, restClass=$restClass, " +
+            "restTargetSource=$restTargetSource" + (holdSeconds?.let { ", holdSeconds=$it" } ?: "") + ")"
+
     fun withUserRestPreference(preference: UserRestPreference): ExercisePrescription =
         copy(
             restSeconds = preference.restSeconds,

@@ -135,7 +135,7 @@ object RecommendationContextIdentity {
                 )
                 session.exercises.sortedWith(compareBy({ it.exerciseId }, { it.id })).forEach { exercise ->
                     lines += line("progressionExercise", exercise.id, exercise.sessionId,
-                        exercise.exerciseId, exercise.prescription.holdFreeText())
+                        exercise.exerciseId, exercise.prescription.toString())
                     exercise.sets.sortedWith(compareBy({ it.setNumber }, { it.id })).forEach { set ->
                         lines += line("progressionSet", set.toString())
                     }
@@ -185,13 +185,6 @@ object RecommendationContextIdentity {
 
     /** Matches both prescription construction and validation's traceable-load boundary. */
     private fun Double?.usableLoad(): Double? = this?.takeIf { it.isFinite() && it >= 0.0 }
-
-    /**
-     * The data class text without an absent hold, so a prescription with no hold digests as it
-     * did before holds existed and displayed plans are not invalidated by that release.
-     */
-    private fun wallcrawl.elopenmike.com.core.model.ExercisePrescription.holdFreeText(): String =
-        toString().replace(", holdSeconds=null)", ")")
 
     private fun SessionProgramConstraints.canonicalForm(): String = listOf(
         uniqueExerciseIds.toString(),

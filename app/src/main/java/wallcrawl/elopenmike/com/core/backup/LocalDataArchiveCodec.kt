@@ -165,6 +165,10 @@ object LocalDataArchiveCodec {
                     }
                 )
         ) { "Conditions, roles and holds require archive version $CONDITIONS_ARCHIVE_VERSION." }
+        // Templates have no hold column in any version.
+        require(archive.snapshot.templates.all { t -> t.exercises.all { it.prescription.holdSeconds == null } }) {
+            "A template prescription cannot carry a hold."
+        }
         require(
             archive.metadata.archiveVersion >= RECOMMENDATION_RECORDS_ARCHIVE_VERSION ||
                 archive.snapshot.recommendationRecords.isEmpty()
@@ -862,7 +866,7 @@ object LocalDataArchiveCodec {
                 "profile" -> profile = readProfile(archiveVersion)
                 "templates" -> templates =
                     readArray("templates", MAX_TEMPLATES) { readTemplate(archiveVersion) }
-                "sessions" -> sessions = readArray("sessions", MAX_SESSIONS) { readSession() }
+                "sessions" -> sessions = readArray("sessions", MAX_SESSIONS) { readSession(archiveVersion) }
                 "recommendations" -> {
                     if (archiveVersion < RECOMMENDATION_RECORDS_ARCHIVE_VERSION) {
                         malformed(
@@ -1367,7 +1371,7 @@ object LocalDataArchiveCodec {
             when (field) {
                 "exerciseId" -> exerciseId = nextBoundedString("$label.exerciseId", MAX_ID_LENGTH)
                 "notes" -> notes = nextBoundedString("$label.notes", MAX_NOTES_LENGTH)
-                "prescription" -> prescription = readPrescription("$label.prescription")
+                "prescription" -> prescription = readPrescription("$label.prescription", archiveVersion = 0, holdAllowed = false)
                 else -> malformed("An archived template exercise has an unsupported field.")
             }
         }
@@ -1380,7 +1384,7 @@ object LocalDataArchiveCodec {
         )
     }
 
-    private fun JsonReader.readSession(): WorkoutSession {
+    private fun JsonReader.readSession(archiveVersion: Int): WorkoutSession {
         var id: String? = null
         var name: String? = null
         var startedAt: Long? = null
@@ -1425,7 +1429,7 @@ object LocalDataArchiveCodec {
                 "notes" -> notes = nextBoundedString("session.notes", MAX_NOTES_LENGTH)
                 "exercises" -> exercises =
                     readArray("session.exercises", MAX_EXERCISES_PER_SESSION) {
-                        readSessionExercise()
+                        readSessionExercise(archiveVersion)
                     }
 
                 else -> malformed("An archived session has an unsupported field.")
@@ -1455,7 +1459,7 @@ object LocalDataArchiveCodec {
         )
     }
 
-    private fun JsonReader.readSessionExercise(): WorkoutExercise {
+    private fun JsonReader.readSessionExercise(archiveVersion: Int): WorkoutExercise {
         var id: String? = null
         var sessionId: String? = null
         var exerciseId: String? = null
@@ -1478,8 +1482,13 @@ object LocalDataArchiveCodec {
                     orderIndex = nextBoundedInt("session exercise.orderIndex", 0, MAX_ORDER_INDEX)
 
                 "notes" -> notes = nextBoundedString("session exercise.notes", MAX_NOTES_LENGTH)
-                "role" -> role = nextEnum<ExerciseRole>("session exercise.role")
-                "prescription" -> prescription = readPrescription("session exercise.prescription")
+                "role" -> {
+                    if (archiveVersion < CONDITIONS_ARCHIVE_VERSION) {
+                        malformed("Exercise roles require archive version $CONDITIONS_ARCHIVE_VERSION.")
+                    }
+                    role = nextEnum<ExerciseRole>("session exercise.role")
+                }
+                "prescription" -> prescription = readPrescription("session exercise.prescription", archiveVersion, holdAllowed = true)
                 "sets" -> sets = readArray("session exercise.sets", MAX_SETS_PER_EXERCISE) {
                     readSet()
                 }
@@ -1504,7 +1513,11 @@ object LocalDataArchiveCodec {
         )
     }
 
-    private fun JsonReader.readPrescription(label: String): ExercisePrescription {
+    private fun JsonReader.readPrescription(
+        label: String,
+        archiveVersion: Int,
+        holdAllowed: Boolean
+    ): ExercisePrescription {
         var exerciseType: ExerciseType? = null
         var targetSets: Int? = null
         var repMin: Int? = null
@@ -1547,7 +1560,14 @@ object LocalDataArchiveCodec {
                 "restClass" -> restClass = nextEnum<RestClass>("$label.restClass")
                 "restTargetSource" ->
                     restTargetSource = nextEnum<RestTargetSource>("$label.restTargetSource")
-                "holdSeconds" -> holdSeconds = nextBoundedInt("$label.holdSeconds", 0, MAX_DURATION_SECONDS)
+                "holdSeconds" -> {
+                    // Templates have no hold column, so a hold there could not survive a restore.
+                    if (!holdAllowed) malformed("An archived template cannot carry a hold.")
+                    if (archiveVersion < CONDITIONS_ARCHIVE_VERSION) {
+                        malformed("Holds require archive version $CONDITIONS_ARCHIVE_VERSION.")
+                    }
+                    holdSeconds = nextBoundedInt("$label.holdSeconds", 0, MAX_DURATION_SECONDS)
+                }
                 else -> malformed("An archived prescription has an unsupported field.")
             }
         }

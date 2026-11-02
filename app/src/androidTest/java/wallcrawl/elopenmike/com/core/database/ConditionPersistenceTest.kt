@@ -21,6 +21,8 @@ import wallcrawl.elopenmike.com.core.backup.LocalDataArchiveFormat
 import wallcrawl.elopenmike.com.core.database.repository.OfflineLocalDataBackupRepository
 import wallcrawl.elopenmike.com.core.database.repository.OfflineUserProfileRepository
 import wallcrawl.elopenmike.com.core.model.ExerciseRole
+import wallcrawl.elopenmike.com.core.model.ExerciseType
+import wallcrawl.elopenmike.com.core.backup.ArchiveRejection
 
 @RunWith(AndroidJUnit4::class)
 class ConditionPersistenceTest {
@@ -101,15 +103,61 @@ class ConditionPersistenceTest {
             .containsExactly("from-a-newer-app")
     }
 
-    @Test fun oversizedOrUnjoinableConditionListsAreRejected() {
+    private fun rejection(block: () -> Unit): LocalDataArchiveException =
+        assertThrows(LocalDataArchiveException::class.java) { block() }
+
+    private fun read(document: String) = rejection {
+        LocalDataArchiveCodec.read(ByteArrayInputStream(document.toByteArray()))
+    }
+
+    /** Inserts [field] before the first [marker] that follows the "sessions" member. */
+    private fun inSessions(document: String, marker: String, field: String): String {
+        val at = document.indexOf(marker, document.indexOf("\"sessions\""))
+        check(at > 0) { "marker $marker not found in sessions" }
+        return document.substring(0, at) + field + "," + document.substring(at)
+    }
+
+    @Test fun oversizedBlankAndUnjoinableConditionListsAreRejectedOnWriteAndRead() {
         val many = (1..2_001).map { "c$it" }.toSet()
-        assertThrows(Exception::class.java) { bytes(archive(many)) }
-        val tooMany = bytes(archive(setOf("a"))).decodeToString().replaceFirst("\"a\"",
-            many.joinToString(",") { "\"$it\"" })
-        assertThrows(LocalDataArchiveException::class.java) {
-            LocalDataArchiveCodec.read(ByteArrayInputStream(tooMany.toByteArray()))
-        }
-        assertThrows(Exception::class.java) { bytes(archive(setOf("a|||b"))) }
+        assertThat(rejection { bytes(archive(many)) }.rejection).isEqualTo(ArchiveRejection.TOO_LARGE)
+        val doc = bytes(archive(setOf("a"))).decodeToString()
+        assertThat(read(doc.replaceFirst("\"a\"", many.joinToString(",") { "\"$it\"" })).rejection)
+            .isEqualTo(ArchiveRejection.TOO_LARGE)
+        assertThat(rejection { bytes(archive(setOf("a|||b"))) }.rejection).isEqualTo(ArchiveRejection.INVALID_VALUE)
+        assertThat(read(doc.replaceFirst("\"a\"", "\"a|||b\"")).rejection).isEqualTo(ArchiveRejection.INVALID_VALUE)
+        assertThat(rejection { bytes(archive(setOf(" "))) }.rejection).isEqualTo(ArchiveRejection.INVALID_VALUE)
+        assertThat(read(doc.replaceFirst("\"a\"", "\"\"")).rejection).isEqualTo(ArchiveRejection.INVALID_VALUE)
+    }
+
+    @Test fun roleAndHoldNeedVersionSevenAndAnInvalidRoleOrHoldIsRejected() {
+        val v6 = bytes(archive(emptySet(), version = 6)).decodeToString()
+        val role = inSessions(v6, "\"prescription\"", "\"role\":\"MOBILITY\"")
+        assertThat(read(role).message).contains("archive version 7")
+        val hold = inSessions(v6, "\"restSeconds\"", "\"holdSeconds\":30")
+        assertThat(read(hold).message).contains("archive version 7")
+
+        val v7 = bytes(archive(setOf("a"))).decodeToString()
+        // Session 1 is a weight-and-repetition exercise: a hold is not valid on it.
+        assertThat(read(inSessions(v7, "\"restSeconds\"", "\"holdSeconds\":30")).rejection)
+            .isNotEqualTo(ArchiveRejection.UNSUPPORTED_VERSION)
+        assertThat(read(inSessions(v7, "\"prescription\"", "\"role\":\"NOT_A_ROLE\"")).message).contains("role")
+    }
+
+    @Test fun aTemplateCannotCarryAHoldOnWriteOrRead() {
+        val base = LocalDataArchiveFixtures.archive()
+        val withHold = base.copy(snapshot = base.snapshot.copy(templates = base.snapshot.templates.mapIndexed { i, t ->
+            if (i != 0) t else t.copy(exercises = t.exercises.map {
+                it.copy(prescription = it.prescription.copy(
+                    exerciseType = ExerciseType.BODYWEIGHT_REPS, targetWeight = null, holdSeconds = 30
+                ))
+            })
+        }))
+        assertThat(assertThrows(IllegalArgumentException::class.java) { bytes(withHold) }.message)
+            .contains("template prescription cannot carry a hold")
+        val doc = bytes(base).decodeToString()
+        val at = doc.indexOf("\"restSeconds\"")
+        val smuggled = doc.substring(0, at) + "\"holdSeconds\":30," + doc.substring(at)
+        assertThat(read(smuggled).message).contains("template")
     }
 
     @Test fun editingConditionsDoesNotChangeAnActiveSession() = runBlocking<Unit> {

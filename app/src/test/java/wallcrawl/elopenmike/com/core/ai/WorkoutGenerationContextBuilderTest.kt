@@ -241,6 +241,47 @@ class WorkoutGenerationContextBuilderTest {
     }
 
     @Test
+    fun build_anOverlayVersionChangeAltersTheIdentityWithNoProfileEdit() = runTest {
+        val catalog = PlannerFixtureContextFactory().bundledCatalogProjection().exercises
+        val profile = UserProfile(availableEquipment = StandardEquipment.ALL, reportedConditions = setOf("c1"))
+        val record = wallcrawl.elopenmike.com.core.conditions.ConditionRecord(
+            id = "c1", avoidDemands = emptySet(), modifyDemands = emptySet(), routine = emptyList(),
+            exerciseCues = emptyMap(), notes = emptyMap(), redFlags = emptyMap(), evidenceGrade = "C",
+            sources = emptyList(),
+            provenance = wallcrawl.elopenmike.com.core.model.AiReviewProvenance(
+                reviewerModelId = "test", reviewedAtEpochMillis = 1L, reviewedContentId = "x",
+                reviewedContentSha256 = "0", sourceReferences = emptyList(), decisionRationale = "t",
+                limitations = "t", schemaVersion = 1, policyVersion = 1
+            )
+        )
+        suspend fun identityFor(version: String): String {
+            val overlay = object : wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceSource {
+                override suspend fun guidance() = wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceResult.Loaded(
+                    wallcrawl.elopenmike.com.core.conditions.ConditionGuidance(
+                        version = version, exerciseDemands = emptyMap(), conditions = mapOf("c1" to record),
+                        jointLabelDemands = emptyMap(), demandCues = emptyMap()
+                    )
+                )
+            }
+            val context = WorkoutGenerationContextBuilder(
+                userProfileRepository = StubUserProfileRepository(profile),
+                workoutRepository = StubWorkoutRepository(emptyList()),
+                exerciseCatalog = InMemoryExerciseCatalog(catalog),
+                exerciseFilter = ExerciseFilter(),
+                historyAnalyzer = WorkoutHistoryAnalyzer(),
+                plannerFeatureFlags = PlannerFeatureFlags.PRODUCTION,
+                conditionGuidanceSource = overlay
+            ).build()
+            assertThat(context.conditionRestrictions)
+                .isInstanceOf(wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions.Active::class.java)
+            return RecommendationContextIdentity.of(context)
+        }
+
+        assertThat(identityFor("v1")).isEqualTo(identityFor("v1"))
+        assertThat(identityFor("v2")).isNotEqualTo(identityFor("v1"))
+    }
+
+    @Test
     fun build_reportedConditionsFailClosedEvenWithTheReviewedPathOff() = runTest {
         val catalog = PlannerFixtureContextFactory().bundledCatalogProjection().exercises
         fun builderFor(profile: UserProfile) = WorkoutGenerationContextBuilder(

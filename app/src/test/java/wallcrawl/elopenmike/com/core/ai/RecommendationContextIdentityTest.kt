@@ -6,6 +6,12 @@ import org.junit.Test
 import wallcrawl.elopenmike.com.core.conditions.ConditionGuidance
 import wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions
 import wallcrawl.elopenmike.com.core.model.AdaptationState
+import wallcrawl.elopenmike.com.core.model.ExercisePrescription
+import wallcrawl.elopenmike.com.core.model.ExerciseType
+import wallcrawl.elopenmike.com.core.model.RepRange
+import wallcrawl.elopenmike.com.core.model.SessionStatus
+import wallcrawl.elopenmike.com.core.model.WorkoutExercise
+import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.LedgerPolicyVersion
 import wallcrawl.elopenmike.com.core.model.TrainingProgramState
 import wallcrawl.elopenmike.com.core.model.TrainingProgramStatePolicyVersion
@@ -280,7 +286,38 @@ class RecommendationContextIdentityTest {
         }
     )
 
+    private fun withHistory(hold: Int?): WorkoutGenerationContext {
+        val session = WorkoutSession(
+            id = "done-1", name = "Done", startedAtTimestamp = 1_000L, completedAtTimestamp = 2_000L,
+            status = SessionStatus.COMPLETED,
+            exercises = listOf(
+                WorkoutExercise(
+                    id = "ex-1", sessionId = "done-1", exerciseId = "push-up", orderIndex = 0,
+                    prescription = ExercisePrescription(
+                        exerciseType = ExerciseType.BODYWEIGHT_REPS, targetSets = 2,
+                        repRange = RepRange(8, 12), restSeconds = 60, holdSeconds = hold
+                    )
+                )
+            )
+        )
+        return context().copy(progressionHistory = listOf(session), historyAsOfTimestamp = 10_000L)
+    }
+
+    @Test
+    fun aHoldFreeHistoryKeepsItsDigestAndAHoldChangesIt() {
+        // The expected value was produced by this code, not by the base commit: the only input that
+        // differs from 29fb4927a is the prescription text, which is pinned to the base wording in
+        // ExercisePrescriptionTest.absentHoldPrintsTheTextFromBeforeHoldsExisted. Together they
+        // show the digest is what the base commit produced.
+        assertThat(RecommendationContextIdentity.of(withHistory(null))).isEqualTo(HISTORY_DIGEST)
+        assertThat(RecommendationContextIdentity.of(withHistory(30)))
+            .isNotEqualTo(RecommendationContextIdentity.of(withHistory(null)))
+        assertThat(RecommendationContextIdentity.of(withHistory(30)))
+            .isNotEqualTo(RecommendationContextIdentity.of(withHistory(45)))
+    }
+
     private companion object {
+        const val HISTORY_DIGEST = "ccbb4205db360e82f329cd7b513add93cd382cd1e2ca0b0ed7882425fc343704"
         const val PRE_CONDITIONS_DIGEST = "5f74554467b20a16c606e31008e1500b297d4c940b0f2f52e4a434f73d6f45b2"
     }
 }
