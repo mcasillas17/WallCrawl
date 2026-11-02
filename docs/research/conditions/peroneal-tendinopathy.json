@@ -69,6 +69,13 @@
       "query": "DOI:10.7759/cureus.81742",
       "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
       "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search and primary-page open",
+      "query": "\"PMC6829698\"; https://pmc.ncbi.nlm.nih.gov/articles/PMC6829698/",
+      "decision": "Directly inspected the full short correction; two author-name spellings corrected, with no clinical change stated.",
+      "limitations": "Linked institution PDF failed403; direct PMC notice was accessible. Bounded correction check only."
     }
   ],
   "sources": [
@@ -82,12 +89,12 @@
       "access": {
         "status": "full-text",
         "date": "2026-11-01",
-        "details": "Full publisher article and Europe PMC XML/reference trail inspected. Correction DOI10.1007/s00167-018-5021-4 publisher preview subscription-only, substantive correction not inspected."
+        "details": "Full publisher article and Europe PMC XML/reference trail inspected. Later correction body directly opened at https://pmc.ncbi.nlm.nih.gov/articles/PMC6829698/; corroborating author-institution record inspected. Institution PDF returned 403."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
         "method": "Publisher/PubMed records inspected during research; Europe PMC REST core metadata DOI:10.1007/s00167-018-4971-x rechecked during serialization, including publication type and comment/correction links. Not a registry-wide clearance.",
-        "result": "Linked notices: Erratum in: Knee Surg Sports Traumatol Arthrosc. 2018 Oct;26(10):3108. doi: 10.1007/s00167-018-5021-4. No claim of exhaustive integrity clearance or automatic supersession."
+        "result": "Linked correction DOI 10.1007/s00167-018-5021-4 (PMID 29938307), https://pmc.ncbi.nlm.nih.gov/articles/PMC6829698/, corrects two author names only; no clinical recommendation changes in this notice. Not an exhaustive integrity clearance."
       },
       "design": "International multidisciplinary consensus based on scarce, heterogeneous evidence.",
       "population": "Peroneal tendon pathologies; distinguish tendinopathy from tear, rupture and dislocation.",
@@ -95,9 +102,9 @@
       "coInterventions": "Acute associated-injury management and symptom measures.",
       "outcomes": "Consensus supports conservative care, painless weight bearing followed by ROM and tendon loading as appropriate. Dose is unvalidated. Conservative references include mixed-tendon PRP and luxation/subluxation reports, not an isolated-tendinopathy exercise RCT.",
       "followUp": "No single follow-up.",
-      "uncertainty": "Consensus rests on sparse evidence, including mixed-tendon and subluxation reports. It does not establish an isolated-tendinopathy exercise dose. The linked correction body was not accessed; postoperative repair limits are a separate population.",
+      "uncertainty": "Consensus rests on sparse evidence, including mixed-tendon and subluxation reports. It does not establish an isolated-tendinopathy exercise dose. Postoperative repair limits are a separate population.",
       "harms": "No quantified isolated-exercise harms estimate.",
-      "limitations": "Consensus rests on sparse evidence, including mixed-tendon and subluxation reports. It does not establish an isolated-tendinopathy exercise dose. The linked correction body was not accessed; postoperative repair limits are a separate population. Research candidate only; no clinical release.",
+      "limitations": "Consensus rests on sparse evidence, including mixed-tendon and subluxation reports. It does not establish an isolated-tendinopathy exercise dose. Postoperative repair limits are a separate population. Research candidate only; no clinical release.",
       "protocol": {
         "execution": "Weight bearing when painless, then ROM/tendon loading appropriate to diagnosis; no specific verified band exercise execution.",
         "dose": "not reported as validated specific exercise dose.",
@@ -205,7 +212,7 @@
         }
       ],
       "applicability": "Peroneal tendon pathologies; distinguish tendinopathy from tear, rupture and dislocation.",
-      "limitations": "Consensus rests on sparse evidence, including mixed-tendon and subluxation reports. It does not establish an isolated-tendinopathy exercise dose. The linked correction body was not accessed; postoperative repair limits are a separate population."
+      "limitations": "Consensus rests on sparse evidence, including mixed-tendon and subluxation reports. It does not establish an isolated-tendinopathy exercise dose. Postoperative repair limits are a separate population."
     },
     {
       "id": "per-r1-result",
@@ -300,8 +307,7 @@
   "gaps": [
     "Clinical content review and individual applicability are not established.",
     "No verified isolated-peroneal-tendinopathy exercise RCT; source lead is mixed pathology.",
-    "Exact band direction, attachment, range and dose unresolved.",
-    "Published consensus correction content is subscription-only and not assessed; no unqualified integrity clearance."
+    "Exact band direction, attachment, range and dose unresolved."
   ],
   "disposition": "unresolved",
   "review": {

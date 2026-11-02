@@ -90,6 +90,13 @@
       "query": "DOI:10.1002/acr.23732",
       "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
       "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search and primary-page open",
+      "query": "\"PMC6886027\"; \"10.1002/acr.23732\" \"Table\"",
+      "decision": "Complete short correction body inspected in indexed primary PMC text; source and findings updated.",
+      "limitations": "Direct PMC page still challenged; no successful direct PDF retrieval or exhaustive integrity clearance."
     }
   ],
   "sources": [
@@ -141,22 +148,22 @@
       "access": {
         "status": "full-text",
         "date": "2026-11-01",
-        "details": "Full indexed publisher methods/results inspected. Europe PMC core metadata identifies linked 2018 erratum 10.1002/acr.23732; its full content remains unavailable and is not presumed trivial. https://acrjournals.onlinelibrary.wiley.com/doi/full/10.1002/acr.22750"
+        "details": "Full indexed publisher methods/results inspected at https://acrjournals.onlinelibrary.wiley.com/doi/full/10.1002/acr.22750. Linked correction inspected as recorded in mtp-erratum."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
         "method": "Publisher/PubMed records inspected during research; Europe PMC REST core metadata DOI:10.1002/acr.22750 rechecked during serialization, including publication type and comment/correction links. Not a registry-wide clearance.",
-        "result": "Linked notices: Erratum in: Arthritis Care Res (Hoboken). 2018 Sep;70(9):1420. doi: 10.1002/acr.23732 No claim of exhaustive integrity clearance or automatic supersession."
+        "result": "Linked notices: Erratum in: Arthritis Care Res (Hoboken). 2018 Sep;70(9):1420. doi: 10.1002/acr.23732 No claim of exhaustive integrity clearance or automatic supersession. Later inspection of the linked correction is recorded in mtp-erratum."
       },
       "design": "Randomised active-device trial, n=102, with linked 2018 erratum.",
       "population": "Symptomatic first-MTP OA; recurrent fallers excluded.",
       "comparator": "Modified prefabricated orthoses versus rocker-sole shoes.",
       "coInterventions": "Cointerventions/rescue medication monitored.",
-      "outcomes": "Originally reported FHSQ difference 2.05 (95% CI −3.61 to 7.71), with similar improvement. Shoes had lower adherence and more adverse events (39% versus 16%; RR 2.47, 95% CI 1.12–5.44). The linked erratum text is unavailable: check these numbers against the correction before release.",
+      "outcomes": "FHSQ difference 2.05 (95% CI −3.61 to 7.71), with similar improvement. Shoes had lower adherence and more adverse events (39% versus 16%; RR 2.47, 95% CI 1.12–5.44). See mtp-erratum for the separately corrected FFI endpoint.",
       "followUp": "12 weeks.",
-      "uncertainty": "Active comparison without sham cannot isolate efficacy. A linked 2018 erratum remains unread; original numerical values require correction review before release. Device exclusions do not establish exercise contraindications.",
-      "harms": "Original trial reported more shoe events, including new low-back pain; implications of the erratum remain unresolved.",
-      "limitations": "Active comparison without sham cannot isolate efficacy. A linked 2018 erratum remains unread; original numerical values require correction review before release. Device exclusions do not establish exercise contraindications. Research candidate only; no clinical release.",
+      "uncertainty": "Active comparison without sham cannot isolate efficacy. Device exclusions do not establish exercise contraindications.",
+      "harms": "More shoe events, including new low-back pain; see mtp-erratum for the correction scope.",
+      "limitations": "Active comparison without sham cannot isolate efficacy. Device exclusions do not establish exercise contraindications. Research candidate only; no clinical release.",
       "protocol": {
         "execution": "Modified full-length prefabricated orthoses with first-metatarsal cut-out versus MBT rocker-sole shoes.",
         "dose": "Device use rather than exercise; exact wearing schedule beyond the 12-week assignment not re-extracted.",
@@ -255,9 +262,9 @@
       "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6886027/",
       "publicationStatus": "Final journal publication; metadata firstPublicationDate 2018-09-01. Version/access details below.",
       "access": {
-        "status": "unavailable",
+        "status": "full-text",
         "date": "2026-11-01",
-        "details": "PubMed metadata inspected; no abstract. PMC challenged, Europe PMC XML returned 500, and publisher full-text retrieval failed. Corrected content remains unknown."
+        "details": "Complete short correction body inspected in native search indexed text from primary PMC6886027; direct PMC opening still returned a challenge. This is indexed full-notice access, not successful direct-page or PDF retrieval."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -266,13 +273,13 @@
       },
       "design": "Published erratum, 2018.",
       "population": "Linked to the 2016 Menz first-MTP orthoses/footwear trial.",
-      "comparator": "not reported; correction body unavailable.",
+      "comparator": "Orthoses versus rocker-sole footwear in the linked trial.",
       "coInterventions": "not reported.",
-      "outcomes": "Metadata establishes that an erratum exists; its corrected content and impact on original numerical findings remain unresolved.",
-      "followUp": "not reported.",
-      "uncertainty": "Correction exists but its substance is unavailable. Do not presume it only corrects typography or present the original trial numbers as correction-verified.",
-      "harms": "not reported; correction body unavailable.",
-      "limitations": "Correction exists but its substance is unavailable. Do not presume it only corrects typography or present the original trial numbers as correction-verified. Research candidate only; no clinical release.",
+      "outcomes": "Corrects 12-week Foot Function Index scores in Table 2; corrected scores still show no between-group difference. The notice does not change the FHSQ or adverse-event endpoints.",
+      "followUp": "12-week corrected endpoint.",
+      "uncertainty": "Correction checked through complete indexed PMC notice; no new exercise evidence.",
+      "harms": "No harms correction stated.",
+      "limitations": "Correction is not independent replication or an exercise trial.",
       "protocol": {
         "execution": "not reported",
         "dose": "not reported",
@@ -282,7 +289,7 @@
         "stoppingRules": "not reported"
       },
       "locations": [
-        "PubMed > Erratum for and Publication types"
+        "PMC > correction body: Table 2, 12-week Foot Function Index"
       ]
     }
   ],
@@ -303,7 +310,7 @@
     {
       "id": "mtp-r1-result",
       "kind": "study-result",
-      "statement": "Originally reported FHSQ difference 2.05 (95% CI −3.61 to 7.71), with similar improvement. Shoes had lower adherence and more adverse events (39% versus 16%; RR 2.47, 95% CI 1.12–5.44). The linked erratum text is unavailable: check these numbers against the correction before release. Harms: Original trial reported more shoe events, including new low-back pain; implications of the erratum remain unresolved.",
+      "statement": "FHSQ difference 2.05 (95% CI −3.61 to 7.71), with similar improvement. Shoes had lower adherence and more adverse events (39% versus 16%; RR 2.47, 95% CI 1.12–5.44). See mtp-erratum for the separately corrected FFI endpoint. Harms: More shoe events, including new low-back pain; see mtp-erratum for the correction scope.",
       "citations": [
         {
           "sourceId": "mtp-r1",
@@ -316,10 +323,14 @@
         {
           "sourceId": "mtp-r1",
           "location": "Discussion > No placebo comparator"
+        },
+        {
+          "sourceId": "mtp-erratum",
+          "location": "PMC > correction body: Table 2, 12-week Foot Function Index"
         }
       ],
       "applicability": "Symptomatic first-MTP OA; recurrent fallers excluded.",
-      "limitations": "Active comparison without sham cannot isolate efficacy. A linked 2018 erratum remains unread; original numerical values require correction review before release. Device exclusions do not establish exercise contraindications."
+      "limitations": "Active comparison without sham cannot isolate efficacy. Device exclusions do not establish exercise contraindications."
     },
     {
       "id": "mtp-r2-result",
@@ -349,16 +360,16 @@
     },
     {
       "id": "mtp-erratum-result",
-      "kind": "evidence-gap",
-      "statement": "Metadata establishes that an erratum exists; its corrected content and impact on original numerical findings remain unresolved. Harms: not reported; correction body unavailable.",
+      "kind": "study-result",
+      "statement": "Corrects 12-week Foot Function Index scores in Table 2; corrected scores still show no between-group difference. The notice does not change the FHSQ or adverse-event endpoints. Harms: No harms correction stated.",
       "citations": [
         {
           "sourceId": "mtp-erratum",
-          "location": "PubMed > Erratum for and Publication types"
+          "location": "PMC > correction body: Table 2, 12-week Foot Function Index"
         }
       ],
       "applicability": "Linked to the 2016 Menz first-MTP orthoses/footwear trial.",
-      "limitations": "Correction exists but its substance is unavailable. Do not presume it only corrects typography or present the original trial numbers as correction-verified."
+      "limitations": "Correction checked through complete indexed PMC notice; no new exercise evidence."
     }
   ],
   "exerciseMappings": [
@@ -405,7 +416,6 @@
   ],
   "gaps": [
     "Clinical content review and individual applicability are not established.",
-    "2016 footwear trial linked erratum full content unavailable; numerical results require correction review.",
     "Hallux-limitus exercise bundle is indirect and full primary execution unavailable.",
     "No validated universal toe-extension limit or standalone therapeutic exercise."
   ],
