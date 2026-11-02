@@ -11,8 +11,8 @@ import wallcrawl.elopenmike.com.core.model.*
 class ConditionSupportFormatException(message: String, cause: Throwable? = null) : IllegalArgumentException(message, cause)
 
 /** Reads released support only. Unknown fields, cases, units or review bindings fail closed. */
-class ConditionSupportParser(exerciseIdentities: Map<String, ConditionExerciseIdentity> = emptyMap()) {
-    private val exerciseIdentities = exerciseIdentities.toMap()
+class ConditionSupportParser(private val exerciseIdentity: (String) -> ConditionExerciseIdentity?) {
+    constructor(exerciseIdentities: Map<String, ConditionExerciseIdentity> = emptyMap()) : this(exerciseIdentities.toMap()::get)
 
     fun parse(input: Reader): ConditionSupportCatalog = try {
         val reader = JsonReader(BoundedCharacterReader(input, MAX_CHARACTERS) { fail("Condition support exceeds the input limit.") })
@@ -63,7 +63,7 @@ class ConditionSupportParser(exerciseIdentities: Map<String, ConditionExerciseId
         val identity = rule.obj("exerciseIdentity")
         identity.fields("exerciseId", "contentSha256", "exerciseType", "artworkSha256")
         val declared = ConditionExerciseIdentity(identity.string("exerciseId"), identity.string("contentSha256"), enumValueOf(identity.string("exerciseType")), identity.string("artworkSha256"))
-        require(exerciseIdentities[declared.exerciseId] == declared) { "Unknown or changed exercise content: ${declared.exerciseId}." }
+        require(exerciseIdentity(declared.exerciseId) == declared) { "Unknown or changed exercise content: ${declared.exerciseId}." }
         return ConditionRule(rule.string("id"), declared, enumValueOf(rule.string("effect")), rule.string("executionIdentity"), text(rule.obj("instructions")),
             rule.strings("sourceIds"), rule.optionalObj("bounds")?.let(::bounds), rule.boolean("allowOrdinaryProgression"),
             rule.optionalObj("supportivePrescription")?.let(::prescription), rule.optionalObj("schedule")?.let(::schedule))

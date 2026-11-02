@@ -1,0 +1,16 @@
+{
+  "frames": [],
+  "schemaVersion": 1,
+  "source": {
+    "assetLicense": "MIT",
+    "attribution": {
+      "creator": "WallCrawl contributors",
+      "creatorUrl": "https://github.com/mcasillas17/WallCrawl",
+      "license": "MIT",
+      "licenseUrl": "https://github.com/mcasillas17/WallCrawl/blob/main/LICENSE"
+    },
+    "id": "wallcrawl",
+    "repository": "https://github.com/mcasillas17/WallCrawl",
+    "version": 1
+  }
+}

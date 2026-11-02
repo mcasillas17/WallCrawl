@@ -18,7 +18,7 @@ class ConditionSupportLoadException(message: String, cause: Throwable) : Illegal
 class ConditionSupportStore(
     private val assetManager: AssetManager,
     private val exerciseCatalog: ExerciseCatalog,
-    private val artworkSha256ByExerciseId: suspend () -> Map<String, String>,
+    private val prepareArtworkIdentity: suspend (Set<String>) -> ConditionArtworkIdentity,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
     @Volatile private var cached: ConditionSupportCatalog? = null
@@ -29,12 +29,14 @@ class ConditionSupportStore(
             try {
                 val exercises = exerciseCatalog.getAllExercises().first()
                 require(exercises.map { it.id }.distinct().size == exercises.size) { "Duplicate exercise IDs prevent condition identity binding." }
-                val artworkIdentities = artworkSha256ByExerciseId()
-                val knownIds = exercises.map { it.id }.toSet()
-                require(knownIds.containsAll(artworkIdentities.keys)) { "Artwork binding references an unknown exercise." }
-                val parser = ConditionSupportParser(exercises.filter { it.id in artworkIdentities }.associate {
-                    it.id to ConditionExerciseIdentity.from(it, requireNotNull(artworkIdentities[it.id]))
-                })
+                val exercisesById = exercises.associateBy { it.id }
+                val artwork = prepareArtworkIdentity(exercisesById.keys)
+                val identities = mutableMapOf<String, ConditionExerciseIdentity>()
+                val parser = ConditionSupportParser { id ->
+                    exercisesById[id]?.let { exercise ->
+                        identities.getOrPut(id) { ConditionExerciseIdentity.from(exercise, artwork.sha256For(id)) }
+                    }
+                }
                 assetManager.open(ASSET_PATH).bufferedReader().use(parser::parse)
             } catch (error: IOException) {
                 throw ConditionSupportLoadException("Unable to load released condition support.", error)
