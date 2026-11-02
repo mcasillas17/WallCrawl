@@ -53,7 +53,9 @@ data class UserProfileEntity(
     @ColumnInfo(defaultValue = "'UNSPECIFIED'")
     val gender: ProfileGender = ProfileGender.UNSPECIFIED,
     @ColumnInfo(defaultValue = "'AUTOMATIC'")
-    val illustrationPreference: IllustrationPreference = IllustrationPreference.AUTOMATIC
+    val illustrationPreference: IllustrationPreference = IllustrationPreference.AUTOMATIC,
+    @ColumnInfo(defaultValue = "'[]'")
+    val activeConditionsJson: String = "[]"
 )
 
 @Entity(
@@ -74,7 +76,8 @@ data class WorkoutSessionEntity(
     val origin: WorkoutOrigin = WorkoutOrigin.PLANNER,
     val sourceTemplateId: String? = null,
     val focusMusclesJson: String,
-    val notes: String
+    val notes: String,
+    val conditionContextJson: String? = null
 )
 
 @Entity(
@@ -108,7 +111,9 @@ data class WorkoutExerciseEntity(
     val effortMinRir: Int? = null,
     val effortMaxRir: Int? = null,
     val restClass: RestClass? = null,
-    val restTargetSource: RestTargetSource? = null
+    val restTargetSource: RestTargetSource? = null,
+    @ColumnInfo(defaultValue = "'ORDINARY'")
+    val purpose: String = "ORDINARY"
 )
 
 @Entity(
@@ -199,5 +204,7 @@ data class WorkoutTemplateExerciseEntity(
     val effortMinRir: Int? = null,
     val effortMaxRir: Int? = null,
     val restClass: RestClass? = null,
-    val restTargetSource: RestTargetSource? = null
+    val restTargetSource: RestTargetSource? = null,
+    @ColumnInfo(defaultValue = "'ORDINARY'")
+    val purpose: String = "ORDINARY"
 )

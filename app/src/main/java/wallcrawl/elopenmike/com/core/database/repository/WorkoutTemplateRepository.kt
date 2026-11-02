@@ -106,7 +106,8 @@ class OfflineWorkoutTemplateRepository(
                     effortMinRir = prescription.effortTarget?.minRir,
                     effortMaxRir = prescription.effortTarget?.maxRir,
                     restClass = prescription.restClass,
-                    restTargetSource = prescription.restTargetSource
+                    restTargetSource = prescription.restTargetSource,
+                    purpose = prescription.purpose.name
                 )
             }
         )

@@ -43,9 +43,22 @@ interface UserProfileDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOrUpdate(profile: UserProfileEntity)
 
+    @Query("SELECT COUNT(*) FROM workout_sessions WHERE status = 'IN_PROGRESS'")
+    suspend fun activeWorkoutCount(): Int
+
     @Transaction
     suspend fun insertOrUpdateWithNextRevision(profile: UserProfileEntity): UserProfileEntity {
-        val nextRevision = (getProfile(profile.id)?.revision ?: -1L) + 1L
+        val previous = getProfile(profile.id)
+        if (previous != null) {
+            check(previous.trainingConstraintsJson == profile.trainingConstraintsJson ||
+                decodeTrainingConstraints(previous.trainingConstraintsJson).second == null) {
+                "Unresolved training constraints require review before replacement."
+            }
+            check(previous.activeConditionsJson == profile.activeConditionsJson || activeWorkoutCount() == 0) {
+                "Active conditions cannot change during a workout."
+            }
+        }
+        val nextRevision = (previous?.revision ?: -1L) + 1L
         return profile.copy(revision = nextRevision).also { revisedProfile ->
             insertOrUpdate(revisedProfile)
         }
@@ -203,6 +216,17 @@ interface WorkoutSessionDao : CompletedWorkoutHistoryDao, WorkoutHistoryDao, Pro
         }
         val existingActiveSession = getActiveSession()
         if (existingActiveSession != null) return existingActiveSession
+        check(getProgramProfile(expectedProfileId)?.trainingConstraintsJson
+            ?.let { decodeTrainingConstraints(it).second == null } == true) {
+            "Unresolved training constraints prevent a new workout."
+        }
+        val contextDigest = session.conditionContextJson?.let { ConditionContextCodec.decodeSession(it).canonicalDigest }
+        require(recommendation?.conditionContextDigest == null || recommendation.conditionContextDigest == contextDigest) {
+            "Recommendation condition context does not match the frozen session."
+        }
+        require(recommendation == null || (recommendation.conditionContextDigest == null) == (contextDigest == null)) {
+            "Recommendation and session must agree on condition context."
+        }
 
         val header = if (session.origin == WorkoutOrigin.PLANNER) readProgramHeader(expectedProfileId) else null
         if (header != null && expectedProgramHeader != header &&

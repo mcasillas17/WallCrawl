@@ -39,7 +39,10 @@ data class UserProfile(
     val themePreference: ThemePreference = ThemePreference.SYSTEM,
     val gender: ProfileGender = ProfileGender.UNSPECIFIED,
     // Compatibility data from the first integration preview; artwork now reads gender only.
-    val illustrationPreference: IllustrationPreference = IllustrationPreference.AUTOMATIC
+    val illustrationPreference: IllustrationPreference = IllustrationPreference.AUTOMATIC,
+    val activeConditions: List<SelectedCondition> = emptyList(),
+    /** Exact legacy text whose meaning this build cannot safely use for planning. */
+    val unresolvedTrainingConstraintsRaw: String? = null
 ) {
     val primaryGoal: FitnessGoal get() = goals.firstOrNull() ?: FitnessGoal.BUILD_MUSCLE
 

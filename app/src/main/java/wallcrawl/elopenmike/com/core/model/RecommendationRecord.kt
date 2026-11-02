@@ -83,10 +83,12 @@ data class RecommendationRecord(
     val reasonCodes: List<String>,
     val doseAccounting: List<MuscleDoseAccounting>,
     val recordedAtEpochMillis: Long,
-    val programAssociationDigest: String? = null
+    val programAssociationDigest: String? = null,
+    val conditionContextDigest: String? = null
 ) {
     init {
         require(programAssociationDigest == null || programAssociationDigest.matches(Regex("[0-9a-f]{64}"))) { "Invalid program association digest." }
+        require(conditionContextDigest == null || conditionContextDigest.matches(Regex("[0-9a-f]{64}"))) { "Invalid condition context digest." }
         requireToken(sessionId, "sessionId")
         requireToken(validatorVersion, "validatorVersion")
         requireToken(durationEstimatorVersion, "durationEstimatorVersion")

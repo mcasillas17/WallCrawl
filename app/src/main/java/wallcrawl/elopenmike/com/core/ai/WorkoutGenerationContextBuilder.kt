@@ -114,6 +114,9 @@ class WorkoutGenerationContextBuilder(
         // Program configuration and the live constraints must come from one coherent read.
         val profile = if (projection != null) projection.profile
             ?: throw ProgramException(ProgramFailure.PROFILE_UNAVAILABLE) else initialProfile
+        check(profile.unresolvedTrainingConstraintsRaw == null) {
+            "Unresolved training constraints prevent workout planning."
+        }
         val programHeader = projection?.header ?: programRepository?.getHeader(profile.id) ?: ProgramHeader.absent(profile.id)
         val programInput = projection?.let {
             val progress = MultiWeekProgramPolicy.reconstruct(it.enrollment, it.sessions)

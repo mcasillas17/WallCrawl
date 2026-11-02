@@ -66,6 +66,35 @@ import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
  */
 @RunWith(AndroidJUnit4::class)
 class ProductionPlannerPersistenceTest {
+    @Test fun generatedStartChecksPersistedRestrictionsWhenIncomingProfileOmitsTheMarker() = runBlocking {
+        profileRepository.saveProfile(onboardedProfile())
+        val profile = profileRepository.getProfileOnce()
+        val proposal = validatedPlan(contextBuilder.build())
+        database.openHelper.writableDatabase.execSQL("UPDATE user_profiles SET trainingConstraintsJson='FUTURE_CONSTRAINT'")
+        org.junit.Assert.assertThrows(IllegalStateException::class.java) {
+            runBlocking { workoutRepository.startWorkoutFromGenerated(proposal.workout, DISPLAY_NAME,
+                DISPLAY_RATIONALE, profile, proposal.snapshot) }
+        }
+        assertThat(database.workoutSessionDao().getActiveSession()).isNull()
+        assertThat(database.localDataBackupDao().selectRecommendationRecords()).isEmpty()
+    }
+    @Test fun generatedStartPersistsTheSnapshotContextAndItsExactReceiptDigest() = runBlocking {
+        profileRepository.saveProfile(onboardedProfile())
+        val profile = profileRepository.getProfileOnce()
+        val proposal = validatedPlan(contextBuilder.build())
+        val selections = listOf("z-future-condition", "a-future-condition").map {
+            wallcrawl.elopenmike.com.core.model.SelectedCondition(it, 1, emptyMap())
+        }
+        val frozen = wallcrawl.elopenmike.com.core.model.SessionConditionContext(1, 1,
+            selections, selections.associate { it.conditionId to "v1" }, emptyList(), emptyList(),
+            listOf("z-event", "a-event"))
+        val started = workoutRepository.startWorkoutFromGenerated(proposal.workout, DISPLAY_NAME,
+            DISPLAY_RATIONALE, profile, proposal.snapshot.copy(conditionContext = frozen))
+        assertThat(started.conditionContext).isEqualTo(frozen)
+        assertThat(workoutRepository.getSessionById(started.id)!!.conditionContext).isEqualTo(frozen)
+        assertThat(workoutRepository.getRecommendationRecords(listOf(started.id)).single().conditionContextDigest)
+            .isEqualTo(frozen.canonicalDigest)
+    }
     @Test
     fun corruptRecommendationFailsHistoryAndExportBeforeOpeningTheDestination() = runBlocking<Unit> {
         profileRepository.saveProfile(onboardedProfile())

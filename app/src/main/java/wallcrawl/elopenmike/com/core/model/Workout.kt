@@ -108,7 +108,8 @@ data class WorkoutSession(
     val sourceTemplateId: String? = null,
     val focusMuscles: List<String> = emptyList(),
     val exercises: List<WorkoutExercise> = emptyList(),
-    val notes: String = ""
+    val notes: String = "",
+    val conditionContext: SessionConditionContext? = null
 ) {
     val totalVolume: Double
         get() = exercises.sumOf { it.totalVolume }

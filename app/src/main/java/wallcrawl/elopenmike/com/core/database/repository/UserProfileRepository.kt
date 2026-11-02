@@ -10,6 +10,7 @@ import wallcrawl.elopenmike.com.core.model.ThemePreference
 import wallcrawl.elopenmike.com.core.model.ProfileGender
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.UserProfile
+import wallcrawl.elopenmike.com.core.model.SelectedCondition
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.convertWeight
 import kotlinx.coroutines.flow.Flow
@@ -38,6 +39,9 @@ interface UserProfileRepository {
     suspend fun updateMusclePriorities(priorities: Map<String, PriorityLevel>)
     suspend fun updateExcludedExercises(excludedIds: List<String>)
     suspend fun updateTrainingConstraints(constraints: Set<TrainingConstraint>)
+    suspend fun updateActiveConditions(conditions: List<SelectedCondition>) {
+        throw UnsupportedOperationException("Condition selection is unavailable in this repository.")
+    }
     suspend fun updateReturningAfterBreakWeeks(weeks: Int)
     suspend fun updateThemePreference(theme: ThemePreference)
     suspend fun updateGender(gender: ProfileGender)
@@ -149,7 +153,14 @@ class OfflineUserProfileRepository(
     }
 
     override suspend fun updateTrainingConstraints(constraints: Set<TrainingConstraint>) {
-        mutateProfile { current -> current.copy(trainingConstraints = constraints) }
+        mutateProfile { current ->
+            check(current.unresolvedTrainingConstraintsRaw == null) { "Training constraints require review before editing." }
+            current.copy(trainingConstraints = constraints)
+        }
+    }
+
+    override suspend fun updateActiveConditions(conditions: List<SelectedCondition>) {
+        mutateProfile { current -> current.copy(activeConditions = conditions) }
     }
 
     override suspend fun updateReturningAfterBreakWeeks(weeks: Int) {

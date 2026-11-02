@@ -58,6 +58,7 @@ import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.model.MuscleDoseAccounting
 import wallcrawl.elopenmike.com.core.model.MuscleVocabulary
 import wallcrawl.elopenmike.com.core.model.PlannedExercise
+import wallcrawl.elopenmike.com.core.model.PrescriptionPurpose
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
 import wallcrawl.elopenmike.com.core.model.ProgressionReasonCode
 import wallcrawl.elopenmike.com.core.model.RecommendationRecord
@@ -134,6 +135,17 @@ object LocalDataArchiveCodec {
      * been flushed and closed without error.
      */
     fun write(archive: LocalDataArchive, openOutput: () -> OutputStream) {
+        require(archive.snapshot.profile?.unresolvedTrainingConstraintsRaw == null) {
+            "Unresolved training constraints cannot be represented by this archive."
+        }
+        require(archive.snapshot.profile?.activeConditions.isNullOrEmpty() &&
+            archive.snapshot.sessions.all { session -> session.conditionContext == null &&
+                session.exercises.all { it.prescription.purpose == PrescriptionPurpose.ORDINARY } } &&
+            archive.snapshot.templates.all { template ->
+                template.exercises.all { it.prescription.purpose == PrescriptionPurpose.ORDINARY } } &&
+            archive.snapshot.recommendationRecords.all { it.conditionContextDigest == null }) {
+            "Condition-aware data cannot be represented by this archive."
+        }
         // The codec writes any format it can read, which is what makes the older format's
         // round trip testable at all. Production always exports [ARCHIVE_VERSION]: the
         // repository names the version, not this function.

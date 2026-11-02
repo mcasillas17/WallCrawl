@@ -25,6 +25,7 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutSummary
 import wallcrawl.elopenmike.com.core.model.WorkoutOrigin
 import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
+import wallcrawl.elopenmike.com.core.model.SessionConditionContext
 import wallcrawl.elopenmike.com.core.progress.ProgressCalculator
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -198,7 +199,8 @@ class OfflineWorkoutRepository(
         origin = WorkoutOrigin.PLANNER,
         sourceTemplateId = null,
         userProfile = userProfile,
-        recommendation = recommendation
+        recommendation = recommendation,
+        conditionContext = recommendation?.conditionContext
     )
 
     override suspend fun startWorkoutFromTemplate(
@@ -235,7 +237,8 @@ class OfflineWorkoutRepository(
         origin: WorkoutOrigin,
         sourceTemplateId: String?,
         userProfile: UserProfile,
-        recommendation: RecommendationSnapshot?
+        recommendation: RecommendationSnapshot?,
+        conditionContext: SessionConditionContext? = null
     ): WorkoutSession {
         val sessionId = UUID.randomUUID().toString()
         val sessionEntity = WorkoutSessionEntity(
@@ -250,7 +253,8 @@ class OfflineWorkoutRepository(
             origin = origin,
             sourceTemplateId = sourceTemplateId,
             focusMusclesJson = focusMuscles.joinToString(PERSISTED_LIST_SEPARATOR),
-            notes = notes
+            notes = notes,
+            conditionContextJson = conditionContext?.let(ConditionContextCodec::encodeSession)
         )
         val exerciseEntities = mutableListOf<WorkoutExerciseEntity>()
         val setEntities = mutableListOf<WorkoutSetEntity>()
@@ -276,7 +280,8 @@ class OfflineWorkoutRepository(
                     effortMinRir = genEx.prescription.effortTarget?.minRir,
                     effortMaxRir = genEx.prescription.effortTarget?.maxRir,
                     restClass = genEx.prescription.restClass,
-                    restTargetSource = genEx.prescription.restTargetSource
+                    restTargetSource = genEx.prescription.restTargetSource,
+                    purpose = genEx.prescription.purpose.name
                 )
             )
 

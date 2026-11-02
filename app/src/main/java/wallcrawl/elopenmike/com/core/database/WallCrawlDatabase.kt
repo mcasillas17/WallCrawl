@@ -12,6 +12,8 @@ import wallcrawl.elopenmike.com.core.database.dao.ProgramDao
 import wallcrawl.elopenmike.com.core.database.entity.ProgramEnrollmentEntity
 import wallcrawl.elopenmike.com.core.database.entity.ProgramSessionAssociationEntity
 import wallcrawl.elopenmike.com.core.database.dao.CompletedWorkoutHistoryDao
+import wallcrawl.elopenmike.com.core.database.dao.ConditionReassessmentDao
+import wallcrawl.elopenmike.com.core.database.entity.ConditionReassessmentPendingEntity
 import wallcrawl.elopenmike.com.core.database.dao.DeloadPreferencesDao
 import wallcrawl.elopenmike.com.core.database.entity.DeloadPreferencesEntity
 import wallcrawl.elopenmike.com.core.database.dao.LocalDataBackupDao
@@ -36,7 +38,7 @@ import wallcrawl.elopenmike.com.core.database.entity.WorkoutTemplateExerciseEnti
  * Exposed as a constant so provenance recorded in an export names the same number the
  * database is actually built with, rather than a copy that can drift after a migration.
  */
-const val WALLCRAWL_SCHEMA_VERSION = 16
+const val WALLCRAWL_SCHEMA_VERSION = 17
 
 @Database(
     entities = [
@@ -50,7 +52,8 @@ const val WALLCRAWL_SCHEMA_VERSION = 16
         WorkoutRecommendationRecordEntity::class,
         DeloadPreferencesEntity::class,
         ProgramEnrollmentEntity::class,
-        ProgramSessionAssociationEntity::class
+        ProgramSessionAssociationEntity::class,
+        ConditionReassessmentPendingEntity::class
     ],
     version = WALLCRAWL_SCHEMA_VERSION,
     exportSchema = false
@@ -68,6 +71,7 @@ abstract class WallCrawlDatabase : RoomDatabase() {
     abstract fun weeklyDoseLedgerStateDao(): WeeklyDoseLedgerStateDao
     abstract fun localDataBackupDao(): LocalDataBackupDao
     abstract fun deloadPreferencesDao(): DeloadPreferencesDao
+    abstract fun conditionReassessmentDao(): ConditionReassessmentDao
 
     companion object {
         private const val DATABASE_NAME = "wallcrawl.db"
@@ -472,6 +476,21 @@ abstract class WallCrawlDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_16_17 = object : Migration(16, 17) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE user_profiles ADD COLUMN activeConditionsJson TEXT NOT NULL DEFAULT '[]'")
+                db.execSQL("ALTER TABLE workout_sessions ADD COLUMN conditionContextJson TEXT")
+                db.execSQL("ALTER TABLE workout_exercises ADD COLUMN purpose TEXT NOT NULL DEFAULT 'ORDINARY'")
+                db.execSQL("ALTER TABLE workout_template_exercises ADD COLUMN purpose TEXT NOT NULL DEFAULT 'ORDINARY'")
+                db.execSQL("ALTER TABLE workout_recommendation_records ADD COLUMN conditionContextDigest TEXT")
+                db.execSQL("""CREATE TABLE IF NOT EXISTS condition_reassessment_pending (
+                    profileId INTEGER NOT NULL, conditionId TEXT NOT NULL, exerciseId TEXT NOT NULL,
+                    eventId TEXT NOT NULL, stoppedContextIdentity TEXT NOT NULL,
+                    responsePolicyVersion INTEGER NOT NULL, stoppedAtTimestamp INTEGER NOT NULL,
+                    sourceSetId INTEGER, PRIMARY KEY(profileId, conditionId, exerciseId))""")
+            }
+        }
+
         val ALL_MIGRATIONS: Array<Migration>
             get() = arrayOf(
                 MIGRATION_1_2,
@@ -488,7 +507,8 @@ abstract class WallCrawlDatabase : RoomDatabase() {
                 MIGRATION_12_13,
                 MIGRATION_13_14,
                 MIGRATION_14_15,
-                MIGRATION_15_16
+                MIGRATION_15_16,
+                MIGRATION_16_17
             )
     }
 }

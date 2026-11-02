@@ -130,7 +130,7 @@ class OfflineLocalDataBackupRepository(
     override suspend fun isRestoreAllowed(): Boolean = backupDao.isEmptyDestination()
 
     override suspend fun exportTo(openOutput: () -> OutputStream): LocalDataExportResult {
-        // No gate. `readAll()` is itself a transaction, so the snapshot is one point in
+        // No gate. `readAllForExport()` is a transaction, so the snapshot is one point in
         // time whatever else is running, and export mutates nothing. Taking the shared gate
         // here would only make every profile and template write queue behind a full-history
         // read and then behind a document write the user's provider controls the speed of.
@@ -172,7 +172,7 @@ class OfflineLocalDataBackupRepository(
     }
 
     private suspend fun readSnapshot(): LocalDataSnapshot {
-        val rows = backupDao.readAll()
+        val rows = backupDao.readAllForExport()
         check(rows.profiles.size <= 1) {
             "The local database holds more than one profile row."
         }
@@ -262,7 +262,8 @@ class OfflineLocalDataBackupRepository(
                 effortMinRir = prescription.effortTarget?.minRir,
                 effortMaxRir = prescription.effortTarget?.maxRir,
                 restClass = prescription.restClass,
-                restTargetSource = prescription.restTargetSource
+                restTargetSource = prescription.restTargetSource,
+                purpose = prescription.purpose.name
             )
         }
 
@@ -280,7 +281,8 @@ class OfflineLocalDataBackupRepository(
         origin = origin,
         sourceTemplateId = sourceTemplateId,
         focusMusclesJson = focusMuscles.joinToString(PERSISTED_LIST_SEPARATOR),
-        notes = notes
+        notes = notes,
+        conditionContextJson = conditionContext?.let(ConditionContextCodec::encodeSession)
     )
 
     private fun WorkoutExercise.toExerciseEntity() =
@@ -302,7 +304,8 @@ class OfflineLocalDataBackupRepository(
             effortMinRir = prescription.effortTarget?.minRir,
             effortMaxRir = prescription.effortTarget?.maxRir,
             restClass = prescription.restClass,
-            restTargetSource = prescription.restTargetSource
+            restTargetSource = prescription.restTargetSource,
+            purpose = prescription.purpose.name
         )
 
     private fun WorkoutSet.toSetEntity() = WorkoutSetEntity(

@@ -59,6 +59,19 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.model.WorkoutSummary
 
 class WorkoutGenerationContextBuilderTest {
+    @Test fun unresolvedLegacyConstraintRefusesPlanningBeforeCandidateConstruction() = runTest {
+        val builder = WorkoutGenerationContextBuilder(
+            userProfileRepository = StubUserProfileRepository(
+                UserProfile(unresolvedTrainingConstraintsRaw = "FUTURE_SENSITIVE")),
+            workoutRepository = StubWorkoutRepository(emptyList()),
+            exerciseCatalog = InMemoryExerciseCatalog(emptyList()),
+            exerciseFilter = ExerciseFilter(),
+            historyAnalyzer = WorkoutHistoryAnalyzer()
+        )
+        org.junit.Assert.assertThrows(IllegalStateException::class.java) {
+            kotlinx.coroutines.runBlocking { builder.build() }
+        }
+    }
     @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
     @Test
     fun observationBoundsOnlyNowEligibleRowsAndRetainsAFutureOverflowSentinel() = runTest {

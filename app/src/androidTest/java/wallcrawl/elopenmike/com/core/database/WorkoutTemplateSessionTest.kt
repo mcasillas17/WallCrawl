@@ -6,6 +6,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.runBlocking
 import org.junit.After
+import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -24,13 +25,51 @@ import wallcrawl.elopenmike.com.core.model.RepRange
 import wallcrawl.elopenmike.com.core.model.RestClass
 import wallcrawl.elopenmike.com.core.model.RestTargetSource
 import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
+import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutOrigin
 import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
+import wallcrawl.elopenmike.com.core.model.PrescriptionPurpose
 
 @RunWith(AndroidJUnit4::class)
 class WorkoutTemplateSessionTest {
+    @Test fun unresolvedRestrictionsRefuseManualStartsAndReplacementButPreserveActiveLifecycle() = runBlocking {
+        val manual = template(listOf(planned("plank", ExercisePrescription(
+            exerciseType = ExerciseType.DURATION, targetSets = 1, targetDurationSeconds = 30))))
+        val active = workoutRepository.startWorkoutFromTemplate(manual, UserProfile())
+        database.openHelper.writableDatabase.execSQL("UPDATE user_profiles SET trainingConstraintsJson='FUTURE_CONSTRAINT'")
+        assertThrows(IllegalStateException::class.java) {
+            runBlocking { database.userProfileDao().insertOrUpdateWithNextRevision(profileEntity()) }
+        }
+        workoutRepository.logSetCompletion(active.exercises.single().sets.single().id,
+            SetPerformanceInput(durationSeconds = 30, completedAtTimestamp = COMPLETED_AT, isCompleted = true))
+        assertThat(workoutRepository.completeWorkout(active.id, 10).totalSetsCompleted).isEqualTo(1)
+        assertThat(workoutRepository.getSessionById(active.id)!!.status).isEqualTo(SessionStatus.COMPLETED)
+        assertThrows(IllegalStateException::class.java) {
+            runBlocking { workoutRepository.startWorkoutFromTemplate(manual, UserProfile()) }
+        }
+        assertThat(workoutRepository.getActiveSessionOnce()).isNull()
+        database.openHelper.writableDatabase.execSQL("UPDATE user_profiles SET trainingConstraintsJson=''")
+        val cancelled = workoutRepository.startWorkoutFromTemplate(manual, UserProfile())
+        database.openHelper.writableDatabase.execSQL("UPDATE user_profiles SET trainingConstraintsJson='KNEE_SENSITIVE|||'")
+        workoutRepository.cancelWorkout(cancelled.id)
+        assertThat(workoutRepository.getSessionById(cancelled.id)).isNull()
+        assertThat(database.userProfileDao().getProfile(UserProfile.DEFAULT_PROFILE_ID)!!.trainingConstraintsJson)
+            .isEqualTo("KNEE_SENSITIVE|||")
+    }
+
+    @Test fun templatePurposePersistsAndStartsWithTheSamePurpose() = runBlocking {
+        val supportive = template(listOf(planned("plank", ExercisePrescription(
+            exerciseType = ExerciseType.DURATION, targetSets = 1, targetDurationSeconds = 30,
+            purpose = PrescriptionPurpose.SUPPORTIVE))))
+        templateRepository.saveTemplate(supportive)
+        val loaded = templateRepository.getTemplate(supportive.id)!!
+        assertThat(loaded.exercises.single().prescription.purpose).isEqualTo(PrescriptionPurpose.SUPPORTIVE)
+        val started = workoutRepository.startWorkoutFromTemplate(loaded, UserProfile())
+        assertThat(workoutRepository.getSessionById(started.id)!!.exercises.single().prescription.purpose)
+            .isEqualTo(PrescriptionPurpose.SUPPORTIVE)
+    }
 
     private lateinit var database: WallCrawlDatabase
     private lateinit var workoutRepository: OfflineWorkoutRepository

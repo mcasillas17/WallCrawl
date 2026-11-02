@@ -1,6 +1,8 @@
 package wallcrawl.elopenmike.com.core.database.relation
 
 import wallcrawl.elopenmike.com.core.database.PERSISTED_LIST_SEPARATOR
+import wallcrawl.elopenmike.com.core.database.repository.ConditionContextCodec
+import wallcrawl.elopenmike.com.core.model.PrescriptionPurpose
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSetEntity
 import wallcrawl.elopenmike.com.core.model.ExercisePrescription
 import wallcrawl.elopenmike.com.core.model.RepRange
@@ -40,7 +42,8 @@ internal fun WorkoutSessionWithExercisesAndSets.toWorkoutSession(): WorkoutSessi
         sourceTemplateId = session.sourceTemplateId,
         focusMuscles = focusMusclesList,
         exercises = domainExercises,
-        notes = session.notes
+        notes = session.notes,
+        conditionContext = session.conditionContextJson?.let(ConditionContextCodec::decodeSession)
     )
 }
 
@@ -75,7 +78,8 @@ internal fun WorkoutExerciseWithSets.toWorkoutExercise(): WorkoutExercise {
             restSeconds = exercise.restSeconds,
             effortTarget = effortTarget,
             restClass = exercise.restClass,
-            restTargetSource = exercise.restTargetSource
+            restTargetSource = exercise.restTargetSource,
+            purpose = PrescriptionPurpose.valueOf(exercise.purpose)
         ),
         notes = exercise.notes,
         sets = sets.sortedWith(compareBy<WorkoutSetEntity> { it.setNumber }.thenBy { it.id }).map { setEntity ->

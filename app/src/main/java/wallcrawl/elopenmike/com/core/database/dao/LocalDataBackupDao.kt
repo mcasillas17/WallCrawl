@@ -104,6 +104,20 @@ interface LocalDataBackupDao {
     @Query("DELETE FROM program_enrollments")
     suspend fun deleteProgramEnrollments()
 
+    @Query("DELETE FROM condition_reassessment_pending")
+    suspend fun deleteConditionReassessmentPending()
+
+    @Query("SELECT EXISTS(SELECT 1 FROM condition_reassessment_pending)")
+    suspend fun hasConditionReassessmentPending(): Boolean
+
+    @Transaction
+    suspend fun readAllForExport(): LocalDataRows {
+        require(!hasConditionReassessmentPending()) {
+            "Pending condition reassessments cannot be represented by this archive."
+        }
+        return readAll()
+    }
+
     /**
      * One transactionally consistent snapshot of every user-owned table.
      *
@@ -151,7 +165,8 @@ interface LocalDataBackupDao {
     @Transaction
     suspend fun isEmptyDestination(): Boolean =
         countSessions() == 0 && countTemplates() == 0 && countOnboardedProfiles() == 0 &&
-            countDeloadPreferences() == 0 && countProgramEnrollments() == 0 && countProgramAssociations() == 0
+            countDeloadPreferences() == 0 && countProgramEnrollments() == 0 && countProgramAssociations() == 0 &&
+            !hasConditionReassessmentPending()
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertProfile(profile: UserProfileEntity)
@@ -215,6 +230,7 @@ interface LocalDataBackupDao {
      */
     @Transaction
     suspend fun deleteAll() {
+        deleteConditionReassessmentPending()
         deleteProgramAssociations()
         deleteProgramEnrollments()
         deleteDeloadPreferences()

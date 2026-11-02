@@ -231,7 +231,7 @@ class UserProfileRepositoryTest {
     }
 
     @Test
-    fun getProfile_dropsMalformedTrainingConstraintNamesRatherThanGuessing() = runTest {
+    fun getProfile_preservesUnknownTrainingConstraintNamesAndOrdinaryEdits() = runTest {
         // A future/renamed constraint value, or corruption, must not silently resolve to
         // some other constraint: that would misrepresent what the user actually confirmed.
         fakeDao.seed(
@@ -242,6 +242,35 @@ class UserProfileRepositoryTest {
         val profile = repository.getUserProfile().first()
 
         assertThat(profile.trainingConstraints).containsExactly(TrainingConstraint.SHOULDER_SENSITIVE)
+        assertThat(profile.unresolvedTrainingConstraintsRaw).isEqualTo("SHOULDER_SENSITIVE|||NOT_A_REAL_CONSTRAINT")
+        repository.updateThemePreference(wallcrawl.elopenmike.com.core.model.ThemePreference.DARK)
+        assertThat(fakeDao.getProfile(UserProfile.DEFAULT_PROFILE_ID)!!.trainingConstraintsJson)
+            .isEqualTo("SHOULDER_SENSITIVE|||NOT_A_REAL_CONSTRAINT")
+        assertThrows(IllegalStateException::class.java) {
+            kotlinx.coroutines.runBlocking { repository.updateTrainingConstraints(emptySet()) }
+        }
+        assertThrows(IllegalArgumentException::class.java) {
+            kotlinx.coroutines.runBlocking { repository.saveUserProfile(profile.copy(trainingConstraints = emptySet())) }
+        }
+    }
+
+    @Test fun malformedAndOversizedLegacyConstraintTextStaysOpaque() = runTest {
+        listOf("SHOULDER_SENSITIVE|||", "SHOULDER_SENSITIVE|||SHOULDER_SENSITIVE",
+            "SHOULDER_SENSITIVE|||\n", " shoulder_sensitive ", " ", "[]", "x".repeat(8_193)).forEach { raw ->
+            fakeDao.seed(musclePrioritiesJson = "", trainingConstraintsJson = raw)
+            val profile = repository.getProfileOnce()
+            assertThat(profile.unresolvedTrainingConstraintsRaw).isEqualTo(raw)
+            if (raw.startsWith("SHOULDER_SENSITIVE|||")) {
+                assertThat(profile.trainingConstraints).containsExactly(TrainingConstraint.SHOULDER_SENSITIVE)
+            } else {
+                assertThat(profile.trainingConstraints).isEmpty()
+            }
+            repository.updatePreferredDuration(60)
+            assertThat(fakeDao.getProfile(profile.id)?.trainingConstraintsJson).isEqualTo(raw)
+            assertThrows(IllegalStateException::class.java) {
+                kotlinx.coroutines.runBlocking { repository.saveUserProfile(UserProfile(id = profile.id)) }
+            }
+        }
     }
 
     @Test
@@ -404,6 +433,8 @@ class FakeUserProfileDao : UserProfileDao {
     override fun observeProfile(id: String): Flow<UserProfileEntity?> = profileState
 
     override suspend fun getProfile(id: String): UserProfileEntity? = profileState.value
+
+    override suspend fun activeWorkoutCount(): Int = 0
 
     override suspend fun insertOrUpdate(profile: UserProfileEntity) {
         profileState.value = profile
