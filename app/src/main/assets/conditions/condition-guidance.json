@@ -612,25 +612,23 @@
         "en": [
           "New or worsening numbness, tingling or any change in feeling around your genitals, bottom or inner thighs: Stop exercising and call emergency services. Do not drive yourself.",
           "New or worsening trouble starting to pee or keeping the flow going, or not being able to fully empty your bladder: Stop exercising and call emergency services. Do not drive yourself.",
-          "New or worsening loss of control of your bladder or bowels, or not being able to feel when you need to pee or poop: Stop exercising and call emergency services. Do not drive yourself.",
-          "New or worsening pain or numbness in both legs: Stop exercising and call emergency services. Do not drive yourself.",
-          "Severe or worsening weakness or numbness in both legs: Stop exercising and call emergency services. Do not drive yourself.",
+          "New or worsening loss of control of your bladder or bowels, or not being able to feel when you need to pee or poop or while you pee: Stop exercising and call emergency services. Do not drive yourself.",
+          "New, severe or worsening pain, numbness or weakness in both legs: Stop exercising and call emergency services. Do not drive yourself.",
           "A foot that drags or won't lift, or leg weakness that keeps growing, especially after a major injury: Stop exercising and see a doctor today or as soon as you can.",
           "Sudden buttock or hip pain with a high fever, or severe deep buttock pain with new numbness or weakness: Stop exercising and see a doctor today or as soon as you can.",
-          "Leg pain or weakness that returns with each menstrual period, or buttock pain that could be an infection: Stop this exercise and see a doctor before continuing.",
+          "Leg pain or weakness that returns with each menstrual period, or buttock pain that could be an infection: Stop exercising and see a doctor before continuing.",
           "Leg pain that does not improve after a few weeks, gets worse, or stops your normal activities: See a doctor. It is not an emergency, but it should be checked.",
           "Buttock or leg symptoms that last past about 3 months: See a doctor. It is not an emergency, but it should be checked."
         ],
         "es": [
-          "Adormecimiento, hormigueo o cualquier cambio de sensibilidad, nuevo o que empeora, alrededor de los genitales, los glúteos o la parte interna de los muslos: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
+          "Adormecimiento, hormigueo o cualquier cambio de sensibilidad, nuevo o que empeora, alrededor del ano o los genitales, o en la parte interna de los muslos: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
           "Dificultad nueva o que empeora para empezar a orinar o mantener el chorro, o no poder vaciar por completo la vejiga: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
-          "Pérdida nueva o que empeora del control de la vejiga o de las evacuaciones, o no sentir cuándo necesitas orinar o evacuar: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
-          "Dolor o adormecimiento, nuevo o que empeora, en las dos piernas: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
-          "Debilidad o adormecimiento intensos o que empeoran en las dos piernas: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
+          "Pérdida nueva o que empeora del control de la vejiga o de las evacuaciones, o no sentir cuándo necesitas orinar o evacuar, o mientras orinas: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
+          "Dolor, adormecimiento o debilidad, nuevos, intensos o que empeoran, en las dos piernas: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
           "Un pie que se arrastra o no se levanta, o debilidad en la pierna que sigue aumentando, sobre todo después de una lesión grave: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
           "Dolor repentino en el glúteo o la cadera con fiebre alta, o dolor profundo y fuerte en el glúteo con adormecimiento o debilidad nuevos: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
-          "Dolor o debilidad en la pierna que regresa con cada menstruación, o dolor en el glúteo que podría ser una infección: Deja este ejercicio y ve al médico antes de continuar.",
-          "Dolor en la pierna que no mejora en unas semanas, empeora o te impide tus actividades normales: Ve al médico. No es una emergencia, pero debe revisarlo un médico.",
+          "Dolor o debilidad en la pierna que regresa con cada menstruación, o dolor en el glúteo que podría ser una infección: Deja de ejercitarte y ve al médico antes de continuar.",
+          "Dolor en la pierna que no mejora en unas semanas, empeora o te impide hacer tus actividades normales: Ve al médico. No es una emergencia, pero debe revisarlo un médico.",
           "Síntomas en el glúteo o la pierna que duran más de unos 3 meses: Ve al médico. No es una emergencia, pero debe revisarlo un médico."
         ]
       },
@@ -651,7 +649,7 @@
         "reviewerModelId": "claude-opus-5-5",
         "reviewedAtEpochMillis": 1793491200000,
         "reviewedContentId": "piriformis_syndrome",
-        "reviewedContentSha256": "1b0e706c31ead0749c9d6df6f320caa1e0747cc9f4eb4231ee8ad0d0b2d3a45f",
+        "reviewedContentSha256": "e21dfee7b450ae78a2c815a8657b438fe884b4a5fe337dcaa9e80d35cfd12aff",
         "sourceReferences": [
           "https://doi.org/10.7759/cureus.43804",
           "https://doi.org/10.7759/cureus.32952",
@@ -664,7 +662,7 @@
           "https://doi.org/10.1186/s13102-023-00802-4",
           "https://doi.org/10.1002/14651858.CD007612.pub2"
         ],
-        "decisionRationale": "Owner-authorized AI authoring for alpha use. Restrictions, red flags and doses follow the research consolidation for this condition; nothing here is a treatment plan.",
+        "decisionRationale": "Owner-authorized AI authoring for alpha use. Restrictions, red flags and doses follow the research consolidation for this condition; nothing here is a care plan.",
         "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. Evidence is very low: restrictions are mostly expert opinion and no routine item is shown to work. The glute bridge dose comes from a trial registry record whose results were not found, which has no DOI or PMID and so is not listed. The figure-four and lying stretches arrive with the new catalog entries.",
         "schemaVersion": 1,
         "policyVersion": 1
@@ -741,21 +739,21 @@
           "Sudden hip pain with no injury that makes it hard to stand on that leg: Stop exercising and get emergency care right away.",
           "Deep pain that does not let up, maybe worse at night, especially with past cancer or unexplained weight loss: Stop exercising and see a doctor today or as soon as you can.",
           "Pain when walking if you use steroids, drink heavily, smoke, or have lupus, sickle cell disease or HIV: Stop this exercise and see a doctor before continuing.",
-          "Heat, redness or swelling in several places, or morning stiffness lasting over an hour: Stop this exercise and see a doctor before continuing.",
+          "Heat, redness or swelling in several places, morning stiffness lasting over an hour, or the same joint signs on both sides of your body: Stop this exercise and see a doctor before continuing.",
           "Pain spreading below the knee, or hip pain together with low back pain: Stop this exercise and see a doctor before continuing.",
-          "Groin pain with morning stiffness, lost hip motion, locking or giving way: Stop this exercise and see a doctor before continuing.",
+          "Groin pain with morning stiffness, lost hip motion, locking, giving way, or difficulty putting on shoes and socks: Stop this exercise and see a doctor before continuing.",
           "Surgery to repair a hip tendon in the past 16 weeks: Do not use this routine. Follow what your surgical team told you.",
           "A known tear of a hip tendon on a scan: Stop this exercise and see a doctor before continuing."
         ],
         "es": [
           "Dolor de cadera o ingle que empeora al apoyar peso después de una caída o de un aumento repentino de actividad: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
-          "Dolor de cadera o ingle que aumenta con carrera repetida u otro ejercicio de carga: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
+          "Dolor de cadera o ingle que aumenta al correr repetidamente o con otro ejercicio de carga: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
           "Dolor repentino de cadera sin lesión que dificulta apoyarte en esa pierna: Deja de ejercitarte y busca atención de urgencias de inmediato.",
           "Dolor profundo que no cede, quizá peor de noche, sobre todo con cáncer previo o pérdida de peso sin explicación: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
           "Dolor al caminar si usas esteroides, bebes mucho alcohol, fumas o tienes lupus, anemia falciforme o VIH: Deja este ejercicio y ve al médico antes de continuar.",
-          "Calor, enrojecimiento o hinchazón en varias zonas, o rigidez matutina de más de una hora: Deja este ejercicio y ve al médico antes de continuar.",
+          "Calor, enrojecimiento o hinchazón en varias zonas, rigidez matutina de más de una hora, o los mismos signos en las articulaciones de ambos lados del cuerpo: Deja este ejercicio y ve al médico antes de continuar.",
           "Dolor que se extiende por debajo de la rodilla, o dolor de cadera junto con dolor de espalda baja: Deja este ejercicio y ve al médico antes de continuar.",
-          "Dolor de ingle con rigidez matutina, pérdida de movimiento, bloqueo o sensación de que la cadera falla: Deja este ejercicio y ve al médico antes de continuar.",
+          "Dolor de ingle con rigidez matutina, pérdida de movimiento, bloqueo, sensación de que la cadera falla o dificultad para ponerte zapatos y calcetines: Deja este ejercicio y ve al médico antes de continuar.",
           "Cirugía para reparar un tendón de la cadera en las últimas 16 semanas: No uses esta rutina. Sigue lo que te indicó tu equipo quirúrgico.",
           "Un desgarro conocido de un tendón de la cadera visto en un estudio: Deja este ejercicio y ve al médico antes de continuar."
         ]
@@ -775,7 +773,7 @@
         "reviewerModelId": "claude-opus-5-5",
         "reviewedAtEpochMillis": 1793491200000,
         "reviewedContentId": "gluteal_tendinopathy",
-        "reviewedContentSha256": "942bc8b0a62f323d6d53b2095a6957b03e1931333b5e22938be150ca40b0cc76",
+        "reviewedContentSha256": "eec6d6cbece2516764bf2a8ba7cbc5ff30d62830a523c76172ad71c96fa9a2c0",
         "sourceReferences": [
           "https://doi.org/10.2519/jospt.2015.5829",
           "https://doi.org/10.1186/s12891-016-1043-6",
@@ -786,7 +784,7 @@
           "https://doi.org/10.1249/MSS.0000000000003091",
           "https://doi.org/10.1016/j.clinbiomech.2016.10.003"
         ],
-        "decisionRationale": "Owner-authorized AI authoring for alpha use. Restrictions, red flags and doses follow the research consolidation for this condition; nothing here is a treatment plan.",
+        "decisionRationale": "Owner-authorized AI authoring for alpha use. Restrictions, red flags and doses follow the research consolidation for this condition; nothing here is a care plan.",
         "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. Evidence is low: all but one restriction is expert opinion, and no individual exercise is shown to work. The doses come from one pilot and from a protocol that did not test these exercises alone. No study tested the three-exercise combination.",
         "schemaVersion": 1,
         "policyVersion": 1
@@ -834,7 +832,7 @@
         "en": [
           "Stop or change any activity that makes your leg pain worse.",
           "Staying in bed instead of your normal activities is not advised.",
-          "Nerve stretches or sliders are not part of this app and are not a first step when symptoms are new. Do not try them on your own if you have numbness in the groin, bladder or bowel changes, or a known nerve or spinal cord problem.",
+          "Nerve stretches or sliders are not part of this app and are not a first step when symptoms are new. Do not try them on your own if you have numbness in the groin, bladder or bowel changes, or a known nerve or spinal cord problem. Numbness in the groin and bladder or bowel changes are emergency signs: see the red flags.",
           "There is no single direction of back movement that suits everyone. Let your leg symptoms guide you.",
           "Traction machines are a clinical procedure, and guidelines do not support them for this. Gym hanging was not studied.",
           "A leg press can still load your spine, so do not assume it spares your back.",
@@ -843,7 +841,7 @@
         "es": [
           "Detén o cambia cualquier actividad que empeore el dolor de tu pierna.",
           "No se recomienda quedarte en cama en lugar de hacer tus actividades normales.",
-          "Los estiramientos o deslizamientos de nervio no forman parte de esta app y no son un primer paso cuando los síntomas son recientes. No los intentes por tu cuenta si tienes adormecimiento en la ingle, cambios al orinar o en tus evacuaciones, o un problema conocido de nervios o de médula.",
+          "Los estiramientos o deslizamientos de nervio no forman parte de esta app y no son un primer paso cuando los síntomas son recientes. No los intentes por tu cuenta si tienes adormecimiento en la ingle, cambios al orinar o en tus evacuaciones, o un problema conocido de nervios o de médula. El adormecimiento en la ingle y los cambios al orinar o en tus evacuaciones son signos de emergencia: revisa las señales de alarma.",
           "No hay una sola dirección de movimiento de espalda que le funcione a todos. Déjate guiar por los síntomas de tu pierna.",
           "Las máquinas de tracción son un procedimiento clínico y las guías no las respaldan para esto. Colgarse en el gimnasio no se estudió.",
           "La prensa de piernas aún puede cargar la columna, así que no des por hecho que protege tu espalda.",
@@ -854,24 +852,24 @@
         "en": [
           "New or worsening numbness, tingling or any change in feeling around your genitals, bottom or inner thighs: Stop exercising and call emergency services. Do not drive yourself.",
           "New or worsening trouble starting to pee or keeping the flow going, or not being able to fully empty your bladder: Stop exercising and call emergency services. Do not drive yourself.",
-          "New or worsening loss of control of your bladder or bowels, or not being able to feel when you need to pee or poop: Stop exercising and call emergency services. Do not drive yourself.",
-          "New or worsening pain or numbness in both legs: Stop exercising and call emergency services. Do not drive yourself.",
+          "New or worsening loss of control of your bladder or bowels, or not being able to feel when you need to pee or poop or while you pee: Stop exercising and call emergency services. Do not drive yourself.",
+          "New, severe or worsening pain, numbness or weakness in both legs: Stop exercising and call emergency services. Do not drive yourself.",
           "A new change in how you pee: a different pattern, trouble getting started, going much more often, dribbling, or not being able to go: Stop exercising and call emergency services. Do not drive yourself.",
           "A foot that drags or won't lift, significant or worsening leg weakness, or new difficulty walking: Stop exercising and see a doctor today or as soon as you can.",
           "New sexual problems together with back or leg pain: Stop exercising and see a doctor today or as soon as you can.",
-          "New symptoms that make you worry about cancer, infection, an injury or inflammation: Stop exercising and see a doctor today or as soon as you can.",
+          "New or changed symptoms that make you worry about cancer, infection, an injury or inflammation: Stop exercising and see a doctor today or as soon as you can.",
           "Back or leg pain that keeps getting worse over weeks of training, especially with numbness or weakness: Stop exercising and see a doctor today or as soon as you can.",
           "Severe leg pain that limits your life and has not improved: Stop this exercise and see a doctor before continuing."
         ],
         "es": [
-          "Adormecimiento, hormigueo o cualquier cambio de sensibilidad, nuevo o que empeora, alrededor de los genitales, los glúteos o la parte interna de los muslos: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
+          "Adormecimiento, hormigueo o cualquier cambio de sensibilidad, nuevo o que empeora, alrededor del ano o los genitales, o en la parte interna de los muslos: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
           "Dificultad nueva o que empeora para empezar a orinar o mantener el chorro, o no poder vaciar por completo la vejiga: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
-          "Pérdida nueva o que empeora del control de la vejiga o de las evacuaciones, o no sentir cuándo necesitas orinar o evacuar: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
-          "Dolor o adormecimiento, nuevo o que empeora, en las dos piernas: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
+          "Pérdida nueva o que empeora del control de la vejiga o de las evacuaciones, o no sentir cuándo necesitas orinar o evacuar, o mientras orinas: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
+          "Dolor, adormecimiento o debilidad, nuevos, intensos o que empeoran, en las dos piernas: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
           "Un cambio nuevo al orinar: un patrón distinto, dificultad para empezar, ir mucho más seguido, goteo o no poder orinar: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
           "Un pie que se arrastra o no se levanta, debilidad en la pierna importante o que empeora, o dificultad nueva para caminar: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
           "Problemas sexuales nuevos junto con dolor de espalda o pierna: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
-          "Síntomas nuevos que te hagan pensar en cáncer, infección, lesión o inflamación: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
+          "Síntomas nuevos o distintos que te hagan pensar en cáncer, infección, lesión o inflamación: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
           "Dolor de espalda o pierna que sigue empeorando tras semanas de entrenar, sobre todo con adormecimiento o debilidad: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
           "Dolor fuerte en la pierna que limita tu vida y no ha mejorado: Deja este ejercicio y ve al médico antes de continuar."
         ]
@@ -895,7 +893,7 @@
         "reviewerModelId": "claude-opus-5-5",
         "reviewedAtEpochMillis": 1793491200000,
         "reviewedContentId": "lumbar_radiculopathy",
-        "reviewedContentSha256": "9707b933c0fa9a3061e7d9c6c1ddeaa67ba3d95b846c8ffe51f09e9ccfcaaa8e",
+        "reviewedContentSha256": "f4d211e85afdd19ffee491094c9581b36e1b73f9d41ecf7a474bd2a2120bb80b",
         "sourceReferences": [
           "https://doi.org/10.1097/BRS.0b013e31821ace7f",
           "https://doi.org/10.7326/M20-4187",
@@ -910,7 +908,7 @@
           "https://doi.org/10.23736/S1973-9087.24.08541-1",
           "https://doi.org/10.1002/14651858.CD003010.pub5"
         ],
-        "decisionRationale": "Owner-authorized AI authoring for alpha use. Restrictions, red flags and doses follow the research consolidation for this condition; nothing here is a treatment plan.",
+        "decisionRationale": "Owner-authorized AI authoring for alpha use. Restrictions, red flags and doses follow the research consolidation for this condition; nothing here is a care plan.",
         "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. Evidence is low and conflicting, and restrictions on gym lifts are biomechanical inference: no study tested them in people with symptoms. The routine items were given to all trial arms, so their own effect was not tested. Absence of a restriction does not mean an exercise is cleared.",
         "schemaVersion": 1,
         "policyVersion": 1
@@ -987,22 +985,22 @@
         "en": [
           "New or worsening numbness, tingling or any change in feeling around your genitals, bottom or inner thighs: Stop exercising and call emergency services. Do not drive yourself.",
           "New or worsening trouble starting to pee or keeping the flow going, or not being able to fully empty your bladder: Stop exercising and call emergency services. Do not drive yourself.",
-          "New or worsening loss of control of your bladder or bowels, or not being able to feel when you need to pee or poop: Stop exercising and call emergency services. Do not drive yourself.",
-          "New or worsening pain or numbness in both legs: Stop exercising and call emergency services. Do not drive yourself.",
-          "New or worsening severe pain in both legs, or leg weakness that is getting worse quickly: Stop exercising and call emergency services. Do not drive yourself.",
+          "New or worsening loss of control of your bladder or bowels, or not being able to feel when you need to pee or poop or while you pee: Stop exercising and call emergency services. Do not drive yourself.",
+          "New, severe or worsening pain, numbness or weakness in both legs: Stop exercising and call emergency services. Do not drive yourself.",
+          "Leg weakness that is getting worse quickly: Stop exercising and call emergency services. Do not drive yourself.",
           "New or worsening changes in sexual feeling or function together with back or leg pain: Stop exercising and call emergency services. Do not drive yourself.",
-          "Back pain after a hard injury, or sharp pain in one spot if you have osteoporosis, long-term steroid use or a past spinal fracture: Stop exercising and see a doctor today or as soon as you can.",
+          "Back pain after a hard injury, or severe pain in one spot if you have osteoporosis, long-term steroid use or a past spinal fracture: Stop exercising and see a doctor today or as soon as you can.",
           "Back pain with past cancer, unexplained weight loss or pain at night: Stop exercising and see a doctor today or as soon as you can.",
           "Back pain with fever, a weak immune system, injected drug use, a recent infection or a recent spinal procedure, even without a fever: Stop exercising and see a doctor today or as soon as you can."
         ],
         "es": [
-          "Adormecimiento, hormigueo o cualquier cambio de sensibilidad, nuevo o que empeora, alrededor de los genitales, los glúteos o la parte interna de los muslos: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
+          "Adormecimiento, hormigueo o cualquier cambio de sensibilidad, nuevo o que empeora, alrededor del ano o los genitales, o en la parte interna de los muslos: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
           "Dificultad nueva o que empeora para empezar a orinar o mantener el chorro, o no poder vaciar por completo la vejiga: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
-          "Pérdida nueva o que empeora del control de la vejiga o de las evacuaciones, o no sentir cuándo necesitas orinar o evacuar: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
-          "Dolor o adormecimiento, nuevo o que empeora, en las dos piernas: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
-          "Dolor intenso, nuevo o que empeora, en las dos piernas, o debilidad en la pierna que empeora rápido: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
+          "Pérdida nueva o que empeora del control de la vejiga o de las evacuaciones, o no sentir cuándo necesitas orinar o evacuar, o mientras orinas: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
+          "Dolor, adormecimiento o debilidad, nuevos, intensos o que empeoran, en las dos piernas: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
+          "Debilidad en la pierna que empeora rápido: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
           "Cambios nuevos o que empeoran en la sensibilidad o la función sexual junto con dolor de espalda o pierna: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
-          "Dolor de espalda después de un golpe fuerte, o dolor agudo en un punto si tienes osteoporosis, uso prolongado de esteroides o una fractura previa de columna: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
+          "Dolor de espalda después de un golpe fuerte, o dolor intenso en un punto si tienes osteoporosis, uso prolongado de esteroides o una fractura previa de columna: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
           "Dolor de espalda con cáncer previo, pérdida de peso sin explicación o dolor de noche: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
           "Dolor de espalda con fiebre, defensas bajas, uso de drogas inyectadas, infección reciente o un procedimiento reciente en la columna, aun sin fiebre: Deja de ejercitarte y ve al médico hoy o lo antes posible."
         ]
@@ -1026,7 +1024,7 @@
         "reviewerModelId": "claude-opus-5-5",
         "reviewedAtEpochMillis": 1793491200000,
         "reviewedContentId": "nonspecific_low_back_pain",
-        "reviewedContentSha256": "d15a5abf638dceae1668d087fbe4f26704be0d96fb0a31f37b2988da1819ae76",
+        "reviewedContentSha256": "c1204b7d6d0554cff3a80554df0afceddc55a3077eaee1f356b414ab0c0e6102",
         "sourceReferences": [
           "https://doi.org/10.1002/14651858.CD009790.pub2",
           "https://doi.org/10.3390/healthcare14162550",
@@ -1041,8 +1039,8 @@
           "https://doi.org/10.1001/jamainternmed.2015.7431",
           "https://doi.org/10.1002/14651858.CD007612.pub2"
         ],
-        "decisionRationale": "Owner-authorized AI authoring for alpha use. Restrictions, red flags and doses follow the research consolidation for this condition; nothing here is a treatment plan.",
-        "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. The moderate grade is narrow: it covers only short-term pain against no treatment in chronic pain, and benefits fade. Evidence for specific exercises is weak. The doses mix three separate programs, so no trial tested this combination, and there is no established dose. The knee-supported plank is left out because the catalog plank does not match its dose.",
+        "decisionRationale": "Owner-authorized AI authoring for alpha use. Restrictions, red flags and doses follow the research consolidation for this condition; nothing here is a care plan.",
+        "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. The moderate grade is narrow: it covers only short-term pain against usual care, placebo or doing nothing in chronic pain, and benefits fade. Evidence for specific exercises is weak. The doses mix three separate programs, so no trial tested this combination, and there is no established dose. The knee-supported plank is left out because the catalog plank does not match its dose.",
         "schemaVersion": 1,
         "policyVersion": 1
       }
@@ -1132,24 +1130,24 @@
           "es": "Jala hacia el pecho, no detrás del cuello."
         },
         "barbell-bench-press": {
-          "en": "A narrow grip or elbows at about 45 degrees can bother the shoulder. Widen your grip or change your elbow angle if it does.",
-          "es": "Un agarre cerrado o los codos a unos 45 grados pueden molestar el hombro. Abre el agarre o cambia el ángulo de los codos si es tu caso."
+          "en": "A narrow grip or elbows at about 45 degrees can bother the shoulder. Widen your grip slightly or change your elbow angle if it does.",
+          "es": "Un agarre cerrado o los codos a unos 45 grados pueden molestar el hombro. Abre un poco el agarre o cambia el ángulo de los codos si es tu caso."
         },
         "close-grip-bench-press": {
-          "en": "A narrow grip or elbows at about 45 degrees can bother the shoulder. Widen your grip or change your elbow angle if it does.",
-          "es": "Un agarre cerrado o los codos a unos 45 grados pueden molestar el hombro. Abre el agarre o cambia el ángulo de los codos si es tu caso."
+          "en": "A narrow grip or elbows at about 45 degrees can bother the shoulder. Widen your grip slightly or change your elbow angle if it does.",
+          "es": "Un agarre cerrado o los codos a unos 45 grados pueden molestar el hombro. Abre un poco el agarre o cambia el ángulo de los codos si es tu caso."
         },
         "smith-machine-bench-press": {
-          "en": "A narrow grip or elbows at about 45 degrees can bother the shoulder. Widen your grip or change your elbow angle if it does.",
-          "es": "Un agarre cerrado o los codos a unos 45 grados pueden molestar el hombro. Abre el agarre o cambia el ángulo de los codos si es tu caso."
+          "en": "A narrow grip or elbows at about 45 degrees can bother the shoulder. Widen your grip slightly or change your elbow angle if it does.",
+          "es": "Un agarre cerrado o los codos a unos 45 grados pueden molestar el hombro. Abre un poco el agarre o cambia el ángulo de los codos si es tu caso."
         },
         "incline-bench-press": {
-          "en": "A narrow grip or elbows at about 45 degrees can bother the shoulder. Widen your grip or change your elbow angle if it does.",
-          "es": "Un agarre cerrado o los codos a unos 45 grados pueden molestar el hombro. Abre el agarre o cambia el ángulo de los codos si es tu caso."
+          "en": "A narrow grip or elbows at about 45 degrees can bother the shoulder. Widen your grip slightly or change your elbow angle if it does.",
+          "es": "Un agarre cerrado o los codos a unos 45 grados pueden molestar el hombro. Abre un poco el agarre o cambia el ángulo de los codos si es tu caso."
         },
         "decline-bench-press": {
-          "en": "A narrow grip or elbows at about 45 degrees can bother the shoulder. Widen your grip or change your elbow angle if it does.",
-          "es": "Un agarre cerrado o los codos a unos 45 grados pueden molestar el hombro. Abre el agarre o cambia el ángulo de los codos si es tu caso."
+          "en": "A narrow grip or elbows at about 45 degrees can bother the shoulder. Widen your grip slightly or change your elbow angle if it does.",
+          "es": "Un agarre cerrado o los codos a unos 45 grados pueden molestar el hombro. Abre un poco el agarre o cambia el ángulo de los codos si es tu caso."
         }
       },
       "notes": {
@@ -1205,7 +1203,7 @@
         "reviewerModelId": "claude-opus-5-5",
         "reviewedAtEpochMillis": 1793491200000,
         "reviewedContentId": "rotator_cuff_related_shoulder_pain",
-        "reviewedContentSha256": "cc2445cb4cdf8f75fa0f2b9efef1064d29dea1ca676e722ec3733e2de6d9eea9",
+        "reviewedContentSha256": "50a88524785d592234deab7e7a8088d7c47d02046563f3cae538d10ea4adac4c",
         "sourceReferences": [
           "https://doi.org/10.1136/bmj.e787",
           "https://doi.org/10.1016/j.math.2016.03.009",
@@ -1216,7 +1214,7 @@
           "https://doi.org/10.2519/jospt.2025.13182",
           "https://doi.org/10.1177/2325967117723292"
         ],
-        "decisionRationale": "Owner-authorized AI authoring for alpha use. Restrictions, red flags and doses follow the research consolidation for this condition; nothing here is a treatment plan.",
+        "decisionRationale": "Owner-authorized AI authoring for alpha use. Restrictions, red flags and doses follow the research consolidation for this condition; nothing here is a care plan.",
         "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. Evidence is low for specific exercises and the best parameters are unknown. Limits on raises, presses and pulldowns come from biomechanical or cross-sectional data, not outcome studies. The stretch came from a multi-exercise program, so its own effect was not tested. Lack of a restriction does not clear overhead work.",
         "schemaVersion": 1,
         "policyVersion": 1
@@ -1288,7 +1286,7 @@
           "https://doi.org/10.1371/journal.pone.0155379",
           "https://doi.org/10.1080/0014013031000107595"
         ],
-        "decisionRationale": "Owner-authorized AI authoring for alpha use. Restrictions, red flags and doses follow the research consolidation for this condition; nothing here is a treatment plan.",
+        "decisionRationale": "Owner-authorized AI authoring for alpha use. Restrictions, red flags and doses follow the research consolidation for this condition; nothing here is a care plan.",
         "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. Evidence is low and exercise benefits may not be clinically worthwhile. No load or hold time is established. The routine stays empty until the wrist extensor stretch is in the catalog; its dose is a consensus choice made for practicality.",
         "schemaVersion": 1,
         "policyVersion": 1
@@ -1319,7 +1317,7 @@
           "Hand symptoms in several areas, or with neck pain or changes in how you walk: Stop exercising and see a doctor today or as soon as you can.",
           "Tingling or numbness that began after an injury, or a possible fracture or tumor: Stop exercising and see a doctor today or as soon as you can.",
           "Hand symptoms along with active gout or rheumatoid arthritis, or poor circulation in the arm: Stop exercising and see a doctor today or as soon as you can.",
-          "Symptoms that get worse, wake you most nights or do not improve after about 12 weeks: See a doctor. It is not an emergency, but it should be checked."
+          "Symptoms that get worse, wake you most nights or do not improve after about 12 weeks: Stop this exercise and see a doctor before continuing."
         ],
         "es": [
           "Dolor repentino que empeora rápido y sensibilidad alterada en los dedos del lado del pulgar, sobre todo tras una fractura de muñeca, un sangrado o una lesión por alta presión: Deja de ejercitarte y busca atención de urgencias de inmediato.",
@@ -1328,7 +1326,7 @@
           "Síntomas en varias zonas de la mano, o con dolor de cuello o cambios al caminar: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
           "Hormigueo o adormecimiento que empezó después de una lesión, o una posible fractura o tumor: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
           "Síntomas en la mano junto con gota activa o artritis reumatoide, o mala circulación en el brazo: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
-          "Síntomas que empeoran, te despiertan casi todas las noches o no mejoran en unas 12 semanas: Ve al médico. No es una emergencia, pero debe revisarlo un médico."
+          "Síntomas que empeoran, te despiertan casi todas las noches o no mejoran en unas 12 semanas: Deja este ejercicio y ve al médico antes de continuar."
         ]
       },
       "evidenceGrade": "very_low",
@@ -1346,7 +1344,7 @@
         "reviewerModelId": "claude-opus-5-5",
         "reviewedAtEpochMillis": 1793491200000,
         "reviewedContentId": "carpal_tunnel_syndrome",
-        "reviewedContentSha256": "c1e32e2ead4971d6f333d3364a1f83b02cba266198bbf930f1479673552c960e",
+        "reviewedContentSha256": "83148ecccd162704d738bd13f0ff7117ff5f9fcfc2eb345ad66742d8e4115988",
         "sourceReferences": [
           "https://doi.org/10.1002/14651858.CD009899",
           "https://doi.org/10.1518/001872007779598127",
@@ -1357,7 +1355,7 @@
           "https://doi.org/10.1155/2022/1975803",
           "https://doi.org/10.1177/17589983221113870"
         ],
-        "decisionRationale": "Owner-authorized AI authoring for alpha use. Restrictions, red flags and doses follow the research consolidation for this condition; nothing here is a treatment plan.",
+        "decisionRationale": "Owner-authorized AI authoring for alpha use. Restrictions, red flags and doses follow the research consolidation for this condition; nothing here is a care plan.",
         "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. Evidence is very low: restrictions come from healthy-volunteer, cadaver or workplace data, and reviews disagree about exercise. The routine stays empty until the tendon gliding sequence is in the catalog, and its dose comes from a study with no control group.",
         "schemaVersion": 1,
         "policyVersion": 1
@@ -1410,7 +1408,7 @@
         "en": [
           "Large knee swelling, redness or warmth: Stop exercising and see a doctor today or as soon as you can.",
           "A knee that locks or feels like something is caught inside: Stop exercising and see a doctor today or as soon as you can.",
-          "Kneecap pain after a fall or a direct hit: Stop exercising and see a doctor today or as soon as you can.",
+          "Kneecap pain after an injury: Stop exercising and see a doctor today or as soon as you can.",
           "A kneecap that slips or feels like it could slip out: Stop exercising and see a doctor today or as soon as you can.",
           "Pain only below the kneecap or on the bump of the shin, especially in children and teenagers: Stop this exercise and see a doctor before continuing.",
           "Knee pain in a teenager, because the problem may be in the hip: Stop exercising and see a doctor today or as soon as you can.",
@@ -1421,7 +1419,7 @@
         "es": [
           "Hinchazón grande, enrojecimiento o calor en la rodilla: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
           "Una rodilla que se traba o que se siente como si algo estuviera atorado dentro: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
-          "Dolor en la rótula después de una caída o un golpe directo: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
+          "Dolor en la rótula después de una lesión: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
           "Una rótula que se desliza o que se siente como si fuera a salirse: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
           "Dolor solo debajo de la rótula o en el bulto de la espinilla, sobre todo en niños y adolescentes: Deja este ejercicio y ve al médico antes de continuar.",
           "Dolor de rodilla en un adolescente, porque el problema puede estar en la cadera: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
@@ -1446,7 +1444,7 @@
         "reviewerModelId": "claude-opus-5-5",
         "reviewedAtEpochMillis": 1793491200000,
         "reviewedContentId": "patellofemoral_pain",
-        "reviewedContentSha256": "5e43bf3e0a74ae5b3283a0703dfe7e3e24ad845af1ff4cdb9b3d18cee7fc680c",
+        "reviewedContentSha256": "6b1c733903e2d1a2adef49a1d2dc1d5866c441463325abf9585e009e3acf4438",
         "sourceReferences": [
           "https://doi.org/10.2519/jospt.2014.4936",
           "https://doi.org/10.4085/1062-6050-231-15",
@@ -1458,7 +1456,7 @@
           "https://doi.org/10.1136/bjsports-2018-099397",
           "https://doi.org/10.1080/17461391.2020.1806935"
         ],
-        "decisionRationale": "Owner-authorized AI authoring for alpha use. Restrictions, red flags and doses follow the research consolidation for this condition; nothing here is a treatment plan.",
+        "decisionRationale": "Owner-authorized AI authoring for alpha use. Restrictions, red flags and doses follow the research consolidation for this condition; nothing here is a care plan.",
         "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. Evidence is low: most restrictions rest on biomechanical data and no validated pain limit exists. The partial squat depth was not precisely monitored in its trial. The straight leg raise arrives with the new catalog entries; quadriceps setting is out because it has no hold time.",
         "schemaVersion": 1,
         "policyVersion": 1

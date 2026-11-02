@@ -238,19 +238,17 @@ class BundledConditionGuidanceTest {
 
     @Test
     fun spineConditionsNameTheEmergencySignsInBothLanguages() {
-        val signs = mapOf(
-            "en" to listOf("genitals", "bladder", "poop", "both legs"),
-            "es" to listOf("genitales", "vejiga", "evacuaciones", "las dos piernas")
-        )
-        val action = mapOf("en" to "call emergency services", "es" to "servicios de emergencia")
         listOf("piriformis_syndrome", "lumbar_radiculopathy", "nonspecific_low_back_pain").forEach { id ->
-            signs.forEach { (language, words) ->
-                val emergency = guidance.conditions.getValue(id).redFlags.getValue(language)
-                    .filter { action.getValue(language) in it }
-                words.forEach { word ->
-                    assertWithMessage("$id/$language/$word").that(emergency.any { word in it }).isTrue()
-                }
+            SPINE_EMERGENCY_FLAGS.forEach { (language, flags) ->
+                assertWithMessage("$id/$language")
+                    .that(guidance.conditions.getValue(id).redFlags.getValue(language))
+                    .containsAtLeastElementsIn(flags)
             }
+        }
+        LUMBAR_FOOT_AND_WALKING.forEach { (language, flag) ->
+            assertWithMessage(language)
+                .that(guidance.conditions.getValue("lumbar_radiculopathy").redFlags.getValue(language))
+                .contains(flag)
         }
     }
 
@@ -369,7 +367,8 @@ class BundledConditionGuidanceTest {
         val FORBIDDEN_COPY = Regex(
             "(?i)\\b(safe for|helps? heal|treats?|cures?|prevents?|seguro para|segura para|" +
                 "ayuda a sanar|ayuda a curar|trata|tratan|cura|curan|previene|previenen|" +
-                "heal|prevention|preventing|treating|sanar|curar|prevenir|tratar|seguro|" +
+                "heal|heals|healing|prevention|preventing|treating|treatment|safe|safely|protects|" +
+                "sanar|curar|prevenir|tratar|seguro|segura|seguros|seguras|" +
                 "A&E|999|NHS|GP|clinician referral|referral|derivaci[oó]n)\\b"
         )
 
@@ -422,6 +421,31 @@ class BundledConditionGuidanceTest {
             "LOWER_BACK_SENSITIVE" to "33/33; 5 (0) | 72/71; 5 (0) | 51/25; 5 (2) | 11/11; 2 (0) | 163/121; 5 (0)",
             "HIP_SENSITIVE" to "33/28; 5 (0) | 72/60; 5 (0) | 51/25; 5 (2) | 11/10; 2 (0) | 163/109; 5 (0)",
             "KNEE_SENSITIVE" to "33/29; 5 (0) | 72/59; 5 (0) | 51/44; 5 (0) | 11/10; 2 (0) | 163/140; 5 (0)"
+        )
+
+        private const val CALL_EN = ": Stop exercising and call emergency services. Do not drive yourself."
+        private const val CALL_ES = ": Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú."
+
+        val SPINE_EMERGENCY_FLAGS = mapOf(
+            "en" to listOf(
+                "New or worsening numbness, tingling or any change in feeling around your genitals, bottom or inner thighs",
+                "New or worsening trouble starting to pee or keeping the flow going, or not being able to fully empty your bladder",
+                "New or worsening loss of control of your bladder or bowels, or not being able to feel when you need to pee or poop or while you pee",
+                "New, severe or worsening pain, numbness or weakness in both legs"
+            ).map { it + CALL_EN },
+            "es" to listOf(
+                "Adormecimiento, hormigueo o cualquier cambio de sensibilidad, nuevo o que empeora, alrededor del ano o los genitales, o en la parte interna de los muslos",
+                "Dificultad nueva o que empeora para empezar a orinar o mantener el chorro, o no poder vaciar por completo la vejiga",
+                "Pérdida nueva o que empeora del control de la vejiga o de las evacuaciones, o no sentir cuándo necesitas orinar o evacuar, o mientras orinas",
+                "Dolor, adormecimiento o debilidad, nuevos, intensos o que empeoran, en las dos piernas"
+            ).map { it + CALL_ES }
+        )
+
+        val LUMBAR_FOOT_AND_WALKING = mapOf(
+            "en" to "A foot that drags or won't lift, significant or worsening leg weakness, or new difficulty walking: " +
+                "Stop exercising and see a doctor today or as soon as you can.",
+            "es" to "Un pie que se arrastra o no se levanta, debilidad en la pierna importante o que empeora, o dificultad " +
+                "nueva para caminar: Deja de ejercitarte y ve al médico hoy o lo antes posible."
         )
 
         /** Section 4 minus the dropped tags. */
