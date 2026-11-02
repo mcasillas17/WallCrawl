@@ -90,7 +90,8 @@ class ProfileViewModel(
     fun selectCondition(id: String) {
         val guidance = conditionEditorFlow.value.guidance as? ConditionGuidanceResult.Loaded ?: return
         if (id !in guidance.guidance.conditions) return
-        conditionEditorFlow.value = conditionEditorFlow.value.copy(pending = PendingCondition(id))
+        conditionEditorFlow.value =
+            conditionEditorFlow.value.copy(pending = PendingCondition(id), errorRes = null)
     }
 
     fun setConditionAcknowledged(acknowledged: Boolean) {
@@ -101,7 +102,7 @@ class ProfileViewModel(
     }
 
     fun cancelPendingCondition() {
-        conditionEditorFlow.value = conditionEditorFlow.value.copy(pending = null)
+        conditionEditorFlow.value = conditionEditorFlow.value.copy(pending = null, errorRes = null)
     }
 
     fun confirmPendingCondition() {

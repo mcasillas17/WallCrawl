@@ -1229,6 +1229,8 @@ internal class StaticUserProfileRepository(
         unsupported()
 
     override suspend fun updateReturningAfterBreakWeeks(weeks: Int) = unsupported()
+    override suspend fun editReportedConditions(change: (Set<String>) -> Set<String>) = error("Not used")
+    override suspend fun editExcludedExercises(change: (List<String>) -> List<String>) = error("Not used")
     override suspend fun updateGender(
         gender: wallcrawl.elopenmike.com.core.model.ProfileGender
     ) = unsupported()

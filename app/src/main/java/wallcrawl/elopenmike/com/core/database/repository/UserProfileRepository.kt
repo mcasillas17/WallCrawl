@@ -44,18 +44,12 @@ interface UserProfileRepository {
 
     /**
      * Applies [change] to the stored conditions as one read-modify-write, so a concurrent
-     * edit of another field cannot be overwritten. The default is for test doubles only.
+     * edit of another field cannot be overwritten.
      */
-    suspend fun editReportedConditions(change: (Set<String>) -> Set<String>) {
-        val current = getProfileOnce()
-        saveUserProfile(current.copy(reportedConditions = change(current.reportedConditions)))
-    }
+    suspend fun editReportedConditions(change: (Set<String>) -> Set<String>)
 
     /** As [editReportedConditions], for the excluded exercise ids. */
-    suspend fun editExcludedExercises(change: (List<String>) -> List<String>) {
-        val current = getProfileOnce()
-        saveUserProfile(current.copy(excludedExerciseIds = change(current.excludedExerciseIds)))
-    }
+    suspend fun editExcludedExercises(change: (List<String>) -> List<String>)
 }
 
 /**

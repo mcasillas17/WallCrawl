@@ -80,6 +80,12 @@ class OnboardingConditionStepTest {
         composeRule.onNodeWithTag("condition-confirm").assertIsEnabled().performClick()
         composeRule.waitForIdle()
         assertThat(viewModel.uiState.value.reportedConditions).containsExactly(id)
+        // Settling the condition clears the message that asked for it.
+        assertThat(viewModel.uiState.value.error).isNull()
+        assertThat(
+            composeRule.onAllNodesWithText(context.getString(R.string.onboarding_error_condition_pending))
+                .fetchSemanticsNodes()
+        ).isEmpty()
 
         composeRule.onNodeWithText(context.getString(R.string.onboarding_action_continue)).performClick()
         composeRule.waitForIdle()

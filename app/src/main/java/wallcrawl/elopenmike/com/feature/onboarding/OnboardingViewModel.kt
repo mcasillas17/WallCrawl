@@ -68,13 +68,17 @@ class OnboardingViewModel(
     }
 
     fun cancelPendingCondition() {
-        updateState { it.copy(pendingCondition = null) }
+        updateState { it.copy(pendingCondition = null, error = null) }
     }
 
     fun confirmPendingCondition() {
         val pending = mutableState.value.pendingCondition?.takeIf { it.acknowledged } ?: return
         updateState {
-            it.copy(reportedConditions = it.reportedConditions + pending.id, pendingCondition = null)
+            it.copy(
+                reportedConditions = it.reportedConditions + pending.id,
+                pendingCondition = null,
+                error = null
+            )
         }
     }
 

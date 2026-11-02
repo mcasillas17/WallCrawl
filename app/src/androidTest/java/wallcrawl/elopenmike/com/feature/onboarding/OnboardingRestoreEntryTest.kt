@@ -193,4 +193,13 @@ private class FakeUserProfileRepository : UserProfileRepository {
     override suspend fun updateGender(gender: wallcrawl.elopenmike.com.core.model.ProfileGender) = saveProfile(getProfileOnce().copy(gender = gender))
     override suspend fun updateThemePreference(themePreference: ThemePreference) =
         error("Not used")
+    override suspend fun editReportedConditions(change: (Set<String>) -> Set<String>) {
+        val current = getProfileOnce()
+        saveUserProfile(current.copy(reportedConditions = change(current.reportedConditions)))
+    }
+
+    override suspend fun editExcludedExercises(change: (List<String>) -> List<String>) {
+        val current = getProfileOnce()
+        saveUserProfile(current.copy(excludedExerciseIds = change(current.excludedExerciseIds)))
+    }
 }

@@ -247,13 +247,38 @@ class ConditionSelectionViewModelTest {
 
         viewModel.cancelPendingCondition()
         assertThat(viewModel.uiState.value.canProceedCurrentStep).isTrue()
+        assertThat(viewModel.uiState.value.error).isNull()
 
         viewModel.selectCondition(id)
         viewModel.setConditionAcknowledged(true)
         viewModel.confirmPendingCondition()
         assertThat(viewModel.uiState.value.canProceedCurrentStep).isTrue()
+        assertThat(viewModel.uiState.value.error).isNull()
         viewModel.nextStep()
         assertThat(viewModel.uiState.value.currentStep).isEqualTo(OnboardingStep.SUMMARY)
+    }
+
+    @Test
+    fun cancellingOrPickingAnotherConditionClearsASaveError() = runTest {
+        val real = repository()
+        val failing = object : UserProfileRepository by real {
+            override suspend fun editReportedConditions(change: (Set<String>) -> Set<String>) {
+                throw java.io.IOException("disk full")
+            }
+        }
+        val viewModel = ProfileViewModel(failing, ConditionTestGuidance.source(ConditionTestGuidance.loaded()))
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        advanceUntilIdle()
+        repeat(2) { round ->
+            viewModel.selectCondition(id)
+            viewModel.setConditionAcknowledged(true)
+            viewModel.confirmPendingCondition()
+            advanceUntilIdle()
+            assertThat(state(viewModel).safetyErrorRes).isNotNull()
+            if (round == 0) viewModel.cancelPendingCondition() else viewModel.selectCondition(id)
+            advanceUntilIdle()
+            assertThat(state(viewModel).safetyErrorRes).isNull()
+        }
     }
 
     private fun state(viewModel: ProfileViewModel) = viewModel.uiState.value as ProfileUiState.Success
