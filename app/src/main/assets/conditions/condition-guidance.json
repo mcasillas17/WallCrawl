@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "2026-11-02.2",
+  "version": "2026-11-02.3",
   "exerciseDemands": {
     "active-hang": [
       "HAND_GRIP_LOAD"
@@ -704,7 +704,7 @@
           "https://doi.org/10.1002/14651858.CD007612.pub2"
         ],
         "decisionRationale": "Owner-authorized AI authoring for alpha use. Restrictions, red flags and doses follow the research consolidation for this condition; nothing here is a care plan.",
-        "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. Evidence is very low: restrictions are mostly expert opinion and no routine item is shown to work. The glute bridge dose comes from a trial registry record whose results were not found, which has no DOI or PMID and so is not listed. The figure-four dose comes from a supervised trial in which stretching did not beat a hot pack plus TENS for pain, and calling the position a figure-four is this review's mapping, not a term the papers use. The lying stretch reads its dose as one set of 10 repetitions with 30 s holds, because the source says '10 repetitions/sets' and the set count is unclear; the source also does not specify the position, which comes from separate biomechanical studies, and it had no untreated control group.",
+        "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. Evidence is very low: restrictions are mostly expert opinion and no routine item is shown to work. The glute bridge dose comes from a trial registry record whose results were not found, which has no DOI or PMID and so is not listed. The figure-four dose comes from a supervised trial in which stretching did not beat a hot pack plus TENS for pain, and calling the position a figure-four is this review's mapping, not a term the papers use. The lying stretch reads its dose as one set of 10 repetitions with 30 s holds, because the source says '10 repetitions/sets' and the set count is unclear; the source also does not specify the position, which comes from separate biomechanical studies, and it had no untreated control group. Setup wording in the cues is the project's own, written for this app, not from the cited sources.",
         "schemaVersion": 1,
         "policyVersion": 1
       }
@@ -855,7 +855,7 @@
           "https://doi.org/10.1016/j.clinbiomech.2016.10.003"
         ],
         "decisionRationale": "Owner-authorized AI authoring for alpha use. Restrictions, red flags and doses follow the research consolidation for this condition; nothing here is a care plan.",
-        "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. Evidence is low: all but one restriction is expert opinion, and no individual exercise is shown to work. The doses come from one pilot and from a protocol that did not test these exercises alone. No study tested the three-exercise combination. The two isometric holds come from one 30-person pilot trial, and the side-lying hold showed no advantage over isotonic work there. For the standing hold the source only says the free leg moves in and out while holding a wall or chair; it does not state which leg stands, how far the leg moves, or the pelvis position for this exercise. The cue to keep the pelvis level comes from this condition's general restriction on dropping the pelvis, and the illustration draws a small movement.",
+        "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. Evidence is low: all but one restriction is expert opinion, and no individual exercise is shown to work. The doses come from one pilot and from a protocol that did not test these exercises alone. No study tested the three-exercise combination. The two isometric holds come from one 30-person pilot trial, and the side-lying hold showed no advantage over isotonic work there. For the standing hold the source only says the free leg moves in and out while holding a wall or chair; it does not state which leg stands, how far the leg moves, or the pelvis position for this exercise. The cue to keep the pelvis level comes from this condition's general restriction on dropping the pelvis, and the illustration draws a small movement. Setup wording in the cues is the project's own, written for this app, not from the cited sources.",
         "schemaVersion": 1,
         "policyVersion": 1
       }
@@ -1379,7 +1379,7 @@
           "https://doi.org/10.1080/0014013031000107595"
         ],
         "decisionRationale": "Owner-authorized AI authoring for alpha use. Restrictions, red flags and doses follow the research consolidation for this condition; nothing here is a care plan.",
-        "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. Evidence is low and exercise benefits may not be clinically worthwhile. No load or hold time is established. The wrist extensor stretch dose is a consensus choice made for practicality. The source describes three 30 s holds before and three after loading exercises; this routine has no loading, so one block of 3 x 30 s is authored here, which the source does not state.",
+        "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. Evidence is low and exercise benefits may not be clinically worthwhile. No load or hold time is established. The wrist extensor stretch dose is a consensus choice made for practicality. The source describes three 30 s holds before and three after loading exercises; this routine has no loading, so one block of 3 x 30 s is authored here, which the source does not state. Setup wording in the cues is the project's own, written for this app, not from the cited sources.",
         "schemaVersion": 1,
         "policyVersion": 1
       }
@@ -1404,8 +1404,8 @@
       ],
       "exerciseCues": {
         "tendon-gliding-sequence": {
-          "en": "Move your fingers slowly through three positions: straight, hook, fist. Keep it gentle. Stop if numbness or tingling increases.",
-          "es": "Mueve los dedos despacio por tres posiciones: rectos, en gancho y en puño. Hazlo con suavidad. Detente si aumentan el adormecimiento o el hormigueo."
+          "en": "Move your fingers slowly from straight to a fist. Keep it gentle. Stop if numbness or tingling increases.",
+          "es": "Mueve los dedos despacio de rectos a puño. Hazlo con suavidad. Detente si aumentan el adormecimiento o el hormigueo."
         }
       },
       "notes": {
@@ -1451,7 +1451,7 @@
         "reviewerModelId": "claude-opus-5-5",
         "reviewedAtEpochMillis": 1793491200000,
         "reviewedContentId": "carpal_tunnel_syndrome",
-        "reviewedContentSha256": "5baa6899f810e02caf97024a952f691b947848876f625a29a2890f2c8ec8cc74",
+        "reviewedContentSha256": "11ee8f72c8bd0ab4045d57987ce5ecf234301e420a48317dba10a0b15a77b370",
         "sourceReferences": [
           "https://doi.org/10.1002/14651858.CD009899",
           "https://doi.org/10.1518/001872007779598127",
@@ -1463,7 +1463,7 @@
           "https://doi.org/10.1177/17589983221113870"
         ],
         "decisionRationale": "Owner-authorized AI authoring for alpha use. Restrictions, red flags and doses follow the research consolidation for this condition; nothing here is a care plan.",
-        "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. Evidence is very low: restrictions come from healthy-volunteer, cadaver or workplace data, and reviews disagree about exercise. The tendon gliding dose comes from a study with no control group, given alongside manual therapy, so it is not a stand-alone dose.",
+        "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. Evidence is very low: restrictions come from healthy-volunteer, cadaver or workplace data, and reviews disagree about exercise. The tendon gliding dose comes from a study with no control group, given alongside manual therapy, so it is not a stand-alone dose. Setup wording in the cues is the project's own, written for this app, not from the cited sources.",
         "schemaVersion": 1,
         "policyVersion": 1
       }
@@ -1579,7 +1579,7 @@
           "https://doi.org/10.1080/17461391.2020.1806935"
         ],
         "decisionRationale": "Owner-authorized AI authoring for alpha use. Restrictions, red flags and doses follow the research consolidation for this condition; nothing here is a care plan.",
-        "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. Evidence is low: most restrictions rest on biomechanical data and no validated pain limit exists. The partial squat depth was not precisely monitored in its trial. The straight leg raise dose comes from one trial and describes common practice, not efficacy. Quadriceps setting is out because it has no hold time.",
+        "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. Evidence is low: most restrictions rest on biomechanical data and no validated pain limit exists. The partial squat depth was not precisely monitored in its trial. The straight leg raise dose comes from one trial and describes common practice, not efficacy. Quadriceps setting is out because it has no hold time. Setup wording in the cues is the project's own, written for this app, not from the cited sources.",
         "schemaVersion": 1,
         "policyVersion": 1
       }
