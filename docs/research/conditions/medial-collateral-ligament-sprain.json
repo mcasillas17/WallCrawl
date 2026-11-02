@@ -45,6 +45,13 @@
       "query": "\"10.1136/bmjsem-2023-001750\" correction retraction",
       "decision": "Retained source-specific evidence below; trial eligibility limits remain population boundaries.",
       "limitations": "Focused search, not exhaustive/systematic; publisher403/PMC challenge handled through lawful XML or conservative abstract-only status."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Direct primary PubMed abstract reopening; bounded indexed primary passage check",
+      "query": "Direct reopen: https://pubmed.ncbi.nlm.nih.gov/7943511/ ; https://pubmed.ncbi.nlm.nih.gov/3178440/",
+      "decision": "Recorded only explicit accessible protocol categories, program duration and any source-stated sequence; full-text status unchanged.",
+      "limitations": "Bounded protocol-fact audit, no broad discovery or new clinical guidance. Unseen mechanics, dose/frequency, supervision and stopping details remain not reported."
     }
   ],
   "sources": [
@@ -98,7 +105,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "PubMed complete abstract inspected; publisher full text not retrieved; third-party PDF lead not used as full-text verification."
+        "details": "PubMed complete abstract inspected; publisher full text not retrieved; third-party PDF lead not used as full-text verification. Accessible-protocol audit: complete PubMed abstract reopened; its intervention sequence and progression are recorded without inventing session dose, frequency, supervision or return criteria. No full-text access upgrade."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -115,15 +122,16 @@
       "harms": "Exercise-specific harms not reported in abstract.",
       "limitations": "Old uncontrolled athletic cohort; full text not retrieved; dose/frequency and validated return criteria inaccessible.",
       "protocol": {
-        "execution": "not reported in accessible full text; full article not retrieved",
-        "dose": "not reported in accessible full text; full article not retrieved",
-        "frequency": "not reported in accessible full text; full article not retrieved",
-        "supervision": "not reported in accessible full text; full article not retrieved",
-        "progression": "not reported in accessible full text; full article not retrieved",
-        "stoppingRules": "not reported in accessible full text; full article not retrieved"
+        "execution": "reported in accessible text: Abstract describes lateral hinged valgus-support bracing allowing knee motion, initial pool/whirlpool ROM, then quadriceps setting and leg raises. Exact exercise setup and brace use during each exercise remain unspecified.",
+        "dose": "not reported as repetitions, holds, resistance or program duration in the inspected abstract; mean 5.3 years is follow-up, not intervention duration.",
+        "frequency": "not reported in the inspected abstract; full methods not retrieved.",
+        "supervision": "not reported as a session-supervision schedule in the inspected abstract; full methods not retrieved.",
+        "progression": "reported in accessible text: Abstract adds resistive exercise when 90 degrees of knee flexion is present and allows unrestricted sports upon recovery. This describes the selected 35-athlete isolated grade III program; recovery criteria and loading details remain unspecified, not universal clearance.",
+        "stoppingRules": "not reported as an exercise stopping rule in the inspected abstract; return upon recovery lacks precise clearance criteria."
       },
       "locations": [
-        "Abstract > Methods and Results"
+        "Abstract > Methods and Results",
+        "Abstract (unstructured), intervention sequence and return-to-sport sentences 2–6"
       ]
     },
     {
@@ -136,7 +144,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "PubMed complete abstract inspected; publisher full text not retrieved."
+        "details": "PubMed complete abstract inspected; publisher full text not retrieved. Accessible-protocol audit: PubMed abstract reopened; immediate mobilization versus plaster is a treatment category, not a reproducible exercise program. Follow-up was not converted into treatment duration. No access upgrade."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -153,15 +161,16 @@
       "harms": "Residual laxity in 60%; other harms not reported.",
       "limitations": "Very small old trial; abstract only; does not demonstrate unrestricted valgus/pivoting safety.",
       "protocol": {
-        "execution": "not reported in accessible full text; full article not retrieved",
-        "dose": "not reported in accessible full text; full article not retrieved",
-        "frequency": "not reported in accessible full text; full article not retrieved",
-        "supervision": "not reported in accessible full text; full article not retrieved",
-        "progression": "not reported in accessible full text; full article not retrieved",
-        "stoppingRules": "not reported in accessible full text; full article not retrieved"
+        "execution": "reported in accessible text: Abstract compares immediate mobilization with plaster immobilization for selected isolated grade III MCL injuries. Specific exercise mechanics are not described.",
+        "dose": "not reported as exercise dose or treatment duration in the inspected abstract; 1.5 years is follow-up, not treatment duration.",
+        "frequency": "not reported in the inspected abstract; full methods not retrieved.",
+        "supervision": "not reported as a treatment-supervision schedule in the inspected abstract; full methods not retrieved.",
+        "progression": "not reported in the inspected abstract; full methods not retrieved.",
+        "stoppingRules": "not reported in the inspected abstract; full methods not retrieved."
       },
       "locations": [
-        "Abstract > Methods and Results"
+        "Abstract > Methods and Results",
+        "Abstract (unstructured), opening treatment-comparison sentence"
       ]
     }
   ],

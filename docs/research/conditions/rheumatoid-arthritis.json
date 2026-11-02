@@ -27,6 +27,13 @@
       "query": "rheumatoid arthritis ACR exercise 2025 2026 guideline update systematic review contraindications",
       "decision": "Retrieved and extracted the primary studies and current sources declared below; retained population, dose, uncertainty and harms. Later evidence contextualizes rather than automatically replaces earlier studies.",
       "limitations": "Focused search, not exhaustive systematic review. Source-specific access limits and integrity failures remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Direct primary PubMed abstract reopening; bounded indexed primary passage check",
+      "query": "Direct reopen: https://pubmed.ncbi.nlm.nih.gov/13130460/",
+      "decision": "Recorded only explicit accessible protocol categories, program duration and any source-stated sequence; full-text status unchanged.",
+      "limitations": "Bounded protocol-fact audit, no broad discovery or new clinical guidance. Unseen mechanics, dose/frequency, supervision and stopping details remain not reported."
     }
   ],
   "sources": [
@@ -79,7 +86,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "PubMed abstract/metadata inspected. Complete original methods and baseline-damage subgroup tables not obtained; cannot extract exact RAPIT execution or numeric damage threshold."
+        "details": "PubMed abstract/metadata inspected. Complete original methods and baseline-damage subgroup tables not obtained; cannot extract exact RAPIT execution or numeric damage threshold. Accessible-protocol audit: PubMed Abstract > Objective reopened; two-year program duration is explicit but supplies no weekly frequency, session duration or exercise selection. Full methods and damage-stratum tables remain unavailable."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -96,15 +103,16 @@
       "harms": "No detrimental disease-activity effect reported; possible large-joint structural harm in considerable-baseline-damage subgroup.",
       "limitations": "Cannot translate subgroup signal into all-RA weight cap; no fulltext protocol.",
       "protocol": {
-        "execution": "not reported",
-        "dose": "not reported",
-        "frequency": "not reported",
-        "supervision": "not reported",
-        "progression": "not reported",
-        "stoppingRules": "not reported"
+        "execution": "reported in accessible text: Abstract > Objective describes intensive RAPIT exercise versus usual-care physical therapy. Individual exercise selection and mechanics are not specified.",
+        "dose": "reported in accessible text: Abstract > Objective specifies a two-year intensive exercise program. This is total program duration; session minutes, exercise repetitions and load are not reported.",
+        "frequency": "not reported in the inspected abstract; complete methods not obtained.",
+        "supervision": "not reported as a delivery or session-supervision schedule in the inspected abstract; complete methods not obtained.",
+        "progression": "not reported in the inspected abstract; complete methods not obtained.",
+        "stoppingRules": "not reported in the inspected abstract; complete methods not obtained."
       },
       "locations": [
-        "Abstract > Methods; Results; Conclusion"
+        "Abstract > Methods; Results; Conclusion",
+        "Abstract > Objective"
       ]
     },
     {

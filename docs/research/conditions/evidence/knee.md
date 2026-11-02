@@ -70,14 +70,14 @@ Harms: Safety reported in 40 studies(18%); no clear differences, wide uncertaint
 Limits/contrary evidence: Network indirectness, heterogeneity, sparse harm reporting; published 2025 synthesis does not establish a specific safe app routine.
 
 Reported protocol (study extraction, never an approved app dose):
-- execution: not reported in accessible full text; full article not retrieved
-- dose: not reported in accessible full text; full article not retrieved
-- frequency: not reported in accessible full text; full article not retrieved
-- supervision: not reported in accessible full text; full article not retrieved
-- progression: not reported in accessible full text; full article not retrieved
-- stoppingRules: not reported in accessible full text; full article not retrieved
+- execution: reported in accessible text: PubMed Abstract > Eligibility criteria lists aerobic, flexibility, mind-body, neuromotor, strengthening and mixed exercise categories. Individual exercise mechanics are not specified.
+- dose: not reported as an intervention dose in the inspected abstract; four-, 12- and 24-week values are outcome windows, not treatment schedules.
+- frequency: not reported in the inspected abstract; complete protocols not retrieved.
+- supervision: not reported in the inspected abstract; complete protocols not retrieved.
+- progression: not reported in the inspected abstract; complete protocols not retrieved.
+- stoppingRules: not reported in the inspected abstract; complete protocols not retrieved.
 
-Exact inspected locations: Abstract > Methods; Results; Conclusions.
+Exact inspected locations: Abstract > Methods; Results; Conclusions; Abstract > Eligibility criteria for selecting studies; Main outcome measures.
 Integrity/currentness: No correction/retraction link in the inspected Europe PMC core metadata; bounded metadata check, not registry-wide clearance.
 
 **Source findings / recommendations**
@@ -120,14 +120,14 @@ Harms: Abstract/partial indexed results report few adverse events; exact safety 
 Limits/contrary evidence: Full publisher article/PDF returned 403; partial indexed methods are not full-text access. No comparison with no exercise; modest improvement does not prove movement harm.
 
 Reported protocol (study extraction, never an approved app dose):
-- execution: not reported in accessible full text; full article not retrieved
-- dose: not reported in accessible full text; full article not retrieved
-- frequency: not reported in accessible full text; full article not retrieved
-- supervision: not reported in accessible full text; full article not retrieved
-- progression: not reported in accessible full text; full article not retrieved
-- stoppingRules: not reported in accessible full text; full article not retrieved
+- execution: reported in accessible text: PubMed Abstract names hip- or quadriceps-focused programs. Indexed HE-2 (printed p.9) describes side-lying abduction then standing, stable pelvis and optional band loading; complete figures/setup remain unverified.
+- dose: reported in accessible text: Abstract > Objective/Methods specifies a 12-week program; indexed Methods > Interventions specifies three sets of 8–12 repetitions. Exact resistance and session duration remain unresolved.
+- frequency: reported in accessible text: indexed main Methods > Interventions specifies three home exercise sessions weekly; this frequency is not reported in the PubMed abstract.
+- supervision: reported in accessible text: indexed Methods > Interventions describes an initial individual physiotherapist instruction visit and monthly clinical supervision. Complete delivery materials remain uninspected.
+- progression: reported in accessible text: indexed HE-2 (p.9) progresses side-lying to standing after four weeks and permits added band resistance. Indexed Methods > Interventions increases resistance when 14 repetitions are possible with movement quality maintained; full implementation remains unresolved.
+- stoppingRules: reported in accessible text: indexed Methods > Interventions permits reduced ROM or sets/repetitions for significant knee-pain exacerbation. No numeric stopping threshold or automatic app rule is established.
 
-Exact inspected locations: Abstract > Methods and Results; indexed partial Methods > Interventions; Indexed supplement > HE-2 SIDELYING HIP ABDUCTION, progression (printed p.9).
+Exact inspected locations: Abstract > Methods and Results; indexed partial Methods > Interventions; Indexed supplement > HE-2 SIDELYING HIP ABDUCTION, progression (printed p.9); Abstract > Objective; Methods; Indexed main article > Methods > Interventions.
 Integrity/currentness: No correction/retraction link in the inspected Europe PMC core metadata; bounded metadata check, not registry-wide clearance.
 
 **[Best practice guide for patellofemoral pain based on synthesis of a systematic review, the patient voice and expert clinical reasoning](https://repository.essex.ac.uk/39411/)** — DOI `10.1136/bjsports-2024-108110`, PMID `39401870`; final journal article; access `full-text`.
@@ -525,14 +525,14 @@ Harms: Exercise-specific harms not reported in abstract.
 Limits/contrary evidence: Old uncontrolled athletic cohort; full text not retrieved; dose/frequency and validated return criteria inaccessible.
 
 Reported protocol (study extraction, never an approved app dose):
-- execution: not reported in accessible full text; full article not retrieved
-- dose: not reported in accessible full text; full article not retrieved
-- frequency: not reported in accessible full text; full article not retrieved
-- supervision: not reported in accessible full text; full article not retrieved
-- progression: not reported in accessible full text; full article not retrieved
-- stoppingRules: not reported in accessible full text; full article not retrieved
+- execution: reported in accessible text: Abstract describes lateral hinged valgus-support bracing allowing knee motion, initial pool/whirlpool ROM, then quadriceps setting and leg raises. Exact exercise setup and brace use during each exercise remain unspecified.
+- dose: not reported as repetitions, holds, resistance or program duration in the inspected abstract; mean 5.3 years is follow-up, not intervention duration.
+- frequency: not reported in the inspected abstract; full methods not retrieved.
+- supervision: not reported as a session-supervision schedule in the inspected abstract; full methods not retrieved.
+- progression: reported in accessible text: Abstract adds resistive exercise when 90 degrees of knee flexion is present and allows unrestricted sports upon recovery. This describes the selected 35-athlete isolated grade III program; recovery criteria and loading details remain unspecified, not universal clearance.
+- stoppingRules: not reported as an exercise stopping rule in the inspected abstract; return upon recovery lacks precise clearance criteria.
 
-Exact inspected locations: Abstract > Methods and Results.
+Exact inspected locations: Abstract > Methods and Results; Abstract (unstructured), intervention sequence and return-to-sport sentences 2–6.
 Integrity/currentness: No correction/retraction link in the inspected Europe PMC core metadata; bounded metadata check, not registry-wide clearance.
 
 **[The non operative treatment of isolated complete tears of the medial collateral ligament of the knee. A prospective study](https://pubmed.ncbi.nlm.nih.gov/3178440/)** — DOI `10.1007/BF00451505`, PMID `3178440`; final journal article; access `abstract-only`.
@@ -546,14 +546,14 @@ Harms: Residual laxity in 60%; other harms not reported.
 Limits/contrary evidence: Very small old trial; abstract only; does not demonstrate unrestricted valgus/pivoting safety.
 
 Reported protocol (study extraction, never an approved app dose):
-- execution: not reported in accessible full text; full article not retrieved
-- dose: not reported in accessible full text; full article not retrieved
-- frequency: not reported in accessible full text; full article not retrieved
-- supervision: not reported in accessible full text; full article not retrieved
-- progression: not reported in accessible full text; full article not retrieved
-- stoppingRules: not reported in accessible full text; full article not retrieved
+- execution: reported in accessible text: Abstract compares immediate mobilization with plaster immobilization for selected isolated grade III MCL injuries. Specific exercise mechanics are not described.
+- dose: not reported as exercise dose or treatment duration in the inspected abstract; 1.5 years is follow-up, not treatment duration.
+- frequency: not reported in the inspected abstract; full methods not retrieved.
+- supervision: not reported as a treatment-supervision schedule in the inspected abstract; full methods not retrieved.
+- progression: not reported in the inspected abstract; full methods not retrieved.
+- stoppingRules: not reported in the inspected abstract; full methods not retrieved.
 
-Exact inspected locations: Abstract > Methods and Results.
+Exact inspected locations: Abstract > Methods and Results; Abstract (unstructured), opening treatment-comparison sentence.
 Integrity/currentness: No correction/retraction link in the inspected Europe PMC core metadata; bounded metadata check, not registry-wide clearance.
 
 **Source findings / recommendations**

@@ -44,6 +44,20 @@
       "query": "site:bjsm.bmj.com/content \"HE-2\" \"After 4 weeks\"",
       "decision": "Reopened indexed HE-2 printed p.9: side-lying abduction progresses to standing after four weeks. Corrected the unsupported alternatives relationship; no new dose/artwork.",
       "limitations": "Direct PDF returned 403; only indexed primary HE-2 passage inspected, not complete PDF/figures. Abstract-only schema status retained."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Direct primary PubMed abstract reopening; bounded indexed primary passage check",
+      "query": "Direct reopen: https://pubmed.ncbi.nlm.nih.gov/37137673/",
+      "decision": "Recorded only explicit accessible protocol categories, program duration and any source-stated sequence; full-text status unchanged.",
+      "limitations": "Bounded protocol-fact audit, no broad discovery or new clinical guidance. Unseen mechanics, dose/frequency, supervision and stopping details remain not reported."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Native web search; indexed primary publisher sections",
+      "query": "site:bjsm.bmj.com/content/early/2023/05/02/bjsports-2022-106197 \"monthly clinical supervision\" \"3 weekly\"; site:bjsm.bmj.com/content/bjsports/early/2023/05/02/bjsports-2022-106197/DC1 \"HE-2\" \"After 4 weeks\"",
+      "decision": "Rechecked indexed Methods > Interventions and HE-2 p.9 for reported frequency, sets/repetitions, clinical visits, progression and pain-related adjustment; attribution distinguishes abstract from indexed partial text.",
+      "limitations": "Complete article/PDF/supplement/figures not inspected; no access upgrade or automatic app suitability."
     }
   ],
   "sources": [
@@ -57,7 +71,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "PubMed/Europe PMC abstract and indexed publisher methods/results inspected. Direct publisher HTML/PDF403; Europe PMC lists subscription-only and no PMC copy; conservative abstract-only status. Follow-up correction: indexed publisher supplemental HE-2 (printed p.9) inspected at https://bjsm.bmj.com/content/bjsports/early/2023/05/02/bjsports-2022-106197/DC1/embed/inline-supplementary-material-1.pdf?download=true; direct supplemental PDF returned 403. This is partial primary access, not complete PDF or figure inspection; conservative abstract-only status and protocol-field boundary retained."
+        "details": "PubMed/Europe PMC abstract and indexed publisher methods/results inspected. Direct publisher HTML/PDF403; Europe PMC lists subscription-only and no PMC copy; conservative abstract-only status. Follow-up correction: indexed publisher supplemental HE-2 (printed p.9) inspected at https://bjsm.bmj.com/content/bjsports/early/2023/05/02/bjsports-2022-106197/DC1/embed/inline-supplementary-material-1.pdf?download=true; direct supplemental PDF returned 403. This is partial primary access, not complete PDF or figure inspection; conservative abstract-only status and partial-access limitations retained. Accessible-protocol audit: PubMed abstract and indexed primary Methods > Interventions/HE-2 rechecked. Reported fields distinguish abstract from partial indexed methods; no complete article/PDF/figure inspection or access upgrade claimed."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -74,16 +88,18 @@
       "harms": "Abstract/partial indexed results report few adverse events; exact safety table not inspected.",
       "limitations": "Full publisher article/PDF returned 403; partial indexed methods are not full-text access. No comparison with no exercise; modest improvement does not prove movement harm.",
       "protocol": {
-        "execution": "not reported in accessible full text; full article not retrieved",
-        "dose": "not reported in accessible full text; full article not retrieved",
-        "frequency": "not reported in accessible full text; full article not retrieved",
-        "supervision": "not reported in accessible full text; full article not retrieved",
-        "progression": "not reported in accessible full text; full article not retrieved",
-        "stoppingRules": "not reported in accessible full text; full article not retrieved"
+        "execution": "reported in accessible text: PubMed Abstract names hip- or quadriceps-focused programs. Indexed HE-2 (printed p.9) describes side-lying abduction then standing, stable pelvis and optional band loading; complete figures/setup remain unverified.",
+        "dose": "reported in accessible text: Abstract > Objective/Methods specifies a 12-week program; indexed Methods > Interventions specifies three sets of 8–12 repetitions. Exact resistance and session duration remain unresolved.",
+        "frequency": "reported in accessible text: indexed main Methods > Interventions specifies three home exercise sessions weekly; this frequency is not reported in the PubMed abstract.",
+        "supervision": "reported in accessible text: indexed Methods > Interventions describes an initial individual physiotherapist instruction visit and monthly clinical supervision. Complete delivery materials remain uninspected.",
+        "progression": "reported in accessible text: indexed HE-2 (p.9) progresses side-lying to standing after four weeks and permits added band resistance. Indexed Methods > Interventions increases resistance when 14 repetitions are possible with movement quality maintained; full implementation remains unresolved.",
+        "stoppingRules": "reported in accessible text: indexed Methods > Interventions permits reduced ROM or sets/repetitions for significant knee-pain exacerbation. No numeric stopping threshold or automatic app rule is established."
       },
       "locations": [
         "Abstract > Methods and Results; indexed partial Methods > Interventions",
-        "Indexed supplement > HE-2 SIDELYING HIP ABDUCTION, progression (printed p.9)"
+        "Indexed supplement > HE-2 SIDELYING HIP ABDUCTION, progression (printed p.9)",
+        "Abstract > Objective; Methods",
+        "Indexed main article > Methods > Interventions"
       ]
     },
     {

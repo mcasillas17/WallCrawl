@@ -20,6 +20,13 @@
       "query": "ASAS EULAR recommendations axial spondyloarthritis 2025 2026 exercise physiotherapy 2022 update",
       "decision": "Retrieved and extracted the primary studies and current sources declared below; retained population, dose, uncertainty and harms. Later evidence contextualizes rather than automatically replaces earlier studies.",
       "limitations": "Focused search, not exhaustive systematic review. Source-specific access limits and integrity failures remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Direct primary PubMed abstract reopening; bounded indexed primary passage check",
+      "query": "Direct reopen: https://pubmed.ncbi.nlm.nih.gov/30745314/",
+      "decision": "Recorded only explicit accessible protocol categories, program duration and any source-stated sequence; full-text status unchanged.",
+      "limitations": "Bounded protocol-fact audit, no broad discovery or new clinical guidance. Unseen mechanics, dose/frequency, supervision and stopping details remain not reported."
     }
   ],
   "sources": [
@@ -72,7 +79,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "PubMed metadata/abstract inspected; publisher full article not obtained in this batch. Do not reuse2014protocol as exact2020execution."
+        "details": "PubMed metadata/abstract inspected; publisher full article not obtained in this batch. Do not reuse2014protocol as exact2020execution. Accessible-protocol audit: PubMed Abstract > Method reopened; exercise categories and three-month program duration are explicit. No sessions, HR/RM targets, supervision or stopping schedule borrowed from the 2014 pilot; full methods remain uninspected."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -89,15 +96,16 @@
       "harms": "Not fully reported in accessible abstract; no broad safety clearance.",
       "limitations": "Abstract supports benefit but not an exact app protocol.",
       "protocol": {
-        "execution": "not reported",
-        "dose": "not reported",
-        "frequency": "not reported",
-        "supervision": "not reported",
-        "progression": "not reported",
-        "stoppingRules": "not reported"
+        "execution": "reported in accessible text: Abstract > Method describes high-intensity cardiorespiratory and muscular-strength exercise. Exact movements, apparatus and intensity targets are not specified.",
+        "dose": "reported in accessible text: Abstract > Method specifies exercise over three months. This is program duration; session minutes, sets/repetitions and HR/RM targets are not reported.",
+        "frequency": "not reported in the inspected 2020-trial abstract; the 2014 pilot schedule is not assigned to this trial.",
+        "supervision": "not reported in the inspected 2020-trial abstract; the 2014 pilot delivery is not assigned to this trial.",
+        "progression": "not reported in the inspected 2020-trial abstract; full methods not obtained.",
+        "stoppingRules": "not reported in the inspected 2020-trial abstract; full methods not obtained."
       },
       "locations": [
-        "Abstract > Methods; Results; Conclusion"
+        "Abstract > Methods; Results; Conclusion",
+        "Abstract > Method"
       ]
     },
     {

@@ -37,6 +37,13 @@
       "query": "\"10.1001/jama.2021.0411\" correction retraction",
       "decision": "Retained source-specific evidence below; trial eligibility limits remain population boundaries.",
       "limitations": "Focused search, not exhaustive/systematic; publisher403/PMC challenge handled through lawful XML or conservative abstract-only status."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Direct primary PubMed abstract reopening; bounded indexed primary passage check",
+      "query": "Direct reopen: https://pubmed.ncbi.nlm.nih.gov/41093618/",
+      "decision": "Recorded only explicit accessible protocol categories, program duration and any source-stated sequence; full-text status unchanged.",
+      "limitations": "Bounded protocol-fact audit, no broad discovery or new clinical guidance. Unseen mechanics, dose/frequency, supervision and stopping details remain not reported."
     }
   ],
   "sources": [
@@ -130,7 +137,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "Publisher indexed PDF abstract and Europe PMC core abstract inspected; complete PDF and supplements not inspected. Conservative abstract-only status."
+        "details": "Publisher indexed PDF abstract and Europe PMC core abstract inspected; complete PDF and supplements not inspected. Conservative abstract-only status. Accessible-protocol audit: PubMed abstract reopened; exercise categories are explicit, while outcome windows do not define a treatment schedule. Complete methods/supplements remain uninspected."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -147,15 +154,16 @@
       "harms": "Safety reported in 40 studies(18%); no clear differences, wide uncertainty.",
       "limitations": "Network indirectness, heterogeneity, sparse harm reporting; published 2025 synthesis does not establish a specific safe app routine.",
       "protocol": {
-        "execution": "not reported in accessible full text; full article not retrieved",
-        "dose": "not reported in accessible full text; full article not retrieved",
-        "frequency": "not reported in accessible full text; full article not retrieved",
-        "supervision": "not reported in accessible full text; full article not retrieved",
-        "progression": "not reported in accessible full text; full article not retrieved",
-        "stoppingRules": "not reported in accessible full text; full article not retrieved"
+        "execution": "reported in accessible text: PubMed Abstract > Eligibility criteria lists aerobic, flexibility, mind-body, neuromotor, strengthening and mixed exercise categories. Individual exercise mechanics are not specified.",
+        "dose": "not reported as an intervention dose in the inspected abstract; four-, 12- and 24-week values are outcome windows, not treatment schedules.",
+        "frequency": "not reported in the inspected abstract; complete protocols not retrieved.",
+        "supervision": "not reported in the inspected abstract; complete protocols not retrieved.",
+        "progression": "not reported in the inspected abstract; complete protocols not retrieved.",
+        "stoppingRules": "not reported in the inspected abstract; complete protocols not retrieved."
       },
       "locations": [
-        "Abstract > Methods; Results; Conclusions"
+        "Abstract > Methods; Results; Conclusions",
+        "Abstract > Eligibility criteria for selecting studies; Main outcome measures"
       ]
     }
   ],
