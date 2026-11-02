@@ -1,0 +1,246 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "degenerative-meniscal-lesion",
+    "label": "degenerative meniscal lesion",
+    "aliases": [
+      "degenerative meniscal tear",
+      "degenerative meniscus lesion"
+    ],
+    "distinctions": "Degenerative lesion differs from acute traumatic, bucket-handle/root/displaced tears and repaired meniscus."
+  },
+  "scope": {
+    "population": "Middle-aged adults with symptomatic degenerative meniscal lesions; ESCAPE 45–70.",
+    "stage": "Nonlocked degenerative tear with conservative treatment; acute displaced tears distinct.",
+    "operativeStatus": "Nonsurgical initial care; partial meniscectomy, repair and reconstruction require different stage-specific management.",
+    "exclusions": "Locked knee, acute surgical trauma, cruciate instability, KL 4 andBMI>35 excluded from ESCAPE; exclusions are not contraindications.",
+    "uncertainty": "Research extraction only; no universal safe dose, clearance or diagnosis inferred."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "Native web search; primary PubMed/publisher pages; Europe PMC retrieval",
+      "query": "\"degenerative meniscal\" ESCAPE 2022 physical therapy 16 sessions 5 years full text",
+      "decision": "Retained source-specific evidence below; trial eligibility limits remain population boundaries.",
+      "limitations": "Focused search, not exhaustive/systematic; publisher403/PMC challenge handled through lawful XML or conservative abstract-only status."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Native web search; primary PubMed/publisher pages; Europe PMC retrieval",
+      "query": "degenerative meniscal 2024 EU US consensus rehabilitation restrictions 2025 exercise treatment consensus",
+      "decision": "Retained source-specific evidence below; trial eligibility limits remain population boundaries.",
+      "limitations": "Focused search, not exhaustive/systematic; publisher403/PMC challenge handled through lawful XML or conservative abstract-only status."
+    }
+  ],
+  "sources": [
+    {
+      "id": "escape-2022",
+      "title": "Effect of Physical Therapy vs Arthroscopic Partial Meniscectomy in People With Degenerative Meniscal Tears: Five-Year Follow-up of the ESCAPE Randomized Clinical Trial",
+      "doi": "10.1001/jamanetworkopen.2022.20394",
+      "pmid": "35802374",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9270699/",
+      "publicationStatus": "final journal article",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Full article text, tables, methods, results and limitations retrieved through lawful Europe PMC fullTextXML: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9270699/fullTextXML . PMC direct browser access sometimes challenged; XML retrieval succeeded. Figures not visually verified."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Source record and Europe PMC REST core metadata inspected, including commentCorrectionList and firstPublicationDate; selected DOI correction/retraction web searches; no formal registry-wide audit.",
+        "result": "Indexed related records: Comment in 35802378; Comment in 36315941. These are comments/reprint links, not identified corrections/retractions; bounded check only."
+      },
+      "design": "Multicenter noninferiority RCT, n 321, 278(87%)5-year respondents.",
+      "population": "Age 45–70, MRI-confirmed symptomatic degenerative tears; locked knee, acute-surgery trauma, cruciate instability, KL 4, BMI>35 excluded.",
+      "comparator": "Physical therapy vs arthroscopic partial meniscectomy.",
+      "coInterventions": "Surgery: home exercise instructions; PT if delayed recovery. PT: extra sessions/delayed surgery if persistent symptoms.",
+      "outcomes": "IKDC improvement 25.1 PT vs 29.6 surgery; 5-year crude MD 3.5 (95%CI 0.7, 6.3)within 11-point noninferiority margin; similar OA progression. PT 32.1%delayed surgery.",
+      "followUp": "3/6 months, 1/2/5 years.",
+      "uncertainty": "Crossover, unblinded, loss to follow-up, noninvasive cointerventions not registered. Source narrative crossover timing inconsistent; do not infer universal success.",
+      "harms": "5-year report refers earlier 2-year adverse-event report; 17additional operations(5 surgery, 12 PT); not exercise-harm equivalence.",
+      "limitations": "Crossover, unblinded, loss to follow-up, noninvasive cointerventions not registered. Source narrative crossover timing inconsistent; do not infer universal success.",
+      "protocol": {
+        "execution": "Incremental exercise program; exact tasks, coordination and strength details not supplied in main report; supplement not retrieved.",
+        "dose": "16 sessions, 30 min each over 8 weeks.",
+        "frequency": "2/week implied by 16 in 8 weeks; actual spacing not prescribed in main report.",
+        "supervision": "Physical therapist-led.",
+        "progression": "Incremental program; detailed load/ROM/sets not available in inspected main report.",
+        "stoppingRules": "Persistent pain/function/mechanical symptoms prompted review, extra PT or surgeon discussion; no numeric rule."
+      },
+      "locations": [
+        "Methods > Patients",
+        "Methods > Treatment procedures > Physical therapy",
+        "Results > Patient-reported knee function; Table 2; Additional surgeries",
+        "Discussion > Limitations"
+      ]
+    },
+    {
+      "id": "meniscus-consensus-2025",
+      "title": "The formal EU-US Meniscus Rehabilitation 2024 Consensus: An ESSKA-AOSSM-AASPT initiative. Part II-Prevention, non-operative treatment and return to sport",
+      "doi": "10.1002/ksa.12689",
+      "pmid": "40501314",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12310080/",
+      "publicationStatus": "final journal article",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Full article text, tables, methods, results and limitations retrieved through lawful Europe PMC fullTextXML: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12310080/fullTextXML . PMC direct browser access sometimes challenged; XML retrieval succeeded. Figures not visually verified."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Source record and Europe PMC REST core metadata inspected, including commentCorrectionList and firstPublicationDate; selected DOI correction/retraction web searches; no formal registry-wide audit.",
+        "result": "No correction/retraction link in the inspected Europe PMC core metadata; bounded metadata check, not registry-wide clearance."
+      },
+      "design": "ESSKA/AOSSM/AASPT 2024consensus, published 2025; graded literature+expert statements.",
+      "population": "Separate acute traumatic tears, degenerative lesions and postoperative procedures.",
+      "comparator": "Nonoperative vs surgery; multiple rehab strategies.",
+      "coInterventions": "Home exercise added to supervised therapy; manual/ROM options.",
+      "outcomes": "Degenerative lesions: PT-first GRADEA; progressive knee/hip strength and neuromuscular/ROM training GRADEB. No direct supervised-vs-home comparison(GRADED).",
+      "followUp": "Varies; no new randomized follow-up.",
+      "uncertainty": "Many criteria based on consensus; no one optimal exercise dose; postrepair restrictions cannot be transferred to untreated degenerative lesions.",
+      "harms": "No pooled harms rate. Persistent symptoms/effusion/instability/mechanical symptoms merit surgical referral.",
+      "limitations": "Many criteria based on consensus; no one optimal exercise dose; postrepair restrictions cannot be transferred to untreated degenerative lesions.",
+      "protocol": {
+        "execution": "Progressive knee/hip strengthening, ROM, neuromuscular training.",
+        "dose": "not reported as a standard sets/reps/load prescription",
+        "frequency": "not reported as a standard frequency",
+        "supervision": "Supervised PT with home exercise suggested; supervised-vs-home untested.",
+        "progression": "Criterion-based assessment of symptoms, effusion, ROM, strength/control; consider healing time.",
+        "stoppingRules": "Refer persistent pain, recurring effusion/functional instability/mechanical symptoms; clinical assessment required."
+      },
+      "locations": [
+        "Rehabilitation management of non-operated degenerative meniscal lesions",
+        "Return to sports after meniscus injury and surgery"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "meniscus-pt-noninferior",
+      "kind": "study-result",
+      "statement": "IKDC improvement 25.1 PT vs 29.6 surgery; 5-year crude MD 3.5 (95%CI 0.7, 6.3)within 11-point noninferiority margin; similar OA progression. PT 32.1%delayed surgery.",
+      "citations": [
+        {
+          "sourceId": "escape-2022",
+          "location": "Methods > Treatment procedures > Physical therapy"
+        },
+        {
+          "sourceId": "escape-2022",
+          "location": "Results > Patient-reported knee function; Table 2; Additional surgeries"
+        }
+      ],
+      "applicability": "Age 45–70, MRI-confirmed symptomatic degenerative tears; locked knee, acute-surgery trauma, cruciate instability, KL 4, BMI>35 excluded.",
+      "limitations": "Crossover and unblinded strategy; not all responded to PT."
+    },
+    {
+      "id": "meniscus-conservative-first",
+      "kind": "published-recommendation",
+      "statement": "2025consensus recommends PT-first for degenerative lesions(GRADEA); progressive knee/hip strength, ROM and neuromuscular training with home exercise(GRADEB). Supervised-vs-home superiority untested.",
+      "citations": [
+        {
+          "sourceId": "meniscus-consensus-2025",
+          "location": "Rehabilitation management of non-operated degenerative meniscal lesions"
+        }
+      ],
+      "applicability": "Conservatively managed degenerative lesions; separate acute/surgical categories.",
+      "limitations": "Does not establish an exact exercise protocol or a universal ROM/load threshold."
+    },
+    {
+      "id": "meniscus-clinical-review",
+      "kind": "published-recommendation",
+      "statement": "Consensus advises referral for persistent pain, recurring stiffness/effusion, functional instability or mechanical symptoms; return is criterion-based with knee function and healing considerations.",
+      "citations": [
+        {
+          "sourceId": "meniscus-consensus-2025",
+          "location": "Return to sports after meniscus injury and surgery"
+        }
+      ],
+      "applicability": "Symptomatic meniscal lesions under clinical care.",
+      "limitations": "Symptoms require assessment; app cannot infer a locked/displaced lesion from selection alone."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "meniscus-incremental-exercise-variant-unresolved-candidate",
+      "exerciseId": null,
+      "requestId": "knee-meniscus-incremental-exercise-variant-unresolved",
+      "findingIds": [
+        "meniscus-pt-noninferior"
+      ],
+      "matchRationale": "Catalog squats/leg-press cannot be matched to an unspecified incremental program. Preserve a protocol-retrieval candidate, not a new generic exercise or approval of every squat.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "meniscus-pt-candidate",
+      "kind": "supportive-prescription",
+      "basis": "unresolved-hypothesis",
+      "statement": "Retain the documented incremental strengthening program as a research candidate after exact task retrieval; ordinary exercise selection should be individualized with symptom review.",
+      "findingIds": [
+        "meniscus-pt-noninferior",
+        "meniscus-conservative-first"
+      ],
+      "citations": [
+        {
+          "sourceId": "escape-2022",
+          "location": "Methods > Treatment procedures > Physical therapy"
+        },
+        {
+          "sourceId": "meniscus-consensus-2025",
+          "location": "Rehabilitation management of non-operated degenerative meniscal lesions"
+        }
+      ],
+      "applicability": {
+        "population": "Middle-aged adults with symptomatic degenerative meniscal lesions; ESCAPE 45–70.",
+        "stage": "Nonlocked degenerative tear with conservative treatment; acute displaced tears distinct.",
+        "rationale": "Evidence supports nonoperative managed exercise strategy rather than a specific generic catalog identity."
+      },
+      "limitations": "No inferred universal deep-flexion/twisting ban; acute locked or repaired knees need their own clinical protocol.",
+      "mappingIds": [
+        "meniscus-incremental-exercise-variant-unresolved-candidate"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "meniscus-reassess-symptoms",
+      "kind": "escalation",
+      "basis": "published-recommendation",
+      "statement": "Candidate ordinary-workout implication: pause automatic progression and seek clinical reassessment for persistent/recurrent effusion, mechanical symptoms or instability as described by consensus; distinguish locked/acute presentations from the trial population.",
+      "findingIds": [
+        "meniscus-clinical-review"
+      ],
+      "citations": [
+        {
+          "sourceId": "meniscus-consensus-2025",
+          "location": "Return to sports after meniscus injury and surgery"
+        }
+      ],
+      "applicability": {
+        "population": "Middle-aged adults with symptomatic degenerative meniscal lesions; ESCAPE 45–70.",
+        "stage": "Nonlocked degenerative tear with conservative treatment; acute displaced tears distinct.",
+        "rationale": "Consensus specifically identifies failure/recurrent-symptom referral boundaries."
+      },
+      "limitations": "A symptom is not an app diagnosis; no timed recovery or surgery recommendation supplied.",
+      "mappingIds": [],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "Researcher appraisal, not formal GRADE: moderate-to-high confidence in managed PT-first strategy for nonlocked degenerative lesions; low confidence in a specific app exercise identity/dose.",
+    "ESCAPE exercise supplement not retrieved; actual individual sets/reps/load and progression unresolved.",
+    "No deep-squat/twisting ban or universal 90-degree cap justified for every untreated degenerative lesion.",
+    "Postrepair consensus restrictions encountered during search are procedure-specific and not transferred to this condition.",
+    "Delayed surgery 32% means response is not guaranteed; currentness check included 2025consensus.",
+    "Independent clinical review absent; doses are reported study protocols, not app prescriptions.",
+    "No universal contraindication follows from trial exclusion or another exercise showing benefit. No generic five-second progression or stretch strength-set credit."
+  ],
+  "disposition": "research-only",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

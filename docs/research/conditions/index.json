@@ -174,43 +174,43 @@
       "id": "knee-osteoarthritis",
       "label": "Knee osteoarthritis",
       "region": "Knee (7)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "patellofemoral-pain",
       "label": "patellofemoral pain",
       "region": "Knee (7)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "patellar-tendinopathy",
       "label": "patellar tendinopathy",
       "region": "Knee (7)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "iliotibial-band-related-lateral-knee-pain",
       "label": "iliotibial-band-related lateral knee pain",
       "region": "Knee (7)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "degenerative-meniscal-lesion",
       "label": "degenerative meniscal lesion",
       "region": "Knee (7)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "anterior-cruciate-ligament-injury",
       "label": "anterior cruciate ligament injury",
       "region": "Knee (7)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "medial-collateral-ligament-sprain",
       "label": "medial collateral ligament sprain",
       "region": "Knee (7)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "midportion-achilles-tendinopathy",

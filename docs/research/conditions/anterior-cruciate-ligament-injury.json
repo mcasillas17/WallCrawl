@@ -1,0 +1,313 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "anterior-cruciate-ligament-injury",
+    "label": "anterior cruciate ligament injury",
+    "aliases": [
+      "ACL tear",
+      "ACL rupture",
+      "ACL injury"
+    ],
+    "distinctions": "ACL injury is not a single rehabilitation stage; graft choice, repair, stability and associated injury alter applicability."
+  },
+  "scope": {
+    "population": "Clinically confirmed ACL injury; distinct acute management strategies and postreconstruction rehabilitation.",
+    "stage": "Acute/recent injury and staged postoperative rehabilitation must be identified; chronic symptomatic instability not fully covered.",
+    "operativeStatus": "Both nonoperative and reconstructed strategies researched; no interchangeable protocol.",
+    "exclusions": "Concomitant meniscus/collateral/cartilage injuries and surgical restrictions require separate assessment; professional/pediatric cohorts not covered by KANON.",
+    "uncertainty": "Research extraction only; no universal safe dose, clearance or diagnosis inferred."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "Native web search; primary PubMed/publisher pages; Europe PMC retrieval",
+      "query": "\"Treatment for acute anterior cruciate ligament tear: five year outcome\" PMC",
+      "decision": "Retained source-specific evidence below; trial eligibility limits remain population boundaries.",
+      "limitations": "Focused search, not exhaustive/systematic; publisher403/PMC challenge handled through lawful XML or conservative abstract-only status."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Native web search; primary PubMed/publisher pages; Europe PMC retrieval",
+      "query": "COMPARE randomised trial early anterior cruciate ligament reconstruction rehabilitation optional delayed 2021 BMJ 5.3 95 confidence",
+      "decision": "Retained source-specific evidence below; trial eligibility limits remain population boundaries.",
+      "limitations": "Focused search, not exhaustive/systematic; publisher403/PMC challenge handled through lawful XML or conservative abstract-only status."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Native web search; primary PubMed/publisher pages; Europe PMC retrieval",
+      "query": "ACL rehabilitation Aspetar guideline 2023 open kinetic chain criteria return running",
+      "decision": "Retained source-specific evidence below; trial eligibility limits remain population boundaries.",
+      "limitations": "Focused search, not exhaustive/systematic; publisher403/PMC challenge handled through lawful XML or conservative abstract-only status."
+    }
+  ],
+  "sources": [
+    {
+      "id": "kanon-2013",
+      "title": "Treatment for acute anterior cruciate ligament tear: five year outcome of randomised trial",
+      "doi": "10.1136/bmj.f232",
+      "pmid": "23349407",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3553934/",
+      "publicationStatus": "final journal article",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Full article text, tables, methods, results and limitations retrieved through lawful Europe PMC fullTextXML: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC3553934/fullTextXML . PMC direct browser access sometimes challenged; XML retrieval succeeded. Figures not visually verified."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Source record and Europe PMC REST core metadata inspected, including commentCorrectionList and firstPublicationDate; selected DOI correction/retraction web searches; no formal registry-wide audit.",
+        "result": "Indexed related records: Comment in 23407801; Comment in 23896338; Comment in 23965704; Comment in 25322347; Reprint in 25926596. These are comments/reprint links, not identified corrections/retractions; bounded check only."
+      },
+      "design": "Strategy RCT 5-year follow-up, 121randomized, 120followed.",
+      "population": "Active 18–35, ACLtear<=4 weeks, previously uninjured; professional athletes, low activity, complete collateral tear/full-thickness cartilage/extensive meniscal repair excluded.",
+      "comparator": "Rehab+early ACLR vs same rehab+optional delayed ACLR.",
+      "coInterventions": "Single-bundle patellar/hamstring reconstruction; meniscal procedures as indicated.",
+      "outcomes": "KOOS 4 improvement 42.9 early vs 44.9 optional; report presents difference 2.0 with CI−8.5, 4.5 (direction inconsistency retained), p.54. No strategy differenceOA/meniscal surgery; 51%optional group reconstructed.",
+      "followUp": "5 years.",
+      "uncertainty": "Managed strategies, not surgery-vs-no-rehab; crossovers; selected young active cohort; not unattended return-to-sport.",
+      "harms": "Four graft ruptures; two revisions; five contralateral reconstructions reported; not proof of equal individual injury risk.",
+      "limitations": "Managed strategies, not surgery-vs-no-rehab; crossovers; selected young active cohort; not unattended return-to-sport.",
+      "protocol": {
+        "execution": "Similar structured rehabilitation in both arms; exact exercise protocol referred to earlier report.",
+        "dose": "not reported in this 5-year main article",
+        "frequency": "not reported in this 5-year main article",
+        "supervision": "Rehabilitation by physiotherapists; full visit schedule not given.",
+        "progression": "Delayed ACLR for symptomatic ACL insufficiency with positive pivot shift; not time-alone clearance.",
+        "stoppingRules": "not reported as exercise stop rule; instability required clinical management."
+      },
+      "locations": [
+        "Methods > Participants and Treatment",
+        "Results > Patient-reported outcomes; Surgical procedures",
+        "Discussion > Conclusions"
+      ]
+    },
+    {
+      "id": "compare-2021",
+      "title": "Early surgical reconstruction versus rehabilitation with elective delayed reconstruction for patients with anterior cruciate ligament rupture: COMPARE randomised controlled trial",
+      "doi": "10.1136/bmj.n375",
+      "pmid": "33687926",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7941216/",
+      "publicationStatus": "final journal article",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Full article text, tables, methods, results and limitations retrieved through lawful Europe PMC fullTextXML: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7941216/fullTextXML . PMC direct browser access sometimes challenged; XML retrieval succeeded. Figures not visually verified."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Source record and Europe PMC REST core metadata inspected, including commentCorrectionList and firstPublicationDate; selected DOI correction/retraction web searches; no formal registry-wide audit.",
+        "result": "No correction/retraction link in the inspected Europe PMC core metadata; bounded metadata check, not registry-wide clearance."
+      },
+      "design": "Open-label multicenter strategy RCT, n 167, 163 completed.",
+      "population": "Adults 18–65, primary complete ACL rupture<=2 months; locked bucket-handle extension-deficit lesions excluded; associated injuries allowed.",
+      "comparator": "Early ACLR vs rehab with optional delayed surgery.",
+      "coInterventions": "Surgeon-chosen graft/procedures; postoperative PT.",
+      "outcomes": "24-monthIKDC 84.7vs 79.4, MD 5.3(95%CI 0.6, 9.9), statistically better early surgery, authors judge not clinically relevant. At 3 months rehab favored, MD−9.3(−14.6,−4.0); 50%rehab had ACLR.",
+      "followUp": "3/6/9/12/24 months.",
+      "uncertainty": "Unblinded, crossover, not equivalent to KANON population/outcome; cannot guarantee rehab-alone success or infer therapy harmful.",
+      "harms": "Early 4 reruptures+3 contralateral vs optional 2+1; small counts, exposure/treatment differences.",
+      "limitations": "Unblinded, crossover, not equivalent to KANON population/outcome; cannot guarantee rehab-alone success or infer therapy harmful.",
+      "protocol": {
+        "execution": "Supervised PT according to DutchACLguideline; exact exercise menu not reported.",
+        "dose": "Minimum 3 months before considering elective delayed reconstruction.",
+        "frequency": "not reported as exercise frequency",
+        "supervision": "Physical therapist supervised; postoperative PT until functional control.",
+        "progression": "Clinical instability or failure to reach desired activity after>=3 months allowed ACLR.",
+        "stoppingRules": "No numeric exercise stop rule; instability prompted clinical reassessment."
+      },
+      "locations": [
+        "Methods > Patients; Interventions > Early reconstruction and Rehabilitation",
+        "Results > Primary outcome; Table 2; Serious adverse events"
+      ]
+    },
+    {
+      "id": "aspetar-2023",
+      "title": "Aspetar clinical practice guideline on rehabilitation after anterior cruciate ligament reconstruction",
+      "doi": "10.1136/bjsports-2022-106158",
+      "pmid": "36731908",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11785408/",
+      "publicationStatus": "final journal article",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Full article text, tables, methods, results and limitations retrieved through lawful Europe PMC fullTextXML: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11785408/fullTextXML . PMC direct browser access sometimes challenged; XML retrieval succeeded. Figures not visually verified."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Source record and Europe PMC REST core metadata inspected, including commentCorrectionList and firstPublicationDate; selected DOI correction/retraction web searches; no formal registry-wide audit.",
+        "result": "No correction/retraction link in the inspected Europe PMC core metadata; bounded metadata check, not registry-wide clearance."
+      },
+      "design": "Clinical practice guideline, systematic evidence+expert consensus; many recommendations low-certainty.",
+      "population": "After ACLR; isolated-surgery guidance must respect graft/surgical instructions and additional repairs.",
+      "comparator": "Earlier/later and different strength/motor-control interventions.",
+      "coInterventions": "Multiple rehabilitation components; individual prescribing and monitoring.",
+      "outcomes": "Supports active rehabilitation; combines open/closed-chain strength and motor control. Running criteria are explicitly expert-proposed, not validated injury-risk thresholds; time alone insufficient.",
+      "followUp": "Heterogeneous source studies; no new follow-up.",
+      "uncertainty": "Postoperative evidence cannot be transferred directly to untreated ACL or multiligament/meniscal repair cases; no universal reps/load.",
+      "harms": "Monitor anterior knee pain/load; not conclusive running safety<=12 weeks.",
+      "limitations": "Postoperative evidence cannot be transferred directly to untreated ACL or multiligament/meniscal repair cases; no universal reps/load.",
+      "protocol": {
+        "execution": "Open-chain knee extension 90–45 degrees from week 4; legpress 0–45 degrees from week 3 for hamstring graft; static quads/SLR early options.",
+        "dose": "not reported as one common sets/reps/load",
+        "frequency": "not reported as one common frequency",
+        "supervision": "Individual prescribed program and monitoring even when home-based.",
+        "progression": "Criteria+minimum healing times+surgical restrictions; monitor pain/load response.",
+        "stoppingRules": "Adjust anterior knee pain/loading; running criteria include full extension, 95%flexion, no/trace effusion, quadLSI>80%; expert-proposed, not app clearance."
+      },
+      "locations": [
+        "Box 1 > Timing and structure recommendations",
+        "Box 3 > Exercise initiation recommendations",
+        "Return to activities > Running; Box 5 recommendations"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "acl-kanon-strategy",
+      "kind": "study-result",
+      "statement": "KOOS 4 improvement 42.9 early vs 44.9 optional; report presents difference 2.0 with CI−8.5, 4.5 (direction inconsistency retained), p.54. No strategy differenceOA/meniscal surgery; 51%optional group reconstructed.",
+      "citations": [
+        {
+          "sourceId": "kanon-2013",
+          "location": "Methods > Participants and Treatment"
+        },
+        {
+          "sourceId": "kanon-2013",
+          "location": "Results > Patient-reported outcomes; Surgical procedures"
+        }
+      ],
+      "applicability": "Active 18–35, ACLtear<=4 weeks, previously uninjured; professional athletes, low activity, complete collateral tear/full-thickness cartilage/extensive meniscal repair excluded.",
+      "limitations": "Direction/CI inconsistency in published difference retained; no app clearance."
+    },
+    {
+      "id": "acl-compare-qualification",
+      "kind": "study-result",
+      "statement": "24-monthIKDC 84.7vs 79.4, MD 5.3(95%CI 0.6, 9.9), statistically better early surgery, authors judge not clinically relevant. At 3 months rehab favored, MD−9.3(−14.6,−4.0); 50%rehab had ACLR.",
+      "citations": [
+        {
+          "sourceId": "compare-2021",
+          "location": "Methods > Patients; Interventions > Early reconstruction and Rehabilitation"
+        },
+        {
+          "sourceId": "compare-2021",
+          "location": "Results > Primary outcome; Table 2; Serious adverse events"
+        }
+      ],
+      "applicability": "Adults 18–65, primary complete ACL rupture<=2 months; locked bucket-handle extension-deficit lesions excluded; associated injuries allowed.",
+      "limitations": "Statistical advantage judged below clinical relevance by authors; different outcome/population/follow-up from KANON."
+    },
+    {
+      "id": "acl-individual-monitoring",
+      "kind": "published-recommendation",
+      "statement": "Aspetar recommends individually prescribed and monitored rehabilitation, criteria-based progression with healing times; time alone is insufficient for return. No conclusive evidence running<=12 weeks is safe.",
+      "citations": [
+        {
+          "sourceId": "aspetar-2023",
+          "location": "Box 1 > Timing and structure recommendations"
+        },
+        {
+          "sourceId": "aspetar-2023",
+          "location": "Return to activities > Running; Box 5 recommendations"
+        }
+      ],
+      "applicability": "Post ACLR, with surgical instructions and associated procedures considered.",
+      "limitations": "Expert criteria not validated automatic return thresholds; not an untreated ACLprotocol."
+    },
+    {
+      "id": "acl-open-chain-stage",
+      "kind": "published-recommendation",
+      "statement": "Aspetar permits limited-range open-chain knee extension 90–45 degrees from week 4 with anterior-knee-pain/load monitoring; early leg press 0–45 degrees from week 3 is hamstring-graft-specific.",
+      "citations": [
+        {
+          "sourceId": "aspetar-2023",
+          "location": "Box 3 > Exercise initiation recommendations"
+        }
+      ],
+      "applicability": "Post ACLR in described contexts, not all ACL injuries.",
+      "limitations": "Timing/range are clinical recommendations with low-certainty evidence; not independent fixed app limits."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "acl-open-chain-extension-90-45-candidate",
+      "exerciseId": null,
+      "requestId": "knee-acl-open-chain-extension-90-45",
+      "findingIds": [
+        "acl-open-chain-stage"
+      ],
+      "matchRationale": "Catalog leg-extension is generic weight_reps/Machine with repetition/load progression and does not encode postoperative stage, arc or surgical instructions. Separate clinical variation request prevents routine progression from substituting for rehabilitation.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "acl-stage-before-progression",
+      "kind": "exclusion",
+      "basis": "product-precaution",
+      "statement": "Candidate ordinary-workout gate: withhold automatic injured-knee progression and pivoting/jump return until the user has a clinician-defined injury/procedure stage and permitted activities; never infer clearance from weeks elapsed or historicalACLselection alone.",
+      "findingIds": [
+        "acl-individual-monitoring"
+      ],
+      "citations": [
+        {
+          "sourceId": "aspetar-2023",
+          "location": "Box 1 > Timing and structure recommendations"
+        },
+        {
+          "sourceId": "aspetar-2023",
+          "location": "Return to activities > Running; Box 5 recommendations"
+        }
+      ],
+      "applicability": {
+        "population": "Clinically confirmed ACL injury; distinct acute management strategies and postreconstruction rehabilitation.",
+        "stage": "Especially acute injury or incomplete postoperative rehabilitation.",
+        "rationale": "Guideline requires individual prescribing/monitoring and functional progression; this product gate handles unknown clinical stage."
+      },
+      "limitations": "Product precaution, not a published lifetime exercise ban; scope includes nonoperative injury indirectly, so review required. No supported-condition release.",
+      "mappingIds": [],
+      "status": "candidate"
+    },
+    {
+      "id": "acl-extension-review-only",
+      "kind": "supportive-prescription",
+      "basis": "unresolved-hypothesis",
+      "statement": "Retain restricted-arc knee extension as a post ACLR clinical-review candidate only after graft, associated surgery and stage are verified. Do not use the source timing as automatic clearance.",
+      "findingIds": [
+        "acl-open-chain-stage"
+      ],
+      "citations": [
+        {
+          "sourceId": "aspetar-2023",
+          "location": "Box 3 > Exercise initiation recommendations"
+        }
+      ],
+      "applicability": {
+        "population": "Clinician-managed post ACLR patients matching the guideline.",
+        "stage": "Postoperative stage and surgical instructions known.",
+        "rationale": "Source supplies a stage-specific option, not generic evidence all leg extension is safe or harmful."
+      },
+      "limitations": "Exact load/dose/resistance setup unresolved; competing joint limits and other diagnoses still govern.",
+      "mappingIds": [
+        "acl-open-chain-extension-90-45-candidate"
+      ],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "Researcher appraisal, not formal GRADE: moderate confidence in managed strategy comparisons; low confidence in unsupervised exercise dosage or automated return criteria. Product gates require independent review.",
+    "KANON andCOMPAREcompare managed strategies with optional surgery, not free exercise versus surgery.",
+    "Early running/pivoting safety and return-to-sport thresholds not established for an unsupervised app; Aspetar criteria explicitly proposed, not fully validated.",
+    "Detailed KANON/COMPAREexercise menu/dose is in referenced protocols not retrieved; no schedule invented.",
+    "Aspetar postoperative ROM/timing options cannot be applied to untreated ACL or additional repair without clinical instructions.",
+    "Independent clinical review absent; doses are reported study protocols, not app prescriptions.",
+    "No universal contraindication follows from trial exclusion or another exercise showing benefit. No generic five-second progression or stretch strength-set credit."
+  ],
+  "disposition": "research-only",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

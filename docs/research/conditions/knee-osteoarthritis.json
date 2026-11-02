@@ -1,0 +1,271 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "knee-osteoarthritis",
+    "label": "Knee osteoarthritis",
+    "aliases": [
+      "knee OA",
+      "gonarthrosis"
+    ],
+    "distinctions": "Knee OA differs from inflammatory arthritis, acute ligament injury and nonspecific knee pain."
+  },
+  "scope": {
+    "population": "Adults with clinically assessed knee OA; strongest anchor medial KL 2–3, age>=50.",
+    "stage": "Stable symptomatic conservative care; flare severity not standardized.",
+    "operativeStatus": "Nonoperative; arthroplasty rehabilitation outside extracted evidence.",
+    "exclusions": "Acute injury, severe/other-compartment OA and postoperative cases not established by START.",
+    "uncertainty": "Research extraction only; no universal safe dose, clearance or diagnosis inferred."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "Native web search; primary PubMed/publisher pages; Europe PMC retrieval",
+      "query": "2024 2025 knee osteoarthritis exercise guideline EULAR exercise dose recommendation",
+      "decision": "Retained source-specific evidence below; trial eligibility limits remain population boundaries.",
+      "limitations": "Focused search, not exhaustive/systematic; publisher403/PMC challenge handled through lawful XML or conservative abstract-only status."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Native web search; primary PubMed/publisher pages; Europe PMC retrieval",
+      "query": "\"exercise\" \"knee osteoarthritis\" 2025 \"217\" BMJ randomized systematic",
+      "decision": "Retained source-specific evidence below; trial eligibility limits remain population boundaries.",
+      "limitations": "Focused search, not exhaustive/systematic; publisher403/PMC challenge handled through lawful XML or conservative abstract-only status."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Native web search; primary PubMed/publisher pages; Europe PMC retrieval",
+      "query": "\"10.1001/jama.2021.0411\" correction retraction",
+      "decision": "Retained source-specific evidence below; trial eligibility limits remain population boundaries.",
+      "limitations": "Focused search, not exhaustive/systematic; publisher403/PMC challenge handled through lawful XML or conservative abstract-only status."
+    }
+  ],
+  "sources": [
+    {
+      "id": "start-2021",
+      "title": "Effect of High-Intensity Strength Training on Knee Pain and Knee Joint Compressive Forces Among Adults With Knee Osteoarthritis: The START Randomized Clinical Trial",
+      "doi": "10.1001/jama.2021.0411",
+      "pmid": "33591346",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7887656/",
+      "publicationStatus": "final journal article",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "PMC full HTML inspected including Methods, Tables and harms. Supplement not retrieved."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Source record and Europe PMC REST core metadata inspected, including commentCorrectionList and firstPublicationDate; selected DOI correction/retraction web searches; no formal registry-wide audit.",
+        "result": "Indexed related records: Comment in 34100874. These are comments/reprint links, not identified corrections/retractions; bounded check only."
+      },
+      "design": "Assessor-blinded single-center RCT, n=377; 320 completed.",
+      "population": "Ambulatory adults >=50; BMI 20–45; medial tibiofemoral KL 2–3 OA. Severe patellofemoral/lateral-predominant OA excluded; nonsurgical exercise study.",
+      "comparator": "High-intensity vs low-intensity strength vs attention workshops.",
+      "coInterventions": "Usual medication continued; ten-exercise upper/lower/core program and behavioral support.",
+      "outcomes": "18-month WOMAC pain high vs control MD 0.2/20 (95%CI−0.6, 1.1); high vs low 0.7 (−0.1, 1.6). Walking compressive-force high vs control−58 N (−282, 165). No primary superiority.",
+      "followUp": "6 and 18 months.",
+      "uncertainty": "Single center; missing biomechanical data; no inference that all strengthening is ineffective/harmful.",
+      "harms": "Nonserious events 53/30/4; serious 5/3/5 unrelated to study (high/low/control).",
+      "limitations": "Single center; missing biomechanical data; no inference that all strengthening is ineffective/harmful.",
+      "protocol": {
+        "execution": "Six unilateral lower-body machine exercises including knee extension/press, plus four upper/core exercises.",
+        "dose": "High: 3 sets, 75%1RM 8 reps weeks 1–2; 80%8 weeks 3–4; 85%6 weeks 5–6; 90%4 weeks 7–8. Low: 3x 15, 30–40%1RM.",
+        "frequency": "Three supervised sessions/week, 18 months; 5 min warmup, 40 min training, 15 min cooldown.",
+        "supervision": "Staff interventionists; four technique sessions precede 1RM testing.",
+        "progression": "Week 9 taper/retest 1RM; repeat 9-week block.",
+        "stoppingRules": "not reported as a universal numeric pain-stop criterion"
+      },
+      "locations": [
+        "Methods > Participants",
+        "Methods > Interventions > Strength Training",
+        "Results > primary outcomes and adverse events; Table 2"
+      ]
+    },
+    {
+      "id": "eular-2024",
+      "title": "EULAR recommendations for the non-pharmacological core management of hip and knee osteoarthritis: 2023 update",
+      "doi": "10.1136/ard-2023-225041",
+      "pmid": "38212040",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11103326/",
+      "publicationStatus": "final journal article",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Full article text, tables, methods, results and limitations retrieved through lawful Europe PMC fullTextXML: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11103326/fullTextXML . PMC direct browser access sometimes challenged; XML retrieval succeeded. Figures not visually verified."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Source record and Europe PMC REST core metadata inspected, including commentCorrectionList and firstPublicationDate; selected DOI correction/retraction web searches; no formal registry-wide audit.",
+        "result": "No correction/retraction link in the inspected Europe PMC core metadata; bounded metadata check, not registry-wide clearance."
+      },
+      "design": "2023 update published 2024; multidisciplinary recommendations informed by 36 SRs and 31RCTs; searches toMay 2022.",
+      "population": "People with hip/knee OA; individualized nonpharmacological management, not a postsurgical protocol.",
+      "comparator": "Multiple exercise modalities/delivery modes vs usual/no care or other treatment.",
+      "coInterventions": "Education, self-management, individualized multicomponent care.",
+      "outcomes": "Recommends tailored strength/aerobic/flexibility/neuromotor exercise (evidence 1a, strengthA); does not establish one optimal modality/dose.",
+      "followUp": "Heterogeneous underlying studies.",
+      "uncertainty": "Most included SRs low/critically-low AMSTARII; broad combined hip/knee evidence; search predates newer trials.",
+      "harms": "No common harms rate; not evidence all modalities are risk-free.",
+      "limitations": "Most included SRs low/critically-low AMSTARII; broad combined hip/knee evidence; search predates newer trials.",
+      "protocol": {
+        "execution": "Individualized exercise, several modalities.",
+        "dose": "No universal numeric regimen.",
+        "frequency": "not reported as one universal frequency",
+        "supervision": "Delivery according to availability/preferences; supervised or unsupervised options.",
+        "progression": "Tailor dosage/progression to function, preferences and services.",
+        "stoppingRules": "not reported as one universal numeric stopping rule"
+      },
+      "locations": [
+        "Methods > Systematic literature review",
+        "Results > Table 1, recommendations 3 and 4",
+        "Recommendation 3 > exercise; Recommendation 4 > mode of delivery"
+      ]
+    },
+    {
+      "id": "oa-nma-2025",
+      "title": "Comparative efficacy and safety of exercise modalities in knee osteoarthritis: systematic review and network meta-analysis",
+      "doi": "10.1136/bmj-2025-085242",
+      "pmid": "41093618",
+      "url": "https://www.bmj.com/content/391/bmj-2025-085242",
+      "publicationStatus": "final journal article",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "Publisher indexed PDF abstract and Europe PMC core abstract inspected; complete PDF and supplements not inspected. Conservative abstract-only status."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Source record and Europe PMC REST core metadata inspected, including commentCorrectionList and firstPublicationDate; selected DOI correction/retraction web searches; no formal registry-wide audit.",
+        "result": "No correction/retraction link in the inspected Europe PMC core metadata; bounded metadata check, not registry-wide clearance."
+      },
+      "design": "Systematic review/network meta-analysis; 217 RCTs, 15684 participants; search through August 2024.",
+      "population": "Knee OA; varied exercise modalities and protocols, predominantly conservative treatment.",
+      "comparator": "Aerobic, strengthening, flexibility, mind-body, neuromotor, mixed exercise and controls.",
+      "coInterventions": "Heterogeneous across trials; component effects not assured.",
+      "outcomes": "Moderate certainty: aerobic pain SMD−1.10 (95%CI−1.68,−0.52) at 4 weeks and−1.19 (−1.59,−0.79) at 12 weeks; strengthening function SMD 0.86 (0.53, 1.18) at 12 weeks. Rankings do not determine individual superiority or dosing.",
+      "followUp": "4, 12, 24 week windows.",
+      "uncertainty": "Network indirectness, heterogeneity, sparse harm reporting; published 2025 synthesis does not establish a specific safe app routine.",
+      "harms": "Safety reported in 40 studies(18%); no clear differences, wide uncertainty.",
+      "limitations": "Network indirectness, heterogeneity, sparse harm reporting; published 2025 synthesis does not establish a specific safe app routine.",
+      "protocol": {
+        "execution": "not reported in accessible full text; full article not retrieved",
+        "dose": "not reported in accessible full text; full article not retrieved",
+        "frequency": "not reported in accessible full text; full article not retrieved",
+        "supervision": "not reported in accessible full text; full article not retrieved",
+        "progression": "not reported in accessible full text; full article not retrieved",
+        "stoppingRules": "not reported in accessible full text; full article not retrieved"
+      },
+      "locations": [
+        "Abstract > Methods; Results; Conclusions"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "tailored-exercise",
+      "kind": "published-recommendation",
+      "statement": "EULAR recommends exercise dosage and progression tailored to function/preferences/services, with education and individualized care.",
+      "citations": [
+        {
+          "sourceId": "eular-2024",
+          "location": "Results > Table 1, recommendations 3 and 4"
+        },
+        {
+          "sourceId": "eular-2024",
+          "location": "Recommendation 3 > exercise; Recommendation 4 > mode of delivery"
+        }
+      ],
+      "applicability": "Conservative hip/knee OA; knee-specific anchor considered separately.",
+      "limitations": "No universal dose or blanket movement prohibition."
+    },
+    {
+      "id": "intensity-not-superior",
+      "kind": "study-result",
+      "statement": "18-month WOMAC pain high vs control MD 0.2/20 (95%CI−0.6, 1.1); high vs low 0.7 (−0.1, 1.6). Walking compressive-force high vs control−58 N (−282, 165). No primary superiority.",
+      "citations": [
+        {
+          "sourceId": "start-2021",
+          "location": "Methods > Interventions > Strength Training"
+        },
+        {
+          "sourceId": "start-2021",
+          "location": "Results > primary outcomes and adverse events; Table 2"
+        }
+      ],
+      "applicability": "Ambulatory adults >=50; BMI 20–45; medial tibiofemoral KL 2–3 OA. Severe patellofemoral/lateral-predominant OA excluded; nonsurgical exercise study.",
+      "limitations": "Supervised multi-exercise program; no proof high load universally harmful."
+    },
+    {
+      "id": "modality-and-harms",
+      "kind": "study-result",
+      "statement": "Moderate certainty: aerobic pain SMD−1.10 (95%CI−1.68,−0.52) at 4 weeks and−1.19 (−1.59,−0.79) at 12 weeks; strengthening function SMD 0.86 (0.53, 1.18) at 12 weeks. Rankings do not determine individual superiority or dosing. Safety reporting only 18%.",
+      "citations": [
+        {
+          "sourceId": "oa-nma-2025",
+          "location": "Abstract > Methods; Results; Conclusions"
+        }
+      ],
+      "applicability": "Heterogeneous knee OA trials.",
+      "limitations": "Abstract-only; no executable dose derived."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "oa-unilateral-machine-knee-extension-candidate",
+      "exerciseId": null,
+      "requestId": "knee-oa-unilateral-machine-knee-extension",
+      "findingIds": [
+        "intensity-not-superior"
+      ],
+      "matchRationale": "Catalog leg-extension is weight_reps/Machine and describes thigh support, but does not encode unilateral execution, START setup/range or clinical dosage; no direct equivalence asserted.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "retain-tailored-strength-candidate",
+      "kind": "supportive-prescription",
+      "basis": "unresolved-hypothesis",
+      "statement": "Retain unilateral machine strengthening as a clinical-content review candidate within individualized OA exercise care. Do not automatically import START intensity blocks or catalog progression.",
+      "findingIds": [
+        "tailored-exercise",
+        "intensity-not-superior"
+      ],
+      "citations": [
+        {
+          "sourceId": "eular-2024",
+          "location": "Results > Table 1, recommendations 3 and 4"
+        },
+        {
+          "sourceId": "start-2021",
+          "location": "Methods > Interventions > Strength Training"
+        }
+      ],
+      "applicability": {
+        "population": "Adults with clinically assessed knee OA; strongest anchor medial KL 2–3, age>=50.",
+        "stage": "Stable symptomatic conservative care; flare severity not standardized.",
+        "rationale": "Guideline supports exercise generally; trial quantifies intensity uncertainty and supervised calibration."
+      },
+      "limitations": "Candidate only; machine variant and ordinary-workout symptom handling still need review.",
+      "mappingIds": [
+        "oa-unilateral-machine-knee-extension-candidate"
+      ],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "Researcher appraisal, not formal GRADE: moderate confidence in individualized exercise strategy; low confidence in one exact ordinary-workout dose or contraindication.",
+    "No universal knee-flexion ceiling, maximum load or pain cutoff established.",
+    "START machine setup/range and independent component effects not established; 1RM calibration was supervised.",
+    "NMA abstract only; harms sparsely reported and rankings must not displace individual preference or other conditions.",
+    "Independent clinical review absent; doses are reported study protocols, not app prescriptions.",
+    "No universal contraindication follows from trial exclusion or another exercise showing benefit. No generic five-second progression or stretch strength-set credit."
+  ],
+  "disposition": "research-only",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

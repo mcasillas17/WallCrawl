@@ -1,0 +1,291 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "patellofemoral-pain",
+    "label": "patellofemoral pain",
+    "aliases": [
+      "PFP",
+      "patellofemoral pain syndrome"
+    ],
+    "distinctions": "PFP is not patellar tendinopathy; pain location alone does not establish diagnosis."
+  },
+  "scope": {
+    "population": "Clinically assessed insidious peripatellar/retropatellar pain; primary trial mainly young adults.",
+    "stage": "Nontraumatic persistent symptoms; dose responsiveness individualized.",
+    "operativeStatus": "Nonoperative; postsurgical guidance not established.",
+    "exclusions": "Patellar tendon pain, instability/acute trauma, OA and other causes require differentiation.",
+    "uncertainty": "Research extraction only; no universal safe dose, clearance or diagnosis inferred."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "Native web search; primary PubMed/publisher pages; Europe PMC retrieval",
+      "query": "patellofemoral pain quadriceps hip exercises equivalence trial 2023 12 weeks 200 participants",
+      "decision": "Retained source-specific evidence below; trial eligibility limits remain population boundaries.",
+      "limitations": "Focused search, not exhaustive/systematic; publisher403/PMC challenge handled through lawful XML or conservative abstract-only status."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Native web search; primary PubMed/publisher pages; Europe PMC retrieval",
+      "query": "\"Best practice guide for patellofemoral pain\" 2024 108110",
+      "decision": "Retained source-specific evidence below; trial eligibility limits remain population boundaries.",
+      "limitations": "Focused search, not exhaustive/systematic; publisher403/PMC challenge handled through lawful XML or conservative abstract-only status."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Native web search; primary PubMed/publisher pages; Europe PMC retrieval",
+      "query": "\"10.1136/bjsports-2022-106197\" correction retraction",
+      "decision": "Retained source-specific evidence below; trial eligibility limits remain population boundaries.",
+      "limitations": "Focused search, not exhaustive/systematic; publisher403/PMC challenge handled through lawful XML or conservative abstract-only status."
+    }
+  ],
+  "sources": [
+    {
+      "id": "pfp-equivalence-2023",
+      "title": "Quadriceps or hip exercises for patellofemoral pain? A randomised controlled equivalence trial",
+      "doi": "10.1136/bjsports-2022-106197",
+      "pmid": "37137673",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/37137673/",
+      "publicationStatus": "final journal article",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "PubMed/Europe PMC abstract and indexed publisher methods/results inspected. Direct publisher HTML/PDF403; Europe PMC lists subscription-only and no PMC copy; conservative abstract-only status."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Source record and Europe PMC REST core metadata inspected, including commentCorrectionList and firstPublicationDate; selected DOI correction/retraction web searches; no formal registry-wide audit.",
+        "result": "No correction/retraction link in the inspected Europe PMC core metadata; bounded metadata check, not registry-wide clearance."
+      },
+      "design": "Randomized equivalence trial, 200 participants; 12-week intervention.",
+      "population": "Clinically diagnosed insidious PFP; mean 27.2 years, 69%women; not traumatic knee injury.",
+      "comparator": "Quadriceps-focused vs hip-focused exercises.",
+      "coInterventions": "Therapist introduction and educational leaflet described in indexed partial methods.",
+      "outcomes": "AKPS change 7.6 vs 7.0; MD 0.6 (95%CI−2.0, 3.2), within±8 equivalence margin; neither mean reached established important-change threshold. Indexed methods list knee extension/squat/lunge vs clam/abduction/extension; indexed dose 3x 8–12, 3/week for 12 weeks is not verified full protocol.",
+      "followUp": "12 and 26 weeks.",
+      "uncertainty": "Full publisher article/PDF returned 403; partial indexed methods are not full-text access. No comparison with no exercise; modest improvement does not prove movement harm.",
+      "harms": "Abstract/partial indexed results report few adverse events; exact safety table not inspected.",
+      "limitations": "Full publisher article/PDF returned 403; partial indexed methods are not full-text access. No comparison with no exercise; modest improvement does not prove movement harm.",
+      "protocol": {
+        "execution": "not reported in accessible full text; full article not retrieved",
+        "dose": "not reported in accessible full text; full article not retrieved",
+        "frequency": "not reported in accessible full text; full article not retrieved",
+        "supervision": "not reported in accessible full text; full article not retrieved",
+        "progression": "not reported in accessible full text; full article not retrieved",
+        "stoppingRules": "not reported in accessible full text; full article not retrieved"
+      },
+      "locations": [
+        "Abstract > Methods and Results; indexed partial Methods > Interventions"
+      ]
+    },
+    {
+      "id": "pfp-guide-2024",
+      "title": "Best practice guide for patellofemoral pain based on synthesis of a systematic review, the patient voice and expert clinical reasoning",
+      "doi": "10.1136/bjsports-2024-108110",
+      "pmid": "39401870",
+      "url": "https://repository.essex.ac.uk/39411/",
+      "publicationStatus": "final journal article",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Complete10-page author-repository PDF inspected: https://repository.essex.ac.uk/39411/1/bjsports-2024-108110.full.pdf . Metadata online14Oct2024; journal18Dec2024."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Source record and Europe PMC REST core metadata inspected, including commentCorrectionList and firstPublicationDate; selected DOI correction/retraction web searches; no formal registry-wide audit.",
+        "result": "No correction/retraction link in the inspected Europe PMC core metadata; bounded metadata check, not registry-wide clearance."
+      },
+      "design": "Mixed-methods guide; 65 high-quality RCTs, n 3796; patients 12, clinical experts 19; systematic-search cutoffMay 2022.",
+      "population": "Nonsurgical PFP; gradual retropatellar/peripatellar activity pain. Not tendon rupture or OA-specific evidence.",
+      "comparator": "Knee exercise vs wait/sham/placebo; other combinations vs knee exercise.",
+      "coInterventions": "Education central; tailored hip exercise, orthoses, taping, retraining/manual therapy as indicated.",
+      "outcomes": "Short-term knee-targeted pain SMD 1.16 (95%CI 0.66, 1.66), function 1.19 (0.51, 1.88). Combined hip/knee pain evidence very-low certainty. No adequately tested high-quality medium/long-term intervention evidence.",
+      "followUp": "Predominantly<3 months.",
+      "uncertainty": "May 2022 search not updated for 2024 synthesis; patient/expert preferences distinct from RCT efficacy. No-added-benefit findings do not imply ordinary movements harmful.",
+      "harms": "No unified exercise-harm estimate.",
+      "limitations": "May 2022 search not updated for 2024 synthesis; patient/expert preferences distinct from RCT efficacy. No-added-benefit findings do not imply ordinary movements harmful.",
+      "protocol": {
+        "execution": "Knee-targeted with optional hip-targeted exercise after assessment.",
+        "dose": "No single execution/dose schedule recommended.",
+        "frequency": "not reported as universal frequency",
+        "supervision": "Individual assessment/education; no single supervision schedule.",
+        "progression": "Tailor to symptoms/impairments/goals.",
+        "stoppingRules": "not reported as universal numeric threshold"
+      },
+      "locations": [
+        "Methods > Systematic review and meta-analysis component (PDF p.2)",
+        "Results > Summary of systematic review results; Intervention synthesis (PDF pp.4–5)",
+        "Best practice guide and discussion (PDF pp.6–8)"
+      ]
+    },
+    {
+      "id": "dutch-2025",
+      "title": "Dutch multidisciplinary guideline on anterior knee pain: Patellofemoral pain and patellar tendinopathy",
+      "doi": "10.1002/ksa.12367",
+      "pmid": "39045713",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11792096/",
+      "publicationStatus": "final journal article",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Full article text, tables, methods, results and limitations retrieved through lawful Europe PMC fullTextXML: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11792096/fullTextXML . PMC direct browser access sometimes challenged; XML retrieval succeeded. Figures not visually verified."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Source record and Europe PMC REST core metadata inspected, including commentCorrectionList and firstPublicationDate; selected DOI correction/retraction web searches; no formal registry-wide audit.",
+        "result": "No correction/retraction link in the inspected Europe PMC core metadata; bounded metadata check, not registry-wide clearance."
+      },
+      "design": "Multidisciplinary guideline, onlineJuly 2024, journal 2025; systematic reviews+RCTs, GRADE, informal consensus.",
+      "population": "Clinically distinguished PFP and PT; not generic anterior knee pain; nonoperative initial management.",
+      "comparator": "Exercise and multiple additional conservative treatments.",
+      "coInterventions": "Education/loading advice; additional treatment decisions after response review.",
+      "outcomes": "PFP: quadriceps/hip exercise 6–12 weeks; reconsider diagnosis if no improvement 12 weeks. PT: progressive quadriceps resistance>=12 weeks; heavy-slow preferred with alternate contractions for reactivity; review if no meaningful change 12 weeks.",
+      "followUp": "Recommended 6/12-week reassessment, not a trial follow-up.",
+      "uncertainty": "Evidence low/very-low; exercise reporting incomplete; informal consensus; scheduled guideline review after 2027, not automatic currentness guarantee.",
+      "harms": "Harms inconsistently reported; survey pain worsening is not randomized harm evidence.",
+      "limitations": "Evidence low/very-low; exercise reporting incomplete; informal consensus; scheduled guideline review after 2027, not automatic currentness guarantee.",
+      "protocol": {
+        "execution": "PFP: quadriceps/hip; PT: education/loading, strength, energy-storage, maintenance.",
+        "dose": "No universal sets/reps/load; PT>=12 weeks strength, PFP 6–12 weeks.",
+        "frequency": "not reported as universal frequency",
+        "supervision": "PFP preferably partly PT-supervised; individualized management.",
+        "progression": "Adjust intensity to pain; stage PT toward sport-dependent plyometrics then maintenance.",
+        "stoppingRules": "No universal numeric threshold; reassess poor response after 12 weeks."
+      },
+      "locations": [
+        "Methods > Evidence review and guideline development",
+        "Results > Module 1: Exercise therapy for PFP",
+        "Results > Module 5: Exercise therapy for PT; Figure 2",
+        "Discussion > limitations and updating"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "pfp-exercise-education",
+      "kind": "published-recommendation",
+      "statement": "2024 guide recommends knee-targeted exercise with optional hip-targeted exercise and education, selected after assessment. Short-term pain SMD 1.16(95%CI 0.66, 1.66); no adequately tested medium/long-term intervention evidence.",
+      "citations": [
+        {
+          "sourceId": "pfp-guide-2024",
+          "location": "Results > Summary of systematic review results; Intervention synthesis (PDF pp.4–5)"
+        },
+        {
+          "sourceId": "pfp-guide-2024",
+          "location": "Best practice guide and discussion (PDF pp.6–8)"
+        }
+      ],
+      "applicability": "Clinically assessed nonsurgical PFP.",
+      "limitations": "No common optimal dose; patient/expert reasoning distinct from trial effect."
+    },
+    {
+      "id": "hip-knee-equivalence",
+      "kind": "study-result",
+      "statement": "AKPS change 7.6 vs 7.0; MD 0.6 (95%CI−2.0, 3.2), within±8 equivalence margin; neither mean reached established important-change threshold. Indexed methods list knee extension/squat/lunge vs clam/abduction/extension; indexed dose 3x 8–12, 3/week for 12 weeks is not verified full protocol.",
+      "citations": [
+        {
+          "sourceId": "pfp-equivalence-2023",
+          "location": "Abstract > Methods and Results; indexed partial Methods > Interventions"
+        }
+      ],
+      "applicability": "Primary trial PFP cohort; source access limited.",
+      "limitations": "No untreated control; partial methods cannot establish exact variation/artwork."
+    },
+    {
+      "id": "pfp-reassessment",
+      "kind": "published-recommendation",
+      "statement": "Dutch guideline recommends 6–12 weeks quadriceps/hip exercise, preferably partly PT-supervised, continuously adjusted to pain; reassess 6/12 weeks and reconsider diagnosis if no improvement 12 weeks.",
+      "citations": [
+        {
+          "sourceId": "dutch-2025",
+          "location": "Results > Module 1: Exercise therapy for PFP"
+        }
+      ],
+      "applicability": "Diagnosed PFP conservative care.",
+      "limitations": "Recommendations include low-certainty evidence; no universal numeric pain threshold."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "pfp-hip-abduction-variant-unresolved-candidate",
+      "exerciseId": null,
+      "requestId": "knee-pfp-hip-abduction-variant-unresolved",
+      "findingIds": [
+        "hip-knee-equivalence"
+      ],
+      "matchRationale": "Catalog side-lying-hip-abduction is bodyweight_reps/Bodyweight; indexed trial permits standing alternative and actual variant/resistance not verified. Request preserves uncertainty rather than claiming exact match.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "pfp-tailor-and-review",
+      "kind": "symptom-response",
+      "basis": "published-recommendation",
+      "statement": "Candidate ordinary-workout implication: adjust exercise volume/intensity to symptoms with clinical reassessment after the reported course; do not hardcode a numerical pain cutoff or assume a movement-wide ban.",
+      "findingIds": [
+        "pfp-reassessment"
+      ],
+      "citations": [
+        {
+          "sourceId": "dutch-2025",
+          "location": "Results > Module 1: Exercise therapy for PFP"
+        }
+      ],
+      "applicability": {
+        "population": "Clinically assessed insidious peripatellar/retropatellar pain; primary trial mainly young adults.",
+        "stage": "Nontraumatic persistent symptoms; dose responsiveness individualized.",
+        "rationale": "Guideline explicitly calls for pain-adjusted exercise and response review."
+      },
+      "limitations": "Clinical protocol still needed; cannot infer acute-trauma safety or diagnosis.",
+      "mappingIds": [],
+      "status": "candidate"
+    },
+    {
+      "id": "pfp-hip-option-review",
+      "kind": "supportive-prescription",
+      "basis": "unresolved-hypothesis",
+      "statement": "Retain a hip-targeted exercise candidate when clinically selected; full execution/protocol must be resolved before use.",
+      "findingIds": [
+        "hip-knee-equivalence",
+        "pfp-exercise-education"
+      ],
+      "citations": [
+        {
+          "sourceId": "pfp-equivalence-2023",
+          "location": "Abstract > Methods and Results; indexed partial Methods > Interventions"
+        },
+        {
+          "sourceId": "pfp-guide-2024",
+          "location": "Best practice guide and discussion (PDF pp.6–8)"
+        }
+      ],
+      "applicability": {
+        "population": "Clinically assessed insidious peripatellar/retropatellar pain; primary trial mainly young adults.",
+        "stage": "Nontraumatic persistent symptoms; dose responsiveness individualized.",
+        "rationale": "Equivalence supports choice between studied programs, not a generic substitute for every exercise."
+      },
+      "limitations": "Candidate variation unresolved; no automatic symptom guarantee.",
+      "mappingIds": [
+        "pfp-hip-abduction-variant-unresolved-candidate"
+      ],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "Researcher appraisal, not formal GRADE: moderate confidence in short-term exercise/education strategy; low confidence in exact app execution and longer-term effects.",
+    "Primary 2023 full text/supplement inaccessible; partial indexed methods retained conservatively, no full protocol reconstructed.",
+    "No universal squat/lunge ban, patellofemoral load cap or angle restriction follows from these sources.",
+    "Guide efficacy search cutoffMay 2022 predates 2023 equivalence trial; both retained without treating later publication as automatic supersession.",
+    "Independent clinical review absent; doses are reported study protocols, not app prescriptions.",
+    "No universal contraindication follows from trial exclusion or another exercise showing benefit. No generic five-second progression or stretch strength-set credit."
+  ],
+  "disposition": "research-only",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

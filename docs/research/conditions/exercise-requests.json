@@ -100,6 +100,260 @@
         }
       ],
       "status": "candidate"
+    },
+    {
+      "id": "knee-oa-unilateral-machine-knee-extension",
+      "conditionIds": [
+        "knee-osteoarthritis"
+      ],
+      "name": "Unilateral machine knee extension, study variant unresolved",
+      "execution": "One leg at a time on knee-extension machine in the START multi-exercise program. Chair/axis/cuff setup and exact ROM must be resolved before identity acceptance.",
+      "equipment": [
+        "knee-extension machine"
+      ],
+      "movementRequirements": [
+        "seated supported knee extension",
+        "unilateral loading"
+      ],
+      "artwork": "Candidate only. Requires exact execution review and, if commissioned, a separately attributed retained PNG sequence. No PNG generated or upstream artwork equivalence claimed.",
+      "reason": "Catalog leg-extension is weight_reps/Machine and describes thigh support, but does not encode unilateral execution, START setup/range or clinical dosage; no direct equivalence asserted.",
+      "sourceRefs": [
+        {
+          "conditionId": "knee-osteoarthritis",
+          "sourceId": "start-2021",
+          "location": "Methods > Interventions > Strength Training"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "knee-pfp-hip-abduction-variant-unresolved",
+      "conditionIds": [
+        "patellofemoral-pain"
+      ],
+      "name": "PFP hip-abduction execution unresolved",
+      "execution": "2023 indexed partial methods name side-lying/standing hip abduction as alternatives. Choose and verify the actual side, support, equipment and resistance variant from the complete intervention before acceptance.",
+      "equipment": [
+        "equipment unresolved: home hip-exercise program"
+      ],
+      "movementRequirements": [
+        "hip abduction",
+        "position and support unresolved"
+      ],
+      "artwork": "Candidate only. Requires exact execution review and, if commissioned, a separately attributed retained PNG sequence. No PNG generated or upstream artwork equivalence claimed.",
+      "reason": "Catalog side-lying-hip-abduction is bodyweight_reps/Bodyweight; indexed trial permits standing alternative and actual variant/resistance not verified. Request preserves uncertainty rather than claiming exact match.",
+      "sourceRefs": [
+        {
+          "conditionId": "patellofemoral-pain",
+          "sourceId": "pfp-equivalence-2023",
+          "location": "Abstract > Methods and Results; indexed partial Methods > Interventions"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "knee-pt-single-leg-isometric-machine-extension",
+      "conditionIds": [
+        "patellar-tendinopathy"
+      ],
+      "name": "Single-leg machine knee-extension isometric at60-degree flexion",
+      "execution": "Single-leg leg-extension machine alternative in Breda stage 1; static quadriceps at60-degree knee flexion, 5x45 s at70%MVC in the study. Calibration/rest details and exact machine setup unresolved.",
+      "equipment": [
+        "knee-extension machine",
+        "method to establish MVC unresolved"
+      ],
+      "movementRequirements": [
+        "seated supported unilateral quadriceps isometric",
+        "fixed60-degree knee flexion"
+      ],
+      "artwork": "Candidate only. Requires exact execution review and, if commissioned, a separately attributed retained PNG sequence. No PNG generated or upstream artwork equivalence claimed.",
+      "reason": "Catalog leg-extension is dynamic weight_reps with repetition progression; it does not encode MVC-calibrated sustained force or fixed knee angle. A duration/force clinical identity is required; not equivalent to generic5-second progression.",
+      "sourceRefs": [
+        {
+          "conditionId": "patellar-tendinopathy",
+          "sourceId": "breda-2021",
+          "location": "Methods > Interventions; Figure 2"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "knee-pt-single-leg-isotonic-machine-press",
+      "conditionIds": [
+        "patellar-tendinopathy"
+      ],
+      "name": "Single-leg machine leg press, staged range and load",
+      "execution": "Breda stage 2 single-leg leg-press alternative; 4x15 at10–60-degree knee flexion progressing4x6 with almost full extension to90degrees and greater load. Exact station/load calibration must be reviewed.",
+      "equipment": [
+        "single-leg-capable leg-press machine"
+      ],
+      "movementRequirements": [
+        "supported unilateral leg press",
+        "clinically staged knee-flexion range"
+      ],
+      "artwork": "Candidate only. Requires exact execution review and, if commissioned, a separately attributed retained PNG sequence. No PNG generated or upstream artwork equivalence claimed.",
+      "reason": "Catalog leg-press has generic Machine/weight_reps and routine progression; no documented equivalence to this unilateral stage-specific range. Preserve alternative to knee-extension machine, not a mandatory sequence between machines.",
+      "sourceRefs": [
+        {
+          "conditionId": "patellar-tendinopathy",
+          "sourceId": "breda-2021",
+          "location": "Methods > Interventions; Figure 2"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "knee-itbs-modified-side-plank-clamshell",
+      "conditionIds": [
+        "iliotibial-band-related-lateral-knee-pain"
+      ],
+      "name": "Modified side plank with band-resisted clamshell",
+      "execution": "McKayTable 2 week 3/4 progression combines modified side plank and clamshell; 10repsx2 with light band then15x3. Knee support, band placement and precise stance require source-image/protocol review.",
+      "equipment": [
+        "floor mat",
+        "light resistance band"
+      ],
+      "movementRequirements": [
+        "side support with modified plank",
+        "hip external rotation with flexed knee",
+        "supported knee loading"
+      ],
+      "artwork": "Candidate only. Requires exact execution review and, if commissioned, a separately attributed retained PNG sequence. No PNG generated or upstream artwork equivalence claimed.",
+      "reason": "Catalog side-plank supports forearm/foot and duration; banded-clamshell is separate dynamic hip work. Neither metadata establishes this combined supported-knee variant; retain separate PNG identity if commissioned.",
+      "sourceRefs": [
+        {
+          "conditionId": "iliotibial-band-related-lateral-knee-pain",
+          "sourceId": "mckay-2020",
+          "location": "Methods > Interventions; Tables 1–3"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "knee-itbs-side-lying-hip-abduction",
+      "conditionIds": [
+        "iliotibial-band-related-lateral-knee-pain"
+      ],
+      "name": "Side-lying hip abduction, ITBS trial execution unresolved",
+      "execution": "McKayTable 2 starts side-lying hip abduction10x2 week 1 to10x3 week 2, then progresses to standing band walks. Exact leg/hip alignment and range not specified in table.",
+      "equipment": [
+        "floor space"
+      ],
+      "movementRequirements": [
+        "side-lying position",
+        "hip abduction"
+      ],
+      "artwork": "Candidate only. Requires exact execution review and, if commissioned, a separately attributed retained PNG sequence. No PNG generated or upstream artwork equivalence claimed.",
+      "reason": "Catalog side-lying-hip-abduction has matching position/type but no study-specific execution verification. No PNG-frame review was performed, so direct equivalence remains unresolved.",
+      "sourceRefs": [
+        {
+          "conditionId": "iliotibial-band-related-lateral-knee-pain",
+          "sourceId": "mckay-2020",
+          "location": "Methods > Interventions; Tables 1–3"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "knee-meniscus-incremental-exercise-variant-unresolved",
+      "conditionIds": [
+        "degenerative-meniscal-lesion"
+      ],
+      "name": "Degenerative-meniscus incremental exercise variant unresolved",
+      "execution": "ESCAPE main report identifies an incremental exercise program, 16 physical-therapy sessions of 30 minutes over 8 weeks. Exact individual tasks, equipment, range and load remain unresolved until the supplement is inspected.",
+      "equipment": [
+        "equipment unresolved: physical therapy program"
+      ],
+      "movementRequirements": [
+        "incremental exercise; exact movement tasks unresolved",
+        "knee/hip strength and coordination may be relevant under consensus; no exact task verified"
+      ],
+      "artwork": "Candidate only. Requires exact execution review and, if commissioned, a separately attributed retained PNG sequence. No PNG generated or upstream artwork equivalence claimed.",
+      "reason": "Catalog squats/leg-press cannot be matched to an unspecified incremental program. Preserve a protocol-retrieval candidate, not a new generic exercise or approval of every squat.",
+      "sourceRefs": [
+        {
+          "conditionId": "degenerative-meniscal-lesion",
+          "sourceId": "escape-2022",
+          "location": "Methods > Treatment procedures > Physical therapy"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "knee-acl-open-chain-extension-90-45",
+      "conditionIds": [
+        "anterior-cruciate-ligament-injury"
+      ],
+      "name": "Post ACLR open-chain knee extension, 90–45-degree clinical variant",
+      "execution": "Open-chain knee extension in90–45-degree knee-flexion arc from week 4 inAspetar recommendation, subject to graft/procedure and surgical instructions. Machine versus alternative resistance and dose require clinician specification.",
+      "equipment": [
+        "knee-extension resistance apparatus; exact setup unresolved"
+      ],
+      "movementRequirements": [
+        "controlled open-chain knee extension",
+        "restricted knee-flexion arc90–45degrees"
+      ],
+      "artwork": "Candidate only. Requires exact execution review and, if commissioned, a separately attributed retained PNG sequence. No PNG generated or upstream artwork equivalence claimed.",
+      "reason": "Catalog leg-extension is generic weight_reps/Machine with repetition/load progression and does not encode postoperative stage, arc or surgical instructions. Separate clinical variation request prevents routine progression from substituting for rehabilitation.",
+      "sourceRefs": [
+        {
+          "conditionId": "anterior-cruciate-ligament-injury",
+          "sourceId": "aspetar-2023",
+          "location": "Box 3 > Exercise initiation recommendations"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "knee-mcl-quadriceps-set-unresolved",
+      "conditionIds": [
+        "medial-collateral-ligament-sprain"
+      ],
+      "name": "MCL early quadriceps setting, clinical execution unresolved",
+      "execution": "Reiderabstract names quadriceps setting after initial pool/whirlpool ROM in hinged valgus-support brace. Position, hold, force, repetition count and supervised progression remain unresolved.",
+      "equipment": [
+        "hinged knee brace in source clinical protocol",
+        "exercise support/setup unresolved"
+      ],
+      "movementRequirements": [
+        "isometric quadriceps activation",
+        "knee position unresolved"
+      ],
+      "artwork": "Candidate only. Requires exact execution review and, if commissioned, a separately attributed retained PNG sequence. No PNG generated or upstream artwork equivalence claimed.",
+      "reason": "No equivalence to a dynamic catalog leg extension or genericduration progression. Abstract establishes exercise name but does not support an executable dose; full protocol required before commissioned PNG.",
+      "sourceRefs": [
+        {
+          "conditionId": "medial-collateral-ligament-sprain",
+          "sourceId": "reider-1994",
+          "location": "Abstract > Methods and Results"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "knee-mcl-leg-raise-unresolved",
+      "conditionIds": [
+        "medial-collateral-ligament-sprain"
+      ],
+      "name": "MCL early leg raise, clinical execution unresolved",
+      "execution": "Reiderabstract names leg raises after initial ROM; precise straight-leg position, brace use duringexercise, load anddose not available. Verify full protocol before fixing execution.",
+      "equipment": [
+        "hinged knee brace in source clinical protocol",
+        "floor/plinth setup unresolved"
+      ],
+      "movementRequirements": [
+        "hip flexion leg raise; precise knee position unresolved"
+      ],
+      "artwork": "Candidate only. Requires exact execution review and, if commissioned, a separately attributed retained PNG sequence. No PNG generated or upstream artwork equivalence claimed.",
+      "reason": "Do not equate unspecified clinical legraise to abdominal straight-legraise or other hip exercise. Preserve exact known/unknown details and seek primary protocol; no artwork provenance fabricated.",
+      "sourceRefs": [
+        {
+          "conditionId": "medial-collateral-ligament-sprain",
+          "sourceId": "reider-1994",
+          "location": "Abstract > Methods and Results"
+        }
+      ],
+      "status": "candidate"
     }
   ]
 }
