@@ -96,6 +96,25 @@ class ConditionGuidanceParserTest {
     }
 
     @Test
+    fun emptyConditionsIsRejected() {
+        assertRejected(
+            overlay().replace(Regex("\"conditions\": \\{.*?\\n          \\},\\n", RegexOption.DOT_MATCHES_ALL), "\"conditions\": {},\n")
+        )
+    }
+
+    @Test
+    fun emptyExerciseDemandsIsRejected() {
+        assertRejected(
+            overlay().replace(Regex("\"exerciseDemands\": \\{.*?\\n          \\},\\n", RegexOption.DOT_MATCHES_ALL), "\"exerciseDemands\": {},\n")
+        )
+    }
+
+    @Test
+    fun trailingContentIsRejected() {
+        assertRejected(overlay() + " {}")
+    }
+
+    @Test
     fun nonHttpsSourceIsRejected() {
         assertRejected(overlay(sources = """["http://example.org/a"]"""))
     }

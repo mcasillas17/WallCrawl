@@ -57,10 +57,12 @@ class ConditionGuidanceParser {
             }
 
             schemaVersion ?: malformed("Guidance is missing its schemaVersion.")
+            if (exerciseDemands.isNullOrEmpty()) malformed("Guidance needs a non-empty exerciseDemands.")
+            if (conditions.isNullOrEmpty()) malformed("Guidance needs a non-empty conditions.")
             return ConditionGuidance(
                 version = version ?: malformed("Guidance is missing its version."),
-                exerciseDemands = exerciseDemands ?: malformed("Guidance is missing exerciseDemands."),
-                conditions = conditions ?: malformed("Guidance is missing conditions."),
+                exerciseDemands = exerciseDemands,
+                conditions = conditions,
                 jointLabelDemands = jointLabels ?: malformed("Guidance is missing jointLabelDemands."),
                 demandCues = demandCues ?: malformed("Guidance is missing demandCues.")
             )

@@ -1,7 +1,7 @@
 package wallcrawl.elopenmike.com.core.conditions
 
 import android.content.res.AssetManager
-import java.io.IOException
+import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
@@ -35,9 +35,10 @@ class ConditionGuidanceStore(
             ConditionGuidanceResult.Loaded(
                 assetManager.open(GUIDANCE_ASSET_PATH).bufferedReader().use(parser::parse)
             )
-        } catch (error: IOException) {
-            ConditionGuidanceResult.Unavailable
-        } catch (error: ConditionGuidanceFormatException) {
+        } catch (error: CancellationException) {
+            throw error
+        } catch (error: Exception) {
+            // IO, format, or anything else: a restriction must never be silently dropped.
             ConditionGuidanceResult.Unavailable
         }
     }
