@@ -152,6 +152,7 @@ class ProgramValidator(
         if ((requiresProgressionReceipts || workout.progressionDecisions.isNotEmpty()) &&
             workout.progressionDecisions.map { it.exerciseId } != workout.exercises.map { it.exerciseId }
         ) violations += ProgramViolation(ProgramViolationCode.PROGRESSION_POLICY_MISMATCH)
+        violations += structuralValidator.mobilityIdViolations(workout.mobilityBlock)
         violations += mobilityViolations(workout, context)
         violations += durationViolations(workout)
 

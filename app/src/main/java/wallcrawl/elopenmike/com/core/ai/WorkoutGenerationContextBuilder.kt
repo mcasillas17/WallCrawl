@@ -16,6 +16,8 @@ import wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceSource
 import wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions
 import wallcrawl.elopenmike.com.core.conditions.hasConditionInputs
 import wallcrawl.elopenmike.com.core.conditions.restrictionsFor
+import wallcrawl.elopenmike.com.core.conditions.MobilityBlockPolicy
+import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
 import wallcrawl.elopenmike.com.core.database.repository.DeloadRepository
@@ -255,6 +257,9 @@ class WorkoutGenerationContextBuilder(
             allowedExercises = allowedExercises,
             automaticEligibilityResult = automaticEligibilityResult,
             conditionRestrictions = conditionRestrictions,
+            routineExercises = MobilityBlockPolicy.routineEntries(conditionRestrictions)
+                .mapNotNull { entry -> allExercises.firstOrNull { it.id == entry.exerciseId } }
+                .associateBy(Exercise::id),
             capabilityEvidence = capabilityEvidence,
             schedulingEvidence = schedulingEvidence,
             trainingProgramState = trainingProgramState,

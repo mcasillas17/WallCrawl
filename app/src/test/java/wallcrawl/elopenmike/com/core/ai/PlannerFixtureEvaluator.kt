@@ -128,6 +128,7 @@ internal data class PlannerFixtureInputSnapshot(
     val automaticEligibilityResult: AutomaticEligibilityResult?,
     /** Deeply immutable, so the snapshot holds the instance directly. */
     val conditionRestrictions: wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions,
+    val routineExercises: Map<String, Exercise>,
     /**
      * Deeply immutable, so the snapshot holds the instance directly.
      */
@@ -315,6 +316,7 @@ private fun WorkoutGenerationContext.snapshot(): PlannerFixtureInputSnapshot =
         allowedExercises = allowedExercises.map(Exercise::deepCopy),
         automaticEligibilityResult = automaticEligibilityResult?.deepCopy(),
         conditionRestrictions = conditionRestrictions,
+        routineExercises = routineExercises.mapValues { (_, exercise) -> exercise.deepCopy() },
         capabilityEvidence = capabilityEvidence,
         schedulingEvidence = schedulingEvidence,
         regenerationIndex = regenerationIndex,

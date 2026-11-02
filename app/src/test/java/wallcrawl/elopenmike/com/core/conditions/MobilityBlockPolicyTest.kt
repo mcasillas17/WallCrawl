@@ -3,6 +3,16 @@ package wallcrawl.elopenmike.com.core.conditions
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
+import kotlinx.coroutines.runBlocking
+import wallcrawl.elopenmike.com.core.ai.ExerciseEligibilityPolicy
+import wallcrawl.elopenmike.com.core.ai.syntheticApprovedExercise
+import wallcrawl.elopenmike.com.core.ai.validatorContext
+import wallcrawl.elopenmike.com.core.model.AdaptationState
+import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
+import wallcrawl.elopenmike.com.core.model.CapabilityLevel
+import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
+import wallcrawl.elopenmike.com.core.model.MovementCapabilities
+import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.ai.FakeWorkoutPlanner
 import wallcrawl.elopenmike.com.core.ai.ProgramValidationResult
 import wallcrawl.elopenmike.com.core.ai.validate
@@ -132,15 +142,18 @@ class MobilityBlockPolicyTest {
                 "c1" to recordOf(
                     "c1",
                     entries = listOf(
-                        RoutineEntry("a", 2, 5, null, 10, 45),
-                        RoutineEntry("b", 1, null, 30, null, 0),
-                        RoutineEntry("c", 3, 8, null, null, 0)
+                        RoutineEntry("a", 2, 5, null, 10, 45, false),
+                        RoutineEntry("b", 1, null, 30, null, 0, false),
+                        RoutineEntry("c", 3, 8, null, null, 0, false)
                     )
                 )
             )
         )
 
-        val (a, b, c) = select(restrictions)
+        val (a, b, c) = select(
+            restrictions,
+            exercises = catalog + ("b" to stretch("b", type = ExerciseType.DURATION))
+        )
 
         assertThat(a.prescription.exerciseType).isEqualTo(ExerciseType.BODYWEIGHT_REPS)
         assertThat(a.prescription.holdSeconds).isEqualTo(10)
@@ -163,6 +176,8 @@ class MobilityBlockPolicyTest {
 
         assertThat(workout.mobilityBlock).isEmpty()
         assertThat(workout.exercises).isNotEmpty()
+        assertThat(check(workout, context(restrictions)))
+            .isInstanceOf(ProgramValidationResult.Valid::class.java)
     }
 
     @Test
@@ -212,13 +227,13 @@ class MobilityBlockPolicyTest {
                 mobilityBlock = block,
                 estimatedDurationMinutes = WorkoutDurationEstimator.estimateMinutes(good.exercises + block)
             )
-            val result = validate(bad, ctx, allowRepair = true)
+            val result = check(bad, ctx, allowRepair = true)
             assertThat(result).isInstanceOf(ProgramValidationResult.Invalid::class.java)
             return (result as ProgramValidationResult.Invalid).violations.map { it.code }
         }
 
         fun plan(id: String) = PlannedExercise(id, 1, 5, 5)
-        assertThat(validate(good, ctx))
+        assertThat(check(good, ctx))
             .isInstanceOf(ProgramValidationResult.Valid::class.java)
         assertThat(codes(listOf(plan("a"), plan("elsewhere"))))
             .contains(ProgramViolationCode.MOBILITY_ENTRY_NOT_IN_ROUTINE)
@@ -227,7 +242,110 @@ class MobilityBlockPolicyTest {
             .contains(ProgramViolationCode.MOBILITY_BLOCK_TOO_LONG)
     }
 
+    @Test
+    fun entryWhoseShapeDoesNotFitItsCatalogTypeIsDropped() {
+        val restrictions = active(
+            mapOf(
+                "c1" to recordOf(
+                    "c1",
+                    listOf(
+                        RoutineEntry("a", 2, null, 30, null, 0, false), // timed, but catalog says reps
+                        RoutineEntry("b", 2, 8, null, null, 0, false)
+                    )
+                )
+            )
+        )
+
+        assertThat(ids(select(restrictions))).containsExactly("b")
+    }
+
+    @Test
+    fun floorTransitionAvoidDropsOnlyFloorItems() {
+        val restrictions = active(
+            mapOf(
+                "c1" to recordOf(
+                    "c1",
+                    listOf(
+                        RoutineEntry("a", 2, 8, null, null, 0, true),
+                        RoutineEntry("b", 2, 8, null, null, 0, false)
+                    )
+                )
+            )
+        )
+        fun capability(level: CapabilityLevel) = profile.copy(
+            movementCapabilities = MovementCapabilities.from(
+                mapOf(MovementCapabilityType.FLOOR_TRANSITION to level)
+            )
+        )
+
+        assertThat(ids(select(restrictions, userProfile = capability(CapabilityLevel.AVOID))))
+            .containsExactly("b")
+        // A limited or unknown answer is not a stated limit to avoid.
+        assertThat(ids(select(restrictions, userProfile = capability(CapabilityLevel.LIMITED))))
+            .containsExactly("a", "b").inOrder()
+        assertThat(ids(select(restrictions))).containsExactly("a", "b").inOrder()
+    }
+
+    @Test
+    fun tamperedBlockIdsAreReportedAsBlankOrUnknown() = runTest {
+        val restrictions = active(mapOf("c1" to record("c1", listOf("a", "b"))))
+        val ctx = context(restrictions)
+        val good = FakeWorkoutPlanner().generateWorkout(ctx)
+
+        fun codes(block: List<PlannedExercise>) = runBlocking {
+            val bad = good.copy(
+                mobilityBlock = block,
+                estimatedDurationMinutes = WorkoutDurationEstimator.estimateMinutes(good.exercises + block)
+            )
+            (check(bad, ctx) as ProgramValidationResult.Invalid).violations.map { it.code }
+        }
+
+        assertThat(codes(listOf(PlannedExercise("", 1, 5, 5))))
+            .contains(ProgramViolationCode.BLANK_EXERCISE_ID)
+        assertThat(codes(listOf(PlannedExercise("ghost", 1, 5, 5))))
+            .contains(ProgramViolationCode.UNKNOWN_EXERCISE_ID)
+    }
+
+    @Test
+    fun stretchWithoutReviewedMetadataReachesTheBlockThroughRealEligibility() = runTest {
+        val strength = (1..2).map { syntheticApprovedExercise("press-$it", StandardMuscles.CHEST) }
+        val noMetadataStretch = stretch("cross-body", type = ExerciseType.BODYWEIGHT_REPS)
+        val restrictions = active(
+            mapOf("c1" to record("c1", listOf("cross-body"))),
+            demands = strength.associate { it.id to emptySet<MovementDemand>() } +
+                ("cross-body" to emptySet())
+        )
+        val eligibility = ExerciseEligibilityPolicy().evaluate(
+            exercises = strength + noMetadataStretch,
+            profile = profile,
+            adaptationState = AdaptationState.BUILD,
+            restrictions = restrictions
+        ) as AutomaticEligibilityResult.Candidates
+        // The premise: the real gate rejects it, so only routineExercises can supply it.
+        assertThat(eligibility.exercises.map { it.id }).doesNotContain("cross-body")
+        val ctx = validatorContext(eligibility.exercises, profile = profile, reviewedPath = true).copy(
+            conditionRestrictions = restrictions,
+            routineExercises = mapOf("cross-body" to noMetadataStretch)
+        )
+
+        val workout = FakeWorkoutPlanner().generateWorkout(ctx)
+
+        assertThat(ids(workout.mobilityBlock)).containsExactly("cross-body")
+        assertThat(check(workout, ctx, allowRepair = true))
+            .isInstanceOf(ProgramValidationResult.Valid::class.java)
+    }
+
     // region fixtures
+
+    private suspend fun check(
+        workout: GeneratedWorkout,
+        ctx: WorkoutGenerationContext,
+        allowRepair: Boolean = false
+    ) = validate(
+        workout, ctx,
+        InMemoryExerciseCatalog(ctx.allowedExercises + ctx.routineExercises.values),
+        allowRepair
+    )
 
     private fun select(
         restrictions: ConditionRestrictions,
@@ -246,18 +364,23 @@ class MobilityBlockPolicyTest {
         val strength = InMemoryExerciseCatalog.SAMPLE_EXERCISES.filter { !it.isStretch }
         return WorkoutGenerationContext(
             userProfile = profile.copy(goals = setOf(FitnessGoal.BUILD_MUSCLE)),
-            allowedExercises = strength + catalog.values,
+            allowedExercises = strength,
+            routineExercises = catalog,
             conditionRestrictions = restrictions,
             regenerationIndex = regenerationIndex
         )
     }
 
-    private fun stretch(id: String, equipment: List<String> = listOf(StandardEquipment.BODYWEIGHT)) = Exercise(
+    private fun stretch(
+        id: String,
+        equipment: List<String> = listOf(StandardEquipment.BODYWEIGHT),
+        type: ExerciseType = ExerciseType.BODYWEIGHT_REPS
+    ) = Exercise(
         id = id,
         name = id,
         primaryMuscles = listOf(StandardMuscles.GLUTES),
         listedEquipment = equipment,
-        type = ExerciseType.DURATION,
+        type = type,
         isStretch = true
     )
 
@@ -286,7 +409,7 @@ class MobilityBlockPolicyTest {
         routine: List<String>,
         avoid: Set<MovementDemand> = emptySet(),
         modify: Set<MovementDemand> = emptySet()
-    ) = recordOf(id, routine.map { RoutineEntry(it, 2, 8, null, null, 30) }, avoid, modify)
+    ) = recordOf(id, routine.map { RoutineEntry(it, 2, 8, null, null, 30, false) }, avoid, modify)
 
     private fun recordOf(
         id: String,

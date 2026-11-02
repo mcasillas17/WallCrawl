@@ -583,7 +583,8 @@
           "targetReps": 15,
           "targetDurationSeconds": null,
           "holdSeconds": null,
-          "restSeconds": 0
+          "restSeconds": 0,
+          "requiresFloorTransition": true
         }
       ],
       "exerciseCues": {
@@ -649,7 +650,7 @@
         "reviewerModelId": "claude-opus-5-5",
         "reviewedAtEpochMillis": 1793491200000,
         "reviewedContentId": "piriformis_syndrome",
-        "reviewedContentSha256": "e21dfee7b450ae78a2c815a8657b438fe884b4a5fe337dcaa9e80d35cfd12aff",
+        "reviewedContentSha256": "b3281a5a4d6e1e6dba5b2d37d80ad54a008730a54506fa48cb80e836726c7034",
         "sourceReferences": [
           "https://doi.org/10.7759/cureus.43804",
           "https://doi.org/10.7759/cureus.32952",
@@ -687,7 +688,8 @@
           "targetReps": 10,
           "targetDurationSeconds": null,
           "holdSeconds": null,
-          "restSeconds": 60
+          "restSeconds": 60,
+          "requiresFloorTransition": true
         },
         {
           "exerciseId": "glute-bridge",
@@ -695,7 +697,8 @@
           "targetReps": 10,
           "targetDurationSeconds": null,
           "holdSeconds": null,
-          "restSeconds": 0
+          "restSeconds": 0,
+          "requiresFloorTransition": true
         },
         {
           "exerciseId": "bodyweight-squat",
@@ -703,7 +706,8 @@
           "targetReps": 10,
           "targetDurationSeconds": null,
           "holdSeconds": null,
-          "restSeconds": 0
+          "restSeconds": 0,
+          "requiresFloorTransition": false
         }
       ],
       "exerciseCues": {
@@ -773,7 +777,7 @@
         "reviewerModelId": "claude-opus-5-5",
         "reviewedAtEpochMillis": 1793491200000,
         "reviewedContentId": "gluteal_tendinopathy",
-        "reviewedContentSha256": "eec6d6cbece2516764bf2a8ba7cbc5ff30d62830a523c76172ad71c96fa9a2c0",
+        "reviewedContentSha256": "a5fe35d66bdf43e4e0ef5d958fbef7313c37540236d07678a7b867ec9e2beac9",
         "sourceReferences": [
           "https://doi.org/10.2519/jospt.2015.5829",
           "https://doi.org/10.1186/s12891-016-1043-6",
@@ -807,7 +811,8 @@
           "targetReps": 10,
           "targetDurationSeconds": null,
           "holdSeconds": null,
-          "restSeconds": 0
+          "restSeconds": 0,
+          "requiresFloorTransition": true
         },
         {
           "exerciseId": "glute-bridge",
@@ -815,7 +820,8 @@
           "targetReps": 10,
           "targetDurationSeconds": null,
           "holdSeconds": null,
-          "restSeconds": 0
+          "restSeconds": 0,
+          "requiresFloorTransition": true
         }
       ],
       "exerciseCues": {
@@ -893,7 +899,7 @@
         "reviewerModelId": "claude-opus-5-5",
         "reviewedAtEpochMillis": 1793491200000,
         "reviewedContentId": "lumbar_radiculopathy",
-        "reviewedContentSha256": "f4d211e85afdd19ffee491094c9581b36e1b73f9d41ecf7a474bd2a2120bb80b",
+        "reviewedContentSha256": "84f72858aa5d325052f9b4fca33bb15181ea431b9f7013d0e6b0c0956856b1d5",
         "sourceReferences": [
           "https://doi.org/10.1097/BRS.0b013e31821ace7f",
           "https://doi.org/10.7326/M20-4187",
@@ -928,7 +934,8 @@
           "targetReps": 15,
           "targetDurationSeconds": null,
           "holdSeconds": null,
-          "restSeconds": 0
+          "restSeconds": 0,
+          "requiresFloorTransition": true
         },
         {
           "exerciseId": "dead-bug",
@@ -936,7 +943,8 @@
           "targetReps": 15,
           "targetDurationSeconds": null,
           "holdSeconds": null,
-          "restSeconds": 0
+          "restSeconds": 0,
+          "requiresFloorTransition": true
         },
         {
           "exerciseId": "glute-bridge",
@@ -944,7 +952,8 @@
           "targetReps": 10,
           "targetDurationSeconds": null,
           "holdSeconds": null,
-          "restSeconds": 0
+          "restSeconds": 0,
+          "requiresFloorTransition": true
         },
         {
           "exerciseId": "hamstring-stretch",
@@ -952,7 +961,8 @@
           "targetReps": null,
           "targetDurationSeconds": 30,
           "holdSeconds": null,
-          "restSeconds": 0
+          "restSeconds": 0,
+          "requiresFloorTransition": false
         }
       ],
       "exerciseCues": {
@@ -1024,7 +1034,7 @@
         "reviewerModelId": "claude-opus-5-5",
         "reviewedAtEpochMillis": 1793491200000,
         "reviewedContentId": "nonspecific_low_back_pain",
-        "reviewedContentSha256": "c1204b7d6d0554cff3a80554df0afceddc55a3077eaee1f356b414ab0c0e6102",
+        "reviewedContentSha256": "8f33978e441cfd49e2c90f32f9ff1b879f3a2b5a47c728ef9bcf443bb826c558",
         "sourceReferences": [
           "https://doi.org/10.1002/14651858.CD009790.pub2",
           "https://doi.org/10.3390/healthcare14162550",
@@ -1057,7 +1067,8 @@
           "targetReps": null,
           "targetDurationSeconds": 30,
           "holdSeconds": null,
-          "restSeconds": 0
+          "restSeconds": 0,
+          "requiresFloorTransition": false
         }
       ],
       "exerciseCues": {
@@ -1203,7 +1214,7 @@
         "reviewerModelId": "claude-opus-5-5",
         "reviewedAtEpochMillis": 1793491200000,
         "reviewedContentId": "rotator_cuff_related_shoulder_pain",
-        "reviewedContentSha256": "50a88524785d592234deab7e7a8088d7c47d02046563f3cae538d10ea4adac4c",
+        "reviewedContentSha256": "49511d551472f66b8d9069e4ad117c65ef65fcade24ae5abad6c27ed85febb85",
         "sourceReferences": [
           "https://doi.org/10.1136/bmj.e787",
           "https://doi.org/10.1016/j.math.2016.03.009",
@@ -1377,7 +1388,8 @@
           "targetReps": 10,
           "targetDurationSeconds": null,
           "holdSeconds": null,
-          "restSeconds": 30
+          "restSeconds": 30,
+          "requiresFloorTransition": true
         },
         {
           "exerciseId": "bodyweight-squat",
@@ -1385,7 +1397,8 @@
           "targetReps": 10,
           "targetDurationSeconds": null,
           "holdSeconds": 2,
-          "restSeconds": 120
+          "restSeconds": 120,
+          "requiresFloorTransition": false
         }
       ],
       "exerciseCues": {
@@ -1444,7 +1457,7 @@
         "reviewerModelId": "claude-opus-5-5",
         "reviewedAtEpochMillis": 1793491200000,
         "reviewedContentId": "patellofemoral_pain",
-        "reviewedContentSha256": "6b1c733903e2d1a2adef49a1d2dc1d5866c441463325abf9585e009e3acf4438",
+        "reviewedContentSha256": "e59c57f2f8fce62c4b98dd33d91764fec1c77d12956d40c780d677b45edbb96b",
         "sourceReferences": [
           "https://doi.org/10.2519/jospt.2014.4936",
           "https://doi.org/10.4085/1062-6050-231-15",

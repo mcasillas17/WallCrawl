@@ -77,7 +77,7 @@ class FakeWorkoutPlanner(
         val focusMuscles = extractFocusMuscles(selectedExercises)
         val mobilityBlock = MobilityBlockPolicy.select(
             restrictions = context.conditionRestrictions,
-            exercises = candidates.associateBy(Exercise::id),
+            exercises = context.routineExercises,
             profile = context.userProfile,
             mainExerciseIds = selectedExercises.mapTo(hashSetOf(), Exercise::id),
             seed = rotationSeed(context, generationIndex)

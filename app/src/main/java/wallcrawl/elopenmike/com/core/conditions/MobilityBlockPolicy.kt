@@ -1,6 +1,8 @@
 package wallcrawl.elopenmike.com.core.conditions
 
+import wallcrawl.elopenmike.com.core.model.CapabilityLevel
 import wallcrawl.elopenmike.com.core.model.Exercise
+import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.model.ExercisePrescription
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.PlannedExercise
@@ -16,6 +18,7 @@ import wallcrawl.elopenmike.com.core.model.normalizedEquipmentSet
  * Deterministic and independent of the main selection: the same routines, seed and profile
  * give the same block, and an empty block (no conditions, no overlay, or nothing left after
  * filtering) never fails a plan. Only conditions contribute routines, never joint labels.
+ * For an item shared by several conditions, the first condition's dose wins by sorted id.
  */
 object MobilityBlockPolicy {
     const val MAX_ITEMS = 3
@@ -53,6 +56,10 @@ object MobilityBlockPolicy {
             .filter { entry ->
                 val exercise = exercises[entry.exerciseId]
                 exercise != null &&
+                    exercise.type == entry.expectedType() &&
+                    !(entry.requiresFloorTransition &&
+                        profile.movementCapabilities[MovementCapabilityType.FLOOR_TRANSITION] ==
+                        CapabilityLevel.AVOID) &&
                     entry.exerciseId !in excluded &&
                     entry.exerciseId !in mainExerciseIds &&
                     exercise.equipmentRequirements.isEquipmentSatisfiedBy(owned) &&
@@ -61,6 +68,9 @@ object MobilityBlockPolicy {
             .take(MAX_ITEMS)
             .map(::planned)
     }
+
+    private fun RoutineEntry.expectedType() =
+        if (targetDurationSeconds != null) ExerciseType.DURATION else ExerciseType.BODYWEIGHT_REPS
 
     private fun planned(entry: RoutineEntry): PlannedExercise {
         // 0 means the overlay publishes no rest, which is not the same as a zero-second rest.

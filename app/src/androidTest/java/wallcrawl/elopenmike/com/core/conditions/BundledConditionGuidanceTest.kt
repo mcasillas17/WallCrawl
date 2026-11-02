@@ -302,6 +302,42 @@ class BundledConditionGuidanceTest {
         assertThat(measured).containsExactlyEntriesIn(COVERAGE_TABLE)
     }
 
+    @Test
+    fun productionBlockIncludesStretchesAndValidates() = runBlocking<Unit> {
+        val profile = inputs().toMap().getValue("rotator_cuff_related_shoulder_pain")
+
+        val result = plan(profile) as ProgramValidationResult.Valid
+
+        // The stretch has no accepted metadata, so it is not an automatic candidate.
+        assertThat(result.workout.mobilityBlock.map { it.exerciseId })
+            .containsExactly("cross-body-shoulder-stretch")
+    }
+
+    @Test
+    fun floorTransitionAvoidRemovesFloorRoutineItems() = runBlocking<Unit> {
+        val base = inputs().toMap().getValue("nonspecific_low_back_pain")
+        val avoidsFloor = base.copy(
+            movementCapabilities = MovementCapabilities.from(
+                MovementCapabilityType.entries.associateWith {
+                    if (it == MovementCapabilityType.FLOOR_TRANSITION) CapabilityLevel.AVOID
+                    else CapabilityLevel.COMFORTABLE
+                }
+            )
+        )
+
+        val block = (plan(avoidsFloor) as ProgramValidationResult.Valid).workout.mobilityBlock
+
+        assertThat(block.map { it.exerciseId }).containsExactly("hamstring-stretch")
+    }
+
+    @Test
+    fun floorFlagsMatchTheFloorItems() {
+        routineEntries().forEach { (conditionId, entry) ->
+            assertWithMessage("$conditionId/${entry.exerciseId}")
+                .that(entry.requiresFloorTransition).isEqualTo(entry.exerciseId in FLOOR_ITEMS)
+        }
+    }
+
     private fun routineEntries(): List<Pair<String, RoutineEntry>> =
         guidance.conditions.values.flatMap { record -> record.routine.map { record.id to it } }
 
@@ -372,10 +408,13 @@ class BundledConditionGuidanceTest {
                 "A&E|999|NHS|GP|clinician referral|referral|derivaci[oó]n)\\b"
         )
 
-        fun reps(id: String, sets: Int, reps: Int, hold: Int? = null, rest: Int = 0) =
-            RoutineEntry(id, sets, reps, null, hold, rest)
+        /** Items performed on the floor; the rest are standing. */
+        val FLOOR_ITEMS = setOf("glute-bridge", "side-lying-hip-abduction", "bird-dog", "dead-bug")
 
-        fun timed(id: String, sets: Int, seconds: Int) = RoutineEntry(id, sets, null, seconds, null, 0)
+        fun reps(id: String, sets: Int, reps: Int, hold: Int? = null, rest: Int = 0) =
+            RoutineEntry(id, sets, reps, null, hold, rest, requiresFloorTransition = id in FLOOR_ITEMS)
+
+        fun timed(id: String, sets: Int, seconds: Int) = RoutineEntry(id, sets, null, seconds, null, 0, requiresFloorTransition = id in FLOOR_ITEMS)
 
         /** Section 5, catalog-backed entries only. Task 9 appends the new exercises. */
         val EXPECTED_ROUTINES = mapOf(

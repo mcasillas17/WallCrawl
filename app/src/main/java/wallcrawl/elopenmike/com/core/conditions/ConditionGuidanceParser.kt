@@ -203,6 +203,7 @@ class ConditionGuidanceParser {
         var duration: Int? = null
         var hold: Int? = null
         var rest: Int? = null
+        var floor: Boolean? = null
         val seen = mutableSetOf<String>()
 
         beginObject()
@@ -219,6 +220,10 @@ class ConditionGuidanceParser {
                     duration = readNullableInt("$label.targetDurationSeconds", 1, 600)
                 "holdSeconds" -> hold = readNullableInt("$label.holdSeconds", 1, 120)
                 "restSeconds" -> rest = readInt("$label.restSeconds", 0, 300)
+                "requiresFloorTransition" -> {
+                    if (peek() != JsonToken.BOOLEAN) malformed("$label.requiresFloorTransition has the wrong JSON type.")
+                    floor = nextBoolean()
+                }
                 else -> malformed("Unexpected field ${safe(field)} in $label.")
             }
         }
@@ -234,7 +239,8 @@ class ConditionGuidanceParser {
             targetReps = reps,
             targetDurationSeconds = duration,
             holdSeconds = hold,
-            restSeconds = rest ?: malformed("$label is missing restSeconds.")
+            restSeconds = rest ?: malformed("$label is missing restSeconds."),
+            requiresFloorTransition = floor ?: malformed("$label is missing requiresFloorTransition.")
         )
     }
 

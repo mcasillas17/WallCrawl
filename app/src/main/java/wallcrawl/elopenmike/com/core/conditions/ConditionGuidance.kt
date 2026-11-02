@@ -32,14 +32,19 @@ enum class MovementDemand {
     END_RANGE_KNEE_EXTENSION_LOAD
 }
 
-/** One mobility item. Exactly one of reps or duration; a hold only accompanies reps. */
+/**
+ * One mobility item. Exactly one of reps or duration; a hold only accompanies reps.
+ * [requiresFloorTransition] is authored per entry because stretches and owned exercises
+ * carry no reviewed capability metadata to read it from.
+ */
 data class RoutineEntry(
     val exerciseId: String,
     val targetSets: Int,
     val targetReps: Int?,
     val targetDurationSeconds: Int?,
     val holdSeconds: Int?,
-    val restSeconds: Int
+    val restSeconds: Int,
+    val requiresFloorTransition: Boolean
 )
 
 /** Text is keyed by language; [exerciseCues] by exercise id first, then language. */

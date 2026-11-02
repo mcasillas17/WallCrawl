@@ -29,14 +29,20 @@ class ConditionGuidanceParserTest {
         assertThat(record.avoidDemands).containsExactly(MovementDemand.END_RANGE_KNEE_EXTENSION_LOAD)
         assertThat(record.modifyDemands).containsExactly(MovementDemand.DEEP_KNEE_FLEXION_LOAD)
         assertThat(record.routine).containsExactly(
-            RoutineEntry("glute-bridge", 2, 10, null, 3, 30),
-            RoutineEntry("dead-bug", 2, null, 30, null, 30)
+            RoutineEntry("glute-bridge", 2, 10, null, 3, 30, true),
+            RoutineEntry("dead-bug", 2, null, 30, null, 30, false)
         ).inOrder()
         assertThat(record.exerciseCues["step-up"]).containsEntry("es", "Baja despacio.")
         assertThat(record.notes["en"]).containsExactly("Chosen to work around knee pain.")
         assertThat(record.redFlags["en"]).containsExactly("Seek care for swelling.")
         assertThat(record.provenance.reviewerModelId).isEqualTo("claude-test")
         assertThat(record.provenance.sourceReferences).containsExactly("https://example.org/a")
+    }
+
+    @Test
+    fun missingOrNonBooleanFloorFlagIsRejected() {
+        assertRejected(overlay(routine = entry("10", "null", floor = "")))
+        assertRejected(overlay(routine = entry("10", "null", floor = ""","requiresFloorTransition": "yes"""")))
     }
 
     @Test
@@ -129,10 +135,11 @@ class ConditionGuidanceParserTest {
         assertThrows(ConditionGuidanceFormatException::class.java) { parser.parse(json.reader()) }
     }
 
-    private fun entry(reps: String, duration: String, hold: String = "null", rest: String? = "30") =
+    private fun entry(reps: String, duration: String, hold: String = "null", rest: String? = "30",
+        floor: String = ""","requiresFloorTransition": false""") =
         """{"exerciseId": "glute-bridge", "targetSets": 2, "targetReps": $reps,
             "targetDurationSeconds": $duration, "holdSeconds": $hold
-            ${rest?.let { ""","restSeconds": $it""" } ?: ""}}"""
+            ${rest?.let { ""","restSeconds": $it""" } ?: ""}$floor}"""
 
     private fun overlay(
         version: String = "test-1",
@@ -140,9 +147,11 @@ class ConditionGuidanceParserTest {
         modify: String = """["DEEP_KNEE_FLEXION_LOAD"]""",
         routine: String = """
             {"exerciseId": "glute-bridge", "targetSets": 2, "targetReps": 10,
-             "targetDurationSeconds": null, "holdSeconds": 3, "restSeconds": 30},
+             "targetDurationSeconds": null, "holdSeconds": 3, "restSeconds": 30,
+             "requiresFloorTransition": true},
             {"exerciseId": "dead-bug", "targetSets": 2, "targetReps": null,
-             "targetDurationSeconds": 30, "holdSeconds": null, "restSeconds": 30}
+             "targetDurationSeconds": 30, "holdSeconds": null, "restSeconds": 30,
+             "requiresFloorTransition": false}
         """,
         sources: String = """["https://example.org/a"]""",
         extraConditionField: String = "",

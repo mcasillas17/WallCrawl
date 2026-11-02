@@ -33,6 +33,12 @@ data class WorkoutGenerationContext(
     /** What the profile's conditions and joint labels mean for ranking and the state policy. */
     val conditionRestrictions: ConditionRestrictions = ConditionRestrictions.None,
     /**
+     * Catalog exercises named by the active conditions' routines, whether or not they are
+     * automatic candidates (stretches have no accepted metadata). Only the mobility block
+     * reads it. Not part of the context digest: the catalog and guidance versions cover it.
+     */
+    val routineExercises: Map<String, Exercise> = emptyMap(),
+    /**
      * Reviewed-only capability evidence derived from the bounded completed-history snapshot.
      *
      * Empty on the legacy path.
