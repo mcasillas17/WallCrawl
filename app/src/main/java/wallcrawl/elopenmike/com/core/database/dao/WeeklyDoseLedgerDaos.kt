@@ -36,11 +36,17 @@ interface CompletedWorkoutHistoryDao {
         limit: Int
     ): Flow<List<WorkoutSessionWithExercisesAndSets>>
 
-    /** Lightweight, uncapped history for calendar streaks and the all-time workout count. */
+    /**
+     * Lightweight, uncapped history for calendar streaks and the all-time workout count.
+     * A session holding only mobility work is not a training session, so it is left out.
+     */
     @Query(
         """
         SELECT completedAtTimestamp FROM workout_sessions
         WHERE status = :status AND completedAtTimestamp IS NOT NULL
+          AND (NOT EXISTS (SELECT 1 FROM workout_exercises e WHERE e.sessionId = workout_sessions.id)
+            OR EXISTS (SELECT 1 FROM workout_exercises e
+                WHERE e.sessionId = workout_sessions.id AND e.role = 'MAIN'))
         """
     )
     suspend fun getCompletedTimestamps(

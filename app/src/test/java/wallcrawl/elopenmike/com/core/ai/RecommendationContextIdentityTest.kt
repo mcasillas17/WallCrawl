@@ -316,6 +316,18 @@ class RecommendationContextIdentityTest {
             .isNotEqualTo(RecommendationContextIdentity.of(withHistory(45)))
     }
 
+    @Test
+    fun mobilityRowsInProgressionHistoryDoNotChangeTheDigest() {
+        val context = withHistory(null)
+        val withMobility = context.copy(progressionHistory = context.progressionHistory.map { session ->
+            session.copy(exercises = session.exercises + session.exercises.single().copy(
+                id = "mobility-1", exerciseId = "clamshell", orderIndex = 1,
+                role = wallcrawl.elopenmike.com.core.model.ExerciseRole.MOBILITY
+            ))
+        })
+        assertThat(RecommendationContextIdentity.of(withMobility)).isEqualTo(HISTORY_DIGEST)
+    }
+
     private companion object {
         const val HISTORY_DIGEST = "ccbb4205db360e82f329cd7b513add93cd382cd1e2ca0b0ed7882425fc343704"
         const val PRE_CONDITIONS_DIGEST = "5f74554467b20a16c606e31008e1500b297d4c940b0f2f52e4a434f73d6f45b2"

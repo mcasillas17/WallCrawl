@@ -1,5 +1,6 @@
 package wallcrawl.elopenmike.com.core.ai
 
+import wallcrawl.elopenmike.com.core.model.mainExercises
 import java.time.Instant
 import java.time.ZoneId
 import kotlinx.coroutines.flow.first
@@ -280,7 +281,7 @@ class WorkoutGenerationContextBuilder(
         val preferences = linkedMapOf<String, UserRestPreference>()
         var examinedPrescriptions = 0
         for (session in sessions) {
-            for (exercise in session.exercises) {
+            for (exercise in session.mainExercises) {
                 if (examinedPrescriptions == MAX_PRIOR_REST_PRESCRIPTIONS) {
                     return preferences
                 }

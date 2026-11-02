@@ -1,5 +1,6 @@
 package wallcrawl.elopenmike.com.core.ai
 
+import wallcrawl.elopenmike.com.core.model.mainExercises
 import java.security.MessageDigest
 import java.util.Locale
 import wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions
@@ -133,7 +134,7 @@ object RecommendationContextIdentity {
                     session.origin.name,
                     ((session.completedAtTimestamp ?: Long.MAX_VALUE) <= context.historyAsOfTimestamp).toString()
                 )
-                session.exercises.sortedWith(compareBy({ it.exerciseId }, { it.id })).forEach { exercise ->
+                session.mainExercises.sortedWith(compareBy({ it.exerciseId }, { it.id })).forEach { exercise ->
                     lines += line("progressionExercise", exercise.id, exercise.sessionId,
                         exercise.exerciseId, exercise.prescription.toString())
                     exercise.sets.sortedWith(compareBy({ it.setNumber }, { it.id })).forEach { set ->

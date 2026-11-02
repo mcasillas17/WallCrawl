@@ -179,6 +179,14 @@ data class WorkoutExercise(
 /** MOBILITY exercises are written by the routine block; everything else is MAIN. */
 enum class ExerciseRole { MAIN, MOBILITY }
 
+/** The rows that earn training credit: mobility work is logged like any set but never counted. */
+internal val WorkoutSession.mainExercises: List<WorkoutExercise>
+    get() = exercises.filter { it.role == ExerciseRole.MAIN }
+
+/** Logged work that is only mobility: it stays in history but is not a training session. */
+internal val WorkoutSession.isMobilityOnly: Boolean
+    get() = exercises.isNotEmpty() && mainExercises.isEmpty()
+
 /**
  * An individual set within a [WorkoutExercise].
  */

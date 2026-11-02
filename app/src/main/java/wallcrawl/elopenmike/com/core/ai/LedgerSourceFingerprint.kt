@@ -6,6 +6,7 @@ import wallcrawl.elopenmike.com.core.model.LedgerPolicyVersion
 import wallcrawl.elopenmike.com.core.model.TrainingWeek
 import wallcrawl.elopenmike.com.core.model.WeeklyDoseLedger
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
+import wallcrawl.elopenmike.com.core.model.mainExercises
 
 /**
  * A deterministic digest of every input that can change a [WeeklyDoseLedger].
@@ -52,7 +53,7 @@ object LedgerSourceFingerprint {
                 session.id,
                 session.completedAtTimestamp?.toString() ?: "none"
             )
-            session.exercises.forEach { exercise ->
+            session.mainExercises.forEach { exercise ->
                 referencedExerciseIds += exercise.exerciseId
                 lines += line("instance", session.id, exercise.id, exercise.exerciseId)
                 exercise.sets.forEach { set ->

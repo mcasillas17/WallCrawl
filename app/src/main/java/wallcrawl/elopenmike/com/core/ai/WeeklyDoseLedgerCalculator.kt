@@ -12,6 +12,7 @@ import wallcrawl.elopenmike.com.core.model.WeeklyDoseLedger
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
+import wallcrawl.elopenmike.com.core.model.mainExercises
 
 /**
  * Reconstructs a [WeeklyDoseLedger] from completed history under [LedgerPolicyVersion].
@@ -37,7 +38,7 @@ class WeeklyDoseLedgerCalculator {
         val unattributedWorkSets = EnumMap<LedgerOmissionReason, Int>(LedgerOmissionReason::class.java)
 
         sessions.forEach { session ->
-            session.exercises.forEach { exercise ->
+            session.mainExercises.forEach { exercise ->
                 val workSets = exercise.sets.count(WorkoutSet::isCreditableWorkSet)
                 if (workSets == 0) return@forEach
 
@@ -118,7 +119,7 @@ class WeeklyDoseLedgerCalculator {
                 "Duplicate session id '${session.id}' was supplied to the weekly ledger."
             }
 
-            session.exercises.forEach { exercise ->
+            session.mainExercises.forEach { exercise ->
                 require(seenExerciseInstanceIds.add(exercise.id)) {
                     "Duplicate workout exercise id '${exercise.id}' was supplied to the " +
                         "weekly ledger."

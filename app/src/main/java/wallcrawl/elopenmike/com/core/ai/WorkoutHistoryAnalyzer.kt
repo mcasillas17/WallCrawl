@@ -1,5 +1,7 @@
 package wallcrawl.elopenmike.com.core.ai
 
+import wallcrawl.elopenmike.com.core.model.isMobilityOnly
+import wallcrawl.elopenmike.com.core.model.mainExercises
 import wallcrawl.elopenmike.com.core.model.ExercisePerformanceHistory
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.WeightUnit
@@ -23,7 +25,7 @@ class WorkoutHistoryAnalyzer {
 
         val performancesByExerciseId = completedSessions
             .flatMap { session ->
-                session.exercises.map { exercise ->
+                session.mainExercises.map { exercise ->
                     ExercisePerformance(
                         exerciseId = exercise.exerciseId,
                         completedAtTimestamp = session.completedAtTimestamp ?: Long.MIN_VALUE,
@@ -73,6 +75,7 @@ class WorkoutHistoryAnalyzer {
             .filter { session ->
                 val completedAt = session.completedAtTimestamp
                 session.status == SessionStatus.COMPLETED &&
+                    !session.isMobilityOnly &&
                     completedAt != null &&
                     completedAt in earliestTimestamp..nowTimestamp
             }
@@ -94,7 +97,7 @@ class WorkoutHistoryAnalyzer {
             .filter { it.status == SessionStatus.COMPLETED && it.completedAtTimestamp != null }
             .sortedByDescending { it.completedAtTimestamp }
             .mapNotNull { session ->
-                val completedSets = session.exercises
+                val completedSets = session.mainExercises
                     .firstOrNull { it.exerciseId == exerciseId }
                     ?.sets
                     ?.completedPerformanceSets()
