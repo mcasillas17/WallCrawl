@@ -11,6 +11,11 @@ import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.withIndex
+import wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceResult
+import wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceSource
+import wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions
+import wallcrawl.elopenmike.com.core.conditions.hasConditionInputs
+import wallcrawl.elopenmike.com.core.conditions.restrictionsFor
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
 import wallcrawl.elopenmike.com.core.database.repository.DeloadRepository
@@ -56,7 +61,12 @@ class WorkoutGenerationContextBuilder(
     private val nowTimestamp: () -> Long = System::currentTimeMillis,
     private val zoneId: () -> ZoneId = ZoneId::systemDefault,
     private val deloadRepository: DeloadRepository? = null,
-    private val programRepository: ProgramRepository? = null
+    private val programRepository: ProgramRepository? = null,
+    /**
+     * Where the condition overlay comes from. Absent means no overlay can be read, which
+     * restricts a user who reported a condition or joint label and nobody else.
+     */
+    private val conditionGuidanceSource: ConditionGuidanceSource? = null
 ) {
     /**
      * Reuses Today’s clock and Room invalidation, not polling queries. A day/zone change
@@ -165,6 +175,18 @@ class WorkoutGenerationContextBuilder(
         } else {
             CapabilityEvidenceSet.empty()
         }
+        // The overlay is read only for a profile that needs it, so everyone else is unaffected
+        // by it being missing or broken.
+        val conditionRestrictions = if (
+            plannerFeatureFlags.reviewedCapabilityEligibility && profile.hasConditionInputs()
+        ) {
+            restrictionsFor(
+                profile,
+                conditionGuidanceSource?.guidance() ?: ConditionGuidanceResult.Unavailable
+            )
+        } else {
+            ConditionRestrictions.None
+        }
         val automaticEligibilityResult = if (plannerFeatureFlags.reviewedCapabilityEligibility) {
             val exercisesById = allExercises.associateBy { it.id }
             reviewedEligibilityPolicy.evaluate(
@@ -179,7 +201,8 @@ class WorkoutGenerationContextBuilder(
                     exercisesById[exerciseId]
                         ?.acceptedMetadata()
                         ?.progressionFamily
-                }
+                },
+                restrictions = conditionRestrictions
             )
         } else {
             null
@@ -225,6 +248,7 @@ class WorkoutGenerationContextBuilder(
             excludedExerciseIds = profile.excludedExerciseIds,
             allowedExercises = allowedExercises,
             automaticEligibilityResult = automaticEligibilityResult,
+            conditionRestrictions = conditionRestrictions,
             capabilityEvidence = capabilityEvidence,
             schedulingEvidence = schedulingEvidence,
             trainingProgramState = trainingProgramState,

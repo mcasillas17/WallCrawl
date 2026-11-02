@@ -191,22 +191,9 @@ data class ReviewedExerciseMetadata(
 )
 
 /**
- * True when every joint sensitivity [profile] selected was explicitly cleared for this exercise.
- *
- * `LOW_IMPACT_ONLY` is excluded because [ReviewedExerciseMetadata.impactLevel] already decides
- * it. Shared so the eligibility gate and the prescription policy cannot drift into two
- * different readings of the same reviewed field.
- */
-internal fun ReviewedExerciseMetadata.clearsJointConstraintsOf(profile: UserProfile): Boolean =
-    profile.trainingConstraints.none { constraint ->
-        constraint != TrainingConstraint.LOW_IMPACT_ONLY &&
-            constraint !in clearedTrainingConstraints
-    }
-
-/**
  * The other half of the training-constraint contract: `LOW_IMPACT_ONLY` meeting a high-impact
- * exercise. Shared for the same reason as [clearsJointConstraintsOf] — the eligibility gate,
- * its supported-regression exception and the prescription policy must read one rule.
+ * exercise. Shared so the eligibility gate, its supported-regression exception and the
+ * prescription policy read one rule.
  */
 internal fun ReviewedExerciseMetadata.violatesImpactRestrictionOf(profile: UserProfile): Boolean =
     TrainingConstraint.LOW_IMPACT_ONLY in profile.trainingConstraints &&

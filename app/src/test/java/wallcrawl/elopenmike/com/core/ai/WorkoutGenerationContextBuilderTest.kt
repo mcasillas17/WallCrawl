@@ -155,6 +155,60 @@ class WorkoutGenerationContextBuilderTest {
     }
 
     @Test
+    fun build_overlayLoadFailureIsTypedForAConditionUserAndInvisibleToEveryoneElse() = runTest {
+        val catalog = PlannerFixtureContextFactory().bundledCatalogProjection().exercises
+        var reads = 0
+        val brokenOverlay = object : wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceSource {
+            override suspend fun guidance() = wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceResult
+                .Unavailable.also { reads++ }
+        }
+        fun builderFor(profile: UserProfile) = WorkoutGenerationContextBuilder(
+            userProfileRepository = StubUserProfileRepository(profile),
+            workoutRepository = StubWorkoutRepository(emptyList()),
+            exerciseCatalog = InMemoryExerciseCatalog(catalog),
+            exerciseFilter = ExerciseFilter(),
+            historyAnalyzer = WorkoutHistoryAnalyzer(),
+            plannerFeatureFlags = PlannerFeatureFlags.PRODUCTION,
+            conditionGuidanceSource = brokenOverlay
+        )
+
+        val unrestricted = builderFor(UserProfile()).build()
+        assertThat(reads).isEqualTo(0)
+        assertThat(unrestricted.conditionRestrictions)
+            .isEqualTo(wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions.None)
+
+        // A reported condition or a joint label, each with the overlay unreadable.
+        listOf(
+            UserProfile(reportedConditions = setOf("any-condition")),
+            UserProfile(trainingConstraints = setOf(wallcrawl.elopenmike.com.core.model.TrainingConstraint.HIP_SENSITIVE))
+        ).forEach { profile ->
+            val context = builderFor(profile).build()
+            assertThat(context.conditionRestrictions)
+                .isEqualTo(wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions.Unavailable)
+            assertThat(context.allowedExercises).isEmpty()
+            assertThat((context.automaticEligibilityResult as AutomaticEligibilityResult.NoCandidates).failure)
+                .isEqualTo(wallcrawl.elopenmike.com.core.model.AutomaticEligibilityFailure.CONDITION_GUIDANCE_UNAVAILABLE)
+        }
+    }
+
+    @Test
+    fun build_withoutAnyOverlaySourceAConditionUserIsStillRefusedNotUnrestricted() = runTest {
+        val catalog = PlannerFixtureContextFactory().bundledCatalogProjection().exercises
+        val context = WorkoutGenerationContextBuilder(
+            userProfileRepository = StubUserProfileRepository(UserProfile(reportedConditions = setOf("x"))),
+            workoutRepository = StubWorkoutRepository(emptyList()),
+            exerciseCatalog = InMemoryExerciseCatalog(catalog),
+            exerciseFilter = ExerciseFilter(),
+            historyAnalyzer = WorkoutHistoryAnalyzer(),
+            plannerFeatureFlags = PlannerFeatureFlags.PRODUCTION
+        ).build()
+
+        assertThat(context.allowedExercises).isEmpty()
+        assertThat(context.conditionRestrictions)
+            .isEqualTo(wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions.Unavailable)
+    }
+
+    @Test
     fun build_missingAnchorsReturnsNoCandidatesWithoutInventoryOrPlannerFallback() = runTest {
         val anchored = PlannerFixtureContextFactory().bundledCatalogProjection().exercises
             .filter { it.id in setOf("banded-row", "banded-face-pull", "banded-woodchop") }

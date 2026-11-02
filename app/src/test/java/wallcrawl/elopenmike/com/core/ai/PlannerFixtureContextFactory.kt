@@ -37,6 +37,10 @@ import wallcrawl.elopenmike.com.core.model.ReviewedExerciseLink
 import wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.SupportRequirement
+import wallcrawl.elopenmike.com.core.conditions.ConditionGuidance
+import wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceResult
+import wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions
+import wallcrawl.elopenmike.com.core.conditions.restrictionsFor
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.TrainingProgramState
@@ -104,6 +108,31 @@ internal class PlannerFixtureContextFactory(
             allExercises = catalogExercises,
             profile = profile
         )
+        // The bundled overlay is not part of a fixture. A fixture that selects joint labels gets
+        // a synthetic one: every synthetic-approved exercise is listed (so it counts as reviewed
+        // for the label) only when the fixture says those labels were cleared.
+        val conditionRestrictions = fixture.reviewedEligibility?.let { reviewedEligibility ->
+            val cleared = profile.trainingConstraints.all {
+                it == TrainingConstraint.LOW_IMPACT_ONLY ||
+                    it in reviewedEligibility.syntheticClearedTrainingConstraints
+            }
+            restrictionsFor(
+                profile,
+                ConditionGuidanceResult.Loaded(
+                    ConditionGuidance(
+                        version = "fixture",
+                        exerciseDemands = if (cleared) {
+                            reviewedEligibility.syntheticApprovedExerciseIds.associateWith { emptySet() }
+                        } else {
+                            emptyMap()
+                        },
+                        conditions = emptyMap(),
+                        jointLabelDemands = emptyMap(),
+                        demandCues = emptyMap()
+                    )
+                )
+            )
+        } ?: ConditionRestrictions.None
         val automaticEligibilityResult = fixture.reviewedEligibility?.let { reviewedEligibility ->
             ExerciseEligibilityPolicy().evaluate(
                 exercises = catalogExercises,
@@ -116,7 +145,8 @@ internal class PlannerFixtureContextFactory(
                         .reviewedMetadata
                         ?.takeIf { it.reviewState == ReviewState.APPROVED }
                         ?.progressionFamily
-                }
+                },
+                restrictions = conditionRestrictions
             )
         }
         val allowedExercises = when (automaticEligibilityResult) {
@@ -159,6 +189,7 @@ internal class PlannerFixtureContextFactory(
                 exerciseHistory = fixture.exerciseHistory.associateBy { it.exerciseId },
                 allowedExercises = allowedExercises,
                 automaticEligibilityResult = automaticEligibilityResult,
+                conditionRestrictions = conditionRestrictions,
                 trainingProgramState = trainingProgramState,
                 schedulingEvidence = fixture.reviewedEligibility?.let {
                     TrainingFrequencyRecencyPolicy().derive(

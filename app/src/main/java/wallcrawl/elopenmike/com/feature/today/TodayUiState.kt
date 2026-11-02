@@ -48,6 +48,8 @@ enum class TodayError(@StringRes val messageRes: Int) {
     REVIEWED_EQUIPMENT_REMOVED_ALL(R.string.today_error_reviewed_equipment),
     REVIEWED_CAPABILITIES_REMOVED_ALL(R.string.today_error_reviewed_capabilities),
     REVIEWED_CONSTRAINTS_REMOVED_ALL(R.string.today_error_reviewed_constraints),
+    REVIEWED_CONDITIONS_REMOVED_ALL(R.string.today_error_reviewed_conditions),
+    CONDITION_GUIDANCE_UNAVAILABLE(R.string.today_error_condition_guidance_unavailable),
     REVIEWED_CALIBRATION_REMOVED_ALL(R.string.today_error_reviewed_calibration),
     REVIEWED_NONE_ELIGIBLE(R.string.today_error_reviewed_none_eligible)
 }

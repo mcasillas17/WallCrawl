@@ -6,6 +6,7 @@ import org.junit.Test
 import org.json.JSONObject
 import java.io.File
 import wallcrawl.elopenmike.com.core.exercise.ExerciseFilter
+import wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions
 import wallcrawl.elopenmike.com.core.model.AdaptationState
 import wallcrawl.elopenmike.com.core.model.CapabilityLevel
 import wallcrawl.elopenmike.com.core.model.EligibilityReason
@@ -131,8 +132,9 @@ class FixedAnchorBandEligibilityTest {
         assertThat(ExerciseEligibilityPolicy().evaluate(
             listOf(standing),
             notExcluded.copy(trainingConstraints = setOf(TrainingConstraint.SHOULDER_SENSITIVE)),
-            AdaptationState.BUILD
-        ).decisions.single().reasons).contains(EligibilityReason.UNMAPPED_TRAINING_CONSTRAINT)
+            AdaptationState.BUILD,
+            restrictions = ConditionRestrictions.Unavailable
+        ).decisions.single().reasons).contains(EligibilityReason.CONDITION_GUIDANCE_UNAVAILABLE)
     }
 
     @Test

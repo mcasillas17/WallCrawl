@@ -1,6 +1,7 @@
 package wallcrawl.elopenmike.com.core.ai
 
 import wallcrawl.elopenmike.com.core.model.Exercise
+import wallcrawl.elopenmike.com.core.conditions.ranksLower
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
@@ -340,6 +341,7 @@ class FakeWorkoutPlanner(
             .filter { it.programming?.mechanics == MechanicsType.COMPOUND }
             .sortedWith(
                 compareByDescending<Exercise> { split.trainsAsFocus(it) }
+                    .thenBy { context.conditionRestrictions.ranksLower(it.id) }
                     .thenBy { capabilityPenalties.getValue(it.id) }
                     .thenBy { if (it.id in supportedRegressionPreferences) 0 else 1 }
                     .thenBy {
@@ -386,6 +388,7 @@ class FakeWorkoutPlanner(
         schedulingPreferences: Set<String>
     ): Comparator<Exercise> =
         compareByDescending<Exercise> { split.trainsAsFocus(it) }
+            .thenBy { context.conditionRestrictions.ranksLower(it.id) }
             .thenByDescending { it.programming?.mechanics == MechanicsType.ISOLATION }
             .thenByDescending { it.programming != null }
             .thenBy { capabilityPenalties.getValue(it.id) }

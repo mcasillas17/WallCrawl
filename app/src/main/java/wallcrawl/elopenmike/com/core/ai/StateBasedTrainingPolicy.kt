@@ -1,6 +1,8 @@
 package wallcrawl.elopenmike.com.core.ai
 
 import java.util.Collections
+import wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions
+import wallcrawl.elopenmike.com.core.conditions.decisionFor
 import wallcrawl.elopenmike.com.core.model.AdaptationState
 import wallcrawl.elopenmike.com.core.model.CapabilityLevel
 import wallcrawl.elopenmike.com.core.model.EffortTarget
@@ -19,7 +21,6 @@ import wallcrawl.elopenmike.com.core.model.TrainingProgramStatePolicyVersion
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.UserRestPreference
 import wallcrawl.elopenmike.com.core.model.WeeklyDoseLedger
-import wallcrawl.elopenmike.com.core.model.clearsJointConstraintsOf
 import wallcrawl.elopenmike.com.core.model.violatesImpactRestrictionOf
 
 enum class TrainingPolicyVersion {
@@ -217,7 +218,8 @@ class StateBasedTrainingPolicy(
         profile: UserProfile,
         fitnessGoals: Set<FitnessGoal>,
         programState: TrainingProgramState,
-        priorUserRestPreference: UserRestPreference? = null
+        priorUserRestPreference: UserRestPreference? = null,
+        restrictions: ConditionRestrictions = ConditionRestrictions.None
     ): TrainingPolicyResult {
         if (
             programState.policyVersion !in setOf(
@@ -273,7 +275,7 @@ class StateBasedTrainingPolicy(
         // training-constraint rules: eligibility should have removed this exercise, and a
         // selected restriction must not survive a gap in one gate.
         if (
-            !metadata.clearsJointConstraintsOf(profile) ||
+            restrictions.decisionFor(exercise.id) != null ||
             metadata.violatesImpactRestrictionOf(profile)
         ) {
             return TrainingPolicyResult.Failure(

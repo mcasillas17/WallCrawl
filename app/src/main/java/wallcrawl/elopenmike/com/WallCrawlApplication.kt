@@ -15,6 +15,7 @@ import wallcrawl.elopenmike.com.core.ai.TrainingProgramStateProvider
 import wallcrawl.elopenmike.com.core.ai.WorkoutGenerationContextBuilder
 import wallcrawl.elopenmike.com.core.ai.WorkoutHistoryAnalyzer
 import wallcrawl.elopenmike.com.core.ai.WorkoutPlanner
+import wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceStore
 import wallcrawl.elopenmike.com.core.database.WallCrawlDatabase
 import wallcrawl.elopenmike.com.core.database.repository.LocalDataBackupRepository
 import wallcrawl.elopenmike.com.core.database.repository.OfflineLocalDataBackupRepository
@@ -84,6 +85,10 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
 
     private val workoutGuideCatalogStore: WorkoutGuideCatalogStore by lazy {
         WorkoutGuideCatalogStore(context.assets)
+    }
+
+    private val conditionGuidanceStore: ConditionGuidanceStore by lazy {
+        ConditionGuidanceStore(context.assets)
     }
 
     override val workoutGuideCatalogSource: WorkoutGuideCatalogSource
@@ -232,7 +237,8 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
                 workoutGuideCatalogStore.currentSnapshot()?.catalogAttribution?.commit
             },
             deloadRepository = deloadRepository,
-            programRepository = programRepository
+            programRepository = programRepository,
+            conditionGuidanceSource = conditionGuidanceStore
         )
     }
 

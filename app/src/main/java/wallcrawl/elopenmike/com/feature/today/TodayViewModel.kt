@@ -638,6 +638,12 @@ internal fun automaticEligibilityError(failure: AutomaticEligibilityFailure?): T
         AutomaticEligibilityFailure.TRAINING_CONSTRAINTS_REMOVED_ALL ->
             TodayError.REVIEWED_CONSTRAINTS_REMOVED_ALL
 
+        AutomaticEligibilityFailure.CONDITIONS_REMOVED_ALL ->
+            TodayError.REVIEWED_CONDITIONS_REMOVED_ALL
+
+        AutomaticEligibilityFailure.CONDITION_GUIDANCE_UNAVAILABLE ->
+            TodayError.CONDITION_GUIDANCE_UNAVAILABLE
+
         AutomaticEligibilityFailure.CALIBRATION_COMPLEXITY_REMOVED_ALL ->
             TodayError.REVIEWED_CALIBRATION_REMOVED_ALL
 

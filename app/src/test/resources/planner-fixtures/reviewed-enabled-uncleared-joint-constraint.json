@@ -44,7 +44,7 @@
   },
   "expected": {
     "outcome": "REVIEWED_ELIGIBILITY_NO_CANDIDATES",
-    "automaticEligibilityFailure": "TRAINING_CONSTRAINTS_REMOVED_ALL",
+    "automaticEligibilityFailure": "CONDITIONS_REMOVED_ALL",
     "requiredExerciseIds": [],
     "forbiddenExerciseIds": []
   }

@@ -202,7 +202,7 @@ class MultiWeekProgramProductionReplayTest {
             profile.copy(availableEquipment = listOf(StandardEquipment.CARDIO)) to
                 AutomaticEligibilityFailure.NO_APPROVED_METADATA,
             profile.copy(trainingConstraints = setOf(TrainingConstraint.KNEE_SENSITIVE)) to
-                AutomaticEligibilityFailure.TRAINING_CONSTRAINTS_REMOVED_ALL,
+                AutomaticEligibilityFailure.CONDITION_GUIDANCE_UNAVAILABLE,
             profile.copy(excludedExerciseIds = bundled.exercises.map { it.id }) to
                 AutomaticEligibilityFailure.USER_EXCLUSIONS_REMOVED_ALL
         )

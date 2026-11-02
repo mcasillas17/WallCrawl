@@ -2,6 +2,8 @@ package wallcrawl.elopenmike.com.core.ai
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
+import wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceResult
+import wallcrawl.elopenmike.com.core.conditions.restrictionsFor
 import wallcrawl.elopenmike.com.core.model.AdaptationState
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityFailure
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
@@ -363,120 +365,30 @@ class ExerciseEligibilityPolicyTest {
     }
 
     @Test
-    fun evaluate_jointSensitiveConstraintFailsClosedWithoutReviewedMapping() {
-        val exercise = exercise(id = "approved-with-unmapped-constraint").copy(
+    fun evaluate_jointLabelWithoutAnOverlayFailsClosed() {
+        val exercise = exercise(id = "approved-with-no-overlay").copy(
             reviewedMetadata = reviewedMetadata(reviewState = ReviewState.APPROVED)
+        )
+        val profile = UserProfile(
+            availableEquipment = listOf(StandardEquipment.BODYWEIGHT),
+            trainingConstraints = setOf(TrainingConstraint.SHOULDER_SENSITIVE)
         )
 
         val result = policy.evaluate(
             exercises = listOf(exercise),
-            profile = UserProfile(
-                availableEquipment = listOf(StandardEquipment.BODYWEIGHT),
-                trainingConstraints = setOf(TrainingConstraint.SHOULDER_SENSITIVE)
-            ),
-            adaptationState = AdaptationState.BUILD
+            profile = profile,
+            adaptationState = AdaptationState.BUILD,
+            restrictions = restrictionsFor(profile, ConditionGuidanceResult.Unavailable)
         )
 
         assertThat(result).isEqualTo(
             AutomaticEligibilityResult.NoCandidates(
-                failure = AutomaticEligibilityFailure.TRAINING_CONSTRAINTS_REMOVED_ALL,
+                failure = AutomaticEligibilityFailure.CONDITION_GUIDANCE_UNAVAILABLE,
                 decisions = listOf(
                     EligibilityDecision(
                         exerciseId = exercise.id,
                         eligible = false,
-                        reasons = listOf(EligibilityReason.UNMAPPED_TRAINING_CONSTRAINT)
-                    )
-                )
-            )
-        )
-    }
-
-    @Test
-    fun evaluate_jointSensitiveConstraintIsDecidedPerExerciseNotAcrossThePool() {
-        val cleared = exercise(id = "reviewed-and-cleared").copy(
-            reviewedMetadata = reviewedMetadata(
-                reviewState = ReviewState.APPROVED,
-                clearedTrainingConstraints = setOf(TrainingConstraint.SHOULDER_SENSITIVE)
-            )
-        )
-        val otherJointCleared = exercise(id = "cleared-for-a-different-joint").copy(
-            reviewedMetadata = reviewedMetadata(
-                reviewState = ReviewState.APPROVED,
-                clearedTrainingConstraints = setOf(TrainingConstraint.KNEE_SENSITIVE)
-            )
-        )
-
-        val result = policy.evaluate(
-            exercises = listOf(cleared, otherJointCleared),
-            profile = UserProfile(
-                availableEquipment = listOf(StandardEquipment.BODYWEIGHT),
-                trainingConstraints = setOf(TrainingConstraint.SHOULDER_SENSITIVE)
-            ),
-            adaptationState = AdaptationState.BUILD
-        )
-
-        assertThat(result).isEqualTo(
-            AutomaticEligibilityResult.Candidates(
-                exercises = listOf(cleared),
-                decisions = listOf(
-                    EligibilityDecision(
-                        exerciseId = cleared.id,
-                        eligible = true,
-                        reasons = listOf(EligibilityReason.APPROVED)
-                    ),
-                    EligibilityDecision(
-                        exerciseId = otherJointCleared.id,
-                        eligible = false,
-                        reasons = listOf(EligibilityReason.UNMAPPED_TRAINING_CONSTRAINT)
-                    )
-                )
-            )
-        )
-    }
-
-    @Test
-    fun evaluate_combinedJointConstraintsRequireEveryOneToBeCleared() {
-        val partiallyCleared = exercise(id = "cleared-for-one-of-two").copy(
-            reviewedMetadata = reviewedMetadata(
-                reviewState = ReviewState.APPROVED,
-                clearedTrainingConstraints = setOf(TrainingConstraint.WRIST_SENSITIVE)
-            )
-        )
-        val fullyCleared = exercise(id = "cleared-for-both").copy(
-            reviewedMetadata = reviewedMetadata(
-                reviewState = ReviewState.APPROVED,
-                clearedTrainingConstraints = setOf(
-                    TrainingConstraint.WRIST_SENSITIVE,
-                    TrainingConstraint.ELBOW_SENSITIVE
-                )
-            )
-        )
-
-        val result = policy.evaluate(
-            exercises = listOf(partiallyCleared, fullyCleared),
-            profile = UserProfile(
-                availableEquipment = listOf(StandardEquipment.BODYWEIGHT),
-                trainingConstraints = setOf(
-                    TrainingConstraint.WRIST_SENSITIVE,
-                    TrainingConstraint.ELBOW_SENSITIVE
-                )
-            ),
-            adaptationState = AdaptationState.BUILD
-        )
-
-        assertThat(result).isEqualTo(
-            AutomaticEligibilityResult.Candidates(
-                exercises = listOf(fullyCleared),
-                decisions = listOf(
-                    EligibilityDecision(
-                        exerciseId = partiallyCleared.id,
-                        eligible = false,
-                        reasons = listOf(EligibilityReason.UNMAPPED_TRAINING_CONSTRAINT)
-                    ),
-                    EligibilityDecision(
-                        exerciseId = fullyCleared.id,
-                        eligible = true,
-                        reasons = listOf(EligibilityReason.APPROVED)
+                        reasons = listOf(EligibilityReason.CONDITION_GUIDANCE_UNAVAILABLE)
                     )
                 )
             )
@@ -509,54 +421,6 @@ class ExerciseEligibilityPolicyTest {
                         exerciseId = lowImpact.id,
                         eligible = true,
                         reasons = listOf(EligibilityReason.APPROVED)
-                    )
-                )
-            )
-        )
-    }
-
-    @Test
-    fun evaluate_supportedRegressionCannotBypassAnUnclearedJointConstraint() {
-        val regression = exercise(id = "uncleared-regression").copy(
-            reviewedMetadata = reviewedMetadata(
-                reviewState = ReviewState.APPROVED,
-                complexity = ComplexityTier.FOUNDATIONAL,
-                supportRequirement = SupportRequirement.SUPPORTED
-            )
-        )
-        val advanced = exercise(id = "advanced-cleared").copy(
-            reviewedMetadata = reviewedMetadata(
-                reviewState = ReviewState.APPROVED,
-                complexity = ComplexityTier.ADVANCED,
-                approvedRegressions = listOf(ReviewedExerciseLink(exerciseId = regression.id)),
-                clearedTrainingConstraints = setOf(TrainingConstraint.HIP_SENSITIVE)
-            )
-        )
-
-        val result = policy.evaluate(
-            exercises = listOf(advanced, regression),
-            profile = UserProfile(
-                availableEquipment = listOf(StandardEquipment.BODYWEIGHT),
-                trainingConstraints = setOf(TrainingConstraint.HIP_SENSITIVE)
-            ),
-            adaptationState = AdaptationState.UNCALIBRATED
-        )
-
-        assertThat(result).isEqualTo(
-            AutomaticEligibilityResult.NoCandidates(
-                // The uncleared regression is removed first, so the surviving advanced entry
-                // decides the aggregate cause. Neither exercise reaches the candidate pool.
-                failure = AutomaticEligibilityFailure.CALIBRATION_COMPLEXITY_REMOVED_ALL,
-                decisions = listOf(
-                    EligibilityDecision(
-                        exerciseId = advanced.id,
-                        eligible = false,
-                        reasons = listOf(EligibilityReason.ADVANCED_WHILE_UNCALIBRATED)
-                    ),
-                    EligibilityDecision(
-                        exerciseId = regression.id,
-                        eligible = false,
-                        reasons = listOf(EligibilityReason.UNMAPPED_TRAINING_CONSTRAINT)
                     )
                 )
             )

@@ -6,6 +6,10 @@ import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityFailure
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
+import wallcrawl.elopenmike.com.core.conditions.ConditionGuidance
+import wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions
+import wallcrawl.elopenmike.com.core.conditions.MovementDemand
+import wallcrawl.elopenmike.com.core.conditions.cuesFor
 import wallcrawl.elopenmike.com.core.model.AdaptationState
 import wallcrawl.elopenmike.com.core.model.CapabilityEvidence
 import wallcrawl.elopenmike.com.core.model.CapabilityEvidencePolicyVersion
@@ -904,18 +908,18 @@ class FakeWorkoutPlannerTest {
     }
 
     @Test
-    fun generateWorkout_supportedPreferenceCannotBypassJointClearance() = runTest {
+    fun generateWorkout_supportedPreferenceCannotBypassAnAvoidedDemand() = runTest {
         val source = rankingExercise(
-            id = "a-joint-sensitive-source",
+            id = "a-clean-source",
             difficulty = Difficulty.BEGINNER,
             fatigueScore = 5,
             reviewedState = ReviewState.APPROVED,
             reviewedComplexity = ComplexityTier.FOUNDATIONAL,
             reviewedCapabilities = setOf(MovementCapabilityType.FLOOR_TRANSITION),
-            approvedRegressions = listOf(ReviewedExerciseLink("z-cleared-supported-target"))
+            approvedRegressions = listOf(ReviewedExerciseLink("z-avoided-supported-target"))
         )
         val supported = rankingExercise(
-            id = "z-cleared-supported-target",
+            id = "z-avoided-supported-target",
             difficulty = Difficulty.BEGINNER,
             fatigueScore = 1,
             reviewedState = ReviewState.APPROVED,
@@ -931,7 +935,7 @@ class FakeWorkoutPlannerTest {
                 StandardEquipment.BENCH
             ),
             musclePriorities = mapOf(StandardMuscles.CHEST to PriorityLevel.HIGH),
-            trainingConstraints = setOf(TrainingConstraint.KNEE_SENSITIVE),
+            reportedConditions = setOf("c1"),
             movementCapabilities = MovementCapabilities.from(
                 mapOf(
                     MovementCapabilityType.FLOOR_TRANSITION to CapabilityLevel.LIMITED,
@@ -939,49 +943,107 @@ class FakeWorkoutPlannerTest {
                 )
             )
         )
-        val unclearedResult = ExerciseEligibilityPolicy().evaluate(
+        val restrictions = ConditionRestrictions.Active(
+            avoid = setOf(MovementDemand.PLYOMETRIC_IMPACT),
+            modify = emptySet(),
+            guidance = ConditionGuidance(
+                version = "test",
+                exerciseDemands = mapOf(
+                    source.id to emptySet(),
+                    supported.id to setOf(MovementDemand.PLYOMETRIC_IMPACT)
+                ),
+                conditions = emptyMap(),
+                jointLabelDemands = emptyMap(),
+                demandCues = emptyMap()
+            )
+        )
+
+        val result = ExerciseEligibilityPolicy().evaluate(
             exercises = listOf(source, supported),
             profile = profile,
-            adaptationState = AdaptationState.BUILD
+            adaptationState = AdaptationState.BUILD,
+            restrictions = restrictions
         )
 
-        assertThat(unclearedResult).isInstanceOf(AutomaticEligibilityResult.NoCandidates::class.java)
-        unclearedResult.decisions.forEach { decision ->
-            assertThat(decision.reasons).contains(EligibilityReason.UNMAPPED_TRAINING_CONSTRAINT)
-        }
-
-        val clearedExercises = listOf(source, supported).map { exercise ->
-            exercise.copy(
-                reviewedMetadata = checkNotNull(exercise.reviewedMetadata).copy(
-                    clearedTrainingConstraints = setOf(TrainingConstraint.KNEE_SENSITIVE)
-                )
-            )
-        }
-        val clearedResult = ExerciseEligibilityPolicy().evaluate(
-            exercises = clearedExercises,
-            profile = profile,
-            adaptationState = AdaptationState.BUILD
-        )
-        val clearedCandidates = (clearedResult as AutomaticEligibilityResult.Candidates).exercises
+        // The supported alternative is refused for its own demand, so it neither enters the
+        // pool nor earns the source a regression preference.
+        val candidates = (result as AutomaticEligibilityResult.Candidates).exercises
+        assertThat(candidates.map { it.id }).containsExactly(source.id)
         val workout = planner.generateWorkout(
             WorkoutGenerationContext(
                 userProfile = profile,
-                allowedExercises = clearedCandidates,
-                automaticEligibilityResult = clearedResult
+                allowedExercises = candidates,
+                automaticEligibilityResult = result,
+                conditionRestrictions = restrictions
             )
         )
 
-        assertThat(workout.exercises.map { it.exerciseId })
-            .containsExactly(supported.id, source.id)
-            .inOrder()
-        assertThat(workout.rankingReasons).containsExactly(
-            WorkoutRankingReason.SupportedRegressionPreference(
-                preferredExerciseId = supported.id,
-                sourceExerciseId = source.id,
-                capability = MovementCapabilityType.FLOOR_TRANSITION
+        assertThat(workout.exercises.map { it.exerciseId }).containsExactly(source.id)
+        assertThat(workout.rankingReasons).isEmpty()
+    }
+
+    @Test
+    fun modifyDemandIsEligibleAndRanksLower() = runTest {
+        // "a-" sorts first and is the more fatiguing lift, so it leads unless a modify
+        // demand moves it below the clean one. Same split focus and tier otherwise.
+        val modify = rankingExercise(
+            id = "a-modify-demand", difficulty = Difficulty.BEGINNER, fatigueScore = 5,
+            movementPattern = MovementPattern.HORIZONTAL_PUSH
+        )
+        val clean = rankingExercise(
+            id = "b-clean", difficulty = Difficulty.BEGINNER, fatigueScore = 1,
+            movementPattern = MovementPattern.VERTICAL_PUSH
+        )
+        val candidates = listOf(modify, clean)
+
+        val unrestricted = planner.generateWorkout(rankingContext(ExperienceLevel.BEGINNER, candidates))
+        val restricted = planner.generateWorkout(
+            rankingContext(ExperienceLevel.BEGINNER, candidates).copy(
+                conditionRestrictions = modifyRestrictions(modify.id, clean.id)
             )
         )
+
+        assertThat(unrestricted.exercises.map { it.exerciseId })
+            .containsExactly(modify.id, clean.id).inOrder()
+        assertThat(restricted.exercises.map { it.exerciseId })
+            .containsExactly(clean.id, modify.id).inOrder()
     }
+
+    @Test
+    fun modifyExerciseIsChosenWhenNothingCleanFitsAndShowsItsCue() = runTest {
+        val modify = rankingExercise(id = "only-modify", difficulty = Difficulty.BEGINNER)
+        val restrictions = modifyRestrictions(modify.id)
+
+        val workout = planner.generateWorkout(
+            rankingContext(ExperienceLevel.BEGINNER, listOf(modify))
+                .copy(conditionRestrictions = restrictions)
+        )
+
+        assertThat(workout.exercises.map { it.exerciseId }).containsExactly(modify.id)
+        assertThat(restrictions.cuesFor(modify.id, "en")).containsExactly("Keep the load light.")
+        assertThat(restrictions.cuesFor(modify.id, "es")).containsExactly("Usa poca carga.")
+    }
+
+    private fun modifyRestrictions(
+        modifyId: String,
+        vararg cleanIds: String
+    ): ConditionRestrictions.Active = ConditionRestrictions.Active(
+        avoid = emptySet(),
+        modify = setOf(MovementDemand.HEAVY_EXTERNAL_LOAD),
+        guidance = ConditionGuidance(
+            version = "test",
+            exerciseDemands = mapOf(modifyId to setOf(MovementDemand.HEAVY_EXTERNAL_LOAD)) +
+                cleanIds.associateWith { emptySet() },
+            conditions = emptyMap(),
+            jointLabelDemands = emptyMap(),
+            demandCues = mapOf(
+                MovementDemand.HEAVY_EXTERNAL_LOAD to mapOf(
+                    "en" to "Keep the load light.",
+                    "es" to "Usa poca carga."
+                )
+            )
+        )
+    )
 
     @Test
     fun generateWorkout_prefersDirectSupportedRegressionForLimitedAccessoryDemand() = runTest {

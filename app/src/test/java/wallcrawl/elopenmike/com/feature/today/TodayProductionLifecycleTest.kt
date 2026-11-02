@@ -1488,7 +1488,7 @@ class TodayProductionLifecycleTest {
         advanceUntilIdle()
 
         assertThat((viewModel.uiState.value as TodayUiState.Error).error)
-            .isEqualTo(TodayError.REVIEWED_CONSTRAINTS_REMOVED_ALL)
+            .isEqualTo(TodayError.CONDITION_GUIDANCE_UNAVAILABLE)
     }
 
     // region harness

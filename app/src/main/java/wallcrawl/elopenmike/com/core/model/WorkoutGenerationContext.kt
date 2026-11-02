@@ -1,5 +1,7 @@
 package wallcrawl.elopenmike.com.core.model
 
+import wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions
+
 /**
  * Inputs used by [wallcrawl.elopenmike.com.core.ai.WorkoutPlanner]
  * to generate a rules-based workout recommendation.
@@ -28,6 +30,8 @@ data class WorkoutGenerationContext(
     val excludedExerciseIds: List<String> = userProfile.excludedExerciseIds,
     val allowedExercises: List<Exercise> = emptyList(),
     val automaticEligibilityResult: AutomaticEligibilityResult? = null,
+    /** What the profile's conditions and joint labels mean for ranking and the state policy. */
+    val conditionRestrictions: ConditionRestrictions = ConditionRestrictions.None,
     /**
      * Reviewed-only capability evidence derived from the bounded completed-history snapshot.
      *

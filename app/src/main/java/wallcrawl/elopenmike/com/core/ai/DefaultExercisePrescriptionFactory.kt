@@ -167,7 +167,8 @@ class DefaultExercisePrescriptionFactory(
                 profile = context.userProfile,
                 fitnessGoals = context.fitnessGoals.ifEmpty { setOf(context.fitnessGoal) },
                 programState = programState,
-                priorUserRestPreference = context.priorUserRestPreferences[exercise.id]
+                priorUserRestPreference = context.priorUserRestPreferences[exercise.id],
+                restrictions = context.conditionRestrictions
             )
         ) {
             is TrainingPolicyResult.Applied -> result.prescription

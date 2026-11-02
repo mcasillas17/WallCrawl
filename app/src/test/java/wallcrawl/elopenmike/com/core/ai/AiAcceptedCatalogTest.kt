@@ -7,6 +7,7 @@ import java.security.MessageDigest
 import org.json.JSONArray
 import org.json.JSONObject
 import org.junit.Test
+import wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions
 import wallcrawl.elopenmike.com.core.model.AdaptationState
 import wallcrawl.elopenmike.com.core.model.CapabilityLevel
 import wallcrawl.elopenmike.com.core.model.EligibilityReason
@@ -133,11 +134,13 @@ class AiAcceptedCatalogTest {
         for (constraint in TrainingConstraint.entries.filterNot { it == TrainingConstraint.LOW_IMPACT_ONLY }) {
             val constrained = ExerciseEligibilityPolicy().evaluate(
                 exercises, fullInventoryProfile().copy(trainingConstraints = setOf(constraint)),
-                AdaptationState.BUILD
+                AdaptationState.BUILD,
+                // No overlay is supplied, so a joint label cannot be applied and fails closed.
+                restrictions = ConditionRestrictions.Unavailable
             ).decisions
             assertWithMessage(constraint.name).that(constrained.none { it.eligible }).isTrue()
             constrained.filter { it.exerciseId in acceptedIds }.forEach {
-                assertThat(it.reasons).contains(EligibilityReason.UNMAPPED_TRAINING_CONSTRAINT)
+                assertThat(it.reasons).contains(EligibilityReason.CONDITION_GUIDANCE_UNAVAILABLE)
             }
         }
     }
