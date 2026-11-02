@@ -330,6 +330,25 @@ class BundledConditionGuidanceTest {
     }
 
     @Test
+    fun piriformisBlockHoldsAllThreeItemsAcrossSeedsAndEquipmentAndRotates() = runBlocking<Unit> {
+        val full = inputs().toMap().getValue("piriformis_syndrome")
+        val bodyweightOnly = full.copy(availableEquipment = listOf(StandardEquipment.BODYWEIGHT))
+        listOf(full, bodyweightOnly).forEach { profile ->
+            val restrictions = restrictionsFor(profile, ConditionGuidanceResult.Loaded(guidance))
+            val blocks = (0L..5L).map { seed ->
+                MobilityBlockPolicy.select(restrictions, exercises, profile, emptySet(), seed).map { it.exerciseId }
+            }
+            blocks.forEach {
+                assertThat(it).containsExactly("figure-four-stretch", "lying-piriformis-stretch", "glute-bridge")
+            }
+            // Rotation: each of the three items leads the block for some seed.
+            assertThat(blocks.map { it.first() }.toSet()).hasSize(3)
+        }
+        val planned = (plan(bodyweightOnly) as ProgramValidationResult.Valid).workout.mobilityBlock
+        assertThat(planned.map { it.exerciseId }).contains("figure-four-stretch")
+    }
+
+    @Test
     fun bridgesInTheMobilityBlockKeepWorking() {
         val restrictions = restrictionsFor(
             inputs().toMap().getValue("piriformis_syndrome"), ConditionGuidanceResult.Loaded(guidance)
@@ -373,7 +392,7 @@ class BundledConditionGuidanceTest {
         OWNED_IDS.forEach { id ->
             assertWithMessage(id).that(exercises.getValue(id).reviewedMetadata).isNull()
             assertWithMessage(id).that(exercises.getValue(id).source?.attribution?.license)
-                .isEqualTo("Original work by the WallCrawl project")
+                .isEqualTo("Original work by the WallCrawl project, MIT License")
         }
         (listOf(inputs().first().second.copy(reportedConditions = emptySet())) + inputs().map { it.second })
             .forEach { profile ->

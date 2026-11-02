@@ -13,7 +13,7 @@ exact source URLs and recorded changes are retained in
 
 ## WallCrawl-owned additions
 
-The exercises below are not part of the pinned Workout Guide source. Their artwork, names and metadata are original work by the WallCrawl project, marked as "Original work by the WallCrawl project" (https://github.com/mcasillas17/WallCrawl/blob/main/LICENSE). The Everkinetic and Workout Guide licences above do not cover them, and no part of them was copied or traced from upstream or third-party artwork.
+The exercises below are not part of the pinned Workout Guide source. Their artwork, names and metadata are original work by the WallCrawl project, marked as "Original work by the WallCrawl project, MIT License" (https://github.com/mcasillas17/WallCrawl/blob/main/LICENSE). The Everkinetic and Workout Guide licences above do not cover them, and no part of them was copied or traced from upstream or third-party artwork.
 
 - `figure-four-stretch`: Figure-Four Stretch, Foot Against a Wall
 - `lying-piriformis-stretch`: Lying Piriformis Stretch, Knee Toward Opposite Shoulder

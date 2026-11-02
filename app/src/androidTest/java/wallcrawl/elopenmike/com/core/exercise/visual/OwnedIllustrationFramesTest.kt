@@ -52,7 +52,7 @@ class OwnedIllustrationFramesTest {
                         "workout-guide/assets/$id/frame-3.svg"
                     ).inOrder()
                 frames.forEach {
-                    assertThat(it.attribution?.license).isEqualTo("Original work by the WallCrawl project")
+                    assertThat(it.attribution?.license).isEqualTo("Original work by the WallCrawl project, MIT License")
                 }
             }
             val sheet = Bitmap.createBitmap(3 * FRAME_PX, FRAME_PX, Bitmap.Config.ARGB_8888)

@@ -19,6 +19,8 @@ import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
 import wallcrawl.elopenmike.com.core.model.ComplexityTier
 import wallcrawl.elopenmike.com.core.model.Difficulty
 import wallcrawl.elopenmike.com.core.model.Exercise
+import wallcrawl.elopenmike.com.core.model.ExerciseAttribution
+import wallcrawl.elopenmike.com.core.model.ExerciseSource
 import wallcrawl.elopenmike.com.core.model.ExercisePrescription
 import wallcrawl.elopenmike.com.core.model.ExerciseProgrammingMetadata
 import wallcrawl.elopenmike.com.core.model.ExerciseType
@@ -590,8 +592,24 @@ internal class PlannerFixtureContextFactory(
         } catch (error: IllegalArgumentException) {
             throw PlannerFixtureFormatException("$path.programming.recommendedRepRange is invalid for exerciseType.")
         }
+        // Only the owned marker matters to the planner; upstream entries keep no source here.
+        val owned = if (exercise.has("attribution")) {
+            val attribution = requireObject(exercise, "attribution", "$path.attribution")
+            ExerciseSource(
+                catalogId = ExerciseSource.OWNED_CATALOG_ID,
+                sourceId = requireString(exercise, "sourceId", "$path.sourceId"),
+                sourceSlug = requireString(exercise, "sourceSlug", "$path.sourceSlug"),
+                attribution = ExerciseAttribution(
+                    creator = requireString(attribution, "creator", "$path.attribution.creator"),
+                    creatorUrl = requireString(attribution, "creatorUrl", "$path.attribution.creatorUrl"),
+                    license = requireString(attribution, "license", "$path.attribution.license"),
+                    licenseUrl = requireString(attribution, "licenseUrl", "$path.attribution.licenseUrl")
+                )
+            )
+        } else null
         return Exercise(
             id = id,
+            source = owned,
             name = name,
             searchAliases = searchAliases,
             primaryMuscles = primaryMuscles,

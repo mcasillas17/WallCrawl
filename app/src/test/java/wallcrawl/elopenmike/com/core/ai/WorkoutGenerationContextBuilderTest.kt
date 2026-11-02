@@ -51,6 +51,7 @@ import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
 import wallcrawl.elopenmike.com.core.model.SupportRequirement
 import wallcrawl.elopenmike.com.core.model.UserProfile
+import wallcrawl.elopenmike.com.core.model.isOwnedByWallCrawl
 import wallcrawl.elopenmike.com.core.model.UserRestPreference
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
@@ -152,6 +153,28 @@ class WorkoutGenerationContextBuilderTest {
         assertThat(ProgramValidator(GeneratedWorkoutValidator(InMemoryExerciseCatalog(catalog)))
             .validate(proposal, context, allowRepair = false))
             .isInstanceOf(ProgramValidationResult.Valid::class.java)
+    }
+
+    @Test
+    fun build_withTheReviewedFlagOffNoOwnedExerciseCanFillAMainSlot() = runTest {
+        val catalog = PlannerFixtureContextFactory().bundledCatalogProjection().exercises
+        val owned = catalog.filter { it.isOwnedByWallCrawl }.map { it.id }
+        assertThat(owned).hasSize(7)
+        val context = WorkoutGenerationContextBuilder(
+            userProfileRepository = StubUserProfileRepository(
+                UserProfile(availableEquipment = StandardEquipment.ALL)
+            ),
+            workoutRepository = StubWorkoutRepository(emptyList()),
+            exerciseCatalog = InMemoryExerciseCatalog(catalog),
+            exerciseFilter = ExerciseFilter(),
+            historyAnalyzer = WorkoutHistoryAnalyzer(),
+            plannerFeatureFlags = PlannerFeatureFlags()
+        ).build()
+
+        assertThat(context.allowedExercises.map { it.id }).containsNoneIn(owned)
+        assertThat(context.allowedExercises).isNotEmpty()
+        assertThat(FakeWorkoutPlanner().generateWorkout(context).exercises.map { it.exerciseId })
+            .containsNoneIn(owned)
     }
 
     @Test

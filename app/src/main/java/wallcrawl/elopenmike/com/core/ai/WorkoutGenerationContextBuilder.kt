@@ -19,6 +19,7 @@ import wallcrawl.elopenmike.com.core.conditions.hasConditionInputs
 import wallcrawl.elopenmike.com.core.conditions.restrictionsFor
 import wallcrawl.elopenmike.com.core.conditions.MobilityBlockPolicy
 import wallcrawl.elopenmike.com.core.model.Exercise
+import wallcrawl.elopenmike.com.core.model.isOwnedByWallCrawl
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
 import wallcrawl.elopenmike.com.core.database.repository.DeloadRepository
@@ -218,8 +219,10 @@ class WorkoutGenerationContextBuilder(
             null -> if (conditionRestrictions == ConditionRestrictions.Unavailable) {
                 emptyList()
             } else {
+                // Owned exercises have no metadata, so the legacy filter would otherwise pass them
+                // into main slots; they are mobility and routine items only.
                 exerciseFilter.filterCandidates(
-                    allExercises = allExercises,
+                    allExercises = allExercises.filterNot { it.isOwnedByWallCrawl },
                     profile = profile
                 )
             }

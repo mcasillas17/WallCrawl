@@ -141,7 +141,7 @@ class BundledCatalogVocabularyTest {
     private companion object {
         const val UPSTREAM_EXERCISES = 302
         const val EXPECTED_EXERCISES = UPSTREAM_EXERCISES + 7
-        const val OWNED_LICENSE = "Original work by the WallCrawl project"
+        const val OWNED_LICENSE = "Original work by the WallCrawl project, MIT License"
         val ASSETS = File("src/main/assets")
         val CATALOG_FILE = File(ASSETS, "workout-guide/catalog.json")
         val OWNED_STRETCHES = setOf("figure-four-stretch", "lying-piriformis-stretch", "wrist-extensor-stretch")

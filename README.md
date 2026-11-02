@@ -236,7 +236,7 @@ restoring an archive never changes it.
   <img src="art/screenshots/today-screen-es.png" width="24%" alt="Spanish Today screen with a generated Empuje / Hipertrofia session, its focus muscles, and five Spanish exercise names" />
 </p>
 <p align="center">
-  <img src="art/screenshots/exercises-screen-es.png" width="24%" alt="Spanish exercise library showing 302 exercises with Spanish names, muscle chips, and equipment chips" />
+  <img src="art/screenshots/exercises-screen-es.png" width="24%" alt="Spanish exercise library (captured when the catalog held 302 exercises) with Spanish names, muscle chips, and equipment chips" />
   <img src="art/screenshots/active-workout-es.png" width="24%" alt="Spanish active workout logging a bench press set, with the load shown as 47,5 using the reader decimal mark and the unit still in pounds" />
   <img src="art/screenshots/profile-your-data-es.png" width="24%" alt="Spanish Your Data card with export, restore, and delete-all controls and their privacy and fresh-start guidance" />
   <img src="art/screenshots/profile-delete-confirmation-es.png" width="24%" alt="Spanish delete-all confirmation naming exactly what is removed, what is left alone, and that the language setting is not changed" />
@@ -767,9 +767,12 @@ The source artwork and WallCrawl's adaptations are CC BY-SA 4.0. The source `LIC
 and WallCrawl notice are preserved under
 `app/src/main/assets/workout-guide/`. WallCrawl source code remains covered by
 the repository's MIT license; third-party assets retain their own terms. The 7 owned
-exercises are marked "Original work by the WallCrawl project" in `catalog.json` and in the
+exercises are marked "Original work by the WallCrawl project, MIT License" in `catalog.json` and in the
 owned section of `ATTRIBUTION.md`; their art is simple original line art, not copied or
 traced from upstream or third-party artwork.
+The catalog and context identity hash the pinned upstream commit and the reviewed records, not the owned
+entries, so bump `version` in `condition-guidance.json` whenever an owned entry (its name, art or
+metadata) changes.
 
 The license also requires the credit to reach the person using the app, not
 only someone reading this repository. **Training Profile → Credits & Licenses**

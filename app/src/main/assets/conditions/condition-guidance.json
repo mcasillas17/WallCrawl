@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "2026-11-02.1",
+  "version": "2026-11-02.2",
   "exerciseDemands": {
     "active-hang": [
       "HAND_GRIP_LOAD"
@@ -623,12 +623,12 @@
       ],
       "exerciseCues": {
         "figure-four-stretch": {
-          "en": "Aim for a slight stretch only. Stop if the position brings on buttock or leg symptoms.",
-          "es": "Busca solo un estiramiento leve. Detente si la posición te provoca síntomas en el glúteo o la pierna."
+          "en": "Lie on your back with one foot flat on the wall, rest the other ankle on that knee, and let the knee fall out. Aim for a slight stretch only. Stop if the position brings on buttock or leg symptoms.",
+          "es": "Acuéstate boca arriba con un pie apoyado en la pared, apoya el otro tobillo sobre esa rodilla y deja que la rodilla se abra hacia afuera. Busca solo un estiramiento leve. Detente si la posición te provoca síntomas en el glúteo o la pierna."
         },
         "lying-piriformis-stretch": {
-          "en": "Keep it gentle. Stop if leg or buttock symptoms increase.",
-          "es": "Hazlo con suavidad. Detente si aumentan los síntomas en la pierna o el glúteo."
+          "en": "Lie on your back and draw one knee across your body toward the opposite shoulder, holding it with your hands. Keep it gentle. Stop if leg or buttock symptoms increase.",
+          "es": "Acuéstate boca arriba y lleva una rodilla hacia el hombro contrario, cruzando el cuerpo, sujetándola con las manos. Hazlo con suavidad. Detente si aumentan los síntomas en la pierna o el glúteo."
         },
         "glute-bridge": {
           "en": "Stop if leg symptoms increase.",
@@ -690,7 +690,7 @@
         "reviewerModelId": "claude-opus-5-5",
         "reviewedAtEpochMillis": 1793491200000,
         "reviewedContentId": "piriformis_syndrome",
-        "reviewedContentSha256": "ffe25f33b7cab4351f32c0880c8c44487d706a54d3c5e9f81bc2c7f45f7f4c23",
+        "reviewedContentSha256": "c895d45a3c0036cda80b3cdd6cf23a13f573b12564ccee65dafc58c2dde03984",
         "sourceReferences": [
           "https://doi.org/10.7759/cureus.43804",
           "https://doi.org/10.7759/cureus.32952",
@@ -782,12 +782,12 @@
           "es": "Muévete despacio, unos 3 segundos en cada dirección. No dejes que la pelvis se cargue sobre una cadera."
         },
         "side-lying-isometric-hip-abduction-hold": {
-          "en": "Lie with the painful side up, with a pillow between your knees. If both hips hurt, skip this one. Stop if your symptoms increase.",
-          "es": "Acuéstate con el lado doloroso arriba y una almohada entre las rodillas. Si te duelen las dos caderas, omite este ejercicio. Detente si aumentan los síntomas."
+          "en": "Lie on your side with the painful side up and a pillow between your knees. Lift the top leg a little and hold it. If both hips hurt, skip this one. Stop if your symptoms increase.",
+          "es": "Acuéstate de lado con el lado doloroso arriba y una almohada entre las rodillas. Levanta un poco la pierna de arriba y sostenla. Si te duelen las dos caderas, omite este ejercicio. Detente si aumentan los síntomas."
         },
         "standing-isometric-gluteal-contraction": {
-          "en": "Hold a wall or chair for support. Stop if your symptoms increase.",
-          "es": "Apóyate en una pared o una silla. Detente si aumentan los síntomas."
+          "en": "Stand holding a wall or chair, and move the free leg in and out. Keep your pelvis level. Stop if your symptoms increase.",
+          "es": "Párate sujetándote de una pared o una silla y mueve la pierna libre hacia afuera y hacia adentro. Mantén la pelvis nivelada. Detente si aumentan los síntomas."
         }
       },
       "notes": {
@@ -843,7 +843,7 @@
         "reviewerModelId": "claude-opus-5-5",
         "reviewedAtEpochMillis": 1793491200000,
         "reviewedContentId": "gluteal_tendinopathy",
-        "reviewedContentSha256": "01d796f5184798b7d17fc21f1b12a3dd6be0e0fe7d85f27dbd398f8f332ee84d",
+        "reviewedContentSha256": "577d438f978f510d8db58dc48a19f039009032ca7147bad592606cbd5730c548",
         "sourceReferences": [
           "https://doi.org/10.2519/jospt.2015.5829",
           "https://doi.org/10.1186/s12891-016-1043-6",
@@ -855,7 +855,7 @@
           "https://doi.org/10.1016/j.clinbiomech.2016.10.003"
         ],
         "decisionRationale": "Owner-authorized AI authoring for alpha use. Restrictions, red flags and doses follow the research consolidation for this condition; nothing here is a care plan.",
-        "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. Evidence is low: all but one restriction is expert opinion, and no individual exercise is shown to work. The doses come from one pilot and from a protocol that did not test these exercises alone. No study tested the three-exercise combination. The two isometric holds come from one 30-person pilot trial, and the side-lying hold showed no advantage over isotonic work there.",
+        "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. Evidence is low: all but one restriction is expert opinion, and no individual exercise is shown to work. The doses come from one pilot and from a protocol that did not test these exercises alone. No study tested the three-exercise combination. The two isometric holds come from one 30-person pilot trial, and the side-lying hold showed no advantage over isotonic work there. For the standing hold the source only says the free leg moves in and out while holding a wall or chair; it does not state which leg stands, how far the leg moves, or the pelvis position for this exercise. The cue to keep the pelvis level comes from this condition's general restriction on dropping the pelvis, and the illustration draws a small movement.",
         "schemaVersion": 1,
         "policyVersion": 1
       }
@@ -1318,8 +1318,8 @@
       ],
       "exerciseCues": {
         "wrist-extensor-stretch": {
-          "en": "Stretch gently, only to a pull. Stop if your elbow symptoms increase.",
-          "es": "Estira con suavidad, solo hasta sentir tensión. Detente si aumentan los síntomas del codo."
+          "en": "Hold one arm out with the palm down, then use the other hand to gently bend the wrist down and hold it. Stretch gently, only to a pull. Stop if your elbow symptoms increase.",
+          "es": "Extiende un brazo con la palma hacia abajo y, con la otra mano, flexiona suavemente la muñeca hacia abajo y sostenla. Estira con suavidad, solo hasta sentir tensión. Detente si aumentan los síntomas del codo."
         }
       },
       "notes": {
@@ -1367,7 +1367,7 @@
         "reviewerModelId": "claude-opus-5-5",
         "reviewedAtEpochMillis": 1793491200000,
         "reviewedContentId": "lateral_elbow_tendinopathy",
-        "reviewedContentSha256": "4f1d048e1d3d533579883eb0a38878c279fd1aeaec63006d8bd3eb4d460e680b",
+        "reviewedContentSha256": "206b14d82f02f9a57487d4af6e79b40d4e2b1eb28058ffee8e5239a8cce05e65",
         "sourceReferences": [
           "https://doi.org/10.2519/jospt.2022.0302",
           "https://doi.org/10.1136/bmjopen-2021-053841",
@@ -1404,8 +1404,8 @@
       ],
       "exerciseCues": {
         "tendon-gliding-sequence": {
-          "en": "Move slowly and keep it gentle. Stop if numbness or tingling increases.",
-          "es": "Muévete despacio y con suavidad. Detente si aumentan el adormecimiento o el hormigueo."
+          "en": "Move your fingers slowly through three positions: straight, hook, fist. Keep it gentle. Stop if numbness or tingling increases.",
+          "es": "Mueve los dedos despacio por tres posiciones: rectos, en gancho y en puño. Hazlo con suavidad. Detente si aumentan el adormecimiento o el hormigueo."
         }
       },
       "notes": {
@@ -1451,7 +1451,7 @@
         "reviewerModelId": "claude-opus-5-5",
         "reviewedAtEpochMillis": 1793491200000,
         "reviewedContentId": "carpal_tunnel_syndrome",
-        "reviewedContentSha256": "d70beb5936793870af1c52ae6d9b0d2045e665a6f4bb2f68af8d6fd16dd652b7",
+        "reviewedContentSha256": "5baa6899f810e02caf97024a952f691b947848876f625a29a2890f2c8ec8cc74",
         "sourceReferences": [
           "https://doi.org/10.1002/14651858.CD009899",
           "https://doi.org/10.1518/001872007779598127",
@@ -1512,8 +1512,8 @@
           "es": "Baja solo hasta unos 45 grados de flexión de rodilla y sostén ahí 2 segundos."
         },
         "straight-leg-raise": {
-          "en": "Keep the knee straight and lift slowly. Stop if your knee pain increases.",
-          "es": "Mantén la rodilla recta y levanta despacio. Detente si aumenta el dolor de rodilla."
+          "en": "Lie on your back with one knee bent and that foot flat, then lift the other leg, keeping it straight, and lower it slowly. Stop if your knee pain increases.",
+          "es": "Acuéstate boca arriba con una rodilla doblada y ese pie apoyado, levanta la otra pierna sin doblarla y bájala despacio. Detente si aumenta el dolor de rodilla."
         }
       },
       "notes": {
@@ -1566,7 +1566,7 @@
         "reviewerModelId": "claude-opus-5-5",
         "reviewedAtEpochMillis": 1793491200000,
         "reviewedContentId": "patellofemoral_pain",
-        "reviewedContentSha256": "0a93fb48fcd366245d135a4d82e9e1abe85351f767602da3bdcb4151289e63ab",
+        "reviewedContentSha256": "e277eb6e0906fb2a17921aa03f4f7cc09dfc07cb44928596ec2f30e59b491f60",
         "sourceReferences": [
           "https://doi.org/10.2519/jospt.2014.4936",
           "https://doi.org/10.4085/1062-6050-231-15",

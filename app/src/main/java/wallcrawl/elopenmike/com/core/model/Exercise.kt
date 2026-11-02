@@ -27,7 +27,16 @@ data class ExerciseSource(
     val sourceId: String,
     val sourceSlug: String,
     val attribution: ExerciseAttribution
-)
+) {
+    companion object {
+        /** Catalog marker of the exercises WallCrawl owns beside the pinned upstream catalog. */
+        const val OWNED_CATALOG_ID = "wallcrawl-owned"
+    }
+}
+
+/** Owned exercises carry no reviewed metadata and are never chosen for a main session slot. */
+val Exercise.isOwnedByWallCrawl: Boolean
+    get() = source?.catalogId == ExerciseSource.OWNED_CATALOG_ID
 
 data class ExerciseAttribution(
     val creator: String,

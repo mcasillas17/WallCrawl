@@ -103,7 +103,7 @@ class WorkoutGuideCatalogParserTest {
         )
         owned.forEach { exercise ->
             assertThat(exercise.source!!.attribution.license)
-                .isEqualTo("Original work by the WallCrawl project")
+                .isEqualTo("Original work by the WallCrawl project, MIT License")
             assertThat(exercise.reviewedMetadata).isNull()
             assertThat(exercise.programming).isNull()
             val frames = snapshot.framesByExerciseId.getValue(exercise.id)
