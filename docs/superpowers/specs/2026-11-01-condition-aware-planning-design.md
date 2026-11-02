@@ -1,14 +1,20 @@
 # Condition-aware planning design
 
-**Status:** Design approved in conversation on 2026-11-01. Written spec awaiting owner review.
+**Status:** Approved on 2026-11-01. Amended the same day after the owner approved seven changes
+from the [research consolidation](../../research/conditions/CONSOLIDATION.md), section 8. Where an
+earlier draft differs, this text governs.
 
 **Engine map:** [deterministic engine report](../../engine-map/deterministic-engine-report.html)
 
 ## Goal
 
-Let a user report a musculoskeletal condition so that automatic workouts leave out movements
-linked to aggravating it and add an optional mobility routine for it. A user with piriformis
-syndrome, for example, should still get a useful automatic workout rather than a refusal.
+Let a user report a musculoskeletal condition so that automatic workouts leave out the few movements
+the research says to avoid, prefer alternatives to movements it says to modify, and add an optional
+mobility routine for it. A user with piriformis syndrome, for example, should still get a useful
+automatic workout rather than a refusal.
+
+The research does not support banning most movements: 75 of its 83 restrictions say modify. A
+modify exercise can therefore still appear, with a cue, when the plan has nothing better.
 
 ## Product position
 
@@ -53,15 +59,38 @@ The overlay holds:
 | Section | Keyed by | Fields |
 | --- | --- | --- |
 | Movement demands | Exercise ID | Set of `MovementDemand` values; presence means this exercise was reviewed |
-| Conditions | Condition ID | Restricted demands, routine, red flags, evidence grade, sources, review provenance |
-| Joint labels | `TrainingConstraint` | Restricted demands |
+| Conditions | Condition ID | Avoid demands, modify demands, routine, exercise cues, notes, red flags, evidence grade, sources, review provenance |
+| Joint labels | `TrainingConstraint` | Modify demands |
+| Demand cues | `MovementDemand` | Cue text by language |
 
-`MovementDemand` is a closed, categorical vocabulary derived from the research pilot, such as
-loaded deep hip flexion or overhead pressing. It carries no numeric risk or joint-stress score,
-which the evidence review rules out.
+`MovementDemand` is a closed, categorical vocabulary of 21 values: the 26 in the consolidation minus
+`THUMB_DOWN_ARM_RAISE`, `ARM_RAISE_ABOVE_90`, `BEHIND_NECK_PRESS_OR_PULL`, `NARROW_GRIP_BENCH` and
+`FIGURE_FOUR_POSITION`, which become per-exercise cues on their condition. It carries no numeric
+risk or joint-stress score, which the evidence review rules out.
 
-Routine entries reference catalog exercise IDs and hold a duration or repetition target. A
-condition with weak evidence has an empty routine and keeps its restrictions and red flags.
+Routine entries reference catalog exercise IDs and hold sets, then either a duration or reps with an
+optional hold, plus rest. Doses come from a published source and are never invented; an exercise
+without a usable dose stays out of the routine. Dose applies per session. The block runs with each
+workout, so the app does not follow a trial's weekly schedule and does not claim to.
+
+Notes hold the restrictions that are not exercise properties, such as stopping when leg pain
+increases, as plain text by language. The app asks no new medical questions.
+
+Approved routines:
+
+| Condition | Routine |
+| --- | --- |
+| Piriformis syndrome | Figure-four stretch, lying piriformis stretch, glute bridge |
+| Gluteal tendinopathy | Section 5 of the consolidation |
+| Lumbar radiculopathy | Cat-cow, bird dog, glute bridge |
+| Nonspecific low back pain | Section 5 of the consolidation |
+| Rotator cuff-related shoulder pain | Cross-body shoulder stretch |
+| Lateral elbow tendinopathy | Wrist extensor stretch |
+| Carpal tunnel syndrome | Tendon gliding sequence |
+| Patellofemoral pain | Side-lying hip abduction, partial-range squat, straight leg raise |
+
+Nerve sliders are in no routine. `HIP_SENSITIVE` and the other joint labels have no routine. Every
+routine stretch carries a stop-if-symptoms cue, and no copy claims a benefit from any routine.
 
 The parser rejects unknown exercise IDs, unknown demands, missing provenance and oversized input.
 A load failure produces a typed failure and disables condition-aware planning. It never treats a
@@ -96,15 +125,23 @@ predicate:
 
 | Case | Reason |
 | --- | --- |
-| Exercise demands intersect the user's restricted demands | `CONDITION_RESTRICTED_DEMAND` |
+| Exercise demands intersect the user's avoid demands | `CONDITION_RESTRICTED_DEMAND` |
 | User has a restriction and the exercise has no overlay entry | `CONDITION_DEMANDS_UNREVIEWED` |
 
-Restricted demands are the union across selected conditions and joint labels. Both reasons report
-through a new aggregate failure, `CONDITIONS_REMOVED_ALL`, with its own Today copy. A profile with
-no conditions and no joint labels behaves exactly as it does today, and its plans do not change.
+Avoid and modify demands are each the union across selected conditions and joint labels. A demand
+in both is treated as avoid. Both reasons report through a new aggregate failure,
+`CONDITIONS_REMOVED_ALL`, with its own Today copy. A profile with no conditions and no joint labels
+behaves exactly as it does today, and its plans do not change.
 
-Joint labels change meaning: an exercise passes a label when it has an overlay entry with no
-restricted demand. `LOW_IMPACT_ONLY` still uses `impactLevel`. The rule replaces
+### Ranking
+
+An eligible exercise with a modify demand ranks after one without, in both compound and accessory
+ordering, directly after split focus. The rank is restricted or not, never a count. Each exercise
+selected with a modify demand shows that demand's cue. No source tested this mechanism; it is app
+design.
+
+Joint labels change meaning: an exercise passes a label when it has an overlay entry, and ranks
+lower when that entry has a modify demand. `LOW_IMPACT_ONLY` still uses `impactLevel`. The rule replaces
 `clearsJointConstraintsOf` in all its callers, so the supported-regression exception and
 `StateBasedTrainingPolicy` read one predicate. The second check returns
 `TRAINING_CONSTRAINT_REACHED_POLICY` as it does today.
@@ -116,8 +153,10 @@ has a routine.
 
 Selection is deterministic: conditions in stable ID order contribute routine entries in authored
 order, rotating by the same seed as the split, up to three items. Duplicates are removed. Entries
-are subject to user exclusions, equipment and restricted demands, and the block is what remains.
-The block never causes a plan to fail.
+are subject to user exclusions, equipment and avoid demands, and the block is what remains. Modify
+demands do not filter a routine, because a condition's routines can carry its own modify tags. An
+avoid demand from any selected condition does, so a lying piriformis stretch is removed for someone
+who also reports gluteal tendinopathy. The block never causes a plan to fail.
 
 The block bypasses `isStrengthWork()` only through this path. Stretches stay out of compound and
 accessory selection.
@@ -138,7 +177,7 @@ strength exercises such as `clamshell`, which would otherwise earn credit.
 ### Validation
 
 `ProgramValidator` checks the block: IDs exist, each entry belongs to a selected condition's
-routine, no entry has a restricted demand, and the block respects the three-item limit. A violation
+routine, no entry has an avoid demand, and the block respects the three-item limit. A violation
 is typed and is not repairable. `WorkoutDurationEstimator` includes the block in the estimate.
 
 ### Pain feedback
@@ -149,13 +188,14 @@ from repeated stops. The planner still does not read `PAIN_STOP`.
 
 ### Manual templates
 
-Templates still allow every exercise. The editor shows a warning next to any exercise with a
-restricted demand, and also when the exercise has no overlay entry. Nothing is hidden.
+Templates still allow every exercise. The editor shows a warning next to any exercise with an
+avoid or modify demand, and also when the exercise has no overlay entry. Nothing is hidden.
 
 ## Interface copy
 
-- Adding a condition shows its red flags with "see a clinician" guidance and requires
-  acknowledgement. It does not block use.
+- Adding a condition shows its red flags, in plain language with "see a clinician" guidance, and its
+  notes, and requires acknowledgement. It does not block use.
+- A reported condition never implies that an exercise without a restriction is safe.
 - The Today card names the condition the mobility block relates to, as general information.
 - All new copy exists in English and Spanish. Overlay text uses the same localization validation.
 - `SafetyCopyTest` gains an explicit allowlist for condition names. Claim vocabulary stays
@@ -198,13 +238,16 @@ for the final two conditions processed.
 
 New stretches need illustrations, Spanish text, a licensed source and attribution. The pinned
 upstream catalog cannot be edited, so owned additions need their own source path through the
-importer, and the attribution notices must cover them. The pilot's list decides how many are worth
-that cost, with the piriformis or figure-four stretch expected first.
+importer, and the attribution notices must cover them. The approved routines need seven: figure-four
+stretch, lying piriformis stretch, side-lying isometric hip abduction hold, standing isometric
+gluteal contraction, wrist extensor stretch, tendon gliding sequence and straight leg raise.
 
 ## Testing
 
-- **Eligibility:** restricted, unreviewed and clean cases; union across conditions; regression
-  bypass refused; aggregate failure stage; second check in the state policy.
+- **Eligibility:** avoid, unreviewed and clean cases; union across conditions; regression bypass
+  refused; aggregate failure stage; second check in the state policy.
+- **Ranking:** a modify exercise ranks after a clean one, is still chosen when nothing else fits, and
+  shows its cue.
 - **Regression guard:** a full-cohort test proves plans are unchanged for a profile with no
   conditions and no joint labels.
 - **Mobility block:** deterministic selection, rotation, limit, exclusion and equipment filtering,

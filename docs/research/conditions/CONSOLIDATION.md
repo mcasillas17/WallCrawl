@@ -68,6 +68,20 @@ There are 26 values, up from 16 before the deeper search. Tag an exercise with a
 | DEEP_KNEE_FLEXION_LOAD | A weight-bearing squat, lunge or wall squat goes deeper than about 45 degrees of knee flexion. | [patellofemoral_pain](patellofemoral_pain.md) |
 | END_RANGE_KNEE_EXTENSION_LOAD | Resisted seated knee extension works the arc from about 45 to 0 degrees. | [patellofemoral_pain](patellofemoral_pain.md) |
 
+### Approved vocabulary and tag test
+
+The owner approved 21 values on 2026-11-01. THUMB_DOWN_ARM_RAISE, ARM_RAISE_ABOVE_90, BEHIND_NECK_PRESS_OR_PULL, NARROW_GRIP_BENCH and FIGURE_FOUR_POSITION become per-exercise cues.
+
+Two independent agents tagged a fixed random 40 of the 302 catalog exercises. They matched exactly on 34 of 40, with an overall set overlap of 0.87. Both were the same model, so this likely overstates what two people would agree on, and 40 exercises leave some tags with one or two uses. Five of the six disagreements came from PROLONGED_SITTING and END_RANGE_SPINE_POSITION, and the sixth from END_RANGE_HIP_EXTENSION. Both agents also said HEAVY_EXTERNAL_LOAD had no real threshold.
+
+These rules refine the definitions above for authoring:
+
+- **PROLONGED_SITTING:** continuous seated work or seated holds only. Machine seats used for ordinary sets do not count, and neither does cycling, which is SUSTAINED_LOCOMOTION.
+- **END_RANGE_SPINE_POSITION:** cat-cow does not get this tag. It is in the lumbar radiculopathy routine, and the source warns about end-range Pilates and yoga positions, not this movement.
+- **END_RANGE_HIP_EXTENSION:** active or loaded work only, not stretches.
+- **HEAVY_EXTERNAL_LOAD:** barbell, Smith machine, landmine and machine exercises. The catalog holds no load data, so this is equipment standing in for load. Dumbbell, cable and band work do not get it, even though a heavy dumbbell is heavy.
+- **SINGLE_LEG_HIP_CONTROL:** includes split squats and alternating single-leg work. Lateral band walks do not count.
+
 ## 3. Condition restrictions
 
 The tag applies only where its condition's item says so. 75 of the 83 items are `modify`, and `avoid` is marked below. 29 of the 83 items are not movement properties, so they are listed as rules and need another mechanism, such as a symptom prompt, a safety gate or education. The "Basis" column gives each file's `evidenceStrength`. "Expert" and "Biomech." mark evidence that was only expert opinion or biomechanical. Sources are the item's own `sourceIds`.

@@ -14,7 +14,8 @@
 
 - No model runs in the app. All workout decisions come from deterministic rules over bundled data.
 - Copy never says "safe for", "helps heal", "treats" or "prevents". It says "chosen to work around".
-- `MovementDemand` is categorical, with no numeric risk or joint-stress score.
+- `MovementDemand` is categorical, with no numeric risk or joint-stress score. It has 21 values: section 2 of `docs/research/conditions/CONSOLIDATION.md` minus `THUMB_DOWN_ARM_RAISE`, `ARM_RAISE_ABOVE_90`, `BEHIND_NECK_PRESS_OR_PULL`, `NARROW_GRIP_BENCH` and `FIGURE_FOUR_POSITION`.
+- Avoid demands exclude. Modify demands rank lower and show a cue. Doses are never invented.
 - A profile with no conditions and no joint labels must get byte-identical plans to today.
 - Language never affects a training decision. All new copy exists in English and Spanish.
 - Mobility blocks hold at most three items and never cause a plan to fail.
@@ -82,15 +83,15 @@ The owner reviews the vocabulary and the new-exercise list before Task 2 starts.
 - Consumes: the vocabulary from Task 1.
 - Produces:
   - `enum class MovementDemand` with the Task 1 values.
-  - `data class RoutineEntry(val exerciseId: String, val targetSets: Int, val targetReps: Int?, val targetDurationSeconds: Int?)`, with exactly one target set.
-  - `data class ConditionRecord(val id: String, val restrictedDemands: Set<MovementDemand>, val routine: List<RoutineEntry>, val redFlags: Map<String, List<String>>, val evidenceGrade: String, val sources: List<String>, val provenance: AiReviewProvenance)`, with red flags keyed by language.
-  - `data class ConditionGuidance(val version: String, val exerciseDemands: Map<String, Set<MovementDemand>>, val conditions: Map<String, ConditionRecord>, val jointLabelDemands: Map<TrainingConstraint, Set<MovementDemand>>)`.
+  - `data class RoutineEntry(val exerciseId: String, val targetSets: Int, val targetReps: Int?, val targetDurationSeconds: Int?, val holdSeconds: Int?, val restSeconds: Int)`, with exactly one of reps or duration, and a hold only with reps.
+  - `data class ConditionRecord(val id: String, val avoidDemands: Set<MovementDemand>, val modifyDemands: Set<MovementDemand>, val routine: List<RoutineEntry>, val exerciseCues: Map<String, Map<String, String>>, val notes: Map<String, List<String>>, val redFlags: Map<String, List<String>>, val evidenceGrade: String, val sources: List<String>, val provenance: AiReviewProvenance)`, with text keyed by language and `exerciseCues` by exercise ID first.
+  - `data class ConditionGuidance(val version: String, val exerciseDemands: Map<String, Set<MovementDemand>>, val conditions: Map<String, ConditionRecord>, val jointLabelDemands: Map<TrainingConstraint, Set<MovementDemand>>, val demandCues: Map<MovementDemand, Map<String, String>>)`. Joint label demands are modify demands.
   - `interface ConditionGuidanceSource { suspend fun guidance(): ConditionGuidanceResult }`.
   - `sealed interface ConditionGuidanceResult { Loaded(guidance); Unavailable }`.
 
 - [ ] **Step 1: Write failing parser tests**
 
-`validOverlayParses`, `unknownDemandIsRejected`, `missingProvenanceIsRejected`, `duplicateKeyIsRejected`, `oversizedInputIsRejected`, `lowImpactOnlyInJointLabelsIsRejected`, `routineEntryWithBothTargetsIsRejected`. Each rejection asserts a thrown `ConditionGuidanceFormatException`.
+`validOverlayParses`, `unknownDemandIsRejected`, `missingProvenanceIsRejected`, `duplicateKeyIsRejected`, `oversizedInputIsRejected`, `lowImpactOnlyInJointLabelsIsRejected`, `routineEntryWithBothTargetsIsRejected`, `holdWithoutRepsIsRejected`, `demandInBothAvoidAndModifyIsRejected`. Each rejection asserts a thrown `ConditionGuidanceFormatException`.
 
 - [ ] **Step 2: Run them and confirm they fail because the classes are missing**
 
@@ -111,7 +112,7 @@ git commit -m "feat(conditions): add condition guidance overlay parser"
 
 **Files:**
 - Create: `core/conditions/ConditionRestrictions.kt`
-- Modify: `core/ai/ExerciseEligibilityPolicy.kt:30-122,146-190`, `core/ai/StateBasedTrainingPolicy.kt:275-282`, `core/model/Exercise.kt:193-204`, `core/model/AutomaticExerciseEligibility.kt:23-33,54-62`, `core/ai/WorkoutGenerationContextBuilder.kt:168-186`, `feature/today/TodayViewModel.kt:625-645`, `feature/today/TodayUiState.kt:50`
+- Modify: `core/ai/FakeWorkoutPlanner.kt:341-355,387-402`, `core/ai/ExerciseEligibilityPolicy.kt:30-122,146-190`, `core/ai/StateBasedTrainingPolicy.kt:275-282`, `core/model/Exercise.kt:193-204`, `core/model/AutomaticExerciseEligibility.kt:23-33,54-62`, `core/ai/WorkoutGenerationContextBuilder.kt:168-186`, `feature/today/TodayViewModel.kt:625-645`, `feature/today/TodayUiState.kt:50`
 - Modify: `app/src/test/resources/planner-fixtures/reviewed-enabled-uncleared-joint-constraint.json`, `reviewed-enabled-cleared-joint-constraints.json`
 - Test: `app/src/test/java/wallcrawl/elopenmike/com/core/conditions/ConditionRestrictionsTest.kt`, existing `ExerciseEligibilityPolicy` tests
 
@@ -119,8 +120,10 @@ git commit -m "feat(conditions): add condition guidance overlay parser"
 - Consumes: `ConditionGuidanceResult`, `ConditionGuidance`.
 - Produces:
   - `fun restrictionsFor(profile: UserProfile, result: ConditionGuidanceResult): ConditionRestrictions`.
-  - `sealed interface ConditionRestrictions { None; Active(demands: Set<MovementDemand>, guidance: ConditionGuidance); Unavailable }`.
-  - `fun ConditionRestrictions.decisionFor(exerciseId: String): EligibilityReason?`.
+  - `sealed interface ConditionRestrictions { None; Active(avoid: Set<MovementDemand>, modify: Set<MovementDemand>, guidance: ConditionGuidance); Unavailable }`. A demand in both unions goes in `avoid` only.
+  - `fun ConditionRestrictions.decisionFor(exerciseId: String): EligibilityReason?`, null for a modify exercise.
+  - `fun ConditionRestrictions.ranksLower(exerciseId: String): Boolean`, read in both planner comparators directly after `trainsAsFocus`.
+  - `fun ConditionRestrictions.cuesFor(exerciseId: String, language: String): List<String>`.
   - New reasons `CONDITION_RESTRICTED_DEMAND`, `CONDITION_DEMANDS_UNREVIEWED`, and `CONDITION_GUIDANCE_UNAVAILABLE`.
   - New failures `CONDITIONS_REMOVED_ALL`, `CONDITION_GUIDANCE_UNAVAILABLE`, mapped to new `TodayError` values with English and Spanish strings.
   - `evaluate(..., restrictions: ConditionRestrictions)`, and the same parameter on `StateBasedTrainingPolicy.evaluate`.
@@ -132,12 +135,15 @@ git commit -m "feat(conditions): add condition guidance overlay parser"
 @Test fun conditionsWithUnavailableOverlayAreUnavailable()
 @Test fun unknownConditionIdIsUnavailableNotIgnored()
 @Test fun demandsAreTheUnionAcrossConditionsAndJointLabels()
+@Test fun demandInBothUnionsIsTreatedAsAvoid()
 @Test fun lowImpactOnlyContributesNoDemands()
-@Test fun restrictedDemandIsRefused()
+@Test fun avoidDemandIsRefused()
+@Test fun modifyDemandIsEligibleAndRanksLower()
+@Test fun modifyExerciseIsChosenWhenNothingCleanFitsAndShowsItsCue()
 @Test fun exerciseWithoutOverlayEntryIsRefusedWhenRestricted()
 @Test fun cleanReviewedExerciseIsAllowedForHipLabel()
-@Test fun restrictedRegressionCannotLiftAdvancedCeiling()
-@Test fun statePolicyRefusesRestrictedExercise() // TRAINING_CONSTRAINT_REACHED_POLICY
+@Test fun avoidedRegressionCannotLiftAdvancedCeiling()
+@Test fun statePolicyRefusesAvoidedExercise() // TRAINING_CONSTRAINT_REACHED_POLICY
 @Test fun aggregateFailureIsConditionsRemovedAll()
 ```
 
@@ -173,7 +179,10 @@ git commit -m "feat(planner): apply condition restrictions through one predicate
 @Test fun bundledOverlayParses()
 @Test fun everyAcceptedRecordHasADemandEntry()
 @Test fun everyRoutineEntryIsInTheCatalogAndHasAMatchingType()
-@Test fun everyConditionHasEnglishAndSpanishRedFlags()
+@Test fun everyRoutineDoseMatchesConsolidationSectionFive()
+@Test fun noRoutineContainsANerveSlider()
+@Test fun everyConditionHasEnglishAndSpanishRedFlagsAndNotes()
+@Test fun everyDemandHasEnglishAndSpanishCues()
 @Test fun everyRecordHasDoiOrPmidSources()
 @Test fun fullGymGetsAPlanForEachConditionAndJointLabel()
 @Test fun bodyweightOnlyOutcomeIsAPlanOrATypedRefusal()
@@ -185,7 +194,7 @@ The full-gym test runs `FakeWorkoutPlanner` and `ProgramValidator` with the real
 
 - [ ] **Step 3: Author the asset**
 
-Tag exercises in reviewed batches, recording provenance per record. Routine entries reference catalog IDs only. Task 9 adds new exercises. Have an independent agent audit the tags against the movement definitions and list disagreements for resolution.
+Tag exercises in reviewed batches, recording provenance per record, using the tag definitions in section 2 of the consolidation, as refined by its tag test subsection. Routine entries reference catalog IDs only. Task 9 adds new exercises. Follow the spec's routine table: the piriformis routine has no FAIR stretch or clamshell, the elbow routine is the wrist extensor stretch only, and patellofemoral has no quadriceps setting. Map the 29 rule items in section 3 of the consolidation to notes, rewrite red flags in plain language with no UK-specific actions, and make the four shoulder tags and figure-four into `exerciseCues`. Give the partial squat a depth cue. The lying piriformis stretch's source leaves its set count unclear: author one set of 10 and say so in its provenance limitations. Have an independent agent audit the tags against the movement definitions and list disagreements for resolution.
 
 - [ ] **Step 4: Run the tests and record candidate counts per condition and equipment profile in the coverage report**
 
@@ -208,6 +217,7 @@ git commit -m "feat(conditions): add reviewed condition guidance content"
   - `UserProfile.reportedConditions: Set<String> = emptySet()`, which keeps unknown IDs as opaque strings.
   - `enum class ExerciseRole { MAIN, MOBILITY }`.
   - `WorkoutExercise.role: ExerciseRole = ExerciseRole.MAIN`.
+  - `ExercisePrescription.holdSeconds: Int? = null`, valid only on `BODYWEIGHT_REPS`, and the matching `WorkoutExercise.targetHoldSeconds: Int? = null`. Logging still records reps.
   - `ARCHIVE_VERSION = 7`, with `WALLCRAWL_SCHEMA_VERSION = 17`.
 
 - [ ] **Step 1: Write failing tests**
@@ -224,7 +234,7 @@ git commit -m "feat(conditions): add reviewed condition guidance content"
 
 - [ ] **Step 2: Run them and confirm they fail**
 
-- [ ] **Step 3: Implement `MIGRATION_16_17` with `reportedConditions TEXT NOT NULL DEFAULT '[]'` and `role TEXT NOT NULL DEFAULT 'MAIN'`, plus the archive and digest changes**
+- [ ] **Step 3: Implement `MIGRATION_16_17` with `reportedConditions TEXT NOT NULL DEFAULT '[]'`, `role TEXT NOT NULL DEFAULT 'MAIN'` and a nullable `targetHoldSeconds INTEGER`, plus the archive and digest changes**
 
 Add a condition-guidance version to `WorkoutGenerationContext` for the digest. Reject an oversized condition list on restore with the codec's existing bounds.
 
@@ -260,7 +270,10 @@ git commit -m "feat(data): persist reported conditions and exercise roles"
 @Test fun blockHoldsAtMostThreeItems()
 @Test fun duplicateAcrossConditionsAppearsOnce()
 @Test fun itemAlreadySelectedAsMainWorkIsDropped()
-@Test fun exclusionsEquipmentAndRestrictedDemandsFilterTheBlock()
+@Test fun exclusionsEquipmentAndAvoidDemandsFilterTheBlock()
+@Test fun modifyDemandsDoNotFilterTheBlock()
+@Test fun avoidDemandFromAnotherConditionRemovesARoutineItem()
+@Test fun holdAndRestReachThePlannedExercise()
 @Test fun emptyResultNeverFailsThePlan()
 @Test fun stretchesStillNeverEnterMainSelection()
 @Test fun estimateIncludesTheBlock()
@@ -336,8 +349,11 @@ git commit -m "fix(planner): exclude mobility work from training accounting"
 
 ```kotlin
 @Test fun addingAConditionRequiresRedFlagAcknowledgementBeforeSaving()
+@Test fun addingAConditionShowsItsNotes()
 @Test fun todayNamesTheConditionForTheMobilityBlock()
 @Test fun activeWorkoutShowsTheMobilitySectionSeparately()
+@Test fun activeWorkoutShowsHoldTimeAndCues()
+@Test fun modifyExerciseShowsItsCueInTodayAndActiveWorkout()
 @Test fun painStopOffersExclusionAndChangesNothingUnlessAccepted()
 @Test fun acceptedExclusionUpdatesExcludedExerciseIds()
 @Test fun templateEditorWarnsOnRestrictedAndUnreviewedWithoutHiding()
@@ -367,7 +383,7 @@ git commit -m "feat(ui): add condition selection and mobility presentation"
 - Test: `BundledCatalogVocabularyTest` and `BundledConditionGuidanceTest`, plus the importer's existing checks
 
 **Interfaces:**
-- Consumes: the owner-approved new-exercise list from Task 1.
+- Consumes: the owner-approved list of seven: figure-four stretch, lying piriformis stretch, side-lying isometric hip abduction hold, standing isometric gluteal contraction, wrist extensor stretch, tendon gliding sequence and straight leg raise. Doses are in section 5 of the consolidation.
 - Produces: owned catalog IDs usable in routines. Owned entries have no `reviewedMetadata`, so they never enter main selection.
 
 - [ ] **Step 1: Write failing tests**
