@@ -5,6 +5,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import wallcrawl.elopenmike.com.core.model.ConditionStartRefused
+import wallcrawl.elopenmike.com.core.model.ConditionPlanningResult
 import wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -93,18 +95,19 @@ class TodayViewModel(
     private var lastSettledContextIdentity: String? = null
     private var observedSchedulingEvidence: TrainingFrequencyRecencyEvidence? = null
     private val isRegeneratingFlow = MutableStateFlow(false)
+    private val conditionRefusalFlow = MutableStateFlow<ConditionStartRefused?>(null)
     private val errorFlow = MutableStateFlow<TodayError?>(null)
     private val schedulingObservationFailed = MutableStateFlow(false)
     private val deloadObservationFailed = MutableStateFlow(false)
     private val isSavingDeloadFlow = MutableStateFlow(false)
     private val isStartingFlow = MutableStateFlow(false)
     private val deloadDecisionErrorFlow = MutableStateFlow<TodayError?>(null)
-    private val visibleErrorFlow = combine(errorFlow, schedulingObservationFailed, deloadObservationFailed, programObservationFailed) { error, failed, deloadFailed, programFailed ->
+    private val visibleErrorFlow = combine(errorFlow, schedulingObservationFailed, deloadObservationFailed, programObservationFailed, conditionRefusalFlow) { error, failed, deloadFailed, programFailed, refusal ->
         when {
             deloadFailed -> TodayError.DELOAD_READ_FAILED
             failed || programFailed -> TodayError.RECOMMENDATION_OUT_OF_DATE
             else -> error
-        }
+        } to refusal
     }
     private var schedulingObserverJob: Job? = null
     private var deloadObserverJob: Job? = null
@@ -151,7 +154,8 @@ class TodayViewModel(
         isBusyFlow,
         visibleErrorFlow,
         deloadControlFlow
-    ) { sourceState, recommendation, isRegenerating, error, deloadControl ->
+    ) { sourceState, recommendation, isRegenerating, errors, deloadControl ->
+        val (error, conditionRefusal) = errors
         val (preferences, saving, decisionError) = deloadControl
         val deload = preferences?.takeIf {
             sourceState.userProfile.onboardingCompleted && sourceState.activeSession == null
@@ -166,7 +170,7 @@ class TodayViewModel(
             )
         }
         if (error != null) {
-            TodayUiState.Error(error = error, activeSession = sourceState.activeSession, deload = deload)
+            TodayUiState.Error(error = error, activeSession = sourceState.activeSession, deload = deload, conditionRefusal = conditionRefusal)
         } else if (recommendation == null) {
             sourceState.activeSession?.let { TodayUiState.Preparing(it) } ?: TodayUiState.Loading
         } else {
@@ -224,6 +228,7 @@ class TodayViewModel(
         savedStateHandle["today.intent"] = intent.name
         selectionRevision++
         lastSettledContextIdentity = null
+        conditionRefusalFlow.value = null
         errorFlow.value = null
         requestWorkoutGeneration(isRegeneration = true)
     }
@@ -350,8 +355,11 @@ class TodayViewModel(
                 } catch (e: CancellationException) {
                     throw e
                 } catch (e: Exception) {
-                    if (processingSelectionRevision == selectionRevision) errorFlow.value = userFacingError(e, currentRequestIsRegeneration)
-                    else hasPendingFreshnessCheck = true
+                    if (processingSelectionRevision == selectionRevision) {
+                        conditionRefusalFlow.value = (e as? ConditionStartRefused)
+                            ?: (e as? WorkoutValidationException)?.conditionReasons?.takeIf { it.isNotEmpty() }?.let(::ConditionStartRefused)
+                        errorFlow.value = userFacingError(e, currentRequestIsRegeneration)
+                    } else hasPendingFreshnessCheck = true
                 } finally {
                     isRegeneratingFlow.value = false
                 }
@@ -434,6 +442,7 @@ class TodayViewModel(
                 recommendationFlow.value = PublishedRecommendation(
                     result.workout, result.snapshot, context.userProfile.preferredUnit, intent
                 )
+                conditionRefusalFlow.value = null
                 errorFlow.value = null
             }
 
@@ -541,15 +550,21 @@ class TodayViewModel(
         if (published.intent != selectedIntentFlow.value) return
         val currentWorkout = published.workout
         val recommendation = published.snapshot
+        conditionRefusalFlow.value = null
         isStartingFlow.value = true
         viewModelScope.launch {
             try {
                 if (workoutRepository.getActiveSessionOnce() != null) return@launch
                 val currentContext = workoutGenerationContextBuilder.build(published.intent, currentWorkout.generationIndex)
+                (currentContext.conditionPlanning as? ConditionPlanningResult.Blocked)?.let { throw ConditionStartRefused(it.reasons) }
                 if (
                     RecommendationContextIdentity.of(currentContext) !=
                     recommendation.contextIdentity
                 ) {
+                    if (recommendation.conditionContext != null || currentContext.userProfile.activeConditions.isNotEmpty()) {
+                        conditionRefusalFlow.value = ConditionStartRefused("changed-condition-facts",
+                            currentContext.userProfile.activeConditions.map { it.conditionId }.toSet())
+                    }
                     errorFlow.value = TodayError.RECOMMENDATION_OUT_OF_DATE
                     return@launch
                 }
@@ -559,6 +574,11 @@ class TodayViewModel(
                     allowRepair = false
                 )
                 if (result is ProgramValidationResult.Invalid) {
+                    val reasons = result.violations.filter { it.detail?.startsWith("CONDITION:") == true }.map {
+                        wallcrawl.elopenmike.com.core.model.ConditionViolation(requireNotNull(it.detail).removePrefix("CONDITION:"),
+                            currentContext.userProfile.activeConditions.map { selection -> selection.conditionId }.toSet(), setOfNotNull(it.exerciseId))
+                    }
+                    if (reasons.isNotEmpty()) conditionRefusalFlow.value = ConditionStartRefused(reasons)
                     errorFlow.value = TodayError.START_VALIDATION_FAILED
                     return@launch
                 }
@@ -575,6 +595,9 @@ class TodayViewModel(
                 onWorkoutStarted(session.id)
             } catch (e: CancellationException) {
                 throw e
+            } catch (e: ConditionStartRefused) {
+                conditionRefusalFlow.value = e
+                errorFlow.value = TodayError.START_VALIDATION_FAILED
             } catch (e: Exception) {
                 errorFlow.value = TodayError.START_FAILED
             } finally {

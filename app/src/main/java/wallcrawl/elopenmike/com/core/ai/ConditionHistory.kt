@@ -23,7 +23,8 @@ class ConditionHistory(
     val windowStartTimestamp: Long,
     complete: Boolean,
     exposures: List<ConditionExposure>,
-    pending: List<PendingConditionReassessment>
+    pending: List<PendingConditionReassessment>,
+    sourceFactsDigest: String? = null
 ) {
     val exposures = conditionList(exposures)
     val pending = conditionList(pending)
@@ -32,6 +33,7 @@ class ConditionHistory(
     } && pending.all { it.stoppedAtTimestamp <= asOfTimestamp }
     val sourceDigest: String = conditionDigest(mapOf(
         "complete" to this.complete,
+        "sourceFacts" to sourceFactsDigest,
         "exposures" to this.exposures.sortedWith(compareBy(ConditionExposure::sessionId, ConditionExposure::exerciseId, ConditionExposure::timestamp))
             .map { listOf(it.sessionId, it.exerciseId, it.timestamp) },
         "pending" to this.pending.sortedWith(compareBy(PendingConditionReassessment::profileId, PendingConditionReassessment::conditionId, PendingConditionReassessment::exerciseId))

@@ -87,6 +87,7 @@ sealed interface TodayUiState {
     data class Error(
         val error: TodayError,
         val activeSession: WorkoutSession? = null,
-        val deload: TodayDeloadState? = null
+        val deload: TodayDeloadState? = null,
+        val conditionRefusal: wallcrawl.elopenmike.com.core.model.ConditionStartRefused? = null
     ) : TodayUiState
 }

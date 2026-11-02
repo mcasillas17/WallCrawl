@@ -1,5 +1,10 @@
 package wallcrawl.elopenmike.com.core.database.repository
 
+import wallcrawl.elopenmike.com.core.ai.*
+import wallcrawl.elopenmike.com.core.model.*
+import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.CancellationException
 import wallcrawl.elopenmike.com.core.ai.RecommendationSnapshot
 import wallcrawl.elopenmike.com.core.ai.TrainingFrequencyRecencyPolicy
 import wallcrawl.elopenmike.com.core.ai.asRecord
@@ -115,7 +120,13 @@ class OfflineWorkoutRepository(
     private val sessionDao: WorkoutSessionDao,
     private val setDao: WorkoutSetDao,
     private val progressCalculator: ProgressCalculator = ProgressCalculator(),
-    private val localDataWriteGate: Mutex = Mutex()
+    private val localDataWriteGate: Mutex = Mutex(),
+    private val conditionSupport: (suspend () -> ConditionSupportCatalog)? = null,
+    private val exerciseCatalog: ExerciseCatalog? = null,
+    private val generationContext: (suspend (WorkoutPlanningIntent, Int?) -> WorkoutGenerationContext)? = null,
+    private val validateGenerated: (suspend (GeneratedWorkout, WorkoutGenerationContext) -> ProgramValidationResult)? = null,
+    private val nowTimestamp: () -> Long = System::currentTimeMillis,
+    private val currentZone: () -> ZoneId = ZoneId::systemDefault
 ) : WorkoutRepository {
     override suspend fun hasPendingConditionReassessment(profileId: String) = localDataWriteGate.withLock {
         sessionDao.conditionPendingProbe(profileId, 1).isNotEmpty()
@@ -123,7 +134,6 @@ class OfflineWorkoutRepository(
 
     override suspend fun getConditionContext(profileId: String, support: ConditionSupportCatalog,
         asOf: Long, zone: ZoneId, programMode: Boolean) = localDataWriteGate.withLock { sessionDao.readConditionContext(profileId, support, asOf, zone, programMode) }
-
 
     override fun observeActiveSession(): Flow<WorkoutSession?> {
         return sessionDao.observeActiveSession().map { it?.toWorkoutSession() }
@@ -218,7 +228,7 @@ class OfflineWorkoutRepository(
         sourceTemplateId = null,
         userProfile = userProfile,
         recommendation = recommendation,
-        conditionContext = recommendation?.conditionContext
+        generated = generated
     )
 
     override suspend fun startWorkoutFromTemplate(
@@ -241,7 +251,7 @@ class OfflineWorkoutRepository(
             sourceTemplateId = template.id,
             userProfile = userProfile,
             // A manual template is an explicit user choice, not an automatic recommendation, so
-            // there is no validation provenance to record for it.
+            // there is no automatic recommendation receipt to record for it.
             recommendation = null
         )
     }
@@ -256,13 +266,35 @@ class OfflineWorkoutRepository(
         sourceTemplateId: String?,
         userProfile: UserProfile,
         recommendation: RecommendationSnapshot?,
-        conditionContext: SessionConditionContext? = null
+        generated: GeneratedWorkout? = null
     ): WorkoutSession {
+        getActiveSessionOnce()?.let { return it }
+        val pending = localDataWriteGate.withLock { sessionDao.conditionPendingProbe(userProfile.id, 1) }
+        if (pending.isNotEmpty()) throw ConditionStartRefused(pending.map {
+            ConditionViolation("pending-reassessment", setOf(it.conditionId), setOf(it.exerciseId))
+        })
+        val needsConditions = userProfile.activeConditions.isNotEmpty() || recommendation?.conditionContext != null ||
+            exercises.any { it.prescription.purpose != PrescriptionPurpose.ORDINARY }
+        val currentContext = if (generated != null && needsConditions) {
+            if (recommendation?.conditionContext == null) throw ConditionStartRefused("missing-condition-context")
+            val build = generationContext ?: throw ConditionStartRefused("condition-validation-unavailable")
+            val rebuilt = try {
+                build(if (recommendation.programSession == null) WorkoutPlanningIntent.ORDINARY else WorkoutPlanningIntent.PROGRAM,
+                    generated.generationIndex)
+            } catch (error: CancellationException) { throw error
+            } catch (error: ConditionStartRefused) { throw error
+            } catch (error: Exception) {
+                throw ConditionStartRefused("condition-context-unavailable").also { it.initCause(error) }
+            }
+            rebuilt.also { context ->
+                validateCurrentGenerated(generated, recommendation, context)
+            }
+        } else null
         val sessionId = UUID.randomUUID().toString()
         val sessionEntity = WorkoutSessionEntity(
             id = sessionId,
             name = name,
-            startedAtTimestamp = System.currentTimeMillis(),
+            startedAtTimestamp = nowTimestamp(),
             completedAtTimestamp = null,
             targetDurationMinutes = estimatedDurationMinutes,
             actualDurationMinutes = 0,
@@ -272,7 +304,7 @@ class OfflineWorkoutRepository(
             sourceTemplateId = sourceTemplateId,
             focusMusclesJson = focusMuscles.joinToString(PERSISTED_LIST_SEPARATOR),
             notes = notes,
-            conditionContextJson = conditionContext?.let(ConditionContextCodec::encodeSession)
+            conditionContextJson = recommendation?.conditionContext?.let(ConditionContextCodec::encodeSession)
         )
         val exerciseEntities = mutableListOf<WorkoutExerciseEntity>()
         val setEntities = mutableListOf<WorkoutSetEntity>()
@@ -329,7 +361,7 @@ class OfflineWorkoutRepository(
             }
         }
 
-        return sessionDao.insertWorkoutUnlessActive(
+        return localDataWriteGate.withLock { sessionDao.insertWorkoutUnlessActive(
             session = sessionEntity,
             exercises = exerciseEntities,
             sets = setEntities,
@@ -344,8 +376,67 @@ class OfflineWorkoutRepository(
             expectedDeloadDecisionRevision = recommendation?.deloadDecisionRevision,
             acceptedDeloadOfferId = recommendation?.acceptedDeloadOfferId,
             expectedProgramHeader = recommendation?.expectedProgramHeader,
-            programSession = recommendation?.programSession
-        ).toWorkoutSession()
+            programSession = recommendation?.programSession,
+            conditionCheck = if (needsConditions) {
+                {
+                    val support = try { conditionSupport?.invoke() ?: throw ConditionStartRefused("missing-support")
+                    } catch (error: CancellationException) { throw error
+                    } catch (error: ConditionStartRefused) { throw error
+                    } catch (error: Exception) { throw ConditionStartRefused("support-unavailable").also { it.initCause(error) } }
+                    val catalog = exerciseCatalog?.getAllExercises()?.first() ?: throw ConditionStartRefused("missing-exercise")
+                    val read = readConditionContext(userProfile.id, support, nowTimestamp(), currentZone(), recommendation?.programSession != null)
+                    val catalogById = catalog.associateBy { it.id }
+                    val candidates = currentContext?.allowedExercises?.mapNotNull { catalogById[it.id] } ?: catalog
+                    val planning = ConditionPlanningPolicy().resolve(read.profile, candidates, catalogById, support, read.history)
+                    when (planning) {
+                        is ConditionPlanningResult.Blocked -> throw ConditionStartRefused(planning.reasons)
+                        ConditionPlanningResult.NotApplicable -> throw ConditionStartRefused("missing-condition-context", exerciseIds = exercises.map { it.exerciseId }.toSet())
+                        is ConditionPlanningResult.Ready -> {
+                            if (generated != null) {
+                                val checked = requireNotNull(currentContext).copy(userProfile = read.profile,
+                                    conditionPlanning = planning, conditionHistory = read.history, conditionSupport = support)
+                                validateCurrentGenerated(generated, requireNotNull(recommendation), checked)
+                                // Only the original receipt's exact checked times may be frozen on this session.
+                                recommendation.conditionContext
+                            } else {
+                                val violations = exercises.flatMap { ConditionPlanningPolicy().validate(it, planning) }.toMutableList()
+                                planning.supportive.forEach { required ->
+                                    if (exercises.count { it.exerciseId == required.exerciseId && it.prescription.purpose == PrescriptionPurpose.SUPPORTIVE } != 1)
+                                        violations += ConditionViolation("missing-required-support", read.profile.activeConditions.map { it.conditionId }.toSet(), setOf(required.exerciseId))
+                                }
+                                if (exercises.map { it.exerciseId }.distinct().size != exercises.size)
+                                    violations += ConditionViolation("duplicate-exercise", emptySet(), exercises.map { it.exerciseId }.toSet())
+                                if (violations.isNotEmpty()) throw ConditionStartRefused(violations)
+                                planning.context
+                            }
+                        }
+                    }
+                }
+            } else null
+        ).toWorkoutSession() }
+    }
+
+    private suspend fun validateCurrentGenerated(generated: GeneratedWorkout, recommendation: RecommendationSnapshot,
+        context: WorkoutGenerationContext) {
+        val planning = context.conditionPlanning
+        if (planning is ConditionPlanningResult.Blocked) throw ConditionStartRefused(planning.reasons)
+        if (recommendation.profileRevision != context.userProfile.revision ||
+            RecommendationContextIdentity.of(context) != recommendation.contextIdentity)
+            throw ConditionStartRefused("changed-condition-facts", context.userProfile.activeConditions.map { it.conditionId }.toSet())
+        val frozen = recommendation.conditionContext ?: throw ConditionStartRefused("missing-condition-context")
+        val current = (planning as? ConditionPlanningResult.Ready)?.context ?: throw ConditionStartRefused("missing-condition-context")
+        if (frozen.formatVersion != current.formatVersion || frozen.policyVersion != current.policyVersion ||
+            frozen.selectedConditions != current.selectedConditions || frozen.sourceSupportVersions != current.sourceSupportVersions ||
+            frozen.appliedRules != current.appliedRules || frozen.consumedReassessmentEventIds != current.consumedReassessmentEventIds ||
+            frozen.consumedScheduleEvidence.map { it.reference to it.previousPerformedAtTimestamp } !=
+                current.consumedScheduleEvidence.map { it.reference to it.previousPerformedAtTimestamp })
+            throw ConditionStartRefused("changed-condition-facts")
+        val validate = validateGenerated ?: throw ConditionStartRefused("condition-validation-unavailable")
+        val result = validate(generated, context)
+        if (result is ProgramValidationResult.Invalid) throw ConditionStartRefused(result.violations.map {
+            ConditionViolation(it.detail?.takeIf { detail -> detail.startsWith("CONDITION:") }?.removePrefix("CONDITION:") ?: "invalid-workout",
+                context.userProfile.activeConditions.map { selection -> selection.conditionId }.toSet(), setOfNotNull(it.exerciseId))
+        })
     }
 
     override suspend fun logSetCompletion(
@@ -353,135 +444,9 @@ class OfflineWorkoutRepository(
         performance: SetPerformanceInput
     ) {
         require(setId.isNotBlank()) { "setId must not be blank." }
-        SetOutcomeRules.requireValidOutcome(performance)
-        require(performance.reps == null || performance.reps in 0..MAX_LOGGED_REPS) {
-            "reps must be between zero and $MAX_LOGGED_REPS."
-        }
-        requireValidWeight(performance.weight, "weight")
-        requireValidWeight(performance.assistanceWeight, "assistanceWeight")
-        require(
-            performance.durationSeconds == null ||
-                performance.durationSeconds in 0..MAX_LOGGED_DURATION_SECONDS
-        ) {
-            "durationSeconds must be between zero and $MAX_LOGGED_DURATION_SECONDS."
-        }
-        require(
-            performance.distanceMeters == null ||
-                performance.distanceMeters.isFinite() &&
-                performance.distanceMeters in 0.0..MAX_LOGGED_DISTANCE_METERS
-        ) {
-            "distanceMeters must be finite and between zero and $MAX_LOGGED_DISTANCE_METERS."
-        }
-
-        val persistedSet = checkNotNull(setDao.getSetById(setId)) {
-            "Workout set '$setId' was not found."
-        }
-        validatePerformanceForType(persistedSet.exerciseType, performance)
-
-        // One statement writes performance, feedback, timestamps, stop reason, and
-        // completion together, so clearing completion also clears completion-only
-        // feedback and no intermediate contradictory row can ever be observed.
-        val affectedRows = setDao.updateSetOutcome(
-            setId = setId,
-            reps = performance.reps,
-            weight = performance.weight,
-            assistanceWeight = performance.assistanceWeight,
-            durationSeconds = performance.durationSeconds,
-            distanceMeters = performance.distanceMeters,
-            rpe = performance.rpe,
-            rir = performance.rir,
-            feltManageable = performance.feltManageable,
-            completedAtTimestamp = performance.completedAtTimestamp,
-            stoppedAtTimestamp = performance.stoppedAtTimestamp,
-            stopReason = performance.stopReason,
-            isCompleted = performance.isCompleted
-        )
+        val affectedRows = localDataWriteGate.withLock { setDao.recordOutcomeAndConditionStops(setId, performance) }
         check(affectedRows == 1) {
             "Workout set '$setId' was not found or its session is not in progress."
-        }
-    }
-
-    private fun requireValidWeight(value: Double?, label: String) {
-        require(value == null || (value.isFinite() && value in 0.0..MAX_LOGGED_WEIGHT)) {
-            "$label must be finite and between zero and $MAX_LOGGED_WEIGHT."
-        }
-    }
-
-    private fun validatePerformanceForType(
-        exerciseType: ExerciseType,
-        performance: SetPerformanceInput
-    ) {
-        when (exerciseType) {
-            ExerciseType.WEIGHT_REPS -> {
-                require(performance.assistanceWeight == null) {
-                    "Weight and repetition sets cannot record assistance weight."
-                }
-                requireNoDurationOrDistance(performance, "Weight and repetition")
-                requirePositiveRepetitionsWhenCompleted(performance)
-                // With no fabricated default weight (Task 2), a set could otherwise be
-                // marked complete while silently recording no load at all.
-                require(!performance.isCompleted || (performance.weight ?: 0.0) > 0.0) {
-                    "A completed weight and repetition set must have a positive load."
-                }
-            }
-
-            ExerciseType.BODYWEIGHT_REPS -> {
-                require(performance.weight == null && performance.assistanceWeight == null) {
-                    "Bodyweight sets cannot record load or assistance weight."
-                }
-                requireNoDurationOrDistance(performance, "Bodyweight")
-                requirePositiveRepetitionsWhenCompleted(performance)
-            }
-
-            ExerciseType.ASSISTED_BODYWEIGHT -> {
-                require(performance.weight == null) {
-                    "Assisted bodyweight sets use assistance weight instead of load."
-                }
-                requireNoDurationOrDistance(performance, "Assisted bodyweight")
-                requirePositiveRepetitionsWhenCompleted(performance)
-            }
-
-            ExerciseType.DURATION -> {
-                require(
-                    performance.reps == null &&
-                        performance.weight == null &&
-                        performance.assistanceWeight == null &&
-                        performance.distanceMeters == null
-                ) { "Duration sets can only record duration." }
-                require(!performance.isCompleted || (performance.durationSeconds ?: 0) > 0) {
-                    "A completed duration set must have positive durationSeconds."
-                }
-            }
-
-            ExerciseType.DISTANCE_DURATION -> {
-                require(
-                    performance.reps == null &&
-                        performance.weight == null &&
-                        performance.assistanceWeight == null
-                ) { "Distance and duration sets cannot record repetitions or load." }
-                require(
-                    !performance.isCompleted ||
-                        (performance.durationSeconds ?: 0) > 0 ||
-                        (performance.distanceMeters ?: 0.0) > 0.0
-                ) {
-                    "A completed distance and duration set needs positive distance or duration."
-                }
-            }
-        }
-    }
-
-    private fun requireNoDurationOrDistance(
-        performance: SetPerformanceInput,
-        label: String
-    ) {
-        require(performance.durationSeconds == null && performance.distanceMeters == null) {
-            "$label sets cannot record duration or distance."
-        }
-    }
-
-    private fun requirePositiveRepetitionsWhenCompleted(performance: SetPerformanceInput) {
-        require(!performance.isCompleted || (performance.reps ?: 0) > 0) {
-            "A completed repetition set must have positive reps."
         }
     }
 
@@ -501,12 +466,12 @@ class OfflineWorkoutRepository(
     override suspend fun completeWorkout(sessionId: String, actualDurationMinutes: Int): WorkoutSummary {
         require(sessionId.isNotBlank()) { "sessionId must not be blank." }
         require(actualDurationMinutes > 0) { "actualDurationMinutes must be greater than zero." }
-        return sessionDao.completeWorkoutAndReadSummary(
+        return localDataWriteGate.withLock { sessionDao.completeWorkoutAndReadSummary(
             sessionId = sessionId,
             completedAt = System.currentTimeMillis(),
             actualDuration = actualDurationMinutes,
             calculator = progressCalculator
-        )
+        ) }
     }
 
     override suspend fun getWorkoutSummary(sessionId: String): WorkoutSummary? {
@@ -516,17 +481,123 @@ class OfflineWorkoutRepository(
 
     override suspend fun cancelWorkout(sessionId: String) {
         require(sessionId.isNotBlank()) { "sessionId must not be blank." }
-        if (sessionDao.deleteActiveSession(sessionId) != 1) {
+        if (localDataWriteGate.withLock { sessionDao.deleteActiveSession(sessionId) } != 1) {
             throw wallcrawl.elopenmike.com.core.model.ProgramException(wallcrawl.elopenmike.com.core.model.ProgramFailure.MISSING_OR_NOT_ACTIVE)
         }
     }
 
-    private companion object {
-        const val MAX_LOGGED_REPS = 1_000
-        const val MAX_LOGGED_WEIGHT = 100_000.0
-        const val MAX_LOGGED_DURATION_SECONDS = 86_400
-        const val MAX_LOGGED_DISTANCE_METERS = 1_000_000.0
-    }
 }
 
 const val DEFAULT_OBSERVED_COMPLETED_SESSIONS = 500
+
+internal fun validateSetPerformance(performance: SetPerformanceInput) {
+    SetOutcomeRules.requireValidOutcome(performance)
+    require(performance.reps == null || performance.reps in 0..MAX_LOGGED_REPS) {
+        "reps must be between zero and $MAX_LOGGED_REPS."
+    }
+    requireValidWeight(performance.weight, "weight")
+    requireValidWeight(performance.assistanceWeight, "assistanceWeight")
+    require(
+        performance.durationSeconds == null ||
+            performance.durationSeconds in 0..MAX_LOGGED_DURATION_SECONDS
+    ) {
+        "durationSeconds must be between zero and $MAX_LOGGED_DURATION_SECONDS."
+    }
+    require(
+        performance.distanceMeters == null ||
+            performance.distanceMeters.isFinite() &&
+            performance.distanceMeters in 0.0..MAX_LOGGED_DISTANCE_METERS
+    ) {
+        "distanceMeters must be finite and between zero and $MAX_LOGGED_DISTANCE_METERS."
+    }
+
+}
+private fun requireValidWeight(value: Double?, label: String) {
+    require(value == null || (value.isFinite() && value in 0.0..MAX_LOGGED_WEIGHT)) {
+        "$label must be finite and between zero and $MAX_LOGGED_WEIGHT."
+    }
+}
+
+internal fun validatePerformanceForType(
+    exerciseType: ExerciseType,
+    performance: SetPerformanceInput
+) {
+    when (exerciseType) {
+        ExerciseType.WEIGHT_REPS -> {
+            require(performance.assistanceWeight == null) {
+                "Weight and repetition sets cannot record assistance weight."
+            }
+            requireNoDurationOrDistance(performance, "Weight and repetition")
+            requirePositiveRepetitionsWhenCompleted(performance)
+            // With no fabricated default weight (Task 2), a set could otherwise be
+            // marked complete while silently recording no load at all.
+            require(!performance.isCompleted || (performance.weight ?: 0.0) > 0.0) {
+                "A completed weight and repetition set must have a positive load."
+            }
+        }
+
+        ExerciseType.BODYWEIGHT_REPS -> {
+            require(performance.weight == null && performance.assistanceWeight == null) {
+                "Bodyweight sets cannot record load or assistance weight."
+            }
+            requireNoDurationOrDistance(performance, "Bodyweight")
+            requirePositiveRepetitionsWhenCompleted(performance)
+        }
+
+        ExerciseType.ASSISTED_BODYWEIGHT -> {
+            require(performance.weight == null) {
+                "Assisted bodyweight sets use assistance weight instead of load."
+            }
+            requireNoDurationOrDistance(performance, "Assisted bodyweight")
+            requirePositiveRepetitionsWhenCompleted(performance)
+        }
+
+        ExerciseType.DURATION -> {
+            require(
+                performance.reps == null &&
+                    performance.weight == null &&
+                    performance.assistanceWeight == null &&
+                    performance.distanceMeters == null
+            ) { "Duration sets can only record duration." }
+            require(!performance.isCompleted || (performance.durationSeconds ?: 0) > 0) {
+                "A completed duration set must have positive durationSeconds."
+            }
+        }
+
+        ExerciseType.DISTANCE_DURATION -> {
+            require(
+                performance.reps == null &&
+                    performance.weight == null &&
+                    performance.assistanceWeight == null
+            ) { "Distance and duration sets cannot record repetitions or load." }
+            require(
+                !performance.isCompleted ||
+                    (performance.durationSeconds ?: 0) > 0 ||
+                    (performance.distanceMeters ?: 0.0) > 0.0
+            ) {
+                "A completed distance and duration set needs positive distance or duration."
+            }
+        }
+    }
+}
+
+private fun requireNoDurationOrDistance(
+    performance: SetPerformanceInput,
+    label: String
+) {
+    require(performance.durationSeconds == null && performance.distanceMeters == null) {
+        "$label sets cannot record duration or distance."
+    }
+}
+
+private fun requirePositiveRepetitionsWhenCompleted(performance: SetPerformanceInput) {
+    require(!performance.isCompleted || (performance.reps ?: 0) > 0) {
+        "A completed repetition set must have positive reps."
+    }
+}
+
+
+private const val MAX_LOGGED_REPS = 1_000
+private const val MAX_LOGGED_WEIGHT = 100_000.0
+private const val MAX_LOGGED_DURATION_SECONDS = 86_400
+private const val MAX_LOGGED_DISTANCE_METERS = 1_000_000.0

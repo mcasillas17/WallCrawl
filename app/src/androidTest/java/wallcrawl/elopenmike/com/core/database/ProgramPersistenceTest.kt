@@ -47,6 +47,20 @@ class ProgramPersistenceTest {
         assertEquals(1, state().progress.completedSlots)
         assertEquals("KNEE_SENSITIVE|||", db.userProfileDao().getProfile("default_user")!!.trainingConstraintsJson)
     }
+    @Test fun pendingAfterConditionRemovalRefusesProgramReservationAtomically() = runBlocking<Unit> {
+        start()
+        val before = repository.getHeader()
+        db.conditionReassessmentDao().replace(ConditionReassessmentPendingEntity("default_user", "removed-condition",
+            "exercise", "event", "a".repeat(64), 1, 1, null))
+        val failure = runCatching { reserve("blocked") }.exceptionOrNull() as ConditionStartRefused
+        assertEquals("pending-reassessment", failure.reasons.single().reason)
+        assertEquals(before, repository.getHeader())
+        assertNull(db.workoutSessionDao().getSessionWithDetails("blocked"))
+        assertNull(db.workoutSessionDao().getRecommendationRecord("blocked"))
+        assertNull(db.programDao().getProgramAssociation("blocked"))
+        assertEquals(1, db.conditionReassessmentDao().forProfile("default_user").size)
+    }
+
     private lateinit var db: WallCrawlDatabase
     private lateinit var repository: OfflineProgramRepository
     private val run = "11111111-1111-1111-1111-111111111111"

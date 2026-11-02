@@ -115,7 +115,10 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
     override val userProfileRepository: UserProfileRepository by lazy {
         OfflineUserProfileRepository(
             userProfileDao = database.userProfileDao(),
-            localDataWriteGate = localDataWriteGate
+            localDataWriteGate = localDataWriteGate,
+            conditionReassessmentDao = database.conditionReassessmentDao(),
+            conditionSupport = { conditionSupportStore.load() },
+            exerciseCatalog = exerciseCatalog
         )
     }
 
@@ -123,7 +126,11 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
         OfflineWorkoutRepository(
             sessionDao = database.workoutSessionDao(),
             setDao = database.workoutSetDao(),
-            localDataWriteGate = localDataWriteGate
+            localDataWriteGate = localDataWriteGate,
+            conditionSupport = { conditionSupportStore.load() },
+            exerciseCatalog = exerciseCatalog,
+            generationContext = { intent, index -> workoutGenerationContextBuilder.build(intent, index) },
+            validateGenerated = { workout, generation -> programValidator.validate(workout, generation, allowRepair = false) }
         )
     }
 

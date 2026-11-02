@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutTemplateRepository
+import wallcrawl.elopenmike.com.core.model.ConditionStartRefused
 import wallcrawl.elopenmike.com.core.model.UnconfirmedTemplateUnitException
 import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
 
@@ -35,7 +36,8 @@ data class WorkoutTemplatesUiState(
      * a number hard-coded into a translated sentence that would then need updating twice.
      */
     val catalogSize: Int = 0,
-    @StringRes val errorMessage: Int? = null
+    @StringRes val errorMessage: Int? = null,
+    val conditionRefusal: ConditionStartRefused? = null
 )
 
 class WorkoutTemplatesViewModel(
@@ -46,12 +48,14 @@ class WorkoutTemplatesViewModel(
 ) : ViewModel() {
     private val startingTemplateId = MutableStateFlow<String?>(null)
     private val errorMessage = MutableStateFlow<Int?>(null)
+    private val conditionRefusal = MutableStateFlow<ConditionStartRefused?>(null)
+    private val startErrors = combine(errorMessage, conditionRefusal) { message, refusal -> message to refusal }
     private val startedSessionId = MutableStateFlow<String?>(null)
 
     val uiState: StateFlow<WorkoutTemplatesUiState> = combine(
         templateRepository.observeTemplates(),
         startingTemplateId,
-        errorMessage,
+        startErrors,
         startedSessionId,
         exerciseCatalog.getAllExercises()
     ) { templates, startingId, error, startedId, catalog ->
@@ -61,7 +65,8 @@ class WorkoutTemplatesViewModel(
             startingTemplateId = startingId,
             startedSessionId = startedId,
             catalogSize = catalog.size,
-            errorMessage = error
+            errorMessage = error.first,
+            conditionRefusal = error.second
         )
     }.catch { error ->
         // The repository's exception message is developer text; the screen shows a typed,
@@ -86,6 +91,7 @@ class WorkoutTemplatesViewModel(
         startingTemplateId.value = template.id
         // A new attempt answers whatever the last one said, such as a unit to confirm.
         errorMessage.value = null
+        conditionRefusal.value = null
         viewModelScope.launch {
             try {
                 val currentTemplate = templateRepository.getTemplate(template.id)
@@ -97,6 +103,9 @@ class WorkoutTemplatesViewModel(
                 startedSessionId.value = workoutRepository.startWorkoutFromTemplate(currentTemplate, profile).id
             } catch (error: CancellationException) {
                 throw error
+            } catch (error: ConditionStartRefused) {
+                conditionRefusal.value = error
+                errorMessage.value = R.string.template_error_start_failed
             } catch (error: UnconfirmedTemplateUnitException) {
                 // Its loads were saved before templates recorded a unit, so it cannot start a
                 // new workout without guessing one. (A workout in progress is resumed by the
@@ -129,6 +138,7 @@ class WorkoutTemplatesViewModel(
 
     fun clearError() {
         errorMessage.value = null
+        conditionRefusal.value = null
     }
 
     companion object {

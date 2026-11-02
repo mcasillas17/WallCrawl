@@ -59,16 +59,34 @@ class WorkoutTemplateSessionTest {
             .isEqualTo("KNEE_SENSITIVE|||")
     }
 
-    @Test fun templatePurposePersistsAndStartsWithTheSamePurpose() = runBlocking {
+    @Test fun storedSupportivePurposeRequiresCurrentAuthorizationWithoutRewritingTemplate() = runBlocking {
         val supportive = template(listOf(planned("plank", ExercisePrescription(
             exerciseType = ExerciseType.DURATION, targetSets = 1, targetDurationSeconds = 30,
             purpose = PrescriptionPurpose.SUPPORTIVE))))
         templateRepository.saveTemplate(supportive)
         val loaded = templateRepository.getTemplate(supportive.id)!!
         assertThat(loaded.exercises.single().prescription.purpose).isEqualTo(PrescriptionPurpose.SUPPORTIVE)
-        val started = workoutRepository.startWorkoutFromTemplate(loaded, UserProfile())
-        assertThat(workoutRepository.getSessionById(started.id)!!.exercises.single().prescription.purpose)
+        assertThat(runCatching { workoutRepository.startWorkoutFromTemplate(loaded, UserProfile()) }.isFailure).isTrue()
+        assertThat(workoutRepository.getActiveSessionOnce()).isNull()
+        assertThat(templateRepository.getTemplate(supportive.id)!!.exercises.single().prescription.purpose)
             .isEqualTo(PrescriptionPurpose.SUPPORTIVE)
+    }
+
+    @Test fun manualStartCannotBypassUnsupportedConditionOrRemovedPendingCondition() = runBlocking {
+        val manual = template(listOf(planned("plank", ExercisePrescription(
+            exerciseType = ExerciseType.DURATION, targetSets = 1, targetDurationSeconds = 30))))
+        val profile = UserProfile(activeConditions = listOf(
+            wallcrawl.elopenmike.com.core.model.SelectedCondition("fictional-condition", 1, emptyMap())))
+        database.userProfileDao().insertOrUpdate(profileEntity().copy(activeConditionsJson =
+            wallcrawl.elopenmike.com.core.database.repository.ConditionContextCodec.encodeSelections(profile.activeConditions)))
+        assertThat(runCatching { workoutRepository.startWorkoutFromTemplate(manual, profile) }.isFailure).isTrue()
+        assertThat(workoutRepository.getActiveSessionOnce()).isNull()
+        database.userProfileDao().insertOrUpdate(profileEntity())
+        database.conditionReassessmentDao().replace(
+            wallcrawl.elopenmike.com.core.database.entity.ConditionReassessmentPendingEntity(
+                profile.id, "fictional-condition", "plank", "event", "a".repeat(64), 1, 1, null))
+        assertThat(runCatching { workoutRepository.startWorkoutFromTemplate(manual, UserProfile()) }.isFailure).isTrue()
+        assertThat(workoutRepository.getActiveSessionOnce()).isNull()
     }
 
     private lateinit var database: WallCrawlDatabase

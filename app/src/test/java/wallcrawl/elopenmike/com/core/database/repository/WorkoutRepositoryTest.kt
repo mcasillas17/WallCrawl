@@ -459,6 +459,12 @@ private data class SetCompletionUpdate(
 )
 
 private class RecordingWorkoutSetDao : WorkoutSetDao {
+    override suspend fun getOutcomeConditionContext(setId: String): String? = null
+    override suspend fun getOutcomeExercise(setId: String): wallcrawl.elopenmike.com.core.database.entity.WorkoutExerciseEntity? = error("Not used")
+    override suspend fun getOutcomeProfile(profileId: String): wallcrawl.elopenmike.com.core.database.entity.UserProfileEntity? = error("Not used")
+    override suspend fun advanceOutcomeProfileRevision(profileId: String, expectedRevision: Long): Int = error("Not used")
+    override suspend fun replaceOutcomeMarker(marker: wallcrawl.elopenmike.com.core.database.entity.ConditionReassessmentPendingEntity) = error("Not used")
+
     val completionUpdates = mutableListOf<SetCompletionUpdate>()
     var affectedRows: Int = 1
     var exerciseType: ExerciseType = ExerciseType.WEIGHT_REPS

@@ -78,7 +78,7 @@ class ProductionPlannerPersistenceTest {
         assertThat(database.workoutSessionDao().getActiveSession()).isNull()
         assertThat(database.localDataBackupDao().selectRecommendationRecords()).isEmpty()
     }
-    @Test fun generatedStartPersistsTheSnapshotContextAndItsExactReceiptDigest() = runBlocking {
+    @Test fun generatedStartRefusesUnvalidatedConditionProvenance() = runBlocking {
         profileRepository.saveProfile(onboardedProfile())
         val profile = profileRepository.getProfileOnce()
         val proposal = validatedPlan(contextBuilder.build())
@@ -88,12 +88,11 @@ class ProductionPlannerPersistenceTest {
         val frozen = wallcrawl.elopenmike.com.core.model.SessionConditionContext(1, 1,
             selections, selections.associate { it.conditionId to "v1" }, emptyList(), emptyList(),
             listOf("z-event", "a-event"))
-        val started = workoutRepository.startWorkoutFromGenerated(proposal.workout, DISPLAY_NAME,
-            DISPLAY_RATIONALE, profile, proposal.snapshot.copy(conditionContext = frozen))
-        assertThat(started.conditionContext).isEqualTo(frozen)
-        assertThat(workoutRepository.getSessionById(started.id)!!.conditionContext).isEqualTo(frozen)
-        assertThat(workoutRepository.getRecommendationRecords(listOf(started.id)).single().conditionContextDigest)
-            .isEqualTo(frozen.canonicalDigest)
+        val failure = runCatching { workoutRepository.startWorkoutFromGenerated(proposal.workout, DISPLAY_NAME,
+            DISPLAY_RATIONALE, profile, proposal.snapshot.copy(conditionContext = frozen)) }.exceptionOrNull()
+        assertThat(failure).isInstanceOf(wallcrawl.elopenmike.com.core.model.ConditionStartRefused::class.java)
+        assertThat(database.workoutSessionDao().getActiveSession()).isNull()
+        assertThat(database.localDataBackupDao().selectRecommendationRecords()).isEmpty()
     }
     @Test
     fun corruptRecommendationFailsHistoryAndExportBeforeOpeningTheDestination() = runBlocking<Unit> {

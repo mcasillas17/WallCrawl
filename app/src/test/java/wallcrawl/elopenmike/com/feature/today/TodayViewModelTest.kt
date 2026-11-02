@@ -118,6 +118,28 @@ class TodayViewModelTest {
         assertThat((viewModel.uiState.value as TodayUiState.Error).error).isEqualTo(TodayError.START_VALIDATION_FAILED)
     }
 
+    @Test fun authoritativeConditionRefusalIsRetainedForTheNextAction() = runTest {
+        val now = 20 * DAY_MILLIS
+        val catalog = InMemoryExerciseCatalog(listOf(syntheticApprovedExercise(id = "press-a", directPrimaryMuscle = "Chest")))
+        val profiles = TodayUserProfileRepository(UserProfile(availableEquipment = listOf(StandardEquipment.BODYWEIGHT)))
+        val refused = wallcrawl.elopenmike.com.core.model.ConditionStartRefused("pending-reassessment", setOf("condition"), setOf("exercise"))
+        val workouts = object : WorkoutRepository by TodayWorkoutRepository(emptyList()) {
+            override suspend fun startWorkoutFromGenerated(generated: GeneratedWorkout, displayName: String,
+                displayRationale: String, userProfile: UserProfile, recommendation: RecommendationSnapshot?): WorkoutSession = throw refused
+        }
+        val builder = WorkoutGenerationContextBuilder(profiles, workouts, catalog, ExerciseFilter(), WorkoutHistoryAnalyzer(), nowTimestamp = { now })
+        val viewModel = TodayViewModel(profiles, workouts, builder, FixedPlanWorkoutPlanner(),
+            ProgramValidator(GeneratedWorkoutValidator(catalog)), nowTimestamp = { now }, clock = flowOf(now))
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        advanceUntilIdle()
+        assertThat(viewModel.uiState.value).isInstanceOf(TodayUiState.Success::class.java)
+        var started = false
+        viewModel.startWorkout(WORKOUT_NAME, WORKOUT_RATIONALE) { started = true }
+        advanceUntilIdle()
+        assertThat((viewModel.uiState.value as TodayUiState.Error).conditionRefusal).isSameInstanceAs(refused)
+        assertThat(started).isFalse()
+    }
+
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 

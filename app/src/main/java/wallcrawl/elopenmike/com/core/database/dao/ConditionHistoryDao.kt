@@ -17,7 +17,11 @@ import wallcrawl.elopenmike.com.core.model.*
 data class ConditionContextRead(val profile: UserProfile, val program: ProgramReadState?, val programHeader: ProgramHeader, val history: ConditionHistory)
 
 data class ConditionOutcomeRow(val setId: String, val sessionId: String, val exerciseId: String,
-    val sessionStartedAtTimestamp: Long, val isCompleted: Boolean, val completedAtTimestamp: Long?, val stoppedAtTimestamp: Long?, val stopReason: String?) {
+    val sessionStartedAtTimestamp: Long, val isCompleted: Boolean, val completedAtTimestamp: Long?, val stoppedAtTimestamp: Long?, val stopReason: String?,
+    val sessionStatus: String? = null, val sessionCompletedAt: Long? = null, val purpose: String? = null,
+    val completedReps: Int? = null, val completedWeight: Double? = null, val completedAssistanceWeight: Double? = null,
+    val completedDurationSeconds: Int? = null, val completedDistanceMeters: Double? = null,
+    val rpe: Float? = null, val rir: Int? = null, val feltManageable: Boolean? = null) {
     fun timestamp(): Long? = (when {
         isCompleted && completedAtTimestamp != null && stoppedAtTimestamp == null && stopReason == null -> completedAtTimestamp
         !isCompleted && completedAtTimestamp == null && stoppedAtTimestamp != null && SetStopReason.entries.any { it.name == stopReason } -> stoppedAtTimestamp
@@ -30,7 +34,10 @@ data class ConditionOutcomeRow(val setId: String, val sessionId: String, val exe
 interface ConditionHistoryDao : ProgramDao {
     // A valid closed parent bounds a legacy unknown outcome from above; it never supplies its exact time.
     @Query("""SELECT s.id AS setId, e.sessionId, e.exerciseId, w.startedAtTimestamp AS sessionStartedAtTimestamp, s.isCompleted,
-        s.completedAtTimestamp, s.stoppedAtTimestamp, s.stopReason
+        s.completedAtTimestamp, s.stoppedAtTimestamp, s.stopReason,
+        w.status AS sessionStatus, w.completedAtTimestamp AS sessionCompletedAt, e.purpose,
+        s.completedReps, s.completedWeight, s.completedAssistanceWeight, s.completedDurationSeconds,
+        s.completedDistanceMeters, s.rpe, s.rir, s.feltManageable
         FROM workout_sets s JOIN workout_exercises e ON e.id = s.workoutExerciseId JOIN workout_sessions w ON w.id = e.sessionId
         WHERE e.exerciseId IN (:exerciseIds)
         AND (s.isCompleted = 1 OR s.completedAtTimestamp IS NOT NULL OR s.stoppedAtTimestamp IS NOT NULL OR s.stopReason IS NOT NULL)
@@ -74,7 +81,8 @@ interface ConditionHistoryDao : ProgramDao {
         val complete = exerciseIds.size <= MAX_CONDITION_EXERCISES && outcomes.size <= MAX_CONDITION_OUTCOMES && markers.size <= MAX_CONDITION_MARKERS &&
             outcomes.all { it.timestamp()?.let { timestamp -> timestamp in start..asOf } == true }
         val exposures = outcomes.take(MAX_CONDITION_OUTCOMES).mapNotNull { row -> row.timestamp()?.takeIf { it in start..asOf }?.let { ConditionExposure(row.sessionId, row.exerciseId, it) } }
-        return ConditionContextRead(profile, program, header, ConditionHistory(asOf, zone, start, complete, exposures, markers.take(MAX_CONDITION_MARKERS).map { it.toModel() }))
+        return ConditionContextRead(profile, program, header, ConditionHistory(asOf, zone, start, complete, exposures, markers.take(MAX_CONDITION_MARKERS).map { it.toModel() },
+            sourceFactsDigest = conditionDigest(outcomes.take(MAX_CONDITION_OUTCOMES).map { it.toString() })))
     }
 
     companion object {

@@ -99,6 +99,20 @@ class WorkoutTemplatesViewModelTest {
             }
         }
 
+    @Test fun conditionRefusalRetainsActionableIdentities() = runTest {
+        val refused = wallcrawl.elopenmike.com.core.model.ConditionStartRefused("pending-reassessment", setOf("condition"), setOf("exercise"))
+        val saved = template(unit = WeightUnit.KG, load = 10.0)
+        val viewModel = viewModel(saved, workoutRepository = object : WorkoutRepository by FakeRepository(null) {
+            override suspend fun startWorkoutFromTemplate(template: WorkoutTemplate, userProfile: UserProfile): WorkoutSession = throw refused
+        })
+        backgroundScope.launch { viewModel.uiState.collect {} }
+        viewModel.uiState.first { it.templates.isNotEmpty() }
+        viewModel.startTemplate(saved)
+        advanceUntilIdle()
+        assertThat(viewModel.uiState.value.conditionRefusal).isSameInstanceAs(refused)
+        assertThat(viewModel.uiState.value.startedSessionId).isNull()
+    }
+
     @Test
     fun aLegacyTemplateWithAnUnrecordedLoadUnitIsNotStartedUnderAGuessedUnit() = runTest {
         val viewModel = viewModel(template(unit = null, load = 100.0))

@@ -57,13 +57,12 @@ class ConditionReassessmentPersistenceTest {
         assertTrue(markers.upsertIfNewer(marker.copy(eventId = "event-2", stoppedAtTimestamp = 101)))
         assertEquals(0, markers.deleteIfEventMatches(selected.id, condition.conditionId, "fictional-exercise", "event-1"))
         val context = SessionConditionContext(1, 1, emptyList(), emptyMap(), emptyList(), emptyList(), emptyList())
-        sessions.insertWorkoutUnlessActive(session("session-1").copy(
+        sessions.insertWorkout(session("session-1").copy(
             conditionContextJson = ConditionContextCodec.encodeSession(context)),
             listOf(WorkoutExerciseEntity("exercise-row", "session-1", "fictional-exercise", 0,
                 targetSets = 1, targetRepMin = null, targetRepMax = null, targetWeight = null, notes = "")),
             listOf(WorkoutSetEntity(sourceSetId, "exercise-row", 1, targetReps = null, completedReps = null,
-                targetWeight = null, completedWeight = null, isCompleted = false, rpe = null, rir = null, type = SetType.NORMAL)),
-            selected.id, selected.revision)
+                targetWeight = null, completedWeight = null, isCompleted = false, rpe = null, rir = null, type = SetType.NORMAL)))
         assertNotNull(database.workoutSetDao().getSetById(sourceSetId))
         assertEquals(context, sessions.getSessionWithDetails("session-1")!!.session.conditionContextJson
             ?.let(ConditionContextCodec::decodeSession))
