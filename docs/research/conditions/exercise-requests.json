@@ -1941,6 +1941,359 @@
         }
       ],
       "status": "candidate"
+    },
+    {
+      "id": "wrist-extensor-loading-execution-unresolved",
+      "conditionIds": [
+        "lateral-elbow-tendinopathy"
+      ],
+      "name": "Wrist-extensor resisted loading, study execution unresolved",
+      "execution": "Resisted wrist extension using isometric,concentric and/or eccentric contractions;exact grip,support,range and implement require primary protocol/figure verification.",
+      "equipment": [
+        "Resistance implement unresolved; do not assume catalog dumbbell setup"
+      ],
+      "movementRequirements": [
+        "Wrist extension",
+        "Support/forearmposition and range unresolved"
+      ],
+      "artwork": "Candidate only. Verify source execution/figures and compare catalog before commissioning; if new, retain actual setup/start/action/return PNGs including support,equipment and range. No PNG generated or provenance fabricated.",
+      "reason": "Catalog wrist-extension is Dumbbell/weight_reps with unsupported bent-over forearms and visually uncertain motion per inspected catalog/ledger. Guideline lacks exact setup. Reuse catalog if actual execution matches; dose alone is not a new identity.",
+      "sourceRefs": [
+        {
+          "conditionId": "lateral-elbow-tendinopathy",
+          "sourceId": "let-g1",
+          "location": "Recommendations > Interventions: Therapeutic Exercise; evidence synthesis > Therapeutic Exercise"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "rubber-bar-eccentric-wrist-flexion",
+      "conditionIds": [
+        "medial-elbow-tendinopathy"
+      ],
+      "name": "Rubber-bar eccentric wrist-flexor release",
+      "execution": "Noninvolved arm preloads the rubber bar. Involved wrist flexors slowly release torsion eccentrically. Original figure/video review must resolve inconsistent flexor/extensor caption wording.",
+      "equipment": [
+        "Flexible rubber resistance bar"
+      ],
+      "movementRequirements": [
+        "Bimanual grip and preloading",
+        "Involved wrist-flexor eccentric release",
+        "Elbow/forearm position awaiting figure verification"
+      ],
+      "artwork": "Candidate only. Verify source execution/figures and compare catalog before commissioning; if new, retain actual setup/start/action/return PNGs including support,equipment and range. No PNG generated or provenance fabricated.",
+      "reason": "Catalog wrist-curl uses a standing barbell; wrist-extension uses unsupported dumbbells. Neither establishes torsion-bar execution. Different implement and preloading require review, rather than different clinical dose.",
+      "sourceRefs": [
+        {
+          "conditionId": "medial-elbow-tendinopathy",
+          "sourceId": "met-p1",
+          "location": "Methods > Treatment; Results; Discussion; Figure 1 caption"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "assisted-supinated-dumbbell-eccentric-elbow-flexion",
+      "conditionIds": [
+        "distal-biceps-tendinopathy"
+      ],
+      "name": "Contralaterally assisted supinated dumbbell eccentric elbow flexion",
+      "execution": "Involved supinated arm controls dumbbell lowering initially in midrange. Opposite arm assists lifting/support, as described for Figure 1. Exact posture/end range awaits visual review.",
+      "equipment": [
+        "Dumbbell"
+      ],
+      "movementRequirements": [
+        "Unilateral elbow-flexion lowering",
+        "Contralateral arm assistance",
+        "Supinated forearm; initial midrange"
+      ],
+      "artwork": "Candidate only. Verify source execution/figures and compare catalog before commissioning; if new, retain actual setup/start/action/return PNGs including support,equipment and range. No PNG generated or provenance fabricated.",
+      "reason": "Catalog bicep-curl is bilateral unsupported standing dynamic curling; hammer-curl is neutral grip. Assistance and studied range differ. Retain unresolved posture until source figure verification; do not duplicate merely for dose.",
+      "sourceRefs": [
+        {
+          "conditionId": "distal-biceps-tendinopathy",
+          "sourceId": "dbt-p1",
+          "location": "Case Presentation > Intervention; Table 2; Outcomes"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "cts-lumbrical-stretch-execution-unresolved",
+      "conditionIds": [
+        "carpal-tunnel-syndrome"
+      ],
+      "name": "CTS combined-orthosis lumbrical stretch, execution unresolved",
+      "execution": "Lumbrical-oriented stretch studied alongside orthoses. Primary full methods/handout unavailable, so joint positions, range and hold require verification.",
+      "equipment": [
+        "Orthosis type varies between trial arms; exact stretch equipment unresolved"
+      ],
+      "movementRequirements": [
+        "Finger/wrist position unverified",
+        "Selected mild-to-moderate CTS population"
+      ],
+      "artwork": "Candidate only. Verify source execution/figures and compare catalog before commissioning; if new, retain actual setup/start/action/return PNGs including support,equipment and range. No PNG generated or provenance fabricated.",
+      "reason": "No exact lumbrical-stretch execution verified in catalog metadata. Generic wrist stretching is not proven equivalent. No executable dose from abstract or secondary summary.",
+      "sourceRefs": [
+        {
+          "conditionId": "carpal-tunnel-syndrome",
+          "sourceId": "cts-p2",
+          "location": "Abstract > Participants, Interventions; 2019 CPG Therapeutic Exercise extraction"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "median-nerve-glide-cts-execution-unresolved",
+      "conditionIds": [
+        "carpal-tunnel-syndrome"
+      ],
+      "name": "Median nerve glide for CTS, trial execution unresolved",
+      "execution": "Median-nerve glide studied with splinting and tendon glides. Exact sequence/range requires primary-method verification.",
+      "equipment": [
+        "Splint cointervention; glide equipment not reported"
+      ],
+      "movementRequirements": [
+        "Median-nerve-specific sequence unverified",
+        "Do not substitute an ulnar glide"
+      ],
+      "artwork": "Candidate only. Verify source execution/figures and compare catalog before commissioning; if new, retain actual setup/start/action/return PNGs including support,equipment and range. No PNG generated or provenance fabricated.",
+      "reason": "No exact median-nerve sequence verified in catalog metadata. Trial showed no incremental benefit. Preserve as an uncertain research request, not default therapy.",
+      "sourceRefs": [
+        {
+          "conditionId": "carpal-tunnel-syndrome",
+          "sourceId": "cts-p1",
+          "location": "Abstract > Methods and Results; indexed Results"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "tendon-glide-cts-execution-unresolved",
+      "conditionIds": [
+        "carpal-tunnel-syndrome"
+      ],
+      "name": "Hand tendon glide for CTS, trial execution unresolved",
+      "execution": "Tendon glide studied with splint and median-nerve glides. Exact finger/wrist sequence was not verified from primary full methods.",
+      "equipment": [
+        "Splint cointervention; glide equipment not reported"
+      ],
+      "movementRequirements": [
+        "Finger-tendon excursion sequence unresolved",
+        "Distinct from median-nerve gliding"
+      ],
+      "artwork": "Candidate only. Verify source execution/figures and compare catalog before commissioning; if new, retain actual setup/start/action/return PNGs including support,equipment and range. No PNG generated or provenance fabricated.",
+      "reason": "No exact catalog sequence verified. Tendon and nerve glides are separate executions; primary abstract is not an execution manual.",
+      "sourceRefs": [
+        {
+          "conditionId": "carpal-tunnel-syndrome",
+          "sourceId": "cts-p1",
+          "location": "Abstract > Methods and Results; indexed Results"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "ulnar-nerve-glide-elbow-execution-unresolved",
+      "conditionIds": [
+        "ulnar-neuropathy-at-the-elbow"
+      ],
+      "name": "Ulnar nerve glide at elbow, trial execution unresolved",
+      "execution": "Nerve-gliding arm of the mild/moderate UNE trial. Exact upper-limb positions, sequence and range unverified.",
+      "equipment": [
+        "Not reported for exact glide execution"
+      ],
+      "movementRequirements": [
+        "Ulnar-nerve-specific movement unresolved",
+        "No assumed equivalence to median-nerve CTS glides"
+      ],
+      "artwork": "Candidate only. Verify source execution/figures and compare catalog before commissioning; if new, retain actual setup/start/action/return PNGs including support,equipment and range. No PNG generated or provenance fabricated.",
+      "reason": "Trial found no additional benefit over information. Preserve the uncertain candidate without inventing a sequence; no exact catalog identity verified.",
+      "sourceRefs": [
+        {
+          "conditionId": "ulnar-neuropathy-at-the-elbow",
+          "sourceId": "une-p1",
+          "location": "Abstract"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "measured-isometric-thumb-extension-spring-gauge",
+      "conditionIds": [
+        "de-quervain-tenosynovitis"
+      ],
+      "name": "Measured isometric thumb extension with spring gauge",
+      "execution": "Forearm supported on table, hand beyond edge, wrist neutral, proximal thumb phalanx under padded spring gauge. Unaffected hand loads/unloads gauge and stabilizes base. Hold thumb neutral against measured force.",
+      "equipment": [
+        "Stable table",
+        "Padded spring-gauge exercise device",
+        "Clinical digital force meter for MVIC calibration"
+      ],
+      "movementRequirements": [
+        "Table-supported forearm",
+        "Isometric thumb extension",
+        "Measured force; unaffected-hand assistance"
+      ],
+      "artwork": "Candidate only. Verify source execution/figures and compare catalog before commissioning; if new, retain actual setup/start/action/return PNGs including support,equipment and range. No PNG generated or provenance fabricated.",
+      "reason": "No exact catalog thumb-extension gauge identity verified. Support, device and calibrated force distinguish this from band exercise. Dose arms at 25% versus 70% MVIC remain one execution identity.",
+      "sourceRefs": [
+        {
+          "conditionId": "de-quervain-tenosynovitis",
+          "sourceId": "dqt-p1",
+          "location": "Methods > Exercise intervention; Results > Adverse events"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "thumb-cmc-coordination-execution-unresolved",
+      "conditionIds": [
+        "thumb-carpometacarpal-osteoarthritis"
+      ],
+      "name": "Thumb-CMC coordination and stability, exact home execution unresolved",
+      "execution": "Therapist-taught thumb positioning/coordination targeting CMC extension/abduction, followed by thenar strengthening. Exact home sequences await trial appendix review.",
+      "equipment": [
+        "Orthosis as studied cointervention",
+        "Exercise implements unverified"
+      ],
+      "movementRequirements": [
+        "Thumb-CMC coordination",
+        "Exact joint alignment, range and resistance unresolved"
+      ],
+      "artwork": "Candidate only. Verify source execution/figures and compare catalog before commissioning; if new, retain actual setup/start/action/return PNGs including support,equipment and range. No PNG generated or provenance fabricated.",
+      "reason": "No exact CMC-coordination identity verified. Do not replace it with generic grip exercise. Possible overlap with opposition/band work needs source verification; clinical dose alone is not a new identity.",
+      "sourceRefs": [
+        {
+          "conditionId": "thumb-carpometacarpal-osteoarthritis",
+          "sourceId": "cmc-p1",
+          "location": "Methods > Interventions, PDF pp.3–4; Results, PDF p.6; Table 2, PDF p.10"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "hand-small-large-fist-active-rom",
+      "conditionIds": [
+        "thumb-carpometacarpal-osteoarthritis",
+        "finger-interphalangeal-osteoarthritis"
+      ],
+      "name": "Active small-fist and large-fist hand ROM sequence",
+      "execution": "Actively roll fingers into small and large fist, then open, as described in mixed hand-OA programs. End range and thumb position require original handout/figure verification.",
+      "equipment": [
+        "Own hand; no external resistance established"
+      ],
+      "movementRequirements": [
+        "Active finger flexion/extension",
+        "Small and large fist are distinct positions",
+        "Joint-specific comfortable range unresolved"
+      ],
+      "artwork": "Candidate only. Verify source execution/figures and compare catalog before commissioning; if new, retain actual setup/start/action/return PNGs including support,equipment and range. No PNG generated or provenance fabricated.",
+      "reason": "No exact fist-ROM sequence verified in catalog. Grip strengthening differs from active ROM. Mixed hand-OA program component is indirect for isolated IP/CMC disease, with no isolated efficacy.",
+      "sourceRefs": [
+        {
+          "conditionId": "thumb-carpometacarpal-osteoarthritis",
+          "sourceId": "hoa-s2",
+          "location": "Characteristics of included studies > Hennig 2015 and Østerås 2014; Description of studies > Adverse events"
+        },
+        {
+          "conditionId": "finger-interphalangeal-osteoarthritis",
+          "sourceId": "hoa-p2",
+          "location": "Methods > Exercise intervention and Table 1; Results > Adverse events"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "hand-grip-rubber-ball-squeeze",
+      "conditionIds": [
+        "thumb-carpometacarpal-osteoarthritis",
+        "finger-interphalangeal-osteoarthritis"
+      ],
+      "name": "Hand grip with rubber ball",
+      "execution": "Squeeze a compliant rubber ball as a Hennig program component. Ball stiffness, diameter and finger/thumb geometry are not established from the review table; primary handout verification required.",
+      "equipment": [
+        "Compliant rubber ball; stiffness and size unresolved"
+      ],
+      "movementRequirements": [
+        "Whole-hand grip",
+        "Force and range unresolved",
+        "Tube geometry may require distinct execution verification"
+      ],
+      "artwork": "Candidate only. Verify source execution/figures and compare catalog before commissioning; if new, retain actual setup/start/action/return PNGs including support,equipment and range. No PNG generated or provenance fabricated.",
+      "reason": "No exact ball-handgrip identity verified. This is not a wrist or elbow curl. Mixed hand-OA component has no isolated efficacy; different dose alone will not create another identity.",
+      "sourceRefs": [
+        {
+          "conditionId": "thumb-carpometacarpal-osteoarthritis",
+          "sourceId": "hoa-s2",
+          "location": "Characteristics of included studies > Hennig 2015 and Østerås 2014; Description of studies > Adverse events"
+        },
+        {
+          "conditionId": "finger-interphalangeal-osteoarthritis",
+          "sourceId": "hoa-s2",
+          "location": "Characteristics of included studies > Hennig 2015 and Østerås 2014; Description of studies > Adverse events"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "band-thumb-abduction-extension-execution-unresolved",
+      "conditionIds": [
+        "thumb-carpometacarpal-osteoarthritis"
+      ],
+      "name": "Band-resisted thumb abduction/extension, setup unresolved",
+      "execution": "Thumb abduction/extension against elastic band in a mixed hand-OA program. Anchor, hand position, joint alignment and whether directions are separate exercises await primary handout.",
+      "equipment": [
+        "Elastic band; attachment unresolved"
+      ],
+      "movementRequirements": [
+        "Thumb abduction/extension",
+        "Anchor and range unresolved",
+        "CMC stability not assumed for finger-IP OA"
+      ],
+      "artwork": "Candidate only. Verify source execution/figures and compare catalog before commissioning; if new, retain actual setup/start/action/return PNGs including support,equipment and range. No PNG generated or provenance fabricated.",
+      "reason": "No exact band-thumb identity verified. Resolve direction and geometry before combined-direction artwork. Clinical dose alone is not a new identity.",
+      "sourceRefs": [
+        {
+          "conditionId": "thumb-carpometacarpal-osteoarthritis",
+          "sourceId": "hoa-s2",
+          "location": "Characteristics of included studies > Hennig 2015 and Østerås 2014; Description of studies > Adverse events"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "finger-stretch-hand-oa-execution-unresolved",
+      "conditionIds": [
+        "thumb-carpometacarpal-osteoarthritis",
+        "finger-interphalangeal-osteoarthritis"
+      ],
+      "name": "Finger stretch from hand-OA program, execution unresolved",
+      "execution": "Finger stretch listed in mixed hand-OA program. Assistance, joint positions, direction and hold were not verified. No forceful passive end-range prescription.",
+      "equipment": [
+        "Not reported until primary handout identified"
+      ],
+      "movementRequirements": [
+        "Finger-joint mobility",
+        "Exact stretch direction/support unresolved",
+        "Stretch does not earn strength-set credit"
+      ],
+      "artwork": "Candidate only. Verify source execution/figures and compare catalog before commissioning; if new, retain actual setup/start/action/return PNGs including support,equipment and range. No PNG generated or provenance fabricated.",
+      "reason": "No exact matching finger stretch verified. Name alone cannot establish equivalence. Withhold illustration until original execution is resolved.",
+      "sourceRefs": [
+        {
+          "conditionId": "thumb-carpometacarpal-osteoarthritis",
+          "sourceId": "hoa-s2",
+          "location": "Characteristics of included studies > Hennig 2015 and Østerås 2014; Description of studies > Adverse events"
+        },
+        {
+          "conditionId": "finger-interphalangeal-osteoarthritis",
+          "sourceId": "hoa-p2",
+          "location": "Methods > Exercise intervention and Table 1; Results > Adverse events"
+        }
+      ],
+      "status": "candidate"
     }
   ]
 }

@@ -1,0 +1,307 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "ulnar-neuropathy-at-the-elbow",
+    "label": "ulnar neuropathy at the elbow",
+    "aliases": [],
+    "distinctions": "Ulnar nerve at elbow;not median CTS or ulnar neuropathy at wrist."
+  },
+  "scope": {
+    "population": "Clinically mild or moderate ulnar neuropathy at the elbow.",
+    "stage": "Nonsurgical mild/moderate disease; progressive weakness, trauma, instability and postoperative cases unresolved.",
+    "operativeStatus": "Nonsurgical research unless explicitly noted; postoperative progression not established.",
+    "exclusions": "Source-specific trial exclusions are applicability limits,not universal contraindications; no automatic diagnosis-only ban.",
+    "uncertainty": "Draft research only. Side, stage, concurrent conditions, starting load and symptom response require individual clinical decisions."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "Native web search with primary PubMed,publisher,PMC,and guideline retrieval",
+      "query": "ulnar neuropathy elbow conservative treatment randomized trial nerve gliding education splint Svernlov 2009",
+      "decision": "Executed query; included sources and direct extraction retained in this dossier and elbow-hand-source-report.md.",
+      "limitations": "Targeted search, not an exhaustive systematic review. Full-text/abstract boundaries explicit; local November 1 / UTC November 2, 2026."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Native web search with primary PubMed,publisher,PMC,and guideline retrieval",
+      "query": "\"Conservative treatment of the cubital tunnel syndrome\" Svernlov 2009 PubMed",
+      "decision": "Executed query; included sources and direct extraction retained in this dossier and elbow-hand-source-report.md.",
+      "limitations": "Targeted search, not an exhaustive systematic review. Full-text/abstract boundaries explicit; local November 1 / UTC November 2, 2026."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Native web search with primary PubMed,publisher,PMC,and guideline retrieval",
+      "query": "ulnar nerve elbow pressure flexion cadaver Gelberman 1998 intraneural pressure flexion PubMed",
+      "decision": "Executed query; included sources and direct extraction retained in this dossier and elbow-hand-source-report.md.",
+      "limitations": "Targeted search, not an exhaustive systematic review. Full-text/abstract boundaries explicit; local November 1 / UTC November 2, 2026."
+    }
+  ],
+  "sources": [
+    {
+      "id": "une-s1",
+      "title": "Treatment for ulnar neuropathy at the elbow",
+      "doi": "10.1002/14651858.CD006839.pub5",
+      "pmid": "40298125",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12038884/",
+      "publicationStatus": "Final Cochrane update published April 29, 2025;CD006839; search through July 2022.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Full article text retrieved and relevant methods/results/limitations inspected; access details in the retained source report."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Title/identifier/publication metadata checked against the linked primary record and access account recorded in elbow-hand-source-report.md. Inspected source/version, not an independent retraction-registry audit.",
+        "result": "Identifiers and published versions retained as verified in this session; no clinical approval inferred. Dedicated correction/retraction search not performed; absence of a notice is not established."
+      },
+      "design": "Cochrane review of randomized or quasi-randomized UNE treatment trials.",
+      "population": "Clinical UNE; conservative evidence principally mild/moderate disease",
+      "comparator": "Information alone versus added splint/glides; other surgical/injection comparisons separate",
+      "coInterventions": "Information/advice common to conservative arms",
+      "outcomes": "Information may improve work/night pain as much as adding splint or glides; small/limited trials.",
+      "followUp": "Trial-specific; review and primary Svernlöv trial reports differ in analyzed denominator/timepoint account.",
+      "uncertainty": "Not adequate evidence for progressive motor deficits or all severity states.",
+      "harms": "Conservative exercise harms poorly established.",
+      "limitations": "In clinically mild/moderate UNE, information alone may improve work activities/night pain as much as adding night splints or nerve glides; confidence limited by small trials/methods. Review cannot identify best therapy by severity/imaging/electrophysiology. It does not prove no conservative treatment works or that education is adequate for progressive motor deficits. Exercise dose and general gym restrictions are not established. Reported surgical comparisons do not answer exercise safety.",
+      "protocol": {
+        "execution": "Written advice about avoiding individually provoking movements/positions; nerve glides varied/not fully defined.",
+        "dose": "not reported as a validated exercise dose.",
+        "frequency": "Relevant trial: night splint for three months. Exact glide frequency not verified.",
+        "supervision": "not reported as a universal model.",
+        "progression": "not reported.",
+        "stoppingRules": "not reported as a validated clinical threshold."
+      },
+      "locations": [
+        "Results > Conservative treatments; Svernlov 2009 study characteristics; Plain language summary"
+      ]
+    },
+    {
+      "id": "une-p1",
+      "title": "Conservative treatment of the cubital tunnel syndrome",
+      "doi": "10.1177/1753193408098480",
+      "pmid": "19282413",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19282413/",
+      "publicationStatus": "Final randomized study, Journal of Hand Surgery European Volume 2009;34(2):201–207.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. Protocol fields deliberately not populated. [Primary abstract](https://pubmed.ncbi.nlm.nih.gov/19282413/). DOI 10.1177/1753193408098480; PMID 19282413. 70 mild/moderate patients received information about causes/avoiding provocation, randomized to information alone, night splint or nerve glides. Primary abstract: 57 followed at 6 months, 51 improved (89.5%), no significant group differences. Cochrane reports a smaller analyzed set; denominator/timepoint differences require preserving the source-specific account rather than merging. Night splint duration 3 months; exact glide repetition/hold dose not verified. Harms were not adequately reported. Not evidence that all exercise prevents surgery, nor that glides should be routine. Trial excluded several other upper-limb conditions; those exclusions are generalizability limits."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Title/identifier/publication metadata checked against the linked primary record and access account recorded in elbow-hand-source-report.md. Inspected source/version, not an independent retraction-registry audit.",
+        "result": "Identifiers and published versions retained as verified in this session; no clinical approval inferred. Dedicated correction/retraction search not performed; absence of a notice is not established."
+      },
+      "design": "Randomized trial, 70 patients.",
+      "population": "Clinically mild/moderate cubital tunnel/UNE",
+      "comparator": "Information alone versus information plus night splint versus nerve glides",
+      "coInterventions": "Cause/provocation information for all",
+      "outcomes": "Primary abstract: 57 followed at six months, 51 improved (89.5%), with no significant differences between groups. Cochrane uses a different analyzed denominator; accounts remain separate.",
+      "followUp": "Six months in primary abstract.",
+      "uncertainty": "Exact glide execution/dose unavailable. Trial exclusions limit applicability, rather than establishing contraindications.",
+      "harms": "not adequately reported in inspected abstract",
+      "limitations": "Exact glide execution/dose unavailable; trial exclusions limit applicability, not contraindications. [Primary abstract](https://pubmed.ncbi.nlm.nih.gov/19282413/). DOI 10.1177/1753193408098480; PMID 19282413. 70 mild/moderate patients received information about causes/avoiding provocation, randomized to information alone, night splint or nerve glides. Primary abstract: 57 followed at 6 months, 51 improved (89.5%), no significant group differences. Cochrane reports a smaller analyzed set; denominator/timepoint differences require preserving the source-specific account rather than merging. Night splint duration 3 months; exact glide repetition/hold dose not verified. Harms were not adequately reported. Not evidence that all exercise prevents surgery, nor that glides should be routine. Trial excluded several other upper-limb conditions; those exclusions are generalizability limits.",
+      "protocol": {
+        "execution": "not reported — exact primary protocol not independently established at this access level.",
+        "dose": "not reported — exact primary protocol not independently established at this access level.",
+        "frequency": "not reported — exact primary protocol not independently established at this access level.",
+        "supervision": "not reported — exact primary protocol not independently established at this access level.",
+        "progression": "not reported — exact primary protocol not independently established at this access level.",
+        "stoppingRules": "not reported — exact primary protocol not independently established at this access level."
+      },
+      "locations": [
+        "Abstract"
+      ]
+    },
+    {
+      "id": "une-p2",
+      "title": "Outcomes of rigid night splinting and activity modification in the treatment of cubital tunnel syndrome",
+      "doi": "10.1016/j.jhsa.2013.02.039",
+      "pmid": "23647638",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/23647638/",
+      "publicationStatus": "Final cohort study, Journal of Hand Surgery American Volume 2013;38(6):1125–1130.e1.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. Protocol fields deliberately not populated. [Primary abstract](https://pubmed.ncbi.nlm.nih.gov/23647638/); [Full article](https://pmc.ncbi.nlm.nih.gov/articles/PMC3989882/). DOI 10.1016/j.jhsa.2013.02.039; PMID 23647638. Indexed abstract/full treatment passages inspected."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Title/identifier/publication metadata checked against the linked primary record and access account recorded in elbow-hand-source-report.md. Inspected source/version, not an independent retraction-registry audit.",
+        "result": "Identifiers and published versions retained as verified in this session; no clinical approval inferred. Dedicated correction/retraction search not performed; absence of a notice is not established."
+      },
+      "design": "Prospective uncontrolled cohort, 19 patients and 25 extremities.",
+      "population": "Mild–moderate idiopathic cubital tunnel syndrome",
+      "comparator": "None",
+      "coInterventions": "Activity modification plus three months of rigid night splinting at 45° elbow flexion.",
+      "outcomes": "21 of 24 available extremities avoided surgery (88%); QuickDASH improved from 29 to 11, grip from 32 to 35 kg.",
+      "followUp": "Mean two years; range 15–32 months.",
+      "uncertainty": "No control; splint angle not exercise limit; advice-only RCT did not show splint advantage.",
+      "harms": "Described well tolerated; comprehensive harm rate unavailable.",
+      "limitations": "19 patients/25 extremities, mild–moderate idiopathic cubital tunnel syndrome. Activity modification plus rigid night splint at 45° elbow flexion for 3 months. At mean 2 years, 24 extremities available, 21 avoided surgery (88%); QuickDASH 29→11 and grip 32→35 kg. No control group; success defined by avoiding surgery, not confirmed reversal of nerve damage. Described well tolerated; no comprehensive harm rate. Night-splint angle is not an exercise elbow-flexion limit. Does not resolve whether splint adds benefit beyond advice, given UNE-P1.",
+      "protocol": {
+        "execution": "not reported — exact primary protocol not independently established at this access level.",
+        "dose": "not reported — exact primary protocol not independently established at this access level.",
+        "frequency": "not reported — exact primary protocol not independently established at this access level.",
+        "supervision": "not reported — exact primary protocol not independently established at this access level.",
+        "progression": "not reported — exact primary protocol not independently established at this access level.",
+        "stoppingRules": "not reported — exact primary protocol not independently established at this access level."
+      },
+      "locations": [
+        "Abstract > Methods and Results; indexed Discussion"
+      ]
+    },
+    {
+      "id": "une-m1",
+      "title": "Changes in interstitial pressure and cross-sectional area of the cubital tunnel and of the ulnar nerve with flexion of the elbow. An experimental study in human cadavera.",
+      "doi": "10.2106/00004623-199804000-00005",
+      "pmid": "9563378",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/9563378/",
+      "publicationStatus": "Final cadaver experiment, Journal of Bone and Joint Surgery American Volume, April 1998;80(4):492–501.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. Protocol fields deliberately not populated. [Primary abstract](https://pubmed.ncbi.nlm.nih.gov/9563378/). DOI 10.2106/00004623-199804000-00005; PMID 9563378. MRI and interstitial pressure while flexing human cadaver elbows. Tunnel/nerve area decreased toward 135°; intraneural pressure exceeded extraneural pressure at several flexed positions. No living clinical symptoms, exercise dose, longitudinal injury outcome or maximum safe angle. Mechanistic support for reducing sustained symptomatic flexion/pressure; not evidence for a universal 90° cap or no-flexion workouts."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Title/identifier/publication metadata checked against the linked primary record and access account recorded in elbow-hand-source-report.md. Inspected source/version, not an independent retraction-registry audit.",
+        "result": "Identifiers and published versions retained as verified in this session; no clinical approval inferred. Dedicated correction/retraction search not performed; absence of a notice is not established."
+      },
+      "design": "Cadaver pressure/MRI experiment",
+      "population": "Human cadaver elbows, not living symptomatic exercise participants",
+      "comparator": "Angles across elbow flexion",
+      "coInterventions": "No clinical therapy",
+      "outcomes": "Tunnel/nerve cross-sectional area decreased toward 135° flexion; intraneural pressure exceeded extraneural pressure at several flexed positions.",
+      "followUp": "Immediate mechanistic measurement",
+      "uncertainty": "Mechanistic surrogate does not establish a 90° exercise ceiling or safe clinical duration, angle or load.",
+      "harms": "No clinical harms endpoint.",
+      "limitations": "Does not establish90degree ceiling or any safe exercise duration/angle/load. [Primary abstract](https://pubmed.ncbi.nlm.nih.gov/9563378/). DOI 10.2106/00004623-199804000-00005; PMID 9563378. MRI and interstitial pressure while flexing human cadaver elbows. Tunnel/nerve area decreased toward 135°; intraneural pressure exceeded extraneural pressure at several flexed positions. No living clinical symptoms, exercise dose, longitudinal injury outcome or maximum safe angle. Mechanistic support for reducing sustained symptomatic flexion/pressure; not evidence for a universal 90° cap or no-flexion workouts.",
+      "protocol": {
+        "execution": "not reported — exact primary protocol not independently established at this access level.",
+        "dose": "not reported — exact primary protocol not independently established at this access level.",
+        "frequency": "not reported — exact primary protocol not independently established at this access level.",
+        "supervision": "not reported — exact primary protocol not independently established at this access level.",
+        "progression": "not reported — exact primary protocol not independently established at this access level.",
+        "stoppingRules": "not reported — exact primary protocol not independently established at this access level."
+      },
+      "locations": [
+        "Abstract"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "une-s1-finding",
+      "kind": "study-result",
+      "statement": "Information may improve work/night pain as much as adding splint or glides; small/limited trials.",
+      "citations": [
+        {
+          "sourceId": "une-s1",
+          "location": "Results > Conservative treatments; Svernlov 2009 study characteristics; Plain language summary"
+        }
+      ],
+      "applicability": "Clinical UNE; conservative evidence principally mild/moderate disease",
+      "limitations": "Not adequate evidence for progressive motor deficits or all severity states. Conservative exercise harms poorly established."
+    },
+    {
+      "id": "une-p1-finding",
+      "kind": "study-result",
+      "statement": "Primary abstract: 57 followed at six months, 51 improved (89.5%), with no significant differences between groups. Cochrane uses a different analyzed denominator; accounts remain separate.",
+      "citations": [
+        {
+          "sourceId": "une-p1",
+          "location": "Abstract"
+        }
+      ],
+      "applicability": "Clinically mild/moderate cubital tunnel/UNE",
+      "limitations": "Exact glide execution/dose unavailable. Trial exclusions limit applicability, rather than establishing contraindications. not adequately reported in inspected abstract"
+    },
+    {
+      "id": "une-p2-finding",
+      "kind": "study-result",
+      "statement": "21 of 24 available extremities avoided surgery (88%); QuickDASH improved from 29 to 11, grip from 32 to 35 kg.",
+      "citations": [
+        {
+          "sourceId": "une-p2",
+          "location": "Abstract > Methods and Results; indexed Discussion"
+        }
+      ],
+      "applicability": "Mild–moderate idiopathic cubital tunnel syndrome",
+      "limitations": "No control; splint angle not exercise limit; advice-only RCT did not show splint advantage. Described well tolerated; comprehensive harm rate unavailable."
+    },
+    {
+      "id": "une-m1-finding",
+      "kind": "study-result",
+      "statement": "Tunnel/nerve cross-sectional area decreased toward 135° flexion; intraneural pressure exceeded extraneural pressure at several flexed positions.",
+      "citations": [
+        {
+          "sourceId": "une-m1",
+          "location": "Abstract"
+        }
+      ],
+      "applicability": "Human cadaver elbows, not living symptomatic exercise participants",
+      "limitations": "Mechanistic surrogate does not establish a 90° exercise ceiling or safe clinical duration, angle or load. No clinical harms endpoint."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "ulnar-nerve-glide-elbow-execution-unresolved-mapping",
+      "exerciseId": null,
+      "requestId": "ulnar-nerve-glide-elbow-execution-unresolved",
+      "findingIds": [
+        "une-p1-finding"
+      ],
+      "matchRationale": "Trial found no additional benefit over information. Preserve the uncertain candidate without inventing a sequence; no exact catalog identity verified.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "une-provocation-modification-hypothesis",
+      "kind": "symptom-response",
+      "basis": "unresolved-hypothesis",
+      "statement": "Consider modifying individually provoking sustained elbow flexion or direct medial-elbow pressure. No universal angle, duration or force cutoff and no automatic nerve-glide prescription.",
+      "findingIds": [
+        "une-p1-finding",
+        "une-p2-finding",
+        "une-m1-finding"
+      ],
+      "citations": [
+        {
+          "sourceId": "une-p1",
+          "location": "Abstract"
+        },
+        {
+          "sourceId": "une-p2",
+          "location": "Abstract > Methods and Results; indexed Discussion"
+        },
+        {
+          "sourceId": "une-m1",
+          "location": "Abstract"
+        }
+      ],
+      "applicability": {
+        "population": "Clinically mild or moderate ulnar neuropathy at the elbow.",
+        "stage": "Nonsurgical mild/moderate disease; progressive weakness, trauma, instability and postoperative cases unresolved.",
+        "rationale": "Source-specific draft implication. Preserve indirectness and all concurrent condition, equipment and joint restrictions."
+      },
+      "limitations": "Candidate only, unreviewed, not clinically released. No invented pain/load/ROM cutoff. Benefit does not establish that alternatives are harmful; trial exclusions are applicability limits.",
+      "mappingIds": [],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "Glides/splints did not add benefit over information in the relevant randomized trial.",
+    "No exact glide execution/dose verified; no automatic strengthening or stretch prescription.",
+    "Cadaver pressure/night-splint angles are not exercise ROM ceilings. Primary/review denominator differences retained."
+  ],
+  "disposition": "unresolved",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

@@ -4,7 +4,7 @@ Working evidence review for personalized workouts. This inventory contains 50 ca
 
 Each regional evidence report links the actual medical papers and guidelines inspected, distinguishes full-text from abstract-only access, and records study populations, interventions, outcomes, harms, conflicts and limits. A study protocol is not an approved app prescription. Unavailable details stay unknown; no restriction is justified merely because another exercise helped.
 
-Current state: linked source reports cover 50 of 50 conditions; 42 structured dossiers have been reconciled. Independent source verification and clinical review are separate gates. This is a targeted evidence review, not an exhaustive systematic review.
+Current state: linked source reports cover 50 of 50 conditions; 50 structured dossiers have been reconciled. Independent source verification and clinical review are separate gates. This is a targeted evidence review, not an exhaustive systematic review.
 
 ## Inventory and evidence links
 
@@ -23,14 +23,14 @@ Current state: linked source reports cover 50 of 50 conditions; 42 structured do
 | glenohumeral osteoarthritis | [Study extraction](evidence/shoulder.md) | [complete](glenohumeral-osteoarthritis.json) |
 | shoulder instability | [Study extraction](evidence/shoulder.md) | [complete](shoulder-instability.json) |
 | acromioclavicular osteoarthritis | [Study extraction](evidence/shoulder.md) | [complete](acromioclavicular-osteoarthritis.json) |
-| Lateral elbow tendinopathy | [Study extraction](evidence/elbow-hand.md) | Pending reconciliation |
-| medial elbow tendinopathy | [Study extraction](evidence/elbow-hand.md) | Pending reconciliation |
-| distal biceps tendinopathy | [Study extraction](evidence/elbow-hand.md) | Pending reconciliation |
-| carpal tunnel syndrome | [Study extraction](evidence/elbow-hand.md) | Pending reconciliation |
-| ulnar neuropathy at the elbow | [Study extraction](evidence/elbow-hand.md) | Pending reconciliation |
-| de Quervain tenosynovitis | [Study extraction](evidence/elbow-hand.md) | Pending reconciliation |
-| thumb carpometacarpal osteoarthritis | [Study extraction](evidence/elbow-hand.md) | Pending reconciliation |
-| finger interphalangeal osteoarthritis | [Study extraction](evidence/elbow-hand.md) | Pending reconciliation |
+| Lateral elbow tendinopathy | [Study extraction](evidence/elbow-hand.md) | [complete](lateral-elbow-tendinopathy.json) |
+| medial elbow tendinopathy | [Study extraction](evidence/elbow-hand.md) | [complete](medial-elbow-tendinopathy.json) |
+| distal biceps tendinopathy | [Study extraction](evidence/elbow-hand.md) | [complete](distal-biceps-tendinopathy.json) |
+| carpal tunnel syndrome | [Study extraction](evidence/elbow-hand.md) | [complete](carpal-tunnel-syndrome.json) |
+| ulnar neuropathy at the elbow | [Study extraction](evidence/elbow-hand.md) | [complete](ulnar-neuropathy-at-the-elbow.json) |
+| de Quervain tenosynovitis | [Study extraction](evidence/elbow-hand.md) | [complete](de-quervain-tenosynovitis.json) |
+| thumb carpometacarpal osteoarthritis | [Study extraction](evidence/elbow-hand.md) | [complete](thumb-carpometacarpal-osteoarthritis.json) |
+| finger interphalangeal osteoarthritis | [Study extraction](evidence/elbow-hand.md) | [complete](finger-interphalangeal-osteoarthritis.json) |
 | Hip osteoarthritis | [Study extraction](evidence/hip.md) | [complete](hip-osteoarthritis.json) |
 | gluteal tendinopathy | [Study extraction](evidence/hip.md) | [complete](gluteal-tendinopathy.json) |
 | femoroacetabular impingement syndrome | [Study extraction](evidence/hip.md) | [complete](femoroacetabular-impingement-syndrome.json) |

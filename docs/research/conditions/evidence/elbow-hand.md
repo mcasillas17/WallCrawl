@@ -1,6 +1,6 @@
 # Elbow, wrist and hand: substantive source extraction
 
-Draft research, accessed 2026-11-01/02. Assigned inventory: lateral elbow tendinopathy; medial elbow tendinopathy; distal biceps tendinopathy; carpal tunnel syndrome; ulnar neuropathy at the elbow; de Quervain tenosynovitis; thumb carpometacarpal osteoarthritis; finger interphalangeal osteoarthritis. This is targeted evidence gathering, not an exhaustive systematic review, clinical approval, or personal prescription. Machine-readable dossier reconciliation is in progress.
+Draft research, accessed 2026-11-01/02. Assigned inventory: lateral elbow tendinopathy; medial elbow tendinopathy; distal biceps tendinopathy; carpal tunnel syndrome; ulnar neuropathy at the elbow; de Quervain tenosynovitis; thumb carpometacarpal osteoarthritis; finger interphalangeal osteoarthritis. This is targeted evidence gathering, not an exhaustive systematic review, clinical approval, or personal prescription. Controller-reviewed serialization is retained in elbow-hand-dossiers/ and elbow-hand-exercise-requests.json; see elbow-hand-serialization-report.md for validation and remaining gaps.
 
 ## Interpretation and access
 
@@ -293,3 +293,8 @@ Search executed 2026-11-01 America/Los_Angeles (2026-11-02 UTC). Broad medical l
 - `"NCT05980793" site:clinicaltrials.gov "exercise"`
 
 Useful extraction locations: LET-G1 recommendation panel and exercise section (PDF indexed lines 51–54, 1021–1061); CTS-G2 therapeutic exercise section (1040–1046); DBT-P1 intervention/Table 2; DQT-G1 Table 5; DQT-P1 exercise intervention and adverse events; HOA-S2 study characteristics/dose tables; HOA-P2 adverse-events section; CMC-P1 PDF pages 3–5 and Table 2/page 9. These locations describe what was inspected, not clinical approval.
+
+
+## Serialization access refinement
+
+The structured dossiers conservatively label partial indexed passages as `abstract-only`, even where those passages expose a recommendation or intervention detail. All six protocol fields then begin `not reported`; accessible factual details remain in findings with the access limitation explicit. Full-text designation is retained only where complete source text was retrieved and relevant methods/results were inspected. Baker trial results extracted by the 2019 CTS guideline are separately attributed to that guideline, rather than represented as inspected primary full methods. No wholesale re-search was undertaken during serialization.

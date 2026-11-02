@@ -84,49 +84,49 @@
       "id": "lateral-elbow-tendinopathy",
       "label": "Lateral elbow tendinopathy",
       "region": "Elbow, wrist, hand (8)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "medial-elbow-tendinopathy",
       "label": "medial elbow tendinopathy",
       "region": "Elbow, wrist, hand (8)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "distal-biceps-tendinopathy",
       "label": "distal biceps tendinopathy",
       "region": "Elbow, wrist, hand (8)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "carpal-tunnel-syndrome",
       "label": "carpal tunnel syndrome",
       "region": "Elbow, wrist, hand (8)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "ulnar-neuropathy-at-the-elbow",
       "label": "ulnar neuropathy at the elbow",
       "region": "Elbow, wrist, hand (8)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "de-quervain-tenosynovitis",
       "label": "de Quervain tenosynovitis",
       "region": "Elbow, wrist, hand (8)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "thumb-carpometacarpal-osteoarthritis",
       "label": "thumb carpometacarpal osteoarthritis",
       "region": "Elbow, wrist, hand (8)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "finger-interphalangeal-osteoarthritis",
       "label": "finger interphalangeal osteoarthritis",
       "region": "Elbow, wrist, hand (8)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "hip-osteoarthritis",
