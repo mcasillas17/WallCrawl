@@ -3,6 +3,8 @@ package wallcrawl.elopenmike.com.core.database
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.async
 import kotlinx.coroutines.CompletableDeferred
@@ -32,6 +34,44 @@ class ConditionReassessmentPersistenceTest {
         database = Room.inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(), WallCrawlDatabase::class.java).build()
     }
     @After fun tearDown() = database.close()
+
+    @Test fun onboardingConditionDraftIsOneRevisionAndActiveRefusalIsAtomic() = runBlocking<Unit> {
+        val repository = OfflineUserProfileRepository(database.userProfileDao())
+        val initial = repository.getProfileOnce()
+        val saved = androidx.lifecycle.SavedStateHandle()
+        suspend fun complete(name: String, selections: List<SelectedCondition>) {
+            val vm = kotlinx.coroutines.withContext(Dispatchers.Main) {
+                wallcrawl.elopenmike.com.feature.onboarding.OnboardingViewModel(repository, saved).also {
+                    it.updateName(name)
+                    MovementCapabilityType.entries.forEach { type -> it.updateMovementCapability(type, CapabilityLevel.UNKNOWN) }
+                    it.updateConditions(selections)
+                    it.complete()
+                }
+            }
+            withTimeout(5000) { vm.uiState.first { it.isComplete || it.error != null } }
+        }
+        complete("saved atomically", listOf(condition))
+        val success = repository.getProfileOnce()
+        assertEquals(initial.revision + 1, success.revision)
+        assertEquals(listOf(condition), success.activeConditions)
+        database.workoutSessionDao().insertWorkout(session("active"), emptyList(), emptyList())
+        complete("must not persist", emptyList())
+        assertEquals(success, repository.getProfileOnce())
+        assertTrue(saved.get<List<String>>("onboarding.conditions")!!.isEmpty())
+    }
+
+    @Test fun pendingObservationTracksExactReplacementAndRejectsOverflowWithoutSelections() = runBlocking<Unit> {
+        val repository = wallcrawl.elopenmike.com.core.database.repository.OfflineWorkoutRepository(database.workoutSessionDao(), database.workoutSetDao())
+        val flow = repository.observePendingConditionReassessments(UserProfile.DEFAULT_PROFILE_ID)
+        assertTrue(flow.first().isEmpty())
+        val marker = ConditionReassessmentPendingEntity(UserProfile.DEFAULT_PROFILE_ID, "withdrawn", "exercise", "first", digest, 1, 100, null)
+        val changed = async { withTimeout(5000) { flow.first { it.singleOrNull()?.eventId == "second" } } }
+        database.conditionReassessmentDao().replace(marker)
+        database.conditionReassessmentDao().replace(marker.copy(eventId = "second"))
+        assertEquals("second", changed.await().single().eventId)
+        repeat(512) { database.conditionReassessmentDao().replace(marker.copy(exerciseId = "exercise-$it")) }
+        assertThrows(IllegalStateException::class.java) { runBlocking { flow.first() } }
+    }
 
     @Test fun selectedFactsRoundTripThroughRepositoryWithoutCatalogRecognition() = runBlocking {
         val repository = OfflineUserProfileRepository(database.userProfileDao())

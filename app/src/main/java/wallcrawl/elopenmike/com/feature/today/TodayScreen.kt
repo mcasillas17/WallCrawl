@@ -32,7 +32,11 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.Text
+import androidx.compose.runtime.collectAsState
+import wallcrawl.elopenmike.com.core.ui.components.ConditionRefusal
+import wallcrawl.elopenmike.com.core.ui.components.ConditionExecution
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.produceState
 import androidx.lifecycle.Lifecycle
@@ -82,14 +86,25 @@ fun TodayScreen(
     onResumeWorkout: (sessionId: String) -> Unit,
     onOpenTemplates: () -> Unit,
     modifier: Modifier = Modifier,
-    programContent: @Composable () -> Unit = {}
+    programContent: @Composable () -> Unit = {},
+    onOpenProfile: () -> Unit = {}
 ) {
+    val pending by viewModel.pendingConditions.collectAsState()
     val lifecycleOwner = LocalLifecycleOwner.current
     val uiState by produceState<TodayUiState>(TodayUiState.Loading, viewModel, lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
             value = TodayUiState.Loading
             viewModel.uiState.collect { value = it }
         }
+    }
+
+    val conditionAndProgramContent: @Composable () -> Unit = {
+        if (pending.pendingFailed) Text(stringResource(R.string.condition_pending_read_error), color = MaterialTheme.colorScheme.onSurface)
+        if (!pending.pending.isNullOrEmpty()) {
+            Text(stringResource(R.string.condition_pending_hint), color = MaterialTheme.colorScheme.onSurface)
+            TextButton(onClick = onOpenProfile) { Text(stringResource(R.string.condition_edit), color = MaterialTheme.colorScheme.onSurface) }
+        }
+        programContent()
     }
 
     Box(
@@ -115,7 +130,7 @@ fun TodayScreen(
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                         }
-                        programContent()
+                        conditionAndProgramContent()
                         CircularProgressIndicator(color = CrimsonRedPrimary)
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
@@ -145,13 +160,14 @@ fun TodayScreen(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                     }
-                    programContent()
+                    conditionAndProgramContent()
                     if (state.activeSession == null) {
                         state.deload?.let {
                             TodayDeloadCard(it, viewModel::decideDeload)
                             Spacer(modifier = Modifier.height(16.dp))
                         }
                     }
+                    state.conditionRefusal?.let { ConditionRefusal(it.reasons) }
                     WallCrawlCard(borderColor = CrimsonRedPrimary) {
                         Text(
                             stringResource(R.string.today_error_title),
@@ -198,7 +214,7 @@ fun TodayScreen(
                     onRegenerate = { viewModel.regenerateWorkout() },
                     onOpenTemplates = onOpenTemplates,
                     onDeloadAction = viewModel::decideDeload,
-                    programContent = programContent
+                    programContent = conditionAndProgramContent
                 )
             }
         }
@@ -271,7 +287,8 @@ internal fun TodayContent(
                 prescriptionUnit = state.prescriptionUnit,
                 onStartWorkout = onStartWorkout,
                 onRegenerate = onRegenerate,
-                programSession = state.programSession
+                programSession = state.programSession,
+                conditionContext = state.conditionContext
             )
         }
 
@@ -521,7 +538,8 @@ private fun SuggestedWorkoutCard(
     prescriptionUnit: WeightUnit,
     onStartWorkout: () -> Unit,
     onRegenerate: () -> Unit,
-    programSession: wallcrawl.elopenmike.com.core.model.ProgramSessionSnapshot? = null
+    programSession: wallcrawl.elopenmike.com.core.model.ProgramSessionSnapshot? = null,
+    conditionContext: wallcrawl.elopenmike.com.core.model.SessionConditionContext? = null
 ) {
     val locale = LocalConfiguration.current.locales[0]
     val vocabulary = LocalExerciseVocabulary.current
@@ -672,6 +690,7 @@ private fun SuggestedWorkoutCard(
             workout.exercises.forEachIndexed { index, exercise ->
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     ExercisePreviewRow(index = index + 1, exercise = exercise)
+                    ConditionExecution(conditionContext, exercise.exerciseId, exercise.prescription.purpose)
                     workout.progressionDecisions.firstOrNull { it.exerciseId == exercise.exerciseId }?.let {
                         Text(
                             progressionNotice(it, prescriptionUnit, prescriptionUnit),

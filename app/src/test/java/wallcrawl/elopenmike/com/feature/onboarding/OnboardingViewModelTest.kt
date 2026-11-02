@@ -27,6 +27,33 @@ import wallcrawl.elopenmike.com.test.MainDispatcherRule
 class OnboardingViewModelTest {
 
     @Test
+    fun untouchedRetainedConditionsAndExplicitEmptyUseOneAtomicSave() = runTest {
+        val repository = RecordingUserProfileRepository()
+        val unknown = wallcrawl.elopenmike.com.core.model.SelectedCondition("unknown", 7, mapOf("future" to "value", "side" to null))
+        repository.saveUserProfile(UserProfile(activeConditions = listOf(unknown)))
+        val untouched = OnboardingViewModel(repository)
+        untouched.updateName("Crawler")
+        MovementCapabilityType.entries.forEach { untouched.updateMovementCapability(it, CapabilityLevel.UNKNOWN) }
+        untouched.complete()
+        advanceUntilIdle()
+        assertThat(repository.saved).hasSize(1)
+        assertThat(repository.saved.single().activeConditions).containsExactly(unknown)
+
+        val handle = SavedStateHandle()
+        val edited = OnboardingViewModel(repository, handle)
+        edited.updateName("Edited")
+        MovementCapabilityType.entries.forEach { edited.updateMovementCapability(it, CapabilityLevel.UNKNOWN) }
+        edited.updateConditions(listOf(unknown))
+        assertThat(OnboardingViewModel(repository, handle).uiState.value.conditionDraft).containsExactly(unknown)
+        edited.updateConditions(emptyList())
+        val restored = OnboardingViewModel(repository, handle)
+        restored.complete()
+        advanceUntilIdle()
+        assertThat(repository.saved).hasSize(2)
+        assertThat(repository.saved.last().activeConditions).isEmpty()
+    }
+
+    @Test
     fun profileGenderSurvivesDraftRecreationAndCompletion() = runTest {
         val repository = RecordingUserProfileRepository()
         val savedState = SavedStateHandle()

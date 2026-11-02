@@ -80,6 +80,7 @@ import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.WeightUnit
+import wallcrawl.elopenmike.com.core.ui.components.*
 import wallcrawl.elopenmike.com.core.ui.components.BreakDurationSelector
 import wallcrawl.elopenmike.com.core.ui.components.LanguageChip
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
@@ -818,6 +819,9 @@ private fun SafetyStep(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        if (state.conditionLoadFailed) Text(stringResource(R.string.condition_load_error), color = MaterialTheme.colorScheme.onSurface)
+        ConditionSelectionControls(state.conditionRecords, state.conditionDraft ?: state.retainedConditions,
+            viewModel::updateConditions, !state.isSaving)
         WallCrawlCard(
             cornerRadius = 16.dp,
             contentPadding = 16.dp
@@ -979,6 +983,7 @@ private fun SummaryStep(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        ConditionSelectionControls(state.conditionRecords, state.conditionDraft ?: state.retainedConditions, null)
         WallCrawlCard(
             cornerRadius = 16.dp,
             contentPadding = 20.dp

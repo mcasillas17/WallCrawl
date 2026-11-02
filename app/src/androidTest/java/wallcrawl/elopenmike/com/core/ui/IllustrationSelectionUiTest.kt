@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toPixelMap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.test.DeviceConfigurationOverride
 import androidx.compose.ui.test.ExperimentalTestApi
@@ -81,7 +82,9 @@ class IllustrationSelectionUiTest {
     @Test fun shortFootHoldLoadsBothLocalVariantsInSpanish() = checkSelection("es", ThemePreference.LIGHT, "seated-short-foot-arch-hold-no-toe-flexion")
 
     @Test fun spanishDetailShowsNewGuidanceAndSupportLabels() {
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val base = InstrumentationRegistry.getInstrumentation().targetContext
+        val context = base.createConfigurationContext(Configuration(base.resources.configuration).apply { setLocale(Locale("es")) })
+        val english = base.createConfigurationContext(Configuration(base.resources.configuration).apply { setLocale(Locale.ENGLISH) })
         val store = WorkoutGuideCatalogStore(context.assets)
         val localizationStore = ExerciseLocalizationStore(context.assets)
         val vocabulary = ExerciseVocabulary(runBlocking { localizationStore.localization() }, "es")
@@ -92,7 +95,7 @@ class IllustrationSelectionUiTest {
         })
         compose.setContent {
             DeviceConfigurationOverride(DeviceConfigurationOverride.Locales(LocaleList("es"))) {
-                CompositionLocalProvider(LocalExerciseVocabulary provides vocabulary) {
+                CompositionLocalProvider(LocalContext provides context, LocalResources provides context.resources, LocalExerciseVocabulary provides vocabulary) {
                     WallCrawlTheme { ExercisesScreen(viewModel, provider) }
                 }
             }
@@ -105,6 +108,17 @@ class IllustrationSelectionUiTest {
         assertThat(compose.onAllNodes(hasText(vocabulary.exerciseName(exercise))).fetchSemanticsNodes()).isNotEmpty()
         assertThat(compose.onAllNodes(hasText("Camilla acolchada", substring = true)).fetchSemanticsNodes()).isNotEmpty()
         assertThat(compose.onAllNodes(hasText("Apoyo para la pantorrilla", substring = true)).fetchSemanticsNodes()).isNotEmpty()
+        listOf(R.string.exercise_detail_primary, R.string.exercise_detail_secondary,
+            R.string.exercise_detail_equipment, R.string.exercise_detail_review_pending).forEach { id ->
+            assertThat(context.getString(id)).isNotEqualTo(english.getString(id))
+        }
+        compose.onNodeWithText("Principal:", substring = true).assertExists()
+        compose.onNodeWithText("Secundarios:", substring = true).assertExists()
+        compose.onNodeWithText("Equipo indicado:", substring = true).assertExists()
+        compose.onNodeWithText("Programación pendiente de revisión").assertExists()
+        compose.onNodeWithText("Primary:", substring = true).assertDoesNotExist()
+        compose.onNodeWithText("Programming review pending").assertDoesNotExist()
+        compose.waitUntil(10_000) { compose.onAllNodes(hasText("Cuadro", substring = true)).fetchSemanticsNodes().isNotEmpty() }
         saveScreenshot("pht-detail-es.png", compose.onRoot())
     }
 

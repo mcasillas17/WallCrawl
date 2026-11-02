@@ -207,6 +207,7 @@ private fun WallCrawlAppContent(
             composable(AppRoutes.ONBOARDING) {
                 val onboardingViewModel: OnboardingViewModel = viewModel(
                     factory = OnboardingViewModel.provideFactory(
+                        conditionSupport = { container.conditionSupportStore.load() },
                         userProfileRepository = container.userProfileRepository
                     )
                 )
@@ -268,6 +269,7 @@ private fun WallCrawlAppContent(
                     }
                 }
                 TodayScreen(
+                    onOpenProfile = { navController.navigate(AppRoutes.PROFILE) },
                     viewModel = todayViewModel,
                     onStartWorkout = { sessionId ->
                         navController.navigate(AppRoutes.activeWorkout(sessionId))
@@ -354,6 +356,8 @@ private fun WallCrawlAppContent(
             composable(AppRoutes.PROFILE) {
                 val profileViewModel: ProfileViewModel = viewModel(
                     factory = ProfileViewModel.provideFactory(
+                        conditionSupport = { container.conditionSupportStore.load() },
+                        workoutRepository = container.workoutRepository,
                         userProfileRepository = container.userProfileRepository
                     )
                 )

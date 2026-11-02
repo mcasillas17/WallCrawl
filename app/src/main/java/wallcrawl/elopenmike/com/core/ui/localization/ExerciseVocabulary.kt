@@ -49,6 +49,7 @@ class ExerciseVocabulary(
     fun coachingSummary(exercise: Exercise): String? =
         localization.coachingSummary(exercise.id, languageTag)
             ?: exercise.executionGuidance
+            ?: exercise.programming?.coachingSummary
 
     /**
      * True when execution or programming text has no translation in the reader's language.

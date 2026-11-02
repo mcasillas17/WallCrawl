@@ -39,6 +39,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -77,6 +78,7 @@ import wallcrawl.elopenmike.com.core.ui.components.ProfileGenderSelector
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
+import wallcrawl.elopenmike.com.core.ui.components.*
 import wallcrawl.elopenmike.com.core.ui.components.BreakDurationSelector
 import wallcrawl.elopenmike.com.core.ui.components.MovementCapabilityQuestion
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
@@ -108,6 +110,7 @@ fun ProfileScreen(
     localDataSection: @Composable () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val conditions by viewModel.conditions.collectAsState()
 
     Box(
         modifier = modifier
@@ -133,7 +136,26 @@ fun ProfileScreen(
                 BackHandler(enabled = state.movementCapabilityDraft != null) {
                     viewModel.cancelMovementCapabilityEditing()
                 }
+                BackHandler(enabled = conditions.draft != null) { viewModel.cancelConditionEditing() }
                 ProfileContent(
+                    conditionSection = {
+                        if (conditions.loadFailed) Text(stringResource(R.string.condition_load_error), color = MaterialTheme.colorScheme.onSurface)
+                        val selected = conditions.draft ?: state.profile.activeConditions
+                        if (conditions.records.isNotEmpty() || selected.isNotEmpty() || conditions.draft != null) {
+                            WallCrawlCard {
+                                ConditionSelectionControls(conditions.records, selected,
+                                    if (conditions.draft != null) viewModel::updateConditionDraft else null, !conditions.saving)
+                                if (conditions.draft == null) TextButton(onClick = viewModel::startConditionEditing) {
+                                    Text(stringResource(R.string.condition_edit), color = MaterialTheme.colorScheme.onSurface)
+                                } else {
+                                    TextButton(enabled = !conditions.saving, onClick = viewModel::saveConditions) { Text(stringResource(R.string.condition_save), color = MaterialTheme.colorScheme.onSurface) }
+                                    TextButton(enabled = !conditions.saving, onClick = viewModel::cancelConditionEditing) { Text(stringResource(R.string.condition_cancel), color = MaterialTheme.colorScheme.onSurface) }
+                                }
+                            }
+                        }
+                        if (conditions.saveFailed) Text(stringResource(R.string.condition_save_error), color = MaterialTheme.colorScheme.onSurface)
+                        PendingConditionControls(conditions, state.profile.activeConditions, viewModel::updateReassessmentAnswers, viewModel::reassess)
+                    },
                     profile = state.profile,
                     movementCapabilityDraft = state.movementCapabilityDraft,
                     movementCapabilityError = state.movementCapabilityError,
@@ -167,6 +189,7 @@ fun ProfileScreen(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ProfileContent(
+    conditionSection: @Composable () -> Unit,
     profile: UserProfile,
     movementCapabilityDraft: MovementCapabilities?,
     movementCapabilityError: ProfileCapabilityError?,
@@ -417,6 +440,7 @@ private fun ProfileContent(
             }
         }
 
+        item { conditionSection() }
         item {
             MovementCapabilityProfileCard(
                 persistedCapabilities = profile.movementCapabilities,

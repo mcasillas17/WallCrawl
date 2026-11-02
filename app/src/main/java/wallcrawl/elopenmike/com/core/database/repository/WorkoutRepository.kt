@@ -11,6 +11,7 @@ import wallcrawl.elopenmike.com.core.ai.asRecord
 import wallcrawl.elopenmike.com.core.database.PERSISTED_LIST_SEPARATOR
 import wallcrawl.elopenmike.com.core.database.dao.WorkoutSessionDao
 import wallcrawl.elopenmike.com.core.database.dao.WorkoutSetDao
+import wallcrawl.elopenmike.com.core.database.entity.toModel
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutExerciseEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSessionEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSetEntity
@@ -40,9 +41,13 @@ import kotlinx.coroutines.flow.flow
 import java.util.UUID
 import java.time.ZoneId
 import wallcrawl.elopenmike.com.core.model.ConditionSupportCatalog
+import wallcrawl.elopenmike.com.core.database.dao.ConditionHistoryDao
 import wallcrawl.elopenmike.com.core.database.dao.ConditionContextRead
 
 interface WorkoutRepository {
+    fun observePendingConditionReassessments(profileId: String): Flow<List<PendingConditionReassessment>> =
+        flow { throw UnsupportedOperationException("Pending condition observation is unavailable.") }
+
     /** Bounded ownership probe, independent of current selections or optional provenance. */
     suspend fun hasPendingConditionReassessment(profileId: String): Boolean
     suspend fun getConditionContext(profileId: String, support: ConditionSupportCatalog,
@@ -128,6 +133,12 @@ class OfflineWorkoutRepository(
     private val nowTimestamp: () -> Long = System::currentTimeMillis,
     private val currentZone: () -> ZoneId = ZoneId::systemDefault
 ) : WorkoutRepository {
+    override fun observePendingConditionReassessments(profileId: String): Flow<List<PendingConditionReassessment>> =
+        sessionDao.observeConditionPendingProbe(profileId, ConditionHistoryDao.MAX_CONDITION_MARKERS + 1).map { rows ->
+            check(rows.size <= ConditionHistoryDao.MAX_CONDITION_MARKERS) { "Pending condition observation exceeds its bound." }
+            rows.map { it.toModel() }
+        }
+
     override suspend fun hasPendingConditionReassessment(profileId: String) = localDataWriteGate.withLock {
         sessionDao.conditionPendingProbe(profileId, 1).isNotEmpty()
     }

@@ -69,6 +69,10 @@ enum class OnboardingError(@StringRes val messageRes: Int) {
  * The current onboarding form values plus wizard step, error, and completion state.
  */
 data class OnboardingUiState(
+    val conditionDraft: List<wallcrawl.elopenmike.com.core.model.SelectedCondition>? = null,
+    val retainedConditions: List<wallcrawl.elopenmike.com.core.model.SelectedCondition> = emptyList(),
+    val conditionRecords: List<wallcrawl.elopenmike.com.core.model.ConditionSupportRecord> = emptyList(),
+    val conditionLoadFailed: Boolean = false,
     val currentStep: OnboardingStep = OnboardingStep.WELCOME,
     val name: String = "",
     val gender: ProfileGender = ProfileGender.UNSPECIFIED,

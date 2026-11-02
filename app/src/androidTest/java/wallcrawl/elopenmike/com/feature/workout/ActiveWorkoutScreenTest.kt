@@ -1,5 +1,10 @@
 package wallcrawl.elopenmike.com.feature.workout
 
+import android.graphics.Bitmap
+import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.test.onRoot
+import java.io.File
+import wallcrawl.elopenmike.com.core.model.*
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -82,6 +87,30 @@ class ActiveWorkoutScreenTest {
         nowMillis = { WALL_CLOCK },
         elapsedRealtimeClock = clock
     )
+
+    @Test fun supportiveLoggingShowsFrozenExecutionAndKeepsFinishReachable() {
+        val selected = SelectedCondition("withdrawn", 1, mapOf("side" to "recorded-left"))
+        val instruction = ConditionText("Original fictional logging instruction", "Instrucción ficticia de registro original")
+        val frozen = SessionConditionContext(1, 1, listOf(selected), mapOf("withdrawn" to "old-v1"), listOf(
+            AppliedConditionRule(ConditionRuleReference("withdrawn", "old-v1", "case", "rule", 1),
+                ConditionExerciseIdentity("incline-dumbbell-press", "a".repeat(64), ExerciseType.WEIGHT_REPS, "b".repeat(64)),
+                "original-execution", PrescriptionPurpose.SUPPORTIVE, instruction)), emptyList(), emptyList())
+        val initial = session()
+        val supportive = initial.copy(conditionContext = frozen, exercises = initial.exercises.map {
+            it.copy(prescription = it.prescription.copy(purpose = PrescriptionPurpose.SUPPORTIVE)) })
+        val vm = ActiveWorkoutViewModel(SESSION_ID, ScreenTestRepository(supportive), InMemoryExerciseCatalog(), WorkoutHistoryAnalyzer())
+        composeRule.setContent { WallCrawlTheme(themePreference = ThemePreference.DARK) { ActiveWorkoutScreen(vm, NoVisualProvider, {}, {}) } }
+        composeRule.onNodeWithText(instruction.en).performScrollTo().assertIsDisplayed()
+        composeRule.onNodeWithText(text(R.string.condition_supportive)).assertIsDisplayed()
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val output = InstrumentationRegistry.getArguments().getString("additionalTestOutputDir")?.let(::File) ?: context.filesDir
+        output.mkdirs()
+        File(output, "active-frozen-supportive-dark.png").outputStream().use {
+            composeRule.onRoot().captureToImage().asAndroidBitmap().compress(Bitmap.CompressFormat.PNG, 100, it)
+        }
+        composeRule.onNodeWithText("Finish").performClick()
+        composeRule.onNodeWithText("Finish anyway").assertIsDisplayed()
+    }
 
     @Test
     fun persistedSetUpdateKeepsFocusedPartialInputAndFeedbackOpen() {

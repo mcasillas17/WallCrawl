@@ -328,6 +328,11 @@ private fun ActiveWorkoutContent(
                     )
                 }
 
+                item {
+                    wallcrawl.elopenmike.com.core.ui.components.ConditionExecution(
+                        state.session.conditionContext, currentExercise.exerciseId, currentExercise.prescription.purpose)
+                }
+
                 // 3. Previous Performance Reference Card
                 if (state.previousSets.isNotEmpty()) {
                     item {

@@ -29,6 +29,18 @@ class ConditionPlanningPolicyTest {
         policy.resolve(profile, exercises, exercises.associateBy { it.id }, ConditionSupportCatalog("fictional", records.associateBy { it.conditionId }), history)
     private fun blocked(result: ConditionPlanningResult) { assertThat(result).isInstanceOf(ConditionPlanningResult.Blocked::class.java) }
 
+    @Test fun selectableCapabilityIsStaticAndRejectsUnknownPolicyWithoutRequiringAnswers() {
+        val input = ConditionInputDefinition("stage", text, true, mapOf("known" to text))
+        val supported = record(inputs = listOf(input), answers = mapOf("stage" to "known"))
+        assertThat(policy.supports(supported)).isTrue()
+        blocked(resolve(listOf(supported)))
+        assertThat(policy.supports(record(version = 2))).isFalse()
+        val conflicting = record(inputs = listOf(ConditionInputDefinition("response", text, false, mapOf("different" to text))))
+        assertThat(policy.supports(conflicting)).isFalse()
+        assertThat((resolve(listOf(conflicting)) as ConditionPlanningResult.Blocked).reasons.single().reason)
+            .isEqualTo("conflicting-input-definitions")
+    }
+
     @Test fun noSelectionsAreNotApplicableEvenWithoutHistory() { assertThat(resolve(profile = UserProfile(), history = history(false))).isEqualTo(ConditionPlanningResult.NotApplicable) }
     @Test fun unknownAndUnknownPolicyAreBlocked() {
         blocked(resolve(records = emptyList(), profile = UserProfile(activeConditions = listOf(SelectedCondition("withdrawn", 1, emptyMap())))))

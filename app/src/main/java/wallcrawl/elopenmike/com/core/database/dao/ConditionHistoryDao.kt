@@ -56,6 +56,9 @@ interface ConditionHistoryDao : ProgramDao {
         ORDER BY conditionId, exerciseId LIMIT :limit""")
     suspend fun conditionPendingProbe(profileId: String, limit: Int): List<ConditionReassessmentPendingEntity>
 
+    @Query("SELECT * FROM condition_reassessment_pending WHERE profileId = :profileId ORDER BY conditionId, exerciseId LIMIT :limit")
+    fun observeConditionPendingProbe(profileId: String, limit: Int): kotlinx.coroutines.flow.Flow<List<ConditionReassessmentPendingEntity>>
+
     /** Bootstrap is performed by the caller before entering this transaction; no recursive write gate. */
     @Transaction
     suspend fun readConditionContext(profileId: String, support: ConditionSupportCatalog, asOf: Long, zone: ZoneId, programMode: Boolean): ConditionContextRead {

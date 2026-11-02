@@ -129,6 +129,7 @@ fun WorkoutTemplatesScreen(
                 }
             }
 
+            state.conditionRefusal?.let { wallcrawl.elopenmike.com.core.ui.components.ConditionRefusal(it.reasons) }
             state.errorMessage?.let { messageRes ->
                 Text(
                     stringResource(messageRes),

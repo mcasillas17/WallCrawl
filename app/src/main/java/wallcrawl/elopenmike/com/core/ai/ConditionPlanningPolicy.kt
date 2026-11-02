@@ -13,6 +13,15 @@ sealed interface ConditionPrescriptionResult {
 
 /** Explicit reviewed cases only. The support store binds artwork before supplying this catalog. */
 class ConditionPlanningPolicy {
+    /** After the store's release/content/artwork gate; V1 uses exact execution and ISO-week schedules. */
+    fun supports(record: ConditionSupportRecord): Boolean = capabilityViolation(record) == null
+
+    private fun capabilityViolation(record: ConditionSupportRecord): String? = when {
+        record.policyVersion != 1 || record.responsePolicy.version != 1 -> "unsupported-policy-or-context"
+        (record.inputs + record.responsePolicy.inputs).groupBy { it.id }.values.any { it.distinct().size != 1 } -> "conflicting-input-definitions"
+        else -> null
+    }
+
     fun resolve(profile: UserProfile, ordinaryCandidates: List<Exercise>, exercisesById: Map<String, Exercise>,
                 support: ConditionSupportCatalog, history: ConditionHistory): ConditionPlanningResult {
         val pending = history.pending.filter { it.profileId == profile.id }
@@ -27,9 +36,9 @@ class ConditionPlanningPolicy {
         val selected = mutableListOf<Pair<ConditionSupportRecord, ConditionApplicabilityCase>>()
         for (selection in profile.activeConditions.sortedBy { it.conditionId }) {
             val record = support.records[selection.conditionId] ?: return blocked("unsupported-condition")
-            if (record.policyVersion != 1 || record.responsePolicy.version != 1 || selection.contextSchemaVersion != record.contextSchemaVersion) return blocked("unsupported-policy-or-context")
+            if (selection.contextSchemaVersion != record.contextSchemaVersion) return blocked("unsupported-policy-or-context")
+            capabilityViolation(record)?.let { return blocked(it) }
             val definitions = (record.inputs + record.responsePolicy.inputs).groupBy { it.id }
-            if (definitions.values.any { it.distinct().size != 1 }) return blocked("conflicting-input-definitions")
             if (selection.answers.any { (id, answer) -> definitions[id] == null || answer != null && answer !in definitions.getValue(id).first().choices }) return blocked("unknown-answer")
             if (record.inputs.any { it.required && selection.answers[it.id] == null }) return blocked("missing-context")
             if ((record.responsePolicy.stopWhenAnswers.entries + record.responsePolicy.reassessmentRequiredAnswers.entries).any { (id, answer) -> selection.answers[id] == answer }) return blocked("response-requires-reassessment")

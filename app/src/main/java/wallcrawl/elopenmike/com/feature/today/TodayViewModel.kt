@@ -74,6 +74,13 @@ class TodayViewModel(
     private val savedStateHandle: androidx.lifecycle.SavedStateHandle = androidx.lifecycle.SavedStateHandle()
 ) : ViewModel() {
 
+    val pendingConditions = workoutRepository.observePendingConditionReassessments(UserProfile.DEFAULT_PROFILE_ID)
+        .map { wallcrawl.elopenmike.com.core.ui.ConditionUiState(pending = it) }
+        .catch { error ->
+            if (error is CancellationException) throw error
+            emit(wallcrawl.elopenmike.com.core.ui.ConditionUiState(pendingFailed = true))
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), wallcrawl.elopenmike.com.core.ui.ConditionUiState())
+
     private val selectedIntentFlow = MutableStateFlow(
         savedStateHandle.get<String>("today.intent")?.let { name -> WorkoutPlanningIntent.entries.firstOrNull { it.name == name } }
             ?: WorkoutPlanningIntent.ORDINARY)
@@ -183,7 +190,8 @@ class TodayViewModel(
                 deload = deload,
                 prescriptionUnit = recommendation.prescriptionUnit,
                 planningIntent = recommendation.intent,
-                programSession = recommendation.snapshot.programSession
+                programSession = recommendation.snapshot.programSession,
+                conditionContext = recommendation.snapshot.conditionContext
             )
         }
     }.onStart {
