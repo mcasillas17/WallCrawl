@@ -454,7 +454,7 @@ labels plans exactly as before. Language never reaches a decision.
 by condition ID order and the split seed, and filtered by exclusions, equipment and avoid
 demands. It never fails a plan. Block entries are logged with `ExerciseRole.MOBILITY`, and the
 ledger, scheduling evidence, split focus, progression, capability evidence and Progress
-analytics all filter by role, so mobility work earns no training credit. `ProgramValidator`
+analytics and the completion and history summary all filter by role, so mobility work earns no training credit. `ProgramValidator`
 checks the block, and the duration estimate includes it. After a `PAIN_STOP` the logger offers
 to exclude the exercise through `excludedExerciseIds`; Profile undoes it. Manual templates
 allow everything and warn beside avoid, modify and unreviewed exercises.

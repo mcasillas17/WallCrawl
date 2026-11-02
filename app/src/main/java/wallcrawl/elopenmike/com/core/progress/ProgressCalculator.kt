@@ -6,6 +6,7 @@ import kotlin.math.roundToInt
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.WorkoutSummary
+import wallcrawl.elopenmike.com.core.model.mainExercises
 import wallcrawl.elopenmike.com.core.model.hasValidCompletedChronology
 import wallcrawl.elopenmike.com.core.model.isMobilityOnly
 import wallcrawl.elopenmike.com.core.model.isStrictlyPriorTo
@@ -176,8 +177,8 @@ class ProgressCalculator {
             sessionId = session.id,
             workoutName = session.name,
             durationMinutes = session.actualDurationMinutes,
-            totalSetsCompleted = session.completedSetsCount,
-            totalVolume = session.totalVolume,
+            totalSetsCompleted = session.mainExercises.sumOf { ex -> ex.sets.count { it.isCompleted } },
+            totalVolume = session.mainExercises.sumOf { it.totalVolume },
             prCount = countPersonalRecordsFromBaselines(session, baselines),
             unit = session.weightUnit,
             completedAtTimestamp = session.completedAtTimestamp ?: session.startedAtTimestamp

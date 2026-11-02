@@ -138,7 +138,13 @@ fun WorkoutHistoryDetailScreen(
                     sessionFacts(state.detail)
                     recordedReasons(state.reasons)
                     state.detail.session.exercises.sortedWith(compareBy({ it.orderIndex }, { it.id })).forEach { exercise ->
-                        item { HistoryHeading(exercise.exerciseId) }
+                        item {
+                            HistoryHeading(
+                                if (exercise.role == ExerciseRole.MOBILITY) {
+                                    "${stringResource(R.string.mobility_section_label)} · ${exercise.exerciseId}"
+                                } else exercise.exerciseId
+                            )
+                        }
                         field(R.string.history_exercise_type) { stringResource(exerciseTypeRes(exercise.prescription.exerciseType)) }
                         if (exercise.notes.isNotEmpty()) field(R.string.history_notes) { exercise.notes }
                         heading(R.string.history_previous)

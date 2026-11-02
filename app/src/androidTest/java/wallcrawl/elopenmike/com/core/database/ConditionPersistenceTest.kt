@@ -143,6 +143,13 @@ class ConditionPersistenceTest {
         assertThat(read(inSessions(v7, "\"prescription\"", "\"role\":\"NOT_A_ROLE\"")).message).contains("role")
     }
 
+    @Test fun aZeroSecondHoldIsRejectedOnRead() {
+        val v7 = bytes(archive(setOf("a"))).decodeToString()
+        assertThat(v7).contains("\"holdSeconds\":30")
+        assertThat(read(v7.replace("\"holdSeconds\":30", "\"holdSeconds\":0")).message)
+            .contains("holdSeconds")
+    }
+
     @Test fun aTemplateCannotCarryAHoldOnWriteOrRead() {
         val base = LocalDataArchiveFixtures.archive()
         val withHold = base.copy(snapshot = base.snapshot.copy(templates = base.snapshot.templates.mapIndexed { i, t ->

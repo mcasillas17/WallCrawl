@@ -1,5 +1,6 @@
 package wallcrawl.elopenmike.com.feature.templates
 
+import wallcrawl.elopenmike.com.core.conditions.hasConditionInputs
 import androidx.annotation.StringRes
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -231,8 +232,12 @@ class TemplateEditorViewModel(
                 profile = loadedProfile
                 restrictionsFlow.value = wallcrawl.elopenmike.com.core.conditions.restrictionsFor(
                     loadedProfile,
-                    conditionGuidanceSource?.guidance()
-                        ?: wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceResult.Unavailable
+                    if (!loadedProfile.hasConditionInputs()) {
+                        wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceResult.Unavailable
+                    } else {
+                        conditionGuidanceSource?.guidance()
+                            ?: wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceResult.Unavailable
+                    }
                 )
                 val catalogById = exercises.associateBy { it.id }
                 if (templateId != null && template == null) {

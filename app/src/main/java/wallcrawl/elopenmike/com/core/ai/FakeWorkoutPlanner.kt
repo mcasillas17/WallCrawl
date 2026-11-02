@@ -3,7 +3,9 @@ package wallcrawl.elopenmike.com.core.ai
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.conditions.MobilityBlockPolicy
 import wallcrawl.elopenmike.com.core.conditions.ranksLower
+import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityFailure
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
+import wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.GeneratedExercise
@@ -45,9 +47,14 @@ class FakeWorkoutPlanner(
         context.validatedProgramSession()
         val candidates = context.allowedExercises
         if (candidates.isEmpty()) {
+            // The reviewed path off with reported conditions yields an empty list that must
+            // read as the guidance failure, not as an equipment shortfall.
             val reviewedFailure =
                 (context.automaticEligibilityResult as? AutomaticEligibilityResult.NoCandidates)
                     ?.failure
+                    ?: AutomaticEligibilityFailure.CONDITION_GUIDANCE_UNAVAILABLE.takeIf {
+                        context.conditionRestrictions == ConditionRestrictions.Unavailable
+                    }
             throw WorkoutValidationException(
                 message = "Cannot generate workout: no allowed candidate exercises available.",
                 failure = if (reviewedFailure != null) {

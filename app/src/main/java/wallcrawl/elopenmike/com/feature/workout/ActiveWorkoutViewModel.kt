@@ -1,5 +1,6 @@
 package wallcrawl.elopenmike.com.feature.workout
 
+import wallcrawl.elopenmike.com.core.conditions.hasConditionInputs
 import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -63,10 +64,10 @@ class ActiveWorkoutViewModel(
         if (userProfileRepository != null && conditionGuidanceSource != null) {
             viewModelScope.launch {
                 try {
-                    restrictionsFlow.value = restrictionsFor(
-                        userProfileRepository.getProfileOnce(),
-                        conditionGuidanceSource.guidance()
-                    )
+                    val profile = userProfileRepository.getProfileOnce()
+                    if (profile.hasConditionInputs()) {
+                        restrictionsFlow.value = restrictionsFor(profile, conditionGuidanceSource.guidance())
+                    }
                 } catch (e: CancellationException) {
                     throw e
                 } catch (e: Exception) {

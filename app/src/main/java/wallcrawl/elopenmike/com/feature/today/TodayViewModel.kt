@@ -1,5 +1,6 @@
 package wallcrawl.elopenmike.com.feature.today
 
+import wallcrawl.elopenmike.com.core.conditions.hasConditionInputs
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.createSavedStateHandle
@@ -80,6 +81,10 @@ class TodayViewModel(
     suspend fun conditionRestrictions(
         profile: UserProfile
     ): wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions {
+        // Nobody without a condition input needs the overlay parsed just to open the screen.
+        if (!profile.hasConditionInputs()) {
+            return wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions.None
+        }
         val result = try {
             conditionGuidanceSource?.guidance()
         } catch (error: CancellationException) {

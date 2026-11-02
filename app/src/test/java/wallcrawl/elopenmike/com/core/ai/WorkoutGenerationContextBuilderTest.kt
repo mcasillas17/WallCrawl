@@ -331,6 +331,13 @@ class WorkoutGenerationContextBuilderTest {
         assertThat(conditioned.conditionRestrictions)
             .isEqualTo(wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions.Unavailable)
         assertThat(conditioned.allowedExercises).isEmpty()
+        // Not an equipment shortfall: the planner reports the guidance failure, still closed.
+        val refused = org.junit.Assert.assertThrows(
+            wallcrawl.elopenmike.com.core.ai.WorkoutValidationException::class.java
+        ) { kotlinx.coroutines.runBlocking { FakeWorkoutPlanner().generateWorkout(conditioned) } }
+        assertThat(refused.failure).isEqualTo(WorkoutPlanningFailure.REVIEWED_ELIGIBILITY_NO_CANDIDATES)
+        assertThat(refused.automaticEligibilityFailure)
+            .isEqualTo(wallcrawl.elopenmike.com.core.model.AutomaticEligibilityFailure.CONDITION_GUIDANCE_UNAVAILABLE)
         assertThat(plain.allowedExercises).isNotEmpty()
         assertThat(labelled.allowedExercises).isEqualTo(plain.allowedExercises)
     }

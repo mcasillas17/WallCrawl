@@ -345,7 +345,7 @@
     <string name="today_error_reviewed_capabilities">Tus preferencias de movimiento no dejan opciones automáticas revisadas. Actualízalas en el perfil o crea tu propia rutina.</string>
     <string name="today_error_reviewed_constraints">Tu ajuste de solo bajo impacto no deja opciones dentro del alcance automático revisado.</string>
     <string name="today_error_reviewed_conditions">Las condiciones y etiquetas de articulaciones que indicaste no dejan opciones automáticas revisadas. WallCrawl evita los movimientos indicados para ellas, así que hoy no se pudo planificar nada.</string>
-    <string name="today_error_condition_guidance_unavailable">WallCrawl no pudo cargar la guía que corresponde a las condiciones o etiquetas de articulaciones que indicaste, así que no planificó un entrenamiento. Inténtalo de nuevo después de reiniciar la app.</string>
+    <string name="today_error_condition_guidance_unavailable">WallCrawl no pudo cargar la guía que corresponde a las condiciones o etiquetas de articulaciones que indicaste, así que no planificó un entrenamiento. Reiniciar la app puede ayudar. Si restauraste una copia de una versión más reciente, quita en Perfil cualquier condición que esta versión no reconozca.</string>
     <string name="today_error_reviewed_calibration">Tu etapa de calibración actual no deja opciones automáticas revisadas. Aun así puedes crear tu propia rutina.</string>
     <string name="today_error_reviewed_none_eligible">Ningún ejercicio cumple todas las reglas de la planificación automática revisada. Aun así puedes crear tu propia rutina.</string>
 

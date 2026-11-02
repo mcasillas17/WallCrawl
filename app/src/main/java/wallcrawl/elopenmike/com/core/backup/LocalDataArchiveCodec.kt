@@ -1566,7 +1566,7 @@ object LocalDataArchiveCodec {
                     if (archiveVersion < CONDITIONS_ARCHIVE_VERSION) {
                         malformed("Holds require archive version $CONDITIONS_ARCHIVE_VERSION.")
                     }
-                    holdSeconds = nextBoundedInt("$label.holdSeconds", 0, MAX_DURATION_SECONDS)
+                    holdSeconds = nextBoundedInt("$label.holdSeconds", 1, MAX_DURATION_SECONDS)
                 }
                 else -> malformed("An archived prescription has an unsupported field.")
             }
