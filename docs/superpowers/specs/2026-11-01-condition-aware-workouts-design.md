@@ -88,6 +88,13 @@ terminology, deduplication, and synthesis. A separate verification pass checks
 citations, population boundaries, doses, and exercise mappings. Agents do not
 promote their own findings to clinical approval.
 
+**Owner clarification, 2026-11-01:** retrieve and review scientific studies for
+every syndrome/injury being considered, including conditions used only to restrict
+ordinary workout generation. Evidence gathering is not limited to conditions that
+receive new exercises or stretches. Every proposed exclusion, load/range limit,
+substitution or supportive prescription must trace to the relevant findings and
+their applicability to that condition and stage.
+
 For every condition, preserve:
 
 1. Exact clinical label, aliases and distinctions from neighboring diagnoses;
@@ -113,6 +120,11 @@ abstract-only access cannot establish an unreported exercise protocol. Preserve
 links and factual extraction rather than republishing copyrighted articles.
 Do not mistake trial exclusion criteria for universal contraindications, lack of
 reported harms for established safety, or agent agreement for clinical validation.
+Record contrary findings and uncertainty. Evidence that one exercise helps does
+not, by itself, establish that another exercise is harmful. Distinguish a published
+restriction from an app-policy precaution; do not present the latter as a proven
+contraindication. When suitable studies cannot be found or accessed, retain the
+search record and evidence gap, and withhold unsupported condition-specific rules.
 
 The approved release gate requires clinical review for the mapping, prescription, symptom-response, and
 escalation rules before those are released as condition-specific therapeutic

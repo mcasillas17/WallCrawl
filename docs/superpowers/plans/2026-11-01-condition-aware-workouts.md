@@ -22,6 +22,7 @@
 - "Existing profiles with no selected conditions must retain their existing planning behavior."
 - Preserve offline operation, English/Spanish copy, existing measurement validation and user-confirmed starting loads. Unknown clinical facts remain unknown.
 - Never fabricate source access, reviewer identity, clinical approval, generation provenance, upstream attribution or a missing artwork workspace.
+- Research scientific studies for **every candidate syndrome/injury**, including restriction-only conditions. Every exclusion, load/range limit, substitution and supportive prescription needs a condition-specific evidence trail; adding no new exercise does not exempt a condition from research.
 - Keep the upstream 302-exercise/906-frame pin and historical AI acceptance audit unchanged. A supplement gets its own source and identity.
 
 ## Review Focus
@@ -147,8 +148,14 @@ version-1 dossier per completed ID. Each dossier has `condition`, `scope`,
 `searchLog`, `sources`, `findings`, `exerciseMappings`, `proposedRules`, `gaps`,
 `disposition`, `review`. Each finding/rule references local source IDs and exact
 locations; mappings name a catalog ID or an explicit new-exercise request ID.
+For each proposed rule, retain the chain **condition → source/study → finding →
+rule → applicable population/stage → limitations**. Classify a published
+recommendation separately from a reasoned product precaution or unresolved
+hypothesis. Record DOI/PMID where available and direct paper links; read accessible
+full texts/supplements and explicitly label abstract-only access. Study quality and
+applicability matter; do not invent a minimum paper count or fill missing evidence.
 
-- [ ] Write validator tests: duplicate IDs/JSON fields, non-finite numbers, broken source/mapping references, absent access status and fabricated review promotion produce errors; an explicit insufficient-evidence dossier is valid. `require_complete=True` rejects 49 dossiers and accepts 50.
+- [ ] Write validator tests: duplicate IDs/JSON fields, non-finite numbers, broken source/mapping references, absent access status and fabricated review promotion produce errors; an explicit insufficient-evidence dossier is valid. A restriction-only condition without a search record is incomplete; an exclusion/limit without a linked finding and applicability rationale cannot be releasable. `require_complete=True` rejects 49 dossiers and accepts 50.
 - [ ] Run `python3 -m unittest discover -s tools/workout-guide -p 'test_validate_condition_research.py' -v`; verify the new cases fail before implementation.
 - [ ] Implement strict bounded JSON validation with existing importer helpers. Pin transport limits, depth and identifier lengths in constants, test at and above each limit, and reject rather than truncate. No generic JSON-schema interpreter or new dependency.
 - [ ] Research piriformis using primary sources/guidelines and relevant syntheses. Record search/access dates, exact variant/dose, population, co-interventions, outcomes, uncertainty, harms reporting and supersession. Keep DGS distinctions; retain `not reported` where appropriate. Produce candidates only, with actual reviewer provenance absent.
@@ -164,9 +171,9 @@ research dispositions and a deduplicated list of new exercise execution identiti
 The inventory is the approved design's exact list, not a freshly generated ranking.
 
 - [ ] Assign batches: spine (7), shoulder (6), elbow/wrist/hand (8), hip/groin/gluteal excluding the completed pilot (6), knee (7), lower leg/ankle/foot (10), systemic/multiple regions (5). Run at most three batches concurrently and keep the pilot in the same index.
-- [ ] Each worker searches and extracts every assigned dossier, records inaccessible sources and weak/absent evidence, and maps ordinary-training implications separately from therapeutic candidates. Stage/surgery/side are attributes, not invented extra diagnoses.
+- [ ] Each worker retrieves and reviews scientific studies for every assigned condition, including those used only as workout restrictions. Start with relevant peer-reviewed primary studies and current guidelines/syntheses; inspect the underlying studies needed to support the actual proposed restrictions. Record inaccessible sources, contrary findings and weak/absent evidence, and map ordinary-training implications separately from therapeutic candidates. Stage/surgery/side are attributes, not invented extra diagnoses.
 - [ ] The coordinator reconciles synonymous exercise requests using execution, equipment, range and measurement shape; preserve clinically meaningful variations. Add sources/gaps rather than deciding unknown clinical values.
-- [ ] Run the validator with `--require-complete`. Confirm all 50 IDs have a disposition and every proposed rule has its exact supporting population/source or is explicitly unresolved. Record the per-condition result in `summary.md`.
+- [ ] Run the validator with `--require-complete`. Confirm all 50 IDs have a disposition and every proposed rule has its exact supporting population/source or is explicitly unresolved. In `summary.md`, link each condition to its studied evidence and proposed restrictions; explicitly identify restriction-only conditions and any evidence gaps. No bibliography-only dossier counts as completed extraction.
 - [ ] Commit by completed regional batch, then commit the reconciled corpus. Do not claim an exhaustive systematic review or 50 supported app conditions.
 
 ## Task 3: Independently verify evidence and prepare the clinical review packet
@@ -177,7 +184,7 @@ The inventory is the approved design's exact list, not a freshly generated ranki
 including exact source-derived prescriptions and required context, and a release
 status for each record. This is the input to Task 4's authored support data.
 
-- [ ] Assign each dossier to an agent that did not author it. Reopen the cited sources; verify publication status, the specific claim, population, dose, follow-up and reported harms. Abstract-only records cannot supply absent dose details.
+- [ ] Assign each dossier to an agent that did not author it. Reopen the cited sources; verify publication status, the specific claim, population, dose, follow-up and reported harms. Independently check each exclusion/load/range restriction as well as proposed exercises: evidence of benefit must not be converted into an unsupported claim that alternatives are harmful. Abstract-only records cannot supply absent dose details.
 - [ ] Resolve citation/mapping errors in the owned dossier and have the independent verifier check corrections. Keep rejected claims and reasons visible; do not silently turn an inference into a source statement.
 - [ ] Assemble the qualified-review packet with rules, applicability, monitoring/escalation, exercise identity and content hashes. Record real clinical review only if it actually occurs; otherwise mark `AWAITING_CLINICAL_REVIEW` and continue draft/infrastructure tasks.
 - [ ] Identify protocols the app cannot represent faithfully, including required supervision, schedules, per-side accounting or monitoring beyond the supported contract; leave these research-only. Never compress them to fit an ordinary session by guesswork.
