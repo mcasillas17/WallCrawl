@@ -9,12 +9,13 @@ import wallcrawl.elopenmike.com.core.model.ComparableMovementShape
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.ExercisePrescription
 import wallcrawl.elopenmike.com.core.model.ExerciseType
+import wallcrawl.elopenmike.com.core.model.PrescriptionPurpose
 import wallcrawl.elopenmike.com.core.model.ReviewedExerciseLink
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetType
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
-import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
+import wallcrawl.elopenmike.com.core.model.WorkoutSet
 
 class CapabilityEvidencePolicy(
     private val policyVersion: CapabilityEvidencePolicyVersion =
@@ -118,7 +119,7 @@ class CapabilityEvidencePolicy(
         session: WorkoutSession,
         exercise: WorkoutExercise
     ): ComparableObservation? {
-        if (exercise.exerciseId.isBlank()) return null
+        if (exercise.prescription.purpose != PrescriptionPurpose.ORDINARY || exercise.exerciseId.isBlank()) return null
 
         val comparableShape = exercise.prescription.comparableShapeOrNull() ?: return null
         val workSets = exercise.sets.filterNot { it.type == SetType.WARMUP }

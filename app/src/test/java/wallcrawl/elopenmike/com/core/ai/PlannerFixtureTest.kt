@@ -1213,7 +1213,7 @@ class PlannerFixtureTest {
                 policyVersion = TrainingProgramStatePolicyVersion.PROGRAM_STATE_V1,
                 adaptationState = AdaptationState.BUILD,
                 weeklyLedger = WeeklyDoseLedger(
-                    policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+                    policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
                     weekStartEpochDay = MONDAY_EPOCH_DAY,
                     timeZoneId = "UTC",
                     catalogVersion = "probe-catalog",

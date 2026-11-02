@@ -247,7 +247,8 @@ class WorkoutGenerationContextBuilder(
             exerciseHistory = exerciseHistory,
             recentlyTrainedMuscles = historyAnalyzer.recentlyTrainedMuscles(
                 sessions = recentCompletedSessions,
-                nowTimestamp = now.toEpochMilli()
+                nowTimestamp = now.toEpochMilli(),
+                exercisesById = allExercises.associateBy { it.id }
             ),
             excludedExerciseIds = profile.excludedExerciseIds,
             allowedExercises = conditionCandidates,

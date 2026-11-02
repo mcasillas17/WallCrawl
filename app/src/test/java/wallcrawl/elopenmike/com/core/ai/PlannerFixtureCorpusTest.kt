@@ -100,7 +100,7 @@ class PlannerFixtureCorpusTest {
         val built = contextFactory.create(withCompletedHistory)
         val ledger = checkNotNull(built.context.trainingProgramState).weeklyLedger
 
-        assertThat(ledger.policyVersion).isEqualTo(LedgerPolicyVersion.PRIMARY_ONLY_V1)
+        assertThat(ledger.policyVersion).isEqualTo(LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2)
         assertThat(ledger.weekStartEpochDay).isEqualTo(MONDAY_EPOCH_DAY)
         assertThat(ledger.timeZoneId).isEqualTo("UTC")
         assertThat(ledger.catalogVersion).isEqualTo(base.catalogVersion)
@@ -178,7 +178,7 @@ class PlannerFixtureCorpusTest {
         assertThat(built.context.trainingProgramState?.adaptationState)
             .isEqualTo(reviewedEligibility.adaptationState)
         assertThat(built.context.trainingProgramState?.weeklyLedger?.policyVersion)
-            .isEqualTo(LedgerPolicyVersion.PRIMARY_ONLY_V1)
+            .isEqualTo(LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2)
         assertThat(built.context.trainingProgramState?.weeklyLedger?.directPrimarySets)
             .isEmpty()
         assertThat(built.catalogExercises).hasSize(302)

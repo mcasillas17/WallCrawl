@@ -10,6 +10,12 @@ class HistoryPresentationTest {
     // Prior/cited eligibility cases moved to WorkoutHistoryRepositoryTest: the shared SQL boundary
     // now supplies validated projections to this presentation layer, including archive/time bounds.
 
+    @Test fun historicalAndOrdinaryOnlyLedgerPoliciesRemainKnown() {
+        for (version in listOf("PRIMARY_ONLY_V1", "ORDINARY_PRIMARY_ONLY_V2")) {
+            assertThat(decodeHistoryReasons(record(emptyList()).copy(ledgerPolicyVersion = version)).unsupportedIdentities).isEmpty()
+        }
+    }
+
     @Test fun supportedReasonsDecodeWithoutInventingReferenceTargets() {
         val provenance = ProgressionProvenance("squat", ProgressionReason.ADVANCED, ProgressionAxis.LOAD,
             listOf("source-a", "source-b"), "a".repeat(64))

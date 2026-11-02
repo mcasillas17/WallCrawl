@@ -36,6 +36,24 @@ class ProgressCalculatorTest {
     }
 
     @Test
+    fun supportiveMeasurementsStayInActivityButNotPersonalRecordsOrStrengthTrends() {
+        val ordinary = session("ordinary", PREV_WEEK, sets = listOf(completedSet(1, 40.0, 10)))
+        val support = session("support", THIS_WEEK, sets = listOf(completedSet(1, 100.0, 20))).let { s ->
+            s.copy(exercises = s.exercises.map { ex -> ex.copy(prescription = ex.prescription.copy(
+                purpose = wallcrawl.elopenmike.com.core.model.PrescriptionPurpose.SUPPORTIVE)) })
+        }
+        val later = session("later", THIS_WEEK_2, sets = listOf(completedSet(1, 50.0, 10)))
+        assertThat(calculator.countPersonalRecords(support, listOf(ordinary))).isEqualTo(0)
+        assertThat(calculator.countPersonalRecords(later, listOf(ordinary, support))).isEqualTo(1)
+        val result = calculator.calculate(listOf(ordinary, support), profile, exercises, NOW, ZONE)
+        assertThat(result.completedSetsThisWeek).isEqualTo(1)
+        assertThat(result.totalVolumeThisWeek).isEqualTo(2_000.0)
+        assertThat(result.totalWorkoutsLogged).isEqualTo(2)
+        assertThat(result.recentPersonalRecords).isEmpty()
+        assertThat(result.strengthTrends).isEmpty()
+    }
+
+    @Test
     fun calculate_emptyHistoryReportsZeroedActivity() {
         val result = calculator.calculate(
             completedSessions = emptyList(),

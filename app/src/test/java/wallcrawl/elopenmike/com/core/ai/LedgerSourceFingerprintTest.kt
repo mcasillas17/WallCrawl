@@ -39,6 +39,14 @@ class LedgerSourceFingerprintTest {
     )
 
     @Test
+    fun changingOnlyInstancePurposeChangesTheFingerprint() {
+        val supportive = sessions.map { s -> s.copy(exercises = s.exercises.map { ex ->
+            ex.copy(prescription = ex.prescription.copy(purpose = wallcrawl.elopenmike.com.core.model.PrescriptionPurpose.SUPPORTIVE))
+        }) }
+        assertThat(fingerprintOf(sessions = supportive)).isNotEqualTo(fingerprintOf())
+    }
+
+    @Test
     fun identicalInputsProduceAnIdenticalFingerprint() {
         assertThat(fingerprintOf()).isEqualTo(fingerprintOf())
         assertThat(fingerprintOf()).matches("[0-9a-f]{64}")
@@ -164,7 +172,7 @@ class LedgerSourceFingerprintTest {
     ): String = LedgerSourceFingerprint.of(
         sessions = sessions,
         exercisesById = exercisesById,
-        policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+        policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
         week = week,
         catalogVersion = catalogVersion,
         reviewPolicyVersion = reviewPolicyVersion

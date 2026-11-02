@@ -35,6 +35,16 @@ class CapabilityEvidencePolicyTest {
     private val policy = CapabilityEvidencePolicy()
 
     @Test
+    fun supportiveInstanceCannotCompleteAnOrdinaryCapabilityPair() {
+        val one = weightRepsSession("one", "press")
+        val two = weightRepsSession("two", "press").let { s -> s.copy(exercises = s.exercises.map { ex ->
+            ex.copy(prescription = ex.prescription.copy(purpose = wallcrawl.elopenmike.com.core.model.PrescriptionPurpose.SUPPORTIVE))
+        }) }
+        val catalog = exactExerciseCatalog("press" to ExerciseType.WEIGHT_REPS)
+        assertThat(CapabilityEvidencePolicy().derive(listOf(one, two), catalog).records).isEmpty()
+    }
+
+    @Test
     fun derive_requiresTwoDistinctQualifyingSessions() {
         val sessions = listOf(
             weightRepsSession(

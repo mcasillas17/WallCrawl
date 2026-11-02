@@ -333,7 +333,7 @@ class ProductionPlannerPersistenceTest {
         assertThat(storedRecord.sessionId).isEqualTo(session.id)
         assertThat(storedRecord.reviewedPathEnabled).isTrue()
         assertThat(storedRecord.trainingPolicyVersion).isEqualTo("STATE_BASED_DOSE_EFFORT_REST_V2")
-        assertThat(storedRecord.ledgerPolicyVersion).isEqualTo("PRIMARY_ONLY_V1")
+        assertThat(storedRecord.ledgerPolicyVersion).isEqualTo("ORDINARY_PRIMARY_ONLY_V2")
         assertThat(storedRecord.adaptationState).isNotNull()
         assertThat(storedRows.sets).hasSize(accepted.workout.exercises.sumOf { it.targetSets })
 
@@ -565,6 +565,6 @@ class ProductionPlannerPersistenceTest {
 
         /** What a user types into the load field; the planner prescribes none here. */
         const val USER_ENTERED_LOAD = 20.0
-        val CACHED_LEDGER_POLICY = LedgerPolicyVersion.PRIMARY_ONLY_V1
+        val CACHED_LEDGER_POLICY = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2
     }
 }

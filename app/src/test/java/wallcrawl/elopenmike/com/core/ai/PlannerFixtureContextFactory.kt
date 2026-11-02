@@ -198,7 +198,7 @@ internal class PlannerFixtureContextFactory(
     ): WeeklyDoseLedger = ledgerCalculator.calculate(
         sessions = sessions,
         exercisesById = catalogExercises.associateBy(Exercise::id),
-        policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+        policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
         week = CORPUS_WEEK,
         catalogVersion = fixture.catalogVersion,
         reviewPolicyVersion = reviewPolicyVersion

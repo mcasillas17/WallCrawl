@@ -589,7 +589,7 @@ class ProductionPlannerCompositionTest {
             assertWithMessage(cohort.name).that(served.snapshot.trainingPolicyVersion)
                 .isEqualTo(TrainingPolicyVersion.STATE_BASED_DOSE_EFFORT_REST_V2)
             assertWithMessage(cohort.name).that(served.snapshot.ledgerPolicyVersion)
-                .isEqualTo(LedgerPolicyVersion.PRIMARY_ONLY_V1)
+                .isEqualTo(LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2)
             assertWithMessage(cohort.name).that(served.snapshot.outcome)
                 .isIn(listOf(RecommendationOutcome.VALID, RecommendationOutcome.REPAIRED))
         }
@@ -815,7 +815,7 @@ class ProductionPlannerCompositionTest {
         assertThat(record.catalogVersion).isEqualTo(bundledCatalog.sourceCommit)
         assertThat(record.reviewPolicyVersion).isEqualTo(REVIEW_POLICY_VERSION)
         assertThat(record.trainingPolicyVersion).isEqualTo("STATE_BASED_DOSE_EFFORT_REST_V2")
-        assertThat(record.ledgerPolicyVersion).isEqualTo("PRIMARY_ONLY_V1")
+        assertThat(record.ledgerPolicyVersion).isEqualTo("ORDINARY_PRIMARY_ONLY_V2")
         assertThat(record.programStatePolicyVersion).isEqualTo("PROGRAM_STATE_V2")
         assertThat(record.adaptationState).isEqualTo(AdaptationState.UNCALIBRATED.name)
         assertThat(record.weekStartEpochDay).isEqualTo(MONDAY_EPOCH_DAY)
@@ -964,7 +964,7 @@ class ProductionPlannerCompositionTest {
     ): WeeklyDoseLedger = WeeklyDoseLedgerCalculator().calculate(
         sessions = sessions,
         exercisesById = exercises.associateBy(Exercise::id),
-        policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+        policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
         week = week,
         catalogVersion = bundledCatalog.sourceCommit,
         reviewPolicyVersion = REVIEW_POLICY_VERSION
@@ -978,7 +978,7 @@ class ProductionPlannerCompositionTest {
     ): String = LedgerSourceFingerprint.of(
         sessions = sessions,
         exercisesById = attributedExercises.associateBy(Exercise::id),
-        policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+        policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
         week = week,
         catalogVersion = bundledCatalog.sourceCommit,
         reviewPolicyVersion = reviewPolicyVersion
@@ -1339,7 +1339,7 @@ internal class RecomputingLedgerRepository(
     private fun current(): WeeklyDoseLedger = calculator.calculate(
         sessions = sessions.filter { it.completedAtTimestamp?.let(week::contains) == true },
         exercisesById = exercises.associateBy(Exercise::id),
-        policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+        policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
         week = week,
         catalogVersion = catalogVersion,
         reviewPolicyVersion = exercises

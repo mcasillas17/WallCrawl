@@ -2,16 +2,16 @@ package wallcrawl.elopenmike.com.core.ai
 
 import java.security.MessageDigest
 import java.util.Locale
+import wallcrawl.elopenmike.com.core.model.AdaptationState
 import wallcrawl.elopenmike.com.core.model.ConditionPlanningResult
 import wallcrawl.elopenmike.com.core.model.ConditionViolation
-import wallcrawl.elopenmike.com.core.model.conditionDigest
-import wallcrawl.elopenmike.com.core.model.AdaptationState
 import wallcrawl.elopenmike.com.core.model.Exercise
-import wallcrawl.elopenmike.com.core.model.ExercisePrescription
 import wallcrawl.elopenmike.com.core.model.ExercisePerformanceHistory
+import wallcrawl.elopenmike.com.core.model.ExercisePrescription
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.MechanicsType
+import wallcrawl.elopenmike.com.core.model.PrescriptionPurpose
 import wallcrawl.elopenmike.com.core.model.ProgressionDecision
 import wallcrawl.elopenmike.com.core.model.ProgressionReason
 import wallcrawl.elopenmike.com.core.model.ProgressionReasonCode
@@ -19,8 +19,9 @@ import wallcrawl.elopenmike.com.core.model.RepRange
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetType
 import wallcrawl.elopenmike.com.core.model.WeightUnit
-import wallcrawl.elopenmike.com.core.model.WorkoutOrigin
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
+import wallcrawl.elopenmike.com.core.model.WorkoutOrigin
+import wallcrawl.elopenmike.com.core.model.conditionDigest
 import wallcrawl.elopenmike.com.core.model.convertWeight
 
 /**
@@ -42,7 +43,8 @@ internal fun WorkoutGenerationContext.recordedWorkLoad(exerciseId: String, type:
             it.completedAtTimestamp
         }.thenBy { it.id })
         .flatMap { session ->
-            session.exercises.filter { it.exerciseId == exerciseId && it.prescription.exerciseType == type }
+            session.exercises.filter { it.exerciseId == exerciseId && it.prescription.exerciseType == type &&
+                it.prescription.purpose == PrescriptionPurpose.ORDINARY }
                 .flatMap { it.sets }.sortedByDescending { it.setNumber }.asSequence()
                 .filter { it.isCompleted && it.type != SetType.WARMUP && it.exerciseType == type &&
                     (it.completedReps ?: 0) > 0 && it.stopReason == null && it.stoppedAtTimestamp == null &&
@@ -123,7 +125,8 @@ class DefaultExercisePrescriptionFactory(
         val latest = context.progressionHistory
             .filter { it.status == SessionStatus.COMPLETED &&
                 (it.completedAtTimestamp ?: Long.MAX_VALUE) <= context.historyAsOfTimestamp &&
-                it.exercises.count { ex -> ex.exerciseId == exercise.id } == 1
+                it.exercises.count { ex -> ex.exerciseId == exercise.id } == 1 &&
+                it.exercises.any { ex -> ex.exerciseId == exercise.id && ex.prescription.purpose == PrescriptionPurpose.ORDINARY }
             }
             .sortedWith(compareByDescending<wallcrawl.elopenmike.com.core.model.WorkoutSession> {
                 it.startedAtTimestamp

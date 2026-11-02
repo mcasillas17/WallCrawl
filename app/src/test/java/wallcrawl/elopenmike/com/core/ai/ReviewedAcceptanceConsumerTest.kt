@@ -397,7 +397,7 @@ class ReviewedAcceptanceConsumerTest {
     private fun fingerprintOf(exercise: Exercise): String = LedgerSourceFingerprint.of(
         sessions = completedSessionsFor(exercise.id),
         exercisesById = mapOf(exercise.id to exercise),
-        policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+        policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
         week = week,
         catalogVersion = SYNTHETIC_CATALOG_VERSION,
         reviewPolicyVersion = 1
@@ -407,7 +407,7 @@ class ReviewedAcceptanceConsumerTest {
         ledgerCalculator.calculate(
             sessions = completedSessionsFor(referencedExerciseId),
             exercisesById = mapOf(exercise.id to exercise),
-            policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+            policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
             week = week,
             catalogVersion = SYNTHETIC_CATALOG_VERSION,
             reviewPolicyVersion = 1
@@ -456,7 +456,7 @@ class ReviewedAcceptanceConsumerTest {
         policyVersion = TrainingProgramStatePolicyVersion.PROGRAM_STATE_V1,
         adaptationState = AdaptationState.BUILD,
         weeklyLedger = WeeklyDoseLedger(
-            policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+            policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
             weekStartEpochDay = MONDAY_EPOCH_DAY,
             timeZoneId = "UTC",
             catalogVersion = SYNTHETIC_CATALOG_VERSION,

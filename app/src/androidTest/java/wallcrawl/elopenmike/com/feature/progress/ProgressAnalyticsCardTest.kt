@@ -432,7 +432,7 @@ class ProgressAnalyticsCardTest {
     )
 
     private fun ledger(week: TrainingWeek) = WeeklyDoseLedger(
-        LedgerPolicyVersion.PRIMARY_ONLY_V1, week.startEpochDay, "UTC", "test", 1, emptyMap(), emptyMap(), emptyMap()
+        LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2, week.startEpochDay, "UTC", "test", 1, emptyMap(), emptyMap(), emptyMap()
     )
 
     /** The metric the rendered selection shows; every metric gets the same fixture series. */

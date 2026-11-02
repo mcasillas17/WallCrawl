@@ -963,7 +963,7 @@ class WorkoutGenerationContextBuilderTest {
     }
 
     private val emptyLedger = WeeklyDoseLedger(
-        policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+        policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
         weekStartEpochDay = 20_696L,
         timeZoneId = "UTC",
         catalogVersion = "catalog-commit",

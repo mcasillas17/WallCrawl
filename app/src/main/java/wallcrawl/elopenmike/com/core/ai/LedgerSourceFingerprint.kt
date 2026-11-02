@@ -11,7 +11,7 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSession
  * A deterministic digest of every input that can change a [WeeklyDoseLedger].
  *
  * A cached ledger may only be reused while its stored fingerprint still matches the one its
- * current inputs produce. The digest therefore covers exactly the values `PRIMARY_ONLY_V1`
+ * current inputs produce. The digest therefore covers exactly the values `ORDINARY_PRIMARY_ONLY_V2`
  * reads — history identity, set identity and completion state, the reviewed muscle mapping,
  * and the policy, catalog, review-policy, week, and zone provenance — and deliberately
  * excludes everything the policy cannot read.
@@ -24,7 +24,7 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSession
  */
 object LedgerSourceFingerprint {
 
-    private const val FORMAT_VERSION = "wallcrawl-ledger-fingerprint-v1"
+    private const val FORMAT_VERSION = "wallcrawl-ledger-fingerprint-v2"
 
     /** ASCII unit separator: it cannot occur in a catalog id, muscle name, or zone id. */
     private const val FIELD_SEPARATOR = "\u001F"
@@ -54,7 +54,7 @@ object LedgerSourceFingerprint {
             )
             session.exercises.forEach { exercise ->
                 referencedExerciseIds += exercise.exerciseId
-                lines += line("instance", session.id, exercise.id, exercise.exerciseId)
+                lines += line("instance", session.id, exercise.id, exercise.exerciseId, exercise.prescription.purpose.name)
                 exercise.sets.forEach { set ->
                     lines += line(
                         "set",

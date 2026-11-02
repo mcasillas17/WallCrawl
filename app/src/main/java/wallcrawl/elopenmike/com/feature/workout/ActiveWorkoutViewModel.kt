@@ -175,7 +175,8 @@ class ActiveWorkoutViewModel(
 
             val previousPerformance = workoutHistoryAnalyzer.latestCompletedExercisePerformance(
                 sessions = completedSessions,
-                exerciseId = currentEx.exerciseId
+                exerciseId = currentEx.exerciseId,
+                purpose = currentEx.prescription.purpose
             )
 
             ActiveWorkoutUiState.Active(

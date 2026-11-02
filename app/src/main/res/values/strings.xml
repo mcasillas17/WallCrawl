@@ -600,11 +600,11 @@
     <string name="progress_metric_volume_def">Volume is load × reps for weighted sets only; body weight, assistance, time and distance are not tonnage.</string>
     <string name="progress_streak_grace_note">An unfinished current week does not break your streak.</string>
 
-    <!-- Reviewed primary dose: PRIMARY_ONLY_V1 accounting, kept apart from broad activity. -->
+    <!-- Reviewed primary dose: ORDINARY_PRIMARY_ONLY_V2 accounting, kept apart from broad activity. -->
     <string name="progress_dose_heading">Reviewed primary dose</string>
     <string name="progress_dose_unattributed">Work without approved muscle data is still included in your logged activity.</string>
     <string name="progress_dose_none">No completed work sets to review this week.</string>
-    <string name="progress_dose_policy">Policy PRIMARY_ONLY_V1: one approved primary muscle counts per completed work set. Warm-ups and described secondary muscles are never counted as dose.</string>
+    <string name="progress_dose_policy">Policy ORDINARY_PRIMARY_ONLY_V2: one approved primary muscle counts per completed ordinary work set. Supportive work, warm-ups and described secondary muscles are never counted as dose.</string>
     <string name="progress_dose_details">Reviewed dose details</string>
     <string name="progress_dose_direct_heading">Credited primary sets</string>
     <string name="progress_dose_secondary_heading">Described secondary involvement</string>

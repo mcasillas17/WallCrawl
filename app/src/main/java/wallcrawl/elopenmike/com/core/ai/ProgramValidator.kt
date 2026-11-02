@@ -595,7 +595,7 @@ class ProgramValidator(
      *
      * Prospective targets and completed credit stay in separate fields of the result:
      * nothing here writes to the ledger, and a proposed or rejected workout never becomes
-     * completed exposure. `PRIMARY_ONLY_V1` is preserved exactly — one designated direct
+     * completed exposure. `ORDINARY_PRIMARY_ONLY_V2` is preserved exactly — one designated direct
      * primary per set, with descriptive secondary muscles credited nothing at all.
      */
     private fun accountProposedDose(
@@ -678,7 +678,7 @@ class ProgramValidator(
                 detail = "UNSUPPORTED_TRAINING_PROGRAM_STATE_POLICY"
             )
 
-        state.weeklyLedger.policyVersion != LedgerPolicyVersion.PRIMARY_ONLY_V1 ->
+        state.weeklyLedger.policyVersion != LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2 ->
             ProgramViolation(
                 code = ProgramViolationCode.MALFORMED_WEEKLY_LEDGER,
                 detail = "UNSUPPORTED_LEDGER_POLICY"

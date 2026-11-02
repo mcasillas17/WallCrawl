@@ -4,7 +4,7 @@ package wallcrawl.elopenmike.com.core.model
  * Prospective and completed exposure for one approved direct-primary muscle.
  *
  * The two counts stay separate on purpose. [completedSets] is reconstructed from completed
- * history by `PRIMARY_ONLY_V1`; [proposedSets] is what a not-yet-performed plan would add.
+ * history by `ORDINARY_PRIMARY_ONLY_V2`; [proposedSets] is what a not-yet-performed plan would add.
  * Summing them into one stored number would let a proposal that was never performed look
  * like work the user did, which is the thing weekly accounting must never do.
  *

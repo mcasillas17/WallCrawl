@@ -1910,7 +1910,7 @@ private class LifecycleLedgerRepository(
                 it.completedAtTimestamp?.let(week::contains) == true
             },
             exercisesById = exercises.associateBy(Exercise::id),
-            policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+            policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
             week = week,
             catalogVersion = catalogVersion,
             reviewPolicyVersion = exercises

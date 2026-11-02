@@ -5,12 +5,10 @@ import java.time.ZoneId
 import kotlin.math.roundToInt
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.ExerciseType
-import wallcrawl.elopenmike.com.core.model.WorkoutSummary
-import wallcrawl.elopenmike.com.core.model.hasValidCompletedChronology
-import wallcrawl.elopenmike.com.core.model.isStrictlyPriorTo
 import wallcrawl.elopenmike.com.core.model.MuscleProgressStat
 import wallcrawl.elopenmike.com.core.model.MuscleVocabulary
 import wallcrawl.elopenmike.com.core.model.PersonalRecord
+import wallcrawl.elopenmike.com.core.model.PrescriptionPurpose
 import wallcrawl.elopenmike.com.core.model.ProgressOverview
 import wallcrawl.elopenmike.com.core.model.RecordType
 import wallcrawl.elopenmike.com.core.model.SessionStatus
@@ -22,7 +20,10 @@ import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
+import wallcrawl.elopenmike.com.core.model.WorkoutSummary
 import wallcrawl.elopenmike.com.core.model.convertWeight
+import wallcrawl.elopenmike.com.core.model.hasValidCompletedChronology
+import wallcrawl.elopenmike.com.core.model.isStrictlyPriorTo
 
 /** Calculates user-visible progress exclusively from persisted completed workout data. */
 class ProgressCalculator {
@@ -114,7 +115,7 @@ class ProgressCalculator {
             .asSequence()
             .filter { it.isStrictlyPriorTo(session) }
             .flatMap { prior ->
-                prior.exercises.mapNotNull { exercise ->
+                prior.exercises.filter { it.prescription.purpose == PrescriptionPurpose.ORDINARY }.mapNotNull { exercise ->
                     val sets = exercise.sets.filter {
                         it.exerciseType == exercise.prescription.exerciseType && it.isValidRecordSet()
                     }
@@ -139,6 +140,7 @@ class ProgressCalculator {
         if (!session.hasValidCompletedChronology()) return 0
         val bestByExercise = baselines.groupBy { it.exerciseId to it.exerciseType }
         return session.exercises
+            .filter { it.prescription.purpose == PrescriptionPurpose.ORDINARY }
             .groupBy { it.exerciseId }
             .count { (exerciseId, entries) ->
                 entries.groupBy { it.prescription.exerciseType }.any { (type, typedEntries) ->
@@ -353,7 +355,7 @@ class ProgressCalculator {
     ): Map<String, List<ExerciseSessionPerformance>> {
         return sessions
             .flatMap { session ->
-                session.exercises.mapNotNull { exercise ->
+                session.exercises.filter { it.prescription.purpose == PrescriptionPurpose.ORDINARY }.mapNotNull { exercise ->
                     val completedSets = exercise.sets.filter { it.isValidCompletedSet() }
                     if (completedSets.isEmpty()) {
                         null

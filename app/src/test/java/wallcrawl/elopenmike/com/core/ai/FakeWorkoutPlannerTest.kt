@@ -249,7 +249,7 @@ class FakeWorkoutPlannerTest {
         val first = ConditionPlannerFixtures.ordinary
         val optional = first.copy(id = "z-optional")
         val state = TrainingProgramState(TrainingProgramStatePolicyVersion.PROGRAM_STATE_V1, AdaptationState.UNCALIBRATED,
-            WeeklyDoseLedger(LedgerPolicyVersion.PRIMARY_ONLY_V1, MONDAY_EPOCH_DAY, "UTC", SYNTHETIC_CATALOG_VERSION, 1,
+            WeeklyDoseLedger(LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2, MONDAY_EPOCH_DAY, "UTC", SYNTHETIC_CATALOG_VERSION, 1,
                 emptyMap(), emptyMap(), emptyMap()))
         val context = ConditionPlannerFixtures.context(ordinaryExercises = listOf(first, optional))
             .copy(preferredWorkoutDurationMinutes = 7, trainingProgramState = state,

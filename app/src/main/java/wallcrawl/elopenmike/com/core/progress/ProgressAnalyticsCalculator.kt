@@ -20,6 +20,7 @@ import wallcrawl.elopenmike.com.core.model.PerformanceComparison
 import wallcrawl.elopenmike.com.core.model.PerformanceObservation
 import wallcrawl.elopenmike.com.core.model.PerformanceSeries
 import wallcrawl.elopenmike.com.core.model.PerformanceShape
+import wallcrawl.elopenmike.com.core.model.PrescriptionPurpose
 import wallcrawl.elopenmike.com.core.model.ProgressAnalytics
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.TrainingWeek
@@ -86,7 +87,7 @@ class ProgressAnalyticsCalculator(
                 }
                 val ledger = ledgerCalculator.calculate(
                     listOf(session.restrictedTo(scope)),
-                    exercisesById, LedgerPolicyVersion.PRIMARY_ONLY_V1, week, catalogVersion, reviewPolicyVersion
+                    exercisesById, LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2, week, catalogVersion, reviewPolicyVersion
                 )
                 ledger.unattributedWorkSets.forEach { (reason, count) -> unattributed.merge(reason, count, Int::plus) }
                 val member = scope == AnalyticsScope.All || completed.isNotEmpty()
@@ -171,7 +172,7 @@ class ProgressAnalyticsCalculator(
             .sortedWith(compareBy({ it.completedAtTimestamp }, { it.startedAtTimestamp }, { it.id }))
             .flatMap { session ->
                 session.exercises
-                    .filter { it.exerciseId == exerciseId }
+                    .filter { it.exerciseId == exerciseId && it.prescription.purpose == PrescriptionPurpose.ORDINARY }
                     .sortedWith(compareBy({ it.orderIndex }, { it.id }))
                     .groupBy { it.shape() }
                     .mapNotNull { (shape, instances) ->

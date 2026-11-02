@@ -593,11 +593,11 @@
     <string name="progress_metric_volume_def">El volumen es carga × reps solo en series con peso; el peso corporal, la asistencia, el tiempo y la distancia no son tonelaje.</string>
     <string name="progress_streak_grace_note">Una semana en curso sin terminar no corta tu racha.</string>
 
-    <!-- Dosis primaria revisada: cuenta PRIMARY_ONLY_V1, separada de la actividad amplia. -->
+    <!-- Dosis primaria revisada: cuenta ORDINARY_PRIMARY_ONLY_V2, separada de la actividad amplia. -->
     <string name="progress_dose_heading">Dosis primaria revisada</string>
     <string name="progress_dose_unattributed">El trabajo sin datos musculares aprobados sigue incluido en tu actividad registrada.</string>
     <string name="progress_dose_none">No hay series de trabajo completadas para revisar esta semana.</string>
-    <string name="progress_dose_policy">Política PRIMARY_ONLY_V1: se cuenta un músculo primario aprobado por serie de trabajo completada. Los calentamientos y los músculos secundarios descritos nunca cuentan como dosis.</string>
+    <string name="progress_dose_policy">Política ORDINARY_PRIMARY_ONLY_V2: se cuenta un músculo primario aprobado por serie de trabajo ordinario completada. El trabajo de apoyo, los calentamientos y los músculos secundarios descritos nunca cuentan como dosis.</string>
     <string name="progress_dose_details">Detalles de la dosis revisada</string>
     <string name="progress_dose_direct_heading">Series primarias acreditadas</string>
     <string name="progress_dose_secondary_heading">Participación secundaria descrita</string>

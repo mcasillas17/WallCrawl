@@ -25,10 +25,23 @@ class ProgressionEngine {
         if (sessions.map { it.id }.distinct().size != sessions.size) {
             return hold(ProgressionReason.HOLD_DUPLICATE_OBSERVATION)
         }
-        val attempts = sessions.filter { s -> s.exercises.any { it.exerciseId == exerciseId } }
+        val attempts = sessions.filter { s -> s.exercises.any { it.exerciseId == exerciseId } &&
+            (s.exercises.any { it.exerciseId == exerciseId && it.prescription.purpose == PrescriptionPurpose.ORDINARY } ||
+                s.exercises.any { ex -> ex.sets.any { it.type != SetType.WARMUP &&
+                    (it.stopReason != null || it.stoppedAtTimestamp != null) } })
+        }
             .sortedWith(compareByDescending<WorkoutSession> { it.startedAtTimestamp }.thenBy { it.id })
             .take(2)
-        if (attempts.size < 2) return hold(ProgressionReason.HOLD_INSUFFICIENT_HISTORY)
+        if (attempts.size < 2) {
+            // Keep a newer supportive stop visible even without two ordinary observations.
+            val supportiveStop = attempts.any { s -> s.exercises.any { ex ->
+                ex.prescription.purpose == PrescriptionPurpose.SUPPORTIVE && ex.sets.any {
+                    it.type != SetType.WARMUP && (it.stopReason != null || it.stoppedAtTimestamp != null)
+                }
+            } }
+            return hold(if (supportiveStop) ProgressionReason.HOLD_INCOMPLETE_WORK
+                else ProgressionReason.HOLD_INSUFFICIENT_HISTORY)
+        }
         val instanceIds = mutableSetOf<String>()
         val setIds = mutableSetOf<String>()
         for (session in attempts) {

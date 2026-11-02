@@ -27,6 +27,47 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSet
 
 class DefaultExercisePrescriptionFactoryTest {
 
+    @Test
+    fun supportiveRecommendationCannotReplaceOrdinaryProgressionReference() {
+        val exercise = syntheticApprovedExercise("press", "Chest")
+        val initial = WorkoutGenerationContext(userProfile = UserProfile(preferredUnit = WeightUnit.KG,
+            confirmedStartingLoads = mapOf(exercise.id to 40.0)),
+            trainingProgramState = programState(AdaptationState.UNCALIBRATED))
+        val baseline = factory.createDecision(exercise, initial)
+        val sessions = listOf(progressionSession("one", exercise.id, baseline.prescription, 10_000),
+            progressionSession("two", exercise.id, baseline.prescription, 20_000),
+            progressionSession("support", exercise.id, baseline.prescription.copy(
+                purpose = wallcrawl.elopenmike.com.core.model.PrescriptionPurpose.SUPPORTIVE), 25_000))
+        val result = factory.createDecision(exercise, initial.copy(progressionHistory = sessions,
+            historyAsOfTimestamp = 30_000, recentRecommendationRecords = mapOf("support" to
+                progressionRecord("support", listOf(baseline.copy(baseConfigurationDigest = "b".repeat(64)))))))
+        assertThat(result.reason).isEqualTo(wallcrawl.elopenmike.com.core.model.ProgressionReason.ADVANCED)
+        assertThat(result.sourceSessionIds).containsExactly("one", "two").inOrder()
+    }
+
+    @Test
+    fun supportiveRecordedLoadNeverReplacesOrdinaryWorkingLoad() {
+        val exercise = syntheticApprovedExercise("press", "Chest")
+        val initial = WorkoutGenerationContext(userProfile = UserProfile(preferredUnit = WeightUnit.KG,
+            confirmedStartingLoads = mapOf(exercise.id to 40.0)),
+            trainingProgramState = programState(AdaptationState.UNCALIBRATED))
+        val prescription = factory.create(exercise, initial)
+        val ordinary = progressionSession("ordinary", exercise.id, prescription, 10_000)
+        val supportive = progressionSession("supportive", exercise.id,
+            prescription.copy(targetWeight = 90.0, purpose = wallcrawl.elopenmike.com.core.model.PrescriptionPurpose.SUPPORTIVE), 20_000)
+        val context = initial.copy(recentWorkoutHistory = listOf(ordinary, supportive),
+            progressionHistory = listOf(ordinary, supportive), historyAsOfTimestamp = 30_000)
+        val ordinaryPurpose = supportive.copy(exercises = supportive.exercises.map { ex -> ex.copy(
+            prescription = ex.prescription.copy(purpose = wallcrawl.elopenmike.com.core.model.PrescriptionPurpose.ORDINARY)) })
+        val allOrdinary = context.copy(recentWorkoutHistory = listOf(ordinary, ordinaryPurpose),
+            progressionHistory = listOf(ordinary, ordinaryPurpose))
+        assertThat(allOrdinary.recordedWorkLoad(exercise.id, ExerciseType.WEIGHT_REPS)).isEqualTo(90.0)
+        assertThat(RecommendationContextIdentity.of(context)).isNotEqualTo(RecommendationContextIdentity.of(allOrdinary))
+        assertThat(context.recordedWorkLoad(exercise.id, ExerciseType.WEIGHT_REPS)).isEqualTo(40.0)
+        assertThat(factory.create(exercise, context).targetWeight).isEqualTo(40.0)
+        assertThat(context.copy(recentWorkoutHistory = listOf(supportive)).recordedWorkLoad(exercise.id, ExerciseType.WEIGHT_REPS)).isNull()
+    }
+
     @Test fun conditionOrdinaryBoundsApplyAfterGuidanceAndKeepCoherentReceipt() {
         val context = ConditionPlannerFixtures.context(bounds = ConditionPrescriptionBounds(
             minSets = 2, maxSets = 2, minReps = 4, maxReps = 5, minRestSeconds = 91, maxRestSeconds = 91))
@@ -580,7 +621,7 @@ class DefaultExercisePrescriptionFactoryTest {
         policyVersion = TrainingProgramStatePolicyVersion.PROGRAM_STATE_V1,
         adaptationState = adaptationState,
         weeklyLedger = WeeklyDoseLedger(
-            policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+            policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
             weekStartEpochDay = MONDAY_EPOCH_DAY,
             timeZoneId = "UTC",
             catalogVersion = SYNTHETIC_CATALOG_VERSION,

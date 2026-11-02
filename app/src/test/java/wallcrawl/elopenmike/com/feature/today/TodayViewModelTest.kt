@@ -991,7 +991,7 @@ private fun ledger(
     directPrimarySets: Map<String, Int>,
     weekStartEpochDay: Long = 20_696L
 ) = WeeklyDoseLedger(
-    policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+    policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
     weekStartEpochDay = weekStartEpochDay,
     timeZoneId = "UTC",
     catalogVersion = "catalog-commit-under-test",

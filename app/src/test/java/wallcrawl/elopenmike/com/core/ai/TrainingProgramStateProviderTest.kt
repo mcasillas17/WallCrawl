@@ -18,7 +18,7 @@ class TrainingProgramStateProviderTest {
     private val zone = ZoneId.of("Asia/Kolkata")
 
     private val ledger = WeeklyDoseLedger(
-        policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+        policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
         weekStartEpochDay = 20_696L,
         timeZoneId = zone.id,
         catalogVersion = "catalog-commit",

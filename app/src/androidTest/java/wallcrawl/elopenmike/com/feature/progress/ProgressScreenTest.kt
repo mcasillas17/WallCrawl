@@ -552,7 +552,7 @@ class ProgressScreenTest {
 
     /** Credited 11 + omitted 1 == 12 work sets (14 completed − 2 warm-ups). */
     private fun approvedLedger() = WeeklyDoseLedger(
-        policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+        policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
         weekStartEpochDay = WEEK.startEpochDay,
         timeZoneId = WEEK.zoneId.id,
         catalogVersion = "test",
@@ -564,7 +564,7 @@ class ProgressScreenTest {
 
     /** A distinct prior-week ledger, keyed to the previous week rather than the current one. */
     private fun previousLedger() = WeeklyDoseLedger(
-        policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+        policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
         weekStartEpochDay = WEEK.startEpochDay - 7,
         timeZoneId = WEEK.zoneId.id,
         catalogVersion = "test",
@@ -575,7 +575,7 @@ class ProgressScreenTest {
     )
 
     private fun noneLedger() = WeeklyDoseLedger(
-        policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+        policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
         weekStartEpochDay = WEEK.startEpochDay,
         timeZoneId = WEEK.zoneId.id,
         catalogVersion = "test",
@@ -587,7 +587,7 @@ class ProgressScreenTest {
 
     /** The bundled metadata is entirely DRAFT, so no reviewed primary work is credited. */
     private fun productionLedger() = WeeklyDoseLedger(
-        policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+        policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
         weekStartEpochDay = WEEK.startEpochDay,
         timeZoneId = WEEK.zoneId.id,
         catalogVersion = "test",

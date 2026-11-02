@@ -3,6 +3,7 @@ package wallcrawl.elopenmike.com.core.ai
 import java.time.Instant
 import java.time.ZoneId
 import wallcrawl.elopenmike.com.core.model.Exercise
+import wallcrawl.elopenmike.com.core.model.PrescriptionPurpose
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetOutcomeRules
 import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
@@ -51,6 +52,7 @@ class TrainingFrequencyRecencyPolicy {
                         allowMissingCompletionTimestamp = true
                     )
                 }
+                if (exercise.prescription.purpose != PrescriptionPurpose.ORDINARY) return@forEach
                 if (exercise.sets.none { it.isCreditableWorkSet }) return@forEach
                 val primary = byId[exercise.exerciseId]?.acceptedMetadata()?.directPrimaryMuscle
                     ?: return@forEach

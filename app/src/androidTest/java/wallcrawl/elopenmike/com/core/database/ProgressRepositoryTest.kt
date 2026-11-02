@@ -65,6 +65,19 @@ class ProgressRepositoryTest {
 
     @After fun tearDown() { db.close() }
 
+    @Test fun supportiveSameIdRemainsLoggedActivityWithoutStrengthCredit() = runBlocking {
+        insert("ordinary", monday.toEpochMilli(), "approved")
+        insert("support", monday.toEpochMilli() + 1, "approved")
+        db.openHelper.writableDatabase.execSQL("UPDATE workout_exercises SET purpose = 'SUPPORTIVE' WHERE sessionId = 'support'")
+        val snapshot = requireNotNull(repository().observeProgress({ now }, zone).first())
+        assertThat(snapshot.reviewedDose.creditedWorkSets).isEqualTo(1)
+        assertThat(snapshot.overview.workoutsThisWeek).isEqualTo(2)
+        assertThat(snapshot.overview.completedSetsThisWeek).isEqualTo(2)
+        assertThat(snapshot.overview.totalRepsThisWeek).isEqualTo(20)
+        assertThat(snapshot.overview.totalVolumeThisWeek).isEqualTo(400.0)
+        assertThat(snapshot.overview.recentHistory).hasSize(2)
+    }
+
     @Test fun currentAndPreviousWeeksAreNotTruncatedToTheRecent500() = runBlocking {
         repeat(501) { index -> insert("current-$index", monday.toEpochMilli() + index, "approved") }
         insert("previous", monday.toEpochMilli() - 1, "approved")

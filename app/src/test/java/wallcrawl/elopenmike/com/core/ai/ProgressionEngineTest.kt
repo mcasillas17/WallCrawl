@@ -18,6 +18,47 @@ class ProgressionEngineTest {
     )
 
     @Test
+    fun supportiveSuccessesNeverSupplyOrdinaryProgression() {
+        val reference = cases.first().prescription
+        val support = reference.copy(purpose = PrescriptionPurpose.SUPPORTIVE)
+        assertHold(reference, pair(support), ProgressionReason.HOLD_INSUFFICIENT_HISTORY)
+        assertHold(reference, listOf(session("one", reference, 10_000), session("two", support, 20_000)),
+            ProgressionReason.HOLD_INSUFFICIENT_HISTORY)
+        assertThat(evaluate(reference, pair(reference) + session("support", support, 25_000)).reason)
+            .isEqualTo(ProgressionReason.ADVANCED)
+    }
+
+    @Test
+    fun newerSupportivePainStopCannotExposeOlderOrdinarySuccesses() {
+        val reference = cases.first().prescription
+        val stopped = changeLatestSet(listOf(session("stop", reference.copy(purpose = PrescriptionPurpose.SUPPORTIVE), 25_000))) {
+            it.copy(isCompleted = false, completedAtTimestamp = null, feltManageable = null,
+                stoppedAtTimestamp = 26_000, stopReason = SetStopReason.PAIN_STOP)
+        }.single()
+        assertHold(reference, pair(reference) + stopped, ProgressionReason.HOLD_INCOMPLETE_WORK)
+        assertHold(reference, pair(reference).take(1) + stopped, ProgressionReason.HOLD_INCOMPLETE_WORK)
+    }
+
+    @Test
+    fun supportivePainStopElsewhereInOrdinarySessionStillBlocksAndDuplicatesStillFail() {
+        val reference = cases.first().prescription
+        val mixed = changeLatestSession(pair(reference)) { s ->
+            val support = s.exercises.single().copy(id = "support", exerciseId = "other",
+                prescription = reference.copy(purpose = PrescriptionPurpose.SUPPORTIVE),
+                sets = listOf(s.exercises.single().sets.first().copy(id = "support-set", workoutExerciseId = "support",
+                    isCompleted = false, completedAtTimestamp = null, feltManageable = null,
+                    stoppedAtTimestamp = 21_000, stopReason = SetStopReason.PAIN_STOP)))
+            s.copy(exercises = s.exercises + support)
+        }
+        assertHold(reference, mixed, ProgressionReason.HOLD_INCOMPLETE_WORK)
+        val duplicate = changeLatestSession(pair(reference)) { s ->
+            s.copy(exercises = s.exercises + s.exercises.single().copy(
+                prescription = reference.copy(purpose = PrescriptionPurpose.SUPPORTIVE)))
+        }
+        assertHold(reference, duplicate, ProgressionReason.HOLD_DUPLICATE_OBSERVATION)
+    }
+
+    @Test
     fun allShapes_changeExactlyOneDeclaredAxis_andReplayIdentically() {
         cases.forEach { (reference, axis) ->
             val sessions = pair(reference)
