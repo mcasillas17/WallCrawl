@@ -23,6 +23,8 @@ class GeneratedWorkoutValidator(
     private val exerciseCatalog: ExerciseCatalog
 ) {
 
+    internal suspend fun catalogExercise(id: String) = exerciseCatalog.getExerciseById(id)
+
     /**
      * Every structural problem in [workout], in report order, or an empty list.
      *
