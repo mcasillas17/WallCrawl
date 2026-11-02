@@ -1,6 +1,6 @@
 # Condition-aware personalized workouts
 
-Date: 2026-11-01. Status: proposed design, awaiting owner approval.
+Date: 2026-11-01. Status: approved by the owner in chat on 2026-11-01.
 Repository baseline: `da8b24b51`. This document does not approve clinical content.
 
 ## Intent and agreed direction
@@ -28,8 +28,8 @@ profile persistence, and validation. It is not a separate rehabilitation app.
 | Curated exercise pools for each condition | Straightforward initial audit; limits variety and duplicates work across conditions, equipment, and combinations | Not selected |
 | Condition-aware rules in the existing planner | Reuses personalization and validation; requires explicit condition/exercise mappings, prescription rules, and conflict handling | Selected by the owner |
 
-The following defaults are **author proposals**, not decisions already made by the
-owner: start with 50 research records; prepare piriformis first to establish the
+The following defaults were **author proposals included in the approved design**:
+start with 50 research records; prepare piriformis first to establish the
 dossier format; integrate supportive work into normal sessions; require qualified
 clinical review before releasing condition-specific therapeutic prescriptions; and
 produce PNG masters in both existing demonstrator variants with SVG delivery.
@@ -114,7 +114,7 @@ links and factual extraction rather than republishing copyrighted articles.
 Do not mistake trial exclusion criteria for universal contraindications, lack of
 reported harms for established safety, or agent agreement for clinical validation.
 
-Clinical review is proposed for the mapping, prescription, symptom-response, and
+The approved release gate requires clinical review for the mapping, prescription, symptom-response, and
 escalation rules before those are released as condition-specific therapeutic
 guidance. No reviewer is currently identified. Research and draft content can be
 completed without that reviewer; unreviewed therapeutic mappings remain unreleased.
@@ -201,7 +201,7 @@ universal pain threshold or automatic recovery date is introduced. A stopped ite
 is not automatically offered again or advanced until its required reassessment
 inputs are satisfied. Escalation copy must come from reviewed guidance.
 
-Apply this contract to generated ordinary and program sessions. Proposal for manual
+Apply this contract to generated ordinary and program sessions. The approved approach for manual
 templates: retain editing and saved content, but check active condition compatibility
 before starting; known conflicts or unassessed items require modification before
 the app presents the session as condition-aware. Do not silently rewrite templates.
@@ -300,8 +300,8 @@ conditions must retain their existing planning behavior.
 The builder chooses exact classes/files, record serialization and test allocation
 within these contracts, and may reduce implementation detail where reuse is enough.
 Condition content and artwork cannot be substituted by generic placeholders at
-release. Owner approval is still required for this proposed design, especially the
-clinical-review gate and the PNG-master/SVG-delivery interpretation.
+release. Owner approval covers this design, including the clinical-review gate and
+the PNG-master/SVG-delivery interpretation; it does not approve clinical content.
 
 ## Initial research inventory: 50 candidates, none approved by this list
 
