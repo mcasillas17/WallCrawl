@@ -41,6 +41,13 @@
       "query": "Exact DOI metadata GET /works/{URL-encoded DOI}: 10.1093/ptj/pzad041, 10.3928/01477447-20160606-02, 10.1016/j.jseint.2024.08.189",
       "decision": "Metadata returned for michener-2023, guo-2016, su-2025. PubMed/publisher records remain source of access/extraction.",
       "limitations": "Only record metadata/relations inspected; not a registry-wide retraction/correction search."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Europe PMC primary abstract/core records and targeted cited primary sections; official guideline/notice pages",
+      "query": "Bounded accessible-protocol audit of existing sources; exact primary IDs/URLs and inspected sections recorded in shoulder-elbow-fix-report.md. No broad discovery search.",
+      "decision": "Retain only explicitly reported partial-text facts, distinct from complete executable dose, visit schedule, device wear and follow-up. Apply regional F1–F4 corrections and known notice provenance.",
+      "limitations": "Access statuses unchanged; full article inspection not inferred from partial retrieval; unseen fields remain not reported; no clinical release."
     }
   ],
   "sources": [
@@ -93,7 +100,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-02",
-        "details": "Published final abstract inspected; full methods unavailable."
+        "details": "Published final abstract inspected; full methods unavailable. Bounded accessible-protocol audit 2026-11-02: only explicitly reported categories/schedules entered; access status unchanged and exact unseen methods remain unreported."
       },
       "integrity": {
         "checkedOn": "2026-11-02",
@@ -110,15 +117,16 @@
       "harms": "not reported in inspected abstract.",
       "limitations": "No exact exercises/dose or general safety clearance.",
       "protocol": {
-        "execution": "not reported",
+        "execution": "reported in accessible text: Abstract: some patients received physiotherapy, rehabilitation and a shoulder strap targeting range of motion and muscle strength, alongside discretionary conventional care. Exact movements, sets and loads unreported.",
         "dose": "not reported",
         "frequency": "not reported",
-        "supervision": "not reported",
+        "supervision": "reported in accessible text: Abstract: some patients received ROM/muscular-strength training from a physical therapist. No exact therapist visit schedule or universal participation reported.",
         "progression": "not reported",
         "stoppingRules": "not reported"
       },
       "locations": [
-        "Abstract > Methods; Results; Conclusions"
+        "Abstract > Methods; Results; Conclusions",
+        "Abstract > Conservative treatment and physiotherapy description"
       ]
     },
     {

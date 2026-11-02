@@ -1324,22 +1324,23 @@
         "rotator-cuff-tendinopathy"
       ],
       "name": "Standing straight-arm band shoulder extension",
-      "execution": "Standing upright with straight arms, elastic band attached in front; pull hands down/back toward outside of hips, then controlled return. Precise attachment height requires confirmation from study figure before artwork.",
+      "execution": "Stand upright about 1.5 m from a fixed band anchor in front, with band middle approximately at shoulder height. Hold therapist-marked ends in both hands; keep back straight and shoulders slightly back. With straight arms, pull hands down/back toward the outside of the hips, then return under control without fully relaxing. Text gives about two seconds each direction; not a separately created identity for this tempo.",
       "equipment": [
         "Resistance Band"
       ],
       "movementRequirements": [
-        "Standing unsupported",
-        "Secure front band anchor; exact height unresolved",
-        "Straight elbows; shoulder extension"
+        "Unsupported standing with upright back and shoulders slightly back",
+        "Secure front band anchor approximately at shoulder height; participant about 1.5 m away",
+        "Bilateral marked-end grip, straight elbows and shoulder extension toward outside of hips",
+        "Exact hand spacing, band pretension and individualized mark placement require execution review; approximate text distances are not universal fit/safety thresholds"
       ],
-      "artwork": "Candidate only. No artwork generated, upstream attribution or clinical approval claimed. After execution review, commission/verify retained start, movement and end PNGs under separate supplement provenance; unresolved setup must be resolved before drawing.",
-      "reason": "Cable straight-arm-pulldown has cable/bar setup; banded-kickback refers to hip extension, not this shoulder execution.",
+      "artwork": "Candidate only. No artwork generated or clinical approval claimed. After visual execution review, retain setup/start/pull/return PNGs showing shoulder-height anchor, approximate standing distance, marked-end bilateral grip and straight elbows under separate supplement provenance. Known textual anchor geometry must not be marked absent.",
+      "reason": "RoCTEx Appendix A/B Sixth Exercise explicitly supplies anchor height and approximate distance. Cable straight-arm-pulldown has a different cable/bar apparatus; banded-kickback is hip extension. Clinical dose/tempo alone does not create a distinct identity; preserve unresolved individual fit and source-specific dose.",
       "sourceRefs": [
         {
           "conditionId": "rotator-cuff-tendinopathy",
           "sourceId": "ingwersen-2017",
-          "location": "Methods > Interventions; Appendices A and B > Exercise Program"
+          "location": "Methods > Participants, Settings, and Locations; Appendices A and B > Sixth Exercise"
         }
       ],
       "status": "candidate"

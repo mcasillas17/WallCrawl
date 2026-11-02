@@ -34,6 +34,13 @@
       "query": "ulnar nerve elbow pressure flexion cadaver Gelberman 1998 intraneural pressure flexion PubMed",
       "decision": "Executed query; included sources and direct extraction retained in this dossier and elbow-hand-source-report.md.",
       "limitations": "Targeted search, not an exhaustive systematic review. Full-text/abstract boundaries explicit; local November 1 / UTC November 2, 2026."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Europe PMC primary abstract/core records and targeted cited primary sections; official guideline/notice pages",
+      "query": "Bounded accessible-protocol audit of existing sources; exact primary IDs/URLs and inspected sections recorded in shoulder-elbow-fix-report.md. No broad discovery search.",
+      "decision": "Retain only explicitly reported partial-text facts, distinct from complete executable dose, visit schedule, device wear and follow-up. Apply regional F1–F4 corrections and known notice provenance.",
+      "limitations": "Access statuses unchanged; full article inspection not inferred from partial retrieval; unseen fields remain not reported; no clinical release."
     }
   ],
   "sources": [
@@ -85,7 +92,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. Protocol fields deliberately not populated. [Primary abstract](https://pubmed.ncbi.nlm.nih.gov/19282413/). DOI 10.1177/1753193408098480; PMID 19282413. 70 mild/moderate patients received information about causes/avoiding provocation, randomized to information alone, night splint or nerve glides. Primary abstract: 57 followed at 6 months, 51 improved (89.5%), no significant group differences. Cochrane reports a smaller analyzed set; denominator/timepoint differences require preserving the source-specific account rather than merging. Night splint duration 3 months; exact glide repetition/hold dose not verified. Harms were not adequately reported. Not evidence that all exercise prevents surgery, nor that glides should be routine. Trial excluded several other upper-limb conditions; those exclusions are generalizability limits."
+        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. [Primary abstract](https://pubmed.ncbi.nlm.nih.gov/19282413/). DOI 10.1177/1753193408098480; PMID 19282413. 70 mild/moderate patients received information about causes/avoiding provocation, randomized to information alone, night splint or nerve glides. Primary abstract: 57 followed at 6 months, 51 improved (89.5%), no significant group differences. Cochrane reports a smaller analyzed set; denominator/timepoint differences require preserving the source-specific account rather than merging. Night splint duration 3 months; exact glide repetition/hold dose not verified. Harms were not adequately reported. Not evidence that all exercise prevents surgery, nor that glides should be routine. Trial excluded several other upper-limb conditions; those exclusions are generalizability limits. Bounded accessible-protocol audit 2026-11-02: only explicitly reported categories/schedules entered; access status unchanged and exact unseen methods remain unreported."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -102,15 +109,16 @@
       "harms": "not adequately reported in inspected abstract",
       "limitations": "Exact glide execution/dose unavailable; trial exclusions limit applicability, not contraindications. [Primary abstract](https://pubmed.ncbi.nlm.nih.gov/19282413/). DOI 10.1177/1753193408098480; PMID 19282413. 70 mild/moderate patients received information about causes/avoiding provocation, randomized to information alone, night splint or nerve glides. Primary abstract: 57 followed at 6 months, 51 improved (89.5%), no significant group differences. Cochrane reports a smaller analyzed set; denominator/timepoint differences require preserving the source-specific account rather than merging. Night splint duration 3 months; exact glide repetition/hold dose not verified. Harms were not adequately reported. Not evidence that all exercise prevents surgery, nor that glides should be routine. Trial excluded several other upper-limb conditions; those exclusions are generalizability limits.",
       "protocol": {
-        "execution": "not reported — exact primary protocol not independently established at this access level.",
+        "execution": "reported in accessible text: Abstract: cause/provocation information for all groups; additional night-splint or nerve-gliding arms compared with control. Exact glide sequence/range not reported.",
         "dose": "not reported — exact primary protocol not independently established at this access level.",
-        "frequency": "not reported — exact primary protocol not independently established at this access level.",
+        "frequency": "reported in accessible text: Abstract: night splinting is named; nightly hours, duration and glide frequency are not reported in this primary abstract. Six months is assessment follow-up, not treatment duration.",
         "supervision": "not reported — exact primary protocol not independently established at this access level.",
         "progression": "not reported — exact primary protocol not independently established at this access level.",
         "stoppingRules": "not reported — exact primary protocol not independently established at this access level."
       },
       "locations": [
-        "Abstract"
+        "Abstract",
+        "Abstract > Interventions and evaluation description"
       ]
     },
     {
@@ -123,7 +131,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. Protocol fields deliberately not populated. [Primary abstract](https://pubmed.ncbi.nlm.nih.gov/23647638/); [Full article](https://pmc.ncbi.nlm.nih.gov/articles/PMC3989882/). DOI 10.1016/j.jhsa.2013.02.039; PMID 23647638. Indexed abstract/full treatment passages inspected."
+        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. [Primary abstract](https://pubmed.ncbi.nlm.nih.gov/23647638/); [Full article](https://pmc.ncbi.nlm.nih.gov/articles/PMC3989882/). DOI 10.1016/j.jhsa.2013.02.039; PMID 23647638. Indexed abstract/full treatment passages inspected. Bounded accessible-protocol audit 2026-11-02: only explicitly reported categories/schedules entered; access status unchanged and exact unseen methods remain unreported."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -140,15 +148,16 @@
       "harms": "Described well tolerated; comprehensive harm rate unavailable.",
       "limitations": "19 patients/25 extremities, mild–moderate idiopathic cubital tunnel syndrome. Activity modification plus rigid night splint at 45° elbow flexion for 3 months. At mean 2 years, 24 extremities available, 21 avoided surgery (88%); QuickDASH 29→11 and grip 32→35 kg. No control group; success defined by avoiding surgery, not confirmed reversal of nerve damage. Described well tolerated; no comprehensive harm rate. Night-splint angle is not an exercise elbow-flexion limit. Does not resolve whether splint adds benefit beyond advice, given UNE-P1.",
       "protocol": {
-        "execution": "not reported — exact primary protocol not independently established at this access level.",
-        "dose": "not reported — exact primary protocol not independently established at this access level.",
-        "frequency": "not reported — exact primary protocol not independently established at this access level.",
+        "execution": "reported in accessible text: Abstract > Methods: activity modification with rigid night splint maintaining 45° elbow flexion. Orthosis setup, not an exercise or universal workout ROM limit.",
+        "dose": "reported in accessible text: Abstract > Methods: three-month splint course. Device program duration, not strengthening/stretching sets or repetitions.",
+        "frequency": "reported in accessible text: Abstract > Methods: nighttime splint wear; exact hours and any therapeutic exercise frequency not reported.",
         "supervision": "not reported — exact primary protocol not independently established at this access level.",
         "progression": "not reported — exact primary protocol not independently established at this access level.",
         "stoppingRules": "not reported — exact primary protocol not independently established at this access level."
       },
       "locations": [
-        "Abstract > Methods and Results; indexed Discussion"
+        "Abstract > Methods and Results; indexed Discussion",
+        "Abstract > Methods"
       ]
     },
     {
@@ -161,7 +170,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. Protocol fields deliberately not populated. [Primary abstract](https://pubmed.ncbi.nlm.nih.gov/9563378/). DOI 10.2106/00004623-199804000-00005; PMID 9563378. MRI and interstitial pressure while flexing human cadaver elbows. Tunnel/nerve area decreased toward 135°; intraneural pressure exceeded extraneural pressure at several flexed positions. No living clinical symptoms, exercise dose, longitudinal injury outcome or maximum safe angle. Mechanistic support for reducing sustained symptomatic flexion/pressure; not evidence for a universal 90° cap or no-flexion workouts."
+        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. [Primary abstract](https://pubmed.ncbi.nlm.nih.gov/9563378/). DOI 10.2106/00004623-199804000-00005; PMID 9563378. MRI and interstitial pressure while flexing human cadaver elbows. Tunnel/nerve area decreased toward 135°; intraneural pressure exceeded extraneural pressure at several flexed positions. No living clinical symptoms, exercise dose, longitudinal injury outcome or maximum safe angle. Mechanistic support for reducing sustained symptomatic flexion/pressure; not evidence for a universal 90° cap or no-flexion workouts. Bounded accessible-protocol audit 2026-11-02: only explicitly reported categories/schedules entered; access status unchanged and exact unseen methods remain unreported."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -178,7 +187,7 @@
       "harms": "No clinical harms endpoint.",
       "limitations": "Does not establish90degree ceiling or any safe exercise duration/angle/load. [Primary abstract](https://pubmed.ncbi.nlm.nih.gov/9563378/). DOI 10.2106/00004623-199804000-00005; PMID 9563378. MRI and interstitial pressure while flexing human cadaver elbows. Tunnel/nerve area decreased toward 135°; intraneural pressure exceeded extraneural pressure at several flexed positions. No living clinical symptoms, exercise dose, longitudinal injury outcome or maximum safe angle. Mechanistic support for reducing sustained symptomatic flexion/pressure; not evidence for a universal 90° cap or no-flexion workouts.",
       "protocol": {
-        "execution": "not reported — exact primary protocol not independently established at this access level.",
+        "execution": "reported in accessible text: Abstract: pressure/MRI experiment in twenty human cadaver specimens during incremental elbow flexion. Pressure catheter measurements at ten-degree increments from 0–130°; MRI changes also described at 135°. Laboratory setup, not exercise dosing or a safe clinical angle.",
         "dose": "not reported — exact primary protocol not independently established at this access level.",
         "frequency": "not reported — exact primary protocol not independently established at this access level.",
         "supervision": "not reported — exact primary protocol not independently established at this access level.",
@@ -186,7 +195,8 @@
         "stoppingRules": "not reported — exact primary protocol not independently established at this access level."
       },
       "locations": [
-        "Abstract"
+        "Abstract",
+        "Abstract > Experimental methods"
       ]
     }
   ],

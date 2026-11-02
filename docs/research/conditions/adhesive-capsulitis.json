@@ -48,6 +48,13 @@
       "query": "Exact DOI metadata GET /works/{URL-encoded DOI}: 10.5535/arm.250057, 10.2519/jospt.2013.0302, 10.1016/j.jse.2004.03.002, 10.1016/j.jht.2016.10.007, 10.1016/S0140-6736(20)31965-6",
       "decision": "Metadata returned for lee-2025, kelley-2013, diercks-2004, rawat-2017, rangan-2020. PubMed/publisher records remain source of access/extraction.",
       "limitations": "Only record metadata/relations inspected; not a registry-wide retraction/correction search."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Europe PMC primary abstract/core records and targeted cited primary sections; official guideline/notice pages",
+      "query": "Bounded accessible-protocol audit of existing sources; exact primary IDs/URLs and inspected sections recorded in shoulder-elbow-fix-report.md. No broad discovery search.",
+      "decision": "Retain only explicitly reported partial-text facts, distinct from complete executable dose, visit schedule, device wear and follow-up. Apply regional F1–F4 corrections and known notice provenance.",
+      "limitations": "Access statuses unchanged; full article inspection not inferred from partial retrieval; unseen fields remain not reported; no clinical release."
     }
   ],
   "sources": [
@@ -178,7 +185,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-02",
-        "details": "Final abstract inspected; online Nov 2016, issue 2017; full protocol unavailable."
+        "details": "Final abstract inspected; online Nov 2016, issue 2017; full protocol unavailable. Bounded accessible-protocol audit 2026-11-02: only explicitly reported categories/schedules entered; access status unchanged and exact unseen methods remain unreported."
       },
       "integrity": {
         "checkedOn": "2026-11-02",
@@ -195,33 +202,34 @@
       "harms": "not reported in inspected abstract.",
       "limitations": "No exact exercise mapping or painful end-range rule follows.",
       "protocol": {
-        "execution": "not reported",
-        "dose": "not reported",
+        "execution": "reported in accessible text: Abstract > Methods: rotator-cuff strengthening added to TENS and joint mobilization; exact exercise positions, implements and range not reported.",
+        "dose": "reported in accessible text: Abstract > Methods: twelve treatment sessions within four weeks. Multimodal treatment contacts, not isolated exercise dose or frequency; no sessions-per-week calculation.",
         "frequency": "not reported",
         "supervision": "not reported",
         "progression": "not reported",
         "stoppingRules": "not reported"
       },
       "locations": [
-        "Abstract > Methods; Results; Conclusions"
+        "Abstract > Methods; Results; Conclusions",
+        "Abstract > Methods"
       ]
     },
     {
       "id": "rangan-2020",
       "title": "Management of adults with primary frozen shoulder in secondary care (UK FROST): a multicentre, pragmatic, three-arm, superiority randomised clinical trial",
       "doi": "10.1016/S0140-6736(20)31965-6",
-      "pmid": null,
+      "pmid": "33010843",
       "url": "https://doi.org/10.1016/S0140-6736(20)31965-6",
       "publicationStatus": "Published final article; exact version described in access details. Crossref recorded publication/online date 2020-10 (online date preferred where supplied).",
       "access": {
         "status": "abstract-only",
         "date": "2026-11-02",
-        "details": "Published trial repository abstract/results and HTA abstract inspected; full protocol not reviewed."
+        "details": "Published trial repository abstract/results and HTA abstract inspected; full protocol not reviewed. Bounded accessible-protocol audit 2026-11-02: only explicitly reported categories/schedules entered; access status unchanged and exact unseen methods remain unreported."
       },
       "integrity": {
         "checkedOn": "2026-11-02",
-        "method": "Inspected cited publication/PubMed or society record and retrieved version during targeted search; title/identifier/access cross-check. No registry-wide correction or retraction search performed. Exact-DOI Crossref metadata lookup: https://api.crossref.org/works/10.1016%2FS0140-6736%2820%2931965-6.",
-        "result": "Bounded publication/version check only; no claim of comprehensive integrity clearance. Any known notice is recorded in limitations. DOI/title/publication metadata correspond; this record does not establish absence of notices elsewhere."
+        "method": "Inspected cited publication/PubMed or society record and retrieved version during targeted search; title/identifier/access cross-check. No registry-wide correction or retraction search performed. Exact-DOI Crossref metadata lookup: https://api.crossref.org/works/10.1016%2FS0140-6736%2820%2931965-6. Independently read indexed primary Lancet Department of Error sidebar on issue p.98 (2021-01-09), retrieved at https://www.thelancet.com/article/S0140673620327215/pdf; reviewer-provided adjacent issue URL https://www.thelancet.com/article/S0140673620326817/pdf returned403 in this pass. Checked notice identity separately: PMID33422260, DOI10.1016/S0140-6736(20)32719-7.",
+        "result": "Known UK FROST erratum PMID33422260 / DOI10.1016/S0140-6736(20)32719-7 corrects collaborator Muhammad Butt’s name, updated online January7,2021. The independently read primary issue sidebar identifies a collaborator-name correction and does not state an outcome/protocol change. Retrieved issue-page URL and adjacent correspondence DOI10.1016/S0140-6736(20)32681-7 are not the correction identifier. Bounded check only; no registry-wide clearance."
       },
       "design": "Multicenter pragmatic RCT, 503 participants",
       "population": "Secondary-care primary frozen shoulder.",
@@ -233,15 +241,16 @@
       "harms": "Surgical adverse events reported; exercise-specific harm not resolved in inspected abstract.",
       "limitations": "No claim all patients recover without reassessment.",
       "protocol": {
-        "execution": "not reported",
-        "dose": "not reported",
+        "execution": "reported in accessible text: Abstract > Methods: early structured physiotherapy included mobilization and a graduated home exercise program with steroid injection; surgical arms received postprocedural physiotherapy. Exact exercise mechanics not reported.",
+        "dose": "reported in accessible text: Abstract > Methods: early structured and postprocedural physiotherapy each involved twelve sessions during up to twelve weeks. Package contact schedule, not home exercise sets/repetitions/frequency.",
         "frequency": "not reported",
         "supervision": "not reported",
         "progression": "not reported",
         "stoppingRules": "not reported"
       },
       "locations": [
-        "Abstract > Methods; Findings; Interpretation"
+        "Abstract > Methods; Findings; Interpretation",
+        "Abstract > Methods"
       ]
     }
   ],

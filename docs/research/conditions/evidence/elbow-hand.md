@@ -93,7 +93,7 @@ Disposition: evidence-gap/restriction-review candidate, not automatic biceps reh
 
 [Full official guideline](https://www.aaos.org/globalassets/quality-and-practice-resources/carpal-tunnel/carpal-tunnel-2024/cts-cpg.pdf). Adopted May 18, 2024; adult CTS, final PDF inspected.
 
-Guideline states that exercise and several other nonoperative modalities do not improve long-term patient-reported outcomes, based on limited evidence. Its long-term endpoint should not be rewritten as proof of short-term inefficacy or harm. It does not supply a universal gym-exercise contraindication, maximum wrist angle or safe load. Exercise must not be presented as treatment for progressive/severe compression or as a substitute for evaluation. No exercise prescription is extracted from this recommendation.
+AAOS rates the long-term nonoperative-treatment evidence quality **High**, while the option strength is **Limited (Downgraded)** following Evidence-to-Decision deliberation (printed p.36). The guideline states that exercise and listed modalities do not improve long-term patient-reported outcomes; evidence quality and option strength are separate axes. Its long-term endpoint should not be rewritten as proof of short-term inefficacy or harm. It does not supply a universal gym-exercise contraindication, maximum wrist angle or safe load. Exercise must not be presented as treatment for progressive/severe compression or as a substitute for evaluation. No exercise prescription is extracted from this recommendation.
 
 ### CTS-G2 — Erickson et al., final JOSPT revision 2026
 
@@ -111,7 +111,9 @@ Grade C retains optional combined orthotic/stretching treatment for **nonsurgica
 
 [Publisher abstract](https://www.sciencedirect.com/science/article/abs/pii/S0003999311006952). DOI 10.1016/j.apmr.2011.08.013. 124 mild–moderate CTS volunteers randomized to four splint/stretch combinations. Publisher abstract and the original 2019 CPG extraction were inspected; full primary methods unavailable.
 
-The [2019 CPG](https://www.hand-therapy.co.uk/_userfiles/pages/files/cts_nhs_england_leaflet.pdf) reports 103 analyzed, no thenar atrophy and normal two-point discrimination, assessment through 24 weeks. Improvement occurred across combinations; no untreated or orthosis-only comparator isolates stretching. At 24 weeks, 25.5% progressed to surgery without group difference. CPG reports no adverse effects. Stretch frequency/hold details in tertiary reports were not accepted as verified primary dosing. This supports cautious selected-population consideration, not a general stretching mandate.
+The [primary abstract, PMID22200381](https://pubmed.ncbi.nlm.nih.gov/22200381/), independently retrieved through [Europe PMC](https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A22200381&resultType=core&format=json), reports a four-week home nocturnal-splint regimen with stretches six times daily and assessment at 4, 12 and 24 weeks. It reports a 12-week CTQ-Function/DASH interaction and a 24-week clinically important functional-response advantage with cock-up splint plus lumbrical-intensive stretch. Exact effect sizes/p-values and responder denominators are not given in the abstract; exact stretch holds, repetitions, geometry, progression and primary harms remain unknown. All arms used orthoses, so no isolated stretch efficacy follows.
+
+The [2019 CPG](https://www.hand-therapy.co.uk/_userfiles/pages/files/cts_nhs_england_leaflet.pdf), CPG50, reports 103 analyzed, no thenar atrophy/normal two-point discrimination, 12-week differences but no 3-way interaction at 4/24 weeks, and then summarizes no superior combination. It separately reports 25.5% surgery by 24 weeks without group difference and no reported adverse effects. Its summary and the primary abstract's endpoint-specific 24-week functional-response advantage remain an unresolved account discrepancy, with both attributions preserved.
 
 ### CTS-M1 — Luchetti et al., final 1998 primary pressure study
 
@@ -297,4 +299,11 @@ Useful extraction locations: LET-G1 recommendation panel and exercise section (P
 
 ## Serialization access refinement
 
-The structured dossiers conservatively label partial indexed passages as `abstract-only`, even where those passages expose a recommendation or intervention detail. All six protocol fields then begin `not reported`; accessible factual details remain in findings with the access limitation explicit. Full-text designation is retained only where complete source text was retrieved and relevant methods/results were inspected. Baker trial results extracted by the 2019 CTS guideline are separately attributed to that guideline, rather than represented as inspected primary full methods. No wholesale re-search was undertaken during serialization.
+The structured dossiers conservatively label partial indexed passages as `abstract-only`, even where those passages expose a recommendation or intervention detail. The approved accessible-protocol correction now permits `reported in accessible text: ` for precisely attributed partial facts, while unseen methods remain `not reported`. Access labels stay unchanged; a reported frequency or program duration is not a complete executable dose. Full-text designation is retained only where complete source text was retrieved and relevant methods/results were inspected. Baker trial results extracted by the 2019 CTS guideline are separately attributed to that guideline, rather than represented as inspected primary full methods. No wholesale re-search was undertaken during serialization.
+
+
+## Regional review fix round 1 and accessible-protocol audit
+
+The bounded 2026-11-02 audit extracted explicit partial-text categories and schedules without upgrading access or releasing treatment. Baker primary/secondary endpoint accounts remain separate. Visits, program duration, orthosis wear and follow-up are distinguished from individual exercise dose. All non-full source records were audited; exact field changes, unchanged IDs, source passages and hashes are recorded in the retained regional fix report.
+
+The [ACR primary erratum](https://acrjournals.onlinelibrary.wiley.com/doi/10.1002/art.41761), independently read, corrects Figure2B's pharmacological categorization of chondroitin for hand OA (notice DOI10.1002/art.41761 / PMID33913629, April29,2021; original DOI10.1002/art.41142 / PMID31908163). Exercise recommendations are not changed by that notice. Both hand-OA dossier integrity records retain it.

@@ -27,6 +27,13 @@
       "query": "\"medial epicondylitis\" \"systematic review\" \"exercise\" 2026 See",
       "decision": "Executed query; included sources and direct extraction retained in this dossier and elbow-hand-source-report.md.",
       "limitations": "Targeted search, not an exhaustive systematic review. Full-text/abstract boundaries explicit; local November 1 / UTC November 2, 2026."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Europe PMC primary abstract/core records and targeted cited primary sections; official guideline/notice pages",
+      "query": "Bounded accessible-protocol audit of existing sources; exact primary IDs/URLs and inspected sections recorded in shoulder-elbow-fix-report.md. No broad discovery search.",
+      "decision": "Retain only explicitly reported partial-text facts, distinct from complete executable dose, visit schedule, device wear and follow-up. Apply regional F1–F4 corrections and known notice provenance.",
+      "limitations": "Access statuses unchanged; full article inspection not inferred from partial retrieval; unseen fields remain not reported; no clinical release."
     }
   ],
   "sources": [
@@ -40,7 +47,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. Protocol fields deliberately not populated. [Primary abstract](https://pubmed.ncbi.nlm.nih.gov/41887339/). DOI 10.1016/j.ctim.2026.103364; PMID 41887339. Complementary Therapies in Medicine 98:103364, June 2026; online March 24. Indexed primary abstract inspected; full text not obtained despite a free-article label."
+        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. [Primary abstract](https://pubmed.ncbi.nlm.nih.gov/41887339/). DOI 10.1016/j.ctim.2026.103364; PMID 41887339. Complementary Therapies in Medicine 98:103364, June 2026; online March 24. Indexed primary abstract inspected; full text not obtained despite a free-article label. Bounded accessible-protocol audit 2026-11-02: only explicitly reported categories/schedules entered; access status unchanged and exact unseen methods remain unreported."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -57,7 +64,7 @@
       "harms": "not reported in accessible abstract",
       "limitations": "Search through January 2025; five clinical studies/143 patients receiving wrist flexor-pronator eccentric loading, including randomized, pre/post and comparative designs. Within-group pain/function improvements were frequent; one RCT showed between-group superiority, others did not. One uncontrolled 11-year report suggested persistence. Heterogeneity and small samples precluded pooling; authors rate overall certainty low. Abstract does not establish exact protocols, harms or a validated exercise restriction. Newer synthesis prevents claiming that no medial-specific research exists, while still leaving a weak evidence base.",
       "protocol": {
-        "execution": "not reported — exact primary protocol not independently established at this access level.",
+        "execution": "reported in accessible text: Abstract > Methods: review includes eccentric wrist flexor-pronator loading as a main intervention component. Heterogeneous programs; no single exact mechanics/dose available from the abstract.",
         "dose": "not reported — exact primary protocol not independently established at this access level.",
         "frequency": "not reported — exact primary protocol not independently established at this access level.",
         "supervision": "not reported — exact primary protocol not independently established at this access level.",
@@ -65,7 +72,8 @@
         "stoppingRules": "not reported — exact primary protocol not independently established at this access level."
       },
       "locations": [
-        "Abstract > Methods, Results, Conclusion"
+        "Abstract > Methods, Results, Conclusion",
+        "Abstract > Methods"
       ]
     },
     {

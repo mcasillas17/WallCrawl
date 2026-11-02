@@ -48,6 +48,13 @@
       "query": "Exact DOI metadata GET /works/{URL-encoded DOI}: 10.1177/1758573220984471, 10.1177/1758573219840673, 10.1177/17585732231157090, 10.2519/jospt.2012.3866, 10.1136/bmjopen-2019-034439, 10.1007/s00167-020-06377-8",
       "decision": "Metadata returned for bess-2021, farrell-2019, welch-2024, harris-2012, acam-protocol; HTTP429 for soler-2021. PubMed/publisher records remain source of access/extraction.",
       "limitations": "Only record metadata/relations inspected; not a registry-wide retraction/correction search."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Europe PMC primary abstract/core records and targeted cited primary sections; official guideline/notice pages",
+      "query": "Bounded accessible-protocol audit of existing sources; exact primary IDs/URLs and inspected sections recorded in shoulder-elbow-fix-report.md. No broad discovery search.",
+      "decision": "Retain only explicitly reported partial-text facts, distinct from complete executable dose, visit schedule, device wear and follow-up. Apply regional F1–F4 corrections and known notice provenance.",
+      "limitations": "Access statuses unchanged; full article inspection not inferred from partial retrieval; unseen fields remain not reported; no clinical release."
     }
   ],
   "sources": [
@@ -209,13 +216,13 @@
       "id": "acam-protocol",
       "title": "Management of acromioclavicular joint disease by manual therapy versus corticosteroid injections: the protocol of a non-inferiority study",
       "doi": "10.1136/bmjopen-2019-034439",
-      "pmid": null,
+      "pmid": "33303428",
       "url": "https://doi.org/10.1136/bmjopen-2019-034439",
       "publicationStatus": "Published final article; exact version described in access details. Crossref recorded publication/online date 2020-12-10 (online date preferred where supplied).",
       "access": {
         "status": "abstract-only",
         "date": "2026-11-02",
-        "details": "Published final protocol, online2020-12-10; abstract/indexed methods only inspected, not full article; no outcome publication retrieved."
+        "details": "Published final protocol, online2020-12-10; abstract/indexed methods only inspected, not full article; no outcome publication retrieved. Bounded accessible-protocol audit 2026-11-02: only explicitly reported categories/schedules entered; access status unchanged and exact unseen methods remain unreported."
       },
       "integrity": {
         "checkedOn": "2026-11-02",
@@ -232,15 +239,16 @@
       "harms": "Planned adverse-event collection; no outcome data.",
       "limitations": "No workout restriction, benefit or noninferiority inferred.",
       "protocol": {
-        "execution": "not reported",
-        "dose": "not reported",
-        "frequency": "not reported",
+        "execution": "reported in accessible text: Abstract > Methods and analysis: manual therapy versus one ultrasound-guided corticosteroid injection; no therapeutic exercise mechanics reported.",
+        "dose": "reported in accessible text: Abstract > Methods and analysis: planned one to three manual-therapy visits versus a single injection. This is a protocol contact schedule, not exercise sets/repetitions or an observed result.",
+        "frequency": "reported in accessible text: Abstract > Methods and analysis: manual-therapy visits at one-week intervals; individual exercise frequency not reported.",
         "supervision": "not reported",
         "progression": "not reported",
         "stoppingRules": "not reported"
       },
       "locations": [
-        "Abstract; indexed Methods > Study design; Inclusion criteria; Sample size"
+        "Abstract; indexed Methods > Study design; Inclusion criteria; Sample size",
+        "Abstract > Methods and analysis"
       ]
     },
     {

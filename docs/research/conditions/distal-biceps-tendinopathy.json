@@ -34,6 +34,13 @@
       "query": "\"A Case Series of Symptomatic Distal Biceps Tendinopathy\" doi PMID",
       "decision": "Executed query; included sources and direct extraction retained in this dossier and elbow-hand-source-report.md.",
       "limitations": "Targeted search, not an exhaustive systematic review. Full-text/abstract boundaries explicit; local November 1 / UTC November 2, 2026."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Europe PMC primary abstract/core records and targeted cited primary sections; official guideline/notice pages",
+      "query": "Bounded accessible-protocol audit of existing sources; exact primary IDs/URLs and inspected sections recorded in shoulder-elbow-fix-report.md. No broad discovery search.",
+      "decision": "Retain only explicitly reported partial-text facts, distinct from complete executable dose, visit schedule, device wear and follow-up. Apply regional F1–F4 corrections and known notice provenance.",
+      "limitations": "Access statuses unchanged; full article inspection not inferred from partial retrieval; unseen fields remain not reported; no clinical release."
     }
   ],
   "sources": [
@@ -123,7 +130,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. Protocol fields deliberately not populated. [Full text](https://pmc.ncbi.nlm.nih.gov/articles/PMC7726399/); [primary abstract](https://pubmed.ncbi.nlm.nih.gov/33330179/). DOI 10.5397/cise.2018.21.4.213; PMID 33330179. Final 2018 Clinics in Shoulder and Elbow article. Indexed clinical/MRI and treatment passages inspected; direct publisher PDF returned 403."
+        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. [Full text](https://pmc.ncbi.nlm.nih.gov/articles/PMC7726399/); [primary abstract](https://pubmed.ncbi.nlm.nih.gov/33330179/). DOI 10.5397/cise.2018.21.4.213; PMID 33330179. Final 2018 Clinics in Shoulder and Elbow article. Indexed clinical/MRI and treatment passages inspected; direct publisher PDF returned 403. Bounded accessible-protocol audit 2026-11-02: only explicitly reported categories/schedules entered; access status unchanged and exact unseen methods remain unreported."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -140,15 +147,16 @@
       "harms": "No isolated exercise harm estimate.",
       "limitations": "21 patients, 12 tendinopathy and 9 partial tears. Complete ruptures were excluded and managed surgically. Initial care included a long-arm splint in forearm supination for 3 weeks, NSAIDs/physical therapy; refractory cases proceeded to ultrasound-guided injection and, for five continued failures with partial tears, surgery. No exercise-versus-control test or isolated exercise dose. Splint position is an initial treatment exposure, not a safe workout ROM threshold. Mixed pathology and escalation confound attribution; report cannot prove which movements cause rupture.",
       "protocol": {
-        "execution": "not reported — exact primary protocol not independently established at this access level.",
-        "dose": "not reported — exact primary protocol not independently established at this access level.",
+        "execution": "reported in accessible text: Previously retrieved indexed Methods > Conservative treatment, rechecked through the same primary article XML: initial long-arm splint in forearm supination with physical therapy/NSAIDs. This is clinical immobilization, not an exercise position.",
+        "dose": "reported in accessible text: Methods > Conservative treatment (partial primary XML inspection): initial splint course three weeks. No isolated therapeutic exercise sets/repetitions/load reported.",
         "frequency": "not reported — exact primary protocol not independently established at this access level.",
         "supervision": "not reported — exact primary protocol not independently established at this access level.",
         "progression": "not reported — exact primary protocol not independently established at this access level.",
         "stoppingRules": "not reported — exact primary protocol not independently established at this access level."
       },
       "locations": [
-        "Methods > Conservative treatment; Results"
+        "Methods > Conservative treatment; Results",
+        "Methods > Conservative treatment (partial XML passage)"
       ]
     }
   ],

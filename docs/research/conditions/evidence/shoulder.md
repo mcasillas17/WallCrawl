@@ -223,7 +223,7 @@ Insufficient evidence/restriction-review only; no exact therapeutic exercise app
 - Only tendinopathy RoCTEx candidates have sufficiently inspected exercise execution here for near-term variant requests: standing dumbbell scaption; side-lying dumbbell external rotation; supine scapular protraction; straight-arm elastic-band shoulder extension. Verify catalog execution/equipment/range/measurement before reusing any ID. No ID or art provenance claimed.
 - Mobility/strength classes elsewhere remain exploratory; do not invent doses, candidates, starting loads, time-based progression, reviewer identity or clinical approval to complete fields.
 - Full-thickness tears, instability and GHOA need broader clinical context before autonomous training rules; absent values should stay unresolved. These are app-scope decisions inferred from evidence limitations, not claims that all exercise is harmful.
-- No code/index/artwork changed. File is source-extraction scratch only; canonical JSON serialization awaits schema.
+- The six structured research dossiers are linked in the [condition inventory](../summary.md). This report and those records do not change app behavior or constitute clinical approval; artwork remains pending.
 
 ## Serialization-stage access and metadata updates
 
@@ -233,3 +233,12 @@ Insufficient evidence/restriction-review only; no exact therapeutic exercise app
 - Exact-DOI Crossref metadata queried for all27 DOI-bearing sources:23 returned metadata and4 HTTP429 (ARTISAN, Soler, Lafrance, Lazzarini). Existing publisher/PubMed metadata retained for429s. Crossref confirms ACAM online2020-12-10, correcting earlier2021 label. Returned publication dates precede access. This is bounded metadata/version inspection, not comprehensive integrity clearance.
 - Cochrane public summary is not the whole review: its formal excluded-study rationale for Warby was not inspected. Different comparator eligibility is an interpretation, not a verified exclusion-table finding.
 - Structured dossiers conservatively mark incomplete indexed/abstract inspections as abstract-only; full-text has not been claimed simply because some indexed methods were visible.
+
+
+## Regional review fix round 1 and accessible-protocol audit (2026-11-02)
+
+RoCTEx's sole-trial candidate now retains its 18–65-year, symptoms ≥3-month, ultrasound-confirmed sample and trial exclusions as evidence-applicability limits, never universal contraindications. Appendix A/B Sixth Exercise explicitly places the band middle approximately at shoulder height, participant about 1.5m from the anchor, both hands on therapist-marked ends, straight arms pulling toward the outside of the hips. These are textual facts, not missing geometry. Individual fit/pretension and visual artwork review remain open; a full replacement request is staged for controller reconciliation without editing the shared register.
+
+The independently re-read UK FROST primary abstract reports twelve early structured/postprocedural PT contacts during up to twelve weeks. Rawat's abstract reports twelve multimodal contacts within four weeks, ACAM one to three weekly manual-therapy contacts versus one injection, and Kuhn2024 six to twelve weeks of standard PT. These are package/contact schedules, not per-exercise doses or frequencies inferred by division. The bounded audit also retains explicitly reported abstract phase context for traumatic instability and broad PT categories for Guo, without inventing mechanics or clearance dates.
+
+UK FROST correction notice PMID33422260 / DOI10.1016/S0140-6736(20)32719-7 corrects collaborator Muhammad Butt's name (updated online January7,2021). Its primary Department of Error sidebar was independently read on Lancet issue p.98 via [retrieved issue-page PDF](https://www.thelancet.com/article/S0140673620327215/pdf). The [adjacent issue URL supplied by the verifier](https://www.thelancet.com/article/S0140673620326817/pdf) returned403 here; adjacent correspondence DOI10.1016/S0140-6736(20)32681-7 is not the correction DOI. The name-only notice does not state an outcome/protocol change and is not a remaining clinical-results blocker. Full changed/unchanged source-field and hash records are retained in the regional fix report.

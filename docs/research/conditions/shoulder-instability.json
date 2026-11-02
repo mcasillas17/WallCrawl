@@ -48,6 +48,13 @@
       "query": "Exact DOI metadata GET /works/{URL-encoded DOI}: 10.1177/1758573218815002, 10.1177/17585732261439731, 10.1002/14651858.CD015450.pub2, 10.1177/0363546517734508, 10.1136/bmj-2023-076925",
       "decision": "Metadata returned for noorani-2019, wong-2026, karasuyama-2026, warby-2018; HTTP429 for kearney-2024. PubMed/publisher records remain source of access/extraction.",
       "limitations": "Only record metadata/relations inspected; not a registry-wide retraction/correction search."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Europe PMC primary abstract/core records and targeted cited primary sections; official guideline/notice pages",
+      "query": "Bounded accessible-protocol audit of existing sources; exact primary IDs/URLs and inspected sections recorded in shoulder-elbow-fix-report.md. No broad discovery search.",
+      "decision": "Retain only explicitly reported partial-text facts, distinct from complete executable dose, visit schedule, device wear and follow-up. Apply regional F1–F4 corrections and known notice provenance.",
+      "limitations": "Access statuses unchanged; full article inspection not inferred from partial retrieval; unseen fields remain not reported; no clinical release."
     }
   ],
   "sources": [
@@ -99,7 +106,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-02",
-        "details": "Final Apr 7 2026 online / June issue metadata and abstract inspected. Publisher full request redirects to restricted abstract; detailed supplements not reviewed."
+        "details": "Final Apr 7 2026 online / June issue metadata and abstract inspected. Publisher full request redirects to restricted abstract; detailed supplements not reviewed. Bounded accessible-protocol audit 2026-11-02: only explicitly reported categories/schedules entered; access status unchanged and exact unseen methods remain unreported."
       },
       "integrity": {
         "checkedOn": "2026-11-02",
@@ -116,15 +123,16 @@
       "harms": "No independently tested adverse-event estimate for guideline.",
       "limitations": "No exact sling, ROM or exercise load rule extracted from abstract.",
       "protocol": {
-        "execution": "not reported",
+        "execution": "reported in accessible text: Abstract > Results: traumatic-dislocation pathways use protection/education, early movement and strengthening, progressive strengthening, then return to sport/high-level function. Individual exercise mechanics remain unavailable.",
         "dose": "not reported",
         "frequency": "not reported",
         "supervision": "not reported",
-        "progression": "not reported",
+        "progression": "reported in accessible text: Abstract > Results: phase labels are 0–3 weeks protection/education, 3–6 movement/early strengthening, 6–12 progressive strengthening, >12 return to sport, then high-level function; operative/nonoperative pathways differ and progression is criteria-based. These contextual phase windows are not automatic clearance dates.",
         "stoppingRules": "not reported"
       },
       "locations": [
-        "Abstract > Methods; Results; Conclusions"
+        "Abstract > Methods; Results; Conclusions",
+        "Abstract > Results"
       ]
     },
     {

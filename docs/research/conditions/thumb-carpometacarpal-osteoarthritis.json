@@ -34,6 +34,13 @@
       "query": "\"Effectiveness of exercise therapy\" \"orthosis + exercise\" \"pain\"",
       "decision": "Executed query; included sources and direct extraction retained in this dossier and elbow-hand-source-report.md.",
       "limitations": "Targeted search, not an exhaustive systematic review. Full-text/abstract boundaries explicit; local November 1 / UTC November 2, 2026."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Europe PMC primary abstract/core records and targeted cited primary sections; official guideline/notice pages",
+      "query": "Bounded accessible-protocol audit of existing sources; exact primary IDs/URLs and inspected sections recorded in shoulder-elbow-fix-report.md. No broad discovery search.",
+      "decision": "Retain only explicitly reported partial-text facts, distinct from complete executable dose, visit schedule, device wear and follow-up. Apply regional F1–F4 corrections and known notice provenance.",
+      "limitations": "Access statuses unchanged; full article inspection not inferred from partial retrieval; unseen fields remain not reported; no clinical release."
     }
   ],
   "sources": [
@@ -47,7 +54,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. Protocol fields deliberately not populated. [Published guideline](https://ard.bmj.com/content/early/2018/08/27/annrheumdis-2018-213826). DOI 10.1136/annrheumdis-2018-213826. Final recommendations/full indexed text inspected."
+        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. [Published guideline](https://ard.bmj.com/content/early/2018/08/27/annrheumdis-2018-213826). DOI 10.1136/annrheumdis-2018-213826. Final recommendations/full indexed text inspected. Bounded accessible-protocol audit 2026-11-02: only explicitly reported categories/schedules entered; access status unchanged and exact unseen methods remain unreported."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -64,7 +71,7 @@
       "harms": "No universal safe loading/harm threshold.",
       "limitations": "Hand OA guidance supports education, ergonomic principles, activity pacing and assistive devices; consider exercise for pain, strength/function and mobility. Specifically notes first-CMC exercise differs from interphalangeal exercise. Thumb-base stability is relevant to thumb-base OA; do not relabel thumb-specific stability as an IP intervention. Thumb orthoses may reduce symptoms with longer use (at least 3 months in evidence); no demonstrated prevention/correction of deformity. No universal loading limit or optimal exercise dose. General hand-OA studies often mix joint distributions, limiting phenotype-specific extrapolation. Postoperative rehabilitation and inflammatory/erosive flares need separate applicability decisions.",
       "protocol": {
-        "execution": "not reported — exact primary protocol not independently established at this access level.",
+        "execution": "reported in accessible text: Previously retrieved indexed Exercises recommendation: improve joint mobility and muscle strength, with thumb-base stability work distinct from interphalangeal exercises. These are categories, not exact exercise geometry or one common dose.",
         "dose": "not reported — exact primary protocol not independently established at this access level.",
         "frequency": "not reported — exact primary protocol not independently established at this access level.",
         "supervision": "not reported — exact primary protocol not independently established at this access level.",
@@ -72,25 +79,26 @@
         "stoppingRules": "not reported — exact primary protocol not independently established at this access level."
       },
       "locations": [
-        "Recommendations > Education and training; Exercises; Orthoses"
+        "Recommendations > Education and training; Exercises; Orthoses",
+        "Recommendations > Exercises (indexed passage)"
       ]
     },
     {
       "id": "hoa-g2",
       "title": "2019 American College of Rheumatology/Arthritis Foundation Guideline for the Management of Osteoarthritis of the Hand, Hip, and Knee",
       "doi": "10.1002/art.41142",
-      "pmid": null,
+      "pmid": "31908163",
       "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11488261/",
       "publicationStatus": "Final 2019 ACR/Arthritis Foundation guideline, published in 2020.",
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. Protocol fields deliberately not populated. [Final guideline full text](https://pmc.ncbi.nlm.nih.gov/articles/PMC11488261/). DOI 10.1002/art.41142. Indexed final recommendations inspected."
+        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. [Final guideline full text](https://pmc.ncbi.nlm.nih.gov/articles/PMC11488261/). DOI 10.1002/art.41142. Indexed final recommendations inspected. Bounded accessible-protocol audit 2026-11-02: only explicitly reported categories/schedules entered; access status unchanged and exact unseen methods remain unreported."
       },
       "integrity": {
-        "checkedOn": "2026-11-01",
-        "method": "Title/identifier/publication metadata checked against the linked primary record and access account recorded in elbow-hand-source-report.md. Inspected source/version, not an independent retraction-registry audit.",
-        "result": "Identifiers and published versions retained as verified in this session; no clinical approval inferred. Dedicated correction/retraction search not performed; absence of a notice is not established."
+        "checkedOn": "2026-11-02",
+        "method": "Title/identifier/publication metadata checked against the linked primary record and access account recorded in elbow-hand-source-report.md. Inspected source/version, not an independent retraction-registry audit. Independently read primary Wiley erratum https://acrjournals.onlinelibrary.wiley.com/doi/10.1002/art.41761 (2021-04-29), for cited DOI10.1002/art.41142 / PMID31908163; notice PMID33913629.",
+        "result": "Known erratum DOI10.1002/art.41761 / PMID33913629 corrects Figure2B: chondroitin should not be among pharmacologic therapies recommended against for handOA. Independently read notice is pharmacological and does not change exercise recommendations. The parallel journal edition was not substituted. No comprehensive integrity clearance."
       },
       "design": "Final2019guideline published2020",
       "population": "Hand,hip,kneeOA; joint-specific recommendations retained",
@@ -102,7 +110,7 @@
       "harms": "No universal gym-movement harm conclusion.",
       "limitations": "Exercise strongly recommended for hand OA; first-CMC orthoses strongly recommended, orthoses for other hand joints conditional. Insufficient evidence selects an ideal exercise type/dose. Strength of recommendation does not mean high-certainty evidence for every specific hand exercise. Does not establish that forceful gripping is always harmful, that thumb-base OA and finger-IP OA require identical programming, or that an orthosis prevents deformity. This is treatment guidance, not a prohibition against general resistance exercise.",
       "protocol": {
-        "execution": "not reported — exact primary protocol not independently established at this access level.",
+        "execution": "reported in accessible text: Primary abstract > Results: exercise strongly recommended for hand OA; exact exercise mechanics and dose not reported. First-CMC versus other-hand orthosis recommendations are separate interventions.",
         "dose": "not reported — exact primary protocol not independently established at this access level.",
         "frequency": "not reported — exact primary protocol not independently established at this access level.",
         "supervision": "not reported — exact primary protocol not independently established at this access level.",
@@ -110,7 +118,8 @@
         "stoppingRules": "not reported — exact primary protocol not independently established at this access level."
       },
       "locations": [
-        "Recommendations > Exercise; Hand orthoses"
+        "Recommendations > Exercise; Hand orthoses",
+        "Abstract > Results"
       ]
     },
     {
@@ -123,7 +132,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. Protocol fields deliberately not populated. [Full text](https://pmc.ncbi.nlm.nih.gov/articles/PMC11749855/); [Primary abstract](https://pubmed.ncbi.nlm.nih.gov/39793978/). DOI 10.1136/rmdopen-2024-004963; PMID 39793978. Final January 9, 2025; indexed full extraction inspected (direct pages intermittently challenged)."
+        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. [Full text](https://pmc.ncbi.nlm.nih.gov/articles/PMC11749855/); [Primary abstract](https://pubmed.ncbi.nlm.nih.gov/39793978/). DOI 10.1136/rmdopen-2024-004963; PMID 39793978. Final January 9, 2025; indexed full extraction inspected (direct pages intermittently challenged). Bounded accessible-protocol audit 2026-11-02: only explicitly reported categories/schedules entered; access status unchanged and exact unseen methods remain unreported."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -140,15 +149,16 @@
       "harms": "None of the new exercise studies reported adverse events; earlier reports were few and often mild. Missing reporting is not zero harm.",
       "limitations": "Added 65 RCTs since prior review; exercise studies heterogeneous/multimodal, with 11 new exercise trials. Pooled hand exercise versus no exercise showed low-certainty small long-term pain benefit (SMD −0.34, 95% CI −0.58 to −0.09); other functional/grip estimates very uncertain. No new exercise study reported adverse events; earlier reports had few, usually mild events. Missing reporting is not zero harm. Phenotype/subtype evidence insufficient; none of the new nonpharmacologic studies specifically recruited inflammatory OA. Review supports investigation without assigning thumb-CMC results to finger IP or a universal safe intensity.",
       "protocol": {
-        "execution": "not reported — exact primary protocol not independently established at this access level.",
-        "dose": "not reported — exact primary protocol not independently established at this access level.",
-        "frequency": "not reported — exact primary protocol not independently established at this access level.",
-        "supervision": "not reported — exact primary protocol not independently established at this access level.",
+        "execution": "reported in accessible text: Hand exercises and Table 1, partial primary review XML rechecked: heterogeneous hand-exercise programs, often combined with other care. This review does not establish one executable protocol.",
+        "dose": "reported in accessible text: Table 1 > Kang et al 2019 row: review describes six exercises, ten to fifteen repetitions, thirty-minute sessions for eight weeks. Secondary study-table extraction, not an inspected Kang primary manual or a common hand-OA dose.",
+        "frequency": "reported in accessible text: Table 1 > Kang et al 2019 row: five sessions weekly for eight weeks. This is one review-table program, not a shared regimen for the pooled studies.",
+        "supervision": "reported in accessible text: Table 1 > Kang et al 2019 row: physiotherapy-supervised exercise plus paraffin. Individual instruction details and original execution illustrations not verified.",
         "progression": "not reported — exact primary protocol not independently established at this access level.",
         "stoppingRules": "not reported — exact primary protocol not independently established at this access level."
       },
       "locations": [
-        "Non-pharmacological interventions > Hand exercises; Table 1; Discussion"
+        "Non-pharmacological interventions > Hand exercises; Table 1; Discussion",
+        "Non-pharmacological interventions > Hand exercises; Table 1 > Kang et al 2019"
       ]
     },
     {
@@ -199,7 +209,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. Protocol fields deliberately not populated. [Primary abstract](https://pubmed.ncbi.nlm.nih.gov/24667900/). DOI 10.1136/annrheumdis-2013-204808; PMID 24667900. Primary abstract inspected; full publisher methods not retrieved (dose available via HOA-S2)."
+        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. [Primary abstract](https://pubmed.ncbi.nlm.nih.gov/24667900/). DOI 10.1136/annrheumdis-2013-204808; PMID 24667900. Primary abstract inspected; full publisher methods not retrieved (dose available via HOA-S2). Bounded accessible-protocol audit 2026-11-02: only explicitly reported categories/schedules entered; access status unchanged and exact unseen methods remain unreported."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -216,15 +226,16 @@
       "harms": "Abstract describes good tolerance; the Cochrane review reports one sustained-pain withdrawal.",
       "limitations": "80 women with hand OA, mean age 60.8; exercise+information versus information alone for 3 months, occupational therapist instruction and eight follow-up calls. 71 followed; intention-to-treat PSFS difference 1.4/10 (95% CI 0.6–2.2), other pain/grip/function improvements. 16 versus 2 met OMERACT-OARSI response criteria. Abstract describes good tolerance, but review notes one sustained-pain withdrawal. Mixed hand-OA sample, no isolated finger-IP subgroup effect established. It supports a hand exercise candidate and adherence support, not certainty that each component is effective or safe for every joint phenotype.",
       "protocol": {
-        "execution": "not reported — exact primary protocol not independently established at this access level.",
+        "execution": "reported in accessible text: Abstract > Objective/Methods: home hand exercises plus information, compared with information alone. Specific hand-exercise geometry and resistance unreported.",
         "dose": "not reported — exact primary protocol not independently established at this access level.",
         "frequency": "not reported — exact primary protocol not independently established at this access level.",
-        "supervision": "not reported — exact primary protocol not independently established at this access level.",
+        "supervision": "reported in accessible text: Abstract > Methods: two occupational therapists delivered intervention; exercise group received eight follow-up calls during the three-month study and recorded adherence, post-exercise pain and adverse events. This support/monitoring schedule is not exercise frequency.",
         "progression": "not reported — exact primary protocol not independently established at this access level.",
         "stoppingRules": "not reported — exact primary protocol not independently established at this access level."
       },
       "locations": [
-        "Abstract > Methods and Results"
+        "Abstract > Methods and Results",
+        "Abstract > Methods"
       ]
     },
     {
@@ -313,7 +324,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. Protocol fields deliberately not populated. [Primary abstract](https://pubmed.ncbi.nlm.nih.gov/35811182/). DOI 10.1016/j.jht.2022.03.009; PMID 35811182. 190 patients, mean 60, 78% women; standard care (orthoses, modalities, joint-protection education, adaptive equipment) with versus without stabilization home exercise over 6–12 months. Outcomes at 3/6/12 months; only 48% completed; groups could change after 6 months. No significant extra strength/ROM or patient-centered benefit from added exercise; poor/unknown adherence limits interpretation. Exact repetitions/holds unavailable in primary abstract. Harms not reported. Does not prove stabilization useless; supports uncertainty and avoidance of guaranteed benefit claims."
+        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. [Primary abstract](https://pubmed.ncbi.nlm.nih.gov/35811182/). DOI 10.1016/j.jht.2022.03.009; PMID 35811182. 190 patients, mean 60, 78% women; standard care (orthoses, modalities, joint-protection education, adaptive equipment) with versus without stabilization home exercise over 6–12 months. Outcomes at 3/6/12 months; only 48% completed; groups could change after 6 months. No significant extra strength/ROM or patient-centered benefit from added exercise; poor/unknown adherence limits interpretation. Exact repetitions/holds unavailable in primary abstract. Harms not reported. Does not prove stabilization useless; supports uncertainty and avoidance of guaranteed benefit claims. Bounded accessible-protocol audit 2026-11-02: only explicitly reported categories/schedules entered; access status unchanged and exact unseen methods remain unreported."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -330,15 +341,16 @@
       "harms": "not reported in abstract",
       "limitations": "Attrition/crossover/adherence limit inference;noexactprotocolfromabstract. [Primary abstract](https://pubmed.ncbi.nlm.nih.gov/35811182/). DOI 10.1016/j.jht.2022.03.009; PMID 35811182. 190 patients, mean 60, 78% women; standard care (orthoses, modalities, joint-protection education, adaptive equipment) with versus without stabilization home exercise over 6–12 months. Outcomes at 3/6/12 months; only 48% completed; groups could change after 6 months. No significant extra strength/ROM or patient-centered benefit from added exercise; poor/unknown adherence limits interpretation. Exact repetitions/holds unavailable in primary abstract. Harms not reported. Does not prove stabilization useless; supports uncertainty and avoidance of guaranteed benefit claims.",
       "protocol": {
-        "execution": "not reported — exact primary protocol not independently established at this access level.",
-        "dose": "not reported — exact primary protocol not independently established at this access level.",
+        "execution": "reported in accessible text: Abstract > Methods: standard care plus a home exercise program versus standard care alone; specific stabilization mechanics not given in the abstract.",
+        "dose": "reported in accessible text: Abstract > Methods: added home program for six to twelve months. Duration only; repetitions, holds and frequency unreported.",
         "frequency": "not reported — exact primary protocol not independently established at this access level.",
         "supervision": "not reported — exact primary protocol not independently established at this access level.",
         "progression": "not reported — exact primary protocol not independently established at this access level.",
         "stoppingRules": "not reported — exact primary protocol not independently established at this access level."
       },
       "locations": [
-        "Abstract > Methods, Results and Conclusions"
+        "Abstract > Methods, Results and Conclusions",
+        "Abstract > Methods"
       ]
     },
     {

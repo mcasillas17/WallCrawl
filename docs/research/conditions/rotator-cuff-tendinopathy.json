@@ -48,6 +48,13 @@
       "query": "Exact DOI metadata GET /works/{URL-encoded DOI}: 10.2519/jospt.2025.13182, 10.2519/jospt.2024.12453, 10.1177/2325967117723292, 10.1016/S0140-6736(21)00846-1, 10.1136/bjsports-2025-110024",
       "decision": "Metadata returned for desmeules-2025, ingwersen-2017, hopewell-2021; HTTP429 for lafrance-2024, lazzarini-2026. PubMed/publisher records remain source of access/extraction.",
       "limitations": "Only record metadata/relations inspected; not a registry-wide retraction/correction search."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Europe PMC primary abstract/core records and targeted cited primary sections; official guideline/notice pages",
+      "query": "Bounded accessible-protocol audit of existing sources; exact primary IDs/URLs and inspected sections recorded in shoulder-elbow-fix-report.md. No broad discovery search.",
+      "decision": "Retain only explicitly reported partial-text facts, distinct from complete executable dose, visit schedule, device wear and follow-up. Apply regional F1–F4 corrections and known notice provenance.",
+      "limitations": "Access statuses unchanged; full article inspection not inferred from partial retrieval; unseen fields remain not reported; no clinical release."
     }
   ],
   "sources": [
@@ -155,7 +162,7 @@
       "harms": "Three worsening-symptom referrals for surgery; no significant group difference in increased-pain/strength-loss episodes.",
       "limitations": "Eligibility exclusions are not contraindications; regimen is study extraction, not app prescription.",
       "protocol": {
-        "execution": "Standing dumbbell scaption at 45° between flexion/abduction to horizontal, side-lying dumbbell ER with elbow by side; supine dumbbell scapular protraction; standing straight-arm elastic-band extension.",
+        "execution": "Standing dumbbell scaption at 45° between flexion/abduction to horizontal, side-lying dumbbell ER with elbow by side; supine dumbbell scapular protraction; standing straight-arm elastic-band extension. Appendix A/B Sixth Exercise text: band middle anchored approximately at shoulder height; stand about 1.5 m away, hold therapist-marked ends in both hands and pull straight arms toward outside of hips, keeping back straight and shoulders slightly back.",
         "dose": "Cuff low-load: 3 sets 20–25RM; high-load: 4 sets progressing 15RM to 6RM. Scapular exercises 3 sets of 20.",
         "frequency": "Home 3/week for 12 weeks.",
         "supervision": "Initial 60-min instruction; 30-min sessions weeks 2–4, 6 and 9.",
@@ -164,7 +171,8 @@
       },
       "locations": [
         "Methods > Interventions; Appendices A and B > Exercise Program",
-        "Results > Primary and Secondary Outcomes; Adverse Events"
+        "Results > Primary and Secondary Outcomes; Adverse Events",
+        "Methods > Participants, Settings, and Locations; Appendices A and B > Sixth Exercise"
       ]
     },
     {
@@ -364,11 +372,11 @@
         }
       ],
       "applicability": {
-        "population": "Adults with clinically assessed rotator cuff tendinopathy.",
-        "stage": "Nonoperative; repaired/full-thickness status not covered by these candidates.",
-        "rationale": "Studied within a tailored exercise package."
+        "population": "RoCTEx sample: adults aged 18–65 with symptoms for at least three months and ultrasound-confirmed rotator-cuff tendinopathy, with specified provocative clinical tests.",
+        "stage": "Selected nonoperative chronic sample. Rest pain >40/100, active elevation <90°, ultrasound full-thickness tear, recent corticosteroid injection within six weeks and competing diagnoses were trial exclusions.",
+        "rationale": "The sole-trial candidate derives from that selected sample. Extension beyond its age, duration, imaging/clinical eligibility or excluded presentations is unresolved. Exclusions define evidence applicability, not universal contraindications."
       },
-      "limitations": "No isolated efficacy, safety guarantee or superiority over other exercises.",
+      "limitations": "No isolated exercise efficacy, safety guarantee or high-load superiority. Trial-specific eligibility and monitoring cannot become diagnosis-wide prohibitions or automatic app thresholds.",
       "mappingIds": [
         "roctex-1",
         "roctex-2",

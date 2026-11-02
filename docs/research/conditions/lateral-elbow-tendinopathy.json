@@ -34,6 +34,13 @@
       "query": "\"Manual therapy and exercise for lateral elbow pain\" 2024 Cochrane",
       "decision": "Executed query; included sources and direct extraction retained in this dossier and elbow-hand-source-report.md.",
       "limitations": "Targeted search, not an exhaustive systematic review. Full-text/abstract boundaries explicit; local November 1 / UTC November 2, 2026."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Europe PMC primary abstract/core records and targeted cited primary sections; official guideline/notice pages",
+      "query": "Bounded accessible-protocol audit of existing sources; exact primary IDs/URLs and inspected sections recorded in shoulder-elbow-fix-report.md. No broad discovery search.",
+      "decision": "Retain only explicitly reported partial-text facts, distinct from complete executable dose, visit schedule, device wear and follow-up. Apply regional F1–F4 corrections and known notice provenance.",
+      "limitations": "Access statuses unchanged; full article inspection not inferred from partial retrieval; unseen fields remain not reported; no clinical release."
     }
   ],
   "sources": [
@@ -47,7 +54,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. Protocol fields deliberately not populated. [Guideline PDF](https://www.orthopt.org/uploads/content_files/files/lucado_et_al_2022_lateral_elbow_pain_and_muscle_function_impairments.pdf); [PubMed](https://pubmed.ncbi.nlm.nih.gov/36453071/). DOI 10.2519/jospt.2022.0302; PMID 36453071. Published JOSPT 52(12), CPG1–CPG111. PDF indexed full-text recommendations and exercise section inspected; direct initial fetch returned 403."
+        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. [Guideline PDF](https://www.orthopt.org/uploads/content_files/files/lucado_et_al_2022_lateral_elbow_pain_and_muscle_function_impairments.pdf); [PubMed](https://pubmed.ncbi.nlm.nih.gov/36453071/). DOI 10.2519/jospt.2022.0302; PMID 36453071. Published JOSPT 52(12), CPG1–CPG111. PDF indexed full-text recommendations and exercise section inspected; direct initial fetch returned 403. Bounded accessible-protocol audit 2026-11-02: only explicitly reported categories/schedules entered; access status unchanged and exact unseen methods remain unreported."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -64,15 +71,16 @@
       "harms": "No consistent guideline-wide exercise harm estimate extracted.",
       "limitations": "Population: lateral elbow pain/tendinopathy; exercise recommendation specifically subacute/chronic LET. Grade B supports resisted wrist-extensor exercise using isometric, concentric and/or eccentric contractions. Suggested synthesis dose: 3 sets of 15 repetitions over 6–12 weeks; load/progression determination is inadequately described. Phased return to demanding work/sport is expert-opinion grade F. Stretching alone lacks convincing durable advantage; combinations cannot isolate stretching effects. Guideline acknowledges limited specific return-to-function information. Candidate wrist-extensor loading can therefore be researched, but there is no validated app-wide kilogram ceiling, elbow-angle ceiling or mandatory eccentric-only sequence. Harms/progression cannot be assumed absent or standardized.",
       "protocol": {
-        "execution": "not reported — exact primary protocol not independently established at this access level.",
-        "dose": "not reported — exact primary protocol not independently established at this access level.",
+        "execution": "reported in accessible text: Previously retrieved indexed Recommendations > Therapeutic Exercise: isometric, concentric and/or eccentric resisted wrist-extensor exercise for subacute/chronic LET. Exact implement, support and range are not established.",
+        "dose": "reported in accessible text: Previously retrieved indexed Therapeutic Exercise synthesis suggests three sets of fifteen repetitions over six to twelve weeks. This is guideline synthesis, not a validated universal regimen; starting resistance and load progression unreported.",
         "frequency": "not reported — exact primary protocol not independently established at this access level.",
         "supervision": "not reported — exact primary protocol not independently established at this access level.",
         "progression": "not reported — exact primary protocol not independently established at this access level.",
         "stoppingRules": "not reported — exact primary protocol not independently established at this access level."
       },
       "locations": [
-        "Recommendations > Interventions: Therapeutic Exercise; evidence synthesis > Therapeutic Exercise"
+        "Recommendations > Interventions: Therapeutic Exercise; evidence synthesis > Therapeutic Exercise",
+        "Therapeutic Exercise > Evidence synthesis (previously retrieved indexed passage)"
       ]
     },
     {
@@ -85,7 +93,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. Protocol fields deliberately not populated. [Primary abstract](https://pubmed.ncbi.nlm.nih.gov/24634444/). DOI 10.1177/0269215514527595; PMID 24634444. Abstract inspected; publisher full text not retrieved."
+        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. [Primary abstract](https://pubmed.ncbi.nlm.nih.gov/24634444/). DOI 10.1177/0269215514527595; PMID 24634444. Abstract inspected; publisher full text not retrieved. Bounded accessible-protocol audit 2026-11-02: only explicitly reported categories/schedules entered; access status unchanged and exact unseen methods remain unreported."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -102,15 +110,16 @@
       "harms": "not reported in accessible abstract",
       "limitations": "120 adults with tennis elbow >3 months randomized 60/60 to daily home eccentric lowering versus concentric lifting with gradually increased load for 3 months. Evaluations at 1, 2, 3, 6 and 12 months. Eccentrics produced faster pain improvement (approximately 10% greater responder rate; reported NNT 10) and larger strength improvement; function and quality of life did not differ. Abstract verifies daily frequency and intervention duration, not exact set/repetition, starting weight or progression increment; those values must not be copied from a tertiary account. Harms not reported in the inspected abstract. This supports a loading candidate for chronic LET, not proof that concentric lifting is contraindicated or evidence about medial elbow disease.",
       "protocol": {
-        "execution": "not reported — exact primary protocol not independently established at this access level.",
-        "dose": "not reported — exact primary protocol not independently established at this access level.",
-        "frequency": "not reported — exact primary protocol not independently established at this access level.",
-        "supervision": "not reported — exact primary protocol not independently established at this access level.",
-        "progression": "not reported — exact primary protocol not independently established at this access level.",
+        "execution": "reported in accessible text: Abstract > Intervention: eccentric lowering or concentric lifting of a weight at home. Exact grip, support and range not reported.",
+        "dose": "reported in accessible text: Abstract > Intervention: three-month home program. Exact sets, repetitions, starting load and increments not reported.",
+        "frequency": "reported in accessible text: Abstract > Intervention: daily. Do not derive an alternative frequency from follow-up contacts.",
+        "supervision": "reported in accessible text: Abstract > Intervention: home exercise; exact supervised contacts not reported.",
+        "progression": "reported in accessible text: Abstract > Intervention: gradually increasing load. Increment size and progression/stopping criteria not reported.",
         "stoppingRules": "not reported — exact primary protocol not independently established at this access level."
       },
       "locations": [
-        "Abstract > Subjects, Intervention, Results"
+        "Abstract > Subjects, Intervention, Results",
+        "Abstract > Intervention"
       ]
     },
     {

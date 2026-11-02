@@ -41,6 +41,13 @@
       "query": "Exact DOI metadata GET /works/{URL-encoded DOI}: 10.1016/j.jse.2013.01.026, 10.2106/JBJS.23.00978, 10.2106/JBJS.24.00065",
       "decision": "Metadata returned for kuhn-2013, kuhn-2024, moosmayer-2024. PubMed/publisher records remain source of access/extraction.",
       "limitations": "Only record metadata/relations inspected; not a registry-wide retraction/correction search."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Europe PMC primary abstract/core records and targeted cited primary sections; official guideline/notice pages",
+      "query": "Bounded accessible-protocol audit of existing sources; exact primary IDs/URLs and inspected sections recorded in shoulder-elbow-fix-report.md. No broad discovery search.",
+      "decision": "Retain only explicitly reported partial-text facts, distinct from complete executable dose, visit schedule, device wear and follow-up. Apply regional F1–F4 corrections and known notice provenance.",
+      "limitations": "Access statuses unchanged; full article inspection not inferred from partial retrieval; unseen fields remain not reported; no clinical release."
     }
   ],
   "sources": [
@@ -132,7 +139,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-02",
-        "details": "Published 2024 final citation/abstract-level author-institution record inspected; full report not retrieved."
+        "details": "Published 2024 final citation/abstract-level author-institution record inspected; full report not retrieved. Bounded accessible-protocol audit 2026-11-02: only explicitly reported categories/schedules entered; access status unchanged and exact unseen methods remain unreported."
       },
       "integrity": {
         "checkedOn": "2026-11-02",
@@ -149,15 +156,16 @@
       "harms": "not reported in inspected abstract-level material.",
       "limitations": "Cannot establish structural healing or exercise-specific safety.",
       "protocol": {
-        "execution": "not reported",
-        "dose": "not reported",
+        "execution": "reported in accessible text: Abstract > Methods: standard physical-therapy protocol for atraumatic full-thickness cuff tears; individual exercise variants are not specified in this abstract.",
+        "dose": "reported in accessible text: Abstract > Methods: standard physical-therapy program lasted six to twelve weeks. Program duration only; not an isolated anterior-shoulder stretch dose.",
         "frequency": "not reported",
         "supervision": "not reported",
         "progression": "not reported",
         "stoppingRules": "not reported"
       },
       "locations": [
-        "Abstract > Results and Conclusions"
+        "Abstract > Results and Conclusions",
+        "Abstract > Methods"
       ]
     },
     {

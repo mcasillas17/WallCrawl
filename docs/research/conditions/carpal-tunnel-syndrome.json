@@ -41,6 +41,13 @@
       "query": "\"carpal tunnel\" \"combined\" \"stretching\" \"Baker\" \"2012\" orthoses randomized",
       "decision": "Executed query; included sources and direct extraction retained in this dossier and elbow-hand-source-report.md.",
       "limitations": "Targeted search, not an exhaustive systematic review. Full-text/abstract boundaries explicit; local November 1 / UTC November 2, 2026."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Europe PMC primary abstract/core records and targeted cited primary sections; official guideline/notice pages",
+      "query": "Bounded accessible-protocol audit of existing sources; exact primary IDs/URLs and inspected sections recorded in shoulder-elbow-fix-report.md. No broad discovery search.",
+      "decision": "Retain only explicitly reported partial-text facts, distinct from complete executable dose, visit schedule, device wear and follow-up. Apply regional F1–F4 corrections and known notice provenance.",
+      "limitations": "Access statuses unchanged; full article inspection not inferred from partial retrieval; unseen fields remain not reported; no clinical release."
     }
   ],
   "sources": [
@@ -54,7 +61,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. Protocol fields deliberately not populated. [Full official guideline](https://www.aaos.org/globalassets/quality-and-practice-resources/carpal-tunnel/carpal-tunnel-2024/cts-cpg.pdf). Adopted May 18, 2024; adult CTS, final PDF inspected."
+        "details": "Official AAOS final PDF targeted Non-operative Treatments: Long-Term recommendation/grading, printed p.36, independently re-read on 2026-11-02. Quality High; option Limited (Downgraded). Access remains conservatively partial, not entire guideline inspection."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -65,11 +72,11 @@
       "population": "Adults with CTS",
       "comparator": "Long-term nonoperative treatment comparisons",
       "coInterventions": "Multiple modalities considered separately",
-      "outcomes": "Limited evidence that exercise does not improve long-term patient-reported outcomes; this is not evidence of short-term harm.",
+      "outcomes": "AAOS 2024 long-term nonoperative-treatment option rates evidence quality High and option strength Limited (Downgraded) after Evidence-to-Decision deliberation. Exercise and listed modalities do not improve long-term patient-reported outcomes; this is not proof of short-term harm.",
       "followUp": "Long-term focus; not one trial",
-      "uncertainty": "Recommendation pages/indexed passages inspected; not complete full guideline inspection. No maximum load/wrist-angle prescription.",
+      "uncertainty": "Official PDF, printed p.36 / zero-based PDF35, Non-operative Treatments: Long-Term, recommendation and grading independently re-read. Whole-guideline inspection not claimed; access remains abstract-only/partial.",
       "harms": "No universal gym-exercise harm conclusion.",
-      "limitations": "Guideline states that exercise and several other nonoperative modalities do not improve long-term patient-reported outcomes, based on limited evidence. Its long-term endpoint should not be rewritten as proof of short-term inefficacy or harm. It does not supply a universal gym-exercise contraindication, maximum wrist angle or safe load. Exercise must not be presented as treatment for progressive/severe compression or as a substitute for evaluation. No exercise prescription is extracted from this recommendation.",
+      "limitations": "High evidence quality and downgraded Limited option strength are different axes. The long-term statement does not establish short-term inefficacy/harm, an individual exercise protocol, or a universal wrist-load/angle prohibition.",
       "protocol": {
         "execution": "not reported — exact primary protocol not independently established at this access level.",
         "dose": "not reported — exact primary protocol not independently established at this access level.",
@@ -79,7 +86,8 @@
         "stoppingRules": "not reported — exact primary protocol not independently established at this access level."
       },
       "locations": [
-        "Summary of recommendations > Non-operative treatment"
+        "Summary of recommendations > Non-operative treatment",
+        "Non-operative Treatments: Long-Term, printed p.36 / PDF page index35 > Recommendation; Quality of Evidence; Strength of Option"
       ]
     },
     {
@@ -92,7 +100,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. Protocol fields deliberately not populated. [Official academy PDF](https://www.orthopt.org/uploads/content_files/files/Hand_Pain_CTS_jospt.2026.0301_new.pdf); [Publisher](https://doi.org/10.2519/jospt.2026.0301). April 2026, JOSPT 56(4). Indexed PDF recommendations/intervention section read; initial direct fetch 403."
+        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. [Official academy PDF](https://www.orthopt.org/uploads/content_files/files/Hand_Pain_CTS_jospt.2026.0301_new.pdf); [Publisher](https://doi.org/10.2519/jospt.2026.0301). April 2026, JOSPT 56(4). Indexed PDF recommendations/intervention section read; initial direct fetch 403. Bounded accessible-protocol audit 2026-11-02: only explicitly reported categories/schedules entered; access status unchanged and exact unseen methods remain unreported."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -109,15 +117,16 @@
       "harms": "No common exercise-specific harm estimate.",
       "limitations": "Grade C retains optional combined orthotic/stretching treatment for **nonsurgical mild–moderate CTS without thenar atrophy and with normal two-point discrimination**; monitor meaningful improvement. It explicitly found no new therapeutic-exercise evidence for this section. A limited selected-population option and AAOS's long-term negative finding are different questions, not proof of universal gliding efficacy. Exact stretching execution/dose needs the underlying trial; the guideline recommendation alone is insufficient. No general gym-position ceiling is given.",
       "protocol": {
-        "execution": "not reported — exact primary protocol not independently established at this access level.",
+        "execution": "reported in accessible text: Previously retrieved indexed Therapeutic Exercise recommendation, CPG29: optional combined orthotic/stretching program for nonsurgical mild/moderate CTS without thenar atrophy and with normal two-point discrimination. Exact stretch geometry not reported.",
         "dose": "not reported — exact primary protocol not independently established at this access level.",
         "frequency": "not reported — exact primary protocol not independently established at this access level.",
         "supervision": "not reported — exact primary protocol not independently established at this access level.",
         "progression": "not reported — exact primary protocol not independently established at this access level.",
-        "stoppingRules": "not reported — exact primary protocol not independently established at this access level."
+        "stoppingRules": "reported in accessible text: Previously retrieved indexed Therapeutic Exercise recommendation: monitor clinically significant improvement; no exact exercise stopping threshold or progression criterion reported."
       },
       "locations": [
-        "Therapeutic Exercise, CPG29; summary recommendation C"
+        "Therapeutic Exercise, CPG29; summary recommendation C",
+        "Therapeutic Exercise > Recommendation, CPG29 (indexed passage)"
       ]
     },
     {
@@ -130,7 +139,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. Protocol fields deliberately not populated. [Full article landing/indexed abstract](https://pmc.ncbi.nlm.nih.gov/articles/PMC10035085/). DOI 10.1177/15589447211006857; PMID 33855879. Online 2021; final Hand 2023;18(2):222–229. Primary abstract/results inspected; repeated full-text access challenged."
+        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. [Full article landing/indexed abstract](https://pmc.ncbi.nlm.nih.gov/articles/PMC10035085/). DOI 10.1177/15589447211006857; PMID 33855879. Online 2021; final Hand 2023;18(2):222–229. Primary abstract/results inspected; repeated full-text access challenged. Bounded accessible-protocol audit 2026-11-02: only explicitly reported categories/schedules entered; access status unchanged and exact unseen methods remain unreported."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -147,28 +156,29 @@
       "harms": "not established by accessible abstract",
       "limitations": "80 mild idiopathic CTS patients completed splint+median nerve/tendon glides versus splint alone over 6 weeks. Splints at night, daytime as needed. No significant between-group difference in symptom/function scores, grip or pinch; within-group improvement cannot establish added glide benefit. AAOS evidence appendix reports exercise 3 times/day, 10 repetitions, each position held 5 seconds; dose is secondary extraction, not independently verified methods. Harms not established by the accessible abstract. This is a limited glide candidate, not default treatment for severe CTS, another nerve diagnosis, or postoperative CTS.",
       "protocol": {
-        "execution": "not reported — exact primary protocol not independently established at this access level.",
+        "execution": "reported in accessible text: Abstract > Methods: nerve/tendon gliding plus wrist splint compared with wrist splint alone; exact gliding sequence, range and hold not reported.",
         "dose": "not reported — exact primary protocol not independently established at this access level.",
-        "frequency": "not reported — exact primary protocol not independently established at this access level.",
+        "frequency": "reported in accessible text: Abstract > Methods: wrist splint at night and during daytime if required. This is orthosis wear, not glide frequency; six weeks is follow-up, not a derived exercise dose.",
         "supervision": "not reported — exact primary protocol not independently established at this access level.",
         "progression": "not reported — exact primary protocol not independently established at this access level.",
         "stoppingRules": "not reported — exact primary protocol not independently established at this access level."
       },
       "locations": [
-        "Abstract > Methods and Results; indexed Results"
+        "Abstract > Methods and Results; indexed Results",
+        "Abstract > Methods"
       ]
     },
     {
       "id": "cts-p2",
       "title": "The Comparative Effectiveness of Combined Lumbrical Muscle Splints and Stretches on Symptoms and Function in Carpal Tunnel Syndrome",
       "doi": "10.1016/j.apmr.2011.08.013",
-      "pmid": null,
-      "url": "https://www.sciencedirect.com/science/article/abs/pii/S0003999311006952",
+      "pmid": "22200381",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/22200381/",
       "publicationStatus": "Final randomized trial, Archives of Physical Medicine and Rehabilitation 2012;93(1):1–10.",
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. Protocol fields deliberately not populated. [Publisher abstract](https://www.sciencedirect.com/science/article/abs/pii/S0003999311006952). DOI 10.1016/j.apmr.2011.08.013. 124 mild–moderate CTS volunteers randomized to four splint/stretch combinations. Publisher abstract and the original 2019 CPG extraction were inspected; full primary methods unavailable."
+        "details": "Primary abstract PMID22200381 independently retrieved 2026-11-02 through Europe PMC core record (Interventions, Main outcome measures, Results and Conclusions). Full primary methods not inspected; abstract-only classification unchanged. Actual reported regimen, follow-up and endpoint-specific results are retained."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -178,22 +188,23 @@
       "design": "Randomized trial of4 splint/stretch combinations",
       "population": "124 volunteers with mild to moderate CTS; narrower analyzed-population details come from cts-g3.",
       "comparator": "Four combinations; no orthosis-only/untreated arm",
-      "coInterventions": "Orthoses in every arm",
-      "outcomes": "The accessible primary abstract identifies a four-combination splint/stretch trial. Results reported by the 2019 guideline are retained in the separate cts-g3 source; primary full methods/results were not retrieved.",
-      "followUp": "Not established from the inspected primary abstract; cts-g3 reports through 24 weeks.",
-      "uncertainty": "Primary abstract only. No orthosis-only or untreated comparison isolates stretching; detailed secondary extraction is attributed separately.",
-      "harms": "Not established from inspected primary abstract; no-adverse-effects statement belongs to cts-g3.",
-      "limitations": "The [2019 CPG](https://www.hand-therapy.co.uk/_userfiles/pages/files/cts_nhs_england_leaflet.pdf) reports 103 analyzed, no thenar atrophy and normal two-point discrimination, assessment through 24 weeks. Improvement occurred across combinations; no untreated or orthosis-only comparator isolates stretching. At 24 weeks, 25.5% progressed to surgery without group difference. CPG reports no adverse effects. Stretch frequency/hold details in tertiary reports were not accepted as verified primary dosing. This supports cautious selected-population consideration, not a general stretching mandate.",
+      "coInterventions": "All four groups received nocturnal orthoses plus stretching; no stretch-only, orthosis-only or untreated comparison.",
+      "outcomes": "Primary abstract: significant time effects at four, twelve and twenty-four weeks; CTQ-Function/DASH interaction at twelve weeks, with post hoc differences for lumbrical-splint/general-stretch and cock-up-splint/lumbrical-stretch combinations versus the other two groups. At twenty-four weeks, a significantly greater percentage with cock-up splint plus lumbrical-intensive stretch achieved clinically important CTQ-Function improvement. Surgery elected by 25.5% by twenty-four weeks. Exact effect sizes, p-values and responder denominators are not supplied in the abstract.",
+      "followUp": "Assessments at four, twelve and twenty-four weeks; four-week intervention is distinct from follow-up.",
+      "uncertainty": "Primary abstract supports a frequency and endpoint-specific functional-response advantage, not complete methods or isolated stretch efficacy. The 2019 CPG cts-g3 describes twelve-week differences but concludes no combination superior; endpoint/account discrepancy remains explicitly unresolved.",
+      "harms": "Primary abstract does not report harms. The 2019 guideline separately says no adverse effects reported; primary ascertainment unknown.",
+      "limitations": "Full primary methods unavailable. Six-times-daily stretching is explicit, while exact geometry, repetitions, hold, load, progression and stopping rules remain unknown. Preserve the primary twenty-four-week responder advantage alongside the secondary guideline no-superiority summary; do not invent numerical significance/effect size or isolate stretching benefit.",
       "protocol": {
-        "execution": "not reported — exact primary protocol not independently established at this access level.",
-        "dose": "not reported — exact primary protocol not independently established at this access level.",
-        "frequency": "not reported — exact primary protocol not independently established at this access level.",
-        "supervision": "not reported — exact primary protocol not independently established at this access level.",
+        "execution": "reported in accessible text: Abstract > Interventions: nocturnal lumbrical or cock-up splint combined with lumbrical-intensive or general stretches at home. Exact stretch geometry, hold and repetitions remain unreported.",
+        "dose": "reported in accessible text: Abstract > Interventions: four-week home regimen. This program duration does not establish stretch repetitions/hold/load.",
+        "frequency": "reported in accessible text: Abstract > Interventions: stretches six times daily and splints nocturnally. Frequency is explicitly reported but incomplete execution remains unreported.",
+        "supervision": "reported in accessible text: Abstract > Setting and Interventions: outpatient hand-therapy clinics and a home regimen; exact therapist contact or supervision schedule not reported.",
         "progression": "not reported — exact primary protocol not independently established at this access level.",
         "stoppingRules": "not reported — exact primary protocol not independently established at this access level."
       },
       "locations": [
-        "Abstract > Participants, Interventions; 2019 CPG Therapeutic Exercise extraction"
+        "Abstract > Participants, Interventions; 2019 CPG Therapeutic Exercise extraction",
+        "Abstract > Interventions; Main outcome measures; Results; Conclusions (PMID22200381)"
       ]
     },
     {
@@ -206,7 +217,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. Protocol fields deliberately not populated. [Primary abstract](https://journals.sagepub.com/doi/10.1016/S0266-7681%2898%2980009-0). DOI 10.1016/S0266-7681(98)80009-0. 39 CTS patients/12 controls; measured pressure at 1-cm intervals in relaxed/gripping hands across neutral/flexed/extended wrists. Patient pressures exceeded controls; relaxed neutral generally lower, extension often higher than flexion. Position, grip and measurement location interacted; simple universal pressure rules are inappropriate. Mechanistic study, no workout intervention, clinical follow-up or safe angle/load endpoint. Supports exploring a symptom-tolerable wrist position, not declaring all loaded wrist extension harmful."
+        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. [Primary abstract](https://journals.sagepub.com/doi/10.1016/S0266-7681%2898%2980009-0). DOI 10.1016/S0266-7681(98)80009-0. 39 CTS patients/12 controls; measured pressure at 1-cm intervals in relaxed/gripping hands across neutral/flexed/extended wrists. Patient pressures exceeded controls; relaxed neutral generally lower, extension often higher than flexion. Position, grip and measurement location interacted; simple universal pressure rules are inappropriate. Mechanistic study, no workout intervention, clinical follow-up or safe angle/load endpoint. Supports exploring a symptom-tolerable wrist position, not declaring all loaded wrist extension harmful. Bounded accessible-protocol audit 2026-11-02: only explicitly reported categories/schedules entered; access status unchanged and exact unseen methods remain unreported."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -223,7 +234,7 @@
       "harms": "No clinical workout harms/follow-up endpoint.",
       "limitations": "Mechanistic surrogate; not outcome evidence for a universal wrist-extension prohibition. [Primary abstract](https://journals.sagepub.com/doi/10.1016/S0266-7681%2898%2980009-0). DOI 10.1016/S0266-7681(98)80009-0. 39 CTS patients/12 controls; measured pressure at 1-cm intervals in relaxed/gripping hands across neutral/flexed/extended wrists. Patient pressures exceeded controls; relaxed neutral generally lower, extension often higher than flexion. Position, grip and measurement location interacted; simple universal pressure rules are inappropriate. Mechanistic study, no workout intervention, clinical follow-up or safe angle/load endpoint. Supports exploring a symptom-tolerable wrist position, not declaring all loaded wrist extension harmful.",
       "protocol": {
-        "execution": "not reported — exact primary protocol not independently established at this access level.",
+        "execution": "reported in accessible text: Abstract: experimental pressure measurement at one-centimeter segments with relaxed/gripping hand and neutral/extended/flexed wrist positions. Mechanistic test setup, not therapeutic exercise or a safe gym angle.",
         "dose": "not reported — exact primary protocol not independently established at this access level.",
         "frequency": "not reported — exact primary protocol not independently established at this access level.",
         "supervision": "not reported — exact primary protocol not independently established at this access level.",
@@ -231,20 +242,21 @@
         "stoppingRules": "not reported — exact primary protocol not independently established at this access level."
       },
       "locations": [
-        "Abstract"
+        "Abstract",
+        "Abstract > Methods/pressure-measurement description"
       ]
     },
     {
       "id": "cts-g3",
       "title": "Hand Pain and Sensory Deficits: Carpal Tunnel Syndrome",
-      "doi": null,
+      "doi": "10.2519/jospt.2019.0301",
       "pmid": null,
       "url": "https://www.hand-therapy.co.uk/_userfiles/pages/files/cts_nhs_england_leaflet.pdf",
       "publicationStatus": "Final JOSPT clinical practice guideline, May 2019;49(5). Exact DOI not independently checked here.",
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "Indexed Therapeutic Exercise section inspected; partial guideline text rather than entire guideline inspection. This source explicitly attributes Baker results to a primary trial."
+        "details": "Indexed Therapeutic Exercise section inspected; partial guideline text rather than entire guideline inspection. This source explicitly attributes Baker results to a primary trial. Bounded accessible-protocol audit 2026-11-02: only explicitly reported categories/schedules entered; access status unchanged and exact unseen methods remain unreported."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -255,20 +267,21 @@
       "population": "Nonsurgical mild–moderate CTS, no thenar atrophy, normal two-point discrimination",
       "comparator": "Guideline synthesis; combined orthosis/stretch evidence",
       "coInterventions": "Orthotic treatment accompanies stretching",
-      "outcomes": "Guideline extraction of Baker trial: 103 analyzed, no thenar atrophy and normal two-point discrimination. No combination superior; 25.5% progressed to surgery by 24 weeks without group difference. No untreated/orthosis-only group isolates stretching.",
+      "outcomes": "2019 CPG secondary Baker extraction: 103 analyzed, normal two-point discrimination/no thenar atrophy. It describes twelve-week differences and no three-way interaction at four/twenty-four weeks, then summarizes no superior intervention; 25.5% surgery by twenty-four weeks without group difference. Primary abstract cts-p2 instead reports a twenty-four-week clinically important functional-response advantage for cock-up splint plus lumbrical-intensive stretches. Different endpoint/account summaries remain unresolved.",
       "followUp": "Source-specific, not one trial",
-      "uncertainty": "Selected indexed PDF recommendation/intervention passages inspected; initial direct403. Not universal nerve-gliding support.",
+      "uncertainty": "Secondary guideline summary conflicts with the primary abstract on overall superiority interpretation. Do not erase the primary endpoint-specific response or infer isolated stretching efficacy.",
       "harms": "Guideline states no adverse effects reported in the Baker trial; full primary harm ascertainment not independently verified.",
-      "limitations": "Secondary guideline extraction, not inspected primary full methods. No exact stretch dose or movement sequence established.",
+      "limitations": "Secondary extraction independently re-read at CPG50. No control arm isolates stretching. Exact stretch holds/range/progression remain unknown; orthosis joint angles are not stretch geometry.",
       "protocol": {
-        "execution": "not reported — exact primary protocol not independently established at this access level.",
+        "execution": "reported in accessible text: Therapeutic Exercise > Stretching, CPG50: combined orthosis/stretching for selected mild/moderate CTS; secondary Baker extraction describes nocturnal orthoses, including wrist 0° and MCP 0–10° for the lumbrical orthosis. This describes the orthosis, not stretch geometry.",
         "dose": "not reported — exact primary protocol not independently established at this access level.",
-        "frequency": "not reported — exact primary protocol not independently established at this access level.",
+        "frequency": "reported in accessible text: Therapeutic Exercise > Stretching, CPG50: secondary Baker extraction describes stretches six times daily and orthoses during sleep. No hold/repetitions or individual exercise mechanics established.",
         "supervision": "not reported — exact primary protocol not independently established at this access level.",
         "progression": "not reported — exact primary protocol not independently established at this access level.",
-        "stoppingRules": "not reported — exact primary protocol not independently established at this access level."
+        "stoppingRules": "reported in accessible text: Therapeutic Exercise > Stretching recommendation, CPG50: monitor clinically significant improvement; no numeric exercise stopping threshold."
       },
       "locations": [
+        "Therapeutic Exercise > Stretching, CPG50",
         "Therapeutic Exercise > Stretching, CPG50"
       ]
     }
@@ -277,15 +290,19 @@
     {
       "id": "cts-g1-finding",
       "kind": "published-recommendation",
-      "statement": "Limited evidence that exercise does not improve long-term patient-reported outcomes; this is not evidence of short-term harm.",
+      "statement": "AAOS 2024 long-term nonoperative-treatment option rates evidence quality High and option strength Limited (Downgraded) after Evidence-to-Decision deliberation. Exercise and listed modalities do not improve long-term patient-reported outcomes; this is not proof of short-term harm.",
       "citations": [
+        {
+          "sourceId": "cts-g1",
+          "location": "Non-operative Treatments: Long-Term, printed p.36 / PDF page index35 > Recommendation; Quality of Evidence; Strength of Option"
+        },
         {
           "sourceId": "cts-g1",
           "location": "Summary of recommendations > Non-operative treatment"
         }
       ],
       "applicability": "Adults with CTS",
-      "limitations": "Recommendation pages/indexed passages inspected; not complete full guideline inspection. No maximum load/wrist-angle prescription. No universal gym-exercise harm conclusion."
+      "limitations": "Official PDF, printed p.36 / zero-based PDF35, Non-operative Treatments: Long-Term, recommendation and grading independently re-read. Whole-guideline inspection not claimed; access remains abstract-only/partial. No universal gym-exercise harm conclusion."
     },
     {
       "id": "cts-g2-finding",
@@ -316,15 +333,19 @@
     {
       "id": "cts-p2-finding",
       "kind": "study-result",
-      "statement": "The accessible primary abstract identifies a four-combination splint/stretch trial. Results reported by the 2019 guideline are retained in the separate cts-g3 source; primary full methods/results were not retrieved.",
+      "statement": "Primary abstract: significant time effects at four, twelve and twenty-four weeks; CTQ-Function/DASH interaction at twelve weeks, with post hoc differences for lumbrical-splint/general-stretch and cock-up-splint/lumbrical-stretch combinations versus the other two groups. At twenty-four weeks, a significantly greater percentage with cock-up splint plus lumbrical-intensive stretch achieved clinically important CTQ-Function improvement. Surgery elected by 25.5% by twenty-four weeks. Exact effect sizes, p-values and responder denominators are not supplied in the abstract.",
       "citations": [
+        {
+          "sourceId": "cts-p2",
+          "location": "Abstract > Interventions; Main outcome measures; Results; Conclusions (PMID22200381)"
+        },
         {
           "sourceId": "cts-p2",
           "location": "Abstract > Participants, Interventions; 2019 CPG Therapeutic Exercise extraction"
         }
       ],
       "applicability": "124 volunteers with mild to moderate CTS; narrower analyzed-population details come from cts-g3.",
-      "limitations": "Primary abstract only. No orthosis-only or untreated comparison isolates stretching; detailed secondary extraction is attributed separately. Not established from inspected primary abstract; no-adverse-effects statement belongs to cts-g3."
+      "limitations": "Primary abstract supports a frequency and endpoint-specific functional-response advantage, not complete methods or isolated stretch efficacy. The 2019 CPG cts-g3 describes twelve-week differences but concludes no combination superior; endpoint/account discrepancy remains explicitly unresolved. Primary abstract does not report harms. The 2019 guideline separately says no adverse effects reported; primary ascertainment unknown."
     },
     {
       "id": "cts-m1-finding",
@@ -342,7 +363,7 @@
     {
       "id": "cts-g3-finding",
       "kind": "study-result",
-      "statement": "Guideline extraction of Baker trial: 103 analyzed, no thenar atrophy and normal two-point discrimination. No combination superior; 25.5% progressed to surgery by 24 weeks without group difference. No untreated/orthosis-only group isolates stretching.",
+      "statement": "2019 CPG secondary Baker extraction: 103 analyzed, normal two-point discrimination/no thenar atrophy. It describes twelve-week differences and no three-way interaction at four/twenty-four weeks, then summarizes no superior intervention; 25.5% surgery by twenty-four weeks without group difference. Primary abstract cts-p2 instead reports a twenty-four-week clinically important functional-response advantage for cock-up splint plus lumbrical-intensive stretches. Different endpoint/account summaries remain unresolved.",
       "citations": [
         {
           "sourceId": "cts-g3",
@@ -350,7 +371,7 @@
         }
       ],
       "applicability": "Nonsurgical mild–moderate CTS, no thenar atrophy, normal two-point discrimination",
-      "limitations": "Secondary guideline extraction, not inspected primary full methods. No exact stretch dose or movement sequence established. Guideline states no adverse effects reported in the Baker trial; full primary harm ascertainment not independently verified."
+      "limitations": "Secondary guideline summary conflicts with the primary abstract on overall superiority interpretation. Do not erase the primary endpoint-specific response or infer isolated stretching efficacy. Guideline states no adverse effects reported in the Baker trial; full primary harm ascertainment not independently verified."
     }
   ],
   "exerciseMappings": [
@@ -447,8 +468,9 @@
   ],
   "gaps": [
     "No demonstrated added glide benefit over splinting. AAOS long-term negative evidence differs from the limited combined stretching option.",
-    "Full primary glide/stretch protocol not accessed. Secondary dose cannot become primary protocol.",
-    "Mechanistic pressure does not establish wrist-angle/load limits or universal neutral-grip superiority."
+    "Complete glide/stretch mechanics remain inaccessible. Baker abstract reports four weeks and stretching six times daily; exact holds/repetitions/geometry remain unknown.",
+    "Mechanistic pressure does not establish wrist-angle/load limits or universal neutral-grip superiority.",
+    "Primary Baker abstract twenty-four-week functional-responder advantage and 2019 CPG no-superiority conclusion remain an unresolved endpoint/account discrepancy; no isolated stretch effect established."
   ],
   "disposition": "unresolved",
   "review": {
