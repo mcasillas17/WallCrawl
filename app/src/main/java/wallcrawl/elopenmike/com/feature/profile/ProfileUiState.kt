@@ -21,7 +21,9 @@ sealed interface ProfileUiState {
         val availableConstraintOptions: List<TrainingConstraint> = TrainingConstraint.entries,
         /** Null until the overlay has been read. */
         val conditionGuidance: ConditionGuidanceResult? = null,
-        val pendingCondition: PendingCondition? = null
+        val pendingCondition: PendingCondition? = null,
+        /** A failed condition or exclusion save, shown in the safety card. */
+        @StringRes val safetyErrorRes: Int? = null
     ) : ProfileUiState
 
     data class Error(@StringRes val messageRes: Int = R.string.profile_load_error) : ProfileUiState

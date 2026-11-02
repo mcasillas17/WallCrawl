@@ -609,7 +609,7 @@ class TodayViewModel(
             programValidator: ProgramValidator,
             deloadRepository: DeloadRepository? = null,
             programRepository: wallcrawl.elopenmike.com.core.database.repository.ProgramRepository? = null,
-            conditionGuidanceSource: wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceSource? = null
+            conditionGuidanceSource: wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceSource
         ): ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 TodayViewModel(

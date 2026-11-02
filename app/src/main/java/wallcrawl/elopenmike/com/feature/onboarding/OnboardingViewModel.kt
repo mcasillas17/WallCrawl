@@ -190,6 +190,8 @@ class OnboardingViewModel(
                 it.copy(
                     error = if (state.currentStep == OnboardingStep.MOVEMENT_CAPABILITY) {
                         OnboardingError.MOVEMENT_REQUIRED
+                    } else if (state.currentStep == OnboardingStep.SAFETY) {
+                        OnboardingError.CONDITION_PENDING
                     } else {
                         OnboardingError.REQUIRED_FIELD
                     }
@@ -433,7 +435,7 @@ class OnboardingViewModel(
 
         fun provideFactory(
             userProfileRepository: UserProfileRepository,
-            conditionGuidanceSource: ConditionGuidanceSource? = null
+            conditionGuidanceSource: ConditionGuidanceSource
         ): ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 OnboardingViewModel(

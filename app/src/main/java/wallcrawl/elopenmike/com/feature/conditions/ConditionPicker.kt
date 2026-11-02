@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.FilterChip
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -23,6 +23,9 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -68,7 +71,8 @@ fun ConditionPicker(
     onConfirm: () -> Unit,
     onCancel: () -> Unit,
     onRemove: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    @androidx.annotation.StringRes errorRes: Int? = null
 ) {
     val language = LocalConfiguration.current.locales[0].language
     Column(modifier = modifier.fillMaxWidth()) {
@@ -77,7 +81,8 @@ fun ConditionPicker(
             fontSize = 12.sp,
             fontWeight = FontWeight.Bold,
             letterSpacing = 0.8.sp,
-            color = MaterialTheme.colorScheme.primary
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.semantics { heading() }
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
@@ -99,13 +104,26 @@ fun ConditionPicker(
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
+                val removeDescription = stringResource(R.string.condition_remove_description, name)
                 TextButton(
                     onClick = { onRemove(id) },
-                    modifier = Modifier.testTag("condition-remove-$id")
+                    modifier = Modifier
+                        .testTag("condition-remove-$id")
+                        .semantics { contentDescription = removeDescription }
                 ) {
                     Text(stringResource(R.string.condition_remove_action))
                 }
             }
+        }
+
+        errorRes?.let { error ->
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = stringResource(error),
+                fontSize = 13.sp,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.testTag("condition-save-error")
+            )
         }
 
         when (guidance) {
@@ -134,8 +152,7 @@ fun ConditionPicker(
                         modifier = Modifier.padding(top = 6.dp)
                     ) {
                         addable.forEach { id ->
-                            FilterChip(
-                                selected = false,
+                            AssistChip(
                                 onClick = { onSelect(id) },
                                 label = { Text(stringResource(conditionNameRes(id)), fontSize = 12.sp) },
                                 modifier = Modifier.testTag("condition-chip-$id")
@@ -195,8 +212,8 @@ fun ConditionPicker(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .heightIn(min = 48.dp)
                                 .padding(top = 8.dp)
+                                .heightIn(min = 48.dp)
                                 .toggleable(
                                     value = pending.acknowledged,
                                     role = Role.Checkbox,

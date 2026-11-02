@@ -1064,13 +1064,16 @@ private fun SummaryStep(
             )
             SummaryRow(
                 label = stringResource(R.string.onboarding_summary_label_sensitive),
-                value = if (state.constraints.isEmpty()) {
+                value = if (state.constraints.isEmpty() && state.reportedConditions.isEmpty()) {
                     stringResource(R.string.onboarding_summary_value_no_sensitive)
                 } else {
-                    TrainingConstraint.entries
-                        .filter { it in state.constraints }
-                        .map { stringResource(it.labelRes) }
-                        .joinToString(separator)
+                    (
+                        TrainingConstraint.entries
+                            .filter { it in state.constraints }
+                            .map { stringResource(it.labelRes) } +
+                            state.reportedConditions.sorted()
+                                .map { stringResource(wallcrawl.elopenmike.com.feature.conditions.conditionNameRes(it)) }
+                        ).joinToString(separator)
                 }
             )
             if (state.returningAfterBreakWeeks > 0) {

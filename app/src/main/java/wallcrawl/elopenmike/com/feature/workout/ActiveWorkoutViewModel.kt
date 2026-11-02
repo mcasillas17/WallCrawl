@@ -362,10 +362,21 @@ class ActiveWorkoutViewModel(
         // Only an offer: nothing changes unless it is accepted, and a stop is never counted
         // toward a decision. Mobility work is offered the same way as main work.
         if (reason == SetStopReason.PAIN_STOP && userProfileRepository != null) {
-            exerciseContaining(setId)?.let { exercise ->
-                confirmationFlow.value = confirmationFlow.value.copy(
-                    painExclusionOffer = PainExclusionOffer(exercise.exerciseId)
-                )
+            exerciseContaining(setId)?.exerciseId?.let { exerciseId ->
+                viewModelScope.launch {
+                    try {
+                        // Nothing to offer for an exercise that is already left out.
+                        if (exerciseId !in userProfileRepository.getProfileOnce().excludedExerciseIds) {
+                            confirmationFlow.value = confirmationFlow.value.copy(
+                                painExclusionOffer = PainExclusionOffer(exerciseId)
+                            )
+                        }
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (e: Exception) {
+                        // No offer; the stop itself is recorded below regardless.
+                    }
+                }
             }
         }
         // Partial work already entered for an unfinished set is kept; a set that was
@@ -460,9 +471,8 @@ class ActiveWorkoutViewModel(
         val repository = userProfileRepository ?: return
         viewModelScope.launch {
             try {
-                val excluded = repository.getProfileOnce().excludedExerciseIds
-                if (offer.exerciseId !in excluded) {
-                    repository.updateExcludedExercises(excluded + offer.exerciseId)
+                repository.editExcludedExercises { excluded ->
+                    if (offer.exerciseId in excluded) excluded else excluded + offer.exerciseId
                 }
                 confirmationFlow.value = confirmationFlow.value.copy(painExclusionOffer = null)
             } catch (e: CancellationException) {
@@ -589,7 +599,7 @@ class ActiveWorkoutViewModel(
             workoutHistoryAnalyzer: WorkoutHistoryAnalyzer,
             programRepository: wallcrawl.elopenmike.com.core.database.repository.ProgramRepository? = null,
             userProfileRepository: UserProfileRepository? = null,
-            conditionGuidanceSource: ConditionGuidanceSource? = null
+            conditionGuidanceSource: ConditionGuidanceSource
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {

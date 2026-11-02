@@ -304,14 +304,15 @@ class SafetyCopyTest {
             (key.startsWith("condition_") && !key.startsWith("condition_name_")) ||
                 key.startsWith("mobility_") || key.startsWith("pain_offer_") ||
                 key.startsWith("editor_condition_") ||
-                key == "onboarding_safety_hint" || key == "profile_safety_description"
+                key.startsWith("onboarding_safety_") || key.startsWith("profile_safety_") ||
+                key.startsWith("profile_excluded_")
         }
         assertThat(featureKeys.size).isAtLeast(25)
         val claims = listOf(
             // English
             "treat", "heal", "cure", "prevent", "safe", "protect", "rehab", "recover", "therap",
             // Spanish
-            "trata", "curar", "cura ", "sana", "previen", "prevenir", "seguro", "segura",
+            "trata", "curar", "sana", "previen", "prevenir", "seguro", "segura",
             "proteg", "rehabilit", "recuper", "terapi"
         )
         listOf("en" to english, "es" to spanish).forEach { (language, strings) ->
@@ -321,6 +322,9 @@ class SafetyCopyTest {
                     assertWithMessage("$key ($language) must not claim: $claim")
                         .that(value).doesNotContain(claim)
                 }
+                // "cura" is a claim as a word, but only a fragment of "procura" or "curar".
+                assertWithMessage("$key ($language) must not claim: cura")
+                    .that(Regex("\\bcura\\b").containsMatchIn(value)).isFalse()
             }
             // A routine is general information and the pain offer promises nothing.
             assertThat(strings.getValue("mobility_today_for").lowercase())

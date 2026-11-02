@@ -949,7 +949,7 @@ class TemplateEditorViewModel(
             userProfileRepository: UserProfileRepository,
             exerciseCatalog: ExerciseCatalog,
             localizationSource: ExerciseLocalizationSource? = null,
-            conditionGuidanceSource: wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceSource? = null
+            conditionGuidanceSource: wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceSource
         ): ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 TemplateEditorViewModel(

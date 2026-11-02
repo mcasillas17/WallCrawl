@@ -64,7 +64,8 @@ enum class OnboardingError(@StringRes val messageRes: Int) {
     REQUIRED_FIELD(R.string.onboarding_error_required_field),
     MOVEMENT_REQUIRED(R.string.onboarding_error_movement_required),
     INVALID_FIELD(R.string.onboarding_error_invalid_field),
-    SAVE_FAILED(R.string.onboarding_error_save_failed)
+    SAVE_FAILED(R.string.onboarding_error_save_failed),
+    CONDITION_PENDING(R.string.onboarding_error_condition_pending)
 }
 
 /**
@@ -104,7 +105,8 @@ data class OnboardingUiState(
             OnboardingStep.MOVEMENT_CAPABILITY -> unansweredCapability == null
             OnboardingStep.SCHEDULE -> daysPerWeek in 2..6 && durationMinutes in 20..120
             OnboardingStep.EQUIPMENT -> equipment.isNotEmpty()
-            OnboardingStep.SAFETY -> true
+            // A condition picked but not yet added or cancelled must be settled first.
+            OnboardingStep.SAFETY -> pendingCondition == null
             OnboardingStep.SUMMARY -> !isSaving && name.trim().isNotBlank() &&
                 equipment.isNotEmpty() && goals.isNotEmpty() && unansweredCapability == null
         }

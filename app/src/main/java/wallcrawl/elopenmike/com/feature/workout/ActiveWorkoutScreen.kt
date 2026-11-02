@@ -270,11 +270,16 @@ private fun ActiveWorkoutContent(
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
+                val (position, total) = state.positionInRole
                 Text(
                     text = stringResource(
-                        R.string.workout_exercise_position,
-                        LocaleFormatting.formatCount(state.currentExerciseIndex + 1, locale),
-                        LocaleFormatting.formatCount(state.totalExercises, locale)
+                        if (currentExercise?.role == ExerciseRole.MOBILITY) {
+                            R.string.mobility_exercise_position
+                        } else {
+                            R.string.workout_exercise_position
+                        },
+                        LocaleFormatting.formatCount(position, locale),
+                        LocaleFormatting.formatCount(total, locale)
                     ),
                     fontSize = 12.sp,
                     color = CrimsonRedLight,

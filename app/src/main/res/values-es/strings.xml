@@ -94,8 +94,8 @@
     <string name="onboarding_schedule_subtitle">Define tu rutina semanal y la duración que prefieres por sesión.</string>
     <string name="onboarding_equipment_title">Equipo disponible</string>
     <string name="onboarding_equipment_subtitle">Escoge el equipo que tengas disponible.</string>
-    <string name="onboarding_safety_title">Seguridad y recuperación</string>
-    <string name="onboarding_safety_subtitle">Cuéntanos qué zonas quieres cuidar.</string>
+    <string name="onboarding_safety_title">Zonas a sortear</string>
+    <string name="onboarding_safety_subtitle">Cuéntanos qué zonas quieres sortear.</string>
     <string name="onboarding_summary_title">Todo listo para empezar</string>
     <string name="onboarding_summary_subtitle">Revisa tu configuración antes de generar tu primer entrenamiento.</string>
 
@@ -130,9 +130,9 @@
     <string name="band_setup_kickback_description">Sujeción al tobillo y apoyo estable al alcance de la mano en el mismo conjunto de anclaje bajo. Selecciona también el anclaje bajo por separado.</string>
 
     <string name="onboarding_safety_heading">ARTICULACIONES SENSIBLES</string>
-    <string name="onboarding_safety_hint">Cuéntanos qué articulaciones quieres cuidar y, si quieres, una condición. Los entrenamientos automáticos se eligen para sortear lo que indiques: algunos movimientos se dejan fuera, otros se ordenan después y se muestran con una indicación, y una condición puede añadir una rutina corta de movilidad. WallCrawl no puede garantizar que un entrenamiento no empeore una condición, y que un ejercicio no tenga aviso no significa que te convenga. La exploración y los entrenamientos manuales no tienen restricciones. Esto no es consejo médico.</string>
+    <string name="onboarding_safety_hint">Cuéntanos qué articulaciones quieres tener en cuenta y, si quieres, una condición. Los entrenamientos automáticos se eligen para sortear lo que indiques: algunos movimientos se dejan fuera, otros se ordenan después y se muestran con una indicación, y una condición puede agregar una rutina corta de movilidad. WallCrawl no puede garantizar que un entrenamiento no empeore una condición, y que un ejercicio no tenga aviso no significa que te convenga. La exploración y los entrenamientos manuales no tienen restricciones. Esto no es consejo médico.</string>
     <string name="onboarding_safety_none_title">Sin molestias / sin restricciones</string>
-    <string name="onboarding_safety_none_subtitle">Ninguna zona que cuidar.</string>
+    <string name="onboarding_safety_none_subtitle">Ninguna zona que tener en cuenta.</string>
     <string name="onboarding_safety_tag_prompt">O marca zonas específicas:</string>
 
     <string name="onboarding_summary_heading">PLAN DE ENTRENAMIENTO</string>
@@ -641,8 +641,8 @@
     <string name="profile_training_days">Días de entrenamiento por semana</string>
     <string name="profile_equipment_heading">EQUIPO DISPONIBLE</string>
     <string name="profile_muscle_heading">PRIORIDADES MUSCULARES</string>
-    <string name="profile_safety_heading">SEGURIDAD AL ENTRENAR</string>
-    <string name="profile_safety_description">Tu selección de articulaciones y condiciones se lee al crear entrenamientos automáticos. Los entrenamientos se eligen para sortear lo que indiques: algunos movimientos se dejan fuera, otros se ordenan después y se muestran con una indicación, y una condición puede añadir una rutina corta de movilidad. «Solo bajo impacto» limita el plan a ejercicios de menor impacto. WallCrawl no puede garantizar que un entrenamiento no empeore una condición, y que un ejercicio no tenga aviso no significa que te convenga. La exploración y los entrenamientos manuales no tienen restricciones, aunque el editor de plantillas muestra avisos. Esto no es consejo médico.</string>
+    <string name="profile_safety_heading">ZONAS A SORTEAR</string>
+    <string name="profile_safety_description">Tu selección de articulaciones y condiciones se lee al crear entrenamientos automáticos. Los entrenamientos se eligen para sortear lo que indiques: algunos movimientos se dejan fuera, otros se ordenan después y se muestran con una indicación, y una condición puede agregar una rutina corta de movilidad. «Solo bajo impacto» limita el plan a ejercicios de menor impacto. WallCrawl no puede garantizar que un entrenamiento no empeore una condición, y que un ejercicio no tenga aviso no significa que te convenga. La exploración y los entrenamientos manuales no tienen restricciones, aunque el editor de plantillas muestra avisos. Esto no es consejo médico.</string>
     <string name="profile_break_title">Regreso después de una pausa</string>
     <string name="profile_break_hint">Ajusta la duración de tu pausa para que WallCrawl adapte el volumen que planifica.</string>
     <string name="profile_app_preferences_heading">PREFERENCIAS DE LA APP</string>
@@ -1133,11 +1133,20 @@
     <string name="mobility_hold">Mantén %1$s s</string>
     <string name="mobility_rest">Descansa %1$s s</string>
     <string name="pain_offer_title">¿Dejar %1$s fuera de los entrenamientos automáticos?</string>
-    <string name="pain_offer_body">Detuviste esta serie por dolor. Si quieres, WallCrawl puede dejar este ejercicio fuera de tus próximos entrenamientos automáticos. Nada cambia a menos que lo elijas. Los entrenamientos manuales no se ven afectados.</string>
+    <string name="pain_offer_body">Detuviste esta serie por dolor. Si quieres, WallCrawl puede dejar este ejercicio fuera de tus próximos entrenamientos automáticos. Nada cambia a menos que lo elijas. Los entrenamientos manuales no se ven afectados, y puedes volver a agregar el ejercicio desde Perfil.</string>
     <string name="pain_offer_accept">Dejarlo fuera</string>
     <string name="pain_offer_decline">Conservarlo</string>
-    <string name="editor_condition_avoid">Tus condiciones indicadas señalan un movimiento de este ejercicio que conviene evitar. Aun así puedes conservarlo aquí.</string>
-    <string name="editor_condition_modify">Este ejercicio incluye un movimiento que tus condiciones indicadas piden adaptar.</string>
-    <string name="editor_condition_unreviewed">WallCrawl no ha comparado este ejercicio con tus condiciones indicadas.</string>
-    <string name="editor_condition_unavailable">No se pudo cargar la guía de tus condiciones indicadas, así que los ejercicios de aquí no se comparan con ellas.</string>
+    <string name="editor_condition_avoid">Lo que indicaste incluye un movimiento de este ejercicio que conviene evitar. Aun así puedes conservarlo aquí.</string>
+    <string name="editor_condition_modify">Este ejercicio incluye un movimiento que conviene adaptar, según lo que indicaste.</string>
+    <string name="editor_condition_unreviewed">WallCrawl no ha comparado este ejercicio con lo que indicaste.</string>
+    <string name="editor_condition_unavailable">Ahora mismo WallCrawl no puede comparar los ejercicios con lo que indicaste, así que aquí no se revisa ninguno.</string>
+    <string name="condition_remove_description">Quitar %1$s</string>
+    <string name="profile_condition_save_error">No se pudieron guardar tus condiciones. No se cambió nada. Inténtalo de nuevo.</string>
+    <string name="profile_exclusion_save_error">No se pudieron guardar los ejercicios excluidos. No se cambió nada. Inténtalo de nuevo.</string>
+    <string name="mobility_exercise_position">Movilidad %1$s de %2$s</string>
+    <string name="profile_excluded_heading">Ejercicios excluidos</string>
+    <string name="profile_excluded_hint">Los entrenamientos automáticos los dejan fuera. Quita uno para permitirlo de nuevo.</string>
+    <string name="profile_excluded_remove">Quitar</string>
+    <string name="profile_excluded_remove_description">Quitar %1$s de los ejercicios excluidos</string>
+    <string name="onboarding_error_condition_pending">Agrega o cancela la condición que elegiste antes de continuar.</string>
 </resources>

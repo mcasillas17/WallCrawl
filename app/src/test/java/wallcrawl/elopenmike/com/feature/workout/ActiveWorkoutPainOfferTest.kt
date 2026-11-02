@@ -12,6 +12,7 @@ import wallcrawl.elopenmike.com.core.ai.WorkoutHistoryAnalyzer
 import wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions
 import wallcrawl.elopenmike.com.core.conditions.ConditionTestGuidance
 import wallcrawl.elopenmike.com.core.conditions.MovementDemand
+import wallcrawl.elopenmike.com.core.conditions.cuesFor
 import wallcrawl.elopenmike.com.core.database.repository.FakeUserProfileDao
 import wallcrawl.elopenmike.com.core.database.repository.OfflineUserProfileRepository
 import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
@@ -81,6 +82,7 @@ class ActiveWorkoutPainOfferTest {
         advanceUntilIdle()
 
         viewModel.skipSet("main-1", SetStopReason.PAIN_STOP)
+        advanceUntilIdle()
         viewModel.acceptPainExclusion()
         advanceUntilIdle()
 
@@ -106,7 +108,52 @@ class ActiveWorkoutPainOfferTest {
     }
 
     @Test
-    fun theWorkoutCarriesRestrictionsForCuesAndSeparatesMobilityRows() = runTest {
+    fun noOfferWhenTheExerciseIsAlreadyExcluded() = runTest {
+        val profiles = profiles(UserProfile(excludedExerciseIds = listOf("main-exercise")))
+        val viewModel = viewModel(profiles)
+        collect(viewModel)
+        advanceUntilIdle()
+
+        viewModel.skipSet("main-1", SetStopReason.PAIN_STOP)
+        advanceUntilIdle()
+
+        assertThat(active(viewModel).painExclusionOffer).isNull()
+        assertThat(profiles.getProfileOnce().excludedExerciseIds).containsExactly("main-exercise")
+    }
+
+    @Test
+    fun openMobilityRowsDoNotBlockFinishingWhenMainWorkIsResolved() {
+        val base = session()
+        val resolved = base.copy(exercises = base.exercises.map { exercise ->
+            if (exercise.role == ExerciseRole.MAIN) {
+                exercise.copy(sets = exercise.sets.map { it.copy(isCompleted = true) })
+            } else exercise
+        })
+        // The mobility set is still open, yet there is nothing to confirm.
+        assertThat(resolved.exercises.first { it.role == ExerciseRole.MOBILITY }.sets.single().isResolved)
+            .isFalse()
+        assertThat(resolved.finishDecision()).isEqualTo(FinishDecision.Complete)
+
+        // An open main set still asks.
+        assertThat(base.finishDecision()).isEqualTo(FinishDecision.ConfirmIncomplete(2))
+    }
+
+    @Test
+    fun theExercisePositionCountsRowsOfTheCurrentRoleOnly() = runTest {
+        val viewModel = viewModel(profiles())
+        collect(viewModel)
+        advanceUntilIdle()
+
+        assertThat(active(viewModel).positionInRole).isEqualTo(1 to 1)
+        viewModel.nextExercise()
+        advanceUntilIdle()
+        assertThat(active(viewModel).currentExercise?.role).isEqualTo(ExerciseRole.MAIN)
+        assertThat(active(viewModel).positionInRole).isEqualTo(1 to 1)
+        assertThat(active(viewModel).totalExercises).isEqualTo(2)
+    }
+
+    @Test
+    fun theWorkoutCarriesRestrictionsForCues() = runTest {
         val profiles = profiles(
             UserProfile(reportedConditions = setOf(ConditionTestGuidance.CONDITION_ID))
         )
@@ -130,10 +177,10 @@ class ActiveWorkoutPainOfferTest {
         collect(viewModel)
         advanceUntilIdle()
 
-        val state = active(viewModel)
-        assertThat(state.restrictions).isInstanceOf(ConditionRestrictions.Active::class.java)
-        assertThat(state.session.exercises.map { it.role })
-            .containsExactly(ExerciseRole.MOBILITY, ExerciseRole.MAIN).inOrder()
+        val restrictions = active(viewModel).restrictions
+        assertThat(restrictions).isInstanceOf(ConditionRestrictions.Active::class.java)
+        assertThat(restrictions.cuesFor("bird-dog", "en")).containsExactly("Stop if symptoms spread.")
+        assertThat(restrictions.cuesFor("main-exercise", "en")).containsExactly("Keep the load light.")
     }
 
     private suspend fun profiles(profile: UserProfile = UserProfile()) =

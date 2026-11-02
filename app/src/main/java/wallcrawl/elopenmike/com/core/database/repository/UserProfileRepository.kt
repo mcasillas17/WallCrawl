@@ -41,6 +41,21 @@ interface UserProfileRepository {
     suspend fun updateReturningAfterBreakWeeks(weeks: Int)
     suspend fun updateThemePreference(theme: ThemePreference)
     suspend fun updateGender(gender: ProfileGender)
+
+    /**
+     * Applies [change] to the stored conditions as one read-modify-write, so a concurrent
+     * edit of another field cannot be overwritten. The default is for test doubles only.
+     */
+    suspend fun editReportedConditions(change: (Set<String>) -> Set<String>) {
+        val current = getProfileOnce()
+        saveUserProfile(current.copy(reportedConditions = change(current.reportedConditions)))
+    }
+
+    /** As [editReportedConditions], for the excluded exercise ids. */
+    suspend fun editExcludedExercises(change: (List<String>) -> List<String>) {
+        val current = getProfileOnce()
+        saveUserProfile(current.copy(excludedExerciseIds = change(current.excludedExerciseIds)))
+    }
 }
 
 /**
@@ -162,6 +177,14 @@ class OfflineUserProfileRepository(
 
     override suspend fun updateGender(gender: ProfileGender) {
         mutateProfile { current -> if (current.gender == gender) null else current.copy(gender = gender) }
+    }
+
+    override suspend fun editReportedConditions(change: (Set<String>) -> Set<String>) {
+        mutateProfile { current -> current.copy(reportedConditions = change(current.reportedConditions)) }
+    }
+
+    override suspend fun editExcludedExercises(change: (List<String>) -> List<String>) {
+        mutateProfile { current -> current.copy(excludedExerciseIds = change(current.excludedExerciseIds)) }
     }
 
     /**

@@ -6,7 +6,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import org.junit.Rule
+import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import org.junit.Test
 import wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceResult
 import wallcrawl.elopenmike.com.core.conditions.ConditionTestGuidance
@@ -16,6 +20,7 @@ import wallcrawl.elopenmike.com.core.database.repository.OfflineUserProfileRepos
 import wallcrawl.elopenmike.com.core.model.CapabilityLevel
 import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.model.UserProfile
+import wallcrawl.elopenmike.com.feature.onboarding.OnboardingError
 import wallcrawl.elopenmike.com.feature.onboarding.OnboardingStep
 import wallcrawl.elopenmike.com.feature.onboarding.OnboardingViewModel
 import wallcrawl.elopenmike.com.feature.profile.ProfileUiState
@@ -169,6 +174,86 @@ class ConditionSelectionViewModelTest {
         )
         advanceUntilIdle()
         assertThat(repository.getProfileOnce().reportedConditions).containsExactly(id)
+    }
+
+    @Test
+    fun removingAnExcludedExerciseAllowsItAgainAndLeavesTheRest() = runTest {
+        val repository = repository(UserProfile(excludedExerciseIds = listOf("a", "b")))
+        val viewModel = ProfileViewModel(repository, ConditionTestGuidance.source(ConditionTestGuidance.loaded()))
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        advanceUntilIdle()
+
+        viewModel.removeExcludedExercise("a")
+        advanceUntilIdle()
+
+        assertThat(repository.getProfileOnce().excludedExerciseIds).containsExactly("b")
+        assertThat(state(viewModel).safetyErrorRes).isNull()
+    }
+
+    @Test
+    fun aFailedConditionSaveIsSurfacedAndKeepsThePromptOpen() = runTest {
+        val real = repository()
+        val failing = object : UserProfileRepository by real {
+            override suspend fun editReportedConditions(change: (Set<String>) -> Set<String>) {
+                throw java.io.IOException("disk full")
+            }
+        }
+        val viewModel = ProfileViewModel(failing, ConditionTestGuidance.source(ConditionTestGuidance.loaded()))
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        advanceUntilIdle()
+
+        viewModel.selectCondition(id)
+        viewModel.setConditionAcknowledged(true)
+        viewModel.confirmPendingCondition()
+        advanceUntilIdle()
+
+        assertThat(state(viewModel).safetyErrorRes)
+            .isEqualTo(wallcrawl.elopenmike.com.R.string.profile_condition_save_error)
+        assertThat(state(viewModel).pendingCondition?.id).isEqualTo(id)
+        assertThat(real.getProfileOnce().reportedConditions).isEmpty()
+    }
+
+    @Test
+    fun concurrentExclusionAndConditionEditsDoNotOverwriteEachOther() = runTest {
+        val repository = repository()
+        val edits = (1..40).flatMap { n ->
+            listOf(
+                async(Dispatchers.Default) { repository.editExcludedExercises { it + "ex-$n" } },
+                async(Dispatchers.Default) { repository.editReportedConditions { it + "c-$n" } }
+            )
+        }
+        edits.awaitAll()
+
+        val saved = repository.getProfileOnce()
+        assertThat(saved.excludedExerciseIds).hasSize(40)
+        assertThat(saved.reportedConditions).hasSize(40)
+    }
+
+    @Test
+    fun theSafetyStepBlocksNextWhileAConditionIsPendingUntilItIsAddedOrCancelled() = runTest {
+        val viewModel = OnboardingViewModel(
+            repository(),
+            conditionGuidanceSource = ConditionTestGuidance.source(ConditionTestGuidance.loaded())
+        )
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        advanceUntilIdle()
+        viewModel.goToStep(OnboardingStep.SAFETY)
+
+        viewModel.selectCondition(id)
+        assertThat(viewModel.uiState.value.canProceedCurrentStep).isFalse()
+        viewModel.nextStep()
+        assertThat(viewModel.uiState.value.currentStep).isEqualTo(OnboardingStep.SAFETY)
+        assertThat(viewModel.uiState.value.error).isEqualTo(OnboardingError.CONDITION_PENDING)
+
+        viewModel.cancelPendingCondition()
+        assertThat(viewModel.uiState.value.canProceedCurrentStep).isTrue()
+
+        viewModel.selectCondition(id)
+        viewModel.setConditionAcknowledged(true)
+        viewModel.confirmPendingCondition()
+        assertThat(viewModel.uiState.value.canProceedCurrentStep).isTrue()
+        viewModel.nextStep()
+        assertThat(viewModel.uiState.value.currentStep).isEqualTo(OnboardingStep.SUMMARY)
     }
 
     private fun state(viewModel: ProfileViewModel) = viewModel.uiState.value as ProfileUiState.Success
