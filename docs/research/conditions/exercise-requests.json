@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "requests": [
+    {
+      "id": "supine-wall-supported-piriformis-stretch",
+      "conditionIds": [
+        "piriformis-syndrome"
+      ],
+      "name": "Supine wall-supported ankle-over-knee stretch",
+      "execution": "Supine; unaffected foot against wall, affected ankle above opposite kneecap; arms alongside, palms down; slight piriformis stretch. Hip angles are not quantified.",
+      "equipment": [
+        "wall",
+        "floor space"
+      ],
+      "movementRequirements": [
+        "floor transfer",
+        "hip and knee flexion",
+        "affected hip external rotation"
+      ],
+      "artwork": "New supplement identity; retained PNG sequence showing wall foot placement and crossed ankle. No artwork generated in Task 1.",
+      "reason": "No exact named variant among the 302 catalog entries; do not equate butterfly-stretch or hamstring-stretch. Source text inspected; Figure 2 embedded in PDF located, separate image retrieval timed out; visual verification remains open.",
+      "sourceRefs": [
+        {
+          "conditionId": "piriformis-syndrome",
+          "sourceId": "shamsi-2024",
+          "location": "Methods > Interventions > Stretching exercise; Figure 2 (PDF pp. 3–4)"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "piriformis-home-stretch-variant-unresolved",
+      "conditionIds": [
+        "piriformis-syndrome"
+      ],
+      "name": "Home static piriformis self-stretch, variant unresolved",
+      "execution": "Study identifies a static self-stretch but does not specify body position in its accessible exercise-protocol paragraph; do not substitute another paper’s variant.",
+      "equipment": [
+        "not reported"
+      ],
+      "movementRequirements": [
+        "not reported"
+      ],
+      "artwork": "Blocked until exact variant is established; request study exercise handout before retaining any new PNGs.",
+      "reason": "Exercise image handout mentioned but not attached to retrieved seven-page paper. No exact catalog mapping justified.",
+      "sourceRefs": [
+        {
+          "conditionId": "piriformis-syndrome",
+          "sourceId": "guner-2023",
+          "location": "Materials and methods > Exercise protocol (PDF p. 2)"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "piriformis-bilateral-bridge-variant-unresolved",
+      "conditionIds": [
+        "piriformis-syndrome"
+      ],
+      "name": "Bilateral bridging, protocol details unresolved",
+      "execution": "Bilateral bridging is named; precise foot placement, range, load and repetitions are not reported.",
+      "equipment": [
+        "not reported"
+      ],
+      "movementRequirements": [
+        "bilateral bridge; further details not reported"
+      ],
+      "artwork": "Compare the study handout with catalog glute-bridge frames before deciding whether new PNGs are required.",
+      "reason": "Catalog glute-bridge is a possible match, not a verified exact study variant; no independent component effect established.",
+      "sourceRefs": [
+        {
+          "conditionId": "piriformis-syndrome",
+          "sourceId": "guner-2023",
+          "location": "Materials and methods > Exercise protocol (PDF p. 2)"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "piriformis-feet-together-flexed-hip-knee-raise",
+      "conditionIds": [
+        "piriformis-syndrome"
+      ],
+      "name": "Feet-together side leg raise with hip/knee flexion",
+      "execution": "Side leg raise with hip and knee flexed 45 degrees and feet together; do not infer the unreported range or repetitions.",
+      "equipment": [
+        "not reported"
+      ],
+      "movementRequirements": [
+        "hip and knee flexion 45 degrees",
+        "feet together"
+      ],
+      "artwork": "Resolve the study handout and motion before commissioning a retained PNG sequence; distinguish from straight-leg side-lying abduction.",
+      "reason": "Existing side-lying-hip-abduction and side-lying-leg-raise records do not verify this flexed-knee feet-together protocol.",
+      "sourceRefs": [
+        {
+          "conditionId": "piriformis-syndrome",
+          "sourceId": "guner-2023",
+          "location": "Materials and methods > Exercise protocol (PDF p. 2)"
+        }
+      ],
+      "status": "candidate"
+    }
+  ]
+}

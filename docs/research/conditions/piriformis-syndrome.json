@@ -1,0 +1,452 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "piriformis-syndrome",
+    "label": "Piriformis syndrome",
+    "aliases": [
+      "piriformis muscle syndrome",
+      "PMS",
+      "PS"
+    ],
+    "distinctions": "Selected piriformis-related sciatic irritation label, not all deep gluteal syndrome, discogenic radicular pain, proximal hamstring pathology or nonspecific buttock pain. Clinical attribution remains uncertain; no self-diagnostic test is supplied."
+  },
+  "scope": {
+    "population": "Adults with clinically assessed piriformis syndrome; study-specific populations retained per source.",
+    "stage": "Conservative care candidates; severity and symptom duration insufficiently characterized.",
+    "operativeStatus": "No postoperative protocol extracted; do not infer operative clearance.",
+    "exclusions": "Do not apply to unassessed sciatica-like symptoms or other diagnoses by label alone. Trial exclusions are applicability limits, not universal contraindications.",
+    "uncertainty": "A condition label does not select an individual stretch, dose or range. No clinical reviewer is identified."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "Native web search (publisher/PubMed/PMC records)",
+      "query": "piriformis syndrome exercise randomized trial stretching deep gluteal Shamsi 2024 00802; piriformis syndrome Guner 2023 exercise ultrasound dry needling PMC10508642",
+      "decision": "Retrieved and inspected both primary anchor full texts; retained population and bundled-treatment limits.",
+      "limitations": "PMC direct access timed out; Guner publisher PDF accessible. Not a systematic database review."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Native web search and publisher downloads",
+      "query": "piriformis syndrome systematic review exercise conservative management 2025; piriformis syndrome guideline deep gluteal syndrome systematic review Hopayian 2022 conservative surgery",
+      "decision": "Retained Hopayian abstract and Aali 2026 full text plus supplement; no current final condition-specific exercise guideline verified. Injection/surgical review DOI 10.1093/jhps/hnag047 excluded as outside exercise pilot scope.",
+      "limitations": "ScienceDirect full text returned 403. ELDOA trial PMID 32894238 surfaced but full text not retrieved; no protocol claimed. Remaining primary studies in latest synthesis require later appraisal."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Publisher/PubMed records and native web search",
+      "query": "\"10.1186/s13102-023-00802-4\" correction retraction; \"10.7759/cureus.43804\" correction retraction; later piriformis reviews",
+      "decision": "No notice located for the primary anchors in inspected results; Aali early-access version recorded explicitly.",
+      "limitations": "Search does not prove absence of corrections, retractions or supersession; recheck before content review."
+    }
+  ],
+  "sources": [
+    {
+      "id": "shamsi-2024",
+      "title": "A controlled clinical trial investigating the effects of stretching and compression exercises on electromyography of calf muscles in chronic LBP patients with a deep gluteal syndrome",
+      "doi": "10.1186/s13102-023-00802-4",
+      "pmid": "38200475",
+      "url": "https://link.springer.com/article/10.1186/s13102-023-00802-4",
+      "publicationStatus": "final journal article",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Publisher HTML and 11-page PDF inspected: https://link.springer.com/content/pdf/10.1186/s13102-023-00802-4.pdf . No supplement identified; standalone Figure 2 image fetch timed out."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed record inspection and DOI + correction/retraction web search; later evidence search. Not a registry-wide clearance.",
+        "result": "No correction/retraction notice located in inspected records. No replacement established; later syntheses contextualize rather than supersede the study."
+      },
+      "design": "Assessor-blind randomized three-group trial; 45 participants, 15/group; retrospectively registered.",
+      "population": "Adults 18–60 with low-back pain, positive FAIR and piriformis tenderness. Other lumbar/hip pathologies and recent hip/knee injuries excluded; operative status not reported.",
+      "comparator": "Foam-roller compression or no added exercise.",
+      "coInterventions": "All groups: heat 15 min and TENS 15 min.",
+      "outcomes": "No between-group pain or calf sEMG benefit. Disability favored stretching versus compression: MD −12.62, 95% CI −20.41 to −4.38, p=0.009.",
+      "followUp": "Pre/post ten treatment sessions; later follow-up not reported.",
+      "uncertainty": "Small groups; participants unblinded; sex imbalance; broad DGS label. Narrative conclusion broader than its explicit pairwise result; do not assert superiority versus control.",
+      "harms": "not reported; no loss to follow-up is not a harms assessment.",
+      "limitations": "Indirect for piriformis-only diagnosis; multimodal supervised care does not establish a self-directed app routine or universal contraindications.",
+      "protocol": {
+        "execution": "Supine, unaffected foot on wall; affected ankle above opposite kneecap; arms alongside, palms down; slight stretch.",
+        "dose": "3 sets × 2 minutes; 2 minutes rest between sets.",
+        "frequency": "3 sessions/week, 10 sessions total.",
+        "supervision": "Experienced physiotherapist monitored execution.",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Methods > Participants (PDF pp. 2–3)",
+        "Methods > Interventions > Stretching exercise; Figure 2 (PDF pp. 3–4)",
+        "Results > Secondary outcomes > Pain and Disability; Table 3 (PDF pp. 7–8)",
+        "Limitation of study (PDF p. 10)"
+      ]
+    },
+    {
+      "id": "guner-2023",
+      "title": "Evaluation of the Efficacy of Ultrasound-Guided Dry Needling Therapy and Exercise in Piriformis Muscle Syndrome",
+      "doi": "10.7759/cureus.43804",
+      "pmid": "37731410",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10508642/",
+      "publicationStatus": "final journal article",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "PMC open timed out; indexed PMC full-text sections and complete publisher seven-page PDF inspected: https://assets.cureus.com/uploads/original_article/pdf/178201/20230820-28244-6wx7st.pdf . Exercise handout not attached."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed record inspection and DOI + correction/retraction web search; later evidence search. Not a registry-wide clearance.",
+        "result": "No correction/retraction notice located in inspected records. No replacement established; later syntheses contextualize rather than supersede the study."
+      },
+      "design": "Prospective observational, nonrandomized; 44 adults, 22/group; allocation by accepting dry needling.",
+      "population": "Adults 18–70 with clinically assessed unilateral piriformis muscle syndrome after alternative hip/lumbar/sacroiliac causes excluded; pain persisted after oral treatment. Stage and operative status not reported.",
+      "comparator": "Ultrasound-guided dry needling weekly × 3.",
+      "coInterventions": "Exercise arm: stretching, bilateral bridging, flexed hip/knee feet-together leg raises, posture/activity advice; medication use during follow-up not reported.",
+      "outcomes": "Within-group improvement in VAS, ODI, LEFS and DN4; no significant between-group follow-up differences. No untreated comparator or isolated component test.",
+      "followUp": "1 and 3 months.",
+      "uncertainty": "Confounding, sex imbalance, no untreated control. Baseline ODI direction conflicts between narrative and Table 2; do not resolve by guessing.",
+      "harms": "No adverse effects stated for needling arm; exercise-specific harms not reported.",
+      "limitations": "Bundled program cannot establish independent benefit of a stretch or bridge; exclusion criteria are not universal exercise prohibitions.",
+      "protocol": {
+        "execution": "Static self-stretch position unspecified; bilateral bridging; side leg raises with hip/knee flexion 45 degrees, feet together.",
+        "dose": "Stretch hold 30 seconds; wording: 10 repetitions/sets. Bridge/leg-raise dose not reported.",
+        "frequency": "Stretch twice daily; exercise program 3 weeks.",
+        "supervision": "Home program taught by therapist with image handout; ongoing supervision not reported.",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Materials and methods (PDF p. 2)",
+        "Materials and methods > Exercise protocol (PDF p. 2)",
+        "Results > Table 2 (PDF p. 4)",
+        "Discussion > adverse effects and limitations (PDF pp. 5–6)"
+      ]
+    },
+    {
+      "id": "hopayian-2023",
+      "title": "A systematic review of conservative and surgical treatments for deep gluteal syndrome",
+      "doi": "10.1016/j.jbmt.2022.12.003",
+      "pmid": "37949567",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/37949567/",
+      "publicationStatus": "final journal article",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "PubMed abstract inspected; publisher full-text attempt https://www.sciencedirect.com/science/article/pii/S1360859222001619 returned 403."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed record inspection and DOI + correction/retraction web search; later evidence search. Not a registry-wide clearance.",
+        "result": "No correction/retraction notice located in inspected records. No replacement established; later syntheses contextualize rather than supersede the study."
+      },
+      "design": "Systematic review, narrative synthesis; search through 24 July 2019; 13 studies, 508 patients.",
+      "population": "Deep gluteal syndrome; indirect for piriformis-specific protocols.",
+      "comparator": "Conservative modalities and surgery.",
+      "coInterventions": "Heterogeneous; details not accessible.",
+      "outcomes": "Overall evidence low quality; no single conservative treatment preferred; authors advise general back-pain/sciatica first-line physiotherapy.",
+      "followUp": "not reported in accessible abstract.",
+      "uncertainty": "Older search; cannot extract an exercise protocol from abstract.",
+      "harms": "not reported in accessible abstract.",
+      "limitations": "Context only; does not validate an exact app stretch or restriction.",
+      "protocol": {
+        "execution": "not reported",
+        "dose": "not reported",
+        "frequency": "not reported",
+        "supervision": "not reported",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Abstract > Databases and data treatment; Results; Conclusion"
+      ]
+    },
+    {
+      "id": "aali-2026",
+      "title": "Effectiveness of stretching techniques in piriformis syndrome management: a systematic review",
+      "doi": "10.4081/ejtm.2026.14765",
+      "pmid": null,
+      "url": "https://www.pagepressjournals.org/bam/article/view/14765",
+      "publicationStatus": "peer-reviewed early access, 29 October 2026; not final typeset version",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Publisher early-access 30-page PDF https://www.pagepressjournals.org/bam/article/download/14765/14609/106679 and 8-page supplement https://www.pagepressjournals.org/bam/article/download/14765/14610/106680 inspected."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed record inspection and DOI + correction/retraction web search; later evidence search. Not a registry-wide clearance.",
+        "result": "No correction/retraction notice located in inspected records. No replacement established; later syntheses contextualize rather than supersede the study."
+      },
+      "design": "Systematic review; narrative synthesis of 12 studies (572 participants), search 2015–February 2025.",
+      "population": "Reported piriformis syndrome, ages 20–65; supplement also includes tightness and disc-herniation cohorts.",
+      "comparator": "Various active rehabilitation comparisons.",
+      "coInterventions": "Heterogeneous combinations including manual therapy, heat, ultrasound and strengthening.",
+      "outcomes": "Authors report potential benefit of multimodal stretching-based care; no meta-analysis or single optimum protocol.",
+      "followUp": "Long-term follow-up lacking in most studies.",
+      "uncertainty": "Eligibility/population heterogeneity; early-access version before proofreading; confirm primary populations rather than pooling labels.",
+      "harms": "Exercise-specific harms synthesis not reported.",
+      "limitations": "Source of research leads and uncertainty, not an independent exact protocol or clinical guideline.",
+      "protocol": {
+        "execution": "Multiple distinct techniques; no single execution established.",
+        "dose": "No common optimal dose established.",
+        "frequency": "not reported",
+        "supervision": "not reported",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Methods > Inclusion/exclusion criteria (PDF pp. 6–7)",
+        "Clinical applications; Limitations; Conclusions (PDF pp. 12–14)",
+        "Supplementary Table 2A, study 6 (p. 3); Table 3 (pp. 5–8)"
+      ]
+    },
+    {
+      "id": "kizaki-2020",
+      "title": "Deep gluteal syndrome is defined as a non-discogenic sciatic nerve disorder with entrapment in the deep gluteal space: a systematic review",
+      "doi": "10.1007/s00167-020-05966-x",
+      "pmid": "32246173",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/32246173/",
+      "publicationStatus": "final journal article",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "PubMed indexed abstract inspected; no full diagnostic protocol extracted."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed record inspection and DOI + correction/retraction web search; later evidence search. Not a registry-wide clearance.",
+        "result": "No correction/retraction notice located in inspected records. No replacement established; later syntheses contextualize rather than supersede the study."
+      },
+      "design": "Systematic review of DGS definition and diagnostic pathway.",
+      "population": "Patients with DGS across published studies.",
+      "comparator": "not applicable.",
+      "coInterventions": "not applicable.",
+      "outcomes": "Definition combines non-discogenic sciatic nerve disorder and entrapment in deep gluteal space.",
+      "followUp": "not applicable.",
+      "uncertainty": "Definition is broader than piriformis-specific involvement.",
+      "harms": "not reported in accessible abstract.",
+      "limitations": "Used for terminology boundary only; no exercise prescription.",
+      "protocol": {
+        "execution": "not reported",
+        "dose": "not reported",
+        "frequency": "not reported",
+        "supervision": "not reported",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Abstract > Results and Conclusion"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "dgs-stretch-signal",
+      "kind": "study-result",
+      "statement": "No between-group pain or calf sEMG benefit. Disability favored stretching versus compression: MD −12.62, 95% CI −20.41 to −4.38, p=0.009.",
+      "citations": [
+        {
+          "sourceId": "shamsi-2024",
+          "location": "Results > Secondary outcomes > Pain and Disability; Table 3 (PDF pp. 7–8)"
+        },
+        {
+          "sourceId": "shamsi-2024",
+          "location": "Methods > Interventions > Stretching exercise; Figure 2 (PDF pp. 3–4)"
+        }
+      ],
+      "applicability": "Selected clinically assessed DGS/LBP adults under supervision; indirect for piriformis syndrome.",
+      "limitations": "Indirect for piriformis-only diagnosis; multimodal supervised care does not establish a self-directed app routine or universal contraindications."
+    },
+    {
+      "id": "bundled-home-program",
+      "kind": "study-result",
+      "statement": "Within-group improvement in VAS, ODI, LEFS and DN4; no significant between-group follow-up differences. No untreated comparator or isolated component test.",
+      "citations": [
+        {
+          "sourceId": "guner-2023",
+          "location": "Results > Table 2 (PDF p. 4)"
+        },
+        {
+          "sourceId": "guner-2023",
+          "location": "Materials and methods > Exercise protocol (PDF p. 2)"
+        }
+      ],
+      "applicability": "Selected adults with clinically assessed piriformis syndrome; home program taught by therapist.",
+      "limitations": "Bundled program cannot establish independent benefit of a stretch or bridge; exclusion criteria are not universal exercise prohibitions."
+    },
+    {
+      "id": "low-certainty-context",
+      "kind": "published-recommendation",
+      "statement": "Review authors advise physiotherapy first line without selecting one superior conservative treatment.",
+      "citations": [
+        {
+          "sourceId": "hopayian-2023",
+          "location": "Abstract > Databases and data treatment; Results; Conclusion"
+        }
+      ],
+      "applicability": "Broad DGS; older search, abstract only.",
+      "limitations": "Does not specify an app protocol or clearance."
+    },
+    {
+      "id": "heterogeneous-stretching-evidence",
+      "kind": "study-result",
+      "statement": "Authors report potential benefit of multimodal stretching-based care; no meta-analysis or single optimum protocol.",
+      "citations": [
+        {
+          "sourceId": "aali-2026",
+          "location": "Clinical applications; Limitations; Conclusions (PDF pp. 12–14)"
+        },
+        {
+          "sourceId": "aali-2026",
+          "location": "Supplementary Table 2A, study 6 (p. 3); Table 3 (pp. 5–8)"
+        }
+      ],
+      "applicability": "Mixed PS, muscle-tightness and lumbar-pathology populations; inspect primary study before mapping.",
+      "limitations": "Source of research leads and uncertainty, not an independent exact protocol or clinical guideline."
+    },
+    {
+      "id": "dgs-label-boundary",
+      "kind": "study-result",
+      "statement": "DGS is a broader non-discogenic sciatic entrapment definition; the selected piriformis label must not cover every deep-gluteal cause.",
+      "citations": [
+        {
+          "sourceId": "kizaki-2020",
+          "location": "Abstract > Results and Conclusion"
+        }
+      ],
+      "applicability": "Terminology and eligibility interpretation.",
+      "limitations": "Abstract-only definition; does not diagnose an individual."
+    },
+    {
+      "id": "activity-advice-bundle",
+      "kind": "published-recommendation",
+      "statement": "Study program advised avoiding sacral sitting, changing posture every 30 minutes and sparing heavy lifting.",
+      "citations": [
+        {
+          "sourceId": "guner-2023",
+          "location": "Materials and methods > Exercise protocol (PDF p. 2)"
+        }
+      ],
+      "applicability": "Advice within the selected observational exercise arm.",
+      "limitations": "Not separately tested; no measured load threshold, universal exclusion, or range cap follows."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "wall-stretch-candidate",
+      "exerciseId": null,
+      "requestId": "supine-wall-supported-piriformis-stretch",
+      "findingIds": [
+        "dgs-stretch-signal"
+      ],
+      "matchRationale": "No exact named variant among the 302 catalog entries; do not equate butterfly-stretch or hamstring-stretch. Source text inspected; Figure 2 embedded in PDF located, separate image retrieval timed out; visual verification remains open.",
+      "status": "candidate"
+    },
+    {
+      "id": "home-stretch-unresolved",
+      "exerciseId": null,
+      "requestId": "piriformis-home-stretch-variant-unresolved",
+      "findingIds": [
+        "bundled-home-program"
+      ],
+      "matchRationale": "Exercise image handout mentioned but not attached to retrieved seven-page paper. No exact catalog mapping justified.",
+      "status": "candidate"
+    },
+    {
+      "id": "bridge-unresolved",
+      "exerciseId": null,
+      "requestId": "piriformis-bilateral-bridge-variant-unresolved",
+      "findingIds": [
+        "bundled-home-program"
+      ],
+      "matchRationale": "Catalog glute-bridge is a possible match, not a verified exact study variant; no independent component effect established.",
+      "status": "candidate"
+    },
+    {
+      "id": "flexed-leg-raise-unresolved",
+      "exerciseId": null,
+      "requestId": "piriformis-feet-together-flexed-hip-knee-raise",
+      "findingIds": [
+        "bundled-home-program"
+      ],
+      "matchRationale": "Existing side-lying-hip-abduction and side-lying-leg-raise records do not verify this flexed-knee feet-together protocol.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "consider-supervised-wall-stretch",
+      "kind": "supportive-prescription",
+      "basis": "unresolved-hypothesis",
+      "statement": "Retain the studied wall-supported stretch as a review candidate; no default app dose or clinical release follows.",
+      "findingIds": [
+        "dgs-stretch-signal"
+      ],
+      "citations": [
+        {
+          "sourceId": "shamsi-2024",
+          "location": "Methods > Interventions > Stretching exercise; Figure 2 (PDF pp. 3–4)"
+        },
+        {
+          "sourceId": "shamsi-2024",
+          "location": "Results > Secondary outcomes > Pain and Disability; Table 3 (PDF pp. 7–8)"
+        }
+      ],
+      "mappingIds": [
+        "wall-stretch-candidate"
+      ],
+      "applicability": {
+        "population": "Adults resembling the selected DGS/LBP cohort; piriformis attribution must be checked.",
+        "stage": "Nonoperative status not established by source; postoperative use unresolved.",
+        "rationale": "Indirect DGS signal with supervised co-interventions; clinical mapping and dose review required."
+      },
+      "limitations": "No isolated pain benefit, long-term outcome, progression or stopping rule established. Source dose is extraction, not an app prescription.",
+      "status": "candidate"
+    },
+    {
+      "id": "withhold-blanket-heavy-lifting-ban",
+      "kind": "load-limit",
+      "basis": "product-precaution",
+      "statement": "Do not instantiate a numeric load cap or blanket lifting exclusion from the observational advice alone; keep this proposed limit unresolved.",
+      "findingIds": [
+        "activity-advice-bundle",
+        "bundled-home-program"
+      ],
+      "citations": [
+        {
+          "sourceId": "guner-2023",
+          "location": "Materials and methods > Exercise protocol (PDF p. 2)"
+        },
+        {
+          "sourceId": "guner-2023",
+          "location": "Results > Table 2 (PDF p. 4)"
+        }
+      ],
+      "mappingIds": [],
+      "applicability": {
+        "population": "Clinically assessed piriformis syndrome resembling the observational cohort.",
+        "stage": "Stage, severity and operative applicability unreported.",
+        "rationale": "The source supplies bundled advice without a tested threshold or isolated causal effect; ordinary-training restriction requires further evidence and review."
+      },
+      "limitations": "Product evidence-handling precaution, not a published contraindication; no executable exclusion, range or load rule supplied.",
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "Independent clinical review absent; all mappings, dosing, symptom-response and escalation guidance unreleased.",
+    "No condition-specific ordinary-training exclusion, load or range threshold established by this pilot; no contraindication inferred from benefit or trial exclusion.",
+    "Guner exercise handout and exact self-stretch/bridge/leg-raise mechanics unresolved; image request is not artwork provenance.",
+    "No source establishes a generic five-second progression, strength-set credit for stretching, individualized stopping threshold or escalation protocol.",
+    "Latest synthesis supplies additional primary-study leads; pilot is not an exhaustive evidence review. DGS and piriformis populations cannot be merged without justification.",
+    "Shamsi figure visual inspection remains open; Guner baseline ODI narrative/table inconsistency retained as uncertainty."
+  ],
+  "disposition": "research-only",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}
