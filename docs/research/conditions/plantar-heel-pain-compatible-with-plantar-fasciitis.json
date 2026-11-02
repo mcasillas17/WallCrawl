@@ -62,6 +62,13 @@
       "query": "DOI:10.1136/bjsports-2019-101970",
       "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
       "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC XML selected passage",
+      "query": "GET https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8458083/fullTextXML; inspect Core approach paragraph",
+      "decision": "Bounded accessible-protocol audit: preserve explicitly reported category, program/visit/device schedule or context with the reported-in-accessible-text prefix. No unseen primary mechanics copied from secondary sources.",
+      "limitations": "Local 2026-11-01 / UTC 2026-11-02. Access status unchanged; exact missing exercise mechanics, per-exercise load/dose, and clinical applicability remain unresolved."
     }
   ],
   "sources": [
@@ -154,7 +161,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "PubMed abstract and indexed publisher education/core-approach sections inspected; conservative access classification because entire article inspection was not completed. https://bjsm.bmj.com/content/early/2021/03/30/bjsports-2019-101970"
+        "details": "PubMed abstract and indexed publisher education/core-approach sections inspected; conservative access classification because entire article inspection was not completed. https://bjsm.bmj.com/content/early/2021/03/30/bjsports-2019-101970 Bounded protocol audit re-read only the Core approach passage from Europe PMC XML PMC8458083; whole-article inspection was not performed and access status remains partial."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -171,16 +178,17 @@
       "harms": "No quantified harms of education/load-management component.",
       "limitations": "Only abstract/indexed selected full-text sections inspected here; expert-reasoning advice not trial proof of a specific harmful activity dose. Research candidate only; no clinical release.",
       "protocol": {
-        "execution": "not reported",
-        "dose": "not reported",
+        "execution": "reported in accessible text: Primary Core approach passage describes fascia stretching, low-Dye taping and individualised education together; it does not provide a complete standalone exercise technique.",
+        "dose": "reported in accessible text: Primary Core approach passage gives approximately four to six weeks of combined core care before considering adjuncts, adjusted individually. This expert-derived care-review window is not a stretch hold/repetition dose or frequency.",
         "frequency": "not reported",
         "supervision": "not reported",
-        "progression": "not reported",
+        "progression": "reported in accessible text: Primary Core approach passage considers adjunctive ESWT or orthoses after the initial approximately four-to-six-week core approach if progress is inadequate; timing derives from qualitative expert input and is adjusted to circumstances, not a loading progression.",
         "stoppingRules": "not reported"
       },
       "locations": [
         "Abstract",
-        "Best practice guide > Core approach and load-management education (indexed sections)"
+        "Best practice guide > Core approach and load-management education (indexed sections)",
+        "Best practice guide > Core approach (Europe PMC XML paragraph: simultaneous components and approximately 4–6 weeks)"
       ]
     }
   ],

@@ -69,6 +69,13 @@
       "query": "DOI:10.1186/s12891-023-06170-x",
       "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
       "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC XML selected passages",
+      "query": "GET https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12171478/fullTextXML; inspect Methods > Interventions and Discussion supervision-duration passages",
+      "decision": "Confirmed progressive home/supervised therapy lasts up to twelve weeks; Discussion states weekly supervision ends at twelve weeks. Preserved twenty-four-week outcome interval.",
+      "limitations": "No dose/threshold, mapping or progression-rule change; no clinical release."
     }
   ],
   "sources": [
@@ -82,7 +89,7 @@
       "access": {
         "status": "full-text",
         "date": "2026-11-01",
-        "details": "Full PMC article and Europe PMC XML inspected. During serialization Europe PMC supplementaryFiles ZIP retrieved in memory; supplemental file3 is100pages containing LTCR and HTCR brochures; relevant LTCR execution pages13,16,18–24,48 inspected. No source file saved. https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12171478/supplementaryFiles"
+        "details": "Full PMC article and Europe PMC XML inspected. During serialization Europe PMC supplementaryFiles ZIP retrieved in memory; supplemental file3 is100pages containing LTCR and HTCR brochures; relevant LTCR execution pages13,16,18–24,48 inspected. No source file saved. https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12171478/supplementaryFiles Bounded audit re-read primary XML Methods > Interventions and Discussion to separate up-to-twelve-week supervised therapy from twenty-four-week follow-up."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -101,15 +108,16 @@
       "protocol": {
         "execution": "LTCR limits dorsiflexion. Brochure p.19: long-seated straight-knee band plantarflexion, loop around forefoot, neutral to maximal plantarflexion. Page 20: same with knee slightly bent over towel. Page 21: chair-seated bilateral raise, hips/knees 90 degrees, hands at knees, neutral to maximal plantarflexion.",
         "dose": "Main text stages: isometric 5 × 30 seconds at 50% MVC to 5 × 60 seconds at 70%; isotonic 4 × 15 at 65% 1RM to 4 × 6 at 85%; energy storage 3 × 10 at 75% to 3 × 6 at 85%. Brochure p.19 band example: 8 × 15; p.20 band and p.21 chair examples: 4 × 15, 30-second rests, four seconds each direction. Preserve stage/exercise-specific differences; do not harmonise silently.",
-        "frequency": "Daily rotating stages; stage 2 alternates isometric and isotonic days. Later sport every 2–3 days; follow-up/management to 24 weeks.",
-        "supervision": "Weekly trained physiotherapist sessions, plus home/gym exercise.",
+        "frequency": "Daily rotating stages during the progressive program lasting up to twelve weeks; stage 2 alternates isometric and isotonic days. Later sport every 2–3 days. Twenty-four weeks is allocation/outcome follow-up, not the duration of weekly supervised visits.",
+        "supervision": "Individual home-based and supervised progressive therapy lasted up to twelve weeks, with weekly trained physiotherapist sessions and home/gym exercise. Methods > Interventions describes this duration; Discussion says weekly supervision ended at twelve weeks. Allocation and outcome follow-up continued to twenty-four weeks, not weekly supervision.",
         "progression": "At least two weeks per stage and one week of high-load work; pain below 5/10 during, one hour after and next morning, with no weekly deterioration. Clinician decides advancement.",
         "stoppingRules": "Trial-specific monitoring in progression field; worsening prompts adjustment. Symptom response is not proof of tissue healing and is not an automatic app threshold."
       },
       "locations": [
         "Methods > Patients and Interventions; Figure 1",
         "Results > Primary outcome; Adherence and adverse events",
-        "Online supplemental file 3 > LTCR brochure pp.18–24; Rehabilitation schedule p.48"
+        "Online supplemental file 3 > LTCR brochure pp.18–24; Rehabilitation schedule p.48",
+        "Discussion > Principal findings: weekly supervision ends at twelve weeks"
       ]
     },
     {

@@ -97,6 +97,27 @@
       "query": "\"PMC6886027\"; \"10.1002/acr.23732\" \"Table\"",
       "decision": "Complete short correction body inspected in indexed primary PMC text; source and findings updated.",
       "limitations": "Direct PMC page still challenged; no successful direct PDF retrieval or exhaustive integrity clearance."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "EXT_ID:35272050 AND SRC:MED",
+      "decision": "Bounded accessible-protocol audit: preserve explicitly reported category, program/visit/device schedule or context with the reported-in-accessible-text prefix. No unseen primary mechanics copied from secondary sources.",
+      "limitations": "Local 2026-11-01 / UTC 2026-11-02. Access status unchanged; exact missing exercise mechanics, per-exercise load/dose, and clinical applicability remain unresolved."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "EXT_ID:15296364 AND SRC:MED",
+      "decision": "Bounded accessible-protocol audit: preserve explicitly reported category, program/visit/device schedule or context with the reported-in-accessible-text prefix. No unseen primary mechanics copied from secondary sources.",
+      "limitations": "Local 2026-11-01 / UTC 2026-11-02. Access status unchanged; exact missing exercise mechanics, per-exercise load/dose, and clinical applicability remain unresolved."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search, exact primary correction notice",
+      "query": "\"10.1002/acr.23732\" Errata FFI 12; \"PMC6886027\"",
+      "decision": "Complete short indexed PMC notice re-read. Removed stale unresolved-erratum wording only from the rule limitation; correction is limited to twelve-week Table 2 FFI scores, retaining no between-group difference.",
+      "limitations": "No change to rule statement, basis, citations, mapping or clinical status. Full notice read through indexed primary text, not a successful direct-page retrieval."
     }
   ],
   "sources": [
@@ -188,7 +209,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "PubMed abstract and selected indexed primary-PDF methods/abstract inspected; entire article inspection not completed. Conservative abstract-only classification. https://www.oarsijournal.com/article/S1063458422006550/pdf"
+        "details": "PubMed abstract and selected indexed primary-PDF methods/abstract inspected; entire article inspection not completed. Conservative abstract-only classification. https://www.oarsijournal.com/article/S1063458422006550/pdf Bounded protocol audit re-read the primary abstract through Europe PMC core metadata; retained only explicitly reported program/category facts, with no full-method access upgrade."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -205,15 +226,16 @@
       "harms": "Generally minor/transient; exact event table not completely re-extracted.",
       "limitations": "No superiority of contoured orthoses over sham; not a test of motion restrictions or exercise. Entire primary article inspection not completed. Research candidate only; no clinical release.",
       "protocol": {
-        "execution": "not reported",
+        "execution": "reported in accessible text: Abstract > Design describes contoured foot orthoses versus flat sham insoles; this is a device intervention, not an exercise execution.",
         "dose": "not reported",
-        "frequency": "not reported",
+        "frequency": "reported in accessible text: Abstract > Design specifies wearing the assigned devices at all times when wearing shoes for twelve weeks. This is a device-wearing schedule, not an exercise frequency.",
         "supervision": "not reported",
         "progression": "not reported",
         "stoppingRules": "not reported"
       },
       "locations": [
-        "Abstract > Methods and Results"
+        "Abstract > Methods and Results",
+        "Abstract > Design"
       ]
     },
     {
@@ -226,7 +248,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "PubMed abstract inspected; full primary methods not retrieved."
+        "details": "PubMed abstract inspected; full primary methods not retrieved. Bounded protocol audit re-read the primary abstract through Europe PMC core metadata; retained only explicitly reported program/category facts, with no full-method access upgrade."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -243,15 +265,17 @@
       "harms": "not reported in the accessible abstract.",
       "limitations": "Small functional hallux-limitus multimodal trial, indirect for radiographic OA. Full exact exercise methods and harms unavailable; no isolated strengthening effect. Research candidate only; no clinical release.",
       "protocol": {
-        "execution": "not reported",
-        "dose": "not reported",
-        "frequency": "not reported",
+        "execution": "reported in accessible text: Abstract > Methods and measures describes shared multimodal physiotherapy with added sesamoid mobilisation, flexor-hallucis strengthening and gait training in the experimental arm. Exact flexor-strengthening mechanics remain unknown.",
+        "dose": "reported in accessible text: Abstract > Results describes twelve therapy sessions; this is total multimodal treatment-visit count, not a verified isolated hallux exercise dose.",
+        "frequency": "reported in accessible text: Abstract > Methods and measures reports treatment three times weekly for four weeks. This is a multimodal treatment-visit schedule; per-exercise repetitions, loading and standalone hallux-training frequency remain unverified.",
         "supervision": "not reported",
         "progression": "not reported",
         "stoppingRules": "not reported"
       },
       "locations": [
-        "Abstract > Methods, Results and Conclusions"
+        "Abstract > Methods, Results and Conclusions",
+        "Abstract > Methods and measures",
+        "Abstract > Results"
       ]
     },
     {
@@ -409,7 +433,7 @@
         "stage": "Symptomatic nonoperative first-MTP OA with individual limits; hallux-limitus evidence indirect.",
         "rationale": "Draft interpretation of the linked condition-specific findings; evidence and product choice are separated by basis. Other conditions, equipment and independent joint limits remain controlling."
       },
-      "limitations": "Exercise evidence is indirect; improvement in a therapy bundle does not prove alternatives harmful. Original footwear trial also has unresolved erratum. Candidate only; no clinical release.",
+      "limitations": "Exercise evidence is indirect; improvement in a therapy bundle does not prove alternatives harmful. The verified erratum corrects only the twelve-week Table 2 FFI values and retains no between-group difference; it does not amend FHSQ or adverse-event results. Candidate only; no clinical release.",
       "mappingIds": [],
       "status": "candidate"
     }

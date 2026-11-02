@@ -76,6 +76,13 @@
       "query": "\"PMC6829698\"; https://pmc.ncbi.nlm.nih.gov/articles/PMC6829698/",
       "decision": "Directly inspected the full short correction; two author-name spellings corrected, with no clinical change stated.",
       "limitations": "Linked institution PDF failed403; direct PMC notice was accessible. Bounded correction check only."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "EXT_ID:21570893 AND SRC:MED",
+      "decision": "Bounded accessible-protocol audit: preserve explicitly reported category, program/visit/device schedule or context with the reported-in-accessible-text prefix. No unseen primary mechanics copied from secondary sources.",
+      "limitations": "Local 2026-11-01 / UTC 2026-11-02. Access status unchanged; exact missing exercise mechanics, per-exercise load/dose, and clinical applicability remain unresolved."
     }
   ],
   "sources": [
@@ -128,7 +135,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "PubMed abstract inspected; full treatment table not retrieved."
+        "details": "PubMed abstract inspected; full treatment table not retrieved. Bounded protocol audit re-read the primary abstract through Europe PMC core metadata; retained only explicitly reported program/category facts, with no full-method access upgrade."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -145,10 +152,10 @@
       "harms": "not reported in the accessible abstract.",
       "limitations": "Single case with multiple treatments and no comparator; exact home program and harms unavailable. Improvement cannot be attributed to strengthening alone. Research candidate only; no clinical release.",
       "protocol": {
-        "execution": "not reported",
-        "dose": "not reported",
+        "execution": "reported in accessible text: Abstract describes peroneal strengthening, manual therapy and a structured home exercise program; lateral calcaneal glide was added. Exact strengthening technique, resistance and range are not described.",
+        "dose": "reported in accessible text: Abstract observes improvement over eight visits. This is an observed visit count, not a reported weeks-long schedule, visits-per-week rate or per-exercise dose.",
         "frequency": "not reported",
-        "supervision": "not reported",
+        "supervision": "reported in accessible text: Abstract identifies a structured home exercise program alongside the treatment visits; the amount and arrangement of direct exercise supervision remain unreported.",
         "progression": "not reported",
         "stoppingRules": "not reported"
       },

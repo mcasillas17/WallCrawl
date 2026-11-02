@@ -76,6 +76,13 @@
       "query": "DOI:10.1177/0363546513490645",
       "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
       "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search, exact primary indexed passage",
+      "query": "site:bjsm.bmj.com/content/59/2/78 \"Rehabilitation protocols should\" \"pain-free\"",
+      "decision": "Bounded accessible-protocol audit: preserve explicitly reported category, program/visit/device schedule or context with the reported-in-accessible-text prefix. No unseen primary mechanics copied from secondary sources.",
+      "limitations": "Local 2026-11-01 / UTC 2026-11-02. Access status unchanged; exact missing exercise mechanics, per-exercise load/dose, and clinical applicability remain unresolved."
     }
   ],
   "sources": [
@@ -89,7 +96,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "PubMed abstract and selected indexed publisher discussion sections inspected. Direct publisher HTML/PDF requests returned 403 and complete recommendation tables were not retrieved; conservatively classified abstract-only. https://doi.org/10.1136/bjsports-2024-108616"
+        "details": "PubMed abstract and selected indexed publisher discussion sections inspected. Direct publisher HTML/PDF requests returned 403 and complete recommendation tables were not retrieved; conservatively classified abstract-only. https://doi.org/10.1136/bjsports-2024-108616 Bounded protocol audit re-read indexed primary Return to sports discussion; direct publisher opening still returned 403. No full-table or full-method access upgrade."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -106,11 +113,11 @@
       "harms": "No exercise-specific harms comparison.",
       "limitations": "Expert consensus rather than trial evidence. Full recommendation tables not retrieved; no universal rehabilitation dose or permission to load an unassessed fracture follows. Research candidate only; no clinical release.",
       "protocol": {
-        "execution": "not reported",
+        "execution": "reported in accessible text: Indexed primary Discussion > Return to sports recommends structured physical therapy rather than one specified exercise; exact exercise mechanics/dose are not established.",
         "dose": "not reported",
         "frequency": "not reported",
-        "supervision": "not reported",
-        "progression": "not reported",
+        "supervision": "reported in accessible text: Indexed primary Discussion > Return to sports places rehabilitation in structured physical therapy and multidisciplinary management. No fixed supervised-session schedule is reported.",
+        "progression": "reported in accessible text: Indexed primary Discussion > Return to sports describes stepwise return guided by injury site/severity, sport demands and pain-free daily/sport activity, bone-loading tests and palpation. It does not provide a universal loading increment or calendar.",
         "stoppingRules": "not reported"
       },
       "locations": [

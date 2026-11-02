@@ -76,6 +76,13 @@
       "query": "DOI:10.1177/0363546506298279",
       "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
       "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "EXT_ID:17307888 AND SRC:MED",
+      "decision": "Bounded accessible-protocol audit: preserve explicitly reported category, program/visit/device schedule or context with the reported-in-accessible-text prefix. No unseen primary mechanics copied from secondary sources.",
+      "limitations": "Local 2026-11-01 / UTC 2026-11-02. Access status unchanged; exact missing exercise mechanics, per-exercise load/dose, and clinical applicability remain unresolved."
     }
   ],
   "sources": [
@@ -167,7 +174,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "PubMed abstract inspected. Publisher full methods not successfully retrieved in this pass."
+        "details": "PubMed abstract inspected. Publisher full methods not successfully retrieved in this pass. Bounded protocol audit re-read the primary abstract through Europe PMC core metadata; retained only explicitly reported program/category facts, with no full-method access upgrade."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -184,15 +191,17 @@
       "harms": "not reported in accessible abstract.",
       "limitations": "Small monitored sample; full loading/harms methods not retrieved. Do not export a numeric pain threshold. Research candidate only; no clinical release.",
       "protocol": {
-        "execution": "not reported",
-        "dose": "not reported",
+        "execution": "reported in accessible text: Abstract > Methods describes identical rehabilitation in both arms, with continued Achilles-loading running/jumping under pain monitoring versus active rest. Specific strengthening mechanics are not described.",
+        "dose": "reported in accessible text: Abstract > Methods assigns cessation of running/jumping to the comparison arm for the first six weeks; this is the activity-comparison period, not a per-exercise dose or the entire rehabilitation duration. Twelve months is outcome follow-up.",
         "frequency": "not reported",
         "supervision": "not reported",
-        "progression": "not reported",
+        "progression": "reported in accessible text: Abstract > Conclusions describes gradually increasing Achilles/calf loading, but does not report increments, stage criteria or a numerical pain threshold.",
         "stoppingRules": "not reported"
       },
       "locations": [
-        "Abstract > Methods, Results and Conclusions"
+        "Abstract > Methods, Results and Conclusions",
+        "Abstract > Methods",
+        "Abstract > Conclusions"
       ]
     }
   ],

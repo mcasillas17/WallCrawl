@@ -48,6 +48,20 @@
       "query": "DOI:10.1177/1071100715579906",
       "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
       "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "EXT_ID:19022863 AND SRC:MED",
+      "decision": "Bounded accessible-protocol audit: preserve explicitly reported category, program/visit/device schedule or context with the reported-in-accessible-text prefix. No unseen primary mechanics copied from secondary sources.",
+      "limitations": "Local 2026-11-01 / UTC 2026-11-02. Access status unchanged; exact missing exercise mechanics, per-exercise load/dose, and clinical applicability remain unresolved."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "EXT_ID:25857939 AND SRC:MED",
+      "decision": "Bounded accessible-protocol audit: preserve explicitly reported category, program/visit/device schedule or context with the reported-in-accessible-text prefix. No unseen primary mechanics copied from secondary sources.",
+      "limitations": "Local 2026-11-01 / UTC 2026-11-02. Access status unchanged; exact missing exercise mechanics, per-exercise load/dose, and clinical applicability remain unresolved."
     }
   ],
   "sources": [
@@ -100,7 +114,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "PubMed abstract accessed; OUP PDF redirected/500; full primary protocol not inspected."
+        "details": "PubMed abstract accessed; OUP PDF redirected/500; full primary protocol not inspected. Bounded protocol audit re-read the primary abstract through Europe PMC core metadata; retained only explicitly reported program/category facts, with no full-method access upgrade."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -117,15 +131,16 @@
       "harms": "not reported in the accessible abstract.",
       "limitations": "Small early-stage trial with orthoses/stretching in every arm and no untreated comparator. Full primary exercise protocol and harms not retrieved; review-extracted details must remain attributed to the review. Research candidate only; no clinical release.",
       "protocol": {
-        "execution": "not reported",
-        "dose": "not reported",
+        "execution": "reported in accessible text: Abstract > Methods describes orthoses/stretching alone or with concentric or eccentric progressive resistance. Exact exercise mechanics/apparatus remain unavailable in the primary abstract.",
+        "dose": "reported in accessible text: Abstract > Methods reports a 12-week program. It does not report per-exercise sets, repetitions or loading; twice-daily frequency comes from Ross Table 3 and remains an indirect extraction in PTT-S.",
         "frequency": "not reported",
         "supervision": "not reported",
         "progression": "not reported",
         "stoppingRules": "not reported"
       },
       "locations": [
-        "Abstract > Methods, Results and Conclusion"
+        "Abstract > Methods, Results and Conclusion",
+        "Abstract > Methods"
       ]
     },
     {
@@ -138,7 +153,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "PubMed abstract inspected and DOI metadata rechecked; no full primary protocol inspected."
+        "details": "PubMed abstract inspected and DOI metadata rechecked; no full primary protocol inspected. Bounded protocol audit re-read the primary abstract through Europe PMC core metadata; retained only explicitly reported program/category facts, with no full-method access upgrade."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -155,15 +170,16 @@
       "harms": "not reported in the accessible abstract.",
       "limitations": "Moderate home strengthening added little to orthosis/stretching. Full primary methods/harms unavailable; trial cannot establish a universally ineffective or harmful exercise. Research candidate only; no clinical release.",
       "protocol": {
-        "execution": "not reported",
-        "dose": "not reported",
+        "execution": "reported in accessible text: Abstract > Methods compares prefabricated orthosis plus stretching with orthosis plus stretching/strengthening. Exact exercise mechanics are not described.",
+        "dose": "reported in accessible text: Abstract > Results reports a 12-week trial period, with Methods assessing outcomes six and twelve weeks after exercise began. These are program/assessment intervals, not per-exercise dose or session frequency.",
         "frequency": "not reported",
-        "supervision": "not reported",
+        "supervision": "reported in accessible text: Abstract > Background and Conclusions identify a moderate-intensity home-based program; direct-supervision arrangements and visit counts are not reported.",
         "progression": "not reported",
         "stoppingRules": "not reported"
       },
       "locations": [
-        "Abstract > Results and Conclusions"
+        "Abstract > Results and Conclusions",
+        "Abstract > Background, Methods, Results and Conclusions"
       ]
     }
   ],

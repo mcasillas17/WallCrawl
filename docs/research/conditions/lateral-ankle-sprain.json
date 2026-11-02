@@ -69,6 +69,13 @@
       "query": "DOI:10.1371/journal.pone.0262023",
       "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
       "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "EXT_ID:20457737 AND SRC:MED",
+      "decision": "Bounded accessible-protocol audit: preserve explicitly reported category, program/visit/device schedule or context with the reported-in-accessible-text prefix. No unseen primary mechanics copied from secondary sources.",
+      "limitations": "Local 2026-11-01 / UTC 2026-11-02. Access status unchanged; exact missing exercise mechanics, per-exercise load/dose, and clinical applicability remain unresolved."
     }
   ],
   "sources": [
@@ -121,7 +128,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "PubMed abstract accessed; direct BMJ body403."
+        "details": "PubMed abstract accessed; direct BMJ body403. Bounded protocol audit re-read the primary abstract through Europe PMC core metadata; retained only explicitly reported program/category facts, with no full-method access upgrade."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -138,15 +145,16 @@
       "harms": "Reinjury4%,two/arm; abstract insufficient for full harms assessment.",
       "limitations": "Cannot transfer to gradeIII, fracture or undifferentiated injury; full exercise dosing inaccessible. Research candidate only; no clinical release.",
       "protocol": {
-        "execution": "not reported",
-        "dose": "not reported",
+        "execution": "reported in accessible text: Abstract > Interventions compares early therapeutic exercise with protection, rest, ice, compression and elevation after assessed grade I/II sprain; exact exercise directions, position and range are not described.",
+        "dose": "reported in accessible text: Abstract > Conclusion places the accelerated exercise protocol in the first week after sprain. Per-exercise repetitions, session duration and session frequency are not given; 16 weeks is outcome/reinjury follow-up.",
         "frequency": "not reported",
         "supervision": "not reported",
         "progression": "not reported",
         "stoppingRules": "not reported"
       },
       "locations": [
-        "Abstract > Methods and Results"
+        "Abstract > Methods and Results",
+        "Abstract > Interventions and Conclusion"
       ]
     },
     {
