@@ -19,6 +19,7 @@ import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.UserRestPreference
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
+import wallcrawl.elopenmike.com.core.model.ConditionPlanningResult
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.ProgramPlanningInput
@@ -156,7 +157,9 @@ internal data class PlannerFixtureInputSnapshot(
     val programConstraints: SessionProgramConstraints,
     val planningIntent: WorkoutPlanningIntent,
     val programHeader: ProgramHeader,
-    val programInput: ProgramPlanningInput?
+    val programInput: ProgramPlanningInput?,
+    /** Condition planning results own immutable collections. */
+    val conditionPlanning: ConditionPlanningResult
 )
 
 /**
@@ -325,7 +328,8 @@ private fun WorkoutGenerationContext.snapshot(): PlannerFixtureInputSnapshot =
         ),
         planningIntent = planningIntent,
         programHeader = programHeader,
-        programInput = programInput?.deepCopy()
+        programInput = programInput?.deepCopy(),
+        conditionPlanning = conditionPlanning
     )
 
 private fun ProgramPlanningInput.deepCopy(): ProgramPlanningInput = copy(

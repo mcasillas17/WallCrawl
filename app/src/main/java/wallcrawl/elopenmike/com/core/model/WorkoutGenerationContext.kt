@@ -75,7 +75,8 @@ data class WorkoutGenerationContext(
     val regenerationIndex: Int? = null,
     val planningIntent: WorkoutPlanningIntent = WorkoutPlanningIntent.ORDINARY,
     val programHeader: ProgramHeader = ProgramHeader.absent(userProfile.id),
-    val programInput: ProgramPlanningInput? = null
+    val programInput: ProgramPlanningInput? = null,
+    val conditionPlanning: ConditionPlanningResult = ConditionPlanningResult.NotApplicable
 )
 
 enum class WorkoutPlanningIntent { ORDINARY, PROGRAM }

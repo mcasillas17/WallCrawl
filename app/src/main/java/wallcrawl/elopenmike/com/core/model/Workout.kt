@@ -31,8 +31,28 @@ data class GeneratedWorkout(
      */
     val unavailableFocusMuscles: List<String> = emptyList(),
     /** Recorded separately from freshness: advancing the planner must not stale this plan. */
-    val generationIndex: Int? = null
+    val generationIndex: Int? = null,
+    val conditionDecisions: List<ConditionPrescriptionDecision> = emptyList()
 )
+
+/** The exact condition rule provenance for one generated exercise instance. */
+class ConditionPrescriptionDecision(
+    val exerciseIdentity: ConditionExerciseIdentity,
+    val purpose: PrescriptionPurpose,
+    val executionIdentity: String,
+    sourceRuleReferences: Set<ConditionRuleReference>
+) {
+    val sourceRuleReferences = conditionSet(sourceRuleReferences)
+
+    init {
+        requireConditionToken(executionIdentity)
+        require(sourceRuleReferences.size in 1..512)
+    }
+
+    private fun valueFields(): List<Any?> = listOf(exerciseIdentity, purpose, executionIdentity, sourceRuleReferences)
+    override fun equals(other: Any?): Boolean = other is ConditionPrescriptionDecision && valueFields() == other.valueFields()
+    override fun hashCode(): Int = valueFields().hashCode()
+}
 
 sealed interface WorkoutRankingReason {
     data class TrainingFrequencyRecencyPreference(

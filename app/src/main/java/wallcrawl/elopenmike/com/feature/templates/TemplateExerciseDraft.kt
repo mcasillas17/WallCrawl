@@ -14,6 +14,7 @@ import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
 import wallcrawl.elopenmike.com.core.model.convertWeightForEditing
 import wallcrawl.elopenmike.com.core.model.roundForEditing
 import wallcrawl.elopenmike.com.core.model.PlannedExercise
+import wallcrawl.elopenmike.com.core.model.PrescriptionPurpose
 import wallcrawl.elopenmike.com.core.model.RepRange
 import wallcrawl.elopenmike.com.core.model.RestClass
 import wallcrawl.elopenmike.com.core.model.RestTargetSource
@@ -95,7 +96,8 @@ data class TemplateExerciseDraft(
      * choice only while it differs from this, so changing it in one sheet and typing it back
      * in a later one leaves the original classification alone.
      */
-    val originalRestSeconds: String = ""
+    val originalRestSeconds: String = "",
+    val purpose: PrescriptionPurpose = PrescriptionPurpose.ORDINARY
 ) {
 
     /**
@@ -172,7 +174,8 @@ data class TemplateExerciseDraft(
                 restSeconds = rest,
                 effortTarget = effort,
                 restClass = originalRestClass,
-                restTargetSource = originalRestTargetSource
+                restTargetSource = originalRestTargetSource,
+                purpose = purpose
             )
             PlannedExercise(
                 exerciseId = exerciseId,
@@ -288,7 +291,8 @@ data class TemplateExerciseDraft(
         originalRestTargetSource?.name.orEmpty(),
         loadBeforeConversion.encodeNullable(),
         assistanceBeforeConversion.encodeNullable(),
-        originalRestSeconds
+        originalRestSeconds,
+        purpose.name
     ).joinToString(FIELD_SEPARATOR.toString())
 
     /** A whole-number field, held to [rule]: required or optional, and its bounds. */
@@ -392,7 +396,8 @@ data class TemplateExerciseDraft(
          * so no value can split its own record.
          */
         private const val FIELD_SEPARATOR = '\u001F'
-        private const val ENCODED_FIELD_COUNT = 20
+        private const val LEGACY_ENCODED_FIELD_COUNT = 20
+        private const val ENCODED_FIELD_COUNT = 21
         /** `RepRange` requires a positive minimum; the maximum is the prescription's. */
         internal const val MIN_TARGET_REPS = 1
 
@@ -503,14 +508,17 @@ data class TemplateExerciseDraft(
                 notes = exercise.notes,
                 restWasEdited = false,
                 originalRestClass = prescription.restClass,
-                originalRestTargetSource = prescription.restTargetSource
+                originalRestTargetSource = prescription.restTargetSource,
+                purpose = prescription.purpose
             )
         }
 
         /** Reads one [encode]d row, or null if the record is not one this build wrote. */
         fun decode(text: String): TemplateExerciseDraft? {
             val parts = text.split(FIELD_SEPARATOR)
-            if (parts.size != ENCODED_FIELD_COUNT) return null
+            if (parts.size != LEGACY_ENCODED_FIELD_COUNT && parts.size != ENCODED_FIELD_COUNT) return null
+            val purpose = if (parts.size == LEGACY_ENCODED_FIELD_COUNT) PrescriptionPurpose.ORDINARY
+                else enumOrNull<PrescriptionPurpose>(parts[20]) ?: return null
             val exerciseType = enumOrNull<ExerciseType>(parts[2]) ?: return null
             val restClass = parts[15].takeIf(String::isNotEmpty)?.let {
                 enumOrNull<RestClass>(it) ?: return null
@@ -542,7 +550,8 @@ data class TemplateExerciseDraft(
                 originalRestTargetSource = restTargetSource,
                 loadBeforeConversion = parts[17].decodeNullable(),
                 assistanceBeforeConversion = parts[18].decodeNullable(),
-                originalRestSeconds = parts[19]
+                originalRestSeconds = parts[19],
+                purpose = purpose
             )
         }
 
