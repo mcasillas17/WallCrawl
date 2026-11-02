@@ -12,5 +12,6 @@ data class ConditionUiState(
     val pendingFailed: Boolean = false,
     val reassessmentEventId: String? = null,
     val reassessmentAnswers: Map<String, String?> = emptyMap(),
+    val reassessmentAnswerLimitEventId: String? = null,
     val reassessmentRefusal: ConditionReassessmentRefused? = null
 )

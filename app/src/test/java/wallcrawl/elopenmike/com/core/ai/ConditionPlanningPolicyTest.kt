@@ -20,10 +20,10 @@ class ConditionPlanningPolicyTest {
     private fun rule(ex: Exercise = exercise, bounds: ConditionPrescriptionBounds? = null, prescription: ExercisePrescription = dose, timing: ConditionSchedule = schedule, execution: String = "fictional-execution", needs: ConditionSupportiveRequirements = requirements) =
         ConditionRule("rule", ConditionExerciseIdentity.from(ex, "b".repeat(64)), if (bounds == null) ConditionRuleEffect.PRESCRIBE_SUPPORTIVE else ConditionRuleEffect.PERMIT_ORDINARY,
             execution, text, setOf("source"), bounds, false, if (bounds == null) prescription else null, if (bounds == null) timing else null, if (bounds == null) needs else null)
-    private fun record(id: String = "fictional-condition", rules: List<ConditionRule> = listOf(rule()), version: Int = 1, inputs: List<ConditionInputDefinition> = emptyList(), answers: Map<String, String> = emptyMap()) = ConditionSupportRecord(
+    private fun record(id: String = "fictional-condition", rules: List<ConditionRule> = listOf(rule()), version: Int = 1, inputs: List<ConditionInputDefinition> = emptyList(), answers: Map<String, String> = emptyMap(), responseInputs: List<ConditionInputDefinition>? = null) = ConditionSupportRecord(
         id, "fictional-v1", 1, version, ConditionPopulation.ADULT_NONOPERATIVE, text, text, inputs,
         listOf(ConditionApplicabilityCase("case", answers, rules)), listOf(ConditionSource("source", "https://example.invalid/fictional", "a".repeat(64))),
-        ConditionResponsePolicy(1, listOf(ConditionInputDefinition("response", text, true, mapOf("stop" to text, "okay" to text))), mapOf("response" to "stop"), mapOf("response" to "stop"), text),
+        ConditionResponsePolicy(1, responseInputs ?: listOf(ConditionInputDefinition("response", text, true, mapOf("stop" to text, "okay" to text))), mapOf("response" to "stop"), mapOf("response" to "stop"), text),
         "c".repeat(64), ConditionReleaseReview(ConditionReviewState.RELEASED, "FICTIONAL", "FICTIONAL", 1, "FICTIONAL", "c".repeat(64), setOf("source")))
     private fun resolve(records: List<ConditionSupportRecord> = listOf(record()), profile: UserProfile = UserProfile(activeConditions = records.map { SelectedCondition(it.conditionId, 1, emptyMap()) }), exercises: List<Exercise> = listOf(exercise), history: ConditionHistory = history()) =
         policy.resolve(profile, exercises, exercises.associateBy { it.id }, ConditionSupportCatalog("fictional", records.associateBy { it.conditionId }), history)
@@ -39,6 +39,19 @@ class ConditionPlanningPolicyTest {
         assertThat(policy.supports(conflicting)).isFalse()
         assertThat((resolve(listOf(conflicting)) as ConditionPlanningResult.Blocked).reasons.single().reason)
             .isEqualTo("conflicting-input-definitions")
+    }
+
+    @Test fun capabilityRejectsCombinedAnswerOverflowAndAllowsSharedKeysAtTheLimit() {
+        val response = ConditionInputDefinition("response", text, true, mapOf("stop" to text, "okay" to text))
+        val responses = listOf(response) + (1..31).map {
+            ConditionInputDefinition("response-$it", text, true, mapOf("okay" to text))
+        }
+        val overflow = record(inputs = listOf(ConditionInputDefinition("stage", text, true, mapOf("known" to text))),
+            answers = mapOf("stage" to "known"), responseInputs = responses)
+        assertThat(policy.supports(overflow)).isFalse()
+        assertThat((resolve(listOf(overflow)) as ConditionPlanningResult.Blocked).reasons.single().reason)
+            .isEqualTo("unsupported-policy-or-context")
+        assertThat(policy.supports(record(inputs = listOf(response), answers = mapOf("response" to "okay"), responseInputs = responses))).isTrue()
     }
 
     @Test fun noSelectionsAreNotApplicableEvenWithoutHistory() { assertThat(resolve(profile = UserProfile(), history = history(false))).isEqualTo(ConditionPlanningResult.NotApplicable) }

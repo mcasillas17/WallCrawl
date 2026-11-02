@@ -1118,6 +1118,7 @@
     <string name="condition_unsupported">Retained selection: %1$s (context %2$d). Support is unavailable.</string>
     <string name="condition_remove">Remove %1$s</string>
     <string name="condition_add">Add %1$s</string>
+    <string name="condition_answer_limit">Another answer cannot be added because the saved answers have reached the limit. All your answers are kept.</string>
     <string name="condition_unknown">Not known</string>
     <string name="condition_unknown_answer">Unrecognized saved answer: %1$s = %2$s</string>
     <string name="condition_recorded_answer">%1$s: %2$s</string>

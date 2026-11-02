@@ -101,10 +101,15 @@ class ProfileViewModel(
 
     fun updateReassessmentAnswers(eventId: String, answers: Map<String, String?>) {
         if (conditionState.value.saving) return
+        if (answers.size > SelectedCondition.MAX_ANSWERS) {
+            conditionState.value = conditionState.value.copy(reassessmentAnswerLimitEventId = eventId)
+            return
+        }
+        val encoded = encodeConditionDraft(listOf(SelectedCondition("answers", 1, answers)))
         savedStateHandle[REASSESS_EVENT] = eventId
-        savedStateHandle[REASSESS_ANSWERS] = encodeConditionDraft(listOf(SelectedCondition("answers", 1, answers)))
+        savedStateHandle[REASSESS_ANSWERS] = encoded
         conditionState.value = conditionState.value.copy(reassessmentEventId = eventId,
-            reassessmentAnswers = answers.toMap(), reassessmentRefusal = null, saveFailed = false)
+            reassessmentAnswers = answers.toMap(), reassessmentRefusal = null, reassessmentAnswerLimitEventId = null, saveFailed = false)
     }
 
     fun reassess(event: PendingConditionReassessment) {
@@ -117,7 +122,7 @@ class ProfileViewModel(
                 savedStateHandle.remove<String>(REASSESS_EVENT)
                 savedStateHandle.remove<List<String>>(REASSESS_ANSWERS)
                 conditionState.value = conditionState.value.copy(saving = false, reassessmentEventId = null,
-                    reassessmentAnswers = emptyMap(), reassessmentRefusal = null)
+                    reassessmentAnswers = emptyMap(), reassessmentRefusal = null, reassessmentAnswerLimitEventId = null)
             } catch (error: CancellationException) { throw error
             } catch (error: ConditionReassessmentRefused) {
                 conditionState.value = conditionState.value.copy(saving = false, reassessmentRefusal = error)

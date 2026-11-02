@@ -59,6 +59,72 @@ class ConditionControlsTest {
             mapOf("stop" to ConditionText("Stop response", "Respuesta de detener"), "continue" to ConditionText("Continue response", "Respuesta de continuar")))), mapOf("response" to "stop"), mapOf("response" to "stop"), text),
         "c".repeat(64), ConditionReleaseReview(ConditionReviewState.RELEASED, "FICTIONAL", "FICTIONAL", 1, "FICTIONAL", "c".repeat(64), setOf("source")))
 
+    @Test fun fullRetainedAnswersDisableOnlyNewInputsInEnglish() = checkFullRetainedAnswers("en")
+    @Test fun fullRetainedAnswersDisableOnlyNewInputsInSpanish() = checkFullRetainedAnswers("es")
+
+    private fun checkFullRetainedAnswers(language: String) {
+        val base = InstrumentationRegistry.getInstrumentation().targetContext
+        val config = Configuration(base.resources.configuration).apply { setLocale(Locale.forLanguageTag(language)) }
+        val context = base.createConfigurationContext(config)
+        val original = (1..32).associate { "future-$it" to if (it % 2 == 0) null else "retained" }
+        var selected by mutableStateOf(listOf(SelectedCondition("fictional", 1, original)))
+        compose.setContent {
+            CompositionLocalProvider(LocalContext provides context, LocalConfiguration provides config, LocalResources provides context.resources) {
+                WallCrawlTheme { Surface { Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+                    ConditionSelectionControls(listOf(record), selected, { selected = it })
+                } } }
+            }
+        }
+        val left = if (language == "es") "Izquierdo" else "Left"
+        val right = if (language == "es") "Derecho" else "Right"
+        val refusal = if (language == "es") "No se puede añadir otra respuesta porque los datos guardados han alcanzado el límite. Se conservan todas tus respuestas."
+            else "Another answer cannot be added because the saved answers have reached the limit. All your answers are kept."
+        compose.onNodeWithText(left).performScrollTo().assertIsNotEnabled().performClick()
+        compose.onNodeWithText(refusal).performScrollTo().assertIsDisplayed()
+        assertThat(selected.single().answers).isEqualTo(original)
+        save("answer-limit-$language.png")
+        // Replacing an existing explicit-null key is permitted at the same bound.
+        compose.runOnIdle { selected = listOf(SelectedCondition("fictional", 1, original - "future-32" + ("side" to null))) }
+        compose.onNodeWithText(right).performScrollTo().assertIsEnabled().performClick()
+        assertThat(selected.single().answers).isEqualTo(original - "future-32" + ("side" to "right"))
+        assertThat(original).hasSize(32)
+    }
+
+    @Test fun fullReassessmentAnswersDisableNewKeysAndKeepExactEventForExistingEdits() {
+        val base = InstrumentationRegistry.getInstrumentation().targetContext
+        val db = androidx.room.Room.inMemoryDatabaseBuilder(base, wallcrawl.elopenmike.com.core.database.WallCrawlDatabase::class.java).build()
+        database = db
+        val vm = wallcrawl.elopenmike.com.feature.profile.ProfileViewModel(
+            wallcrawl.elopenmike.com.core.database.repository.OfflineUserProfileRepository(db.userProfileDao()))
+        viewModels.put("answer-limit", vm)
+        val event = PendingConditionReassessment(UserProfile.DEFAULT_PROFILE_ID, "fictional", identity.exerciseId, "exact-event", "a".repeat(64), 1, 100, null)
+        val answers = (1..31).associate { "future-$it" to if (it % 2 == 0) null else "retained" } + ("response" to "stop")
+        compose.runOnUiThread { vm.updateReassessmentAnswers(event.eventId, answers) }
+        var submitted: PendingConditionReassessment? = null
+        compose.setContent { WallCrawlTheme { Surface { Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+            val state by vm.conditions.collectAsState()
+            PendingConditionControls(state.copy(records = listOf(record), pending = listOf(event)), emptyList(),
+                vm::updateReassessmentAnswers, { submitted = it })
+        } } } }
+        compose.onNodeWithText("Left").performScrollTo().assertIsNotEnabled().performClick()
+        assertThat(vm.conditions.value.reassessmentAnswers).isEqualTo(answers)
+        compose.onNodeWithText("Continue response").performScrollTo().assertIsEnabled().performClick()
+        assertThat(vm.conditions.value.reassessmentAnswers).isEqualTo(answers + ("response" to "continue"))
+        // With all current prompts already represented, only the direct boundary refusal supplies this message.
+        val complete = answers - "future-31" + ("side" to "left")
+        compose.runOnUiThread {
+            vm.updateReassessmentAnswers(event.eventId, complete)
+            vm.updateReassessmentAnswers(event.eventId, complete + ("extra" to "answer"))
+        }
+        compose.onNodeWithText(base.getString(R.string.condition_answer_limit)).performScrollTo().assertIsDisplayed()
+        assertThat(vm.conditions.value.reassessmentAnswers).isEqualTo(complete)
+        compose.onNodeWithText("Continue response").performScrollTo().performClick()
+        compose.onNodeWithText(base.getString(R.string.condition_answer_limit)).assertDoesNotExist()
+        compose.onNodeWithText(base.getString(R.string.condition_reassess)).performScrollTo().performClick()
+        assertThat(submitted).isSameInstanceAs(event)
+        assertThat(vm.conditions.value.reassessmentEventId).isEqualTo("exact-event")
+    }
+
     @Test fun englishLightLargeText() = checkControls("en", ThemePreference.LIGHT)
     @Test fun englishDarkLargeText() = checkControls("en", ThemePreference.DARK)
     @Test fun spanishLightLargeText() = checkControls("es", ThemePreference.LIGHT)

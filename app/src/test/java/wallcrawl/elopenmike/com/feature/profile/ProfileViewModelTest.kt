@@ -79,6 +79,40 @@ class ProfileViewModelTest {
     }
 
     @Test
+    fun reassessmentAnswerOverflowRefusesWithoutChangingSavedEventOrFacts() = runTest {
+        val repository = repositoryWith(profile())
+        val saved = androidx.lifecycle.SavedStateHandle()
+        val answers = (1..32).associate { "unknown-$it" to if (it % 2 == 0) null else "future" }
+        val vm = ProfileViewModel(repository, saved)
+        vm.updateReassessmentAnswers("exact-event", answers)
+        vm.updateReassessmentAnswers("replacement-event", answers + ("extra" to "answer"))
+        assertThat(vm.conditions.value.reassessmentAnswerLimitEventId).isEqualTo("replacement-event")
+        assertThat(vm.conditions.value.reassessmentEventId).isEqualTo("exact-event")
+        assertThat(vm.conditions.value.reassessmentAnswers).isEqualTo(answers)
+        val restored = ProfileViewModel(repository, saved)
+        assertThat(restored.conditions.value.reassessmentEventId).isEqualTo("exact-event")
+        assertThat(restored.conditions.value.reassessmentAnswers).isEqualTo(answers)
+        vm.updateReassessmentAnswers("exact-event", answers + ("unknown-1" to null))
+        assertThat(vm.conditions.value.reassessmentAnswers).isEqualTo(answers + ("unknown-1" to null))
+        assertThat(vm.conditions.value.reassessmentAnswerLimitEventId).isNull()
+    }
+
+    @Test
+    fun fullRetainedAnswerMapsSurviveEditorAndExactEventDraftRecreation() = runTest {
+        val repository = repositoryWith(profile())
+        val saved = androidx.lifecycle.SavedStateHandle()
+        val answers = (1..32).associate { "unknown-$it" to if (it % 2 == 0) null else "future" }
+        val selection = wallcrawl.elopenmike.com.core.model.SelectedCondition("retained", 8, answers)
+        val vm = ProfileViewModel(repository, saved)
+        vm.updateConditionDraft(listOf(selection))
+        vm.updateReassessmentAnswers("exact-event", answers)
+        val restored = ProfileViewModel(repository, saved)
+        assertThat(restored.conditions.value.draft).containsExactly(selection)
+        assertThat(restored.conditions.value.reassessmentEventId).isEqualTo("exact-event")
+        assertThat(restored.conditions.value.reassessmentAnswers).isEqualTo(answers)
+    }
+
+    @Test
     fun conditionDraftKeepsUnknownAnswersAndExplicitEmptyAcrossRecreation() = runTest {
         val repository = repositoryWith(profile())
         val saved = androidx.lifecycle.SavedStateHandle()

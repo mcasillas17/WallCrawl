@@ -29,7 +29,7 @@ class OnboardingViewModelTest {
     @Test
     fun untouchedRetainedConditionsAndExplicitEmptyUseOneAtomicSave() = runTest {
         val repository = RecordingUserProfileRepository()
-        val unknown = wallcrawl.elopenmike.com.core.model.SelectedCondition("unknown", 7, mapOf("future" to "value", "side" to null))
+        val unknown = wallcrawl.elopenmike.com.core.model.SelectedCondition("unknown", 7, (1..32).associate { "future-$it" to if (it % 2 == 0) null else "value" })
         repository.saveUserProfile(UserProfile(activeConditions = listOf(unknown)))
         val untouched = OnboardingViewModel(repository)
         untouched.updateName("Crawler")

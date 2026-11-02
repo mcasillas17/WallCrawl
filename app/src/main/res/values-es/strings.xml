@@ -1110,6 +1110,7 @@
     <string name="condition_unsupported">Selección conservada: %1$s (contexto %2$d). El apoyo no está disponible.</string>
     <string name="condition_remove">Quitar %1$s</string>
     <string name="condition_add">Agregar %1$s</string>
+    <string name="condition_answer_limit">No se puede añadir otra respuesta porque los datos guardados han alcanzado el límite. Se conservan todas tus respuestas.</string>
     <string name="condition_unknown">No se sabe</string>
     <string name="condition_unknown_answer">Respuesta guardada no reconocida: %1$s = %2$s</string>
     <string name="condition_recorded_answer">%1$s: %2$s</string>

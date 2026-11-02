@@ -4,9 +4,11 @@ package wallcrawl.elopenmike.com.core.model
 class SelectedCondition(val conditionId: String, val contextSchemaVersion: Int, answers: Map<String, String?>) {
     val answers = conditionMap(answers)
     init {
-        requireConditionToken(conditionId); require(contextSchemaVersion > 0 && answers.size <= 32)
+        requireConditionToken(conditionId); require(contextSchemaVersion > 0 && answers.size <= MAX_ANSWERS)
         answers.forEach { (id, answer) -> requireConditionToken(id); answer?.let(::requireConditionToken) }
     }
+
+    companion object { const val MAX_ANSWERS = 32 }
 
     private fun valueFields(): List<Any?> = listOf(conditionId, contextSchemaVersion, answers)
     override fun equals(other: Any?): Boolean = other is SelectedCondition && valueFields() == other.valueFields()

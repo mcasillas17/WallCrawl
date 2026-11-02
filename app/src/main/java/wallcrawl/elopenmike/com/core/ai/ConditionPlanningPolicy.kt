@@ -19,6 +19,7 @@ class ConditionPlanningPolicy {
     private fun capabilityViolation(record: ConditionSupportRecord): String? = when {
         record.policyVersion != 1 || record.responsePolicy.version != 1 -> "unsupported-policy-or-context"
         (record.inputs + record.responsePolicy.inputs).groupBy { it.id }.values.any { it.distinct().size != 1 } -> "conflicting-input-definitions"
+        (record.inputs + record.responsePolicy.inputs).map { it.id }.distinct().size > SelectedCondition.MAX_ANSWERS -> "unsupported-policy-or-context"
         else -> null
     }
 

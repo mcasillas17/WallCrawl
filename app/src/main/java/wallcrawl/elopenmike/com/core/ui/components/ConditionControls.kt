@@ -52,15 +52,19 @@ fun ConditionSelectionControls(
 @Composable
 fun ConditionInputs(inputs: List<ConditionInputDefinition>, answers: Map<String, String?>, enabled: Boolean,
     onChange: (Map<String, String?>) -> Unit) {
+    if (answers.size >= SelectedCondition.MAX_ANSWERS && inputs.any { it.id !in answers }) {
+        ConditionLabel(stringResource(R.string.condition_answer_limit), color = MaterialTheme.colorScheme.error)
+    }
     inputs.forEach { input ->
+        val inputEnabled = enabled && (input.id in answers || answers.size < SelectedCondition.MAX_ANSWERS)
         ConditionLabel(if (input.required) stringResource(R.string.condition_required_prompt, input.prompt.localized()) else input.prompt.localized(), style = MaterialTheme.typography.titleSmall)
         val value = answers[input.id]
         if (value != null && value !in input.choices) ConditionLabel(stringResource(R.string.condition_unknown_answer, input.id, value))
         (listOf<String?>(null) + input.choices.keys).forEach { token ->
             val label = token?.let { input.choices.getValue(it).localized() } ?: stringResource(R.string.condition_unknown)
-            Row(Modifier.fillMaxWidth().selectable(selected = value == token, enabled = enabled, role = Role.RadioButton) { onChange(answers + (input.id to token)) }
+            Row(Modifier.fillMaxWidth().selectable(selected = value == token, enabled = inputEnabled, role = Role.RadioButton) { onChange(answers + (input.id to token)) }
                 .padding(vertical = 4.dp)) {
-                RadioButton(selected = value == token, onClick = null, enabled = enabled)
+                RadioButton(selected = value == token, onClick = null, enabled = inputEnabled)
                 ConditionLabel(label, Modifier.padding(start = 8.dp, top = 12.dp))
             }
         }
@@ -118,6 +122,9 @@ fun PendingConditionControls(state: ConditionUiState, selections: List<SelectedC
                 Button(enabled = !state.saving && state.reassessmentEventId == event.eventId, onClick = { onSubmit(event) }) {
                     ConditionLabel(stringResource(R.string.condition_reassess))
                 }
+            }
+            if (state.reassessmentAnswerLimitEventId == event.eventId) {
+                ConditionLabel(stringResource(R.string.condition_answer_limit), color = MaterialTheme.colorScheme.error)
             }
             state.reassessmentRefusal?.takeIf { it.expectedEventId == event.eventId }?.let { ConditionRefusal(listOf(it.reason)) }
         }
