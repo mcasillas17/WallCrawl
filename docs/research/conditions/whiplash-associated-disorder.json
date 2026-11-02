@@ -134,7 +134,7 @@
       "population": "Ages 18–65, chronic WAD grades I/II, 3 months–5 years; excluded nerve-root compromise",
       "comparator": "20-session comprehensive physiotherapy exercise versus one advice session plus telephone support",
       "coInterventions": "Education/advice and therapist support differ by arm",
-      "outcomes": "Michaleff et al., 2014 PROMISE RCT. DOI 10.1016/S0140-6736(14)60457-860457-8), full article PDF mirror. FT. 172 adults 18–65, WAD I/II, 3 months–5 years; comprehensive 20-session PT exercise versus one advice session/phone support. At 14 weeks pain difference 0.0/10 (95% CI −0.7 to 0.7); no advantage at 6/12 months. No serious adverse events recorded. Nerve-root compromise/grade III excluded, limiting scope; not proof grade III exercise is unsafe (WAD-P1 studied it). Contrary evidence prevents promising that more sessions or complexity necessarily improves outcomes.",
+      "outcomes": "Michaleff et al., 2014 PROMISE RCT. DOI 10.1016/S0140-6736(14)60457-8, full article PDF mirror. FT. 172 adults 18–65, WAD I/II, 3 months–5 years; comprehensive 20-session PT exercise versus one advice session/phone support. At 14 weeks pain difference 0.0/10 (95% CI −0.7 to 0.7); no advantage at 6/12 months. No serious adverse events recorded. Nerve-root compromise/grade III excluded, limiting scope; not proof grade III exercise is unsafe (WAD-P1 studied it). Contrary evidence prevents promising that more sessions or complexity necessarily improves outcomes.",
       "followUp": "14 weeks, 6 and 12 months",
       "uncertainty": "Primary pain difference zero at 14 weeks; intensive package not superior; grade III exclusion is applicability boundary",
       "harms": "No serious adverse events. Adverse effects in five exercise and four advice patients: headache, musculoskeletal symptoms, symptom exacerbation or stiffness; no withdrawal for adverse effects. Open-ended questioning at three-month assessment.",
@@ -279,7 +279,7 @@
     {
       "id": "wad-p2-extraction",
       "kind": "study-result",
-      "statement": "DOI 10.1016/S0140-6736(14)60457-860457-8), full article PDF mirror. FT. 172 adults 18–65, WAD I/II, 3 months–5 years; comprehensive 20-session PT exercise versus one advice session/phone support. At 14 weeks pain difference 0.0/10 (95% CI −0.7 to 0.7); no advantage at 6/12 months. No serious adverse events recorded. Nerve-root compromise/grade III excluded, limiting scope; not proof grade III exercise is unsafe (WAD-P1 studied it). Contrary evidence prevents promising that more sessions or complexity necessarily improves outcomes. Targeted reopen: five exercise and four advice patients reported nonserious adverse effects; no adverse-effect withdrawals.",
+      "statement": "DOI 10.1016/S0140-6736(14)60457-8, full article PDF mirror. FT. 172 adults 18–65, WAD I/II, 3 months–5 years; comprehensive 20-session PT exercise versus one advice session/phone support. At 14 weeks pain difference 0.0/10 (95% CI −0.7 to 0.7); no advantage at 6/12 months. No serious adverse events recorded. Nerve-root compromise/grade III excluded, limiting scope; not proof grade III exercise is unsafe (WAD-P1 studied it). Contrary evidence prevents promising that more sessions or complexity necessarily improves outcomes. Targeted reopen: five exercise and four advice patients reported nonserious adverse effects; no adverse-effect withdrawals.",
       "citations": [
         {
           "sourceId": "wad-p2",

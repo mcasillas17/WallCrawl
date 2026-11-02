@@ -80,7 +80,7 @@
       "access": {
         "status": "full-text",
         "date": "2026-11-01",
-        "details": "Underlying article/guideline and relevant sections inspected in completed spine research; extraction preserved in spine-source-report.md. Publisher PDF reopened during serialization; Methods and Discussion inspected. PMC challenge and Europe PMC XML HTTP 500 prevented those reopens."
+        "details": "Underlying article/guideline and relevant sections inspected in completed spine research; extraction preserved in spine-source-report.md. Publisher PDF reopened during serialization; Methods and Discussion inspected. PMC challenge and Europe PMC XML HTTP 500 prevented those reopens. Fix-round-1 publisher PDF reopen verified Methods p. 25 and Discussion p. 27 home-continuation discrepancy."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -91,15 +91,15 @@
       "population": "Nonsurgical thoracolumbar adult degenerative scoliosis",
       "comparator": "No control group",
       "coInterventions": "Heat, TENS, ultrasound; as-needed paracetamol advised. No drug instruction transferred to app.",
-      "outcomes": "Bayram et al., 2024 prospective uncontrolled cohort. DOI 10.26574/maedica.2024.19.1.23, PMID 38736938, FT PMC11079735. FT. Forty nonsurgical thoracolumbar ADS participants enrolled, 30 women completed. Combined modalities (heat/TENS/ultrasound) plus stretching, strengthening, stabilization, posture/balance/coordination, 15 sessions/3 weeks, 60 min/day five days/week; home continuation. Pain/disability/QoL improved at 1/3 months. No control, ten dropouts, multiple cointerventions; no causal exercise-specific effect or long-term curve effect established. Detailed adverse-event surveillance not identified; health problems among attrition reasons cannot be assigned to treatment. Not a proof that every listed exercise is safe for all curves.",
+      "outcomes": "Bayram et al., 2024 prospective uncontrolled cohort. DOI 10.26574/maedica.2024.19.1.23, PMID 38736938, FT PMC11079735. FT. Forty nonsurgical thoracolumbar ADS participants enrolled, 30 women completed. Combined modalities (heat/TENS/ultrasound) plus stretching, strengthening, stabilization, posture/balance/coordination, 15 sessions/3 weeks, 60 min/day five days/week. Methods p. 25 says one patient continued a home program; Discussion p. 27 reports patients continuing one hour/day at least three days/week. These participation descriptions conflict and remain unresolved. The Discussion schedule is reported home prescription, not measured adherence; actual home participation/adherence was not established. Pain/disability/QoL improved at 1/3 months. No control, ten dropouts, multiple cointerventions; no causal exercise-specific effect or long-term curve effect established. Detailed adverse-event surveillance not identified; health problems among attrition reasons cannot be assigned to treatment. Not a proof that every listed exercise is safe for all curves.",
       "followUp": "1 and 3 months",
-      "uncertainty": "Ten dropouts, no control, multiple modalities; cannot identify exercise-specific or long-term curve effect",
+      "uncertainty": "Ten dropouts, no control, multiple modalities; cannot identify exercise-specific or long-term curve effect; Methods p. 25 says one patient continued a home program; Discussion p. 27 reports patients continuing one hour/day at least three days/week. These participation descriptions conflict and remain unresolved. The Discussion schedule is reported home prescription, not measured adherence; actual home participation/adherence was not established.",
       "harms": "Systematic surveillance not identified; attrition health problems cannot be assigned to treatment",
       "limitations": "Ten dropouts, no control, multiple modalities; cannot identify exercise-specific or long-term curve effect Trial exclusions delimit studied applicability; they do not establish general contraindications.",
       "protocol": {
         "execution": "Combined stretching/strengthening/stabilization, posture/balance/coordination; exact exercise positions not detailed in retained extraction",
-        "dose": "15 sessions over three weeks, 60 minutes/day including modalities",
-        "frequency": "Five days weekly for three weeks; text mentions home continuation ambiguously, without frequency/adherence.",
+        "dose": "15 sessions over three weeks, 60 minutes/day including modalities; Discussion p. 27 also reports a home schedule of one hour/day. This is extracted study content, not an app regimen.",
+        "frequency": "Five days weekly for three weeks in the PT unit. Methods p. 25 says one patient continued a home program; Discussion p. 27 reports patients continuing one hour/day at least three days/week. These participation descriptions conflict and remain unresolved. The Discussion schedule is reported home prescription, not measured adherence; actual home participation/adherence was not established.",
         "supervision": "Exercise supervised by physiotherapist after PT modalities delivered by technician; detailed home supervision not established.",
         "progression": "not reported as exact progression",
         "stoppingRules": "not reported; health-related attrition not causally attributed"
@@ -242,7 +242,7 @@
     {
       "id": "ads-p1-extraction",
       "kind": "study-result",
-      "statement": "DOI 10.26574/maedica.2024.19.1.23, PMID 38736938, FT PMC11079735. FT. Forty nonsurgical thoracolumbar ADS participants enrolled, 30 women completed. Combined modalities (heat/TENS/ultrasound) plus stretching, strengthening, stabilization, posture/balance/coordination, 15 sessions/3 weeks, 60 min/day five days/week; home continuation. Pain/disability/QoL improved at 1/3 months. No control, ten dropouts, multiple cointerventions; no causal exercise-specific effect or long-term curve effect established. Detailed adverse-event surveillance not identified; health problems among attrition reasons cannot be assigned to treatment. Not a proof that every listed exercise is safe for all curves. Publisher PDF confirms physiotherapist supervision; home continuation wording is ambiguous and its frequency is not established.",
+      "statement": "DOI 10.26574/maedica.2024.19.1.23, PMID 38736938, FT PMC11079735. FT. Forty nonsurgical thoracolumbar ADS participants enrolled, 30 women completed. Combined modalities (heat/TENS/ultrasound) plus stretching, strengthening, stabilization, posture/balance/coordination, 15 sessions/3 weeks, 60 min/day five days/week. Methods p. 25 says one patient continued a home program; Discussion p. 27 reports patients continuing one hour/day at least three days/week. These participation descriptions conflict and remain unresolved. The Discussion schedule is reported home prescription, not measured adherence; actual home participation/adherence was not established. Pain/disability/QoL improved at 1/3 months. No control, ten dropouts, multiple cointerventions; no causal exercise-specific effect or long-term curve effect established. Detailed adverse-event surveillance not identified; health problems among attrition reasons cannot be assigned to treatment. Not a proof that every listed exercise is safe for all curves. Publisher PDF confirms physiotherapist supervision; the conflicting home-participation descriptions and reported schedule above are retained without inferring adherence.",
       "citations": [
         {
           "sourceId": "ads-p1",
@@ -254,7 +254,7 @@
         }
       ],
       "applicability": "Nonsurgical thoracolumbar adult degenerative scoliosis",
-      "limitations": "Ten dropouts, no control, multiple modalities; cannot identify exercise-specific or long-term curve effect Access: full-text."
+      "limitations": "Ten dropouts, no control, multiple modalities; cannot identify exercise-specific or long-term curve effect Access: full-text. Home-participation discrepancy unresolved; home adherence not measured."
     },
     {
       "id": "ads-p2-extraction",
