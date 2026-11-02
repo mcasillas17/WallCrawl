@@ -1,0 +1,275 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "nonspecific-neck-pain",
+    "label": "nonspecific neck pain",
+    "aliases": [
+      "chronic nonspecific neck pain"
+    ],
+    "distinctions": "Nonspecific neck pain excludes an identified structural/neurological cause. Cervical radicular pain, WAD, myelopathy and instability need separate assessment."
+  },
+  "scope": {
+    "population": "Female office workers ages 25–53, neck pain over six months; excluded severe cervical structural/traumatic/postoperative disease and major competing conditions",
+    "stage": "Varies by source; acute/recent versus chronic and symptom irritability are explicitly retained. Unknown stage remains unknown.",
+    "operativeStatus": "Nonsurgical evidence predominates; no postoperative protocol approved or inferred.",
+    "exclusions": "Source-specific exclusions are applicability boundaries, not diagnosis-wide contraindications. Coexisting conditions and independently selected joint limits retain precedence.",
+    "uncertainty": "- Ordinary training: activity and individualized progression compatible with assessed nonspecific neck pain; do not apply cervical-radicular, myelopathic, trauma or instability restrictions indiscriminately. No universal overhead press, shrug, neck extension/rotation or strength-training prohibition supported by retrieved evidence.\n- Supportive candidates: neck motor-control/isometric endurance and scapular/upper-body strengthening, with exact execution/dose reviewed independently. A neck bridge is not interchangeable with low-load cervical isometrics.\n- No validated numerical pain cutoff, load ceiling, ROM threshold or automatic progression rule extracted. Detailed adverse surveillance is a major gap.\n- Newer 2025–2026 network analyses were located (Spine Journal S1529943025003444; PMC13401843; PMC13112673) but not used to infer personal “optimal” doses. Their rankings/study-level dose curves do not establish app starting loads."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "Completed targeted spine research; PubMed/PMC, official guidelines and publishers",
+      "query": "Original exact search strings were not retained in the source report; the report records the actual scientific sources and access attempts. No reconstructed search string is presented as executed.",
+      "decision": "Faithfully serialize all 3 extracted substantive sources, including contrary/indirect evidence.",
+      "limitations": "Targeted English-access-dominated investigation; not a database-complete systematic review. Retained report: .superpowers/sdd/2026-11-01-condition-aware-workouts/spine-source-report.md"
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST exact DOI metadata lookup; targeted official/primary-source reopen",
+      "query": "Individual executed DOI queries: https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.3238/arztebl.m2025.0119; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.2519/jospt.2023.11820; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1001/jama.289.19.2509",
+      "decision": "Retrieve missing exact title/PMID/publication metadata; compare titles and dates. Protocol reopens identified in source.access.details.",
+      "limitations": "Metadata API access does not upgrade abstract-only clinical extraction. Correction/retraction/supersession registry search not comprehensive."
+    }
+  ],
+  "sources": [
+    {
+      "id": "nn-g1",
+      "title": "Clinical Practice Guideline: Nonspecific Neck Pain.",
+      "doi": "10.3238/arztebl.m2025.0119",
+      "pmid": "40665902",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12620902/",
+      "publicationStatus": "Published journal article; indexed publication 2025-10-01; all dates precede access.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Underlying article/guideline and relevant sections inspected in completed spine research; extraction preserved in spine-source-report.md. Reopen returned PMC browser challenge, Europe PMC XML HTTP 500 and DOI redirect error; retained earlier full-summary extraction is the substantive basis; exact subsection headings were not retained, so journal page locator used."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Exact DOI lookup in Europe PMC; title, PMID and publication date compared with retained scientific source. Query: https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.3238/arztebl.m2025.0119",
+        "result": "Metadata/version check only. No comprehensive correction/retraction registry or formal supersession audit performed; no integrity clearance claimed."
+      },
+      "design": "Final German S3 guideline summary; consensus-evaluated guidelines not separately journal peer reviewed",
+      "population": "Adults with nonspecific neck pain; chronic over 12 weeks for exercise recommendation",
+      "comparator": "Exercise modalities/other management from guideline synthesis",
+      "coInterventions": "Activation and self-management",
+      "outcomes": "El-Allawy et al., 2025 final German S3 guideline summary. DOI 10.3238/arztebl.m2025.0119, PMID 40665902, FT PMC12620902; official guideline, published August 2025, valid to February 2030. FT summary. Adults without identified structural cause; exercise recommended for chronic >12-week pain, activation/self-management central. Specific exercise modality not established because interventions heterogeneous. Immobilization discouraged; neurological deficit/trauma or structural warning signs require evaluation. No exercise dose, overhead lifting cap or cervical ROM prohibition established. Summary explicitly says these consensus-evaluated S3 guidelines are not separately journal peer reviewed; preserve distinction from peer-reviewed primary studies.",
+      "followUp": "Varies; final guideline published 2025, official validity to February 2030",
+      "uncertainty": "Heterogeneous interventions prevent selecting a single modality/dose; structural warning signs need evaluation",
+      "harms": "Exercise-specific adverse surveillance not extracted",
+      "limitations": "Heterogeneous interventions prevent selecting a single modality/dose; structural warning signs need evaluation Trial exclusions delimit studied applicability; they do not establish general contraindications.",
+      "protocol": {
+        "execution": "Physical activity/exercise recommended for chronic nonspecific neck pain; no preferred modality",
+        "dose": "not reported as an exact regimen",
+        "frequency": "not reported as an exact frequency",
+        "supervision": "Activation/self-management with assessment when warning signs present",
+        "progression": "Individualize; no universal dose increment",
+        "stoppingRules": "Structural warning signs require evaluation; no numerical exercise threshold extracted"
+      },
+      "locations": [
+        "Guideline summary, chronic neck pain exercise recommendation and diagnostic warning-sign discussion, journal pp. 552–557"
+      ]
+    },
+    {
+      "id": "nn-s1",
+      "title": "Resistance, Motor Control, and Mindfulness-Based Exercises Are Effective for Treating Chronic Nonspecific Neck Pain: A Systematic Review With Meta-Analysis and Dose-Response Meta-Regression.",
+      "doi": "10.2519/jospt.2023.11820",
+      "pmid": "37339388",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/37339388/",
+      "publicationStatus": "Published journal article; indexed publication 2023-08-01; all dates precede access.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "Conservative abstract-only designation; full article/protocol not comprehensively inspected. Accessible abstract/selected snippets are distinguished in findings."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Exact DOI lookup in Europe PMC; title, PMID and publication date compared with retained scientific source. Query: https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.2519/jospt.2023.11820",
+        "result": "Metadata/version check only. No comprehensive correction/retraction registry or formal supersession audit performed; no integrity clearance claimed."
+      },
+      "design": "Systematic review/meta-analysis/dose-response meta-regression, 68 trials",
+      "population": "Adults with chronic nonspecific neck pain",
+      "comparator": "Resistance, motor-control and mindfulness-based exercise versus controls/other exercise",
+      "coInterventions": "Varied across included trials",
+      "outcomes": "Mueller et al., 2023 systematic review/meta-analysis. DOI 10.2519/jospt.2023.11820, PMID 37339388. Abstract and publisher results text. 68 trials chronic nonspecific neck pain; resistance, motor-control and mindfulness-based exercise versus controls/other exercises. Benefit for pain/disability, very-low to moderate certainty; substantial heterogeneity (many I² values >90%). No resistance-exercise dose-response relationship demonstrated. Modality rankings do not prove alternatives dangerous or provide safe loads for individual users. Full protocol and harms extraction remains incomplete.",
+      "followUp": "Varied follow-up",
+      "uncertainty": "Very low to moderate certainty; substantial heterogeneity, many I-squared values above 90%; resistance dose-response not demonstrated",
+      "harms": "not reported in accessed abstract/results excerpt",
+      "limitations": "Very low to moderate certainty; substantial heterogeneity, many I-squared values above 90%; resistance dose-response not demonstrated Trial exclusions delimit studied applicability; they do not establish general contraindications.",
+      "protocol": {
+        "execution": "not reported from full protocol; abstract-only/partial access does not establish execution",
+        "dose": "not reported from full protocol; abstract-only/partial access does not establish dose",
+        "frequency": "not reported from full protocol; abstract-only/partial access does not establish frequency",
+        "supervision": "not reported from full protocol; abstract-only/partial access does not establish supervision",
+        "progression": "not reported from full protocol; abstract-only/partial access does not establish progression",
+        "stoppingRules": "not reported from full protocol; abstract-only/partial access does not establish stoppingRules"
+      },
+      "locations": [
+        "Abstract > Results and Conclusion"
+      ]
+    },
+    {
+      "id": "nn-p1",
+      "title": "Active neck muscle training in the treatment of chronic neck pain in women: a randomized controlled trial.",
+      "doi": "10.1001/jama.289.19.2509",
+      "pmid": "12759322",
+      "url": "https://jamanetwork.com/journals/jama/fullarticle/196580",
+      "publicationStatus": "Published journal article; indexed publication 2003-05-01; all dates precede access.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Underlying article/guideline and relevant sections inspected in completed spine research; extraction preserved in spine-source-report.md. Primary full text reopened for exact execution during serialization."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Exact DOI lookup in Europe PMC; title, PMID and publication date compared with retained scientific source. Query: https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1001/jama.289.19.2509",
+        "result": "Metadata/version check only. No comprehensive correction/retraction registry or formal supersession audit performed; no integrity clearance claimed."
+      },
+      "design": "Examiner-blinded RCT, 180 women",
+      "population": "Female office workers ages 25–53, neck pain over six months; excluded severe cervical structural/traumatic/postoperative disease and major competing conditions",
+      "comparator": "Neck strength versus endurance versus stretching/aerobic advice",
+      "coInterventions": "Upper-body/trunk exercises; multimodal institutional rehabilitation; four therapy sessions in active groups",
+      "outcomes": "Ylinen et al., 2003 RCT. DOI 10.1001/jama.289.19.2509, PMID 12759322, journal FT. FT. 180 female office workers with chronic nonspecific neck pain. Twelve-month isometric strength/dynamic endurance programs versus stretching/aerobic advice; supervised introductory rehabilitation then home practice encouraged three times weekly. Both active programs reduced pain/disability more; included upper-body dumbbell presses, rows and shrugs as part of package. Excluded major structural/radicular/traumatic/postoperative disease. Systematic adverse-event reporting not identified. Selected supervised population and mixed package prevent assuming every press/shrug is safe for every neck disorder; equally, findings undermine an evidence-free diagnosis-wide ban on all upper-body resistance work.",
+      "followUp": "12 months; checks at 2 and 6 months",
+      "uncertainty": "Selected working women; multimodal package; no automatic transfer to cervical radicular pain or WAD",
+      "harms": "At 12 months 3% across groups felt pain worsened due to training. This self-report is not comprehensive systematic adverse-event surveillance.",
+      "limitations": "Selected working women; multimodal package; no automatic transfer to cervical radicular pain or WAD Trial exclusions delimit studied applicability; they do not establish general contraindications.",
+      "protocol": {
+        "execution": "Endurance: supine head lifts; strength: seated elastic-resisted neck effort forward/obliquely right/left/back; both upper-body dumbbell and bodyweight exercises",
+        "dose": "Endurance 3×20 head lifts; strength 1×15 per direction, measured resistance target 80% maximal isometric strength. These are trial values, not personal starting loads",
+        "frequency": "12-day introduction with nine practice sessions; home encouraged three times weekly for a year",
+        "supervision": "Specially trained PT; load/technique checked at baseline, 2, 6 and 12 months",
+        "progression": "Strength resistance recalibrated from measured isometric testing; endurance load unchanged",
+        "stoppingRules": "not reported as a validated symptom cutoff; every other introductory session half intensity to reduce excessive loading"
+      },
+      "locations": [
+        "Methods > Description of Interventions",
+        "Methods > Patients",
+        "Results > Table 2 and patient-reported worsening paragraph"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "nn-g1-extraction",
+      "kind": "published-recommendation",
+      "statement": "DOI 10.3238/arztebl.m2025.0119, PMID 40665902, FT PMC12620902; official guideline, published August 2025, valid to February 2030. FT summary. Adults without identified structural cause; exercise recommended for chronic >12-week pain, activation/self-management central. Specific exercise modality not established because interventions heterogeneous. Immobilization discouraged; neurological deficit/trauma or structural warning signs require evaluation. No exercise dose, overhead lifting cap or cervical ROM prohibition established. Summary explicitly says these consensus-evaluated S3 guidelines are not separately journal peer reviewed; preserve distinction from peer-reviewed primary studies.",
+      "citations": [
+        {
+          "sourceId": "nn-g1",
+          "location": "Guideline summary, chronic neck pain exercise recommendation and diagnostic warning-sign discussion, journal pp. 552–557"
+        }
+      ],
+      "applicability": "Adults with nonspecific neck pain; chronic over 12 weeks for exercise recommendation",
+      "limitations": "Heterogeneous interventions prevent selecting a single modality/dose; structural warning signs need evaluation Access: full-text."
+    },
+    {
+      "id": "nn-s1-extraction",
+      "kind": "study-result",
+      "statement": "DOI 10.2519/jospt.2023.11820, PMID 37339388. Abstract and publisher results text. 68 trials chronic nonspecific neck pain; resistance, motor-control and mindfulness-based exercise versus controls/other exercises. Benefit for pain/disability, very-low to moderate certainty; substantial heterogeneity (many I² values >90%). No resistance-exercise dose-response relationship demonstrated. Modality rankings do not prove alternatives dangerous or provide safe loads for individual users. Full protocol and harms extraction remains incomplete.",
+      "citations": [
+        {
+          "sourceId": "nn-s1",
+          "location": "Abstract > Results and Conclusion"
+        }
+      ],
+      "applicability": "Adults with chronic nonspecific neck pain",
+      "limitations": "Very low to moderate certainty; substantial heterogeneity, many I-squared values above 90%; resistance dose-response not demonstrated Access: abstract-only."
+    },
+    {
+      "id": "nn-p1-extraction",
+      "kind": "study-result",
+      "statement": "DOI 10.1001/jama.289.19.2509, PMID 12759322, journal FT. FT. 180 female office workers with chronic nonspecific neck pain. Twelve-month isometric strength/dynamic endurance programs versus stretching/aerobic advice; supervised introductory rehabilitation then home practice encouraged three times weekly. Both active programs reduced pain/disability more; included upper-body dumbbell presses, rows and shrugs as part of package. Excluded major structural/radicular/traumatic/postoperative disease. Systematic adverse-event reporting not identified. Selected supervised population and mixed package prevent assuming every press/shrug is safe for every neck disorder; equally, findings undermine an evidence-free diagnosis-wide ban on all upper-body resistance work. Targeted reopen: 3% across groups reported pain worsening attributed to training; this does not replace formal adverse-event surveillance.",
+      "citations": [
+        {
+          "sourceId": "nn-p1",
+          "location": "Methods > Description of Interventions"
+        },
+        {
+          "sourceId": "nn-p1",
+          "location": "Methods > Patients"
+        },
+        {
+          "sourceId": "nn-p1",
+          "location": "Results > Table 2 and patient-reported worsening paragraph"
+        }
+      ],
+      "applicability": "Female office workers ages 25–53, neck pain over six months; excluded severe cervical structural/traumatic/postoperative disease and major competing conditions",
+      "limitations": "Selected working women; multimodal package; no automatic transfer to cervical radicular pain or WAD Access: full-text."
+    },
+    {
+      "id": "ordinary-training-restriction-evidence-gap",
+      "kind": "evidence-gap",
+      "statement": "Selected women performed upper-body dumbbell work, including presses, rows and shrugs, within rehabilitation. This does not establish every execution safe, but does not justify a diagnosis-wide upper-body/overhead resistance ban. Myelopathy, radicular disease, trauma and instability are distinct applicability questions.",
+      "citations": [
+        {
+          "sourceId": "nn-p1",
+          "location": "Methods > Description of Interventions"
+        }
+      ],
+      "applicability": "Female office workers ages 25–53, neck pain over six months; excluded severe cervical structural/traumatic/postoperative disease and major competing conditions",
+      "limitations": "This is a bounded evidence gap in the retrieved corpus, not proof that all training is harmless. Trial exclusions are applicability boundaries. No runtime restriction or therapeutic release follows."
+    },
+    {
+      "id": "supine-neck-flexion-head-lift-execution",
+      "kind": "study-result",
+      "statement": "Lift head from supine to train neck flexors against head weight. Detailed support, lift height, chin position and lowering tempo not specified in the inspected intervention paragraph. This is a dynamic head lift, distinct from a small supported chin nod.",
+      "citations": [
+        {
+          "sourceId": "nn-p1",
+          "location": "Methods > Description of Interventions"
+        }
+      ],
+      "applicability": "Female office workers ages 25–53, neck pain over six months; excluded severe cervical structural/traumatic/postoperative disease and major competing conditions",
+      "limitations": "Studied/described execution only. All unreported setup, ROM, dosing, eligibility and clinical approval remain unresolved."
+    },
+    {
+      "id": "seated-elastic-resisted-neck-training-unresolved-execution",
+      "kind": "study-result",
+      "statement": "Seated elastic-band neck strengthening described forward, obliquely right/left and backward, calibrated by handheld isometric testing. Article calls program isometric; exact band anchorage/head contact and degree of movement require instructional source verification.",
+      "citations": [
+        {
+          "sourceId": "nn-p1",
+          "location": "Methods > Description of Interventions"
+        }
+      ],
+      "applicability": "Female office workers ages 25–53, neck pain over six months; excluded severe cervical structural/traumatic/postoperative disease and major competing conditions",
+      "limitations": "Studied/described execution only. All unreported setup, ROM, dosing, eligibility and clinical approval remain unresolved."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "supine-neck-flexion-head-lift-mapping",
+      "exerciseId": null,
+      "requestId": "supine-neck-flexion-head-lift",
+      "findingIds": [
+        "supine-neck-flexion-head-lift-execution"
+      ],
+      "matchRationale": "Pinned catalog metadata search did not establish a cervical head-lift identity. Neck bridges, abdominal work and supported chin nods are not verified equivalents. Study 3×20 is extraction, not an app dose.",
+      "status": "candidate"
+    },
+    {
+      "id": "seated-elastic-resisted-neck-training-unresolved-mapping",
+      "exerciseId": null,
+      "requestId": "seated-elastic-resisted-neck-training-unresolved",
+      "findingIds": [
+        "seated-elastic-resisted-neck-training-unresolved-execution"
+      ],
+      "matchRationale": "No catalog neck training execution verified. High-intensity calibrated neck loading cannot be replaced by generic stretch, hand-resisted low-load isometric or neck bridge; 80% study target is not user starting-load guidance.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [],
+  "gaps": [
+    "- Ordinary training: activity and individualized progression compatible with assessed nonspecific neck pain; do not apply cervical-radicular, myelopathic, trauma or instability restrictions indiscriminately. No universal overhead press, shrug, neck extension/rotation or strength-training prohibition supported by retrieved evidence.\n- Supportive candidates: neck motor-control/isometric endurance and scapular/upper-body strengthening, with exact execution/dose reviewed independently. A neck bridge is not interchangeable with low-load cervical isometrics.\n- No validated numerical pain cutoff, load ceiling, ROM threshold or automatic progression rule extracted. Detailed adverse surveillance is a major gap.\n- Newer 2025–2026 network analyses were located (Spine Journal S1529943025003444; PMC13401843; PMC13112673) but not used to infer personal “optimal” doses. Their rankings/study-level dose curves do not establish app starting loads.",
+    "No exact catalog execution equivalence or numeric diagnosis-wide load/ROM/pain threshold established. All request/mapping/rule material is candidate-only, and clinical review provenance is absent."
+  ],
+  "disposition": "unresolved",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

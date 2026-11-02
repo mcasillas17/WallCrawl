@@ -6,43 +6,43 @@
       "id": "chronic-primary-low-back-pain",
       "label": "Chronic primary low-back pain",
       "region": "Spine (7)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "lumbar-radicular-pain",
       "label": "lumbar radicular pain",
       "region": "Spine (7)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "lumbar-spinal-stenosis",
       "label": "lumbar spinal stenosis",
       "region": "Spine (7)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "nonspecific-neck-pain",
       "label": "nonspecific neck pain",
       "region": "Spine (7)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "cervical-radicular-pain",
       "label": "cervical radicular pain",
       "region": "Spine (7)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "whiplash-associated-disorder",
       "label": "whiplash-associated disorder",
       "region": "Spine (7)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "adult-degenerative-scoliosis",
       "label": "adult degenerative scoliosis",
       "region": "Spine (7)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "rotator-cuff-tendinopathy",

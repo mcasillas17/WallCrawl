@@ -4,19 +4,19 @@ Working evidence review for personalized workouts. This inventory contains 50 ca
 
 Each regional evidence report links the actual medical papers and guidelines inspected, distinguishes full-text from abstract-only access, and records study populations, interventions, outcomes, harms, conflicts and limits. A study protocol is not an approved app prescription. Unavailable details stay unknown; no restriction is justified merely because another exercise helped.
 
-Current state: linked source reports cover 50 of 50 conditions; 19 structured dossiers have been reconciled. Independent source verification and clinical review are separate gates. This is a targeted evidence review, not an exhaustive systematic review.
+Current state: linked source reports cover 50 of 50 conditions; 26 structured dossiers have been reconciled. Independent source verification and clinical review are separate gates. This is a targeted evidence review, not an exhaustive systematic review.
 
 ## Inventory and evidence links
 
 | Condition | Detailed evidence | Structured dossier |
 | --- | --- | --- |
-| Chronic primary low-back pain | [Study extraction](evidence/spine.md) | Pending reconciliation |
-| lumbar radicular pain | [Study extraction](evidence/spine.md) | Pending reconciliation |
-| lumbar spinal stenosis | [Study extraction](evidence/spine.md) | Pending reconciliation |
-| nonspecific neck pain | [Study extraction](evidence/spine.md) | Pending reconciliation |
-| cervical radicular pain | [Study extraction](evidence/spine.md) | Pending reconciliation |
-| whiplash-associated disorder | [Study extraction](evidence/spine.md) | Pending reconciliation |
-| adult degenerative scoliosis | [Study extraction](evidence/spine.md) | Pending reconciliation |
+| Chronic primary low-back pain | [Study extraction](evidence/spine.md) | [complete](chronic-primary-low-back-pain.json) |
+| lumbar radicular pain | [Study extraction](evidence/spine.md) | [complete](lumbar-radicular-pain.json) |
+| lumbar spinal stenosis | [Study extraction](evidence/spine.md) | [complete](lumbar-spinal-stenosis.json) |
+| nonspecific neck pain | [Study extraction](evidence/spine.md) | [complete](nonspecific-neck-pain.json) |
+| cervical radicular pain | [Study extraction](evidence/spine.md) | [complete](cervical-radicular-pain.json) |
+| whiplash-associated disorder | [Study extraction](evidence/spine.md) | [complete](whiplash-associated-disorder.json) |
+| adult degenerative scoliosis | [Study extraction](evidence/spine.md) | [complete](adult-degenerative-scoliosis.json) |
 | Rotator cuff tendinopathy | [Study extraction](evidence/shoulder.md) | Pending reconciliation |
 | full-thickness rotator cuff tear | [Study extraction](evidence/shoulder.md) | Pending reconciliation |
 | adhesive capsulitis | [Study extraction](evidence/shoulder.md) | Pending reconciliation |

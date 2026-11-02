@@ -48,6 +48,13 @@
       "query": "Sinaki Mikkelsen 1984 postmenopausal spinal osteoporosis flexion extension exercises fractures 89 16 PMID",
       "decision": "Inspected historical condition-specific primary harms abstract supporting the source trail behind spinal-flexion caution; retained weak design and inaccessible scan boundary.",
       "limitations": "No readable full scanned article or verified DOI; no exact exercise/angle/load mapping extracted."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Original scanned PDF; local PDFium rendering and visual inspection",
+      "query": "https://therapilates.com/PDF/sinaki.pdf",
+      "decision": "Rendered and inspected printed pages593–596. Upgraded source access after reading retrospective allocation, cointerventions, figures and results. Earlier abstract-only search entry records the initial access failure.",
+      "limitations": "Historical observational evidence; no verified DOI or comprehensive correction clearance. No cohort dose/frequency or universal threshold established."
     }
   ],
   "sources": [
@@ -217,34 +224,35 @@
       "url": "https://pubmed.ncbi.nlm.nih.gov/6487063/",
       "publicationStatus": "Final journal article, October 1984;65(10):593–596.",
       "access": {
-        "status": "abstract-only",
+        "status": "full-text",
         "date": "2026-11-01",
-        "details": "PubMed indexed primary abstract and article metadata inspected. Four-page scanned original paper at https://therapilates.com/PDF/sinaki.pdf downloaded but no text layer extracted; web screenshot calls returned no viewable image. Do not claim complete scanned-paper inspection."
+        "details": "Initially abstract-only. Coordinator subsequently rendered and visually inspected all four scanned pages (593–596) from https://therapilates.com/PDF/sinaki.pdf using PDFium and the local image viewer; source has no text layer."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
         "method": "Primary indexed metadata/abstract inspected and current guideline context compared; no DOI verified. No registry-wide correction/retraction search for this old record.",
         "result": "Correction/retraction status not fully verified; no replacement established. This historical study is weak direct harm context, not definitive proof."
       },
-      "design": "Small comparative observational study; allocation/randomization and adjusted confounding not established by accessible abstract.",
+      "design": "Retrospective review; exercise choice followed the treating physiatrist’s method, not random allocation. Radiograph comparisons were blinded to prescription.",
       "population": "59 women age49–60 with postmenopausal spinal osteoporosis and back pain.",
       "comparator": "Extension n25,flexion n9,combined n19,no therapeutic exercise n6.",
-      "coInterventions": "Not reported in accessible abstract; full methods not inspected.",
-      "outcomes": "Additional radiographic fractures: extension16%,flexion89%,combined53%,noexercise67%;flexion versus extension p<0.001. No adjusted risk estimate or confidence interval reported in accessible abstract.",
-      "followUp": "1–6years;group means1.4–2years.",
-      "uncertainty": "Very small,unequal groups;selection/confounding and differing follow-up can explain part of association. Do not label this an RCT or estimate a safe angle/load.",
-      "harms": "Radiographic wedging/compression fractures are the reported adverse outcome;other adverse events not reported in abstract.",
-      "limitations": "Indirect historical context for spinal-flexion precautions;does not show every bend causes fracture or that all modern loaded exercise is harmful.",
+      "coInterventions": "Infrared heat and massage in all programs; shared posture/lifting advice, not separately tested.",
+      "outcomes": "Additional radiographic wedging/compression: extension16%, flexion89%, combined53%, noexercise67%. Flexion versus extension p<0.001; no adjusted risk or confidence interval.",
+      "followUp": "One to six years. Body reports no-exercise mean2.3years; abstract rounds group means to1.4–2years.",
+      "uncertainty": "Small unequal groups, clinician selection, historical diagnosis and unequal follow-up limit causal interpretation.",
+      "harms": "Radiographic wedging/compression was the adverse outcome; broader surveillance not described.",
+      "limitations": "No universal safe angle/load or causal claim about every bend follows.",
       "protocol": {
-        "execution": "not reported; full scanned methods were not readable in this session.",
-        "dose": "not reported; full scanned methods were not readable in this session.",
-        "frequency": "not reported; full scanned methods were not readable in this session.",
-        "supervision": "not reported; full scanned methods were not readable in this session.",
-        "progression": "not reported; full scanned methods were not readable in this session.",
-        "stoppingRules": "not reported; full scanned methods were not readable in this session."
+        "execution": "Extension: prone or seated spinal-extensor work. Flexion: sit-ups and seated forward bending. Some no-exercise participants used abdominal isometrics.",
+        "dose": "not reported as sets, repetitions or holds",
+        "frequency": "not reported for this cohort; discussion frequency refers to another cited study",
+        "supervision": "Physiatrist prescribed; session supervision not reported.",
+        "progression": "not reported",
+        "stoppingRules": "not reported; shared historical lifting/posture advice was not a tested threshold."
       },
       "locations": [
-        "Abstract > Participants, follow-up and radiographic fracture results"
+        "Abstract > Participants, follow-up and radiographic fracture results",
+        "Subjects and Methods; Figures 1–5; Results and table (printed pp.593–595)"
       ]
     }
   ],
@@ -308,15 +316,19 @@
     {
       "id": "historical-flexion-harm-context",
       "kind": "study-result",
-      "statement": "Small historical comparative study reports greater radiographic fracture occurrence with flexion versus extension, but unequal groups,confounding and missing full methods prevent a causal universal prohibition.",
+      "statement": "Retrospective study reports more radiographic wedging/compression in flexion than extension groups; clinician-selected programs and unequal follow-up prevent a universal causal prohibition.",
       "citations": [
         {
           "sourceId": "sinaki-1984",
           "location": "Abstract > Participants, follow-up and radiographic fracture results"
+        },
+        {
+          "sourceId": "sinaki-1984",
+          "location": "Subjects and Methods; Figures 1–5; Results and table (printed pp.593–595)"
         }
       ],
       "applicability": "59 women age49–60 with postmenopausal spinal osteoporosis and back pain.",
-      "limitations": "Abstract only; no valid universal ROM/load threshold or modern exercise identity."
+      "limitations": "Full scanned methods inspected; nonrandomized historical cohort cannot establish a universal ROM/load threshold."
     }
   ],
   "exerciseMappings": [

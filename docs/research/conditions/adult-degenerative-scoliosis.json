@@ -1,0 +1,331 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "adult-degenerative-scoliosis",
+    "label": "adult degenerative scoliosis",
+    "aliases": [
+      "degenerative lumbar scoliosis"
+    ],
+    "distinctions": "Adult degenerative scoliosis is distinct from adult/adolescent idiopathic scoliosis; curve side alone does not establish an exercise prescription."
+  },
+  "scope": {
+    "population": "Nonsurgical thoracolumbar adult degenerative scoliosis; Mixed idiopathic/degenerative scoliosis, curves 6–120 degrees; degenerative subgroup details not extracted; Adult idiopathic scoliosis, lower progression risk, main curve under 35 degrees",
+    "stage": "Varies by source; acute/recent versus chronic and symptom irritability are explicitly retained. Unknown stage remains unknown.",
+    "operativeStatus": "Nonsurgical evidence predominates; no postoperative protocol approved or inferred.",
+    "exclusions": "Source-specific exclusions are applicability boundaries, not diagnosis-wide contraindications. Coexisting conditions and independently selected joint limits retain precedence.",
+    "uncertainty": "- No automatic scoliosis-wide ban on rotation, side bending, axial load, extension or asymmetric exercise is defensible from these retrieved studies. Likewise, no evidence-based number can be assigned to a safe load/ROM limit.\n- Ordinary-training modifications must follow actual coexisting stenosis/radicular symptoms, osteoporosis/fracture risk, balance, surgery and clinician orders. Those conditions retain precedence; curve side alone cannot determine a universal “safe” side.\n- Supportive exercise candidates remain research-only individualized trunk/hip strength, conditioning and balance; no execution-level therapeutic mapping approved. ADS may remain restriction-only/unresolved pending specific clinical planning rules. A primary exercise study is recorded even if no exercise is added.\n- Current final ADS-specific exercise guideline not verified after targeted searches. Do not substitute adolescent idiopathic scoliosis guidelines or the adult idiopathic RCT. Long-term deformity progression, neurologic adverse outcomes and strength-training restrictions remain major gaps."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "Completed targeted spine research; PubMed/PMC, official guidelines and publishers",
+      "query": "Original exact search strings were not retained in the source report; the report records the actual scientific sources and access attempts. No reconstructed search string is presented as executed.",
+      "decision": "Faithfully serialize all 5 extracted substantive sources, including contrary/indirect evidence.",
+      "limitations": "Targeted English-access-dominated investigation; not a database-complete systematic review. Retained report: .superpowers/sdd/2026-11-01-condition-aware-workouts/spine-source-report.md"
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST exact DOI metadata lookup; targeted official/primary-source reopen",
+      "query": "Individual executed DOI queries: https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1093/pm/pnz253; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.26574/maedica.2024.19.1.23; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.7453/gahmj.2013.064; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1007/s00586-016-4528-y; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.3389/fsurg.2026.1807406",
+      "decision": "Retrieve missing exact title/PMID/publication metadata; compare titles and dates. Protocol reopens identified in source.access.details.",
+      "limitations": "Metadata API access does not upgrade abstract-only clinical extraction. Correction/retraction/supersession registry search not comprehensive."
+    }
+  ],
+  "sources": [
+    {
+      "id": "ads-s1",
+      "title": "Outcomes of Nonsurgical Treatments for Symptomatic Adult Degenerative Scoliosis: A Systematic Review.",
+      "doi": "10.1093/pm/pnz253",
+      "pmid": "31617915",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/31617915/",
+      "publicationStatus": "Published journal article; indexed publication 2020-06-01; all dates precede access.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "Conservative abstract-only designation; full article/protocol not comprehensively inspected. Accessible abstract/selected snippets are distinguished in findings. Institutional PDF located but fetch returned 403."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Exact DOI lookup in Europe PMC; title, PMID and publication date compared with retained scientific source. Query: https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1093/pm/pnz253",
+        "result": "Metadata/version check only. No comprehensive correction/retraction registry or formal supersession audit performed; no integrity clearance claimed."
+      },
+      "design": "Systematic review, six studies",
+      "population": "Symptomatic adult degenerative scoliosis, age at least 50, nonsurgical interventions",
+      "comparator": "Various nonsurgical treatments; limited comparator evidence",
+      "coInterventions": "Injection, bracing, yoga among reviewed approaches",
+      "outcomes": "Schoutens et al., 2020 (online 2019) systematic review. DOI 10.1093/pm/pnz253, PMID 31617915. Abstract; institutional FT PDF located but direct fetch 403. Symptomatic degenerative scoliosis ≥50, nonsurgical interventions, follow-up ≥6 weeks; six studies. Injection evidence low; yoga/bracing very low; no specific PT evidence found in review period. Cannot advise for/against these approaches from available evidence. This is uncertainty, not a contraindication against exercise. No condition-specific ordinary-training load/ROM ban supported.",
+      "followUp": "At least six weeks eligibility",
+      "uncertainty": "Low injection and very-low yoga/bracing certainty; no specific PT evidence in search period; absence is not an exercise contraindication",
+      "harms": "not reported in accessed abstract",
+      "limitations": "Low injection and very-low yoga/bracing certainty; no specific PT evidence in search period; absence is not an exercise contraindication Trial exclusions delimit studied applicability; they do not establish general contraindications.",
+      "protocol": {
+        "execution": "not reported from full protocol; abstract-only/partial access does not establish execution",
+        "dose": "not reported from full protocol; abstract-only/partial access does not establish dose",
+        "frequency": "not reported from full protocol; abstract-only/partial access does not establish frequency",
+        "supervision": "not reported from full protocol; abstract-only/partial access does not establish supervision",
+        "progression": "not reported from full protocol; abstract-only/partial access does not establish progression",
+        "stoppingRules": "not reported from full protocol; abstract-only/partial access does not establish stoppingRules"
+      },
+      "locations": [
+        "Abstract > Results and Conclusions"
+      ]
+    },
+    {
+      "id": "ads-p1",
+      "title": "Conservative Treatment in Adult Degenerative Scoliosis: a Prospective Cohort Study.",
+      "doi": "10.26574/maedica.2024.19.1.23",
+      "pmid": "38736938",
+      "url": "https://www.maedica.ro/articles/2024/1/2024_19%2822%29_No1_pg23-29.pdf",
+      "publicationStatus": "Published journal article; indexed publication 2024-03-01; all dates precede access.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Underlying article/guideline and relevant sections inspected in completed spine research; extraction preserved in spine-source-report.md. Publisher PDF reopened during serialization; Methods and Discussion inspected. PMC challenge and Europe PMC XML HTTP 500 prevented those reopens."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Exact DOI lookup in Europe PMC; title, PMID and publication date compared with retained scientific source. Query: https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.26574/maedica.2024.19.1.23",
+        "result": "Metadata/version check only. No comprehensive correction/retraction registry or formal supersession audit performed; no integrity clearance claimed."
+      },
+      "design": "Prospective uncontrolled cohort; 40 enrolled, 30 women completed",
+      "population": "Nonsurgical thoracolumbar adult degenerative scoliosis",
+      "comparator": "No control group",
+      "coInterventions": "Heat, TENS, ultrasound; as-needed paracetamol advised. No drug instruction transferred to app.",
+      "outcomes": "Bayram et al., 2024 prospective uncontrolled cohort. DOI 10.26574/maedica.2024.19.1.23, PMID 38736938, FT PMC11079735. FT. Forty nonsurgical thoracolumbar ADS participants enrolled, 30 women completed. Combined modalities (heat/TENS/ultrasound) plus stretching, strengthening, stabilization, posture/balance/coordination, 15 sessions/3 weeks, 60 min/day five days/week; home continuation. Pain/disability/QoL improved at 1/3 months. No control, ten dropouts, multiple cointerventions; no causal exercise-specific effect or long-term curve effect established. Detailed adverse-event surveillance not identified; health problems among attrition reasons cannot be assigned to treatment. Not a proof that every listed exercise is safe for all curves.",
+      "followUp": "1 and 3 months",
+      "uncertainty": "Ten dropouts, no control, multiple modalities; cannot identify exercise-specific or long-term curve effect",
+      "harms": "Systematic surveillance not identified; attrition health problems cannot be assigned to treatment",
+      "limitations": "Ten dropouts, no control, multiple modalities; cannot identify exercise-specific or long-term curve effect Trial exclusions delimit studied applicability; they do not establish general contraindications.",
+      "protocol": {
+        "execution": "Combined stretching/strengthening/stabilization, posture/balance/coordination; exact exercise positions not detailed in retained extraction",
+        "dose": "15 sessions over three weeks, 60 minutes/day including modalities",
+        "frequency": "Five days weekly for three weeks; text mentions home continuation ambiguously, without frequency/adherence.",
+        "supervision": "Exercise supervised by physiotherapist after PT modalities delivered by technician; detailed home supervision not established.",
+        "progression": "not reported as exact progression",
+        "stoppingRules": "not reported; health-related attrition not causally attributed"
+      },
+      "locations": [
+        "MATERIALS AND METHODS > Conservative treatment program, journal p. 25",
+        "DISCUSSION and Study limitations, journal pp. 27–28"
+      ]
+    },
+    {
+      "id": "ads-p2",
+      "title": "Serial case reporting yoga for idiopathic and degenerative scoliosis.",
+      "doi": "10.7453/gahmj.2013.064",
+      "pmid": "25568820",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/25568820/",
+      "publicationStatus": "Published journal article; indexed publication 2014-09-01; all dates precede access.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "Conservative abstract-only designation; full article/protocol not comprehensively inspected. Accessible abstract/selected snippets are distinguished in findings."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Exact DOI lookup in Europe PMC; title, PMID and publication date compared with retained scientific source. Query: https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.7453/gahmj.2013.064",
+        "result": "Metadata/version check only. No comprehensive correction/retraction registry or formal supersession audit performed; no integrity clearance claimed."
+      },
+      "design": "Uncontrolled case series, 25 mixed scoliosis cases",
+      "population": "Mixed idiopathic/degenerative scoliosis, curves 6–120 degrees; degenerative subgroup details not extracted",
+      "comparator": "No randomized/control comparison",
+      "coInterventions": "Daily side-plank practice",
+      "outcomes": "Fishman et al., 2014 case series. DOI 10.7453/gahmj.2013.064, PMID 25568820, PMC4268609. Abstract and available methods/results snippets; FT browser challenged. Twenty-five mixed idiopathic/degenerative scoliosis cases, curves 6–120°, side plank with convex side down, daily practice, average follow-up 6.8 months. Curve reductions reported among adherers; no randomized/control group, mixed age/etiology and adherence selection. No defensible universal one-sided plank prescription, side assignment or curve-correction promise. Actual degenerative subgroup/adverse details require full extraction before considering a therapeutic mapping.",
+      "followUp": "Mean 6.8 months",
+      "uncertainty": "Mixed ages/etiology, adherence selection; convex-side-down description cannot authorize universal side assignment",
+      "harms": "not reported in accessible abstract/method/results snippets",
+      "limitations": "Mixed ages/etiology, adherence selection; convex-side-down description cannot authorize universal side assignment Trial exclusions delimit studied applicability; they do not establish general contraindications.",
+      "protocol": {
+        "execution": "not reported from full protocol; abstract-only/partial access does not establish execution",
+        "dose": "not reported from full protocol; abstract-only/partial access does not establish dose",
+        "frequency": "not reported from full protocol; abstract-only/partial access does not establish frequency",
+        "supervision": "not reported from full protocol; abstract-only/partial access does not establish supervision",
+        "progression": "not reported from full protocol; abstract-only/partial access does not establish progression",
+        "stoppingRules": "not reported from full protocol; abstract-only/partial access does not establish stoppingRules"
+      },
+      "locations": [
+        "Abstract > Methods and Results"
+      ]
+    },
+    {
+      "id": "ads-p3",
+      "title": "Adults with idiopathic scoliosis improve disability after motor and cognitive rehabilitation: results of a randomised controlled trial.",
+      "doi": "10.1007/s00586-016-4528-y",
+      "pmid": "27015689",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/27015689/",
+      "publicationStatus": "Published journal article; indexed publication 2016-03-25; all dates precede access.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "Conservative abstract-only designation; full article/protocol not comprehensively inspected. Accessible abstract/selected snippets are distinguished in findings."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Exact DOI lookup in Europe PMC; title, PMID and publication date compared with retained scientific source. Query: https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1007/s00586-016-4528-y",
+        "result": "Metadata/version check only. No comprehensive correction/retraction registry or formal supersession audit performed; no integrity clearance claimed."
+      },
+      "design": "RCT, 130 adults; deliberately indirect population",
+      "population": "Adult idiopathic scoliosis, lower progression risk, main curve under 35 degrees",
+      "comparator": "20-week self-correction/task exercises/CBT versus general mobilization/stretching/strengthening",
+      "coInterventions": "Cognitive behavioral therapy",
+      "outcomes": "Monticone et al., 2016 RCT, deliberately indirect. DOI 10.1007/s00586-016-4528-y, PMID 27015689. Abstract. 130 adults with idiopathic, lower-progression-risk scoliosis, main curve <35°; 20-week active self-correction/task exercises/CBT versus general mobilization/stretching/strengthening. Favorable disability outcome described, but this is not a degenerative-scoliosis RCT. Do not transfer its curve threshold, dose, side-specific correction or outcomes into ADS as direct evidence. Full harms unavailable.",
+      "followUp": "Abstract reports disability outcome; full follow-up extraction incomplete",
+      "uncertainty": "Idiopathic rather than degenerative disease; do not transfer threshold/dose/curve correction as direct ADS evidence",
+      "harms": "not reported in accessed abstract",
+      "limitations": "Idiopathic rather than degenerative disease; do not transfer threshold/dose/curve correction as direct ADS evidence Trial exclusions delimit studied applicability; they do not establish general contraindications.",
+      "protocol": {
+        "execution": "not reported from full protocol; abstract-only/partial access does not establish execution",
+        "dose": "not reported from full protocol; abstract-only/partial access does not establish dose",
+        "frequency": "not reported from full protocol; abstract-only/partial access does not establish frequency",
+        "supervision": "not reported from full protocol; abstract-only/partial access does not establish supervision",
+        "progression": "not reported from full protocol; abstract-only/partial access does not establish progression",
+        "stoppingRules": "not reported from full protocol; abstract-only/partial access does not establish stoppingRules"
+      },
+      "locations": [
+        "Abstract > Methods and Results"
+      ]
+    },
+    {
+      "id": "ads-r1",
+      "title": "Adult degenerative scoliosis: challenges in diagnosis, pain management, and surgical decision-making.",
+      "doi": "10.3389/fsurg.2026.1807406",
+      "pmid": "42518838",
+      "url": "https://www.frontiersin.org/journals/surgery/articles/10.3389/fsurg.2026.1807406/full",
+      "publicationStatus": "Published journal article; indexed publication 2026-07-07; all dates precede access.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Underlying article/guideline and relevant sections inspected in completed spine research; extraction preserved in spine-source-report.md. Europe PMC fullTextXML re-opened during serialization: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13384435/fullTextXML. Relevant sections inspected; not every module/reference or underlying primary trial extracted."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Exact DOI lookup in Europe PMC; title, PMID and publication date compared with retained scientific source. Query: https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.3389/fsurg.2026.1807406",
+        "result": "Metadata/version check only. No comprehensive correction/retraction registry or formal supersession audit performed; no integrity clearance claimed."
+      },
+      "design": "Narrative review, not a guideline",
+      "population": "Adult degenerative scoliosis, varied curve/symptom/comorbidity patterns",
+      "comparator": "No controlled intervention comparison in narrative itself",
+      "coInterventions": "Individualized multimodal management discussed",
+      "outcomes": "Zhao et al., 2026 narrative review (not guideline). DOI 10.3389/fsurg.2026.1807406, PMID 42518838, publisher text. Relevant text inspected. Discusses individualized rehabilitation by curve pattern, balance, stenosis phenotype/comorbidity; high-quality protocol trials still needed. This is background/expert synthesis, not direct proof of extensor strengthening or cycling for every ADS patient and not a current final exercise CPG.",
+      "followUp": "Not a longitudinal primary study",
+      "uncertainty": "Background/expert synthesis; high-quality protocol trials still required",
+      "harms": "Not a systematic adverse-event estimate",
+      "limitations": "Background/expert synthesis; high-quality protocol trials still required Trial exclusions delimit studied applicability; they do not establish general contraindications.",
+      "protocol": {
+        "execution": "Individualized rehabilitation by curve, balance, stenosis phenotype and comorbidity discussed; no tested single execution",
+        "dose": "not reported as validated protocol",
+        "frequency": "not reported as validated frequency",
+        "supervision": "Clinical individualized management context",
+        "progression": "not reported as validated progression",
+        "stoppingRules": "not reported as validated exercise stopping algorithm"
+      },
+      "locations": [
+        "The challenge of pain management: comprehensive strategies beyond a single modality > Physical therapy and rehabilitation",
+        "Conclusion and future directions > Optimizing non-surgical therapies"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "ads-s1-extraction",
+      "kind": "study-result",
+      "statement": "DOI 10.1093/pm/pnz253, PMID 31617915. Abstract; institutional FT PDF located but direct fetch 403. Symptomatic degenerative scoliosis ≥50, nonsurgical interventions, follow-up ≥6 weeks; six studies. Injection evidence low; yoga/bracing very low; no specific PT evidence found in review period. Cannot advise for/against these approaches from available evidence. This is uncertainty, not a contraindication against exercise. No condition-specific ordinary-training load/ROM ban supported.",
+      "citations": [
+        {
+          "sourceId": "ads-s1",
+          "location": "Abstract > Results and Conclusions"
+        }
+      ],
+      "applicability": "Symptomatic adult degenerative scoliosis, age at least 50, nonsurgical interventions",
+      "limitations": "Low injection and very-low yoga/bracing certainty; no specific PT evidence in search period; absence is not an exercise contraindication Access: abstract-only."
+    },
+    {
+      "id": "ads-p1-extraction",
+      "kind": "study-result",
+      "statement": "DOI 10.26574/maedica.2024.19.1.23, PMID 38736938, FT PMC11079735. FT. Forty nonsurgical thoracolumbar ADS participants enrolled, 30 women completed. Combined modalities (heat/TENS/ultrasound) plus stretching, strengthening, stabilization, posture/balance/coordination, 15 sessions/3 weeks, 60 min/day five days/week; home continuation. Pain/disability/QoL improved at 1/3 months. No control, ten dropouts, multiple cointerventions; no causal exercise-specific effect or long-term curve effect established. Detailed adverse-event surveillance not identified; health problems among attrition reasons cannot be assigned to treatment. Not a proof that every listed exercise is safe for all curves. Publisher PDF confirms physiotherapist supervision; home continuation wording is ambiguous and its frequency is not established.",
+      "citations": [
+        {
+          "sourceId": "ads-p1",
+          "location": "MATERIALS AND METHODS > Conservative treatment program, journal p. 25"
+        },
+        {
+          "sourceId": "ads-p1",
+          "location": "DISCUSSION and Study limitations, journal pp. 27–28"
+        }
+      ],
+      "applicability": "Nonsurgical thoracolumbar adult degenerative scoliosis",
+      "limitations": "Ten dropouts, no control, multiple modalities; cannot identify exercise-specific or long-term curve effect Access: full-text."
+    },
+    {
+      "id": "ads-p2-extraction",
+      "kind": "study-result",
+      "statement": "DOI 10.7453/gahmj.2013.064, PMID 25568820, PMC4268609. Abstract and available methods/results snippets; FT browser challenged. Twenty-five mixed idiopathic/degenerative scoliosis cases, curves 6–120°, side plank with convex side down, daily practice, average follow-up 6.8 months. Curve reductions reported among adherers; no randomized/control group, mixed age/etiology and adherence selection. No defensible universal one-sided plank prescription, side assignment or curve-correction promise. Actual degenerative subgroup/adverse details require full extraction before considering a therapeutic mapping.",
+      "citations": [
+        {
+          "sourceId": "ads-p2",
+          "location": "Abstract > Methods and Results"
+        }
+      ],
+      "applicability": "Mixed idiopathic/degenerative scoliosis, curves 6–120 degrees; degenerative subgroup details not extracted",
+      "limitations": "Mixed ages/etiology, adherence selection; convex-side-down description cannot authorize universal side assignment Access: abstract-only."
+    },
+    {
+      "id": "ads-p3-extraction",
+      "kind": "study-result",
+      "statement": "DOI 10.1007/s00586-016-4528-y, PMID 27015689. Abstract. 130 adults with idiopathic, lower-progression-risk scoliosis, main curve <35°; 20-week active self-correction/task exercises/CBT versus general mobilization/stretching/strengthening. Favorable disability outcome described, but this is not a degenerative-scoliosis RCT. Do not transfer its curve threshold, dose, side-specific correction or outcomes into ADS as direct evidence. Full harms unavailable.",
+      "citations": [
+        {
+          "sourceId": "ads-p3",
+          "location": "Abstract > Methods and Results"
+        }
+      ],
+      "applicability": "Adult idiopathic scoliosis, lower progression risk, main curve under 35 degrees",
+      "limitations": "Idiopathic rather than degenerative disease; do not transfer threshold/dose/curve correction as direct ADS evidence Access: abstract-only."
+    },
+    {
+      "id": "ads-r1-extraction",
+      "kind": "study-result",
+      "statement": "DOI 10.3389/fsurg.2026.1807406, PMID 42518838, publisher text. Relevant text inspected. Discusses individualized rehabilitation by curve pattern, balance, stenosis phenotype/comorbidity; high-quality protocol trials still needed. This is background/expert synthesis, not direct proof of extensor strengthening or cycling for every ADS patient and not a current final exercise CPG.",
+      "citations": [
+        {
+          "sourceId": "ads-r1",
+          "location": "The challenge of pain management: comprehensive strategies beyond a single modality > Physical therapy and rehabilitation"
+        },
+        {
+          "sourceId": "ads-r1",
+          "location": "Conclusion and future directions > Optimizing non-surgical therapies"
+        }
+      ],
+      "applicability": "Adult degenerative scoliosis, varied curve/symptom/comorbidity patterns",
+      "limitations": "Background/expert synthesis; high-quality protocol trials still required Access: full-text."
+    },
+    {
+      "id": "ordinary-training-restriction-evidence-gap",
+      "kind": "evidence-gap",
+      "statement": "The uncontrolled combined-treatment cohort cannot establish bans on rotation, side bending, axial load, extension or asymmetric work, or a safe numeric load/ROM limit. Coexisting stenosis/radicular symptoms, osteoporosis, balance and surgery need their own evidence/orders. No condition-specific ordinary-training restriction is proposed from this record.",
+      "citations": [
+        {
+          "sourceId": "ads-p1",
+          "location": "MATERIALS AND METHODS > Conservative treatment program, journal p. 25"
+        }
+      ],
+      "applicability": "Nonsurgical thoracolumbar adult degenerative scoliosis",
+      "limitations": "This is a bounded evidence gap in the retrieved corpus, not proof that all training is harmless. Trial exclusions are applicability boundaries. No runtime restriction or therapeutic release follows."
+    }
+  ],
+  "exerciseMappings": [],
+  "proposedRules": [],
+  "gaps": [
+    "- No automatic scoliosis-wide ban on rotation, side bending, axial load, extension or asymmetric exercise is defensible from these retrieved studies. Likewise, no evidence-based number can be assigned to a safe load/ROM limit.\n- Ordinary-training modifications must follow actual coexisting stenosis/radicular symptoms, osteoporosis/fracture risk, balance, surgery and clinician orders. Those conditions retain precedence; curve side alone cannot determine a universal “safe” side.\n- Supportive exercise candidates remain research-only individualized trunk/hip strength, conditioning and balance; no execution-level therapeutic mapping approved. ADS may remain restriction-only/unresolved pending specific clinical planning rules. A primary exercise study is recorded even if no exercise is added.\n- Current final ADS-specific exercise guideline not verified after targeted searches. Do not substitute adolescent idiopathic scoliosis guidelines or the adult idiopathic RCT. Long-term deformity progression, neurologic adverse outcomes and strength-training restrictions remain major gaps.",
+    "No exact catalog execution equivalence or numeric diagnosis-wide load/ROM/pain threshold established. All request/mapping/rule material is candidate-only, and clinical review provenance is absent.",
+    "No execution-level therapeutic mapping proposed: available direct cohort describes a combined program without exact positions; one-sided yoga case series remains partial/mixed-etiology, and adult idiopathic trial is indirect. Restriction-only/unresolved research disposition, with no invented exercise or ban."
+  ],
+  "disposition": "unresolved",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

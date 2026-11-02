@@ -14,7 +14,7 @@ Draft research for workout generation. The doses below describe studies; they ar
 
 [Source](https://link.springer.com/article/10.1186/s13102-023-00802-4) · [DOI](https://doi.org/10.1186/s13102-023-00802-4) · [PubMed](https://pubmed.ncbi.nlm.nih.gov/38200475/)
 
-**Access:** full-text, 2026-11-01. Publisher HTML and 11-page PDF inspected: https://link.springer.com/content/pdf/10.1186/s13102-023-00802-4.pdf . No supplement identified; standalone Figure 2 image fetch timed out.
+**Access:** full-text, 2026-11-01. Publisher HTML and 11-page PDF inspected: https://link.springer.com/content/pdf/10.1186/s13102-023-00802-4.pdf . Initial figure retrieval failed; coordinator subsequently retrieved the linked Figure2 JPEG and visually confirmed the wall-supported crossed-ankle pose. No numeric angle or clinical suitability inferred from the photograph.
 **Publication:** final journal article
 
 - **design:** Assessor-blind randomized three-group trial; 45 participants, 15/group; retrospectively registered.
@@ -182,7 +182,7 @@ Product evidence-handling precaution, not a published contraindication; no execu
 
 Supine; unaffected foot against wall, affected ankle above opposite kneecap; arms alongside, palms down; slight piriformis stretch. Hip angles are not quantified.
 
-No exact named variant among the 302 catalog entries; do not equate butterfly-stretch or hamstring-stretch. Source text inspected; Figure 2 embedded in PDF located, separate image retrieval timed out; visual verification remains open.
+No exact named variant among the 302 catalog entries; do not equate butterfly-stretch or hamstring-stretch. Source text and publisher Figure2 independently inspected: supine, supporting foot at wall and opposite ankle above knee. Numerical angles and individualized suitability remain unresolved.
 
 **Artwork:** New supplement identity; retained PNG sequence showing wall foot placement and crossed ankle. No artwork generated in Task 1.
 
@@ -217,6 +217,6 @@ Existing side-lying-hip-abduction and side-lying-leg-raise records do not verify
 - Guner exercise handout and exact self-stretch/bridge/leg-raise mechanics unresolved; image request is not artwork provenance.
 - No source establishes a generic five-second progression, strength-set credit for stretching, individualized stopping threshold or escalation protocol.
 - Latest synthesis supplies additional primary-study leads; pilot is not an exhaustive evidence review. DGS and piriformis populations cannot be merged without justification.
-- Shamsi figure visual inspection remains open; Guner baseline ODI narrative/table inconsistency retained as uncertainty.
+- Shamsi Figure2 pose visually verified; numeric angles remain unspecified. Guner baseline ODI narrative/table inconsistency remains unresolved.
 
 **Release:** Research only. Qualified clinical review has not occurred. [Structured source and rule record](../piriformis-syndrome.json).

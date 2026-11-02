@@ -18,7 +18,7 @@
         "affected hip external rotation"
       ],
       "artwork": "New supplement identity; retained PNG sequence showing wall foot placement and crossed ankle. No artwork generated in Task 1.",
-      "reason": "No exact named variant among the 302 catalog entries; do not equate butterfly-stretch or hamstring-stretch. Source text inspected; Figure 2 embedded in PDF located, separate image retrieval timed out; visual verification remains open.",
+      "reason": "No exact named variant among the 302 catalog entries; do not equate butterfly-stretch or hamstring-stretch. Source text and publisher Figure2 independently inspected: supine, supporting foot at wall and opposite ankle above knee. Numerical angles and individualized suitability remain unresolved.",
       "sourceRefs": [
         {
           "conditionId": "piriformis-syndrome",
@@ -1016,6 +1016,242 @@
           "conditionId": "hypermobility-spectrum-disorder",
           "sourceId": "liaghat-protocol-2020",
           "location": "Supplementary file 3 HEAVY manual, printed pp.4–8 (PDF pp.5–9), Exercises 1–5"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "barbell-deadlift-lbp-study-setup-unresolved",
+      "conditionIds": [
+        "chronic-primary-low-back-pain"
+      ],
+      "name": "Barbell deadlift, studied setup awaiting exact comparison",
+      "execution": "Barbell deadlift with abdominal bracing/breath hold and therapist-monitored neutral lumbar alignment through ascent/descent. The article refers to a prior pilot for full lift setup; stance, grip and start height are not independently established here.",
+      "equipment": [
+        "barbell",
+        "plates"
+      ],
+      "movementRequirements": [
+        "hip/knee movement during lifting",
+        "trunk bracing",
+        "unsupported standing; assessed ability required"
+      ],
+      "artwork": "Before any new PNG commission, inspect prior pilot/Aasa supplement and compare retained catalog barbell-deadlift sequence. If identical reuse existing identity; otherwise retain start/lift/return PNGs under a distinct source identity. No PNG generated.",
+      "reason": "Catalog barbell-deadlift is a plausible execution candidate, with Barbell and weight_reps; metadata alone cannot verify study start height/grip/ROM. Romanian, sumo, trap-bar and dumbbell variants are distinct. Supervision/dose does not itself create a new exercise identity.",
+      "sourceRefs": [
+        {
+          "conditionId": "chronic-primary-low-back-pain",
+          "sourceId": "lbp-p2",
+          "location": "Methods > Interventions > High load lifting exercise, journal pp. 457–458"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "lumbar-directional-preference-exercise-unresolved",
+      "conditionIds": [
+        "lumbar-radicular-pain"
+      ],
+      "name": "Lumbar directional exercise, assessed direction and execution unresolved",
+      "execution": "Repeated/sustained lumbar movements selected by therapist according to symptom centralization. Extension often selected in this trial, but no direction assigned from diagnosis alone; position/variant and range await assessment and protocol supplement.",
+      "equipment": [
+        "not established until exact therapist-selected execution is identified"
+      ],
+      "movementRequirements": [
+        "assessed lumbar directional response",
+        "movement/position that centralizes symptoms; exact range unknown"
+      ],
+      "artwork": "Blocked: identify actual selected position and consult study supplement before commissioning retained PNGs. Do not generate generic extension art as diagnosis-specific treatment.",
+      "reason": "Catalog extension/flexion or stretches cannot be equated to clinician-selected mechanical-diagnosis treatment by name. A named unresolved request preserves the studied response criterion without inventing a universal execution.",
+      "sourceRefs": [
+        {
+          "conditionId": "lumbar-radicular-pain",
+          "sourceId": "lr-p1",
+          "location": "Methods > Randomization and Interventions"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "stationary-bicycle-warmup-lss-setup-unresolved",
+      "conditionIds": [
+        "lumbar-spinal-stenosis"
+      ],
+      "name": "Stationary bicycle warmup, seating setup unresolved",
+      "execution": "Stationary bicycle used as warmup before individualized manual therapy/exercise. Upright versus recumbent configuration, trunk support/angle, cadence, resistance and bicycle-specific dose not reported in the inspected treatment paragraph.",
+      "equipment": [
+        "stationary bicycle; exact seat/support configuration unresolved"
+      ],
+      "movementRequirements": [
+        "seated pedaling",
+        "hip/knee motion",
+        "transfer and balance requirements depend on machine"
+      ],
+      "artwork": "Compare source protocol/equipment and catalog cycling artwork before deciding reuse. If distinct, retain PNGs showing exact seat, support and pedal position after configuration verification.",
+      "reason": "Catalog cycling has coarse Cardio equipment and distance_duration shape; this does not verify the study stationary configuration or whether distance is meaningful for warmup. No exact match or clinical dose established.",
+      "sourceRefs": [
+        {
+          "conditionId": "lumbar-spinal-stenosis",
+          "sourceId": "lss-p1",
+          "location": "Methods > Treatment Arms"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "supine-neck-flexion-head-lift",
+      "conditionIds": [
+        "nonspecific-neck-pain"
+      ],
+      "name": "Supine neck-flexor head lift",
+      "execution": "Lift head from supine to train neck flexors against head weight. Detailed support, lift height, chin position and lowering tempo not specified in the inspected intervention paragraph. This is a dynamic head lift, distinct from a small supported chin nod.",
+      "equipment": [
+        "floor or plinth; exact support surface unresolved"
+      ],
+      "movementRequirements": [
+        "supine transfer",
+        "dynamic cervical flexion/head lift"
+      ],
+      "artwork": "Retained start/lift/return PNGs needed only after support, chin alignment and range are verified from original instructional material. No images generated.",
+      "reason": "Pinned catalog metadata search did not establish a cervical head-lift identity. Neck bridges, abdominal work and supported chin nods are not verified equivalents. Study 3×20 is extraction, not an app dose.",
+      "sourceRefs": [
+        {
+          "conditionId": "nonspecific-neck-pain",
+          "sourceId": "nn-p1",
+          "location": "Methods > Description of Interventions"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "seated-elastic-resisted-neck-training-unresolved",
+      "conditionIds": [
+        "nonspecific-neck-pain"
+      ],
+      "name": "Seated elastic-resisted neck effort, attachment unresolved",
+      "execution": "Seated elastic-band neck strengthening described forward, obliquely right/left and backward, calibrated by handheld isometric testing. Article calls program isometric; exact band anchorage/head contact and degree of movement require instructional source verification.",
+      "equipment": [
+        "elastic band",
+        "stable seat",
+        "handheld isometric strength device in study; not a consumer requirement inferred from catalog"
+      ],
+      "movementRequirements": [
+        "seated cervical directional effort",
+        "individual strength calibration",
+        "head-band attachment unresolved"
+      ],
+      "artwork": "Block drawing until attachment/contact and isometric versus repetition execution resolved; retain separate direction/setup PNGs if commissioned.",
+      "reason": "No catalog neck training execution verified. High-intensity calibrated neck loading cannot be replaced by generic stretch, hand-resisted low-load isometric or neck bridge; 80% study target is not user starting-load guidance.",
+      "sourceRefs": [
+        {
+          "conditionId": "nonspecific-neck-pain",
+          "sourceId": "nn-p1",
+          "location": "Methods > Description of Interventions"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "cervical-radicular-low-load-isometrics-unresolved",
+      "conditionIds": [
+        "cervical-radicular-pain"
+      ],
+      "name": "Cervical low-load isometrics/endurance, trial positions unresolved",
+      "execution": "Guideline describes neck-specific program progressing gentle isometrics to low-load endurance tailored to response. Exact force direction, resistance interface and body position need primary protocol verification; Dedering primary article remains abstract-only.",
+      "equipment": [
+        "not reported for exact execution"
+      ],
+      "movementRequirements": [
+        "clinician-assessed cervical/nerve-root capacity",
+        "low-load cervical effort; precise direction/ROM unknown"
+      ],
+      "artwork": "Blocked until primary instructional protocol is inspected. Retained setup/effort PNGs must distinguish no-motion isometrics from dynamic exercise.",
+      "reason": "CR-G1/CR-S1 describe a clinical program, not an exact catalog match. Do not borrow acute-WAD cheek-resisted rotation or nonspecific-neck elastic resistance as verified equivalence.",
+      "sourceRefs": [
+        {
+          "conditionId": "cervical-radicular-pain",
+          "sourceId": "cr-g1",
+          "location": "Overwegingen > Waarden en voorkeuren van patiënten (en evt. hun verzorgers)"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "supine-supported-chin-nod",
+      "conditionIds": [
+        "whiplash-associated-disorder"
+      ],
+      "name": "Supine supported gentle chin nod",
+      "execution": "Lie supine with soft pillow under neck and knees bent. Gently nod as if saying yes; stop just before anterior neck muscles harden, then relax and return. Head remains supported; this is distinct from lifting the head.",
+      "equipment": [
+        "soft pillow",
+        "floor or plinth"
+      ],
+      "movementRequirements": [
+        "supine transfer",
+        "small gentle craniocervical nod",
+        "head/neck supported"
+      ],
+      "artwork": "Retain original supplement PNGs showing pillow, bent knees, neutral start and small nod. No generated or accepted artwork; avoid portraying a large head lift.",
+      "reason": "Catalog metadata did not verify this supported nod execution. Do not equate neck bridges/head lifts or extrapolate a generic stretching timer/progression. SIRA five-second example is source-specific.",
+      "sourceRefs": [
+        {
+          "conditionId": "whiplash-associated-disorder",
+          "sourceId": "wad-g1",
+          "location": "Appendix 3 > Exercise 1 The chin nod exercise, printed p. 45"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "seated-hand-resisted-cervical-rotation-isometric",
+      "conditionIds": [
+        "whiplash-associated-disorder"
+      ],
+      "name": "Seated hand-resisted cervical rotation isometric",
+      "execution": "Sit tall with relaxed slightly lowered chin; place hand on same-side cheek, gently attempt turning toward that shoulder against fingers while allowing no movement; repeat opposite side. SIRA labels this later-recovery strengthening.",
+      "equipment": [
+        "stable seat",
+        "own hand as resistance"
+      ],
+      "movementRequirements": [
+        "seated posture",
+        "no visible cervical rotation during effort",
+        "bilateral hand placement; individual capacity"
+      ],
+      "artwork": "Retain PNGs showing seated alignment, correct cheek contact and attempted-turn arrow with explicit no-motion cue on both sides. No artwork generated.",
+      "reason": "Catalog metadata did not verify this no-motion hand-resisted execution. Not equivalent to dynamic rotation, band-loaded neck training, or a neck bridge. Ten–twenty-percent effort/five-second holds are SIRA examples, not automatic app clearance or progression.",
+      "sourceRefs": [
+        {
+          "conditionId": "whiplash-associated-disorder",
+          "sourceId": "wad-g1",
+          "location": "Appendix 3 > Exercise 9 Neck strengthening exercises (isometric, no movement exercise), printed p. 49"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "chronic-wad-gentle-cervical-isometrics-unresolved",
+      "conditionIds": [
+        "whiplash-associated-disorder"
+      ],
+      "name": "Chronic-WAD cervical isometrics, setup unresolved",
+      "execution": "Trial began gentle unresisted flexion/extension/rotation isometrics, then low isometric resistance in supine/sitting; later pulley/guild-board endurance. Resistance interface/contact and exact initial positions not fully specified in inspected paragraph.",
+      "equipment": [
+        "not reported for initial isometrics",
+        "later weighted pulley or guild board; distinct execution requires separate verification"
+      ],
+      "movementRequirements": [
+        "clinician-assessed supine/sitting cervical effort",
+        "direction-specific no-motion effort; later endurance distinct"
+      ],
+      "artwork": "Blocked pending original protocol/handout; retain position/direction-specific PNGs only after identifying actual execution. Do not illustrate pulley work as the gentle starting stage.",
+      "reason": "No exact catalog execution verified; progression stages cannot be collapsed into one accepted exercise. Distinct from SIRA acute later-stage hand-on-cheek variant unless original protocol confirms equivalence.",
+      "sourceRefs": [
+        {
+          "conditionId": "whiplash-associated-disorder",
+          "sourceId": "wad-p1",
+          "location": "MATERIALS AND METHODS > Interventions > Physiotherapist-led Neck-specific Exercise Group (NSE)"
         }
       ],
       "status": "candidate"
