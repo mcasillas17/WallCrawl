@@ -1,0 +1,246 @@
+{
+  "id": "rotator_cuff_related_shoulder_pain",
+  "name": "Rotator cuff-related shoulder pain",
+  "evidenceGrade": "low",
+  "diagnosisContested": {
+    "contested": true,
+    "note": "RCRSP is an umbrella label covering subacromial pain or impingement, rotator cuff tendinopathy, and partial-thickness and atraumatic full-thickness tears. Lewis (2016, narrative masterclass) reports that the extent to which a definitive structural diagnosis is achievable has been contested and lists the cause and source of symptoms and establishing a definitive diagnosis as unresolved. Guidelines still use the narrower terms 'rotator cuff tendinopathy' (JOSPT 2025) and 'subacromial pain' (Rees 2021)."
+  },
+  "avoidOrModify": [
+    {
+      "movement": "Resistance exercise whose load produces pain above 5/10 during the set, or leaves a pain increase that has not returned to the pre-exercise level by the next session",
+      "action": "modify",
+      "rationale": "The Holmgren trial reduced load under this pain-monitoring rule, while allowing some pain during loading. The rule belongs to one trial's protocol: a scoping review found that thresholds varied between trials (3/10, 4/10, 5/10 and others) and are mainly pragmatic, not research-derived.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": ["holmgren2012", "ullern2025"]
+    },
+    {
+      "movement": "Resisted band or equipment exercise performed quickly, under high loads and high repetitions, when the shoulder is easily aggravated with prolonged pain once provoked, together with night pain",
+      "action": "modify",
+      "rationale": "Lewis states that this commonly aggravates the irritable presentation and advises load management (relative rest), aiming for an activity level that reduces pain. This is clinical opinion, not trial evidence.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": ["lewis2016"]
+    },
+    {
+      "movement": "Starting with, or progressing to, higher-load or higher-volume resistance training on the assumption that it works better than lower load",
+      "action": "modify",
+      "rationale": "This does not show harm. A meta-analysis found exercise intensity uncertain (low to very low certainty), and a network meta-analysis said high-load training appeared to be the worst programme, from 4 trials (202 participants in the high-load arms), 2 of them at high risk of bias, with no certainty rating. The defensible position is not to assume heavier is better.",
+      "evidenceStrength": "systematic_review",
+      "sourceIds": ["lafrance2024", "zhang2025"]
+    },
+    {
+      "movement": "Daily, work or training activities that reliably provoke the shoulder pain",
+      "action": "modify",
+      "rationale": "Activity-modification advice is part of guideline-style education and of both GRASP trial arms, with no specific movements named. Its separate effect has not been isolated. The JOSPT grade C is known here only from a secondary summary.",
+      "evidenceStrength": "guideline",
+      "sourceIds": ["jospt_cpg_summary", "grasp_protocol2017"]
+    }
+  ],
+  "candidateExercises": [
+    {
+      "name": "Eccentric-emphasis rotator cuff strengthening with band or light weight",
+      "catalog": "new",
+      "kind": "strengthening",
+      "dose": { "sets": 3, "reps": 15, "holdSeconds": null, "frequency": "Trial dose: twice daily for 8 weeks, then once daily for 4 weeks" },
+      "bodyweightOrHold": false,
+      "cautions": "The trial appendix shows a full-can raise for supraspinatus and side-lying external rotation for infraspinatus and teres minor, using a dumbbell, with weeks 9 to 12 becoming concentric/eccentric. Participants had pain for more than 6 months, were on an orthopaedic pathway, received a corticosteroid injection first, and had physiotherapist-adjusted load. Do not treat this high-frequency dose as a proven unsupervised minimum. Certainty for eccentric programmes over nonspecific exercise is low to very low.",
+      "evidenceStrength": "rct",
+      "sourceIds": ["holmgren2012", "lafrance2024"]
+    },
+    {
+      "name": "Posterior shoulder stretch (cross-body)",
+      "catalog": "catalog:cross-body-shoulder-stretch",
+      "kind": "stretch",
+      "dose": { "sets": 3, "reps": null, "holdSeconds": 30, "frequency": "Trial dose: twice daily; holds were 30 to 60 seconds in the article and 30 to 45 in its appendix, 30 is the lower bound" },
+      "bodyweightOrHold": true,
+      "cautions": "The trial appendix photo shows a cross-body stretch with the back against a wall. It was one part of a multi-exercise programme and was not tested alone.",
+      "evidenceStrength": "rct",
+      "sourceIds": ["holmgren2012"]
+    },
+    {
+      "name": "Arm-supported isometric hold in the direction of pain",
+      "catalog": "new",
+      "kind": "strengthening",
+      "dose": { "sets": null, "reps": null, "holdSeconds": null, "frequency": "No dose found in the sources opened" },
+      "bodyweightOrHold": true,
+      "cautions": "Lewis calls this anecdotal and says conclusive evidence for the shoulder is not available. Individual response should decide whether it continues.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": ["lewis2016"]
+    },
+    {
+      "name": "Short-lever shoulder flexion, or flexion supported on a ball",
+      "catalog": "new",
+      "kind": "mobility",
+      "dose": { "sets": null, "reps": null, "holdSeconds": null, "frequency": "No dose found in the sources opened" },
+      "bodyweightOrHold": true,
+      "cautions": "Offered by Lewis as gentle loading for the irritable presentation; it should ideally not increase pain. Progress only as tolerated. A meta-analysis favours motor control programmes slightly, but it cannot separate their effect from progression and tailoring, and did not test this specific exercise.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": ["lewis2016", "lafrance2024"]
+    }
+  ],
+  "redFlags": [
+    {
+      "sign": "Suspected infected shoulder joint",
+      "action": "Stop exercising. Same-day emergency referral.",
+      "sourceIds": ["rees2021"]
+    },
+    {
+      "sign": "Shoulder dislocation after trauma that has not been put back in place",
+      "action": "Stop exercising. Same-day emergency referral.",
+      "sourceIds": ["rees2021"]
+    },
+    {
+      "sign": "Suspected tumour or malignancy",
+      "action": "Stop exercising and see a clinician promptly. The source specifies urgent referral on the local two-week cancer pathway.",
+      "sourceIds": ["rees2021"]
+    },
+    {
+      "sign": "Suspected acute rotator cuff tear after a traumatic event",
+      "action": "Stop exercising. Urgent referral, ideally the next available outpatient clinic.",
+      "sourceIds": ["rees2021"]
+    },
+    {
+      "sign": "New inflammatory arthritis with symptoms of inflammation in several joints",
+      "action": "Urgent referral through local rheumatology pathways.",
+      "sourceIds": ["rees2021"]
+    },
+    {
+      "sign": "Shoulder symptoms that may come from elsewhere or from systemic illness, such as the neck, chest or abdomen, nerves or blood vessels, or a cardiovascular cause",
+      "action": "Do not attribute them to the rotator cuff. Stop and get medical assessment; urgency depends on the symptoms.",
+      "sourceIds": ["lewis2016", "jospt_cpg_summary"]
+    }
+  ],
+  "sources": [
+    {
+      "id": "jospt_cpg_abstract",
+      "citation": "Desmeules F, Roy JS, Lafrance S, et al. Rotator Cuff Tendinopathy Diagnosis, Nonsurgical Medical Care, and Rehabilitation: A Clinical Practice Guideline. J Orthop Sports Phys Ther. 2025;55(4):235-274. Abstract only; full text returned HTTP 403.",
+      "doi": "10.2519/jospt.2025.13182",
+      "pmid": "40165544",
+      "url": "https://europepmc.org/article/MED/40165544",
+      "type": "guideline"
+    },
+    {
+      "id": "jospt_cpg_summary",
+      "citation": "Physiotutors. Rotator cuff tendinopathy: the new 2025 clinical practice guideline. Secondary summary of Desmeules et al. 2025, used for grades because the original was inaccessible.",
+      "doi": null,
+      "pmid": null,
+      "url": "https://www.physiotutors.com/rotator-cuff-tendinopathy-the-new-2025-clinical-practice-guideline/",
+      "type": "secondary_guideline_summary"
+    },
+    {
+      "id": "rees2021",
+      "citation": "Rees JL, Kulkarni R, Rangan A, et al. Shoulder Pain Diagnosis, Treatment and Referral Guidelines for Primary, Community and Intermediate Care. Shoulder Elbow. 2021;13(1):5-11.",
+      "doi": "10.1177/1758573220984471",
+      "pmid": "33747136",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7905504",
+      "type": "guideline"
+    },
+    {
+      "id": "cochrane2016",
+      "citation": "Page MJ, Green S, McBain B, et al. Manual therapy and exercise for rotator cuff disease. Cochrane Database Syst Rev. 2016;(6):CD012224.",
+      "doi": "10.1002/14651858.CD012224",
+      "pmid": "27283590",
+      "url": "https://www.cochrane.org/evidence/CD012224_manual-therapy-and-exercise-rotator-cuff-disease",
+      "type": "systematic_review"
+    },
+    {
+      "id": "lafrance2024",
+      "citation": "Lafrance S, Charron M, Dube MO, et al. The Efficacy of Exercise Therapy for Rotator Cuff-Related Shoulder Pain According to the FITT Principle: A Systematic Review With Meta-analyses. J Orthop Sports Phys Ther. 2024;54(8):499-512. Abstract only.",
+      "doi": "10.2519/jospt.2024.12453",
+      "pmid": "38848304",
+      "url": "https://europepmc.org/article/MED/38848304",
+      "type": "systematic_review"
+    },
+    {
+      "id": "naunton2020",
+      "citation": "Naunton J, Street G, Littlewood C, Haines T, Malliaras P. Effectiveness of progressive and resisted and non-progressive or non-resisted exercise in rotator cuff related shoulder pain: a systematic review and meta-analysis of randomized controlled trials. Clin Rehabil. 2020;34(9):1198-1216. Abstract only.",
+      "doi": "10.1177/0269215520934147",
+      "pmid": "32571081",
+      "url": "https://europepmc.org/article/MED/32571081",
+      "type": "systematic_review"
+    },
+    {
+      "id": "zhang2025",
+      "citation": "Zhang W, Du M, Xia L, Hao F, Tian M. Effects of seven types of exercise in the treatment of rotator cuff-related shoulder pain (RCRSP): a systematic review and Bayesian network meta-analysis. J Orthop Surg Res. 2025;20:1075.",
+      "doi": "10.1186/s13018-025-06514-4",
+      "pmid": "41276811",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12715924/",
+      "type": "systematic_review"
+    },
+    {
+      "id": "wu2025",
+      "citation": "Wu D, Wen Z, Ke H, et al. Specific modes of exercise to improve rotator cuff-related shoulder pain: systematic review and meta-analysis. Front Bioeng Biotechnol. 2025;13:1560597.",
+      "doi": "10.3389/fbioe.2025.1560597",
+      "pmid": "40264916",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12011739/",
+      "type": "systematic_review"
+    },
+    {
+      "id": "ullern2025",
+      "citation": "Ullern KR, Richardsen M, Weerasekara I, Bogen BE. Painful considerations in exercise-management for rotator cuff related shoulder pain: a scoping review on pain-related prescription parameters. BMC Musculoskelet Disord. 2025;26:180.",
+      "doi": "10.1186/s12891-025-08411-7",
+      "pmid": "39987051",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11846222/",
+      "type": "scoping_review"
+    },
+    {
+      "id": "grasp2021",
+      "citation": "Hopewell S, Keene DJ, Marian IR, et al. Progressive exercise compared with best practice advice, with or without corticosteroid injection, for the treatment of patients with rotator cuff disorders (GRASP): a multicentre, pragmatic, 2 x 2 factorial, randomised controlled trial. Lancet. 2021;398(10298):416-428.",
+      "doi": "10.1016/s0140-6736(21)00846-1",
+      "pmid": "34265255",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8343092/",
+      "type": "rct"
+    },
+    {
+      "id": "grasp_protocol2017",
+      "citation": "Hopewell S, Keene DJ, Maia Schlussel M, et al. Clinical and cost-effectiveness of progressive exercise compared with best practice advice, with or without corticosteroid injection, for the treatment of rotator cuff disorders: protocol for a 2x2 factorial randomised controlled trial (the GRASP trial). BMJ Open. 2017;7(7):e018004.",
+      "doi": "10.1136/bmjopen-2017-018004",
+      "pmid": "28716796",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5683303/",
+      "type": "rct_protocol"
+    },
+    {
+      "id": "holmgren2012",
+      "citation": "Holmgren T, Bjornsson Hallgren H, Oberg B, Adolfsson L, Johansson K. Effect of specific exercise strategy on need for surgery in patients with subacromial impingement syndrome: randomised controlled study. BMJ. 2012;344:e787, with its appendix (details of specific exercise programme).",
+      "doi": "10.1136/bmj.e787",
+      "pmid": "22349588",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3282676/",
+      "type": "rct"
+    },
+    {
+      "id": "lewis2016",
+      "citation": "Lewis J. Rotator cuff related shoulder pain: Assessment, management and uncertainties. Man Ther. 2016;23:57-68. Accepted manuscript.",
+      "doi": "10.1016/j.math.2016.03.009",
+      "pmid": "27083390",
+      "url": "https://uhra.herts.ac.uk/id/eprint/5875/1/Accepted_Manuscript.pdf",
+      "type": "narrative_review"
+    }
+  ],
+  "verification": {
+    "sourcesChecked": 13,
+    "itemsRemoved": [
+      {
+        "item": "Band row (scapular stabiliser strengthening), catalog:banded-row",
+        "reason": "The Holmgren appendix contains no row. Its nearest exercise is a standing 'shoulder retraction' with a low-anchored band, hands moving from in front of the body to beside the hips. The catalog entry is a horizontal pull, so it is not confirmed as the same movement, and the trial evidence does not transfer to it."
+      }
+    ],
+    "labelsCorrected": [
+      "Load above 5/10 pain or not recovered by next session: evidenceStrength rct -> expert_opinion. The threshold was a protocol rule that the trial did not test separately, and Ullern 2025 reports that such parameters are predominantly pragmatic, founded on clinical expertise rather than research evidence."
+    ],
+    "textCorrected": [
+      "Holmgren appendix was retrieved through Europe PMC, so the statements that the exercises and positions were unknown were replaced. catalog:cross-body-shoulder-stretch is now confirmed by the appendix photo, not inferred.",
+      "Stretch hold: the appendix says 30 to 45 seconds and the article 30 to 60. Both are recorded.",
+      "Zhang 2025: 202 is the number in the high-load arms (401 across those trials). 'Ranked lowest' replaced by the authors' 'appeared to be the worst'. Concentric 30 and 14 are network totals, not two arms.",
+      "Lewis describes the irritable presentation as easily aggravated pain together with night pain, not or.",
+      "Wu 2025: 'heterogeneous' removed, because I2 was 5% for pain, 21% for CMS and 28% for DASH after sensitivity analysis.",
+      "Citation details completed for Cochrane (PMID), Naunton, Zhang, GRASP and the GRASP protocol."
+    ],
+    "unverifiable": [
+      "JOSPT 2025 full text returned HTTP 403 in the original research; only its abstract was checked through Europe PMC. Grade C for education and grade F for screening are confirmed only as stated in the Physiotutors secondary summary.",
+      "Zhang 2025: no numeric SUCRA for high-load training was readable, as the ranking figures are images. The top three SUCRA values and the authors' statement were confirmed.",
+      "Lafrance 2024 and Naunton 2020 were checked at abstract level only."
+    ],
+    "notes": "Sources without a sourceIds reference (jospt_cpg_abstract, cochrane2016, naunton2020, wu2025, grasp2021) were kept because diagnosisContested, limitations or the .md evidence summary use them. The appendix also shows exercises not added here, such as push-up plus against a table; a verification pass does not add items."
+  },
+  "limitations": "Overall grade is low for specific exercise guidance, although guidelines broadly endorse exercise. Effects against placebo, no treatment or simple advice are small or uncertain: Cochrane 2016 found small, not clinically important benefit against placebo in one trial; Naunton 2020 found uncertain benefit (low certainty); GRASP found no difference in SPADI between up to six sessions of progressive exercise and one advice session, and the advice arm also exercised. The JOSPT 2025 full text returned HTTP 403, so its grades come only from a secondary summary and need checking against the original. NICE CKS could not be opened and is not used. No source opened supports a blanket ban on overhead movement, upright rows or any named gym exercise, so none is listed. Trials rarely report dosing; no trial compared different frequencies or times. The only numeric dose comes from one single-centre trial of people with long-standing symptoms on an orthopaedic pathway after corticosteroid injection, with physiotherapist-adjusted load, so it may not transfer to unsupervised use. Network meta-analysis rankings rest on small arms (concentric training had 30 participants in the disability network and 14 in the pain network) with no certainty rating, so no concentric-over-eccentric preference is recorded. Wu 2025 has no GRADE rating. Red flags use clinician referral wording and need plain-language review before display. Traumatic presentations, full-thickness tears being considered for surgery, instability, frozen shoulder and inflammatory arthritis fall outside the trial evidence. This is general information for working around a condition, not diagnosis or treatment."
+}

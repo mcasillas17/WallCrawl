@@ -1,0 +1,243 @@
+{
+  "id": "nonspecific_low_back_pain",
+  "name": "Nonspecific low back pain",
+  "evidenceGrade": "moderate",
+  "diagnosisContested": {
+    "contested": false,
+    "note": "The label itself is not seriously disputed, but it is a diagnosis of exclusion: WHO defines chronic primary low back pain as pain lasting more than 3 months that is not due to an underlying disease or other condition. It covers a mixed population, and it presumes serious pathology has been ruled out, which an app cannot do. The guideline's movement control impairment subgroup is a clinician classification and cannot be self-assigned in an app (expert opinion, this review)."
+  },
+  "avoidOrModify": [
+    {
+      "movement": "Prolonged bed rest or stopping ordinary activity because of back pain",
+      "action": "avoid",
+      "rationale": "Advice to stay active gave small improvements in pain and function over advice to rest in bed for acute low back pain (moderate quality). For sciatica there was little or no difference, so this is weaker with leg symptoms. The review's search ended in May 2009.",
+      "evidenceStrength": "systematic_review",
+      "sourceIds": ["dahm2022", "iatrox_vadod"]
+    },
+    {
+      "movement": "Lumbar flexion (rounding the lower back) while lifting, only where it provokes the person's symptoms",
+      "action": "modify",
+      "rationale": "Do not apply this as a blanket ban. A systematic review found low-quality evidence that greater lumbar flexion during lifting is not a risk factor for low back pain onset or persistence, and does not distinguish people with and without pain. Modifying is justified only by individual symptom response (expert opinion).",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": ["saraceni2020"]
+    },
+    {
+      "movement": "Loaded spinal flexion or lifting in a person with known osteoporosis, long-term corticosteroid use or previous spinal fracture",
+      "action": "modify",
+      "rationale": "A secondary summary of the IFOMPT framework describes spinal fracture as often following a fall or lifting in flexion, with these as risk factors. Applying that to exercise selection is an inference, not a tested rule. Such users should get clinician clearance.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": ["pogo_finucane_summary"]
+    },
+    {
+      "movement": "Heavy spinal loading during a flare, such as heavily loaded hinges or squats",
+      "action": "modify",
+      "rationale": "A biomechanics review states that low back tissues may need stress but too much load can be detrimental, and notes the basis for exercise selection is less complete than expected. No opened source gives a safe load limit or shows that heavy lifting worsens outcomes, so treat this as cautious expert opinion and not a prohibition.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": ["mcgill1998"]
+    },
+    {
+      "movement": "Using stretching as the entire exercise programme",
+      "action": "modify",
+      "rationale": "Stretching is not contraindicated, but it was not significantly different from true control for pain or function in a network meta-analysis (low-quality evidence), and specific trunk muscle activation outperformed stretching in several small trials in a movement control impairment subgroup. Combine it with strengthening or general exercise.",
+      "evidenceStrength": "systematic_review",
+      "sourceIds": ["owen2020", "george2021"]
+    }
+  ],
+  "candidateExercises": [
+    {
+      "name": "Forearm plank",
+      "catalog": "catalog:plank",
+      "kind": "strengthening",
+      "dose": {"sets": null, "reps": null, "holdSeconds": null, "frequency": "3 sessions per week for 6 weeks in one trial; hold time not reported"},
+      "bodyweightOrHold": true,
+      "cautions": "No hold time was reported, so set it by tolerance. The trial found no between-group pain or disability difference, and it did not report adverse events.",
+      "evidenceStrength": "rct",
+      "sourceIds": ["kanli2024", "george2021"]
+    },
+    {
+      "name": "Side plank",
+      "catalog": "catalog:side-plank",
+      "kind": "strengthening",
+      "dose": {"sets": null, "reps": null, "holdSeconds": null, "frequency": "3 sessions per week for 6 weeks in one trial; hold time not reported"},
+      "bodyweightOrHold": true,
+      "cautions": "No hold time was reported. The catalog rates it intermediate, so it may be too hard for a first choice during symptoms.",
+      "evidenceStrength": "rct",
+      "sourceIds": ["kanli2024", "asik2025", "george2021"]
+    },
+    {
+      "name": "Curl-up (partial trunk raise, not a full sit-up)",
+      "catalog": "new",
+      "kind": "strengthening",
+      "dose": {"sets": null, "reps": null, "holdSeconds": null, "frequency": "3 sessions per week for 6 weeks in one trial; repetitions not reported"},
+      "bodyweightOrHold": true,
+      "cautions": "No repetitions or hold were reported. The catalog crunch is not treated as the same movement.",
+      "evidenceStrength": "rct",
+      "sourceIds": ["kanli2024", "george2021"]
+    },
+    {
+      "name": "Pelvic tilt",
+      "catalog": "new",
+      "kind": "mobility",
+      "dose": {"sets": null, "reps": null, "holdSeconds": null, "frequency": "Warm-up within sessions 3 times per week; repetitions not reported"},
+      "bodyweightOrHold": true,
+      "cautions": "Warm-up component only, with no independent evidence of effect.",
+      "evidenceStrength": "rct",
+      "sourceIds": ["asik2025"]
+    },
+    {
+      "name": "Cat-cow",
+      "catalog": "catalog:cat-cow-stretch",
+      "kind": "mobility",
+      "dose": {"sets": null, "reps": null, "holdSeconds": null, "frequency": "Warm-up within sessions 3 times per week; repetitions not reported"},
+      "bodyweightOrHold": true,
+      "cautions": "Warm-up component only, with no independent evidence of effect. Trunk mobility exercise carries a weaker guideline grade (B) than strengthening (A) in chronic pain.",
+      "evidenceStrength": "rct",
+      "sourceIds": ["asik2025", "george2021"]
+    },
+    {
+      "name": "Trunk rotation",
+      "catalog": "new",
+      "kind": "mobility",
+      "dose": {"sets": null, "reps": null, "holdSeconds": null, "frequency": "Within home sessions 3 times per week; repetitions not reported"},
+      "bodyweightOrHold": true,
+      "cautions": "The source does not describe the position, so the catalog Torso Twists entry is not assumed to match. Programme component only.",
+      "evidenceStrength": "rct",
+      "sourceIds": ["asik2025"]
+    },
+    {
+      "name": "Hamstring stretch",
+      "catalog": "catalog:hamstring-stretch",
+      "kind": "stretch",
+      "dose": {"sets": null, "reps": null, "holdSeconds": null, "frequency": "Within sessions 3 times per week; hold time not reported"},
+      "bodyweightOrHold": true,
+      "cautions": "Use as a complement only, since stretching was not significantly different from control in a network meta-analysis.",
+      "evidenceStrength": "rct",
+      "sourceIds": ["asik2025", "owen2020"]
+    },
+    {
+      "name": "Child's pose",
+      "catalog": "catalog:childs-pose",
+      "kind": "stretch",
+      "dose": {"sets": null, "reps": null, "holdSeconds": null, "frequency": "Cool-down within sessions 3 times per week; hold time not reported"},
+      "bodyweightOrHold": true,
+      "cautions": "Cool-down in the Pilates arm of one trial only, so its specific effect is unknown.",
+      "evidenceStrength": "rct",
+      "sourceIds": ["asik2025"]
+    },
+    {
+      "name": "Walking",
+      "catalog": "catalog:walking",
+      "kind": "mobility",
+      "dose": {"sets": null, "reps": null, "holdSeconds": null, "frequency": "3 days per week for 6 weeks in a walking and cycling arm, at 75% of age-predicted maximum heart rate"},
+      "bodyweightOrHold": true,
+      "cautions": "Aerobic exercise has no matching kind in this schema, so mobility is a forced label. The trial combined walking with cycling and showed no between-group difference, while the guideline supports aerobic exercise for chronic pain at grade A.",
+      "evidenceStrength": "guideline",
+      "sourceIds": ["george2021", "kanli2024"]
+    }
+  ],
+  "redFlags": [
+    {
+      "sign": "With back or leg pain: new or worsening trouble starting or maintaining urination, or not emptying the bladder",
+      "action": "Stop and seek emergency help immediately; possible cauda equina syndrome.",
+      "sourceIds": ["somerset_ces"]
+    },
+    {
+      "sign": "With back or leg pain: new or worsening loss of bowel control or of the sensation of needing to pass stool",
+      "action": "Stop and seek emergency help immediately; possible cauda equina syndrome.",
+      "sourceIds": ["somerset_ces"]
+    },
+    {
+      "sign": "New or worsening altered feeling around the buttocks, genitals or between the legs",
+      "action": "Stop and seek emergency help immediately; possible cauda equina syndrome.",
+      "sourceIds": ["somerset_ces", "iatrox_vadod"]
+    },
+    {
+      "sign": "New or worsening changes in sexual sensation or function, with back or leg pain",
+      "action": "Stop and seek emergency help immediately; possible cauda equina syndrome.",
+      "sourceIds": ["somerset_ces"]
+    },
+    {
+      "sign": "New or worsening severe pain in both legs, or rapidly progressive leg weakness",
+      "action": "Stop and seek emergency help immediately; possible cauda equina syndrome or other serious nerve involvement.",
+      "sourceIds": ["somerset_ces", "iatrox_vadod"]
+    },
+    {
+      "sign": "Back pain after significant trauma, or severe localised pain with osteoporosis, long-term corticosteroid use or previous spinal fracture",
+      "action": "Stop exercising and get prompt medical assessment for possible fracture. The urgency wording is expert opinion, since the opened summaries set no timeframe.",
+      "sourceIds": ["pogo_finucane_summary", "iatrox_vadod"]
+    },
+    {
+      "sign": "Back pain with a past history of cancer, unexplained weight loss or night pain",
+      "action": "Stop exercising and get prompt medical assessment for possible malignancy. The urgency wording is expert opinion, since the opened summaries set no timeframe.",
+      "sourceIds": ["pogo_finucane_summary", "iatrox_vadod"]
+    },
+    {
+      "sign": "Back pain with fever, immunosuppression, injection-drug use, recent infection or a recent spinal procedure. Absence of fever does not exclude infection.",
+      "action": "Stop exercising and seek urgent medical assessment for possible spinal infection.",
+      "sourceIds": ["pogo_finucane_summary", "iatrox_vadod"]
+    }
+  ],
+  "sources": [
+    {"id": "hayden2021", "citation": "Hayden JA, Ellis J, Ogilvie R, Malmivaara A, van Tulder MW. Exercise therapy for chronic low back pain. Cochrane Database Syst Rev. 2021;9:CD009790.", "doi": "10.1002/14651858.CD009790.pub2", "pmid": "34580864", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8477273/", "type": "systematic_review"},
+    {"id": "george2021", "citation": "George SZ, Fritz JM, Silfies SP, et al. Interventions for the Management of Acute and Chronic Low Back Pain: Revision 2021. J Orthop Sports Phys Ther. 2021;51(11):CPG1-CPG60.", "doi": "10.2519/jospt.2021.0304", "pmid": "34719942", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10508241", "type": "guideline"},
+    {"id": "who2023_news", "citation": "World Health Organization. WHO releases guidelines on chronic low back pain. News item, 7 December 2023.", "doi": null, "pmid": null, "url": "https://www.who.int/news/item/07-12-2023-who-releases-guidelines-on-chronic-low-back-pain", "type": "guideline_summary"},
+    {"id": "arma_nice2016", "citation": "ARMA. NICE publishes updated advice on treating low back pain. 30 November 2016. Secondary report of NICE NG59; NICE's own pages returned HTTP 403.", "doi": null, "pmid": null, "url": "https://arma.uk.net/nice-publishes-updated-advice-on-treating-low-back-pain/", "type": "guideline_summary"},
+    {"id": "iatrox_vadod", "citation": "iatroX. Educational summary of the VA/DoD 2022 low back pain guideline, source check 20 August 2026. Secondary and not an official guideline.", "doi": null, "pmid": null, "url": "https://iatrox.com/guidelines/low-back-pain-and-sciatica", "type": "guideline_summary"},
+    {"id": "owen2020", "citation": "Owen PJ, Miller CT, Mundell NL, et al. Which specific modes of exercise training are most effective for treating low back pain? Network meta-analysis. Br J Sports Med. 2020;54(21):1279-1287.", "doi": "10.1136/bjsports-2019-100886", "pmid": "31666220", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7588406/", "type": "network_meta_analysis"},
+    {"id": "owen2020_eoc", "citation": "Expression of concern for Owen et al., Br J Sports Med 2020. PubMed record states it was rescinded in an editorial dated 27 July 2020.", "doi": null, "pmid": "32139370", "url": "https://pubmed.ncbi.nlm.nih.gov/32139370/", "type": "editorial_notice"},
+    {"id": "saragiotto2016", "citation": "Saragiotto BT, Maher CG, Yamato TP, et al. Motor control exercise for chronic non-specific low-back pain. Cochrane Database Syst Rev. 2016;(1):CD012004.", "doi": "10.1002/14651858.CD012004", "pmid": "26742533", "url": "https://pubmed.ncbi.nlm.nih.gov/26742533/", "type": "systematic_review"},
+    {"id": "ijzelenberg2024", "citation": "IJzelenberg W, Oosterhuis T, Hayden JA, et al. Exercise Therapy for Treatment of Acute Non-specific Low Back Pain: A Cochrane Systematic Review and Meta-analysis. Arch Phys Med Rehabil. 2024;105(8):1571-1584.", "doi": "10.1016/j.apmr.2024.02.732", "pmid": "38513994", "url": "https://pubmed.ncbi.nlm.nih.gov/38513994/", "type": "systematic_review"},
+    {"id": "karlsson2020", "citation": "Karlsson M, Bergenheim A, Larsson MEH, et al. Effects of exercise therapy in patients with acute low back pain: a systematic review of systematic reviews. Syst Rev. 2020;9:182.", "doi": "10.1186/s13643-020-01412-8", "pmid": "32795336", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7427286/", "type": "systematic_review"},
+    {"id": "dahm2022", "citation": "Dahm KT, Brurberg KG, Jamtvedt G, Hagen KB. Advice to rest in bed versus advice to stay active for acute low-back pain and sciatica. Cochrane Database Syst Rev. 2010;(6):CD007612. Search to May 2009.", "doi": "10.1002/14651858.CD007612.pub2", "pmid": "20556780", "url": "https://www.cochrane.org/CD007612", "type": "systematic_review"},
+    {"id": "saraceni2020", "citation": "Saraceni N, Kent P, Ng L, Campbell A, Straker L, O'Sullivan P. To Flex or Not to Flex? J Orthop Sports Phys Ther. 2020;50(3):121-130.", "doi": "10.2519/jospt.2020.9218", "pmid": "31775556", "url": "https://pubmed.ncbi.nlm.nih.gov/31775556/", "type": "systematic_review"},
+    {"id": "mcgill1998", "citation": "McGill SM. Low back exercises: evidence for improving exercise regimens. Phys Ther. 1998;78(7):754-765. Abstract only read.", "doi": "10.1093/ptj/78.7.754", "pmid": "9672547", "url": "https://pubmed.ncbi.nlm.nih.gov/9672547/", "type": "narrative_review"},
+    {"id": "finucane2020", "citation": "Finucane LM, Downie A, Mercer C, et al. International Framework for Red Flags for Potential Serious Spinal Pathologies. J Orthop Sports Phys Ther. 2020;50(7):350-372. Abstract only read.", "doi": "10.2519/jospt.2020.9971", "pmid": "32438853", "url": "https://pubmed.ncbi.nlm.nih.gov/32438853/", "type": "consensus_framework"},
+    {"id": "pogo_finucane_summary", "citation": "POGO Physio. Red Flags for Spinal Pathology. Secondary summary attributing only part of its content, including fracture risk factors, to Finucane et al. 2020.", "doi": null, "pmid": null, "url": "https://www.pogophysio.com.au/?p=8582", "type": "secondary_summary"},
+    {"id": "somerset_ces", "citation": "Somerset NHS Foundation Trust. Cauda Equina Syndrome. Patient information page.", "doi": null, "pmid": null, "url": "https://www.somersetft.nhs.uk/trauma-and-orthopaedics/trauma-and-orthopaedics/spinal-surgery-service/cauda-equina-syndrome/", "type": "patient_information"},
+    {"id": "kanli2024", "citation": "Kanli K, Hare Yigitoglu P, Ozgul A. Investigation of the effects of different treatment approaches on lumbar stabilizer muscles and diaphragm motility in individuals with chronic low back pain. Turk J Phys Med Rehabil. 2024;70(3):358-369.", "doi": "10.5606/tftrd.2024.13257", "pmid": "39679113", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11639492/", "type": "rct"},
+    {"id": "asik2025", "citation": "Asik HK, Sahbaz T. Preventing chronic low back pain: investigating the role of Pilates in subacute management, a randomized controlled trial. Ir J Med Sci. 2025;194(3):949-956.", "doi": "10.1007/s11845-025-03939-y", "pmid": "40183915", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12276093/", "type": "rct"}
+  ],
+  "limitations": "The moderate grade applies only to the general claim that exercise probably reduces pain in chronic nonspecific low back pain compared with no treatment, usual care or placebo (Hayden 2021: pain MD -15.2/100; disability MD -6.8/100, below the review's clinical threshold; searches to April 2018). Guidance on any individual exercise, movement restriction or dose is low to very low certainty, and no source establishes a best exercise. The guideline states dosing varied widely and prescribes no standard dose. Doses here are taken from single trial arms; sets were never reported, so they are null. Named exercises were tested inside programmes, often with other treatments, so their individual effects are unknown. Evidence for acute pain is weaker: exercise may have no clinically relevant short-term effect, and the evidence is very uncertain (IJzelenberg 2024; Karlsson 2020). Harms are poorly reported. Owen 2020 carried a later-rescinded expression of concern and rated all outcomes low quality. Access limits: NICE pages, the Cochrane Library pages, the IFOMPT full text and the WHO full guideline could not be read, so NICE is represented only by a 2016 secondary report (exercise in all its forms as a first step; normal activity encouraged), and the search snippet reporting a July 2026 NICE update was not verified. Non-emergency red flags come from secondary summaries, and their urgency wording is partly expert opinion; the Finucane abstract notes most red flags lack strong diagnostic accuracy evidence. WHO advises against lumbar braces, belts and supports for most people, recorded here because it is not a movement rule. Dead bug and other candidates seen only in unopened search results were left out. The app cannot screen for serious pathology. This summary is general information, not treatment.",
+  "verification": {
+    "sourcesChecked": 21,
+    "itemsRemoved": [
+      {
+        "item": "avoidOrModify: A movement that sharply reproduces or lastingly worsens the person's own symptoms",
+        "reason": "The Cochrane summary reports increased low back pain and muscle soreness as harms but never calls them temporary, so 'temporary increases' and the conclusion that short-lived soreness is not a stop signal are unsupported. iatroX does not address symptom-guided modification."
+      },
+      {
+        "item": "candidateExercises: Bird dog",
+        "reason": "Dose unsupported. Hlaing 2021 introduces alternate arm and leg lifting only in week 4 of the strengthening arm, so it was not done for 4 weeks. Kanli 2024 and Asik 2025 do support the exercise itself, so it can be re-added with a dose those trials report."
+      },
+      {
+        "item": "candidateExercises: Glute bridge",
+        "reason": "Dose unsupported. Hlaing 2021 introduces bridging in week 2 of the strengthening arm, so it was not done for 4 weeks. Kanli 2024 and Asik 2025 do support the exercise itself, so it can be re-added with a dose those trials report."
+      },
+      {
+        "item": "candidateExercises: Abdominal drawing-in",
+        "reason": "Dose unsupported. Hlaing 2021 places the drawing-in stage in weeks 1-2, then moves to co-contraction, so the 4-week dose does not describe this exercise. Kanli 2024 does list abdominal hollowing, but with no dose."
+      },
+      {
+        "item": "candidateExercises: Repeated prone extension",
+        "reason": "The guideline does not report an acute trial. Shah and Kage enrolled patients with pain under 3 months and appears in its chronic section, and manual therapy outperformed repeated prone extension after 7 sessions. That does not support the dose description or the guideline strength label."
+      }
+    ],
+    "labelsCorrected": [
+      "Lumbar flexion while lifting: evidenceStrength systematic_review to expert_opinion. Saraceni 2020 supports no blanket ban, but the modify rule itself is opinion.",
+      "Heavy spinal loading during a flare: evidenceStrength biomechanical to expert_opinion. The McGill abstract does not address flares, load limits or outcomes.",
+      "Source dahm2022: PubMed and Europe PMC list this DOI as Cochrane 2010;(6):CD007612, PMID 20556780. Citation year and pmid corrected; the id is unchanged.",
+      "Source pogo_finucane_summary: citation corrected, since the page attributes only part of its content to Finucane 2020."
+    ],
+    "sourcesRemoved": [
+      "hayden2021_summary",
+      "who2023_record",
+      "hlaing2021"
+    ],
+    "unverifiable": [
+      "The July 2026 NICE update noted in limitations was not checked and remains unverified.",
+      "Kanli 2024 says 'prone plank' and does not state forearm support, so its match to catalog:plank is assumed. Asik 2025 names forearm plank but is not cited on that item.",
+      "Red flag on bowel sensation: the Somerset page says 'not feeling you are pooing', while the item says sensation of needing to pass stool. Kept because the meaning is close and the safety action is the same.",
+      "Candidate items citing george2021 rest on exercise categories only. The guideline does not name plank, side plank, curl-up or cat-cow."
+    ]
+  }
+}

@@ -1,0 +1,413 @@
+{
+  "id": "lumbar_radiculopathy",
+  "name": "Lumbar radiculopathy (sciatica)",
+  "evidenceGrade": "low",
+  "diagnosisContested": {
+    "contested": true,
+    "note": "The condition itself is accepted, but its label and boundaries are not standardised. A review of 23 prevalence studies found that definitions of sciatica varied widely, only 2 studies used clinical assessment, and prevalence ranged from 1.2% to 43%. A Cochrane diagnostic review found that most physical tests perform poorly in isolation, and a primary-care modelling study reports conflicting reference standards. Trial populations therefore differ, and a self-reported 'sciatica' in the app may not be true nerve-root pain."
+  },
+  "avoidOrModify": [
+    {
+      "movement": "Any exercise or activity during which leg pain increases",
+      "action": "modify",
+      "rationale": "Participants in a sham-controlled trial were advised to stay as active as possible but to reduce activity if leg pain increased. The advice was given to both arms as part of a package, so its separate effect was not tested.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": [
+        "albert2012"
+      ]
+    },
+    {
+      "movement": "Replacing normal activity with extended bed rest",
+      "action": "modify",
+      "rationale": "NICE advises encouraging people to continue normal activities. For sciatica specifically, Cochrane found moderate-quality evidence of little or no difference between advice to rest in bed and advice to stay active, so this shows rest has no added benefit, not that it harms people with sciatica.",
+      "evidenceStrength": "guideline",
+      "sourceIds": [
+        "nice_ng59",
+        "dahm_cochrane"
+      ]
+    },
+    {
+      "movement": "Any neural mobilisation in a person with cauda equina lesions, cord signs, or other nervous system pathology such as Guillain-Barre syndrome or multiple sclerosis",
+      "action": "avoid",
+      "rationale": "The meta-analysis lists these as contraindications and says they should be identified before neural mobilisation. None of its 20 trials reported adverse events, which does not establish safety for self-directed use.",
+      "evidenceStrength": "systematic_review",
+      "sourceIds": [
+        "lin2023"
+      ]
+    },
+    {
+      "movement": "Fixed-direction repeated lumbar flexion or extension applied to everyone with leg pain",
+      "action": "modify",
+      "rationale": "The guideline's retained 2012 recommendations describe repeated exercises in a direction determined by treatment response, and it also says flexion exercises can be considered within a combined programme for older people with chronic radiating pain. The opened sources therefore do not support a blanket ban or a blanket prescription for either direction.",
+      "evidenceStrength": "guideline",
+      "sourceIds": [
+        "jospt2021"
+      ]
+    },
+    {
+      "movement": "Mechanical spinal traction used to manage leg pain",
+      "action": "avoid",
+      "rationale": "NICE says not to offer traction for low back pain with or without sciatica, and the JOSPT guideline says physical therapists should not use mechanical traction for chronic low back pain with leg pain. These address clinical traction and do not assess gym movements such as hanging.",
+      "evidenceStrength": "guideline",
+      "sourceIds": [
+        "nice_ng59",
+        "jospt2021"
+      ]
+    }
+  ],
+  "candidateExercises": [
+    {
+      "name": "Seated slump slider",
+      "catalog": "new",
+      "kind": "neural_mobility",
+      "dose": {
+        "sets": 3,
+        "reps": 15,
+        "holdSeconds": null,
+        "frequency": "3 days per week for 2 weeks, with 5 minutes between sets (one small trial, Anikwe 2015, as tabulated in Lin 2023). Another trial, Bhatia 2017, used 5 sets of 15, 5 days per week for 4 weeks."
+      },
+      "bodyweightOrHold": true,
+      "cautions": "Doses come from small trials where this was added to other treatment. Self-directed use without clinician screening is not established. Excluded if any red flag or listed contraindication applies. Stop if leg symptoms increase.",
+      "evidenceStrength": "systematic_review",
+      "sourceIds": [
+        "lin2023",
+        "jospt2021"
+      ]
+    },
+    {
+      "name": "Side-lying straight-leg-raise slider",
+      "catalog": "new",
+      "kind": "neural_mobility",
+      "dose": {
+        "sets": 3,
+        "reps": 10,
+        "holdSeconds": null,
+        "frequency": "3 days per week for 4 weeks; described as repeated 3 times with 10 oscillatory movements (one trial, Colakovic 2013, as tabulated in Lin 2023)"
+      },
+      "bodyweightOrHold": true,
+      "cautions": "Same limits as the slump slider. Added to lumbar stabilisation exercise in the trial. Stop if leg symptoms increase.",
+      "evidenceStrength": "systematic_review",
+      "sourceIds": [
+        "lin2023"
+      ]
+    },
+    {
+      "name": "Repeated lumbar movement in a direction chosen by symptom response",
+      "catalog": "new",
+      "kind": "mobility",
+      "dose": {
+        "sets": null,
+        "reps": null,
+        "holdSeconds": null,
+        "frequency": "Not established; the opened sources give no usable dose and the exercises were individualised."
+      },
+      "bodyweightOrHold": true,
+      "cautions": "Results conflict. Symptom-guided exercise beat sham for most outcomes in Albert 2012, but a McKenzie programme matched guideline-based advice at 24 months in a small trial. Direction was set by an algorithm or therapist, which a fixed app routine would not replicate.",
+      "evidenceStrength": "rct",
+      "sourceIds": [
+        "albert2012",
+        "kilpikoski2024",
+        "jospt2021"
+      ]
+    },
+    {
+      "name": "Walking",
+      "catalog": "catalog:walking",
+      "kind": "mobility",
+      "dose": {
+        "sets": null,
+        "reps": null,
+        "holdSeconds": null,
+        "frequency": "Not established for sciatica; the opened sources give no dose."
+      },
+      "bodyweightOrHold": true,
+      "cautions": "Supports staying active rather than treating leg pain. The guideline's walking review covered chronic low back pain, not sciatica, and found no significant differences against other interventions. Reduce if leg pain increases.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": [
+        "jospt2021",
+        "nice_ng59"
+      ]
+    },
+    {
+      "name": "Bird dog",
+      "catalog": "catalog:bird-dog",
+      "kind": "strengthening",
+      "dose": {
+        "sets": null,
+        "reps": null,
+        "holdSeconds": null,
+        "frequency": "Not established; no opened source names this exercise or gives a dose."
+      },
+      "bodyweightOrHold": true,
+      "cautions": "Choosing this exercise is expert-opinion mapping onto the guideline's broad trunk-strengthening and movement-control categories. Evidence for that category in sciatica itself is limited. Reduce if leg pain increases.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": [
+        "jospt2021"
+      ]
+    },
+    {
+      "name": "Side plank",
+      "catalog": "catalog:side-plank",
+      "kind": "strengthening",
+      "dose": {
+        "sets": null,
+        "reps": null,
+        "holdSeconds": null,
+        "frequency": "Not established; no opened source names this exercise or gives a dose."
+      },
+      "bodyweightOrHold": true,
+      "cautions": "Choosing this exercise is expert-opinion mapping onto the guideline's broad trunk-endurance category. Reduce if leg pain increases.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": [
+        "jospt2021"
+      ]
+    },
+    {
+      "name": "Dead bug",
+      "catalog": "catalog:dead-bug",
+      "kind": "strengthening",
+      "dose": {
+        "sets": null,
+        "reps": null,
+        "holdSeconds": null,
+        "frequency": "Not established; no opened source names this exercise or gives a dose."
+      },
+      "bodyweightOrHold": true,
+      "cautions": "Choosing this exercise is expert-opinion mapping onto the guideline's movement-control category. Reduce if leg pain increases.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": [
+        "jospt2021"
+      ]
+    },
+    {
+      "name": "Cat-cow",
+      "catalog": "catalog:cat-cow-stretch",
+      "kind": "mobility",
+      "dose": {
+        "sets": null,
+        "reps": null,
+        "holdSeconds": null,
+        "frequency": "Not established; no opened source names this exercise or gives a dose."
+      },
+      "bodyweightOrHold": true,
+      "cautions": "Choosing this exercise is expert-opinion mapping onto the guideline's trunk mobility category. It moves through both flexion and extension, so limit range to what does not increase leg pain.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": [
+        "jospt2021"
+      ]
+    }
+  ],
+  "redFlags": [
+    {
+      "sign": "New bladder change with back pain or sciatica: altered urination pattern, hesitancy, frequency, dribbling, incomplete emptying, loss of the sensation of passing urine, retention, or incontinence",
+      "action": "Stop exercising and seek emergency care the same day. UK guidance calls for an urgent same-day MRI based on symptoms alone.",
+      "sourceIds": [
+        "todd2025",
+        "york_ces"
+      ]
+    },
+    {
+      "sign": "Any change in saddle sensation, meaning numbness or tingling in the genital or perianal area",
+      "action": "Stop exercising and seek emergency care the same day. UK guidance calls for an urgent same-day MRI based on symptoms alone.",
+      "sourceIds": [
+        "todd2025",
+        "york_ces"
+      ]
+    },
+    {
+      "sign": "Faecal incontinence",
+      "action": "Stop exercising and go to an emergency department.",
+      "sourceIds": [
+        "york_ces"
+      ]
+    },
+    {
+      "sign": "Sciatica in both legs",
+      "action": "Stop exercising and seek urgent medical assessment, because the pathway treats this as potential cauda equina syndrome.",
+      "sourceIds": [
+        "york_ces"
+      ]
+    },
+    {
+      "sign": "Significant or worsening leg weakness, foot drop, or new difficulty walking",
+      "action": "Stop exercising and seek urgent medical assessment.",
+      "sourceIds": [
+        "york_ces"
+      ]
+    },
+    {
+      "sign": "New sexual dysfunction with back pain or sciatica",
+      "action": "Stop exercising and seek urgent medical assessment.",
+      "sourceIds": [
+        "york_ces",
+        "todd2025"
+      ]
+    },
+    {
+      "sign": "New or changed symptoms raising concern for cancer, infection, trauma, or inflammatory disease",
+      "action": "Stop the programme and see a clinician to look for another cause.",
+      "sourceIds": [
+        "nice_ng59"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "nice_ng59",
+      "citation": "National Institute for Health and Care Excellence. Low back pain and sciatica in over 16s: assessment and management. NICE guideline NG59. Published 30 November 2016, last updated 29 July 2026.",
+      "doi": null,
+      "pmid": null,
+      "url": "https://www.nice.org.uk/guidance/ng59/chapter/Recommendations",
+      "type": "guideline"
+    },
+    {
+      "id": "jospt2021",
+      "citation": "George SZ, Fritz JM, Silfies SP, et al. Interventions for the Management of Acute and Chronic Low Back Pain: Revision 2021. J Orthop Sports Phys Ther. 2021;51(11):CPG1-CPG60.",
+      "doi": "10.2519/jospt.2021.0304",
+      "pmid": "34719942",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10508241/",
+      "type": "guideline"
+    },
+    {
+      "id": "dove2023",
+      "citation": "Dove L, Jones G, Kelsey LA, Cairns MC, Schmid AB. How effective are physiotherapy interventions in treating people with sciatica? A systematic review and meta-analysis. Eur Spine J. 2023.",
+      "doi": "10.1007/s00586-022-07356-y",
+      "pmid": "36580149",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9925551/",
+      "type": "systematic_review"
+    },
+    {
+      "id": "fernandez2015",
+      "citation": "Fernandez M, Hartvigsen J, Ferreira ML, et al. Advice to Stay Active or Structured Exercise in the Management of Sciatica: A Systematic Review and Meta-analysis. Spine. 2015. Abstract only.",
+      "doi": "10.1097/BRS.0000000000001036",
+      "pmid": "26165218",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/26165218/",
+      "type": "systematic_review"
+    },
+    {
+      "id": "zhu2025",
+      "citation": "Zhu Z, Schouten T, Strijkers R, Koes B, Gerger H, Chiarotto A. Effectiveness of non-surgical interventions for patients with chronic sciatica: A systematic review with network meta-analysis. J Pain. 2025. Abstract only.",
+      "doi": "10.1016/j.jpain.2025.105431",
+      "pmid": "40373933",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/40373933/",
+      "type": "systematic_review"
+    },
+    {
+      "id": "lin2023",
+      "citation": "Lin LH, Lin TY, Chang KV, Wu WT, Ozcakar L. Neural Mobilization for Reducing Pain and Disability in Patients with Lumbar Radiculopathy: A Systematic Review and Meta-Analysis. Life (Basel). 2023;13(12):2255.",
+      "doi": "10.3390/life13122255",
+      "pmid": "38137856",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10744707/",
+      "type": "systematic_review"
+    },
+    {
+      "id": "dahm_cochrane",
+      "citation": "Dahm KT, Brurberg KG, Jamtvedt G, Hagen KB. Advice to rest in bed versus advice to stay active for acute low-back pain and sciatica. Cochrane Database Syst Rev. Art. No. CD007612. Plain-language evidence page only.",
+      "doi": "10.1002/14651858.CD007612.pub2",
+      "pmid": null,
+      "url": "https://www.cochrane.org/evidence/CD007612_advice-rest-bed-versus-advice-stay-active-acute-low-back-pain-and-sciatica",
+      "type": "systematic_review"
+    },
+    {
+      "id": "albert2012",
+      "citation": "Albert HB, Manniche C. The efficacy of systematic active conservative treatment for patients with severe sciatica: a single-blind, randomized, clinical, controlled trial. Spine. 2012. Abstract only.",
+      "doi": "10.1097/BRS.0b013e31821ace7f",
+      "pmid": "21494193",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/21494193/",
+      "type": "rct"
+    },
+    {
+      "id": "kilpikoski2024",
+      "citation": "Kilpikoski S, Hakkinen AH, Repo JP, et al. The McKenzie Method versus guideline-based advice in the treatment of sciatica: 24-month outcomes of a randomised clinical trial. Clin Rehabil. 2024. Abstract only.",
+      "doi": "10.1177/02692155231196393",
+      "pmid": "37605454",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/37605454/",
+      "type": "rct"
+    },
+    {
+      "id": "hahne2017",
+      "citation": "Hahne AJ, Ford JJ, Hinman RS, et al. Individualized functional restoration as an adjunct to advice for lumbar disc herniation with associated radiculopathy. A preplanned subgroup analysis of a randomized controlled trial. Spine J. 2017. Abstract only.",
+      "doi": "10.1016/j.spinee.2016.10.004",
+      "pmid": "27765714",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/27765714/",
+      "type": "rct"
+    },
+    {
+      "id": "luijsterburg2008",
+      "citation": "Luijsterburg PA, Verhagen AP, Ostelo RW, et al. Physical therapy plus general practitioners' care versus general practitioners' care alone for sciatica: a randomised clinical trial with a 12-month follow-up. Eur Spine J. 2008.",
+      "doi": "10.1007/s00586-007-0569-6",
+      "pmid": "18172697",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2295266/",
+      "type": "rct"
+    },
+    {
+      "id": "konstantinou2008",
+      "citation": "Konstantinou K, Dunn KM. Sciatica: review of epidemiological studies and prevalence estimates. Spine. 2008;33:2464-2472. Abstract only.",
+      "doi": "10.1097/BRS.0b013e318183a4a2",
+      "pmid": "18923325",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/18923325/",
+      "type": "review"
+    },
+    {
+      "id": "vanderwindt2010",
+      "citation": "van der Windt DA, Simons E, Riphagen II, et al. Physical examination for lumbar radiculopathy due to disc herniation in patients with low-back pain. Cochrane Database Syst Rev. 2010. Abstract only.",
+      "doi": "10.1002/14651858.CD007431.pub2",
+      "pmid": "20166095",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20166095/",
+      "type": "systematic_review"
+    },
+    {
+      "id": "stynes2018",
+      "citation": "Stynes S, Konstantinou K, Ogollah R, Hay EM, Dunn KM. Clinical diagnostic model for sciatica developed in primary care patients with low back-related leg pain. PLoS One. 2018. Abstract only.",
+      "doi": "10.1371/journal.pone.0191852",
+      "pmid": "29621243",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5886387/",
+      "type": "observational"
+    },
+    {
+      "id": "todd2025",
+      "citation": "Todd NV, Kearsley N, Wright-Todd A. Assessment of cauda equina syndrome: new national guidelines and implications for primary care. Br J Gen Pract. 2025;75(757):381-383.",
+      "doi": "10.3399/BJGP.2025.0122",
+      "pmid": "40744753",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12729032/",
+      "type": "expert_review"
+    },
+    {
+      "id": "york_ces",
+      "citation": "Humber and North Yorkshire Health and Care Partnership. Back pain (cauda equina syndrome) pathway, York. Last modified 19 November 2025; the page states the pathway is under review.",
+      "doi": null,
+      "pmid": null,
+      "url": "https://hnyppr.org.uk/web/york/w/back-pain-cauda-equina-syndrome-pathway",
+      "type": "local_clinical_pathway"
+    }
+  ],
+  "limitations": "Overall grade is low and the evidence conflicts. A 2023 review of 18 trials (all high or unclear risk of bias) found inadequate evidence to make clinical recommendations on physiotherapy for sciatica. A 2025 network meta-analysis of chronic sciatica found very low confidence and no high-quality evidence that any non-surgical option is superior. Exercise beat advice only slightly for short-term leg pain (low-quality evidence), with no long-term difference (moderate-quality evidence). Neural mobilisation shows large pooled effects, but 65% of its trials were high risk of bias, heterogeneity was high, publication bias was found, and treatment lasted only 6 days to 6 weeks where a duration was given. Those doses come from single small trials, usually alongside other treatment, and were not checked trial by trial for therapist versus self delivery. No opened source names bird dog, side plank, dead bug or cat-cow, so those are expert-opinion mappings, and no dose is given for them, for walking or for direction-guided movement; sets is null where no dose was found. No opened source gave direct evidence for restricting lifting, sitting, loaded flexion or specific gym lifts, so none is listed; this absence is not evidence that they are safe. Much JOSPT guidance concerns low back pain with leg pain rather than confirmed radiculopathy. Red flags draw on UK sources, including a local pathway and a primary-care article summarising national guidance; the national documents were not opened, and thresholds may differ elsewhere. Several trials were read as abstracts only, the Cochrane review as its evidence page only, and the BMJ 2019 review of sciatica could not be opened and is not used. This is general information for planning exercise around a condition, not diagnosis or treatment.",
+  "verification": {
+    "sourcesChecked": 17,
+    "itemsRemoved": [
+      {
+        "item": "avoidOrModify: Nerve-tensioning movements that increase the distance between the two ends of the nerve",
+        "reason": "Lin 2023 does not advise modifying tensioners. Its tensioner subgroup showed a significant benefit, the confidence intervals overlap with sliders, and its discussion says NM helped regardless of technique."
+      },
+      {
+        "item": "candidateExercises: Supine straight-leg-raise slider",
+        "reason": "Lin 2023 tabulates Ahmed 2013 only as \"SLR technique, slider\"; the supine position is not stated, and the trial report could not be retrieved."
+      },
+      {
+        "item": "source: stochkendahl2018",
+        "reason": "Its abstract says only \"different types of supervised exercise\", which does not support the trunk categories it was cited for, and the full text was unavailable. Nothing else used it. The bird dog, side plank and dead bug cautions now name only the JOSPT categories."
+      }
+    ],
+    "labelsCorrected": [
+      "Any exercise or activity during which leg pain increases: rct to expert_opinion, because the advice was given to both Albert 2012 arms and was never randomised.",
+      "Walking: guideline to expert_opinion, because neither guideline recommends walking for sciatica; the JOSPT walking review covered chronic low back pain and found no significant differences.",
+      "Limitations: neural mobilisation treatment length corrected from 2 to 6 weeks to 6 days to 6 weeks (Pallipamula 2012 ran 6 days)."
+    ],
+    "unverifiable": [
+      "Primary slider trials (Anikwe 2015, Bhatia 2017, Colakovic 2013) were checked only as tabulated in Lin 2023.",
+      "JOSPT 2021 was read through the fetch tool's extracts of the PMC page, not by direct text search; Europe PMC had no full-text XML for it.",
+      "Abstract only: Fernandez 2015, Zhu 2025, Albert 2012, Kilpikoski 2024, Hahne 2017, Konstantinou 2008, van der Windt 2010, Stynes 2018. Cochrane CD007612: evidence page only.",
+      "The UK national cauda equina documents behind Todd 2025 were not opened."
+    ]
+  }
+}

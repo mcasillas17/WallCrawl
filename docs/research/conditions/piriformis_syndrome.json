@@ -1,0 +1,470 @@
+{
+  "id": "piriformis_syndrome",
+  "name": "Piriformis syndrome",
+  "evidenceGrade": "very_low",
+  "diagnosisContested": {
+    "contested": true,
+    "note": "There are no agreed diagnostic criteria and no definitive imaging or electrodiagnostic test (Miller 2012, Vij 2021). Authors disagree on frequency: Vij 2021 calls it underdiagnosed and Sharma 2023 calls it over-diagnosed. Piriformis syndrome is now usually treated as one subgroup of deep gluteal syndrome, with symptoms overlapping lumbar and other hip conditions (Park 2020, Metikala 2022, Bisciotti 2026). The mechanism is also debated: stretching assumes a short or spastic muscle, while Tonley 2010 proposes the opposite in one patient, overstretching from poor hip control."
+  },
+  "avoidOrModify": [
+    {
+      "movement": "Prolonged sitting, especially on a hard surface",
+      "action": "modify",
+      "rationale": "Commonly reported as aggravating. One exercise protocol taught changing posture every 30 minutes, and NHS sciatica advice is to avoid long periods of sitting. Neither was tested as a separate intervention.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": [
+        "guner2023",
+        "vij2021",
+        "sharma2023",
+        "nhs_sciatica"
+      ]
+    },
+    {
+      "movement": "Cross-legged sitting held for long periods",
+      "action": "avoid",
+      "rationale": "Named as an aggravator and a target of activity modification. This concerns sustained positioning, and a short, controlled stretch is a separate question.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": [
+        "guner2023",
+        "kulcu2024"
+      ]
+    },
+    {
+      "movement": "Slumped sitting with weight on the sacrum (sacral sitting)",
+      "action": "avoid",
+      "rationale": "Patients in one exercise protocol were taught to refrain from it. Its independent effect was not tested.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": [
+        "guner2023"
+      ]
+    },
+    {
+      "movement": "High-volume or repetitive running, long-distance walking, cycling and jumping when these provoke symptoms",
+      "action": "modify",
+      "rationale": "Reported as aggravating or as overuse contributors. Sources support reducing provoking volume and do not support blanket avoidance, and NHS sciatica advice favours staying active.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": [
+        "guner2023",
+        "siraj2022",
+        "kulcu2024",
+        "nhs_sciatica"
+      ]
+    },
+    {
+      "movement": "Heavy lifting",
+      "action": "modify",
+      "rationale": "One exercise protocol taught patients to lift heavy objects sparingly. No load threshold is given and none was tested.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": [
+        "guner2023"
+      ]
+    },
+    {
+      "movement": "Excessive inward knee collapse (hip adduction with internal rotation) during single-leg step-downs and similar tasks",
+      "action": "modify",
+      "rationale": "This pattern reproduced symptoms in one patient, who became pain-free after hip strengthening and movement retraining. A single case report cannot establish cause or effect.",
+      "evidenceStrength": "observational",
+      "sourceIds": [
+        "tonley2010"
+      ]
+    },
+    {
+      "movement": "Forceful end-range stretching in hip flexion, adduction and rotation that reproduces buttock or leg symptoms",
+      "action": "modify",
+      "rationale": "These same positions are used as provocation tests, because they tension the muscle and can compress the nerve. Backing off when symptoms reproduce is this review's cautious reading, and no trial tested a symptom-limit rule.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": [
+        "siraj2022",
+        "sharma2023",
+        "tonley2010",
+        "itsuda2024"
+      ]
+    },
+    {
+      "movement": "Nerve tensioning drills that load the sciatic nerve along its length",
+      "action": "modify",
+      "rationale": "A narrative review reports that gliding produces less nerve strain than tensioning, so gliding is the gentler choice. This is secondary reporting.",
+      "evidenceStrength": "biomechanical",
+      "sourceIds": [
+        "siraj2022"
+      ]
+    },
+    {
+      "movement": "Sustained forward trunk flexion, hamstring stretching and repeated eccentric hamstring loading when pain sits near the sit bone",
+      "action": "modify",
+      "rationale": "May worsen proximal hamstring syndrome, a related deep gluteal condition and not piriformis syndrome itself. It matters because these conditions are hard to tell apart.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": [
+        "kulcu2024"
+      ]
+    }
+  ],
+  "candidateExercises": [
+    {
+      "name": "Piriformis stretch in hip flexion, adduction and external rotation (lying, knee drawn toward the opposite shoulder)",
+      "catalog": "new",
+      "kind": "stretch",
+      "dose": {
+        "sets": null,
+        "reps": 10,
+        "holdSeconds": 30,
+        "frequency": "Twice daily, for 3 weeks in the source. The source says '10 repetitions/sets', so the set count is unclear. The source does not specify the stretch position; the position here comes from separate biomechanical studies."
+      },
+      "bodyweightOrHold": true,
+      "cautions": "Keep it gentle and ease off if it reproduces leg or buttock symptoms. The dose comes from a non-randomized comparison with no untreated control. Position studies measured muscle length or stiffness in small samples and did not measure symptoms. Those studies point to high hip flexion (about 110-120 degrees). May be unhelpful if the overstretching hypothesis applies.",
+      "evidenceStrength": "observational",
+      "sourceIds": [
+        "guner2023",
+        "gulledge2014",
+        "itsuda2024",
+        "aali2026",
+        "siraj2022",
+        "tonley2010"
+      ]
+    },
+    {
+      "name": "FAIR-position stretch (hip flexed and adducted, foot placed beside the opposite knee)",
+      "catalog": "new",
+      "kind": "stretch",
+      "dose": {
+        "sets": 3,
+        "reps": 10,
+        "holdSeconds": 15,
+        "frequency": "3 days per week, with 30 seconds rest between repetitions and a 2-day gap between sessions, as registered. The 15 seconds is a registered minimum, and the registered schedule is internally inconsistent."
+      },
+      "bodyweightOrHold": true,
+      "cautions": "The FAIR position is also a provocation test, so it can reproduce symptoms; ease off if it does. Dose is from a trial registry entry. The published results were not opened, and every arm also did strengthening. A separate study in healthy men found stiffness higher in external than internal rotation, so the best rotation direction is unsettled.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": [
+        "nct05660005",
+        "siraj2022",
+        "itsuda2024"
+      ]
+    },
+    {
+      "name": "Glute bridge (both legs)",
+      "catalog": "catalog:glute-bridge",
+      "kind": "strengthening",
+      "dose": {
+        "sets": 3,
+        "reps": 15,
+        "holdSeconds": null,
+        "frequency": "Not stated in the registry text. Used in week 1 of a 4-week progressive program."
+      },
+      "bodyweightOrHold": true,
+      "cautions": "Dose is from a registered protocol whose results were not found. A 12-patient single-session study found no immediate pain change. Stop if leg symptoms increase.",
+      "evidenceStrength": "observational",
+      "sourceIds": [
+        "nct07484373",
+        "chaari2024",
+        "guner2023"
+      ]
+    },
+    {
+      "name": "Clamshell (side-lying, hips and knees bent, feet together)",
+      "catalog": "catalog:clamshell",
+      "kind": "strengthening",
+      "dose": {
+        "sets": 3,
+        "reps": 15,
+        "holdSeconds": null,
+        "frequency": "Not stated in the registry text. Used in week 1 of a 4-week progressive program."
+      },
+      "bodyweightOrHold": true,
+      "cautions": "Dose is from a registered protocol whose results were not found. A 12-patient single-session study found no immediate pain change. It actively loads the external rotators, so stop if it reproduces symptoms.",
+      "evidenceStrength": "observational",
+      "sourceIds": [
+        "nct07484373",
+        "chaari2024",
+        "guner2023"
+      ]
+    },
+    {
+      "name": "Side-lying hip abduction",
+      "catalog": "catalog:side-lying-hip-abduction",
+      "kind": "strengthening",
+      "dose": {
+        "sets": 3,
+        "reps": 15,
+        "holdSeconds": null,
+        "frequency": "Not stated in the registry text. Used in week 1 of a 4-week progressive program."
+      },
+      "bodyweightOrHold": true,
+      "cautions": "Selected from a registered protocol whose results were not found. A small randomized trial (Laha 2018, 30 patients) favoured adding hip abductor and extensor strengthening, but it was read only as summarized in Siraj 2022.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": [
+        "nct07484373",
+        "siraj2022",
+        "tonley2010"
+      ]
+    },
+    {
+      "name": "Sciatic nerve glide (rhythmic slider, not a tensioner)",
+      "catalog": "new",
+      "kind": "neural_mobility",
+      "dose": {
+        "sets": null,
+        "reps": null,
+        "holdSeconds": null,
+        "frequency": "No dose found in the sources opened."
+      },
+      "bodyweightOrHold": true,
+      "cautions": "Keep it gentle and rhythmic, and stop if numbness, tingling or leg pain increases or lingers. No dose should be presented as evidence-based.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": [
+        "metikala2022",
+        "kulcu2024",
+        "siraj2022"
+      ]
+    },
+    {
+      "name": "Hip circumduction (controlled hip circles)",
+      "catalog": "new",
+      "kind": "mobility",
+      "dose": {
+        "sets": null,
+        "reps": null,
+        "holdSeconds": null,
+        "frequency": "No dose found in the sources opened."
+      },
+      "bodyweightOrHold": true,
+      "cautions": "Listed in reviews as a part of conservative care and home sciatic nerve mobilization, with no effectiveness data of its own. Use a small, comfortable range.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": [
+        "metikala2022",
+        "kulcu2024"
+      ]
+    }
+  ],
+  "redFlags": [
+    {
+      "sign": "Sciatica in both legs",
+      "action": "Stop exercising and go to A&E or call 999. Do not drive yourself.",
+      "sourceIds": [
+        "nhs_sciatica"
+      ]
+    },
+    {
+      "sign": "Severe or worsening weakness or numbness in both legs",
+      "action": "Stop exercising and go to A&E or call 999. Do not drive yourself.",
+      "sourceIds": [
+        "nhs_sciatica"
+      ]
+    },
+    {
+      "sign": "Numbness around the genitals or bottom",
+      "action": "Stop exercising and go to A&E or call 999. Do not drive yourself.",
+      "sourceIds": [
+        "nhs_sciatica"
+      ]
+    },
+    {
+      "sign": "New trouble controlling urination or bowel movements",
+      "action": "Stop exercising and go to A&E or call 999. Do not drive yourself.",
+      "sourceIds": [
+        "nhs_sciatica"
+      ]
+    },
+    {
+      "sign": "Sciatica that has not improved after a few weeks of home treatment, is getting worse, or stops normal activities",
+      "action": "See a GP (non-urgent).",
+      "sourceIds": [
+        "nhs_sciatica"
+      ]
+    },
+    {
+      "sign": "New foot drop or progressive leg weakness, particularly after major pelvic or hip trauma or surgery",
+      "action": "Stop exercising and get prompt medical assessment. The action is this review's cautious wording; the source reports poor recovery in such cases and gives no triage rule.",
+      "sourceIds": [
+        "metikala2022"
+      ]
+    },
+    {
+      "sign": "Sciatica-like pain that cycles in a repeating pattern, or buttock pain that could reflect a piriformis muscle infection (pyomyositis)",
+      "action": "Get medical assessment instead of exercising through it. The action is this review's cautious wording; the source names these as potentially catastrophic and gives no triage rule. Spotting infection signs is not something the app can do.",
+      "sourceIds": [
+        "siddiq2020"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "aali2026",
+      "citation": "Aali S, Rezazadeh F, Imani F, Moradzadeh N, Prisacaru C, Badicu G. Effectiveness of stretching techniques in piriformis syndrome management: a systematic review. Eur J Transl Myol. 2026 Oct 29, online ahead of print. Abstract only read.",
+      "doi": "10.4081/ejtm.2026.14765",
+      "pmid": "42955058",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/42955058/",
+      "type": "systematic_review"
+    },
+    {
+      "id": "hopayian2023",
+      "citation": "Hopayian K, Mirzaei M, Shamsi M, Arab-Zozani M. A systematic review of conservative and surgical treatments for deep gluteal syndrome. J Bodyw Mov Ther. 2023;36:244-250. Abstract only read.",
+      "doi": "10.1016/j.jbmt.2022.12.003",
+      "pmid": "37949567",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/37949567/",
+      "type": "systematic_review"
+    },
+    {
+      "id": "park2020",
+      "citation": "Park JW, Lee YK, Lee YJ, Shin S, Kang Y, Koo KH. Deep gluteal syndrome as a cause of posterior hip pain and sciatica-like pain. Bone Joint J. 2020;102-B(5):556-567. Abstract only read.",
+      "doi": "10.1302/0301-620X.102B5.BJJ-2019-1212.R1",
+      "pmid": "32349600",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/32349600/",
+      "type": "narrative_review"
+    },
+    {
+      "id": "metikala2022",
+      "citation": "Metikala S, Sharma V. Endoscopic Sciatic Neurolysis for Deep Gluteal Syndrome: A Systematic Review. Cureus. 2022;14(3):e23153. Surgical review; conservative care described as background.",
+      "doi": "10.7759/cureus.23153",
+      "pmid": "35444897",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9010003",
+      "type": "systematic_review"
+    },
+    {
+      "id": "bisciotti2026",
+      "citation": "Bisciotti GN, Bisciotti A, Zini R, Bisciotti A, Volpi P, Di Pietto F. The diagnosis of deep gluteal syndrome: a systematic review of the current literature. Muscles Ligaments Tendons J. 2026;16. Abstract only read.",
+      "doi": "10.32098/mltj_2026_6435",
+      "pmid": null,
+      "url": "https://www.ejcrim.com/index.php/mltj/article/view/6435",
+      "type": "systematic_review"
+    },
+    {
+      "id": "miller2012",
+      "citation": "Miller TA, White KP, Ross DC. The diagnosis and management of Piriformis Syndrome: myths and facts. Can J Neurol Sci. 2012. Abstract only read.",
+      "doi": "10.1017/s0317167100015298",
+      "pmid": "22931697",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/22931697/",
+      "type": "narrative_review"
+    },
+    {
+      "id": "sharma2023",
+      "citation": "Sharma S, Kaur H, Verma N, Adhya B. Looking beyond Piriformis Syndrome: Is It Really the Piriformis? Hip Pelvis. 2023;35(1):1-5.",
+      "doi": "10.5371/hp.2023.35.1.1",
+      "pmid": "36937215",
+      "url": "https://europepmc.org/article/PMC/PMC10020728",
+      "type": "narrative_review"
+    },
+    {
+      "id": "vij2021",
+      "citation": "Vij N, Kiernan H, Bisht R, et al. Surgical and Non-surgical Treatment Options for Piriformis Syndrome: A Literature Review. Anesth Pain Med. 2021;11(1):e112825.",
+      "doi": "10.5812/aapm.112825",
+      "pmid": "34221947",
+      "url": "https://europepmc.org/article/PMC/PMC8241586",
+      "type": "narrative_review"
+    },
+    {
+      "id": "kulcu2024",
+      "citation": "Geler Külcü D. Deep Gluteal syndrome: An underestimated cause of posterior hip pain. Turk J Phys Med Rehabil. 2024;70(1):4-16.",
+      "doi": "10.5606/tftrd.2024.14668",
+      "pmid": "38549816",
+      "url": "https://europepmc.org/article/PMC/PMC10966759",
+      "type": "narrative_review"
+    },
+    {
+      "id": "siraj2022",
+      "citation": "Ahmad Siraj S, Dadgal R. Physiotherapy for Piriformis Syndrome Using Sciatic Nerve Mobilization and Piriformis Release. Cureus. 2022;14(12):e32952.",
+      "doi": "10.7759/cureus.32952",
+      "pmid": "36712711",
+      "url": "https://europepmc.org/article/PMC/PMC9879580",
+      "type": "narrative_review"
+    },
+    {
+      "id": "siddiq2020",
+      "citation": "Siddiq MAB, Clegg D, Hasan SA, Rasker JJ. Extra-spinal sciatica and sciatica mimics: a scoping review. Korean J Pain. 2020;33(4):305-317. Abstract only read.",
+      "doi": "10.3344/kjp.2020.33.4.305",
+      "pmid": "32989195",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/32989195/",
+      "type": "scoping_review"
+    },
+    {
+      "id": "guner2023",
+      "citation": "Guner D, Ozcete ZA. Evaluation of the Efficacy of Ultrasound-Guided Dry Needling Therapy and Exercise in Piriformis Muscle Syndrome. Cureus. 2023;15(8):e43804. Non-randomized: groups formed by whether patients accepted needling.",
+      "doi": "10.7759/cureus.43804",
+      "pmid": "37731410",
+      "url": "https://europepmc.org/article/PMC/PMC10508642",
+      "type": "observational"
+    },
+    {
+      "id": "chaari2024",
+      "citation": "Chaari F, Jardak M, Bouchaala F, Harrabi MA, Rebai H, Sahli S. Immediate effect of hip exercises-inducing motor unit recruitment on static and dynamic postural balance in patients with piriformis muscle syndrome. J Bodyw Mov Ther. 2024;40:1738-1743. Abstract only read.",
+      "doi": "10.1016/j.jbmt.2024.10.027",
+      "pmid": "39593517",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/39593517/",
+      "type": "observational"
+    },
+    {
+      "id": "tonley2010",
+      "citation": "Tonley JC, Yun SM, Kochevar RJ, Dye JA, Farrokhi S, Powers CM. Treatment of an individual with piriformis syndrome focusing on hip muscle strengthening and movement reeducation: a case report. J Orthop Sports Phys Ther. 2010;40(2):103-111. Abstract only read.",
+      "doi": "10.2519/jospt.2010.3108",
+      "pmid": "20118521",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20118521/",
+      "type": "case_report"
+    },
+    {
+      "id": "itsuda2024",
+      "citation": "Itsuda H, Yagi M, Yanase K, Umehara J, Mukai H, Ichihashi N. Effective Stretching Positions of the Piriformis Muscle Evaluated Using Shear Wave Elastography. J Sport Rehabil. 2024;33(4):282-288. 21 healthy men. Abstract only read.",
+      "doi": "10.1123/jsr.2023-0240",
+      "pmid": "38593993",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/38593993/",
+      "type": "biomechanical"
+    },
+    {
+      "id": "gulledge2014",
+      "citation": "Gulledge BM, Marcellin-Little DJ, Levine D, et al. Comparison of two stretching methods and optimization of stretching protocol for the piriformis muscle. Med Eng Phys. 2014;36(2):212-218. 7 subjects plus computational model. Abstract only read.",
+      "doi": "10.1016/j.medengphy.2013.10.016",
+      "pmid": "24262799",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/24262799/",
+      "type": "biomechanical"
+    },
+    {
+      "id": "nct05660005",
+      "citation": "Self Myofascial Release in Individuals With Piriformis Syndrome. ClinicalTrials.gov NCT05660005. Completed, 63 enrolled. Registry intervention text only read.",
+      "doi": null,
+      "pmid": null,
+      "url": "https://clinicaltrials.gov/study/NCT05660005",
+      "type": "trial_registry"
+    },
+    {
+      "id": "nct07484373",
+      "citation": "Effects of Hip Abductor Strengthening Exercises in Patients With Piriformis Syndrome. ClinicalTrials.gov NCT07484373. Completed, 48 enrolled. Registry intervention text only read.",
+      "doi": null,
+      "pmid": null,
+      "url": "https://clinicaltrials.gov/study/NCT07484373",
+      "type": "trial_registry"
+    },
+    {
+      "id": "nhs_sciatica",
+      "citation": "NHS. Sciatica. Page last reviewed 3 December 2024. General sciatica advice, not specific to piriformis syndrome.",
+      "doi": null,
+      "pmid": null,
+      "url": "https://www.nhs.uk/conditions/sciatica/",
+      "type": "patient_guidance"
+    }
+  ],
+  "limitations": "No condition-specific clinical guideline was found. NICE NG59, NICE CKS and the JOSPT site returned 403 errors and could not be read, so guideline content is not represented, and NHS patient guidance stands in for red flags. A PubMed search for Cochrane reviews returned only a botulinum toxin review on low-back pain and sciatica, which does not address exercise. Most sources were read as abstracts, automated full-text extraction or registry text, and Aali 2026 was abstract only. Trial results for NCT05660005 and NCT07484373, and the Laha 2018 trial, were not opened. Doses vary widely between protocols and none has been shown to be better than another. Evidence is limited by uncertain diagnosis, small samples, heterogeneous multimodal programs, few or no untreated controls and little long-term follow-up. Biomechanical studies used small samples and did not measure symptoms. The very_low grade is this review's judgement, not a formal GRADE assessment. Avoid and modify items are mostly opinion or protocol instructions, and the app should present them as general information, not treatment.",
+  "verification": {
+    "sourcesChecked": 19,
+    "itemsRemoved": [
+      {
+        "item": "Caution clause on the piriformis stretch: 'but that may not suit people with hip impingement'",
+        "reason": "No cited source says this. Gulledge 2014 suggests high-flexion positions may be easier for some patients. The rest of the exercise item is supported and stays."
+      }
+    ],
+    "labelsCorrected": [
+      "Forceful end-range stretching avoid/modify item: evidenceStrength biomechanical -> expert_opinion. The provocation-test reasoning comes from narrative reviews and one case report, and no biomechanical study measured harm or nerve compression in these positions.",
+      "park2020 source type: systematic_review -> narrative_review. The abstract calls it a comprehensive review and reports no systematic method.",
+      "Piriformis stretch: replaced 'healthy' for the position studies, because the Gulledge 2014 abstract says only 'seven subjects'. Only Itsuda 2024 is confirmed as healthy men. Same correction in limitations.",
+      "Piriformis stretch: added tonley2010 to sourceIds, because the caution about the overstretching hypothesis comes from it."
+    ],
+    "unverifiable": [
+      "Abstract only, full text not opened: aali2026, hopayian2023, park2020, miller2012, bisciotti2026, chaari2024, tonley2010, itsuda2024, gulledge2014. Items citing them were checked against the abstract.",
+      "Laha 2018 was not opened. It is checked only as summarized in Siraj 2022, which matches what is stated here.",
+      "NICE, JOSPT and Cochrane search claims in limitations describe the original search and were not repeated.",
+      "NCT05660005 is inconsistent on whether the stretching arm did home strengthening: the detailed description says yes, while the arm and intervention entries link it only to the control group.",
+      "Clamshell: the catalog entry lists bodyweight, but its review notes say the pictured variant uses a thigh band and an unbanded alternative needs its own decision. Same movement; needs a human decision on the variant.",
+      "Side-lying hip abduction: the catalog notes it is near-identical to side-lying-leg-raise, with the distinction unclear.",
+      "Red flag on cycling pain: Siddiq 2020 describes cyclical sciatica as menstruation-linked, and the item's wording is broader. The source supports the risk but does not give a triage rule. Flagged for review, not changed.",
+      "Red flag on foot drop: Metikala 2022 reports foot drop and poor recovery in a surgical series after major trauma, not a warning sign for exercisers. The action is the review's own wording, as the item says."
+    ]
+  }
+}
