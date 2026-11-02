@@ -2,6 +2,7 @@ package wallcrawl.elopenmike.com.core.ai
 
 import java.security.MessageDigest
 import java.util.Locale
+import wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.SessionProgramConstraints
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
@@ -80,6 +81,15 @@ object RecommendationContextIdentity {
             line("zone", ledger?.timeZoneId ?: "none"),
             line("constraints", context.programConstraints.canonicalForm())
         )
+        // A profile with no conditions and no joint labels never reads the overlay, so it adds
+        // nothing here and its digest is exactly what it was before conditions existed.
+        when (val restrictions = context.conditionRestrictions) {
+            ConditionRestrictions.None -> Unit
+            is ConditionRestrictions.Active -> lines += line("conditions",
+                context.userProfile.reportedConditions.sorted().joinToString(","), restrictions.guidance.version)
+            ConditionRestrictions.Unavailable -> lines += line("conditions",
+                context.userProfile.reportedConditions.sorted().joinToString(","), "unavailable")
+        }
         val header = context.programHeader
         lines += line("planningIntent", context.planningIntent.name)
         lines += line("programHeader", header.profileId, header.programId ?: "none", header.revision.toString(),
@@ -125,7 +135,7 @@ object RecommendationContextIdentity {
                 )
                 session.exercises.sortedWith(compareBy({ it.exerciseId }, { it.id })).forEach { exercise ->
                     lines += line("progressionExercise", exercise.id, exercise.sessionId,
-                        exercise.exerciseId, exercise.prescription.toString())
+                        exercise.exerciseId, exercise.prescription.holdFreeText())
                     exercise.sets.sortedWith(compareBy({ it.setNumber }, { it.id })).forEach { set ->
                         lines += line("progressionSet", set.toString())
                     }
@@ -175,6 +185,13 @@ object RecommendationContextIdentity {
 
     /** Matches both prescription construction and validation's traceable-load boundary. */
     private fun Double?.usableLoad(): Double? = this?.takeIf { it.isFinite() && it >= 0.0 }
+
+    /**
+     * The data class text without an absent hold, so a prescription with no hold digests as it
+     * did before holds existed and displayed plans are not invalidated by that release.
+     */
+    private fun wallcrawl.elopenmike.com.core.model.ExercisePrescription.holdFreeText(): String =
+        toString().replace(", holdSeconds=null)", ")")
 
     private fun SessionProgramConstraints.canonicalForm(): String = listOf(
         uniqueExerciseIds.toString(),

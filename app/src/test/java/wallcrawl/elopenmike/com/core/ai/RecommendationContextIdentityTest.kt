@@ -3,6 +3,8 @@ package wallcrawl.elopenmike.com.core.ai
 import com.google.common.truth.Truth.assertThat
 import java.util.Locale
 import org.junit.Test
+import wallcrawl.elopenmike.com.core.conditions.ConditionGuidance
+import wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions
 import wallcrawl.elopenmike.com.core.model.AdaptationState
 import wallcrawl.elopenmike.com.core.model.LedgerPolicyVersion
 import wallcrawl.elopenmike.com.core.model.TrainingProgramState
@@ -201,6 +203,48 @@ class RecommendationContextIdentityTest {
             .isNotEqualTo(RecommendationContextIdentity.of(original))
     }
 
+    private fun withConditions(conditions: Set<String>, overlayVersion: String): WorkoutGenerationContext =
+        context().let { base ->
+            base.copy(
+                userProfile = base.userProfile.copy(reportedConditions = conditions),
+                conditionRestrictions = ConditionRestrictions.Active(
+                    avoid = emptySet(), modify = emptySet(), conditionIds = conditions,
+                    guidance = ConditionGuidance(overlayVersion, emptyMap(), emptyMap(), emptyMap(), emptyMap())
+                )
+            )
+        }
+
+    @Test
+    fun identityChangesWhenConditionsChange() {
+        val one = RecommendationContextIdentity.of(withConditions(setOf("a"), "v1"))
+        assertThat(RecommendationContextIdentity.of(withConditions(setOf("a", "b"), "v1"))).isNotEqualTo(one)
+        assertThat(RecommendationContextIdentity.of(withConditions(setOf("a"), "v1"))).isEqualTo(one)
+        assertThat(RecommendationContextIdentity.of(withConditions(setOf("b", "a"), "v1")))
+            .isEqualTo(RecommendationContextIdentity.of(withConditions(setOf("a", "b"), "v1")))
+        // Unknown ids fail closed in planning; the unavailable overlay is its own state.
+        val unavailable = context().let {
+            it.copy(
+                userProfile = it.userProfile.copy(reportedConditions = setOf("a")),
+                conditionRestrictions = ConditionRestrictions.Unavailable
+            )
+        }
+        assertThat(RecommendationContextIdentity.of(unavailable)).isNotEqualTo(one)
+    }
+
+    @Test
+    fun identityChangesWhenOverlayVersionChanges() {
+        assertThat(RecommendationContextIdentity.of(withConditions(setOf("a"), "v2")))
+            .isNotEqualTo(RecommendationContextIdentity.of(withConditions(setOf("a"), "v1")))
+    }
+
+    @Test
+    fun aProfileWithoutConditionsDoesNotDependOnTheOverlayAndKeepsItsDigest() {
+        // Pinned from the build before conditions existed: this release must not invalidate
+        // the plans such a profile already displays.
+        assertThat(RecommendationContextIdentity.of(context()))
+            .isEqualTo(PRE_CONDITIONS_DIGEST)
+    }
+
     private fun context(
         weekStartEpochDay: Long = MONDAY_EPOCH_DAY,
         timeZoneId: String = "America/Mexico_City",
@@ -235,4 +279,8 @@ class RecommendationContextIdentityTest {
             null
         }
     )
+
+    private companion object {
+        const val PRE_CONDITIONS_DIGEST = "5f74554467b20a16c606e31008e1500b297d4c940b0f2f52e4a434f73d6f45b2"
+    }
 }

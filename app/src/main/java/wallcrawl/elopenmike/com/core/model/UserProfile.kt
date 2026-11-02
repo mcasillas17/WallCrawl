@@ -31,7 +31,7 @@ data class UserProfile(
     // Today must not generate or render a workout for an unconfirmed profile.
     val onboardingCompleted: Boolean = false,
     val trainingConstraints: Set<TrainingConstraint> = emptySet(),
-    // Condition ids from the bundled overlay. In memory only until persistence arrives.
+    // Condition ids from the bundled overlay. Unknown ids restored from an archive stay opaque.
     val reportedConditions: Set<String> = emptySet(),
     val returningAfterBreakWeeks: Int = 0,
     // Never populated with a guessed or catalog default: a load only lands here once a

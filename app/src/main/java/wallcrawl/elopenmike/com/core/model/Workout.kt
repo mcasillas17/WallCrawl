@@ -133,7 +133,8 @@ data class WorkoutExercise(
     val orderIndex: Int,
     val prescription: ExercisePrescription,
     val notes: String = "",
-    val sets: List<WorkoutSet> = emptyList()
+    val sets: List<WorkoutSet> = emptyList(),
+    val role: ExerciseRole = ExerciseRole.MAIN
 ) {
     /** Compatibility constructor for persisted repetition-only sessions before schema 4. */
     constructor(
@@ -170,7 +171,11 @@ data class WorkoutExercise(
     val targetRepMax: Int get() = prescription.repRange?.max ?: 0
     val targetWeight: Double? get() = prescription.targetWeight
     val targetRepRange: RepRange? get() = prescription.repRange
+    val targetHoldSeconds: Int? get() = prescription.holdSeconds
 }
+
+/** MOBILITY exercises are written by the routine block; everything else is MAIN. */
+enum class ExerciseRole { MAIN, MOBILITY }
 
 /**
  * An individual set within a [WorkoutExercise].

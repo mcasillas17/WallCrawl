@@ -75,8 +75,10 @@ internal fun WorkoutExerciseWithSets.toWorkoutExercise(): WorkoutExercise {
             restSeconds = exercise.restSeconds,
             effortTarget = effortTarget,
             restClass = exercise.restClass,
-            restTargetSource = exercise.restTargetSource
+            restTargetSource = exercise.restTargetSource,
+            holdSeconds = exercise.targetHoldSeconds
         ),
+        role = exercise.role,
         notes = exercise.notes,
         sets = sets.sortedWith(compareBy<WorkoutSetEntity> { it.setNumber }.thenBy { it.id }).map { setEntity ->
             WorkoutSet(

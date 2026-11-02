@@ -276,7 +276,8 @@ class OfflineWorkoutRepository(
                     effortMinRir = genEx.prescription.effortTarget?.minRir,
                     effortMaxRir = genEx.prescription.effortTarget?.maxRir,
                     restClass = genEx.prescription.restClass,
-                    restTargetSource = genEx.prescription.restTargetSource
+                    restTargetSource = genEx.prescription.restTargetSource,
+                    targetHoldSeconds = genEx.prescription.holdSeconds
                 )
             )
 

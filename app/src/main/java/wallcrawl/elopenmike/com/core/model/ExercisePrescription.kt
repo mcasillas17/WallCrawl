@@ -17,7 +17,9 @@ data class ExercisePrescription(
     val restSeconds: Int = DEFAULT_REST_SECONDS,
     val effortTarget: EffortTarget? = null,
     val restClass: RestClass? = null,
-    val restTargetSource: RestTargetSource? = null
+    val restTargetSource: RestTargetSource? = null,
+    /** A held position per repetition; logging still records reps. Only BODYWEIGHT_REPS. */
+    val holdSeconds: Int? = null
 ) {
     init {
         require(targetSets in MIN_TARGET_SETS..MAX_TARGET_SETS) {
@@ -40,6 +42,15 @@ data class ExercisePrescription(
         targetDurationSeconds?.let { seconds ->
             require(seconds in MIN_DURATION_SECONDS..MAX_DURATION_SECONDS) {
                 "Target duration must be between $MIN_DURATION_SECONDS and $MAX_DURATION_SECONDS seconds."
+            }
+        }
+
+        holdSeconds?.let { seconds ->
+            require(exerciseType == ExerciseType.BODYWEIGHT_REPS) {
+                "A hold applies only to bodyweight repetition exercises."
+            }
+            require(seconds in MIN_DURATION_SECONDS..MAX_DURATION_SECONDS) {
+                "Hold must be between $MIN_DURATION_SECONDS and $MAX_DURATION_SECONDS seconds."
             }
         }
 

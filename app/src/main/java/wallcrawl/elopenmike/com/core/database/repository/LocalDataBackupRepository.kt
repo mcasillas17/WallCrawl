@@ -302,7 +302,9 @@ class OfflineLocalDataBackupRepository(
             effortMinRir = prescription.effortTarget?.minRir,
             effortMaxRir = prescription.effortTarget?.maxRir,
             restClass = prescription.restClass,
-            restTargetSource = prescription.restTargetSource
+            restTargetSource = prescription.restTargetSource,
+            role = role,
+            targetHoldSeconds = prescription.holdSeconds
         )
 
     private fun WorkoutSet.toSetEntity() = WorkoutSetEntity(

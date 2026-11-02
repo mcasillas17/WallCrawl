@@ -7,6 +7,22 @@ import org.junit.Test
 class ExercisePrescriptionTest {
 
     @Test
+    fun holdIsValidOnlyOnBodyweightRepetitions() {
+        val bodyweight = ExercisePrescription(
+            exerciseType = ExerciseType.BODYWEIGHT_REPS, targetSets = 2,
+            repRange = RepRange(5, 8), holdSeconds = 30
+        )
+        assertThat(bodyweight.holdSeconds).isEqualTo(30)
+        assertThrows(IllegalArgumentException::class.java) {
+            ExercisePrescription(
+                exerciseType = ExerciseType.WEIGHT_REPS, targetSets = 2,
+                repRange = RepRange(5, 8), holdSeconds = 30
+            )
+        }
+        assertThrows(IllegalArgumentException::class.java) { bodyweight.copy(holdSeconds = 0) }
+    }
+
+    @Test
     fun weightRepetitionPrescription_keepsOnlyApplicableTargets() {
         val prescription = ExercisePrescription(
             exerciseType = ExerciseType.WEIGHT_REPS,
