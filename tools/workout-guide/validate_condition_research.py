@@ -265,8 +265,9 @@ def validate_corpus(root: Path, require_complete: bool) -> list[str]:
             choices(rule.get('status'), 'candidate', rid + '.status: clinical review required')
         texts(dossier.get('gaps'), key + '.gaps')
         choices(dossier.get('disposition'), 'research-only unresolved insufficient-evidence eligible-for-independent-content-review', key + '.disposition: clinical review unavailable')
+        if not sources or dossier.get('disposition') == 'insufficient-evidence':
+            check(bool(dossier.get('gaps')), key + ': absent or insufficient evidence needs an explicit gap')
         if dossier.get('disposition') == 'insufficient-evidence':
-            check(bool(dossier.get('gaps')), key + ': insufficient evidence needs an explicit gap')
             check(not mappings and not dossier.get('proposedRules'), key + ': insufficient evidence must withhold mappings/rules')
         review = fields(dossier.get('review'), 'status reviewer reviewedOn policy evidence', key + '.review')
         check(review.get('status') == 'unreviewed' and all(review.get(name) is None for name in ('reviewer', 'reviewedOn', 'policy', 'evidence')),

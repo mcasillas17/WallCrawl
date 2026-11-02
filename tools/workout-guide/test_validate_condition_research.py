@@ -69,6 +69,18 @@ class ConditionResearchTest(unittest.TestCase):
     def test_explicit_insufficient_evidence_is_valid(self):
         self.assertEqual([], self.errors())
 
+    def test_empty_sources_require_explicit_gap_for_every_disposition(self):
+        for disposition in ('research-only', 'unresolved', 'insufficient-evidence',
+                            'eligible-for-independent-content-review'):
+            with self.subTest(disposition=disposition):
+                self.dossier['disposition'] = disposition
+                self.dossier['gaps'] = []
+                self.complete(self.dossier)
+                self.rejected('explicit gap')
+                self.dossier['gaps'] = ['No suitable evidence established by the recorded search.']
+                self.complete(self.dossier)
+                self.assertEqual([], self.errors())
+
     def test_inventory_has_exact_approved_ids(self):
         actual = json.loads((Path(__file__).resolve().parents[2] / 'docs/research/conditions/index.json').read_text())
         self.assertEqual(set(APPROVED_IDS), {row['id'] for row in actual['conditions']})
