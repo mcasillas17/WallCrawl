@@ -16,6 +16,7 @@ import org.junit.runner.RunWith
 import wallcrawl.elopenmike.com.core.database.entity.UserProfileEntity
 import wallcrawl.elopenmike.com.core.database.repository.OfflineWorkoutRepository
 import wallcrawl.elopenmike.com.core.model.ExercisePrescription
+import wallcrawl.elopenmike.com.core.model.ExerciseRole
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
@@ -444,6 +445,44 @@ class WorkoutSetOutcomeDaoTest {
         assertThat(persisted.getValue(ExerciseType.DISTANCE_DURATION).completedDistanceMeters)
             .isEqualTo(1_000.0)
         assertForeignKeysIntact()
+    }
+
+    @Test
+    fun startWritesTheMobilityBlockFirstWithMobilityRole() = runBlocking {
+        val main = ExercisePrescription(
+            exerciseType = ExerciseType.WEIGHT_REPS,
+            targetSets = 1,
+            repRange = RepRange(8, 10),
+            targetWeight = 40.0
+        )
+        val mobility = ExercisePrescription(
+            exerciseType = ExerciseType.BODYWEIGHT_REPS,
+            targetSets = 1,
+            repRange = RepRange(5, 5),
+            holdSeconds = 10
+        )
+        val session = repository.startWorkoutFromGenerated(
+            generated = GeneratedWorkout(
+                title = testTitle(),
+                rationale = testRationale(),
+                focusMuscles = listOf("Chest"),
+                estimatedDurationMinutes = 30,
+                exercises = listOf(planned("incline-dumbbell-press", main), planned("parallel-bar-dips", main)),
+                mobilityBlock = listOf(planned("plank", mobility))
+            ),
+            displayName = "With mobility",
+            displayRationale = "Generated for this test.",
+            userProfile = UserProfile()
+        )
+
+        val rows = session.exercises.sortedBy { it.orderIndex }
+        assertThat(rows.map { it.exerciseId })
+            .containsExactly("plank", "incline-dumbbell-press", "parallel-bar-dips").inOrder()
+        assertThat(rows.map { it.orderIndex }).containsExactly(0, 1, 2).inOrder()
+        assertThat(rows.map { it.role }).containsExactly(
+            ExerciseRole.MOBILITY, ExerciseRole.MAIN, ExerciseRole.MAIN
+        ).inOrder()
+        assertThat(rows.first().prescription.holdSeconds).isEqualTo(10)
     }
 
     private lateinit var sessionId: String

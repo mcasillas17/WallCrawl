@@ -447,7 +447,10 @@ private fun violationRes(code: ProgramViolationCode) = when (code) {
     ProgramViolationCode.EMPTY_RECOMMENDATION -> R.string.history_violation_empty
     ProgramViolationCode.DURATION_OUT_OF_BOUNDS -> R.string.history_violation_duration_bounds
     ProgramViolationCode.BLANK_EXERCISE_ID, ProgramViolationCode.UNKNOWN_EXERCISE_ID -> R.string.history_violation_id
-    ProgramViolationCode.NOT_IN_CANDIDATE_SET -> R.string.history_violation_candidate
+    ProgramViolationCode.NOT_IN_CANDIDATE_SET,
+    ProgramViolationCode.MOBILITY_ENTRY_NOT_IN_ROUTINE,
+    ProgramViolationCode.MOBILITY_BLOCK_TOO_LONG -> R.string.history_violation_candidate
+    ProgramViolationCode.MOBILITY_ENTRY_RESTRICTED -> R.string.history_violation_constraint
     ProgramViolationCode.PRESCRIPTION_TYPE_MISMATCH, ProgramViolationCode.PRESCRIPTION_SHAPE_MISMATCH -> R.string.history_violation_type
     ProgramViolationCode.UNSUPPORTED_WORKOUT_FOCUS -> R.string.history_violation_focus
     ProgramViolationCode.DUPLICATE_EXERCISE_IN_SESSION, ProgramViolationCode.DUPLICATE_PROGRESSION_FAMILY -> R.string.history_violation_duplicate

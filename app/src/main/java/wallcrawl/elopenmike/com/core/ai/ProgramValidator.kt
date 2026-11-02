@@ -1,6 +1,7 @@
 package wallcrawl.elopenmike.com.core.ai
 
 import wallcrawl.elopenmike.com.core.model.Exercise
+import wallcrawl.elopenmike.com.core.conditions.MobilityBlockPolicy
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
 import wallcrawl.elopenmike.com.core.model.LedgerPolicyVersion
 import wallcrawl.elopenmike.com.core.model.MovementPattern
@@ -151,6 +152,7 @@ class ProgramValidator(
         if ((requiresProgressionReceipts || workout.progressionDecisions.isNotEmpty()) &&
             workout.progressionDecisions.map { it.exerciseId } != workout.exercises.map { it.exerciseId }
         ) violations += ProgramViolation(ProgramViolationCode.PROGRESSION_POLICY_MISMATCH)
+        violations += mobilityViolations(workout, context)
         violations += durationViolations(workout)
 
         val accounting = accountProposedDose(workout, context, allowedById)
@@ -491,6 +493,39 @@ class ProgramValidator(
 
     // endregion
 
+    // region mobility block
+
+    private fun mobilityViolations(
+        workout: GeneratedWorkout,
+        context: WorkoutGenerationContext
+    ): List<ProgramViolation> {
+        val block = workout.mobilityBlock
+        val restrictions = context.conditionRestrictions
+        val routine = MobilityBlockPolicy.routineEntries(restrictions).mapTo(hashSetOf()) { it.exerciseId }
+        val violations = mutableListOf<ProgramViolation>()
+        if (block.size > MobilityBlockPolicy.MAX_ITEMS) {
+            violations += ProgramViolation(
+                ProgramViolationCode.MOBILITY_BLOCK_TOO_LONG,
+                detail = "${block.size}>${MobilityBlockPolicy.MAX_ITEMS}"
+            )
+        }
+        block.forEachIndexed { index, planned ->
+            if (planned.exerciseId !in routine) {
+                violations += ProgramViolation(
+                    ProgramViolationCode.MOBILITY_ENTRY_NOT_IN_ROUTINE, planned.exerciseId, index
+                )
+            }
+            if (MobilityBlockPolicy.isAvoided(restrictions, planned.exerciseId)) {
+                violations += ProgramViolation(
+                    ProgramViolationCode.MOBILITY_ENTRY_RESTRICTED, planned.exerciseId, index
+                )
+            }
+        }
+        return violations
+    }
+
+    // endregion
+
     // region duration
 
     /**
@@ -501,7 +536,7 @@ class ProgramValidator(
      * physiological.
      */
     private fun durationViolations(workout: GeneratedWorkout): List<ProgramViolation> {
-        val expected = WorkoutDurationEstimator.estimateMinutes(workout.exercises)
+        val expected = WorkoutDurationEstimator.estimateMinutes(workout.exercises + workout.mobilityBlock)
         val deviation = kotlin.math.abs(workout.estimatedDurationMinutes - expected)
         if (deviation <= WorkoutDurationEstimator.TOLERANCE_MINUTES) return emptyList()
         return listOf(
@@ -695,7 +730,7 @@ class ProgramValidator(
                     )
                 } else decision
             },
-            estimatedDurationMinutes = WorkoutDurationEstimator.estimateMinutes(exercises)
+            estimatedDurationMinutes = WorkoutDurationEstimator.estimateMinutes(exercises + workout.mobilityBlock)
         )
     }
 

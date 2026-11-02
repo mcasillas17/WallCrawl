@@ -31,7 +31,9 @@ data class GeneratedWorkout(
      */
     val unavailableFocusMuscles: List<String> = emptyList(),
     /** Recorded separately from freshness: advancing the planner must not stale this plan. */
-    val generationIndex: Int? = null
+    val generationIndex: Int? = null,
+    /** Mobility work shown and started before the exercises. Empty without a condition routine. */
+    val mobilityBlock: List<PlannedExercise> = emptyList()
 )
 
 sealed interface WorkoutRankingReason {

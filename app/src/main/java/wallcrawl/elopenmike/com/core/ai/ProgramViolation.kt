@@ -84,6 +84,15 @@ enum class ProgramViolationCode {
     /** Software invariant: progression provenance and targets must match the shared policy. */
     PROGRESSION_POLICY_MISMATCH,
 
+    /** Software invariant: a mobility entry must come from a selected condition's routine. */
+    MOBILITY_ENTRY_NOT_IN_ROUTINE,
+
+    /** Product policy: a mobility entry may not carry a demand a selected condition avoids. */
+    MOBILITY_ENTRY_RESTRICTED,
+
+    /** Product policy: the mobility block holds at most three items. */
+    MOBILITY_BLOCK_TOO_LONG,
+
     /**
      * Software invariant for the arithmetic, product policy for the tolerance.
      *

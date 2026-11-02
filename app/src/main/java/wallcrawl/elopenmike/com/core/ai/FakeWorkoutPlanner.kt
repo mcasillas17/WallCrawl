@@ -1,6 +1,7 @@
 package wallcrawl.elopenmike.com.core.ai
 
 import wallcrawl.elopenmike.com.core.model.Exercise
+import wallcrawl.elopenmike.com.core.conditions.MobilityBlockPolicy
 import wallcrawl.elopenmike.com.core.conditions.ranksLower
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
 import wallcrawl.elopenmike.com.core.model.ExerciseType
@@ -74,7 +75,14 @@ class FakeWorkoutPlanner(
 
         val goals = context.fitnessGoals.ifEmpty { setOf(context.fitnessGoal) }
         val focusMuscles = extractFocusMuscles(selectedExercises)
-        val estimatedDuration = WorkoutDurationEstimator.estimateMinutes(generatedExerciseList)
+        val mobilityBlock = MobilityBlockPolicy.select(
+            restrictions = context.conditionRestrictions,
+            exercises = candidates.associateBy(Exercise::id),
+            profile = context.userProfile,
+            mainExerciseIds = selectedExercises.mapTo(hashSetOf(), Exercise::id),
+            seed = rotationSeed(context, generationIndex)
+        )
+        val estimatedDuration = WorkoutDurationEstimator.estimateMinutes(generatedExerciseList + mobilityBlock)
         val breakRange = BreakDurationHelper.findMatchingRange(breakWeeks)
         // Ordered by the enum rather than by set iteration, so the same profile always
         // produces the same title and the same explanation.
@@ -99,7 +107,8 @@ class FakeWorkoutPlanner(
             rankingReasons = selection.rankingReasons,
             progressionDecisions = prescriptionDecisions.takeIf { context.trainingProgramState != null }.orEmpty(),
             unavailableFocusMuscles = unavailableFocusMuscles(context, candidates),
-            generationIndex = generationIndex
+            generationIndex = generationIndex,
+            mobilityBlock = mobilityBlock
         )
     }
 
