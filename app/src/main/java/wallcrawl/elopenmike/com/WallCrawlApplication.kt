@@ -44,6 +44,7 @@ import wallcrawl.elopenmike.com.core.exercise.workoutguide.AttributionNoticeSour
 import wallcrawl.elopenmike.com.core.exercise.workoutguide.WorkoutGuideCatalogSource
 import wallcrawl.elopenmike.com.core.exercise.workoutguide.WorkoutGuideCatalogStore
 import wallcrawl.elopenmike.com.core.progress.ProgressCalculator
+import wallcrawl.elopenmike.com.core.condition.ConditionSupportStore
 
 /**
  * Dependency container providing core database, catalog, filter, and deterministic planner instances.
@@ -70,6 +71,7 @@ interface AppContainer {
     val progressCalculator: ProgressCalculator
     val workoutGuideCatalogSource: WorkoutGuideCatalogSource
     val attributionNoticeSource: AttributionNoticeSource
+    val conditionSupportStore: ConditionSupportStore
 }
 
 class DefaultAppContainer(private val context: Context) : AppContainer {
@@ -88,6 +90,11 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
 
     override val workoutGuideCatalogSource: WorkoutGuideCatalogSource
         get() = workoutGuideCatalogStore
+
+    override val conditionSupportStore: ConditionSupportStore by lazy {
+        // shortcut: support is withheld; Task 6 must bind shipped canonical/variant frame bytes before release.
+        ConditionSupportStore(context.assets, exerciseCatalog, artworkSha256ByExerciseId = { emptyMap() })
+    }
 
     override val attributionNoticeSource: AttributionNoticeSource by lazy {
         AssetAttributionNoticeReader(context.assets)

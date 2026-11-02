@@ -17,7 +17,8 @@ data class ExercisePrescription(
     val restSeconds: Int = DEFAULT_REST_SECONDS,
     val effortTarget: EffortTarget? = null,
     val restClass: RestClass? = null,
-    val restTargetSource: RestTargetSource? = null
+    val restTargetSource: RestTargetSource? = null,
+    val purpose: PrescriptionPurpose = PrescriptionPurpose.ORDINARY
 ) {
     init {
         require(targetSets in MIN_TARGET_SETS..MAX_TARGET_SETS) {
