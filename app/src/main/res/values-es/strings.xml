@@ -1136,4 +1136,9 @@
     <string name="condition_save">Guardar condiciones</string>
     <string name="condition_cancel">Cancelar cambios de condiciones</string>
     <string name="condition_required_prompt">%1$s (obligatorio)</string>
+    <string name="editor_add_support">Añadir apoyo para las afecciones</string>
+    <string name="editor_support_help">Añade las actividades de apoyo que corresponden a las afecciones seleccionadas con las dosis indicadas. Se reemplazarán los ejercicios coincidentes de este borrador. Guarda para conservar los cambios. La compatibilidad se comprobará de nuevo al empezar.</string>
+    <string name="editor_support_changed">El apoyo ha cambiado o no está disponible. Revisa las indicaciones actuales antes de añadirlo de nuevo. El borrador no ha cambiado.</string>
+    <string name="editor_support_precision">Esta dosis exacta no se puede guardar con las unidades o la precisión de medida actuales de la plantilla. Prueba otra unidad o solicita un entrenamiento generado. El borrador no ha cambiado.</string>
+    <string name="condition_workout_changed">Tu historial de entrenamientos, perfil o indicaciones para tus afecciones ha cambiado. Solicita un nuevo entrenamiento antes de empezar.</string>
 </resources>

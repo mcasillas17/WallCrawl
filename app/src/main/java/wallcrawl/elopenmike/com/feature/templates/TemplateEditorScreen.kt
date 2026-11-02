@@ -77,6 +77,11 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import wallcrawl.elopenmike.com.core.model.ConditionPlanningResult
+import wallcrawl.elopenmike.com.core.model.PlannedExercise
+import wallcrawl.elopenmike.com.core.model.PrescriptionPurpose
+import wallcrawl.elopenmike.com.core.ui.components.ConditionRefusal
+import wallcrawl.elopenmike.com.core.ui.components.localized
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
 import wallcrawl.elopenmike.com.core.ui.localization.longLabelRes
@@ -87,6 +92,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import java.util.Locale
+import java.text.NumberFormat
 import androidx.compose.material3.MaterialTheme
 import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.model.Exercise
@@ -270,6 +276,39 @@ fun TemplateEditorScreen(
                         colors = editorFieldColors(),
                         modifier = Modifier.fillMaxWidth()
                     )
+                }
+
+                when (val planning = state.conditionPlanning) {
+                    is ConditionPlanningResult.Blocked -> item { ConditionRefusal(planning.reasons) }
+                    is ConditionPlanningResult.Ready -> if (planning.supportive.isNotEmpty()) item {
+                        WallCrawlCard {
+                            Text(stringResource(R.string.editor_support_help), color = MaterialTheme.colorScheme.onSurface)
+                            planning.supportive.forEach { support ->
+                                // Read-only reviewed doses must not inherit editable-field rounding.
+                                val numbers = NumberFormat.getNumberInstance(locale).apply {
+                                    maximumFractionDigits = 340
+                                    isGroupingUsed = false
+                                }
+                                val draft = TemplateExerciseDraft.from(PlannedExercise(support.exerciseId, support.prescription), locale).copy(
+                                    load = support.prescription.targetWeight?.let(numbers::format).orEmpty(),
+                                    assistance = support.prescription.targetAssistanceWeight?.let(numbers::format).orEmpty(),
+                                    distanceMeters = support.prescription.targetDistanceMeters?.let(numbers::format).orEmpty())
+                                Text(state.exerciseFor(draft)?.let { LocalExerciseVocabulary.current.exerciseName(it) }
+                                    ?: support.exerciseId, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
+                                Text(stringResource(R.string.condition_supportive), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(draftSummary(draft, stringResource(WeightUnit.KG.shortLabelRes)), color = MaterialTheme.colorScheme.onSurface)
+                                planning.context.appliedRules.filter { it.exerciseIdentity.exerciseId == support.exerciseId &&
+                                    it.purpose == PrescriptionPurpose.SUPPORTIVE }.map { it.explanation }.distinct().forEach {
+                                    Text(it.localized(), color = MaterialTheme.colorScheme.onSurface)
+                                }
+                            }
+                            WallCrawlOutlinedButton(text = stringResource(R.string.editor_add_support),
+                                onClick = viewModel::adoptConditionSupport,
+                                enabled = !state.isSaving && !state.isCheckingSupport && !state.hasLoadFailed && !state.isDraftIncomplete,
+                                modifier = Modifier.fillMaxWidth())
+                        }
+                    }
+                    ConditionPlanningResult.NotApplicable -> Unit
                 }
 
                 if (state.showsRoundedStoredValues) {
@@ -635,6 +674,10 @@ private fun SelectedExerciseCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 13.sp
                 )
+                if (draft.purpose == PrescriptionPurpose.SUPPORTIVE) {
+                    Text(stringResource(R.string.condition_supportive),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp)
+                }
                 if (isMissingFromCatalog) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(

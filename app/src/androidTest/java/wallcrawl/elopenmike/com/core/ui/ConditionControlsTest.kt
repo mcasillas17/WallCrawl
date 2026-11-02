@@ -59,6 +59,22 @@ class ConditionControlsTest {
             mapOf("stop" to ConditionText("Stop response", "Respuesta de detener"), "continue" to ConditionText("Continue response", "Respuesta de continuar")))), mapOf("response" to "stop"), mapOf("response" to "stop"), text),
         "c".repeat(64), ConditionReleaseReview(ConditionReviewState.RELEASED, "FICTIONAL", "FICTIONAL", 1, "FICTIONAL", "c".repeat(64), setOf("source")))
 
+    @Test fun changedOrdinaryHistoryRequestsANewWorkoutInEnglish() = changedHistoryRefusal("en")
+    @Test fun changedOrdinaryHistoryRequestsANewWorkoutInSpanish() = changedHistoryRefusal("es")
+
+    private fun changedHistoryRefusal(language: String) {
+        val base = InstrumentationRegistry.getInstrumentation().targetContext
+        val config = Configuration(base.resources.configuration).apply { setLocale(Locale.forLanguageTag(language)) }
+        val context = base.createConfigurationContext(config)
+        compose.setContent {
+            CompositionLocalProvider(LocalContext provides context, LocalConfiguration provides config, LocalResources provides context.resources) {
+                WallCrawlTheme { Surface { ConditionRefusal(listOf(ConditionViolation("changed-condition-facts", emptySet()))) } }
+            }
+        }
+        compose.onNodeWithText(context.getString(R.string.condition_workout_changed)).assertIsDisplayed()
+        compose.onNodeWithText(context.getString(R.string.condition_stale_refusal)).assertDoesNotExist()
+    }
+
     @Test fun fullRetainedAnswersDisableOnlyNewInputsInEnglish() = checkFullRetainedAnswers("en")
     @Test fun fullRetainedAnswersDisableOnlyNewInputsInSpanish() = checkFullRetainedAnswers("es")
 

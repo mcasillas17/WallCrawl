@@ -30,7 +30,25 @@ Preview, logging and history show frozen instructions and recorded answers.
 Historical interpretation does not consult today's support catalog.
 
 Generated, manual-template and program starts check current facts and recheck
-inside the insertion transaction. Pain-stop outcomes atomically write pending
+inside the insertion transaction. Generated starts rebuild all consumed ordinary
+history, weekly credit, scheduling, capability and progression inputs under the
+shared write gate; an intervening ordinary completion can invalidate a preview
+without changing its condition-history digest. Successful starts retain the
+original frozen recommendation context and receipt.
+
+The manual editor offers an explicit action to adopt currently due supportive
+prescriptions and their purpose. It shows the doses and instructions first,
+rechecks current support on the action, and changes only the draft until Save.
+Matching draft exercises are replaced only by that explicit action. Changed or
+withdrawn support, unknown context and pending reassessment cannot fabricate a
+dose. Start still validates the saved concrete prescription against current
+policy; editing an adopted dose does not bypass that validation. A dose that
+cannot round-trip exactly through the existing manual units and measurement
+precision is refused without partial adoption. Some loaded prescriptions therefore
+require another template unit or the separately validated generated-workout path;
+the editor never silently rounds the reviewed dose.
+
+Pain-stop outcomes atomically write pending
 reassessment events. Removing a condition, cancelling a workout or deleting its
 source set does not clear those events. Reassessment requires the exact current
 event, required fresh reviewed answers and a current valid policy, then updates
@@ -91,8 +109,8 @@ condition/exercise IDs and emit no dose.
 | Insufficient duration | Same typed failure / `insufficient-duration`; fictional support alone needs 3,634 s against 2,100 s budget; no trimmed dose | `condition-duration` |
 | Missing equipment | Same typed failure / `support-restricted`; no prescription | `condition-equipment` |
 | Pain stop, including removed selection | Same typed failure / `pending-reassessment`; no new dose | Two pain-stop corpus personas; actual writes/idempotence in `ConditionWorkoutLifecycleTest` |
-| Stale preview | Typed start refusal, zero partial insertion; valid start preserves original context/receipt | `ConditionRecommendationIdentityTest`, `ConditionRecommendationValidationTest`, `ConditionStartPersistenceTest` |
-| Manual template | Concrete converted dose checked; exact purpose/context persisted without automatic receipt; invalid membership/dose refused | `ConditionStartPersistenceTest`, `WorkoutTemplateSessionTest`, `WorkoutRepositoryTest` |
+| Stale preview | Typed start refusal, zero partial insertion; valid start preserves original context/receipt | `ConditionRecommendationIdentityTest`, `ConditionRecommendationValidationTest`, `ConditionStartPersistenceTest`, `ConditionGeneratedFreshnessTest` |
+| Manual template | Explicit editor adoption → save → current concrete-dose check; exact purpose/context persisted without automatic receipt; invalid membership/dose refused | `ConditionTemplateEditorTest`, `ConditionStartPersistenceTest`, `WorkoutTemplateSessionTest`, `WorkoutRepositoryTest` |
 | Program | Actual program slot/intent/receipt and condition dose retained; refused start reserves nothing | `ProgramPersistenceTest`, `ConditionStartPersistenceTest`, multi-week program suites |
 
 The parser asset fixtures intentionally use their own fictional 1 × 20 s supportive
@@ -129,17 +147,31 @@ evidence, not files promised to a fresh clone. Clinical release remains outstand
 The November 2 integration recheck verified 174 local research links, 50 dossier
 anchors and all 60 hashes in the [frozen review manifest](research/conditions/review.md#frozen-candidate-record-manifest).
 It rechecked local source records, not access to every primary publication.
-The retained final debug APK is 67,541,234 bytes, versus the 66,360,669-byte
-Task 6B baseline: +1,180,565 bytes in this **incremental debug comparison**.
-This is not clean-build growth or a comparison with a pre-feature app. Compressed
-asset payloads grew by 305,437 bytes; all 1,812 historical SVG payloads and old
-attribution files match the baseline. The retained report separately records
-ZIP payload sizes and the unexplained physical/container difference.
+The final integration-fix debug APK is 67,541,234 bytes (SHA-256
+`014d110d44f55ed0edcc0811994f5ae70dcf3080cfbdb6c0a2af5c1686faf7ae`), versus
+the 66,360,669-byte Task 6B baseline: +1,180,565 bytes in this **incremental debug
+comparison**. This is not clean-build growth or a comparison with a pre-feature
+app. Compressed asset payloads grew by 305,437 bytes; all 1,812 historical SVG
+payloads and old attribution files match that baseline. All 2,759 asset payloads
+also match the retained pre-fix Task 16 APK. The fix adds 14,716 compressed ZIP
+payload bytes versus Task 16 while physical APK size stays equal; container
+layout/compression effects are not attributed to feature code. Against Task 6B,
+the physical delta exceeds summed compressed-payload growth by 633,566 bytes,
+which remains separately recorded and unassigned in `final-fix-artifacts/apk-proof.json`.
+The original Task 16 APK and proof remain unchanged.
 
-Final November 2 checks executed 206 Python tests and 1,471 JVM tests; full
-instrumentation executed 719 cases on each of API 36 and API 37, and the API 26
-app boundary executed 40. All reported zero failures, errors and skips. The final
-API 37 start-dose assertion update also passed its 11-case class separately;
-those cases are included in the 719-case suite, not additional unique cases.
-Lint and debug assembly succeeded; lint retained 0 errors, 32 warnings and 3 hints,
-with existing dependency, API-style and resource warnings triaged in the report.
+Task 16's **pre-fix baseline** executed 206 Python tests and 1,471 JVM tests;
+full instrumentation executed 719 cases on each of API 36 and API 37, and the
+API 26 app boundary executed 40. All reported zero failures, errors and skips.
+The separate 11-case start-dose rerun is included in the 719, not additional
+unique coverage.
+
+The final integration fix executed all **1,471 JVM tests** and **131 affected
+API 37 tests**, with zero failures, errors and skips. The affected device checks
+cover the actual manual editor/save/start path, ordinary and program freshness
+interleavings with real history/ledger inputs, condition controls, existing editor
+behavior, and production/program/template persistence. The full device matrix and
+unchanged Python/research/art suites were not repeated. Debug assembly, `lint`
+and explicit variant lint checks succeeded; retained lint reports and exact
+commands distinguish the current verification from the earlier full matrix.
+Warnings remain a bounded maintenance concern, not a claim of pristine output.

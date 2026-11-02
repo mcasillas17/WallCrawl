@@ -1144,4 +1144,9 @@
     <string name="condition_save">Save conditions</string>
     <string name="condition_cancel">Cancel condition edits</string>
     <string name="condition_required_prompt">%1$s (required)</string>
+    <string name="editor_add_support">Add condition support</string>
+    <string name="editor_support_help">Add the supportive activities due for your selected conditions with the doses shown below. Matching exercises in this draft will be replaced. Save to keep the changes. Compatibility is checked again when you start.</string>
+    <string name="editor_support_changed">Support has changed or is unavailable. Review the current guidance before adding it again. Your draft has not changed.</string>
+    <string name="editor_support_precision">This exact dose cannot be saved with the current template units or measurement precision. Try another template unit, or request a generated workout. Your draft has not changed.</string>
+    <string name="condition_workout_changed">Your workout history, profile, or condition guidance changed. Request a new workout before starting.</string>
 </resources>

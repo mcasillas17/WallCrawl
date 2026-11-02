@@ -949,8 +949,9 @@ codename and gender together in one card; the menu marks the current choice and
 closes after selection. Exercise artwork follows that
 single profile setting: female artwork for Woman, male artwork for the other
 options. Exercise screens have no separate gender or illustration selector.
-Both artwork sets contain 302 three-frame sequences, including
-current drafts whose continuity corrections remain for a later iteration.
+Both current artwork sets contain 306 three-frame sequences: the historical
+302-exercise upstream set and four neutral additions. Some historical drafts
+still have continuity corrections reserved for a later iteration.
 
 <p align="center">
   <img src="art/screenshots/onboarding-gender-dropdown.png" width="32%" alt="Onboarding with codename and the optional gender dropdown grouped in one card" />

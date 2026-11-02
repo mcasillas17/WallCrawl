@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.withIndex
+import wallcrawl.elopenmike.com.core.database.dao.ConditionContextRead
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
 import wallcrawl.elopenmike.com.core.database.repository.DeloadRepository
@@ -105,14 +106,29 @@ class WorkoutGenerationContextBuilder(
     suspend fun build(
         intent: WorkoutPlanningIntent = WorkoutPlanningIntent.ORDINARY,
         regenerationIndex: Int? = null
+    ): WorkoutGenerationContext = buildContext(intent, regenerationIndex, null, null)
+
+    /** Caller owns gate → Room transaction. These reads replace every gate-taking bootstrap read. */
+    internal suspend fun buildInTransaction(
+        intent: WorkoutPlanningIntent,
+        regenerationIndex: Int?,
+        read: ConditionContextRead,
+        support: ConditionSupportCatalog
+    ): WorkoutGenerationContext = buildContext(intent, regenerationIndex, read, support)
+
+    private suspend fun buildContext(
+        intent: WorkoutPlanningIntent,
+        regenerationIndex: Int?,
+        transactionRead: ConditionContextRead?,
+        transactionSupport: ConditionSupportCatalog?
     ): WorkoutGenerationContext {
-        val now = Instant.ofEpochMilli(nowTimestamp())
-        val zone = zoneId()
-        val initialProfile = userProfileRepository.getProfileOnce()
-        val needsConditionRead = initialProfile.activeConditions.isNotEmpty() ||
+        val now = Instant.ofEpochMilli(transactionRead?.history?.asOfTimestamp ?: nowTimestamp())
+        val zone = transactionRead?.history?.zoneId ?: zoneId()
+        val initialProfile = transactionRead?.profile ?: userProfileRepository.getProfileOnce()
+        val needsConditionRead = transactionRead != null || initialProfile.activeConditions.isNotEmpty() ||
             workoutRepository.hasPendingConditionReassessment(initialProfile.id)
-        var support = if (needsConditionRead) conditionSupport() else null
-        var conditionRead = support?.let { workoutRepository.getConditionContext(initialProfile.id, it, now.toEpochMilli(), zone, intent == WorkoutPlanningIntent.PROGRAM) }
+        var support = transactionSupport ?: if (needsConditionRead) conditionSupport() else null
+        var conditionRead = transactionRead ?: support?.let { workoutRepository.getConditionContext(initialProfile.id, it, now.toEpochMilli(), zone, intent == WorkoutPlanningIntent.PROGRAM) }
         val initialProgram = if (intent == WorkoutPlanningIntent.PROGRAM && conditionRead == null) programRepository?.get(initialProfile.id) else null
         // A program projection can observe a selection made after the bootstrap profile read.
         if (conditionRead == null && initialProgram?.profile?.activeConditions?.isNotEmpty() == true) {

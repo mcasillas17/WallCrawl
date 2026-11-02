@@ -130,6 +130,9 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
             conditionSupport = { conditionSupportStore.load() },
             exerciseCatalog = exerciseCatalog,
             generationContext = { intent, index -> workoutGenerationContextBuilder.build(intent, index) },
+            generationContextInTransaction = { intent, index, read, support ->
+                workoutGenerationContextBuilder.buildInTransaction(intent, index, read, support)
+            },
             validateGenerated = { workout, generation -> programValidator.validate(workout, generation, allowRepair = false) }
         )
     }

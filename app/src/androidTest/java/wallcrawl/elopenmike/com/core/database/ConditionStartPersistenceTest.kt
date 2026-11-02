@@ -36,13 +36,15 @@ class ConditionStartPersistenceTest {
         profiles.saveUserProfile(fixture.context().userProfile)
         workouts = OfflineWorkoutRepository(db.workoutSessionDao(), db.workoutSetDao(), localDataWriteGate = gate,
             conditionSupport = { support }, exerciseCatalog = catalog,
-            generationContext = { intent, _ -> context(intent) }, validateGenerated = { workout, context ->
+            generationContext = { intent, _ -> context(intent) },
+            generationContextInTransaction = { intent, _, read, _ -> context(intent, read) }, validateGenerated = { workout, context ->
                 validator.validate(workout, context).also { afterValidation?.also { afterValidation = null }?.invoke() }
             }, nowTimestamp = { now }, currentZone = { ZoneId.of("UTC") })
     }
     @After fun teardown() = db.close()
-    private suspend fun context(intent: WorkoutPlanningIntent = WorkoutPlanningIntent.ORDINARY): WorkoutGenerationContext {
-        val read = workouts.getConditionContext(UserProfile.DEFAULT_PROFILE_ID, support, now, ZoneId.of("UTC"), intent == WorkoutPlanningIntent.PROGRAM)
+    private suspend fun context(intent: WorkoutPlanningIntent = WorkoutPlanningIntent.ORDINARY,
+        transactionRead: wallcrawl.elopenmike.com.core.database.dao.ConditionContextRead? = null): WorkoutGenerationContext {
+        val read = transactionRead ?: workouts.getConditionContext(UserProfile.DEFAULT_PROFILE_ID, support, now, ZoneId.of("UTC"), intent == WorkoutPlanningIntent.PROGRAM)
         val all = listOf(fixture.ordinary, fixture.supportive)
         val planning = ConditionPlanningPolicy().resolve(read.profile, all, all.associateBy { it.id }, support, read.history)
         val program = read.program as? ProgramReadState.Supported

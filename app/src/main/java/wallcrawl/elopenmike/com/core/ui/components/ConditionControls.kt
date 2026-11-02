@@ -88,7 +88,8 @@ fun ConditionRefusal(reasons: List<ConditionViolation>) {
         val message = when (reason.reason) {
             "pending-reassessment", "response-requires-reassessment" -> R.string.condition_pending_hint
             "active-workout" -> R.string.condition_active_refusal
-            "stale-event", "stale-profile", "changed-condition-facts" -> R.string.condition_stale_refusal
+            "stale-event", "stale-profile" -> R.string.condition_stale_refusal
+            "changed-condition-facts" -> R.string.condition_workout_changed
             "missing-context", "unknown-answer", "unresolved-case" -> R.string.condition_answers_refusal
             "unsupported-condition", "unsupported-policy-or-context", "support-unavailable", "missing-support" -> R.string.condition_support_unavailable
             else -> R.string.condition_start_refusal

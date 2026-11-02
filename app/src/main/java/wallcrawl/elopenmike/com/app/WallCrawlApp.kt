@@ -464,7 +464,8 @@ private fun WallCrawlAppContent(
                         templateRepository = container.workoutTemplateRepository,
                         userProfileRepository = container.userProfileRepository,
                         exerciseCatalog = container.exerciseCatalog,
-                        localizationSource = container.exerciseLocalizationSource
+                        localizationSource = container.exerciseLocalizationSource,
+                        conditionContext = { container.workoutGenerationContextBuilder.build() }
                     )
                 )
                 TemplateEditorScreen(
@@ -486,7 +487,8 @@ private fun WallCrawlAppContent(
                         templateRepository = container.workoutTemplateRepository,
                         userProfileRepository = container.userProfileRepository,
                         exerciseCatalog = container.exerciseCatalog,
-                        localizationSource = container.exerciseLocalizationSource
+                        localizationSource = container.exerciseLocalizationSource,
+                        conditionContext = { container.workoutGenerationContextBuilder.build() }
                     )
                 )
                 TemplateEditorScreen(

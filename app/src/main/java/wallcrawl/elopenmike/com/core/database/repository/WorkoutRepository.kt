@@ -131,7 +131,9 @@ class OfflineWorkoutRepository(
     private val generationContext: (suspend (WorkoutPlanningIntent, Int?) -> WorkoutGenerationContext)? = null,
     private val validateGenerated: (suspend (GeneratedWorkout, WorkoutGenerationContext) -> ProgramValidationResult)? = null,
     private val nowTimestamp: () -> Long = System::currentTimeMillis,
-    private val currentZone: () -> ZoneId = ZoneId::systemDefault
+    private val currentZone: () -> ZoneId = ZoneId::systemDefault,
+    // Trusted composition only: must rebuild all inputs without reacquiring localDataWriteGate.
+    private val generationContextInTransaction: (suspend (WorkoutPlanningIntent, Int?, ConditionContextRead, ConditionSupportCatalog) -> WorkoutGenerationContext)? = null
 ) : WorkoutRepository {
     override fun observePendingConditionReassessments(profileId: String): Flow<List<PendingConditionReassessment>> =
         sessionDao.observeConditionPendingProbe(profileId, ConditionHistoryDao.MAX_CONDITION_MARKERS + 1).map { rows ->
@@ -286,7 +288,7 @@ class OfflineWorkoutRepository(
         })
         val needsConditions = userProfile.activeConditions.isNotEmpty() || recommendation?.conditionContext != null ||
             exercises.any { it.prescription.purpose != PrescriptionPurpose.ORDINARY }
-        val currentContext = if (generated != null && needsConditions) {
+        if (generated != null && needsConditions) {
             if (recommendation?.conditionContext == null) throw ConditionStartRefused("missing-condition-context")
             val build = generationContext ?: throw ConditionStartRefused("condition-validation-unavailable")
             val rebuilt = try {
@@ -297,10 +299,8 @@ class OfflineWorkoutRepository(
             } catch (error: Exception) {
                 throw ConditionStartRefused("condition-context-unavailable").also { it.initCause(error) }
             }
-            rebuilt.also { context ->
-                validateCurrentGenerated(generated, recommendation, context)
-            }
-        } else null
+            validateCurrentGenerated(generated, recommendation, rebuilt)
+        }
         val sessionId = UUID.randomUUID().toString()
         val sessionEntity = WorkoutSessionEntity(
             id = sessionId,
@@ -397,15 +397,21 @@ class OfflineWorkoutRepository(
                     val catalog = exerciseCatalog?.getAllExercises()?.first() ?: throw ConditionStartRefused("missing-exercise")
                     val read = readConditionContext(userProfile.id, support, nowTimestamp(), currentZone(), recommendation?.programSession != null)
                     val catalogById = catalog.associateBy { it.id }
-                    val candidates = currentContext?.allowedExercises?.mapNotNull { catalogById[it.id] } ?: catalog
-                    val planning = ConditionPlanningPolicy().resolve(read.profile, candidates, catalogById, support, read.history)
+                    val planning = ConditionPlanningPolicy().resolve(read.profile, catalog, catalogById, support, read.history)
                     when (planning) {
                         is ConditionPlanningResult.Blocked -> throw ConditionStartRefused(planning.reasons)
                         ConditionPlanningResult.NotApplicable -> throw ConditionStartRefused("missing-condition-context", exerciseIds = exercises.map { it.exerciseId }.toSet())
                         is ConditionPlanningResult.Ready -> {
                             if (generated != null) {
-                                val checked = requireNotNull(currentContext).copy(userProfile = read.profile,
-                                    conditionPlanning = planning, conditionHistory = read.history, conditionSupport = support)
+                                val rebuild = generationContextInTransaction ?: throw ConditionStartRefused("condition-validation-unavailable")
+                                val checked = try {
+                                    rebuild(if (recommendation?.programSession == null) WorkoutPlanningIntent.ORDINARY else WorkoutPlanningIntent.PROGRAM,
+                                        generated.generationIndex, read, support)
+                                } catch (error: CancellationException) { throw error
+                                } catch (error: ConditionStartRefused) { throw error
+                                } catch (error: Exception) {
+                                    throw ConditionStartRefused("condition-context-unavailable").also { it.initCause(error) }
+                                }
                                 validateCurrentGenerated(generated, requireNotNull(recommendation), checked)
                                 // Only the original receipt's exact checked times may be frozen on this session.
                                 recommendation.conditionContext
