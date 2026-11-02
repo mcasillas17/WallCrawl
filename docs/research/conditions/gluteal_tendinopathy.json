@@ -4,71 +4,149 @@
   "evidenceGrade": "low",
   "diagnosisContested": {
     "contested": true,
-    "note": "Partly contested. The condition is accepted, but GTPS is a non-specific umbrella term covering bursitis, external snapping hip and gluteus medius/minimus tendinopathy or tears. There is no consensus on the most useful clinical tests. Tendon changes on MRI were found in 88% of asymptomatic women in one small study, so imaging correlates poorly with symptoms. Trials used varying eligibility criteria."
+    "note": "Partly contested. The condition is accepted, but GTPS is a non-specific umbrella term covering bursitis, external snapping hip and gluteus medius/minimus tendinopathy or tears. There is no consensus on the most useful clinical tests. Tendon changes on MRI were found in 88% of asymptomatic women in one small study, so imaging correlates poorly with symptoms. Trials used varying eligibility criteria. Kinsella 2024 (6 studies, 272 people, certainty very low to moderate) found that in people with lateral hip pain, positive gluteal tendon palpation followed by positive resisted abduction raised the probability of GTPS from 59% to 96%, and both negative lowered it to 14%. ISHA 2023 names gluteal tendinopathy with or without bursitis as the primary pain source, and the NHS Lothian fact sheet calls MRI findings a poor predictor of symptoms."
   },
   "avoidOrModify": [
     {
       "movement": "Stretches that pull the hip into adduction, such as iliotibial band stretches and piriformis or glute stretches that draw the knee across the body",
       "action": "avoid",
-      "rationale": "These positions combine compression of the tendons against the greater trochanter with passive tensile load. The advice comes from pathomechanical reasoning and clinical commentary, and no trial has tested it alone.",
+      "rationale": "These positions combine compression of the tendons against the greater trochanter with passive tensile load, and the LEAP programme deliberately left out piriformis and iliotibial band stretches. This is a precaution, not a tested harm: no trial tested stretching alone. The evidence also pulls the other way. Nava 2025 found a general programme with piriformis, abductor, adductor and iliotibial band stretches no worse on pain than motor control exercise, and Rompe 2009's home programme, which included piriformis and iliotibial band stretches, reached 80% success at 15 months. Neither isolates stretching or shows it is safe.",
       "evidenceStrength": "expert_opinion",
-      "sourceIds": ["grimaldi_fearon_2015", "mellor_protocol_2016", "nhs_lothian_2025", "isha_2023"]
+      "sourceIds": [
+        "grimaldi_fearon_2015",
+        "mellor_protocol_2016",
+        "nhs_lothian_2025",
+        "isha_2023",
+        "challoumas_2023",
+        "grimaldi_2024",
+        "nava_2025",
+        "nava_protocol_2022",
+        "rompe_2009",
+        "french_2020"
+      ]
     },
     {
       "movement": "Loaded exercise that takes the hip across the midline into adduction, or drops the pelvis on the working side",
       "action": "modify",
       "rationale": "Keep the hip neutral or slightly abducted during loading. Hip adduction is proposed as a key mechanical factor, and the LEAP programme limited adduction in its exercises, but that restriction was not isolated from the rest of the programme.",
       "evidenceStrength": "expert_opinion",
-      "sourceIds": ["grimaldi_fearon_2015", "grimaldi_2015", "mellor_protocol_2016"]
+      "sourceIds": [
+        "grimaldi_fearon_2015",
+        "grimaldi_2015",
+        "mellor_protocol_2016",
+        "grimaldi_2024"
+      ]
     },
     {
       "movement": "Heavy single-leg squats and similar single-leg sagittal-plane lifts",
       "action": "modify",
-      "rationale": "These are naturally performed in some hip adduction, so tendon compression cannot be avoided. LEAP still progressed through single-leg-biased work, which supports graded use rather than exclusion.",
+      "rationale": "These are naturally performed in some hip adduction, so tendon compression cannot be avoided. Modelling in healthy young athletes places a loaded single-leg squat and a loaded single-leg Romanian deadlift among the highest gluteus medius and minimus loads tested. LEAP still progressed through single-leg-biased work, which supports graded use rather than exclusion.",
       "evidenceStrength": "expert_opinion",
-      "sourceIds": ["grimaldi_fearon_2015", "mellor_protocol_2016"]
+      "sourceIds": [
+        "grimaldi_fearon_2015",
+        "mellor_protocol_2016",
+        "collings_2023"
+      ]
     },
     {
       "movement": "Lying on the painful side, or side-lying with the top leg resting across the body, during floor exercise or rest",
       "action": "modify",
-      "rationale": "Side-lying compresses the lower hip against the surface and adducts the upper hip. Place the painful side uppermost with pillows between the knees, or use a supine alternative.",
+      "rationale": "Side-lying compresses the lower hip against the surface and adducts the upper hip. Place the painful side uppermost with pillows between the knees, or use a supine alternative. ISHA also advises sleeping supine with a pillow under the knees, or side-lying with a pillow between the legs.",
       "evidenceStrength": "expert_opinion",
-      "sourceIds": ["grimaldi_fearon_2015", "isha_2023"]
+      "sourceIds": [
+        "grimaldi_fearon_2015",
+        "isha_2023",
+        "grimaldi_2024",
+        "hogsholt_2026"
+      ]
     },
     {
       "movement": "Clamshell exercise, with or without a band",
       "action": "modify",
-      "rationale": "One clinician fact sheet says it may be provocative through friction and compression at the greater trochanter. A fine-wire EMG study in 10 healthy adults also found it poor at recruiting gluteus medius. No trial shows that it harms people with this condition. Prefer another abductor exercise.",
+      "rationale": "One clinician fact sheet says it may be provocative through friction and compression at the greater trochanter. A fine-wire EMG study in 10 healthy adults also found it poor at recruiting gluteus medius. No trial shows that it harms people with this condition, and the motor control arm of Nava 2025 used it in weeks 1-2. Prefer another abductor exercise.",
       "evidenceStrength": "expert_opinion",
-      "sourceIds": ["nhs_lothian_2025", "moore_gmed_2019"]
+      "sourceIds": [
+        "nhs_lothian_2025",
+        "moore_gmed_2019",
+        "nava_protocol_2022",
+        "gonzalez_2025"
+      ]
     },
     {
       "movement": "Long-distance, tempo or hill running, plyometric drills and other rapid stretch-shortening work",
       "action": "modify",
       "rationale": "High tensile loads, especially when increased quickly, are thought to aggravate tendon pain. Temporary suspension may be needed, while activity can usually continue in some form without its most provocative parts.",
       "evidenceStrength": "expert_opinion",
-      "sourceIds": ["grimaldi_fearon_2015"]
+      "sourceIds": [
+        "grimaldi_fearon_2015"
+      ]
     },
     {
       "movement": "Hill walking, stair climbing and long walks",
       "action": "modify",
-      "rationale": "For older or deconditioned people, the proposed approach is to limit hills and stairs and adjust walking distance to control symptoms.",
+      "rationale": "For older or deconditioned people, the proposed approach is to limit hills and stairs and adjust walking distance to control symptoms. People with this condition show a greater hip adduction moment impulse on stair ascent than pain-free controls, and a greater hip adduction moment during walking stance than people with hip osteoarthritis, but those studies are cross-sectional and cannot show that stairs cause harm.",
       "evidenceStrength": "expert_opinion",
-      "sourceIds": ["grimaldi_fearon_2015"]
+      "sourceIds": [
+        "grimaldi_fearon_2015",
+        "allison_2016",
+        "allison_gait_2018"
+      ]
     },
     {
       "movement": "Prolonged time balancing on one leg",
       "action": "modify",
-      "rationale": "The ISHA panel advises minimising single-leg time in daily activities, such as sitting to dress, to reduce tensile load. Its application to workout design is an extrapolation.",
+      "rationale": "The ISHA panel advises minimising single-leg time in daily activities, such as sitting to dress, to reduce tensile load. Its application to workout design is an extrapolation, and Nava's motor control programme prescribed 15 s single-leg holds from week 5.",
       "evidenceStrength": "expert_opinion",
-      "sourceIds": ["isha_2023"]
+      "sourceIds": [
+        "isha_2023",
+        "almousa_2023",
+        "nava_protocol_2022",
+        "grimaldi_2024"
+      ]
     },
     {
       "movement": "Hip abductor strengthening progressed quickly or performed through significant pain",
       "action": "modify",
-      "rationale": "Trial programmes allowed up to 5/10 pain during strengthening only if it eased afterwards and did not increase overnight or the next day. A commentary proposes starting at moderate effort, limiting high-load work to 3 times per week, and treating increased night pain as a sign that load was too high.",
+      "rationale": "Progress slowly, and treat pain that rises overnight or the next morning as a sign of too much load. LEAP used two pain rules: no change in pain over the greater trochanter during functional retraining, and up to 5/10 during heavy slow strengthening only if it eased afterwards and did not increase that night or the next morning. Load was adjusted to prevent week-to-week increases. Clifford 2019 and LEAP-Ireland used a similar 5/10 limit. These were programme rules chosen by trial authors, and Escriche-Escuder 2020 says pain-based progression is not supported by strong evidence. A narrative review is stricter, progressing only when pain-free. A commentary proposes starting at moderate effort and limiting high-load work to 3 times per week.",
       "evidenceStrength": "expert_opinion",
-      "sourceIds": ["mellor_protocol_2016", "clifford_2019", "grimaldi_fearon_2015"]
+      "sourceIds": [
+        "mellor_protocol_2016",
+        "clifford_2019",
+        "grimaldi_fearon_2015",
+        "almousa_2023",
+        "escriche_2020",
+        "gonzalez_2025"
+      ]
+    },
+    {
+      "movement": "Sitting or standing with the legs crossed or the hip hanging into adduction, including during rests and seated work",
+      "action": "modify",
+      "rationale": "ISHA advises avoiding hip adduction in sitting, standing and sleeping, and avoiding crossed legs. Compression education of this type was part of the effective trial programmes, but no trial tested each restriction alone.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": [
+        "isha_2023",
+        "grimaldi_2024",
+        "almousa_2023",
+        "hogsholt_2026"
+      ]
+    },
+    {
+      "movement": "Side plank and side-plank variations used as a beginner core exercise",
+      "action": "modify",
+      "rationale": "In modelling of 14 healthy young female footballers, a bodyweight side plank was in the top tier for gluteus medius (338-483 N) and minimus (272-382 N) force. Treating it as a high-load exercise for this condition is an inference: the study measured no tendon compression and no harm, and it did not include people with this condition.",
+      "evidenceStrength": "biomechanical",
+      "sourceIds": [
+        "collings_2023"
+      ]
+    },
+    {
+      "movement": "Hard loading soon after a corticosteroid or platelet-rich plasma injection",
+      "action": "modify",
+      "rationale": "ISHA advises starting with gentle isometrics, pain-free stretching that avoids compression through the lateral tendons, and neuromuscular control work, then adding eccentric abductor strengthening and dynamic single-leg work when tolerated. It advises longer rest after platelet-rich plasma than after corticosteroid, with no duration given.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": [
+        "isha_2023"
+      ]
     }
   ],
   "candidateExercises": [
@@ -76,153 +154,632 @@
       "name": "Standing isometric hip abduction in slight abduction",
       "catalog": "new",
       "kind": "strengthening",
-      "dose": {"sets": null, "reps": null, "holdSeconds": "5-15", "frequency": "Not clearly stated in the source table"},
+      "dose": {
+        "sets": 1,
+        "reps": "3-5",
+        "holdSeconds": "5-15",
+        "frequency": "BD, which the source expands only as 'bi-daily', at light effort with slow onset"
+      },
       "bodyweightOrHold": true,
-      "cautions": "Use gentle effort and avoid adduction. Only the hold time could be read reliably from the source table.",
+      "cautions": "Use gentle effort (Borg 11-12) and avoid adduction. The XML table offsets its labels from its values, so assigning this row to this position is a reading of the layout, and it should be checked against the published PDF.",
       "evidenceStrength": "rct",
-      "sourceIds": ["mellor_protocol_2016", "grimaldi_fearon_2015"]
+      "sourceIds": [
+        "mellor_protocol_2016",
+        "grimaldi_fearon_2015",
+        "almousa_2023"
+      ]
+    },
+    {
+      "name": "Supine isometric hip abduction hold",
+      "catalog": "new",
+      "kind": "strengthening",
+      "dose": {
+        "sets": "1-2",
+        "reps": 10,
+        "holdSeconds": "5-10",
+        "frequency": "BD, which the source expands only as 'bi-daily', at light effort with slow onset"
+      },
+      "bodyweightOrHold": true,
+      "cautions": "Use gentle effort (Borg 11-12) and stay out of adduction. Restored after an earlier check removed a mismatched dose. The XML table offsets its labels from its values, so assigning this row to this position is a reading of the layout, and it should be checked against the published PDF. The earlier entry's belt or band is not in the protocol text, so none is listed.",
+      "evidenceStrength": "rct",
+      "sourceIds": [
+        "mellor_protocol_2016",
+        "almousa_2023"
+      ]
     },
     {
       "name": "Side-lying isometric hip abduction hold, painful side up",
       "catalog": "new",
       "kind": "strengthening",
-      "dose": {"sets": 1, "reps": 6, "holdSeconds": 30, "frequency": "Daily, with 60 s rest between holds"},
+      "dose": {
+        "sets": 1,
+        "reps": 6,
+        "holdSeconds": 30,
+        "frequency": "Daily, with 60 s rest between holds"
+      },
       "bodyweightOrHold": true,
-      "cautions": "Keep pillows between the knees and do not let the top hip drop into adduction. Tested in a 30-person pilot trial with no untreated control. Bilateral symptoms prevent side-lying without compressing one hip. A supine, slightly abducted hold can be substituted, but no dose for it could be verified.",
+      "cautions": "Keep pillows between the knees and do not let the top hip drop into adduction. Tested in a 30-person pilot trial with no untreated control, where it showed no advantage over isotonic work. Bilateral symptoms prevent side-lying without compressing one hip, so use the supine hold instead. Clifford 2019 started without external load, then added elastic bands around both ankles, keeping pain at or below 5/10.",
       "evidenceStrength": "rct",
-      "sourceIds": ["clifford_2019", "grimaldi_fearon_2015"]
+      "sourceIds": [
+        "clifford_2019",
+        "grimaldi_fearon_2015"
+      ]
     },
     {
       "name": "Standing weight-bearing isometric gluteal contraction, moving the free leg in and out",
       "catalog": "new",
       "kind": "strengthening",
-      "dose": {"sets": 3, "reps": 10, "holdSeconds": 6, "frequency": "Daily, with 60 s rest between sets"},
+      "dose": {
+        "sets": 3,
+        "reps": 10,
+        "holdSeconds": 6,
+        "frequency": "Daily, with 60 s rest between sets"
+      },
       "bodyweightOrHold": true,
-      "cautions": "Hold a wall or chair for support. Stop adding load if pain increases overnight or the next day. Pilot-trial evidence only.",
+      "cautions": "Hold a wall or chair for support. Stop adding load if pain increases overnight or the next day. Pilot-trial evidence only. Clifford 2019 started without external load, then added elastic bands around both ankles, keeping pain at or below 5/10.",
       "evidenceStrength": "rct",
-      "sourceIds": ["clifford_2019"]
+      "sourceIds": [
+        "clifford_2019"
+      ]
     },
     {
       "name": "Side-lying hip abduction",
       "catalog": "catalog:side-lying-hip-abduction",
       "kind": "strengthening",
-      "dose": {"sets": 3, "reps": 10, "holdSeconds": null, "frequency": "Daily, 6 s per rep, with 60 s rest between sets"},
+      "dose": {
+        "sets": 3,
+        "reps": 10,
+        "holdSeconds": null,
+        "frequency": "Daily, 6 s per rep, with 60 s rest between sets"
+      },
       "bodyweightOrHold": true,
-      "cautions": "Keep the painful side up, pillows between the knees at the start, and the knee straight. Lift to about 30 degrees and lower with control. The catalog entry does not carry these setup cues. Pilot-trial evidence only.",
+      "cautions": "Keep the painful side up, pillows between the knees at the start, and the knee straight. Lift to about 30 degrees and lower with control. The catalog entry does not carry these setup cues. Pilot-trial evidence only. Clifford 2019 started without external load, then added elastic bands around both ankles, keeping pain at or below 5/10.",
       "evidenceStrength": "rct",
-      "sourceIds": ["clifford_2019"]
+      "sourceIds": [
+        "clifford_2019"
+      ]
     },
     {
       "name": "Standing hip abduction slide",
       "catalog": "new",
       "kind": "strengthening",
-      "dose": {"sets": 3, "reps": 10, "holdSeconds": null, "frequency": "Daily, 6 s per rep, with 60 s rest between sets"},
+      "dose": {
+        "sets": 3,
+        "reps": 10,
+        "holdSeconds": null,
+        "frequency": "Daily, 6 s per rep, with 60 s rest between sets"
+      },
       "bodyweightOrHold": true,
-      "cautions": "Hold a chair or table, keep the foot on the floor and the working knee straight. Requires a surface that allows sliding. Pilot-trial evidence only.",
+      "cautions": "Hold a chair or table, keep the foot on the floor and the working knee straight. Requires a surface that allows sliding. Pilot-trial evidence only. Clifford 2019 started without external load, then added elastic bands around both ankles, keeping pain at or below 5/10.",
       "evidenceStrength": "rct",
-      "sourceIds": ["clifford_2019"]
+      "sourceIds": [
+        "clifford_2019"
+      ]
     },
     {
       "name": "Double-leg glute bridge",
       "catalog": "catalog:glute-bridge",
       "kind": "strengthening",
-      "dose": {"sets": 1, "reps": 10, "holdSeconds": null, "frequency": "Daily at light effort"},
+      "dose": {
+        "sets": 1,
+        "reps": 10,
+        "holdSeconds": null,
+        "frequency": "Daily at light effort: moderate tempo (2 s per phase) in week 1, slow (3 s per phase) in week 2. Weeks 3-8 drop to 1 x 5."
+      },
       "bodyweightOrHold": true,
       "cautions": "The dose is the first week of a supervised, progressive multi-part programme, and this exercise was not tested alone.",
       "evidenceStrength": "rct",
-      "sourceIds": ["mellor_protocol_2016"]
+      "sourceIds": [
+        "mellor_protocol_2016"
+      ]
     },
     {
       "name": "Offset bridge, biased to one leg",
       "catalog": "new",
       "kind": "strengthening",
-      "dose": {"sets": 1, "reps": 5, "holdSeconds": null, "frequency": "Not stated for this row in week 2 of the source table"},
+      "dose": {
+        "sets": 1,
+        "reps": 5,
+        "holdSeconds": null,
+        "frequency": "Week 2, slow tempo (3 s per phase). Frequency is blank on this row; adjacent rows say daily."
+      },
       "bodyweightOrHold": true,
-      "cautions": "A later progression at 'somewhat hard' effort. It is less demanding than the catalog's full single-leg bridge and is not the same movement.",
+      "cautions": "A later progression at 'somewhat hard' effort (Borg 13-15). It is less demanding than the catalog's full single-leg bridge and is not the same movement.",
       "evidenceStrength": "rct",
-      "sourceIds": ["mellor_protocol_2016"]
+      "sourceIds": [
+        "mellor_protocol_2016"
+      ]
     },
     {
       "name": "Bodyweight double-leg squat",
       "catalog": "catalog:bodyweight-squat",
       "kind": "strengthening",
-      "dose": {"sets": 1, "reps": 10, "holdSeconds": null, "frequency": "Daily at light effort, slow tempo"},
+      "dose": {
+        "sets": 1,
+        "reps": 10,
+        "holdSeconds": null,
+        "frequency": "Week 2: daily at light effort, slow tempo (3 s per phase). Week 1 is light to somewhat hard with frequency blank. Weeks 3-8 drop to 1 x 5."
+      },
       "bodyweightOrHold": true,
       "cautions": "Do not let the pelvis shift over one hip. Part of a multi-part programme and not tested alone.",
       "evidenceStrength": "rct",
-      "sourceIds": ["mellor_protocol_2016"]
+      "sourceIds": [
+        "mellor_protocol_2016"
+      ]
     },
     {
       "name": "Offset squat, biased to one leg",
       "catalog": "new",
       "kind": "strengthening",
-      "dose": {"sets": 1, "reps": 5, "holdSeconds": null, "frequency": "Not stated for this row in week 2 of the source table"},
+      "dose": {
+        "sets": 1,
+        "reps": 5,
+        "holdSeconds": null,
+        "frequency": "Week 2, slow tempo (3 s per phase). Frequency is blank on this row; adjacent rows say daily."
+      },
       "bodyweightOrHold": true,
-      "cautions": "A later progression at 'somewhat hard' effort. Keep the pelvis level and avoid drifting into hip adduction.",
+      "cautions": "A later progression at 'somewhat hard' effort (Borg 13-15). Keep the pelvis level and avoid drifting into hip adduction.",
       "evidenceStrength": "rct",
-      "sourceIds": ["mellor_protocol_2016"]
+      "sourceIds": [
+        "mellor_protocol_2016"
+      ]
     },
     {
       "name": "Bodyweight side-stepping",
       "catalog": "new",
       "kind": "strengthening",
-      "dose": {"sets": 1, "reps": "10 each direction", "holdSeconds": null, "frequency": "Daily at light effort, moderate tempo"},
+      "dose": {
+        "sets": 1,
+        "reps": "10 each direction",
+        "holdSeconds": null,
+        "frequency": "Daily at light effort, moderate tempo (2 s per phase). Week 2 rises to 15 each, and weeks 3-8 return to 10 each."
+      },
       "bodyweightOrHold": true,
       "cautions": "Push into abduction with the stance leg and keep the pelvis and trunk aligned. The catalog's banded-lateral-walk adds band resistance, so it was not treated as the same movement.",
       "evidenceStrength": "rct",
-      "sourceIds": ["mellor_protocol_2016", "grimaldi_fearon_2015"]
+      "sourceIds": [
+        "mellor_protocol_2016",
+        "grimaldi_fearon_2015"
+      ]
     },
     {
       "name": "Band side slide",
       "catalog": "new",
       "kind": "strengthening",
-      "dose": {"sets": "1-2", "reps": "5-10 each side", "holdSeconds": null, "frequency": "Not stated for this row in the source table"},
+      "dose": {
+        "sets": "1-2",
+        "reps": "5-10 each side",
+        "holdSeconds": null,
+        "frequency": "Weeks 3-8, daily (stated on the block heading row), 'somewhat hard' to 'hard' effort"
+      },
       "bodyweightOrHold": false,
       "cautions": "A later progression at 'somewhat hard' to 'hard' effort. Keep weight on the stationary leg and slide the other foot on a slippery surface. Requires a band.",
       "evidenceStrength": "rct",
-      "sourceIds": ["mellor_protocol_2016", "grimaldi_fearon_2015"]
+      "sourceIds": [
+        "mellor_protocol_2016",
+        "grimaldi_fearon_2015"
+      ]
+    },
+    {
+      "name": "Single-leg-biased bridge",
+      "catalog": "new",
+      "kind": "strengthening",
+      "dose": {
+        "sets": 2,
+        "reps": "5-10",
+        "holdSeconds": null,
+        "frequency": "Weeks 3-8, daily, 'somewhat hard' to 'hard' effort"
+      },
+      "bodyweightOrHold": true,
+      "cautions": "The progression from the offset bridge. Keep the pelvis level and avoid drifting into hip adduction. Part of a multi-part programme and not tested alone.",
+      "evidenceStrength": "rct",
+      "sourceIds": [
+        "mellor_protocol_2016"
+      ]
+    },
+    {
+      "name": "Single-leg-biased squat",
+      "catalog": "new",
+      "kind": "strengthening",
+      "dose": {
+        "sets": 2,
+        "reps": "5-10",
+        "holdSeconds": null,
+        "frequency": "Weeks 3-8, 'somewhat hard' to 'hard' effort. Frequency is blank on this row."
+      },
+      "bodyweightOrHold": true,
+      "cautions": "The progression from the offset squat. Compression cannot be fully avoided in single-leg squatting. Keep the pelvis level and avoid drifting into hip adduction. Part of a multi-part programme and not tested alone.",
+      "evidenceStrength": "rct",
+      "sourceIds": [
+        "mellor_protocol_2016",
+        "grimaldi_fearon_2015"
+      ]
+    },
+    {
+      "name": "Banded side walking",
+      "catalog": "catalog:banded-lateral-walk",
+      "kind": "strengthening",
+      "dose": {
+        "sets": 3,
+        "reps": "8-12",
+        "holdSeconds": null,
+        "frequency": "Twice weekly in weeks 5-8, supervised, with 1 min rest between exercises"
+      },
+      "bodyweightOrHold": false,
+      "cautions": "The motor control arm of a 60-woman trial, which was not superior to general exercise. A narrative review advises checking technique and adjusting resistance or stride for gluteal tendinopathy, with no band-walk study behind that advice. Requires a band.",
+      "evidenceStrength": "rct",
+      "sourceIds": [
+        "nava_protocol_2022",
+        "nava_2025",
+        "gonzalez_2025"
+      ]
+    },
+    {
+      "name": "Single-leg stance hold",
+      "catalog": "new",
+      "kind": "strengthening",
+      "dose": {
+        "sets": 3,
+        "reps": null,
+        "holdSeconds": 15,
+        "frequency": "Twice weekly in weeks 5-6, supervised"
+      },
+      "bodyweightOrHold": false,
+      "cautions": "The table lists an elastic band as material. It conflicts with ISHA's advice to minimise single-leg time in daily activities, and single-leg stance for 30 s is also used as a pain provocation test, so keep it for later stages. The arm was not superior to general exercise.",
+      "evidenceStrength": "rct",
+      "sourceIds": [
+        "nava_protocol_2022",
+        "nava_2025",
+        "isha_2023"
+      ]
+    },
+    {
+      "name": "Hip hike on a step",
+      "catalog": "new",
+      "kind": "strengthening",
+      "dose": {
+        "sets": 3,
+        "reps": "8-12",
+        "holdSeconds": 15,
+        "frequency": "Twice weekly in weeks 7-8, supervised"
+      },
+      "bodyweightOrHold": false,
+      "cautions": "The table prints 'Hold 15s' and '8-12' in one cell without saying how they combine, so use one or the other until the source is checked. Lists an elastic band and step. Hip hitch variations reach over 40% MVIC across gluteus medius, though EMG predicts muscle force poorly. The arm was not superior to general exercise.",
+      "evidenceStrength": "rct",
+      "sourceIds": [
+        "nava_protocol_2022",
+        "nava_2025",
+        "moore_2020",
+        "collings_2025"
+      ]
+    },
+    {
+      "name": "Wall squat hold with a ball",
+      "catalog": "new",
+      "kind": "strengthening",
+      "dose": {
+        "sets": 1,
+        "reps": 20,
+        "holdSeconds": 10,
+        "frequency": "Twice daily, 7 days a week, for 12 weeks"
+      },
+      "bodyweightOrHold": false,
+      "cautions": "Thighs parallel to the ground. Dose is read from the table in Cordeiro 2024, not from the original trial, whose full text was not opened. Rompe 2009 used sequential assignment rather than randomisation, and its programme also included stretches this record advises against. Requires a ball.",
+      "evidenceStrength": "observational",
+      "sourceIds": [
+        "rompe_2009",
+        "cordeiro_2024"
+      ]
     }
   ],
   "redFlags": [
     {
       "sign": "Hip or groin pain that worsens with weight bearing after a fall or a rapid increase in activity, especially with known osteoporosis",
       "action": "Stop the plan and seek prompt medical assessment for possible hip fracture",
-      "sourceIds": ["grimaldi_fearon_2015", "wilson_furukawa_2014"]
+      "sourceIds": [
+        "grimaldi_fearon_2015",
+        "wilson_furukawa_2014"
+      ]
     },
     {
       "sign": "Hip or groin pain linked to repetitive weight-bearing exercise, particularly in endurance athletes, smokers, steroid users or people with female athlete triad",
       "action": "Stop impact and loading work and seek medical assessment for possible stress fracture, since an early X-ray can be normal",
-      "sourceIds": ["wilson_furukawa_2014"]
+      "sourceIds": [
+        "wilson_furukawa_2014"
+      ]
     },
     {
       "sign": "Sudden hip pain without injury that makes weight bearing difficult, especially with diabetes, rheumatoid arthritis, recent joint surgery, a prosthesis or age over 80",
       "action": "Seek urgent medical assessment for possible joint infection",
-      "sourceIds": ["wilson_furukawa_2014"]
+      "sourceIds": [
+        "wilson_furukawa_2014"
+      ]
     },
     {
       "sign": "Deep, unrelenting pain, possibly worse at night, particularly with a history of cancer or unexplained weight loss",
       "action": "Stop the plan and seek prompt medical assessment",
-      "sourceIds": ["grimaldi_fearon_2015"]
+      "sourceIds": [
+        "grimaldi_fearon_2015"
+      ]
     },
     {
       "sign": "Pain on walking with risk factors for osteonecrosis, including corticosteroid use, heavy alcohol use, smoking, lupus, sickle cell disease or HIV infection",
       "action": "Seek medical assessment before continuing loading work",
-      "sourceIds": ["wilson_furukawa_2014", "grimaldi_fearon_2015"]
+      "sourceIds": [
+        "wilson_furukawa_2014",
+        "grimaldi_fearon_2015"
+      ]
     },
     {
       "sign": "Heat, redness or swelling in several areas, morning stiffness over 1 hour, or symmetrical joint signs",
       "action": "Seek medical assessment for possible inflammatory disease",
-      "sourceIds": ["grimaldi_fearon_2015"]
+      "sourceIds": [
+        "grimaldi_fearon_2015"
+      ]
     },
     {
       "sign": "Pain spreading below the knee, or lateral hip pain with low back pain",
       "action": "Ask a clinician to check the back and leg, because the pain may not come from the gluteal tendons",
-      "sourceIds": ["isha_2023", "grimaldi_fearon_2015"]
+      "sourceIds": [
+        "isha_2023",
+        "grimaldi_fearon_2015"
+      ]
     },
     {
       "sign": "Groin pain with morning stiffness, lost hip motion, locking, giving way, or difficulty putting on shoes and socks",
       "action": "Ask a clinician to check for hip joint disease",
-      "sourceIds": ["isha_2023", "grimaldi_fearon_2015"]
+      "sourceIds": [
+        "isha_2023",
+        "grimaldi_fearon_2015"
+      ]
+    },
+    {
+      "sign": "Gluteal tendon repair surgery in the past 16 weeks",
+      "action": "Do not use this plan. Follow the surgical team's rehabilitation. ISHA's consensus limits hip flexion to 90 degrees, external rotation to 20 degrees and adduction to neutral in weeks 1-6, contraindicates active against-gravity abduction until week 8 and active long-lever hip flexion until week 12, and excludes jumping, hopping, cutting and pivoting in weeks 12-16.",
+      "sourceIds": [
+        "isha_2023",
+        "ebert_2022"
+      ]
+    },
+    {
+      "sign": "A known gluteal tendon tear or rupture on imaging",
+      "action": "Ask a clinician before loading. Spencer 2026 found no non-surgical treatment studies for symptomatic tears. One later uncontrolled cohort reported no adverse events and no worse outcome in its rupture subgroup, which is too weak to establish safety.",
+      "sourceIds": [
+        "spencer_2026",
+        "hogsholt_2026"
+      ]
+    }
+  ],
+  "searches": [
+    {
+      "database": "PubMed (E-utilities esearch)",
+      "query": "(\"greater trochanteric pain syndrome\"[tiab] OR \"gluteal tendinopathy\"[tiab] OR \"gluteal tendinopathies\"[tiab]) AND (guideline[tiab] OR guidelines[tiab] OR consensus[tiab] OR \"clinical practice\"[tiab] OR pathway[tiab] OR Delphi[tiab])",
+      "hits": "57; titles screened"
+    },
+    {
+      "database": "PubMed (E-utilities esearch)",
+      "query": "(\"greater trochanteric pain syndrome\"[tiab] OR \"gluteal tendinopathy\"[tiab]) AND (systematic review[pt] OR meta-analysis[pt] OR \"systematic review\"[tiab]) AND (exercise[tiab] OR management[tiab] OR treatment[tiab])",
+      "hits": "43; titles screened"
+    },
+    {
+      "database": "PubMed (E-utilities esearch)",
+      "query": "(\"gluteal tendinopathy\"[tiab] OR \"greater trochanteric pain syndrome\"[tiab]) AND Randomized Controlled Trial[pt]",
+      "hits": "32; titles screened"
+    },
+    {
+      "database": "PubMed (E-utilities esearch)",
+      "query": "(\"greater trochanteric pain syndrome\"[tiab] OR \"gluteal tendinopathy\"[tiab] OR \"trochanteric bursitis\"[tiab]) AND (\"Practice Guideline\"[pt] OR \"Guideline\"[pt] OR \"Consensus Development Conference\"[pt])",
+      "hits": "0. PubMed warned that the phrase \"Consensus Development Conference\"[pt] was not found, so effectively only the two guideline publication types were searched. Null result."
+    },
+    {
+      "database": "PubMed (E-utilities esearch)",
+      "query": "\"Cochrane Database Syst Rev\"[jour] AND (\"greater trochanteric\"[tiab] OR \"gluteal tendinopathy\"[tiab] OR \"trochanteric bursitis\"[tiab])",
+      "hits": "0. Null result."
+    },
+    {
+      "database": "PubMed (E-utilities esearch)",
+      "query": "\"ACR Appropriateness Criteria\" \"Chronic Hip Pain\"",
+      "hits": "4"
+    },
+    {
+      "database": "Europe PMC REST",
+      "query": "(\"greater trochanteric pain syndrome\" OR \"gluteal tendinopathy\") AND (TITLE:guideline OR TITLE:consensus OR TITLE:pathway OR TITLE:Delphi OR TITLE:recommendations OR TITLE:\"clinical practice\" OR TITLE:\"core outcome\")",
+      "hits": "8"
+    },
+    {
+      "database": "Europe PMC REST",
+      "query": "(\"hip pain\" OR \"hip\") AND (\"clinical practice guideline\" OR \"consensus statement\") AND (\"gluteal tendinopathy\" OR \"greater trochanteric pain syndrome\" OR \"trochanteric bursitis\") AND SRC:MED",
+      "hits": "43; first 30 titles screened"
+    },
+    {
+      "database": "Europe PMC REST (Cochrane journal filter)",
+      "query": "(\"greater trochanteric pain syndrome\" OR \"gluteal tendinopathy\" OR \"trochanteric bursitis\") AND JOURNAL:\"Cochrane Database of Systematic Reviews\"",
+      "hits": "0. Null result. The Cochrane Library site itself returned HTTP 403, so it was not searched directly."
+    },
+    {
+      "database": "Crossref REST",
+      "query": "query.bibliographic=greater trochanteric pain syndrome guideline consensus (rows=20)",
+      "hits": "1,658,749 fuzzy-ranked matches; of the first 20 screened, none was a guideline or consensus statement"
+    },
+    {
+      "database": "WebSearch",
+      "query": "gluteal tendinopathy greater trochanteric pain syndrome clinical practice guideline consensus recommendations grade",
+      "hits": "10 links; no formal GRADE-based guideline"
+    },
+    {
+      "database": "WebSearch",
+      "query": "NICE CKS greater trochanteric pain syndrome trochanteric bursitis management; JOSPT hip pain clinical practice guideline gluteal tendinopathy; BMJ Best Practice",
+      "hits": "10 links; regional NHS documents and reviews only. A guessed NICE CKS URL returned HTTP 403, so CKS coverage is unverified."
+    },
+    {
+      "database": "WebSearch",
+      "query": "Delphi consensus gluteal tendinopathy core outcome set ICON tendinopathy terminology international consensus greater trochanteric pain syndrome exercise",
+      "hits": "10 links"
+    },
+    {
+      "database": "WebSearch",
+      "query": "\"core outcome\" gluteal tendinopathy OR \"greater trochanteric pain syndrome\" Delphi consensus published results Fearon Mellor Ganderton outcome measures",
+      "hits": "10 links"
+    },
+    {
+      "database": "WebSearch",
+      "query": "Enseki 2023 JOSPT Hip Pain and Movement Dysfunction Associated With Nonarthritic Hip Joint Pain revision clinical practice guideline scope; ACR Appropriateness Criteria chronic hip pain greater trochanteric",
+      "hits": "10 links"
+    },
+    {
+      "database": "WebSearch",
+      "query": "ACR Appropriateness Criteria Chronic Hip Pain 2017 suspected greater trochanteric pain syndrome imaging ultrasound MRI rating",
+      "hits": "10 links"
+    },
+    {
+      "database": "WebSearch (restricted to acsearch.acr.org, jacr.org, acr.org)",
+      "query": "ACR Appropriateness Criteria Chronic Hip Pain 2022 variant \"greater trochanteric pain syndrome\" OR \"suspect abductor\" MRI ultrasound usually appropriate acsearch.acr.org narrative",
+      "hits": "9 links"
+    },
+    {
+      "database": "WebSearch",
+      "query": "national guideline greater trochanteric pain syndrome Dutch KNGF OR NHG OR NVOG OR AWMF OR \"Royal Australian College\" OR ACSEP position statement gluteal tendinopathy; NICE interventional procedures guidance shockwave greater trochanteric pain syndrome",
+      "hits": "10 links; no national guideline found. A single combined query only: these bodies' own libraries, and AAOS and WHO, were not checked directly."
+    },
+    {
+      "database": "WebSearch",
+      "query": "NICE IPG376 extracorporeal shockwave therapy for refractory greater trochanteric pain syndrome interventional procedures guidance recommendations",
+      "hits": "10 links; led to NICE IPG376, now HTG248"
+    },
+    {
+      "database": "PubMed E-utilities",
+      "query": "(\"greater trochanteric pain syndrome\"[tiab] OR \"gluteal tendinopathy\"[tiab] OR \"lateral hip pain\"[tiab]) AND (systematic review[pt] OR meta-analysis[pt] OR \"systematic review\"[tiab] OR \"meta-analysis\"[tiab])",
+      "hits": "64 (first 60 PMIDs retrieved; titles screened for those fetched by summary)"
+    },
+    {
+      "database": "PubMed E-utilities",
+      "query": "(\"greater trochanteric pain syndrome\"[tiab] OR \"gluteal tendinopathy\"[tiab]) AND (exercise[tiab] OR stretching[tiab] OR \"load management\"[tiab]) AND (randomized controlled trial[pt] OR systematic review[pt] OR meta-analysis[pt])",
+      "hits": "26"
+    },
+    {
+      "database": "PubMed E-utilities",
+      "query": "(\"greater trochanteric pain syndrome\"[tiab] OR \"gluteal tendinopathy\"[tiab]) AND (stretching[tiab] OR stretch[tiab] OR compression[tiab] OR \"hip adduction\"[tiab])",
+      "hits": "25"
+    },
+    {
+      "database": "PubMed E-utilities (Cochrane journal filter)",
+      "query": "(\"greater trochanteric pain syndrome\"[tiab] OR \"gluteal tendinopathy\"[tiab] OR \"trochanteric bursitis\"[tiab]) AND \"Cochrane Database Syst Rev\"[jour]",
+      "hits": "0"
+    },
+    {
+      "database": "PubMed web search",
+      "query": "Clifford isometric isotonic gluteal tendinopathy randomized",
+      "hits": "2"
+    },
+    {
+      "database": "Europe PMC REST",
+      "query": "(\"greater trochanteric pain syndrome\" OR \"gluteal tendinopathy\") AND (\"systematic review\" OR \"meta-analysis\") AND (exercise OR stretching OR physiotherapy)",
+      "hits": "220 (first 40 screened)"
+    },
+    {
+      "database": "Europe PMC REST (Cochrane journal filter)",
+      "query": "(\"greater trochanteric pain\" OR \"gluteal tendinopathy\" OR \"trochanteric bursitis\") AND JOURNAL:\"Cochrane Database Syst Rev\"",
+      "hits": "4; none is a review of this condition (extracapsular hip fracture surgery, platelet-rich therapies for soft tissue injuries, osteoporosis exercise, progressive resistance training in older adults)"
+    },
+    {
+      "database": "Cochrane Library",
+      "query": "https://www.cochranelibrary.com/cdsr/reviews?searchBy=1&searchText=greater%20trochanteric%20pain%20syndrome",
+      "hits": "Not obtained: HTTP 403. The direct Cochrane Library search was not completed, so absence of a Cochrane review rests on the PubMed and Europe PMC filters and a domain-limited web search."
+    },
+    {
+      "database": "WebSearch (cochranelibrary.com, cochrane.org)",
+      "query": "Cochrane Database of Systematic Reviews gluteal tendinopathy OR \"greater trochanteric pain syndrome\" protocol review cochranelibrary",
+      "hits": "10 links; no Cochrane review or protocol, only one CENTRAL trial record"
+    },
+    {
+      "database": "WebSearch",
+      "query": "Cochrane review greater trochanteric pain syndrome exercise systematic review meta-analysis certainty of evidence",
+      "hits": "10 links; no Cochrane review"
+    },
+    {
+      "database": "Crossref",
+      "query": "https://api.crossref.org/works/10.1016/j.physio.2024.01.001",
+      "hits": "1 (HTTP 200; DOI of Kjeldsen 2024 exists). Publisher full text returned 403 and the PEDro record returned 503."
+    },
+    {
+      "database": "PubMed E-utilities",
+      "query": "(\"gluteal tendinopathy\" OR \"greater trochanteric pain syndrome\") AND (randomized controlled trial[pt] OR randomised[tiab] OR randomized[tiab])",
+      "hits": "96 (first 40 IDs returned)"
+    },
+    {
+      "database": "PubMed E-utilities",
+      "query": "(\"gluteal tendinopathy\" OR \"greater trochanteric pain syndrome\") AND (biomechanic*[tiab] OR kinematic*[tiab] OR electromyograph*[tiab] OR compressive[tiab] OR compression[tiab])",
+      "hits": "Unknown: HTTP 429, not retried. Biomechanics was covered by the Europe PMC author and topic searches instead."
+    },
+    {
+      "database": "PubMed E-utilities",
+      "query": "(\"gluteal tendinopathy\" OR \"greater trochanteric pain syndrome\") AND (systematic review[pt] OR meta-analysis[pt])",
+      "hits": "45 (first 30 IDs returned)"
+    },
+    {
+      "database": "PubMed E-utilities",
+      "query": "(\"gluteal tendinopathy\" OR \"greater trochanteric pain syndrome\") AND (adverse[tiab] OR harm*[tiab] OR aggravat*[tiab] OR provocat*[tiab] OR worsen*[tiab])",
+      "hits": "38 (first 30 IDs returned)"
+    },
+    {
+      "database": "PubMed E-utilities",
+      "query": "Rompe JD[au] AND \"greater trochanter\" AND \"home training\"",
+      "hits": "1"
+    },
+    {
+      "database": "Europe PMC REST",
+      "query": "\"gluteal tendinopathy\" AND (exercise OR loading) AND OPEN_ACCESS:y",
+      "hits": "144 (first 40 listed)"
+    },
+    {
+      "database": "Europe PMC REST",
+      "query": "(\"gluteal tendinopathy\" OR \"greater trochanteric pain syndrome\") AND (AUTH:\"Mellor R\" OR AUTH:\"Clifford C\" OR AUTH:\"Ganderton C\" OR AUTH:\"Cowan RM\" OR AUTH:\"Rompe JD\" OR AUTH:\"Allison K\" OR AUTH:\"Grimaldi A\")",
+      "hits": "53 (39 listed)"
+    },
+    {
+      "database": "Europe PMC REST",
+      "query": "(\"gluteus medius\" OR \"gluteus minimus\") AND (exercise*) AND (electromyograph* OR EMG OR \"muscle activity\" OR compress*) AND (tendinopathy OR rehabilitation)",
+      "hits": "1713 (first 30 listed)"
+    },
+    {
+      "database": "Europe PMC REST",
+      "query": "LEAP trial protocol gluteus medius minimus tendinopathy \"load modification\" corticosteroid",
+      "hits": "2"
+    },
+    {
+      "database": "Europe PMC REST",
+      "query": "(TITLE:\"gluteus medius\" OR TITLE:\"gluteus minimus\" OR TITLE:gluteal) AND (TITLE:exercises OR TITLE:rehabilitation) AND (systematic review OR electromyography) AND (Moore OR Ebert OR Ganderton OR Semciw)",
+      "hits": "3"
+    },
+    {
+      "database": "Europe PMC REST",
+      "query": "(\"greater trochanter\" OR \"gluteal tendon\" OR \"gluteal tendinopathy\") AND (\"iliotibial band\" OR \"iliotibial tract\") AND (compression OR \"compressive force\" OR \"contact pressure\" OR adduction)",
+      "hits": "555 (first 20 listed; no direct measurement of tendon compression during exercise seen on that page)"
+    },
+    {
+      "database": "Europe PMC REST",
+      "query": "(AUTH:\"Rompe JD\" AND trochanteric) OR (AUTH:\"Collings TJ\" AND gluteal) OR (AUTH:\"Nissen MJ\" AND trochanteric) OR (AUTH:\"Heaver C\" AND trochanteric)",
+      "hits": "10"
+    },
+    {
+      "database": "Crossref REST",
+      "query": "query.bibliographic=gluteal muscle forces hip-focused injury prevention rehabilitation exercises",
+      "hits": "2,277,593 relevance-ranked (top 3 inspected; used only to confirm the Collings DOI)"
+    },
+    {
+      "database": "Cochrane Library (via WebSearch, restricted to cochranelibrary.com)",
+      "query": "Cochrane review greater trochanteric pain syndrome gluteal tendinopathy interventions",
+      "hits": "Result list of 10 links, 2 on cochranelibrary.com: CD008924 (Bierma-Zeinstra 2011, Interventions for lateral hip pain) and a CENTRAL trial record. CD008924 returned HTTP 403 on fetch and was not read."
+    },
+    {
+      "database": "PubMed E-utilities (esummary, update check)",
+      "query": "All PMIDs in the source list, checked for author, title, journal, DOI and PMCID",
+      "hits": "61 records returned"
+    },
+    {
+      "database": "Crossref (update check)",
+      "query": "https://api.crossref.org/works/10.1002/14651858.CD008924",
+      "hits": "1: title 'Interventions for lateral hip pain (tendinopathy or bursitis)', Bierma-Zeinstra, 2011. Metadata only."
     }
   ],
   "sources": [
@@ -231,151 +788,744 @@
       "citation": "Kjeldsen T, Hvidt KJ, Bohn MB, et al. Exercise compared to a control condition or other conservative treatment options in patients with Greater Trochanteric Pain Syndrome: a systematic review and meta-analysis of randomized controlled trials. Physiotherapy. 2024;123:69-80.",
       "doi": "10.1016/j.physio.2024.01.001",
       "pmid": "38295551",
+      "pmcid": null,
       "url": "https://europepmc.org/article/MED/38295551",
-      "type": "systematic_review"
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
     },
     {
       "id": "cordeiro_2024",
       "citation": "Patricio Cordeiro TT, Rocha EAB, Scattone Silva R. Effects of exercise-based interventions on gluteal tendinopathy. Systematic review with meta-analysis. Sci Rep. 2024;14:3343.",
       "doi": "10.1038/s41598-024-53283-x",
       "pmid": "38336959",
+      "pmcid": "PMC10858207",
       "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10858207/",
-      "type": "systematic_review"
+      "type": "systematic_review",
+      "accessLevel": "full_text"
     },
     {
       "id": "bremer_2025",
       "citation": "Bremer T, Nicklen P, Fearon A, Morrissey D. The efficacy of gluteal tendinopathy treatments: A systematic review. Clin Rehabil. 2025;39(5):600-617.",
       "doi": "10.1177/02692155251327298",
       "pmid": "40223303",
+      "pmcid": "PMC13687622",
       "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13687622/",
-      "type": "systematic_review"
+      "type": "systematic_review",
+      "accessLevel": "full_text"
     },
     {
       "id": "wang_2025",
       "citation": "Wang SQ, Guo NY, Liu W, et al. Effect of conservative treatment on greater trochanteric pain syndrome: a systematic review and network meta-analysis of randomized controlled trials. J Orthop Surg Res. 2025;20:126.",
       "doi": "10.1186/s13018-025-05477-w",
       "pmid": "39891188",
+      "pmcid": "PMC11783921",
       "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11783921/",
-      "type": "systematic_review"
+      "type": "systematic_review",
+      "accessLevel": "full_text"
     },
     {
       "id": "mellor_2018",
       "citation": "Mellor R, Bennell K, Grimaldi A, et al. Education plus exercise versus corticosteroid injection use versus a wait and see approach on global outcome and pain from gluteal tendinopathy: prospective, single blinded, randomised clinical trial. BMJ. 2018;361:k1662.",
       "doi": "10.1136/bmj.k1662",
       "pmid": "29720374",
+      "pmcid": "PMC5930290",
       "url": "https://europepmc.org/article/MED/29720374",
-      "type": "rct"
+      "type": "rct",
+      "accessLevel": "full_text"
     },
     {
       "id": "mellor_protocol_2016",
       "citation": "Mellor R, Grimaldi A, Wajswelner H, et al. Exercise and load modification versus corticosteroid injection versus 'wait and see' for persistent gluteus medius/minimus tendinopathy (the LEAP trial): a protocol for a randomised clinical trial. BMC Musculoskelet Disord. 2016;17:196.",
       "doi": "10.1186/s12891-016-1043-6",
       "pmid": "27139495",
+      "pmcid": "PMC4852446",
       "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4852446/",
-      "type": "rct_protocol"
+      "type": "rct_protocol",
+      "accessLevel": "full_text"
     },
     {
       "id": "clifford_2019",
       "citation": "Clifford C, Paul L, Syme G, Millar NL. Isometric versus isotonic exercise for greater trochanteric pain syndrome: a randomised controlled pilot study. BMJ Open Sport Exerc Med. 2019;5(1):e000558.",
       "doi": "10.1136/bmjsem-2019-000558",
       "pmid": "31673402",
+      "pmcid": "PMC6797310",
       "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6797310/",
-      "type": "rct"
+      "type": "rct",
+      "accessLevel": "full_text"
     },
     {
       "id": "mcmillan_2022",
       "citation": "McMillan RM, Ganderton CL, Cook J, Semciw AI, Long DM, Pizzari T. Does Menopausal Hormone Therapy, Exercise, or Both Improve Pain and Function in Postmenopausal Women With Greater Trochanteric Pain Syndrome? A 2 x 2 Factorial Randomized Clinical Trial. Am J Sports Med. 2022;50(2):515-525.",
       "doi": "10.1177/03635465211061142",
       "pmid": "34898293",
+      "pmcid": null,
       "url": "https://europepmc.org/article/MED/34898293",
-      "type": "rct"
+      "type": "rct",
+      "accessLevel": "abstract_only"
     },
     {
       "id": "isha_2023",
       "citation": "Disantis A, Andrade AJ, Baillou A, et al. The 2022 International Society for Hip Preservation (ISHA) physiotherapy agreement on assessment and treatment of greater trochanteric pain syndrome (GTPS): an international consensus statement. J Hip Preserv Surg. 2023;10(1):48-56.",
       "doi": "10.1093/jhps/hnac050",
       "pmid": "37275836",
+      "pmcid": "PMC10234389",
       "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10234389/",
-      "type": "consensus_statement"
+      "type": "consensus_statement",
+      "accessLevel": "full_text"
     },
     {
       "id": "grimaldi_fearon_2015",
       "citation": "Grimaldi A, Fearon A. Gluteal Tendinopathy: Integrating Pathomechanics and Clinical Features in Its Management. J Orthop Sports Phys Ther. 2015;45(11):910-922.",
       "doi": "10.2519/jospt.2015.5829",
       "pmid": "26381486",
+      "pmcid": null,
       "url": "https://wikiMSK.org/w/img_auth.php/0/04/Grimaldi2015_-_Gluteal_Tendinopathy.pdf",
-      "type": "clinical_commentary"
+      "type": "clinical_commentary",
+      "accessLevel": "full_text"
     },
     {
       "id": "grimaldi_2015",
       "citation": "Grimaldi A, Mellor R, Hodges P, Bennell K, Wajswelner H, Vicenzino B. Gluteal Tendinopathy: A Review of Mechanisms, Assessment and Management. Sports Med. 2015;45(8):1107-1119.",
       "doi": "10.1007/s40279-015-0336-5",
       "pmid": "25969366",
+      "pmcid": null,
       "url": "https://europepmc.org/article/MED/25969366",
-      "type": "narrative_review"
+      "type": "narrative_review",
+      "accessLevel": "abstract_only"
     },
     {
       "id": "nhs_lothian_2025",
       "citation": "Gold J, Murray I, Macpherson G. Greater Trochanteric Pain Syndrome: Fact Sheet and Advice for GPs and referrers to use with patients. NHS Lothian RefHelp. December 2025.",
       "doi": null,
       "pmid": null,
+      "pmcid": null,
       "url": "https://apps.nhslothian.scot/files/sites/2/GTPS-FACT-SHEET-for-Ref-help-1.pdf",
-      "type": "clinician_fact_sheet"
+      "type": "clinician_fact_sheet",
+      "accessLevel": "full_text"
     },
     {
       "id": "moore_gmed_2019",
       "citation": "Moore D, Pizzari T, McClelland J, Semciw AI. Rehabilitation Exercises for the Gluteus Medius Muscle Segments: An Electromyography Study. J Sport Rehabil. 2019;28(8).",
       "doi": "10.1123/jsr.2018-0340",
       "pmid": "30747561",
+      "pmcid": null,
       "url": "https://europepmc.org/article/MED/30747561",
-      "type": "biomechanical"
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
     },
     {
       "id": "ganderton_2017",
       "citation": "Ganderton C, Semciw A, Cook J, Pizzari T. Demystifying the Clinical Diagnosis of Greater Trochanteric Pain Syndrome in Women. J Womens Health (Larchmt). 2017;26(6):633-643.",
       "doi": "10.1089/jwh.2016.5889",
       "pmid": "28263673",
+      "pmcid": null,
       "url": "https://europepmc.org/article/MED/28263673",
-      "type": "diagnostic_accuracy"
+      "type": "diagnostic_accuracy",
+      "accessLevel": "abstract_only"
     },
     {
       "id": "wilson_furukawa_2014",
       "citation": "Wilson JJ, Furukawa M. Evaluation of the patient with hip pain. Am Fam Physician. 2014;89(1):27-34.",
       "doi": null,
-      "pmid": null,
+      "pmid": "24444505",
+      "pmcid": null,
       "url": "https://www.aafp.org/pubs/afp/issues/2014/0101/p27.html",
-      "type": "clinical_review"
+      "type": "clinical_review",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "fearon_2024",
+      "citation": "Fearon AM, Grimaldi A, Mellor R, et al; COS-GT consensus group; Vicenzino B. ICON 2020-International Scientific Tendinopathy Symposium Consensus: the development of a core outcome set for gluteal tendinopathy. Br J Sports Med. 2024;58(5):245-254.",
+      "doi": "10.1136/bjsports-2023-107150",
+      "pmid": "38216320",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/38216320/",
+      "type": "consensus_statement",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "nice_htg248",
+      "citation": "NICE. Extracorporeal shockwave therapy for refractory greater trochanteric pain syndrome. Interventional procedures guidance IPG376, published 26 January 2011; migrated to HealthTech guidance HTG248 with content unchanged.",
+      "doi": null,
+      "pmid": null,
+      "pmcid": null,
+      "url": "https://www.nice.org.uk/guidance/htg248/chapter/1-Recommendations",
+      "type": "guideline",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "acr_2023",
+      "citation": "Expert Panel on Musculoskeletal Imaging; Jawetz ST, Fox MG, Blankenbaker DG, et al. ACR Appropriateness Criteria Chronic Hip Pain: 2022 Update. J Am Coll Radiol. 2023;20(5S):S33-S48.",
+      "doi": "10.1016/j.jacr.2023.02.019",
+      "pmid": "37236751",
+      "pmcid": null,
+      "url": "https://gravitas.acr.org/ACPortal/TopicNarrativePdf?topicId=84",
+      "type": "guideline",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "enseki_2023",
+      "citation": "Enseki KR, Bloom NJ, Harris-Hayes M, et al. Hip Pain and Movement Dysfunction Associated With Nonarthritic Hip Joint Pain: A Revision. J Orthop Sports Phys Ther. 2023;53(7):CPG1-CPG70.",
+      "doi": "10.2519/jospt.2023.0302",
+      "pmid": "37383013",
+      "pmcid": null,
+      "url": "https://www.orthopt.org/uploads/content_files/files/jospt.2023.0302.pdf",
+      "type": "clinical_practice_guideline",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "sconfienza_2022",
+      "citation": "Sconfienza LM, Adriaensen M, Alcala-Galiano A, et al. Clinical indications for image-guided interventional procedures in the musculoskeletal system: a Delphi-based consensus paper from the European Society of Musculoskeletal Radiology (ESSR)-part hip. Eur Radiol. 2022;32(1):551-560.",
+      "doi": "10.1007/s00330-021-07997-5",
+      "pmid": "34146140",
+      "pmcid": "PMC8660721",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8660721/",
+      "type": "consensus_statement",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "dsouza_2024",
+      "citation": "D'Souza RS, Her YF, Hussain N, et al. Evidence-Based Clinical Practice Guidelines on Regenerative Medicine Treatment for Chronic Pain: A Consensus Report from a Multispecialty Working Group. J Pain Res. 2024;17:2951-3001.",
+      "doi": "10.2147/JPR.S480559",
+      "pmid": "39282657",
+      "pmcid": "PMC11402349",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11402349/",
+      "type": "consensus_statement",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "york_pathway",
+      "citation": "Humber and North Yorkshire Health and Care Partnership. Greater trochanteric pain syndrome (GTPS) pathway (York). Review date 31/07/2019, page marked as under review; modified 20/08/2025.",
+      "doi": null,
+      "pmid": null,
+      "pmcid": null,
+      "url": "https://hnyppr.org.uk/web/york/w/greater-trochanteric-pain-syndrome-pathway",
+      "type": "local_clinical_pathway",
+      "accessLevel": "registry_or_summary"
+    },
+    {
+      "id": "comet_1468",
+      "citation": "COMET Initiative record 1468. Development of a core outcome set for clinical trials in Greater Trochanteric Pain Syndrome (Gluteal Tendinopathy).",
+      "doi": null,
+      "pmid": null,
+      "pmcid": null,
+      "url": "https://comet-initiative.org/Studies/Details/1468",
+      "type": "trial_registry",
+      "accessLevel": "registry_or_summary"
+    },
+    {
+      "id": "bierma_zeinstra_2011",
+      "citation": "Bierma-Zeinstra et al. Interventions for lateral hip pain (tendinopathy or bursitis). Cochrane Database Syst Rev. 2011;CD008924. Title and DOI metadata only: the Cochrane page returned HTTP 403, so its content, and whether it is a full review or a protocol, is unknown.",
+      "doi": "10.1002/14651858.CD008924",
+      "pmid": null,
+      "pmcid": null,
+      "url": "https://doi.org/10.1002/14651858.cd008924",
+      "type": "cochrane_record",
+      "accessLevel": "registry_or_summary"
+    },
+    {
+      "id": "ladurner_2021",
+      "citation": "Ladurner A, Fitzpatrick J, O'Donnell JM. Treatment of Gluteal Tendinopathy: A Systematic Review and Stage-Adjusted Treatment Recommendation. Orthop J Sports Med. 2021;9(7):23259671211016850.",
+      "doi": "10.1177/23259671211016850",
+      "pmid": "34377713",
+      "pmcid": "PMC8330465",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8330465/",
+      "type": "systematic_review",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "challoumas_2023",
+      "citation": "Challoumas D, Crosbie G, O'Neill S, Pedret C, Millar NL. Effectiveness of Exercise Treatments with or without Adjuncts for Common Lower Limb Tendinopathies: A Living Systematic Review and Network Meta-analysis. Sports Med Open. 2023;9(1):71.",
+      "doi": "10.1186/s40798-023-00616-1",
+      "pmid": "37553459",
+      "pmcid": "PMC10409676",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10409676/",
+      "type": "network_meta_analysis",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "kinsella_2024",
+      "citation": "Kinsella R, Semciw AI, Hawke LJ, Stoney J, Choong PFM, Dowsey MM. Diagnostic Accuracy of Clinical Tests for Assessing Greater Trochanteric Pain Syndrome: A Systematic Review With Meta-analysis. J Orthop Sports Phys Ther. 2024;54(1):26-49.",
+      "doi": "10.2519/jospt.2023.11890",
+      "pmid": "37561820",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/37561820/",
+      "type": "diagnostic_accuracy",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "gazendam_2022",
+      "citation": "Gazendam A, Ekhtiari S, Axelrod D, et al. Comparative Efficacy of Nonoperative Treatments for Greater Trochanteric Pain Syndrome: A Systematic Review and Network Meta-Analysis of Randomized Controlled Trials. Clin J Sport Med. 2022;32(4):427-432.",
+      "doi": "10.1097/JSM.0000000000000924",
+      "pmid": "34009798",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/34009798/",
+      "type": "network_meta_analysis",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "he_2023",
+      "citation": "He Y, Lin Y, He X, Li C, Lu Q, He J. The conservative management for improving Visual Analog Scale (VAS) pain scoring in greater trochanteric pain syndrome: a Bayesian analysis. BMC Musculoskelet Disord. 2023;24(1):423.",
+      "doi": "10.1186/s12891-023-06443-5",
+      "pmid": "37237355",
+      "pmcid": "PMC10214555",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/37237355/",
+      "type": "network_meta_analysis",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "barratt_2017",
+      "citation": "Barratt PA, Brookes N, Newson A. Conservative treatments for greater trochanteric pain syndrome: a systematic review. Br J Sports Med. 2017;51(2):97-104.",
+      "doi": "10.1136/bjsports-2015-095858",
+      "pmid": "27834675",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/27834675/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "rhim_2024",
+      "citation": "Rhim HC, Shin J, Beling A, et al. Extracorporeal Shockwave Therapy for Greater Trochanteric Pain Syndrome: A Systematic Review with Meta-Analysis of Randomized Clinical Trials. JBJS Rev. 2024;12(8).",
+      "doi": "10.2106/JBJS.RVW.24.00091",
+      "pmid": "39297780",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/39297780/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "harding_2024",
+      "citation": "Harding D, Cameron L, Monga A, Winter S. Is shockwave therapy effective in the management of greater trochanteric pain syndrome? A systematic review and meta-analysis. Musculoskeletal Care. 2024;22(2):e1892.",
+      "doi": "10.1002/msc.1892",
+      "pmid": "38777616",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/38777616/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "spencer_2026",
+      "citation": "Spencer T, Nasser A, Brown NAT, et al. Low quality evidence supports surgery for gluteal tendon tears, no non-surgical evidence was identified: a systematic review. BMC Musculoskelet Disord. 2026;27(1):191.",
+      "doi": "10.1186/s12891-026-09519-0",
+      "pmid": "41634705",
+      "pmcid": "PMC12958556",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/41634705/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "slawaska_eng_2025",
+      "citation": "Slawaska-Eng D, Veilleux A, Thebaud A, et al. The limited impact of randomized controlled trials on the management of greater trochanteric pain syndrome as demonstrated by fragility Indices: A citation analysis. J ISAKOS. 2025;11:100846.",
+      "doi": "10.1016/j.jisako.2025.100846",
+      "pmid": "40054773",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/40054773/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "escriche_2020",
+      "citation": "Escriche-Escuder A, Casana J, Cuesta-Vargas AI. Load progression criteria in exercise programmes in lower limb tendinopathy: a systematic review. BMJ Open. 2020;10(11):e041433.",
+      "doi": "10.1136/bmjopen-2020-041433",
+      "pmid": "33444210",
+      "pmcid": "PMC7678382",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/33444210/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "swinton_2023",
+      "citation": "Swinton PA, Shim JSC, Pavlova AV, et al. What are small, medium and large effect sizes for exercise treatments of tendinopathy? A systematic review and meta-analysis. BMJ Open Sport Exerc Med. 2023;9(1):e001389.",
+      "doi": "10.1136/bmjsem-2022-001389",
+      "pmid": "36865768",
+      "pmcid": "PMC9972446",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/36865768/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "clifford_2020",
+      "citation": "Clifford C, Challoumas D, Paul L, Syme G, Millar NL. Effectiveness of isometric exercise in the management of tendinopathy: a systematic review and meta-analysis of randomised trials. BMJ Open Sport Exerc Med. 2020;6(1):e000760.",
+      "doi": "10.1136/bmjsem-2020-000760",
+      "pmid": "32818059",
+      "pmcid": "PMC7406028",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/32818059/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "plinsinga_2019",
+      "citation": "Plinsinga ML, Ross MH, Coombes BK, Vicenzino B. Physical findings differ between individuals with greater trochanteric pain syndrome and healthy controls: A systematic review with meta-analysis. Musculoskelet Sci Pract. 2019;43:83-90.",
+      "doi": "10.1016/j.msksp.2019.07.009",
+      "pmid": "31369906",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/31369906/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "moore_2020",
+      "citation": "Moore D, Semciw AI, Pizzari T. A systematic review and meta-analysis of common therapeutic exercises that generate highest muscle activity in the gluteus medius and gluteus minimus segments. Int J Sports Phys Ther. 2020;15(6):856-881.",
+      "doi": "10.26603/ijspt20200856",
+      "pmid": "33344003",
+      "pmcid": "PMC7727410",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/33344003/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "ebert_2017",
+      "citation": "Ebert JR, Edwards PK, Fick DP, Janes GC. A Systematic Review of Rehabilitation Exercises to Progressively Load the Gluteus Medius. J Sport Rehabil. 2017;26(5):418-436.",
+      "doi": "10.1123/jsr.2016-0088",
+      "pmid": "27632888",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/27632888/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "ebert_2022",
+      "citation": "Ebert JR, Fearon AM, Smith PN, Janes GC. Recommendations in the rehabilitation of patients undergoing hip abductor tendon repair: a systematic literature search and evidence based rehabilitation protocol. Arch Orthop Trauma Surg. 2022;142(11):3165-3182.",
+      "doi": "10.1007/s00402-021-03952-7",
+      "pmid": "33983527",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/33983527/",
+      "type": "review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "grimaldi_2025",
+      "citation": "Grimaldi A, Ganderton C, Nasser A. Gluteal tendinopathy masterclass: Refuting the myths and engaging with the evidence. Musculoskelet Sci Pract. 2025;76:103253.",
+      "doi": "10.1016/j.msksp.2025.103253",
+      "pmid": "39854929",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/39854929/",
+      "type": "expert_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "grimaldi_2024",
+      "citation": "Grimaldi A, Mellor R, Nasser A, Vicenzino B, Hunter DJ. Current and future advances in practice: tendinopathies of the hip. Rheumatol Adv Pract. 2024;8(2):rkae022.",
+      "doi": "10.1093/rap/rkae022",
+      "pmid": "38601140",
+      "pmcid": "PMC11003818",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11003818/",
+      "type": "narrative_review",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "bremer_2026",
+      "citation": "Bremer T, Lack S, Fearon A, Morrissey D. Best practice for patients with gluteal tendinopathy: A qualitative exploration of expert clinical reasoning and management. Physiotherapy. 2026;132:101871.",
+      "doi": "10.1016/j.physio.2025.101871",
+      "pmid": "41605724",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/41605724/",
+      "type": "expert_opinion",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "gonzalez_2025",
+      "citation": "Gonzalez-de-la-Flor A. Optimizing Hip Abductor Strengthening for Lower Extremity Rehabilitation: A Narrative Review on the Role of Monster Walk and Lateral Band Walk. J Funct Morphol Kinesiol. 2025;10(3).",
+      "doi": "10.3390/jfmk10030294",
+      "pmid": "40843825",
+      "pmcid": "PMC12372021",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12372021/",
+      "type": "narrative_review",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "french_2020",
+      "citation": "French HP, Woodley SJ, Fearon A, O'Connor L, Grimaldi A. Physiotherapy management of greater trochanteric pain syndrome (GTPS): an international survey of current physiotherapy practice. Physiotherapy. 2020;109:111-120.",
+      "doi": "10.1016/j.physio.2019.05.002",
+      "pmid": "31493863",
+      "pmcid": null,
+      "url": "https://doi.org/10.1016/j.physio.2019.05.002",
+      "type": "observational",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "ganderton_2018",
+      "citation": "Ganderton C, Semciw A, Cook J, Moreira E, Pizzari T. Gluteal Loading Versus Sham Exercises to Improve Pain and Dysfunction in Postmenopausal Women with Greater Trochanteric Pain Syndrome: A Randomized Controlled Trial. J Womens Health (Larchmt). 2018;27(6):815-829.",
+      "doi": "10.1089/jwh.2017.6729",
+      "pmid": "29715073",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/29715073/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "nava_2025",
+      "citation": "Thomaz de Aquino Nava G, Prudencio CB, Mellor R, et al. Motor control exercises were not superior to general exercises for women with greater trochanteric pain syndrome: A randomized controlled trial. J Sci Med Sport. 2025;28(10):806-812.",
+      "doi": "10.1016/j.jsams.2025.04.012",
+      "pmid": "40404553",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/40404553/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "nava_protocol_2022",
+      "citation": "Thomaz de Aquino Nava G, Baldini Prudencio C, Krasic Alaiti R, et al. Motor control exercises versus general exercises for greater trochanteric pain syndrome: A protocol of a randomized controlled trial. PLoS One. 2022;17(6):e0269230.",
+      "doi": "10.1371/journal.pone.0269230",
+      "pmid": "35749349",
+      "pmcid": "PMC9231741",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9231741/",
+      "type": "rct_protocol",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "rompe_2009",
+      "citation": "Rompe JD, Segal NA, Cacchio A, Furia JP, Morral A, Maffulli N. Home training, local corticosteroid injection, or radial shock wave therapy for greater trochanter pain syndrome. Am J Sports Med. 2009;37(10):1981-90.",
+      "doi": "10.1177/0363546509334374",
+      "pmid": "19439758",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19439758/",
+      "type": "non_randomised_trial",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "nissen_2019",
+      "citation": "Nissen MJ, Brulhart L, Faundez A, Finckh A, Courvoisier DS, Genevay S. Glucocorticoid injections for greater trochanteric pain syndrome: a randomised double-blind placebo-controlled (GLUTEAL) trial. Clin Rheumatol. 2019;38(3):647-655.",
+      "doi": "10.1007/s10067-018-4309-6",
+      "pmid": "30267357",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/30267357/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "heaver_2023",
+      "citation": "Heaver C, Pinches M, Kuiper JH, et al. Greater trochanteric pain syndrome: focused shockwave therapy versus an ultrasound guided injection: a randomised control trial. Hip Int. 2023;33(3):490-499.",
+      "doi": "10.1177/11207000211060396",
+      "pmid": "34784804",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/34784804/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "wheeler_2022",
+      "citation": "Wheeler PC, Dudson C, Calver R, et al. Three Sessions of Radial Extracorporeal Shockwave Therapy Gives No Additional Benefit Over 'Minimal-Dose' Radial Extracorporeal Shockwave Therapy for Patients With Chronic Greater Trochanteric Pain Syndrome. Clin J Sport Med. 2022;32(1):e7-e18.",
+      "doi": "10.1097/JSM.0000000000000880",
+      "pmid": "33512943",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/33512943/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "brennan_2017",
+      "citation": "Brennan KL, Allen BC, Maldonado YM. Dry Needling Versus Cortisone Injection in the Treatment of Greater Trochanteric Pain Syndrome. J Orthop Sports Phys Ther. 2017;47(4):232-239.",
+      "doi": "10.2519/jospt.2017.6994",
+      "pmid": "28257614",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/28257614/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "mellor_2022",
+      "citation": "Mellor R, Kasza J, Grimaldi A, Hodges P, Bennell K, Vicenzino B. Mediators and Moderators of Education Plus Exercise on Perceived Improvement in Individuals With Gluteal Tendinopathy. J Orthop Sports Phys Ther. 2022;52(12):826-836.",
+      "doi": "10.2519/jospt.2022.11261",
+      "pmid": "36306175",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/36306175/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "wilson_2023",
+      "citation": "Wilson R, Abbott JH, Mellor R, Grimaldi A, Bennell K, Vicenzino B. Education plus exercise for persistent gluteal tendinopathy improves quality of life and is cost-effective compared with corticosteroid injection and wait and see. J Physiother. 2023;69(1):35-41.",
+      "doi": "10.1016/j.jphys.2022.11.007",
+      "pmid": "36526564",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/36526564/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "almousa_2023",
+      "citation": "Almousa S, Vicenzino B, Mellor R, et al. An EDucation and eXercise intervention for gluteal tendinopathy in an Irish setting: a protocol for a feasibility randomised clinical trial (LEAP-Ireland RCT). HRB Open Res. 2023;6:76.",
+      "doi": "10.12688/hrbopenres.13796.2",
+      "pmid": "39045032",
+      "pmcid": "PMC11263908",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11263908/",
+      "type": "rct_protocol",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "french_2026",
+      "citation": "French HP, Almousa S, Mellor R, Grimaldi A, et al. EDucation and eXercise for gluteal tendinopathy in an Irish context (EDX-Ireland): findings from the LEAP-Ireland feasibility randomised controlled trial. Musculoskelet Sci Pract. 2026;85:103607.",
+      "doi": "10.1016/j.msksp.2026.103607",
+      "pmid": "42372389",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/42372389/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "morin_melas_2025",
+      "citation": "Morin Melas T, Bjorneboe J, Juel NG, et al. Self-management versus usual care for greater trochanteric pain syndrome (the HIPS trial): study protocol for a randomised controlled trial. BMJ Open. 2025;15(4):e090688.",
+      "doi": "10.1136/bmjopen-2024-090688",
+      "pmid": "40187788",
+      "pmcid": "PMC11973791",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11973791/",
+      "type": "rct_protocol",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "hogsholt_2026",
+      "citation": "Hogsholt M, Kierkegaard-Brochner S, Lange J, et al. Physiotherapist-led education and exercise for patients with MRI-verified hip abductor tendon pathology: a prospective cohort study. BMJ Open. 2026;16(9):e120837.",
+      "doi": "10.1136/bmjopen-2026-120837",
+      "pmid": "42727969",
+      "pmcid": "PMC13583818",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13583818/",
+      "type": "observational",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "carney_2023",
+      "citation": "Carney G, Fitzpatrick J. Is there structural change on MRI in gluteal tendinopathy after treatment? Single outcome measure extension of an RCT. BMC Med Imaging. 2023;23:179.",
+      "doi": "10.1186/s12880-023-01150-y",
+      "pmid": "37940869",
+      "pmcid": "PMC10634075",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10634075/",
+      "type": "observational",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "grimaldi_2026",
+      "citation": "Grimaldi A, Nasser A, Mellor R, Vicenzino B. Functional impact of gluteal tendinopathy: A secondary cross-sectional analysis of baseline data from the LEAP randomised clinical trial. Braz J Phys Ther. 2026;30(3):101583.",
+      "doi": "10.1016/j.bjpt.2026.101583",
+      "pmid": "41865562",
+      "pmcid": "PMC13227185",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13227185/",
+      "type": "observational",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "plinsinga_2018",
+      "citation": "Plinsinga ML, Coombes BK, Mellor R, et al. Psychological factors not strength deficits are associated with severity of gluteal tendinopathy: A cross-sectional study. Eur J Pain. 2018;22(6):1124-1133.",
+      "doi": "10.1002/ejp.1199",
+      "pmid": "29427310",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/29427310/",
+      "type": "observational",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "allison_2016",
+      "citation": "Allison K, Vicenzino B, Bennell KL, Wrigley TV, Grimaldi A, Hodges PW. Kinematics and kinetics during stair ascent in individuals with Gluteal Tendinopathy. Clin Biomech (Bristol). 2016;40:37-44.",
+      "doi": "10.1016/j.clinbiomech.2016.10.003",
+      "pmid": "27816023",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/27816023/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "allison_gait_2018",
+      "citation": "Allison K, Hall M, Hodges PW, et al. Gluteal tendinopathy and hip osteoarthritis: Different pathologies, different hip biomechanics. Gait Posture. 2018;61:459-465.",
+      "doi": "10.1016/j.gaitpost.2018.02.011",
+      "pmid": "29486364",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/29486364/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "allison_emg_2018",
+      "citation": "Allison K, Salomoni SE, Bennell KL, et al. Hip abductor muscle activity during walking in individuals with gluteal tendinopathy. Scand J Med Sci Sports. 2018;28(2):686-695.",
+      "doi": "10.1111/sms.12942",
+      "pmid": "28675778",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/28675778/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "ganderton_emg_2017",
+      "citation": "Ganderton C, Pizzari T, Harle T, Cook J, Semciw A. A comparison of gluteus medius, gluteus minimus and tensor facia latae muscle activation during gait in post-menopausal women with and without greater trochanteric pain syndrome. J Electromyogr Kinesiol. 2017;33:39-47.",
+      "doi": "10.1016/j.jelekin.2017.01.004",
+      "pmid": "28171786",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/28171786/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "collings_2023",
+      "citation": "Collings TJ, Bourne MN, Barrett RS, et al. Gluteal Muscle Forces during Hip-Focused Injury Prevention and Rehabilitation Exercises. Med Sci Sports Exerc. 2023;55(4):650-660.",
+      "doi": "10.1249/MSS.0000000000003091",
+      "pmid": "36918403",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/36918403/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "collings_2025",
+      "citation": "Collings TJ, Bourne MN, Barrett RS, et al. Reconsidering Exercise Selection with EMG: Poor Agreement between Ranking Hip Exercises with Gluteal EMG and Muscle Force. Med Sci Sports Exerc. 2025;57(9):1829-1837.",
+      "doi": "10.1249/MSS.0000000000003733",
+      "pmid": "40263750",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/40263750/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "wang_s_2025",
+      "citation": "Wang S, Serbin R, Bonvillain K, et al. Influence of hip morphology on gluteal muscle biomechanics: a computational modeling study. BMC Musculoskelet Disord. 2025;26(1):35.",
+      "doi": "10.1186/s12891-024-08136-z",
+      "pmid": "39789570",
+      "pmcid": "PMC11716244",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11716244/",
+      "type": "biomechanical",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "derksen_2026",
+      "citation": "Derksen A, Wicke C, Jakubowitz E, et al. Load Management After Gluteal Tendon Repair: A Controlled Laboratory Study. J Orthop Res. 2026;44(1):e70107.",
+      "doi": "10.1002/jor.70107",
+      "pmid": "41388925",
+      "pmcid": "PMC12701624",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12701624/",
+      "type": "biomechanical",
+      "accessLevel": "full_text"
     }
   ],
-  "limitations": "No formal clinical practice guideline, NICE guideline or Cochrane review specific to this condition was found in the searches run, though the search was not exhaustive. The strongest single trial, LEAP, tested education and exercise together, and it had supervised sessions with specialised equipment. Bremer 2025 rates its evidence moderate, but defines that as findings from a single high-quality trial. Cordeiro 2024 rates certainty low to very low. McMillan 2022 found no difference between tendon-specific and sham exercise when both groups received education on compression and load, so exercise may not be the active component and no individual exercise is proven. Compression and stretching advice rests on expert reasoning and has not been tested alone. Participants were mostly women, many postmenopausal. Doses come from multi-part or pilot programmes, are not validated as stand-alone prescriptions, and a few source-table values are ambiguous. Red-flag action wording was written for this app, because no source provides a red-flag list specific to this condition. Kjeldsen 2024, McMillan 2022, Grimaldi 2015, Moore 2019 and Ganderton 2017 were read as abstracts only. The other sources were read as extracted full text, with figures not viewed. None of this is treatment advice.",
+  "limitations": "Evidence grade stays low. Education plus exercise has the best support, but Bremer 2025's 'moderate' means findings from a single high-quality trial, Cordeiro 2024 rates certainty low to very low, a web search snippet gives Kjeldsen 2024 low-to-moderate certainty, and Slawaska-Eng 2025 reports a median continuous fragility index of 2 across 21 RCTs. No individual exercise is proven. Guidelines: no dedicated clinical practice guideline for this condition was found. The nearest documents are ISHA 2023 (Delphi consensus, no grades), Fearon 2024 (outcome measures only), NICE HTG248 (one procedure, 2011), ACR 2023 (imaging only, no GTPS-specific variant), Sconfienza 2022 and D'Souza 2024 (injections only) and two regional NHS documents. Enseki 2023 excludes extra-articular pain, so its graded recommendations should not be transferred. NICE CKS, the Cochrane Library, AAOS, WHO and national guideline libraries were not searched directly or could not be opened, so this is not an exhaustive negative. Cochrane: PubMed and Europe PMC filters found no review of this condition and one searcher found none on the Cochrane domain, but another domain search listed CD008924 (Bierma-Zeinstra 2011, 'Interventions for lateral hip pain'). Only its title and DOI could be confirmed, and the page returned HTTP 403, so a Cochrane record exists whose status and content are unknown. Contradictions. (1) Exercise ranking: Wang 2025 and Gazendam 2022 favour exercise for function or pain, while He 2023 ranks exercise lowest for VAS pain, behind shockwave and platelet-rich plasma, and Ladurner 2021 rates platelet-rich plasma above exercise, with one author's own trial in its evidence. (2) Added value of exercise: Ganderton 2018 and McMillan 2022 found targeted exercise no better than sham when both arms had education, and Mellor 2022 found strength did not mediate benefit, so education may be the active part. (3) Injection: LEAP favoured education plus exercise over injection at 8 and 52 weeks on global success, but Challoumas 2023 pooled short-term pain in favour of injection, Rompe 2009 found injection far ahead at 1 month, Cordeiro 2024 found no pain difference (I2 93-99%), and Nissen 2019 found injection no better than saline, although Sconfienza 2022 calls injection effective with 100% panel agreement. (4) Stretching: LEAP, NHS Lothian and Challoumas advise against it, but Nava 2025's general arm and Rompe 2009's home programme included these stretches with good results, none of which isolates stretching, and 53% of physiotherapists surveyed still used it (French 2020). (5) Eccentric work: ISHA progresses to eccentric loading, while Challoumas does not recommend eccentric loading alone. (6) Isometrics: Challoumas suggests them when isotonic loading is not tolerated, but Clifford 2019 and Clifford 2020 found no advantage. (7) Shockwave: Bremer 2025 prints a long-term SMD of 5.77 that is implausibly large and should not be used, Harding 2024 found no significant effect against control, Wheeler 2022 found no benefit over minimal dose, and 7 of 8 RCTs in Rhim 2024 were at high risk of bias. NICE allows it only under special arrangements. (8) Recovery rates: ISHA gives 60-90%, NHS Lothian over 90%, LEAP 77-78% global success, and Hogsholt 2026 only 37% in MRI-verified disease. (9) Surgery and tears: NHS Lothian says surgery is rarely if ever needed, while ISHA says some patients may require it and Ladurner 2021 gives repair its top symbol at LoE 4. Spencer 2026 found no non-surgical evidence for tears, and Hogsholt 2026, published later, reported a rupture subgroup without a control. (10) Pain rule: trials allowed up to 5/10, while Gonzalez-de-la-Flor 2025 advises progressing only without pain. (11) EMG: Collings 2025 found poor agreement between EMG and force rankings (rho 0.29-0.51), so EMG-based rankings such as Moore 2020 and Ebert 2017 should not set load order. Compression and stretching advice rests on expert reasoning and has not been tested alone. No study found measures tendon compression during gym exercises, and Collings 2023 and Wang S 2025 are healthy-person models. Participants were mostly women, many postmenopausal. LEAP excluded back, sciatic or groin pain above 2/10 and total hip replacement. LEAP also included supervised sessions with specialised equipment; the sliding platform work is omitted here. Doses come from multi-part or pilot programmes and are not validated as stand-alone prescriptions. Table values in the LEAP protocol are offset in XML, and 'Hold 15s' with '8-12' in the Nava protocol is ambiguous. Printed errors to avoid quoting: Challoumas's long-term estimate, Cordeiro's Rompe arm sizes and participant totals. Ganderton 2018 and McMillan 2022 doses are available only through Cordeiro 2024's table. Red-flag action wording was written for this app, because no source provides a red-flag list specific to this condition; the York pathway lists its red flags as 'None provided'. Reading depth is in each source's accessLevel. Abstract-only sources gave no adverse event detail in most cases, full-text sources were often read by targeted extraction, and LEAP's per-arm non-serious adverse events sit in an unopened web appendix. Grimaldi and Fearon 2015 and Wilson and Furukawa 2014, which carry most red flags, were reopened and read by targeted extraction. Moore 2019 and Ganderton 2017 were checked at abstract level. None of this is treatment advice.",
   "verification": {
-    "sourcesChecked": 15,
+    "sourcesChecked": 71,
     "itemsRemoved": [
       {
-        "item": "Candidate exercise: Supine isometric hip abduction with a belt or band around the thighs (1 set of 3-5, 5-10 s holds, BD)",
-        "reason": "Dose unsupported. In the LEAP protocol table, the 5-10 s hold sits with the 10 reps x 1-2 sets row, and 3-5 reps x 1 set sits with the 5-15 s hold row. The listed combination appears in neither block, and the table's labels are offset from its values."
+        "item": "Contradictions table, Surgery row (.md only): 'Grimaldi 2024 says only after 12 months of loading'",
+        "reason": "In Grimaldi 2024 that sentence is about surgery for proximal hamstring tendinopathy, not gluteal tendinopathy."
       },
       {
-        "item": "Glute bridge caution: 'Keep the knees apart so the hips do not adduct'",
-        "reason": "This cue is not in the only cited source (LEAP protocol), or in the LEAP trial report or Grimaldi and Fearon 2015."
+        "item": "Citation fearon_2024 on 'Hill walking, stair climbing and long walks'",
+        "reason": "Fearon 2024 is an outcome-set Delphi. It lists pain with stair walking as a measure and does not support limiting hills or stairs."
       },
       {
-        "item": "Bodyweight squat caution: 'Do not let the knees collapse inward'",
-        "reason": "This cue is not in the only cited source (LEAP protocol), which covers pelvic shift and hip adduction but not knee position."
+        "item": "Citation grimaldi_2026 on 'Long-distance, tempo or hill running, plyometric drills'",
+        "reason": "Grimaldi 2026 reports baseline function scores only. It says nothing on tensile load or suspending activity. The rationale rests on Grimaldi and Fearon 2015."
       }
     ],
-    "labelsCorrected": [
-      "Avoid/modify 'Hip abductor strengthening progressed quickly or performed through significant pain': evidenceStrength rct to expert_opinion. The pain limit was a rule within trial programmes and was not tested as a variable.",
-      "Avoid/modify 'Loaded exercise that takes the hip across the midline': removed the isha_2023 citation, because ISHA addresses adduction in sitting, standing and sleeping rather than loaded exercise.",
-      "Citation cordeiro_2024: author names corrected to the indexed form.",
-      "Citation grimaldi_fearon_2015: added PMID 26381486.",
-      "Citations mellor_protocol_2016, mcmillan_2022, moore_gmed_2019 and ganderton_2017: added missing volume, issue or page details."
+    "valuesCorrected": [
+      "Hill walking row: Allison 2016 compared stair ascent with pain-free controls, and Allison 2018 compared walking with hip osteoarthritis, not controls, and reports the moment rather than its impulse. Wording corrected.",
+      "Side-lying row: ISHA gives supine with a pillow under the knees or side-lying with a pillow between the legs. The second option had been dropped.",
+      "accessLevel: grimaldi_fearon_2015 and wilson_furukawa_2014 from not_reconfirmed to full_text; moore_gmed_2019 and ganderton_2017 from not_reconfirmed to abstract_only.",
+      "pmid: added 24444505 for wilson_furukawa_2014 and 31493863 for french_2020, both confirmed in PubMed.",
+      "bierma_zeinstra_2011: type trial_registry to cochrane_record. Crossref lists it as a Cochrane item, not a registry entry."
     ],
     "unverifiable": [
-      "Page numbers for Moore 2019 were not in the Europe PMC record.",
-      "The published layout of the LEAP table was checked only as XML, so sets, reps and frequency for standing isometric abduction stay unset. Only the 5-15 s hold is kept.",
-      "Figures in Grimaldi and Fearon 2015 and other PDFs were not viewed. Only their text and captions were read.",
-      "The source defines BD only as 'bi-daily', so the meaning of that frequency is unresolved."
+      "Kjeldsen 2024: the low-to-moderate certainty rating comes from a web snippet. The abstract does not state it, and the full text was not opened.",
+      "CD008924: title, authors and date confirmed through Crossref only, so its content and whether it is a review or a protocol are unknown.",
+      "LEAP Table 3 was read as flattened text, not the published layout, so the supine and standing isometric doses remain a reading of row order. BD is defined only as bi-daily.",
+      "Nava's 'Hold 15s' with '8-12' cell states no rule for combining them.",
+      "French 2020: the 53% stretching figure was confirmed from a search summary of the abstract, with no denominator.",
+      "Grimaldi and Fearon 2015 was read from a third-party PDF copy on wikiMSK, and its figures were not viewed.",
+      "Full-text sources were checked by targeted extraction, not read end to end. LEAP non-serious adverse events remain in an unopened appendix."
     ]
   }
 }

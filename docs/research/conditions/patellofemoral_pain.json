@@ -4,36 +4,121 @@
   "evidenceGrade": "low",
   "diagnosisContested": {
     "contested": false,
-    "note": "A 2016 international consensus agrees the core criterion: pain around or behind the kneecap aggravated by at least one activity loading the joint on a flexed, weight-bearing knee. The condition is still a clinical diagnosis made without a structural finding. Trial inclusion criteria vary considerably, and terminology is not fully settled: the consensus treats chondromalacia patella as a synonym, while the 2019 AAFP review lists it as a differential diagnosis."
+    "note": "A 2016 international consensus agrees the core criterion: pain around or behind the kneecap aggravated by at least one activity loading the joint on a flexed, weight-bearing knee. It names no definitive test; the best available is anterior knee pain during squatting (patellofemoral pain evident in 80% of those positive). The condition is still a clinical diagnosis made without a structural finding. The 2019 APTA guideline, as restated by Connell 2020 and not read directly, adds exclusion of other conditions to its diagnostic criteria (grade B), and the Dutch guideline scope also sets other knee conditions aside. Trial inclusion criteria vary considerably, and terminology is not fully settled: the consensus treats chondromalacia patella as a synonym, while the 2019 AAFP review lists it as a differential diagnosis."
   },
   "avoidOrModify": [
     {
       "movement": "Squatting deep into knee flexion (beyond about 45 degrees)",
       "action": "modify",
-      "rationale": "In a model-based study, squats produced higher estimated patellofemoral joint stress than seated knee extension at 60, 75 and 90 degrees. The authors suggest squatting from 45 to 0 degrees to minimise stress. This comes from 10 healthy people and does not show that deeper squats cause harm or worse outcomes. One trial's knee programme progressed to 90 degrees.",
+      "rationale": "In a model-based study, squats produced higher estimated patellofemoral joint stress than seated knee extension at 60, 75 and 90 degrees, and the authors suggest squatting from 45 to 0 degrees. The NATA position statement gives the same range for weight-bearing quadriceps work, at SOR C, its weakest grade. Closed-chain joint force was greatest near full flexion, and reaction force and stress were highest below parallel in barbell squats. All of this is from uninjured people or expert guidance and does not show that deeper squats cause harm. Against it, a 2026 trial used split squats from about 90 degrees to near-full extension and symptoms still improved, and Ferber's knee programme progressed to 90 degrees.",
       "evidenceStrength": "biomechanical",
-      "sourceIds": ["powers2014", "ferber2015"]
+      "sourceIds": [
+        "powers2014",
+        "bolgla2018",
+        "zavala2021",
+        "escamilla1998",
+        "severosilveira2026",
+        "ferber2015"
+      ]
     },
     {
       "movement": "Resisted seated knee extension near full straightening (about 45 to 0 degrees)",
       "action": "modify",
-      "rationale": "The same study estimated higher joint stress for seated knee extension than for squats at 0, 15 and 30 degrees, and suggests working variable-resistance knee extension from 90 to 45 degrees. The clinical relevance is unproven: weight-bearing and non-weight-bearing exercise appear similarly effective overall.",
+      "rationale": "Modelled stress was higher for seated knee extension than for squats at 0, 15 and 30 degrees; an older study found the leg extension and leg press stress curves crossing at 48 degrees. The NATA statement recommends 45 to 90 degrees for non-weight-bearing work (SOR C). Clinical relevance is unproven: Cochrane found no clear short-term difference between open and closed chain work, one 49-participant study there favoured open chain long term, and a 2026 trial used knee extension from about 90 degrees to near-full extension with symptoms still improving.",
       "evidenceStrength": "biomechanical",
-      "sourceIds": ["powers2014", "marra2020", "cochrane2015"]
+      "sourceIds": [
+        "powers2014",
+        "steinkamp1993",
+        "bolgla2018",
+        "cochrane2015",
+        "severosilveira2026"
+      ]
     },
     {
       "movement": "Activities that reproduce the knee pain, commonly squatting, stairs, running, jumping and prolonged sitting with bent knees",
       "action": "modify",
-      "rationale": "A clinical review advises avoiding exacerbating movements while staying as active as possible. A guideline summary describes relative rest followed by gradual return for overuse. An uncontrolled cohort of 151 adolescents aged 10 to 14 reported high success with activity modification and pain monitoring. No validated pain threshold for continuing exercise was found, and the cohort may not apply to adults.",
+      "rationale": "A clinical review advises avoiding exacerbating movements while staying as active as possible, and a guideline summary describes relative rest followed by gradual return. An uncontrolled cohort of 151 adolescents aged 10 to 14 reported high success with a 12-week programme opening with 4 weeks of activity modification using an activity ladder and pain monitoring, followed by exercise, so the activity step cannot be credited alone and may not apply to adults. Limited evidence found sitting more painful than seven other tasks. Stairs load the joint about 2.5 to 2.6 times body weight in people with the condition. One cartilage cohort is observational, in older adults, and should not be used to justify stair avoidance.",
       "evidenceStrength": "observational",
-      "sourceIds": ["gaitonde2019", "marra2020", "rathleff2019", "willy2019"]
+      "sourceIds": [
+        "gaitonde2019",
+        "marra2020",
+        "rathleff2019",
+        "willy2019",
+        "glaviano2022",
+        "hart2022",
+        "yang2025"
+      ]
     },
     {
       "movement": "High running load, such as hills or high mileage",
       "action": "modify",
-      "rationale": "A summary of the APTA guideline lists avoiding hills or reducing mileage among options for runners. The 2018 consensus considers evidence for gait retraining uncertain, so this is an option and not an established intervention.",
+      "rationale": "A summary of the APTA guideline lists avoiding hills or reducing mileage for runners. Peak joint force while running was about 4.1 times body weight in this condition. In a trial of 69 runners, education on symptoms and training loads alone matched education plus exercise or gait retraining, and the authors call it a primary component. Gait retraining evidence conflicts: grade C in the APTA guideline as restated by Connell, uncertain in the 2018 consensus, and landing softer lowered knee injury risk in one prevention trial on low certainty evidence.",
       "evidenceStrength": "guideline",
-      "sourceIds": ["marra2020", "collins2018"]
+      "sourceIds": [
+        "marra2020",
+        "connell2020",
+        "collins2018",
+        "hart2022",
+        "esculier2018",
+        "alexander2022",
+        "culvenor2020"
+      ]
+    },
+    {
+      "movement": "Deep forward or side lunges, especially on a short step",
+      "action": "modify",
+      "rationale": "Modelled loading rises with flexion. Forward lunges loaded the joint more than backward lunges in 20 uninjured women. Peak stress at 80 degrees was 3.25 MPa for side lunges against 1.91 MPa for forward lunges, and stayed under 0.85 MPa below about 30 degrees. A short step loaded more at deep angles and a long step more at shallow ones. Restricting forward travel of the front shin may lower front-leg stress while raising it in the back leg, so the usual knee-over-toe cue is not a simple fix. None of this was tested for symptoms.",
+      "evidenceStrength": "biomechanical",
+      "sourceIds": [
+        "goulette2021",
+        "escamilla2022a",
+        "escamilla2022b",
+        "escamilla2008",
+        "hofmann2017"
+      ]
+    },
+    {
+      "movement": "One-legged squats taken deep",
+      "action": "modify",
+      "rationale": "At 100 degrees on the way up, modelled stress was 4.99 MPa on one leg against 2.11 MPa on two, and the authors suggest progressing two-legged to one-legged within 0 to 50 degrees before going to 100. An older study found wall squats loading more than one-leg squats at 60 to 90 degrees, so the ranking depends on the variation. The first study was in uninjured people at bodyweight; the older one used a 12-repetition maximum, so they are not directly comparable.",
+      "evidenceStrength": "biomechanical",
+      "sourceIds": [
+        "escamilla2025",
+        "escamilla2009"
+      ]
+    },
+    {
+      "movement": "Deep wall squats (about 90 degrees or more) with the heels close to the wall",
+      "action": "modify",
+      "rationale": "A short heel-to-wall distance, letting the knee travel past the toes at high flexion, increased modelled loading at 90 and 100 degrees on the way up, and wall squats generally loaded more than ball squats. At 60 degrees the pattern reversed, with feet farther from the wall loading more in a weighted study, so this cue applies to deep squats only. Minimising loading may favour 0 to 50 degrees.",
+      "evidenceStrength": "biomechanical",
+      "sourceIds": [
+        "escamilla2023",
+        "escamilla2009"
+      ]
+    },
+    {
+      "movement": "Raising external load quickly in squats or carried-load walking",
+      "action": "modify",
+      "rationale": "Joint force and stress rose with barbell load in experienced female lifters. In weighted-vest walking, stress rose with load and more so in women (3.8 against 2.4 MPa at 34 kg and 0 kg), and the authors suggest slower progressions for women under fixed external loads. Uninjured subjects with no clinical outcome.",
+      "evidenceStrength": "biomechanical",
+      "sourceIds": [
+        "zavala2021",
+        "willy2025"
+      ]
+    },
+    {
+      "movement": "Exercising through more than mild knee pain",
+      "action": "modify",
+      "rationale": "No validated threshold exists, and rules differ. NATA asks that quadriceps work be pain free. One trial accepted up to 3/10 during exercise and modified above that. A trial cited by the Dutch guideline allowed no self-reported increase in usual pain after the session or the next morning, and that guideline asks for volume and intensity to adjust continuously to pain. One crossover trial held stretches at mild discomfort but not pain. Separately, a trial with no formal pain threshold still improved, so a strict rule is not shown to be necessary.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": [
+        "bolgla2018",
+        "vasconcelos2024",
+        "ophey2025",
+        "jellad2021",
+        "severosilveira2026"
+      ]
     }
   ],
   "candidateExercises": [
@@ -41,187 +126,1687 @@
       "name": "Side-lying hip abduction",
       "catalog": "catalog:side-lying-hip-abduction",
       "kind": "strengthening",
-      "dose": {"sets": 3, "reps": 10, "holdSeconds": null, "frequency": "Not specified in the source trial; trials in the Cochrane review averaged 3 times per week"},
+      "dose": {
+        "sets": 3,
+        "reps": 10,
+        "holdSeconds": null,
+        "frequency": "2 days per week for 6 weeks in Kamel 2024; not specified in Raju 2024; trials in the Cochrane review averaged 3 times per week"
+      },
       "bodyweightOrHold": true,
-      "cautions": "The trial used elastic resistance and lifted to about 30 degrees, so the bodyweight version is a lighter adaptation that was not itself tested. The trial ran 4 weeks with short-term outcomes only.",
+      "cautions": "Kamel 2024 used 3 x 10 up to 3 x 20 at 2 to 3 seconds per rep with 30 seconds between sets, adding cuff or tubing resistance afterwards, which this report reads as an unloaded start. Raju 2024 used elastic resistance, lifting to about 30 degrees, for 4 weeks. Both trials are small and short.",
       "evidenceStrength": "rct",
-      "sourceIds": ["raju2024", "cochrane2015"]
+      "sourceIds": [
+        "raju2024",
+        "kamel2024",
+        "cochrane2015"
+      ]
     },
     {
       "name": "Banded clamshell",
       "catalog": "catalog:banded-clamshell",
       "kind": "strengthening",
-      "dose": {"sets": 3, "reps": 10, "holdSeconds": null, "frequency": "Not specified in the source trial; trials in the Cochrane review averaged 3 times per week"},
+      "dose": {
+        "sets": 3,
+        "reps": 10,
+        "holdSeconds": null,
+        "frequency": "2 days per week for 6 weeks in Kamel 2024; twice weekly for 9 weeks in Severo-Silveira 2026"
+      },
       "bodyweightOrHold": false,
-      "cautions": "The trial does not use the name clamshell. It describes side-lying abductor and lateral rotator work against elastic resistance with feet together and hips and knees flexed about 45 degrees; the match to this catalog exercise is this report's reading.",
+      "cautions": "Kamel 2024 names the clamshell: 3 x 10 up to 3 x 20, adding tubing resistance after that, so catalog:clamshell may suit the start. Severo-Silveira 2026 used a band clam at 1 or 3 sets of 15, then 12, then 8 reps in 3-week blocks. Raju 2024's side-lying abductor and lateral rotator work does not use the name, and matching it here is this report's reading.",
       "evidenceStrength": "rct",
-      "sourceIds": ["raju2024", "cochrane2015"]
+      "sourceIds": [
+        "kamel2024",
+        "severosilveira2026",
+        "raju2024",
+        "cochrane2015"
+      ]
     },
     {
       "name": "Standing banded hip abduction",
       "catalog": "catalog:banded-standing-hip-abduction",
       "kind": "strengthening",
-      "dose": {"sets": 3, "reps": 10, "holdSeconds": null, "frequency": "Prescribed at least 6 days per week for 6 weeks; about 4.8 days per week achieved"},
+      "dose": {
+        "sets": 3,
+        "reps": 10,
+        "holdSeconds": null,
+        "frequency": "Prescribed at least 6 days per week for 6 weeks; about 4.8 days per week achieved"
+      },
       "bodyweightOrHold": false,
-      "cautions": "Reps rose to 10 to 15 by weeks 4 to 6 for other hip exercises in the programme. Band resistance was set so the last 3 of 10 reps were challenging with good form, and an athletic trainer supervised progression.",
+      "cautions": "Reps rose to 10 to 15 by weeks 4 to 6 for other hip exercises in the programme. Band resistance was set so the last 3 of 10 reps were challenging with good form, and an athletic trainer supervised progression. Severo-Silveira 2026 also used band hip abduction, position not stated in the data read.",
       "evidenceStrength": "rct",
-      "sourceIds": ["ferber2015"]
+      "sourceIds": [
+        "ferber2015",
+        "severosilveira2026"
+      ]
     },
     {
       "name": "Seated banded hip external rotation",
       "catalog": "new",
       "kind": "strengthening",
-      "dose": {"sets": 3, "reps": 10, "holdSeconds": null, "frequency": "Prescribed at least 6 days per week for 6 weeks; about 4.8 days per week achieved"},
+      "dose": {
+        "sets": 3,
+        "reps": 10,
+        "holdSeconds": null,
+        "frequency": "Prescribed at least 6 days per week for 6 weeks; about 4.8 days per week achieved"
+      },
       "bodyweightOrHold": false,
       "cautions": "Performed seated with the knee at 90 degrees in one trial, rotating the hip to nearly 30 degrees. Progression was supervised.",
       "evidenceStrength": "rct",
-      "sourceIds": ["ferber2015", "raju2024"]
+      "sourceIds": [
+        "ferber2015",
+        "raju2024"
+      ]
     },
     {
       "name": "Isometric quadriceps setting",
       "catalog": "new",
       "kind": "strengthening",
-      "dose": {"sets": 3, "reps": 10, "holdSeconds": null, "frequency": "Prescribed at least 6 days per week in week 1 of a 6-week programme; about 4.9 days per week achieved"},
+      "dose": {
+        "sets": 3,
+        "reps": 10,
+        "holdSeconds": null,
+        "frequency": "Prescribed at least 6 days per week in week 1 of a 6-week programme; about 4.9 days per week achieved"
+      },
       "bodyweightOrHold": true,
-      "cautions": "The trials opened did not report a hold time. The trial moved to 3 sets of 15 in week 2.",
+      "cautions": "The trials opened did not report a hold time, so holdSeconds stays null. The trial moved to 3 sets of 15 in week 2.",
       "evidenceStrength": "rct",
-      "sourceIds": ["ferber2015", "raju2024"]
+      "sourceIds": [
+        "ferber2015",
+        "raju2024"
+      ]
+    },
+    {
+      "name": "Isometric quadriceps at 60 degrees of knee flexion",
+      "catalog": "new",
+      "kind": "strengthening",
+      "dose": {
+        "sets": 3,
+        "reps": 2,
+        "holdSeconds": 5,
+        "frequency": "5 days per week for 6 weeks"
+      },
+      "bodyweightOrHold": false,
+      "cautions": "The trial is weak: an implausibly large effect, inconsistent statistics and no follow-up. Performed as maximal voluntary contractions on an ISOMOVE machine, not bodyweight, with 30 seconds between sets, and 3 sets of 2 contractions is an unusually low volume. Treat as a low-confidence dose.",
+      "evidenceStrength": "rct",
+      "sourceIds": [
+        "hasan2025"
+      ]
     },
     {
       "name": "Straight leg raise",
       "catalog": "new",
       "kind": "strengthening",
-      "dose": {"sets": 3, "reps": 10, "holdSeconds": null, "frequency": "Twice daily in one older trial; frequency not stated in the other"},
+      "dose": {
+        "sets": 3,
+        "reps": 10,
+        "holdSeconds": null,
+        "frequency": "2 days per week for 6 weeks in Kamel 2024; twice daily in one older trial (Colon 1988, as tabulated by Cochrane)"
+      },
       "bodyweightOrHold": true,
-      "cautions": "The twice-daily trial (Colon 1988, as tabulated by Cochrane) added increasing weights. In the 2024 trial it formed part of a control programme alongside interferential therapy, and that group improved least.",
+      "cautions": "Kamel 2024 progressed 3 x 10 to 3 x 20. Dolak, as tabulated by NATA, progressed resistance from 3% to 7% of body mass. A review of 79 studies gives 3 x 10, isometric at 0 degrees, as the median, which describes habit and not efficacy. In Raju 2024 it was part of a control programme with interferential therapy, and that group improved least.",
       "evidenceStrength": "rct",
-      "sourceIds": ["cochrane2015", "raju2024"]
+      "sourceIds": [
+        "kamel2024",
+        "bolgla2018",
+        "gunhamn2025",
+        "cochrane2015",
+        "raju2024"
+      ]
     },
     {
       "name": "Terminal knee extension with band",
       "catalog": "new",
       "kind": "strengthening",
-      "dose": {"sets": 3, "reps": 15, "holdSeconds": null, "frequency": "Prescribed at least 6 days per week from week 2 of a 6-week programme; about 4.9 days per week achieved"},
+      "dose": {
+        "sets": 3,
+        "reps": 15,
+        "holdSeconds": null,
+        "frequency": "Prescribed at least 6 days per week from week 2 of a 6-week programme; about 4.9 days per week achieved"
+      },
       "bodyweightOrHold": false,
-      "cautions": "It works the end-range arc where seated knee extension showed higher modelled joint stress; whether that finding applies to this standing exercise was not tested.",
+      "cautions": "NATA tabulates the same trial's standing version at 3 x 10, and Kamel 2024 used 10 degrees to full extension at 3 x 10 up to 3 x 20. It works the end-range arc where seated knee extension showed higher modelled joint stress; whether that applies to this standing exercise was not tested.",
       "evidenceStrength": "rct",
-      "sourceIds": ["ferber2015", "powers2014"]
+      "sourceIds": [
+        "ferber2015",
+        "bolgla2018",
+        "kamel2024",
+        "gunhamn2025",
+        "powers2014"
+      ]
+    },
+    {
+      "name": "Prone hip extension",
+      "catalog": "new",
+      "kind": "strengthening",
+      "dose": {
+        "sets": 3,
+        "reps": 10,
+        "holdSeconds": null,
+        "frequency": "2 days per week for 6 weeks in Kamel 2024"
+      },
+      "bodyweightOrHold": true,
+      "cautions": "Progressed to 3 x 20, then cuff or tubing resistance, at 2 to 3 seconds per rep with 30 seconds between sets. Named in one small trial of people with pronated feet.",
+      "evidenceStrength": "rct",
+      "sourceIds": [
+        "kamel2024"
+      ]
     },
     {
       "name": "Partial-range bodyweight squat",
       "catalog": "catalog:bodyweight-squat",
       "kind": "strengthening",
-      "dose": {"sets": 3, "reps": 10, "holdSeconds": null, "frequency": "Prescribed at least 6 days per week from week 1 of a 6-week programme; about 4.9 days per week achieved"},
+      "dose": {
+        "sets": 3,
+        "reps": 10,
+        "holdSeconds": 2,
+        "frequency": "5 days per week for 8 weeks at home in Chen 2026; prescribed at least 6 days per week for 6 weeks in Ferber 2015"
+      },
       "bodyweightOrHold": true,
-      "cautions": "The dose is for one-quarter depth only, so a depth limit must accompany the catalog exercise, which is otherwise a full squat. Cochrane tabulates another trial using a neutral to 30 degree semi squat held 2 seconds, 15 reps, 3 times daily.",
+      "cautions": "A depth limit must accompany the catalog exercise: to 45 degrees of knee flexion with a 2-second lowering and 2-second hold at the bottom, 2 minutes between sets, progressing every 2 weeks to at most 3 x 20 (Chen 2026, 30 adults, range not precisely monitored). Ferber 2015 used one-quarter depth with no hold in week 1, then 30-second holds in week 2. Cochrane tabulates a neutral to 30 degree semi squat held 2 seconds, 15 reps, 3 times daily.",
       "evidenceStrength": "rct",
-      "sourceIds": ["ferber2015", "cochrane2015", "powers2014"]
+      "sourceIds": [
+        "chen2026",
+        "ferber2015",
+        "cochrane2015",
+        "powers2014",
+        "gunhamn2025"
+      ]
+    },
+    {
+      "name": "Wall mini-squat to 45 degrees",
+      "catalog": "new",
+      "kind": "strengthening",
+      "dose": {
+        "sets": 3,
+        "reps": 10,
+        "holdSeconds": null,
+        "frequency": "2 days per week for 6 weeks in Kamel 2024"
+      },
+      "bodyweightOrHold": true,
+      "cautions": "Progressed to 3 x 20. Median reported across trials is 3 x 10 at 0 to 45 degrees.",
+      "evidenceStrength": "rct",
+      "sourceIds": [
+        "kamel2024",
+        "gunhamn2025"
+      ]
     },
     {
       "name": "Wall sit, shallow",
       "catalog": "catalog:wall-sit",
       "kind": "strengthening",
-      "dose": {"sets": 3, "reps": null, "holdSeconds": 30, "frequency": "Prescribed at least 6 days per week from week 4 of a 6-week programme; about 4.9 days per week achieved"},
+      "dose": {
+        "sets": 3,
+        "reps": null,
+        "holdSeconds": 30,
+        "frequency": "Prescribed at least 6 days per week from week 4 of a 6-week programme; about 4.9 days per week achieved"
+      },
       "bodyweightOrHold": true,
-      "cautions": "The dose is for one-half depth. The trial later used 45 to 60 seconds down to a maximum of 90 degrees, a depth at which squats showed higher modelled joint stress in a separate study. A later-stage exercise under supervised progression.",
+      "cautions": "The dose is for one-half depth. NATA tabulates this trial's wall slide as 3 repetitions, progressing the hold from 30 to 60 seconds and the excursion to 90 degrees. Between 60 and 90 degrees wall squats loaded the joint more than one-leg squats in modelling. A later-stage exercise under supervised progression.",
       "evidenceStrength": "rct",
-      "sourceIds": ["ferber2015", "powers2014"]
+      "sourceIds": [
+        "ferber2015",
+        "bolgla2018",
+        "powers2014",
+        "escamilla2009"
+      ]
     },
     {
       "name": "Step-down",
       "catalog": "catalog:step-down",
       "kind": "strengthening",
-      "dose": {"sets": 3, "reps": 10, "holdSeconds": null, "frequency": "Prescribed at least 6 days per week from week 4 of a 6-week programme; about 4.9 days per week achieved"},
+      "dose": {
+        "sets": 3,
+        "reps": 10,
+        "holdSeconds": null,
+        "frequency": "Prescribed at least 6 days per week from week 4 of a 6-week programme; about 4.9 days per week achieved"
+      },
       "bodyweightOrHold": true,
-      "cautions": "The trial started on a 4-inch step, and stairs commonly aggravate this condition. Introduced only at week 4 under supervision, so unsuitable as a starting exercise.",
+      "cautions": "The trial started on a 4-inch step, and stairs commonly aggravate this condition, so this is unsuitable as a starting exercise. A review of 79 studies gives a median of 3 sets of 20 to 10 reps on a 20 cm step, as description and not efficacy.",
       "evidenceStrength": "rct",
-      "sourceIds": ["ferber2015", "willy2019"]
+      "sourceIds": [
+        "ferber2015",
+        "willy2019",
+        "gunhamn2025"
+      ]
     },
     {
       "name": "Seated knee extension, limited range",
       "catalog": "catalog:leg-extension",
       "kind": "strengthening",
-      "dose": {"sets": null, "reps": null, "holdSeconds": null, "frequency": "No exercise-specific dose established"},
+      "dose": {
+        "sets": 3,
+        "reps": 10,
+        "holdSeconds": null,
+        "frequency": "Median 3 sessions per week for 6 weeks across trials (Gunhamn 2025); the tabulated trial's frequency is not in the data"
+      },
       "bodyweightOrHold": false,
-      "cautions": "Machine-loaded. The range limit of 90 to 45 degrees comes from the biomechanical study, which applied to a variable-resistance machine. Cochrane reports no clear short-term pain difference between open and closed chain work.",
-      "evidenceStrength": "biomechanical",
-      "sourceIds": ["powers2014", "cochrane2015"]
+      "cautions": "Machine-loaded at 70% of 1RM, 90 to 45 degrees (Fukuda, as tabulated by NATA; the review median is the same range at 70% of 1RM, ranging from bodyweight to 80%). The range rests on SOR C guidance and modelling. Severo-Silveira 2026 worked from about 90 degrees to near-full extension with improvement. Cochrane reports no clear short-term pain difference between open and closed chain work.",
+      "evidenceStrength": "rct",
+      "sourceIds": [
+        "bolgla2018",
+        "gunhamn2025",
+        "powers2014",
+        "steinkamp1993",
+        "severosilveira2026",
+        "cochrane2015"
+      ]
+    },
+    {
+      "name": "Leg press, limited range",
+      "catalog": "catalog:leg-press",
+      "kind": "strengthening",
+      "dose": {
+        "sets": 3,
+        "reps": 10,
+        "holdSeconds": null,
+        "frequency": "3 sessions per week for 8 weeks (Peng 2015, Song 2009); the 3 x 10 tabulated trial's frequency is not in the data"
+      },
+      "bodyweightOrHold": false,
+      "cautions": "3 x 10 at 70% of 1RM, 0 to 45 degrees (Fukuda, as tabulated by NATA). Peng 2015 used 5 x 10 at 60% of 1RM from 45 degrees to full extension with 2 seconds each way, a 2-second pause and 2 minutes between sets, in 17 patients. Both leg press arms in Song 2009 (89 patients) beat control. Peng found pain fell without any change in patellar tilt or offset, so alignment should not be promised as the reason. Machine-loaded.",
+      "evidenceStrength": "rct",
+      "sourceIds": [
+        "bolgla2018",
+        "peng2015",
+        "song2009",
+        "gunhamn2025",
+        "severosilveira2026"
+      ]
+    },
+    {
+      "name": "Split squat, loaded",
+      "catalog": "catalog:split-squat",
+      "kind": "strengthening",
+      "dose": {
+        "sets": "1 or 3",
+        "reps": "15 for 3 weeks, then 12 for 3 weeks, then 8 for 3 weeks",
+        "holdSeconds": null,
+        "frequency": "Twice weekly for 9 weeks, sessions at least 48 hours apart"
+      },
+      "bodyweightOrHold": false,
+      "cautions": "Supervised trial in 42 women, about 4 seconds per rep, about 90 degrees to near-full extension, 1 minute between sets. Load rose if more than 2 extra reps were possible and fell if the target was missed from fatigue or knee discomfort. One set matched three sets, though a non-significant difference in a small trial does not prove equivalence. No follow-up after 9 weeks. Lunge-type depth loads the joint more in modelling, so this is not a starting exercise.",
+      "evidenceStrength": "rct",
+      "sourceIds": [
+        "severosilveira2026",
+        "escamilla2022b"
+      ]
+    },
+    {
+      "name": "Single-leg squat, 0 to 45 degrees",
+      "catalog": "new",
+      "kind": "strengthening",
+      "dose": {
+        "sets": 3,
+        "reps": 10,
+        "holdSeconds": null,
+        "frequency": "Prescribed at least 6 days per week, from week 3 as single-leg quarter squats at 3 x 10 in a 6-week programme (Ferber 2015)"
+      },
+      "bodyweightOrHold": true,
+      "cautions": "From NATA's table of Ferber: progress to 15 reps and excursion to 90 degrees. Later stage: modelled stress on one leg was over double that on two at 100 degrees. The review median is 3 x 10, 0 to 90 degrees, from bodyweight to 70% of 1RM.",
+      "evidenceStrength": "rct",
+      "sourceIds": [
+        "bolgla2018",
+        "ferber2015",
+        "escamilla2025",
+        "gunhamn2025"
+      ]
+    },
+    {
+      "name": "Pillow-squeeze hip adduction",
+      "catalog": "new",
+      "kind": "strengthening",
+      "dose": {
+        "sets": 3,
+        "reps": 10,
+        "holdSeconds": null,
+        "frequency": "5 days per week for 6 weeks"
+      },
+      "bodyweightOrHold": true,
+      "cautions": "From a weak trial (see Isometric quadriceps at 60 degrees). Evidence for adding adduction conflicts: a ball squeeze during home squats lowered pain more in 30 adults (Chen 2026), and adding adduction to leg press did nothing in 89 (Song 2009). The adduction entry gives no hold, though the trial's general instruction is 5 seconds per contraction with 10 seconds rest.",
+      "evidenceStrength": "rct",
+      "sourceIds": [
+        "hasan2025",
+        "chen2026",
+        "song2009"
+      ]
+    },
+    {
+      "name": "Isometric resisted hip abduction",
+      "catalog": "new",
+      "kind": "strengthening",
+      "dose": {
+        "sets": 3,
+        "reps": 10,
+        "holdSeconds": 10,
+        "frequency": "5 days per week for 6 weeks"
+      },
+      "bodyweightOrHold": false,
+      "cautions": "From a weak trial (see Isometric quadriceps at 60 degrees). Done supine with knees flexed to 60 degrees against a therapist's hand, so it is untested as self-resisted work.",
+      "evidenceStrength": "rct",
+      "sourceIds": [
+        "hasan2025"
+      ]
+    },
+    {
+      "name": "Short foot exercise",
+      "catalog": "new",
+      "kind": "strengthening",
+      "dose": {
+        "sets": 3,
+        "reps": 15,
+        "holdSeconds": 5,
+        "frequency": "2 days per week for 6 weeks"
+      },
+      "bodyweightOrHold": true,
+      "cautions": "Added on top of hip and knee work in 28 patients with navicular drop over 10 mm only, so it does not transfer to all feet. The source's dose description is inconsistent. Not a substitute for hip and knee exercise.",
+      "evidenceStrength": "rct",
+      "sourceIds": [
+        "kamel2024"
+      ]
     },
     {
       "name": "Hamstring stretch",
       "catalog": "catalog:hamstring-stretch",
       "kind": "stretch",
-      "dose": {"sets": null, "reps": null, "holdSeconds": null, "frequency": "About 3 minutes total per session in one trial (Avraham 2007, as tabulated by Cochrane), over 3 weeks at 2 times a week plus 4 home self treatments"},
+      "dose": {
+        "sets": null,
+        "reps": 3,
+        "holdSeconds": 30,
+        "frequency": "Varied by trial, from 2 times per week to daily, in Harvie 2011"
+      },
       "bodyweightOrHold": true,
-      "cautions": "Stretch-specific evidence is sparse. The 3 minutes is total stretching time, not a single hold. A 2019 review recommends flexibility work as part of a programme, without specifying a dose per stretch.",
+      "cautions": "Harvie 2011: 'The majority of trials examined three repetitions of 30-second duration', always bundled with strengthening. So this describes common prescription and does not show stretching works on its own. Reduced hamstring flexibility is an association that vanished against the unaffected limb. Avraham 2007, as tabulated by Cochrane, used about 3 minutes in total per session. Static stretching did not change risk in a single prevention trial. Gaitonde 2019 advises flexibility work 3 times per week for 6 to 8 weeks with no stretch dose.",
+      "evidenceStrength": "systematic_review",
+      "sourceIds": [
+        "harvie2011",
+        "lopes2024",
+        "cochrane2015",
+        "gaitonde2019",
+        "culvenor2020"
+      ]
+    },
+    {
+      "name": "Standing quadriceps stretch",
+      "catalog": "catalog:standing-quad-stretch",
+      "kind": "stretch",
+      "dose": {
+        "sets": null,
+        "reps": 3,
+        "holdSeconds": 30,
+        "frequency": "Varied by trial, from 2 times per week to daily, in Harvie 2011"
+      },
+      "bodyweightOrHold": true,
+      "cautions": "Harvie 2011 dose, always bundled with strengthening. A 44-person trial found no difference between static and dynamic quadriceps stretching but had no no-stretch control, so it cannot show that stretching helps, and its dose was not available.",
+      "evidenceStrength": "systematic_review",
+      "sourceIds": [
+        "harvie2011",
+        "lee2021"
+      ]
+    },
+    {
+      "name": "Calf stretch",
+      "catalog": "catalog:wall-calf-stretch",
+      "kind": "stretch",
+      "dose": {
+        "sets": null,
+        "reps": 3,
+        "holdSeconds": 30,
+        "frequency": "Varied by trial, from 2 times per week to daily, in Harvie 2011"
+      },
+      "bodyweightOrHold": true,
+      "cautions": "6 of 7 trials specifying muscles stretched the gastrocnemius. Harvie 2011 dose, always bundled with strengthening; no isolated evidence, and matching the wall version is this report's reading.",
+      "evidenceStrength": "systematic_review",
+      "sourceIds": [
+        "harvie2011"
+      ]
+    },
+    {
+      "name": "Hip internal rotator stretch",
+      "catalog": "new",
+      "kind": "stretch",
+      "dose": {
+        "sets": null,
+        "reps": 4,
+        "holdSeconds": 30,
+        "frequency": "3 sessions per week for 4 weeks"
+      },
+      "bodyweightOrHold": true,
+      "cautions": "Applied by a physical therapist with 20 seconds rest, held at mild discomfort but not pain. Untested as self-stretching in an app. Combined with hip strengthening, so stretching cannot be credited alone. Single-blinded crossover in which participants were not blinded, with no power analysis.",
       "evidenceStrength": "rct",
-      "sourceIds": ["cochrane2015", "gaitonde2019"]
+      "sourceIds": [
+        "jellad2021"
+      ]
     }
   ],
   "redFlags": [
     {
       "sign": "Large knee swelling, redness or increased warmth",
       "action": "Stop exercising the knee and get prompt medical evaluation. These are not features of patellofemoral pain and can indicate infection, acute trauma or inflammatory joint disease.",
-      "sourceIds": ["gaitonde2019"]
+      "sourceIds": [
+        "gaitonde2019",
+        "connell2020"
+      ]
     },
     {
       "sign": "Knee locking or clicking suggesting something is caught in the joint",
       "action": "Do not attribute this to patellofemoral pain; have a clinician assess the knee. It can indicate internal derangement such as a meniscal tear or loose body.",
-      "sourceIds": ["gaitonde2019"]
+      "sourceIds": [
+        "gaitonde2019"
+      ]
     },
     {
       "sign": "Kneecap pain after an injury or direct trauma",
       "action": "Have a clinician assess the knee before training it. Patellar fracture needs to be considered, using radiographs.",
-      "sourceIds": ["gaitonde2019"]
+      "sourceIds": [
+        "gaitonde2019",
+        "connell2020"
+      ]
     },
     {
       "sign": "Kneecap dislocation, a sense of the kneecap slipping out, or apprehension when it is pushed sideways",
-      "action": "Have a clinician assess the knee. These point to patellar instability, which consensus definitions keep separate from patellofemoral pain.",
-      "sourceIds": ["crossley2016", "marra2020"]
+      "action": "Have a clinician assess the knee. These point to patellar instability, which consensus treats as a separate subgroup and the Dutch guideline places outside its scope.",
+      "sourceIds": [
+        "crossley2016",
+        "marra2020",
+        "ophey2025"
+      ]
     },
     {
       "sign": "Pain and tenderness isolated to below the kneecap or the bump on the shin, especially in children and adolescents",
       "action": "Have a clinician assess the knee. This fits tendinopathy or apophysitis more than patellofemoral pain.",
-      "sourceIds": ["marra2020", "gaitonde2019"]
+      "sourceIds": [
+        "marra2020",
+        "gaitonde2019"
+      ]
     },
     {
-      "sign": "No improvement after four to eight weeks of conservative measures",
-      "action": "Return to a clinician, who may consider imaging. Radiographs can also help exclude osteoarthritis in people over 50.",
-      "sourceIds": ["gaitonde2019"]
+      "sign": "Knee pain in an adolescent, particularly with a presentation that does not fit",
+      "action": "Have a clinician assess the hip as well as the knee. The APTA guideline, as restated by Connell 2020, names slipped capital femoral epiphysis as a possible cause of knee pain.",
+      "sourceIds": [
+        "connell2020"
+      ]
+    },
+    {
+      "sign": "Symptoms that do not fit the expected pattern or are not resolving, or any concern about tumour or infection",
+      "action": "Refer to a clinician. The APTA guideline, as restated by Connell 2020, asks clinicians to consider red flags (tumours, infection, fracture), yellow flags and other musculoskeletal conditions in this situation.",
+      "sourceIds": [
+        "connell2020"
+      ]
+    },
+    {
+      "sign": "Knee swelling or substantially increasing pain caused by the exercise",
+      "action": "Stop that exercise and get it reviewed. Cochrane defines this as an adverse event of exercise therapy. The Dutch patient survey also records increased knee pain with exercise therapy in a few people.",
+      "sourceIds": [
+        "cochrane2015",
+        "ophey2025"
+      ]
+    },
+    {
+      "sign": "No improvement after a period of conservative care",
+      "action": "Return to a clinician. Timing varies: an AAFP review says imaging may help after four to eight weeks of conservative care, while the Dutch guideline reassesses at 6 weeks and reconsiders the diagnosis if there is no improvement after 12. Radiographs can help exclude osteoarthritis in people over 50.",
+      "sourceIds": [
+        "gaitonde2019",
+        "ophey2025"
+      ]
+    }
+  ],
+  "searches": [
+    {
+      "database": "PubMed (E-utilities)",
+      "query": "patellofemoral pain[Title] AND (guideline[pt] OR \"clinical practice guideline\"[Title] OR \"clinical practice guidelines\"[Title])",
+      "hits": "9"
+    },
+    {
+      "database": "PubMed (E-utilities)",
+      "query": "patellofemoral[Title] AND (consensus[Title] OR \"consensus statement\"[Title])",
+      "hits": "18"
+    },
+    {
+      "database": "PubMed (E-utilities)",
+      "query": "patellofemoral pain[Title] AND (pathway[Title] OR \"clinical guidance\"[Title] OR recommendations[Title])",
+      "hits": "2"
+    },
+    {
+      "database": "PubMed (E-utilities)",
+      "query": "patellofemoral[Title] AND (guideline[Title] OR guidelines[Title]) AND (quality[Title] OR appraisal[Title] OR \"systematic review\"[Title])",
+      "hits": "5"
+    },
+    {
+      "database": "PubMed (E-utilities)",
+      "query": "patellofemoral pain[Title] AND (\"position statement\"[Title] OR \"best practice\"[Title] OR \"clinical guide\"[Title])",
+      "hits": "3"
+    },
+    {
+      "database": "PubMed (E-utilities)",
+      "query": "patellofemoral pain[Title/Abstract] AND (\"Practice Guidelines as Topic\"[MeSH] OR \"Practice Guideline\"[pt])",
+      "hits": "21"
+    },
+    {
+      "database": "Europe PMC REST",
+      "query": "TITLE:\"patellofemoral pain\" AND (TITLE:guideline OR TITLE:\"position statement\" OR TITLE:consensus OR TITLE:\"best practice\")",
+      "hits": "21 (count only; records not reviewed individually)"
+    },
+    {
+      "database": "Crossref REST",
+      "query": "query.title=patellofemoral pain clinical practice guideline",
+      "hits": "2638921 (relevance-ranked fuzzy match, top 8 viewed; only 1 was on patellofemoral pain, the 2026 J Physiother appraisal)"
+    },
+    {
+      "database": "NICE website search",
+      "query": "https://www.nice.org.uk/search?q=patellofemoral",
+      "hits": "4 (page reported result count 4; the result titles were not extracted, so this does not show whether any is a dedicated PFP guideline)"
+    },
+    {
+      "database": "NICE CKS direct fetch",
+      "query": "https://cks.nice.org.uk/topics/knee-pain-assessment/",
+      "hits": "0 read: HTTP 403, so no NICE CKS content was read"
+    },
+    {
+      "database": "WebSearch",
+      "query": "NICE CKS patellofemoral pain syndrome management guidance anterior knee pain",
+      "hits": "10 links; no NICE page returned"
+    },
+    {
+      "database": "WebSearch (allowed domains nice.org.uk, aaos.org, orthoguidelines.org, who.int)",
+      "query": "AAOS OR NICE clinical guideline patellofemoral pain; does AAOS have clinical practice guideline for patellofemoral pain; cks.nice.org.uk knee pain assessment patellofemoral",
+      "hits": "9 links; none was an AAOS, NICE or WHO patellofemoral pain guideline. This is a null search result, not proof that none exists; the AAOS guideline index was not checked"
+    },
+    {
+      "database": "WebSearch",
+      "query": "Willy 2019 Patellofemoral Pain clinical practice guidelines JOSPT recommendations grade A exercise therapy hip and knee targeted taping foot orthoses dry needling full text pdf",
+      "hits": "10 links; no full text. jospt.org returned HTTP 403 to WebFetch and curl, the Playwright browser failed to launch, and Unpaywall reports no OA copy"
+    },
+    {
+      "database": "Direct fetch of BMJ",
+      "query": "https://bjsm.bmj.com/content/58/24/1486; https://bjsm.bmj.com/content/52/18/1170; https://bjsm.bmj.com/content/bjsports/52/18/1170.full.pdf",
+      "hits": "0 read: 403 or an HTML block page, so Neal 2024 and Collins 2018 were read at abstract level only"
+    },
+    {
+      "database": "PubMed",
+      "query": "patellofemoral pain[Title/Abstract] AND (exercise OR stretching OR \"activity modification\") AND (systematic review[pt] OR meta-analysis[pt])",
+      "hits": "118"
+    },
+    {
+      "database": "PubMed",
+      "query": "patellofemoral[Title] AND \"Cochrane Database Syst Rev\"[Journal]",
+      "hits": "12"
+    },
+    {
+      "database": "PubMed",
+      "query": "patellofemoral pain[Title/Abstract] AND (stretching OR flexibility) AND (systematic review[Title/Abstract] OR meta-analysis[Title/Abstract])",
+      "hits": "14"
+    },
+    {
+      "database": "PubMed",
+      "query": "patellofemoral pain[Title/Abstract] AND (\"load management\" OR \"activity modification\" OR education OR \"patient education\") AND (randomized OR systematic review)",
+      "hits": "118"
+    },
+    {
+      "database": "PubMed",
+      "query": "\"patellofemoral pain\" AND (\"consensus statement\" OR \"clinical practice guideline\")",
+      "hits": "20"
+    },
+    {
+      "database": "PubMed",
+      "query": "(patellofemoral pain[Title]) AND (stretching[Title/Abstract] OR hamstring flexibility[Title/Abstract]) AND (trial[Title/Abstract] OR randomized[Title/Abstract] OR randomised[Title/Abstract])",
+      "hits": "34"
+    },
+    {
+      "database": "PubMed",
+      "query": "(patellofemoral pain[Title]) AND (network meta-analysis[Title/Abstract])",
+      "hits": "5"
+    },
+    {
+      "database": "PubMed",
+      "query": "patellofemoral pain[Title/Abstract] AND adolescents[Title/Abstract] AND (\"activity modification\" OR \"load management\")",
+      "hits": "7"
+    },
+    {
+      "database": "PubMed",
+      "query": "patellofemoral pain[Title/Abstract] AND (exercise dose OR dosage OR \"exercise parameters\" OR \"exercise prescription\") AND (systematic review[Title/Abstract] OR meta-analysis[Title/Abstract])",
+      "hits": "11"
+    },
+    {
+      "database": "PubMed",
+      "query": "patellofemoral pain[Title/Abstract] AND (painful OR \"pain-free\" OR \"pain during exercise\" OR \"pain monitoring\") AND exercise[Title/Abstract] AND (trial OR review)",
+      "hits": "321 (first 25 titles screened only)"
+    },
+    {
+      "database": "PubMed",
+      "query": "patellofemoral pain[Title/Abstract] AND (prognosis OR \"long-term\") AND (systematic review[Title/Abstract] OR cohort[Title/Abstract])",
+      "hits": "77 (first 25 titles screened only)"
+    },
+    {
+      "database": "PubMed",
+      "query": "patellofemoral pain[Title/Abstract] AND (open kinetic chain OR closed kinetic chain) AND (systematic review[Title/Abstract] OR meta-analysis[Title/Abstract])",
+      "hits": "6"
+    },
+    {
+      "database": "Europe PMC",
+      "query": "TITLE:\"patellofemoral\" AND SRC:MED AND (PUB_TYPE:\"systematic review\" OR PUB_TYPE:\"meta-analysis\") AND (exercise OR stretching)",
+      "hits": "106 (count only, used as a cross-check; records not screened individually)"
+    },
+    {
+      "database": "Cochrane Library",
+      "query": "Direct fetch of https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD010387.pub2/full",
+      "hits": "0: HTTP 403. Cochrane reviews were reached through their PubMed records and PMC copies only. Europe PMC fullTextXML returned HTTP 500 for PMC10898323."
+    },
+    {
+      "database": "Europe PMC (DOI lookup)",
+      "query": "DOI:10.2519/jospt.2019.0302; DOI:10.1136/bjsports-2018-099397; DOI:10.1136/bjsports-2024-108110; DOI:10.1136/bjsports-2020-102819",
+      "hits": "4 records; only Winters 2021 is open access in PMC (PMC7982922). A direct fetch of the JOSPT guideline full text returned HTTP 403."
+    },
+    {
+      "database": "Europe PMC REST",
+      "query": "\"patellofemoral pain\" AND (exercise OR strengthening) AND PUB_TYPE:\"Randomized Controlled Trial\" AND PUB_YEAR:[2010 TO 2026]",
+      "hits": "245 (first 40 viewed)"
+    },
+    {
+      "database": "Europe PMC REST",
+      "query": "TITLE:patellofemoral AND (TITLE:squat OR TITLE:lunge OR TITLE:\"leg press\" OR TITLE:\"knee extension\" OR TITLE:\"leg extension\") AND (force OR stress OR load)",
+      "hits": "28 (all viewed)"
+    },
+    {
+      "database": "Europe PMC REST",
+      "query": "TITLE:patellofemoral AND (TITLE:consensus OR TITLE:guideline OR TITLE:\"exercise therapy\" OR TITLE:\"adverse\" OR TITLE:\"dose\")",
+      "hits": "75 (first 30 viewed)"
+    },
+    {
+      "database": "PubMed E-utilities",
+      "query": "\"patellofemoral pain syndrome\"[MeSH] AND \"exercise therapy\"[MeSH] AND randomized controlled trial[pt]",
+      "hits": "123 (60 IDs returned; IDs not individually screened beyond overlap with Europe PMC list)"
+    },
+    {
+      "database": "Europe PMC REST",
+      "query": "TITLE:\"patellofemoral\" AND (AUTH:\"Powers CM\" OR AUTH:\"Steinkamp\" OR AUTH:\"Rathleff MS\" OR AUTH:\"Hott A\" OR AUTH:\"Fukuda TY\" OR AUTH:\"Khayambashi\" OR AUTH:\"Neal BS\" OR AUTH:\"van der Heijden RA\" OR AUTH:\"Willy RW\" OR AUTH:\"Collins NJ\" OR AUTH:\"Lack S\" OR AUTH:\"Esculier\")",
+      "hits": "282 (first 100 viewed)"
+    },
+    {
+      "database": "PubMed E-utilities",
+      "query": "(Powers CM[au] AND patellofemoral[ti] AND (squat[ti] OR \"knee extension\"[ti])) OR (Steinkamp LA[au] AND patellofemoral[ti]) OR (Rathleff MS[au] AND \"high-load\"[ti] AND knee[ti]) OR (van der Heijden RA[au] AND exercise[ti] AND patellofemoral[ti]) OR (Khayambashi K[au] AND (hip[ti])) OR (Fukuda TY[au] AND patellofemoral[ti]) OR (Giles L[au] AND blood flow restriction[ti]) OR (Rathleff MS[au] AND (\"load management\"[ti] OR \"activity modification\"[ti]))",
+      "hits": "22 (all abstracts fetched; several off-topic)"
+    },
+    {
+      "database": "Europe PMC REST",
+      "query": "TITLE:\"patellofemoral\" AND (\"knee extension\" OR \"leg press\") AND (\"joint stress\" OR \"reaction force\") AND PUB_YEAR:[1990 TO 2026]",
+      "hits": "168 (first 30 viewed)"
+    },
+    {
+      "database": "Europe PMC REST",
+      "query": "\"patellofemoral pain\" AND \"adverse events\" AND exercise AND (\"randomized\" OR \"randomised\") AND OPEN_ACCESS:y AND PUB_YEAR:[2012 TO 2026]",
+      "hits": "204 (first 25 viewed)"
+    },
+    {
+      "database": "PubMed E-utilities",
+      "query": "(patellofemoral[ti] AND (\"joint stress\"[ti] OR \"joint reaction\"[ti] OR \"stress\"[ti]) AND (\"weight-bearing\"[ti] OR \"non-weight-bearing\"[ti] OR squat[ti] OR \"knee extension\"[ti] OR \"open\"[ti] OR \"closed\"[ti])) OR (Escamilla RF[au] AND (\"closed kinetic chain\"[ti])) OR (Hansen R[au] AND patellofemoral[ti] AND protocol[ti])",
+      "hits": "5 (all abstracts fetched; Kameda 2021 and Wilk 1996 not patellofemoral-loading relevant)"
+    },
+    {
+      "database": "PubMed esummary (metadata check, not a search)",
+      "query": "All PMIDs in this record, checking title, DOI and PMCID",
+      "hits": "All resolved"
     }
   ],
   "sources": [
-    {"id": "willy2019", "citation": "Willy RW, Hoglund LT, Barton CJ, et al. Patellofemoral Pain. J Orthop Sports Phys Ther. 2019;49(9):CPG1-CPG95. PubMed abstract opened; publisher full text returned HTTP 403 and was not read.", "doi": "10.2519/jospt.2019.0302", "pmid": "31475628", "url": "https://pubmed.ncbi.nlm.nih.gov/31475628/", "type": "clinical_guideline_abstract_only"},
-    {"id": "marra2020", "citation": "Marra J. Patellofemoral pain: guidelines from the American Physical Therapy Association. Am Fam Physician. 2020;102(7):442-443.", "doi": null, "pmid": null, "url": "https://www.aafp.org/pubs/afp/issues/2020/1001/p442.html", "type": "guideline_summary"},
-    {"id": "collins2018", "citation": "Collins NJ, Barton CJ, van Middelkoop M, et al. 2018 Consensus statement on exercise therapy and physical interventions (orthoses, taping and manual therapy) to treat patellofemoral pain. Br J Sports Med. 2018;52(18):1170-1178. Abstract read; publisher full text returned HTTP 403.", "doi": "10.1136/bjsports-2018-099397", "pmid": "29925502", "url": "https://pure.eur.nl/en/publications/2018-consensus-statement-on-exercise-therapy-and-physical-interve/", "type": "consensus_statement"},
-    {"id": "crossley2016", "citation": "Crossley KM, Stefanik JJ, Selfe J, et al. 2016 Patellofemoral pain consensus statement from the 4th International Patellofemoral Pain Research Retreat, Manchester. Part 1. Br J Sports Med. 2016;50(14):839-843.", "doi": "10.1136/bjsports-2016-096384", "pmid": "27343241", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4975817", "type": "consensus_statement"},
-    {"id": "cochrane2015", "citation": "van der Heijden RA, Lankhorst NE, van Linschoten R, Bierma-Zeinstra SM, van Middelkoop M. Exercise for treating patellofemoral pain syndrome. Cochrane Database Syst Rev. 2015;(1):CD010387.", "doi": "10.1002/14651858.CD010387.pub2", "pmid": "25603546", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10898323", "type": "systematic_review"},
-    {"id": "winters2021", "citation": "Winters M, Holden S, Lura CB, et al. Comparative effectiveness of treatments for patellofemoral pain: a living systematic review with network meta-analysis. Br J Sports Med. 2021;55(7):369-377.", "doi": "10.1136/bjsports-2020-102819", "pmid": "33106251", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7982922", "type": "systematic_review"},
-    {"id": "gaitonde2019", "citation": "Gaitonde DY, Ericksen A, Robbins RC. Patellofemoral Pain Syndrome. Am Fam Physician. 2019;99(2):88-94.", "doi": null, "pmid": null, "url": "https://www.aafp.org/afp/2019/0115/p88", "type": "narrative_review"},
-    {"id": "ferber2015", "citation": "Ferber R, Bolgla L, Earl-Boehm JE, Emery C, Hamstra-Wright K. Strengthening of the Hip and Core Versus Knee Muscles for the Treatment of Patellofemoral Pain: A Multicenter Randomized Controlled Trial. J Athl Train. 2015;50(4):366-377.", "doi": "10.4085/1062-6050-49.3.70", "pmid": "25365133", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4560005", "type": "rct"},
-    {"id": "raju2024", "citation": "Raju A, Jayaraman K, Nuhmani S, Sebastian S, Khan M, Alghadir AH. Effects of hip abductor with external rotator strengthening versus proprioceptive training on pain and functions in patients with patellofemoral pain syndrome: A randomized controlled trial. Medicine (Baltimore). 2024;103(7):e37102.", "doi": "10.1097/MD.0000000000037102", "pmid": "38363950", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10869081/", "type": "rct"},
-    {"id": "powers2014", "citation": "Powers CM, Ho KY, Chen YJ, Souza RB, Farrokhi S. Patellofemoral joint stress during weight-bearing and non-weight-bearing quadriceps exercises. J Orthop Sports Phys Ther. 2014;44(5):320-327.", "doi": "10.2519/jospt.2014.4936", "pmid": "24673446", "url": "https://scholar.usuhs.edu/en/publications/patellofemoral-joint-stress-during-weight-bearing-and-non-weight-/", "type": "biomechanical"},
-    {"id": "rathleff2019", "citation": "Rathleff MS, Graven-Nielsen T, Holmich P, et al. Activity Modification and Load Management of Adolescents With Patellofemoral Pain: A Prospective Intervention Study Including 151 Adolescents. Am J Sports Med. 2019;47(7):1629-1637. Abstract read via Europe PMC.", "doi": "10.1177/0363546519843915", "pmid": "31095417", "url": "https://doi.org/10.1177/0363546519843915", "type": "observational"}
+    {
+      "id": "willy2019",
+      "citation": "Willy RW, Hoglund LT, Barton CJ, et al. Patellofemoral Pain. J Orthop Sports Phys Ther. 2019;49(9):CPG1-CPG95. PubMed abstract opened; publisher full text returned HTTP 403 and was not read.",
+      "doi": "10.2519/jospt.2019.0302",
+      "pmid": "31475628",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/31475628/",
+      "type": "clinical_practice_guideline",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "marra2020",
+      "citation": "Marra J. Patellofemoral pain: guidelines from the American Physical Therapy Association. Am Fam Physician. 2020;102(7):442-443.",
+      "doi": null,
+      "pmid": null,
+      "pmcid": null,
+      "url": "https://www.aafp.org/pubs/afp/issues/2020/1001/p442.html",
+      "type": "guideline_summary",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "collins2018",
+      "citation": "Collins NJ, Barton CJ, van Middelkoop M, et al. 2018 Consensus statement on exercise therapy and physical interventions (orthoses, taping and manual therapy) to treat patellofemoral pain. Br J Sports Med. 2018;52(18):1170-1178. Abstract read; publisher full text returned HTTP 403.",
+      "doi": "10.1136/bjsports-2018-099397",
+      "pmid": "29925502",
+      "pmcid": null,
+      "url": "https://pure.eur.nl/en/publications/2018-consensus-statement-on-exercise-therapy-and-physical-interve/",
+      "type": "consensus_statement",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "crossley2016",
+      "citation": "Crossley KM, Stefanik JJ, Selfe J, et al. 2016 Patellofemoral pain consensus statement from the 4th International Patellofemoral Pain Research Retreat, Manchester. Part 1. Br J Sports Med. 2016;50(14):839-843.",
+      "doi": "10.1136/bjsports-2016-096384",
+      "pmid": "27343241",
+      "pmcid": "PMC4975817",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4975817",
+      "type": "consensus_statement",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "cochrane2015",
+      "citation": "van der Heijden RA, Lankhorst NE, van Linschoten R, Bierma-Zeinstra SM, van Middelkoop M. Exercise for treating patellofemoral pain syndrome. Cochrane Database Syst Rev. 2015;(1):CD010387.",
+      "doi": "10.1002/14651858.CD010387.pub2",
+      "pmid": "25603546",
+      "pmcid": "PMC10898323",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10898323",
+      "type": "systematic_review",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "winters2021",
+      "citation": "Winters M, Holden S, Lura CB, et al. Comparative effectiveness of treatments for patellofemoral pain: a living systematic review with network meta-analysis. Br J Sports Med. 2021;55(7):369-377.",
+      "doi": "10.1136/bjsports-2020-102819",
+      "pmid": "33106251",
+      "pmcid": "PMC7982922",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7982922",
+      "type": "systematic_review",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "gaitonde2019",
+      "citation": "Gaitonde DY, Ericksen A, Robbins RC. Patellofemoral Pain Syndrome. Am Fam Physician. 2019;99(2):88-94.",
+      "doi": null,
+      "pmid": null,
+      "pmcid": null,
+      "url": "https://www.aafp.org/afp/2019/0115/p88",
+      "type": "narrative_review",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "ferber2015",
+      "citation": "Ferber R, Bolgla L, Earl-Boehm JE, Emery C, Hamstra-Wright K. Strengthening of the Hip and Core Versus Knee Muscles for the Treatment of Patellofemoral Pain: A Multicenter Randomized Controlled Trial. J Athl Train. 2015;50(4):366-377.",
+      "doi": "10.4085/1062-6050-49.3.70",
+      "pmid": "25365133",
+      "pmcid": "PMC4560005",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4560005",
+      "type": "rct",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "raju2024",
+      "citation": "Raju A, Jayaraman K, Nuhmani S, Sebastian S, Khan M, Alghadir AH. Effects of hip abductor with external rotator strengthening versus proprioceptive training on pain and functions in patients with patellofemoral pain syndrome: A randomized controlled trial. Medicine (Baltimore). 2024;103(7):e37102.",
+      "doi": "10.1097/MD.0000000000037102",
+      "pmid": "38363950",
+      "pmcid": "PMC10869081",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10869081/",
+      "type": "rct",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "powers2014",
+      "citation": "Powers CM, Ho KY, Chen YJ, Souza RB, Farrokhi S. Patellofemoral joint stress during weight-bearing and non-weight-bearing quadriceps exercises. J Orthop Sports Phys Ther. 2014;44(5):320-327.",
+      "doi": "10.2519/jospt.2014.4936",
+      "pmid": "24673446",
+      "pmcid": null,
+      "url": "https://scholar.usuhs.edu/en/publications/patellofemoral-joint-stress-during-weight-bearing-and-non-weight-/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "rathleff2019",
+      "citation": "Rathleff MS, Graven-Nielsen T, Holmich P, et al. Activity Modification and Load Management of Adolescents With Patellofemoral Pain: A Prospective Intervention Study Including 151 Adolescents. Am J Sports Med. 2019;47(7):1629-1637. Abstract read via Europe PMC.",
+      "doi": "10.1177/0363546519843915",
+      "pmid": "31095417",
+      "pmcid": null,
+      "url": "https://doi.org/10.1177/0363546519843915",
+      "type": "observational",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "connell2020",
+      "citation": "Connell G, To D, Ashraf M, Verville L. Appraisal and summary of patellofemoral pain clinical practice guideline. J Can Chiropr Assoc. 2020;64(3):180-186.",
+      "doi": null,
+      "pmid": "33487639",
+      "pmcid": "PMC7815180",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7815180/",
+      "type": "secondary_guideline_summary",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "ophey2025",
+      "citation": "Ophey M, Koeter S, van Ooijen L, et al. Dutch multidisciplinary guideline on anterior knee pain: Patellofemoral pain and patellar tendinopathy. Knee Surg Sports Traumatol Arthrosc. 2025;33(2):457-469.",
+      "doi": "10.1002/ksa.12367",
+      "pmid": "39045713",
+      "pmcid": "PMC11792096",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11792096/",
+      "type": "clinical_practice_guideline",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "crossley2016b",
+      "citation": "Crossley KM, van Middelkoop M, Callaghan MJ, Collins NJ, Rathleff MS, Barton CJ. 2016 Patellofemoral pain consensus statement from the 4th International Patellofemoral Pain Research Retreat, Manchester. Part 2: recommended physical interventions (exercise, taping, bracing, foot orthoses and combined interventions). Br J Sports Med. 2016;50(14):844-852.",
+      "doi": "10.1136/bjsports-2016-096268",
+      "pmid": "27247098",
+      "pmcid": "PMC4975825",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4975825/",
+      "type": "consensus_statement",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "bolgla2018",
+      "citation": "Bolgla LA, Boling MC, Mace KL, DiStefano MJ, Fithian DC, Powers CM. National Athletic Trainers' Association Position Statement: Management of Individuals With Patellofemoral Pain. J Athl Train. 2018;53(9):820-836.",
+      "doi": "10.4085/1062-6050-231-15",
+      "pmid": "30372640",
+      "pmcid": "PMC6208300",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6208300/",
+      "type": "position_statement",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "neal2024",
+      "citation": "Neal BS, Lack SD, Bartholomew C, Morrissey D. Best practice guide for patellofemoral pain based on synthesis of a systematic review, the patient voice and expert clinical reasoning. Br J Sports Med. 2024;58(24):1486-1495.",
+      "doi": "10.1136/bjsports-2024-108110",
+      "pmid": "39401870",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/39401870/",
+      "type": "best_practice_guide",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "barton2015",
+      "citation": "Barton CJ, Lack S, Hemmings S, Tufail S, Morrissey D. The 'Best Practice Guide to Conservative Management of Patellofemoral Pain': incorporating level 1 evidence with expert clinical reasoning. Br J Sports Med. 2015;49(14):923-934.",
+      "doi": "10.1136/bjsports-2014-093637",
+      "pmid": "25716151",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/25716151/",
+      "type": "best_practice_guide",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "wallis2021",
+      "citation": "Wallis JA, Roddy L, Bottrell J, Parslow S, Taylor NF. A Systematic Review of Clinical Practice Guidelines for Physical Therapist Management of Patellofemoral Pain. Phys Ther. 2021;101(3):pzab021.",
+      "doi": "10.1093/ptj/pzab021",
+      "pmid": "33533400",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/33533400/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "blazey2024",
+      "citation": "Blazey P, Scott A, Ardern CL, Davis JC, Whittaker JL, Losciale JM, Khan KM. Consensus methods in patellofemoral pain: how rigorous are they? A scoping review. Br J Sports Med. 2024;58(13):733-744.",
+      "doi": "10.1136/bjsports-2023-107552",
+      "pmid": "38777386",
+      "pmcid": "PMC11228197",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11228197/",
+      "type": "scoping_review",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "farrokhi2025",
+      "citation": "Farrokhi S, Gorczynski S, Beisheim-Ryan E, Piva SR, Rhon DI, Willy RW, Pontillo M. Differences in content of care and outcomes between a clinical practice guideline adherent program and usual care for patellofemoral pain: A retrospective pilot study. PM R. 2025;17(5):485-495.",
+      "doi": "10.1002/pmrj.13298",
+      "pmid": "39749655",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/39749655/",
+      "type": "observational",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "beisheimryan2025",
+      "citation": "Beisheim-Ryan EH, Mauntel TC, Rhon DI, et al. Evaluating the Effectiveness of Clinical Practice Guideline Adherence for Patellofemoral Pain (knEE-CAPP): Protocol for a Multisite, Parallel-Arm Randomized Clinical Trial in the Military Health System. Phys Ther. 2025;105(12):pzaf138.",
+      "doi": "10.1093/ptj/pzaf138",
+      "pmid": "41273076",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/41273076/",
+      "type": "rct_protocol",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "willy2022",
+      "citation": "Willy RW, Hoglund LT, Glaviano NR, Bolgla LA, Bazett-Jones DM. Survey of confidence and knowledge to manage patellofemoral pain in readers versus nonreaders of the physical therapy clinical practice guideline. Phys Ther Sport. 2022;55:218-228.",
+      "doi": "10.1016/j.ptsp.2022.04.009",
+      "pmid": "35550496",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/35550496/",
+      "type": "observational",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "vicenzino2022",
+      "citation": "Vicenzino BT, Rathleff MS, Holden S, Maclachlan L, Smith BE, de Oliveira Silva D, van Middelkoop M. Developing Clinical and Research Priorities for Pain and Psychological Features in People With Patellofemoral Pain: An International Consensus Process With Health Care Professionals. J Orthop Sports Phys Ther. 2022;52(1):29-39.",
+      "doi": "10.2519/jospt.2022.10647",
+      "pmid": "34972490",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/34972490/",
+      "type": "consensus_statement",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "neal2022",
+      "citation": "Neal BS, Bartholomew C, Barton CJ, Morrissey D, Lack SD. Six Treatments Have Positive Effects at 3 Months for People With Patellofemoral Pain: A Systematic Review With Meta-analysis. J Orthop Sports Phys Ther. 2022;52(11):750-768.",
+      "doi": "10.2519/jospt.2022.11359",
+      "pmid": "36070427",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/36070427/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "nascimento2018",
+      "citation": "Nascimento LR, Teixeira-Salmela LF, Souza RB, Resende RA. Hip and Knee Strengthening Is More Effective Than Knee Strengthening Alone for Reducing Pain and Improving Activity in Individuals With Patellofemoral Pain: A Systematic Review With Meta-analysis. J Orthop Sports Phys Ther. 2018;48(1):19-31.",
+      "doi": "10.2519/jospt.2018.7365",
+      "pmid": "29034800",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/29034800/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "halabi2025",
+      "citation": "Halabi MH, Alturkistani BA, Abuhadi RH, Garout AN, et al. The Efficacy of Hip and Knee Muscles Strengthening Versus Knee Muscle Strengthening Alone in Managing Patellofemoral Pain Syndrome: A Systematic Review and Meta-Analysis. Musculoskeletal Care. 2025;23(1):e70059.",
+      "doi": "10.1002/msc.70059",
+      "pmid": "39934098",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/39934098/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "rogan2019",
+      "citation": "Rogan S, Haehni M, Luijckx E, Dealer J, et al. Effects of Hip Abductor Muscles Exercises on Pain and Function in Patients With Patellofemoral Pain: A Systematic Review and Meta-Analysis. J Strength Cond Res. 2019;33(11):3174-3187.",
+      "doi": "10.1519/JSC.0000000000002658",
+      "pmid": "30074970",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/30074970/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "contrerasmora2026",
+      "citation": "Contreras-Mora C, Cerrolaza-Tudanca S, Amor-Salamanca MS, Mendoza-Moron PA, et al. Effectiveness of Hip Muscle Strengthening Compared with Knee Strengthening or No Intervention in Individuals with Patellofemoral Pain Syndrome: A Systematic Review. Muscles. 2026;5(3).",
+      "doi": "10.3390/muscles5030066",
+      "pmid": "42784051",
+      "pmcid": "PMC13610369",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/42784051/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "hott2019",
+      "citation": "Hott A, Brox JI, Pripp AH, Juel NG, Paulsen G, Liavaag S. Effectiveness of Isolated Hip Exercise, Knee Exercise, or Free Physical Activity for Patellofemoral Pain: A Randomized Controlled Trial. Am J Sports Med. 2019;47(6):1312-1322.",
+      "doi": "10.1177/0363546519830644",
+      "pmid": "30958707",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/30958707/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "hott2020",
+      "citation": "Hott A, Brox JI, Pripp AH, Juel NG, Liavaag S. Patellofemoral pain: One year results of a randomized trial comparing hip exercise, knee exercise, or free activity. Scand J Med Sci Sports. 2020;30(4):741-753.",
+      "doi": "10.1111/sms.13613",
+      "pmid": "31846113",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/31846113/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "esculier2018",
+      "citation": "Esculier JF, Bouyer LJ, Dubois B, Fremont P, et al. Is combining gait retraining or an exercise programme with education better than education alone in treating runners with patellofemoral pain? A randomised clinical trial. Br J Sports Med. 2018;52(10):659-666.",
+      "doi": "10.1136/bjsports-2016-096988",
+      "pmid": "28476901",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/28476901/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "pazzinatto2026",
+      "citation": "Pazzinatto MF, Mazzella N, Souto LR, Collins NJ, et al. Is education effective for pain and function in patellofemoral pain or patellofemoral osteoarthritis? A systematic review with meta-analysis. Ann Phys Rehabil Med. 2026;69(7):102157.",
+      "doi": "10.1016/j.rehab.2026.102157",
+      "pmid": "42579894",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/42579894/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "deoliveirasilva2020",
+      "citation": "de Oliveira Silva D, Pazzinatto MF, Rathleff MS, Holden S, et al. Patient Education for Patellofemoral Pain: A Systematic Review. J Orthop Sports Phys Ther. 2020;50(7):388-396.",
+      "doi": "10.2519/jospt.2020.9400",
+      "pmid": "32349640",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/32349640/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "lopes2024",
+      "citation": "Lopes HS, Waiteman MC, Priore LB, Glaviano NR, et al. There is more to the knee joint than just the quadriceps: A systematic review with meta-analysis and evidence gap map of hamstring strength, flexibility, and morphology in individuals with gradual-onset knee disorders. J Sport Health Sci. 2024;13(4):521-536.",
+      "doi": "10.1016/j.jshs.2023.08.004",
+      "pmid": "37669706",
+      "pmcid": "PMC11184318",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11184318/",
+      "type": "systematic_review",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "harvie2011",
+      "citation": "Harvie D, O'Leary T, Kumar S. A systematic review of randomized controlled trials on exercise parameters in the treatment of patellofemoral pain: what works? J Multidiscip Healthc. 2011;4:383-392.",
+      "doi": "10.2147/JMDH.S24595",
+      "pmid": "22135495",
+      "pmcid": "PMC3215347",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3215347/",
+      "type": "systematic_review",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "jellad2021",
+      "citation": "Jellad A, Kalai A, Guedria M, Jguirim M, et al. Combined Hip Abductor and External Rotator Strengthening and Hip Internal Rotator Stretching Improves Pain and Function in Patients With Patellofemoral Pain Syndrome: A Randomized Controlled Trial With Crossover Design. Orthop J Sports Med. 2021;9(4):2325967121989729.",
+      "doi": "10.1177/2325967121989729",
+      "pmid": "33912615",
+      "pmcid": "PMC8050763",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8050763/",
+      "type": "rct",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "lee2021",
+      "citation": "Lee JH, Jang KM, Kim E, Rhim HC, et al. Static and Dynamic Quadriceps Stretching Exercises in Patients With Patellofemoral Pain: A Randomized Controlled Trial. Sports Health. 2021;13(5):482-489.",
+      "doi": "10.1177/1941738121993777",
+      "pmid": "33615901",
+      "pmcid": "PMC8404765",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/33615901/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "culvenor2020",
+      "citation": "Culvenor AG, van Middelkoop M, Macri EM, Crossley KM. Is patellofemoral pain preventable? A systematic review and meta-analysis of randomised controlled trials. Br J Sports Med. 2020.",
+      "doi": "10.1136/bjsports-2020-102973",
+      "pmid": "33115705",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/33115705/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "alexander2022",
+      "citation": "Alexander JLN, Culvenor AG, Johnston RRT, Ezzat AM, et al. Strategies to prevent and manage running-related knee injuries: a systematic review of randomised controlled trials. Br J Sports Med. 2022;56(22):1307-1319.",
+      "doi": "10.1136/bjsports-2022-105553",
+      "pmid": "36150753",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/36150753/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "hart2022",
+      "citation": "Hart HF, Patterson BE, Crossley KM, Culvenor AG, et al. May the force be with you: understanding how patellofemoral joint reaction force compares across different activities and physical interventions-a systematic review and meta-analysis. Br J Sports Med. 2022;56(9):521-530.",
+      "doi": "10.1136/bjsports-2021-104686",
+      "pmid": "35115309",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/35115309/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "glaviano2022",
+      "citation": "Glaviano NR, Bazett-Jones DM, Boling MC. Pain severity during functional activities in individuals with patellofemoral pain: A systematic review with meta-analysis. J Sci Med Sport. 2022;25(5):399-406.",
+      "doi": "10.1016/j.jsams.2022.01.004",
+      "pmid": "35190263",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/35190263/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "deoliveira2023",
+      "citation": "de Oliveira NT, Lopez P, Severo-Silveira L, Almeida GPL, et al. Dose-response effect of lower limb resistance training volume on pain and function of women with patellofemoral pain: A systematic review and meta-regression. Phys Ther Sport. 2023;63:95-103.",
+      "doi": "10.1016/j.ptsp.2023.07.006",
+      "pmid": "37542832",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/37542832/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "severosilveira2026",
+      "citation": "Severo-Silveira L, Garcia E, Viana-Dias JD, Roberti LS, Serrao FV, Baroni BM. Single-set versus three-set resistance training in the management of women with patellofemoral pain: A randomized clinical trial. Braz J Phys Ther. 2026;30(4):101599.",
+      "doi": "10.1016/j.bjpt.2026.101599",
+      "pmid": "42155315",
+      "pmcid": "PMC13213771",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13213771/",
+      "type": "rct",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "young2018",
+      "citation": "Young JL, Rhon DI, Cleland JA, Snodgrass SJ. The Influence of Exercise Dosing on Outcomes in Patients With Knee Disorders: A Systematic Review. J Orthop Sports Phys Ther. 2018;48(3):146-161.",
+      "doi": "10.2519/jospt.2018.7637",
+      "pmid": "29320945",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/29320945/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "holden2018",
+      "citation": "Holden S, Rathleff MS, Jensen MB, Barton CJ. How can we implement exercise therapy for patellofemoral pain if we don't know what was prescribed? A systematic review. Br J Sports Med. 2018;52(6):385.",
+      "doi": "10.1136/bjsports-2017-097547",
+      "pmid": "29084726",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/29084726/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "gunhamn2025",
+      "citation": "Gunhamn T, Pojskic H, Augustsson SR. Knee extensor training in patients with patellofemoral pain: a systematic review and synthesis. Front Rehabil Sci. 2025;6:1641054.",
+      "doi": "10.3389/fresc.2025.1641054",
+      "pmid": "40861009",
+      "pmcid": "PMC12377044",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12377044/",
+      "type": "systematic_review",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "dischiavi2021",
+      "citation": "Dischiavi SL, Wright AA, Tarara DT, Bleakley CM. Do exercises for patellofemoral pain reflect common injury mechanisms? A systematic review. J Sci Med Sport. 2021;24(3):229-240.",
+      "doi": "10.1016/j.jsams.2020.09.001",
+      "pmid": "32978070",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/32978070/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "wang2024",
+      "citation": "Wang Y, Li H, Zhang D, Zhao T, et al. Core Training for Pain Management and Functional Improvement in Patients With Patellofemoral Pain Syndrome: A Systematic Review and Meta-analysis. Am J Phys Med Rehabil. 2024;103(12):1094-1103.",
+      "doi": "10.1097/PHM.0000000000002513",
+      "pmid": "38684137",
+      "pmcid": "PMC11610919",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/38684137/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "nunes2023",
+      "citation": "Nunes GS, de Oliveira J, Iacob GS, Signori LU, et al. Effectiveness of Interventions Aimed at Changing Movement Patterns in People With Patellofemoral Pain: A Systematic Review With Network Meta-analysis. J Orthop Sports Phys Ther. 2023;53(12):748-760.",
+      "doi": "10.2519/jospt.2023.11956",
+      "pmid": "37707784",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/37707784/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "souto2024",
+      "citation": "Souto LR, De Oliveira Silva D, Pazzinatto MF, Siqueira MS, et al. Are adjunct treatments effective in improving pain and function when added to exercise therapy in people with patellofemoral pain? Br J Sports Med. 2024;58(14):792-804.",
+      "doi": "10.1136/bjsports-2024-108145",
+      "pmid": "38889956",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/38889956/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "smith2015",
+      "citation": "Smith TO, Drew BT, Meek TH, Clark AB. Knee orthoses for treating patellofemoral pain syndrome. Cochrane Database Syst Rev. 2015;12:CD010513.",
+      "doi": "10.1002/14651858.CD010513.pub2",
+      "pmid": "26645724",
+      "pmcid": "PMC8763348",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/26645724/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "callaghan2012",
+      "citation": "Callaghan MJ, Selfe J. Patellar taping for patellofemoral pain syndrome in adults. Cochrane Database Syst Rev. 2012;4:CD006717.",
+      "doi": "10.1002/14651858.CD006717.pub2",
+      "pmid": "22513943",
+      "pmcid": "PMC11831247",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/22513943/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "hossain2011",
+      "citation": "Hossain M, Alexander P, Burls A, Jobanputra P. Foot orthoses for patellofemoral pain in adults. Cochrane Database Syst Rev. 2011;1:CD008402.",
+      "doi": "10.1002/14651858.CD008402.pub2",
+      "pmid": "21249707",
+      "pmcid": "PMC13061357",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/21249707/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "martimbianco2017",
+      "citation": "Martimbianco ALC, Torloni MR, Andriolo BN, Porfirio GJ, et al. Neuromuscular electrical stimulation (NMES) for patellofemoral pain syndrome. Cochrane Database Syst Rev. 2017;12:CD011289.",
+      "doi": "10.1002/14651858.CD011289.pub2",
+      "pmid": "29231243",
+      "pmcid": "PMC6486051",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/29231243/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "neal2019",
+      "citation": "Neal BS, Lack SD, Lankhorst NE, Raye A, et al. Risk factors for patellofemoral pain: a systematic review and meta-analysis. Br J Sports Med. 2019;53(5):270-281.",
+      "doi": "10.1136/bjsports-2017-098890",
+      "pmid": "30242107",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/30242107/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "saltychev2018",
+      "citation": "Saltychev M, Dutton RA, Laimi K, Beaupre GS, et al. Effectiveness of conservative treatment for patellofemoral pain syndrome: A systematic review and meta-analysis. J Rehabil Med. 2018;50(5):393-401.",
+      "doi": "10.2340/16501977-2295",
+      "pmid": "29392329",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/29392329/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "hou2026",
+      "citation": "Hou C, Liu Z, Wang C, Wang J, et al. Effects of blood flow restriction exercise interventions on patellofemoral pain syndrome: a systematic review and meta-analysis. Front Physiol. 2026;17:1859305.",
+      "doi": "10.3389/fphys.2026.1859305",
+      "pmid": "42394841",
+      "pmcid": "PMC13322932",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/42394841/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "neal2025",
+      "citation": "Neal BS, Bolgla LA, Lack SD, Bazett-Jones DM, et al. Prognosis of Patellofemoral Pain: A Systematic Review With Evidence- and Gap-Map. J Orthop Sports Phys Ther. 2025;55(10):661-670.",
+      "doi": "10.2519/jospt.2025.13491",
+      "pmid": "40996335",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/40996335/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "briani2026",
+      "citation": "Briani RV, Hoglund L, Waiteman MC, Arin-Bal G, et al. Bridging the Gap: A Systematic Evidence and Gap Map of Risk Factors and Preventive Strategies for Patellofemoral Pain. J Orthop Sports Phys Ther. 2026;56(2):85-97.",
+      "doi": "10.2519/jospt.2025.13489",
+      "pmid": "41620838",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/41620838/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "nunes2026",
+      "citation": "Nunes GS, Solner MW, de Oliveira J, Wageck B, Dangui AJM. A Systematic Review with Meta-analysis of the Association between Changes in Muscle Strength and Clinical Outcome Changes in Patellofemoral Pain. Sports Med. 2026;56(11):2717-2731.",
+      "doi": "10.1007/s40279-026-02473-w",
+      "pmid": "42301594",
+      "pmcid": "PMC13672437",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13672437/",
+      "type": "systematic_review",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "park2026",
+      "citation": "Park JY, Lee S, Kim JM, Lee SH, et al. Digital therapeutic combining exercise and cognitive-behavioural therapy reduces pain in patients with chronic patellofemoral pain: a multicentre randomised controlled trial. Br J Sports Med. 2026;60(20):1551-1559.",
+      "doi": "10.1136/bjsports-2025-110863",
+      "pmid": "42692805",
+      "pmcid": "PMC13691719",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13691719/",
+      "type": "rct",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "hansen2023",
+      "citation": "Hansen R, Brushoj C, Rathleff MS, Magnusson SP, Henriksen M. Quadriceps or hip exercises for patellofemoral pain? A randomised controlled equivalence trial. Br J Sports Med. 2023;57(20):1287-1294.",
+      "doi": "10.1136/bjsports-2022-106197",
+      "pmid": "37137673",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/37137673/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "hansen2024",
+      "citation": "Hansen R, Rathleff MS, Brushoj C, Magnusson SP, Henriksen M. Differential Effects of Quadriceps and Hip Muscle Exercises for Patellofemoral Pain: A Secondary Effect Modifier Analysis of a Randomized Trial. J Orthop Sports Phys Ther. 2024;54(11):732-742.",
+      "doi": "10.2519/jospt.2024.12503",
+      "pmid": "39478429",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/39478429/",
+      "type": "rct_secondary_analysis",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "vasconcelos2024",
+      "citation": "Vasconcelos GS, Nunes GS, Munhoz RF, da Silva MECB, Pisani GK, Luz BC, Serrao FV. Is strength and power training targeting hip and knee muscles superior to strength training in individuals with patellofemoral pain? Proof of concept study. Sci Rep. 2024;14:27450.",
+      "doi": "10.1038/s41598-024-78074-2",
+      "pmid": "39523423",
+      "pmcid": "PMC11551199",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11551199/",
+      "type": "rct",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "chen2026",
+      "citation": "Chen CL, Lo SF, Chiu MC, Chang CC, Hong WH. Refining Home-Based Squat Training: The Role of Hip Adduction in Improving Neuromuscular Control for Clinically Diagnosed Patellofemoral Pain Syndrome. Med Sci Monit. 2026;32:e953994.",
+      "doi": "10.12659/MSM.953994",
+      "pmid": "42864886",
+      "pmcid": "PMC13676067",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13676067/",
+      "type": "rct",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "song2009",
+      "citation": "Song CY, Lin YF, Wei TC, Lin DH, Yen TY, Jan MH. Surplus value of hip adduction in leg-press exercise in patients with patellofemoral pain syndrome: a randomized controlled trial. Phys Ther. 2009;89(5):409-418.",
+      "doi": "10.2522/ptj.20080195",
+      "pmid": "19299508",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19299508/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "peng2015",
+      "citation": "Peng HT, Song CY. Effect of leg press training on patellar realignment in patients with patellofemoral pain. J Phys Ther Sci. 2015;27(12):3873-3878.",
+      "doi": "10.1589/jpts.27.3873",
+      "pmid": "26834371",
+      "pmcid": "PMC4713810",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4713810/",
+      "type": "rct",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "giles2017",
+      "citation": "Giles L, Webster KE, McClelland J, Cook JL. Quadriceps strengthening with and without blood flow restriction in the treatment of patellofemoral pain: a double-blind randomised trial. Br J Sports Med. 2017;51(23):1688-1694.",
+      "doi": "10.1136/bjsports-2016-096329",
+      "pmid": "28500081",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/28500081/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "kong2025",
+      "citation": "Kong W, Wang Z, Zhou Q, Yan X, Li J, Zhao Y, Wang X, Wang H, Ni G. Comparing the Impact of Intermittent Blood Flow Restriction Training and High-Load Resistance Training in Individuals With Patellofemoral Pain: A Randomized Controlled Trial. Arch Phys Med Rehabil. 2025;106(12):1789-1797.",
+      "doi": "10.1016/j.apmr.2025.06.003",
+      "pmid": "40527370",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/40527370/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "lee2026",
+      "citation": "Lee J, Kwon H, Lee Y. Low-Intensity Blood Flow-Restricted Multi-Joint Exercise Improves Muscle Function in Patients With Patellofemoral Pain Syndrome: A Randomized Trial. Med Sci Monit. 2026;32:e950516.",
+      "doi": "10.12659/MSM.950516",
+      "pmid": "41606964",
+      "pmcid": "PMC12866272",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12866272/",
+      "type": "rct",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "xiong2025",
+      "citation": "Xiong Z, Zheng W, Wang H, Gao Y, Wang C. Effects of functional strength training on pain, function, and lower extremity biomechanics in patients with patellofemoral pain syndrome: a randomized clinical trial. J Orthop Surg Res. 2025;20:50.",
+      "doi": "10.1186/s13018-025-05482-z",
+      "pmid": "39825450",
+      "pmcid": "PMC11740520",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11740520/",
+      "type": "rct",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "xiao2026",
+      "citation": "Xiao Y, Xiong Z. Effects of foot core training combined with hip and knee strengthening on patients with patellofemoral pain: a randomized controlled trial. BMC Musculoskelet Disord. 2026;27:536.",
+      "doi": "10.1186/s12891-026-09914-7",
+      "pmid": "42063015",
+      "pmcid": "PMC13295930",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13295930/",
+      "type": "rct",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "kamel2024",
+      "citation": "Kamel AM, Ghuiba K, Abd Allah DS, Fayaz NA, Abdelkader NA. Effect of adding short foot exercise to hip and knee focused exercises in treatment of patients with patellofemoral pain syndrome: a randomized controlled trial. J Orthop Surg Res. 2024;19:207.",
+      "doi": "10.1186/s13018-024-04688-x",
+      "pmid": "38561773",
+      "pmcid": "PMC10983661",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10983661/",
+      "type": "rct",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "hasan2025",
+      "citation": "Hasan S. The effect of patellar taping combined with isometric strength training on pain, muscle strength, and functional performance in patients with patellofemoral pain syndrome: a randomized comparative study. PeerJ. 2025;13:e19381.",
+      "doi": "10.7717/peerj.19381",
+      "pmid": "40376557",
+      "pmcid": "PMC12080477",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12080477/",
+      "type": "rct",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "rabelo2017",
+      "citation": "Rabelo NDDA, Costa LOP, Lima BM, Dos Reis AC, Bley AS, Fukuda TY, Lucareli PRG. Adding motor control training to muscle strengthening did not substantially improve the effects on clinical or kinematic outcomes in women with patellofemoral pain: A randomised controlled trial. Gait Posture. 2017;58:280-286.",
+      "doi": "10.1016/j.gaitpost.2017.08.018",
+      "pmid": "28841508",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/28841508/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "holden2021",
+      "citation": "Holden S, Matthews M, Rathleff MS, Kasza J, Vicenzino B. How Do Hip Exercises Improve Pain in Individuals With Patellofemoral Pain? Secondary Mediation Analysis of Strength and Psychological Factors as Mechanisms. J Orthop Sports Phys Ther. 2021;51(12):602-610.",
+      "doi": "10.2519/jospt.2021.10674",
+      "pmid": "34847699",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/34847699/",
+      "type": "rct_secondary_analysis",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "fukuda2012",
+      "citation": "Fukuda TY, Melo WP, Zaffalon BM, Rossetto FM, Magalhaes E, Bryk FF, Martin RL. Hip posterolateral musculature strengthening in sedentary women with patellofemoral pain syndrome: a randomized controlled clinical trial with 1-year follow-up. J Orthop Sports Phys Ther. 2012;42(10):823-830.",
+      "doi": "10.2519/jospt.2012.4184",
+      "pmid": "22951491",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/22951491/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "khayambashi2014",
+      "citation": "Khayambashi K, Fallah A, Movahedi A, Bagwell J, Powers C. Posterolateral hip muscle strengthening versus quadriceps strengthening for patellofemoral pain: a comparative control trial. Arch Phys Med Rehabil. 2014;95(5):900-907.",
+      "doi": "10.1016/j.apmr.2013.12.022",
+      "pmid": "24440362",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/24440362/",
+      "type": "controlled_trial",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "steinkamp1993",
+      "citation": "Steinkamp LA, Dillingham MF, Markel MD, Hill JA, Kaufman KR. Biomechanical considerations in patellofemoral joint rehabilitation. Am J Sports Med. 1993;21(3):438-444.",
+      "doi": "10.1177/036354659302100319",
+      "pmid": "8346760",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/8346760/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "escamilla1998",
+      "citation": "Escamilla RF, Fleisig GS, Zheng N, Barrentine SW, Wilk KE, Andrews JR. Biomechanics of the knee during closed kinetic chain and open kinetic chain exercises. Med Sci Sports Exerc. 1998;30(4):556-569.",
+      "doi": "10.1097/00005768-199804000-00014",
+      "pmid": "9565938",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/9565938/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "escamilla2008",
+      "citation": "Escamilla RF, Zheng N, Macleod TD, Edwards WB, Hreljac A, Fleisig GS, Wilk KE, Moorman CT 3rd, Imamura R, Andrews JR. Patellofemoral joint force and stress between a short- and long-step forward lunge. J Orthop Sports Phys Ther. 2008;38(11):681-690.",
+      "doi": "10.2519/jospt.2008.2694",
+      "pmid": "18978453",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/18978453/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "escamilla2009",
+      "citation": "Escamilla RF, Zheng N, Macleod TD, Edwards WB, Imamura R, Hreljac A, Fleisig GS, Wilk KE, Moorman CT 3rd, Andrews JR. Patellofemoral joint force and stress during the wall squat and one-leg squat. Med Sci Sports Exerc. 2009;41(4):879-888.",
+      "doi": "10.1249/MSS.0b013e31818e7ead",
+      "pmid": "19276845",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19276845/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "escamilla2022a",
+      "citation": "Escamilla R, Zheng N, MacLeod TD, Imamura R, Wilk KE, Wang S, Rubenstein I, Yamashiro K, Fleisig GS. Patellofemoral Joint Loading During the Performance of the Forward and Side Lunge with Step Height Variations. Int J Sports Phys Ther. 2022;17(2):174-184.",
+      "doi": "10.26603/001c.31876",
+      "pmid": "35136686",
+      "pmcid": "PMC8805090",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8805090/",
+      "type": "biomechanical",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "escamilla2022b",
+      "citation": "Escamilla RF, Zheng N, MacLeod TD, Imamura R, Wang S, Wilk KE, Yamashiro K, Fleisig GS. Patellofemoral Joint Loading in Forward Lunge With Step Length and Height Variations. J Appl Biomech. 2022;38(4):210-220.",
+      "doi": "10.1123/jab.2021-0313",
+      "pmid": "35697336",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/35697336/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "escamilla2023",
+      "citation": "Escamilla RF, Zheng N, Macleod TD, Imamura R, Wilk KE, Wang S, Yamashiro K, Escamilla IM, Fleisig GS. Patellofemoral Joint Loading during the Performance of the Wall Squat and Ball Squat with Heel-to-Wall-Distance Variations. Med Sci Sports Exerc. 2023;55(9):1592-1600.",
+      "doi": "10.1249/MSS.0000000000003185",
+      "pmid": "37057713",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/37057713/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "escamilla2025",
+      "citation": "Escamilla R, Zheng N, MacLeod TD, Imamura R, Wilk KE, Wang S, Asuncion R, Thompson IS, Aguinaldo AL, Fleisig GS. Patellofemoral Joint Loading During Bodyweight One-Legged and Two-Legged BOSU and Floor Squats. Int J Sports Phys Ther. 2025;20(2):199-209.",
+      "doi": "10.26603/001c.128628",
+      "pmid": "39906057",
+      "pmcid": "PMC11788085",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11788085/",
+      "type": "biomechanical",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "goulette2021",
+      "citation": "Goulette D, Griffith P, Schiller M, Rutherford D, Kernozek TW. Patellofemoral joint loading during the forward and backward lunge. Phys Ther Sport. 2021;47:178-184.",
+      "doi": "10.1016/j.ptsp.2020.12.001",
+      "pmid": "33310585",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/33310585/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "hofmann2017",
+      "citation": "Hofmann CL, Holyoak DT, Juris PM. Trunk and Shank Position Influences Patellofemoral Joint Stress in the Lead and Trail Limbs During the Forward Lunge Exercise. J Orthop Sports Phys Ther. 2017;47(1):31-40.",
+      "doi": "10.2519/jospt.2017.6336",
+      "pmid": "27814666",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/27814666/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "zavala2021",
+      "citation": "Zavala L, Flores V, Cotter JA, Becker J. Patellofemoral joint kinetics in females when using different depths and loads during the barbell back squat. Eur J Sport Sci. 2021;21(7):976-984.",
+      "doi": "10.1080/17461391.2020.1806935",
+      "pmid": "32781938",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/32781938/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "ishida2025",
+      "citation": "Ishida T, Ueno R, Kitamura Y, Yamakawa Y, Samukawa M, Tohyama H. The Effect of Real-Time Feedback Regarding the Center-of-Pressure Position on Patellofemoral Joint Loading During Double-leg Squatting. Orthop J Sports Med. 2025;13(3):23259671251319526.",
+      "doi": "10.1177/23259671251319526",
+      "pmid": "40052186",
+      "pmcid": "PMC11881122",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11881122/",
+      "type": "biomechanical",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "willy2025",
+      "citation": "Willy RW, Simon JE, Hanser B, Plemmons M, Christensen K, Klawitter L, Doutt A, Ruby BC. Females exhibit greater peak and cumulative patellofemoral joint stress with moderate and heavy load carriage compared with males. Eur J Sport Sci. 2025;25(10):e70046.",
+      "doi": "10.1002/ejsc.70046",
+      "pmid": "40906825",
+      "pmcid": "PMC12410583",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12410583/",
+      "type": "biomechanical",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "yang2025",
+      "citation": "Yang Y, Zhao Z, Zhang H, Zhou F, Liu X. Impact of stair climbing volume on patellofemoral cartilage: a dose-response analysis from the osteoarthritis initiative reveals elevated risk at middle levels. Front Med. 2025;12:1699297.",
+      "doi": "10.3389/fmed.2025.1699297",
+      "pmid": "41368303",
+      "pmcid": "PMC12682809",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12682809/",
+      "type": "observational",
+      "accessLevel": "full_text"
+    }
   ],
-  "limitations": "Overall evidence is low. Cochrane rates every main outcome as very low quality, and the 2021 network meta-analysis rates most comparisons low to very low, with education possibly as effective as exercise alone at 3 months. The full APTA guideline, the full 2018 consensus and NICE guidance were not read: the guideline and consensus publisher pages refused access, and no NICE page for this condition was opened. Guideline content therefore comes from the PubMed record and an AAFP summary, without individual recommendation grades. No exercise is established as superior, and the 2021 analysis suggests the body region exercised may not matter, against the hip-plus-knee preference of the consensus and Cochrane. Doses are what individual trials used, usually within supervised programmes, and are not validated optimal doses. The guideline summary reports higher volumes work best, for example 3 sets of 30 or more reps 3 times weekly as tolerated, without tying that volume to one exercise; its preceding sentence lists single-leg squats, step downs, squats, lunges and band hip exercises, and it says the guideline does not recommend specific programmes. Parts of the trial data were extracted by an automated page-reading tool and were not checked line by line, and the final 2,300 characters of the Cochrane page were not read. Null sets means the source gave no usable per-exercise value. No evidence-based pain threshold for continuing exercise was found. The biomechanical limits come from 10 healthy people and estimate joint stress, not clinical outcomes. Red flags come from clinical reviews and are not validated screening rules. This is general information and not diagnosis or treatment.",
+  "limitations": "Overall evidence stays low. Cochrane rates every main outcome very low; the Dutch guideline rates exercise evidence low in its full text and very low in a searcher's reading of its abstract; the 2021 network meta-analysis is low to very low except one moderate comparison. A 2026 systematic review (Contreras-Mora) rates strengthening evidence moderate, from its abstract only, and a core training review grades short-term function high, but these do not lift the whole body of evidence. ACCESS: the full APTA guideline (Willy 2019) was still not read: jospt.org returned HTTP 403, and its PubMed abstract contains no recommendations. All APTA grades here come through Connell 2020, a third-party appraisal narrowed to chiropractic scope, or Marra 2020; they must be checked against the original before being quoted as primary. No secondary summary could be replaced for that reason; the Dutch guideline, read in the original, was added alongside them. The 2018 consensus and Neal 2024 remain abstract only (HTTP 403). No NICE content was read (cks.nice.org.uk returned 403; NICE search reported 4 unread results), and the AAOS guideline index was not checked, so absence of those guidelines is not established. Cochrane was reached through PMC; one searcher read the first 200,000 of 502,300 characters, an earlier pass reported all but 2,300 characters, and another searcher got only the abstract and summary through a failed route. Several other full texts were read by targeted passage or missed final sections. Supplements or linked protocols holding exercise details for Xiong 2025, Xiao 2026 and Vasconcelos 2024 were not read. Marra 2020, Gaitonde 2019, Ferber 2015 and Raju 2024 were reopened by the independent check. CONTRADICTIONS. Hip plus knee: favoured by Cochrane, the 2016 and 2018 consensus statements, Nascimento 2018, Halabi 2025 and Neal 2022 (SMD 1.02 for pain), but Hansen 2023 found quadriceps and hip programmes equivalent, Hott 2019 and 2020 found neither beat free activity plus education, Winters 2021 found no winner, and Neal 2024 frames care as knee with or without hip. Khayambashi 2014 favoured hip over quadriceps, against Hansen 2023. Sequencing: NATA recommends 3 weeks of isolated gluteal work first (SOR B), while trials of targeted programmes show no clear overall advantage. Mechanism: Nascimento 2018 and Holden 2021 found benefit without strength change or mediation, whereas Nunes 2026 found strong correlations between strength and pain change (r -0.75 and -0.91), and it cannot show cause. Hip weakness: not a risk factor (Neal 2019; NATA), and higher hip abduction strength was a risk factor in adolescents, although hip strengthening helps. Education: Winters 2021 and Esculier 2018 show education close to exercise at some time points, whereas Pazzinatto 2026 found education worse than exercise overall, though not when delivered by a health professional. Its pain CI is printed in PubMed as 1.46 (0.6 to 2.56), which is asymmetric. Volume: de Oliveira 2023's exploratory meta-regression favours 17 to 27 sets per session for function only, whereas Severo-Silveira 2026 found 1 set matched 3 and Young 2018 found no dosing trend. Marra 2020's statement that higher volumes work best is likewise unsupported by the latter two. Passive care: the APTA guideline as restated gives dry needling and isolated manual therapy grade A against, while the 2018 consensus calls dry needling uncertain, Neal 2022 reports SMD 2.30 for lower-quadrant manual therapy on function, and Neal 2024 lists manual therapy as a support. Orthoses: APTA grade A short term, consensus supported, but the Dutch guideline allows them only after 6 weeks without clinically relevant change, and a Cochrane orthoses review found no added benefit over physiotherapy. Braces: APTA grade B against and null as a treatment adjunct, yet braces lowered onset in a prevention review (RR 0.40). Taping: APTA grade B tailored use and Wallis 2021 consistent, against Souto 2024 and Callaghan 2012 null. Visual feedback: NATA SOR A for movement retraining against APTA grade B against visual biofeedback during exercise. Depth: modelled limits and SOR C guidance suggest 0 to 45 degrees weight bearing and 90 to 45 non-weight bearing, while trials using about 90 degrees to near-full extension improved. Hip adduction: Chen 2026 positive against Song 2009 null. Saltychev 2018 is dissenting: over 80% of 37 trials showed no clinically significant benefit. Cochrane's hip plus knee estimate is -2.20 in its abstract and -2.02 in its summary table, with the same CI, which fits -2.20. Registration: Xiong 2025 and Xiao 2026 give the same trial number, ChiCTR2400087664, for trials that appear different, which is unresolved. PROCESS: Blazey 2024 found only 2 of 22 consensus panels included a patient and 7 of 22 reported an established method. CPG adherence has no randomised outcomes yet: Farrokhi 2025 is a retrospective pilot with missing data and a guideline author, and knEE-CAPP is a protocol. DOSES are what individual trials used, usually supervised; none is a validated optimum. Holden 2018 found no trial reported a complete prescription, and Gunhamn 2025's medians describe habit rather than efficacy. The Hasan 2025 doses should be treated with caution. Null sets means the source gave no usable per-exercise value, and the isometric quadriceps setting hold remains unreported. No evidence-based pain threshold exists: the figures here are trial rules. Harm data are thin: Winters 2021 dropped adverse events for lack of data, and few trials recorded them actively. Biomechanical limits come largely from uninjured people and estimate stress, not outcomes. Stretching evidence is indirect or bundled. Most stretch and hip data are short term, and Neal 2022 found no intervention adequately tested beyond 3 months. Rathleff 2019 was uncontrolled and covers ages 10 to 14 only. Blood flow restriction, covered by Hou 2026 and trials, needs a cuff and is not an unsupervised app option. Red flags come from clinical reviews and guideline restatements and are not validated screening rules. An independent check then opened every source; see verification for its limits. This is general information and not diagnosis or treatment.",
   "verification": {
-    "sourcesChecked": 11,
+    "sourcesChecked": 92,
     "itemsRemoved": [
       {
-        "item": "Diagnosis claim that the condition depends on excluding other causes",
-        "reason": "Not supported. gaitonde2019 says it is a clinical diagnosis and that imaging may help rule out other causes; crossley2016 and marra2020 as opened do not state this requirement."
+        "item": "Wall mini-squat to 45 degrees: \"Keep the heels away from the wall\" cue, with its escamilla2023 citation",
+        "reason": "escamilla2023 found the heel-distance difference only at 90 and 100 degrees on ascent, and escamilla2009 found farther feet loading more at 60 degrees. Nothing supports the cue for a squat limited to 45 degrees."
+      },
+      {
+        "item": "Activities row: sitting provokes pain \"despite low load\"",
+        "reason": "glaviano2022 reports greater pain in sitting on limited evidence and says nothing about load; no cited source does."
       }
     ],
-    "labelsCorrected": [
-      "No strength label or evidence grade needed changing.",
-      "rathleff2019 citation: added volume, issue and pages from PubMed.",
-      "Hamstring stretch frequency: replaced 'not extracted' with the schedule Cochrane tabulates for Avraham 2007.",
-      "Limitations: 'without naming exercises' was misleading, because marra2020 lists exercises in the preceding sentence.",
-      "Markdown winters2021 summary: exercise beat wait-and-see for any improvement only, not pain intensity."
+    "valuesCorrected": [
+      "gunhamn2025 knee extension median intensity: 70 to 80% of 1RM changed to 70% of 1RM, range bodyweight to 80%.",
+      "ophey2025 additional treatments: after 6 to 12 weeks changed to after 6 weeks, as the guideline states for patellofemoral pain.",
+      "ophey2025 survey: 52 respondents split into 43 patellofemoral pain and 9 patellar tendinopathy; the 12 (40%) dissatisfied are patellofemoral pain patients.",
+      "holden2021 -0.13 (-0.49 to 0.23) relabelled: it is abduction strength on pain-free squats, not pain.",
+      "deoliveira2023 17 to 27 sets relabelled as function only; the paper found no volume association with pain.",
+      "ishida2025 9% relabelled as peak stress; the at-90-degrees figure in the paper is reaction force, 11%.",
+      "gaitonde2019 four to eight weeks relabelled: it is when imaging may help, not a return-to-clinician rule.",
+      "Stretch frequency (3 exercises): \"not stated separately\" changed to 2 times per week to daily, from harvie2011 Table 2; hamstring entry adds gaitonde2019 flexibility schedule.",
+      "ferber2015 single-leg squat start week: not confirmed changed to week 3. Partial squat: 30-second holds in week 2 added to \"no hold\".",
+      "hasan2025 quadriceps isometric: machine-based maximal contractions, bodyweightOrHold changed to false. Hip abduction: supine at 60 degrees against a therapist, bodyweightOrHold changed to false. Pillow squeeze: general 5-second instruction noted.",
+      "Deep wall squats: escamilla2023 loading limited to 90 and 100 degrees on ascent, with the reversal at 60 degrees from escamilla2009 added.",
+      "One-legged squats: \"bodyweight only\" limited to escamilla2025, since escamilla2009 used a 12-repetition maximum.",
+      "rathleff2019: 4 weeks of activity modification restated as the opening of a 12-week programme.",
+      "jellad2021: \"unblinded\" changed to single-blinded with participants not blinded.",
+      "accessLevel of marra2020, gaitonde2019, ferber2015 and raju2024: not_reconfirmed changed to full_text, all reopened.",
+      "connell2020 markdown link changed from PubMed to the PMC url in the JSON."
     ],
     "unverifiable": [
-      "ferber2015 prints the first step-down height as '4-in [3.6-cm]', which is internally inconsistent, so the true height is uncertain.",
-      "Full text of willy2019 and collins2018 was not opened; only their abstracts were checked, so their claims here rest on the abstracts."
+      "Sources marked abstract_only, including collins2018, neal2024 and willy2019, were checked against the abstract only. Willy 2019 holds no recommendations in its abstract, so every APTA grade rests on connell2020 or marra2020.",
+      "Full texts were searched for the claims made and not read end to end. cochrane2015 was queried across characters 0 to 500,000 of 502,300.",
+      "contrerasmora2026, wang2024 and hou2026 have PMC copies but stay abstract_only because their claims were checked only against the abstract.",
+      "Publisher pages at BMJ and JOSPT were not opened. Their DOIs redirect and match the PubMed records, but that does not confirm the landing page.",
+      "ferber2015 prints step height as 4-inch (3.6 cm), which is internally inconsistent, so the true height is uncertain.",
+      "hasan2025 being implausibly large is this report's judgement (AKPS +38 in 6 weeks, in Table 4), not a statement by the paper.",
+      "ophey2025 abstract gives very low and low GRADE for the two conditions without clearly mapping them; its text gives low for exercise in patellofemoral pain."
     ]
   }
 }

@@ -1,115 +1,392 @@
-# Piriformis syndrome: exercise evidence
+# Piriformis syndrome (deep gluteal syndrome): exercise evidence review
 
 General information for a workout app that works around a condition. This is not treatment or diagnosis.
 
 **Overall evidence grade for exercise guidance: very low.** This is a judgement made for this review, not a formal GRADE assessment.
 
-## What the evidence supports
+**Bottom line.** No guideline tells anyone how to exercise with this condition. Physical therapy is the agreed first step, but its type and dose are not specified. Stretching may help, mainly as part of a wider programme, and the only trial of the closest thing to a figure-four stretch found no pain benefit over hot pack and TENS. No dose has been shown to be better than another.
 
-- Stretching, especially as part of a wider program with strengthening, may improve pain, range of motion and function. The newest systematic review covers 12 studies and 572 participants, only 4 of them randomized trials, and was too heterogeneous for meta-analysis (Aali 2026).
-- A systematic review of deep gluteal syndrome rated overall evidence as low and recommended following general back pain and sciatica guidance, namely physiotherapy, as first-line care (Hopayian 2023). Its included conservative trials were injection-based.
-- Exercise and dry needling did not differ at 1 and 3 months in a 44-patient non-randomized comparison. It had no untreated control, so it does not show exercise works (Guner 2023).
-- One narrative review notes that only one randomized physiotherapy trial was known to it and that no study compared exercise with another treatment (Külcü 2024). Guner 2023 and Aali 2026 suggest this is now out of date, but the base remains thin.
+## Scope and search log
 
-## Is the diagnosis contested?
+**Question.** What do guidelines, trials and biomechanical studies say about exercise for piriformis syndrome and deep gluteal syndrome, including piriformis and figure-four stretches, and which movements should be avoided or modified?
 
-Yes.
+**Method.** Three independent searches of PubMed, Europe PMC, Crossref, Cochrane-filtered PubMed, NICE, AAOS and the web. Results were merged by DOI or PMID into the existing record, and this update is dated 2026-11-01. PMIDs, authors and journal details were then checked against PubMed and Crossref metadata. An independent check then reopened the sources, as the Verification section records. No formal risk-of-bias tool was applied.
 
-- There are no agreed diagnostic criteria and no definitive imaging or electrodiagnostic test (Miller 2012, Vij 2021).
-- Authors disagree on frequency: Vij 2021 calls it underdiagnosed, and Sharma 2023 calls it over-diagnosed.
-- It is now usually treated as one subgroup of deep gluteal syndrome, with symptoms overlapping lumbar and other hip conditions (Park 2020, Metikala 2022, Bisciotti 2026).
-- The mechanism is debated. Stretching assumes a short or spastic muscle, while one case report proposes overstretching from poor hip control (Tonley 2010).
+**Not exhaustive.** Several result lists were only partly screened, as the log shows. NICE CKS, JOSPT and the Cochrane Library returned 403 errors, and the AAOS search was inconclusive. Many sources were read as abstracts or keyword-matched passages, and each reference states its access level.
 
-## Movements to avoid or modify
+| Searcher | Database | Query | Hits |
+|---|---|---|---|
+| 1 | PubMed | piriformis syndrome[Title/Abstract] AND (guideline[pt] OR practice guideline[pt] OR consensus[Title/Abstract] OR guideline*[Title/Abstract]) | 19 |
+| 1 | PubMed | deep gluteal syndrome[Title/Abstract] AND (consensus[Title/Abstract] OR guideline*[Title/Abstract] OR pathway[Title/Abstract] OR recommendation*[Title/Abstract]) | 4 |
+| 1 | PubMed | piriformis syndrome[Title/Abstract] AND (systematic review[pt] OR scoping review[Title/Abstract] OR meta-analysis[pt]) | 17 |
+| 1 | PubMed | (piriformis[Title/Abstract] OR "figure-four"[Title/Abstract] OR "figure of four"[Title/Abstract] OR "figure 4"[Title/Abstract]) AND stretch*[Title/Abstract] | 64 (first 40 IDs returned; only a subset was screened, so this search was not exhausted) |
+| 1 | PubMed | (hip pain[Title/Abstract] OR nonarthritic hip[Title/Abstract]) AND clinical practice guideline*[Title/Abstract] AND "J Orthop Sports Phys Ther"[jour] | 5 |
+| 1 | PubMed | (gluteal[Title/Abstract] OR buttock[Title/Abstract]) AND sciatica[Title/Abstract] AND guideline[Title/Abstract] AND piriformis[Title/Abstract] | 0 |
+| 1 | PubMed | sciatica[Title] AND (guideline[pt] OR practice guideline[pt] OR guideline*[Title]) | 11 |
+| 1 | PubMed | Gulledge[Author] AND piriformis[Title] | 1 |
+| 1 | PubMed | (piriformis[Title]) AND (stretch*[Title/Abstract]) AND (randomized[Title/Abstract] OR randomised[Title/Abstract]) | 7 |
+| 1 | PubMed (Cochrane journal filter) | piriformis[Title/Abstract] AND "Cochrane Database Syst Rev"[jour] | 1 (botulinum toxin for low-back pain review; no piriformis-specific Cochrane review) |
+| 1 | PubMed (Cochrane journal filter) | "deep gluteal"[Title/Abstract] AND "Cochrane Database Syst Rev"[jour] | 0 |
+| 1 | Europe PMC | TITLE_ABS:"piriformis syndrome" AND (TITLE:guideline OR TITLE:consensus OR TITLE:recommendations OR TITLE:pathway) | 3 |
+| 1 | Europe PMC | TITLE_ABS:"deep gluteal" AND (TITLE:guideline OR TITLE:consensus OR TITLE:recommendations OR TITLE:pathway OR TITLE:review) | 21 |
+| 1 | Europe PMC | "piriformis" AND "clinical practice guideline" AND (hip OR "low back pain") | 31 (none a piriformis guideline by title) |
+| 1 | Crossref | query.bibliographic=piriformis syndrome clinical practice guideline consensus (top 15 screened) | 6481698 total fuzzy matches; no piriformis guideline in the top 15; includes a 1999 item titled 'No Consensus on Piriformis Syndrome' (not opened) |
+| 1 | WebSearch | piriformis syndrome deep gluteal syndrome clinical practice guideline consensus statement Delphi recommendations physiotherapy | 10 links; no physiotherapy guideline or Delphi |
+| 1 | WebSearch | NICE CKS sciatica piriformis; Dutch guideline deep gluteal; AAOS OrthoInfo piriformis syndrome; national guideline piriformis | 10 links; no national guideline; one NHS Lothian patient leaflet |
+| 1 | WebSearch | NICE NG59 low back pain and sciatica exercise recommendation; NICE CKS sciatica differential piriformis syndrome | 10 links; NG59 material only |
+| 1 | WebSearch (who.int, ncbi.nlm.nih.gov, iris.who.int) | WHO guideline non-surgical management chronic primary low back pain 2023 structured exercise recommendation conditional excludes radicular pain definition | 10 links |
+| 1 | NICE website (direct page text search) | NG59 Recommendations page searched for 'piriformis' and 'deep gluteal' | 0 matches. CKS sciatica page returned HTTP 403, so CKS is unchecked |
+| 1 | AAOS OrthoInfo (site search page) | piriformis | No results rendered in the fetched page; inconclusive, not proof that no page exists |
+| 2 | PubMed E-utilities | ("piriformis syndrome"[tiab] OR "deep gluteal syndrome"[tiab] OR "deep gluteal pain"[tiab]) AND (systematic review[pt] OR meta-analysis[pt] OR systematic[ti] OR meta-analysis[ti] OR scoping[ti]) | 32 |
+| 2 | PubMed E-utilities | ("piriformis syndrome"[tiab] OR "deep gluteal syndrome"[tiab]) AND (exercise[tiab] OR stretching[tiab] OR stretch[tiab] OR physiotherapy[tiab] OR "physical therapy"[tiab] OR rehabilitation[tiab]) | 94 |
+| 2 | PubMed E-utilities | piriformis[tiab] AND (stretch*[tiab] OR "figure-four"[tiab] OR "figure 4"[tiab] OR "figure-of-four"[tiab]) | 59 |
+| 2 | PubMed E-utilities | ("figure-four"[tiab] OR "figure 4 stretch"[tiab] OR "figure-of-four"[tiab] OR "figure four stretch"[tiab]) AND (piriformis[tiab] OR gluteal[tiab] OR sciatic*[tiab]) | 4. None evaluates a figure-four stretch: the titles concern ultrasound scanning or nerve block positioning and hip surgical access. The two quoted stretch phrases were not found in PubMed. |
+| 2 | PubMed E-utilities | ("piriformis syndrome"[tiab] OR "deep gluteal syndrome"[tiab]) AND (randomized controlled trial[pt] OR randomized[tiab] OR randomised[tiab]) | 41 |
+| 2 | PubMed E-utilities (Cochrane journal filter) | (sciatica[tiab] OR piriformis[tiab]) AND exercise[tiab] AND "Cochrane Database Syst Rev"[journal] | 0 |
+| 2 | PubMed E-utilities (Cochrane journal filter) | (piriformis[tiab] OR sciatica[tiab] OR "sciatic"[tiab]) AND "Cochrane Database Syst Rev"[journal] | 29. Titles of 12 were screened, and no piriformis-specific exercise review appeared among them. The remaining 17 titles were not screened. Cochrane Library direct fetch of CD008257 returned HTTP 403, so the Library's own search was not used. |
+| 2 | PubMed E-utilities | sciatica[ti] AND (exercise[ti] OR "physical activity"[ti] OR "stay active"[tiab] OR physiotherapy[ti]) AND (systematic review[pt] OR meta-analysis[pt]) | 13 |
+| 2 | Europe PMC REST | ("piriformis syndrome" OR "deep gluteal syndrome") AND (exercise OR stretching) AND (TITLE:systematic OR TITLE:review OR TITLE:meta-analysis) | 78 (first 50 titles screened) |
+| 2 | Europe PMC REST | ("piriformis syndrome" OR "piriformis muscle syndrome") AND ("muscle energy" OR strengthening OR "static stretching" OR "hip abductor" OR "gluteus") AND (randomized OR randomised OR trial) | 162 (first 25 titles screened) |
+| 2 | Crossref REST | works/10.4081/ejtm.2026.14765 (DOI lookup to locate the publisher page) | 1 |
+| 3 | PubMed E-utilities | piriformis syndrome AND randomized controlled trial[pt] | 26 |
+| 3 | PubMed E-utilities | ("piriformis syndrome" OR "deep gluteal syndrome") AND (exercise OR stretching OR physiotherapy) | 96 |
+| 3 | PubMed E-utilities | piriformis AND (stretch OR stretching OR "figure four" OR "figure-4") | 61 |
+| 3 | PubMed E-utilities | piriformis AND (electromyography OR EMG) AND exercise | 9 |
+| 3 | PubMed E-utilities | piriformis AND (squat OR deadlift OR lunge OR "hip thrust" OR "resistance training" OR weightlifting) | 5 (none measures piriformis or sciatic load in a patient population) |
+| 3 | PubMed E-utilities | "sciatic nerve" AND (elastography OR strain OR excursion) AND "hip flexion" | 15 (titles not fully screened; only PMIDs 25680573 and 36712711 opened) |
+| 3 | PubMed E-utilities | Fishman LM AND piriformis AND (FAIR OR "physical therapy") | 5 |
+| 3 | Europe PMC REST | "piriformis syndrome" AND (exercise OR stretching) AND (randomized OR randomised) AND OPEN_ACCESS:y | 118 (first 40 screened) |
+| 3 | Europe PMC REST | "deep gluteal syndrome" AND (review OR consensus) | 151 (first 25 screened) |
+| 3 | Europe PMC REST | piriformis AND (electromyography OR "muscle activation" OR biomechanical OR cadaver) AND (exercise OR stretch OR "internal rotation") | 742 (first 30 screened) |
+| 3 | Europe PMC REST (Cochrane journal filter) | (piriformis OR "deep gluteal") AND JOURNAL:"Cochrane Database Syst Rev" | 21 (20 listed; none has piriformis or deep gluteal syndrome in its title; none opened) |
+| 3 | Cochrane Library direct | No search run. One probe of cochranelibrary.com returned HTTP 403, so the Cochrane check rests on the Europe PMC filter above. | 0 (not accessible) |
+| 3 | Crossref | query.bibliographic=piriformis syndrome stretching randomized trial | 1,760,536 (loose relevance match; top 15 screened) |
+| merge metadata check | PubMed E-utilities esummary | Authors, journal, DOI and PMC ID lookup for 70 PMIDs in this record | 70 returned; NG59 (33090750) came back without title or author fields |
+| merge metadata check | Crossref REST | works lookup for 10.1093/jhps/hnv029, 10.53389/JRCRS.2025130403, 10.1093/jhps/hnag043.101 | 3 returned |
 
-These are mostly opinion or protocol instructions, not tested interventions.
+## Evidence summary
+
+### Is the diagnosis contested?
+
+Yes, and this limits everything below.
+
+- There are no agreed criteria and no definitive imaging or electrodiagnostic test ([Miller 2012](https://doi.org/10.1017/s0317167100015298), [Vij 2021](https://doi.org/10.5812/aapm.112825)). [Vij 2021](https://doi.org/10.5812/aapm.112825) calls it underdiagnosed, and [Sharma 2023](https://doi.org/10.5371/hp.2023.35.1.1) calls it over-diagnosed.
+- A sceptical review says there is "no definitive proof of its existence", while accepting that some patients may have piriformis-origin pain ([Halpin 2009](https://doi.org/10.1227/01.NEU.0000335788.45495.0C)).
+- It is usually treated as one subgroup of deep gluteal syndrome, alongside gemelli-obturator internus, ischiofemoral impingement and proximal hamstring syndromes ([Park 2020](https://doi.org/10.1302/0301-620X.102B5.BJJ-2019-1212.R1), [Metikala 2022](https://doi.org/10.7759/cureus.23153), [Bisciotti 2026](https://doi.org/10.32098/mltj_2026_6435)). Deep gluteal syndrome is defined as a non-discogenic sciatic nerve disorder with entrapment in the deep gluteal space ([Kizaki 2020](https://doi.org/10.1007/s00167-020-05966-x), 14 studies, 853 patients).
+- In surgical deep gluteal cases, only 26% were piriformis syndrome, behind iatrogenic causes at 30% ([Kay 2017](https://doi.org/10.1016/j.arthro.2017.06.041)). A piriformis stretch does not target most of those cases. A series of 239 patients, as reported in a later review, lists 67.8% piriformis syndrome ([Martin 2015](https://doi.org/10.1093/jhps/hnv029)), which shows how selection changes the figure.
+- Four features recur: buttock pain, pain on sitting, tenderness near the greater sciatic notch, and pain on manoeuvres that tension the piriformis. Test accuracy "cannot be concluded from studies to date" ([Hopayian 2018](https://doi.org/10.1007/s00590-017-2031-8)).
+- Diagnostic figures: seated stretch test sensitivity 0.52 and specificity 0.90; active piriformis test 0.78 and 0.80; combined 0.91 and 0.80; straight leg raise sensitivity 0.15, in 33 surgical patients ([Martin 2014](https://doi.org/10.1007/s00167-013-2758-7)). FAIR at 3 SD had sensitivity .881 and specificity .832 ([Fishman 2002a](https://doi.org/10.1053/apmr.2002.30622)). A 12-point score reported sensitivity 96.4% and specificity 100%, developed in the same centre ([Michel 2013a](https://doi.org/10.1016/j.rehab.2013.04.003)).
+
+### Guidelines and consensus
+
+| Source | What it says | Exercise content |
+|---|---|---|
+| [WFNS 2024](https://doi.org/10.1016/j.wnsx.2024.100274) | Delphi consensus. Clinical diagnosis after excluding others, with at least one positive piriformis stretching test. Rest, NSAIDs, muscle relaxants, gabapentin and/or physical therapy first; steroid or local anaesthetic injections second, and botulinum toxin can be considered; surgery for refractory cases. | Physical therapy named, with no type or dose. |
+| [Sconfienza 2022](https://doi.org/10.1007/s00330-021-08283-0) | Delphi of 53 radiologists. Perisciatic anaesthetic "provides good symptom relief"; added corticosteroid has an "unclear role"; relapse in up to 50%. | None (injections only). |
+| [NICE NG59](https://www.nice.org.uk/guidance/ng59/chapter/Recommendations) | Consider a group exercise programme for a flare of low back pain with or without sciatica. "Consider" is NICE's weaker wording. | No dose. The words piriformis and deep gluteal do not appear on the Recommendations page. |
+| [Aldera 2026](https://doi.org/10.3390/jcm15020528) | Saudi guideline. Strong recommendations for risk assessment tools and stratified care; conditional for items including imaging and sciatica medicines. Certainty is as low as very low. | No piriformis or stretching passage found on keyword search. |
+| [WHO 2023](https://www.who.int/publications/i/item/9789240081789) | All recommendations conditional; certainty moderate to very low. Chronic primary low back pain in primary and community care. | Not read. Indirect at best. |
+| [Enseki 2014](https://doi.org/10.2519/jospt.2014.0302), [Enseki 2023](https://doi.org/10.2519/jospt.2023.0302) | APTA hip pain guidelines. Abstracts do not name piriformis or deep gluteal syndrome. | The Enseki 2014 full text never uses the words piriformis, deep gluteal or sciatic, so it does not cover this condition. Enseki 2023 is **unknown**: its full text could not be read, so it must not be cited as covering or excluding it. |
+| [NHS Lothian 2025](https://policyonline.nhslothian.scot/wp-content/uploads/2025/02/Piriformis-Syndrome.pdf) | Regional patient leaflet, not a guideline, citing no evidence. Ice, rest from aggravating activity, flexibility and strength exercises. | "Hold each position for 30 seconds"; positions are photos and no repetitions are given. |
+
+### Systematic reviews
+
+- **Stretching.** [Aali 2026](https://doi.org/10.4081/ejtm.2026.14765): 12 studies, 572 participants, 4 RCTs, no meta-analysis because of heterogeneity. "Combined interventions generally demonstrated greater improvements in pain, function, and range of motion than stretching alone." No pooled effect, and doses could not be read.
+- **All conservative and surgical care.** [Hopayian 2023](https://doi.org/10.1016/j.jbmt.2022.12.003): 13 studies, 508 patients. Only three trials reached an MCID for pain and one for disability. "No single conservative treatment can be recommended over another." It advises physiotherapy first by following general guidance, but the listed conservative modalities were injections, so this is extrapolated.
+- **Scoping and narrative.** A conference scoping review reports potential benefit from multimodal physiotherapy but "a lack of clarity regarding dosage, duration and long-term efficacy" ([Gallotti 2026](https://doi.org/10.1093/jhps/hnag043.101)). Direct comparisons of exercise protocols "are lacking" ([Yoon 2025](https://doi.org/10.3390/diagnostics15192531)). A dedicated physiotherapy synthesis is still at protocol stage ([Deshmukh 2026](https://doi.org/10.2196/72350)).
+- **Hip conditions broadly.** [Franceschi 2024](https://doi.org/10.3390/jfmk9040262): 8 trials, mostly hip osteoarthritis. Deep gluteal syndrome was eligible, but no subgroup was reported, and it is unclear whether adding stretching improves manual treatment for it.
+- **Case reports.** [Monteleone 2025](https://doi.org/10.1186/s12893-025-03202-2): 212 patients; only 4.7% received specific exercise or physiotherapy; 38.2% had pelvic trauma or piriformis stress from vigorous activity; clinical diagnosis without instrumental finding had OR 5.3 for surgical failure. Its 58.9% surgery figure must not be read as a population rate.
+- **Exercise advice quality.** Of 92 YouTube piriformis exercise videos, 19.5% were high, 48.9% medium and 31.5% low quality ([Ertem 2023](https://doi.org/10.5606/tftrd.2022.10459)). Popularity of a stretch is not evidence for it.
+
+### Trials involving stretching or exercise
+
+| Study | Design | Comparison | Result |
+|---|---|---|---|
+| [Shamsi 2024a](https://doi.org/10.1186/s13102-023-00802-4) | RCT, n=45 | Figure-four-like stretch vs foam-roller compression vs control; all had hot pack and TENS | Pain VAS 0-100: stretch 61.40 to 24.00, compression 60.00 to 33.33, control 62.67 to 27.80; group p=0.264, interaction p=0.255. Oswestry: stretch 61.59 to 34.53, compression 57.16 to 45.80, control 58.75 to 40.20; stretch vs compression -12.62 (95% CI -20.41 to -4.38). No sEMG change. |
+| [Shamsi 2024b](https://doi.org/10.1016/j.jbmt.2024.03.073) | Apparently the same cohort | As above | No flexion-relaxation difference. Disability lower with stretching than compression (F=5.53, P=0.009). Not independent evidence. |
+| [Usman 2025](https://doi.org/10.53389/JRCRS.2025130403) | RCT, 47 randomised, 40 analysed | Stretching vs neural mobilisation, no control | VAS 9.15 to 3.05 vs 9.25 to 2.80; p=0.601. A null test in this sample does not show equal effectiveness. |
+| [Dede 2026](https://doi.org/10.5606/tftrd.2026.16718) | RCT, 44 completed | Shockwave vs dry needling; home stretch in both | VAS 7.8 to 3.7 with shockwave at 3 months; needling baseline 8.0, and its 3-month cell is garbled. Mean difference -0.25, p=0.594. Stretch effect cannot be separated. No side effects reported. |
+| [Guner 2023](https://doi.org/10.7759/cureus.43804) | Non-randomised, n=44 | Home exercise vs dry needling | Pain 7.8 to 2.6 vs 7.6 to 2.5 at 3 months, p=0.929. LEFS 42.4 to 71.3 vs 41.7 to 69.4, p=0.563. Baseline ODI imbalance. |
+| [Shahzad 2020](https://doi.org/10.3233/BMR-181290) | RCT, n=40 | Post-facilitation stretching vs ELDOA | Pain 6.00 to 2.00 vs 7.00 to 3.00; LEFS 25.20 to 66.30 vs 26.90 to 58.10. No control; baseline differs. |
+| [Nazlıkul 2018](https://doi.org/10.3233/BMR-170980) | RCT, n=102 | Stretching vs stretching plus neural therapy | Both improved, more with neural therapy. No numbers in abstract. |
+| [Danazumi 2021](https://doi.org/10.1515/jom-2020-0327) | RCT, n=48 | Two manual techniques; stretching after each | INIT better than PRT to 4 months. Authors say stretching may have contributed to both. |
+| [Fu 2026](https://doi.org/10.1016/j.jfma.2025.01.020) | RCT, n=70 | Steroid injection vs shockwave; home stretching in both | No difference at 5 weeks; baseline imbalance. |
+| [Fishman 2017](https://doi.org/10.1002/mus.25504) | Double-blind RCT, n=56 | Toxin vs placebo; physical therapy in both | VAS fell more with toxin at 2-12 weeks (P<0.0001). Physical therapy alone did not match it, in an electrophysiologically selected group. |
+| [Byeon 2011](https://doi.org/10.3344/kjp.2011.24.2.93) | RCT, n=150 | Stop vs continue rocker shoes; same stretch, injection and medication in all | Stopping did better from weeks 4-12. Stretch not tested. Knee osteoarthritis limited the stretch. |
+| [Sadiq 2025](https://doi.org/10.1016/j.jbmt.2025.05.044) | RCT, n=36, sacroiliac dysfunction | Added piriformis stretch vs none | No added pain benefit; disability improved more at 1 week. Indirect. |
+| [Meknas 2009](https://doi.org/10.1007/s00167-009-0750-z) | Uncontrolled cohort, n=13 | 4-week supervised stretching, obturator internus emphasis | Median VAS 6.0 to 4.0 at 12 weeks and 4.0 at 5 years. Moderate pain persisted. |
+| [Chaari 2024](https://doi.org/10.1016/j.jbmt.2024.10.027) | Pre-post, n=12 | Single session of bridges and clams | No pain change. Eyes-closed single-leg balance improved (p<0.001). |
+| [Michel 2013a](https://doi.org/10.1016/j.rehab.2013.04.003) | Case series, n=250 | Medication plus rehabilitation | 51.2% cured; 48.8% unresponsive and received toxin. |
+| [Tonley 2010](https://doi.org/10.2519/jospt.2010.3108) | Case report, n=1 | Strengthening and movement retraining, without stretching described | Pain 0/10; LEFS 65/80 to 80/80; step-down peak adduction 15.9 to 5.8 degrees. Stretching had reproduced symptoms. |
+
+### Sciatica evidence (indirect)
+
+- Physiotherapy against control showed no overall effect: pain short term SMD -0.34 (95% CI -1.05 to 0.37), long term SMD 0.09 (95% CI -0.18 to 0.36); disability short term SMD -0.00 (95% CI -0.36 to 0.35). Authors call the evidence inadequate for clinical recommendations; all trials were at high or unclear risk of bias ([Dove 2023](https://doi.org/10.1007/s00586-022-07356-y), 18 trials, 2699 participants).
+- Exercise beat advice for short-term leg pain by WMD 11.43 of 100 (95% CI 0.71-22.16, low quality), with no difference in disability ([Fernandez 2015](https://doi.org/10.1097/BRS.0000000000001036)).
+- Bed rest and staying active did not differ in sciatica: pain SMD -0.03 (95% CI -0.24 to 0.18), function SMD 0.19 (95% CI -0.02 to 0.41), moderate quality ([Dahm 2010](https://doi.org/10.1002/14651858.CD007612.pub2)).
+- Activity at 4 or more times a week was linked to lower new-onset risk, RR 0.88 (95% CI 0.78-0.99). Authors say a reduction above 30% seems unlikely. This is observational and about prevention ([Shiri 2016](https://doi.org/10.1002/ejp.885)).
+
+### Non-exercise treatments, for context
+
+- Injections, pooled pre-post pain change: botulinum toxin SMD -2.00 (95% CI -2.84 to -1.16); anaesthetic plus steroid SMD -4.34 (CI as printed -5.77, 2.90); anaesthetic SMD -3.73 (95% CI -6.47 to -0.99); steroid SMD -2.78 (95% CI -3.56 to -2.00); placebo SMD -0.04 (95% CI -0.07 to -0.01). Mixed designs and no direct comparison ([Hilal 2022](https://pubmed.ncbi.nlm.nih.gov/35901473/)).
+- Dry needling reduced pain against waitlist by 2.16 points at 1 week ([Tabatabaiee 2019](https://doi.org/10.1002/mus.26671)), one of few trials with an untreated control. Shockwave and steroid injection did not differ ([Ahadi 2023](https://doi.org/10.1016/j.jbmt.2022.09.020)).
+- Botulinum toxin in physical therapy trials: [Fishman 2002b](https://doi.org/10.1097/00002060-200212000-00009), [Fishman 2004](https://doi.org/10.1097/01.PHM.0000104669.86076.30). In the dose-finding study 24 of 27 had at least 50% relief, and dry mouth and dysphagia approached 50% of patients at 2 and 4 weeks. [Waseem 2011](https://doi.org/10.1002/14651858.CD008257.pub2) is the only Cochrane review found that touches piriformis, with low to very low-quality evidence and no exercise content.
+
+### Stretch and muscle biomechanics
+
+None of these studies measured symptoms in patients.
+
+| Study | Sample | Finding |
+|---|---|---|
+| [Gulledge 2014](https://doi.org/10.1016/j.medengphy.2013.10.016) | 7 subjects, CT and modelling | Both orders of conventional stretch gave about 12% elongation. Optimised 115/40/25 or 120/50/30 degrees (flexion, external rotation, adduction) gave 15.1% and 15.3%. Femoral anteversion matters. |
+| [Itsuda 2024](https://doi.org/10.1123/jsr.2023-0240) | 21 healthy men | Stiffness greatest at 110 degrees flexion, 40 degrees adduction, maximum external rotation; higher in external than internal rotation. |
+| [McGovern 2017](https://doi.org/10.26603/ijspt20171068) | 17 embalmed hips | Length change, superior/inferior fibres: 30 degrees adduction from 90 degrees flexion 30.7/23.7 mm; 45 degrees internal rotation from neutral 22.2/20.6 mm; 45 degrees external rotation from 90 degrees 19.4/10.4 mm; malleolus on opposite knee (figure-four-like) 7.7/2.5 mm. |
+| [Ito 2025](https://doi.org/10.1002/jor.70005) | 15 fresh-frozen hips | External rotation torque 0.40 N·m at 0 degrees flexion, 0.05 at 75, -0.02 at 90, -0.06 at 105. The muscle's rotation action flips between 75 and 90 degrees. |
+| [Giphart 2012](https://doi.org/10.1177/0363546512443812) | 10 healthy, EMG | Highest peak activation in single-leg bridge (35.7% ± 25.7% MVC); highest mean in prone heel squeeze (24.3% ± 8.2% MVC). |
+| [Kim 2026](https://doi.org/10.1177/19417381251372979) | 10 healthy, functional MRI | T2 change: abduction with external rotation 23.8%; clamshell 14.5%; single-leg bridge 13.1%; reverse clamshell 5.3%. |
+| [Uebayashi 2026](https://doi.org/10.7717/peerj.21536) | 12 healthy men, EMG | Hip position had no significant main effect on piriformis EMG during side-lying abduction. |
+| [Chiddarwar 2026](https://doi.org/10.1177/19417381261480238) | Systematic review, 106 studies | Only one concerned the piriformis, so exercise selection for this muscle cannot be strongly evidence-based. |
+
+**Heavy lifting and squats.** No patient data exist on piriformis or sciatic load during these lifts. The nearest data are modelling in healthy people ([Meinders 2022a](https://doi.org/10.1016/j.jbiomech.2022.111019), [Meinders 2022b](https://doi.org/10.1016/j.jbiomech.2022.111220), [Maniar 2018](https://doi.org/10.1038/s41598-017-19098-9)) and an RCT in healthy adults where kettlebell swings raised local pressure pain thresholds (p=0.026, [Keilman 2017](https://doi.org/10.1519/JSC.0000000000001743)), which must not be read as safe for patients.
+
+**Nerve mechanics.** A surgeon-authored review reports 28 mm of sciatic excursion in hip flexion, neuropraxia at 6% strain and complete block at 12% ([Martin 2015](https://doi.org/10.1093/jhps/hnv029)). It states no exercise restriction, and applying this to stretching would be inference.
+
+## What to avoid or modify
+
+These are mostly opinion or protocol instructions, not tested interventions. Nothing here is a tested contraindication.
 
 | Movement | Action | Strength | Sources |
 |---|---|---|---|
-| Prolonged sitting, especially on a hard surface | Modify | Expert opinion | Guner 2023, Vij 2021, Sharma 2023, NHS |
-| Cross-legged sitting held for long periods | Avoid | Expert opinion | Guner 2023, Külcü 2024 |
-| Slumped sitting on the sacrum | Avoid | Expert opinion | Guner 2023 |
-| High-volume running, long-distance walking, cycling or jumping when provoking | Modify | Expert opinion | Guner 2023, Siraj 2022, Külcü 2024, NHS |
-| Heavy lifting | Modify | Expert opinion | Guner 2023 |
-| Inward knee collapse in single-leg step-downs and similar tasks | Modify | Observational (one case) | Tonley 2010 |
-| Forceful end-range hip stretching that reproduces symptoms | Modify | Expert opinion | Siraj 2022, Sharma 2023, Tonley 2010, Itsuda 2024 |
-| Nerve tensioning drills (gliding is the gentler option) | Modify | Biomechanical | Siraj 2022 |
-| Sustained forward bending, hamstring stretching and repeated eccentric hamstring loading, when pain sits near the sit bone | Modify | Expert opinion | Külcü 2024 |
+| Prolonged sitting, especially on a hard surface | Modify | Expert opinion | [Guner 2023](https://doi.org/10.7759/cureus.43804), [Vij 2021](https://doi.org/10.5812/aapm.112825), [Sharma 2023](https://doi.org/10.5371/hp.2023.35.1.1), [NHS sciatica](https://www.nhs.uk/conditions/sciatica/), [Kizaki 2020](https://doi.org/10.1007/s00167-020-05966-x), [Hopayian 2018](https://doi.org/10.1007/s00590-017-2031-8), [Yoon 2025](https://doi.org/10.3390/diagnostics15192531), [Külcü 2024](https://doi.org/10.5606/tftrd.2024.14668), [NHS Lothian 2025](https://policyonline.nhslothian.scot/wp-content/uploads/2025/02/Piriformis-Syndrome.pdf) |
+| Cross-legged sitting held for long periods | Avoid | Expert opinion | [Guner 2023](https://doi.org/10.7759/cureus.43804), [Külcü 2024](https://doi.org/10.5606/tftrd.2024.14668) |
+| Slumped sitting with weight on the sacrum (sacral sitting) | Avoid | Expert opinion | [Guner 2023](https://doi.org/10.7759/cureus.43804) |
+| High-volume or repetitive running, long-distance walking, cycling and jumping when these provoke symptoms | Modify | Expert opinion | [Guner 2023](https://doi.org/10.7759/cureus.43804), [Siraj 2022](https://doi.org/10.7759/cureus.32952), [Külcü 2024](https://doi.org/10.5606/tftrd.2024.14668), [NHS sciatica](https://www.nhs.uk/conditions/sciatica/), [Vij 2021](https://doi.org/10.5812/aapm.112825), [Park 2020](https://doi.org/10.1302/0301-620X.102B5.BJJ-2019-1212.R1), [Monteleone 2025](https://doi.org/10.1186/s12893-025-03202-2), [Dahm 2010](https://doi.org/10.1002/14651858.CD007612.pub2), [Shiri 2016](https://doi.org/10.1002/ejp.885) |
+| Heavy lifting | Modify | Expert opinion | [Guner 2023](https://doi.org/10.7759/cureus.43804), [Neal 2026](https://doi.org/10.3390/sports14030095) |
+| Excessive inward knee collapse (hip adduction with internal rotation) during single-leg step-downs and similar tasks | Modify | Observational | [Tonley 2010](https://doi.org/10.2519/jospt.2010.3108), [Maniar 2018](https://doi.org/10.1038/s41598-017-19098-9) |
+| Forceful end-range stretching in hip flexion, adduction and rotation that reproduces buttock or leg symptoms | Modify | Expert opinion | [Siraj 2022](https://doi.org/10.7759/cureus.32952), [Sharma 2023](https://doi.org/10.5371/hp.2023.35.1.1), [Tonley 2010](https://doi.org/10.2519/jospt.2010.3108), [Itsuda 2024](https://doi.org/10.1123/jsr.2023-0240), [WFNS 2024](https://doi.org/10.1016/j.wnsx.2024.100274), [Hopayian 2018](https://doi.org/10.1007/s00590-017-2031-8), [Martin 2014](https://doi.org/10.1007/s00167-013-2758-7), [Michel 2013b](https://doi.org/10.1016/j.rehab.2013.03.006), [Yoon 2025](https://doi.org/10.3390/diagnostics15192531), [Neal 2026](https://doi.org/10.3390/sports14030095), [Dey 2026](https://doi.org/10.1186/s13063-026-09873-3) |
+| Nerve tensioning drills that load the sciatic nerve along its length | Modify | Expert opinion | [Siraj 2022](https://doi.org/10.7759/cureus.32952) |
+| Sustained forward trunk flexion, hamstring stretching and repeated eccentric hamstring loading when pain sits near the sit bone | Modify | Expert opinion | [Külcü 2024](https://doi.org/10.5606/tftrd.2024.14668) |
+| Figure-four position (ankle over the opposite knee) or heel-to-opposite-knee position, when holding it reproduces buttock or leg symptoms | Modify | Expert opinion | [Michel 2013b](https://doi.org/10.1016/j.rehab.2013.03.006), [Neal 2026](https://doi.org/10.3390/sports14030095), [Tonley 2010](https://doi.org/10.2519/jospt.2010.3108), [Shamsi 2024a](https://doi.org/10.1186/s13102-023-00802-4), [McGovern 2017](https://doi.org/10.26603/ijspt20171068) |
+| Squatting and resistance exercise when it reproduces symptoms | Modify | Expert opinion | [Külcü 2024](https://doi.org/10.5606/tftrd.2024.14668), [Neal 2026](https://doi.org/10.3390/sports14030095), [Meinders 2022a](https://doi.org/10.1016/j.jbiomech.2022.111019), [Meinders 2022b](https://doi.org/10.1016/j.jbiomech.2022.111220) |
+| Hard resisted hip external rotation and abduction, including single-leg bridge and prone heel squeeze, when contraction reproduces symptoms | Modify | Biomechanical | [Martin 2014](https://doi.org/10.1007/s00167-013-2758-7), [Giphart 2012](https://doi.org/10.1177/0363546512443812), [Kim 2026](https://doi.org/10.1177/19417381251372979) |
+| Prolonged bed rest or complete inactivity | Modify | Expert opinion | [Vij 2021](https://doi.org/10.5812/aapm.112825), [Dahm 2010](https://doi.org/10.1002/14651858.CD007612.pub2), [Park 2020](https://doi.org/10.1302/0301-620X.102B5.BJJ-2019-1212.R1), [NHS Lothian 2025](https://policyonline.nhslothian.scot/wp-content/uploads/2025/02/Piriformis-Syndrome.pdf) |
+| Foam-roller or other compression on the tender buttock point, especially when symptoms are highly irritable | Modify | RCT | [Shamsi 2024a](https://doi.org/10.1186/s13102-023-00802-4), [Shamsi 2024b](https://doi.org/10.1016/j.jbmt.2024.03.073), [Vij 2021](https://doi.org/10.5812/aapm.112825) |
+| Long strides and terminal hip extension when these provoke deep buttock pain | Modify | Expert opinion | [Külcü 2024](https://doi.org/10.5606/tftrd.2024.14668), [Park 2020](https://doi.org/10.1302/0301-620X.102B5.BJJ-2019-1212.R1) |
 
-The last row concerns proximal hamstring syndrome, a related condition that is hard to distinguish from this one.
+The deep gluteal subtypes differ, so one rule cannot cover them all. Hamstring stretching can worsen the ischiotunnel subtype ([Külcü 2024](https://doi.org/10.5606/tftrd.2024.14668)), which is the opposite of what a generic stretch routine does. [Siddiq 2020](https://doi.org/10.3344/kjp.2020.33.4.305) lists other mimics, including gluteus medius tendinitis, cluneal nerve disorders and sacroiliitis.
 
-## Candidate exercises
+## Exercises and exact doses
 
-| Exercise | Catalog | Kind | Dose in the source | Strength |
-|---|---|---|---|---|
-| Piriformis stretch in flexion, adduction and external rotation | new | Stretch | 30 s hold, 10 repetitions, twice daily | Observational |
-| FAIR-position stretch | new | Stretch | 3 sets of 10, at least 15 s hold, 3 days a week | Expert opinion (registry protocol) |
-| Glute bridge | `catalog:glute-bridge` | Strengthening | 3 sets of 15 | Observational |
-| Clamshell | `catalog:clamshell` | Strengthening | 3 sets of 15 | Observational |
-| Side-lying hip abduction | `catalog:side-lying-hip-abduction` | Strengthening | 3 sets of 15 | Expert opinion (registry protocol) |
-| Sciatic nerve glide | new | Neural mobility | None found | Expert opinion |
-| Hip circumduction | new | Mobility | None found | Expert opinion |
+Doses describe what a source used. None has been shown to be better than another. A dash means the source does not give that value.
 
-Notes on these:
+| Exercise | Catalog | Sets | Reps | Hold | Frequency and notes | Strength |
+|---|---|---|---|---|---|---|
+| Piriformis stretch in hip flexion, adduction and external rotation (lying, knee drawn toward the opposite shoulder) | new | - | 10 | 30 s | Twice daily, for 3 weeks in the source. The source says '10 repetitions/sets', so the set count is unclear. The source does not specify the stretch position; the position here comes from separate biomechanical studies. | Observational |
+| Figure-four stretch (lying on the back, foot of the unaffected leg against a wall, affected ankle resting over the opposite knee) | new | 3 | - | 120 s | Three sets of 2 minutes with 2 minutes rest between sets, three supervised sessions a week, ten sessions in total. The source does not state repetitions within a set; each set reads as one 2-minute hold. | RCT |
+| FAIR-position stretch (hip flexed and adducted, foot placed beside the opposite knee) | new | 3 | 10 | 15 s | 3 days per week for 4 weeks, with 30 seconds rest between repetitions and a 2-day gap between sessions, as registered. The 15 seconds is a registered minimum, and the registered schedule is internally inconsistent. | RCT |
+| Pigeon-type forward-lean stretch (from a push-up position, affected leg across and under the trunk, other leg straight back, pelvis level) | new | - | 20 | 30 s | 20 times a day at home. Sets, programme duration and progression not specified. | Expert opinion |
+| Glute bridge (both legs) | `catalog:glute-bridge` | 3 | 15 | - | Not stated in the registry text. Used in week 1 of a 4-week progressive program. | Observational |
+| Clamshell (side-lying, hips and knees bent, feet together) | `catalog:clamshell` | 3 | 15 | - | Not stated in the registry text. Used in week 1 of a 4-week progressive program. | Observational |
+| Side-lying hip abduction | `catalog:side-lying-hip-abduction` | 3 | 15 | - | Not stated in the registry text. Used in week 1 of a 4-week progressive program. | Expert opinion |
+| Sciatic nerve glide (rhythmic slider, not a tensioner) | new | - | - | - | No self-performed dose found. See alternativeDoses for two therapist-applied protocols, neither of which should be presented as a home dose. | Expert opinion |
+| Hip circumduction (controlled hip circles) | new | - | - | - | No dose found in the sources opened. | Expert opinion |
 
-- **No catalog stretch fits.** The catalog has no piriformis stretch, nerve glide or hip circle, so those are marked new.
-- **Doses are descriptive.** They show what one protocol used, and no dose has been shown to be better than another. Other protocols differ, for example a 20-second hold for 10 repetitions in NCT07484373.
-- **The strengthening dose is from week 1 of a program.** NCT07484373 is a 4-week progressive protocol that doesn't state weekly frequency in the text read, and its results were not found.
-- **Pain may not change right away.** A 12-patient single session of bridges and clams improved one balance measure but not pain (Chaari 2024).
-- **The FAIR stretch can provoke symptoms.** The position doubles as a provocation test, and a study in healthy men found higher muscle stiffness in external than internal rotation (Itsuda 2024).
-- **Strengthening has one further signal, read second-hand.** A 30-patient trial (Laha 2018) favoured adding hip strengthening, but it was read only as summarized in Siraj 2022.
+**Other published protocols**
+
+| Exercise | Sets | Reps | Hold | Protocol | Source |
+|---|---|---|---|---|---|
+| Piriformis stretch in hip flexion, adduction and external rotation | - | 3 | 20 s | Hold 20 to 30 seconds (20 is the lower bound), 3 per session, 3 times a week for 6 weeks, progressing by flexibility and symptoms, to a tolerable stretch without marked symptoms. Protocol only, no results, in spondylolisthesis. | [Dey 2026](https://doi.org/10.1186/s13063-026-09873-3) |
+| FAIR-position stretch | - | 10 | - | Twice a day at home, with adherence checked at weekly sessions. Hold duration and sets not specified in the passage read. | [Dede 2026](https://doi.org/10.5606/tftrd.2026.16718) |
+| FAIR-position stretch | 3 | 10 | 30 s | Three times a week for two weeks, 30 seconds rest, therapist-applied in side-lying. The source states 10-14 minutes per session, but 30 repetitions of 30 seconds is 15 minutes of holds alone, so the dose is internally inconsistent. | [Usman 2025](https://doi.org/10.53389/JRCRS.2025130403) |
+| Sciatic nerve glide | - | - | 30 s | Therapist-applied passive mobilisation, straight-knee hip flexion with adduction and medial rotation, about 12-15 minutes per session with 30-second holds and 1 minute rest, three times a week for two weeks. On this review's reading, the held end position is closer to a tensioner than to the rhythmic slider named here. | [Usman 2025](https://doi.org/10.53389/JRCRS.2025130403) |
+| Sciatic nerve glide | 5 | - | 5 s | Therapist-applied slider, 5 sets of 10, 15, 20, 25 and 30 repetitions (100 total), 1-2 minutes rest, three times a week for four weeks. Disc lesion population with piriformis syndrome excluded. | [Shaheen 2025](https://doi.org/10.23736/S1973-9087.24.08541-1) |
+
+**Cautions**
+
+- **Piriformis stretch in hip flexion, adduction and external rotation.** Keep it gentle and ease off if it reproduces leg or buttock symptoms. The dose comes from a non-randomized comparison with no untreated control. Position studies measured muscle length or stiffness in small samples and did not measure symptoms. Those studies point to high hip flexion (about 110-120 degrees). May be unhelpful if the overstretching hypothesis applies. Position data conflict: a cadaver study found the most piriformis length change at 30 degrees adduction from 90 degrees hip and knee flexion ([McGovern 2017](https://doi.org/10.26603/ijspt20171068)). External rotation only stretches the muscle when the hip is flexed past about 75-90 degrees ([Ito 2025](https://doi.org/10.1002/jor.70005), [Michel 2013b](https://doi.org/10.1016/j.rehab.2013.03.006)). Sources: [Guner 2023](https://doi.org/10.7759/cureus.43804), [Gulledge 2014](https://doi.org/10.1016/j.medengphy.2013.10.016), [Itsuda 2024](https://doi.org/10.1123/jsr.2023-0240), [Aali 2026](https://doi.org/10.4081/ejtm.2026.14765), [Siraj 2022](https://doi.org/10.7759/cureus.32952), [Tonley 2010](https://doi.org/10.2519/jospt.2010.3108), [McGovern 2017](https://doi.org/10.26603/ijspt20171068), [Ito 2025](https://doi.org/10.1002/jor.70005), [Dey 2026](https://doi.org/10.1186/s13063-026-09873-3), [Shamsi 2024a](https://doi.org/10.1186/s13102-023-00802-4), [Michel 2013b](https://doi.org/10.1016/j.rehab.2013.03.006).
+- **Figure-four stretch.** Aim for a slight stretch, as the trial did, and ease off if it reproduces buttock or leg symptoms. Calling this a figure-four is this review's mapping: no paper found uses the term, and PubMed found no study evaluating a stretch by that name. In the only trial, stretching did not beat hot pack plus TENS for pain (group p=0.264), all arms had those treatments, and adverse events were not reported, so safety is not shown. A similar position gave the least piriformis length change in cadavers (7.7 and 2.5 mm against 30.7 and 23.7 mm for the best position, [McGovern 2017](https://doi.org/10.26603/ijspt20171068)), and it also serves as a provocation test ([Michel 2013b](https://doi.org/10.1016/j.rehab.2013.03.006)). Sources: [Shamsi 2024a](https://doi.org/10.1186/s13102-023-00802-4), [Shamsi 2024b](https://doi.org/10.1016/j.jbmt.2024.03.073), [McGovern 2017](https://doi.org/10.26603/ijspt20171068), [Michel 2013b](https://doi.org/10.1016/j.rehab.2013.03.006), [Tonley 2010](https://doi.org/10.2519/jospt.2010.3108).
+- **FAIR-position stretch.** The FAIR position is also a provocation test, so it can reproduce symptoms; ease off if it does. Dose is from a trial registry entry with no posted results, and every arm also did strengthening. People who declined stretching or release were put in the control arm, so allocation was not fully random. A separate study in healthy men found stiffness higher in external than internal rotation, so the best rotation direction is unsettled. Published trials now use this position, but none isolates its effect: it was background care in both arms of [Dede 2026](https://doi.org/10.5606/tftrd.2026.16718) and showed no difference from neural mobilisation with no control in [Usman 2025](https://doi.org/10.53389/JRCRS.2025130403). The main dose stays the registry one because no published trial gives a complete self-performed dose. Sustained flexion, adduction and internal rotation measurably delays the H-reflex in these patients ([Fishman 2002a](https://doi.org/10.1053/apmr.2002.30622)). Sources: [NCT05660005](https://clinicaltrials.gov/study/NCT05660005), [Siraj 2022](https://doi.org/10.7759/cureus.32952), [Itsuda 2024](https://doi.org/10.1123/jsr.2023-0240), [Dede 2026](https://doi.org/10.5606/tftrd.2026.16718), [Usman 2025](https://doi.org/10.53389/JRCRS.2025130403), [Fishman 2002a](https://doi.org/10.1053/apmr.2002.30622), [Ito 2025](https://doi.org/10.1002/jor.70005).
+- **Pigeon-type forward-lean stretch.** Calling this pigeon-type is this review's mapping. Dose comes from one trial where exercise was not the randomized variable and everyone also had an injection and oral medication, so its effect is unknown. Authors report that people with knee osteoarthritis could not do it well because of knee pain and deformity, so this review would not offer it to people with knee problems without clinician input. Adverse events not reported. Sources: [Byeon 2011](https://doi.org/10.3344/kjp.2011.24.2.93).
+- **Glute bridge.** Dose is from a registered protocol whose results were not found. A 12-patient single-session study found no immediate pain change. Stop if leg symptoms increase. [Guner 2023](https://doi.org/10.7759/cureus.43804) used bilateral bridging without a reported dose. Single-leg bridge showed the highest peak piriformis activation in healthy people (35.7% MVC, [Giphart 2012](https://doi.org/10.1177/0363546512443812)), so the two-leg version is the one listed. Sources: [NCT07484373](https://clinicaltrials.gov/study/NCT07484373), [Chaari 2024](https://doi.org/10.1016/j.jbmt.2024.10.027), [Guner 2023](https://doi.org/10.7759/cureus.43804), [Giphart 2012](https://doi.org/10.1177/0363546512443812), [Kim 2026](https://doi.org/10.1177/19417381251372979).
+- **Clamshell.** Dose is from a registered protocol whose results were not found. A 12-patient single-session study found no immediate pain change. It actively loads the external rotators, so stop if it reproduces symptoms. Piriformis functional MRI change was 14.5% in healthy adults ([Kim 2026](https://doi.org/10.1177/19417381251372979)). That study used a test dose of 40 repetitions and it is not a treatment dose. Sources: [NCT07484373](https://clinicaltrials.gov/study/NCT07484373), [Chaari 2024](https://doi.org/10.1016/j.jbmt.2024.10.027), [Guner 2023](https://doi.org/10.7759/cureus.43804), [Kim 2026](https://doi.org/10.1177/19417381251372979).
+- **Side-lying hip abduction.** Selected from a registered protocol whose results were not found. A small randomized trial (Laha 2018, 30 patients) favoured adding hip abductor and extensor strengthening, but it was read only as summarized in [Siraj 2022](https://doi.org/10.7759/cureus.32952). Abduction with external rotation gave the largest piriformis functional MRI change of four exercises (23.8%, [Kim 2026](https://doi.org/10.1177/19417381251372979)), and rotating the hip did not significantly change piriformis EMG ([Uebayashi 2026](https://doi.org/10.7717/peerj.21536)). Both studies used healthy people. Sources: [NCT07484373](https://clinicaltrials.gov/study/NCT07484373), [Siraj 2022](https://doi.org/10.7759/cureus.32952), [Tonley 2010](https://doi.org/10.2519/jospt.2010.3108), [Kim 2026](https://doi.org/10.1177/19417381251372979), [Uebayashi 2026](https://doi.org/10.7717/peerj.21536).
+- **Sciatic nerve glide.** Keep it gentle and rhythmic, and stop if numbness, tingling or leg pain increases or lingers. No dose should be presented as evidence-based. [Usman 2025](https://doi.org/10.53389/JRCRS.2025130403) found no difference from stretching with no control, and one participant left for discomfort. [Shaheen 2025](https://doi.org/10.23736/S1973-9087.24.08541-1) excluded piriformis syndrome, so its result does not transfer. Sources: [Metikala 2022](https://doi.org/10.7759/cureus.23153), [Külcü 2024](https://doi.org/10.5606/tftrd.2024.14668), [Siraj 2022](https://doi.org/10.7759/cureus.32952), [Usman 2025](https://doi.org/10.53389/JRCRS.2025130403), [Shaheen 2025](https://doi.org/10.23736/S1973-9087.24.08541-1), [Martin 2015](https://doi.org/10.1093/jhps/hnv029).
+- **Hip circumduction.** Listed in reviews as a part of conservative care and home sciatic nerve mobilization, with no effectiveness data of its own. Use a small, comfortable range. Sources: [Metikala 2022](https://doi.org/10.7759/cureus.23153), [Külcü 2024](https://doi.org/10.5606/tftrd.2024.14668).
+
+**Protocols with no usable self-performed dose.** Post-facilitation stretching ([Shahzad 2020](https://doi.org/10.3233/BMR-181290)) and the manual techniques in [Danazumi 2021](https://doi.org/10.1515/jom-2020-0327) are therapist-delivered and lack stretch doses in the abstracts. [Meknas 2009](https://doi.org/10.1007/s00167-009-0750-z) also gives no holds.
+
+**Stretch dose ranges seen.** Holds run from 15 seconds (registry) to 120 seconds ([Shamsi 2024a](https://doi.org/10.1186/s13102-023-00802-4)). A 30-second hold recurs ([Guner 2023](https://doi.org/10.7759/cureus.43804), [Byeon 2011](https://doi.org/10.3344/kjp.2011.24.2.93), [Usman 2025](https://doi.org/10.53389/JRCRS.2025130403), [NHS Lothian 2025](https://policyonline.nhslothian.scot/wp-content/uploads/2025/02/Piriformis-Syndrome.pdf)) but none of them tests it against another hold.
 
 ## Red flags
 
-From NHS sciatica guidance. Stop exercising and go to A&E or call 999, without driving yourself, for any of these:
+- **Sciatica in both legs.** Stop exercising and go to A&E or call 999. Do not drive yourself. Sources: [NHS sciatica](https://www.nhs.uk/conditions/sciatica/).
+- **Severe or worsening weakness or numbness in both legs.** Stop exercising and go to A&E or call 999. Do not drive yourself. Sources: [NHS sciatica](https://www.nhs.uk/conditions/sciatica/).
+- **Numbness around the genitals or bottom.** Stop exercising and go to A&E or call 999. Do not drive yourself. Sources: [NHS sciatica](https://www.nhs.uk/conditions/sciatica/).
+- **New trouble controlling urination or bowel movements.** Stop exercising and go to A&E or call 999. Do not drive yourself. Sources: [NHS sciatica](https://www.nhs.uk/conditions/sciatica/).
+- **Sciatica that has not improved after a few weeks of home treatment, is getting worse, or stops normal activities.** See a GP (non-urgent). Sources: [NHS sciatica](https://www.nhs.uk/conditions/sciatica/).
+- **New foot drop or progressive leg weakness, particularly after major trauma.** Stop exercising and get prompt medical assessment. The action is this review's cautious wording; the source reports poor recovery in such cases and gives no triage rule. Sources: [Metikala 2022](https://doi.org/10.7759/cureus.23153).
+- **Sciatica-like leg pain or weakness that returns with each menstrual period, or buttock pain that could reflect a piriformis muscle infection (pyomyositis).** Get medical assessment instead of exercising through it. The action is this review's cautious wording; the source names these as potentially catastrophic and gives no triage rule. Spotting infection signs is not something the app can do. Sources: [Siddiq 2020](https://doi.org/10.3344/kjp.2020.33.4.305), [Siddiq 2019](https://doi.org/10.1007/s10067-019-04552-y), [Monteleone 2025](https://doi.org/10.1186/s12893-025-03202-2).
+- **Sudden sciatica-like buttock or hip pain with high fever, or aggressive deep buttock pain with new leg numbness or weakness.** Stop exercising and get urgent medical assessment. The action is this review's wording; the source lists these as diagnostic clues to piriformis infection and gives no triage rule. Infection needs antibiotics and sometimes drainage, and it accounted for 9.4% of a biased case-report sample. Sources: [Siddiq 2019](https://doi.org/10.1007/s10067-019-04552-y), [Siddiq 2020](https://doi.org/10.3344/kjp.2020.33.4.305), [Monteleone 2025](https://doi.org/10.1186/s12893-025-03202-2).
+- **Buttock or leg symptoms that continue past about 3 months despite conservative care.** See a doctor for reassessment (non-urgent). The timing comes from Yoon 2025, which considers surgery after more than three months without response; using it as a referral prompt is this review's wording. Reassessment also matters because other conditions mimic this one. Sources: [Yoon 2025](https://doi.org/10.3390/diagnostics15192531), [WFNS 2024](https://doi.org/10.1016/j.wnsx.2024.100274), [Siddiq 2020](https://doi.org/10.3344/kjp.2020.33.4.305).
 
-- Sciatica in both legs
-- Severe or worsening weakness or numbness in both legs
-- Numbness around the genitals or bottom
-- New trouble controlling urination or bowel movements
+## Contradictions and limitations
 
-See a GP if sciatica has not improved after a few weeks of home treatment, is getting worse, or stops normal activities.
+**Contradictions**
 
-Two further items have sources that describe the risk but give no triage rule, so the action here is this review's cautious wording:
+1. **Mechanism.** Stretching assumes a short or spastic muscle. [Tonley 2010](https://doi.org/10.2519/jospt.2010.3108) proposes overstretching in one patient, who recovered without stretching described. No trial tests this.
+2. **Which position.** Trials stretch in flexion, adduction and internal rotation ([Dede 2026](https://doi.org/10.5606/tftrd.2026.16718), [Usman 2025](https://doi.org/10.53389/JRCRS.2025130403)). [Itsuda 2024](https://doi.org/10.1123/jsr.2023-0240) found more stiffness in external rotation; [Gulledge 2014](https://doi.org/10.1016/j.medengphy.2013.10.016) found both orders similar; [McGovern 2017](https://doi.org/10.26603/ijspt20171068) favoured adduction from 90 degrees. [Michel 2013b](https://doi.org/10.1016/j.rehab.2013.03.006) and [Ito 2025](https://doi.org/10.1002/jor.70005) explain part of this: rotation direction depends on hip flexion angle.
+3. **Figure-four.** It is widely recommended informally, yet the similar position gave the least length change in embalmed cadavers, done supine rather than prone ([McGovern 2017](https://doi.org/10.26603/ijspt20171068)). The closest trial found no pain benefit over control ([Shamsi 2024a](https://doi.org/10.1186/s13102-023-00802-4)). Neither shows it is useless or unsafe in living patients.
+4. **Whether stretching works.** [Aali 2026](https://doi.org/10.4081/ejtm.2026.14765) says it may help, especially combined. [Shamsi 2024a](https://doi.org/10.1186/s13102-023-00802-4) and [Sadiq 2025](https://doi.org/10.1016/j.jbmt.2025.05.044) found no added pain benefit. [Guner 2023](https://doi.org/10.7759/cureus.43804) found a home programme matched needling, without randomisation. [Fishman 2017](https://doi.org/10.1002/mus.25504) found physical therapy alone inferior to toxin in a selected group. [Siddiq 2020](https://doi.org/10.3344/kjp.2020.33.4.305) calls stretching "somewhat effective", from low-level sources.
+5. **Physiotherapy as first line.** [WFNS 2024](https://doi.org/10.1016/j.wnsx.2024.100274) and [Hopayian 2023](https://doi.org/10.1016/j.jbmt.2022.12.003) recommend it, while [Dove 2023](https://doi.org/10.1007/s00586-022-07356-y) found no overall effect in sciatica against control.
+6. **Rest.** [Park 2020](https://doi.org/10.1302/0301-620X.102B5.BJJ-2019-1212.R1) and [NHS Lothian 2025](https://policyonline.nhslothian.scot/wp-content/uploads/2025/02/Piriformis-Syndrome.pdf) include rest, [Vij 2021](https://doi.org/10.5812/aapm.112825) limits it to 48 hours, and [Dahm 2010](https://doi.org/10.1002/14651858.CD007612.pub2) found little or no difference between bed rest and staying active.
+7. **Anatomy.** Anomalies were equally common in cadavers and surgical cases, 16.9% (95% CI 16.0-17.9) vs 16.2% (95% CI 10.7-23.5) ([Smoll 2010](https://doi.org/10.1002/ca.20893)), yet [Monteleone 2025](https://doi.org/10.1186/s12893-025-03202-2) emphasises variants.
+8. **Injections.** [Hilal 2022](https://pubmed.ncbi.nlm.nih.gov/35901473/) ranks anaesthetic plus steroid best, while [Sconfienza 2022](https://doi.org/10.1007/s00330-021-08283-0) calls the added steroid's role unclear.
+9. **Prognosis.** Surgery was 58.9% in case reports ([Monteleone 2025](https://doi.org/10.1186/s12893-025-03202-2)) against 6.47% in a large cohort, where 79% of FAIR-positive patients improved 50% or more ([Fishman 2002a](https://doi.org/10.1053/apmr.2002.30622)). [Vij 2021](https://doi.org/10.5812/aapm.112825) reports 41 of 42 resolving by 35 days in one series, with inconsistently reported numbers.
 
-- **New foot drop or progressive leg weakness**, particularly after major pelvic or hip trauma or surgery: get prompt medical assessment (Metikala 2022).
-- **Cyclical sciatica-like pain, or possible piriformis muscle infection:** get medical assessment instead of exercising through it (Siddiq 2020). The app cannot detect signs of infection.
+**Data quality problems in the sources**
 
-## Limitations
+- [Shamsi 2024a](https://doi.org/10.1186/s13102-023-00802-4) and [Shamsi 2024b](https://doi.org/10.1016/j.jbmt.2024.03.073) share a registration number and arm sizes. The first was retrospectively registered, and its abstract CIs for sEMG do not match its Results.
+- [Usman 2025](https://doi.org/10.53389/JRCRS.2025130403) states 10-14 minutes per session, but 30 repetitions of 30 seconds takes 15 minutes in holds alone. Its FAIR chi-square of 0.657 looks wrong, since 4/20 vs 14/20 gives about 10.
+- [Dede 2026](https://doi.org/10.5606/tftrd.2026.16718) has garbled tables and identical ODI and LEFS p-values, so check the PDF before reusing its numbers.
+- [Guner 2023](https://doi.org/10.7759/cureus.43804) labels VAS 0-100 mm but reports 0-10 values.
+- [Vij 2021](https://doi.org/10.5812/aapm.112825) misstates [Gulledge 2014](https://doi.org/10.1016/j.medengphy.2013.10.016)'s 30-40% figure as a muscle length increase.
+- [Külcü 2024](https://doi.org/10.5606/tftrd.2024.14668)'s statement of only one randomised stretching trial is out of date.
+- [Hilal 2022](https://pubmed.ncbi.nlm.nih.gov/35901473/) prints a CI upper bound of +2.90, which looks like a typographical error.
+- [Neal 2026](https://doi.org/10.3390/sports14030095) has a text figure of 14.9% conflicting with 25.4%.
 
-- **No condition-specific guideline was found.** NICE NG59, NICE CKS and the JOSPT site returned errors and could not be read, so guideline content is missing and NHS patient guidance stands in for red flags.
-- **No relevant Cochrane review was found.** The only PubMed hit covers botulinum toxin for low-back pain and sciatica.
-- **Reading depth was limited.** Most sources were read as abstracts, automated full-text extraction or registry text. Aali 2026, the newest review, was abstract only.
-- **Some trial results were not opened.** This applies to NCT05660005, NCT07484373 and Laha 2018.
-- **The evidence base is weak.** Diagnosis is uncertain, samples are small, programs are mixed, untreated controls are rare, and long-term follow-up is lacking.
-- **Biomechanical studies don't measure symptoms.** They used small samples, and Itsuda 2024 studied healthy men.
+**Limits of this review**
+
+- **No condition-specific guideline was found.** [WFNS 2024](https://doi.org/10.1016/j.wnsx.2024.100274) is the closest, and it has no exercise detail.
+- **Key documents were not read.** The 2023 JOSPT guideline, NICE CKS and the WHO guideline full text. [NICE NG59](https://www.nice.org.uk/guidance/ng59/chapter/Recommendations) was read at its Recommendations page only.
+- **No Cochrane exercise review was found, but the check is partial.** Of 29 filtered PubMed hits, 12 titles were screened, and the Cochrane Library returned 403.
+- **The best dose source was not read.** The [Aali 2026](https://doi.org/10.4081/ejtm.2026.14765) protocol table could not be opened, and it is worth retrieving by hand.
+- **"Figure-four" and "pigeon" are this review's labels.** No paper found uses them, so each mapping is inference.
+- **Harms are barely reported.** Most exercise trials do not report adverse events, so absence of reports is not evidence of safety.
+- **One trial is known second-hand.** Laha 2018 is known only through [Siraj 2022](https://doi.org/10.7759/cureus.32952).
+- **Doses from registries have no published results.** This applies to [NCT05660005](https://clinicaltrials.gov/study/NCT05660005) and [NCT07484373](https://clinicaltrials.gov/study/NCT07484373), and NCT05660005 is inconsistent on whether its stretching arm did home strengthening.
 
 ## Verification
 
-An independent check opened all 19 sources. All exist and their details match. The three catalog IDs exist and are the same movements. All exercise, avoid/modify and red flag items were kept.
+An independent check reopened this record against PubMed, PMC, the registries, NHS pages and the trial PDFs.
+
+**Sources checked:** 79.
 
 **Removed**
 
-- Caution clause on the piriformis stretch: 'but that may not suit people with hip impingement'. No cited source says this. Gulledge 2014 suggests high-flexion positions may be easier for some patients. The rest of the exercise item is supported and stays.
+- vij2021 as a source for the 3-month reassessment red flag: Vij 2021 reserves surgery for failed conservative care and gives no 3-month timing. Only Yoon 2025 states it.
+- 'pelvic or hip' and 'or surgery' in the foot drop red flag: Metikala 2022 reports foot drop in a group after major trauma. It does not limit this to the pelvis or hip, and it does not report it after surgery.
+- Dede 2026 needling arm 3-month pain value of 3.0: The table cell is garbled ('3 0,2 2') and the printed mean difference of -0.25 against 3.7 does not fit 3.0.
+- 'surgical referral series' for the 67.8% figure: Martin 2015 describes 239 patients with sciatic entrapment and does not say they were a surgical referral series.
+- 'landmark' describing Halpin 2009: Nothing in the source supports the description.
 
 **Corrected**
 
-- Forceful end-range stretching avoid/modify item: evidenceStrength biomechanical -> expert_opinion. The provocation-test reasoning comes from narrative reviews and one case report, and no biomechanical study measured harm or nerve compression in these positions.
-- park2020 source type: systematic_review -> narrative_review. The abstract calls it a comprehensive review and reports no systematic method.
-- Piriformis stretch: replaced 'healthy' for the position studies, because the Gulledge 2014 abstract says only 'seven subjects'. Only Itsuda 2024 is confirmed as healthy men. Same correction in limitations.
-- Piriformis stretch: added tonley2010 to sourceIds, because the caution about the overstretching hypothesis comes from it.
+- Neal 2026: 25.4% and 22.4% are L5-S1 pain with sustained stretching and sustained resistance exercise, not general pain.
+- Cyclical sciatica red flag: narrowed from 'cycles in a repeating pattern' to returning with each menstrual period, as Siddiq 2020 describes it.
+- 3-month red flag: timing attributed to Yoon 2025 alone.
+- FAIR stretch (NCT05660005): added the 4-week duration and the control arm's non-random make-up; 'results not opened' now reads no results posted.
+- Sciatic nerve glide, Usman 2025 alternative dose: stated that this is a held straight-knee position, closer to a tensioner than to a slider.
+- Nerve tensioning item: evidenceStrength biomechanical -> expert_opinion, because the only source is one sentence in a narrative review.
+- Dede 2026 table: needling arm reported with baseline only, and the garbled 3-month cell is stated.
+- WFNS 2024: first line is rest, NSAIDs, muscle relaxants, gabapentin and/or physical therapy; second line is steroid or local anaesthetic injection, then botulinum toxin. It previously read pain medication and physical therapy, then lidocaine and botulinum.
+- Aldera 2026: 'most conditional, very low to low certainty' replaced by what the abstract states, including strong recommendations and moderate certainty.
+- Waseem 2011: 'very low-quality' corrected to low quality against saline and very low quality against acupuncture or steroid.
+- Enseki 2014: accessLevel abstract_only -> full_text. The PMC full text has no match for piriformis, deep gluteal or sciatic, so 'unknown' now reads does not cover this condition.
+- Gallotti 2026: author 'Gallotti DM' corrected to 'Gallotti M'. The 'D' came from the title 'Dr'.
+- accessLevel not_reconfirmed resolved: metikala2022, sharma2023, siraj2022 and nhs_sciatica to full_text; miller2012 and bisciotti2026 to abstract_only; nct05660005 and nct07484373 to registry_or_summary.
+- NICE NG59: .md link changed from the PubMed record to the NICE page, to match the JSON url.
 
-**Could not be fully verified, or needs review**
+**Could not be verified**
 
-- Abstract only, full text not opened: aali2026, hopayian2023, park2020, miller2012, bisciotti2026, chaari2024, tonley2010, itsuda2024, gulledge2014. Items citing them were checked against the abstract.
-- Laha 2018 was not opened. It is checked only as summarized in Siraj 2022, which matches what is stated here.
-- NICE, JOSPT and Cochrane search claims in limitations describe the original search and were not repeated.
-- NCT05660005 is inconsistent on whether the stretching arm did home strengthening: the detailed description says yes, while the arm and intervention entries link it only to the control group.
-- Clamshell: the catalog entry lists bodyweight, but its review notes say the pictured variant uses a thigh band and an unbanded alternative needs its own decision. Same movement; needs a human decision on the variant.
+- NICE NG59 page returned HTTP 403 on this check. PMID 33090750 resolves to the right title, and a web search confirmed the 'consider a group exercise programme' wording and that it survives the July 2026 update, the latter only from a vendor article. The absence of 'piriformis' on the page was not re-tested.
+- Enseki 2023 full text (JOSPT 403) and the Aali 2026 full text were not read. Abstracts only.
+- Abstract-only sources were checked against the abstract, so any claim on their full text is out of reach: tonley2010, michel2013b, martin2014, giphart2012, itsuda2024, gulledge2014, kay2017 and others marked abstract_only.
+- DOI links were checked by matching DOI, PMID and title in PubMed; publisher pages were not each opened. Links without a PMID were opened directly.
+- Laha 2018 is known only through Siraj 2022. Fishman 2002b is labelled rct, but its abstract says double-blind and placebo-controlled without the word randomized.
+- Shamsi 2024a and 2024b being the same cohort remains an inference from the shared arm sizes and registration.
+- Search hit counts in the log were not re-run.
+- NCT05660005 lists strengthening under the control arm in its arm entries, while its description gives it to the other two arms as well.
+- Clamshell: the catalog entry lists bodyweight, but its review notes say the pictured variant uses a thigh band. Needs a human decision on the variant.
 - Side-lying hip abduction: the catalog notes it is near-identical to side-lying-leg-raise, with the distinction unclear.
-- Red flag on cycling pain: Siddiq 2020 describes cyclical sciatica as menstruation-linked, and the item's wording is broader. The source supports the risk but does not give a triage rule. Flagged for review, not changed.
-- Red flag on foot drop: Metikala 2022 reports foot drop and poor recovery in a surgical series after major trauma, not a warning sign for exercisers. The action is the review's own wording, as the item says.
 
-## Sources
+## References
 
-Full citations, DOIs, PMIDs and URLs are in `piriformis_syndrome.json`.
+1. [Aali S, Rezazadeh F, Imani F, Moradzadeh N, Prisacaru C, Badicu G. Effectiveness of stretching techniques in piriformis syndrome management: a systematic review. Eur J Transl Myol. 2026 Oct 29, online ahead of print. Abstract only read.](https://doi.org/10.4081/ejtm.2026.14765) Access: abstract only.
+2. [Hopayian K, Mirzaei M, Shamsi M, Arab-Zozani M. A systematic review of conservative and surgical treatments for deep gluteal syndrome. J Bodyw Mov Ther. 2023;36:244-250. Abstract only read.](https://doi.org/10.1016/j.jbmt.2022.12.003) Access: abstract only.
+3. [Park JW, Lee YK, Lee YJ, Shin S, Kang Y, Koo KH. Deep gluteal syndrome as a cause of posterior hip pain and sciatica-like pain. Bone Joint J. 2020;102-B(5):556-567. Abstract only read.](https://doi.org/10.1302/0301-620X.102B5.BJJ-2019-1212.R1) Access: abstract only.
+4. [Metikala S, Sharma V. Endoscopic Sciatic Neurolysis for Deep Gluteal Syndrome: A Systematic Review. Cureus. 2022;14(3):e23153. Surgical review; conservative care described as background.](https://doi.org/10.7759/cureus.23153) Access: full text.
+5. [Bisciotti GN, Bisciotti A, Zini R, Bisciotti A, Volpi P, Di Pietto F. The diagnosis of deep gluteal syndrome: a systematic review of the current literature. Muscles Ligaments Tendons J. 2026;16. Abstract only read.](https://doi.org/10.32098/mltj_2026_6435) Access: abstract only.
+6. [Miller TA, White KP, Ross DC. The diagnosis and management of Piriformis Syndrome: myths and facts. Can J Neurol Sci. 2012. Abstract only read.](https://doi.org/10.1017/s0317167100015298) Access: abstract only.
+7. [Sharma S, Kaur H, Verma N, Adhya B. Looking beyond Piriformis Syndrome: Is It Really the Piriformis? Hip Pelvis. 2023;35(1):1-5.](https://doi.org/10.5371/hp.2023.35.1.1) Access: full text.
+8. [Vij N, Kiernan H, Bisht R, et al. Surgical and Non-surgical Treatment Options for Piriformis Syndrome: A Literature Review. Anesth Pain Med. 2021;11(1):e112825.](https://doi.org/10.5812/aapm.112825) Access: full text.
+9. [Geler Külcü D. Deep Gluteal syndrome: An underestimated cause of posterior hip pain. Turk J Phys Med Rehabil. 2024;70(1):4-16.](https://doi.org/10.5606/tftrd.2024.14668) Access: full text.
+10. [Ahmad Siraj S, Dadgal R. Physiotherapy for Piriformis Syndrome Using Sciatic Nerve Mobilization and Piriformis Release. Cureus. 2022;14(12):e32952.](https://doi.org/10.7759/cureus.32952) Access: full text.
+11. [Siddiq MAB, Clegg D, Hasan SA, Rasker JJ. Extra-spinal sciatica and sciatica mimics: a scoping review. Korean J Pain. 2020;33(4):305-317.](https://doi.org/10.3344/kjp.2020.33.4.305) Access: full text.
+12. [Guner D, Ozcete ZA. Evaluation of the Efficacy of Ultrasound-Guided Dry Needling Therapy and Exercise in Piriformis Muscle Syndrome. Cureus. 2023;15(8):e43804. Non-randomized: groups formed by whether patients accepted needling.](https://doi.org/10.7759/cureus.43804) Access: full text.
+13. [Chaari F, Jardak M, Bouchaala F, Harrabi MA, Rebai H, Sahli S. Immediate effect of hip exercises-inducing motor unit recruitment on static and dynamic postural balance in patients with piriformis muscle syndrome. J Bodyw Mov Ther. 2024;40:1738-1743. Abstract only read.](https://doi.org/10.1016/j.jbmt.2024.10.027) Access: abstract only.
+14. [Tonley JC, Yun SM, Kochevar RJ, Dye JA, Farrokhi S, Powers CM. Treatment of an individual with piriformis syndrome focusing on hip muscle strengthening and movement reeducation: a case report. J Orthop Sports Phys Ther. 2010;40(2):103-111. Abstract only read.](https://doi.org/10.2519/jospt.2010.3108) Access: abstract only.
+15. [Itsuda H, Yagi M, Yanase K, Umehara J, Mukai H, Ichihashi N. Effective Stretching Positions of the Piriformis Muscle Evaluated Using Shear Wave Elastography. J Sport Rehabil. 2024;33(4):282-288. 21 healthy men. Abstract only read.](https://doi.org/10.1123/jsr.2023-0240) Access: abstract only.
+16. [Gulledge BM, Marcellin-Little DJ, Levine D, et al. Comparison of two stretching methods and optimization of stretching protocol for the piriformis muscle. Med Eng Phys. 2014;36(2):212-218. 7 subjects plus computational model. Abstract only read.](https://doi.org/10.1016/j.medengphy.2013.10.016) Access: abstract only.
+17. [Self Myofascial Release in Individuals With Piriformis Syndrome. ClinicalTrials.gov NCT05660005. Completed, 63 enrolled. Registry record read; no results posted.](https://clinicaltrials.gov/study/NCT05660005) Access: registry or summary.
+18. [Effects of Hip Abductor Strengthening Exercises in Patients With Piriformis Syndrome. ClinicalTrials.gov NCT07484373. Completed, 48 enrolled. Registry record read; no results posted.](https://clinicaltrials.gov/study/NCT07484373) Access: registry or summary.
+19. [NHS. Sciatica. Page last reviewed 3 December 2024. General sciatica advice, not specific to piriformis syndrome.](https://www.nhs.uk/conditions/sciatica/) Access: full text.
+20. [Vaishya S, Pojskic M, Bedi MS, et al. Cauda equina, conus medullaris and syndromes mimicking sciatic pain: WFNS spine committee recommendations. World Neurosurg X. 2024;22:100274.](https://doi.org/10.1016/j.wnsx.2024.100274) Access: full text.
+21. [Sconfienza LM, Adriaensen M, Albano D, et al. Clinical indications for image-guided interventional procedures in the musculoskeletal system: a Delphi-based consensus paper from the ESSR, part VII, nerves of the lower limb. Eur Radiol. 2022;32(3):1456-1464.](https://doi.org/10.1007/s00330-021-08283-0) Access: full text.
+22. [NICE guideline NG59. Low back pain and sciatica in over 16s: assessment and management. Published 30 November 2016; last updated 29 July 2026. Recommendations page only.](https://www.nice.org.uk/guidance/ng59/chapter/Recommendations) Access: full text.
+23. [Enseki K, Harris-Hayes M, White DM, et al. Nonarthritic hip joint pain. J Orthop Sports Phys Ther. 2014;44(6):A1-32.](https://doi.org/10.2519/jospt.2014.0302) Access: full text.
+24. [Enseki KR, Bloom NJ, Harris-Hayes M, et al. Hip Pain and Movement Dysfunction Associated With Nonarthritic Hip Joint Pain: A Revision. J Orthop Sports Phys Ther. 2023;53(7):CPG1-CPG70.](https://doi.org/10.2519/jospt.2023.0302) Access: abstract only.
+25. [Aldera M, Alturkistany A, Al Rayes H, et al. Saudi Clinical Practice Guideline for the Assessment and Management of Low Back Pain and Sciatica in Adults. J Clin Med. 2026;15(2).](https://doi.org/10.3390/jcm15020528) Access: full text.
+26. [WHO guideline for non-surgical management of chronic primary low back pain in adults in primary and community care settings. WHO; 2023. Publication page and a published commentary (PMC12232859) only.](https://www.who.int/publications/i/item/9789240081789) Access: registry or summary.
+27. [Kizaki K, Uchida S, Shanmugaraj A, et al. Deep gluteal syndrome is defined as a non-discogenic sciatic nerve disorder with entrapment in the deep gluteal space: a systematic review. Knee Surg Sports Traumatol Arthrosc. 2020;28(10):3354-3364.](https://doi.org/10.1007/s00167-020-05966-x) Access: abstract only.
+28. [Hopayian K, Danielyan A. Four symptoms define the piriformis syndrome: an updated systematic review of its clinical features. Eur J Orthop Surg Traumatol. 2018;28(2):155-164.](https://doi.org/10.1007/s00590-017-2031-8) Access: abstract only.
+29. [Halpin RJ, Ganju A. Piriformis syndrome: a real pain in the buttock? Neurosurgery. 2009;65(4 Suppl):A197-202.](https://doi.org/10.1227/01.NEU.0000335788.45495.0C) Access: abstract only.
+30. [Shamsi M, Mirzaei M, Hopayian K. A controlled clinical trial investigating the effects of stretching and compression exercises on electromyography of calf muscles in chronic LBP patients with a deep gluteal syndrome. BMC Sports Sci Med Rehabil. 2024;16(1):12.](https://doi.org/10.1186/s13102-023-00802-4) Access: full text.
+31. [Shamsi M, Akbari M, Mirzaei M, Minobes Molina E. Comparing the effect of stretching and compression exercises on flexion relaxation ratio of back muscles in patients having deep gluteal syndrome: A randomized trial. J Bodyw Mov Ther. 2024;40:66-71. Appears to be the same cohort as Shamsi 2024a.](https://doi.org/10.1016/j.jbmt.2024.03.073) Access: abstract only.
+32. [Usman M, Khan R, Riaz SA, Shahid G, Ali ST, Arif A. Comparative Effects of Neural Mobilization of Sciatic Nerve Versus Stretching Among Patients with Piriformis Syndrome: A Randomized Clinical Trial. J Riphah Coll Rehabil Sci. 2025;13(4):203-209. NCT06808659.](https://doi.org/10.53389/JRCRS.2025130403) Access: full text.
+33. [Dede BT, Toktaş M, Kurnaz S, Oğuz M, Bağcıer F, Aytekin E. Extracorporeal shock wave therapy versus dry needling for piriformis syndrome: A randomized clinical trial. Turk J Phys Med Rehabil. 2026;72(1):39-47.](https://doi.org/10.5606/tftrd.2026.16718) Access: full text.
+34. [Shahzad M, Rafique N, Shakil-Ur-Rehman S, Ali Hussain S. Effects of ELDOA and post-facilitation stretching technique on pain and functional performance in patients with piriformis syndrome: A randomized controlled trial. J Back Musculoskelet Rehabil. 2020;33(6):983-988.](https://doi.org/10.3233/BMR-181290) Access: abstract only.
+35. [Fu YS, Shih KS, Lin YT, Hsieh LF, Liu YF, Chen YR. Efficacy of ultrasound-guided piriformis muscle corticosteroid injection versus extracorporeal shockwave therapy in patients with piriformis syndrome: A randomized controlled trial. J Formos Med Assoc. 2026;125(4):391-397.](https://doi.org/10.1016/j.jfma.2025.01.020) Access: abstract only.
+36. [Danazumi MS, Yakasai AM, Ibrahim AA, Shehu UT, Ibrahim SU. Effect of integrated neuromuscular inhibition technique compared with positional release technique in the management of piriformis syndrome. J Osteopath Med. 2021;121(8):693-703.](https://doi.org/10.1515/jom-2020-0327) Access: abstract only.
+37. [Sadiq A, Khalid Z, Kiran T, Hassan W. Additional effects of piriformis stretch in the management of sacroiliac joint dysfunction: A randomized control trial. J Bodyw Mov Ther. 2025;44:149-154. Indirect population.](https://doi.org/10.1016/j.jbmt.2025.05.044) Access: abstract only.
+38. [Nazlıkul H, Ural FG, Öztürk GT, Öztürk ADT. Evaluation of neural therapy effect in patients with piriformis syndrome. J Back Musculoskelet Rehabil. 2018;31(6):1105-1110.](https://doi.org/10.3233/BMR-170980) Access: abstract only.
+39. [Byeon GJ, Kim KH. Piriformis Syndrome in Knee Osteoarthritis Patients after Wearing Rocker Bottom Shoes. Korean J Pain. 2011;24(2):93-99.](https://doi.org/10.3344/kjp.2011.24.2.93) Access: full text.
+40. [Fishman LM, Wilkins AN, Rosner B. Electrophysiologically identified piriformis syndrome is successfully treated with incobotulinum toxin a and physical therapy. Muscle Nerve. 2017;56(2):258-263.](https://doi.org/10.1002/mus.25504) Access: abstract only.
+41. [Fishman LM, Dombi GW, Michaelsen C, et al. Piriformis syndrome: diagnosis, treatment, and outcome--a 10-year study. Arch Phys Med Rehabil. 2002;83(3):295-301.](https://doi.org/10.1053/apmr.2002.30622) Access: abstract only.
+42. [Fishman LM, Anderson C, Rosner B. BOTOX and physical therapy in the treatment of piriformis syndrome. Am J Phys Med Rehabil. 2002;81(12):936-942.](https://doi.org/10.1097/00002060-200212000-00009) Access: abstract only.
+43. [Fishman LM, Konnoth C, Rozner B. Botulinum neurotoxin type B and physical therapy in the treatment of piriformis syndrome: a dose-finding study. Am J Phys Med Rehabil. 2004;83(1):42-50.](https://doi.org/10.1097/01.PHM.0000104669.86076.30) Access: abstract only.
+44. [Tabatabaiee A, Takamjani IE, Sarrafzadeh J, Salehi R, Ahmadi M. Ultrasound-guided dry needling decreases pain in patients with piriformis syndrome. Muscle Nerve. 2019;60(5):558-565.](https://doi.org/10.1002/mus.26671) Access: abstract only.
+45. [Ahadi T, Yousefi A, Sajadi S, Yousefi N, Babaei-Ghazani A. Comparing radial extracorporeal shockwave therapy and corticosteroid injection in the treatment of piriformis syndrome: A randomized clinical trial. J Bodyw Mov Ther. 2023;33:182-188.](https://doi.org/10.1016/j.jbmt.2022.09.020) Access: abstract only.
+46. [Dove L, Jones G, Kelsey LA, Cairns MC, Schmid AB. How effective are physiotherapy interventions in treating people with sciatica? A systematic review and meta-analysis. Eur Spine J. 2023;32(2):517-533.](https://doi.org/10.1007/s00586-022-07356-y) Access: full text.
+47. [Fernandez M, Hartvigsen J, Ferreira ML, et al. Advice to Stay Active or Structured Exercise in the Management of Sciatica: A Systematic Review and Meta-analysis. Spine. 2015;40(18):1457-1466.](https://doi.org/10.1097/BRS.0000000000001036) Access: abstract only.
+48. [Dahm KT, Brurberg KG, Jamtvedt G, Hagen KB. Advice to rest in bed versus advice to stay active for acute low-back pain and sciatica. Cochrane Database Syst Rev. 2010;(6):CD007612.](https://doi.org/10.1002/14651858.CD007612.pub2) Access: abstract only.
+49. [Shiri R, Falah-Hassani K, Viikari-Juntura E, Coggon D. Leisure-time physical activity and sciatica: A systematic review and meta-analysis. Eur J Pain. 2016;20(10):1563-1572.](https://doi.org/10.1002/ejp.885) Access: abstract only.
+50. [Monteleone G, Stevanato G, Alimandi M, Cappa E, Sorge R. Piriformis syndrome: a systematic review of case reports. BMC Surg. 2025;25(1):468.](https://doi.org/10.1186/s12893-025-03202-2) Access: full text.
+51. [Franceschi G, Scotto I, Maselli F, Mourad F, Gallotti M. Hands-On Versus Hands-Off Treatment of Hip-Related Nonspecific Musculoskeletal Diseases: A Systematic Review. J Funct Morphol Kinesiol. 2024;9(4).](https://doi.org/10.3390/jfmk9040262) Access: full text.
+52. [Smoll NR. Variations of the piriformis and sciatic nerve with clinical consequence: a review. Clin Anat. 2010;23(1):8-17.](https://doi.org/10.1002/ca.20893) Access: abstract only.
+53. [Hilal FM, Bashawyah A, Allam AE, et al. Efficacy of Botulinum Toxin, Local Anesthetics, and Corticosteroids in Patients With Piriformis Syndrome: A Systematic Review and Meta-analysis. Pain Physician. 2022;25(5):325-337.](https://pubmed.ncbi.nlm.nih.gov/35901473/) Access: abstract only.
+54. [Waseem Z, Boulias C, Gordon A, Ismail F, Sheean G, Furlan AD. Botulinum toxin injections for low-back pain and sciatica. Cochrane Database Syst Rev. 2011;(1):CD008257.](https://doi.org/10.1002/14651858.CD008257.pub2) Access: abstract only.
+55. [Kay J, de Sa D, Morrison L, et al. Surgical Management of Deep Gluteal Syndrome Causing Sciatic Nerve Entrapment: A Systematic Review. Arthroscopy. 2017;33(12):2263-2278.](https://doi.org/10.1016/j.arthro.2017.06.041) Access: abstract only.
+56. [Chiddarwar VV, Kelly DK, DelBiondo GM, et al. Rehabilitative and Conditioning Exercises That Selectively Activate Individual Lower Extremity Muscles: A Systematic Review. Sports Health. 2026, online ahead of print.](https://doi.org/10.1177/19417381261480238) Access: full text.
+57. [Gallotti M. FP13.5 Time to reconsider conservative treatment recommendations for Deep Gluteal Syndrome: A scoping review. J Hip Preserv Surg. 2026;13(Suppl 1):i44. Conference abstract.](https://doi.org/10.1093/jhps/hnag043.101) Access: abstract only.
+58. [Siddiq MAB, Rasker JJ. Piriformis pyomyositis, a cause of piriformis syndrome: a systematic search and review. Clin Rheumatol. 2019;38(7):1811-1821.](https://doi.org/10.1007/s10067-019-04552-y) Access: abstract only.
+59. [Deshmukh N. Impact of Physiotherapy Intervention on Pain, Quality of Life, and Function in Low Back Pain Associated With Piriformis Syndrome: Protocol for Systematic Review. JMIR Res Protoc. 2026;15:e72350. Protocol; no results.](https://doi.org/10.2196/72350) Access: abstract only.
+60. [Dey G, Hossain MA, Halder P, Huda MN, Adhikari M, Alam F. Effectiveness of abdominal hollowing and piriformis stretching exercises in spondylolisthesis patients: a study protocol for a randomized controlled trial. Trials. 2026;27:556. Protocol; no results; indirect population.](https://doi.org/10.1186/s13063-026-09873-3) Access: full text.
+61. [Shaheen HM, Belgen Kaygisiz B. Comparison of different treatment positions of nerve slider technique for patients with low back pain: a randomized control trial. Eur J Phys Rehabil Med. 2025;61(1):82-92. Indirect population; piriformis syndrome excluded.](https://doi.org/10.23736/S1973-9087.24.08541-1) Access: full text.
+62. [Meknas K, Kartus J, Letto JI, Flaten M, Johansen O. A 5-year prospective study of non-surgical treatment of retro-trochanteric pain. Knee Surg Sports Traumatol Arthrosc. 2009;17(8):996-1002.](https://doi.org/10.1007/s00167-009-0750-z) Access: abstract only.
+63. [Michel F, Decavel P, Toussirot E, et al. Piriformis muscle syndrome: diagnostic criteria and treatment of a monocentric series of 250 patients. Ann Phys Rehabil Med. 2013;56(5):371-383.](https://doi.org/10.1016/j.rehab.2013.04.003) Access: abstract only.
+64. [Neal C, Gelatt T, Toma M. Prevalence and Clinical Patterns of Piriformis Syndrome Among Actively Competing and Retired Elite Hockey Players. Sports (Basel). 2026;14(3):95.](https://doi.org/10.3390/sports14030095) Access: full text.
+65. [Ertem U, Özçakır S, İrdesel FJ, Günay SM. YouTube as a source of information on piriformis syndrome exercises. Turk J Phys Med Rehabil. 2023;69(1):15-22.](https://doi.org/10.5606/tftrd.2022.10459) Access: full text.
+66. [Martin HD, Kivlan BR, Palmer IJ, Martin RL. Diagnostic accuracy of clinical tests for sciatic nerve entrapment in the gluteal region. Knee Surg Sports Traumatol Arthrosc. 2014;22(4):882-888.](https://doi.org/10.1007/s00167-013-2758-7) Access: abstract only.
+67. [Michel F, Decavel P, Toussirot E, et al. The piriformis muscle syndrome: an exploration of anatomical context, pathophysiological hypotheses and diagnostic criteria. Ann Phys Rehabil Med. 2013;56(4):300-311.](https://doi.org/10.1016/j.rehab.2013.03.006) Access: abstract only.
+68. [Martin HD, Reddy M, Gómez-Hoyos J. Deep gluteal syndrome. J Hip Preserv Surg. 2015;2(2):99-107.](https://doi.org/10.1093/jhps/hnv029) Access: full text.
+69. [Yoon YH, Hwang JH, Lee HW, et al. Beyond Nerve Entrapment: A Narrative Review of Muscle-Tendon Pathologies in Deep Gluteal Syndrome. Diagnostics (Basel). 2025;15(19):2531.](https://doi.org/10.3390/diagnostics15192531) Access: full text.
+70. [McGovern RP, Kivlan BR, Martin RL. Length change of the short external rotators of the hip in common stretch positions: a cadaveric study. Int J Sports Phys Ther. 2017;12(7):1068-1077.](https://doi.org/10.26603/ijspt20171068) Access: full text.
+71. [Ito Y, Suzuki D, Kizawa F, et al. Comparison of External Rotation Torque of Short External Rotator Muscles in Hip Flexion Position. J Orthop Res. 2025;43(9):1655-1665.](https://doi.org/10.1002/jor.70005) Access: full text.
+72. [Giphart JE, Stull JD, LaPrade RF, Wahoff MS, Philippon MJ. Recruitment and activity of the pectineus and piriformis muscles during hip rehabilitation exercises: an electromyography study. Am J Sports Med. 2012;40(7):1654-1663.](https://doi.org/10.1177/0363546512443812) Access: abstract only.
+73. [Kim S, Burland JP, Morgan KD, DiStefano LJ, Boling MC, Glaviano NR. Superficial and Deep Gluteal Muscle Activation During Common Therapeutic Exercises: A Muscle Functional Magnetic Resonance Imaging Analysis. Sports Health. 2026;18(3):582-591.](https://doi.org/10.1177/19417381251372979) Access: full text.
+74. [Uebayashi K, Okubo Y, Akasaka K, et al. Muscle activity of deep hip muscles across joint positions and elevation phases during side-lying hip abduction. PeerJ. 2026;14:e21536.](https://doi.org/10.7717/peerj.21536) Access: full text.
+75. [Meinders E, Pizzolato C, Gonçalves B, Lloyd DG, Saxby DJ, Diamond LE. Activation of the deep hip muscles can change the direction of loading at the hip. J Biomech. 2022;135:111019.](https://doi.org/10.1016/j.jbiomech.2022.111019) Access: abstract only.
+76. [Meinders E, Pizzolato C, Gonçalves BAM, Lloyd DG, Saxby DJ, Diamond LE. Electromyography measurements of the deep hip muscles do not improve estimates of hip contact force. J Biomech. 2022;141:111220. Read only as a companion-paper note.](https://doi.org/10.1016/j.jbiomech.2022.111220) Access: abstract only.
+77. [Maniar N, Schache AG, Sritharan P, Opar DA. Non-knee-spanning muscles contribute to tibiofemoral shear as well as valgus and rotational joint reaction moments during unanticipated sidestep cutting. Sci Rep. 2018;8:2501.](https://doi.org/10.1038/s41598-017-19098-9) Access: abstract only.
+78. [Keilman BM, Hanney WJ, Kolber MJ, et al. The Short-Term Effect of Kettlebell Swings on Lumbopelvic Pressure Pain Thresholds: A Randomized Controlled Trial. J Strength Cond Res. 2017;31(11):3001-3009.](https://doi.org/10.1519/JSC.0000000000001743) Access: abstract only.
+79. [NHS Lothian. Piriformis Syndrome: Patient Information Sheet. v1.0 approved Jan 2025, review Jan 2028.](https://policyonline.nhslothian.scot/wp-content/uploads/2025/02/Piriformis-Syndrome.pdf) Access: full text.

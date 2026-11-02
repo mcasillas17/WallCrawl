@@ -4,43 +4,102 @@
   "evidenceGrade": "very_low",
   "diagnosisContested": {
     "contested": true,
-    "note": "The condition itself is widely accepted. What is debated is how to diagnose and grade it: a secondary summary reports no true reference standard, normal electrodiagnostic results in some symptomatic people, and severity classifications of limited validity. A Lancet Neurology review reports a paucity of evidence on the best approaches to assessment. Users of this app may be self-identified rather than diagnosed. Sources: physiotutors_dx_2026, padua_2016."
+    "note": "The condition itself is widely accepted. What is debated is how to diagnose and grade it. A consensus paper found no perfect gold standard and judged electrodiagnostic findings plus symptoms most accurate (rempel_1998). The AAOS/ASSH 2024 guideline says the CTS-6 can be used in lieu of routine ultrasound or nerve testing (shapiro_2025), while an expert consensus says electrodiagnosis should always be performed to quantify severity and in people over 70 (pelosi_2022). Twelve severity grading systems exist and 27% of surveyed practitioners used none (robinson_2026). A secondary summary also reports normal electrodiagnostic results in some symptomatic people (physiotutors_dx_2026), and a Lancet Neurology review reports a paucity of evidence on the best approaches to assessment (padua_2016). Users of this app may be self-identified rather than diagnosed, and the severity limits most non-surgical recommendations rely on cannot be checked from self-report."
   },
   "avoidOrModify": [
     {
       "movement": "Sustained or loaded positions near end-range wrist extension or flexion, for example flat-palm push-ups, planks and front-rack holds. These examples are an inference; no study found measured them.",
       "action": "modify",
-      "rationale": "Catheter studies show carpal canal pressure is lowest near neutral and rises with wrist flexion and extension, and more so in people with CTS (mean 32 mmHg neutral, 94 at 90 degrees flexion, 110 at 90 degrees extension, against 2.5, 31 and 30 in controls). In healthy people, 30 mmHg was reached at about 33 degrees extension and 49 degrees flexion at the 25th percentile. Workplace evidence on wrist posture itself is low quality. Using a smaller range or a straighter wrist is a reasonable inference, not a tested exercise intervention.",
+      "rationale": "Catheter studies show carpal canal pressure is lowest near neutral and rises with wrist flexion and extension, and more so in people with CTS (mean 32 mmHg neutral, 94 at 90 degrees flexion, 110 at 90 degrees extension, against 2.5, 31 and 30 in controls). In healthy people, 30 mmHg was reached at 32.7 degrees extension (95% CI 27.2-38.1) and 48.6 degrees flexion (37.7-59.4) at the 25th percentile. In 5 cadaveric hands, pressure rose beyond 20 degrees and exceeded 5 times baseline at 50 degrees. Straight fingers gave higher pressure than 45 degrees of knuckle flexion across extension angles, which by inference makes the flat-palm shape a high-pressure posture, though that study was unloaded. Direct support for acting on this is weak: wrist posture was significantly associated under the broader NIOSH case definition but not under a strict nerve-conduction-backed definition (OR 4.73, 95% CI 0.42-53.32), workplace evidence is low quality, and in 21 patients ergonomic devices changed wrist position without lowering pressure. Using a smaller range or a straighter wrist is a reasonable inference, not a tested exercise intervention.",
       "evidenceStrength": "biomechanical",
-      "sourceIds": ["gelberman_1981", "keir_2007", "kozak_2015", "orthoinfo_cts"]
+      "sourceIds": [
+        "gelberman_1981",
+        "keir_2007",
+        "kozak_2015",
+        "orthoinfo_cts",
+        "keir_finger_1998",
+        "li_jordan_2026",
+        "barcenilla_2012",
+        "schmid_2015",
+        "vignais_2016"
+      ]
     },
     {
       "movement": "High-volume hand work that combines forceful gripping with many repetitions",
       "action": "modify",
-      "rationale": "Occupational studies rate repetition and force as the best-supported risk factors (repetition HR 1.87, 95% CI 1.42-2.46; force intensity HR 1.84, 95% CI 1.22-2.79). These are years of workplace exposure and may not transfer to gym training. They support managing hand volume, not avoiding hand use. A secondary summary of the 2026 guideline favours individual activity modification over indiscriminate avoidance.",
+      "rationale": "Occupational studies rate repetition and force as the best-supported risk factors: repetition HR 1.87 (95% CI 1.42-2.46) and force intensity HR 1.84 (1.22-2.79) in prospective cohorts; repetition OR 2.26 (1.73-2.94) and hand force OR 4.23 (1.53-11.68) with nerve-conduction-backed cases. A separate cohort review also supports repetition, velocity and combined exposures. These are years of workplace exposure and may not transfer to gym training. The nearest sport data disagree: 33.3% definite CTS in 27 elite female tug-of-war athletes analysed (the abstract says 29 recruited) with no concurrent control, against no association between training load and CTS in wheelchair athletes. They support managing hand volume, not avoiding hand use. A secondary summary of the 2026 guideline favours individual activity modification over indiscriminate avoidance.",
       "evidenceStrength": "observational",
-      "sourceIds": ["hassan_2022", "kozak_2015", "physiotutors_cpg_2026", "nhs_cts"]
+      "sourceIds": [
+        "hassan_2022",
+        "kozak_2015",
+        "physiotutors_cpg_2026",
+        "nhs_cts",
+        "barcenilla_2012",
+        "gerger_2024",
+        "palmer_2007",
+        "huang_2024",
+        "marriott_2023"
+      ]
     },
     {
       "movement": "Hard or sustained pinching and fingertip loading, and by inference pinch-grip carries and fingertip-heavy holds",
       "action": "modify",
-      "rationale": "In healthy volunteers, small fingertip loads raised carpal tunnel pressure at every wrist angle tested, and pinching produced nearly twice the pressure of pressing at the same force. Epidemiological support is weaker: pooled pinch gripping was not significant (HR 1.84, 95% CI 0.96-3.52). No study found measured hanging or barbell gripping.",
+      "rationale": "In healthy volunteers, small fingertip loads raised carpal tunnel pressure at every wrist angle tested, and pinching produced nearly twice the pressure of pressing at the same force (14.2, 29.9, 41.9 and 49.7 mmHg at 0, 5, 10 and 15 N, against 7.8, 14.1, 20.0 and 33.8). Pinch pressure was at least 18% above power grip or no grip during resisted wrist motion. Epidemiological support is weaker: pooled pinch gripping was not significant (HR 1.84, 95% CI 0.96-3.52). No study found measured hanging or barbell gripping.",
       "evidenceStrength": "biomechanical",
-      "sourceIds": ["rempel_1997", "keir_1998", "hassan_2022"]
+      "sourceIds": [
+        "rempel_1997",
+        "keir_1998",
+        "hassan_2022",
+        "mcgorry_2014"
+      ]
     },
     {
       "movement": "Hand-transmitted vibration, for example vibrating tools or vibrating grips",
       "action": "modify",
-      "rationale": "Evidence is mixed: an overview rated it moderate quality as a risk factor, while a later meta-analysis found no significant association (HR 1.47, 95% CI 0.63-3.42, I-squared 90%). NHS advice is to cut back on vibrating tools.",
+      "rationale": "Evidence is mixed: odds ratios of 5.40 (95% CI 3.14-9.31) and 2.9 (low risk-of-bias analysis) and a more than 2-fold risk with prolonged tool use, while a later meta-analysis of prospective cohorts found no significant association (HR 1.47, 95% CI 0.63-3.42, I-squared 90%). An overview rated it moderate quality as a risk factor. NHS advice is to cut back on vibrating tools. All of this is occupational; nothing found tested gym vibration platforms or similar.",
       "evidenceStrength": "observational",
-      "sourceIds": ["kozak_2015", "hassan_2022", "nhs_cts"]
+      "sourceIds": [
+        "kozak_2015",
+        "hassan_2022",
+        "nhs_cts",
+        "barcenilla_2012",
+        "nilsson_2017",
+        "palmer_2007"
+      ]
     },
     {
       "movement": "Strong nerve tensioning: holding the wrist, fingers and arm in a position that lengthens the whole median nerve path at once",
       "action": "modify",
-      "rationale": "In cadavers, tensioning techniques strained the median nerve at the wrist far more than sliding techniques (6.8% versus 0.8%). One trial chose sliding to avoid irritating an already compressed nerve. No clinical trial found shows tensioning causes harm, so this is cautious reasoning from mechanics.",
+      "rationale": "In cadavers, tensioning techniques strained the median nerve at the wrist far more than sliding techniques (6.8% versus 0.8%). In 15 asymptomatic volunteers, sliding produced far more excursion than tensioning (10.2 versus 1.8 mm, measured in the upper arm). One trial chose sliding to avoid irritating an already compressed nerve, and adjusted speed and amplitude so that movement produced no pain. No clinical trial found shows tensioning causes harm, and therapist-delivered trials have used both techniques, so this is cautious reasoning from mechanics.",
       "evidenceStrength": "biomechanical",
-      "sourceIds": ["coppieters_2008", "sheereen_2022"]
+      "sourceIds": [
+        "coppieters_2008",
+        "sheereen_2022",
+        "coppieters_2009",
+        "wolny_2019"
+      ]
+    },
+    {
+      "movement": "Hard active gripping or pinching with the wrist bent back, by inference any gripped load held in extension",
+      "action": "modify",
+      "rationale": "In 14 healthy adults, resisted wrist motion without gripping changed pressure little, while active pinch or power grip raised it, especially in extension (extension and flexion means: no grip 6.9, power 9.7, pinch 9.8 mmHg; rest 3.5). Loads were 2 N·m or less, far below gym loads. Calculated excursions, not direct measurement, suggest flexor muscle bellies can enter the tunnel in wrist extension, and those cadaver authors advise avoiding flexor use with wrist and fingers extended. A separate cadaver study found contact force on the nerve highest with the wrist flexed under flexor load, so the direction of risk between flexion and extension is not settled. Catheter studies found the lowest pressure near neutral.",
+      "evidenceStrength": "biomechanical",
+      "sourceIds": [
+        "mcgorry_2014",
+        "keir_bach_2000",
+        "keir_1997",
+        "vignais_2016"
+      ]
+    },
+    {
+      "movement": "After carpal tunnel release only: repeated hand and wrist loading, lifting over 10 kg, and hand-held vibrating tools, during the early recovery window",
+      "action": "modify",
+      "rationale": "A UK Delphi panel of 33 surgeons and hand therapists gave expected return times: repetitive gripping and releasing 14-28 days; unpredictable hand or wrist contact 14-35 days; repeated loading including sports training 14-35 days; hand-held vibrating tools 21-42 days; lifting or stabilising over 10 kg 21-42 days. The panel agreed that patients should regularly move fingers, thumb and wrist (97%). AAOS/ASSH 2024 advises against routine immobilization and routine supervised therapy after release (Moderate). This is expert consensus, and timescales may lengthen with complications; follow the surgeon's instructions where they differ.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": [
+        "newington_2022",
+        "shapiro_2025"
+      ]
     }
   ],
   "candidateExercises": [
@@ -55,24 +114,98 @@
         "frequency": "3 times per week for 3 weeks, used alongside manual therapy (Sheereen 2022). Bartkowiak 2019 used the same 5 repeats and 7-second holds 3 times daily for 2 weeks, without stating sets."
       },
       "bodyweightOrHold": true,
-      "cautions": "These doses come from trials where gliding was combined with other treatment, so they are not proven standalone doses. Stop if numbness or tingling increases. Evidence for isolated tendon gliding is reported as less conclusive.",
+      "cautions": "These doses come from trials where gliding was combined with other treatment, so they are not proven standalone doses. Sheereen had no control group. Adding gliding to a splint gave no between-group benefit on symptoms in Abdolrazaghi 2023 and Sim 2019, and no between-group difference on BCTQ in Arman 2024. Stop if numbness or tingling increases. Evidence for isolated tendon gliding is reported as less conclusive. The full-fist position draws lumbrical muscle into the tunnel in healthy hands (79.4% of fingers); no outcome data link this to symptoms.",
       "evidenceStrength": "rct",
-      "sourceIds": ["sheereen_2022", "bartkowiak_2019", "kim_2015", "physiotutors_cpg_2026"]
+      "sourceIds": [
+        "sheereen_2022",
+        "bartkowiak_2019",
+        "kim_2015",
+        "physiotutors_cpg_2026",
+        "abdolrazaghi_2023",
+        "arman_2024",
+        "caglar_2024",
+        "sim_2019",
+        "lewis_2020",
+        "nadar_2022"
+      ],
+      "alternativeDoses": [
+        {
+          "sets": 1,
+          "reps": 10,
+          "holdSeconds": 5,
+          "frequency": "3 sessions per day for 6 weeks, with a splint. Gave no added benefit over splint alone in mild CTS.",
+          "sourceId": "abdolrazaghi_2023"
+        },
+        {
+          "sets": 2,
+          "reps": 10,
+          "holdSeconds": 7,
+          "frequency": "Twice daily at home for 8 weeks with a night splint, 15 seconds rest between series, then at least once daily to week 16. Five tendon positions.",
+          "sourceId": "arman_2024"
+        },
+        {
+          "sets": null,
+          "reps": 20,
+          "holdSeconds": null,
+          "frequency": "Twice daily plus supervised physiotherapy 3 days per week. Hold and sets not reported.",
+          "sourceId": "caglar_2024"
+        }
+      ]
     },
     {
       "name": "Median nerve gliding sequence",
       "catalog": "new",
       "kind": "neural_mobility",
       "dose": {
-        "sets": 1,
-        "reps": 5,
+        "sets": 2,
+        "reps": 10,
         "holdSeconds": 7,
-        "frequency": "3 times daily for 2 weeks, used alongside ultrasound or laser therapy (Bartkowiak 2019). The trial does not state sets; 1 is our reading of it."
+        "frequency": "Twice daily at home for 8 weeks with a night splint, 15 seconds rest between series, then at least once daily to week 16 (Arman 2024). Six positions. No load or difficulty progression was described."
       },
       "bodyweightOrHold": true,
-      "cautions": "Lowest-confidence candidate. Cochrane found one very low-quality trial of nerve gliding with a confidence interval including no effect, and the guideline summaries report conflicting evidence with no routine recommendation. The sequence includes wrist-extended positions, which raise canal pressure. Keep it gentle and stop if symptoms increase. Not suitable for anyone with a red flag sign.",
+      "cautions": "Lowest-confidence candidate. Reviews disagree: Cochrane found very low-quality evidence, Paraskevopoulos 2023 concluded no clinical benefit, Núñez de Arenas-Arroyo 2021 found small short-term effects at very low certainty, and Zaheer 2023 reports clear benefit from trials it describes as physiotherapist-delivered, with no GRADE rating. AAOS/ASSH 2024 says exercise does not improve long-term outcomes (Limited), and the 2019 and 2026 guideline summaries report conflicting evidence with no clear recommendation. In Arman 2024 BCTQ improved in all arms with no between-group difference, and every arm wore a night splint. The sequence includes wrist-extended positions, which raise canal pressure. Keep it gentle, adjust speed and range so it does not produce pain, and stop if symptoms increase. Avoid overstretching the thumb in the final step, which one cross-sectional study says may be omitted; no outcome data test this. Not suitable for anyone with a red flag sign.",
       "evidenceStrength": "systematic_review",
-      "sourceIds": ["cochrane_2022", "bartkowiak_2019", "ballestero_2017", "medina_2008", "akalin_2002", "guideline_central_2019", "physiotutors_cpg_2026"]
+      "sourceIds": [
+        "cochrane_2022",
+        "bartkowiak_2019",
+        "ballestero_2017",
+        "medina_2008",
+        "akalin_2002",
+        "guideline_central_2019",
+        "physiotutors_cpg_2026",
+        "arman_2024",
+        "abdolrazaghi_2023",
+        "keskin_2020",
+        "paraskevopoulos_2023",
+        "nunez_2021",
+        "zaheer_2023",
+        "shapiro_2025",
+        "chang_2026",
+        "sheereen_2022"
+      ],
+      "alternativeDoses": [
+        {
+          "sets": 1,
+          "reps": 5,
+          "holdSeconds": 7,
+          "frequency": "3 times daily for 2 weeks, alongside ultrasound or laser. Sets are our reading; the trial does not state them. This was the earlier primary dose in this file.",
+          "sourceId": "bartkowiak_2019"
+        },
+        {
+          "sets": 1,
+          "reps": 10,
+          "holdSeconds": 5,
+          "frequency": "3 sessions per day for 6 weeks, with a splint. No added benefit over splint alone.",
+          "sourceId": "abdolrazaghi_2023"
+        },
+        {
+          "sets": 3,
+          "reps": 10,
+          "holdSeconds": null,
+          "frequency": "Daily, in pregnancy. No untreated comparator, so this is not efficacy evidence.",
+          "sourceId": "keskin_2020"
+        }
+      ]
     },
     {
       "name": "Wrist flexor and extensor stretch, arm straight, using the other hand",
@@ -87,7 +220,29 @@
       "bodyweightOrHold": true,
       "cautions": "The dose is patient-information advice, not trial data. Guideline support (Grade C) is for stretching combined with an orthosis in mild to moderate CTS without thenar atrophy and with normal two-point discrimination; the specific stretches could not be checked. End-range wrist positions raise canal pressure, so use light pressure and release if tingling starts.",
       "evidenceStrength": "expert_opinion",
-      "sourceIds": ["csp_cts", "guideline_central_2019", "physiotutors_cpg_2026", "gelberman_1981"]
+      "sourceIds": [
+        "csp_cts",
+        "guideline_central_2019",
+        "physiotutors_cpg_2026",
+        "gelberman_1981",
+        "shem_2020"
+      ],
+      "alternativeDoses": [
+        {
+          "sets": null,
+          "reps": null,
+          "holdSeconds": null,
+          "frequency": "Self-carpal-ligament stretch 4 times per day for 6 weeks. Between-group result inconclusive; only 36 of 83 completed. Not the same stretch.",
+          "sourceId": "shem_2020"
+        },
+        {
+          "sets": null,
+          "reps": null,
+          "holdSeconds": null,
+          "frequency": "Lumbrical or general stretches 6 times per day with an orthosis during sleep (Baker trial, as described in the 2019 guideline's public-comment draft marked 'Do Not Cite'). No hold reported in the passage read. No arm was superior; 25.5% progressed to surgery at 24 weeks.",
+          "sourceId": "guideline_central_2019"
+        }
+      ]
     },
     {
       "name": "Active wrist bend forward and back, elbow on a table",
@@ -100,9 +255,13 @@
         "frequency": "Use for at least 6-8 weeks. Sessions per day or week are not stated."
       },
       "bodyweightOrHold": true,
-      "cautions": "CSP describes bending to a right angle, but pressure data show the highest canal pressures at 90 degrees. Consider a smaller symptom-free range; that adjustment is our inference and has not been tested.",
+      "cautions": "CSP describes bending to a right angle, but pressure data show the highest canal pressures at 90 degrees, and a cadaver study found pressure rising beyond 20 degrees. Consider a smaller symptom-free range; that adjustment is our inference and has not been tested.",
       "evidenceStrength": "expert_opinion",
-      "sourceIds": ["csp_cts", "gelberman_1981"]
+      "sourceIds": [
+        "csp_cts",
+        "gelberman_1981",
+        "li_jordan_2026"
+      ]
     },
     {
       "name": "Finger bend at the middle joints",
@@ -117,7 +276,9 @@
       "bodyweightOrHold": true,
       "cautions": "Patient-information dose, not trial data. Stop if numbness or tingling increases.",
       "evidenceStrength": "expert_opinion",
-      "sourceIds": ["csp_cts"]
+      "sourceIds": [
+        "csp_cts"
+      ]
     },
     {
       "name": "Light palm-down wrist extension with a small weight",
@@ -130,9 +291,15 @@
         "frequency": "Use for at least 6-8 weeks. Sessions per day or week are not stated."
       },
       "bodyweightOrHold": false,
-      "cautions": "CSP's example load is a tin of beans, far below normal training weight, and the catalog's normal programming should not be assumed to apply. CSP also says to increase the weight gradually, without giving a limit. CSP calls this a stretch, but it is loaded wrist extension. Fingertip loading and wrist extension both raise canal pressure; the same effect from gripping is an inference. No trial found tested this for CTS.",
+      "cautions": "CSP's example load is a tin of beans, far below normal training weight, and the catalog's normal programming should not be assumed to apply. CSP also says to increase the weight gradually, without giving a limit. CSP calls this a stretch, but it is loaded wrist extension. In healthy wrists, resisted motion up to 2 N·m without gripping changed pressure little, but active power grip raised it, especially in extension, and holding a dumbbell needs a grip. No trial found tested this for unoperated CTS. The only resistance trial found was a crossover with one session per condition of elastic-band wrist work to failure at Borg 3 in 22 people at least 3 weeks after release: pain fell, but it shows neither training safety nor benefit, so it is not used as a dose.",
       "evidenceStrength": "expert_opinion",
-      "sourceIds": ["csp_cts", "gelberman_1981", "rempel_1997"]
+      "sourceIds": [
+        "csp_cts",
+        "gelberman_1981",
+        "rempel_1997",
+        "mcgorry_2014",
+        "nunez_cortes_2026"
+      ]
     },
     {
       "name": "Rubber ball hand squeeze",
@@ -145,36 +312,74 @@
         "frequency": "Use for at least 6-8 weeks. Sessions per day or week are not stated."
       },
       "bodyweightOrHold": true,
-      "cautions": "CSP recommends this, but fingertip loading raises canal pressure in healthy volunteers, and squeezing may do the same (inference, not measured), so the sources point in different directions. Use a soft ball and low effort, and skip it if symptoms increase. Not tested in a trial found.",
+      "cautions": "CSP recommends this, but the pressure data point the other way. Fingertip loading raises canal pressure in healthy volunteers, active power grip raised it during wrist motion, and a full fist draws lumbrical muscle into the tunnel. Squeezing a ball itself was not measured. Use a soft ball and low effort, keep the wrist neutral, and skip it if symptoms increase. Not tested in a trial found.",
       "evidenceStrength": "expert_opinion",
-      "sourceIds": ["csp_cts", "rempel_1997", "keir_1998"]
+      "sourceIds": [
+        "csp_cts",
+        "rempel_1997",
+        "keir_1998",
+        "mcgorry_2014",
+        "nadar_2022"
+      ]
     }
   ],
   "redFlags": [
     {
       "sign": "Sudden, rapidly worsening pain and altered sensation in the thumb-side fingers, especially after a wrist fracture, bleeding or a high-pressure injury",
       "action": "Stop exercise and seek emergency care the same day. Acute carpal tunnel syndrome can need urgent surgical decompression to prevent permanent nerve injury.",
-      "sourceIds": ["christodoulou_2025", "iatrox_aaos_2024"]
+      "sourceIds": [
+        "christodoulou_2025",
+        "iatrox_aaos_2024"
+      ]
     },
     {
       "sign": "Hand or thumb weakness, or visible wasting of the muscle at the base of the thumb",
       "action": "Stop hand and wrist exercises for this condition and get prompt medical assessment. Do not wait for it to pass.",
-      "sourceIds": ["csp_cts", "physiotutors_cpg_2026", "iatrox_aaos_2024", "orthoinfo_cts"]
+      "sourceIds": [
+        "csp_cts",
+        "physiotutors_cpg_2026",
+        "iatrox_aaos_2024",
+        "orthoinfo_cts",
+        "boa_2017"
+      ]
     },
     {
       "sign": "Constant numbness or progressive loss of sensation",
       "action": "Get prompt medical assessment, as this can signal severe nerve injury. Do not rely on exercise.",
-      "sourceIds": ["iatrox_aaos_2024", "physiotutors_cpg_2026"]
+      "sourceIds": [
+        "iatrox_aaos_2024",
+        "physiotutors_cpg_2026"
+      ]
     },
     {
       "sign": "Hand symptoms affecting several nerve areas, or with neck pain, a change in walking or brisk reflexes",
-      "action": "Get medical evaluation, since this can point to a cervical spinal cord problem or generalised neuropathy rather than carpal tunnel syndrome. Stop the programme until assessed.",
-      "sourceIds": ["iatrox_aaos_2024"]
+      "action": "Stop the programme until assessed and get medical evaluation, since this can point to a cervical spinal cord or nerve root problem, other neurological disease or generalised neuropathy rather than carpal tunnel syndrome. A UK commissioning guide lists neurological disease and cervical nerve root entrapment for urgent referral, within 2 weeks.",
+      "sourceIds": [
+        "iatrox_aaos_2024",
+        "boa_2017"
+      ]
     },
     {
-      "sign": "Symptoms getting worse, not going away, or not responding to home treatment",
-      "action": "See a GP or clinician.",
-      "sourceIds": ["nhs_cts"]
+      "sign": "Symptoms getting worse or not going away, daily symptoms with frequent night waking, or functional problems not responding to up to 12 weeks of home or non-surgical treatment",
+      "action": "See a GP or clinician. A UK commissioning guide says outcomes of surgery may be poorer after long periods of persistent symptoms.",
+      "sourceIds": [
+        "nhs_cts",
+        "boa_2017"
+      ]
+    },
+    {
+      "sign": "Tingling or numbness that began after an injury, or a suspected fracture or tumour",
+      "action": "Stop hand and wrist exercise and get medical assessment. The guide lists these as red flags; the passage read gives no time frame, and the same-day rule above applies if symptoms are rapidly worsening.",
+      "sourceIds": [
+        "boa_2017"
+      ]
+    },
+    {
+      "sign": "Hand symptoms with active inflammatory joint disease such as gout or rheumatoid arthritis, or with poor circulation to the limb (peripheral limb ischaemia)",
+      "action": "Stop these exercises and seek urgent medical referral. The guide lists these for urgent referral, within 2 weeks.",
+      "sourceIds": [
+        "boa_2017"
+      ]
     }
   ],
   "sources": [
@@ -183,208 +388,1159 @@
       "citation": "Page MJ, O'Connor D, Pitt V, Massy-Westropp N. Exercise and mobilisation interventions for carpal tunnel syndrome. Cochrane Database Syst Rev. 2012;(6):CD009899. The Cochrane page lists 2022 Issue 3, published 1 April 2022, but Crossref and Europe PMC record this DOI as 13 June 2012.",
       "doi": "10.1002/14651858.CD009899",
       "pmid": "22696387",
+      "pmcid": "PMC11536321",
       "url": "https://www.cochrane.org/evidence/CD009899_exercise-and-mobilisation-interventions-carpal-tunnel-syndrome",
-      "type": "systematic_review"
+      "type": "systematic_review",
+      "accessLevel": "full_text",
+      "accessNote": "Partial: the first 100,000 of about 462,000 characters of the PMC page (summary and first comparisons). A second retrieval attempt returned only the abstract and plain-language summary."
     },
     {
       "id": "physiotutors_cpg_2026",
       "citation": "Vivanco A. Carpal Tunnel Syndrome: The New 2026 Clinical Practice Guideline for Physiotherapists. Physiotutors, 14 October 2026. Secondary summary of Erickson et al., J Orthop Sports Phys Ther. 2026;56(4):CPG1-CPG79 (doi:10.2519/jospt.2026.0301, PMID 41919928), which was not read.",
       "doi": null,
       "pmid": null,
+      "pmcid": null,
       "url": "https://www.physiotutors.com/?p=29289",
-      "type": "secondary_guideline_summary"
+      "type": "secondary_guideline_summary",
+      "accessLevel": "registry_or_summary",
+      "accessNote": "Third-party summary of Erickson 2026, kept because the original could not be read."
     },
     {
       "id": "physiotutors_dx_2026",
       "citation": "Physiotutors. Carpal tunnel syndrome diagnosis article, Research: Diagnosis & Imaging, 24 April 2026. Secondary narrative summary.",
       "doi": null,
       "pmid": null,
+      "pmcid": null,
       "url": "https://www.physiotutors.com/research/carpal-tunnel-syndrome-diagnosis/",
-      "type": "secondary_summary"
+      "type": "secondary_summary",
+      "accessLevel": "registry_or_summary"
     },
     {
       "id": "guideline_central_2019",
-      "citation": "Guideline Central summary of APTA Hand Pain and Sensory Deficits: Carpal Tunnel Syndrome (Erickson et al., J Orthop Sports Phys Ther. 2019;49(5):CPG1-CPG85). The JOSPT full text returned HTTP 403.",
+      "citation": "Erickson M, Lawrence M, Jansen CWS, Coker D, Amadio P, Cleary C. Hand Pain and Sensory Deficits: Carpal Tunnel Syndrome. J Orthop Sports Phys Ther. 2019;49(5):CPG1-CPG85. The final text returned HTTP 403 and was not read. What was read: the Guideline Central summary of the final text, and the APTA public-comment draft, which is marked 'Do Not Cite'.",
       "doi": "10.2519/jospt.2019.0301",
       "pmid": "31039690",
+      "pmcid": null,
       "url": "https://www.guidelinecentral.com/guideline/8396",
-      "type": "secondary_guideline_summary"
+      "type": "secondary_guideline_summary",
+      "accessLevel": "registry_or_summary",
+      "accessNote": "The final guideline was read only through the Guideline Central summary. Grades are taken from that summary. The draft is used only to describe the Baker trial dose, and its status is labelled wherever it is used.",
+      "draftRead": {
+        "url": "https://www.orthopt.org/uploads/content_files/files/CTS%20CPG%20for%20reviewDRAFT.pdf",
+        "accessLevel": "full_text",
+        "status": "Public-comment draft, marked 'Do Not Cite'. Final grades may differ."
+      }
     },
     {
       "id": "iatrox_aaos_2024",
       "citation": "iatroX educational summary of AAOS, Management of Carpal Tunnel Syndrome: Evidence-Based Clinical Practice Guideline (2024). The original guideline was not read.",
       "doi": null,
       "pmid": null,
+      "pmcid": null,
       "url": "https://iatrox.com/guidelines/carpal-tunnel-syndrome",
-      "type": "secondary_guideline_summary"
+      "type": "secondary_guideline_summary",
+      "accessLevel": "registry_or_summary"
     },
     {
       "id": "kim_2015",
       "citation": "Kim SD. Efficacy of tendon and nerve gliding exercises for carpal tunnel syndrome: a systematic review of randomized controlled trials. J Phys Ther Sci. 2015;27:2645-2648.",
       "doi": "10.1589/jpts.27.2645",
       "pmid": "26357452",
-      "url": "https://europepmc.org/article/MED/26357452",
-      "type": "systematic_review"
+      "pmcid": "PMC4563334",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/26357452/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
     },
     {
       "id": "ballestero_2017",
       "citation": "Ballestero-Perez R, Plaza-Manzano G, Urraca-Gesto A, et al. Effectiveness of Nerve Gliding Exercises on Carpal Tunnel Syndrome: A Systematic Review. J Manipulative Physiol Ther. 2017;40:50-59. Abstract read.",
       "doi": "10.1016/j.jmpt.2016.10.004",
       "pmid": "27842937",
-      "url": "https://europepmc.org/article/MED/27842937",
-      "type": "systematic_review"
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/27842937/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
     },
     {
       "id": "medina_2008",
       "citation": "Medina McKeon JM, Yancosek KE. Neural gliding techniques for the treatment of carpal tunnel syndrome: a systematic review. J Sport Rehabil. 2008;17:324-341. Abstract read.",
       "doi": "10.1123/jsr.17.3.324",
       "pmid": "18708684",
-      "url": "https://europepmc.org/article/MED/18708684",
-      "type": "systematic_review"
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/18708684/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
     },
     {
       "id": "akalin_2002",
       "citation": "Akalin E, El O, Peker O, et al. Treatment of carpal tunnel syndrome with nerve and tendon gliding exercises. Am J Phys Med Rehabil. 2002;81:108-113. Abstract read.",
       "doi": "10.1097/00002060-200202000-00006",
       "pmid": "11807347",
-      "url": "https://europepmc.org/article/MED/11807347",
-      "type": "rct"
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/11807347/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
     },
     {
       "id": "bartkowiak_2019",
       "citation": "Bartkowiak Z, Eliks M, Zgorzalewicz-Stachowiak M, Romanowski L. The Effects of Nerve and Tendon Gliding Exercises Combined with Low-level Laser or Ultrasound Therapy in Carpal Tunnel Syndrome. Indian J Orthop. 2019;53:347-352.",
       "doi": "10.4103/ortho.ijortho_45_17",
       "pmid": "30967707",
-      "url": "https://europepmc.org/article/MED/30967707",
-      "type": "non_randomised_trial"
+      "pmcid": "PMC6415562",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/30967707/",
+      "type": "non_randomised_trial",
+      "accessLevel": "full_text",
+      "accessNote": "Abstract and targeted full-text passages on dose and design were read."
     },
     {
       "id": "sheereen_2022",
       "citation": "Sheereen FJ, Sarkar B, Sahay P, et al. Comparison of Two Manual Therapy Programs, including Tendon Gliding Exercises as a Common Adjunct, While Managing the Participants with Chronic Carpal Tunnel Syndrome. Pain Res Manag. 2022;2022:1975803.",
       "doi": "10.1155/2022/1975803",
       "pmid": "35719196",
-      "url": "https://europepmc.org/article/MED/35719196",
-      "type": "rct"
+      "pmcid": "PMC9200595",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/35719196/",
+      "type": "rct",
+      "accessLevel": "full_text"
     },
     {
       "id": "coppieters_2008",
       "citation": "Coppieters MW, Butler DS. Do 'sliders' slide and 'tensioners' tension? An analysis of neurodynamic techniques and considerations regarding their application. Man Ther. 2008;13:213-221. Abstract read.",
       "doi": "10.1016/j.math.2006.12.008",
       "pmid": "17398140",
-      "url": "https://europepmc.org/article/MED/17398140",
-      "type": "biomechanical"
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/17398140/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
     },
     {
       "id": "gelberman_1981",
       "citation": "Gelberman RH, Hergenroeder PT, Hargens AR, Lundborg GN, Akeson WH. The carpal tunnel syndrome. A study of carpal canal pressures. J Bone Joint Surg Am. 1981;63:380-383. Abstract read.",
       "doi": "10.2106/00004623-198163030-00009",
       "pmid": "7204435",
-      "url": "https://europepmc.org/article/MED/7204435",
-      "type": "biomechanical"
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/7204435/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
     },
     {
       "id": "keir_2007",
       "citation": "Keir PJ, Bach JM, Hudes M, Rempel DM. Guidelines for wrist posture based on carpal tunnel pressure thresholds. Hum Factors. 2007;49:88-99. Abstract read.",
       "doi": "10.1518/001872007779598127",
       "pmid": "17315846",
+      "pmcid": null,
       "url": "https://stacks.cdc.gov/view/cdc/185869",
-      "type": "biomechanical"
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
     },
     {
       "id": "rempel_1997",
       "citation": "Rempel D, Keir PJ, Smutz WP, Hargens A. Effects of static fingertip loading on carpal tunnel pressure. J Orthop Res. 1997;15:422-426. Abstract read.",
       "doi": "10.1002/jor.1100150315",
       "pmid": "9246089",
-      "url": "https://europepmc.org/article/MED/9246089",
-      "type": "biomechanical"
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/9246089/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
     },
     {
       "id": "keir_1998",
       "citation": "Keir PJ, Bach JM, Rempel DM. Fingertip loading and carpal tunnel pressure: differences between a pinching and a pressing task. J Orthop Res. 1998;16:112-115. Abstract read.",
       "doi": "10.1002/jor.1100160119",
       "pmid": "9565082",
-      "url": "https://europepmc.org/article/MED/9565082",
-      "type": "biomechanical"
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/9565082/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
     },
     {
       "id": "hassan_2022",
       "citation": "Hassan A, Beumer A, Kuijer PPFM, van der Molen HF. Work-relatedness of carpal tunnel syndrome: systematic review including meta-analysis and GRADE. Health Sci Rep. 2022;5(6):e888.",
       "doi": "10.1002/hsr2.888",
       "pmid": "36340637",
+      "pmcid": "PMC9629628",
       "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9629628",
-      "type": "systematic_review"
+      "type": "systematic_review",
+      "accessLevel": "full_text"
     },
     {
       "id": "kozak_2015",
       "citation": "Kozak A, Schedlbauer G, Wirth T, Euler U, Westermann C, Nienhaus A. Association between work-related biomechanical risk factors and the occurrence of carpal tunnel syndrome: an overview of systematic reviews and a meta-analysis of current research. BMC Musculoskelet Disord. 2015;16:231.",
       "doi": "10.1186/s12891-015-0685-0",
       "pmid": "26323649",
-      "url": "https://europepmc.org/article/MED/26323649",
-      "type": "systematic_review"
+      "pmcid": "PMC4553935",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/26323649/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
     },
     {
       "id": "padua_2016",
       "citation": "Padua L, Coraci D, Erra C, et al. Carpal tunnel syndrome: clinical features, diagnosis, and management. Lancet Neurol. 2016;15:1273-1284. Abstract read.",
       "doi": "10.1016/s1474-4422(16)30231-9",
       "pmid": "27751557",
-      "url": "https://europepmc.org/article/MED/27751557",
-      "type": "narrative_review"
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/27751557/",
+      "type": "narrative_review",
+      "accessLevel": "abstract_only"
     },
     {
       "id": "christodoulou_2025",
       "citation": "Christodoulou P, Osarumwense D, Papadopoulos A. Acute Carpal Tunnel Syndrome: Is It Only Wrist Fractures? A Case Series Report and Literature Review. J Orthop Case Rep. 2025;15:275-279.",
       "doi": "10.13107/jocr.2025.v15.i08.5968",
       "pmid": "40786768",
-      "url": "https://europepmc.org/article/MED/40786768",
-      "type": "observational"
+      "pmcid": "PMC12328951",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/40786768/",
+      "type": "observational",
+      "accessLevel": "full_text",
+      "accessNote": "Abstract and targeted full-text passages were read."
     },
     {
       "id": "csp_cts",
       "citation": "Chartered Society of Physiotherapy. Carpal tunnel syndrome rehabilitation exercises (patient information).",
       "doi": null,
       "pmid": null,
+      "pmcid": null,
       "url": "https://www.csp.org.uk/public-patient/rehabilitation-exercises/carpal-tunnel-syndrome",
-      "type": "expert_opinion"
+      "type": "expert_opinion",
+      "accessLevel": "full_text"
     },
     {
       "id": "nhs_cts",
       "citation": "NHS. Carpal tunnel syndrome (patient information).",
       "doi": null,
       "pmid": null,
+      "pmcid": null,
       "url": "https://www.nhs.uk/conditions/carpal-tunnel-syndrome/",
-      "type": "patient_information"
+      "type": "patient_information",
+      "accessLevel": "full_text"
     },
     {
       "id": "orthoinfo_cts",
       "citation": "American Academy of Orthopaedic Surgeons, OrthoInfo. Carpal Tunnel Syndrome (patient information).",
       "doi": null,
       "pmid": null,
+      "pmcid": null,
       "url": "https://www.orthoinfo.org/en/diseases--conditions/carpal-tunnel-syndrome/",
-      "type": "patient_information"
+      "type": "patient_information",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "shapiro_2025",
+      "citation": "Shapiro LM, Kamal R, Brault J, et al. American Academy of Orthopaedic Surgeons/ASSH Clinical Practice Guideline Summary: Management of Carpal Tunnel Syndrome. J Am Acad Orthop Surg. 2025;33(7):e356-e366. Erratum: 2026;34(20):e2922 (PMID 42825588, record seen, content not read).",
+      "doi": "10.5435/JAAOS-D-24-01179",
+      "pmid": "39637428",
+      "pmcid": "PMC11928260",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11928260/",
+      "type": "clinical_practice_guideline",
+      "accessLevel": "full_text",
+      "accessNote": "The published guideline summary, read by keyword extraction and checked in the XML. The full 2024 CPG PDF was not readable."
+    },
+    {
+      "id": "erickson_2026",
+      "citation": "Erickson M, Lawrence M, Lazinski MJ, Scott K, Martin RL. Hand Pain and Sensory Deficits: Carpal Tunnel Syndrome: Revision 2026. J Orthop Sports Phys Ther. 2026;56(4):CPG1-CPG79.",
+      "doi": "10.2519/jospt.2026.0301",
+      "pmid": "41919928",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/41919928/",
+      "type": "clinical_practice_guideline",
+      "accessLevel": "registry_or_summary",
+      "accessNote": "Original returned HTTP 403 and is not open access in PMC or Europe PMC. Only the PubMed record was read. Grades come second-hand from physiotutors_cpg_2026."
+    },
+    {
+      "id": "graham_2016",
+      "citation": "Graham B, Peljovich AE, Afra R, et al. The American Academy of Orthopaedic Surgeons Evidence-Based Clinical Practice Guideline on: Management of Carpal Tunnel Syndrome. J Bone Joint Surg Am. 2016;98(20):1750-1754. Full guideline PDF from aaos.org. Superseded by the 2024 guideline.",
+      "doi": "10.2106/JBJS.16.00719",
+      "pmid": "27869627",
+      "pmcid": null,
+      "url": "https://www.aaos.org/globalassets/quality-and-practice-resources/carpal-tunnel/cts_cpg_4-25-19.pdf",
+      "type": "clinical_practice_guideline",
+      "accessLevel": "full_text",
+      "accessNote": "The 986-page AAOS PDF was term-searched and its recommendation statements read. The evidence tables were not read."
+    },
+    {
+      "id": "newington_2022",
+      "citation": "Newington L, Madan I, Sandford F. Driving, work, wound care and rehabilitation after carpal tunnel release: Consensus recommendations from a UK Delphi study. Hand Ther. 2022;27:71-82.",
+      "doi": "10.1177/17589983221113870",
+      "pmid": "37905199",
+      "pmcid": "PMC10588429",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10588429/",
+      "type": "consensus_statement",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "boa_2017",
+      "citation": "British Orthopaedic Association, Royal College of Surgeons of England, BSSH. Commissioning guide: Treatment of carpal and cubital tunnel syndromes. Version 2.1, November 2017; evidence search January 2016.",
+      "doi": null,
+      "pmid": null,
+      "pmcid": null,
+      "url": "https://boa.ac.uk/asset/DEF06E52-94D4-46B9-A482B7C4B9DED7F8",
+      "type": "guideline",
+      "accessLevel": "full_text",
+      "accessNote": "Targeted passages of the extracted text were read, not every page."
+    },
+    {
+      "id": "huisstede_2014",
+      "citation": "Huisstede BM, Fridén J, Coert JH, Hoogvliet P; European HANDGUIDE Group. Carpal tunnel syndrome: hand surgeons, hand therapists, and physical medicine and rehabilitation physicians agree on a multidisciplinary treatment guideline: results from the European HANDGUIDE Study. Arch Phys Med Rehabil. 2014;95(12):2253-2263.",
+      "doi": "10.1016/j.apmr.2014.06.022",
+      "pmid": "25127999",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/25127999/",
+      "type": "consensus_statement",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "pelosi_2022",
+      "citation": "Pelosi L, Arányi Z, Beekman R, et al. Expert consensus on the combined investigation of carpal tunnel syndrome with electrodiagnostic tests and neuromuscular ultrasound. Clin Neurophysiol. 2022;135:107-116.",
+      "doi": "10.1016/j.clinph.2021.12.012",
+      "pmid": "35074720",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/35074720/",
+      "type": "consensus_statement",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "robinson_2026",
+      "citation": "Robinson LR, Al-Lawati ZJ, Andary M, et al. AANEM Consensus-Based Guideline for Grading the Severity of Carpal Tunnel Syndrome. Muscle Nerve. 2026 Sep 12 (online ahead of print).",
+      "doi": "10.1002/mus.70384",
+      "pmid": "42728830",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/42728830/",
+      "type": "consensus_statement",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "cartwright_2012",
+      "citation": "Cartwright MS, Hobson-Webb LD, Boon AJ, et al. Evidence-based guideline: neuromuscular ultrasound for the diagnosis of carpal tunnel syndrome. Muscle Nerve. 2012;46(2):287-293.",
+      "doi": "10.1002/mus.23389",
+      "pmid": "22806381",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/22806381/",
+      "type": "clinical_practice_guideline",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "rempel_1998",
+      "citation": "Rempel D, Evanoff B, Amadio PC, et al. Consensus criteria for the classification of carpal tunnel syndrome in epidemiologic studies. Am J Public Health. 1998;88(10):1447-1451.",
+      "doi": "10.2105/ajph.88.10.1447",
+      "pmid": "9772842",
+      "pmcid": "PMC1508472",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/9772842/",
+      "type": "consensus_statement",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "franklin_2015",
+      "citation": "Franklin GM, Friedman AS. Work-Related Carpal Tunnel Syndrome: Diagnosis and Treatment Guideline. Phys Med Rehabil Clin N Am. 2015;26(3):523-537.",
+      "doi": "10.1016/j.pmr.2015.04.003",
+      "pmid": "26231963",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/26231963/",
+      "type": "guideline",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "hytonen_2026",
+      "citation": "Hytönen M, Savolainen A, Reito A, et al. Guidelines and Policies as Levers in Managing Carpal Tunnel Release Demand. MDM Policy Pract. 2026;11(2):23814683261477058.",
+      "doi": "10.1177/23814683261477058",
+      "pmid": "42643814",
+      "pmcid": "PMC13504087",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/42643814/",
+      "type": "observational",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "fernandes_2026",
+      "citation": "Fernandes LFRM, Cardoso BTA, Paranhos DB, et al. Clinical Decision-Making and Guideline Alignment Among Brazilian Physical Therapists: Evidence From Standardized Carpal Tunnel Syndrome Vignettes. J Eval Clin Pract. 2026;32:e70575.",
+      "doi": "10.1111/jep.70575",
+      "pmid": "42670593",
+      "pmcid": "PMC13527589",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13527589/",
+      "type": "observational",
+      "accessLevel": "full_text",
+      "accessNote": "Results and conclusion passages were read."
+    },
+    {
+      "id": "sadler_2025",
+      "citation": "Sadler KP, Torbert DR, Writer JK. Management of Carpal Tunnel Syndrome: Guidelines From the AAOS. Am Fam Physician. 2025;112(3):337-339.",
+      "doi": null,
+      "pmid": "40961320",
+      "pmcid": null,
+      "url": "https://www.aafp.org/pubs/afp/issues/2025/0900/practice-guidelines-carpal-tunnel-syndrome.html",
+      "type": "secondary_guideline_summary",
+      "accessLevel": "registry_or_summary",
+      "accessNote": "Free excerpt only."
+    },
+    {
+      "id": "gopalkrishnan_2022",
+      "citation": "Gopalkrishnan S, Ramachandran S, Ring D, Melhorn JM, Crijns TJ. Potential Misinformation in the Official Disability Guidelines About the Diagnosis and Treatment of Carpal Tunnel Syndrome. J Occup Environ Med. 2022;64(7):e424-e430.",
+      "doi": "10.1097/JOM.0000000000002570",
+      "pmid": "35672919",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/35672919/",
+      "type": "observational",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "karjalainen_2023",
+      "citation": "Karjalainen TV, Lusa V, Page MJ, O'Connor D, Massy-Westropp N, Peters SE. Splinting for carpal tunnel syndrome. Cochrane Database Syst Rev. 2023;2(2):CD010003.",
+      "doi": "10.1002/14651858.CD010003.pub2",
+      "pmid": "36848651",
+      "pmcid": "PMC9969978",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9969978/",
+      "type": "systematic_review",
+      "accessLevel": "full_text",
+      "accessNote": "Partial: the first 100,000 of about 553,000 characters of the PMC page."
+    },
+    {
+      "id": "paraskevopoulos_2023",
+      "citation": "Paraskevopoulos E, Karanasios S, Gioftsos G, Tatsios P, Koumantakis G, Papandreou M. The effectiveness of neuromobilization exercises in carpal tunnel syndrome: Systematic review and meta-analysis. Physiother Theory Pract. 2023;39(10):2037-2076.",
+      "doi": "10.1080/09593985.2022.2068097",
+      "pmid": "35481794",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/35481794/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "nunez_2021",
+      "citation": "Núñez de Arenas-Arroyo S, Cavero-Redondo I, Torres-Costoso A, Reina-Gutiérrez S, Álvarez-Bueno C, Martínez-Vizcaíno V. Short-term Effects of Neurodynamic Techniques for Treating Carpal Tunnel Syndrome: A Systematic Review With Meta-analysis. J Orthop Sports Phys Ther. 2021;51(12):566-580.",
+      "doi": "10.2519/jospt.2021.10533",
+      "pmid": "34784245",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/34784245/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "zaheer_2023",
+      "citation": "Zaheer SA, Ahmed Z. Neurodynamic Techniques in the Treatment of Mild-to-Moderate Carpal Tunnel Syndrome: A Systematic Review and Meta-Analysis. J Clin Med. 2023;12(15):4888.",
+      "doi": "10.3390/jcm12154888",
+      "pmid": "37568290",
+      "pmcid": "PMC10419623",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10419623/",
+      "type": "systematic_review",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "jimenez_2022",
+      "citation": "Jiménez-Del-Barrio S, Cadellans-Arróniz A, Ceballos-Laita L, et al. The effectiveness of manual therapy on pain, physical function, and nerve conduction studies in carpal tunnel syndrome patients: a systematic review and meta-analysis. Int Orthop. 2022;46(2):301-312.",
+      "doi": "10.1007/s00264-021-05272-2",
+      "pmid": "34862562",
+      "pmcid": "PMC8782801",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8782801/",
+      "type": "systematic_review",
+      "accessLevel": "full_text",
+      "accessNote": "Three published comments on the paper were not read."
+    },
+    {
+      "id": "lim_2017",
+      "citation": "Lim YH, Chee DY, Girdler S, Lee HC. Median nerve mobilization techniques in the treatment of carpal tunnel syndrome: A systematic review. J Hand Ther. 2017;30(4):397-406.",
+      "doi": "10.1016/j.jht.2017.06.019",
+      "pmid": "28764878",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/28764878/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "piazzini_2007",
+      "citation": "Piazzini DB, Aprile I, Ferrara PE, et al. A systematic review of conservative treatment of carpal tunnel syndrome. Clin Rehabil. 2007;21(4):299-314.",
+      "doi": "10.1177/0269215507077294",
+      "pmid": "17613571",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/17613571/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "oconnor_2003",
+      "citation": "O'Connor D, Marshall S, Massy-Westropp N. Non-surgical treatment (other than steroid injection) for carpal tunnel syndrome. Cochrane Database Syst Rev. 2003;2003(1):CD003219.",
+      "doi": "10.1002/14651858.CD003219",
+      "pmid": "12535461",
+      "pmcid": "PMC6486195",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/12535461/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "oconnor_2012",
+      "citation": "O'Connor D, Page MJ, Marshall SC, Massy-Westropp N. Ergonomic positioning or equipment for treating carpal tunnel syndrome. Cochrane Database Syst Rev. 2012;1(1):CD009600.",
+      "doi": "10.1002/14651858.CD009600",
+      "pmid": "22259003",
+      "pmcid": "PMC6486220",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/22259003/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "mehta_2026",
+      "citation": "Mehta P, Stubbs PW, Tamminga SJ, et al. Ergonomic interventions for treating work-related complaints of the arm, neck or shoulder in adults. Cochrane Database Syst Rev. 2026;10(10):CD014644.",
+      "doi": "10.1002/14651858.CD014644.pub2",
+      "pmid": "42946017",
+      "pmcid": "PMC13713164",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/42946017/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "gerger_2024",
+      "citation": "Gerger H, Macri EM, Jackson JA, et al. Physical and psychosocial work-related exposures and the incidence of carpal tunnel syndrome: A systematic review of prospective studies. Appl Ergon. 2024;117:104211.",
+      "doi": "10.1016/j.apergo.2023.104211",
+      "pmid": "38199092",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/38199092/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "palmer_2007",
+      "citation": "Palmer KT, Harris EC, Coggon D. Carpal tunnel syndrome and its relation to occupation: a systematic literature review. Occup Med (Lond). 2007;57(1):57-66.",
+      "doi": "10.1093/occmed/kql125",
+      "pmid": "17082517",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/17082517/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "coenen_2019",
+      "citation": "Coenen P, van der Molen HF, Burdorf A, et al. Associations of screen work with neck and upper extremity symptoms: a systematic review with meta-analysis. Occup Environ Med. 2019;76(7):502-509.",
+      "doi": "10.1136/oemed-2018-105553",
+      "pmid": "30894425",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/30894425/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "lusa_2024",
+      "citation": "Lusa V, Karjalainen TV, Pääkkönen M, Rajamäki TJ, Jaatinen K. Surgical versus non-surgical treatment for carpal tunnel syndrome. Cochrane Database Syst Rev. 2024;1(1):CD001552.",
+      "doi": "10.1002/14651858.CD001552.pub3",
+      "pmid": "38189479",
+      "pmcid": "PMC10772978",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/38189479/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "cavalcante_2022",
+      "citation": "Cavalcante MC, Moraes VY, Osés GL, Nakachima LR, Belloti JC. Quality analysis of prior systematic reviews of carpal tunnel syndrome: an overview of the literature. Sao Paulo Med J. 2022;141(5):e20211020.",
+      "doi": "10.1590/1516-3180.2021.1020.R2.10102022",
+      "pmid": "36541951",
+      "pmcid": "PMC10065117",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/36541951/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "wolny_2019",
+      "citation": "Wolny T, Linek P. Is manual therapy based on neurodynamic techniques effective in the treatment of carpal tunnel syndrome? A randomized controlled trial. Clin Rehabil. 2019;33(3):408-417.",
+      "doi": "10.1177/0269215518805213",
+      "pmid": "30306805",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/30306805/",
+      "type": "rct",
+      "accessLevel": "abstract_only",
+      "accessNote": "A published comment was not read."
+    },
+    {
+      "id": "shem_2020",
+      "citation": "Shem K, Wong J, Dirlikov B. Effective self-stretching of carpal ligament for the treatment of carpal tunnel syndrome: A double-blinded randomized controlled study. J Hand Ther. 2020;33(3):272-280.",
+      "doi": "10.1016/j.jht.2019.12.002",
+      "pmid": "32362377",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/32362377/",
+      "type": "rct",
+      "accessLevel": "abstract_only",
+      "accessNote": "A published comment was not read."
+    },
+    {
+      "id": "garfinkel_1998",
+      "citation": "Garfinkel MS, Singhal A, Katz WA, Allan DA, Reshetar R, Schumacher HR Jr. Yoga-based intervention for carpal tunnel syndrome: a randomized trial. JAMA. 1998;280(18):1601-1603.",
+      "doi": "10.1001/jama.280.18.1601",
+      "pmid": "9820263",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/9820263/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "li_jordan_2026",
+      "citation": "Li ZM, Jordan D. Change in Carpal Tunnel Pressure With Dynamic Wrist Flexion/Extension and Radioulnar Deviation: A Cadaveric Study. J Orthop Res. 2026;44(10):e70294.",
+      "doi": "10.1002/jor.70294",
+      "pmid": "42856080",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/42856080/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "kumari_2026",
+      "citation": "Kumari O, Mishra R, Singh V, Gowda AKS, Harisha R. Conservative management of carpal tunnel syndrome during pregnancy and lactation: A systematic review of mixed study designs. J Clin Orthop Trauma. 2026;82:103608.",
+      "doi": "10.1016/j.jcot.2026.103608",
+      "pmid": "42761408",
+      "pmcid": "PMC13586587",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/42761408/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "lewis_2020",
+      "citation": "Lewis KJ, Coppieters MW, Ross L, Hughes I, Vicenzino B, Schmid AB. Group education, night splinting and home exercises reduce conversion to surgery for carpal tunnel syndrome: a multicentre randomised trial. J Physiother. 2020;66:97-104.",
+      "doi": "10.1016/j.jphys.2020.03.007",
+      "pmid": "32291222",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/32291222/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "abdolrazaghi_2023",
+      "citation": "Abdolrazaghi HA, Khansari M, Mirshahi M, Ahmadi Pishkuhi M. Effectiveness of Tendon and Nerve Gliding Exercises in the Treatment of Patients With Mild Idiopathic Carpal Tunnel Syndrome: A Randomized Controlled Trial. Hand (N Y). 2023;18:222-229.",
+      "doi": "10.1177/15589447211006857",
+      "pmid": "33855879",
+      "pmcid": "PMC10035085",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10035085/",
+      "type": "rct",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "arman_2024",
+      "citation": "Arman S, Menekseoglu AK, Sezgin B, Ozgur B, Capan N, Oral A. The effects of virtual reality-mediated tendon and nerve gliding exercises in the conservative management of carpal tunnel syndrome: a double-blind randomized placebo controlled trial. Eur J Phys Rehabil Med. 2024;60:458-469.",
+      "doi": "10.23736/S1973-9087.24.08432-6",
+      "pmid": "38551521",
+      "pmcid": "PMC11255877",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11255877/",
+      "type": "rct",
+      "accessLevel": "full_text",
+      "accessNote": "The final 6,673 characters of the page were not read."
+    },
+    {
+      "id": "caglar_2024",
+      "citation": "Çağlar S, Altun T, Vural M, Mert M. Evaluation of Splint and Exercise Interventions for Carpal Tunnel Syndrome: Insights from Ultrasonographic Measurements. Med Sci Monit. 2024;30:e945704.",
+      "doi": "10.12659/MSM.945704",
+      "pmid": "39487575",
+      "pmcid": "PMC11539373",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11539373/",
+      "type": "rct",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "hamzeh_2021",
+      "citation": "Hamzeh H, Madi M, Alghwiri AA, Hawamdeh Z. The long-term effect of neurodynamics vs exercise therapy on pain and function in people with carpal tunnel syndrome: a randomized parallel-group clinical trial. J Hand Ther. 2021;34:521-530.",
+      "doi": "10.1016/j.jht.2020.07.005",
+      "pmid": "32893098",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/32893098/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "sim_2019",
+      "citation": "Sim SE, Gunasagaran J, Goh KJ, Ahmad TS. Short-term clinical outcome of orthosis alone vs combination of orthosis, nerve, and tendon gliding exercises and ultrasound therapy for treatment of carpal tunnel syndrome. J Hand Ther. 2019;32:411-416.",
+      "doi": "10.1016/j.jht.2018.01.004",
+      "pmid": "29426574",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/29426574/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "paquette_2021",
+      "citation": "Paquette P, Higgins J, Danino MA, Harris P, Lamontagne M, Gagnon DH. Effects of a preoperative neuromobilization program offered to individuals with carpal tunnel syndrome awaiting carpal tunnel decompression surgery: a pilot randomized controlled study. J Hand Ther. 2021;34:37-46.",
+      "doi": "10.1016/j.jht.2019.12.012",
+      "pmid": "32151500",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/32151500/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "keskin_2020",
+      "citation": "Keskin Y, Kilic G, Taspinar O, Posul SO, Halac G, Eren F. Effectiveness of home exercise in pregnant women with carpal tunnel syndrome: randomized control trial. J Pak Med Assoc. 2020;70:202-207.",
+      "doi": "10.5455/JPMA.1846",
+      "pmid": "32063607",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/32063607/",
+      "type": "non_randomised_trial",
+      "accessLevel": "abstract_only",
+      "accessNote": "Labelled randomised, but the abstract describes groups defined by EMG result and the same exercises in both, so it is typed here as non-randomised."
+    },
+    {
+      "id": "mabrouk_2026",
+      "citation": "Mabrouk MI, Abdalbary SA, El-Shaarawy EAA, et al. Neurodynamic techniques vs. desensitization maneuvers in the manual therapy management of moderate carpal tunnel syndrome among women: randomized clinical trial with 1-year follow-up. Front Pain Res (Lausanne). 2026;7:1792933.",
+      "doi": "10.3389/fpain.2026.1792933",
+      "pmid": "42592020",
+      "pmcid": "PMC13463407",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13463407/",
+      "type": "rct",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "schmid_2012",
+      "citation": "Schmid AB, Elliott JM, Strudwick MW, Little M, Coppieters MW. Effect of splinting and exercise on intraneural edema of the median nerve in carpal tunnel syndrome: an MRI study to reveal therapeutic mechanisms. J Orthop Res. 2012;30:1343-1350.",
+      "doi": "10.1002/jor.22064",
+      "pmid": "22231571",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/22231571/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "nunez_cortes_2026",
+      "citation": "Núñez-Cortés R, Cruz-Montecinos C, López-Bueno L, et al. Acute Clinical Effects of Dual-Task Resistance Exercise on Muscle Endurance and Pressure Sensitivity in Patients With Carpal Tunnel Syndrome After Surgery. Musculoskeletal Care. 2026;24:e70223.",
+      "doi": "10.1002/msc.70223",
+      "pmid": "42001196",
+      "pmcid": "PMC13091818",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13091818/",
+      "type": "rct",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "chang_2026",
+      "citation": "Chang YW, Chen CJ, Wang YW, Chiu V, Horng YS. Thumb Positioning Modulates Median Nerve Mobility and Morphology During Postural Changes in Carpal Tunnel Syndrome: Implications for Nerve Gliding Exercises. Arch Rehabil Res Clin Transl. 2026;8:100660.",
+      "doi": "10.1016/j.arrct.2026.100660",
+      "pmid": "42769373",
+      "pmcid": "PMC13591192",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13591192/",
+      "type": "observational",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "mcgorry_2014",
+      "citation": "McGorry RW, Fallentin N, Andersen JH, Keir PJ, Hansen TB, Pransky G, et al. Effect of grip type, wrist motion, and resistance level on pressures within the carpal tunnel of normal wrists. J Orthop Res. 2014;32:524-530.",
+      "doi": "10.1002/jor.22571",
+      "pmid": "24391059",
+      "pmcid": "PMC4305197",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4305197/",
+      "type": "biomechanical",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "keir_finger_1998",
+      "citation": "Keir PJ, Bach JM, Rempel DM. Effects of finger posture on carpal tunnel pressure during wrist motion. J Hand Surg Am. 1998;23:1004-1009.",
+      "doi": "10.1016/S0363-5023(98)80007-5",
+      "pmid": "9848550",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/9848550/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "keir_1997",
+      "citation": "Keir PJ, Wells RP, Ranney DA, Lavery W. The effects of tendon load and posture on carpal tunnel pressure. J Hand Surg Am. 1997;22:628-634.",
+      "doi": "10.1016/S0363-5023(97)80119-0",
+      "pmid": "9260617",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/9260617/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "vignais_2016",
+      "citation": "Vignais N, Weresch J, Keir PJ. Posture and Loading in the Pathomechanics of Carpal Tunnel Syndrome: A Review. Crit Rev Biomed Eng. 2016;44:397-410.",
+      "doi": "10.1615/CritRevBiomedEng.2017021073",
+      "pmid": "29199603",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/29199603/",
+      "type": "narrative_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "keir_bach_2000",
+      "citation": "Keir PJ, Bach JM. Flexor muscle incursion into the carpal tunnel: a mechanism for increased carpal tunnel pressure? Clin Biomech (Bristol). 2000;15:301-305.",
+      "doi": "10.1016/s0268-0033(99)00092-3",
+      "pmid": "10758289",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/10758289/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "nadar_2022",
+      "citation": "Nadar MS, Amr HA, Manee FS, Ali AA. In vivo evidence of lumbricals incursion into the carpal tunnel in healthy hands: an ultrasonographic cross sectional study. J Hand Ther. 2022;35:261-266.",
+      "doi": "10.1016/j.jht.2022.03.003",
+      "pmid": "35504766",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/35504766/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "cobb_1996",
+      "citation": "Cobb TK, Cooney WP, An KN. Aetiology of work-related carpal tunnel syndrome: the role of lumbrical muscles and tool size on carpal tunnel pressures. Ergonomics. 1996;39:103-107.",
+      "doi": "10.1080/00140139608964437",
+      "pmid": "8851076",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/8851076/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "coppieters_2009",
+      "citation": "Coppieters MW, Hough AD, Dilley A. Different nerve-gliding exercises induce different magnitudes of median nerve longitudinal excursion: an in vivo study using dynamic ultrasound imaging. J Orthop Sports Phys Ther. 2009;39:164-171.",
+      "doi": "10.2519/jospt.2009.2913",
+      "pmid": "19252262",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19252262/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "li_s_2026",
+      "citation": "Li S, Kociolek AM, Loh PY. Characterizing median nerve deformation and recovery processes in response to repeated isometric wrist torque exertions. PeerJ. 2026;14:e21724.",
+      "doi": "10.7717/peerj.21724",
+      "pmid": "42756933",
+      "pmcid": "PMC13584936",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13584936/",
+      "type": "biomechanical",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "betancourt_2020",
+      "citation": "Betancourt L, Cowan RE, Chang A, Irwin R. Case-Control Study of Ultrasound Evaluation of Acute Median Nerve Response to Upper Extremity Circuit Training in Spinal Cord Injury. Arch Phys Med Rehabil. 2020;101:1898-1905.",
+      "doi": "10.1016/j.apmr.2020.05.008",
+      "pmid": "32450062",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/32450062/",
+      "type": "observational",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "altinok_2004",
+      "citation": "Altinok MT, Baysal O, Karakas HM, Firat AK. Sonographic evaluation of the carpal tunnel after provocative exercises. J Ultrasound Med. 2004;23:1301-1306.",
+      "doi": "10.7863/jum.2004.23.10.1301",
+      "pmid": "15448319",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/15448319/",
+      "type": "diagnostic_accuracy",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "huang_2024",
+      "citation": "Huang CH, Liu KC, Cheng JW, Hsu SC, Chen CK. Carpal Tunnel Syndrome in Elite Female Tug-of-War Athletes: Prevalence and Risk Factor Analysis. Diagnostics (Basel). 2024;14.",
+      "doi": "10.3390/diagnostics14192120",
+      "pmid": "39410525",
+      "pmcid": "PMC11476192",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11476192/",
+      "type": "observational",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "marriott_2023",
+      "citation": "Marriott C, Montgomery K, Whelan A. Carpal Tunnel Syndrome in Athletes Who Compete in Wheelchair Sport: A Scoping Review. Am J Phys Med Rehabil. 2023;102:1116-1121.",
+      "doi": "10.1097/PHM.0000000000002167",
+      "pmid": "36729651",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/36729651/",
+      "type": "scoping_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "barcenilla_2012",
+      "citation": "Barcenilla A, March LM, Chen JS, Sambrook PN. Carpal tunnel syndrome and its relationship to occupation: a meta-analysis. Rheumatology (Oxford). 2012;51:250-261.",
+      "doi": "10.1093/rheumatology/ker108",
+      "pmid": "21586523",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/21586523/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "nilsson_2017",
+      "citation": "Nilsson T, Wahlström J, Burström L. Hand-arm vibration and the risk of vascular and neurological diseases: a systematic review and meta-analysis. PLoS One. 2017;12:e0180795.",
+      "doi": "10.1371/journal.pone.0180795",
+      "pmid": "28704466",
+      "pmcid": "PMC5509149",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/28704466/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "schmid_2015",
+      "citation": "Schmid AB, Kubler PA, Johnston V, Coppieters MW. A vertical mouse and ergonomic mouse pads alter wrist position but do not reduce carpal tunnel pressure in patients with carpal tunnel syndrome. Appl Ergon. 2015;47:151-156.",
+      "doi": "10.1016/j.apergo.2014.08.020",
+      "pmid": "25479984",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/25479984/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
     }
   ],
-  "limitations": "Exercise benefit is graded very low because the Cochrane review calls the evidence limited and very low quality, could not pool its 16 studies, and found only two that measured adverse effects. That review dates from 2012 by its DOI record, so it may miss later trials. Gliding doses come from small trials where gliding was combined with other treatment. Other doses are patient-information advice from one professional body. The JOSPT 2019 and 2026 guidelines, the AAOS 2024 guideline and NICE CKS could not be read directly (HTTP 403 or no primary access), so guideline content is from secondary summaries and needs checking against the originals. The Physiotutors summary also gives no grade for neural mobilisation or tendon gliding, while the 2019 summary lists Grade D for conflicting neurodynamic evidence. Movement cautions are indirect: pressure studies are mostly in healthy volunteers, risk data are occupational, and no study found measured push-ups, planks, hangs or barbell grip in CTS. CSP advice conflicts with pressure data on right-angle wrist bends and on squeezing. Only NHS, CSP and OrthoInfo describe general public advice, and the app's own adaptations are labelled inference. Not medical advice or treatment.",
+  "limitations": "Grade stays very_low. The closest evidence on exercise itself is the 2012 Cochrane review (limited, very low quality, 16 studies not pooled, only two measured adverse effects) and later GRADE-rated neurodynamic reviews at low to very low certainty; AAOS/ASSH 2024 rates exercise as not improving long-term outcomes at Limited strength, which is not evidence of harm or of no short-term benefit. Cochrane search ended January 2012. Contradictions. (1) Neurodynamic work: Zaheer 2023 and Jiménez-Del-Barrio 2022 (manual therapy, soft-tissue as well as neurodynamic) report large benefits (BCTQ SSS MD -1.20; SMD -1.67) and Paraskevopoulos 2023 concludes no clinical benefit from statistically positive pooled data; Núñez de Arenas-Arroyo 2021 finds small short-term effects. Pooled effects lean on no-treatment-controlled, therapist-delivered trials such as Wolny 2019, with pain I-squared 96% in Jiménez-Del-Barrio. Cavalcante 2022 rates over 76% of CTS treatment reviews low or very low on AMSTAR. (2) Add-on gliding: Abdolrazaghi 2023, Sim 2019 and Arman 2024 (BCTQ) show no added benefit over splinting, while Kim 2015 reports benefit over conventional treatment; Lewis 2020 reduced conversion to surgery (59% vs 80%) but tested a bundle. (3) Mabrouk 2026 found desensitization beat neurodynamics, but its effect sizes (d=6.11, d=6.91) are implausibly large and its BCTQ values conflict between table and text, so it does not change this file. (4) Splinting: AAOS 2016 gave a Strong recommendation and the 2019 summary Grade B, while Cochrane 2023 finds insufficient evidence; AAOS 2024 did not carry the 2016 recommendation forward in its summary. (5) Diagnosis: AAOS 2024 favours CTS-6 in lieu of routine testing; Pelosi 2022 says electrodiagnosis should always be done to quantify severity. (6) Keyboard use: AAOS 2024 (workgroup consensus from absence of reliable evidence) reversed the prior moderate association, and Hassan 2022 found HR 0.28 for high computer use from one study with a possibly high-risk reference group, while Coenen 2019 found RR 1.11 for screen work across symptoms that are not CTS-specific. (7) Vibration: Barcenilla 2012, Nilsson 2017 and Palmer 2007 find increased risk; Hassan 2022 does not. (8) Wrist direction: McGorry 2014 found flexion often lowered in vivo pressure, while Keir 1997 and Gelberman 1981 found flexion raised load or pressure. (9) Exercise and nerve size: Altinok 2004 found swelling after provocative exercise in dynamic CTS, while Betancourt 2020 found area fell in larger nerves after circuit training in a different population. (10) Doses: CSP advice conflicts with pressure data on right-angle wrist bends and squeezing. Access. The final JOSPT 2019 and 2026 guidelines were blocked: 2019 grades come from Guideline Central and a draft marked 'Do Not Cite', and 2026 grades come from a commercial third-party summary, so they need checking against the original. AAOS 2024 was read as its published summary, with its 2026 erratum unread. NICE CKS and NG127 and the German AWMF S3 guideline could not be read and are not used. Most new sources are abstract only, and the two Cochrane full texts were read only in part. Indirectness. Pressure studies are mostly in healthy volunteers at low loads, risk data are occupational, and no study found measured push-ups, planks, hangs or barbell grip in CTS. Harms of exercise are essentially unmeasured, not shown to be absent. The only resistance trial found is a single post-release session. Primary doses are from combined-treatment trials or patient information, and the app's adaptations are labelled inference. Red flags on acute CTS, constant numbness and spinal cord signs still rest on an educational summary of AAOS and a small case series: the AAOS summary that was read does not supply them. Not medical advice or treatment.",
   "verification": {
-    "sourcesChecked": 24,
-    "itemsRemoved": [
-      {
-        "item": "Source jospt_cpg_2026",
-        "reason": "No item cited it. The record exists and matches; its identifiers moved into the physiotutors_cpg_2026 citation."
-      }
-    ],
-    "labelsCorrected": [
-      "bartkowiak_2019 source type changed from rct to non_randomised_trial: the full text describes no randomisation and Europe PMC does not index it as an RCT.",
-      "cochrane_2022 citation corrected to 2012;(6), and PMID 22696387 added: Crossref and Europe PMC date this DOI 13 June 2012, while the Cochrane page shows 1 April 2022. The source id was left unchanged so references stay valid.",
-      "Cervical/neuropathy red flag: 'urgent' removed because iatroX says only 'requires evaluation'. Clinician review should decide the urgency; a lower urgency here is a source-fidelity change, not a clinical judgement.",
-      "Tendon gliding caution: 'inconclusive' corrected to 'less conclusive', the summary's wording.",
-      "Wrist extension and ball squeeze cautions: Rempel 1997 and Keir 1998 measured fingertip pressing and pinching, not grip, so the grip effect is now labelled inference.",
-      "Wrist extension caution: added CSP's instruction to increase the weight gradually, which had been omitted.",
-      "Markdown bottom line: Grade C is for a combined orthotic and stretching programme, with no 'night' stated, and Grade B is for a neutral orthosis, not near-neutral."
+    "sourcesChecked": 86,
+    "itemsRemoved": [],
+    "valuesCorrected": [
+      "Barcenilla 2012 wrist posture: was given only as not significant; the abstract also reports a significant association under the NIOSH case definition. Added to the rationale and the .md.",
+      "Hassan 2022 HR 0.28: reference group corrected from 'high-force' to 'high-risk', the paper's wording.",
+      "Zaheer 2023: 'mostly therapist-delivered' corrected, since the full text says a trained physiotherapist applied the techniques in all included studies. No GRADE assessment appears in the full text, not only the abstract.",
+      "Jiménez-Del-Barrio 2022: labelled as manual therapy including soft-tissue techniques, not neurodynamic work alone.",
+      "Núñez-Cortés 2026: 'one session' corrected to a crossover with one session per condition across 2 visits.",
+      "Huang 2024: n=27 kept from the paper's results, with a note that its abstract says 29 recruited.",
+      "Keir and Bach 2000: flexor entry into the tunnel labelled as calculated, not measured.",
+      "Page 2012 RR 1.26 (.md): outcome corrected from general improvement to normal sensory latency, in a trial that also used activity modification.",
+      "Sim 2019 (.md): 0.53 and 0.48 labelled as within-group changes.",
+      "Li and Jordan 2026 (.md): added that baseline pressure was set near 30 mmHg.",
+      "Links: 13 europepmc.org/article URLs returned HTTP 403 when fetched, so their JSON url now points to the matching PubMed record.",
+      "PMCIDs added from PubMed: bartkowiak_2019, kozak_2015, christodoulou_2025.",
+      "Access labels: all 14 not_reconfirmed entries replaced with what was actually read in this check.",
+      "Sadler 2025 (.md): link changed to the AAFP page given in the JSON."
     ],
     "unverifiable": [
-      "JOSPT 2019 and 2026 and AAOS 2024 guideline content: only the records or secondary summaries could be read, so grades and red flag wording rest on those summaries.",
-      "catalog:wrist-extension: the id exists (Wrist Extension, dumbbell, forearms, loaded-wrist-extension), but its metadata does not state palm-down. The match rests on name and progression family, and the entry is an unreviewed draft.",
-      "Stop-exercise wording in the weakness and cervical/neuropathy red flags: the sources call for assessment or evaluation and do not state stopping; this is a cautious app instruction."
+      "JOSPT 2019 and 2026 final guidelines: only PubMed records, Guideline Central, Physiotutors and the 'Do Not Cite' draft could be read. The grades are second-hand.",
+      "AAOS/ASSH 2024: only the published summary was read, and only the title of its 2026 erratum (PMID 42825588), which has no abstract. The erratum's content could change a statement here.",
+      "iatroX red flag wording: iatroX tags it to AAOS, but it does not appear in the AAOS summary read, so it could not be traced to the original.",
+      "Abstract-only sources were checked against the abstract alone; their methods and tables were not read.",
+      "Sadler 2025: free excerpt only, and PubMed has no abstract.",
+      "catalog:wrist-extension match and the stop-exercise wording in some red flags are app decisions, not source claims, so they could not be confirmed from any paper."
     ]
-  }
+  },
+  "searches": [
+    {
+      "searcher": "searcher_a_guidelines",
+      "database": "PubMed E-utilities",
+      "query": "\"Carpal Tunnel Syndrome\"[Mesh] AND (guideline[pt] OR \"practice guideline\"[pt])",
+      "hits": "14"
+    },
+    {
+      "searcher": "searcher_a_guidelines",
+      "database": "PubMed E-utilities",
+      "query": "carpal tunnel syndrome[tiab] AND (clinical practice guideline[tiab] OR consensus[tiab] OR clinical pathway[tiab])",
+      "hits": "158 (first 40 IDs listed; selected records read)"
+    },
+    {
+      "searcher": "searcher_a_guidelines",
+      "database": "PubMed E-utilities",
+      "query": "carpal tunnel syndrome[tiab] AND (Clinical Practice Guidelines[ti] OR guideline[ti] OR guidelines[ti] OR consensus[ti] OR Delphi[ti])",
+      "hits": "59"
+    },
+    {
+      "searcher": "searcher_a_guidelines",
+      "database": "PubMed E-utilities",
+      "query": "carpal tunnel syndrome[tiab] AND (exercise[ti] OR rehabilitation[ti] OR therapy[ti]) AND (guideline[ti] OR consensus[ti] OR Delphi[ti] OR recommendations[ti])",
+      "hits": "3"
+    },
+    {
+      "searcher": "searcher_a_guidelines",
+      "database": "Europe PMC REST",
+      "query": "TITLE:\"carpal tunnel\" AND (TITLE:guideline OR TITLE:guidelines OR TITLE:consensus OR TITLE:pathway)",
+      "hits": "46"
+    },
+    {
+      "searcher": "searcher_a_guidelines",
+      "database": "Europe PMC REST",
+      "query": "DOI:10.2519/jospt.2026.0301 OR DOI:10.2519/jospt.2019.0301 OR DOI:10.1016/j.apmr.2014.06.022",
+      "hits": "3 (all flagged not open access, no PMCID)"
+    },
+    {
+      "searcher": "searcher_a_guidelines",
+      "database": "Crossref REST",
+      "query": "query.title=carpal tunnel syndrome guideline (rows=20)",
+      "hits": "987706 relevance-ranked; first 20 inspected, none added beyond the PubMed set"
+    },
+    {
+      "searcher": "searcher_a_guidelines",
+      "database": "WebSearch",
+      "query": "carpal tunnel syndrome clinical practice guideline national (Dutch, German AWMF S3, BSSH, NICE, Australia, Italian, Spanish) recommendations exercise splint",
+      "hits": "10 links"
+    },
+    {
+      "searcher": "searcher_a_guidelines",
+      "database": "WebSearch",
+      "query": "NICE CKS carpal tunnel syndrome management wrist splint 6 weeks referral; BSSH carpal tunnel guideline commissioning",
+      "hits": "10 links (BOA/RCS commissioning guide opened; NICE CKS itself not returned)"
+    },
+    {
+      "searcher": "searcher_a_guidelines",
+      "database": "WebSearch",
+      "query": "AWMF S3 Leitlinie Karpaltunnelsyndrom Diagnostik und Therapie 005-003",
+      "hits": "9 links; AWMF PDFs returned 404/HTML when fetched, so the guideline was not read and is not reported as a paper"
+    },
+    {
+      "searcher": "searcher_a_guidelines",
+      "database": "WebSearch",
+      "query": "AWMF 005-003 S3 Leitlinie Karpaltunnelsyndrom 2022 konservative Therapie Schiene Empfehlung Antoniadis Chirurgie 2023",
+      "hits": "10 links; Springer and Thieme copies blocked by login/bot wall, not read"
+    },
+    {
+      "searcher": "searcher_a_guidelines",
+      "database": "WebSearch",
+      "query": "Erickson 2019 JOSPT \"Hand Pain and Sensory Deficits: Carpal Tunnel Syndrome\" recommendations grade orthosis nerve gliding exercise stretching should not",
+      "hits": "10 links; surfaced the 2026 revision"
+    },
+    {
+      "searcher": "searcher_a_guidelines",
+      "database": "WebSearch (nice.org.uk, cks.nice.org.uk)",
+      "query": "Carpal tunnel syndrome NICE clinical knowledge summary management \"splint\" corticosteroid injection refer surgery cks.nice.org.uk scenarios",
+      "hits": "9 links; NICE NG127 page and CKS both returned HTTP 403 when fetched, so neither was read and neither is reported as a paper"
+    },
+    {
+      "searcher": "searcher_b_reviews",
+      "database": "PubMed E-utilities",
+      "query": "\"carpal tunnel syndrome\"[Title] AND (exercise[Title/Abstract] OR stretching[Title/Abstract] OR mobilization[Title/Abstract] OR mobilisation[Title/Abstract]) AND (systematic[sb] OR meta-analysis[pt])",
+      "hits": "15"
+    },
+    {
+      "searcher": "searcher_b_reviews",
+      "database": "PubMed E-utilities",
+      "query": "\"carpal tunnel syndrome\"[Title] AND \"Cochrane Database Syst Rev\"[Journal]",
+      "hits": "22"
+    },
+    {
+      "searcher": "searcher_b_reviews",
+      "database": "PubMed E-utilities",
+      "query": "\"carpal tunnel syndrome\"[Title] AND (splint*[Title/Abstract] OR \"activity modification\"[Title/Abstract] OR ergonomic*[Title/Abstract] OR keyboard[Title/Abstract]) AND (systematic[sb] OR meta-analysis[pt])",
+      "hits": "59 (first 30 IDs retrieved)"
+    },
+    {
+      "searcher": "searcher_b_reviews",
+      "database": "Europe PMC REST",
+      "query": "TITLE:\"carpal tunnel syndrome\" AND (exercise OR stretching OR mobilization) AND (PUB_TYPE:\"systematic-review\" OR PUB_TYPE:\"Meta-Analysis\" OR TITLE:\"systematic review\")",
+      "hits": "43 (first 25 listed)"
+    },
+    {
+      "searcher": "searcher_b_reviews",
+      "database": "PubMed E-utilities",
+      "query": "\"carpal tunnel syndrome\"[Title/Abstract] AND (ergonomic*[Title/Abstract] OR keyboard[Title/Abstract] OR computer[Title/Abstract] OR \"work-related\"[Title/Abstract] OR occupational[Title/Abstract] OR biomechanical[Title/Abstract]) AND (meta-analysis[pt] OR systematic[sb])",
+      "hits": "54 (first 25 IDs retrieved)"
+    },
+    {
+      "searcher": "searcher_b_reviews",
+      "database": "PubMed E-utilities",
+      "query": "\"carpal tunnel syndrome\"[Title] AND (\"clinical practice guideline\"[Title/Abstract] OR guideline[pt] OR guideline[Title]) AND (\"physical therapy\"[Title/Abstract] OR rehabilitation[Title/Abstract] OR management[Title/Abstract])",
+      "hits": "15"
+    },
+    {
+      "searcher": "searcher_b_reviews",
+      "database": "PubMed E-utilities",
+      "query": "\"carpal tunnel\"[Title] AND (\"physical activity\"[Title/Abstract] OR \"resistance training\"[Title/Abstract] OR \"strengthening\"[Title/Abstract] OR \"stretching\"[Title/Abstract] OR yoga[Title/Abstract] OR \"carpal tunnel pressure\"[Title/Abstract]) AND randomized controlled trial[pt]",
+      "hits": "9"
+    },
+    {
+      "searcher": "searcher_b_reviews",
+      "database": "PubMed E-utilities",
+      "query": "\"carpal tunnel\"[Title] AND (\"wrist posture\"[Title/Abstract] OR \"wrist extension\"[Title/Abstract] OR \"weight-bearing\"[Title/Abstract] OR \"weight bearing\"[Title/Abstract] OR \"pressure\"[Title]) AND (pressure[Title/Abstract])",
+      "hits": "100 (first 25 IDs retrieved; titles of 14 reviewed, one abstract opened)"
+    },
+    {
+      "searcher": "searcher_b_reviews",
+      "database": "PubMed E-utilities",
+      "query": "Wolny T[Author] AND \"carpal tunnel syndrome\"[Title] AND (neurodynamic[Title/Abstract] OR manual[Title/Abstract])",
+      "hits": "8"
+    },
+    {
+      "searcher": "searcher_b_reviews",
+      "database": "JOSPT website (direct fetch, not a search)",
+      "query": "https://www.jospt.org/doi/10.2519/jospt.2026.0301 and https://www.jospt.org/doi/10.2519/jospt.2019.0302",
+      "hits": "Both returned HTTP 403. The graded recommendations in the APTA guideline were not read; the 2019 URL was constructed by the searcher and did not resolve to readable content."
+    },
+    {
+      "searcher": "searcher_b_reviews",
+      "database": "Europe PMC fullTextXML (retrieval, not a search)",
+      "query": "PMC11536321/fullTextXML",
+      "hits": "HTTP 500; PMC efetch returned abstract and plain-language summary only"
+    },
+    {
+      "searcher": "searcher_c_trials_and_mechanisms",
+      "database": "PubMed",
+      "query": "\"carpal tunnel syndrome\"[Title] AND (exercise[Title/Abstract] OR \"nerve gliding\"[Title/Abstract] OR \"tendon gliding\"[Title/Abstract]) AND randomized controlled trial[Publication Type]",
+      "hits": "41"
+    },
+    {
+      "searcher": "searcher_c_trials_and_mechanisms",
+      "database": "PubMed",
+      "query": "\"carpal tunnel\" AND pressure AND (\"wrist position\" OR \"wrist extension\" OR \"weight-bearing\" OR \"push-up\")",
+      "hits": "39"
+    },
+    {
+      "searcher": "searcher_c_trials_and_mechanisms",
+      "database": "PubMed",
+      "query": "\"carpal tunnel syndrome\" AND (weightlifting OR \"weight lifting\" OR \"resistance training\" OR gym OR crossfit)",
+      "hits": "10 (none measured gym lifts in CTS; the only exercise study was the post-release dual-task crossover, plus case reports and narrative pieces)"
+    },
+    {
+      "searcher": "searcher_c_trials_and_mechanisms",
+      "database": "PubMed",
+      "query": "\"carpal tunnel syndrome\"[Title] AND exercise AND (systematic review[Publication Type] OR meta-analysis[Publication Type])",
+      "hits": "22"
+    },
+    {
+      "searcher": "searcher_c_trials_and_mechanisms",
+      "database": "PubMed",
+      "query": "\"carpal tunnel syndrome\" AND (\"adverse events\" OR harms OR worsening) AND (exercise OR gliding OR neurodynamic)",
+      "hits": "21"
+    },
+    {
+      "searcher": "searcher_c_trials_and_mechanisms",
+      "database": "Europe PMC",
+      "query": "\"carpal tunnel syndrome\" AND (\"nerve gliding\" OR \"tendon gliding\" OR \"strengthening\") AND OPEN_ACCESS:y AND SRC:MED",
+      "hits": "938 (first 25 screened by title)"
+    },
+    {
+      "searcher": "searcher_c_trials_and_mechanisms",
+      "database": "PubMed",
+      "query": "\"carpal tunnel pressure\" AND (fingertip OR pinch OR grip OR \"finger\" OR load) AND (Rempel[Author] OR Keir[Author])",
+      "hits": "8"
+    },
+    {
+      "searcher": "searcher_c_trials_and_mechanisms",
+      "database": "PubMed",
+      "query": "\"carpal tunnel\" AND (lumbrical OR \"flexor tendon\" OR \"muscle incursion\") AND pressure AND (grip OR fist OR incursion)",
+      "hits": "7"
+    },
+    {
+      "searcher": "searcher_c_trials_and_mechanisms",
+      "database": "PubMed",
+      "query": "(Coppieters MW[Author] OR Echigo[Author]) AND \"median nerve\" AND (excursion OR sliders OR strain OR gliding)",
+      "hits": "12"
+    },
+    {
+      "searcher": "searcher_c_trials_and_mechanisms",
+      "database": "PubMed",
+      "query": "\"carpal tunnel syndrome\" AND (forceful OR \"hand force\" OR vibration OR \"repetitive\") AND (meta-analysis[Publication Type] OR systematic review[Publication Type]) AND (occupational OR work)",
+      "hits": "16"
+    },
+    {
+      "searcher": "searcher_c_trials_and_mechanisms",
+      "database": "PubMed",
+      "query": "\"carpal tunnel\" AND (\"push-up\" OR \"push up\" OR \"weight bearing\" OR \"weight-bearing\" OR cycling OR cyclist OR \"hand-bearing\" OR climber OR athlete*) AND (median nerve OR pressure)",
+      "hits": "53 (first 10 screened; no push-up or weight-bearing pressure study among them)"
+    },
+    {
+      "searcher": "searcher_c_trials_and_mechanisms",
+      "database": "PubMed",
+      "query": "\"median nerve\" AND exercise AND (acute OR immediate) AND (ultrasound OR \"cross-sectional area\") AND (\"carpal tunnel\" OR athletes OR wheelchair OR \"repetitive hand\")",
+      "hits": "7"
+    },
+    {
+      "searcher": "searcher_c_trials_and_mechanisms",
+      "database": "PubMed",
+      "query": "\"carpal tunnel syndrome\" AND (clinical practice guideline OR \"Clinical Practice Guidelines\") AND (physical therapy OR exercise)",
+      "hits": "20 (first 4 screened)"
+    },
+    {
+      "searcher": "searcher_c_trials_and_mechanisms",
+      "database": "PubMed",
+      "query": "Wolny T[Author] AND \"carpal tunnel syndrome\" AND (neurodynamic OR manual therapy) AND randomized",
+      "hits": "8 (first 3 screened)"
+    },
+    {
+      "searcher": "searcher_c_trials_and_mechanisms",
+      "database": "PubMed",
+      "query": "\"carpal tunnel syndrome\" AND yoga AND randomized",
+      "hits": "8 (first 3 screened)"
+    },
+    {
+      "searcher": "searcher_c_trials_and_mechanisms",
+      "database": "PubMed",
+      "query": "\"carpal tunnel\" AND pressure AND (Gelberman[Author] OR Szabo[Author] OR Weiss ND[Author]) AND (wrist OR position)",
+      "hits": "16 (first 4 screened)"
+    },
+    {
+      "searcher": "searcher_c_trials_and_mechanisms",
+      "database": "PubMed",
+      "query": "\"carpal tunnel\" AND (rehabilitation OR \"return to work\" OR \"strengthening\" OR \"grip\") AND (release OR decompression) AND (randomized controlled trial[Publication Type] OR Cochrane Database Syst Rev[Journal]) AND (rehabilitation OR exercise) AND (\"early\" OR \"immobilisation\" OR \"splint\")",
+      "hits": "14 (first 4 screened)"
+    }
+  ]
 }

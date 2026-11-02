@@ -4,54 +4,154 @@
   "evidenceGrade": "low",
   "diagnosisContested": {
     "contested": true,
-    "note": "The condition itself is accepted, but its label and boundaries are not standardised. A review of 23 prevalence studies found that definitions of sciatica varied widely, only 2 studies used clinical assessment, and prevalence ranged from 1.2% to 43%. A Cochrane diagnostic review found that most physical tests perform poorly in isolation, and a primary-care modelling study reports conflicting reference standards. Trial populations therefore differ, and a self-reported 'sciatica' in the app may not be true nerve-root pain."
+    "note": "The condition itself is accepted, but its label and boundaries are not standardised. A review of 23 prevalence studies found that definitions of sciatica varied widely, only 2 studies used clinical assessment, and prevalence ranged from 1.2% to 43%. A Cochrane diagnostic review found that most physical tests perform poorly in isolation, and a primary-care modelling study used two reference standards, with substantial agreement for one and only fair agreement for the other. Trial populations therefore differ, and a self-reported 'sciatica' in the app may not be true nerve-root pain."
   },
   "avoidOrModify": [
     {
       "movement": "Any exercise or activity during which leg pain increases",
       "action": "modify",
-      "rationale": "Participants in a sham-controlled trial were advised to stay as active as possible but to reduce activity if leg pain increased. The advice was given to both arms as part of a package, so its separate effect was not tested.",
+      "rationale": "Participants in a sham-controlled trial were advised to stay as active as possible but to reduce activity if leg pain increased. The advice was given to both arms as part of a package, so its separate effect was not tested. Fritz 2021 shows flares are common even with supervision: 37 of 100 people reported side effects, mostly increased back pain and stiffness. A cohort found that people whose symptoms peripheralised during testing improved about as much as those whose symptoms centralised, so peripheralisation during testing did not predict a poor outcome in that cohort. That finding does not justify training through leg pain, and the peripheralisation group was small.",
       "evidenceStrength": "expert_opinion",
       "sourceIds": [
-        "albert2012"
+        "albert2012",
+        "fritz2021",
+        "albert2012centralization"
       ]
     },
     {
       "movement": "Replacing normal activity with extended bed rest",
       "action": "modify",
-      "rationale": "NICE advises encouraging people to continue normal activities. For sciatica specifically, Cochrane found moderate-quality evidence of little or no difference between advice to rest in bed and advice to stay active, so this shows rest has no added benefit, not that it harms people with sciatica.",
+      "rationale": "NICE advises encouraging people to continue normal activities. For sciatica specifically, Cochrane found moderate-quality evidence of little or no difference between advice to rest in bed and advice to stay active (pain SMD -0.03, 95% CI -0.24 to 0.18). Vroomen 1999 found 70% versus 65% improved at 2 weeks (adjusted OR 1.2, 95% CI 0.6 to 2.3), and Hofstee 2002 found neither bed rest nor physiotherapy beat continuing daily activities. This shows rest has no added benefit, not that it harms people with sciatica.",
       "evidenceStrength": "guideline",
       "sourceIds": [
         "nice_ng59",
-        "dahm_cochrane"
+        "dahm_cochrane",
+        "vroomen1999",
+        "hofstee2002"
       ]
     },
     {
       "movement": "Any neural mobilisation in a person with cauda equina lesions, cord signs, or other nervous system pathology such as Guillain-Barre syndrome or multiple sclerosis",
       "action": "avoid",
-      "rationale": "The meta-analysis lists these as contraindications and says they should be identified before neural mobilisation. None of its 20 trials reported adverse events, which does not establish safety for self-directed use.",
+      "rationale": "The meta-analysis lists these as contraindications and says they should be identified before neural mobilisation. None of its 20 trials reported adverse events, which does not establish safety for self-directed use: Peacock 2023 reports adverse events were not a formal outcome, and Danazumi 2023 states they were not measured.",
       "evidenceStrength": "systematic_review",
       "sourceIds": [
-        "lin2023"
+        "lin2023",
+        "peacock2023",
+        "danazumi2023"
       ]
     },
     {
       "movement": "Fixed-direction repeated lumbar flexion or extension applied to everyone with leg pain",
       "action": "modify",
-      "rationale": "The guideline's retained 2012 recommendations describe repeated exercises in a direction determined by treatment response, and it also says flexion exercises can be considered within a combined programme for older people with chronic radiating pain. The opened sources therefore do not support a blanket ban or a blanket prescription for either direction.",
+      "rationale": "The guideline's retained 2012 recommendations describe repeated exercises in a direction determined by treatment response, and it also says flexion exercises can be considered within a combined programme for older people with chronic radiating pain. Fritz 2021 individualised extension progressions to maximise centralisation, while Shacklock 2023 used static flexion with contralateral side bending and walking in a small pilot, and VanGelder 2013, as opinion, avoids flexion in the first phase. The sources therefore do not support a blanket ban or a blanket prescription for either direction.",
       "evidenceStrength": "guideline",
       "sourceIds": [
-        "jospt2021"
+        "jospt2021",
+        "delitto2012",
+        "fritz2021",
+        "shacklock2023",
+        "vangelder2013",
+        "albert2012centralization"
       ]
     },
     {
       "movement": "Mechanical spinal traction used to manage leg pain",
       "action": "avoid",
-      "rationale": "NICE says not to offer traction for low back pain with or without sciatica, and the JOSPT guideline says physical therapists should not use mechanical traction for chronic low back pain with leg pain. These address clinical traction and do not assess gym movements such as hanging.",
+      "rationale": "NICE says not to offer traction for low back pain with or without sciatica, and the JOSPT guideline says physical therapists should not use mechanical traction for chronic low back pain with leg pain (should not, Grade D as inferred from its Table 2). Cochrane found low- to moderate-quality evidence that traction probably has no impact in low back pain with sciatica, with adverse effects in 7 of 32 studies including increased pain and aggravated neurological signs. Thackeray 2016 found no added benefit at any time point. A WHO news release also advises against traction in chronic primary low back pain. NASS rates the evidence insufficient (Grade I), and Vanti 2021 reports a positive supine result drawn from low-quality trials. These address clinical traction and do not assess gym movements such as hanging or inversion.",
       "evidenceStrength": "guideline",
       "sourceIds": [
         "nice_ng59",
+        "jospt2021",
+        "wegner2013",
+        "thackeray2016",
+        "kreiner2014",
+        "vanti2021",
+        "pangarkar2019",
+        "delitto2012",
+        "who_news2023"
+      ]
+    },
+    {
+      "movement": "Neural mobilisation as the first step in the acute stage",
+      "action": "modify",
+      "rationale": "A 14-member Delphi panel placed information, individualised physical activity and directional preference exercise in the acute stage, and said neurodynamic mobilisation could be added in the sub-acute stage. This is consensus, not trial evidence. George 2021 supports neural mobilisation only for chronic low back pain with leg pain, as a short-term adjunct.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": [
+        "thoomes2023",
         "jospt2021"
+      ]
+    },
+    {
+      "movement": "Loaded or sustained lumbar flexion, especially lifting with a rounded back and straight knees, or a load held far from the body",
+      "action": "modify",
+      "rationale": "No study tested this in people with active sciatica. Indirect support: in one healthy subject, lifting 20 kg gave 2.3 MPa with a round flexed back, 1.7 with flexed knees and 1.1 with the load close to the body; repeated flexion with compression produced herniation in porcine segments, at cycle counts far beyond a gym session; static flexion with compression weakened porcine annulus; and frequently lifting 25 lb or more with straight knees and a bent back was associated with herniation onset (RR 3.95, case-control). VanGelder 2013 avoids flexion and sustained flexed postures in phase I as opinion. Contrary: modelling found stoop lifting had lower compression than squat lifting in healthy people, and a narrative review argues strict neutral may be oversimplified, especially for trained lifters, though it says neutral may suit novices or those with acute pain. Do not read this as a flexion ban.",
+      "evidenceStrength": "biomechanical",
+      "sourceIds": [
+        "wilke1999",
+        "callaghan2001",
+        "tampier2007",
+        "briar2023",
+        "mundt1993lifting",
+        "vangelder2013",
+        "stoopsquat2021",
+        "neutralspine2026"
+      ]
+    },
+    {
+      "movement": "Heavy bilateral lifting such as near-maximal conventional deadlifts during symptoms",
+      "action": "modify",
+      "rationale": "No trial tested these lifts in symptomatic lifters, so any restriction is inference. Competition deadlift L4/L5 compression estimates reach 17,192 N, and 75% 1RM gave 7,963 N compression and 1,903 N shear. High-load deadlifts lowered the disc apparent diffusion coefficient, most at L5/S1, as an acute response rather than injury. A hexagonal bar lowered peak lumbar moment in powerlifters; disc load and injury were not reported in the abstract. One case report describes massive L5-S1 extrusion with cauda equina syndrome after a year of training through worsening pain; it cannot show cause. Contrary: Mundt 1993 found weight lifting equipment not associated with lumbar herniation. VanGelder 2013 reintroduces kettlebell and trap bar deadlifts in phase II, starting the kettlebell version at the lightest load possible, as untested opinion.",
+      "evidenceStrength": "biomechanical",
+      "sourceIds": [
+        "cholewicki1991",
+        "deadliftreview2022",
+        "yanagisawa2021",
+        "swinton2011",
+        "cescase2025",
+        "mundt1993sports",
+        "vangelder2013"
+      ]
+    },
+    {
+      "movement": "Leg press treated as automatically spine-sparing",
+      "action": "modify",
+      "rationale": "In 8 resistance-trained people, peak L4-L5 compression was similarly high across flywheel leg press and squats, and shear was higher in leg press and barbell squat than flywheel squat. This was not a conventional sled leg press, and the participants were resistance-trained rather than people with sciatica, so it removes an assumption rather than setting a limit.",
+      "evidenceStrength": "biomechanical",
+      "sourceIds": [
+        "sjoberg2023"
+      ]
+    },
+    {
+      "movement": "Hip-hinge positions with the ankle dorsiflexed, including straight-leg hamstring stretches, when leg symptoms respond",
+      "action": "modify",
+      "rationale": "Hip flexion strongly predicted sciatic excursion during forward bending, and force from hip flexion transmits beyond the ankle when it is dorsiflexed. Danazumi 2023 notes hamstring stretching in a home programme could add neural tension. Romanian deadlifts and good mornings were not tested, and no trial of hamstring stretching in lumbar radiculopathy was found, so this is inference from a cadaver study and an in vivo ultrasound study.",
+      "evidenceStrength": "biomechanical",
+      "sourceIds": [
+        "ellis2021",
+        "coppieters2006",
+        "danazumi2023"
+      ]
+    },
+    {
+      "movement": "Long-lying sit-ups, and high-impact loading such as jogging, skipping or trampoline jumping, when leg symptoms respond",
+      "action": "modify",
+      "rationale": "Modelling found the highest curl-up forces in long-lying; hook-lying cut shear 46% in men and 39% in women, but compression only 5% and 4%. In vivo data showed high spinal loads during jogging, trampoline jumping and skipping. Neither study tested symptomatic people, so this is load data and not evidence of harm.",
+      "evidenceStrength": "biomechanical",
+      "sourceIds": [
+        "johnson1991",
+        "rohlmann2001"
+      ]
+    },
+    {
+      "movement": "Lumbar belts or corsets used as treatment",
+      "action": "avoid",
+      "rationale": "NICE says not to offer belts or corsets for low back pain with or without sciatica, and a WHO news release advises against lumbar braces, belts and supports in chronic primary low back pain. VA/DoD rates the evidence on lumbar supports as insufficient. The passages read do not address a lifting belt during training.",
+      "evidenceStrength": "guideline",
+      "sourceIds": [
+        "nice_ng59",
+        "who_news2023",
+        "pangarkar2019"
       ]
     }
   ],
@@ -67,11 +167,16 @@
         "frequency": "3 days per week for 2 weeks, with 5 minutes between sets (one small trial, Anikwe 2015, as tabulated in Lin 2023). Another trial, Bhatia 2017, used 5 sets of 15, 5 days per week for 4 weeks."
       },
       "bodyweightOrHold": true,
-      "cautions": "Doses come from small trials where this was added to other treatment. Self-directed use without clinician screening is not established. Excluded if any red flag or listed contraindication applies. Stop if leg symptoms increase.",
+      "cautions": "Doses come from small trials where this was added to other treatment. No trial of self-directed mobilisation alone was found, and self-directed use without clinician screening is not established. Excluded if any red flag or listed contraindication applies. Stop if leg symptoms increase. Evidence is very low certainty and conflicts: Sousa Filho 2022 and Plaza-Manzano 2020 found no added benefit, and Ellis 2017 found a slumped position did not change nerve excursion. Do not copy the Shaheen 2025 dose of 100 reps per session with 5-second holds: it was therapist-delivered, and its effects are implausibly large.",
       "evidenceStrength": "systematic_review",
       "sourceIds": [
         "lin2023",
-        "jospt2021"
+        "jospt2021",
+        "peacock2023",
+        "sousafilho2022",
+        "plazamanzano2020",
+        "ellis2017",
+        "shaheen2025"
       ]
     },
     {
@@ -96,18 +201,22 @@
       "catalog": "new",
       "kind": "mobility",
       "dose": {
-        "sets": null,
-        "reps": null,
+        "sets": 1,
+        "reps": 10,
         "holdSeconds": null,
-        "frequency": "Not established; the opened sources give no usable dose and the exercises were individualised."
+        "frequency": "Up to 10 reps per direction, as used to test response (Albert centralisation 2012), stopping at once if distal symptoms worsen. Fritz 2021 asked people to do assigned exercises at home every 4 to 5 hours on days between sessions, with reps left to the therapist. No trial tested this exact combination, and direction was chosen by a clinician or algorithm."
       },
       "bodyweightOrHold": true,
-      "cautions": "Results conflict. Symptom-guided exercise beat sham for most outcomes in Albert 2012, but a McKenzie programme matched guideline-based advice at 24 months in a small trial. Direction was set by an algorithm or therapist, which a fixed app routine would not replicate.",
+      "cautions": "Results conflict. Symptom-guided exercise beat sham for most outcomes in Albert 2012, and early physical therapy improved ODI by 5.4 points at 6 months in Fritz 2021, but a McKenzie programme matched guideline-based advice at 24 months in a small trial. Direction was set by an algorithm or therapist, which a fixed app routine would not replicate. Evidence from credentialed McKenzie therapists in chronic low back pain (Hennemann 2025) does not transfer directly to self-guided use. In Fritz 2021, 37% of people reported side effects.",
       "evidenceStrength": "rct",
       "sourceIds": [
         "albert2012",
         "kilpikoski2024",
-        "jospt2021"
+        "jospt2021",
+        "albert2012centralization",
+        "fritz2021",
+        "hennemann2025",
+        "thackeray2016"
       ]
     },
     {
@@ -121,11 +230,12 @@
         "frequency": "Not established for sciatica; the opened sources give no dose."
       },
       "bodyweightOrHold": true,
-      "cautions": "Supports staying active rather than treating leg pain. The guideline's walking review covered chronic low back pain, not sciatica, and found no significant differences against other interventions. Reduce if leg pain increases.",
+      "cautions": "Supports staying active rather than treating leg pain. The guideline's walking review covered chronic low back pain, not sciatica, and found no significant differences against other interventions. Walking was part of the Shacklock 2023 pilot package, with no separate dose or effect. Reduce if leg pain increases.",
       "evidenceStrength": "expert_opinion",
       "sourceIds": [
         "jospt2021",
-        "nice_ng59"
+        "nice_ng59",
+        "shacklock2023"
       ]
     },
     {
@@ -133,16 +243,17 @@
       "catalog": "catalog:bird-dog",
       "kind": "strengthening",
       "dose": {
-        "sets": null,
-        "reps": null,
+        "sets": 2,
+        "reps": 10,
         "holdSeconds": null,
-        "frequency": "Not established; no opened source names this exercise or gives a dose."
+        "frequency": "Home programme in Shaheen 2025: quadruped alternating arms and legs, 2 sets of 10. The frequency of the home sessions was not captured, and it was given to all three arms."
       },
       "bodyweightOrHold": true,
-      "cautions": "Choosing this exercise is expert-opinion mapping onto the guideline's broad trunk-strengthening and movement-control categories. Evidence for that category in sciatica itself is limited. Reduce if leg pain increases.",
+      "cautions": "This dose comes from one small trial that gave it to all arms, so its own effect was not tested. Choosing this exercise remains expert-opinion mapping onto the guideline's trunk-strengthening and movement-control categories. Reduce if leg pain increases.",
       "evidenceStrength": "expert_opinion",
       "sourceIds": [
-        "jospt2021"
+        "jospt2021",
+        "shaheen2025"
       ]
     },
     {
@@ -153,13 +264,14 @@
         "sets": null,
         "reps": null,
         "holdSeconds": null,
-        "frequency": "Not established; no opened source names this exercise or gives a dose."
+        "frequency": "Not established; no opened source gives a dose."
       },
       "bodyweightOrHold": true,
-      "cautions": "Choosing this exercise is expert-opinion mapping onto the guideline's broad trunk-endurance category. Reduce if leg pain increases.",
+      "cautions": "Choosing this exercise is expert-opinion mapping onto the guideline's broad trunk-endurance category. VanGelder 2013 lists plank progressions and an advanced side plank in phase I without a dose. Reduce if leg pain increases.",
       "evidenceStrength": "expert_opinion",
       "sourceIds": [
-        "jospt2021"
+        "jospt2021",
+        "vangelder2013"
       ]
     },
     {
@@ -184,16 +296,161 @@
       "catalog": "catalog:cat-cow-stretch",
       "kind": "mobility",
       "dose": {
+        "sets": 3,
+        "reps": 10,
+        "holdSeconds": null,
+        "frequency": "Cat-and-camel exercise in Pradhan 2024: 3 sets of 10, one session a day, 10 sessions in 14 days. Given to both groups of the trial, so its own effect was not tested."
+      },
+      "bodyweightOrHold": true,
+      "cautions": "Dose comes from one trial that gave it to both groups, so its own effect was not tested. It moves through both flexion and extension, so limit range to what does not increase leg pain.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": [
+        "pradhan2024",
+        "jospt2021"
+      ]
+    },
+    {
+      "name": "Self-performed lower-limb neural slider, tolerance dose",
+      "catalog": "new",
+      "kind": "neural_mobility",
+      "dose": {
+        "sets": 1,
+        "reps": null,
+        "holdSeconds": null,
+        "frequency": "Single session; each slider performed for 30 seconds at about 1 repetition per 3 to 4 seconds, with actual means of 7.3 to 9.5 reps per exercise (Boyd 2017). Tested once, in people with diabetes rather than sciatica."
+      },
+      "bodyweightOrHold": true,
+      "cautions": "The best-defined self-performed slider dose found, but it comes from a single-session feasibility study in a different population, so it describes tolerance and not benefit in sciatica. That study did not count a stretch that resolved immediately on leaving the position as an adverse event. Excluded if any red flag or listed contraindication applies. Stop if leg symptoms increase.",
+      "evidenceStrength": "observational",
+      "sourceIds": [
+        "boyd2017",
+        "lin2023"
+      ]
+    },
+    {
+      "name": "Side-lying static foramen opening",
+      "catalog": "new",
+      "kind": "mobility",
+      "dose": {
         "sets": null,
         "reps": null,
         "holdSeconds": null,
-        "frequency": "Not established; no opened source names this exercise or gives a dose."
+        "frequency": "Not established; the abstract describes static flexion with contralateral lateral flexion in side-lying but gives no hold time or repetitions."
       },
       "bodyweightOrHold": true,
-      "cautions": "Choosing this exercise is expert-opinion mapping onto the guideline's trunk mobility category. It moves through both flexion and extension, so limit range to what does not increase leg pain.",
+      "cautions": "Evidence is one randomised pilot of 20 inpatients, added to forward bending, walking and medication. The Ferreira 2016 trial used passive foramen opening delivered by a therapist. Stop if leg symptoms increase.",
+      "evidenceStrength": "rct",
+      "sourceIds": [
+        "shacklock2023",
+        "ferreira2016",
+        "ferreira2016protocol"
+      ]
+    },
+    {
+      "name": "Glute bridge",
+      "catalog": "catalog:glute-bridge",
+      "kind": "strengthening",
+      "dose": {
+        "sets": 2,
+        "reps": 10,
+        "holdSeconds": null,
+        "frequency": "Home programme in Shaheen 2025: bridging, 2 sets of 10. The frequency of the home sessions was not captured, and it was given to all three arms. VanGelder 2013 lists bridging in phase I without a dose. Pradhan 2024 used bridging at 3 sets of 10 in both groups."
+      },
+      "bodyweightOrHold": true,
+      "cautions": "Given to all arms of one small trial, so its own effect was not tested. Reduce if leg pain increases.",
       "evidenceStrength": "expert_opinion",
       "sourceIds": [
-        "jospt2021"
+        "shaheen2025",
+        "vangelder2013",
+        "pradhan2024"
+      ]
+    },
+    {
+      "name": "Pelvic tilt",
+      "catalog": "new",
+      "kind": "mobility",
+      "dose": {
+        "sets": 2,
+        "reps": 10,
+        "holdSeconds": null,
+        "frequency": "Home programme in Shaheen 2025: pelvic tilts, 2 sets of 10. The frequency of the home sessions was not captured, and it was given to all three arms."
+      },
+      "bodyweightOrHold": true,
+      "cautions": "Given to all arms of one small trial, so its own effect was not tested. Reduce if leg pain increases.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": [
+        "shaheen2025"
+      ]
+    },
+    {
+      "name": "Core bracing",
+      "catalog": "new",
+      "kind": "strengthening",
+      "dose": {
+        "sets": 2,
+        "reps": 10,
+        "holdSeconds": null,
+        "frequency": "Home programme in Shaheen 2025: core bracing, 2 sets of 10. The frequency of the home sessions was not captured, and it was given to all three arms."
+      },
+      "bodyweightOrHold": true,
+      "cautions": "Given to all arms of one small trial, so its own effect was not tested. The STOPS protocol teaches motor control in non-weight-bearing positions first, without stating sets or reps. Reduce if leg pain increases.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": [
+        "shaheen2025",
+        "stops2011",
+        "hahne2017"
+      ]
+    },
+    {
+      "name": "Hook-lying abdominal hollowing",
+      "catalog": "new",
+      "kind": "strengthening",
+      "dose": {
+        "sets": null,
+        "reps": 5,
+        "holdSeconds": 5,
+        "frequency": "5-second holds for 5 repetitions, progressing to 30-second holds (VanGelder 2013). Session frequency not given."
+      },
+      "bodyweightOrHold": true,
+      "cautions": "Level 5 clinical commentary and untested, and it is the only exercise that paper doses. Reduce if leg pain increases.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": [
+        "vangelder2013"
+      ]
+    },
+    {
+      "name": "Goblet squat, later phase only",
+      "catalog": "catalog:goblet-squat",
+      "kind": "strengthening",
+      "dose": {
+        "sets": null,
+        "reps": null,
+        "holdSeconds": null,
+        "frequency": "Not established. VanGelder 2013 places it in phase II and states that it gives no dosing."
+      },
+      "bodyweightOrHold": false,
+      "cautions": "Untested expert opinion in athletes with disc herniation. No trial shows when it is safe to start. Not for use while leg symptoms are worsening or any red flag applies.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": [
+        "vangelder2013"
+      ]
+    },
+    {
+      "name": "Trap bar deadlift, later phase only",
+      "catalog": "catalog:trap-bar-deadlift",
+      "kind": "strengthening",
+      "dose": {
+        "sets": null,
+        "reps": null,
+        "holdSeconds": null,
+        "frequency": "Not established. VanGelder 2013 places kettlebell and trap bar deadlifts in phase II and states that it gives no dosing. The lightest-load instruction was found for the kettlebell version, not the trap bar."
+      },
+      "bodyweightOrHold": false,
+      "cautions": "Untested expert opinion. A hexagonal bar lowered peak lumbar moment in powerlifters; disc load and injury were not reported in the abstract. Not for use while leg symptoms are worsening or any red flag applies.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": [
+        "vangelder2013",
+        "swinton2011"
       ]
     }
   ],
@@ -232,15 +489,18 @@
       "sign": "Significant or worsening leg weakness, foot drop, or new difficulty walking",
       "action": "Stop exercising and seek urgent medical assessment.",
       "sourceIds": [
-        "york_ces"
+        "york_ces",
+        "aldera2026",
+        "khorami2021",
+        "pangarkar2019",
+        "fritz2021"
       ]
     },
     {
       "sign": "New sexual dysfunction with back pain or sciatica",
       "action": "Stop exercising and seek urgent medical assessment.",
       "sourceIds": [
-        "york_ces",
-        "todd2025"
+        "york_ces"
       ]
     },
     {
@@ -248,6 +508,27 @@
       "action": "Stop the programme and see a clinician to look for another cause.",
       "sourceIds": [
         "nice_ng59"
+      ]
+    },
+    {
+      "sign": "Back or leg pain that keeps worsening over weeks of training, especially if leg numbness or weakness joins it",
+      "action": "Stop loaded training and see a clinician. Do not train through it.",
+      "sourceIds": [
+        "cescase2025"
+      ],
+      "evidenceNote": "From a single case report of a person who continued deadlift training through a year of worsening pain. It supports caution and cannot show cause."
+    },
+    {
+      "sign": "Severe, disabling leg pain that has not improved with non-surgical care",
+      "action": "See a clinician to discuss referral. Thresholds differ: within 12 weeks in the Danish guideline, 6 to 8 weeks in the Dutch GP standard as relayed by the occupational guideline, and before six months among people whose symptoms warrant surgery in NASS.",
+      "sourceIds": [
+        "stochkendahl2018",
+        "luites2022",
+        "kreiner2014",
+        "nice_ng59",
+        "aldera2026",
+        "khorami2021",
+        "bailey2020"
       ]
     }
   ],
@@ -258,7 +539,9 @@
       "doi": null,
       "pmid": null,
       "url": "https://www.nice.org.uk/guidance/ng59/chapter/Recommendations",
-      "type": "guideline"
+      "type": "guideline",
+      "pmcid": null,
+      "accessLevel": "not_reconfirmed"
     },
     {
       "id": "jospt2021",
@@ -266,7 +549,9 @@
       "doi": "10.2519/jospt.2021.0304",
       "pmid": "34719942",
       "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10508241/",
-      "type": "guideline"
+      "type": "guideline",
+      "pmcid": "PMC10508241",
+      "accessLevel": "full_text"
     },
     {
       "id": "dove2023",
@@ -274,23 +559,29 @@
       "doi": "10.1007/s00586-022-07356-y",
       "pmid": "36580149",
       "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9925551/",
-      "type": "systematic_review"
+      "type": "systematic_review",
+      "pmcid": "PMC9925551",
+      "accessLevel": "full_text"
     },
     {
       "id": "fernandez2015",
-      "citation": "Fernandez M, Hartvigsen J, Ferreira ML, et al. Advice to Stay Active or Structured Exercise in the Management of Sciatica: A Systematic Review and Meta-analysis. Spine. 2015. Abstract only.",
+      "citation": "Fernandez M, Hartvigsen J, Ferreira ML, et al. Advice to Stay Active or Structured Exercise in the Management of Sciatica: A Systematic Review and Meta-analysis. Spine. 2015.",
       "doi": "10.1097/BRS.0000000000001036",
       "pmid": "26165218",
       "url": "https://pubmed.ncbi.nlm.nih.gov/26165218/",
-      "type": "systematic_review"
+      "type": "systematic_review",
+      "pmcid": null,
+      "accessLevel": "abstract_only"
     },
     {
       "id": "zhu2025",
-      "citation": "Zhu Z, Schouten T, Strijkers R, Koes B, Gerger H, Chiarotto A. Effectiveness of non-surgical interventions for patients with chronic sciatica: A systematic review with network meta-analysis. J Pain. 2025. Abstract only.",
+      "citation": "Zhu Z, Schouten T, Strijkers R, Koes B, Gerger H, Chiarotto A. Effectiveness of non-surgical interventions for patients with chronic sciatica: A systematic review with network meta-analysis. J Pain. 2025.",
       "doi": "10.1016/j.jpain.2025.105431",
       "pmid": "40373933",
       "url": "https://pubmed.ncbi.nlm.nih.gov/40373933/",
-      "type": "systematic_review"
+      "type": "systematic_review",
+      "pmcid": null,
+      "accessLevel": "abstract_only"
     },
     {
       "id": "lin2023",
@@ -298,39 +589,49 @@
       "doi": "10.3390/life13122255",
       "pmid": "38137856",
       "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10744707/",
-      "type": "systematic_review"
+      "type": "systematic_review",
+      "pmcid": "PMC10744707",
+      "accessLevel": "full_text"
     },
     {
       "id": "dahm_cochrane",
-      "citation": "Dahm KT, Brurberg KG, Jamtvedt G, Hagen KB. Advice to rest in bed versus advice to stay active for acute low-back pain and sciatica. Cochrane Database Syst Rev. Art. No. CD007612. Plain-language evidence page only.",
+      "citation": "Dahm KT, Brurberg KG, Jamtvedt G, Hagen KB. Advice to rest in bed versus advice to stay active for acute low-back pain and sciatica. Cochrane Database Syst Rev. 2010;(6):CD007612.",
       "doi": "10.1002/14651858.CD007612.pub2",
-      "pmid": null,
-      "url": "https://www.cochrane.org/evidence/CD007612_advice-rest-bed-versus-advice-stay-active-acute-low-back-pain-and-sciatica",
-      "type": "systematic_review"
+      "pmid": "20556780",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20556780/",
+      "type": "systematic_review",
+      "pmcid": "PMC12161166",
+      "accessLevel": "abstract_only"
     },
     {
       "id": "albert2012",
-      "citation": "Albert HB, Manniche C. The efficacy of systematic active conservative treatment for patients with severe sciatica: a single-blind, randomized, clinical, controlled trial. Spine. 2012. Abstract only.",
+      "citation": "Albert HB, Manniche C. The efficacy of systematic active conservative treatment for patients with severe sciatica: a single-blind, randomized, clinical, controlled trial. Spine. 2012.",
       "doi": "10.1097/BRS.0b013e31821ace7f",
       "pmid": "21494193",
       "url": "https://pubmed.ncbi.nlm.nih.gov/21494193/",
-      "type": "rct"
+      "type": "rct",
+      "pmcid": null,
+      "accessLevel": "abstract_only"
     },
     {
       "id": "kilpikoski2024",
-      "citation": "Kilpikoski S, Hakkinen AH, Repo JP, et al. The McKenzie Method versus guideline-based advice in the treatment of sciatica: 24-month outcomes of a randomised clinical trial. Clin Rehabil. 2024. Abstract only.",
+      "citation": "Kilpikoski S, Hakkinen AH, Repo JP, et al. The McKenzie Method versus guideline-based advice in the treatment of sciatica: 24-month outcomes of a randomised clinical trial. Clin Rehabil. 2024.",
       "doi": "10.1177/02692155231196393",
       "pmid": "37605454",
       "url": "https://pubmed.ncbi.nlm.nih.gov/37605454/",
-      "type": "rct"
+      "type": "rct",
+      "pmcid": null,
+      "accessLevel": "abstract_only"
     },
     {
       "id": "hahne2017",
-      "citation": "Hahne AJ, Ford JJ, Hinman RS, et al. Individualized functional restoration as an adjunct to advice for lumbar disc herniation with associated radiculopathy. A preplanned subgroup analysis of a randomized controlled trial. Spine J. 2017. Abstract only.",
+      "citation": "Hahne AJ, Ford JJ, Hinman RS, et al. Individualized functional restoration as an adjunct to advice for lumbar disc herniation with associated radiculopathy. A preplanned subgroup analysis of a randomized controlled trial. Spine J. 2017.",
       "doi": "10.1016/j.spinee.2016.10.004",
       "pmid": "27765714",
       "url": "https://pubmed.ncbi.nlm.nih.gov/27765714/",
-      "type": "rct"
+      "type": "rct",
+      "pmcid": null,
+      "accessLevel": "abstract_only"
     },
     {
       "id": "luijsterburg2008",
@@ -338,31 +639,39 @@
       "doi": "10.1007/s00586-007-0569-6",
       "pmid": "18172697",
       "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2295266/",
-      "type": "rct"
+      "type": "rct",
+      "pmcid": "PMC2295266",
+      "accessLevel": "full_text"
     },
     {
       "id": "konstantinou2008",
-      "citation": "Konstantinou K, Dunn KM. Sciatica: review of epidemiological studies and prevalence estimates. Spine. 2008;33:2464-2472. Abstract only.",
+      "citation": "Konstantinou K, Dunn KM. Sciatica: review of epidemiological studies and prevalence estimates. Spine. 2008;33:2464-2472.",
       "doi": "10.1097/BRS.0b013e318183a4a2",
       "pmid": "18923325",
       "url": "https://pubmed.ncbi.nlm.nih.gov/18923325/",
-      "type": "review"
+      "type": "review",
+      "pmcid": null,
+      "accessLevel": "abstract_only"
     },
     {
       "id": "vanderwindt2010",
-      "citation": "van der Windt DA, Simons E, Riphagen II, et al. Physical examination for lumbar radiculopathy due to disc herniation in patients with low-back pain. Cochrane Database Syst Rev. 2010. Abstract only.",
+      "citation": "van der Windt DA, Simons E, Riphagen II, et al. Physical examination for lumbar radiculopathy due to disc herniation in patients with low-back pain. Cochrane Database Syst Rev. 2010.",
       "doi": "10.1002/14651858.CD007431.pub2",
       "pmid": "20166095",
       "url": "https://pubmed.ncbi.nlm.nih.gov/20166095/",
-      "type": "systematic_review"
+      "type": "systematic_review",
+      "pmcid": null,
+      "accessLevel": "abstract_only"
     },
     {
       "id": "stynes2018",
-      "citation": "Stynes S, Konstantinou K, Ogollah R, Hay EM, Dunn KM. Clinical diagnostic model for sciatica developed in primary care patients with low back-related leg pain. PLoS One. 2018. Abstract only.",
+      "citation": "Stynes S, Konstantinou K, Ogollah R, Hay EM, Dunn KM. Clinical diagnostic model for sciatica developed in primary care patients with low back-related leg pain. PLoS One. 2018.",
       "doi": "10.1371/journal.pone.0191852",
       "pmid": "29621243",
       "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5886387/",
-      "type": "observational"
+      "type": "observational",
+      "pmcid": "PMC5886387",
+      "accessLevel": "abstract_only"
     },
     {
       "id": "todd2025",
@@ -370,7 +679,9 @@
       "doi": "10.3399/BJGP.2025.0122",
       "pmid": "40744753",
       "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12729032/",
-      "type": "expert_review"
+      "type": "expert_review",
+      "pmcid": "PMC12729032",
+      "accessLevel": "full_text"
     },
     {
       "id": "york_ces",
@@ -378,36 +689,1782 @@
       "doi": null,
       "pmid": null,
       "url": "https://hnyppr.org.uk/web/york/w/back-pain-cauda-equina-syndrome-pathway",
-      "type": "local_clinical_pathway"
+      "type": "local_clinical_pathway",
+      "pmcid": null,
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "delitto2012",
+      "citation": "Delitto A, George SZ, Van Dillen L, et al. Low back pain. J Orthop Sports Phys Ther. 2012;42(4):A1-A57.",
+      "doi": "10.2519/jospt.2012.42.4.A1",
+      "pmid": "22466247",
+      "pmcid": "PMC4893951",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4893951/",
+      "type": "guideline",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "kreiner2014",
+      "citation": "Kreiner DS, Hwang SW, Easa JE, et al; North American Spine Society. An evidence-based clinical guideline for the diagnosis and treatment of lumbar disc herniation with radiculopathy. Spine J. 2014;14(1):180-191.",
+      "doi": "10.1016/j.spinee.2013.08.003",
+      "pmid": "24239490",
+      "pmcid": null,
+      "url": "https://www.spine.org/Portals/0/Assets/Downloads/ResearchClinicalCare/Guidelines/LumbarDiscHerniation.pdf",
+      "type": "guideline",
+      "accessLevel": "registry_or_summary"
+    },
+    {
+      "id": "pangarkar2019",
+      "citation": "Pangarkar SS, Kang DG, Sandbrink F, et al. VA/DoD Clinical Practice Guideline: Diagnosis and Treatment of Low Back Pain. J Gen Intern Med. 2019;34(11):2620-2629.",
+      "doi": "10.1007/s11606-019-05086-4",
+      "pmid": "31529375",
+      "pmcid": "PMC6848394",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6848394/",
+      "type": "guideline_summary",
+      "accessLevel": "not_reconfirmed"
+    },
+    {
+      "id": "aldera2026",
+      "citation": "Aldera M, Alturkistany A, Al Rayes H, et al. Saudi Clinical Practice Guideline for the Assessment and Management of Low Back Pain and Sciatica in Adults. J Clin Med. 2026;15(2):528.",
+      "doi": "10.3390/jcm15020528",
+      "pmid": "41598467",
+      "pmcid": "PMC12842004",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12842004/",
+      "type": "guideline",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "stochkendahl2018",
+      "citation": "Stochkendahl MJ, Kjaer P, Hartvigsen J, et al. National Clinical Guidelines for non-surgical treatment of patients with recent onset low back pain or lumbar radiculopathy. Eur Spine J. 2018;27(1):60-75.",
+      "doi": "10.1007/s00586-017-5099-2",
+      "pmid": "28429142",
+      "pmcid": null,
+      "url": "https://chiro.org/Non-pharmacologic_Therapy/National_Clinical_Guidelines.shtml",
+      "type": "guideline",
+      "accessLevel": "registry_or_summary"
+    },
+    {
+      "id": "luites2022",
+      "citation": "Luites JWH, Kuijer PPFM, Hulshof CTJ, et al. The Dutch Multidisciplinary Occupational Health Guideline to Enhance Work Participation Among Low Back Pain and Lumbosacral Radicular Syndrome Patients. J Occup Rehabil. 2022;32(3):337-352.",
+      "doi": "10.1007/s10926-021-09993-4",
+      "pmid": "34313903",
+      "pmcid": "PMC9576671",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9576671/",
+      "type": "guideline",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "skelly2026",
+      "citation": "Skelly AC, Kansagara D, Oswald J, Chou R; Acute Low Back Pain Guideline Project. Assessment and Treatment of Acute Low Back Pain: A Multidisciplinary Clinical Practice Guideline. Pain Med. 2026 Sep 2:pnag110.",
+      "doi": "10.1093/pm/pnag110",
+      "pmid": "42687437",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/42687437/",
+      "type": "guideline",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "briggs2025",
+      "citation": "Briggs AM, Sumi Y, Banerjee A. The World Health Organization guideline for non-surgical management of chronic primary low back pain in adults: implications for equitable care and strengthening health systems globally. Glob Health Res Policy. 2025;10(1):26.",
+      "doi": "10.1186/s41256-025-00426-w",
+      "pmid": "40624581",
+      "pmcid": "PMC12232859",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12232859/",
+      "type": "secondary_guideline_summary",
+      "accessLevel": "registry_or_summary"
+    },
+    {
+      "id": "swart2023",
+      "citation": "Swart N, Apeldoorn A, Conijn D, Meerhoff G, Ostelo R. Revised Dutch guideline physical therapy low back pain and lumbosacral radicular syndrome. World Physiotherapy Congress abstract, 2023.",
+      "doi": null,
+      "pmid": null,
+      "pmcid": null,
+      "url": "https://world.physio/congress-proceeding/revised-dutch-guideline-physical-therapy-low-back-pain-and-lumbosacral",
+      "type": "secondary_guideline_summary",
+      "accessLevel": "registry_or_summary"
+    },
+    {
+      "id": "vanwambeke2020",
+      "citation": "van Wambeke P, Desomer A, Jonckheer P, Depreitere B. The Belgian national guideline on low back pain and radicular pain: key roles for rehabilitation, assessment of rehabilitation potential and the PRM specialist. Eur J Phys Rehabil Med. 2020;56(2):220-227.",
+      "doi": "10.23736/S1973-9087.19.05983-5",
+      "pmid": "31556510",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/31556510/",
+      "type": "secondary_guideline_summary",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "lee2013",
+      "citation": "Lee J, Gupta S, Price C, Baranowski AP; British Pain Society. Low back and radicular pain: a pathway for care developed by the British Pain Society. Br J Anaesth. 2013;111(1):112-120.",
+      "doi": "10.1093/bja/aet172",
+      "pmid": "23794653",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/23794653/",
+      "type": "consensus_statement",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "thoomes2023",
+      "citation": "Thoomes E, Falla D, Cleland JA, Fernandez-de-Las-Penas C, Gallina A, de Graaf M. Conservative management for lumbar radiculopathy based on the stage of the disorder: a Delphi study. Disabil Rehabil. 2023;45(21):3539-3548.",
+      "doi": "10.1080/09638288.2022.2130448",
+      "pmid": "36205564",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/36205564/",
+      "type": "consensus_statement",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "neuropathic2021",
+      "citation": "Zhang YH, et al. Exercise for Neuropathic Pain: A Systematic Review and Expert Consensus. Front Med (Lausanne). 2021.",
+      "doi": "10.3389/fmed.2021.756940",
+      "pmid": "34901069",
+      "pmcid": "PMC8654102",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8654102/",
+      "type": "consensus_statement",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "khorami2021",
+      "citation": "Khorami AK, Oliveira CB, Maher CG, et al. Recommendations for Diagnosis and Treatment of Lumbosacral Radicular Pain: A Systematic Review of Clinical Practice Guidelines. J Clin Med. 2021;10(11):2482.",
+      "doi": "10.3390/jcm10112482",
+      "pmid": "34205193",
+      "pmcid": "PMC8200038",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8200038/",
+      "type": "systematic_review",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "price2024",
+      "citation": "Price MR, Mead KE, Cowell DM, et al. Medication recommendations for treatment of lumbosacral radiculopathy: a systematic review of clinical practice guidelines. PM R. 2024;16(10):1128-1142.",
+      "doi": "10.1002/pmrj.13142",
+      "pmid": "38629664",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/38629664/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "zaina2023",
+      "citation": "Zaina F, Cote P, Cancelliere C, et al. A Systematic Review of Clinical Practice Guidelines for Persons With Non-specific Low Back Pain With and Without Radiculopathy: Identification of Best Evidence for Rehabilitation to Develop the WHO's Package of Interventions for Rehabilitation. Arch Phys Med Rehabil. 2023;104(11):1913-1927.",
+      "doi": "10.1016/j.apmr.2023.02.022",
+      "pmid": "36963709",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/36963709/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "zhu2025acute",
+      "citation": "Zhu Z, et al. Effectiveness of Nonsurgical Interventions for Patients With Acute and Subacute Sciatica: A Systematic Review With Network Meta-Analysis. J Orthop Sports Phys Ther. 2025;55(6):1-12.",
+      "doi": "10.2519/jospt.2025.13068",
+      "pmid": "40434940",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/40434940/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "lewis2015",
+      "citation": "Lewis RA, et al. Comparative clinical effectiveness of management strategies for sciatica: systematic review and network meta-analyses. Spine J. 2015;15(6):1461-77.",
+      "doi": "10.1016/j.spinee.2013.08.049",
+      "pmid": "24412033",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/24412033/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "luijsterburg2007",
+      "citation": "Luijsterburg PA, et al. Effectiveness of conservative treatments for the lumbosacral radicular syndrome: a systematic review. Eur Spine J. 2007;16(7):881-99.",
+      "doi": "10.1007/s00586-007-0367-1",
+      "pmid": "17415595",
+      "pmcid": "PMC2219647",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2219647/",
+      "type": "systematic_review",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "liu2023",
+      "citation": "Liu C, et al. Surgical versus non-surgical treatment for sciatica: systematic review and meta-analysis of randomised controlled trials. BMJ. 2023;381:e070730.",
+      "doi": "10.1136/bmj-2022-070730",
+      "pmid": "37076169",
+      "pmcid": "PMC10498296",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10498296/",
+      "type": "systematic_review",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "peacock2023",
+      "citation": "Peacock M, Douglas S, Nair P. Neural mobilization in low back and radicular pain: a systematic review. J Man Manip Ther. 2023;31(1):4-12.",
+      "doi": "10.1080/10669817.2022.2065599",
+      "pmid": "35583521",
+      "pmcid": "PMC9848316",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9848316/",
+      "type": "systematic_review",
+      "accessLevel": "not_reconfirmed"
+    },
+    {
+      "id": "baptista2024",
+      "citation": "Baptista FM, et al. Effectiveness of Neural Mobilisation on Pain Intensity, Functional Status, and Physical Performance in Adults with Musculoskeletal Pain - A Systematic Review with Meta-Analysis. Clin Rehabil. 2024;38(2):145-183.",
+      "doi": "10.1177/02692155231215216",
+      "pmid": "37990512",
+      "pmcid": "PMC10725147",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10725147/",
+      "type": "systematic_review",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "basson2017",
+      "citation": "Basson A, Olivier B, Ellis R, Coppieters M, et al. The Effectiveness of Neural Mobilization for Neuromusculoskeletal Conditions: A Systematic Review and Meta-analysis. J Orthop Sports Phys Ther. 2017;47(9):593-615.",
+      "doi": "10.2519/jospt.2017.7117",
+      "pmid": "28704626",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/28704626/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "neto2017",
+      "citation": "Neto T, et al. Effects of lower body quadrant neural mobilization in healthy and low back pain populations: A systematic review and meta-analysis. Musculoskelet Sci Pract. 2017;27:14-22.",
+      "doi": "10.1016/j.msksp.2016.11.014",
+      "pmid": "28637597",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/28637597/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "pourahmadi2019",
+      "citation": "Pourahmadi M, et al. Effectiveness of Slump Stretching on Low Back Pain: A Systematic Review and Meta-analysis. Pain Med. 2019;20(2):378-396.",
+      "doi": "10.1093/pm/pny208",
+      "pmid": "30590849",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/30590849/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "wegner2013",
+      "citation": "Wegner I, Widyahening IS, van Tulder MW, Blomberg SE, et al. Traction for low-back pain with or without sciatica. Cochrane Database Syst Rev. 2013;(8):CD003010.",
+      "doi": "10.1002/14651858.CD003010.pub5",
+      "pmid": "23959683",
+      "pmcid": "PMC6823219",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/23959683/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "vanti2021",
+      "citation": "Vanti C, et al. Effectiveness of Mechanical Traction for Lumbar Radiculopathy: A Systematic Review and Meta-Analysis. Phys Ther. 2021;101(3):pzaa231.",
+      "doi": "10.1093/ptj/pzaa231",
+      "pmid": "33382419",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/33382419/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "hayden2021",
+      "citation": "Hayden JA, et al. Exercise therapy for chronic low back pain. Cochrane Database Syst Rev. 2021;9(9):CD009790.",
+      "doi": "10.1002/14651858.CD009790.pub2",
+      "pmid": "34580864",
+      "pmcid": "PMC8477273",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/34580864/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "hennemann2025",
+      "citation": "Hennemann V, et al. The McKenzie Method delivered by credentialed therapists for chronic low back pain with directional preference: systematic review with meta-analysis. J Man Manip Ther. 2025;33(2):96-111.",
+      "doi": "10.1080/10669817.2024.2408084",
+      "pmid": "39383118",
+      "pmcid": "PMC11924268",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/39383118/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "chiu2015",
+      "citation": "Chiu CC, et al. The probability of spontaneous regression of lumbar herniated disc: a systematic review. Clin Rehabil. 2015;29(2):184-95.",
+      "doi": "10.1177/0269215514540919",
+      "pmid": "25009200",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/25009200/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "arslan2025",
+      "citation": "Arslan S, et al. The effect of exercise in the treatment of lumbar disc herniation: a systematic review. Acta Neurol Belg. 2025;125(5):1209-1224.",
+      "doi": "10.1007/s13760-025-02767-2",
+      "pmid": "40128486",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/40128486/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "shinde2026",
+      "citation": "Shinde AP, et al. Evidence-Based Conservative Treatment Strategies for Lumbar Radiculopathy: A Systematic Review. Cureus. 2026;18(6):e110554.",
+      "doi": "10.7759/cureus.110554",
+      "pmid": "42434659",
+      "pmcid": "PMC13349735",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/42434659/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "shiri2016",
+      "citation": "Shiri R, Falah-Hassani K, Viikari-Juntura E, Coggon D. Leisure-time physical activity and sciatica: A systematic review and meta-analysis. Eur J Pain. 2016;20(10):1563-1572.",
+      "doi": "10.1002/ejp.885",
+      "pmid": "27091423",
+      "pmcid": "PMC5081102",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/27091423/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "vroomen1999",
+      "citation": "Vroomen PC, de Krom MC, Wilmink JT, Kester AD, et al. Lack of effectiveness of bed rest for sciatica. N Engl J Med. 1999;340(6):418-23.",
+      "doi": "10.1056/NEJM199902113400602",
+      "pmid": "9971865",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/9971865/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "hofstee2002",
+      "citation": "Hofstee DJ, Gijtenbeek JMM, Hoogland PH, van Houwelingen HC, et al. Westeinde sciatica trial: randomized controlled study of bed rest and physiotherapy for acute sciatica. J Neurosurg. 2002;96(1 Suppl):45-9.",
+      "doi": "10.3171/spi.2002.96.1.0045",
+      "pmid": "11797655",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/11797655/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "fritz2021",
+      "citation": "Fritz JM, Lane E, McFadden M, Brennan G, et al. Physical Therapy Referral From Primary Care for Acute Back Pain With Sciatica: A Randomized Controlled Trial. Ann Intern Med. 2021;174(1):8-17.",
+      "doi": "10.7326/M20-4187",
+      "pmid": "33017565",
+      "pmcid": "PMC7856080",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7856080/",
+      "type": "rct",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "ferreira2016",
+      "citation": "Ferreira G, Stieven F, Araujo F, Wiebusch M, et al. Neurodynamic treatment did not improve pain and disability at two weeks in patients with chronic nerve-related leg pain: a randomised trial. J Physiother. 2016;62(4):197-202.",
+      "doi": "10.1016/j.jphys.2016.08.007",
+      "pmid": "27634158",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/27634158/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "sousafilho2022",
+      "citation": "Sousa Filho LF, et al. Neurodynamic exercises provide no additional benefit to extension-oriented exercises in people with chronic low back-related leg pain and a directional preference: A randomized clinical trial. J Bodyw Mov Ther. 2022;30:140-147.",
+      "doi": "10.1016/j.jbmt.2022.01.007",
+      "pmid": "35500962",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/35500962/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "plazamanzano2020",
+      "citation": "Plaza-Manzano G, Cancela-Cilleruelo I, Fernandez-de-Las-Penas C, Cleland JA, et al. Effects of Adding a Neurodynamic Mobilization to Motor Control Training in Patients With Lumbar Radiculopathy Due to Disc Herniation: A Randomized Clinical Trial. Am J Phys Med Rehabil. 2020;99(2):124-132.",
+      "doi": "10.1097/PHM.0000000000001295",
+      "pmid": "31464753",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/31464753/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "shaheen2025",
+      "citation": "Shaheen HM, et al. Comparison of different treatment positions of nerve slider technique for patients with low back pain: a randomized control trial. Eur J Phys Rehabil Med. 2025;61(1):82-92.",
+      "doi": "10.23736/S1973-9087.24.08541-1",
+      "pmid": "39873676",
+      "pmcid": "PMC11948043",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11948043/",
+      "type": "rct",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "danazumi2023",
+      "citation": "Danazumi MS, Nuhu JM, Ibrahim SU, Falke MA, et al. Effects of spinal manipulation or mobilization as an adjunct to neurodynamic mobilization for lumbar disc herniation with radiculopathy: a randomized clinical trial. J Man Manip Ther. 2023;31(6):408-420.",
+      "doi": "10.1080/10669817.2023.2192975",
+      "pmid": "36950742",
+      "pmcid": "PMC10642333",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10642333/",
+      "type": "rct",
+      "accessLevel": "not_reconfirmed"
+    },
+    {
+      "id": "gunaydin2026",
+      "citation": "Gunaydin G, Karaduman MN, Pala OO, Hazar Z, Citaker S. Neurodynamic mobilization for the management of patients with lumbar disc herniation: A randomized controlled study. J Back Musculoskelet Rehabil. 2026.",
+      "doi": "10.1177/10538127261480256",
+      "pmid": "42647187",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/42647187/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "nahid2025",
+      "citation": "Nahid ZBS, Ahmed F, Islam MF, Rahman Z, et al. Effectiveness of Shacklock's Neural Mobilization for Acute and Sub-Acute Lumbar Disc Prolapsed: A Randomized Controlled Trial. Health Sci Rep. 2025.",
+      "doi": "10.1002/hsr2.70872",
+      "pmid": "40432703",
+      "pmcid": "PMC12106338",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12106338/",
+      "type": "rct",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "pradhan2024",
+      "citation": "Pradhan A, J M. Effects of Neurodynamics Along With Conventional Exercises on Sciatica Patients: A Single-Blinded Randomized Clinical Trial. Cureus. 2024.",
+      "doi": null,
+      "pmid": null,
+      "pmcid": "PMC11151706",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11151706/",
+      "type": "rct",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "shacklock2023",
+      "citation": "Shacklock M, Rade M, Poznic S, Marcinko A, et al. Treatment of Sciatica and Lumbar Radiculopathy with an Intervertebral Foramen Opening Protocol: Pilot Study in a Hospital Emergency and In-patient Setting. Physiother Theory Pract. 2023;39(6):1178-1188.",
+      "doi": "10.1080/09593985.2022.2037797",
+      "pmid": "35253599",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/35253599/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "thackeray2016",
+      "citation": "Thackeray A, et al. The Effectiveness of Mechanical Traction Among Subgroups of Patients With Low Back Pain and Leg Pain: A Randomized Trial. J Orthop Sports Phys Ther. 2016;46(3):144-54.",
+      "doi": "10.2519/jospt.2016.6238",
+      "pmid": "26813755",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/26813755/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "bailey2020",
+      "citation": "Bailey CS, Rasoulinejad P, Taylor D, Sequeira K, et al. Surgery versus Conservative Care for Persistent Sciatica Lasting 4 to 12 Months. N Engl J Med. 2020;382(12):1093-1102.",
+      "doi": "10.1056/NEJMoa1912658",
+      "pmid": "32187469",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/32187469/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "foster2020",
+      "citation": "Foster NE, Konstantinou K, Lewis M, Ogollah R, et al. Stratified versus usual care for the management of primary care patients with sciatica: the SCOPiC RCT. Health Technol Assess. 2020;24(49):1-130.",
+      "doi": "10.3310/hta24490",
+      "pmid": "33043881",
+      "pmcid": "PMC7681342",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/33043881/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "snook1998",
+      "citation": "Snook SH, Webster BS, McGorry RW, Fogleman MT, McCann KB. The reduction of chronic nonspecific low back pain through the control of early morning lumbar flexion. A randomized controlled trial. Spine. 1998;23(23):2601-7.",
+      "doi": "10.1097/00007632-199812010-00015",
+      "pmid": "9854759",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/9854759/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "ferreira2016protocol",
+      "citation": "Ferreira GE, Stieven F, Araujo F, Wiebusch M, et al. Neurodynamic treatment for patients with nerve-related leg pain: Protocol for a randomized controlled trial. J Bodyw Mov Ther. 2016;20(4):870-878.",
+      "doi": "10.1016/j.jbmt.2016.02.012",
+      "pmid": "27814869",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/27814869/",
+      "type": "rct_protocol",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "correa2022",
+      "citation": "Correa LA, Bittencourt JV, Mainenti Pagnez MA, Mathieson S, et al. Neural management plus advice to stay active on clinical measures and sciatic neurodynamic for patients with chronic sciatica: Study protocol for a controlled randomised clinical trial. PLoS One. 2022;17(2):e0263152.",
+      "doi": "10.1371/journal.pone.0263152",
+      "pmid": "35120149",
+      "pmcid": "PMC8815873",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8815873/",
+      "type": "rct_protocol",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "stops2011",
+      "citation": "Hahne AJ, et al. Specific treatment of problems of the spine (STOPS): design of a randomised controlled trial comparing specific physiotherapy versus advice. BMC Musculoskelet Disord. 2011.",
+      "doi": "10.1186/1471-2474-12-104",
+      "pmid": "21599941",
+      "pmcid": "PMC3121656",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3121656/",
+      "type": "rct_protocol",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "albert2012centralization",
+      "citation": "Albert HB, Hauge E, Manniche C. Centralization in patients with sciatica: are pain responses to repeated movement and positioning associated with outcome or types of disc lesions? Eur Spine J. 2012;21(4):630-6.",
+      "doi": "10.1007/s00586-011-2018-9",
+      "pmid": "21947819",
+      "pmcid": "PMC3326129",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3326129/",
+      "type": "observational",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "hahne2011",
+      "citation": "Hahne AJ, Ford JJ, Hinman RS, Taylor NF, et al. Outcomes and adverse events from physiotherapy functional restoration for lumbar disc herniation with associated radiculopathy. Disabil Rehabil. 2011;33(17-18):1537-47.",
+      "doi": "10.3109/09638288.2010.533814",
+      "pmid": "21091049",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/21091049/",
+      "type": "observational",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "saal1989",
+      "citation": "Saal JA, Saal JS. Nonoperative treatment of herniated lumbar intervertebral disc with radiculopathy. An outcome study. Spine. 1989;14(4):431-7.",
+      "doi": "10.1097/00007632-198904000-00018",
+      "pmid": "2718047",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/2718047/",
+      "type": "observational",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "toribe2025",
+      "citation": "Toribe A, et al. Dynamics of the Tibial Nerve During Straight Leg Raise Test: A Study of Individuals With Lumbar Disc Herniation. J Manipulative Physiol Ther. 2025;48(6-9):967-976.",
+      "doi": "10.1016/j.jmpt.2025.11.001",
+      "pmid": "41348073",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/41348073/",
+      "type": "observational",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "nordberg2021",
+      "citation": "Nordberg CL, Boesen M, Fournier GL, Bliddal H, et al. Positional changes in lumbar disc herniation during standing or lumbar extension: a cross-sectional weight-bearing MRI study. Eur Radiol. 2021;31(2):804-812.",
+      "doi": "10.1007/s00330-020-07132-w",
+      "pmid": "32822052",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/32822052/",
+      "type": "observational",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "mundt1993lifting",
+      "citation": "Mundt DJ, Kelsey JL, Golden AL, Pastides H, et al. An epidemiologic study of non-occupational lifting as a risk factor for herniated lumbar intervertebral disc. Spine. 1993;18(5):595-602.",
+      "doi": "10.1097/00007632-199304000-00012",
+      "pmid": "8484151",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/8484151/",
+      "type": "observational",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "mundt1993sports",
+      "citation": "Mundt DJ, Kelsey JL, Golden AL, Panjabi MM, et al. An epidemiologic study of sports and weight lifting as possible risk factors for herniated lumbar and cervical discs. Am J Sports Med. 1993;21(6):854-60.",
+      "doi": "10.1177/036354659302100617",
+      "pmid": "8291639",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/8291639/",
+      "type": "observational",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "boyd2017",
+      "citation": "Boyd BS, Nee RJ, Smoot B. Safety of lower extremity neurodynamic exercises in adults with diabetes mellitus: a feasibility study. J Man Manip Ther. 2017;25(1):30-38.",
+      "doi": "10.1080/10669817.2016.1180772",
+      "pmid": "28855790",
+      "pmcid": "PMC5539576",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5539576/",
+      "type": "non_randomised_trial",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "cescase2025",
+      "citation": "Alshanqity M, et al. Massive Lumbar Disc Extrusion and Cauda Equina Syndrome in a Female Athlete Following Deadlift Training. Cureus. 2025.",
+      "doi": "10.7759/cureus.100428",
+      "pmid": "41625865",
+      "pmcid": "PMC12854390",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12854390/",
+      "type": "case_report",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "vangelder2013",
+      "citation": "VanGelder LH, Hoogenboom BJ, Vaughn DW. A phased rehabilitation protocol for athletes with lumbar intervertebral disc herniation. Int J Sports Phys Ther. 2013.",
+      "doi": null,
+      "pmid": "24175134",
+      "pmcid": "PMC3812831",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3812831/",
+      "type": "clinical_commentary",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "deadliftreview2022",
+      "citation": "Ramirez VJ, et al. Low Back Biomechanics during Repetitive Deadlifts: A Narrative Review. IISE Trans Occup Ergon Hum Factors. 2022.",
+      "doi": null,
+      "pmid": "34875981",
+      "pmcid": "PMC9837526",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9837526/",
+      "type": "narrative_review",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "neutralspine2026",
+      "citation": "Cherni B, et al. Beyond the Neutral Spine: A Narrative Review and Modern Framework for Low Back Injury Prevention in Deadlifting. Sports (Basel). 2026.",
+      "doi": "10.3390/sports14040151",
+      "pmid": "42043083",
+      "pmcid": "PMC13120164",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13120164/",
+      "type": "narrative_review",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "coppieters2015",
+      "citation": "Coppieters MW, Andersen LS, Johansen R, Giskegjerde PK, et al. Excursion of the Sciatic Nerve During Nerve Mobilization Exercises: An In Vivo Cross-sectional Study Using Dynamic Ultrasound Imaging. J Orthop Sports Phys Ther. 2015;45(10):731-7.",
+      "doi": "10.2519/jospt.2015.5743",
+      "pmid": "26304637",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/26304637/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "ellis2012",
+      "citation": "Ellis RF, Hing WA, McNair PJ. Comparison of longitudinal sciatic nerve movement with different mobilization exercises: an in vivo study utilizing ultrasound imaging. J Orthop Sports Phys Ther. 2012;42(8):667-75.",
+      "doi": "10.2519/jospt.2012.3854",
+      "pmid": "22711174",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/22711174/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "ellis2017",
+      "citation": "Ellis R, Osborne S, Whitfield J, Parmar P, et al. The effect of spinal position on sciatic nerve excursion during seated neural mobilisation exercises: an in vivo study using ultrasound imaging. J Man Manip Ther. 2017;25(2):98-105.",
+      "doi": "10.1179/2042618615Y.0000000020",
+      "pmid": "28559669",
+      "pmcid": "PMC5430455",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5430455/",
+      "type": "biomechanical",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "boyd2013",
+      "citation": "Boyd BS, Topp KS, Coppieters MW. Impact of movement sequencing on sciatic and tibial nerve strain and excursion during the straight leg raise test in embalmed cadavers. J Orthop Sports Phys Ther. 2013;43(6):398-403.",
+      "doi": "10.2519/jospt.2013.4413",
+      "pmid": "23633619",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/23633619/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "coppieters2006",
+      "citation": "Coppieters MW, Alshami AM, Babri AS, Souvlis T, et al. Strain and excursion of the sciatic, tibial, and plantar nerves during a modified straight leg raising test. J Orthop Res. 2006;24(9):1883-9.",
+      "doi": "10.1002/jor.20210",
+      "pmid": "16838375",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/16838375/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "ellis2021",
+      "citation": "Ellis R, et al. Assessing Sciatic Nerve Excursion and Strain with Ultrasound Imaging during Forward Bending. Ultrasound Med Biol. 2021;47(9):2560-2569.",
+      "doi": "10.1016/j.ultrasmedbio.2021.05.018",
+      "pmid": "34218969",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/34218969/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "hitier2026",
+      "citation": "Hitier M, Vieira DCL, Cometti C, Durigan JLQ, Babault N. Technique-specific reduction of sciatic nerve stiffness through neurodynamic stretches at submaximal and maximal intensity in asymptomatic individuals. Eur J Appl Physiol. 2026;126(10):5409-5420.",
+      "doi": "10.1007/s00421-026-06320-8",
+      "pmid": "42371082",
+      "pmcid": "PMC13634001",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/42371082/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "gilbert2015",
+      "citation": "Gilbert KK, Smith MP, Sobczak S, James CR, et al. Effects of lower limb neurodynamic mobilization on intraneural fluid dispersion of the fourth lumbar nerve root: an unembalmed cadaveric investigation. J Man Manip Ther. 2015;23(5):239-45.",
+      "doi": "10.1179/2042618615Y.0000000009",
+      "pmid": "26955255",
+      "pmcid": "PMC4768379",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/26955255/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "wilke1999",
+      "citation": "Wilke HJ, Neef P, Caimi M, Hoogland T, Claes LE. New in vivo measurements of pressures in the intervertebral disc in daily life. Spine. 1999;24(8):755-62.",
+      "doi": "10.1097/00007632-199904150-00005",
+      "pmid": "10222525",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/10222525/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "sato1999",
+      "citation": "Sato K, Kikuchi S, Yonezawa T. In vivo intradiscal pressure measurement in healthy individuals and in patients with ongoing back problems. Spine. 1999;24(23):2468-74.",
+      "doi": "10.1097/00007632-199912010-00008",
+      "pmid": "10626309",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/10626309/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "rohlmann2001",
+      "citation": "Rohlmann A, Claes LE, Bergmann G, Graichen F, et al. Comparison of intradiscal pressures and spinal fixator loads for different body positions and exercises. Ergonomics. 2001;44(8):781-94.",
+      "doi": "10.1080/00140130120943",
+      "pmid": "11450876",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/11450876/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "callaghan2001",
+      "citation": "Callaghan JP, McGill SM. Intervertebral disc herniation: studies on a porcine model exposed to highly repetitive flexion/extension motion with compressive force. Clin Biomech. 2001;16(1):28-37.",
+      "doi": "10.1016/s0268-0033(00)00063-2",
+      "pmid": "11114441",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/11114441/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "tampier2007",
+      "citation": "Tampier C, Drake JDM, Callaghan JP, McGill SM. Progressive disc herniation: an investigation of the mechanism using radiologic, histochemical, and microscopic dissection techniques on a porcine model. Spine. 2007;32(25):2869-74.",
+      "doi": "10.1097/BRS.0b013e31815b64f5",
+      "pmid": "18246010",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/18246010/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "briar2023",
+      "citation": "Briar KJ, Gregory DE. Combined flexion and compression negatively impact the mechanical integrity of the annulus fibrosus. Eur Spine J. 2023;32(3):831-838.",
+      "doi": "10.1007/s00586-022-07518-y",
+      "pmid": "36631712",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/36631712/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "cholewicki1991",
+      "citation": "Cholewicki J, McGill SM, Norman RW. Lumbar spine loads during the lifting of extremely heavy weights. Med Sci Sports Exerc. 1991;23(10):1179-86.",
+      "doi": null,
+      "pmid": "1758295",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/1758295/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "swinton2011",
+      "citation": "Swinton PA, Stewart A, Agouris I, Keogh JWL, et al. A biomechanical analysis of straight and hexagonal barbell deadlifts using submaximal loads. J Strength Cond Res. 2011;25(7):2000-9.",
+      "doi": "10.1519/JSC.0b013e3181e73f87",
+      "pmid": "21659894",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/21659894/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "stoopsquat2021",
+      "citation": "von Arx M, et al. From Stoop to Squat: A Comprehensive Analysis of Lumbar Loading Among Different Lifting Styles. Front Bioeng Biotechnol. 2021.",
+      "doi": "10.3389/fbioe.2021.769117",
+      "pmid": "34805121",
+      "pmcid": "PMC8599159",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8599159/",
+      "type": "biomechanical",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "sjoberg2023",
+      "citation": "Sjoberg M, Eiken O, Norrbrand L, Berg HE, Gutierrez-Farewik EM. Lumbar Loads and Muscle Activity During Flywheel and Barbell Leg Exercises. J Strength Cond Res. 2023;37(1):27-34.",
+      "doi": "10.1519/JSC.0000000000004163",
+      "pmid": "34743146",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/34743146/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "sayers2020",
+      "citation": "Sayers MGL, Bachem C, Schutz P, Taylor WR, et al. The effect of elevating the heels on spinal kinematics and kinetics during the back squat in trained and novice weight trainers. J Sports Sci. 2020;38(9):1000-1008.",
+      "doi": "10.1080/02640414.2020.1738675",
+      "pmid": "32183616",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/32183616/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "yanagisawa2021",
+      "citation": "Yanagisawa O, Oshikawa T, Matsunaga N, Adachi G, et al. Acute Physiological Response of Lumbar Intervertebral Discs to High-load Deadlift Exercise. Magn Reson Med Sci. 2021;20(3):290-294.",
+      "doi": "10.2463/mrms.mp.2020-0052",
+      "pmid": "32879259",
+      "pmcid": "PMC8424024",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/32879259/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "johnson1991",
+      "citation": "Johnson C, Reid JG. Lumbar compressive and shear forces during various trunk curl-up exercises. Clin Biomech. 1991;6(2):97-104.",
+      "doi": "10.1016/0268-0033(91)90006-C",
+      "pmid": "23915482",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/23915482/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "who_news2023",
+      "citation": "World Health Organization. WHO releases guidelines on chronic low back pain. News release, 7 December 2023.",
+      "doi": null,
+      "pmid": null,
+      "pmcid": null,
+      "url": "https://www.who.int/news/item/07-12-2023-who-releases-guidelines-on-chronic-low-back-pain",
+      "type": "secondary_guideline_summary",
+      "accessLevel": "full_text"
     }
   ],
-  "limitations": "Overall grade is low and the evidence conflicts. A 2023 review of 18 trials (all high or unclear risk of bias) found inadequate evidence to make clinical recommendations on physiotherapy for sciatica. A 2025 network meta-analysis of chronic sciatica found very low confidence and no high-quality evidence that any non-surgical option is superior. Exercise beat advice only slightly for short-term leg pain (low-quality evidence), with no long-term difference (moderate-quality evidence). Neural mobilisation shows large pooled effects, but 65% of its trials were high risk of bias, heterogeneity was high, publication bias was found, and treatment lasted only 6 days to 6 weeks where a duration was given. Those doses come from single small trials, usually alongside other treatment, and were not checked trial by trial for therapist versus self delivery. No opened source names bird dog, side plank, dead bug or cat-cow, so those are expert-opinion mappings, and no dose is given for them, for walking or for direction-guided movement; sets is null where no dose was found. No opened source gave direct evidence for restricting lifting, sitting, loaded flexion or specific gym lifts, so none is listed; this absence is not evidence that they are safe. Much JOSPT guidance concerns low back pain with leg pain rather than confirmed radiculopathy. Red flags draw on UK sources, including a local pathway and a primary-care article summarising national guidance; the national documents were not opened, and thresholds may differ elsewhere. Several trials were read as abstracts only, the Cochrane review as its evidence page only, and the BMJ 2019 review of sciatica could not be opened and is not used. This is general information for planning exercise around a condition, not diagnosis or treatment.",
+  "limitations": "Overall grade is low and the evidence conflicts. Dove 2023 (18 trials, all high or unclear risk of bias) found inadequate evidence to make clinical recommendations on physiotherapy for sciatica, and its pooled effects were null. Both 2025 network meta-analyses report very low confidence and no high-quality evidence that any non-surgical option is superior. Exercise beat advice only slightly for short-term leg pain (low-quality evidence), with no long-term difference (moderate-quality evidence). CONTRADICTIONS. Exercise: NASS rates stand-alone physical therapy or structured exercise as insufficient evidence (Grade I), Khorami finds exercise a could-do (7 guidelines in its table, 6 in its text), Stochkendahl recommends supervised exercise in addition to usual care, a neuropathic pain consensus gives Grade A, and Lewis 2015 found exercise significantly inferior to epidural injection or surgery for overall recovery, on very low validity. Direction-guided work: Albert 2012 and Fritz 2021 are positive, Kilpikoski 2024 is null at 24 months with one advice session matching seven visits, and peripheralisers improved about as much as centralisers in a small group. Neural mobilisation: Lin 2023 reports large pooled effects (pain g -1.097), but 65% of trials were high risk of bias, I2 was about 85-89% and Egger p < 0.001, while Ferreira 2016 was null at its 2-week primary time point, and Sousa Filho 2022, Plaza-Manzano 2020 and Nahid 2025 found no between-group benefit for pain or disability. Nahid 2025 claims superiority its reported between-group result does not support. Baptista 2024 rates all estimates very low. Treatment lasted 6 days to 6 weeks in most reviewed protocols. Shaheen 2025 claims slump beats supine, whereas Ellis 2017 found slump versus upright did not change excursion, and Pourahmadi 2019 suggests non-radicular low back pain may benefit most from slump stretching. Slider excursion ranged from 3.2 to 17.0 mm between Ellis 2012 and Coppieters 2015, and Lin's subgroups favouring sliders over tensioners are not head-to-head. Traction: NICE and George 2021 advise against, NASS and VA/DoD call evidence insufficient, Vanti 2021 is positive in low-quality supine trials, and Cochrane is null. Sitting versus standing: Wilke 1999 and Sato 1999 disagree. Lifting: stoop versus squat modelling and neutral-spine reviews run against common advice, Mundt found no association with weight lifting equipment but an association with bent-back lifting, and those studies concern onset, not recovery. Flexion: Shacklock 2023 and VanGelder 2013 point in opposite directions. Referral timing differs across guidelines (6 to 8 weeks, 12 weeks, before six months). Epidural injection and drug recommendations also disagree (Kreiner 2014, Pangarkar 2019, Stochkendahl 2018, Price 2024) and are outside this exercise record. GAPS. No trial of self-directed neural mobilisation alone was found, and no dedicated Cochrane review of exercise for sciatica was found through a title-only filter. Neural mobilisation is absent from NICE, NASS, VA/DoD, the Saudi and Dutch occupational guidelines, Khorami 2021 and Briggs 2025, which is a null result and not a recommendation against it. No study tested gym lifts, hamstring stretching, sitting limits or Valsalva in symptomatic people, so every lifting restriction here is biomechanical or expert inference from healthy, cadaveric, animal or case data. This absence is not evidence that those lifts are safe. Doses for sliders come from single small trials, usually therapist-delivered and alongside other treatment. No source names dead bug, so it is an expert-opinion mapping with no dose. Side plank is named only in untested commentary without a dose. Bird dog, glute bridge, pelvic tilt, core bracing and cat-cow doses come from co-interventions given to all arms of one small trial each. Exercise recommendations are often for low back pain with leg pain, not confirmed radiculopathy, and Hayden 2021 and Hennemann 2025 are indirect. ACCESS AND READING DEPTH. Not opened: WHO guideline full text (reCAPTCHA), Danish SST guide (HTTP 429), AAPM guideline full text (HTTP 403), KCE Report 287 (HTTP 404), KNGF guideline, and the Cochrane Library directly (HTTP 403). The BMJ 2019 sciatica review could not be opened in the earlier pass and is not used. Corrêa 2022 results were not found. Many sources were abstract only, as accessLevel records, and some full texts were read through summarising fetches or keyword extraction: Dove 2023 (first 100,000 of 155,424 characters), Liu 2023, Lin 2023, Baptista 2024 (first 100,000 of 266,661), VanGelder 2013, STOPS 2011, Delitto 2012, Kreiner 2014 and George 2021. Peacock 2023 doses could not be reopened in the citation check, and one Dove short-term disability subgroup was omitted as internally inconsistent. Grade letters for George 2021 are inferred from its obligation wording and Table 2. Stochkendahl 2018 grades are not reported because the third-party reprint omits the tables. Red flags draw on UK sources, including a local pathway under review and a primary-care article summarising national guidance; the national documents were not opened, and thresholds may differ elsewhere. This is general information for planning exercise around a condition, not diagnosis or treatment.",
   "verification": {
-    "sourcesChecked": 17,
+    "sourcesChecked": 101,
     "itemsRemoved": [
       {
-        "item": "avoidOrModify: Nerve-tensioning movements that increase the distance between the two ends of the nerve",
-        "reason": "Lin 2023 does not advise modifying tensioners. Its tensioner subgroup showed a significant benefit, the confidence intervals overlap with sliders, and its discussion says NM helped regardless of technique."
+        "item": "avoidOrModify: Neural mobilisation taken to the pain threshold, or performed immediately before strength work",
+        "reason": "Hitier 2026 tested asymptomatic adults and found flossing at the pain threshold reduced nerve stiffness, with no harm reported. Strength fell across all conditions including the control, with no condition by time interaction, so the fall cannot be attributed to the stretching."
       },
       {
-        "item": "candidateExercises: Supine straight-leg-raise slider",
-        "reason": "Lin 2023 tabulates Ahmed 2013 only as \"SLR technique, slider\"; the supine position is not stated, and the trial report could not be retrieved."
+        "item": "Swinton 2011: hexagonal bar still loads the spine substantially",
+        "reason": "The abstract reports lower peak lumbar moment and does not make this statement."
       },
       {
-        "item": "source: stochkendahl2018",
-        "reason": "Its abstract says only \"different types of supervised exercise\", which does not support the trunk categories it was cited for, and the full text was unavailable. Nothing else used it. The bird dog, side plank and dead bug cautions now name only the JOSPT categories."
+        "item": "Shacklock 2023: the lead author developed the method",
+        "reason": "Not stated in the abstract read."
+      },
+      {
+        "item": "Trap bar deadlift at the lightest possible load",
+        "reason": "VanGelder 2013 gives the lightest-load instruction for the kettlebell deadlift. No such instruction for the trap bar was found in the text read, so the exercise was renamed."
+      },
+      {
+        "item": "Todd 2025 as a source for the sexual dysfunction red flag",
+        "reason": "It names sexual function only in passing, for the chronic presentation, and not as a referral trigger. The York pathway still supports the item."
+      },
+      {
+        "item": "Briggs 2025 as a source for traction and belts",
+        "reason": "The commentary does not mention them in its text. Replaced by the WHO news release, which was opened and does."
       }
     ],
-    "labelsCorrected": [
-      "Any exercise or activity during which leg pain increases: rct to expert_opinion, because the advice was given to both Albert 2012 arms and was never randomised.",
-      "Walking: guideline to expert_opinion, because neither guideline recommends walking for sciatica; the JOSPT walking review covered chronic low back pain and found no significant differences.",
-      "Limitations: neural mobilisation treatment length corrected from 2 to 6 weeks to 6 days to 6 weeks (Pallipamula 2012 ran 6 days)."
+    "valuesCorrected": [
+      "Shaheen 2025 slider volume: 150 to 100 reps per session (10+15+20+25+30).",
+      "Pradhan 2024 neurodynamic dose: 3 sets of 10 belonged to the conventional exercises in both groups. The glides were therapist-delivered, 5 glides then 1 minute rest for 5 minutes, 10 sessions in 14 days. Sample corrected from not captured to 58.",
+      "Cat-cow: dose changed from not established to 3 sets of 10, because Pradhan 2024 names cat-and-camel, as a co-intervention in both groups.",
+      "Side plank: VanGelder 2013 does name an advanced side plank in phase I, still without a dose.",
+      "Luites 2022: behavioural treatment is considered after 6 weeks, not 12. Multidisciplinary rehabilitation is the 12-week step.",
+      "Luijsterburg 2007: physical therapy vs inactive treatment rests on 1 high-quality trial, not 30.",
+      "Lin 2023 table: Morsi 2022 frequency is 3 days per week for 2 weeks. Vijayalakshmi 2022 is slump position, 10 sessions over 3 weeks, with tensioners of 5-7 repetitions of 15-25 seconds.",
+      "Khorami 2021: its table lists 7 guidelines each for physical activity and exercise, while its text cites 8 and 6.",
+      "Stynes 2018: reference standards differ in agreement, rather than conflict.",
+      "Nordberg 2021: higher compression grades were for paracentral herniations; size increased generally.",
+      "Neutral spine review: applies to trained lifters; the paper does not say uninjured.",
+      "Sjoberg 2023: participants described as resistance-trained, since the abstract does not state symptom status. Ellis 2021: described as in vivo, since the abstract does not state healthy.",
+      "Citations: first authors corrected for Hennemann (V), Shinde (AP), Shaheen (HM), Zhu acute (Z), Ferreira protocol (GE), Toribe (A); added for Zhang, Alshanqity, Ramirez, Cherni, von Arx, Hahne (STOPS). Eight missing DOIs added.",
+      "Access levels: Todd 2025 and York pathway to full_text. Konstantinou 2008, van der Windt 2010 and Stynes 2018 to abstract_only. Kreiner 2014 to registry_or_summary. NICE NG59, Pangarkar 2019, Peacock 2023 and Danazumi 2023 to not_reconfirmed."
     ],
     "unverifiable": [
-      "Primary slider trials (Anikwe 2015, Bhatia 2017, Colakovic 2013) were checked only as tabulated in Lin 2023.",
-      "JOSPT 2021 was read through the fetch tool's extracts of the PMC page, not by direct text search; Europe PMC had no full-text XML for it.",
-      "Abstract only: Fernandez 2015, Zhu 2025, Albert 2012, Kilpikoski 2024, Hahne 2017, Konstantinou 2008, van der Windt 2010, Stynes 2018. Cochrane CD007612: evidence page only.",
-      "The UK national cauda equina documents behind Todd 2025 were not opened."
+      "NICE NG59: nice.org.uk returned HTTP 403 and no NICE copy could be opened, so its wording on traction, belts, normal activity, medication and alternative diagnoses was not reconfirmed. The 29 July 2026 update date was seen only in a vendor blog.",
+      "Pangarkar 2019, Peacock 2023 and Danazumi 2023: PMC returned a reCAPTCHA page and only abstracts could be read. VA/DoD traction, support, weakness and medication statements, Peacock doses and its 322 total, and Danazumi's adverse event, hamstring and dose statements were not reconfirmed.",
+      "Kreiner 2014: the NASS PDF returned no readable text, so grades were confirmed on the Guideline Central summary. The absence of neural mobilisation was not reconfirmed.",
+      "Delitto 2012, George 2021, Khorami 2021 and VanGelder 2013 were read through a summarising fetch, and only part of each long page.",
+      "Abstract-only sources: anything beyond the abstract, such as Luijsterburg 2008 content, was not rechecked unless its full text is listed as read. Primary slider trials were checked only as tabulated in Lin 2023.",
+      "WHO guideline full text and UK national cauda equina documents were not opened."
     ]
-  }
+  },
+  "searches": [
+    {
+      "searcher": 1,
+      "database": "PubMed E-utilities",
+      "query": "sciatica AND (\"practice guideline\"[pt] OR guideline[ti])",
+      "hits": "27"
+    },
+    {
+      "searcher": 1,
+      "database": "PubMed E-utilities",
+      "query": "radiculopathy AND lumbar AND (guideline[ti] OR \"clinical practice guideline\"[ti] OR consensus[ti])",
+      "hits": "20"
+    },
+    {
+      "searcher": 1,
+      "database": "PubMed E-utilities",
+      "query": "\"low back pain\" AND \"clinical practice guideline\"[ti] AND (radiculopathy OR \"radiating pain\" OR \"leg pain\" OR sciatica)",
+      "hits": "12"
+    },
+    {
+      "searcher": 1,
+      "database": "PubMed E-utilities",
+      "query": "\"neural mobilization\" OR \"neural mobilisation\" OR neurodynamic AND (sciatica OR radiculopathy) AND (guideline OR \"systematic review\"[pt])",
+      "hits": "20"
+    },
+    {
+      "searcher": 1,
+      "database": "PubMed E-utilities",
+      "query": "lumbar disc herniation with radiculopathy guideline North American Spine Society",
+      "hits": "5"
+    },
+    {
+      "searcher": 1,
+      "database": "PubMed E-utilities",
+      "query": "World Health Organization guideline non-surgical management chronic primary low back pain",
+      "hits": "4"
+    },
+    {
+      "searcher": 1,
+      "database": "PubMed E-utilities",
+      "query": "lumbosacral radicular pain guidelines systematic review AGREE II",
+      "hits": "2"
+    },
+    {
+      "searcher": 1,
+      "database": "PubMed E-utilities",
+      "query": "neurodynamic sciatica clinical practice guideline recommendation",
+      "hits": "0 (null result)"
+    },
+    {
+      "searcher": 1,
+      "database": "PubMed E-utilities",
+      "query": "\"low back pain\" clinical practice guidelines \"Neck pain\"[ti] OR \"radiculopathy\" Journal of Orthopaedic Sports Physical Therapy clinical practice guideline radiating pain",
+      "hits": "0"
+    },
+    {
+      "searcher": 1,
+      "database": "PubMed E-utilities",
+      "query": "Oliveira clinical practice guidelines low back pain primary care systematic review radicular 2018 Eur Spine J",
+      "hits": "0"
+    },
+    {
+      "searcher": 1,
+      "database": "Europe PMC REST",
+      "query": "TITLE:\"sciatica\" AND (TITLE:guideline OR TITLE:recommendation OR TITLE:pathway OR TITLE:consensus)",
+      "hits": "15"
+    },
+    {
+      "searcher": 1,
+      "database": "Europe PMC REST",
+      "query": "TITLE:\"radiculopathy\" AND TITLE:\"lumbar\" AND (TITLE:guideline OR TITLE:recommendation OR TITLE:consensus)",
+      "hits": "5"
+    },
+    {
+      "searcher": 1,
+      "database": "Europe PMC REST",
+      "query": "Interventions for the management of acute and chronic low back pain: revision 2021 JOSPT",
+      "hits": "12"
+    },
+    {
+      "searcher": 1,
+      "database": "Europe PMC REST",
+      "query": "AUTH:\"Stochkendahl MJ\" AND TITLE:\"National Clinical Guidelines\"",
+      "hits": "1"
+    },
+    {
+      "searcher": 1,
+      "database": "WebSearch",
+      "query": "clinical practice guideline sciatica lumbar radiculopathy physiotherapy neural mobilisation recommendation grade JOSPT Lancet NICE Danish national guideline",
+      "hits": "10 links"
+    },
+    {
+      "searcher": 1,
+      "database": "WebSearch",
+      "query": "WHO guideline for non-surgical management of chronic primary low back pain in adults 2023 recommendations structured exercise conditional radicular excluded",
+      "hits": "10 links"
+    },
+    {
+      "searcher": 1,
+      "database": "WebSearch",
+      "query": "Danish Health Authority national clinical guideline recent onset lumbar nerve root compression (lumbar radiculopathy) recommendations neural mobilisation Stochkendahl",
+      "hits": "10 links"
+    },
+    {
+      "searcher": 1,
+      "database": "WebSearch",
+      "query": "KCE Report 287 Low back pain and radicular pain: assessment and management recommendations exercise therapy strength of recommendation",
+      "hits": "10 links; KCE full report not retrieved (kce.fgov.be URL tried returned 404)"
+    },
+    {
+      "searcher": 1,
+      "database": "Keyword count across opened guideline texts",
+      "query": "neural mobili|nerve mobili|neurodynamic|nerve glid|nerve floss|neuromobili, run on NICE NG59 recommendations page, Saudi CPG, Dutch OH CPG, VA/DoD summary, Khorami review, NASS guideline, Briggs WHO paper",
+      "hits": "0 in all seven. Only JOSPT 2012/2021 and the Thoomes Delphi address neural mobilisation."
+    },
+    {
+      "searcher": 1,
+      "database": "Not retrieved (access failures, nothing reported from them)",
+      "query": "WHO guideline full text NBK599212 (reCAPTCHA); Danish SST quick guide (HTTP 429); AAPM guideline full text at OUP (HTTP 403); JOSPT and Peacock via Europe PMC XML (not available, read on pmc.ncbi.nlm.nih.gov instead). Cochrane Library was not searched in this guideline-focused pass; Crossref was not used.",
+      "hits": "n/a"
+    },
+    {
+      "searcher": 2,
+      "database": "PubMed",
+      "query": "(sciatica OR \"lumbar radiculopathy\") AND (exercise OR physical therapy) AND (systematic[sb])",
+      "hits": "70"
+    },
+    {
+      "searcher": 2,
+      "database": "PubMed",
+      "query": "(\"neural mobilization\" OR \"neural mobilisation\" OR neurodynamic OR \"nerve gliding\" OR \"neural glide\") AND (sciatica OR radiculopathy OR \"low back\") AND (systematic review OR meta-analysis)",
+      "hits": "34"
+    },
+    {
+      "searcher": 2,
+      "database": "PubMed",
+      "query": "sciatica AND (\"bed rest\" OR \"activity modification\" OR \"stay active\") AND (systematic[sb] OR randomized controlled trial[pt])",
+      "hits": "22"
+    },
+    {
+      "searcher": 2,
+      "database": "PubMed",
+      "query": "\"directional preference\" AND (sciatica OR radiculopathy OR \"low back pain\") AND (systematic[sb])",
+      "hits": "8"
+    },
+    {
+      "searcher": 2,
+      "database": "PubMed (Cochrane journal filter)",
+      "query": "sciatica[ti] AND \"Cochrane Database Syst Rev\"[ta]",
+      "hits": "11 (none is a dedicated exercise-for-sciatica review; topics were bed rest, stay active, traction, NSAIDs, botulinum toxin)"
+    },
+    {
+      "searcher": 2,
+      "database": "PubMed",
+      "query": "(sciatica OR radiculopathy) AND \"stretching\" AND (systematic[sb] OR randomized controlled trial[pt])",
+      "hits": "10 (none was a stretching trial or review for lumbar radiculopathy by title)"
+    },
+    {
+      "searcher": 2,
+      "database": "PubMed",
+      "query": "\"herniated disc\" AND (exercise OR physiotherapy OR rehabilitation) AND (surgery) AND (systematic[sb])",
+      "hits": "9"
+    },
+    {
+      "searcher": 2,
+      "database": "PubMed",
+      "query": "sciatica AND \"physical therapy\" AND \"usual care\" AND randomized[ti]",
+      "hits": "2"
+    },
+    {
+      "searcher": 2,
+      "database": "PubMed",
+      "query": "\"Surgery or physical activity\" sciatica",
+      "hits": "3338 (phrase was not matched; query expanded, results not used)"
+    },
+    {
+      "searcher": 2,
+      "database": "PubMed",
+      "query": "early physiotherapy sciatica randomized guideline primary care",
+      "hits": "1 (not relevant)"
+    },
+    {
+      "searcher": 2,
+      "database": "PubMed",
+      "query": "sciatica AND (\"neural mobilization\" OR \"neural mobilisation\" OR \"sciatic nerve mobilization\" OR \"self-mobilization\" OR \"slider\") AND randomized controlled trial[pt]",
+      "hits": "3"
+    },
+    {
+      "searcher": 2,
+      "database": "PubMed",
+      "query": "(neurodynamic OR \"neural mobilization\" OR \"neural mobilisation\" OR \"nerve glide\" OR slider) AND (\"nerve-related\" OR sciatica OR radicul*) AND (leg OR lumbar) AND (\"home\" OR \"self\" OR \"self-mobilization\" OR \"home exercise\" OR \"self-administered\")",
+      "hits": "7 (no trial of self-directed mobilisation alone)"
+    },
+    {
+      "searcher": 2,
+      "database": "PubMed",
+      "query": "(neural mobilization OR neurodynamic) AND (sciatica OR radiculopathy OR \"leg pain\") AND (\"adverse events\" OR harms OR \"adverse effects\")",
+      "hits": "6"
+    },
+    {
+      "searcher": 2,
+      "database": "PubMed",
+      "query": "(sciatica OR \"lumbar radiculopathy\" OR \"leg pain\") AND (hamstring stretch* OR \"stretching exercise\") AND trial",
+      "hits": "1 (piriformis syndrome trial, not used)"
+    },
+    {
+      "searcher": 2,
+      "database": "PubMed",
+      "query": "Hayden JA exercise therapy chronic low back pain Cochrane 2021",
+      "hits": "5"
+    },
+    {
+      "searcher": 2,
+      "database": "PubMed",
+      "query": "sciatica prognosis natural course systematic review",
+      "hits": "1"
+    },
+    {
+      "searcher": 2,
+      "database": "PubMed",
+      "query": "(motor control OR stabilization OR extension) exercise AND sciatica AND randomized[ti]",
+      "hits": "5"
+    },
+    {
+      "searcher": 2,
+      "database": "Europe PMC",
+      "query": "(TITLE:sciatica OR TITLE:\"radiculopathy\") AND (exercise OR stretching) AND (SRC:MED) AND (TITLE:\"systematic review\" OR TITLE:\"meta-analysis\")",
+      "hits": "57"
+    },
+    {
+      "searcher": 2,
+      "database": "Europe PMC",
+      "query": "\"nerve-related leg pain\" neurodynamic AND SRC:MED",
+      "hits": "8"
+    },
+    {
+      "searcher": 2,
+      "database": "Cochrane Library (direct)",
+      "query": "Direct fetch of https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD007612.pub2/full",
+      "hits": "HTTP 403; site not accessible, so Cochrane records were reached through PubMed and PMC only"
+    },
+    {
+      "searcher": 2,
+      "database": "Web search",
+      "query": "Cochrane review exercise for sciatica OR \"lumbar radiculopathy\" self-administered neural mobilization home program randomized trial sliders",
+      "hits": "10 links; no Cochrane review and no self-administered home neural mobilisation trial; none opened or reported"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "(sciatica OR \"lumbar radiculopathy\") AND (neural mobilization OR neural mobilisation OR neurodynamic OR nerve gliding OR neural flossing) AND (randomized controlled trial[pt])",
+      "hits": "8"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "(sciatica OR \"lumbar radiculopathy\") AND (exercise OR \"physical therapy\" OR \"motor control\") AND randomized controlled trial[pt] AND 2010:2026[dp]",
+      "hits": "52"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "(sciatica OR radiculopathy) AND (self-mobilization OR \"self-mobilisation\" OR home exercise OR self-management) AND (neural OR neurodynamic)",
+      "hits": "13"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "(sciatica OR \"lumbar radiculopathy\" OR \"disc herniation\") AND (exercise OR physiotherapy) AND (adverse events OR harms OR worsening OR aggravat*) AND (systematic review[pt] OR randomized controlled trial[pt])",
+      "hits": "37"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "(sciatica OR \"disc herniation\") AND (resistance training OR weightlifting OR gym OR deadlift OR squat)",
+      "hits": "22"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "(\"lumbar spine\" OR \"intervertebral disc\") AND (squat OR deadlift OR \"leg press\" OR \"good morning\" OR sit-up) AND (compressive force OR compression OR biomechanic*)",
+      "hits": "92"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "\"sciatic nerve\" AND (strain OR excursion OR tension OR biomechanic*) AND (slump OR \"straight leg raise\" OR neurodynamic OR slider OR tensioner)",
+      "hits": "444"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "(sciatica OR radiculopathy) AND (directional preference OR McKenzie OR centralization OR \"mechanical diagnosis\") AND randomized controlled trial[pt]",
+      "hits": "15"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "sciatica[ti] AND (systematic review[pt] OR meta-analysis[pt]) AND (exercise OR conservative OR physical therapy OR neural)",
+      "hits": "32"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "neural mobilization AND (low back pain OR sciatica OR radiculopathy) AND (systematic review[pt] OR meta-analysis[pt])",
+      "hits": "12"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "disc herniation AND (flexion OR \"repeated flexion\" OR \"compression\") AND (cadaver OR in vitro OR porcine) AND (mechanism OR herniation)",
+      "hits": "194"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "Albert[au] AND Manniche[au] AND sciatica AND exercise",
+      "hits": "2"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "Luijsterburg[au] AND sciatica AND physical therapy",
+      "hits": "5"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "Hahne[au] AND Ford[au] AND (radiculopathy OR \"disc herniation\") AND functional restoration",
+      "hits": "3"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "Coppieters[au] AND (sciatic OR \"straight leg\") AND (strain OR excursion)",
+      "hits": "5"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "Ellis[au] AND sciatic nerve AND (excursion OR ultrasound OR neural mobilization)",
+      "hits": "8"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "Callaghan[au] AND McGill[au] AND herniation",
+      "hits": "3"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "Wilke[au] AND intradiscal pressure AND in vivo AND (daily OR activities OR exercise)",
+      "hits": "5"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "(powerlifter OR powerlifting OR weightlifter) AND lumbar AND (compression OR \"compressive\" OR L4/L5)",
+      "hits": "17"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "(deadlift OR \"hexagonal barbell\" OR \"trap bar\") AND (lumbar OR spine) AND (moment OR load)",
+      "hits": "21"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "(sit-up OR curl-up OR \"abdominal exercise\") AND (lumbar compression OR spine loading OR intradiscal)",
+      "hits": "6"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "Mundt[au] AND weight lifting AND herniated",
+      "hits": "2"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "(\"neurodynamic\" OR \"neural mobilisation\" OR \"neural mobilization\") AND (adverse OR \"symptom irritation\" OR \"flare\" OR worsening OR \"aggravation\") AND (leg pain OR sciatica OR radiculopathy)",
+      "hits": "10"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "(slider OR tensioner) AND (sciatic OR tibial OR \"lower limb\") AND (ultrasound OR excursion OR strain OR cadaver)",
+      "hits": "1021 (mostly irrelevant; \"slider\" and \"tensioner\" matched surgical and implant papers)"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "(sciatica OR \"lumbar radicular\") AND (exercise OR stabilization) AND (home OR dose OR \"sets\" OR \"repetitions\") AND trial[ti] AND 2010:2026[dp]",
+      "hits": "2"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "Ford[au] AND Hahne[au] AND (STOPS OR \"specific treatment of problems of the spine\")",
+      "hits": "9"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "Snook[au] AND \"early morning\" AND lumbar flexion",
+      "hits": "2"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "(back squat OR \"barbell squat\") AND (L5 OR lumbar) AND (compressive OR shear OR \"joint load\" OR moment) AND (front squat OR depth OR biomechanic*)",
+      "hits": "42"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "\"leg press\" AND (lumbar OR spine) AND (flexion OR pelvic OR compression OR disc)",
+      "hits": "7"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "Vroomen[au] AND bed rest AND sciatica",
+      "hits": "2"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "Hofstee[au] AND sciatica AND (bed rest OR physiotherapy)",
+      "hits": "1"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "Saal[au] AND herniated disc AND (nonoperative OR aggressive)",
+      "hits": "7"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "(sciatica OR \"lumbar radiculopathy\" OR \"disc herniation\") AND (hamstring stretch* OR \"forward bending\" OR \"lumbar flexion\") AND (symptom* OR pain) AND (provok* OR aggravat* OR increase*)",
+      "hits": "10"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "(disc herniation OR radiculopathy) AND Valsalva AND (lifting OR exercise OR intradiscal OR cough)",
+      "hits": "1 (not relevant)"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "(cauda equina) AND (weight lifting OR gym OR deadlift OR squat OR exercise-induced OR \"physical therapy\")",
+      "hits": "103"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "Kumar[au] AND neural mobili* AND (sciatica OR radiculopathy OR \"low back\")",
+      "hits": "1 (not relevant)"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "Jeong[au] AND (neural mobilization OR neural) AND (lumbar disc OR sciatica OR radicular)",
+      "hits": "2 (not relevant)"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed",
+      "query": "Ahmed[au] AND neural mobilization AND (lumbar OR low back) AND (radicul* OR sciatica)",
+      "hits": "0"
+    },
+    {
+      "searcher": 3,
+      "database": "Europe PMC REST",
+      "query": "(sciatica OR \"lumbar radiculopathy\") AND (\"neural mobilisation\" OR \"neural mobilization\" OR neurodynamic) AND (trial OR randomised OR randomized)",
+      "hits": "148 (first 25 screened)"
+    },
+    {
+      "searcher": 3,
+      "database": "Europe PMC REST (Cochrane Database Syst Rev filter, used in place of searching cochranelibrary.com directly)",
+      "query": "JOURNAL:\"Cochrane Database Syst Rev\" AND TITLE:(sciatica OR radicular OR radiculopathy OR \"herniated disc\")",
+      "hits": "22; none of the titles is a review of exercise or neural mobilisation for sciatica. Title-only filter, so this does not prove none exists."
+    },
+    {
+      "searcher": 3,
+      "database": "Crossref",
+      "query": "query.bibliographic=sciatica neural mobilisation self home exercise randomised trial (rows=15)",
+      "hits": "3,457,209 (relevance-ranked, no boolean filter; top 15 contained no relevant sciatica neural mobilisation paper)"
+    }
+  ],
+  "evidenceGradeRationale": "Overall grade stays low. The strongest syntheses disagree or rate certainty very low: Dove 2023 found inadequate evidence for recommendations, and both 2025 network meta-analyses rate their evidence very low. Moderate-quality evidence exists only for narrow points, namely little or no difference between bed rest and stay-active advice, and no long-term difference between exercise and advice. Fritz 2021 is a positive trial with a modest effect.",
+  "evidenceGradeByQuestion": {
+    "stayActiveVersusBedRest": "moderate",
+    "structuredExerciseVersusAdviceShortTerm": "low",
+    "structuredExerciseVersusAdviceLongTerm": "moderate",
+    "neuralMobilisationSupervised": "very_low",
+    "neuralMobilisationSelfDirected": "not_established",
+    "directionGuidedExercise": "low",
+    "specificGymLiftRestrictions": "not_established"
+  },
+  "doseEvidence": [
+    {
+      "intervention": "Seated slump slider (Anikwe 2015)",
+      "sourceIds": [
+        "lin2023"
+      ],
+      "sets": 3,
+      "reps": 15,
+      "holdSeconds": null,
+      "frequency": "3 days per week for 2 weeks, 5 minutes between sets",
+      "delivery": "Not checked",
+      "note": "As tabulated in Lin 2023"
+    },
+    {
+      "intervention": "Seated slump slider (Bhatia 2017)",
+      "sourceIds": [
+        "lin2023"
+      ],
+      "sets": 5,
+      "reps": 15,
+      "holdSeconds": null,
+      "frequency": "5 days per week for 4 weeks",
+      "delivery": "Not checked",
+      "note": "As tabulated in Lin 2023"
+    },
+    {
+      "intervention": "Side-lying SLR slider (Colakovic 2013)",
+      "sourceIds": [
+        "lin2023"
+      ],
+      "sets": 3,
+      "reps": 10,
+      "holdSeconds": null,
+      "frequency": "3 days per week for 4 weeks",
+      "delivery": "Not checked",
+      "note": "10 oscillatory movements, repeated 3 times; added to stabilisation exercise"
+    },
+    {
+      "intervention": "Slump slider and tensioner (Morsi 2022)",
+      "sourceIds": [
+        "lin2023"
+      ],
+      "sets": 3,
+      "reps": null,
+      "holdSeconds": null,
+      "frequency": "3 days per week for 2 weeks",
+      "delivery": "Not checked",
+      "note": "Reps not given"
+    },
+    {
+      "intervention": "Slump sliders, tensioners added later (Vijayalakshmi 2022)",
+      "sourceIds": [
+        "lin2023"
+      ],
+      "sets": "2-3",
+      "reps": "20-30",
+      "holdSeconds": null,
+      "frequency": "Per day, 10 sessions over 3 weeks",
+      "delivery": "Not checked",
+      "note": "Tensioning added as 5-7 repetitions of 15-25 seconds"
+    },
+    {
+      "intervention": "SLR slider (Ahmed 2013)",
+      "sourceIds": [
+        "lin2023",
+        "peacock2023"
+      ],
+      "sets": 2,
+      "reps": 20,
+      "holdSeconds": null,
+      "frequency": "Peacock: 3 times per week for 2 weeks, 6 sessions",
+      "delivery": "Passive slider plus home flossing (Peacock)",
+      "note": "Sources differ: Lin gives 2 x 20, Peacock gives home exercise of 2-3 sets of 10, 30 minutes per day"
+    },
+    {
+      "intervention": "Active seated slump slider (Pallipamula 2012)",
+      "sourceIds": [
+        "peacock2023"
+      ],
+      "sets": null,
+      "reps": null,
+      "holdSeconds": null,
+      "frequency": "Daily for 6 days, 6 sessions",
+      "delivery": "Active",
+      "note": "Sets and reps not tabulated"
+    },
+    {
+      "intervention": "Active seated slump slider (Satishkumar 2017)",
+      "sourceIds": [
+        "peacock2023"
+      ],
+      "sets": null,
+      "reps": null,
+      "holdSeconds": null,
+      "frequency": "5 times per week for 4 weeks, 20 sessions",
+      "delivery": "Active",
+      "note": "Sets and reps not tabulated"
+    },
+    {
+      "intervention": "Active seated tensioner (Jeong 2016)",
+      "sourceIds": [
+        "peacock2023"
+      ],
+      "sets": null,
+      "reps": null,
+      "holdSeconds": null,
+      "frequency": "3 times per week for 6 weeks, 18 sessions",
+      "delivery": "Active",
+      "note": "Sets and reps not tabulated"
+    },
+    {
+      "intervention": "Static slump stretch with overpressure (Cleland 2006, Nagrale 2013)",
+      "sourceIds": [
+        "peacock2023"
+      ],
+      "sets": null,
+      "reps": null,
+      "holdSeconds": null,
+      "frequency": "2 times per week for 3 weeks, 6 sessions, plus daily home exercise, 18 sessions",
+      "delivery": "Therapist plus home",
+      "note": "Sets, reps and holds not tabulated"
+    },
+    {
+      "intervention": "Passive supine slider",
+      "sourceIds": [
+        "plazamanzano2020",
+        "peacock2023"
+      ],
+      "sets": null,
+      "reps": null,
+      "holdSeconds": null,
+      "frequency": "2 times per week for 4 weeks, 8 sessions",
+      "delivery": "Passive, added to motor control exercise",
+      "note": "No added benefit for pain or disability"
+    },
+    {
+      "intervention": "Foramen opening plus passive then active slider",
+      "sourceIds": [
+        "ferreira2016",
+        "ferreira2016protocol",
+        "peacock2023"
+      ],
+      "sets": null,
+      "reps": null,
+      "holdSeconds": null,
+      "frequency": "2 times per week for 2 weeks, 4 sessions, plus daily home exercise, 14 sessions",
+      "delivery": "Therapist plus home",
+      "note": "Reps in paywalled text, not seen"
+    },
+    {
+      "intervention": "Slump or supine slider, ascending volume",
+      "sourceIds": [
+        "shaheen2025"
+      ],
+      "sets": 5,
+      "reps": "10, 15, 20, 25, 30",
+      "holdSeconds": 5,
+      "frequency": "3 times per week for 4 weeks, 1-2 minutes rest between sets",
+      "delivery": "Therapist-delivered",
+      "note": "Implausibly large effects. Do not copy as a validated dose"
+    },
+    {
+      "intervention": "Supine SLR tensioning with ankle oscillation",
+      "sourceIds": [
+        "danazumi2023"
+      ],
+      "sets": null,
+      "reps": 5,
+      "holdSeconds": 30,
+      "frequency": "2 times per week for 12 weeks",
+      "delivery": "In clinic, plus a home programme",
+      "note": "Co-intervention in both arms, so not itself tested"
+    },
+    {
+      "intervention": "Manual sciatic nerve glides in SLR position",
+      "sourceIds": [
+        "pradhan2024"
+      ],
+      "sets": null,
+      "reps": 5,
+      "holdSeconds": null,
+      "frequency": "5 glides then 1 minute rest, for 5 minutes; 10 sessions in 14 days",
+      "delivery": "Physiotherapist",
+      "note": "SLR degree set by that session's positive SLR angle; added to conventional exercise"
+    },
+    {
+      "intervention": "Bridging, knee-to-chest, back extensions, cat-and-camel",
+      "sourceIds": [
+        "pradhan2024"
+      ],
+      "sets": 3,
+      "reps": 10,
+      "holdSeconds": null,
+      "frequency": "One session a day, 10 sessions in 14 days",
+      "delivery": "Active, in both groups",
+      "note": "Given to both groups, so not itself tested"
+    },
+    {
+      "intervention": "Shacklock sequence, opener through tensioner",
+      "sourceIds": [
+        "nahid2025"
+      ],
+      "sets": null,
+      "reps": null,
+      "holdSeconds": null,
+      "frequency": "8 sessions, 4 per week for 2 weeks",
+      "delivery": "Not captured",
+      "note": "Neural sets, reps and holds not reported. No between-group difference"
+    },
+    {
+      "intervention": "Supine hip and ankle slider, knees extended",
+      "sourceIds": [
+        "correa2022"
+      ],
+      "sets": 3,
+      "reps": 30,
+      "holdSeconds": null,
+      "frequency": "1 minute per set, 1 minute rest, 10 weekly 30-minute sessions",
+      "delivery": "Therapist",
+      "note": "Planned protocol, no results found"
+    },
+    {
+      "intervention": "Self-performed sliders",
+      "sourceIds": [
+        "boyd2017"
+      ],
+      "sets": null,
+      "reps": "7.3-9.5 (mean)",
+      "holdSeconds": null,
+      "frequency": "Each for 30 seconds, single session",
+      "delivery": "Self-performed",
+      "note": "Adults with diabetes, not sciatica"
+    },
+    {
+      "intervention": "Neurodynamic stretch or floss at pain threshold or 90% ROM",
+      "sourceIds": [
+        "hitier2026"
+      ],
+      "sets": 5,
+      "reps": null,
+      "holdSeconds": null,
+      "frequency": "60 seconds per set",
+      "delivery": "Laboratory",
+      "note": "Asymptomatic adults. Not tested in sciatica"
+    },
+    {
+      "intervention": "Directional exercise home programme",
+      "sourceIds": [
+        "fritz2021"
+      ],
+      "sets": null,
+      "reps": null,
+      "holdSeconds": null,
+      "frequency": "6-8 sessions over 4 weeks; assigned home exercises every 4 to 5 hours on days between sessions",
+      "delivery": "Therapist plus home",
+      "note": "Mean 5.5 sessions attended; reps left to therapist"
+    },
+    {
+      "intervention": "Repeated movement response test",
+      "sourceIds": [
+        "albert2012centralization"
+      ],
+      "sets": null,
+      "reps": "Up to 10 per direction",
+      "holdSeconds": null,
+      "frequency": "Assessment",
+      "delivery": "Clinician",
+      "note": "Stop immediately if distal symptoms worsen"
+    },
+    {
+      "intervention": "Symptom-guided exercises by written algorithm",
+      "sourceIds": [
+        "albert2012"
+      ],
+      "sets": null,
+      "reps": null,
+      "holdSeconds": null,
+      "frequency": "Mean 4.8 sessions",
+      "delivery": "Clinician",
+      "note": "Exact doses on an external site, not read"
+    },
+    {
+      "intervention": "Extension-oriented treatment",
+      "sourceIds": [
+        "thackeray2016"
+      ],
+      "sets": null,
+      "reps": null,
+      "holdSeconds": null,
+      "frequency": "Up to 12 visits over 6 weeks",
+      "delivery": "Therapist",
+      "note": "No untreated control"
+    },
+    {
+      "intervention": "McKenzie exercises plus a book",
+      "sourceIds": [
+        "kilpikoski2024"
+      ],
+      "sets": null,
+      "reps": null,
+      "holdSeconds": null,
+      "frequency": "7 visits, versus one self-management session",
+      "delivery": "Therapist",
+      "note": "No difference at 24 months"
+    },
+    {
+      "intervention": "McKenzie repeated movement",
+      "sourceIds": [
+        "nahid2025"
+      ],
+      "sets": 1,
+      "reps": 10,
+      "holdSeconds": null,
+      "frequency": "Every 2 hours",
+      "delivery": "Not captured",
+      "note": "Given alongside neural mobilisation; trial has reporting problems"
+    },
+    {
+      "intervention": "Functional restoration",
+      "sourceIds": [
+        "stops2011",
+        "hahne2017"
+      ],
+      "sets": null,
+      "reps": null,
+      "holdSeconds": null,
+      "frequency": "10 sessions of 30 minutes over 10 weeks",
+      "delivery": "Therapist plus home",
+      "note": "Sets, reps and holds not specified"
+    },
+    {
+      "intervention": "Quadruped, bridging, pelvic tilts, core bracing",
+      "sourceIds": [
+        "shaheen2025"
+      ],
+      "sets": 2,
+      "reps": 10,
+      "holdSeconds": null,
+      "frequency": "Each exercise; home session frequency not captured",
+      "delivery": "Home",
+      "note": "Given to all arms"
+    },
+    {
+      "intervention": "Hook-lying abdominal hollowing",
+      "sourceIds": [
+        "vangelder2013"
+      ],
+      "sets": null,
+      "reps": 5,
+      "holdSeconds": "5, progressing to 30",
+      "frequency": "Not given",
+      "delivery": "Not stated",
+      "note": "Clinical commentary, untested"
+    }
+  ]
 }

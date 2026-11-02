@@ -10,37 +10,100 @@
     {
       "movement": "Loaded wrist extensor work at a load that aggravates symptoms",
       "action": "modify",
-      "rationale": "The guideline says applied loads should not exacerbate symptoms, and that loading should progress from isometric to isotonic to eccentric as tolerated. It also notes that no study described how load was determined or progressed, so this rule rests largely on expert opinion.",
+      "rationale": "The guideline says applied loads should not exacerbate symptoms, and that loading should progress from isometric to isotonic to eccentric as tolerated. It also notes that no study described how load was determined or progressed. Sources disagree on the pain limit: Park 2010 used pain-free holds, Stasinopoulos 2017 allowed pain below 4 on VAS and stopped above 8, and the Bateman 2021 consensus allowed pain the patient deems acceptable. OPTimisE reported no related adverse events with the patient-acceptable rule, in a small sample not designed to detect harm. Sveinall 2024 lowered the weight next session if pain afterwards was not tolerable, affected sleep or lasted into the next session. No pain rule has been shown superior.",
       "evidenceStrength": "guideline",
-      "sourceIds": ["lucado2022"]
+      "sourceIds": [
+        "lucado2022",
+        "park2010",
+        "stasinopoulos2022a",
+        "bateman2021",
+        "bateman2024",
+        "sveinall2024",
+        "ortega2022"
+      ]
     },
     {
       "movement": "Repeated wrist or elbow flexion and extension that aggravates symptoms, especially for long periods",
       "action": "modify",
-      "rationale": "Repetitive elbow or wrist flexion and extension for more than 2 hours a day is listed as a modifiable risk factor, and the guideline says aggravating repetitive motions should be minimized. This comes from risk-factor data and guideline narrative, not from trials showing that reducing these motions improves outcomes.",
+      "rationale": "Repetitive elbow or wrist flexion and extension for more than 2 hours a day is listed as a modifiable risk factor, and the guideline says aggravating repetitive motions should be minimized. A systematic review of work exposures reports repetitive movements over 2 hours a day with odds ratios of 2.8 to 4.7. This is association data. No RCT or systematic review testing activity modification alone was found.",
       "evidenceStrength": "observational",
-      "sourceIds": ["lucado2022"]
+      "sourceIds": [
+        "lucado2022",
+        "vanrijn2009"
+      ]
     },
     {
       "movement": "Repeated forearm twisting, rotating or screwing motions",
       "action": "modify",
       "rationale": "Listed by the guideline as a modifiable risk factor. Risk-factor association only, with no trial showing that reducing it helps.",
       "evidenceStrength": "observational",
-      "sourceIds": ["lucado2022"]
+      "sourceIds": [
+        "lucado2022"
+      ]
     },
     {
       "movement": "Lifting objects with the forearm pronated (palm facing down)",
       "action": "modify",
-      "rationale": "The guideline says this should be minimized, in a narrative statement under ergonomics. Its ergonomics recommendation is grade E, and very little evidence is specific to this condition. Applying it to palm-down gym lifts such as reverse curls is an extrapolation made for this app.",
-      "evidenceStrength": "expert_opinion",
-      "sourceIds": ["lucado2022"]
+      "rationale": "The guideline says this should be minimized, in a narrative statement under ergonomics, and its ergonomics recommendation is grade E. Laboratory EMG supports the mechanism: ECRB activity during wrist extension was 72.3 %MVE pronated, 67.8 neutral and 54.6 supinated (pronation versus supination difference 17.8%, 95% CI 13.9 to 21.6), extensor activity during gripping was always greater with pronation, and adding a pull to a grip raised activity in all forearm muscles. These are isolated torque, dynamometer and push-pull tasks. No study found measured wrist extensor load during a gym lift, and no trial shows that a neutral or supinated grip reduces symptoms. Applying this to palm-down gym lifts such as reverse curls is an extrapolation made for this app.",
+      "evidenceStrength": "biomechanical",
+      "sourceIds": [
+        "lucado2022",
+        "ikeda2025",
+        "mogk2003",
+        "didomizio2010"
+      ]
     },
     {
       "movement": "Handling very heavy loads in the hands",
       "action": "modify",
-      "rationale": "Handling heavy tools over 20 kg is listed as a modifiable risk factor. This is occupational data. Applying it to loaded carries or heavy barbell work is an extrapolation made for this app, and the 20 kg figure should not be treated as a gym threshold.",
+      "rationale": "The guideline lists handling heavy tools over 20 kg as a modifiable risk factor. van Rijn 2009 reports handling loads over 20 kg at least 10 times a day (OR 2.6) and handling tools over 1 kg (ORs 2.1 to 3.0). This is occupational association data. Applying it to loaded carries or heavy barbell work is an extrapolation made for this app, and neither figure should be treated as a gym threshold.",
       "evidenceStrength": "observational",
-      "sourceIds": ["lucado2022"]
+      "sourceIds": [
+        "lucado2022",
+        "vanrijn2009"
+      ]
+    },
+    {
+      "movement": "Isometric wrist extension or gripping above the individual pain threshold, especially when used for immediate pain relief",
+      "action": "modify",
+      "rationale": "Isometric wrist extension (10 x 15 s) at a load 20% above pain threshold raised pain immediately and at 30 minutes compared with a load 20% below threshold, which matched control. Isometric gripping alone increased pain immediately compared with control. The evidence is acute and says nothing about long-term harm, and the app should not promise immediate relief from isometric holds.",
+      "evidenceStrength": "rct",
+      "sourceIds": [
+        "coombes2016",
+        "coombes2025",
+        "stasinopoulos2022a",
+        "clifford2020"
+      ]
+    },
+    {
+      "movement": "Isometric gripping that provokes lateral elbow pain",
+      "action": "modify",
+      "rationale": "Reinstated in narrower form after the earlier verification removed an unsupported version. Isometric gripping increased pain immediately in Coombes 2025. In a very small case-control study, none of 11 participants reported pain at 15% of maximum voluntary grip and 6 of 11 reported mild discomfort at 30%. The grip intensity in Coombes 2025 was not read, so no source shows that harder or longer gripping is worse. Extending this to hangs or heavy carries is an extrapolation made for this app, and no study tested those tasks.",
+      "evidenceStrength": "rct",
+      "sourceIds": [
+        "coombes2025",
+        "manickaraj2018",
+        "mogk2003"
+      ]
+    },
+    {
+      "movement": "Heavy slow resistance wrist extensor programs as an unsupervised home plan",
+      "action": "modify",
+      "rationale": "In a feasibility trial using dumbbells as heavy as possible for 15 down to 6 repetitions, only 6 of 19 completed at least 30 of 36 sessions, eight named increased pain as the reason for non-compliance, and five reported increased pain as an adverse event. The authors concluded it was not suitable for patients with tennis elbow. A small pilot reported the opposite, but its groups differed in mean age by 14 years, so it is low confidence.",
+      "evidenceStrength": "rct",
+      "sourceIds": [
+        "sveinall2024",
+        "divyamary2025"
+      ]
+    },
+    {
+      "movement": "Fast, forceful wrist extension with the wrist held in extreme radial or ulnar deviation",
+      "action": "modify",
+      "rationale": "This is the laboratory authors' inference from isokinetic torque and EMG data, not an injury or symptom outcome.",
+      "evidenceStrength": "biomechanical",
+      "sourceIds": [
+        "lee2016"
+      ]
     }
   ],
   "candidateExercises": [
@@ -52,27 +115,191 @@
         "sets": 3,
         "reps": 15,
         "holdSeconds": null,
-        "frequency": "Guideline suggests 3 sets of 15 for 6-12 weeks, without stating a weekly frequency. Trial programs were often daily, but frequency and load varied."
+        "frequency": "Once daily for 6-12 weeks. 3 x 15 for 6-12 weeks is the guideline's suggestion, without a weekly frequency. Once daily comes from Peterson 2011 (3 months) and the Bateman 2021 consensus (3 x 10-15)."
       },
       "bodyweightOrHold": false,
-      "cautions": "Load should not exacerbate symptoms. The best dose and load are unknown, and no study described how load was determined or progressed. Benefits are small. Not advised as a progression until an isometric version is tolerated, under the guideline's expert-opinion sequence.",
+      "cautions": "Load should not exacerbate symptoms. The best dose and load are unknown. Benefits are small: exercise beat passive care with low to very low certainty. Adding strengthening to education, stretching and activity modification improved nothing up to 52 weeks in McQueen 2021, and adding it to home stretching added nothing in Menta 2015. Not advised as a progression until an isometric version is tolerated, under the guideline's expert-opinion sequence.",
       "evidenceStrength": "guideline",
-      "sourceIds": ["lucado2022", "karanasios2021", "yoon2021"]
+      "sourceIds": [
+        "lucado2022",
+        "karanasios2021",
+        "yoon2021",
+        "peterson2011",
+        "bateman2021",
+        "sveinall2024",
+        "mcqueen2021",
+        "menta2015"
+      ],
+      "alternativeDoses": [
+        {
+          "protocol": "Peterson 2011 trial",
+          "sets": 3,
+          "reps": 15,
+          "holdSeconds": null,
+          "frequency": "Once daily for 3 months",
+          "load": "Water container held in a clenched fist, forearm supported and pronated. Start 1 kg (women) or 2 kg (men), add 0.1 kg per week.",
+          "painRule": "Told the condition was painful but harmless",
+          "note": "Versus wait-list: lower pain during maximal contraction (p=0.0005). No difference in strength (p=0.17), DASH (p=0.30) or quality of life. 93% fully adhered.",
+          "sourceIds": [
+            "peterson2011"
+          ]
+        },
+        {
+          "protocol": "Bateman 2021 consensus",
+          "sets": 3,
+          "reps": "10-15",
+          "holdSeconds": null,
+          "frequency": "Once daily",
+          "load": "Not numerically specified",
+          "painRule": "Pain the patient deems acceptable",
+          "note": "Agreed by vote, not efficacy data. Applies to concentric and eccentric work.",
+          "sourceIds": [
+            "bateman2021"
+          ]
+        },
+        {
+          "protocol": "Sveinall 2024 heavy slow resistance, not recommended here",
+          "sets": 3,
+          "reps": "15 falling to 6",
+          "holdSeconds": null,
+          "frequency": "3 times a week with at least 48 h between sessions, 12 weeks",
+          "load": "As heavy as possible within the repetitions, 4 s up and 4 s down, 2-3 min rest",
+          "painRule": "Pain during training allowed. Reduce weight if pain afterwards is not tolerable, affects sleep or lasts into the next session.",
+          "note": "Only 6 of 19 reached adequate adherence. Authors judged it unsuitable.",
+          "sourceIds": [
+            "sveinall2024"
+          ]
+        }
+      ]
     },
     {
       "name": "Isometric wrist extension hold",
       "catalog": "new",
       "kind": "strengthening",
       "dose": {
-        "sets": 3,
-        "reps": 15,
-        "holdSeconds": null,
-        "frequency": "Guideline's general suggestion is 3 sets of 15 for 6-12 weeks, and it applies this to isometric work too. The isometric trial used a daily program for 8 weeks. Its hold time, sets and reps were not available in the sources opened, so hold time is left empty."
+        "sets": 1,
+        "reps": 5,
+        "holdSeconds": 60,
+        "frequency": "Once daily. From the Bateman 2021 consensus. Its results say 'up to 60 s', so 60 is a ceiling, and it is the only dose in this record set by a consensus process for routine treatment. The duration of the program is not set by the consensus; the isometric trial ran 8 weeks."
       },
       "bodyweightOrHold": true,
-      "cautions": "Do not invent a hold time. The trial used a container of water with a handle as resistance, so this is not a true no-equipment exercise. It improved disability and worst pain versus wait-and-see, but not global improvement or pain-free grip strength, and its authors question it as a sole treatment.",
-      "evidenceStrength": "rct",
-      "sourceIds": ["lucado2022", "vuvan2020"]
+      "cautions": "No hold time has been shown to be better than another, and dose 'is based on clinical experience and varies among studies'. Load is unresolved: the Bateman 2021 discussion says maximal resistance, while the guideline starts at about 20%-40% MVIC and Coombes 2016 shows a flare above pain threshold. An app cannot measure these, so this record does not adopt maximal resistance; treat 60 s as a ceiling and reduce load or time if pain rises. Isometrics may raise pain at once, so do not promise immediate relief. In Vuvan 2020 PRTEE (SMD -0.92) and worst pain (SMD -0.80) improved versus wait-and-see, but global success and pain-free grip did not, and the authors doubt it works as a sole treatment. OPTimisE, an unpowered pilot that tested the package containing this dose, showed improvement similar to usual physiotherapy, and its delivered hold time is in a handbook that was not opened. The Vuvan trial used a water container as resistance; Park 2010 was equipment-free. Bateman 2021 attributes the 60 s dose to Barratt 2018, an uncontrolled service audit whose abstract gives no hold time and describes patient-specific high load into discomfort or pain.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": [
+        "bateman2021",
+        "barratt2018",
+        "bateman2024",
+        "lucado2022",
+        "vuvan2020",
+        "park2010",
+        "coombes2016",
+        "coombes2025",
+        "stasinopoulos2017",
+        "stasinopoulos2022a",
+        "clifford2020",
+        "soliman2026",
+        "parkjh2026"
+      ],
+      "alternativeDoses": [
+        {
+          "protocol": "Coombes 2016 experiment",
+          "sets": 1,
+          "reps": 10,
+          "holdSeconds": 15,
+          "frequency": "Single bout, not a training frequency",
+          "load": "20% below the individual pain threshold",
+          "painRule": "Below threshold",
+          "note": "Lowest-provocation dose found: comparable to control, with no flare and no relief. Acute only, so no treatment effect is shown. The same dose 20% above threshold raised pain for 30 minutes.",
+          "sourceIds": [
+            "coombes2016"
+          ]
+        },
+        {
+          "protocol": "Barratt 2018 audit",
+          "sets": null,
+          "reps": null,
+          "holdSeconds": null,
+          "frequency": "Not read",
+          "load": "Patient-specific high load, then progressing to slow combined concentric and eccentric work",
+          "painRule": "Into discomfort or pain",
+          "note": "Named by Bateman 2021 as the origin of maximal resistance, 60 s, five repetitions. The abstract gives no hold time and the full text could not be opened, so that attribution is unconfirmed. Uncontrolled audit (n=182): responders 8% higher and treatments 42% fewer in phase three than phase one.",
+          "sourceIds": [
+            "barratt2018",
+            "bateman2021"
+          ]
+        },
+        {
+          "protocol": "Park 2010 trial",
+          "sets": 4,
+          "reps": 50,
+          "holdSeconds": 10,
+          "frequency": "Daily",
+          "load": "Not numerically specified; equipment-free",
+          "painRule": "Gently, without pain",
+          "note": "Lower pain at 1 month than delayed exercise (p<0.01), with no difference at 3, 6 or 12 months and no untreated control. That is 2000 s of holds a day (this record's arithmetic). Compliance fell to about 0.4 at 6 months, and Bateman 2021 rejected it as too burdensome.",
+          "sourceIds": [
+            "park2010",
+            "bateman2021"
+          ]
+        },
+        {
+          "protocol": "Stasinopoulos 2017 trial, via editorial",
+          "sets": null,
+          "reps": 15,
+          "holdSeconds": 45,
+          "frequency": "Daily per the editorial; 5 treatments a week for 4 weeks per the trial abstract",
+          "load": "Wrist in dorsal flexion; load not stated",
+          "painRule": "Continue with mild pain (below 4 on VAS), stop if disabling (above 8 on VAS)",
+          "note": "Secondary report, not read in the trial itself. Unusually high and confounded: the combined arm had 56 min of loading a session against 22 min. Part of a program with eccentric-concentric work, not tested alone.",
+          "sourceIds": [
+            "stasinopoulos2017",
+            "stasinopoulos2022a",
+            "clifford2020"
+          ]
+        },
+        {
+          "protocol": "Park JH 2026 program",
+          "sets": 3,
+          "reps": null,
+          "holdSeconds": "10-15",
+          "frequency": "Within a 6-week progressive program",
+          "load": "RPE 9-12 in week 1, up to RPE 16 from week 4 if no pain. Same protocol in both arms; the experimental arm added a blood flow restriction cuff at 40-50% arterial occlusion pressure",
+          "painRule": "Progression conditional on no pain",
+          "note": "Hold template only, covering wrist extensors among other muscle groups. n=20 completed. No between-group difference in pain.",
+          "sourceIds": [
+            "parkjh2026"
+          ]
+        },
+        {
+          "protocol": "Vuvan 2020 trial",
+          "sets": null,
+          "reps": null,
+          "holdSeconds": null,
+          "frequency": "Daily for 8 weeks, unsupervised",
+          "load": "20% rising to 35% of maximum voluntary contraction, per secondary reports; water container with a handle per the guideline table",
+          "painRule": "Not read",
+          "note": "Hold time and sets were not available. Do not infer them. Bateman 2021 judged this load scheme too complicated.",
+          "sourceIds": [
+            "vuvan2020",
+            "lucado2022",
+            "bateman2021",
+            "stasinopoulos2022a"
+          ]
+        },
+        {
+          "protocol": "Lucado 2022 guideline",
+          "sets": 3,
+          "reps": 15,
+          "holdSeconds": null,
+          "frequency": "6-12 weeks",
+          "load": "Cited expert phases: pain-free contractions at about 20%-40% MVIC to start, above 40% MVIC later",
+          "painRule": "Should not exacerbate symptoms",
+          "note": "Written for repetitions with no hold time, so it cannot be converted into seconds without inference.",
+          "sourceIds": [
+            "lucado2022"
+          ]
+        }
+      ]
     },
     {
       "name": "Eccentric wrist extension with a rubber bar",
@@ -85,9 +312,59 @@
         "frequency": "Daily for 7 weeks in the Tyler 2010 trial, as tabulated by Yoon 2021."
       },
       "bodyweightOrHold": false,
-      "cautions": "Requires a rubber bar, and the exact technique was not verified in the sources opened. Evidence is limited: 6 trials with risk-of-bias concerns and varied protocols. Compared with concentric or isotonic exercise the pain benefit was small, with no clear difference in strength or function. Progress only as tolerated without exacerbating symptoms.",
+      "cautions": "Requires a rubber bar. Tyler 2010 confirms the bar and about 7 weeks, but its abstract gives no sets or repetitions, so 3 x 15 rests on the table in Yoon 2021. Large gains in Tyler 2010 (DASH 76% vs 13%) come from 21 people. Pooled short-term effects are large with wide intervals (pain 1.12, CI 0.31 to 1.93), long-term results are inconclusive, and against concentric or isotonic work the pain benefit is small (SMD -0.30) with no difference in strength or function. Lapner 2022 found an eccentric program no better than no active treatment, and Wen 2011 was null. Progress only as tolerated without exacerbating symptoms.",
       "evidenceStrength": "systematic_review",
-      "sourceIds": ["yoon2021", "lucado2022"]
+      "sourceIds": [
+        "yoon2021",
+        "lucado2022",
+        "tyler2010",
+        "chen2021",
+        "peterson2014",
+        "wen2011",
+        "sevier2015",
+        "lapner2022"
+      ],
+      "alternativeDoses": [
+        {
+          "protocol": "Wen 2011 trial",
+          "sets": 3,
+          "reps": 15,
+          "holdSeconds": null,
+          "frequency": "Daily",
+          "load": "Maximum load tolerated, applied by the other hand rather than a rubber bar, pushing the wrist from extended to fully flexed over 6-8 s (a tempo, not a hold)",
+          "painRule": "Warned it would be quite painful",
+          "note": "No difference from stretching and modalities at any point through 20 weeks.",
+          "sourceIds": [
+            "wen2011"
+          ]
+        },
+        {
+          "protocol": "Sevier 2015 trial",
+          "sets": "2, rising to 3 as tolerated",
+          "reps": 15,
+          "holdSeconds": null,
+          "frequency": "2 times a week",
+          "load": "Thera-Band progression across six exercises for elbow, wrist and shoulder",
+          "painRule": "Pain-free sets",
+          "note": "Astym beat this arm on DASH and grip at 4 weeks. No adverse effects in either group.",
+          "sourceIds": [
+            "sevier2015"
+          ]
+        },
+        {
+          "protocol": "Yoon 2021 table: Martinez-Silvestrini 2005",
+          "sets": 3,
+          "reps": 10,
+          "holdSeconds": null,
+          "frequency": "Daily for 6 weeks",
+          "load": "Elastic resistance band",
+          "painRule": "Not extracted",
+          "note": "Yoon 2021 says 2 or 3 sets of 10 or 15 repetitions were common.",
+          "sourceIds": [
+            "yoon2021"
+          ]
+        }
+      ]
     },
     {
       "name": "Shoulder and scapular stabilizer training",
@@ -100,41 +377,142 @@
         "frequency": "Not established in the sources opened."
       },
       "bodyweightOrHold": false,
-      "cautions": "Grade C, only when impairments have been identified, and alongside wrist extensor strengthening. An app cannot identify those impairments, and the guideline passage reviewed names no specific exercises, so this does not justify mapping to a catalog exercise. The trials conflict: Mostafaee 2020 favored adding it, while Day 2021 found no added value in a multimodal program.",
+      "cautions": "Grade C, only when impairments have been identified, and alongside wrist extensor strengthening. An app cannot identify those impairments, and the guideline passage reviewed names no specific exercises, so this does not justify mapping to a catalog exercise. The trials conflict: Mostafaee 2020 favored adding it, while Day 2021 found no added value in a multimodal program. The Bateman 2021 consensus also included shoulder girdle exercises (80% vote) without a dose in the passages read.",
       "evidenceStrength": "guideline",
-      "sourceIds": ["lucado2022"]
+      "sourceIds": [
+        "lucado2022",
+        "bateman2021",
+        "stasinopoulos2022b"
+      ]
+    },
+    {
+      "name": "Wrist extensor stretch",
+      "catalog": "new",
+      "kind": "stretch",
+      "dose": {
+        "sets": 1,
+        "reps": 3,
+        "holdSeconds": 30,
+        "frequency": "Three 30 s holds before and three after loading exercises, with the once-daily program. From the Bateman 2021 consensus."
+      },
+      "alternativeDoses": [
+        {
+          "protocol": "Stasinopoulos 2005 program",
+          "sets": 1,
+          "reps": 3,
+          "holdSeconds": "30-45",
+          "frequency": "Three holds before and three after eccentric exercise each session, with 30 s rest between",
+          "load": "Static",
+          "painRule": "Not read",
+          "note": "A recommendation, not trial data, and the source of the common dose.",
+          "sourceIds": [
+            "stasinopoulos2005"
+          ]
+        },
+        {
+          "protocol": "Nishizuka 2017 trial",
+          "sets": 1,
+          "reps": 1,
+          "holdSeconds": 30,
+          "frequency": "3 times daily for 6 months",
+          "load": "Wrist extensor stretch",
+          "painRule": "Not read",
+          "note": "Given to both arms of a forearm band trial, so stretching itself was not tested.",
+          "sourceIds": [
+            "nishizuka2017"
+          ]
+        },
+        {
+          "protocol": "Sveinall 2024 trial",
+          "sets": 3,
+          "reps": 1,
+          "holdSeconds": 30,
+          "frequency": "3 times a day",
+          "load": "Straight elbow, pronated forearm, palmar-flexed wrist",
+          "painRule": "Not read",
+          "note": "Exact position is the most specific found.",
+          "sourceIds": [
+            "sveinall2024"
+          ]
+        },
+        {
+          "protocol": "Sevier 2015 trial",
+          "sets": 1,
+          "reps": 1,
+          "holdSeconds": 30,
+          "frequency": "3 times daily",
+          "load": "To the point of pull",
+          "painRule": "To the point of pull, not pain",
+          "note": "Same volume as Nishizuka 2017. Strengthening in this trial was separate, at 2 sessions a week.",
+          "sourceIds": [
+            "sevier2015"
+          ]
+        }
+      ],
+      "bodyweightOrHold": true,
+      "cautions": "Reinstated: the earlier verification removed it because no opened source gave a dose, and Bateman 2021 and others now do. The dose was chosen by vote for practicality (80% on second vote). No source isolates a benefit: 'the relative effectiveness of stretching vs strengthening for the wrist extensors remains unknown', and no trial here compares stretching with no stretching. Catalog: no forearm stretch id was found in a search of the app's workout-guide assets, so it is marked new.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": [
+        "bateman2021",
+        "stasinopoulos2005",
+        "nishizuka2017",
+        "sveinall2024",
+        "sevier2015",
+        "menta2015"
+      ]
     }
   ],
   "redFlags": [
     {
       "sign": "Atypical mass or swelling around the elbow",
       "action": "Stop elbow-loading exercise and seek urgent medical assessment.",
-      "sourceIds": ["nhs_highland"]
+      "sourceIds": [
+        "nhs_highland"
+      ]
     },
     {
       "sign": "Unremitting or increasing pain",
       "action": "Stop elbow-loading exercise and seek urgent medical assessment.",
-      "sourceIds": ["nhs_highland"]
+      "sourceIds": [
+        "nhs_highland"
+      ]
     },
     {
       "sign": "Night pain",
       "action": "Stop elbow-loading exercise and seek urgent medical assessment.",
-      "sourceIds": ["nhs_highland"]
+      "sourceIds": [
+        "nhs_highland"
+      ]
     },
     {
       "sign": "Feeling systemically unwell, malaise or weight loss alongside elbow symptoms",
       "action": "Stop elbow-loading exercise and seek urgent medical assessment.",
-      "sourceIds": ["nhs_highland"]
+      "sourceIds": [
+        "nhs_highland"
+      ]
     },
     {
       "sign": "Progressive weakness when extending the fingers or wrist",
       "action": "Stop loading the arm and get prompt medical assessment. This can point to posterior interosseous nerve compression. The source sets no timing, so 'prompt' is this report's wording.",
-      "sourceIds": ["cha2014", "lucado2022"]
+      "sourceIds": [
+        "cha2014",
+        "lucado2022"
+      ]
     },
     {
       "sign": "Symptoms that may come from another condition, such as the neck or a nerve entrapment, or that do not fit the usual pattern",
-      "action": "Get a professional evaluation. The guideline says therapists should identify conditions that mimic this one and promptly refer when appropriate. It lists the conditions but not patient-facing signs, so the wording here is this report's own.",
-      "sourceIds": ["lucado2022"]
+      "action": "Get a professional evaluation. The guideline says therapists should identify conditions that mimic this one and promptly refer when appropriate. It lists the conditions but not patient-facing signs, so the wording here is this report's own. Trial exclusions show which presentations are untested in this evidence: recent significant trauma, inflammatory arthritis or gout, elbow osteoarthritis, neurological symptoms at onset, and neck pain and stiffness starting at a similar time.",
+      "sourceIds": [
+        "lucado2022",
+        "bateman2024"
+      ]
+    },
+    {
+      "sign": "No improvement after 12-24 weeks of treatment",
+      "action": "Not urgent. Get a clinical review. The BESS pathway treats failure to improve within 12-24 weeks as a trigger for secondary care referral.",
+      "sourceIds": [
+        "singh2023"
+      ]
     }
   ],
   "sources": [
@@ -144,7 +522,10 @@
       "doi": "10.2519/jospt.2022.0302",
       "pmid": "36453071",
       "url": "https://www.orthopt.org/uploads/content_files/files/jospt.2022.0302.pdf",
-      "type": "clinical_practice_guideline"
+      "type": "clinical_practice_guideline",
+      "pmcid": null,
+      "accessLevel": "full_text",
+      "accessNote": "Read from the orthopt.org-hosted PDF using text extraction. The publisher copy returned HTTP 403."
     },
     {
       "id": "karanasios2021",
@@ -152,7 +533,9 @@
       "doi": "10.1136/bjsports-2020-102525",
       "pmid": "33148599",
       "url": "https://doi.org/10.1136/bjsports-2020-102525",
-      "type": "systematic_review"
+      "type": "systematic_review",
+      "pmcid": null,
+      "accessLevel": "abstract_only"
     },
     {
       "id": "yoon2021",
@@ -160,7 +543,9 @@
       "doi": "10.3390/jcm10173968",
       "pmid": "34501416",
       "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8432114/fullTextXML",
-      "type": "systematic_review"
+      "type": "systematic_review",
+      "pmcid": "PMC8432114",
+      "accessLevel": "full_text"
     },
     {
       "id": "vuvan2020",
@@ -168,7 +553,10 @@
       "doi": "10.1249/mss.0000000000002128",
       "pmid": "31425384",
       "url": "https://doi.org/10.1249/mss.0000000000002128",
-      "type": "rct"
+      "type": "rct",
+      "pmcid": null,
+      "accessLevel": "abstract_only",
+      "accessNote": "Paywalled. Hold time and sets were not read."
     },
     {
       "id": "nhs_highland",
@@ -176,7 +564,10 @@
       "doi": null,
       "pmid": null,
       "url": "https://www.rightdecisions.scot.nhs.uk/tam-treatments-and-medicines-nhs-highland/adult-therapeutic-guidelines/orthopaedics/musculoskeletal-pathways-guidelines/",
-      "type": "local_clinical_guidance"
+      "type": "local_clinical_guidance",
+      "pmcid": null,
+      "accessLevel": "full_text",
+      "accessNote": "Elbow pathway section read during verification. Clinician-facing."
     },
     {
       "id": "cha2014",
@@ -184,28 +575,964 @@
       "doi": null,
       "pmid": "24570771",
       "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3919107/",
-      "type": "case_report_with_review"
+      "type": "case_report_with_review",
+      "pmcid": "PMC3919107",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "bateman2021",
+      "citation": "Bateman M, Saunders B, Littlewood C, Hill JC. Development of an optimised physiotherapist-led treatment protocol for lateral elbow tendinopathy: a consensus study using an online nominal group technique. BMJ Open. 2021;11(12):e053841.",
+      "doi": "10.1136/bmjopen-2021-053841",
+      "pmid": "34949626",
+      "pmcid": "PMC8712984",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8712984/",
+      "type": "consensus_statement",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "bateman2024",
+      "citation": "Bateman M, Skeggs A, Whitby E, Fletcher-Barrett V, Stephens G, Dawes M, et al. Optimising physiotherapy for people with lateral elbow tendinopathy - Results of a mixed-methods pilot and feasibility randomised controlled trial (OPTimisE). Musculoskelet Sci Pract. 2024;69:102905.",
+      "doi": "10.1016/j.msksp.2023.102905",
+      "pmid": "38194841",
+      "pmcid": "PMC10843168",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10843168/",
+      "type": "rct",
+      "accessLevel": "full_text",
+      "accessNote": "Pilot and feasibility trial. The supplementary exercise handbook was not opened."
+    },
+    {
+      "id": "singh2023",
+      "citation": "Singh HP, Watts AC. BESS patient care pathway: Tennis elbow. Shoulder Elbow. 2023;15(4):348-359.",
+      "doi": "10.1177/17585732231170793",
+      "pmid": "37538521",
+      "pmcid": "PMC10395404",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10395404/",
+      "type": "clinical_practice_guideline",
+      "accessLevel": "full_text",
+      "accessNote": "Read through a summarising page extraction."
+    },
+    {
+      "id": "lapner2022",
+      "citation": "Lapner P, Alfonso A, Herbert-Davies J, Pollock JW, Marsh J, King G, et al. Position statement: nonoperative management of lateral epicondylitis in adults. Can J Surg. 2022;65(5):E625-E629.",
+      "doi": "10.1503/cjs.019221",
+      "pmid": "36130807",
+      "pmcid": "PMC9503571",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9503571/",
+      "type": "position_statement",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "amako2022",
+      "citation": "Amako M, Arai T, Iba K, Ikeda M, Ikegami H, Imada H, et al. Japanese Orthopaedic Association (JOA) clinical practice guidelines on the management of lateral epicondylitis of the humerus - Secondary publication. J Orthop Sci. 2022;27(3):514-532.",
+      "doi": "10.1016/j.jos.2021.09.003",
+      "pmid": "34922804",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/34922804/",
+      "type": "clinical_practice_guideline",
+      "accessLevel": "abstract_only",
+      "accessNote": "Full text returned HTTP 403."
+    },
+    {
+      "id": "leschinger2022",
+      "citation": "Leschinger T, Tischer T, Doepfer AK, Glanzmann M, Hackl M, Lehmann L, et al. Epicondylopathia humeri radialis. Z Orthop Unfall. 2022;160(3):329-340.",
+      "doi": "10.1055/a-1340-0931",
+      "pmid": "33851405",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/33851405/",
+      "type": "guideline_summary",
+      "accessLevel": "abstract_only",
+      "accessNote": "Original AWMF guideline and Thieme full text could not be retrieved."
+    },
+    {
+      "id": "hegmann2013",
+      "citation": "Hegmann KT, Hoffman HE, Belcourt RM, Byrne K, Glass L, Melhorn JM, et al. ACOEM practice guidelines: elbow disorders. J Occup Environ Med. 2013;55(11):1365-74.",
+      "doi": "10.1097/JOM.0b013e3182a0d7ec",
+      "pmid": "23963225",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/23963225/",
+      "type": "clinical_practice_guideline",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "park2010",
+      "citation": "Park JY, Park HK, Choi JH, Moon ES, Kim BS, Kim WS, et al. Prospective evaluation of the effectiveness of a home-based program of isometric strengthening exercises: 12-month follow-up. Clin Orthop Surg. 2010;2(3):173-8.",
+      "doi": "10.4055/cios.2010.2.3.173",
+      "pmid": "20808589",
+      "pmcid": "PMC2915397",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2915397/",
+      "type": "rct",
+      "accessLevel": "full_text",
+      "accessNote": "Dose wording re-read in the Europe PMC full text during this update."
+    },
+    {
+      "id": "stasinopoulos2017",
+      "citation": "Stasinopoulos D, Stasinopoulos I. Comparison of effects of eccentric training, eccentric-concentric training, and eccentric-concentric training combined with isometric contraction in the treatment of lateral elbow tendinopathy. J Hand Ther. 2017;30(1):13-19.",
+      "doi": "10.1016/j.jht.2016.09.001",
+      "pmid": "27823901",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/27823901/",
+      "type": "rct",
+      "accessLevel": "abstract_only",
+      "accessNote": "The 45 s dose is known only through Stasinopoulos 2022a."
+    },
+    {
+      "id": "stasinopoulos2022a",
+      "citation": "Stasinopoulos D. Isometric Exercise for the Management of Lateral Elbow Tendinopathy. J Clin Med. 2022;12(1).",
+      "doi": "10.3390/jcm12010094",
+      "pmid": "36614894",
+      "pmcid": "PMC9820871",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9820871/",
+      "type": "clinical_commentary",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "clifford2020",
+      "citation": "Clifford C, Challoumas D, Paul L, Syme G, Millar NL. Effectiveness of isometric exercise in the management of tendinopathy: a systematic review and meta-analysis of randomised trials. BMJ Open Sport Exerc Med. 2020;6(1):e000760.",
+      "doi": "10.1136/bmjsem-2020-000760",
+      "pmid": "32818059",
+      "pmcid": "PMC7406028",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7406028/",
+      "type": "systematic_review",
+      "accessLevel": "full_text",
+      "accessNote": "Read in targeted sections, focused on the lateral elbow passages."
+    },
+    {
+      "id": "soliman2026",
+      "citation": "Soliman EFF, Nagra D, Goh SL, Akingbade E, Nouri B, Amin S, et al. Isometric Exercises for Tendinopathies: A Systematic Literature Review. Clin Ther. 2026;48(10):952-957.",
+      "doi": "10.1016/j.clinthera.2026.04.027",
+      "pmid": "42203537",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/42203537/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "coombes2025",
+      "citation": "Coombes BK, Hams A, Tenbrink R, Love A, Bisset LM. Mobilisation-with-movement induces analgesia during exercise but exercise alone is not analgesic in people with lateral elbow tendinopathy: An assessor blinded, randomised crossover trial. Musculoskelet Sci Pract. 2025;80:103421.",
+      "doi": "10.1016/j.msksp.2025.103421",
+      "pmid": "41005254",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/41005254/",
+      "type": "rct",
+      "accessLevel": "abstract_only",
+      "accessNote": "Randomised crossover trial with acute outcomes."
+    },
+    {
+      "id": "coombes2016",
+      "citation": "Coombes BK, Wiebusch M, Heales L, Stephenson A, Vicenzino B. Isometric Exercise Above but not Below an Individual's Pain Threshold Influences Pain Perception in People With Lateral Epicondylalgia. Clin J Pain. 2016;32(12):1069-1075.",
+      "doi": "10.1097/AJP.0000000000000365",
+      "pmid": "26889612",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/26889612/",
+      "type": "experimental_study",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "lowdon2024",
+      "citation": "Lowdon H, Chong HH, Dhingra M, Gomaa AR, Teece L, Booth S, et al. Comparison of Interventions for Lateral Elbow Tendinopathy: A Systematic Review and Network Meta-Analysis for Patient-Rated Tennis Elbow Evaluation Pain Outcome. J Hand Surg Am. 2024;49(7):639-648.",
+      "doi": "10.1016/j.jhsa.2024.03.007",
+      "pmid": "38678448",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/38678448/",
+      "type": "network_meta_analysis",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "chen2023",
+      "citation": "Chen Q, Shen P, Zhang B, Chen Y, Zheng C. Long-term effectiveness of conservative management for lateral epicondylitis: a meta-analysis. J Plast Surg Hand Surg. 2023;58:67-73.",
+      "doi": "10.2340/jphs.v58.12333",
+      "pmid": "37615315",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/37615315/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "chen2021",
+      "citation": "Chen Z, Baker NA. Effectiveness of eccentric strengthening in the treatment of lateral elbow tendinopathy: A systematic review with meta-analysis. J Hand Ther. 2021;34(1):18-28.",
+      "doi": "10.1016/j.jht.2020.02.002",
+      "pmid": "32284219",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/32284219/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "menta2015",
+      "citation": "Menta R, Randhawa K, Côté P, Wong JJ, Yu H, Sutton D, et al. The effectiveness of exercise for the management of musculoskeletal disorders and injuries of the elbow, forearm, wrist, and hand: a systematic review by the Ontario Protocol for Traffic Injury Management (OPTIMa) collaboration. J Manipulative Physiol Ther. 2015;38(7):507-20.",
+      "doi": "10.1016/j.jmpt.2015.06.002",
+      "pmid": "26130104",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/26130104/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "hoogvliet2013",
+      "citation": "Hoogvliet P, Randsdorp MS, Dingemanse R, Koes BW, Huisstede BM. Does effectiveness of exercise therapy and mobilisation techniques offer guidance for the treatment of lateral and medial epicondylitis? A systematic review. Br J Sports Med. 2013;47(17):1112-9.",
+      "doi": "10.1136/bjsports-2012-091990",
+      "pmid": "23709519",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/23709519/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "olaussen2013",
+      "citation": "Olaussen M, Holmedal O, Lindbaek M, Brage S, Solvang H. Treating lateral epicondylitis with corticosteroid injections or non-electrotherapeutical physiotherapy: a systematic review. BMJ Open. 2013;3(10):e003564.",
+      "doi": "10.1136/bmjopen-2013-003564",
+      "pmid": "24171937",
+      "pmcid": "PMC3816235",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3816235/",
+      "type": "systematic_review",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "wen2011",
+      "citation": "Wen DY, Schultz BJ, Schaal B, Graham ST, Kim BS. Eccentric strengthening for chronic lateral epicondylosis: a prospective randomized study. Sports Health. 2011;3(6):500-3.",
+      "doi": "10.1177/1941738111409690",
+      "pmid": "23016049",
+      "pmcid": "PMC3445220",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3445220/",
+      "type": "rct",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "mcqueen2021",
+      "citation": "McQueen KS, Powell RK, Keener T, Whalley R, Calfee RP. Role of strengthening during nonoperative treatment of lateral epicondyle tendinopathy. J Hand Ther. 2021;34(4):619-626.",
+      "doi": "10.1016/j.jht.2020.10.009",
+      "pmid": "33250396",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/33250396/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "nishizuka2017",
+      "citation": "Nishizuka T, Iwatsuki K, Kurimoto S, Yamamoto M, Hirata H. Efficacy of a forearm band in addition to exercises compared with exercises alone for lateral epicondylitis: A multicenter, randomized, controlled trial. J Orthop Sci. 2017;22(2):289-294.",
+      "doi": "10.1016/j.jos.2016.11.011",
+      "pmid": "27916338",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/27916338/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "shahabi2020",
+      "citation": "Shahabi S, Bagheri Lankarani K, Heydari ST, Jalali M, Ghahramani S, Kamyab M, et al. The effects of counterforce brace on pain in subjects with lateral elbow tendinopathy: A systematic review and meta-analysis of randomized controlled trials. Prosthet Orthot Int. 2020;44(5):341-354.",
+      "doi": "10.1177/0309364620930618",
+      "pmid": "32635812",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/32635812/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "struijs2002",
+      "citation": "Struijs PA, Smidt N, Arola H, Dijk vC, Buchbinder R, Assendelft WJ. Orthotic devices for the treatment of tennis elbow. Cochrane Database Syst Rev. 2002;(1):CD001821.",
+      "doi": "10.1002/14651858.CD001821",
+      "pmid": "11869609",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/11869609/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only",
+      "accessNote": "Cochrane review. The Cochrane Library copy returned HTTP 403."
+    },
+    {
+      "id": "dion2017",
+      "citation": "Dion S, Wong JJ, Côté P, Yu H, Sutton D, Randhawa K, et al. Are Passive Physical Modalities Effective for the Management of Common Soft Tissue Injuries of the Elbow?: A Systematic Review by the Ontario Protocol for Traffic Injury Management (OPTIMa) Collaboration. Clin J Pain. 2017;33(1):71-86.",
+      "doi": "10.1097/AJP.0000000000000368",
+      "pmid": "27022675",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/27022675/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "loew2014",
+      "citation": "Loew LM, Brosseau L, Tugwell P, Wells GA, Welch V, Shea B, et al. Deep transverse friction massage for treating lateral elbow or lateral knee tendinitis. Cochrane Database Syst Rev. 2014;2014(11):CD003528.",
+      "doi": "10.1002/14651858.CD003528.pub2",
+      "pmid": "25380079",
+      "pmcid": "PMC7154576",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7154576/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only",
+      "accessNote": "Cochrane review."
+    },
+    {
+      "id": "coombes2013",
+      "citation": "Coombes BK, Bisset L, Brooks P, Khan A, Vicenzino B. Effect of corticosteroid injection, physiotherapy, or both on clinical outcomes in patients with unilateral lateral epicondylalgia: a randomized controlled trial. JAMA. 2013;309(5):461-9.",
+      "doi": "10.1001/jama.2013.129",
+      "pmid": "23385272",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/23385272/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "bisset2006",
+      "citation": "Bisset L, Beller E, Jull G, Brooks P, Darnell R, Vicenzino B. Mobilisation with movement and exercise, corticosteroid injection, or wait and see for tennis elbow: randomised trial. BMJ. 2006;333(7575):939.",
+      "doi": "10.1136/bmj.38961.584653.AE",
+      "pmid": "17012266",
+      "pmcid": "PMC1633771",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC1633771/",
+      "type": "rct",
+      "accessLevel": "full_text",
+      "accessNote": "Read through a summarising fetch and partly cross-checked against the abstract."
+    },
+    {
+      "id": "smidt2002",
+      "citation": "Smidt N, van der Windt DA, Assendelft WJ, Devillé WL, Korthals-de Bos IB, Bouter LM. Corticosteroid injections, physiotherapy, or a wait-and-see policy for lateral epicondylitis: a randomised controlled trial. Lancet. 2002;359(9307):657-62.",
+      "doi": "10.1016/S0140-6736(02)07811-X",
+      "pmid": "11879861",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/11879861/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "ouyang2026",
+      "citation": "Ouyang C, You Q, Yang C, Yu D. Time-dependent comparative efficacy of non-surgical treatments for pain relief in lateral epicondylitis: a systematic review and network meta-analysis. Front Physiol. 2026;17:1782562.",
+      "doi": "10.3389/fphys.2026.1782562",
+      "pmid": "41971661",
+      "pmcid": "PMC13066320",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13066320/",
+      "type": "network_meta_analysis",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "ortega2022",
+      "citation": "Ortega-Castillo M, Cuesta-Vargas A, Luque-Teba A, Trinidad-Fernández M. The role of progressive, therapeutic exercise in the management of upper limb tendinopathies: A systematic review and meta-analysis. Musculoskelet Sci Pract. 2022;62:102645.",
+      "doi": "10.1016/j.msksp.2022.102645",
+      "pmid": "35964498",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/35964498/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "cooper2023",
+      "citation": "Cooper K, Alexander L, Brandie D, Brown VT, Greig L, Harrison I, et al. Exercise therapy for tendinopathy: a mixed-methods evidence synthesis exploring feasibility, acceptability and effectiveness. Health Technol Assess. 2023;27(24):1-389.",
+      "doi": "10.3310/TFWS2748",
+      "pmid": "37929629",
+      "pmcid": "PMC10641714",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10641714/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only",
+      "accessNote": "Long report retrieved, but only the abstract was read."
+    },
+    {
+      "id": "kinney2023",
+      "citation": "Kinney WR, Anderson BR. Nonoperative Management of Lateral Epicondyle Tendinopathy: An Umbrella Review. J Chiropr Med. 2023;22(3):204-211.",
+      "doi": "10.1016/j.jcm.2023.04.004",
+      "pmid": "37644995",
+      "pmcid": "PMC10461134",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10461134/",
+      "type": "umbrella_review",
+      "accessLevel": "full_text",
+      "accessNote": "Read selectively, not end to end."
+    },
+    {
+      "id": "karjalainen2021",
+      "citation": "Karjalainen TV, Silagy M, O'Bryan E, Johnston RV, Cyril S, Buchbinder R. Autologous blood and platelet-rich plasma injection therapy for lateral elbow pain. Cochrane Database Syst Rev. 2021;9(9):CD010951.",
+      "doi": "10.1002/14651858.CD010951.pub2",
+      "pmid": "34590307",
+      "pmcid": "PMC8481072",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8481072/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only",
+      "accessNote": "Cochrane review."
+    },
+    {
+      "id": "vanrijn2009",
+      "citation": "van Rijn RM, Huisstede BM, Koes BW, Burdorf A. Associations between work-related factors and specific disorders at the elbow: a systematic literature review. Rheumatology (Oxford). 2009;48(5):528-36.",
+      "doi": "10.1093/rheumatology/kep013",
+      "pmid": "19224937",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19224937/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "shah2025",
+      "citation": "Shah R, Yu A, Kelley MG, Yendluri A, Bienstock D, Nietsch K, et al. Randomized controlled trial outcomes for nonoperative management of lateral epicondylitis of the elbow are statistically fragile: a systematic review. JSES Rev Rep Tech. 2025;5(4):798-804.",
+      "doi": "10.1016/j.xrrt.2025.03.008",
+      "pmid": "41179430",
+      "pmcid": "PMC12573480",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12573480/",
+      "type": "methodological_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "stasinopoulos2010",
+      "citation": "Stasinopoulos D, Stasinopoulos I, Pantelis M, Stasinopoulou K. Comparison of effects of a home exercise programme and a supervised exercise programme for the management of lateral elbow tendinopathy. Br J Sports Med. 2010;44(8):579-83.",
+      "doi": "10.1136/bjsm.2008.049759",
+      "pmid": "19887440",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19887440/",
+      "type": "non_randomised_trial",
+      "accessLevel": "abstract_only",
+      "accessNote": "Sequential allocation."
+    },
+    {
+      "id": "stasinopoulos2005",
+      "citation": "Stasinopoulos D, Stasinopoulou K, Johnson MI. An exercise programme for the management of lateral elbow tendinopathy. Br J Sports Med. 2005;39(12):944-7.",
+      "doi": "10.1136/bjsm.2005.019836",
+      "pmid": "16306504",
+      "pmcid": "PMC1725102",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC1725102/",
+      "type": "clinical_commentary",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "sveinall2024",
+      "citation": "Sveinall H, Brox JI, Engebretsen KB, Hoksrud AF, Røe C, Johnsen MB. Heavy slow resistance training, radial extracorporeal shock wave therapy or advice for patients with tennis elbow in the Norwegian secondary care: a randomised controlled feasibility trial. BMJ Open. 2024;14(12):e085916.",
+      "doi": "10.1136/bmjopen-2024-085916",
+      "pmid": "39806585",
+      "pmcid": "PMC11667321",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11667321/",
+      "type": "rct",
+      "accessLevel": "full_text",
+      "accessNote": "Feasibility trial."
+    },
+    {
+      "id": "divyamary2025",
+      "citation": "Divya Mary SM, Paul J, Hema Suresh V, Senthil P. Impact of Heavy Slow Resistance vs. Convectional Exercise in Lateral Epicondylitis-A Pilot Study. Health Care Sci. 2025;4(2):71-81.",
+      "doi": "10.1002/hcs2.70004",
+      "pmid": "40241983",
+      "pmcid": "PMC11997458",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11997458/",
+      "type": "rct",
+      "accessLevel": "full_text",
+      "accessNote": "Read in targeted sections. Self-described randomised pilot."
+    },
+    {
+      "id": "peterson2011",
+      "citation": "Peterson M, Butler S, Eriksson M, Svärdsudd K. A randomized controlled trial of exercise versus wait-list in chronic tennis elbow (lateral epicondylosis). Ups J Med Sci. 2011;116(4):269-79.",
+      "doi": "10.3109/03009734.2011.600476",
+      "pmid": "22066975",
+      "pmcid": "PMC3207303",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3207303/",
+      "type": "rct",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "peterson2014",
+      "citation": "Peterson M, Butler S, Eriksson M, Svärdsudd K. A randomized controlled trial of eccentric vs. concentric graded exercise in chronic tennis elbow (lateral elbow tendinopathy). Clin Rehabil. 2014;28(9):862-72.",
+      "doi": "10.1177/0269215514527595",
+      "pmid": "24634444",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/24634444/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "tyler2010",
+      "citation": "Tyler TF, Thomas GC, Nicholas SJ, McHugh MP. Addition of isolated wrist extensor eccentric exercise to standard treatment for chronic lateral epicondylosis: a prospective randomized trial. J Shoulder Elbow Surg. 2010;19(6):917-22.",
+      "doi": "10.1016/j.jse.2010.04.041",
+      "pmid": "20579907",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20579907/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "sevier2015",
+      "citation": "Sevier TL, Stegink-Jansen CW. Astym treatment vs. eccentric exercise for lateral elbow tendinopathy: a randomized controlled clinical trial. PeerJ. 2015;3:e967.",
+      "doi": "10.7717/peerj.967",
+      "pmid": "26038722",
+      "pmcid": "PMC4451036",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4451036/",
+      "type": "rct",
+      "accessLevel": "full_text",
+      "accessNote": "Read in targeted sections."
+    },
+    {
+      "id": "wallis2024",
+      "citation": "Wallis JA, Bourne AM, Jessup RL, Johnston RV, Frydman A, Cyril S, et al. Manual therapy and exercise for lateral elbow pain. Cochrane Database Syst Rev. 2024;5(5):CD013042.",
+      "doi": "10.1002/14651858.CD013042.pub2",
+      "pmid": "38802121",
+      "pmcid": "PMC11129914",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11129914/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only",
+      "accessNote": "Cochrane review. The full-text XML request returned HTTP 500."
+    },
+    {
+      "id": "karanasios2022",
+      "citation": "Karanasios S, Korakakis V, Moutzouri M, Xergia SA, Tsepis E, Gioftsos G. Low-Load Resistance Training With Blood Flow Restriction Is Effective for Managing Lateral Elbow Tendinopathy: A Randomized, Sham-Controlled Trial. J Orthop Sports Phys Ther. 2022;52(12):803-825.",
+      "doi": "10.2519/jospt.2022.11211",
+      "pmid": "36099170",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/36099170/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "parkjh2026",
+      "citation": "Park JH, Kim H, Lee MM. Effects of Blood Flow Restriction Training Combined With Conventional Physical Therapy on Pain, Muscle Architecture, Strength, Function, and Psychosocial Outcomes in Chronic Lateral Epicondylitis: A Pilot Randomized Controlled Trial. Med Sci Monit. 2026;32:e951969.",
+      "doi": "10.12659/MSM.951969",
+      "pmid": "41736376",
+      "pmcid": "PMC12951797",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12951797/",
+      "type": "rct",
+      "accessLevel": "full_text",
+      "accessNote": "Read in targeted sections. The paper describes a single-blind randomized controlled trial."
+    },
+    {
+      "id": "elmelhat2026",
+      "citation": "El Melhat AM, Saab IM, Abbas RL, El Khatib A, Mohamed RA, Hijazi B, et al. Addition of low-load blood flow restriction training to conventional physiotherapy improves handgrip strength and function in patients with lateral epicondylitis at the short-term: A single-blind randomized clinical trial. J Back Musculoskelet Rehabil. 2026;:10538127261494053.",
+      "doi": "10.1177/10538127261494053",
+      "pmid": "42842742",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/42842742/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "raman2012",
+      "citation": "Raman J, MacDermid JC, Grewal R. Effectiveness of different methods of resistance exercises in lateral epicondylosis--a systematic review. J Hand Ther. 2012;25(1):5-25; quiz 26.",
+      "doi": "10.1016/j.jht.2011.09.001",
+      "pmid": "22075055",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/22075055/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "stasinopoulos2022b",
+      "citation": "Stasinopoulos D. Stop Using the Eccentric Exercises as the Gold Standard Treatment for the Management of Lateral Elbow Tendinopathy. J Clin Med. 2022;11(5).",
+      "doi": "10.3390/jcm11051325",
+      "pmid": "35268416",
+      "pmcid": "PMC8911334",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8911334/",
+      "type": "clinical_commentary",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "taylor2024",
+      "citation": "Taylor L, Wiebusch M, Bisset LM, Coombes BK. Adherence to exercise in lateral elbow tendinopathy, a scoping review. Musculoskelet Sci Pract. 2024;72:102978.",
+      "doi": "10.1016/j.msksp.2024.102978",
+      "pmid": "38820868",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/38820868/",
+      "type": "scoping_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "ikeda2025",
+      "citation": "Ikeda K, Kaneoka K, Matsunaga N, Ikumi A, Yamazaki M, Yoshii Y. Effects of forearm rotation on wrist flexor and extensor muscle activities. J Orthop Surg Res. 2025;20(1):53.",
+      "doi": "10.1186/s13018-024-05363-x",
+      "pmid": "39819577",
+      "pmcid": "PMC11740565",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11740565/",
+      "type": "biomechanical",
+      "accessLevel": "full_text",
+      "accessNote": "Read in targeted sections."
+    },
+    {
+      "id": "mogk2003",
+      "citation": "Mogk JP, Keir PJ. The effects of posture on forearm muscle loading during gripping. Ergonomics. 2003;46(9):956-75.",
+      "doi": "10.1080/0014013031000107595",
+      "pmid": "12775491",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/12775491/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "didomizio2010",
+      "citation": "Di Domizio J, Keir PJ. Forearm posture and grip effects during push and pull tasks. Ergonomics. 2010;53(3):336-43.",
+      "doi": "10.1080/00140130903389076",
+      "pmid": "20191408",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20191408/",
+      "type": "biomechanical",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "manickaraj2018",
+      "citation": "Manickaraj N, Bisset LM, Kavanagh JJ. Lateral epicondylalgia exhibits adaptive muscle activation strategies based on wrist posture and levels of grip force: a case-control study. J Musculoskelet Neuronal Interact. 2018;18(3):323-332.",
+      "doi": null,
+      "pmid": "30179209",
+      "pmcid": "PMC6146193",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6146193/",
+      "type": "biomechanical",
+      "accessLevel": "full_text",
+      "accessNote": "Case-control EMG study read in targeted sections."
+    },
+    {
+      "id": "lee2016",
+      "citation": "Lee SY, Chieh HF, Lin CJ, Jou IM, Kuo LC, Su FC. The Potential Risk Factors Relevant to Lateral Epicondylitis by Wrist Coupling Posture. PLoS One. 2016;11(5):e0155379.",
+      "doi": "10.1371/journal.pone.0155379",
+      "pmid": "27171198",
+      "pmcid": "PMC4865201",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4865201/",
+      "type": "biomechanical",
+      "accessLevel": "full_text",
+      "accessNote": "Read in targeted sections."
+    },
+    {
+      "id": "coombes2016econ",
+      "citation": "Coombes BK, Connelly L, Bisset L, Vicenzino B. Economic evaluation favours physiotherapy but not corticosteroid injection as a first-line intervention for chronic lateral epicondylalgia: evidence from a randomised clinical trial. Br J Sports Med. 2016;50(22):1400-1405.",
+      "doi": "10.1136/bjsports-2015-094729",
+      "pmid": "26036675",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/26036675/",
+      "type": "economic_evaluation",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "bateman2022protocol",
+      "citation": "Bateman M, Saunders B, Littlewood C, Davis D, Beckhelling J, Cooper K, et al. Comparing an optimised physiotherapy treatment package with usual physiotherapy care for people with tennis elbow - protocol for the OPTimisE pilot and feasibility randomised controlled trial. Pilot Feasibility Stud. 2022;8(1):178.",
+      "doi": "10.1186/s40814-022-01132-x",
+      "pmid": "35953842",
+      "pmcid": "PMC9367116",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9367116/",
+      "type": "rct_protocol",
+      "accessLevel": "full_text",
+      "accessNote": "Read in targeted sections."
+    },
+    {
+      "id": "barratt2018",
+      "citation": "Barratt PA, Selfe J. A service evaluation and improvement project: a three year systematic audit cycle of the physiotherapy treatment for Lateral Epicondylalgia. Physiotherapy. 2018;104(2):209-216.",
+      "doi": "10.1016/j.physio.2017.09.001",
+      "pmid": "29366541",
+      "pmcid": null,
+      "url": "https://doi.org/10.1016/j.physio.2017.09.001",
+      "type": "service_audit",
+      "accessLevel": "abstract_only",
+      "accessNote": "Subscription article. The repository copy returned HTTP 403, so the protocol and hold time were not read."
     }
   ],
-  "limitations": "Overall grade is low. Karanasios 2021 rates its evidence low to very low certainty and finds small effects. The guideline gives exercise grade B, but states that its 3 x 15 for 6-12 weeks dose comes from best available evidence and expert opinion, that no study described load determination or progression, and that the best exercise type and dose remain unknown. Trial protocols varied widely. The guideline covers literature published before November 2021, and no later systematic review was read. Coverage gaps: the NICE CKS page and the BESS tennis elbow pathway (Singh 2023, DOI 10.1177/17585732231170793) could not be opened, so neither is cited; no Cochrane review was opened. Karanasios 2021 and Vuvan 2020 were read as abstracts only, and the Tyler 2010 protocol only as tabulated in Yoon 2021. Red flags come from one local NHS pathway and one case-based article, not from a validated screening tool, and patient-facing wording is partly this report's own. Applying occupational risk factors to gym movements is an extrapolation. This is general information and not treatment or diagnosis.",
+  "limitations": "Overall grade stays low. The Cochrane review (Wallis 2024) rates manual therapy and exercise evidence low certainty with benefits that may not be clinically worthwhile, and Karanasios 2021 rates its comparisons low to very low certainty. Evidence for any specific isometric hold time is lower still: it rests on consensus, one small trial without an untreated control, an acute experiment and a secondary report. CONTRADICTIONS. (1) Whether to recommend exercise: Lucado 2022 gives it grade B and Singh 2023 a strong recommendation for physiotherapy, while Lapner 2022 (strong, moderate) says eccentric programs are similar to no active treatment and does not support exercise-based physiotherapy. Lapner excluded combination therapies and rated the pain evidence low. (2) Pain during exercise: Lucado 2022 says loads should not exacerbate symptoms and Park 2010 used pain-free holds; Bateman 2021 allows patient-acceptable pain, Stasinopoulos allows below 4 on VAS, and Wen 2011 warned the work would be quite painful. (3) Isometric analgesia: Coombes 2016, Coombes 2025 and the review by Clifford 2020 do not support immediate relief. (4) Isometric hold wording: Bateman 2021 says 'up to 60 s' in its results and 'maximal resistance, held for 60 s' in its discussion, attributed to Barratt and Selfe 2018, an uncontrolled audit whose abstract gives no hold time and whose full text could not be opened. One searcher reported that Bateman 2021 lacks 'maximal resistance'; the full text was re-read and it is there. (5) Park 2010 says four sets of 50 daily. Bateman 2021 and Stasinopoulos 2022a restate it as 50 repetitions four times a day. The primary wording is used here. (6) Stasinopoulos 2017 is reported as daily by the editorial and 5 treatments a week by the abstract, and the 45 s x 15 dose was never read in the trial itself. (7) Vuvan 2020 global success is 29% vs 26% in its abstract, while Clifford 2020 reports overall improvement of 86% vs 63%. Both are non-significant, and the likely difference in threshold could not be confirmed without the full text. (8) Heavy loading: Sveinall 2024 found it unsuitable and Divya Mary 2025 reported it superior, the latter with failed-looking randomisation (mean age 48.42 vs 62.42) and an age table that does not sum to n. (9) Manual therapy: grade B in Lucado 2022, excluded by Bateman 2021 partly on cost and burden. (10) Bracing: Grade D and F in Lucado 2022, conditional in Singh 2023, included in Bateman 2021 (80%), null in Nishizuka 2017, inconclusive in Struijs 2002 and Dion 2017, short-term benefit in Ouyang 2026. Shahabi 2020 concludes bracing is reasonable, though every interval quoted includes zero. (11) Injections: Kinney 2023 reports PRP and autologous blood as most effective long term, while Karjalainen 2021 finds no clinically significant benefit over placebo at three months with moderate certainty. (12) Long term: physiotherapy advantages generally do not persist to one year (Bisset 2006, Smidt 2002, Coombes 2013, Chen Q 2023), so recovery cannot be separated from natural history (Leschinger 2022). (13) Adherence: 93% with light graded loads in Peterson 2011 and 32% with heavy loads in Sveinall 2024, but 71% of 104 studies report no adherence data (Taylor 2024). (14) Lucado 2022 lists tools over 20 kg as a risk factor, while van Rijn 2009 reports tools over 1 kg and loads over 20 kg. (15) Sveinall 2024 treats sleep-disturbing pain after training as a cue to reduce weight, while the NHS Highland pathway lists night pain as a red flag. This record keeps the red flag for night pain that is not explained by a recent session; that split is this record's reading. GAPS. No study found measured wrist extensor load during a gym lift, and 29 titles in that search were not screened. No trial tested activity modification alone. Vuvan 2020 hold time and sets remain unread, the OPTimisE handbook was not opened, and the Barratt 2018 protocol was not read. NICE CKS (HTTP 403), the German AWMF original (HTTP 500), the Dutch guideline (not located), the JOA recommendations (HTTP 403) and the ACOEM recommendations were not read; the BESS exercise sheets were not opened. Cochrane reviews were read as abstracts through PubMed or PMC, not through the Cochrane Library. Fragility is a concern: 8 of 29 significant outcomes in 17 nonoperative RCTs reversed with one event (Shah 2025). Do not reuse the Chen Q 2023 ESWT function interval, which appears misprinted. Coombes 2013 intervals are 99%. Red flags still come from one local NHS pathway and one case-based article, not a validated screening tool, and patient-facing wording is partly this record's own. Applying occupational and laboratory data to gym movements is an extrapolation. This is general information and not treatment or diagnosis.",
   "verification": {
-    "sourcesChecked": 8,
+    "sourcesChecked": 66,
     "itemsRemoved": [
       {
-        "item": "avoidOrModify: Hard or sustained gripping that provokes lateral elbow pain, such as hangs or heavy carries",
-        "reason": "No cited source supports it. The guideline mentions gripping only as a provoking test in a trial's inclusion criteria, and NHS Tayside says only 'Modify loading' and gives no gripping advice. The item's own text called it an inference. nhs_tayside was then unused and was removed."
+        "item": "avoidOrModify gripping: the 'Hard or sustained' qualifier",
+        "reason": "No source compares grip intensity or duration against symptoms beyond 15% and 30% of maximum in 11 people. The grip intensity in Coombes 2025 was not read. The item now covers gripping that provokes pain."
       },
       {
-        "item": "candidateExercises: Wrist extensor stretch",
-        "reason": "No source recommends it as a candidate or gives a dose. The guideline's exercise recommendation covers resisted exercise only, and the trials it describes tested stretching only combined with strengthening, so no source isolates a benefit from stretching."
+        "item": "Wrist extensor stretch, Sevier 2015: 'Lowest stretch dose found'",
+        "reason": "It rested on a wrong frequency. The trial used 3 stretches a day."
+      },
+      {
+        "item": "Palm-down lifting: 'low-load' describing Di Domizio 2010",
+        "reason": "The abstract gives no load level for the push and pull tasks."
+      },
+      {
+        "item": "Contradiction 3: volleyball results 'have not been replicated'",
+        "reason": "Clifford 2020 says later results were variable."
       }
     ],
-    "labelsCorrected": [],
+    "valuesCorrected": [
+      "Sevier 2015 stretch frequency: was tied to 2 sessions a week; the paper says 3 times daily, one 30 s repetition.",
+      "Park JH 2026: type changed from controlled_trial to rct, because the paper states randomisation. The cuff applies only to the experimental arm.",
+      "Barratt and Selfe: was reported as not found. It is Physiotherapy 2018;104(2):209-216, PMID 29366541, and was added as a source with abstract access.",
+      "Wen 2011: resistance comes from the other hand, not a rubber bar.",
+      "Martinez-Silvestrini 2005: load changed from not extracted to elastic resistance band, per the Yoon 2021 table.",
+      "Wallis 2024 table row: 23 trials and 1612 people is the whole review; the pain estimate comes from 12 trials and 1023 people.",
+      "Taylor 2024: 71% refers to 74 of 104 studies, not trials.",
+      "Lucado 2022 grade B row: only rigid taping is limited to irritable cases, and dry needling is not limited to short-term relief.",
+      "OPTimisE: changed from not better than usual physiotherapy to similar improvement in an unpowered pilot.",
+      "Bateman 2022 protocol citation completed: 2022;8(1):178.",
+      "accessLevel for nhs_highland and cha2014 changed from not_reconfirmed to full_text, because both were opened and support their red flags."
+    ],
     "unverifiable": [
-      "The publisher copy of Lucado 2022 returned 403. The full text was read from the orthopt.org PDF, which carries the JOSPT download stamp.",
-      "Red flags: 'Stop elbow-loading exercise' is not in the NHS Highland pathway. Its clinician-facing action is an urgent call to on-call orthopaedics plus a referral.",
-      "Cha 2014 names progressive weakness of the digit extensors and extensor carpi radialis brevis. 'Wrist' is an anatomical reading of that muscle, not the article's word.",
-      "The Tyler 2010 protocol was checked only as tabulated in Yoon 2021. Vuvan 2020 hold time, sets and reps were not checked in its full text."
+      "Barratt 2018 hold time, repetitions and load: subscription article, repository copy returned 403. Bateman 2021 attribution of 60 s x 5 to it is unconfirmed.",
+      "Vuvan 2020 hold time, sets and pain rule: paywalled, repository copy returned 403.",
+      "Coombes 2025 grip intensity and Coombes 2016 load method: abstract only.",
+      "Stasinopoulos 2017 45 s x 15: read only through Stasinopoulos 2022a.",
+      "Tyler 2010 3 x 15: read only in the Yoon 2021 table.",
+      "Sources marked abstract_only were checked against their PubMed abstract only.",
+      "Singh 2023, Bisset 2006 and Kinney 2023 were checked through a summarising page fetch, because Europe PMC full-text XML returned HTTP 500.",
+      "Lucado 2022 was read from the orthopt.org PDF. The publisher copy returned 403 earlier. The PDF is text-extracted, so table layout may be imperfect.",
+      "Red flags: 'Stop elbow-loading exercise' is not in the NHS Highland pathway, whose action is an urgent call to on-call orthopaedics plus a referral. Cha 2014 names the digit extensors and extensor carpi radialis brevis, so 'wrist' is an anatomical reading."
     ]
-  }
+  },
+  "searches": [
+    {
+      "searcher": 1,
+      "database": "PubMed E-utilities",
+      "query": "(\"tennis elbow\"[tiab] OR \"lateral epicondylitis\"[tiab] OR \"lateral epicondylalgia\"[tiab] OR \"lateral elbow tendinopathy\"[tiab]) AND (guideline[pt] OR \"practice guideline\"[pt] OR guideline*[ti] OR consensus[ti] OR \"clinical pathway\"[tiab] OR \"delphi\"[ti])",
+      "hits": "15"
+    },
+    {
+      "searcher": 1,
+      "database": "PubMed E-utilities",
+      "query": "(\"lateral elbow\"[tiab] OR \"tennis elbow\"[tiab]) AND isometric[tiab] AND (exercise[tiab] OR hold[tiab])",
+      "hits": "7"
+    },
+    {
+      "searcher": 1,
+      "database": "PubMed E-utilities",
+      "query": "\"lateral elbow pain\"[ti] AND \"clinical practice guideline\"[tiab]",
+      "hits": "1 (PMID 36453071, the JOSPT guideline)"
+    },
+    {
+      "searcher": 1,
+      "database": "PubMed E-utilities",
+      "query": "(\"tennis elbow\"[tiab] OR \"lateral epicondylitis\"[tiab]) AND \"Cochrane Database Syst Rev\"[ta]",
+      "hits": "10, not opened by this searcher; the Cochrane Library site was not queried"
+    },
+    {
+      "searcher": 1,
+      "database": "PubMed E-utilities",
+      "query": "(\"tennis elbow\"[tiab] OR \"lateral epicondylitis\"[tiab]) AND (\"American Academy of Orthopaedic Surgeons\"[tiab] OR AAOS[tiab]) AND guideline*[tiab]",
+      "hits": "1 (PMID 40459170, an orthobiologics guideline, not opened); no AAOS lateral elbow guideline identified"
+    },
+    {
+      "searcher": 1,
+      "database": "PubMed E-utilities",
+      "query": "(\"tennis elbow\"[tiab] OR \"lateral epicondylitis\"[tiab]) AND (\"World Health Organization\"[tiab] OR NICE[tiab]) AND guideline*[tiab]",
+      "hits": "0 (null result)"
+    },
+    {
+      "searcher": 1,
+      "database": "Europe PMC REST",
+      "query": "(\"lateral elbow tendinopathy\" OR \"tennis elbow\" OR \"lateral epicondylitis\") AND (TITLE:guideline OR TITLE:pathway OR TITLE:consensus OR TITLE:recommendations)",
+      "hits": "41"
+    },
+    {
+      "searcher": 1,
+      "database": "Europe PMC REST",
+      "query": "(OPTimisE AND \"lateral elbow tendinopathy\") OR (TITLE:\"lateral elbow\" AND TITLE:\"isometric\") OR (DOI:10.1016/j.msksp.2023.102905) OR (DOI:10.1503/cjs.019221) OR (DOI:10.1055/a-1340-0931)",
+      "hits": "23"
+    },
+    {
+      "searcher": 1,
+      "database": "WebSearch",
+      "query": "lateral elbow pain clinical practice guideline JOSPT APTA 2022 Lucado recommendation grades",
+      "hits": "10 links; located the orthopt.org copy of the guideline PDF"
+    },
+    {
+      "searcher": 1,
+      "database": "WebSearch",
+      "query": "tennis elbow NICE CKS guideline Dutch KNGF NHG multidisciplinary guideline epicondylitis lateral recommendations; Bateman 2022 BMJ Open Sport consensus physiotherapy tennis elbow; AAOS",
+      "hits": "10 links; no NICE, Dutch or AAOS document returned"
+    },
+    {
+      "searcher": 1,
+      "database": "WebSearch",
+      "query": "NICE Clinical Knowledge Summary tennis elbow lateral epicondylitis management last revised; S2k Leitlinie Epicondylopathia humeri radialis AWMF 033-019",
+      "hits": "20 links across two result sets. cks.nice.org.uk returned HTTP 403 and the AWMF PDF returned HTTP 500 or an HTML page, so neither original was read"
+    },
+    {
+      "searcher": 1,
+      "database": "WebSearch",
+      "query": "OPTimisE pilot feasibility randomised trial lateral elbow tendinopathy Bateman results optimised physiotherapy",
+      "hits": "10 links"
+    },
+    {
+      "searcher": 1,
+      "database": "WebSearch",
+      "query": "Park 2010 isometric exercise lateral epicondylitis early 50 repetitions 10 second holds; Barratt Selfe isometric 60 seconds tennis elbow; Stasinopoulos 2017 J Hand Ther 45 s isometric",
+      "hits": "10 links; Barratt and Selfe source not found, ANZCTR records returned no usable content"
+    },
+    {
+      "searcher": 2,
+      "database": "PubMed E-utilities",
+      "query": "(lateral epicondylitis[tiab] OR lateral elbow tendinopathy[tiab] OR tennis elbow[tiab]) AND (exercise[tiab] OR isometric[tiab] OR stretching[tiab] OR eccentric[tiab]) AND (systematic review[pt] OR meta-analysis[pt] OR systematic review[ti] OR meta-analysis[ti])",
+      "hits": "36"
+    },
+    {
+      "searcher": 2,
+      "database": "PubMed E-utilities",
+      "query": "(lateral epicondylitis[tiab] OR lateral elbow tendinopathy[tiab] OR tennis elbow[tiab]) AND isometric[tiab]",
+      "hits": "39"
+    },
+    {
+      "searcher": 2,
+      "database": "PubMed E-utilities",
+      "query": "(lateral epicondylitis[tiab] OR tennis elbow[tiab] OR lateral elbow tendinopathy[tiab]) AND cochrane database syst rev[ta]",
+      "hits": "10"
+    },
+    {
+      "searcher": 2,
+      "database": "PubMed E-utilities",
+      "query": "(lateral epicondylitis[tiab] OR tennis elbow[tiab] OR lateral elbow tendinopathy[tiab] OR lateral epicondylalgia[tiab]) AND (stretching[tiab] OR stretch[tiab]) AND (randomized[tiab] OR randomised[tiab] OR systematic review[tiab] OR meta-analysis[tiab])",
+      "hits": "35"
+    },
+    {
+      "searcher": 2,
+      "database": "PubMed E-utilities",
+      "query": "(lateral epicondylitis[tiab] OR tennis elbow[tiab] OR lateral elbow tendinopathy[tiab]) AND (orthosis[tiab] OR orthoses[tiab] OR brace[tiab] OR splint[tiab] OR activity modification[tiab] OR load management[tiab] OR ergonomic[tiab]) AND (systematic review[tiab] OR meta-analysis[tiab] OR Cochrane[tiab])",
+      "hits": "13"
+    },
+    {
+      "searcher": 2,
+      "database": "PubMed E-utilities",
+      "query": "(lateral epicondylitis[tiab] OR tennis elbow[tiab] OR lateral elbow tendinopathy[tiab] OR lateral epicondylalgia[tiab]) AND (wait and see[tiab] OR wait-and-see[tiab] OR natural history[tiab]) AND (randomized[tiab] OR randomised[tiab] OR trial[tiab])",
+      "hits": "19"
+    },
+    {
+      "searcher": 2,
+      "database": "PubMed E-utilities",
+      "query": "(lateral epicondylitis[tiab] OR tennis elbow[tiab] OR lateral elbow tendinopathy[tiab] OR lateral epicondylalgia[tiab]) AND (isometric[tiab] OR static[tiab]) AND (exercise[tiab] OR hold*[tiab] OR analges*[tiab] OR hypoalgesia[tiab])",
+      "hits": "14"
+    },
+    {
+      "searcher": 2,
+      "database": "PubMed E-utilities",
+      "query": "(lateral elbow tendinopathy[tiab] OR lateral epicondylitis[tiab] OR tennis elbow[tiab]) AND (network meta-analysis[tiab] OR umbrella review[tiab] OR overview of systematic reviews[tiab] OR clinical practice guideline[tiab])",
+      "hits": "29"
+    },
+    {
+      "searcher": 2,
+      "database": "PubMed E-utilities",
+      "query": "Coombes[au] AND epicondylalgia[tiab] AND JAMA[ta]",
+      "hits": "1"
+    },
+    {
+      "searcher": 2,
+      "database": "PubMed E-utilities",
+      "query": "Struijs[au] AND orthotic[tiab] AND tennis elbow[tiab]",
+      "hits": "3"
+    },
+    {
+      "searcher": 2,
+      "database": "PubMed E-utilities",
+      "query": "Physiotherapy[ti] AND lateral epicondylitis[ti] AND Smidt[au]",
+      "hits": "2"
+    },
+    {
+      "searcher": 2,
+      "database": "Europe PMC REST",
+      "query": "(\"lateral elbow tendinopathy\" OR \"tennis elbow\" OR \"lateral epicondylitis\") AND isometric AND (SRC:PMC OR OPEN_ACCESS:y) AND (PUB_TYPE:\"systematic review\" OR TITLE:\"systematic review\" OR TITLE:\"meta-analysis\")",
+      "hits": "49"
+    },
+    {
+      "searcher": 2,
+      "database": "Cochrane Library (direct fetch, not a search)",
+      "query": "https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD001821/full",
+      "hits": "0: HTTP 403. Cochrane reviews were read through PubMed abstracts or PMC, and the Cochrane Library search interface was not used"
+    },
+    {
+      "searcher": 2,
+      "database": "JOSPT (direct fetch, not a search)",
+      "query": "https://www.jospt.org/doi/10.2519/jospt.2022.0302 and /doi/full/10.2519/jospt.2022.0302",
+      "hits": "0: HTTP 403 on both. Searcher 1 read the guideline from the orthopt.org copy"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed E-utilities",
+      "query": "(\"Tennis Elbow\"[Mesh] OR \"lateral epicondylitis\"[tiab] OR \"lateral elbow tendinopathy\"[tiab]) AND isometric[tiab]",
+      "hits": "42"
+    },
+    {
+      "searcher": 3,
+      "database": "Europe PMC REST",
+      "query": "(TITLE:\"lateral epicondylitis\" OR TITLE:\"lateral elbow tendinopathy\" OR TITLE:\"tennis elbow\") AND TITLE:isometric",
+      "hits": "5"
+    },
+    {
+      "searcher": 3,
+      "database": "Europe PMC REST",
+      "query": "(TITLE:\"lateral epicondylitis\" OR TITLE:\"lateral elbow tendinopathy\" OR TITLE:\"tennis elbow\" OR TITLE:\"lateral epicondylalgia\") AND (TITLE:eccentric OR TITLE:exercise OR TITLE:strengthening OR TITLE:exercises)",
+      "hits": "78"
+    },
+    {
+      "searcher": 3,
+      "database": "Europe PMC REST",
+      "query": "(\"extensor carpi radialis brevis\") AND (electromyography OR EMG) AND (grip OR \"wrist position\" OR \"resistance exercise\" OR \"bench press\" OR barbell OR dumbbell)",
+      "hits": "204"
+    },
+    {
+      "searcher": 3,
+      "database": "Europe PMC REST",
+      "query": "(\"lateral elbow tendinopathy\" OR \"lateral epicondylalgia\" OR \"tennis elbow\") AND (TITLE:\"physiotherapy\" OR TITLE:\"corticosteroid\" OR TITLE:\"wait and see\" OR TITLE:\"optimised\" OR TITLE:\"OPTimise\") AND (\"randomised\" OR \"randomized\")",
+      "hits": "142"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed E-utilities",
+      "query": "(\"Tennis Elbow\"[Mesh] OR \"lateral epicondylitis\"[tiab] OR \"lateral elbow tendinopathy\"[tiab] OR \"lateral epicondylalgia\"[tiab]) AND (electromyography[tiab] OR EMG[tiab] OR biomechanic*[tiab]) AND (grip[tiab] OR wrist[tiab])",
+      "hits": "86"
+    },
+    {
+      "searcher": 3,
+      "database": "Europe PMC REST",
+      "query": "(\"wrist extensor\" OR \"wrist extensors\" OR \"forearm muscle\" OR \"forearm extensor\") AND (\"bench press\" OR \"pull-up\" OR \"deadlift\" OR \"grip width\" OR \"barbell curl\" OR \"biceps curl\" OR \"forearm position\" OR \"neutral grip\" OR \"grip type\") AND (electromyography OR EMG)",
+      "hits": "95"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed E-utilities",
+      "query": "(\"Tennis Elbow\"[Mesh] OR \"lateral epicondylitis\"[tiab]) AND (\"weight training\"[tiab] OR \"resistance training\"[tiab] OR weightlifting[tiab] OR \"weight lifting\"[tiab] OR gym[tiab] OR bodybuilding[tiab] OR CrossFit[tiab])",
+      "hits": "15"
+    },
+    {
+      "searcher": 3,
+      "database": "Europe PMC REST",
+      "query": "TITLE:\"mobilisation with movement\" AND (epicondylalgia OR \"tennis elbow\") AND (\"wait and see\" OR \"corticosteroid\") OR (TITLE:\"multimodal physiotherapy\" AND \"tennis elbow\") OR (TITLE:\"corticosteroid injection\" AND TITLE:\"multimodal\" AND \"lateral epicondylalgia\") OR (TITLE:\"isolated eccentric\" AND \"tennis elbow\") OR (TITLE:\"Thera-Band\" AND \"tennis elbow\") OR (TITLE:\"FlexBar\" AND epicondyl*) OR (TITLE:\"home exercise\" AND TITLE:\"lateral\" AND (epicondylitis OR tendinopathy)) OR (TITLE:\"eccentric\" AND TITLE:\"isokinetic\" AND TITLE:\"tendinopathy\" AND elbow)",
+      "hits": "3"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed E-utilities",
+      "query": "(Coombes BK[au] AND (epicondylalgia[ti] OR tennis[ti])) OR (Bisset L[au] AND (epicondylalgia[ti] OR tennis[ti]) AND (Mobilisation[ti] OR injection[ti])) OR (Tyler TF[au] AND elbow[ti]) OR (Smidt N[au] AND epicondylitis[ti]) OR (Croisier JL[au] AND tendinopathy[ti]) OR (Peterson M[au] AND tennis elbow[ti]) OR (Martinez-Silvestrini JA[au]) OR (Svernlöv B[au]) OR (Pienimaki TT[au] AND epicondylitis[ti])",
+      "hits": "45"
+    },
+    {
+      "searcher": 3,
+      "database": "Europe PMC REST",
+      "query": "(\"extensor carpi radialis brevis\" OR \"ECRB\" OR \"forearm muscle\") AND TITLE:(grip OR gripping OR posture OR \"wrist extension\" OR load) AND (electromyography OR EMG) AND (posture OR \"wrist extension\" OR \"elbow extension\" OR pronat*) AND (\"forearm muscle loading\" OR \"wrist posture\" OR \"wrist extended\" OR \"tendon force\" OR \"elbow position\")",
+      "hits": "13"
+    },
+    {
+      "searcher": 3,
+      "database": "Europe PMC REST",
+      "query": "(\"lateral elbow tendinopathy\" OR \"tennis elbow\" OR \"lateral epicondylitis\") AND (\"pain-free\" OR \"pain free\" OR painful OR \"pain threshold\") AND (exercise OR loading) AND (TITLE:load OR TITLE:loading OR TITLE:pain OR TITLE:grip) AND (FIRST_PDATE:[2012-01-01 TO 2026-12-31])",
+      "hits": "206"
+    },
+    {
+      "searcher": 3,
+      "database": "PubMed E-utilities",
+      "query": "(\"Tennis Elbow\"[Mesh] OR \"lateral epicondylitis\"[tiab]) AND (Coombes[au] OR Bisset[au] OR Vicenzino[au]) AND (JAMA[ta] OR Lancet[ta] OR \"Br J Sports Med\"[ta] OR BMJ[ta])",
+      "hits": "11"
+    },
+    {
+      "searcher": 3,
+      "database": "Europe PMC REST",
+      "query": "TITLE:\"tennis elbow\" AND (Tyler OR Smidt OR Peterson OR Croisier OR Svernlov) AND (eccentric OR \"wait-and-see\" OR \"exercise\") AND AUTH:(\"Tyler TF\" OR \"Smidt N\" OR \"Peterson M\" OR \"Croisier JL\" OR \"Svernlov B\")",
+      "hits": "9"
+    },
+    {
+      "searcher": 3,
+      "database": "Europe PMC REST",
+      "query": "(TITLE:\"eccentric\" OR TITLE:\"strengthening program\") AND (\"Tyler\") AND (\"chronic lateral epicondylosis\" OR \"tennis elbow\" OR \"lateral epicondylosis\") AND PUB_YEAR:2010",
+      "hits": "1"
+    },
+    {
+      "searcher": 3,
+      "database": "Europe PMC REST (Cochrane Database filter; the Cochrane Library site was not queried)",
+      "query": "JOURNAL:\"Cochrane Database Syst Rev\" AND (\"tennis elbow\" OR \"lateral elbow pain\" OR \"lateral epicondylitis\")",
+      "hits": "33"
+    },
+    {
+      "searcher": 3,
+      "database": "Europe PMC REST",
+      "query": "(\"bench press\" OR \"pull-up\" OR \"deadlift\" OR \"weightlifting\" OR \"resistance training\") AND (\"lateral epicondylitis\" OR \"lateral epicondylalgia\" OR \"lateral elbow tendinopathy\" OR \"tennis elbow\") AND (biomechanic* OR electromyograph* OR \"injury\") AND (TITLE:elbow OR TITLE:epicondyl*)",
+      "hits": "44. Null result: among the top 15 titles none measured wrist extensor or common extensor origin load during a gym lift. The other 29 titles were not screened"
+    },
+    {
+      "searcher": "merge check",
+      "database": "PubMed E-utilities esummary (ID lookup, not a search)",
+      "query": "63 PMIDs of this record",
+      "hits": "63 of 63 resolved. Used to confirm identifiers and to complete citations the searchers could not capture"
+    },
+    {
+      "searcher": "merge check",
+      "database": "Europe PMC REST (full-text XML, not a search)",
+      "query": "PMC8712984, PMC7406028, PMC9820871, PMC2915397, plus record lookup for PMC9367116",
+      "hits": "All returned. Dose wording in Bateman 2021, Clifford 2020, Stasinopoulos 2022a and Park 2010 was re-read directly"
+    },
+    {
+      "searcher": "verification",
+      "database": "WebSearch and Europe PMC REST",
+      "query": "Barratt Selfe service evaluation audit lateral epicondylalgia; DOI:10.1016/j.physio.2017.09.001",
+      "hits": "1 record, PMID 29366541. The earlier searcher null result for this source was wrong"
+    }
+  ]
 }
