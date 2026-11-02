@@ -22,6 +22,7 @@ MAX_ITEMS = 1_000
 MAX_STRING_LENGTH = 8_192
 MAX_IDENTIFIER_LENGTH = 96
 CONDITION_COUNT = 50
+ACCESSIBLE_PROTOCOL_PREFIX = 'reported in accessible text: '
 CORPUS_PATH = Path('docs/research/conditions')
 ID_PATTERN = re.compile(r'[a-z0-9]+(?:-[a-z0-9]+)*\Z')
 
@@ -205,9 +206,13 @@ def validate_corpus(root: Path, require_complete: bool) -> list[str]:
             protocol = fields(source.get('protocol'), 'execution dose frequency supervision progression stoppingRules', sid + '.protocol')
             for name in ('execution', 'dose', 'frequency', 'supervision', 'progression', 'stoppingRules'):
                 text(protocol.get(name), sid + '.protocol.' + name)
-                if access.get('status') != 'full-text':
-                    check(isinstance(protocol.get(name), str) and protocol[name].startswith('not reported'),
-                          f'{sid}: abstract/unavailable access cannot establish protocol.{name}')
+                value = protocol.get(name)
+                if access.get('status') != 'full-text' and isinstance(value, str):
+                    reported = (access.get('status') == 'abstract-only'
+                                and value.startswith(ACCESSIBLE_PROTOCOL_PREFIX)
+                                and bool(value[len(ACCESSIBLE_PROTOCOL_PREFIX):].strip()))
+                    check(value.startswith('not reported') or reported,
+                          f'{sid}: protocol.{name} needs an access-qualified statement or not reported')
             texts(source.get('locations'), sid + '.locations', True)
 
         def citations(value, label):

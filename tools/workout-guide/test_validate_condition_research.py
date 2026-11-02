@@ -60,6 +60,16 @@ class ConditionResearchTest(unittest.TestCase):
         self.write('exercise-requests', json.loads((base / 'exercise-requests.json').read_text()))
         return json.loads((base / 'piriformis-syndrome.json').read_text())
 
+    def protocol_source(self, status):
+        pilot_path = Path(__file__).resolve().parents[2] / 'docs/research/conditions/piriformis-syndrome.json'
+        source = json.loads(pilot_path.read_text())['sources'][0]
+        source['access'] = {'status': status, 'date': '2026-11-01',
+                            'details': 'Synthetic access boundary fixture; no claim of full-text retrieval.'}
+        source['locations'] = ['Abstract > Methods']
+        source['protocol'] = dict.fromkeys(source['protocol'], 'not reported in accessible text')
+        self.dossier['sources'] = [source]
+        return source
+
     def errors(self, complete=False):
         return self.validator.validate_corpus(self.root, complete)
 
@@ -105,6 +115,54 @@ class ConditionResearchTest(unittest.TestCase):
         self.dossier['searchLog'] = []
         self.complete(self.dossier)
         self.rejected('searchLog')
+
+    def test_abstract_protocol_accepts_explicit_accessible_text(self):
+        for field in ('execution', 'dose', 'frequency', 'supervision', 'progression', 'stoppingRules'):
+            with self.subTest(field=field):
+                source = self.protocol_source('abstract-only')
+                source['protocol'][field] = 'reported in accessible text: Explicit method detail in the abstract.'
+                self.complete(self.dossier)
+                self.assertEqual([], self.errors())
+
+    def test_full_text_protocol_keeps_unqualified_method(self):
+        for field in ('execution', 'dose', 'frequency', 'supervision', 'progression', 'stoppingRules'):
+            with self.subTest(field=field):
+                source = self.protocol_source('full-text')
+                source['protocol'][field] = 'Three sessions per week.'
+                self.complete(self.dossier)
+                self.assertEqual([], self.errors())
+
+    def test_abstract_protocol_rejects_empty_accessible_text(self):
+        for field in ('execution', 'dose', 'frequency', 'supervision', 'progression', 'stoppingRules'):
+            for value in ('reported in accessible text: ', 'reported in accessible text:    '):
+                with self.subTest(field=field, value=value):
+                    source = self.protocol_source('abstract-only')
+                    source['protocol'][field] = value
+                    self.complete(self.dossier)
+                    self.assertTrue(self.errors())
+
+    def test_unavailable_protocol_rejects_accessible_text_claim(self):
+        for field in ('execution', 'dose', 'frequency', 'supervision', 'progression', 'stoppingRules'):
+            with self.subTest(field=field):
+                source = self.protocol_source('unavailable')
+                source['protocol'][field] = 'reported in accessible text: Three sessions per week.'
+                self.complete(self.dossier)
+                self.rejected('protocol.' + field)
+
+    def test_abstract_protocol_rejects_unqualified_method(self):
+        for field in ('execution', 'dose', 'frequency', 'supervision', 'progression', 'stoppingRules'):
+            with self.subTest(field=field):
+                source = self.protocol_source('abstract-only')
+                source['protocol'][field] = 'Three sessions per week.'
+                self.complete(self.dossier)
+                self.rejected('protocol.' + field)
+
+    def test_accessible_protocol_still_requires_source_locations(self):
+        source = self.protocol_source('abstract-only')
+        source['protocol']['frequency'] = 'reported in accessible text: Three sessions per week.'
+        source['locations'] = []
+        self.complete(self.dossier)
+        self.rejected('locations')
 
     def test_access_status_required(self):
         pilot = self.pilot()
