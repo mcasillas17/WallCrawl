@@ -1,0 +1,374 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "fibromyalgia",
+    "label": "fibromyalgia",
+    "aliases": [],
+    "distinctions": "Nociplastic widespread pain syndrome; does not label all widespread pain or override coexisting inflammatory/structural diagnoses."
+  },
+  "scope": {
+    "population": "Adults with established fibromyalgia; primary strength trial women20–65 and tai-chi trial predominantly middle-aged women.",
+    "stage": "Chronic symptoms; not acute injury or surgery rehabilitation.",
+    "operativeStatus": "Primarily nonoperative exercise research; surgical protocols and postoperative clearance not established.",
+    "exclusions": "Primary studies excluded important participation-limiting comorbidity and competing pain causes; these are applicability limits,not universal exercise bans.",
+    "uncertainty": "Response and tolerability vary; stretching alone cannot inherit benefit of strength,aerobic or mind-body bundles."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "Web scientific search; primary publisher/PubMed retrieval",
+      "query": "fibromyalgia exercise 2025 Brazilian guideline s42358-025-00507-x",
+      "decision": "Retrieved and extracted the primary studies and current sources declared below; retained population, dose, uncertainty and harms. Later evidence contextualizes rather than automatically replaces earlier studies.",
+      "limitations": "Focused search, not exhaustive systematic review. Source-specific access limits and integrity failures remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Web scientific search; primary publisher/PubMed retrieval",
+      "query": "10.1186/s13075-015-0679-1 PMC",
+      "decision": "Retrieved and extracted the primary studies and current sources declared below; retained population, dose, uncertainty and harms. Later evidence contextualizes rather than automatically replaces earlier studies.",
+      "limitations": "Focused search, not exhaustive systematic review. Source-specific access limits and integrity failures remain explicit."
+    }
+  ],
+  "sources": [
+    {
+      "id": "larsson-2015",
+      "title": "Resistance exercise improves muscle strength, health status and pain intensity in fibromyalgia—a randomized controlled trial",
+      "doi": "10.1186/s13075-015-0679-1",
+      "pmid": "26084281",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4489359/",
+      "publicationStatus": "final peer-reviewed journal article",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Complete EuropePMC XML PMC4489359 retrieved; eligibility,person-centered intervention,Box1,Tables3/4 and pain-related withdrawals inspected."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Inspected primary article metadata/version and linked notices; Crossref DOI works metadata request and focused later-evidence searches on 2026-11-01. Not a registry-wide clearance.",
+        "result": "Crossref lookup returned HTTP Error 429: Too Many Requests; no complete external registry check. No notice identified in the retrieved article text; absence not established."
+      },
+      "design": "Assessor-blinded multicentre randomized trial130women,67strength/63relaxation;105post-test,91long-term responders.",
+      "population": "Women20–65 meeting ACR1990 criteria;actual22–64,variable chronic symptom duration; competing severe pain/comorbidity excluded.",
+      "comparator": "Physiotherapist-guided relaxation/autogenic training twice weekly15weeks,followed by stretching.",
+      "coInterventions": "Person-centered introductory dialogue/group support;strength arm included warm-up and stretching,so not isolated resistance component.",
+      "outcomes": "Knee-extension force between-group p=0.010,effect size0.55;FIQ p=0.038,effect size0.41;pain p=0.033,effect size0.46. No95%CI for these standardized effects in extracted table. Handgrip/SF36 group differences not significant;13–18month self-report group differences absent.",
+      "followUp": "15weeks and13–18months (questionnaires only long term).",
+      "uncertainty": "Unblinded participants,multiple outcomes,attrition;higher-function participants more often reached80%1RM; no durable group benefit established.",
+      "harms": "Five participants discontinued resistance because increased pain;two still attended post-test. Meanattendance71%strength,64%relaxation.",
+      "limitations": "Individual readiness governs progression: 42/67 participants (62.7%) reached 80% estimated 1RM. No automatic progression or universal tolerability follows.",
+      "protocol": {
+        "execution": "Machine leg press,knee extension/flexion;free-weight biceps/grip;bodyweight heel raise/core stability;10minwarm-up,50minprotocol and10minstretching. Exact machines/core/stretch positions incompletely specified.",
+        "dose": "Initially40%estimated1RM15–20reps1–2sets;after3–4weeks60%10–12reps;6–8weeks80%5–8reps1–2sets;1minrest.",
+        "frequency": "Twice weekly15weeks.",
+        "supervision": "Experienced physiotherapists,groups5–7 with individual introductory/load-adjustment meeting.",
+        "progression": "Evaluate every3–4weeks in patient–therapist dialogue;retain load if participant not ready. Rapid heel raises addedweek5,explosive knee extensionsweek8 within supervised program.",
+        "stoppingRules": "Avoid increased pain via modification/person-centered control;no universal numeric stopping threshold reported."
+      },
+      "locations": [
+        "Methods > Recruitment; Intervention; Box 1 Dosage of resistance exercise",
+        "Results > Participants; Primary/Secondary outcomes; Table 3",
+        "Results > Follow up at 13–18 months; Table 4"
+      ]
+    },
+    {
+      "id": "wang-2018",
+      "title": "Effect of tai chi versus aerobic exercise for fibromyalgia: comparative effectiveness randomized controlled trial",
+      "doi": "10.1136/bmj.k851",
+      "pmid": "29563100",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5861462/",
+      "publicationStatus": "final peer-reviewed journal article",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Complete EuropePMC XML PMC5861462 retrieved;eligibility,tai-chi/aerobic execution and dose,Tables2/3,safety/limitations inspected. Individual-form supplement not visually verified."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Inspected primary article metadata/version and linked notices; Crossref DOI works metadata request and focused later-evidence searches on 2026-11-01. Not a registry-wide clearance.",
+        "result": "Crossref lookup returned HTTP Error 429: Too Many Requests; no complete external registry check. No notice identified in the retrieved article text; absence not established."
+      },
+      "design": "Single-blind5-arm comparative-effectiveness randomized trial226adults.",
+      "population": "Age≥21,ACR1990/2010criteria;92%women,mean52;serious participation-limiting disease,inflammatory/connective-tissue disease and recent tai chi excluded.",
+      "comparator": "24weekmoderate aerobic classes twice weekly versus tai chi1or2times/week,12or24weeks.",
+      "coInterventions": "Routine drugs/physician care permitted;home practice encouraged;warm-up/stretching/breathing/relaxation differ by program.",
+      "outcomes": "24weekFIQR combined tai-chi advantage5.5points (95%CI0.6–10.4),below borrowed8.1pointFIQclinical threshold;matched24week2×/weekcontrast16.2 (8.7–23.6). At52weeks combined difference2.7 (−2.3 to7.7),not significant. Twice-versus-once weekly advantage not significant.",
+      "followUp": "12,24,52weeks;70%52weekretention.",
+      "uncertainty": "Tai-chi attendance62%versus aerobic40%;unblinded participants,complex bundle,unequal adherence and multiple contrasts.",
+      "harms": "No intervention-related serious adverse events;12events considered related,8tai chi/4aerobic,mostly minor musculoskeletal.",
+      "limitations": "Tai chi is not a single stretch or strength-set substitute;exact Yang forms not fully extracted for app artwork.",
+      "protocol": {
+        "execution": "Classic Yang-style tai chi combines meditative movement,breathing,relaxation; aerobic arm choreographed group cardiovascular exercise plus warm-up/cool-down/stretching.",
+        "dose": "60minclasses; aerobic initially20min50–60%estimatedHRmax,RPE11–13,progressing to40min60–70% byweeks10–12;dailywalk goal30min.",
+        "frequency": "Tai chi1or2weekly12or24weeks; aerobic2weekly24weeks;dailyhome practice encouraged.",
+        "supervision": "Trained instructors;videos monitored tai chi fidelity;exercise-physiology oversight and technique/HR/RPE monitoring for aerobic.",
+        "progression": "Aerobic duration +5min every2weeks,individually tailored. Tai chi weekly practice assignments.",
+        "stoppingRules": "not reported as one numeric stopping rule;adverse events systematically assessed by rheumatologist."
+      },
+      "locations": [
+        "Methods > Setting and participants; Interventions > Tai chi; Aerobic exercise",
+        "Results > Tables 2–3; adverse events; Discussion"
+      ]
+    },
+    {
+      "id": "brazilian-guideline-2026",
+      "title": "Brazilian Society of Rheumatology’s fibromyalgia treatment guidelines – part I: monitoring and non-pharmacological management",
+      "doi": "10.1186/s42358-025-00507-x",
+      "pmid": null,
+      "url": "https://link.springer.com/article/10.1186/s42358-025-00507-x",
+      "publicationStatus": "Finalpublished16January2026;version-of-record23January2026;DOIcontains2025butpublication2026.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Complete publisher HTML retrieved;methodology,exercise modality recommendations and strength/flexibility evidence/limits inspected."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Inspected primary article metadata/version and linked notices; Crossref DOI works metadata request and focused later-evidence searches on 2026-11-01. Not a registry-wide clearance.",
+        "result": "Inspected Crossref metadata has no update-to entry; this does not establish absence of corrections or retractions. No replacement established by focused currentness search."
+      },
+      "design": "Society evidence-based treatment guideline plus consensus,not one trial.",
+      "population": "Fibromyalgia management; evidence predominantly women with heterogeneous trials.",
+      "comparator": "Exercise versus no intervention or active modalities in reviewed syntheses.",
+      "coInterventions": "Multidisciplinary symptom-targeted management.",
+      "outcomes": "Recommends aerobic/resistance approaches;flexibility generally less effective and lacks clinically significant advantage versus aerobic for several outcomes.",
+      "followUp": "Varies;long-term flexibility benefit uncertain.",
+      "uncertainty": "No universally superior aerobic modality;methodological quality and protocol standardization vary.",
+      "harms": "Tolerability summaries cannot erase individual pain withdrawals in primary trials.",
+      "limitations": "No condition-wide high-intensity/ROM ban and no single validated default dose.",
+      "protocol": {
+        "execution": "Multiple aerobic,resistance and flexibility approaches;not one precise execution.",
+        "dose": "Heterogeneous reviewed protocols;no single optimal dose.",
+        "frequency": "Varied protocols;not a common universal frequency.",
+        "supervision": "Individualized multidisciplinary context.",
+        "progression": "Tailored;no universal algorithm.",
+        "stoppingRules": "not reported as a validated numeric stopping rule."
+      },
+      "locations": [
+        "Recommendations > benefits of strength training; therapeutic benefits of flexibility exercises",
+        "Methods; Recommendations > aerobic exercise modalities"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "strength-short-term-signal",
+      "kind": "study-result",
+      "statement": "Knee-extension force between-group p=0.010,effect size0.55;FIQ p=0.038,effect size0.41;pain p=0.033,effect size0.46. No95%CI for these standardized effects in extracted table. Handgrip/SF36 group differences not significant;13–18month self-report group differences absent.",
+      "citations": [
+        {
+          "sourceId": "larsson-2015",
+          "location": "Methods > Recruitment; Intervention; Box 1 Dosage of resistance exercise"
+        },
+        {
+          "sourceId": "larsson-2015",
+          "location": "Results > Participants; Primary/Secondary outcomes; Table 3"
+        },
+        {
+          "sourceId": "larsson-2015",
+          "location": "Results > Follow up at 13–18 months; Table 4"
+        }
+      ],
+      "applicability": "Women20–65 meeting ACR1990 criteria;actual22–64,variable chronic symptom duration; competing severe pain/comorbidity excluded.",
+      "limitations": "Bundle with stretching and support;5painwithdrawals and long-term null comparisons retained."
+    },
+    {
+      "id": "tai-chi-comparative-signal",
+      "kind": "study-result",
+      "statement": "24weekFIQR combined tai-chi advantage5.5points (95%CI0.6–10.4),below borrowed8.1pointFIQclinical threshold;matched24week2×/weekcontrast16.2 (8.7–23.6). At52weeks combined difference2.7 (−2.3 to7.7),not significant. Twice-versus-once weekly advantage not significant.",
+      "citations": [
+        {
+          "sourceId": "wang-2018",
+          "location": "Methods > Setting and participants; Interventions > Tai chi; Aerobic exercise"
+        },
+        {
+          "sourceId": "wang-2018",
+          "location": "Results > Tables 2–3; adverse events; Discussion"
+        }
+      ],
+      "applicability": "Age≥21,ACR1990/2010criteria;92%women,mean52;serious participation-limiting disease,inflammatory/connective-tissue disease and recent tai chi excluded.",
+      "limitations": "Different adherence and contextual factors;benefit cannot be transferred to catalog stretching."
+    },
+    {
+      "id": "exercise-modalities-guidance",
+      "kind": "published-recommendation",
+      "statement": "Current Brazilian guideline recommends resistance/aerobic exercise and describes flexibility as less effective for most parameters,with low-certainty flexibility evidence. It supplies no universal ban on strength or default individual dose.",
+      "citations": [
+        {
+          "sourceId": "brazilian-guideline-2026",
+          "location": "Recommendations > benefits of strength training; therapeutic benefits of flexibility exercises"
+        }
+      ],
+      "applicability": "Adults with FM.",
+      "limitations": "Consensus interpretation of heterogeneous trials;not clinical app approval."
+    },
+    {
+      "id": "individual-response",
+      "kind": "study-result",
+      "statement": "Strength progression was decided every3–4weeks with patient/physiotherapist;unchanged load permitted. Five participants discontinued due to increased pain;not all achieved target80%1RM.",
+      "citations": [
+        {
+          "sourceId": "larsson-2015",
+          "location": "Methods > Recruitment; Intervention; Box 1 Dosage of resistance exercise"
+        },
+        {
+          "sourceId": "larsson-2015",
+          "location": "Results > Participants; Primary/Secondary outcomes; Table 3"
+        }
+      ],
+      "applicability": "Women20–65 meeting ACR1990 criteria;actual22–64,variable chronic symptom duration; competing severe pain/comorbidity excluded.",
+      "limitations": "This supports preserving individual response,not a numeric diagnostic pain threshold."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "fm-machine-leg-press-variant-unresolved-mapping",
+      "exerciseId": null,
+      "requestId": "fm-machine-leg-press-variant-unresolved",
+      "findingIds": [
+        "strength-short-term-signal"
+      ],
+      "matchRationale": "Catalog leg-press,leg-extension,calf-raise metadata inspected;study does not verify exact apparatus/range/support. Retain research variant rather than claiming visual/execution equivalence or independent component efficacy.",
+      "status": "candidate"
+    },
+    {
+      "id": "fm-machine-knee-extension-variant-unresolved-mapping",
+      "exerciseId": null,
+      "requestId": "fm-machine-knee-extension-variant-unresolved",
+      "findingIds": [
+        "strength-short-term-signal"
+      ],
+      "matchRationale": "Catalog leg-press,leg-extension,calf-raise metadata inspected;study does not verify exact apparatus/range/support. Retain research variant rather than claiming visual/execution equivalence or independent component efficacy.",
+      "status": "candidate"
+    },
+    {
+      "id": "fm-bodyweight-heel-raise-variant-unresolved-mapping",
+      "exerciseId": null,
+      "requestId": "fm-bodyweight-heel-raise-variant-unresolved",
+      "findingIds": [
+        "strength-short-term-signal"
+      ],
+      "matchRationale": "Catalog leg-press,leg-extension,calf-raise metadata inspected;study does not verify exact apparatus/range/support. Retain research variant rather than claiming visual/execution equivalence or independent component efficacy.",
+      "status": "candidate"
+    },
+    {
+      "id": "fm-yang-tai-chi-program-unresolved-mapping",
+      "exerciseId": null,
+      "requestId": "fm-yang-tai-chi-program-unresolved",
+      "findingIds": [
+        "tai-chi-comparative-signal"
+      ],
+      "matchRationale": "No exact sequence in catalog;retain program research request,individual forms/PNGstoryboard require separate extraction and review.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "review-person-centered-strength",
+      "kind": "supportive-prescription",
+      "basis": "unresolved-hypothesis",
+      "statement": "Retain studied strength candidates for independent review with individualized starting load and nonautomatic progression.",
+      "findingIds": [
+        "strength-short-term-signal",
+        "exercise-modalities-guidance"
+      ],
+      "citations": [
+        {
+          "sourceId": "larsson-2015",
+          "location": "Methods > Recruitment; Intervention; Box 1 Dosage of resistance exercise"
+        },
+        {
+          "sourceId": "larsson-2015",
+          "location": "Results > Participants; Primary/Secondary outcomes; Table 3"
+        },
+        {
+          "sourceId": "brazilian-guideline-2026",
+          "location": "Recommendations > benefits of strength training; therapeutic benefits of flexibility exercises"
+        }
+      ],
+      "applicability": {
+        "population": "Women20–65 meeting ACR1990 criteria;actual22–64,variable chronic symptom duration; competing severe pain/comorbidity excluded.",
+        "stage": "Chronic FM,not acute injury/postoperative rehabilitation.",
+        "rationale": "Short-term benefit and current recommendations support review."
+      },
+      "limitations": "No isolated component effect,durable benefit or guaranteed tolerability;other joint restrictions prevail.",
+      "mappingIds": [
+        "fm-machine-leg-press-variant-unresolved-mapping",
+        "fm-machine-knee-extension-variant-unresolved-mapping",
+        "fm-bodyweight-heel-raise-variant-unresolved-mapping"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "review-mind-body-candidate",
+      "kind": "supportive-prescription",
+      "basis": "unresolved-hypothesis",
+      "statement": "Retain Yang-style tai-chi program as a distinct mind-body candidate;do not substitute a stretch or award strength credit.",
+      "findingIds": [
+        "tai-chi-comparative-signal"
+      ],
+      "citations": [
+        {
+          "sourceId": "wang-2018",
+          "location": "Methods > Setting and participants; Interventions > Tai chi; Aerobic exercise"
+        },
+        {
+          "sourceId": "wang-2018",
+          "location": "Results > Tables 2–3; adverse events; Discussion"
+        }
+      ],
+      "applicability": {
+        "population": "Age≥21,ACR1990/2010criteria;92%women,mean52;serious participation-limiting disease,inflammatory/connective-tissue disease and recent tai chi excluded.",
+        "stage": "Chronic clinically assessed FM.",
+        "rationale": "Comparative program signal,not proof all movements independently therapeutic."
+      },
+      "limitations": "Execution forms and adherence difference unresolved;no release.",
+      "mappingIds": [
+        "fm-yang-tai-chi-program-unresolved-mapping"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "review-individual-progression",
+      "kind": "symptom-response",
+      "basis": "product-precaution",
+      "statement": "Candidate: progression must remain responsive to individual tolerance/readiness;withhold automatic load increments and universal pain cutoff.",
+      "findingIds": [
+        "individual-response"
+      ],
+      "citations": [
+        {
+          "sourceId": "larsson-2015",
+          "location": "Methods > Recruitment; Intervention; Box 1 Dosage of resistance exercise"
+        },
+        {
+          "sourceId": "larsson-2015",
+          "location": "Results > Participants; Primary/Secondary outcomes; Table 3"
+        }
+      ],
+      "applicability": {
+        "population": "Women20–65 meeting ACR1990 criteria;actual22–64,variable chronic symptom duration; competing severe pain/comorbidity excluded.",
+        "stage": "During supervised chronic-FM strength training.",
+        "rationale": "Observed pain withdrawals and variable progression challenge one-size dose."
+      },
+      "limitations": "Product interpretation of protocol/harms,not an independently tested stopping rule.",
+      "mappingIds": [],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "Independent clinical review absent. All mappings/rules/requests are candidates; no therapeutic release, clinical approval or universally safe exercise claim.",
+    "Source doses describe studied or recommended contexts, not individual app prescriptions. No generic five-second stretch progression or strength-set credit for stretching.",
+    "Coexisting conditions, equipment, independently selected joint limits and user-confirmed starting load remain separate constraints; no restriction may be relaxed to fill an empty workout.",
+    "Exact machine/support/range/core/stretch positions and tai-chi forms/visuals unresolved;no synonym-only catalog match.",
+    "No diagnosis-only ordinary-training exclusion,load cap or ROM threshold established;weak flexibility evidence is not proof stretching harmful.",
+    "Long-term strength self-report group differences absent;combined tai-chi advantage not significant at52weeks."
+  ],
+  "disposition": "research-only",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

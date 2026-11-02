@@ -1,0 +1,470 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "osteoporosis",
+    "label": "Osteoporosis",
+    "aliases": [],
+    "distinctions": "Low bone mass/osteopenia in a trial is broader than diagnosed osteoporosis. Vertebral fracture, multiple fragility fractures, fall risk and frailty are attributes requiring separate handling."
+  },
+  "scope": {
+    "population": "Adults with osteoporosis; primary lifting trial is selected postmenopausal women over 58 with T-score below −1.0.",
+    "stage": "Stable low bone mass cohorts; acute vertebral fracture, recent surgery and medically unstable patients are not established by the lifting RCT.",
+    "operativeStatus": "Primarily nonoperative exercise research; surgical protocols and postoperative clearance not established.",
+    "exclusions": "LIFTMOR excluded fracture within 12 months, localized back pain, lower limb joint injury/surgery and specified comorbidities/medications. These are study limits, not universal contraindications.",
+    "uncertainty": "Fracture prevention is not equivalent to BMD improvement; exact safe loads/ranges for an individual are unknown."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "Web scientific search; primary publisher/PubMed retrieval",
+      "query": "osteoporosis Strong steady straight LIFTMOR 2026 exercise guideline DVO 02194",
+      "decision": "Retrieved and extracted the primary studies and current sources declared below; retained population, dose, uncertainty and harms. Later evidence contextualizes rather than automatically replaces earlier studies.",
+      "limitations": "Focused search, not exhaustive systematic review. Source-specific access limits and integrity failures remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Web scientific search; primary publisher/PubMed retrieval",
+      "query": "LIFTMOR 3284 full text pdf Watson 2018 trial",
+      "decision": "Retrieved and extracted the primary studies and current sources declared below; retained population, dose, uncertainty and harms. Later evidence contextualizes rather than automatically replaces earlier studies.",
+      "limitations": "Focused search, not exhaustive systematic review. Source-specific access limits and integrity failures remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Web scientific search; primary publisher/PubMed retrieval",
+      "query": "\"10.1002/jbmr.3659\" correction LIFTMOR",
+      "decision": "Retrieved and extracted the primary studies and current sources declared below; retained population, dose, uncertainty and harms. Later evidence contextualizes rather than automatically replaces earlier studies.",
+      "limitations": "Focused search, not exhaustive systematic review. Source-specific access limits and integrity failures remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Web scientific search; primary publisher/PubMed retrieval",
+      "query": "\"LIFTMOR\" \"Corrigendum\" 2019",
+      "decision": "Retrieved and extracted the primary studies and current sources declared below; retained population, dose, uncertainty and harms. Later evidence contextualizes rather than automatically replaces earlier studies.",
+      "limitations": "Focused search, not exhaustive systematic review. Source-specific access limits and integrity failures remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Web scientific search and PubMed primary abstract",
+      "query": "Sinaki Mikkelsen 1984 postmenopausal spinal osteoporosis flexion extension exercises fractures 89 16 PMID",
+      "decision": "Inspected historical condition-specific primary harms abstract supporting the source trail behind spinal-flexion caution; retained weak design and inaccessible scan boundary.",
+      "limitations": "No readable full scanned article or verified DOI; no exact exercise/angle/load mapping extracted."
+    }
+  ],
+  "sources": [
+    {
+      "id": "uk-consensus-2022",
+      "title": "Strong, steady and straight: UK consensus statement on physical activity and exercise for osteoporosis",
+      "doi": "10.1136/bjsports-2021-104634",
+      "pmid": "35577538",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9304091/",
+      "publicationStatus": "final peer-reviewed journal article",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Complete article text retrieved and relevant population, methods, results, harms and limitations inspected."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Inspected primary article metadata/version and linked notices; Crossref DOI works metadata request and focused later-evidence searches on 2026-11-01. Not a registry-wide clearance.",
+        "result": "Inspected Crossref metadata has no update-to entry; this does not establish absence of corrections or retractions. No replacement established by focused currentness search."
+      },
+      "design": "Evidence review plus expert consensus; boxes distinguish evidence [E] and consensus [C].",
+      "population": "People with osteoporosis, stratified by vertebral/multiple low-trauma fractures, fall history and frailty.",
+      "comparator": "Heterogeneous exercise/control studies, not one randomized comparison.",
+      "coInterventions": "Exercise complements indicated pharmacological treatment.",
+      "outcomes": "Recommends resistance, impact, balance and spinal-extensor approaches. Most spine-sparing and fracture-specific modifications are consensus rather than directly proven risk thresholds.",
+      "followUp": "Varies by underlying studies; no common follow-up.",
+      "uncertainty": "Adverse events incompletely reported; theoretical risks must be distinguished from measured harms.",
+      "harms": "Review notes sparse adverse-event reporting, cases involving spinal flexion and some increased falls/fractures in high-risk walking cohorts; no universal safety established.",
+      "limitations": "No universal weight limit or ban on all twisting/lifting. Fracture-specific impact advice explicitly precautionary.",
+      "protocol": {
+        "execution": "Progressive resistance, impact, balance and posture/hip-hinge techniques; distinct contexts, not one execution.",
+        "dose": "Box1: resistance 8–12RM building to three sets; start lower intensity for technique. Vertebral/multiple low-trauma fracture impact up to brisk walking is a precaution, not proven harm threshold.",
+        "frequency": "Resistance 2–3 days/week; balance at least twice weekly in specified contexts.",
+        "supervision": "Individual physiotherapy advice especially with fractures/new training.",
+        "progression": "Individual gradual progression with technique and adverse-effect monitoring.",
+        "stoppingRules": "not reported as a validated numeric stopping algorithm."
+      },
+      "locations": [
+        "Strong > Box 1; Steady > Box 2",
+        "Straight > Box 3; Evidence for exercise safety",
+        "Exercise and pharmaceutical treatment"
+      ]
+    },
+    {
+      "id": "liftmor-2018",
+      "title": "High-Intensity Resistance and Impact Training Improves Bone Mineral Density and Physical Function in Postmenopausal Women With Osteopenia and Osteoporosis: The LIFTMOR Randomized Controlled Trial",
+      "doi": "10.1002/jbmr.3284",
+      "pmid": "28975661",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/28975661/",
+      "publicationStatus": "Final journal report 2018 (online 2017); retrieved full version is author thesis Chapter5, January2019, not asserted to be corrected publisher typeset text.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "PubMed metadata/abstract cross-checked. Complete author thesis https://research-repository.griffith.edu.au/server/api/core/bitstreams/b6b80b27-44f2-4f82-a315-370c13c7e34f/content retrieved, Chapter5 methods/results inspected. Thesis DOI10.25904/1912/1881 is not the journal DOI. 2019 erratum separately inspected."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Inspected primary article metadata/version and linked notices; Crossref DOI works metadata request and focused later-evidence searches on 2026-11-01. Not a registry-wide clearance.",
+        "result": "Crossref erratum relation found DOI10.1002/jbmr.3659 (PMID30861219). Wiley full notice inspected: Table2 lifestyle/anthropometric change headings and calcium sign corrected; do not describe this paper as uncorrected or confuse absolute changes with percentages. No registry-wide retraction clearance."
+      },
+      "design": "Randomized trial; 101 women; 49 HiRIT,52 control. Outcome measurer unblinded, BMD verified by blinded investigator; selected population and unequal supervision.",
+      "population": "Otherwise healthy postmenopausal women >58 years, hip/spine T-score <−1.0; screened for conditions/drugs influencing bone/function. Recent fracture/back pain excluded.",
+      "comparator": "8 months twice-weekly 30-minute unsupervised low-load home exercise: walking, lunges, calf raises, raises/shrugs, stretches, progression to 3kg.",
+      "coInterventions": "Stratification by established osteoporosis medication; participants on/off medication included.",
+      "outcomes": "At 8 months LS BMD change 2.9±2.8% vs −1.2±2.8% (p<0.001); FN 0.3±2.6% vs −1.9±2.6% (p=0.004). These are changes±SD, not confidence intervals; no fracture-reduction effect established.",
+      "followUp": "8 months.",
+      "uncertainty": "Small selected sample, surrogate outcomes; not powered for rare fracture harms; study registration after recruitment had begun.",
+      "harms": "One minor lower-back spasm in HiRIT, missing 2/70 sessions; summary claim of no adverse events is broader than this reported event.",
+      "limitations": "Cannot transfer >80–85%1RM lifting or drop landings to unsupervised app users, acute/recent fractures or excluded comorbidity groups.",
+      "protocol": {
+        "execution": "Deadlift, overhead press, back squat and jumping chin-up with drop landing; underhand shoulder-width overhead bar, jump/pull then drop and land as heavily as comfortable.",
+        "dose": "30min; resistance 5×5 at >80–85%1RM after familiarisation; up to 2 deadlift warm-up sets at 50–70%1RM.",
+        "frequency": "Twice weekly for 8months.",
+        "supervision": "Exercise scientist/physiotherapist, groups ≤8 per instructor.",
+        "progression": "First month bodyweight/low-load technique; all reached four movements within2months; later load progression maintained target relative effort.",
+        "stoppingRules": "not reported as a reproducible numeric symptom algorithm."
+      },
+      "locations": [
+        "Author thesis Chapter 5 > 5.3.2 Participants, pp.118–119 (PDF pp.150–151)",
+        "Author thesis Chapter 5 > 5.3.3–5.3.4 Intervention/control, pp.120–121 (PDF pp.152–153)",
+        "Author thesis Chapter 5 > 5.1 Abstract; 5.4 Results; 5.5 Discussion"
+      ]
+    },
+    {
+      "id": "liftmor-erratum-2019",
+      "title": "High-Intensity Resistance and Impact Training Improves Bone Mineral Density and Physical Function in Postmenopausal Women With Osteopenia and Osteoporosis: The LIFTMOR Randomized Controlled Trial [Published Erratum]",
+      "doi": "10.1002/jbmr.3659",
+      "pmid": "30861219",
+      "url": "https://onlinelibrary.wiley.com/doi/10.1002/jbmr.3659",
+      "publicationStatus": "Published erratum, online25February2019, March2019 issue.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Complete article text retrieved and relevant population, methods, results, harms and limitations inspected."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Inspected primary article metadata/version and linked notices; Crossref DOI works metadata request and focused later-evidence searches on 2026-11-01. Not a registry-wide clearance.",
+        "result": "Identified through original DOI Crossref erratum relation and PubMed ErratumFor; Wiley notice read. It corrects original report, not a new study."
+      },
+      "design": "Correction notice, not new participants or an efficacy trial.",
+      "population": "Original LIFTMOR cohort.",
+      "comparator": "not applicable.",
+      "coInterventions": "not applicable.",
+      "outcomes": "Table2 headings changed from % change to Change (absolute values); HiRIT calcium intake change corrected to −10±282 instead of +10±282.",
+      "followUp": "No additional follow-up.",
+      "uncertainty": "Oxford migrated HTML calls Table1; Wiley notice and correction PDF identify Table2. Retain title/version identity.",
+      "harms": "No new harms data.",
+      "limitations": "Correction supplies no new exercise efficacy or clearance.",
+      "protocol": {
+        "execution": "not reported",
+        "dose": "not reported",
+        "frequency": "not reported",
+        "supervision": "not reported",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "To The Editor; corrected Table 2 (2019;34:572)"
+      ]
+    },
+    {
+      "id": "dvo-2026",
+      "title": "Exercise for fracture prevention - evidence and consensus-based practice guideline of the osteology umbrella association (DVO)",
+      "doi": "10.1186/s12902-026-02194-1",
+      "pmid": "41699562",
+      "url": "https://link.springer.com/article/10.1186/s12902-026-02194-1",
+      "publicationStatus": "Final open-access journal guideline16February2026.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Complete article text retrieved and relevant population, methods, results, harms and limitations inspected."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Inspected primary article metadata/version and linked notices; Crossref DOI works metadata request and focused later-evidence searches on 2026-11-01. Not a registry-wide clearance.",
+        "result": "Inspected Crossref metadata has no update-to entry; this does not establish absence of corrections or retractions. No replacement established by focused currentness search."
+      },
+      "design": "Evidence and consensus guideline deriving risk-stratified fracture-prevention training, not one trial.",
+      "population": "Community-dwelling men/postmenopausal women≥45, varying BMD, fractures and fall risk; institutionalized/younger populations outside scope.",
+      "comparator": "Heterogeneous exercise programs versus controls.",
+      "coInterventions": "Risk-dependent pharmacological treatment and other fracture management.",
+      "outcomes": "Supports bone strength/fall prevention exercise; optimal single fracture-prevention protocol remains unknown.",
+      "followUp": "Varied underlying studies.",
+      "uncertainty": "Selected cohorts and outcomes; consensus/evidence grades vary; article excludes detailed acute vertebral-fracture guidance.",
+      "harms": "Safety section specifies high spinal loading concerns; rare harms/reporting limits prevent universal safety conclusions.",
+      "limitations": "Risk strata differ: restrictions on dynamic high back-extension/flexion loading coexist with supervised low-stimulus trunk exercise in fracture/fall-risk cohorts. No diagnosis-only ban on all trunk movement.",
+      "protocol": {
+        "execution": "Risk-stratified resistance, impact, balance/functional and fall-response training.",
+        "dose": "Initial conditioning examples <70%1RM; after adaptation higher bone-loading phases. These are guideline contexts, not a personal load cap.",
+        "frequency": "At least2sessions/week for bone strength; about3 for fall prevention.",
+        "supervision": "Competent close supervision for complex falling/landing and frail multiple-fracture cohorts.",
+        "progression": "Cautious progressive conditioning first3–6months; avoid explosive/high-velocity movements initially.",
+        "stoppingRules": "not reported as an individually validated numeric symptom algorithm."
+      },
+      "locations": [
+        "Targeted patient groups; Methods",
+        "Exercise safety and adverse effects > General recommendations; osteoporosis risk subgroups",
+        "Recommendations 19, 33, 37–44; Explanation and conclusion"
+      ]
+    },
+    {
+      "id": "sinaki-1984",
+      "title": "Postmenopausal spinal osteoporosis: flexion versus extension exercises",
+      "doi": null,
+      "pmid": "6487063",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/6487063/",
+      "publicationStatus": "Final journal article, October 1984;65(10):593–596.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "PubMed indexed primary abstract and article metadata inspected. Four-page scanned original paper at https://therapilates.com/PDF/sinaki.pdf downloaded but no text layer extracted; web screenshot calls returned no viewable image. Do not claim complete scanned-paper inspection."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Primary indexed metadata/abstract inspected and current guideline context compared; no DOI verified. No registry-wide correction/retraction search for this old record.",
+        "result": "Correction/retraction status not fully verified; no replacement established. This historical study is weak direct harm context, not definitive proof."
+      },
+      "design": "Small comparative observational study; allocation/randomization and adjusted confounding not established by accessible abstract.",
+      "population": "59 women age49–60 with postmenopausal spinal osteoporosis and back pain.",
+      "comparator": "Extension n25,flexion n9,combined n19,no therapeutic exercise n6.",
+      "coInterventions": "Not reported in accessible abstract; full methods not inspected.",
+      "outcomes": "Additional radiographic fractures: extension16%,flexion89%,combined53%,noexercise67%;flexion versus extension p<0.001. No adjusted risk estimate or confidence interval reported in accessible abstract.",
+      "followUp": "1–6years;group means1.4–2years.",
+      "uncertainty": "Very small,unequal groups;selection/confounding and differing follow-up can explain part of association. Do not label this an RCT or estimate a safe angle/load.",
+      "harms": "Radiographic wedging/compression fractures are the reported adverse outcome;other adverse events not reported in abstract.",
+      "limitations": "Indirect historical context for spinal-flexion precautions;does not show every bend causes fracture or that all modern loaded exercise is harmful.",
+      "protocol": {
+        "execution": "not reported; full scanned methods were not readable in this session.",
+        "dose": "not reported; full scanned methods were not readable in this session.",
+        "frequency": "not reported; full scanned methods were not readable in this session.",
+        "supervision": "not reported; full scanned methods were not readable in this session.",
+        "progression": "not reported; full scanned methods were not readable in this session.",
+        "stoppingRules": "not reported; full scanned methods were not readable in this session."
+      },
+      "locations": [
+        "Abstract > Participants, follow-up and radiographic fracture results"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "lifting-benefit",
+      "kind": "study-result",
+      "statement": "At 8 months LS BMD change 2.9±2.8% vs −1.2±2.8% (p<0.001); FN 0.3±2.6% vs −1.9±2.6% (p=0.004). These are changes±SD, not confidence intervals; no fracture-reduction effect established.",
+      "citations": [
+        {
+          "sourceId": "liftmor-2018",
+          "location": "Author thesis Chapter 5 > 5.3.3–5.3.4 Intervention/control, pp.120–121 (PDF pp.152–153)"
+        },
+        {
+          "sourceId": "liftmor-2018",
+          "location": "Author thesis Chapter 5 > 5.1 Abstract; 5.4 Results; 5.5 Discussion"
+        }
+      ],
+      "applicability": "Otherwise healthy postmenopausal women >58 years, hip/spine T-score <−1.0; screened for conditions/drugs influencing bone/function. Recent fracture/back pain excluded.",
+      "limitations": "Bundled HiRIT versus unequal-supervision low-load control; no isolated lift or fracture endpoint effect."
+    },
+    {
+      "id": "spine-sparing-consensus",
+      "kind": "published-recommendation",
+      "statement": "Box3 advises modifying sustained/repeated/end-range spinal flexion and excessive loaded curvature; use hip hinge, comfortable controlled movement. Smooth comfortable rotation is not categorically forbidden; no fixed lifting-weight ceiling.",
+      "citations": [
+        {
+          "sourceId": "uk-consensus-2022",
+          "location": "Straight > Box 3; Evidence for exercise safety"
+        }
+      ],
+      "applicability": "Osteoporosis, individualized around symptoms/fractures.",
+      "limitations": "Consensus precautions; not a validated angle/load threshold."
+    },
+    {
+      "id": "fracture-impact-consensus",
+      "kind": "published-recommendation",
+      "statement": "Vertebral or multiple low-trauma fracture cohort: impact up to brisk walking and individualized physiotherapy advice; restriction is explicitly precautionary because additional vertebral-fracture risk is theoretical/unproved.",
+      "citations": [
+        {
+          "sourceId": "uk-consensus-2022",
+          "location": "Strong > Box 1; Steady > Box 2"
+        }
+      ],
+      "applicability": "Vertebral/multiple fragility fractures.",
+      "limitations": "Does not justify applying fracture-cohort limits to every low-BMD user."
+    },
+    {
+      "id": "risk-stratified-loading",
+      "kind": "published-recommendation",
+      "statement": "DVO2026 recommends initial conditioning and supervised risk-stratified progression. High dynamic back-extension/flexion loads are contraindicated in its osteoporosis/no-increased-fall-risk subsection; frail/fracture cohorts require different tailored low-stimulus strategies.",
+      "citations": [
+        {
+          "sourceId": "dvo-2026",
+          "location": "Exercise safety and adverse effects > General recommendations; osteoporosis risk subgroups"
+        }
+      ],
+      "applicability": "Community-dwelling men/postmenopausal women≥45, varying BMD, fractures and fall risk; institutionalized/younger populations outside scope.",
+      "limitations": "Guideline strata and load context must remain attached; not one universal trunk ban."
+    },
+    {
+      "id": "historical-flexion-harm-context",
+      "kind": "study-result",
+      "statement": "Small historical comparative study reports greater radiographic fracture occurrence with flexion versus extension, but unequal groups,confounding and missing full methods prevent a causal universal prohibition.",
+      "citations": [
+        {
+          "sourceId": "sinaki-1984",
+          "location": "Abstract > Participants, follow-up and radiographic fracture results"
+        }
+      ],
+      "applicability": "59 women age49–60 with postmenopausal spinal osteoporosis and back pain.",
+      "limitations": "Abstract only; no valid universal ROM/load threshold or modern exercise identity."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "liftmor-back-squat-variant-unresolved-mapping",
+      "exerciseId": null,
+      "requestId": "liftmor-back-squat-variant-unresolved",
+      "findingIds": [
+        "lifting-benefit"
+      ],
+      "matchRationale": "Catalog barbell-back-squat,barbell-deadlift,overhead-press and chin-up metadata inspected; nominal similarity does not verify exact studied depth/setup/landing. Retain study-specific candidate, not automatic equivalence.",
+      "status": "candidate"
+    },
+    {
+      "id": "liftmor-deadlift-variant-unresolved-mapping",
+      "exerciseId": null,
+      "requestId": "liftmor-deadlift-variant-unresolved",
+      "findingIds": [
+        "lifting-benefit"
+      ],
+      "matchRationale": "Catalog barbell-back-squat,barbell-deadlift,overhead-press and chin-up metadata inspected; nominal similarity does not verify exact studied depth/setup/landing. Retain study-specific candidate, not automatic equivalence.",
+      "status": "candidate"
+    },
+    {
+      "id": "liftmor-overhead-press-variant-unresolved-mapping",
+      "exerciseId": null,
+      "requestId": "liftmor-overhead-press-variant-unresolved",
+      "findingIds": [
+        "lifting-benefit"
+      ],
+      "matchRationale": "Catalog barbell-back-squat,barbell-deadlift,overhead-press and chin-up metadata inspected; nominal similarity does not verify exact studied depth/setup/landing. Retain study-specific candidate, not automatic equivalence.",
+      "status": "candidate"
+    },
+    {
+      "id": "liftmor-jumping-chin-up-drop-landing-mapping",
+      "exerciseId": null,
+      "requestId": "liftmor-jumping-chin-up-drop-landing",
+      "findingIds": [
+        "lifting-benefit"
+      ],
+      "matchRationale": "Catalog barbell-back-squat,barbell-deadlift,overhead-press and chin-up metadata inspected; nominal similarity does not verify exact studied depth/setup/landing. Retain study-specific candidate, not automatic equivalence.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "review-hirit-only",
+      "kind": "supportive-prescription",
+      "basis": "unresolved-hypothesis",
+      "statement": "Retain supervised HiRIT executions for independent review in the selected stable postmenopausal cohort; no automatic heavy-load or impact prescription.",
+      "findingIds": [
+        "lifting-benefit"
+      ],
+      "citations": [
+        {
+          "sourceId": "liftmor-2018",
+          "location": "Author thesis Chapter 5 > 5.3.3–5.3.4 Intervention/control, pp.120–121 (PDF pp.152–153)"
+        },
+        {
+          "sourceId": "liftmor-2018",
+          "location": "Author thesis Chapter 5 > 5.1 Abstract; 5.4 Results; 5.5 Discussion"
+        }
+      ],
+      "applicability": {
+        "population": "Otherwise healthy postmenopausal women >58 years, hip/spine T-score <−1.0; screened for conditions/drugs influencing bone/function. Recent fracture/back pain excluded.",
+        "stage": "Not acute/recent fracture or postoperative rehabilitation.",
+        "rationale": "Source bundle improved BMD and function under close supervision."
+      },
+      "limitations": "Exact execution gaps and fracture risk/rare harms prevent app release.",
+      "mappingIds": [
+        "liftmor-back-squat-variant-unresolved-mapping",
+        "liftmor-deadlift-variant-unresolved-mapping",
+        "liftmor-overhead-press-variant-unresolved-mapping",
+        "liftmor-jumping-chin-up-drop-landing-mapping"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "review-loaded-spinal-flexion",
+      "kind": "range-limit",
+      "basis": "published-recommendation",
+      "statement": "Candidate: modify sustained,repeated,end-range or excessive loaded spinal flexion using individualized spine-sparing technique. No numeric angle or blanket twisting ban.",
+      "findingIds": [
+        "spine-sparing-consensus",
+        "risk-stratified-loading",
+        "historical-flexion-harm-context"
+      ],
+      "citations": [
+        {
+          "sourceId": "uk-consensus-2022",
+          "location": "Straight > Box 3; Evidence for exercise safety"
+        },
+        {
+          "sourceId": "dvo-2026",
+          "location": "Exercise safety and adverse effects > General recommendations; osteoporosis risk subgroups"
+        },
+        {
+          "sourceId": "sinaki-1984",
+          "location": "Abstract > Participants, follow-up and radiographic fracture results"
+        }
+      ],
+      "applicability": {
+        "population": "Clinically assessed osteoporosis; fracture/fall attributes required.",
+        "stage": "Acute vertebral fracture requires separate advice.",
+        "rationale": "Consensus and current risk-stratified guidance identify particular loading patterns rather than all exercise."
+      },
+      "limitations": "Not an executable catalog restriction until reviewed movement tags and clinical scope exist. Historical direct harms evidence is small and observational; no universal causal risk estimate follows.",
+      "mappingIds": [],
+      "status": "candidate"
+    },
+    {
+      "id": "review-fracture-impact",
+      "kind": "load-limit",
+      "basis": "published-recommendation",
+      "statement": "Candidate fracture-specific impact precaution: review higher-than-brisk-walking impact with clinician/physiotherapist; keep low-BMD-only users distinct.",
+      "findingIds": [
+        "fracture-impact-consensus"
+      ],
+      "citations": [
+        {
+          "sourceId": "uk-consensus-2022",
+          "location": "Strong > Box 1; Steady > Box 2"
+        }
+      ],
+      "applicability": {
+        "population": "Osteoporosis with vertebral or multiple low-trauma fractures.",
+        "stage": "Stable fracture history; acute fracture guidance unresolved.",
+        "rationale": "Published theoretical-risk precaution, not measured universal threshold."
+      },
+      "limitations": "No automatic impact blacklist or personalized clearance; fall risk changes priorities.",
+      "mappingIds": [],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "Independent clinical review absent. All mappings/rules/requests are candidates; no therapeutic release, clinical approval or universally safe exercise claim.",
+    "Source doses describe studied or recommended contexts, not individual app prescriptions. No generic five-second stretch progression or strength-set credit for stretching.",
+    "Coexisting conditions, equipment, independently selected joint limits and user-confirmed starting load remain separate constraints; no restriction may be relaxed to fill an empty workout.",
+    "LIFTMOR exact lift mechanics/artwork need verification; thesis-carried text is not asserted to be the final corrected typeset version. Known2019 erratum recorded.",
+    "Restriction evidence mostly consensus and risk stratification; no validated universal numeric ROM/weight cap or individual stopping rule.",
+    "DVO2026 contains conditional differences across risk strata, including high spinal-load contraindication versus lower-stimulus supervised trunk exercise; do not flatten into contradictory diagnosis-only rules."
+  ],
+  "disposition": "research-only",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

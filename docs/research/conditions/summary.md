@@ -4,7 +4,7 @@ Working evidence review for personalized workouts. This inventory contains 50 ca
 
 Each regional evidence report links the actual medical papers and guidelines inspected, distinguishes full-text from abstract-only access, and records study populations, interventions, outcomes, harms, conflicts and limits. A study protocol is not an approved app prescription. Unavailable details stay unknown; no restriction is justified merely because another exercise helped.
 
-Current state: linked source reports cover 45 of 50 conditions; 14 structured dossiers have been reconciled. Independent source verification and clinical review are separate gates. This is a targeted evidence review, not an exhaustive systematic review.
+Current state: linked source reports cover 50 of 50 conditions; 19 structured dossiers have been reconciled. Independent source verification and clinical review are separate gates. This is a targeted evidence review, not an exhaustive systematic review.
 
 ## Inventory and evidence links
 
@@ -55,11 +55,11 @@ Current state: linked source reports cover 45 of 50 conditions; 14 structured do
 | medial tibial stress syndrome | [Study extraction](evidence/lower-leg.md) | Pending reconciliation |
 | lower-limb bone stress injury | [Study extraction](evidence/lower-leg.md) | Pending reconciliation |
 | first metatarsophalangeal osteoarthritis | [Study extraction](evidence/lower-leg.md) | Pending reconciliation |
-| Osteoporosis | In progress | Pending reconciliation |
-| rheumatoid arthritis | In progress | Pending reconciliation |
-| axial spondyloarthritis | In progress | Pending reconciliation |
-| fibromyalgia | In progress | Pending reconciliation |
-| hypermobility spectrum disorder | In progress | Pending reconciliation |
+| Osteoporosis | [Study extraction](evidence/systemic.md) | [complete](osteoporosis.json) |
+| rheumatoid arthritis | [Study extraction](evidence/systemic.md) | [complete](rheumatoid-arthritis.json) |
+| axial spondyloarthritis | [Study extraction](evidence/systemic.md) | [complete](axial-spondyloarthritis.json) |
+| fibromyalgia | [Study extraction](evidence/systemic.md) | [complete](fibromyalgia.json) |
+| hypermobility spectrum disorder | [Study extraction](evidence/systemic.md) | [complete](hypermobility-spectrum-disorder.json) |
 
 ## Reading the evidence
 

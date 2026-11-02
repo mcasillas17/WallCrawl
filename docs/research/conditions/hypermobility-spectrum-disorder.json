@@ -1,0 +1,395 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "hypermobility-spectrum-disorder",
+    "label": "hypermobility spectrum disorder",
+    "aliases": [],
+    "distinctions": "HSD is symptomatic hypermobility after differential diagnosis,not asymptomatic flexibility or all Ehlers-Danlos syndromes. Trial enrolled no hEDS despite protocol allowing it."
+  },
+  "scope": {
+    "population": "Adults18–65 with generalized/historical HSD and shoulder symptoms≥3months;broader lower-limb evidence uses mixed older diagnostic labels.",
+    "stage": "Persistent shoulder symptoms;recent shoulder surgery excluded;other joints and hEDS require separate inference.",
+    "operativeStatus": "Primarily nonoperative exercise research; surgical protocols and postoperative clearance not established.",
+    "exclusions": "Primary trial excluded recent surgery/injection and limiting referred/systemic causes;these are trial applicability limits.",
+    "uncertainty": "Do not assume high loads universally unsafe,full range universally safe,or all stretching prohibited from HSD alone."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "Web scientific search; primary publisher/PubMed retrieval",
+      "query": "hypermobility 2026 review s43166-026-00407-y shoulder 2024",
+      "decision": "Retrieved and extracted the primary studies and current sources declared below; retained population, dose, uncertainty and harms. Later evidence contextualizes rather than automatically replaces earlier studies.",
+      "limitations": "Focused search, not exhaustive systematic review. Source-specific access limits and integrity failures remain explicit."
+    }
+  ],
+  "sources": [
+    {
+      "id": "liaghat-2022",
+      "title": "Short-term effectiveness of high-load compared with low-load strengthening exercise on self-reported function in patients with hypermobile shoulders: a randomised controlled trial",
+      "doi": "10.1136/bjsports-2021-105223",
+      "pmid": "35649707",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9626913/",
+      "publicationStatus": "final peer-reviewed journal article",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Complete Europe PMC XML retrieved; eligibility, actual intervention, Tables 2/3 and limitations inspected. None of 100 participants had hEDS."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Inspected primary article metadata/version and linked notices; Crossref DOI works metadata request and focused later-evidence searches on 2026-11-01. Not a registry-wide clearance.",
+        "result": "Crossref lookup returned HTTP Error 429: Too Many Requests; no complete external registry check. No notice identified in the retrieved article text; absence not established."
+      },
+      "design": "Assessor-blinded randomized trial of 100 adults; 93 completed 16-week assessment. Supervision/contact differed substantially.",
+      "population": "Generalized or historical HSD, age 18–65, shoulder pain/instability at least 3 months; 79% women, mean age 37.8. No hEDS enrolled. Shoulder surgery within 1 year and injection within 3 months excluded.",
+      "comparator": "LIGHT: nine posture/isometric exercises progressing to yellow-band dynamic home training three times weekly; introduction plus supervision at weeks 5 and 11.",
+      "coInterventions": "Both groups received scapular correction/joint protection education; concomitant manual therapy/injections discouraged and recorded.",
+      "outcomes": "At 16 weeks, WOSI adjusted between-group difference −174.5/2100 (95% CI −341.4 to −7.7), 8.3%, below the predefined minimal important difference. Most secondary outcomes inconclusive; NNT 7 (95% CI 4–620) very imprecise.",
+      "followUp": "16 weeks; later one-year report uses the same cohort.",
+      "uncertainty": "Participants and therapists unblinded; attention/supervision differed; group mean difference below MID; individual exercises not tested separately.",
+      "harms": "No serious adverse events; HEAVY muscle soreness 56% versus 37%, headache 40% versus 20%. Two HEAVY withdrawals due to adverse events. Table 3 includes one dislocation in HEAVY versus zero LIGHT; events were not necessarily caused by intervention.",
+      "limitations": "Cannot generalize to all joints, hEDS, postoperative shoulders, unsupervised loading or unrestricted end range.",
+      "protocol": {
+        "execution": "Five dumbbell exercises: side-lying external rotation in neutral, prone horizontal abduction, prone external rotation at 90° abduction, supine protraction, seated scaption.",
+        "dose": "Five-minute unloaded warm-up. Weeks 1–3: 3×10 at 50%, 70%, 90% of 10RM; weeks 4–9: 3×10RM; weeks 10–15: 4×8RM; week 16 taper.",
+        "frequency": "Three sessions weekly for 16 weeks.",
+        "supervision": "Two individual physiotherapist sessions plus one home session weekly. Relative load estimated from 5RM test; high relative effort does not necessarily mean high kilograms.",
+        "progression": "Individual load adjustment; protocol/manual define quality criteria and contain timing discrepancies.",
+        "stoppingRules": "Study allowed acceptable symptoms below 5/10. Detailed modification instructions in protocol/manual differ in symptom timing; not an app default."
+      },
+      "locations": [
+        "Methods > Participants; Intervention > HEAVY and LIGHT",
+        "Results > Primary outcome; Table 2; Table 3 adverse events"
+      ]
+    },
+    {
+      "id": "liaghat-protocol-2020",
+      "title": "A randomised controlled trial of heavy shoulder strengthening exercise in patients with hypermobility spectrum disorder or hypermobile Ehlers-Danlos syndrome and long-lasting shoulder complaints: study protocol for the Shoulder-MOBILEX study",
+      "doi": "10.1186/s13063-020-04892-0",
+      "pmid": "33261635",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7705859/",
+      "publicationStatus": "Final published protocol, 1 December 2020; not outcome evidence.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Complete Europe PMC XML and 11-page HEAVY manual retrieved: https://static-content.springer.com/esm/art%3A10.1186%2Fs13063-020-04892-0/MediaObjects/13063_2020_4892_MOESM3_ESM.pdf . Exercise and pain-management text read; embedded figures not independently visually verified."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Inspected primary article metadata/version and linked notices; Crossref DOI works metadata request and focused later-evidence searches on 2026-11-01. Not a registry-wide clearance.",
+        "result": "Crossref lookup returned HTTP Error 429: Too Many Requests; no complete external registry check. No notice identified in the retrieved article text; absence not established."
+      },
+      "design": "Prospective trial protocol and intervention manual; no independent treatment outcomes.",
+      "population": "Planned HSD/hEDS adults with persistent shoulder complaints; actual 2022 cohort included HSD only.",
+      "comparator": "LIGHT exercise plan with lower supervision.",
+      "coInterventions": "Shared scapular correction and joint protection education.",
+      "outcomes": "Defines planned execution, loading and control; does not supply an efficacy estimate.",
+      "followUp": "Planned 16 weeks and 1 year; actual outcomes are separate reports.",
+      "uncertainty": "Manual describes first 4 weeks as preparatory versus 3-week familiarisation in main protocol. Manual says pain return to baseline within 30 minutes/before next session; protocol reduces demands if symptoms persist more than 2–3 hours. Do not invent a harmonized threshold.",
+      "harms": "Modification/reporting plan, not observed harms; 2022 outcome paper reports events.",
+      "limitations": "Manual advice about back twisting, bent-back work and extreme positions is untested shared education; it is not causal evidence for universal HSD restrictions.",
+      "protocol": {
+        "execution": "Manual specifies side-lying external rotation with pillow between upper arm/trunk; prone horizontal arm raise with outward rotation; seated scaption; prone external rotation with supported upper arm and elbow at 90°; supported supine straight-arm protraction.",
+        "dose": "Three seconds concentric plus three seconds eccentric; 3×10 with 60-second rests through week 9, then 4×8 with 90-second rests in weeks 10–16. Week 16 load is 70% of 8RM; 48 hours between sessions.",
+        "frequency": "Three sessions weekly for 16 weeks: two supervised, one home.",
+        "supervision": "Trained physiotherapists, same clinician where possible; individual 5RM test and movement-quality control.",
+        "progression": "Increase if all sets exceed target repetitions with acceptable symptoms and good control: no glenohumeral subluxation or increased scapular dyskinesis. Full ROM was planned for HEAVY; not universal end-range clearance.",
+        "stoppingRules": "Protocol reduces load, ROM, sets, repetitions, frequency or provoking exercises if symptoms persist beyond 2–3 hours; baseline resting pain above 5/10 permits no increase. Manual gives different 30-minute timing; clinical reconciliation required."
+      },
+      "locations": [
+        "Interventions > HEAVY; Table 1; Criteria for discontinuing or modifying allocated interventions {11b}",
+        "Supplementary file 3 HEAVY manual, printed pp.4–8 (PDF pp.5–9), Exercises 1–5",
+        "Supplementary file 3 HEAVY manual, printed pp.1–3 (PDF pp.2–4)"
+      ]
+    },
+    {
+      "id": "liaghat-followup-2024",
+      "title": "One-year effectiveness of high-load compared with low-load strengthening exercise on self-reported function in patients with hypermobile shoulders: a secondary analysis from a randomised controlled trial",
+      "doi": "10.1136/bjsports-2023-107563",
+      "pmid": "38253436",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10982631/",
+      "publicationStatus": "final peer-reviewed journal article",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Complete Europe PMC XML retrieved; intervention, one-year primary outcome, Table 2 and discussion inspected."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Inspected primary article metadata/version and linked notices; Crossref DOI works metadata request and focused later-evidence searches on 2026-11-01. Not a registry-wide clearance.",
+        "result": "Crossref lookup returned HTTP Error 429: Too Many Requests; no complete external registry check. No notice identified in the retrieved article text; absence not established."
+      },
+      "design": "Secondary one-year analysis of the same 100-person randomized trial; not independent replication.",
+      "population": "Same HSD shoulder cohort; 86% completed one-year follow-up.",
+      "comparator": "HEAVY versus LIGHT; postprogram activity not randomized.",
+      "coInterventions": "Shared education and subsequent usual care.",
+      "outcomes": "WOSI change: HEAVY −456.9 (95% CI −572.2 to −341.7), LIGHT −364.0 (−481.4 to −246.6); between-group difference −92.9 (−257.4 to 71.5), not significant. Clinically important improvement: 64% versus 60%.",
+      "followUp": "1 year.",
+      "uncertainty": "Secondary analysis, attrition and uncertain postprogram training; null confidence interval does not prove equivalence.",
+      "harms": "No new causal long-term safety clearance from this report.",
+      "limitations": "Short-term relative advantage does not establish sustained one-year superiority.",
+      "protocol": {
+        "execution": "Five dumbbell exercises: side-lying external rotation in neutral, prone horizontal abduction, prone external rotation at 90° abduction, supine protraction, seated scaption.",
+        "dose": "Five-minute unloaded warm-up. Weeks 1–3: 3×10 at 50%, 70%, 90% of 10RM; weeks 4–9: 3×10RM; weeks 10–15: 4×8RM; week 16 taper.",
+        "frequency": "Three sessions weekly for 16 weeks.",
+        "supervision": "Two individual physiotherapist sessions plus one home session weekly. Relative load estimated from 5RM test; high relative effort does not necessarily mean high kilograms.",
+        "progression": "Individual load adjustment; protocol/manual define quality criteria and contain timing discrepancies.",
+        "stoppingRules": "Study allowed acceptable symptoms below 5/10. Detailed modification instructions in protocol/manual differ in symptom timing; not an app default."
+      },
+      "locations": [
+        "Methods > Intervention; Results > Primary outcome; Table 2",
+        "Discussion; Conclusion"
+      ]
+    },
+    {
+      "id": "hsd-review-2026",
+      "title": "The effect of therapeutic exercises in individuals with joint hypermobility syndrome: a systematic review and meta-analysis",
+      "doi": "10.1186/s43166-026-00407-y",
+      "pmid": null,
+      "url": "https://link.springer.com/article/10.1186/s43166-026-00407-y",
+      "publicationStatus": "Final 27 April 2026 systematic review results; distinct from scoping-review protocol PMID 41637690.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Complete publisher HTML retrieved; methods, results, study characteristics and limitations inspected. Exact lower-limb primary executions were not independently extracted for new mappings."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Inspected primary article metadata/version and linked notices; Crossref DOI works metadata request and focused later-evidence searches on 2026-11-01. Not a registry-wide clearance.",
+        "result": "Crossref lookup returned HTTP Error 429: Too Many Requests; no complete external registry check. No notice identified in the retrieved article text; absence not established."
+      },
+      "design": "Six studies, 231 participants. Authors label studies quasi-experimental while citing several randomized studies; design classification and heterogeneity limit certainty.",
+      "population": "Ages 7–45, mixed Brighton/Beighton diagnoses, JHS/EDS; indirect for contemporary adult HSD.",
+      "comparator": "No exercise/control/alternative interventions varied.",
+      "coInterventions": "Often unclear in underlying studies.",
+      "outcomes": "Pain effect CI −2.164 to −0.357, with high heterogeneity (I² 81.799%); strength CI −0.389 to 0.495, nonsignificant. Effects were not uniform across outcomes.",
+      "followUp": "Programs 4–12 weeks; durability poorly established.",
+      "uncertainty": "Small mixed-age/diagnostic samples, co-interventions, inconsistent design classification and imprecision; low certainty.",
+      "harms": "No comprehensive adverse-event synthesis establishing universal safety.",
+      "limitations": "Does not establish a blanket HSD stretching/end-range ban or justify shoulder-to-knee transfer.",
+      "protocol": {
+        "execution": "Heterogeneous proprioception, stability, resistance and general exercise.",
+        "dose": "No common optimized dose; underlying exact executions not verified here.",
+        "frequency": "Varied across included studies.",
+        "supervision": "Varied; not one common protocol.",
+        "progression": "not reported as an established universal algorithm.",
+        "stoppingRules": "not reported as an established universal algorithm."
+      },
+      "locations": [
+        "Methods > Inclusion/exclusion; Results > Study characteristics and Meta-analysis",
+        "Discussion > Limitations; Conclusion"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "heavy-short-term",
+      "kind": "study-result",
+      "statement": "At 16 weeks, WOSI adjusted between-group difference −174.5/2100 (95% CI −341.4 to −7.7), 8.3%, below the predefined minimal important difference. Most secondary outcomes inconclusive; NNT 7 (95% CI 4–620) very imprecise.",
+      "citations": [
+        {
+          "sourceId": "liaghat-2022",
+          "location": "Methods > Participants; Intervention > HEAVY and LIGHT"
+        },
+        {
+          "sourceId": "liaghat-2022",
+          "location": "Results > Primary outcome; Table 2; Table 3 adverse events"
+        }
+      ],
+      "applicability": "Generalized/historical HSD,18–65,shoulder pain/instability≥3months;79%women,mean37.8;no hEDS enrolled. Shoulder surgery<1year or injection<3months excluded.",
+      "limitations": "Bundle and contact differences; below-MID mean difference, adverse events and absence of hEDS matter."
+    },
+    {
+      "id": "one-year-no-superiority",
+      "kind": "study-result",
+      "statement": "WOSI change: HEAVY −456.9 (95% CI −572.2 to −341.7), LIGHT −364.0 (−481.4 to −246.6); between-group difference −92.9 (−257.4 to 71.5), not significant. Clinically important improvement: 64% versus 60%.",
+      "citations": [
+        {
+          "sourceId": "liaghat-followup-2024",
+          "location": "Methods > Intervention; Results > Primary outcome; Table 2"
+        }
+      ],
+      "applicability": "SameHSDshouldercohort;86%one-yearfollowupreported.",
+      "limitations": "Same cohort, not replication; a null contrast does not prove equivalence."
+    },
+    {
+      "id": "execution-control-protocol",
+      "kind": "published-recommendation",
+      "statement": "Protocol requires controlled movement, no glenohumeral subluxation/increased dyskinesis for progression, and individual symptom modification. Planned full ROM is contextual; manual and protocol symptom timing differ.",
+      "citations": [
+        {
+          "sourceId": "liaghat-protocol-2020",
+          "location": "Interventions > HEAVY; Table 1; Criteria for discontinuing or modifying allocated interventions {11b}"
+        },
+        {
+          "sourceId": "liaghat-protocol-2020",
+          "location": "Supplementary file 3 HEAVY manual, printed pp.4–8 (PDF pp.5–9), Exercises 1–5"
+        },
+        {
+          "sourceId": "liaghat-protocol-2020",
+          "location": "Supplementary file 3 HEAVY manual, printed pp.1–3 (PDF pp.2–4)"
+        }
+      ],
+      "applicability": "Planned protocol population; actual 2022 cohort had HSD.",
+      "limitations": "Protocol recommendations, not independently proven stopping rules; do not automatically import thresholds."
+    },
+    {
+      "id": "mixed-lower-limb-evidence",
+      "kind": "study-result",
+      "statement": "Pain effect CI −2.164 to −0.357, with high heterogeneity (I² 81.799%); strength CI −0.389 to 0.495, nonsignificant. Effects were not uniform across outcomes.",
+      "citations": [
+        {
+          "sourceId": "hsd-review-2026",
+          "location": "Methods > Inclusion/exclusion; Results > Study characteristics and Meta-analysis"
+        },
+        {
+          "sourceId": "hsd-review-2026",
+          "location": "Discussion > Limitations; Conclusion"
+        }
+      ],
+      "applicability": "Ages7–45,mixedBrighton/Beightondiagnoses/JHS/EDS;indirectforcontemporaryadultHSD.",
+      "limitations": "Different joint and diagnostic era, low certainty; no universal restriction authority."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "hsd-side-lying-dumbbell-er-pillow-mapping",
+      "exerciseId": null,
+      "requestId": "hsd-side-lying-dumbbell-er-pillow",
+      "findingIds": [
+        "heavy-short-term"
+      ],
+      "matchRationale": "Catalog external-rotation/scaption/protraction identities absent in enumerated302metadata;prone-t-raise/bodyweight and genericraises do not match dumbbell/support/rotation mechanics. Manualtext inspected;figuresnotvisuallyverified;independentcomponentbenefitnotestablished.",
+      "status": "candidate"
+    },
+    {
+      "id": "hsd-prone-horizontal-abduction-er-mapping",
+      "exerciseId": null,
+      "requestId": "hsd-prone-horizontal-abduction-er",
+      "findingIds": [
+        "heavy-short-term"
+      ],
+      "matchRationale": "Catalog external-rotation/scaption/protraction identities absent in enumerated302metadata;prone-t-raise/bodyweight and genericraises do not match dumbbell/support/rotation mechanics. Manualtext inspected;figuresnotvisuallyverified;independentcomponentbenefitnotestablished.",
+      "status": "candidate"
+    },
+    {
+      "id": "hsd-seated-dumbbell-scaption-mapping",
+      "exerciseId": null,
+      "requestId": "hsd-seated-dumbbell-scaption",
+      "findingIds": [
+        "heavy-short-term"
+      ],
+      "matchRationale": "Catalog external-rotation/scaption/protraction identities absent in enumerated302metadata;prone-t-raise/bodyweight and genericraises do not match dumbbell/support/rotation mechanics. Manualtext inspected;figuresnotvisuallyverified;independentcomponentbenefitnotestablished.",
+      "status": "candidate"
+    },
+    {
+      "id": "hsd-prone-er-shoulder-elbow-90-mapping",
+      "exerciseId": null,
+      "requestId": "hsd-prone-er-shoulder-elbow-90",
+      "findingIds": [
+        "heavy-short-term"
+      ],
+      "matchRationale": "Catalog external-rotation/scaption/protraction identities absent in enumerated302metadata;prone-t-raise/bodyweight and genericraises do not match dumbbell/support/rotation mechanics. Manualtext inspected;figuresnotvisuallyverified;independentcomponentbenefitnotestablished.",
+      "status": "candidate"
+    },
+    {
+      "id": "hsd-supine-dumbbell-scapular-protraction-mapping",
+      "exerciseId": null,
+      "requestId": "hsd-supine-dumbbell-scapular-protraction",
+      "findingIds": [
+        "heavy-short-term"
+      ],
+      "matchRationale": "Catalog external-rotation/scaption/protraction identities absent in enumerated302metadata;prone-t-raise/bodyweight and genericraises do not match dumbbell/support/rotation mechanics. Manualtext inspected;figuresnotvisuallyverified;independentcomponentbenefitnotestablished.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "review-heavy-shoulder-candidates",
+      "kind": "supportive-prescription",
+      "basis": "unresolved-hypothesis",
+      "statement": "Retain five exact shoulder executions as review candidates in the studied adult HSD context; do not infer all-joint, hEDS or unsupervised high-load clearance.",
+      "findingIds": [
+        "heavy-short-term",
+        "one-year-no-superiority",
+        "execution-control-protocol"
+      ],
+      "citations": [
+        {
+          "sourceId": "liaghat-2022",
+          "location": "Methods > Participants; Intervention > HEAVY and LIGHT"
+        },
+        {
+          "sourceId": "liaghat-2022",
+          "location": "Results > Primary outcome; Table 2; Table 3 adverse events"
+        },
+        {
+          "sourceId": "liaghat-protocol-2020",
+          "location": "Supplementary file 3 HEAVY manual, printed pp.4–8 (PDF pp.5–9), Exercises 1–5"
+        },
+        {
+          "sourceId": "liaghat-followup-2024",
+          "location": "Methods > Intervention; Results > Primary outcome; Table 2"
+        }
+      ],
+      "applicability": {
+        "population": "Generalized or historical HSD, age 18–65, shoulder pain/instability at least 3 months; 79% women, mean age 37.8. No hEDS enrolled. Shoulder surgery within 1 year and injection within 3 months excluded.",
+        "stage": "Persistent shoulder complaints; recent surgery/injection excluded. Not acute dislocation rehabilitation.",
+        "rationale": "Modest short-term relative benefit; one-year superiority not established."
+      },
+      "limitations": "Independent clinical content/execution review required; source targets are not app prescriptions.",
+      "mappingIds": [
+        "hsd-side-lying-dumbbell-er-pillow-mapping",
+        "hsd-prone-horizontal-abduction-er-mapping",
+        "hsd-seated-dumbbell-scaption-mapping",
+        "hsd-prone-er-shoulder-elbow-90-mapping",
+        "hsd-supine-dumbbell-scapular-protraction-mapping"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "review-symptom-quality-modification",
+      "kind": "symptom-response",
+      "basis": "published-recommendation",
+      "statement": "Candidate: retain individual symptom and movement-quality modification; do not advance automatically when subluxation, poor control or persistent worsening requires reassessment. Do not hardcode conflicting protocol/manual timing or a universal pain number.",
+      "findingIds": [
+        "execution-control-protocol"
+      ],
+      "citations": [
+        {
+          "sourceId": "liaghat-protocol-2020",
+          "location": "Interventions > HEAVY; Table 1; Criteria for discontinuing or modifying allocated interventions {11b}"
+        },
+        {
+          "sourceId": "liaghat-protocol-2020",
+          "location": "Supplementary file 3 HEAVY manual, printed pp.1–3 (PDF pp.2–4)"
+        }
+      ],
+      "applicability": {
+        "population": "Studied adult HSD shoulder population.",
+        "stage": "Persistent complaints under physiotherapy supervision.",
+        "rationale": "Protocol specifies symptom and quality control, with inconsistent timing statements."
+      },
+      "limitations": "Not an independently validated self-directed algorithm; clinical reconciliation required.",
+      "mappingIds": [],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "Independent clinical review absent. All mappings/rules/requests are candidates; no therapeutic release, clinical approval or universally safe exercise claim.",
+    "Source doses describe studied or recommended contexts, not individual app prescriptions. No generic five-second stretch progression or strength-set credit for stretching.",
+    "Coexisting conditions, equipment, independently selected joint limits and user-confirmed starting load remain separate constraints; no restriction may be relaxed to fill an empty workout.",
+    "Protocol/manual inconsistency: 3 versus 4 weeks of preparation and 30 minutes versus 2–3 hours symptom timing. Do not resolve by guessing.",
+    "No evidence here for a blanket ban on end range, stretching or heavy loading; other joint-specific restrictions still prevail.",
+    "Lower-limb synthesis does not map contemporary HSD perfectly; no exact lower-limb mappings created. PMID 41637690 is a scoping-review protocol, not results.",
+    "Five HEAVY exercise figures located and accompanying text read; figures not independently visually verified. Retained PNG creation needs real provenance and independent content review."
+  ],
+  "disposition": "research-only",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

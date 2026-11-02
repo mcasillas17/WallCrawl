@@ -276,31 +276,31 @@
       "id": "osteoporosis",
       "label": "Osteoporosis",
       "region": "Systemic or multiple regions (5)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "rheumatoid-arthritis",
       "label": "rheumatoid arthritis",
       "region": "Systemic or multiple regions (5)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "axial-spondyloarthritis",
       "label": "axial spondyloarthritis",
       "region": "Systemic or multiple regions (5)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "fibromyalgia",
       "label": "fibromyalgia",
       "region": "Systemic or multiple regions (5)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "hypermobility-spectrum-disorder",
       "label": "hypermobility spectrum disorder",
       "region": "Systemic or multiple regions (5)",
-      "status": "pending"
+      "status": "complete"
     }
   ]
 }

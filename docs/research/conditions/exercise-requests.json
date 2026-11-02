@@ -593,6 +593,432 @@
         }
       ],
       "status": "candidate"
+    },
+    {
+      "id": "liftmor-back-squat-variant-unresolved",
+      "conditionIds": [
+        "osteoporosis"
+      ],
+      "name": "LIFTMOR back squat — technique variant unresolved",
+      "execution": "Barbell back squat in LIFTMOR supervised HiRIT; exact depth, stance and rack safety setup need source/manual verification.",
+      "equipment": [
+        "Barbell",
+        "Squat Rack"
+      ],
+      "movementRequirements": [
+        "Back-racked loaded squat",
+        "Individual technique familiarisation",
+        "Repetition/load measurement"
+      ],
+      "artwork": "Retained PNG execution frames needed after independent execution/content review. No artwork generated, accepted or attributed by this research; source text inspection is not visual figure verification.",
+      "reason": "Catalog barbell-back-squat,barbell-deadlift,overhead-press and chin-up metadata inspected; nominal similarity does not verify exact studied depth/setup/landing. Retain study-specific candidate, not automatic equivalence.",
+      "sourceRefs": [
+        {
+          "conditionId": "osteoporosis",
+          "sourceId": "liftmor-2018",
+          "location": "Author thesis Chapter 5 > 5.3.3–5.3.4 Intervention/control, pp.120–121 (PDF pp.152–153)"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "liftmor-deadlift-variant-unresolved",
+      "conditionIds": [
+        "osteoporosis"
+      ],
+      "name": "LIFTMOR deadlift — technique variant unresolved",
+      "execution": "Supervised loaded deadlift; exact start height, stance and grip not fully specified in Chapter5.",
+      "equipment": [
+        "Barbell"
+      ],
+      "movementRequirements": [
+        "Hip hinge with externally loaded lift",
+        "Individual technique familiarisation",
+        "Repetition/load measurement"
+      ],
+      "artwork": "Retained PNG execution frames needed after independent execution/content review. No artwork generated, accepted or attributed by this research; source text inspection is not visual figure verification.",
+      "reason": "Catalog barbell-back-squat,barbell-deadlift,overhead-press and chin-up metadata inspected; nominal similarity does not verify exact studied depth/setup/landing. Retain study-specific candidate, not automatic equivalence.",
+      "sourceRefs": [
+        {
+          "conditionId": "osteoporosis",
+          "sourceId": "liftmor-2018",
+          "location": "Author thesis Chapter 5 > 5.3.3–5.3.4 Intervention/control, pp.120–121 (PDF pp.152–153)"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "liftmor-overhead-press-variant-unresolved",
+      "conditionIds": [
+        "osteoporosis"
+      ],
+      "name": "LIFTMOR overhead press — setup unresolved",
+      "execution": "Overhead press in supervised HiRIT; exact stance/grip/range not fully specified in Chapter5.",
+      "equipment": [
+        "Barbell"
+      ],
+      "movementRequirements": [
+        "Loaded overhead movement",
+        "Unresolved exact press setup",
+        "Repetition/load measurement"
+      ],
+      "artwork": "Retained PNG execution frames needed after independent execution/content review. No artwork generated, accepted or attributed by this research; source text inspection is not visual figure verification.",
+      "reason": "Catalog barbell-back-squat,barbell-deadlift,overhead-press and chin-up metadata inspected; nominal similarity does not verify exact studied depth/setup/landing. Retain study-specific candidate, not automatic equivalence.",
+      "sourceRefs": [
+        {
+          "conditionId": "osteoporosis",
+          "sourceId": "liftmor-2018",
+          "location": "Author thesis Chapter 5 > 5.3.3–5.3.4 Intervention/control, pp.120–121 (PDF pp.152–153)"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "liftmor-jumping-chin-up-drop-landing",
+      "conditionIds": [
+        "osteoporosis"
+      ],
+      "name": "LIFTMOR jumping chin-up with drop landing",
+      "execution": "Underhand shoulder-width grip, shoulders/elbows initially90degrees; jump and pull upward, release/drop at apex, land as heavily as comfortable under trial supervision.",
+      "equipment": [
+        "Overhead chin-up bar",
+        "Appropriate landing surface"
+      ],
+      "movementRequirements": [
+        "Grasp overhead bar",
+        "Jump/pull and release",
+        "High-impact drop landing; not ordinary chin-up",
+        "Repetitions; landing mechanics unresolved for artwork"
+      ],
+      "artwork": "Retained PNG execution frames needed after independent execution/content review. No artwork generated, accepted or attributed by this research; source text inspection is not visual figure verification.",
+      "reason": "Catalog barbell-back-squat,barbell-deadlift,overhead-press and chin-up metadata inspected; nominal similarity does not verify exact studied depth/setup/landing. Retain study-specific candidate, not automatic equivalence.",
+      "sourceRefs": [
+        {
+          "conditionId": "osteoporosis",
+          "sourceId": "liftmor-2018",
+          "location": "Author thesis Chapter 5 > 5.3.3–5.3.4 Intervention/control, pp.120–121 (PDF pp.152–153)"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "ra-cycle-ergometer-hiit",
+      "conditionIds": [
+        "rheumatoid-arthritis"
+      ],
+      "name": "RA studied cycle-ergometer interval training",
+      "execution": "Seated cycle ergometer interval bouts at individually tested HR targets within the supervised12week protocol; bike fit,cadence,resistance adjustment unspecified.",
+      "equipment": [
+        "Cycle ergometer",
+        "Heart-rate sensor"
+      ],
+      "movementRequirements": [
+        "Aerobic intervals with active recovery",
+        "HRmax established by CPET",
+        "Time/intensity measurement; no strength-set credit"
+      ],
+      "artwork": "Retained PNG execution frames needed after independent execution/content review. No artwork generated, accepted or attributed by this research; source text inspection is not visual figure verification.",
+      "reason": "No exact cycle interval execution/measurement equivalent in resistance catalog; retain protocol candidate with fit/cadence gaps and screened supervision.",
+      "sourceRefs": [
+        {
+          "conditionId": "rheumatoid-arthritis",
+          "sourceId": "bilberg-2024",
+          "location": "Exercise intervention > Table 1; symptom modification paragraph"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "axspa-treadmill-interval-pilot",
+      "conditionIds": [
+        "axial-spondyloarthritis"
+      ],
+      "name": "AxSpA pilot treadmill interval walking/running",
+      "execution": "Treadmill walking or running individually adapted to baseline-tested HRmax;4minute bouts interleaved active recovery,not a fixed walking speed or incline.",
+      "equipment": [
+        "Treadmill",
+        "Heart-rate monitor"
+      ],
+      "movementRequirements": [
+        "Walking/running endurance",
+        "Time and HR-based intensity",
+        "Individual fitness screening and supervision"
+      ],
+      "artwork": "Retained PNG execution frames needed after independent execution/content review. No artwork generated, accepted or attributed by this research; source text inspection is not visual figure verification.",
+      "reason": "Catalog resistance identities do not encode tested treadmill/HR interval shape; exact speed/incline individualized and unresolved.",
+      "sourceRefs": [
+        {
+          "conditionId": "axial-spondyloarthritis",
+          "sourceId": "sveaas-pilot-2014",
+          "location": "Methods > Participants; Intervention; Safety"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "axspa-abdominal-bridge-variant-unresolved",
+      "conditionIds": [
+        "axial-spondyloarthritis"
+      ],
+      "name": "AxSpA pilot abdominal stabilization bridge — position unresolved",
+      "execution": "Abdominal stabilization exercise described as abdominal bridge within6exercise strength bundle; exact prone/side/supine position,hold-versus-repetition and support not specified.",
+      "equipment": [
+        "Equipment/support unresolved from primary text"
+      ],
+      "movementRequirements": [
+        "Core stabilization",
+        "Unresolved support posture",
+        "Measurement shape must be resolved before artwork"
+      ],
+      "artwork": "Retained PNG execution frames needed after independent execution/content review. No artwork generated, accepted or attributed by this research; source text inspection is not visual figure verification.",
+      "reason": "Do not equate glute-bridge or plank by name; primary text lacks execution detail. Preserve request as unresolved,not invented posture/dose.",
+      "sourceRefs": [
+        {
+          "conditionId": "axial-spondyloarthritis",
+          "sourceId": "sveaas-pilot-2014",
+          "location": "Methods > Participants; Intervention; Safety"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "fm-machine-leg-press-variant-unresolved",
+      "conditionIds": [
+        "fibromyalgia"
+      ],
+      "name": "Fibromyalgia machine leg press — exact setup unresolved",
+      "execution": "Machine leg press within person-centered15weekprogram;seat angle,foot stance and range individualized/not fully specified.",
+      "equipment": [
+        "Leg press machine"
+      ],
+      "movementRequirements": [
+        "Supported bilateral leg press;exact variant unresolved",
+        "Load/repetition measurement"
+      ],
+      "artwork": "Retained PNG execution frames needed after independent execution/content review. No artwork generated, accepted or attributed by this research; source text inspection is not visual figure verification.",
+      "reason": "Catalog leg-press,leg-extension,calf-raise metadata inspected;study does not verify exact apparatus/range/support. Retain research variant rather than claiming visual/execution equivalence or independent component efficacy.",
+      "sourceRefs": [
+        {
+          "conditionId": "fibromyalgia",
+          "sourceId": "larsson-2015",
+          "location": "Methods > Recruitment; Intervention; Box 1 Dosage of resistance exercise"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "fm-machine-knee-extension-variant-unresolved",
+      "conditionIds": [
+        "fibromyalgia"
+      ],
+      "name": "Fibromyalgia machine knee extension — exact range unresolved",
+      "execution": "Machine knee extension within15weekbundle;exact ROM,machine geometry and unilateral/bilateral execution unresolved.",
+      "equipment": [
+        "Knee extension machine"
+      ],
+      "movementRequirements": [
+        "Supported knee extension",
+        "Repetition/load;power phase separately supervised"
+      ],
+      "artwork": "Retained PNG execution frames needed after independent execution/content review. No artwork generated, accepted or attributed by this research; source text inspection is not visual figure verification.",
+      "reason": "Catalog leg-press,leg-extension,calf-raise metadata inspected;study does not verify exact apparatus/range/support. Retain research variant rather than claiming visual/execution equivalence or independent component efficacy.",
+      "sourceRefs": [
+        {
+          "conditionId": "fibromyalgia",
+          "sourceId": "larsson-2015",
+          "location": "Methods > Recruitment; Intervention; Box 1 Dosage of resistance exercise"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "fm-bodyweight-heel-raise-variant-unresolved",
+      "conditionIds": [
+        "fibromyalgia"
+      ],
+      "name": "Fibromyalgia bodyweight heel raise — support unresolved",
+      "execution": "Bodyweight heel raise;support,unilateral/bilateral stance and step versus floor not specified;rapid version addedweek5under supervision.",
+      "equipment": [
+        "Bodyweight",
+        "Support/step configuration unresolved"
+      ],
+      "movementRequirements": [
+        "Plantarflexion heel raise",
+        "Repetition and movement-speed attributes unresolved"
+      ],
+      "artwork": "Retained PNG execution frames needed after independent execution/content review. No artwork generated, accepted or attributed by this research; source text inspection is not visual figure verification.",
+      "reason": "Catalog leg-press,leg-extension,calf-raise metadata inspected;study does not verify exact apparatus/range/support. Retain research variant rather than claiming visual/execution equivalence or independent component efficacy.",
+      "sourceRefs": [
+        {
+          "conditionId": "fibromyalgia",
+          "sourceId": "larsson-2015",
+          "location": "Methods > Recruitment; Intervention; Box 1 Dosage of resistance exercise"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "fm-yang-tai-chi-program-unresolved",
+      "conditionIds": [
+        "fibromyalgia"
+      ],
+      "name": "Fibromyalgia Yang-style tai chi — forms unresolved",
+      "execution": "Instructor-led classic Yang-style sequence with warm-up,meditative movement,breathing/relaxation;individual named forms and transitions not fully extracted.",
+      "equipment": [
+        "Clear practice space",
+        "Qualified instructor for studied delivery"
+      ],
+      "movementRequirements": [
+        "Multicomponent coordinated whole-body movement",
+        "Time/frequency measurement",
+        "Not a single stretch or strength set"
+      ],
+      "artwork": "Retained PNG execution frames needed after independent execution/content review. No artwork generated, accepted or attributed by this research; source text inspection is not visual figure verification.",
+      "reason": "No exact sequence in catalog;retain program research request,individual forms/PNGstoryboard require separate extraction and review.",
+      "sourceRefs": [
+        {
+          "conditionId": "fibromyalgia",
+          "sourceId": "wang-2018",
+          "location": "Methods > Setting and participants; Interventions > Tai chi; Aerobic exercise"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "hsd-side-lying-dumbbell-er-pillow",
+      "conditionIds": [
+        "hypermobility-spectrum-disorder"
+      ],
+      "name": "HSD side-lying dumbbell external rotation with pillow",
+      "execution": "Side-lying with hips/knees flexed, head supported, upper elbow at 90°, pillow between upper arm/trunk. Hand begins on abdomen; rotate forearm upward while keeping upper arm close to body, then lower under control.",
+      "equipment": [
+        "Dumbbell",
+        "Pillow",
+        "Stable lying surface"
+      ],
+      "movementRequirements": [
+        "Preserve the specified supported posture and arm/rotation geometry",
+        "Controlled unilateral repetition/load measurement",
+        "Scapular control as taught by physiotherapist; exact figure verification remains open"
+      ],
+      "artwork": "Retained PNG execution frames needed after independent execution/content review. No artwork generated, accepted or attributed by this research; source text inspection is not visual figure verification.",
+      "reason": "Enumerated catalog metadata has no named external-rotation/scaption/protraction identity. Bodyweight prone-t-raise and generic raises do not verify the dumbbell, support and rotation variant. Manual text read; figures not independently visually verified. No isolated exercise efficacy established.",
+      "sourceRefs": [
+        {
+          "conditionId": "hypermobility-spectrum-disorder",
+          "sourceId": "liaghat-protocol-2020",
+          "location": "Supplementary file 3 HEAVY manual, printed pp.4–8 (PDF pp.5–9), Exercises 1–5"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "hsd-prone-horizontal-abduction-er",
+      "conditionIds": [
+        "hypermobility-spectrum-disorder"
+      ],
+      "name": "HSD prone horizontal abduction with outward rotation",
+      "execution": "Prone on table with arm hanging vertically at 90° shoulder flexion. Raise straight arm out to side to horizontal while rotating outward, add further outward rotation at horizontal, then lower while reversing rotation.",
+      "equipment": [
+        "Dumbbell",
+        "Stable table/bench"
+      ],
+      "movementRequirements": [
+        "Preserve the specified supported posture and arm/rotation geometry",
+        "Controlled unilateral repetition/load measurement",
+        "Scapular control as taught by physiotherapist; exact figure verification remains open"
+      ],
+      "artwork": "Retained PNG execution frames needed after independent execution/content review. No artwork generated, accepted or attributed by this research; source text inspection is not visual figure verification.",
+      "reason": "Enumerated catalog metadata has no named external-rotation/scaption/protraction identity. Bodyweight prone-t-raise and generic raises do not verify the dumbbell, support and rotation variant. Manual text read; figures not independently visually verified. No isolated exercise efficacy established.",
+      "sourceRefs": [
+        {
+          "conditionId": "hypermobility-spectrum-disorder",
+          "sourceId": "liaghat-protocol-2020",
+          "location": "Supplementary file 3 HEAVY manual, printed pp.4–8 (PDF pp.5–9), Exercises 1–5"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "hsd-seated-dumbbell-scaption",
+      "conditionIds": [
+        "hypermobility-spectrum-disorder"
+      ],
+      "name": "HSD seated dumbbell scaption with scapular monitoring",
+      "execution": "Sit on backless chair with feet hip-width and upright trunk; thumb points obliquely outward. Opposite fingers monitor lower scapula. Lift dumbbell obliquely forward/up and lower slowly. Exact end angle unresolved.",
+      "equipment": [
+        "Dumbbell",
+        "Stable backless chair"
+      ],
+      "movementRequirements": [
+        "Preserve the specified supported posture and arm/rotation geometry",
+        "Controlled unilateral repetition/load measurement",
+        "Scapular control as taught by physiotherapist; exact figure verification remains open"
+      ],
+      "artwork": "Retained PNG execution frames needed after independent execution/content review. No artwork generated, accepted or attributed by this research; source text inspection is not visual figure verification.",
+      "reason": "Enumerated catalog metadata has no named external-rotation/scaption/protraction identity. Bodyweight prone-t-raise and generic raises do not verify the dumbbell, support and rotation variant. Manual text read; figures not independently visually verified. No isolated exercise efficacy established.",
+      "sourceRefs": [
+        {
+          "conditionId": "hypermobility-spectrum-disorder",
+          "sourceId": "liaghat-protocol-2020",
+          "location": "Supplementary file 3 HEAVY manual, printed pp.4–8 (PDF pp.5–9), Exercises 1–5"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "hsd-prone-er-shoulder-elbow-90",
+      "conditionIds": [
+        "hypermobility-spectrum-disorder"
+      ],
+      "name": "HSD prone external rotation with supported shoulder/elbow at90degrees",
+      "execution": "Prone on table, upper arm supported at 90° abduction, elbow flexed 90°, forearm hanging down. Externally rotate forearm toward ceiling then lower under control.",
+      "equipment": [
+        "Dumbbell",
+        "Stable table/bench"
+      ],
+      "movementRequirements": [
+        "Preserve the specified supported posture and arm/rotation geometry",
+        "Controlled unilateral repetition/load measurement",
+        "Scapular control as taught by physiotherapist; exact figure verification remains open"
+      ],
+      "artwork": "Retained PNG execution frames needed after independent execution/content review. No artwork generated, accepted or attributed by this research; source text inspection is not visual figure verification.",
+      "reason": "Enumerated catalog metadata has no named external-rotation/scaption/protraction identity. Bodyweight prone-t-raise and generic raises do not verify the dumbbell, support and rotation variant. Manual text read; figures not independently visually verified. No isolated exercise efficacy established.",
+      "sourceRefs": [
+        {
+          "conditionId": "hypermobility-spectrum-disorder",
+          "sourceId": "liaghat-protocol-2020",
+          "location": "Supplementary file 3 HEAVY manual, printed pp.4–8 (PDF pp.5–9), Exercises 1–5"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "hsd-supine-dumbbell-scapular-protraction",
+      "conditionIds": [
+        "hypermobility-spectrum-disorder"
+      ],
+      "name": "HSD supine straight-arm dumbbell scapular protraction",
+      "execution": "Supine on floor/table, shoulder flexed 90°, elbow straight, dumbbell toward ceiling. Press shoulder blade off surface without head/back lifting or shrugging; lower shoulder until it touches support.",
+      "equipment": [
+        "Dumbbell",
+        "Stable floor/table"
+      ],
+      "movementRequirements": [
+        "Preserve the specified supported posture and arm/rotation geometry",
+        "Controlled unilateral repetition/load measurement",
+        "Scapular control as taught by physiotherapist; exact figure verification remains open"
+      ],
+      "artwork": "Retained PNG execution frames needed after independent execution/content review. No artwork generated, accepted or attributed by this research; source text inspection is not visual figure verification.",
+      "reason": "Enumerated catalog metadata has no named external-rotation/scaption/protraction identity. Bodyweight prone-t-raise and generic raises do not verify the dumbbell, support and rotation variant. Manual text read; figures not independently visually verified. No isolated exercise efficacy established.",
+      "sourceRefs": [
+        {
+          "conditionId": "hypermobility-spectrum-disorder",
+          "sourceId": "liaghat-protocol-2020",
+          "location": "Supplementary file 3 HEAVY manual, printed pp.4–8 (PDF pp.5–9), Exercises 1–5"
+        }
+      ],
+      "status": "candidate"
     }
   ]
 }
