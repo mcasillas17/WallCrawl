@@ -221,9 +221,9 @@ def validate_png(data):
         if not chunks:
             require(kind == b"IHDR" and size == 13, "Missing PNG header")
             width, height, depth, color, compression, filtering, interlace = struct.unpack(">IIBBBBB", payload)
-            require(0 < width <= 8192 and 0 < height <= 8192 and width * height <= 16777216 and compression == filtering == 0 and interlace in {0, 1}, "Invalid bounded PNG header")
-            require(color in {0, 2, 3, 4, 6} and depth in {1, 2, 4, 8, 16}, "Unsupported PNG samples")
-            dimensions = width, height, color
+            require(0 < width <= 8192 and 0 < height <= 8192 and width * height <= 16777216 and compression == filtering == 0, "Invalid bounded PNG header")
+            require(color == 6 and depth == 8 and interlace == 0, "Retained PNG masters must use noninterlaced RGBA8")
+            dimensions = width, height
         require(kind not in {b"acTL", b"fcTL", b"fdAT"}, "Animated PNG is forbidden")
         require(kind != b"IHDR" or not chunks, "Duplicate PNG header")
         if kind == b"IDAT": compressed.extend(payload)
@@ -233,13 +233,14 @@ def validate_png(data):
             require(size == 0 and position == len(data), "Trailing PNG content")
             break
     require(dimensions and chunks[-1] == b"IEND" and compressed, "Incomplete PNG")
-    width, height, color = dimensions
-    require(color in {4, 6} or b"tRNS" in chunks, "PNG master must retain alpha")
-    maximum = (width * 8 + 8) * height + 1024
+    width, height = dimensions
+    scanline_bytes = 1 + width * 4
+    expected = scanline_bytes * height
     try:
         decoder = zlib.decompressobj()
-        raw = decoder.decompress(compressed, maximum + 1)
-        require(raw and len(raw) <= maximum and decoder.eof and not decoder.unused_data, "Invalid bounded PNG image data")
+        raw = decoder.decompress(compressed, expected + 1)
+        require(len(raw) == expected and decoder.eof and not decoder.unused_data, "Invalid PNG scanline length or deflate stream")
+        require(all(raw[offset] <= 4 for offset in range(0, expected, scanline_bytes)), "Invalid PNG scanline filter")
     except zlib.error as error:
         raise ValueError("Malformed PNG image data") from error
 

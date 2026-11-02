@@ -40,7 +40,7 @@ Keep masters, inspected references, actual prompts/generation records and trace 
 }
 ```
 
-`source` is the distinct authored WallCrawl source object, never a borrowed upstream commit. Provide all six slots per ID (male/female × 1/2/3), and all shipped supplemental IDs in a complete ledger. A generation record has `tool: "native-imagegen"`, the actual `prompt`, and `outputSha256` matching the retained PNG. Preserve any further available factual references/tool output identifiers in that local record; do not invent unavailable metadata. Source/master/derived/generation/trace bytes are all hash-checked. The PNG structure/CRC/alpha/deflate stream and SVG namespace/dimensions/path geometry are checked; Sharp performs full raster decoding during tracing.
+`source` is the distinct authored WallCrawl source object, never a borrowed upstream commit. Provide all six slots per ID (male/female × 1/2/3), and all shipped supplemental IDs in a complete ledger. A generation record has `tool: "native-imagegen"`, the actual `prompt`, and `outputSha256` matching the retained PNG. Preserve any further available factual references/tool output identifiers in that local record; do not invent unavailable metadata. Source/master/derived/generation/trace bytes are all hash-checked. Packaged PNG masters must be noninterlaced RGBA8 (8-bit channels, color type 6, interlace 0); other sample layouts/bit depths/interlace are rejected. Validation checks PNG structure/CRC, exact decoded scanline length, each row filter 0–4, and the bounded complete deflate stream. SVG namespace/dimensions/path geometry are checked; Sharp performs full raster decoding during tracing.
 
 ```sh
 python3 tools/workout-guide/package_illustrations.py --supplement-ledger /absolute/retained/provenance.json

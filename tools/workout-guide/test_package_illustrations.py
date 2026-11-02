@@ -18,7 +18,25 @@ SVG = b'<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox
 # A 2x2 artificial alpha square: never a pose or exercise stand-in.
 def chunk(kind, data):
     return struct.pack('>I', len(data)) + kind + data + struct.pack('>I', zlib.crc32(kind + data))
-PNG = b'\x89PNG\r\n\x1a\n' + chunk(b'IHDR', struct.pack('>IIBBBBB', 2, 2, 8, 6, 0, 0, 0)) + chunk(b'IDAT', zlib.compress(b'\0' + b'\xff' * 4 + b'\0' * 4 + b'\0' + b'\0' * 8)) + chunk(b'IEND', b'')
+def png(raw, *, depth=8, color=6, interlace=0):
+    return b'\x89PNG\r\n\x1a\n' + chunk(b'IHDR', struct.pack('>IIBBBBB', 2, 2, depth, color, 0, 0, interlace)) + chunk(b'IDAT', zlib.compress(raw)) + chunk(b'IEND', b'')
+PNG = png(b'\0' + b'\xff' * 4 + b'\0' * 4 + b'\0' + b'\0' * 8)
+
+
+class PngValidationTest(unittest.TestCase):
+    def test_rgba8_rows_accept_each_defined_filter(self):
+        for filter_number in range(5):
+            p.validate_png(png((bytes([filter_number]) + b'\xff' * 8) * 2))
+
+    def test_scanline_length_and_filter_bytes_are_validated(self):
+        for raw in [b'X', b'\0' * 17, b'\0' * 19, b'\x05' + b'\0' * 17, b'\0' * 9 + b'\xff' + b'\0' * 8]:
+            with self.subTest(raw=raw), self.assertRaises(ValueError):
+                p.validate_png(png(raw))
+
+    def test_packaging_explicitly_requires_noninterlaced_rgba8_masters(self):
+        for options in [dict(color=6, depth=4), dict(color=6, depth=16), dict(color=4), dict(color=2), dict(color=3), dict(interlace=1)]:
+            with self.subTest(options=options), self.assertRaisesRegex(ValueError, 'noninterlaced RGBA8'):
+                p.validate_png(png(b'\0' * 18, **options))
 
 
 class PackagingTest(unittest.TestCase):
@@ -126,6 +144,27 @@ class PackagingTest(unittest.TestCase):
         self.save()
         with self.assertRaises(ValueError):
             p.collect_supplement(self.ledger)
+
+    def test_truncated_pixels_with_matching_digests_are_rejected_before_writes(self):
+        self.promote_fixture_id()
+        p.package_supplement(self.ledger, self.destination)
+        before = self.state()
+        frame = self.document['frames'][-1]
+        truncated = png(b'X')  # CRC/deflate-valid; RGBA8 2x2 requires 18 scanline bytes.
+        (self.ledger.parent / frame['master']['path']).write_bytes(truncated)
+        frame['master']['sha256'] = p.digest(truncated)
+        for field in ['trace', 'generation']:
+            path = self.ledger.parent / frame[field]['path']
+            document = json.loads(path.read_text())
+            document['inputSha256' if field == 'trace' else 'outputSha256'] = p.digest(truncated)
+            path.write_text(json.dumps(document))
+            frame[field]['sha256'] = p.digest(path.read_bytes())
+        self.save()
+        with self.assertRaises(ValueError):
+            p.collect_supplement(self.ledger)
+        with self.assertRaises(ValueError):
+            p.package_supplement(self.ledger, self.destination)
+        self.assertEqual(before, self.state())
 
     def test_bad_trace_binding_is_rejected(self):
         frame = self.document['frames'][0]
