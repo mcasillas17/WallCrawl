@@ -37,6 +37,13 @@
       "query": "\"10.1136/bjsports-2022-106197\" correction retraction",
       "decision": "Retained source-specific evidence below; trial eligibility limits remain population boundaries.",
       "limitations": "Focused search, not exhaustive/systematic; publisher403/PMC challenge handled through lawful XML or conservative abstract-only status."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Native web search; indexed primary publisher supplement",
+      "query": "site:bjsm.bmj.com/content \"HE-2\" \"After 4 weeks\"",
+      "decision": "Reopened indexed HE-2 printed p.9: side-lying abduction progresses to standing after four weeks. Corrected the unsupported alternatives relationship; no new dose/artwork.",
+      "limitations": "Direct PDF returned 403; only indexed primary HE-2 passage inspected, not complete PDF/figures. Abstract-only schema status retained."
     }
   ],
   "sources": [
@@ -50,7 +57,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "PubMed/Europe PMC abstract and indexed publisher methods/results inspected. Direct publisher HTML/PDF403; Europe PMC lists subscription-only and no PMC copy; conservative abstract-only status."
+        "details": "PubMed/Europe PMC abstract and indexed publisher methods/results inspected. Direct publisher HTML/PDF403; Europe PMC lists subscription-only and no PMC copy; conservative abstract-only status. Follow-up correction: indexed publisher supplemental HE-2 (printed p.9) inspected at https://bjsm.bmj.com/content/bjsports/early/2023/05/02/bjsports-2022-106197/DC1/embed/inline-supplementary-material-1.pdf?download=true; direct supplemental PDF returned 403. This is partial primary access, not complete PDF or figure inspection; conservative abstract-only status and protocol-field boundary retained."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -75,7 +82,8 @@
         "stoppingRules": "not reported in accessible full text; full article not retrieved"
       },
       "locations": [
-        "Abstract > Methods and Results; indexed partial Methods > Interventions"
+        "Abstract > Methods and Results; indexed partial Methods > Interventions",
+        "Indexed supplement > HE-2 SIDELYING HIP ABDUCTION, progression (printed p.9)"
       ]
     },
     {
@@ -203,6 +211,19 @@
       ],
       "applicability": "Diagnosed PFP conservative care.",
       "limitations": "Recommendations include low-certainty evidence; no universal numeric pain threshold."
+    },
+    {
+      "id": "pfp-abduction-sequence",
+      "kind": "study-result",
+      "statement": "Indexed supplemental HE-2 describes side-lying hip abduction followed by standing progression after four weeks; optional elastic-band loading, a stable pelvis and avoidance of compensatory movement are described. The positions are sequential, not interchangeable alternatives.",
+      "citations": [
+        {
+          "sourceId": "pfp-equivalence-2023",
+          "location": "Indexed supplement > HE-2 SIDELYING HIP ABDUCTION, progression (printed p.9)"
+        }
+      ],
+      "applicability": "Execution relationship within the published hip-exercise program for the trial PFP cohort; partial primary supplement access.",
+      "limitations": "No complete PDF/figure inspection; exact support, resistance implementation and full protocol remain unresolved. No new exercise dose, artwork or clinical clearance."
     }
   ],
   "exerciseMappings": [
@@ -211,9 +232,10 @@
       "exerciseId": null,
       "requestId": "knee-pfp-hip-abduction-variant-unresolved",
       "findingIds": [
-        "hip-knee-equivalence"
+        "hip-knee-equivalence",
+        "pfp-abduction-sequence"
       ],
-      "matchRationale": "Catalog side-lying-hip-abduction is bodyweight_reps/Bodyweight; indexed trial permits standing alternative and actual variant/resistance not verified. Request preserves uncertainty rather than claiming exact match.",
+      "matchRationale": "Catalog side-lying-hip-abduction is bodyweight_reps/Bodyweight. Indexed supplemental HE-2 describes a side-lying-to-standing progression after four weeks, not free choice of position. Full-protocol/figure verification and exact support/resistance matching remain unresolved; no exact catalog equivalence or clinical clearance asserted.",
       "status": "candidate"
     }
   ],
@@ -274,7 +296,7 @@
   ],
   "gaps": [
     "Researcher appraisal, not formal GRADE: moderate confidence in short-term exercise/education strategy; low confidence in exact app execution and longer-term effects.",
-    "Primary 2023 full text/supplement inaccessible; partial indexed methods retained conservatively, no full protocol reconstructed.",
+    "Primary 2023 full article/supplement direct fetches inaccessible; indexed partial methods and HE-2 printed p.9 inspected. Complete protocol and figure verification remain unresolved; no full protocol reconstructed.",
     "No universal squat/lunge ban, patellofemoral load cap or angle restriction follows from these sources.",
     "Guide efficacy search cutoffMay 2022 predates 2023 equivalence trial; both retained without treating later publication as automatic supersession.",
     "Independent clinical review absent; doses are reported study protocols, not app prescriptions.",

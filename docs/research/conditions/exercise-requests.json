@@ -132,21 +132,26 @@
         "patellofemoral-pain"
       ],
       "name": "PFP hip-abduction execution unresolved",
-      "execution": "2023 indexed partial methods name side-lying/standing hip abduction as alternatives. Choose and verify the actual side, support, equipment and resistance variant from the complete intervention before acceptance.",
+      "execution": "The program names side-lying and standing hip abduction; indexed supplemental HE-2 (printed p.9) describes side-lying abduction followed by standing progression after four weeks, not interchangeable alternatives. Optional elastic-band loading and stable-pelvis/no-compensation cues are reported. Complete protocol and figure inspection, exact support and resistance implementation remain unresolved.",
       "equipment": [
         "equipment unresolved: home hip-exercise program"
       ],
       "movementRequirements": [
         "hip abduction",
-        "position and support unresolved"
+        "side-lying-to-standing progression; complete support/resistance implementation unresolved"
       ],
       "artwork": "Candidate only. Requires exact execution review and, if commissioned, a separately attributed retained PNG sequence. No PNG generated or upstream artwork equivalence claimed.",
-      "reason": "Catalog side-lying-hip-abduction is bodyweight_reps/Bodyweight; indexed trial permits standing alternative and actual variant/resistance not verified. Request preserves uncertainty rather than claiming exact match.",
+      "reason": "Catalog side-lying-hip-abduction is bodyweight_reps/Bodyweight. Indexed supplemental HE-2 describes a side-lying-to-standing progression after four weeks, not free choice of position. Full-protocol/figure verification and exact support/resistance matching remain unresolved; no exact catalog equivalence or clinical clearance asserted.",
       "sourceRefs": [
         {
           "conditionId": "patellofemoral-pain",
           "sourceId": "pfp-equivalence-2023",
           "location": "Abstract > Methods and Results; indexed partial Methods > Interventions"
+        },
+        {
+          "conditionId": "patellofemoral-pain",
+          "sourceId": "pfp-equivalence-2023",
+          "location": "Indexed supplement > HE-2 SIDELYING HIP ABDUCTION, progression (printed p.9)"
         }
       ],
       "status": "candidate"
@@ -994,33 +999,6 @@
       "status": "candidate"
     },
     {
-      "id": "hsd-supine-dumbbell-scapular-protraction",
-      "conditionIds": [
-        "hypermobility-spectrum-disorder"
-      ],
-      "name": "HSD supine straight-arm dumbbell scapular protraction",
-      "execution": "Supine on floor/table, shoulder flexed 90°, elbow straight, dumbbell toward ceiling. Press shoulder blade off surface without head/back lifting or shrugging; lower shoulder until it touches support.",
-      "equipment": [
-        "Dumbbell",
-        "Stable floor/table"
-      ],
-      "movementRequirements": [
-        "Preserve the specified supported posture and arm/rotation geometry",
-        "Controlled unilateral repetition/load measurement",
-        "Scapular control as taught by physiotherapist; exact figure verification remains open"
-      ],
-      "artwork": "Retained PNG execution frames needed after independent execution/content review. No artwork generated, accepted or attributed by this research; source text inspection is not visual figure verification.",
-      "reason": "Enumerated catalog metadata has no named external-rotation/scaption/protraction identity. Bodyweight prone-t-raise and generic raises do not verify the dumbbell, support and rotation variant. Manual text read; figures not independently visually verified. No isolated exercise efficacy established.",
-      "sourceRefs": [
-        {
-          "conditionId": "hypermobility-spectrum-disorder",
-          "sourceId": "liaghat-protocol-2020",
-          "location": "Supplementary file 3 HEAVY manual, printed pp.4–8 (PDF pp.5–9), Exercises 1–5"
-        }
-      ],
-      "status": "candidate"
-    },
-    {
       "id": "barbell-deadlift-lbp-study-setup-unresolved",
       "conditionIds": [
         "chronic-primary-low-back-pain"
@@ -1309,24 +1287,33 @@
     {
       "id": "supine-dumbbell-scapular-protraction",
       "conditionIds": [
-        "rotator-cuff-tendinopathy"
+        "rotator-cuff-tendinopathy",
+        "hypermobility-spectrum-disorder"
       ],
       "name": "Supine dumbbell scapular protraction",
-      "execution": "Supine on support surface with straight arm holding dumbbell toward ceiling; lift scapula/shoulder from surface without trunk rotation, then lower scapula.",
+      "execution": "Supine with supported trunk, straight elbow and dumbbell pointing toward the ceiling; raise the scapula/shoulder without lifting or rotating the trunk, then lower under control. Source-specific starting and terminal cues are retained in the rationale; this shared candidate is not a universal prescription.",
       "equipment": [
-        "Dumbbell"
+        "Dumbbell",
+        "Stable floor/table"
       ],
       "movementRequirements": [
         "Supine supported trunk",
-        "Elbow straight; scapular protraction/retraction"
+        "Elbow straight; scapular protraction/retraction",
+        "Controlled unilateral repetition/load measurement",
+        "Scapular control with stable supported head/trunk; exact figures remain to be verified"
       ],
       "artwork": "Candidate only. No artwork generated, upstream attribution or clinical approval claimed. After execution review, commission/verify retained start, movement and end PNGs under separate supplement provenance; unresolved setup must be resolved before drawing.",
-      "reason": "Catalog scapular-push-up is hands/toes supported high plank, a different loading/support setup.",
+      "reason": "Common execution independently checked in RoCTEx Appendices A/B, fifth exercise, and HEAVY manual PDF p.9, Exercise5. RoCTEx specifies knees about90 degrees and stopping before relaxing; HEAVY specifies shoulder90 degrees, no head/back lift or shrug, and shoulder returning to support. Preserve these source-specific cues and separate condition dosing/monitoring; do not combine schedules. Catalog scapular-push-up uses high-plank support, a different setup. Text comparison is not completed figure/catalog-art verification or isolated-exercise efficacy.",
       "sourceRefs": [
         {
           "conditionId": "rotator-cuff-tendinopathy",
           "sourceId": "ingwersen-2017",
           "location": "Methods > Interventions; Appendices A and B > Exercise Program"
+        },
+        {
+          "conditionId": "hypermobility-spectrum-disorder",
+          "sourceId": "liaghat-protocol-2020",
+          "location": "Supplementary file 3 HEAVY manual, printed pp.4–8 (PDF pp.5–9), Exercises 1–5"
         }
       ],
       "status": "candidate"

@@ -295,11 +295,11 @@
     {
       "id": "hsd-supine-dumbbell-scapular-protraction-mapping",
       "exerciseId": null,
-      "requestId": "hsd-supine-dumbbell-scapular-protraction",
+      "requestId": "supine-dumbbell-scapular-protraction",
       "findingIds": [
         "heavy-short-term"
       ],
-      "matchRationale": "Catalog external-rotation/scaption/protraction identities absent in enumerated302metadata;prone-t-raise/bodyweight and genericraises do not match dumbbell/support/rotation mechanics. Manualtext inspected;figuresnotvisuallyverified;independentcomponentbenefitnotestablished.",
+      "matchRationale": "Catalog external-rotation/scaption/protraction identities absent in enumerated302metadata;prone-t-raise/bodyweight and genericraises do not match dumbbell/support/rotation mechanics. Manualtext inspected;figuresnotvisuallyverified;independentcomponentbenefitnotestablished. Shared candidate execution with RoCTEx protraction; preserve HEAVY-specific cues, dose and monitoring. Source figures still require visual verification.",
       "status": "candidate"
     }
   ],

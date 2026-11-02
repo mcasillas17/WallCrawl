@@ -107,10 +107,11 @@ Actual search queries:
 - `patellofemoral pain quadriceps hip exercises equivalence trial 2023 12 weeks 200 participants`
 - `"Best practice guide for patellofemoral pain" 2024 108110`
 - `"10.1136/bjsports-2022-106197" correction retraction`
+- `site:bjsm.bmj.com/content "HE-2" "After 4 weeks"`
 
 **[Quadriceps or hip exercises for patellofemoral pain? A randomised controlled equivalence trial](https://pubmed.ncbi.nlm.nih.gov/37137673/)** — DOI `10.1136/bjsports-2022-106197`, PMID `37137673`; final journal article; access `abstract-only`.
 
-PubMed/Europe PMC abstract and indexed publisher methods/results inspected. Direct publisher HTML/PDF403; Europe PMC lists subscription-only and no PMC copy; conservative abstract-only status.
+PubMed/Europe PMC abstract and indexed publisher methods/results inspected. Direct publisher HTML/PDF403; Europe PMC lists subscription-only and no PMC copy; conservative abstract-only status. Follow-up correction: indexed publisher supplemental HE-2 (printed p.9) inspected at https://bjsm.bmj.com/content/bjsports/early/2023/05/02/bjsports-2022-106197/DC1/embed/inline-supplementary-material-1.pdf?download=true; direct supplemental PDF returned 403. This is partial primary access, not complete PDF or figure inspection; conservative abstract-only status and protocol-field boundary retained.
 
 Design/population: Randomized equivalence trial, 200 participants; 12-week intervention. Clinically diagnosed insidious PFP; mean 27.2 years, 69%women; not traumatic knee injury.
 Comparator/cointerventions: Quadriceps-focused vs hip-focused exercises. Therapist introduction and educational leaflet described in indexed partial methods.
@@ -126,7 +127,7 @@ Reported protocol (study extraction, never an approved app dose):
 - progression: not reported in accessible full text; full article not retrieved
 - stoppingRules: not reported in accessible full text; full article not retrieved
 
-Exact inspected locations: Abstract > Methods and Results; indexed partial Methods > Interventions.
+Exact inspected locations: Abstract > Methods and Results; indexed partial Methods > Interventions; Indexed supplement > HE-2 SIDELYING HIP ABDUCTION, progression (printed p.9).
 Integrity/currentness: No correction/retraction link in the inspected Europe PMC core metadata; bounded metadata check, not registry-wide clearance.
 
 **[Best practice guide for patellofemoral pain based on synthesis of a systematic review, the patient voice and expert clinical reasoning](https://repository.essex.ac.uk/39411/)** — DOI `10.1136/bjsports-2024-108110`, PMID `39401870`; final journal article; access `full-text`.
@@ -176,15 +177,17 @@ Integrity/currentness: No correction/retraction link in the inspected Europe PMC
 - study-result: AKPS change 7.6 vs 7.0; MD 0.6 (95%CI−2.0, 3.2), within±8 equivalence margin; neither mean reached established important-change threshold. Indexed methods list knee extension/squat/lunge vs clam/abduction/extension; indexed dose 3x 8–12, 3/week for 12 weeks is not verified full protocol. Boundary: No untreated control; partial methods cannot establish exact variation/artwork.
 - published-recommendation: Dutch guideline recommends 6–12 weeks quadriceps/hip exercise, preferably partly PT-supervised, continuously adjusted to pain; reassess 6/12 weeks and reconsider diagnosis if no improvement 12 weeks. Boundary: Recommendations include low-certainty evidence; no universal numeric pain threshold.
 
+Indexed [primary supplemental HE-2, printed p.9](https://bjsm.bmj.com/content/bjsports/early/2023/05/02/bjsports-2022-106197/DC1/embed/inline-supplementary-material-1.pdf?download=true) clarifies a side-lying-to-standing progression after four weeks, with optional elastic-band loading and stable-pelvis/no-compensation cues. This corrects the execution relationship only; direct PDF403 means partial primary access, not complete protocol/figure inspection. No new dose or artwork.
+
 **Proposed ordinary-workout implications (not clinical release)**
 - Candidate ordinary-workout implication: adjust exercise volume/intensity to symptoms with clinical reassessment after the reported course; do not hardcode a numerical pain cutoff or assume a movement-wide ban. Basis: published-recommendation. Limits: Clinical protocol still needed; cannot infer acute-trauma safety or diagnosis.
 
 **Separate supportive exercise candidates**
-- PFP hip-abduction execution unresolved: 2023 indexed partial methods name side-lying/standing hip abduction as alternatives. Choose and verify the actual side, support, equipment and resistance variant from the complete intervention before acceptance. Catalog side-lying-hip-abduction is bodyweight_reps/Bodyweight; indexed trial permits standing alternative and actual variant/resistance not verified. Request preserves uncertainty rather than claiming exact match.
+- PFP hip-abduction execution unresolved: The program names side-lying and standing hip abduction; indexed supplemental HE-2 (printed p.9) describes side-lying abduction followed by standing progression after four weeks, not interchangeable alternatives. Optional elastic-band loading and stable-pelvis/no-compensation cues are reported. Complete protocol and figure inspection, exact support and resistance implementation remain unresolved. Catalog side-lying-hip-abduction is bodyweight_reps/Bodyweight. Indexed supplemental HE-2 describes a side-lying-to-standing progression after four weeks, not free choice of position. Full-protocol/figure verification and exact support/resistance matching remain unresolved; no exact catalog equivalence or clinical clearance asserted.
 
 **Gaps / confidence**
 - Researcher appraisal, not formal GRADE: moderate confidence in short-term exercise/education strategy; low confidence in exact app execution and longer-term effects.
-- Primary 2023 full text/supplement inaccessible; partial indexed methods retained conservatively, no full protocol reconstructed.
+- Primary 2023 direct article/supplement fetches inaccessible; indexed partial methods and HE-2 printed p.9 inspected. Full protocol/figure verification remains unresolved.
 - No universal squat/lunge ban, patellofemoral load cap or angle restriction follows from these sources.
 - Guide efficacy search cutoffMay 2022 predates 2023 equivalence trial; both retained without treating later publication as automatic supersession.
 - Independent clinical review absent; doses are reported study protocols, not app prescriptions.

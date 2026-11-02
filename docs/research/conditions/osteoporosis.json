@@ -226,7 +226,7 @@
       "access": {
         "status": "full-text",
         "date": "2026-11-01",
-        "details": "Initially abstract-only. Coordinator subsequently rendered and visually inspected all four scanned pages (593–596) from https://therapilates.com/PDF/sinaki.pdf using PDFium and the local image viewer; source has no text layer."
+        "details": "Initially abstract-only. Coordinator subsequently rendered and visually inspected all four scanned pages (593–596) from https://therapilates.com/PDF/sinaki.pdf using PDFium and the local image viewer; source has no text layer. Fix-round verification: original printed p.594 freshly downloaded, rendered with PDFium and visually inspected; common care distinguished from group N-specific instruction."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -236,7 +236,7 @@
       "design": "Retrospective review; exercise choice followed the treating physiatrist’s method, not random allocation. Radiograph comparisons were blinded to prescription.",
       "population": "59 women age49–60 with postmenopausal spinal osteoporosis and back pain.",
       "comparator": "Extension n25,flexion n9,combined n19,no therapeutic exercise n6.",
-      "coInterventions": "Infrared heat and massage in all programs; shared posture/lifting advice, not separately tested.",
+      "coInterventions": "All groups received infrared heat/massage and lifting/bending advice. Group N (neither flexion nor extension) specifically received posture instruction; some group N participants also performed abdominal isometrics. These components were not separately tested.",
       "outcomes": "Additional radiographic wedging/compression: extension16%, flexion89%, combined53%, noexercise67%. Flexion versus extension p<0.001; no adjusted risk or confidence interval.",
       "followUp": "One to six years. Body reports no-exercise mean2.3years; abstract rounds group means to1.4–2years.",
       "uncertainty": "Small unequal groups, clinician selection, historical diagnosis and unequal follow-up limit causal interpretation.",
@@ -248,7 +248,7 @@
         "frequency": "not reported for this cohort; discussion frequency refers to another cited study",
         "supervision": "Physiatrist prescribed; session supervision not reported.",
         "progression": "not reported",
-        "stoppingRules": "not reported; shared historical lifting/posture advice was not a tested threshold."
+        "stoppingRules": "not reported; lifting/bending advice was common to all groups and not an independently tested threshold. Posture instruction was specific to group N."
       },
       "locations": [
         "Abstract > Participants, follow-up and radiographic fracture results",
