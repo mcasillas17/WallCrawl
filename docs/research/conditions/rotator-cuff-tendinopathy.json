@@ -1,0 +1,422 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "rotator-cuff-tendinopathy",
+    "label": "Rotator cuff tendinopathy",
+    "aliases": [],
+    "distinctions": "Partial-thickness tears included in guideline scope; full-thickness tear, frozen shoulder, OA and instability are distinct."
+  },
+  "scope": {
+    "population": "Adults with clinically assessed rotator cuff tendinopathy.",
+    "stage": "Stage/irritability individualized; trial chronicity varies.",
+    "operativeStatus": "Nonoperative; repaired/full-thickness status not covered by these candidates.",
+    "exclusions": "No universal exercise ban established by these sources.",
+    "uncertainty": "Exact exercise choice, dosing and symptom-response thresholds require independent review."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-02",
+      "service": "Native web search, PubMed/PMC/publisher/society records; Europe PMC XML for accessible PMCID full text",
+      "query": "rotator cuff tendinopathy clinical practice guideline 2025 JOSPT exercise DOI",
+      "decision": "Targeted source inclusion/extraction recorded below; retained contrary findings and population/access limits.",
+      "limitations": "Not exhaustive; no fixed paper quota. Date is UTC (Nov 1 local / Nov 2 UTC). No registry-wide integrity clearance."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Native web search, PubMed/PMC/publisher/society records; Europe PMC XML for accessible PMCID full text",
+      "query": "RoCTEx trial high load low load rotator cuff tendinopathy PMC",
+      "decision": "Targeted source inclusion/extraction recorded below; retained contrary findings and population/access limits.",
+      "limitations": "Not exhaustive; no fixed paper quota. Date is UTC (Nov 1 local / Nov 2 UTC). No registry-wide integrity clearance."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Native web search, PubMed/PMC/publisher/society records; Europe PMC XML for accessible PMCID full text",
+      "query": "GRASP trial progressive exercise best practice advice rotator cuff 2021 Lancet PMC",
+      "decision": "Targeted source inclusion/extraction recorded below; retained contrary findings and population/access limits.",
+      "limitations": "Not exhaustive; no fixed paper quota. Date is UTC (Nov 1 local / Nov 2 UTC). No registry-wide integrity clearance."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Native web search, PubMed/PMC/publisher/society records; Europe PMC XML for accessible PMCID full text",
+      "query": "rotator cuff tendinopathy systematic review exercise loading 2024 2025 pain exercise",
+      "decision": "Targeted source inclusion/extraction recorded below; retained contrary findings and population/access limits.",
+      "limitations": "Not exhaustive; no fixed paper quota. Date is UTC (Nov 1 local / Nov 2 UTC). No registry-wide integrity clearance."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Crossref official REST API",
+      "query": "Exact DOI metadata GET /works/{URL-encoded DOI}: 10.2519/jospt.2025.13182, 10.2519/jospt.2024.12453, 10.1177/2325967117723292, 10.1016/S0140-6736(21)00846-1, 10.1136/bjsports-2025-110024",
+      "decision": "Metadata returned for desmeules-2025, ingwersen-2017, hopewell-2021; HTTP429 for lafrance-2024, lazzarini-2026. PubMed/publisher records remain source of access/extraction.",
+      "limitations": "Only record metadata/relations inspected; not a registry-wide retraction/correction search."
+    }
+  ],
+  "sources": [
+    {
+      "id": "desmeules-2025",
+      "title": "Rotator Cuff Tendinopathy Diagnosis, Nonsurgical Medical Care, and Rehabilitation: A Clinical Practice Guideline",
+      "doi": "10.2519/jospt.2025.13182",
+      "pmid": "40165544",
+      "url": "https://doi.org/10.2519/jospt.2025.13182",
+      "publicationStatus": "Published final article; exact version described in access details. Crossref recorded publication/online date 2025-04 (online date preferred where supplied).",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-02",
+        "details": "Final publisher HTML inspected; society PDF located. Published Apr 2025, online Jan 30."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-02",
+        "method": "Inspected cited publication/PubMed or society record and retrieved version during targeted search; title/identifier/access cross-check. No registry-wide correction or retraction search performed. Exact-DOI Crossref metadata lookup: https://api.crossref.org/works/10.2519%2Fjospt.2025.13182.",
+        "result": "Bounded publication/version check only; no claim of comprehensive integrity clearance. Any known notice is recorded in limitations. DOI/title/publication metadata correspond; this record does not establish absence of notices elsewhere."
+      },
+      "design": "Evidence-based clinical practice guideline",
+      "population": "Adults with tendinopathy, with/without calcification and partial-thickness tears.",
+      "comparator": "Exercise/no treatment and varied rehabilitation comparisons summarized.",
+      "coInterventions": "Education and other treatments varied across underlying studies.",
+      "outcomes": "Active rehabilitation recommended; optimal exercise mode, intensity and dose remain uncertain.",
+      "followUp": "Short to long term across studies.",
+      "uncertainty": "Heterogeneous programs; no universal load or range threshold.",
+      "harms": "No per-exercise safety clearance or pooled injury incidence established here.",
+      "limitations": "Full-thickness tears and repair protocols are separate applicability states.",
+      "protocol": {
+        "execution": "Active rehabilitation including motor control and/or resistance training at varied loads; no single variant prescribed.",
+        "dose": "not reported",
+        "frequency": "not reported",
+        "supervision": "Education and exercise individualized by clinicians; home programs discussed.",
+        "progression": "Not standardized; capacity/load tolerance considered for return to sport.",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Summary recommendations 24–25, 35–36",
+        "Section 3.2 Exercise > Gaps in Knowledge; Evidence Synthesis and Rationale"
+      ]
+    },
+    {
+      "id": "lafrance-2024",
+      "title": "The Efficacy of Exercise Therapy for Rotator Cuff–Related Shoulder Pain According to the FITT Principle: A Systematic Review With Meta-analyses",
+      "doi": "10.2519/jospt.2024.12453",
+      "pmid": null,
+      "url": "https://doi.org/10.2519/jospt.2024.12453",
+      "publicationStatus": "Published final article; exact version described in access details.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-02",
+        "details": "Publisher abstract and indexed results inspected; PDF located, not fully reviewed."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-02",
+        "method": "Inspected cited publication/PubMed or society record and retrieved version during targeted search; title/identifier/access cross-check. No registry-wide correction or retraction search performed. Exact-DOI Crossref metadata lookup: https://api.crossref.org/works/10.2519%2Fjospt.2024.12453.",
+        "result": "Bounded publication/version check only; no claim of comprehensive integrity clearance. Any known notice is recorded in limitations. Crossref lookup returned HTTP429; existing publisher/PubMed metadata retained, no Crossref clearance claimed."
+      },
+      "design": "Systematic review/meta-analysis; 22 RCTs, 1281 participants",
+      "population": "Adults with rotator cuff-related shoulder pain.",
+      "comparator": "Specific/motor-control/high-load programs versus nonspecific/lower-load programs.",
+      "coInterventions": "Varied bundled programs.",
+      "outcomes": "Motor control slightly favored disability short term SMD −0.29 and medium term −0.33; pain superiority unclear.",
+      "followUp": "Short and medium term.",
+      "uncertainty": "Other modes/intensity low or very-low certainty; no frequency/time comparisons.",
+      "harms": "not reported in inspected abstract.",
+      "limitations": "Relative-program benefit does not demonstrate alternative exercises harmful.",
+      "protocol": {
+        "execution": "not reported",
+        "dose": "not reported",
+        "frequency": "not reported",
+        "supervision": "not reported",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Abstract > Results and Conclusion"
+      ]
+    },
+    {
+      "id": "ingwersen-2017",
+      "title": "Three Months of Progressive High-Load Versus Traditional Low-Load Strength Training Among Patients With Rotator Cuff Tendinopathy: Primary Results From the Double-Blind Randomized Controlled RoCTEx Trial",
+      "doi": "10.1177/2325967117723292",
+      "pmid": "28875153",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5576542/",
+      "publicationStatus": "Published final article; exact version described in access details. Crossref recorded publication/online date 2017-08-28 (online date preferred where supplied).",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-02",
+        "details": "Final full-text XML including Appendices A/B retrieved through Europe PMC; PMC browser challenge."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-02",
+        "method": "Inspected cited publication/PubMed or society record and retrieved version during targeted search; title/identifier/access cross-check. No registry-wide correction or retraction search performed. Exact-DOI Crossref metadata lookup: https://api.crossref.org/works/10.1177%2F2325967117723292.",
+        "result": "Bounded publication/version check only; no claim of comprehensive integrity clearance. Any known notice is recorded in limitations. DOI/title/publication metadata correspond; this record does not establish absence of notices elsewhere."
+      },
+      "design": "Randomized trial, 100 patients",
+      "population": "Adults 18–65, symptoms ≥3 months, ultrasound tendinopathy; full-thickness tear, elevation <90°, resting pain >40/100 excluded.",
+      "comparator": "Same exercise program, progressive high-load versus low-load cuff exercises.",
+      "coInterventions": "Both groups scapular and mobility exercises/education; some received corticosteroid before randomization.",
+      "outcomes": "DASH group difference −1.37 (95% CI −6.72 to 3.99); no high-load superiority.",
+      "followUp": "12 weeks.",
+      "uncertainty": "No untreated group; selected population; corticosteroid interaction exploratory.",
+      "harms": "Three worsening-symptom referrals for surgery; no significant group difference in increased-pain/strength-loss episodes.",
+      "limitations": "Eligibility exclusions are not contraindications; regimen is study extraction, not app prescription.",
+      "protocol": {
+        "execution": "Standing dumbbell scaption at 45° between flexion/abduction to horizontal, side-lying dumbbell ER with elbow by side; supine dumbbell scapular protraction; standing straight-arm elastic-band extension.",
+        "dose": "Cuff low-load: 3 sets 20–25RM; high-load: 4 sets progressing 15RM to 6RM. Scapular exercises 3 sets of 20.",
+        "frequency": "Home 3/week for 12 weeks.",
+        "supervision": "Initial 60-min instruction; 30-min sessions weeks 2–4, 6 and 9.",
+        "progression": "Cuff high-load 15RM week 1 to 6RM weeks 9–12; low-load maintained 20–25RM. Range/load adjusted if symptoms.",
+        "stoppingRules": "Protocol: pain ≤5/10, returns toward baseline within 30 min, no worsening following days; adjust ROM/load, isometric option if necessary; contact therapist if adjustment fails. Numeric rules are protocol-specific, not damage thresholds."
+      },
+      "locations": [
+        "Methods > Interventions; Appendices A and B > Exercise Program",
+        "Results > Primary and Secondary Outcomes; Adverse Events"
+      ]
+    },
+    {
+      "id": "hopewell-2021",
+      "title": "Progressive exercise compared with best practice advice, with or without corticosteroid injection, for the treatment of patients with rotator cuff disorders (GRASP): a multicentre, pragmatic, 2 × 2 factorial, randomised controlled trial",
+      "doi": "10.1016/S0140-6736(21)00846-1",
+      "pmid": "34265255",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8343092/",
+      "publicationStatus": "Published final article; exact version described in access details. Crossref recorded publication/online date 2021-07 (online date preferred where supplied).",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-02",
+        "details": "Final trial full-text XML inspected via Europe PMC; detailed HTA intervention chapter retrieval blocked."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-02",
+        "method": "Inspected cited publication/PubMed or society record and retrieved version during targeted search; title/identifier/access cross-check. No registry-wide correction or retraction search performed. Exact-DOI Crossref metadata lookup: https://api.crossref.org/works/10.1016%2FS0140-6736%2821%2900846-1.",
+        "result": "Bounded publication/version check only; no claim of comprehensive integrity clearance. Any known notice is recorded in limitations. DOI/title/publication metadata correspond; this record does not establish absence of notices elsewhere."
+      },
+      "design": "Pragmatic factorial RCT, 708 adults",
+      "population": "Episode ≤6 months; significant trauma, surgery candidates, instability/frozen shoulder excluded.",
+      "comparator": "Up to six progressive-exercise sessions versus one advice session; factorial injection/no injection.",
+      "coInterventions": "Both groups home exercise and education; corticosteroid in factorial arms.",
+      "outcomes": "SPADI over 12 months difference −0.66 (99% CI −4.52 to 3.20); progressive sessions not superior.",
+      "followUp": "12 months.",
+      "uncertainty": "Advice included exercise, not inactive control; open-label and broad cuff disorder label.",
+      "harms": "No serious adverse events reported.",
+      "limitations": "Not a test of unrestricted gym training or surgical full-thickness tears.",
+      "protocol": {
+        "execution": "Individually tailored progressive home exercise versus advice with home exercise; no exact candidate execution imported from blocked detailed chapter.",
+        "dose": "Up to six face-to-face sessions over 16 weeks versus one advice session.",
+        "frequency": "Home exercise advised 5 days/week.",
+        "supervision": "Physiotherapist instruction in both arms.",
+        "progression": "Tailored progression; not a single fixed clinical regimen.",
+        "stoppingRules": "not reported as a transferable autonomous-app stopping rule."
+      },
+      "locations": [
+        "Methods > Participants; Procedures",
+        "Findings; Results > Adverse events"
+      ]
+    },
+    {
+      "id": "lazzarini-2026",
+      "title": "Comparative effectiveness of physical therapy interventions in adults with rotator cuff tendinopathy: a systematic review and network meta-analysis",
+      "doi": "10.1136/bjsports-2025-110024",
+      "pmid": null,
+      "url": "https://doi.org/10.1136/bjsports-2025-110024",
+      "publicationStatus": "Published final article; exact version described in access details.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-02",
+        "details": "Published 2026 online-ahead-of-print version; abstract/indexed results/discussion inspected, not entire paper."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-02",
+        "method": "Inspected cited publication/PubMed or society record and retrieved version during targeted search; title/identifier/access cross-check. No registry-wide correction or retraction search performed. Exact-DOI Crossref metadata lookup: https://api.crossref.org/works/10.1136%2Fbjsports-2025-110024.",
+        "result": "Bounded publication/version check only; no claim of comprehensive integrity clearance. Any known notice is recorded in limitations. Crossref lookup returned HTTP429; existing publisher/PubMed metadata retained, no Crossref clearance claimed."
+      },
+      "design": "Network meta-analysis, 89 RCTs/5532 participants",
+      "population": "Adults with rotator cuff tendinopathy.",
+      "comparator": "Physical therapy interventions versus each other, sham or no treatment.",
+      "coInterventions": "Often multicomponent interventions.",
+      "outcomes": "Shoulder exercise may help versus no treatment; most adjunct superiority unclear.",
+      "followUp": "End-of-treatment and varied longer-term assessments.",
+      "uncertainty": "Very-low certainty, indirect comparisons, small studies and limited long-term data.",
+      "harms": "Adverse-event evidence limited in inspected material.",
+      "limitations": "Ranking does not establish mandatory exercises or harm from alternatives.",
+      "protocol": {
+        "execution": "not reported",
+        "dose": "not reported",
+        "frequency": "not reported",
+        "supervision": "not reported",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Abstract > Results and Conclusion; indexed Discussion"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "active-rehabilitation",
+      "kind": "published-recommendation",
+      "statement": "Guideline recommends individualized education and active rehabilitation, including motor control/resistance at varied loads.",
+      "citations": [
+        {
+          "sourceId": "desmeules-2025",
+          "location": "Summary recommendations 24–25, 35–36"
+        },
+        {
+          "sourceId": "desmeules-2025",
+          "location": "Section 3.2 Exercise > Gaps in Knowledge; Evidence Synthesis and Rationale"
+        }
+      ],
+      "applicability": "Nonoperative adult tendinopathy/partial tears.",
+      "limitations": "No optimum universal exercise/dose or numeric range cap."
+    },
+    {
+      "id": "roctex-results",
+      "kind": "study-result",
+      "statement": "Both loading programs improved; high load was not superior. Exact scaption/ER/scapular variants and a symptom-response protocol were used.",
+      "citations": [
+        {
+          "sourceId": "ingwersen-2017",
+          "location": "Methods > Interventions; Appendices A and B > Exercise Program"
+        },
+        {
+          "sourceId": "ingwersen-2017",
+          "location": "Results > Primary and Secondary Outcomes; Adverse Events"
+        }
+      ],
+      "applicability": "Adults 18–65, symptoms ≥3 months, ultrasound tendinopathy; full-thickness tear, elevation <90°, resting pain >40/100 excluded.",
+      "limitations": "Package effects; each exercise not independently tested."
+    },
+    {
+      "id": "comparative-uncertainty",
+      "kind": "evidence-gap",
+      "statement": "Mode/intensity superiority remains uncertain; extra GRASP sessions not superior to exercise-supported advice.",
+      "citations": [
+        {
+          "sourceId": "lafrance-2024",
+          "location": "Abstract > Results and Conclusion"
+        },
+        {
+          "sourceId": "hopewell-2021",
+          "location": "Findings; Results > Adverse events"
+        },
+        {
+          "sourceId": "lazzarini-2026",
+          "location": "Abstract > Results and Conclusion; indexed Discussion"
+        }
+      ],
+      "applicability": "Nonoperative selected cuff disorders.",
+      "limitations": "Not evidence that general exercise or alternatives are harmful."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "roctex-1",
+      "exerciseId": null,
+      "requestId": "standing-dumbbell-scaption",
+      "findingIds": [
+        "roctex-results"
+      ],
+      "matchRationale": "Catalog front-raise is anterior elevation; dumbbell-lateral-raise does not verify this plane/grip. Dose alone is not a new identity.",
+      "status": "candidate"
+    },
+    {
+      "id": "roctex-2",
+      "exerciseId": null,
+      "requestId": "side-lying-dumbbell-shoulder-external-rotation",
+      "findingIds": [
+        "roctex-results"
+      ],
+      "matchRationale": "No catalog ER execution identified in enumerated shoulder records. HSD pillow/support variants require reconciliation; do not assume exact equivalence.",
+      "status": "candidate"
+    },
+    {
+      "id": "roctex-3",
+      "exerciseId": null,
+      "requestId": "supine-dumbbell-scapular-protraction",
+      "findingIds": [
+        "roctex-results"
+      ],
+      "matchRationale": "Catalog scapular-push-up is hands/toes supported high plank, a different loading/support setup.",
+      "status": "candidate"
+    },
+    {
+      "id": "roctex-4",
+      "exerciseId": null,
+      "requestId": "standing-straight-arm-band-shoulder-extension",
+      "findingIds": [
+        "roctex-results"
+      ],
+      "matchRationale": "Cable straight-arm-pulldown has cable/bar setup; banded-kickback refers to hip extension, not this shoulder execution.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "consider-roctex-variants",
+      "kind": "supportive-prescription",
+      "basis": "unresolved-hypothesis",
+      "statement": "Retain the four studied execution variants for independent content review; no default clinical dose or clinical release.",
+      "findingIds": [
+        "roctex-results"
+      ],
+      "citations": [
+        {
+          "sourceId": "ingwersen-2017",
+          "location": "Methods > Interventions; Appendices A and B > Exercise Program"
+        },
+        {
+          "sourceId": "ingwersen-2017",
+          "location": "Results > Primary and Secondary Outcomes; Adverse Events"
+        }
+      ],
+      "applicability": {
+        "population": "Adults with clinically assessed rotator cuff tendinopathy.",
+        "stage": "Nonoperative; repaired/full-thickness status not covered by these candidates.",
+        "rationale": "Studied within a tailored exercise package."
+      },
+      "limitations": "No isolated efficacy, safety guarantee or superiority over other exercises.",
+      "mappingIds": [
+        "roctex-1",
+        "roctex-2",
+        "roctex-3",
+        "roctex-4"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "tailored-symptom-adjustment",
+      "kind": "symptom-response",
+      "basis": "published-recommendation",
+      "statement": "Candidate: individualize activity/exercise to tolerance; RoCTEx numeric pain/recovery rules remain a study-specific review item, not a universal damage threshold.",
+      "findingIds": [
+        "active-rehabilitation",
+        "roctex-results"
+      ],
+      "citations": [
+        {
+          "sourceId": "desmeules-2025",
+          "location": "Summary recommendations 24–25, 35–36"
+        },
+        {
+          "sourceId": "ingwersen-2017",
+          "location": "Methods > Interventions; Appendices A and B > Exercise Program"
+        }
+      ],
+      "applicability": {
+        "population": "Adults with clinically assessed rotator cuff tendinopathy.",
+        "stage": "Nonoperative selected tendinopathy; not acute trauma or repair.",
+        "rationale": "Guideline individualized education and trial-specific adjustments support review of symptom-responsive progression."
+      },
+      "limitations": "No automatic app cutoff or numeric load limit released.",
+      "mappingIds": [],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "No clinical approval or automatic dose/progression.",
+    "No diagnosis-wide overhead/pressing/stretching ban supported; unsupported restrictions withheld.",
+    "Catalog contains anterior/lateral raises, not verified 45-degree scaption; no synonym-only equivalence."
+  ],
+  "disposition": "research-only",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

@@ -1,0 +1,396 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "lateral-ankle-sprain",
+    "label": "lateral ankle sprain",
+    "aliases": [],
+    "distinctions": "Undifferentiated injury, suspected fracture, syndesmotic injury or severe immobilised injury must not inherit mild-sprain protocols."
+  },
+  "scope": {
+    "population": "Assessed acute or postacute lateral ligament sprain; direct early-exercise trials mostly grade I/II.",
+    "stage": "Severity, healing and weight-bearing instructions determine applicability.",
+    "operativeStatus": "Nonoperative evidence unless explicitly stated otherwise; no postoperative protocol proposed.",
+    "exclusions": "Undifferentiated injury, suspected fracture, syndesmotic injury or severe immobilised injury must not inherit mild-sprain protocols.",
+    "uncertainty": "Draft research only; diagnosis, individual starting load, stage and clinical review remain unresolved."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "2021 lateral ankle ligament sprains clinical practice guideline chronic ankle instability exercise balance resistance training",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "acute ankle sprain accelerated rehabilitation randomized trial Bleakley 2010 early exercise",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "exercise based rehabilitation reduces reinjury following acute lateral ankle sprain systematic review meta analysis 2022 14 RCT",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "\"Effectiveness of supervised physiotherapy\" \"ankle sprain\" 2016 BMJ",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "DOI:10.2519/jospt.2021.0302",
+      "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
+      "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "DOI:10.1136/bmj.c1964",
+      "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
+      "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "DOI:10.1136/bmj.i5650",
+      "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
+      "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "DOI:10.1371/journal.pone.0262023",
+      "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
+      "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    }
+  ],
+  "sources": [
+    {
+      "id": "ank-g",
+      "title": "Ankle Stability and Movement Coordination Impairments: Lateral Ankle Ligament Sprains Revision 2021.",
+      "doi": "10.2519/jospt.2021.0302",
+      "pmid": "33789434",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/33789434/",
+      "publicationStatus": "Final journal publication; metadata firstPublicationDate 2021-04-01. Version/access details below.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Official80-page AOPT PDF retrieved and parsed in memory during serialization; summary CPG3 and acute/chronic intervention sections inspected. https://www.orthopt.org/uploads/content_files/files/jospt.2021.0302.pdf"
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed records inspected during research; Europe PMC REST core metadata DOI:10.2519/jospt.2021.0302 rechecked during serialization, including publication type and comment/correction links. Not a registry-wide clearance.",
+        "result": "No correction/retraction link returned in this bounded metadata check. No claim of exhaustive integrity clearance or automatic supersession."
+      },
+      "design": "Final2021 clinical practice guideline; distinct initial LAS and CAI evidence.",
+      "population": "Acute/postacute lateral sprains and chronic ankle instability, separately classified.",
+      "comparator": "Multiple rehabilitation/support comparisons, not one trial.",
+      "coInterventions": "External supports/manual therapy and education tailored to severity.",
+      "outcomes": "Acute: progressive weight bearing with external support, structured protected ROM/neuromuscular/balance rehab; severe injury may need up to10 daysimmobilisation. CAI: proprioceptive/neuromuscular exercise; supports alone insufficient for postural stability.",
+      "followUp": "Varied study intervals.",
+      "uncertainty": "Severity/healing/impairment assessment required; no self-prescribed acute fracture or severe-sprain protocol.",
+      "harms": "No single exercise harms denominator.",
+      "limitations": "Severity/healing/impairment assessment required; no self-prescribed acute fracture or severe-sprain protocol. Research candidate only; no clinical release.",
+      "protocol": {
+        "execution": "Acute protected active ROM, stretching, neuromuscular/postural/balance training; CAI proprioceptive/neuromuscular work.",
+        "dose": "not reported as one universal set/repetition dose.",
+        "frequency": "not reported as one universal frequency.",
+        "supervision": "Clinic and home selected for severity, impairments, preferences and resources.",
+        "progression": "Progressive weight bearing/protection and exercise selected for phase of healing; no universal increment.",
+        "stoppingRules": "Severity, pain and protection guide care; no universal numerical stop rule."
+      },
+      "locations": [
+        "Summary of Recommendations > Acute/Postacute Protection and Optimal Loading; Therapeutic Exercise (CPG3)",
+        "Summary of Recommendations > Chronic Ankle Instability > External Support; Therapeutic Exercise (CPG3)"
+      ]
+    },
+    {
+      "id": "las-r1",
+      "title": "Effect of accelerated rehabilitation on function after ankle sprain: randomised controlled trial.",
+      "doi": "10.1136/bmj.c1964",
+      "pmid": "20457737",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20457737/",
+      "publicationStatus": "Final journal publication; metadata firstPublicationDate 2010-05-10. Version/access details below.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "PubMed abstract accessed; direct BMJ body403."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed records inspected during research; Europe PMC REST core metadata DOI:10.1136/bmj.c1964 rechecked during serialization, including publication type and comment/correction links. Not a registry-wide clearance.",
+        "result": "Linked notices: Comment in: Evid Based Med. 2010 Oct;15(5):141-2. doi: 10.1136/ebm1102; Comment in: J Physiother. 2010;56(3):202. doi: 10.1016/s1836-9553(10)70028-x; Comment in: J Bone Joint Surg Am. 2010 Nov 17;92(16):2733. doi: 10.2106/JBJS.9216.ebo819; Comment in: Clin J Sport Med. 2011 May;21(3):276-7. doi: 10.1097/01.jsm.0000398177.62711.92 No claim of exhaustive integrity clearance or automatic supersession."
+      },
+      "design": "RCT,n=101 with blinded assessor.",
+      "population": "Assessed acute gradeI/II ankle sprain.",
+      "comparator": "First-week early therapeutic exercise versus standard protection/rest/ice/compression/elevation.",
+      "coInterventions": "Standard care elements.",
+      "outcomes": "LEFS favored early exercise atweeks1,2 (adjusted5.28,4.92); no other pain/swelling differences.",
+      "followUp": "Weeks1–4; reinjury16 weeks.",
+      "uncertainty": "Cannot transfer to gradeIII, fracture or undifferentiated injury; full exercise dosing inaccessible.",
+      "harms": "Reinjury4%,two/arm; abstract insufficient for full harms assessment.",
+      "limitations": "Cannot transfer to gradeIII, fracture or undifferentiated injury; full exercise dosing inaccessible. Research candidate only; no clinical release.",
+      "protocol": {
+        "execution": "not reported",
+        "dose": "not reported",
+        "frequency": "not reported",
+        "supervision": "not reported",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Abstract > Methods and Results"
+      ]
+    },
+    {
+      "id": "las-r2",
+      "title": "Effect of early supervised physiotherapy on recovery from acute ankle sprain: randomised controlled trial.",
+      "doi": "10.1136/bmj.i5650",
+      "pmid": "27852621",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5112179/",
+      "publicationStatus": "Final journal publication; metadata firstPublicationDate 2016-11-16. Version/access details below.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Full indexed BMJ methods/results inspected. https://www.bmj.com/content/355/bmj.i5650.long"
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed records inspected during research; Europe PMC REST core metadata DOI:10.1136/bmj.i5650 rechecked during serialization, including publication type and comment/correction links. Not a registry-wide clearance.",
+        "result": "Linked notices: Comment in: BMJ. 2016 Nov 16;355:i5984. doi: 10.1136/bmj.i5984; Comment in: J Physiother. 2017 Apr;63(2):115. doi: 10.1016/j.jphys.2017.02.006; Comment in: J Physiother. 2017 Apr;63(2):115. doi: 10.1016/j.jphys.2017.02.007 No claim of exhaustive integrity clearance or automatic supersession."
+      },
+      "design": "RCT,n=503, usual-care active comparator.",
+      "population": "Age≥16 with simple gradeI/II sprain; injuries requiring immobilisation excluded.",
+      "comparator": "Usual care versus added supervised physiotherapy.",
+      "coInterventions": "Usual care included graduated weight bearing and home-management information.",
+      "outcomes": "Excellent3-month FAOS recovery43%versus37%; difference6%(95%CI−3 to15); no clinically important functional improvement through6 months.",
+      "followUp": "1,3,6 months.",
+      "uncertainty": "No proof exercise is harmful/unnecessary for all injuries; the particular added supervised program did not improve major outcome.",
+      "harms": "Reinjury7.5%physiotherapy versus8.4%usual care; separate comprehensive harms extraction not established.",
+      "limitations": "No proof exercise is harmful/unnecessary for all injuries; the particular added supervised program did not improve major outcome. Research candidate only; no clinical release.",
+      "protocol": {
+        "execution": "Four-stage recovery-based active ankle ROM, isometrics and elastic-band/bodyweight resistance home exercises.",
+        "dose": "Initial assessment plus up to7 further30 minclinic visits; home exercise dose based on recovery rather than one fixed regimen.",
+        "frequency": "Individual appointment/home frequency; not fixed universal daily sets.",
+        "supervision": "Assigned physiotherapist, usually same clinician.",
+        "progression": "Four stages: symptoms, ROM/strength/weight bearing, exercise tolerance, full function/dynamic stability; criteria for progression/discharge.",
+        "stoppingRules": "not reported as an app-wide numeric stopping rule."
+      },
+      "locations": [
+        "Methods > Description of the trial arms",
+        "Results > Primary outcome; Re-injury"
+      ]
+    },
+    {
+      "id": "las-s",
+      "title": "Exercise-based rehabilitation reduces reinjury following acute lateral ankle sprain: A systematic review update with meta-analysis.",
+      "doi": "10.1371/journal.pone.0262023",
+      "pmid": "35134061",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8824326/",
+      "publicationStatus": "Final journal publication; metadata firstPublicationDate 2022-02-08. Version/access details below.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Full PMC review methods/results inspected."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed records inspected during research; Europe PMC REST core metadata DOI:10.1371/journal.pone.0262023 rechecked during serialization, including publication type and comment/correction links. Not a registry-wide clearance.",
+        "result": "No correction/retraction link returned in this bounded metadata check. No claim of exhaustive integrity clearance or automatic supersession."
+      },
+      "design": "Systematic review/meta-analysis,14 RCTs; therapeutic-content quality poor/moderate.",
+      "population": "Adults after acute ankle sprain; reported sample2182 abstract versus2184 body.",
+      "comparator": "Exercise-based rehab versus usual care/minimal intervention.",
+      "coInterventions": "Varied across studies.",
+      "outcomes": "Abstract reinjury OR0.60(95%CI0.36–0.99); sensitivity excluding high-risk exercise content lost significance; patient/clinical outcomes inconsistent.",
+      "followUp": "Up to12 months.",
+      "uncertainty": "Optimal content/dose unknown; abstract/body count discrepancy retained.",
+      "harms": "No uniform program-specific adverse-event estimate established.",
+      "limitations": "Optimal content/dose unknown; abstract/body count discrepancy retained. Research candidate only; no clinical release.",
+      "protocol": {
+        "execution": "Varied rehabilitation exercise content.",
+        "dose": "Reported sessions 10–60 minutes; 5–84 sessions across programs. Content was not standardised.",
+        "frequency": "Programs lasted 1–12 weeks; optimal frequency was not established.",
+        "supervision": "Varied study supervision.",
+        "progression": "not reported as a single validated progression.",
+        "stoppingRules": "not reported as a single validated stopping rule."
+      },
+      "locations": [
+        "Abstract > Results",
+        "Results > Re-injury and sensitivity analysis; Training volume"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "ank-g-result",
+      "kind": "published-recommendation",
+      "statement": "Acute: progressive weight bearing with external support, structured protected ROM/neuromuscular/balance rehab; severe injury may need up to10 daysimmobilisation. CAI: proprioceptive/neuromuscular exercise; supports alone insufficient for postural stability. Harms: No single exercise harms denominator.",
+      "citations": [
+        {
+          "sourceId": "ank-g",
+          "location": "Summary of Recommendations > Acute/Postacute Protection and Optimal Loading; Therapeutic Exercise (CPG3)"
+        },
+        {
+          "sourceId": "ank-g",
+          "location": "Summary of Recommendations > Chronic Ankle Instability > External Support; Therapeutic Exercise (CPG3)"
+        }
+      ],
+      "applicability": "Acute/postacute lateral sprains and chronic ankle instability, separately classified.",
+      "limitations": "Severity/healing/impairment assessment required; no self-prescribed acute fracture or severe-sprain protocol."
+    },
+    {
+      "id": "ank-g-execution",
+      "kind": "published-recommendation",
+      "statement": "Reported execution: Acute protected active ROM, stretching, neuromuscular/postural/balance training; CAI proprioceptive/neuromuscular work. Study dose: not reported as one universal set/repetition dose. Frequency: not reported as one universal frequency.",
+      "citations": [
+        {
+          "sourceId": "ank-g",
+          "location": "Summary of Recommendations > Acute/Postacute Protection and Optimal Loading; Therapeutic Exercise (CPG3)"
+        },
+        {
+          "sourceId": "ank-g",
+          "location": "Summary of Recommendations > Chronic Ankle Instability > External Support; Therapeutic Exercise (CPG3)"
+        }
+      ],
+      "applicability": "Acute/postacute lateral sprains and chronic ankle instability, separately classified.",
+      "limitations": "Execution identity is independent of dose. Bundle/component and access limits apply; these are research protocols rather than app prescriptions."
+    },
+    {
+      "id": "las-r1-result",
+      "kind": "study-result",
+      "statement": "LEFS favored early exercise atweeks1,2 (adjusted5.28,4.92); no other pain/swelling differences. Harms: Reinjury4%,two/arm; abstract insufficient for full harms assessment.",
+      "citations": [
+        {
+          "sourceId": "las-r1",
+          "location": "Abstract > Methods and Results"
+        }
+      ],
+      "applicability": "Assessed acute gradeI/II ankle sprain.",
+      "limitations": "Cannot transfer to gradeIII, fracture or undifferentiated injury; full exercise dosing inaccessible."
+    },
+    {
+      "id": "las-r2-result",
+      "kind": "study-result",
+      "statement": "Excellent3-month FAOS recovery43%versus37%; difference6%(95%CI−3 to15); no clinically important functional improvement through6 months. Harms: Reinjury7.5%physiotherapy versus8.4%usual care; separate comprehensive harms extraction not established.",
+      "citations": [
+        {
+          "sourceId": "las-r2",
+          "location": "Methods > Description of the trial arms"
+        },
+        {
+          "sourceId": "las-r2",
+          "location": "Results > Primary outcome; Re-injury"
+        }
+      ],
+      "applicability": "Age≥16 with simple gradeI/II sprain; injuries requiring immobilisation excluded.",
+      "limitations": "No proof exercise is harmful/unnecessary for all injuries; the particular added supervised program did not improve major outcome."
+    },
+    {
+      "id": "las-s-result",
+      "kind": "study-result",
+      "statement": "Abstract reinjury OR0.60(95%CI0.36–0.99); sensitivity excluding high-risk exercise content lost significance; patient/clinical outcomes inconsistent. Harms: No uniform program-specific adverse-event estimate established.",
+      "citations": [
+        {
+          "sourceId": "las-s",
+          "location": "Abstract > Results"
+        },
+        {
+          "sourceId": "las-s",
+          "location": "Results > Re-injury and sensitivity analysis; Training volume"
+        }
+      ],
+      "applicability": "Adults after acute ankle sprain; reported sample2182 abstract versus2184 body.",
+      "limitations": "Optimal content/dose unknown; abstract/body count discrepancy retained."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "acute-sprain-protected-active-ankle-rom-unresolved-mapping",
+      "exerciseId": null,
+      "requestId": "acute-sprain-protected-active-ankle-rom-unresolved",
+      "findingIds": [
+        "ank-g-execution"
+      ],
+      "matchRationale": "A generic ankle motion name cannot establish a safe acute-sprain routine. Preserve this as an unresolved request, with no invented fracture protocol or numeric range.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "acute-sprain-assessment-boundary",
+      "kind": "escalation",
+      "basis": "product-precaution",
+      "statement": "Require assessed injury severity, healing phase and weight-bearing/protection instructions before selecting acute ankle exercises; an unassessed recent injury does not receive an automatic routine.",
+      "findingIds": [
+        "ank-g-result",
+        "las-r1-result"
+      ],
+      "citations": [
+        {
+          "sourceId": "ank-g",
+          "location": "Summary of Recommendations > Acute/Postacute Protection and Optimal Loading; Therapeutic Exercise (CPG3)"
+        },
+        {
+          "sourceId": "las-r1",
+          "location": "Abstract > Methods and Results"
+        }
+      ],
+      "applicability": {
+        "population": "Assessed acute or postacute lateral ligament sprain; direct early-exercise trials mostly grade I/II.",
+        "stage": "Acute/postacute injury; particularly unknown severity or suspected fracture.",
+        "rationale": "Draft interpretation of the linked condition-specific findings; evidence and product choice are separated by basis. Other conditions, equipment and independent joint limits remain controlling."
+      },
+      "limitations": "Conservative product boundary, not a trial-tested app triage algorithm or a claim that all loading is harmful. Candidate only; no clinical release.",
+      "mappingIds": [],
+      "status": "candidate"
+    },
+    {
+      "id": "acute-sprain-protected-rom-candidate",
+      "kind": "supportive-prescription",
+      "basis": "published-recommendation",
+      "statement": "Protected active ROM can form part of clinician-selected structured rehabilitation, but this unresolved execution request must be completed before programming.",
+      "findingIds": [
+        "ank-g-result",
+        "ank-g-execution"
+      ],
+      "citations": [
+        {
+          "sourceId": "ank-g",
+          "location": "Summary of Recommendations > Acute/Postacute Protection and Optimal Loading; Therapeutic Exercise (CPG3)"
+        }
+      ],
+      "applicability": {
+        "population": "Assessed acute or postacute lateral ligament sprain; direct early-exercise trials mostly grade I/II.",
+        "stage": "Assessed acute/postacute sprain within permitted protection.",
+        "rationale": "Draft interpretation of the linked condition-specific findings; evidence and product choice are separated by basis. Other conditions, equipment and independent joint limits remain controlling."
+      },
+      "limitations": "Guideline does not define one universal position/range/dose. Candidate only; no clinical release.",
+      "mappingIds": [
+        "acute-sprain-protected-active-ankle-rom-unresolved-mapping"
+      ],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "Clinical content review and individual applicability are not established.",
+    "Restriction-only until injury severity/healing/protection is assessed.",
+    "Acute ROM request intentionally lacks an invented range/direction/dose.",
+    "Early exercise trial primary methods remain abstract-only."
+  ],
+  "disposition": "unresolved",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

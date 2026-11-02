@@ -4,7 +4,7 @@ Working evidence review for personalized workouts. This inventory contains 50 ca
 
 Each regional evidence report links the actual medical papers and guidelines inspected, distinguishes full-text from abstract-only access, and records study populations, interventions, outcomes, harms, conflicts and limits. A study protocol is not an approved app prescription. Unavailable details stay unknown; no restriction is justified merely because another exercise helped.
 
-Current state: linked source reports cover 50 of 50 conditions; 26 structured dossiers have been reconciled. Independent source verification and clinical review are separate gates. This is a targeted evidence review, not an exhaustive systematic review.
+Current state: linked source reports cover 50 of 50 conditions; 42 structured dossiers have been reconciled. Independent source verification and clinical review are separate gates. This is a targeted evidence review, not an exhaustive systematic review.
 
 ## Inventory and evidence links
 
@@ -17,12 +17,12 @@ Current state: linked source reports cover 50 of 50 conditions; 26 structured do
 | cervical radicular pain | [Study extraction](evidence/spine.md) | [complete](cervical-radicular-pain.json) |
 | whiplash-associated disorder | [Study extraction](evidence/spine.md) | [complete](whiplash-associated-disorder.json) |
 | adult degenerative scoliosis | [Study extraction](evidence/spine.md) | [complete](adult-degenerative-scoliosis.json) |
-| Rotator cuff tendinopathy | [Study extraction](evidence/shoulder.md) | Pending reconciliation |
-| full-thickness rotator cuff tear | [Study extraction](evidence/shoulder.md) | Pending reconciliation |
-| adhesive capsulitis | [Study extraction](evidence/shoulder.md) | Pending reconciliation |
-| glenohumeral osteoarthritis | [Study extraction](evidence/shoulder.md) | Pending reconciliation |
-| shoulder instability | [Study extraction](evidence/shoulder.md) | Pending reconciliation |
-| acromioclavicular osteoarthritis | [Study extraction](evidence/shoulder.md) | Pending reconciliation |
+| Rotator cuff tendinopathy | [Study extraction](evidence/shoulder.md) | [complete](rotator-cuff-tendinopathy.json) |
+| full-thickness rotator cuff tear | [Study extraction](evidence/shoulder.md) | [complete](full-thickness-rotator-cuff-tear.json) |
+| adhesive capsulitis | [Study extraction](evidence/shoulder.md) | [complete](adhesive-capsulitis.json) |
+| glenohumeral osteoarthritis | [Study extraction](evidence/shoulder.md) | [complete](glenohumeral-osteoarthritis.json) |
+| shoulder instability | [Study extraction](evidence/shoulder.md) | [complete](shoulder-instability.json) |
+| acromioclavicular osteoarthritis | [Study extraction](evidence/shoulder.md) | [complete](acromioclavicular-osteoarthritis.json) |
 | Lateral elbow tendinopathy | [Study extraction](evidence/elbow-hand.md) | Pending reconciliation |
 | medial elbow tendinopathy | [Study extraction](evidence/elbow-hand.md) | Pending reconciliation |
 | distal biceps tendinopathy | [Study extraction](evidence/elbow-hand.md) | Pending reconciliation |
@@ -45,16 +45,16 @@ Current state: linked source reports cover 50 of 50 conditions; 26 structured do
 | degenerative meniscal lesion | [Study extraction](evidence/knee.md) | [complete](degenerative-meniscal-lesion.json) |
 | anterior cruciate ligament injury | [Study extraction](evidence/knee.md) | [complete](anterior-cruciate-ligament-injury.json) |
 | medial collateral ligament sprain | [Study extraction](evidence/knee.md) | [complete](medial-collateral-ligament-sprain.json) |
-| Midportion Achilles tendinopathy | [Study extraction](evidence/lower-leg.md) | Pending reconciliation |
-| insertional Achilles tendinopathy | [Study extraction](evidence/lower-leg.md) | Pending reconciliation |
-| plantar heel pain compatible with plantar fasciitis | [Study extraction](evidence/lower-leg.md) | Pending reconciliation |
-| lateral ankle sprain | [Study extraction](evidence/lower-leg.md) | Pending reconciliation |
-| chronic ankle instability | [Study extraction](evidence/lower-leg.md) | Pending reconciliation |
-| posterior tibial tendinopathy | [Study extraction](evidence/lower-leg.md) | Pending reconciliation |
-| peroneal tendinopathy | [Study extraction](evidence/lower-leg.md) | Pending reconciliation |
-| medial tibial stress syndrome | [Study extraction](evidence/lower-leg.md) | Pending reconciliation |
-| lower-limb bone stress injury | [Study extraction](evidence/lower-leg.md) | Pending reconciliation |
-| first metatarsophalangeal osteoarthritis | [Study extraction](evidence/lower-leg.md) | Pending reconciliation |
+| Midportion Achilles tendinopathy | [Study extraction](evidence/lower-leg.md) | [complete](midportion-achilles-tendinopathy.json) |
+| insertional Achilles tendinopathy | [Study extraction](evidence/lower-leg.md) | [complete](insertional-achilles-tendinopathy.json) |
+| plantar heel pain compatible with plantar fasciitis | [Study extraction](evidence/lower-leg.md) | [complete](plantar-heel-pain-compatible-with-plantar-fasciitis.json) |
+| lateral ankle sprain | [Study extraction](evidence/lower-leg.md) | [complete](lateral-ankle-sprain.json) |
+| chronic ankle instability | [Study extraction](evidence/lower-leg.md) | [complete](chronic-ankle-instability.json) |
+| posterior tibial tendinopathy | [Study extraction](evidence/lower-leg.md) | [complete](posterior-tibial-tendinopathy.json) |
+| peroneal tendinopathy | [Study extraction](evidence/lower-leg.md) | [complete](peroneal-tendinopathy.json) |
+| medial tibial stress syndrome | [Study extraction](evidence/lower-leg.md) | [complete](medial-tibial-stress-syndrome.json) |
+| lower-limb bone stress injury | [Study extraction](evidence/lower-leg.md) | [complete](lower-limb-bone-stress-injury.json) |
+| first metatarsophalangeal osteoarthritis | [Study extraction](evidence/lower-leg.md) | [complete](first-metatarsophalangeal-osteoarthritis.json) |
 | Osteoporosis | [Study extraction](evidence/systemic.md) | [complete](osteoporosis.json) |
 | rheumatoid arthritis | [Study extraction](evidence/systemic.md) | [complete](rheumatoid-arthritis.json) |
 | axial spondyloarthritis | [Study extraction](evidence/systemic.md) | [complete](axial-spondyloarthritis.json) |

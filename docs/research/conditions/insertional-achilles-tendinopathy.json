@@ -1,0 +1,324 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "insertional-achilles-tendinopathy",
+    "label": "insertional Achilles tendinopathy",
+    "aliases": [],
+    "distinctions": "Midportion-only, prior rupture/surgery and systemic conditions were excluded in RCT; not automatically contraindications."
+  },
+  "scope": {
+    "population": "Sport-active adults with chronic insertional Achilles pain within 2 cm of attachment; direct trial ages 18–60.",
+    "stage": "Symptoms >3 months in direct RCT; staged clinician-supervised conservative rehabilitation.",
+    "operativeStatus": "Nonoperative evidence unless explicitly stated otherwise; no postoperative protocol proposed.",
+    "exclusions": "Midportion-only, prior rupture/surgery and systemic conditions were excluded in RCT; not automatically contraindications.",
+    "uncertainty": "Draft research only; diagnosis, individual starting load, stage and clinical review remain unresolved."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "2024 Achilles pain stiffness muscle power deficits midportion Achilles tendinopathy clinical practice guideline 2024 final tendon loading 3 times week",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "insertional Achilles tendinopathy low tendon compression randomized trial 2025 rehabilitation dorsiflexion",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "Beyer 2015 heavy slow resistance eccentric Achilles randomized controlled trial 58 12 weeks dose 15 RM",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "insertional Achilles tendinopathy systematic review exercise 2023 2024 nonoperative",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "pain monitoring continued sports activity Achilles tendinopathy randomized controlled study Silbernagel 2007 5 10",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "Silbernagel continued sports activity using pain monitoring model Achilles tendinopathy 2007 randomized 37 3 38 6 weeks",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "DOI:10.1136/bjsports-2024-109138",
+      "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
+      "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "DOI:10.1186/s12891-023-06170-x",
+      "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
+      "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    }
+  ],
+  "sources": [
+    {
+      "id": "iat-r",
+      "title": "Effectiveness of reducing tendon compression in the rehabilitation of insertional Achilles tendinopathy: a randomised clinical trial.",
+      "doi": "10.1136/bjsports-2024-109138",
+      "pmid": "40011018",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12171478/",
+      "publicationStatus": "Final journal publication; metadata firstPublicationDate 2025-04-24. Version/access details below.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Full PMC article and Europe PMC XML inspected. During serialization Europe PMC supplementaryFiles ZIP retrieved in memory; supplemental file3 is100pages containing LTCR and HTCR brochures; relevant LTCR execution pages13,16,18–24,48 inspected. No source file saved. https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12171478/supplementaryFiles"
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed records inspected during research; Europe PMC REST core metadata DOI:10.1136/bjsports-2024-109138 rechecked during serialization, including publication type and comment/correction links. Not a registry-wide clearance.",
+        "result": "No correction/retraction link returned in this bounded metadata check. No claim of exhaustive integrity clearance or automatic supersession."
+      },
+      "design": "Investigator-blinded randomised trial, n=42; bundled rehabilitation comparison.",
+      "population": "Sport-active adults18–60 with insertional symptoms >3 months and <3 years, VISA-A<80, running-based sport≥2/week; ultrasound-confirmed.",
+      "comparator": "Low-compression versus high-compression rehabilitation.",
+      "coInterventions": "Both education and progressive loading; low-compression massage/12 mm heel lifts versus high-compression stretching/end-range dorsiflexion.",
+      "outcomes": "VISA-A difference favored low compression:12.9 (95%CI6.2–19.6) at12 weeks;10.4 (3.7–17.1) at24 weeks. Cannot isolate range, heel lifts or omitted stretching.",
+      "followUp": "12 and24 weeks.",
+      "uncertainty": "Small athletic sample; low-compression package not proof that all dorsiflexion causes injury. Supplemental brochure has stage-specific doses; symptom response does not prove tissue healing.",
+      "harms": "Weekly surveillance; no adverse events or discouraged cointerventions reported.",
+      "limitations": "Small athletic sample; low-compression package not proof that all dorsiflexion causes injury. Supplemental brochure has stage-specific doses; symptom response does not prove tissue healing. Research candidate only; no clinical release.",
+      "protocol": {
+        "execution": "LTCR limits dorsiflexion. Brochure p.19: long-seated straight-knee band plantarflexion, loop around forefoot, neutral to maximal plantarflexion. Page 20: same with knee slightly bent over towel. Page 21: chair-seated bilateral raise, hips/knees 90 degrees, hands at knees, neutral to maximal plantarflexion.",
+        "dose": "Main text stages: isometric 5 × 30 seconds at 50% MVC to 5 × 60 seconds at 70%; isotonic 4 × 15 at 65% 1RM to 4 × 6 at 85%; energy storage 3 × 10 at 75% to 3 × 6 at 85%. Brochure p.19 band example: 8 × 15; p.20 band and p.21 chair examples: 4 × 15, 30-second rests, four seconds each direction. Preserve stage/exercise-specific differences; do not harmonise silently.",
+        "frequency": "Daily rotating stages; stage 2 alternates isometric and isotonic days. Later sport every 2–3 days; follow-up/management to 24 weeks.",
+        "supervision": "Weekly trained physiotherapist sessions, plus home/gym exercise.",
+        "progression": "At least two weeks per stage and one week of high-load work; pain below 5/10 during, one hour after and next morning, with no weekly deterioration. Clinician decides advancement.",
+        "stoppingRules": "Trial-specific monitoring in progression field; worsening prompts adjustment. Symptom response is not proof of tissue healing and is not an automatic app threshold."
+      },
+      "locations": [
+        "Methods > Patients and Interventions; Figure 1",
+        "Results > Primary outcome; Adherence and adverse events",
+        "Online supplemental file 3 > LTCR brochure pp.18–24; Rehabilitation schedule p.48"
+      ]
+    },
+    {
+      "id": "iat-s",
+      "title": "Comparative short-term effectiveness of non-surgical treatments for insertional Achilles tendinopathy: a systematic review and network meta-analysis.",
+      "doi": "10.1186/s12891-023-06170-x",
+      "pmid": "36750789",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9903592/",
+      "publicationStatus": "Final journal publication; metadata firstPublicationDate 2023-02-07. Version/access details below.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Full Europe PMC XML methods/conclusions inspected after intermittent PMC challenges. https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9903592/fullTextXML"
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed records inspected during research; Europe PMC REST core metadata DOI:10.1186/s12891-023-06170-x rechecked during serialization, including publication type and comment/correction links. Not a registry-wide clearance.",
+        "result": "No correction/retraction link returned in this bounded metadata check. No claim of exhaustive integrity clearance or automatic supersession."
+      },
+      "design": "Systematic review/network meta-analysis of nonsurgical insertional treatments.",
+      "population": "Trials diagnosed insertional Achilles tendinopathy, not midportion-only disease.",
+      "comparator": "Heterogeneous conservative treatment combinations.",
+      "coInterventions": "Multimodal combinations differ.",
+      "outcomes": "Eccentric exercise plus soft-tissue therapy ranked favorably for short-term pain, but confidence low/verylow; authors could not recommend a best treatment.",
+      "followUp": "Primarily short term; optimal longer-term plan uncertain.",
+      "uncertainty": "Small heterogeneous studies; ranking does not validate a precise exercise or universal contraindication. Predates2025 compression RCT.",
+      "harms": "No dependable exercise-specific harms estimate extracted.",
+      "limitations": "Small heterogeneous studies; ranking does not validate a precise exercise or universal contraindication. Predates2025 compression RCT. Research candidate only; no clinical release.",
+      "protocol": {
+        "execution": "Heterogeneous eccentric/loading and adjunct therapy executions.",
+        "dose": "not reported as a single optimal protocol.",
+        "frequency": "not reported as a single optimal frequency.",
+        "supervision": "Varied across included studies.",
+        "progression": "not reported as a validated universal progression.",
+        "stoppingRules": "not reported as a universal threshold."
+      },
+      "locations": [
+        "Methods > Eligibility and outcomes",
+        "Discussion and Conclusions"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "iat-r-result",
+      "kind": "study-result",
+      "statement": "VISA-A difference favored low compression:12.9 (95%CI6.2–19.6) at12 weeks;10.4 (3.7–17.1) at24 weeks. Cannot isolate range, heel lifts or omitted stretching. Harms: Weekly surveillance; no adverse events or discouraged cointerventions reported.",
+      "citations": [
+        {
+          "sourceId": "iat-r",
+          "location": "Methods > Patients and Interventions; Figure 1"
+        },
+        {
+          "sourceId": "iat-r",
+          "location": "Results > Primary outcome; Adherence and adverse events"
+        },
+        {
+          "sourceId": "iat-r",
+          "location": "Online supplemental file 3 > LTCR brochure pp.18–24; Rehabilitation schedule p.48"
+        }
+      ],
+      "applicability": "Sport-active adults18–60 with insertional symptoms >3 months and <3 years, VISA-A<80, running-based sport≥2/week; ultrasound-confirmed.",
+      "limitations": "Small athletic sample; low-compression package not proof that all dorsiflexion causes injury. Supplemental brochure has stage-specific doses; symptom response does not prove tissue healing."
+    },
+    {
+      "id": "iat-r-execution",
+      "kind": "study-result",
+      "statement": "Reported execution: LTCR limits dorsiflexion. Brochure p.19: long-seated straight-knee band plantarflexion, loop around forefoot, neutral to maximal plantarflexion. Page 20: same with knee slightly bent over towel. Page 21: chair-seated bilateral raise, hips/knees 90 degrees, hands at knees, neutral to maximal plantarflexion. Study dose: Main text stages: isometric 5 × 30 seconds at 50% MVC to 5 × 60 seconds at 70%; isotonic 4 × 15 at 65% 1RM to 4 × 6 at 85%; energy storage 3 × 10 at 75% to 3 × 6 at 85%. Brochure p.19 band example: 8 × 15; p.20 band and p.21 chair examples: 4 × 15, 30-second rests, four seconds each direction. Preserve stage/exercise-specific differences; do not harmonise silently. Frequency: Daily rotating stages; stage 2 alternates isometric and isotonic days. Later sport every 2–3 days; follow-up/management to 24 weeks.",
+      "citations": [
+        {
+          "sourceId": "iat-r",
+          "location": "Methods > Patients and Interventions; Figure 1"
+        },
+        {
+          "sourceId": "iat-r",
+          "location": "Results > Primary outcome; Adherence and adverse events"
+        },
+        {
+          "sourceId": "iat-r",
+          "location": "Online supplemental file 3 > LTCR brochure pp.18–24; Rehabilitation schedule p.48"
+        }
+      ],
+      "applicability": "Sport-active adults18–60 with insertional symptoms >3 months and <3 years, VISA-A<80, running-based sport≥2/week; ultrasound-confirmed.",
+      "limitations": "Execution identity is independent of dose. Bundle/component and access limits apply; these are research protocols rather than app prescriptions."
+    },
+    {
+      "id": "iat-s-result",
+      "kind": "study-result",
+      "statement": "Eccentric exercise plus soft-tissue therapy ranked favorably for short-term pain, but confidence low/verylow; authors could not recommend a best treatment. Harms: No dependable exercise-specific harms estimate extracted.",
+      "citations": [
+        {
+          "sourceId": "iat-s",
+          "location": "Methods > Eligibility and outcomes"
+        },
+        {
+          "sourceId": "iat-s",
+          "location": "Discussion and Conclusions"
+        }
+      ],
+      "applicability": "Trials diagnosed insertional Achilles tendinopathy, not midportion-only disease.",
+      "limitations": "Small heterogeneous studies; ranking does not validate a precise exercise or universal contraindication. Predates2025 compression RCT."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "insertional-chair-seated-neutral-heel-raise-mapping",
+      "exerciseId": null,
+      "requestId": "insertional-chair-seated-neutral-heel-raise",
+      "findingIds": [
+        "iat-r-execution"
+      ],
+      "matchRationale": "Catalog seated-calf-raise is a thigh-pad machine; source uses chair/hands and an explicit neutral floor limit. Setup/range differ independently of dose.",
+      "status": "candidate"
+    },
+    {
+      "id": "insertional-neutral-band-plantarflexion-straight-knee-mapping",
+      "exerciseId": null,
+      "requestId": "insertional-neutral-band-plantarflexion-straight-knee",
+      "findingIds": [
+        "iat-r-execution"
+      ],
+      "matchRationale": "Exact band/knee setup and neutral range differ from loaded calf machines. Dose differences alone do not create this identity.",
+      "status": "candidate"
+    },
+    {
+      "id": "insertional-neutral-band-plantarflexion-bent-knee-mapping",
+      "exerciseId": null,
+      "requestId": "insertional-neutral-band-plantarflexion-bent-knee",
+      "findingIds": [
+        "iat-r-execution"
+      ],
+      "matchRationale": "Exact band/knee setup and neutral range differ from loaded calf machines. Dose differences alone do not create this identity.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "insertional-low-compression-loading-candidate",
+      "kind": "supportive-prescription",
+      "basis": "unresolved-hypothesis",
+      "statement": "Consider a clinician-selected low-compression loading variant while limiting dorsiflexion within a staged rehabilitation package. The neutral-range chair/band variants are research candidates, not an automatic regimen.",
+      "findingIds": [
+        "iat-r-result",
+        "iat-r-execution"
+      ],
+      "citations": [
+        {
+          "sourceId": "iat-r",
+          "location": "Methods > Patients and Interventions; Figure 1"
+        },
+        {
+          "sourceId": "iat-r",
+          "location": "Online supplemental file 3 > LTCR brochure pp.18–24; Rehabilitation schedule p.48"
+        }
+      ],
+      "applicability": {
+        "population": "Sport-active adults with chronic insertional Achilles pain within 2 cm of attachment; direct trial ages 18–60.",
+        "stage": "Chronic sport-active nonoperative population comparable to the RCT.",
+        "rationale": "Draft interpretation of the linked condition-specific findings; evidence and product choice are separated by basis. Other conditions, equipment and independent joint limits remain controlling."
+      },
+      "limitations": "Bundled trial cannot isolate range, heel lifts, omitted stretching or individual exercise effects. Candidate only; no clinical release.",
+      "mappingIds": [
+        "insertional-chair-seated-neutral-heel-raise-mapping",
+        "insertional-neutral-band-plantarflexion-straight-knee-mapping",
+        "insertional-neutral-band-plantarflexion-bent-knee-mapping"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "insertional-dorsiflexion-context",
+      "kind": "range-limit",
+      "basis": "unresolved-hypothesis",
+      "statement": "Prefer the reviewed limited-dorsiflexion execution in an applicable early-stage low-compression plan. Do not infer that any dorsiflexion causes structural injury or impose a permanent degree limit.",
+      "findingIds": [
+        "iat-r-result",
+        "iat-r-execution"
+      ],
+      "citations": [
+        {
+          "sourceId": "iat-r",
+          "location": "Methods > Patients and Interventions; Figure 1"
+        },
+        {
+          "sourceId": "iat-r",
+          "location": "Online supplemental file 3 > LTCR brochure pp.18–24; Rehabilitation schedule p.48"
+        }
+      ],
+      "applicability": {
+        "population": "Sport-active adults with chronic insertional Achilles pain within 2 cm of attachment; direct trial ages 18–60.",
+        "stage": "Early controlled rehabilitation of chronic insertional symptoms; clinician-selected stage.",
+        "rationale": "Draft interpretation of the linked condition-specific findings; evidence and product choice are separated by basis. Other conditions, equipment and independent joint limits remain controlling."
+      },
+      "limitations": "Range is part of a treatment bundle; later reintegration of compression requires review. Candidate only; no clinical release.",
+      "mappingIds": [],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "Clinical content review and individual applicability are not established.",
+    "Trial main-text stage doses and brochure-specific exercise doses differ; preserve both instead of silently harmonising.",
+    "Supplement narration that pain implies healing is not adopted; symptom relief cannot certify tissue healing.",
+    "No automatic stage transition, heel-lift withdrawal or later impact progression."
+  ],
+  "disposition": "eligible-for-independent-content-review",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

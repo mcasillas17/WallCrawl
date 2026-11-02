@@ -200,7 +200,7 @@ Undifferentiated instability is not ready for autonomous exercise mapping. Captu
 - SPADI improved 25.9 points at four weeks, 29.8 at six months; no additional care/increased medication/activity reduction among completers. Formal adverse-event count not found. Multiple joints treated and later exercises confound component effects.
 - Inference: assisted ROM/band strengthening are exploratory candidates only. Delaying strength in this protocol does not prove strength contraindicated before week four. Exact appendix variants would need execution matching; not mapped.
 
-### ACOA-P2: ACAM randomized-study protocol, 2021
+### ACOA-P2: ACAM randomized-study protocol, 2020 (date corrected at serialization)
 
 - Citation/access: [10.1136/bmjopen-2019-034439](https://doi.org/10.1136/bmjopen-2019-034439); final published [protocol](https://doi.org/10.1136/bmjopen-2019-034439) inspected, not an outcome paper. NCT03951480.
 - Planned 136 adults 40–70 with radiographic symptomatic AC OA ≥3 months; manual therapy versus corticosteroid injection, activity-related pain at three months. No outcome results retrieved. This is not an exercise efficacy trial.
@@ -224,3 +224,12 @@ Insufficient evidence/restriction-review only; no exact therapeutic exercise app
 - Mobility/strength classes elsewhere remain exploratory; do not invent doses, candidates, starting loads, time-based progression, reviewer identity or clinical approval to complete fields.
 - Full-thickness tears, instability and GHOA need broader clinical context before autonomous training rules; absent values should stay unresolved. These are app-scope decisions inferred from evidence limitations, not claims that all exercise is harmful.
 - No code/index/artwork changed. File is source-extraction scratch only; canonical JSON serialization awaits schema.
+
+## Serialization-stage access and metadata updates
+
+- Reopened the final Warby MDI trial PDF (DOI10.1177/0363546517734508) and inspected Methods, Table1, Results/adverse events and Tables4–5. Access now full-text: Table1 describes standing arm-at-side band ER0–45°, staged scapular/cuff work, pain-free motor-control progression; 14 minor soreness events resolved with rest/modification and no serious events reported. This expands the earlier abstract-only extraction; no unseen supplementary protocol claimed.
+- Reopened Harris AppendixB (p.80): all-fours straight-arm scapular retraction/protraction progresses to incline/regular push-up position; well-tolerated painless instruction is source-specific. The cohort remains indirect for confirmed primary AC OA.
+- Retrieved ARTISAN correction full XML (PMC10941290; DOI10.1136/bmj.q662): collaborator-name correction only; no outcome/protocol change.
+- Exact-DOI Crossref metadata queried for all27 DOI-bearing sources:23 returned metadata and4 HTTP429 (ARTISAN, Soler, Lafrance, Lazzarini). Existing publisher/PubMed metadata retained for429s. Crossref confirms ACAM online2020-12-10, correcting earlier2021 label. Returned publication dates precede access. This is bounded metadata/version inspection, not comprehensive integrity clearance.
+- Cochrane public summary is not the whole review: its formal excluded-study rationale for Warby was not inspected. Different comparator eligibility is an interpretation, not a verified exclusion-table finding.
+- Structured dossiers conservatively mark incomplete indexed/abstract inspections as abstract-only; full-text has not been claimed simply because some indexed methods were visible.

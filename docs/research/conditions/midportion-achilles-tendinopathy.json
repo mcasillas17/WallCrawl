@@ -1,0 +1,391 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "midportion-achilles-tendinopathy",
+    "label": "Midportion Achilles tendinopathy",
+    "aliases": [],
+    "distinctions": "Insertional disease, suspected rupture and presumed tendon frailty are distinct. Trial exclusions are applicability limits, not contraindications."
+  },
+  "scope": {
+    "population": "Adults with clinically diagnosed midportion Achilles symptoms, especially chronic unilateral recreational-athlete cohorts.",
+    "stage": "Chronic conservative management; individual irritability/loading stage unknown.",
+    "operativeStatus": "Nonoperative evidence unless explicitly stated otherwise; no postoperative protocol proposed.",
+    "exclusions": "Insertional disease, suspected rupture and presumed tendon frailty are distinct. Trial exclusions are applicability limits, not contraindications.",
+    "uncertainty": "Draft research only; diagnosis, individual starting load, stage and clinical review remain unresolved."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "2024 Achilles pain stiffness muscle power deficits midportion Achilles tendinopathy clinical practice guideline 2024 final tendon loading 3 times week",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "insertional Achilles tendinopathy low tendon compression randomized trial 2025 rehabilitation dorsiflexion",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "Beyer 2015 heavy slow resistance eccentric Achilles randomized controlled trial 58 12 weeks dose 15 RM",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "insertional Achilles tendinopathy systematic review exercise 2023 2024 nonoperative",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "pain monitoring continued sports activity Achilles tendinopathy randomized controlled study Silbernagel 2007 5 10",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "Silbernagel continued sports activity using pain monitoring model Achilles tendinopathy 2007 randomized 37 3 38 6 weeks",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "DOI:10.2519/jospt.2024.0302",
+      "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
+      "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "DOI:10.1177/0363546515584760",
+      "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
+      "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "DOI:10.1177/0363546506298279",
+      "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
+      "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    }
+  ],
+  "sources": [
+    {
+      "id": "ach-g",
+      "title": "Achilles Pain, Stiffness, and Muscle Power Deficits: Midportion Achilles Tendinopathy Revision - 2024",
+      "doi": "10.2519/jospt.2024.0302",
+      "pmid": "39611662",
+      "url": "https://www.jospt.org/doi/10.2519/jospt.2024.0302",
+      "publicationStatus": "Final journal publication; metadata firstPublicationDate 2024-12-01. Version/access details below.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Official final AOPT 32-page PDF retrieved and parsed in memory during serialization; summary and exercise/education sections inspected. Final December 2024 publication, not public-comment draft. https://orthopt.org/uploads/content_files/files/chimenti_et_al_2024_achilles_pain_stiffness_and_muscle_power_deficits_midportion_achilles_tendinopathy_revision_2024.pdf"
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed records inspected during research; Europe PMC REST core metadata DOI:10.2519/jospt.2024.0302 rechecked during serialization, including publication type and comment/correction links. Not a registry-wide clearance.",
+        "result": "No correction/retraction link returned in this bounded metadata check. No claim of exhaustive integrity clearance or automatic supersession."
+      },
+      "design": "Final evidence-based clinical practice guideline; not a single intervention trial.",
+      "population": "Clinically diagnosed midportion Achilles tendinopathy; recommendation excludes presumed tendon frailty.",
+      "comparator": "Multiple heterogeneous evidence comparisons, including wait-and-see and loading alternatives.",
+      "coInterventions": "Education recommended with loading; adjunct choices vary.",
+      "outcomes": "Tendon loading first-line (grade A); final frequency at least 3/week (grade E). Complete rest not indicated; activity within pain tolerance. No universally superior loading type.",
+      "followUp": "Heterogeneous primary follow-up; no single guideline endpoint.",
+      "uncertainty": "Frequency is an expert recommendation, not proof of an optimal numeric threshold. Insertional pathology outside scope.",
+      "harms": "No single guideline harms denominator.",
+      "limitations": "Frequency is an expert recommendation, not proof of an optimal numeric threshold. Insertional pathology outside scope. Research candidate only; no clinical release.",
+      "protocol": {
+        "execution": "Progressive plantarflexor tendon loading: eccentric, concentric, isometric, isotonic or plyometric as appropriate.",
+        "dose": "No single set/repetition dose; loads as high as tolerated in the stated population.",
+        "frequency": "Final recommendation: at least 3 times weekly.",
+        "supervision": "Clinician-delivered education; supervision not fixed for one universal protocol.",
+        "progression": "Individual pain tolerance/functional capacity; no universal increment.",
+        "stoppingRules": "No universal stopping threshold; guideline advises activity within pain tolerance."
+      },
+      "locations": [
+        "Summary of Recommendations > Interventions—Exercise and Patient Education (CPG2)",
+        "Interventions > Exercise > 2024 Recommendation"
+      ]
+    },
+    {
+      "id": "ach-r1",
+      "title": "Heavy Slow Resistance Versus Eccentric Training as Treatment for Achilles Tendinopathy: A Randomized Controlled Trial.",
+      "doi": "10.1177/0363546515584760",
+      "pmid": "26018970",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/26018970/",
+      "publicationStatus": "Final journal publication; metadata firstPublicationDate 2015-05-27. Version/access details below.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Primary-paper public nonpublisher PDF inspected, including dose page and attrition; later web requests timed out, independently parsed in-memory with pdfplumber. Publisher DOI access failed. https://tripp.co.za/wp-content/uploads/Beyer2015_Achillestendinopathy.pdf"
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed records inspected during research; Europe PMC REST core metadata DOI:10.1177/0363546515584760 rechecked during serialization, including publication type and comment/correction links. Not a registry-wide clearance.",
+        "result": "No correction/retraction link returned in this bounded metadata check. No claim of exhaustive integrity clearance or automatic supersession."
+      },
+      "design": "Randomised trial, 58 randomised; attrition and last-observation-carried-forward analysis.",
+      "population": "Recreational athletes with chronic >3-month unilateral midportion Achilles tendinopathy, age eligibility 18–60; insertional disease excluded.",
+      "comparator": "Heavy slow resistance versus eccentric loading.",
+      "coInterventions": "Instruction/manual, initial physiotherapist demonstration and 1-week check; initial sport restriction then monitored activity.",
+      "outcomes": "VISA-A/pain improved in both at 12 and 52 weeks, no between-group superiority. HSR adherence 92% versus 78%.",
+      "followUp": "12-week intervention; 52-week follow-up.",
+      "uncertainty": "Small sample, no untreated comparator; no inference that eccentric loading caused rupture. Full-ROM protocol not insertional evidence.",
+      "harms": "One eccentric-arm partial rupture during badminton; HSR withdrawals included ankle/back pain; causality not established.",
+      "limitations": "Small sample, no untreated comparator; no inference that eccentric loading caused rupture. Full-ROM protocol not insertional evidence. Research candidate only; no clinical release.",
+      "protocol": {
+        "execution": "HSR bilateral seated bent-knee machine raise, straight-knee leg-press raise and barbell-on-shoulders raise with forefoot on disc; full ankle ROM. Comparator unilateral straight/bent-knee eccentric heel lowering on step.",
+        "dose": "HSR: 3 × 15RM week 1; 3 × 12RM weeks 2–3; 4 × 10RM weeks 4–5; 4 × 8RM weeks 6–8; 4 × 6RM weeks 9–12. Three seconds each concentric/eccentric phase; 2–3-minute rests. Eccentric comparator: each exercise 3 × 15 with approximately three-second lowering.",
+        "frequency": "HSR three times weekly for 12 weeks; eccentric exercises twice daily, seven days weekly.",
+        "supervision": "Physiotherapist instruction and follow-up after one week; training diary thereafter.",
+        "progression": "Increasing load with decreasing RM schedule; eccentric backpack load increased as pain diminished.",
+        "stoppingRules": "Study allowed exercise VAS 40–50 mm if settled by next session. Sport was withheld for the first three weeks, then discomfort limited to 30 mm. These are trial-specific values, not app thresholds."
+      },
+      "locations": [
+        "Methods > Treatment Intervention (journal pp.1705–1706); Figure 1",
+        "Results > Participant flow/attrition; clinical outcomes"
+      ]
+    },
+    {
+      "id": "ach-r2",
+      "title": "Continued sports activity, using a pain-monitoring model, during rehabilitation in patients with Achilles tendinopathy: a randomized controlled study.",
+      "doi": "10.1177/0363546506298279",
+      "pmid": "17307888",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/17307888/",
+      "publicationStatus": "Final journal publication; metadata firstPublicationDate 2007-02-16. Version/access details below.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "PubMed abstract inspected. Publisher full methods not successfully retrieved in this pass."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed records inspected during research; Europe PMC REST core metadata DOI:10.1177/0363546506298279 rechecked during serialization, including publication type and comment/correction links. Not a registry-wide clearance.",
+        "result": "Linked notices: Comment in: Am J Sports Med. 2007 Jul;35(7):1208; author reply 1208-9. doi: 10.1177/0363546507303564.; Comment in: Clin J Sport Med. 2008 May;18(3):303-4. doi: 10.1097/01.jsm.0000248841.86132.a0. No claim of exhaustive integrity clearance or automatic supersession."
+      },
+      "design": "Small randomised controlled study, n=38.",
+      "population": "Achilles tendinopathy patients receiving progressive rehabilitation; exact anatomical eligibility not verified from abstract.",
+      "comparator": "Continued tendon-loading sport under pain monitoring versus stopping running/jumping for first6 weeks.",
+      "coInterventions": "Identical rehabilitation program in both groups.",
+      "outcomes": "No significant difference in rate of improvement; both improved VISA-A/pain through12 months. Does not establish unrestricted sport safety.",
+      "followUp": "12 months.",
+      "uncertainty": "Small monitored sample; full loading/harms methods not retrieved. Do not export a numeric pain threshold.",
+      "harms": "not reported in accessible abstract.",
+      "limitations": "Small monitored sample; full loading/harms methods not retrieved. Do not export a numeric pain threshold. Research candidate only; no clinical release.",
+      "protocol": {
+        "execution": "not reported",
+        "dose": "not reported",
+        "frequency": "not reported",
+        "supervision": "not reported",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Abstract > Methods, Results and Conclusions"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "ach-g-result",
+      "kind": "published-recommendation",
+      "statement": "Tendon loading first-line (grade A); final frequency at least 3/week (grade E). Complete rest not indicated; activity within pain tolerance. No universally superior loading type. Harms: No single guideline harms denominator.",
+      "citations": [
+        {
+          "sourceId": "ach-g",
+          "location": "Summary of Recommendations > Interventions—Exercise and Patient Education (CPG2)"
+        },
+        {
+          "sourceId": "ach-g",
+          "location": "Interventions > Exercise > 2024 Recommendation"
+        }
+      ],
+      "applicability": "Clinically diagnosed midportion Achilles tendinopathy; recommendation excludes presumed tendon frailty.",
+      "limitations": "Frequency is an expert recommendation, not proof of an optimal numeric threshold. Insertional pathology outside scope."
+    },
+    {
+      "id": "ach-r1-result",
+      "kind": "study-result",
+      "statement": "VISA-A/pain improved in both at 12 and 52 weeks, no between-group superiority. HSR adherence 92% versus 78%. Harms: One eccentric-arm partial rupture during badminton; HSR withdrawals included ankle/back pain; causality not established.",
+      "citations": [
+        {
+          "sourceId": "ach-r1",
+          "location": "Methods > Treatment Intervention (journal pp.1705–1706); Figure 1"
+        },
+        {
+          "sourceId": "ach-r1",
+          "location": "Results > Participant flow/attrition; clinical outcomes"
+        }
+      ],
+      "applicability": "Recreational athletes with chronic >3-month unilateral midportion Achilles tendinopathy, age eligibility 18–60; insertional disease excluded.",
+      "limitations": "Small sample, no untreated comparator; no inference that eccentric loading caused rupture. Full-ROM protocol not insertional evidence."
+    },
+    {
+      "id": "ach-r1-execution",
+      "kind": "study-result",
+      "statement": "Reported execution: HSR bilateral seated bent-knee machine raise, straight-knee leg-press raise and barbell-on-shoulders raise with forefoot on disc; full ankle ROM. Comparator unilateral straight/bent-knee eccentric heel lowering on step. Study dose: HSR: 3 × 15RM week 1; 3 × 12RM weeks 2–3; 4 × 10RM weeks 4–5; 4 × 8RM weeks 6–8; 4 × 6RM weeks 9–12. Three seconds each concentric/eccentric phase; 2–3-minute rests. Eccentric comparator: each exercise 3 × 15 with approximately three-second lowering. Frequency: HSR three times weekly for 12 weeks; eccentric exercises twice daily, seven days weekly.",
+      "citations": [
+        {
+          "sourceId": "ach-r1",
+          "location": "Methods > Treatment Intervention (journal pp.1705–1706); Figure 1"
+        },
+        {
+          "sourceId": "ach-r1",
+          "location": "Results > Participant flow/attrition; clinical outcomes"
+        }
+      ],
+      "applicability": "Recreational athletes with chronic >3-month unilateral midportion Achilles tendinopathy, age eligibility 18–60; insertional disease excluded.",
+      "limitations": "Execution identity is independent of dose. Bundle/component and access limits apply; these are research protocols rather than app prescriptions."
+    },
+    {
+      "id": "ach-r2-result",
+      "kind": "study-result",
+      "statement": "No significant difference in rate of improvement; both improved VISA-A/pain through12 months. Does not establish unrestricted sport safety. Harms: not reported in accessible abstract.",
+      "citations": [
+        {
+          "sourceId": "ach-r2",
+          "location": "Abstract > Methods, Results and Conclusions"
+        }
+      ],
+      "applicability": "Achilles tendinopathy patients receiving progressive rehabilitation; exact anatomical eligibility not verified from abstract.",
+      "limitations": "Small monitored sample; full loading/harms methods not retrieved. Do not export a numeric pain threshold."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "hsr-seated-calf-machine",
+      "exerciseId": "seated-calf-raise",
+      "requestId": null,
+      "findingIds": [
+        "ach-r1-execution"
+      ],
+      "matchRationale": "Catalog metadata and existing execution ledger show a seated thigh-pad calf machine, matching the HSR bent-knee machine action. Trial tempo/load remain protocol fields, not new identity; setup and clinical dose still need independent review.",
+      "status": "candidate"
+    },
+    {
+      "id": "hsr-leg-press-calf-machine",
+      "exerciseId": "leg-press-calf-raise",
+      "requestId": null,
+      "findingIds": [
+        "ach-r1-execution"
+      ],
+      "matchRationale": "Catalog metadata/ledger show reclined leg-press ankle plantarflexion with substantially straight knees, matching the HSR machine execution family. Exact footplate/heel travel is unresolved and must be checked; candidate reuse is not clinical equivalence.",
+      "status": "candidate"
+    },
+    {
+      "id": "achilles-barbell-calf-raise-disc-mapping",
+      "exerciseId": null,
+      "requestId": "achilles-barbell-calf-raise-disc",
+      "findingIds": [
+        "ach-r1-execution"
+      ],
+      "matchRationale": "Catalog standing-calf-raise uses a machine; this barbell/forefoot-disc setup differs in equipment. Tempo/RM schedule alone would not justify a new identity.",
+      "status": "candidate"
+    },
+    {
+      "id": "achilles-straight-knee-eccentric-heel-lower-mapping",
+      "exerciseId": null,
+      "requestId": "achilles-straight-knee-eccentric-heel-lower",
+      "findingIds": [
+        "ach-r1-execution"
+      ],
+      "matchRationale": "Catalog calf-raise identities do not establish eccentric-only lowering and return execution. Preserve knee/step differences; do not create a new ID merely for repetitions or tempo.",
+      "status": "candidate"
+    },
+    {
+      "id": "achilles-bent-knee-eccentric-heel-lower-mapping",
+      "exerciseId": null,
+      "requestId": "achilles-bent-knee-eccentric-heel-lower",
+      "findingIds": [
+        "ach-r1-execution"
+      ],
+      "matchRationale": "Catalog calf-raise identities do not establish eccentric-only lowering and return execution. Preserve knee/step differences; do not create a new ID merely for repetitions or tempo.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "midportion-progressive-loading-candidate",
+      "kind": "supportive-prescription",
+      "basis": "published-recommendation",
+      "statement": "Consider progressive tendon loading and education for assessed midportion disease without presumed tendon frailty; final guideline suggests at least three sessions weekly. Do not assign a personal starting load or require full-ROM eccentric work for every user.",
+      "findingIds": [
+        "ach-g-result",
+        "ach-r1-execution"
+      ],
+      "citations": [
+        {
+          "sourceId": "ach-g",
+          "location": "Summary of Recommendations > Interventions—Exercise and Patient Education (CPG2)"
+        },
+        {
+          "sourceId": "ach-r1",
+          "location": "Methods > Treatment Intervention (journal pp.1705–1706); Figure 1"
+        }
+      ],
+      "applicability": {
+        "population": "Adults with clinically diagnosed midportion Achilles symptoms, especially chronic unilateral recreational-athlete cohorts.",
+        "stage": "Assessed nonoperative midportion disease; no presumed tendon frailty.",
+        "rationale": "Draft interpretation of the linked condition-specific findings; evidence and product choice are separated by basis. Other conditions, equipment and independent joint limits remain controlling."
+      },
+      "limitations": "Final frequency recommendation is grade E; individual stage/tolerance and clinical review remain unresolved. Candidate only; no clinical release.",
+      "mappingIds": [
+        "hsr-seated-calf-machine",
+        "hsr-leg-press-calf-machine"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "midportion-activity-response-candidate",
+      "kind": "symptom-response",
+      "basis": "published-recommendation",
+      "statement": "Complete rest is not routinely indicated; individual activity can continue within pain tolerance. Do not translate this into unrestricted running/jumping or a universal numeric pain threshold.",
+      "findingIds": [
+        "ach-g-result",
+        "ach-r2-result"
+      ],
+      "citations": [
+        {
+          "sourceId": "ach-g",
+          "location": "Summary of Recommendations > Interventions—Exercise and Patient Education (CPG2)"
+        },
+        {
+          "sourceId": "ach-r2",
+          "location": "Abstract > Methods, Results and Conclusions"
+        }
+      ],
+      "applicability": {
+        "population": "Adults with clinically diagnosed midportion Achilles symptoms, especially chronic unilateral recreational-athlete cohorts.",
+        "stage": "Clinically assessed midportion tendinopathy, not rupture or postoperative care.",
+        "rationale": "Draft interpretation of the linked condition-specific findings; evidence and product choice are separated by basis. Other conditions, equipment and independent joint limits remain controlling."
+      },
+      "limitations": "Small activity RCT; applicability requires diagnosis and stage. Candidate only; no clinical release.",
+      "mappingIds": [],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "Clinical content review and individual applicability are not established.",
+    "No individual starting load, tendon-frailty assessment or universal pain threshold established.",
+    "Leg-press footplate/heel excursion and eccentric assisted return need exact setup review."
+  ],
+  "disposition": "eligible-for-independent-content-review",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

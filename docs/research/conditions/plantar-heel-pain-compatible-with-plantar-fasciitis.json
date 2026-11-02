@@ -1,0 +1,340 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "plantar-heel-pain-compatible-with-plantar-fasciitis",
+    "label": "plantar heel pain compatible with plantar fasciitis",
+    "aliases": [],
+    "distinctions": "Heel pain can have neurological, arthritic or bone-stress causes; selection is not a diagnosis."
+  },
+  "scope": {
+    "population": "Adults with plantar heel pain clinically compatible with plantar fasciitis; strength RCT required ultrasound changes and symptoms ≥3 months.",
+    "stage": "Mostly persistent symptoms; acute/atypical heel pain not established.",
+    "operativeStatus": "Nonoperative evidence unless explicitly stated otherwise; no postoperative protocol proposed.",
+    "exclusions": "Heel pain can have neurological, arthritic or bone-stress causes; selection is not a diagnosis.",
+    "uncertainty": "Draft research only; diagnosis, individual starting load, stage and clinical review remain unresolved."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "heel pain plantar fasciitis revision 2023 clinical practice guideline resistance training stretching Rathleff 2015 randomized trial high load",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "Rathleff 2015 high load strength plantar fasciitis 48 3 seconds 12 RM DOI",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "High load strength training improves outcome patients plantar fasciitis randomized controlled trial 12 month follow up 2015 25145882",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "plantar heel pain best practice guide systematic review 2021 education load management Morrissey",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "DOI:10.2519/jospt.2023.0303",
+      "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
+      "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "DOI:10.1111/sms.12313",
+      "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
+      "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "DOI:10.1136/bjsports-2019-101970",
+      "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
+      "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    }
+  ],
+  "sources": [
+    {
+      "id": "php-g",
+      "title": "Heel Pain - Plantar Fasciitis: Revision 2023.",
+      "doi": "10.2519/jospt.2023.0303",
+      "pmid": "38037331",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/38037331/",
+      "publicationStatus": "Final journal publication; metadata firstPublicationDate 2023-12-01. Version/access details below.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Official39-page final AOPT PDF retrieved/parsed in memory during serialization; stretching and therapeutic-exercise recommendations/synthesis inspected. Earlier publisher403 retained. https://www.orthopt.org/uploads/content_files/files/koc_et_al_2023_heel_pain_plantar_fasciitis_revision_2023.pdf"
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed records inspected during research; Europe PMC REST core metadata DOI:10.2519/jospt.2023.0303 rechecked during serialization, including publication type and comment/correction links. Not a registry-wide clearance.",
+        "result": "Linked notices: Comment in: J Orthop Sports Phys Ther. 2025 Jan;55(1):72-73. doi: 10.2519/jospt.2025.0202. No claim of exhaustive integrity clearance or automatic supersession."
+      },
+      "design": "Final2023 guideline; synthesis of heterogeneous plantar heel pain trials.",
+      "population": "Clinically compatible plantar fasciitis/nonarthritic heel pain.",
+      "comparator": "Stretching/resistance and combinations versus varied controls.",
+      "coInterventions": "Manual therapy, education, taping/orthoses considered by presentation.",
+      "outcomes": "Recommends fascia-specific and gastrocnemius/soleus stretching; foot/ankle resistance training (gradeB); best dose/strength type unresolved.",
+      "followUp": "Short/long-term studies; no single endpoint.",
+      "uncertainty": "Not diagnosis of every heel pain; combined evidence cannot isolate optimal exercise or establish blanket activity prohibitions.",
+      "harms": "Stretching synthesis reported transient mild/moderate pain resolving after stretch, no serious events reported.",
+      "limitations": "Not diagnosis of every heel pain; combined evidence cannot isolate optimal exercise or establish blanket activity prohibitions. Research candidate only; no clinical release.",
+      "protocol": {
+        "execution": "Fascia-specific and knee-straight/knee-bent calf stretching; resistance targeting foot/ankle.",
+        "dose": "not reported as one optimal dose; trial protocols differ.",
+        "frequency": "not reported as one optimal frequency.",
+        "supervision": "Individual physical-therapy management; no universal supervision dose.",
+        "progression": "not reported as one validated progression.",
+        "stoppingRules": "Individual response; no universal numeric stopping rule."
+      },
+      "locations": [
+        "Summary of Recommendations > Stretching; Therapeutic Exercise",
+        "Interventions > Stretching > Evidence Synthesis",
+        "Interventions > Therapeutic Exercise and Neuromuscular Re-education > Recommendation"
+      ]
+    },
+    {
+      "id": "php-r",
+      "title": "High-load strength training improves outcome in patients with plantar fasciitis: A randomized controlled trial with 12-month follow-up.",
+      "doi": "10.1111/sms.12313",
+      "pmid": "25145882",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/25145882/",
+      "publicationStatus": "Final journal publication; metadata firstPublicationDate 2014-08-21. Version/access details below.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Primary full PDF inspected at public nonpublisher host; publisher record/PMID verified. https://braceworks.ca/wp-content/uploads/2016/04/Rathleff-og-M%C3%B8lgaard-2014_High-load-strength-training-improves-outcome-in-patients-with-plantar-fasciitis-A-randomized-controlled-trial-with-12-month-follow-up.pdf"
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed records inspected during research; Europe PMC REST core metadata DOI:10.1111/sms.12313 rechecked during serialization, including publication type and comment/correction links. Not a registry-wide clearance.",
+        "result": "No correction/retraction link returned in this bounded metadata check. No claim of exhaustive integrity clearance or automatic supersession."
+      },
+      "design": "RCT,n=48; primary follow-up81%; both groups active treatment.",
+      "population": "Adults with ultrasound-verified plantar fasciitis and heel pain≥3 months.",
+      "comparator": "High-load strength versus fascia-specific stretching.",
+      "coInterventions": "Both gel heel inserts and education/activity advice.",
+      "outcomes": "FFI favored strength at3 months by29 points (95%CI6–52); no between-group difference at1,6,12 months.",
+      "followUp": "3-month intervention;1,3,6,12-month assessments.",
+      "uncertainty": "Small sample/attrition; short-term improvement not durable superiority. Toe-extension setup conflicts with independent first-MTP range limits.",
+      "harms": "Minor delayed-onset soreness in strength arm; no other adverse events reported.",
+      "limitations": "Small sample/attrition; short-term improvement not durable superiority. Toe-extension setup conflicts with independent first-MTP range limits. Research candidate only; no clinical release.",
+      "protocol": {
+        "execution": "Unilateral heel raise on stair with towel under toes, maximal toe dorsiflexion at top; backpack loading; bilateral start if unable. Comparator seated crossed-leg fascia stretch, hand pulls toes toward shin and other hand palpates fascia.",
+        "dose": "Heel raise: three seconds up, two seconds at top, three seconds down; 3 × 12RM initially, 4 × 10RM after two weeks, 5 × 8RM after four weeks. Stretch: 10 × 10 seconds.",
+        "frequency": "Strength every second day for three months; stretch three times daily.",
+        "supervision": "Physiotherapist instruction and performance check/correction after one month.",
+        "progression": "Backpack books added as strength improved; bilateral start as needed.",
+        "stoppingRules": "not reported as a verified universal pain threshold."
+      },
+      "locations": [
+        "Methods > Interventions > Plantar-specific stretching and High-load strength training (PDF p.2); Figures1–2",
+        "Results > Primary/Secondary outcomes and satisfaction (PDF p.4)"
+      ]
+    },
+    {
+      "id": "php-s",
+      "title": "Management of plantar heel pain: a best practice guide informed by a systematic review, expert clinical reasoning and patient values.",
+      "doi": "10.1136/bjsports-2019-101970",
+      "pmid": "33785535",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8458083/",
+      "publicationStatus": "Final journal publication; metadata firstPublicationDate 2021-03-30. Version/access details below.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "PubMed abstract and indexed publisher education/core-approach sections inspected; conservative access classification because entire article inspection was not completed. https://bjsm.bmj.com/content/early/2021/03/30/bjsports-2019-101970"
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed records inspected during research; Europe PMC REST core metadata DOI:10.1136/bjsports-2019-101970 rechecked during serialization, including publication type and comment/correction links. Not a registry-wide clearance.",
+        "result": "No correction/retraction link returned in this bounded metadata check. No claim of exhaustive integrity clearance or automatic supersession."
+      },
+      "design": "Best-practice guide integrating systematic review, experts and patient values.",
+      "population": "People with plantar heel pain; different sources inform different guide elements.",
+      "comparator": "Varied treatment trials; education/load-management reasoning not isolated RCT.",
+      "coInterventions": "Core stretching/taping plus education; stepped escalation.",
+      "outcomes": "Core guide favored fascia stretching, taping, education; break prolonged static loading and adjust aggravating activity.",
+      "followUp": "Varied; no single study endpoint.",
+      "uncertainty": "Only abstract/indexed selected full-text sections inspected here; expert-reasoning advice not trial proof of a specific harmful activity dose.",
+      "harms": "No quantified harms of education/load-management component.",
+      "limitations": "Only abstract/indexed selected full-text sections inspected here; expert-reasoning advice not trial proof of a specific harmful activity dose. Research candidate only; no clinical release.",
+      "protocol": {
+        "execution": "not reported",
+        "dose": "not reported",
+        "frequency": "not reported",
+        "supervision": "not reported",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Abstract",
+        "Best practice guide > Core approach and load-management education (indexed sections)"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "php-g-result",
+      "kind": "published-recommendation",
+      "statement": "Recommends fascia-specific and gastrocnemius/soleus stretching; foot/ankle resistance training (gradeB); best dose/strength type unresolved. Harms: Stretching synthesis reported transient mild/moderate pain resolving after stretch, no serious events reported.",
+      "citations": [
+        {
+          "sourceId": "php-g",
+          "location": "Summary of Recommendations > Stretching; Therapeutic Exercise"
+        },
+        {
+          "sourceId": "php-g",
+          "location": "Interventions > Stretching > Evidence Synthesis"
+        },
+        {
+          "sourceId": "php-g",
+          "location": "Interventions > Therapeutic Exercise and Neuromuscular Re-education > Recommendation"
+        }
+      ],
+      "applicability": "Clinically compatible plantar fasciitis/nonarthritic heel pain.",
+      "limitations": "Not diagnosis of every heel pain; combined evidence cannot isolate optimal exercise or establish blanket activity prohibitions."
+    },
+    {
+      "id": "php-r-result",
+      "kind": "study-result",
+      "statement": "FFI favored strength at3 months by29 points (95%CI6–52); no between-group difference at1,6,12 months. Harms: Minor delayed-onset soreness in strength arm; no other adverse events reported.",
+      "citations": [
+        {
+          "sourceId": "php-r",
+          "location": "Methods > Interventions > Plantar-specific stretching and High-load strength training (PDF p.2); Figures1–2"
+        },
+        {
+          "sourceId": "php-r",
+          "location": "Results > Primary/Secondary outcomes and satisfaction (PDF p.4)"
+        }
+      ],
+      "applicability": "Adults with ultrasound-verified plantar fasciitis and heel pain≥3 months.",
+      "limitations": "Small sample/attrition; short-term improvement not durable superiority. Toe-extension setup conflicts with independent first-MTP range limits."
+    },
+    {
+      "id": "php-r-execution",
+      "kind": "study-result",
+      "statement": "Reported execution: Unilateral heel raise on stair with towel under toes, maximal toe dorsiflexion at top; backpack loading; bilateral start if unable. Comparator seated crossed-leg fascia stretch, hand pulls toes toward shin and other hand palpates fascia. Study dose: Heel raise: three seconds up, two seconds at top, three seconds down; 3 × 12RM initially, 4 × 10RM after two weeks, 5 × 8RM after four weeks. Stretch: 10 × 10 seconds. Frequency: Strength every second day for three months; stretch three times daily.",
+      "citations": [
+        {
+          "sourceId": "php-r",
+          "location": "Methods > Interventions > Plantar-specific stretching and High-load strength training (PDF p.2); Figures1–2"
+        },
+        {
+          "sourceId": "php-r",
+          "location": "Results > Primary/Secondary outcomes and satisfaction (PDF p.4)"
+        }
+      ],
+      "applicability": "Adults with ultrasound-verified plantar fasciitis and heel pain≥3 months.",
+      "limitations": "Execution identity is independent of dose. Bundle/component and access limits apply; these are research protocols rather than app prescriptions."
+    },
+    {
+      "id": "php-s-result",
+      "kind": "study-result",
+      "statement": "Core guide favored fascia stretching, taping, education; break prolonged static loading and adjust aggravating activity. Harms: No quantified harms of education/load-management component.",
+      "citations": [
+        {
+          "sourceId": "php-s",
+          "location": "Abstract"
+        },
+        {
+          "sourceId": "php-s",
+          "location": "Best practice guide > Core approach and load-management education (indexed sections)"
+        }
+      ],
+      "applicability": "People with plantar heel pain; different sources inform different guide elements.",
+      "limitations": "Only abstract/indexed selected full-text sections inspected here; expert-reasoning advice not trial proof of a specific harmful activity dose."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "generic-wall-calf-stretch",
+      "exerciseId": "wall-calf-stretch",
+      "requestId": null,
+      "findingIds": [
+        "php-g-result"
+      ],
+      "matchRationale": "Catalog execution ledger shows staggered wall-supported stance, rear heel down. This is a candidate for the guideline general calf stretch; exact straight-/bent-knee emphasis is not verified. Duration/stretch identity earns no strength credit.",
+      "status": "candidate"
+    },
+    {
+      "id": "plantar-fascia-towel-toe-heel-raise-step-mapping",
+      "exerciseId": null,
+      "requestId": "plantar-fascia-towel-toe-heel-raise-step",
+      "findingIds": [
+        "php-r-execution"
+      ],
+      "matchRationale": "Generic calf-raise records do not encode the towel-under-toes windlass setup. First-MTP or insertional Achilles restrictions can make this exact execution inappropriate.",
+      "status": "candidate"
+    },
+    {
+      "id": "seated-hand-assisted-plantar-fascia-stretch-mapping",
+      "exerciseId": null,
+      "requestId": "seated-hand-assisted-plantar-fascia-stretch",
+      "findingIds": [
+        "php-r-execution"
+      ],
+      "matchRationale": "Wall calf stretch has a different execution and target setup. This is flexibility work; it cannot receive strength-set credit or generic five-second progression.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "plantar-resistance-stretch-candidates",
+      "kind": "supportive-prescription",
+      "basis": "published-recommendation",
+      "statement": "Consider foot/ankle resistance and plantar-fascia/calf flexibility candidates after diagnosis and review. Check the towel-toe variant against toe-extension and insertional Achilles restrictions; stretching receives no strength-set credit.",
+      "findingIds": [
+        "php-g-result",
+        "php-r-execution"
+      ],
+      "citations": [
+        {
+          "sourceId": "php-g",
+          "location": "Interventions > Therapeutic Exercise and Neuromuscular Re-education > Recommendation"
+        },
+        {
+          "sourceId": "php-r",
+          "location": "Methods > Interventions > Plantar-specific stretching and High-load strength training (PDF p.2); Figures1–2"
+        }
+      ],
+      "applicability": {
+        "population": "Adults with plantar heel pain clinically compatible with plantar fasciitis; strength RCT required ultrasound changes and symptoms ≥3 months.",
+        "stage": "Clinically compatible plantar fasciitis; strength anchor chronic ultrasound-confirmed.",
+        "rationale": "Draft interpretation of the linked condition-specific findings; evidence and product choice are separated by basis. Other conditions, equipment and independent joint limits remain controlling."
+      },
+      "limitations": "Optimal resistance dose unknown; short-term trial superiority was not sustained. Candidate only; no clinical release.",
+      "mappingIds": [
+        "plantar-fascia-towel-toe-heel-raise-step-mapping",
+        "seated-hand-assisted-plantar-fascia-stretch-mapping",
+        "generic-wall-calf-stretch"
+      ],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "Clinical content review and individual applicability are not established.",
+    "Plantar heel pain is a presentation, not a confirmed diagnosis.",
+    "Towel-under-toes loading can conflict with first-MTP limits; generic wall stretch knee emphasis remains unresolved."
+  ],
+  "disposition": "eligible-for-independent-content-review",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

@@ -1,0 +1,313 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "medial-tibial-stress-syndrome",
+    "label": "medial tibial stress syndrome",
+    "aliases": [],
+    "distinctions": "Focal/atypical bony symptoms need assessment; research selection cannot establish absence of fracture."
+  },
+  "scope": {
+    "population": "Athletes/runners with diffuse posteromedial tibial tenderness and diagnosed medial tibial stress syndrome.",
+    "stage": "Persistent exercise-related symptoms; trials screened for stress fracture/compartment syndrome.",
+    "operativeStatus": "Nonoperative evidence unless explicitly stated otherwise; no postoperative protocol proposed.",
+    "exclusions": "Focal/atypical bony symptoms need assessment; research selection cannot establish absence of fracture.",
+    "uncertainty": "Draft research only; diagnosis, individual starting load, stage and clinical review remain unresolved."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "medial tibial stress syndrome treatment randomized clinical trial graded running calf stretching strengthening Moen 2012",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "medial tibial stress syndrome randomized trial exercise strengthening 2024 2025 2026 systematic review",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "DOI:10.1186/1758-2555-4-12",
+      "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
+      "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "DOI:10.1177/23259671241311849",
+      "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
+      "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "DOI:10.1016/j.ptsp.2026.101962",
+      "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
+      "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    }
+  ],
+  "sources": [
+    {
+      "id": "mtss-r1",
+      "title": "The treatment of medial tibial stress syndrome in athletes; a randomized clinical trial.",
+      "doi": "10.1186/1758-2555-4-12",
+      "pmid": "22464032",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3352296/",
+      "publicationStatus": "Final journal publication; metadata firstPublicationDate 2012-03-30. Version/access details below.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Full Europe PMC XML retrieved and key methods, results and protocol tables inspected. Earlier PMC access was challenged where recorded in lower-leg-source-report.md. https://www.ebi.ac.uk/europepmc/webservices/rest/PMC3352296/fullTextXML"
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed records inspected during research; Europe PMC REST core metadata DOI:10.1186/1758-2555-4-12 rechecked during serialization, including publication type and comment/correction links. Not a registry-wide clearance.",
+        "result": "No correction/retraction link returned in this bounded metadata check. No claim of exhaustive integrity clearance or automatic supersession."
+      },
+      "design": "Randomised three-arm trial, n=74; 14 withdrew for inadequate progress.",
+      "population": "Athletes older than 16 with symptoms longer than three weeks and diffuse posteromedial tenderness of at least 5 cm. Suspected stress fracture/compartment syndrome was excluded.",
+      "comparator": "Graded running alone versus added calf stretching/strengthening versus compression stockings.",
+      "coInterventions": "All groups received graded running.",
+      "outcomes": "Mean completion time was 105.2, 117.6 and 102.1 days respectively, with no significant between-group difference or satisfaction benefit.",
+      "followUp": "To running-program completion; duration varied.",
+      "uncertainty": "No rest/no-treatment comparator and substantial noncompletion. Trial-screened MTSS pain values cannot be exported to suspected fracture or every severity.",
+      "harms": "Fourteen did not complete because of inadequate progress; robust harms ascertainment was not established.",
+      "limitations": "No rest/no-treatment comparator and substantial noncompletion. Trial-screened MTSS pain values cannot be exported to suspected fracture or every severity. Research candidate only; no clinical release.",
+      "protocol": {
+        "execution": "Six-phase graded walk/run program; adjunct calf stretching/strengthening had five phases. Exact individual exercise variants were not verified from the addendum.",
+        "dose": "Phase-specific walk/run duration; no single transferable running dose.",
+        "frequency": "Running three times weekly with a rest day between sessions; adjunct exercise five times weekly.",
+        "supervision": "Investigators taught/practised exercises, followed by home performance.",
+        "progression": "If walking hurt, started after two pain-free walking days. Progression required running pain below 4/10; pain at least 4 afterwards/next day prevented advancement and reduced running by two minutes.",
+        "stoppingRules": "Trial-specific rules above. They do not establish fracture clearance or an app-wide pain threshold."
+      },
+      "locations": [
+        "Methods > Graded running program; Table2",
+        "Methods > Graded running program with exercises",
+        "Results > Table4"
+      ]
+    },
+    {
+      "id": "mtss-r2",
+      "title": "Effects of Integrating Lower-Leg Exercises Into a Multimodal Therapeutic Approach on Medial Tibial Stress Syndrome Management Among Recreational Runners: A Randomized Controlled Study.",
+      "doi": "10.1177/23259671241311849",
+      "pmid": "39958697",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11826869/",
+      "publicationStatus": "Final journal publication; metadata firstPublicationDate 2025-02-06. Version/access details below.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Full Europe PMC XML retrieved and key methods, results and protocol tables inspected. Earlier PMC access was challenged where recorded in lower-leg-source-report.md. https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11826869/fullTextXML"
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed records inspected during research; Europe PMC REST core metadata DOI:10.1177/23259671241311849 rechecked during serialization, including publication type and comment/correction links. Not a registry-wide clearance.",
+        "result": "No correction/retraction link returned in this bounded metadata check. No claim of exhaustive integrity clearance or automatic supersession."
+      },
+      "design": "Parallel-group RCT, n=40, with a multimodal active comparator.",
+      "population": "Recreational runners with diagnosed MTSS; mean age 23.9, 40% women.",
+      "comparator": "Multimodal care versus the same care plus lower-leg exercise.",
+      "coInterventions": "Both groups used graded walk/run, ice and five shockwave sessions; existing orthoses continued.",
+      "outcomes": "No added improvement in pain or MTSS severity at six/twelve weeks. Quality-of-life and foot-posture measures improved with added exercise.",
+      "followUp": "Six and twelve weeks.",
+      "uncertainty": "Small multimodal trial with no isolated exercise-component effect. Posture/QoL improvement does not establish pain reduction or prevention of bone stress injury. Exercise frequency was not clear in inspected methods.",
+      "harms": "No side effects reported; questionnaires collected every three weeks.",
+      "limitations": "Small multimodal trial with no isolated exercise-component effect. Posture/QoL improvement does not establish pain reduction or prevention of bone stress injury. Exercise frequency was not clear in inspected methods. Research candidate only; no clinical release.",
+      "protocol": {
+        "execution": "Short-foot exercise raises the arch without toe flexion or forefoot lift, progressing seated to double-leg then single-leg stance. Also side-lying band inversion, seated band plantarflexion, weighted towel toe curls, straight-/bent-knee wall stretches and foam rolling.",
+        "dose": "Short foot: 5-second holds up to 3 minutes. Band exercises: 3 × 12–15. Toe curls: 3 × 15–20. Stretch: 5 × 20–30 seconds. Rolling: 4 × 45 seconds, 30-second rests.",
+        "frequency": "not clearly reported in the inspected intervention section; 12-week program.",
+        "supervision": "Clinic-based supervision by an experienced physical therapy/sports science specialist with physician input.",
+        "progression": "After 4 × 15 for one week without increased symptoms, increase band/load; sets increased from 3 to 4, with resistance described from 40% to 85% 1 RM.",
+        "stoppingRules": "Progression required no worsening; no universal numeric app threshold established."
+      },
+      "locations": [
+        "Methods > Lower-Leg Exercise Intervention; Table1",
+        "Results > Table3; Adverse events"
+      ]
+    },
+    {
+      "id": "mtss-s",
+      "title": "Load-induced medial leg pain in runners: A systematic review of non-invasive treatment approaches.",
+      "doi": "10.1016/j.ptsp.2026.101962",
+      "pmid": "42462658",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/42462658/",
+      "publicationStatus": "Final journal publication; metadata firstPublicationDate 2026-07-15. Version/access details below.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "Publisher abstract/indexedintroductioninspected; metadata verifiespublication2026-07-15 beforeaccess,notfutureproof."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed records inspected during research; Europe PMC REST core metadata DOI:10.1016/j.ptsp.2026.101962 rechecked during serialization, including publication type and comment/correction links. Not a registry-wide clearance.",
+        "result": "No correction/retraction link returned in this bounded metadata check. No claim of exhaustive integrity clearance or automatic supersession."
+      },
+      "design": "2026 systematic review of three RCTs, 130 runners; searches through June 2025.",
+      "population": "Runners with MTSS/load-induced medial leg pain.",
+      "comparator": "Noninvasive interventions versus varied comparators.",
+      "coInterventions": "Multimodal care in included studies.",
+      "outcomes": "No clearly superior treatment. Exercise additions did not outperform comparators; short-term orthosis benefit was not maintained.",
+      "followUp": "Varied short-term studies.",
+      "uncertainty": "Only three heterogeneous trials; abstract/selected introduction access cannot establish a full protocol. This is treatment evidence, separate from prevention studies.",
+      "harms": "not established from the accessible abstract.",
+      "limitations": "Only three heterogeneous trials; abstract/selected introduction access cannot establish a full protocol. This is treatment evidence, separate from prevention studies. Research candidate only; no clinical release.",
+      "protocol": {
+        "execution": "not reported",
+        "dose": "not reported",
+        "frequency": "not reported",
+        "supervision": "not reported",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Abstract > Methods, Results and Conclusions"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "mtss-r1-result",
+      "kind": "study-result",
+      "statement": "Mean completion time was 105.2, 117.6 and 102.1 days respectively, with no significant between-group difference or satisfaction benefit. Harms: Fourteen did not complete because of inadequate progress; robust harms ascertainment was not established.",
+      "citations": [
+        {
+          "sourceId": "mtss-r1",
+          "location": "Methods > Graded running program; Table2"
+        },
+        {
+          "sourceId": "mtss-r1",
+          "location": "Methods > Graded running program with exercises"
+        },
+        {
+          "sourceId": "mtss-r1",
+          "location": "Results > Table4"
+        }
+      ],
+      "applicability": "Athletes older than 16 with symptoms longer than three weeks and diffuse posteromedial tenderness of at least 5 cm. Suspected stress fracture/compartment syndrome was excluded.",
+      "limitations": "No rest/no-treatment comparator and substantial noncompletion. Trial-screened MTSS pain values cannot be exported to suspected fracture or every severity."
+    },
+    {
+      "id": "mtss-r2-result",
+      "kind": "study-result",
+      "statement": "No added improvement in pain or MTSS severity at six/twelve weeks. Quality-of-life and foot-posture measures improved with added exercise. Harms: No side effects reported; questionnaires collected every three weeks.",
+      "citations": [
+        {
+          "sourceId": "mtss-r2",
+          "location": "Methods > Lower-Leg Exercise Intervention; Table1"
+        },
+        {
+          "sourceId": "mtss-r2",
+          "location": "Results > Table3; Adverse events"
+        }
+      ],
+      "applicability": "Recreational runners with diagnosed MTSS; mean age 23.9, 40% women.",
+      "limitations": "Small multimodal trial with no isolated exercise-component effect. Posture/QoL improvement does not establish pain reduction or prevention of bone stress injury. Exercise frequency was not clear in inspected methods."
+    },
+    {
+      "id": "mtss-r2-execution",
+      "kind": "study-result",
+      "statement": "Reported execution: Short-foot exercise raises the arch without toe flexion or forefoot lift, progressing seated to double-leg then single-leg stance. Also side-lying band inversion, seated band plantarflexion, weighted towel toe curls, straight-/bent-knee wall stretches and foam rolling. Study dose: Short foot: 5-second holds up to 3 minutes. Band exercises: 3 × 12–15. Toe curls: 3 × 15–20. Stretch: 5 × 20–30 seconds. Rolling: 4 × 45 seconds, 30-second rests. Frequency: not clearly reported in the inspected intervention section; 12-week program.",
+      "citations": [
+        {
+          "sourceId": "mtss-r2",
+          "location": "Methods > Lower-Leg Exercise Intervention; Table1"
+        },
+        {
+          "sourceId": "mtss-r2",
+          "location": "Results > Table3; Adverse events"
+        }
+      ],
+      "applicability": "Recreational runners with diagnosed MTSS; mean age 23.9, 40% women.",
+      "limitations": "Execution identity is independent of dose. Bundle/component and access limits apply; these are research protocols rather than app prescriptions."
+    },
+    {
+      "id": "mtss-s-result",
+      "kind": "study-result",
+      "statement": "No clearly superior treatment. Exercise additions did not outperform comparators; short-term orthosis benefit was not maintained. Harms: not established from the accessible abstract.",
+      "citations": [
+        {
+          "sourceId": "mtss-s",
+          "location": "Abstract > Methods, Results and Conclusions"
+        }
+      ],
+      "applicability": "Runners with MTSS/load-induced medial leg pain.",
+      "limitations": "Only three heterogeneous trials; abstract/selected introduction access cannot establish a full protocol. This is treatment evidence, separate from prevention studies."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "short-foot-arch-raise-no-toe-flexion-mapping",
+      "exerciseId": null,
+      "requestId": "short-foot-arch-raise-no-toe-flexion",
+      "findingIds": [
+        "mtss-r2-execution"
+      ],
+      "matchRationale": "Exact foot-control execution differs from calf raises/toe touches. Study found posture/QoL change, no added pain benefit; timed hold is a protocol parameter, not automatic strength credit.",
+      "status": "candidate"
+    },
+    {
+      "id": "weighted-towel-toe-curl-mapping",
+      "exerciseId": null,
+      "requestId": "weighted-towel-toe-curl",
+      "findingIds": [
+        "mtss-r2-execution"
+      ],
+      "matchRationale": "Distinct toe-flexor execution; no claim this isolated component reduces MTSS symptoms. Additional dose alone does not define identity.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "mtss-load-response-research-boundary",
+      "kind": "symptom-response",
+      "basis": "unresolved-hypothesis",
+      "statement": "A reviewed plan may adjust provocative running/impact load according to symptom response; trial pain/progression values remain trial-specific and cannot be applied to suspected fracture. Do not promise calf exercise shortens MTSS recovery.",
+      "findingIds": [
+        "mtss-r1-result",
+        "mtss-r2-result",
+        "mtss-s-result"
+      ],
+      "citations": [
+        {
+          "sourceId": "mtss-r1",
+          "location": "Methods > Graded running program; Table2"
+        },
+        {
+          "sourceId": "mtss-r2",
+          "location": "Results > Table3; Adverse events"
+        },
+        {
+          "sourceId": "mtss-s",
+          "location": "Abstract > Methods, Results and Conclusions"
+        }
+      ],
+      "applicability": {
+        "population": "Athletes/runners with diffuse posteromedial tibial tenderness and diagnosed medial tibial stress syndrome.",
+        "stage": "Diagnosed diffuse MTSS after assessment, not focal/unassessed bony pain.",
+        "rationale": "Draft interpretation of the linked condition-specific findings; evidence and product choice are separated by basis. Other conditions, equipment and independent joint limits remain controlling."
+      },
+      "limitations": "Treatment trials did not show added pain benefit from strengthening bundles; no universal threshold proposed. Candidate only; no clinical release.",
+      "mappingIds": [],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "Clinical content review and individual applicability are not established.",
+    "No established added pain benefit for lower-leg exercise bundles; mappings are research candidates only.",
+    "Exercise frequency in 2025 trial not clearly reported in inspected section.",
+    "Do not conflate prevention evidence with treatment, or MTSS thresholds with fracture care."
+  ],
+  "disposition": "research-only",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

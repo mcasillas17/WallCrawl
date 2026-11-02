@@ -1,6 +1,6 @@
 # Lower-leg, ankle and foot source extractions
 
-Research draft, searches executed 2026-11-01 America/Los_Angeles (2026-11-02 UTC; access audit at 05:34 UTC). Owner: lower-leg batch. This report covers exactly the ten assigned inventory conditions. It is evidence gathering for controller review, not clinical approval, an exhaustive systematic review, or an assertion that the app supports these conditions. Canonical JSON awaits the controller-reviewed schema.
+Research draft, searches executed 2026-11-01 America/Los_Angeles (2026-11-02 UTC; access audit at 05:34 UTC). Owner: lower-leg batch. This report covers exactly the ten assigned inventory conditions. It is evidence gathering for controller review, not clinical approval, an exhaustive systematic review, or an assertion that the app supports these conditions. Canonical-shaped regional scratch dossiers now use the controller-reviewed schema; root promotion and clinical review remain separate.
 
 ## Interpretation and access conventions
 
@@ -236,3 +236,15 @@ Search date: **2026-11-01 America/Los_Angeles / 2026-11-02 UTC**. These are lite
 - XML attempts for PMC6089027, PMC4299733 and PMC11181457 returned HTTP 500. PMC6089027 was instead read successfully as full HTML. The other two retain the access levels specified above.
 - PubMed identifiers/DOIs were cross-checked via Europe PMC metadata for PTT-R2, CAI-R1, LAS-S, BSI-S and PTT-S. PTT-S PMID is **30271611**.
 - ACH-R1 public PDF body was independently parsed using pdfplumber in memory to inspect the full dosing page and rupture/attrition text after later web-view requests timed out. No downloaded source file or scratch artifact was added to the repository.
+
+
+## Serialization-stage source verification addendum
+
+Additional checks performed on 2026-11-01 local / 2026-11-02 UTC, without repeating the literature search:
+
+- Official final Achilles (32 pages), plantar heel pain (39 pages) and ankle sprain/instability (80 pages) AOPT PDFs were retrieved and parsed in memory. Their final recommendation sections were inspected. This upgrades guideline access from indexed snippets to full-text access, and confirms that final ACH-G frequency is at least three sessions weekly.
+- IAT-R supplemental file 3 (100 pages, LTCR and HTCR brochures) was retrieved through the legitimate [Europe PMC supplementary-files endpoint](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12171478/supplementaryFiles). LTCR pp.19–20 specify neutral-to-plantarflexion band work with straight knee or knee slightly flexed over a towel. Page 21 specifies a chair-seated bilateral heel raise with hands at knees, hips/knees 90 degrees, neutral-to-plantarflexion. The straight-knee band example states 8 × 15; bent-knee band/chair examples state 4 × 15, with 30-second rest and four seconds each direction. Main-text percentage/RM stage descriptions and brochure-specific doses are retained separately. The brochure's claim that pain response implies tendon healing is not adopted as an app inference.
+- Europe PMC REST `DOI:<identifier>` core metadata checked the 32 distinct included papers/notices individually for exact title/DOI/PMID, publication date/type and returned comment/correction links. Exact responses are retained in lower-leg-serialization-report.md. This is a bounded metadata check, not a registry-wide integrity clearance.
+- MTP-R1 links to [2018 Errata](https://pubmed.ncbi.nlm.nih.gov/30157317/), DOI 10.1002/acr.23732. PubMed confirms the original trial link, but the correction has no abstract; PMC challenged, Europe PMC XML returned 500 and publisher full text was unavailable. Corrected content remains unknown. Original numerical results are therefore explicitly correction-unverified and do not support an actionable rule.
+- PER-G's [linked correction](https://link.springer.com/article/10.1007/s00167-018-5021-4) was inspected as publisher metadata/preview; substantive text is subscription-only and was not read. Its effect is not assumed. The plantar guideline's linked 2025 item, PMID 39741456, was verified as a letter/comment rather than silently labelled a correction; its full arguments were not reviewed.
+- Catalog metadata plus existing execution-observation ledger were inspected for calf and ankle/foot entries. Seated calf machine and leg-press calf raise are candidate reuse matches for HSR; different study tempo/RM does not create a new execution identity. The chair/neutral-range, band/knee-position, towel-toe/step and eccentric-lowering variants retain their distinct known setup and unresolved details. Actual supplement PNGs remain required for missing exact variants after review; none was generated or attributed in this research phase.

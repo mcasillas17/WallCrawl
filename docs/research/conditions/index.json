@@ -48,37 +48,37 @@
       "id": "rotator-cuff-tendinopathy",
       "label": "Rotator cuff tendinopathy",
       "region": "Shoulder (6)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "full-thickness-rotator-cuff-tear",
       "label": "full-thickness rotator cuff tear",
       "region": "Shoulder (6)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "adhesive-capsulitis",
       "label": "adhesive capsulitis",
       "region": "Shoulder (6)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "glenohumeral-osteoarthritis",
       "label": "glenohumeral osteoarthritis",
       "region": "Shoulder (6)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "shoulder-instability",
       "label": "shoulder instability",
       "region": "Shoulder (6)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "acromioclavicular-osteoarthritis",
       "label": "acromioclavicular osteoarthritis",
       "region": "Shoulder (6)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "lateral-elbow-tendinopathy",
@@ -216,61 +216,61 @@
       "id": "midportion-achilles-tendinopathy",
       "label": "Midportion Achilles tendinopathy",
       "region": "Lower leg, ankle, foot (10)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "insertional-achilles-tendinopathy",
       "label": "insertional Achilles tendinopathy",
       "region": "Lower leg, ankle, foot (10)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "plantar-heel-pain-compatible-with-plantar-fasciitis",
       "label": "plantar heel pain compatible with plantar fasciitis",
       "region": "Lower leg, ankle, foot (10)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "lateral-ankle-sprain",
       "label": "lateral ankle sprain",
       "region": "Lower leg, ankle, foot (10)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "chronic-ankle-instability",
       "label": "chronic ankle instability",
       "region": "Lower leg, ankle, foot (10)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "posterior-tibial-tendinopathy",
       "label": "posterior tibial tendinopathy",
       "region": "Lower leg, ankle, foot (10)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "peroneal-tendinopathy",
       "label": "peroneal tendinopathy",
       "region": "Lower leg, ankle, foot (10)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "medial-tibial-stress-syndrome",
       "label": "medial tibial stress syndrome",
       "region": "Lower leg, ankle, foot (10)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "lower-limb-bone-stress-injury",
       "label": "lower-limb bone stress injury",
       "region": "Lower leg, ankle, foot (10)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "first-metatarsophalangeal-osteoarthritis",
       "label": "first metatarsophalangeal osteoarthritis",
       "region": "Lower leg, ankle, foot (10)",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "id": "osteoporosis",

@@ -1,0 +1,420 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "first-metatarsophalangeal-osteoarthritis",
+    "label": "first metatarsophalangeal osteoarthritis",
+    "aliases": [],
+    "distinctions": "Inflammatory arthropathy, postoperative care and functional hallux limitus are distinct; trial exclusions do not prove contraindications."
+  },
+  "scope": {
+    "population": "Adults with symptomatic first-MTP osteoarthritis; hallux-limitus therapy evidence is indirect.",
+    "stage": "Chronic nonoperative presentation; individual range and symptom limits unknown.",
+    "operativeStatus": "Nonoperative evidence unless explicitly stated otherwise; no postoperative protocol proposed.",
+    "exclusions": "Inflammatory arthropathy, postoperative care and functional hallux limitus are distinct; trial exclusions do not prove contraindications.",
+    "uncertainty": "Draft research only; diagnosis, individual starting load, stage and clinical review remain unresolved."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "first metatarsophalangeal osteoarthritis nonsurgical interventions randomized trial exercise footwear orthoses 2024 Cochrane",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "first metatarsophalangeal joint osteoarthritis non surgical Cochrane 2024 exercise trial sesamoid mobilization",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "first metatarsophalangeal osteoarthritis rocker sole footwear foot orthoses randomized 2016 Menz 12 weeks",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "Non surgical interventions treating osteoarthritis big toe joint 2024 Cochrane CD007809",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "Shamus 2004 hallux limitus sesamoid mobilization flexor hallucis strength trial 12 sessions",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "Effect foot orthoses sham insoles first metatarsophalangeal osteoarthritis 2022 Paterson doi",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "DOI:10.1002/14651858.cd007809.pub3",
+      "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
+      "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "DOI:10.1002/acr.22750",
+      "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
+      "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "DOI:10.1016/j.joca.2022.01.014",
+      "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
+      "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "DOI:10.2519/jospt.2004.34.7.368",
+      "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
+      "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "DOI:10.1002/acr.23732",
+      "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
+      "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    }
+  ],
+  "sources": [
+    {
+      "id": "mtp-s",
+      "title": "Non-surgical interventions for treating osteoarthritis of the big toe joint.",
+      "doi": "10.1002/14651858.cd007809.pub3",
+      "pmid": "38884172",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11181457/",
+      "publicationStatus": "Final journal publication; metadata firstPublicationDate 2024-06-17. Version/access details below.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "Cochrane summary and indexed PMC review discussion/characteristics inspected; Europe PMC XML returned 500. Entire review inspection not completed, conservatively classified abstract-only."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed records inspected during research; Europe PMC REST core metadata DOI:10.1002/14651858.cd007809.pub3 rechecked during serialization, including publication type and comment/correction links. Not a registry-wide clearance.",
+        "result": "Linked notices: Update of: Cochrane Database Syst Rev. 2010 Sep 08;(9):CD007809. doi: 10.1002/14651858.CD007809.pub2. No claim of exhaustive integrity clearance or automatic supersession."
+      },
+      "design": "2024 Cochrane review, six trials and 547 participants; minor amendment noted January 2025.",
+      "population": "First-MTP/big-toe OA; a small functional hallux-limitus trial is indirect.",
+      "comparator": "Three placebo/sham comparisons; other trials used active treatment.",
+      "coInterventions": "Varied devices, injections and multimodal care.",
+      "outcomes": "Moderate-certainty evidence of no clinically important benefit from arch-contouring orthoses or shoe-stiffening inserts versus sham; other treatments/exercise remain uncertain.",
+      "followUp": "Longest 52 weeks; primary review endpoint 12 weeks.",
+      "uncertainty": "Few trials and limited exercise evidence; functional hallux-limitus findings may be indirect for radiographic OA. Partial full-review inspection conservatively classified abstract-only.",
+      "harms": "Serious events not reported; device events commonly foot pain.",
+      "limitations": "Few trials and limited exercise evidence; functional hallux-limitus findings may be indirect for radiographic OA. Partial full-review inspection conservatively classified abstract-only. Research candidate only; no clinical release.",
+      "protocol": {
+        "execution": "not reported",
+        "dose": "not reported",
+        "frequency": "not reported",
+        "supervision": "not reported",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Authors conclusions; Discussion > Summary of main results (indexed sections)"
+      ]
+    },
+    {
+      "id": "mtp-r1",
+      "title": "Effectiveness of Foot Orthoses Versus Rocker-Sole Footwear for First Metatarsophalangeal Joint Osteoarthritis: Randomized Trial.",
+      "doi": "10.1002/acr.22750",
+      "pmid": "26638878",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5074253/",
+      "publicationStatus": "Final journal publication; metadata firstPublicationDate 2016-05-01. Version/access details below.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Full indexed publisher methods/results inspected. Europe PMC core metadata identifies linked 2018 erratum 10.1002/acr.23732; its full content remains unavailable and is not presumed trivial. https://acrjournals.onlinelibrary.wiley.com/doi/full/10.1002/acr.22750"
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed records inspected during research; Europe PMC REST core metadata DOI:10.1002/acr.22750 rechecked during serialization, including publication type and comment/correction links. Not a registry-wide clearance.",
+        "result": "Linked notices: Erratum in: Arthritis Care Res (Hoboken). 2018 Sep;70(9):1420. doi: 10.1002/acr.23732 No claim of exhaustive integrity clearance or automatic supersession."
+      },
+      "design": "Randomised active-device trial, n=102, with linked 2018 erratum.",
+      "population": "Symptomatic first-MTP OA; recurrent fallers excluded.",
+      "comparator": "Modified prefabricated orthoses versus rocker-sole shoes.",
+      "coInterventions": "Cointerventions/rescue medication monitored.",
+      "outcomes": "Originally reported FHSQ difference 2.05 (95% CI −3.61 to 7.71), with similar improvement. Shoes had lower adherence and more adverse events (39% versus 16%; RR 2.47, 95% CI 1.12–5.44). The linked erratum text is unavailable: check these numbers against the correction before release.",
+      "followUp": "12 weeks.",
+      "uncertainty": "Active comparison without sham cannot isolate efficacy. A linked 2018 erratum remains unread; original numerical values require correction review before release. Device exclusions do not establish exercise contraindications.",
+      "harms": "Original trial reported more shoe events, including new low-back pain; implications of the erratum remain unresolved.",
+      "limitations": "Active comparison without sham cannot isolate efficacy. A linked 2018 erratum remains unread; original numerical values require correction review before release. Device exclusions do not establish exercise contraindications. Research candidate only; no clinical release.",
+      "protocol": {
+        "execution": "Modified full-length prefabricated orthoses with first-metatarsal cut-out versus MBT rocker-sole shoes.",
+        "dose": "Device use rather than exercise; exact wearing schedule beyond the 12-week assignment not re-extracted.",
+        "frequency": "12-week device use, with adherence measured in hours.",
+        "supervision": "Podiatrist fitting/assessment; no exercise protocol.",
+        "progression": "not reported as exercise load progression.",
+        "stoppingRules": "not reported as exercise stopping rules."
+      },
+      "locations": [
+        "Methods > Interventions",
+        "Results > Primary/Secondary outcomes; Cointerventions and adverse events",
+        "Discussion > No placebo comparator"
+      ]
+    },
+    {
+      "id": "mtp-r2",
+      "title": "Effect of foot orthoses vs sham insoles on first metatarsophalangeal joint osteoarthritis symptoms: a randomized controlled trial.",
+      "doi": "10.1016/j.joca.2022.01.014",
+      "pmid": "35272050",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/35272050/",
+      "publicationStatus": "Final journal publication; metadata firstPublicationDate 2022-03-07. Version/access details below.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "PubMed abstract and selected indexed primary-PDF methods/abstract inspected; entire article inspection not completed. Conservative abstract-only classification. https://www.oarsijournal.com/article/S1063458422006550/pdf"
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed records inspected during research; Europe PMC REST core metadata DOI:10.1016/j.joca.2022.01.014 rechecked during serialization, including publication type and comment/correction links. Not a registry-wide clearance.",
+        "result": "Linked notices: Comment in: MMW Fortschr Med. 2022 Apr;164(Suppl 1):11. doi: 10.1007/s15006-022-1040-7; Comment in: Osteoarthritis Cartilage. 2022 Jul;30(7):909-910. doi: 10.1016/j.joca.2022.03.008 No claim of exhaustive integrity clearance or automatic supersession."
+      },
+      "design": "Sham-controlled RCT, n=88; 87 completed the primary endpoint.",
+      "population": "Adults at least 45 with symptomatic radiographic first-MTP OA.",
+      "comparator": "Contoured orthoses versus flat sham insoles.",
+      "coInterventions": "Bilateral insoles worn with shoes.",
+      "outcomes": "No pain superiority: difference −0.3 NRS (95% CI −1.2 to 0.6); no secondary-outcome superiority.",
+      "followUp": "12 weeks.",
+      "uncertainty": "No superiority of contoured orthoses over sham; not a test of motion restrictions or exercise. Entire primary article inspection not completed.",
+      "harms": "Generally minor/transient; exact event table not completely re-extracted.",
+      "limitations": "No superiority of contoured orthoses over sham; not a test of motion restrictions or exercise. Entire primary article inspection not completed. Research candidate only; no clinical release.",
+      "protocol": {
+        "execution": "not reported",
+        "dose": "not reported",
+        "frequency": "not reported",
+        "supervision": "not reported",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Abstract > Methods and Results"
+      ]
+    },
+    {
+      "id": "mtp-r3",
+      "title": "The effect of sesamoid mobilization, flexor hallucis strengthening, and gait training on reducing pain and restoring function in individuals with hallux limitus: a clinical trial.",
+      "doi": "10.2519/jospt.2004.34.7.368",
+      "pmid": "15296364",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/15296364/",
+      "publicationStatus": "Final journal publication; metadata firstPublicationDate 2004-07-01. Version/access details below.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "PubMed abstract inspected; full primary methods not retrieved."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed records inspected during research; Europe PMC REST core metadata DOI:10.2519/jospt.2004.34.7.368 rechecked during serialization, including publication type and comment/correction links. Not a registry-wide clearance.",
+        "result": "No correction/retraction link returned in this bounded metadata check. No claim of exhaustive integrity clearance or automatic supersession."
+      },
+      "design": "Small controlled clinical trial, n=20, not an established-OA-specific RCT.",
+      "population": "Functional hallux limitus with pain, motion loss and weakness; not necessarily radiographic OA.",
+      "comparator": "Multimodal physiotherapy alone versus added mobilisation/strength/gait bundle.",
+      "coInterventions": "Both groups received whirlpool, ultrasound, toe mobilisation, calf/hamstring stretching, marble pickup, cold and electrical modalities.",
+      "outcomes": "The added bundle improved ROM, flexor strength and pain after 12 visits (P<.001); isolated exercise effect and durability remain unknown.",
+      "followUp": "Four weeks.",
+      "uncertainty": "Small functional hallux-limitus multimodal trial, indirect for radiographic OA. Full exact exercise methods and harms unavailable; no isolated strengthening effect.",
+      "harms": "not reported in the accessible abstract.",
+      "limitations": "Small functional hallux-limitus multimodal trial, indirect for radiographic OA. Full exact exercise methods and harms unavailable; no isolated strengthening effect. Research candidate only; no clinical release.",
+      "protocol": {
+        "execution": "not reported",
+        "dose": "not reported",
+        "frequency": "not reported",
+        "supervision": "not reported",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Abstract > Methods, Results and Conclusions"
+      ]
+    },
+    {
+      "id": "mtp-erratum",
+      "title": "Errata.",
+      "doi": "10.1002/acr.23732",
+      "pmid": "30157317",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6886027/",
+      "publicationStatus": "Final journal publication; metadata firstPublicationDate 2018-09-01. Version/access details below.",
+      "access": {
+        "status": "unavailable",
+        "date": "2026-11-01",
+        "details": "PubMed metadata inspected; no abstract. PMC challenged, Europe PMC XML returned 500, and publisher full-text retrieval failed. Corrected content remains unknown."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed records inspected during research; Europe PMC REST core metadata DOI:10.1002/acr.23732 rechecked during serialization, including publication type and comment/correction links. Not a registry-wide clearance.",
+        "result": "Linked notices: Erratum for: Arthritis Care Res (Hoboken). 2016 May;68(5):581-9. doi: 10.1002/acr.22750 No claim of exhaustive integrity clearance or automatic supersession."
+      },
+      "design": "Published erratum, 2018.",
+      "population": "Linked to the 2016 Menz first-MTP orthoses/footwear trial.",
+      "comparator": "not reported; correction body unavailable.",
+      "coInterventions": "not reported.",
+      "outcomes": "Metadata establishes that an erratum exists; its corrected content and impact on original numerical findings remain unresolved.",
+      "followUp": "not reported.",
+      "uncertainty": "Correction exists but its substance is unavailable. Do not presume it only corrects typography or present the original trial numbers as correction-verified.",
+      "harms": "not reported; correction body unavailable.",
+      "limitations": "Correction exists but its substance is unavailable. Do not presume it only corrects typography or present the original trial numbers as correction-verified. Research candidate only; no clinical release.",
+      "protocol": {
+        "execution": "not reported",
+        "dose": "not reported",
+        "frequency": "not reported",
+        "supervision": "not reported",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "PubMed > Erratum for and Publication types"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "mtp-s-result",
+      "kind": "study-result",
+      "statement": "Moderate-certainty evidence of no clinically important benefit from arch-contouring orthoses or shoe-stiffening inserts versus sham; other treatments/exercise remain uncertain. Harms: Serious events not reported; device events commonly foot pain.",
+      "citations": [
+        {
+          "sourceId": "mtp-s",
+          "location": "Authors conclusions; Discussion > Summary of main results (indexed sections)"
+        }
+      ],
+      "applicability": "First-MTP/big-toe OA; a small functional hallux-limitus trial is indirect.",
+      "limitations": "Few trials and limited exercise evidence; functional hallux-limitus findings may be indirect for radiographic OA. Partial full-review inspection conservatively classified abstract-only."
+    },
+    {
+      "id": "mtp-r1-result",
+      "kind": "study-result",
+      "statement": "Originally reported FHSQ difference 2.05 (95% CI −3.61 to 7.71), with similar improvement. Shoes had lower adherence and more adverse events (39% versus 16%; RR 2.47, 95% CI 1.12–5.44). The linked erratum text is unavailable: check these numbers against the correction before release. Harms: Original trial reported more shoe events, including new low-back pain; implications of the erratum remain unresolved.",
+      "citations": [
+        {
+          "sourceId": "mtp-r1",
+          "location": "Methods > Interventions"
+        },
+        {
+          "sourceId": "mtp-r1",
+          "location": "Results > Primary/Secondary outcomes; Cointerventions and adverse events"
+        },
+        {
+          "sourceId": "mtp-r1",
+          "location": "Discussion > No placebo comparator"
+        }
+      ],
+      "applicability": "Symptomatic first-MTP OA; recurrent fallers excluded.",
+      "limitations": "Active comparison without sham cannot isolate efficacy. A linked 2018 erratum remains unread; original numerical values require correction review before release. Device exclusions do not establish exercise contraindications."
+    },
+    {
+      "id": "mtp-r2-result",
+      "kind": "study-result",
+      "statement": "No pain superiority: difference −0.3 NRS (95% CI −1.2 to 0.6); no secondary-outcome superiority. Harms: Generally minor/transient; exact event table not completely re-extracted.",
+      "citations": [
+        {
+          "sourceId": "mtp-r2",
+          "location": "Abstract > Methods and Results"
+        }
+      ],
+      "applicability": "Adults at least 45 with symptomatic radiographic first-MTP OA.",
+      "limitations": "No superiority of contoured orthoses over sham; not a test of motion restrictions or exercise. Entire primary article inspection not completed."
+    },
+    {
+      "id": "mtp-r3-result",
+      "kind": "study-result",
+      "statement": "The added bundle improved ROM, flexor strength and pain after 12 visits (P<.001); isolated exercise effect and durability remain unknown. Harms: not reported in the accessible abstract.",
+      "citations": [
+        {
+          "sourceId": "mtp-r3",
+          "location": "Abstract > Methods, Results and Conclusions"
+        }
+      ],
+      "applicability": "Functional hallux limitus with pain, motion loss and weakness; not necessarily radiographic OA.",
+      "limitations": "Small functional hallux-limitus multimodal trial, indirect for radiographic OA. Full exact exercise methods and harms unavailable; no isolated strengthening effect."
+    },
+    {
+      "id": "mtp-erratum-result",
+      "kind": "evidence-gap",
+      "statement": "Metadata establishes that an erratum exists; its corrected content and impact on original numerical findings remain unresolved. Harms: not reported; correction body unavailable.",
+      "citations": [
+        {
+          "sourceId": "mtp-erratum",
+          "location": "PubMed > Erratum for and Publication types"
+        }
+      ],
+      "applicability": "Linked to the 2016 Menz first-MTP orthoses/footwear trial.",
+      "limitations": "Correction exists but its substance is unavailable. Do not presume it only corrects typography or present the original trial numbers as correction-verified."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "hallux-flexor-strengthening-execution-unresolved-mapping",
+      "exerciseId": null,
+      "requestId": "hallux-flexor-strengthening-execution-unresolved",
+      "findingIds": [
+        "mtp-r3-result"
+      ],
+      "matchRationale": "Functional hallux limitus evidence is indirect for radiographic OA, and the full primary exercise instructions are inaccessible. Do not substitute towel curl by name alone.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "first-mtp-symptom-modification-hypothesis",
+      "kind": "symptom-response",
+      "basis": "unresolved-hypothesis",
+      "statement": "If loaded great-toe extension is problematic, an individual assessment may justify a less provocative execution within the selected joint limit. No universal forbidden exercise or degree threshold is established.",
+      "findingIds": [
+        "mtp-s-result",
+        "mtp-r3-result"
+      ],
+      "citations": [
+        {
+          "sourceId": "mtp-s",
+          "location": "Authors conclusions; Discussion > Summary of main results (indexed sections)"
+        },
+        {
+          "sourceId": "mtp-r3",
+          "location": "Abstract > Methods, Results and Conclusions"
+        }
+      ],
+      "applicability": {
+        "population": "Adults with symptomatic first-MTP osteoarthritis; hallux-limitus therapy evidence is indirect.",
+        "stage": "Symptomatic nonoperative first-MTP OA with individual limits; hallux-limitus evidence indirect.",
+        "rationale": "Draft interpretation of the linked condition-specific findings; evidence and product choice are separated by basis. Other conditions, equipment and independent joint limits remain controlling."
+      },
+      "limitations": "Exercise evidence is indirect; improvement in a therapy bundle does not prove alternatives harmful. Original footwear trial also has unresolved erratum. Candidate only; no clinical release.",
+      "mappingIds": [],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "Clinical content review and individual applicability are not established.",
+    "2016 footwear trial linked erratum full content unavailable; numerical results require correction review.",
+    "Hallux-limitus exercise bundle is indirect and full primary execution unavailable.",
+    "No validated universal toe-extension limit or standalone therapeutic exercise."
+  ],
+  "disposition": "unresolved",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

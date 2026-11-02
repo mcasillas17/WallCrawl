@@ -1,0 +1,219 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "glenohumeral-osteoarthritis",
+    "label": "glenohumeral osteoarthritis",
+    "aliases": [],
+    "distinctions": "Native primary GH OA differs from AC OA, cuff arthropathy, inflammatory arthritis and anatomic/reverse arthroplasty."
+  },
+  "scope": {
+    "population": "Adults with symptomatic native primary GHOA.",
+    "stage": "Severity/irritability and structural context individualized.",
+    "operativeStatus": "Native nonoperative disease; surgery protocols separate.",
+    "exclusions": "No universal strengthening or overhead ban supported.",
+    "uncertainty": "Exercise-specific benefit, dosage and ordinary-training restrictions insufficiently established."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-02",
+      "service": "Native web search, PubMed/PMC/publisher/society records; Europe PMC XML for accessible PMCID full text",
+      "query": "glenohumeral osteoarthritis physical therapy clinical practice guideline 2023",
+      "decision": "Targeted source inclusion/extraction recorded below; retained contrary findings and population/access limits.",
+      "limitations": "Not exhaustive; no fixed paper quota. Date is UTC (Nov 1 local / Nov 2 UTC). No registry-wide integrity clearance."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Native web search, PubMed/PMC/publisher/society records; Europe PMC XML for accessible PMCID full text",
+      "query": "site.pubmed.ncbi.nlm.nih.gov glenohumeral osteoarthritis nonoperative Guo 2016 exercise 129",
+      "decision": "Targeted source inclusion/extraction recorded below; retained contrary findings and population/access limits.",
+      "limitations": "Not exhaustive; no fixed paper quota. Date is UTC (Nov 1 local / Nov 2 UTC). No registry-wide integrity clearance."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Native web search, PubMed/PMC/publisher/society records; Europe PMC XML for accessible PMCID full text",
+      "query": "Three-Year Follow-up of Conservative Treatments shoulder Guo doi",
+      "decision": "Targeted source inclusion/extraction recorded below; retained contrary findings and population/access limits.",
+      "limitations": "Not exhaustive; no fixed paper quota. Date is UTC (Nov 1 local / Nov 2 UTC). No registry-wide integrity clearance."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Crossref official REST API",
+      "query": "Exact DOI metadata GET /works/{URL-encoded DOI}: 10.1093/ptj/pzad041, 10.3928/01477447-20160606-02, 10.1016/j.jseint.2024.08.189",
+      "decision": "Metadata returned for michener-2023, guo-2016, su-2025. PubMed/publisher records remain source of access/extraction.",
+      "limitations": "Only record metadata/relations inspected; not a registry-wide retraction/correction search."
+    }
+  ],
+  "sources": [
+    {
+      "id": "michener-2023",
+      "title": "Physical Therapist Management of Glenohumeral Joint Osteoarthritis: A Clinical Practice Guideline from the American Physical Therapy Association",
+      "doi": "10.1093/ptj/pzad041",
+      "pmid": null,
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10256270/",
+      "publicationStatus": "Published final article; exact version described in access details. Crossref recorded publication/online date 2023-04-28 (online date preferred where supplied).",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-02",
+        "details": "Final full-text XML inspected via Europe PMC; publisher/PMC direct challenges."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-02",
+        "method": "Inspected cited publication/PubMed or society record and retrieved version during targeted search; title/identifier/access cross-check. No registry-wide correction or retraction search performed. Exact-DOI Crossref metadata lookup: https://api.crossref.org/works/10.1093%2Fptj%2Fpzad041.",
+        "result": "Bounded publication/version check only; no claim of comprehensive integrity clearance. Any known notice is recorded in limitations. DOI/title/publication metadata correspond; this record does not establish absence of notices elsewhere."
+      },
+      "design": "Guideline based on systematic review; nonoperative advice best-practice opinion",
+      "population": "Adults with native GHOA and anatomic TSA; not reverse/revision arthroplasty or primary RA.",
+      "comparator": "No high/moderate-quality nonoperative comparative PT study; postoperative comparisons separate.",
+      "coInterventions": "Multimodal conservative care.",
+      "outcomes": "PT may benefit selected patients; no specific intervention superiority established.",
+      "followUp": "Underlying cohort through three years; varied surgical follow-up.",
+      "uncertainty": "Insufficient comparative evidence; clinical expertise supports individualization.",
+      "harms": "Intensity mismatched to irritability may increase pain; no per-exercise harm threshold.",
+      "limitations": "Hip/knee OA or postoperative data cannot supply native-shoulder exercise efficacy.",
+      "protocol": {
+        "execution": "Select ROM/strength exercises for individual impairments and irritability, not a fixed program.",
+        "dose": "not reported as optimal universal dose.",
+        "frequency": "not reported as optimal universal frequency.",
+        "supervision": "Clinician selection/evaluation.",
+        "progression": "Individual response-guided, not a validated fixed progression.",
+        "stoppingRules": "Increased pain possible if intensity mismatched; no numeric stopping rule."
+      },
+      "locations": [
+        "Best Practice Statements > Nonoperative Physical Therapist Services",
+        "Best Practice Statements > Nonoperative Physical Therapist Interventions"
+      ]
+    },
+    {
+      "id": "guo-2016",
+      "title": "Three-Year Follow-up of Conservative Treatments of Shoulder Osteoarthritis in Older Patients",
+      "doi": "10.3928/01477447-20160606-02",
+      "pmid": "27286050",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/27286050/",
+      "publicationStatus": "Published final article; exact version described in access details. Crossref recorded publication/online date 2016-07 (online date preferred where supplied).",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-02",
+        "details": "Published final abstract inspected; full methods unavailable."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-02",
+        "method": "Inspected cited publication/PubMed or society record and retrieved version during targeted search; title/identifier/access cross-check. No registry-wide correction or retraction search performed. Exact-DOI Crossref metadata lookup: https://api.crossref.org/works/10.3928%2F01477447-20160606-02.",
+        "result": "Bounded publication/version check only; no claim of comprehensive integrity clearance. Any known notice is recorded in limitations. DOI/title/publication metadata correspond; this record does not establish absence of notices elsewhere."
+      },
+      "design": "Prospective uncontrolled cohort, 129 patients",
+      "population": "Chinese adults >65 with unilateral shoulder OA.",
+      "comparator": "Baseline versus subsequent outcomes, no untreated control.",
+      "coInterventions": "Multimodal conservative treatment; ROM/strength description comes from guideline, not accessible primary protocol.",
+      "outcomes": "Pain/function/quality-of-life generally improved at three years, with changing intermediate trajectories.",
+      "followUp": "3, 6, 12, 18, 24, 36 months.",
+      "uncertainty": "No causal exercise-component inference; selected older cohort.",
+      "harms": "not reported in inspected abstract.",
+      "limitations": "No exact exercises/dose or general safety clearance.",
+      "protocol": {
+        "execution": "not reported",
+        "dose": "not reported",
+        "frequency": "not reported",
+        "supervision": "not reported",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Abstract > Methods; Results; Conclusions"
+      ]
+    },
+    {
+      "id": "su-2025",
+      "title": "Effectiveness of nonoperative treatment in patients with glenohumeral osteoarthritis: a prospective cohort study",
+      "doi": "10.1016/j.jseint.2024.08.189",
+      "pmid": "40182250",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11962565/",
+      "publicationStatus": "Published final article; exact version described in access details. Crossref recorded publication/online date 2025-03 (online date preferred where supplied).",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-02",
+        "details": "Final full-text XML inspected; 2025 March collection."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-02",
+        "method": "Inspected cited publication/PubMed or society record and retrieved version during targeted search; title/identifier/access cross-check. No registry-wide correction or retraction search performed. Exact-DOI Crossref metadata lookup: https://api.crossref.org/works/10.1016%2Fj.jseint.2024.08.189.",
+        "result": "Bounded publication/version check only; no claim of comprehensive integrity clearance. Any known notice is recorded in limitations. DOI/title/publication metadata correspond; this record does not establish absence of notices elsewhere."
+      },
+      "design": "Prospective pragmatic nonrandomized cohort, 62 patients",
+      "population": "Primary GHOA; prior surgery/fracture/dislocation/full-thickness tear excluded.",
+      "comparator": "Patient-chosen PT versus no PT within multimodal cohort.",
+      "coInterventions": "Analgesics, NSAIDs and corticosteroid injections offered.",
+      "outcomes": "No ASES change difference with PT (P=.524); 31% met clinical improvement; 14/62 underwent TSA.",
+      "followUp": "3, 6, 12 months; surgery mean 7.7 months.",
+      "uncertainty": "Treatment self-selection/confounding; 53% completed twelve-month ASES.",
+      "harms": "No detailed exercise-injury attribution; authors loading-aggravation explanation speculative.",
+      "limitations": "No causal conclusion strengthening harmful or no patient can benefit.",
+      "protocol": {
+        "execution": "Standard PT emphasizing shoulder motion and strengthening; exact individual execution not described in main text.",
+        "dose": "Six-week PT course offered.",
+        "frequency": "not reported for individual exercises.",
+        "supervision": "PT performed at location chosen by patient.",
+        "progression": "After six weeks continued care or arthroplasty elected; no exercise-specific progression.",
+        "stoppingRules": "not reported as exercise-specific numeric stop rule."
+      },
+      "locations": [
+        "Methods > Study Design; Nonoperative Treatment",
+        "Results; Discussion > Physical Therapy"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "ghoa-best-practice",
+      "kind": "published-recommendation",
+      "statement": "Guideline offers individualized ROM/strength PT as best-practice opinion; no intervention superiority or high/moderate-quality nonoperative comparisons.",
+      "citations": [
+        {
+          "sourceId": "michener-2023",
+          "location": "Best Practice Statements > Nonoperative Physical Therapist Services"
+        },
+        {
+          "sourceId": "michener-2023",
+          "location": "Best Practice Statements > Nonoperative Physical Therapist Interventions"
+        }
+      ],
+      "applicability": "Native adult GHOA.",
+      "limitations": "Expert opinion, not exercise-specific evidence."
+    },
+    {
+      "id": "ghoa-conflicting-cohorts",
+      "kind": "study-result",
+      "statement": "Older multimodal cohort improved; newer self-selected cohort did not show PT-associated ASES benefit.",
+      "citations": [
+        {
+          "sourceId": "guo-2016",
+          "location": "Abstract > Methods; Results; Conclusions"
+        },
+        {
+          "sourceId": "su-2025",
+          "location": "Methods > Study Design; Nonoperative Treatment"
+        },
+        {
+          "sourceId": "su-2025",
+          "location": "Results; Discussion > Physical Therapy"
+        }
+      ],
+      "applicability": "Different native-GHOA cohorts.",
+      "limitations": "No randomized causal comparison; loading harm speculation not a contraindication."
+    }
+  ],
+  "exerciseMappings": [],
+  "proposedRules": [],
+  "gaps": [
+    "Insufficient evidence for a condition-specific exact exercise mapping, load/ROM threshold or blanket exclusion; mappings/rules withheld.",
+    "No exact candidate exercise extracted; underlying Guo protocol unavailable and Su main-text variants unspecified.",
+    "No therapeutic release; independent clinical review needed."
+  ],
+  "disposition": "insufficient-evidence",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

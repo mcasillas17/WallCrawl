@@ -1,0 +1,314 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "peroneal-tendinopathy",
+    "label": "peroneal tendinopathy",
+    "aliases": [],
+    "distinctions": "Surgical retinacular repair and peroneal instability have separate loading requirements; not a generic tendinopathy protocol."
+  },
+  "scope": {
+    "population": "Clinically diagnosed peroneal tendinopathy; isolated disease must be distinguished from tears, rupture and tendon dislocation.",
+    "stage": "Conservative management; severity and associated lateral ligament pathology unknown.",
+    "operativeStatus": "Nonoperative evidence unless explicitly stated otherwise; no postoperative protocol proposed.",
+    "exclusions": "Surgical retinacular repair and peroneal instability have separate loading requirements; not a generic tendinopathy protocol.",
+    "uncertainty": "Draft research only; diagnosis, individual starting load, stage and clinical review remain unresolved."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "peroneal tendon pathologies ESSKA AFAS consensus 2018 rehabilitation tendinopathy conservative exercise",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "peroneal tendinopathy exercise trial conservative treatment eccentric randomized",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "peroneal tendinopathy conservative treatment physiotherapy exercise prospective clinical study",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "peroneal tendinopathy rehabilitation randomized controlled trial 2025 2026 exercise",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "peroneal tendinopathy exercise case report 2011 21570893 doi",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "DOI:10.1007/s00167-018-4971-x",
+      "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
+      "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "DOI:10.1016/j.math.2011.04.004",
+      "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
+      "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "DOI:10.7759/cureus.81742",
+      "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
+      "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    }
+  ],
+  "sources": [
+    {
+      "id": "per-g",
+      "title": "The ESSKA-AFAS international consensus statement on peroneal tendon pathologies.",
+      "doi": "10.1007/s00167-018-4971-x",
+      "pmid": "29767272",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6154028/",
+      "publicationStatus": "Final journal publication; metadata firstPublicationDate 2018-05-16. Version/access details below.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Full publisher article and Europe PMC XML/reference trail inspected. Correction DOI10.1007/s00167-018-5021-4 publisher preview subscription-only, substantive correction not inspected."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed records inspected during research; Europe PMC REST core metadata DOI:10.1007/s00167-018-4971-x rechecked during serialization, including publication type and comment/correction links. Not a registry-wide clearance.",
+        "result": "Linked notices: Erratum in: Knee Surg Sports Traumatol Arthrosc. 2018 Oct;26(10):3108. doi: 10.1007/s00167-018-5021-4. No claim of exhaustive integrity clearance or automatic supersession."
+      },
+      "design": "International multidisciplinary consensus based on scarce, heterogeneous evidence.",
+      "population": "Peroneal tendon pathologies; distinguish tendinopathy from tear, rupture and dislocation.",
+      "comparator": "No randomised conservative exercise comparison.",
+      "coInterventions": "Acute associated-injury management and symptom measures.",
+      "outcomes": "Consensus supports conservative care, painless weight bearing followed by ROM and tendon loading as appropriate. Dose is unvalidated. Conservative references include mixed-tendon PRP and luxation/subluxation reports, not an isolated-tendinopathy exercise RCT.",
+      "followUp": "No single follow-up.",
+      "uncertainty": "Consensus rests on sparse evidence, including mixed-tendon and subluxation reports. It does not establish an isolated-tendinopathy exercise dose. The linked correction body was not accessed; postoperative repair limits are a separate population.",
+      "harms": "No quantified isolated-exercise harms estimate.",
+      "limitations": "Consensus rests on sparse evidence, including mixed-tendon and subluxation reports. It does not establish an isolated-tendinopathy exercise dose. The linked correction body was not accessed; postoperative repair limits are a separate population. Research candidate only; no clinical release.",
+      "protocol": {
+        "execution": "Weight bearing when painless, then ROM/tendon loading appropriate to diagnosis; no specific verified band exercise execution.",
+        "dose": "not reported as validated specific exercise dose.",
+        "frequency": "not reported as validated frequency.",
+        "supervision": "Clinically managed; no universal supervision schedule.",
+        "progression": "Diagnosis/symptom-guided progression.",
+        "stoppingRules": "Painless weight-bearing prerequisite in consensus rationale; no trial-based numeric exercise threshold."
+      },
+      "locations": [
+        "Conservative therapies > Recommendations4.1–4.4 and Rationale",
+        "References6,21,35; Post-operative protocol section"
+      ]
+    },
+    {
+      "id": "per-r1",
+      "title": "Novel use of a manual therapy technique and management of a patient with peroneal tendinopathy: a case report.",
+      "doi": "10.1016/j.math.2011.04.004",
+      "pmid": "21570893",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/21570893/",
+      "publicationStatus": "Final journal publication; metadata firstPublicationDate 2011-05-13. Version/access details below.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "PubMed abstract inspected; full treatment table not retrieved."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed records inspected during research; Europe PMC REST core metadata DOI:10.1016/j.math.2011.04.004 rechecked during serialization, including publication type and comment/correction links. Not a registry-wide clearance.",
+        "result": "No correction/retraction link returned in this bounded metadata check. No claim of exhaustive integrity clearance or automatic supersession."
+      },
+      "design": "Single-patient case report.",
+      "population": "A 50-year-old woman with chronic lateral ankle symptoms consistent with peroneal tendinopathy.",
+      "comparator": "No comparator.",
+      "coInterventions": "Orthotics, strengthening, manual therapy and home program; a lateral calcaneal glide was added.",
+      "outcomes": "Pain, function, heel raises and balance improved over eight visits; patient returned to work and recreational exercise.",
+      "followUp": "Eight visits; long-term durability not established in the abstract.",
+      "uncertainty": "Single case with multiple treatments and no comparator; exact home program and harms unavailable. Improvement cannot be attributed to strengthening alone.",
+      "harms": "not reported in the accessible abstract.",
+      "limitations": "Single case with multiple treatments and no comparator; exact home program and harms unavailable. Improvement cannot be attributed to strengthening alone. Research candidate only; no clinical release.",
+      "protocol": {
+        "execution": "not reported",
+        "dose": "not reported",
+        "frequency": "not reported",
+        "supervision": "not reported",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Abstract"
+      ]
+    },
+    {
+      "id": "per-r2",
+      "title": "Diagnostic and Therapeutic Role of Peroneal Tenography in Chronic Peroneal Disorders: A Service Evaluation.",
+      "doi": "10.7759/cureus.81742",
+      "pmid": "40330353",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12051077/",
+      "publicationStatus": "Final journal publication; metadata firstPublicationDate 2025-04-05. Version/access details below.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Full Europe PMC XML retrieved and key methods, results and protocol tables inspected. Earlier PMC access was challenged where recorded in lower-leg-source-report.md. https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12051077/fullTextXML"
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed records inspected during research; Europe PMC REST core metadata DOI:10.7759/cureus.81742 rechecked during serialization, including publication type and comment/correction links. Not a registry-wide clearance.",
+        "result": "No correction/retraction link returned in this bounded metadata check. No claim of exhaustive integrity clearance or automatic supersession."
+      },
+      "design": "Retrospective service evaluation, n=27, principally a diagnostic/tenography study.",
+      "population": "Adults with mixed chronic peroneal disorders, including tendinosis and tears; median age 50.",
+      "comparator": "MRI/tenography/intraoperative comparisons; no exercise control.",
+      "coInterventions": "Boot/physiotherapy, selected band strengthening, tenography and escalated care.",
+      "outcomes": "Fifteen of 27 reported adequate pain relief after tenography. This is not an exercise efficacy estimate.",
+      "followUp": "12 months after final management.",
+      "uncertainty": "Retrospective mixed-pathology series selected for diagnostic/interventional care. Band strengthening dose and isolated effect are unknown; tenography benefit is not exercise evidence.",
+      "harms": "Isolated exercise harms were not established.",
+      "limitations": "Retrospective mixed-pathology series selected for diagnostic/interventional care. Band strengthening dose and isolated effect are unknown; tenography benefit is not exercise evidence. Research candidate only; no clinical release.",
+      "protocol": {
+        "execution": "Selected patients offered TheraBand peroneal strengthening; precise ankle position/execution not reported.",
+        "dose": "not reported for strengthening.",
+        "frequency": "not reported for strengthening.",
+        "supervision": "Clinical follow-up; exact exercise supervision not reported.",
+        "progression": "Clinical response categories informed further management.",
+        "stoppingRules": "not reported for strengthening."
+      },
+      "locations": [
+        "Materials and methods > Conservative management and peroneal strengthening",
+        "Abstract > Results"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "per-g-result",
+      "kind": "published-recommendation",
+      "statement": "Consensus supports conservative care, painless weight bearing followed by ROM and tendon loading as appropriate. Dose is unvalidated. Conservative references include mixed-tendon PRP and luxation/subluxation reports, not an isolated-tendinopathy exercise RCT. Harms: No quantified isolated-exercise harms estimate.",
+      "citations": [
+        {
+          "sourceId": "per-g",
+          "location": "Conservative therapies > Recommendations4.1–4.4 and Rationale"
+        },
+        {
+          "sourceId": "per-g",
+          "location": "References6,21,35; Post-operative protocol section"
+        }
+      ],
+      "applicability": "Peroneal tendon pathologies; distinguish tendinopathy from tear, rupture and dislocation.",
+      "limitations": "Consensus rests on sparse evidence, including mixed-tendon and subluxation reports. It does not establish an isolated-tendinopathy exercise dose. The linked correction body was not accessed; postoperative repair limits are a separate population."
+    },
+    {
+      "id": "per-r1-result",
+      "kind": "study-result",
+      "statement": "Pain, function, heel raises and balance improved over eight visits; patient returned to work and recreational exercise. Harms: not reported in the accessible abstract.",
+      "citations": [
+        {
+          "sourceId": "per-r1",
+          "location": "Abstract"
+        }
+      ],
+      "applicability": "A 50-year-old woman with chronic lateral ankle symptoms consistent with peroneal tendinopathy.",
+      "limitations": "Single case with multiple treatments and no comparator; exact home program and harms unavailable. Improvement cannot be attributed to strengthening alone."
+    },
+    {
+      "id": "per-r2-result",
+      "kind": "study-result",
+      "statement": "Fifteen of 27 reported adequate pain relief after tenography. This is not an exercise efficacy estimate. Harms: Isolated exercise harms were not established.",
+      "citations": [
+        {
+          "sourceId": "per-r2",
+          "location": "Materials and methods > Conservative management and peroneal strengthening"
+        },
+        {
+          "sourceId": "per-r2",
+          "location": "Abstract > Results"
+        }
+      ],
+      "applicability": "Adults with mixed chronic peroneal disorders, including tendinosis and tears; median age 50.",
+      "limitations": "Retrospective mixed-pathology series selected for diagnostic/interventional care. Band strengthening dose and isolated effect are unknown; tenography benefit is not exercise evidence."
+    },
+    {
+      "id": "per-r2-execution",
+      "kind": "study-result",
+      "statement": "Reported execution: Selected patients offered TheraBand peroneal strengthening; precise ankle position/execution not reported. Study dose: not reported for strengthening. Frequency: not reported for strengthening.",
+      "citations": [
+        {
+          "sourceId": "per-r2",
+          "location": "Materials and methods > Conservative management and peroneal strengthening"
+        },
+        {
+          "sourceId": "per-r2",
+          "location": "Abstract > Results"
+        }
+      ],
+      "applicability": "Adults with mixed chronic peroneal disorders, including tendinosis and tears; median age 50.",
+      "limitations": "Execution identity is independent of dose. Bundle/component and access limits apply; these are research protocols rather than app prescriptions."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "peroneal-band-loading-execution-unresolved-mapping",
+      "exerciseId": null,
+      "requestId": "peroneal-band-loading-execution-unresolved",
+      "findingIds": [
+        "per-r2-execution"
+      ],
+      "matchRationale": "No verified isolated-tendinopathy exercise RCT or precise dose. This request retains a research lead, not an accepted eversion prescription borrowed from Achilles or CAI.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "peroneal-diagnosis-boundary",
+      "kind": "escalation",
+      "basis": "product-precaution",
+      "statement": "Distinguish uncomplicated tendinopathy from tendon snapping/dislocation, tear, rupture or postoperative repair before loading; do not infer that the peroneal band research lead is a verified prescription.",
+      "findingIds": [
+        "per-g-result",
+        "per-r2-result"
+      ],
+      "citations": [
+        {
+          "sourceId": "per-g",
+          "location": "Conservative therapies > Recommendations4.1–4.4 and Rationale"
+        },
+        {
+          "sourceId": "per-r2",
+          "location": "Materials and methods > Conservative management and peroneal strengthening"
+        }
+      ],
+      "applicability": {
+        "population": "Clinically diagnosed peroneal tendinopathy; isolated disease must be distinguished from tears, rupture and tendon dislocation.",
+        "stage": "Unknown diagnosis/stage or associated pathology.",
+        "rationale": "Draft interpretation of the linked condition-specific findings; evidence and product choice are separated by basis. Other conditions, equipment and independent joint limits remain controlling."
+      },
+      "limitations": "Consensus and mixed clinical series; no universal band dose or ankle-motion prohibition established. Candidate only; no clinical release.",
+      "mappingIds": [],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "Clinical content review and individual applicability are not established.",
+    "No verified isolated-peroneal-tendinopathy exercise RCT; source lead is mixed pathology.",
+    "Exact band direction, attachment, range and dose unresolved.",
+    "Published consensus correction content is subscription-only and not assessed; no unqualified integrity clearance."
+  ],
+  "disposition": "unresolved",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

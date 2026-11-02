@@ -1,0 +1,409 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "shoulder-instability",
+    "label": "shoulder instability",
+    "aliases": [],
+    "distinctions": "Traumatic anterior, atraumatic multidirectional, posterior, recurrent structural and repaired instability are distinct attributes; do not pool their precautions."
+  },
+  "scope": {
+    "population": "Clinically assessed shoulder instability; candidate mappings confined to young nontraumatic/nonstructural MDI.",
+    "stage": "Direction, recurrence, bone/soft-tissue injury and apprehension matter.",
+    "operativeStatus": "Nonoperative candidates only; repaired/acute dislocation phases separate.",
+    "exclusions": "No diagnosis-wide overhead, 90/90, hanging or pressing ban established here.",
+    "uncertainty": "Generic instability label insufficient for autonomous exercise selection."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-02",
+      "service": "Native web search, PubMed/PMC/publisher/society records; Europe PMC XML for accessible PMCID full text",
+      "query": "shoulder instability BESS BOA atraumatic traumatic rehabilitation guideline 2024 systematic review randomized exercise",
+      "decision": "Targeted source inclusion/extraction recorded below; retained contrary findings and population/access limits.",
+      "limitations": "Not exhaustive; no fixed paper quota. Date is UTC (Nov 1 local / Nov 2 UTC). No registry-wide integrity clearance."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Native web search, PubMed/PMC/publisher/society records; Europe PMC XML for accessible PMCID full text",
+      "query": "site.pubmed.ncbi.nlm.nih.gov shoulder instability Watson Rockwood randomized trial 2018",
+      "decision": "Targeted source inclusion/extraction recorded below; retained contrary findings and population/access limits.",
+      "limitations": "Not exhaustive; no fixed paper quota. Date is UTC (Nov 1 local / Nov 2 UTC). No registry-wide integrity clearance."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Native web search, PubMed/PMC/publisher/society records; Europe PMC XML for accessible PMCID full text",
+      "query": "site.pubmed.ncbi.nlm.nih.gov ARTISAN shoulder dislocation physiotherapy 2024 trial",
+      "decision": "Targeted source inclusion/extraction recorded below; retained contrary findings and population/access limits.",
+      "limitations": "Not exhaustive; no fixed paper quota. Date is UTC (Nov 1 local / Nov 2 UTC). No registry-wide integrity clearance."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Native web search, PubMed/PMC/publisher/society records; Europe PMC XML for accessible PMCID full text",
+      "query": "BESS/BOA atraumatic shoulder instability 10.1177",
+      "decision": "Targeted source inclusion/extraction recorded below; retained contrary findings and population/access limits.",
+      "limitations": "Not exhaustive; no fixed paper quota. Date is UTC (Nov 1 local / Nov 2 UTC). No registry-wide integrity clearance."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Crossref official REST API",
+      "query": "Exact DOI metadata GET /works/{URL-encoded DOI}: 10.1177/1758573218815002, 10.1177/17585732261439731, 10.1002/14651858.CD015450.pub2, 10.1177/0363546517734508, 10.1136/bmj-2023-076925",
+      "decision": "Metadata returned for noorani-2019, wong-2026, karasuyama-2026, warby-2018; HTTP429 for kearney-2024. PubMed/publisher records remain source of access/extraction.",
+      "limitations": "Only record metadata/relations inspected; not a registry-wide retraction/correction search."
+    }
+  ],
+  "sources": [
+    {
+      "id": "noorani-2019",
+      "title": "BESS/BOA patient care pathways: Atraumatic shoulder instability",
+      "doi": "10.1177/1758573218815002",
+      "pmid": "30719099",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6348586/",
+      "publicationStatus": "Published final article; exact version described in access details. Crossref recorded publication/online date 2018-12-10 (online date preferred where supplied).",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-02",
+        "details": "Final pathway metadata and indexed Introduction/Summary inspected; full article not completely reviewed, so conservative abstract-only classification."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-02",
+        "method": "Inspected cited publication/PubMed or society record and retrieved version during targeted search; title/identifier/access cross-check. No registry-wide correction or retraction search performed. Exact-DOI Crossref metadata lookup: https://api.crossref.org/works/10.1177%2F1758573218815002.",
+        "result": "Bounded publication/version check only; no claim of comprehensive integrity clearance. Any known notice is recorded in limitations. DOI/title/publication metadata correspond; this record does not establish absence of notices elsewhere."
+      },
+      "design": "Evidence-informed clinical pathway/consensus",
+      "population": "Atraumatic instability with laxity/motor-control and possible microtrauma structural components.",
+      "comparator": "No single randomized comparator.",
+      "coInterventions": "Specialist multidisciplinary care when complex.",
+      "outcomes": "Physiotherapy first-line; evidence limited, persistent complex displacement needs specialist assessment.",
+      "followUp": "Varied studies/pathway course.",
+      "uncertainty": "Small cohorts, inconsistent definitions and outcome scales.",
+      "harms": "No universal exercise-harm threshold established.",
+      "limitations": "Atraumatic presentation is not equivalent to acute traumatic anterior instability.",
+      "protocol": {
+        "execution": "not reported",
+        "dose": "not reported",
+        "frequency": "not reported",
+        "supervision": "not reported",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Indexed Introduction > Definition; Aetiology; Summary"
+      ]
+    },
+    {
+      "id": "wong-2026",
+      "title": "British Elbow and Shoulder Society practice guidelines: Rehabilitation following traumatic anterior shoulder dislocation (post-operative and non-operative care)",
+      "doi": "10.1177/17585732261439731",
+      "pmid": "41959665",
+      "url": "https://doi.org/10.1177/17585732261439731",
+      "publicationStatus": "Published final article; exact version described in access details. Crossref recorded publication/online date 2026-04-07 (online date preferred where supplied).",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-02",
+        "details": "Final Apr 7 2026 online / June issue metadata and abstract inspected. Publisher full request redirects to restricted abstract; detailed supplements not reviewed."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-02",
+        "method": "Inspected cited publication/PubMed or society record and retrieved version during targeted search; title/identifier/access cross-check. No registry-wide correction or retraction search performed. Exact-DOI Crossref metadata lookup: https://api.crossref.org/works/10.1177%2F17585732261439731.",
+        "result": "Bounded publication/version check only; no claim of comprehensive integrity clearance. Any known notice is recorded in limitations. DOI/title/publication metadata correspond; this record does not establish absence of notices elsewhere."
+      },
+      "design": "Survey/Delphi/evidence synthesis/workshop clinical guideline",
+      "population": "Traumatic anterior dislocation, separate postoperative/nonoperative pathways.",
+      "comparator": "No independent trial comparator for the guideline itself.",
+      "coInterventions": "Phase-specific rehabilitation and education.",
+      "outcomes": "Aligned phased pathways with protection, early movement/strength, progressive strength and return-to-function criteria.",
+      "followUp": "Not a trial follow-up; abstract gives phases, not clearance dates.",
+      "uncertainty": "Pragmatic consensus; exact protocols inaccessible.",
+      "harms": "No independently tested adverse-event estimate for guideline.",
+      "limitations": "No exact sling, ROM or exercise load rule extracted from abstract.",
+      "protocol": {
+        "execution": "not reported",
+        "dose": "not reported",
+        "frequency": "not reported",
+        "supervision": "not reported",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Abstract > Methods; Results; Conclusions"
+      ]
+    },
+    {
+      "id": "karasuyama-2026",
+      "title": "Exercise for multidirectional instability of the shoulder",
+      "doi": "10.1002/14651858.CD015450.pub2",
+      "pmid": null,
+      "url": "https://www.cochrane.org/evidence/CD015450_what-are-benefits-and-harms-exercise-therapy-multidirectional-instability-shoulder-where-joint-moves",
+      "publicationStatus": "Published final article; exact version described in access details. Crossref recorded publication/online date 2026-02-18 (online date preferred where supplied).",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-02",
+        "details": "Final Feb 18 2026 Cochrane review public summary/abstract inspected; full excluded-study table not inspected."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-02",
+        "method": "Inspected cited publication/PubMed or society record and retrieved version during targeted search; title/identifier/access cross-check. No registry-wide correction or retraction search performed. Exact-DOI Crossref metadata lookup: https://api.crossref.org/works/10.1002%2F14651858.CD015450.pub2.",
+        "result": "Bounded publication/version check only; no claim of comprehensive integrity clearance. Any known notice is recorded in limitations. DOI/title/publication metadata correspond; this record does not establish absence of notices elsewhere. Crossref update-to identifies pub2 as a new version of DOI10.1002/14651858.CD015450, not an integrity sanction."
+      },
+      "design": "Cochrane systematic review, searches to May 2025",
+      "population": "Multidirectional instability, traumatic or nontraumatic in review eligibility.",
+      "comparator": "Exercise versus placebo/no treatment/waiting list/usual-care comparisons described in public summary.",
+      "coInterventions": "No eligible trial data.",
+      "outcomes": "No eligible randomized evidence; benefits and harms uncertain for the review question.",
+      "followUp": "Not applicable; no eligible trial.",
+      "uncertainty": "Warby active-program RCT exists; exact formal exclusion decision not verified, so do not say no MDI randomized study exists.",
+      "harms": "No eligible harm estimate.",
+      "limitations": "Review eligibility differs from relative-program questions; comparison explanation is interpretation, not verified excluded-study rationale.",
+      "protocol": {
+        "execution": "not reported",
+        "dose": "not reported",
+        "frequency": "not reported",
+        "supervision": "not reported",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Public summary > Main results; Authors conclusions; Search strategy"
+      ]
+    },
+    {
+      "id": "warby-2018",
+      "title": "Comparison of 2 Exercise Rehabilitation Programs for Multidirectional Instability of the Glenohumeral Joint: A Randomized Controlled Trial",
+      "doi": "10.1177/0363546517734508",
+      "pmid": "29048942",
+      "url": "https://doi.org/10.1177/0363546517734508",
+      "publicationStatus": "Published final article; exact version described in access details. Crossref recorded publication/online date 2017-10-19 (online date preferred where supplied).",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-02",
+        "details": "Final publication PDF inspected at https://www.schoudernetwerk.nl/SNNbestanden/2019/Inventarisatie/RCT.GHInstabilityMDI.WarbyWatson.2017.pdf during serialization; online 2017, 2018 issue. Earlier protocol retrieval 403; unreviewed supplements not claimed."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-02",
+        "method": "Inspected cited publication/PubMed or society record and retrieved version during targeted search; title/identifier/access cross-check. No registry-wide correction or retraction search performed. Exact-DOI Crossref metadata lookup: https://api.crossref.org/works/10.1177%2F0363546517734508.",
+        "result": "Bounded publication/version check only; no claim of comprehensive integrity clearance. Any known notice is recorded in limitations. DOI/title/publication metadata correspond; this record does not establish absence of notices elsewhere."
+      },
+      "design": "RCT, 41 participants; underpowered relative to planned definitive sample",
+      "population": "Age 12–35, nontraumatic/nonstructural MDI, MRI exclusion of structural lesions.",
+      "comparator": "Watson staged scapular-control program versus Rockwood cuff/deltoid program.",
+      "coInterventions": "Education and home exercises; other care/medications recorded.",
+      "outcomes": "At 24 weeks WOSI difference 12.6, MISS 15.4, pain −2.0 favored Watson; no meaningful difference demonstrated for dislocation incidence.",
+      "followUp": "6, 12, 24 weeks; longer follow-up planned, not reported here.",
+      "uncertainty": "Small sample, several authors teach/work in program-associated services; no no-treatment group or isolated-exercise effect.",
+      "harms": "14 minor postexercise soreness events (5 Watson/9 Rockwood), resolved with 48-hour rest/modification; no serious events reported.",
+      "limitations": "Not traumatic structural instability, repair or unrestricted gym clearance.",
+      "protocol": {
+        "execution": "Watson: clinician-specific scapular control, standing band ER 0–45° at 0° abduction, rows, later side-lying ER/functional ranges. Rockwood includes wall/knee/full push-ups and cuff/deltoid work.",
+        "dose": "Watson typical recruitment 3×20 then endurance 3×10–15 and later strength 4×8–12; most holds 3 seconds. Rockwood 5 reps with 5-sec end-range hold. Study extraction only.",
+        "frequency": "Watson recruitment/endurance typically twice daily, later strength alternate days; Rockwood twice daily.",
+        "supervision": "Weekly 30-min physiotherapy for 12 weeks, trained therapists with fidelity checks.",
+        "progression": "Watson progressed load/elevation after pain-free scapular/GH control for full exercise set; Rockwood increased resistance when relatively easy.",
+        "stoppingRules": "Exercises performed pain free in both programs; soreness events managed by rest/modification. These do not establish universal damage or rest-duration rules."
+      },
+      "locations": [
+        "Methods > Participants and Recruitment; Interventions; Table 1 (PDF pp. 2–4)",
+        "Results > Adverse Events; Tables 4–5 (PDF pp. 6–9)"
+      ]
+    },
+    {
+      "id": "kearney-2024",
+      "title": "Acute rehabilitation following traumatic anterior shoulder dislocation (ARTISAN): pragmatic, multicentre, randomised controlled trial",
+      "doi": "10.1136/bmj-2023-076925",
+      "pmid": "38233068",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10792684/",
+      "publicationStatus": "Published final article; exact version described in access details.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-02",
+        "details": "Final full-text XML inspected. Correction doi:10.1136/bmj.q662 / PMC10941290 XML additionally retrieved during serialization; corrects collaborator name only."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-02",
+        "method": "Final trial/PubMed metadata inspected; published erratum specifically retrieved as full Europe PMC XML at https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10941290/fullTextXML. Exact-DOI Crossref metadata lookup: https://api.crossref.org/works/10.1136%2Fbmj-2023-076925.",
+        "result": "Erratum 10.1136/bmj.q662 corrects collaborator Charalambos P Charalambous name, not outcomes/protocol. No registry-wide integrity clearance. Crossref lookup returned HTTP429; existing publisher/PubMed metadata retained, no Crossref clearance claimed."
+      },
+      "design": "Multicenter pragmatic RCT, 482 adults",
+      "population": "First-time radiologically confirmed anterior traumatic dislocation, mean age45, managed nonoperatively; neurovascular complications/bilateral injury/surgical candidates excluded.",
+      "comparator": "Single advice/materials/self-referral option versus same plus extra PT.",
+      "coInterventions": "Both groups progressive-exercise education and initial sling-supported period.",
+      "outcomes": "Six-month Oxford instability difference 1.5 (95% CI −0.3 to 3.5), no worthwhile extra-PT superiority; similar complications, ten redislocations overall.",
+      "followUp": "6 months primary; earlier six-week/three-month outcomes.",
+      "uncertainty": "73% primary follow-up; not a young collision-athlete-only trial.",
+      "harms": "Similar complication profiles; no significant group difference.",
+      "limitations": "Not no rehabilitation, recurrent structural instability or immediate unrestricted return.",
+      "protocol": {
+        "execution": "Initial therapist exam/advice with progressive exercise materials; exact individual execution not extracted from linked booklet.",
+        "dose": "Advice up to 1 hour; extra PT up to 30-min sessions over maximum four months.",
+        "frequency": "not reported as common per-exercise frequency in inspected main text.",
+        "supervision": "Initial physiotherapist session within six weeks in both arms; extra sessions in experimental arm.",
+        "progression": "Patient education/exercise planning; no generic release date.",
+        "stoppingRules": "not reported as a numeric exercise-specific autonomous stopping rule."
+      },
+      "locations": [
+        "Methods > Interventions; Results > Complications",
+        "Discussion > Principal Findings; Conclusion"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "atraumatic-pathway",
+      "kind": "published-recommendation",
+      "statement": "Atraumatic pathway recommends physiotherapy with specialist assessment for persistent/complex presentations.",
+      "citations": [
+        {
+          "sourceId": "noorani-2019",
+          "location": "Indexed Introduction > Definition; Aetiology; Summary"
+        }
+      ],
+      "applicability": "Atraumatic instability, not a generic postoperative plan.",
+      "limitations": "Limited evidence and incomplete article access."
+    },
+    {
+      "id": "mdi-program-comparison",
+      "kind": "study-result",
+      "statement": "Watson program outperformed Rockwood for function/pain in selected MDI; both used specific exercises. Minor soreness resolved after modification/rest.",
+      "citations": [
+        {
+          "sourceId": "warby-2018",
+          "location": "Methods > Participants and Recruitment; Interventions; Table 1 (PDF pp. 2–4)"
+        },
+        {
+          "sourceId": "warby-2018",
+          "location": "Results > Adverse Events; Tables 4–5 (PDF pp. 6–9)"
+        }
+      ],
+      "applicability": "Age 12–35, nontraumatic/nonstructural MDI, MRI exclusion of structural lesions.",
+      "limitations": "Programs not isolated components; no proof every alternative harmful."
+    },
+    {
+      "id": "mdi-painfree-progression",
+      "kind": "published-recommendation",
+      "statement": "Table 1 requires pain-free exercise; Watson stage progression requires scapular/GH motor-control without pain for a full set.",
+      "citations": [
+        {
+          "sourceId": "warby-2018",
+          "location": "Methods > Participants and Recruitment; Interventions; Table 1 (PDF pp. 2–4)"
+        }
+      ],
+      "applicability": "Age 12–35, nontraumatic/nonstructural MDI, MRI exclusion of structural lesions.",
+      "limitations": "Study-specific staged criterion, not universal instability clearance."
+    },
+    {
+      "id": "instability-evidence-boundaries",
+      "kind": "evidence-gap",
+      "statement": "Cochrane found no eligible control-comparison trials; BESS traumatic guideline protocol inaccessible; ARTISAN extra visits not superior to exercise-supported advice.",
+      "citations": [
+        {
+          "sourceId": "wong-2026",
+          "location": "Abstract > Methods; Results; Conclusions"
+        },
+        {
+          "sourceId": "karasuyama-2026",
+          "location": "Public summary > Main results; Authors conclusions; Search strategy"
+        },
+        {
+          "sourceId": "kearney-2024",
+          "location": "Methods > Interventions; Results > Complications"
+        },
+        {
+          "sourceId": "kearney-2024",
+          "location": "Discussion > Principal Findings; Conclusion"
+        }
+      ],
+      "applicability": "Separate traumatic and atraumatic questions.",
+      "limitations": "Do not infer no rehabilitation needed or no MDI RCT ever conducted."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "mdi-standing-band-er",
+      "exerciseId": null,
+      "requestId": "standing-band-external-rotation-at-side-zero-to-forty-five",
+      "findingIds": [
+        "mdi-program-comparison",
+        "mdi-painfree-progression"
+      ],
+      "matchRationale": "Table1 execution/range identified; anchor/support unresolved, no exact catalog match claimed.",
+      "status": "candidate"
+    },
+    {
+      "id": "rockwood-wall-push-up",
+      "exerciseId": "wall-push-up",
+      "requestId": null,
+      "findingIds": [
+        "mdi-program-comparison"
+      ],
+      "matchRationale": "Table1 Rockwood wall-push-up is standing bodyweight push against wall. Catalog wall-push-up metadata/retained audit describe same setup; dose differences do not justify duplicate identity. No independent component benefit or exact wall distance asserted.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "mdi-candidates-for-review",
+      "kind": "supportive-prescription",
+      "basis": "unresolved-hypothesis",
+      "statement": "Retain arm-at-side ER and the Rockwood wall-push-up execution as review candidates for selected MDI; do not treat either as standalone proven therapy.",
+      "findingIds": [
+        "mdi-program-comparison"
+      ],
+      "citations": [
+        {
+          "sourceId": "warby-2018",
+          "location": "Methods > Participants and Recruitment; Interventions; Table 1 (PDF pp. 2–4)"
+        },
+        {
+          "sourceId": "warby-2018",
+          "location": "Results > Adverse Events; Tables 4–5 (PDF pp. 6–9)"
+        }
+      ],
+      "applicability": {
+        "population": "Age 12–35, nontraumatic/nonstructural MDI, MRI exclusion of structural lesions.",
+        "stage": "Nonoperative nontraumatic/nonstructural MDI, age12–35.",
+        "rationale": "These components were used in the compared programs."
+      },
+      "limitations": "Relative Watson superiority neither approves every component nor bans Rockwood; not traumatic/surgical clearance.",
+      "mappingIds": [
+        "mdi-standing-band-er",
+        "rockwood-wall-push-up"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "mdi-control-before-progression",
+      "kind": "symptom-response",
+      "basis": "published-recommendation",
+      "statement": "Candidate: preserve clinician-defined pain-free control prerequisites before Watson stage progression; no automatic schedule or generic joint-range expansion.",
+      "findingIds": [
+        "mdi-painfree-progression"
+      ],
+      "citations": [
+        {
+          "sourceId": "warby-2018",
+          "location": "Methods > Participants and Recruitment; Interventions; Table 1 (PDF pp. 2–4)"
+        }
+      ],
+      "applicability": {
+        "population": "Age 12–35, nontraumatic/nonstructural MDI, MRI exclusion of structural lesions.",
+        "stage": "Clinically supervised Watson staged MDI rehabilitation.",
+        "rationale": "Source progression depends on motor control and pain, not calendar only."
+      },
+      "limitations": "Not a universal ban on any position; no default pain/weight/ROM values released.",
+      "mappingIds": [],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "Direction/trauma/operative context required; no generic ROM/load/return date released.",
+    "No stretching to increase laxity selected; a universal stretching ban is not established.",
+    "Cochrane excluded-study rationale not verified; active-program RCT and review summary interpreted separately.",
+    "Warby table names drills but individualized scapular correction and anchor geometry require exact execution review."
+  ],
+  "disposition": "research-only",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

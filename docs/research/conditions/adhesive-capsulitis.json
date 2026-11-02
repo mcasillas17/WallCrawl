@@ -1,0 +1,401 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "adhesive-capsulitis",
+    "label": "adhesive capsulitis",
+    "aliases": [],
+    "distinctions": "Primary frozen shoulder separated from secondary/diabetic/postoperative stiffness; irritability and stage are attributes."
+  },
+  "scope": {
+    "population": "Adults with clinically assessed primary frozen shoulder.",
+    "stage": "Pain and tissue irritability vary; do not use calendar stage alone.",
+    "operativeStatus": "Nonoperative; surgical/post-procedure protocols separate.",
+    "exclusions": "No universal overhead ban or forced-symmetry target established.",
+    "uncertainty": "Exact stretching/strengthening dose and isolated benefits unresolved."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-02",
+      "service": "Native web search, PubMed/PMC/publisher/society records; Europe PMC XML for accessible PMCID full text",
+      "query": "adhesive capsulitis clinical practice guideline 2025 exercise stretching",
+      "decision": "Targeted source inclusion/extraction recorded below; retained contrary findings and population/access limits.",
+      "limitations": "Not exhaustive; no fixed paper quota. Date is UTC (Nov 1 local / Nov 2 UTC). No registry-wide integrity clearance."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Native web search, PubMed/PMC/publisher/society records; Europe PMC XML for accessible PMCID full text",
+      "query": "Diercks Stevens 2004 gentle thawing frozen shoulder supervised neglect intensive physiotherapy",
+      "decision": "Targeted source inclusion/extraction recorded below; retained contrary findings and population/access limits.",
+      "limitations": "Not exhaustive; no fixed paper quota. Date is UTC (Nov 1 local / Nov 2 UTC). No registry-wide integrity clearance."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Native web search, PubMed/PMC/publisher/society records; Europe PMC XML for accessible PMCID full text",
+      "query": "frozen shoulder UK FROST early structured physiotherapy trial 2020 Lancet",
+      "decision": "Targeted source inclusion/extraction recorded below; retained contrary findings and population/access limits.",
+      "limitations": "Not exhaustive; no fixed paper quota. Date is UTC (Nov 1 local / Nov 2 UTC). No registry-wide integrity clearance."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Native web search, PubMed/PMC/publisher/society records; Europe PMC XML for accessible PMCID full text",
+      "query": "Shoulder pain and mobility deficits stretching irritability",
+      "decision": "Targeted source inclusion/extraction recorded below; retained contrary findings and population/access limits.",
+      "limitations": "Not exhaustive; no fixed paper quota. Date is UTC (Nov 1 local / Nov 2 UTC). No registry-wide integrity clearance."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Crossref official REST API",
+      "query": "Exact DOI metadata GET /works/{URL-encoded DOI}: 10.5535/arm.250057, 10.2519/jospt.2013.0302, 10.1016/j.jse.2004.03.002, 10.1016/j.jht.2016.10.007, 10.1016/S0140-6736(20)31965-6",
+      "decision": "Metadata returned for lee-2025, kelley-2013, diercks-2004, rawat-2017, rangan-2020. PubMed/publisher records remain source of access/extraction.",
+      "limitations": "Only record metadata/relations inspected; not a registry-wide retraction/correction search."
+    }
+  ],
+  "sources": [
+    {
+      "id": "lee-2025",
+      "title": "Clinical Practice Guidelines for Diagnosis and Non-Surgical Treatment of Primary Frozen Shoulder",
+      "doi": "10.5535/arm.250057",
+      "pmid": "40602400",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12231400/",
+      "publicationStatus": "Published final article; exact version described in access details. Crossref recorded publication/online date 2025-06-30 (online date preferred where supplied).",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-02",
+        "details": "Final June 2025 article/full-text XML inspected."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-02",
+        "method": "Inspected cited publication/PubMed or society record and retrieved version during targeted search; title/identifier/access cross-check. No registry-wide correction or retraction search performed. Exact-DOI Crossref metadata lookup: https://api.crossref.org/works/10.5535%2Farm.250057.",
+        "result": "Bounded publication/version check only; no claim of comprehensive integrity clearance. Any known notice is recorded in limitations. DOI/title/publication metadata correspond; this record does not establish absence of notices elsewhere."
+      },
+      "design": "Clinical guideline/systematic evidence synthesis",
+      "population": "Adults with primary frozen shoulder.",
+      "comparator": "Manual/ROM, stretching and strengthening evidence versus varied controls.",
+      "coInterventions": "Frequently multimodal care/injections.",
+      "outcomes": "Isolated self-stretch evidence insufficient; strengthening recommendation clinician discretion, very-low certainty; pooled pain MD −1.02, I² 97%.",
+      "followUp": "Varies across underlying trials.",
+      "uncertainty": "Two small heterogeneous strengthening trials; no isolated self-stretch trial meeting review criteria.",
+      "harms": "No transferable exercise-specific safety threshold.",
+      "limitations": "Secondary/postsurgical stiffness not interchangeable with primary frozen shoulder.",
+      "protocol": {
+        "execution": "Manual/ROM may be considered; self-stretching and strengthening individualized, no exact common variant.",
+        "dose": "not reported",
+        "frequency": "not reported",
+        "supervision": "Education/adherence and clinical judgment emphasized.",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Recommendations > Self-stretching exercises; Strengthening exercises",
+        "Evidence synthesis > Self-stretching; Strengthening"
+      ]
+    },
+    {
+      "id": "kelley-2013",
+      "title": "Shoulder Pain and Mobility Deficits: Adhesive Capsulitis",
+      "doi": "10.2519/jospt.2013.0302",
+      "pmid": "23636125",
+      "url": "https://doi.org/10.2519/jospt.2013.0302",
+      "publicationStatus": "Published final article; exact version described in access details. Crossref recorded publication/online date 2013-05 (online date preferred where supplied).",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-02",
+        "details": "Final CPG PDF inspected via https://www.pt.or.th/PTCouncil/download/cpg/M_05.pdf after original mirror search timeouts."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-02",
+        "method": "Inspected cited publication/PubMed or society record and retrieved version during targeted search; title/identifier/access cross-check. No registry-wide correction or retraction search performed. Exact-DOI Crossref metadata lookup: https://api.crossref.org/works/10.2519%2Fjospt.2013.0302.",
+        "result": "Bounded publication/version check only; no claim of comprehensive integrity clearance. Any known notice is recorded in limitations. DOI/title/publication metadata correspond; this record does not establish absence of notices elsewhere."
+      },
+      "design": "Clinical practice guideline; older irritability framework retained alongside 2025 guideline",
+      "population": "Adhesive capsulitis assessed by pain, mobility and tissue irritability.",
+      "comparator": "Evidence synthesis, not one trial comparator.",
+      "coInterventions": "Education, mobility, optional other treatments.",
+      "outcomes": "Recommends functional pain-free ROM and stretching intensity matched to tissue irritability.",
+      "followUp": "Underlying studies vary; course may leave residual limitations.",
+      "uncertainty": "Irritability classification is clinical; calendar stage alone inadequate.",
+      "harms": "Excessive intensity not equated with a quantified tissue-damage threshold.",
+      "limitations": "No automatic app diagnosis or universal hold-time progression.",
+      "protocol": {
+        "execution": "High-irritability: pain-free passive/assisted ROM. Moderate: gentle/moderate stretching without sustained post-treatment aggravation. Low: progress stress into tissue resistance.",
+        "dose": "not reported as a single universal dose.",
+        "frequency": "not reported as a single universal frequency.",
+        "supervision": "Clinician classifies irritability and selects interventions.",
+        "progression": "Match intensity/duration to clinical irritability; no generic five-second progression.",
+        "stoppingRules": "Avoid post-treatment inflammation/pain in staged framework; not a quantified autonomous stopping algorithm."
+      },
+      "locations": [
+        "Recommendations > Patient Education; Stretching Exercises (PDF pp. a2–a3)",
+        "Evaluation/Intervention Components 3–4 > Tissue Irritability and Intervention Strategies"
+      ]
+    },
+    {
+      "id": "diercks-2004",
+      "title": "Gentle thawing of the frozen shoulder: a prospective study of supervised neglect versus intensive physical therapy in seventy-seven patients with frozen shoulder syndrome followed up for two years",
+      "doi": "10.1016/j.jse.2004.03.002",
+      "pmid": "15383804",
+      "url": "https://upload.orthobullets.com/journalclub/free_pdf/15383804.pdf",
+      "publicationStatus": "Published final article; exact version described in access details. Crossref recorded publication/online date 2004-09 (online date preferred where supplied).",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-02",
+        "details": "Final four-page article PDF inspected."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-02",
+        "method": "Inspected cited publication/PubMed or society record and retrieved version during targeted search; title/identifier/access cross-check. No registry-wide correction or retraction search performed. Exact-DOI Crossref metadata lookup: https://api.crossref.org/works/10.1016%2Fj.jse.2004.03.002.",
+        "result": "Bounded publication/version check only; no claim of comprehensive integrity clearance. Any known notice is recorded in limitations. DOI/title/publication metadata correspond; this record does not establish absence of notices elsewhere."
+      },
+      "design": "Prospective successive temporal cohorts; not randomized despite wording about random groups",
+      "population": "77 idiopathic frozen shoulders; >50% GH restriction ≥3 months.",
+      "comparator": "45 supportive/pain-limited movement versus 32 intensive mobilization/stretching beyond pain threshold.",
+      "coInterventions": "Education/resume tolerated activities versus therapist treatment and home exercises.",
+      "outcomes": "Constant ≥80 at 24 months: 89% versus 63%, favoring pain-limited group.",
+      "followUp": "24 months.",
+      "uncertainty": "Temporal confounding; mechanism of inflammatory aggravation is author hypothesis.",
+      "harms": "No quantified exercise-injury incidence; poorer outcomes not proof every painful repetition damages tissue.",
+      "limitations": "Not all secondary/postoperative cases or all stages.",
+      "protocol": {
+        "execution": "Pain-limited pendulum and active exercises, resume tolerated activities; exact trunk support/pendulum geometry not specified.",
+        "dose": "not reported for holds/reps of pendulum/active exercises.",
+        "frequency": "not reported for exact home frequency.",
+        "supervision": "Supportive education; comparison intensive physiotherapist-led regimen.",
+        "progression": "Resume activities tolerated; no fixed progression.",
+        "stoppingRules": "Supportive group instructed not to exceed pain threshold."
+      },
+      "locations": [
+        "Materials and Methods (PDF pp. 499–500)",
+        "Results; Discussion; Tables IV–V (PDF pp. 500–502)"
+      ]
+    },
+    {
+      "id": "rawat-2017",
+      "title": "Effect of rotator cuff strengthening as an adjunct to standard care in subjects with adhesive capsulitis: A randomized controlled trial",
+      "doi": "10.1016/j.jht.2016.10.007",
+      "pmid": "27884497",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/27884497/",
+      "publicationStatus": "Published final article; exact version described in access details. Crossref recorded publication/online date 2017-07 (online date preferred where supplied).",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-02",
+        "details": "Final abstract inspected; online Nov 2016, issue 2017; full protocol unavailable."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-02",
+        "method": "Inspected cited publication/PubMed or society record and retrieved version during targeted search; title/identifier/access cross-check. No registry-wide correction or retraction search performed. Exact-DOI Crossref metadata lookup: https://api.crossref.org/works/10.1016%2Fj.jht.2016.10.007.",
+        "result": "Bounded publication/version check only; no claim of comprehensive integrity clearance. Any known notice is recorded in limitations. DOI/title/publication metadata correspond; this record does not establish absence of notices elsewhere."
+      },
+      "design": "Parallel-group RCT, 42 patients",
+      "population": "Adhesive capsulitis; stage and exact execution not established by inspected abstract.",
+      "comparator": "TENS/mobilization versus same plus cuff strengthening.",
+      "coInterventions": "TENS and joint mobilization in both arms.",
+      "outcomes": "SPADI favored added strengthening; abstract reports improved pain/ROM/function after 12 sessions within four weeks.",
+      "followUp": "4 weeks.",
+      "uncertainty": "Exact variants and dosing inaccessible; abstract pain numbers unclear and not copied.",
+      "harms": "not reported in inspected abstract.",
+      "limitations": "No exact exercise mapping or painful end-range rule follows.",
+      "protocol": {
+        "execution": "not reported",
+        "dose": "not reported",
+        "frequency": "not reported",
+        "supervision": "not reported",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Abstract > Methods; Results; Conclusions"
+      ]
+    },
+    {
+      "id": "rangan-2020",
+      "title": "Management of adults with primary frozen shoulder in secondary care (UK FROST): a multicentre, pragmatic, three-arm, superiority randomised clinical trial",
+      "doi": "10.1016/S0140-6736(20)31965-6",
+      "pmid": null,
+      "url": "https://doi.org/10.1016/S0140-6736(20)31965-6",
+      "publicationStatus": "Published final article; exact version described in access details. Crossref recorded publication/online date 2020-10 (online date preferred where supplied).",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-02",
+        "details": "Published trial repository abstract/results and HTA abstract inspected; full protocol not reviewed."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-02",
+        "method": "Inspected cited publication/PubMed or society record and retrieved version during targeted search; title/identifier/access cross-check. No registry-wide correction or retraction search performed. Exact-DOI Crossref metadata lookup: https://api.crossref.org/works/10.1016%2FS0140-6736%2820%2931965-6.",
+        "result": "Bounded publication/version check only; no claim of comprehensive integrity clearance. Any known notice is recorded in limitations. DOI/title/publication metadata correspond; this record does not establish absence of notices elsewhere."
+      },
+      "design": "Multicenter pragmatic RCT, 503 participants",
+      "population": "Secondary-care primary frozen shoulder.",
+      "comparator": "Early structured PT versus manipulation under anesthesia versus arthroscopic release.",
+      "coInterventions": "PT arm steroid; procedural arms subsequent PT.",
+      "outcomes": "No clinically important superior treatment at 12 months; packages differed.",
+      "followUp": "12 months.",
+      "uncertainty": "Treatment package comparison, not isolated stretch dose or gym safety.",
+      "harms": "Surgical adverse events reported; exercise-specific harm not resolved in inspected abstract.",
+      "limitations": "No claim all patients recover without reassessment.",
+      "protocol": {
+        "execution": "not reported",
+        "dose": "not reported",
+        "frequency": "not reported",
+        "supervision": "not reported",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Abstract > Methods; Findings; Interpretation"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "irritability-matched-mobility",
+      "kind": "published-recommendation",
+      "statement": "Match mobility/stretching intensity to irritability; high-irritability framework uses pain-free assisted/passive movement.",
+      "citations": [
+        {
+          "sourceId": "kelley-2013",
+          "location": "Recommendations > Patient Education; Stretching Exercises (PDF pp. a2–a3)"
+        },
+        {
+          "sourceId": "kelley-2013",
+          "location": "Evaluation/Intervention Components 3–4 > Tissue Irritability and Intervention Strategies"
+        }
+      ],
+      "applicability": "Clinically classified adhesive capsulitis.",
+      "limitations": "Older guideline interpreted alongside newer low-certainty evidence, not a diagnostic app rule."
+    },
+    {
+      "id": "pain-limited-cohort",
+      "kind": "study-result",
+      "statement": "Pain-limited pendulum/active movement cohort had better two-year function than intensive painful stretching cohort.",
+      "citations": [
+        {
+          "sourceId": "diercks-2004",
+          "location": "Materials and Methods (PDF pp. 499–500)"
+        },
+        {
+          "sourceId": "diercks-2004",
+          "location": "Results; Discussion; Tables IV–V (PDF pp. 500–502)"
+        }
+      ],
+      "applicability": "77 idiopathic frozen shoulders; >50% GH restriction ≥3 months.",
+      "limitations": "Temporal-cohort design; not randomized proof of exercise damage."
+    },
+    {
+      "id": "stretch-strength-uncertainty",
+      "kind": "evidence-gap",
+      "statement": "Isolated self-stretching evidence insufficient; strengthening may help but very-low-certainty and exact Rawat variants inaccessible.",
+      "citations": [
+        {
+          "sourceId": "lee-2025",
+          "location": "Recommendations > Self-stretching exercises; Strengthening exercises"
+        },
+        {
+          "sourceId": "lee-2025",
+          "location": "Evidence synthesis > Self-stretching; Strengthening"
+        },
+        {
+          "sourceId": "rawat-2017",
+          "location": "Abstract > Methods; Results; Conclusions"
+        }
+      ],
+      "applicability": "Primary frozen shoulder.",
+      "limitations": "No mandatory therapeutic dose or automatic progression."
+    },
+    {
+      "id": "treatment-package-context",
+      "kind": "study-result",
+      "statement": "UK FROST did not show clinically important superiority among treatment packages at 12 months.",
+      "citations": [
+        {
+          "sourceId": "rangan-2020",
+          "location": "Abstract > Methods; Findings; Interpretation"
+        }
+      ],
+      "applicability": "Secondary-care primary frozen shoulder.",
+      "limitations": "Not evidence for an exact exercise identity or arbitrary gym safety."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "pendulum-unresolved",
+      "exerciseId": null,
+      "requestId": "frozen-shoulder-pendulum-setup-unresolved",
+      "findingIds": [
+        "pain-limited-cohort"
+      ],
+      "matchRationale": "Actual named study component, exact variant unresolved; no catalog synonym match claimed.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "review-pain-limited-pendulum",
+      "kind": "supportive-prescription",
+      "basis": "unresolved-hypothesis",
+      "statement": "Retain pain-limited pendulum as an execution-review candidate; exact setup and clinical dose remain unresolved.",
+      "findingIds": [
+        "pain-limited-cohort"
+      ],
+      "citations": [
+        {
+          "sourceId": "diercks-2004",
+          "location": "Materials and Methods (PDF pp. 499–500)"
+        },
+        {
+          "sourceId": "diercks-2004",
+          "location": "Results; Discussion; Tables IV–V (PDF pp. 500–502)"
+        }
+      ],
+      "applicability": {
+        "population": "Adults with clinically assessed primary frozen shoulder.",
+        "stage": "Primary nonoperative frozen shoulder resembling cohort.",
+        "rationale": "Actual component used in pain-limited cohort."
+      },
+      "limitations": "No isolated pendulum effect or generalized regimen.",
+      "mappingIds": [
+        "pendulum-unresolved"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "match-mobility-irritability",
+      "kind": "symptom-response",
+      "basis": "published-recommendation",
+      "statement": "Candidate: match mobility/stretching to clinically assessed irritability, avoiding forced painful end-range in the high-irritability presentation.",
+      "findingIds": [
+        "irritability-matched-mobility"
+      ],
+      "citations": [
+        {
+          "sourceId": "kelley-2013",
+          "location": "Recommendations > Patient Education; Stretching Exercises (PDF pp. a2–a3)"
+        },
+        {
+          "sourceId": "kelley-2013",
+          "location": "Evaluation/Intervention Components 3–4 > Tissue Irritability and Intervention Strategies"
+        }
+      ],
+      "applicability": {
+        "population": "Adults with clinically assessed primary frozen shoulder.",
+        "stage": "Nonoperative clinical irritability framework.",
+        "rationale": "Guideline supports graded stress; not a fixed degree limit."
+      },
+      "limitations": "No autonomous diagnosis, numeric pain cutoff, calendar clearance or stretch progression released.",
+      "mappingIds": [],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "No clinical reviewer/dose approval; stretch never supplies strength-set credit.",
+    "Pendulum trunk support/path/dose unresolved; no default five-second stretch progression.",
+    "Rawat full protocol absent; strengthening class cannot become an exact execution."
+  ],
+  "disposition": "research-only",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}
