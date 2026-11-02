@@ -21,7 +21,9 @@
       "Hips": { "es": "Caderas" },
       "Core": { "es": "Core" },
       "Cardio": { "es": "Cardio" },
-      "Mobility": { "es": "Movilidad" }
+      "Mobility": { "es": "Movilidad" },
+      "Neck": { "es": "Cuello" },
+      "Foot Intrinsics": { "es": "Músculos intrínsecos del pie" }
     },
     "equipment": {
       "Barbell": { "es": "Barra" },
@@ -46,10 +48,16 @@
       "Band Anchor - Upper Body": { "es": "Anclaje de banda: tren superior" },
       "Band Anchor - Overhead": { "es": "Anclaje de banda: sobre la cabeza" },
       "Band Anchor - Low": { "es": "Anclaje de banda: bajo" },
-      "Band Kickback Attachment and Support": { "es": "Sujeción y apoyo para patada con banda" }
+      "Band Kickback Attachment and Support": { "es": "Sujeción y apoyo para patada con banda" },
+      "Padded Plinth": { "es": "Camilla acolchada" },
+      "Calf Support": { "es": "Apoyo para la pantorrilla" }
     }
   },
   "exercises": {
+    "supine-wall-supported-piriformis-stretch": {"es": {"name": "Estiramiento piriforme tumbado con apoyo en pared", "aliases": ["estiramiento en cuatro con pared"], "coachingSummary": "Túmbate boca arriba con las plantas de ambos pies contra una pared. Cruza un tobillo sobre la otra rodilla y deja que la rodilla cruzada se abra mientras la espalda permanece apoyada. El dibujo muestra un lado como ejemplo."}},
+    "pht-single-leg-calf-supported-isometric-hamstring-bridge": {"es": {"name": "Puente isométrico de isquiotibiales con una pantorrilla apoyada", "aliases": ["puente de isquiotibiales con apoyo de pantorrilla"], "coachingSummary": "Túmbate en una camilla acolchada con la cabeza y los hombros apoyados. Apoya una pantorrilla ampliamente sobre un soporte estable colocado en la misma camilla, flexiona la cadera y la rodilla libres, cruza los brazos y eleva la pelvis hasta quedar inmóvil en puente. El dibujo muestra un lado como ejemplo."}},
+    "seated-hand-resisted-cervical-rotation-isometric": {"es": {"name": "Rotación cervical isométrica sentado con resistencia de la mano", "aliases": ["isométrico de cuello sentado"], "coachingSummary": "Siéntate erguido con los pies en el suelo. Coloca la mano del mismo lado contra la mejilla e intenta girar suavemente la cabeza contra ella mientras mantienes la mirada al frente. El dibujo muestra un lado como ejemplo; el esfuerzo no se ve."}},
+    "seated-short-foot-arch-hold-no-toe-flexion": {"es": {"name": "Sostén del arco del pie sentado sin flexionar los dedos", "aliases": ["ejercicio de pie corto sentado"], "coachingSummary": "Siéntate con ambos pies en el suelo. Acerca las cabezas de los metatarsianos a los talones para elevar los arcos internos mientras talones y antepiés permanecen apoyados y los dedos se mantienen extendidos, sin curvarse. El dibujo muestra una posición sentada e inmóvil."}},
     "ab-wheel": {
       "es": {
         "name": "Rueda abdominal",

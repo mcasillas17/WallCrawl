@@ -286,6 +286,8 @@ object StandardEquipment {
     const val STABILITY_BALL = "Stability Ball"
     const val TOWEL = "Towel"
     const val WALL = "Wall"
+    const val PADDED_PLINTH = "Padded Plinth"
+    const val CALF_SUPPORT = "Calf Support"
     const val BAND_ANCHOR_UPPER_BODY = "Band Anchor - Upper Body"
     const val BAND_ANCHOR_OVERHEAD = "Band Anchor - Overhead"
     const val BAND_ANCHOR_LOW = "Band Anchor - Low"
@@ -303,5 +305,7 @@ object StandardEquipment {
         BAND_KICKBACK_ATTACHMENT_SUPPORT
     )
 
-    val ALL = FULL_GYM + BAND_SETUPS
+    val SUPPORT_ASSEMBLY = listOf(PADDED_PLINTH, CALF_SUPPORT)
+
+    val ALL = FULL_GYM + BAND_SETUPS + SUPPORT_ASSEMBLY
 }

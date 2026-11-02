@@ -1,13 +1,1574 @@
 {
-  "frames": [],
+  "frames": [
+    {
+      "exerciseId": "pht-single-leg-calf-supported-isometric-hamstring-bridge",
+      "frameNumber": 1,
+      "generationRecordSha256": "81c2018bc06648b840c77891e825c2fcf118725179a1cbdfc5469740745d9bd6",
+      "masterSha256": "2587721b3863c4a97c1d453cfd3ec600f380810ab960cb31a0721994c1e3957c",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/female/pht-single-leg-calf-supported-isometric-hamstring-bridge/frame-1.svg",
+      "sha256": "611595225ad6234775f8e93feccd70991b96cc135a711e9b0da2449ee9790e6a",
+      "sourceSha256": "2a8daa660e6ef5e231fed61e3f7d39ee33aa20d3a10d7990c7014fd5338ceb69",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "e91fc74960a2c76502b2c30502c40aeb3103ecc6bcff740ecee0bafff5c88888",
+      "variant": "female"
+    },
+    {
+      "exerciseId": "pht-single-leg-calf-supported-isometric-hamstring-bridge",
+      "frameNumber": 2,
+      "generationRecordSha256": "81c2018bc06648b840c77891e825c2fcf118725179a1cbdfc5469740745d9bd6",
+      "masterSha256": "2587721b3863c4a97c1d453cfd3ec600f380810ab960cb31a0721994c1e3957c",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/female/pht-single-leg-calf-supported-isometric-hamstring-bridge/frame-2.svg",
+      "sha256": "611595225ad6234775f8e93feccd70991b96cc135a711e9b0da2449ee9790e6a",
+      "sourceSha256": "2a8daa660e6ef5e231fed61e3f7d39ee33aa20d3a10d7990c7014fd5338ceb69",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "e91fc74960a2c76502b2c30502c40aeb3103ecc6bcff740ecee0bafff5c88888",
+      "variant": "female"
+    },
+    {
+      "exerciseId": "pht-single-leg-calf-supported-isometric-hamstring-bridge",
+      "frameNumber": 3,
+      "generationRecordSha256": "81c2018bc06648b840c77891e825c2fcf118725179a1cbdfc5469740745d9bd6",
+      "masterSha256": "2587721b3863c4a97c1d453cfd3ec600f380810ab960cb31a0721994c1e3957c",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/female/pht-single-leg-calf-supported-isometric-hamstring-bridge/frame-3.svg",
+      "sha256": "611595225ad6234775f8e93feccd70991b96cc135a711e9b0da2449ee9790e6a",
+      "sourceSha256": "2a8daa660e6ef5e231fed61e3f7d39ee33aa20d3a10d7990c7014fd5338ceb69",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "e91fc74960a2c76502b2c30502c40aeb3103ecc6bcff740ecee0bafff5c88888",
+      "variant": "female"
+    },
+    {
+      "exerciseId": "pht-single-leg-calf-supported-isometric-hamstring-bridge",
+      "frameNumber": 1,
+      "generationRecordSha256": "eedf2a5c449fe5b365ad86eba08046e0440869eb3c6e103816ead3070e65944b",
+      "masterSha256": "70466a5213de654a06262a36f1cbb07a8644334901f146a745b61898a00fb376",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/male/pht-single-leg-calf-supported-isometric-hamstring-bridge/frame-1.svg",
+      "sha256": "568d4e83a5c409d287d0ed02612bef0e57c51b054c6a66e763b8f91272b83070",
+      "sourceSha256": "2a8daa660e6ef5e231fed61e3f7d39ee33aa20d3a10d7990c7014fd5338ceb69",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "0b43305cc3f023973f89a85a9da61f3ecc9cf19fbeddc760302d54fddd0fd828",
+      "variant": "male"
+    },
+    {
+      "exerciseId": "pht-single-leg-calf-supported-isometric-hamstring-bridge",
+      "frameNumber": 2,
+      "generationRecordSha256": "eedf2a5c449fe5b365ad86eba08046e0440869eb3c6e103816ead3070e65944b",
+      "masterSha256": "70466a5213de654a06262a36f1cbb07a8644334901f146a745b61898a00fb376",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/male/pht-single-leg-calf-supported-isometric-hamstring-bridge/frame-2.svg",
+      "sha256": "568d4e83a5c409d287d0ed02612bef0e57c51b054c6a66e763b8f91272b83070",
+      "sourceSha256": "2a8daa660e6ef5e231fed61e3f7d39ee33aa20d3a10d7990c7014fd5338ceb69",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "0b43305cc3f023973f89a85a9da61f3ecc9cf19fbeddc760302d54fddd0fd828",
+      "variant": "male"
+    },
+    {
+      "exerciseId": "pht-single-leg-calf-supported-isometric-hamstring-bridge",
+      "frameNumber": 3,
+      "generationRecordSha256": "eedf2a5c449fe5b365ad86eba08046e0440869eb3c6e103816ead3070e65944b",
+      "masterSha256": "70466a5213de654a06262a36f1cbb07a8644334901f146a745b61898a00fb376",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/male/pht-single-leg-calf-supported-isometric-hamstring-bridge/frame-3.svg",
+      "sha256": "568d4e83a5c409d287d0ed02612bef0e57c51b054c6a66e763b8f91272b83070",
+      "sourceSha256": "2a8daa660e6ef5e231fed61e3f7d39ee33aa20d3a10d7990c7014fd5338ceb69",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "0b43305cc3f023973f89a85a9da61f3ecc9cf19fbeddc760302d54fddd0fd828",
+      "variant": "male"
+    },
+    {
+      "exerciseId": "seated-hand-resisted-cervical-rotation-isometric",
+      "frameNumber": 1,
+      "generationRecordSha256": "85c0abf8dcf37ec4f96ddb726b1a57fb5c40d981ee0f33c7ff5dd4c666bb143d",
+      "masterSha256": "a49f0810bf0ade2c47a5a914b7426b15c1ef31b308362d9cca3da4a41a7bd139",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/female/seated-hand-resisted-cervical-rotation-isometric/frame-1.svg",
+      "sha256": "261f41fa80e99becd3c80834aba559f9a0c0dc793ef081dd49cb237d8b4d6629",
+      "sourceSha256": "c8c9ed5f59a436016cec240ae4aee8cca2f8fe44dabdc13c80ac344d4a40bc31",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "958245ca8d3c44254cbc312b3fe53931ff9605f88be27c7c400a88b0e53a1f93",
+      "variant": "female"
+    },
+    {
+      "exerciseId": "seated-hand-resisted-cervical-rotation-isometric",
+      "frameNumber": 2,
+      "generationRecordSha256": "85c0abf8dcf37ec4f96ddb726b1a57fb5c40d981ee0f33c7ff5dd4c666bb143d",
+      "masterSha256": "a49f0810bf0ade2c47a5a914b7426b15c1ef31b308362d9cca3da4a41a7bd139",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/female/seated-hand-resisted-cervical-rotation-isometric/frame-2.svg",
+      "sha256": "261f41fa80e99becd3c80834aba559f9a0c0dc793ef081dd49cb237d8b4d6629",
+      "sourceSha256": "c8c9ed5f59a436016cec240ae4aee8cca2f8fe44dabdc13c80ac344d4a40bc31",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "958245ca8d3c44254cbc312b3fe53931ff9605f88be27c7c400a88b0e53a1f93",
+      "variant": "female"
+    },
+    {
+      "exerciseId": "seated-hand-resisted-cervical-rotation-isometric",
+      "frameNumber": 3,
+      "generationRecordSha256": "85c0abf8dcf37ec4f96ddb726b1a57fb5c40d981ee0f33c7ff5dd4c666bb143d",
+      "masterSha256": "a49f0810bf0ade2c47a5a914b7426b15c1ef31b308362d9cca3da4a41a7bd139",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/female/seated-hand-resisted-cervical-rotation-isometric/frame-3.svg",
+      "sha256": "261f41fa80e99becd3c80834aba559f9a0c0dc793ef081dd49cb237d8b4d6629",
+      "sourceSha256": "c8c9ed5f59a436016cec240ae4aee8cca2f8fe44dabdc13c80ac344d4a40bc31",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "958245ca8d3c44254cbc312b3fe53931ff9605f88be27c7c400a88b0e53a1f93",
+      "variant": "female"
+    },
+    {
+      "exerciseId": "seated-hand-resisted-cervical-rotation-isometric",
+      "frameNumber": 1,
+      "generationRecordSha256": "b1f42f6a477c030a931b64349b9db853f90b7cf1ab07313c881fda7a321866d2",
+      "masterSha256": "f051a6b69b54b07406f5cdde6c8ccec5dbe7a085adb6dd83abdfc72eaeec10fa",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/male/seated-hand-resisted-cervical-rotation-isometric/frame-1.svg",
+      "sha256": "6547f14bb735992d62bab24b5d25afacb316080f3831ee7db4314b1999f710c0",
+      "sourceSha256": "c8c9ed5f59a436016cec240ae4aee8cca2f8fe44dabdc13c80ac344d4a40bc31",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "a7f0541df5a30cb87c3f43913cc3b81a1f5d0dd86041e2816179cc6f65b30645",
+      "variant": "male"
+    },
+    {
+      "exerciseId": "seated-hand-resisted-cervical-rotation-isometric",
+      "frameNumber": 2,
+      "generationRecordSha256": "b1f42f6a477c030a931b64349b9db853f90b7cf1ab07313c881fda7a321866d2",
+      "masterSha256": "f051a6b69b54b07406f5cdde6c8ccec5dbe7a085adb6dd83abdfc72eaeec10fa",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/male/seated-hand-resisted-cervical-rotation-isometric/frame-2.svg",
+      "sha256": "6547f14bb735992d62bab24b5d25afacb316080f3831ee7db4314b1999f710c0",
+      "sourceSha256": "c8c9ed5f59a436016cec240ae4aee8cca2f8fe44dabdc13c80ac344d4a40bc31",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "a7f0541df5a30cb87c3f43913cc3b81a1f5d0dd86041e2816179cc6f65b30645",
+      "variant": "male"
+    },
+    {
+      "exerciseId": "seated-hand-resisted-cervical-rotation-isometric",
+      "frameNumber": 3,
+      "generationRecordSha256": "b1f42f6a477c030a931b64349b9db853f90b7cf1ab07313c881fda7a321866d2",
+      "masterSha256": "f051a6b69b54b07406f5cdde6c8ccec5dbe7a085adb6dd83abdfc72eaeec10fa",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/male/seated-hand-resisted-cervical-rotation-isometric/frame-3.svg",
+      "sha256": "6547f14bb735992d62bab24b5d25afacb316080f3831ee7db4314b1999f710c0",
+      "sourceSha256": "c8c9ed5f59a436016cec240ae4aee8cca2f8fe44dabdc13c80ac344d4a40bc31",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "a7f0541df5a30cb87c3f43913cc3b81a1f5d0dd86041e2816179cc6f65b30645",
+      "variant": "male"
+    },
+    {
+      "exerciseId": "seated-short-foot-arch-hold-no-toe-flexion",
+      "frameNumber": 1,
+      "generationRecordSha256": "b7e6019ec02ac3d3227ed4dde8f41157dee2bcc467e7f2f065e27f20bf35aec7",
+      "masterSha256": "97dc7c8f22f6826bf4c76646e11235b7ba6e7a2fef803fe9c92f47036698b53e",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/female/seated-short-foot-arch-hold-no-toe-flexion/frame-1.svg",
+      "sha256": "27e7a5266e5f931bfa843d542226fd94fcceec46d09758c645ad9d4d80f3de56",
+      "sourceSha256": "f83a4b52bf72ba2e46255d9edb60733d8fcb41f81e4dc9063e660257976279c2",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "60e3010a5993af3dc91a430fe48758349add88d044f347e620d661d43078c78c",
+      "variant": "female"
+    },
+    {
+      "exerciseId": "seated-short-foot-arch-hold-no-toe-flexion",
+      "frameNumber": 2,
+      "generationRecordSha256": "b7e6019ec02ac3d3227ed4dde8f41157dee2bcc467e7f2f065e27f20bf35aec7",
+      "masterSha256": "97dc7c8f22f6826bf4c76646e11235b7ba6e7a2fef803fe9c92f47036698b53e",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/female/seated-short-foot-arch-hold-no-toe-flexion/frame-2.svg",
+      "sha256": "27e7a5266e5f931bfa843d542226fd94fcceec46d09758c645ad9d4d80f3de56",
+      "sourceSha256": "f83a4b52bf72ba2e46255d9edb60733d8fcb41f81e4dc9063e660257976279c2",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "60e3010a5993af3dc91a430fe48758349add88d044f347e620d661d43078c78c",
+      "variant": "female"
+    },
+    {
+      "exerciseId": "seated-short-foot-arch-hold-no-toe-flexion",
+      "frameNumber": 3,
+      "generationRecordSha256": "b7e6019ec02ac3d3227ed4dde8f41157dee2bcc467e7f2f065e27f20bf35aec7",
+      "masterSha256": "97dc7c8f22f6826bf4c76646e11235b7ba6e7a2fef803fe9c92f47036698b53e",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/female/seated-short-foot-arch-hold-no-toe-flexion/frame-3.svg",
+      "sha256": "27e7a5266e5f931bfa843d542226fd94fcceec46d09758c645ad9d4d80f3de56",
+      "sourceSha256": "f83a4b52bf72ba2e46255d9edb60733d8fcb41f81e4dc9063e660257976279c2",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "60e3010a5993af3dc91a430fe48758349add88d044f347e620d661d43078c78c",
+      "variant": "female"
+    },
+    {
+      "exerciseId": "seated-short-foot-arch-hold-no-toe-flexion",
+      "frameNumber": 1,
+      "generationRecordSha256": "3d48a63498eda98d79d8fc715ff73fd691177982c4ad277bb0d3cc6bbfa1c3db",
+      "masterSha256": "fef456e4e428dc97734426656313e4a244f9bb8c8fd9d5d350123b59a4caab15",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/male/seated-short-foot-arch-hold-no-toe-flexion/frame-1.svg",
+      "sha256": "d275e375fbebb309770d260c682bc8c81d46ca5704a591cb800e4cbb850afee0",
+      "sourceSha256": "f83a4b52bf72ba2e46255d9edb60733d8fcb41f81e4dc9063e660257976279c2",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "d656f80668156d7262cf3be247d2c3f81a0c07a0c717d079380b19186e36d3d4",
+      "variant": "male"
+    },
+    {
+      "exerciseId": "seated-short-foot-arch-hold-no-toe-flexion",
+      "frameNumber": 2,
+      "generationRecordSha256": "3d48a63498eda98d79d8fc715ff73fd691177982c4ad277bb0d3cc6bbfa1c3db",
+      "masterSha256": "fef456e4e428dc97734426656313e4a244f9bb8c8fd9d5d350123b59a4caab15",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/male/seated-short-foot-arch-hold-no-toe-flexion/frame-2.svg",
+      "sha256": "d275e375fbebb309770d260c682bc8c81d46ca5704a591cb800e4cbb850afee0",
+      "sourceSha256": "f83a4b52bf72ba2e46255d9edb60733d8fcb41f81e4dc9063e660257976279c2",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "d656f80668156d7262cf3be247d2c3f81a0c07a0c717d079380b19186e36d3d4",
+      "variant": "male"
+    },
+    {
+      "exerciseId": "seated-short-foot-arch-hold-no-toe-flexion",
+      "frameNumber": 3,
+      "generationRecordSha256": "3d48a63498eda98d79d8fc715ff73fd691177982c4ad277bb0d3cc6bbfa1c3db",
+      "masterSha256": "fef456e4e428dc97734426656313e4a244f9bb8c8fd9d5d350123b59a4caab15",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/male/seated-short-foot-arch-hold-no-toe-flexion/frame-3.svg",
+      "sha256": "d275e375fbebb309770d260c682bc8c81d46ca5704a591cb800e4cbb850afee0",
+      "sourceSha256": "f83a4b52bf72ba2e46255d9edb60733d8fcb41f81e4dc9063e660257976279c2",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "d656f80668156d7262cf3be247d2c3f81a0c07a0c717d079380b19186e36d3d4",
+      "variant": "male"
+    },
+    {
+      "exerciseId": "supine-wall-supported-piriformis-stretch",
+      "frameNumber": 1,
+      "generationRecordSha256": "2d9b2f8d2be3f852378f710bfe5d4488c2f6579878ff57995352acf188191266",
+      "masterSha256": "4affae19311c6b5d2a7ef3dfcc64a077f4f15df0a9550a2235ef6bf048c8f90a",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/female/supine-wall-supported-piriformis-stretch/frame-1.svg",
+      "sha256": "29e1fb9bb0f63d844be9c41362a074782d1f8268138eb0d6d0cb9154b4b7da18",
+      "sourceSha256": "b5def3f887d0ea3d91361e5f8aebe6ec8ae9f85fb7154f71fac148e8e591555c",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "69659735b3232db3420bf2fb49b928575ae6cffdd923fcb63589c3694b2e416e",
+      "variant": "female"
+    },
+    {
+      "exerciseId": "supine-wall-supported-piriformis-stretch",
+      "frameNumber": 2,
+      "generationRecordSha256": "2d9b2f8d2be3f852378f710bfe5d4488c2f6579878ff57995352acf188191266",
+      "masterSha256": "4affae19311c6b5d2a7ef3dfcc64a077f4f15df0a9550a2235ef6bf048c8f90a",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/female/supine-wall-supported-piriformis-stretch/frame-2.svg",
+      "sha256": "29e1fb9bb0f63d844be9c41362a074782d1f8268138eb0d6d0cb9154b4b7da18",
+      "sourceSha256": "b5def3f887d0ea3d91361e5f8aebe6ec8ae9f85fb7154f71fac148e8e591555c",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "69659735b3232db3420bf2fb49b928575ae6cffdd923fcb63589c3694b2e416e",
+      "variant": "female"
+    },
+    {
+      "exerciseId": "supine-wall-supported-piriformis-stretch",
+      "frameNumber": 3,
+      "generationRecordSha256": "2d9b2f8d2be3f852378f710bfe5d4488c2f6579878ff57995352acf188191266",
+      "masterSha256": "4affae19311c6b5d2a7ef3dfcc64a077f4f15df0a9550a2235ef6bf048c8f90a",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/female/supine-wall-supported-piriformis-stretch/frame-3.svg",
+      "sha256": "29e1fb9bb0f63d844be9c41362a074782d1f8268138eb0d6d0cb9154b4b7da18",
+      "sourceSha256": "b5def3f887d0ea3d91361e5f8aebe6ec8ae9f85fb7154f71fac148e8e591555c",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "69659735b3232db3420bf2fb49b928575ae6cffdd923fcb63589c3694b2e416e",
+      "variant": "female"
+    },
+    {
+      "exerciseId": "supine-wall-supported-piriformis-stretch",
+      "frameNumber": 1,
+      "generationRecordSha256": "af739a3576cb27a4204120e6c7dd448e367f8f4b60f43c1f41b81e2780942d84",
+      "masterSha256": "3e733e1bb90a924d9f30f05a0401cbe28c549f3976804eaee3a487eb31bd55c9",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/male/supine-wall-supported-piriformis-stretch/frame-1.svg",
+      "sha256": "59518c46cca039b426bab894aebe8c86f18f00e8b5e02cdeeefef6161acd45ee",
+      "sourceSha256": "b5def3f887d0ea3d91361e5f8aebe6ec8ae9f85fb7154f71fac148e8e591555c",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "35c62f505fd3ced680870bb48c73c505d89755ff85597dd58ca66f089a934273",
+      "variant": "male"
+    },
+    {
+      "exerciseId": "supine-wall-supported-piriformis-stretch",
+      "frameNumber": 2,
+      "generationRecordSha256": "af739a3576cb27a4204120e6c7dd448e367f8f4b60f43c1f41b81e2780942d84",
+      "masterSha256": "3e733e1bb90a924d9f30f05a0401cbe28c549f3976804eaee3a487eb31bd55c9",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/male/supine-wall-supported-piriformis-stretch/frame-2.svg",
+      "sha256": "59518c46cca039b426bab894aebe8c86f18f00e8b5e02cdeeefef6161acd45ee",
+      "sourceSha256": "b5def3f887d0ea3d91361e5f8aebe6ec8ae9f85fb7154f71fac148e8e591555c",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "35c62f505fd3ced680870bb48c73c505d89755ff85597dd58ca66f089a934273",
+      "variant": "male"
+    },
+    {
+      "exerciseId": "supine-wall-supported-piriformis-stretch",
+      "frameNumber": 3,
+      "generationRecordSha256": "af739a3576cb27a4204120e6c7dd448e367f8f4b60f43c1f41b81e2780942d84",
+      "masterSha256": "3e733e1bb90a924d9f30f05a0401cbe28c549f3976804eaee3a487eb31bd55c9",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/male/supine-wall-supported-piriformis-stretch/frame-3.svg",
+      "sha256": "59518c46cca039b426bab894aebe8c86f18f00e8b5e02cdeeefef6161acd45ee",
+      "sourceSha256": "b5def3f887d0ea3d91361e5f8aebe6ec8ae9f85fb7154f71fac148e8e591555c",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "35c62f505fd3ced680870bb48c73c505d89755ff85597dd58ca66f089a934273",
+      "variant": "male"
+    }
+  ],
   "schemaVersion": 1,
   "source": {
-    "assetLicense": "MIT",
+    "assetLicense": "CC-BY-SA-4.0",
     "attribution": {
       "creator": "WallCrawl contributors",
       "creatorUrl": "https://github.com/mcasillas17/WallCrawl",
-      "license": "MIT",
-      "licenseUrl": "https://github.com/mcasillas17/WallCrawl/blob/main/LICENSE"
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
     },
     "id": "wallcrawl",
     "repository": "https://github.com/mcasillas17/WallCrawl",

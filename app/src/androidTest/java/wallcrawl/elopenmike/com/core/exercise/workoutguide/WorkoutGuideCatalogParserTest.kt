@@ -86,12 +86,20 @@ class WorkoutGuideCatalogParserTest {
 
     @Test fun supplement_packagedStoreRetainsLegacyIdentityAndShipsLocalNotices() = kotlinx.coroutines.runBlocking {
         val snapshot = WorkoutGuideCatalogStore(assets).snapshot()
-        assertThat(snapshot.exercises).hasSize(302)
-        assertThat(snapshot.framesByExerciseId.values.flatten()).hasSize(906)
-        assertThat(snapshot.catalogVersion).isEqualTo(snapshot.catalogAttribution.commit)
+        assertThat(snapshot.exercises).hasSize(306)
+        assertThat(snapshot.framesByExerciseId.values.flatten()).hasSize(918)
+        assertThat(snapshot.catalogVersion).startsWith(snapshot.catalogAttribution.commit + "+wallcrawl:")
+        assertThat(snapshot.exercises.filter { it.source?.catalogId == "wallcrawl" }).hasSize(4)
+        assertThat(snapshot.exercises.filter { it.source?.catalogId == "wallcrawl" }
+            .all { it.programming == null && it.reviewedMetadata == null && it.executionGuidance != null })
+            .isTrue()
+        assertThat(snapshot.exercises.filter { it.source?.catalogId == "wallcrawl" }
+            .flatMap { snapshot.framesByExerciseId.getValue(it.id) }
+            .all { it.widthPx == 512 && it.heightPx == 512 })
+            .isTrue()
         val notices = AssetAttributionNoticeReader(assets).notices()
         assertThat(notices.any { it.titleRes == wallcrawl.elopenmike.com.R.string.credits_notice_supplement &&
-            it.body.contains("contains no exercises or artwork") }).isTrue()
+            it.body.contains("four neutral exercise descriptions") }).isTrue()
         assertThat(notices.any { it.titleRes == wallcrawl.elopenmike.com.R.string.credits_notice_supplement_license &&
             it.body.contains("MIT License") }).isTrue()
     }

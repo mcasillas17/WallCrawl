@@ -30,6 +30,7 @@ import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performSemanticsAction
@@ -52,6 +53,8 @@ import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.exercise.visual.IllustrationCatalog
 import wallcrawl.elopenmike.com.core.exercise.visual.WorkoutGuideVisualProvider
 import wallcrawl.elopenmike.com.core.exercise.workoutguide.WorkoutGuideCatalogStore
+import wallcrawl.elopenmike.com.core.exercise.BundledExerciseCatalog
+import wallcrawl.elopenmike.com.core.exercise.localization.ExerciseLocalizationStore
 import wallcrawl.elopenmike.com.core.model.ThemePreference
 import wallcrawl.elopenmike.com.core.model.ProfileGender
 import wallcrawl.elopenmike.com.core.model.UserProfile
@@ -60,6 +63,10 @@ import wallcrawl.elopenmike.com.core.ui.components.ExerciseIllustration
 import wallcrawl.elopenmike.com.core.ui.components.ProfileGenderSelector
 import wallcrawl.elopenmike.com.core.ui.components.LocalIllustrationVariant
 import wallcrawl.elopenmike.com.core.ui.theme.WallCrawlTheme
+import wallcrawl.elopenmike.com.core.ui.localization.ExerciseVocabulary
+import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
+import wallcrawl.elopenmike.com.feature.exercises.ExercisesScreen
+import wallcrawl.elopenmike.com.feature.exercises.ExercisesViewModel
 
 @RunWith(AndroidJUnit4::class)
 @OptIn(ExperimentalTestApi::class)
@@ -68,13 +75,45 @@ class IllustrationSelectionUiTest {
 
     @Test fun profileGenderSwitchesTheRealBundledArtwork() = checkSelection("en", ThemePreference.DARK)
     @Test fun spanishControlsAndArtworkRemainUsableInLightTheme() = checkSelection("es", ThemePreference.LIGHT)
+    @Test fun piriformisHoldLoadsBothLocalVariants() = checkSelection("en", ThemePreference.DARK, "supine-wall-supported-piriformis-stretch")
+    @Test fun phtBridgeHoldLoadsBothLocalVariants() = checkSelection("en", ThemePreference.DARK, "pht-single-leg-calf-supported-isometric-hamstring-bridge")
+    @Test fun neckHoldLoadsBothLocalVariants() = checkSelection("en", ThemePreference.DARK, "seated-hand-resisted-cervical-rotation-isometric")
+    @Test fun shortFootHoldLoadsBothLocalVariantsInSpanish() = checkSelection("es", ThemePreference.LIGHT, "seated-short-foot-arch-hold-no-toe-flexion")
 
-    private fun checkSelection(language: String, theme: ThemePreference) {
+    @Test fun spanishDetailShowsNewGuidanceAndSupportLabels() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val store = WorkoutGuideCatalogStore(context.assets)
+        val localizationStore = ExerciseLocalizationStore(context.assets)
+        val vocabulary = ExerciseVocabulary(runBlocking { localizationStore.localization() }, "es")
+        val exercise = runBlocking { store.snapshot().exercises.first { it.id == "pht-single-leg-calf-supported-isometric-hamstring-bridge" } }
+        val viewModel = ExercisesViewModel(BundledExerciseCatalog(store, localizationStore))
+        val provider = WorkoutGuideVisualProvider(store, IllustrationCatalog {
+            context.assets.open("exercise-illustrations/index.json").bufferedReader().use { it.readText() }
+        })
+        compose.setContent {
+            DeviceConfigurationOverride(DeviceConfigurationOverride.Locales(LocaleList("es"))) {
+                CompositionLocalProvider(LocalExerciseVocabulary provides vocabulary) {
+                    WallCrawlTheme { ExercisesScreen(viewModel, provider) }
+                }
+            }
+        }
+        viewModel.openExerciseDetail(exercise)
+        compose.waitUntil(10_000) {
+            compose.onAllNodes(hasText(vocabulary.coachingSummary(exercise)!!)).fetchSemanticsNodes().isNotEmpty()
+        }
+        compose.onNodeWithText(vocabulary.coachingSummary(exercise)!!).assertIsDisplayed()
+        assertThat(compose.onAllNodes(hasText(vocabulary.exerciseName(exercise))).fetchSemanticsNodes()).isNotEmpty()
+        assertThat(compose.onAllNodes(hasText("Camilla acolchada", substring = true)).fetchSemanticsNodes()).isNotEmpty()
+        assertThat(compose.onAllNodes(hasText("Apoyo para la pantorrilla", substring = true)).fetchSemanticsNodes()).isNotEmpty()
+        saveScreenshot("pht-detail-es.png", compose.onRoot())
+    }
+
+    private fun checkSelection(language: String, theme: ThemePreference, exerciseId: String = "bodyweight-squat") {
         val base = InstrumentationRegistry.getInstrumentation().targetContext
         val configuration = Configuration(base.resources.configuration).apply { setLocale(Locale(language)) }
         val context = base.createConfigurationContext(configuration)
         val store = WorkoutGuideCatalogStore(context.assets)
-        val exercise = runBlocking { store.snapshot().exercises.first { it.id == "bodyweight-squat" } }
+        val exercise = runBlocking { store.snapshot().exercises.first { it.id == exerciseId } }
         val provider = WorkoutGuideVisualProvider(store, IllustrationCatalog {
             context.assets.open("exercise-illustrations/index.json").bufferedReader().use { it.readText() }
         })
@@ -147,13 +186,13 @@ class IllustrationSelectionUiTest {
         openMenu()
         select(R.string.gender_woman, ProfileGender.WOMAN)
         waitForImage(context.getString(R.string.illustration_content_description, exercise.name))
-        saveScreenshot("illustration-female-$language.png")
+        saveScreenshot("illustration-female-$language-$exerciseId.png")
         saveScreenshot("gender-dropdown-$language.png", compose.onNodeWithTag("gender-selector"))
         openMenu()
         option(R.string.gender_woman).assertIsSelected()
         select(R.string.gender_man, ProfileGender.MAN)
         waitForImage(context.getString(R.string.illustration_content_description, exercise.name))
-        saveScreenshot("illustration-male-$language.png")
+        saveScreenshot("illustration-male-$language-$exerciseId.png")
         openMenu()
         select(R.string.gender_non_binary, ProfileGender.NON_BINARY)
         openMenu()
@@ -170,6 +209,10 @@ class IllustrationSelectionUiTest {
         // Let the actual SVG decoder complete before saving visual review evidence.
         compose.mainClock.advanceTimeBy(1000)
         compose.waitForIdle()
+        compose.waitUntil(10_000) {
+            compose.onAllNodes(hasText("Frame", substring = true) or hasText("Cuadro", substring = true))
+                .fetchSemanticsNodes().isNotEmpty()
+        }
     }
 
     private fun saveScreenshot(
@@ -177,7 +220,10 @@ class IllustrationSelectionUiTest {
         node: SemanticsNodeInteraction = compose.onNodeWithTag("exercise-artwork")
     ) {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
-        File(context.filesDir, name).outputStream().use {
+        val output = InstrumentationRegistry.getArguments().getString("additionalTestOutputDir")
+            ?.let(::File) ?: context.filesDir
+        output.mkdirs()
+        File(output, name).outputStream().use {
             node.captureToImage().asAndroidBitmap().compress(Bitmap.CompressFormat.PNG, 100, it)
         }
     }

@@ -113,7 +113,7 @@ class OnboardingViewModel(
         updateState { state ->
             state.copy(
                 equipment = StandardEquipment.FULL_GYM.toSet() +
-                    state.equipment.filter { it in StandardEquipment.BAND_SETUPS },
+                    state.equipment.filter { it in StandardEquipment.BAND_SETUPS || it in StandardEquipment.SUPPORT_ASSEMBLY },
                 error = null
             )
         }

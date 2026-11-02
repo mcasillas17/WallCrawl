@@ -19,6 +19,7 @@ class SupplementTest(unittest.TestCase):
         self.catalog = json.loads((ROOT / "app/src/androidTest/assets/wallcrawl/fictional-catalog.json").read_text())
         self.upstream = json.loads((ROOT / "app/src/main/assets/workout-guide/catalog.json").read_text())
         self.overlay = json.loads((ROOT / "app/src/main/assets/localization/exercise-localization.json").read_text())
+        self.overlay["exercises"] = {entry["id"]: self.overlay["exercises"][entry["id"]] for entry in self.upstream["exercises"]}
         self.overlay["exercises"]["fictional-catalog-movement"] = {"es": {"name": "Movimiento FICTICIO", "coachingSummary": "Texto FICTICIO; sin aprobación clínica."}}
         for index in range(1, 4):
             path = self.assets / f"exercise-illustrations/male/fictional-catalog-movement/frame-{index}.svg"
@@ -29,6 +30,13 @@ class SupplementTest(unittest.TestCase):
         return validate_supplement(self.catalog, self.upstream, self.overlay, self.assets)
 
     def test_valid_complete_fictional_fixture(self):
+        self.assertEqual(self.validate(), (1, 3))
+
+    def test_condition_anatomy_and_support_requirements_are_canonical(self):
+        entry = self.catalog["exercises"][0]
+        entry["primaryMuscles"] = ["Neck"]
+        entry["secondaryMuscles"] = ["Foot Intrinsics"]
+        entry["listedEquipment"] = ["Bodyweight", "Padded Plinth", "Calf Support"]
         self.assertEqual(self.validate(), (1, 3))
 
     def test_empty_production_supplement(self):

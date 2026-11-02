@@ -2352,6 +2352,18 @@
         "exercise-illustrations/male/pendlay-row/frame-3.svg"
       ]
     },
+    "pht-single-leg-calf-supported-isometric-hamstring-bridge": {
+      "female": [
+        "exercise-illustrations/female/pht-single-leg-calf-supported-isometric-hamstring-bridge/frame-1.svg",
+        "exercise-illustrations/female/pht-single-leg-calf-supported-isometric-hamstring-bridge/frame-2.svg",
+        "exercise-illustrations/female/pht-single-leg-calf-supported-isometric-hamstring-bridge/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/pht-single-leg-calf-supported-isometric-hamstring-bridge/frame-1.svg",
+        "exercise-illustrations/male/pht-single-leg-calf-supported-isometric-hamstring-bridge/frame-2.svg",
+        "exercise-illustrations/male/pht-single-leg-calf-supported-isometric-hamstring-bridge/frame-3.svg"
+      ]
+    },
     "pike-push-up": {
       "female": [
         "exercise-illustrations/female/pike-push-up/frame-1.svg",
@@ -2736,6 +2748,18 @@
         "exercise-illustrations/male/seated-forward-fold-stretch/frame-3.svg"
       ]
     },
+    "seated-hand-resisted-cervical-rotation-isometric": {
+      "female": [
+        "exercise-illustrations/female/seated-hand-resisted-cervical-rotation-isometric/frame-1.svg",
+        "exercise-illustrations/female/seated-hand-resisted-cervical-rotation-isometric/frame-2.svg",
+        "exercise-illustrations/female/seated-hand-resisted-cervical-rotation-isometric/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/seated-hand-resisted-cervical-rotation-isometric/frame-1.svg",
+        "exercise-illustrations/male/seated-hand-resisted-cervical-rotation-isometric/frame-2.svg",
+        "exercise-illustrations/male/seated-hand-resisted-cervical-rotation-isometric/frame-3.svg"
+      ]
+    },
     "seated-knee-tuck": {
       "female": [
         "exercise-illustrations/female/seated-knee-tuck/frame-1.svg",
@@ -2770,6 +2794,18 @@
         "exercise-illustrations/male/seated-row/frame-1.svg",
         "exercise-illustrations/male/seated-row/frame-2.svg",
         "exercise-illustrations/male/seated-row/frame-3.svg"
+      ]
+    },
+    "seated-short-foot-arch-hold-no-toe-flexion": {
+      "female": [
+        "exercise-illustrations/female/seated-short-foot-arch-hold-no-toe-flexion/frame-1.svg",
+        "exercise-illustrations/female/seated-short-foot-arch-hold-no-toe-flexion/frame-2.svg",
+        "exercise-illustrations/female/seated-short-foot-arch-hold-no-toe-flexion/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/seated-short-foot-arch-hold-no-toe-flexion/frame-1.svg",
+        "exercise-illustrations/male/seated-short-foot-arch-hold-no-toe-flexion/frame-2.svg",
+        "exercise-illustrations/male/seated-short-foot-arch-hold-no-toe-flexion/frame-3.svg"
       ]
     },
     "shrimp-squat": {
@@ -3250,6 +3286,18 @@
         "exercise-illustrations/male/superman-hold/frame-1.svg",
         "exercise-illustrations/male/superman-hold/frame-2.svg",
         "exercise-illustrations/male/superman-hold/frame-3.svg"
+      ]
+    },
+    "supine-wall-supported-piriformis-stretch": {
+      "female": [
+        "exercise-illustrations/female/supine-wall-supported-piriformis-stretch/frame-1.svg",
+        "exercise-illustrations/female/supine-wall-supported-piriformis-stretch/frame-2.svg",
+        "exercise-illustrations/female/supine-wall-supported-piriformis-stretch/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/supine-wall-supported-piriformis-stretch/frame-1.svg",
+        "exercise-illustrations/male/supine-wall-supported-piriformis-stretch/frame-2.svg",
+        "exercise-illustrations/male/supine-wall-supported-piriformis-stretch/frame-3.svg"
       ]
     },
     "swimming": {

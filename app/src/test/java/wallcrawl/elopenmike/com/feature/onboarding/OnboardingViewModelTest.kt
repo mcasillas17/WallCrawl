@@ -280,6 +280,18 @@ class OnboardingViewModelTest {
     }
 
     @Test
+    fun fullGymPreservesConfirmedSupportsButDoesNotGrantThem() {
+        val viewModel = OnboardingViewModel(RecordingUserProfileRepository())
+        val supports = listOf("Padded Plinth", "Calf Support")
+        viewModel.selectFullGymEquipment()
+        assertThat(viewModel.uiState.value.equipment).containsNoneIn(supports)
+        supports.forEach(viewModel::toggleEquipment)
+        viewModel.selectFullGymEquipment()
+        assertThat(viewModel.uiState.value.equipment)
+            .containsExactlyElementsIn(StandardEquipment.FULL_GYM + supports)
+    }
+
+    @Test
     fun fullGym_preservesOnlyExplicitBandConfirmationsAcrossSavedState() {
         StandardEquipment.BAND_SETUPS.forEach { confirmed ->
             val handle = SavedStateHandle()

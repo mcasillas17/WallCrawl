@@ -881,7 +881,7 @@ def _canonical_catalog_muscles(catalog_exercise: dict[str, Any]) -> set[str]:
     canonical = {
         "Chest", "Shoulders", "Rear Delts", "Triceps", "Back", "Upper Back",
         "Lower Back", "Lats", "Biceps", "Forearms", "Quadriceps", "Hamstrings",
-        "Glutes", "Adductors", "Calves", "Hips", "Core", "Cardio", "Mobility",
+        "Glutes", "Adductors", "Calves", "Hips", "Core", "Cardio", "Mobility", "Neck", "Foot Intrinsics",
     }
     result: set[str] = set()
     for raw_name in catalog_exercise["primaryMuscles"] + catalog_exercise["secondaryMuscles"]:

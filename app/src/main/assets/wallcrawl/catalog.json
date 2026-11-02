@@ -4,20 +4,104 @@
     "id": "wallcrawl",
     "version": 1,
     "repository": "https://github.com/mcasillas17/WallCrawl",
-    "assetLicense": "MIT",
+    "assetLicense": "CC-BY-SA-4.0",
     "attribution": {
       "creator": "WallCrawl contributors",
       "creatorUrl": "https://github.com/mcasillas17/WallCrawl",
-      "license": "MIT",
-      "licenseUrl": "https://github.com/mcasillas17/WallCrawl/blob/main/LICENSE"
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
     }
   },
   "visuals": {
     "frameCount": 3,
-    "widthPx": 320,
-    "heightPx": 320,
+    "widthPx": 512,
+    "heightPx": 512,
     "format": "svg",
     "assetPathPrefix": "exercise-illustrations/male/"
   },
-  "exercises": []
+  "exercises": [
+    {
+      "id": "supine-wall-supported-piriformis-stretch",
+      "sourceId": "supine-wall-supported-piriformis-stretch",
+      "sourceSlug": "supine-wall-supported-piriformis-stretch",
+      "name": "Supine Wall-Supported Piriformis Stretch",
+      "searchAliases": [
+        "supine figure-four wall stretch"
+      ],
+      "primaryMuscles": [
+        "Hips"
+      ],
+      "secondaryMuscles": [],
+      "listedEquipment": [
+        "Bodyweight",
+        "Wall"
+      ],
+      "exerciseType": "duration",
+      "isStretch": true,
+      "executionGuidance": "Lie on your back with both soles against a wall. Cross one ankle over the other knee and let the crossed knee move outward while your back remains supported. The drawing shows one example side."
+    },
+    {
+      "id": "pht-single-leg-calf-supported-isometric-hamstring-bridge",
+      "sourceId": "pht-single-leg-calf-supported-isometric-hamstring-bridge",
+      "sourceSlug": "pht-single-leg-calf-supported-isometric-hamstring-bridge",
+      "name": "Single-Leg Calf-Supported Isometric Hamstring Bridge",
+      "searchAliases": [
+        "calf-supported hamstring bridge hold"
+      ],
+      "primaryMuscles": [
+        "Hamstrings"
+      ],
+      "secondaryMuscles": [
+        "Glutes"
+      ],
+      "listedEquipment": [
+        "Bodyweight",
+        "Padded Plinth",
+        "Calf Support"
+      ],
+      "exerciseType": "duration",
+      "isStretch": false,
+      "executionGuidance": "Lie on a padded plinth with your head and shoulders supported. Rest one calf broadly on a stable support placed on the same plinth, bend the free hip and knee, cross your arms, and raise your hips into a still bridge. The drawing shows one example side."
+    },
+    {
+      "id": "seated-hand-resisted-cervical-rotation-isometric",
+      "sourceId": "seated-hand-resisted-cervical-rotation-isometric",
+      "sourceSlug": "seated-hand-resisted-cervical-rotation-isometric",
+      "name": "Seated Hand-Resisted Cervical Rotation Isometric",
+      "searchAliases": [
+        "seated neck rotation hold"
+      ],
+      "primaryMuscles": [
+        "Neck"
+      ],
+      "secondaryMuscles": [],
+      "listedEquipment": [
+        "Bodyweight",
+        "Chair"
+      ],
+      "exerciseType": "duration",
+      "isStretch": false,
+      "executionGuidance": "Sit upright with feet on the floor. Place the hand on the same side against your cheek and gently attempt to turn your head into it while your head stays facing forward. The drawing shows one example side; the effort is not visible."
+    },
+    {
+      "id": "seated-short-foot-arch-hold-no-toe-flexion",
+      "sourceId": "seated-short-foot-arch-hold-no-toe-flexion",
+      "sourceSlug": "seated-short-foot-arch-hold-no-toe-flexion",
+      "name": "Seated Short-Foot Arch Hold",
+      "searchAliases": [
+        "seated short-foot hold"
+      ],
+      "primaryMuscles": [
+        "Foot Intrinsics"
+      ],
+      "secondaryMuscles": [],
+      "listedEquipment": [
+        "Bodyweight",
+        "Chair"
+      ],
+      "exerciseType": "duration",
+      "isStretch": false,
+      "executionGuidance": "Sit with both feet on the floor. Draw the metatarsal heads toward the heels to raise the inner arches while the heels and forefeet remain down and the toes stay long rather than curling. The drawing shows a still seated position."
+    }
+  ]
 }
