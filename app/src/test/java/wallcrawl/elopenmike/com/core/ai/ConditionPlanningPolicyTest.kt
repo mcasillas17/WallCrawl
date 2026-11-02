@@ -160,6 +160,11 @@ class ConditionPlanningPolicyTest {
         val ex = exercise.copy(id = "banded-row")
         blocked(resolve(listOf(record(rules = listOf(rule(ex)))), exercises = listOf(ex)))
     }
+    @Test fun pendingCannotBeHiddenByRemovingLastConditionOrSelectingAnother() {
+        val marker = PendingConditionReassessment("default_user", "removed", "fictional", "event", "a".repeat(64), 1, now - 1, null)
+        blocked(resolve(profile = UserProfile(), history = history(pending = listOf(marker))))
+        blocked(resolve(history = history(pending = listOf(marker))))
+    }
     private fun ordinary() = exercise.copy(type = ExerciseType.WEIGHT_REPS, isStretch = false, reviewedMetadata = ReviewedExerciseMetadata(
         ReviewState.APPROVED, "Core", emptySet(), MovementPattern.CORE, ComplexityTier.FOUNDATIONAL, "fictional", PrescriptionShape.WEIGHT_REPS,
         emptyList(), emptyList(), emptySet(), SupportRequirement.SUPPORTED, ImpactLevel.NONE, listOf(emptyList()),

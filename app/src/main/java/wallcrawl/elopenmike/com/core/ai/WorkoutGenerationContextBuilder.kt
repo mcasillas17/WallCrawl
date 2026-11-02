@@ -109,7 +109,9 @@ class WorkoutGenerationContextBuilder(
         val now = Instant.ofEpochMilli(nowTimestamp())
         val zone = zoneId()
         val initialProfile = userProfileRepository.getProfileOnce()
-        var support = if (initialProfile.activeConditions.isNotEmpty()) conditionSupport() else null
+        val needsConditionRead = initialProfile.activeConditions.isNotEmpty() ||
+            workoutRepository.hasPendingConditionReassessment(initialProfile.id)
+        var support = if (needsConditionRead) conditionSupport() else null
         var conditionRead = support?.let { workoutRepository.getConditionContext(initialProfile.id, it, now.toEpochMilli(), zone, intent == WorkoutPlanningIntent.PROGRAM) }
         val initialProgram = if (intent == WorkoutPlanningIntent.PROGRAM && conditionRead == null) programRepository?.get(initialProfile.id) else null
         // A program projection can observe a selection made after the bootstrap profile read.

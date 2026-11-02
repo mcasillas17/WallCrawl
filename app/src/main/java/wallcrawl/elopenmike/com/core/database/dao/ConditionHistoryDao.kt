@@ -46,8 +46,8 @@ interface ConditionHistoryDao : ProgramDao {
     suspend fun conditionOutcomeProbe(exerciseIds: List<String>, start: Long, limit: Int): List<ConditionOutcomeRow>
 
     @Query("""SELECT * FROM condition_reassessment_pending WHERE profileId = :profileId
-        AND conditionId IN (:conditionIds) ORDER BY conditionId, exerciseId LIMIT :limit""")
-    suspend fun conditionPendingProbe(profileId: String, conditionIds: List<String>, limit: Int): List<ConditionReassessmentPendingEntity>
+        ORDER BY conditionId, exerciseId LIMIT :limit""")
+    suspend fun conditionPendingProbe(profileId: String, limit: Int): List<ConditionReassessmentPendingEntity>
 
     /** Bootstrap is performed by the caller before entering this transaction; no recursive write gate. */
     @Transaction
@@ -70,7 +70,7 @@ interface ConditionHistoryDao : ProgramDao {
         val maxGap = schedules.maxOfOrNull { requireNotNull(it.schedule).minimumHoursBetweenSessions } ?: 0
         val start = minOf(weekStart, asOf - maxGap * 3_600_000L)
         val outcomes = if (exerciseIds.isNotEmpty() && exerciseIds.size <= MAX_CONDITION_EXERCISES) conditionOutcomeProbe(exerciseIds, start, MAX_CONDITION_OUTCOMES + 1) else emptyList()
-        val markers = if (profile.activeConditions.isEmpty()) emptyList() else conditionPendingProbe(profileId, profile.activeConditions.map { it.conditionId }, MAX_CONDITION_MARKERS + 1)
+        val markers = conditionPendingProbe(profileId, MAX_CONDITION_MARKERS + 1)
         val complete = exerciseIds.size <= MAX_CONDITION_EXERCISES && outcomes.size <= MAX_CONDITION_OUTCOMES && markers.size <= MAX_CONDITION_MARKERS &&
             outcomes.all { it.timestamp()?.let { timestamp -> timestamp in start..asOf } == true }
         val exposures = outcomes.take(MAX_CONDITION_OUTCOMES).mapNotNull { row -> row.timestamp()?.takeIf { it in start..asOf }?.let { ConditionExposure(row.sessionId, row.exerciseId, it) } }

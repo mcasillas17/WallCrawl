@@ -14,6 +14,7 @@ import wallcrawl.elopenmike.com.core.database.dao.ConditionHistoryDao
 import wallcrawl.elopenmike.com.core.database.entity.*
 import wallcrawl.elopenmike.com.core.database.repository.toUserProfileEntity
 import wallcrawl.elopenmike.com.core.database.repository.toEntity
+import wallcrawl.elopenmike.com.core.database.repository.OfflineWorkoutRepository
 import wallcrawl.elopenmike.com.core.model.*
 
 @RunWith(AndroidJUnit4::class)
@@ -52,7 +53,7 @@ class ConditionHistoryReadTest {
         val marker = marker(0)
         db.conditionReassessmentDao().replace(marker)
         assertEquals("deleted-set", read().history.pending.single().sourceSetId)
-        assertEquals(1, db.workoutSessionDao().conditionPendingProbe(profile.id, listOf("fictional"), 1).size)
+        assertEquals(1, db.workoutSessionDao().conditionPendingProbe(profile.id, 1).size)
         db.withTransaction {
             repeat(ConditionHistoryDao.MAX_CONDITION_MARKERS) { db.conditionReassessmentDao().replace(marker.copy(exerciseId = "other-$it")) }
         }
@@ -68,6 +69,21 @@ class ConditionHistoryReadTest {
         assertTrue(read().history.exposures.isEmpty())
         insert("unknown-open", SessionStatus.IN_PROGRESS, null, started = now - 31 * 86_400_000L)
         assertFalse(read().history.complete)
+    }
+    @Test fun boundedProbeAndSnapshotRetainMarkersAfterLastSelectionRemoval() = runBlocking {
+        val repository = OfflineWorkoutRepository(db.workoutSessionDao(), db.workoutSetDao())
+        db.conditionReassessmentDao().replace(marker(0))
+        db.conditionReassessmentDao().replace(marker(1).copy(profileId = "other-profile"))
+        db.userProfileDao().insertOrUpdate(profile.copy(activeConditions = emptyList()).toUserProfileEntity())
+        assertTrue(repository.hasPendingConditionReassessment(profile.id))
+        val removed = read()
+        assertTrue(removed.profile.activeConditions.isEmpty())
+        assertEquals(listOf("event-0"), removed.history.pending.map { it.eventId })
+        assertTrue(removed.history.exposures.isEmpty())
+        db.userProfileDao().insertOrUpdate(profile.copy(activeConditions = listOf(SelectedCondition("other-condition", 1, emptyMap()))).toUserProfileEntity())
+        assertEquals(listOf("event-0"), read().history.pending.map { it.eventId })
+        db.conditionReassessmentDao().deleteIfEventMatches(profile.id, "fictional", "fictional-exercise", "event-0")
+        assertFalse(repository.hasPendingConditionReassessment(profile.id))
     }
     @Test fun oldClosedParentDoesNotExcuseMalformedExplicitChronology() = runBlocking {
         insert("old-bad", SessionStatus.COMPLETED, now - 32 * 86_400_000L,

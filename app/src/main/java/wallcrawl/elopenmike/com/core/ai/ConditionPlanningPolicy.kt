@@ -15,15 +15,15 @@ sealed interface ConditionPrescriptionResult {
 class ConditionPlanningPolicy {
     fun resolve(profile: UserProfile, ordinaryCandidates: List<Exercise>, exercisesById: Map<String, Exercise>,
                 support: ConditionSupportCatalog, history: ConditionHistory): ConditionPlanningResult {
+        val pending = history.pending.filter { it.profileId == profile.id }
+        if (pending.isNotEmpty()) return ConditionPlanningResult.Blocked(pending.take(512).map {
+            ConditionViolation("pending-reassessment", setOf(it.conditionId), setOf(it.exerciseId))
+        })
         if (profile.activeConditions.isEmpty()) return ConditionPlanningResult.NotApplicable
         val ids = profile.activeConditions.map { it.conditionId }.toSet()
         fun blocked(reason: String, exercises: Set<String> = emptySet()) = ConditionPlanningResult.Blocked(listOf(ConditionViolation(reason, ids, exercises)))
         if (profile.unresolvedTrainingConstraintsRaw != null) return blocked("unresolved-restrictions")
         if (!history.complete) return blocked("incomplete-history")
-        val pending = history.pending.filter { it.profileId == profile.id && it.conditionId in ids }
-        if (pending.isNotEmpty()) return ConditionPlanningResult.Blocked(pending.take(512).map {
-            ConditionViolation("pending-reassessment", setOf(it.conditionId), setOf(it.exerciseId))
-        })
         val selected = mutableListOf<Pair<ConditionSupportRecord, ConditionApplicabilityCase>>()
         for (selection in profile.activeConditions.sortedBy { it.conditionId }) {
             val record = support.records[selection.conditionId] ?: return blocked("unsupported-condition")

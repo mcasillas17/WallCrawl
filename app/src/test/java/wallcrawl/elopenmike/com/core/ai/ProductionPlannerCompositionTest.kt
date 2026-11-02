@@ -1245,6 +1245,8 @@ internal class StaticWorkoutRepository(
     private val completedSessions: List<WorkoutSession>,
     private val records: List<RecommendationRecord> = emptyList()
 ) : WorkoutRepository {
+    override suspend fun hasPendingConditionReassessment(profileId: String) = false
+
     override suspend fun getCompletedSessionsInRange(startTimestamp: Long, endTimestampExclusive: Long) =
         completedSessions.filter { it.status == wallcrawl.elopenmike.com.core.model.SessionStatus.COMPLETED &&
             it.completedAtTimestamp?.let { time -> time >= startTimestamp && time < endTimestampExclusive } == true }

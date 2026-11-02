@@ -38,6 +38,8 @@ import wallcrawl.elopenmike.com.core.model.ConditionSupportCatalog
 import wallcrawl.elopenmike.com.core.database.dao.ConditionContextRead
 
 interface WorkoutRepository {
+    /** Bounded ownership probe, independent of current selections or optional provenance. */
+    suspend fun hasPendingConditionReassessment(profileId: String): Boolean
     suspend fun getConditionContext(profileId: String, support: ConditionSupportCatalog,
         asOf: Long, zone: ZoneId, programMode: Boolean): ConditionContextRead =
         throw UnsupportedOperationException("Coherent condition history is unavailable.")
@@ -115,6 +117,10 @@ class OfflineWorkoutRepository(
     private val progressCalculator: ProgressCalculator = ProgressCalculator(),
     private val localDataWriteGate: Mutex = Mutex()
 ) : WorkoutRepository {
+    override suspend fun hasPendingConditionReassessment(profileId: String) = localDataWriteGate.withLock {
+        sessionDao.conditionPendingProbe(profileId, 1).isNotEmpty()
+    }
+
     override suspend fun getConditionContext(profileId: String, support: ConditionSupportCatalog,
         asOf: Long, zone: ZoneId, programMode: Boolean) = localDataWriteGate.withLock { sessionDao.readConditionContext(profileId, support, asOf, zone, programMode) }
 

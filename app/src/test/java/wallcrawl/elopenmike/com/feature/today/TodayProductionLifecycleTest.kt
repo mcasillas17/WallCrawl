@@ -1707,6 +1707,8 @@ private class LifecycleWorkoutRepository(
     private val observeHistoryChanges: Boolean = false,
     private val manualNotifications: Boolean = false
 ) : WorkoutRepository {
+    override suspend fun hasPendingConditionReassessment(profileId: String) = false
+
     val startRequests = mutableListOf<LifecycleStartRequest>()
     val originalSessions: List<WorkoutSession> = initialCompleted
 

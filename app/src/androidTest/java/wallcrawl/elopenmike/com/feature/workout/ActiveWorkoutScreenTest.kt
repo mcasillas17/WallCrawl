@@ -339,6 +339,8 @@ private object NoVisualProvider : ExerciseVisualProvider {
 }
 
 private class ScreenTestRepository(initial: WorkoutSession) : WorkoutRepository {
+    override suspend fun hasPendingConditionReassessment(profileId: String) = false
+
     override suspend fun getCompletedSessionsInRange(startTimestamp: Long, endTimestampExclusive: Long): List<WorkoutSession> = emptyList()
     private val session = MutableStateFlow<WorkoutSession?>(initial)
     var completeCalls: Int = 0

@@ -796,6 +796,8 @@ private class TodayUserProfileRepository(
 private class TodayWorkoutRepository(
     completedSessions: List<WorkoutSession>
 ) : WorkoutRepository {
+    override suspend fun hasPendingConditionReassessment(profileId: String) = false
+
     val startRequests = mutableListOf<StartWorkoutRequest>()
     private val activeSession = MutableStateFlow<WorkoutSession?>(null)
     private val completed = MutableStateFlow(completedSessions)

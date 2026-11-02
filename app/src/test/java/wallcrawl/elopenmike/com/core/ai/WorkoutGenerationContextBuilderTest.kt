@@ -126,12 +126,47 @@ class WorkoutGenerationContextBuilderTest {
         assertThat(repository.conditionReadCalls).isEqualTo(1)
     }
 
+    @Test fun removedLastConditionWithPendingMarkerStillBuildsBlockedSnapshot() = runTest {
+        val profile = UserProfile()
+        val now = 1_800_000_000_000L
+        val marker = PendingConditionReassessment(profile.id, "removed", "fictional-exercise", "event", "a".repeat(64), 1, now - 1, null)
+        val history = ConditionHistory(now, ZoneId.of("UTC"), now - 8 * 86_400_000, true, emptyList(), listOf(marker))
+        val repository = StubWorkoutRepository(emptyList()).apply {
+            pendingPresent = true
+            conditionRead = wallcrawl.elopenmike.com.core.database.dao.ConditionContextRead(profile, null, ProgramHeader.absent(profile.id), history)
+        }
+        val builder = WorkoutGenerationContextBuilder(StubUserProfileRepository(profile), repository,
+            InMemoryExerciseCatalog(emptyList()), ExerciseFilter(), WorkoutHistoryAnalyzer(), nowTimestamp = { now })
+        val context = builder.build()
+        assertThat(context.conditionPlanning).isInstanceOf(ConditionPlanningResult.Blocked::class.java)
+        assertThat(repository.pendingProbeCalls).isEqualTo(1)
+        assertThat(repository.conditionReadCalls).isEqualTo(1)
+        assertThat(context.conditionHistory?.pending).containsExactly(marker)
+    }
+
+    @Test fun anotherSelectionDoesNotHideRemovedConditionsPendingMarker() = runTest {
+        val profile = UserProfile(activeConditions = listOf(SelectedCondition("other", 1, emptyMap())))
+        val now = 1_800_000_000_000L
+        val marker = PendingConditionReassessment(profile.id, "removed", "fictional-exercise", "event", "a".repeat(64), 1, now - 1, null)
+        val history = ConditionHistory(now, ZoneId.of("UTC"), now - 8 * 86_400_000, true, emptyList(), listOf(marker))
+        val repository = StubWorkoutRepository(emptyList()).apply {
+            conditionRead = wallcrawl.elopenmike.com.core.database.dao.ConditionContextRead(profile, null, ProgramHeader.absent(profile.id), history)
+        }
+        val context = WorkoutGenerationContextBuilder(StubUserProfileRepository(profile), repository,
+            InMemoryExerciseCatalog(emptyList()), ExerciseFilter(), WorkoutHistoryAnalyzer(), nowTimestamp = { now }).build()
+        val reason = (context.conditionPlanning as ConditionPlanningResult.Blocked).reasons.single()
+        assertThat(reason.reason).isEqualTo("pending-reassessment")
+        assertThat(reason.conditionIds).containsExactly("removed")
+        assertThat(reason.exerciseIds).containsExactly("fictional-exercise")
+    }
+
     @Test fun noConditionsDoNotRequestConditionSnapshot() = runTest {
         val repository = StubWorkoutRepository(emptyList())
         val builder = WorkoutGenerationContextBuilder(StubUserProfileRepository(UserProfile()), repository,
             InMemoryExerciseCatalog(emptyList()), ExerciseFilter(), WorkoutHistoryAnalyzer())
         assertThat(builder.build().conditionPlanning).isEqualTo(wallcrawl.elopenmike.com.core.model.ConditionPlanningResult.NotApplicable)
         assertThat(repository.conditionReadCalls).isEqualTo(0)
+        assertThat(repository.pendingProbeCalls).isEqualTo(1)
     }
 
     @Test fun unresolvedLegacyConstraintRefusesPlanningBeforeCandidateConstruction() = runTest {
@@ -1135,6 +1170,10 @@ private class StubUserProfileRepository(
 private class StubWorkoutRepository(
     private val completedSessions: List<WorkoutSession>
 ) : WorkoutRepository {
+    var pendingPresent = false
+    var pendingProbeCalls = 0
+    override suspend fun hasPendingConditionReassessment(profileId: String): Boolean { pendingProbeCalls++; return pendingPresent }
+
     var conditionRead: wallcrawl.elopenmike.com.core.database.dao.ConditionContextRead? = null
     var conditionReadCalls = 0
     override suspend fun getConditionContext(profileId: String, support: wallcrawl.elopenmike.com.core.model.ConditionSupportCatalog,
