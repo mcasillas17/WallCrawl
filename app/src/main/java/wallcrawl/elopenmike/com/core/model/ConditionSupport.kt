@@ -332,12 +332,12 @@ sealed interface ConditionPlanningResult {
         override fun equals(other: Any?): Boolean = other is Blocked && valueFields() == other.valueFields()
         override fun hashCode(): Int = valueFields().hashCode()
     }
-    class Ready(ordinaryRules: Map<String, ResolvedConditionRule>, supportive: List<ConditionSupportivePrescription>, val context: SessionConditionContext) : ConditionPlanningResult {
+    class Ready(ordinaryRules: Map<String, ResolvedConditionRule>, supportive: List<ConditionSupportivePrescription>, val context: SessionConditionContext, val weightUnit: WeightUnit = WeightUnit.KG) : ConditionPlanningResult {
         val ordinaryRules = conditionMap(ordinaryRules)
         val supportive = conditionList(supportive)
         init { require(ordinaryRules.size <= 512 && supportive.size <= 512) }
 
-        private fun valueFields(): List<Any?> = listOf(ordinaryRules, supportive, context)
+        private fun valueFields(): List<Any?> = listOf(ordinaryRules, supportive, context, weightUnit)
         override fun equals(other: Any?): Boolean = other is Ready && valueFields() == other.valueFields()
         override fun hashCode(): Int = valueFields().hashCode()
     }

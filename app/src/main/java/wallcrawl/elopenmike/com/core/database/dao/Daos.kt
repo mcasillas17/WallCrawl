@@ -66,7 +66,7 @@ interface UserProfileDao {
 }
 
 @Dao
-interface WorkoutSessionDao : CompletedWorkoutHistoryDao, WorkoutHistoryDao, ProgramDao {
+interface WorkoutSessionDao : CompletedWorkoutHistoryDao, WorkoutHistoryDao, ConditionHistoryDao {
     @Transaction
     suspend fun readWorkoutSummary(sessionId: String, calculator: ProgressCalculator): WorkoutSummary? {
         val session = getBoundedHistorySessions(listOf(sessionId)).singleOrNull()?.toWorkoutSession()

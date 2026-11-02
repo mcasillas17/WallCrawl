@@ -27,12 +27,20 @@ import wallcrawl.elopenmike.com.core.model.WorkoutOrigin
 import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
 import wallcrawl.elopenmike.com.core.model.SessionConditionContext
 import wallcrawl.elopenmike.com.core.progress.ProgressCalculator
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.flow
 import java.util.UUID
+import java.time.ZoneId
+import wallcrawl.elopenmike.com.core.model.ConditionSupportCatalog
+import wallcrawl.elopenmike.com.core.database.dao.ConditionContextRead
 
 interface WorkoutRepository {
+    suspend fun getConditionContext(profileId: String, support: ConditionSupportCatalog,
+        asOf: Long, zone: ZoneId, programMode: Boolean): ConditionContextRead =
+        throw UnsupportedOperationException("Coherent condition history is unavailable.")
     fun observeActiveSession(): Flow<WorkoutSession?>
     suspend fun getActiveSessionOnce(): WorkoutSession?
     suspend fun getSessionById(sessionId: String): WorkoutSession?
@@ -104,8 +112,12 @@ interface WorkoutRepository {
 class OfflineWorkoutRepository(
     private val sessionDao: WorkoutSessionDao,
     private val setDao: WorkoutSetDao,
-    private val progressCalculator: ProgressCalculator = ProgressCalculator()
+    private val progressCalculator: ProgressCalculator = ProgressCalculator(),
+    private val localDataWriteGate: Mutex = Mutex()
 ) : WorkoutRepository {
+    override suspend fun getConditionContext(profileId: String, support: ConditionSupportCatalog,
+        asOf: Long, zone: ZoneId, programMode: Boolean) = localDataWriteGate.withLock { sessionDao.readConditionContext(profileId, support, asOf, zone, programMode) }
+
 
     override fun observeActiveSession(): Flow<WorkoutSession?> {
         return sessionDao.observeActiveSession().map { it?.toWorkoutSession() }

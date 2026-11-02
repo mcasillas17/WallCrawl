@@ -523,6 +523,9 @@ private class EmptyWorkoutSessionDao(
     private val rangeRows: List<WorkoutSessionWithExercisesAndSets> = emptyList(),
     private val records: List<WorkoutRecommendationRecordEntity> = emptyList()
 ) : WorkoutSessionDao {
+    override suspend fun conditionOutcomeProbe(exerciseIds: List<String>, start: Long, limit: Int): List<wallcrawl.elopenmike.com.core.database.dao.ConditionOutcomeRow> = error("Not used")
+    override suspend fun conditionPendingProbe(profileId: String, conditionIds: List<String>, limit: Int): List<wallcrawl.elopenmike.com.core.database.entity.ConditionReassessmentPendingEntity> = error("Not used")
+
     override suspend fun selectCitedPerformanceIds(sessionId: String, sourceIds: List<String>, sourceExercisePairs: List<String>):
         List<wallcrawl.elopenmike.com.core.database.dao.PreviousPerformanceIds> =
         error("This fake does not model cited performance.")

@@ -122,7 +122,8 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
     override val workoutRepository: WorkoutRepository by lazy {
         OfflineWorkoutRepository(
             sessionDao = database.workoutSessionDao(),
-            setDao = database.workoutSetDao()
+            setDao = database.workoutSetDao(),
+            localDataWriteGate = localDataWriteGate
         )
     }
 
@@ -247,7 +248,8 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
                 workoutGuideCatalogStore.currentSnapshot()?.catalogVersion
             },
             deloadRepository = deloadRepository,
-            programRepository = programRepository
+            programRepository = programRepository,
+            conditionSupport = { conditionSupportStore.load() }
         )
     }
 

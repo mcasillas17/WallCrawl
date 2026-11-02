@@ -159,7 +159,9 @@ internal data class PlannerFixtureInputSnapshot(
     val programHeader: ProgramHeader,
     val programInput: ProgramPlanningInput?,
     /** Condition planning results own immutable collections. */
-    val conditionPlanning: ConditionPlanningResult
+    val conditionPlanning: ConditionPlanningResult,
+    val conditionHistory: ConditionHistory?,
+    val conditionSupport: wallcrawl.elopenmike.com.core.model.ConditionSupportCatalog?
 )
 
 /**
@@ -329,7 +331,9 @@ private fun WorkoutGenerationContext.snapshot(): PlannerFixtureInputSnapshot =
         planningIntent = planningIntent,
         programHeader = programHeader,
         programInput = programInput?.deepCopy(),
-        conditionPlanning = conditionPlanning
+        conditionPlanning = conditionPlanning,
+        conditionHistory = conditionHistory,
+        conditionSupport = conditionSupport
     )
 
 private fun ProgramPlanningInput.deepCopy(): ProgramPlanningInput = copy(
