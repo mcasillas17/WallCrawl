@@ -484,10 +484,10 @@ abstract class WallCrawlDatabase : RoomDatabase() {
                 db.execSQL("ALTER TABLE workout_template_exercises ADD COLUMN purpose TEXT NOT NULL DEFAULT 'ORDINARY'")
                 db.execSQL("ALTER TABLE workout_recommendation_records ADD COLUMN conditionContextDigest TEXT")
                 db.execSQL("""CREATE TABLE IF NOT EXISTS condition_reassessment_pending (
-                    profileId INTEGER NOT NULL, conditionId TEXT NOT NULL, exerciseId TEXT NOT NULL,
+                    profileId TEXT NOT NULL, conditionId TEXT NOT NULL, exerciseId TEXT NOT NULL,
                     eventId TEXT NOT NULL, stoppedContextIdentity TEXT NOT NULL,
                     responsePolicyVersion INTEGER NOT NULL, stoppedAtTimestamp INTEGER NOT NULL,
-                    sourceSetId INTEGER, PRIMARY KEY(profileId, conditionId, exerciseId))""")
+                    sourceSetId TEXT, PRIMARY KEY(profileId, conditionId, exerciseId))""")
             }
         }
 

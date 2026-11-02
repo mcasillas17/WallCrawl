@@ -10,10 +10,10 @@ import wallcrawl.elopenmike.com.core.database.entity.ConditionReassessmentPendin
 @Dao
 interface ConditionReassessmentDao {
     @Query("SELECT * FROM condition_reassessment_pending WHERE profileId = :profileId AND conditionId = :conditionId AND exerciseId = :exerciseId LIMIT 1")
-    suspend fun get(profileId: Long, conditionId: String, exerciseId: String): ConditionReassessmentPendingEntity?
+    suspend fun get(profileId: String, conditionId: String, exerciseId: String): ConditionReassessmentPendingEntity?
 
     @Query("SELECT * FROM condition_reassessment_pending WHERE profileId = :profileId ORDER BY conditionId, exerciseId")
-    suspend fun forProfile(profileId: Long): List<ConditionReassessmentPendingEntity>
+    suspend fun forProfile(profileId: String): List<ConditionReassessmentPendingEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun replace(marker: ConditionReassessmentPendingEntity)
@@ -28,5 +28,5 @@ interface ConditionReassessmentDao {
     }
 
     @Query("DELETE FROM condition_reassessment_pending WHERE profileId = :profileId AND conditionId = :conditionId AND exerciseId = :exerciseId AND eventId = :eventId")
-    suspend fun deleteIfEventMatches(profileId: Long, conditionId: String, exerciseId: String, eventId: String): Int
+    suspend fun deleteIfEventMatches(profileId: String, conditionId: String, exerciseId: String, eventId: String): Int
 }

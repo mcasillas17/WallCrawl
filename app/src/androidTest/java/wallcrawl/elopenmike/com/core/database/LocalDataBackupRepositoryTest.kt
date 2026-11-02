@@ -80,7 +80,7 @@ class LocalDataBackupRepositoryTest {
     }
 
     @Test fun pendingMarkerRefusesExportAndSurvivesUntilExplicitDeleteAll() = runBlocking {
-        val marker = ConditionReassessmentPendingEntity(1, "future-condition", "future-exercise", "event-1",
+        val marker = ConditionReassessmentPendingEntity("default_user", "future-condition", "future-exercise", "event-1",
             "a".repeat(64), 1, 100, null)
         database.conditionReassessmentDao().upsertIfNewer(marker)
         var opened = false
@@ -88,15 +88,15 @@ class LocalDataBackupRepositoryTest {
             runBlocking { repository.exportTo { opened = true; ByteArrayOutputStream() } }
         }
         assertThat(opened).isFalse()
-        assertThat(database.conditionReassessmentDao().forProfile(1)).containsExactly(marker)
+        assertThat(database.conditionReassessmentDao().forProfile("default_user")).containsExactly(marker)
         assertThat(repository.isRestoreAllowed()).isFalse()
         assertThrows(LocalDataRestoreRefusedException::class.java) {
             runBlocking { repository.restoreFrom(ByteArrayInputStream(exportedFixtureDocument())) }
         }
-        assertThat(database.conditionReassessmentDao().forProfile(1)).containsExactly(marker)
+        assertThat(database.conditionReassessmentDao().forProfile("default_user")).containsExactly(marker)
         assertThat(database.localDataBackupDao().readAll().sessions).isEmpty()
         repository.deleteAllLocalData()
-        assertThat(database.conditionReassessmentDao().forProfile(1)).isEmpty()
+        assertThat(database.conditionReassessmentDao().forProfile("default_user")).isEmpty()
         repository.exportTo { opened = true; ByteArrayOutputStream() }
         assertThat(opened).isTrue()
     }

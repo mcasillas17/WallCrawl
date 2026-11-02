@@ -14,6 +14,9 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import wallcrawl.elopenmike.com.core.database.entity.ConditionReassessmentPendingEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSessionEntity
+import wallcrawl.elopenmike.com.core.database.entity.WorkoutExerciseEntity
+import wallcrawl.elopenmike.com.core.database.entity.WorkoutSetEntity
+import wallcrawl.elopenmike.com.core.database.entity.toModel
 import wallcrawl.elopenmike.com.core.database.repository.ConditionContextCodec
 import wallcrawl.elopenmike.com.core.database.repository.toUserProfileEntity
 import wallcrawl.elopenmike.com.core.database.repository.OfflineUserProfileRepository
@@ -45,25 +48,33 @@ class ConditionReassessmentPersistenceTest {
         val sessions = database.workoutSessionDao()
         val markers = database.conditionReassessmentDao()
         val selected = profiles.insertOrUpdateWithNextRevision(UserProfile(activeConditions = listOf(condition)).toUserProfileEntity())
-        val marker = ConditionReassessmentPendingEntity(1, condition.conditionId, "fictional-exercise", "event-1",
-            digest, 1, 100, null)
+        val sourceSetId = "a03c8a04-9f34-45e2-9654-d5cdb16aeb77"
+        val marker = ConditionReassessmentPendingEntity(selected.id, condition.conditionId, "fictional-exercise", "event-1",
+            digest, 1, 100, sourceSetId)
         assertTrue(markers.upsertIfNewer(marker))
         assertFalse(markers.upsertIfNewer(marker))
         assertFalse(markers.upsertIfNewer(marker.copy(eventId = "older", stoppedAtTimestamp = 99)))
         assertTrue(markers.upsertIfNewer(marker.copy(eventId = "event-2", stoppedAtTimestamp = 101)))
-        assertEquals(0, markers.deleteIfEventMatches(1, condition.conditionId, "fictional-exercise", "event-1"))
+        assertEquals(0, markers.deleteIfEventMatches(selected.id, condition.conditionId, "fictional-exercise", "event-1"))
         val context = SessionConditionContext(1, 1, emptyList(), emptyMap(), emptyList(), emptyList(), emptyList())
         sessions.insertWorkoutUnlessActive(session("session-1").copy(
             conditionContextJson = ConditionContextCodec.encodeSession(context)),
-            emptyList(), emptyList(), selected.id, selected.revision)
+            listOf(WorkoutExerciseEntity("exercise-row", "session-1", "fictional-exercise", 0,
+                targetSets = 1, targetRepMin = null, targetRepMax = null, targetWeight = null, notes = "")),
+            listOf(WorkoutSetEntity(sourceSetId, "exercise-row", 1, targetReps = null, completedReps = null,
+                targetWeight = null, completedWeight = null, isCompleted = false, rpe = null, rir = null, type = SetType.NORMAL)),
+            selected.id, selected.revision)
+        assertNotNull(database.workoutSetDao().getSetById(sourceSetId))
         assertEquals(context, sessions.getSessionWithDetails("session-1")!!.session.conditionContextJson
             ?.let(ConditionContextCodec::decodeSession))
         assertNull(sessions.getRecommendationRecord("session-1"))
         assertEquals(1, sessions.deleteActiveSession("session-1"))
+        assertNull(database.workoutSetDao().getSetById(sourceSetId))
+        assertEquals(sourceSetId, markers.get(selected.id, condition.conditionId, "fictional-exercise")?.toModel()?.sourceSetId)
         profiles.insertOrUpdateWithNextRevision(selected.copy(activeConditionsJson = ConditionContextCodec.encodeSelections(emptyList())))
         profiles.insertOrUpdateWithNextRevision(selected)
-        assertEquals("event-2", markers.get(1, condition.conditionId, "fictional-exercise")?.eventId)
-        assertEquals(1, markers.deleteIfEventMatches(1, condition.conditionId, "fictional-exercise", "event-2"))
+        assertEquals("event-2", markers.get(selected.id, condition.conditionId, "fictional-exercise")?.eventId)
+        assertEquals(1, markers.deleteIfEventMatches(selected.id, condition.conditionId, "fictional-exercise", "event-2"))
     }
 
     @Test fun profileChangeAndStartInterleavingsCannotBothCommit() = runBlocking {

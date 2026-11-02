@@ -6,14 +6,14 @@ import wallcrawl.elopenmike.com.core.model.PendingConditionReassessment
 /** No foreign keys: profile REPLACE and session deletion must preserve the marker. */
 @Entity(tableName = "condition_reassessment_pending", primaryKeys = ["profileId", "conditionId", "exerciseId"])
 data class ConditionReassessmentPendingEntity(
-    val profileId: Long,
+    val profileId: String,
     val conditionId: String,
     val exerciseId: String,
     val eventId: String,
     val stoppedContextIdentity: String,
     val responsePolicyVersion: Int,
     val stoppedAtTimestamp: Long,
-    val sourceSetId: Long?
+    val sourceSetId: String?
 )
 
 fun PendingConditionReassessment.toEntity() = ConditionReassessmentPendingEntity(

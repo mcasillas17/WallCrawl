@@ -12,6 +12,7 @@ import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
 import wallcrawl.elopenmike.com.core.model.PrescriptionPurpose
+import wallcrawl.elopenmike.com.core.database.entity.ConditionReassessmentPendingEntity
 import wallcrawl.elopenmike.com.core.database.relation.toWorkoutSession
 import wallcrawl.elopenmike.com.core.database.relation.toWorkoutTemplate
 
@@ -59,7 +60,11 @@ class Migration16To17Test {
             assertEquals("legacy", receipt.contextIdentity)
             val template = database.workoutTemplateDao().getTemplateWithExercises("template-7")!!
             assertEquals(PrescriptionPurpose.ORDINARY, template.toWorkoutTemplate().exercises.single().prescription.purpose)
-            assertTrue(database.conditionReassessmentDao().forProfile(1).isEmpty())
+            assertTrue(database.conditionReassessmentDao().forProfile(profile.id).isEmpty())
+            val marker = ConditionReassessmentPendingEntity(profile.id, "condition", "exercise", "event",
+                "a".repeat(64), 1, 100, "a03c8a04-9f34-45e2-9654-d5cdb16aeb77")
+            database.conditionReassessmentDao().upsertIfNewer(marker)
+            assertEquals(marker, database.conditionReassessmentDao().get(profile.id, "condition", "exercise"))
         } finally {
             database.close()
             context.deleteDatabase(name)
