@@ -1,0 +1,912 @@
+{
+ "archflow_hero": 1,
+ "project": {
+  "title": "WallCrawl deterministic engine",
+  "subtitle": "From a stored profile to a frozen, validated session and back"
+ },
+ "canvas": {
+  "width": 1460,
+  "height": 715
+ },
+ "zones": [
+  {
+   "id": "z-input",
+   "title": "Inputs",
+   "tone": "cool",
+   "frame": {
+    "x": 20,
+    "y": 60,
+    "w": 220,
+    "h": 440
+   }
+  },
+  {
+   "id": "z-context",
+   "title": "Context",
+   "tone": "cool",
+   "frame": {
+    "x": 260,
+    "y": 60,
+    "w": 220,
+    "h": 440
+   }
+  },
+  {
+   "id": "z-gate",
+   "title": "Legality gate",
+   "tone": "warm",
+   "frame": {
+    "x": 500,
+    "y": 60,
+    "w": 220,
+    "h": 440
+   }
+  },
+  {
+   "id": "z-plan",
+   "title": "Plan and prescribe",
+   "tone": "warm",
+   "frame": {
+    "x": 740,
+    "y": 60,
+    "w": 220,
+    "h": 440
+   }
+  },
+  {
+   "id": "z-valid",
+   "title": "Whole-program check",
+   "tone": "warm",
+   "frame": {
+    "x": 980,
+    "y": 60,
+    "w": 220,
+    "h": 440
+   }
+  },
+  {
+   "id": "z-commit",
+   "title": "Publish and start",
+   "tone": "cool",
+   "frame": {
+    "x": 1220,
+    "y": 60,
+    "w": 220,
+    "h": 440
+   }
+  },
+  {
+   "id": "z-loop",
+   "title": "History loop",
+   "tone": "cool",
+   "frame": {
+    "x": 20,
+    "y": 515,
+    "w": 1420,
+    "h": 180
+   }
+  }
+ ],
+ "entities": [
+  {
+   "id": "profile",
+   "title": "UserProfile",
+   "caption": "Goals, equipment, constraints",
+   "kind": "source",
+   "zone": "z-input",
+   "tag": "ROOM",
+   "frame": {
+    "x": 40,
+    "y": 110,
+    "w": 180,
+    "h": 84
+   },
+   "evidence": [
+    {
+     "path": "app/src/main/java/wallcrawl/elopenmike/com/core/model/UserProfile.kt",
+     "start_line": 6,
+     "end_line": 40
+    }
+   ]
+  },
+  {
+   "id": "catalog",
+   "title": "Exercise catalog",
+   "caption": "302 bundled exercises",
+   "kind": "source",
+   "zone": "z-input",
+   "tag": "ASSET",
+   "frame": {
+    "x": 40,
+    "y": 250,
+    "w": 180,
+    "h": 84
+   },
+   "evidence": [
+    {
+     "path": "app/src/main/java/wallcrawl/elopenmike/com/core/model/Exercise.kt",
+     "start_line": 7,
+     "end_line": 23
+    }
+   ]
+  },
+  {
+   "id": "metadata",
+   "title": "Reviewed metadata",
+   "caption": "182 AI_ACCEPTED, 0 APPROVED",
+   "kind": "source",
+   "zone": "z-input",
+   "tag": "JSON",
+   "frame": {
+    "x": 40,
+    "y": 390,
+    "w": 180,
+    "h": 84
+   },
+   "evidence": [
+    {
+     "path": "tools/workout-guide/reviewed-metadata.json",
+     "start_line": 1,
+     "end_line": 40
+    }
+   ]
+  },
+  {
+   "id": "evidence",
+   "title": "CapabilityEvidence",
+   "caption": "2 manageable sessions",
+   "kind": "process",
+   "zone": "z-context",
+   "tag": "POLICY",
+   "frame": {
+    "x": 280,
+    "y": 110,
+    "w": 180,
+    "h": 84
+   },
+   "evidence": [
+    {
+     "path": "app/src/main/java/wallcrawl/elopenmike/com/core/ai/CapabilityEvidencePolicy.kt",
+     "start_line": 32,
+     "end_line": 60
+    }
+   ]
+  },
+  {
+   "id": "builder",
+   "title": "ContextBuilder",
+   "caption": "One bounded, typed context",
+   "kind": "process",
+   "zone": "z-context",
+   "tag": "BUILD",
+   "frame": {
+    "x": 280,
+    "y": 250,
+    "w": 180,
+    "h": 84
+   },
+   "evidence": [
+    {
+     "path": "app/src/main/java/wallcrawl/elopenmike/com/core/ai/WorkoutGenerationContextBuilder.kt",
+     "start_line": 100,
+     "end_line": 240
+    }
+   ]
+  },
+  {
+   "id": "state",
+   "title": "ProgramState",
+   "caption": "Adaptation state, weekly ledger",
+   "kind": "process",
+   "zone": "z-context",
+   "tag": "POLICY",
+   "frame": {
+    "x": 280,
+    "y": 390,
+    "w": 180,
+    "h": 84
+   },
+   "evidence": [
+    {
+     "path": "app/src/main/java/wallcrawl/elopenmike/com/core/ai/TrainingProgramStateProvider.kt",
+     "start_line": 30,
+     "end_line": 48
+    }
+   ]
+  },
+  {
+   "id": "accepted",
+   "title": "acceptedMetadata()",
+   "caption": "The single review gate",
+   "kind": "control",
+   "zone": "z-gate",
+   "tag": "GATE",
+   "frame": {
+    "x": 520,
+    "y": 110,
+    "w": 180,
+    "h": 84
+   },
+   "evidence": [
+    {
+     "path": "app/src/main/java/wallcrawl/elopenmike/com/core/ai/ReviewedMetadataAcceptance.kt",
+     "start_line": 41,
+     "end_line": 60
+    }
+   ]
+  },
+  {
+   "id": "eligibility",
+   "title": "EligibilityPolicy",
+   "caption": "6 hard stages, typed reasons",
+   "kind": "control",
+   "zone": "z-gate",
+   "tag": "HARD",
+   "frame": {
+    "x": 520,
+    "y": 250,
+    "w": 180,
+    "h": 84
+   },
+   "evidence": [
+    {
+     "path": "app/src/main/java/wallcrawl/elopenmike/com/core/ai/ExerciseEligibilityPolicy.kt",
+     "start_line": 30,
+     "end_line": 122
+    }
+   ]
+  },
+  {
+   "id": "clears",
+   "title": "Joint clearance",
+   "caption": "Clears nothing today",
+   "kind": "control",
+   "zone": "z-gate",
+   "tag": "SEAM",
+   "frame": {
+    "x": 520,
+    "y": 390,
+    "w": 180,
+    "h": 84
+   },
+   "evidence": [
+    {
+     "path": "app/src/main/java/wallcrawl/elopenmike/com/core/model/Exercise.kt",
+     "start_line": 200,
+     "end_line": 213
+    }
+   ]
+  },
+  {
+   "id": "planner",
+   "title": "FakeWorkoutPlanner",
+   "caption": "Split, then ranked selection",
+   "kind": "process",
+   "zone": "z-plan",
+   "tag": "SELECT",
+   "frame": {
+    "x": 760,
+    "y": 110,
+    "w": 180,
+    "h": 84
+   },
+   "evidence": [
+    {
+     "path": "app/src/main/java/wallcrawl/elopenmike/com/core/ai/FakeWorkoutPlanner.kt",
+     "start_line": 42,
+     "end_line": 103
+    }
+   ]
+  },
+  {
+   "id": "factory",
+   "title": "PrescriptionFactory",
+   "caption": "Base dose, progression, deload",
+   "kind": "process",
+   "zone": "z-plan",
+   "tag": "DOSE",
+   "frame": {
+    "x": 760,
+    "y": 250,
+    "w": 180,
+    "h": 84
+   },
+   "evidence": [
+    {
+     "path": "app/src/main/java/wallcrawl/elopenmike/com/core/ai/DefaultExercisePrescriptionFactory.kt",
+     "start_line": 74,
+     "end_line": 120
+    }
+   ]
+  },
+  {
+   "id": "policy",
+   "title": "StateBasedPolicy",
+   "caption": "Caps sets, effort and rest",
+   "kind": "control",
+   "zone": "z-plan",
+   "tag": "CAP",
+   "frame": {
+    "x": 760,
+    "y": 390,
+    "w": 180,
+    "h": 84
+   },
+   "evidence": [
+    {
+     "path": "app/src/main/java/wallcrawl/elopenmike/com/core/ai/StateBasedTrainingPolicy.kt",
+     "start_line": 214,
+     "end_line": 341
+    }
+   ]
+  },
+  {
+   "id": "structural",
+   "title": "GeneratedValidator",
+   "caption": "IDs, types, candidate set",
+   "kind": "control",
+   "zone": "z-valid",
+   "tag": "CHECK",
+   "frame": {
+    "x": 1000,
+    "y": 110,
+    "w": 180,
+    "h": 84
+   },
+   "evidence": [
+    {
+     "path": "app/src/main/java/wallcrawl/elopenmike/com/core/ai/GeneratedWorkoutValidator.kt",
+     "start_line": 1,
+     "end_line": 149
+    }
+   ]
+  },
+  {
+   "id": "validator",
+   "title": "ProgramValidator",
+   "caption": "Typed violations, no writes",
+   "kind": "control",
+   "zone": "z-valid",
+   "tag": "CHECK",
+   "frame": {
+    "x": 1000,
+    "y": 250,
+    "w": 180,
+    "h": 84
+   },
+   "evidence": [
+    {
+     "path": "app/src/main/java/wallcrawl/elopenmike/com/core/ai/ProgramValidator.kt",
+     "start_line": 83,
+     "end_line": 164
+    }
+   ]
+  },
+  {
+   "id": "repair",
+   "title": "Repair pass",
+   "caption": "One pass, sets only",
+   "kind": "process",
+   "zone": "z-valid",
+   "tag": "ONCE",
+   "frame": {
+    "x": 1000,
+    "y": 390,
+    "w": 180,
+    "h": 84
+   },
+   "evidence": [
+    {
+     "path": "app/src/main/java/wallcrawl/elopenmike/com/core/ai/ProgramValidator.kt",
+     "start_line": 638,
+     "end_line": 708
+    }
+   ]
+  },
+  {
+   "id": "identity",
+   "title": "ContextIdentity",
+   "caption": "Digest catches stale plans",
+   "kind": "control",
+   "zone": "z-commit",
+   "tag": "DIGEST",
+   "frame": {
+    "x": 1240,
+    "y": 110,
+    "w": 180,
+    "h": 84
+   },
+   "evidence": [
+    {
+     "path": "app/src/main/java/wallcrawl/elopenmike/com/core/ai/RecommendationContextIdentity.kt",
+     "start_line": 52,
+     "end_line": 70
+    }
+   ]
+  },
+  {
+   "id": "today",
+   "title": "TodayViewModel",
+   "caption": "Publishes plan or typed error",
+   "kind": "view",
+   "zone": "z-commit",
+   "tag": "UI",
+   "frame": {
+    "x": 1240,
+    "y": 250,
+    "w": 180,
+    "h": 84
+   },
+   "evidence": [
+    {
+     "path": "app/src/main/java/wallcrawl/elopenmike/com/feature/today/TodayViewModel.kt",
+     "start_line": 370,
+     "end_line": 429
+    }
+   ]
+  },
+  {
+   "id": "repo",
+   "title": "startWorkout…",
+   "caption": "Frozen session, atomic write",
+   "kind": "store",
+   "zone": "z-commit",
+   "tag": "TXN",
+   "frame": {
+    "x": 1240,
+    "y": 390,
+    "w": 180,
+    "h": 84
+   },
+   "evidence": [
+    {
+     "path": "app/src/main/java/wallcrawl/elopenmike/com/core/database/repository/WorkoutRepository.kt",
+     "start_line": 186,
+     "end_line": 240
+    }
+   ]
+  },
+  {
+   "id": "history",
+   "title": "Completed history",
+   "caption": "Immutable sessions and sets",
+   "kind": "store",
+   "zone": "z-loop",
+   "tag": "ROOM",
+   "frame": {
+    "x": 40,
+    "y": 560,
+    "w": 180,
+    "h": 84
+   },
+   "evidence": [
+    {
+     "path": "app/src/main/java/wallcrawl/elopenmike/com/core/database/repository/WorkoutRepository.kt",
+     "start_line": 73,
+     "end_line": 90
+    }
+   ]
+  },
+  {
+   "id": "pain",
+   "title": "PAIN_STOP",
+   "caption": "Acts like any other stop",
+   "kind": "source",
+   "zone": "z-loop",
+   "tag": "SEAM",
+   "frame": {
+    "x": 760,
+    "y": 540,
+    "w": 180,
+    "h": 68
+   },
+   "evidence": [
+    {
+     "path": "app/src/main/java/wallcrawl/elopenmike/com/core/model/SetOutcome.kt",
+     "start_line": 6,
+     "end_line": 13
+    }
+   ]
+  },
+  {
+   "id": "logging",
+   "title": "logSetCompletion",
+   "caption": "Typed outcome per set",
+   "kind": "process",
+   "zone": "z-loop",
+   "tag": "LOG",
+   "frame": {
+    "x": 1240,
+    "y": 560,
+    "w": 180,
+    "h": 84
+   },
+   "evidence": [
+    {
+     "path": "app/src/main/java/wallcrawl/elopenmike/com/core/database/repository/WorkoutRepository.kt",
+     "start_line": 328,
+     "end_line": 380
+    }
+   ]
+  }
+ ],
+ "flows": [
+  {
+   "id": "f-meta",
+   "source": "metadata",
+   "target": "catalog",
+   "label": "imported",
+   "kind": "data",
+   "source_port": "top",
+   "target_port": "bottom"
+  },
+  {
+   "id": "f-prof",
+   "source": "profile",
+   "target": "builder",
+   "kind": "data",
+   "source_port": "right",
+   "target_port": "left",
+   "target_offset": -14,
+   "via": [
+    [
+     250,
+     152
+    ],
+    [
+     250,
+     278
+    ]
+   ]
+  },
+  {
+   "id": "f-cat",
+   "source": "catalog",
+   "target": "builder",
+   "kind": "data",
+   "source_port": "right",
+   "target_port": "left"
+  },
+  {
+   "id": "f-hist",
+   "source": "history",
+   "target": "builder",
+   "kind": "data",
+   "source_port": "right",
+   "target_port": "left",
+   "source_offset": -14,
+   "target_offset": 14,
+   "via": [
+    [
+     250,
+     588
+    ],
+    [
+     250,
+     306
+    ]
+   ]
+  },
+  {
+   "id": "f-state",
+   "source": "history",
+   "target": "state",
+   "kind": "data",
+   "source_port": "right",
+   "target_port": "bottom",
+   "via": [
+    [
+     370,
+     602
+    ]
+   ]
+  },
+  {
+   "id": "f-ev",
+   "source": "evidence",
+   "target": "builder",
+   "label": "evidence",
+   "kind": "data",
+   "source_port": "bottom",
+   "target_port": "top"
+  },
+  {
+   "id": "f-st",
+   "source": "state",
+   "target": "builder",
+   "label": "state",
+   "kind": "data",
+   "source_port": "top",
+   "target_port": "bottom"
+  },
+  {
+   "id": "f-ctx",
+   "source": "builder",
+   "target": "eligibility",
+   "kind": "data",
+   "source_port": "right",
+   "target_port": "left"
+  },
+  {
+   "id": "f-acc",
+   "source": "accepted",
+   "target": "eligibility",
+   "label": "accepted?",
+   "kind": "data",
+   "source_port": "bottom",
+   "target_port": "top"
+  },
+  {
+   "id": "f-clr",
+   "source": "clears",
+   "target": "eligibility",
+   "label": "cleared?",
+   "kind": "data",
+   "source_port": "top",
+   "target_port": "bottom"
+  },
+  {
+   "id": "f-can",
+   "source": "eligibility",
+   "target": "planner",
+   "kind": "data",
+   "source_port": "right",
+   "target_port": "left",
+   "source_offset": -14,
+   "via": [
+    [
+     730,
+     278
+    ],
+    [
+     730,
+     152
+    ]
+   ]
+  },
+  {
+   "id": "f-sel",
+   "source": "planner",
+   "target": "factory",
+   "label": "picks",
+   "kind": "data",
+   "source_port": "bottom",
+   "target_port": "top"
+  },
+  {
+   "id": "f-cap",
+   "source": "policy",
+   "target": "factory",
+   "label": "limits",
+   "kind": "data",
+   "source_port": "top",
+   "target_port": "bottom"
+  },
+  {
+   "id": "f-prop",
+   "source": "planner",
+   "target": "validator",
+   "kind": "data",
+   "source_port": "right",
+   "target_port": "left",
+   "target_offset": -14,
+   "via": [
+    [
+     970,
+     152
+    ],
+    [
+     970,
+     278
+    ]
+   ]
+  },
+  {
+   "id": "f-str",
+   "source": "structural",
+   "target": "validator",
+   "label": "violations",
+   "kind": "data",
+   "source_port": "bottom",
+   "target_port": "top"
+  },
+  {
+   "id": "f-rep",
+   "source": "validator",
+   "target": "repair",
+   "kind": "data",
+   "source_port": "bottom",
+   "target_port": "top",
+   "source_offset": -50,
+   "target_offset": -50
+  },
+  {
+   "id": "f-ret",
+   "source": "repair",
+   "target": "validator",
+   "kind": "data",
+   "source_port": "top",
+   "target_port": "bottom",
+   "source_offset": 50,
+   "target_offset": 50
+  },
+  {
+   "id": "f-pub",
+   "source": "validator",
+   "target": "today",
+   "kind": "data",
+   "source_port": "right",
+   "target_port": "left"
+  },
+  {
+   "id": "f-id",
+   "source": "identity",
+   "target": "today",
+   "label": "fresh?",
+   "kind": "data",
+   "source_port": "bottom",
+   "target_port": "top"
+  },
+  {
+   "id": "f-start",
+   "source": "today",
+   "target": "repo",
+   "label": "start",
+   "kind": "data",
+   "source_port": "bottom",
+   "target_port": "top"
+  },
+  {
+   "id": "f-log",
+   "source": "repo",
+   "target": "logging",
+   "kind": "data",
+   "source_port": "bottom",
+   "target_port": "top"
+  },
+  {
+   "id": "f-done",
+   "source": "logging",
+   "target": "history",
+   "label": "completed work",
+   "kind": "data",
+   "source_port": "left",
+   "target_port": "right",
+   "source_offset": 14,
+   "target_offset": 14,
+   "label_at": [
+    600,
+    630
+   ]
+  },
+  {
+   "id": "f-pain",
+   "source": "logging",
+   "target": "pain",
+   "kind": "data",
+   "source_port": "left",
+   "target_port": "right",
+   "source_offset": -28,
+   "target_offset": 0
+  }
+ ],
+ "chapters": [
+  {
+   "id": "c1",
+   "label": "1 Gather",
+   "color": "mint",
+   "zones": [
+    "z-input",
+    "z-context"
+   ],
+   "entities": [
+    "profile",
+    "catalog",
+    "metadata",
+    "builder",
+    "evidence",
+    "state"
+   ],
+   "flows": [
+    "f-meta",
+    "f-prof",
+    "f-cat",
+    "f-ev",
+    "f-st"
+   ]
+  },
+  {
+   "id": "c2",
+   "label": "2 Legalize",
+   "color": "amber",
+   "zones": [
+    "z-gate"
+   ],
+   "entities": [
+    "accepted",
+    "eligibility",
+    "clears"
+   ],
+   "flows": [
+    "f-ctx",
+    "f-acc",
+    "f-clr"
+   ]
+  },
+  {
+   "id": "c3",
+   "label": "3 Select",
+   "color": "amber",
+   "zones": [
+    "z-plan"
+   ],
+   "entities": [
+    "planner",
+    "factory",
+    "policy"
+   ],
+   "flows": [
+    "f-can",
+    "f-sel",
+    "f-cap"
+   ]
+  },
+  {
+   "id": "c4",
+   "label": "4 Validate",
+   "color": "amber",
+   "zones": [
+    "z-valid"
+   ],
+   "entities": [
+    "structural",
+    "validator",
+    "repair"
+   ],
+   "flows": [
+    "f-prop",
+    "f-str",
+    "f-rep",
+    "f-ret"
+   ]
+  },
+  {
+   "id": "c5",
+   "label": "5 Start",
+   "color": "mint",
+   "zones": [
+    "z-commit"
+   ],
+   "entities": [
+    "identity",
+    "today",
+    "repo"
+   ],
+   "flows": [
+    "f-pub",
+    "f-id",
+    "f-start"
+   ]
+  },
+  {
+   "id": "c6",
+   "label": "6 Feed back",
+   "color": "mint",
+   "zones": [
+    "z-loop"
+   ],
+   "entities": [
+    "logging",
+    "history",
+    "pain"
+   ],
+   "flows": [
+    "f-log",
+    "f-done",
+    "f-pain",
+    "f-hist",
+    "f-state"
+   ]
+  }
+ ]
+}
