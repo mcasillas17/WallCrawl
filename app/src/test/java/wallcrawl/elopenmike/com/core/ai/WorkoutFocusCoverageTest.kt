@@ -34,6 +34,15 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSplit
  */
 class WorkoutFocusCoverageTest {
 
+    @Test fun supportiveMusclesNeverAdvertiseOrdinaryFocus() = runTest {
+        val context = ConditionPlannerFixtures.context()
+        val workout = FakeWorkoutPlanner().generateWorkout(context)
+        assertThat(workout.exercises.map { it.exerciseId }).contains("supportive")
+        assertThat(workout.focusMuscles).containsExactly(StandardMuscles.CHEST)
+        assertThat(workout.title.split.trainsAsFocus(ConditionPlannerFixtures.ordinary)).isTrue()
+    }
+
+
     private val factory = PlannerFixtureContextFactory()
     private val catalog = factory.bundledCatalogProjection().exercises
 

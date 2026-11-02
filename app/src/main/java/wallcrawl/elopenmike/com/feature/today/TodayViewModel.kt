@@ -503,6 +503,7 @@ class TodayViewModel(
             WorkoutPlanningFailure.NO_CANDIDATES_FOR_ANY_SPLIT ->
                 TodayError.NO_CANDIDATES_FOR_ANY_SPLIT
 
+            WorkoutPlanningFailure.CONDITION_REQUIREMENTS_UNSATISFIED,
             null ->
                 if (isRegeneration) {
                     TodayError.REGENERATION_FAILED

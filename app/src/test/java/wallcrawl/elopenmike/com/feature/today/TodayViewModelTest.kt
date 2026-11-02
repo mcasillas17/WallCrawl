@@ -58,6 +58,26 @@ import wallcrawl.elopenmike.com.test.MainDispatcherRule
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class TodayViewModelTest {
+    @Test fun conditionGenerationFailureUsesExistingLocalizedErrorFlow() = runTest {
+        val now = 20 * DAY_MILLIS
+        val profileRepository = TodayUserProfileRepository(UserProfile(availableEquipment = StandardEquipment.ALL))
+        val workoutRepository = TodayWorkoutRepository(emptyList())
+        val catalog = InMemoryExerciseCatalog()
+        val planner = object : WorkoutPlanner {
+            override suspend fun generateWorkout(context: WorkoutGenerationContext): GeneratedWorkout =
+                throw wallcrawl.elopenmike.com.core.ai.WorkoutValidationException("condition",
+                    wallcrawl.elopenmike.com.core.ai.WorkoutPlanningFailure.CONDITION_REQUIREMENTS_UNSATISFIED,
+                    conditionReasons = listOf(wallcrawl.elopenmike.com.core.model.ConditionViolation("insufficient-duration", setOf("fictional"))))
+        }
+        val viewModel = TodayViewModel(profileRepository, workoutRepository,
+            WorkoutGenerationContextBuilder(profileRepository, workoutRepository, catalog, ExerciseFilter(), WorkoutHistoryAnalyzer(), nowTimestamp = { now }),
+            planner, ProgramValidator(GeneratedWorkoutValidator(catalog)), nowTimestamp = { now }, clock = flowOf(now))
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        advanceUntilIdle()
+        assertThat((viewModel.uiState.value as TodayUiState.Error).error).isEqualTo(TodayError.FIRST_GENERATION_FAILED)
+        assertThat(workoutRepository.startRequests).isEmpty()
+    }
+
     @Test
     fun startWorkout_revalidatesTheProposalEvenWhenContextIdentityMatches() = runTest {
         val now = 20 * DAY_MILLIS
