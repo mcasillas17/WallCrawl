@@ -57,8 +57,8 @@ WallCrawl supports **Dark Theme** (stealth suit graphite aesthetic), **Light The
 
 - **Today Recommendation**: Offline planner-generated routine tailored to equipment and training goals, with instant regeneration and custom routine shortcuts.
 - **My Workouts & Templates**: Manage and launch saved custom routines with total sets, exercise counts, and quick-start actions.
-- **Custom Workout Builder**: Interactive routine editor with full 302-exercise bottom sheet picker, move controls for ordering, type-aware editing of every prescription target, unit-safe loads, and unsaved drafts recovered after configuration change or background process death.
-- **Exercise Library**: Searchable catalog of 302 exercises across all muscle groups and equipment types.
+- **Custom Workout Builder**: Interactive routine editor with full 306-exercise bottom sheet picker, move controls for ordering, type-aware editing of every prescription target, unit-safe loads, and unsaved drafts recovered after configuration change or background process death.
+- **Exercise Library**: Searchable catalog of 306 exercises across all muscle groups and equipment types.
 - **Active Workout Session**: Type-aware logging for load/reps, bodyweight reps, assisted reps, duration, and distance/duration, with one-tap set completion, plus/minus and text entry for every value, a local rest countdown, optional RPE/RIR, animated SVG movement previews, and previous performance comparisons.
 - **Workout Summary**: The existing Finish flow shows recorded duration, external-load volume, completed sets, and records against genuinely earlier performance. View workout details opens the read-only record; Done returns to Progress.
 - **Progress Tracking & History**: Calendar-week activity and separately labelled reviewed dose, weekly streaks, and strength trends, plus an Over time card that charts 4–52 calendar weeks for all exercises, one exercise or one muscle, whose week rows list the workouts behind each week and whose data points open their workout. Tap a completed-workout card to reopen its frozen targets, performed sets, feedback and recorded decision reasons. View all workouts browses older sessions in fixed 20-workout pages.
@@ -268,7 +268,7 @@ how to add a string, an exercise, or a language.
   is deliberately never translated, the exercise-translation overlay and its
   stable-ID boundary, number and input formatting, and how to add a string, an
   exercise, or a language without translation drift.
-- [Planner evaluation](docs/planner-evaluation.md) documents the versioned fourteen-persona
+- [Planner evaluation](docs/planner-evaluation.md) documents the versioned 23-persona
   corpus, strict fixture validation, deterministic replay, the weekly ledger the
   reviewed-enabled personas' weeks are reconstructed through, the whole-program validation of
   every persona that produces a proposal, the asserted planner invariants, and which release
@@ -330,7 +330,7 @@ Bundled catalog ─────────┤  profile + bounded history
                          │  hard filter → WorkoutPlanner → validator
                          │
                          └─ manual template
-                            all 302 exercises → local template
+                            all 306 exercises → local template
                                           │
                                           ▼
                               transactional active session
@@ -367,7 +367,7 @@ gym never adds them**. A band, wall, doorway or chair does not establish an
 anchor. The seated band pulldown additionally requires Chair. The source row's
 off-image anchor remains unresolved and is excluded from automatic workouts.
 
-Unanchored band work remains available. All 302 exercises remain browseable and
+Unanchored band work remains available. All 306 exercises remain browseable and
 manually selectable, with accurate missing-equipment or unresolved-setup warnings.
 Existing profiles and archives acquire no new selections; new confirmations use
 the existing canonical equipment list and export/restore format. Older clients
@@ -859,7 +859,7 @@ its failure reasons, whether a session's advertised focus is one its exercises
 actually train, the muscle vocabulary and the shipped catalog's conformance
 to it, generated-workout and whole-program validation, template validation, atomic
 persistence boundaries, progress and personal-record calculations, attribution loading,
-Today state, duration calculation, and visual-provider mapping. The fourteen-persona planner
+Today state, duration calculation, and visual-provider mapping. The 23-persona planner
 corpus runs inside it, reconstructing the reviewed-enabled personas' training weeks with the
 shipped weekly ledger and validating the complete proposal behind every successful persona.
 Android instrumentation also validates every supported database migration chain through
@@ -958,3 +958,14 @@ current drafts whose continuity corrections remain for a later iteration.
 </p>
 
 See [artwork packaging, provenance, and known limitations](docs/exercise-illustration-variants.md).
+
+### Condition-aware planning
+
+The condition engine, typed refusals, atomic starts/pain stops, reassessment and
+English/Spanish presentation are implemented. **Zero conditions are released**:
+all 50 research candidates await qualified clinical review. The 187 distinct
+sources and their access limits do not establish clinical authorization. Four
+neutral catalog additions bring browsing to 306 exercises; eight PNG masters
+remain retained, and 15 other pose candidates remain research-only. See
+[condition-aware workouts](docs/condition-aware-workouts.md) for exact behavior,
+fixture contracts, source/art provenance, verification commands and limits.

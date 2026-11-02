@@ -383,3 +383,12 @@ not erase/reset a shared device or run destructive restore scripts on real data.
 - [Testing backup and transfer](https://developer.android.com/identity/data/testingbackup)
 
 Condition selections (which may reveal diagnoses), session context and pending reassessments are stored locally. A user-selected export includes these details in readable form; deleting local data removes them from the device but does not delete previously exported files.
+
+Frozen session context includes selected answers, exact support/execution/policy
+identities and instructions. Pending reassessment events remain after condition
+removal, workout cancellation or source-set deletion; only explicit exact-event
+reassessment clears them. These records and prescription purpose round-trip in
+the versioned local archive and are removed by Delete all local data. Restore
+still requires an empty destination and applies atomically; it does not silently
+merge, discard unknown facts or grant clearance. No new network service, telemetry
+or background upload was introduced. See [condition-aware behavior](condition-aware-workouts.md).

@@ -1,6 +1,6 @@
 # Exercise illustration variants
 
-WallCrawl bundles 906 female and 906 male SVGs, covering the same 302 exercises as
+The historical WallCrawl bundle has 906 female and 906 male SVGs, covering the same 302 exercises as
 the [pinned source catalog](../tools/workout-guide/import-config.json). Each is a byte-for-byte copy of the selected
 SVG selected by the ledgers in `art/pilots/female-exercises/catalog` or
 `male-catalog`, including the retained animation-correction batches.
@@ -106,3 +106,20 @@ preview; there is no setter in the UI or repository, and artwork selection ignor
 it. Archive format 3 round-trips those legacy values without changing their checksums.
 Formats 1 and 2 remain readable with their original canonical checksums and receive
 unspecified gender. Newer unknown archive versions are rejected.
+
+## Four neutral condition-research additions
+
+The historical 302-exercise set above remains unchanged. Four authored neutral
+entries add 24 held SVG slots (both variants × three slots), for 306 illustrated
+exercises and 1,836 adapted app SVG files. Eight unique PNG masters remain under
+`art/condition-exercises/<id>/{male,female}/masters/`; they are deliverables, not
+discarded intermediates. Fifteen further pose candidates remain research-only.
+
+See [selected sources, per-pose limitations and reproduction](art/condition-exercises.md)
+and [integration verification](condition-aware-workouts.md). The three selected
+slots per variant are identical holds, so playback does not imply motion or side
+alternation. Existing real app-size captures cover all eight variants; production
+Spanish detail recreation and Close-action readability are separately verified.
+The clone-safe `package_illustrations.py --check-bundled` validates current shipped
+bytes; retained-ledger validation additionally checks actual PNG/source/trace
+lineage. No art or source revision inherits clinical approval.

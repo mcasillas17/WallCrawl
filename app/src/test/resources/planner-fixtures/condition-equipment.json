@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "id": "condition-equipment",
+  "policyVersion": 4,
+  "catalogVersion": "ba0b709cb20430361b2cb33aaadd20998164a916",
+  "profile": {
+    "goals": [
+      "GENERAL_FITNESS",
+      "BUILD_MUSCLE"
+    ],
+    "experienceLevel": "BEGINNER",
+    "preferredDurationMinutes": 35,
+    "daysPerWeek": 3,
+    "availableEquipment": [
+      "Bodyweight"
+    ],
+    "preferredUnit": "LBS",
+    "musclePriorities": {
+      "Chest": "HIGH",
+      "Core": "NORMAL"
+    },
+    "excludedExerciseIds": [],
+    "trainingConstraints": [],
+    "returningAfterBreakWeeks": 0,
+    "confirmedStartingLoads": {},
+    "movementCapabilities": {
+      "IMPACT": "COMFORTABLE"
+    }
+  },
+  "completedWorkoutCount": 2,
+  "exerciseHistory": [],
+  "reviewedEligibility": {
+    "adaptationState": "BUILD",
+    "syntheticApprovedExerciseIds": [
+      "push-up",
+      "knee-push-up",
+      "bodyweight-squat",
+      "glute-bridge"
+    ]
+  },
+  "expected": {
+    "outcome": "CONDITION_REQUIREMENTS_UNSATISFIED",
+    "requiredExerciseIds": [],
+    "forbiddenExerciseIds": [],
+    "conditionReasons": [
+      {
+        "reason": "support-restricted",
+        "conditionIds": [
+          "fictional-condition"
+        ],
+        "exerciseIds": [
+          "butterfly-stretch"
+        ]
+      }
+    ],
+    "prescriptions": {}
+  },
+  "conditions": {
+    "supportVariant": "REQUIRES_EQUIPMENT",
+    "selections": [
+      {
+        "conditionId": "fictional-condition",
+        "contextSchemaVersion": 1,
+        "answers": {
+          "stage": "stable"
+        }
+      }
+    ],
+    "pending": false
+  }
+}

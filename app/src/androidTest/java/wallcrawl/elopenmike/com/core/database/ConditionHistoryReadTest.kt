@@ -97,6 +97,11 @@ class ConditionHistoryReadTest {
             SELECT 'set-' || x, 'exercise-many', 1, 'DURATION', 1, $now, 'NORMAL' FROM n""")
         assertEquals(2, db.workoutSessionDao().conditionOutcomeProbe(listOf("fictional-exercise"), now - 100, 2).size)
         assertFalse(read().history.complete)
+        db.openHelper.writableDatabase.execSQL("DELETE FROM workout_sets WHERE id = 'outcome-many'")
+        val exactLimit = read().history
+        assertTrue(exactLimit.complete)
+        assertEquals(ConditionHistoryDao.MAX_CONDITION_OUTCOMES, exactLimit.exposures.size)
+        assertEquals(64, exactLimit.sourceDigest.length)
     }
     @Test fun profileRevisionProgramProjectionAndPendingRowsShareOneTransaction() = runBlocking {
         db.conditionReassessmentDao().replace(marker(0))

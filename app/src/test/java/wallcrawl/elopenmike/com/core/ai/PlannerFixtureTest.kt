@@ -2,6 +2,8 @@ package wallcrawl.elopenmike.com.core.ai
 
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
+import wallcrawl.elopenmike.com.core.model.ConditionPlanningResult
+import wallcrawl.elopenmike.com.core.model.PrescriptionPurpose
 import java.util.UUID
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
@@ -75,6 +77,18 @@ class PlannerFixtureTest {
     private fun corpus(): List<PlannerFixture> = SharedPlannerFixtureHarness.corpus
 
     @Test
+    fun conditionDurationFixtureReservesTheEntireExactSupportDose() {
+        val built = SharedPlannerFixtureHarness.contextFactory.create(corpus().single { it.id == "condition-duration" })
+        val ready = built.context.conditionPlanning as ConditionPlanningResult.Ready
+        val support = ready.supportive.single()
+        assertThat(support.prescription).isEqualTo(ExercisePrescription(ExerciseType.DURATION, 2,
+            targetDurationSeconds = 1800, restSeconds = 17, purpose = PrescriptionPurpose.SUPPORTIVE))
+        val planned = wallcrawl.elopenmike.com.core.model.PlannedExercise(support.exerciseId, support.prescription)
+        assertThat(WorkoutDurationEstimator.estimateSeconds(listOf(planned))).isEqualTo(3634L)
+        assertThat(built.context.preferredWorkoutDurationMinutes).isEqualTo(35)
+    }
+
+    @Test
     fun evaluateCorpus_runsEveryPlannerFixture() = runTest {
         val evaluations = SHARED_CORPUS_EVALUATIONS
 
@@ -92,7 +106,16 @@ class PlannerFixtureTest {
             "reviewed-enabled-no-approved",
             "reviewed-enabled-uncleared-joint-constraint",
             "reviewed-enabled-cleared-joint-constraints",
-            "concurrent-activity"
+            "concurrent-activity",
+            "condition-released",
+            "condition-compatible",
+            "condition-incompatible",
+            "condition-missing-context",
+            "condition-withdrawn",
+            "condition-duration",
+            "condition-equipment",
+            "condition-pain-stop",
+            "condition-removed-pain-stop"
         )
     }
 
@@ -581,7 +604,7 @@ class PlannerFixtureTest {
     fun corpusMetadata_usesSupportedVersionsAndBoundedHistory() {
         val fixtures = corpus()
 
-        assertThat(fixtures).hasSize(14)
+        assertThat(fixtures).hasSize(23)
         fixtures.forEach { fixture ->
             assertThat(fixture.schemaVersion).isEqualTo(1)
             assertThat(fixture.policyVersion).isEqualTo(4)
@@ -813,7 +836,10 @@ class PlannerFixtureTest {
         val excludedIds = evaluation.built.userProfile.excludedExerciseIds.toSet()
 
         assertThat(selectedIds).isNotEmpty()
-        assertThat(allowedIds.containsAll(selectedIds)).isTrue()
+        val ready = evaluation.built.context.conditionPlanning as? ConditionPlanningResult.Ready
+        val supportiveIds = ready?.supportive.orEmpty().map { it.exerciseId }.toSet()
+        assertThat((allowedIds + supportiveIds).containsAll(selectedIds)).isTrue()
+        assertThat(allowedIds.intersect(supportiveIds)).isEmpty()
         assertThat(filteredIds.containsAll(selectedIds)).isTrue()
         assertThat(excludedIds.intersect(selectedIds.toSet())).isEmpty()
 
@@ -832,6 +858,25 @@ class PlannerFixtureTest {
                 .that(selectedIds.any { it in group }).isTrue()
         }
 
+        evaluation.built.fixture.expected.prescriptions.forEach { (id, dose) ->
+            assertThat(normalizedFirst.exercises.single { it.exerciseId == id }.prescription).isEqualTo(dose)
+        }
+        if (ready != null) {
+            assertThat(ready.supportive.single().sourceRuleReferences.map { it.conditionId }.toSet())
+                .isEqualTo(evaluation.built.userProfile.activeConditions.map { it.conditionId }.toSet())
+            val snapshot = evaluation.firstValidation.displayed.acceptedSnapshot
+            assertThat(snapshot.conditionContext).isSameInstanceAs(ready.context)
+            assertThat(snapshot.asRecord("fixture", evaluation.built.context.conditionHistory!!.asOfTimestamp).conditionContextDigest)
+                .isEqualTo(ready.context.canonicalDigest)
+            assertThat(snapshot.progression.map { it.exerciseId }.toSet())
+                .isEqualTo(normalizedFirst.exercises.filter { it.prescription.purpose == PrescriptionPurpose.ORDINARY }.map { it.exerciseId }.toSet())
+            assertThat(snapshot.doseAccounting.map { it.muscle }).doesNotContain(StandardMuscles.ADDUCTORS)
+            assertThat(snapshot.doseAccounting.sumOf { it.proposedSets }).isEqualTo(
+                normalizedFirst.exercises.filter { it.prescription.purpose == PrescriptionPurpose.ORDINARY }.sumOf { it.targetSets })
+        } else {
+            assertThat(evaluation.built.context.conditionPlanning).isEqualTo(ConditionPlanningResult.NotApplicable)
+            assertThat(normalizedFirst.exercises.all { it.prescription.purpose == PrescriptionPurpose.ORDINARY }).isTrue()
+        }
         val expectedTargetWeights = readExpectedTargetWeights(evaluation.built.fixture.expected)
         expectedTargetWeights.forEach { (exerciseId, expectedWeight) ->
             val generated = normalizedFirst.exercises.singleOrNull { it.exerciseId == exerciseId }
@@ -863,7 +908,11 @@ class PlannerFixtureTest {
 
         normalizedFirst.exercises.forEach { generated ->
             val catalogExercise = checkNotNull(catalogById[generated.exerciseId])
-            val expectedPrescription = prescriptionFactory.create(catalogExercise, evaluation.built.context)
+            val expectedPrescription = evaluation.built.fixture.expected.prescriptions[generated.exerciseId]
+                ?: prescriptionFactory.create(catalogExercise, evaluation.built.context)
+            if (ready != null && generated.exerciseId !in supportiveIds) {
+                assertThat(generated.prescription).isEqualTo(evaluation.built.fixture.expected.ordinaryDose)
+            }
 
             assertThat(generated.prescription.exerciseType).isEqualTo(catalogExercise.type)
             assertThat(
@@ -924,6 +973,7 @@ class PlannerFixtureTest {
     private fun assertFailureFixture(evaluation: PlannerFixtureFailureEvaluation) {
         val expectedFailure = when (evaluation.built.fixture.expected.outcome) {
             PlannerFixtureOutcome.SUCCESS -> error("Expected failure fixture but found success")
+            PlannerFixtureOutcome.CONDITION_REQUIREMENTS_UNSATISFIED -> WorkoutPlanningFailure.CONDITION_REQUIREMENTS_UNSATISFIED
             PlannerFixtureOutcome.NO_CANDIDATES -> WorkoutPlanningFailure.NO_CANDIDATES
             PlannerFixtureOutcome.NO_STRENGTH_CANDIDATES ->
                 WorkoutPlanningFailure.NO_STRENGTH_CANDIDATES
@@ -933,6 +983,8 @@ class PlannerFixtureTest {
                 WorkoutPlanningFailure.REVIEWED_ELIGIBILITY_NO_CANDIDATES
         }
 
+        assertThat(evaluation.firstConditionReasons).isEqualTo(evaluation.built.fixture.expected.conditionReasons)
+        assertThat(evaluation.secondConditionReasons).isEqualTo(evaluation.built.fixture.expected.conditionReasons)
         assertThat(evaluation.firstFailure).isEqualTo(expectedFailure)
         assertThat(evaluation.secondFailure).isEqualTo(expectedFailure)
         assertThat(evaluation.firstAutomaticEligibilityFailure)

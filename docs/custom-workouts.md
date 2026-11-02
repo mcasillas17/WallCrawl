@@ -261,8 +261,8 @@ exercises, every note filled to its length limit with characters that take two U
 units (such as an emoji), every number field, remembered pre-switch value and original
 rest at the most characters a field keeps (one more than a valid number can have), an
 exercise id longer than the catalog allows, and a recorded rest choice on every row. It
-came to 152 112 bytes, under a sixth of the 1 MiB Android allows a whole task's saved
-state. An instrumented test prints the measurement on every run, fails if it grows past
+came to 153 132 bytes with SUPPORTIVE purpose on every row (API 37), under a sixth
+of the 1 MiB Android allows a whole task's saved state. An instrumented test prints the measurement on every run, fails if it grows past
 that figure, and keeps it under a quarter.
 
 Back from an open exercise picker or an untouched edit sheet closes it first. Once you

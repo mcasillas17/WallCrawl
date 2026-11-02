@@ -72,6 +72,8 @@ class ConditionStartPersistenceTest {
         now += 1_000
         val session = start(plan)
         assertEquals(frozen, session.conditionContext)
+        assertEquals(plan.workout.exercises.map { it.prescription }, session.exercises.map { it.prescription })
+        assertEquals(fixture.dose, session.exercises.single { it.exerciseId == fixture.supportive.id }.prescription)
         assertEquals(frozen.canonicalDigest, db.workoutSessionDao().getRecommendationRecord(session.id)!!.conditionContextDigest)
         assertEquals(fixture.now, session.conditionContext!!.consumedScheduleEvidence.first().checkedAtTimestamp)
     }
@@ -94,6 +96,7 @@ class ConditionStartPersistenceTest {
         }))) refused { workouts.startWorkoutFromTemplate(invalid, profiles.getProfileOnce()) }
         val session = workouts.startWorkoutFromTemplate(template, profiles.getProfileOnce())
         assertNotNull(session.conditionContext)
+        assertEquals(fixture.dose, session.exercises.single { it.exerciseId == fixture.supportive.id }.prescription)
         assertNull(db.workoutSessionDao().getRecommendationRecord(session.id))
         assertEquals(template.exercises.map { it.prescription }, session.exercises.map { it.prescription })
     }
@@ -149,6 +152,8 @@ class ConditionStartPersistenceTest {
         val session = start(plan)
         assertNotNull(db.programDao().getProgramAssociation(session.id))
         assertEquals(plan.snapshot.conditionContext, session.conditionContext)
+        assertEquals(plan.workout.exercises.map { it.prescription }, session.exercises.map { it.prescription })
+        assertEquals(fixture.dose, session.exercises.single { it.exerciseId == fixture.supportive.id }.prescription)
         workouts.cancelWorkout(session.id)
         assertEquals(0, (programs.get() as ProgramReadState.Supported).progress.completedSlots)
     }

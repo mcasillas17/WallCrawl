@@ -461,7 +461,7 @@ recommendation snapshots, validation policies and planner behavior are unchanged
 
 ### 6. Complete the deterministic corpus and CI release gate
 
-**Status:** Complete. The authoritative manifest holds fourteen personas: Package 6 shipped
+**Status:** Complete. The original fourteen-persona subset is retained in the current 23-persona manifest: Package 6 shipped
 twelve, and Package 7 preparation added the two joint-restriction personas. Reviewed-enabled
 personas compose their week through the production weekly ledger, every successful persona's
 proposal is validated as a complete program, and CI runs that corpus alongside the real pinned-upstream
@@ -901,7 +901,7 @@ substitution choices.
    converts into the profile unit without touching the template. Archive 6 carries the
    unit; formats 1–5 restore as unknown.
 4. Drafts recover through `SavedStateHandle` across configuration change and
-   system-initiated process death, measured above the supported limits (152 112 bytes),
+   system-initiated process death, measured above the supported limits (153 132 bytes),
    never overwritten by late loading. They do not survive force-stop, task removal,
    reboot or uninstall. Discard confirmation covers toolbar and system back after any
    open picker or sheet closes; saves keep one identity, refuse edits in flight, and
@@ -1260,3 +1260,18 @@ Update status from repository evidence, not unchecked historical plan steps. Whe
    are understood.
 6. Keep exact filenames out of unresolved designs; use stable package or contract boundaries
    until a reviewed design chooses the persistence/UI shape.
+
+## Condition-aware integration (November 2026)
+
+The offline condition engine, purpose-specific dose accounting, frozen context,
+atomic generated/manual/program starts, pain-stop reassessment ownership and
+English/Spanish controls are implemented. The planner corpus now has 23 personas,
+retaining all 14 historical inputs and adding nine clearly fictional scenarios.
+The [integration contract](docs/condition-aware-workouts.md) maps each scenario to
+the existing planner, lifecycle and Room suites.
+
+Clinical content release remains outstanding: **0 released conditions**, 50
+research dossiers, 187 distinct sources with explicit access limits. Four neutral
+catalog/art additions are available; their PNG masters are retained. Fifteen other
+pose candidates remain research-only/unsettled. No real condition is authorized by
+a passing software test, strength metadata acceptance or AI artwork/source review.

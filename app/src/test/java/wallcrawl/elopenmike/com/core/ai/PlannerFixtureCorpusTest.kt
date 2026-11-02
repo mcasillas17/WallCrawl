@@ -39,9 +39,18 @@ class PlannerFixtureCorpusTest {
             "reviewed-enabled-no-approved",
             "reviewed-enabled-uncleared-joint-constraint",
             "reviewed-enabled-cleared-joint-constraints",
-            "concurrent-activity"
+            "concurrent-activity",
+            "condition-released",
+            "condition-compatible",
+            "condition-incompatible",
+            "condition-missing-context",
+            "condition-withdrawn",
+            "condition-duration",
+            "condition-equipment",
+            "condition-pain-stop",
+            "condition-removed-pain-stop"
         ).inOrder()
-        assertThat(fixtures.map { it.id }.distinct()).hasSize(14)
+        assertThat(fixtures.map { it.id }.distinct()).hasSize(23)
     }
 
     @Test

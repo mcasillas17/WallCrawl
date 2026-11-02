@@ -50,6 +50,22 @@ class PackagingTest(unittest.TestCase):
         shutil.copytree(shipped / 'exercise-illustrations', self.destination)
         shutil.copytree(shipped / 'wallcrawl', self.assets / 'wallcrawl')
         shutil.copytree(shipped / 'workout-guide', self.assets / 'workout-guide')
+        # Each artificial supplement starts from the historical bundle, even after real additions ship.
+        catalog_path = self.assets / 'wallcrawl/catalog.json'
+        catalog = json.loads(catalog_path.read_text())
+        index_path = self.destination / 'index.json'
+        index = json.loads(index_path.read_text())
+        for exercise in catalog['exercises']:
+            for frames in index['exercises'].pop(exercise['id']).values():
+                for frame in frames:
+                    (self.assets / frame).unlink()
+        catalog['exercises'] = []
+        catalog_path.write_text(json.dumps(catalog))
+        index_path.write_text(json.dumps(index))
+        provenance_path = self.assets / 'wallcrawl/illustration-provenance.json'
+        provenance = json.loads(provenance_path.read_text())
+        provenance['frames'] = []
+        provenance_path.write_text(json.dumps(provenance))
         self.patch = patch.object(p, 'ROOT', self.root)
         self.patch.start()
         self.addCleanup(self.patch.stop)

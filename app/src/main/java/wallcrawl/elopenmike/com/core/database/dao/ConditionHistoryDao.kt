@@ -3,6 +3,7 @@ package wallcrawl.elopenmike.com.core.database.dao
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
+import java.security.MessageDigest
 import java.time.DayOfWeek
 import java.time.Instant
 import java.time.ZoneId
@@ -27,6 +28,18 @@ data class ConditionOutcomeRow(val setId: String, val sessionId: String, val exe
         !isCompleted && completedAtTimestamp == null && stoppedAtTimestamp != null && SetStopReason.entries.any { it.name == stopReason } -> stoppedAtTimestamp
         else -> null
     })?.takeIf { sessionStartedAtTimestamp > 0 && it >= sessionStartedAtTimestamp }
+}
+
+/** Same canonical array bytes without retaining 100,000 row strings and a joined JSON copy. */
+internal fun conditionOutcomeDigest(rows: Sequence<ConditionOutcomeRow>): String {
+    val digest = MessageDigest.getInstance("SHA-256")
+    digest.update('['.code.toByte())
+    rows.forEachIndexed { index, row ->
+        if (index > 0) digest.update(','.code.toByte())
+        digest.update(conditionCanonicalJson(row.toString()).toByteArray(Charsets.UTF_8))
+    }
+    digest.update(']'.code.toByte())
+    return digest.digest().joinToString("") { "%02x".format(it) }
 }
 
 /** Direct bounded projections: no parent status filter, relation graphs, or inferred event times. */
@@ -85,7 +98,7 @@ interface ConditionHistoryDao : ProgramDao {
             outcomes.all { it.timestamp()?.let { timestamp -> timestamp in start..asOf } == true }
         val exposures = outcomes.take(MAX_CONDITION_OUTCOMES).mapNotNull { row -> row.timestamp()?.takeIf { it in start..asOf }?.let { ConditionExposure(row.sessionId, row.exerciseId, it) } }
         return ConditionContextRead(profile, program, header, ConditionHistory(asOf, zone, start, complete, exposures, markers.take(MAX_CONDITION_MARKERS).map { it.toModel() },
-            sourceFactsDigest = conditionDigest(outcomes.take(MAX_CONDITION_OUTCOMES).map { it.toString() })))
+            sourceFactsDigest = conditionOutcomeDigest(outcomes.asSequence().take(MAX_CONDITION_OUTCOMES))))
     }
 
     companion object {

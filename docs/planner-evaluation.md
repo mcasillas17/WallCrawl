@@ -33,7 +33,7 @@ stale starts, passive-refresh invariance and interim unit binding.
 `DeloadPersistenceTest`, `DeloadDiskPersistenceTest`,
 `LocalDataArchiveDeloadTest`, `LocalDataArchiveProgressionTest`,
 `Migration13To14Test` and `TodayDeloadScreenTest` extend real Android evidence.
-The authoritative manifest remains fourteen personas; these focused scenarios
+The authoritative manifest now has 23 personas; these earlier focused scenarios
 are not synthetic promotion of the bundled catalog or new automatic eligibility.
 
 Every persona whose replay produces a proposal is now also validated as a complete program.
@@ -209,7 +209,7 @@ Full packaged catalog validity remains the responsibility of the dedicated impor
 
 ## Persona coverage
 
-The manifest currently contains fourteen fixtures:
+The manifest retains these fourteen historical fixtures, followed by nine condition fixtures described below:
 
 1. `bodyweight-beginner` — conservative curated bodyweight beginner subset (`push-up`, `knee-push-up`, `bodyweight-squat`, `dead-bug`) requiring at least one beginner push variant.
 2. `band-only` — resistance-band-only coverage after the fixed-anchor gate: `banded-dead-bug` is required, and cable-only pull work is excluded by the real filter alongside every anchor-dependent band variation, `banded-row` included.
@@ -279,8 +279,8 @@ Each replay attempt uses a fresh `FakeWorkoutPlanner`. That is intentional: the 
 The corpus suite asserts:
 
 - deterministic output equality across two fresh replays, normalized only for the generated workout ID;
-- fixture schema and evaluator support all current typed planner failures (`NO_CANDIDATES`, `NO_STRENGTH_CANDIDATES`, `NO_CANDIDATES_FOR_ANY_SPLIT`, `REVIEWED_ELIGIBILITY_NO_CANDIDATES`) and the reviewed failure's typed aggregate cause;
-- the committed fourteen-fixture manifest exercises `NO_STRENGTH_CANDIDATES` and `REVIEWED_ELIGIBILITY_NO_CANDIDATES`; focused planner tests cover `NO_CANDIDATES` and `NO_CANDIDATES_FOR_ANY_SPLIT`;
+- fixture schema and evaluator support all current typed planner failures (`NO_CANDIDATES`, `NO_STRENGTH_CANDIDATES`, `NO_CANDIDATES_FOR_ANY_SPLIT`, `REVIEWED_ELIGIBILITY_NO_CANDIDATES`, `CONDITION_REQUIREMENTS_UNSATISFIED`) and the reviewed/condition failures' typed causes;
+- the historical fourteen-fixture subset exercises `NO_STRENGTH_CANDIDATES` and `REVIEWED_ELIGIBILITY_NO_CANDIDATES`; focused planner tests cover `NO_CANDIDATES` and `NO_CANDIDATES_FOR_ANY_SPLIT`;
 - legality of every selected exercise against the bundled catalog, the real filter result, and any curated allowed-ID subset;
 - non-mutation of the full `WorkoutGenerationContext` input;
 - type-valid prescriptions and no-invented-load behavior through the real prescription factory;
@@ -603,3 +603,20 @@ change, which is why `reviewedEligibility`, `requiredAnyExerciseIdGroups`,
 arrived under `schemaVersion` 1. Both fixture versions are independent of the runtime
 training, ledger, catalog, reviewed-metadata, Room and archive versions; changing one of
 those is never a reason to move either of these.
+
+## Condition integration corpus
+
+The manifest contains **23** personas. The nine `condition-*` resources extend the
+existing strict bounded loader, projected catalog, evaluator and replay assertions.
+The original 14 JSON inputs are unchanged. The optional descriptor selects only
+fictional support variants and bounded explicit answers/pending state; every
+record is built against the actual projected exercise identity. Exact expected
+ordinary/supportive prescriptions and typed refusal reasons/affected IDs are
+asserted alongside raw validation, frozen receipt identity and purpose separation.
+No supplemental parser, clinical promotion or second lifecycle simulator is used.
+
+The [scenario table](condition-aware-workouts.md#integration-scenarios) identifies
+the generation fixtures and the existing transactional/manual/program suites.
+The corpus and condition-start Room fixtures share a fictional dose; parser assets
+use a distinct fictional dose. Neither is a therapeutic recommendation. `src/test/resources` is already a Gradle test
+input; no new undeclared filesystem dependency is introduced.
