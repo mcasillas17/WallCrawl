@@ -99,3 +99,20 @@ fun ConditionRestrictions.cuesFor(exerciseId: String, language: String): List<St
 }
 
 private const val FALLBACK_LANGUAGE = "en"
+
+/** What the manual template editor says beside an exercise. Nothing is hidden or refused. */
+enum class ManualExerciseNotice { AVOID, MODIFY, UNREVIEWED }
+
+/**
+ * The notice for [exerciseId], or null when there is nothing to say. [None] says nothing, and
+ * [Unavailable] says nothing per exercise because the screen shows one general notice instead.
+ * A null result is silence, never a statement that the exercise suits the user.
+ */
+fun ConditionRestrictions.manualNoticeFor(exerciseId: String): ManualExerciseNotice? = when (this) {
+    ConditionRestrictions.None, ConditionRestrictions.Unavailable -> null
+    is ConditionRestrictions.Active -> when (decisionFor(exerciseId)) {
+        EligibilityReason.CONDITION_RESTRICTED_DEMAND -> ManualExerciseNotice.AVOID
+        EligibilityReason.CONDITION_DEMANDS_UNREVIEWED -> ManualExerciseNotice.UNREVIEWED
+        else -> if (ranksLower(exerciseId)) ManualExerciseNotice.MODIFY else null
+    }
+}

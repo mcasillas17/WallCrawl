@@ -58,6 +58,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.platform.testTag
+import wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions
+import wallcrawl.elopenmike.com.core.conditions.ManualExerciseNotice
+import wallcrawl.elopenmike.com.core.conditions.cuesFor
+import wallcrawl.elopenmike.com.core.conditions.manualNoticeFor
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -114,6 +119,7 @@ fun TemplateEditorScreen(
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.uiState.collectAsState()
+    val restrictions by viewModel.restrictions.collectAsState()
     val locale = LocalConfiguration.current.locales[0]
 
     // Toolbar back, system back and predictive back all take the same route, so leaving
@@ -342,6 +348,17 @@ fun TemplateEditorScreen(
                     }
                 }
 
+                // One general notice when the guidance could not be read, rather than a
+                // warning per exercise that would claim more than we know.
+                if (restrictions == ConditionRestrictions.Unavailable) item {
+                    Text(
+                        text = stringResource(R.string.editor_condition_unavailable),
+                        color = MaterialTheme.colorScheme.error,
+                        fontSize = 13.sp,
+                        modifier = Modifier.fillMaxWidth().testTag("editor-condition-unavailable")
+                    )
+                }
+
                 // Its copy points at Add and counts the catalog; after a failed load Add is off
                 // and there is no catalog, so the error card speaks alone.
                 if (state.selectedExercises.isEmpty()) {
@@ -381,6 +398,7 @@ fun TemplateEditorScreen(
                             isMissingFromCatalog = draft.rowId in state.unresolvedRowIds,
                             isSaving = state.isSaving,
                             availableEquipment = state.availableEquipment,
+                            restrictions = restrictions,
                             weightUnit = state.weightUnit?.let { stringResource(it.shortLabelRes) },
                             onEdit = { viewModel.editExercise(draft.rowId) },
                             onSetsDown = { viewModel.changeSetCount(draft.rowId, -1) },
@@ -589,6 +607,7 @@ private fun SelectedExerciseCard(
     isMissingFromCatalog: Boolean,
     isSaving: Boolean,
     availableEquipment: Set<String>,
+    restrictions: ConditionRestrictions,
     weightUnit: String?,
     onEdit: () -> Unit,
     onSetsDown: () -> Unit,
@@ -644,6 +663,7 @@ private fun SelectedExerciseCard(
                     )
                 }
                 exercise?.let { EquipmentWarning(it, availableEquipment) }
+                ConditionWarning(draft.exerciseId, restrictions)
             }
         }
 
@@ -1224,6 +1244,39 @@ private fun ExercisePickerSheet(
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+/**
+ * A notice beside an exercise, never a reason to hide or refuse it. Silence is not a claim
+ * that the exercise suits the user, so nothing positive is ever shown here.
+ */
+@Composable
+private fun ConditionWarning(exerciseId: String, restrictions: ConditionRestrictions) {
+    val notice = restrictions.manualNoticeFor(exerciseId) ?: return
+    val language = LocalConfiguration.current.locales[0].language
+    Spacer(modifier = Modifier.height(4.dp))
+    Column(modifier = Modifier.testTag("editor-condition-warning")) {
+        Text(
+            text = stringResource(
+                when (notice) {
+                    ManualExerciseNotice.AVOID -> R.string.editor_condition_avoid
+                    ManualExerciseNotice.MODIFY -> R.string.editor_condition_modify
+                    ManualExerciseNotice.UNREVIEWED -> R.string.editor_condition_unreviewed
+                }
+            ),
+            color = MaterialTheme.colorScheme.error,
+            fontSize = 12.sp
+        )
+        if (notice != ManualExerciseNotice.UNREVIEWED) {
+            restrictions.cuesFor(exerciseId, language).forEach { cue ->
+                Text(
+                    text = stringResource(R.string.condition_cue, cue),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontSize = 12.sp
+                )
             }
         }
     }

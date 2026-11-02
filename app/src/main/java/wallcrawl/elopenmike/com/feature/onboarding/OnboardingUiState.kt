@@ -2,6 +2,8 @@ package wallcrawl.elopenmike.com.feature.onboarding
 
 import androidx.annotation.StringRes
 import wallcrawl.elopenmike.com.R
+import wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceResult
+import wallcrawl.elopenmike.com.feature.conditions.PendingCondition
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
 import wallcrawl.elopenmike.com.core.model.CapabilityLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
@@ -80,6 +82,11 @@ data class OnboardingUiState(
     val equipment: Set<String> = setOf(StandardEquipment.BODYWEIGHT),
     val constraints: Set<TrainingConstraint> = emptySet(),
     val capabilityAnswers: Map<MovementCapabilityType, CapabilityLevel> = emptyMap(),
+    /** Optional; an empty set adds no step and blocks nothing. */
+    val reportedConditions: Set<String> = emptySet(),
+    val pendingCondition: PendingCondition? = null,
+    /** Null until the overlay has been read. */
+    val conditionGuidance: ConditionGuidanceResult? = null,
     val returningAfterBreakWeeks: Int = 0,
     val equipmentOptions: List<String> = StandardEquipment.ALL,
     val constraintOptions: List<TrainingConstraint> = TrainingConstraint.entries,

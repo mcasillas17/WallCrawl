@@ -70,6 +70,7 @@ interface AppContainer {
     val workoutHistoryAnalyzer: WorkoutHistoryAnalyzer
     val progressCalculator: ProgressCalculator
     val workoutGuideCatalogSource: WorkoutGuideCatalogSource
+    val conditionGuidanceSource: wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceSource
     val attributionNoticeSource: AttributionNoticeSource
 }
 
@@ -93,6 +94,9 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
 
     override val workoutGuideCatalogSource: WorkoutGuideCatalogSource
         get() = workoutGuideCatalogStore
+
+    override val conditionGuidanceSource: wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceSource
+        get() = conditionGuidanceStore
 
     override val attributionNoticeSource: AttributionNoticeSource by lazy {
         AssetAttributionNoticeReader(context.assets)

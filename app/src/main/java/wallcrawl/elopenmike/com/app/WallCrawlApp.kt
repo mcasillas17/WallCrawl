@@ -207,7 +207,8 @@ private fun WallCrawlAppContent(
             composable(AppRoutes.ONBOARDING) {
                 val onboardingViewModel: OnboardingViewModel = viewModel(
                     factory = OnboardingViewModel.provideFactory(
-                        userProfileRepository = container.userProfileRepository
+                        userProfileRepository = container.userProfileRepository,
+                        conditionGuidanceSource = container.conditionGuidanceSource
                     )
                 )
                 val localDataViewModel: LocalDataViewModel = viewModel(
@@ -254,7 +255,8 @@ private fun WallCrawlAppContent(
                         workoutPlanner = container.workoutPlanner,
                         programValidator = container.programValidator,
                         deloadRepository = container.deloadRepository,
-                        programRepository = container.programRepository
+                        programRepository = container.programRepository,
+                        conditionGuidanceSource = container.conditionGuidanceSource
                     )
                 )
                 val programViewModel: ProgramViewModel = viewModel(factory = ProgramViewModel.provideFactory(
@@ -354,7 +356,8 @@ private fun WallCrawlAppContent(
             composable(AppRoutes.PROFILE) {
                 val profileViewModel: ProfileViewModel = viewModel(
                     factory = ProfileViewModel.provideFactory(
-                        userProfileRepository = container.userProfileRepository
+                        userProfileRepository = container.userProfileRepository,
+                        conditionGuidanceSource = container.conditionGuidanceSource
                     )
                 )
                 val localDataViewModel: LocalDataViewModel = viewModel(
@@ -405,7 +408,9 @@ private fun WallCrawlAppContent(
                         workoutRepository = container.workoutRepository,
                         exerciseCatalog = container.exerciseCatalog,
                         workoutHistoryAnalyzer = container.workoutHistoryAnalyzer,
-                        programRepository = container.programRepository
+                        programRepository = container.programRepository,
+                        userProfileRepository = container.userProfileRepository,
+                        conditionGuidanceSource = container.conditionGuidanceSource
                     )
                 )
                 ActiveWorkoutScreen(
@@ -460,7 +465,8 @@ private fun WallCrawlAppContent(
                         templateRepository = container.workoutTemplateRepository,
                         userProfileRepository = container.userProfileRepository,
                         exerciseCatalog = container.exerciseCatalog,
-                        localizationSource = container.exerciseLocalizationSource
+                        localizationSource = container.exerciseLocalizationSource,
+                        conditionGuidanceSource = container.conditionGuidanceSource
                     )
                 )
                 TemplateEditorScreen(
@@ -482,7 +488,8 @@ private fun WallCrawlAppContent(
                         templateRepository = container.workoutTemplateRepository,
                         userProfileRepository = container.userProfileRepository,
                         exerciseCatalog = container.exerciseCatalog,
-                        localizationSource = container.exerciseLocalizationSource
+                        localizationSource = container.exerciseLocalizationSource,
+                        conditionGuidanceSource = container.conditionGuidanceSource
                     )
                 )
                 TemplateEditorScreen(

@@ -141,6 +141,13 @@ fun ProfileScreen(
                     availableEquipment = state.availableEquipmentOptions,
                     availableMuscles = state.availableMuscleOptions,
                     availableConstraints = state.availableConstraintOptions,
+                    conditionGuidance = state.conditionGuidance,
+                    pendingCondition = state.pendingCondition,
+                    onSelectCondition = viewModel::selectCondition,
+                    onAcknowledgeCondition = viewModel::setConditionAcknowledged,
+                    onConfirmCondition = viewModel::confirmPendingCondition,
+                    onCancelCondition = viewModel::cancelPendingCondition,
+                    onRemoveCondition = viewModel::removeCondition,
                     onToggleGoal = { viewModel.toggleGoal(it) },
                     onUpdateExperience = { viewModel.updateExperience(it) },
                     onUpdateDuration = { viewModel.updateDuration(it) },
@@ -174,6 +181,13 @@ private fun ProfileContent(
     availableEquipment: List<String>,
     availableMuscles: List<String>,
     availableConstraints: List<TrainingConstraint>,
+    conditionGuidance: wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceResult?,
+    pendingCondition: wallcrawl.elopenmike.com.feature.conditions.PendingCondition?,
+    onSelectCondition: (String) -> Unit,
+    onAcknowledgeCondition: (Boolean) -> Unit,
+    onConfirmCondition: () -> Unit,
+    onCancelCondition: () -> Unit,
+    onRemoveCondition: (String) -> Unit,
     onToggleGoal: (FitnessGoal) -> Unit,
     onUpdateExperience: (ExperienceLevel) -> Unit,
     onUpdateDuration: (Int) -> Unit,
@@ -578,8 +592,6 @@ private fun ProfileContent(
                     color = CrimsonRedPrimary
                 )
                 Spacer(modifier = Modifier.height(4.dp))
-                // Same honesty note the movement-capability card already carries: this input is
-                // saved but inert until reviewed planning ships.
                 Text(
                     text = stringResource(R.string.profile_safety_description),
                     fontSize = 12.sp,
@@ -620,6 +632,19 @@ private fun ProfileContent(
                         )
                     }
                 }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                wallcrawl.elopenmike.com.feature.conditions.ConditionPicker(
+                    guidance = conditionGuidance,
+                    selected = profile.reportedConditions,
+                    pending = pendingCondition,
+                    onSelect = onSelectCondition,
+                    onAcknowledge = onAcknowledgeCondition,
+                    onConfirm = onConfirmCondition,
+                    onCancel = onCancelCondition,
+                    onRemove = onRemoveCondition
+                )
 
                 Spacer(modifier = Modifier.height(16.dp))
 

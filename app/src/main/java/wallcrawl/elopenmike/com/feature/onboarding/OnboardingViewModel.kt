@@ -12,7 +12,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceResult
+import wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceSource
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
+import wallcrawl.elopenmike.com.feature.conditions.PendingCondition
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
 import wallcrawl.elopenmike.com.core.model.CapabilityLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
@@ -30,11 +33,54 @@ import wallcrawl.elopenmike.com.core.model.ProfileGender
  */
 class OnboardingViewModel(
     private val userProfileRepository: UserProfileRepository,
-    private val savedStateHandle: SavedStateHandle = SavedStateHandle()
+    private val savedStateHandle: SavedStateHandle = SavedStateHandle(),
+    conditionGuidanceSource: ConditionGuidanceSource? = null
 ) : ViewModel() {
 
     private val mutableState = MutableStateFlow(restoreDraft(savedStateHandle))
     val uiState: StateFlow<OnboardingUiState> = mutableState.asStateFlow()
+
+    init {
+        conditionGuidanceSource?.let { source ->
+            viewModelScope.launch {
+                val result = try {
+                    source.guidance()
+                } catch (error: CancellationException) {
+                    throw error
+                } catch (error: Exception) {
+                    ConditionGuidanceResult.Unavailable
+                }
+                mutableState.value = mutableState.value.copy(conditionGuidance = result)
+            }
+        }
+    }
+
+    /** Starts adding [id]; it joins the draft only after the warning signs are acknowledged. */
+    fun selectCondition(id: String) {
+        val guidance = mutableState.value.conditionGuidance as? ConditionGuidanceResult.Loaded ?: return
+        if (id !in guidance.guidance.conditions) return
+        updateState { it.copy(pendingCondition = PendingCondition(id)) }
+    }
+
+    fun setConditionAcknowledged(acknowledged: Boolean) {
+        val pending = mutableState.value.pendingCondition ?: return
+        updateState { it.copy(pendingCondition = pending.copy(acknowledged = acknowledged)) }
+    }
+
+    fun cancelPendingCondition() {
+        updateState { it.copy(pendingCondition = null) }
+    }
+
+    fun confirmPendingCondition() {
+        val pending = mutableState.value.pendingCondition?.takeIf { it.acknowledged } ?: return
+        updateState {
+            it.copy(reportedConditions = it.reportedConditions + pending.id, pendingCondition = null)
+        }
+    }
+
+    fun removeCondition(id: String) {
+        updateState { it.copy(reportedConditions = it.reportedConditions - id) }
+    }
 
     fun updateName(name: String) {
         updateState { it.copy(name = name.take(NAME_MAX_LENGTH), error = null) }
@@ -127,7 +173,14 @@ class OnboardingViewModel(
     }
 
     fun clearConstraints() {
-        updateState { it.copy(constraints = emptySet(), error = null) }
+        updateState {
+            it.copy(
+                constraints = emptySet(),
+                reportedConditions = emptySet(),
+                pendingCondition = null,
+                error = null
+            )
+        }
     }
 
     fun nextStep() {
@@ -231,6 +284,7 @@ class OnboardingViewModel(
                     preferredUnit = unit,
                     availableEquipment = equipment.toList(),
                     trainingConstraints = constraints,
+                    reportedConditions = mutableState.value.reportedConditions,
                     returningAfterBreakWeeks = returningAfterBreakWeeks,
                     movementCapabilities = MovementCapabilities.from(capabilityAnswers),
                     onboardingCompleted = true
@@ -271,6 +325,7 @@ class OnboardingViewModel(
         savedStateHandle[STATE_UNIT] = state.unit.name
         savedStateHandle[STATE_EQUIPMENT] = ArrayList(state.equipment)
         savedStateHandle[STATE_CONSTRAINTS] = ArrayList(state.constraints.map { it.name })
+        savedStateHandle[STATE_REPORTED_CONDITIONS] = ArrayList(state.reportedConditions)
         savedStateHandle[STATE_BREAK_WEEKS] = state.returningAfterBreakWeeks
         savedStateHandle[STATE_CAPABILITY_ANSWERS] = ArrayList(
             state.capabilityAnswers.entries.map { (type, level) ->
@@ -291,6 +346,7 @@ class OnboardingViewModel(
         private const val STATE_UNIT = "onboarding.unit"
         private const val STATE_EQUIPMENT = "onboarding.equipment"
         private const val STATE_CONSTRAINTS = "onboarding.constraints"
+        private const val STATE_REPORTED_CONDITIONS = "onboarding.reportedConditions"
         private const val STATE_BREAK_WEEKS = "onboarding.returningAfterBreakWeeks"
         private const val STATE_CAPABILITY_ANSWERS = "onboarding.capabilityAnswers"
 
@@ -318,6 +374,8 @@ class OnboardingViewModel(
                     savedStateHandle[STATE_CONSTRAINTS],
                     defaults.constraints
                 ),
+                reportedConditions = savedStateHandle.get<List<String>>(STATE_REPORTED_CONDITIONS)
+                    ?.toSet() ?: defaults.reportedConditions,
                 returningAfterBreakWeeks = savedStateHandle[STATE_BREAK_WEEKS]
                     ?: defaults.returningAfterBreakWeeks,
                 capabilityAnswers = decodeCapabilityAnswers(
@@ -374,12 +432,14 @@ class OnboardingViewModel(
         }
 
         fun provideFactory(
-            userProfileRepository: UserProfileRepository
+            userProfileRepository: UserProfileRepository,
+            conditionGuidanceSource: ConditionGuidanceSource? = null
         ): ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 OnboardingViewModel(
                     userProfileRepository = userProfileRepository,
-                    savedStateHandle = createSavedStateHandle()
+                    savedStateHandle = createSavedStateHandle(),
+                    conditionGuidanceSource = conditionGuidanceSource
                 )
             }
         }

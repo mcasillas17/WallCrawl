@@ -9,6 +9,9 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.model.WorkoutSummary
 
+/** The user stopped a set for pain; [exerciseId] may be left out of automatic plans if they agree. */
+data class PainExclusionOffer(val exerciseId: String)
+
 /** What finishing the workout right now would mean. */
 sealed interface FinishDecision {
     /** Every planned set is resolved: finishing needs no further confirmation. */
@@ -55,7 +58,11 @@ sealed interface ActiveWorkoutUiState {
         val isConfirmingDiscard: Boolean = false,
         val programAssociation: wallcrawl.elopenmike.com.core.model.ProgramHistoryAssociation? = null,
         @StringRes val programReadError: Int? = null,
-        val programFinishUnsupported: Boolean = false
+        val programFinishUnsupported: Boolean = false,
+        /** Display only: cues for exercises with a modify demand or a routine cue. */
+        val restrictions: wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions =
+            wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions.None,
+        val painExclusionOffer: PainExclusionOffer? = null
     ) : ActiveWorkoutUiState {
         val currentExercise: WorkoutExercise?
             get() = session.exercises.getOrNull(currentExerciseIndex)

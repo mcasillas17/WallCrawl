@@ -80,3 +80,7 @@ sealed interface ConditionGuidanceResult {
     /** The overlay could not be read or failed validation. Callers must fail closed. */
     data object Unavailable : ConditionGuidanceResult
 }
+
+/** Display text only: [language], else English. Never read by a planning decision. */
+fun Map<String, List<String>>.textIn(language: String): List<String> =
+    this[language] ?: this["en"].orEmpty()

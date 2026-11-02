@@ -72,6 +72,10 @@ import wallcrawl.elopenmike.com.core.ui.localization.workoutRankingNotice
 import wallcrawl.elopenmike.com.core.ui.localization.progressionNotice
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
+import wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions
+import wallcrawl.elopenmike.com.core.conditions.cuesFor
+import wallcrawl.elopenmike.com.feature.conditions.conditionNameRes
+import androidx.compose.ui.platform.testTag
 import wallcrawl.elopenmike.com.core.ui.theme.SuccessGreen
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
 
@@ -188,9 +192,16 @@ fun TodayScreen(
                     unavailableFocusMuscles = state.suggestedWorkout.unavailableFocusMuscles,
                     rankingReasons = state.suggestedWorkout.rankingReasons
                 )
+                val restrictions by produceState<ConditionRestrictions>(
+                    ConditionRestrictions.None,
+                    viewModel,
+                    state.userProfile.reportedConditions,
+                    state.userProfile.trainingConstraints
+                ) { value = viewModel.conditionRestrictions(state.userProfile) }
                 TodayContent(
                     state = state,
                     workoutName = workoutName,
+                    restrictions = restrictions,
                     onStartWorkout = {
                         viewModel.startWorkout(workoutName, workoutRationale, onStartWorkout)
                     },
@@ -218,7 +229,8 @@ internal fun TodayContent(
     onRegenerate: () -> Unit,
     onOpenTemplates: () -> Unit,
     onDeloadAction: (DeloadAction) -> Unit = {},
-    programContent: @Composable () -> Unit = {}
+    programContent: @Composable () -> Unit = {},
+    restrictions: ConditionRestrictions = ConditionRestrictions.None
 ) {
     LazyColumn(
         modifier = Modifier
@@ -262,9 +274,21 @@ internal fun TodayContent(
             }
         }
 
+        // Mobility comes first and stays separate from the main work.
+        if (state.suggestedWorkout.mobilityBlock.isNotEmpty()) {
+            item {
+                MobilityBlockCard(
+                    block = state.suggestedWorkout.mobilityBlock,
+                    reportedConditions = state.userProfile.reportedConditions,
+                    restrictions = restrictions
+                )
+            }
+        }
+
         // Main Recommended Workout Card
         item {
             SuggestedWorkoutCard(
+                restrictions = restrictions,
                 workout = state.suggestedWorkout,
                 workoutName = workoutName,
                 isRegenerating = state.isRegenerating || state.activeSession != null || state.deload?.isSaving == true,
@@ -515,6 +539,7 @@ private fun ButtonResume(onClick: () -> Unit) {
 
 @Composable
 private fun SuggestedWorkoutCard(
+    restrictions: ConditionRestrictions,
     workout: GeneratedWorkout,
     workoutName: String,
     isRegenerating: Boolean,
@@ -672,6 +697,13 @@ private fun SuggestedWorkoutCard(
             workout.exercises.forEachIndexed { index, exercise ->
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     ExercisePreviewRow(index = index + 1, exercise = exercise)
+                    restrictions.cuesFor(exercise.exerciseId, locale.language).forEach { cue ->
+                        Text(
+                            text = stringResource(R.string.condition_cue, cue),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                     workout.progressionDecisions.firstOrNull { it.exerciseId == exercise.exerciseId }?.let {
                         Text(
                             progressionNotice(it, prescriptionUnit, prescriptionUnit),
@@ -710,6 +742,88 @@ private fun SuggestedWorkoutCard(
             enabled = !isRegenerating
         )
     }
+}
+
+/**
+ * The condition-related mobility routine, presented as general information. Names the
+ * conditions whose routines supplied the block, never promises a result, and carries each
+ * item's hold, rest and cue.
+ */
+@Composable
+private fun MobilityBlockCard(
+    block: List<GeneratedExercise>,
+    reportedConditions: Set<String>,
+    restrictions: ConditionRestrictions
+) {
+    val locale = LocalConfiguration.current.locales[0]
+    val vocabulary = LocalExerciseVocabulary.current
+    val blockIds = block.map { it.exerciseId }.toSet()
+    val contributing = (restrictions as? ConditionRestrictions.Active)?.let { active ->
+        reportedConditions.sorted().filter { id ->
+            active.guidance.conditions[id]?.routine.orEmpty().any { it.exerciseId in blockIds }
+        }
+    }.orEmpty().ifEmpty { reportedConditions.sorted() }
+    val separator = stringResource(R.string.detail_separator)
+    val names = contributing.map { stringResource(conditionNameRes(it)) }.joinToString(separator)
+    WallCrawlCard(
+        modifier = Modifier.testTag("today-mobility-card"),
+        cornerRadius = 20.dp,
+        contentPadding = 16.dp
+    ) {
+        Text(
+            text = stringResource(R.string.mobility_today_heading),
+            fontSize = 11.sp,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = 0.5.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        if (names.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = stringResource(R.string.mobility_today_for, names),
+                fontSize = 13.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        block.forEach { exercise ->
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(
+                text = vocabulary.exerciseName(exercise.exerciseId),
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Text(
+                text = mobilityDoseSummary(exercise),
+                fontSize = 13.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            restrictions.cuesFor(exercise.exerciseId, locale.language).forEach { cue ->
+                Text(
+                    text = stringResource(R.string.condition_cue, cue),
+                    fontSize = 13.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+    }
+}
+
+/** Sets and reps or duration, then the hold when there is one, then rest. */
+@Composable
+internal fun mobilityDoseSummary(exercise: GeneratedExercise): String {
+    val locale = LocalConfiguration.current.locales[0]
+    val separator = stringResource(R.string.detail_separator)
+    return listOfNotNull(
+        prescriptionSummary(exercise),
+        exercise.prescription.holdSeconds?.let {
+            stringResource(R.string.mobility_hold, LocaleFormatting.formatCount(it, locale))
+        },
+        stringResource(
+            R.string.mobility_rest,
+            LocaleFormatting.formatCount(exercise.prescription.restSeconds, locale)
+        )
+    ).joinToString(separator)
 }
 
 @Composable

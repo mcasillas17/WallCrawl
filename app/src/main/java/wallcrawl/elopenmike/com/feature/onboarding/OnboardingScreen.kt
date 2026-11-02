@@ -837,7 +837,7 @@ private fun SafetyStep(
             )
             Spacer(modifier = Modifier.height(14.dp))
 
-            val hasNoConstraints = state.constraints.isEmpty()
+            val hasNoConstraints = state.constraints.isEmpty() && state.reportedConditions.isEmpty()
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -919,6 +919,19 @@ private fun SafetyStep(
                     )
                 }
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            wallcrawl.elopenmike.com.feature.conditions.ConditionPicker(
+                guidance = state.conditionGuidance,
+                selected = state.reportedConditions,
+                pending = state.pendingCondition,
+                onSelect = viewModel::selectCondition,
+                onAcknowledge = viewModel::setConditionAcknowledged,
+                onConfirm = viewModel::confirmPendingCondition,
+                onCancel = viewModel::cancelPendingCondition,
+                onRemove = viewModel::removeCondition
+            )
         }
     }
 }
