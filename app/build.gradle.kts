@@ -103,6 +103,21 @@ dependencies {
         add("androidLintTool", libs.build.httpclient) {
             because("GHSA-7r82-7xv7-xcpj; match the patched version already selected by AGP")
         }
+        listOf("androidLintTool", "ksp").forEach {
+            add(it, libs.build.guava) {
+                because("GHSA-xxph-c9ww-hj94 in lint and Room's compiler; preserve the JRE variant")
+            }
+        }
+        listOf("testImplementation", "androidTestImplementation").forEach {
+            add(it, libs.test.guava) {
+                because("GHSA-xxph-c9ww-hj94 in Truth; preserve the Android variant")
+            }
+        }
+        listOf(libs.build.bcprov, libs.build.bcpkix, libs.build.bcutil).forEach {
+            add("androidLintTool", it) {
+                because("Align BC with the qualified AGP classpath; see docs/dependency-health.md")
+            }
+        }
     }
 
     // Carries the per-app language APIs back to minSdk 26. On API 33+ AppCompatDelegate
