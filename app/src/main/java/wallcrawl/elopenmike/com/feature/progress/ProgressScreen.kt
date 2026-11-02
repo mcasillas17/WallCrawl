@@ -80,6 +80,7 @@ import wallcrawl.elopenmike.com.core.model.StrengthTrend
 import wallcrawl.elopenmike.com.core.model.TrainingWeek
 import wallcrawl.elopenmike.com.core.model.WeeklyDoseLedger
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
+import wallcrawl.elopenmike.com.core.model.mainExercises
 import wallcrawl.elopenmike.com.core.ui.components.MetricHighlight
 import wallcrawl.elopenmike.com.core.ui.components.StatBadge
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
@@ -985,21 +986,24 @@ private fun WorkoutHistoryCard(session: WorkoutSession, onClick: () -> Unit) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            // Mobility work is logged but earns no training credit, so it is not counted here.
+            val mainSets = session.mainExercises.sumOf { exercise -> exercise.sets.count { it.isCompleted } }
+            val mainVolume = session.mainExercises.sumOf { it.totalVolume }
             Text(
                 text = pluralStringResource(
                     R.plurals.count_sets_logged,
-                    session.completedSetsCount,
-                    LocaleFormatting.formatCount(session.completedSetsCount, locale)
+                    mainSets,
+                    LocaleFormatting.formatCount(mainSets, locale)
                 ),
                 fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            if (session.totalVolume > 0) {
+            if (mainVolume > 0) {
                 Text(
                     text = stringResource(
                         R.string.progress_history_volume,
-                        LocaleFormatting.formatVolume(session.totalVolume, locale),
+                        LocaleFormatting.formatVolume(mainVolume, locale),
                         session.weightUnit.symbol
                     ),
                     fontSize = 12.sp,

@@ -114,12 +114,19 @@ interface WorkoutSessionDao : CompletedWorkoutHistoryDao, WorkoutHistoryDao, Pro
         status: SessionStatus = SessionStatus.COMPLETED
     ): Flow<List<WorkoutSessionWithExercisesAndSets>>
 
-    @Query("SELECT COUNT(*) FROM workout_sessions WHERE status = :status")
+    @Query("""SELECT COUNT(*) FROM workout_sessions WHERE status = :status
+        AND (NOT EXISTS (SELECT 1 FROM workout_exercises e WHERE e.sessionId = workout_sessions.id)
+            OR EXISTS (SELECT 1 FROM workout_exercises e
+                WHERE e.sessionId = workout_sessions.id AND e.role = 'MAIN'))""")
     fun observeCompletedSessionCount(
         status: SessionStatus = SessionStatus.COMPLETED
     ): Flow<Int>
 
-    @Query("SELECT COUNT(*) FROM workout_sessions WHERE status = :status AND completedAtTimestamp >= :startTimestamp AND completedAtTimestamp < :endTimestampExclusive")
+    @Query("""SELECT COUNT(*) FROM workout_sessions WHERE status = :status
+        AND completedAtTimestamp >= :startTimestamp AND completedAtTimestamp < :endTimestampExclusive
+        AND (NOT EXISTS (SELECT 1 FROM workout_exercises e WHERE e.sessionId = workout_sessions.id)
+            OR EXISTS (SELECT 1 FROM workout_exercises e
+                WHERE e.sessionId = workout_sessions.id AND e.role = 'MAIN'))""")
     fun observeCompletedSessionCountInRange(
         startTimestamp: Long,
         endTimestampExclusive: Long,

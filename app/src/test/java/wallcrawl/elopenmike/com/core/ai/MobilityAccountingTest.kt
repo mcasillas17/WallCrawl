@@ -21,6 +21,7 @@ import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.mainExercises
 import wallcrawl.elopenmike.com.core.progress.ProgressAnalyticsCalculator
+import wallcrawl.elopenmike.com.core.progress.PersonalRecordBaseline
 import wallcrawl.elopenmike.com.core.progress.ProgressCalculator
 
 /**
@@ -40,8 +41,9 @@ class MobilityAccountingTest {
     private fun WorkoutSession.asMobility() = copy(exercises = exercises.map { it.copy(role = ExerciseRole.MOBILITY) })
 
     /** One completed, manageable, two-set session of [exerciseId] started at [start]. */
-    private fun session(id: String, exerciseId: String, start: Long, role: ExerciseRole = ExerciseRole.MAIN) =
-        progressionSession(id, exerciseId, prescription, start).let { s ->
+    private fun session(
+        id: String, exerciseId: String, start: Long, role: ExerciseRole = ExerciseRole.MAIN, weight: Double = 40.0
+    ) = progressionSession(id, exerciseId, prescription.copy(targetWeight = weight), start).let { s ->
             s.copy(exercises = s.exercises.map { it.copy(role = role) }, focusMuscles = listOf("Chest"))
         }
 
@@ -107,6 +109,12 @@ class MobilityAccountingTest {
         val mobility = inWeek("m", "clamshell", ExerciseRole.MOBILITY).copy(focusMuscles = listOf("Glutes"))
         assertThat(analyzer.exerciseHistory(listOf(mobility))).isEmpty()
         assertThat(analyzer.latestCompletedExercisePerformance(listOf(mobility), "clamshell")).isNull()
+        // A mobility row in the logger compares with mobility history of its own role.
+        assertThat(analyzer.latestCompletedExercisePerformance(listOf(mobility), "clamshell", ExerciseRole.MOBILITY))
+            .isNotNull()
+        assertThat(analyzer.latestCompletedExercisePerformance(
+            listOf(inWeek("n", "clamshell", ExerciseRole.MAIN)), "clamshell", ExerciseRole.MOBILITY
+        )).isNull()
         assertThat(analyzer.recentlyTrainedMuscles(listOf(mobility), requireNotNull(mobility.completedAtTimestamp)))
             .isEmpty()
         val main = inWeek("b", "bench", ExerciseRole.MAIN).copy(focusMuscles = listOf("Chest"))
@@ -160,6 +168,44 @@ class MobilityAccountingTest {
             .series.getValue(AnalyticsMetric.COMPLETED_SETS).buckets.sumOf { it.value }).isEqualTo(0.0)
     }
 
+    @Test fun personalRecordsAndTrendsIgnoreMobilityRows() {
+        val calculator = ProgressCalculator()
+        // Heavy mobility history must neither hide a real record nor create one.
+        val priorMain = session("p1", "bench", 10_000, weight = 30.0)
+        val priorMobility = session("p2", "bench", 20_000, ExerciseRole.MOBILITY, weight = 100.0)
+        val viewedMain = session("v", "bench", 30_000, weight = 40.0)
+        val viewed = viewedMain.copy(exercises = viewedMain.exercises +
+            mobilityRow("v", "v-mobility", "clamshell", weight = 100.0))
+        assertThat(calculator.countPersonalRecords(viewed, listOf(priorMain, priorMobility))).isEqualTo(1)
+        assertThat(calculator.countPersonalRecords(viewed, listOf(priorMain))).isEqualTo(1)
+        val mobilityPrior = session("p3", "clamshell", 5_000, ExerciseRole.MOBILITY, weight = 10.0)
+        assertThat(calculator.countPersonalRecords(viewed, listOf(priorMain, mobilityPrior))).isEqualTo(1)
+
+        fun baseline(id: String, kg: Double) =
+            PersonalRecordBaseline(id, ExerciseType.WEIGHT_REPS, WeightUnit.KG, kg, 12)
+        assertThat(calculator.countPersonalRecordsFromBaselines(
+            viewed, listOf(baseline("bench", 30.0), baseline("clamshell", 50.0))
+        )).isEqualTo(1)
+
+        val sessions = listOf(
+            inWeek("r1", "bench", ExerciseRole.MAIN, 0).copy(),
+            inWeek("r2", "bench", ExerciseRole.MAIN, 1)
+        ).mapIndexed { i, s -> s.copy(exercises = s.exercises.map { e -> e.heavier(if (i == 0) 30.0 else 40.0) }) } +
+            listOf(inWeek("m1", "clamshell", ExerciseRole.MOBILITY, 0), inWeek("m2", "clamshell", ExerciseRole.MOBILITY, 1))
+                .mapIndexed { i, s -> s.copy(exercises = s.exercises.map { e -> e.heavier(if (i == 0) 50.0 else 100.0) }) }
+        val overview = calculator.calculate(
+            completedSessions = sessions, profile = UserProfile(preferredUnit = WeightUnit.KG),
+            catalogExercises = catalog, nowTimestamp = now.toEpochMilli(), zoneId = utc
+        )
+        assertThat(overview.recentPersonalRecords.map { it.exerciseId }).containsExactly("bench")
+        assertThat(overview.strengthTrends.map { it.exerciseId }).containsExactly("bench")
+    }
+
+    private fun WorkoutExercise.heavier(kg: Double) = copy(
+        prescription = prescription.copy(targetWeight = kg),
+        sets = sets.map { it.copy(targetWeight = kg, completedWeight = kg) }
+    )
+
     @Test fun doesNotChangeTheLedgerFingerprintOfOtherWork() {
         val main = inWeek("b", "bench", ExerciseRole.MAIN)
         val mixed = main.copy(exercises = main.exercises + mobilityRow(main.id, "mixed-mobility"))
@@ -212,8 +258,10 @@ class MobilityAccountingTest {
         )
     }
 
-    private fun mobilityRow(sessionId: String, id: String, exerciseId: String = "clamshell"): WorkoutExercise =
-        progressionSession("$id-src", exerciseId, prescription, 1).exercises.single().let { e ->
+    private fun mobilityRow(
+        sessionId: String, id: String, exerciseId: String = "clamshell", weight: Double = 40.0
+    ): WorkoutExercise =
+        progressionSession("$id-src", exerciseId, prescription.copy(targetWeight = weight), 1).exercises.single().let { e ->
             e.copy(
                 id = id, sessionId = sessionId, orderIndex = 9, role = ExerciseRole.MOBILITY,
                 sets = e.sets.map { it.copy(id = "$id-${it.id}", workoutExerciseId = id) }

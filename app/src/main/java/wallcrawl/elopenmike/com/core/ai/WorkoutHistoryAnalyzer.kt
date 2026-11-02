@@ -3,6 +3,7 @@ package wallcrawl.elopenmike.com.core.ai
 import wallcrawl.elopenmike.com.core.model.isMobilityOnly
 import wallcrawl.elopenmike.com.core.model.mainExercises
 import wallcrawl.elopenmike.com.core.model.ExercisePerformanceHistory
+import wallcrawl.elopenmike.com.core.model.ExerciseRole
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
@@ -88,7 +89,8 @@ class WorkoutHistoryAnalyzer {
 
     fun latestCompletedExercisePerformance(
         sessions: List<WorkoutSession>,
-        exerciseId: String
+        exerciseId: String,
+        role: ExerciseRole = ExerciseRole.MAIN
     ): CompletedExercisePerformance? {
         require(exerciseId.isNotBlank()) { "exerciseId must not be blank." }
 
@@ -97,8 +99,9 @@ class WorkoutHistoryAnalyzer {
             .filter { it.status == SessionStatus.COMPLETED && it.completedAtTimestamp != null }
             .sortedByDescending { it.completedAtTimestamp }
             .mapNotNull { session ->
-                val completedSets = session.mainExercises
-                    .firstOrNull { it.exerciseId == exerciseId }
+                // A row is compared with history of the same role only.
+                val completedSets = session.exercises
+                    .firstOrNull { it.exerciseId == exerciseId && it.role == role }
                     ?.sets
                     ?.completedPerformanceSets()
                     ?.sortedBy { it.setNumber }

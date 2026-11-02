@@ -24,6 +24,7 @@ import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
@@ -48,6 +49,12 @@ import org.junit.runner.RunWith
 import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.exercise.localization.ExerciseLocalizationParser
 import wallcrawl.elopenmike.com.core.exercise.localization.ExerciseLocalizationStore
+import wallcrawl.elopenmike.com.core.model.ExercisePrescription
+import wallcrawl.elopenmike.com.core.model.ExerciseRole
+import wallcrawl.elopenmike.com.core.model.ExerciseType
+import wallcrawl.elopenmike.com.core.model.RepRange
+import wallcrawl.elopenmike.com.core.model.WorkoutExercise
+import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.model.LedgerOmissionReason
 import wallcrawl.elopenmike.com.core.model.LedgerPolicyVersion
 import wallcrawl.elopenmike.com.core.model.MuscleProgressStat
@@ -111,6 +118,36 @@ class ProgressScreenTest {
             .assertHeightIsAtLeast(48.dp)
             .performClick()
         assertThat(openedId).isEqualTo("recorded-session")
+    }
+
+    @Test
+    fun recentHistoryCountsMainSetsAndVolumeOnly() {
+        fun exercise(id: String, role: ExerciseRole, sets: Int, weight: Double?) = WorkoutExercise(
+            id = id, sessionId = "mixed", exerciseId = id, orderIndex = if (role == ExerciseRole.MAIN) 0 else 1,
+            prescription = ExercisePrescription(ExerciseType.BODYWEIGHT_REPS, sets, RepRange(8, 10)),
+            role = role,
+            sets = (1..sets).map {
+                WorkoutSet(
+                    id = "$id-$it", workoutExerciseId = id, setNumber = it, isCompleted = true,
+                    completedReps = 10, completedWeight = weight
+                )
+            }
+        )
+        val mixed = WorkoutSession(
+            id = "mixed", name = "Mixed session", status = SessionStatus.COMPLETED,
+            exercises = listOf(
+                exercise("squat", ExerciseRole.MAIN, 2, null),
+                exercise("clamshell", ExerciseRole.MOBILITY, 3, 20.0)
+            )
+        )
+        render(success(overview = emptyOverview().copy(recentHistory = listOf(mixed))),
+            Locale.ENGLISH, ThemePreference.LIGHT)
+
+        scrollTo("Mixed session")
+        composeRule.onNodeWithText("2 sets logged").assertIsDisplayed()
+        assertThat(composeRule.onAllNodesWithText("5 sets logged").fetchSemanticsNodes()).isEmpty()
+        // Only the mobility rows carry a load, so no volume line appears at all.
+        assertThat(composeRule.onAllNodesWithText("of volume", substring = true).fetchSemanticsNodes()).isEmpty()
     }
 
     @Test

@@ -17,6 +17,7 @@ import org.junit.runner.RunWith
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutExerciseEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSessionEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSetEntity
+import wallcrawl.elopenmike.com.core.model.ExerciseRole
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetType
@@ -125,6 +126,42 @@ class CompletedWorkoutHistoryDaoTest {
     }
 
     @Test
+    fun completedTimestampsAndCountsIgnoreMobilityOnlySessions(): Unit = runBlocking {
+        insertSession(id = "mobility-only", completedAt = 1_000L, role = ExerciseRole.MOBILITY)
+        insertSession(id = "main", completedAt = 1_100L)
+        insertSession(id = "mixed", completedAt = 1_200L)
+        database.workoutSessionDao().insertWorkoutExercises(listOf(
+            database.workoutSessionDao().getSessionWithDetails("mixed")!!.exercisesWithSets.single().exercise
+                .copy(id = "mixed-mobility", orderIndex = 1, role = ExerciseRole.MOBILITY)
+        ))
+        // A session saved before exercises were attached has no rows and still counts.
+        database.workoutSessionDao().insertWorkout(
+            WorkoutSessionEntity(
+                id = "no-rows", name = "No rows", startedAtTimestamp = 1_299L, completedAtTimestamp = 1_300L,
+                targetDurationMinutes = 45, actualDurationMinutes = 44, status = SessionStatus.COMPLETED,
+                focusMusclesJson = "", notes = ""
+            ),
+            emptyList(), emptyList()
+        )
+        // A row written before roles existed carries the migration default and counts as MAIN.
+        insertSession(id = "legacy", completedAt = 1_400L)
+        database.openHelper.writableDatabase.execSQL("DELETE FROM workout_exercises WHERE id = 'legacy-exercise'")
+        database.openHelper.writableDatabase.execSQL(
+            "INSERT INTO workout_exercises (id, sessionId, exerciseId, orderIndex, exerciseType, targetSets, " +
+                "targetRepMin, targetRepMax, targetWeight, restSeconds, notes) " +
+                "VALUES ('legacy-exercise', 'legacy', 'goblet-squat', 0, 'WEIGHT_REPS', 1, 8, 10, 24.0, 90, '')"
+        )
+
+        assertThat(database.completedWorkoutHistoryDao().getCompletedTimestamps())
+            .containsExactly(1_100L, 1_200L, 1_300L, 1_400L)
+        assertThat(database.workoutSessionDao().observeCompletedSessionCount().first()).isEqualTo(4)
+        assertThat(database.workoutSessionDao().observeCompletedSessionCountInRange(1_000L, 1_300L).first())
+            .isEqualTo(2)
+        // History browsing still lists the mobility-only session.
+        assertThat(database.workoutSessionDao().selectHistoryPage(10, 0).map { it.id }).contains("mobility-only")
+    }
+
+    @Test
     fun onlyCompletedSessionsAreReturned(): Unit = runBlocking {
         insertSession(id = "completed", completedAt = 1_000L)
         insertSession(id = "cancelled", completedAt = 1_100L, status = SessionStatus.CANCELLED)
@@ -165,7 +202,8 @@ class CompletedWorkoutHistoryDaoTest {
         id: String,
         completedAt: Long?,
         status: SessionStatus = SessionStatus.COMPLETED,
-        setCount: Int = 1
+        setCount: Int = 1,
+        role: ExerciseRole = ExerciseRole.MAIN
     ) {
         database.workoutSessionDao().insertWorkout(
             session = WorkoutSessionEntity(
@@ -190,7 +228,8 @@ class CompletedWorkoutHistoryDaoTest {
                     targetRepMin = 8,
                     targetRepMax = 10,
                     targetWeight = 24.0,
-                    notes = ""
+                    notes = "",
+                    role = role
                 )
             ),
             sets = (1..setCount).map { setNumber ->
