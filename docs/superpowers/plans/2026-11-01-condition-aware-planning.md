@@ -400,7 +400,7 @@ Include this check: `import_catalog.py --check` must still confirm that upstream
 
 - [ ] **Step 3: Add the importer path and the approved exercises, starting with the figure-four stretch**
 
-Move the figure-four note in the piriformis record to an `exerciseCues` entry, and add the one-set-of-10 limitation for the lying stretch to its provenance. Artwork must be original or compatibly licensed, and each entry's notice must say which. Update every test and document that states a catalog count of 302.
+Set `requiresFloorTransition` on each new routine entry. Move the figure-four note in the piriformis record to an `exerciseCues` entry, and add the one-set-of-10 limitation for the lying stretch to its provenance. Artwork must be original or compatibly licensed, and each entry's notice must say which. Update every test and document that states a catalog count of 302.
 
 - [ ] **Step 4: Run the importer check and the JVM suite and confirm they pass**
 
