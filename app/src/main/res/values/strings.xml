@@ -348,7 +348,7 @@
     <string name="today_error_reviewed_exclusions">Your exercise exclusions leave no reviewed automatic options. Update your exclusions in Profile, or build your own workout.</string>
     <string name="today_error_reviewed_equipment">Your available equipment leaves no reviewed automatic options. Update your equipment in Profile, or build your own workout.</string>
     <string name="today_error_reviewed_capabilities">Your movement preferences leave no reviewed automatic options. Update them in Profile, or build your own workout.</string>
-    <string name="today_error_reviewed_constraints">Your training restrictions leave no reviewed automatic options. Those restrictions are not in the reviewed automatic scope yet.</string>
+    <string name="today_error_reviewed_constraints">Your low impact only setting leaves no options inside the reviewed automatic scope.</string>
     <string name="today_error_reviewed_conditions">The conditions and joint labels you reported leave no reviewed automatic options. WallCrawl avoids the movements listed for them, so nothing could be planned today.</string>
     <string name="today_error_condition_guidance_unavailable">WallCrawl could not load the guidance that goes with the conditions or joint labels you reported, so it did not plan a workout. Try again after restarting the app.</string>
     <string name="today_error_reviewed_calibration">Your current calibration stage leaves no reviewed automatic options. You can still build your own workout.</string>

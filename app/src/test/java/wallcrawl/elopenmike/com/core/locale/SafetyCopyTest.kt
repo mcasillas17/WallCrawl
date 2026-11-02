@@ -356,6 +356,8 @@ class SafetyCopyTest {
             "today_error_reviewed_equipment",
             "today_error_reviewed_capabilities",
             "today_error_reviewed_constraints",
+            "today_error_reviewed_conditions",
+            "today_error_condition_guidance_unavailable",
             "today_error_reviewed_calibration",
             "today_error_reviewed_none_eligible"
         )

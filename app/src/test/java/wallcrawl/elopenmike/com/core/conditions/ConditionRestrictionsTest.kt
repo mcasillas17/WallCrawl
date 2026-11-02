@@ -2,7 +2,10 @@ package wallcrawl.elopenmike.com.core.conditions
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
+import wallcrawl.elopenmike.com.core.ai.DefaultExercisePrescriptionFactory
 import wallcrawl.elopenmike.com.core.ai.ExerciseEligibilityPolicy
+import wallcrawl.elopenmike.com.core.ai.TrainingPolicyResultException
+import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
 import wallcrawl.elopenmike.com.core.ai.SYNTHETIC_CATALOG_VERSION
 import wallcrawl.elopenmike.com.core.ai.StateBasedTrainingPolicy
 import wallcrawl.elopenmike.com.core.ai.TrainingPolicyFailureReason
@@ -86,6 +89,24 @@ class ConditionRestrictionsTest {
         )
 
         assertThat(result).isEqualTo(ConditionRestrictions.Unavailable)
+    }
+
+    @Test
+    fun jointLabelMissingFromTheOverlayIsUnavailableNotIgnored() {
+        val missing = restrictionsFor(
+            UserProfile(trainingConstraints = setOf(TrainingConstraint.KNEE_SENSITIVE)),
+            loaded(joint = mapOf(TrainingConstraint.HIP_SENSITIVE to setOf(SINGLE_LEG_HIP_CONTROL)))
+        )
+        val alongsideACondition = restrictionsFor(
+            UserProfile(
+                reportedConditions = setOf("c1"),
+                trainingConstraints = setOf(TrainingConstraint.KNEE_SENSITIVE)
+            ),
+            loaded()
+        )
+
+        assertThat(missing).isEqualTo(ConditionRestrictions.Unavailable)
+        assertThat(alongsideACondition).isEqualTo(ConditionRestrictions.Unavailable)
     }
 
     @Test
@@ -202,6 +223,7 @@ class ConditionRestrictionsTest {
         val restrictions = restrictionsFor(
             profile,
             loaded(
+                joint = mapOf(TrainingConstraint.HIP_SENSITIVE to setOf(SINGLE_LEG_HIP_CONTROL)),
                 exerciseDemands = mapOf(
                     "clean" to emptySet(),
                     "single-leg" to setOf(SINGLE_LEG_HIP_CONTROL)
@@ -216,7 +238,10 @@ class ConditionRestrictionsTest {
             restrictions = restrictions
         )
 
-        // A modify demand still passes; only the exercise absent from the overlay is refused.
+        // The label's modify demand still passes but ranks lower; only the exercise absent
+        // from the overlay is refused.
+        assertThat(restrictions.ranksLower("single-leg")).isTrue()
+        assertThat(restrictions.ranksLower("clean")).isFalse()
         assertThat((result as AutomaticEligibilityResult.Candidates).exercises.map { it.id })
             .containsExactly("clean", "single-leg").inOrder()
         assertThat(result.decisions.last().reasons)
@@ -274,6 +299,99 @@ class ConditionRestrictionsTest {
     }
 
     @Test
+    fun statePolicyRefusesUnreviewedAndUnavailableToo() {
+        val exercise = syntheticApprovedExercise(id = "jump", directPrimaryMuscle = StandardMuscles.CHEST)
+
+        listOf(
+            activeFor(exerciseDemands = mapOf("other" to emptySet())), // no entry for "jump"
+            ConditionRestrictions.Unavailable
+        ).forEach { restrictions ->
+            val result = evaluateState(exercise, restrictions)
+            assertThat(result).isEqualTo(
+                TrainingPolicyResult.Failure(TrainingPolicyFailureReason.TRAINING_CONSTRAINT_REACHED_POLICY)
+            )
+        }
+        // A modify demand and a clean entry are not refused.
+        listOf(
+            activeFor(exerciseDemands = mapOf("jump" to setOf(HEAVY_EXTERNAL_LOAD))),
+            activeFor(exerciseDemands = mapOf("jump" to emptySet())),
+            ConditionRestrictions.None
+        ).forEach { restrictions ->
+            assertThat(evaluateState(exercise, restrictions))
+                .isInstanceOf(TrainingPolicyResult.Applied::class.java)
+        }
+    }
+
+    @Test
+    fun factoryRefusesAnAvoidedExerciseWithTheStatePolicyReason() {
+        val exercise = syntheticApprovedExercise(id = "jump", directPrimaryMuscle = StandardMuscles.CHEST)
+        val context = WorkoutGenerationContext(
+            userProfile = UserProfile(goals = setOf(FitnessGoal.BUILD_MUSCLE)),
+            trainingProgramState = programState(),
+            conditionRestrictions =
+                activeFor(exerciseDemands = mapOf("jump" to setOf(PLYOMETRIC_IMPACT)))
+        )
+
+        val error = org.junit.Assert.assertThrows(TrainingPolicyResultException::class.java) {
+            DefaultExercisePrescriptionFactory().createDecision(exercise, context)
+        }
+
+        assertThat(error.result).isEqualTo(
+            TrainingPolicyResult.Failure(TrainingPolicyFailureReason.TRAINING_CONSTRAINT_REACHED_POLICY)
+        )
+        // The same exercise with nothing restricted is prescribed.
+        assertThat(
+            DefaultExercisePrescriptionFactory()
+                .createDecision(exercise, context.copy(conditionRestrictions = ConditionRestrictions.None))
+                .prescription
+        ).isNotNull()
+    }
+
+    @Test
+    fun unreviewedRegressionCannotLiftAdvancedCeiling() {
+        val regression = exercise("regression")
+        val advanced = exercise("advanced").copy(
+            reviewedMetadata = metadata(
+                complexity = ComplexityTier.ADVANCED,
+                approvedRegressions = listOf(ReviewedExerciseLink("regression"))
+            )
+        )
+        // "regression" has no overlay entry at all.
+        val active = activeFor(exerciseDemands = mapOf("advanced" to emptySet()))
+
+        val result = evaluate(listOf(advanced, regression), active, AdaptationState.UNCALIBRATED)
+
+        assertThat(result.decisions.map { it.reasons }).containsExactly(
+            listOf(EligibilityReason.ADVANCED_WHILE_UNCALIBRATED),
+            listOf(EligibilityReason.CONDITION_DEMANDS_UNREVIEWED)
+        ).inOrder()
+    }
+
+    @Test
+    fun impactReasonPrecedesConditionReasons() {
+        val highImpact = exercise("high").copy(
+            reviewedMetadata = metadata().copy(impactLevel = ImpactLevel.HIGH)
+        )
+        val profile = UserProfile(
+            availableEquipment = listOf(StandardEquipment.BODYWEIGHT),
+            reportedConditions = setOf("c1"),
+            trainingConstraints = setOf(TrainingConstraint.LOW_IMPACT_ONLY)
+        )
+
+        val result = eligibility.evaluate(
+            exercises = listOf(highImpact),
+            profile = profile,
+            adaptationState = AdaptationState.BUILD,
+            restrictions = restrictionsFor(profile, loaded())
+        )
+
+        assertThat(result.decisions.single().reasons).containsExactly(
+            EligibilityReason.HIGH_IMPACT_DISALLOWED,
+            EligibilityReason.CONDITION_DEMANDS_UNREVIEWED
+        ).inOrder()
+    }
+
+    @Test
     fun aggregateFailureIsConditionsRemovedAll() {
         val active = activeFor(exerciseDemands = mapOf("a" to setOf(PLYOMETRIC_IMPACT)))
 
@@ -296,6 +414,22 @@ class ConditionRestrictionsTest {
         adaptationState = state,
         restrictions = restrictions
     )
+
+    private fun evaluateState(exercise: Exercise, restrictions: ConditionRestrictions) =
+        StateBasedTrainingPolicy().evaluate(
+            exercise = exercise,
+            basePrescription = ExercisePrescription(
+                exerciseType = ExerciseType.WEIGHT_REPS,
+                targetSets = 3,
+                repRange = RepRange(8, 12),
+                targetWeight = 40.0,
+                restSeconds = 75
+            ),
+            profile = UserProfile(goals = setOf(FitnessGoal.BUILD_MUSCLE)),
+            fitnessGoals = setOf(FitnessGoal.BUILD_MUSCLE),
+            programState = programState(),
+            restrictions = restrictions
+        )
 
     private fun activeFor(
         exerciseDemands: Map<String, Set<MovementDemand>>

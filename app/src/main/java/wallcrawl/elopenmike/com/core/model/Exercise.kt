@@ -175,11 +175,10 @@ data class ReviewedExerciseMetadata(
     /**
      * Joint sensitivities a reviewer explicitly cleared this exercise for.
      *
-     * Absence is not clearance: a selected [TrainingConstraint] that is not listed keeps the
-     * exercise out of automatic planning. [TrainingConstraint.LOW_IMPACT_ONLY] is never listed
-     * because [impactLevel] already decides it; the parser and importer reject it here so the
-     * two contracts cannot disagree. This is a reviewer's product judgement about a
-     * self-reported sensitivity label, not a diagnosis or clinical clearance.
+     * Kept in the schema but no longer read by planning: joint labels are now decided by the
+     * condition overlay (`core/conditions/ConditionRestrictions.kt`).
+     * [TrainingConstraint.LOW_IMPACT_ONLY] is never listed because [impactLevel] decides it;
+     * the parser and importer reject it here so the two contracts cannot disagree.
      */
     val clearedTrainingConstraints: Set<TrainingConstraint>,
     /**

@@ -124,7 +124,7 @@ class AiAcceptedCatalogTest {
             .evaluate(exercises, fullInventoryProfile(), AdaptationState.BUILD,
                 demonstratedProgressionFamilies = exercises.mapNotNullTo(mutableSetOf()) {
                     it.acceptedMetadata()?.progressionFamily
-                }).decisions
+                }, restrictions = ConditionRestrictions.None).decisions
 
         assertThat(decisions.filter { it.eligible }.map { it.exerciseId })
             .containsExactlyElementsIn(acceptedIds)
@@ -180,7 +180,7 @@ class AiAcceptedCatalogTest {
     @Test
     fun pendingRegressionOpensNoComplexityExceptionOrCapabilityInheritance() {
         val decisions = ExerciseEligibilityPolicy().evaluate(
-            exercises, fullInventoryProfile(), AdaptationState.UNCALIBRATED
+            exercises, fullInventoryProfile(), AdaptationState.UNCALIBRATED, restrictions = ConditionRestrictions.None
         ).decisions.associateBy { it.exerciseId }
         assertThat(byId.getValue("pistol-squat").acceptedMetadata()).isNotNull()
         assertThat(decisions.getValue("pistol-squat").reasons)

@@ -47,11 +47,13 @@ fun restrictionsFor(
     val records = profile.reportedConditions.map { guidance.conditions[it] }
     if (records.any { it == null }) return ConditionRestrictions.Unavailable
 
+    // Same rule for a joint label the overlay does not describe: never ignored.
+    val jointLabels = profile.trainingConstraints.filter { it != TrainingConstraint.LOW_IMPACT_ONLY }
+    if (jointLabels.any { it !in guidance.jointLabelDemands }) return ConditionRestrictions.Unavailable
+
     val avoid = records.flatMapTo(mutableSetOf()) { it!!.avoidDemands }
     val modify = records.flatMapTo(mutableSetOf()) { it!!.modifyDemands }
-    profile.trainingConstraints
-        .filter { it != TrainingConstraint.LOW_IMPACT_ONLY }
-        .forEach { modify += guidance.jointLabelDemands[it].orEmpty() }
+    jointLabels.forEach { modify += guidance.jointLabelDemands.getValue(it) }
     return ConditionRestrictions.Active(
         avoid = avoid,
         modify = modify - avoid,

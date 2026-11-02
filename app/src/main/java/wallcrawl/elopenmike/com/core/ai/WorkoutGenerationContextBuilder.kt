@@ -176,16 +176,18 @@ class WorkoutGenerationContextBuilder(
             CapabilityEvidenceSet.empty()
         }
         // The overlay is read only for a profile that needs it, so everyone else is unaffected
-        // by it being missing or broken.
-        val conditionRestrictions = if (
-            plannerFeatureFlags.reviewedCapabilityEligibility && profile.hasConditionInputs()
-        ) {
-            restrictionsFor(
-                profile,
-                conditionGuidanceSource?.guidance() ?: ConditionGuidanceResult.Unavailable
-            )
-        } else {
-            ConditionRestrictions.None
+        // by it being missing or broken. With the reviewed path off nothing can apply a
+        // reported condition, so it fails closed (below) rather than being ignored. Joint
+        // labels are left alone there: the legacy filter has never read them.
+        val conditionRestrictions = when {
+            plannerFeatureFlags.reviewedCapabilityEligibility && profile.hasConditionInputs() ->
+                restrictionsFor(
+                    profile,
+                    conditionGuidanceSource?.guidance() ?: ConditionGuidanceResult.Unavailable
+                )
+            !plannerFeatureFlags.reviewedCapabilityEligibility &&
+                profile.reportedConditions.isNotEmpty() -> ConditionRestrictions.Unavailable
+            else -> ConditionRestrictions.None
         }
         val automaticEligibilityResult = if (plannerFeatureFlags.reviewedCapabilityEligibility) {
             val exercisesById = allExercises.associateBy { it.id }
@@ -210,10 +212,14 @@ class WorkoutGenerationContextBuilder(
         val allowedExercises = when (automaticEligibilityResult) {
             is AutomaticEligibilityResult.Candidates -> automaticEligibilityResult.exercises
             is AutomaticEligibilityResult.NoCandidates -> emptyList()
-            null -> exerciseFilter.filterCandidates(
-                allExercises = allExercises,
-                profile = profile
-            )
+            null -> if (conditionRestrictions == ConditionRestrictions.Unavailable) {
+                emptyList()
+            } else {
+                exerciseFilter.filterCandidates(
+                    allExercises = allExercises,
+                    profile = profile
+                )
+            }
         }
         val schedulingEvidence = if (plannerFeatureFlags.reviewedCapabilityEligibility) {
             val policy = TrainingFrequencyRecencyPolicy()

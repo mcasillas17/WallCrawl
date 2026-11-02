@@ -1010,6 +1010,31 @@ class FakeWorkoutPlannerTest {
     }
 
     @Test
+    fun modifyDemandRanksLowerInTheAccessoryOrderingToo() = runTest {
+        val modify = rankingExercise(
+            id = "a-modify-isolation", difficulty = Difficulty.BEGINNER, fatigueScore = 5,
+            mechanics = MechanicsType.ISOLATION
+        )
+        val clean = rankingExercise(
+            id = "b-clean-isolation", difficulty = Difficulty.BEGINNER, fatigueScore = 1,
+            mechanics = MechanicsType.ISOLATION
+        )
+        val candidates = listOf(modify, clean)
+
+        val unrestricted = planner.generateWorkout(rankingContext(ExperienceLevel.BEGINNER, candidates))
+        val restricted = planner.generateWorkout(
+            rankingContext(ExperienceLevel.BEGINNER, candidates).copy(
+                conditionRestrictions = modifyRestrictions(modify.id, clean.id)
+            )
+        )
+
+        assertThat(unrestricted.exercises.map { it.exerciseId })
+            .containsExactly(modify.id, clean.id).inOrder()
+        assertThat(restricted.exercises.map { it.exerciseId })
+            .containsExactly(clean.id, modify.id).inOrder()
+    }
+
+    @Test
     fun modifyExerciseIsChosenWhenNothingCleanFitsAndShowsItsCue() = runTest {
         val modify = rankingExercise(id = "only-modify", difficulty = Difficulty.BEGINNER)
         val restrictions = modifyRestrictions(modify.id)

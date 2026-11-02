@@ -219,7 +219,7 @@ class StateBasedTrainingPolicy(
         fitnessGoals: Set<FitnessGoal>,
         programState: TrainingProgramState,
         priorUserRestPreference: UserRestPreference? = null,
-        restrictions: ConditionRestrictions = ConditionRestrictions.None
+        restrictions: ConditionRestrictions
     ): TrainingPolicyResult {
         if (
             programState.policyVersion !in setOf(

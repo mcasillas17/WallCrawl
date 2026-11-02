@@ -127,7 +127,9 @@ internal class PlannerFixtureContextFactory(
                             emptyMap()
                         },
                         conditions = emptyMap(),
-                        jointLabelDemands = emptyMap(),
+                        jointLabelDemands = profile.trainingConstraints
+                            .filter { it != TrainingConstraint.LOW_IMPACT_ONLY }
+                            .associateWith { emptySet() },
                         demandCues = emptyMap()
                     )
                 )

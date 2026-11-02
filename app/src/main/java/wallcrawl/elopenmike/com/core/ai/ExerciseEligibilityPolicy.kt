@@ -33,7 +33,7 @@ class ExerciseEligibilityPolicy {
         profile: UserProfile,
         adaptationState: AdaptationState,
         demonstratedProgressionFamilies: Set<String> = emptySet(),
-        restrictions: ConditionRestrictions = ConditionRestrictions.None
+        restrictions: ConditionRestrictions
     ): AutomaticEligibilityResult {
         val ownedEquipment = profile.availableEquipment.normalizedEquipmentSet()
         val excludedExerciseIds = profile.excludedExerciseIds.toSet()
@@ -61,10 +61,10 @@ class ExerciseEligibilityPolicy {
                     ) {
                         add(EligibilityReason.CAPABILITY_AVOID)
                     }
-                    restrictions.decisionFor(exercise.id)?.let(::add)
                     if (acceptedMetadata.violatesImpactRestrictionOf(profile)) {
                         add(EligibilityReason.HIGH_IMPACT_DISALLOWED)
                     }
+                    restrictions.decisionFor(exercise.id)?.let(::add)
                     val advancedCeilingApplies =
                         acceptedMetadata.complexity == ComplexityTier.ADVANCED &&
                             acceptedMetadata.progressionFamily !in demonstratedProgressionFamilies &&

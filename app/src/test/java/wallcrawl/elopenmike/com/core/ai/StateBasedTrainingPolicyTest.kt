@@ -1,5 +1,6 @@
 package wallcrawl.elopenmike.com.core.ai
 
+import wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import org.junit.Assert.assertThrows
@@ -565,7 +566,7 @@ class StateBasedTrainingPolicyTest {
                 adaptationState = adaptationState,
                 weeklyLedger = ledger
             ),
-            priorUserRestPreference = priorUserRestPreference
+            priorUserRestPreference = priorUserRestPreference, restrictions = ConditionRestrictions.None
         )
     }
 
