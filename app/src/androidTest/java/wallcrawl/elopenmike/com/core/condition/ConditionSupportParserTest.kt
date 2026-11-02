@@ -48,6 +48,22 @@ class ConditionSupportParserTest {
         assertThat(rule.schedule!!.sessionsPerWeek).isEqualTo(2)
         assertThat(rule.allowOrdinaryProgression).isFalse()
     }
+    @Test fun supportiveExecutionRequirementsAreMandatoryAndBoundToReview() {
+        val exercise = fictionalExercise.copy(type = ExerciseType.DURATION)
+        val parser = ConditionSupportParser(mapOf(exercise.id to ConditionExerciseIdentity.from(exercise, "b".repeat(64))))
+        val root = JSONObject(instrumentation.context.assets.open("conditions/fictional-supportive.json").bufferedReader().use { it.readText() })
+        val rule = root.getJSONArray("records").getJSONObject(0).getJSONObject("content")
+            .getJSONArray("cases").getJSONObject(0).getJSONArray("rules").getJSONObject(0)
+        assertThat(parser.parse(StringReader(root.toString())).records).hasSize(1)
+        rule.getJSONObject("supportiveRequirements").put("impact", "HIGH")
+        assertThrows(ConditionSupportFormatException::class.java) { parser.parse(StringReader(root.toString())) }
+        rebindReview(root)
+        assertThat(parser.parse(StringReader(root.toString())).records).hasSize(1)
+        rule.remove("supportiveRequirements")
+        rebindReview(root)
+        assertThrows(ConditionSupportFormatException::class.java) { parser.parse(StringReader(root.toString())) }
+    }
+
     @Test fun resigningUnchangedFixturePreservesTheReviewedDigest() {
         val root = JSONObject(fixture())
         val review = root.getJSONArray("records").getJSONObject(0).getJSONObject("review")

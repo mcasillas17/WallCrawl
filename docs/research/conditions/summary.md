@@ -84,3 +84,5 @@ A later figure and execution check distinguishes fixed HEAVY shoulder, calf-supp
 [`index.json`](index.json) is the authoritative inventory. [`exercise-requests.json`](exercise-requests.json) tracks draft exercise variants. The offline validator checks references, required fields and draft status; it does not establish scientific correctness or clinical approval.
 
 The [clinical-review packet](review.md) records review progress, applicability limits and content hashes. All 50 conditions remain awaiting qualified clinical review; none is released by these research documents.
+
+Condition support policy version 1 uses a local ISO Monday-to-Monday calendar week and counts each retained session/exercise pair with a resolved set outcome once. Minimum spacing uses elapsed hours since the latest actual outcome, including a prior-week outcome. A stop counts as an exposure, not proof of therapeutic dose. Clinical release review must approve this application convention; protocols requiring different timing or monitoring remain unsupported. Missing required chronology blocks planning.

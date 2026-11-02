@@ -5,6 +5,17 @@ import org.junit.Assert.assertThrows
 import org.junit.Test
 
 class ConditionSupportTest {
+    @Test fun supportiveRequirementsRequireExplicitValidEquipmentAndImpact() {
+        val requirements = ConditionSupportiveRequirements(emptySet(), emptySet(), ImpactLevel.LOW, listOf(emptyList()))
+        assertThat(requirements.equipmentAlternatives).containsExactly(emptyList<String>())
+        assertThrows(IllegalArgumentException::class.java) {
+            ConditionSupportiveRequirements(emptySet(), setOf(TrainingConstraint.LOW_IMPACT_ONLY), ImpactLevel.LOW, listOf(emptyList()))
+        }
+        assertThrows(IllegalArgumentException::class.java) {
+            ConditionSupportiveRequirements(emptySet(), emptySet(), ImpactLevel.LOW, emptyList())
+        }
+    }
+
     @Test fun legacyPrescriptionsRemainOrdinaryAndSupportiveUsesExistingValidation() {
         val ordinary = ExercisePrescription(ExerciseType.DURATION, 1, targetDurationSeconds = 20)
         assertThat(ordinary.purpose).isEqualTo(PrescriptionPurpose.ORDINARY)

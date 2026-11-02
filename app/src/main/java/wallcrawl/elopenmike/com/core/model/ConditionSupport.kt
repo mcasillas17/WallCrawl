@@ -131,6 +131,8 @@ data class ConditionExerciseIdentity(val exerciseId: String, val contentSha256: 
     }
 }
 
+/** Version 1 counts distinct session/exercise exposures in the local ISO week;
+ * minimum spacing uses actual elapsed hours. Release review must approve this convention. */
 data class ConditionSchedule(val sessionsPerWeek: Int, val minimumHoursBetweenSessions: Int, val instructions: ConditionText) {
     init {
         require(sessionsPerWeek in 1..7 && minimumHoursBetweenSessions in 0..168)
@@ -158,28 +160,48 @@ class ConditionResponsePolicy(
     override fun hashCode(): Int = valueFields().hashCode()
 }
 
+/** Explicit reviewed requirements for supportive execution, independent of strength metadata. */
+class ConditionSupportiveRequirements(
+    capabilities: Set<MovementCapabilityType>, clearedConstraints: Set<TrainingConstraint>,
+    val impact: ImpactLevel, equipmentAlternatives: List<List<String>>
+) {
+    val capabilities = conditionSet(capabilities)
+    val clearedConstraints = conditionSet(clearedConstraints)
+    val equipmentAlternatives = conditionList(equipmentAlternatives.map(::conditionList))
+    init {
+        require(TrainingConstraint.LOW_IMPACT_ONLY !in clearedConstraints)
+        require(equipmentAlternatives.isNotEmpty() && equipmentAlternatives.size <= 32)
+        require(equipmentAlternatives.distinct().size == equipmentAlternatives.size)
+        require(equipmentAlternatives.all { it.size <= 32 && it.distinct().size == it.size && it.all { item -> item in StandardEquipment.ALL } })
+    }
+    private fun values() = listOf(capabilities, clearedConstraints, impact, equipmentAlternatives)
+    override fun equals(other: Any?) = other is ConditionSupportiveRequirements && values() == other.values()
+    override fun hashCode() = values().hashCode()
+}
+
 class ConditionRule(
     val id: String, val exerciseIdentity: ConditionExerciseIdentity,
     val effect: ConditionRuleEffect, val executionIdentity: String, val instructions: ConditionText,
     sourceIds: Set<String>, val bounds: ConditionPrescriptionBounds?,
     val allowOrdinaryProgression: Boolean,
-    val supportivePrescription: ExercisePrescription?, val schedule: ConditionSchedule?
+    val supportivePrescription: ExercisePrescription?, val schedule: ConditionSchedule?,
+    val supportiveRequirements: ConditionSupportiveRequirements? = null
 ) {
     val sourceIds = conditionSet(sourceIds)
     init {
         requireConditionToken(id); requireConditionToken(executionIdentity)
         require(sourceIds.size in 1..64); sourceIds.forEach(::requireConditionToken)
         when (effect) {
-            ConditionRuleEffect.EXCLUDE -> require(bounds == null && !allowOrdinaryProgression && supportivePrescription == null && schedule == null)
+            ConditionRuleEffect.EXCLUDE -> require(bounds == null && !allowOrdinaryProgression && supportivePrescription == null && schedule == null && supportiveRequirements == null)
             ConditionRuleEffect.PERMIT_ORDINARY -> {
-                require(bounds != null && supportivePrescription == null && schedule == null)
+                require(bounds != null && supportivePrescription == null && schedule == null && supportiveRequirements == null)
                 validateBoundsForType(bounds, exerciseIdentity.exerciseType)
             }
-            ConditionRuleEffect.PRESCRIBE_SUPPORTIVE -> require(bounds == null && !allowOrdinaryProgression && supportivePrescription != null && schedule != null && supportivePrescription.purpose == PrescriptionPurpose.SUPPORTIVE && supportivePrescription.exerciseType == exerciseIdentity.exerciseType)
+            ConditionRuleEffect.PRESCRIBE_SUPPORTIVE -> require(bounds == null && !allowOrdinaryProgression && supportivePrescription != null && schedule != null && supportiveRequirements != null && supportivePrescription.purpose == PrescriptionPurpose.SUPPORTIVE && supportivePrescription.exerciseType == exerciseIdentity.exerciseType)
         }
     }
 
-    private fun valueFields(): List<Any?> = listOf(id, exerciseIdentity, effect, executionIdentity, instructions, sourceIds, bounds, allowOrdinaryProgression, supportivePrescription, schedule)
+    private fun valueFields(): List<Any?> = listOf(id, exerciseIdentity, effect, executionIdentity, instructions, sourceIds, bounds, allowOrdinaryProgression, supportivePrescription, schedule, supportiveRequirements)
     override fun equals(other: Any?): Boolean = other is ConditionRule && valueFields() == other.valueFields()
     override fun hashCode(): Int = valueFields().hashCode()
 }

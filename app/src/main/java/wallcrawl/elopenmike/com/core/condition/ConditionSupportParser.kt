@@ -59,14 +59,26 @@ class ConditionSupportParser(private val exerciseIdentity: (String) -> Condition
     }
 
     private fun rule(rule: Obj): ConditionRule {
-        rule.fields("id", "exerciseIdentity", "effect", "executionIdentity", "instructions", "sourceIds", "bounds", "allowOrdinaryProgression", "supportivePrescription", "schedule")
+        rule.fields("id", "exerciseIdentity", "effect", "executionIdentity", "instructions", "sourceIds", "bounds", "allowOrdinaryProgression", "supportivePrescription", "schedule", "supportiveRequirements")
         val identity = rule.obj("exerciseIdentity")
         identity.fields("exerciseId", "contentSha256", "exerciseType", "artworkSha256")
         val declared = ConditionExerciseIdentity(identity.string("exerciseId"), identity.string("contentSha256"), enumValueOf(identity.string("exerciseType")), identity.string("artworkSha256"))
         require(exerciseIdentity(declared.exerciseId) == declared) { "Unknown or changed exercise content: ${declared.exerciseId}." }
         return ConditionRule(rule.string("id"), declared, enumValueOf(rule.string("effect")), rule.string("executionIdentity"), text(rule.obj("instructions")),
             rule.strings("sourceIds"), rule.optionalObj("bounds")?.let(::bounds), rule.boolean("allowOrdinaryProgression"),
-            rule.optionalObj("supportivePrescription")?.let(::prescription), rule.optionalObj("schedule")?.let(::schedule))
+            rule.optionalObj("supportivePrescription")?.let(::prescription), rule.optionalObj("schedule")?.let(::schedule),
+            rule.optionalObj("supportiveRequirements")?.let(::supportiveRequirements))
+    }
+
+    private fun supportiveRequirements(value: Obj): ConditionSupportiveRequirements {
+        value.fields("capabilities", "clearedConstraints", "impact", "equipmentAlternatives")
+        val capabilities = value.strings("capabilities").map { enumValueOf<MovementCapabilityType>(it) }.toSet()
+        val constraints = value.strings("clearedConstraints").map { enumValueOf<TrainingConstraint>(it) }.toSet()
+        val equipment = value.list("equipmentAlternatives").map { combination ->
+            (combination as? List<*>)?.map { it as? String ?: error("Invalid equipment token.") }
+                ?: error("Invalid equipment combination.")
+        }
+        return ConditionSupportiveRequirements(capabilities, constraints, enumValueOf(value.string("impact")), equipment)
     }
 
     private fun bounds(bounds: Obj): ConditionPrescriptionBounds {
