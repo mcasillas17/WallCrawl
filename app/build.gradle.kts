@@ -4,6 +4,19 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
+class RoomSchemaArgProvider(
+    @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    val schemaDir: File
+) : CommandLineArgumentProvider {
+    override fun asArguments() = listOf("room.schemaLocation=${schemaDir.path}")
+}
+
+ksp {
+    // CI redirects output to an empty directory so a stale export cannot pass the drift check.
+    arg(RoomSchemaArgProvider(file(providers.gradleProperty("wallcrawl.roomSchemaDirectory").orElse("schemas").get())))
+}
+
 val wallcrawlVersionCode = providers.gradleProperty("wallcrawl.versionCode")
     .orElse("1")
     .map { it.toInt() }
@@ -71,6 +84,9 @@ android {
         }
     }
     sourceSets {
+        getByName("androidTest") {
+            assets.directories.add("schemas")
+        }
         getByName("test") {
             resources.srcDir("src/main/assets")
             resources.srcDir("src/androidTest/assets")
