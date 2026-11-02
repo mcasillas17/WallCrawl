@@ -364,7 +364,7 @@ git commit -m "fix(planner): exclude mobility work from training accounting"
 
 - [ ] **Step 3: Implement the screens and strings**
 
-Rewrite `onboarding_safety_hint`, because its statement that a joint choice leaves no automatic workout is no longer true. The Spanish version must match. Use `hasScrollAction()` and `performScrollToNode` in device tests.
+Rewrite `onboarding_safety_hint` and `profile_safety_description`, because their statements that a joint choice leaves no automatic workout are no longer true. The Spanish version must match. Use `hasScrollAction()` and `performScrollToNode` in device tests.
 
 - [ ] **Step 4: Run the JVM suite, then device tests at both the default size and 320x640 dp, and confirm they pass**
 
@@ -400,7 +400,7 @@ Include this check: `import_catalog.py --check` must still confirm that upstream
 
 - [ ] **Step 3: Add the importer path and the approved exercises, starting with the figure-four stretch**
 
-Artwork must be original or compatibly licensed, and each entry's notice must say which. Update every test and document that states a catalog count of 302.
+Move the figure-four note in the piriformis record to an `exerciseCues` entry, and add the one-set-of-10 limitation for the lying stretch to its provenance. Artwork must be original or compatibly licensed, and each entry's notice must say which. Update every test and document that states a catalog count of 302.
 
 - [ ] **Step 4: Run the importer check and the JVM suite and confirm they pass**
 

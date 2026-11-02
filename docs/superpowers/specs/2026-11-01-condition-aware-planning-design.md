@@ -82,7 +82,7 @@ Approved routines:
 | --- | --- |
 | Piriformis syndrome | Figure-four stretch, lying piriformis stretch, glute bridge |
 | Gluteal tendinopathy | Section 5 of the consolidation |
-| Lumbar radiculopathy | Cat-cow, bird dog, glute bridge |
+| Lumbar radiculopathy | Bird dog, glute bridge. Cat-cow is left out because its published rep dose does not fit the catalog's duration type. |
 | Nonspecific low back pain | Section 5 of the consolidation |
 | Rotator cuff-related shoulder pain | Cross-body shoulder stretch |
 | Lateral elbow tendinopathy | Wrist extensor stretch |
