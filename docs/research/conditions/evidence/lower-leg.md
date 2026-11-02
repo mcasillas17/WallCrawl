@@ -122,6 +122,7 @@ Research draft, searches executed 2026-11-01 America/Los_Angeles (2026-11-02 UTC
 
 - **Disposition candidate:** symptom-guided loading modification, with exercise options marked uncertain for MTSS-specific symptom benefit. Neither direct trial supports promising that calf strengthening shortens recovery.
 - **Ordinary training inference:** reduce provocative impact volume rather than mandate permanent running exclusion. Obtain assessment for focal bony pain or atypical progression before treating it as MTSS. MTSS trial screening is not an app diagnostic algorithm.
+- **Fixed scope candidate:** `seated-short-foot-arch-hold-no-toe-flexion` depicts only the already reported seated short-foot stage, with forefoot down and toes uncurled. The broad seated-to-double-/single-leg parent remains unresolved for a single artwork sequence. No fresh primary-source fact, hold duration or clinical efficacy claim is added.
 - **Unresolved:** best exercise dose, effects on recurrence, safe return criteria across severities, and differentiating bone stress injury. Stretching, short-foot control and resistance cannot be collapsed into strength-set equivalents.
 
 ## 9. Lower-limb bone stress injury

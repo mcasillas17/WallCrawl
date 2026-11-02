@@ -6,7 +6,7 @@ Each regional evidence report links the actual medical papers and guidelines ins
 
 Current state: linked source reports cover 50 of 50 conditions; 50 structured dossiers have been reconciled. Independent source verification and clinical review are separate gates; the review packet records the completed regional passes and remaining access limits. This is a targeted evidence review, not an exhaustive systematic review.
 
-The structured records contain **187 distinct publications, guidelines and notices**, used in 196 condition-specific source records: 118 full-text and 78 abstract-only/partial-access records. These are access counts, not evidence-quality grades; the same publication can inform multiple conditions. Each record states exactly what was inspected. The corpus contains 227 extracted findings and 79 draft rules. None is an activated workout restriction.
+The structured records contain **187 distinct publications, guidelines and notices**, used in 196 condition-specific source records: 118 full-text and 78 abstract-only/partial-access records. These are access counts, not evidence-quality grades; the same publication can inform multiple conditions. Each record states exactly what was inspected. The corpus contains 230 extracted findings and 79 draft rules. None is an activated workout restriction.
 
 ## Inventory and evidence links
 
@@ -37,7 +37,7 @@ The structured records contain **187 distinct publications, guidelines and notic
 | gluteal tendinopathy | [Study extraction](evidence/hip.md#gluteal-tendinopathy-progressive-loading-with-compression-management) | [Recorded](gluteal-tendinopathy.json) | 3 / 2 / 2 |
 | femoroacetabular impingement syndrome | [Study extraction](evidence/hip.md#femoroacetabular-impingement-syndrome-restriction-only-research-disposition-in-this-batch) | [Recorded](femoroacetabular-impingement-syndrome.json) | 3 / 2 / 0 |
 | adductor-related groin pain | [Study extraction](evidence/hip.md#adductor-related-groin-pain-narrow-chronic-athlete-applicability) | [Recorded](adductor-related-groin-pain.json) | 4 / 1 / 2 |
-| proximal hamstring tendinopathy | [Study extraction](evidence/hip.md#proximal-hamstring-tendinopathy-compression-is-deliberately-reintroduced) | [Recorded](proximal-hamstring-tendinopathy.json) | 3 / 3 / 2 |
+| proximal hamstring tendinopathy | [Study extraction](evidence/hip.md#proximal-hamstring-tendinopathy-compression-is-deliberately-reintroduced) | [Recorded](proximal-hamstring-tendinopathy.json) | 3 / 3 / 3 |
 | iliopsoas-related groin pain | [Study extraction](evidence/hip.md#iliopsoas-related-groin-pain-single-native-hip-exercise-case-major-uncertainty) | [Recorded](iliopsoas-related-groin-pain.json) | 2 / 1 / 1 |
 | piriformis syndrome | [Study extraction](evidence/piriformis.md#population-and-scope) | [Recorded](piriformis-syndrome.json) | 5 / 2 / 4 |
 | Knee osteoarthritis | [Study extraction](evidence/knee.md#knee-osteoarthritis-knee-osteoarthritis) | [Recorded](knee-osteoarthritis.json) | 3 / 1 / 1 |
@@ -54,7 +54,7 @@ The structured records contain **187 distinct publications, guidelines and notic
 | chronic ankle instability | [Study extraction](evidence/lower-leg.md#5-chronic-ankle-instability) | [Recorded](chronic-ankle-instability.json) | 4 / 1 / 4 |
 | posterior tibial tendinopathy | [Study extraction](evidence/lower-leg.md#6-posterior-tibial-tendinopathy) | [Recorded](posterior-tibial-tendinopathy.json) | 3 / 1 / 1 |
 | peroneal tendinopathy | [Study extraction](evidence/lower-leg.md#7-peroneal-tendinopathy) | [Recorded](peroneal-tendinopathy.json) | 3 / 1 / 1 |
-| medial tibial stress syndrome | [Study extraction](evidence/lower-leg.md#8-medial-tibial-stress-syndrome-mtss) | [Recorded](medial-tibial-stress-syndrome.json) | 3 / 1 / 2 |
+| medial tibial stress syndrome | [Study extraction](evidence/lower-leg.md#8-medial-tibial-stress-syndrome-mtss) | [Recorded](medial-tibial-stress-syndrome.json) | 3 / 1 / 3 |
 | lower-limb bone stress injury | [Study extraction](evidence/lower-leg.md#9-lower-limb-bone-stress-injury) | [Recorded](lower-limb-bone-stress-injury.json) | 3 / 1 / 0 |
 | first metatarsophalangeal osteoarthritis | [Study extraction](evidence/lower-leg.md#10-first-metatarsophalangeal-mtp-osteoarthritis) | [Recorded](first-metatarsophalangeal-osteoarthritis.json) | 5 / 1 / 1 |
 | Osteoporosis | [Study extraction](evidence/systemic.md#osteoporosis) | [Recorded](osteoporosis.json) | 5 / 3 / 4 |
@@ -63,7 +63,9 @@ The structured records contain **187 distinct publications, guidelines and notic
 | fibromyalgia | [Study extraction](evidence/systemic.md#fibromyalgia) | [Recorded](fibromyalgia.json) | 3 / 3 / 4 |
 | hypermobility spectrum disorder | [Study extraction](evidence/systemic.md#hypermobility-spectrum-disorder) | [Recorded](hypermobility-spectrum-disorder.json) | 4 / 2 / 5 |
 
-The source access counts describe the original extraction; the [review packet](review.md) records narrower independent-verification limits where applicable. The 86 exercise requests include unresolved variants and whole programs; they are not 86 accepted catalog exercises or completed PNG sets.
+The source access counts describe the original extraction; the [review packet](review.md) records narrower independent-verification limits where applicable. The 89 exercise requests include unresolved variants and whole programs; they are not 89 accepted catalog exercises or completed PNG sets.
+
+A later figure and execution check distinguishes fixed HEAVY shoulder, calf-supported single-leg hamstring hold and seated short-foot variants from broader or differently supported requests. The register now has 97 candidate mappings and 89 requests. Nineteen source-scoped pose briefs are ready for draft artwork; that does not establish clinical suitability or acceptance of the resulting images.
 
 ## Reading the evidence
 

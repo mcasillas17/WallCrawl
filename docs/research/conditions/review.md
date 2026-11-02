@@ -21,6 +21,8 @@ Regional verifiers are different agents from the dossier authors. They reopen pr
 | Shoulder and elbow/hand | 14 | Research gate approved; 66 source records, 20 rules and 26 mappings checked; source verification remains partial |
 | Lower leg/ankle/foot | 10 | Research gate approved; 33 source records, 13 rules and 21 mappings checked with access limits |
 
+The table records the original regional passes. A subsequent scoped source review on 2026-11-02 checked the [HEAVY shoulder executions](hypermobility-spectrum-disorder.json), [fixed calf-supported hamstring hold](proximal-hamstring-tendinopathy.json) and [seated short-foot variant](medial-tibial-stress-syndrome.json), plus their request and readable-report changes. It added execution findings and two candidate mappings, retained broader unresolved variants, and separated the final HEAVY protraction pose from the RoCTEx setup. The earlier common-movement merge remains historical; it did not accept one final illustration for both setups. Current totals are 230 findings, 79 draft rules, 97 mappings and 89 requests. Nineteen source-scoped briefs passed factual draft-art planning review; no generated artwork or clinical prescription was accepted by that review.
+
 ## Corrections and remaining source-verification limits
 
 The independent passes corrected a missing/conflicting scoliosis home schedule, a malformed narrative DOI, PFP progression described as a free-choice alternative, Sinaki cointervention allocation, insertional-Achilles supervision duration, stale erratum wording, CTS evidence-quality versus recommendation-strength grading, the Baker primary/CPG endpoint discrepancy, RoCTEx applicability and a reported band-anchor position. Published correction notices are linked in their source records; correction existence alone was not assumed to invalidate or preserve results.
@@ -29,7 +31,7 @@ All 78 abstract/partial-access source records received a focused audit for expli
 
 Source access counts in the inventory describe the original extraction. Independent reviewers sometimes had narrower access. Remaining examples include the WHO chapter and 2025 neck guideline, selected Krauss/Bennell hip-OA details, the BESS AC pathway (metadata only in the independent pass), selected 2026 CTS/hand-OA guideline passages and parts of the MOON/LET reports. Primary abstracts or indexed passages were checked where available; missing full methods and original handouts/figures were not inferred. The CTS monitoring passage in the 2026 document appears under its reproduced 2019 recommendation; it is not presented as newly established 2026 evidence.
 
-Contrary and null results, mixed diagnoses, bundled-treatment effects, imperfect harms reporting and unresolved primary-versus-guideline accounts remain in the dossiers. No independent pass claimed exhaustive retrieval, a registry-wide absence of corrections, or clinical safety for an individual. Every current dossier hash below was matched to its assigned verifier's final recorded hashes after corrections.
+Contrary and null results, mixed diagnoses, bundled-treatment effects, imperfect harms reporting and unresolved primary-versus-guideline accounts remain in the dossiers. No independent pass claimed exhaustive retrieval, a registry-wide absence of corrections, or clinical safety for an individual. Every current dossier hash below was matched to its regional verifier's final record or the subsequent scoped source-review record for the three updated dossiers. Earlier manifests remain historical snapshots of the bytes reviewed at those stages.
 
 ## Applicability and execution limits
 
@@ -71,7 +73,7 @@ Hashes below bind the current dossier bytes for review; they are not clinical si
 | [gluteal tendinopathy](gluteal-tendinopathy.json) | research-only | 2 / 2 | `537a9591d2f9400299d3db223487c7993a4f72e8b55887338f74bb093d432b55` |
 | [femoroacetabular impingement syndrome](femoroacetabular-impingement-syndrome.json) | research-only | 2 / 0 | `cb6c6111fdfb566276ecd8b8bbc938b96a7c0cf171cf894b98ee05376ea46cbe` |
 | [adductor-related groin pain](adductor-related-groin-pain.json) | research-only | 1 / 2 | `239f779ac8eee1c2d5d4acc5b81457830ae85eddd7b991d23dbe089d46b66151` |
-| [proximal hamstring tendinopathy](proximal-hamstring-tendinopathy.json) | research-only | 3 / 2 | `786d93018d55ceff769b48db546b8c4b173383bae764e32561fbf5297f54d2c8` |
+| [proximal hamstring tendinopathy](proximal-hamstring-tendinopathy.json) | research-only | 3 / 3 | `019b2f2fe47474aa06615eb6931db6521c4edc22b4fa6d2ad2ab2e590849ee34` |
 | [iliopsoas-related groin pain](iliopsoas-related-groin-pain.json) | research-only | 1 / 1 | `821e810aa3649486190c1ad370044ef779013d8da2647b740022055a526f0479` |
 | [piriformis syndrome](piriformis-syndrome.json) | research-only | 2 / 4 | `59c24572779c19b179f1fe2bee22c3c238c7a30cf073370d978264323c6a634e` |
 | [Knee osteoarthritis](knee-osteoarthritis.json) | research-only | 1 / 1 | `01ad707ef663f7ffffa77bdca0cc9a1172e4eb7dc5dce6ab272f65c013879e02` |
@@ -88,29 +90,29 @@ Hashes below bind the current dossier bytes for review; they are not clinical si
 | [chronic ankle instability](chronic-ankle-instability.json) | eligible-for-independent-content-review | 1 / 4 | `f8a1cb790865f43f63cdc414c01d2344f25bd3906b95b8870a3fd85f3a8c8475` |
 | [posterior tibial tendinopathy](posterior-tibial-tendinopathy.json) | unresolved | 1 / 1 | `a38cd30f7930496f503d34dfb40569492c21db7b548732327592499863cb824e` |
 | [peroneal tendinopathy](peroneal-tendinopathy.json) | unresolved | 1 / 1 | `72e0e8489b64a893057dcd6dcaa020fd7da2f2e733d22f5b81d6bb66459226a4` |
-| [medial tibial stress syndrome](medial-tibial-stress-syndrome.json) | research-only | 1 / 2 | `3733f457ecee7727615bc5e37afd08c4bc74270db0b0b50b1bd4e1ec4746a17d` |
+| [medial tibial stress syndrome](medial-tibial-stress-syndrome.json) | research-only | 1 / 3 | `ad59140a00944a9d67f9c5c1dde881eaf13fad0970fc33e3623e035f06a67057` |
 | [lower-limb bone stress injury](lower-limb-bone-stress-injury.json) | research-only | 1 / 0 | `de4e7da373b9b7d4d067c43dbd1f7c2ee81bf6201991dae7a747d989cb8442dd` |
 | [first metatarsophalangeal osteoarthritis](first-metatarsophalangeal-osteoarthritis.json) | unresolved | 1 / 1 | `6c8c3e74a26dba07b0992c4a84fe870a0c4ea64155d5d567583685616863d09e` |
 | [Osteoporosis](osteoporosis.json) | research-only | 3 / 4 | `cf6939c6445d367e71b168764c3a3f11365be1393f6bb93ac36d608561f2b493` |
 | [rheumatoid arthritis](rheumatoid-arthritis.json) | research-only | 3 / 1 | `9b2edf76b49ca725d860dfd523ec1a6b48d14e86b4d7fe2a75815dab3fe427f6` |
 | [axial spondyloarthritis](axial-spondyloarthritis.json) | research-only | 2 / 2 | `43d42fd0a9d87fe32546bc0bb9f1478b8ca3d76bd93996bd28395e78525e7725` |
 | [fibromyalgia](fibromyalgia.json) | research-only | 3 / 4 | `908f02c7d13e788ce9c9a4f2f7fe1fa59354e8a5a6d6cac33f8d4d6e10c293c4` |
-| [hypermobility spectrum disorder](hypermobility-spectrum-disorder.json) | research-only | 2 / 5 | `3d49a29aa6038550e3221912f9f0c4fc5507bfff4244e1ad698ea5a93b84887c` |
+| [hypermobility spectrum disorder](hypermobility-spectrum-disorder.json) | research-only | 2 / 5 | `9ba6b613bf2b91b55f2877f96a24ea8dd15fea750c7d0f85c503ef4bb0701d7e` |
 
 ## Shared input manifest
 
 | Input | SHA-256 |
 | --- | --- |
 | [index.json](index.json) | `4d7299edfe3558435cae85556a64828c0e3f63cbc6e35c908604b99a3c0333d5` |
-| [exercise-requests.json](exercise-requests.json) | `a7b233ae808e5941f41129c3f17ce6ee5b74fa47a37e3b4941b06188c22fcb35` |
+| [exercise-requests.json](exercise-requests.json) | `4cac4a7f57ea4aaea279cdb9b87008becda6f0dfbe2bc71bde35bb387ba8a042` |
 | [evidence/elbow-hand.md](evidence/elbow-hand.md) | `45320db6acb1a926ded0a7754ae74d5028b0c2e2270b17e0675361e95ce56dc0` |
-| [evidence/hip.md](evidence/hip.md) | `0fb98d54a3f6711f05724b78058c4bcfeb3ec8de7608f673afde2abfae81c135` |
+| [evidence/hip.md](evidence/hip.md) | `64fa71e76b2de665300f7da1951077e7e1001890dfe06410bb1a56320ec6be63` |
 | [evidence/knee.md](evidence/knee.md) | `dac93b6e2b12233ba25a3c74d92ea68a2ce1b3e9008b9463e5ba2fea0f8525ae` |
-| [evidence/lower-leg.md](evidence/lower-leg.md) | `facafc75fddf879934158213c48c28c965a323cb4e5d6b178c0f56b5658c151b` |
+| [evidence/lower-leg.md](evidence/lower-leg.md) | `92ff499d0246c10a16b726ffd0ca779df1ba74e21b004952e86438ec1cb3974d` |
 | [evidence/piriformis.md](evidence/piriformis.md) | `2e37a27546edb8180299dca906d95938e74f07e83461c2898b19165773ce6c7f` |
 | [evidence/shoulder.md](evidence/shoulder.md) | `c743218e7421f8a33162850c842d7fa8e84ff808646a7e0d2ececac24e983652` |
 | [evidence/spine.md](evidence/spine.md) | `2debe8fff4d736fba214094b6ccd7c228994904033e825f974c73f285e8892a6` |
-| [evidence/systemic.md](evidence/systemic.md) | `6757a4c224b7fdae87a2bbd055617066232f58f015c18ce8f24c53619fae70ef` |
+| [evidence/systemic.md](evidence/systemic.md) | `27f31e7b0cf026289203bd620c0924bba58a14f699a88bcf5e8c9ec57f5bd2f5` |
 
 ## Validation and remaining gates
 

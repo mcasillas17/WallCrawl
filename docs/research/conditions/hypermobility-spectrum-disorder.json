@@ -72,7 +72,7 @@
       "access": {
         "status": "full-text",
         "date": "2026-11-01",
-        "details": "Complete Europe PMC XML and 11-page HEAVY manual retrieved: https://static-content.springer.com/esm/art%3A10.1186%2Fs13063-020-04892-0/MediaObjects/13063_2020_4892_MOESM3_ESM.pdf . Exercise and pain-management text read; embedded figures not independently visually verified."
+        "details": "Complete Europe PMC XML and 11-page HEAVY manual retrieved: https://static-content.springer.com/esm/art%3A10.1186%2Fs13063-020-04892-0/MediaObjects/13063_2020_4892_MOESM3_ESM.pdf . Exercise and pain-management text read; embedded figures not independently visually verified. Fresh figure inspection 2026-11-02 UTC: original art-readiness author and separate factual-art reviewer inspected all five exercise photograph pairs and execution text, PDF pp.5–9 / printed pp.4–8. Exact retained primary PDF SHA-256 3f99b740d5155ec1c2039a36e8ea92bc680bd663179aec832452b3692610a4b3 (332030 bytes), https://static-content.springer.com/esm/art%3A10.1186%2Fs13063-020-04892-0/MediaObjects/13063_2020_4892_MOESM3_ESM.pdf. Exercise 3 shows a qualitative overhead endpoint; no numeric end angle inferred. Exercise 4 shows an upper-arm support roll. Exercise 5 photographs an extended-leg/table-support variant and shoulder return to support. Original access.date remains the extraction date. These bounded factual observations and staged replacements await scoped source re-review; this is not clinical approval or generated-image acceptance."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -89,7 +89,7 @@
       "harms": "Modification/reporting plan, not observed harms; 2022 outcome paper reports events.",
       "limitations": "Manual advice about back twisting, bent-back work and extreme positions is untested shared education; it is not causal evidence for universal HSD restrictions.",
       "protocol": {
-        "execution": "Manual specifies side-lying external rotation with pillow between upper arm/trunk; prone horizontal arm raise with outward rotation; seated scaption; prone external rotation with supported upper arm and elbow at 90°; supported supine straight-arm protraction.",
+        "execution": "Manual specifies side-lying external rotation with pillow between upper arm/trunk; prone horizontal arm raise with outward rotation; seated scaption; prone external rotation with supported upper arm and elbow at 90°; supported supine straight-arm protraction. Fresh inspected photograph details: seated scaption has a qualitative overhead endpoint; prone 90/90 external rotation uses a visible upper-arm support roll; the photographed supine protraction variant has extended legs on a table with supported head/back and shoulder return to support. These are source-specific candidate executions, not a harmonized clinical prescription.",
         "dose": "Three seconds concentric plus three seconds eccentric; 3×10 with 60-second rests through week 9, then 4×8 with 90-second rests in weeks 10–16. Week 16 load is 70% of 8RM; 48 hours between sessions.",
         "frequency": "Three sessions weekly for 16 weeks: two supervised, one home.",
         "supervision": "Trained physiotherapists, same clinician where possible; individual 5RM test and movement-quality control.",
@@ -99,7 +99,12 @@
       "locations": [
         "Interventions > HEAVY; Table 1; Criteria for discontinuing or modifying allocated interventions {11b}",
         "Supplementary file 3 HEAVY manual, printed pp.4–8 (PDF pp.5–9), Exercises 1–5",
-        "Supplementary file 3 HEAVY manual, printed pp.1–3 (PDF pp.2–4)"
+        "Supplementary file 3 HEAVY manual, printed pp.1–3 (PDF pp.2–4)",
+        "Supplementary file 3 HEAVY manual > Exercise 1, PDF p.5 (printed p.4), photograph pair and execution text",
+        "Supplementary file 3 HEAVY manual > Exercise 2, PDF p.6 (printed p.5), photograph pair and execution text",
+        "Supplementary file 3 HEAVY manual > Exercise 3, PDF p.7 (printed p.6), photograph pair and execution text",
+        "Supplementary file 3 HEAVY manual > Exercise 4, PDF p.8 (printed p.7), photograph pair and execution text",
+        "Supplementary file 3 HEAVY manual > Exercise 5, PDF p.9 (printed p.8), photograph pair and execution text"
       ]
     },
     {
@@ -249,6 +254,35 @@
       ],
       "applicability": "Ages7–45,mixedBrighton/Beightondiagnoses/JHS/EDS;indirectforcontemporaryadultHSD.",
       "limitations": "Different joint and diagnostic era, low certainty; no universal restriction authority."
+    },
+    {
+      "id": "heavy-manual-executions",
+      "kind": "published-recommendation",
+      "statement": "HEAVY manual photographs/text describe five fixed candidate executions: side-lying dumbbell external rotation with head and upper-arm pillows; prone straight-arm horizontal raise with outward rotation then further outward rotation; backless-seated oblique dumbbell lift with opposite fingers behind the lower scapula and a qualitative overhead endpoint; prone externally rotated forearm with table-supported upper arm at 90-degree abduction, elbow 90 degrees and visible support roll; and an extended-leg table-supported supine straight-arm scapular lift with head/back retained on support and shoulder returning to contact.",
+      "citations": [
+        {
+          "sourceId": "liaghat-protocol-2020",
+          "location": "Supplementary file 3 HEAVY manual > Exercise 1, PDF p.5 (printed p.4), photograph pair and execution text"
+        },
+        {
+          "sourceId": "liaghat-protocol-2020",
+          "location": "Supplementary file 3 HEAVY manual > Exercise 2, PDF p.6 (printed p.5), photograph pair and execution text"
+        },
+        {
+          "sourceId": "liaghat-protocol-2020",
+          "location": "Supplementary file 3 HEAVY manual > Exercise 3, PDF p.7 (printed p.6), photograph pair and execution text"
+        },
+        {
+          "sourceId": "liaghat-protocol-2020",
+          "location": "Supplementary file 3 HEAVY manual > Exercise 4, PDF p.8 (printed p.7), photograph pair and execution text"
+        },
+        {
+          "sourceId": "liaghat-protocol-2020",
+          "location": "Supplementary file 3 HEAVY manual > Exercise 5, PDF p.9 (printed p.8), photograph pair and execution text"
+        }
+      ],
+      "applicability": "Execution descriptions in the planned HEAVY shoulder program. Actual trial enrolled HSD, not hEDS; source-specific supervision, symptom response and program constraints remain separate.",
+      "limitations": "Five pictured executions are not individually proven treatments or universal setup/range/dose rules. Qualitative endpoints do not establish measured joint angles. Manual/protocol preparation and symptom-timing discrepancies remain unresolved. Factual source re-review and clinical review are separate gates."
     }
   ],
   "exerciseMappings": [
@@ -257,9 +291,10 @@
       "exerciseId": null,
       "requestId": "hsd-side-lying-dumbbell-er-pillow",
       "findingIds": [
-        "heavy-short-term"
+        "heavy-short-term",
+        "heavy-manual-executions"
       ],
-      "matchRationale": "Catalog external-rotation/scaption/protraction identities absent in enumerated302metadata;prone-t-raise/bodyweight and genericraises do not match dumbbell/support/rotation mechanics. Manualtext inspected;figuresnotvisuallyverified;independentcomponentbenefitnotestablished.",
+      "matchRationale": "Manual photograph pair and execution text inspected at the exact cited page; source-supported posture/equipment/motion define this candidate, not clinical dose. Head/upper-arm pillows and supported lower arm are explicit; keep separate from unresolved RoCTEx support. Independent component efficacy and clinical applicability remain unestablished; candidate only.",
       "status": "candidate"
     },
     {
@@ -267,9 +302,10 @@
       "exerciseId": null,
       "requestId": "hsd-prone-horizontal-abduction-er",
       "findingIds": [
-        "heavy-short-term"
+        "heavy-short-term",
+        "heavy-manual-executions"
       ],
-      "matchRationale": "Catalog external-rotation/scaption/protraction identities absent in enumerated302metadata;prone-t-raise/bodyweight and genericraises do not match dumbbell/support/rotation mechanics. Manualtext inspected;figuresnotvisuallyverified;independentcomponentbenefitnotestablished.",
+      "matchRationale": "Manual photograph pair and execution text inspected at the exact cited page; source-supported posture/equipment/motion define this candidate, not clinical dose. Dumbbell and final rotation stage distinguish bodyweight prone T raise. Independent component efficacy and clinical applicability remain unestablished; candidate only.",
       "status": "candidate"
     },
     {
@@ -277,9 +313,10 @@
       "exerciseId": null,
       "requestId": "hsd-seated-dumbbell-scaption",
       "findingIds": [
-        "heavy-short-term"
+        "heavy-short-term",
+        "heavy-manual-executions"
       ],
-      "matchRationale": "Catalog external-rotation/scaption/protraction identities absent in enumerated302metadata;prone-t-raise/bodyweight and genericraises do not match dumbbell/support/rotation mechanics. Manualtext inspected;figuresnotvisuallyverified;independentcomponentbenefitnotestablished.",
+      "matchRationale": "Manual photograph pair and execution text inspected at the exact cited page; source-supported posture/equipment/motion define this candidate, not clinical dose. Qualitative overhead endpoint is pictured; no numeric end angle is invented and standing RoCTEx scaption remains distinct. Independent component efficacy and clinical applicability remain unestablished; candidate only.",
       "status": "candidate"
     },
     {
@@ -287,19 +324,21 @@
       "exerciseId": null,
       "requestId": "hsd-prone-er-shoulder-elbow-90",
       "findingIds": [
-        "heavy-short-term"
+        "heavy-short-term",
+        "heavy-manual-executions"
       ],
-      "matchRationale": "Catalog external-rotation/scaption/protraction identities absent in enumerated302metadata;prone-t-raise/bodyweight and genericraises do not match dumbbell/support/rotation mechanics. Manualtext inspected;figuresnotvisuallyverified;independentcomponentbenefitnotestablished.",
+      "matchRationale": "Manual photograph pair and execution text inspected at the exact cited page; source-supported posture/equipment/motion define this candidate, not clinical dose. Visible upper-arm support roll and pictured raised forearm are retained; no inferred overhead endpoint. Independent component efficacy and clinical applicability remain unestablished; candidate only.",
       "status": "candidate"
     },
     {
       "id": "hsd-supine-dumbbell-scapular-protraction-mapping",
       "exerciseId": null,
-      "requestId": "supine-dumbbell-scapular-protraction",
+      "requestId": "hsd-supine-dumbbell-scapular-protraction",
       "findingIds": [
-        "heavy-short-term"
+        "heavy-short-term",
+        "heavy-manual-executions"
       ],
-      "matchRationale": "Catalog external-rotation/scaption/protraction identities absent in enumerated302metadata;prone-t-raise/bodyweight and genericraises do not match dumbbell/support/rotation mechanics. Manualtext inspected;figuresnotvisuallyverified;independentcomponentbenefitnotestablished. Shared candidate execution with RoCTEx protraction; preserve HEAVY-specific cues, dose and monitoring. Source figures still require visual verification.",
+      "matchRationale": "Previously merged with RoCTEx at common movement-core level. Fixed artwork now separates the photographed extended-leg/table/head-back-support and shoulder-return-to-contact setup from RoCTEx knee/terminal cues; this split is based on execution, not dose. The earlier shared review remains historical and does not prove one final illustration. Clinical/provenance limits and independent component uncertainty remain.",
       "status": "candidate"
     }
   ],
@@ -382,7 +421,7 @@
     "Protocol/manual inconsistency: 3 versus 4 weeks of preparation and 30 minutes versus 2–3 hours symptom timing. Do not resolve by guessing.",
     "No evidence here for a blanket ban on end range, stretching or heavy loading; other joint-specific restrictions still prevail.",
     "Lower-limb synthesis does not map contemporary HSD perfectly; no exact lower-limb mappings created. PMID 41637690 is a scoping-review protocol, not results.",
-    "Five HEAVY exercise figures located and accompanying text read; figures not independently visually verified. Retained PNG creation needs real provenance and independent content review."
+    "Five HEAVY photograph pairs and execution text inspected at PDF pp.5–9, with source hash and fresh inspection date in access.details. Scoped changed-content source re-review remains required; generated PNG provenance, sequence review and qualified clinical review are separate outstanding gates. RoCTEx support/terminal cues are not resolved by these HEAVY figures."
   ],
   "disposition": "research-only",
   "review": {

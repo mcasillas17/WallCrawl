@@ -524,7 +524,7 @@
         "proximal-hamstring-tendinopathy"
       ],
       "name": "PHT isometric hamstring bridge",
-      "execution": "Supine hamstring bridge held isometrically; double/single-leg and leg-support progression require Figure 3 visual verification.",
+      "execution": "Broad source program includes double/single-leg isometric hamstring bridges and leg-support progression. Figure 3(a,b) now supports a separate fixed calf-on-box single-leg child; Figure 3(c,d) changes support. The whole set of choices/support/load progressions remains unresolved as one execution.",
       "equipment": [
         "floor mat",
         "leg support variant unresolved"
@@ -534,8 +534,8 @@
         "Sustained hamstring/hip extension",
         "Pelvic control"
       ],
-      "artwork": "Candidate supplement: retain actual PNG sequence after execution and clinical review. No PNG/artwork generated here; source illustration text is not verified visual provenance.",
-      "reason": "Catalog glute-bridge/bodyweight_reps cannot verify hamstring emphasis/support or timed isometric measurement; preserve distinct candidate.",
+      "artwork": "Unresolved broad progression; do not commission one sequence to stand for every variant. Only separately mapped fixed child pht-single-leg-calf-supported-isometric-hamstring-bridge has a source-bound draft hold brief.",
+      "reason": "Preserve the broad candidate and source chain; fixed Figure 3(a,b) calf-supported child does not settle double-leg or reduced-support progression. No generic catalog glute bridge or duration default can supply missing variant mechanics.",
       "sourceRefs": [
         {
           "conditionId": "proximal-hamstring-tendinopathy",
@@ -561,7 +561,7 @@
         "Hip hinge"
       ],
       "artwork": "Candidate supplement: retain actual PNG sequence after execution and clinical review. No PNG/artwork generated here; source illustration text is not verified visual provenance.",
-      "reason": "Generic Romanian-deadlift name does not encode graded compression angle or clinical progression; Figure 8 visual review needed.",
+      "reason": "Figure 8(a) has now been visually inspected and shows one single-leg barbell example. The broad double/single-leg choices, individualized setup/load and target hip-flexion range remain unresolved; no generic Romanian-deadlift equivalence or universal progression is established.",
       "sourceRefs": [
         {
           "conditionId": "proximal-hamstring-tendinopathy",
@@ -895,24 +895,25 @@
         "hypermobility-spectrum-disorder"
       ],
       "name": "HSD side-lying dumbbell external rotation with pillow",
-      "execution": "Side-lying with hips/knees flexed, head supported, upper elbow at 90°, pillow between upper arm/trunk. Hand begins on abdomen; rotate forearm upward while keeping upper arm close to body, then lower under control.",
+      "execution": "Side-lying on a stable table as pictured, hips/knees flexed; lower arm supported and head on a pillow. Upper elbow at 90 degrees with a pillow between upper arm and trunk. Dumbbell hand begins on abdomen; rotate forearm upward while upper arm remains close to body/on pillow, then lower under control without trunk rotation.",
       "equipment": [
         "Dumbbell",
-        "Pillow",
-        "Stable lying surface"
+        "Head pillow",
+        "Upper-arm pillow",
+        "Stable table"
       ],
       "movementRequirements": [
         "Preserve the specified supported posture and arm/rotation geometry",
-        "Controlled unilateral repetition/load measurement",
-        "Scapular control as taught by physiotherapist; exact figure verification remains open"
+        "Controlled unilateral repetition/load measurement; preserve source-specific supported posture",
+        "Head and upper-arm pillow contacts; table transfer"
       ],
-      "artwork": "Retained PNG execution frames needed after independent execution/content review. No artwork generated, accepted or attributed by this research; source text inspection is not visual figure verification.",
-      "reason": "Enumerated catalog metadata has no named external-rotation/scaption/protraction identity. Bodyweight prone-t-raise and generic raises do not verify the dumbbell, support and rotation variant. Manual text read; figures not independently visually verified. No isolated exercise efficacy established.",
+      "artwork": "Fixed source-specific DRAFT pose brief only; three coherent male/female frame slots after scoped source-concordance review. Retain original PNG masters, true generation provenance and derived SVGs if generated. No artwork generated or accepted by this factual update.",
+      "reason": "Manual photograph pair and execution text inspected at the exact cited page; source-supported posture/equipment/motion define this candidate, not clinical dose. Head/upper-arm pillows and supported lower arm are explicit; keep separate from unresolved RoCTEx support. Independent component efficacy and clinical applicability remain unestablished; candidate only.",
       "sourceRefs": [
         {
           "conditionId": "hypermobility-spectrum-disorder",
           "sourceId": "liaghat-protocol-2020",
-          "location": "Supplementary file 3 HEAVY manual, printed pp.4–8 (PDF pp.5–9), Exercises 1–5"
+          "location": "Supplementary file 3 HEAVY manual > Exercise 1, PDF p.5 (printed p.4), photograph pair and execution text"
         }
       ],
       "status": "candidate"
@@ -923,23 +924,23 @@
         "hypermobility-spectrum-disorder"
       ],
       "name": "HSD prone horizontal abduction with outward rotation",
-      "execution": "Prone on table with arm hanging vertically at 90° shoulder flexion. Raise straight arm out to side to horizontal while rotating outward, add further outward rotation at horizontal, then lower while reversing rotation.",
+      "execution": "Prone on stable table, head supported/turned as photographed; straight dumbbell arm hangs toward floor at the described 90-degree shoulder-flexion start. Raise arm sideways to horizontal while rotating outward, then add further outward rotation at horizontal; lower while reversing rotation. Do not substitute a bodyweight T raise.",
       "equipment": [
         "Dumbbell",
-        "Stable table/bench"
+        "Stable table"
       ],
       "movementRequirements": [
         "Preserve the specified supported posture and arm/rotation geometry",
-        "Controlled unilateral repetition/load measurement",
-        "Scapular control as taught by physiotherapist; exact figure verification remains open"
+        "Controlled unilateral repetition/load measurement; preserve source-specific supported posture",
+        "Prone support; horizontal raise plus outward-rotation stages"
       ],
-      "artwork": "Retained PNG execution frames needed after independent execution/content review. No artwork generated, accepted or attributed by this research; source text inspection is not visual figure verification.",
-      "reason": "Enumerated catalog metadata has no named external-rotation/scaption/protraction identity. Bodyweight prone-t-raise and generic raises do not verify the dumbbell, support and rotation variant. Manual text read; figures not independently visually verified. No isolated exercise efficacy established.",
+      "artwork": "Fixed source-specific DRAFT pose brief only; three coherent male/female frame slots after scoped source-concordance review. Retain original PNG masters, true generation provenance and derived SVGs if generated. No artwork generated or accepted by this factual update.",
+      "reason": "Manual photograph pair and execution text inspected at the exact cited page; source-supported posture/equipment/motion define this candidate, not clinical dose. Dumbbell and final rotation stage distinguish bodyweight prone T raise. Independent component efficacy and clinical applicability remain unestablished; candidate only.",
       "sourceRefs": [
         {
           "conditionId": "hypermobility-spectrum-disorder",
           "sourceId": "liaghat-protocol-2020",
-          "location": "Supplementary file 3 HEAVY manual, printed pp.4–8 (PDF pp.5–9), Exercises 1–5"
+          "location": "Supplementary file 3 HEAVY manual > Exercise 2, PDF p.6 (printed p.5), photograph pair and execution text"
         }
       ],
       "status": "candidate"
@@ -950,23 +951,23 @@
         "hypermobility-spectrum-disorder"
       ],
       "name": "HSD seated dumbbell scaption with scapular monitoring",
-      "execution": "Sit on backless chair with feet hip-width and upright trunk; thumb points obliquely outward. Opposite fingers monitor lower scapula. Lift dumbbell obliquely forward/up and lower slowly. Exact end angle unresolved.",
+      "execution": "Sit upright on a stable backless seat with feet hip-width. Dumbbell arm starts by side, thumb obliquely outward; opposite index/middle fingers behind the lower scapula. Lift obliquely forward/up to the qualitative overhead endpoint pictured, then lower slowly. No measured end angle is inferred.",
       "equipment": [
         "Dumbbell",
-        "Stable backless chair"
+        "Stable backless seat"
       ],
       "movementRequirements": [
         "Preserve the specified supported posture and arm/rotation geometry",
-        "Controlled unilateral repetition/load measurement",
-        "Scapular control as taught by physiotherapist; exact figure verification remains open"
+        "Controlled unilateral repetition/load measurement; preserve source-specific supported posture",
+        "Backless seated support; opposite-hand scapular monitoring; oblique overhead path"
       ],
-      "artwork": "Retained PNG execution frames needed after independent execution/content review. No artwork generated, accepted or attributed by this research; source text inspection is not visual figure verification.",
-      "reason": "Enumerated catalog metadata has no named external-rotation/scaption/protraction identity. Bodyweight prone-t-raise and generic raises do not verify the dumbbell, support and rotation variant. Manual text read; figures not independently visually verified. No isolated exercise efficacy established.",
+      "artwork": "Fixed source-specific DRAFT pose brief only; three coherent male/female frame slots after scoped source-concordance review. Retain original PNG masters, true generation provenance and derived SVGs if generated. No artwork generated or accepted by this factual update.",
+      "reason": "Manual photograph pair and execution text inspected at the exact cited page; source-supported posture/equipment/motion define this candidate, not clinical dose. Qualitative overhead endpoint is pictured; no numeric end angle is invented and standing RoCTEx scaption remains distinct. Independent component efficacy and clinical applicability remain unestablished; candidate only.",
       "sourceRefs": [
         {
           "conditionId": "hypermobility-spectrum-disorder",
           "sourceId": "liaghat-protocol-2020",
-          "location": "Supplementary file 3 HEAVY manual, printed pp.4–8 (PDF pp.5–9), Exercises 1–5"
+          "location": "Supplementary file 3 HEAVY manual > Exercise 3, PDF p.7 (printed p.6), photograph pair and execution text"
         }
       ],
       "status": "candidate"
@@ -977,23 +978,24 @@
         "hypermobility-spectrum-disorder"
       ],
       "name": "HSD prone external rotation with supported shoulder/elbow at90degrees",
-      "execution": "Prone on table, upper arm supported at 90° abduction, elbow flexed 90°, forearm hanging down. Externally rotate forearm toward ceiling then lower under control.",
+      "execution": "Prone on stable table, head resting on opposite forearm as pictured. Exercising upper arm supported at 90-degree abduction on the visible roll; elbow flexed 90 degrees, dumbbell forearm hanging vertically down. Rotate forearm upward to the pictured raised endpoint and lower under control, preserving upper-arm/support contact. No invented overhead endpoint.",
       "equipment": [
         "Dumbbell",
-        "Stable table/bench"
+        "Stable table",
+        "Upper-arm support roll"
       ],
       "movementRequirements": [
         "Preserve the specified supported posture and arm/rotation geometry",
-        "Controlled unilateral repetition/load measurement",
-        "Scapular control as taught by physiotherapist; exact figure verification remains open"
+        "Controlled unilateral repetition/load measurement; preserve source-specific supported posture",
+        "Fixed table/roll upper-arm support and 90/90 elbow geometry"
       ],
-      "artwork": "Retained PNG execution frames needed after independent execution/content review. No artwork generated, accepted or attributed by this research; source text inspection is not visual figure verification.",
-      "reason": "Enumerated catalog metadata has no named external-rotation/scaption/protraction identity. Bodyweight prone-t-raise and generic raises do not verify the dumbbell, support and rotation variant. Manual text read; figures not independently visually verified. No isolated exercise efficacy established.",
+      "artwork": "Fixed source-specific DRAFT pose brief only; three coherent male/female frame slots after scoped source-concordance review. Retain original PNG masters, true generation provenance and derived SVGs if generated. No artwork generated or accepted by this factual update.",
+      "reason": "Manual photograph pair and execution text inspected at the exact cited page; source-supported posture/equipment/motion define this candidate, not clinical dose. Visible upper-arm support roll and pictured raised forearm are retained; no inferred overhead endpoint. Independent component efficacy and clinical applicability remain unestablished; candidate only.",
       "sourceRefs": [
         {
           "conditionId": "hypermobility-spectrum-disorder",
           "sourceId": "liaghat-protocol-2020",
-          "location": "Supplementary file 3 HEAVY manual, printed pp.4–8 (PDF pp.5–9), Exercises 1–5"
+          "location": "Supplementary file 3 HEAVY manual > Exercise 4, PDF p.8 (printed p.7), photograph pair and execution text"
         }
       ],
       "status": "candidate"
@@ -1273,8 +1275,8 @@
         "Side-lying support/floor or treatment surface",
         "Elbow at side; shoulder external rotation without trunk rotation"
       ],
-      "artwork": "Candidate only. No artwork generated, upstream attribution or clinical approval claimed. After execution review, commission/verify retained start, movement and end PNGs under separate supplement provenance; unresolved setup must be resolved before drawing.",
-      "reason": "No catalog ER execution identified in enumerated shoulder records. HSD pillow/support variants require reconciliation; do not assume exact equivalence.",
+      "artwork": "UNRESOLVED before generation: establish starting forearm position and concrete support surface/head/lower-arm arrangement from RoCTEx source. The one bounded source reopen in artwork fix round 1 returned a browser challenge. Do not ask a generator to invent support or import HEAVY pillows.",
+      "reason": "No catalog ER execution identified in enumerated shoulder records. HSD pillow/support variants require reconciliation; do not assume exact equivalence. Full-body starting pose/support remains unresolved after one challenged source reopen; draft generation is withheld for this request.",
       "sourceRefs": [
         {
           "conditionId": "rotator-cuff-tendinopathy",
@@ -1287,33 +1289,26 @@
     {
       "id": "supine-dumbbell-scapular-protraction",
       "conditionIds": [
-        "rotator-cuff-tendinopathy",
-        "hypermobility-spectrum-disorder"
+        "rotator-cuff-tendinopathy"
       ],
-      "name": "Supine dumbbell scapular protraction",
-      "execution": "Supine with supported trunk, straight elbow and dumbbell pointing toward the ceiling; raise the scapula/shoulder without lifting or rotating the trunk, then lower under control. Source-specific starting and terminal cues are retained in the rationale; this shared candidate is not a universal prescription.",
+      "name": "RoCTEx supine dumbbell scapular protraction, exact support unresolved",
+      "execution": "RoCTEx candidate: supine supported trunk, knees about 90 degrees, straight elbow and dumbbell pointing toward ceiling; raise shoulder/scapula without lifting/rotating trunk, lower without fully relaxing. Exact head/lower-body/support arrangement remains unresolved for fixed artwork. Do not import the photographed HEAVY extended-leg/table variant or its shoulder-return-to-contact cue.",
       "equipment": [
         "Dumbbell",
-        "Stable floor/table"
+        "Stable support surface; exact setup unresolved"
       ],
       "movementRequirements": [
-        "Supine supported trunk",
-        "Elbow straight; scapular protraction/retraction",
-        "Controlled unilateral repetition/load measurement",
-        "Scapular control with stable supported head/trunk; exact figures remain to be verified"
+        "Supine supported trunk; exact full-body support geometry unresolved",
+        "Straight elbow; scapular protraction/retraction",
+        "RoCTEx knee/terminal cues retained; controlled unilateral repetition/load measurement"
       ],
-      "artwork": "Candidate only. No artwork generated, upstream attribution or clinical approval claimed. After execution review, commission/verify retained start, movement and end PNGs under separate supplement provenance; unresolved setup must be resolved before drawing.",
-      "reason": "Common execution independently checked in RoCTEx Appendices A/B, fifth exercise, and HEAVY manual PDF p.9, Exercise5. RoCTEx specifies knees about90 degrees and stopping before relaxing; HEAVY specifies shoulder90 degrees, no head/back lift or shrug, and shoulder returning to support. Preserve these source-specific cues and separate condition dosing/monitoring; do not combine schedules. Catalog scapular-push-up uses high-plank support, a different setup. Text comparison is not completed figure/catalog-art verification or isolated-exercise efficacy.",
+      "artwork": "UNRESOLVED fixed execution: verify source-specific support and starting/terminal geometry before full-body generation. The separate HEAVY candidate cannot supply unreported RoCTEx setup. No image acceptance or clinical clearance.",
+      "reason": "Earlier shared candidate was accepted at common movement-core level, not as one final illustrated execution. Fixed HEAVY extended-leg/table/contact-return setup is now separately requested as hsd-supine-dumbbell-scapular-protraction. Preserve RoCTEx mapping roctex-3, knee-about-90-degree and no-relaxation cues, source chain and clinical limits. Exact full-body support still needs source details; schedules are not combined and neither source proves isolated efficacy.",
       "sourceRefs": [
         {
           "conditionId": "rotator-cuff-tendinopathy",
           "sourceId": "ingwersen-2017",
           "location": "Methods > Interventions; Appendices A and B > Exercise Program"
-        },
-        {
-          "conditionId": "hypermobility-spectrum-disorder",
-          "sourceId": "liaghat-protocol-2020",
-          "location": "Supplementary file 3 HEAVY manual, printed pp.4–8 (PDF pp.5–9), Exercises 1–5"
         }
       ],
       "status": "candidate"
@@ -1867,8 +1862,8 @@
         "No toe clawing",
         "Later standing balance"
       ],
-      "artwork": "Candidate supplement: retain an actual PNG sequence for this exact execution after execution/clinical review. No PNG or clinical/artwork provenance generated here; unresolved instructions must be settled before illustration.",
-      "reason": "Exact foot-control execution differs from calf raises/toe touches. Study found posture/QoL change, no added pain benefit; timed hold is a protocol parameter, not automatic strength credit.",
+      "artwork": "Unresolved progression scope: do not commission one sequence that purports to represent seated, double-leg and single-leg standing. Separate seated-only candidate seated-short-foot-arch-hold-no-toe-flexion has a fixed draft hold brief; standing contacts/balance choices still need review.",
+      "reason": "Exact foot-control execution differs from calf raises/toe touches. Study found posture/QoL change, no added pain benefit; timed hold is a protocol parameter, not automatic strength credit. Broad progression remains unresolved for one fixed artwork identity. The seated stage is now separately requested; it does not settle standing support or progression.",
       "sourceRefs": [
         {
           "conditionId": "medial-tibial-stress-syndrome",
@@ -2279,6 +2274,90 @@
           "conditionId": "finger-interphalangeal-osteoarthritis",
           "sourceId": "hoa-p2",
           "location": "Methods > Exercise intervention and Table 1; Results > Adverse events"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "hsd-supine-dumbbell-scapular-protraction",
+      "conditionIds": [
+        "hypermobility-spectrum-disorder"
+      ],
+      "name": "HEAVY table-supported extended-leg dumbbell scapular protraction",
+      "execution": "Photographed HEAVY Exercise 5 variant: supine on stable table with legs extended, head/back on support, opposite hand relaxed at abdomen as pictured. Exercising shoulder at 90 degrees, elbow straight and dumbbell hand vertical. Raise the shoulder/scapula by reaching the straight arm upward without head/back lift or shrug; lower until shoulder returns to support.",
+      "equipment": [
+        "Dumbbell",
+        "Stable table"
+      ],
+      "movementRequirements": [
+        "Supine transfer and extended-leg table support",
+        "Straight-elbow vertical dumbbell reach by scapular protraction/retraction",
+        "Head/back stay supported; shoulder returns to support",
+        "Controlled unilateral repetition/load measurement"
+      ],
+      "artwork": "Source-specific fixed HEAVY DRAFT sequence, not a universal shared protraction image. Use only HEAVY Exercise 5 in exact generation references; retain actual PNG masters and real provenance if generated after source re-review. No image or execution acceptance here.",
+      "reason": "Previously merged with RoCTEx at common movement-core level. Fixed artwork now separates the photographed extended-leg/table/head-back-support and shoulder-return-to-contact setup from RoCTEx knee/terminal cues; this split is based on execution, not dose. The earlier shared review remains historical and does not prove one final illustration. Clinical/provenance limits and independent component uncertainty remain.",
+      "sourceRefs": [
+        {
+          "conditionId": "hypermobility-spectrum-disorder",
+          "sourceId": "liaghat-protocol-2020",
+          "location": "Supplementary file 3 HEAVY manual > Exercise 5, PDF p.9 (printed p.8), photograph pair and execution text"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "pht-single-leg-calf-supported-isometric-hamstring-bridge",
+      "conditionIds": [
+        "proximal-hamstring-tendinopathy"
+      ],
+      "name": "Single-leg calf-supported isometric hamstring bridge, Figure 3(a,b)",
+      "execution": "Figure 3(a,b): supine with head/shoulders supported on the pictured padded plinth, arms crossed; one calf supported on a stable box resting on the same plinth, other hip/knee flexed and elevated. Raise hips and hold the pictured level-pelvis bridge in (b). This fixed hold does not include double-leg or reduced-support (c,d) alternatives; no numeric angle or dose is inferred.",
+      "equipment": [
+        "Stable padded plinth",
+        "Stable calf-support box on the plinth"
+      ],
+      "movementRequirements": [
+        "Transfer onto pictured padded plinth",
+        "One calf contacts box; opposite leg elevated/flexed",
+        "Head/shoulder support and crossed arms",
+        "Sustained isometric hamstring/hip-extension hold with pelvic control"
+      ],
+      "artwork": "Fixed Figure 3(b) static-hold DRAFT: the identical raised pose may fill all three frame slots. No bouncing or dynamic bridge repetitions; setup can be explained separately. Source-concordance review precedes generation; retain PNG masters/provenance if generated.",
+      "reason": "Narrow source-bound child of unresolved pht-isometric-hamstring-bridge. Support contact, unilateral lever and duration measurement distinguish this execution from catalog glute/single-leg bridges; dose alone does not. Broad double/single-leg/support progression remains unresolved and no isolated component efficacy is claimed.",
+      "sourceRefs": [
+        {
+          "conditionId": "proximal-hamstring-tendinopathy",
+          "sourceId": "rich-2025-commentary",
+          "location": "Stage 1—Isometric > Figure 3(a,b), calf-supported single-leg setup and held position"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "seated-short-foot-arch-hold-no-toe-flexion",
+      "conditionIds": [
+        "medial-tibial-stress-syndrome"
+      ],
+      "name": "Seated short-foot arch hold without toe flexion",
+      "execution": "Seated-only starting stage: foot on floor/support, elevate medial arch and bring metatarsal heads toward heel without lifting forefoot or flexing/clawing toes. Hold that arch-controlled pose. Standing double-/single-leg progression is excluded; no numeric angle or new clinical hold duration is inferred.",
+      "equipment": [
+        "Stable chair or seated support",
+        "Floor surface"
+      ],
+      "movementRequirements": [
+        "Seated support",
+        "Medial-arch control with forefoot contact",
+        "Toes remain uncurled; no forefoot lift",
+        "Static hold measurement; no automatic strength-set credit"
+      ],
+      "artwork": "Fixed seated foot-focused DRAFT hold; identical held pose across all three slots is appropriate. Do not depict standing balance, heel raise or toe curl. Retain actual PNG/provenance if generated after scoped source review.",
+      "reason": "Narrow child of short-foot-arch-raise-no-toe-flexion; only the already reported seated stage is depicted, not its standing progression. No new efficacy or dose claim. Source bundle had no added pain/MTSS severity benefit and does not establish strength credit.",
+      "sourceRefs": [
+        {
+          "conditionId": "medial-tibial-stress-syndrome",
+          "sourceId": "mtss-r2",
+          "location": "Methods > Lower-Leg Exercise Intervention; Table1"
         }
       ],
       "status": "candidate"

@@ -101,7 +101,7 @@
       "access": {
         "status": "full-text",
         "date": "2026-11-01",
-        "details": "Full Europe PMC XML retrieved and key methods, results and protocol tables inspected. Earlier PMC access was challenged where recorded in lower-leg-source-report.md. https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11826869/fullTextXML"
+        "details": "Full Europe PMC XML retrieved and key methods, results and protocol tables inspected. Earlier PMC access was challenged where recorded in lower-leg-source-report.md. https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11826869/fullTextXML Scope reconciliation 2026-11-02 UTC uses the already inspected Methods > Lower-Leg Exercise Intervention/Table1 text to distinguish a seated-only short-foot candidate from the standing progression. No fresh figure inspection, new primary retrieval, access upgrade or dose approval is claimed; original access.date is retained."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -237,6 +237,19 @@
       ],
       "applicability": "Runners with MTSS/load-induced medial leg pain.",
       "limitations": "Only three heterogeneous trials; abstract/selected introduction access cannot establish a full protocol. This is treatment evidence, separate from prevention studies."
+    },
+    {
+      "id": "seated-short-foot-execution",
+      "kind": "study-result",
+      "statement": "The reported short-foot progression begins seated: raise the medial arch by bringing metatarsal heads toward heel, without forefoot lift or toe flexion. This finding identifies only that seated execution; double-/single-leg standing stages remain separate progression choices. A fixed hold illustration adds no new source fact or clinical dose.",
+      "citations": [
+        {
+          "sourceId": "mtss-r2",
+          "location": "Methods > Lower-Leg Exercise Intervention; Table1"
+        }
+      ],
+      "applicability": "Seated stage in the diagnosed recreational-runner MTSS multimodal study; not a general bone-stress-injury or symptom diagnosis instruction.",
+      "limitations": "Small bundled intervention; no isolated pain or strength benefit established. No added pain/MTSS-severity improvement in the study; reported posture/QoL findings and unclear frequency remain unchanged."
     }
   ],
   "exerciseMappings": [
@@ -247,7 +260,7 @@
       "findingIds": [
         "mtss-r2-execution"
       ],
-      "matchRationale": "Exact foot-control execution differs from calf raises/toe touches. Study found posture/QoL change, no added pain benefit; timed hold is a protocol parameter, not automatic strength credit.",
+      "matchRationale": "Exact foot-control execution differs from calf raises/toe touches. Study found posture/QoL change, no added pain benefit; timed hold is a protocol parameter, not automatic strength credit. Broad progression remains unresolved for one fixed artwork identity. The seated stage is now separately requested; it does not settle standing support or progression.",
       "status": "candidate"
     },
     {
@@ -258,6 +271,16 @@
         "mtss-r2-execution"
       ],
       "matchRationale": "Distinct toe-flexor execution; no claim this isolated component reduces MTSS symptoms. Additional dose alone does not define identity.",
+      "status": "candidate"
+    },
+    {
+      "id": "seated-short-foot-arch-hold-no-toe-flexion-mapping",
+      "exerciseId": null,
+      "requestId": "seated-short-foot-arch-hold-no-toe-flexion",
+      "findingIds": [
+        "seated-short-foot-execution"
+      ],
+      "matchRationale": "Narrow child of short-foot-arch-raise-no-toe-flexion; only the already reported seated stage is depicted, not its standing progression. No new efficacy or dose claim. Source bundle had no added pain/MTSS severity benefit and does not establish strength credit.",
       "status": "candidate"
     }
   ],
@@ -300,7 +323,8 @@
     "Clinical content review and individual applicability are not established.",
     "No established added pain benefit for lower-leg exercise bundles; mappings are research candidates only.",
     "Exercise frequency in 2025 trial not clearly reported in inspected section.",
-    "Do not conflate prevention evidence with treatment, or MTSS thresholds with fracture care."
+    "Do not conflate prevention evidence with treatment, or MTSS thresholds with fracture care.",
+    "A separately mapped seated-only short-foot child covers no standing stage. Broad seated-to-double-/single-leg progression remains unresolved for fixed artwork; the scope reconciliation adds no new primary-source fact, clinical dose or efficacy claim."
   ],
   "disposition": "research-only",
   "review": {

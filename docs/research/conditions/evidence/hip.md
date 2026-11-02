@@ -8,7 +8,7 @@ Version findings: the proximal hamstring publisher PDF documents a January 2026 
 
 Access limits: original Hölmich institutional PDF returned 404; its RCT remains abstract-only. The 2018 full-text groin study is uncontrolled and does not silently fill the original RCT protocol. PHOENIX final publisher text returned 403; the separately retrieved full protocol and Additional file 5 establish planned execution, not delivery of every planned element.
 
-Catalog review inspected relevant bridge, hip adduction/abduction, band walk, hip-flexor and hamstring metadata in the pinned catalog. Names alone were not accepted as execution equivalence. Nine candidate requests preserve execution differences or unknowns and actual retained-PNG requirements. LEAP Figure 1 was visually inspected from its actual publisher image link and confirmed staggered supported feet; no numerical angles or load split inferred. Other figure gaps remain. No source photograph became app artwork, and no artwork or runtime code was changed.
+Catalog review inspected relevant bridge, hip adduction/abduction, band walk, hip-flexor and hamstring metadata in the pinned catalog. Names alone were not accepted as execution equivalence. Ten candidate requests (including the fixed PHT child) preserve execution differences or unknowns and actual retained-PNG requirements. LEAP Figure 1 was visually inspected from its actual publisher image link and confirmed staggered supported feet; no numerical angles or load split inferred. Other figure gaps remain. No source photograph became app artwork, and no artwork or runtime code was changed.
 
 
 ## Hip osteoarthritis: Tailored activity with modest, comparator-dependent evidence
@@ -92,7 +92,7 @@ Actual executed search queries:
 
 ## proximal hamstring tendinopathy: Compression is deliberately reintroduced
 
-The final trial establishes no superiority over shockwave and is not an equivalence trial. The protocol/commentary describe staged compression reintroduction to functional demand. The bridge and modified-deadlift requests preserve timed-hold and angle distinctions. No permanent flexion, squat, deadlift or hamstring-stretch ban follows.
+The final trial establishes no superiority over shockwave and is not an equivalence trial. The protocol/commentary describe staged compression reintroduction to functional demand. The bridge and modified-deadlift requests preserve timed-hold and angle distinctions. Bounded primary Figure 3/8 inspection (2026-11-02 UTC) separately identifies the Figure 3(a,b) calf-on-box single-leg isometric hold as `pht-single-leg-calf-supported-isometric-hamstring-bridge`; the broad double/single-leg/support parent remains unresolved. Figure 3(c,d) has reduced support and is excluded. Figure 8 shows one single-leg barbell example, not all compression variants or an individual target range. These changed records await scoped source re-review and do not change clinical status. No permanent flexion, squat, deadlift or hamstring-stretch ban follows.
 
 Detailed extraction: [proximal-hamstring-tendinopathy.json](../proximal-hamstring-tendinopathy.json).
 
@@ -127,6 +127,6 @@ Actual executed search queries:
 
 ## Review boundary and counts
 
-Six research-only dossiers; 21 source records; nine candidate execution/PNG requests. All rules/mappings are candidates; clinical reviewer provenance remains null. Exact figures, artwork, dosing, starting loads and runtime integration remain subject to independent review. Source doses are research extractions. No generic five-second stretch progression, strength credit for stretching, blanket ordinary-training ban or invented catalog ID was added.
+Six research-only dossiers; 21 source records; ten candidate execution/PNG requests. All rules/mappings are candidates; clinical reviewer provenance remains null. Exact figures, artwork, dosing, starting loads and runtime integration remain subject to independent review. Source doses are research extractions. No generic five-second stretch progression, strength credit for stretching, blanket ordinary-training ban or invented catalog ID was added.
 
 Initial isolated structural validation: `ERRORS 0`, exit 0. Final post-cleanup validation is recorded in `hip-serialization-report.md`. This validates references and shapes, not clinical truth. No app behavior, profiles, measurements, translations, offline assets, upstream pin or historical audit changed.

@@ -125,7 +125,7 @@
       "access": {
         "status": "full-text",
         "date": "2026-11-01",
-        "details": "Primary full text inspected at linked archive/publisher; Europe PMC XML used where PMC HTML challenged."
+        "details": "Primary full text inspected at linked archive/publisher; Europe PMC XML used where PMC HTML challenged. Fresh figure inspection 2026-11-02 UTC: original author and independent factual-art reviewer inspected primary publisher Figure 3(a–d) and Figure 8(a–b). Retained Figure 3 PNG SHA-256 2a8daa660e6ef5e231fed61e3f7d39ee33aa20d3a10d7990c7014fd5338ceb69; Figure 8 PNG SHA-256 2546ba3529295a5ab7e5bc8c67c3527119a915250477c0c1e747517fc45fbcdc. Figure 3(a,b) specifically shows calf-on-box single-leg setup/hold; (c,d) reduces leg support. Figure 8(a) shows one single-leg barbell example, not all program alternatives or individualized target range. Original access.date retained; scoped changed-content re-review and clinical review remain outstanding."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -142,7 +142,7 @@
       "harms": "No independent adverse-event dataset.",
       "limitations": "Not clinical approval or a universal ordinary-training restriction.",
       "protocol": {
-        "execution": "Supine hamstring bridge, double/single leg; modify support/load. Later modified deadlift/lunge with graded hip flexion.",
+        "execution": "Supine hamstring bridge, double/single leg; modify support/load. Later modified deadlift/lunge with graded hip flexion. Figure 3(a,b) visually distinguishes a calf-on-box single-leg isometric bridge from reduced-support (c,d). The broad double/single-leg/support program and individualized compression ranges are not settled by this fixed child.",
         "dose": "Isometric 5×30–45 s; 90 seconds rest. Compression 2×4–6→3×6–8, 2 minutes rest.",
         "frequency": "Isometric as-needed up to 4/day; compression 3/week/every second day.",
         "supervision": "Therapist assesses contraction/pelvic control.",
@@ -151,7 +151,8 @@
       },
       "locations": [
         "Stage 1—Isometric; Table 1; Figure 3",
-        "Stage 4—Compressive loading; Table 1; Figure 8; Pain monitoring"
+        "Stage 4—Compressive loading; Table 1; Figure 8; Pain monitoring",
+        "Stage 1—Isometric > Figure 3(a,b), calf-supported single-leg setup and held position"
       ]
     }
   ],
@@ -185,7 +186,7 @@
     {
       "id": "hamstring-bridge-execution",
       "kind": "published-recommendation",
-      "statement": "Commentary describes hamstring bridge and progressive compressive deadlift/lunge, with symptom monitoring.",
+      "statement": "Commentary describes hamstring bridge and progressive compressive deadlift/lunge, with symptom monitoring. Freshly inspected Figure 3(a,b) shows a fixed calf-on-box single-leg bridge hold; Figure 3(c,d) changes support. Figure 8(a) depicts one single-leg barbell example, not all double/single-leg options or individualized target range.",
       "citations": [
         {
           "sourceId": "rich-2025-commentary",
@@ -197,7 +198,20 @@
         }
       ],
       "applicability": "PHT individualized rehabilitation; postoperative/acute avulsion extrapolation unsupported.",
-      "limitations": "Authors report no conflicts; recommendations partly extrapolated from other tendons."
+      "limitations": "Authors report no conflicts; recommendations partly extrapolated from other tendons. Photographic mechanics do not establish isolated efficacy or transferable dose. The broad program requests retain unresolved variant/range scope."
+    },
+    {
+      "id": "calf-supported-single-leg-hold-execution",
+      "kind": "published-recommendation",
+      "statement": "Figure 3(a,b) shows supine setup then a held single-leg hamstring bridge: one calf supported on a box, other hip/knee flexed and elevated, arms crossed, head and shoulders supported. The fixed candidate covers the raised isometric pose in (b); it excludes the reduced-support (c,d) progression and the double-leg alternative. No numeric joint angles or individualized dose are inferred.",
+      "citations": [
+        {
+          "sourceId": "rich-2025-commentary",
+          "location": "Stage 1—Isometric > Figure 3(a,b), calf-supported single-leg setup and held position"
+        }
+      ],
+      "applicability": "One source-described execution within individualized chronic PHT rehabilitation; postoperative/acute avulsion extrapolation remains unsupported.",
+      "limitations": "Commentary/expert execution, not independently established isolated analgesia or superiority. Source dose and symptom-monitoring rules remain contextual research extractions, not an app prescription."
     }
   ],
   "exerciseMappings": [
@@ -208,7 +222,7 @@
       "findingIds": [
         "hamstring-bridge-execution"
       ],
-      "matchRationale": "Catalog glute-bridge/bodyweight_reps cannot verify hamstring emphasis/support or timed isometric measurement; preserve distinct candidate.",
+      "matchRationale": "Preserve the broad candidate and source chain; fixed Figure 3(a,b) calf-supported child does not settle double-leg or reduced-support progression. No generic catalog glute bridge or duration default can supply missing variant mechanics.",
       "status": "candidate"
     },
     {
@@ -218,7 +232,17 @@
       "findingIds": [
         "hamstring-bridge-execution"
       ],
-      "matchRationale": "Generic Romanian-deadlift name does not encode graded compression angle or clinical progression; Figure 8 visual review needed.",
+      "matchRationale": "Figure 8(a) has now been visually inspected and shows one single-leg barbell example. The broad double/single-leg choices, individualized setup/load and target hip-flexion range remain unresolved; no generic Romanian-deadlift equivalence or universal progression is established.",
+      "status": "candidate"
+    },
+    {
+      "id": "pht-single-leg-calf-supported-isometric-hamstring-bridge-mapping",
+      "exerciseId": null,
+      "requestId": "pht-single-leg-calf-supported-isometric-hamstring-bridge",
+      "findingIds": [
+        "calf-supported-single-leg-hold-execution"
+      ],
+      "matchRationale": "Narrow source-bound child of unresolved pht-isometric-hamstring-bridge. Support contact, unilateral lever and duration measurement distinguish this execution from catalog glute/single-leg bridges; dose alone does not. Broad double/single-leg/support progression remains unresolved and no isolated component efficacy is claimed.",
       "status": "candidate"
     }
   ],
@@ -303,7 +327,8 @@
     "Concurrent condition restrictions, equipment requirements and independent joint limits remain controlling; stretching never earns strength-set credit or generic five-second progression.",
     "No untreated comparison or equivalence conclusion; isometric analgesia remains a rationale rather than proven isolated PHT effect.",
     "No permanent ban on hip flexion, squatting, deadlifting or hamstring stretching follows; compression was deliberately reintroduced.",
-    "Corrected Table 2 publisher headings conflict with archived XML; baseline arm labels intentionally not copied."
+    "Corrected Table 2 publisher headings conflict with archived XML; baseline arm labels intentionally not copied.",
+    "Fixed Figure 3(a,b) calf-supported single-leg hold is separately requested; broad bridge support/limb progressions and individualized compression/deadlift target range remain unresolved. Fresh figure observations await changed-content source re-review and do not establish clinical approval or original artwork provenance."
   ],
   "disposition": "research-only",
   "review": {
