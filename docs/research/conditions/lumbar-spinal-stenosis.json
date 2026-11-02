@@ -29,6 +29,13 @@
       "query": "Individual executed DOI queries: https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1016/j.jpain.2021.03.147; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1177/02692155231201048; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1001/jamanetworkopen.2018.6828; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1371/journal.pone.0072878; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1097/01.brs.0000241136.98159.8c",
       "decision": "Retrieve missing exact title/PMID/publication metadata; compare titles and dates. Protocol reopens identified in source.access.details.",
       "limitations": "Metadata API access does not upgrade abstract-only clinical extraction. Correction/retraction/supersession registry search not comprehensive."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST, primary MED abstracts; selected PubMed reopens",
+      "query": "Exact primary-record queries: https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A17047542%20AND%20SRC%3AMED&format=json&resultType=core",
+      "decision": "Bounded accessible-protocol audit restored explicitly reported facts for lss-p3. Program/contact totals are distinguished from isolated exercise schedules; no unseen protocol, new search discovery or clinical release.",
+      "limitations": "Abstract-only/partial access unchanged. Unreported mechanics, home frequency, progression or stopping criteria remain unknown; no frequency computed from total contacts/duration."
     }
   ],
   "sources": [
@@ -199,7 +206,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "Conservative abstract-only designation; full article/protocol not comprehensively inspected. Accessible abstract/selected snippets are distinguished in findings."
+        "details": "Conservative abstract-only designation; full article/protocol not comprehensively inspected. Accessible abstract/selected snippets are distinguished in findings. Accessible-protocol audit: primary abstract reopened via Europe PMC MED core (PMID 17047542); only explicitly reported categories/program or contact facts restored. Full text and unseen mechanics remain uninspected; access status unchanged."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -216,15 +223,17 @@
       "harms": "not reported in accessed abstract",
       "limitations": "Multicomponent contrast; no independent exercise-effect or contraindication inference Trial exclusions delimit studied applicability; they do not establish general contraindications.",
       "protocol": {
-        "execution": "not reported from full protocol; abstract-only/partial access does not establish execution",
-        "dose": "not reported from full protocol; abstract-only/partial access does not establish dose",
+        "execution": "reported in accessible text: Abstract > Methods (primary abstract, PMID 17047542): one package included manual physical therapy, body-weight-supported treadmill walking and exercise; the other lumbar-flexion exercises, treadmill walking and subtherapeutic ultrasound. Exact exercise mechanics, body-weight support and treadmill settings are not specified.",
+        "dose": "reported in accessible text: Abstract > Methods (primary abstract, PMID 17047542): two six-week physical-therapy programs were compared. Total visits and exercise-specific sets, repetitions and duration are not specified.",
         "frequency": "not reported from full protocol; abstract-only/partial access does not establish frequency",
         "supervision": "not reported from full protocol; abstract-only/partial access does not establish supervision",
-        "progression": "not reported from full protocol; abstract-only/partial access does not establish progression",
+        "progression": "reported in accessible text: Abstract > Conclusions (primary abstract, PMID 17047542): the conclusion describes the body-weight-supported treadmill program as progressive; no progression steps, support reductions, speed or symptom criteria are given.",
         "stoppingRules": "not reported from full protocol; abstract-only/partial access does not establish stoppingRules"
       },
       "locations": [
-        "Abstract > Methods and Results"
+        "Abstract > Methods and Results",
+        "Abstract > Methods",
+        "Abstract > Conclusions"
       ]
     }
   ],

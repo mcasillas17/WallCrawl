@@ -29,6 +29,13 @@
       "query": "Individual executed DOI queries: https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1136/bmj.b3883; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1016/j.apmr.2018.06.008; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.2340/jrm.v54.2799; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1177/02692155251365193",
       "decision": "Retrieve missing exact title/PMID/publication metadata; compare titles and dates. Protocol reopens identified in source.access.details.",
       "limitations": "Metadata API access does not upgrade abstract-only clinical extraction. Correction/retraction/supersession registry search not comprehensive."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST, primary MED abstracts; selected PubMed reopens",
+      "query": "Exact primary-record queries: https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A19812130%20AND%20SRC%3AMED&format=json&resultType=core; https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A30473018%20AND%20SRC%3AMED&format=json&resultType=core; https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A40776625%20AND%20SRC%3AMED&format=json&resultType=core",
+      "decision": "Bounded accessible-protocol audit restored explicitly reported facts for cr-p1, cr-p2, cr-s2. Program/contact totals are distinguished from isolated exercise schedules; no unseen protocol, new search discovery or clinical release.",
+      "limitations": "Abstract-only/partial access unchanged. Unreported mechanics, home frequency, progression or stopping criteria remain unknown; no frequency computed from total contacts/duration."
     }
   ],
   "sources": [
@@ -82,7 +89,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "Conservative abstract-only designation; full article/protocol not comprehensively inspected. Accessible abstract/selected snippets are distinguished in findings. Substantive indexed article text was available earlier; direct BMJ opening returned 403."
+        "details": "Conservative abstract-only designation; full article/protocol not comprehensively inspected. Accessible abstract/selected snippets are distinguished in findings. Substantive indexed article text was available earlier; direct BMJ opening returned 403. Accessible-protocol audit: primary abstract reopened via Europe PMC MED core (PMID 19812130); only explicitly reported categories/program or contact facts restored. Full text and unseen mechanics remain uninspected; access status unchanged."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -99,15 +106,16 @@
       "harms": "Adverse-event outcome absent per CR-G1 synthesis",
       "limitations": "Direct BMJ fetch 403 after indexed substantive article text; conservative abstract-only serialization; short-term pain benefit did not establish persistent superiority Trial exclusions delimit studied applicability; they do not establish general contraindications.",
       "protocol": {
-        "execution": "not reported from full protocol; abstract-only/partial access does not establish execution",
-        "dose": "not reported from full protocol; abstract-only/partial access does not establish dose",
-        "frequency": "not reported from full protocol; abstract-only/partial access does not establish frequency",
-        "supervision": "not reported from full protocol; abstract-only/partial access does not establish supervision",
+        "execution": "reported in accessible text: Abstract > Interventions (primary abstract, PMID 19812130): physiotherapy accompanied by home exercises was compared with semi-hard collar/rest and continuation of daily activity without specific treatment. The abstract does not identify individual exercise mechanics; the collar/rest arm is not an app exercise instruction.",
+        "dose": "reported in accessible text: Abstract > Interventions (primary abstract, PMID 19812130): 12 physiotherapy sessions with home exercises over six weeks; collar/rest comparator for three to six weeks. These are program/contact facts, not exercise-specific repetition, hold or load doses.",
+        "frequency": "reported in accessible text: Abstract > Interventions (primary abstract, PMID 19812130): physiotherapy visits were twice weekly. The abstract does not specify home-exercise frequency, and no frequency is derived by dividing session totals by duration.",
+        "supervision": "reported in accessible text: Abstract > Interventions (primary abstract, PMID 19812130): the exercise arm combined physiotherapy sessions and home exercise. The abstract does not establish continuous supervision or who monitored home execution.",
         "progression": "not reported from full protocol; abstract-only/partial access does not establish progression",
         "stoppingRules": "not reported from full protocol; abstract-only/partial access does not establish stoppingRules"
       },
       "locations": [
-        "Abstract > Interventions and Results"
+        "Abstract > Interventions and Results",
+        "Abstract > Interventions"
       ]
     },
     {
@@ -120,7 +128,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "Conservative abstract-only designation; full article/protocol not comprehensively inspected. Accessible abstract/selected snippets are distinguished in findings."
+        "details": "Conservative abstract-only designation; full article/protocol not comprehensively inspected. Accessible abstract/selected snippets are distinguished in findings. Accessible-protocol audit: primary abstract reopened via Europe PMC MED core (PMID 30473018); only explicitly reported categories/program or contact facts restored. Full text and unseen mechanics remain uninspected; access status unchanged."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -137,15 +145,18 @@
       "harms": "not reported in accessed primary abstract",
       "limitations": "No significant overall group/group-by-time effects; secondary review contrasts should not be described as decisive superiority Trial exclusions delimit studied applicability; they do not establish general contraindications.",
       "protocol": {
-        "execution": "not reported from full protocol; abstract-only/partial access does not establish execution",
-        "dose": "not reported from full protocol; abstract-only/partial access does not establish dose",
+        "execution": "reported in accessible text: Abstract > Objective and Interventions (primary abstract, PMID 30473018): neck-specific training versus prescribed physical activity; both groups also received a cognitive-behavioral approach. Individual positions, resistance interfaces and movements are not identified.",
+        "dose": "reported in accessible text: Abstract > Interventions (primary abstract, PMID 30473018): both interventions lasted three months. Session totals and exercise-specific dose are not stated; follow-up at 3/6/12/24 months is not a frequency schedule.",
         "frequency": "not reported from full protocol; abstract-only/partial access does not establish frequency",
-        "supervision": "not reported from full protocol; abstract-only/partial access does not establish supervision",
+        "supervision": "reported in accessible text: Abstract > Setting (primary abstract, PMID 30473018): interventions occurred in primary-care outpatient physiotherapy clinics. The abstract does not establish supervision of each exercise or home practice, or therapist-contact frequency.",
         "progression": "not reported from full protocol; abstract-only/partial access does not establish progression",
         "stoppingRules": "not reported from full protocol; abstract-only/partial access does not establish stoppingRules"
       },
       "locations": [
-        "Abstract > Interventions and Results"
+        "Abstract > Interventions and Results",
+        "Abstract > Objective and Interventions",
+        "Abstract > Interventions",
+        "Abstract > Setting"
       ]
     },
     {
@@ -197,7 +208,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "Conservative abstract-only designation; full article/protocol not comprehensively inspected. Accessible abstract/selected snippets are distinguished in findings."
+        "details": "Conservative abstract-only designation; full article/protocol not comprehensively inspected. Accessible abstract/selected snippets are distinguished in findings. Accessible-protocol audit: primary abstract reopened via Europe PMC MED core (PMID 40776625); only explicitly reported categories/program or contact facts restored. Full text and unseen mechanics remain uninspected; access status unchanged."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -214,7 +225,7 @@
       "harms": "not reported in accessed abstract",
       "limitations": "Network assumptions/heterogeneity; selected moderate-confidence combinations do not prove execution safety or contraindications Trial exclusions delimit studied applicability; they do not establish general contraindications.",
       "protocol": {
-        "execution": "not reported from full protocol; abstract-only/partial access does not establish execution",
+        "execution": "reported in accessible text: Abstract > Results and Conclusions (primary abstract, PMID 40776625): the component network names neurodynamic techniques, cervical traction, articular treatment, dry needling, analgesic electrotherapy and strengthening combinations. These component labels do not specify exercise mechanics or authorize self-directed procedures; no individual execution is established.",
         "dose": "not reported from full protocol; abstract-only/partial access does not establish dose",
         "frequency": "not reported from full protocol; abstract-only/partial access does not establish frequency",
         "supervision": "not reported from full protocol; abstract-only/partial access does not establish supervision",
@@ -222,7 +233,8 @@
         "stoppingRules": "not reported from full protocol; abstract-only/partial access does not establish stoppingRules"
       },
       "locations": [
-        "Abstract > Methods and Results"
+        "Abstract > Methods and Results",
+        "Abstract > Results and Conclusions"
       ]
     }
   ],

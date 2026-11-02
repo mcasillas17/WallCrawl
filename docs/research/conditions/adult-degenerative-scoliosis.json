@@ -29,6 +29,13 @@
       "query": "Individual executed DOI queries: https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1093/pm/pnz253; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.26574/maedica.2024.19.1.23; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.7453/gahmj.2013.064; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1007/s00586-016-4528-y; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.3389/fsurg.2026.1807406",
       "decision": "Retrieve missing exact title/PMID/publication metadata; compare titles and dates. Protocol reopens identified in source.access.details.",
       "limitations": "Metadata API access does not upgrade abstract-only clinical extraction. Correction/retraction/supersession registry search not comprehensive."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST, primary MED abstracts; selected PubMed reopens",
+      "query": "Exact primary-record queries: https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A31617915%20AND%20SRC%3AMED&format=json&resultType=core; https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A25568820%20AND%20SRC%3AMED&format=json&resultType=core; https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A27015689%20AND%20SRC%3AMED&format=json&resultType=core",
+      "decision": "Bounded accessible-protocol audit restored explicitly reported facts for ads-s1, ads-p2, ads-p3. Program/contact totals are distinguished from isolated exercise schedules; no unseen protocol, new search discovery or clinical release.",
+      "limitations": "Abstract-only/partial access unchanged. Unreported mechanics, home frequency, progression or stopping criteria remain unknown; no frequency computed from total contacts/duration."
     }
   ],
   "sources": [
@@ -42,7 +49,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "Conservative abstract-only designation; full article/protocol not comprehensively inspected. Accessible abstract/selected snippets are distinguished in findings. Institutional PDF located but fetch returned 403."
+        "details": "Conservative abstract-only designation; full article/protocol not comprehensively inspected. Accessible abstract/selected snippets are distinguished in findings. Institutional PDF located but fetch returned 403. Accessible-protocol audit: primary abstract reopened via Europe PMC MED core (PMID 31617915); only explicitly reported categories/program or contact facts restored. Full text and unseen mechanics remain uninspected; access status unchanged."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -59,7 +66,7 @@
       "harms": "not reported in accessed abstract",
       "limitations": "Low injection and very-low yoga/bracing certainty; no specific PT evidence in search period; absence is not an exercise contraindication Trial exclusions delimit studied applicability; they do not establish general contraindications.",
       "protocol": {
-        "execution": "not reported from full protocol; abstract-only/partial access does not establish execution",
+        "execution": "reported in accessible text: Abstract > Results (primary abstract, PMID 31617915): yoga is a named nonsurgical treatment category alongside bracing and injections. The abstract does not identify a yoga pose or establish a specific physical-therapy exercise; minimum six-week follow-up is not an intervention dose.",
         "dose": "not reported from full protocol; abstract-only/partial access does not establish dose",
         "frequency": "not reported from full protocol; abstract-only/partial access does not establish frequency",
         "supervision": "not reported from full protocol; abstract-only/partial access does not establish supervision",
@@ -67,7 +74,8 @@
         "stoppingRules": "not reported from full protocol; abstract-only/partial access does not establish stoppingRules"
       },
       "locations": [
-        "Abstract > Results and Conclusions"
+        "Abstract > Results and Conclusions",
+        "Abstract > Results"
       ]
     },
     {
@@ -119,7 +127,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "Conservative abstract-only designation; full article/protocol not comprehensively inspected. Accessible abstract/selected snippets are distinguished in findings."
+        "details": "Conservative abstract-only designation; full article/protocol not comprehensively inspected. Accessible abstract/selected snippets are distinguished in findings. Accessible-protocol audit: primary abstract reopened via Europe PMC MED core (PMID 25568820); only explicitly reported categories/program or contact facts restored. Full text and unseen mechanics remain uninspected; access status unchanged."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -136,15 +144,16 @@
       "harms": "not reported in accessible abstract/method/results snippets",
       "limitations": "Mixed ages/etiology, adherence selection; convex-side-down description cannot authorize universal side assignment Trial exclusions delimit studied applicability; they do not establish general contraindications.",
       "protocol": {
-        "execution": "not reported from full protocol; abstract-only/partial access does not establish execution",
-        "dose": "not reported from full protocol; abstract-only/partial access does not establish dose",
-        "frequency": "not reported from full protocol; abstract-only/partial access does not establish frequency",
-        "supervision": "not reported from full protocol; abstract-only/partial access does not establish supervision",
-        "progression": "not reported from full protocol; abstract-only/partial access does not establish progression",
+        "execution": "reported in accessible text: Abstract > Methods (primary abstract, PMID 25568820): participants were taught side plank and performed it with curve convexity downward on one side only. Limb support, alignment and curve-specific assessment details are not specified; this mixed idiopathic/degenerative case series is not a universal side-assignment instruction.",
+        "dose": "reported in accessible text: Abstract > Methods and Results (primary abstract, PMID 25568820): initial week: side-plank holds of 10–20 seconds; subsequently instructed to hold as long as possible. Mean self-reported practice was 1.5 minutes/day; this observation is distinct from the instructed hold and is not an app prescription.",
+        "frequency": "reported in accessible text: Abstract > Methods and Results (primary abstract, PMID 25568820): after the initial week, instructed to practice once daily on that one side; mean self-reported practice was 6.1 days/week. Radiographs at 3–22 months and mean follow-up 6.8 months are follow-up facts, not a fixed program duration.",
+        "supervision": "reported in accessible text: Abstract > Methods (primary abstract, PMID 25568820): participants were taught the side-plank pose. Instructor credentials, number of teaching contacts and ongoing supervision are not specified.",
+        "progression": "reported in accessible text: Abstract > Methods (primary abstract, PMID 25568820): after one week of 10–20-second holds, instruction changed to holding once daily as long as possible. No load increments, symptom-response rule or criterion for choosing curve side is established by this abstract.",
         "stoppingRules": "not reported from full protocol; abstract-only/partial access does not establish stoppingRules"
       },
       "locations": [
-        "Abstract > Methods and Results"
+        "Abstract > Methods and Results",
+        "Abstract > Methods"
       ]
     },
     {
@@ -157,7 +166,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "Conservative abstract-only designation; full article/protocol not comprehensively inspected. Accessible abstract/selected snippets are distinguished in findings."
+        "details": "Conservative abstract-only designation; full article/protocol not comprehensively inspected. Accessible abstract/selected snippets are distinguished in findings. Accessible-protocol audit: primary abstract reopened via Europe PMC MED core (PMID 27015689); only explicitly reported categories/program or contact facts restored. Full text and unseen mechanics remain uninspected; access status unchanged."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -174,15 +183,16 @@
       "harms": "not reported in accessed abstract",
       "limitations": "Idiopathic rather than degenerative disease; do not transfer threshold/dose/curve correction as direct ADS evidence Trial exclusions delimit studied applicability; they do not establish general contraindications.",
       "protocol": {
-        "execution": "not reported from full protocol; abstract-only/partial access does not establish execution",
-        "dose": "not reported from full protocol; abstract-only/partial access does not establish dose",
+        "execution": "reported in accessible text: Abstract > Methods (primary abstract, PMID 27015689): active self-correction, task-oriented exercise and cognitive-behavioral therapy versus general physiotherapy with active/passive mobilization, stretching and spinal-muscle strengthening. Mechanics of individual exercises are not given; this is adult idiopathic scoliosis, indirect for degenerative scoliosis.",
+        "dose": "reported in accessible text: Abstract > Methods (primary abstract, PMID 27015689): 20-week rehabilitation program. Session totals and per-exercise repetitions, sets, hold and load are not specified; 12-month post-treatment assessment is follow-up, not treatment duration.",
         "frequency": "not reported from full protocol; abstract-only/partial access does not establish frequency",
         "supervision": "not reported from full protocol; abstract-only/partial access does not establish supervision",
         "progression": "not reported from full protocol; abstract-only/partial access does not establish progression",
         "stoppingRules": "not reported from full protocol; abstract-only/partial access does not establish stoppingRules"
       },
       "locations": [
-        "Abstract > Methods and Results"
+        "Abstract > Methods and Results",
+        "Abstract > Methods"
       ]
     },
     {

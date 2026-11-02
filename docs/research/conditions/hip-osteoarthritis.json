@@ -48,6 +48,13 @@
       "query": "\"10.1001/jama.2014.4591\" correction retraction",
       "decision": "Letters/reply found; no correction identified.",
       "limitations": "Focused regional review, not an exhaustive systematic search; English-accessible sources prioritized."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST, primary MED abstracts; selected PubMed reopens",
+      "query": "Exact primary-record queries: https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A39922217%20AND%20SRC%3AMED&format=json&resultType=core; https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A42486497%20AND%20SRC%3AMED&format=json&resultType=core",
+      "decision": "Bounded accessible-protocol audit restored explicitly reported facts for hall-2025-phoenix, hall-2026-review. Program/contact totals are distinguished from isolated exercise schedules; no unseen protocol, new search discovery or clinical release.",
+      "limitations": "Abstract-only/partial access unchanged. Unreported mechanics, home frequency, progression or stopping criteria remain unknown; no frequency computed from total contacts/duration."
     }
   ],
   "sources": [
@@ -139,7 +146,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "PubMed abstract inspected; ScienceDirect full text 403. Protocol below separately retrieved."
+        "details": "PubMed abstract inspected; ScienceDirect full text 403. Protocol below separately retrieved. Accessible-protocol audit: primary abstract reopened via Europe PMC MED core (PMID 39922217); only explicitly reported categories/program or contact facts restored. Full text and unseen mechanics remain uninspected; access status unchanged."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -156,15 +163,16 @@
       "harms": "24 related events combined vs 31 resistance-only; none serious (abstract); ascertainment unavailable.",
       "limitations": "Not clinical approval or a universal ordinary-training restriction.",
       "protocol": {
-        "execution": "not reported",
-        "dose": "not reported",
+        "execution": "reported in accessible text: Abstract > Methods (primary abstract, PMID 39922217): home resistance exercise alone versus home resistance exercise plus aerobic physical activity. The abstract does not identify exact strength/aerobic executions, equipment or ranges.",
+        "dose": "reported in accessible text: Abstract > Methods (primary abstract, PMID 39922217): both groups received nine physiotherapist consultations over three months plus a home program. These are contact/program facts, not exercise-specific dose or confirmation of all delivery details in the separately published protocol.",
         "frequency": "not reported",
-        "supervision": "not reported",
+        "supervision": "reported in accessible text: Abstract > Methods (primary abstract, PMID 39922217): nine physiotherapist consultations and a home exercise program are reported. Continuous exercise supervision and home monitoring are not established; home frequency cannot be inferred from the consultation total.",
         "progression": "not reported",
         "stoppingRules": "not reported"
       },
       "locations": [
-        "Abstract > Methods, Findings, Interpretation"
+        "Abstract > Methods, Findings, Interpretation",
+        "Abstract > Methods"
       ]
     },
     {
@@ -217,7 +225,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "Current PubMed abstract inspected. Cochrane public webpage mixes updated summary with older 10-trial abstract; current PubMed version used."
+        "details": "Current PubMed abstract inspected. Cochrane public webpage mixes updated summary with older 10-trial abstract; current PubMed version used. Accessible-protocol audit: primary abstract reopened via Europe PMC MED core (PMID 42486497); only explicitly reported categories/program or contact facts restored. Full text and unseen mechanics remain uninspected; access status unchanged."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -234,7 +242,7 @@
       "harms": "Exercise vs usual care RR 2.95 (0.62–13.96), very low certainty.",
       "limitations": "Not clinical approval or a universal ordinary-training restriction.",
       "protocol": {
-        "execution": "not reported",
+        "execution": "reported in accessible text: Abstract > Objectives and Eligibility criteria (primary abstract, PMID 42486497): land-based exercise is the review intervention, alone or with co-interventions; perioperative programs and gait-aid/retraining interventions were excluded. No particular land-based execution or shared regimen is described.",
         "dose": "not reported",
         "frequency": "not reported",
         "supervision": "not reported",
@@ -242,7 +250,8 @@
         "stoppingRules": "not reported"
       },
       "locations": [
-        "Abstract > Search methods; Synthesis of results; Conclusions"
+        "Abstract > Search methods; Synthesis of results; Conclusions",
+        "Abstract > Objectives and Eligibility criteria"
       ]
     },
     {

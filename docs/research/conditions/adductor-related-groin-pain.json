@@ -41,6 +41,13 @@
       "query": "\"10.1016/S0140-6736(98)03340-6\" correction retraction",
       "decision": "No correction found in bounded search.",
       "limitations": "Focused regional review, not an exhaustive systematic search; English-accessible sources prioritized."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST, primary MED abstracts; selected PubMed reopens",
+      "query": "Exact primary-record queries: https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A9989713%20AND%20SRC%3AMED&format=json&resultType=core; https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A20952244%20AND%20SRC%3AMED&format=json&resultType=core; https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A23740671%20AND%20SRC%3AMED&format=json&resultType=core",
+      "decision": "Bounded accessible-protocol audit restored explicitly reported facts for holmich-1999, weir-2011, cochrane-groin-2013. Program/contact totals are distinguished from isolated exercise schedules; no unseen protocol, new search discovery or clinical release.",
+      "limitations": "Abstract-only/partial access unchanged. Unreported mechanics, home frequency, progression or stopping criteria remain unknown; no frequency computed from total contacts/duration."
     }
   ],
   "sources": [
@@ -54,7 +61,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "PubMed abstract inspected; institutional ctu.dk PDF repeatedly 404; indexed fragments are not fulltext inspection."
+        "details": "PubMed abstract inspected; institutional ctu.dk PDF repeatedly 404; indexed fragments are not fulltext inspection. Accessible-protocol audit: primary abstract reopened via Europe PMC MED core (PMID 9989713); only explicitly reported categories/program or contact facts restored. Full text and unseen mechanics remain uninspected; access status unchanged."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -71,15 +78,17 @@
       "harms": "not reported in abstract.",
       "limitations": "Not clinical approval or a universal ordinary-training restriction.",
       "protocol": {
-        "execution": "not reported",
-        "dose": "not reported",
+        "execution": "reported in accessible text: Abstract > Methods and Interpretation (primary abstract, PMID 9989713): active training aimed at strength/coordination of muscles acting on the pelvis, especially adductors, versus physiotherapy without active training. Individual exercises, equipment and mechanics are not given; no later modified protocol is substituted.",
+        "dose": "reported in accessible text: Abstract > Methods (primary abstract, PMID 9989713): treatment period was 8–12 weeks. Session totals and exercise-specific dose are not given; the four-month post-treatment examination is follow-up.",
         "frequency": "not reported",
         "supervision": "not reported",
         "progression": "not reported",
         "stoppingRules": "not reported"
       },
       "locations": [
-        "Abstract > Methods and Findings"
+        "Abstract > Methods and Findings",
+        "Abstract > Methods and Interpretation",
+        "Abstract > Methods"
       ]
     },
     {
@@ -92,7 +101,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "PubMed abstract and indexed publisher abstract inspected; full intervention tables not accessed."
+        "details": "PubMed abstract and indexed publisher abstract inspected; full intervention tables not accessed. Accessible-protocol audit: primary abstract reopened via Europe PMC MED core (PMID 20952244); only explicitly reported categories/program or contact facts restored. Full text and unseen mechanics remain uninspected; access status unchanged."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -109,15 +118,16 @@
       "harms": "Abstract calls MMT safe; ascertainment not reported.",
       "limitations": "Not clinical approval or a universal ordinary-training restriction.",
       "protocol": {
-        "execution": "not reported",
-        "dose": "not reported",
+        "execution": "reported in accessible text: Abstract > Methods > Interventions (primary abstract, PMID 20952244): exercise arm used home exercise plus structured return to running; multimodal arm used heat, Van den Akker manual therapy, stretching and return to running. Individual exercise mechanics and running stages are not specified.",
+        "dose": "reported in accessible text: Abstract > Methods > Interventions (primary abstract, PMID 20952244): exercise arm received instruction on three occasions from a sports physical therapist. This is an instruction-contact count; the abstract does not report total intervention duration or exercise-specific dose.",
         "frequency": "not reported",
-        "supervision": "not reported",
+        "supervision": "reported in accessible text: Abstract > Methods > Interventions (primary abstract, PMID 20952244): home exercise/running program was instructed on three occasions by a sports physical therapist. Ongoing home supervision is not established; outcome assessments at 0/6/16/24 weeks do not establish exercise frequency.",
         "progression": "not reported",
         "stoppingRules": "not reported"
       },
       "locations": [
-        "Abstract > Patients; Interventions; Results"
+        "Abstract > Patients; Interventions; Results",
+        "Abstract > Methods > Interventions"
       ]
     },
     {
@@ -169,7 +179,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "Primary abstract/indexed review results inspected; full study-characteristic table not comprehensively extracted."
+        "details": "Primary abstract/indexed review results inspected; full study-characteristic table not comprehensively extracted. Accessible-protocol audit: primary abstract reopened via Europe PMC MED core (PMID 23740671); only explicitly reported categories/program or contact facts restored. Full text and unseen mechanics remain uninspected; access status unchanged."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -186,7 +196,7 @@
       "harms": "Not established from accessed abstract.",
       "limitations": "Not clinical approval or a universal ordinary-training restriction.",
       "protocol": {
-        "execution": "not reported",
+        "execution": "reported in accessible text: Abstract > Main results (primary abstract, PMID 23740671): one trial compared adductor/abdominal strengthening and muscular coordination with stretching/electrotherapy/friction massage; another compared multimodal heat/manual therapy/stretching with exercise. These are reviewed intervention categories, not exact exercise mechanics or proof of each component effect.",
         "dose": "not reported",
         "frequency": "not reported",
         "supervision": "not reported",
@@ -194,7 +204,8 @@
         "stoppingRules": "not reported"
       },
       "locations": [
-        "Main results; Discussion > Quality of evidence"
+        "Main results; Discussion > Quality of evidence",
+        "Abstract > Main results"
       ]
     }
   ],

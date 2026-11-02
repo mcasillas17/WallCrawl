@@ -29,6 +29,13 @@
       "query": "Individual executed DOI queries: https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.3238/arztebl.m2025.0119; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.2519/jospt.2023.11820; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1001/jama.289.19.2509",
       "decision": "Retrieve missing exact title/PMID/publication metadata; compare titles and dates. Protocol reopens identified in source.access.details.",
       "limitations": "Metadata API access does not upgrade abstract-only clinical extraction. Correction/retraction/supersession registry search not comprehensive."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST, primary MED abstracts; selected PubMed reopens",
+      "query": "Exact primary-record queries: https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A37339388%20AND%20SRC%3AMED&format=json&resultType=core",
+      "decision": "Bounded accessible-protocol audit restored explicitly reported facts for nn-s1. Program/contact totals are distinguished from isolated exercise schedules; no unseen protocol, new search discovery or clinical release.",
+      "limitations": "Abstract-only/partial access unchanged. Unreported mechanics, home frequency, progression or stopping criteria remain unknown; no frequency computed from total contacts/duration."
     }
   ],
   "sources": [
@@ -80,7 +87,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "Conservative abstract-only designation; full article/protocol not comprehensively inspected. Accessible abstract/selected snippets are distinguished in findings."
+        "details": "Conservative abstract-only designation; full article/protocol not comprehensively inspected. Accessible abstract/selected snippets are distinguished in findings. Accessible-protocol audit: primary abstract reopened via Europe PMC MED core (PMID 37339388); only explicitly reported categories/program or contact facts restored. Full text and unseen mechanics remain uninspected; access status unchanged."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -97,7 +104,7 @@
       "harms": "not reported in accessed abstract/results excerpt",
       "limitations": "Very low to moderate certainty; substantial heterogeneity, many I-squared values above 90%; resistance dose-response not demonstrated Trial exclusions delimit studied applicability; they do not establish general contraindications.",
       "protocol": {
-        "execution": "not reported from full protocol; abstract-only/partial access does not establish execution",
+        "execution": "reported in accessible text: Abstract > Data synthesis and Results (primary abstract, PMID 37339388): reviewed categories include resistance, motor-control and mindfulness-based exercise, with yoga/Pilates/Tai Chi/Qui Gong grouped in the results. These category names do not identify an individual execution or dosing schedule.",
         "dose": "not reported from full protocol; abstract-only/partial access does not establish dose",
         "frequency": "not reported from full protocol; abstract-only/partial access does not establish frequency",
         "supervision": "not reported from full protocol; abstract-only/partial access does not establish supervision",
@@ -105,7 +112,8 @@
         "stoppingRules": "not reported from full protocol; abstract-only/partial access does not establish stoppingRules"
       },
       "locations": [
-        "Abstract > Results and Conclusion"
+        "Abstract > Results and Conclusion",
+        "Abstract > Data synthesis and Results"
       ]
     },
     {

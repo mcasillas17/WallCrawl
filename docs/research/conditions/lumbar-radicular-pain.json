@@ -30,6 +30,13 @@
       "query": "Individual executed DOI queries: https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.23736/S1973-9087.24.08352-7; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.7326/M20-4187; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1007/s00586-007-0569-6; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.7759/cureus.57278; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.3390/jcm15020528",
       "decision": "Retrieve missing exact title/PMID/publication metadata; compare titles and dates. Protocol reopens identified in source.access.details.",
       "limitations": "Metadata API access does not upgrade abstract-only clinical extraction. Correction/retraction/supersession registry search not comprehensive."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST, primary MED abstracts; selected PubMed reopens",
+      "query": "Exact primary-record queries: https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A18172697%20AND%20SRC%3AMED&format=json&resultType=core",
+      "decision": "Bounded accessible-protocol audit restored explicitly reported facts for lr-p2. Program/contact totals are distinguished from isolated exercise schedules; no unseen protocol, new search discovery or clinical release.",
+      "limitations": "Abstract-only/partial access unchanged. Unreported mechanics, home frequency, progression or stopping criteria remain unknown; no frequency computed from total contacts/duration."
     }
   ],
   "sources": [
@@ -123,7 +130,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "Conservative abstract-only designation; full article/protocol not comprehensively inspected. Accessible abstract/selected snippets are distinguished in findings."
+        "details": "Conservative abstract-only designation; full article/protocol not comprehensively inspected. Accessible abstract/selected snippets are distinguished in findings. Accessible-protocol audit: primary abstract reopened via Europe PMC MED core (PMID 18172697); only explicitly reported categories/program or contact facts restored. Full text and unseen mechanics remain uninspected; access status unchanged."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -140,7 +147,7 @@
       "harms": "not reported in accessed abstract/summary",
       "limitations": "Global recovery improved, without relevant significant differences in leg pain/disability/fear/general health; cost effectiveness not improved Trial exclusions delimit studied applicability; they do not establish general contraindications.",
       "protocol": {
-        "execution": "not reported from full protocol; abstract-only/partial access does not establish execution",
+        "execution": "reported in accessible text: Abstract (primary abstract, PMID 18172697): physical therapy added to general-practitioner care versus general-practitioner care alone. The primary abstract does not identify particular exercises or their mechanics; 3/6/12/52-week assessments are follow-up, not a reported exercise schedule.",
         "dose": "not reported from full protocol; abstract-only/partial access does not establish dose",
         "frequency": "not reported from full protocol; abstract-only/partial access does not establish frequency",
         "supervision": "not reported from full protocol; abstract-only/partial access does not establish supervision",
@@ -148,7 +155,8 @@
         "stoppingRules": "not reported from full protocol; abstract-only/partial access does not establish stoppingRules"
       },
       "locations": [
-        "Abstract > Results and Conclusions"
+        "Abstract > Results and Conclusions",
+        "Abstract"
       ]
     },
     {

@@ -29,6 +29,13 @@
       "query": "Individual executed DOI queries: https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1097/AJP.0000000000000123; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1016/S0140-6736%2814%2960457-8; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1001/jamanetworkopen.2025.26674; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.3390/muscles4040049",
       "decision": "Retrieve missing exact title/PMID/publication metadata; compare titles and dates. Protocol reopens identified in source.access.details.",
       "limitations": "Metadata API access does not upgrade abstract-only clinical extraction. Correction/retraction/supersession registry search not comprehensive."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST, primary MED abstracts; selected PubMed reopens",
+      "query": "Exact primary-record queries: https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A40794407%20AND%20SRC%3AMED&format=json&resultType=core; https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A41283437%20AND%20SRC%3AMED&format=json&resultType=core",
+      "decision": "Bounded accessible-protocol audit restored explicitly reported facts for wad-p3, wad-s1. Program/contact totals are distinguished from isolated exercise schedules; no unseen protocol, new search discovery or clinical release.",
+      "limitations": "Abstract-only/partial access unchanged. Unreported mechanics, home frequency, progression or stopping criteria remain unknown; no frequency computed from total contacts/duration."
     }
   ],
   "sources": [
@@ -162,7 +169,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "Conservative abstract-only designation; full article/protocol not comprehensively inspected. Accessible abstract/selected snippets are distinguished in findings."
+        "details": "Conservative abstract-only designation; full article/protocol not comprehensively inspected. Accessible abstract/selected snippets are distinguished in findings. Accessible-protocol audit: primary abstract reopened via Europe PMC MED core (PMID 40794407); only explicitly reported categories/program or contact facts restored. Full text and unseen mechanics remain uninspected; access status unchanged."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -179,15 +186,16 @@
       "harms": "not reported in extracted abstract/results/PDF excerpts",
       "limitations": "Primary six-month disability difference nonsignificant; secondary endpoints favored intervention; full dose/harms not extracted Trial exclusions delimit studied applicability; they do not establish general contraindications.",
       "protocol": {
-        "execution": "not reported from full protocol; abstract-only/partial access does not establish execution",
-        "dose": "not reported from full protocol; abstract-only/partial access does not establish dose",
+        "execution": "reported in accessible text: Abstract > Interventions (primary abstract, PMID 40794407): MPNA combined pain-neuroscience education, stress management and cognition-targeted time-contingent exercise; usual care combined biomedically focused education and symptom-contingent exercise. Exact exercises and mechanics are not specified.",
+        "dose": "reported in accessible text: Abstract > Interventions (primary abstract, PMID 40794407): participants in either group received 18 sessions during 16 weeks. This is a whole-treatment program/contact dose, not an isolated exercise dose or an inferred weekly schedule.",
         "frequency": "not reported from full protocol; abstract-only/partial access does not establish frequency",
         "supervision": "not reported from full protocol; abstract-only/partial access does not establish supervision",
-        "progression": "not reported from full protocol; abstract-only/partial access does not establish progression",
+        "progression": "reported in accessible text: Abstract > Interventions (primary abstract, PMID 40794407): exercise is labeled time-contingent in MPNA and symptom-contingent in usual care. No operational progression steps, numerical increments, pain cutoff or stopping algorithm are given.",
         "stoppingRules": "not reported from full protocol; abstract-only/partial access does not establish stoppingRules"
       },
       "locations": [
-        "Abstract > Results"
+        "Abstract > Results",
+        "Abstract > Interventions"
       ]
     },
     {
@@ -200,7 +208,7 @@
       "access": {
         "status": "abstract-only",
         "date": "2026-11-01",
-        "details": "Conservative abstract-only designation; full article/protocol not comprehensively inspected. Accessible abstract/selected snippets are distinguished in findings. PMC browser challenge and publisher rate limit blocked full-text inspection."
+        "details": "Conservative abstract-only designation; full article/protocol not comprehensively inspected. Accessible abstract/selected snippets are distinguished in findings. PMC browser challenge and publisher rate limit blocked full-text inspection. Accessible-protocol audit: primary abstract reopened via Europe PMC MED core (PMID 41283437); only explicitly reported categories/program or contact facts restored. Full text and unseen mechanics remain uninspected; access status unchanged."
       },
       "integrity": {
         "checkedOn": "2026-11-01",
@@ -217,7 +225,7 @@
       "harms": "not reported in accessed abstract",
       "limitations": "Pooled approach differences unclear; possible overlapping cohorts need checking; FT challenge/rate limit Trial exclusions delimit studied applicability; they do not establish general contraindications.",
       "protocol": {
-        "execution": "not reported from full protocol; abstract-only/partial access does not establish execution",
+        "execution": "reported in accessible text: Abstract (primary abstract, PMID 41283437): the review compares physiotherapy based on neck-specific exercises with versus without a behavioral approach. No particular movement mechanics or per-exercise schedule is given.",
         "dose": "not reported from full protocol; abstract-only/partial access does not establish dose",
         "frequency": "not reported from full protocol; abstract-only/partial access does not establish frequency",
         "supervision": "not reported from full protocol; abstract-only/partial access does not establish supervision",
@@ -225,7 +233,8 @@
         "stoppingRules": "not reported from full protocol; abstract-only/partial access does not establish stoppingRules"
       },
       "locations": [
-        "Abstract > Results and Conclusions"
+        "Abstract > Results and Conclusions",
+        "Abstract"
       ]
     }
   ],
