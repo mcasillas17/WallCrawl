@@ -53,7 +53,7 @@ const val WALLCRAWL_SCHEMA_VERSION = 17
         ProgramSessionAssociationEntity::class
     ],
     version = WALLCRAWL_SCHEMA_VERSION,
-    exportSchema = false
+    exportSchema = true
 )
 @TypeConverters(RoomTypeConverters::class)
 abstract class WallCrawlDatabase : RoomDatabase() {

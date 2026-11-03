@@ -67,7 +67,7 @@ model downloads, model-driven features, a network connection, or a companion dev
 | Deterministic coach | Reviewed eligibility/ranking, weekly ledger, state guidance and whole-program validation; Packages 9 and 12 add single-axis progression, persistent user-controlled deload and optional completion-driven programs in the production composition | Genuine human `APPROVED` review remains independent; substitutions remain future work |
 | Planner evaluation | Versioned persona corpus (`planner-fixtures/manifest.txt` is the authoritative roster), with the reviewed-enabled personas' weeks replayed through the real ledger and every successful persona's proposal validated as a complete program, importer unit tests, real pinned-upstream regeneration check, JVM tests, and Android CI shipped | None for this package; reviewed-planner enablement (package 7) is done, and human-approval rollout (package 3) is the remaining gate |
 | Health Connect and Wear OS | Not started; only `:app` exists | Shared modules, privacy controls, validation, substitutions, protocol, and device evidence |
-| Operational quality | Dependabot, SBOM submission, JVM/lint/build CI, API 36 and 37 instrumentation with an API 26 smoke, the target SDK 37 review, and prerelease automation shipped | Accessibility baseline, Room schema export, signed/minified release posture, and next alpha |
+| Operational quality | Dependabot, SBOM submission, JVM/lint/build CI, API 36 and 37 instrumentation with an API 26 smoke, the target SDK 37 review, compiler-exported Room schemas with a CI drift guard, and prerelease automation shipped | Accessibility baseline, signed/minified release posture, and next alpha |
 
 The production path today is the reviewed deterministic planner. Reviewed eligibility,
 capability-evidence ranking and state-based guidance are enabled because
@@ -1041,6 +1041,8 @@ gate is green at one commit, and core workout flows remain offline and account-f
 
 The [2026-10-31 dependency-health record](docs/dependency-health.md) covers a focused
 tooling remediation and remaining advisories; the release-maintenance package remains open.
+The [Room schema-artifact record](docs/room-schemas.md) completes the export/migration-artifact
+slice without changing database or archive versions or runtime storage semantics.
 
 **Depends on:** Platform behavior review before changing runtime targets.
 
@@ -1052,8 +1054,11 @@ tooling remediation and remaining advisories; the release-maintenance package re
    matching emulator/device before raising `targetSdk`. **Done** on API 37, 36 and 26
    emulators. CI runs the suite on API 36 and 37, and a smoke run on API 26.
 3. Enable Room schema export and commit schema JSON when the migration workflow is ready to
-   treat it as an artifact.
+   treat it as an artifact. **Done:** authentic schema 16 is tracked, deterministically
+   regenerated and checked for drift, missing output and untracked version files in CI.
 4. Correct stale schema-10 CI comments and keep migration-chain tests aligned with each schema.
+   **Done:** current-version names/references, preserved legacy fixtures and data assertions,
+   exported-schema validation for all supported starts, and full API 36/37 device evidence.
 5. Decide signing, shrinking, and distribution requirements before a production release.
 6. Cut a new alpha when testers should receive the merged, unreleased deterministic-planning,
    progression/deload, and workout-history behavior, with release notes

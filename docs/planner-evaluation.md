@@ -520,6 +520,7 @@ not touch.
 | Pinned-upstream catalog regeneration (`check_pinned_catalog.py`) | yes | no |
 | Catalog importer tests (`tools/workout-guide`) | yes | no |
 | Release tooling tests (`tools/release`) | yes | yes |
+| Room compiler schema drift guard (`tools/room/check_schemas.py`) | yes | yes |
 | JVM unit tests including this corpus, lint, debug build | yes | yes |
 | Instrumentation suite on API 36 and 37; its app-level package on API 26 | yes | yes |
 | Release version validation and prerelease publication | no | yes |

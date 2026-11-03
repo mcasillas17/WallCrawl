@@ -972,7 +972,13 @@ no separate write path that copies a logged value back into
 
 ## Room persistence and invariants
 
-`WallCrawlDatabase` is currently schema version 16. Its tables store:
+`WallCrawlDatabase` is currently schema version 16. Its compiler-exported schema is
+tracked under `app/schemas/` and regenerated in CI. See [Room schema artifacts](room-schemas.md)
+for generation/check commands, the historical SQL-fixture boundary, and the two preserved
+legacy SQL-default differences. Schema artifacts contain no user data and are only packaged
+in the instrumentation APK; archive format versioning remains independent.
+
+Its tables store:
 
 - the user profile, including onboarding status, multi-select fitness goals,
   training constraints, return-after-break weeks, confirmed starting loads,
