@@ -579,6 +579,22 @@ class ProgressCalculatorTest {
     }
 
     @Test
+    fun summarize_countsOnlyMainExercisesSoItMatchesProgress() {
+        val base = session("mixed", THIS_WEEK, sets = listOf(completedSet(1, 50.0, 10), completedSet(2, 50.0, 10)))
+        val main = base.exercises.single()
+        val mobility = main.copy(
+            id = "mobility-row",
+            role = wallcrawl.elopenmike.com.core.model.ExerciseRole.MOBILITY,
+            sets = listOf(completedSet(1, 100.0, 10), completedSet(2, 100.0, 10))
+        )
+
+        val summary = calculator.summarize(base.copy(exercises = listOf(main, mobility)), emptyList())
+
+        assertThat(summary.totalSetsCompleted).isEqualTo(2)
+        assertThat(summary.totalVolume).isEqualTo(1000.0)
+    }
+
+    @Test
     fun countPersonalRecords_countsAnExerciseOnceEvenIfLoggedTwiceInOneSession() {
         val older = session("older", PREV_WEEK, sets = listOf(completedSet(1, 45.0, 10)))
         val repeated = session("repeated", THIS_WEEK, sets = listOf(completedSet(1, 50.0, 10)))

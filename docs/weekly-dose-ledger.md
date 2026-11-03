@@ -103,7 +103,8 @@ the legacy `programming` block, or to an inferred movement pattern. The attribut
 is a sealed `LedgerAttribution` with exactly two outcomes — credited, or omitted with a
 reason — so there is no third path that could invent a muscle.
 
-The bundled catalog currently ships 302 exercises with 211 authored reviewed entries:
+The bundled catalog currently ships 309 exercises (302 upstream and 7 owned, which have no reviewed
+metadata) with 211 authored reviewed entries:
 **182 `AI_ACCEPTED`, 29 `DRAFT`, and none `APPROVED`.** The ledger credits every completed
 work set for an `AI_ACCEPTED` exercise exactly as it would for a human-`APPROVED` one —
 one `directPrimarySets` credit per completed non-warm-up work set — and reports the rest

@@ -2,6 +2,8 @@ package wallcrawl.elopenmike.com.feature.onboarding
 
 import androidx.annotation.StringRes
 import wallcrawl.elopenmike.com.R
+import wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceResult
+import wallcrawl.elopenmike.com.feature.conditions.PendingCondition
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
 import wallcrawl.elopenmike.com.core.model.CapabilityLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
@@ -62,7 +64,8 @@ enum class OnboardingError(@StringRes val messageRes: Int) {
     REQUIRED_FIELD(R.string.onboarding_error_required_field),
     MOVEMENT_REQUIRED(R.string.onboarding_error_movement_required),
     INVALID_FIELD(R.string.onboarding_error_invalid_field),
-    SAVE_FAILED(R.string.onboarding_error_save_failed)
+    SAVE_FAILED(R.string.onboarding_error_save_failed),
+    CONDITION_PENDING(R.string.onboarding_error_condition_pending)
 }
 
 /**
@@ -80,6 +83,11 @@ data class OnboardingUiState(
     val equipment: Set<String> = setOf(StandardEquipment.BODYWEIGHT),
     val constraints: Set<TrainingConstraint> = emptySet(),
     val capabilityAnswers: Map<MovementCapabilityType, CapabilityLevel> = emptyMap(),
+    /** Optional; an empty set adds no step and blocks nothing. */
+    val reportedConditions: Set<String> = emptySet(),
+    val pendingCondition: PendingCondition? = null,
+    /** Null until the overlay has been read. */
+    val conditionGuidance: ConditionGuidanceResult? = null,
     val returningAfterBreakWeeks: Int = 0,
     val equipmentOptions: List<String> = StandardEquipment.ALL,
     val constraintOptions: List<TrainingConstraint> = TrainingConstraint.entries,
@@ -97,7 +105,8 @@ data class OnboardingUiState(
             OnboardingStep.MOVEMENT_CAPABILITY -> unansweredCapability == null
             OnboardingStep.SCHEDULE -> daysPerWeek in 2..6 && durationMinutes in 20..120
             OnboardingStep.EQUIPMENT -> equipment.isNotEmpty()
-            OnboardingStep.SAFETY -> true
+            // A condition picked but not yet added or cancelled must be settled first.
+            OnboardingStep.SAFETY -> pendingCondition == null
             OnboardingStep.SUMMARY -> !isSaving && name.trim().isNotBlank() &&
                 equipment.isNotEmpty() && goals.isNotEmpty() && unansweredCapability == null
         }

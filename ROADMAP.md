@@ -1,6 +1,6 @@
 # WallCrawl Roadmap
 
-> **Status date:** 2026-10-31
+> **Status date:** 2026-11-01
 >
 > **Evidence baseline:** `002cfde` (enable AI-reviewed production planning, #78). Package 1
 > status additionally
@@ -14,7 +14,8 @@
 > Package 5 status reflects `ProgressRepository`, the calendar-week calculators,
 > localized Progress disclosures, and their JVM and Android integration/UI tests.
 > Package 6 status reflects the checked-in `planner-fixtures/manifest.txt` — twelve personas
-> at Package 6, fourteen after Package 7 preparation added the two joint-restriction ones — the
+> at Package 6, fourteen after Package 7 preparation added the two joint-restriction ones, seventeen after
+> condition-aware planning added three — the
 > corpus harness's reconstruction of the reviewed-enabled personas' weeks through
 > `WeeklyDoseLedgerCalculator`, its whole-program validation of every successful persona, and
 > the pinned-upstream catalog check in CI. Packages 3 and 7 status reflect the committed
@@ -57,11 +58,11 @@ model downloads, model-driven features, a network connection, or a companion dev
 
 | Area | Status | Remaining gap |
 | --- | --- | --- |
-| Android foundation | Room schema 16 (15 adds program enrollment/association storage; 16 adds the nullable template unit) with a continuous migration chain; archive 6 reads formats 1–6; implicit backup remains disabled; `targetSdk` and `compileSdk` are both 37 ([compatibility record](docs/android-target-sdk-37.md)) | OEM transfer enforcement varies; restore is empty-destination only |
-| Catalog and reviewed content | All 302 entries have per-ID AI evidence records; 906 SVG frames and 131 legacy programming entries unchanged; an owner-authorized audit accepted 182 of 211 authored records as `AI_ACCEPTED` | Zero genuine human approvals; 29 authored drafts and 56 IDs with no authored block remain pending, 35 entries outside automatic-strength scope; the band-only inventory still contains no chest work, and `banded-row`'s anchor stays unrepresentable, though anchored variations are now gated and the session is labelled truthfully |
+| Android foundation | Room schema 17 (15 adds program enrollment/association storage; 16 adds the nullable template unit; 17 adds reported conditions and the exercise role) with a continuous migration chain; archive 7 reads formats 1–7; implicit backup remains disabled; `targetSdk` and `compileSdk` are both 37 ([compatibility record](docs/android-target-sdk-37.md)) | OEM transfer enforcement varies; restore is empty-destination only |
+| Catalog and reviewed content | The catalog holds 309 entries (302 upstream plus 7 owned mobility exercises); all 302 upstream entries have per-ID AI evidence records; 906 SVG frames and 131 legacy programming entries unchanged; an owner-authorized audit accepted 182 of 211 authored records as `AI_ACCEPTED` | Zero genuine human approvals; 29 authored drafts and 56 IDs with no authored block remain pending, 35 entries outside automatic-strength scope; the band-only inventory still contains no chest work, and `banded-row`'s anchor stays unrepresentable, though anchored variations are now gated and the session is labelled truthfully |
 | Onboarding and profile | Shipped as an eight-step flow with seven movement-capability questions, plus export, restore, and delete-all controls | Restore requires a fresh start, so it cannot merge into an installation that already holds data |
 | Templates and logging | Shipped with frozen template snapshots, type-aware outcomes, RPE/RIR, typed stops, a local rest timer, complete type-aware template editing, unit-safe template loads, and draft recovery across configuration change and background process death | Drafts do not survive force-stop, task removal, reboot or uninstall, by design; legacy unitless loads need a one-time unit confirmation |
-| Localization | English and neutral Latin American Spanish shipped across the whole interface, the 302-exercise catalog, generated workout text, and accessibility labels, selectable from onboarding and Profile through Android's per-app language mechanism | Only two languages; historical session text stays in the language it was written in, by design |
+| Localization | English and neutral Latin American Spanish shipped across the whole interface, the 309-exercise catalog, generated workout text, and accessibility labels, selectable from onboarding and Profile through Android's per-app language mechanism | Only two languages; historical session text stays in the language it was written in, by design |
 | Progress and history | Calendar-week activity, separately labelled reviewed primary dose, records/trends, one completion-summary flow, paged completed history, read-only snapshot detail, and a filterable 4–52-week Over time card whose week rows list the workouts behind each week and whose observations open their workout; range-wide omission counts are not linked | Substitution-specific detail awaits Package 10; no genuinely human-`APPROVED` metadata exists |
 | Deterministic coach | Reviewed eligibility/ranking, weekly ledger, state guidance and whole-program validation; Packages 9 and 12 add single-axis progression, persistent user-controlled deload and optional completion-driven programs in the production composition | Genuine human `APPROVED` review remains independent; substitutions remain future work |
 | Planner evaluation | Versioned persona corpus (`planner-fixtures/manifest.txt` is the authoritative roster), with the reviewed-enabled personas' weeks replayed through the real ledger and every successful persona's proposal validated as a complete program, importer unit tests, real pinned-upstream regeneration check, JVM tests, and Android CI shipped | None for this package; reviewed-planner enablement (package 7) is done, and human-approval rollout (package 3) is the remaining gate |
@@ -129,6 +130,52 @@ allocation never erases completed workouts. An unfinished current week preserves
 through the previous week; zero-baseline comparisons do not manufacture growth percentages.
 See the [metric contract](docs/weekly-dose-ledger.md#progress-metric-contract).
 
+**Condition-aware planning (2026-11-01):** users can report one or more of eight
+musculoskeletal conditions so automatic workouts work around them. Design:
+[condition-aware planning](docs/superpowers/specs/2026-11-01-condition-aware-planning-design.md);
+research: [condition research](docs/research/conditions/CONSOLIDATION.md). This changes two
+recorded boundaries and adds three release gates.
+
+- *Package 11 boundary changed.* Package 11's exclusion of medical and injury-prevention
+  claims stays in force for claims: no copy says "safe for", treats, heals, cures or prevents
+  anything, and no benefit is claimed for any routine. Condition names and condition-linked
+  routines are now allowed content, as general information.
+- *Joint clearance rule replaced for this overlay.* The human-only reservation on joint
+  clearance no longer decides joint labels. One shared predicate reads a bundled overlay
+  (`conditions/condition-guidance.json`) of 21 categorical movement demands and replaces
+  `clearsJointConstraintsOf` in all call sites. A joint label now ranks exercises lower
+  instead of removing the whole pool. `clearedTrainingConstraints` and `APPROVED` keep their
+  meaning, and the overlay's provenance is AI review for alpha use, not human approval.
+- *Behaviour.* Avoid demands exclude; modify demands only rank an exercise lower and show a
+  cue. A profile with no conditions and no joint labels plans exactly as before. Reported
+  conditions are kept on the profile (Room schema 17, archive format 7). A mobility block of
+  at most three items accompanies a workout when a condition has a routine; its `MOBILITY`
+  role earns no ledger, scheduling, progression, focus or analytics credit. After a
+  `PAIN_STOP` the logger offers, and never forces, exclusion of that exercise, and Profile
+  undoes it. The template editor warns beside an avoid, modify or unreviewed exercise and
+  hides nothing. If the overlay cannot be read, planning fails closed rather than treating
+  conditions as absent.
+- *Scope.* Eight conditions: piriformis syndrome, gluteal tendinopathy, lumbar
+  radiculopathy, nonspecific low back pain, rotator cuff-related shoulder pain, lateral
+  elbow tendinopathy, carpal tunnel syndrome and patellofemoral pain. Seven owned mobility
+  exercises (original work, MIT) join the catalog, which is now 309 entries (302 upstream).
+- *Evidence honesty.* The research linked 654 sources; most (408) were read as abstract only.
+  Overall evidence is weak, and the app makes no benefit claim.
+
+Public release gates, all **unmet** as of 2026-11-01:
+
+1. A qualified clinician reviews all overlay content, including the red-flag tiers and the
+   owned exercises' setup wording.
+2. An illustrator redraws the figure-four stretch, lying piriformis stretch and side-lying
+   hold art.
+3. The owner confirms the MIT licence wording on the owned art.
+
+Known limits and deferrals: the lumbar radiculopathy routine has no cat-cow, because its
+published rep dose does not fit the catalog's duration type. Heavy external load is
+approximated by equipment, since the catalog has no load field. Scaling past eight conditions
+is a separate decision; the pilot's criterion failed, narrowly (patellofemoral pain needed
+two new demand values where the limit read as one).
+
 ## Open decisions
 
 These decisions must be recorded before the related implementation package closes.
@@ -144,7 +191,7 @@ These decisions must be recorded before the related implementation package close
 3. **Validation persistence:** ~~decided~~. A dedicated `workout_recommendation_records`
    table holds one immutable row per started session, written in the same transaction as the
    session, and travels in the local-data archive. It arrived in Room schema 12 and archive
-   format version 2; the current schema is 16 and archive format 6 still preserves
+   format version 2; the current schema is 17 and archive format 7 still preserves
    this record. Columns beside the
    session were rejected: the record is provenance about a decision rather than part of the
    session,    and a separate table keeps it out of ordinary session reads; the history-detail
@@ -286,7 +333,7 @@ after graph-only review holds (five retain five edges to four unique pending end
 and the committed reproducible
 audit artifact plus its offline verifier.
 
-Task 2's selected joint-constraint half is now closed on the implementation side and open on
+Task 2's selected joint-constraint half was closed on the implementation side and open on
 the content side. Reviewed schema version 2 adds a required `clearedTrainingConstraints`
 field, and `ExerciseEligibilityPolicy` decides each exercise — and each supported-regression
 exception — against it instead of rejecting the whole pool whenever any joint sensitivity is
@@ -295,6 +342,10 @@ joint-sensitive profile still receives a typed `TRAINING_CONSTRAINTS_REMOVED_ALL
 production; filling the field in requires genuine human review as part of the same
 field-by-field sign-off. The band-only chest gap and the fixed-anchor decisions are
 unchanged, and no clearance is inferred from a name, muscle, pattern or equipment.
+
+**Superseded for joint labels (2026-11-01):** selected joint labels no longer refuse the pool;
+they are read through the condition overlay (see Recorded decisions). The paragraph above
+stays accurate for `clearedTrainingConstraints` itself, which still clears nothing.
 
 **Depends on:** Human decisions for direct-primary classification and first-cohort scope.
 
@@ -591,7 +642,8 @@ progression/deload rather than a conservative reviewed planner.
    accepted record's `clearedTrainingConstraints` is still empty, selecting any joint
    sensitivity refuses the whole automatic pool with a typed no-plan outcome instead;
    genuine human-reviewed per-exercise clearances are what would let automatic planning
-   serve a joint-sensitive profile at all. Five of the step's seven strings made some form of
+   serve a joint-sensitive profile at all. (Superseded 2026-11-01: joint labels are now read
+   through the condition overlay and rank exercises lower; see Recorded decisions.) Five of the step's seven strings made some form of
    the claim and all five were corrected in both languages: `onboarding_safety_hint`
    ("filters or substitutes high-stress movements"), `onboarding_safety_subtitle` (the answer
    is needed for "conservative exercise selection"), `onboarding_safety_none_subtitle` (the
@@ -745,6 +797,10 @@ history retains both intent and performance, and replay produces the same candid
 
 **Status:** Not started; current coaching summaries are legacy programming text, not reviewed
 runtime cues.
+
+Condition-aware planning (2026-11-01) changed this package's boundary: its claims exclusion
+stays, but condition names and condition-linked routines are allowed as general information.
+The owned exercises' setup wording awaits clinician review (a public release gate).
 
 **Depends on:** A reviewed content workflow and provenance contract.
 

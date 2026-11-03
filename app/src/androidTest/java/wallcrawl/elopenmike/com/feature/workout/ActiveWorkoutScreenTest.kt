@@ -16,6 +16,9 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performScrollToNode
+import wallcrawl.elopenmike.com.core.conditions.ConditionAndroidFixtures
+import wallcrawl.elopenmike.com.core.conditions.MovementDemand
 import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toPixelMap
@@ -40,6 +43,8 @@ import wallcrawl.elopenmike.com.core.exercise.visual.ExerciseVisual
 import wallcrawl.elopenmike.com.core.exercise.visual.ExerciseVisualProvider
 import wallcrawl.elopenmike.com.core.ai.RecommendationSnapshot
 import wallcrawl.elopenmike.com.core.model.ExercisePrescription
+import wallcrawl.elopenmike.com.core.model.ExerciseRole
+import wallcrawl.elopenmike.com.core.model.PlannedExercise
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
 import wallcrawl.elopenmike.com.core.model.RepRange
@@ -280,6 +285,225 @@ class ActiveWorkoutScreenTest {
                 )
             )
         )
+    }
+
+    // --- conditions: mobility section, hold, cues, pain offer ---------------------------
+    // These start the session through the real repository, so row order and roles are what
+    // a started workout actually has, not what a fixture says.
+
+    @Test
+    fun activeWorkoutShowsTheMobilitySectionSeparately() {
+        val harness = showStartedMobilityWorkout()
+        assertThat(harness.started.exercises.map { it.role }).containsExactly(
+            ExerciseRole.MOBILITY, ExerciseRole.MOBILITY, ExerciseRole.MAIN
+        ).inOrder()
+
+        scrollToText(text(R.string.mobility_section_label))
+        composeRule.onNodeWithText(text(R.string.mobility_section_label)).assertIsDisplayed()
+        composeRule.onNodeWithText(text(R.string.mobility_exercise_position).format("1", "2"))
+            .assertIsDisplayed()
+
+        // The main exercise is counted among main exercises only and is not labelled mobility.
+        goToNextExercise()
+        goToNextExercise()
+        composeRule.onNodeWithText(text(R.string.workout_exercise_position).format("1", "1"))
+            .assertIsDisplayed()
+        composeRule.onAllNodesWithText(text(R.string.mobility_section_label)).assertCountEquals(0)
+    }
+
+    @Test
+    fun activeWorkoutShowsHoldTimeAndCues() {
+        showStartedMobilityWorkout()
+
+        listOf(
+            text(R.string.mobility_hold).format("5"),
+            text(R.string.mobility_rest).format("45"),
+            text(R.string.condition_cue).format("Stop if symptoms spread.")
+        ).forEach { shown ->
+            scrollToText(shown)
+            composeRule.onNodeWithText(shown).assertIsDisplayed()
+        }
+        // A held position still logs reps through the ordinary set row.
+        scrollToDescription("Set 1 complete")
+        composeRule.onNodeWithContentDescription("Set 1 complete").assertIsDisplayed()
+    }
+
+    @Test
+    fun aDurationMobilityRowShowsItsSecondsRestAndCueWithoutAHold() {
+        showStartedMobilityWorkout()
+        goToNextExercise()
+
+        val target = text(R.string.prescription_sets_by_reps)
+            .format("2", text(R.string.prescription_seconds).format("30"))
+        scrollToText(target)
+        composeRule.onNodeWithText(target).assertIsDisplayed()
+        val cue = text(R.string.condition_cue).format("Ease out if it spreads.")
+        scrollToText(cue)
+        composeRule.onNodeWithText(cue).assertIsDisplayed()
+        scrollToText(text(R.string.mobility_rest).format("30"))
+        composeRule.onAllNodesWithText(text(R.string.mobility_hold).format("5")).assertCountEquals(0)
+        scrollToDescription("Set 1 complete")
+        composeRule.onNodeWithContentDescription("Set 1 complete").assertIsDisplayed()
+    }
+
+    @Test
+    fun modifyExerciseShowsItsCueInActiveWorkout() {
+        showStartedMobilityWorkout()
+        goToNextExercise()
+        goToNextExercise()
+
+        val cue = text(R.string.condition_cue).format("Keep the load light.")
+        scrollToText(cue)
+        composeRule.onNodeWithText(cue).assertIsDisplayed()
+    }
+
+    @Test
+    fun aPainStopOffersExclusionAndDecliningChangesNothing() {
+        val harness = showStartedMobilityWorkout()
+        stopFirstSetForPain()
+        composeRule.onNodeWithText(text(R.string.pain_offer_body)).assertIsDisplayed()
+
+        composeRule.onNodeWithText(text(R.string.pain_offer_decline)).performClick()
+        composeRule.waitForIdle()
+        composeRule.onAllNodesWithText(text(R.string.pain_offer_body)).assertCountEquals(0)
+        assertThat(runBlocking { harness.profiles.getProfileOnce().excludedExerciseIds }).isEmpty()
+    }
+
+    @Test
+    fun acceptingThePainOfferExcludesTheExercise() {
+        val harness = showStartedMobilityWorkout()
+        stopFirstSetForPain()
+        composeRule.onNodeWithText(text(R.string.pain_offer_accept)).performClick()
+        composeRule.waitForIdle()
+        assertThat(runBlocking { harness.profiles.getProfileOnce().excludedExerciseIds })
+            .containsExactly("bird-dog")
+    }
+
+    @Test
+    fun noPainOfferWhenTheExerciseIsAlreadyExcluded() {
+        showStartedMobilityWorkout(alreadyExcluded = listOf("bird-dog"))
+        stopFirstSetForPain()
+        composeRule.onAllNodesWithText(text(R.string.pain_offer_body)).assertCountEquals(0)
+    }
+
+    private fun stopFirstSetForPain() {
+        scrollToText(text(R.string.set_skip_or_stop))
+        composeRule.onAllNodesWithText(text(R.string.set_skip_or_stop))[0].performClick()
+        composeRule.onNodeWithText(text(R.string.stop_reason_pain)).performClick()
+        composeRule.waitForIdle()
+    }
+
+    private fun goToNextExercise() {
+        composeRule.onNodeWithText(text(R.string.workout_action_next)).performClick()
+        composeRule.waitForIdle()
+    }
+
+    private fun scrollToText(shown: String) {
+        composeRule.onNode(androidx.compose.ui.test.hasScrollAction())
+            .performScrollToNode(androidx.compose.ui.test.hasText(shown))
+    }
+
+    private fun scrollToDescription(description: String) {
+        composeRule.onNode(androidx.compose.ui.test.hasScrollAction())
+            .performScrollToNode(androidx.compose.ui.test.hasContentDescription(description))
+    }
+
+    private class StartedHarness(
+        val started: WorkoutSession,
+        val profiles: wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
+    )
+
+    private fun showStartedMobilityWorkout(alreadyExcluded: List<String> = emptyList()): StartedHarness {
+        val database = androidx.room.Room.inMemoryDatabaseBuilder(
+            InstrumentationRegistry.getInstrumentation().targetContext,
+            wallcrawl.elopenmike.com.core.database.WallCrawlDatabase::class.java
+        ).build()
+        val profiles = wallcrawl.elopenmike.com.core.database.repository
+            .OfflineUserProfileRepository(database.userProfileDao())
+        val profile = UserProfile(
+            reportedConditions = setOf(ConditionAndroidFixtures.CONDITION_ID),
+            excludedExerciseIds = alreadyExcluded
+        )
+        runBlocking { profiles.saveProfile(profile) }
+        val workouts = wallcrawl.elopenmike.com.core.database.repository
+            .OfflineWorkoutRepository(database.workoutSessionDao(), database.workoutSetDao())
+        val mobilityHold = PlannedExercise(
+            "bird-dog",
+            ExercisePrescription(
+                exerciseType = ExerciseType.BODYWEIGHT_REPS, targetSets = 1,
+                repRange = RepRange(8, 8), restSeconds = 45, holdSeconds = 5
+            )
+        )
+        val mobilityTimed = PlannedExercise(
+            "lying-piriformis-stretch",
+            ExercisePrescription(
+                exerciseType = ExerciseType.DURATION, targetSets = 2,
+                targetDurationSeconds = 30, restSeconds = 30
+            )
+        )
+        val generated = wallcrawl.elopenmike.com.core.model.GeneratedWorkout(
+            title = wallcrawl.elopenmike.com.core.model.WorkoutTitleSpec(
+                split = wallcrawl.elopenmike.com.core.model.WorkoutSplit.UPPER_BODY,
+                emphasis = wallcrawl.elopenmike.com.core.model.WorkoutEmphasis.HYPERTROPHY
+            ),
+            focusMuscles = emptyList(),
+            estimatedDurationMinutes = 30,
+            exercises = listOf(
+                PlannedExercise(
+                    "incline-dumbbell-press",
+                    ExercisePrescription(
+                        exerciseType = ExerciseType.WEIGHT_REPS, targetSets = 2,
+                        repRange = RepRange(8, 10), targetWeight = 40.0, restSeconds = 120
+                    )
+                )
+            ),
+            rationale = wallcrawl.elopenmike.com.core.model.WorkoutRationaleSpec.GoalFocus(
+                listOf(wallcrawl.elopenmike.com.core.model.FitnessGoal.BUILD_MUSCLE), emptyList()
+            ),
+            mobilityBlock = listOf(mobilityHold, mobilityTimed)
+        )
+        val started = runBlocking {
+            workouts.startWorkoutFromGenerated(generated, "Workout", "", profile, null)
+        }
+        val guidance = ConditionAndroidFixtures.loaded(
+            exerciseDemands = mapOf(
+                "bird-dog" to emptySet(),
+                "lying-piriformis-stretch" to emptySet(),
+                "incline-dumbbell-press" to setOf(MovementDemand.HEAVY_EXTERNAL_LOAD)
+            ),
+            modify = setOf(MovementDemand.HEAVY_EXTERNAL_LOAD),
+            exerciseCues = mapOf(
+                "bird-dog" to mapOf("en" to "Stop if symptoms spread."),
+                "lying-piriformis-stretch" to mapOf("en" to "Ease out if it spreads.")
+            ),
+            demandCues = mapOf(MovementDemand.HEAVY_EXTERNAL_LOAD to mapOf("en" to "Keep the load light."))
+        )
+        val vm = ActiveWorkoutViewModel(
+            sessionId = started.id,
+            workoutRepository = workouts,
+            exerciseCatalog = InMemoryExerciseCatalog(),
+            workoutHistoryAnalyzer = WorkoutHistoryAnalyzer(),
+            nowMillis = { WALL_CLOCK },
+            elapsedRealtimeClock = clock,
+            userProfileRepository = profiles,
+            conditionGuidanceSource = ConditionAndroidFixtures.source(guidance)
+        )
+        composeRule.setContent {
+            WallCrawlTheme {
+                ActiveWorkoutScreen(
+                    viewModel = vm,
+                    visualProvider = NoVisualProvider,
+                    onNavigateBack = {},
+                    onWorkoutFinished = {}
+                )
+            }
+        }
+        composeRule.waitUntil(10_000) {
+            (vm.uiState.value as? ActiveWorkoutUiState.Active)?.restrictions !=
+                wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions.None
+        }
+        composeRule.waitForIdle()
+        return StartedHarness(started, profiles)
     }
 
     private fun hasTextStartingWith(prefix: String) = SemanticsMatcher(

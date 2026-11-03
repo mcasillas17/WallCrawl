@@ -30,7 +30,7 @@ class BundledCatalogLedgerAttributionTest {
     private val week = TrainingWeek.startingOn(MONDAY_EPOCH_DAY, ZoneId.of("UTC"))
 
     @Test
-    fun theBundledCatalogStillShipsThreeHundredAndTwoExercises() {
+    fun theBundledCatalogShipsTheUpstreamAndTheOwnedExercises() {
         assertThat(CATALOG_FILE.exists()).isTrue()
         assertThat(exercises).hasSize(EXPECTED_EXERCISES)
         assertThat(exercises.map { it.id }.distinct()).hasSize(EXPECTED_EXERCISES)
@@ -73,10 +73,10 @@ class BundledCatalogLedgerAttributionTest {
         assertThat(ledger.directPrimarySets).containsExactlyEntriesIn(expectedPrimary)
         assertThat(ledger.secondaryInvolvement).containsExactlyEntriesIn(expectedSecondary)
         assertThat(ledger.unattributedWorkSets).containsExactly(
-            LedgerOmissionReason.MISSING_REVIEWED_METADATA, 182,
+            LedgerOmissionReason.MISSING_REVIEWED_METADATA, 196,
             LedgerOmissionReason.METADATA_NOT_APPROVED, 58
         )
-        assertThat(ledger.creditedWorkSets + ledger.omittedWorkSets).isEqualTo(604)
+        assertThat(ledger.creditedWorkSets + ledger.omittedWorkSets).isEqualTo(618)
     }
 
     private fun completedInstance(index: Int, exercise: Exercise): WorkoutExercise {
@@ -106,7 +106,7 @@ class BundledCatalogLedgerAttributionTest {
     }
 
     private companion object {
-        const val EXPECTED_EXERCISES = 302
+        const val EXPECTED_EXERCISES = 309
         const val EXPECTED_REVIEWED_ENTRIES = 211
         val CATALOG_FILE = File("src/main/assets/workout-guide/catalog.json")
     }

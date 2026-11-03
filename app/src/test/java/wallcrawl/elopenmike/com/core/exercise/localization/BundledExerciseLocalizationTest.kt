@@ -208,7 +208,7 @@ class BundledExerciseLocalizationTest {
         JSONTokener(file.readText()).nextValue() as JSONObject
 
     private companion object {
-        const val EXPECTED_EXERCISES = 302
+        const val EXPECTED_EXERCISES = 309
 
         val ASSET_ROOT: File = generateSequence(File(".").absoluteFile) { it.parentFile }
             .map { File(it, "app/src/main/assets") }

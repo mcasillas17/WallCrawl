@@ -97,7 +97,7 @@
     <string name="onboarding_schedule_subtitle">Set up your weekly routine and preferred session length.</string>
     <string name="onboarding_equipment_title">Available Equipment</string>
     <string name="onboarding_equipment_subtitle">Select only the equipment you actually have access to.</string>
-    <string name="onboarding_safety_title">Safety &amp; Recovery</string>
+    <string name="onboarding_safety_title">Areas to work around</string>
     <string name="onboarding_safety_subtitle">Tell us which areas you want to work around.</string>
     <string name="onboarding_summary_title">Ready to Begin</string>
     <string name="onboarding_summary_subtitle">Review your setup before generating your first workout.</string>
@@ -134,7 +134,7 @@
     <string name="band_setup_kickback_description">Ankle attachment and reachable stable handhold on the same low-anchor assembly. Also select the low anchor separately.</string>
 
     <string name="onboarding_safety_heading">SENSITIVE JOINTS</string>
-    <string name="onboarding_safety_hint">Tell us which joints you want to work around. Automatic workouts read your answer. Low impact only takes effect today; no reviewed exercise is cleared for a specific joint yet, so choosing one of those leaves WallCrawl with no automatic workout to offer until such a review exists. Browsing and manual workouts are unaffected. This is not medical advice.</string>
+    <string name="onboarding_safety_hint">Tell us which joints you want to work around, and optionally a condition. Automatic workouts are chosen to work around what you report: some movements are left out, others are ranked lower and shown with a cue, and a condition can add a short mobility routine. WallCrawl cannot guarantee that a workout will not make a condition worse, and an exercise without a warning is not a statement that it suits you. Browsing and manual workouts are not restricted. This is not medical advice.</string>
     <string name="onboarding_safety_none_title">Feeling 100% / no restrictions</string>
     <string name="onboarding_safety_none_subtitle">No areas to work around.</string>
     <string name="onboarding_safety_tag_prompt">Or tag specific areas:</string>
@@ -348,7 +348,9 @@
     <string name="today_error_reviewed_exclusions">Your exercise exclusions leave no reviewed automatic options. Update your exclusions in Profile, or build your own workout.</string>
     <string name="today_error_reviewed_equipment">Your available equipment leaves no reviewed automatic options. Update your equipment in Profile, or build your own workout.</string>
     <string name="today_error_reviewed_capabilities">Your movement preferences leave no reviewed automatic options. Update them in Profile, or build your own workout.</string>
-    <string name="today_error_reviewed_constraints">Your training restrictions leave no reviewed automatic options. Those restrictions are not in the reviewed automatic scope yet.</string>
+    <string name="today_error_reviewed_constraints">Your low impact only setting leaves no options inside the reviewed automatic scope.</string>
+    <string name="today_error_reviewed_conditions">The conditions and joint labels you reported leave no reviewed automatic options. WallCrawl avoids the movements listed for them, so nothing could be planned today.</string>
+    <string name="today_error_condition_guidance_unavailable">WallCrawl could not load the guidance that goes with the conditions or joint labels you reported, so it did not plan a workout. Restarting the app may help. If you restored an exported file from a newer version, remove any condition this version doesn\'t recognize in Profile.</string>
     <string name="today_error_reviewed_calibration">Your current calibration stage leaves no reviewed automatic options. You can still build your own workout.</string>
     <string name="today_error_reviewed_none_eligible">No exercise meets every reviewed automatic-planning rule. You can still build your own workout.</string>
 
@@ -473,7 +475,7 @@
     <string name="summary_success_content_description">Workout complete</string>
     <string name="summary_section">SESSION SUMMARY</string>
     <string name="summary_metric_duration">Duration</string>
-    <string name="summary_metric_sets">Sets logged</string>
+    <string name="summary_metric_sets">Main sets logged</string>
     <string name="summary_metric_volume">Volume lifted</string>
     <string name="summary_metric_prs">PRs hit</string>
     <string name="summary_no_external_volume">No external-load volume recorded</string>
@@ -646,8 +648,8 @@
     <string name="profile_training_days">Training days per week</string>
     <string name="profile_equipment_heading">AVAILABLE EQUIPMENT</string>
     <string name="profile_muscle_heading">MUSCLE PRIORITIES</string>
-    <string name="profile_safety_heading">TRAINING SAFETY</string>
-    <string name="profile_safety_description">Your joint selection is read when automatic workouts are built. Low impact only takes effect today; no reviewed exercise is cleared for a specific joint yet, so choosing one of those leaves WallCrawl with no automatic workout to offer until such a review exists. Browsing and manual workouts are unaffected. This is not medical advice.</string>
+    <string name="profile_safety_heading">AREAS TO WORK AROUND</string>
+    <string name="profile_safety_description">Your joint and condition selection is read when automatic workouts are built. Workouts are chosen to work around what you report: some movements are left out, others are ranked lower and shown with a cue, and a condition can add a short mobility routine. Low impact only keeps the plan to lower-impact exercises. WallCrawl cannot guarantee that a workout will not make a condition worse, and an exercise without a warning is not a statement that it suits you. Browsing and manual workouts are not restricted, though the template editor shows notices. This is not medical advice.</string>
     <string name="profile_break_title">Returning after a break</string>
     <string name="profile_break_hint">Adjust your break duration so WallCrawl can scale the volume it plans.</string>
     <string name="profile_app_preferences_heading">APP PREFERENCES</string>
@@ -916,7 +918,7 @@
     <string name="history_stopped">Stopped</string>
     <string name="history_skipped">Skipped</string>
     <string name="history_stop_reason">Recorded stop reason</string>
-    <string name="history_summary_semantics">Sets include completed warm-ups and timed work. Volume counts external load × repetitions only. PRs count exercises exceeding an eligible earlier load or repetition record; a first observation is not a PR.</string>
+    <string name="history_summary_semantics">Sets include completed warm-ups and timed work, but not mobility work. Volume counts external load × repetitions only, and mobility work is not counted. PRs count exercises exceeding an eligible earlier load or repetition record; a first observation is not a PR.</string>
     <string name="history_explanations">Recorded recommendation</string>
     <string name="history_no_recommendation">No recommendation explanation was recorded for this workout. This does not imply automatic validation passed.</string>
     <string name="history_validation_valid">Recorded software validation: accepted as proposed.</string>
@@ -1111,4 +1113,48 @@
     <string name="analytics_week_value_none">nothing recorded</string>
     <string name="analytics_exercise_options_too_many">There are too many recorded exercises to list here.</string>
     <string name="analytics_decision_row">%1$s, %2$s</string>
+    <!-- Conditions, mobility, pain offer and manual-editor notices. General information only. -->
+    <string name="condition_name_piriformis_syndrome">Piriformis syndrome</string>
+    <string name="condition_name_gluteal_tendinopathy">Gluteal tendinopathy</string>
+    <string name="condition_name_lumbar_radiculopathy">Lumbar radiculopathy</string>
+    <string name="condition_name_nonspecific_low_back_pain">Nonspecific low back pain</string>
+    <string name="condition_name_rotator_cuff_related_shoulder_pain">Rotator cuff-related shoulder pain</string>
+    <string name="condition_name_lateral_elbow_tendinopathy">Lateral elbow tendinopathy</string>
+    <string name="condition_name_carpal_tunnel_syndrome">Carpal tunnel syndrome</string>
+    <string name="condition_name_patellofemoral_pain">Patellofemoral pain</string>
+    <string name="condition_name_unknown">Condition this version doesn\'t recognize</string>
+    <string name="condition_section_heading">CONDITIONS TO WORK AROUND</string>
+    <string name="condition_section_hint">Optional. Automatic workouts are chosen to work around the conditions you add, and may include a short mobility routine as general information. This is not medical advice, and it cannot guarantee that a workout will not make a condition worse.</string>
+    <string name="condition_unavailable">The guidance for conditions could not be loaded, so conditions cannot be added right now. Conditions you already added stay listed and you can remove them. Try again after restarting the app.</string>
+    <string name="condition_remove_action">Remove</string>
+    <string name="condition_add_prompt">Add a condition:</string>
+    <string name="condition_ack_heading">Before you add %1$s</string>
+    <string name="condition_red_flags_heading">Warning signs. See a clinician if you notice any of these:</string>
+    <string name="condition_notes_heading">Notes</string>
+    <string name="condition_ack_checkbox">I have read the warning signs and notes</string>
+    <string name="condition_ack_confirm">Add condition</string>
+    <string name="condition_ack_cancel">Cancel</string>
+    <string name="condition_cue">Cue: %1$s</string>
+    <string name="mobility_today_heading">MOBILITY BEFORE YOUR WORKOUT</string>
+    <string name="mobility_today_for">General information related to: %1$s. Not medical advice.</string>
+    <string name="mobility_section_label">MOBILITY · general information</string>
+    <string name="mobility_hold">Hold %1$s s</string>
+    <string name="mobility_rest">Rest %1$s s</string>
+    <string name="pain_offer_title">Leave %1$s out of automatic workouts?</string>
+    <string name="pain_offer_body">You stopped this set because of pain. If you want, WallCrawl can leave this exercise out of future automatic workouts. Nothing changes unless you choose it. Manual workouts are not affected, and you can put the exercise back from Profile.</string>
+    <string name="pain_offer_accept">Leave it out</string>
+    <string name="pain_offer_decline">Keep it</string>
+    <string name="editor_condition_avoid">What you reported includes a movement in this exercise to avoid. You can still keep it here.</string>
+    <string name="editor_condition_modify">This exercise includes a movement to adjust, based on what you reported.</string>
+    <string name="editor_condition_unreviewed">WallCrawl has not checked this exercise against what you reported.</string>
+    <string name="editor_condition_unavailable">WallCrawl cannot check exercises against what you reported right now, so none are checked here.</string>
+    <string name="condition_remove_description">Remove %1$s</string>
+    <string name="profile_condition_save_error">Your conditions could not be saved. Nothing was changed. Try again.</string>
+    <string name="profile_exclusion_save_error">The excluded exercises could not be saved. Nothing was changed. Try again.</string>
+    <string name="mobility_exercise_position">Mobility %1$s of %2$s</string>
+    <string name="profile_excluded_heading">Excluded exercises</string>
+    <string name="profile_excluded_hint">Automatic workouts leave these out. Remove one to allow it again.</string>
+    <string name="profile_excluded_remove">Remove</string>
+    <string name="profile_excluded_remove_description">Remove %1$s from excluded exercises</string>
+    <string name="onboarding_error_condition_pending">Add or cancel the condition you selected before continuing.</string>
 </resources>

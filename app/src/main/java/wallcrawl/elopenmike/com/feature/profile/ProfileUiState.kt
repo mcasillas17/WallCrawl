@@ -2,6 +2,8 @@ package wallcrawl.elopenmike.com.feature.profile
 
 import androidx.annotation.StringRes
 import wallcrawl.elopenmike.com.R
+import wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceResult
+import wallcrawl.elopenmike.com.feature.conditions.PendingCondition
 import wallcrawl.elopenmike.com.core.model.MovementCapabilities
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.UserProfile
@@ -16,7 +18,12 @@ sealed interface ProfileUiState {
         val movementCapabilityError: ProfileCapabilityError? = null,
         val availableEquipmentOptions: List<String> = emptyList(),
         val availableMuscleOptions: List<String> = emptyList(),
-        val availableConstraintOptions: List<TrainingConstraint> = TrainingConstraint.entries
+        val availableConstraintOptions: List<TrainingConstraint> = TrainingConstraint.entries,
+        /** Null until the overlay has been read. */
+        val conditionGuidance: ConditionGuidanceResult? = null,
+        val pendingCondition: PendingCondition? = null,
+        /** A failed condition or exclusion save, shown in the safety card. */
+        @StringRes val safetyErrorRes: Int? = null
     ) : ProfileUiState
 
     data class Error(@StringRes val messageRes: Int = R.string.profile_load_error) : ProfileUiState

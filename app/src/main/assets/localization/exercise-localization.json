@@ -435,6 +435,7 @@
     "farmer-carry": { "es": { "name": "Caminata del granjero" } },
     "fast-feet": { "es": { "name": "Pies rápidos" } },
     "feet-elevated-pike-push-up": { "es": { "name": "Flexión pike con pies elevados" } },
+    "figure-four-stretch": { "es": { "name": "Estiramiento en figura de cuatro con el pie contra la pared" } },
     "fire-hydrant": { "es": { "name": "Abducción en cuadrupedia" } },
     "flutter-kick": {
       "es": {
@@ -645,6 +646,7 @@
         "coachingSummary": "Elevación de piernas en el suelo que entrena el abdomen bajo y los flexores de cadera."
       }
     },
+    "lying-piriformis-stretch": { "es": { "name": "Estiramiento de piriforme acostado, rodilla hacia el hombro contrario" } },
     "machine-chest-press": {
       "es": {
         "name": "Press de pecho en máquina",
@@ -856,6 +858,7 @@
       }
     },
     "side-lying-hip-abduction": { "es": { "name": "Abducción de cadera tumbado de lado" } },
+    "side-lying-isometric-hip-abduction-hold": { "es": { "name": "Abducción isométrica de cadera de lado, con el lado doloroso arriba" } },
     "side-lying-leg-raise": { "es": { "name": "Elevación de pierna tumbado de lado" } },
     "side-plank": {
       "es": {
@@ -922,6 +925,7 @@
         "coachingSummary": "Press de mancuernas de pie por encima de la cabeza, con trayectoria independiente por brazo y el tronco firme."
       }
     },
+    "standing-isometric-gluteal-contraction": { "es": { "name": "Contracción isométrica de glúteos de pie" } },
     "standing-quad-stretch": { "es": { "name": "Estiramiento de cuádriceps de pie" } },
     "step-down": { "es": { "name": "Descenso del cajón" } },
     "step-up": {
@@ -936,6 +940,7 @@
         "coachingSummary": "Aislamiento de dorsales que baja la barra manteniendo los codos casi estirados."
       }
     },
+    "straight-leg-raise": { "es": { "name": "Elevación de pierna recta" } },
     "sumo-deadlift": {
       "es": {
         "name": "Peso muerto sumo",
@@ -956,6 +961,7 @@
     },
     "swimming": { "es": { "name": "Natación" } },
     "t-bar-row": { "es": { "name": "Remo en T" } },
+    "tendon-gliding-sequence": { "es": { "name": "Secuencia de dedos: de rectos a puño" } },
     "toe-touch": { "es": { "name": "Toque de puntas" } },
     "torso-twist-stretch": { "es": { "name": "Giros de torso" } },
     "towel-hamstring-curl": { "es": { "name": "Curl femoral con toalla" } },
@@ -1029,6 +1035,7 @@
         "coachingSummary": "Flexión de muñeca contra carga: trabajo directo para los flexores del antebrazo y el agarre."
       }
     },
-    "wrist-extension": { "es": { "name": "Extensión de muñeca" } }
+    "wrist-extension": { "es": { "name": "Extensión de muñeca" } },
+    "wrist-extensor-stretch": { "es": { "name": "Estiramiento de los extensores de la muñeca" } }
   }
 }

@@ -1,14 +1,22 @@
 # Room schema artifacts
 
 Room's compiler exports the current annotated `WallCrawlDatabase` to
-`app/schemas/wallcrawl.elopenmike.com.core.database.WallCrawlDatabase/16.json`.
-This is build evidence containing table definitions, fields, affinities, nullability,
-declared SQL defaults, primary keys, indexes, foreign keys, and Room's identity hash.
-It contains no user records and is not a backup or restore format.
+`app/schemas/wallcrawl.elopenmike.com.core.database.WallCrawlDatabase/<version>.json`
+(currently **17**; **16** stays tracked). This is build evidence containing table
+definitions, fields, affinities, nullability, declared SQL defaults, primary keys,
+indexes, foreign keys, and Room's identity hash. It contains no user records and is not
+a backup or restore format.
 
-Database version **16** and archive format **6** (reads **1–6**) are separate contracts.
-Enabling export changes neither. It does not add a migration, destructive fallback,
+Database version **17** and archive format **7** (reads **1–7**) are separate contracts.
+Enabling export changed neither. Export itself adds no migration, destructive fallback,
 runtime table/index/default change, or data rewrite.
+
+Version 17 (condition-aware planning) adds `user_profiles.reportedConditionsJson`
+(`TEXT NOT NULL DEFAULT ''`), `workout_exercises.role` (`TEXT NOT NULL DEFAULT 'MAIN'`)
+and `workout_exercises.targetHoldSeconds` (nullable `INTEGER`) through `MIGRATION_16_17`.
+Identity hash `3652490c96306064f8ca3cd0b93ece5b`. `Migration16To17Test` builds its start
+from the legacy chain rather than the exported 16 JSON; `ExportedSchemaTest` validates
+every older start against the 17 export.
 
 ## Generate and check
 

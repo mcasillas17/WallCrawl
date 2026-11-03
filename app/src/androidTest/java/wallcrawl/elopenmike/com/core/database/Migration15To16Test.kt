@@ -60,7 +60,7 @@ class Migration15To16Test {
         retained.values.forEach { assertEquals(1, it.size) }
         helper.close()
         val database = Room.databaseBuilder(context, WallCrawlDatabase::class.java, name)
-            .addMigrations(WallCrawlDatabase.MIGRATION_15_16).build()
+            .addMigrations(WallCrawlDatabase.MIGRATION_15_16, WallCrawlDatabase.MIGRATION_16_17).build()
         try {
             assertEquals(WALLCRAWL_SCHEMA_VERSION, database.openHelper.writableDatabase.version)
             assertEquals(retained, retainedRows(database.openHelper.writableDatabase))

@@ -92,7 +92,10 @@ interface. It does not parse upstream JSON or construct raw asset paths.
 Likewise, Compose screens request visuals through `ExerciseVisualProvider` and
 render them with `ExerciseIllustration`.
 
-The bundled snapshot contains 302 exercises and 906 original SVG frames.
+The bundled snapshot contains 309 exercises: 302 with 906 original SVG frames from the pinned source, and 7
+WallCrawl-owned mobility exercises with 21 original SVG frames and their own attribution
+(`owned-exercises.json`, merged by the importer). Owned entries have no reviewed metadata, so they
+never enter automatic selection, and the credits counts stay those of the pinned source.
 [Everkinetic](https://github.com/everkinetic/data) is the original pose-artwork
 reference, with additional exercises and animation frames by Bryl Lim. WallCrawl
 also bundles 1,812 female and male adaptation frames; see
@@ -246,8 +249,8 @@ metadata that passes `Exercise.acceptedMetadata()` — `APPROVED` (human-only, a
 currently held by zero bundled records) or `AI_ACCEPTED` (owner-authorized, currently
 held by 182 bundled records) — requires one complete reviewed equipment alternative and
 the source-bound fixed-anchor minimum (also for supported-regression availability),
-preserves explicit exclusions, rejects required capabilities marked `AVOID`, fails
-closed for joint-sensitive constraints that lack reviewed mappings, enforces
+preserves explicit exclusions, rejects required capabilities marked `AVOID`, applies
+the shared condition predicate (below) for joint labels and reported conditions, enforces
 `LOW_IMPACT_ONLY`, and blocks undemonstrated `ADVANCED` work in every state. A supported regression lifts that ceiling only when the
 regression itself is below the advanced ceiling or its family has demonstrated history.
 `LIMITED` and `UNKNOWN` capability requirements remain typed soft preferences rather
@@ -418,12 +421,49 @@ disabled legacy path with a locally built `PlannerFeatureFlags(reviewedCapabilit
 never falls back to an unreviewed exercise. Genuine human `APPROVED` review of the
 metadata remains the outstanding gate before any record can carry that state instead.
 
-Selected joint sensitivities are decided per exercise on that path, against the reviewed
-`clearedTrainingConstraints` field, and the supported-regression exception applies the same
-rule so a restriction cannot be routed around. No bundled record clears any sensitivity, so
-a joint-sensitive profile currently receives a typed `TRAINING_CONSTRAINTS_REMOVED_ALL`
-refusal. `LOW_IMPACT_ONLY` is decided by `impactLevel` alone. See the
+Selected joint sensitivities and reported conditions are decided per exercise on that path
+by one predicate over the bundled condition overlay (see
+[Condition-aware planning](#condition-aware-planning)); the supported-regression exception
+applies the same predicate so a restriction cannot be routed around.
+`clearedTrainingConstraints` is no longer read for joint labels and stays empty for every
+bundled record. `LOW_IMPACT_ONLY` is decided by `impactLevel` alone. See the
 [eligibility boundary](reviewed-capability-eligibility.md).
+
+### Condition-aware planning
+
+Recorded 2026-11-01; see the
+[design](superpowers/specs/2026-11-01-condition-aware-planning-design.md) and the
+[research](research/conditions/CONSOLIDATION.md). Health content lives in
+`assets/conditions/condition-guidance.json`, loaded by `ConditionGuidanceStore` through a bounded
+strict parser. The overlay holds, per exercise ID, a set of 21 categorical `MovementDemand`
+values (presence means the exercise was reviewed); per condition, avoid and modify demands, a
+mobility routine, cues, notes and red flags with evidence grade, sources and AI review
+provenance; per joint label, modify demands; and one cue per demand. There is no numeric risk
+score. Eight conditions ship. A load failure is typed and fails closed: the user's conditions are
+never treated as absent.
+
+`restrictionsFor` builds `ConditionRestrictions` once, and eligibility, the
+supported-regression exception, `StateBasedTrainingPolicy`, ranking and the template editor
+all read it. Avoid demands exclude (`CONDITION_RESTRICTED_DEMAND`); an exercise with no overlay
+entry is excluded as `CONDITION_DEMANDS_UNREVIEWED`; both feed the aggregate
+`CONDITIONS_REMOVED_ALL`. Modify demands only rank an exercise after one without them, and
+the cue is shown. A demand in both sets is avoid. A profile with no conditions and no joint
+labels plans exactly as before. Language never reaches a decision.
+
+`GeneratedWorkout.mobilityBlock` carries at most three routine items, chosen deterministically
+by condition ID order and the split seed, and filtered by exclusions, equipment and avoid
+demands. It never fails a plan. Block entries are logged with `ExerciseRole.MOBILITY`, and the
+ledger, scheduling evidence, split focus, progression, capability evidence and Progress
+analytics and the completion and history summary all filter by role, so mobility work earns no training credit. `ProgramValidator`
+checks the block, and the duration estimate includes it. After a `PAIN_STOP` the logger offers
+to exclude the exercise through `excludedExerciseIds`; Profile undoes it. Manual templates
+allow everything and warn beside avoid, modify and unreviewed exercises.
+
+Reported conditions are stored on `UserProfile` (Room schema 17, archive format 7, unknown IDs
+kept opaque) and are part of `RecommendationContextIdentity`. They stay local under the
+backup exclusions ([privacy](privacy.md)). The catalog gains seven owned mobility exercises
+(309 entries, 302 upstream). Evidence is weak overall (654 linked sources, most read as
+abstract only), no copy claims a benefit, and public release is gated on clinician review.
 
 On that reviewed-enabled path only, `StateBasedTrainingPolicy` consumes the composed
 `TrainingProgramState`. Production emits `PROGRAM_STATE_V2` (V1 contexts remain
@@ -432,8 +472,8 @@ provenance, review-policy equality, and prescription shape before using the appr
 direct-primary muscle. It independently re-checks the capability and training-constraint
 rules the eligibility gate already applied, and returns a typed failure rather than
 prescribing: `CAPABILITY_AVOID_REACHED_POLICY` for an `AVOID` capability requirement, and
-`TRAINING_CONSTRAINT_REACHED_POLICY` for either training-constraint rule — a selected joint
-sensitivity the exercise does not clear, or `LOW_IMPACT_ONLY` meeting `ImpactLevel.HIGH`.
+`TRAINING_CONSTRAINT_REACHED_POLICY` for either training-constraint rule — the shared
+condition predicate refusing the exercise, or `LOW_IMPACT_ONLY` meeting `ImpactLevel.HIGH`.
 Those names all say the same thing: eligibility should have removed the exercise, so for those
 rules a gap in one gate cannot let a user's restriction through. Other gate rules, such as
 explicit exercise exclusions, equipment availability and the temporary advanced-complexity
@@ -779,7 +819,7 @@ quietly. The digest reads no locale and no display text, so language cannot move
 ## Manual workout templates
 
 Manual templates intentionally bypass automatic equipment filtering because the
-user is making an explicit choice. The editor searches all 302 exercises and
+user is making an explicit choice. The editor searches all 309 exercises and
 shows equipment mismatches as warnings. Catalog existence and exercise-type
 agreement remain hard requirements.
 
@@ -1458,13 +1498,13 @@ UserProfile.themePreference (SYSTEM | DARK | LIGHT)
 
 The JVM suite covers pure domain rules, filtering, context construction,
 capability normalization and codec behavior, planner invariance, validation,
-repository mapping, progress calculations, and ViewModel state. Its fourteen-persona
+repository mapping, progress calculations, and ViewModel state. Its seventeen-persona
 [planner evaluation corpus](planner-evaluation.md) composes the reviewed-enabled personas'
 weeks with the real `WeeklyDoseLedgerCalculator` and validates every proposal it produces
 with `ProgramValidator`, keeping raw-valid, repaired-valid and typed no-plan outcomes
 distinct. Instrumentation
-tests cover every supported Room migration chain through schema 16, real 7 → 8,
-9 → 10, 10 → 11, 11 → 12, 12 → 13, 14 → 15 and 15 → 16 preservation, foreign-key integrity, guidance round trips,
+tests cover every supported Room migration chain through schema 17, real 7 → 8,
+9 → 10, 10 → 11, 11 → 12, 12 → 13, 14 → 15, 15 → 16 and 16 → 17 preservation, foreign-key integrity, guidance round trips,
 the atomic start of a session with its validation record, the weekly-ledger repository,
 capability
 accessibility semantics, packaged catalog parsing, all bundled visual paths, template

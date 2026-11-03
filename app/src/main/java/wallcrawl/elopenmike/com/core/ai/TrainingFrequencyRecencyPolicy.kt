@@ -8,6 +8,7 @@ import wallcrawl.elopenmike.com.core.model.SetOutcomeRules
 import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
 import wallcrawl.elopenmike.com.core.model.TrainingFrequencyRecencyEvidence
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
+import wallcrawl.elopenmike.com.core.model.mainExercises
 
 /** One binary repeat-practice preference. Never restricts eligibility or prescriptions. */
 class TrainingFrequencyRecencyPolicy {
@@ -37,7 +38,7 @@ class TrainingFrequencyRecencyPolicy {
             val completed = requireNotNull(session.completedAtTimestamp) { "Completed session has no timestamp." }
             if (completed !in start..end) return@forEach
             val date = Instant.ofEpochMilli(completed).atZone(zoneId).toLocalDate().toEpochDay()
-            session.exercises.forEach { exercise ->
+            session.mainExercises.forEach { exercise ->
                 require(instanceIds.add(exercise.id)) { "Duplicate scheduling exercise instance." }
                 exercise.sets.forEach { set ->
                     require(++examinedSets <= MAX_SETS) { "Scheduling work exceeds its reconstruction bound." }

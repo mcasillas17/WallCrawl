@@ -37,7 +37,7 @@ import wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent
  * JUnit builds a fresh instance per test method and neither `PlannerFixtureLoader` nor
  * `PlannerFixtureContextFactory` caches across instances, so without this each suite — and
  * before that each method — re-read every fixture resource named in
- * `planner-fixtures/manifest.txt` and reparsed the 302-entry bundled catalog. Everything held
+ * `planner-fixtures/manifest.txt` and reparsed the 309-entry bundled catalog. Everything held
  * here is immutable parsed data.
  *
  * Only construction is shared. Every replay still goes through
@@ -126,6 +126,9 @@ internal data class PlannerFixtureInputSnapshot(
     val excludedExerciseIds: List<String>,
     val allowedExercises: List<Exercise>,
     val automaticEligibilityResult: AutomaticEligibilityResult?,
+    /** Deeply immutable, so the snapshot holds the instance directly. */
+    val conditionRestrictions: wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions,
+    val routineExercises: Map<String, Exercise>,
     /**
      * Deeply immutable, so the snapshot holds the instance directly.
      */
@@ -161,7 +164,7 @@ internal data class PlannerFixtureInputSnapshot(
 
 /**
  * [contextFactory] is required rather than defaulted on purpose. A default would construct a
- * second factory and silently reparse the 302-entry bundled catalog — the exact trap round 11
+ * second factory and silently reparse the 309-entry bundled catalog — the exact trap round 11
  * found in a suite that built one factory in a field and another inside this constructor.
  */
 internal class PlannerFixtureEvaluator(
@@ -312,6 +315,8 @@ private fun WorkoutGenerationContext.snapshot(): PlannerFixtureInputSnapshot =
         excludedExerciseIds = excludedExerciseIds.toList(),
         allowedExercises = allowedExercises.map(Exercise::deepCopy),
         automaticEligibilityResult = automaticEligibilityResult?.deepCopy(),
+        conditionRestrictions = conditionRestrictions,
+        routineExercises = routineExercises.mapValues { (_, exercise) -> exercise.deepCopy() },
         capabilityEvidence = capabilityEvidence,
         schedulingEvidence = schedulingEvidence,
         regenerationIndex = regenerationIndex,
@@ -351,6 +356,7 @@ private fun UserProfile.deepCopy(): UserProfile = copy(
     musclePriorities = LinkedHashMap(musclePriorities),
     excludedExerciseIds = excludedExerciseIds.toList(),
     trainingConstraints = trainingConstraints.toSet(),
+    reportedConditions = reportedConditions.toSet(),
     confirmedStartingLoads = LinkedHashMap(confirmedStartingLoads)
     // `movementCapabilities` is carried across as-is: `MovementCapabilities` has a private
     // constructor and its only factory wraps a freshly built map in `unmodifiableMap`, so

@@ -10,6 +10,7 @@ import wallcrawl.elopenmike.com.core.database.entity.WorkoutExerciseEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSessionEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSetEntity
 import wallcrawl.elopenmike.com.core.database.relation.toWorkoutSession
+import wallcrawl.elopenmike.com.core.model.ExerciseRole
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
 import wallcrawl.elopenmike.com.core.model.RecommendationRecord
 import wallcrawl.elopenmike.com.core.backup.LocalDataArchiveLimits
@@ -195,6 +196,7 @@ class OfflineWorkoutRepository(
         focusMuscles = generated.focusMuscles,
         estimatedDurationMinutes = generated.estimatedDurationMinutes,
         exercises = generated.exercises,
+        mobilityBlock = generated.mobilityBlock,
         origin = WorkoutOrigin.PLANNER,
         sourceTemplateId = null,
         userProfile = userProfile,
@@ -235,7 +237,8 @@ class OfflineWorkoutRepository(
         origin: WorkoutOrigin,
         sourceTemplateId: String?,
         userProfile: UserProfile,
-        recommendation: RecommendationSnapshot?
+        recommendation: RecommendationSnapshot?,
+        mobilityBlock: List<PlannedExercise> = emptyList()
     ): WorkoutSession {
         val sessionId = UUID.randomUUID().toString()
         val sessionEntity = WorkoutSessionEntity(
@@ -255,7 +258,11 @@ class OfflineWorkoutRepository(
         val exerciseEntities = mutableListOf<WorkoutExerciseEntity>()
         val setEntities = mutableListOf<WorkoutSetEntity>()
 
-        exercises.forEachIndexed { exIndex, genEx ->
+        // The block comes first and numbering continues through main work, whose relative
+        // order is unchanged.
+        val ordered = mobilityBlock.map { it to ExerciseRole.MOBILITY } +
+            exercises.map { it to ExerciseRole.MAIN }
+        ordered.forEachIndexed { exIndex, (genEx, role) ->
             val exerciseInstanceId = UUID.randomUUID().toString()
             exerciseEntities.add(
                 WorkoutExerciseEntity(
@@ -276,7 +283,9 @@ class OfflineWorkoutRepository(
                     effortMinRir = genEx.prescription.effortTarget?.minRir,
                     effortMaxRir = genEx.prescription.effortTarget?.maxRir,
                     restClass = genEx.prescription.restClass,
-                    restTargetSource = genEx.prescription.restTargetSource
+                    restTargetSource = genEx.prescription.restTargetSource,
+                    targetHoldSeconds = genEx.prescription.holdSeconds,
+                    role = role
                 )
             )
 

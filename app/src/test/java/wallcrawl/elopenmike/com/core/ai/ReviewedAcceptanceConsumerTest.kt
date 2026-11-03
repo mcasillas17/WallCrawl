@@ -5,6 +5,7 @@ import com.google.common.truth.Truth.assertWithMessage
 import kotlinx.coroutines.test.runTest
 import java.time.ZoneId
 import org.junit.Test
+import wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions
 import wallcrawl.elopenmike.com.core.model.AdaptationState
 import wallcrawl.elopenmike.com.core.model.CapabilityEvidenceScope
 import wallcrawl.elopenmike.com.core.model.ComplexityTier
@@ -65,7 +66,7 @@ class ReviewedAcceptanceConsumerTest {
         )
 
         val decisions = eligibilityPolicy
-            .evaluate(listOf(accepted, draft, malformed), bodyweightProfile(), AdaptationState.BUILD)
+            .evaluate(listOf(accepted, draft, malformed), bodyweightProfile(), AdaptationState.BUILD, restrictions = ConditionRestrictions.None)
             .decisions
             .associateBy { it.exerciseId }
 
@@ -125,7 +126,7 @@ class ReviewedAcceptanceConsumerTest {
         val pending = syntheticDraftExercise("pending-endpoint", StandardMuscles.CHEST)
 
         val decisions = eligibilityPolicy
-            .evaluate(listOf(source, pending), bodyweightProfile(), AdaptationState.BUILD)
+            .evaluate(listOf(source, pending), bodyweightProfile(), AdaptationState.BUILD, restrictions = ConditionRestrictions.None)
             .decisions
             .associateBy { it.exerciseId }
 
@@ -142,7 +143,7 @@ class ReviewedAcceptanceConsumerTest {
         // exercise stays legal. Absence of a clearance is not a ban.
         assertThat(isEligible(exercise, bodyweightProfile())).isTrue()
 
-        // Every applicable joint constraint is refused, one at a time: absence is not clearance.
+        // Every applicable joint label is refused one at a time when no overlay can describe it.
         TrainingConstraint.entries
             .filter { it != TrainingConstraint.LOW_IMPACT_ONLY }
             .forEach { constraint ->
@@ -150,12 +151,13 @@ class ReviewedAcceptanceConsumerTest {
                     .evaluate(
                         listOf(exercise),
                         bodyweightProfile(constraints = setOf(constraint)),
-                        AdaptationState.BUILD
+                        AdaptationState.BUILD,
+                        restrictions = ConditionRestrictions.Unavailable
                     )
                     .decisions
                     .single()
                 assertWithMessage(constraint.name).that(decision.reasons)
-                    .containsExactly(EligibilityReason.UNMAPPED_TRAINING_CONSTRAINT)
+                    .containsExactly(EligibilityReason.CONDITION_GUIDANCE_UNAVAILABLE)
             }
     }
 
@@ -168,7 +170,7 @@ class ReviewedAcceptanceConsumerTest {
         // Neither record clears anything, so only impactLevel can be deciding here.
         assertThat(isEligible(lowImpact, profile)).isTrue()
         val highImpactDecision = eligibilityPolicy
-            .evaluate(listOf(highImpact), profile, AdaptationState.BUILD)
+            .evaluate(listOf(highImpact), profile, AdaptationState.BUILD, restrictions = ConditionRestrictions.None)
             .decisions
             .single()
         assertThat(highImpactDecision.reasons)
@@ -286,7 +288,7 @@ class ReviewedAcceptanceConsumerTest {
             basePrescription = basePrescription,
             profile = bodyweightProfile(),
             fitnessGoals = setOf(FitnessGoal.BUILD_MUSCLE),
-            programState = programState()
+            programState = programState(), restrictions = ConditionRestrictions.None
         )
 
         assertThat(applied).isInstanceOf(TrainingPolicyResult.Applied::class.java)
@@ -449,7 +451,7 @@ class ReviewedAcceptanceConsumerTest {
             basePrescription = basePrescription,
             profile = bodyweightProfile(),
             fitnessGoals = setOf(FitnessGoal.BUILD_MUSCLE),
-            programState = programState()
+            programState = programState(), restrictions = ConditionRestrictions.None
         )
 
     private fun programState(): TrainingProgramState = TrainingProgramState(
@@ -481,14 +483,14 @@ class ReviewedAcceptanceConsumerTest {
         .evaluate(
             exercises = listOfNotNull(advanced, endpoint),
             profile = bodyweightProfile(excludedExerciseIds = excluded),
-            adaptationState = AdaptationState.UNCALIBRATED
+            adaptationState = AdaptationState.UNCALIBRATED, restrictions = ConditionRestrictions.None
         )
         .decisions
         .single { it.exerciseId == advanced.id }
         .eligible
 
     private fun isEligible(exercise: Exercise, profile: UserProfile): Boolean = eligibilityPolicy
-        .evaluate(listOf(exercise), profile, AdaptationState.BUILD)
+        .evaluate(listOf(exercise), profile, AdaptationState.BUILD, restrictions = ConditionRestrictions.None)
         .decisions
         .single()
         .eligible

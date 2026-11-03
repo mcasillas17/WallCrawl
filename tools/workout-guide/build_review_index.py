@@ -18,6 +18,7 @@ from import_catalog import (
     CatalogImportError,
     _reject_duplicate_json_fields,
     _reject_non_finite_number,
+    upstream_entries_only,
 )
 
 
@@ -442,7 +443,7 @@ def build_artifacts(
     }
     ledger = _require_object(loaded["ledger"][0], "full review ledger")
     metadata_root = _require_object(loaded["metadata"][0], "reviewed metadata")
-    catalog = _require_object(loaded["catalog"][0], "catalog")
+    catalog = upstream_entries_only(_require_object(loaded["catalog"][0], "catalog"))
     ledger_entries = _require_array(ledger.get("entries"), "ledger.entries")
     metadata = _require_object(metadata_root.get("exercises"), "metadata.exercises")
     catalog_entries = _require_array(catalog.get("exercises"), "catalog.exercises")

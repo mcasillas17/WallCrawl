@@ -10,4 +10,10 @@ Imported exercises: 302
 
 Imported SVG frames: 906
 
+Owned exercises: 7
+
+Owned SVG frames: 21
+
+Owned exercises are original work by the WallCrawl project, not part of the pinned source; they are listed in ATTRIBUTION.md.
+
 PNG counterparts are intentionally not bundled. See LICENSE, LICENSE-ASSETS, ATTRIBUTION.md, and upstream-manifest.json in this directory.

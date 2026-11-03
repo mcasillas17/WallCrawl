@@ -1,5 +1,6 @@
 package wallcrawl.elopenmike.com.core.ai
 
+import wallcrawl.elopenmike.com.core.model.mainExercises
 import java.security.MessageDigest
 import java.util.Locale
 import wallcrawl.elopenmike.com.core.model.AdaptationState
@@ -39,7 +40,7 @@ internal fun WorkoutGenerationContext.recordedWorkLoad(exerciseId: String, type:
             it.completedAtTimestamp
         }.thenBy { it.id })
         .flatMap { session ->
-            session.exercises.filter { it.exerciseId == exerciseId && it.prescription.exerciseType == type }
+            session.mainExercises.filter { it.exerciseId == exerciseId && it.prescription.exerciseType == type }
                 .flatMap { it.sets }.sortedByDescending { it.setNumber }.asSequence()
                 .filter { it.isCompleted && it.type != SetType.WARMUP && it.exerciseType == type &&
                     (it.completedReps ?: 0) > 0 && it.stopReason == null && it.stoppedAtTimestamp == null &&
@@ -86,7 +87,7 @@ class DefaultExercisePrescriptionFactory(
         val latest = context.progressionHistory
             .filter { it.status == SessionStatus.COMPLETED &&
                 (it.completedAtTimestamp ?: Long.MAX_VALUE) <= context.historyAsOfTimestamp &&
-                it.exercises.count { ex -> ex.exerciseId == exercise.id } == 1
+                it.mainExercises.count { ex -> ex.exerciseId == exercise.id } == 1
             }
             .sortedWith(compareByDescending<wallcrawl.elopenmike.com.core.model.WorkoutSession> {
                 it.startedAtTimestamp
@@ -96,7 +97,7 @@ class DefaultExercisePrescriptionFactory(
                 ProgressionReasonCode.decode(record.reasonCodes).firstOrNull { it.exerciseId == exercise.id }
             }
         }
-        val latestPrescription = latest?.exercises?.single { it.exerciseId == exercise.id }?.prescription
+        val latestPrescription = latest?.mainExercises?.single { it.exerciseId == exercise.id }?.prescription
         val reference = if (previous?.baseConfigurationDigest == basis &&
             latest.origin == WorkoutOrigin.PLANNER &&
             latestPrescription?.exerciseType == ordinary.exerciseType
@@ -167,7 +168,8 @@ class DefaultExercisePrescriptionFactory(
                 profile = context.userProfile,
                 fitnessGoals = context.fitnessGoals.ifEmpty { setOf(context.fitnessGoal) },
                 programState = programState,
-                priorUserRestPreference = context.priorUserRestPreferences[exercise.id]
+                priorUserRestPreference = context.priorUserRestPreferences[exercise.id],
+                restrictions = context.conditionRestrictions
             )
         ) {
             is TrainingPolicyResult.Applied -> result.prescription

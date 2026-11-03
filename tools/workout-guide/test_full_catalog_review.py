@@ -7,7 +7,7 @@ from pathlib import Path
 import unittest
 from urllib.parse import urlsplit
 
-from import_catalog import _read_object
+from import_catalog import _read_object, upstream_entries_only
 from render_review_packet import classification_reason, graph_assessments, render_packet
 
 
@@ -20,7 +20,7 @@ class FullCatalogReviewTest(unittest.TestCase):
     def setUp(self):
         self.assertTrue(LEDGER.is_file(), "The full per-ID evidence ledger must be authored.")
         self.ledger = _read_object(LEDGER, "full catalog review")
-        self.catalog = _read_object(BUNDLE / "catalog.json", "catalog")
+        self.catalog = upstream_entries_only(_read_object(BUNDLE / "catalog.json", "catalog"))
         self.reviewed_document = _read_object(
             ROOT / "tools/workout-guide/reviewed-metadata.json", "reviewed metadata"
         )

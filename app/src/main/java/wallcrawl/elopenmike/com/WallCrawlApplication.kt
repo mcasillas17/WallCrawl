@@ -15,6 +15,7 @@ import wallcrawl.elopenmike.com.core.ai.TrainingProgramStateProvider
 import wallcrawl.elopenmike.com.core.ai.WorkoutGenerationContextBuilder
 import wallcrawl.elopenmike.com.core.ai.WorkoutHistoryAnalyzer
 import wallcrawl.elopenmike.com.core.ai.WorkoutPlanner
+import wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceStore
 import wallcrawl.elopenmike.com.core.database.WallCrawlDatabase
 import wallcrawl.elopenmike.com.core.database.repository.LocalDataBackupRepository
 import wallcrawl.elopenmike.com.core.database.repository.OfflineLocalDataBackupRepository
@@ -69,6 +70,7 @@ interface AppContainer {
     val workoutHistoryAnalyzer: WorkoutHistoryAnalyzer
     val progressCalculator: ProgressCalculator
     val workoutGuideCatalogSource: WorkoutGuideCatalogSource
+    val conditionGuidanceSource: wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceSource
     val attributionNoticeSource: AttributionNoticeSource
 }
 
@@ -86,8 +88,15 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
         WorkoutGuideCatalogStore(context.assets)
     }
 
+    private val conditionGuidanceStore: ConditionGuidanceStore by lazy {
+        ConditionGuidanceStore(context.assets)
+    }
+
     override val workoutGuideCatalogSource: WorkoutGuideCatalogSource
         get() = workoutGuideCatalogStore
+
+    override val conditionGuidanceSource: wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceSource
+        get() = conditionGuidanceStore
 
     override val attributionNoticeSource: AttributionNoticeSource by lazy {
         AssetAttributionNoticeReader(context.assets)
@@ -232,7 +241,8 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
                 workoutGuideCatalogStore.currentSnapshot()?.catalogAttribution?.commit
             },
             deloadRepository = deloadRepository,
-            programRepository = programRepository
+            programRepository = programRepository,
+            conditionGuidanceSource = conditionGuidanceStore
         )
     }
 

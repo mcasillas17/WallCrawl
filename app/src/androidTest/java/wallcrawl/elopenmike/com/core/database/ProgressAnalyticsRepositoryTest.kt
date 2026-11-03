@@ -34,6 +34,7 @@ import wallcrawl.elopenmike.com.core.model.AnalyticsMetric
 import wallcrawl.elopenmike.com.core.model.AnalyticsRange
 import wallcrawl.elopenmike.com.core.model.AnalyticsScope
 import wallcrawl.elopenmike.com.core.model.AnalyticsSelection
+import wallcrawl.elopenmike.com.core.model.ExerciseRole
 import wallcrawl.elopenmike.com.core.model.ProgressionProvenance
 import wallcrawl.elopenmike.com.core.model.ProgressionReason
 import wallcrawl.elopenmike.com.core.model.ProgressionReasonCode
@@ -123,6 +124,29 @@ class ProgressAnalyticsRepositoryTest {
         assertThat(snapshot.decisions.map { it.sessionId }).containsExactly("decided")
         assertThat(snapshot.decisions.single().record.reasonCodes).isEqualTo(codes)
         assertThat(read(AnalyticsSelection()).decisions).isEmpty()
+    }
+
+    @Test fun mobilitySetsDecisionsAndOptionsAreOmittedUntilTheExerciseIsLoggedAsMain() = runBlocking {
+        val dao = db.workoutSessionDao()
+        val start = monday.toEpochMilli()
+        val end = start + week
+        insert("mobility", start + 1, "approved", role = ExerciseRole.MOBILITY)
+        insert("main", start + 2, "approved", role = ExerciseRole.MAIN)
+        db.workoutSessionDao().insertRecommendationRecord(record("mobility").toEntity())
+        assertThat(dao.selectAnalyticsComparableSetIds(start, end, "approved")).containsExactly("main-0")
+        assertThat(dao.selectAnalyticsRecommendationRecords(start, end, "approved")).isEmpty()
+        assertThat(dao.selectAnalyticsExerciseIds(10)).containsExactly("approved")
+
+        db.openHelper.writableDatabase.execSQL("DELETE FROM workout_sessions WHERE id = 'main'")
+        assertThat(dao.selectAnalyticsComparableSetIds(start, end, "approved")).isEmpty()
+        assertThat(dao.selectAnalyticsExerciseIds(10)).isEmpty()
+        insert("main-again", start + 3, "approved")
+        assertThat(dao.selectAnalyticsExerciseIds(10)).containsExactly("approved")
+        db.workoutSessionDao().insertRecommendationRecord(record("main-again").toEntity())
+        assertThat(dao.selectAnalyticsRecommendationRecords(start, end, "approved").map { it.sessionId })
+            .containsExactly("main-again")
+        val sessions = read(AnalyticsSelection(scope = AnalyticsScope.Exercise("approved")))
+        assertThat(sessions.series(AnalyticsMetric.WORKOUTS).rangeTotal).isEqualTo(1.0)
     }
 
     @Test fun readsWriteNothing() = runBlocking {
@@ -309,7 +333,8 @@ class ProgressAnalyticsRepositoryTest {
         status: SessionStatus = SessionStatus.COMPLETED,
         unit: WeightUnit = WeightUnit.LBS,
         weight: Double = 20.0,
-        extraSets: List<WorkoutSetEntity> = emptyList()
+        extraSets: List<WorkoutSetEntity> = emptyList(),
+        role: ExerciseRole = ExerciseRole.MAIN
     ) {
         db.workoutSessionDao().insertWorkout(
             WorkoutSessionEntity(
@@ -320,7 +345,8 @@ class ProgressAnalyticsRepositoryTest {
             ),
             listOf(WorkoutExerciseEntity(
                 id = "$id-exercise", sessionId = id, exerciseId = exerciseId, orderIndex = 0,
-                targetSets = 1 + extraSets.size, targetRepMin = 5, targetRepMax = 10, targetWeight = weight, notes = ""
+                targetSets = 1 + extraSets.size, targetRepMin = 5, targetRepMax = 10, targetWeight = weight, notes = "",
+                role = role
             )),
             listOf(WorkoutSetEntity(
                 id = "$id-0", workoutExerciseId = "$id-exercise", setNumber = 1,

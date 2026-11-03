@@ -1,0 +1,1708 @@
+{
+  "schemaVersion": 1,
+  "version": "2026-11-02.3",
+  "exerciseDemands": {
+    "active-hang": [
+      "HAND_GRIP_LOAD"
+    ],
+    "archer-push-up": [
+      "WRIST_END_RANGE_LOAD"
+    ],
+    "arnold-press": [
+      "FOREARM_TWIST_OR_PRONATED_LIFT"
+    ],
+    "assisted-chin-up": [
+      "HAND_GRIP_LOAD"
+    ],
+    "assisted-pull-up": [
+      "HAND_GRIP_LOAD"
+    ],
+    "band-pull-apart": [],
+    "banded-clamshell": [
+      "RESISTED_HIP_EXTERNAL_ROTATION",
+      "SIDE_LYING_HIP_COMPRESSION"
+    ],
+    "banded-dead-bug": [],
+    "banded-donkey-kick": [
+      "END_RANGE_HIP_EXTENSION",
+      "WRIST_END_RANGE_LOAD"
+    ],
+    "banded-fire-hydrant": [
+      "RESISTED_HIP_EXTERNAL_ROTATION",
+      "WRIST_END_RANGE_LOAD"
+    ],
+    "banded-glute-bridge": [
+      "RESISTED_HIP_EXTERNAL_ROTATION"
+    ],
+    "banded-lateral-walk": [
+      "RESISTED_HIP_EXTERNAL_ROTATION"
+    ],
+    "banded-monster-walk": [
+      "RESISTED_HIP_EXTERNAL_ROTATION"
+    ],
+    "banded-seated-hip-abduction": [
+      "RESISTED_HIP_EXTERNAL_ROTATION"
+    ],
+    "banded-squat": [
+      "DEEP_KNEE_FLEXION_LOAD"
+    ],
+    "banded-standing-hip-abduction": [
+      "RESISTED_HIP_EXTERNAL_ROTATION",
+      "SINGLE_LEG_HIP_CONTROL"
+    ],
+    "barbell-back-squat": [
+      "DEEP_KNEE_FLEXION_LOAD",
+      "HEAVY_EXTERNAL_LOAD"
+    ],
+    "barbell-bench-press": [
+      "HEAVY_EXTERNAL_LOAD"
+    ],
+    "barbell-bicep-curl": [
+      "HEAVY_EXTERNAL_LOAD",
+      "WRIST_EXTENSOR_WORK"
+    ],
+    "barbell-glute-bridge": [
+      "END_RANGE_HIP_EXTENSION",
+      "HEAVY_EXTERNAL_LOAD"
+    ],
+    "barbell-row": [
+      "FOREARM_TWIST_OR_PRONATED_LIFT",
+      "HAMSTRING_LENGTH_LOAD",
+      "HEAVY_EXTERNAL_LOAD"
+    ],
+    "bench-dip": [
+      "WRIST_END_RANGE_LOAD"
+    ],
+    "bent-over-rear-delt-raise": [
+      "FOREARM_TWIST_OR_PRONATED_LIFT",
+      "HAMSTRING_LENGTH_LOAD"
+    ],
+    "bicep-curl": [
+      "WRIST_EXTENSOR_WORK"
+    ],
+    "bicycle-crunch": [],
+    "bird-dog": [
+      "WRIST_END_RANGE_LOAD"
+    ],
+    "bodyweight-squat": [
+      "DEEP_KNEE_FLEXION_LOAD"
+    ],
+    "bulgarian-split-squat": [
+      "DEEP_KNEE_FLEXION_LOAD",
+      "END_RANGE_HIP_EXTENSION",
+      "SINGLE_LEG_HIP_CONTROL"
+    ],
+    "cable-curl": [
+      "WRIST_EXTENSOR_WORK"
+    ],
+    "cable-fly": [],
+    "cable-front-raise": [
+      "FOREARM_TWIST_OR_PRONATED_LIFT"
+    ],
+    "cable-lateral-raise": [
+      "FOREARM_TWIST_OR_PRONATED_LIFT"
+    ],
+    "cable-pallof-hold": [],
+    "cable-pull-through": [
+      "HAMSTRING_LENGTH_LOAD"
+    ],
+    "cable-rear-delt-fly": [
+      "FOREARM_TWIST_OR_PRONATED_LIFT"
+    ],
+    "cable-triceps-pushdown": [
+      "WRIST_EXTENSOR_WORK"
+    ],
+    "cable-woodchop": [],
+    "captains-chair-knee-raise": [],
+    "chair-dip": [
+      "WRIST_END_RANGE_LOAD"
+    ],
+    "chest-supported-row": [
+      "HEAVY_EXTERNAL_LOAD"
+    ],
+    "chin-up": [
+      "HAND_GRIP_LOAD"
+    ],
+    "clamshell": [
+      "RESISTED_HIP_EXTERNAL_ROTATION",
+      "SIDE_LYING_HIP_COMPRESSION"
+    ],
+    "close-grip-bench-press": [
+      "HEAVY_EXTERNAL_LOAD"
+    ],
+    "close-grip-lat-pulldown": [],
+    "cossack-squat": [
+      "DEEP_KNEE_FLEXION_LOAD",
+      "SINGLE_LEG_HIP_CONTROL"
+    ],
+    "cross-body-shoulder-stretch": [],
+    "crunch": [],
+    "curtsy-lunge": [
+      "DEEP_KNEE_FLEXION_LOAD",
+      "SINGLE_LEG_HIP_CONTROL"
+    ],
+    "dead-bug": [],
+    "dead-hang": [
+      "HAND_GRIP_LOAD"
+    ],
+    "decline-bench-press": [
+      "HEAVY_EXTERNAL_LOAD"
+    ],
+    "decline-dumbbell-press": [],
+    "decline-push-up": [
+      "WRIST_END_RANGE_LOAD"
+    ],
+    "decline-sit-up": [],
+    "deficit-reverse-lunge": [
+      "DEEP_KNEE_FLEXION_LOAD",
+      "END_RANGE_HIP_EXTENSION",
+      "SINGLE_LEG_HIP_CONTROL"
+    ],
+    "diamond-push-up": [
+      "WRIST_END_RANGE_LOAD"
+    ],
+    "donkey-kick": [
+      "END_RANGE_HIP_EXTENSION",
+      "WRIST_END_RANGE_LOAD"
+    ],
+    "doorway-row": [],
+    "drag-curl": [
+      "HEAVY_EXTERNAL_LOAD",
+      "WRIST_EXTENSOR_WORK"
+    ],
+    "dumbbell-bench-press": [],
+    "dumbbell-bent-over-row": [
+      "HAMSTRING_LENGTH_LOAD"
+    ],
+    "dumbbell-curtsy-lunge": [
+      "DEEP_KNEE_FLEXION_LOAD",
+      "SINGLE_LEG_HIP_CONTROL"
+    ],
+    "dumbbell-fly": [],
+    "dumbbell-glute-bridge": [
+      "END_RANGE_HIP_EXTENSION"
+    ],
+    "dumbbell-hip-thrust": [
+      "END_RANGE_HIP_EXTENSION"
+    ],
+    "dumbbell-lateral-lunge": [
+      "DEEP_KNEE_FLEXION_LOAD",
+      "SINGLE_LEG_HIP_CONTROL"
+    ],
+    "dumbbell-lateral-raise": [
+      "FOREARM_TWIST_OR_PRONATED_LIFT"
+    ],
+    "dumbbell-romanian-deadlift": [
+      "HAMSTRING_LENGTH_LOAD"
+    ],
+    "dumbbell-shoulder-press": [],
+    "dumbbell-shrug": [
+      "HAND_GRIP_LOAD"
+    ],
+    "dumbbell-side-bend": [],
+    "dumbbell-skull-crusher": [
+      "WRIST_EXTENSOR_WORK"
+    ],
+    "dumbbell-sumo-squat": [
+      "DEEP_KNEE_FLEXION_LOAD"
+    ],
+    "face-pull": [],
+    "figure-four-stretch": [],
+    "flutter-kick": [],
+    "forward-lunge": [
+      "DEEP_KNEE_FLEXION_LOAD",
+      "END_RANGE_HIP_EXTENSION",
+      "SINGLE_LEG_HIP_CONTROL"
+    ],
+    "frog-pump": [],
+    "front-raise": [
+      "FOREARM_TWIST_OR_PRONATED_LIFT"
+    ],
+    "front-squat": [
+      "DEEP_KNEE_FLEXION_LOAD",
+      "HEAVY_EXTERNAL_LOAD",
+      "WRIST_END_RANGE_LOAD"
+    ],
+    "glute-bridge": [],
+    "glute-bridge-march": [
+      "SINGLE_LEG_HIP_CONTROL"
+    ],
+    "goblet-squat": [
+      "DEEP_KNEE_FLEXION_LOAD"
+    ],
+    "hack-squat": [
+      "DEEP_KNEE_FLEXION_LOAD",
+      "HEAVY_EXTERNAL_LOAD"
+    ],
+    "half-kneeling-pallof-press": [],
+    "hammer-curl": [
+      "WRIST_EXTENSOR_WORK"
+    ],
+    "hamstring-stretch": [
+      "HAMSTRING_LENGTH_LOAD"
+    ],
+    "hanging-knee-raise": [
+      "HAND_GRIP_LOAD"
+    ],
+    "heel-tap": [],
+    "hindu-push-up": [
+      "END_RANGE_SPINE_POSITION",
+      "WRIST_END_RANGE_LOAD"
+    ],
+    "hip-abduction-machine": [
+      "HEAVY_EXTERNAL_LOAD",
+      "RESISTED_HIP_EXTERNAL_ROTATION"
+    ],
+    "hip-adduction-machine": [
+      "HEAVY_EXTERNAL_LOAD"
+    ],
+    "hip-thrust": [
+      "END_RANGE_HIP_EXTENSION",
+      "HEAVY_EXTERNAL_LOAD"
+    ],
+    "hollow-rock": [],
+    "inchworm": [
+      "HAMSTRING_LENGTH_LOAD",
+      "WRIST_END_RANGE_LOAD"
+    ],
+    "incline-bench-press": [
+      "HEAVY_EXTERNAL_LOAD"
+    ],
+    "incline-cable-fly": [],
+    "incline-dumbbell-curl": [
+      "WRIST_EXTENSOR_WORK"
+    ],
+    "incline-dumbbell-press": [],
+    "incline-push-up": [
+      "WRIST_END_RANGE_LOAD"
+    ],
+    "jump-squat": [
+      "DEEP_KNEE_FLEXION_LOAD",
+      "PLYOMETRIC_IMPACT"
+    ],
+    "kettlebell-romanian-deadlift": [
+      "HAMSTRING_LENGTH_LOAD"
+    ],
+    "kettlebell-swing": [
+      "HAMSTRING_LENGTH_LOAD",
+      "HAND_GRIP_LOAD"
+    ],
+    "l-sit-pull-up": [
+      "HAND_GRIP_LOAD"
+    ],
+    "lat-pulldown": [],
+    "lateral-lunge": [
+      "DEEP_KNEE_FLEXION_LOAD",
+      "SINGLE_LEG_HIP_CONTROL"
+    ],
+    "leg-curl": [
+      "HAMSTRING_LENGTH_LOAD",
+      "HEAVY_EXTERNAL_LOAD"
+    ],
+    "leg-extension": [
+      "END_RANGE_KNEE_EXTENSION_LOAD",
+      "HEAVY_EXTERNAL_LOAD"
+    ],
+    "leg-press": [
+      "DEEP_KNEE_FLEXION_LOAD",
+      "HEAVY_EXTERNAL_LOAD"
+    ],
+    "leg-press-calf-raise": [
+      "HEAVY_EXTERNAL_LOAD"
+    ],
+    "lying-leg-curl": [
+      "HAMSTRING_LENGTH_LOAD",
+      "HEAVY_EXTERNAL_LOAD"
+    ],
+    "lying-leg-raise": [],
+    "lying-piriformis-stretch": [
+      "CROSS_BODY_HIP_STRETCH"
+    ],
+    "machine-chest-press": [
+      "HEAVY_EXTERNAL_LOAD"
+    ],
+    "machine-lateral-raise": [
+      "HEAVY_EXTERNAL_LOAD"
+    ],
+    "machine-shoulder-press": [
+      "HEAVY_EXTERNAL_LOAD"
+    ],
+    "one-arm-dumbbell-row": [
+      "HAMSTRING_LENGTH_LOAD"
+    ],
+    "overhead-press": [
+      "HEAVY_EXTERNAL_LOAD"
+    ],
+    "overhead-tricep-extension": [
+      "WRIST_EXTENSOR_WORK"
+    ],
+    "pallof-press": [],
+    "pec-deck": [
+      "HEAVY_EXTERNAL_LOAD"
+    ],
+    "pike-push-up": [
+      "HAMSTRING_LENGTH_LOAD",
+      "WRIST_END_RANGE_LOAD"
+    ],
+    "pistol-squat": [
+      "DEEP_KNEE_FLEXION_LOAD",
+      "SINGLE_LEG_HIP_CONTROL"
+    ],
+    "plank-shoulder-tap": [
+      "WRIST_END_RANGE_LOAD"
+    ],
+    "plate-front-raise": [
+      "HAND_GRIP_LOAD"
+    ],
+    "preacher-curl": [
+      "HEAVY_EXTERNAL_LOAD",
+      "WRIST_EXTENSOR_WORK"
+    ],
+    "prone-y-raise": [],
+    "pull-ups": [
+      "HAND_GRIP_LOAD"
+    ],
+    "push-press": [
+      "HEAVY_EXTERNAL_LOAD"
+    ],
+    "push-up": [
+      "WRIST_END_RANGE_LOAD"
+    ],
+    "push-up-shoulder-tap": [
+      "WRIST_END_RANGE_LOAD"
+    ],
+    "rear-delt-fly": [
+      "FOREARM_TWIST_OR_PRONATED_LIFT",
+      "HAMSTRING_LENGTH_LOAD"
+    ],
+    "reverse-crunch": [],
+    "reverse-curl": [
+      "FOREARM_TWIST_OR_PRONATED_LIFT",
+      "HEAVY_EXTERNAL_LOAD",
+      "WRIST_EXTENSOR_WORK"
+    ],
+    "reverse-lunge": [
+      "DEEP_KNEE_FLEXION_LOAD",
+      "END_RANGE_HIP_EXTENSION",
+      "SINGLE_LEG_HIP_CONTROL"
+    ],
+    "reverse-pec-deck": [
+      "HEAVY_EXTERNAL_LOAD"
+    ],
+    "reverse-snow-angel": [],
+    "romanian-deadlift": [
+      "FOREARM_TWIST_OR_PRONATED_LIFT",
+      "HAMSTRING_LENGTH_LOAD",
+      "HEAVY_EXTERNAL_LOAD"
+    ],
+    "rope-hammer-curl": [
+      "WRIST_EXTENSOR_WORK"
+    ],
+    "rope-tricep-pushdown": [
+      "WRIST_EXTENSOR_WORK"
+    ],
+    "scapular-pull-up": [
+      "HAND_GRIP_LOAD"
+    ],
+    "scapular-push-up": [
+      "WRIST_END_RANGE_LOAD"
+    ],
+    "seated-calf-raise": [
+      "HEAVY_EXTERNAL_LOAD"
+    ],
+    "seated-leg-curl": [
+      "HAMSTRING_LENGTH_LOAD",
+      "HEAVY_EXTERNAL_LOAD"
+    ],
+    "seated-row": [],
+    "shrug": [
+      "FOREARM_TWIST_OR_PRONATED_LIFT",
+      "HAND_GRIP_LOAD",
+      "HEAVY_EXTERNAL_LOAD"
+    ],
+    "side-lying-hip-abduction": [
+      "RESISTED_HIP_EXTERNAL_ROTATION",
+      "SIDE_LYING_HIP_COMPRESSION"
+    ],
+    "side-lying-isometric-hip-abduction-hold": [
+      "RESISTED_HIP_EXTERNAL_ROTATION",
+      "SIDE_LYING_HIP_COMPRESSION"
+    ],
+    "side-lying-leg-raise": [
+      "RESISTED_HIP_EXTERNAL_ROTATION",
+      "SIDE_LYING_HIP_COMPRESSION"
+    ],
+    "side-plank": [
+      "RESISTED_HIP_EXTERNAL_ROTATION",
+      "SIDE_SUPPORT_HOLD"
+    ],
+    "side-plank-hip-dip": [
+      "RESISTED_HIP_EXTERNAL_ROTATION",
+      "SIDE_SUPPORT_HOLD"
+    ],
+    "single-arm-dumbbell-tricep-extension": [
+      "WRIST_EXTENSOR_WORK"
+    ],
+    "single-dumbbell-skullcrusher": [
+      "WRIST_EXTENSOR_WORK"
+    ],
+    "single-leg-glute-bridge": [
+      "RESISTED_HIP_EXTERNAL_ROTATION",
+      "SINGLE_LEG_HIP_CONTROL"
+    ],
+    "single-leg-romanian-deadlift": [
+      "HAMSTRING_LENGTH_LOAD",
+      "SINGLE_LEG_HIP_CONTROL"
+    ],
+    "skull-crusher": [
+      "HEAVY_EXTERNAL_LOAD",
+      "WRIST_EXTENSOR_WORK"
+    ],
+    "smith-machine-bench-press": [
+      "HEAVY_EXTERNAL_LOAD"
+    ],
+    "smith-machine-bulgarian-split-squat": [
+      "DEEP_KNEE_FLEXION_LOAD",
+      "END_RANGE_HIP_EXTENSION",
+      "HEAVY_EXTERNAL_LOAD",
+      "SINGLE_LEG_HIP_CONTROL"
+    ],
+    "smith-machine-hip-thrust": [
+      "END_RANGE_HIP_EXTENSION",
+      "HEAVY_EXTERNAL_LOAD"
+    ],
+    "smith-machine-reverse-lunge": [
+      "DEEP_KNEE_FLEXION_LOAD",
+      "END_RANGE_HIP_EXTENSION",
+      "HEAVY_EXTERNAL_LOAD",
+      "SINGLE_LEG_HIP_CONTROL"
+    ],
+    "smith-machine-romanian-deadlift": [
+      "FOREARM_TWIST_OR_PRONATED_LIFT",
+      "HAMSTRING_LENGTH_LOAD",
+      "HEAVY_EXTERNAL_LOAD"
+    ],
+    "smith-machine-split-squat": [
+      "DEEP_KNEE_FLEXION_LOAD",
+      "END_RANGE_HIP_EXTENSION",
+      "HEAVY_EXTERNAL_LOAD",
+      "SINGLE_LEG_HIP_CONTROL"
+    ],
+    "smith-machine-squat": [
+      "DEEP_KNEE_FLEXION_LOAD",
+      "HEAVY_EXTERNAL_LOAD"
+    ],
+    "split-squat": [
+      "DEEP_KNEE_FLEXION_LOAD",
+      "END_RANGE_HIP_EXTENSION",
+      "SINGLE_LEG_HIP_CONTROL"
+    ],
+    "standing-calf-raise": [
+      "HEAVY_EXTERNAL_LOAD"
+    ],
+    "standing-dumbbell-press": [],
+    "standing-isometric-gluteal-contraction": [
+      "SINGLE_LEG_HIP_CONTROL"
+    ],
+    "step-down": [
+      "DEEP_KNEE_FLEXION_LOAD",
+      "SINGLE_LEG_HIP_CONTROL"
+    ],
+    "step-up": [
+      "DEEP_KNEE_FLEXION_LOAD",
+      "SINGLE_LEG_HIP_CONTROL"
+    ],
+    "straight-arm-pulldown": [],
+    "straight-leg-raise": [],
+    "superman": [
+      "END_RANGE_HIP_EXTENSION",
+      "END_RANGE_SPINE_POSITION"
+    ],
+    "superman-hold": [
+      "END_RANGE_HIP_EXTENSION",
+      "END_RANGE_SPINE_POSITION"
+    ],
+    "t-bar-row": [
+      "HAMSTRING_LENGTH_LOAD",
+      "HEAVY_EXTERNAL_LOAD"
+    ],
+    "tendon-gliding-sequence": [],
+    "towel-pull-up": [
+      "HAND_GRIP_LOAD"
+    ],
+    "tricep-kickback": [
+      "WRIST_EXTENSOR_WORK"
+    ],
+    "typewriter-push-up": [
+      "WRIST_END_RANGE_LOAD"
+    ],
+    "upright-row": [
+      "FOREARM_TWIST_OR_PRONATED_LIFT",
+      "HEAVY_EXTERNAL_LOAD"
+    ],
+    "v-up": [
+      "LONG_LYING_SIT_UP"
+    ],
+    "walking-lunge": [
+      "DEEP_KNEE_FLEXION_LOAD",
+      "END_RANGE_HIP_EXTENSION",
+      "SINGLE_LEG_HIP_CONTROL"
+    ],
+    "wall-handstand-push-up": [
+      "WRIST_END_RANGE_LOAD"
+    ],
+    "wall-push-up": [
+      "WRIST_END_RANGE_LOAD"
+    ],
+    "wall-sit": [
+      "DEEP_KNEE_FLEXION_LOAD"
+    ],
+    "wall-walk": [
+      "WRIST_END_RANGE_LOAD"
+    ],
+    "weighted-crunch": [
+      "TRUNK_FLEXION_UNDER_LOAD"
+    ],
+    "weighted-push-up": [
+      "WRIST_END_RANGE_LOAD"
+    ],
+    "weighted-russian-twist": [
+      "TRUNK_FLEXION_UNDER_LOAD"
+    ],
+    "wide-grip-lat-pulldown": [],
+    "wide-push-up": [
+      "WRIST_END_RANGE_LOAD"
+    ],
+    "wrist-extensor-stretch": [
+      "WRIST_END_RANGE_LOAD"
+    ]
+  },
+  "conditions": {
+    "piriformis_syndrome": {
+      "avoidDemands": [],
+      "modifyDemands": [
+        "PROLONGED_SITTING",
+        "SUSTAINED_LOCOMOTION",
+        "PLYOMETRIC_IMPACT",
+        "HEAVY_EXTERNAL_LOAD",
+        "SINGLE_LEG_HIP_CONTROL",
+        "CROSS_BODY_HIP_STRETCH",
+        "NERVE_TENSIONING",
+        "HAMSTRING_LENGTH_LOAD",
+        "RESISTED_HIP_EXTERNAL_ROTATION",
+        "END_RANGE_HIP_EXTENSION"
+      ],
+      "routine": [
+        {
+          "exerciseId": "figure-four-stretch",
+          "targetSets": 3,
+          "targetReps": null,
+          "targetDurationSeconds": 120,
+          "holdSeconds": null,
+          "restSeconds": 120,
+          "requiresFloorTransition": true
+        },
+        {
+          "exerciseId": "lying-piriformis-stretch",
+          "targetSets": 1,
+          "targetReps": 10,
+          "targetDurationSeconds": null,
+          "holdSeconds": 30,
+          "restSeconds": 0,
+          "requiresFloorTransition": true
+        },
+        {
+          "exerciseId": "glute-bridge",
+          "targetSets": 3,
+          "targetReps": 15,
+          "targetDurationSeconds": null,
+          "holdSeconds": null,
+          "restSeconds": 0,
+          "requiresFloorTransition": true
+        }
+      ],
+      "exerciseCues": {
+        "figure-four-stretch": {
+          "en": "Lie on your back with one foot flat on the wall, rest the other ankle on that knee, and let the knee fall out. Aim for a slight stretch only. Stop if the position brings on buttock or leg symptoms.",
+          "es": "Acuéstate boca arriba con un pie apoyado en la pared, apoya el otro tobillo sobre esa rodilla y deja que la rodilla se abra hacia afuera. Busca solo un estiramiento leve. Detente si la posición te provoca síntomas en el glúteo o la pierna."
+        },
+        "lying-piriformis-stretch": {
+          "en": "Lie on your back and draw one knee across your body toward the opposite shoulder, holding it with your hands. Keep it gentle. Stop if leg or buttock symptoms increase.",
+          "es": "Acuéstate boca arriba y lleva una rodilla hacia el hombro contrario, cruzando el cuerpo, sujetándola con las manos. Hazlo con suavidad. Detente si aumentan los síntomas en la pierna o el glúteo."
+        },
+        "glute-bridge": {
+          "en": "Stop if leg symptoms increase.",
+          "es": "Detente si aumentan los síntomas en la pierna."
+        }
+      },
+      "notes": {
+        "en": [
+          "Avoid long spells sitting cross-legged or slumped back on your tailbone.",
+          "Squats and resistance work are not banned. Ease off if they bring on your symptoms.",
+          "Staying in bed or stopping all activity for long is not advised. Keep moving within what you can tolerate.",
+          "Go easy on foam rollers or other strong pressure right on the sore spot, especially when symptoms are highly irritable."
+        ],
+        "es": [
+          "Evita pasar mucho tiempo sentado con las piernas cruzadas o encorvado sobre el coxis.",
+          "Las sentadillas y el trabajo con resistencia no están prohibidos. Baja la intensidad si te provocan síntomas.",
+          "No se recomienda quedarte en cama ni dejar toda actividad por mucho tiempo. Sigue moviéndote dentro de lo que toleres.",
+          "Ve con cuidado con los rodillos de espuma u otra presión fuerte justo sobre el punto adolorido, sobre todo cuando los síntomas están muy irritables."
+        ]
+      },
+      "redFlags": {
+        "en": [
+          "New or worsening numbness, tingling or any change in feeling around your genitals, bottom or inner thighs: Stop exercising and call emergency services. Do not drive yourself.",
+          "New or worsening trouble starting to pee or keeping the flow going, or not being able to fully empty your bladder: Stop exercising and call emergency services. Do not drive yourself.",
+          "New or worsening loss of control of your bladder or bowels, or not being able to feel when you need to pee or poop or while you pee: Stop exercising and call emergency services. Do not drive yourself.",
+          "New, severe or worsening pain, numbness or weakness in both legs: Stop exercising and call emergency services. Do not drive yourself.",
+          "A foot that drags or won't lift, or leg weakness that keeps growing, especially after a major injury: Stop exercising and see a doctor today or as soon as you can.",
+          "Sudden buttock or hip pain with a high fever, or severe deep buttock pain with new numbness or weakness: Stop exercising and see a doctor today or as soon as you can.",
+          "Leg pain or weakness that returns with each menstrual period, or buttock pain that could be an infection: Stop exercising and see a doctor before continuing.",
+          "Leg pain that does not improve after a few weeks, gets worse, or stops your normal activities: See a doctor. It is not an emergency, but it should be checked.",
+          "Buttock or leg symptoms that last past about 3 months: See a doctor. It is not an emergency, but it should be checked."
+        ],
+        "es": [
+          "Adormecimiento, hormigueo o cualquier cambio de sensibilidad, nuevo o que empeora, alrededor del ano o los genitales, o en la parte interna de los muslos: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
+          "Dificultad nueva o que empeora para empezar a orinar o mantener el chorro, o no poder vaciar por completo la vejiga: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
+          "Pérdida nueva o que empeora del control de la vejiga o de las evacuaciones, o no sentir cuándo necesitas orinar o evacuar, o mientras orinas: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
+          "Dolor, adormecimiento o debilidad, nuevos, intensos o que empeoran, en las dos piernas: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
+          "Un pie que se arrastra o no se levanta, o debilidad en la pierna que sigue aumentando, sobre todo después de una lesión grave: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
+          "Dolor repentino en el glúteo o la cadera con fiebre alta, o dolor profundo y fuerte en el glúteo con adormecimiento o debilidad nuevos: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
+          "Dolor o debilidad en la pierna que regresa con cada menstruación, o dolor en el glúteo que podría ser una infección: Deja de ejercitarte y ve al médico antes de continuar.",
+          "Dolor en la pierna que no mejora en unas semanas, empeora o te impide hacer tus actividades normales: Ve al médico. No es una emergencia, pero debe revisarlo un médico.",
+          "Síntomas en el glúteo o la pierna que duran más de unos 3 meses: Ve al médico. No es una emergencia, pero debe revisarlo un médico."
+        ]
+      },
+      "evidenceGrade": "very_low",
+      "sources": [
+        "https://doi.org/10.7759/cureus.43804",
+        "https://doi.org/10.7759/cureus.32952",
+        "https://doi.org/10.5606/tftrd.2024.14668",
+        "https://doi.org/10.5812/aapm.112825",
+        "https://doi.org/10.2519/jospt.2010.3108",
+        "https://doi.org/10.3390/sports14030095",
+        "https://doi.org/10.1016/j.rehab.2013.03.006",
+        "https://doi.org/10.1007/s00167-013-2758-7",
+        "https://doi.org/10.1186/s13102-023-00802-4",
+        "https://doi.org/10.1002/14651858.CD007612.pub2"
+      ],
+      "provenance": {
+        "reviewerModelId": "claude-opus-5-5",
+        "reviewedAtEpochMillis": 1793491200000,
+        "reviewedContentId": "piriformis_syndrome",
+        "reviewedContentSha256": "c895d45a3c0036cda80b3cdd6cf23a13f573b12564ccee65dafc58c2dde03984",
+        "sourceReferences": [
+          "https://doi.org/10.7759/cureus.43804",
+          "https://doi.org/10.7759/cureus.32952",
+          "https://doi.org/10.5606/tftrd.2024.14668",
+          "https://doi.org/10.5812/aapm.112825",
+          "https://doi.org/10.2519/jospt.2010.3108",
+          "https://doi.org/10.3390/sports14030095",
+          "https://doi.org/10.1016/j.rehab.2013.03.006",
+          "https://doi.org/10.1007/s00167-013-2758-7",
+          "https://doi.org/10.1186/s13102-023-00802-4",
+          "https://doi.org/10.1002/14651858.CD007612.pub2"
+        ],
+        "decisionRationale": "Owner-authorized AI authoring for alpha use. Restrictions, red flags and doses follow the research consolidation for this condition; nothing here is a care plan.",
+        "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. Evidence is very low: restrictions are mostly expert opinion and no routine item is shown to work. The glute bridge dose comes from a trial registry record whose results were not found, which has no DOI or PMID and so is not listed. The figure-four dose comes from a supervised trial in which stretching did not beat a hot pack plus TENS for pain, and calling the position a figure-four is this review's mapping, not a term the papers use. The lying stretch reads its dose as one set of 10 repetitions with 30 s holds, because the source says '10 repetitions/sets' and the set count is unclear; the source also does not specify the position, which comes from separate biomechanical studies, and it had no untreated control group. Setup wording in the cues is the project's own, written for this app, not from the cited sources.",
+        "schemaVersion": 1,
+        "policyVersion": 1
+      }
+    },
+    "gluteal_tendinopathy": {
+      "avoidDemands": [
+        "CROSS_BODY_HIP_STRETCH"
+      ],
+      "modifyDemands": [
+        "SINGLE_LEG_HIP_CONTROL",
+        "HEAVY_EXTERNAL_LOAD",
+        "SIDE_LYING_HIP_COMPRESSION",
+        "SUSTAINED_LOCOMOTION",
+        "PLYOMETRIC_IMPACT",
+        "SIDE_SUPPORT_HOLD"
+      ],
+      "routine": [
+        {
+          "exerciseId": "side-lying-hip-abduction",
+          "targetSets": 3,
+          "targetReps": 10,
+          "targetDurationSeconds": null,
+          "holdSeconds": null,
+          "restSeconds": 60,
+          "requiresFloorTransition": true
+        },
+        {
+          "exerciseId": "glute-bridge",
+          "targetSets": 1,
+          "targetReps": 10,
+          "targetDurationSeconds": null,
+          "holdSeconds": null,
+          "restSeconds": 0,
+          "requiresFloorTransition": true
+        },
+        {
+          "exerciseId": "bodyweight-squat",
+          "targetSets": 1,
+          "targetReps": 10,
+          "targetDurationSeconds": null,
+          "holdSeconds": null,
+          "restSeconds": 0,
+          "requiresFloorTransition": false
+        },
+        {
+          "exerciseId": "side-lying-isometric-hip-abduction-hold",
+          "targetSets": 1,
+          "targetReps": 6,
+          "targetDurationSeconds": null,
+          "holdSeconds": 30,
+          "restSeconds": 60,
+          "requiresFloorTransition": true
+        },
+        {
+          "exerciseId": "standing-isometric-gluteal-contraction",
+          "targetSets": 3,
+          "targetReps": 10,
+          "targetDurationSeconds": null,
+          "holdSeconds": 6,
+          "restSeconds": 60,
+          "requiresFloorTransition": false
+        }
+      ],
+      "exerciseCues": {
+        "side-lying-hip-abduction": {
+          "en": "Lie on the side without pain, with the painful side up. Take about 6 seconds per rep. If both hips hurt, skip this one.",
+          "es": "Acuéstate sobre el lado sin dolor, con el lado que duele hacia arriba. Tarda unos 6 segundos en cada repetición. Si te duelen las dos caderas, omite este ejercicio."
+        },
+        "glute-bridge": {
+          "en": "Move at an easy pace, about 2 seconds each way.",
+          "es": "Muévete con calma, unos 2 segundos en cada dirección."
+        },
+        "bodyweight-squat": {
+          "en": "Move slowly, about 3 seconds each way. Do not let your pelvis shift over one hip.",
+          "es": "Muévete despacio, unos 3 segundos en cada dirección. No dejes que la pelvis se cargue sobre una cadera."
+        },
+        "side-lying-isometric-hip-abduction-hold": {
+          "en": "Lie on your side with the painful side up and a pillow between your knees. Lift the top leg a little and hold it. If both hips hurt, skip this one. Stop if your symptoms increase.",
+          "es": "Acuéstate de lado con el lado doloroso arriba y una almohada entre las rodillas. Levanta un poco la pierna de arriba y sostenla. Si te duelen las dos caderas, omite este ejercicio. Detente si aumentan los síntomas."
+        },
+        "standing-isometric-gluteal-contraction": {
+          "en": "Stand holding a wall or chair, and move the free leg in and out. Keep your pelvis level. Stop if your symptoms increase.",
+          "es": "Párate sujetándote de una pared o una silla y mueve la pierna libre hacia afuera y hacia adentro. Mantén la pelvis nivelada. Detente si aumentan los síntomas."
+        }
+      },
+      "notes": {
+        "en": [
+          "Build up hip strength work gradually, and do not push through significant pain.",
+          "Avoid crossing your legs or letting one hip hang out to the side when you sit or stand, including between sets.",
+          "After an injection in the hip, ask the person who gave it when you can go back to hard loading."
+        ],
+        "es": [
+          "Aumenta poco a poco el trabajo de fuerza de cadera y no sigas si hay dolor importante.",
+          "Evita cruzar las piernas o dejar caer una cadera hacia un lado al sentarte o estar de pie, también entre series.",
+          "Después de una inyección en la cadera, pregunta a quien te la puso cuándo puedes volver a cargar fuerte."
+        ]
+      },
+      "redFlags": {
+        "en": [
+          "Hip or groin pain that gets worse when you put weight on it after a fall or a sudden jump in activity: Stop exercising and see a doctor today or as soon as you can.",
+          "Hip or groin pain that builds with repeated running or other weight-bearing exercise: Stop exercising and see a doctor today or as soon as you can.",
+          "Sudden hip pain with no injury that makes it hard to stand on that leg: Stop exercising and get emergency care right away.",
+          "Deep pain that does not let up, maybe worse at night, especially with past cancer or unexplained weight loss: Stop exercising and see a doctor today or as soon as you can.",
+          "Pain when walking if you use steroids, drink heavily, smoke, or have lupus, sickle cell disease or HIV: Stop this exercise and see a doctor before continuing.",
+          "Heat, redness or swelling in several places, morning stiffness lasting over an hour, or the same joint signs on both sides of your body: Stop this exercise and see a doctor before continuing.",
+          "Pain spreading below the knee, or hip pain together with low back pain: Stop this exercise and see a doctor before continuing.",
+          "Groin pain with morning stiffness, lost hip motion, locking, giving way, or difficulty putting on shoes and socks: Stop this exercise and see a doctor before continuing.",
+          "Surgery to repair a hip tendon in the past 16 weeks: Do not use this routine. Follow what your surgical team told you.",
+          "A known tear of a hip tendon on a scan: Stop this exercise and see a doctor before continuing."
+        ],
+        "es": [
+          "Dolor de cadera o ingle que empeora al apoyar peso después de una caída o de un aumento repentino de actividad: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
+          "Dolor de cadera o ingle que aumenta al correr repetidamente o con otro ejercicio de carga: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
+          "Dolor repentino de cadera sin lesión que dificulta apoyarte en esa pierna: Deja de ejercitarte y busca atención de urgencias de inmediato.",
+          "Dolor profundo que no cede, quizá peor de noche, sobre todo con cáncer previo o pérdida de peso sin explicación: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
+          "Dolor al caminar si usas esteroides, bebes mucho alcohol, fumas o tienes lupus, anemia falciforme o VIH: Deja este ejercicio y ve al médico antes de continuar.",
+          "Calor, enrojecimiento o hinchazón en varias zonas, rigidez matutina de más de una hora, o los mismos signos en las articulaciones de ambos lados del cuerpo: Deja este ejercicio y ve al médico antes de continuar.",
+          "Dolor que se extiende por debajo de la rodilla, o dolor de cadera junto con dolor de espalda baja: Deja este ejercicio y ve al médico antes de continuar.",
+          "Dolor de ingle con rigidez matutina, pérdida de movimiento, bloqueo, sensación de que la cadera falla o dificultad para ponerte zapatos y calcetines: Deja este ejercicio y ve al médico antes de continuar.",
+          "Cirugía para reparar un tendón de la cadera en las últimas 16 semanas: No uses esta rutina. Sigue lo que te indicó tu equipo quirúrgico.",
+          "Un desgarro conocido de un tendón de la cadera visto en un estudio: Deja este ejercicio y ve al médico antes de continuar."
+        ]
+      },
+      "evidenceGrade": "low",
+      "sources": [
+        "https://doi.org/10.2519/jospt.2015.5829",
+        "https://doi.org/10.1186/s12891-016-1043-6",
+        "https://doi.org/10.1093/jhps/hnac050",
+        "https://doi.org/10.1093/rap/rkae022",
+        "https://doi.org/10.1136/bmjsem-2019-000558",
+        "https://doi.org/10.1123/jsr.2018-0340",
+        "https://doi.org/10.1249/MSS.0000000000003091",
+        "https://doi.org/10.1016/j.clinbiomech.2016.10.003"
+      ],
+      "provenance": {
+        "reviewerModelId": "claude-opus-5-5",
+        "reviewedAtEpochMillis": 1793491200000,
+        "reviewedContentId": "gluteal_tendinopathy",
+        "reviewedContentSha256": "577d438f978f510d8db58dc48a19f039009032ca7147bad592606cbd5730c548",
+        "sourceReferences": [
+          "https://doi.org/10.2519/jospt.2015.5829",
+          "https://doi.org/10.1186/s12891-016-1043-6",
+          "https://doi.org/10.1093/jhps/hnac050",
+          "https://doi.org/10.1093/rap/rkae022",
+          "https://doi.org/10.1136/bmjsem-2019-000558",
+          "https://doi.org/10.1123/jsr.2018-0340",
+          "https://doi.org/10.1249/MSS.0000000000003091",
+          "https://doi.org/10.1016/j.clinbiomech.2016.10.003"
+        ],
+        "decisionRationale": "Owner-authorized AI authoring for alpha use. Restrictions, red flags and doses follow the research consolidation for this condition; nothing here is a care plan.",
+        "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. Evidence is low: all but one restriction is expert opinion, and no individual exercise is shown to work. The doses come from one pilot and from a protocol that did not test these exercises alone. No study tested the three-exercise combination. The two isometric holds come from one 30-person pilot trial, and the side-lying hold showed no advantage over isotonic work there. For the standing hold the source only says the free leg moves in and out while holding a wall or chair; it does not state which leg stands, how far the leg moves, or the pelvis position for this exercise. The cue to keep the pelvis level comes from this condition's general restriction on dropping the pelvis, and the illustration draws a small movement. Setup wording in the cues is the project's own, written for this app, not from the cited sources.",
+        "schemaVersion": 1,
+        "policyVersion": 1
+      }
+    },
+    "lumbar_radiculopathy": {
+      "avoidDemands": [],
+      "modifyDemands": [
+        "TRUNK_FLEXION_UNDER_LOAD",
+        "HEAVY_EXTERNAL_LOAD",
+        "HAMSTRING_LENGTH_LOAD",
+        "LONG_LYING_SIT_UP",
+        "SUSTAINED_LOCOMOTION",
+        "PLYOMETRIC_IMPACT"
+      ],
+      "routine": [
+        {
+          "exerciseId": "bird-dog",
+          "targetSets": 2,
+          "targetReps": 10,
+          "targetDurationSeconds": null,
+          "holdSeconds": null,
+          "restSeconds": 0,
+          "requiresFloorTransition": true
+        },
+        {
+          "exerciseId": "glute-bridge",
+          "targetSets": 2,
+          "targetReps": 10,
+          "targetDurationSeconds": null,
+          "holdSeconds": null,
+          "restSeconds": 0,
+          "requiresFloorTransition": true
+        }
+      ],
+      "exerciseCues": {
+        "bird-dog": {
+          "en": "Do less if your leg pain increases.",
+          "es": "Haz menos si aumenta el dolor en la pierna."
+        },
+        "glute-bridge": {
+          "en": "Do less if your leg pain increases.",
+          "es": "Haz menos si aumenta el dolor en la pierna."
+        }
+      },
+      "notes": {
+        "en": [
+          "Stop or change any activity that makes your leg pain worse.",
+          "Staying in bed instead of your normal activities is not advised.",
+          "Nerve stretches or sliders are not part of this app and are not a first step when symptoms are new. Do not try them on your own if you have numbness in the groin, bladder or bowel changes, or a known nerve or spinal cord problem. Numbness in the groin and bladder or bowel changes are emergency signs: see the red flags.",
+          "There is no single direction of back movement that suits everyone. Let your leg symptoms guide you.",
+          "Traction machines are a clinical procedure, and guidelines do not support them for this. Gym hanging was not studied.",
+          "A leg press can still load your spine, so do not assume it spares your back.",
+          "Back belts and corsets are not recommended as a way to manage this."
+        ],
+        "es": [
+          "Detén o cambia cualquier actividad que empeore el dolor de tu pierna.",
+          "No se recomienda quedarte en cama en lugar de hacer tus actividades normales.",
+          "Los estiramientos o deslizamientos de nervio no forman parte de esta app y no son un primer paso cuando los síntomas son recientes. No los intentes por tu cuenta si tienes adormecimiento en la ingle, cambios al orinar o en tus evacuaciones, o un problema conocido de nervios o de médula. El adormecimiento en la ingle y los cambios al orinar o en tus evacuaciones son signos de emergencia: revisa las señales de alarma.",
+          "No hay una sola dirección de movimiento de espalda que le funcione a todos. Déjate guiar por los síntomas de tu pierna.",
+          "Las máquinas de tracción son un procedimiento clínico y las guías no las respaldan para esto. Colgarse en el gimnasio no se estudió.",
+          "La prensa de piernas aún puede cargar la columna, así que no des por hecho que protege tu espalda.",
+          "Las fajas y corsés no se recomiendan como forma de manejar esto."
+        ]
+      },
+      "redFlags": {
+        "en": [
+          "New or worsening numbness, tingling or any change in feeling around your genitals, bottom or inner thighs: Stop exercising and call emergency services. Do not drive yourself.",
+          "New or worsening trouble starting to pee or keeping the flow going, or not being able to fully empty your bladder: Stop exercising and call emergency services. Do not drive yourself.",
+          "New or worsening loss of control of your bladder or bowels, or not being able to feel when you need to pee or poop or while you pee: Stop exercising and call emergency services. Do not drive yourself.",
+          "New, severe or worsening pain, numbness or weakness in both legs: Stop exercising and call emergency services. Do not drive yourself.",
+          "A new change in how you pee: a different pattern, trouble getting started, going much more often, dribbling, or not being able to go: Stop exercising and call emergency services. Do not drive yourself.",
+          "A foot that drags or won't lift, significant or worsening leg weakness, or new difficulty walking: Stop exercising and see a doctor today or as soon as you can.",
+          "New sexual problems together with back or leg pain: Stop exercising and see a doctor today or as soon as you can.",
+          "New or changed symptoms that make you worry about cancer, infection, an injury or inflammation: Stop exercising and see a doctor today or as soon as you can.",
+          "Back or leg pain that keeps getting worse over weeks of training, especially with numbness or weakness: Stop exercising and see a doctor today or as soon as you can.",
+          "Severe leg pain that limits your life and has not improved: Stop this exercise and see a doctor before continuing."
+        ],
+        "es": [
+          "Adormecimiento, hormigueo o cualquier cambio de sensibilidad, nuevo o que empeora, alrededor del ano o los genitales, o en la parte interna de los muslos: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
+          "Dificultad nueva o que empeora para empezar a orinar o mantener el chorro, o no poder vaciar por completo la vejiga: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
+          "Pérdida nueva o que empeora del control de la vejiga o de las evacuaciones, o no sentir cuándo necesitas orinar o evacuar, o mientras orinas: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
+          "Dolor, adormecimiento o debilidad, nuevos, intensos o que empeoran, en las dos piernas: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
+          "Un cambio nuevo al orinar: un patrón distinto, dificultad para empezar, ir mucho más seguido, goteo o no poder orinar: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
+          "Un pie que se arrastra o no se levanta, debilidad en la pierna importante o que empeora, o dificultad nueva para caminar: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
+          "Problemas sexuales nuevos junto con dolor de espalda o pierna: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
+          "Síntomas nuevos o distintos que te hagan pensar en cáncer, infección, lesión o inflamación: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
+          "Dolor de espalda o pierna que sigue empeorando tras semanas de entrenar, sobre todo con adormecimiento o debilidad: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
+          "Dolor fuerte en la pierna que limita tu vida y no ha mejorado: Deja este ejercicio y ve al médico antes de continuar."
+        ]
+      },
+      "evidenceGrade": "low",
+      "sources": [
+        "https://doi.org/10.1097/BRS.0b013e31821ace7f",
+        "https://doi.org/10.7326/M20-4187",
+        "https://doi.org/10.1002/14651858.CD007612.pub2",
+        "https://doi.org/10.2519/jospt.2021.0304",
+        "https://doi.org/10.3390/life13122255",
+        "https://doi.org/10.1097/00007632-199904150-00005",
+        "https://doi.org/10.1097/BRS.0b013e31815b64f5",
+        "https://doi.org/10.1519/JSC.0b013e3181e73f87",
+        "https://doi.org/10.1016/j.ultrasmedbio.2021.05.018",
+        "https://doi.org/10.1016/0268-0033%2891%2990006-C",
+        "https://doi.org/10.23736/S1973-9087.24.08541-1",
+        "https://doi.org/10.1002/14651858.CD003010.pub5"
+      ],
+      "provenance": {
+        "reviewerModelId": "claude-opus-5-5",
+        "reviewedAtEpochMillis": 1793491200000,
+        "reviewedContentId": "lumbar_radiculopathy",
+        "reviewedContentSha256": "84f72858aa5d325052f9b4fca33bb15181ea431b9f7013d0e6b0c0956856b1d5",
+        "sourceReferences": [
+          "https://doi.org/10.1097/BRS.0b013e31821ace7f",
+          "https://doi.org/10.7326/M20-4187",
+          "https://doi.org/10.1002/14651858.CD007612.pub2",
+          "https://doi.org/10.2519/jospt.2021.0304",
+          "https://doi.org/10.3390/life13122255",
+          "https://doi.org/10.1097/00007632-199904150-00005",
+          "https://doi.org/10.1097/BRS.0b013e31815b64f5",
+          "https://doi.org/10.1519/JSC.0b013e3181e73f87",
+          "https://doi.org/10.1016/j.ultrasmedbio.2021.05.018",
+          "https://doi.org/10.1016/0268-0033%2891%2990006-C",
+          "https://doi.org/10.23736/S1973-9087.24.08541-1",
+          "https://doi.org/10.1002/14651858.CD003010.pub5"
+        ],
+        "decisionRationale": "Owner-authorized AI authoring for alpha use. Restrictions, red flags and doses follow the research consolidation for this condition; nothing here is a care plan.",
+        "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. Evidence is low and conflicting, and restrictions on gym lifts are biomechanical inference: no study tested them in people with symptoms. The routine items were given to all trial arms, so their own effect was not tested. Absence of a restriction does not mean an exercise is cleared.",
+        "schemaVersion": 1,
+        "policyVersion": 1
+      }
+    },
+    "nonspecific_low_back_pain": {
+      "avoidDemands": [],
+      "modifyDemands": [
+        "TRUNK_FLEXION_UNDER_LOAD",
+        "HEAVY_EXTERNAL_LOAD",
+        "END_RANGE_SPINE_POSITION"
+      ],
+      "routine": [
+        {
+          "exerciseId": "bird-dog",
+          "targetSets": 2,
+          "targetReps": 15,
+          "targetDurationSeconds": null,
+          "holdSeconds": null,
+          "restSeconds": 0,
+          "requiresFloorTransition": true
+        },
+        {
+          "exerciseId": "dead-bug",
+          "targetSets": 2,
+          "targetReps": 15,
+          "targetDurationSeconds": null,
+          "holdSeconds": null,
+          "restSeconds": 0,
+          "requiresFloorTransition": true
+        },
+        {
+          "exerciseId": "glute-bridge",
+          "targetSets": 3,
+          "targetReps": 10,
+          "targetDurationSeconds": null,
+          "holdSeconds": null,
+          "restSeconds": 0,
+          "requiresFloorTransition": true
+        },
+        {
+          "exerciseId": "hamstring-stretch",
+          "targetSets": 5,
+          "targetReps": null,
+          "targetDurationSeconds": 30,
+          "holdSeconds": null,
+          "restSeconds": 0,
+          "requiresFloorTransition": false
+        }
+      ],
+      "exerciseCues": {
+        "hamstring-stretch": {
+          "en": "Hold a gentle stretch. Stop if this brings on or worsens your symptoms.",
+          "es": "Mantén un estiramiento suave. Detente si esto te provoca o empeora los síntomas."
+        }
+      },
+      "notes": {
+        "en": [
+          "Staying in bed or stopping your usual activity for long is not advised.",
+          "If you have osteoporosis, take steroids long term or have had a spinal fracture, ask a doctor before lifting with a rounded back.",
+          "Stretching alone should not be your whole program. It sits alongside other exercise here.",
+          "If exercise keeps making your pain worse, ease back, and do not add load while your pain is rising.",
+          "In one clinical Pilates trial, higher intensity added no benefit and more side effects, so low intensity is the one to pick when you have the choice.",
+          "You do not need to keep your abdominals tensed all the time during Pilates.",
+          "Back belts and corsets are not recommended as a way to manage this."
+        ],
+        "es": [
+          "No se recomienda quedarte en cama ni dejar tu actividad habitual por mucho tiempo.",
+          "Si tienes osteoporosis, tomas esteroides por mucho tiempo o has tenido una fractura de columna, pregúntale a un médico antes de cargar con la espalda redondeada.",
+          "Estirar no debería ser todo tu programa. Aquí acompaña a otros ejercicios.",
+          "Si el ejercicio sigue empeorando tu dolor, baja la intensidad y no agregues carga mientras el dolor va en aumento.",
+          "En un estudio clínico de Pilates, la intensidad más alta no agregó beneficio y sí más efectos secundarios, así que la intensidad baja es la que conviene elegir cuando puedes.",
+          "No necesitas mantener el abdomen apretado todo el tiempo durante el Pilates.",
+          "Las fajas y corsés no se recomiendan como forma de manejar esto."
+        ]
+      },
+      "redFlags": {
+        "en": [
+          "New or worsening numbness, tingling or any change in feeling around your genitals, bottom or inner thighs: Stop exercising and call emergency services. Do not drive yourself.",
+          "New or worsening trouble starting to pee or keeping the flow going, or not being able to fully empty your bladder: Stop exercising and call emergency services. Do not drive yourself.",
+          "New or worsening loss of control of your bladder or bowels, or not being able to feel when you need to pee or poop or while you pee: Stop exercising and call emergency services. Do not drive yourself.",
+          "New, severe or worsening pain, numbness or weakness in both legs: Stop exercising and call emergency services. Do not drive yourself.",
+          "Leg weakness that is getting worse quickly: Stop exercising and call emergency services. Do not drive yourself.",
+          "New or worsening changes in sexual feeling or function together with back or leg pain: Stop exercising and call emergency services. Do not drive yourself.",
+          "Back pain after a hard injury, or severe pain in one spot if you have osteoporosis, long-term steroid use or a past spinal fracture: Stop exercising and see a doctor today or as soon as you can.",
+          "Back pain with past cancer, unexplained weight loss or pain at night: Stop exercising and see a doctor today or as soon as you can.",
+          "Back pain with fever, a weak immune system, injected drug use, a recent infection or a recent spinal procedure, even without a fever: Stop exercising and see a doctor today or as soon as you can."
+        ],
+        "es": [
+          "Adormecimiento, hormigueo o cualquier cambio de sensibilidad, nuevo o que empeora, alrededor del ano o los genitales, o en la parte interna de los muslos: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
+          "Dificultad nueva o que empeora para empezar a orinar o mantener el chorro, o no poder vaciar por completo la vejiga: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
+          "Pérdida nueva o que empeora del control de la vejiga o de las evacuaciones, o no sentir cuándo necesitas orinar o evacuar, o mientras orinas: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
+          "Dolor, adormecimiento o debilidad, nuevos, intensos o que empeoran, en las dos piernas: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
+          "Debilidad en la pierna que empeora rápido: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
+          "Cambios nuevos o que empeoran en la sensibilidad o la función sexual junto con dolor de espalda o pierna: Deja de ejercitarte y llama a los servicios de emergencia. No manejes tú.",
+          "Dolor de espalda después de un golpe fuerte, o dolor intenso en un punto si tienes osteoporosis, uso prolongado de esteroides o una fractura previa de columna: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
+          "Dolor de espalda con cáncer previo, pérdida de peso sin explicación o dolor de noche: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
+          "Dolor de espalda con fiebre, defensas bajas, uso de drogas inyectadas, infección reciente o un procedimiento reciente en la columna, aun sin fiebre: Deja de ejercitarte y ve al médico hoy o lo antes posible."
+        ]
+      },
+      "evidenceGrade": "moderate",
+      "sources": [
+        "https://doi.org/10.1002/14651858.CD009790.pub2",
+        "https://doi.org/10.3390/healthcare14162550",
+        "https://doi.org/10.7759/cureus.114958",
+        "https://doi.org/10.1177/20503121241252251",
+        "https://doi.org/10.2519/jospt.2020.9218",
+        "https://doi.org/10.2340/16501977-2091",
+        "https://doi.org/10.1136/bjsports-2019-100886",
+        "https://doi.org/10.1038/s41413-026-00572-y",
+        "https://doi.org/10.1016/j.jphys.2025.03.002",
+        "https://doi.org/10.1016/j.jphys.2026.03.007",
+        "https://doi.org/10.1001/jamainternmed.2015.7431",
+        "https://doi.org/10.1002/14651858.CD007612.pub2"
+      ],
+      "provenance": {
+        "reviewerModelId": "claude-opus-5-5",
+        "reviewedAtEpochMillis": 1793491200000,
+        "reviewedContentId": "nonspecific_low_back_pain",
+        "reviewedContentSha256": "8f33978e441cfd49e2c90f32f9ff1b879f3a2b5a47c728ef9bcf443bb826c558",
+        "sourceReferences": [
+          "https://doi.org/10.1002/14651858.CD009790.pub2",
+          "https://doi.org/10.3390/healthcare14162550",
+          "https://doi.org/10.7759/cureus.114958",
+          "https://doi.org/10.1177/20503121241252251",
+          "https://doi.org/10.2519/jospt.2020.9218",
+          "https://doi.org/10.2340/16501977-2091",
+          "https://doi.org/10.1136/bjsports-2019-100886",
+          "https://doi.org/10.1038/s41413-026-00572-y",
+          "https://doi.org/10.1016/j.jphys.2025.03.002",
+          "https://doi.org/10.1016/j.jphys.2026.03.007",
+          "https://doi.org/10.1001/jamainternmed.2015.7431",
+          "https://doi.org/10.1002/14651858.CD007612.pub2"
+        ],
+        "decisionRationale": "Owner-authorized AI authoring for alpha use. Restrictions, red flags and doses follow the research consolidation for this condition; nothing here is a care plan.",
+        "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. The moderate grade is narrow: it covers only short-term pain against usual care, placebo or doing nothing in chronic pain, and benefits fade. Evidence for specific exercises is weak. The doses mix three separate programs, so no trial tested this combination, and there is no established dose. The knee-supported plank is left out because the catalog plank does not match its dose.",
+        "schemaVersion": 1,
+        "policyVersion": 1
+      }
+    },
+    "rotator_cuff_related_shoulder_pain": {
+      "avoidDemands": [],
+      "modifyDemands": [
+        "HEAVY_EXTERNAL_LOAD"
+      ],
+      "routine": [
+        {
+          "exerciseId": "cross-body-shoulder-stretch",
+          "targetSets": 3,
+          "targetReps": null,
+          "targetDurationSeconds": 30,
+          "holdSeconds": null,
+          "restSeconds": 0,
+          "requiresFloorTransition": false
+        }
+      ],
+      "exerciseCues": {
+        "cross-body-shoulder-stretch": {
+          "en": "Hold a gentle stretch. Stop if this brings on or worsens your symptoms.",
+          "es": "Mantén un estiramiento suave. Detente si esto te provoca o empeora los síntomas."
+        },
+        "dumbbell-lateral-raise": {
+          "en": "Stop at about shoulder height, and keep your thumb from pointing down.",
+          "es": "Detente a la altura del hombro aproximadamente y evita que el pulgar apunte hacia abajo."
+        },
+        "cable-lateral-raise": {
+          "en": "Stop at about shoulder height, and keep your thumb from pointing down.",
+          "es": "Detente a la altura del hombro aproximadamente y evita que el pulgar apunte hacia abajo."
+        },
+        "machine-lateral-raise": {
+          "en": "Stop at about shoulder height, and keep your thumb from pointing down.",
+          "es": "Detente a la altura del hombro aproximadamente y evita que el pulgar apunte hacia abajo."
+        },
+        "upright-row": {
+          "en": "Stop with your elbows at about shoulder height.",
+          "es": "Detente con los codos a la altura del hombro aproximadamente."
+        },
+        "front-raise": {
+          "en": "Keep your thumb from pointing down.",
+          "es": "Evita que el pulgar apunte hacia abajo."
+        },
+        "cable-front-raise": {
+          "en": "Keep your thumb from pointing down.",
+          "es": "Evita que el pulgar apunte hacia abajo."
+        },
+        "plate-front-raise": {
+          "en": "Keep your thumb from pointing down.",
+          "es": "Evita que el pulgar apunte hacia abajo."
+        },
+        "overhead-press": {
+          "en": "Keep the press in front of your head, not behind your neck, and stop short of the full high-five position at the top if it bothers you.",
+          "es": "Mantén el press frente a la cabeza, no detrás del cuello, y no llegues hasta la posición completa de chocar las cinco si te molesta."
+        },
+        "push-press": {
+          "en": "Keep the press in front of your head, not behind your neck, and stop short of the full high-five position at the top if it bothers you.",
+          "es": "Mantén el press frente a la cabeza, no detrás del cuello, y no llegues hasta la posición completa de chocar las cinco si te molesta."
+        },
+        "arnold-press": {
+          "en": "Keep the press in front of your head, not behind your neck, and stop short of the full high-five position at the top if it bothers you.",
+          "es": "Mantén el press frente a la cabeza, no detrás del cuello, y no llegues hasta la posición completa de chocar las cinco si te molesta."
+        },
+        "dumbbell-shoulder-press": {
+          "en": "Keep the press in front of your head, not behind your neck, and stop short of the full high-five position at the top if it bothers you.",
+          "es": "Mantén el press frente a la cabeza, no detrás del cuello, y no llegues hasta la posición completa de chocar las cinco si te molesta."
+        },
+        "standing-dumbbell-press": {
+          "en": "Keep the press in front of your head, not behind your neck, and stop short of the full high-five position at the top if it bothers you.",
+          "es": "Mantén el press frente a la cabeza, no detrás del cuello, y no llegues hasta la posición completa de chocar las cinco si te molesta."
+        },
+        "machine-shoulder-press": {
+          "en": "Keep the press in front of your head, not behind your neck, and stop short of the full high-five position at the top if it bothers you.",
+          "es": "Mantén el press frente a la cabeza, no detrás del cuello, y no llegues hasta la posición completa de chocar las cinco si te molesta."
+        },
+        "lat-pulldown": {
+          "en": "Pull to your chest, not behind your neck.",
+          "es": "Jala hacia el pecho, no detrás del cuello."
+        },
+        "wide-grip-lat-pulldown": {
+          "en": "Pull to your chest, not behind your neck.",
+          "es": "Jala hacia el pecho, no detrás del cuello."
+        },
+        "close-grip-lat-pulldown": {
+          "en": "Pull to your chest, not behind your neck.",
+          "es": "Jala hacia el pecho, no detrás del cuello."
+        },
+        "barbell-bench-press": {
+          "en": "A narrow grip or elbows at about 45 degrees can bother the shoulder. Widen your grip slightly or change your elbow angle if it does.",
+          "es": "Un agarre cerrado o los codos a unos 45 grados pueden molestar el hombro. Abre un poco el agarre o cambia el ángulo de los codos si es tu caso."
+        },
+        "close-grip-bench-press": {
+          "en": "A narrow grip or elbows at about 45 degrees can bother the shoulder. Widen your grip slightly or change your elbow angle if it does.",
+          "es": "Un agarre cerrado o los codos a unos 45 grados pueden molestar el hombro. Abre un poco el agarre o cambia el ángulo de los codos si es tu caso."
+        },
+        "smith-machine-bench-press": {
+          "en": "A narrow grip or elbows at about 45 degrees can bother the shoulder. Widen your grip slightly or change your elbow angle if it does.",
+          "es": "Un agarre cerrado o los codos a unos 45 grados pueden molestar el hombro. Abre un poco el agarre o cambia el ángulo de los codos si es tu caso."
+        },
+        "incline-bench-press": {
+          "en": "A narrow grip or elbows at about 45 degrees can bother the shoulder. Widen your grip slightly or change your elbow angle if it does.",
+          "es": "Un agarre cerrado o los codos a unos 45 grados pueden molestar el hombro. Abre un poco el agarre o cambia el ángulo de los codos si es tu caso."
+        },
+        "decline-bench-press": {
+          "en": "A narrow grip or elbows at about 45 degrees can bother the shoulder. Widen your grip slightly or change your elbow angle if it does.",
+          "es": "Un agarre cerrado o los codos a unos 45 grados pueden molestar el hombro. Abre un poco el agarre o cambia el ángulo de los codos si es tu caso."
+        }
+      },
+      "notes": {
+        "en": [
+          "Keep pain at or below 5 out of 10 while you load the shoulder, and make sure it has settled by your next session.",
+          "More weight has not been shown to work better than less, so there is no need to rush it.",
+          "Ease off activities that reliably bring on your pain.",
+          "Overhead exercise is a question of what you tolerate, not a ban. Long work above shoulder height is worth limiting if it bothers you."
+        ],
+        "es": [
+          "Mantén el dolor en 5 de 10 o menos al cargar el hombro y asegúrate de que se haya calmado para tu siguiente sesión.",
+          "No se ha demostrado que más peso funcione mejor que menos, así que no hay prisa.",
+          "Baja la intensidad de las actividades que siempre te provocan dolor.",
+          "El ejercicio por encima de la cabeza depende de lo que toleres, no está prohibido. Conviene limitar el trabajo prolongado sobre el hombro si te molesta."
+        ]
+      },
+      "redFlags": {
+        "en": [
+          "A hot, swollen, very painful shoulder, especially with a fever: Stop exercising and get emergency care right away.",
+          "A shoulder that came out of place after an injury and has not gone back: Stop exercising and get emergency care right away.",
+          "You think you broke a bone after an injury: Stop exercising and get emergency care right away.",
+          "Sudden loss of strength or a sudden inability to lift your arm after an injury: Stop exercising and see a doctor today or as soon as you can.",
+          "A lump, unexplained weight loss or constant pain at night: Stop exercising and see a doctor today or as soon as you can.",
+          "Swollen, stiff joints in several places: Stop exercising and see a doctor today or as soon as you can.",
+          "Shoulder pain that may come from your neck, chest or belly, or with numbness or changes in your arm's circulation: Stop and get checked by a doctor. How urgently depends on your symptoms.",
+          "Shoulder pain in a child or teenager (this guidance is for adults): Stop exercising and see a doctor today or as soon as you can.",
+          "Severe or lasting pain that has not improved after about 12 weeks: See a doctor. It is not an emergency, but it should be checked."
+        ],
+        "es": [
+          "Un hombro caliente, hinchado y muy adolorido, sobre todo con fiebre: Deja de ejercitarte y busca atención de urgencias de inmediato.",
+          "Un hombro que se salió de lugar después de una lesión y no ha regresado: Deja de ejercitarte y busca atención de urgencias de inmediato.",
+          "Crees que te fracturaste un hueso después de una lesión: Deja de ejercitarte y busca atención de urgencias de inmediato.",
+          "Pérdida repentina de fuerza o no poder levantar el brazo de repente después de una lesión: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
+          "Una bola, pérdida de peso sin explicación o dolor constante de noche: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
+          "Articulaciones hinchadas y rígidas en varias zonas: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
+          "Dolor de hombro que puede venir del cuello, el pecho o el abdomen, o con adormecimiento o cambios en la circulación del brazo: Detente y ve al médico. La urgencia depende de tus síntomas.",
+          "Dolor de hombro en un niño o adolescente (esta guía es para adultos): Deja de ejercitarte y ve al médico hoy o lo antes posible.",
+          "Dolor fuerte o persistente que no ha mejorado en unas 12 semanas: Ve al médico. No es una emergencia, pero debe revisarlo un médico."
+        ]
+      },
+      "evidenceGrade": "low",
+      "sources": [
+        "https://doi.org/10.1136/bmj.e787",
+        "https://doi.org/10.1016/j.math.2016.03.009",
+        "https://doi.org/10.1016/j.jse.2015.08.046",
+        "https://doi.org/10.1519/JSC.0000000000000250",
+        "https://doi.org/10.3390/ijerph191912710",
+        "https://doi.org/10.3389/fphys.2024.1393235",
+        "https://doi.org/10.2519/jospt.2025.13182",
+        "https://doi.org/10.1177/2325967117723292"
+      ],
+      "provenance": {
+        "reviewerModelId": "claude-opus-5-5",
+        "reviewedAtEpochMillis": 1793491200000,
+        "reviewedContentId": "rotator_cuff_related_shoulder_pain",
+        "reviewedContentSha256": "49511d551472f66b8d9069e4ad117c65ef65fcade24ae5abad6c27ed85febb85",
+        "sourceReferences": [
+          "https://doi.org/10.1136/bmj.e787",
+          "https://doi.org/10.1016/j.math.2016.03.009",
+          "https://doi.org/10.1016/j.jse.2015.08.046",
+          "https://doi.org/10.1519/JSC.0000000000000250",
+          "https://doi.org/10.3390/ijerph191912710",
+          "https://doi.org/10.3389/fphys.2024.1393235",
+          "https://doi.org/10.2519/jospt.2025.13182",
+          "https://doi.org/10.1177/2325967117723292"
+        ],
+        "decisionRationale": "Owner-authorized AI authoring for alpha use. Restrictions, red flags and doses follow the research consolidation for this condition; nothing here is a care plan.",
+        "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. Evidence is low for specific exercises and the best parameters are unknown. Limits on raises, presses and pulldowns come from biomechanical or cross-sectional data, not outcome studies. The stretch came from a multi-exercise program, so its own effect was not tested. Lack of a restriction does not clear overhead work.",
+        "schemaVersion": 1,
+        "policyVersion": 1
+      }
+    },
+    "lateral_elbow_tendinopathy": {
+      "avoidDemands": [],
+      "modifyDemands": [
+        "WRIST_EXTENSOR_WORK",
+        "FOREARM_TWIST_OR_PRONATED_LIFT",
+        "HEAVY_EXTERNAL_LOAD",
+        "HAND_GRIP_LOAD"
+      ],
+      "routine": [
+        {
+          "exerciseId": "wrist-extensor-stretch",
+          "targetSets": 3,
+          "targetReps": null,
+          "targetDurationSeconds": 30,
+          "holdSeconds": null,
+          "restSeconds": 0,
+          "requiresFloorTransition": false
+        }
+      ],
+      "exerciseCues": {
+        "wrist-extensor-stretch": {
+          "en": "Hold one arm out with the palm down, then use the other hand to gently bend the wrist down and hold it. Stretch gently, only to a pull. Stop if your elbow symptoms increase.",
+          "es": "Extiende un brazo con la palma hacia abajo y, con la otra mano, flexiona suavemente la muñeca hacia abajo y sostenla. Estira con suavidad, solo hasta sentir tensión. Detente si aumentan los síntomas del codo."
+        }
+      },
+      "notes": {
+        "en": [
+          "Keep wrist holds and gripping below the point where they hurt. Do not count on them for quick relief.",
+          "Ease off fast, forceful wrist movements with your hand bent far to either side."
+        ],
+        "es": [
+          "Haz los ejercicios sostenidos de muñeca y el agarre sin llegar al punto de dolor. No cuentes con ellos para un alivio rápido.",
+          "Modera los movimientos rápidos y fuertes de muñeca con la mano muy inclinada hacia un lado."
+        ]
+      },
+      "redFlags": {
+        "en": [
+          "An unusual lump or swelling around the elbow: Stop exercising and see a doctor today or as soon as you can.",
+          "Pain that does not let up or keeps growing: Stop exercising and see a doctor today or as soon as you can.",
+          "Pain at night: Stop exercising and see a doctor today or as soon as you can.",
+          "Feeling unwell overall or losing weight along with elbow symptoms: Stop exercising and see a doctor today or as soon as you can.",
+          "Growing weakness when straightening your fingers or wrist: Stop exercising and see a doctor today or as soon as you can.",
+          "Symptoms that may come from your neck or a pinched nerve, or that do not fit the usual pattern: Stop this exercise and see a doctor before continuing.",
+          "No improvement after about 12 to 24 weeks: See a doctor. It is not an emergency, but it should be checked."
+        ],
+        "es": [
+          "Una bola o hinchazón inusual alrededor del codo: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
+          "Dolor que no cede o sigue aumentando: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
+          "Dolor de noche: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
+          "Sentirte mal en general o perder peso junto con síntomas en el codo: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
+          "Debilidad creciente al estirar los dedos o la muñeca: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
+          "Síntomas que pueden venir del cuello o de un nervio pinzado, o que no siguen el patrón habitual: Deja este ejercicio y ve al médico antes de continuar.",
+          "Sin mejoría después de unas 12 a 24 semanas: Ve al médico. No es una emergencia, pero debe revisarlo un médico."
+        ]
+      },
+      "evidenceGrade": "low",
+      "sources": [
+        "https://doi.org/10.2519/jospt.2022.0302",
+        "https://doi.org/10.1136/bmjopen-2021-053841",
+        "https://doi.org/10.1097/AJP.0000000000000365",
+        "https://doi.org/10.1016/j.msksp.2025.103421",
+        "https://doi.org/10.1136/bmjopen-2024-085916",
+        "https://doi.org/10.1093/rheumatology/kep013",
+        "https://doi.org/10.1371/journal.pone.0155379",
+        "https://doi.org/10.1080/0014013031000107595"
+      ],
+      "provenance": {
+        "reviewerModelId": "claude-opus-5-5",
+        "reviewedAtEpochMillis": 1793491200000,
+        "reviewedContentId": "lateral_elbow_tendinopathy",
+        "reviewedContentSha256": "206b14d82f02f9a57487d4af6e79b40d4e2b1eb28058ffee8e5239a8cce05e65",
+        "sourceReferences": [
+          "https://doi.org/10.2519/jospt.2022.0302",
+          "https://doi.org/10.1136/bmjopen-2021-053841",
+          "https://doi.org/10.1097/AJP.0000000000000365",
+          "https://doi.org/10.1016/j.msksp.2025.103421",
+          "https://doi.org/10.1136/bmjopen-2024-085916",
+          "https://doi.org/10.1093/rheumatology/kep013",
+          "https://doi.org/10.1371/journal.pone.0155379",
+          "https://doi.org/10.1080/0014013031000107595"
+        ],
+        "decisionRationale": "Owner-authorized AI authoring for alpha use. Restrictions, red flags and doses follow the research consolidation for this condition; nothing here is a care plan.",
+        "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. Evidence is low and exercise benefits may not be clinically worthwhile. No load or hold time is established. The wrist extensor stretch dose is a consensus choice made for practicality. The source describes three 30 s holds before and three after loading exercises; this routine has no loading, so one block of 3 x 30 s is authored here, which the source does not state. Setup wording in the cues is the project's own, written for this app, not from the cited sources.",
+        "schemaVersion": 1,
+        "policyVersion": 1
+      }
+    },
+    "carpal_tunnel_syndrome": {
+      "avoidDemands": [],
+      "modifyDemands": [
+        "WRIST_END_RANGE_LOAD",
+        "HAND_GRIP_LOAD",
+        "NERVE_TENSIONING"
+      ],
+      "routine": [
+        {
+          "exerciseId": "tendon-gliding-sequence",
+          "targetSets": 3,
+          "targetReps": 5,
+          "targetDurationSeconds": null,
+          "holdSeconds": 7,
+          "restSeconds": 0,
+          "requiresFloorTransition": false
+        }
+      ],
+      "exerciseCues": {
+        "tendon-gliding-sequence": {
+          "en": "Move your fingers slowly from straight to a fist. Keep it gentle. Stop if numbness or tingling increases.",
+          "es": "Mueve los dedos despacio de rectos a puño. Hazlo con suavidad. Detente si aumentan el adormecimiento o el hormigueo."
+        }
+      },
+      "notes": {
+        "en": [
+          "After carpal tunnel surgery, follow your surgeon's timing for repeated loading, lifting over 10 kg and vibrating tools."
+        ],
+        "es": [
+          "Después de una cirugía de túnel carpiano, sigue los tiempos de tu cirujano para la carga repetida, levantar más de 10 kg y usar herramientas que vibran."
+        ]
+      },
+      "redFlags": {
+        "en": [
+          "Sudden, fast-worsening pain and altered feeling in your thumb-side fingers, especially after a wrist fracture, bleeding or a high-pressure injury: Stop exercising and get emergency care right away.",
+          "Weak hand or thumb, or the muscle at the base of your thumb shrinking: Stop exercising and see a doctor today or as soon as you can.",
+          "Constant numbness or feeling that keeps fading: Stop exercising and see a doctor today or as soon as you can.",
+          "Hand symptoms in several areas, or with neck pain or changes in how you walk: Stop exercising and see a doctor today or as soon as you can.",
+          "Tingling or numbness that began after an injury, or a possible fracture or tumor: Stop exercising and see a doctor today or as soon as you can.",
+          "Hand symptoms along with active gout or rheumatoid arthritis, or poor circulation in the arm: Stop exercising and see a doctor today or as soon as you can.",
+          "Symptoms that get worse, wake you most nights or do not improve after about 12 weeks: Stop this exercise and see a doctor before continuing."
+        ],
+        "es": [
+          "Dolor repentino que empeora rápido y sensibilidad alterada en los dedos del lado del pulgar, sobre todo tras una fractura de muñeca, un sangrado o una lesión por alta presión: Deja de ejercitarte y busca atención de urgencias de inmediato.",
+          "Mano o pulgar débiles, o que el músculo de la base del pulgar se reduzca: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
+          "Adormecimiento constante o sensibilidad que sigue disminuyendo: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
+          "Síntomas en varias zonas de la mano, o con dolor de cuello o cambios al caminar: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
+          "Hormigueo o adormecimiento que empezó después de una lesión, o una posible fractura o tumor: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
+          "Síntomas en la mano junto con gota activa o artritis reumatoide, o mala circulación en el brazo: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
+          "Síntomas que empeoran, te despiertan casi todas las noches o no mejoran en unas 12 semanas: Deja este ejercicio y ve al médico antes de continuar."
+        ]
+      },
+      "evidenceGrade": "very_low",
+      "sources": [
+        "https://doi.org/10.1002/14651858.CD009899",
+        "https://doi.org/10.1518/001872007779598127",
+        "https://doi.org/10.1186/s12891-015-0685-0",
+        "https://doi.org/10.1002/hsr2.888",
+        "https://doi.org/10.1002/jor.1100150315",
+        "https://doi.org/10.1016/j.math.2006.12.008",
+        "https://doi.org/10.1155/2022/1975803",
+        "https://doi.org/10.1177/17589983221113870"
+      ],
+      "provenance": {
+        "reviewerModelId": "claude-opus-5-5",
+        "reviewedAtEpochMillis": 1793491200000,
+        "reviewedContentId": "carpal_tunnel_syndrome",
+        "reviewedContentSha256": "11ee8f72c8bd0ab4045d57987ce5ecf234301e420a48317dba10a0b15a77b370",
+        "sourceReferences": [
+          "https://doi.org/10.1002/14651858.CD009899",
+          "https://doi.org/10.1518/001872007779598127",
+          "https://doi.org/10.1186/s12891-015-0685-0",
+          "https://doi.org/10.1002/hsr2.888",
+          "https://doi.org/10.1002/jor.1100150315",
+          "https://doi.org/10.1016/j.math.2006.12.008",
+          "https://doi.org/10.1155/2022/1975803",
+          "https://doi.org/10.1177/17589983221113870"
+        ],
+        "decisionRationale": "Owner-authorized AI authoring for alpha use. Restrictions, red flags and doses follow the research consolidation for this condition; nothing here is a care plan.",
+        "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. Evidence is very low: restrictions come from healthy-volunteer, cadaver or workplace data, and reviews disagree about exercise. The tendon gliding dose comes from a study with no control group, given alongside manual therapy, so it is not a stand-alone dose. Setup wording in the cues is the project's own, written for this app, not from the cited sources.",
+        "schemaVersion": 1,
+        "policyVersion": 1
+      }
+    },
+    "patellofemoral_pain": {
+      "avoidDemands": [],
+      "modifyDemands": [
+        "DEEP_KNEE_FLEXION_LOAD",
+        "END_RANGE_KNEE_EXTENSION_LOAD",
+        "SUSTAINED_LOCOMOTION",
+        "PLYOMETRIC_IMPACT",
+        "PROLONGED_SITTING"
+      ],
+      "routine": [
+        {
+          "exerciseId": "side-lying-hip-abduction",
+          "targetSets": 3,
+          "targetReps": 10,
+          "targetDurationSeconds": null,
+          "holdSeconds": null,
+          "restSeconds": 30,
+          "requiresFloorTransition": true
+        },
+        {
+          "exerciseId": "bodyweight-squat",
+          "targetSets": 3,
+          "targetReps": 10,
+          "targetDurationSeconds": null,
+          "holdSeconds": 2,
+          "restSeconds": 120,
+          "requiresFloorTransition": false
+        },
+        {
+          "exerciseId": "straight-leg-raise",
+          "targetSets": 3,
+          "targetReps": 10,
+          "targetDurationSeconds": null,
+          "holdSeconds": null,
+          "restSeconds": 0,
+          "requiresFloorTransition": true
+        }
+      ],
+      "exerciseCues": {
+        "bodyweight-squat": {
+          "en": "Lower only to about 45 degrees of knee bend, and hold there for 2 seconds.",
+          "es": "Baja solo hasta unos 45 grados de flexión de rodilla y sostén ahí 2 segundos."
+        },
+        "straight-leg-raise": {
+          "en": "Lie on your back with one knee bent and that foot flat, then lift the other leg, keeping it straight, and lower it slowly. Stop if your knee pain increases.",
+          "es": "Acuéstate boca arriba con una rodilla doblada y ese pie apoyado, levanta la otra pierna sin doblarla y bájala despacio. Detente si aumenta el dolor de rodilla."
+        }
+      },
+      "notes": {
+        "en": [
+          "Add load to squats or carried walks gradually, not in big jumps.",
+          "Stay at no more than mild knee pain while you exercise. No exact limit has been validated."
+        ],
+        "es": [
+          "Agrega peso a las sentadillas o a las caminatas con carga poco a poco, no con saltos grandes.",
+          "Durante el ejercicio, no pases de un dolor leve de rodilla. No se ha validado un límite exacto."
+        ]
+      },
+      "redFlags": {
+        "en": [
+          "Large knee swelling, redness or warmth: Stop exercising and see a doctor today or as soon as you can.",
+          "A knee that locks or feels like something is caught inside: Stop exercising and see a doctor today or as soon as you can.",
+          "Kneecap pain after an injury: Stop exercising and see a doctor today or as soon as you can.",
+          "A kneecap that slips or feels like it could slip out: Stop exercising and see a doctor today or as soon as you can.",
+          "Pain only below the kneecap or on the bump of the shin, especially in children and teenagers: Stop this exercise and see a doctor before continuing.",
+          "Knee pain in a teenager, because the problem may be in the hip: Stop exercising and see a doctor today or as soon as you can.",
+          "Swelling or much more pain caused by an exercise: Stop this exercise and see a doctor before continuing.",
+          "Symptoms that do not fit this pattern or do not settle, or any worry about infection or a growth: Stop this exercise and see a doctor before continuing.",
+          "No improvement after several weeks of steady exercise: Stop this exercise and see a doctor before continuing."
+        ],
+        "es": [
+          "Hinchazón grande, enrojecimiento o calor en la rodilla: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
+          "Una rodilla que se traba o que se siente como si algo estuviera atorado dentro: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
+          "Dolor en la rótula después de una lesión: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
+          "Una rótula que se desliza o que se siente como si fuera a salirse: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
+          "Dolor solo debajo de la rótula o en el bulto de la espinilla, sobre todo en niños y adolescentes: Deja este ejercicio y ve al médico antes de continuar.",
+          "Dolor de rodilla en un adolescente, porque el problema puede estar en la cadera: Deja de ejercitarte y ve al médico hoy o lo antes posible.",
+          "Hinchazón o mucho más dolor causados por un ejercicio: Deja este ejercicio y ve al médico antes de continuar.",
+          "Síntomas que no siguen este patrón o no se calman, o cualquier sospecha de infección o tumor: Deja este ejercicio y ve al médico antes de continuar.",
+          "Sin mejoría después de varias semanas de ejercicio constante: Deja este ejercicio y ve al médico antes de continuar."
+        ]
+      },
+      "evidenceGrade": "low",
+      "sources": [
+        "https://doi.org/10.2519/jospt.2014.4936",
+        "https://doi.org/10.4085/1062-6050-231-15",
+        "https://doi.org/10.1186/s13018-024-04688-x",
+        "https://doi.org/10.12659/MSM.953994",
+        "https://doi.org/10.1249/MSS.0b013e31818e7ead",
+        "https://doi.org/10.2519/jospt.2019.0302",
+        "https://doi.org/10.1016/j.jsams.2022.01.004",
+        "https://doi.org/10.1136/bjsports-2018-099397",
+        "https://doi.org/10.1080/17461391.2020.1806935"
+      ],
+      "provenance": {
+        "reviewerModelId": "claude-opus-5-5",
+        "reviewedAtEpochMillis": 1793491200000,
+        "reviewedContentId": "patellofemoral_pain",
+        "reviewedContentSha256": "e277eb6e0906fb2a17921aa03f4f7cc09dfc07cb44928596ec2f30e59b491f60",
+        "sourceReferences": [
+          "https://doi.org/10.2519/jospt.2014.4936",
+          "https://doi.org/10.4085/1062-6050-231-15",
+          "https://doi.org/10.1186/s13018-024-04688-x",
+          "https://doi.org/10.12659/MSM.953994",
+          "https://doi.org/10.1249/MSS.0b013e31818e7ead",
+          "https://doi.org/10.2519/jospt.2019.0302",
+          "https://doi.org/10.1016/j.jsams.2022.01.004",
+          "https://doi.org/10.1136/bjsports-2018-099397",
+          "https://doi.org/10.1080/17461391.2020.1806935"
+        ],
+        "decisionRationale": "Owner-authorized AI authoring for alpha use. Restrictions, red flags and doses follow the research consolidation for this condition; nothing here is a care plan.",
+        "limitations": "AI authored and not reviewed by a clinician; a clinician must review it before public release. Red flags were rewritten and merged from the research into plain language. Evidence is low: most restrictions rest on biomechanical data and no validated pain limit exists. The partial squat depth was not precisely monitored in its trial. The straight leg raise dose comes from one trial and describes common practice, not efficacy. Quadriceps setting is out because it has no hold time. Setup wording in the cues is the project's own, written for this app, not from the cited sources.",
+        "schemaVersion": 1,
+        "policyVersion": 1
+      }
+    }
+  },
+  "jointLabelDemands": {
+    "SHOULDER_SENSITIVE": [
+      "HEAVY_EXTERNAL_LOAD"
+    ],
+    "ELBOW_SENSITIVE": [
+      "HEAVY_EXTERNAL_LOAD",
+      "WRIST_EXTENSOR_WORK",
+      "FOREARM_TWIST_OR_PRONATED_LIFT",
+      "HAND_GRIP_LOAD"
+    ],
+    "WRIST_SENSITIVE": [
+      "NERVE_TENSIONING",
+      "HAND_GRIP_LOAD",
+      "WRIST_END_RANGE_LOAD"
+    ],
+    "LOWER_BACK_SENSITIVE": [
+      "HEAVY_EXTERNAL_LOAD",
+      "TRUNK_FLEXION_UNDER_LOAD"
+    ],
+    "HIP_SENSITIVE": [
+      "SUSTAINED_LOCOMOTION",
+      "PLYOMETRIC_IMPACT",
+      "HEAVY_EXTERNAL_LOAD",
+      "SINGLE_LEG_HIP_CONTROL",
+      "CROSS_BODY_HIP_STRETCH"
+    ],
+    "KNEE_SENSITIVE": [
+      "PROLONGED_SITTING",
+      "SUSTAINED_LOCOMOTION",
+      "PLYOMETRIC_IMPACT",
+      "DEEP_KNEE_FLEXION_LOAD",
+      "END_RANGE_KNEE_EXTENSION_LOAD"
+    ]
+  },
+  "demandCues": {
+    "PROLONGED_SITTING": {
+      "en": "You stay seated for this one. Stand up or change position if your symptoms build.",
+      "es": "Aquí te quedas sentado. Ponte de pie o cambia de posición si tus síntomas aumentan."
+    },
+    "SUSTAINED_LOCOMOTION": {
+      "en": "Keep this one shorter and easier if your symptoms build as you go.",
+      "es": "Hazlo más corto y más suave si tus síntomas aumentan sobre la marcha."
+    },
+    "PLYOMETRIC_IMPACT": {
+      "en": "This one has jumps. Land softly, and skip the jump if it brings on your symptoms.",
+      "es": "Este ejercicio tiene saltos. Cae con suavidad y omite el salto si te provoca síntomas."
+    },
+    "HEAVY_EXTERNAL_LOAD": {
+      "en": "This one uses a bar or machine. Start with a load you can control, and lower it if your symptoms build.",
+      "es": "Este ejercicio usa barra o máquina. Empieza con un peso que controles y bájalo si tus síntomas aumentan."
+    },
+    "SINGLE_LEG_HIP_CONTROL": {
+      "en": "One leg does most of the work. Keep your knee from dropping inward and your pelvis level.",
+      "es": "Una pierna hace casi todo el trabajo. Evita que la rodilla se vaya hacia adentro y mantén la pelvis nivelada."
+    },
+    "CROSS_BODY_HIP_STRETCH": {
+      "en": "This stretch pulls the hip across your body. Ease off if you feel your symptoms.",
+      "es": "Este estiramiento lleva la cadera a través del cuerpo. Afloja si sientes tus síntomas."
+    },
+    "NERVE_TENSIONING": {
+      "en": "This position stretches along a nerve. Ease out if you feel tingling, numbness or pain that travels.",
+      "es": "Esta posición estira a lo largo de un nervio. Sal poco a poco si sientes hormigueo, adormecimiento o dolor que se extiende."
+    },
+    "HAMSTRING_LENGTH_LOAD": {
+      "en": "This one loads the back of the thigh in a long position. Shorten the range if it brings on leg or buttock symptoms.",
+      "es": "Este ejercicio carga la parte trasera del muslo estirada. Reduce el rango si te provoca síntomas en la pierna o el glúteo."
+    },
+    "RESISTED_HIP_EXTERNAL_ROTATION": {
+      "en": "The side of your hip works hard here. Use less effort if the contraction brings on your symptoms.",
+      "es": "Aquí el costado de la cadera trabaja fuerte. Usa menos esfuerzo si la contracción te provoca síntomas."
+    },
+    "END_RANGE_HIP_EXTENSION": {
+      "en": "Take a shorter stride or stop short of the very top if your symptoms build.",
+      "es": "Da un paso más corto o no llegues hasta el tope si tus síntomas aumentan."
+    },
+    "SIDE_LYING_HIP_COMPRESSION": {
+      "en": "You lie on one side for this. Lie on the side without pain, and keep the top hip from dropping.",
+      "es": "Aquí te acuestas de lado. Acuéstate sobre el lado sin dolor y evita que la cadera de arriba se caiga."
+    },
+    "SIDE_SUPPORT_HOLD": {
+      "en": "This holds you up on one side. Shorten the hold or drop to your knees if your hip complains.",
+      "es": "Aquí te sostienes sobre un lado. Acorta el tiempo o apoya las rodillas si te molesta la cadera."
+    },
+    "TRUNK_FLEXION_UNDER_LOAD": {
+      "en": "Your lower back rounds with weight here. Use less weight or a smaller range if it brings on your symptoms.",
+      "es": "Aquí la espalda baja se redondea con peso. Usa menos peso o un rango menor si te provoca síntomas."
+    },
+    "LONG_LYING_SIT_UP": {
+      "en": "Your legs stay long here. Bend your knees or shorten the range if your leg symptoms respond.",
+      "es": "Aquí las piernas quedan estiradas. Dobla las rodillas o reduce el rango si reaccionan tus síntomas en la pierna."
+    },
+    "END_RANGE_SPINE_POSITION": {
+      "en": "This takes your spine far into bending or arching. Stay short of the end of the range.",
+      "es": "Esto lleva la columna muy lejos al doblarla o arquearla. Quédate antes del final del rango."
+    },
+    "WRIST_EXTENSOR_WORK": {
+      "en": "Your wrist or elbow does repeated work here. Use less weight if your forearm or elbow complains.",
+      "es": "Aquí la muñeca o el codo trabajan una y otra vez. Usa menos peso si te molesta el antebrazo o el codo."
+    },
+    "FOREARM_TWIST_OR_PRONATED_LIFT": {
+      "en": "Your palm faces down or your forearm twists here. Use less weight or turn your palm in if your elbow complains.",
+      "es": "Aquí la palma mira hacia abajo o el antebrazo gira. Usa menos peso o gira la palma hacia adentro si te molesta el codo."
+    },
+    "HAND_GRIP_LOAD": {
+      "en": "Your grip works hard here. Rest your hands between sets, and shorten the set if your symptoms build.",
+      "es": "Aquí tu agarre trabaja fuerte. Descansa las manos entre series y acorta la serie si tus síntomas aumentan."
+    },
+    "WRIST_END_RANGE_LOAD": {
+      "en": "Your wrist bears weight while bent back. Try fists or handles to keep it straighter if your symptoms build.",
+      "es": "Aquí la muñeca carga peso doblada hacia atrás. Prueba con los puños o agarraderas para mantenerla más recta si tus síntomas aumentan."
+    },
+    "DEEP_KNEE_FLEXION_LOAD": {
+      "en": "Your knee bends deep under load here. Stop higher, around 45 degrees, if your knee complains.",
+      "es": "Aquí la rodilla se dobla mucho con carga. Detente más arriba, cerca de 45 grados, si te molesta la rodilla."
+    },
+    "END_RANGE_KNEE_EXTENSION_LOAD": {
+      "en": "The last part of straightening the knee carries the most load on the kneecap. Stop short of straight if your knee complains.",
+      "es": "La última parte de estirar la rodilla es la que más carga la rótula. No la estires del todo si te molesta."
+    }
+  }
+}

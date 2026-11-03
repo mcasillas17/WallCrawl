@@ -4,7 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CancellationException
+import wallcrawl.elopenmike.com.R
+import wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceResult
+import wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceSource
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
+import wallcrawl.elopenmike.com.feature.conditions.PendingCondition
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.CapabilityLevel
@@ -29,17 +33,20 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 class ProfileViewModel(
-    private val userProfileRepository: UserProfileRepository
+    private val userProfileRepository: UserProfileRepository,
+    conditionGuidanceSource: ConditionGuidanceSource? = null
 ) : ViewModel() {
 
     private val capabilityEditorFlow = MutableStateFlow(CapabilityEditorState())
+    private val conditionEditorFlow = MutableStateFlow(ConditionEditorState())
     // Capability saves also replace the equipment list as part of a whole-profile write.
     private val equipmentEdits = Mutex()
 
     val uiState: StateFlow<ProfileUiState> = combine(
         userProfileRepository.getUserProfile(),
-        capabilityEditorFlow
-    ) { profile, editor ->
+        capabilityEditorFlow,
+        conditionEditorFlow
+    ) { profile, editor, conditions ->
         val state: ProfileUiState = ProfileUiState.Success(
             profile = profile,
             isSaving = editor.isSaving,
@@ -47,7 +54,10 @@ class ProfileViewModel(
             movementCapabilityError = editor.error,
             availableEquipmentOptions = StandardEquipment.ALL,
             availableMuscleOptions = StandardMuscles.PRIORITY_OPTIONS,
-            availableConstraintOptions = TrainingConstraint.entries
+            availableConstraintOptions = TrainingConstraint.entries,
+            conditionGuidance = conditions.guidance,
+            pendingCondition = conditions.pending,
+            safetyErrorRes = conditions.errorRes
         )
         state
     }.catch { error ->
@@ -60,6 +70,87 @@ class ProfileViewModel(
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = ProfileUiState.Loading
     )
+
+    init {
+        conditionGuidanceSource?.let { source ->
+            viewModelScope.launch {
+                val result = try {
+                    source.guidance()
+                } catch (error: CancellationException) {
+                    throw error
+                } catch (error: Exception) {
+                    ConditionGuidanceResult.Unavailable
+                }
+                conditionEditorFlow.value = conditionEditorFlow.value.copy(guidance = result)
+            }
+        }
+    }
+
+    /** Starts adding [id]. Nothing is saved until the warning signs are acknowledged and confirmed. */
+    fun selectCondition(id: String) {
+        val guidance = conditionEditorFlow.value.guidance as? ConditionGuidanceResult.Loaded ?: return
+        if (id !in guidance.guidance.conditions) return
+        conditionEditorFlow.value =
+            conditionEditorFlow.value.copy(pending = PendingCondition(id), errorRes = null)
+    }
+
+    fun setConditionAcknowledged(acknowledged: Boolean) {
+        val pending = conditionEditorFlow.value.pending ?: return
+        conditionEditorFlow.value = conditionEditorFlow.value.copy(
+            pending = pending.copy(acknowledged = acknowledged)
+        )
+    }
+
+    fun cancelPendingCondition() {
+        conditionEditorFlow.value = conditionEditorFlow.value.copy(pending = null, errorRes = null)
+    }
+
+    fun confirmPendingCondition() {
+        val pending = conditionEditorFlow.value.pending?.takeIf { it.acknowledged } ?: return
+        viewModelScope.launch {
+            try {
+                userProfileRepository.editReportedConditions { it + pending.id }
+                conditionEditorFlow.value =
+                    conditionEditorFlow.value.copy(pending = null, errorRes = null)
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                // The prompt stays open so the user can try again; nothing was saved.
+                conditionEditorFlow.value =
+                    conditionEditorFlow.value.copy(errorRes = R.string.profile_condition_save_error)
+            }
+        }
+    }
+
+    /** Removing never asks for acknowledgement, and works whether or not the overlay loaded. */
+    fun removeCondition(id: String) {
+        viewModelScope.launch {
+            try {
+                userProfileRepository.editReportedConditions { it - id }
+                conditionEditorFlow.value = conditionEditorFlow.value.copy(errorRes = null)
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                conditionEditorFlow.value =
+                    conditionEditorFlow.value.copy(errorRes = R.string.profile_condition_save_error)
+            }
+        }
+    }
+
+    /** Undoes a pain-stop exclusion (or any other): the exercise may be planned again. */
+    fun removeExcludedExercise(exerciseId: String) {
+        viewModelScope.launch {
+            try {
+                userProfileRepository.editExcludedExercises { it - exerciseId }
+                conditionEditorFlow.value = conditionEditorFlow.value.copy(errorRes = null)
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                conditionEditorFlow.value =
+                    conditionEditorFlow.value.copy(errorRes = R.string.profile_exclusion_save_error)
+            }
+        }
+    }
 
     fun updateThemePreference(theme: ThemePreference) {
         viewModelScope.launch {
@@ -224,14 +315,21 @@ class ProfileViewModel(
 
     companion object {
         fun provideFactory(
-            userProfileRepository: UserProfileRepository
+            userProfileRepository: UserProfileRepository,
+            conditionGuidanceSource: ConditionGuidanceSource
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return ProfileViewModel(userProfileRepository) as T
+                return ProfileViewModel(userProfileRepository, conditionGuidanceSource) as T
             }
         }
     }
+
+    private data class ConditionEditorState(
+        val guidance: ConditionGuidanceResult? = null,
+        val pending: PendingCondition? = null,
+        @androidx.annotation.StringRes val errorRes: Int? = null
+    )
 
     private data class CapabilityEditorState(
         val draft: MovementCapabilities? = null,

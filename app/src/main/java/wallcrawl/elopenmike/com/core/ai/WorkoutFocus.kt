@@ -14,7 +14,7 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSplit
  * the user got a Push day with no pushing in it.
  *
  * The rule below is deliberately about the muscle an exercise trains **as its own purpose**
- * and not about its movement pattern. Only 131 of the 302 bundled entries carry legacy
+ * and not about its movement pattern. Only 131 of the 309 bundled entries (302 pinned plus 7 owned) carry legacy
  * programming, and genuine pushes such as `archer-push-up` and `handstand-push-up` carry no
  * pattern at all, so requiring one would invent an absence rather than describe a fact.
  *

@@ -1,7 +1,11 @@
 package wallcrawl.elopenmike.com.core.ai
 
 import wallcrawl.elopenmike.com.core.model.Exercise
+import wallcrawl.elopenmike.com.core.conditions.MobilityBlockPolicy
+import wallcrawl.elopenmike.com.core.conditions.ranksLower
+import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityFailure
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
+import wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.GeneratedExercise
@@ -43,9 +47,14 @@ class FakeWorkoutPlanner(
         context.validatedProgramSession()
         val candidates = context.allowedExercises
         if (candidates.isEmpty()) {
+            // The reviewed path off with reported conditions yields an empty list that must
+            // read as the guidance failure, not as an equipment shortfall.
             val reviewedFailure =
                 (context.automaticEligibilityResult as? AutomaticEligibilityResult.NoCandidates)
                     ?.failure
+                    ?: AutomaticEligibilityFailure.CONDITION_GUIDANCE_UNAVAILABLE.takeIf {
+                        context.conditionRestrictions == ConditionRestrictions.Unavailable
+                    }
             throw WorkoutValidationException(
                 message = "Cannot generate workout: no allowed candidate exercises available.",
                 failure = if (reviewedFailure != null) {
@@ -73,7 +82,14 @@ class FakeWorkoutPlanner(
 
         val goals = context.fitnessGoals.ifEmpty { setOf(context.fitnessGoal) }
         val focusMuscles = extractFocusMuscles(selectedExercises)
-        val estimatedDuration = WorkoutDurationEstimator.estimateMinutes(generatedExerciseList)
+        val mobilityBlock = MobilityBlockPolicy.select(
+            restrictions = context.conditionRestrictions,
+            exercises = context.routineExercises,
+            profile = context.userProfile,
+            mainExerciseIds = selectedExercises.mapTo(hashSetOf(), Exercise::id),
+            seed = rotationSeed(context, generationIndex)
+        )
+        val estimatedDuration = WorkoutDurationEstimator.estimateMinutes(generatedExerciseList + mobilityBlock)
         val breakRange = BreakDurationHelper.findMatchingRange(breakWeeks)
         // Ordered by the enum rather than by set iteration, so the same profile always
         // produces the same title and the same explanation.
@@ -98,7 +114,8 @@ class FakeWorkoutPlanner(
             rankingReasons = selection.rankingReasons,
             progressionDecisions = prescriptionDecisions.takeIf { context.trainingProgramState != null }.orEmpty(),
             unavailableFocusMuscles = unavailableFocusMuscles(context, candidates),
-            generationIndex = generationIndex
+            generationIndex = generationIndex,
+            mobilityBlock = mobilityBlock
         )
     }
 
@@ -340,6 +357,7 @@ class FakeWorkoutPlanner(
             .filter { it.programming?.mechanics == MechanicsType.COMPOUND }
             .sortedWith(
                 compareByDescending<Exercise> { split.trainsAsFocus(it) }
+                    .thenBy { context.conditionRestrictions.ranksLower(it.id) }
                     .thenBy { capabilityPenalties.getValue(it.id) }
                     .thenBy { if (it.id in supportedRegressionPreferences) 0 else 1 }
                     .thenBy {
@@ -386,6 +404,7 @@ class FakeWorkoutPlanner(
         schedulingPreferences: Set<String>
     ): Comparator<Exercise> =
         compareByDescending<Exercise> { split.trainsAsFocus(it) }
+            .thenBy { context.conditionRestrictions.ranksLower(it.id) }
             .thenByDescending { it.programming?.mechanics == MechanicsType.ISOLATION }
             .thenByDescending { it.programming != null }
             .thenBy { capabilityPenalties.getValue(it.id) }

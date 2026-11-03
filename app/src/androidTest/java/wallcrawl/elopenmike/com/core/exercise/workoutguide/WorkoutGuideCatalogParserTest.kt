@@ -27,9 +27,9 @@ class WorkoutGuideCatalogParserTest {
     fun parse_packagedCatalogLoadsEveryExerciseAndFrame() {
         val snapshot = assets.open("workout-guide/catalog.json").bufferedReader().use(parser::parse)
 
-        assertThat(snapshot.exercises).hasSize(302)
-        assertThat(snapshot.exercises.map { it.id }.toSet()).hasSize(302)
-        assertThat(snapshot.framesByExerciseId.values.flatten()).hasSize(906)
+        assertThat(snapshot.exercises).hasSize(309)
+        assertThat(snapshot.exercises.map { it.id }.toSet()).hasSize(309)
+        assertThat(snapshot.framesByExerciseId.values.flatten()).hasSize(927)
         // Reviewed programming metadata covers the exercises the planner selects from,
         // not the whole catalog; the rest fall back to conservative defaults.
         assertThat(snapshot.exercises.count { it.programming != null }).isEqualTo(131)
@@ -92,6 +92,34 @@ class WorkoutGuideCatalogParserTest {
     }
 
     @Test
+    fun parse_ownedExercisesCarryTheirOwnAttributionAndStayOutOfTheUpstreamCounts() {
+        val snapshot = assets.open("workout-guide/catalog.json").bufferedReader().use(parser::parse)
+
+        val owned = snapshot.exercises.filter { it.source?.catalogId == "wallcrawl-owned" }
+        assertThat(owned.map { it.id }).containsExactly(
+            "figure-four-stretch", "lying-piriformis-stretch", "side-lying-isometric-hip-abduction-hold",
+            "standing-isometric-gluteal-contraction", "wrist-extensor-stretch", "tendon-gliding-sequence",
+            "straight-leg-raise"
+        )
+        owned.forEach { exercise ->
+            assertThat(exercise.source!!.attribution.license)
+                .isEqualTo("Original work by the WallCrawl project, MIT License")
+            assertThat(exercise.reviewedMetadata).isNull()
+            assertThat(exercise.programming).isNull()
+            val frames = snapshot.framesByExerciseId.getValue(exercise.id)
+            assertThat(frames).hasSize(3)
+            frames.forEach { assertThat(it.attribution).isEqualTo(exercise.source.attribution) }
+        }
+        assertThat(owned.filter { it.isStretch }.map { it.id }).containsExactly(
+            "figure-four-stretch", "lying-piriformis-stretch", "wrist-extensor-stretch"
+        )
+        // The credits screen counts the original source catalog, so owned entries stay out of it.
+        assertThat(snapshot.catalogAttribution.exerciseCount).isEqualTo(302)
+        assertThat(snapshot.catalogAttribution.frameCount).isEqualTo(906)
+        assertThat(snapshot.exercises.filter { it.source?.catalogId == "workout-guide" }).hasSize(302)
+    }
+
+    @Test
     fun parse_preservesAliasedIdentityAndSourceMetadata() {
         val snapshot = assets.open("workout-guide/catalog.json").bufferedReader().use(parser::parse)
 
@@ -117,7 +145,7 @@ class WorkoutGuideCatalogParserTest {
         )
 
         assertThat(StandardEquipment.ALL).containsAtLeastElementsIn(catalogEquipment)
-        assertThat(exercises).hasSize(302)
+        assertThat(exercises).hasSize(309)
         assertThat(candidates.map { it.id })
             .containsExactlyElementsIn(exercises.map { it.id }.filterNot { it == "banded-row" })
             .inOrder()

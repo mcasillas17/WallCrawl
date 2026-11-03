@@ -19,6 +19,8 @@ import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
 import wallcrawl.elopenmike.com.core.model.ComplexityTier
 import wallcrawl.elopenmike.com.core.model.Difficulty
 import wallcrawl.elopenmike.com.core.model.Exercise
+import wallcrawl.elopenmike.com.core.model.ExerciseAttribution
+import wallcrawl.elopenmike.com.core.model.ExerciseSource
 import wallcrawl.elopenmike.com.core.model.ExercisePrescription
 import wallcrawl.elopenmike.com.core.model.ExerciseProgrammingMetadata
 import wallcrawl.elopenmike.com.core.model.ExerciseType
@@ -37,6 +39,12 @@ import wallcrawl.elopenmike.com.core.model.ReviewedExerciseLink
 import wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.SupportRequirement
+import wallcrawl.elopenmike.com.core.conditions.ConditionGuidance
+import wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceResult
+import wallcrawl.elopenmike.com.core.conditions.ConditionRecord
+import wallcrawl.elopenmike.com.core.conditions.MovementDemand
+import wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions
+import wallcrawl.elopenmike.com.core.conditions.restrictionsFor
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.TrainingProgramState
@@ -60,7 +68,9 @@ internal data class PlannerFixtureContext(
 internal data class PlannerFixtureBundledCatalogProjection(
     val schemaVersion: Int,
     val sourceCommit: String,
-    val exercises: List<Exercise>
+    val exercises: List<Exercise>,
+    /** Entries WallCrawl owns beside the pinned upstream ones; they carry no reviewed metadata. */
+    val ownedExerciseIds: Set<String> = emptySet()
 )
 
 internal class PlannerFixtureContextFactory(
@@ -96,6 +106,7 @@ internal class PlannerFixtureContextFactory(
             excludedExerciseIds = fixture.profile.excludedExerciseIds,
             onboardingCompleted = true,
             trainingConstraints = fixture.profile.trainingConstraints,
+            reportedConditions = fixture.profile.reportedConditions,
             returningAfterBreakWeeks = fixture.profile.returningAfterBreakWeeks,
             confirmedStartingLoads = fixture.profile.confirmedStartingLoads,
             movementCapabilities = fixture.profile.movementCapabilities
@@ -104,6 +115,61 @@ internal class PlannerFixtureContextFactory(
             allExercises = catalogExercises,
             profile = profile
         )
+        // The bundled overlay is not part of a fixture. A fixture that selects joint labels gets
+        // a synthetic one: every synthetic-approved exercise is listed (so it counts as reviewed
+        // for the label) only when the fixture says those labels were cleared.
+        val conditionRestrictions = fixture.reviewedEligibility?.let { reviewedEligibility ->
+            val cleared = profile.trainingConstraints.all {
+                it == TrainingConstraint.LOW_IMPACT_ONLY ||
+                    it in reviewedEligibility.syntheticClearedTrainingConstraints
+            }
+            val synthetic = reviewedEligibility.syntheticGuidance
+            restrictionsFor(
+                profile,
+                ConditionGuidanceResult.Loaded(
+                    ConditionGuidance(
+                        version = "fixture",
+                        // A fixture that declares guidance owns the whole overlay; otherwise
+                        // approved exercises carry no demands, and only when labels are cleared.
+                        exerciseDemands = if (synthetic != null || cleared) {
+                            reviewedEligibility.syntheticApprovedExerciseIds
+                                .associateWith { emptySet<MovementDemand>() } +
+                                synthetic?.exerciseDemands.orEmpty()
+                        } else {
+                            emptyMap()
+                        },
+                        conditions = synthetic?.conditions.orEmpty().mapValues { (id, condition) ->
+                            ConditionRecord(
+                                id = id,
+                                avoidDemands = condition.avoidDemands,
+                                modifyDemands = condition.modifyDemands,
+                                routine = emptyList(),
+                                exerciseCues = emptyMap(),
+                                notes = emptyMap(),
+                                redFlags = emptyMap(),
+                                evidenceGrade = "C",
+                                sources = emptyList(),
+                                provenance = AiReviewProvenance(
+                                    reviewerModelId = "fixture",
+                                    reviewedAtEpochMillis = 1L,
+                                    reviewedContentId = id,
+                                    reviewedContentSha256 = "0",
+                                    sourceReferences = emptyList(),
+                                    decisionRationale = "SYNTHETIC PLANNER FIXTURE",
+                                    limitations = "Test-only; never bundled.",
+                                    schemaVersion = 1,
+                                    policyVersion = 1
+                                )
+                            )
+                        },
+                        jointLabelDemands = profile.trainingConstraints
+                            .filter { it != TrainingConstraint.LOW_IMPACT_ONLY }
+                            .associateWith { synthetic?.jointLabelDemands?.get(it).orEmpty() },
+                        demandCues = emptyMap()
+                    )
+                )
+            )
+        } ?: ConditionRestrictions.None
         val automaticEligibilityResult = fixture.reviewedEligibility?.let { reviewedEligibility ->
             ExerciseEligibilityPolicy().evaluate(
                 exercises = catalogExercises,
@@ -116,7 +182,8 @@ internal class PlannerFixtureContextFactory(
                         .reviewedMetadata
                         ?.takeIf { it.reviewState == ReviewState.APPROVED }
                         ?.progressionFamily
-                }
+                },
+                restrictions = conditionRestrictions
             )
         }
         val allowedExercises = when (automaticEligibilityResult) {
@@ -159,6 +226,7 @@ internal class PlannerFixtureContextFactory(
                 exerciseHistory = fixture.exerciseHistory.associateBy { it.exerciseId },
                 allowedExercises = allowedExercises,
                 automaticEligibilityResult = automaticEligibilityResult,
+                conditionRestrictions = conditionRestrictions,
                 trainingProgramState = trainingProgramState,
                 schedulingEvidence = fixture.reviewedEligibility?.let {
                     TrainingFrequencyRecencyPolicy().derive(
@@ -488,10 +556,17 @@ internal class PlannerFixtureContextFactory(
         if (duplicateId != null) {
             throw PlannerFixtureFormatException("Bundled planner catalog contains duplicate exercise id $duplicateId.")
         }
+        val ownedIds = buildSet {
+            for (index in 0 until exercisesArray.length()) {
+                val entry = exercisesArray.getJSONObject(index)
+                if (entry.has("attribution")) add(entry.getString("id"))
+            }
+        }
         return PlannerFixtureBundledCatalogProjection(
             schemaVersion = schemaVersion,
             sourceCommit = sourceCommit,
-            exercises = exercises
+            exercises = exercises,
+            ownedExerciseIds = ownedIds
         )
     }
 
@@ -548,8 +623,24 @@ internal class PlannerFixtureContextFactory(
         } catch (error: IllegalArgumentException) {
             throw PlannerFixtureFormatException("$path.programming.recommendedRepRange is invalid for exerciseType.")
         }
+        // Only the owned marker matters to the planner; upstream entries keep no source here.
+        val owned = if (exercise.has("attribution")) {
+            val attribution = requireObject(exercise, "attribution", "$path.attribution")
+            ExerciseSource(
+                catalogId = ExerciseSource.OWNED_CATALOG_ID,
+                sourceId = requireString(exercise, "sourceId", "$path.sourceId"),
+                sourceSlug = requireString(exercise, "sourceSlug", "$path.sourceSlug"),
+                attribution = ExerciseAttribution(
+                    creator = requireString(attribution, "creator", "$path.attribution.creator"),
+                    creatorUrl = requireString(attribution, "creatorUrl", "$path.attribution.creatorUrl"),
+                    license = requireString(attribution, "license", "$path.attribution.license"),
+                    licenseUrl = requireString(attribution, "licenseUrl", "$path.attribution.licenseUrl")
+                )
+            )
+        } else null
         return Exercise(
             id = id,
+            source = owned,
             name = name,
             searchAliases = searchAliases,
             primaryMuscles = primaryMuscles,
@@ -926,7 +1017,7 @@ internal class PlannerFixtureContextFactory(
         /** A plausible timed target for logged duration and distance work. */
         private const val LOGGED_DURATION_SECONDS = 600
         private const val SUPPORTED_BUNDLED_CATALOG_SCHEMA_VERSION = 1
-        private const val EXPECTED_BUNDLED_EXERCISE_COUNT = 302
+        private const val EXPECTED_BUNDLED_EXERCISE_COUNT = 309
         private const val MAX_RESOURCE_BYTES = 512 * 1024
         // Dedicated AI provenance enlarges the catalog, not the persona fixture contract.
         private const val MAX_CATALOG_RESOURCE_BYTES = 2 * 1024 * 1024

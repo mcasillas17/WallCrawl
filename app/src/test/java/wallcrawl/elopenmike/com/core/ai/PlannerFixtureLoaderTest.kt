@@ -90,7 +90,10 @@ class PlannerFixtureLoaderTest {
             "reviewed-enabled-no-approved",
             "reviewed-enabled-uncleared-joint-constraint",
             "reviewed-enabled-cleared-joint-constraints",
-            "concurrent-activity"
+            "concurrent-activity",
+            "condition-piriformis",
+            "joint-label-hip",
+            "condition-removes-all"
         ).inOrder()
         assertThat(fixtures.map { it.id }).doesNotContain("valid-basic")
     }

@@ -273,7 +273,7 @@ passed `ProgramValidator` without repair; typed no-plan outcomes remained explic
 | Mixed-unit history | 88 | 81 | `arnold-press`, `dumbbell-bench-press`, `dumbbell-shoulder-press`, `dumbbell-fly`, `dumbbell-lateral-raise` |
 | Sparse history | 58 | 52 | `band-pull-apart`, `prone-y-raise`, `reverse-snow-angel` |
 | Uncalibrated full gym | 185 | 167 | `barbell-bench-press`, `overhead-press`, `arnold-press`, `cable-fly`, `cable-lateral-raise`, `cable-triceps-pushdown` |
-| Selected joint constraint | 0 | 0 | `REVIEWED_ELIGIBILITY_NO_CANDIDATES` / `TRAINING_CONSTRAINTS_REMOVED_ALL` |
+| Selected joint constraint (historical, before the 2026-11-01 condition overlay) | 0 | 0 | `REVIEWED_ELIGIBILITY_NO_CANDIDATES` / `TRAINING_CONSTRAINTS_REMOVED_ALL` |
 | Selected joint constraint, synthetically cleared | 211 | 186 | `barbell-bench-press`, `overhead-press`, `incline-bench-press`, `cable-fly`, `cable-lateral-raise`, `cable-triceps-pushdown` |
 | Empty equipment inventory | 0 | 0 | `REVIEWED_ELIGIBILITY_NO_CANDIDATES` / `NO_APPROVED_METADATA` |
 | Unmodified catalog, no synthetic approvals | 0 | 0 | `REVIEWED_ELIGIBILITY_NO_CANDIDATES` / `NO_APPROVED_METADATA` |
@@ -356,7 +356,9 @@ Selected joint mappings now have a contract but no cleared content.
 decides each exercise against it instead of rejecting the whole pool whenever any joint
 sensitivity is selected. All 302 `reviewedMetadata` records — including the 182
 `AI_ACCEPTED` ones — clear nothing, so the observable outcome for a joint-sensitive
-profile is unchanged in production: a typed `TRAINING_CONSTRAINTS_REMOVED_ALL` refusal.
+profile was a typed `TRAINING_CONSTRAINTS_REMOVED_ALL` refusal until the 2026-11-01 condition
+overlay, which now decides joint labels (they rank exercises lower and no longer refuse the pool).
+The field itself is still unread for that purpose and still empty.
 Populating the field requires genuine human review; see the
 [enabled rollout contract](reviewed-capability-eligibility.md#enabled-rollout-contract).
 
@@ -404,3 +406,51 @@ when deliberately isolated. It does not establish selection from a full pool,
 complete equipment representation, movement-goal coverage, reviewed readiness or
 human approval. The per-ID evidence ledger retains the observed outcome and
 selected split rather than replacing them with an inferred classifier result.
+
+## Condition and joint-label candidate counts (2026-11-01)
+
+Measured on the booted emulator, through `WorkoutGenerationContextBuilder`, `FakeWorkoutPlanner`
+and `ProgramValidator` with the shipped catalog and `conditions/condition-guidance.json`, for a
+default profile with every capability comfortable, no history and one input selected
+at a time. Each cell reads **candidates / candidates with no modify demand; planned exercises
+(of which carry a modify demand)**. These counts describe availability under the overlay. They say
+nothing about clinical suitability, and an exercise with no demand is not thereby cleared.
+
+Equipment: bodyweight; dumbbell = bodyweight, dumbbell, bench; machine = machine, cable, bench;
+band = resistance band only; full gym = all equipment.
+
+| Input | Bodyweight | Dumbbell | Machine | Band | Full gym |
+| --- | --- | --- | --- | --- | --- |
+| No conditions or labels | 33/33; 5 (0) | 72/72; 5 (0) | 51/51; 5 (0) | 11/11; 2 (0) | 163/163; 5 (0) |
+| `piriformis_syndrome` | 33/20; 5 (0) | 72/45; 5 (0) | 51/24; 5 (2) | 11/3; 2 (0) | 163/84; 5 (0) |
+| `gluteal_tendinopathy` | 33/24; 5 (0) | 72/56; 5 (0) | 51/25; 5 (2) | 11/8; 2 (0) | 163/103; 5 (0) |
+| `lumbar_radiculopathy` | 33/31; 5 (0) | 72/64; 5 (0) | 51/24; 5 (2) | 11/11; 2 (0) | 163/112; 5 (0) |
+| `nonspecific_low_back_pain` | 33/31; 5 (0) | 72/69; 5 (0) | 51/25; 5 (2) | 11/11; 2 (0) | 163/119; 5 (0) |
+| `LOWER_BACK_SENSITIVE` | 33/33; 5 (0) | 72/71; 5 (0) | 51/25; 5 (2) | 11/11; 2 (0) | 163/121; 5 (0) |
+| `rotator_cuff_related_shoulder_pain`, `SHOULDER_SENSITIVE` | 33/33; 5 (0) | 72/72; 5 (0) | 51/25; 5 (2) | 11/11; 2 (0) | 163/123; 5 (0) |
+| `lateral_elbow_tendinopathy`, `ELBOW_SENSITIVE` | 33/33; 5 (0) | 72/59; 5 (0) | 51/15; 5 (3) | 11/11; 2 (0) | 163/93; 5 (0) |
+| `carpal_tunnel_syndrome`, `WRIST_SENSITIVE` | 33/24; 5 (3) | 72/60; 5 (0) | 51/49; 5 (0) | 11/9; 2 (0) | 163/136; 5 (0) |
+| `patellofemoral_pain`, `KNEE_SENSITIVE` | 33/29; 5 (0) | 72/59; 5 (0) | 51/44; 5 (0) | 11/10; 2 (0) | 163/140; 5 (0) |
+| `HIP_SENSITIVE` | 33/28; 5 (0) | 72/60; 5 (0) | 51/25; 5 (2) | 11/10; 2 (0) | 163/109; 5 (0) |
+
+`BundledConditionGuidanceTest.candidateCountsMatchTheCoverageReport` measures and asserts these
+cells, so a tag or catalog change must update this table. Every cell produced a valid plan and no
+input produced a refusal. Paired rows have equal counts because the condition and the label restrict
+the same demands. The two lower-back rows differ because only the condition restricts
+`END_RANGE_SPINE_POSITION`, and the label rests on the demands shared with `lumbar_radiculopathy`.
+
+Limitations:
+
+- **Modify work can dominate a plan.** Elbow on the machine profile and wrist on the bodyweight
+  profile each plan 3 of 5 exercises with a modify demand, even though 15 and 24 non-modify
+  candidates remain. Ranking orders candidates within the planner's slots and does not guarantee a
+  non-modify choice. The slot-level cause was not traced. On the machine profile, most inputs plan
+  2 of 5, since `HEAVY_EXTERNAL_LOAD` is on nearly all machine work.
+- **Band-only plans stay small.** Two exercises for every input, the same as with no input.
+- **`HEAVY_EXTERNAL_LOAD` follows equipment, not load.** The catalog has no load data, so barbell and
+  machine records carry it, except three stations that support the body: `assisted-chin-up`,
+  `assisted-pull-up` and `captains-chair-knee-raise`. The machine column's low non-modify counts
+  reflect that proxy.
+- **Some demands tag no exercise.** `PROLONGED_SITTING`, `SUSTAINED_LOCOMOTION`,
+  `CROSS_BODY_HIP_STRETCH` and `NERVE_TENSIONING` have no member, so a restriction on them does not
+  change these counts.

@@ -57,6 +57,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -141,6 +143,15 @@ fun ProfileScreen(
                     availableEquipment = state.availableEquipmentOptions,
                     availableMuscles = state.availableMuscleOptions,
                     availableConstraints = state.availableConstraintOptions,
+                    conditionGuidance = state.conditionGuidance,
+                    pendingCondition = state.pendingCondition,
+                    onSelectCondition = viewModel::selectCondition,
+                    onAcknowledgeCondition = viewModel::setConditionAcknowledged,
+                    onConfirmCondition = viewModel::confirmPendingCondition,
+                    onCancelCondition = viewModel::cancelPendingCondition,
+                    onRemoveCondition = viewModel::removeCondition,
+                    safetyErrorRes = state.safetyErrorRes,
+                    onRemoveExcludedExercise = viewModel::removeExcludedExercise,
                     onToggleGoal = { viewModel.toggleGoal(it) },
                     onUpdateExperience = { viewModel.updateExperience(it) },
                     onUpdateDuration = { viewModel.updateDuration(it) },
@@ -174,6 +185,15 @@ private fun ProfileContent(
     availableEquipment: List<String>,
     availableMuscles: List<String>,
     availableConstraints: List<TrainingConstraint>,
+    conditionGuidance: wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceResult?,
+    pendingCondition: wallcrawl.elopenmike.com.feature.conditions.PendingCondition?,
+    onSelectCondition: (String) -> Unit,
+    onAcknowledgeCondition: (Boolean) -> Unit,
+    onConfirmCondition: () -> Unit,
+    onCancelCondition: () -> Unit,
+    onRemoveCondition: (String) -> Unit,
+    safetyErrorRes: Int?,
+    onRemoveExcludedExercise: (String) -> Unit,
     onToggleGoal: (FitnessGoal) -> Unit,
     onUpdateExperience: (ExperienceLevel) -> Unit,
     onUpdateDuration: (Int) -> Unit,
@@ -578,8 +598,6 @@ private fun ProfileContent(
                     color = CrimsonRedPrimary
                 )
                 Spacer(modifier = Modifier.height(4.dp))
-                // Same honesty note the movement-capability card already carries: this input is
-                // saved but inert until reviewed planning ships.
                 Text(
                     text = stringResource(R.string.profile_safety_description),
                     fontSize = 12.sp,
@@ -618,6 +636,61 @@ private fun ProfileContent(
                                 selectedBorderColor = CrimsonRedPrimary
                             )
                         )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                wallcrawl.elopenmike.com.feature.conditions.ConditionPicker(
+                    guidance = conditionGuidance,
+                    selected = profile.reportedConditions,
+                    pending = pendingCondition,
+                    onSelect = onSelectCondition,
+                    onAcknowledge = onAcknowledgeCondition,
+                    onConfirm = onConfirmCondition,
+                    onCancel = onCancelCondition,
+                    onRemove = onRemoveCondition,
+                    errorRes = safetyErrorRes
+                )
+
+                if (profile.excludedExerciseIds.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    val vocabulary = wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary.current
+                    Text(
+                        text = stringResource(R.string.profile_excluded_heading),
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.semantics { heading() }
+                    )
+                    Text(
+                        text = stringResource(R.string.profile_excluded_hint),
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    profile.excludedExerciseIds.forEach { exerciseId ->
+                        val name = vocabulary.exerciseName(exerciseId)
+                        val removeDescription =
+                            stringResource(R.string.profile_excluded_remove_description, name)
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(top = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = name,
+                                modifier = Modifier.weight(1f),
+                                fontSize = 14.sp,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            androidx.compose.material3.TextButton(
+                                onClick = { onRemoveExcludedExercise(exerciseId) },
+                                modifier = Modifier
+                                    .testTag("excluded-remove-$exerciseId")
+                                    .semantics { contentDescription = removeDescription }
+                            ) {
+                                Text(stringResource(R.string.profile_excluded_remove))
+                            }
+                        }
                     }
                 }
 

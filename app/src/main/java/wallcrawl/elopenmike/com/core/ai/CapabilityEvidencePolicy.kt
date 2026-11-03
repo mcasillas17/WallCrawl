@@ -15,6 +15,7 @@ import wallcrawl.elopenmike.com.core.model.SetType
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
+import wallcrawl.elopenmike.com.core.model.mainExercises
 
 class CapabilityEvidencePolicy(
     private val policyVersion: CapabilityEvidencePolicyVersion =
@@ -39,7 +40,7 @@ class CapabilityEvidencePolicy(
             .distinctBy { it.id }
             .filter { it.isCompletedSnapshot() }
             .flatMap { session ->
-                session.exercises.asSequence()
+                session.mainExercises.asSequence()
                     .sortedWith(compareBy<WorkoutExercise> { it.orderIndex }.thenBy { it.id })
                     .mapNotNull { exercise ->
                         exactComparableObservation(session, exercise)

@@ -7,6 +7,37 @@ import org.junit.Test
 class ExercisePrescriptionTest {
 
     @Test
+    fun absentHoldPrintsTheTextFromBeforeHoldsExisted() {
+        val plain = ExercisePrescription(
+            exerciseType = ExerciseType.BODYWEIGHT_REPS, targetSets = 2, repRange = RepRange(8, 12), restSeconds = 60
+        )
+        // Written out from the base commit's data class text, field by field.
+        assertThat(plain.toString()).isEqualTo(
+            "ExercisePrescription(exerciseType=BODYWEIGHT_REPS, targetSets=2, repRange=8–12, " +
+                "targetWeight=null, targetAssistanceWeight=null, targetDurationSeconds=null, " +
+                "targetDistanceMeters=null, restSeconds=60, effortTarget=null, restClass=null, " +
+                "restTargetSource=null)"
+        )
+        assertThat(plain.copy(holdSeconds = 30).toString()).endsWith("restTargetSource=null, holdSeconds=30)")
+    }
+
+    @Test
+    fun holdIsValidOnlyOnBodyweightRepetitions() {
+        val bodyweight = ExercisePrescription(
+            exerciseType = ExerciseType.BODYWEIGHT_REPS, targetSets = 2,
+            repRange = RepRange(5, 8), holdSeconds = 30
+        )
+        assertThat(bodyweight.holdSeconds).isEqualTo(30)
+        assertThrows(IllegalArgumentException::class.java) {
+            ExercisePrescription(
+                exerciseType = ExerciseType.WEIGHT_REPS, targetSets = 2,
+                repRange = RepRange(5, 8), holdSeconds = 30
+            )
+        }
+        assertThrows(IllegalArgumentException::class.java) { bodyweight.copy(holdSeconds = 0) }
+    }
+
+    @Test
     fun weightRepetitionPrescription_keepsOnlyApplicableTargets() {
         val prescription = ExercisePrescription(
             exerciseType = ExerciseType.WEIGHT_REPS,

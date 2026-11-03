@@ -1,5 +1,6 @@
 package wallcrawl.elopenmike.com.core.ai
 
+import wallcrawl.elopenmike.com.core.model.mainExercises
 import java.time.Instant
 import java.time.ZoneId
 import kotlinx.coroutines.flow.first
@@ -11,6 +12,14 @@ import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.withIndex
+import wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceResult
+import wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceSource
+import wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions
+import wallcrawl.elopenmike.com.core.conditions.hasConditionInputs
+import wallcrawl.elopenmike.com.core.conditions.restrictionsFor
+import wallcrawl.elopenmike.com.core.conditions.MobilityBlockPolicy
+import wallcrawl.elopenmike.com.core.model.Exercise
+import wallcrawl.elopenmike.com.core.model.isOwnedByWallCrawl
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
 import wallcrawl.elopenmike.com.core.database.repository.DeloadRepository
@@ -56,7 +65,12 @@ class WorkoutGenerationContextBuilder(
     private val nowTimestamp: () -> Long = System::currentTimeMillis,
     private val zoneId: () -> ZoneId = ZoneId::systemDefault,
     private val deloadRepository: DeloadRepository? = null,
-    private val programRepository: ProgramRepository? = null
+    private val programRepository: ProgramRepository? = null,
+    /**
+     * Where the condition overlay comes from. Absent means no overlay can be read, which
+     * restricts a user who reported a condition or joint label and nobody else.
+     */
+    private val conditionGuidanceSource: ConditionGuidanceSource? = null
 ) {
     /**
      * Reuses Today’s clock and Room invalidation, not polling queries. A day/zone change
@@ -165,6 +179,20 @@ class WorkoutGenerationContextBuilder(
         } else {
             CapabilityEvidenceSet.empty()
         }
+        // The overlay is read only for a profile that needs it, so everyone else is unaffected
+        // by it being missing or broken. With the reviewed path off nothing can apply a
+        // reported condition, so it fails closed (below) rather than being ignored. Joint
+        // labels are left alone there: the legacy filter has never read them.
+        val conditionRestrictions = when {
+            plannerFeatureFlags.reviewedCapabilityEligibility && profile.hasConditionInputs() ->
+                restrictionsFor(
+                    profile,
+                    conditionGuidanceSource?.guidance() ?: ConditionGuidanceResult.Unavailable
+                )
+            !plannerFeatureFlags.reviewedCapabilityEligibility &&
+                profile.reportedConditions.isNotEmpty() -> ConditionRestrictions.Unavailable
+            else -> ConditionRestrictions.None
+        }
         val automaticEligibilityResult = if (plannerFeatureFlags.reviewedCapabilityEligibility) {
             val exercisesById = allExercises.associateBy { it.id }
             reviewedEligibilityPolicy.evaluate(
@@ -179,7 +207,8 @@ class WorkoutGenerationContextBuilder(
                     exercisesById[exerciseId]
                         ?.acceptedMetadata()
                         ?.progressionFamily
-                }
+                },
+                restrictions = conditionRestrictions
             )
         } else {
             null
@@ -187,10 +216,16 @@ class WorkoutGenerationContextBuilder(
         val allowedExercises = when (automaticEligibilityResult) {
             is AutomaticEligibilityResult.Candidates -> automaticEligibilityResult.exercises
             is AutomaticEligibilityResult.NoCandidates -> emptyList()
-            null -> exerciseFilter.filterCandidates(
-                allExercises = allExercises,
-                profile = profile
-            )
+            null -> if (conditionRestrictions == ConditionRestrictions.Unavailable) {
+                emptyList()
+            } else {
+                // Owned exercises have no metadata, so the legacy filter would otherwise pass them
+                // into main slots; they are mobility and routine items only.
+                exerciseFilter.filterCandidates(
+                    allExercises = allExercises.filterNot { it.isOwnedByWallCrawl },
+                    profile = profile
+                )
+            }
         }
         val schedulingEvidence = if (plannerFeatureFlags.reviewedCapabilityEligibility) {
             val policy = TrainingFrequencyRecencyPolicy()
@@ -225,6 +260,10 @@ class WorkoutGenerationContextBuilder(
             excludedExerciseIds = profile.excludedExerciseIds,
             allowedExercises = allowedExercises,
             automaticEligibilityResult = automaticEligibilityResult,
+            conditionRestrictions = conditionRestrictions,
+            routineExercises = MobilityBlockPolicy.routineEntries(conditionRestrictions)
+                .mapNotNull { entry -> allExercises.firstOrNull { it.id == entry.exerciseId } }
+                .associateBy(Exercise::id),
             capabilityEvidence = capabilityEvidence,
             schedulingEvidence = schedulingEvidence,
             trainingProgramState = trainingProgramState,
@@ -245,7 +284,7 @@ class WorkoutGenerationContextBuilder(
         val preferences = linkedMapOf<String, UserRestPreference>()
         var examinedPrescriptions = 0
         for (session in sessions) {
-            for (exercise in session.exercises) {
+            for (exercise in session.mainExercises) {
                 if (examinedPrescriptions == MAX_PRIOR_REST_PRESCRIPTIONS) {
                     return preferences
                 }

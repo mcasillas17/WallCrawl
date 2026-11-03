@@ -28,6 +28,8 @@ import wallcrawl.elopenmike.com.core.model.WorkoutExercise
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.model.convertWeight
+import wallcrawl.elopenmike.com.core.model.isMobilityOnly
+import wallcrawl.elopenmike.com.core.model.mainExercises
 
 /** A range beyond the analytics representation bounds; reported as too large, never truncated. */
 class AnalyticsRangeTooLargeException : IllegalStateException("Analytics range exceeds its representation bound.")
@@ -76,11 +78,11 @@ class ProgressAnalyticsCalculator(
             // checked here once per week and reported as too large rather than as a read error.
             if (exceedsLedgerWeekBounds(byWeek[week].orEmpty())) throw AnalyticsRangeTooLargeException()
             byWeek[week].orEmpty().sortedWith(compareBy({ it.completedAtTimestamp }, { it.id })).map { session ->
-                val completed = session.exercises
+                val completed = session.mainExercises
                     .filter { it.inScope(scope, exercisesById) }
                     .flatMap { exercise -> exercise.sets.filter { it.isCompleted } }
                 if (scope is AnalyticsScope.Muscle) {
-                    unclassifiable += session.exercises
+                    unclassifiable += session.mainExercises
                         .filter { it.exerciseId !in exercisesById }
                         .sumOf { exercise -> exercise.sets.count { it.isCompleted } }
                 }
@@ -89,7 +91,7 @@ class ProgressAnalyticsCalculator(
                     exercisesById, LedgerPolicyVersion.PRIMARY_ONLY_V1, week, catalogVersion, reviewPolicyVersion
                 )
                 ledger.unattributedWorkSets.forEach { (reason, count) -> unattributed.merge(reason, count, Int::plus) }
-                val member = scope == AnalyticsScope.All || completed.isNotEmpty()
+                val member = (scope == AnalyticsScope.All && !session.isMobilityOnly) || completed.isNotEmpty()
                 session to AnalyticsMetric.entries.associateWith { metric ->
                     when (metric) {
                         AnalyticsMetric.WORKOUTS -> 1.0.takeIf { member }
@@ -132,7 +134,7 @@ class ProgressAnalyticsCalculator(
                 AnalyticsSeries(buckets)
             },
             fullWeeks = weeks.size - 1,
-            hasWorkoutsInRange = sessions.isNotEmpty(),
+            hasWorkoutsInRange = sessions.any { !it.isMobilityOnly },
             unclassifiableSets = unclassifiable,
             unattributedWorkSets = unattributed.filterValues { it > 0 },
             performance = if (scope is AnalyticsScope.Exercise) {
@@ -170,7 +172,7 @@ class ProgressAnalyticsCalculator(
         val observations = sessions
             .sortedWith(compareBy({ it.completedAtTimestamp }, { it.startedAtTimestamp }, { it.id }))
             .flatMap { session ->
-                session.exercises
+                session.mainExercises
                     .filter { it.exerciseId == exerciseId }
                     .sortedWith(compareBy({ it.orderIndex }, { it.id }))
                     .groupBy { it.shape() }
@@ -237,7 +239,7 @@ class ProgressAnalyticsCalculator(
         internal fun exceedsLedgerWeekBounds(weekSessions: List<WorkoutSession>): Boolean =
             weekSessions.size > WeeklyDoseLedgerCalculator.MAX_SESSIONS_PER_WEEK ||
                 weekSessions.sumOf { session ->
-                    session.exercises.sumOf { exercise -> exercise.sets.count { it.isCreditableWorkSet } }
+                    session.mainExercises.sumOf { exercise -> exercise.sets.count { it.isCreditableWorkSet } }
                 } > WeeklyDoseLedgerCalculator.MAX_WORK_SETS_PER_WEEK
 
         /** The range's Monday-start calendar [TrainingWeek]s, oldest first; the last contains [now] and is partial. */

@@ -286,6 +286,25 @@ class WorkoutHistoryScreenTest {
             useUnmergedTree = true).assertExists()
     }
 
+    @Test fun aMobilityExerciseHeadingCarriesTheMobilitySectionLabel() {
+        val original = detail()
+        val main = original.session.exercises.single()
+        val mobility = main.copy(id = "mobility-instance", exerciseId = "stored-mobility-id",
+            orderIndex = 1, role = ExerciseRole.MOBILITY)
+        compose.setContent {
+            WallCrawlTheme {
+                WorkoutHistoryDetailScreen(WorkoutHistoryDetailUiState.Loaded(original.copy(
+                    session = original.session.copy(exercises = listOf(main, mobility))
+                ), null), {}, {})
+            }
+        }
+        val label = context.getString(R.string.mobility_section_label)
+        scrollTo("stored-run-id")
+        compose.onNode(hasText("stored-run-id") and isHeading()).assertExists()
+        scrollTo("stored-mobility-id")
+        compose.onNode(hasText("$label · stored-mobility-id") and isHeading()).assertExists()
+    }
+
     private fun scrollTo(text: String) {
         compose.onNodeWithTag("history-detail").performScrollToNode(hasText(text, substring = true))
     }

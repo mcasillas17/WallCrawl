@@ -27,7 +27,16 @@ data class ExerciseSource(
     val sourceId: String,
     val sourceSlug: String,
     val attribution: ExerciseAttribution
-)
+) {
+    companion object {
+        /** Catalog marker of the exercises WallCrawl owns beside the pinned upstream catalog. */
+        const val OWNED_CATALOG_ID = "wallcrawl-owned"
+    }
+}
+
+/** Owned exercises carry no reviewed metadata and are never chosen for a main session slot. */
+val Exercise.isOwnedByWallCrawl: Boolean
+    get() = source?.catalogId == ExerciseSource.OWNED_CATALOG_ID
 
 data class ExerciseAttribution(
     val creator: String,
@@ -175,11 +184,10 @@ data class ReviewedExerciseMetadata(
     /**
      * Joint sensitivities a reviewer explicitly cleared this exercise for.
      *
-     * Absence is not clearance: a selected [TrainingConstraint] that is not listed keeps the
-     * exercise out of automatic planning. [TrainingConstraint.LOW_IMPACT_ONLY] is never listed
-     * because [impactLevel] already decides it; the parser and importer reject it here so the
-     * two contracts cannot disagree. This is a reviewer's product judgement about a
-     * self-reported sensitivity label, not a diagnosis or clinical clearance.
+     * Kept in the schema but no longer read by planning: joint labels are now decided by the
+     * condition overlay (`core/conditions/ConditionRestrictions.kt`).
+     * [TrainingConstraint.LOW_IMPACT_ONLY] is never listed because [impactLevel] decides it;
+     * the parser and importer reject it here so the two contracts cannot disagree.
      */
     val clearedTrainingConstraints: Set<TrainingConstraint>,
     /**
@@ -191,22 +199,9 @@ data class ReviewedExerciseMetadata(
 )
 
 /**
- * True when every joint sensitivity [profile] selected was explicitly cleared for this exercise.
- *
- * `LOW_IMPACT_ONLY` is excluded because [ReviewedExerciseMetadata.impactLevel] already decides
- * it. Shared so the eligibility gate and the prescription policy cannot drift into two
- * different readings of the same reviewed field.
- */
-internal fun ReviewedExerciseMetadata.clearsJointConstraintsOf(profile: UserProfile): Boolean =
-    profile.trainingConstraints.none { constraint ->
-        constraint != TrainingConstraint.LOW_IMPACT_ONLY &&
-            constraint !in clearedTrainingConstraints
-    }
-
-/**
  * The other half of the training-constraint contract: `LOW_IMPACT_ONLY` meeting a high-impact
- * exercise. Shared for the same reason as [clearsJointConstraintsOf] — the eligibility gate,
- * its supported-regression exception and the prescription policy must read one rule.
+ * exercise. Shared so the eligibility gate, its supported-regression exception and the
+ * prescription policy read one rule.
  */
 internal fun ReviewedExerciseMetadata.violatesImpactRestrictionOf(profile: UserProfile): Boolean =
     TrainingConstraint.LOW_IMPACT_ONLY in profile.trainingConstraints &&

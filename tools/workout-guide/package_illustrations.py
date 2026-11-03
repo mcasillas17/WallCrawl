@@ -18,7 +18,10 @@ def digest(data):
 def collect():
     catalog_path = ROOT / "app/src/main/assets/workout-guide/catalog.json"
     catalog = json.loads(catalog_path.read_text())
-    index = {"schemaVersion": 1, "exercises": {e["id"]: {} for e in catalog["exercises"]}}
+    # WallCrawl-owned entries carry their own attribution and one gender-neutral sequence, which the
+    # app loads as the original fallback; only upstream entries have female and male variants.
+    upstream = [e for e in catalog["exercises"] if "attribution" not in e]
+    index = {"schemaVersion": 1, "exercises": {e["id"]: {} for e in upstream}}
     provenance = {
         "schemaVersion": 1,
         "source": catalog["source"],
@@ -35,8 +38,8 @@ def collect():
         ledger = json.loads((PILOT / folder / "provenance.json").read_text())
         assert ledger["sourceCommit"] == catalog["source"]["commit"], "Artwork source pin differs"
         frames = {(f["exerciseId"], f["frameNumber"]): f for f in ledger["frames"]}
-        assert len(frames) == len(catalog["exercises"]) * 3, "Duplicate or missing ledger frames"
-        for exercise in catalog["exercises"]:
+        assert len(frames) == len(upstream) * 3, "Duplicate or missing ledger frames"
+        for exercise in upstream:
             paths = []
             for number in range(1, 4):
                 frame = frames[(exercise["id"], number)]
@@ -84,6 +87,8 @@ def collect():
         "and traced using Sharp, Potrace and SVGO. Pinned originals were preserved. Selected SVGs are copied byte-for-byte; "
         "masters and full generation records are retained in the local production workspace at art/pilots/female-exercises, "
         "outside the integration commit and app distribution.\n\n"
+        "WallCrawl-owned exercises (listed in ATTRIBUTION.md) are original simple vector art by the WallCrawl project, "
+        "not adaptations of the source catalog, and have no female or male variants.\n\n"
         "The three-frame sequences have the review status recorded in provenance.json. AI-reviewed sequences may retain minor contour, alignment or phase-spacing variations. "
         "AI visual review is not qualified movement-expert approval.\n"
     ).encode()

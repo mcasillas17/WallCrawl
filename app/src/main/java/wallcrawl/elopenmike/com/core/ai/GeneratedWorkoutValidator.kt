@@ -62,6 +62,19 @@ class GeneratedWorkoutValidator(
         return violations
     }
 
+    /** Blank and unknown ids in a mobility block; membership in the candidate set is not required. */
+    suspend fun mobilityIdViolations(block: List<GeneratedExercise>): List<ProgramViolation> =
+        block.mapIndexedNotNull { index, entry ->
+            when {
+                entry.exerciseId.isBlank() ->
+                    ProgramViolation(ProgramViolationCode.BLANK_EXERCISE_ID, orderIndex = index)
+                exerciseCatalog.getExerciseById(entry.exerciseId) == null -> ProgramViolation(
+                    ProgramViolationCode.UNKNOWN_EXERCISE_ID, entry.exerciseId, index
+                )
+                else -> null
+            }
+        }
+
     private suspend fun exerciseViolations(
         index: Int,
         exercise: GeneratedExercise,

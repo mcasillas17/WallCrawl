@@ -69,7 +69,9 @@ internal fun UserProfileEntity.toUserProfile(): UserProfile {
         movementCapabilities = MovementCapabilitiesCodec.decode(movementCapabilitiesJson),
         themePreference = themePreference,
         gender = gender,
-        illustrationPreference = illustrationPreference
+        illustrationPreference = illustrationPreference,
+        reportedConditions = reportedConditionsJson.split(PERSISTED_LIST_SEPARATOR)
+            .filter { it.isNotBlank() }.toSet()
     )
 }
 
@@ -96,7 +98,8 @@ internal fun UserProfile.toUserProfileEntity(): UserProfileEntity = UserProfileE
     movementCapabilitiesJson = MovementCapabilitiesCodec.encode(movementCapabilities),
     themePreference = themePreference,
     gender = gender,
-    illustrationPreference = illustrationPreference
+    illustrationPreference = illustrationPreference,
+    reportedConditionsJson = reportedConditions.joinToString(PERSISTED_LIST_SEPARATOR)
 )
 
 private fun decodeFitnessGoals(raw: String): Set<FitnessGoal> {

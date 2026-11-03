@@ -78,6 +78,9 @@ import wallcrawl.elopenmike.com.core.ui.theme.WebBlueAccent
 import kotlinx.coroutines.delay
 import java.text.DateFormat
 import java.util.Date
+import wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions
+import wallcrawl.elopenmike.com.core.conditions.cuesFor
+import wallcrawl.elopenmike.com.core.model.ExerciseRole
 
 @Composable
 fun ActiveWorkoutScreen(
@@ -193,6 +196,14 @@ fun ActiveWorkoutScreen(
                     )
                 }
 
+                state.painExclusionOffer?.let { offer ->
+                    PainExclusionDialog(
+                        exerciseName = LocalExerciseVocabulary.current.exerciseName(offer.exerciseId),
+                        onAccept = viewModel::acceptPainExclusion,
+                        onDecline = viewModel::dismissPainExclusionOffer
+                    )
+                }
+
                 if (state.isConfirmingDiscard) {
                     DiscardConfirmationDialog(
                         onConfirm = { viewModel.confirmCancel(onNavigateBack) },
@@ -259,11 +270,16 @@ private fun ActiveWorkoutContent(
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
+                val (position, total) = state.positionInRole
                 Text(
                     text = stringResource(
-                        R.string.workout_exercise_position,
-                        LocaleFormatting.formatCount(state.currentExerciseIndex + 1, locale),
-                        LocaleFormatting.formatCount(state.totalExercises, locale)
+                        if (currentExercise?.role == ExerciseRole.MOBILITY) {
+                            R.string.mobility_exercise_position
+                        } else {
+                            R.string.workout_exercise_position
+                        },
+                        LocaleFormatting.formatCount(position, locale),
+                        LocaleFormatting.formatCount(total, locale)
                     ),
                     fontSize = 12.sp,
                     color = CrimsonRedLight,
@@ -324,7 +340,8 @@ private fun ActiveWorkoutContent(
                     ExerciseHeaderCard(
                         workoutExercise = currentExercise,
                         catalogExercise = state.currentCatalogExercise,
-                        preferredUnit = state.weightUnit.symbol
+                        preferredUnit = state.weightUnit.symbol,
+                        restrictions = state.restrictions
                     )
                 }
 
@@ -501,6 +518,48 @@ private fun FinishConfirmationDialog(
     )
 }
 
+/** Closing it any way other than accepting leaves every setting as it was. */
+@Composable
+private fun PainExclusionDialog(
+    exerciseName: String,
+    onAccept: () -> Unit,
+    onDecline: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDecline,
+        title = {
+            Text(
+                stringResource(R.string.pain_offer_title, exerciseName),
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        },
+        text = {
+            Text(
+                stringResource(R.string.pain_offer_body),
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        },
+        confirmButton = {
+            TextButton(onClick = onAccept) {
+                Text(
+                    stringResource(R.string.pain_offer_accept),
+                    color = CrimsonRedPrimary,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDecline) {
+                Text(
+                    stringResource(R.string.pain_offer_decline),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+        },
+        containerColor = MaterialTheme.colorScheme.surface
+    )
+}
+
 @Composable
 private fun DiscardConfirmationDialog(
     onConfirm: () -> Unit,
@@ -545,7 +604,8 @@ private fun DiscardConfirmationDialog(
 private fun ExerciseHeaderCard(
     workoutExercise: WorkoutExercise,
     catalogExercise: wallcrawl.elopenmike.com.core.model.Exercise?,
-    preferredUnit: String
+    preferredUnit: String,
+    restrictions: ConditionRestrictions
 ) {
     val locale = LocalConfiguration.current.locales[0]
     val vocabulary = LocalExerciseVocabulary.current
@@ -553,10 +613,22 @@ private fun ExerciseHeaderCard(
         ?.let(vocabulary::exerciseName)
         ?: vocabulary.exerciseName(workoutExercise.exerciseId)
 
+    val isMobility = workoutExercise.role == ExerciseRole.MOBILITY
     WallCrawlCard(
         cornerRadius = 14.dp,
         contentPadding = 14.dp
     ) {
+        if (isMobility) {
+            // A separate section, not a main exercise: it is general information.
+            Text(
+                text = stringResource(R.string.mobility_section_label),
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 0.5.sp,
+                color = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier.padding(bottom = 6.dp)
+            )
+        }
         Text(
             text = displayName,
             fontSize = 20.sp,
@@ -596,6 +668,35 @@ private fun ExerciseHeaderCard(
                     textColor = MaterialTheme.colorScheme.secondary
                 )
             }
+            // Logging still records reps for a held position; the hold is only the target.
+            workoutExercise.prescription.holdSeconds?.let { hold ->
+                StatBadge(
+                    label = stringResource(
+                        R.string.mobility_hold,
+                        LocaleFormatting.formatCount(hold, locale)
+                    ),
+                    textColor = MaterialTheme.colorScheme.secondary
+                )
+            }
+        }
+        if (isMobility) {
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = stringResource(
+                    R.string.mobility_rest,
+                    LocaleFormatting.formatCount(workoutExercise.prescription.restSeconds, locale)
+                ),
+                fontSize = 13.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        restrictions.cuesFor(workoutExercise.exerciseId, locale.language).forEach { cue ->
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = stringResource(R.string.condition_cue, cue),
+                fontSize = 13.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }

@@ -1,5 +1,6 @@
 package wallcrawl.elopenmike.com.feature.today
 
+import wallcrawl.elopenmike.com.core.conditions.hasConditionInputs
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.createSavedStateHandle
@@ -69,8 +70,30 @@ class TodayViewModel(
     zoneId: () -> ZoneId = ZoneId::systemDefault,
     private val deloadRepository: DeloadRepository? = null,
     private val programRepository: wallcrawl.elopenmike.com.core.database.repository.ProgramRepository? = null,
-    private val savedStateHandle: androidx.lifecycle.SavedStateHandle = androidx.lifecycle.SavedStateHandle()
+    private val savedStateHandle: androidx.lifecycle.SavedStateHandle = androidx.lifecycle.SavedStateHandle(),
+    private val conditionGuidanceSource: wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceSource? = null
 ) : ViewModel() {
+
+    /**
+     * Display only: what the cues on screen are read from. Planning gets its own restrictions
+     * from the context builder, and this never feeds a decision.
+     */
+    suspend fun conditionRestrictions(
+        profile: UserProfile
+    ): wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions {
+        // Nobody without a condition input needs the overlay parsed just to open the screen.
+        if (!profile.hasConditionInputs()) {
+            return wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions.None
+        }
+        val result = try {
+            conditionGuidanceSource?.guidance()
+        } catch (error: CancellationException) {
+            throw error
+        } catch (error: Exception) {
+            null
+        } ?: wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceResult.Unavailable
+        return wallcrawl.elopenmike.com.core.conditions.restrictionsFor(profile, result)
+    }
 
     private val selectedIntentFlow = MutableStateFlow(
         savedStateHandle.get<String>("today.intent")?.let { name -> WorkoutPlanningIntent.entries.firstOrNull { it.name == name } }
@@ -590,7 +613,8 @@ class TodayViewModel(
             workoutPlanner: WorkoutPlanner,
             programValidator: ProgramValidator,
             deloadRepository: DeloadRepository? = null,
-            programRepository: wallcrawl.elopenmike.com.core.database.repository.ProgramRepository? = null
+            programRepository: wallcrawl.elopenmike.com.core.database.repository.ProgramRepository? = null,
+            conditionGuidanceSource: wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceSource
         ): ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 TodayViewModel(
@@ -601,7 +625,8 @@ class TodayViewModel(
                     programValidator,
                     deloadRepository = deloadRepository,
                     programRepository = programRepository,
-                    savedStateHandle = createSavedStateHandle()
+                    savedStateHandle = createSavedStateHandle(),
+                    conditionGuidanceSource = conditionGuidanceSource
                 )
             }
         }
@@ -637,6 +662,12 @@ internal fun automaticEligibilityError(failure: AutomaticEligibilityFailure?): T
 
         AutomaticEligibilityFailure.TRAINING_CONSTRAINTS_REMOVED_ALL ->
             TodayError.REVIEWED_CONSTRAINTS_REMOVED_ALL
+
+        AutomaticEligibilityFailure.CONDITIONS_REMOVED_ALL ->
+            TodayError.REVIEWED_CONDITIONS_REMOVED_ALL
+
+        AutomaticEligibilityFailure.CONDITION_GUIDANCE_UNAVAILABLE ->
+            TodayError.CONDITION_GUIDANCE_UNAVAILABLE
 
         AutomaticEligibilityFailure.CALIBRATION_COMPLEXITY_REMOVED_ALL ->
             TodayError.REVIEWED_CALIBRATION_REMOVED_ALL

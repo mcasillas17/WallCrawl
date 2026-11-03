@@ -31,7 +31,9 @@ data class GeneratedWorkout(
      */
     val unavailableFocusMuscles: List<String> = emptyList(),
     /** Recorded separately from freshness: advancing the planner must not stale this plan. */
-    val generationIndex: Int? = null
+    val generationIndex: Int? = null,
+    /** Mobility work shown and started before the exercises. Empty without a condition routine. */
+    val mobilityBlock: List<PlannedExercise> = emptyList()
 )
 
 sealed interface WorkoutRankingReason {
@@ -133,7 +135,8 @@ data class WorkoutExercise(
     val orderIndex: Int,
     val prescription: ExercisePrescription,
     val notes: String = "",
-    val sets: List<WorkoutSet> = emptyList()
+    val sets: List<WorkoutSet> = emptyList(),
+    val role: ExerciseRole = ExerciseRole.MAIN
 ) {
     /** Compatibility constructor for persisted repetition-only sessions before schema 4. */
     constructor(
@@ -170,7 +173,19 @@ data class WorkoutExercise(
     val targetRepMax: Int get() = prescription.repRange?.max ?: 0
     val targetWeight: Double? get() = prescription.targetWeight
     val targetRepRange: RepRange? get() = prescription.repRange
+    val targetHoldSeconds: Int? get() = prescription.holdSeconds
 }
+
+/** MOBILITY exercises are written by the routine block; everything else is MAIN. */
+enum class ExerciseRole { MAIN, MOBILITY }
+
+/** The rows that earn training credit: mobility work is logged like any set but never counted. */
+internal val WorkoutSession.mainExercises: List<WorkoutExercise>
+    get() = exercises.filter { it.role == ExerciseRole.MAIN }
+
+/** Logged work that is only mobility: it stays in history but is not a training session. */
+internal val WorkoutSession.isMobilityOnly: Boolean
+    get() = exercises.isNotEmpty() && mainExercises.isEmpty()
 
 /**
  * An individual set within a [WorkoutExercise].

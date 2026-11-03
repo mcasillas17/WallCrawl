@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WallCrawl Engine Map</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --serif:'Fraunces',Georgia,serif;--sans:'IBM Plex Sans',system-ui,sans-serif;--mono:'IBM Plex Mono',ui-monospace,monospace;
+  --bg:#f5f2ea;--bg2:#ece7da;--panel:#fffdf7;--ink:#20262b;--muted:#59636b;--line:#cfc8b6;
+  --chalk:#0f766e;--ochre:#a85a12;--chalk-soft:#0f766e1a;--ochre-soft:#a85a121f;
+  --afh-bg:#f5f2ea;--afh-zone-fill:#ece7da;--afh-zone-stroke:#cfc8b6;--afh-muted:#59636b;--afh-shadow:#8f886f;
+  --afh-card:#fffdf7;--afh-card-active:#ffffff;--afh-line:#b9b19b;--afh-icon:#e2dccb;--afh-accent:#0f766e;--afh-accent-2:#a85a12;
+  --afh-ink:#20262b;--afh-edge:#7d8388;--afh-mono:'IBM Plex Mono',monospace;--afh-body:'IBM Plex Sans',sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#14191d;--bg2:#1b2227;--panel:#20282e;--ink:#eef0ea;--muted:#a3adb3;--line:#36414a;
+  --chalk:#5fd0c2;--ochre:#eaa75a;--chalk-soft:#5fd0c21a;--ochre-soft:#eaa75a1f;
+  --afh-bg:#14191d;--afh-zone-fill:#1b2227;--afh-zone-stroke:#36414a;--afh-muted:#a3adb3;--afh-shadow:#050708;
+  --afh-card:#20282e;--afh-card-active:#27323a;--afh-line:#46525b;--afh-icon:#2d3840;--afh-accent:#5fd0c2;--afh-accent-2:#eaa75a;
+  --afh-ink:#eef0ea;--afh-edge:#77838b;
+}}
+:root[data-theme="dark"]{
+  --bg:#14191d;--bg2:#1b2227;--panel:#20282e;--ink:#eef0ea;--muted:#a3adb3;--line:#36414a;
+  --chalk:#5fd0c2;--ochre:#eaa75a;--chalk-soft:#5fd0c21a;--ochre-soft:#eaa75a1f;
+  --afh-bg:#14191d;--afh-zone-fill:#1b2227;--afh-zone-stroke:#36414a;--afh-muted:#a3adb3;--afh-shadow:#050708;
+  --afh-card:#20282e;--afh-card-active:#27323a;--afh-line:#46525b;--afh-icon:#2d3840;--afh-accent:#5fd0c2;--afh-accent-2:#eaa75a;
+  --afh-ink:#eef0ea;--afh-edge:#77838b;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.6 var(--sans)}
+code,.mono{font-family:var(--mono);font-size:.86em}
+a{color:var(--chalk)}
+.layout{display:grid;grid-template-columns:210px minmax(0,1fr);max-width:1500px;margin:auto}
+nav.toc{position:sticky;top:0;align-self:start;height:100vh;padding:32px 20px;border-right:1px solid var(--line);font-size:14px}
+nav.toc b{font:600 19px var(--serif);display:block;margin-bottom:18px}
+nav.toc a{display:block;padding:5px 0;color:var(--muted);text-decoration:none}
+nav.toc a:hover,nav.toc a:focus-visible{color:var(--chalk)}
+#theme{margin-top:18px;background:none;border:1px solid var(--line);color:var(--ink);padding:6px 12px;border-radius:4px;font:500 13px var(--sans);cursor:pointer}
+main{min-width:0}
+section,header.top{padding:64px 48px;border-bottom:1px solid var(--line)}
+h1{font:600 clamp(36px,5vw,60px)/1.05 var(--serif);margin:0 0 18px;max-width:18ch}
+h2{font:600 32px/1.15 var(--serif);margin:0 0 14px}
+h3{font:600 15px var(--sans);margin:0 0 6px}
+.lede{font-size:19px;max-width:66ch;color:var(--muted);margin:0}
+p{max-width:72ch}
+.eyebrow{font:600 12px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ochre);margin:0 0 12px}
+header.top{background:radial-gradient(900px 340px at 85% 0,var(--chalk-soft),transparent)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));background:var(--bg2);padding:0}
+.kpi{padding:26px 28px;border-right:1px solid var(--line)}
+.kpi b{display:block;font:600 38px/1 var(--serif);color:var(--chalk)}
+.kpi.warn b{color:var(--ochre)}
+.kpi span{font-size:13.5px;color:var(--muted)}
+#map{background:linear-gradient(180deg,var(--bg2),var(--bg) 300px);padding-inline:24px}
+#map>h2,#map>p{margin-inline:24px}
+.scroll{overflow-x:auto}
+.scroll .archflow-hero{min-width:1000px}
+.chapters{display:flex;flex-wrap:wrap;gap:8px;margin:18px 24px 10px}
+.chapters button{font:600 13px var(--mono);background:var(--panel);color:var(--muted);border:1px solid var(--line);padding:7px 12px;border-radius:4px;cursor:pointer}
+.chapters button[aria-pressed="true"]{color:var(--bg);background:var(--chalk);border-color:var(--chalk)}
+#narr{margin:0 24px 18px;min-height:3.2em;max-width:88ch}
+.gate{background:radial-gradient(800px 400px at 0 100%,var(--ochre-soft),transparent)}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+caption{text-align:left;font-size:13.5px;color:var(--muted);padding-bottom:8px}
+th{text-align:left;font:600 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:8px 12px;border-bottom:2px solid var(--line)}
+td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr.hot td{background:var(--ochre-soft)}
+.ladders{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:40px;margin-top:24px}
+ol.ladder{list-style:none;counter-reset:r;padding:0;margin:0}
+ol.ladder li{counter-increment:r;padding:9px 0 9px 42px;position:relative;border-bottom:1px dashed var(--line);font-size:15px}
+ol.ladder li::before{content:counter(r);position:absolute;left:0;top:7px;width:28px;height:28px;border-radius:50%;background:var(--chalk-soft);color:var(--chalk);font:600 13px/28px var(--mono);text-align:center}
+.dose{background:var(--bg2)}
+.split{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:44px}
+.valid{background:linear-gradient(120deg,var(--chalk-soft),transparent 45%)}
+.checks{columns:2 280px;gap:36px;padding:0;margin:20px 0 0;list-style:none}
+.checks li{break-inside:avoid;padding:0 0 14px}
+.trace{background:var(--bg2)}
+.term{background:#101417;color:#dfe5e0;border-radius:6px;padding:22px 24px;font:400 13.5px/1.75 var(--mono);overflow-x:auto;white-space:pre;margin-top:18px}
+.term .k{color:#eaa75a}.term .g{color:#5fd0c2}.term .d{color:#8b979e}
+.seams{background:radial-gradient(900px 400px at 100% 0,var(--ochre-soft),transparent)}
+.seam{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;padding:18px 0;border-top:1px solid var(--line)}
+.seam h3{color:var(--chalk)}
+.seam .todo{color:var(--ochre);font:600 12px var(--mono);letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:4px}
+.seam p{margin:0;font-size:15px}
+blockquote{font:400 25px/1.35 var(--serif);margin:0 0 26px;padding-left:24px;border-left:3px solid var(--ochre);max-width:34em}
+blockquote cite{display:block;font:400 13px var(--mono);color:var(--muted);margin-top:8px}
+.refs{background:var(--bg2)}
+.refs td:first-child{font:400 13px var(--mono);word-break:break-word}
+:focus-visible{outline:2px solid var(--chalk);outline-offset:2px}
+@media(max-width:900px){.layout{display:block}nav.toc{position:static;height:auto;border:0;border-bottom:1px solid var(--line);padding:16px}nav.toc a{display:inline-block;margin-right:12px}section,header.top{padding:44px 16px}#map{padding-inline:16px}#map>h2,#map>p,.chapters,#narr{margin-inline:0}.split,.seam{grid-template-columns:1fr}.table-wrap{overflow-x:auto}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{
+  @page{size:A4 portrait;margin:14mm}
+  :root,:root[data-theme="dark"]{--bg:#fff;--bg2:#fff;--panel:#fff;--ink:#111;--muted:#444;--line:#bbb;--chalk:#0f766e;--ochre:#a85a12;--afh-bg:#fff;--afh-zone-fill:#f6f6f2;--afh-zone-stroke:#bbb;--afh-muted:#444;--afh-card:#fff;--afh-card-active:#fff;--afh-line:#888;--afh-icon:#eee;--afh-accent:#0f766e;--afh-accent-2:#a85a12;--afh-ink:#111;--afh-edge:#666;--afh-shadow:#fff}
+  body{font-size:11pt}
+  h1{font-size:26pt}
+  h2{font-size:17pt}
+  nav.toc,.chapters,#narr{display:none}
+  .layout{display:block}
+  section,header.top{padding:18px 0;background:none!important;border-bottom:1px solid #bbb}
+  .scroll .archflow-hero{min-width:0}
+  .term{background:#f4f4f0;color:#111;white-space:pre-wrap;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .term .k,.term .g,.term .d{color:#111}
+  tr,.seam,blockquote,li{break-inside:avoid}
+  h2{break-after:avoid}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc" aria-label="Contents">
+  <b>Engine map</b>
+  <a href="#summary">Summary</a><a href="#map">The pipeline</a><a href="#gate">Legality gate</a><a href="#select">Selection</a><a href="#dose">Dose</a><a href="#validate">Validation</a><a href="#trace">A piriformis trace</a><a href="#seams">Condition seams</a><a href="#bounds">Recorded limits</a><a href="#refs">Code references</a>
+  <button id="theme" type="button">Switch theme</button>
+</nav>
+<main>
+<header class="top" id="summary">
+  <p class="eyebrow">WallCrawl · mapped at 0781ad59d · 2026-11-01</p>
+  <h1>How a workout gets decided</h1>
+  <p class="lede">WallCrawl has no model runtime. A pure Kotlin pipeline turns a stored profile, a bundled catalog and bounded local history into one session. Hard rules decide what is legal, comparators decide what is chosen, and a validator rejects anything that breaks the contract. The same inputs and generation index always give the same plan.</p>
+</header>
+<div class="kpis">
+  <div class="kpi"><b>309</b><span>exercises: 302 upstream, 7 owned</span></div>
+  <div class="kpi"><b>182</b><span>AI_ACCEPTED, so plannable</span></div>
+  <div class="kpi warn"><b>0</b><span>human APPROVED records</span></div>
+  <div class="kpi"><b>8</b><span>conditions, 21 movement demands</span></div>
+  <div class="kpi"><b>6</b><span>hard legality stages</span></div>
+  <div class="kpi"><b>1</b><span>repair pass, sets only</span></div>
+</div>
+
+<section id="map">
+  <p class="eyebrow">The pipeline</p>
+  <h2>One context in, one frozen session out</h2>
+  <p>Step through the chapters to follow a recommendation. The nodes tagged <code>OVERLAY</code> and <code>BLOCK</code> are where reported conditions touch the engine.</p>
+  <div class="chapters" id="chapters" role="group" aria-label="Pipeline chapters"></div>
+  <p id="narr"></p>
+  <div class="scroll"><svg class="archflow-hero" data-archflow-hero="1" viewBox="0 0 1460 715" role="img" aria-labelledby="afh-title afh-description" xmlns="http://www.w3.org/2000/svg"><title id="afh-title">WallCrawl deterministic engine</title><desc id="afh-description">From a stored profile to a frozen, validated session and back</desc><metadata id="afh-chapters">[{&quot;id&quot;:&quot;c1&quot;,&quot;label&quot;:&quot;1 Gather&quot;,&quot;color&quot;:&quot;mint&quot;,&quot;zones&quot;:[&quot;z-input&quot;,&quot;z-context&quot;],&quot;entities&quot;:[&quot;profile&quot;,&quot;catalog&quot;,&quot;metadata&quot;,&quot;builder&quot;,&quot;evidence&quot;,&quot;state&quot;],&quot;flows&quot;:[&quot;f-meta&quot;,&quot;f-prof&quot;,&quot;f-cat&quot;,&quot;f-ev&quot;,&quot;f-st&quot;]},{&quot;id&quot;:&quot;c2&quot;,&quot;label&quot;:&quot;2 Legalize&quot;,&quot;color&quot;:&quot;amber&quot;,&quot;zones&quot;:[&quot;z-gate&quot;],&quot;entities&quot;:[&quot;accepted&quot;,&quot;eligibility&quot;,&quot;clears&quot;],&quot;flows&quot;:[&quot;f-ctx&quot;,&quot;f-acc&quot;,&quot;f-clr&quot;]},{&quot;id&quot;:&quot;c3&quot;,&quot;label&quot;:&quot;3 Select&quot;,&quot;color&quot;:&quot;amber&quot;,&quot;zones&quot;:[&quot;z-plan&quot;],&quot;entities&quot;:[&quot;planner&quot;,&quot;factory&quot;,&quot;policy&quot;,&quot;mobility&quot;],&quot;flows&quot;:[&quot;f-can&quot;,&quot;f-sel&quot;,&quot;f-cap&quot;,&quot;f-mob&quot;,&quot;f-mobv&quot;]},{&quot;id&quot;:&quot;c4&quot;,&quot;label&quot;:&quot;4 Validate&quot;,&quot;color&quot;:&quot;amber&quot;,&quot;zones&quot;:[&quot;z-valid&quot;],&quot;entities&quot;:[&quot;structural&quot;,&quot;validator&quot;,&quot;repair&quot;],&quot;flows&quot;:[&quot;f-prop&quot;,&quot;f-str&quot;,&quot;f-rep&quot;,&quot;f-ret&quot;]},{&quot;id&quot;:&quot;c5&quot;,&quot;label&quot;:&quot;5 Start&quot;,&quot;color&quot;:&quot;mint&quot;,&quot;zones&quot;:[&quot;z-commit&quot;],&quot;entities&quot;:[&quot;identity&quot;,&quot;today&quot;,&quot;repo&quot;],&quot;flows&quot;:[&quot;f-pub&quot;,&quot;f-id&quot;,&quot;f-start&quot;]},{&quot;id&quot;:&quot;c6&quot;,&quot;label&quot;:&quot;6 Feed back&quot;,&quot;color&quot;:&quot;mint&quot;,&quot;zones&quot;:[&quot;z-loop&quot;],&quot;entities&quot;:[&quot;logging&quot;,&quot;history&quot;,&quot;pain&quot;],&quot;flows&quot;:[&quot;f-log&quot;,&quot;f-done&quot;,&quot;f-pain&quot;,&quot;f-hist&quot;,&quot;f-state&quot;]}]</metadata><defs><marker id="afh-arrow" markerUnits="userSpaceOnUse" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z"/></marker><filter id="afh-soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="6"/></filter></defs><style>.archflow-hero{width:100%;height:auto;display:block;overflow:visible}.afh-zone{opacity:.76;transition:opacity .35s ease}.afh-zone-frame{fill:var(--afh-zone-fill,#121b2f);stroke:var(--afh-zone-stroke,#2b3a59);stroke-width:1}.afh-zone-title{fill:var(--afh-muted,#8290aa);font:600 11px var(--afh-mono,ui-monospace,monospace);letter-spacing:.12em;text-transform:uppercase}.afh-entity{opacity:.46;transition:opacity .3s ease,filter .3s ease}.afh-entity-shadow{fill:var(--afh-shadow,#050810);opacity:.44;filter:url(#afh-soft)}.afh-entity-frame{fill:var(--afh-card,#172137);stroke:var(--afh-line,#33425f);stroke-width:1.2;transition:stroke .3s ease,fill .3s ease}.afh-icon rect{fill:var(--afh-icon,#24334f)}.afh-icon text{fill:var(--afh-accent,#5eead4);font:700 8px var(--afh-mono,ui-monospace,monospace);letter-spacing:.05em}.afh-entity-title{fill:var(--afh-ink,#edf4ff);font:650 12px var(--afh-body,system-ui,sans-serif)}.afh-entity-caption{fill:var(--afh-muted,#95a4bd);font:500 9.5px var(--afh-body,system-ui,sans-serif)}.afh-tag{paint-order:stroke;stroke:var(--afh-bg,#08101f);stroke-width:5;stroke-linejoin:round;fill:var(--afh-accent-2,#f4b860);font:700 8px var(--afh-mono,ui-monospace,monospace);letter-spacing:.08em}.afh-flow{opacity:.22;transition:opacity .3s ease}.afh-flow-halo{fill:none;stroke:var(--afh-bg,#08101f);stroke-width:7;stroke-linejoin:round}.afh-flow-path{fill:none;stroke:var(--afh-edge,#6d7f9f);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.afh-flow-label{paint-order:stroke;stroke:var(--afh-bg,#08101f);stroke-width:7;stroke-linejoin:round;fill:var(--afh-muted,#95a4bd);font:650 8.5px var(--afh-mono,ui-monospace,monospace);letter-spacing:.04em}.afh-entity.is-active{opacity:1}.afh-entity.is-active .afh-entity-frame{stroke:var(--afh-accent,#5eead4);fill:var(--afh-card-active,#1b2a42)}.afh-flow.is-active{opacity:1}.afh-flow.is-active .afh-flow-path{stroke:var(--afh-accent,#5eead4);stroke-width:2.5}.afh-zone.is-active{opacity:1}.afh-zone.is-active .afh-zone-frame{stroke:var(--afh-accent,#5eead4);stroke-opacity:.5}@media(prefers-reduced-motion:reduce){.afh-zone,.afh-entity,.afh-flow{transition:none}}</style><g id="z-input" class="afh-zone" data-af-zone="z-input" data-af-tone="cool"><rect class="afh-zone-frame" x="20" y="60" width="220" height="440" rx="24"/><text class="afh-zone-title" x="42" y="91">Inputs</text></g><g id="z-context" class="afh-zone" data-af-zone="z-context" data-af-tone="cool"><rect class="afh-zone-frame" x="260" y="60" width="220" height="440" rx="24"/><text class="afh-zone-title" x="282" y="91">Context</text></g><g id="z-gate" class="afh-zone" data-af-zone="z-gate" data-af-tone="warm"><rect class="afh-zone-frame" x="500" y="60" width="220" height="440" rx="24"/><text class="afh-zone-title" x="522" y="91">Legality gate</text></g><g id="z-plan" class="afh-zone" data-af-zone="z-plan" data-af-tone="warm"><rect class="afh-zone-frame" x="740" y="60" width="220" height="440" rx="24"/><text class="afh-zone-title" x="762" y="91">Plan and prescribe</text></g><g id="z-valid" class="afh-zone" data-af-zone="z-valid" data-af-tone="warm"><rect class="afh-zone-frame" x="980" y="60" width="220" height="440" rx="24"/><text class="afh-zone-title" x="1002" y="91">Whole-program check</text></g><g id="z-commit" class="afh-zone" data-af-zone="z-commit" data-af-tone="cool"><rect class="afh-zone-frame" x="1220" y="60" width="220" height="440" rx="24"/><text class="afh-zone-title" x="1242" y="91">Publish and start</text></g><g id="z-loop" class="afh-zone" data-af-zone="z-loop" data-af-tone="cool"><rect class="afh-zone-frame" x="20" y="515" width="1420" height="180" rx="24"/><text class="afh-zone-title" x="42" y="546">History loop</text></g><g id="f-meta" class="afh-flow" data-af-flow="f-meta" data-af-kind="data"><path class="afh-flow-halo" d="M 130 390 L 130 334"/><path class="afh-flow-path" d="M 130 390 L 130 334" marker-end="url(#afh-arrow)"/><text class="afh-flow-label" x="142" y="365" text-anchor="start">imported</text></g><g id="f-prof" class="afh-flow" data-af-flow="f-prof" data-af-kind="data"><path class="afh-flow-halo" d="M 220 152 L 250 152 L 250 278 L 280 278"/><path class="afh-flow-path" d="M 220 152 L 250 152 L 250 278 L 280 278" marker-end="url(#afh-arrow)"/></g><g id="f-cat" class="afh-flow" data-af-flow="f-cat" data-af-kind="data"><path class="afh-flow-halo" d="M 220 292 L 280 292"/><path class="afh-flow-path" d="M 220 292 L 280 292" marker-end="url(#afh-arrow)"/></g><g id="f-hist" class="afh-flow" data-af-flow="f-hist" data-af-kind="data"><path class="afh-flow-halo" d="M 220 588 L 250 588 L 250 306 L 280 306"/><path class="afh-flow-path" d="M 220 588 L 250 588 L 250 306 L 280 306" marker-end="url(#afh-arrow)"/></g><g id="f-state" class="afh-flow" data-af-flow="f-state" data-af-kind="data"><path class="afh-flow-halo" d="M 220 602 L 370 602 L 370 474"/><path class="afh-flow-path" d="M 220 602 L 370 602 L 370 474" marker-end="url(#afh-arrow)"/></g><g id="f-ev" class="afh-flow" data-af-flow="f-ev" data-af-kind="data"><path class="afh-flow-halo" d="M 370 194 L 370 250"/><path class="afh-flow-path" d="M 370 194 L 370 250" marker-end="url(#afh-arrow)"/><text class="afh-flow-label" x="382" y="225" text-anchor="start">evidence</text></g><g id="f-st" class="afh-flow" data-af-flow="f-st" data-af-kind="data"><path class="afh-flow-halo" d="M 370 390 L 370 334"/><path class="afh-flow-path" d="M 370 390 L 370 334" marker-end="url(#afh-arrow)"/><text class="afh-flow-label" x="382" y="365" text-anchor="start">state</text></g><g id="f-ctx" class="afh-flow" data-af-flow="f-ctx" data-af-kind="data"><path class="afh-flow-halo" d="M 460 292 L 520 292"/><path class="afh-flow-path" d="M 460 292 L 520 292" marker-end="url(#afh-arrow)"/></g><g id="f-acc" class="afh-flow" data-af-flow="f-acc" data-af-kind="data"><path class="afh-flow-halo" d="M 610 194 L 610 250"/><path class="afh-flow-path" d="M 610 194 L 610 250" marker-end="url(#afh-arrow)"/><text class="afh-flow-label" x="622" y="225" text-anchor="start">accepted?</text></g><g id="f-clr" class="afh-flow" data-af-flow="f-clr" data-af-kind="data"><path class="afh-flow-halo" d="M 610 390 L 610 334"/><path class="afh-flow-path" d="M 610 390 L 610 334" marker-end="url(#afh-arrow)"/><text class="afh-flow-label" x="622" y="365" text-anchor="start">avoid?</text></g><g id="f-can" class="afh-flow" data-af-flow="f-can" data-af-kind="data"><path class="afh-flow-halo" d="M 700 278 L 730 278 L 730 132 L 760 132"/><path class="afh-flow-path" d="M 700 278 L 730 278 L 730 132 L 760 132" marker-end="url(#afh-arrow)"/></g><g id="f-sel" class="afh-flow" data-af-flow="f-sel" data-af-kind="data"><path class="afh-flow-halo" d="M 850 166 L 850 204"/><path class="afh-flow-path" d="M 850 166 L 850 204" marker-end="url(#afh-arrow)"/><text class="afh-flow-label" x="862" y="188" text-anchor="start">picks</text></g><g id="f-cap" class="afh-flow" data-af-flow="f-cap" data-af-kind="data"><path class="afh-flow-halo" d="M 850 310 L 850 272"/><path class="afh-flow-path" d="M 850 310 L 850 272" marker-end="url(#afh-arrow)"/><text class="afh-flow-label" x="862" y="294" text-anchor="start">limits</text></g><g id="f-prop" class="afh-flow" data-af-flow="f-prop" data-af-kind="data"><path class="afh-flow-halo" d="M 940 132 L 970 132 L 970 278 L 1000 278"/><path class="afh-flow-path" d="M 940 132 L 970 132 L 970 278 L 1000 278" marker-end="url(#afh-arrow)"/></g><g id="f-str" class="afh-flow" data-af-flow="f-str" data-af-kind="data"><path class="afh-flow-halo" d="M 1090 194 L 1090 250"/><path class="afh-flow-path" d="M 1090 194 L 1090 250" marker-end="url(#afh-arrow)"/><text class="afh-flow-label" x="1102" y="225" text-anchor="start">violations</text></g><g id="f-rep" class="afh-flow" data-af-flow="f-rep" data-af-kind="data"><path class="afh-flow-halo" d="M 1040 334 L 1040 390"/><path class="afh-flow-path" d="M 1040 334 L 1040 390" marker-end="url(#afh-arrow)"/></g><g id="f-ret" class="afh-flow" data-af-flow="f-ret" data-af-kind="data"><path class="afh-flow-halo" d="M 1140 390 L 1140 334"/><path class="afh-flow-path" d="M 1140 390 L 1140 334" marker-end="url(#afh-arrow)"/></g><g id="f-pub" class="afh-flow" data-af-flow="f-pub" data-af-kind="data"><path class="afh-flow-halo" d="M 1180 292 L 1240 292"/><path class="afh-flow-path" d="M 1180 292 L 1240 292" marker-end="url(#afh-arrow)"/></g><g id="f-id" class="afh-flow" data-af-flow="f-id" data-af-kind="data"><path class="afh-flow-halo" d="M 1330 194 L 1330 250"/><path class="afh-flow-path" d="M 1330 194 L 1330 250" marker-end="url(#afh-arrow)"/><text class="afh-flow-label" x="1342" y="225" text-anchor="start">fresh?</text></g><g id="f-start" class="afh-flow" data-af-flow="f-start" data-af-kind="data"><path class="afh-flow-halo" d="M 1330 334 L 1330 390"/><path class="afh-flow-path" d="M 1330 334 L 1330 390" marker-end="url(#afh-arrow)"/><text class="afh-flow-label" x="1342" y="365" text-anchor="start">start</text></g><g id="f-log" class="afh-flow" data-af-flow="f-log" data-af-kind="data"><path class="afh-flow-halo" d="M 1330 474 L 1330 560"/><path class="afh-flow-path" d="M 1330 474 L 1330 560" marker-end="url(#afh-arrow)"/></g><g id="f-done" class="afh-flow" data-af-flow="f-done" data-af-kind="data"><path class="afh-flow-halo" d="M 1240 616 L 220 616"/><path class="afh-flow-path" d="M 1240 616 L 220 616" marker-end="url(#afh-arrow)"/><text class="afh-flow-label" x="600" y="630" text-anchor="middle">completed work</text></g><g id="f-pain" class="afh-flow" data-af-flow="f-pain" data-af-kind="data"><path class="afh-flow-halo" d="M 1240 574 L 940 574"/><path class="afh-flow-path" d="M 1240 574 L 940 574" marker-end="url(#afh-arrow)"/></g><g id="f-mob" class="afh-flow" data-af-flow="f-mob" data-af-kind="data"><path class="afh-flow-halo" d="M 700 432 L 730 432 L 730 450 L 760 450"/><path class="afh-flow-path" d="M 700 432 L 730 432 L 730 450 L 760 450" marker-end="url(#afh-arrow)"/></g><g id="f-mobv" class="afh-flow" data-af-flow="f-mobv" data-af-kind="data"><path class="afh-flow-halo" d="M 940 450 L 975 450 L 975 306 L 1000 306"/><path class="afh-flow-path" d="M 940 450 L 975 450 L 975 306 L 1000 306" marker-end="url(#afh-arrow)"/></g><g id="profile" class="afh-entity" data-af-entity="profile" data-af-kind="source"><rect class="afh-entity-shadow" x="42" y="115" width="180" height="84" rx="16"/><rect class="afh-entity-frame" x="40" y="110" width="180" height="84" rx="16"/><g class="afh-icon" transform="translate(53 123)"><rect width="27" height="27" rx="8"/><text x="13.5" y="17.5" text-anchor="middle">IN</text></g><text class="afh-tag" x="213" y="103" text-anchor="end">ROOM</text><text class="afh-entity-title" x="90" y="136">UserProfile</text><text class="afh-entity-caption" x="54" y="160">Goals, gear, conditions</text></g><g id="catalog" class="afh-entity" data-af-entity="catalog" data-af-kind="source"><rect class="afh-entity-shadow" x="42" y="255" width="180" height="84" rx="16"/><rect class="afh-entity-frame" x="40" y="250" width="180" height="84" rx="16"/><g class="afh-icon" transform="translate(53 263)"><rect width="27" height="27" rx="8"/><text x="13.5" y="17.5" text-anchor="middle">IN</text></g><text class="afh-tag" x="213" y="243" text-anchor="end">ASSET</text><text class="afh-entity-title" x="90" y="276">Exercise catalog</text><text class="afh-entity-caption" x="54" y="300">309 exercises, 7 owned</text></g><g id="metadata" class="afh-entity" data-af-entity="metadata" data-af-kind="source"><rect class="afh-entity-shadow" x="42" y="395" width="180" height="84" rx="16"/><rect class="afh-entity-frame" x="40" y="390" width="180" height="84" rx="16"/><g class="afh-icon" transform="translate(53 403)"><rect width="27" height="27" rx="8"/><text x="13.5" y="17.5" text-anchor="middle">IN</text></g><text class="afh-tag" x="213" y="383" text-anchor="end">JSON</text><text class="afh-entity-title" x="90" y="416">Reviewed metadata</text><text class="afh-entity-caption" x="54" y="440">182 AI_ACCEPTED, 0 APPROVED</text></g><g id="evidence" class="afh-entity" data-af-entity="evidence" data-af-kind="process"><rect class="afh-entity-shadow" x="282" y="115" width="180" height="84" rx="16"/><rect class="afh-entity-frame" x="280" y="110" width="180" height="84" rx="16"/><g class="afh-icon" transform="translate(293 123)"><rect width="27" height="27" rx="8"/><text x="13.5" y="17.5" text-anchor="middle">FX</text></g><text class="afh-tag" x="453" y="103" text-anchor="end">POLICY</text><text class="afh-entity-title" x="330" y="136">CapabilityEvidence</text><text class="afh-entity-caption" x="294" y="160">2 manageable sessions</text></g><g id="builder" class="afh-entity" data-af-entity="builder" data-af-kind="process"><rect class="afh-entity-shadow" x="282" y="255" width="180" height="84" rx="16"/><rect class="afh-entity-frame" x="280" y="250" width="180" height="84" rx="16"/><g class="afh-icon" transform="translate(293 263)"><rect width="27" height="27" rx="8"/><text x="13.5" y="17.5" text-anchor="middle">FX</text></g><text class="afh-tag" x="453" y="243" text-anchor="end">BUILD</text><text class="afh-entity-title" x="330" y="276">ContextBuilder</text><text class="afh-entity-caption" x="294" y="300">One bounded, typed context</text></g><g id="state" class="afh-entity" data-af-entity="state" data-af-kind="process"><rect class="afh-entity-shadow" x="282" y="395" width="180" height="84" rx="16"/><rect class="afh-entity-frame" x="280" y="390" width="180" height="84" rx="16"/><g class="afh-icon" transform="translate(293 403)"><rect width="27" height="27" rx="8"/><text x="13.5" y="17.5" text-anchor="middle">FX</text></g><text class="afh-tag" x="453" y="383" text-anchor="end">POLICY</text><text class="afh-entity-title" x="330" y="416">ProgramState</text><text class="afh-entity-caption" x="294" y="440">Adaptation state, weekly</text><text class="afh-entity-caption" x="294" y="453">ledger</text></g><g id="accepted" class="afh-entity" data-af-entity="accepted" data-af-kind="control"><rect class="afh-entity-shadow" x="522" y="115" width="180" height="84" rx="16"/><rect class="afh-entity-frame" x="520" y="110" width="180" height="84" rx="16"/><g class="afh-icon" transform="translate(533 123)"><rect width="27" height="27" rx="8"/><text x="13.5" y="17.5" text-anchor="middle">OK</text></g><text class="afh-tag" x="693" y="103" text-anchor="end">GATE</text><text class="afh-entity-title" x="570" y="136">acceptedMetadata()</text><text class="afh-entity-caption" x="534" y="160">The single review gate</text></g><g id="eligibility" class="afh-entity" data-af-entity="eligibility" data-af-kind="control"><rect class="afh-entity-shadow" x="522" y="255" width="180" height="84" rx="16"/><rect class="afh-entity-frame" x="520" y="250" width="180" height="84" rx="16"/><g class="afh-icon" transform="translate(533 263)"><rect width="27" height="27" rx="8"/><text x="13.5" y="17.5" text-anchor="middle">OK</text></g><text class="afh-tag" x="693" y="243" text-anchor="end">HARD</text><text class="afh-entity-title" x="570" y="276">EligibilityPolicy</text><text class="afh-entity-caption" x="534" y="300">6 hard stages, typed</text><text class="afh-entity-caption" x="534" y="313">reasons</text></g><g id="clears" class="afh-entity" data-af-entity="clears" data-af-kind="control"><rect class="afh-entity-shadow" x="522" y="395" width="180" height="84" rx="16"/><rect class="afh-entity-frame" x="520" y="390" width="180" height="84" rx="16"/><g class="afh-icon" transform="translate(533 403)"><rect width="27" height="27" rx="8"/><text x="13.5" y="17.5" text-anchor="middle">OK</text></g><text class="afh-tag" x="693" y="383" text-anchor="end">OVERLAY</text><text class="afh-entity-title" x="570" y="416">Condition overlay</text><text class="afh-entity-caption" x="534" y="440">8 conditions, 21 demands</text></g><g id="planner" class="afh-entity" data-af-entity="planner" data-af-kind="process"><rect class="afh-entity-shadow" x="762" y="103" width="180" height="68" rx="16"/><rect class="afh-entity-frame" x="760" y="98" width="180" height="68" rx="16"/><g class="afh-icon" transform="translate(773 111)"><rect width="27" height="27" rx="8"/><text x="13.5" y="17.5" text-anchor="middle">FX</text></g><text class="afh-tag" x="933" y="91" text-anchor="end">SELECT</text><text class="afh-entity-title" x="810" y="124">FakeWorkoutPlanner</text><text class="afh-entity-caption" x="774" y="148">Modify demands rank lower</text></g><g id="factory" class="afh-entity" data-af-entity="factory" data-af-kind="process"><rect class="afh-entity-shadow" x="762" y="209" width="180" height="68" rx="16"/><rect class="afh-entity-frame" x="760" y="204" width="180" height="68" rx="16"/><g class="afh-icon" transform="translate(773 217)"><rect width="27" height="27" rx="8"/><text x="13.5" y="17.5" text-anchor="middle">FX</text></g><text class="afh-tag" x="933" y="197" text-anchor="end">DOSE</text><text class="afh-entity-title" x="810" y="230">PrescriptionFactory</text><text class="afh-entity-caption" x="774" y="254">Base dose, progression,</text><text class="afh-entity-caption" x="774" y="267">deload</text></g><g id="policy" class="afh-entity" data-af-entity="policy" data-af-kind="control"><rect class="afh-entity-shadow" x="762" y="315" width="180" height="68" rx="16"/><rect class="afh-entity-frame" x="760" y="310" width="180" height="68" rx="16"/><g class="afh-icon" transform="translate(773 323)"><rect width="27" height="27" rx="8"/><text x="13.5" y="17.5" text-anchor="middle">OK</text></g><text class="afh-tag" x="933" y="303" text-anchor="end">CAP</text><text class="afh-entity-title" x="810" y="336">StateBasedPolicy</text><text class="afh-entity-caption" x="774" y="360">Caps sets, effort and rest</text></g><g id="mobility" class="afh-entity" data-af-entity="mobility" data-af-kind="process"><rect class="afh-entity-shadow" x="762" y="421" width="180" height="68" rx="16"/><rect class="afh-entity-frame" x="760" y="416" width="180" height="68" rx="16"/><g class="afh-icon" transform="translate(773 429)"><rect width="27" height="27" rx="8"/><text x="13.5" y="17.5" text-anchor="middle">FX</text></g><text class="afh-tag" x="933" y="409" text-anchor="end">BLOCK</text><text class="afh-entity-title" x="810" y="442">MobilityBlock</text><text class="afh-entity-caption" x="774" y="466">At most 3, no training</text><text class="afh-entity-caption" x="774" y="479">credit</text></g><g id="structural" class="afh-entity" data-af-entity="structural" data-af-kind="control"><rect class="afh-entity-shadow" x="1002" y="115" width="180" height="84" rx="16"/><rect class="afh-entity-frame" x="1000" y="110" width="180" height="84" rx="16"/><g class="afh-icon" transform="translate(1013 123)"><rect width="27" height="27" rx="8"/><text x="13.5" y="17.5" text-anchor="middle">OK</text></g><text class="afh-tag" x="1173" y="103" text-anchor="end">CHECK</text><text class="afh-entity-title" x="1050" y="136">GeneratedValidator</text><text class="afh-entity-caption" x="1014" y="160">IDs, types, candidate set</text></g><g id="validator" class="afh-entity" data-af-entity="validator" data-af-kind="control"><rect class="afh-entity-shadow" x="1002" y="255" width="180" height="84" rx="16"/><rect class="afh-entity-frame" x="1000" y="250" width="180" height="84" rx="16"/><g class="afh-icon" transform="translate(1013 263)"><rect width="27" height="27" rx="8"/><text x="13.5" y="17.5" text-anchor="middle">OK</text></g><text class="afh-tag" x="1173" y="243" text-anchor="end">CHECK</text><text class="afh-entity-title" x="1050" y="276">ProgramValidator</text><text class="afh-entity-caption" x="1014" y="300">Typed violations, block too</text></g><g id="repair" class="afh-entity" data-af-entity="repair" data-af-kind="process"><rect class="afh-entity-shadow" x="1002" y="395" width="180" height="84" rx="16"/><rect class="afh-entity-frame" x="1000" y="390" width="180" height="84" rx="16"/><g class="afh-icon" transform="translate(1013 403)"><rect width="27" height="27" rx="8"/><text x="13.5" y="17.5" text-anchor="middle">FX</text></g><text class="afh-tag" x="1173" y="383" text-anchor="end">ONCE</text><text class="afh-entity-title" x="1050" y="416">Repair pass</text><text class="afh-entity-caption" x="1014" y="440">One pass, sets only</text></g><g id="identity" class="afh-entity" data-af-entity="identity" data-af-kind="control"><rect class="afh-entity-shadow" x="1242" y="115" width="180" height="84" rx="16"/><rect class="afh-entity-frame" x="1240" y="110" width="180" height="84" rx="16"/><g class="afh-icon" transform="translate(1253 123)"><rect width="27" height="27" rx="8"/><text x="13.5" y="17.5" text-anchor="middle">OK</text></g><text class="afh-tag" x="1413" y="103" text-anchor="end">DIGEST</text><text class="afh-entity-title" x="1290" y="136">ContextIdentity</text><text class="afh-entity-caption" x="1254" y="160">Digest includes conditions</text></g><g id="today" class="afh-entity" data-af-entity="today" data-af-kind="view"><rect class="afh-entity-shadow" x="1242" y="255" width="180" height="84" rx="16"/><rect class="afh-entity-frame" x="1240" y="250" width="180" height="84" rx="16"/><g class="afh-icon" transform="translate(1253 263)"><rect width="27" height="27" rx="8"/><text x="13.5" y="17.5" text-anchor="middle">VW</text></g><text class="afh-tag" x="1413" y="243" text-anchor="end">UI</text><text class="afh-entity-title" x="1290" y="276">TodayViewModel</text><text class="afh-entity-caption" x="1254" y="300">Publishes plan or typed</text><text class="afh-entity-caption" x="1254" y="313">error</text></g><g id="repo" class="afh-entity" data-af-entity="repo" data-af-kind="store"><rect class="afh-entity-shadow" x="1242" y="395" width="180" height="84" rx="16"/><rect class="afh-entity-frame" x="1240" y="390" width="180" height="84" rx="16"/><g class="afh-icon" transform="translate(1253 403)"><rect width="27" height="27" rx="8"/><text x="13.5" y="17.5" text-anchor="middle">DB</text></g><text class="afh-tag" x="1413" y="383" text-anchor="end">TXN</text><text class="afh-entity-title" x="1290" y="416">startWorkout…</text><text class="afh-entity-caption" x="1254" y="440">Frozen session, atomic</text><text class="afh-entity-caption" x="1254" y="453">write</text></g><g id="history" class="afh-entity" data-af-entity="history" data-af-kind="store"><rect class="afh-entity-shadow" x="42" y="565" width="180" height="84" rx="16"/><rect class="afh-entity-frame" x="40" y="560" width="180" height="84" rx="16"/><g class="afh-icon" transform="translate(53 573)"><rect width="27" height="27" rx="8"/><text x="13.5" y="17.5" text-anchor="middle">DB</text></g><text class="afh-tag" x="213" y="553" text-anchor="end">ROOM</text><text class="afh-entity-title" x="90" y="586">Completed history</text><text class="afh-entity-caption" x="54" y="610">Immutable sessions and sets</text></g><g id="pain" class="afh-entity" data-af-entity="pain" data-af-kind="source"><rect class="afh-entity-shadow" x="762" y="545" width="180" height="68" rx="16"/><rect class="afh-entity-frame" x="760" y="540" width="180" height="68" rx="16"/><g class="afh-icon" transform="translate(773 553)"><rect width="27" height="27" rx="8"/><text x="13.5" y="17.5" text-anchor="middle">IN</text></g><text class="afh-tag" x="933" y="533" text-anchor="end">SEAM</text><text class="afh-entity-title" x="810" y="566">PAIN_STOP</text><text class="afh-entity-caption" x="774" y="590">Offers to exclude it</text></g><g id="logging" class="afh-entity" data-af-entity="logging" data-af-kind="process"><rect class="afh-entity-shadow" x="1242" y="565" width="180" height="84" rx="16"/><rect class="afh-entity-frame" x="1240" y="560" width="180" height="84" rx="16"/><g class="afh-icon" transform="translate(1253 573)"><rect width="27" height="27" rx="8"/><text x="13.5" y="17.5" text-anchor="middle">FX</text></g><text class="afh-tag" x="1413" y="553" text-anchor="end">LOG</text><text class="afh-entity-title" x="1290" y="586">logSetCompletion</text><text class="afh-entity-caption" x="1254" y="610">Typed outcome per set</text></g></svg></div>
+</section>
+
+<section class="gate" id="gate">
+  <p class="eyebrow">Stage 2 · ExerciseEligibilityPolicy</p>
+  <h2>Legality is decided before ranking</h2>
+  <p>Every exercise gets a typed decision. If nothing survives, the failure names the first stage that emptied the pool, and the planner never falls back to unreviewed work.</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Stage</th><th>Rule</th><th>Reason</th><th>If it empties the pool</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Exercise explicitly excluded by the user</td><td><code>USER_EXCLUDED</code></td><td><code>USER_EXCLUSIONS_REMOVED_ALL</code></td></tr>
+      <tr><td>2</td><td>No complete reviewed equipment alternative or fixed-anchor setup</td><td><code>MISSING_EQUIPMENT</code></td><td><code>EQUIPMENT_REMOVED_ALL</code></td></tr>
+      <tr><td>3</td><td>Metadata absent or not accepted</td><td><code>MISSING_APPROVED_METADATA</code></td><td><code>NO_APPROVED_METADATA</code></td></tr>
+      <tr><td>4</td><td>A required movement capability is marked <code>AVOID</code></td><td><code>CAPABILITY_AVOID</code></td><td><code>CAPABILITIES_REMOVED_ALL</code></td></tr>
+      <tr class="hot"><td>5</td><td>A demand of the exercise is one the reported conditions say to avoid, the exercise has no overlay entry, or <code>LOW_IMPACT_ONLY</code> meets high impact</td><td><code>CONDITION_RESTRICTED_DEMAND</code>, <code>CONDITION_DEMANDS_UNREVIEWED</code>, <code>HIGH_IMPACT_DISALLOWED</code></td><td><code>CONDITIONS_REMOVED_ALL</code> (or <code>CONDITION_GUIDANCE_UNAVAILABLE</code>)</td></tr>
+      <tr><td>6</td><td><code>ADVANCED</code> work without demonstrated family history or a legal supported regression</td><td><code>ADVANCED_WHILE_*</code></td><td><code>CALIBRATION_COMPLEXITY_REMOVED_ALL</code></td></tr>
+    </tbody>
+  </table></div>
+  <p><code>LIMITED</code> and <code>UNKNOWN</code> capabilities do not remove anything. They become soft ranking penalties, and two manageable completed sessions lift that penalty.</p>
+</section>
+
+<section id="select">
+  <p class="eyebrow">Stage 3 · FakeWorkoutPlanner</p>
+  <h2>Selection is a sorted list</h2>
+  <p>The planner picks a split from high-priority muscles it can actually fill, falling back to the default rotation. The rotation advances with the completed-workout count, or the program slot. Session length sets the slot count: up to 35 minutes gives 3 exercises, up to 55 gives 5, and longer gives 6. Up to 3 slots are compounds, and at least one slot always stays an accessory.</p>
+  <div class="ladders">
+    <div><h3>Compound order</h3><ol class="ladder"><li>Trains the split as its own purpose</li><li>No modify demand</li><li>No unresolved capability penalty</li><li>Supported-regression preference</li><li>No above-experience penalty</li><li>Frequency and recency preference</li><li>Higher legacy fatigue ordinal</li><li>Stable exercise ID</li></ol></div>
+    <div><h3>Accessory order</h3><ol class="ladder"><li>Trains the split as its own purpose</li><li>No modify demand</li><li>Isolation before compound</li><li>Has programming metadata</li><li>No unresolved capability penalty</li><li>Supported-regression preference</li><li>No above-experience penalty</li><li>Frequency and recency, fatigue, then ID</li></ol></div>
+  </div>
+  <p>Compounds also spread across movement patterns, one per pattern first, with a fallback to repeats. <code>isStrengthWork()</code> returns false for all 14 catalog stretches, so they can never enter the compound or accessory slots. A modify demand is a yes or no, never a count, and the exercise still appears when nothing better fits, with a cue. Stretches reach a session only through the separate mobility block, which holds at most three items from the reported conditions&#39; routines, rotates with the split seed and never fails a plan.</p>
+</section>
+
+<section class="dose" id="dose">
+  <p class="eyebrow">Stage 3 · Prescription</p>
+  <h2>Dose can only shrink</h2>
+  <div class="split">
+    <div>
+      <p><code>DefaultExercisePrescriptionFactory</code> builds a base prescription and applies progression or an accepted deload. <code>StateBasedTrainingPolicy</code> then caps it and re-checks the capability and condition rules, so a gap in the gate cannot let a restriction through. It never invents a load: with no history or confirmed baseline, the load stays null.</p>
+      <div class="table-wrap"><table>
+        <caption>The states production derives today, under the default V2 policy. BUILD and DEVELOP are defined at 12 weekly and 4 per exercise, but are not currently derived.</caption><thead><tr><th>Derived state</th><th>Weekly direct sets</th><th>Sets per exercise</th><th>Effort</th></tr></thead>
+        <tbody><tr><td><code>UNCALIBRATED</code></td><td>6</td><td>2</td><td>2–4 RIR</td></tr><tr><td><code>RETURNING</code></td><td>6</td><td>2</td><td>2–4 RIR</td></tr><tr><td><code>HOLD</code></td><td>6</td><td>2</td><td>2–4 RIR</td></tr></tbody>
+      </table></div>
+    </div>
+    <div>
+      <h3>One-variable progression</h3>
+      <p>Two latest comparable attempts must be fully completed, confirmed manageable and carry qualifying effort. Then exactly one axis moves: +2.5 kg, +1 rep range, −2.5 kg assistance, or +5 seconds. Weight steps convert to the user's unit. The engine also defines +25 m for distance, but distance work is not admitted to automatic planning.</p>
+      <h3>Rest classes</h3>
+      <p>Short, moderate and long map to 60, 90 and 180 seconds. An explicit stored user preference wins.</p>
+    </div>
+  </div>
+</section>
+
+<section class="valid" id="validate">
+  <p class="eyebrow">Stage 4 · ProgramValidator</p>
+  <h2>Nothing is shown until the whole plan passes</h2>
+  <ul class="checks">
+    <li><h3>Structure</h3>IDs exist, sit in the candidate set and match the exercise type.</li>
+    <li><h3>Truthful labels</h3>The advertised split and each focus muscle must be trained by the session.</li>
+    <li><h3>Declared constraints</h3>Exclusions, unique IDs, and any declared families or patterns.</li>
+    <li><h3>Load provenance</h3>Every number traces to a held source or an authorized progression.</li>
+    <li><h3>Duration agreement</h3>The estimate must be in bounds and within one minute of the shared estimator.</li>
+    <li><h3>Weekly dose</h3>Completed plus proposed sets must fit the allowance, per direct primary muscle.</li>
+  </ul>
+  <p>If the only problem is an exceeded allowance, one repair pass may reduce <code>targetSets</code>, keeping at least one set per exercise. A repaired exercise also reverts to its pre-progression reference and records <code>HOLD_VALIDATION_REPAIR</code>. Repair cannot add, drop or swap exercises. At start, <code>TodayViewModel</code> rebuilds the context, compares the digest and revalidates with repair off, so a stale plan is reported instead of started.</p>
+</section>
+
+<section class="trace" id="trace">
+  <p class="eyebrow">Worked trace</p>
+  <h2>What happens if you report piriformis syndrome</h2>
+  <p>A reported condition is chosen from a fixed list; the app asks no other medical question. This trace follows the shipped overlay.</p>
+<div class="term"><span class="d">// profile.reportedConditions = {piriformis_syndrome}, full gym</span>
+<span class="k">restrictionsFor</span>             <span class="g">Active(avoid = {}, modify = 10 demands)</span>
+<span class="k">ExerciseEligibilityPolicy</span>  <span class="g">decisionFor(id)</span> is null for reviewed exercises <span class="d">// nothing avoided</span>
+                           <span class="g">CONDITION_DEMANDS_UNREVIEWED</span> only for an exercise with no overlay entry
+<span class="k">FakeWorkoutPlanner</span>         a modify exercise ranks after a clean one, and still appears if nothing fits
+<span class="k">MobilityBlockPolicy</span>        figure-four, lying stretch, glute bridge, rotated by the seed, at most 3
+<span class="k">ProgramValidator</span>           checks the block; a violation is typed and not repairable
+<span class="k">Result</span>                     a normal plan, plus a block labelled as general information</div>
+  <p>Nothing here says the plan is safe for the condition. A condition with an avoid demand removes only the exercises carrying it, and a profile whose avoid demands remove every candidate gets the typed <code>CONDITIONS_REMOVED_ALL</code> refusal. No shipped condition does. A joint label such as <code>HIP_SENSITIVE</code> now only ranks exercises lower, and never switches automatic planning off.</p>
+</section>
+
+<section class="seams" id="seams">
+  <p class="eyebrow">Condition seams</p>
+  <h2>Where conditions plug in, and what remains open</h2>
+  <div class="seam"><div><h3>Profile</h3><p><code>reportedConditions</code> is a set of ids from the shipped list, stored in Room schema 17 and archive format 7, and part of the context digest.</p></div><div><span class="todo">Open</span><p>Conditions are health-related information. They stay on the device under the backup exclusions and appear in a user-chosen export.</p></div></div>
+  <div class="seam"><div><h3>Overlay</h3><p>Bundled <code>condition-guidance.json</code> holds 21 categorical demands, eight conditions and joint-label demands, with AI review provenance. A load failure fails closed.</p></div><div><span class="todo">Open</span><p>A qualified clinician must review all overlay content, including red-flag tiers and owned setup wording, before any public release.</p></div></div>
+  <div class="seam"><div><h3>Session shape</h3><p>The mobility block is separate from compound and accessory slots. Entries carry the <code>MOBILITY</code> role and earn no ledger, scheduling, progression, focus or analytics credit.</p></div><div><span class="todo">Open</span><p>Evidence is weak overall: 654 linked sources, most read as abstract only. The app makes no benefit claim.</p></div></div>
+  <div class="seam"><div><h3>Catalog</h3><p>Seven owned mobility exercises join the 302 upstream entries, 309 in all, under MIT as original work.</p></div><div><span class="todo">Open</span><p>An illustrator must redraw the figure-four, lying piriformis and side-lying hold art, and the owner must confirm the MIT wording.</p></div></div>
+  <div class="seam"><div><h3>Feedback</h3><p>After a <code>PAIN_STOP</code> the logger offers to exclude that exercise. Profile undoes it. The planner never reads <code>PAIN_STOP</code> itself.</p></div><div><span class="todo">Open</span><p>Nothing is inferred from repeated stops, by design.</p></div></div>
+  <div class="seam"><div><h3>Manual templates</h3><p>Templates still allow every exercise and warn beside an avoid, modify or unreviewed one. Nothing is hidden.</p></div><div><span class="todo">Open</span><p>Scaling past eight conditions is a separate decision; the pilot criterion failed narrowly.</p></div></div>
+</section>
+
+<section id="bounds">
+  <p class="eyebrow">Recorded limits</p>
+  <h2>Boundaries this feature has to change or respect</h2>
+  <blockquote>Exclude medical, injury-prevention, diagnostic, and unsupported performance claims.<cite>ROADMAP.md, Package 11 (claims exclusion kept; condition content allowed)</cite></blockquote>
+  <blockquote>A clearance is a reviewer's product judgement about a self-reported label; it is not a diagnosis, and reviewer agreement is not clinical validation.<cite>docs/reviewed-capability-eligibility.md:122-124</cite></blockquote>
+  <p><code>SafetyCopyTest</code> fails the build on injury, prevention, healing and joint-protection vocabulary in either language. The evidence review also rules out numeric joint-stress and injury-risk scores. The 2026-11-01 decision in <code>ROADMAP.md</code> keeps the claims exclusion and allows condition names and condition-linked routines as general information.</p>
+</section>
+
+<section class="refs" id="refs">
+  <p class="eyebrow">Code references</p>
+  <h2>Where to read each stage</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>File</th><th>Responsibility</th></tr></thead>
+    <tbody>
+      <tr><td>core/ai/WorkoutGenerationContextBuilder.kt:100</td><td>Bounded context assembly</td></tr>
+      <tr><td>core/ai/ExerciseEligibilityPolicy.kt:30</td><td>Six-stage legality decisions</td></tr>
+      <tr><td>core/conditions/ConditionRestrictions.kt:37</td><td>The shared predicate: avoid, unreviewed and modify</td></tr>
+      <tr><td>core/conditions/MobilityBlockPolicy.kt:23</td><td>Mobility block selection</td></tr>
+      <tr><td>core/ai/FakeWorkoutPlanner.kt:42</td><td>Split choice, selection and ranking reasons</td></tr>
+      <tr><td>core/ai/WorkoutFocus.kt:92</td><td><code>isStrengthWork()</code>, which excludes stretches</td></tr>
+      <tr><td>core/ai/DefaultExercisePrescriptionFactory.kt:74</td><td>Base prescription, progression and deload</td></tr>
+      <tr><td>core/ai/StateBasedTrainingPolicy.kt:214</td><td>Dose, effort and rest caps, plus the second constraint check</td></tr>
+      <tr><td>core/ai/ProgramValidator.kt:83</td><td>Whole-program validation and repair</td></tr>
+      <tr><td>feature/today/TodayViewModel.kt:370</td><td>Generate and publish; revalidation at start (line 530)</td></tr>
+      <tr><td>core/database/repository/WorkoutRepository.kt:186</td><td>Frozen session write; set logging at line 328</td></tr>
+    </tbody>
+  </table></div>
+  <p>Kotlin paths are relative to <code>app/src/main/java/wallcrawl/elopenmike/com/</code>. The diagram's source evidence lives in <code>hero.json</code> beside this report.</p>
+</section>
+</main>
+</div>
+<script>
+(function(){
+  var root=document.documentElement;
+  try{var t=localStorage.getItem('wc-theme');if(t)root.dataset.theme=t;}catch(e){}
+  document.getElementById('theme').addEventListener('click',function(){
+    var dark=root.dataset.theme?root.dataset.theme==='dark':matchMedia('(prefers-color-scheme:dark)').matches;
+    root.dataset.theme=dark?'light':'dark';
+    try{localStorage.setItem('wc-theme',root.dataset.theme);}catch(e){}
+  });
+  var narr={
+    c1:'The builder reads the profile, the full catalog and bounded history: at most eight recent completed sessions, plus a separate 14-date scheduling range. It derives capability evidence and the program state with its weekly ledger.',
+    c2:'Every exercise passes through six hard stages. acceptedMetadata() is the single review gate. One shared predicate reads the condition overlay: avoid demands exclude, an exercise without an overlay entry is excluded as unreviewed, and a joint label only ranks lower.',
+    c3:'The planner chooses a split, sorts the legal candidates with two comparators (a modify demand ranks after a clean exercise), then builds a prescription per pick. The state policy can only reduce sets. A mobility block of at most three routine items is chosen separately.',
+    c4:'The proposal is checked as a whole and returns typed violations. An exceeded allowance alone earns one repair pass that reduces sets and pauses any pending progression, then the plan is re-evaluated once.',
+    c5:'Today publishes the plan or a typed error. Start rebuilds the context, compares the digest, revalidates with repair off and writes one frozen session atomically.',
+    c6:'Sets log typed outcomes, and completed work becomes immutable history that the next context reads. PAIN_STOP is stored and offers to exclude that exercise; nothing changes unless the user accepts. Mobility work earns no ledger, progression or focus credit.'
+  };
+  var svg=document.querySelector('svg.archflow-hero');
+  var chapters=JSON.parse(svg.querySelector('#afh-chapters').textContent);
+  var box=document.getElementById('chapters'),out=document.getElementById('narr');
+  var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var timer=null,index=0;
+  function clear(){svg.querySelectorAll('.is-active').forEach(function(n){n.classList.remove('is-active');});}
+  function lit(attr,id){var n=svg.querySelector('['+attr+'="'+id+'"]');if(n)n.classList.add('is-active');}
+  function all(){svg.querySelectorAll('[data-af-zone],[data-af-entity],[data-af-flow]').forEach(function(n){n.classList.add('is-active');});}
+  function show(i){
+    index=i;clear();var c=chapters[i];
+    c.zones.forEach(function(id){lit('data-af-zone',id);});
+    c.entities.forEach(function(id){lit('data-af-entity',id);});
+    c.flows.forEach(function(id){lit('data-af-flow',id);});
+    box.querySelectorAll('button').forEach(function(b,j){b.setAttribute('aria-pressed',String(j===i));});
+    out.textContent=narr[c.id];
+  }
+  function stop(){if(timer){clearInterval(timer);timer=null;}}
+  chapters.forEach(function(c,i){
+    var b=document.createElement('button');b.type='button';b.textContent=c.label;
+    b.addEventListener('click',function(){stop();out.setAttribute('aria-live','polite');show(i);});box.appendChild(b);
+  });
+  show(0);
+  if(reduce){all();}else{timer=setInterval(function(){show((index+1)%chapters.length);},5200);}
+  addEventListener('beforeprint',function(){stop();all();});
+  addEventListener('afterprint',function(){show(index);});
+})();
+</script>
+</body>
+</html>

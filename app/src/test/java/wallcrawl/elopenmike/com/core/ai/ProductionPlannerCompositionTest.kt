@@ -680,9 +680,9 @@ class ProductionPlannerCompositionTest {
 
     @Test
     fun aSelectedJointConstraintRefusesAutomaticPlanningRatherThanIgnoringIt() = runTest {
-        // No accepted record clears any joint constraint, so selecting one is a refusal on
-        // the production path. Ignoring the selection silently would be the untruthful
-        // alternative, and the legacy filter does exactly that.
+        // This composition passes no overlay source, so a selected joint label cannot be applied
+        // and is a typed refusal. Ignoring the selection silently
+        // would be the untruthful alternative, and the legacy filter does exactly that.
         val constrained = fullGymProfile().copy(
             trainingConstraints = setOf(TrainingConstraint.KNEE_SENSITIVE)
         )
@@ -691,7 +691,7 @@ class ProductionPlannerCompositionTest {
 
         val refused = planFor(Cohort("knee-sensitive", constrained)) as Refused
         assertThat(refused.eligibilityFailure)
-            .isEqualTo(AutomaticEligibilityFailure.TRAINING_CONSTRAINTS_REMOVED_ALL)
+            .isEqualTo(AutomaticEligibilityFailure.CONDITION_GUIDANCE_UNAVAILABLE)
     }
 
     @Test
@@ -1188,7 +1188,7 @@ class ProductionPlannerCompositionTest {
                         onboardingCompleted = true
                     )
                 ),
-                AutomaticEligibilityFailure.TRAINING_CONSTRAINTS_REMOVED_ALL
+                AutomaticEligibilityFailure.CONDITION_GUIDANCE_UNAVAILABLE
             )
         )
     }
@@ -1229,6 +1229,8 @@ internal class StaticUserProfileRepository(
         unsupported()
 
     override suspend fun updateReturningAfterBreakWeeks(weeks: Int) = unsupported()
+    override suspend fun editReportedConditions(change: (Set<String>) -> Set<String>) = error("Not used")
+    override suspend fun editExcludedExercises(change: (List<String>) -> List<String>) = error("Not used")
     override suspend fun updateGender(
         gender: wallcrawl.elopenmike.com.core.model.ProfileGender
     ) = unsupported()

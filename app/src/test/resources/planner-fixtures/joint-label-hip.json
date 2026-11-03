@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "id": "joint-label-hip",
+  "policyVersion": 4,
+  "catalogVersion": "ba0b709cb20430361b2cb33aaadd20998164a916",
+  "profile": {
+    "goals": [
+      "GENERAL_FITNESS",
+      "BUILD_MUSCLE"
+    ],
+    "experienceLevel": "BEGINNER",
+    "preferredDurationMinutes": 35,
+    "daysPerWeek": 3,
+    "availableEquipment": [
+      "Bodyweight"
+    ],
+    "preferredUnit": "LBS",
+    "musclePriorities": {
+      "Core": "HIGH"
+    },
+    "excludedExerciseIds": [],
+    "trainingConstraints": [
+      "HIP_SENSITIVE"
+    ],
+    "returningAfterBreakWeeks": 0,
+    "confirmedStartingLoads": {},
+    "movementCapabilities": {
+      "IMPACT": "COMFORTABLE"
+    }
+  },
+  "completedWorkoutCount": 2,
+  "exerciseHistory": [],
+  "reviewedEligibility": {
+    "adaptationState": "BUILD",
+    "syntheticApprovedExerciseIds": [
+      "bodyweight-squat",
+      "glute-bridge",
+      "plank",
+      "side-plank",
+      "dead-bug",
+      "bird-dog"
+    ],
+    "syntheticGuidance": {
+      "exerciseDemands": {
+        "bird-dog": [
+          "SINGLE_LEG_HIP_CONTROL"
+        ]
+      },
+      "jointLabelDemands": {
+        "HIP_SENSITIVE": [
+          "SINGLE_LEG_HIP_CONTROL",
+          "CROSS_BODY_HIP_STRETCH"
+        ]
+      }
+    }
+  },
+  "expected": {
+    "outcome": "SUCCESS",
+    "requiredExerciseIds": [],
+    "requiredAnyExerciseIdGroups": [],
+    "forbiddenExerciseIds": []
+  }
+}

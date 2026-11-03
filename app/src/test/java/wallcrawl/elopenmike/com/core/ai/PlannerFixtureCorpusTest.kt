@@ -39,9 +39,12 @@ class PlannerFixtureCorpusTest {
             "reviewed-enabled-no-approved",
             "reviewed-enabled-uncleared-joint-constraint",
             "reviewed-enabled-cleared-joint-constraints",
-            "concurrent-activity"
+            "concurrent-activity",
+            "condition-piriformis",
+            "joint-label-hip",
+            "condition-removes-all"
         ).inOrder()
-        assertThat(fixtures.map { it.id }.distinct()).hasSize(14)
+        assertThat(fixtures.map { it.id }.distinct()).hasSize(17)
     }
 
     @Test
@@ -50,7 +53,7 @@ class PlannerFixtureCorpusTest {
 
         val realized = fixtures.map(contextFactory::create)
 
-        assertThat(realized.map { it.catalogExercises.size }.distinct()).containsExactly(302)
+        assertThat(realized.map { it.catalogExercises.size }.distinct()).containsExactly(309)
         realized.forEach { built ->
             assertThat(built.userProfile.availableEquipment)
                 .containsExactlyElementsIn(built.fixture.profile.availableEquipment)
@@ -150,7 +153,7 @@ class PlannerFixtureCorpusTest {
     fun bundledCatalogProjection_distinguishesAiAcceptanceFromPendingAndHumanApproval() {
         val exercises = contextFactory.bundledCatalogProjection().exercises
 
-        assertThat(exercises).hasSize(302)
+        assertThat(exercises).hasSize(309)
         assertThat(exercises.count { it.reviewedMetadata?.reviewState == ReviewState.DRAFT })
             .isEqualTo(29)
         assertThat(exercises.count { it.reviewedMetadata?.reviewState == ReviewState.AI_ACCEPTED })
@@ -181,7 +184,7 @@ class PlannerFixtureCorpusTest {
             .isEqualTo(LedgerPolicyVersion.PRIMARY_ONLY_V1)
         assertThat(built.context.trainingProgramState?.weeklyLedger?.directPrimarySets)
             .isEmpty()
-        assertThat(built.catalogExercises).hasSize(302)
+        assertThat(built.catalogExercises).hasSize(309)
         assertThat(
             built.catalogExercises.filter {
                 it.reviewedMetadata?.reviewState == ReviewState.APPROVED
@@ -192,7 +195,7 @@ class PlannerFixtureCorpusTest {
                 built.catalogExercises.filter { it.id in syntheticIds }.map(Exercise::id)
             )
             .inOrder()
-        assertThat(result.decisions).hasSize(302)
+        assertThat(result.decisions).hasSize(309)
         assertThat(result.decisions.filter { it.eligible }.map { it.exerciseId })
             .containsExactlyElementsIn(result.exercises.map(Exercise::id))
             .inOrder()
@@ -218,7 +221,7 @@ class PlannerFixtureCorpusTest {
 
         assertThat(built.context.allowedExercises).isEmpty()
         assertThat(result.failure).isEqualTo(AutomaticEligibilityFailure.NO_APPROVED_METADATA)
-        assertThat(result.decisions).hasSize(302)
+        assertThat(result.decisions).hasSize(309)
         assertThat(result.decisions.all { decision ->
             !decision.eligible &&
                 decision.reasons == listOf(EligibilityReason.MISSING_APPROVED_METADATA)

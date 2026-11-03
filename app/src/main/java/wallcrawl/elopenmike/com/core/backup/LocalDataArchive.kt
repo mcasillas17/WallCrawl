@@ -59,7 +59,7 @@ import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
 object LocalDataArchiveFormat {
 
     /** The only archive format this build writes. */
-    const val ARCHIVE_VERSION: Int = 6
+    const val ARCHIVE_VERSION: Int = 7
 
     /** Every archive format this build can read. */
     val SUPPORTED_ARCHIVE_VERSIONS: IntRange = 1..ARCHIVE_VERSION
@@ -129,7 +129,9 @@ data class LocalDataArchiveMetadata(
     val appVersionName: String,
     val appVersionCode: Long,
     val roomSchemaVersion: Int,
-    /** Commit of the bundled catalog the archived exercise ids came from, when known. */
+    /** Commit of the bundled catalog the archived exercise ids came from, when known.
+     * It is the pinned upstream commit: WallCrawl-owned entries are not hashed into it, so an
+     * owned entry change does not alter this identity. */
     val catalogCommit: String?
 )
 

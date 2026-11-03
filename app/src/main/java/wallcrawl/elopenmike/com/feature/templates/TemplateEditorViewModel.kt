@@ -1,5 +1,6 @@
 package wallcrawl.elopenmike.com.feature.templates
 
+import wallcrawl.elopenmike.com.core.conditions.hasConditionInputs
 import androidx.annotation.StringRes
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -160,8 +161,17 @@ class TemplateEditorViewModel(
         DefaultExercisePrescriptionFactory(),
     private val nowTimestamp: () -> Long = System::currentTimeMillis,
     private val savedStateHandle: SavedStateHandle = SavedStateHandle(),
-    private val locale: () -> Locale = Locale::getDefault
+    private val locale: () -> Locale = Locale::getDefault,
+    private val conditionGuidanceSource: wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceSource? = null
 ) : ViewModel() {
+    private val restrictionsFlow = MutableStateFlow<wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions>(
+        wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions.None
+    )
+
+    /** Display only: the notices beside exercises. Nothing is hidden or refused because of it. */
+    val restrictions: kotlinx.coroutines.flow.StateFlow<wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions> =
+        restrictionsFlow
+
     // Restored before the load starts, so the asynchronous load can see that a draft is
     // already on screen and fill in only the reference data around it.
     private var restoredDraft: RestoredDraft? = restoreDraft(savedStateHandle)
@@ -220,6 +230,15 @@ class TemplateEditorViewModel(
                     ExerciseSearchIndex(exercises, localization)
                 }
                 profile = loadedProfile
+                restrictionsFlow.value = wallcrawl.elopenmike.com.core.conditions.restrictionsFor(
+                    loadedProfile,
+                    if (!loadedProfile.hasConditionInputs()) {
+                        wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceResult.Unavailable
+                    } else {
+                        conditionGuidanceSource?.guidance()
+                            ?: wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceResult.Unavailable
+                    }
+                )
                 val catalogById = exercises.associateBy { it.id }
                 if (templateId != null && template == null) {
                     // Nothing was loaded, so a freshly opened editor's adopted unit is its
@@ -934,7 +953,8 @@ class TemplateEditorViewModel(
             templateRepository: WorkoutTemplateRepository,
             userProfileRepository: UserProfileRepository,
             exerciseCatalog: ExerciseCatalog,
-            localizationSource: ExerciseLocalizationSource? = null
+            localizationSource: ExerciseLocalizationSource? = null,
+            conditionGuidanceSource: wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceSource
         ): ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 TemplateEditorViewModel(
@@ -943,7 +963,8 @@ class TemplateEditorViewModel(
                     userProfileRepository = userProfileRepository,
                     exerciseCatalog = exerciseCatalog,
                     localizationSource = localizationSource,
-                    savedStateHandle = createSavedStateHandle()
+                    savedStateHandle = createSavedStateHandle(),
+                    conditionGuidanceSource = conditionGuidanceSource
                 )
             }
         }

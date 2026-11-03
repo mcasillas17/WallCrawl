@@ -1488,7 +1488,7 @@ class TodayProductionLifecycleTest {
         advanceUntilIdle()
 
         assertThat((viewModel.uiState.value as TodayUiState.Error).error)
-            .isEqualTo(TodayError.REVIEWED_CONSTRAINTS_REMOVED_ALL)
+            .isEqualTo(TodayError.CONDITION_GUIDANCE_UNAVAILABLE)
     }
 
     // region harness
@@ -1686,6 +1686,8 @@ private class LifecycleProfileRepository(
     override suspend fun updateReturningAfterBreakWeeks(weeks: Int) =
         update { it.copy(returningAfterBreakWeeks = weeks) }
 
+    override suspend fun editReportedConditions(change: (Set<String>) -> Set<String>) = error("Not used")
+    override suspend fun editExcludedExercises(change: (List<String>) -> List<String>) = error("Not used")
     override suspend fun updateGender(gender: ProfileGender) = update { it.copy(gender = gender) }
     override suspend fun updateThemePreference(themePreference: ThemePreference) =
         update { it.copy(themePreference = themePreference) }

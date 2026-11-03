@@ -45,7 +45,7 @@ class LocalDataArchiveTemplateUnitTest {
     }
 
     @Test fun earlierFormatsNeverCarryATemplateUnitAndKeepTheirChecksums() {
-        for (version in 1 until LocalDataArchiveFormat.ARCHIVE_VERSION) {
+        for (version in 1 until 6) {
             val original = archive(version)
             val encoded = bytes(original)
             val restored = LocalDataArchiveCodec.read(ByteArrayInputStream(encoded))

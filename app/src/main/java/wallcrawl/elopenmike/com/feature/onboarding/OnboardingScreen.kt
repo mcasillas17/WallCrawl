@@ -837,7 +837,7 @@ private fun SafetyStep(
             )
             Spacer(modifier = Modifier.height(14.dp))
 
-            val hasNoConstraints = state.constraints.isEmpty()
+            val hasNoConstraints = state.constraints.isEmpty() && state.reportedConditions.isEmpty()
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -919,6 +919,19 @@ private fun SafetyStep(
                     )
                 }
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            wallcrawl.elopenmike.com.feature.conditions.ConditionPicker(
+                guidance = state.conditionGuidance,
+                selected = state.reportedConditions,
+                pending = state.pendingCondition,
+                onSelect = viewModel::selectCondition,
+                onAcknowledge = viewModel::setConditionAcknowledged,
+                onConfirm = viewModel::confirmPendingCondition,
+                onCancel = viewModel::cancelPendingCondition,
+                onRemove = viewModel::removeCondition
+            )
         }
     }
 }
@@ -1051,13 +1064,16 @@ private fun SummaryStep(
             )
             SummaryRow(
                 label = stringResource(R.string.onboarding_summary_label_sensitive),
-                value = if (state.constraints.isEmpty()) {
+                value = if (state.constraints.isEmpty() && state.reportedConditions.isEmpty()) {
                     stringResource(R.string.onboarding_summary_value_no_sensitive)
                 } else {
-                    TrainingConstraint.entries
-                        .filter { it in state.constraints }
-                        .map { stringResource(it.labelRes) }
-                        .joinToString(separator)
+                    (
+                        TrainingConstraint.entries
+                            .filter { it in state.constraints }
+                            .map { stringResource(it.labelRes) } +
+                            state.reportedConditions.sorted()
+                                .map { stringResource(wallcrawl.elopenmike.com.feature.conditions.conditionNameRes(it)) }
+                        ).joinToString(separator)
                 }
             )
             if (state.returningAfterBreakWeeks > 0) {

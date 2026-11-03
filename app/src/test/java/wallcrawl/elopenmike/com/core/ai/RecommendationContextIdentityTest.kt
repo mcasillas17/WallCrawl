@@ -3,7 +3,15 @@ package wallcrawl.elopenmike.com.core.ai
 import com.google.common.truth.Truth.assertThat
 import java.util.Locale
 import org.junit.Test
+import wallcrawl.elopenmike.com.core.conditions.ConditionGuidance
+import wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions
 import wallcrawl.elopenmike.com.core.model.AdaptationState
+import wallcrawl.elopenmike.com.core.model.ExercisePrescription
+import wallcrawl.elopenmike.com.core.model.ExerciseType
+import wallcrawl.elopenmike.com.core.model.RepRange
+import wallcrawl.elopenmike.com.core.model.SessionStatus
+import wallcrawl.elopenmike.com.core.model.WorkoutExercise
+import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.LedgerPolicyVersion
 import wallcrawl.elopenmike.com.core.model.TrainingProgramState
 import wallcrawl.elopenmike.com.core.model.TrainingProgramStatePolicyVersion
@@ -201,6 +209,48 @@ class RecommendationContextIdentityTest {
             .isNotEqualTo(RecommendationContextIdentity.of(original))
     }
 
+    private fun withConditions(conditions: Set<String>, overlayVersion: String): WorkoutGenerationContext =
+        context().let { base ->
+            base.copy(
+                userProfile = base.userProfile.copy(reportedConditions = conditions),
+                conditionRestrictions = ConditionRestrictions.Active(
+                    avoid = emptySet(), modify = emptySet(), conditionIds = conditions,
+                    guidance = ConditionGuidance(overlayVersion, emptyMap(), emptyMap(), emptyMap(), emptyMap())
+                )
+            )
+        }
+
+    @Test
+    fun identityChangesWhenConditionsChange() {
+        val one = RecommendationContextIdentity.of(withConditions(setOf("a"), "v1"))
+        assertThat(RecommendationContextIdentity.of(withConditions(setOf("a", "b"), "v1"))).isNotEqualTo(one)
+        assertThat(RecommendationContextIdentity.of(withConditions(setOf("a"), "v1"))).isEqualTo(one)
+        assertThat(RecommendationContextIdentity.of(withConditions(setOf("b", "a"), "v1")))
+            .isEqualTo(RecommendationContextIdentity.of(withConditions(setOf("a", "b"), "v1")))
+        // Unknown ids fail closed in planning; the unavailable overlay is its own state.
+        val unavailable = context().let {
+            it.copy(
+                userProfile = it.userProfile.copy(reportedConditions = setOf("a")),
+                conditionRestrictions = ConditionRestrictions.Unavailable
+            )
+        }
+        assertThat(RecommendationContextIdentity.of(unavailable)).isNotEqualTo(one)
+    }
+
+    @Test
+    fun identityChangesWhenOverlayVersionChanges() {
+        assertThat(RecommendationContextIdentity.of(withConditions(setOf("a"), "v2")))
+            .isNotEqualTo(RecommendationContextIdentity.of(withConditions(setOf("a"), "v1")))
+    }
+
+    @Test
+    fun aProfileWithoutConditionsDoesNotDependOnTheOverlayAndKeepsItsDigest() {
+        // Pinned from the build before conditions existed: this release must not invalidate
+        // the plans such a profile already displays.
+        assertThat(RecommendationContextIdentity.of(context()))
+            .isEqualTo(PRE_CONDITIONS_DIGEST)
+    }
+
     private fun context(
         weekStartEpochDay: Long = MONDAY_EPOCH_DAY,
         timeZoneId: String = "America/Mexico_City",
@@ -235,4 +285,51 @@ class RecommendationContextIdentityTest {
             null
         }
     )
+
+    private fun withHistory(hold: Int?): WorkoutGenerationContext {
+        val session = WorkoutSession(
+            id = "done-1", name = "Done", startedAtTimestamp = 1_000L, completedAtTimestamp = 2_000L,
+            status = SessionStatus.COMPLETED,
+            exercises = listOf(
+                WorkoutExercise(
+                    id = "ex-1", sessionId = "done-1", exerciseId = "push-up", orderIndex = 0,
+                    prescription = ExercisePrescription(
+                        exerciseType = ExerciseType.BODYWEIGHT_REPS, targetSets = 2,
+                        repRange = RepRange(8, 12), restSeconds = 60, holdSeconds = hold
+                    )
+                )
+            )
+        )
+        return context().copy(progressionHistory = listOf(session), historyAsOfTimestamp = 10_000L)
+    }
+
+    @Test
+    fun aHoldFreeHistoryKeepsItsDigestAndAHoldChangesIt() {
+        // The expected value was produced by this code, not by the base commit: the only input that
+        // differs from 29fb4927a is the prescription text, which is pinned to the base wording in
+        // ExercisePrescriptionTest.absentHoldPrintsTheTextFromBeforeHoldsExisted. Together they
+        // show the digest is what the base commit produced.
+        assertThat(RecommendationContextIdentity.of(withHistory(null))).isEqualTo(HISTORY_DIGEST)
+        assertThat(RecommendationContextIdentity.of(withHistory(30)))
+            .isNotEqualTo(RecommendationContextIdentity.of(withHistory(null)))
+        assertThat(RecommendationContextIdentity.of(withHistory(30)))
+            .isNotEqualTo(RecommendationContextIdentity.of(withHistory(45)))
+    }
+
+    @Test
+    fun mobilityRowsInProgressionHistoryDoNotChangeTheDigest() {
+        val context = withHistory(null)
+        val withMobility = context.copy(progressionHistory = context.progressionHistory.map { session ->
+            session.copy(exercises = session.exercises + session.exercises.single().copy(
+                id = "mobility-1", exerciseId = "clamshell", orderIndex = 1,
+                role = wallcrawl.elopenmike.com.core.model.ExerciseRole.MOBILITY
+            ))
+        })
+        assertThat(RecommendationContextIdentity.of(withMobility)).isEqualTo(HISTORY_DIGEST)
+    }
+
+    private companion object {
+        const val HISTORY_DIGEST = "ccbb4205db360e82f329cd7b513add93cd382cd1e2ca0b0ed7882425fc343704"
+        const val PRE_CONDITIONS_DIGEST = "5f74554467b20a16c606e31008e1500b297d4c940b0f2f52e4a434f73d6f45b2"
+    }
 }

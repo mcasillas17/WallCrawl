@@ -1,5 +1,6 @@
 package wallcrawl.elopenmike.com.core.ai
 
+import wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import org.junit.Assert.assertThrows
@@ -318,37 +319,6 @@ class StateBasedTrainingPolicyTest {
     }
 
     @Test
-    fun unclearedJointConstraint_failsIfACallerBypassesHardEligibility() {
-        val restrictedProfile = UserProfile(
-            goals = setOf(FitnessGoal.BUILD_MUSCLE),
-            trainingConstraints = setOf(TrainingConstraint.KNEE_SENSITIVE)
-        )
-
-        assertThat(
-            evaluate(
-                exercise = approvedExercise,
-                profile = restrictedProfile,
-                adaptationState = AdaptationState.BUILD
-            )
-        ).isEqualTo(
-            TrainingPolicyResult.Failure(
-                TrainingPolicyFailureReason.TRAINING_CONSTRAINT_REACHED_POLICY
-            )
-        )
-
-        val clearedExercise = approvedExercise.withMetadata {
-            copy(clearedTrainingConstraints = setOf(TrainingConstraint.KNEE_SENSITIVE))
-        }
-        assertThat(
-            evaluate(
-                exercise = clearedExercise,
-                profile = restrictedProfile,
-                adaptationState = AdaptationState.BUILD
-            )
-        ).isInstanceOf(TrainingPolicyResult.Applied::class.java)
-    }
-
-    @Test
     fun lowImpactOnly_isEnforcedByImpactLevelRatherThanJointClearance() {
         val lowImpactProfile = UserProfile(
             goals = setOf(FitnessGoal.BUILD_MUSCLE),
@@ -596,7 +566,7 @@ class StateBasedTrainingPolicyTest {
                 adaptationState = adaptationState,
                 weeklyLedger = ledger
             ),
-            priorUserRestPreference = priorUserRestPreference
+            priorUserRestPreference = priorUserRestPreference, restrictions = ConditionRestrictions.None
         )
     }
 
