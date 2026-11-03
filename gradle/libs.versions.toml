@@ -21,11 +21,21 @@ coil = "3.6.2"
 json = "20260814"
 commonsLang = "3.18.0"
 httpClient = "4.5.14"
+guavaJre = "33.7.2-jre"
+guavaAndroid = "33.7.2-android"
+bouncyCastle = "1.85"
+jose4j = "0.9.6"
 
 [libraries]
-# Build-tool constraints only; see docs/dependency-health.md.
+# Tooling and test constraints only; see docs/dependency-health.md.
 build-commons-lang = { group = "org.apache.commons", name = "commons-lang3", version.ref = "commonsLang" }
 build-httpclient = { group = "org.apache.httpcomponents", name = "httpclient", version.ref = "httpClient" }
+build-guava = { group = "com.google.guava", name = "guava", version.ref = "guavaJre" }
+test-guava = { group = "com.google.guava", name = "guava", version.ref = "guavaAndroid" }
+build-bcprov = { group = "org.bouncycastle", name = "bcprov-jdk18on", version.ref = "bouncyCastle" }
+build-bcpkix = { group = "org.bouncycastle", name = "bcpkix-jdk18on", version.ref = "bouncyCastle" }
+build-bcutil = { group = "org.bouncycastle", name = "bcutil-jdk18on", version.ref = "bouncyCastle" }
+build-jose4j = { group = "org.bitbucket.b_c", name = "jose4j", version.ref = "jose4j" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }

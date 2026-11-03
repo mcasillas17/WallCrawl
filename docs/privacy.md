@@ -103,6 +103,10 @@ never history or chart values. It sends no telemetry and makes no
 network or model call. Package 15 adds the weight unit a template's loads are in.
 Current storage uses Room 18 and archive version 8.
 
+The repository's [Room schema JSON](room-schemas.md) is separate build evidence: table
+definitions and compiler metadata, with no user records. It is not a user-data archive,
+is not included in the application APK, and is never offered by export or restore.
+
 Historical title/rationale, notes and measurements are shown as stored. Current
 profile, template or catalog programming cannot fill missing historical facts.
 Unknown decision versions remain opaque, malformed known records surface an error,
