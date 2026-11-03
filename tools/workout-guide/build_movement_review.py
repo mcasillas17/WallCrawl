@@ -31,7 +31,9 @@ def build_review():
             counts[status] += 1
             if not row['sources'] or not row['execution'].strip():
                 raise ValueError(f'Missing movement or sources for {key}')
-            name = request['name'].split(', execution unresolved')[0]
+            name = request['name']
+            if name.endswith('unresolved'):
+                name = name.replace('—', ',').split(',')[0].removesuffix(' execution unresolved').removesuffix(' variant unresolved').strip()
             sections.extend(['', f'### {name}', '', f'`{key}` · **{STATUSES[status]}**', '', row['execution']])
             if status == 'specified':
                 brief = row['artBrief']

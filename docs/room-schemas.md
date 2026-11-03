@@ -6,9 +6,7 @@ This is build evidence containing table definitions, fields, affinities, nullabi
 declared SQL defaults, primary keys, indexes, foreign keys, and Room's identity hash.
 It contains no user records and is not a backup or restore format.
 
-Database version **16** and archive format **6** (reads **1–6**) are separate contracts.
-Enabling export changes neither. It does not add a migration, destructive fallback,
-runtime table/index/default change, or data rewrite.
+The current database uses Room schema **18**. Archive format **8** reads versions **1–8**, including the two historical v7 writers. The database upgrade recognizes both v17 layouts and retains original reported conditions, workout roles and holds. [PR 105 integration](research/conditions/movements/pr-105.md)
 
 ## Generate and check
 
@@ -63,7 +61,9 @@ as compiler output. The historical baseline remains:
 | --- | --- |
 | 1–11 | `LegacyDatabaseFixtures`' existing SQL definitions; `MigrationChainToCurrentTest` opens each through `ALL_MIGRATIONS` |
 | 12–15 | Existing suites construct schema 11, run the actual migrations to the chosen start, then open through the remaining migrations |
-| Current (16) | Authentic compiler JSON; `ExportedSchemaTest` validates it through Room and validates migrations from every older supported start against it |
+| 16 and released 17 | Authentic compiler exports. Migration fixtures exercise real workouts and reported conditions. |
+| Local preview 17 | Its historical generated SQL creates the alternative layout with frozen condition context. |
+| Current (18) | The compiler export is checked against a fresh database and upgraded databases. |
 
 `MigrationChainToCurrentTest` was previously named `MigrationChainTo12Test`. Its new
 method is `everyLegacyFixtureSchemaMigratesToCurrentVersion`; its 1–11 starting fixtures
@@ -165,7 +165,7 @@ with these isolated mutations. Every mutation was restored before subsequent val
 | --- | --- |
 | Append a newline to the repository export | Exit 1: generated schema differs |
 | Remove the tracked current export | Exit 1: tracked artifact missing |
-| Add an untracked `17.json` | Exit 1: untracked schema artifact |
+| Add an untracked `19.json` | Exit 1: untracked schema artifact |
 | Disable export while leaving the old JSON present | Gradle succeeds; guard exits 1 because no schema was generated |
 | Restore the original source and artifact | Exit 0: byte-for-byte match |
 | Normal KSP invocation reports `UP-TO-DATE`, then run guard | Guard executes KSP and passes |

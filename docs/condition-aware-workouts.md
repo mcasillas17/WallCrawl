@@ -165,3 +165,5 @@ The November 2 verification used an emulator.
 ## November 3 movement research and PR integration
 
 All 68 open requests have [source-level movement descriptions](research/conditions/movements/README.md). The supported chin nod and supine straight-arm reach now have paired traced artwork. The catalog includes all seven exercise identities from the merged PR through six new illustrations and one matching prior entry. Fifteen condition pages link to illustrated exercises. The 50 condition reference entries remain separate from the clinical release gate. [PR dispositions and upgrade details](research/conditions/movements/pr-105.md)
+
+The reconciled build passed 214 catalog and research tests, nine Room guard tests, 1,481 JVM tests and 137 focused Android API 37 cases. The compiler reproduced the tracked Room 18 schema. Device checks included the released and preview v17 migrations, historical archive checksums, source links and illustration selection. Debug and release lint reported zero errors. The APK contained 1,962 variant SVG files, including all 1,914 from the previous catalog with identical bytes.

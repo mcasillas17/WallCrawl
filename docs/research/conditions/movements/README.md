@@ -29,7 +29,7 @@ Glute Bridge matches the bilateral exercise identity. PHOENIX starts on a firm s
 
 ## Hip, knee and lifting
 
-### Home static piriformis self-stretch, variant unresolved
+### Home static piriformis self-stretch
 
 `piriformis-home-stretch-variant-unresolved` · **Partially specified**
 
@@ -40,7 +40,7 @@ Participants performed a self-administered static piriformis stretch at home. Ea
 - Materials and methods, exercise group. The only published figure depicts needling. The paper mentions a separate illustrated sheet given to participants. (full-text). [Guner and Ozcete (2023), Evaluation of the efficacy of ultrasound-guided dry needling therapy and exercise in piriformis muscle syndrome](https://pmc.ncbi.nlm.nih.gov/articles/PMC10508642/)
 - Abstract, methods and results on CT-based muscle length in a separate study (abstract only). [Gulledge et al., Comparison of two stretching methods and optimization of stretching protocol for the piriformis muscle](https://pubmed.ncbi.nlm.nih.gov/24262799/)
 
-### Bilateral bridging, protocol details unresolved
+### Bilateral bridging
 
 `piriformis-bilateral-bridge-variant-unresolved` · **Partially specified**
 
@@ -60,7 +60,7 @@ The home program included a side leg raise with the feet together and the hip an
 
 - Materials and methods, exercise group. The only published figure depicts needling. The paper mentions a separate illustrated sheet given to participants. (full-text). [Guner and Ozcete (2023), Evaluation of the efficacy of ultrasound-guided dry needling therapy and exercise in piriformis muscle syndrome](https://pmc.ncbi.nlm.nih.gov/articles/PMC10508642/)
 
-### Unilateral machine knee extension, study variant unresolved
+### Unilateral machine knee extension
 
 `knee-oa-unilateral-machine-knee-extension` · **Partially specified**
 
@@ -71,7 +71,7 @@ START participants trained knee extension on a Nautilus resistance machine, one 
 - Strength interventions, printed p. 4. The authors identify Nautilus and unilateral lower-limb training. (full-text). [Messier et al. (2013), Strength Training for Arthritis Trial (START): design and rationale](https://thescholarship.ecu.edu/server/api/core/bitstreams/8bb6f208-3bdd-4db9-a5e3-af2d9fc75e38/content)
 - Methods, Interventions, Strength Training, and primary outcomes. (full-text). [Messier et al. (2021), Effect of high-intensity strength training on knee pain and knee joint compressive forces among adults with knee osteoarthritis](https://jamanetwork.com/journals/jama/fullarticle/2776330)
 
-### PFP hip-abduction execution unresolved
+### PFP hip-abduction
 
 `knee-pfp-hip-abduction-variant-unresolved` · **Program**
 
@@ -117,7 +117,7 @@ Lie on the side with the elbow under the shoulder, knees stacked and both knees 
 - Table 4, printed p. 43, progression 2. Start position, execution, coaching and resistance rows. (full-text). [SieuNarine-McKay (2016), Evaluation of outcomes in assessment of iliotibial band syndrome rehabilitation programs](https://central.bac-lac.gc.ca/.item?app=Library&id=TC-BVAU-58531&oclc_number=1032932654&op=pdf)
 - Table 2, integrated program, exercise 1 progression, weeks 3–4. (full-text). [McKay et al. (2020), Iliotibial band syndrome rehabilitation in female runners](https://pmc.ncbi.nlm.nih.gov/articles/PMC7247177/)
 
-### Degenerative-meniscus incremental exercise variant unresolved
+### Degenerative-meniscus incremental exercise
 
 `knee-meniscus-incremental-exercise-variant-unresolved` · **Program**
 
@@ -140,7 +140,7 @@ For the supervised early open-chain arm of the hamstring-graft ACL reconstructio
 - Authors’ full paper, Methods, Intervention, early open-chain group. The strength-testing dynamometer described separately was not the training equipment. (full-text). [Fukuda et al. (2013), Open kinetic chain exercises in a restricted range of motion after anterior cruciate ligament reconstruction](https://www.researchgate.net/publication/235669596_Open_Kinetic_Chain_Exercises_in_a_Restricted_Range_of_Motion_After_Anterior_Cruciate_Ligament_Reconstruction_A_Randomized_Controlled_Clinical_Trial)
 - Exercise initiation, open kinetic chain exercise, and Box 3. The seated 90°–45° variant is tied to the Fukuda hamstring graft trial. (full-text). [Kotsifaki et al. (2023), Aspetar clinical practice guideline on rehabilitation after anterior cruciate ligament reconstruction](https://bjsm.bmj.com/content/57/9/500)
 
-### MCL early quadriceps setting, clinical execution unresolved
+### MCL early quadriceps setting
 
 `knee-mcl-quadriceps-set-unresolved` · **Partially specified**
 
@@ -150,7 +150,7 @@ In the monitored protocol for isolated grade III MCL injury, quadriceps setting 
 
 - Methods and Table 2, printed pp. 471–473. Full paper scan, including brace use, timing, straight-leg positions and resistive progression. (full-text). [Reider et al. (1994), Treatment of isolated medial collateral ligament injuries in athletes with early functional rehabilitation](https://citeseerx.ist.psu.edu/document?doi=94a1f3a540f30ad26a76c21d73b633ffcc2baca5&repid=rep1&type=pdf)
 
-### MCL early leg raise, clinical execution unresolved
+### MCL early leg raise
 
 `knee-mcl-leg-raise-unresolved` · **Program**
 
@@ -232,7 +232,7 @@ In this case the runner lay on her right side with her spine supported against a
 
 - Printed p. 1155 (PDF p. 151), intervention and Figures 2–3, with continuation on p. 1156. Case-specific end range and setup. (full-text). [Rauseo (2017), The rehabilitation of a runner with iliopsoas tendinopathy using an eccentric-biased exercise: a case report](https://ijspt.org/wp-content/uploads/2021/01/2017_V12N7.pdf)
 
-### LIFTMOR back squat — technique variant unresolved
+### LIFTMOR back squat
 
 `liftmor-back-squat-variant-unresolved` · **Specified**
 
@@ -244,7 +244,7 @@ In the supervised barbell phase, stand with feet shoulder-width apart and the ba
 
 - Chapter 3, printed p. 61 (PDF p. 93), back squat. Chapter 4, resources, lists the rack, stand and bars. (full-text). [Watson, The LIFTMOR trial: thesis describing supervised HiRIT in postmenopausal women with low bone mass](https://research-repository.griffith.edu.au/server/api/core/bitstreams/b6b80b27-44f2-4f82-a315-370c13c7e34f/content)
 
-### LIFTMOR deadlift — technique variant unresolved
+### LIFTMOR deadlift
 
 `liftmor-deadlift-variant-unresolved` · **Specified**
 
@@ -256,7 +256,7 @@ Stand with the shins at the bar and feet slightly narrower than shoulder width. 
 
 - Chapter 3, printed p. 62 (PDF p. 94), deadlift. The start is specified by shin contact and trunk position. No fixed platform or plate height is given. (full-text). [Watson, The LIFTMOR trial: thesis describing supervised HiRIT in postmenopausal women with low bone mass](https://research-repository.griffith.edu.au/server/api/core/bitstreams/b6b80b27-44f2-4f82-a315-370c13c7e34f/content)
 
-### LIFTMOR overhead press — setup unresolved
+### LIFTMOR overhead press
 
 `liftmor-overhead-press-variant-unresolved` · **Specified**
 
@@ -304,7 +304,7 @@ On a treadmill, walk or run for four minutes at 90–95% of measured maximum hea
 - Methods, Intervention (full text). [Sveaas et al. (2014), Efficacy of high intensity exercise on disease activity and cardiovascular risk in active axial spondyloarthritis](https://pmc.ncbi.nlm.nih.gov/articles/PMC4182541/)
 - Exercise intervention and physical fitness assessment (full supplementary protocol, DOC). [Sveaas et al., Protocol S1](https://doi.org/10.1371/journal.pone.0108688.s002)
 
-### AxSpA pilot abdominal stabilization bridge — position unresolved
+### AxSpA pilot abdominal stabilization bridge
 
 `axspa-abdominal-bridge-variant-unresolved` · **Partially specified**
 
@@ -315,7 +315,7 @@ One abdominal stabilization exercise called an abdominal bridge was included alo
 - Methods, Intervention (full text). [Sveaas et al. (2014), Efficacy of high intensity exercise on disease activity and cardiovascular risk in active axial spondyloarthritis](https://pmc.ncbi.nlm.nih.gov/articles/PMC4182541/)
 - Exercise intervention and physical fitness assessment (full supplementary protocol, DOC). [Sveaas et al., Protocol S1](https://doi.org/10.1371/journal.pone.0108688.s002)
 
-### Fibromyalgia machine leg press — exact setup unresolved
+### Fibromyalgia machine leg press
 
 `fm-machine-leg-press-variant-unresolved` · **Partially specified**
 
@@ -326,7 +326,7 @@ Push against the leg-press machine using the lower limbs and bring the load back
 - Intervention and Box 1, dosage of resistance exercise (full text). [Larsson et al. (2015), Resistance exercise improves muscle strength, health status and pain intensity in fibromyalgia](https://pmc.ncbi.nlm.nih.gov/articles/PMC4489359/)
 - Study II, person-centred progressive resistance exercise, printed pp. 19–21 (full doctoral thesis, University of Gothenburg). [Larsson (2018), Muscle strength and resistance exercise in women with fibromyalgia, a person-centred approach](https://gupea.ub.gu.se/server/api/core/bitstreams/d3aac5b4-3b63-431a-bd24-6814d288d638/content)
 
-### Fibromyalgia machine knee extension — exact range unresolved
+### Fibromyalgia machine knee extension
 
 `fm-machine-knee-extension-variant-unresolved` · **Partially specified**
 
@@ -337,7 +337,7 @@ Straighten the knee against resistance on a weight machine, then return. The stu
 - Intervention and Box 1, dosage of resistance exercise (full text). [Larsson et al. (2015), Resistance exercise improves muscle strength, health status and pain intensity in fibromyalgia](https://pmc.ncbi.nlm.nih.gov/articles/PMC4489359/)
 - Study II, person-centred progressive resistance exercise, printed pp. 19–21 (full doctoral thesis, University of Gothenburg). [Larsson (2018), Muscle strength and resistance exercise in women with fibromyalgia, a person-centred approach](https://gupea.ub.gu.se/server/api/core/bitstreams/d3aac5b4-3b63-431a-bd24-6814d288d638/content)
 
-### Fibromyalgia bodyweight heel raise — support unresolved
+### Fibromyalgia bodyweight heel raise
 
 `fm-bodyweight-heel-raise-variant-unresolved` · **Partially specified**
 
@@ -348,7 +348,7 @@ Use body weight to raise the heel or heels, then lower. The authors identify rap
 - Intervention and Box 1, dosage of resistance exercise (full text). [Larsson et al. (2015), Resistance exercise improves muscle strength, health status and pain intensity in fibromyalgia](https://pmc.ncbi.nlm.nih.gov/articles/PMC4489359/)
 - Study II, person-centred progressive resistance exercise, printed pp. 19–21 (full doctoral thesis, University of Gothenburg). [Larsson (2018), Muscle strength and resistance exercise in women with fibromyalgia, a person-centred approach](https://gupea.ub.gu.se/server/api/core/bitstreams/d3aac5b4-3b63-431a-bd24-6814d288d638/content)
 
-### Fibromyalgia Yang-style tai chi — forms unresolved
+### Fibromyalgia Yang-style tai chi
 
 `fm-yang-tai-chi-program-unresolved` · **Program**
 
@@ -373,7 +373,7 @@ Use the trial’s conventional two-handed barbell lift. The plates rest on the f
 - High load lifting exercise, printed pp. 457–458 (full published PDF). [Michaelson et al. (2016), High load lifting exercise and low load motor control exercises as interventions for patients with mechanical low back pain](https://medicaljournalssweden.se/jrm/article/download/15412/19219/56936)
 - High-load lifting exercise, printed pp. 20–22, Figure 2A–F reproduces the Aasa et al. trial demonstration (full author thesis and six-panel figure inspected). [Berglund (2016), Deadlift training for patients with mechanical low back pain](https://www.diva-portal.org/smash/get/diva2%3A925706/FULLTEXT01.pdf)
 
-### Lumbar directional exercise, assessed direction and execution unresolved
+### Lumbar directional exercise
 
 `lumbar-directional-preference-exercise-unresolved` · **Assessment-dependent**
 
@@ -384,7 +384,7 @@ At each session the therapist checked the response to repeated movements or sust
 - Randomization and interventions (full article, journal PDF inspected). [Fritz et al. (2021), Physical therapy referral from primary care for acute back pain with sciatica](https://pmc.ncbi.nlm.nih.gov/articles/PMC7856080/)
 - Early physical therapy treatment group, Table 3, Progression of Centralizing Extension Exercises (full protocol PDF). [Fritz et al., NCT02391350 study protocol](https://cdn.clinicaltrials.gov/large-docs/50/NCT02391350/Prot_000.pdf)
 
-### Stationary bicycle warmup, seating setup unresolved
+### Stationary bicycle warmup
 
 `stationary-bicycle-warmup-lss-setup-unresolved` · **Partially specified**
 
@@ -406,7 +406,7 @@ Lying on the back, lift the head using the neck flexors against the weight of th
 - Description of interventions, endurance and strength groups (full journal methods). [Ylinen et al. (2003), Active neck muscle training in the treatment of chronic neck pain in women](https://jamanetwork.com/journals/jama/fullarticle/196580)
 - Training description, pp. 466–467, Figure 2. This is the earlier method cited by the 2003 strength arm. (full published PDF and figure inspected). [Ylinen and Ruuska (1994), Clinical use of neck isometric strength measurement in rehabilitation](https://convergemedtech.com/wp-content/uploads/2025/02/Clinical-use-of-neck-isometric-strength-measurements-in-rehabilitation.pdf)
 
-### Seated elastic-resisted neck effort, attachment unresolved
+### Seated elastic-resisted neck effort
 
 `seated-elastic-resisted-neck-training-unresolved` · **Program**
 
@@ -417,7 +417,7 @@ The 2003 group sat to perform four elastic-resistance directions: straight forwa
 - Description of interventions, endurance and strength groups (full journal methods). [Ylinen et al. (2003), Active neck muscle training in the treatment of chronic neck pain in women](https://jamanetwork.com/journals/jama/fullarticle/196580)
 - Training description, pp. 466–467, Figure 2. This is the earlier method cited by the 2003 strength arm. (full published PDF and figure inspected). [Ylinen and Ruuska (1994), Clinical use of neck isometric strength measurement in rehabilitation](https://convergemedtech.com/wp-content/uploads/2025/02/Clinical-use-of-neck-isometric-strength-measurements-in-rehabilitation.pdf)
 
-### Cervical low-load isometrics/endurance, trial positions unresolved
+### Cervical low-load isometrics/endurance
 
 `cervical-radicular-low-load-isometrics-unresolved` · **Assessment-dependent**
 
@@ -429,7 +429,7 @@ The guideline discusses progression from gentle neck isometrics to low-load endu
 - Interventions, neck-specific training and treatment progression (full published trial protocol). [Dedering et al. (2014), Neck-specific training with a cognitive behavioural approach compared with prescribed physical activity in patients with cervical radiculopathy](https://pmc.ncbi.nlm.nih.gov/articles/PMC4243421/)
 - Methods and results, randomized trial (abstract). [Dedering et al. (2018), The effects of neck-specific training versus prescribed physical activity on pain and disability in patients with cervical radiculopathy](https://pubmed.ncbi.nlm.nih.gov/30473018/)
 
-### Chronic-WAD cervical isometrics, setup unresolved
+### Chronic-WAD cervical isometrics
 
 `chronic-wad-gentle-cervical-isometrics-unresolved` · **Program**
 
@@ -453,7 +453,7 @@ Lie on the opposite side on a flat surface, lower arm bent beneath the head as p
 - Appendices A and B, fourth and fifth exercise instructions (full text). [Ingwersen et al. (2017), Three months of progressive high-load versus traditional low-load strength training among patients with rotator cuff tendinopathy](https://pmc.ncbi.nlm.nih.gov/articles/PMC5576542/)
 - Appendix A, Fourth Exercise, two-panel demonstration; archive image 10.1177_2325967117723292-fig6.jpg (original appendix photograph inspected). [Ingwersen et al., illustrated RoCTEx exercise appendices](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC5576542/supplementaryFiles)
 
-### RoCTEx supine dumbbell scapular protraction, exact support unresolved
+### RoCTEx supine dumbbell scapular protraction
 
 `supine-dumbbell-scapular-protraction` · **Specified**
 
@@ -466,7 +466,7 @@ Lie on the flat support with head, back and pelvis down, both knees bent to roug
 - Appendices A and B, fourth and fifth exercise instructions (full text). [Ingwersen et al. (2017), Three months of progressive high-load versus traditional low-load strength training among patients with rotator cuff tendinopathy](https://pmc.ncbi.nlm.nih.gov/articles/PMC5576542/)
 - Appendix A, Fifth Exercise, wide and close-up demonstration; archive image 10.1177_2325967117723292-fig7.jpg (original appendix photograph inspected). [Ingwersen et al., illustrated RoCTEx exercise appendices](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC5576542/supplementaryFiles)
 
-### MOON anterior shoulder stretch — setup unresolved
+### MOON anterior shoulder stretch
 
 `moon-anterior-shoulder-stretch-setup-unresolved` · **Specified**
 
@@ -480,7 +480,7 @@ Use the two-part doorway option in the MOON nonoperative booklet. Stand facing t
 - Flexibility, printed p. 6, Door Stretch A and B, IRB approval August 2008 (full trial-era booklet and figures inspected). [MOON Shoulder Group, nonoperative rotator cuff patient exercise booklet, study-era version](https://www.bcsorthopedics.com/pdf/shoulder/non-operative-rotator-cuff-program.pdf)
 - Flexibility, Door Stretch, A and B (full consortium booklet). [MOON Shoulder Group, patient home therapy booklet](https://moonshoulder.com/wp-content/uploads/2020/04/Patient-Home-Therapy-Booklet.pdf)
 
-### Pain-limited shoulder pendulum — setup unresolved
+### Pain-limited shoulder pendulum
 
 `frozen-shoulder-pendulum-setup-unresolved` · **Partially specified**
 
@@ -555,7 +555,7 @@ Unilateral version. Stand on a step with the heel free, toes over a folded towel
 
 - High-load strength training, pp. 2–3, Figure 2 (four photographs) (Full primary PDF and Figure 2 visually inspected.). [Rathleff et al. High-load strength training improves outcome in patients with plantar fasciitis](https://braceworks.ca/wp-content/uploads/2016/04/Rathleff-og-M%C3%B8lgaard-2014_High-load-strength-training-improves-outcome-in-patients-with-plantar-fasciitis-A-randomized-controlled-trial-with-12-month-follow-up.pdf)
 
-### Protected active ankle ROM after assessed sprain—execution unresolved
+### Protected active ankle ROM after assessed sprain
 
 `acute-sprain-protected-active-ankle-rom-unresolved` · **Assessment-dependent**
 
@@ -608,7 +608,7 @@ Sit on the floor with the working leg extended. Resist eversion by looping the b
 - Methods, Resistance-Band Intervention, Figure 2A caption (Primary full text. Separate adolescent trial. Specifies knee extension, steady hip and knee, heel bolster and full available excursion.). [Cain et al. Four-week ankle-rehabilitation programs in adolescent athletes with chronic ankle instability](https://pmc.ncbi.nlm.nih.gov/articles/PMC7462179/)
 - Banded Inversion and Eversion, directions for each movement (Exercise author’s own directions for the fixed-anchor variant inspected. Independent technique source, not an injury trial or a Hall trial photograph.). [American Council on Exercise. Ankles, knees and hips: 10 joint-friendly exercises](https://www.acefitness.org/resources/pros/expert-articles/9158/ankles-knees-and-hips-10-joint-friendly-exercises-for-the-lower-extremity/)
 
-### Single-leg stance with eyes open—progression unresolved
+### Single-leg stance with eyes open
 
 `single-leg-stance-eyes-open-progression-unresolved` · **Program**
 
@@ -619,7 +619,7 @@ Stand on the involved leg with eyes open. In the published McKeon-based progress
 - Methods, Strength-Training Protocol and Balance-Training Protocol (Indexed primary methods inspected, including the table attachment, forefoot contact and full-range instruction.). [Hall et al. Balance- and strength-training protocols to improve chronic ankle instability deficits, part I](https://pmc.ncbi.nlm.nih.gov/articles/PMC6089027/)
 - Progressive Hop-to-Stabilization Balance Program, Table 2, single-limb stance rows (Full primary trial HTML and table inspected. This trial independently implemented the McKeon progression.). [Anguish and Sandrey. Two 4-week balance-training programs for chronic ankle instability](https://pmc.ncbi.nlm.nih.gov/articles/PMC6138271/)
 
-### Plantarflexed eccentric foot adduction—apparatus unresolved
+### Plantarflexed eccentric foot adduction
 
 `posterior-tibial-plantarflexed-eccentric-adduction` · **Specified**
 
@@ -632,7 +632,7 @@ Sit with knees bent, wearing the prescribed orthosis in the shoe, and place the 
 - Interventions, pp. 29–30, Figure 1 and its caption (Full primary results paper PDF. Visually inspected both views of the apparatus in Figure 1.). [Kulig et al. Nonsurgical management of posterior tibial tendon dysfunction with orthoses and resistive exercise](https://biomechanical.com/services/documents/NonSurg%20Manage%20PTTD%20wOrthoses%20Excercise%20-%20Kulig%20Reischl.pdf)
 - Intervention, specialized exercise unit, Figure 2 and ECC allocation (Primary protocol, full text and figure caption via Europe PMC XML.). [Kulig et al. Non-operative management of posterior tibialis tendon dysfunction: design of a randomized clinical trial](https://pmc.ncbi.nlm.nih.gov/articles/PMC1513568/)
 
-### Peroneal band loading—execution unresolved
+### Peroneal band loading
 
 `peroneal-band-loading-execution-unresolved` · **Partially specified**
 
@@ -666,7 +666,7 @@ Seated weighted variant: start with both feet on the floor and a small towel spr
 - Methods, Lower-Leg Exercise Intervention, Table 1 (Full primary paper and Table 1 inspected in Europe PMC XML.). [Effects of integrating lower-leg exercises into a multimodal therapeutic approach on medial tibial stress syndrome management among recreational runners](https://pmc.ncbi.nlm.nih.gov/articles/PMC11826869/)
 - Exercise 8, Towel Curls, exercises page 4 (Issuing-academy handout inspected. Specifies the seated variant, which part of the towel to grip and where to add a weight. The MTSS trial did not publish those setup details.). [AAOS. Foot and ankle conditioning program](https://orthoinfo.aaos.org/globalassets/pdfs/foot-and-ankle-conditioning-program---2025.pdf)
 
-### Hallux-flexor strengthening—execution unresolved
+### Hallux-flexor strengthening
 
 `hallux-flexor-strengthening-execution-unresolved` · **Program**
 
@@ -676,7 +676,7 @@ Early in-clinic isometrics held the first metatarsophalangeal joint neutral whil
 
 - Intervention (experimental group), Flexor Hallucis Strengthening, pp. 371–372 (Primary paper text in a publicly readable author-uploaded copy. Functional hallux limitus population.). [Shamus et al. The effect of sesamoid mobilization, flexor hallucis strengthening, and gait training on reducing pain and restoring function in individuals with hallux limitus](https://www.researchgate.net/publication/8415351_The_Effect_of_Sesamoid_Mobilization_Flexor_Hallucis_Strengthening_and_Gait_Training_on_Reducing_Pain_and_Restoring_Function_in_Individuals_With_Hallux_Limitus_A_Clinical_Trial)
 
-### Wrist-extensor resisted loading, study execution unresolved
+### Wrist-extensor resisted loading
 
 `wrist-extensor-loading-execution-unresolved` · **Assessment-dependent**
 
@@ -725,7 +725,7 @@ Baker compared lumbrical-focused and general stretch programs alongside night sp
 - Figure 2, panels A1–A3 and B1–B3 (Publisher-hosted primary graphic visually inspected. It shows two sets of three drawings without accompanying step-by-step text.). [Baker et al. Trial exercise illustration](https://ars.els-cdn.com/content/image/1-s2.0-S0003999311006952-gr2.jpg)
 - Study Plan, Arms and Interventions (Investigator registration inspected using the ClinicalTrials.gov API. Names the stretch arms but does not give their respective movement instructions.). [Effect of Lumbrical Stretching on Carpal Tunnel Syndrome, NCT00803257](https://clinicaltrials.gov/study/NCT00803257)
 
-### Median nerve glide for CTS, trial execution unresolved
+### Median nerve glide for CTS
 
 `median-nerve-glide-cts-execution-unresolved` · **Specified**
 
@@ -738,7 +738,7 @@ Keep shoulder and neck neutral, elbow bent about 90°. Follow Figure 3 in order:
 - Treatment and Figure 3a–f (Full primary Methods and corresponding figure caption inspected. The study did not find an additional benefit over splinting alone.). [Abdolrazaghi et al. Effectiveness of tendon and nerve gliding exercises in mild idiopathic carpal tunnel syndrome](https://pmc.ncbi.nlm.nih.gov/articles/PMC10035085/)
 - Figure 3, panels a–f (Primary six-panel illustration visually inspected.). [Abdolrazaghi et al. Median-nerve glide](https://cdn.ncbi.nlm.nih.gov/pmc/blobs/7c4e/10035085/8ef18ba0708a/10.1177_15589447211006857-fig3.jpg)
 
-### Hand tendon glide for CTS, trial execution unresolved
+### Hand tendon glide for CTS
 
 `tendon-glide-cts-execution-unresolved` · **Specified**
 
@@ -751,7 +751,7 @@ Keep the wrist neutral. Straighten all fingers, curl the middle and end joints i
 - Treatment and Figure 2a–e (Full primary Methods and corresponding figure caption inspected. The study did not find an additional benefit over splinting alone.). [Abdolrazaghi et al. Effectiveness of tendon and nerve gliding exercises in mild idiopathic carpal tunnel syndrome](https://pmc.ncbi.nlm.nih.gov/articles/PMC10035085/)
 - Figure 2, panels a–e (Primary five-panel illustration visually inspected.). [Abdolrazaghi et al. Tendon gliding positions](https://cdn.ncbi.nlm.nih.gov/pmc/blobs/7c4e/10035085/5b52684131e4/10.1177_15589447211006857-fig2.jpg)
 
-### Ulnar nerve glide at elbow, trial execution unresolved
+### Ulnar nerve glide at elbow
 
 `ulnar-nerve-glide-elbow-execution-unresolved` · **Partially specified**
 
@@ -776,7 +776,7 @@ Rest the forearm on a table, hand beyond its edge and wrist neutral. With the un
 - Methods, Exercise intervention and Figure 3 caption (Primary methods and home device instructions inspected. Randomized feasibility study with individually measured loads.). [McBain et al. Isometric thumb extension exercise as part of a multimodal intervention for de Quervain’s syndrome](https://pmc.ncbi.nlm.nih.gov/articles/PMC10584067/)
 - Figure 3, side and front views (Original publisher-supplied images visually inspected.). [McBain et al. Home exercise spring gauge](https://cdn.ncbi.nlm.nih.gov/pmc/blobs/99ae/10584067/8185d8a42eff/10.1177_17589983231158499-fig3.jpg)
 
-### Thumb-CMC coordination and stability, exact home execution unresolved
+### Thumb-CMC coordination and stability
 
 `thumb-cmc-coordination-execution-unresolved` · **Program**
 
@@ -813,7 +813,7 @@ Hold the approximately 7-cm exercise ball in the palm. Wrap four fingers around 
 - Appendix 1, movement 4 (instructions and photographs) (Original publisher PDF, both pages and corresponding photographs inspected.). [Hennig et al. Effect of home-based hand exercises in women with hand osteoarthritis, illustrated exercise appendix](https://ars.els-cdn.com/content/image/1-s2.0-S0003496724026062-mmc2.pdf)
 - Characteristics of included studies, Hennig 2015 (Systematic-review extraction inspected for ball material and diameter.). [Østerås et al. Exercise for hand osteoarthritis](https://pmc.ncbi.nlm.nih.gov/articles/PMC6464796/)
 
-### Band-resisted thumb abduction/extension, setup unresolved
+### Band-resisted thumb abduction/extension
 
 `band-thumb-abduction-extension-execution-unresolved` · **Specified**
 
