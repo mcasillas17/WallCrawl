@@ -98,12 +98,12 @@ History shows recorded membership independently of the latest run. Older and man
 sessions retain honestly absent membership.
 
 <p align="center">
-  <img src="art/screenshots/program-today-en.png" width="24%" alt="Today with the complete program-week and shared calendar-allowance explanation and explicit Program session selection" />
+  <img src="art/screenshots/program-today-en.png" width="24%" alt="Today with a program session selected and the Manage program action" />
   <img src="art/screenshots/program-completed-en.png" width="24%" alt="Completed eight-slot program with recorded-workout links and no invented next slot" />
   <img src="art/screenshots/program-partial-finish-en.png" width="24%" alt="Partial Finish confirmation distinguishing program advancement from actual completed-set credit" />
 </p>
 <p align="center">
-  <em>Actual API 36 emulator captures with disposable test profiles. See
+  <em>Today was captured on API 37. The other program screens were captured on API 36. All use disposable test profiles. See
   <a href="docs/localization.md#program-controls-and-large-text-evidence">Spanish management, confirmation and large-text evidence</a>
   and the <a href="docs/architecture.md#optional-multi-week-programs">persistence and recovery contract</a>.</em>
 </p>
@@ -233,7 +233,7 @@ restoring an archive never changes it.
   <img src="art/screenshots/onboarding-welcome-language-es.png" width="24%" alt="Spanish onboarding step 1 of 8 with the language chip in the header reading ES, the codename field, and a quiet Restaurar perfil desde archivo button under Continuar" />
   <img src="art/screenshots/profile-language-es.png" width="24%" alt="Spanish Training Profile App preferences card holding the interface theme and language as two compact segmented controls, with ES selected" />
   <img src="art/screenshots/onboarding-restore-sheet-es.png" width="24%" alt="The Spanish restore sheet opened from the onboarding wizard, stating that the file holds the profile, routines, and every logged workout" />
-  <img src="art/screenshots/today-screen-es.png" width="24%" alt="Spanish Today screen with a generated Empuje / Hipertrofia session, its focus muscles, and five Spanish exercise names" />
+  <img src="art/screenshots/today-screen-es.png" width="24%" alt="Spanish Today screen with the workout summary, start button and expandable exercise list" />
 </p>
 <p align="center">
   <img src="art/screenshots/exercises-screen-es.png" width="24%" alt="Spanish exercise library showing 302 exercises with Spanish names, muscle chips, and equipment chips" />

@@ -1,13 +1,13 @@
 package wallcrawl.elopenmike.com.feature.program
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
+import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.model.*
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
@@ -194,19 +195,61 @@ private fun objectiveRes(objective: ProgramObjective) = when (objective) {
 }
 
 @Composable
-fun ProgramPlanningChoice(selected: WorkoutPlanningIntent, programAvailable: Boolean, enabled: Boolean,
-    onSelect: (WorkoutPlanningIntent) -> Unit) {
-    Column(Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
-        Text(stringResource(R.string.program_choice), style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.onSurface)
-        WorkoutPlanningIntent.entries.forEach { intent ->
-            val available = enabled && (intent == WorkoutPlanningIntent.ORDINARY || programAvailable)
-            Row(Modifier.fillMaxWidth().testTag("planning-${intent.name}")
-                .selectable(selected = selected == intent, enabled = available,
-                    role = androidx.compose.ui.semantics.Role.RadioButton, onClick = { onSelect(intent) })
-                .padding(8.dp), verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
-                RadioButton(selected = selected == intent, onClick = null, enabled = available)
-                Text(stringResource(if (intent == WorkoutPlanningIntent.PROGRAM) R.string.program_session_choice else R.string.program_ordinary_choice),
-                    Modifier.padding(start = 8.dp), color = MaterialTheme.colorScheme.onSurface)
+internal fun TodayProgramOptions(
+    state: ProgramUiState,
+    selected: WorkoutPlanningIntent,
+    onSelect: (WorkoutPlanningIntent) -> Unit,
+    onManage: () -> Unit,
+    onRetry: () -> Unit
+) {
+    val enrollment = state.program as? ProgramReadState.Supported
+    val active = enrollment?.enrollment?.status == ProgramStatus.ACTIVE
+    WallCrawlCard(modifier = Modifier.fillMaxWidth()) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Column(Modifier.weight(1f)) {
+                Text(stringResource(R.string.program_name), style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface)
+                enrollment?.let {
+                    Text(stringResource(when (it.enrollment.status) {
+                        ProgramStatus.ACTIVE -> R.string.program_active
+                        ProgramStatus.PAUSED -> R.string.program_paused
+                        ProgramStatus.COMPLETED -> R.string.program_completed
+                    }), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+            }
+            TextButton(onClick = onManage) {
+                Text(stringResource(R.string.program_manage), color = MaterialTheme.colorScheme.onSurface)
+            }
+        }
+        if (state.program is ProgramReadState.Unsupported) {
+            Text(stringResource(R.string.program_unsupported), color = MaterialTheme.colorScheme.error)
+        }
+        state.error?.let {
+            Text(stringResource(it), color = MaterialTheme.colorScheme.error)
+            TextButton(onClick = onRetry) { Text(stringResource(R.string.action_try_again)) }
+        }
+        if (active || selected == WorkoutPlanningIntent.PROGRAM) {
+            ProgramPlanningChoice(selected, active, state.activeSession == null, onSelect)
+        }
+    }
+}
+
+
+@Composable
+internal fun ProgramPlanningChoice(
+    selected: WorkoutPlanningIntent, programAvailable: Boolean, enabled: Boolean,
+    onSelect: (WorkoutPlanningIntent) -> Unit
+) {
+    SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
+        WorkoutPlanningIntent.entries.forEachIndexed { index, intent ->
+            SegmentedButton(
+                selected = selected == intent,
+                onClick = { onSelect(intent) },
+                enabled = enabled && (intent == WorkoutPlanningIntent.ORDINARY || programAvailable),
+                shape = SegmentedButtonDefaults.itemShape(index, WorkoutPlanningIntent.entries.size),
+                modifier = Modifier.testTag("planning-${intent.name}")
+            ) {
+                Text(stringResource(if (intent == WorkoutPlanningIntent.PROGRAM) R.string.program_session_choice else R.string.program_ordinary_choice))
             }
         }
     }

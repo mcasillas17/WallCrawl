@@ -1,6 +1,5 @@
 package wallcrawl.elopenmike.com.feature.today
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.rememberScrollState
@@ -10,7 +9,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.ui.res.painterResource
 import wallcrawl.elopenmike.com.R
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,11 +21,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Assignment
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -42,6 +38,11 @@ import androidx.compose.runtime.produceState
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,12 +61,10 @@ import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.DeloadAction
 import wallcrawl.elopenmike.com.core.model.WeightUnit
-import wallcrawl.elopenmike.com.core.ui.components.StatBadge
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlWordmark
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlSecondaryButton
-import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
 import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.localization.generatedWorkoutRationale
@@ -76,7 +75,6 @@ import wallcrawl.elopenmike.com.core.ui.localization.workoutRankingNotice
 import wallcrawl.elopenmike.com.core.ui.localization.progressionNotice
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
-import wallcrawl.elopenmike.com.core.ui.theme.SuccessGreen
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
 
 @Composable
@@ -98,13 +96,12 @@ fun TodayScreen(
         }
     }
 
-    val conditionAndProgramContent: @Composable () -> Unit = {
+    val conditionContent: @Composable () -> Unit = {
         if (pending.pendingFailed) Text(stringResource(R.string.condition_pending_read_error), color = MaterialTheme.colorScheme.onSurface)
         if (!pending.pending.isNullOrEmpty()) {
             Text(stringResource(R.string.condition_pending_hint), color = MaterialTheme.colorScheme.onSurface)
             TextButton(onClick = onOpenProfile) { Text(stringResource(R.string.condition_edit), color = MaterialTheme.colorScheme.onSurface) }
         }
-        programContent()
     }
 
     Box(
@@ -112,7 +109,6 @@ fun TodayScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        WebBackgroundPattern()
 
         when (val state = uiState) {
             TodayUiState.Loading, is TodayUiState.Preparing -> {
@@ -130,13 +126,14 @@ fun TodayScreen(
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                         }
-                        conditionAndProgramContent()
+                        conditionContent()
                         CircularProgressIndicator(color = CrimsonRedPrimary)
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
                             stringResource(R.string.today_loading),
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
+                        programContent()
                     }
                 }
             }
@@ -160,13 +157,7 @@ fun TodayScreen(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                     }
-                    conditionAndProgramContent()
-                    if (state.activeSession == null) {
-                        state.deload?.let {
-                            TodayDeloadCard(it, viewModel::decideDeload)
-                            Spacer(modifier = Modifier.height(16.dp))
-                        }
-                    }
+                    conditionContent()
                     state.conditionRefusal?.let { ConditionRefusal(it.reasons) }
                     WallCrawlCard(borderColor = CrimsonRedPrimary) {
                         Text(
@@ -192,6 +183,14 @@ fun TodayScreen(
                             onClick = onOpenTemplates
                         )
                     }
+                    Spacer(Modifier.height(16.dp))
+                    programContent()
+                    if (state.activeSession == null) {
+                        state.deload?.let {
+                            TodayDeloadCard(it, viewModel::decideDeload)
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
+                    }
                 }
             }
 
@@ -214,7 +213,8 @@ fun TodayScreen(
                     onRegenerate = { viewModel.regenerateWorkout() },
                     onOpenTemplates = onOpenTemplates,
                     onDeloadAction = viewModel::decideDeload,
-                    programContent = conditionAndProgramContent
+                    conditionContent = conditionContent,
+                    programContent = programContent
                 )
             }
         }
@@ -234,6 +234,7 @@ internal fun TodayContent(
     onRegenerate: () -> Unit,
     onOpenTemplates: () -> Unit,
     onDeloadAction: (DeloadAction) -> Unit = {},
+    conditionContent: @Composable () -> Unit = {},
     programContent: @Composable () -> Unit = {}
 ) {
     LazyColumn(
@@ -264,6 +265,23 @@ internal fun TodayContent(
             }
         }
 
+        // Main Recommended Workout Card
+        item {
+            Column {
+                conditionContent()
+                SuggestedWorkoutCard(
+                    workout = state.suggestedWorkout,
+                    workoutName = workoutName,
+                    isRegenerating = state.isRegenerating || state.activeSession != null || state.deload?.isSaving == true,
+                    prescriptionUnit = state.prescriptionUnit,
+                    onStartWorkout = onStartWorkout,
+                    onRegenerate = onRegenerate,
+                    programSession = state.programSession,
+                    conditionContext = state.conditionContext
+                )
+            }
+        }
+
         item { programContent() }
 
         if (state.activeSession == null) {
@@ -276,20 +294,6 @@ internal fun TodayContent(
                     }
                 }
             }
-        }
-
-        // Main Recommended Workout Card
-        item {
-            SuggestedWorkoutCard(
-                workout = state.suggestedWorkout,
-                workoutName = workoutName,
-                isRegenerating = state.isRegenerating || state.activeSession != null || state.deload?.isSaving == true,
-                prescriptionUnit = state.prescriptionUnit,
-                onStartWorkout = onStartWorkout,
-                onRegenerate = onRegenerate,
-                programSession = state.programSession,
-                conditionContext = state.conditionContext
-            )
         }
 
         item { MyWorkoutsCard(onOpenTemplates) }
@@ -367,108 +371,31 @@ private fun TodayHeader(
     weeklyGoal: Int
 ) {
     val locale = LocalConfiguration.current.locales[0]
-    Column {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                WallCrawlWordmark(fontSize = 20.sp)
-                Spacer(modifier = Modifier.height(4.dp))
-                val displayName = userName.lineSequence().firstOrNull()?.trim().orEmpty()
-                    .ifBlank { stringResource(R.string.default_crawler_name) }
-                Text(
-                    text = stringResource(R.string.today_greeting, displayName),
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-
-            Box(
-                modifier = Modifier
-                    .size(44.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
-                    .border(1.dp, CrimsonRedPrimary.copy(alpha = 0.5f), CircleShape),
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painter = painterResource(id = R.mipmap.ic_launcher_foreground),
-                    contentDescription = stringResource(R.string.today_logo_content_description),
-                    modifier = Modifier.size(40.dp)
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // Weekly consistency mini progress
-        WallCrawlCard(
-            cornerRadius = 12.dp,
-            contentPadding = 12.dp
-        ) {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.CheckCircle,
-                        contentDescription = null,
-                        tint = SuccessGreen,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text(
-                        text = pluralStringResource(
-                            R.plurals.today_weekly_progress,
-                            weeklyGoal,
-                            LocaleFormatting.formatCount(completedThisWeek, locale),
-                            LocaleFormatting.formatCount(weeklyGoal, locale)
-                        ),
-                        style = MaterialTheme.typography.bodySmall,
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-                val remaining = (weeklyGoal - completedThisWeek).coerceAtLeast(0)
-                Text(
-                    text = if (completedThisWeek >= weeklyGoal) {
-                        stringResource(R.string.today_weekly_goal_met)
-                    } else {
-                        pluralStringResource(
-                            R.plurals.today_weekly_goal_remaining,
-                            remaining,
-                            LocaleFormatting.formatCount(remaining, locale)
-                        )
-                    },
-                    style = MaterialTheme.typography.bodySmall,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.secondary,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            LinearProgressIndicator(
-                progress = { (completedThisWeek.toFloat() / weeklyGoal.coerceAtLeast(1)).coerceIn(0f, 1f) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(6.dp)
-                    .clip(RoundedCornerShape(3.dp)),
-                color = CrimsonRedPrimary,
-                trackColor = MaterialTheme.colorScheme.outline
-            )
-        }
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        WallCrawlWordmark(fontSize = 16.sp)
+        val displayName = userName.lineSequence().firstOrNull()?.trim().orEmpty()
+            .ifBlank { stringResource(R.string.default_crawler_name) }
+        Text(
+            stringResource(R.string.today_greeting, displayName),
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
+        )
+        Text(
+            pluralStringResource(R.plurals.today_weekly_progress, weeklyGoal,
+                LocaleFormatting.formatCount(completedThisWeek, locale), LocaleFormatting.formatCount(weeklyGoal, locale)),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        LinearProgressIndicator(
+            progress = { (completedThisWeek.toFloat() / weeklyGoal.coerceAtLeast(1)).coerceIn(0f, 1f) },
+            modifier = Modifier.fillMaxWidth().height(4.dp).clip(RoundedCornerShape(2.dp)),
+            drawStopIndicator = {},
+            color = MaterialTheme.colorScheme.primary,
+            trackColor = MaterialTheme.colorScheme.outline
+        )
     }
 }
 
@@ -577,7 +504,7 @@ private fun SuggestedWorkoutCard(
             IconButton(
                 onClick = onRegenerate,
                 enabled = !isRegenerating,
-                modifier = Modifier.size(32.dp)
+                modifier = Modifier.size(48.dp)
             ) {
                 if (isRegenerating) {
                     CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp, color = CrimsonRedPrimary)
@@ -635,99 +562,66 @@ private fun SuggestedWorkoutCard(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Stat Badges
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            StatBadge(
-                label = stringResource(
-                    R.string.today_stat_duration,
-                    LocaleFormatting.formatCount(workout.estimatedDurationMinutes, locale)
-                ),
-                icon = Icons.Default.Schedule,
-                textColor = MaterialTheme.colorScheme.secondary
-            )
-            StatBadge(
-                label = pluralStringResource(
-                    R.plurals.count_exercises,
-                    workout.exercises.size,
-                    LocaleFormatting.formatCount(workout.exercises.size, locale)
-                ),
-                icon = Icons.Default.FitnessCenter,
-                textColor = MaterialTheme.colorScheme.onSurface
-            )
-            val totalSets = workout.exercises.sumOf { it.targetSets }
-            StatBadge(
-                label = pluralStringResource(
-                    R.plurals.count_sets,
-                    totalSets,
-                    LocaleFormatting.formatCount(totalSets, locale)
-                ),
-                textColor = MaterialTheme.colorScheme.onSurfaceVariant
+        val duration = stringResource(R.string.today_stat_duration,
+            LocaleFormatting.formatCount(workout.estimatedDurationMinutes, locale))
+        val exercises = pluralStringResource(R.plurals.count_exercises, workout.exercises.size,
+            LocaleFormatting.formatCount(workout.exercises.size, locale))
+        val setCount = workout.exercises.sumOf { it.targetSets }
+        val sets = pluralStringResource(R.plurals.count_sets, setCount, LocaleFormatting.formatCount(setCount, locale))
+        Text(listOf(duration, exercises, sets).joinToString("  ·  "), style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface)
+
+        Spacer(Modifier.height(16.dp))
+
+        val startButton: @Composable () -> Unit = {
+            WallCrawlPrimaryButton(
+                text = stringResource(if (programSession != null) R.string.program_start_session else R.string.today_action_start),
+                onClick = onStartWorkout,
+                enabled = !isRegenerating,
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.PlayArrow,
+                        contentDescription = null,
+                        tint = TextWhite,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                }
             )
         }
+        if (conditionContext == null) startButton()
+        Spacer(modifier = Modifier.height(10.dp))
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Exercise List Preview
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(12.dp))
-                .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
-                .padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.today_routine_heading),
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 0.5.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-
-            workout.exercises.forEachIndexed { index, exercise ->
-                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    ExercisePreviewRow(index = index + 1, exercise = exercise)
-                    ConditionExecution(conditionContext, exercise.exerciseId, exercise.prescription.purpose)
-                    workout.progressionDecisions.firstOrNull { it.exerciseId == exercise.exerciseId }?.let {
-                        Text(
-                            progressionNotice(it, prescriptionUnit, prescriptionUnit),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+        var expanded by rememberSaveable(workoutName) { mutableStateOf(false) }
+        if (conditionContext == null) {
+            TextButton(onClick = { expanded = !expanded }, modifier = Modifier.fillMaxWidth()) {
+                Text(stringResource(if (expanded) R.string.today_hide_exercises else R.string.today_view_exercises),
+                    color = MaterialTheme.colorScheme.onSurface)
+                Icon(if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore, null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+        }
+        if (expanded || conditionContext != null) {
+            Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                workout.exercises.forEachIndexed { index, exercise ->
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        ExercisePreviewRow(index = index + 1, exercise = exercise)
+                        ConditionExecution(conditionContext, exercise.exerciseId, exercise.prescription.purpose)
+                        workout.progressionDecisions.firstOrNull { it.exerciseId == exercise.exerciseId }?.let {
+                            Text(
+                                progressionNotice(it, prescriptionUnit, prescriptionUnit),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                     }
                 }
             }
         }
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        // Large Start Workout CTA
-        WallCrawlPrimaryButton(
-            text = stringResource(if (programSession != null) R.string.program_start_session else R.string.today_action_start),
-            onClick = onStartWorkout,
-            enabled = !isRegenerating,
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.PlayArrow,
-                    contentDescription = null,
-                    tint = TextWhite,
-                    modifier = Modifier.size(20.dp)
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-            }
-        )
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        // Secondary Action: Generate another workout
-        WallCrawlSecondaryButton(
-            text = stringResource(R.string.today_action_regenerate),
-            onClick = onRegenerate,
-            enabled = !isRegenerating
-        )
+        if (conditionContext != null) {
+            Spacer(Modifier.height(16.dp))
+            startButton()
+        }
     }
 }
 

@@ -280,10 +280,8 @@ private fun WallCrawlAppContent(
                     },
                     onOpenTemplates = { navController.navigate(AppRoutes.WORKOUT_TEMPLATES) },
                     programContent = {
-                        ProgramSummary(programState, { navController.navigate(AppRoutes.PROGRAM) }, programViewModel::retry)
-                        Text(stringResource(R.string.program_disclosure), color = MaterialTheme.colorScheme.onSurface)
-                        ProgramPlanningChoice(selectedIntent, known?.enrollment?.status == ProgramStatus.ACTIVE,
-                            programState.activeSession == null, todayViewModel::selectPlanningIntent)
+                        TodayProgramOptions(programState, selectedIntent, todayViewModel::selectPlanningIntent,
+                            { navController.navigate(AppRoutes.PROGRAM) }, programViewModel::retry)
                     }
                 )
             }

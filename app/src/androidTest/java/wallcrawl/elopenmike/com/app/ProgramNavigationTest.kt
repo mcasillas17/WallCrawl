@@ -86,15 +86,44 @@ class ProgramNavigationTest {
             onboardingCompleted = true))
     }
 
-    @Test fun todayDisclosureExplainsProgramWeeksAndSharedCalendarAllowances() = runBlocking {
+    @Test fun returningUserCanStartFromFirstViewportWithAnAcceptedAdjustment() = returningUserFirstViewport(Locale.ENGLISH)
+
+    @Test fun returningUserCanInspectTheRoutineAndAdjustmentInSpanish() = returningUserFirstViewport(Locale.forLanguageTag("es-MX"))
+
+    private fun returningUserFirstViewport(locale: Locale): Unit = runBlocking {
+        val repo = container.userProfileRepository
+        repo.saveProfile(repo.getProfileOnce().copy(name = "Miguel", daysPerWeek = 5, returningAfterBreakWeeks = 4))
+        val profile = repo.getProfileOnce()
+        val preferences = container.deloadRepository.get()
+        val offer = checkNotNull(DeloadOfferPolicy.offer(profile, preferences))
+        container.deloadRepository.decide(DeloadAction.ACCEPT, profile.revision, preferences.revision, offer.id)
+        show(locale)
+        awaitTodayList()
+        val start = compose.onNodeWithText(text(R.string.today_action_start))
+        start.assertIsDisplayed().assertIsEnabled()
+        val viewport = compose.onNodeWithTag("today-list").getUnclippedBoundsInRoot()
+        val button = start.getUnclippedBoundsInRoot()
+        assertThat(button.top.value).isAtLeast(viewport.top.value)
+        assertThat(button.bottom.value).isAtMost(viewport.bottom.value)
+        capture("today-returning-first-viewport-${locale.language}")
+        compose.onNodeWithTag("planning-PROGRAM").assertDoesNotExist()
+        click(R.string.today_view_exercises)
+        click(R.string.today_hide_exercises)
+        click(R.string.today_details)
+        compose.onNodeWithTag("today-list").performScrollToNode(hasText(text(R.string.today_deload_cancel)))
+        compose.onNodeWithText(text(R.string.today_deload_cancel)).assertIsEnabled()
+    }
+
+    @Test fun todayLinksToProgramWeeksAndSharedCalendarAllowances() = runBlocking {
         enroll(); show(); chooseProgram()
+        compose.onNodeWithTag("today-list").performScrollToNode(hasTestTag("planning-PROGRAM"))
+        capture("program-today-mode-en")
         assertTodayDisclosureReadable(1f)
-        capture("program-today-disclosure-en")
         assertThat((container.programRepository.get() as ProgramReadState.Supported).progress.completedSlots).isEqualTo(0)
         assertThat(container.workoutRepository.getActiveSessionOnce()).isNull()
     }
 
-    @Test fun todayDisclosureRemainsReachableInSpanishAt320DpWithLargeText() = runBlocking {
+    @Test fun todayLinksToReadableSpanishDisclosureAt320DpWithLargeText() = runBlocking {
         enroll(); show(Locale.forLanguageTag("es-MX"), 1.8f); chooseProgram()
         assertTodayDisclosureReadable(1.8f)
     }
@@ -372,7 +401,7 @@ class ProgramNavigationTest {
     }
 
     private fun assertTodayDisclosureReadable(fontScale: Float) {
-        compose.onNodeWithTag("today-list").performScrollToNode(hasText(text(R.string.program_disclosure)))
+        click(R.string.program_manage)
         val disclosure = compose.onNodeWithText(text(R.string.program_disclosure))
         disclosure.performScrollTo().assertIsDisplayed()
         val layouts = mutableListOf<androidx.compose.ui.text.TextLayoutResult>()
@@ -443,8 +472,11 @@ class ProgramNavigationTest {
                 WallCrawlTheme { Box(if (fontScale > 1f) Modifier.width(320.dp) else Modifier) { WallCrawlApp(container, nav) } }
             }
         }
-        compose.waitUntil(15_000) { nav.currentDestination?.route == AppRoutes.TODAY }
-        waitText(R.string.program_manage)
+        compose.waitUntil(15_000) {
+            nav.currentDestination?.route == AppRoutes.TODAY && (
+                compose.onAllNodesWithTag("today-list").fetchSemanticsNodes().isNotEmpty() ||
+                    compose.onAllNodesWithText(text(R.string.today_error_title)).fetchSemanticsNodes().isNotEmpty())
+        }
     }
     private fun capture(name: String) {
         if (InstrumentationRegistry.getArguments().getString("captureProgramScreenshots") != "true") return

@@ -2,6 +2,7 @@ package wallcrawl.elopenmike.com.feature.today
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,6 +13,12 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.material3.TextButton
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
@@ -42,15 +49,22 @@ internal fun TodayDeloadCard(
     WallCrawlCard {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             val accepted = state.acceptedChoice != null
-            Text(
-                stringResource(if (accepted) R.string.today_deload_accepted else R.string.today_deload_title),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.semantics { heading() }
-            )
             val offer = state.acceptedChoice?.offer ?: state.offer
-            if (offer != null) {
+            var details by rememberSaveable(offer?.id, accepted) { mutableStateOf(false) }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text(stringResource(if (accepted) R.string.today_deload_accepted else R.string.today_deload_title),
+                        style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.Bold, modifier = Modifier.semantics { heading() })
+                    if (accepted) Text(stringResource(R.string.today_deload_applied_summary),
+                        style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+                if (accepted) TextButton(onClick = { details = !details }) {
+                    Text(stringResource(if (details) R.string.today_hide_details else R.string.today_details),
+                        color = MaterialTheme.colorScheme.onSurface)
+                }
+            }
+            if (offer != null && (!accepted || details)) {
                 Text(stringResource(when (offer.source) {
                     DeloadSource.EXPLICIT_REQUEST -> R.string.today_deload_reason_request
                     DeloadSource.RETURNING -> R.string.today_deload_reason_returning
@@ -59,9 +73,9 @@ internal fun TodayDeloadCard(
                 if (state.offer != null) preview?.invoke()
             }
             if (accepted) {
-                Text(stringResource(R.string.today_deload_accepted_detail), color = MaterialTheme.colorScheme.onSurfaceVariant)
-                DeloadButton(stringResource(R.string.today_deload_cancel), !state.isSaving) {
-                    onAction(DeloadAction.CANCEL)
+                if (details) {
+                    Text(stringResource(R.string.today_deload_accepted_detail), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    DeloadButton(stringResource(R.string.today_deload_cancel), !state.isSaving) { onAction(DeloadAction.CANCEL) }
                 }
             } else if (state.offer != null) {
                 DeloadButton(stringResource(R.string.today_deload_accept), !state.isSaving, primary = true) {

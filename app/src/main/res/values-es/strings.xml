@@ -20,7 +20,12 @@
     <string name="today_error_deload_read">No se pudo cargar tu elección para un entrenamiento. Vuelve a intentarlo antes de iniciar un entrenamiento automático.</string>
     <string name="today_error_deload_write">No se pudo guardar tu elección. Aquí no se aceptó ni cambió nada. Vuelve a intentarlo.</string>
     <string name="today_deload_title">Un entrenamiento con menos series</string>
-    <string name="today_deload_accepted">Menos series aceptadas para un entrenamiento</string>
+    <string name="today_view_exercises">Ver ejercicios</string>
+    <string name="today_hide_exercises">Ocultar ejercicios</string>
+    <string name="today_details">Detalles</string>
+    <string name="today_hide_details">Ocultar detalles</string>
+    <string name="today_deload_applied_summary">Una serie menos por ejercicio, con un mínimo de una.</string>
+    <string name="today_deload_accepted">Menos series en esta sesión</string>
     <string name="today_deload_reason_request">Solicitaste menos series.</string>
     <string name="today_deload_reason_returning">Indicaste que vuelves después de una pausa. La orientación de regreso ya se aplica independientemente de esta elección.</string>
     <string name="today_deload_effect">Tu próximo entrenamiento automático, y solo UNO, usa las metas de trabajo de referencia actuales con una serie de trabajo menos por ejercicio, mínimo una. Mantiene las metas de referencia de carga, asistencia, repeticiones, duración, esfuerzo y descanso. La progresión queda en pausa, incluido cualquier aumento sugerido.</string>
@@ -311,17 +316,13 @@
     <string name="today_loading">Preparando el plan de hoy…</string>
     <string name="today_error_title">No se pudo generar</string>
     <string name="today_greeting">Listo para entrenar, %1$s</string>
-    <string name="today_logo_content_description">Logotipo de WallCrawl</string>
-    <string name="today_weekly_goal_met">Meta semanal cumplida</string>
     <string name="today_active_session_heading">ENTRENAMIENTO EN CURSO</string>
     <string name="today_action_resume">Reanudar</string>
     <string name="today_plan_heading">EL PLAN DE HOY</string>
     <string name="today_regenerate_content_description">Generar otro entrenamiento</string>
     <string name="today_stat_duration">~%1$s min</string>
-    <string name="today_routine_heading">RUTINA</string>
     <string name="today_exercise_position">%1$s.</string>
     <string name="today_action_start">Empezar entrenamiento</string>
-    <string name="today_action_regenerate">Generar otro entrenamiento</string>
     <string name="today_custom_routines_heading">RUTINAS PERSONALIZADAS</string>
     <string name="today_my_workouts_title">Mis rutinas</string>
     <string name="today_my_workouts_body">Crea, guarda y repite tus propias rutinas.</string>
@@ -783,10 +784,6 @@
         <item quantity="one">%1$s de %2$s entrenamiento completado esta semana</item>
         <item quantity="other">%1$s de %2$s entrenamientos completados esta semana</item>
     </plurals>
-    <plurals name="today_weekly_goal_remaining">
-        <item quantity="one">Falta %1$s para la meta semanal</item>
-        <item quantity="other">Faltan %1$s para la meta semanal</item>
-    </plurals>
     <plurals name="today_active_session_sets">
         <item quantity="one">%1$s de %2$s serie registrada</item>
         <item quantity="other">%1$s de %2$s series registradas</item>
@@ -1009,7 +1006,6 @@
     <string name="program_recorded_objective">Objetivo registrado: %1$s</string>
     <string name="program_recorded_heading">Programa al iniciar el entrenamiento</string>
     <string name="program_completed_history">Sesiones del programa finalizadas</string>
-    <string name="program_choice">Modo de recomendación</string>
     <string name="program_ordinary_choice">Entrenamiento habitual</string>
     <string name="program_session_choice">Sesión del programa</string>
     <string name="program_start_session">Iniciar sesión del programa</string>

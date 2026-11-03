@@ -10,7 +10,12 @@
     <string name="today_error_deload_read">Your one-workout choice could not be loaded. Try again before starting an automatic workout.</string>
     <string name="today_error_deload_write">Your choice could not be saved. Nothing was accepted or changed here. Try again.</string>
     <string name="today_deload_title">One workout with fewer sets</string>
-    <string name="today_deload_accepted">Fewer sets accepted for one workout</string>
+    <string name="today_view_exercises">View exercises</string>
+    <string name="today_hide_exercises">Hide exercises</string>
+    <string name="today_details">Details</string>
+    <string name="today_hide_details">Hide details</string>
+    <string name="today_deload_applied_summary">One fewer set per exercise, with a minimum of one.</string>
+    <string name="today_deload_accepted">Fewer sets this workout</string>
     <string name="today_deload_reason_request">You requested fewer sets.</string>
     <string name="today_deload_reason_returning">You reported returning after a break. Returning guidance already applies independently of this choice.</string>
     <string name="today_deload_effect">Your next ONE automatic workout uses the current reference working targets with one fewer work set per exercise, minimum one. It keeps reference load, assistance, repetition, duration, effort, and rest targets. Progression is paused, including any suggested increase.</string>
@@ -316,17 +321,13 @@
     <string name="today_loading">Building today\'s plan…</string>
     <string name="today_error_title">Generation issue</string>
     <string name="today_greeting">Ready to train, %1$s</string>
-    <string name="today_logo_content_description">WallCrawl logo</string>
-    <string name="today_weekly_goal_met">Weekly goal met</string>
     <string name="today_active_session_heading">ACTIVE WORKOUT IN PROGRESS</string>
     <string name="today_action_resume">Resume</string>
     <string name="today_plan_heading">TODAY\'S PLAN</string>
     <string name="today_regenerate_content_description">Generate another workout</string>
     <string name="today_stat_duration">~%1$s min</string>
-    <string name="today_routine_heading">WORKOUT ROUTINE</string>
     <string name="today_exercise_position">%1$s.</string>
     <string name="today_action_start">Start workout</string>
-    <string name="today_action_regenerate">Generate another workout</string>
     <string name="today_custom_routines_heading">CUSTOM ROUTINES</string>
     <string name="today_my_workouts_title">My workouts</string>
     <string name="today_my_workouts_body">Build, save, and repeat your own routines.</string>
@@ -791,10 +792,6 @@
         <item quantity="one">%1$s of %2$s workout completed this week</item>
         <item quantity="other">%1$s of %2$s workouts completed this week</item>
     </plurals>
-    <plurals name="today_weekly_goal_remaining">
-        <item quantity="one">%1$s to weekly goal</item>
-        <item quantity="other">%1$s to weekly goal</item>
-    </plurals>
     <plurals name="today_active_session_sets">
         <item quantity="one">%1$s of %2$s set logged</item>
         <item quantity="other">%1$s of %2$s sets logged</item>
@@ -1017,7 +1014,6 @@
     <string name="program_recorded_objective">Recorded objective: %1$s</string>
     <string name="program_recorded_heading">Program at workout start</string>
     <string name="program_completed_history">Finished program sessions</string>
-    <string name="program_choice">Recommendation mode</string>
     <string name="program_ordinary_choice">Ordinary workout</string>
     <string name="program_session_choice">Program session</string>
     <string name="program_start_session">Start program session</string>

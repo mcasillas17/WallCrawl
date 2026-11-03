@@ -98,8 +98,9 @@ class TodayDeloadScreenTest {
         compose.onNodeWithText("Accept for one workout").performScrollTo().performClick()
         waitForStatus(repository, DeloadChoiceStatus.ACCEPTED)
         compose.onNodeWithText("Request fewer sets").assertDoesNotExist()
+        showAction("Details")
         listOf(
-            "Fewer sets accepted for one workout", "You requested fewer sets.",
+            "Fewer sets this workout", "You requested fewer sets.",
             "This choice stays pending until you start an automatic workout. A manual routine does not use it. You can cancel before starting.",
             "Cancel before starting"
         ).forEach(::assertRenderedTextContrast)
@@ -144,16 +145,13 @@ class TodayDeloadScreenTest {
             .assertHeightIsAtLeast(48.dp).assertWidthIsAtLeast(48.dp)
     }
 
-    @Test fun largeSpanishWeeklySummaryStacksWithoutNarrowingToOneWord() {
+    @Test fun largeSpanishWeeklySummaryWrapsWithoutClipping() {
         render(Locale.forLanguageTag("es-MX"), fontScale = 1.8f,
             maxWidth = 320.dp,
             profile = UserProfile(onboardingCompleted = true, daysPerWeek = 4))
         val progress = compose.onNodeWithText("0 de 4 entrenamientos completados esta semana")
-        val remaining = compose.onNodeWithText("Faltan 4 para la meta semanal")
         progress.assertIsDisplayed().assertWidthIsAtLeast(200.dp)
-        remaining.assertIsDisplayed()
         val progressBounds = progress.fetchSemanticsNode().boundsInRoot
-        val remainingBounds = remaining.fetchSemanticsNode().boundsInRoot
         val maximumHeightPx = 100f *
             InstrumentationRegistry.getInstrumentation().targetContext.resources.displayMetrics.density
         val layouts = mutableListOf<TextLayoutResult>()
@@ -165,12 +163,7 @@ class TodayDeloadScreenTest {
                 "(100 dp); ${layouts.single().lineCount} lines at ${layouts.single().layoutInput.style.lineHeight}",
             progressBounds.height <= maximumHeightPx
         )
-        assertTrue("Remaining-goal label must remain below 100 dp", remainingBounds.height <= maximumHeightPx)
-        assertTrue(
-            "Weekly labels must stack rather than compete for horizontal space",
-            progressBounds.bottom <= remainingBounds.top
-        )
-        compose.onNodeWithText("Un entrenamiento con menos series").assertIsDisplayed()
+
     }
 
     @Test fun offerExplainsEffectBeforeAcceptAndExposesDistinctDeclineAndDismiss() {
@@ -197,6 +190,7 @@ class TodayDeloadScreenTest {
         val decision = ProgressionDecision("push-up", ProgressionReason.ADVANCED, ProgressionAxis.REP_RANGE,
             prescription, prescription.copy(repRange = RepRange(9, 13)), listOf("first", "second"), "a".repeat(64))
         render(Locale.ENGLISH, decisions = listOf(decision))
+        showAction("View exercises")
         compose.onNodeWithText("Progression: repetitions 8–12 → 9–13. Other targets stay unchanged.")
             .performScrollTo().assertIsDisplayed()
     }
@@ -211,8 +205,9 @@ class TodayDeloadScreenTest {
         compose.onNodeWithText("Accept for one workout").performScrollTo().performClick()
         waitForStatus(repository, DeloadChoiceStatus.ACCEPTED)
         compose.runOnIdle { mountKey.intValue++ }
+        showAction("Details")
         compose.onNodeWithTag("today-list").performScrollToNode(hasText("Cancel before starting"))
-        compose.onNodeWithText("Fewer sets accepted for one workout").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText("Fewer sets this workout").performScrollTo().assertIsDisplayed()
         compose.onNodeWithText("Accept for one workout").assertDoesNotExist()
         compose.onNodeWithText("Cancel before starting").performScrollTo().performClick()
         waitForStatus(repository, DeloadChoiceStatus.CANCELLED)
@@ -248,10 +243,12 @@ class TodayDeloadScreenTest {
         val offer = DeloadOffer("explicit", DeloadSource.EXPLICIT_REQUEST, DeloadOfferPolicy.VERSION)
         render(Locale.forLanguageTag("es-MX"), fontScale = 2f,
             choice = DeloadChoice(offer, DeloadChoiceStatus.ACCEPTED, 1), decisions = listOf(decision))
+        showAction("Detalles")
         compose.onNodeWithTag("today-list").performScrollToNode(hasText("Cancelar antes de empezar"))
         compose.onNodeWithText("Cancelar antes de empezar").performScrollTo().assertIsDisplayed()
             .assertHeightIsAtLeast(48.dp).assertWidthIsAtLeast(48.dp)
         val notice = "Progresión en pausa: se aplica tu elección aceptada para un entrenamiento."
+        showAction("Ver ejercicios")
         compose.onNodeWithTag("today-list").performScrollToNode(hasText(notice))
         compose.onNodeWithText(notice).performScrollTo().assertIsDisplayed()
     }
@@ -268,6 +265,7 @@ class TodayDeloadScreenTest {
         compose.onNodeWithTag("today-list").performScrollToNode(hasText("40 lb"))
         compose.onNodeWithText("40 lb").performScrollTo().assertIsDisplayed()
         val notice = "Progression: load 40 lb → 45.51 lb. Other targets stay unchanged."
+        showAction("View exercises")
         compose.onNodeWithTag("today-list").performScrollToNode(hasText(notice))
         compose.onNodeWithText(notice).performScrollTo().assertIsDisplayed()
     }
@@ -307,8 +305,14 @@ class TodayDeloadScreenTest {
         compose.onNodeWithText("Rest: 90 s").performScrollTo().assertIsDisplayed()
         compose.onNodeWithText("Target effort: 2–4 RIR").performScrollTo().assertIsDisplayed()
         val ordinaryNotice = "Progression: load 40 kg → 42.5 kg. Other targets stay unchanged."
+        showAction("View exercises")
         compose.onNodeWithTag("today-list").performScrollToNode(hasText(ordinaryNotice))
         compose.onNodeWithText(ordinaryNotice).performScrollTo().assertIsDisplayed()
+    }
+
+    private fun showAction(label: String) {
+        compose.onNodeWithTag("today-list").performScrollToNode(hasText(label))
+        compose.onNodeWithText(label).performScrollTo().performClick()
     }
 
     private fun durableRepository(profile: UserProfile): DeloadRepository {
